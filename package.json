@@ -1,0 +1,20 @@
+{
+  "name": "mirrorview-task",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server-local.js",
+    "start": "node server-local.js" 
+  },
+  "keywords": ["jspsych", "experiment", "psychology", "aws"],
+  "author": "",
+  "license": "ISC",
+  "description": "A jsPsych-based experimental task with AWS deployment capabilities",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "choices.js": "^10.2.0",
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security"
+  }
+}
