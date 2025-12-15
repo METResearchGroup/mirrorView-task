@@ -13,7 +13,8 @@ const config = {
     // AWS production settings
     aws: {
         GET_PARTICIPANT_ID_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-participant-id',
-        SAVE_DATA_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data'
+        SAVE_DATA_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data',
+        PROLIFIC_COMPLETION_URL: null // Set this to your Prolific completion URL when ready
     },
     
     // Get current configuration based on mode
@@ -38,7 +39,8 @@ const config = {
         const currentConfig = this.getCurrentConfig();
         return {
             GET_PARTICIPANT_ID_URL: currentConfig.GET_PARTICIPANT_ID_URL,
-            SAVE_DATA_URL: currentConfig.SAVE_DATA_URL
+            SAVE_DATA_URL: currentConfig.SAVE_DATA_URL,
+            PROLIFIC_COMPLETION_URL: currentConfig.PROLIFIC_COMPLETION_URL || null
         };
     }
 };
