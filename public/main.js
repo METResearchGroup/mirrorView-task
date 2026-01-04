@@ -39,6 +39,7 @@ const jsPsych = initJsPsych({
             'rt',
             // Mirror preference specific
             'post_id',
+            'human_mirror_id',  // Unique ID for this specific human mirror
             'original_text',
             'selected_mirror',
             'selected_position',
@@ -147,13 +148,16 @@ async function loadMirrorData() {
         const data = parseCSV(csvText);
         
         // Filter to only rows with valid data
+        // Each row represents one post with its human mirror and 4 LLM mirrors
         const validData = data.filter(row => 
             row.original_text && 
             row.original_text.trim() !== '' &&
-            row.post_primary_key
+            row.human_mirror_id &&  // ID of the selected human mirror for this post
+            row.human_mirror &&
+            row.human_mirror.trim() !== ''
         );
         
-        console.log(`Loaded ${validData.length} mirror posts`);
+        console.log(`Loaded ${validData.length} posts with mirrors`);
         return validData;
     } catch (error) {
         console.error('Error loading mirror data:', error);
@@ -339,10 +343,12 @@ async function setupExperiment() {
         timeline.push(assignId);
         
         // ========== MIRROR PREFERENCE TRIALS ==========
+        // Each post shows 5 mirrors: 1 human + 4 LLMs
         selectedPosts.forEach((post, index) => {
             const trial = {
                 type: jsPsychMirrorPreference,
                 post_id: post.post_primary_key,
+                human_mirror_id: post.human_mirror_id,  // Unique ID for this specific human mirror
                 original_text: post.original_text,
                 human_mirror: post.human_mirror,
                 llm_mirrors: {
@@ -351,8 +357,8 @@ async function setupExperiment() {
                     claude: post.claude_mirror,
                     gpt4o: post.gpt4o_mirror
                 },
-                show_original: false, // Set to true if you want to show the original post
-                prompt: "Which version do you prefer?",
+                show_original: true,
+                prompt: "Which mirror do you prefer?",
                 button_label: "Next →",
                 trial_number: index + 1,
                 total_trials: NUM_TRIALS

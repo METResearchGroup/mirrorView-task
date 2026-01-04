@@ -32,6 +32,11 @@ var jsPsychMirrorPreference = (function (jspsych) {
                 type: jspsych.ParameterType.STRING,
                 default: null
             },
+            /** The unique identifier for this specific human mirror */
+            human_mirror_id: {
+                type: jspsych.ParameterType.STRING,
+                default: null
+            },
             /** Human mirror text */
             human_mirror: {
                 type: jspsych.ParameterType.STRING,
@@ -71,6 +76,10 @@ var jsPsychMirrorPreference = (function (jspsych) {
         data: {
             /** The unique identifier for the post */
             post_id: {
+                type: jspsych.ParameterType.STRING
+            },
+            /** The unique identifier for this specific human mirror */
+            human_mirror_id: {
                 type: jspsych.ParameterType.STRING
             },
             /** The original post text */
@@ -160,18 +169,20 @@ var jsPsychMirrorPreference = (function (jspsych) {
             let html = `
                 <div class="mirror-preference-container">
                     ${progressHtml}
-                    <div class="mirror-prompt">${trial.prompt}</div>
             `;
 
-            // Optionally show original post
-            if (trial.show_original && trial.original_text) {
+            // Always show the original text at the top
+            if (trial.original_text) {
                 html += `
+                    <div class="original-post-label">Original Text</div>
                     <div class="original-post-container">
-                        <div class="original-post-label">Original Post:</div>
                         <div class="original-post-text">${trial.original_text}</div>
                     </div>
                 `;
             }
+
+            // Add the prompt for mirrors
+            html += `<div class="mirror-prompt">${trial.prompt}</div>`;
 
             // Add mirror cards
             html += `<div class="mirror-cards-container">`;
@@ -256,6 +267,7 @@ var jsPsychMirrorPreference = (function (jspsych) {
                 // Compile trial data
                 const trialData = {
                     post_id: trial.post_id,
+                    human_mirror_id: trial.human_mirror_id,  // Unique ID for this specific human mirror
                     original_text: trial.original_text,
                     selected_mirror: selectedMirror,
                     selected_position: selectedPosition,

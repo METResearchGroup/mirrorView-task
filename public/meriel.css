@@ -573,28 +573,29 @@ ul {
     margin-bottom: 30px;
 }
 
-/* Original post display (if shown) */
+/* Original post label (styled like mirror-prompt) */
+.original-post-label {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+}
+
+/* Original post display (styled like mirror cards) */
 .original-post-container {
-    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-    border: 1px solid #bae6fd;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 30px;
-}
-
-.original-post-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #0369a1;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .original-post-text {
     font-size: 16px;
-    color: #1e40af;
+    color: #374151;
     line-height: 1.6;
+    text-align: center;
 }
 
 /* Mirror cards container */
