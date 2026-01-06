@@ -4,7 +4,7 @@
  * Participants view 5 "mirror" versions of political posts (1 human + 4 LLMs)
  * and select which mirror they prefer.
  * 
- * Each participant sees 20 randomly selected posts.
+ * Each participant sees 10 randomly selected posts.
  * Mirror order is randomized for each trial.
  */
 
@@ -238,7 +238,7 @@ function sampleArray(array, n) {
 // EXPERIMENT CONFIGURATION
 // ============================================================
 
-const NUM_TRIALS = 20; // Number of posts each participant rates
+const NUM_TRIALS = 10; // Number of posts each participant rates
 
 
 // ============================================================
@@ -268,46 +268,70 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Welcome!</h2>
-                    <p>In this study, you will read different versions of social media posts and tell us which version you prefer.</p>
-                    <p>Each post has been rewritten in 5 different ways. Your task is to <b>read all 5 versions</b> and <b>click on the one you like best</b>.</p>
-                    <p>You will complete <b>${NUM_TRIALS} trials</b> in total. This should take approximately 10-15 minutes.</p>
+                    <p>We're developing an AI tool that will help people think about political messages from different points of view.</p>
+                    <p>It works by generating "mirrors" of political text from social media. For example, when prompted with a left-leaning social media post, the AI should generate the same message, as if the post was written from a right-leaning perspective.</p>
                     <br>
-                    <p>Click <b>Next</b> to continue to the consent form.</p>
+                    <p>For example:</p>
+                    <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think abortion is obviously about protecting women's rights!"</p>
+                    <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
+                    <p>Notice that the mirror text tries to recreate the original message, but from the opposite political stance (original text is clearly liberal, and the mirror text is clearly conservative).
+                    Also notice that it changed the core message to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
+                    it is just trying to replicate the original message as if written from an opposite political stance.</p>
+                    <p>In this study, your job is to choose the “mirrored” message that you believe accomplishes this job the best for a given social media post.</p>
+                    <br>
+                    <p>Click <b>Next</b> to continue to a practice trial.</p>
                 </div>
             `],
             show_clickable_nav: true
         };
         timeline.push(welcome);
-        
+
+        // ========== PRACTICE TRIAL ==========
+        const practiceTrial = {
+            type: jsPsychMirrorPractice,
+            original_text: "Climate change is a pressing issue that requires immediate attention and action, and it's essential to address the root causes of this problem.",
+            options: [
+                {
+                    id: 'wrong1',
+                    text: "Climate change is not as serious as the left claims, and we shouldn't rush into policies that hurt American jobs."
+                },
+                {
+                    id: 'correct',
+                    text: "Government overreach is a pressing issue that requires immediate attention and action, and it's essential to address the root causes of burdensome environmental regulations."
+                },
+                {
+                    id: 'wrong2',
+                    text: "The Second Amendment is a fundamental right that requires immediate protection, and it's essential to defend our constitutional freedoms."
+                }
+            ],
+            correct_answer: 'correct',
+            prompt: "Which of these 3 versions is the best mirror for the original text?",
+            incorrect_feedback: "Try again!",
+            correct_feedback: "Correct! This mirror maintains the same <b>structure</b> and <b>tone</b> as the original, while <b>flipping the political stance</b>.",
+            button_label: "Continue to Consent Form →",
+            shuffle_options: true,
+            practice_label: "Practice Trial"
+        };
+        timeline.push(practiceTrial);
+
         // ========== CONSENT ==========
         timeline.push(consent);
         
-        // ========== INSTRUCTIONS ==========
-        const instructions = {
+        // ========== READY TO BEGIN ==========
+        const readyToBegin = {
             type: jsPsychInstructions,
-            pages: [
-                `<div class='instructions'>
-                    <h2>Task Instructions</h2>
-                    <p>On each trial, you will see <b>5 different versions</b> of a rewritten social media post.</p>
-                    <p>These versions were written by different people (some human, some AI) who were asked to "flip" the perspective of an original post.</p>
-                    <p><b>Your job:</b></p>
-                    <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
-                        <li>Read through all 5 versions</li>
-                        <li>Click on the version you prefer most</li>
-                        <li>Then click "Next" to continue</li>
-                    </ul>
-                    <p>There are no right or wrong answers — we're interested in your personal preference!</p>
-                </div>`,
-                `<div class='instructions'>
-                    <h2>Ready to Begin</h2>
-                    <p>You will now start the main task.</p>
-                    <p>Remember: <b>click on the version you prefer</b>, then click <b>Next</b> to continue.</p>
-                    <p>Click <b>Next</b> when you're ready to start!</p>
-                </div>`
-            ],
+            pages: [`
+                <div class='instructions'>
+                    <h2>Great! You're ready to begin.</h2>
+                    <p>The real study will be similar to the practice trial, except each post has been rewritten in <b>5 different ways</b>, and you will have to select the best mirror out of each of the 5 posts.</p>
+                    <p>There will be <b>${NUM_TRIALS} trials</b> in total. It should take you approximately 10-15 minutes to finish the task.</p>
+                    <br>
+                    <p>Click <b>Next</b> to begin.</p>
+                </div>
+            `],
             show_clickable_nav: true
         };
-        timeline.push(instructions);
+        timeline.push(readyToBegin);
         
         // ========== ASSIGN PARTICIPANT ID ==========
         let ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
@@ -387,23 +411,6 @@ async function setupExperiment() {
             button_label: "Submit →"
         };
         timeline.push(demographics);
-        
-        // ========== THANK YOU ==========
-        const thankYou = {
-            type: jsPsychHtmlButtonResponse,
-            stimulus: `
-                <div class='instructions'>
-                    <h2>Thank You!</h2>
-                    <p>You have completed the study.</p>
-                    <p>Your responses are being saved...</p>
-                </div>
-            `,
-            choices: ['Finish'],
-            on_finish: function() {
-                // Data saving is handled by on_finish in jsPsych init
-            }
-        };
-        timeline.push(thankYou);
         
         // Run the experiment
         jsPsych.run(timeline);

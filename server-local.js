@@ -18,12 +18,14 @@ let politicalAssignments = {
 
 // middleware
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// serve HTML file
+// serve HTML file (local development version) - MUST be before express.static
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index-local.html'));
 });
+
+// Static files (after the root route to prevent index.html from being served)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // endpoint to get participantID; assigns and returns a participantID to a prolificID
 app.get('/get-participant-id', (req, res) => {

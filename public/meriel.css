@@ -1,15 +1,25 @@
 /* use <div class='instructions'> */
 .instructions {
-    line-height: 1.5;
-    max-width: 800px;
-    margin-right: 300px;
-    margin-left: 300px;
+    line-height: 1.7;
+    width: 90%;
+    max-width: 900px;
+    margin: 0 auto;
     text-align: left;
-    background-color: #f0f0f0;
-    padding: 20px;
-    border: 2px solid #f0f0f0b6;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2)
+    background-color: #f8f9fa;
+    padding: 30px 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-size: 17px;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .instructions {
+        width: 95%;
+        padding: 20px 24px;
+        font-size: 16px;
+    }
 }
 
 /* override jspsych.css */
@@ -553,57 +563,63 @@ ul {
 .mirror-preference-container {
     max-width: 900px;
     margin: 0 auto;
-    padding: 30px 20px;
+    padding: 40px 24px;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
+/* Progress indicator - pill style */
 .mirror-progress {
     text-align: center;
-    font-size: 14px;
-    color: #6b7280;
-    margin-bottom: 10px;
-    font-weight: 500;
-}
-
-.mirror-prompt {
-    text-align: center;
-    font-size: 24px;
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 24px;
     font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
-/* Original post label (styled like mirror-prompt) */
+/* Section: Original Text */
 .original-post-label {
-    font-size: 24px;
+    text-align: center;
+    font-size: 20px;
     font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 16px;
+    color: #374151;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-/* Original post display (styled like mirror cards) */
 .original-post-container {
-    background: #ffffff;
-    border: 2px solid #e5e7eb;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 30px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .original-post-text {
     font-size: 16px;
-    color: #374151;
-    line-height: 1.6;
+    color: #1e293b;
+    line-height: 1.7;
     text-align: center;
+}
+
+/* Section: Mirror Selection */
+.mirror-prompt {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 20px;
 }
 
 /* Mirror cards container */
 .mirror-cards-container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 30px;
+    gap: 12px;
+    margin-bottom: 32px;
 }
 
 /* Individual mirror card */
@@ -611,60 +627,60 @@ ul {
     position: relative;
     background: #ffffff;
     border: 2px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 20px 20px 20px 60px;
+    border-radius: 10px;
+    padding: 18px 20px 18px 56px;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .mirror-card:hover {
-    border-color: #3b82f6;
+    border-color: #93c5fd;
     background: #f8fafc;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
 }
 
 .mirror-card.selected {
-    border-color: #2563eb;
+    border-color: #3b82f6;
     background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 2px 12px rgba(59, 130, 246, 0.2);
 }
 
 .mirror-card.selected .mirror-card-number {
-    background: #2563eb;
+    background: #3b82f6;
     color: white;
 }
 
 /* Card number badge */
 .mirror-card-number {
     position: absolute;
-    left: 16px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    background: #e5e7eb;
-    color: #6b7280;
+    width: 28px;
+    height: 28px;
+    background: #e2e8f0;
+    color: #64748b;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s ease;
+    font-size: 13px;
+    transition: all 0.15s ease;
 }
 
 .mirror-card:hover .mirror-card-number {
-    background: #3b82f6;
-    color: white;
+    background: #93c5fd;
+    color: #1e40af;
 }
 
 /* Card text */
 .mirror-card-text {
     font-size: 15px;
     line-height: 1.6;
-    color: #374151;
+    color: #334155;
+    text-align: center;
 }
 
 /* Next button container */
@@ -674,27 +690,26 @@ ul {
 }
 
 .mirror-next-btn {
-    background: #2563eb;
+    background: #3b82f6;
     color: white;
     border: none;
-    padding: 14px 40px;
+    padding: 12px 32px;
     border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 .mirror-next-btn:hover:not(:disabled) {
-    background: #1d4ed8;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    background: #2563eb;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
 .mirror-next-btn:disabled {
-    background: #9ca3af;
+    background: #cbd5e1;
+    color: #94a3b8;
     cursor: not-allowed;
-    opacity: 0.7;
 }
 
 /* Responsive adjustments */
@@ -721,4 +736,60 @@ ul {
     .mirror-card-text {
         font-size: 14px;
     }
+}
+
+/* ============================================
+   PRACTICE TRIAL STYLES
+   ============================================ */
+
+/* Correct answer styling */
+.mirror-card.correct {
+    border-color: #16a34a;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.25);
+}
+
+.mirror-card.correct .mirror-card-number {
+    background: #16a34a;
+    color: white;
+}
+
+/* Incorrect answer styling */
+.mirror-card.incorrect {
+    border-color: #dc2626;
+    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.2);
+}
+
+.mirror-card.incorrect .mirror-card-number {
+    background: #dc2626;
+    color: white;
+}
+
+/* Feedback messages */
+.practice-feedback {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.feedback-correct {
+    color: #16a34a;
+}
+
+.feedback-incorrect {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* Shake animation for wrong answers */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25%, 75% { transform: translateX(-3px); }
+    50% { transform: translateX(3px); }
+}
+
+.mirror-card.shake {
+    animation: shake 0.3s ease-in-out;
 }
