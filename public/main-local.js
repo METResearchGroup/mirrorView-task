@@ -4,7 +4,8 @@
  * Participants view 5 "mirror" versions of political posts (1 human + 4 LLMs)
  * and select which mirror they prefer.
  * 
- * Each participant sees 10 randomly selected posts.
+ * Each participant sees 5 posts assigned based on their political affiliation.
+ * Posts are assigned to ensure 3 democrats + 3 republicans rate each post.
  * Mirror order is randomized for each trial.
  */
 
@@ -39,6 +40,7 @@ const jsPsych = initJsPsych({
             'rt',
             // Mirror preference specific
             'post_id',
+            'post_number',      // Numeric post identifier (easier to reference)
             'human_mirror_id',  // Unique ID for this specific human mirror
             'original_text',
             'selected_mirror',
@@ -51,6 +53,9 @@ const jsPsych = initJsPsych({
             'participant_id',
             'prolific_id',
             'consented',
+            'political_affiliation',
+            'party_lean',
+            'party_group',
             // Demographics (if collected)
             'age',
             'gender',
@@ -225,20 +230,23 @@ function parseCSV(csvText) {
     return rows;
 }
 
-/**
- * Randomly sample n items from an array
- */
-function sampleArray(array, n) {
-    const shuffled = [...array].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, Math.min(n, array.length));
-}
-
 
 // ============================================================
 // EXPERIMENT CONFIGURATION
 // ============================================================
 
-const NUM_TRIALS = 10; // Number of posts each participant rates
+const NUM_TRIALS = 5; // Number of posts each participant rates
+
+
+// ============================================================
+// GLOBAL STATE
+// ============================================================
+
+// Store all mirror data (loaded at start)
+let allMirrorData = [];
+
+// Store assigned posts (populated after political affiliation)
+let assignedPosts = [];
 
 
 // ============================================================
@@ -253,11 +261,7 @@ async function setupExperiment() {
         console.log('Prolific ID:', prolificID);
         
         // Load mirror data
-        const mirrorData = await loadMirrorData();
-        
-        // Sample posts for this participant
-        const selectedPosts = sampleArray(mirrorData, NUM_TRIALS);
-        console.log(`Selected ${selectedPosts.length} posts for this participant`);
+        allMirrorData = await loadMirrorData();
         
         // Build timeline
         const timeline = [];
@@ -272,12 +276,12 @@ async function setupExperiment() {
                     <p>It works by generating "mirrors" of political text from social media. For example, when prompted with a left-leaning social media post, the AI should generate the same message, as if the post was written from a right-leaning perspective.</p>
                     <br>
                     <p>For example:</p>
-                    <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think abortion is obviously about protecting women's rights!"</p>
+                    <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!"</p>
                     <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
-                    <p>Notice that the mirror text tries to recreate the original message, but from the opposite political stance (original text is clearly liberal, and the mirror text is clearly conservative).
+                    <p>Notice that the mirror text recreates the original message, but from the opposite political stance (original text is clearly liberal, and the mirror text is clearly conservative).
                     Also notice that it changed the core message to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
-                    it is just trying to replicate the original message as if written from an opposite political stance.</p>
-                    <p>In this study, your job is to choose the “mirrored” message that you believe accomplishes this job the best for a given social media post.</p>
+                    it is just replicating the original message as if written from an opposite political stance.</p>
+                    <p>In this study, your job is to choose the "mirrored" message that you believe accomplishes this job the best for a given social media post.</p>
                     <br>
                     <p>Click <b>Next</b> to continue to a practice trial.</p>
                 </div>
@@ -293,11 +297,11 @@ async function setupExperiment() {
             options: [
                 {
                     id: 'wrong1',
-                    text: "Climate change is not as serious as the left claims, and we shouldn't rush into policies that hurt American jobs."
+                    text: "Climate change is a pressing issue and the main cause of it is human-based carbon emissions!"
                 },
                 {
                     id: 'correct',
-                    text: "Government overreach is a pressing issue that requires immediate attention and action, and it's essential to address the root causes of burdensome environmental regulations."
+                    text: "Climate change is not as serious as the left claims, and we shouldn't rush into policies that hurt American jobs."
                 },
                 {
                     id: 'wrong2',
@@ -317,14 +321,103 @@ async function setupExperiment() {
         // ========== CONSENT ==========
         timeline.push(consent);
         
+        // ========== POLITICAL AFFILIATION CONFIRMATION ==========
+        // (defined in pre_surveys.js)
+        timeline.push(politicalAffiliation);
+        
+        // ========== FETCH ASSIGNED POSTS ==========
+        // This runs after political affiliation and fetches posts based on party
+        const fetchAssignedPosts = {
+            type: jsPsychCallFunction,
+            async: true,
+            func: async function(done) {
+                try {
+                    // Get the party_group from the data we just collected
+                    const partyGroup = jsPsych.data.get().last(1).values()[0].party_group 
+                        || jsPsych.data.getDataByTimelineNode(jsPsych.getCurrentTimelineNodeID()).trials[0]?.party_group;
+                    
+                    // If we can't get party_group from the last trial, try getting it from addProperties
+                    const allData = jsPsych.data.get().values();
+                    const latestWithParty = allData.filter(d => d.party_group).pop();
+                    const effectivePartyGroup = partyGroup || latestWithParty?.party_group;
+                    
+                    console.log('Party group for assignment:', effectivePartyGroup);
+                    
+                    if (!effectivePartyGroup) {
+                        console.error('Could not determine party group');
+                        // Fallback to random sampling
+                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
+                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
+                        done();
+                        return;
+                    }
+                    
+                    // Get all posts with both ID and number
+                    const allPosts = allMirrorData.map(p => ({
+                        post_id: p.post_primary_key,
+                        post_number: p.post_number
+                    }));
+                    
+                    // Call the server to get assigned posts (using POST to handle large payload)
+                    const response = await fetch('/get-post-assignments', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            prolific_id: prolificID,
+                            party_group: effectivePartyGroup,
+                            all_posts: allPosts
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        console.error('Error getting post assignments:', error);
+                        // Fallback to random sampling
+                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
+                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
+                    } else {
+                        const result = await response.json();
+                        console.log('Received post assignments:', result);
+                        
+                        // Map post IDs back to full post data
+                        assignedPosts = result.assigned_post_ids.map(postId => 
+                            allMirrorData.find(p => p.post_primary_key === postId)
+                        ).filter(p => p); // Remove any undefined
+                        
+                        console.log(`Assigned ${assignedPosts.length} posts to participant`);
+                    }
+                    
+                    done();
+                } catch (error) {
+                    console.error('Error fetching post assignments:', error);
+                    // Fallback to random sampling
+                    const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
+                    assignedPosts = shuffled.slice(0, NUM_TRIALS);
+                    done();
+                }
+            }
+        };
+        timeline.push(fetchAssignedPosts);
+        
         // ========== READY TO BEGIN ==========
         const readyToBegin = {
             type: jsPsychInstructions,
             pages: [`
                 <div class='instructions'>
                     <h2>Great! You're ready to begin.</h2>
-                    <p>The real study will be similar to the practice trial, except each post has been rewritten in <b>5 different ways</b>, and you will have to select the best mirror out of each of the 5 posts.</p>
-                    <p>There will be <b>${NUM_TRIALS} trials</b> in total. It should take you approximately 10-15 minutes to finish the task.</p>
+                    <p>The real study will be just like the practice, except that you will choose one out of <b>5</b> mirror texts that you think is best. 
+                    There will be <b>${NUM_TRIALS} trials</b> in total. If several of them look like good mirrors to you, just use your gut to pick the best 
+                    one based on our definition of a good mirror.</p>
+                    <p>It should take you approximately 10-15 minutes to finish the task.</p>
+                    <br>
+                    <p>Reminder of our definition of a <b>good mirror</b>:</p>
+                    <p>A good mirror is a message that recreates the original message, but from the opposite political stance. It should also maintain the same structure and tone as the original message.</p>
+                    <p>For example:</p>
+                    <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!"</p>
+                    <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
+                    <p>Notice that the mirror text recreates the original message, but from the opposite political stance (original text is clearly liberal, and the mirror text is clearly conservative).
+                    Also notice that it changed the core message to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
+                    it is just replicating the original message as if written from an opposite political stance.</p>
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
@@ -343,35 +436,46 @@ async function setupExperiment() {
                     participant_id: ParticipantID,
                     prolific_id: prolificID,
                     num_trials: NUM_TRIALS,
-                    experiment_version: 'mirrorView_v1'
+                    experiment_version: 'mirrorView_v2'
                 });
             }
         };
         timeline.push(assignId);
         
         // ========== MIRROR PREFERENCE TRIALS ==========
-        // Each post shows 5 mirrors: 1 human + 4 LLMs
-        selectedPosts.forEach((post, index) => {
-            const trial = {
+        // Generate trials dynamically from assignedPosts
+        // Each trial is added individually since timeline_variables can't be set dynamically
+        for (let i = 0; i < NUM_TRIALS; i++) {
+            const trialIndex = i;
+            const mirrorTrial = {
                 type: jsPsychMirrorPreference,
-                post_id: post.post_primary_key,
-                human_mirror_id: post.human_mirror_id,  // Unique ID for this specific human mirror
-                original_text: post.original_text,
-                human_mirror: post.human_mirror,
-                llm_mirrors: {
-                    llama: post.llama_mirror,
-                    qwen: post.qwen_mirror,
-                    claude: post.claude_mirror,
-                    gpt4o: post.gpt4o_mirror
-                },
+                post_id: () => assignedPosts[trialIndex]?.post_primary_key || '',
+                post_number: () => assignedPosts[trialIndex]?.post_number || '',
+                human_mirror_id: () => assignedPosts[trialIndex]?.human_mirror_id || '',
+                original_text: () => assignedPosts[trialIndex]?.original_text || '',
+                human_mirror: () => assignedPosts[trialIndex]?.human_mirror || '',
+                llm_mirrors: () => ({
+                    llama: assignedPosts[trialIndex]?.llama_mirror || '',
+                    qwen: assignedPosts[trialIndex]?.qwen_mirror || '',
+                    claude: assignedPosts[trialIndex]?.claude_mirror || '',
+                    gpt4o: assignedPosts[trialIndex]?.gpt4o_mirror || ''
+                }),
                 show_original: true,
                 prompt: "Which mirror do you prefer?",
                 button_label: "Next →",
-                trial_number: index + 1,
-                total_trials: NUM_TRIALS
+                trial_number: i + 1,
+                total_trials: NUM_TRIALS,
+                // Skip this trial if no post is assigned
+                conditional_function: () => {
+                    const hasPost = assignedPosts[trialIndex] && assignedPosts[trialIndex].original_text;
+                    if (trialIndex === 0) {
+                        console.log('Starting mirror trials with', assignedPosts.length, 'posts');
+                    }
+                    return hasPost;
+                }
             };
-            timeline.push(trial);
-        });
+            timeline.push(mirrorTrial);
+        }
         
         // ========== BRIEF DEMOGRAPHICS (optional) ==========
         const demographics = {

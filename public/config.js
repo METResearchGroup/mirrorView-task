@@ -6,6 +6,7 @@ const config = {
     // Local development settings
     local: {
         GET_PARTICIPANT_ID_URL: 'http://localhost:3000/get-participant-id',
+        POST_ASSIGNMENTS_URL: 'http://localhost:3000/get-post-assignments',
         SAVE_DATA_URL: 'http://localhost:3000/save-jspsych-data',
         port: 3000
     },
@@ -13,6 +14,7 @@ const config = {
     // AWS production settings
     aws: {
         GET_PARTICIPANT_ID_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-participant-id',
+        POST_ASSIGNMENTS_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-post-assignments',
         SAVE_DATA_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data',
         PROLIFIC_COMPLETION_URL: null // Set this to your Prolific completion URL when ready
     },
@@ -39,6 +41,7 @@ const config = {
         const currentConfig = this.getCurrentConfig();
         return {
             GET_PARTICIPANT_ID_URL: currentConfig.GET_PARTICIPANT_ID_URL,
+            POST_ASSIGNMENTS_URL: currentConfig.POST_ASSIGNMENTS_URL,
             SAVE_DATA_URL: currentConfig.SAVE_DATA_URL,
             PROLIFIC_COMPLETION_URL: currentConfig.PROLIFIC_COMPLETION_URL || null
         };

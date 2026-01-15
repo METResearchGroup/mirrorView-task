@@ -32,6 +32,11 @@ var jsPsychMirrorPreference = (function (jspsych) {
                 type: jspsych.ParameterType.STRING,
                 default: null
             },
+            /** The numeric post number (easier reference than post_id) */
+            post_number: {
+                type: jspsych.ParameterType.STRING,
+                default: null
+            },
             /** The unique identifier for this specific human mirror */
             human_mirror_id: {
                 type: jspsych.ParameterType.STRING,
@@ -76,6 +81,10 @@ var jsPsychMirrorPreference = (function (jspsych) {
         data: {
             /** The unique identifier for the post */
             post_id: {
+                type: jspsych.ParameterType.STRING
+            },
+            /** The numeric post number (easier reference than post_id) */
+            post_number: {
                 type: jspsych.ParameterType.STRING
             },
             /** The unique identifier for this specific human mirror */
@@ -267,6 +276,7 @@ var jsPsychMirrorPreference = (function (jspsych) {
                 // Compile trial data
                 const trialData = {
                     post_id: trial.post_id,
+                    post_number: trial.post_number,
                     human_mirror_id: trial.human_mirror_id,  // Unique ID for this specific human mirror
                     original_text: trial.original_text,
                     selected_mirror: selectedMirror,
