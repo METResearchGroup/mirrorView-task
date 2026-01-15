@@ -1,0 +1,52 @@
+{
+  "reddit_cf9889f1c8fef63c": {
+    "post_number": "735",
+    "democrat": 1,
+    "republican": 0
+  },
+  "reddit_ba55b7731232c5bf": {
+    "post_number": "829",
+    "democrat": 1,
+    "republican": 0
+  },
+  "reddit_f0dc3a0efe35e2ba": {
+    "post_number": "791",
+    "democrat": 1,
+    "republican": 0
+  },
+  "bluesky_c02de2050421cf77": {
+    "post_number": "418",
+    "democrat": 1,
+    "republican": 0
+  },
+  "twitter_bd8b11d500bdedf1": {
+    "post_number": "238",
+    "democrat": 1,
+    "republican": 0
+  },
+  "bluesky_95b7ed29722a7de0": {
+    "post_number": "346",
+    "democrat": 0,
+    "republican": 1
+  },
+  "bluesky_eb330edd545f29c4": {
+    "post_number": "389",
+    "democrat": 0,
+    "republican": 1
+  },
+  "twitter_9eb1317e0f4f8e71": {
+    "post_number": "156",
+    "democrat": 0,
+    "republican": 1
+  },
+  "twitter_c4729e30219f5485": {
+    "post_number": "43",
+    "democrat": 0,
+    "republican": 1
+  },
+  "twitter_0735057d44610df6": {
+    "post_number": "1",
+    "democrat": 0,
+    "republican": 1
+  }
+}
