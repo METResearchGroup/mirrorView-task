@@ -62,7 +62,7 @@ const demographicsSurvey = {
             </div>
         </div>
     `,
-    button_label: "Next >",
+    button_label: "Submit",
     autofocus: "gender",
 
     // on_load: function() {
@@ -183,7 +183,7 @@ const politicalSurvey = {
             </div>
         </div>
     `,
-    button_label: "Next >",
+    button_label: "Submit →",
 
     on_load: function() {
 

@@ -570,7 +570,7 @@ ul {
 /* Progress indicator - pill style */
 .mirror-progress {
     text-align: center;
-    font-size: 13px;
+    font-size: 20px;
     color: #64748b;
     margin-bottom: 24px;
     font-weight: 600;
@@ -585,8 +585,8 @@ ul {
     font-weight: 600;
     color: #374151;
     margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
 .original-post-container {
@@ -603,6 +603,19 @@ ul {
     color: #1e293b;
     line-height: 1.7;
     text-align: center;
+}
+
+.mirror-reminder {
+    max-width: 800px;
+    margin: -12px auto 32px auto;
+    text-align: center;
+    color: #475569;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.mirror-reminder p {
+    margin: 0 0 6px 0;
 }
 
 /* Section: Mirror Selection */

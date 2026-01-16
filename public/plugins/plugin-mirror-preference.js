@@ -183,9 +183,13 @@ var jsPsychMirrorPreference = (function (jspsych) {
             // Always show the original text at the top
             if (trial.original_text) {
                 html += `
-                    <div class="original-post-label">Original Text</div>
+                    <div class="original-post-label">Original text:</div>
                     <div class="original-post-container">
                         <div class="original-post-text">${trial.original_text}</div>
+                    </div>
+                    <div class="mirror-reminder">
+                        <p>Reminder:</p>
+                        <p>A good mirror is a message that <b>recreates the original message</b>, but from the <b>opposite political stance</b>. It should also maintain the same <b>structure</b> and <b>tone</b> as the original message.</p>
                     </div>
                 `;
             }

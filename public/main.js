@@ -9,6 +9,9 @@
  * Mirror order is randomized for each trial.
  */
 
+let currentProlificID = null;
+let isTestParticipant = false;
+
 const jsPsych = initJsPsych({
     use_webaudio: false,
     on_finish: function() {
@@ -31,6 +34,13 @@ const jsPsych = initJsPsych({
         // Process all trials
         let allTrials = allData.values();
         allTrials.forEach(flattenResponses);
+
+        // Add attention check attempts as a dedicated column
+        allTrials.forEach(trial => {
+            if (trial.trial_type === 'mirror-practice' && trial.attempts !== undefined) {
+                trial.attention_check_attempts = trial.attempts;
+            }
+        });
         
         // Define columns to keep
         const columnsToKeep = [
@@ -59,7 +69,15 @@ const jsPsych = initJsPsych({
             // Demographics (if collected)
             'age',
             'gender',
-            'education'
+            'education',
+            // Political attitudes (if collected)
+            'political_ideology',
+            'political_follow',
+            'rep_id',
+            'dem_id'
+            ,
+            // Attention check (practice) attempts
+            'attention_check_attempts'
         ];
         
         // Create CSV
@@ -102,7 +120,11 @@ const jsPsych = initJsPsych({
         fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ csv: csv })
+            body: JSON.stringify({
+                csv: csv,
+                prolific_id: currentProlificID,
+                is_test: isTestParticipant
+            })
         })
         .then(response => response.json())
         .then(result => {
@@ -116,8 +138,15 @@ const jsPsych = initJsPsych({
                 document.body.innerHTML = `
                     <div style="text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
                         <h1 style="color: #16a34a;">Thank you!</h1>
-                        <p style="font-size: 18px; color: #4b5563;">Your responses have been recorded.</p>
-                        <p style="color: #9ca3af;">You may now close this window.</p>
+                        <p style="font-size: 18px; color: #4b5563; margin-bottom: 10px;">
+                            Thank you for participating! Your responses have been recorded.
+                        </p>
+                        <p style="font-size: 18px; color: #4b5563;">
+                            <a href="https://app.prolific.com/submissions/complete?cc=CV0XRWGP" target="_blank">
+                                <b>Click here</b>
+                            </a>
+                            to be redirected to Prolific (completion code <b>CV0XRWGP</b>).
+                        </p>
                     </div>
                 `;
             }
@@ -274,8 +303,10 @@ async function setupExperiment() {
     try {
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const prolificID = urlParams.get('PROLIFIC_PID') || 'UNKNOWN_' + Date.now();
-        console.log('Prolific ID:', prolificID);
+        const prolificPID = urlParams.get('PROLIFIC_PID');
+        currentProlificID = prolificPID || 'UNKNOWN_' + Date.now();
+        isTestParticipant = !prolificPID;
+        console.log('Prolific ID:', currentProlificID, isTestParticipant ? '(test)' : '');
         
         // Get config URLs
         const urls = window.config?.getUrls?.() || {};
@@ -293,14 +324,30 @@ async function setupExperiment() {
                 <div class='instructions'>
                     <h2>Welcome!</h2>
                     <p>We're developing an AI tool that will help people think about political messages from different points of view.</p>
-                    <p>It works by generating "mirrors" of political text from social media. For example, when prompted with a left-leaning social media post, the AI should generate the same message, as if the post was written from a right-leaning perspective.</p>
+                    <p>It works by generating "mirrors" of political text from social media.</p>
+                    <p>For example, when prompted with a <b>left-leaning social media post</b>, the AI should generate the same message, as if the post was written from a <b>right-leaning perspective</b> (and vice versa).</p>
                     <br>
-                    <p>For example:</p>
+                    <p>Click <b>Next</b> to continue to an example.</p>
+                </div>
+            `],
+            show_clickable_nav: true
+        };
+        timeline.push(welcome);
+
+        const welcome2 = {
+            type: jsPsychInstructions,
+            pages: [`
+                <div class='instructions'>
+                    <h2>Example</h2>
+                    <p>Here is an example of a <b>good mirror</b>:</p>
+                    <br>
                     <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!"</p>
                     <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
-                    <p>Notice that the mirror text recreates the original message, but from the opposite political stance (original text is clearly liberal, and the mirror text is clearly conservative).
-                    Also notice that it changed the core message to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
-                    it is just replicating the original message as if written from an opposite political stance.</p>
+                    <br>
+                    <p>Notice that the mirror text <b>recreates</b> the original message, but <b>from the opposite political stance</b> (original text is clearly liberal, and the mirror text is clearly conservative).
+                    Also notice that it <b>changed the core message</b> to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
+                    it is just <b>replicating the original message as if written from an opposite political stance</b>.</p>
+                    <br>
                     <p>In this study, your job is to choose the "mirrored" message that you believe accomplishes this job the best for a given social media post.</p>
                     <br>
                     <p>Click <b>Next</b> to continue to a practice trial.</p>
@@ -308,7 +355,7 @@ async function setupExperiment() {
             `],
             show_clickable_nav: true
         };
-        timeline.push(welcome);
+        timeline.push(welcome2);
 
         // ========== PRACTICE TRIAL ==========
         const practiceTrial = {
@@ -390,9 +437,10 @@ async function setupExperiment() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            prolific_id: prolificID,
+                            prolific_id: currentProlificID,
                             party_group: partyGroup,
-                            all_posts: allPosts
+                            all_posts: allPosts,
+                            is_test: isTestParticipant
                         })
                     });
                     
@@ -432,19 +480,16 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Great! You're ready to begin.</h2>
-                    <p>The real study will be just like the practice, except that you will choose one out of <b>5</b> mirror texts that you think is best. 
+                    <p>The real study will be just like the practice, except that you will choose 1 out of <b>5</b> mirror texts that you think is best. 
                     There will be <b>${NUM_TRIALS} trials</b> in total. If several of them look like good mirrors to you, just use your gut to pick the best 
                     one based on our definition of a good mirror.</p>
-                    <p>It should take you approximately 10-15 minutes to finish the task.</p>
+                    <p>It should take you approximately 10 minutes to finish the task.</p>
                     <br>
-                    <p>Reminder of our definition of a <b>good mirror</b>:</p>
-                    <p>A good mirror is a message that recreates the original message, but from the opposite political stance. It should also maintain the same structure and tone as the original message.</p>
+                    <p>Reminder:</p>
+                    <p>A good mirror is a message that <b>recreates the original message</b>, but from the <b>opposite political stance</b>. It should also maintain the same <b>structure</b> and <b>tone</b> as the original message.</p>
                     <p>For example:</p>
                     <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!"</p>
                     <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
-                    <p>Notice that the mirror text recreates the original message, but from the opposite political stance (original text is clearly liberal, and the mirror text is clearly conservative).
-                    Also notice that it changed the core message to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
-                    it is just replicating the original message as if written from an opposite political stance.</p>
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
@@ -488,7 +533,7 @@ async function setupExperiment() {
                     gpt4o: assignedPosts[trialIndex]?.gpt4o_mirror || ''
                 }),
                 show_original: true,
-                prompt: "Which mirror do you prefer?",
+                prompt: "Which mirror is the best?",
                 button_label: "Next →",
                 trial_number: i + 1,
                 total_trials: NUM_TRIALS,
@@ -504,7 +549,7 @@ async function setupExperiment() {
             timeline.push(mirrorTrial);
         }
         
-        // ========== BRIEF DEMOGRAPHICS (optional) ==========
+        // ========== BRIEF DEMOGRAPHICS ==========
         const demographics = {
             type: jsPsychSurveyHtmlForm,
             preamble: "<h2>Almost Done!</h2><p>Please answer a few quick questions about yourself.</p>",
@@ -539,10 +584,14 @@ async function setupExperiment() {
                     </div>
                 </div>
             `,
-            button_label: "Submit →"
+            button_label: "Next →"
         };
         timeline.push(demographics);
         
+        // ========== IDEOLOGY ==========
+        // (defined in post_surveys.js)
+        timeline.push(politicalSurvey);
+
         // Run the experiment
         jsPsych.run(timeline);
         

@@ -115,7 +115,7 @@ var jsPsychMirrorPractice = (function (jspsych) {
             // Show original text
             if (trial.original_text) {
                 html += `
-                    <div class="original-post-label">Original Text</div>
+                    <div class="original-post-label">Original text:</div>
                     <div class="original-post-container">
                         <div class="original-post-text">${trial.original_text}</div>
                     </div>
