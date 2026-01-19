@@ -142,10 +142,10 @@ const jsPsych = initJsPsych({
                             Thank you for participating! Your responses have been recorded.
                         </p>
                         <p style="font-size: 18px; color: #4b5563;">
-                            <a href="https://app.prolific.com/submissions/complete?cc=CV0XRWGP" target="_blank">
+                            <a href="https://app.prolific.com/submissions/complete?cc=CE5XLP3L" target="_blank">
                                 <b>Click here</b>
                             </a>
-                            to be redirected to Prolific (completion code <b>CV0XRWGP</b>).
+                            to be redirected to Prolific (completion code <b>CE5XLP3L</b>).
                         </p>
                     </div>
                 `;
@@ -392,6 +392,61 @@ async function setupExperiment() {
         // (defined in pre_surveys.js)
         timeline.push(politicalAffiliation);
         
+        // ========== ASSIGN PARTICIPANT ID ==========
+        let ParticipantID = null;
+        
+        const assignParticipantId = {
+            type: jsPsychCallFunction,
+            async: true,
+            func: async function(done) {
+                try {
+                    const allData = jsPsych.data.get().values();
+                    const latestWithParty = allData.filter(d => d.party_group).pop();
+                    const partyGroup = latestWithParty?.party_group;
+                    
+                    if (!partyGroup) {
+                        console.warn('No party group found, using local participant ID');
+                        ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    } else {
+                        const getParticipantUrl = urls.GET_PARTICIPANT_ID_URL;
+                        
+                        if (!getParticipantUrl) {
+                            console.warn('No GET_PARTICIPANT_ID_URL configured, using local participant ID');
+                            ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                        } else {
+                            const params = new URLSearchParams({
+                                prolific_id: currentProlificID,
+                                party: partyGroup,
+                                is_test: String(isTestParticipant)
+                            });
+                            const response = await fetch(`${getParticipantUrl}?${params.toString()}`);
+                            
+                            if (!response.ok) {
+                                const error = await response.json();
+                                console.error('Error getting participant ID:', error);
+                                ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                            } else {
+                                const result = await response.json();
+                                ParticipantID = result.participantID;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error assigning participant ID:', error);
+                    ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                } finally {
+                    jsPsych.data.addProperties({
+                        participant_id: ParticipantID,
+                        prolific_id: currentProlificID,
+                        num_trials: NUM_TRIALS,
+                        experiment_version: 'mirrorView_v2'
+                    });
+                    done();
+                }
+            }
+        };
+        timeline.push(assignParticipantId);
+        
         // ========== FETCH ASSIGNED POSTS ==========
         // This runs after political affiliation and fetches posts based on party
         const fetchAssignedPosts = {
@@ -497,22 +552,6 @@ async function setupExperiment() {
             show_clickable_nav: true
         };
         timeline.push(readyToBegin);
-        
-        // ========== ASSIGN PARTICIPANT ID ==========
-        let ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        
-        const assignId = {
-            type: jsPsychCallFunction,
-            func: function() {
-                jsPsych.data.addProperties({
-                    participant_id: ParticipantID,
-                            prolific_id: currentProlificID,
-                    num_trials: NUM_TRIALS,
-                    experiment_version: 'mirrorView_v2'
-                });
-            }
-        };
-        timeline.push(assignId);
         
         // ========== MIRROR PREFERENCE TRIALS ==========
         // Generate trials dynamically from assignedPosts
