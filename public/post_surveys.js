@@ -183,7 +183,7 @@ const politicalSurvey = {
             </div>
         </div>
     `,
-    button_label: "Submit →",
+    button_label: "Submit >",
 
     on_load: function() {
 

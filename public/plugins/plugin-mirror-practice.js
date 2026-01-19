@@ -55,7 +55,7 @@ var jsPsychMirrorPractice = (function (jspsych) {
             /** Button text for the next button */
             button_label: {
                 type: jspsych.ParameterType.STRING,
-                default: "Next →"
+                default: "Next >"
             },
             /** Whether to shuffle the options */
             shuffle_options: {

@@ -379,7 +379,7 @@ async function setupExperiment() {
             prompt: "Which of these 3 versions is the best mirror for the original text?",
             incorrect_feedback: "Try again!",
             correct_feedback: "Correct! This mirror maintains the same <b>structure</b> and <b>tone</b> as the original, while <b>flipping the political stance</b>.",
-            button_label: "Continue to Consent Form →",
+            button_label: "Continue to Consent Form >",
             shuffle_options: true,
             practice_label: "Practice Trial"
         };
@@ -506,7 +506,7 @@ async function setupExperiment() {
             func: function() {
                 jsPsych.data.addProperties({
                     participant_id: ParticipantID,
-                    prolific_id: prolificID,
+                            prolific_id: currentProlificID,
                     num_trials: NUM_TRIALS,
                     experiment_version: 'mirrorView_v2'
                 });
@@ -534,7 +534,8 @@ async function setupExperiment() {
                 }),
                 show_original: true,
                 prompt: "Which mirror is the best?",
-                button_label: "Next →",
+            button_label: "Next >",
+            button_label: "Next >",
                 trial_number: i + 1,
                 total_trials: NUM_TRIALS,
                 // Skip this trial if no post is assigned
@@ -584,7 +585,7 @@ async function setupExperiment() {
                     </div>
                 </div>
             `,
-            button_label: "Next →"
+            button_label: "Next >"
         };
         timeline.push(demographics);
         

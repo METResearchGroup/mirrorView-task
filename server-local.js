@@ -11,48 +11,79 @@ const port = 3000;
 // ============================================================
 
 const DATA_DIR = path.join(__dirname, 'local_data');
-const POST_ASSIGNMENTS_FILE = path.join(DATA_DIR, 'post_assignments.json');
-const PARTICIPANT_ASSIGNMENTS_FILE = path.join(DATA_DIR, 'participant_assignments.json');
+const PROLIFIC_DIR = path.join(DATA_DIR, 'prolific');
+const TEST_DIR = path.join(DATA_DIR, 'test');
+const POST_ASSIGNMENTS_FILE = path.join(PROLIFIC_DIR, 'post_assignments.json');
+const POST_ASSIGNMENTS_LOCAL_FILE = path.join(TEST_DIR, 'post_assignments.json');
+const PARTICIPANT_ASSIGNMENTS_FILE = path.join(PROLIFIC_DIR, 'participant_assignments.json');
+const PARTICIPANT_ASSIGNMENTS_LOCAL_FILE = path.join(TEST_DIR, 'participant_assignments.json');
 
 // Ensure data directory exists
 if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
 }
+if (!fs.existsSync(PROLIFIC_DIR)) {
+    fs.mkdirSync(PROLIFIC_DIR, { recursive: true });
+}
+if (!fs.existsSync(TEST_DIR)) {
+    fs.mkdirSync(TEST_DIR, { recursive: true });
+}
+
+function loadJsonFile(filePath, fallback) {
+    if (!fs.existsSync(filePath)) return fallback;
+    try {
+        return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch (e) {
+        console.error(`Error loading ${path.basename(filePath)}:`, e);
+        return fallback;
+    }
+}
+
+function createEmptyParticipantAssignments() {
+    return {
+        democrat: { count: 0, assignments: {} },
+        republican: { count: 0, assignments: {} }
+    };
+}
 
 // Load or initialize post assignments
-// Structure: { "post_id": { democrat: count, republican: count }, ... }
-let postAssignments = {};
-if (fs.existsSync(POST_ASSIGNMENTS_FILE)) {
-    try {
-        postAssignments = JSON.parse(fs.readFileSync(POST_ASSIGNMENTS_FILE, 'utf8'));
-        console.log(`Loaded ${Object.keys(postAssignments).length} post assignments from file`);
-    } catch (e) {
-        console.error('Error loading post assignments:', e);
-        postAssignments = {};
-    }
-}
+// Structure: { "post_id": { post_number, democrat: count, republican: count }, ... }
+let postAssignments = loadJsonFile(POST_ASSIGNMENTS_FILE, {});
+let postAssignmentsLocal = loadJsonFile(POST_ASSIGNMENTS_LOCAL_FILE, {});
+console.log(`Loaded ${Object.keys(postAssignments).length} post assignments from file`);
+console.log(`Loaded ${Object.keys(postAssignmentsLocal).length} local post assignments from file`);
 
 // Load or initialize participant assignments
-let participantAssignments = {
-    democrat: { count: 0, assignments: {} },
-    republican: { count: 0, assignments: {} }
-};
-if (fs.existsSync(PARTICIPANT_ASSIGNMENTS_FILE)) {
-    try {
-        participantAssignments = JSON.parse(fs.readFileSync(PARTICIPANT_ASSIGNMENTS_FILE, 'utf8'));
-        console.log(`Loaded participant assignments from file`);
-    } catch (e) {
-        console.error('Error loading participant assignments:', e);
-    }
-}
+let participantAssignments = loadJsonFile(
+    PARTICIPANT_ASSIGNMENTS_FILE,
+    createEmptyParticipantAssignments()
+);
+let participantAssignmentsLocal = loadJsonFile(
+    PARTICIPANT_ASSIGNMENTS_LOCAL_FILE,
+    createEmptyParticipantAssignments()
+);
+console.log('Loaded participant assignments from file');
+console.log('Loaded local participant assignments from file');
 
 // Save functions
-function savePostAssignments() {
-    fs.writeFileSync(POST_ASSIGNMENTS_FILE, JSON.stringify(postAssignments, null, 2));
+function savePostAssignments(assignments, isTest) {
+    const target = isTest ? POST_ASSIGNMENTS_LOCAL_FILE : POST_ASSIGNMENTS_FILE;
+    fs.writeFileSync(target, JSON.stringify(assignments, null, 2));
 }
 
-function saveParticipantAssignments() {
-    fs.writeFileSync(PARTICIPANT_ASSIGNMENTS_FILE, JSON.stringify(participantAssignments, null, 2));
+function saveParticipantAssignments(assignments, isTest) {
+    const target = isTest ? PARTICIPANT_ASSIGNMENTS_LOCAL_FILE : PARTICIPANT_ASSIGNMENTS_FILE;
+    fs.writeFileSync(target, JSON.stringify(assignments, null, 2));
+}
+
+function getAssignmentContext({ prolificID, isTest }) {
+    const inferredTest = isTest === true
+        || (typeof prolificID === 'string' && (prolificID.startsWith('TEST_') || prolificID.startsWith('UNKNOWN_')));
+    return {
+        isTest: inferredTest,
+        postAssignments: inferredTest ? postAssignmentsLocal : postAssignments,
+        participantAssignments: inferredTest ? participantAssignmentsLocal : participantAssignments
+    };
 }
 
 // ============================================================
@@ -92,7 +123,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  *   - assigned_post_ids: Array of 5 post IDs to show this participant
  */
 app.post('/get-post-assignments', (req, res) => {
-    const { prolific_id: prolificID, party_group: partyGroup, all_posts: allPosts } = req.body;
+    const { prolific_id: prolificID, party_group: partyGroup, all_posts: allPosts, is_test: isTest } = req.body;
 
     if (!prolificID) {
         return res.status(400).json({ error: 'No prolific_id provided' });
@@ -106,10 +137,9 @@ app.post('/get-post-assignments', (req, res) => {
         return res.status(400).json({ error: 'No posts provided' });
     }
 
-    // Create a mapping from post_id to post_number
-    const postIdToNumber = {};
-    allPosts.forEach(p => {
-        postIdToNumber[p.post_id] = p.post_number;
+    const { postAssignments, participantAssignments, isTest: effectiveIsTest } = getAssignmentContext({
+        prolificID,
+        isTest
     });
 
     // Check if this participant already has assigned posts
@@ -131,17 +161,26 @@ app.post('/get-post-assignments', (req, res) => {
 
     console.log(`Available posts for ${partyGroup}: ${availablePosts.length}/${allPosts.length}`);
 
-    if (availablePosts.length < NUM_POSTS_PER_PARTICIPANT) {
-        return res.status(429).json({ 
-            error: 'Not enough posts available for this party',
-            available: availablePosts.length,
-            needed: NUM_POSTS_PER_PARTICIPANT
-        });
-    }
-
-    // Randomly select posts
+    // Randomly select from available posts first
     const shuffled = [...availablePosts].sort(() => Math.random() - 0.5);
     const selectedPosts = shuffled.slice(0, NUM_POSTS_PER_PARTICIPANT);
+
+    // If we don't have enough available posts, fill from the least-used posts (even if at/over quota)
+    let fallbackUsed = false;
+    if (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT) {
+        fallbackUsed = true;
+        const selectedIds = new Set(selectedPosts.map(p => p.post_id));
+        const remainingPosts = allPosts.filter(p => !selectedIds.has(p.post_id));
+
+        const getPartyCount = (post) => {
+            const assignment = postAssignments[post.post_id];
+            return assignment ? (assignment[partyGroup] || 0) : 0;
+        };
+
+        const fallbackCandidates = [...remainingPosts].sort((a, b) => getPartyCount(a) - getPartyCount(b));
+        const needed = NUM_POSTS_PER_PARTICIPANT - selectedPosts.length;
+        selectedPosts.push(...fallbackCandidates.slice(0, needed));
+    }
 
     // Update post assignments (store both post_id and post_number)
     selectedPosts.forEach(post => {
@@ -166,14 +205,18 @@ app.post('/get-post-assignments', (req, res) => {
     participantAssignments[partyGroup].count++;
 
     // Persist to disk
-    savePostAssignments();
-    saveParticipantAssignments();
+    savePostAssignments(postAssignments, effectiveIsTest);
+    saveParticipantAssignments(participantAssignments, effectiveIsTest);
 
-    console.log(`Assigned ${selectedPosts.length} posts to ${prolificID} (${partyGroup}): ${selectedPosts.map(p => p.post_number).join(', ')}`);
+    const fallbackNote = fallbackUsed ? ' (used fallback posts over quota)' : '';
+    const testNote = effectiveIsTest ? ' [test]' : '';
+    console.log(`Assigned ${selectedPosts.length} posts to ${prolificID} (${partyGroup})${fallbackNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
 
     res.json({ 
         assigned_post_ids: selectedPosts.map(p => p.post_id),
-        already_assigned: false
+        already_assigned: false,
+        fallback_used: fallbackUsed,
+        is_test: effectiveIsTest
     });
 });
 
@@ -184,6 +227,7 @@ app.post('/get-post-assignments', (req, res) => {
 app.get('/get-participant-id', (req, res) => {
     const prolificID = req.query.prolific_id;
     const party = req.query.party;
+    const isTest = req.query.is_test === 'true';
 
     if (!prolificID) {
         return res.status(400).json({ error: 'No Prolific ID provided' });
@@ -194,6 +238,10 @@ app.get('/get-participant-id', (req, res) => {
     }
 
     const partyGroup = (party === 'democrat' || party === 'lean_democrat') ? 'democrat' : 'republican';
+    const { participantAssignments, isTest: effectiveIsTest } = getAssignmentContext({
+        prolificID,
+        isTest
+    });
 
     // Check if participant already has an assignment
     const existing = participantAssignments[partyGroup]?.assignments?.[prolificID];
@@ -216,9 +264,10 @@ app.get('/get-participant-id', (req, res) => {
         assignedAt: new Date().toISOString()
     };
 
-    saveParticipantAssignments();
+    saveParticipantAssignments(participantAssignments, effectiveIsTest);
 
-    console.log(`Assigned participant ID ${participantID} to ${prolificID} (${partyGroup})`);
+    const testNote = effectiveIsTest ? ' [test]' : '';
+    console.log(`Assigned participant ID ${participantID} to ${prolificID} (${partyGroup})${testNote}`);
     res.json({ participantID, partyGroup });
 });
 
@@ -228,15 +277,20 @@ app.get('/get-participant-id', (req, res) => {
 
 app.post('/save-jspsych-data', (req, res) => {
     const data = req.body;
+    const isTest = data?.is_test === true
+        || !data?.prolific_id
+        || (typeof data?.prolific_id === 'string' && (data.prolific_id.startsWith('UNKNOWN_') || data.prolific_id.startsWith('TEST_')));
     const filename = `data_${Date.now()}.csv`;
+    const targetDir = isTest ? TEST_DIR : PROLIFIC_DIR;
     
-    fs.writeFile(path.join(DATA_DIR, filename), data.csv, (err) => {
+    fs.writeFile(path.join(targetDir, filename), data.csv, (err) => {
         if (err) {
             console.error(err);
             res.status(500).send('Error saving data');
         } else {
-            console.log(`Data saved to ${filename}`);
-            res.json({ message: 'Data saved successfully', filename });
+            const prefix = isTest ? 'test' : 'prolific';
+            console.log(`Data saved to ${prefix}/${filename}`);
+            res.json({ message: 'Data saved successfully', filename, is_test: isTest });
         }
     });
 });
@@ -248,18 +302,23 @@ app.post('/save-jspsych-data', (req, res) => {
 app.get('/debug/assignments', (req, res) => {
     res.json({
         participantAssignments,
-        postAssignmentCount: Object.keys(postAssignments).length
+        participantAssignmentsLocal,
+        postAssignmentCount: Object.keys(postAssignments).length,
+        postAssignmentCountLocal: Object.keys(postAssignmentsLocal).length
     });
 });
 
 app.get('/debug/post-assignments', (req, res) => {
+    const useTest = req.query.is_test === 'true';
+    const assignmentsToInspect = useTest ? postAssignmentsLocal : postAssignments;
+
     // Count posts by completion status
     let fullyComplete = 0;
     let partialDemocrat = 0;
     let partialRepublican = 0;
     let unassigned = 0;
 
-    Object.values(postAssignments).forEach(assignment => {
+    Object.values(assignmentsToInspect).forEach(assignment => {
         const demComplete = (assignment.democrat || 0) >= MAX_RATINGS_PER_PARTY;
         const repComplete = (assignment.republican || 0) >= MAX_RATINGS_PER_PARTY;
         
@@ -274,26 +333,36 @@ app.get('/debug/post-assignments', (req, res) => {
 
     res.json({
         summary: {
-            totalTracked: Object.keys(postAssignments).length,
+            totalTracked: Object.keys(assignmentsToInspect).length,
             fullyComplete,
             partialDemocrat,
             partialRepublican
         },
-        details: postAssignments
+        details: assignmentsToInspect,
+        is_test: useTest
     });
 });
 
 // Reset endpoint for testing
 app.post('/debug/reset', (req, res) => {
+    const useTest = req.query.is_test === 'true';
+
+    if (useTest) {
+        postAssignmentsLocal = {};
+        participantAssignmentsLocal = createEmptyParticipantAssignments();
+        savePostAssignments(postAssignmentsLocal, true);
+        saveParticipantAssignments(participantAssignmentsLocal, true);
+        console.log('Reset test assignments');
+        res.json({ message: 'Test assignments reset', is_test: true });
+        return;
+    }
+
     postAssignments = {};
-    participantAssignments = {
-        democrat: { count: 0, assignments: {} },
-        republican: { count: 0, assignments: {} }
-    };
-    savePostAssignments();
-    saveParticipantAssignments();
-    console.log('Reset all assignments');
-    res.json({ message: 'All assignments reset' });
+    participantAssignments = createEmptyParticipantAssignments();
+    savePostAssignments(postAssignments, false);
+    saveParticipantAssignments(participantAssignments, false);
+    console.log('Reset main assignments');
+    res.json({ message: 'Main assignments reset', is_test: false });
 });
 
 // ============================================================

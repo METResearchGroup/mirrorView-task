@@ -72,7 +72,7 @@ const politicalAffiliation = {
             </div>
         </div>
     `,
-    button_label: "Continue →",
+    button_label: "Continue >",
     data: { trial_type: 'political-affiliation' },
     on_finish: function(data) {
         // Determine party group: use party_lean if party is 'other', otherwise use party

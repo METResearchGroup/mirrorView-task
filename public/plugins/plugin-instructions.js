@@ -147,7 +147,7 @@ var jsPsychInstructions = (function (jspsych) {
           if (trial.pages.length > 1 && trial.show_page_number) {
             nav_html += pagenum_display;
           }
-          nav_html += "<button id='jspsych-instructions-next' class='jspsych-btn'style='margin-left: 5px;'>" + trial.button_label_next + " →</button></div>";
+          nav_html += "<button id='jspsych-instructions-next' class='jspsych-btn'style='margin-left: 5px;'>" + trial.button_label_next + " ></button></div>";
           html += nav_html;
           display_element.innerHTML = html;
           if (current_page != 0 && trial.allow_backward) {

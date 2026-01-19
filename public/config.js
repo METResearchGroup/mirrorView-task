@@ -1,7 +1,8 @@
 // Configuration file for switching between local development and AWS production
 const config = {
     // Set to 'local' for development, 'aws' for production
-    mode: 'local',
+    // mode: 'local',
+    mode: 'aws',
     
     // Local development settings
     local: {
@@ -13,9 +14,9 @@ const config = {
     
     // AWS production settings
     aws: {
-        GET_PARTICIPANT_ID_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-participant-id',
-        POST_ASSIGNMENTS_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/get-post-assignments',
-        SAVE_DATA_URL: 'https://n2w6sd413g.execute-api.us-east-2.amazonaws.com/save-jspsych-data',
+        GET_PARTICIPANT_ID_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/get-participant-id',
+        POST_ASSIGNMENTS_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
+        SAVE_DATA_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
         PROLIFIC_COMPLETION_URL: null // Set this to your Prolific completion URL when ready
     },
     

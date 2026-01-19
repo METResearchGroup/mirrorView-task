@@ -89,7 +89,7 @@ const consent = {
             </p>
         </div>
     `,
-    choices: ['I do not agree', 'I agree →'],
+    choices: ['I do not agree', 'I agree >'],
     // button_html: ['<button class="jspsych-btn">%choice%</button>'], // not used
     data: {
         consented: null

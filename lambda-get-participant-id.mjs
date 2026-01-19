@@ -4,13 +4,15 @@ import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3
 
 const s3Client = new S3Client({ region: "us-east-2" });
 
-const BUCKET_NAME = 'jspsych-scroll';
-const ASSIGNMENTS_FILE = 'data/participant_assignments.json';
+const BUCKET_NAME = 'jspsych-mirror-view';
+const ASSIGNMENTS_FILE_PROLIFIC = 'data/prolific/participant_assignments.json';
+const ASSIGNMENTS_FILE_TEST = 'data/test/participant_assignments.json';
 
 export const handler = async (event) => {
     // handle DELETE requests for removing participant IDs
     if (event.httpMethod === 'DELETE') {
-        const prolificID = event.queryStringParameters.prolific_id;
+        const prolificID = event.queryStringParameters?.prolific_id;
+        const isTest = event.queryStringParameters?.is_test === 'true';
         
         if (!prolificID) {
             return {
@@ -25,9 +27,13 @@ export const handler = async (event) => {
 
         try {
             // read current assignments
+            const inferredTest = isTest
+                || (typeof prolificID === 'string' && (prolificID.startsWith('UNKNOWN_') || prolificID.startsWith('TEST_')));
+            const assignmentKey = inferredTest ? ASSIGNMENTS_FILE_TEST : ASSIGNMENTS_FILE_PROLIFIC;
+
             const data = await s3Client.send(new GetObjectCommand({
                 Bucket: BUCKET_NAME,
-                Key: ASSIGNMENTS_FILE
+                Key: assignmentKey
             }));
             const assignments = JSON.parse(await data.Body.transformToString());
 
@@ -42,7 +48,7 @@ export const handler = async (event) => {
             // write updated assignments back to S3
             await s3Client.send(new PutObjectCommand({
                 Bucket: BUCKET_NAME,
-                Key: ASSIGNMENTS_FILE,
+                Key: assignmentKey,
                 Body: JSON.stringify(assignments),
                 ContentType: 'application/json'
             }));
@@ -69,8 +75,9 @@ export const handler = async (event) => {
     }
 
     // handle GET requests for assigning participant IDs
-    const prolificID = event.queryStringParameters.prolific_id;
-    const party = event.queryStringParameters.party;
+    const prolificID = event.queryStringParameters?.prolific_id;
+    const party = event.queryStringParameters?.party;
+    const isTest = event.queryStringParameters?.is_test === 'true';
 
     if (!prolificID || !party) {
         return {
@@ -87,9 +94,13 @@ export const handler = async (event) => {
         // read current assignments from S3
         let assignments;
         try {
+            const inferredTest = isTest
+                || (typeof prolificID === 'string' && (prolificID.startsWith('UNKNOWN_') || prolificID.startsWith('TEST_')));
+            const assignmentKey = inferredTest ? ASSIGNMENTS_FILE_TEST : ASSIGNMENTS_FILE_PROLIFIC;
+
             const data = await s3Client.send(new GetObjectCommand({
                 Bucket: BUCKET_NAME,
-                Key: ASSIGNMENTS_FILE
+                Key: assignmentKey
             }));
             assignments = JSON.parse(await data.Body.transformToString());
             console.log('Current assignments:', JSON.stringify(assignments, null, 2)); // Debug log
@@ -147,9 +158,13 @@ export const handler = async (event) => {
         });
 
         // Save updated assignments
+        const inferredTest = isTest
+            || (typeof prolificID === 'string' && (prolificID.startsWith('UNKNOWN_') || prolificID.startsWith('TEST_')));
+        const assignmentKey = inferredTest ? ASSIGNMENTS_FILE_TEST : ASSIGNMENTS_FILE_PROLIFIC;
+
         await s3Client.send(new PutObjectCommand({
             Bucket: BUCKET_NAME,
-            Key: ASSIGNMENTS_FILE,
+            Key: assignmentKey,
             Body: JSON.stringify(assignments),
             ContentType: 'application/json'
         }));       
