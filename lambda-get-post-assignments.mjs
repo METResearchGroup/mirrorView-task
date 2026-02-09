@@ -103,26 +103,28 @@ export const handler = async (event) => {
         const testNote = inferredTest ? ' [test]' : '';
         console.log(`Available posts for ${party_group}: ${availablePosts.length}/${all_posts.length}${testNote}`);
 
-        // Randomly select from available posts first
-        const shuffled = [...availablePosts].sort(() => Math.random() - 0.5);
-        const selectedPosts = shuffled.slice(0, NUM_POSTS_PER_PARTICIPANT);
+        const getCounts = (post) => {
+            const assignment = assignments.posts[post.post_id];
+            const partyCount = assignment ? (assignment[party_group] || 0) : 0;
+            const totalCount = assignment ? ((assignment.democrat || 0) + (assignment.republican || 0)) : 0;
+            return { partyCount, totalCount };
+        };
 
-        // If we don't have enough available posts, fill from the least-used posts (even if at/over quota)
-        let fallbackUsed = false;
-        if (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT) {
-            fallbackUsed = true;
-            const selectedIds = new Set(selectedPosts.map(p => p.post_id));
-            const remainingPosts = all_posts.filter(p => !selectedIds.has(p.post_id));
+        const sortByLeastViewed = (a, b) => {
+            const aCounts = getCounts(a);
+            const bCounts = getCounts(b);
+            if (aCounts.partyCount !== bCounts.partyCount) return aCounts.partyCount - bCounts.partyCount;
+            if (aCounts.totalCount !== bCounts.totalCount) return aCounts.totalCount - bCounts.totalCount;
+            return Math.random() - 0.5;
+        };
 
-            const getPartyCount = (post) => {
-                const assignment = assignments.posts[post.post_id];
-                return assignment ? (assignment[party_group] || 0) : 0;
-            };
+        // Select lowest-viewed posts first for the participant's party
+        // NOTE: We intentionally do NOT exceed MAX_RATINGS_PER_PARTY.
+        const selectedPosts = [...availablePosts]
+            .sort(sortByLeastViewed)
+            .slice(0, NUM_POSTS_PER_PARTICIPANT);
 
-            const fallbackCandidates = [...remainingPosts].sort((a, b) => getPartyCount(a) - getPartyCount(b));
-            const needed = NUM_POSTS_PER_PARTICIPANT - selectedPosts.length;
-            selectedPosts.push(...fallbackCandidates.slice(0, needed));
-        }
+        const shortAssignment = selectedPosts.length < NUM_POSTS_PER_PARTICIPANT;
 
         // Update post assignments (store both post_id and post_number)
         selectedPosts.forEach(post => {
@@ -151,13 +153,13 @@ export const handler = async (event) => {
             ContentType: 'application/json'
         }));
 
-        const fallbackNote = fallbackUsed ? ' (used fallback posts over quota)' : '';
-        console.log(`Assigned ${selectedPosts.length} posts to ${prolific_id} (${party_group})${fallbackNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
+        const shortNote = shortAssignment ? ' (short assignment: under-cap posts exhausted)' : '';
+        console.log(`Assigned ${selectedPosts.length} posts to ${prolific_id} (${party_group})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
 
         return corsResponse(200, {
             assigned_post_ids: selectedPosts.map(p => p.post_id),
             already_assigned: false,
-            fallback_used: fallbackUsed,
+            short_assignment: shortAssignment,
             is_test: inferredTest
         });
 
