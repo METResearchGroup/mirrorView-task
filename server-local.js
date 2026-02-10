@@ -90,8 +90,9 @@ function getAssignmentContext({ prolificID, isTest }) {
 // CONFIGURATION
 // ============================================================
 
-const NUM_POSTS_PER_PARTICIPANT = 5;
+const NUM_POSTS_PER_PARTICIPANT = 10;
 const MAX_RATINGS_PER_PARTY = 3; // 3 democrats + 3 republicans = 6 total per post
+const CONDITIONS = ['control', 'linked_fate'];
 
 // ============================================================
 // MIDDLEWARE
@@ -123,7 +124,14 @@ app.use(express.static(path.join(__dirname, 'public')));
  *   - assigned_post_ids: Array of 5 post IDs to show this participant
  */
 app.post('/get-post-assignments', (req, res) => {
-    const { prolific_id: prolificID, party_group: partyGroup, all_posts: allPosts, is_test: isTest } = req.body;
+    const { prolific_id: prolificID, party_group: partyGroup, condition, all_posts: allPosts, is_test: isTest } = req.body;
+
+    const normalizedConditionRaw = typeof condition === 'string' ? condition.toLowerCase() : '';
+    let normalizedCondition = normalizedConditionRaw.replace('-', '_');
+    if (normalizedCondition === 'linkedfate') normalizedCondition = 'linked_fate';
+    if (!CONDITIONS.includes(normalizedCondition)) {
+        normalizedCondition = 'control';
+    }
 
     if (!prolificID) {
         return res.status(400).json({ error: 'No prolific_id provided' });
@@ -145,32 +153,55 @@ app.post('/get-post-assignments', (req, res) => {
     // Check if this participant already has assigned posts
     const existingAssignment = participantAssignments[partyGroup]?.assignments?.[prolificID];
     if (existingAssignment && existingAssignment.posts) {
-        console.log(`Returning existing assignment for ${prolificID}: ${existingAssignment.posts.length} posts`);
-        return res.json({ 
-            assigned_post_ids: existingAssignment.posts.map(p => p.post_id || p), // Handle both old and new format
-            already_assigned: true
-        });
+        const existingPostIds = existingAssignment.posts.map(p => p.post_id || p);
+        if (existingPostIds.length >= NUM_POSTS_PER_PARTICIPANT) {
+            console.log(`Returning existing assignment for ${prolificID}: ${existingPostIds.length} posts`);
+            return res.json({ 
+                assigned_post_ids: existingPostIds,
+                already_assigned: true,
+                condition: existingAssignment.condition || normalizedCondition
+            });
+        }
     }
 
     // Find posts that haven't reached the quota for this party
+    const existingPostIds = new Set(existingAssignment?.posts?.map(p => p.post_id || p) || []);
     const availablePosts = allPosts.filter(post => {
+        if (existingPostIds.has(post.post_id)) return false;
         const assignment = postAssignments[post.post_id];
         if (!assignment) return true; // Not yet assigned to anyone
         return (assignment[partyGroup] || 0) < MAX_RATINGS_PER_PARTY;
     });
 
-    console.log(`Available posts for ${partyGroup}: ${availablePosts.length}/${allPosts.length}`);
+    console.log(`Available posts for ${partyGroup}: ${availablePosts.length}/${allPosts.length} (${normalizedCondition})`);
+
+    const getCounts = (post) => {
+        const assignment = postAssignments[post.post_id];
+        const partyCount = assignment ? (assignment[partyGroup] || 0) : 0;
+        const totalCount = assignment ? ((assignment.democrat || 0) + (assignment.republican || 0)) : 0;
+        const conditionCount = assignment?.counts?.[partyGroup]?.[normalizedCondition] || 0;
+        return { partyCount, totalCount, conditionCount };
+    };
 
     // Randomly select from available posts first
-    const shuffled = [...availablePosts].sort(() => Math.random() - 0.5);
-    const selectedPosts = shuffled.slice(0, NUM_POSTS_PER_PARTICIPANT);
+    const neededCount = Math.max(NUM_POSTS_PER_PARTICIPANT - existingPostIds.size, 0);
+    const selectedPosts = [...availablePosts]
+        .sort((a, b) => {
+            const aCounts = getCounts(a);
+            const bCounts = getCounts(b);
+            if (aCounts.conditionCount !== bCounts.conditionCount) return aCounts.conditionCount - bCounts.conditionCount;
+            if (aCounts.partyCount !== bCounts.partyCount) return aCounts.partyCount - bCounts.partyCount;
+            if (aCounts.totalCount !== bCounts.totalCount) return aCounts.totalCount - bCounts.totalCount;
+            return Math.random() - 0.5;
+        })
+        .slice(0, neededCount);
 
     // If we don't have enough available posts, fill from the least-used posts (even if at/over quota)
     let fallbackUsed = false;
-    if (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT) {
+    if (selectedPosts.length < neededCount) {
         fallbackUsed = true;
         const selectedIds = new Set(selectedPosts.map(p => p.post_id));
-        const remainingPosts = allPosts.filter(p => !selectedIds.has(p.post_id));
+        const remainingPosts = allPosts.filter(p => !selectedIds.has(p.post_id) && !existingPostIds.has(p.post_id));
 
         const getPartyCount = (post) => {
             const assignment = postAssignments[post.post_id];
@@ -178,9 +209,14 @@ app.post('/get-post-assignments', (req, res) => {
         };
 
         const fallbackCandidates = [...remainingPosts].sort((a, b) => getPartyCount(a) - getPartyCount(b));
-        const needed = NUM_POSTS_PER_PARTICIPANT - selectedPosts.length;
+        const needed = neededCount - selectedPosts.length;
         selectedPosts.push(...fallbackCandidates.slice(0, needed));
     }
+
+    const combinedPosts = [
+        ...(existingAssignment?.posts?.map(p => ({ post_id: p.post_id || p, post_number: p.post_number })) || []),
+        ...selectedPosts
+    ];
 
     // Update post assignments (store both post_id and post_number)
     selectedPosts.forEach(post => {
@@ -188,10 +224,21 @@ app.post('/get-post-assignments', (req, res) => {
             postAssignments[post.post_id] = { 
                 post_number: post.post_number,
                 democrat: 0, 
-                republican: 0 
+                republican: 0,
+                counts: {
+                    democrat: { control: 0, linked_fate: 0 },
+                    republican: { control: 0, linked_fate: 0 }
+                }
+            };
+        }
+        if (!postAssignments[post.post_id].counts) {
+            postAssignments[post.post_id].counts = {
+                democrat: { control: 0, linked_fate: 0 },
+                republican: { control: 0, linked_fate: 0 }
             };
         }
         postAssignments[post.post_id][partyGroup]++;
+        postAssignments[post.post_id].counts[partyGroup][normalizedCondition]++;
     });
 
     // Save participant assignment (store both post_id and post_number)
@@ -199,7 +246,8 @@ app.post('/get-post-assignments', (req, res) => {
         participantAssignments[partyGroup].assignments = {};
     }
     participantAssignments[partyGroup].assignments[prolificID] = {
-        posts: selectedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number })),
+        condition: normalizedCondition,
+        posts: combinedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number })),
         assignedAt: new Date().toISOString()
     };
     participantAssignments[partyGroup].count++;
@@ -210,12 +258,13 @@ app.post('/get-post-assignments', (req, res) => {
 
     const fallbackNote = fallbackUsed ? ' (used fallback posts over quota)' : '';
     const testNote = effectiveIsTest ? ' [test]' : '';
-    console.log(`Assigned ${selectedPosts.length} posts to ${prolificID} (${partyGroup})${fallbackNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
+    console.log(`Assigned ${combinedPosts.length} posts to ${prolificID} (${partyGroup}, ${normalizedCondition})${fallbackNote}${testNote}: ${combinedPosts.map(p => p.post_number).join(', ')}`);
 
     res.json({ 
-        assigned_post_ids: selectedPosts.map(p => p.post_id),
-        already_assigned: false,
+        assigned_post_ids: combinedPosts.map(p => p.post_id),
+        already_assigned: existingPostIds.size > 0,
         fallback_used: fallbackUsed,
+        condition: normalizedCondition,
         is_test: effectiveIsTest
     });
 });

@@ -16,8 +16,9 @@ const BUCKET_NAME = 'jspsych-mirror-view';
 const POST_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
 const POST_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
 
-const NUM_POSTS_PER_PARTICIPANT = 5;
+const NUM_POSTS_PER_PARTICIPANT = 10;
 const MAX_RATINGS_PER_PARTY = 3;
+const CONDITIONS = ['control', 'linked_fate'];
 
 export const handler = async (event) => {
     // Handle CORS preflight
@@ -34,7 +35,14 @@ export const handler = async (event) => {
             body = event.body || {};
         }
 
-        const { prolific_id, party_group, all_posts, is_test } = body;
+        const { prolific_id, party_group, condition, all_posts, is_test } = body;
+
+        const normalizedConditionRaw = typeof condition === 'string' ? condition.toLowerCase() : '';
+        let normalizedCondition = normalizedConditionRaw.replace('-', '_');
+        if (normalizedCondition === 'linkedfate') normalizedCondition = 'linked_fate';
+        if (!CONDITIONS.includes(normalizedCondition)) {
+            normalizedCondition = 'control';
+        }
 
         // Validate inputs
         if (!prolific_id) {
@@ -82,19 +90,23 @@ export const handler = async (event) => {
 
         // Check if participant already has assignments
         if (assignments.participants[prolific_id] && assignments.participants[prolific_id].posts) {
-            console.log(`Returning existing assignment for ${prolific_id}`);
-            // Return just post_ids (handle both old format and new format)
             const existingPosts = assignments.participants[prolific_id].posts;
             const postIds = existingPosts.map(p => p.post_id || p); // Handle both formats
-            return corsResponse(200, {
-                assigned_post_ids: postIds,
-                already_assigned: true,
-                is_test: inferredTest
-            });
+            if (postIds.length >= NUM_POSTS_PER_PARTICIPANT) {
+                console.log(`Returning existing assignment for ${prolific_id}`);
+                return corsResponse(200, {
+                    assigned_post_ids: postIds,
+                    already_assigned: true,
+                    condition: assignments.participants[prolific_id].condition || normalizedCondition,
+                    is_test: inferredTest
+                });
+            }
         }
 
         // Find available posts (where party count < max)
+        const existingPostIds = new Set(assignments.participants[prolific_id]?.posts?.map(p => p.post_id || p) || []);
         const availablePosts = all_posts.filter(post => {
+            if (existingPostIds.has(post.post_id)) return false;
             const assignment = assignments.posts[post.post_id];
             if (!assignment) return true;
             return (assignment[party_group] || 0) < MAX_RATINGS_PER_PARTY;
@@ -107,12 +119,14 @@ export const handler = async (event) => {
             const assignment = assignments.posts[post.post_id];
             const partyCount = assignment ? (assignment[party_group] || 0) : 0;
             const totalCount = assignment ? ((assignment.democrat || 0) + (assignment.republican || 0)) : 0;
-            return { partyCount, totalCount };
+            const conditionCount = assignment?.counts?.[party_group]?.[normalizedCondition] || 0;
+            return { partyCount, totalCount, conditionCount };
         };
 
         const sortByLeastViewed = (a, b) => {
             const aCounts = getCounts(a);
             const bCounts = getCounts(b);
+            if (aCounts.conditionCount !== bCounts.conditionCount) return aCounts.conditionCount - bCounts.conditionCount;
             if (aCounts.partyCount !== bCounts.partyCount) return aCounts.partyCount - bCounts.partyCount;
             if (aCounts.totalCount !== bCounts.totalCount) return aCounts.totalCount - bCounts.totalCount;
             return Math.random() - 0.5;
@@ -120,11 +134,12 @@ export const handler = async (event) => {
 
         // Select lowest-viewed posts first for the participant's party
         // NOTE: We intentionally do NOT exceed MAX_RATINGS_PER_PARTY.
+        const neededCount = Math.max(NUM_POSTS_PER_PARTICIPANT - existingPostIds.size, 0);
         const selectedPosts = [...availablePosts]
             .sort(sortByLeastViewed)
-            .slice(0, NUM_POSTS_PER_PARTICIPANT);
+            .slice(0, neededCount);
 
-        const shortAssignment = selectedPosts.length < NUM_POSTS_PER_PARTICIPANT;
+        const shortAssignment = selectedPosts.length < neededCount;
 
         // Update post assignments (store both post_id and post_number)
         selectedPosts.forEach(post => {
@@ -132,16 +147,33 @@ export const handler = async (event) => {
                 assignments.posts[post.post_id] = { 
                     post_number: post.post_number,
                     democrat: 0, 
-                    republican: 0 
+                    republican: 0,
+                    counts: {
+                        democrat: { control: 0, linked_fate: 0 },
+                        republican: { control: 0, linked_fate: 0 }
+                    }
+                };
+            }
+            if (!assignments.posts[post.post_id].counts) {
+                assignments.posts[post.post_id].counts = {
+                    democrat: { control: 0, linked_fate: 0 },
+                    republican: { control: 0, linked_fate: 0 }
                 };
             }
             assignments.posts[post.post_id][party_group]++;
+            assignments.posts[post.post_id].counts[party_group][normalizedCondition]++;
         });
 
         // Save participant assignment (store both post_id and post_number)
+        const combinedPosts = [
+            ...(assignments.participants[prolific_id]?.posts || []),
+            ...selectedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number }))
+        ];
+
         assignments.participants[prolific_id] = {
             party: party_group,
-            posts: selectedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number })),
+            condition: normalizedCondition,
+            posts: combinedPosts,
             assigned_at: new Date().toISOString()
         };
 
@@ -154,12 +186,13 @@ export const handler = async (event) => {
         }));
 
         const shortNote = shortAssignment ? ' (short assignment: under-cap posts exhausted)' : '';
-        console.log(`Assigned ${selectedPosts.length} posts to ${prolific_id} (${party_group})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
+        console.log(`Assigned ${combinedPosts.length} posts to ${prolific_id} (${party_group}, ${normalizedCondition})${shortNote}${testNote}: ${combinedPosts.map(p => p.post_number).join(', ')}`);
 
         return corsResponse(200, {
-            assigned_post_ids: selectedPosts.map(p => p.post_id),
-            already_assigned: false,
+            assigned_post_ids: combinedPosts.map(p => p.post_id || p),
+            already_assigned: existingPostIds.size > 0,
             short_assignment: shortAssignment,
+            condition: normalizedCondition,
             is_test: inferredTest
         });
 

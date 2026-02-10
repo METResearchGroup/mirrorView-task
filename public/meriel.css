@@ -806,3 +806,62 @@ ul {
 .mirror-card.shake {
     animation: shake 0.3s ease-in-out;
 }
+
+/* ============================================
+   MODERATION TRIAL STYLES
+   ============================================ */
+
+.moderation-post-label {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #374151;
+    margin: 14px 0 10px 0;
+}
+
+.moderation-post-container {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.moderation-post-text {
+    font-size: 16px;
+    color: #1e293b;
+    line-height: 1.7;
+    text-align: center;
+}
+
+.moderation-button-container {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding-top: 8px;
+}
+
+.moderation-choice-btn {
+    min-width: 130px;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.moderation-choice-btn.keep {
+    background: #16a34a;
+}
+
+.moderation-choice-btn.keep:hover {
+    background: #15803d;
+}
+
+.moderation-choice-btn.remove {
+    background: #dc2626;
+}
+
+.moderation-choice-btn.remove:hover {
+    background: #b91c1c;
+}
