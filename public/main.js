@@ -296,16 +296,6 @@ async function setupExperiment() {
         // Get config URLs
         const urls = window.config?.getUrls?.() || {};
 
-        // Assign condition (optional override via ?condition=control|linked_fate)
-        const conditionParam = (urlParams.get('condition') || '').toLowerCase();
-        if (['control', 'linked_fate', 'linked-fate', 'linkedfate'].includes(conditionParam)) {
-            assignedCondition = conditionParam.replace('-', '_');
-            if (assignedCondition === 'linkedfate') assignedCondition = 'linked_fate';
-        } else {
-            assignedCondition = Math.random() < 0.5 ? 'control' : 'linked_fate';
-        }
-        jsPsych.data.addProperties({ condition: assignedCondition });
-        console.log('Assigned condition:', assignedCondition);
         
         // Load mirror data
         allMirrorData = await loadMirrorData();
@@ -329,61 +319,6 @@ async function setupExperiment() {
         };
         timeline.push(welcome);
 
-        const conditionInstructions = {
-            type: jsPsychInstructions,
-            pages: [`
-                <div class='instructions'>
-                    <h2>Your Task</h2>
-                    ${assignedCondition === 'linked_fate'
-                        ? `<p>In this condition, you will see <b>two posts at a time</b> that are mirrors of each other.</p>
-                           <p>You must make <b>one decision</b> that applies to both posts: keep both or remove both.</p>
-                           <p>The order of the two posts will be randomized.</p>`
-                        : `<p>In this condition, you will see <b>one post at a time</b> and decide whether to keep or remove it.</p>`
-                    }
-                    <br>
-                    <p>Click <b>Next</b> to continue to an example.</p>
-                </div>
-            `],
-            show_clickable_nav: true
-        };
-        timeline.push(conditionInstructions);
-
-        const example = {
-            type: jsPsychInstructions,
-            pages: [`
-                <div class='instructions'>
-                    <h2>Example</h2>
-                    ${assignedCondition === 'linked_fate'
-                        ? `<p><b>Post A:</b> "I support stricter gun regulations to keep communities safe."</p>
-                           <p><b>Post B:</b> "I oppose stricter gun regulations because they infringe on constitutional rights."</p>
-                           <br>
-                           <p>You would make <b>one decision</b> to keep or remove <b>both posts</b> together.</p>`
-                        : `<p><b>Post:</b> "I support stricter gun regulations to keep communities safe."</p>
-                           <br>
-                           <p>You would decide whether to <b>keep</b> or <b>remove</b> this post.</p>`
-                    }
-                    <br>
-                    <p>Click <b>Next</b> to continue to a practice trial.</p>
-                </div>
-            `],
-            show_clickable_nav: true
-        };
-        timeline.push(example);
-
-        // ========== PRACTICE TRIAL ==========
-        const practiceTrial = {
-            type: jsPsychModerationTrial,
-            original_text: "Climate change is a pressing issue that requires immediate attention and action.",
-            mirror_text: "Climate change is exaggerated, and we should not rush into costly policies.",
-            show_pair: assignedCondition === 'linked_fate',
-            prompt: "Keep or remove?",
-            keep_label: "Keep",
-            remove_label: "Remove",
-            progress_label: "Practice Trial",
-            data: { trial_type: 'moderation-practice' }
-        };
-        timeline.push(practiceTrial);
-
         // ========== CONSENT ==========
         timeline.push(consent);
         
@@ -398,50 +333,14 @@ async function setupExperiment() {
             type: jsPsychCallFunction,
             async: true,
             func: async function(done) {
-                try {
-                    const allData = jsPsych.data.get().values();
-                    const latestWithParty = allData.filter(d => d.party_group).pop();
-                    const partyGroup = latestWithParty?.party_group;
-                    
-                    if (!partyGroup) {
-                        console.warn('No party group found, using local participant ID');
-                        ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    } else {
-                        const getParticipantUrl = urls.GET_PARTICIPANT_ID_URL;
-                        
-                        if (!getParticipantUrl) {
-                            console.warn('No GET_PARTICIPANT_ID_URL configured, using local participant ID');
-                            ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                        } else {
-                            const params = new URLSearchParams({
-                                prolific_id: currentProlificID,
-                                party: partyGroup,
-                                is_test: String(isTestParticipant)
-                            });
-                            const response = await fetch(`${getParticipantUrl}?${params.toString()}`);
-                            
-                            if (!response.ok) {
-                                const error = await response.json();
-                                console.error('Error getting participant ID:', error);
-                                ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                            } else {
-                                const result = await response.json();
-                                ParticipantID = result.participantID;
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error assigning participant ID:', error);
-                    ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                } finally {
-                    jsPsych.data.addProperties({
-                        participant_id: ParticipantID,
-                        prolific_id: currentProlificID,
-                        num_trials: NUM_TRIALS,
-                        experiment_version: 'mirrorView_phase2'
-                    });
-                    done();
-                }
+                ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                jsPsych.data.addProperties({
+                    participant_id: ParticipantID,
+                    prolific_id: currentProlificID,
+                    num_trials: NUM_TRIALS,
+                    experiment_version: 'mirrorView_phase2'
+                });
+                done();
             }
         };
         timeline.push(assignParticipantId);
@@ -513,6 +412,9 @@ async function setupExperiment() {
                         assignedPosts = result.assigned_post_ids.map(postId => 
                             allMirrorData.find(p => p.post_primary_key === postId)
                         ).filter(p => p); // Remove any undefined
+
+                        assignedCondition = result.condition || assignedCondition || 'control';
+                        jsPsych.data.addProperties({ condition: assignedCondition });
                         
                         console.log(`Assigned ${assignedPosts.length} posts to participant`);
                     }
@@ -528,6 +430,61 @@ async function setupExperiment() {
             }
         };
         timeline.push(fetchAssignedPosts);
+
+        const conditionInstructions = {
+            type: jsPsychInstructions,
+            pages: () => [`
+                <div class='instructions'>
+                    <h2>Your Task</h2>
+                    ${assignedCondition === 'linked_fate'
+                        ? `<p>In this condition, you will see <b>two posts at a time</b> that are mirrors of each other.</p>
+                           <p>You must make <b>one decision</b> that applies to both posts: keep both or remove both.</p>
+                           <p>The order of the two posts will be randomized.</p>`
+                        : `<p>In this condition, you will see <b>one post at a time</b> and decide whether to keep or remove it.</p>`
+                    }
+                    <br>
+                    <p>Click <b>Next</b> to continue to an example.</p>
+                </div>
+            `],
+            show_clickable_nav: true
+        };
+        timeline.push(conditionInstructions);
+
+        const example = {
+            type: jsPsychInstructions,
+            pages: () => [`
+                <div class='instructions'>
+                    <h2>Example</h2>
+                    ${assignedCondition === 'linked_fate'
+                        ? `<p><b>Post A:</b> "I support stricter gun regulations to keep communities safe."</p>
+                           <p><b>Post B:</b> "I oppose stricter gun regulations because they infringe on constitutional rights."</p>
+                           <br>
+                           <p>You would make <b>one decision</b> to keep or remove <b>both posts</b> together.</p>`
+                        : `<p><b>Post:</b> "I support stricter gun regulations to keep communities safe."</p>
+                           <br>
+                           <p>You would decide whether to <b>keep</b> or <b>remove</b> this post.</p>`
+                    }
+                    <br>
+                    <p>Click <b>Next</b> to continue to a practice trial.</p>
+                </div>
+            `],
+            show_clickable_nav: true
+        };
+        timeline.push(example);
+
+        // ========== PRACTICE TRIAL ==========
+        const practiceTrial = {
+            type: jsPsychModerationTrial,
+            original_text: "Climate change is a pressing issue that requires immediate attention and action.",
+            mirror_text: "Climate change is exaggerated, and we should not rush into costly policies.",
+            show_pair: () => assignedCondition === 'linked_fate',
+            prompt: "Keep or remove?",
+            keep_label: "Keep",
+            remove_label: "Remove",
+            progress_label: "Practice Trial",
+            data: { trial_type: 'moderation-practice' }
+        };
+        timeline.push(practiceTrial);
         
         // ========== READY TO BEGIN ==========
         const readyToBegin = {
