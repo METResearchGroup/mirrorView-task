@@ -38,6 +38,8 @@ const jsPsych = initJsPsych({
             // Moderation trial data
             'post_id',
             'post_number',      // Numeric post identifier (easier to reference)
+            'sampled_stance',
+            'sample_toxicity_type',
             'original_text',
             'mirror_text',
             'show_pair',
@@ -309,8 +311,8 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Welcome!</h2>
-                    <p>In this study, you will take on the role of a content moderator for a political discussion forum.</p>
-                    <p>Your task is to decide whether each post should be <b>kept</b> or <b>removed</b>.</p>
+                    <p>In this study, you will take on the role of a content moderator for a social media platform.</p>
+                    <p>Your task is to decide whether each post should be <b>allowed</b> or <b>removed</b>.</p>
                     <br>
                     <p>Click <b>Next</b> to continue.</p>
                 </div>
@@ -368,12 +370,6 @@ async function setupExperiment() {
                         return;
                     }
                     
-                    // Get all posts with both ID and number
-                    const allPosts = allMirrorData.map(p => ({
-                        post_id: p.post_primary_key,
-                        post_number: p.post_number
-                    }));
-                    
                     // Get the post assignments endpoint from config
                     const postAssignmentUrl = urls.POST_ASSIGNMENTS_URL;
                     
@@ -393,7 +389,6 @@ async function setupExperiment() {
                             prolific_id: currentProlificID,
                             party_group: partyGroup,
                             condition: assignedCondition,
-                            all_posts: allPosts,
                             is_test: isTestParticipant
                         })
                     });
@@ -437,10 +432,9 @@ async function setupExperiment() {
                 <div class='instructions'>
                     <h2>Your Task</h2>
                     ${assignedCondition === 'linked_fate'
-                        ? `<p>In this condition, you will see <b>two posts at a time</b> that are mirrors of each other.</p>
-                           <p>You must make <b>one decision</b> that applies to both posts: keep both or remove both.</p>
-                           <p>The order of the two posts will be randomized.</p>`
-                        : `<p>In this condition, you will see <b>one post at a time</b> and decide whether to keep or remove it.</p>`
+                        ? `<p>You will see <b>two posts at a time</b> that are mirrors of each other.</p>
+                           <p>You must make <b>one decision</b> that applies to both posts: <b>allow both</b> or <b>remove both</b>.</p>`
+                        : `<p>You will see <b>one post at a time</b> and decide whether to allow or remove it.</p>`
                     }
                     <br>
                     <p>Click <b>Next</b> to continue to an example.</p>
@@ -459,10 +453,10 @@ async function setupExperiment() {
                         ? `<p><b>Post A:</b> "I support stricter gun regulations to keep communities safe."</p>
                            <p><b>Post B:</b> "I oppose stricter gun regulations because they infringe on constitutional rights."</p>
                            <br>
-                           <p>You would make <b>one decision</b> to keep or remove <b>both posts</b> together.</p>`
+                           <p>You would make <b>one decision</b> to <b>allow both</b> or <b>remove both</b>.</p>`
                         : `<p><b>Post:</b> "I support stricter gun regulations to keep communities safe."</p>
                            <br>
-                           <p>You would decide whether to <b>keep</b> or <b>remove</b> this post.</p>`
+                           <p>You would decide whether to <b>allow</b> or <b>remove</b> this post.</p>`
                     }
                     <br>
                     <p>Click <b>Next</b> to continue to a practice trial.</p>
@@ -478,8 +472,8 @@ async function setupExperiment() {
             original_text: "Climate change is a pressing issue that requires immediate attention and action.",
             mirror_text: "Climate change is exaggerated, and we should not rush into costly policies.",
             show_pair: () => assignedCondition === 'linked_fate',
-            prompt: "Keep or remove?",
-            keep_label: "Keep",
+            prompt: "Allow or Remove?",
+            allow_label: "Allow",
             remove_label: "Remove",
             progress_label: "Practice Trial",
             data: { trial_type: 'moderation-practice' }
@@ -493,7 +487,7 @@ async function setupExperiment() {
                 <div class='instructions'>
                     <h2>Great! You're ready to begin.</h2>
                     <p>The real study will be just like the practice. There will be <b>${NUM_TRIALS} trials</b> in total.</p>
-                    <p>Please make your decisions based on whether each post should be kept or removed.</p>
+                    <p>Please make your decisions based on whether each post should be allowed or removed.</p>
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
@@ -511,11 +505,13 @@ async function setupExperiment() {
                 type: jsPsychModerationTrial,
                 post_id: () => assignedPosts[trialIndex]?.post_primary_key || '',
                 post_number: () => assignedPosts[trialIndex]?.post_number || '',
+                sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
+                sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
                 original_text: () => assignedPosts[trialIndex]?.original_text || '',
                 mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
-                show_pair: assignedCondition === 'linked_fate',
-                prompt: "Keep or remove?",
-                keep_label: "Keep",
+                show_pair: () => assignedCondition === 'linked_fate',
+                prompt: "Allow or Remove?",
+                allow_label: "Allow",
                 remove_label: "Remove",
                 trial_number: i + 1,
                 total_trials: NUM_TRIALS,

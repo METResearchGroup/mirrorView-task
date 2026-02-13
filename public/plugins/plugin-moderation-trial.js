@@ -46,15 +46,25 @@ var jsPsychModerationTrial = (function (jspsych) {
                 type: jspsych.ParameterType.STRING,
                 default: null
             },
+            /** Sampled stance for this post */
+            sampled_stance: {
+                type: jspsych.ParameterType.STRING,
+                default: null
+            },
+            /** Sampled toxicity bucket for this post */
+            sample_toxicity_type: {
+                type: jspsych.ParameterType.STRING,
+                default: null
+            },
             /** Prompt text to display */
             prompt: {
                 type: jspsych.ParameterType.STRING,
                 default: "Keep or remove?"
             },
             /** Button text for keep */
-            keep_label: {
+            allow_label: {
                 type: jspsych.ParameterType.STRING,
-                default: "Keep"
+                default: "Allow"
             },
             /** Button text for remove */
             remove_label: {
@@ -82,6 +92,12 @@ var jsPsychModerationTrial = (function (jspsych) {
                 type: jspsych.ParameterType.STRING
             },
             post_number: {
+                type: jspsych.ParameterType.STRING
+            },
+            sampled_stance: {
+                type: jspsych.ParameterType.STRING
+            },
+            sample_toxicity_type: {
                 type: jspsych.ParameterType.STRING
             },
             original_text: {
@@ -153,7 +169,7 @@ var jsPsychModerationTrial = (function (jspsych) {
             html += `
                 <div class="mirror-prompt">${trial.prompt}</div>
                 <div class="moderation-button-container">
-                    <button class="jspsych-btn moderation-choice-btn keep" data-decision="keep">${trial.keep_label}</button>
+                    <button class="jspsych-btn moderation-choice-btn keep" data-decision="keep">${trial.allow_label}</button>
                     <button class="jspsych-btn moderation-choice-btn remove" data-decision="remove">${trial.remove_label}</button>
                 </div>
             </div>
@@ -170,6 +186,8 @@ var jsPsychModerationTrial = (function (jspsych) {
                     const trialData = {
                         post_id: trial.post_id,
                         post_number: trial.post_number,
+                        sampled_stance: trial.sampled_stance,
+                        sample_toxicity_type: trial.sample_toxicity_type,
                         original_text: trial.original_text,
                         mirror_text: trial.mirror_text,
                         show_pair: isPair,

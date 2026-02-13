@@ -17,9 +17,108 @@ const POST_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
 const POST_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
 const PENDING_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
 const PENDING_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
+const POST_CATALOG_KEY = 'img/all_mirrors_claude.csv';
 
 const NUM_POSTS_PER_PARTICIPANT = 10;
 const CONDITIONS = ['control', 'linked_fate'];
+const CATEGORY_ORDER = [
+    'left__sample_low_toxicity',
+    'left__sample_high_toxicity',
+    'left__sample_middle_toxicity',
+    'right__sample_low_toxicity',
+    'right__sample_high_toxicity',
+    'right__sample_middle_toxicity'
+];
+
+let cachedPostCatalog = null;
+
+function parseCSV(csvText) {
+    const rows = [];
+    const headers = [];
+    let currentRow = [];
+    let currentField = '';
+    let inQuotes = false;
+    let isFirstRow = true;
+
+    for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const nextChar = csvText[i + 1];
+
+        if (inQuotes) {
+            if (char === '"') {
+                if (nextChar === '"') {
+                    currentField += '"';
+                    i++;
+                } else {
+                    inQuotes = false;
+                }
+            } else {
+                currentField += char;
+            }
+        } else {
+            if (char === '"') {
+                inQuotes = true;
+            } else if (char === ',') {
+                currentRow.push(currentField);
+                currentField = '';
+            } else if (char === '\n' || (char === '\r' && nextChar === '\n')) {
+                if (char === '\r') i++;
+                currentRow.push(currentField);
+                currentField = '';
+
+                if (isFirstRow) {
+                    headers.push(...currentRow);
+                    isFirstRow = false;
+                } else if (currentRow.length > 0 && currentRow.some(f => f.trim() !== '')) {
+                    const rowObj = {};
+                    headers.forEach((header, idx) => {
+                        rowObj[header] = currentRow[idx] || '';
+                    });
+                    rows.push(rowObj);
+                }
+                currentRow = [];
+            } else if (char !== '\r') {
+                currentField += char;
+            }
+        }
+    }
+
+    if (currentField !== '' || currentRow.length > 0) {
+        currentRow.push(currentField);
+        if (currentRow.length > 0 && currentRow.some(f => f.trim() !== '')) {
+            const rowObj = {};
+            headers.forEach((header, idx) => {
+                rowObj[header] = currentRow[idx] || '';
+            });
+            rows.push(rowObj);
+        }
+    }
+
+    return rows;
+}
+
+async function getPostCatalog() {
+    if (cachedPostCatalog && cachedPostCatalog.length > 0) {
+        return cachedPostCatalog;
+    }
+
+    const data = await s3Client.send(new GetObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: POST_CATALOG_KEY
+    }));
+    const csvText = await data.Body.transformToString();
+    const parsed = parseCSV(csvText);
+    cachedPostCatalog = parsed
+        .filter(row => row.post_primary_key && row.post_number)
+        .map(row => ({
+            post_id: row.post_primary_key,
+            post_number: row.post_number,
+            sampled_stance: row.sampled_stance,
+            sample_toxicity_type: row.sample_toxicity_type
+        }));
+
+    return cachedPostCatalog;
+}
 
 export const handler = async (event) => {
     // Handle CORS preflight
@@ -47,8 +146,12 @@ export const handler = async (event) => {
             return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
         }
 
-        if (!all_posts || !Array.isArray(all_posts) || all_posts.length === 0) {
-            return corsResponse(400, { error: 'Missing or invalid all_posts array' });
+        let postPool = Array.isArray(all_posts) && all_posts.length > 0 ? all_posts : null;
+        if (!postPool) {
+            postPool = await getPostCatalog();
+        }
+        if (!postPool || postPool.length === 0) {
+            return corsResponse(400, { error: 'No posts available for assignment' });
         }
 
         const inferredTest = is_test === true
@@ -133,32 +236,96 @@ export const handler = async (event) => {
         const assignedCondition = completedPartyCount % 2 === 0 ? 'control' : 'linked_fate';
 
         // Find available posts
-        const availablePosts = all_posts;
+        const availablePosts = postPool;
 
         const testNote = inferredTest ? ' [test]' : '';
-        console.log(`Available posts for ${party_group}: ${availablePosts.length}/${all_posts.length}${testNote}`);
+        console.log(`Available posts for ${party_group}: ${availablePosts.length}/${postPool.length}${testNote}`);
 
-        const getCounts = (post) => {
+        const sortedPosts = [...availablePosts].sort((a, b) => Number(a.post_number) - Number(b.post_number));
+        const completedInCondition = Object.values(assignments.participants || {})
+            .filter(participant => participant?.condition === assignedCondition)
+            .length;
+        const startOffset = completedInCondition % CATEGORY_ORDER.length;
+
+        const getCategoryKey = (post) => {
+            const stance = String(post.sampled_stance || '').trim().toLowerCase();
+            const tox = String(post.sample_toxicity_type || '').trim().toLowerCase();
+            const key = `${stance}__${tox}`;
+            return CATEGORY_ORDER.includes(key) ? key : null;
+        };
+
+        const getConditionCount = (post) => {
             const assignment = assignments.posts[post.post_id];
-            const conditionCount = assignment?.counts?.[assignedCondition] || 0;
-            const totalCount = assignment?.counts
-                ? Object.values(assignment.counts).reduce((sum, count) => sum + count, 0)
-                : 0;
-            return { conditionCount, totalCount };
+            return assignment?.counts?.[assignedCondition] || 0;
         };
 
-        const sortByLeastViewed = (a, b) => {
-            const aCounts = getCounts(a);
-            const bCounts = getCounts(b);
-            if (aCounts.conditionCount !== bCounts.conditionCount) return aCounts.conditionCount - bCounts.conditionCount;
-            if (aCounts.totalCount !== bCounts.totalCount) return aCounts.totalCount - bCounts.totalCount;
-            return Math.random() - 0.5;
-        };
+        const selectedPosts = [];
+        const selectedIds = new Set();
 
-        // Select lowest-viewed posts first for the assigned condition
-        const selectedPosts = [...availablePosts]
-            .sort(sortByLeastViewed)
-            .slice(0, NUM_POSTS_PER_PARTICIPANT);
+        // Phase 1: unseen posts only
+        const unseenBuckets = {};
+        CATEGORY_ORDER.forEach(k => { unseenBuckets[k] = []; });
+        sortedPosts.forEach(post => {
+            const key = getCategoryKey(post);
+            if (!key) return;
+            if (getConditionCount(post) === 0) {
+                unseenBuckets[key].push(post);
+            }
+        });
+
+        let pickedInPass = true;
+        while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && pickedInPass) {
+            pickedInPass = false;
+            for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < NUM_POSTS_PER_PARTICIPANT; i++) {
+                const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
+                const bucket = unseenBuckets[key];
+                if (bucket && bucket.length > 0) {
+                    const post = bucket.shift();
+                    if (!selectedIds.has(post.post_id)) {
+                        selectedIds.add(post.post_id);
+                        selectedPosts.push(post);
+                        pickedInPass = true;
+                    }
+                }
+            }
+        }
+
+        // Phase 2: repeats after unseen are exhausted
+        if (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT) {
+            const seenBuckets = {};
+            CATEGORY_ORDER.forEach(k => { seenBuckets[k] = []; });
+            sortedPosts.forEach(post => {
+                if (selectedIds.has(post.post_id)) return;
+                const key = getCategoryKey(post);
+                if (!key) return;
+                seenBuckets[key].push(post);
+            });
+            CATEGORY_ORDER.forEach(key => {
+                seenBuckets[key].sort((a, b) => {
+                    const aCount = getConditionCount(a);
+                    const bCount = getConditionCount(b);
+                    if (aCount !== bCount) return aCount - bCount;
+                    return Number(a.post_number) - Number(b.post_number);
+                });
+            });
+
+            pickedInPass = true;
+            while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && pickedInPass) {
+                pickedInPass = false;
+                for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < NUM_POSTS_PER_PARTICIPANT; i++) {
+                    const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
+                    const bucket = seenBuckets[key];
+                    if (bucket && bucket.length > 0) {
+                        const post = bucket.shift();
+                        if (!selectedIds.has(post.post_id)) {
+                            selectedIds.add(post.post_id);
+                            selectedPosts.push(post);
+                            pickedInPass = true;
+                        }
+                    }
+                }
+            }
+        }
 
         const shortAssignment = selectedPosts.length < NUM_POSTS_PER_PARTICIPANT;
 
@@ -176,7 +343,7 @@ export const handler = async (event) => {
             ContentType: 'application/json'
         }));
 
-        const shortNote = shortAssignment ? ' (short assignment: under-cap posts exhausted)' : '';
+        const shortNote = shortAssignment ? ' (short assignment)' : '';
         console.log(`Assigned ${selectedPosts.length} posts to ${prolific_id} (${party_group}, ${assignedCondition})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
 
         return corsResponse(200, {

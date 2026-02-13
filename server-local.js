@@ -105,12 +105,108 @@ function getAssignmentContext({ prolificID, isTest }) {
 
 const NUM_POSTS_PER_PARTICIPANT = 10;
 const CONDITIONS = ['control', 'linked_fate'];
+const POST_CATALOG_FILE = path.join(__dirname, 'public', 'img', 'all_mirrors_claude.csv');
+const CATEGORY_ORDER = [
+    'left__sample_low_toxicity',
+    'left__sample_high_toxicity',
+    'left__sample_middle_toxicity',
+    'right__sample_low_toxicity',
+    'right__sample_high_toxicity',
+    'right__sample_middle_toxicity'
+];
+
+function parseCSV(csvText) {
+    const rows = [];
+    const headers = [];
+    let currentRow = [];
+    let currentField = '';
+    let inQuotes = false;
+    let isFirstRow = true;
+
+    for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const nextChar = csvText[i + 1];
+
+        if (inQuotes) {
+            if (char === '"') {
+                if (nextChar === '"') {
+                    currentField += '"';
+                    i++;
+                } else {
+                    inQuotes = false;
+                }
+            } else {
+                currentField += char;
+            }
+        } else {
+            if (char === '"') {
+                inQuotes = true;
+            } else if (char === ',') {
+                currentRow.push(currentField);
+                currentField = '';
+            } else if (char === '\n' || (char === '\r' && nextChar === '\n')) {
+                if (char === '\r') i++;
+                currentRow.push(currentField);
+                currentField = '';
+
+                if (isFirstRow) {
+                    headers.push(...currentRow);
+                    isFirstRow = false;
+                } else if (currentRow.length > 0 && currentRow.some(f => f.trim() !== '')) {
+                    const rowObj = {};
+                    headers.forEach((header, idx) => {
+                        rowObj[header] = currentRow[idx] || '';
+                    });
+                    rows.push(rowObj);
+                }
+                currentRow = [];
+            } else if (char !== '\r') {
+                currentField += char;
+            }
+        }
+    }
+
+    if (currentField !== '' || currentRow.length > 0) {
+        currentRow.push(currentField);
+        if (currentRow.length > 0 && currentRow.some(f => f.trim() !== '')) {
+            const rowObj = {};
+            headers.forEach((header, idx) => {
+                rowObj[header] = currentRow[idx] || '';
+            });
+            rows.push(rowObj);
+        }
+    }
+
+    return rows;
+}
+
+function loadPostCatalog() {
+    try {
+        const csvText = fs.readFileSync(POST_CATALOG_FILE, 'utf8');
+        const parsed = parseCSV(csvText);
+        const catalog = parsed
+            .filter(row => row.post_primary_key && row.post_number)
+            .map(row => ({
+                post_id: row.post_primary_key,
+                post_number: row.post_number,
+                sampled_stance: row.sampled_stance,
+                sample_toxicity_type: row.sample_toxicity_type
+            }));
+        console.log(`Loaded ${catalog.length} posts from catalog`);
+        return catalog;
+    } catch (error) {
+        console.error('Failed to load post catalog:', error);
+        return [];
+    }
+}
+
+let postCatalog = loadPostCatalog();
 
 // ============================================================
 // MIDDLEWARE
 // ============================================================
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
 
 // Serve HTML file (local development version) - MUST be before express.static
 app.get('/', (req, res) => {
@@ -130,20 +226,13 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Body params:
  *   - prolific_id: The participant's Prolific ID
  *   - party_group: 'democrat' or 'republican'
- *   - all_posts: Array of {post_id, post_number} objects
+ *   - all_posts: Optional array fallback (post catalog is loaded server-side)
  * 
  * Returns:
  *   - assigned_post_ids: Array of 5 post IDs to show this participant
  */
 app.post('/get-post-assignments', (req, res) => {
-    const { prolific_id: prolificID, party_group: partyGroup, condition, all_posts: allPosts, is_test: isTest } = req.body;
-
-    const normalizedConditionRaw = typeof condition === 'string' ? condition.toLowerCase() : '';
-    let normalizedCondition = normalizedConditionRaw.replace('-', '_');
-    if (normalizedCondition === 'linkedfate') normalizedCondition = 'linked_fate';
-    if (!CONDITIONS.includes(normalizedCondition)) {
-        normalizedCondition = 'control';
-    }
+    const { prolific_id: prolificID, party_group: partyGroup, all_posts: allPosts, is_test: isTest } = req.body;
 
     if (!prolificID) {
         return res.status(400).json({ error: 'No prolific_id provided' });
@@ -153,7 +242,8 @@ app.post('/get-post-assignments', (req, res) => {
         return res.status(400).json({ error: 'Invalid party_group. Must be "democrat" or "republican"' });
     }
 
-    if (!allPosts || allPosts.length === 0) {
+    const postPool = Array.isArray(allPosts) && allPosts.length > 0 ? allPosts : postCatalog;
+    if (!postPool || postPool.length === 0) {
         return res.status(400).json({ error: 'No posts provided' });
     }
 
@@ -168,10 +258,10 @@ app.post('/get-post-assignments', (req, res) => {
         const existingPostIds = existingAssignment.posts.map(p => p.post_id || p);
         if (existingPostIds.length >= NUM_POSTS_PER_PARTICIPANT) {
             console.log(`Returning existing assignment for ${prolificID}: ${existingPostIds.length} posts`);
-            return res.json({ 
+            return res.json({
                 assigned_post_ids: existingPostIds,
                 already_assigned: true,
-                condition: existingAssignment.condition || normalizedCondition
+                condition: existingAssignment.condition || 'control'
             });
         }
     }
@@ -182,7 +272,7 @@ app.post('/get-post-assignments', (req, res) => {
         return res.json({
             assigned_post_ids: pending.posts.map(p => p.post_id || p),
             already_assigned: true,
-            condition: pending.condition || normalizedCondition
+            condition: pending.condition || 'control'
         });
     }
 
@@ -192,42 +282,100 @@ app.post('/get-post-assignments', (req, res) => {
 
     // Find posts not already assigned to this participant
     const existingPostIds = new Set();
-    const availablePosts = allPosts.filter(post => !existingPostIds.has(post.post_id));
+    const availablePosts = postPool.filter(post => !existingPostIds.has(post.post_id));
 
-    console.log(`Available posts for ${partyGroup}: ${availablePosts.length}/${allPosts.length} (${assignedCondition})`);
+    console.log(`Available posts for ${partyGroup}: ${availablePosts.length}/${postPool.length} (${assignedCondition})`);
 
-    const getCounts = (post) => {
-        const assignment = postAssignments[post.post_id];
-        const conditionCount = assignment?.counts?.[assignedCondition] || 0;
-        const totalCount = assignment?.counts
-            ? Object.values(assignment.counts).reduce((sum, count) => sum + count, 0)
-            : 0;
-        return { conditionCount, totalCount };
+    const neededCount = Math.max(NUM_POSTS_PER_PARTICIPANT - existingPostIds.size, 0);
+    const sortedPosts = [...availablePosts].sort((a, b) => Number(a.post_number) - Number(b.post_number));
+    const completedInCondition = ['democrat', 'republican'].reduce((sum, party) => {
+        const assignmentsByParty = participantAssignments[party]?.assignments || {};
+        const partyCount = Object.values(assignmentsByParty).filter(a => a?.condition === assignedCondition).length;
+        return sum + partyCount;
+    }, 0);
+    const startOffset = completedInCondition % CATEGORY_ORDER.length;
+
+    const getCategoryKey = (post) => {
+        const stance = String(post.sampled_stance || '').trim().toLowerCase();
+        const tox = String(post.sample_toxicity_type || '').trim().toLowerCase();
+        const key = `${stance}__${tox}`;
+        return CATEGORY_ORDER.includes(key) ? key : null;
     };
 
-    // Randomly select from available posts first
-    const neededCount = Math.max(NUM_POSTS_PER_PARTICIPANT - existingPostIds.size, 0);
-    const selectedPosts = [...availablePosts]
-        .sort((a, b) => {
-            const aCounts = getCounts(a);
-            const bCounts = getCounts(b);
-            if (aCounts.conditionCount !== bCounts.conditionCount) return aCounts.conditionCount - bCounts.conditionCount;
-            if (aCounts.totalCount !== bCounts.totalCount) return aCounts.totalCount - bCounts.totalCount;
-            return Math.random() - 0.5;
-        })
-        .slice(0, neededCount);
+    const getConditionCount = (post) => {
+        const assignment = postAssignments[post.post_id];
+        return assignment?.counts?.[assignedCondition] || 0;
+    };
 
-    // If we don't have enough available posts, fill from the least-used posts (even if at/over quota)
-    let fallbackUsed = false;
-    if (selectedPosts.length < neededCount) {
-        fallbackUsed = true;
-        const selectedIds = new Set(selectedPosts.map(p => p.post_id));
-        const remainingPosts = allPosts.filter(p => !selectedIds.has(p.post_id) && !existingPostIds.has(p.post_id));
+    const selectedPosts = [];
+    const selectedIds = new Set();
 
-        const fallbackCandidates = [...remainingPosts].sort((a, b) => getCounts(a).totalCount - getCounts(b).totalCount);
-        const needed = neededCount - selectedPosts.length;
-        selectedPosts.push(...fallbackCandidates.slice(0, needed));
+    // Phase 1: unseen posts only (ensures every post is viewed once per condition before repeats)
+    const unseenBuckets = {};
+    CATEGORY_ORDER.forEach(k => { unseenBuckets[k] = []; });
+    sortedPosts.forEach(post => {
+        const key = getCategoryKey(post);
+        if (!key) return;
+        if (getConditionCount(post) === 0) {
+            unseenBuckets[key].push(post);
+        }
+    });
+
+    let pickedInPass = true;
+    while (selectedPosts.length < neededCount && pickedInPass) {
+        pickedInPass = false;
+        for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < neededCount; i++) {
+            const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
+            const bucket = unseenBuckets[key];
+            if (bucket && bucket.length > 0) {
+                const post = bucket.shift();
+                if (!selectedIds.has(post.post_id)) {
+                    selectedIds.add(post.post_id);
+                    selectedPosts.push(post);
+                    pickedInPass = true;
+                }
+            }
+        }
     }
+
+    // Phase 2: once all unseen eligible posts are exhausted, cycle through least-viewed posts
+    if (selectedPosts.length < neededCount) {
+        const seenBuckets = {};
+        CATEGORY_ORDER.forEach(k => { seenBuckets[k] = []; });
+        sortedPosts.forEach(post => {
+            if (selectedIds.has(post.post_id)) return;
+            const key = getCategoryKey(post);
+            if (!key) return;
+            seenBuckets[key].push(post);
+        });
+        CATEGORY_ORDER.forEach(key => {
+            seenBuckets[key].sort((a, b) => {
+                const aCount = getConditionCount(a);
+                const bCount = getConditionCount(b);
+                if (aCount !== bCount) return aCount - bCount;
+                return Number(a.post_number) - Number(b.post_number);
+            });
+        });
+
+        pickedInPass = true;
+        while (selectedPosts.length < neededCount && pickedInPass) {
+            pickedInPass = false;
+            for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < neededCount; i++) {
+                const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
+                const bucket = seenBuckets[key];
+                if (bucket && bucket.length > 0) {
+                    const post = bucket.shift();
+                    if (!selectedIds.has(post.post_id)) {
+                        selectedIds.add(post.post_id);
+                        selectedPosts.push(post);
+                        pickedInPass = true;
+                    }
+                }
+            }
+        }
+    }
+
+    const fallbackUsed = selectedPosts.length < neededCount;
 
     const combinedPosts = selectedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number }));
 
@@ -240,7 +388,7 @@ app.post('/get-post-assignments', (req, res) => {
 
     savePendingAssignments(pendingAssignments, effectiveIsTest);
 
-    const fallbackNote = fallbackUsed ? ' (used fallback posts over quota)' : '';
+    const fallbackNote = fallbackUsed ? ' (short assignment)' : '';
     const testNote = effectiveIsTest ? ' [test]' : '';
     console.log(`Assigned ${combinedPosts.length} posts to ${prolificID} (${partyGroup}, ${assignedCondition})${fallbackNote}${testNote}: ${combinedPosts.map(p => p.post_number).join(', ')}`);
 
