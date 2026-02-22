@@ -462,10 +462,7 @@ async function setupExperiment() {
         };
 
         const useBothDecisionLabels = (phaseNumber) => {
-            if (phaseNumber === 1) {
-                return assignedCondition === 'training' || assignedCondition === 'training_assisted';
-            }
-            return assignedCondition === 'training';
+            return phaseNumber === 1 && (assignedCondition === 'training' || assignedCondition === 'training_assisted');
         };
 
         const conditionInstructions = {
@@ -522,7 +519,7 @@ async function setupExperiment() {
                     <h2>Great! You're ready to begin.</h2>
                     <p>There will be <b>2 sections</b> with <b>${TRIALS_PER_PHASE} trials each</b>, for a total of <b>${NUM_TRIALS} trials (posts to evaluate)</b>. 
                     <br>
-                    There will be a short break in between.</p>
+                    There will be a short break in the middle after 10 trials.</p>
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
