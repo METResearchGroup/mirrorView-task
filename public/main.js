@@ -573,7 +573,8 @@ async function setupExperiment() {
                         : assignedCondition === 'training'
                             ? `<p>In Section 2, the task will be essentially the same, except you will only be evaluating <b>one post at a time</b>.</p>
                                <p>Take a short break if you would like, then click <b>Next</b> to continue.</p>`
-                            : `<p>In Section 2, the task will be essentially the same, except you will make a decision about only <b>one</b> of the two posts shown. The post you should evaluate will be clearly indicated.</p>
+                            : `<p>In Section 2, the task will be essentially the same, except you will only be evaluating <b>one post at a time</b>.</p>
+                               <p>Underneath the post, you will be provided with its <b>political mirror</b>, in case it helps you make your decision.</p>
                                <p>Take a short break if you would like, then click <b>Next</b> to continue.</p>`
                     }
                 </div>
