@@ -19,8 +19,8 @@ const PENDING_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
 const PENDING_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
 const POST_CATALOG_KEY = 'img/all_mirrors_claude.csv';
 
-const NUM_POSTS_PER_PARTICIPANT = 10;
-const CONDITIONS = ['control', 'linked_fate'];
+const NUM_POSTS_PER_PARTICIPANT = 20;
+const CONDITIONS = ['control', 'training', 'training_assisted'];
 const CATEGORY_ORDER = [
     'left__sample_low_toxicity',
     'left__sample_high_toxicity',
@@ -135,7 +135,7 @@ export const handler = async (event) => {
             body = event.body || {};
         }
 
-        const { prolific_id, party_group, all_posts, is_test } = body;
+        const { prolific_id, party_group, condition, all_posts, is_test } = body;
 
         // Validate inputs
         if (!prolific_id) {
@@ -172,7 +172,7 @@ export const handler = async (event) => {
             if (error.name === 'NoSuchKey') {
                 // Initialize empty assignments structure
                 assignments = {
-                    posts: {},           // { post_id: { post_number, counts: { control, linked_fate } } }
+                    posts: {},           // { post_id: { post_number, counts: { control, training, training_assisted } } }
                     participants: {}     // { prolific_id: { party, condition, posts: [{post_id, post_number}], assigned_at } }
                 };
                 console.log(`Created new post assignments file: ${assignmentKey}`);
@@ -213,7 +213,7 @@ export const handler = async (event) => {
                 return corsResponse(200, {
                     assigned_post_ids: postIds,
                     already_assigned: true,
-                    condition: assignments.participants[prolific_id].condition || 'control',
+                    condition: assignments.participants[prolific_id].condition || CONDITIONS[0],
                     is_test: inferredTest
                 });
             }
@@ -225,15 +225,20 @@ export const handler = async (event) => {
             return corsResponse(200, {
                 assigned_post_ids: pending.posts.map(p => p.post_id || p),
                 already_assigned: true,
-                condition: pending.condition || 'control',
+                condition: pending.condition || CONDITIONS[0],
                 is_test: inferredTest
             });
         }
 
-        // Assign condition by alternating within party (based on completed count)
-        const completedPartyCount = Object.values(assignments.participants)
-            .filter(p => p.party === party_group).length;
-        const assignedCondition = completedPartyCount % 2 === 0 ? 'control' : 'linked_fate';
+        const requestedCondition = CONDITIONS.includes(String(condition || '').trim()) ? String(condition).trim() : null;
+        let assignedCondition;
+        if (inferredTest && requestedCondition) {
+            assignedCondition = requestedCondition;
+        } else {
+            // Assign condition globally in round-robin order to keep 3-way balance.
+            const totalCompleted = Object.keys(assignments.participants || {}).length;
+            assignedCondition = CONDITIONS[totalCompleted % CONDITIONS.length];
+        }
 
         // Find available posts
         const availablePosts = postPool;
@@ -256,72 +261,166 @@ export const handler = async (event) => {
 
         const getConditionCount = (post) => {
             const assignment = assignments.posts[post.post_id];
-            return assignment?.counts?.[assignedCondition] || 0;
+            if (!assignment?.counts) return 0;
+            if (assignedCondition === 'training') {
+                return assignment.counts.training || assignment.counts.linked_fate || 0;
+            }
+            return assignment.counts[assignedCondition] || 0;
         };
 
         const selectedPosts = [];
         const selectedIds = new Set();
+        const rotatedOrder = CATEGORY_ORDER.map((_, i) => CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length]);
+        const orderRank = new Map(rotatedOrder.map((k, i) => [k, i]));
+        const TOXICITY_ORDER = ['sample_low_toxicity', 'sample_high_toxicity', 'sample_middle_toxicity'];
+        const rotatedToxicityOrder = TOXICITY_ORDER.map((_, i) => TOXICITY_ORDER[(completedInCondition + i) % TOXICITY_ORDER.length]);
 
-        // Phase 1: unseen posts only
+        const allocateByWeights = (total, keys, weightLookup, tieLookup) => {
+            const safeKeys = keys.filter(k => (weightLookup[k] || 0) > 0);
+            if (total <= 0 || safeKeys.length === 0) {
+                const empty = {};
+                keys.forEach(k => { empty[k] = 0; });
+                return empty;
+            }
+
+            const totalWeight = safeKeys.reduce((sum, k) => sum + (weightLookup[k] || 0), 0);
+            const allocation = {};
+            const remainders = [];
+            let assigned = 0;
+
+            keys.forEach(k => {
+                if (!safeKeys.includes(k)) {
+                    allocation[k] = 0;
+                    return;
+                }
+                const raw = (total * (weightLookup[k] || 0)) / totalWeight;
+                const base = Math.floor(raw);
+                allocation[k] = base;
+                assigned += base;
+                remainders.push({ key: k, remainder: raw - base, tie: tieLookup.get(k) ?? 0 });
+            });
+
+            let remaining = total - assigned;
+            remainders.sort((a, b) => {
+                if (b.remainder !== a.remainder) return b.remainder - a.remainder;
+                return a.tie - b.tie;
+            });
+            for (let i = 0; i < remaining; i++) {
+                const target = remainders[i % remainders.length];
+                allocation[target.key] = (allocation[target.key] || 0) + 1;
+            }
+            return allocation;
+        };
+
+        const catalogCountsByCell = {};
+        CATEGORY_ORDER.forEach(k => { catalogCountsByCell[k] = 0; });
+        const catalogCountsByToxicity = {};
+        TOXICITY_ORDER.forEach(k => { catalogCountsByToxicity[k] = 0; });
+        sortedPosts.forEach(post => {
+            const key = getCategoryKey(post);
+            if (key) {
+                catalogCountsByCell[key] += 1;
+                const tox = String(post.sample_toxicity_type || '').trim().toLowerCase();
+                if (TOXICITY_ORDER.includes(tox)) {
+                    catalogCountsByToxicity[tox] += 1;
+                }
+            }
+        });
+
+        const toxicityTieLookup = new Map(rotatedToxicityOrder.map((k, i) => [k, i]));
+        const targetByToxicity = allocateByWeights(
+            NUM_POSTS_PER_PARTICIPANT,
+            TOXICITY_ORDER,
+            catalogCountsByToxicity,
+            toxicityTieLookup
+        );
+
+        const targetByCell = {};
+        CATEGORY_ORDER.forEach(k => { targetByCell[k] = 0; });
+        TOXICITY_ORDER.forEach((tox, toxIndex) => {
+            const leftKey = `left__${tox}`;
+            const rightKey = `right__${tox}`;
+            const splitKeys = [leftKey, rightKey].filter(k => CATEGORY_ORDER.includes(k));
+            const splitTieOrder = (toxIndex + startOffset) % 2 === 0 ? [leftKey, rightKey] : [rightKey, leftKey];
+            const splitTieLookup = new Map(splitTieOrder.map((k, i) => [k, i]));
+            const splitCounts = allocateByWeights(
+                targetByToxicity[tox] || 0,
+                splitKeys,
+                catalogCountsByCell,
+                splitTieLookup
+            );
+            splitKeys.forEach(k => {
+                targetByCell[k] = splitCounts[k] || 0;
+            });
+        });
+
         const unseenBuckets = {};
-        CATEGORY_ORDER.forEach(k => { unseenBuckets[k] = []; });
+        const seenBuckets = {};
+        const selectedCountByCell = {};
+        CATEGORY_ORDER.forEach(k => {
+            unseenBuckets[k] = [];
+            seenBuckets[k] = [];
+            selectedCountByCell[k] = 0;
+        });
         sortedPosts.forEach(post => {
             const key = getCategoryKey(post);
             if (!key) return;
             if (getConditionCount(post) === 0) {
                 unseenBuckets[key].push(post);
+            } else {
+                seenBuckets[key].push(post);
+            }
+        });
+        CATEGORY_ORDER.forEach(key => {
+            seenBuckets[key].sort((a, b) => {
+                const aCount = getConditionCount(a);
+                const bCount = getConditionCount(b);
+                if (aCount !== bCount) return aCount - bCount;
+                return Number(a.post_number) - Number(b.post_number);
+            });
+        });
+
+        rotatedOrder.forEach(key => {
+            const target = targetByCell[key] || 0;
+            while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && selectedCountByCell[key] < target) {
+                const unseen = unseenBuckets[key];
+                if (!unseen || unseen.length === 0) break;
+                const post = unseen.shift();
+                if (!selectedIds.has(post.post_id)) {
+                    selectedIds.add(post.post_id);
+                    selectedPosts.push(post);
+                    selectedCountByCell[key] += 1;
+                }
+            }
+        });
+
+        rotatedOrder.forEach(key => {
+            const target = targetByCell[key] || 0;
+            while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && selectedCountByCell[key] < target) {
+                const seen = seenBuckets[key];
+                if (!seen || seen.length === 0) break;
+                const post = seen.shift();
+                if (!selectedIds.has(post.post_id)) {
+                    selectedIds.add(post.post_id);
+                    selectedPosts.push(post);
+                    selectedCountByCell[key] += 1;
+                }
             }
         });
 
         let pickedInPass = true;
         while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && pickedInPass) {
             pickedInPass = false;
-            for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < NUM_POSTS_PER_PARTICIPANT; i++) {
-                const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
-                const bucket = unseenBuckets[key];
+            for (let i = 0; i < rotatedOrder.length && selectedPosts.length < NUM_POSTS_PER_PARTICIPANT; i++) {
+                const key = rotatedOrder[i];
+                const bucket = seenBuckets[key];
                 if (bucket && bucket.length > 0) {
                     const post = bucket.shift();
                     if (!selectedIds.has(post.post_id)) {
                         selectedIds.add(post.post_id);
                         selectedPosts.push(post);
+                        selectedCountByCell[key] += 1;
                         pickedInPass = true;
-                    }
-                }
-            }
-        }
-
-        // Phase 2: repeats after unseen are exhausted
-        if (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT) {
-            const seenBuckets = {};
-            CATEGORY_ORDER.forEach(k => { seenBuckets[k] = []; });
-            sortedPosts.forEach(post => {
-                if (selectedIds.has(post.post_id)) return;
-                const key = getCategoryKey(post);
-                if (!key) return;
-                seenBuckets[key].push(post);
-            });
-            CATEGORY_ORDER.forEach(key => {
-                seenBuckets[key].sort((a, b) => {
-                    const aCount = getConditionCount(a);
-                    const bCount = getConditionCount(b);
-                    if (aCount !== bCount) return aCount - bCount;
-                    return Number(a.post_number) - Number(b.post_number);
-                });
-            });
-
-            pickedInPass = true;
-            while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && pickedInPass) {
-                pickedInPass = false;
-                for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < NUM_POSTS_PER_PARTICIPANT; i++) {
-                    const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
-                    const bucket = seenBuckets[key];
-                    if (bucket && bucket.length > 0) {
-                        const post = bucket.shift();
-                        if (!selectedIds.has(post.post_id)) {
-                            selectedIds.add(post.post_id);
-                            selectedPosts.push(post);
-                            pickedInPass = true;
-                        }
                     }
                 }
             }

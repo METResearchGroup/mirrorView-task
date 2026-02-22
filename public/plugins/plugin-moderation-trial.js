@@ -36,6 +36,11 @@ var jsPsychModerationTrial = (function (jspsych) {
                 type: jspsych.ParameterType.BOOL,
                 default: false
             },
+            /** Trial mode: single, linked_fate, or assisted */
+            evaluation_mode: {
+                type: jspsych.ParameterType.STRING,
+                default: "single"
+            },
             /** The unique identifier for this post */
             post_id: {
                 type: jspsych.ParameterType.STRING,
@@ -43,6 +48,16 @@ var jsPsychModerationTrial = (function (jspsych) {
             },
             /** The numeric post number */
             post_number: {
+                type: jspsych.ParameterType.STRING,
+                default: null
+            },
+            /** Optional context-only post id (assisted mode) */
+            context_post_id: {
+                type: jspsych.ParameterType.STRING,
+                default: null
+            },
+            /** Optional context-only post number (assisted mode) */
+            context_post_number: {
                 type: jspsych.ParameterType.STRING,
                 default: null
             },
@@ -94,6 +109,12 @@ var jsPsychModerationTrial = (function (jspsych) {
             post_number: {
                 type: jspsych.ParameterType.STRING
             },
+            context_post_id: {
+                type: jspsych.ParameterType.STRING
+            },
+            context_post_number: {
+                type: jspsych.ParameterType.STRING
+            },
             sampled_stance: {
                 type: jspsych.ParameterType.STRING
             },
@@ -109,11 +130,17 @@ var jsPsychModerationTrial = (function (jspsych) {
             show_pair: {
                 type: jspsych.ParameterType.BOOL
             },
+            evaluation_mode: {
+                type: jspsych.ParameterType.STRING
+            },
             decision: {
                 type: jspsych.ParameterType.STRING
             },
             pair_order: {
                 type: jspsych.ParameterType.OBJECT
+            },
+            evaluated_post_role: {
+                type: jspsych.ParameterType.STRING
             },
             response_time_ms: {
                 type: jspsych.ParameterType.FLOAT
@@ -131,13 +158,15 @@ var jsPsychModerationTrial = (function (jspsych) {
         trial(display_element, trial) {
             const startTime = performance.now();
 
-            const isPair = Boolean(trial.show_pair && trial.mirror_text);
-            let posts = [
-                { role: 'original', label: 'Post A', text: trial.original_text }
-            ];
+            const mode = trial.evaluation_mode || (trial.show_pair ? 'linked_fate' : 'single');
+            const isPair = mode === 'linked_fate';
+            const isAssisted = mode === 'assisted';
 
+            let posts = [{ role: 'original', text: trial.original_text }];
+            if (isPair || isAssisted) {
+                posts.push({ role: 'mirror', text: trial.mirror_text });
+            }
             if (isPair) {
-                posts.push({ role: 'mirror', label: 'Post B', text: trial.mirror_text });
                 posts = this.shuffleArray(posts);
             }
 
@@ -157,13 +186,25 @@ var jsPsychModerationTrial = (function (jspsych) {
             `;
 
             posts.forEach((post, index) => {
-                const label = isPair ? `Post ${index + 1}` : 'Post';
-                html += `
-                    <div class="moderation-post-label">${label}</div>
-                    <div class="moderation-post-container">
-                        <div class="moderation-post-text">${post.text || ''}</div>
-                    </div>
-                `;
+                let label = 'Post';
+                if (isPair) {
+                    label = `Post ${index + 1}`;
+                } else if (isAssisted) {
+                    label = post.role === 'original' ? 'Post to evaluate' : 'Reference mirror';
+                }
+                if (isAssisted && post.role === 'mirror') {
+                    html += `
+                        <div class="moderation-reference-label">Mirrored post, from opposite political stance</div>
+                        <div class="moderation-reference-text">${post.text || ''}</div>
+                    `;
+                } else {
+                    html += `
+                        <div class="moderation-post-label">${label}</div>
+                        <div class="moderation-post-container">
+                            <div class="moderation-post-text">${post.text || ''}</div>
+                        </div>
+                    `;
+                }
             });
 
             html += `
@@ -186,13 +227,17 @@ var jsPsychModerationTrial = (function (jspsych) {
                     const trialData = {
                         post_id: trial.post_id,
                         post_number: trial.post_number,
+                        context_post_id: trial.context_post_id,
+                        context_post_number: trial.context_post_number,
                         sampled_stance: trial.sampled_stance,
                         sample_toxicity_type: trial.sample_toxicity_type,
                         original_text: trial.original_text,
                         mirror_text: trial.mirror_text,
                         show_pair: isPair,
+                        evaluation_mode: mode,
                         decision,
                         pair_order: pairOrder,
+                        evaluated_post_role: isPair ? 'both' : 'original',
                         response_time_ms: responseTime
                     };
 

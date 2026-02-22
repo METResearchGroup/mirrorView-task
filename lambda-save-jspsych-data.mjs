@@ -11,6 +11,15 @@ const POST_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
 const POST_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
 const PENDING_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
 const PENDING_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
+const CONDITIONS = ['control', 'training', 'training_assisted'];
+
+function makeConditionCounts(existing = {}) {
+    return {
+        control: Number(existing?.control || 0),
+        training: Number(existing?.training || existing?.linked_fate || 0),
+        training_assisted: Number(existing?.training_assisted || 0)
+    };
+}
 
 export const handler = async (event) => {
     // parse incoming JSON body
@@ -84,14 +93,13 @@ export const handler = async (event) => {
                     if (!assignments.posts[post.post_id]) {
                         assignments.posts[post.post_id] = {
                             post_number: post.post_number,
-                            counts: { control: 0, linked_fate: 0 }
+                            counts: makeConditionCounts()
                         };
                     }
-                    if (!assignments.posts[post.post_id].counts) {
-                        assignments.posts[post.post_id].counts = { control: 0, linked_fate: 0 };
-                    }
-                    assignments.posts[post.post_id].counts[pending.condition] =
-                        (assignments.posts[post.post_id].counts[pending.condition] || 0) + 1;
+                    assignments.posts[post.post_id].counts = makeConditionCounts(assignments.posts[post.post_id].counts);
+                    const pendingCondition = CONDITIONS.includes(pending.condition) ? pending.condition : CONDITIONS[0];
+                    assignments.posts[post.post_id].counts[pendingCondition] =
+                        (assignments.posts[post.post_id].counts[pendingCondition] || 0) + 1;
                 });
 
                 assignments.participants[prolificId] = {

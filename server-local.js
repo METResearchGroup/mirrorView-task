@@ -49,7 +49,7 @@ function createEmptyParticipantAssignments() {
 }
 
 // Load or initialize post assignments
-// Structure: { "post_id": { post_number, counts: { control, linked_fate } }, ... }
+// Structure: { "post_id": { post_number, counts: { control, training, training_assisted } }, ... }
 let postAssignments = loadJsonFile(POST_ASSIGNMENTS_FILE, {});
 let postAssignmentsLocal = loadJsonFile(POST_ASSIGNMENTS_LOCAL_FILE, {});
 console.log(`Loaded ${Object.keys(postAssignments).length} post assignments from file`);
@@ -103,8 +103,8 @@ function getAssignmentContext({ prolificID, isTest }) {
 // CONFIGURATION
 // ============================================================
 
-const NUM_POSTS_PER_PARTICIPANT = 10;
-const CONDITIONS = ['control', 'linked_fate'];
+const NUM_POSTS_PER_PARTICIPANT = 20;
+const CONDITIONS = ['control', 'training', 'training_assisted'];
 const POST_CATALOG_FILE = path.join(__dirname, 'public', 'img', 'all_mirrors_claude.csv');
 const CATEGORY_ORDER = [
     'left__sample_low_toxicity',
@@ -202,6 +202,14 @@ function loadPostCatalog() {
 
 let postCatalog = loadPostCatalog();
 
+function makeConditionCounts(existing = {}) {
+    return {
+        control: Number(existing?.control || 0),
+        training: Number(existing?.training || existing?.linked_fate || 0),
+        training_assisted: Number(existing?.training_assisted || 0)
+    };
+}
+
 // ============================================================
 // MIDDLEWARE
 // ============================================================
@@ -232,7 +240,7 @@ app.use(express.static(path.join(__dirname, 'public')));
  *   - assigned_post_ids: Array of 5 post IDs to show this participant
  */
 app.post('/get-post-assignments', (req, res) => {
-    const { prolific_id: prolificID, party_group: partyGroup, all_posts: allPosts, is_test: isTest } = req.body;
+    const { prolific_id: prolificID, party_group: partyGroup, condition, all_posts: allPosts, is_test: isTest } = req.body;
 
     if (!prolificID) {
         return res.status(400).json({ error: 'No prolific_id provided' });
@@ -261,7 +269,7 @@ app.post('/get-post-assignments', (req, res) => {
             return res.json({
                 assigned_post_ids: existingPostIds,
                 already_assigned: true,
-                condition: existingAssignment.condition || 'control'
+                condition: existingAssignment.condition || CONDITIONS[0]
             });
         }
     }
@@ -272,13 +280,22 @@ app.post('/get-post-assignments', (req, res) => {
         return res.json({
             assigned_post_ids: pending.posts.map(p => p.post_id || p),
             already_assigned: true,
-            condition: pending.condition || 'control'
+            condition: pending.condition || CONDITIONS[0]
         });
     }
 
-    // Assign condition by alternating within party (based on completed count)
-    const completedCount = participantAssignments[partyGroup]?.count || 0;
-    const assignedCondition = completedCount % 2 === 0 ? 'control' : 'linked_fate';
+    const requestedCondition = CONDITIONS.includes(String(condition || '').trim()) ? String(condition).trim() : null;
+    let assignedCondition;
+    if (effectiveIsTest && requestedCondition) {
+        assignedCondition = requestedCondition;
+    } else {
+        // Assign condition globally in round-robin order to keep 3-way balance.
+        const totalCompleted = ['democrat', 'republican'].reduce((sum, party) => {
+            const assignmentsByParty = participantAssignments[party]?.assignments || {};
+            return sum + Object.keys(assignmentsByParty).length;
+        }, 0);
+        assignedCondition = CONDITIONS[totalCompleted % CONDITIONS.length];
+    }
 
     // Find posts not already assigned to this participant
     const existingPostIds = new Set();
@@ -304,72 +321,161 @@ app.post('/get-post-assignments', (req, res) => {
 
     const getConditionCount = (post) => {
         const assignment = postAssignments[post.post_id];
-        return assignment?.counts?.[assignedCondition] || 0;
+        const counts = makeConditionCounts(assignment?.counts);
+        return counts[assignedCondition] || 0;
     };
 
     const selectedPosts = [];
     const selectedIds = new Set();
+    const rotatedOrder = CATEGORY_ORDER.map((_, i) => CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length]);
+    const orderRank = new Map(rotatedOrder.map((k, i) => [k, i]));
+    const TOXICITY_ORDER = ['sample_low_toxicity', 'sample_high_toxicity', 'sample_middle_toxicity'];
+    const rotatedToxicityOrder = TOXICITY_ORDER.map((_, i) => TOXICITY_ORDER[(completedInCondition + i) % TOXICITY_ORDER.length]);
 
-    // Phase 1: unseen posts only (ensures every post is viewed once per condition before repeats)
+    const allocateByWeights = (total, keys, weightLookup, tieLookup) => {
+        const safeKeys = keys.filter(k => (weightLookup[k] || 0) > 0);
+        if (total <= 0 || safeKeys.length === 0) {
+            const empty = {};
+            keys.forEach(k => { empty[k] = 0; });
+            return empty;
+        }
+
+        const totalWeight = safeKeys.reduce((sum, k) => sum + (weightLookup[k] || 0), 0);
+        const allocation = {};
+        const remainders = [];
+        let assigned = 0;
+
+        keys.forEach(k => {
+            if (!safeKeys.includes(k)) {
+                allocation[k] = 0;
+                return;
+            }
+            const raw = (total * (weightLookup[k] || 0)) / totalWeight;
+            const base = Math.floor(raw);
+            allocation[k] = base;
+            assigned += base;
+                remainders.push({ key: k, remainder: raw - base, tie: tieLookup.get(k) ?? 0 });
+        });
+
+        let remaining = total - assigned;
+        remainders.sort((a, b) => {
+            if (b.remainder !== a.remainder) return b.remainder - a.remainder;
+            return a.tie - b.tie;
+        });
+        for (let i = 0; i < remaining; i++) {
+            const target = remainders[i % remainders.length];
+            allocation[target.key] = (allocation[target.key] || 0) + 1;
+        }
+        return allocation;
+    };
+
+    const catalogCountsByCell = {};
+    CATEGORY_ORDER.forEach(k => { catalogCountsByCell[k] = 0; });
+    const catalogCountsByToxicity = {};
+    TOXICITY_ORDER.forEach(k => { catalogCountsByToxicity[k] = 0; });
+    sortedPosts.forEach(post => {
+        const key = getCategoryKey(post);
+        if (key) {
+            catalogCountsByCell[key] += 1;
+            const tox = String(post.sample_toxicity_type || '').trim().toLowerCase();
+            if (TOXICITY_ORDER.includes(tox)) {
+                catalogCountsByToxicity[tox] += 1;
+            }
+        }
+    });
+
+    // Weighted target per participant follows actual catalog prevalence.
+    // First allocate by toxicity, then split each toxicity across left/right.
+    const toxicityTieLookup = new Map(rotatedToxicityOrder.map((k, i) => [k, i]));
+    const targetByToxicity = allocateByWeights(neededCount, TOXICITY_ORDER, catalogCountsByToxicity, toxicityTieLookup);
+
+    const targetByCell = {};
+    CATEGORY_ORDER.forEach(k => { targetByCell[k] = 0; });
+    TOXICITY_ORDER.forEach((tox, toxIndex) => {
+        const leftKey = `left__${tox}`;
+        const rightKey = `right__${tox}`;
+        const splitKeys = [leftKey, rightKey].filter(k => CATEGORY_ORDER.includes(k));
+        const splitTieOrder = (toxIndex + startOffset) % 2 === 0 ? [leftKey, rightKey] : [rightKey, leftKey];
+        const splitTieLookup = new Map(splitTieOrder.map((k, i) => [k, i]));
+        const splitCounts = allocateByWeights(
+            targetByToxicity[tox] || 0,
+            splitKeys,
+            catalogCountsByCell,
+            splitTieLookup
+        );
+        splitKeys.forEach(k => {
+            targetByCell[k] = splitCounts[k] || 0;
+        });
+    });
+
     const unseenBuckets = {};
-    CATEGORY_ORDER.forEach(k => { unseenBuckets[k] = []; });
+    const seenBuckets = {};
+    const selectedCountByCell = {};
+    CATEGORY_ORDER.forEach(k => {
+        unseenBuckets[k] = [];
+        seenBuckets[k] = [];
+        selectedCountByCell[k] = 0;
+    });
     sortedPosts.forEach(post => {
         const key = getCategoryKey(post);
         if (!key) return;
         if (getConditionCount(post) === 0) {
             unseenBuckets[key].push(post);
+        } else {
+            seenBuckets[key].push(post);
+        }
+    });
+    CATEGORY_ORDER.forEach(key => {
+        seenBuckets[key].sort((a, b) => {
+            const aCount = getConditionCount(a);
+            const bCount = getConditionCount(b);
+            if (aCount !== bCount) return aCount - bCount;
+            return Number(a.post_number) - Number(b.post_number);
+        });
+    });
+
+    rotatedOrder.forEach(key => {
+        const target = targetByCell[key] || 0;
+        while (selectedPosts.length < neededCount && selectedCountByCell[key] < target) {
+            const unseen = unseenBuckets[key];
+            if (!unseen || unseen.length === 0) break;
+            const post = unseen.shift();
+            if (!selectedIds.has(post.post_id)) {
+                selectedIds.add(post.post_id);
+                selectedPosts.push(post);
+                selectedCountByCell[key] += 1;
+            }
         }
     });
 
+    rotatedOrder.forEach(key => {
+        const target = targetByCell[key] || 0;
+        while (selectedPosts.length < neededCount && selectedCountByCell[key] < target) {
+            const seen = seenBuckets[key];
+            if (!seen || seen.length === 0) break;
+            const post = seen.shift();
+            if (!selectedIds.has(post.post_id)) {
+                selectedIds.add(post.post_id);
+                selectedPosts.push(post);
+                selectedCountByCell[key] += 1;
+            }
+        }
+    });
+
+    // If a category runs short, top up from any remaining least-viewed posts by rotated category order.
     let pickedInPass = true;
     while (selectedPosts.length < neededCount && pickedInPass) {
         pickedInPass = false;
-        for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < neededCount; i++) {
-            const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
-            const bucket = unseenBuckets[key];
+        for (let i = 0; i < rotatedOrder.length && selectedPosts.length < neededCount; i++) {
+            const key = rotatedOrder[i];
+            const bucket = seenBuckets[key];
             if (bucket && bucket.length > 0) {
                 const post = bucket.shift();
                 if (!selectedIds.has(post.post_id)) {
                     selectedIds.add(post.post_id);
                     selectedPosts.push(post);
+                    selectedCountByCell[key] += 1;
                     pickedInPass = true;
-                }
-            }
-        }
-    }
-
-    // Phase 2: once all unseen eligible posts are exhausted, cycle through least-viewed posts
-    if (selectedPosts.length < neededCount) {
-        const seenBuckets = {};
-        CATEGORY_ORDER.forEach(k => { seenBuckets[k] = []; });
-        sortedPosts.forEach(post => {
-            if (selectedIds.has(post.post_id)) return;
-            const key = getCategoryKey(post);
-            if (!key) return;
-            seenBuckets[key].push(post);
-        });
-        CATEGORY_ORDER.forEach(key => {
-            seenBuckets[key].sort((a, b) => {
-                const aCount = getConditionCount(a);
-                const bCount = getConditionCount(b);
-                if (aCount !== bCount) return aCount - bCount;
-                return Number(a.post_number) - Number(b.post_number);
-            });
-        });
-
-        pickedInPass = true;
-        while (selectedPosts.length < neededCount && pickedInPass) {
-            pickedInPass = false;
-            for (let i = 0; i < CATEGORY_ORDER.length && selectedPosts.length < neededCount; i++) {
-                const key = CATEGORY_ORDER[(startOffset + i) % CATEGORY_ORDER.length];
-                const bucket = seenBuckets[key];
-                if (bucket && bucket.length > 0) {
-                    const post = bucket.shift();
-                    if (!selectedIds.has(post.post_id)) {
-                        selectedIds.add(post.post_id);
-                        selectedPosts.push(post);
-                        pickedInPass = true;
-                    }
                 }
             }
         }
@@ -457,14 +563,13 @@ app.post('/save-jspsych-data', (req, res) => {
                         if (!postAssignments[post.post_id]) {
                             postAssignments[post.post_id] = {
                                 post_number: post.post_number,
-                                counts: { control: 0, linked_fate: 0 }
+                                counts: makeConditionCounts()
                             };
                         }
-                        if (!postAssignments[post.post_id].counts) {
-                            postAssignments[post.post_id].counts = { control: 0, linked_fate: 0 };
-                        }
-                        postAssignments[post.post_id].counts[pending.condition] =
-                            (postAssignments[post.post_id].counts[pending.condition] || 0) + 1;
+                        postAssignments[post.post_id].counts = makeConditionCounts(postAssignments[post.post_id].counts);
+                        const pendingCondition = CONDITIONS.includes(pending.condition) ? pending.condition : CONDITIONS[0];
+                        postAssignments[post.post_id].counts[pendingCondition] =
+                            (postAssignments[post.post_id].counts[pendingCondition] || 0) + 1;
                     });
 
                     if (!participantAssignments[pending.party_group]?.assignments) {
@@ -511,23 +616,29 @@ app.get('/debug/post-assignments', (req, res) => {
 
     // Count posts by completion status (per condition)
     let controlComplete = 0;
-    let linkedFateComplete = 0;
-    let bothComplete = 0;
+    let trainingComplete = 0;
+    let assistedComplete = 0;
     let unassigned = 0;
 
     Object.values(assignmentsToInspect).forEach(assignment => {
-        const controlCount = assignment?.counts?.control || 0;
-        const linkedCount = assignment?.counts?.linked_fate || 0;
+        const counts = makeConditionCounts(assignment?.counts);
+        const controlCount = counts.control || 0;
+        const trainingCount = counts.training || 0;
+        const assistedCount = counts.training_assisted || 0;
         const hasControl = controlCount > 0;
-        const hasLinked = linkedCount > 0;
+        const hasTraining = trainingCount > 0;
+        const hasAssisted = assistedCount > 0;
 
-        if (hasControl && hasLinked) {
-            bothComplete++;
-        } else if (hasControl) {
+        if (hasControl) {
             controlComplete++;
-        } else if (hasLinked) {
-            linkedFateComplete++;
-        } else {
+        }
+        if (hasTraining) {
+            trainingComplete++;
+        }
+        if (hasAssisted) {
+            assistedComplete++;
+        }
+        if (!hasControl && !hasTraining && !hasAssisted) {
             unassigned++;
         }
     });
@@ -536,8 +647,8 @@ app.get('/debug/post-assignments', (req, res) => {
         summary: {
             totalTracked: Object.keys(assignmentsToInspect).length,
             controlComplete,
-            linkedFateComplete,
-            bothComplete,
+            trainingComplete,
+            assistedComplete,
             unassigned
         },
         details: assignmentsToInspect,

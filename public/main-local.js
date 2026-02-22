@@ -38,13 +38,18 @@ const jsPsych = initJsPsych({
             // Moderation trial data
             'post_id',
             'post_number',      // Numeric post identifier (easier to reference)
+            'context_post_id',
+            'context_post_number',
             'sampled_stance',
             'sample_toxicity_type',
+            'phase',
+            'evaluation_mode',
             'original_text',
             'mirror_text',
             'show_pair',
             'decision',
             'pair_order',
+            'evaluated_post_role',
             'response_time_ms',
             // Participant info
             'participant_id',
@@ -62,7 +67,13 @@ const jsPsych = initJsPsych({
             'political_ideology',
             'political_follow',
             'rep_id',
-            'dem_id'
+            'dem_id',
+            'attitude_reduce_abortion',
+            'attitude_citizenship_undocumented',
+            'attitude_restrict_guns',
+            'attitude_regulate_environment',
+            'attitude_raise_wealth_taxes',
+            'attitude_expand_medicaid'
         ];
         
         // Create CSV
@@ -246,7 +257,9 @@ function parseCSV(csvText) {
 // EXPERIMENT CONFIGURATION
 // ============================================================
 
-const NUM_TRIALS = 10; // Number of posts each participant rates
+const TRIALS_PER_PHASE = 10;
+const NUM_PHASES = 2;
+const NUM_TRIALS = TRIALS_PER_PHASE * NUM_PHASES; // 20 evaluated trials
 
 
 // ============================================================
@@ -258,9 +271,11 @@ let allMirrorData = [];
 
 // Store assigned posts (populated after political affiliation)
 let assignedPosts = [];
+let assistedContextPosts = [];
 
 // Store assigned condition
 let assignedCondition = null;
+let requestedConditionOverride = null;
 
 
 // ============================================================
@@ -275,6 +290,11 @@ async function setupExperiment() {
         currentProlificID = prolificPID || 'TEST_' + Date.now();
         isTestParticipant = !prolificPID;
         console.log('Prolific ID:', currentProlificID, isTestParticipant ? '(test)' : '');
+        const conditionParam = (urlParams.get('condition') || '').toLowerCase();
+        if (['control', 'training', 'training_assisted'].includes(conditionParam)) {
+            requestedConditionOverride = conditionParam;
+            console.log('Debug condition override requested:', requestedConditionOverride);
+        }
 
         
         // Load mirror data
@@ -289,10 +309,10 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Welcome!</h2>
-                    <p>In this study, you will take on the role of a content moderator for a social media platform.</p>
-                    <p>Your task is to decide whether each post should be <b>allowed</b> or <b>removed</b>.</p>
+                    <p>In this study, you will take on the role of a <b>content moderator</b> for a social media platform.</p>
+                    <p>Your task will involve deciding whether a selection of posts should be <b>allowed</b> or <b>removed</b> from the platform.</p>
                     <br>
-                    <p>Click <b>Next</b> to continue.</p>
+                    <p>Click <b>Next</b> to continue to the consent form.</p>
                 </div>
             `],
             show_clickable_nav: true
@@ -359,7 +379,7 @@ async function setupExperiment() {
                         body: JSON.stringify({
                             prolific_id: currentProlificID,
                             party_group: effectivePartyGroup,
-                            condition: assignedCondition,
+                            condition: requestedConditionOverride || assignedCondition,
                             is_test: isTestParticipant
                         })
                     });
@@ -381,6 +401,13 @@ async function setupExperiment() {
 
                         assignedCondition = result.condition || assignedCondition || 'control';
                         jsPsych.data.addProperties({ condition: assignedCondition });
+
+                        if (assignedCondition === 'training_assisted') {
+                            const assignedIds = new Set(assignedPosts.map(p => p?.post_primary_key).filter(Boolean));
+                            assistedContextPosts = allMirrorData.filter(p => !assignedIds.has(p.post_primary_key)).slice(0, TRIALS_PER_PHASE);
+                        } else {
+                            assistedContextPosts = [];
+                        }
                         
                         console.log(`Assigned ${assignedPosts.length} posts to participant`);
                     }
@@ -397,54 +424,38 @@ async function setupExperiment() {
         };
         timeline.push(fetchAssignedPosts);
 
+        const getPhaseMode = (phaseNumber) => {
+            if (phaseNumber === 1) {
+                return assignedCondition === 'control' ? 'single' : 'linked_fate';
+            }
+            if (assignedCondition === 'training_assisted') return 'assisted';
+            return 'single';
+        };
+
         const conditionInstructions = {
             type: jsPsychInstructions,
             pages: () => [`
                 <div class='instructions'>
                     <h2>Your Task</h2>
-                    ${assignedCondition === 'linked_fate'
-                        ? `<p>You will see <b>two posts at a time</b> that are mirrors of each other.</p>
-                           <p>You must make <b>one decision</b> that applies to both posts: <b>allow both</b> or <b>remove both</b>.</p>`
-                        : `<p>You will see <b>one post at a time</b> and decide whether to allow or remove it.</p>`
-                    }
-                    <br>
-                    <p>Click <b>Next</b> to continue to an example.</p>
-                </div>
-            `],
-            show_clickable_nav: true
-        };
-        timeline.push(conditionInstructions);
-
-        const example = {
-            type: jsPsychInstructions,
-            pages: () => [`
-                <div class='instructions'>
-                    <h2>Example</h2>
-                    ${assignedCondition === 'linked_fate'
-                        ? `<p><b>Post A:</b> "I support stricter gun regulations to keep communities safe."</p>
-                           <p><b>Post B:</b> "I oppose stricter gun regulations because they infringe on constitutional rights."</p>
-                           <br>
-                           <p>You would make <b>one decision</b> to <b>allow both</b> or <b>remove both</b>.</p>`
-                        : `<p><b>Post:</b> "I support stricter gun regulations to keep communities safe."</p>
-                           <br>
-                           <p>You would decide whether to <b>allow</b> or <b>remove</b> this post.</p>`
-                    }
+                    <p>You will be shown a series of social media posts.</p>
+                    <p>Your job is to decide whether they should be <b>allowed</b> or <b>removed</b> from the platform.</p>
                     <br>
                     <p>Click <b>Next</b> to continue to a practice trial.</p>
                 </div>
             `],
             show_clickable_nav: true
         };
-        timeline.push(example);
+        timeline.push(conditionInstructions);
 
         // ========== PRACTICE TRIAL ==========
         const practiceTrial = {
             type: jsPsychModerationTrial,
             original_text: "Climate change is a pressing issue that requires immediate attention and action.",
             mirror_text: "Climate change is exaggerated, and we should not rush into costly policies.",
-            show_pair: () => assignedCondition === 'linked_fate',
-            prompt: "Allow or Remove?",
-            allow_label: "Allow",
+            show_pair: () => getPhaseMode(1) !== 'single',
+            evaluation_mode: () => getPhaseMode(1),
+            prompt: () => getPhaseMode(1) === 'linked_fate' ? "Allow Both or Remove Both?" : "Allow or Remove?",
+            keep_label: "Allow",
             remove_label: "Remove",
             progress_label: "Practice Trial",
             data: { trial_type: 'moderation-practice' }
@@ -457,8 +468,8 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Great! You're ready to begin.</h2>
-                    <p>The real study will be just like the practice. There will be <b>${NUM_TRIALS} trials</b> in total.</p>
-                    <p>Please make your decisions based on whether each post should be allowed or removed.</p>
+                    <p>There will be <b>2 sections</b> with <b>${TRIALS_PER_PHASE} trials each</b>, for a total of <b>${NUM_TRIALS} trials</b> (posts to evaluate).</p>
+                    <p>There will be a short break in between.</p>
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
@@ -467,33 +478,87 @@ async function setupExperiment() {
         };
         timeline.push(readyToBegin);
         
-        // ========== MODERATION TRIALS ==========
-        // Generate trials dynamically from assignedPosts
-        // Each trial is added individually since timeline_variables can't be set dynamically
-        for (let i = 0; i < NUM_TRIALS; i++) {
+        // ========== PHASE 1 TRIALS ==========
+        for (let i = 0; i < TRIALS_PER_PHASE; i++) {
             const trialIndex = i;
             const moderationTrial = {
                 type: jsPsychModerationTrial,
                 post_id: () => assignedPosts[trialIndex]?.post_primary_key || '',
                 post_number: () => assignedPosts[trialIndex]?.post_number || '',
+                context_post_id: '',
+                context_post_number: '',
                 sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
                 sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
                 original_text: () => assignedPosts[trialIndex]?.original_text || '',
                 mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
-                show_pair: () => assignedCondition === 'linked_fate',
-                prompt: "Allow or Remove?",
-                allow_label: "Allow",
+                show_pair: () => getPhaseMode(1) !== 'single',
+                evaluation_mode: () => getPhaseMode(1),
+                prompt: () => getPhaseMode(1) === 'linked_fate' ? "Allow Both or Remove Both?" : "Allow or Remove?",
+                keep_label: "Allow",
                 remove_label: "Remove",
                 trial_number: i + 1,
-                total_trials: NUM_TRIALS,
-                data: { trial_type: 'moderation-trial' },
+                total_trials: TRIALS_PER_PHASE,
+                data: { trial_type: 'moderation-trial', phase: 1 },
                 // Skip this trial if no post is assigned
                 conditional_function: () => {
                     const hasPost = assignedPosts[trialIndex] && assignedPosts[trialIndex].original_text;
                     if (trialIndex === 0) {
-                        console.log('Starting moderation trials with', assignedPosts.length, 'posts');
+                        console.log('Starting phase 1 with', assignedPosts.length, 'assigned posts');
                     }
                     return hasPost;
+                }
+            };
+            timeline.push(moderationTrial);
+        }
+
+        // ========== PHASE BREAK ==========
+        timeline.push({
+            type: jsPsychInstructions,
+            pages: () => [`
+                <div class='instructions'>
+                    <h2>Break</h2>
+                    <p>You have completed Section 1.</p>
+                    ${assignedCondition === 'control'
+                        ? `<p>Take a short break if you would like, then click <b>Next</b> to continue to Section 2.</p>`
+                        : assignedCondition === 'training'
+                            ? `<p>In Section 2, the task will be essentially the same, except you will only be evaluating <b>one post at a time</b>.</p>
+                               <p>Take a short break if you would like, then click <b>Next</b> to continue.</p>`
+                            : `<p>In Section 2, the task will be essentially the same, except you will make a decision about only <b>one</b> of the two posts shown. The post you should evaluate will be clearly indicated.</p>
+                               <p>Take a short break if you would like, then click <b>Next</b> to continue.</p>`
+                    }
+                </div>
+            `],
+            show_clickable_nav: true
+        });
+
+        // ========== PHASE 2 TRIALS ==========
+        for (let i = 0; i < TRIALS_PER_PHASE; i++) {
+            const trialIndex = i + TRIALS_PER_PHASE;
+            const moderationTrial = {
+                type: jsPsychModerationTrial,
+                post_id: () => assignedPosts[trialIndex]?.post_primary_key || '',
+                post_number: () => assignedPosts[trialIndex]?.post_number || '',
+                context_post_id: () => getPhaseMode(2) === 'assisted' ? (assistedContextPosts[i]?.post_primary_key || '') : '',
+                context_post_number: () => getPhaseMode(2) === 'assisted' ? (assistedContextPosts[i]?.post_number || '') : '',
+                sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
+                sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
+                original_text: () => assignedPosts[trialIndex]?.original_text || '',
+                mirror_text: () => {
+                    if (getPhaseMode(2) === 'assisted') {
+                        return assistedContextPosts[i]?.claude_mirror || '';
+                    }
+                    return assignedPosts[trialIndex]?.claude_mirror || '';
+                },
+                show_pair: () => getPhaseMode(2) !== 'single',
+                evaluation_mode: () => getPhaseMode(2),
+                prompt: "Allow or Remove?",
+                keep_label: "Allow",
+                remove_label: "Remove",
+                trial_number: i + 1,
+                total_trials: TRIALS_PER_PHASE,
+                data: { trial_type: 'moderation-trial', phase: 2 },
+                conditional_function: () => {
+                    return assignedPosts[trialIndex] && assignedPosts[trialIndex].original_text;
                 }
             };
             timeline.push(moderationTrial);
@@ -541,6 +606,7 @@ async function setupExperiment() {
         // ========== IDEOLOGY ==========
         // (defined in post_surveys.js)
         timeline.push(politicalSurvey);
+        timeline.push(attitudeExtremitySurvey);
         
         // Run the experiment
         jsPsych.run(timeline);
