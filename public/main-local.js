@@ -432,6 +432,13 @@ async function setupExperiment() {
             return 'single';
         };
 
+        const useBothDecisionLabels = (phaseNumber) => {
+            if (phaseNumber === 1) {
+                return assignedCondition === 'training' || assignedCondition === 'training_assisted';
+            }
+            return assignedCondition === 'training';
+        };
+
         const conditionInstructions = {
             type: jsPsychInstructions,
             pages: () => [`
@@ -470,9 +477,9 @@ async function setupExperiment() {
             mirror_text: "Climate change is exaggerated, and we should not rush into costly policies.",
             show_pair: () => getPhaseMode(1) !== 'single',
             evaluation_mode: () => getPhaseMode(1),
-            prompt: () => getPhaseMode(1) === 'linked_fate' ? "Allow Both or Remove Both?" : "Allow or Remove?",
-            keep_label: "Allow",
-            remove_label: "Remove",
+            prompt: "Allow or Remove?",
+            allow_label: () => useBothDecisionLabels(1) ? "Allow Both" : "Allow",
+            remove_label: () => useBothDecisionLabels(1) ? "Remove Both" : "Remove",
             progress_label: "Practice Trial",
             data: { trial_type: 'moderation-practice' }
         };
@@ -509,9 +516,9 @@ async function setupExperiment() {
                 mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
                 show_pair: () => getPhaseMode(1) !== 'single',
                 evaluation_mode: () => getPhaseMode(1),
-                prompt: () => getPhaseMode(1) === 'linked_fate' ? "Allow Both or Remove Both?" : "Allow or Remove?",
-                keep_label: "Allow",
-                remove_label: "Remove",
+                prompt: "Allow or Remove?",
+                allow_label: () => useBothDecisionLabels(1) ? "Allow Both" : "Allow",
+                remove_label: () => useBothDecisionLabels(1) ? "Remove Both" : "Remove",
                 trial_number: i + 1,
                 total_trials: TRIALS_PER_PHASE,
                 data: { trial_type: 'moderation-trial', phase: 1 },
@@ -568,8 +575,8 @@ async function setupExperiment() {
                 show_pair: () => getPhaseMode(2) !== 'single',
                 evaluation_mode: () => getPhaseMode(2),
                 prompt: "Allow or Remove?",
-                keep_label: "Allow",
-                remove_label: "Remove",
+                allow_label: () => useBothDecisionLabels(2) ? "Allow Both" : "Allow",
+                remove_label: () => useBothDecisionLabels(2) ? "Remove Both" : "Remove",
                 trial_number: i + 1,
                 total_trials: TRIALS_PER_PHASE,
                 data: { trial_type: 'moderation-trial', phase: 2 },
