@@ -466,8 +466,24 @@ async function setupExperiment() {
             pages: () => [`
                 <div class='instructions'>
                     <h2>Your Task</h2>
-                    <p>You will be shown a series of social media posts.</p>
-                    <p>Your job is to decide whether each one should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                    ${assignedCondition === 'control'
+                        ? `<p>You will be shown a series of <b>political</b> social media posts.</p>
+                           <p>Your job is to decide whether each one should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                           <p><i>How should you make your decision? (add text here later)</i></p>`
+                        : `<p>You will be shown a series of <b>pairs</b> of political social media posts.</p> 
+                           <p>The pairs are political <b>mirrors</b> of each other.</p>
+                           <br>
+                           <p><b>For example:</b></p>
+                           <p><b>Original Text:</b><br>
+                           <i>I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!</i></p>
+                           <p><b>Mirror Text:</b><br>
+                           <i>I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!</i></p>
+                           <p>The mirror text recreates the original message from the opposite political stance. It changes the core message to match that opposite stance.
+                              In other words, the mirror text is not a response to the original text. It replicates the original message as if written from the opposite political stance.</p>
+                            <br>
+                           <p>Your job is to decide whether <b>both posts in the pair</b> should be <b>allowed</b> or <b>removed</b>.</p>
+                           <p><i>How should you make your decision? (add text here later)</i></p>`
+                    }
                     <br>
                     <p>Click <b>Next</b> to continue to a practice trial.</p>
                 </div>
