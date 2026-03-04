@@ -442,22 +442,26 @@ async function setupExperiment() {
                 <div class='instructions'>
                     <h2>Your Task</h2>
                     ${assignedCondition === 'control'
-                        ? `<p>You will be shown a series of <b>political</b> social media posts.</p>
-                           <p>Your job is to decide whether they should be <b>allowed</b> or <b>removed</b> from the platform.</p>
-                           <p><i>How should you make your decision? (add text here later)</i></p>`
-                        : `<p>You will be shown a series of <b>pairs</b> of political social media posts.</p> 
-                           <p>The pairs are political <b>mirrors</b> of each other.</p>
+                        // control
+                        ? `<p>We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated.</p>
+                           <p>Your task is to review a series of real political social media posts and decide whether they should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                           <p>When making your decisions, consider generally whether a post contributes to a <b>healthy environment for political discussion</b>, or whether it would be <b>unhealthy for political discussion</b>. Your goal is to evaluate the messages, using your own judgment.</p>
+                           <p>There are no right or wrong answers - we are interested in what you personally think.</p>`
+                        // training, training_assisted
+                        : `<p>We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. 
+                            Your task will be to review a series of <b>pairs</b> of real political social media posts, and decide whether <b>both posts in the pair</b> should be <b>allowed</b> or <b>removed</b> from the platform.</p>
                            <br>
-                           <p><b>For example:</b></p>
+                           <p>The pairs are <b>political mirrors</b> of each other. This means that the mirror text <b>recreates the original message</b> from the <b>opposite political stance</b>. For example:</p>
                            <p><b>Original Text:</b><br>
                            <i>I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!</i></p>
                            <p><b>Mirror Text:</b><br>
                            <i>I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!</i></p>
-                           <p>The mirror text recreates the original message from the opposite political stance. It changes the core message to match that opposite stance.
-                              In other words, the mirror text is not a response to the original text. It replicates the original message as if written from the opposite political stance.</p>
+                           <p>Notice that the mirror text changes the core message to match that of the opposite political stance.
+                              In other words, the mirror text is <b>not a response to the original text</b> - it replicates the original message as if written from the opposite political stance.</p>
                             <br>
-                           <p>Your job is to decide whether <b>both posts in the pair</b> should be <b>allowed</b> or <b>removed</b>.</p>
-                           <p><i>How should you make your decision? (add text here later)</i></p>`
+                           <p>Your job is to decide whether <b>both posts in the pair</b> should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                           <p>When making your decisions, consider generally whether a post contributes to a <b>healthy environment for political discussion</b>, or whether it would be <b>unhealthy for political discussion</b>. Your goal is to evaluate the messages, using your own judgment.</p>
+                           <p>There are no right or wrong answers - we are interested in what you personally think.</p>`
                     }
                     <br>
                     <p>Click <b>Next</b> to continue to a practice trial.</p>
