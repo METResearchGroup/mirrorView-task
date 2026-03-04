@@ -12,7 +12,8 @@ import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3
 const s3Client = new S3Client({ region: "us-east-2" });
 
 // Configuration - matches existing setup
-const BUCKET_NAME = 'jspsych-mirror-view';
+// const BUCKET_NAME = 'jspsych-mirror-view';
+const BUCKET_NAME = 'jspsych-mirror-view-2';
 const POST_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
 const POST_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
 const PENDING_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
