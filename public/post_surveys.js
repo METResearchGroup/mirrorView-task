@@ -824,7 +824,7 @@ const attitudeExtremitySurvey = {
                     <tr>
                         <td style="padding: 12px 10px; width: 36%; border-top: 1px solid #e5e7eb;">Reducing access to abortion</td>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
-                            <input type="range" name="attitude_reduce_abortion" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <input class="attitude-range" type="range" name="attitude_reduce_abortion" min="0" max="100" step="1" value="50" style="width: 100%;">
                             <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
                                 <span>0</span><span>50</span><span>100</span>
                             </div>
@@ -833,7 +833,7 @@ const attitudeExtremitySurvey = {
                     <tr>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Providing a path to citizenship for undocumented immigrants</td>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
-                            <input type="range" name="attitude_citizenship_undocumented" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <input class="attitude-range" type="range" name="attitude_citizenship_undocumented" min="0" max="100" step="1" value="50" style="width: 100%;">
                             <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
                                 <span>0</span><span>50</span><span>100</span>
                             </div>
@@ -842,7 +842,7 @@ const attitudeExtremitySurvey = {
                     <tr>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Increasing restrictions on gun ownership</td>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
-                            <input type="range" name="attitude_restrict_guns" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <input class="attitude-range" type="range" name="attitude_restrict_guns" min="0" max="100" step="1" value="50" style="width: 100%;">
                             <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
                                 <span>0</span><span>50</span><span>100</span>
                             </div>
@@ -851,7 +851,7 @@ const attitudeExtremitySurvey = {
                     <tr>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Increasing government regulations to protect the environment</td>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
-                            <input type="range" name="attitude_regulate_environment" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <input class="attitude-range" type="range" name="attitude_regulate_environment" min="0" max="100" step="1" value="50" style="width: 100%;">
                             <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
                                 <span>0</span><span>50</span><span>100</span>
                             </div>
@@ -860,7 +860,7 @@ const attitudeExtremitySurvey = {
                     <tr>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Raising taxes on the wealthiest Americans</td>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
-                            <input type="range" name="attitude_raise_wealth_taxes" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <input class="attitude-range" type="range" name="attitude_raise_wealth_taxes" min="0" max="100" step="1" value="50" style="width: 100%;">
                             <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
                                 <span>0</span><span>50</span><span>100</span>
                             </div>
@@ -869,7 +869,7 @@ const attitudeExtremitySurvey = {
                     <tr>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Expanding Medicaid to cover all currently uninsured Americans</td>
                         <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
-                            <input type="range" name="attitude_expand_medicaid" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <input class="attitude-range" type="range" name="attitude_expand_medicaid" min="0" max="100" step="1" value="50" style="width: 100%;">
                             <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
                                 <span>0</span><span>50</span><span>100</span>
                             </div>

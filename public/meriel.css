@@ -295,6 +295,55 @@
     color: #333;
 }
 
+/* neutral slider styling for attitudeExtremitySurvey */
+.attitude-range {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 10px;
+    border-radius: 999px;
+    background: #6b7280;
+    outline: none;
+}
+
+.attitude-range::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #4b5563;
+}
+
+.attitude-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1f2937;
+    border: 2px solid #e5e7eb;
+    margin-top: -5px;
+    cursor: pointer;
+}
+
+.attitude-range::-moz-range-track {
+    height: 10px;
+    border-radius: 999px;
+    background: #4b5563;
+}
+
+.attitude-range::-moz-range-progress {
+    height: 10px;
+    border-radius: 999px;
+    background: #4b5563;
+}
+
+.attitude-range::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1f2937;
+    border: 2px solid #e5e7eb;
+    cursor: pointer;
+}
+
 /* mimic plugin-survey-multi-select.js */
 .multi-select-options {
     display: flex;
