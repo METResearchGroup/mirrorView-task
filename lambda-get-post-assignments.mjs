@@ -22,6 +22,12 @@ const POST_CATALOG_KEY = 'img/all_mirrors_claude.csv';
 
 const NUM_POSTS_PER_PARTICIPANT = 20;
 const CONDITIONS = ['control', 'training', 'training_assisted'];
+// Pilot support: for the final 20 participants of the 90-person pilot, we only
+// allow control/training to land so that `training_assisted` stops drifting.
+const PILOT_TOTAL_TARGET = 90;
+const PILOT_NEXT_BATCH_SIZE = 20;
+const PILOT_NEXT_BATCH_ONLY_CONTROL_TRAINING_START =
+    PILOT_TOTAL_TARGET - PILOT_NEXT_BATCH_SIZE; // e.g. 70 (start restricting)
 const CATEGORY_ORDER = [
     'left__sample_low_toxicity',
     'left__sample_high_toxicity',
@@ -236,9 +242,57 @@ export const handler = async (event) => {
         if (inferredTest && requestedCondition) {
             assignedCondition = requestedCondition;
         } else {
-            // Assign condition globally in round-robin order to keep 3-way balance.
+            // Assign condition globally with pending-aware balancing to prevent drift
+            // during concurrent sign-ups.
             const totalCompleted = Object.keys(assignments.participants || {}).length;
-            assignedCondition = CONDITIONS[totalCompleted % CONDITIONS.length];
+            const totalPending = Object.keys(pendingAssignments || {}).length;
+            const totalCommitted = totalCompleted + totalPending;
+
+            // Use committed (completed+pending) so we don't keep restricting
+            // indefinitely while earlier sign-ups are still in-flight.
+            const inPilotTail = totalCommitted >= PILOT_NEXT_BATCH_ONLY_CONTROL_TRAINING_START && totalCommitted < PILOT_TOTAL_TARGET;
+            const allowedConditions = inPilotTail ? ['control', 'training'] : CONDITIONS;
+
+            // Count both completed and pending:
+            // - party-aware counts (primary): balance control/training within this party_group
+            // - global counts (tie-break): avoid systematic drift overall
+            const partyConditionCounts = {};
+            const globalConditionCounts = {};
+            allowedConditions.forEach(c => {
+                partyConditionCounts[c] = 0;
+                globalConditionCounts[c] = 0;
+            });
+
+            // Completed history
+            Object.values(assignments.participants || {}).forEach(p => {
+                if (!p) return;
+                if (!allowedConditions.includes(p.condition)) return;
+                globalConditionCounts[p.condition] += 1;
+                if (p.party !== party_group) return;
+                partyConditionCounts[p.condition] += 1;
+            });
+
+            // Pending in-flight reservations
+            Object.values(pendingAssignments || {}).forEach(pending => {
+                if (!pending) return;
+                if (!allowedConditions.includes(pending.condition)) return;
+                globalConditionCounts[pending.condition] += 1;
+                if (pending.party !== party_group) return;
+                partyConditionCounts[pending.condition] += 1;
+            });
+
+            // Primary: balance within this party_group
+            const minPartyCount = Math.min(...allowedConditions.map(c => partyConditionCounts[c] ?? 0));
+            const partyCandidates = allowedConditions.filter(c => (partyConditionCounts[c] ?? 0) === minPartyCount);
+
+            if (partyCandidates.length === 1) {
+                assignedCondition = partyCandidates[0];
+            } else {
+                // Tie-break: balance globally
+                const minGlobalCount = Math.min(...partyCandidates.map(c => globalConditionCounts[c] ?? 0));
+                const globalCandidates = partyCandidates.filter(c => (globalConditionCounts[c] ?? 0) === minGlobalCount);
+                assignedCondition = globalCandidates[totalCommitted % globalCandidates.length];
+            }
         }
 
         // Find available posts
@@ -260,14 +314,161 @@ export const handler = async (event) => {
             return CATEGORY_ORDER.includes(key) ? key : null;
         };
 
-        const getConditionCount = (post) => {
-            const assignment = assignments.posts[post.post_id];
-            if (!assignment?.counts) return 0;
-            if (assignedCondition === 'training') {
-                return assignment.counts.training || assignment.counts.linked_fate || 0;
+        /**
+         * Reorder selected posts so that the first half and second half have:
+         * - balanced stance counts (left/right as even as possible)
+         * - balanced toxicity counts (low/high/middle as even as possible)
+         * - less stance clustering (avoid long left-left... runs)
+         *
+         * This only changes the order of `assigned_post_ids` (which the client slices
+         * into phase 1 vs phase 2). It does not change which posts are assigned.
+         */
+        const reorderPostsForPhaseBalance = (posts, phaseSize) => {
+            if (!Array.isArray(posts) || posts.length !== phaseSize * 2) return posts;
+
+            const normalizeStance = (p) => String(p.sampled_stance || '').trim().toLowerCase();
+            const normalizeTox = (p) => String(p.sample_toxicity_type || '').trim().toLowerCase();
+
+            const countTotals = (arr) => {
+                const totals = {
+                    left: 0,
+                    right: 0,
+                    sample_low_toxicity: 0,
+                    sample_high_toxicity: 0,
+                    sample_middle_toxicity: 0
+                };
+                for (const p of arr) {
+                    const stance = normalizeStance(p);
+                    if (stance === 'left') totals.left += 1;
+                    else if (stance === 'right') totals.right += 1;
+
+                    const tox = normalizeTox(p);
+                    if (tox in totals) totals[tox] += 1;
+                }
+                return totals;
+            };
+
+            const totals = countTotals(posts);
+
+            // Allowed per-half counts are floor/ceil splits of the totals.
+            const allowedCounts = (total) => {
+                const a = Math.floor(total / 2);
+                const b = Math.ceil(total / 2);
+                return Array.from(new Set([a, b]));
+            };
+
+            const allowedLeft = allowedCounts(totals.left);
+            const allowedToxMid = allowedCounts(totals.sample_middle_toxicity);
+            const allowedToxLow = allowedCounts(totals.sample_low_toxicity);
+            const allowedToxHigh = allowedCounts(totals.sample_high_toxicity);
+
+            const shuffleInPlace = (arr) => {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            };
+
+            const maxRun = (seq) => {
+                let best = 1;
+                let cur = 1;
+                for (let i = 1; i < seq.length; i++) {
+                    if (seq[i] === seq[i - 1]) {
+                        cur += 1;
+                        best = Math.max(best, cur);
+                    } else {
+                        cur = 1;
+                    }
+                }
+                return best;
+            };
+
+            const transitions = (seq) => {
+                let t = 0;
+                for (let i = 1; i < seq.length; i++) {
+                    if (seq[i] !== seq[i - 1]) t += 1;
+                }
+                return t;
+            };
+
+            const isValid = (half) => {
+                if (half.length !== phaseSize) return false;
+                const c = countTotals(half);
+
+                // Balance stance and toxicity as evenly as possible.
+                if (!allowedLeft.includes(c.left)) return false;
+                if (c.left + c.right !== phaseSize) return false;
+                if (!allowedToxMid.includes(c.sample_middle_toxicity)) return false;
+                if (!allowedToxLow.includes(c.sample_low_toxicity)) return false;
+                if (!allowedToxHigh.includes(c.sample_high_toxicity)) return false;
+
+                // Sanity: toxicity + stance should fully account for the half.
+                const toxSum = c.sample_low_toxicity + c.sample_high_toxicity + c.sample_middle_toxicity;
+                if (toxSum !== phaseSize) return false;
+
+                // Avoid heavy clustering of the same stance.
+                const stanceSeq = half.map(p => normalizeStance(p));
+                const run = maxRun(stanceSeq);
+                const trans = transitions(stanceSeq);
+
+                // Two-tier constraints: prefer interleaving, but relax if needed.
+                // (With 5/5, max run <= 3 eliminates the obvious "all left then all right" pattern.)
+                // Avoid the specific failure mode you saw: long left-left-left-left streaks.
+                if (run > 3) return false;
+                if (trans < 3) return false;
+
+                return true;
+            };
+
+            const tryBudget = 800;
+            for (let attempt = 0; attempt < tryBudget; attempt++) {
+                const candidate = shuffleInPlace(posts.slice());
+                const p1 = candidate.slice(0, phaseSize);
+                const p2 = candidate.slice(phaseSize);
+
+                if (isValid(p1) && isValid(p2)) {
+                    return candidate;
+                }
             }
-            return assignment.counts[assignedCondition] || 0;
+
+            // Fallback: at least shuffle to remove the deterministic stance clustering.
+            return shuffleInPlace(posts.slice());
         };
+
+        // Count condition exposure per *party* for this participant request.
+        // We compute this from `assignments.participants` (which is party-aware),
+        // so we can enforce "at most once per (party, condition, post)" without
+        // relying on non-party-specific counters in `assignments.posts`.
+        const conditionCountByPostId = new Map();
+        const participantsObj = assignments.participants || {};
+        Object.values(participantsObj).forEach(participant => {
+            if (!participant) return;
+            if (participant.party !== party_group) return;
+            if (participant.condition !== assignedCondition) return;
+            const postsArr = participant.posts || [];
+            postsArr.forEach(p => {
+                const postId = p?.post_id || p;
+                if (!postId) return;
+                conditionCountByPostId.set(postId, (conditionCountByPostId.get(postId) || 0) + 1);
+            });
+        });
+
+        // Also count *pending* assignments so we don't hand out the same
+        // (party, condition, post) cell to multiple participants while earlier
+        // ones are still in-flight.
+        Object.values(pendingAssignments || {}).forEach(pending => {
+            if (!pending) return;
+            if (pending.party !== party_group) return;
+            if (pending.condition !== assignedCondition) return;
+            const postsArr = pending.posts || [];
+            postsArr.forEach(p => {
+                const postId = p?.post_id || p;
+                if (!postId) return;
+                conditionCountByPostId.set(postId, (conditionCountByPostId.get(postId) || 0) + 1);
+            });
+        });
+        const getConditionCount = (post) => conditionCountByPostId.get(post.post_id) || 0;
 
         const selectedPosts = [];
         const selectedIds = new Set();
@@ -368,17 +569,7 @@ export const handler = async (event) => {
             if (!key) return;
             if (getConditionCount(post) === 0) {
                 unseenBuckets[key].push(post);
-            } else {
-                seenBuckets[key].push(post);
             }
-        });
-        CATEGORY_ORDER.forEach(key => {
-            seenBuckets[key].sort((a, b) => {
-                const aCount = getConditionCount(a);
-                const bCount = getConditionCount(b);
-                if (aCount !== bCount) return aCount - bCount;
-                return Number(a.post_number) - Number(b.post_number);
-            });
         });
 
         rotatedOrder.forEach(key => {
@@ -395,35 +586,13 @@ export const handler = async (event) => {
             }
         });
 
-        rotatedOrder.forEach(key => {
-            const target = targetByCell[key] || 0;
-            while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && selectedCountByCell[key] < target) {
-                const seen = seenBuckets[key];
-                if (!seen || seen.length === 0) break;
-                const post = seen.shift();
-                if (!selectedIds.has(post.post_id)) {
-                    selectedIds.add(post.post_id);
-                    selectedPosts.push(post);
-                    selectedCountByCell[key] += 1;
-                }
-            }
-        });
-
-        let pickedInPass = true;
-        while (selectedPosts.length < NUM_POSTS_PER_PARTICIPANT && pickedInPass) {
-            pickedInPass = false;
-            for (let i = 0; i < rotatedOrder.length && selectedPosts.length < NUM_POSTS_PER_PARTICIPANT; i++) {
-                const key = rotatedOrder[i];
-                const bucket = seenBuckets[key];
-                if (bucket && bucket.length > 0) {
-                    const post = bucket.shift();
-                    if (!selectedIds.has(post.post_id)) {
-                        selectedIds.add(post.post_id);
-                        selectedPosts.push(post);
-                        selectedCountByCell[key] += 1;
-                        pickedInPass = true;
-                    }
-                }
+        // Fix deterministic stance clustering across phase boundaries by reordering.
+        // Client assigns phase 1 to indices 0..TRIALS_PER_PHASE-1 and phase 2 to the rest.
+        const phaseSize = Math.floor(NUM_POSTS_PER_PARTICIPANT / 2);
+        if (selectedPosts.length === phaseSize * 2) {
+            const ordered = reorderPostsForPhaseBalance(selectedPosts, phaseSize);
+            if (Array.isArray(ordered) && ordered.length === selectedPosts.length) {
+                selectedPosts.splice(0, selectedPosts.length, ...ordered);
             }
         }
 
