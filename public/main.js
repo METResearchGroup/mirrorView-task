@@ -290,7 +290,6 @@ let allMirrorData = [];
 
 // Store assigned posts (populated after political affiliation)
 let assignedPosts = [];
-let assistedContextPosts = [];
 
 // Store assigned condition
 let assignedCondition = null;
@@ -431,13 +430,6 @@ async function setupExperiment() {
                         assignedCondition = result.condition || assignedCondition || 'control';
                         jsPsych.data.addProperties({ condition: assignedCondition });
 
-                        if (assignedCondition === 'training_assisted') {
-                            const assignedIds = new Set(assignedPosts.map(p => p?.post_primary_key).filter(Boolean));
-                            assistedContextPosts = allMirrorData.filter(p => !assignedIds.has(p.post_primary_key)).slice(0, TRIALS_PER_PHASE);
-                        } else {
-                            assistedContextPosts = [];
-                        }
-                        
                         console.log(`Assigned ${assignedPosts.length} posts to participant`);
                     }
                     
@@ -593,17 +585,12 @@ async function setupExperiment() {
                 type: jsPsychModerationTrial,
                 post_id: () => assignedPosts[trialIndex]?.post_primary_key || '',
                 post_number: () => assignedPosts[trialIndex]?.post_number || '',
-                context_post_id: () => getPhaseMode(2) === 'assisted' ? (assistedContextPosts[i]?.post_primary_key || '') : '',
-                context_post_number: () => getPhaseMode(2) === 'assisted' ? (assistedContextPosts[i]?.post_number || '') : '',
+                context_post_id: '',
+                context_post_number: '',
                 sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
                 sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
                 original_text: () => assignedPosts[trialIndex]?.original_text || '',
-                mirror_text: () => {
-                    if (getPhaseMode(2) === 'assisted') {
-                        return assistedContextPosts[i]?.claude_mirror || '';
-                    }
-                    return assignedPosts[trialIndex]?.claude_mirror || '';
-                },
+                mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
                 show_pair: () => getPhaseMode(2) !== 'single',
                 evaluation_mode: () => getPhaseMode(2),
                 prompt: "Allow or Remove?",
