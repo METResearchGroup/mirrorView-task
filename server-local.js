@@ -105,12 +105,6 @@ function getAssignmentContext({ prolificID, isTest }) {
 
 const NUM_POSTS_PER_PARTICIPANT = 20;
 const CONDITIONS = ['control', 'training', 'training_assisted'];
-// Pilot support: for the final 20 participants of the 90-person pilot, we only
-// allow control/training to land so that `training_assisted` stops drifting.
-const PILOT_TOTAL_TARGET = 90;
-const PILOT_NEXT_BATCH_SIZE = 20;
-const PILOT_NEXT_BATCH_ONLY_CONTROL_TRAINING_START =
-    PILOT_TOTAL_TARGET - PILOT_NEXT_BATCH_SIZE; // e.g. 70 (start restricting)
 const POST_CATALOG_FILE = path.join(__dirname, 'public', 'img', 'all_mirrors_claude.csv');
 const CATEGORY_ORDER = [
     'left__sample_low_toxicity',
@@ -305,10 +299,7 @@ app.post('/get-post-assignments', (req, res) => {
         const totalPending = Object.keys(pendingAssignments || {}).length;
         const totalCommitted = totalCompleted + totalPending;
 
-        // Use committed (completed+pending) so we don't keep restricting
-        // indefinitely while earlier sign-ups are still in-flight.
-        const inPilotTail = totalCommitted >= PILOT_NEXT_BATCH_ONLY_CONTROL_TRAINING_START && totalCommitted < PILOT_TOTAL_TARGET;
-        const allowedConditions = inPilotTail ? ['control', 'training'] : CONDITIONS;
+        const allowedConditions = CONDITIONS;
 
         // Count both completed and pending:
         // - party-aware counts (primary): balance control/training within this party_group

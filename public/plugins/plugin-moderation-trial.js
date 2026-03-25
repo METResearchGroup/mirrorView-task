@@ -232,7 +232,10 @@ var jsPsychModerationTrial = (function (jspsych) {
                         sampled_stance: trial.sampled_stance,
                         sample_toxicity_type: trial.sample_toxicity_type,
                         original_text: trial.original_text,
-                        mirror_text: trial.mirror_text,
+                        // Only store mirror_text when a mirror is actually displayed.
+                        // (In single mode, main.js still passes mirror_text, but we want
+                        // the data rows to reflect what participants saw.)
+                        mirror_text: (isPair || isAssisted) ? trial.mirror_text : null,
                         show_pair: isPair,
                         evaluation_mode: mode,
                         decision,
