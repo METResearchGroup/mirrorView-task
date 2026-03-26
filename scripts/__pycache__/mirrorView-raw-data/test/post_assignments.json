@@ -1,0 +1,1530 @@
+{
+  "posts": {
+    "twitter_d7de4c9be816d0de": {
+      "post_number": "56",
+      "counts": {
+        "control": 1,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_864ef1fa9d96d53b": {
+      "post_number": "27",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_f45b4c1387d7d81d": {
+      "post_number": "26",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_6f2aceb89a178e61": {
+      "post_number": "54",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_5762a4c7cf413b1b": {
+      "post_number": "66",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_ca0138aaee9c6261": {
+      "post_number": "13",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_aa29b185c07e7dda": {
+      "post_number": "5",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_a173bee932bf75b3": {
+      "post_number": "28",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_a4a2713f0717b9e5": {
+      "post_number": "68",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_ea19d2c1bbd4db3d": {
+      "post_number": "44",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_48b57de1f22fa206": {
+      "post_number": "30",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_dc47f375e4ee2abb": {
+      "post_number": "70",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_c4729e30219f5485": {
+      "post_number": "43",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_bc2d2d707bb82986": {
+      "post_number": "67",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_f589983318d11147": {
+      "post_number": "29",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_7a9e55165fdf6d88": {
+      "post_number": "6",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_0db5d3adfe5790a7": {
+      "post_number": "4",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_0011616b8c8f2858": {
+      "post_number": "69",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_566b6db03c66be4e": {
+      "post_number": "55",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_7777a34ff4a21d0d": {
+      "post_number": "14",
+      "counts": {
+        "control": 2,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_0735057d44610df6": {
+      "post_number": "1",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_b6241fe00c6ccabd": {
+      "post_number": "12",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_280ffca790c5d454": {
+      "post_number": "63",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_34afefe387a213a9": {
+      "post_number": "24",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_cc0cbd3094aedb65": {
+      "post_number": "22",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_05ffb51ed38ff21b": {
+      "post_number": "62",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_d813488c05fa3895": {
+      "post_number": "3",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_3c79eac98fa05287": {
+      "post_number": "61",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_01ee2a186796122b": {
+      "post_number": "52",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_ee6dd0a2fc387a44": {
+      "post_number": "42",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_3b06c93d1f3cb2ea": {
+      "post_number": "64",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_1d17abb055446f39": {
+      "post_number": "51",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_3b341f025594d2ad": {
+      "post_number": "53",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_7b326beaafa0a686": {
+      "post_number": "11",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_11e8297d7504a414": {
+      "post_number": "41",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_166720149b1f6891": {
+      "post_number": "23",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_7c3277bd04c82fa4": {
+      "post_number": "2",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_10a5698d537e7c26": {
+      "post_number": "65",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_cfb6a196b265ed91": {
+      "post_number": "25",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_ff043027c4aa184a": {
+      "post_number": "21",
+      "counts": {
+        "control": 2,
+        "training": 2,
+        "training_assisted": 2
+      }
+    },
+    "twitter_11ab0d1c18251423": {
+      "post_number": "15",
+      "counts": {
+        "control": 1,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_abfb4fb99cb8531e": {
+      "post_number": "8",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_876cca67783a5ca4": {
+      "post_number": "46",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_9063ffb9c7c5a28f": {
+      "post_number": "34",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_fc3762cbe022ab71": {
+      "post_number": "72",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_019ea46e4ee35de7": {
+      "post_number": "35",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_da0686b085dd054f": {
+      "post_number": "17",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_e916eef42251ec6e": {
+      "post_number": "57",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_10e2a2fd36936dea": {
+      "post_number": "73",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_c97491ba7351aa70": {
+      "post_number": "32",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_878f58adf18fee0e": {
+      "post_number": "9",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_9cba0815ecc0cc6a": {
+      "post_number": "75",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_45d045836925cbfe": {
+      "post_number": "58",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_135cb82e54764618": {
+      "post_number": "45",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_cd913fcb3c7d2c78": {
+      "post_number": "33",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_ee3b7bd11a459d30": {
+      "post_number": "74",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_bd0f5c96a2340877": {
+      "post_number": "7",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_86c30be6086b16fe": {
+      "post_number": "31",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_d9e8db298dc70fef": {
+      "post_number": "71",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    },
+    "twitter_15388b8f406f036f": {
+      "post_number": "16",
+      "counts": {
+        "control": 0,
+        "training": 1,
+        "training_assisted": 1
+      }
+    }
+  },
+  "participants": {
+    "UNKNOWN_1774448140759": {
+      "party": "republican",
+      "condition": "training_assisted",
+      "posts": [
+        {
+          "post_id": "twitter_d7de4c9be816d0de",
+          "post_number": "56"
+        },
+        {
+          "post_id": "twitter_864ef1fa9d96d53b",
+          "post_number": "27"
+        },
+        {
+          "post_id": "twitter_f45b4c1387d7d81d",
+          "post_number": "26"
+        },
+        {
+          "post_id": "twitter_6f2aceb89a178e61",
+          "post_number": "54"
+        },
+        {
+          "post_id": "twitter_5762a4c7cf413b1b",
+          "post_number": "66"
+        },
+        {
+          "post_id": "twitter_ca0138aaee9c6261",
+          "post_number": "13"
+        },
+        {
+          "post_id": "twitter_aa29b185c07e7dda",
+          "post_number": "5"
+        },
+        {
+          "post_id": "twitter_a173bee932bf75b3",
+          "post_number": "28"
+        },
+        {
+          "post_id": "twitter_a4a2713f0717b9e5",
+          "post_number": "68"
+        },
+        {
+          "post_id": "twitter_ea19d2c1bbd4db3d",
+          "post_number": "44"
+        },
+        {
+          "post_id": "twitter_48b57de1f22fa206",
+          "post_number": "30"
+        },
+        {
+          "post_id": "twitter_dc47f375e4ee2abb",
+          "post_number": "70"
+        },
+        {
+          "post_id": "twitter_c4729e30219f5485",
+          "post_number": "43"
+        },
+        {
+          "post_id": "twitter_bc2d2d707bb82986",
+          "post_number": "67"
+        },
+        {
+          "post_id": "twitter_f589983318d11147",
+          "post_number": "29"
+        },
+        {
+          "post_id": "twitter_7a9e55165fdf6d88",
+          "post_number": "6"
+        },
+        {
+          "post_id": "twitter_0db5d3adfe5790a7",
+          "post_number": "4"
+        },
+        {
+          "post_id": "twitter_0011616b8c8f2858",
+          "post_number": "69"
+        },
+        {
+          "post_id": "twitter_566b6db03c66be4e",
+          "post_number": "55"
+        },
+        {
+          "post_id": "twitter_7777a34ff4a21d0d",
+          "post_number": "14"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:15:48.172Z"
+    },
+    "UNKNOWN_1774447912178": {
+      "party": "democrat",
+      "condition": "training_assisted",
+      "posts": [
+        {
+          "post_id": "twitter_0735057d44610df6",
+          "post_number": "1"
+        },
+        {
+          "post_id": "twitter_b6241fe00c6ccabd",
+          "post_number": "12"
+        },
+        {
+          "post_id": "twitter_280ffca790c5d454",
+          "post_number": "63"
+        },
+        {
+          "post_id": "twitter_34afefe387a213a9",
+          "post_number": "24"
+        },
+        {
+          "post_id": "twitter_cc0cbd3094aedb65",
+          "post_number": "22"
+        },
+        {
+          "post_id": "twitter_05ffb51ed38ff21b",
+          "post_number": "62"
+        },
+        {
+          "post_id": "twitter_d813488c05fa3895",
+          "post_number": "3"
+        },
+        {
+          "post_id": "twitter_3c79eac98fa05287",
+          "post_number": "61"
+        },
+        {
+          "post_id": "twitter_01ee2a186796122b",
+          "post_number": "52"
+        },
+        {
+          "post_id": "twitter_ee6dd0a2fc387a44",
+          "post_number": "42"
+        },
+        {
+          "post_id": "twitter_3b06c93d1f3cb2ea",
+          "post_number": "64"
+        },
+        {
+          "post_id": "twitter_1d17abb055446f39",
+          "post_number": "51"
+        },
+        {
+          "post_id": "twitter_3b341f025594d2ad",
+          "post_number": "53"
+        },
+        {
+          "post_id": "twitter_7b326beaafa0a686",
+          "post_number": "11"
+        },
+        {
+          "post_id": "twitter_11e8297d7504a414",
+          "post_number": "41"
+        },
+        {
+          "post_id": "twitter_166720149b1f6891",
+          "post_number": "23"
+        },
+        {
+          "post_id": "twitter_7c3277bd04c82fa4",
+          "post_number": "2"
+        },
+        {
+          "post_id": "twitter_10a5698d537e7c26",
+          "post_number": "65"
+        },
+        {
+          "post_id": "twitter_cfb6a196b265ed91",
+          "post_number": "25"
+        },
+        {
+          "post_id": "twitter_ff043027c4aa184a",
+          "post_number": "21"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:22.153Z"
+    },
+    "UNKNOWN_1774447949958": {
+      "party": "democrat",
+      "condition": "control",
+      "posts": [
+        {
+          "post_id": "twitter_34afefe387a213a9",
+          "post_number": "24"
+        },
+        {
+          "post_id": "twitter_7b326beaafa0a686",
+          "post_number": "11"
+        },
+        {
+          "post_id": "twitter_cfb6a196b265ed91",
+          "post_number": "25"
+        },
+        {
+          "post_id": "twitter_3c79eac98fa05287",
+          "post_number": "61"
+        },
+        {
+          "post_id": "twitter_11e8297d7504a414",
+          "post_number": "41"
+        },
+        {
+          "post_id": "twitter_3b341f025594d2ad",
+          "post_number": "53"
+        },
+        {
+          "post_id": "twitter_166720149b1f6891",
+          "post_number": "23"
+        },
+        {
+          "post_id": "twitter_ee6dd0a2fc387a44",
+          "post_number": "42"
+        },
+        {
+          "post_id": "twitter_05ffb51ed38ff21b",
+          "post_number": "62"
+        },
+        {
+          "post_id": "twitter_7c3277bd04c82fa4",
+          "post_number": "2"
+        },
+        {
+          "post_id": "twitter_b6241fe00c6ccabd",
+          "post_number": "12"
+        },
+        {
+          "post_id": "twitter_d813488c05fa3895",
+          "post_number": "3"
+        },
+        {
+          "post_id": "twitter_280ffca790c5d454",
+          "post_number": "63"
+        },
+        {
+          "post_id": "twitter_0735057d44610df6",
+          "post_number": "1"
+        },
+        {
+          "post_id": "twitter_ff043027c4aa184a",
+          "post_number": "21"
+        },
+        {
+          "post_id": "twitter_1d17abb055446f39",
+          "post_number": "51"
+        },
+        {
+          "post_id": "twitter_3b06c93d1f3cb2ea",
+          "post_number": "64"
+        },
+        {
+          "post_id": "twitter_cc0cbd3094aedb65",
+          "post_number": "22"
+        },
+        {
+          "post_id": "twitter_01ee2a186796122b",
+          "post_number": "52"
+        },
+        {
+          "post_id": "twitter_10a5698d537e7c26",
+          "post_number": "65"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:53.632Z"
+    },
+    "UNKNOWN_1774447975711": {
+      "party": "republican",
+      "condition": "control",
+      "posts": [
+        {
+          "post_id": "twitter_dc47f375e4ee2abb",
+          "post_number": "70"
+        },
+        {
+          "post_id": "twitter_6f2aceb89a178e61",
+          "post_number": "54"
+        },
+        {
+          "post_id": "twitter_7777a34ff4a21d0d",
+          "post_number": "14"
+        },
+        {
+          "post_id": "twitter_ea19d2c1bbd4db3d",
+          "post_number": "44"
+        },
+        {
+          "post_id": "twitter_f45b4c1387d7d81d",
+          "post_number": "26"
+        },
+        {
+          "post_id": "twitter_c4729e30219f5485",
+          "post_number": "43"
+        },
+        {
+          "post_id": "twitter_0011616b8c8f2858",
+          "post_number": "69"
+        },
+        {
+          "post_id": "twitter_7a9e55165fdf6d88",
+          "post_number": "6"
+        },
+        {
+          "post_id": "twitter_864ef1fa9d96d53b",
+          "post_number": "27"
+        },
+        {
+          "post_id": "twitter_f589983318d11147",
+          "post_number": "29"
+        },
+        {
+          "post_id": "twitter_566b6db03c66be4e",
+          "post_number": "55"
+        },
+        {
+          "post_id": "twitter_0db5d3adfe5790a7",
+          "post_number": "4"
+        },
+        {
+          "post_id": "twitter_5762a4c7cf413b1b",
+          "post_number": "66"
+        },
+        {
+          "post_id": "twitter_a4a2713f0717b9e5",
+          "post_number": "68"
+        },
+        {
+          "post_id": "twitter_a173bee932bf75b3",
+          "post_number": "28"
+        },
+        {
+          "post_id": "twitter_48b57de1f22fa206",
+          "post_number": "30"
+        },
+        {
+          "post_id": "twitter_bc2d2d707bb82986",
+          "post_number": "67"
+        },
+        {
+          "post_id": "twitter_aa29b185c07e7dda",
+          "post_number": "5"
+        },
+        {
+          "post_id": "twitter_ca0138aaee9c6261",
+          "post_number": "13"
+        },
+        {
+          "post_id": "twitter_d7de4c9be816d0de",
+          "post_number": "56"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:59.491Z"
+    },
+    "UNKNOWN_1774447929460": {
+      "party": "republican",
+      "condition": "training",
+      "posts": [
+        {
+          "post_id": "twitter_280ffca790c5d454",
+          "post_number": "63"
+        },
+        {
+          "post_id": "twitter_0735057d44610df6",
+          "post_number": "1"
+        },
+        {
+          "post_id": "twitter_01ee2a186796122b",
+          "post_number": "52"
+        },
+        {
+          "post_id": "twitter_1d17abb055446f39",
+          "post_number": "51"
+        },
+        {
+          "post_id": "twitter_cfb6a196b265ed91",
+          "post_number": "25"
+        },
+        {
+          "post_id": "twitter_cc0cbd3094aedb65",
+          "post_number": "22"
+        },
+        {
+          "post_id": "twitter_ee6dd0a2fc387a44",
+          "post_number": "42"
+        },
+        {
+          "post_id": "twitter_166720149b1f6891",
+          "post_number": "23"
+        },
+        {
+          "post_id": "twitter_3c79eac98fa05287",
+          "post_number": "61"
+        },
+        {
+          "post_id": "twitter_7c3277bd04c82fa4",
+          "post_number": "2"
+        },
+        {
+          "post_id": "twitter_34afefe387a213a9",
+          "post_number": "24"
+        },
+        {
+          "post_id": "twitter_11e8297d7504a414",
+          "post_number": "41"
+        },
+        {
+          "post_id": "twitter_d813488c05fa3895",
+          "post_number": "3"
+        },
+        {
+          "post_id": "twitter_3b341f025594d2ad",
+          "post_number": "53"
+        },
+        {
+          "post_id": "twitter_ff043027c4aa184a",
+          "post_number": "21"
+        },
+        {
+          "post_id": "twitter_10a5698d537e7c26",
+          "post_number": "65"
+        },
+        {
+          "post_id": "twitter_7b326beaafa0a686",
+          "post_number": "11"
+        },
+        {
+          "post_id": "twitter_3b06c93d1f3cb2ea",
+          "post_number": "64"
+        },
+        {
+          "post_id": "twitter_b6241fe00c6ccabd",
+          "post_number": "12"
+        },
+        {
+          "post_id": "twitter_05ffb51ed38ff21b",
+          "post_number": "62"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:27.094Z"
+    },
+    "UNKNOWN_1774447917748": {
+      "party": "republican",
+      "condition": "control",
+      "posts": [
+        {
+          "post_id": "twitter_b6241fe00c6ccabd",
+          "post_number": "12"
+        },
+        {
+          "post_id": "twitter_ff043027c4aa184a",
+          "post_number": "21"
+        },
+        {
+          "post_id": "twitter_01ee2a186796122b",
+          "post_number": "52"
+        },
+        {
+          "post_id": "twitter_280ffca790c5d454",
+          "post_number": "63"
+        },
+        {
+          "post_id": "twitter_0735057d44610df6",
+          "post_number": "1"
+        },
+        {
+          "post_id": "twitter_ee6dd0a2fc387a44",
+          "post_number": "42"
+        },
+        {
+          "post_id": "twitter_cc0cbd3094aedb65",
+          "post_number": "22"
+        },
+        {
+          "post_id": "twitter_11e8297d7504a414",
+          "post_number": "41"
+        },
+        {
+          "post_id": "twitter_166720149b1f6891",
+          "post_number": "23"
+        },
+        {
+          "post_id": "twitter_3b06c93d1f3cb2ea",
+          "post_number": "64"
+        },
+        {
+          "post_id": "twitter_3c79eac98fa05287",
+          "post_number": "61"
+        },
+        {
+          "post_id": "twitter_7c3277bd04c82fa4",
+          "post_number": "2"
+        },
+        {
+          "post_id": "twitter_cfb6a196b265ed91",
+          "post_number": "25"
+        },
+        {
+          "post_id": "twitter_3b341f025594d2ad",
+          "post_number": "53"
+        },
+        {
+          "post_id": "twitter_7b326beaafa0a686",
+          "post_number": "11"
+        },
+        {
+          "post_id": "twitter_d813488c05fa3895",
+          "post_number": "3"
+        },
+        {
+          "post_id": "twitter_34afefe387a213a9",
+          "post_number": "24"
+        },
+        {
+          "post_id": "twitter_05ffb51ed38ff21b",
+          "post_number": "62"
+        },
+        {
+          "post_id": "twitter_1d17abb055446f39",
+          "post_number": "51"
+        },
+        {
+          "post_id": "twitter_10a5698d537e7c26",
+          "post_number": "65"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:13.632Z"
+    },
+    "UNKNOWN_1774448185902": {
+      "party": "democrat",
+      "condition": "control",
+      "posts": [
+        {
+          "post_id": "twitter_bc2d2d707bb82986",
+          "post_number": "67"
+        },
+        {
+          "post_id": "twitter_5762a4c7cf413b1b",
+          "post_number": "66"
+        },
+        {
+          "post_id": "twitter_0db5d3adfe5790a7",
+          "post_number": "4"
+        },
+        {
+          "post_id": "twitter_11ab0d1c18251423",
+          "post_number": "15"
+        },
+        {
+          "post_id": "twitter_566b6db03c66be4e",
+          "post_number": "55"
+        },
+        {
+          "post_id": "twitter_7a9e55165fdf6d88",
+          "post_number": "6"
+        },
+        {
+          "post_id": "twitter_a4a2713f0717b9e5",
+          "post_number": "68"
+        },
+        {
+          "post_id": "twitter_7777a34ff4a21d0d",
+          "post_number": "14"
+        },
+        {
+          "post_id": "twitter_f589983318d11147",
+          "post_number": "29"
+        },
+        {
+          "post_id": "twitter_f45b4c1387d7d81d",
+          "post_number": "26"
+        },
+        {
+          "post_id": "twitter_864ef1fa9d96d53b",
+          "post_number": "27"
+        },
+        {
+          "post_id": "twitter_ea19d2c1bbd4db3d",
+          "post_number": "44"
+        },
+        {
+          "post_id": "twitter_aa29b185c07e7dda",
+          "post_number": "5"
+        },
+        {
+          "post_id": "twitter_c4729e30219f5485",
+          "post_number": "43"
+        },
+        {
+          "post_id": "twitter_dc47f375e4ee2abb",
+          "post_number": "70"
+        },
+        {
+          "post_id": "twitter_a173bee932bf75b3",
+          "post_number": "28"
+        },
+        {
+          "post_id": "twitter_0011616b8c8f2858",
+          "post_number": "69"
+        },
+        {
+          "post_id": "twitter_6f2aceb89a178e61",
+          "post_number": "54"
+        },
+        {
+          "post_id": "twitter_ca0138aaee9c6261",
+          "post_number": "13"
+        },
+        {
+          "post_id": "twitter_48b57de1f22fa206",
+          "post_number": "30"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:18:42.211Z"
+    },
+    "UNKNOWN_1774447916752": {
+      "party": "republican",
+      "condition": "training_assisted",
+      "posts": [
+        {
+          "post_id": "twitter_7c3277bd04c82fa4",
+          "post_number": "2"
+        },
+        {
+          "post_id": "twitter_cc0cbd3094aedb65",
+          "post_number": "22"
+        },
+        {
+          "post_id": "twitter_166720149b1f6891",
+          "post_number": "23"
+        },
+        {
+          "post_id": "twitter_3c79eac98fa05287",
+          "post_number": "61"
+        },
+        {
+          "post_id": "twitter_7b326beaafa0a686",
+          "post_number": "11"
+        },
+        {
+          "post_id": "twitter_3b341f025594d2ad",
+          "post_number": "53"
+        },
+        {
+          "post_id": "twitter_d813488c05fa3895",
+          "post_number": "3"
+        },
+        {
+          "post_id": "twitter_05ffb51ed38ff21b",
+          "post_number": "62"
+        },
+        {
+          "post_id": "twitter_01ee2a186796122b",
+          "post_number": "52"
+        },
+        {
+          "post_id": "twitter_10a5698d537e7c26",
+          "post_number": "65"
+        },
+        {
+          "post_id": "twitter_34afefe387a213a9",
+          "post_number": "24"
+        },
+        {
+          "post_id": "twitter_0735057d44610df6",
+          "post_number": "1"
+        },
+        {
+          "post_id": "twitter_3b06c93d1f3cb2ea",
+          "post_number": "64"
+        },
+        {
+          "post_id": "twitter_cfb6a196b265ed91",
+          "post_number": "25"
+        },
+        {
+          "post_id": "twitter_b6241fe00c6ccabd",
+          "post_number": "12"
+        },
+        {
+          "post_id": "twitter_11e8297d7504a414",
+          "post_number": "41"
+        },
+        {
+          "post_id": "twitter_ff043027c4aa184a",
+          "post_number": "21"
+        },
+        {
+          "post_id": "twitter_ee6dd0a2fc387a44",
+          "post_number": "42"
+        },
+        {
+          "post_id": "twitter_1d17abb055446f39",
+          "post_number": "51"
+        },
+        {
+          "post_id": "twitter_280ffca790c5d454",
+          "post_number": "63"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:14.392Z"
+    },
+    "UNKNOWN_1774447914999": {
+      "party": "democrat",
+      "condition": "training",
+      "posts": [
+        {
+          "post_id": "twitter_1d17abb055446f39",
+          "post_number": "51"
+        },
+        {
+          "post_id": "twitter_166720149b1f6891",
+          "post_number": "23"
+        },
+        {
+          "post_id": "twitter_05ffb51ed38ff21b",
+          "post_number": "62"
+        },
+        {
+          "post_id": "twitter_01ee2a186796122b",
+          "post_number": "52"
+        },
+        {
+          "post_id": "twitter_0735057d44610df6",
+          "post_number": "1"
+        },
+        {
+          "post_id": "twitter_3b06c93d1f3cb2ea",
+          "post_number": "64"
+        },
+        {
+          "post_id": "twitter_cc0cbd3094aedb65",
+          "post_number": "22"
+        },
+        {
+          "post_id": "twitter_10a5698d537e7c26",
+          "post_number": "65"
+        },
+        {
+          "post_id": "twitter_b6241fe00c6ccabd",
+          "post_number": "12"
+        },
+        {
+          "post_id": "twitter_d813488c05fa3895",
+          "post_number": "3"
+        },
+        {
+          "post_id": "twitter_34afefe387a213a9",
+          "post_number": "24"
+        },
+        {
+          "post_id": "twitter_ee6dd0a2fc387a44",
+          "post_number": "42"
+        },
+        {
+          "post_id": "twitter_7c3277bd04c82fa4",
+          "post_number": "2"
+        },
+        {
+          "post_id": "twitter_3c79eac98fa05287",
+          "post_number": "61"
+        },
+        {
+          "post_id": "twitter_ff043027c4aa184a",
+          "post_number": "21"
+        },
+        {
+          "post_id": "twitter_11e8297d7504a414",
+          "post_number": "41"
+        },
+        {
+          "post_id": "twitter_7b326beaafa0a686",
+          "post_number": "11"
+        },
+        {
+          "post_id": "twitter_cfb6a196b265ed91",
+          "post_number": "25"
+        },
+        {
+          "post_id": "twitter_3b341f025594d2ad",
+          "post_number": "53"
+        },
+        {
+          "post_id": "twitter_280ffca790c5d454",
+          "post_number": "63"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:12:17.931Z"
+    },
+    "UNKNOWN_1774449129051": {
+      "party": "republican",
+      "condition": "training_assisted",
+      "posts": [
+        {
+          "post_id": "twitter_abfb4fb99cb8531e",
+          "post_number": "8"
+        },
+        {
+          "post_id": "twitter_876cca67783a5ca4",
+          "post_number": "46"
+        },
+        {
+          "post_id": "twitter_9063ffb9c7c5a28f",
+          "post_number": "34"
+        },
+        {
+          "post_id": "twitter_fc3762cbe022ab71",
+          "post_number": "72"
+        },
+        {
+          "post_id": "twitter_019ea46e4ee35de7",
+          "post_number": "35"
+        },
+        {
+          "post_id": "twitter_da0686b085dd054f",
+          "post_number": "17"
+        },
+        {
+          "post_id": "twitter_e916eef42251ec6e",
+          "post_number": "57"
+        },
+        {
+          "post_id": "twitter_10e2a2fd36936dea",
+          "post_number": "73"
+        },
+        {
+          "post_id": "twitter_c97491ba7351aa70",
+          "post_number": "32"
+        },
+        {
+          "post_id": "twitter_878f58adf18fee0e",
+          "post_number": "9"
+        },
+        {
+          "post_id": "twitter_9cba0815ecc0cc6a",
+          "post_number": "75"
+        },
+        {
+          "post_id": "twitter_45d045836925cbfe",
+          "post_number": "58"
+        },
+        {
+          "post_id": "twitter_11ab0d1c18251423",
+          "post_number": "15"
+        },
+        {
+          "post_id": "twitter_135cb82e54764618",
+          "post_number": "45"
+        },
+        {
+          "post_id": "twitter_cd913fcb3c7d2c78",
+          "post_number": "33"
+        },
+        {
+          "post_id": "twitter_ee3b7bd11a459d30",
+          "post_number": "74"
+        },
+        {
+          "post_id": "twitter_bd0f5c96a2340877",
+          "post_number": "7"
+        },
+        {
+          "post_id": "twitter_86c30be6086b16fe",
+          "post_number": "31"
+        },
+        {
+          "post_id": "twitter_d9e8db298dc70fef",
+          "post_number": "71"
+        },
+        {
+          "post_id": "twitter_15388b8f406f036f",
+          "post_number": "16"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:32:22.351Z"
+    },
+    "UNKNOWN_1774449127781": {
+      "party": "democrat",
+      "condition": "training",
+      "posts": [
+        {
+          "post_id": "twitter_aa29b185c07e7dda",
+          "post_number": "5"
+        },
+        {
+          "post_id": "twitter_6f2aceb89a178e61",
+          "post_number": "54"
+        },
+        {
+          "post_id": "twitter_48b57de1f22fa206",
+          "post_number": "30"
+        },
+        {
+          "post_id": "twitter_dc47f375e4ee2abb",
+          "post_number": "70"
+        },
+        {
+          "post_id": "twitter_f45b4c1387d7d81d",
+          "post_number": "26"
+        },
+        {
+          "post_id": "twitter_7777a34ff4a21d0d",
+          "post_number": "14"
+        },
+        {
+          "post_id": "twitter_ca0138aaee9c6261",
+          "post_number": "13"
+        },
+        {
+          "post_id": "twitter_ea19d2c1bbd4db3d",
+          "post_number": "44"
+        },
+        {
+          "post_id": "twitter_bc2d2d707bb82986",
+          "post_number": "67"
+        },
+        {
+          "post_id": "twitter_a4a2713f0717b9e5",
+          "post_number": "68"
+        },
+        {
+          "post_id": "twitter_f589983318d11147",
+          "post_number": "29"
+        },
+        {
+          "post_id": "twitter_7a9e55165fdf6d88",
+          "post_number": "6"
+        },
+        {
+          "post_id": "twitter_d7de4c9be816d0de",
+          "post_number": "56"
+        },
+        {
+          "post_id": "twitter_864ef1fa9d96d53b",
+          "post_number": "27"
+        },
+        {
+          "post_id": "twitter_5762a4c7cf413b1b",
+          "post_number": "66"
+        },
+        {
+          "post_id": "twitter_c4729e30219f5485",
+          "post_number": "43"
+        },
+        {
+          "post_id": "twitter_a173bee932bf75b3",
+          "post_number": "28"
+        },
+        {
+          "post_id": "twitter_566b6db03c66be4e",
+          "post_number": "55"
+        },
+        {
+          "post_id": "twitter_0011616b8c8f2858",
+          "post_number": "69"
+        },
+        {
+          "post_id": "twitter_0db5d3adfe5790a7",
+          "post_number": "4"
+        }
+      ],
+      "assigned_at": "2026-03-25T14:32:17.932Z"
+    },
+    "UNKNOWN_1774452342546": {
+      "party": "republican",
+      "condition": "training",
+      "posts": [
+        {
+          "post_id": "twitter_da0686b085dd054f",
+          "post_number": "17"
+        },
+        {
+          "post_id": "twitter_878f58adf18fee0e",
+          "post_number": "9"
+        },
+        {
+          "post_id": "twitter_abfb4fb99cb8531e",
+          "post_number": "8"
+        },
+        {
+          "post_id": "twitter_876cca67783a5ca4",
+          "post_number": "46"
+        },
+        {
+          "post_id": "twitter_d9e8db298dc70fef",
+          "post_number": "71"
+        },
+        {
+          "post_id": "twitter_c97491ba7351aa70",
+          "post_number": "32"
+        },
+        {
+          "post_id": "twitter_10e2a2fd36936dea",
+          "post_number": "73"
+        },
+        {
+          "post_id": "twitter_e916eef42251ec6e",
+          "post_number": "57"
+        },
+        {
+          "post_id": "twitter_cd913fcb3c7d2c78",
+          "post_number": "33"
+        },
+        {
+          "post_id": "twitter_019ea46e4ee35de7",
+          "post_number": "35"
+        },
+        {
+          "post_id": "twitter_9063ffb9c7c5a28f",
+          "post_number": "34"
+        },
+        {
+          "post_id": "twitter_45d045836925cbfe",
+          "post_number": "58"
+        },
+        {
+          "post_id": "twitter_11ab0d1c18251423",
+          "post_number": "15"
+        },
+        {
+          "post_id": "twitter_15388b8f406f036f",
+          "post_number": "16"
+        },
+        {
+          "post_id": "twitter_9cba0815ecc0cc6a",
+          "post_number": "75"
+        },
+        {
+          "post_id": "twitter_bd0f5c96a2340877",
+          "post_number": "7"
+        },
+        {
+          "post_id": "twitter_ee3b7bd11a459d30",
+          "post_number": "74"
+        },
+        {
+          "post_id": "twitter_135cb82e54764618",
+          "post_number": "45"
+        },
+        {
+          "post_id": "twitter_86c30be6086b16fe",
+          "post_number": "31"
+        },
+        {
+          "post_id": "twitter_fc3762cbe022ab71",
+          "post_number": "72"
+        }
+      ],
+      "assigned_at": "2026-03-25T15:25:49.626Z"
+    }
+  }
+}

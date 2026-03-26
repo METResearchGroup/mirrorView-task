@@ -1,0 +1,176 @@
+{
+  "UNKNOWN_1774448259541": {
+    "party": "republican",
+    "condition": "training",
+    "posts": [
+      {
+        "post_id": "twitter_aa29b185c07e7dda",
+        "post_number": "5"
+      },
+      {
+        "post_id": "twitter_dc47f375e4ee2abb",
+        "post_number": "70"
+      },
+      {
+        "post_id": "twitter_f589983318d11147",
+        "post_number": "29"
+      },
+      {
+        "post_id": "twitter_5762a4c7cf413b1b",
+        "post_number": "66"
+      },
+      {
+        "post_id": "twitter_d7de4c9be816d0de",
+        "post_number": "56"
+      },
+      {
+        "post_id": "twitter_864ef1fa9d96d53b",
+        "post_number": "27"
+      },
+      {
+        "post_id": "twitter_0011616b8c8f2858",
+        "post_number": "69"
+      },
+      {
+        "post_id": "twitter_7a9e55165fdf6d88",
+        "post_number": "6"
+      },
+      {
+        "post_id": "twitter_ca0138aaee9c6261",
+        "post_number": "13"
+      },
+      {
+        "post_id": "twitter_6f2aceb89a178e61",
+        "post_number": "54"
+      },
+      {
+        "post_id": "twitter_a173bee932bf75b3",
+        "post_number": "28"
+      },
+      {
+        "post_id": "twitter_7777a34ff4a21d0d",
+        "post_number": "14"
+      },
+      {
+        "post_id": "twitter_0db5d3adfe5790a7",
+        "post_number": "4"
+      },
+      {
+        "post_id": "twitter_ea19d2c1bbd4db3d",
+        "post_number": "44"
+      },
+      {
+        "post_id": "twitter_f45b4c1387d7d81d",
+        "post_number": "26"
+      },
+      {
+        "post_id": "twitter_566b6db03c66be4e",
+        "post_number": "55"
+      },
+      {
+        "post_id": "twitter_c4729e30219f5485",
+        "post_number": "43"
+      },
+      {
+        "post_id": "twitter_bc2d2d707bb82986",
+        "post_number": "67"
+      },
+      {
+        "post_id": "twitter_48b57de1f22fa206",
+        "post_number": "30"
+      },
+      {
+        "post_id": "twitter_a4a2713f0717b9e5",
+        "post_number": "68"
+      }
+    ],
+    "assigned_at": "2026-03-25T14:17:44.650Z"
+  },
+  "UNKNOWN_1774452331407": {
+    "party": "democrat",
+    "condition": "training_assisted",
+    "posts": [
+      {
+        "post_id": "twitter_7a9e55165fdf6d88",
+        "post_number": "6"
+      },
+      {
+        "post_id": "twitter_bc2d2d707bb82986",
+        "post_number": "67"
+      },
+      {
+        "post_id": "twitter_d7de4c9be816d0de",
+        "post_number": "56"
+      },
+      {
+        "post_id": "twitter_48b57de1f22fa206",
+        "post_number": "30"
+      },
+      {
+        "post_id": "twitter_c4729e30219f5485",
+        "post_number": "43"
+      },
+      {
+        "post_id": "twitter_f589983318d11147",
+        "post_number": "29"
+      },
+      {
+        "post_id": "twitter_0011616b8c8f2858",
+        "post_number": "69"
+      },
+      {
+        "post_id": "twitter_6f2aceb89a178e61",
+        "post_number": "54"
+      },
+      {
+        "post_id": "twitter_aa29b185c07e7dda",
+        "post_number": "5"
+      },
+      {
+        "post_id": "twitter_f45b4c1387d7d81d",
+        "post_number": "26"
+      },
+      {
+        "post_id": "twitter_864ef1fa9d96d53b",
+        "post_number": "27"
+      },
+      {
+        "post_id": "twitter_566b6db03c66be4e",
+        "post_number": "55"
+      },
+      {
+        "post_id": "twitter_ca0138aaee9c6261",
+        "post_number": "13"
+      },
+      {
+        "post_id": "twitter_5762a4c7cf413b1b",
+        "post_number": "66"
+      },
+      {
+        "post_id": "twitter_7777a34ff4a21d0d",
+        "post_number": "14"
+      },
+      {
+        "post_id": "twitter_dc47f375e4ee2abb",
+        "post_number": "70"
+      },
+      {
+        "post_id": "twitter_a4a2713f0717b9e5",
+        "post_number": "68"
+      },
+      {
+        "post_id": "twitter_a173bee932bf75b3",
+        "post_number": "28"
+      },
+      {
+        "post_id": "twitter_0db5d3adfe5790a7",
+        "post_number": "4"
+      },
+      {
+        "post_id": "twitter_ea19d2c1bbd4db3d",
+        "post_number": "44"
+      }
+    ],
+    "assigned_at": "2026-03-25T15:25:41.266Z"
+  }
+}

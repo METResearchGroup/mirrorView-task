@@ -236,7 +236,10 @@ var jsPsychModerationTrial = (function (jspsych) {
                         // (In single mode, main.js still passes mirror_text, but we want
                         // the data rows to reflect what participants saw.)
                         mirror_text: (isPair || isAssisted) ? trial.mirror_text : null,
-                        show_pair: isPair,
+                        // True whenever a mirror is shown (linked_fate pair OR assisted reference mirror).
+                        // Do not use only `isPair`, or training_assisted phase 2 looks like "no pair"
+                        // while mirror_text is still saved.
+                        show_pair: isPair || isAssisted,
                         evaluation_mode: mode,
                         decision,
                         pair_order: pairOrder,
