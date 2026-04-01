@@ -1,4 +1,5 @@
 const path = require('node:path');
+const fs = require('node:fs');
 const { loadLambdaWithMockedS3, invokeJsonHandler } = require('./lambda-test-harness.js');
 
 const GET_ASSIGNMENTS_LAMBDA_PATH = path.join(__dirname, '..', 'lambda-get-post-assignments.mjs');
@@ -13,25 +14,87 @@ const TOXICITY_TYPES = [
     'sample_middle_toxicity'
 ];
 
-function buildCatalog({ perCell = 12, stances = ['left', 'right'], toxicityTypes = TOXICITY_TYPES } = {}) {
-    const posts = [];
-    let counter = 1;
+const POST_CATALOG_FILE = path.join(__dirname, '..', 'img', 'all_mirrors_claude.csv');
+let cachedCatalog = null;
 
-    for (const toxicity of toxicityTypes) {
-        for (const stance of stances) {
-            for (let i = 0; i < perCell; i += 1) {
-                posts.push({
-                    post_id: `post-${String(counter).padStart(3, '0')}`,
-                    post_number: String(counter),
-                    sampled_stance: stance,
-                    sample_toxicity_type: toxicity,
-                });
-                counter += 1;
+function parseCSV(csvText) {
+    const rows = [];
+    const headers = [];
+    let currentRow = [];
+    let currentField = '';
+    let inQuotes = false;
+    let isFirstRow = true;
+
+    for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        const nextChar = csvText[i + 1];
+
+        if (inQuotes) {
+            if (char === '"') {
+                if (nextChar === '"') {
+                    currentField += '"';
+                    i += 1;
+                } else {
+                    inQuotes = false;
+                }
+            } else {
+                currentField += char;
             }
+        } else if (char === '"') {
+            inQuotes = true;
+        } else if (char === ',') {
+            currentRow.push(currentField);
+            currentField = '';
+        } else if (char === '\n' || (char === '\r' && nextChar === '\n')) {
+            if (char === '\r') i += 1;
+            currentRow.push(currentField);
+            currentField = '';
+
+            if (isFirstRow) {
+                headers.push(...currentRow);
+                isFirstRow = false;
+            } else if (currentRow.length > 0 && currentRow.some((field) => field.trim() !== '')) {
+                const rowObj = {};
+                headers.forEach((header, idx) => {
+                    rowObj[header] = currentRow[idx] || '';
+                });
+                rows.push(rowObj);
+            }
+            currentRow = [];
+        } else if (char !== '\r') {
+            currentField += char;
         }
     }
 
-    return posts;
+    if (currentField !== '' || currentRow.length > 0) {
+        currentRow.push(currentField);
+        if (currentRow.length > 0 && currentRow.some((field) => field.trim() !== '')) {
+            const rowObj = {};
+            headers.forEach((header, idx) => {
+                rowObj[header] = currentRow[idx] || '';
+            });
+            rows.push(rowObj);
+        }
+    }
+
+    return rows;
+}
+
+function buildCatalog() {
+    if (cachedCatalog) return cachedCatalog;
+
+    const csvText = fs.readFileSync(POST_CATALOG_FILE, 'utf8');
+    const parsed = parseCSV(csvText);
+    cachedCatalog = parsed
+        .filter((row) => row.post_primary_key && row.post_number)
+        .map((row) => ({
+            post_id: row.post_primary_key,
+            post_number: row.post_number,
+            sampled_stance: row.sampled_stance,
+            sample_toxicity_type: row.sample_toxicity_type,
+        }));
+
+    return cachedCatalog;
 }
 
 function makePosts(prefix, count = 20) {
