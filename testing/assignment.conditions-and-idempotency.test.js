@@ -12,7 +12,7 @@ const {
     PROD_PENDING_KEY,
     TEST_ASSIGNMENTS_KEY,
     TEST_PENDING_KEY,
-    buildCatalog,
+    loadPostsForAssignment,
     makePosts,
     createAssignments,
     createParticipant,
@@ -24,7 +24,7 @@ test('returns 400 for missing prolific_id', async () => {
     const { handler } = await loadGetAssignmentsHandler();
     const response = await invokeGetAssignments(handler, {
         party_group: 'democrat',
-        all_posts: buildCatalog(),
+        all_posts: loadPostsForAssignment(),
     });
 
     assert.equal(response.statusCode, 400);
@@ -32,7 +32,7 @@ test('returns 400 for missing prolific_id', async () => {
 });
 
 test('reuses pending assignment for the same participant', async () => {
-    const catalog = buildCatalog();
+    const catalog = loadPostsForAssignment();
     const { handler, store } = await loadGetAssignmentsHandler({
         [PROD_ASSIGNMENTS_KEY]: createAssignments(),
         [PROD_PENDING_KEY]: {},
@@ -82,7 +82,7 @@ test('reuses committed assignment for the same participant', async () => {
     const response = await invokeGetAssignments(handler, {
         prolific_id: 'P1',
         party_group: 'democrat',
-        all_posts: buildCatalog(),
+        all_posts: loadPostsForAssignment(),
     });
 
     assert.equal(response.statusCode, 200);
@@ -125,7 +125,7 @@ test('balances conditions within party using committed and pending counts', asyn
     const response = await invokeGetAssignments(handler, {
         prolific_id: 'P_BALANCE',
         party_group: 'democrat',
-        all_posts: buildCatalog(),
+        all_posts: loadPostsForAssignment(),
     });
 
     assert.equal(response.statusCode, 200);
@@ -134,7 +134,7 @@ test('balances conditions within party using committed and pending counts', asyn
 });
 
 test('honors condition override only for test participants', async () => {
-    const catalog = buildCatalog();
+    const catalog = loadPostsForAssignment();
     const { handler } = await loadGetAssignmentsHandler({
         [PROD_ASSIGNMENTS_KEY]: createAssignments({
             D_ASSIST_1: createParticipant({ party: 'democrat', condition: 'training_assisted' }),

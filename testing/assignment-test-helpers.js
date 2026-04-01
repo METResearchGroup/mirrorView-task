@@ -15,7 +15,22 @@ const {
 const POST_CATALOG_FILE = path.join(__dirname, '..', 'img', 'all_mirrors_claude.csv');
 let cachedCatalog = null;
 
-function buildCatalog() {
+/**
+ * Load assignment-ready posts from the real CSV source used by the app.
+ *
+ * Reads `img/all_mirrors_claude.csv`, parses CSV rows, and normalizes each
+ * eligible row into the assignment shape expected by the Lambda:
+ * `{ post_id, post_number, sampled_stance, sample_toxicity_type }`.
+ * Results are cached after first load to keep tests fast and deterministic.
+ *
+ * @returns {Array<{
+ *   post_id: string,
+ *   post_number: string,
+ *   sampled_stance: string,
+ *   sample_toxicity_type: string
+ * }>}
+ */
+function loadPostsForAssignment() {
     if (cachedCatalog) return cachedCatalog;
 
     const csvText = fs.readFileSync(POST_CATALOG_FILE, 'utf8');
@@ -71,7 +86,7 @@ module.exports = {
     TEST_ASSIGNMENTS_KEY,
     TEST_PENDING_KEY,
     TOXICITY_TYPES,
-    buildCatalog,
+    loadPostsForAssignment,
     makePosts,
     createAssignments,
     createParticipant,
