@@ -17,12 +17,12 @@ const {
     createAssignments,
     createParticipant,
     loadGetAssignmentsHandler,
-    invokeGetAssignments,
+    runGetAssignmentsHandler,
 } = require('./assignment-test-helpers.js');
 
 test('returns 400 for missing prolific_id', async () => {
     const { handler } = await loadGetAssignmentsHandler();
-    const response = await invokeGetAssignments(handler, {
+    const response = await runGetAssignmentsHandler(handler, {
         party_group: 'democrat',
         all_posts: loadPostsFromMirrorCsv(),
     });
@@ -38,7 +38,7 @@ test('reuses pending assignment for the same participant', async () => {
         [PROD_PENDING_KEY]: {},
     });
 
-    const firstResponse = await invokeGetAssignments(handler, {
+    const firstResponse = await runGetAssignmentsHandler(handler, {
         prolific_id: 'P1',
         party_group: 'democrat',
         all_posts: catalog,
@@ -54,7 +54,7 @@ test('reuses pending assignment for the same participant', async () => {
         firstResponse.json.assigned_post_ids
     );
 
-    const secondResponse = await invokeGetAssignments(handler, {
+    const secondResponse = await runGetAssignmentsHandler(handler, {
         prolific_id: 'P1',
         party_group: 'democrat',
         all_posts: catalog,
@@ -79,7 +79,7 @@ test('reuses committed assignment for the same participant', async () => {
         [PROD_PENDING_KEY]: {},
     });
 
-    const response = await invokeGetAssignments(handler, {
+    const response = await runGetAssignmentsHandler(handler, {
         prolific_id: 'P1',
         party_group: 'democrat',
         all_posts: loadPostsFromMirrorCsv(),
@@ -122,7 +122,7 @@ test('balances conditions within party using committed and pending counts', asyn
         },
     });
 
-    const response = await invokeGetAssignments(handler, {
+    const response = await runGetAssignmentsHandler(handler, {
         prolific_id: 'P_BALANCE',
         party_group: 'democrat',
         all_posts: loadPostsFromMirrorCsv(),
@@ -144,7 +144,7 @@ test('honors condition override only for test participants', async () => {
         [TEST_PENDING_KEY]: {},
     });
 
-    const productionResponse = await invokeGetAssignments(handler, {
+    const productionResponse = await runGetAssignmentsHandler(handler, {
         prolific_id: 'REAL_PROLIFIC_1',
         party_group: 'democrat',
         condition: 'training_assisted',
@@ -152,7 +152,7 @@ test('honors condition override only for test participants', async () => {
         all_posts: catalog,
     });
 
-    const testResponse = await invokeGetAssignments(handler, {
+    const testResponse = await runGetAssignmentsHandler(handler, {
         prolific_id: 'TEST_1',
         party_group: 'democrat',
         condition: 'training_assisted',

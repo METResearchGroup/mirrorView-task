@@ -74,7 +74,7 @@ async function loadGetAssignmentsHandler(initialStore = {}) {
     });
 }
 
-async function invokeGetAssignments(handler, body) {
+async function runGetAssignmentsHandler(handler, body) {
     return invokeJsonHandler(handler, body);
 }
 
@@ -91,5 +91,5 @@ module.exports = {
     createAssignments,
     createParticipant,
     loadGetAssignmentsHandler,
-    invokeGetAssignments,
+    runGetAssignmentsHandler,
 };
