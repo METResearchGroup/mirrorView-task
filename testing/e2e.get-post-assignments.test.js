@@ -8,17 +8,8 @@
 // 4) verifies basic invariants for one participant
 
 const test = require('node:test');
-const assert = require('node:assert/strict');
-const { spawn } = require('node:child_process');
-const path = require('node:path');
+const { setupServer, stopServer } = require('./server-lifecycle.js');
 
-const BASE_URL = 'http://localhost:3000';
-
-const SERVER_PATH = path.join(__dirname, '..', 'server-local.js');
-
-let serverProc;
-
-async function sleep(ms) {
-    return new Promise((r) => setTimeout(r, ms));
-}
+test.before(setupServer);
+test.after(stopServer);
 
