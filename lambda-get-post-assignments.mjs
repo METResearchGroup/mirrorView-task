@@ -122,8 +122,15 @@ async function getPostCatalog() {
 }
 
 
-function parseInputs(input_body) {
-    const { prolific_id, party_group, condition, all_posts, is_test } = input_body;
+function parseInputs(event) {
+    let body;
+    if (typeof event.body === 'string') {
+        body = JSON.parse(event.body);
+    } else {
+        body = event.body || {};
+    }
+
+    const { prolific_id, party_group, condition, all_posts, is_test } = body;
 
     if (!prolific_id) {
         return corsResponse(400, { error: 'Missing prolific_id' });
@@ -133,10 +140,23 @@ function parseInputs(input_body) {
         return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
     }
 
+    const inferredTest = getIsTestFlag(prolific_id);
+
+    if (is_test == null) {
+        is_test = inferredTest;
+    } else {
+        // if is_test is False, we want to use the inferredTest flag.
+        is_test = is_test ?? inferredTest;
+    }
+
     return { prolific_id, party_group, condition, all_posts, is_test };
 }
 
-
+/*
+ * Get the post pool for the assignment.
+ * @param {Array} all_posts - The list of all posts to choose from.
+ * @returns {Array} - The post pool.
+ */
 async function getPostPool(all_posts) {
     let postPool = Array.isArray(all_posts) && all_posts.length > 0 ? all_posts : null;
     if (!postPool) {
@@ -148,6 +168,86 @@ async function getPostPool(all_posts) {
 }
 
 
+/*
+ * Load assignments from S3.
+ * @param {string} assignmentKey - The key to load the assignments from.
+ * @returns {Object} - The loaded assignments.
+ */
+async function loadAssignmentsFromS3(assignmentKey) {
+    let loadedAssignments;
+    try {
+        const data = await s3Client.send(new GetObjectCommand({
+            Bucket: BUCKET_NAME,
+            Key: assignmentKey
+        }));
+        loadedAssignments = JSON.parse(await data.Body.transformToString());
+        console.log(`Loaded ${Object.keys(loadedAssignments.posts || {}).length} post assignments`);
+    } catch (error) {
+        if (error.name === 'NoSuchKey') {
+            loadedAssignments = {}
+            console.log(`Created new post assignments file: ${assignmentKey}`);
+        } else {
+            console.error('Error reading post assignments from S3:', error);
+            throw error;
+        }
+    }
+    return loadedAssignments
+}
+
+
+/* Set default assignments if the file doesn't exist. 
+ * @returns {Object} - The default assignments.
+ */
+function setDefaultAssignments() {
+    return {
+        posts: {},
+        participants: {}
+    }
+}
+
+/*
+ * Load committed assignments from S3.
+ * @param {string} assignmentKey - The key to load the assignments from.
+ * @returns {Object} - The loaded assignments.
+ */
+function loadCommitedAssignmentsFromS3(assignmentKey) {
+    let loadedAssignments = loadAssignmentsFromS3(assignmentKey);
+    if (loadedAssignments && Object.keys(loadedAssignments).length === 0) {
+        loadedAssignments = setDefaultAssignments();
+    }
+    return loadedAssignments;
+}
+
+/*
+ * Load pending assignments from S3.
+ * @param {string} pendingKey - The key to load the assignments from.
+ * @returns {Object} - The loaded assignments.
+ */
+function loadPendingAssignmentsFromS3(pendingKey) {
+    let loadedPendingAssignments = loadAssignmentsFromS3(pendingKey);
+    if (loadedPendingAssignments && Object.keys(loadedPendingAssignments).length === 0) {
+        loadedPendingAssignments = {};
+    }
+    return loadedPendingAssignments;
+}
+
+
+function getIsTestFlag(prolific_id) {
+    return (typeof prolific_id === 'string' && (prolific_id.startsWith('UNKNOWN_') || prolific_id.startsWith('TEST_')));
+}
+
+/* 
+ * Get the correct S3 keys for the assignments, based on if we're in test mode or not.
+ * @param {boolean} is_test - Whether we're running in test mode.
+ * @returns {Object} - An object with the assignment and pending keys.
+ */
+function getAssignmentKeys(is_test) {
+    return {
+        assignmentKey: is_test ? POST_ASSIGNMENTS_TEST_FILE : POST_ASSIGNMENTS_FILE,
+        pendingKey: is_test ? PENDING_ASSIGNMENTS_TEST_FILE : PENDING_ASSIGNMENTS_FILE
+    };
+}
+
 
 export const handler = async (event) => {
     // Handle CORS preflight
@@ -156,66 +256,17 @@ export const handler = async (event) => {
     }
 
     try {
-        // Parse request body
-        let body;
-        if (typeof event.body === 'string') {
-            body = JSON.parse(event.body);
-        } else {
-            body = event.body || {};
-        }
-
-        const { prolific_id, party_group, condition, all_posts, is_test } = parseInputs(body);
+        const { prolific_id, party_group, condition, all_posts, is_test } = parseInputs(event);
         let postPool = await getPostPool(all_posts);
 
-        const inferredTest = is_test === true
-            || (typeof prolific_id === 'string' && (prolific_id.startsWith('UNKNOWN_') || prolific_id.startsWith('TEST_')));
-        const assignmentKey = inferredTest ? POST_ASSIGNMENTS_TEST_FILE : POST_ASSIGNMENTS_FILE;
-        const pendingKey = inferredTest ? PENDING_ASSIGNMENTS_TEST_FILE : PENDING_ASSIGNMENTS_FILE;
+        // get the correct S3 keys for the assignments, based on if we're in test mode or not.
+        const { assignmentKey, pendingKey } = getAssignmentKeys(is_test);
 
         // Read current assignments from S3
-        let assignments;
-        try {
-            const data = await s3Client.send(new GetObjectCommand({
-                Bucket: BUCKET_NAME,
-                Key: assignmentKey
-            }));
-            assignments = JSON.parse(await data.Body.transformToString());
-            console.log(`Loaded ${Object.keys(assignments.posts || {}).length} post assignments`);
-        } catch (error) {
-            if (error.name === 'NoSuchKey') {
-                // Initialize empty assignments structure
-                assignments = {
-                    posts: {},           // { post_id: { post_number, counts: { control, training, training_assisted } } }
-                    participants: {}     // { prolific_id: { party, condition, posts: [{post_id, post_number}], assigned_at } }
-                };
-                console.log(`Created new post assignments file: ${assignmentKey}`);
-            } else {
-                console.error('Error reading post assignments from S3:', error);
-                throw error;
-            }
-        }
-
-        // Initialize structure if missing
-        if (!assignments.posts) assignments.posts = {};
-        if (!assignments.participants) assignments.participants = {};
+        let assignments = loadCommitedAssignmentsFromS3(assignmentKey);
 
         // Read pending assignments
-        let pendingAssignments;
-        try {
-            const pendingData = await s3Client.send(new GetObjectCommand({
-                Bucket: BUCKET_NAME,
-                Key: pendingKey
-            }));
-            pendingAssignments = JSON.parse(await pendingData.Body.transformToString());
-        } catch (error) {
-            if (error.name === 'NoSuchKey') {
-                pendingAssignments = {};
-                console.log(`Created new pending assignments file: ${pendingKey}`);
-            } else {
-                console.error('Error reading pending assignments from S3:', error);
-                throw error;
-            }
-        }
+        let pendingAssignments = loadPendingAssignmentsFromS3(pendingKey);
 
         // Check if participant already has completed assignments
         if (assignments.participants[prolific_id] && assignments.participants[prolific_id].posts) {
@@ -227,7 +278,7 @@ export const handler = async (event) => {
                     assigned_post_ids: postIds,
                     already_assigned: true,
                     condition: assignments.participants[prolific_id].condition || CONDITIONS[0],
-                    is_test: inferredTest
+                    is_test: is_test
                 });
             }
         }
@@ -239,13 +290,13 @@ export const handler = async (event) => {
                 assigned_post_ids: pending.posts.map(p => p.post_id || p),
                 already_assigned: true,
                 condition: pending.condition || CONDITIONS[0],
-                is_test: inferredTest
+                is_test: is_test
             });
         }
 
         const requestedCondition = CONDITIONS.includes(String(condition || '').trim()) ? String(condition).trim() : null;
         let assignedCondition;
-        if (inferredTest && requestedCondition) {
+        if (is_test && requestedCondition) {
             assignedCondition = requestedCondition;
         } else {
             // Assign condition globally with pending-aware balancing to prevent drift
@@ -301,7 +352,7 @@ export const handler = async (event) => {
         // Find available posts
         const availablePosts = postPool;
 
-        const testNote = inferredTest ? ' [test]' : '';
+        const testNote = is_test ? ' [test]' : '';
         console.log(`Available posts for ${party_group}: ${availablePosts.length}/${postPool.length}${testNote}`);
 
         const sortedPosts = [...availablePosts].sort((a, b) => Number(a.post_number) - Number(b.post_number));
@@ -623,7 +674,7 @@ export const handler = async (event) => {
             already_assigned: false,
             short_assignment: shortAssignment,
             condition: assignedCondition,
-            is_test: inferredTest
+            is_test: is_test
         });
 
     } catch (error) {
