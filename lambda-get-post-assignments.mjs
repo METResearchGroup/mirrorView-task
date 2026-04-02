@@ -233,6 +233,24 @@ function loadIssuedAssignmentsFromS3(pendingKey) {
     return loadedPendingAssignments;
 }
 
+function loadFinalizedIssuedAssignmentsFromS3(
+    isTest
+) {
+    // get the correct S3 keys for the assignments, based on if we're in test mode or not.
+    const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(isTest);
+
+    // TODO (Mark): need stronger typing + contract enforcement for what to expect for
+    // the shapes of finalizedAssignments and issuedAssignments.
+
+    // Read finalized assignments from S3
+    let finalizedAssignments = loadFinalizedAssignmentsFromS3(finalizedAssignmentsKey);
+
+    // Read issued assignments
+    let issuedAssignments = loadIssuedAssignmentsFromS3(issuedAssignmentsKey);
+
+    return { finalizedAssignments, issuedAssignments };
+}
+
 
 function getIsTestFlag(prolificId) {
     return (typeof prolificId === 'string' && (prolificId.startsWith('UNKNOWN_') || prolificId.startsWith('TEST_')));
@@ -521,19 +539,7 @@ export const handler = async (event) => {
     try {
         const { prolificId, userPoliticalParty, customManualCondition, all_posts, isTest } = parseInputs(event);
         let postPool = await getPostPool(all_posts);
-
-        // get the correct S3 keys for the assignments, based on if we're in test mode or not.
-        const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(isTest);
-
-
-        // TODO (Mark): need stronger typing + contract enforcement for what to expect for
-        // the shapes of finalizedAssignments and issuedAssignments.
-
-        // Read finalized assignments from S3
-        let finalizedAssignments = loadFinalizedAssignmentsFromS3(finalizedAssignmentsKey);
-
-        // Read issued assignments
-        let issuedAssignments = loadIssuedAssignmentsFromS3(issuedAssignmentsKey);
+        const { finalizedAssignments, issuedAssignments } = loadFinalizedIssuedAssignmentsFromS3(isTest);
 
         // Check if participant already has finalized assignments
         const existingFinalizedAssignmentResponse = returnFinalizedAssignmentIfExists(
