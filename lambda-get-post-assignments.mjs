@@ -131,26 +131,26 @@ function parseInputs(event) {
         body = event.body || {};
     }
 
-    const { prolific_id, party_group, condition, all_posts, is_test } = body;
+    const { prolificId, party_group, condition, all_posts, isTest } = body;
 
-    if (!prolific_id) {
-        return corsResponse(400, { error: 'Missing prolific_id' });
+    if (!prolificId) {
+        return corsResponse(400, { error: 'Missing prolificId' });
     }
 
     if (!party_group || !['democrat', 'republican'].includes(party_group)) {
         return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
     }
 
-    const inferredTest = getIsTestFlag(prolific_id);
+    const inferredTest = getIsTestFlag(prolificId);
 
-    if (is_test == null) {
-        is_test = inferredTest;
+    if (isTest == null) {
+        isTest = inferredTest;
     } else {
-        // if is_test is False, we want to use the inferredTest flag.
-        is_test = is_test ?? inferredTest;
+        // if isTest is False, we want to use the inferredTest flag.
+        isTest = isTest ?? inferredTest;
     }
 
-    return { prolific_id, party_group, condition, all_posts, is_test };
+    return { prolificId, party_group, condition, all_posts, isTest };
 }
 
 /*
@@ -207,7 +207,7 @@ function setDefaultAssignments() {
 }
 
 /*
- * Load committed assignments from S3.
+ * Load finalized assignments from S3.
  * @param {string} assignmentKey - The key to load the assignments from.
  * @returns {Object} - The loaded assignments.
  */
@@ -220,7 +220,7 @@ function loadFinalizedAssignmentsFromS3(assignmentKey) {
 }
 
 /*
- * Load pending assignments from S3.
+ * Load issued assignments from S3.
  * @param {string} pendingKey - The key to load the assignments from.
  * @returns {Object} - The loaded assignments.
  */
@@ -233,20 +233,80 @@ function loadIssuedAssignmentsFromS3(pendingKey) {
 }
 
 
-function getIsTestFlag(prolific_id) {
-    return (typeof prolific_id === 'string' && (prolific_id.startsWith('UNKNOWN_') || prolific_id.startsWith('TEST_')));
+function getIsTestFlag(prolificId) {
+    return (typeof prolificId === 'string' && (prolificId.startsWith('UNKNOWN_') || prolificId.startsWith('TEST_')));
 }
 
 /* 
  * Get the correct S3 keys for the assignments, based on if we're in test mode or not.
- * @param {boolean} is_test - Whether we're running in test mode.
+ * @param {boolean} isTest - Whether we're running in test mode.
  * @returns {Object} - An object with the assignment and pending keys.
  */
-function getAssignmentKeys(is_test) {
+function getAssignmentKeys(isTest) {
     return {
-        finalizedAssignmentsKey: is_test ? FINALIZED_ASSIGNMENTS_TEST_FILE : FINALIZED_ASSIGNMENTS_FILE,
-        issuedAssignmentsKey: is_test ? ISSUED_ASSIGNMENTS_TEST_FILE : ISSUED_ASSIGNMENTS_FILE
+        finalizedAssignmentsKey: isTest ? FINALIZED_ASSIGNMENTS_TEST_FILE : FINALIZED_ASSIGNMENTS_FILE,
+        issuedAssignmentsKey: isTest ? ISSUED_ASSIGNMENTS_TEST_FILE : ISSUED_ASSIGNMENTS_FILE
     };
+}
+
+/**
+ * Checks if a finalized assignment for the given participant already exists and returns it if so.
+ * @param {Object} finalizedAssignments - The finalized assignments object (structure: {participants: {[prolificId]: {posts: Array, condition: string}}}).
+ * @param {string} prolificId - The Prolific participant ID.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {Object|undefined} A CORS response with assignment data if an assignment exists and is complete, otherwise undefined.
+ */
+function returnFinalizedAssignmentIfExists(
+    finalizedAssignments,
+    prolificId,
+    isTest
+) {
+    let prolificUserExists = (
+        finalizedAssignments &&
+        finalizedAssignments.participants &&
+        finalizedAssignments.participants[prolificId]
+    );
+    let prolificUserAssignmentPostsExist = prolificUserExists && Array.isArray(finalizedAssignments.participants[prolificId].posts);
+    if (prolificUserAssignmentPostsExist) {
+        const previouslyAssignedPosts = finalizedAssignments.participants[prolificId].posts;
+        const postIds = previouslyAssignedPosts.map((p) => (p.post_id || p));
+        if (postIds.length >= NUM_POSTS_PER_PARTICIPANT) {
+            console.log(`Returning existing assignment for ${prolificId}`);
+            return corsResponse(200, {
+                assigned_post_ids: postIds,
+                already_assigned: true,
+                condition: finalizedAssignments.participants[prolificId].condition, // NOTE(Mark): avoid the previous "|| CONDITIONS[0]" to avoid silent overrides on unexpected "falsy" branches.
+                isTest: isTest
+            });
+        }
+    }
+    return undefined;
+}
+
+/**
+ * Checks if a pending (issued but not finalized) assignment for the given participant already exists and returns it if so.
+ * @param {Object} issuedAssignments - The issued assignments object (structure: {[prolificId]: {posts: Array, condition: string}}).
+ * @param {string} prolificId - The Prolific participant ID.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {Object|undefined} A CORS response with assignment data if an issued assignment exists, otherwise undefined.
+ */
+function returnIssuedAssignmentIfExists(
+    issuedAssignments,
+    prolificId,
+    isTest
+) {
+    const prolificUserIssuedAssignment = issuedAssignments[prolificId];
+    const prolificUserIssuedAssignmentPosts = prolificUserIssuedAssignment && prolificUserIssuedAssignment.posts;
+
+    if (prolificUserIssuedAssignmentPosts) {
+        return corsResponse(200, {
+            assigned_post_ids: prolificUserIssuedAssignmentPosts.map(p => p.post_id || p),
+            already_assigned: true,
+            condition: prolificUserIssuedAssignment.condition, // NOTE(Mark): avoid the previous "|| CONDITIONS[0]" to avoid silent overrides on unexpected "falsy" branches.
+            isTest: isTest
+        });
+    }
+    return undefined;
 }
 
 
@@ -257,47 +317,27 @@ export const handler = async (event) => {
     }
 
     try {
-        const { prolific_id, party_group, condition, all_posts, is_test } = parseInputs(event);
+        const { prolificId, party_group, condition, all_posts, isTest } = parseInputs(event);
         let postPool = await getPostPool(all_posts);
 
         // get the correct S3 keys for the assignments, based on if we're in test mode or not.
-        const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(is_test);
+        const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(isTest);
 
         // Read finalized assignments from S3
-        let finalizedAssignments = loadFinalizedAssignmentsFromS3(assignmentKey);
+        let finalizedAssignments = loadFinalizedAssignmentsFromS3(finalizedAssignmentsKey);
 
         // Read issued assignments
-        let issuedAssignments = loadIssuedAssignmentsFromS3(pendingKey);
+        let issuedAssignments = loadIssuedAssignmentsFromS3(issuedAssignmentsKey);
 
-        // Check if participant already has completed assignments
-        if (assignments.participants[prolific_id] && assignments.participants[prolific_id].posts) {
-            const existingPosts = assignments.participants[prolific_id].posts;
-            const postIds = existingPosts.map(p => p.post_id || p);
-            if (postIds.length >= NUM_POSTS_PER_PARTICIPANT) {
-                console.log(`Returning existing assignment for ${prolific_id}`);
-                return corsResponse(200, {
-                    assigned_post_ids: postIds,
-                    already_assigned: true,
-                    condition: assignments.participants[prolific_id].condition || CONDITIONS[0],
-                    is_test: is_test
-                });
-            }
-        }
+        // Check if participant already has finalized assignments
+        returnFinalizedAssignmentIfExists(finalizedAssignments, prolificId, isTest);
 
-        // Check pending assignments
-        const pending = pendingAssignments[prolific_id];
-        if (pending && pending.posts) {
-            return corsResponse(200, {
-                assigned_post_ids: pending.posts.map(p => p.post_id || p),
-                already_assigned: true,
-                condition: pending.condition || CONDITIONS[0],
-                is_test: is_test
-            });
-        }
+        // Check if participants already has issued assignments
+        returnIssuedAssignmentIfExists(issuedAssignments, prolificId, isTest);
 
         const requestedCondition = CONDITIONS.includes(String(condition || '').trim()) ? String(condition).trim() : null;
         let assignedCondition;
-        if (is_test && requestedCondition) {
+        if (isTest && requestedCondition) {
             assignedCondition = requestedCondition;
         } else {
             // Assign condition globally with pending-aware balancing to prevent drift
@@ -353,7 +393,7 @@ export const handler = async (event) => {
         // Find available posts
         const availablePosts = postPool;
 
-        const testNote = is_test ? ' [test]' : '';
+        const testNote = isTest ? ' [test]' : '';
         console.log(`Available posts for ${party_group}: ${availablePosts.length}/${postPool.length}${testNote}`);
 
         const sortedPosts = [...availablePosts].sort((a, b) => Number(a.post_number) - Number(b.post_number));
@@ -653,7 +693,9 @@ export const handler = async (event) => {
 
         const shortAssignment = selectedPosts.length < NUM_POSTS_PER_PARTICIPANT;
 
-        pendingAssignments[prolific_id] = {
+        // TODO(Mark): need to be very careful and guarantee and validation all of this, especially
+        // the condition. We should add some sort of verification here.
+        pendingAssignments[prolificId] = {
             party: party_group,
             condition: assignedCondition,
             posts: selectedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number })),
@@ -668,14 +710,14 @@ export const handler = async (event) => {
         }));
 
         const shortNote = shortAssignment ? ' (short assignment)' : '';
-        console.log(`Assigned ${selectedPosts.length} posts to ${prolific_id} (${party_group}, ${assignedCondition})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
+        console.log(`Assigned ${selectedPosts.length} posts to ${prolificId} (${party_group}, ${assignedCondition})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
 
         return corsResponse(200, {
             assigned_post_ids: selectedPosts.map(p => p.post_id),
             already_assigned: false,
             short_assignment: shortAssignment,
             condition: assignedCondition,
-            is_test: is_test
+            isTest: isTest
         });
 
     } catch (error) {
