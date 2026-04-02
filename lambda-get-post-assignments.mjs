@@ -131,13 +131,13 @@ function parseInputs(event) {
         body = event.body || {};
     }
 
-    const { prolificId, party_group, condition, all_posts, isTest } = body;
+    const { prolificId, party_group: userPoliticalParty, condition: customManualCondition, all_posts, isTest } = body;
 
     if (!prolificId) {
         return corsResponse(400, { error: 'Missing prolificId' });
     }
 
-    if (!party_group || !['democrat', 'republican'].includes(party_group)) {
+    if (!userPoliticalParty || !['democrat', 'republican'].includes(userPoliticalParty)) {
         return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
     }
 
@@ -150,7 +150,7 @@ function parseInputs(event) {
         isTest = isTest ?? inferredTest;
     }
 
-    return { prolificId, party_group, condition, all_posts, isTest };
+    return { prolificId, userPoliticalParty, customManualCondition, all_posts, isTest };
 }
 
 /*
@@ -168,6 +168,7 @@ async function getPostPool(all_posts) {
     }
 }
 
+/*** LOGIC RELATED TO LOADING PREVIOUS ASSIGNMENTS FROM S3 ***/
 
 /*
  * Load assignments from S3.
@@ -309,6 +310,122 @@ function returnIssuedAssignmentIfExists(
     return undefined;
 }
 
+/*** LOGIC RELATED TO ASSIGNING A CONDITION ***/
+
+/**
+ * Manually set a condition override if the participant has requested it.
+ * @param {string} customManualCondition - The condition requested by the participant.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {string|null} The condition override if it exists, otherwise null.
+ */
+function manuallySetConditionOverride(customManualCondition, isTest) {
+    const requestedCondition = CONDITIONS.includes(String(customManualCondition || '').trim()) ? String(customManualCondition).trim() : null;
+    if (isTest && requestedCondition) {
+        return requestedCondition;
+    }
+    return null;
+}
+
+/*
+ * Initialize the condition counts.
+ * @param {Array} allowedConditions - The allowed conditions.
+ * @returns {Object} - The initialized condition counts.
+ */
+function initializeConditionCounts(
+    allowedConditions
+)
+{
+    let perConditionCountForUserPartyGroup = {};
+    let totalParticipantsPerCondition = {}
+
+    allowedConditions.forEach(c => {
+        perConditionCountForUserPartyGroup[c] = 0;
+        totalParticipantsPerCondition[c] = 0;
+    });
+
+    return { perConditionCountForUserPartyGroup, totalParticipantsPerCondition };
+}
+
+function addExistingAssignmentsToConditionCounts(
+
+) {
+    // calculate for the finalized assignments
+
+    // calculate for the issued assignments
+}
+
+function computeCondition(
+    finalizedAssignments,
+    issuedAssignments,
+    userPoliticalParty
+) {
+    // Assign a condition.
+
+    // Assign condition globally with pending-aware balancing to prevent drift
+    // during concurrent sign-ups.
+    const totalFinalizedAssignments = Object.keys(finalizedAssignments.participants || {}).length;
+    const totalIssuedAssignments = Object.keys(issuedAssignments || {}).length;
+    const totalAssignments = totalFinalizedAssignments + totalIssuedAssignments;
+
+    const allowedConditions = CONDITIONS;
+
+    const { perConditionCountForUserPartyGroup, totalParticipantsPerCondition } = initializeConditionCounts(allowedConditions);
+
+    // Count both completed and pending:
+    // - party-aware counts (primary): balance control/training within this party_group
+    // - global counts (tie-break): avoid systematic drift overall
+
+    // Completed history
+    Object.values(assignments.participants || {}).forEach(p => {
+        if (!p) return;
+        if (!allowedConditions.includes(p.condition)) return;
+        globalConditionCounts[p.condition] += 1;
+        if (p.party !== party_group) return;
+        partyConditionCounts[p.condition] += 1;
+    });
+
+    // Pending in-flight reservations
+    Object.values(pendingAssignments || {}).forEach(pending => {
+        if (!pending) return;
+        if (!allowedConditions.includes(pending.condition)) return;
+        globalConditionCounts[pending.condition] += 1;
+        if (pending.party !== party_group) return;
+        partyConditionCounts[pending.condition] += 1;
+    });
+
+    // Primary: balance within this party_group
+    const minPartyCount = Math.min(...allowedConditions.map(c => partyConditionCounts[c] ?? 0));
+    const partyCandidates = allowedConditions.filter(c => (partyConditionCounts[c] ?? 0) === minPartyCount);
+
+    if (partyCandidates.length === 1) {
+        assignedCondition = partyCandidates[0];
+    } else {
+        // Tie-break: balance globally
+        const minGlobalCount = Math.min(...partyCandidates.map(c => globalConditionCounts[c] ?? 0));
+        const globalCandidates = partyCandidates.filter(c => (globalConditionCounts[c] ?? 0) === minGlobalCount);
+        assignedCondition = globalCandidates[totalCommitted % globalCandidates.length];
+    }
+    return assignedCondition;
+}
+
+function assignCondition(
+    customManualCondition,
+    isTest
+) {
+
+    // Manually set a condition.
+    const manuallySetConditionOverride = manuallySetConditionOverride(customManualCondition, isTest);
+    if (manuallySetConditionOverride) {
+        return manuallySetConditionOverride;
+    }
+
+    // Compute a condition.
+    const computedCondition = computeCondition();
+    return computedCondition;
+}
+
+
+/*** MAIN HANDLER ***/
 
 export const handler = async (event) => {
     // Handle CORS preflight
@@ -317,7 +434,7 @@ export const handler = async (event) => {
     }
 
     try {
-        const { prolificId, party_group, condition, all_posts, isTest } = parseInputs(event);
+        const { prolificId, userPoliticalParty, customManualCondition, all_posts, isTest } = parseInputs(event);
         let postPool = await getPostPool(all_posts);
 
         // get the correct S3 keys for the assignments, based on if we're in test mode or not.
@@ -335,60 +452,11 @@ export const handler = async (event) => {
         // Check if participants already has issued assignments
         returnIssuedAssignmentIfExists(issuedAssignments, prolificId, isTest);
 
-        const requestedCondition = CONDITIONS.includes(String(condition || '').trim()) ? String(condition).trim() : null;
-        let assignedCondition;
-        if (isTest && requestedCondition) {
-            assignedCondition = requestedCondition;
-        } else {
-            // Assign condition globally with pending-aware balancing to prevent drift
-            // during concurrent sign-ups.
-            const totalCompleted = Object.keys(assignments.participants || {}).length;
-            const totalPending = Object.keys(pendingAssignments || {}).length;
-            const totalCommitted = totalCompleted + totalPending;
-
-            const allowedConditions = CONDITIONS;
-
-            // Count both completed and pending:
-            // - party-aware counts (primary): balance control/training within this party_group
-            // - global counts (tie-break): avoid systematic drift overall
-            const partyConditionCounts = {};
-            const globalConditionCounts = {};
-            allowedConditions.forEach(c => {
-                partyConditionCounts[c] = 0;
-                globalConditionCounts[c] = 0;
-            });
-
-            // Completed history
-            Object.values(assignments.participants || {}).forEach(p => {
-                if (!p) return;
-                if (!allowedConditions.includes(p.condition)) return;
-                globalConditionCounts[p.condition] += 1;
-                if (p.party !== party_group) return;
-                partyConditionCounts[p.condition] += 1;
-            });
-
-            // Pending in-flight reservations
-            Object.values(pendingAssignments || {}).forEach(pending => {
-                if (!pending) return;
-                if (!allowedConditions.includes(pending.condition)) return;
-                globalConditionCounts[pending.condition] += 1;
-                if (pending.party !== party_group) return;
-                partyConditionCounts[pending.condition] += 1;
-            });
-
-            // Primary: balance within this party_group
-            const minPartyCount = Math.min(...allowedConditions.map(c => partyConditionCounts[c] ?? 0));
-            const partyCandidates = allowedConditions.filter(c => (partyConditionCounts[c] ?? 0) === minPartyCount);
-
-            if (partyCandidates.length === 1) {
-                assignedCondition = partyCandidates[0];
-            } else {
-                // Tie-break: balance globally
-                const minGlobalCount = Math.min(...partyCandidates.map(c => globalConditionCounts[c] ?? 0));
-                const globalCandidates = partyCandidates.filter(c => (globalConditionCounts[c] ?? 0) === minGlobalCount);
-                assignedCondition = globalCandidates[totalCommitted % globalCandidates.length];
-            }
-        }
+        let assignedCondition = assignCondition(
+            customManualCondition,
+            isTest,
+            userPoliticalParty
+        );
 
         // Find available posts
         const availablePosts = postPool;
