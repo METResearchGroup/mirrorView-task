@@ -13,11 +13,12 @@ const s3Client = new S3Client({ region: "us-east-2" });
 
 // Configuration - matches existing setup
 // const BUCKET_NAME = 'jspsych-mirror-view';
-const BUCKET_NAME = 'jspsych-mirror-view-2';
-const POST_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
-const POST_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
-const PENDING_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
-const PENDING_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
+// const BUCKET_NAME = 'jspsych-mirror-view-2';
+const BUCKET_NAME = 'jspsych-mirror-view-3'; // (2026-04-02) using a new version, to follow previous semantics.
+const FINALIZED_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
+const FINALIZED_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
+const ISSUED_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
+const ISSUED_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
 const POST_CATALOG_KEY = 'img/all_mirrors_claude.csv';
 
 const NUM_POSTS_PER_PARTICIPANT = 20;
@@ -210,7 +211,7 @@ function setDefaultAssignments() {
  * @param {string} assignmentKey - The key to load the assignments from.
  * @returns {Object} - The loaded assignments.
  */
-function loadCommitedAssignmentsFromS3(assignmentKey) {
+function loadFinalizedAssignmentsFromS3(assignmentKey) {
     let loadedAssignments = loadAssignmentsFromS3(assignmentKey);
     if (loadedAssignments && Object.keys(loadedAssignments).length === 0) {
         loadedAssignments = setDefaultAssignments();
@@ -223,7 +224,7 @@ function loadCommitedAssignmentsFromS3(assignmentKey) {
  * @param {string} pendingKey - The key to load the assignments from.
  * @returns {Object} - The loaded assignments.
  */
-function loadPendingAssignmentsFromS3(pendingKey) {
+function loadIssuedAssignmentsFromS3(pendingKey) {
     let loadedPendingAssignments = loadAssignmentsFromS3(pendingKey);
     if (loadedPendingAssignments && Object.keys(loadedPendingAssignments).length === 0) {
         loadedPendingAssignments = {};
@@ -243,8 +244,8 @@ function getIsTestFlag(prolific_id) {
  */
 function getAssignmentKeys(is_test) {
     return {
-        assignmentKey: is_test ? POST_ASSIGNMENTS_TEST_FILE : POST_ASSIGNMENTS_FILE,
-        pendingKey: is_test ? PENDING_ASSIGNMENTS_TEST_FILE : PENDING_ASSIGNMENTS_FILE
+        finalizedAssignmentsKey: is_test ? FINALIZED_ASSIGNMENTS_TEST_FILE : FINALIZED_ASSIGNMENTS_FILE,
+        issuedAssignmentsKey: is_test ? ISSUED_ASSIGNMENTS_TEST_FILE : ISSUED_ASSIGNMENTS_FILE
     };
 }
 
@@ -260,13 +261,13 @@ export const handler = async (event) => {
         let postPool = await getPostPool(all_posts);
 
         // get the correct S3 keys for the assignments, based on if we're in test mode or not.
-        const { assignmentKey, pendingKey } = getAssignmentKeys(is_test);
+        const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(is_test);
 
-        // Read current assignments from S3
-        let assignments = loadCommitedAssignmentsFromS3(assignmentKey);
+        // Read finalized assignments from S3
+        let finalizedAssignments = loadFinalizedAssignmentsFromS3(assignmentKey);
 
-        // Read pending assignments
-        let pendingAssignments = loadPendingAssignmentsFromS3(pendingKey);
+        // Read issued assignments
+        let issuedAssignments = loadIssuedAssignmentsFromS3(pendingKey);
 
         // Check if participant already has completed assignments
         if (assignments.participants[prolific_id] && assignments.participants[prolific_id].posts) {
