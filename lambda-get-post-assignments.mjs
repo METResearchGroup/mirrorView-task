@@ -13,11 +13,12 @@ const s3Client = new S3Client({ region: "us-east-2" });
 
 // Configuration - matches existing setup
 // const BUCKET_NAME = 'jspsych-mirror-view';
-const BUCKET_NAME = 'jspsych-mirror-view-2';
-const POST_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
-const POST_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
-const PENDING_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
-const PENDING_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
+// const BUCKET_NAME = 'jspsych-mirror-view-2';
+const BUCKET_NAME = 'jspsych-mirror-view-3'; // (2026-04-02) using a new version, to follow previous semantics.
+const FINALIZED_ASSIGNMENTS_FILE = 'data/prolific/post_assignments.json';
+const FINALIZED_ASSIGNMENTS_TEST_FILE = 'data/test/post_assignments.json';
+const ISSUED_ASSIGNMENTS_FILE = 'data/prolific/pending_assignments.json';
+const ISSUED_ASSIGNMENTS_TEST_FILE = 'data/test/pending_assignments.json';
 const POST_CATALOG_KEY = 'img/all_mirrors_claude.csv';
 
 const NUM_POSTS_PER_PARTICIPANT = 20;
@@ -121,6 +122,396 @@ async function getPostCatalog() {
     return cachedPostCatalog;
 }
 
+
+function parseInputs(event) {
+    let body;
+    if (typeof event.body === 'string') {
+        body = JSON.parse(event.body);
+    } else {
+        body = event.body || {};
+    }
+
+    const { prolificId, party_group: userPoliticalParty, condition: customManualCondition, all_posts, isTest } = body;
+
+    if (!prolificId) {
+        return corsResponse(400, { error: 'Missing prolificId' });
+    }
+
+    if (!userPoliticalParty || !['democrat', 'republican'].includes(userPoliticalParty)) {
+        return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
+    }
+
+    const inferredTest = getIsTestFlag(prolificId);
+
+    if (isTest == null) {
+        isTest = inferredTest;
+    } else {
+        // if isTest is False, we want to use the inferredTest flag.
+        isTest = isTest ?? inferredTest;
+    }
+
+    return { prolificId, userPoliticalParty, customManualCondition, all_posts, isTest };
+}
+
+/*
+ * Get the post pool for the assignment.
+ * @param {Array} all_posts - The list of all posts to choose from.
+ * @returns {Array} - The post pool.
+ */
+async function getPostPool(all_posts) {
+    let postPool = Array.isArray(all_posts) && all_posts.length > 0 ? all_posts : null;
+    if (!postPool) {
+        postPool = await getPostCatalog();
+    }
+    if (!postPool || postPool.length === 0) {
+        return corsResponse(400, { error: 'No posts available for assignment' });
+    }
+}
+
+/*** LOGIC RELATED TO LOADING PREVIOUS ASSIGNMENTS FROM S3 ***/
+
+/*
+ * Load assignments from S3.
+ * @param {string} assignmentKey - The key to load the assignments from.
+ * @returns {Object} - The loaded assignments.
+ */
+async function loadAssignmentsFromS3(assignmentKey) {
+    let loadedAssignments;
+    try {
+        const data = await s3Client.send(new GetObjectCommand({
+            Bucket: BUCKET_NAME,
+            Key: assignmentKey
+        }));
+        loadedAssignments = JSON.parse(await data.Body.transformToString());
+        console.log(`Loaded ${Object.keys(loadedAssignments.posts || {}).length} post assignments`);
+    } catch (error) {
+        if (error.name === 'NoSuchKey') {
+            loadedAssignments = {}
+            console.log(`Created new post assignments file: ${assignmentKey}`);
+        } else {
+            console.error('Error reading post assignments from S3:', error);
+            throw error;
+        }
+    }
+    return loadedAssignments
+}
+
+
+/* Set default assignments if the file doesn't exist. 
+ * @returns {Object} - The default assignments.
+ */
+function setDefaultAssignments() {
+    return {
+        posts: {},
+        participants: {}
+    }
+}
+
+/*
+ * Load finalized assignments from S3.
+ * @param {string} assignmentKey - The key to load the assignments from.
+ * @returns {Object} - The loaded assignments.
+ */
+function loadFinalizedAssignmentsFromS3(assignmentKey) {
+    let loadedAssignments = loadAssignmentsFromS3(assignmentKey);
+    if (loadedAssignments && Object.keys(loadedAssignments).length === 0) {
+        loadedAssignments = setDefaultAssignments();
+    }
+    return loadedAssignments;
+}
+
+/*
+ * Load issued assignments from S3.
+ * @param {string} pendingKey - The key to load the assignments from.
+ * @returns {Object} - The loaded assignments.
+ */
+function loadIssuedAssignmentsFromS3(pendingKey) {
+    let loadedPendingAssignments = loadAssignmentsFromS3(pendingKey);
+    if (loadedPendingAssignments && Object.keys(loadedPendingAssignments).length === 0) {
+        loadedPendingAssignments = {};
+    }
+    return loadedPendingAssignments;
+}
+
+
+function getIsTestFlag(prolificId) {
+    return (typeof prolificId === 'string' && (prolificId.startsWith('UNKNOWN_') || prolificId.startsWith('TEST_')));
+}
+
+/* 
+ * Get the correct S3 keys for the assignments, based on if we're in test mode or not.
+ * @param {boolean} isTest - Whether we're running in test mode.
+ * @returns {Object} - An object with the assignment and pending keys.
+ */
+function getAssignmentKeys(isTest) {
+    return {
+        finalizedAssignmentsKey: isTest ? FINALIZED_ASSIGNMENTS_TEST_FILE : FINALIZED_ASSIGNMENTS_FILE,
+        issuedAssignmentsKey: isTest ? ISSUED_ASSIGNMENTS_TEST_FILE : ISSUED_ASSIGNMENTS_FILE
+    };
+}
+
+/**
+ * Checks if a finalized assignment for the given participant already exists and returns it if so.
+ * @param {Object} finalizedAssignments - The finalized assignments object (structure: {participants: {[prolificId]: {posts: Array, condition: string}}}).
+ * @param {string} prolificId - The Prolific participant ID.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {Object|undefined} A CORS response with assignment data if an assignment exists and is complete, otherwise undefined.
+ */
+function returnFinalizedAssignmentIfExists(
+    finalizedAssignments,
+    prolificId,
+    isTest
+) {
+    let prolificUserExists = (
+        finalizedAssignments &&
+        finalizedAssignments.participants &&
+        finalizedAssignments.participants[prolificId]
+    );
+    let prolificUserAssignmentPostsExist = prolificUserExists && Array.isArray(finalizedAssignments.participants[prolificId].posts);
+    if (prolificUserAssignmentPostsExist) {
+        const previouslyAssignedPosts = finalizedAssignments.participants[prolificId].posts;
+        const postIds = previouslyAssignedPosts.map((p) => (p.post_id || p));
+        if (postIds.length >= NUM_POSTS_PER_PARTICIPANT) {
+            console.log(`Returning existing assignment for ${prolificId}`);
+            return corsResponse(200, {
+                assigned_post_ids: postIds,
+                already_assigned: true,
+                condition: finalizedAssignments.participants[prolificId].condition, // NOTE(Mark): avoid the previous "|| CONDITIONS[0]" to avoid silent overrides on unexpected "falsy" branches.
+                isTest: isTest
+            });
+        }
+    }
+    return undefined;
+}
+
+/**
+ * Checks if a pending (issued but not finalized) assignment for the given participant already exists and returns it if so.
+ * @param {Object} issuedAssignments - The issued assignments object (structure: {[prolificId]: {posts: Array, condition: string}}).
+ * @param {string} prolificId - The Prolific participant ID.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {Object|undefined} A CORS response with assignment data if an issued assignment exists, otherwise undefined.
+ */
+function returnIssuedAssignmentIfExists(
+    issuedAssignments,
+    prolificId,
+    isTest
+) {
+    const prolificUserIssuedAssignment = issuedAssignments[prolificId];
+    const prolificUserIssuedAssignmentPosts = prolificUserIssuedAssignment && prolificUserIssuedAssignment.posts;
+
+    if (prolificUserIssuedAssignmentPosts) {
+        return corsResponse(200, {
+            assigned_post_ids: prolificUserIssuedAssignmentPosts.map(p => p.post_id || p),
+            already_assigned: true,
+            condition: prolificUserIssuedAssignment.condition, // NOTE(Mark): avoid the previous "|| CONDITIONS[0]" to avoid silent overrides on unexpected "falsy" branches.
+            isTest: isTest
+        });
+    }
+    return undefined;
+}
+
+/*** LOGIC RELATED TO ASSIGNING A CONDITION ***/
+
+/**
+ * Manually set a condition override if the participant has requested it.
+ * @param {string} customManualCondition - The condition requested by the participant.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {string|null} The condition override if it exists, otherwise null.
+ */
+function manuallySetConditionOverride(customManualCondition, isTest) {
+    const requestedCondition = CONDITIONS.includes(String(customManualCondition || '').trim()) ? String(customManualCondition).trim() : null;
+    if (isTest && requestedCondition) {
+        return requestedCondition;
+    }
+    return null;
+}
+
+/*
+ * Initialize the condition counts.
+ * @param {Array} allowedConditions - The allowed conditions.
+ * @returns {Object} - The initialized condition counts.
+ */
+function initializeConditionCounts(
+    allowedConditions
+)
+{
+    let perConditionParticipantCountForUserPartyGroup = {};
+    let totalParticipantsPerCondition = {}
+
+    allowedConditions.forEach(c => {
+        perConditionParticipantCountForUserPartyGroup[c] = 0;
+        totalParticipantsPerCondition[c] = 0;
+    });
+
+    return { perConditionParticipantCountForUserPartyGroup, totalParticipantsPerCondition };
+}
+
+// TODO(Mark): I need to add typing for perConditionParticipantCountForUserPartyGroup, totalParticipantsPerCondition, so I know what the fields are.
+
+/*
+ * Add existing assignments to the condition counts.
+
+Algorithm:
+ - Count both the finalized and issued assignments. For each, we track two counters:
+   - perConditionParticipantCountForUserPartyGroup: count the number of participants in each condition for the user's party group.
+   - totalParticipantsPerCondition: count the total/global number of participants in each condition.
+
+Doing this allows us to ensure that we are balancing both (1) the global number of participants in
+each condition AND (2) the number of participants in each condition by political party.
+
+ * @param {Object} finalizedAssignments - The finalized assignments object.
+ * @param {Object} issuedAssignments - The issued assignments object.
+ * @param {Array} allowedConditions - The allowed conditions.
+ * @param {string} userPoliticalParty - The user's party group.
+ * @param {Object} perConditionParticipantCountForUserPartyGroup - The per condition count for the user's party group.
+ * @param {Object} totalParticipantsPerCondition - The total participants per condition.
+ */
+function addExistingAssignmentsToConditionCounts(
+    finalizedAssignments,
+    issuedAssignments,
+    allowedConditions,
+    userPoliticalParty,
+    perConditionParticipantCountForUserPartyGroup,
+    totalParticipantsPerCondition
+) {
+    const updatedperConditionParticipantCountForUserPartyGroup = {
+        ...perConditionParticipantCountForUserPartyGroup
+    };
+    const updatedTotalParticipantsPerCondition = {
+        ...totalParticipantsPerCondition
+    };
+
+    // calculate for the finalized assignments
+    const finalizedParticipants = Object.values(finalizedAssignments.participants || {});
+    finalizedParticipants.forEach(participant => {
+        if (!participant) return;
+        if (!allowedConditions.includes(participant.condition)) return;
+
+        // increment counter for the participant's condition
+        updatedTotalParticipantsPerCondition[participant.condition] += 1;
+
+        // increment counter for the participant's party group ONLY
+        // if it matches the user's party group.
+        if (participant.party !== userPoliticalParty) return;
+        updatedperConditionParticipantCountForUserPartyGroup[participant.condition] += 1;
+    });
+
+    // calculate for the issued assignments
+    const issuedParticipantAssignments = Object.values(issuedAssignments || {});
+    issuedParticipantAssignments.forEach(issuedAssignment => {
+        if (!issuedAssignment) return;
+        if (!allowedConditions.includes(issuedAssignment.condition)) return;
+
+        // increment counter for the participant's condition
+        updatedTotalParticipantsPerCondition[issuedAssignment.condition] += 1;
+
+        // increment counter for the participant's party group ONLY
+        // if it matches the user's party group.
+        if (issuedAssignment.party !== userPoliticalParty) return;
+        updatedperConditionParticipantCountForUserPartyGroup[issuedAssignment.condition] += 1;
+    });
+
+    return {
+        perConditionParticipantCountForUserPartyGroup: updatedperConditionParticipantCountForUserPartyGroup,
+        totalParticipantsPerCondition: updatedTotalParticipantsPerCondition
+    };
+}
+
+function computeCondition(
+    finalizedAssignments,
+    issuedAssignments,
+    userPoliticalParty,
+    allowedConditions
+) {
+    const initialConditionCounts = initializeConditionCounts(allowedConditions);
+
+    // Count number of existing participants per condition, and for each condition
+    // within the user's political party.
+    const {
+        perConditionParticipantCountForUserPartyGroup,
+        totalParticipantsPerCondition
+    } = addExistingAssignmentsToConditionCounts(
+        finalizedAssignments,
+        issuedAssignments,
+        allowedConditions,
+        userPoliticalParty,
+        initialConditionCounts.perConditionParticipantCountForUserPartyGroup,
+        initialConditionCounts.totalParticipantsPerCondition
+    );
+
+    // Algorithm for choosing condition.
+
+    let assignedCondition;
+
+    // Primary determinant: look at the user's political party. Then look at,
+    // for that political party, the condition with the fewest number of
+    // participants. Assign that condition to the user
+
+    const lowestParticipantCountForSingleCondition = (
+        Math.min(...allowedConditions.map(c => perConditionParticipantCountForUserPartyGroup[c] ?? 0))
+    );
+    const possibleConditionsForAssignment = allowedConditions.filter(
+        c => (perConditionParticipantCountForUserPartyGroup[c] ?? 0) === lowestParticipantCountForSingleCondition
+    );
+
+    if (possibleConditionsForAssignment.length === 1) {
+        assignedCondition = possibleConditionsForAssignment[0];
+    } else {
+        // Secondary (tiebreaker) algorithm: if we have multiple candidate conditions
+        // after our primary determinant, we assign the condition with
+        // the fewest number of total participants.
+        const globalLowestParticipantCountForSingleCondition = (
+            Math.min(...possibleConditionsForAssignment.map(c => totalParticipantsPerCondition[c] ?? 0))
+        );
+        const globalConditionsWithLowestParticipantCount = possibleConditionsForAssignment.filter(c => (totalParticipantsPerCondition[c] ?? 0) === globalLowestParticipantCountForSingleCondition);
+
+        // pick whichever comes first in the array. Simplification that doesn't cause
+        // any consequential biases. What it means is that in the case where there are
+        // the same number of participants in multiple conditions and those conditions
+        // have the lowest number of participants, we just pick the first one.
+        assignedCondition = globalConditionsWithLowestParticipantCount[0];
+    }
+    return assignedCondition;
+}
+
+/*
+ * Assign a condition to a participant.
+ * @param {Object} finalizedAssignments - The finalized assignments object.
+ * @param {Object} issuedAssignments - The issued assignments object.
+ * @param {string} userPoliticalParty - The user's party group.
+ * @param {Array} allowedConditions - The allowed conditions.
+ * @param {string} customManualCondition - The condition requested by the participant.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {string} - The assigned condition.
+ */
+function assignCondition(
+    finalizedAssignments,
+    issuedAssignments,
+    userPoliticalParty,
+    allowedConditions,
+    customManualCondition,
+    isTest
+) {
+
+    // Option 1: Manually set a condition.
+    const manuallySetConditionOverride = manuallySetConditionOverride(customManualCondition, isTest);
+    if (manuallySetConditionOverride) {
+        return manuallySetConditionOverride;
+    }
+
+    // Option 2: Compute a condition.
+    const computedCondition = computeCondition(
+        finalizedAssignments,
+        issuedAssignments,
+        userPoliticalParty,
+        allowedConditions
+    );
+    return computedCondition;
+}
+
+
+/*** MAIN HANDLER ***/
+
 export const handler = async (event) => {
     // Handle CORS preflight
     if (event.httpMethod === 'OPTIONS') {
@@ -128,168 +519,57 @@ export const handler = async (event) => {
     }
 
     try {
-        // Parse request body
-        let body;
-        if (typeof event.body === 'string') {
-            body = JSON.parse(event.body);
-        } else {
-            body = event.body || {};
+        const { prolificId, userPoliticalParty, customManualCondition, all_posts, isTest } = parseInputs(event);
+        let postPool = await getPostPool(all_posts);
+
+        // get the correct S3 keys for the assignments, based on if we're in test mode or not.
+        const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(isTest);
+
+
+        // TODO (Mark): need stronger typing + contract enforcement for what to expect for
+        // the shapes of finalizedAssignments and issuedAssignments.
+
+        // Read finalized assignments from S3
+        let finalizedAssignments = loadFinalizedAssignmentsFromS3(finalizedAssignmentsKey);
+
+        // Read issued assignments
+        let issuedAssignments = loadIssuedAssignmentsFromS3(issuedAssignmentsKey);
+
+        // Check if participant already has finalized assignments
+        const existingFinalizedAssignmentResponse = returnFinalizedAssignmentIfExists(
+            finalizedAssignments,
+            prolificId,
+            isTest
+        );
+        if (existingFinalizedAssignmentResponse) {
+            return existingFinalizedAssignmentResponse;
         }
 
-        const { prolific_id, party_group, condition, all_posts, is_test } = body;
-
-        // Validate inputs
-        if (!prolific_id) {
-            return corsResponse(400, { error: 'Missing prolific_id' });
+        // Check if participants already has issued assignments
+        const existingIssuedAssignmentResponse = returnIssuedAssignmentIfExists(
+            issuedAssignments,
+            prolificId,
+            isTest
+        );
+        if (existingIssuedAssignmentResponse) {
+            return existingIssuedAssignmentResponse;
         }
 
-        if (!party_group || !['democrat', 'republican'].includes(party_group)) {
-            return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
-        }
+        let allowedConditions = CONDITIONS;
 
-        let postPool = Array.isArray(all_posts) && all_posts.length > 0 ? all_posts : null;
-        if (!postPool) {
-            postPool = await getPostCatalog();
-        }
-        if (!postPool || postPool.length === 0) {
-            return corsResponse(400, { error: 'No posts available for assignment' });
-        }
-
-        const inferredTest = is_test === true
-            || (typeof prolific_id === 'string' && (prolific_id.startsWith('UNKNOWN_') || prolific_id.startsWith('TEST_')));
-        const assignmentKey = inferredTest ? POST_ASSIGNMENTS_TEST_FILE : POST_ASSIGNMENTS_FILE;
-        const pendingKey = inferredTest ? PENDING_ASSIGNMENTS_TEST_FILE : PENDING_ASSIGNMENTS_FILE;
-
-        // Read current assignments from S3
-        let assignments;
-        try {
-            const data = await s3Client.send(new GetObjectCommand({
-                Bucket: BUCKET_NAME,
-                Key: assignmentKey
-            }));
-            assignments = JSON.parse(await data.Body.transformToString());
-            console.log(`Loaded ${Object.keys(assignments.posts || {}).length} post assignments`);
-        } catch (error) {
-            if (error.name === 'NoSuchKey') {
-                // Initialize empty assignments structure
-                assignments = {
-                    posts: {},           // { post_id: { post_number, counts: { control, training, training_assisted } } }
-                    participants: {}     // { prolific_id: { party, condition, posts: [{post_id, post_number}], assigned_at } }
-                };
-                console.log(`Created new post assignments file: ${assignmentKey}`);
-            } else {
-                console.error('Error reading post assignments from S3:', error);
-                throw error;
-            }
-        }
-
-        // Initialize structure if missing
-        if (!assignments.posts) assignments.posts = {};
-        if (!assignments.participants) assignments.participants = {};
-
-        // Read pending assignments
-        let pendingAssignments;
-        try {
-            const pendingData = await s3Client.send(new GetObjectCommand({
-                Bucket: BUCKET_NAME,
-                Key: pendingKey
-            }));
-            pendingAssignments = JSON.parse(await pendingData.Body.transformToString());
-        } catch (error) {
-            if (error.name === 'NoSuchKey') {
-                pendingAssignments = {};
-                console.log(`Created new pending assignments file: ${pendingKey}`);
-            } else {
-                console.error('Error reading pending assignments from S3:', error);
-                throw error;
-            }
-        }
-
-        // Check if participant already has completed assignments
-        if (assignments.participants[prolific_id] && assignments.participants[prolific_id].posts) {
-            const existingPosts = assignments.participants[prolific_id].posts;
-            const postIds = existingPosts.map(p => p.post_id || p);
-            if (postIds.length >= NUM_POSTS_PER_PARTICIPANT) {
-                console.log(`Returning existing assignment for ${prolific_id}`);
-                return corsResponse(200, {
-                    assigned_post_ids: postIds,
-                    already_assigned: true,
-                    condition: assignments.participants[prolific_id].condition || CONDITIONS[0],
-                    is_test: inferredTest
-                });
-            }
-        }
-
-        // Check pending assignments
-        const pending = pendingAssignments[prolific_id];
-        if (pending && pending.posts) {
-            return corsResponse(200, {
-                assigned_post_ids: pending.posts.map(p => p.post_id || p),
-                already_assigned: true,
-                condition: pending.condition || CONDITIONS[0],
-                is_test: inferredTest
-            });
-        }
-
-        const requestedCondition = CONDITIONS.includes(String(condition || '').trim()) ? String(condition).trim() : null;
-        let assignedCondition;
-        if (inferredTest && requestedCondition) {
-            assignedCondition = requestedCondition;
-        } else {
-            // Assign condition globally with pending-aware balancing to prevent drift
-            // during concurrent sign-ups.
-            const totalCompleted = Object.keys(assignments.participants || {}).length;
-            const totalPending = Object.keys(pendingAssignments || {}).length;
-            const totalCommitted = totalCompleted + totalPending;
-
-            const allowedConditions = CONDITIONS;
-
-            // Count both completed and pending:
-            // - party-aware counts (primary): balance control/training within this party_group
-            // - global counts (tie-break): avoid systematic drift overall
-            const partyConditionCounts = {};
-            const globalConditionCounts = {};
-            allowedConditions.forEach(c => {
-                partyConditionCounts[c] = 0;
-                globalConditionCounts[c] = 0;
-            });
-
-            // Completed history
-            Object.values(assignments.participants || {}).forEach(p => {
-                if (!p) return;
-                if (!allowedConditions.includes(p.condition)) return;
-                globalConditionCounts[p.condition] += 1;
-                if (p.party !== party_group) return;
-                partyConditionCounts[p.condition] += 1;
-            });
-
-            // Pending in-flight reservations
-            Object.values(pendingAssignments || {}).forEach(pending => {
-                if (!pending) return;
-                if (!allowedConditions.includes(pending.condition)) return;
-                globalConditionCounts[pending.condition] += 1;
-                if (pending.party !== party_group) return;
-                partyConditionCounts[pending.condition] += 1;
-            });
-
-            // Primary: balance within this party_group
-            const minPartyCount = Math.min(...allowedConditions.map(c => partyConditionCounts[c] ?? 0));
-            const partyCandidates = allowedConditions.filter(c => (partyConditionCounts[c] ?? 0) === minPartyCount);
-
-            if (partyCandidates.length === 1) {
-                assignedCondition = partyCandidates[0];
-            } else {
-                // Tie-break: balance globally
-                const minGlobalCount = Math.min(...partyCandidates.map(c => globalConditionCounts[c] ?? 0));
-                const globalCandidates = partyCandidates.filter(c => (globalConditionCounts[c] ?? 0) === minGlobalCount);
-                assignedCondition = globalCandidates[totalCommitted % globalCandidates.length];
-            }
-        }
+        let assignedCondition = assignCondition(
+            finalizedAssignments,
+            issuedAssignments,
+            userPoliticalParty,
+            allowedConditions,
+            customManualCondition,
+            isTest
+        );
 
         // Find available posts
         const availablePosts = postPool;
 
-        const testNote = inferredTest ? ' [test]' : '';
+        const testNote = isTest ? ' [test]' : '';
         console.log(`Available posts for ${party_group}: ${availablePosts.length}/${postPool.length}${testNote}`);
 
         const sortedPosts = [...availablePosts].sort((a, b) => Number(a.post_number) - Number(b.post_number));
@@ -589,7 +869,9 @@ export const handler = async (event) => {
 
         const shortAssignment = selectedPosts.length < NUM_POSTS_PER_PARTICIPANT;
 
-        pendingAssignments[prolific_id] = {
+        // TODO(Mark): need to be very careful and guarantee and validation all of this, especially
+        // the condition. We should add some sort of verification here.
+        pendingAssignments[prolificId] = {
             party: party_group,
             condition: assignedCondition,
             posts: selectedPosts.map(p => ({ post_id: p.post_id, post_number: p.post_number })),
@@ -604,14 +886,14 @@ export const handler = async (event) => {
         }));
 
         const shortNote = shortAssignment ? ' (short assignment)' : '';
-        console.log(`Assigned ${selectedPosts.length} posts to ${prolific_id} (${party_group}, ${assignedCondition})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
+        console.log(`Assigned ${selectedPosts.length} posts to ${prolificId} (${party_group}, ${assignedCondition})${shortNote}${testNote}: ${selectedPosts.map(p => p.post_number).join(', ')}`);
 
         return corsResponse(200, {
             assigned_post_ids: selectedPosts.map(p => p.post_id),
             already_assigned: false,
             short_assignment: shortAssignment,
             condition: assignedCondition,
-            is_test: inferredTest
+            isTest: isTest
         });
 
     } catch (error) {
