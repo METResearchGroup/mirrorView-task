@@ -447,26 +447,12 @@ function computeCondition(
     // for that political party, the condition with the fewest number of
     // participants. Assign that condition to the user
 
-    let possibleConditionsForAssignment = [];
-    let lowestParticipantCountForSingleCondition = Infinity;
-
-    allowedConditions.forEach(condition => {
-        const totalParticipantsForCondition = perConditionParticipantCountForUserPartyGroup[condition] ?? 0;
-
-        if (totalParticipantsForCondition < lowestParticipantCountForSingleCondition) {
-            lowestParticipantCountForSingleCondition = totalParticipantsForCondition;
-
-            // replace the array with a fresh one whenever a new minimum is found
-            possibleConditionsForAssignment = [];
-
-            possibleConditionsForAssignment.push(condition)
-
-        // if there are multiple conditions that are equally unrepresented,
-        // we add them to the candidate conditions that we could assign.
-        } else if (totalParticipantsForCondition === lowestParticipantCountForSingleCondition) {
-            possibleConditionsForAssignment.push(condition)
-        }
-    });
+    const lowestParticipantCountForSingleCondition = (
+        Math.min(...allowedConditions.map(c => perConditionParticipantCountForUserPartyGroup[c] ?? 0))
+    );
+    const possibleConditionsForAssignment = allowedConditions.filter(
+        c => (perConditionParticipantCountForUserPartyGroup[c] ?? 0) === lowestParticipantCountForSingleCondition
+    );
 
     if (possibleConditionsForAssignment.length === 1) {
         assignedCondition = possibleConditionsForAssignment[0];
@@ -488,19 +474,38 @@ function computeCondition(
     return assignedCondition;
 }
 
+/*
+ * Assign a condition to a participant.
+ * @param {Object} finalizedAssignments - The finalized assignments object.
+ * @param {Object} issuedAssignments - The issued assignments object.
+ * @param {string} userPoliticalParty - The user's party group.
+ * @param {Array} allowedConditions - The allowed conditions.
+ * @param {string} customManualCondition - The condition requested by the participant.
+ * @param {boolean} isTest - Whether this is a test run.
+ * @returns {string} - The assigned condition.
+ */
 function assignCondition(
+    finalizedAssignments,
+    issuedAssignments,
+    userPoliticalParty,
+    allowedConditions,
     customManualCondition,
     isTest
 ) {
 
-    // Manually set a condition.
+    // Option 1: Manually set a condition.
     const manuallySetConditionOverride = manuallySetConditionOverride(customManualCondition, isTest);
     if (manuallySetConditionOverride) {
         return manuallySetConditionOverride;
     }
 
-    // Compute a condition.
-    const computedCondition = computeCondition();
+    // Option 2: Compute a condition.
+    const computedCondition = computeCondition(
+        finalizedAssignments,
+        issuedAssignments,
+        userPoliticalParty,
+        allowedConditions
+    );
     return computedCondition;
 }
 
@@ -539,10 +544,12 @@ export const handler = async (event) => {
         let allowedConditions = CONDITIONS;
 
         let assignedCondition = assignCondition(
-            customManualCondition,
-            isTest,
+            finalizedAssignments,
+            issuedAssignments,
             userPoliticalParty,
             allowedConditions,
+            customManualCondition,
+            isTest
         );
 
         // Find available posts
