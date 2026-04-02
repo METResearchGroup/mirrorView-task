@@ -335,75 +335,155 @@ function initializeConditionCounts(
     allowedConditions
 )
 {
-    let perConditionCountForUserPartyGroup = {};
+    let perConditionParticipantCountForUserPartyGroup = {};
     let totalParticipantsPerCondition = {}
 
     allowedConditions.forEach(c => {
-        perConditionCountForUserPartyGroup[c] = 0;
+        perConditionParticipantCountForUserPartyGroup[c] = 0;
         totalParticipantsPerCondition[c] = 0;
     });
 
-    return { perConditionCountForUserPartyGroup, totalParticipantsPerCondition };
+    return { perConditionParticipantCountForUserPartyGroup, totalParticipantsPerCondition };
 }
 
-function addExistingAssignmentsToConditionCounts(
+// TODO(Mark): I need to add typing for perConditionParticipantCountForUserPartyGroup, totalParticipantsPerCondition, so I know what the fields are.
 
+/*
+ * Add existing assignments to the condition counts.
+
+Algorithm:
+ - Count both the finalized and issued assignments. For each, we track two counters:
+   - perConditionParticipantCountForUserPartyGroup: count the number of participants in each condition for the user's party group.
+   - totalParticipantsPerCondition: count the total/global number of participants in each condition.
+
+Doing this allows us to ensure that we are balancing both (1) the global number of participants in
+each condition AND (2) the number of participants in each condition by political party.
+
+ * @param {Object} finalizedAssignments - The finalized assignments object.
+ * @param {Object} issuedAssignments - The issued assignments object.
+ * @param {Array} allowedConditions - The allowed conditions.
+ * @param {string} userPoliticalParty - The user's party group.
+ * @param {Object} perConditionParticipantCountForUserPartyGroup - The per condition count for the user's party group.
+ * @param {Object} totalParticipantsPerCondition - The total participants per condition.
+ */
+function addExistingAssignmentsToConditionCounts(
+    finalizedAssignments,
+    issuedAssignments,
+    allowedConditions,
+    userPoliticalParty,
+    perConditionParticipantCountForUserPartyGroup,
+    totalParticipantsPerCondition
 ) {
+    const updatedperConditionParticipantCountForUserPartyGroup = {
+        ...perConditionParticipantCountForUserPartyGroup
+    };
+    const updatedTotalParticipantsPerCondition = {
+        ...totalParticipantsPerCondition
+    };
+
     // calculate for the finalized assignments
+    const finalizedParticipants = Object.values(finalizedAssignments.participants || {});
+    finalizedParticipants.forEach(participant => {
+        if (!participant) return;
+        if (!allowedConditions.includes(participant.condition)) return;
+
+        // increment counter for the participant's condition
+        updatedTotalParticipantsPerCondition[participant.condition] += 1;
+
+        // increment counter for the participant's party group ONLY
+        // if it matches the user's party group.
+        if (participant.party !== userPoliticalParty) return;
+        updatedperConditionParticipantCountForUserPartyGroup[participant.condition] += 1;
+    });
 
     // calculate for the issued assignments
+    const issuedParticipantAssignments = Object.values(issuedAssignments || {});
+    issuedParticipantAssignments.forEach(issuedAssignment => {
+        if (!issuedAssignment) return;
+        if (!allowedConditions.includes(issuedAssignment.condition)) return;
+
+        // increment counter for the participant's condition
+        updatedTotalParticipantsPerCondition[issuedAssignment.condition] += 1;
+
+        // increment counter for the participant's party group ONLY
+        // if it matches the user's party group.
+        if (issuedAssignment.party !== userPoliticalParty) return;
+        updatedperConditionParticipantCountForUserPartyGroup[issuedAssignment.condition] += 1;
+    });
+
+    return {
+        perConditionParticipantCountForUserPartyGroup: updatedperConditionParticipantCountForUserPartyGroup,
+        totalParticipantsPerCondition: updatedTotalParticipantsPerCondition
+    };
 }
 
 function computeCondition(
     finalizedAssignments,
     issuedAssignments,
-    userPoliticalParty
+    userPoliticalParty,
+    allowedConditions
 ) {
-    // Assign a condition.
+    const initialConditionCounts = initializeConditionCounts(allowedConditions);
 
-    // Assign condition globally with pending-aware balancing to prevent drift
-    // during concurrent sign-ups.
-    const totalFinalizedAssignments = Object.keys(finalizedAssignments.participants || {}).length;
-    const totalIssuedAssignments = Object.keys(issuedAssignments || {}).length;
-    const totalAssignments = totalFinalizedAssignments + totalIssuedAssignments;
+    // Count number of existing participants per condition, and for each condition
+    // within the user's political party.
+    const {
+        perConditionParticipantCountForUserPartyGroup,
+        totalParticipantsPerCondition
+    } = addExistingAssignmentsToConditionCounts(
+        finalizedAssignments,
+        issuedAssignments,
+        allowedConditions,
+        userPoliticalParty,
+        initialConditionCounts.perConditionParticipantCountForUserPartyGroup,
+        initialConditionCounts.totalParticipantsPerCondition
+    );
 
-    const allowedConditions = CONDITIONS;
+    // Algorithm for choosing condition.
 
-    const { perConditionCountForUserPartyGroup, totalParticipantsPerCondition } = initializeConditionCounts(allowedConditions);
+    let assignedCondition;
 
-    // Count both completed and pending:
-    // - party-aware counts (primary): balance control/training within this party_group
-    // - global counts (tie-break): avoid systematic drift overall
+    // Primary determinant: look at the user's political party. Then look at,
+    // for that political party, the condition with the fewest number of
+    // participants. Assign that condition to the user
 
-    // Completed history
-    Object.values(assignments.participants || {}).forEach(p => {
-        if (!p) return;
-        if (!allowedConditions.includes(p.condition)) return;
-        globalConditionCounts[p.condition] += 1;
-        if (p.party !== party_group) return;
-        partyConditionCounts[p.condition] += 1;
+    let possibleConditionsForAssignment = [];
+    let lowestParticipantCountForSingleCondition = Infinity;
+
+    allowedConditions.forEach(condition => {
+        const totalParticipantsForCondition = perConditionParticipantCountForUserPartyGroup[condition] ?? 0;
+
+        if (totalParticipantsForCondition < lowestParticipantCountForSingleCondition) {
+            lowestParticipantCountForSingleCondition = totalParticipantsForCondition;
+
+            // replace the array with a fresh one whenever a new minimum is found
+            possibleConditionsForAssignment = [];
+
+            possibleConditionsForAssignment.push(condition)
+
+        // if there are multiple conditions that are equally unrepresented,
+        // we add them to the candidate conditions that we could assign.
+        } else if (totalParticipantsForCondition === lowestParticipantCountForSingleCondition) {
+            possibleConditionsForAssignment.push(condition)
+        }
     });
 
-    // Pending in-flight reservations
-    Object.values(pendingAssignments || {}).forEach(pending => {
-        if (!pending) return;
-        if (!allowedConditions.includes(pending.condition)) return;
-        globalConditionCounts[pending.condition] += 1;
-        if (pending.party !== party_group) return;
-        partyConditionCounts[pending.condition] += 1;
-    });
-
-    // Primary: balance within this party_group
-    const minPartyCount = Math.min(...allowedConditions.map(c => partyConditionCounts[c] ?? 0));
-    const partyCandidates = allowedConditions.filter(c => (partyConditionCounts[c] ?? 0) === minPartyCount);
-
-    if (partyCandidates.length === 1) {
-        assignedCondition = partyCandidates[0];
+    if (possibleConditionsForAssignment.length === 1) {
+        assignedCondition = possibleConditionsForAssignment[0];
     } else {
-        // Tie-break: balance globally
-        const minGlobalCount = Math.min(...partyCandidates.map(c => globalConditionCounts[c] ?? 0));
-        const globalCandidates = partyCandidates.filter(c => (globalConditionCounts[c] ?? 0) === minGlobalCount);
-        assignedCondition = globalCandidates[totalCommitted % globalCandidates.length];
+        // Secondary (tiebreaker) algorithm: if we have multiple candidate conditions
+        // after our primary determinant, we assign the condition with
+        // the fewest number of total participants.
+        const globalLowestParticipantCountForSingleCondition = (
+            Math.min(...possibleConditionsForAssignment.map(c => totalParticipantsPerCondition[c] ?? 0))
+        );
+        const globalConditionsWithLowestParticipantCount = possibleConditionsForAssignment.filter(c => (totalParticipantsPerCondition[c] ?? 0) === globalLowestParticipantCountForSingleCondition);
+
+        // pick whichever comes first in the array. Simplification that doesn't cause
+        // any consequential biases. What it means is that in the case where there are
+        // the same number of participants in multiple conditions and those conditions
+        // have the lowest number of participants, we just pick the first one.
+        assignedCondition = globalConditionsWithLowestParticipantCount[0];
     }
     return assignedCondition;
 }
@@ -440,6 +520,10 @@ export const handler = async (event) => {
         // get the correct S3 keys for the assignments, based on if we're in test mode or not.
         const { finalizedAssignmentsKey, issuedAssignmentsKey } = getAssignmentKeys(isTest);
 
+
+        // TODO (Mark): need stronger typing + contract enforcement for what to expect for
+        // the shapes of finalizedAssignments and issuedAssignments.
+
         // Read finalized assignments from S3
         let finalizedAssignments = loadFinalizedAssignmentsFromS3(finalizedAssignmentsKey);
 
@@ -452,10 +536,13 @@ export const handler = async (event) => {
         // Check if participants already has issued assignments
         returnIssuedAssignmentIfExists(issuedAssignments, prolificId, isTest);
 
+        let allowedConditions = CONDITIONS;
+
         let assignedCondition = assignCondition(
             customManualCondition,
             isTest,
-            userPoliticalParty
+            userPoliticalParty,
+            allowedConditions,
         );
 
         // Find available posts
