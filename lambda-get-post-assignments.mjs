@@ -536,10 +536,24 @@ export const handler = async (event) => {
         let issuedAssignments = loadIssuedAssignmentsFromS3(issuedAssignmentsKey);
 
         // Check if participant already has finalized assignments
-        returnFinalizedAssignmentIfExists(finalizedAssignments, prolificId, isTest);
+        const existingFinalizedAssignmentResponse = returnFinalizedAssignmentIfExists(
+            finalizedAssignments,
+            prolificId,
+            isTest
+        );
+        if (existingFinalizedAssignmentResponse) {
+            return existingFinalizedAssignmentResponse;
+        }
 
         // Check if participants already has issued assignments
-        returnIssuedAssignmentIfExists(issuedAssignments, prolificId, isTest);
+        const existingIssuedAssignmentResponse = returnIssuedAssignmentIfExists(
+            issuedAssignments,
+            prolificId,
+            isTest
+        );
+        if (existingIssuedAssignmentResponse) {
+            return existingIssuedAssignmentResponse;
+        }
 
         let allowedConditions = CONDITIONS;
 
