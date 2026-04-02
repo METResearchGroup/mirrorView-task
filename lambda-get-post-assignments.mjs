@@ -121,6 +121,34 @@ async function getPostCatalog() {
     return cachedPostCatalog;
 }
 
+
+function parseInputs(input_body) {
+    const { prolific_id, party_group, condition, all_posts, is_test } = input_body;
+
+    if (!prolific_id) {
+        return corsResponse(400, { error: 'Missing prolific_id' });
+    }
+
+    if (!party_group || !['democrat', 'republican'].includes(party_group)) {
+        return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
+    }
+
+    return { prolific_id, party_group, condition, all_posts, is_test };
+}
+
+
+async function getPostPool(all_posts) {
+    let postPool = Array.isArray(all_posts) && all_posts.length > 0 ? all_posts : null;
+    if (!postPool) {
+        postPool = await getPostCatalog();
+    }
+    if (!postPool || postPool.length === 0) {
+        return corsResponse(400, { error: 'No posts available for assignment' });
+    }
+}
+
+
+
 export const handler = async (event) => {
     // Handle CORS preflight
     if (event.httpMethod === 'OPTIONS') {
@@ -136,24 +164,8 @@ export const handler = async (event) => {
             body = event.body || {};
         }
 
-        const { prolific_id, party_group, condition, all_posts, is_test } = body;
-
-        // Validate inputs
-        if (!prolific_id) {
-            return corsResponse(400, { error: 'Missing prolific_id' });
-        }
-
-        if (!party_group || !['democrat', 'republican'].includes(party_group)) {
-            return corsResponse(400, { error: 'Invalid party_group. Must be "democrat" or "republican"' });
-        }
-
-        let postPool = Array.isArray(all_posts) && all_posts.length > 0 ? all_posts : null;
-        if (!postPool) {
-            postPool = await getPostCatalog();
-        }
-        if (!postPool || postPool.length === 0) {
-            return corsResponse(400, { error: 'No posts available for assignment' });
-        }
+        const { prolific_id, party_group, condition, all_posts, is_test } = parseInputs(body);
+        let postPool = await getPostPool(all_posts);
 
         const inferredTest = is_test === true
             || (typeof prolific_id === 'string' && (prolific_id.startsWith('UNKNOWN_') || prolific_id.startsWith('TEST_')));

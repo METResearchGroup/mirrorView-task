@@ -32,7 +32,6 @@ test('returns 400 for missing prolific_id', async () => {
 });
 
 test('reuses pending assignment for the same participant', async () => {
-    const catalog = loadPostsFromMirrorCsv();
     const { handler, store } = await loadGetAssignmentsHandler({
         [PROD_ASSIGNMENTS_KEY]: createAssignments(),
         [PROD_PENDING_KEY]: {},
@@ -41,7 +40,7 @@ test('reuses pending assignment for the same participant', async () => {
     const firstResponse = await runGetAssignmentsHandler(handler, {
         prolific_id: 'P1',
         party_group: 'democrat',
-        all_posts: catalog,
+        all_posts: loadPostsFromMirrorCsv(),
     });
 
     assert.equal(firstResponse.statusCode, 200);

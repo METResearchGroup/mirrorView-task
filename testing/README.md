@@ -29,3 +29,12 @@ Per-participant distribution with current logic:
 Selection prioritizes: Unseen posts in that condition; so full coverage is achieved before repeats.
 
 Assignments are first written to pending_assignments; they are committed to the main JSON trackers only after successful data save (to avoid including participant dropouts in image sorting).
+
+## Implementation notes from production
+
+### What are "assignments"?
+
+In production, we "assign" users to posts.
+
+- Committed assignments (post_assignments.json): the durable record of what each participant ended up getting.
+- Pending assignments (pending_assignments.json): a temporary reservation so repeated calls are idempotent, and so dropouts don’t affect “seen/unseen” balancing until data is actually saved.

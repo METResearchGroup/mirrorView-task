@@ -47,6 +47,12 @@ function loadPostsFromMirrorCsv() {
     return cachedCatalog;
 }
 
+/* Creates a list of posts with a given prefix and count.
+
+@param {string} prefix - The prefix to use for the post IDs.
+@param {number} count - The number of posts to create.
+@returns {Array<{ post_id: string, post_number: string }>}
+*/
 function makePosts(prefix, count = 20) {
     return Array.from({ length: count }, (_, index) => ({
         post_id: `${prefix}-${String(index + 1).padStart(2, '0')}`,
@@ -67,6 +73,13 @@ function createParticipant({ party, condition, posts = [], assignedAt = '2026-04
     };
 }
 
+/* Loads the assignments lambda handler with a mocked S3 client. 
+
+@param {Object} initialStore - Initial S3 state to mock. initialStore is a
+plain JavaScript object representing the initial mock state of S3 buckets/keys,
+used to simulate S3 storage for tests.
+@returns {Promise<{ handler: Function, store: Map, putCalls: Array }>}
+*/
 async function loadGetAssignmentsHandler(initialStore = {}) {
     return loadLambdaWithMockedS3({
         modulePath: GET_ASSIGNMENTS_LAMBDA_PATH,
