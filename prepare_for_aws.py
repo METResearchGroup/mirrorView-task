@@ -74,7 +74,7 @@ def main():
     
     print("\n⚠️  IMPORTANT: Don't forget to update the API URLs in main.js!")
     print("   Look for these lines around line 199-200:")
-    print("   const GET_PARTICIPANT_ID_URL = 'https://...'")
+    print("   const POST_ASSIGNMENTS_URL = 'https://...'")
     print("   const SAVE_DATA_URL = 'https://...'")
 
 if __name__ == "__main__":

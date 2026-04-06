@@ -51,7 +51,7 @@ npm start
 - **Easy Switching**: Toggle between modes without code changes
 
 ### AWS Integration
-- **Lambda Functions**: Participant ID assignment and data saving
+- **Lambda Functions**: Post assignment and data saving
 - **S3 Storage**: Static hosting and data storage
 - **API Gateway**: RESTful endpoints
 - **Complete Deployment Guide**: Step-by-step AWS setup
@@ -69,7 +69,7 @@ npm start
 1. **Update Main Script**: Modify `public/main.js` and `public/main-local.js` with your experimental logic
 2. **Add Stimuli**: Place your images in `public/img/stimuli/`
 3. **Customize Surveys**: Edit `public/pre_surveys.js` and `public/post_surveys.js`
-4. **Update Participant ID Logic**: Modify `lambda-get-participant-id.mjs` if needed
+4. **Update Post Assignment Logic**: Modify `lambda-get-post-assignments.mjs` if needed
 
 ### Configuration
 
@@ -87,7 +87,7 @@ The `public/config.js` file controls the experiment configuration:
 
 ### AWS Production
 - Data saved to S3 bucket
-- Participant ID assignment via Lambda
+- Post assignment via Lambda
 - Scalable for large studies
 
 ## 🚀 Deployment

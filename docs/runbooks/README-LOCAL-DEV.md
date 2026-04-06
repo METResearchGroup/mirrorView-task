@@ -1,6 +1,6 @@
 # Local Development Setup for AWS-scroll Branch
 
-This setup allows you to debug the full experiment flow locally, including participant ID assignment and data saving, while keeping the AWS functionality intact for production.
+This setup allows you to debug the full experiment flow locally, including post assignment and data saving, while keeping the AWS functionality intact for production.
 
 ## 🚀 Quick Start
 
@@ -28,7 +28,7 @@ npm start
 - **Easy Switching**: Toggle between local and AWS modes without code changes
 
 ### Local Server (`server-local.js`)
-- **Mimics AWS endpoints** for participant ID assignment and data saving
+- **Mimics AWS endpoints** for post assignment and data saving
 - **Political party-based assignment** (Democrats: 1-175, Republicans: 176-350)
 - **Data storage** in local `local_data/` folder with timestamped CSV files
 - **Debug endpoint** at `/debug/assignments` to monitor assignments
@@ -49,13 +49,13 @@ npm start
 ### 1. **Local Development Mode** (Default)
 - Uses local server endpoints
 - Data saved to local `local_data/` folder
-- Full participant ID assignment functionality
+- Participant IDs generated client-side in `main.js`
 - Perfect for debugging the complete experiment flow
 
 ### 2. **AWS Production Mode**
 - Uses actual AWS endpoints
 - Data sent to AWS Lambda
-- Real participant ID assignment
+- Real post assignment
 - Use this to test AWS integration
 
 ### 3. **Mode Switching**
@@ -69,7 +69,7 @@ npm start
 - **Shows**: Current participant assignments, political party counts, available IDs
 
 ### Console Logging
-- Participant ID assignment requests and responses
+- Post assignment requests and responses
 - Data saving attempts and results
 - Current endpoint being used
 
@@ -80,13 +80,17 @@ npm start
 
 ## 📊 Testing Different Scenarios
 
-### Test Participant ID Assignment
+### Test Post Assignment
 ```bash
 # Test Democrat assignment
-curl "http://localhost:3000/get-participant-id?prolific_id=TEST1&party=democrat"
+curl -X POST http://localhost:3000/get-post-assignments \
+  -H "Content-Type: application/json" \
+  -d '{"prolific_id":"TEST1","party_group":"democrat","is_test":true}'
 
 # Test Republican assignment  
-curl "http://localhost:3000/get-participant-id?prolific_id=TEST2&party=republican"
+curl -X POST http://localhost:3000/get-post-assignments \
+  -H "Content-Type: application/json" \
+  -d '{"prolific_id":"TEST2","party_group":"republican","is_test":true}'
 ```
 
 ### Test Data Saving
@@ -137,7 +141,7 @@ npm install
 
 ## 🎉 Benefits
 
-✅ **Full local debugging** of participant ID assignment  
+✅ **Full local debugging** of post assignment  
 ✅ **Complete data saving** functionality locally  
 ✅ **Easy switching** between local and AWS modes  
 ✅ **No code duplication** - same codebase for both modes  

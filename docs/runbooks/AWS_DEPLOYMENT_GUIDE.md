@@ -19,24 +19,25 @@ This guide walks you through setting up the AWS infrastructure for the scrolling
 
 ### Set up bucket structure:
 After creating the bucket, create these folders:
-- `data/` (for experiment data and participant assignments)
+- `data/` (for experiment data)
 - `img/` (for images - you'll need to upload your image folders here)
 
 ## Step 2: Create Lambda Functions
 
-### Function 1: get-participant-id
+### Function 1: get-post-assignments
 
 1. Go to AWS Lambda Console
 2. Click "Create function"
 3. Choose "Author from scratch"
-4. **Function name**: `jspsych-scroll-get-participant-id`
+4. **Function name**: `jspsych-scroll-get-post-assignments`
 5. **Runtime**: Node.js 20.x
 6. **Architecture**: x86_64
 7. Click "Create function"
 
-**Code**: Use the contents from `lambda-get-participant-id.mjs`
+**Code**: Use the contents from `lambda-get-post-assignments.mjs`
 
-**Permissions**: The function needs S3 permissions. Add this policy to the execution role:
+**Permissions**: Configure the Lambda environment variables needed by `lambda-get-post-assignments.mjs` and grant any permissions required by the downstream assignment Lambda it invokes.
+If your deployment still relies on S3-backed helpers elsewhere, add the relevant S3 policy to the execution role:
 ```json
 {
     "Version": "2012-10-17",
@@ -80,15 +81,15 @@ After creating the bucket, create these folders:
 
 ### Add Routes:
 
-#### Route 1: GET /get-participant-id
+#### Route 1: POST /get-post-assignments
 1. Click "Routes" in the left sidebar
 2. Click "Create"
-3. **Method**: GET
-4. **Resource path**: `/get-participant-id`
+3. **Method**: POST
+4. **Resource path**: `/get-post-assignments`
 5. Click "Create"
 6. Click on the route → "Attach integration"
 7. **Integration type**: Lambda function
-8. **Lambda function**: `jspsych-scroll-get-participant-id`
+8. **Lambda function**: `jspsych-scroll-get-post-assignments`
 9. Click "Attach integration"
 
 #### Route 2: POST /save-jspsych-data
@@ -106,7 +107,7 @@ After creating the bucket, create these folders:
 2. Click "Configure"
 3. **Access-Control-Allow-Origin**: `*`
 4. **Access-Control-Allow-Headers**: `*`
-5. **Access-Control-Allow-Methods**: `GET, POST, OPTIONS, DELETE`
+5. **Access-Control-Allow-Methods**: `POST, OPTIONS`
 6. Click "Save"
 
 ### Deploy the API:
@@ -115,14 +116,14 @@ After creating the bucket, create these folders:
 3. Click "Deploy"
 4. **Note the Invoke URL** - you'll need this for the next step!
 
-## Step 4: Update main.js with API URLs
+## Step 4: Update `public/config.js` with API URLs
 
 Your API Gateway invoke URL will look like:
 `https://xxxxxxxxxx.execute-api.us-east-2.amazonaws.com/prod`
 
-You'll need to update the URLs in `public/main.js`:
+You'll need to update the URLs in `public/config.js`:
 ```javascript
-const GET_PARTICIPANT_ID_URL = 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/get-participant-id';
+const POST_ASSIGNMENTS_URL = 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments';
 const SAVE_DATA_URL = 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data';
 ```
 
