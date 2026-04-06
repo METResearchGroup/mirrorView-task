@@ -8,6 +8,7 @@
 
 let currentProlificID = null;
 let isTestParticipant = false;
+let experimentVersion = 'mirrorView_phase2';
 
 const jsPsych = initJsPsych({
     use_webaudio: false,
@@ -376,7 +377,7 @@ async function setupExperiment() {
                     participant_id: ParticipantID,
                     prolific_id: currentProlificID,
                     num_trials: NUM_TRIALS,
-                    experiment_version: 'mirrorView_phase2'
+                    experiment_version: experimentVersion
                 });
                 done();
             }
@@ -420,13 +421,13 @@ async function setupExperiment() {
                         })
                     });
                     
+                    // validate the response from the post assignment lambda
                     if (!response.ok) {
                         const errorText = await response.text();
                         throw new Error(`Post assignment request failed (${response.status}): ${errorText}`);
                     }
 
                     const result = await response.json();
-                    console.log('Received post assignments:', result);
 
                     if (!Array.isArray(result.assigned_post_ids)) {
                         throw new Error('Assignment response did not include assigned_post_ids array');
@@ -451,11 +452,12 @@ async function setupExperiment() {
                         );
                     }
 
-                    assignedCondition = result.condition || assignedCondition || 'control';
+                    assignedCondition = result.condition || assignedCondition;
+                    if (!assignedCondition) {
+                        throw new Error('No condition assigned');
+                    }
                     jsPsych.data.addProperties({ condition: assignedCondition });
 
-                    console.log(`Assigned ${assignedPosts.length} posts to participant`);
-                    
                     done();
                 } catch (error) {
                     console.error('Error fetching post assignments:', error);
