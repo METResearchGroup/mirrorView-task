@@ -1,47 +1,14 @@
-// Configuration file for switching between local development and AWS production
+// Production-only endpoint configuration.
 const config = {
-    // Set to 'local' for development, 'aws' for production
-    // mode: 'local',
-    mode: 'aws',
-    
-    // Local development settings
-    local: {
-        POST_ASSIGNMENTS_URL: 'http://localhost:3000/get-post-assignments',
-        SAVE_DATA_URL: 'http://localhost:3000/save-jspsych-data',
-        port: 3000
-    },
-    
-    // AWS production settings
-    aws: {
-        POST_ASSIGNMENTS_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
-        SAVE_DATA_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
-        PROLIFIC_COMPLETION_URL: null // Set this to your Prolific completion URL when ready
-    },
-    
-    // Get current configuration based on mode
-    getCurrentConfig() {
-        return this[this.mode];
-    },
-    
-    // Switch between modes
-    setMode(newMode) {
-        if (['local', 'aws'].includes(newMode)) {
-            this.mode = newMode;
-            console.log(`Switched to ${newMode} mode`);
-            return true;
-        } else {
-            console.error('Invalid mode. Use "local" or "aws"');
-            return false;
-        }
-    },
-    
-    // Get current URLs
+    POST_ASSIGNMENTS_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
+    SAVE_DATA_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
+    PROLIFIC_COMPLETION_URL: null,
+
     getUrls() {
-        const currentConfig = this.getCurrentConfig();
         return {
-            POST_ASSIGNMENTS_URL: currentConfig.POST_ASSIGNMENTS_URL,
-            SAVE_DATA_URL: currentConfig.SAVE_DATA_URL,
-            PROLIFIC_COMPLETION_URL: currentConfig.PROLIFIC_COMPLETION_URL || null
+            POST_ASSIGNMENTS_URL: this.POST_ASSIGNMENTS_URL,
+            SAVE_DATA_URL: this.SAVE_DATA_URL,
+            PROLIFIC_COMPLETION_URL: this.PROLIFIC_COMPLETION_URL || null
         };
     }
 };
