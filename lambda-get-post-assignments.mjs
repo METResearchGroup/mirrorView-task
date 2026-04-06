@@ -734,6 +734,8 @@ export const handler = async (event) => {
         // Also count *pending* assignments so we don't hand out the same
         // (party, condition, post) cell to multiple participants while earlier
         // ones are still in-flight.
+        // NOTE (Mark): the best way to have handled this is NOT calculating while
+        // it's inflight, but rather precomputing these and having an atomic assignment logic.
         Object.values(pendingAssignments || {}).forEach(pending => {
             if (!pending) return;
             if (pending.party !== party_group) return;
