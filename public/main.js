@@ -122,7 +122,13 @@ const jsPsych = initJsPsych({
                 is_test: isTestParticipant
             })
         })
-        .then(response => response.json())
+        .then(async response => {
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Save request failed (${response.status}): ${errorText}`);
+            }
+            return response.json();
+        })
         .then(result => {
             console.log('Data saved:', result);
             // Redirect to Prolific completion URL if available
@@ -149,13 +155,11 @@ const jsPsych = initJsPsych({
         })
         .catch(error => {
             console.error('Error saving data:', error);
-            document.body.innerHTML = `
-                <div style="text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
-                    <h1 style="color: #dc2626;">Error</h1>
-                    <p>There was an error saving your data. Please contact the researcher.</p>
-                    <p style="color: #9ca3af; font-size: 14px;">Error: ${error.message}</p>
-                </div>
-            `;
+            renderFatalError(
+                'Error',
+                'There was an error saving your data. Please contact the researcher.',
+                `Error: ${error.message}`
+            );
         });
     }
 });
@@ -271,6 +275,19 @@ function parseCSV(csvText) {
     return rows;
 }
 
+function renderFatalError(title, message, details = '') {
+    const detailHtml = details
+        ? `<p style="color: #9ca3af; font-size: 14px;">${details}</p>`
+        : '';
+    document.body.innerHTML = `
+        <div style="text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
+            <h1 style="color: #dc2626;">${title}</h1>
+            <p>${message}</p>
+            ${detailHtml}
+        </div>
+    `;
+}
+
 
 // ============================================================
 // EXPERIMENT CONFIGURATION
@@ -381,23 +398,14 @@ async function setupExperiment() {
                     console.log('Party group for assignment:', partyGroup);
                     
                     if (!partyGroup) {
-                        console.error('Could not determine party group');
-                        // Fallback to random sampling
-                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
-                        done();
-                        return;
+                        throw new Error('Could not determine party_group for assignment request');
                     }
                     
                     // Get the post assignments endpoint from config
                     const postAssignmentUrl = urls.POST_ASSIGNMENTS_URL;
                     
                     if (!postAssignmentUrl) {
-                        console.warn('No POST_ASSIGNMENTS_URL configured, using random sampling');
-                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
-                        done();
-                        return;
+                        throw new Error('No POST_ASSIGNMENTS_URL configured');
                     }
                     
                     // Call the server to get assigned posts
@@ -413,32 +421,49 @@ async function setupExperiment() {
                     });
                     
                     if (!response.ok) {
-                        const error = await response.json();
-                        console.error('Error getting post assignments:', error);
-                        // Fallback to random sampling
-                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
-                    } else {
-                        const result = await response.json();
-                        console.log('Received post assignments:', result);
-                        
-                        // Map post IDs back to full post data
-                        assignedPosts = result.assigned_post_ids.map(postId => 
-                            allMirrorData.find(p => p.post_primary_key === postId)
-                        ).filter(p => p); // Remove any undefined
-
-                        assignedCondition = result.condition || assignedCondition || 'control';
-                        jsPsych.data.addProperties({ condition: assignedCondition });
-
-                        console.log(`Assigned ${assignedPosts.length} posts to participant`);
+                        const errorText = await response.text();
+                        throw new Error(`Post assignment request failed (${response.status}): ${errorText}`);
                     }
+
+                    const result = await response.json();
+                    console.log('Received post assignments:', result);
+
+                    if (!Array.isArray(result.assigned_post_ids)) {
+                        throw new Error('Assignment response did not include assigned_post_ids array');
+                    }
+
+                    const assignedPostLookup = new Map(
+                        allMirrorData.map(post => [post.post_primary_key, post])
+                    );
+                    const missingPostIds = result.assigned_post_ids.filter(
+                        postId => !assignedPostLookup.has(postId)
+                    );
+                    if (missingPostIds.length > 0) {
+                        throw new Error(
+                            `Assignment response contained unknown post IDs: ${missingPostIds.join(', ')}`
+                        );
+                    }
+
+                    assignedPosts = result.assigned_post_ids.map(postId => assignedPostLookup.get(postId));
+                    if (assignedPosts.length !== NUM_TRIALS) {
+                        throw new Error(
+                            `Expected ${NUM_TRIALS} assigned posts, received ${assignedPosts.length}`
+                        );
+                    }
+
+                    assignedCondition = result.condition || assignedCondition || 'control';
+                    jsPsych.data.addProperties({ condition: assignedCondition });
+
+                    console.log(`Assigned ${assignedPosts.length} posts to participant`);
                     
                     done();
                 } catch (error) {
                     console.error('Error fetching post assignments:', error);
-                    // Fallback to random sampling
-                    const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                    assignedPosts = shuffled.slice(0, NUM_TRIALS);
+                    renderFatalError(
+                        'Assignment Error',
+                        'There was an error loading your assigned posts. Please contact the researcher.',
+                        `Error: ${error.message}`
+                    );
                     done();
                 }
             }
