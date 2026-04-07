@@ -2,6 +2,8 @@
 """
 Script to prepare files for AWS S3 upload.
 This script helps organize and check which files need to be uploaded to S3.
+
+DEPRECATED: Use bash scripts/upload_to_s3/run_upload.sh or stage_public_for_s3.py + upload_public_to_s3.py (see docs/runbooks/AWS_DEPLOYMENT_GUIDE.md).
 """
 
 import os

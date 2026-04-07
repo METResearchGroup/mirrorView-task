@@ -1,7 +1,7 @@
 // Production-only endpoint configuration.
 const config = {
-    POST_ASSIGNMENTS_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
-    SAVE_DATA_URL: 'https://ngxqzz3qhd.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
+    POST_ASSIGNMENTS_URL: 'https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
+    SAVE_DATA_URL: 'https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
     PROLIFIC_COMPLETION_URL: null,
     STUDY_ID: '',
     STUDY_ITERATION_ID: '',

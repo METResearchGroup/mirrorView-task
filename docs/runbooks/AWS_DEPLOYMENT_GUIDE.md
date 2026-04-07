@@ -7,7 +7,8 @@ This guide covers deploying the AWS infrastructure for the scrolling social medi
 ## Prerequisites
 
 - AWS Account with appropriate permissions
-- AWS CLI configured (optional)
+- AWS CLI configured (`aws` on your PATH; same credentials used for uploads and verification)
+- [uv](https://docs.astral.sh/uv/) installed (Python 3.12 project env at repo root; see `pyproject.toml`)
 
 ## When do you need to read this?
 
@@ -49,9 +50,9 @@ Re-upload `public/` to S3 whenever any browser-served asset changes, including:
 - `public/main.js`
 - CSS, survey files, plugin files, library files, or images under `public/`
 
-This does not require rerunning Terraform unless the infrastructure itself changed. For frontend-only updates, re-sync the `public/` directory to the S3 bucket.
+This does not require rerunning Terraform unless the infrastructure itself changed. For frontend-only updates, publish the current `public/` tree to the S3 bucket using the upload toolchain (file-by-file `aws s3 cp` to the bucket root; no bucket-wide sync and no deletes).
 
-Keep `public/config.js` up to date with the deployed API Gateway URLs. In particular, `POST_ASSIGNMENTS_URL` and `SAVE_DATA_URL` must match the currently deployed `jspsych-scroll-api` stage URLs.
+Keep `public/config.js` up to date with the deployed API Gateway URLs. In particular, `POST_ASSIGNMENTS_URL` and `SAVE_DATA_URL` must match the currently deployed `jspsych-scroll-api` stage URLs. The upload scripts validate this against the live API before uploading.
 
 Useful AWS CLI checks:
 
@@ -89,8 +90,50 @@ Use `infra/main.tf` to provision the AWS infrastructure:
 ### What Still Requires Manual Steps
 
 - Updating `public/config.js` from Terraform outputs, if you are not generating it automatically
-- Uploading files from `public/` to S3
+- Uploading files from `public/` to S3 (use `scripts/upload_to_s3/`; see below)
 - Validating the deployed experiment end to end
+
+### Upload public assets to S3 (preferred)
+
+From the **repository root**:
+
+1. Ensure `public/config.js` matches the deployed API (the scripts query `jspsych-scroll-api` in `us-east-2` and compare exact URLs).
+2. Stage locally, then print intended S3 keys without uploading:
+
+   ```bash
+   uv python install 3.12
+   uv sync
+   PYTHONPATH=. uv run python scripts/upload_to_s3/stage_public_for_s3.py
+   ```
+
+3. Inspect the staged directory: expect `index.html`, `config.js`, `main.js`, survey JS/CSS, `jspsych/`, `plugins/`, `lib/`, and `img/` when those exist under `public/`.
+
+4. **Full deploy** (upload then verify manifest + critical keys in S3):
+
+   ```bash
+   bash scripts/upload_to_s3/run_upload.sh
+   ```
+
+   Or run the Python steps yourself:
+
+   ```bash
+   PYTHONPATH=. uv run python scripts/upload_to_s3/stage_public_for_s3.py
+   PYTHONPATH=. uv run python scripts/upload_to_s3/upload_public_to_s3.py
+   PYTHONPATH=. uv run python scripts/upload_to_s3/verify_s3_upload.py
+   ```
+
+5. **Verify a specific staged release** (optional):
+
+   ```bash
+   PYTHONPATH=. uv run python scripts/upload_to_s3/verify_s3_upload.py
+   ```
+
+Behavior notes:
+
+- Only website-owned keys under the bucket root are written; nothing under the `data/` prefix is uploaded or deleted.
+- Objects are uploaded one file at a time (`aws s3 cp`); existing keys are overwritten; no `aws s3 sync --delete` or other delete operations.
+
+The legacy script `prepare_for_aws.py` is deprecated; use the commands above instead.
 
 ### Terraform Setup
 
@@ -119,7 +162,7 @@ Before running the automated deployment, make sure Terraform is installed and AW
    - `post_assignments_url`
    - `save_data_url`
 5. Update `public/config.js`
-6. Upload the `public/` assets to S3
+6. Upload the `public/` assets to S3 (`bash scripts/upload_to_s3/run_upload.sh` or the `uv run` commands in [Upload public assets to S3](#upload-public-assets-to-s3-preferred))
 7. Test the experiment flow
 
 ### Debugging
@@ -315,21 +358,7 @@ const config = {
 
 ### Step 5: Upload Files to S3
 
-Upload all files from the `public/` folder to your S3 bucket root:
-
-- `index.html`
-- `config.js` (with updated API URLs)
-- `main.js`
-- `consent.js`
-- `pre_surveys.js`
-- `post_surveys.js`
-- `preload.js`
-- `slide_numbers.js`
-- `meriel.css`
-- `jspsych/` folder
-- `plugins/` folder
-- `lib/` folder
-- `img/` folder (all your image directories)
+Upload the full `public/` tree to your S3 bucket root using the same toolchain as the Terraform workflow: `bash scripts/upload_to_s3/run_upload.sh` from the repo root (after `uv sync`), or follow the `uv run python scripts/upload_to_s3/...` commands in [Upload public assets to S3](#upload-public-assets-to-s3-preferred). Do not use a sync mode that deletes remote objects; experiment data under `data/` must remain untouched.
 
 ### Step 6: Enable Static Website Hosting
 
