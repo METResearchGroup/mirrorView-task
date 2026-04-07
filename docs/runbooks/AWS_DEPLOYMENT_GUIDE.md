@@ -98,13 +98,12 @@ Use `infra/main.tf` to provision the AWS infrastructure:
 From the **repository root**:
 
 1. Ensure `public/config.js` matches the deployed API (the scripts query `jspsych-scroll-api` in `us-east-2` and compare exact URLs).
-2. **Dry run** (stage locally, then print intended S3 keys without uploading):
+2. Stage locally, then print intended S3 keys without uploading:
 
    ```bash
    uv python install 3.12
    uv sync
    PYTHONPATH=. uv run python scripts/upload_to_s3/stage_public_for_s3.py
-   PYTHONPATH=. uv run python scripts/upload_to_s3/upload_public_to_s3.py --dry-run
    ```
 
 3. Inspect the staged directory: expect `index.html`, `config.js`, `main.js`, survey JS/CSS, `jspsych/`, `plugins/`, `lib/`, and `img/` when those exist under `public/`.
@@ -126,7 +125,7 @@ From the **repository root**:
 5. **Verify a specific staged release** (optional):
 
    ```bash
-   PYTHONPATH=. uv run python scripts/upload_to_s3/verify_s3_upload.py --release-dir s3_upload/<timestamp>
+   PYTHONPATH=. uv run python scripts/upload_to_s3/verify_s3_upload.py
    ```
 
 Behavior notes:

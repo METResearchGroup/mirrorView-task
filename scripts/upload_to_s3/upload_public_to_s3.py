@@ -61,17 +61,6 @@ def print_upload_summary(release_dir: Path, manifest: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Upload staged website files to S3 using manifest.json (one aws s3 cp per key)."
-        )
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Print intended S3 keys without uploading.",
-    )
-    args = parser.parse_args()
     release_dir = resolve_latest_release_dir(STAGING_ROOT)
     manifest = load_manifest(release_dir)
     upload_files_to_s3(release_dir, manifest)
