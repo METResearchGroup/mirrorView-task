@@ -75,7 +75,7 @@ async function callStudyAssignmentLambda({
     partyGroup,
     isTest
 }) {
-    const studyIterationId = STUDY_ITERATION_ID;
+    let studyIterationId = STUDY_ITERATION_ID;
     if (isTest) {
         studyIterationId = `dev-${STUDY_ITERATION_ID}`;
         console.log(`Using dev study iteration ID: ${studyIterationId}`);
