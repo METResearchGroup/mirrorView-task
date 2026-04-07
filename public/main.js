@@ -14,10 +14,10 @@ let isTestParticipant = false;
  *
  * Cross-repo / Lambda alignment (change these here and mirror elsewhere as noted):
  * - lambda-get-post-assignments.mjs — should accept the same condition strings in responses; validate
- *   assigned_post_ids.length === postsPerParticipant; forwards party_group / prolific_id to the assignment Lambda.
+ *   assignedPostIds.length === postsPerParticipant; forwards party_group / prolific_id to the assignment Lambda.
  * - lambda-save-jspsych-data.mjs — does not read this object; persisted condition comes from jsPsych CSV columns.
  * - study_participant_assignment_interface/lambdas/get_study_assignment/handler.py — DEFAULT_STUDY_CONDITIONS and
- *   precomputed CSV rows (assigned_post_ids per row) must match conditions + postsPerParticipant + post ID semantics.
+ *   precomputed CSV rows (assignedPostIds per row) must match conditions + postsPerParticipant + post ID semantics.
  */
 const STUDY_SPEC = Object.freeze({
     /** Written to jsPsych data as experiment_version. Used only in public/main.js (assignParticipantId). */
@@ -87,7 +87,7 @@ const STUDY_SPEC = Object.freeze({
     postCatalogPath: 'img/all_mirrors_claude.csv',
     /**
      * CSV column used as canonical post id; assignment API returns these strings.
-     * Used in public/main.js (assignedPostLookup, trial post_id). Must match precomputed assigned_post_ids in S3.
+     * Used in public/main.js (assignedPostLookup, trial post_id). Must match precomputed assignedPostIds in S3.
      */
     postIdField: 'post_primary_key',
     /** CSV column for display numeric id. Used in public/main.js (trial post_number). */
@@ -224,7 +224,7 @@ const jsPsych = initJsPsych({
             body: JSON.stringify({
                 csv: csv,
                 prolific_id: currentProlificID,
-                is_test: isTestParticipant
+                isTest: isTestParticipant
             })
         })
         .then(async response => {
@@ -523,15 +523,15 @@ async function setupExperiment() {
 
                     const result = await response.json();
 
-                    if (!Array.isArray(result.assigned_post_ids)) {
-                        throw new Error('Assignment response did not include assigned_post_ids array');
+                    if (!Array.isArray(result.assignedPostIds)) {
+                        throw new Error('Assignment response did not include assignedPostIds array');
                     }
 
                     const idField = STUDY_SPEC.postIdField;
                     const assignedPostLookup = new Map(
                         allMirrorData.map(post => [post[idField], post])
                     );
-                    const missingPostIds = result.assigned_post_ids.filter(
+                    const missingPostIds = result.assignedPostIds.filter(
                         postId => !assignedPostLookup.has(postId)
                     );
                     if (missingPostIds.length > 0) {
@@ -540,7 +540,7 @@ async function setupExperiment() {
                         );
                     }
 
-                    assignedPosts = result.assigned_post_ids.map(postId => assignedPostLookup.get(postId));
+                    assignedPosts = result.assignedPostIds.map(postId => assignedPostLookup.get(postId));
                     if (assignedPosts.length !== STUDY_SPEC.postsPerParticipant) {
                         throw new Error(
                             `Expected ${STUDY_SPEC.postsPerParticipant} assigned posts, received ${assignedPosts.length}`

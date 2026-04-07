@@ -8,12 +8,16 @@
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 const lambdaClient = new LambdaClient({ region: "us-east-2" });
-const validPoliticalParties = ['democrat', 'republican'];
 
 // TODO: this should be provided via environment variable
 const STUDY_ITERATION_ID = process.env.STUDY_ITERATION_ID;
 const STUDY_ID = process.env.STUDY_ID;
 const ASSIGNMENT_LAMBDA_NAME = process.env.ASSIGNMENT_LAMBDA_NAME;
+
+const STUDY_SPEC = Object.freeze({
+    conditions: ['control', 'training', 'training_assisted'],
+    validPoliticalParties: ['democrat', 'republican'],
+});
 
 /**
  * Validate the inputs
@@ -30,8 +34,8 @@ function validateInputs(
     if (!partyGroup) {
         throw new Error('No partyGroup provided');
     }
-    if (!validPoliticalParties.includes(partyGroup)) {
-        throw new Error(`Invalid partyGroup: ${partyGroup}. Must be one of: ${validPoliticalParties.join(', ')}`);
+    if (!STUDY_SPEC.validPoliticalParties.includes(partyGroup)) {
+        throw new Error(`Invalid partyGroup: ${partyGroup}. Must be one of: ${STUDY_SPEC.validPoliticalParties.join(', ')}`);
     }
 }
 /**
@@ -112,8 +116,8 @@ async function callStudyAssignmentLambda({
     /* Validate the response values */
     if (
         !parsed ||
-        !Array.isArray(parsed.assigned_post_ids) ||
-        !["control", "training_assisted"].includes(parsed.condition)
+        !Array.isArray(parsed.assignedPostIds) ||
+        !STUDY_SPEC.conditions.includes(parsed.condition)
     ) {
         throw new Error(`Unexpected assignment response: ${decoded}`);
     }
@@ -136,21 +140,21 @@ export const handler = async (event) => {
         
         const prolificId = body.prolificId;
         const partyGroup = body.partyGroup;
-        const isTest = body.is_test;
+        const isTest = body.isTest;
 
         validateInputs(prolificId, partyGroup);
 
         const assignment = await callStudyAssignmentLambda({
             prolificId,
             partyGroup,
-            isTest: isTest
+            isTest
         });
 
         return corsResponse(200, {
-            assigned_post_ids: assignment.assigned_post_ids,
-            already_assigned: assignment.already_assigned,
+            assignedPostIds: assignment.assignedPostIds,
+            alreadyAssigned: assignment.alreadyAssigned,
             condition: assignment.condition,
-            is_test: isTest,
+            isTest: isTest,
           });
       
 

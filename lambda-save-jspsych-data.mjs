@@ -40,7 +40,7 @@ export const handler = async (event) => {
     }
 
     const prolificId = body.prolific_id;
-    const isTest = inferIsTest(prolificId, body.is_test);
+    const isTest = inferIsTest(prolificId, body.isTest);
     const prefix = isTest ? DATA_PREFIX_TEST : DATA_PREFIX_PROLIFIC;
     const filename = `data_${Date.now()}.csv`;
 
