@@ -1,15 +1,62 @@
 # AWS Deployment Guide for jsPsych Scrolling Experiment
 
 ## Overview
-This guide walks you through setting up the AWS infrastructure for the scrolling social media feed experiment.
+
+This guide covers deploying the AWS infrastructure for the scrolling social media feed experiment.
+Use Terraform for infrastructure provisioning whenever possible. The older AWS Console flow is kept below for manual deployment and troubleshooting.
 
 ## Prerequisites
+
 - AWS Account with appropriate permissions
 - AWS CLI configured (optional)
 
-## Step 1: Create S3 Bucket
+## Automated Deployment (Preferred)
 
-### Via AWS Console:
+Use `infra/main.tf` to provision the AWS infrastructure:
+
+- S3 bucket for static hosting and experiment data
+- Lambda functions and IAM roles
+- HTTP API Gateway routes and CORS
+- CloudWatch log groups
+
+### What Terraform Manages
+
+- S3 bucket creation
+- Static website hosting configuration
+- Public bucket policy for website assets
+- Lambda creation and permissions
+- API Gateway creation, routes, integrations, and `prod` stage
+
+### What Still Requires Manual Steps
+
+- Supplying Terraform variable values such as `assignment_lambda_name`
+- Updating `public/config.js` from Terraform outputs, if you are not generating it automatically
+- Uploading files from `public/` to S3
+- Validating the deployed experiment end to end
+
+### Suggested Terraform Workflow
+
+1. Review `infra/main.tf`
+2. Provide any required variable values, especially `assignment_lambda_name`
+3. Run `terraform plan`
+4. Run `terraform apply`
+5. Capture the outputs for:
+   - S3 website endpoint
+   - API base URL
+   - `post_assignments_url`
+   - `save_data_url`
+6. Update `public/config.js`
+7. Upload the `public/` assets to S3
+8. Test the experiment flow
+
+## Manual Deployment
+
+Use this section only if you are not provisioning infrastructure with Terraform.
+
+### Step 1: Create S3 Bucket
+
+#### Via AWS Console
+
 1. Go to AWS S3 Console
 2. Click "Create bucket"
 3. **Bucket name**: `jspsych-scroll`
@@ -17,14 +64,16 @@ This guide walks you through setting up the AWS infrastructure for the scrolling
 5. **Block Public Access**: Keep default settings
 6. Click "Create bucket"
 
-### Set up bucket structure:
-After creating the bucket, create these folders:
+#### Set up bucket structure
+
+S3 does not require you to pre-create folders, but you may choose to organize assets as:
+
 - `data/` (for experiment data)
-- `img/` (for images - you'll need to upload your image folders here)
+- `img/` (for images - upload your image folders here)
 
-## Step 2: Create Lambda Functions
+### Step 2: Create Lambda Functions
 
-### Function 1: get-post-assignments
+#### Function 1: get-post-assignments
 
 1. Go to AWS Lambda Console
 2. Click "Create function"
@@ -38,6 +87,7 @@ After creating the bucket, create these folders:
 
 **Permissions**: Configure the `ASSIGNMENT_LAMBDA_NAME` environment variable needed by `lambda-get-post-assignments.mjs` and grant any permissions required by the downstream assignment Lambda it invokes. `STUDY_ID` and `STUDY_ITERATION_ID` are now sent by the public client request rather than read from Lambda env vars.
 If your deployment still relies on S3-backed helpers elsewhere, add the relevant S3 policy to the execution role:
+
 ```json
 {
     "Version": "2012-10-17",
@@ -56,7 +106,7 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 }
 ```
 
-### Function 2: save-jspsych-data
+#### Function 2: save-jspsych-data
 
 1. Go to AWS Lambda Console
 2. Click "Create function"
@@ -70,7 +120,7 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 
 **Permissions**: Same S3 policy as above.
 
-## Step 3: Create API Gateway
+### Step 3: Create API Gateway
 
 1. Go to AWS API Gateway Console
 2. Click "Create API"
@@ -79,9 +129,10 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 5. Click "Next" and keep default settings
 6. Click "Create"
 
-### Add Routes:
+#### Add Routes
 
-#### Route 1: POST /get-post-assignments
+##### Route 1: POST /get-post-assignments
+
 1. Click "Routes" in the left sidebar
 2. Click "Create"
 3. **Method**: POST
@@ -92,7 +143,8 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 8. **Lambda function**: `jspsych-scroll-get-post-assignments`
 9. Click "Attach integration"
 
-#### Route 2: POST /save-jspsych-data
+##### Route 2: POST /save-jspsych-data
+
 1. Click "Create" (new route)
 2. **Method**: POST
 3. **Resource path**: `/save-jspsych-data`
@@ -102,7 +154,8 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 7. **Lambda function**: `jspsych-scroll-save-data`
 8. Click "Attach integration"
 
-### Configure CORS:
+#### Configure CORS
+
 1. Go to "CORS" in the left sidebar
 2. Click "Configure"
 3. **Access-Control-Allow-Origin**: `*`
@@ -110,18 +163,21 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 5. **Access-Control-Allow-Methods**: `POST, OPTIONS`
 6. Click "Save"
 
-### Deploy the API:
+#### Deploy the API
+
 1. Click "Deploy" → "Deploy to stage"
 2. **Stage name**: `prod`
 3. Click "Deploy"
 4. **Note the Invoke URL** - you'll need this for the next step!
 
-## Step 4: Update `public/config.js` with API URLs
+### Step 4: Update `public/config.js` with API URLs
 
 Your API Gateway invoke URL will look like:
+
 `https://xxxxxxxxxx.execute-api.us-east-2.amazonaws.com/prod`
 
 You'll need to update the URLs in `public/config.js`:
+
 ```javascript
 const config = {
   POST_ASSIGNMENTS_URL: 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
@@ -131,9 +187,10 @@ const config = {
 };
 ```
 
-## Step 5: Upload Files to S3
+### Step 5: Upload Files to S3
 
 Upload all files from the `public/` folder to your S3 bucket root:
+
 - `index.html`
 - `config.js` (with updated API URLs)
 - `main.js`
@@ -148,7 +205,7 @@ Upload all files from the `public/` folder to your S3 bucket root:
 - `lib/` folder
 - `img/` folder (all your image directories)
 
-## Step 6: Enable Static Website Hosting
+### Step 6: Enable Static Website Hosting
 
 1. Go to your S3 bucket
 2. Click "Properties" tab
@@ -160,7 +217,7 @@ Upload all files from the `public/` folder to your S3 bucket root:
 
 **Note the website endpoint URL** - this is where your experiment will be hosted!
 
-## Step 7: Set Bucket Policy for Public Access
+### Step 7: Set Bucket Policy for Public Access
 
 You'll need to make the bucket publicly readable. In the bucket permissions, add this policy:
 
@@ -179,19 +236,19 @@ You'll need to make the bucket publicly readable. In the bucket permissions, add
 }
 ```
 
-## Testing
+### Testing
 
 1. Visit your S3 static website URL
 2. Test the experiment flow
 3. Check CloudWatch logs for any Lambda function errors
 4. Verify data is being saved to the `data/` folder in S3
 
-## URLs You'll Need for Prolific
+### URLs You'll Need for Prolific
 
 - **Experiment URL**: Your S3 static website URL
 - **Completion redirect**: The experiment will handle this automatically
 
-## Troubleshooting
+### Troubleshooting
 
 - Check Lambda function logs in CloudWatch
 - Verify S3 permissions and bucket policy
