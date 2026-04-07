@@ -6,6 +6,10 @@ AWS_REGION = "us-east-2"
 TARGET_BUCKET = "jspsych-mirror-view-3"
 API_NAME = "jspsych-scroll-api"
 API_STAGE = "prod"
+API_REQUIRED_TAGS = {
+    "ManagedBy": "Terraform",
+    "Project": "jspsych-scroll",
+}
 SOURCE_PUBLIC_DIR = Path("public")
 STAGING_ROOT = Path("s3_upload")
 PROTECTED_PREFIXES = ("data/",)

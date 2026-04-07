@@ -14,6 +14,7 @@ from typing import Any
 
 from scripts.upload_to_s3.constants import (
     API_NAME,
+    API_REQUIRED_TAGS,
     API_STAGE,
     AWS_REGION,
     PROTECTED_PREFIXES,
@@ -40,16 +41,32 @@ def _run_aws_json(args: list[str]) -> Any:
 def fetch_config_urls_from_aws() -> ConfigUrls:
     data = _run_aws_json(["apigatewayv2", "get-apis"])
     items = data.get("Items") or []
-    match = None
-    for item in items:
-        if item.get("Name") == API_NAME:
-            match = item
-            break
-    if not match:
+    name_matches = [item for item in items if item.get("Name") == API_NAME]
+    if not name_matches:
         names = [i.get("Name") for i in items]
         raise SystemExit(
             f"No HTTP API named {API_NAME!r} in {AWS_REGION}. Known names: {names!r}"
         )
+
+    # used to grab the API managed by Terraform, which is the
+    # one that we want. Later on, we'll delete the old API
+    # Gateway (but this is OK for now).
+    tagged_matches = [
+        item
+        for item in name_matches
+        if all((item.get("Tags") or {}).get(k) == v for k, v in API_REQUIRED_TAGS.items())
+    ]
+    if len(tagged_matches) == 1:
+        match = tagged_matches[0]
+    elif len(name_matches) == 1:
+        match = name_matches[0]
+    else:
+        ids = [item.get("ApiId") for item in name_matches]
+        raise SystemExit(
+            "Multiple APIs share the configured name and no unique Terraform-tagged "
+            f"match was found for tags {API_REQUIRED_TAGS!r}. Matching API IDs: {ids!r}"
+        )
+
     base = (match.get("ApiEndpoint") or "").rstrip("/")
     if not base:
         raise SystemExit("API response missing ApiEndpoint")
