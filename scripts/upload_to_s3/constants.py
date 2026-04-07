@@ -33,4 +33,24 @@ CRITICAL_S3_KEYS = (
     "img/all_mirrors_claude.csv",
 )
 
+ALLOWED_UPLOAD_KEYS = (
+    "index.html",
+    "config.js",
+    "main.js",
+    "consent.js",
+    "pre_surveys.js",
+    "post_surveys.js",
+    "meriel.css",
+    "jspsych/jspsych.js",
+    "jspsych/jspsych.css",
+    "plugins/plugin-instructions.js",
+    "plugins/plugin-survey-html-form.js",
+    "plugins/plugin-html-button-response.js",
+    "plugins/plugin-call-function.js",
+    "plugins/plugin-mirror-preference.js",
+    "plugins/plugin-mirror-practice.js",
+    "plugins/plugin-moderation-trial.js",
+    "img/all_mirrors_claude.csv",
+)
+
 SKIP_STAGING_NAMES = {".DS_Store", ".gitkeep"}

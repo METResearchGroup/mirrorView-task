@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from scripts.upload_to_s3.constants import (
+    ALLOWED_UPLOAD_KEYS,
     API_NAME,
     API_REQUIRED_TAGS,
     API_STAGE,
@@ -111,6 +112,16 @@ def _is_protected_key(rel_posix: str) -> bool:
     return any(rel_posix.startswith(p) for p in PROTECTED_PREFIXES)
 
 
+def _resolve_allowlisted_source(rel: Path) -> Path:
+    candidates = (SOURCE_PUBLIC_DIR / rel, rel)
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    raise SystemExit(
+        f"Missing allowlisted file in both public/ and repo root: {rel.as_posix()}"
+    )
+
+
 def prepare_files_for_upload() -> Path:
     if not SOURCE_PUBLIC_DIR.is_dir():
         raise SystemExit(f"Missing source directory: {SOURCE_PUBLIC_DIR}")
@@ -119,11 +130,9 @@ def prepare_files_for_upload() -> Path:
     release_dir = STAGING_ROOT / ts
     release_dir.mkdir(parents=True, exist_ok=True)
 
-    for path in sorted(SOURCE_PUBLIC_DIR.rglob("*")):
-        if path.is_dir():
-            continue
-        rel = path.relative_to(SOURCE_PUBLIC_DIR)
-        rel_posix = rel.as_posix()
+    for rel_posix in sorted(ALLOWED_UPLOAD_KEYS):
+        rel = Path(rel_posix)
+        path = _resolve_allowlisted_source(rel)
         if path.name in SKIP_STAGING_NAMES:
             continue
         if _is_protected_key(rel_posix):
