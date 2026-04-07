@@ -9,9 +9,6 @@ import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
 const lambdaClient = new LambdaClient({ region: "us-east-2" });
 
-// TODO: this should be provided via environment variable
-const STUDY_ITERATION_ID = process.env.STUDY_ITERATION_ID;
-const STUDY_ID = process.env.STUDY_ID;
 const ASSIGNMENT_LAMBDA_NAME = process.env.ASSIGNMENT_LAMBDA_NAME;
 
 const STUDY_SPEC = Object.freeze({
@@ -26,7 +23,9 @@ const STUDY_SPEC = Object.freeze({
  */
 function validateInputs(
     prolificId,
-    partyGroup
+    partyGroup,
+    studyId,
+    studyIterationId
 ) {
     if (!prolificId) {
         throw new Error('No prolificId provided');
@@ -36,6 +35,12 @@ function validateInputs(
     }
     if (!STUDY_SPEC.validPoliticalParties.includes(partyGroup)) {
         throw new Error(`Invalid partyGroup: ${partyGroup}. Must be one of: ${STUDY_SPEC.validPoliticalParties.join(', ')}`);
+    }
+    if (!studyId) {
+        throw new Error('No STUDY_ID provided');
+    }
+    if (!studyIterationId) {
+        throw new Error('No STUDY_ITERATION_ID provided');
     }
 }
 /**
@@ -73,19 +78,21 @@ function parseBody(event) {
 async function callStudyAssignmentLambda({
     prolificId,
     partyGroup,
-    isTest
+    isTest,
+    studyId,
+    studyIterationId
 }) {
-    let studyIterationId = STUDY_ITERATION_ID;
+    let effectiveStudyIterationId = studyIterationId;
     if (isTest) {
-        studyIterationId = `dev-${STUDY_ITERATION_ID}`;
-        console.log(`Using dev study iteration ID: ${studyIterationId}`);
+        effectiveStudyIterationId = `dev-${studyIterationId}`;
+        console.log(`Using dev study iteration ID: ${effectiveStudyIterationId}`);
     } else {
-        console.log(`Using study iteration ID: ${studyIterationId}`);
+        console.log(`Using study iteration ID: ${effectiveStudyIterationId}`);
     }
 
     const payload = {
-        study_id: STUDY_ID,
-        study_iteration_id: studyIterationId,
+        study_id: studyId,
+        study_iteration_id: effectiveStudyIterationId,
         prolificId: prolificId,
         partyGroup: partyGroup
     }
@@ -141,13 +148,17 @@ export const handler = async (event) => {
         const prolificId = body.prolificId;
         const partyGroup = body.partyGroup;
         const isTest = body.isTest;
+        const studyId = body.STUDY_ID;
+        const studyIterationId = body.STUDY_ITERATION_ID;
 
-        validateInputs(prolificId, partyGroup);
+        validateInputs(prolificId, partyGroup, studyId, studyIterationId);
 
         const assignment = await callStudyAssignmentLambda({
             prolificId,
             partyGroup,
-            isTest
+            isTest,
+            studyId,
+            studyIterationId
         });
 
         return corsResponse(200, {

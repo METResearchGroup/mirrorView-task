@@ -14,7 +14,8 @@ let isTestParticipant = false;
  *
  * Cross-repo / Lambda alignment (change these here and mirror elsewhere as noted):
  * - lambda-get-post-assignments.mjs — should accept the same condition strings in responses; validate
- *   assignedPostIds.length === postsPerParticipant; forwards party_group / prolific_id to the assignment Lambda.
+ *   assignedPostIds.length === postsPerParticipant; forwards party_group / prolific_id plus STUDY_ID /
+ *   STUDY_ITERATION_ID to the assignment Lambda.
  * - lambda-save-jspsych-data.mjs — does not read this object; persisted condition comes from jsPsych CSV columns.
  * - study_participant_assignment_interface/lambdas/get_study_assignment/handler.py — DEFAULT_STUDY_CONDITIONS and
  *   precomputed CSV rows (assignedPostIds per row) must match conditions + postsPerParticipant + post ID semantics.
@@ -498,9 +499,17 @@ async function setupExperiment() {
                     
                     // Get the post assignments endpoint from config
                     const postAssignmentUrl = urls.POST_ASSIGNMENTS_URL;
+                    const studyId = urls.STUDY_ID;
+                    const studyIterationId = urls.STUDY_ITERATION_ID;
                     
                     if (!postAssignmentUrl) {
                         throw new Error('No POST_ASSIGNMENTS_URL configured');
+                    }
+                    if (!studyId) {
+                        throw new Error('No STUDY_ID configured');
+                    }
+                    if (!studyIterationId) {
+                        throw new Error('No STUDY_ITERATION_ID configured');
                     }
                     
                     // Call the server to get assigned posts
@@ -511,7 +520,9 @@ async function setupExperiment() {
                             prolificId: currentProlificID,
                             partyGroup: partyGroup,
                             condition: requestedConditionOverride || assignedCondition,
-                            isTest: isTestParticipant
+                            isTest: isTestParticipant,
+                            STUDY_ID: studyId,
+                            STUDY_ITERATION_ID: studyIterationId
                         })
                     });
                     

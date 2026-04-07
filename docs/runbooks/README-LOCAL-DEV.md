@@ -85,12 +85,12 @@ npm start
 # Test Democrat assignment
 curl -X POST http://localhost:3000/get-post-assignments \
   -H "Content-Type: application/json" \
-  -d '{"prolific_id":"TEST1","party_group":"democrat","is_test":true}'
+  -d '{"prolificId":"TEST1","partyGroup":"democrat","isTest":true,"STUDY_ID":"mirrorview","STUDY_ITERATION_ID":"phase2"}'
 
 # Test Republican assignment  
 curl -X POST http://localhost:3000/get-post-assignments \
   -H "Content-Type: application/json" \
-  -d '{"prolific_id":"TEST2","party_group":"republican","is_test":true}'
+  -d '{"prolificId":"TEST2","partyGroup":"republican","isTest":true,"STUDY_ID":"mirrorview","STUDY_ITERATION_ID":"phase2"}'
 ```
 
 ### Test Data Saving

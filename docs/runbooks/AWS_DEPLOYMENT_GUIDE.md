@@ -36,7 +36,7 @@ After creating the bucket, create these folders:
 
 **Code**: Use the contents from `lambda-get-post-assignments.mjs`
 
-**Permissions**: Configure the Lambda environment variables needed by `lambda-get-post-assignments.mjs` and grant any permissions required by the downstream assignment Lambda it invokes.
+**Permissions**: Configure the `ASSIGNMENT_LAMBDA_NAME` environment variable needed by `lambda-get-post-assignments.mjs` and grant any permissions required by the downstream assignment Lambda it invokes. `STUDY_ID` and `STUDY_ITERATION_ID` are now sent by the public client request rather than read from Lambda env vars.
 If your deployment still relies on S3-backed helpers elsewhere, add the relevant S3 policy to the execution role:
 ```json
 {
@@ -123,15 +123,20 @@ Your API Gateway invoke URL will look like:
 
 You'll need to update the URLs in `public/config.js`:
 ```javascript
-const POST_ASSIGNMENTS_URL = 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments';
-const SAVE_DATA_URL = 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data';
+const config = {
+  POST_ASSIGNMENTS_URL: 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
+  SAVE_DATA_URL: 'https://YOUR-API-ID.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
+  STUDY_ID: 'your-study-id',
+  STUDY_ITERATION_ID: 'your-study-iteration-id',
+};
 ```
 
 ## Step 5: Upload Files to S3
 
 Upload all files from the `public/` folder to your S3 bucket root:
 - `index.html`
-- `main.js` (with updated API URLs)
+- `config.js` (with updated API URLs)
+- `main.js`
 - `consent.js`
 - `pre_surveys.js`
 - `post_surveys.js`
