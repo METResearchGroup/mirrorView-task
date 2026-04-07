@@ -49,17 +49,18 @@ function validateInputs(
  * @param {Object} body - The body of the response
  * @returns {Object} - The response object
  */
+
 function corsResponse(statusCode, body) {
     return {
         statusCode,
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type'
         },
         body: typeof body === 'string' ? body : JSON.stringify(body)
-    }
+    };
 }
 
 /**
@@ -93,9 +94,9 @@ async function callStudyAssignmentLambda({
     const payload = {
         study_id: studyId,
         study_iteration_id: effectiveStudyIterationId,
-        prolificId: prolificId,
-        partyGroup: partyGroup
-    }
+        prolific_id: prolificId,
+        political_party: partyGroup
+    };
 
     const result = await lambdaClient.send(
         new InvokeCommand({
@@ -123,13 +124,16 @@ async function callStudyAssignmentLambda({
     /* Validate the response values */
     if (
         !parsed ||
-        !Array.isArray(parsed.assignedPostIds) ||
+        !Array.isArray(parsed.assigned_post_ids) ||
         !STUDY_SPEC.conditions.includes(parsed.condition)
     ) {
         throw new Error(`Unexpected assignment response: ${decoded}`);
     }
 
-    return parsed;
+    return {
+        ...parsed,
+        assignedPostIds: parsed.assigned_post_ids,
+    };
 }
 
 
@@ -180,19 +184,3 @@ export const handler = async (event) => {
         return corsResponse(statusCode, { error: message });
     }
 };
-
-/**
- * Create response with CORS headers
- */
-function corsResponse(statusCode, body) {
-    return {
-        statusCode,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type'
-        },
-        body: typeof body === 'string' ? body : JSON.stringify(body)
-    };
-}
