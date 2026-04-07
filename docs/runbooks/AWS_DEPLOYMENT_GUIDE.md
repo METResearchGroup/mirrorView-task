@@ -29,7 +29,6 @@ Use `infra/main.tf` to provision the AWS infrastructure:
 
 ### What Still Requires Manual Steps
 
-- Supplying Terraform variable values such as `assignment_lambda_name`
 - Updating `public/config.js` from Terraform outputs, if you are not generating it automatically
 - Uploading files from `public/` to S3
 - Validating the deployed experiment end to end
@@ -37,17 +36,16 @@ Use `infra/main.tf` to provision the AWS infrastructure:
 ### Suggested Terraform Workflow
 
 1. Review `infra/main.tf`
-2. Provide any required variable values, especially `assignment_lambda_name`
-3. Run `terraform plan`
-4. Run `terraform apply`
-5. Capture the outputs for:
+2. Run `terraform plan`
+3. Run `terraform apply`
+4. Capture the outputs for:
    - S3 website endpoint
    - API base URL
    - `post_assignments_url`
    - `save_data_url`
-6. Update `public/config.js`
-7. Upload the `public/` assets to S3
-8. Test the experiment flow
+5. Update `public/config.js`
+6. Upload the `public/` assets to S3
+7. Test the experiment flow
 
 ## Manual Deployment
 

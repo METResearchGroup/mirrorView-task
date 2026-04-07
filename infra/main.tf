@@ -31,8 +31,9 @@ variable "bucket_name" {
 }
 
 variable "assignment_lambda_name" {
-  description = "Existing downstream Lambda invoked by the get-post-assignments Lambda."
+  description = "Downstream Lambda invoked by the get-post-assignments Lambda. Defaults to the function name used by study_participant_assignment_interface."
   type        = string
+  default     = "get_study_assignment"
 }
 
 variable "tags" {
