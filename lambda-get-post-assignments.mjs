@@ -28,19 +28,19 @@ function validateInputs(
     studyIterationId
 ) {
     if (!prolificId) {
-        throw new Error('No prolificId provided');
+        throw new Error('Invalid prolificId: value is required');
     }
     if (!partyGroup) {
-        throw new Error('No partyGroup provided');
+        throw new Error('Invalid partyGroup: value is required');
     }
     if (!STUDY_SPEC.validPoliticalParties.includes(partyGroup)) {
         throw new Error(`Invalid partyGroup: ${partyGroup}. Must be one of: ${STUDY_SPEC.validPoliticalParties.join(', ')}`);
     }
     if (!studyId) {
-        throw new Error('No STUDY_ID provided');
+        throw new Error('Invalid STUDY_ID: value is required');
     }
     if (!studyIterationId) {
-        throw new Error('No STUDY_ITERATION_ID provided');
+        throw new Error('Invalid STUDY_ITERATION_ID: value is required');
     }
 }
 /**
@@ -70,10 +70,14 @@ function corsResponse(statusCode, body) {
  */
 function parseBody(event) {
     if (!event.body) {
-        throw new Error('No body provided');
+        throw new Error('Invalid request body: body is required');
     }
-    const body = JSON.parse(event.body);
-    return body;
+    try {
+        const body = JSON.parse(event.body);
+        return body;
+    } catch {
+        throw new Error('Invalid request body: must be valid JSON');
+    }
 }
 
 async function callStudyAssignmentLambda({
@@ -108,12 +112,25 @@ async function callStudyAssignmentLambda({
     // InvokeCommand does not give you a JavaScript string in result.Payload.
     // It gives you raw bytes. We need to decode first.
     if (result.FunctionError) {
-        const errorPayload = result.Payload ? JSON.parse(result.Payload) : null;
-        const errorMessage = errorPayload?.error || 'Unknown error';
+        const decodedError = (
+            result.Payload ? new TextDecoder().decode(result.Payload) : "{}"
+        );
+        let parsedError = null;
+        try {
+            parsedError = JSON.parse(decodedError);
+        } catch {
+            parsedError = null;
+        }
+        const errorMessage = (
+            parsedError?.errorMessage ||
+            parsedError?.error ||
+            decodedError ||
+            'Unknown error'
+        );
         throw new Error(
             `Assignment lambda failed: ${result.FunctionError} ${errorMessage}`
         );
-    }    
+    }
 
     const decoded = (
         result.Payload ? new TextDecoder().decode(result.Payload) : "{}"
