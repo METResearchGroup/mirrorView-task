@@ -508,10 +508,10 @@ async function setupExperiment() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            prolific_id: currentProlificID,
-                            party_group: partyGroup,
+                            prolificId: currentProlificID,
+                            partyGroup: partyGroup,
                             condition: requestedConditionOverride || assignedCondition,
-                            is_test: isTestParticipant
+                            isTest: isTestParticipant
                         })
                     });
                     

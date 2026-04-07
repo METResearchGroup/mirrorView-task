@@ -25,13 +25,13 @@ function validateInputs(
     partyGroup
 ) {
     if (!prolificId) {
-        throw new Error('No prolific_id provided');
+        throw new Error('No prolificId provided');
     }
     if (!partyGroup) {
-        throw new Error('No party_group provided');
+        throw new Error('No partyGroup provided');
     }
     if (!validPoliticalParties.includes(partyGroup)) {
-        throw new Error(`Invalid party_group: ${partyGroup}. Must be one of: ${validPoliticalParties.join(', ')}`);
+        throw new Error(`Invalid partyGroup: ${partyGroup}. Must be one of: ${validPoliticalParties.join(', ')}`);
     }
 }
 /**
@@ -82,8 +82,8 @@ async function callStudyAssignmentLambda({
     const payload = {
         study_id: STUDY_ID,
         study_iteration_id: studyIterationId,
-        prolific_id: prolificId,
-        party_group: partyGroup
+        prolificId: prolificId,
+        partyGroup: partyGroup
     }
 
     const result = await lambdaClient.send(
@@ -135,7 +135,7 @@ export const handler = async (event) => {
         const body = parseBody(event);
         
         const prolificId = body.prolificId;
-        const partyGroup = body.party_group;
+        const partyGroup = body.partyGroup;
         const isTest = body.is_test;
 
         validateInputs(prolificId, partyGroup);
