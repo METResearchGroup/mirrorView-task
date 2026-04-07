@@ -41,7 +41,9 @@ def _head_object(key: str) -> tuple[bool, str]:
 
 def resolve_latest_release_dir(staging_root: Path) -> Path:
     if not staging_root.is_dir():
-        raise SystemExit(f"No staging root {staging_root}; run the uploader first.")
+        raise SystemExit(
+            f"No staging root {staging_root}; run scripts/upload_to_s3/stage_public_for_s3.py first."
+        )
     candidates = [p for p in staging_root.iterdir() if p.is_dir()]
     if not candidates:
         raise SystemExit(f"No release directories under {staging_root}.")
