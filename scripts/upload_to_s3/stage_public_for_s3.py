@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import argparse
 import json
 import re
 import shutil
@@ -155,30 +154,8 @@ def print_staging_summary(release_dir: Path, manifest: dict[str, Any]) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description=(
-            "Validate public/config.js against live API Gateway, then copy public/ "
-            "into s3_upload/<timestamp>/ and write manifest.json."
-        )
-    )
-    parser.add_argument(
-        "--validate-config-only",
-        action="store_true",
-        help="Fetch API URLs from AWS and compare to public/config.js; then exit.",
-    )
-    args = parser.parse_args()
-
     config_path = SOURCE_PUBLIC_DIR / "config.js"
-    if not config_path.is_file():
-        raise SystemExit(f"Missing {config_path}")
-
     config_urls = fetch_config_urls_from_aws()
-
-    if args.validate_config_only:
-        assert_config_file_matches(config_urls, config_path)
-        print("public/config.js matches deployed API URLs.")
-        return
-
     assert_config_file_matches(config_urls, config_path)
     release_dir = prepare_files_for_upload()
     manifest = build_release_manifest(release_dir)

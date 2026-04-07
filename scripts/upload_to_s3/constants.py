@@ -4,7 +4,6 @@ from pathlib import Path
 
 AWS_REGION = "us-east-2"
 TARGET_BUCKET = "jspsych-mirror-view-3"
-REFERENCE_BUCKET = "jspsych-mirror-view-2"
 API_NAME = "jspsych-scroll-api"
 API_STAGE = "prod"
 SOURCE_PUBLIC_DIR = Path("public")
