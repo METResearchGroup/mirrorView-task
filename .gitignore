@@ -80,3 +80,6 @@ aws-credentials.json
 *.bak
 *.backup
 
+# Terraform
+.terraform*
+*terraform.tfstate*
