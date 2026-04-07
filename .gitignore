@@ -83,3 +83,13 @@ aws-credentials.json
 # Terraform
 .terraform*
 *terraform.tfstate*
+
+# Local S3 release staging (scripts/upload_to_s3)
+s3_upload/
+
+# Lambda zip artifacts produced next to Terraform module
+infra/*.zip
+
+# Python
+__pycache__/
+*.pyc
