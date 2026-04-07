@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import argparse
 import json
 import subprocess
 import sys
@@ -77,25 +76,7 @@ def verify_critical_keys_exist() -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Verify uploaded S3 keys for a release (manifest + critical paths)."
-    )
-    parser.add_argument(
-        "--release-dir",
-        type=Path,
-        default=None,
-        help="Staged release directory (default: latest under s3_upload/).",
-    )
-    args = parser.parse_args()
-
-    release_dir = args.release_dir
-    if release_dir is None:
-        release_dir = resolve_latest_release_dir(STAGING_ROOT)
-    else:
-        release_dir = release_dir.resolve()
-        if not release_dir.is_dir():
-            raise SystemExit(f"Not a directory: {release_dir}")
-
+    release_dir = resolve_latest_release_dir(STAGING_ROOT)
     manifest = load_manifest(release_dir)
     print(f"Verifying manifest from {release_dir}")
     problems: list[str] = []

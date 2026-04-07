@@ -30,14 +30,8 @@ def _head_object(key: str) -> bool:
     return proc.returncode == 0
 
 
-def upload_files_to_s3(release_dir: Path, manifest: dict[str, Any], *, dry_run: bool) -> None:
+def upload_files_to_s3(release_dir: Path, manifest: dict[str, Any]) -> None:
     files: list[str] = list(manifest["files"])
-    if dry_run:
-        print(f"Dry run: would upload {len(files)} objects to s3://{TARGET_BUCKET}/")
-        for key in files:
-            print(f"  {key}")
-        return
-
     for key in files:
         local = release_dir / key
         if not local.is_file():
@@ -59,13 +53,11 @@ def upload_files_to_s3(release_dir: Path, manifest: dict[str, Any], *, dry_run: 
         )
 
 
-def print_upload_summary(release_dir: Path, manifest: dict[str, Any], *, dry_run: bool) -> None:
+def print_upload_summary(release_dir: Path, manifest: dict[str, Any]) -> None:
     n = len(manifest["files"])
     print(f"Release directory: {release_dir}")
     print(f"Manifest: {release_dir / 'manifest.json'}")
     print(f"Objects: {n}")
-    if dry_run:
-        print("No S3 writes performed (dry run).")
 
 
 def main() -> None:
@@ -75,29 +67,15 @@ def main() -> None:
         )
     )
     parser.add_argument(
-        "--release-dir",
-        type=Path,
-        default=None,
-        help="Staged release directory (default: latest under s3_upload/).",
-    )
-    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Print intended S3 keys without uploading.",
     )
     args = parser.parse_args()
-
-    release_dir = args.release_dir
-    if release_dir is None:
-        release_dir = resolve_latest_release_dir(STAGING_ROOT)
-    else:
-        release_dir = release_dir.resolve()
-        if not release_dir.is_dir():
-            raise SystemExit(f"Not a directory: {release_dir}")
-
+    release_dir = resolve_latest_release_dir(STAGING_ROOT)
     manifest = load_manifest(release_dir)
-    upload_files_to_s3(release_dir, manifest, dry_run=args.dry_run)
-    print_upload_summary(release_dir, manifest, dry_run=args.dry_run)
+    upload_files_to_s3(release_dir, manifest)
+    print_upload_summary(release_dir, manifest)
 
 
 if __name__ == "__main__":
