@@ -157,6 +157,8 @@ const jsPsych = initJsPsych({
             'pair_order',
             'evaluated_post_role',
             'response_time_ms',
+            'phase1_pair_reflection_text',
+            'phase1_pair_influence_rating',
             // Participant info
             'participant_id',
             'prolific_id',
@@ -689,6 +691,71 @@ async function setupExperiment() {
             };
             timeline.push(moderationTrial);
         }
+
+        // ========== PHASE 1 REFLECTION (TRAINING CONDITIONS ONLY) ==========
+        timeline.push({
+            type: jsPsychSurveyHtmlForm,
+            preamble: "<h2>Section 1 Reflection</h2>",
+            html: `
+                <div class="survey-container">
+                    <div class="survey-question">
+                        <label for="phase1_pair_reflection_text" style="font-weight: normal;">
+                            You just completed a series of content moderation decisions where you saw pairs of posts expressing opposing political viewpoints on the same topic - one from a left-leaning perspective and one from a right-leaning perspective - and made a single joint decision about both. In a few sentences, please describe what was going through your mind as you made these decisions. What, if anything, influenced how you evaluated the posts as a pair?
+                        </label>
+                        <textarea
+                            id="phase1_pair_reflection_text"
+                            name="phase1_pair_reflection_text"
+                            rows="6"
+                            style="width: 100%; margin-top: 8px;"
+                            required
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="survey-container">
+                    <div class="survey-question">
+                        <div style="font-weight: normal; margin-bottom: 10px;">
+                            To what extent did seeing both versions of each post influence your decisions? (1 = Not at all, 7 = Very much)
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="1" required>
+                                <span style="margin-top: 4px;">1</span>
+                                <span style="font-size: 13px; color: #555;">Not at all</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="2">
+                                <span style="margin-top: 4px;">2</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="3">
+                                <span style="margin-top: 4px;">3</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="4">
+                                <span style="margin-top: 4px;">4</span>
+                                <span style="font-size: 13px; color: #555;">Somewhat</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="5">
+                                <span style="margin-top: 4px;">5</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="6">
+                                <span style="margin-top: 4px;">6</span>
+                            </label>
+                            <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                <input type="radio" name="phase1_pair_influence_rating" value="7">
+                                <span style="margin-top: 4px;">7</span>
+                                <span style="font-size: 13px; color: #555;">Very much</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            `,
+            button_label: "Next >",
+            data: { trial_type: 'phase1-reflection-survey', phase: 1 },
+            conditional_function: () => getPhaseMode(1) === 'linked_fate'
+        });
 
         // ========== PHASE BREAK ==========
         timeline.push({
