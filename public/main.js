@@ -1,24 +1,124 @@
 /**
  * MirrorView Experiment - AWS Production Version
- * 
- * Participants view 5 "mirror" versions of political posts (1 human + 4 LLMs)
- * and select which mirror they prefer.
- * 
- * Each participant sees 5 posts assigned based on their political affiliation.
- * Posts are assigned to ensure 3 democrats + 3 republicans rate each post.
- * Mirror order is randomized for each trial.
+ *
+ * Participants act as content moderators. In the control condition, they
+ * evaluate single posts. In the linked-fate condition, they evaluate paired
+ * original + mirror posts and make one decision that applies to both.
  */
 
 let currentProlificID = null;
 let isTestParticipant = false;
 
+/**
+ * Central study-design constants. Single place to align trial counts, conditions, post catalog, and IDs.
+ *
+ * Cross-repo / Lambda alignment (change these here and mirror elsewhere as noted):
+ * - lambda-get-post-assignments.mjs — should accept the same condition strings in responses; validate
+ *   assignedPostIds.length === postsPerParticipant; forwards party_group / prolific_id plus STUDY_ID /
+ *   STUDY_ITERATION_ID to the assignment Lambda.
+ * - lambda-save-jspsych-data.mjs — does not read this object; persisted condition comes from jsPsych CSV columns.
+ * - study_participant_assignment_interface/lambdas/get_study_assignment/handler.py — DEFAULT_STUDY_CONDITIONS and
+ *   precomputed CSV rows (assignedPostIds per row) must match conditions + postsPerParticipant + post ID semantics.
+ */
+const STUDY_SPEC = Object.freeze({
+    /** Written to jsPsych data as experiment_version. Used only in public/main.js (assignParticipantId). */
+    experimentVersion: 'mirrorView_phase2',
+
+    /** Prolific participant ID query key. Used only in public/main.js (setupExperiment URL parsing). */
+    prolificUrlQueryParam: 'PROLIFIC_PID',
+
+    /** Optional debug override for assigned condition. Used in public/main.js; sent in assignment POST body (lambda may ignore). */
+    conditionUrlQueryParam: 'condition',
+
+    /**
+     * Allowed condition slugs (order: control, training, training_assisted).
+     * Used in public/main.js for URL override allowlist.
+     * Must match lambda-get-post-assignments validation and handler.py DEFAULT_STUDY_CONDITIONS (+ any third condition).
+     */
+    conditions: Object.freeze(['control', 'training', 'training_assisted']),
+
+    /** Condition id for single-post both phases. Used in public/main.js (instructions, break text, condition_phase_modes key). */
+    CONDITION_CONTROL: 'control',
+    /** Condition id for linked-fate phase 1, single phase 2. Used in public/main.js (instructions, break text, condition_phase_modes key). */
+    CONDITION_TRAINING: 'training',
+    /** Condition id for linked-fate phase 1, assisted phase 2. Used in public/main.js (instructions, break text, condition_phase_modes key). */
+    CONDITION_TRAINING_ASSISTED: 'training_assisted',
+
+    /**
+     * Maps each condition to jsPsych moderation trial evaluation_mode per section (phase_1 = first block, phase_2 = second).
+     * Values: "single" (one post, no pair), "linked_fate" (pair, one decision for both), "assisted" (single post + mirror shown for reference).
+     * Used in public/main.js (moderation trials via getPhaseMode / useBothDecisionLabels). Not read by lambdas; documents study UX only.
+     * Must stay consistent with instruction copy (e.g. break text for training_assisted phase_2).
+     */
+    condition_phase_modes: Object.freeze({
+        control: Object.freeze({
+            phase_1: 'single',
+            phase_2: 'single',
+        }),
+        training: Object.freeze({
+            phase_1: 'linked_fate',
+            phase_2: 'single',
+        }),
+        training_assisted: Object.freeze({
+            phase_1: 'linked_fate',
+            phase_2: 'assisted',
+        }),
+    }),
+
+    /** Moderation trials per section before the break. Used in public/main.js (loops, readyToBegin copy, trial total_trials). */
+    trialsPerPhase: 10,
+    /** Number of sections (phases of the task). Used in public/main.js (readyToBegin copy). */
+    numPhases: 2,
+    /**
+     * Total evaluated posts per participant; must equal trialsPerPhase * numPhases.
+     * Used in public/main.js (num_trials property, assignment response length check).
+     * Must match each precomputed assignment row in S3 (study_participant_assignment_interface batch jobs).
+     */
+    numTrials: 20,
+    /**
+     * Same as numTrials for this study; explicit for parity with assignment CSV column semantics.
+     * Used in public/main.js (assignment validation). Match handler / precomputed row length.
+     */
+    postsPerParticipant: 20,
+
+    /**
+     * Path under public/ for the stimulus catalog fetch.
+     * Used in public/main.js (loadMirrorData). Precomputed assignments must use post IDs from this catalog.
+     */
+    postCatalogPath: 'img/all_mirrors_claude.csv',
+    /**
+     * CSV column used as canonical post id; assignment API returns these strings.
+     * Used in public/main.js (assignedPostLookup, trial post_id). Must match precomputed assignedPostIds in S3.
+     */
+    postIdField: 'post_primary_key',
+    /** CSV column for display numeric id. Used in public/main.js (trial post_number). */
+    postNumberField: 'post_number',
+});
+
+if (STUDY_SPEC.numTrials !== STUDY_SPEC.trialsPerPhase * STUDY_SPEC.numPhases) {
+    throw new Error('STUDY_SPEC: numTrials must equal trialsPerPhase * numPhases');
+}
+if (STUDY_SPEC.postsPerParticipant !== STUDY_SPEC.numTrials) {
+    throw new Error('STUDY_SPEC: postsPerParticipant must equal numTrials for this study');
+}
+
+const ALLOWED_EVALUATION_MODES = new Set(['single', 'linked_fate', 'assisted']);
+for (const cond of STUDY_SPEC.conditions) {
+    const row = STUDY_SPEC.condition_phase_modes[cond];
+    if (!row) {
+        throw new Error(`STUDY_SPEC: condition_phase_modes missing entry for condition "${cond}"`);
+    }
+    for (const key of ['phase_1', 'phase_2']) {
+        if (!ALLOWED_EVALUATION_MODES.has(row[key])) {
+            throw new Error(`STUDY_SPEC: condition_phase_modes.${cond}.${key} must be one of ${[...ALLOWED_EVALUATION_MODES].join(', ')}`);
+        }
+    }
+}
+
 const jsPsych = initJsPsych({
     use_webaudio: false,
     on_finish: function() {
         let allData = jsPsych.data.get();
-        
-        // Filter to just the mirror preference trials for the main data
-        const mirrorTrials = allData.filter({trial_type: 'mirror-preference'}).values();
         
         // Flatten any nested response objects
         function flattenResponses(data) {
@@ -35,30 +135,30 @@ const jsPsych = initJsPsych({
         let allTrials = allData.values();
         allTrials.forEach(flattenResponses);
 
-        // Add attention check attempts as a dedicated column
-        allTrials.forEach(trial => {
-            if (trial.trial_type === 'mirror-practice' && trial.attempts !== undefined) {
-                trial.attention_check_attempts = trial.attempts;
-            }
-        });
-        
         // Define columns to keep
         const columnsToKeep = [
             'trial_type',
             'trial_index',
             'time_elapsed',
             'rt',
-            // Mirror preference specific
+            // Moderation trial data
             'post_id',
             'post_number',      // Numeric post identifier (easier to reference)
-            'human_mirror_id',  // Unique ID for this specific human mirror
+            'context_post_id',
+            'context_post_number',
+            'sampled_stance',
+            'sample_toxicity_type',
+            'phase',
+            'evaluation_mode',
             'original_text',
-            'selected_mirror',
-            'selected_position',
-            'presentation_order',
+            'mirror_text',
+            'show_pair',
+            'decision',
+            'pair_order',
+            'evaluated_post_role',
             'response_time_ms',
-            'selection_time_ms',
-            'hover_data',
+            'phase1_pair_reflection_text',
+            'phase1_pair_influence_rating',
             // Participant info
             'participant_id',
             'prolific_id',
@@ -66,6 +166,7 @@ const jsPsych = initJsPsych({
             'political_affiliation',
             'party_lean',
             'party_group',
+            'condition',
             // Demographics (if collected)
             'age',
             'gender',
@@ -74,10 +175,13 @@ const jsPsych = initJsPsych({
             'political_ideology',
             'political_follow',
             'rep_id',
-            'dem_id'
-            ,
-            // Attention check (practice) attempts
-            'attention_check_attempts'
+            'dem_id',
+            'attitude_reduce_abortion',
+            'attitude_citizenship_undocumented',
+            'attitude_restrict_guns',
+            'attitude_regulate_environment',
+            'attitude_raise_wealth_taxes',
+            'attitude_expand_medicaid'
         ];
         
         // Create CSV
@@ -123,10 +227,16 @@ const jsPsych = initJsPsych({
             body: JSON.stringify({
                 csv: csv,
                 prolific_id: currentProlificID,
-                is_test: isTestParticipant
+                isTest: isTestParticipant
             })
         })
-        .then(response => response.json())
+        .then(async response => {
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Save request failed (${response.status}): ${errorText}`);
+            }
+            return response.json();
+        })
         .then(result => {
             console.log('Data saved:', result);
             // Redirect to Prolific completion URL if available
@@ -153,17 +263,14 @@ const jsPsych = initJsPsych({
         })
         .catch(error => {
             console.error('Error saving data:', error);
-            document.body.innerHTML = `
-                <div style="text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
-                    <h1 style="color: #dc2626;">Error</h1>
-                    <p>There was an error saving your data. Please contact the researcher.</p>
-                    <p style="color: #9ca3af; font-size: 14px;">Error: ${error.message}</p>
-                </div>
-            `;
+            renderFatalError(
+                'Error',
+                'There was an error saving your data. Please contact the researcher.',
+                `Error: ${error.message}`
+            );
         });
     }
 });
-
 
 // ============================================================
 // DATA LOADING
@@ -175,20 +282,19 @@ const jsPsych = initJsPsych({
  */
 async function loadMirrorData() {
     try {
-        const response = await fetch('img/all_mirrors.csv');
+        const response = await fetch(STUDY_SPEC.postCatalogPath);
         const csvText = await response.text();
         
         // Parse CSV properly handling quoted fields with newlines
         const data = parseCSV(csvText);
         
         // Filter to only rows with valid data
-        // Each row represents one post with its human mirror and 4 LLM mirrors
+        // Each row represents one post with its Claude mirror
         const validData = data.filter(row => 
             row.original_text && 
             row.original_text.trim() !== '' &&
-            row.human_mirror_id &&  // ID of the selected human mirror for this post
-            row.human_mirror &&
-            row.human_mirror.trim() !== ''
+            row.claude_mirror &&
+            row.claude_mirror.trim() !== ''
         );
         
         console.log(`Loaded ${validData.length} posts with mirrors`);
@@ -276,12 +382,18 @@ function parseCSV(csvText) {
     return rows;
 }
 
-
-// ============================================================
-// EXPERIMENT CONFIGURATION
-// ============================================================
-
-const NUM_TRIALS = 5; // Number of posts each participant rates
+function renderFatalError(title, message, details = '') {
+    const detailHtml = details
+        ? `<p style="color: #9ca3af; font-size: 14px;">${details}</p>`
+        : '';
+    document.body.innerHTML = `
+        <div style="text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
+            <h1 style="color: #dc2626;">${title}</h1>
+            <p>${message}</p>
+            ${detailHtml}
+        </div>
+    `;
+}
 
 
 // ============================================================
@@ -294,6 +406,10 @@ let allMirrorData = [];
 // Store assigned posts (populated after political affiliation)
 let assignedPosts = [];
 
+// Store assigned condition
+let assignedCondition = null;
+let requestedConditionOverride = null;
+
 
 // ============================================================
 // MAIN EXPERIMENT SETUP
@@ -303,13 +419,19 @@ async function setupExperiment() {
     try {
         // Get URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        const prolificPID = urlParams.get('PROLIFIC_PID');
+        const prolificPID = urlParams.get(STUDY_SPEC.prolificUrlQueryParam);
         currentProlificID = prolificPID || 'UNKNOWN_' + Date.now();
         isTestParticipant = !prolificPID;
         console.log('Prolific ID:', currentProlificID, isTestParticipant ? '(test)' : '');
+        const conditionParam = (urlParams.get(STUDY_SPEC.conditionUrlQueryParam) || '').toLowerCase();
+        if (STUDY_SPEC.conditions.includes(conditionParam)) {
+            requestedConditionOverride = conditionParam;
+            console.log('Condition override requested:', requestedConditionOverride);
+        }
         
         // Get config URLs
         const urls = window.config?.getUrls?.() || {};
+
         
         // Load mirror data
         allMirrorData = await loadMirrorData();
@@ -323,67 +445,15 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Welcome!</h2>
-                    <p>We're developing an AI tool that will help people think about political messages from different points of view.</p>
-                    <p>It works by generating "mirrors" of political text from social media.</p>
-                    <p>For example, when prompted with a <b>left-leaning social media post</b>, the AI should generate the same message, as if the post was written from a <b>right-leaning perspective</b> (and vice versa).</p>
+                    <p>In this study, you will take on the role of a <b>content moderator</b> for a social media platform.</p>
+                    <p>Your task will involve deciding whether a selection of posts should be <b>allowed</b> or <b>removed</b> from the platform.</p>
                     <br>
-                    <p>Click <b>Next</b> to continue to an example.</p>
+                    <p>Click <b>Next</b> to continue to the consent form.</p>
                 </div>
             `],
             show_clickable_nav: true
         };
         timeline.push(welcome);
-
-        const welcome2 = {
-            type: jsPsychInstructions,
-            pages: [`
-                <div class='instructions'>
-                    <h2>Example</h2>
-                    <p>Here is an example of a <b>good mirror</b>:</p>
-                    <br>
-                    <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!"</p>
-                    <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
-                    <br>
-                    <p>Notice that the mirror text <b>recreates</b> the original message, but <b>from the opposite political stance</b> (original text is clearly liberal, and the mirror text is clearly conservative).
-                    Also notice that it <b>changed the core message</b> to one consistent with a conservative stance when the original was liberal. In other words, the mirror text is not a response to the original text, 
-                    it is just <b>replicating the original message as if written from an opposite political stance</b>.</p>
-                    <br>
-                    <p>In this study, your job is to choose the "mirrored" message that you believe accomplishes this job the best for a given social media post.</p>
-                    <br>
-                    <p>Click <b>Next</b> to continue to a practice trial.</p>
-                </div>
-            `],
-            show_clickable_nav: true
-        };
-        timeline.push(welcome2);
-
-        // ========== PRACTICE TRIAL ==========
-        const practiceTrial = {
-            type: jsPsychMirrorPractice,
-            original_text: "Climate change is a pressing issue that requires immediate attention and action, and it's essential to address the root causes of this problem.",
-            options: [
-                {
-                    id: 'wrong1',
-                    text: "Climate change is a pressing issue and the main cause of it is human-based carbon emissions!"
-                },
-                {
-                    id: 'correct',
-                    text: "Climate change is not as serious as the left claims, and we shouldn't rush into policies that hurt American jobs."
-                },
-                {
-                    id: 'wrong2',
-                    text: "The Second Amendment is a fundamental right that requires immediate protection, and it's essential to defend our constitutional freedoms."
-                }
-            ],
-            correct_answer: 'correct',
-            prompt: "Which of these 3 versions is the best mirror for the original text?",
-            incorrect_feedback: "Try again!",
-            correct_feedback: "Correct! This mirror maintains the same <b>structure</b> and <b>tone</b> as the original, while <b>flipping the political stance</b>.",
-            button_label: "Continue to Consent Form >",
-            shuffle_options: true,
-            practice_label: "Practice Trial"
-        };
-        timeline.push(practiceTrial);
 
         // ========== CONSENT ==========
         timeline.push(consent);
@@ -399,50 +469,14 @@ async function setupExperiment() {
             type: jsPsychCallFunction,
             async: true,
             func: async function(done) {
-                try {
-                    const allData = jsPsych.data.get().values();
-                    const latestWithParty = allData.filter(d => d.party_group).pop();
-                    const partyGroup = latestWithParty?.party_group;
-                    
-                    if (!partyGroup) {
-                        console.warn('No party group found, using local participant ID');
-                        ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    } else {
-                        const getParticipantUrl = urls.GET_PARTICIPANT_ID_URL;
-                        
-                        if (!getParticipantUrl) {
-                            console.warn('No GET_PARTICIPANT_ID_URL configured, using local participant ID');
-                            ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                        } else {
-                            const params = new URLSearchParams({
-                                prolific_id: currentProlificID,
-                                party: partyGroup,
-                                is_test: String(isTestParticipant)
-                            });
-                            const response = await fetch(`${getParticipantUrl}?${params.toString()}`);
-                            
-                            if (!response.ok) {
-                                const error = await response.json();
-                                console.error('Error getting participant ID:', error);
-                                ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                            } else {
-                                const result = await response.json();
-                                ParticipantID = result.participantID;
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error assigning participant ID:', error);
-                    ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                } finally {
-                    jsPsych.data.addProperties({
-                        participant_id: ParticipantID,
-                        prolific_id: currentProlificID,
-                        num_trials: NUM_TRIALS,
-                        experiment_version: 'mirrorView_v2'
-                    });
-                    done();
-                }
+                ParticipantID = 'P_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                jsPsych.data.addProperties({
+                    participant_id: ParticipantID,
+                    prolific_id: currentProlificID,
+                    num_trials: STUDY_SPEC.numTrials,
+                    experiment_version: STUDY_SPEC.experimentVersion
+                });
+                done();
             }
         };
         timeline.push(assignParticipantId);
@@ -462,29 +496,22 @@ async function setupExperiment() {
                     console.log('Party group for assignment:', partyGroup);
                     
                     if (!partyGroup) {
-                        console.error('Could not determine party group');
-                        // Fallback to random sampling
-                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
-                        done();
-                        return;
+                        throw new Error('Could not determine party_group for assignment request');
                     }
-                    
-                    // Get all posts with both ID and number
-                    const allPosts = allMirrorData.map(p => ({
-                        post_id: p.post_primary_key,
-                        post_number: p.post_number
-                    }));
                     
                     // Get the post assignments endpoint from config
                     const postAssignmentUrl = urls.POST_ASSIGNMENTS_URL;
+                    const studyId = urls.STUDY_ID;
+                    const studyIterationId = urls.STUDY_ITERATION_ID;
                     
                     if (!postAssignmentUrl) {
-                        console.warn('No POST_ASSIGNMENTS_URL configured, using random sampling');
-                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
-                        done();
-                        return;
+                        throw new Error('No POST_ASSIGNMENTS_URL configured');
+                    }
+                    if (!studyId) {
+                        throw new Error('No STUDY_ID configured');
+                    }
+                    if (!studyIterationId) {
+                        throw new Error('No STUDY_ITERATION_ID configured');
                     }
                     
                     // Call the server to get assigned posts
@@ -492,42 +519,128 @@ async function setupExperiment() {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            prolific_id: currentProlificID,
-                            party_group: partyGroup,
-                            all_posts: allPosts,
-                            is_test: isTestParticipant
+                            prolificId: currentProlificID,
+                            partyGroup: partyGroup,
+                            condition: requestedConditionOverride || assignedCondition,
+                            isTest: isTestParticipant,
+                            STUDY_ID: studyId,
+                            STUDY_ITERATION_ID: studyIterationId
                         })
                     });
                     
+                    // validate the response from the post assignment lambda
                     if (!response.ok) {
-                        const error = await response.json();
-                        console.error('Error getting post assignments:', error);
-                        // Fallback to random sampling
-                        const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                        assignedPosts = shuffled.slice(0, NUM_TRIALS);
-                    } else {
-                        const result = await response.json();
-                        console.log('Received post assignments:', result);
-                        
-                        // Map post IDs back to full post data
-                        assignedPosts = result.assigned_post_ids.map(postId => 
-                            allMirrorData.find(p => p.post_primary_key === postId)
-                        ).filter(p => p); // Remove any undefined
-                        
-                        console.log(`Assigned ${assignedPosts.length} posts to participant`);
+                        const errorText = await response.text();
+                        throw new Error(`Post assignment request failed (${response.status}): ${errorText}`);
                     }
-                    
+
+                    const result = await response.json();
+
+                    if (!Array.isArray(result.assignedPostIds)) {
+                        throw new Error('Assignment response did not include assignedPostIds array');
+                    }
+
+                    const idField = STUDY_SPEC.postIdField;
+                    const assignedPostLookup = new Map(
+                        allMirrorData.map(post => [post[idField], post])
+                    );
+                    const missingPostIds = result.assignedPostIds.filter(
+                        postId => !assignedPostLookup.has(postId)
+                    );
+                    if (missingPostIds.length > 0) {
+                        throw new Error(
+                            `Assignment response contained unknown post IDs: ${missingPostIds.join(', ')}`
+                        );
+                    }
+
+                    assignedPosts = result.assignedPostIds.map(postId => assignedPostLookup.get(postId));
+                    if (assignedPosts.length !== STUDY_SPEC.postsPerParticipant) {
+                        throw new Error(
+                            `Expected ${STUDY_SPEC.postsPerParticipant} assigned posts, received ${assignedPosts.length}`
+                        );
+                    }
+
+                    assignedCondition = result.condition || assignedCondition;
+                    if (!assignedCondition) {
+                        throw new Error('No condition assigned');
+                    }
+                    jsPsych.data.addProperties({ condition: assignedCondition });
+
                     done();
                 } catch (error) {
                     console.error('Error fetching post assignments:', error);
-                    // Fallback to random sampling
-                    const shuffled = [...allMirrorData].sort(() => Math.random() - 0.5);
-                    assignedPosts = shuffled.slice(0, NUM_TRIALS);
+                    renderFatalError(
+                        'Assignment Error',
+                        'There was an error loading your assigned posts. Please contact the researcher.',
+                        `Error: ${error.message}`
+                    );
                     done();
                 }
             }
         };
         timeline.push(fetchAssignedPosts);
+
+        /** Thin lookup into STUDY_SPEC.condition_phase_modes[assignedCondition] (no branching on condition name). */
+        const getPhaseMode = (phaseNumber) => {
+            const modes = STUDY_SPEC.condition_phase_modes[assignedCondition];
+            if (!modes) {
+                throw new Error(`condition_phase_modes missing for condition: ${assignedCondition}`);
+            }
+            return phaseNumber === 1 ? modes.phase_1 : modes.phase_2;
+        };
+
+        /** "Allow both" / "Remove both" only when the table says linked_fate for that phase. */
+        const useBothDecisionLabels = (phaseNumber) => getPhaseMode(phaseNumber) === 'linked_fate';
+
+        const conditionInstructions = {
+            type: jsPsychInstructions,
+            pages: () => [`
+                <div class='instructions'>
+                    <h2>Your Task</h2>
+                    ${assignedCondition === STUDY_SPEC.CONDITION_CONTROL
+                        // control
+                        ? `<p>We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated.</p>
+                           <p>Your task is to review a series of real political social media posts and decide whether they should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                           <p>When making your decisions, consider generally whether a post contributes to a <b>healthy environment for political discussion</b>, or whether it would be <b>unhealthy for political discussion</b>. Your goal is to evaluate the messages, using your own judgment.</p>
+                           <p>There are no right or wrong answers - we are interested in what you personally think.</p>`
+                        // training, training_assisted
+                        : `<p>We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. 
+                            Your task will be to review a series of <b>pairs</b> of real political social media posts, and decide whether <b>both posts in the pair</b> should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                           <br>
+                           <p>The pairs are <b>political mirrors</b> of each other. This means that the mirror text <b>recreates the original message</b> from the <b>opposite political stance</b>. For example:</p>
+                           <p><b>Original Text:</b><br>
+                           <i>I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!</i></p>
+                           <p><b>Mirror Text:</b><br>
+                           <i>I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!</i></p>
+                           <p>Notice that the mirror text changes the core message to match that of the opposite political stance.
+                              In other words, the mirror text is <b>not a response to the original text</b> - it replicates the original message as if written from the opposite political stance.</p>
+                            <br>
+                           <p>Your job is to decide whether <b>both posts in the pair</b> should be <b>allowed</b> or <b>removed</b> from the platform.</p>
+                           <p>When making your decisions, consider generally whether a post contributes to a <b>healthy environment for political discussion</b>, or whether it would be <b>unhealthy for political discussion</b>. Your goal is to evaluate the messages, using your own judgment.</p>
+                           <p>There are no right or wrong answers - we are interested in what you personally think.</p>`
+                    }
+                    <br>
+                    <p>Click <b>Next</b> to continue to a practice trial.</p>
+                </div>
+            `],
+            show_clickable_nav: true
+        };
+        timeline.push(conditionInstructions);
+
+        // ========== PRACTICE TRIAL ==========
+        const practiceTrial = {
+            type: jsPsychModerationTrial,
+            original_text: "Climate change is a pressing issue that requires immediate attention and action.",
+            mirror_text: "Climate change is exaggerated, and we should not rush into costly policies.",
+            show_pair: () => getPhaseMode(1) !== 'single',
+            evaluation_mode: () => getPhaseMode(1),
+            prompt: "Allow or Remove?",
+            allow_label: () => useBothDecisionLabels(1) ? "Allow Both" : "Allow",
+            remove_label: () => useBothDecisionLabels(1) ? "Remove Both" : "Remove",
+            progress_label: "Practice Trial",
+            data: { trial_type: 'moderation-practice' }
+        };
+        timeline.push(practiceTrial);
         
         // ========== READY TO BEGIN ==========
         const readyToBegin = {
@@ -535,16 +648,9 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Great! You're ready to begin.</h2>
-                    <p>The real study will be just like the practice, except that you will choose 1 out of <b>5</b> mirror texts that you think is best. 
-                    There will be <b>${NUM_TRIALS} trials</b> in total. If several of them look like good mirrors to you, just use your gut to pick the best 
-                    one based on our definition of a good mirror.</p>
-                    <p>It should take you approximately 10 minutes to finish the task.</p>
+                    <p>There will be <b>${STUDY_SPEC.numPhases} sections</b> with <b>${STUDY_SPEC.trialsPerPhase} trials each</b>, for a total of <b>${STUDY_SPEC.numTrials} trials (posts to evaluate)</b>. 
                     <br>
-                    <p>Reminder:</p>
-                    <p>A good mirror is a message that <b>recreates the original message</b>, but from the <b>opposite political stance</b>. It should also maintain the same <b>structure</b> and <b>tone</b> as the original message.</p>
-                    <p>For example:</p>
-                    <p><b>Original Text:</b> "I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!"</p>
-                    <p><b>Mirror Text:</b> "I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!"</p>
+                    There will be a short break in the middle after ${STUDY_SPEC.trialsPerPhase} trials.</p>
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
@@ -553,40 +659,153 @@ async function setupExperiment() {
         };
         timeline.push(readyToBegin);
         
-        // ========== MIRROR PREFERENCE TRIALS ==========
-        // Generate trials dynamically from assignedPosts
-        // Each trial is added individually since timeline_variables can't be set dynamically
-        for (let i = 0; i < NUM_TRIALS; i++) {
+        // ========== PHASE 1 TRIALS ==========
+        for (let i = 0; i < STUDY_SPEC.trialsPerPhase; i++) {
             const trialIndex = i;
-            const mirrorTrial = {
-                type: jsPsychMirrorPreference,
-                post_id: () => assignedPosts[trialIndex]?.post_primary_key || '',
-                post_number: () => assignedPosts[trialIndex]?.post_number || '',
-                human_mirror_id: () => assignedPosts[trialIndex]?.human_mirror_id || '',
+            const moderationTrial = {
+                type: jsPsychModerationTrial,
+                post_id: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postIdField] || '',
+                post_number: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postNumberField] || '',
+                context_post_id: '',
+                context_post_number: '',
+                sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
+                sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
                 original_text: () => assignedPosts[trialIndex]?.original_text || '',
-                human_mirror: () => assignedPosts[trialIndex]?.human_mirror || '',
-                llm_mirrors: () => ({
-                    llama: assignedPosts[trialIndex]?.llama_mirror || '',
-                    qwen: assignedPosts[trialIndex]?.qwen_mirror || '',
-                    claude: assignedPosts[trialIndex]?.claude_mirror || '',
-                    gpt4o: assignedPosts[trialIndex]?.gpt4o_mirror || ''
-                }),
-                show_original: true,
-                prompt: "Which mirror is the best?",
-            button_label: "Next >",
-            button_label: "Next >",
+                mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
+                show_pair: () => getPhaseMode(1) !== 'single',
+                evaluation_mode: () => getPhaseMode(1),
+                prompt: "Allow or Remove?",
+                allow_label: () => useBothDecisionLabels(1) ? "Allow Both" : "Allow",
+                remove_label: () => useBothDecisionLabels(1) ? "Remove Both" : "Remove",
                 trial_number: i + 1,
-                total_trials: NUM_TRIALS,
+                total_trials: STUDY_SPEC.trialsPerPhase,
+                data: { trial_type: 'moderation-trial', phase: 1 },
                 // Skip this trial if no post is assigned
                 conditional_function: () => {
                     const hasPost = assignedPosts[trialIndex] && assignedPosts[trialIndex].original_text;
                     if (trialIndex === 0) {
-                        console.log('Starting mirror trials with', assignedPosts.length, 'posts');
+                        console.log('Starting phase 1 with', assignedPosts.length, 'assigned posts');
                     }
                     return hasPost;
                 }
             };
-            timeline.push(mirrorTrial);
+            timeline.push(moderationTrial);
+        }
+
+        // ========== PHASE 1 REFLECTION (TRAINING CONDITIONS ONLY) ==========
+        timeline.push({
+            timeline: [{
+                type: jsPsychSurveyHtmlForm,
+                preamble: "<h2>Section 1 Reflection</h2>",
+                html: `
+                    <div class="survey-container">
+                        <div class="survey-question">
+                            <label for="phase1_pair_reflection_text" style="font-weight: normal;">
+                                You just completed a series of content moderation decisions where you saw pairs of posts expressing opposing political viewpoints on the same topic - one from a left-leaning perspective and one from a right-leaning perspective - and made a single joint decision about both. In a few sentences, please describe what was going through your mind as you made these decisions. What, if anything, influenced how you evaluated the posts as a pair?
+                            </label>
+                            <textarea
+                                id="phase1_pair_reflection_text"
+                                name="phase1_pair_reflection_text"
+                                rows="6"
+                                style="width: 100%; margin-top: 8px;"
+                                required
+                            ></textarea>
+                        </div>
+                    </div>
+                    <div class="survey-container">
+                        <div class="survey-question">
+                            <div style="font-weight: normal; margin-bottom: 10px;">
+                                To what extent did seeing both versions of each post influence your decisions? (1 = Not at all, 7 = Very much)
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="1" required>
+                                    <span style="margin-top: 4px;">1</span>
+                                    <span style="font-size: 13px; color: #555;">Not at all</span>
+                                </label>
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="2">
+                                    <span style="margin-top: 4px;">2</span>
+                                </label>
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="3">
+                                    <span style="margin-top: 4px;">3</span>
+                                </label>
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="4">
+                                    <span style="margin-top: 4px;">4</span>
+                                    <span style="font-size: 13px; color: #555;">Somewhat</span>
+                                </label>
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="5">
+                                    <span style="margin-top: 4px;">5</span>
+                                </label>
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="6">
+                                    <span style="margin-top: 4px;">6</span>
+                                </label>
+                                <label style="display: flex; flex-direction: column; align-items: center; font-weight: normal;">
+                                    <input type="radio" name="phase1_pair_influence_rating" value="7">
+                                    <span style="margin-top: 4px;">7</span>
+                                    <span style="font-size: 13px; color: #555;">Very much</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `,
+                button_label: "Next >",
+                data: { trial_type: 'phase1-reflection-survey', phase: 1 }
+            }],
+            conditional_function: () => getPhaseMode(1) === 'linked_fate'
+        });
+
+        // ========== PHASE BREAK ==========
+        timeline.push({
+            type: jsPsychInstructions,
+            pages: () => [`
+                <div class='instructions'>
+                    <h2>Break</h2>
+                    <p>You have completed Section 1.</p>
+                    ${assignedCondition === STUDY_SPEC.CONDITION_CONTROL
+                        ? `<p>Take a short break if you would like, then click <b>Next</b> to continue to Section 2.</p>`
+                        : assignedCondition === STUDY_SPEC.CONDITION_TRAINING
+                            ? `<p>In Section 2, the task will be essentially the same, except you will only be evaluating <b>one post at a time</b>.</p>
+                               <p>Take a short break if you would like, then click <b>Next</b> to continue.</p>`
+                            : `<p>In Section 2, the task will be essentially the same, except you will only be evaluating <b>one post at a time</b>.</p>
+                               <p>Underneath the post, you will be provided with its <b>political mirror</b>, in case it helps you make your decision.</p>
+                               <p>Take a short break if you would like, then click <b>Next</b> to continue.</p>`
+                    }
+                </div>
+            `],
+            show_clickable_nav: true
+        });
+
+        // ========== PHASE 2 TRIALS ==========
+        for (let i = 0; i < STUDY_SPEC.trialsPerPhase; i++) {
+            const trialIndex = i + STUDY_SPEC.trialsPerPhase;
+            const moderationTrial = {
+                type: jsPsychModerationTrial,
+                post_id: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postIdField] || '',
+                post_number: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postNumberField] || '',
+                context_post_id: '',
+                context_post_number: '',
+                sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
+                sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
+                original_text: () => assignedPosts[trialIndex]?.original_text || '',
+                mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
+                show_pair: () => getPhaseMode(2) !== 'single',
+                evaluation_mode: () => getPhaseMode(2),
+                prompt: "Allow or Remove?",
+                allow_label: () => useBothDecisionLabels(2) ? "Allow Both" : "Allow",
+                remove_label: () => useBothDecisionLabels(2) ? "Remove Both" : "Remove",
+                trial_number: i + 1,
+                total_trials: STUDY_SPEC.trialsPerPhase,
+                data: { trial_type: 'moderation-trial', phase: 2 },
+                conditional_function: () => {
+                    return assignedPosts[trialIndex] && assignedPosts[trialIndex].original_text;
+                }
+            };
+            timeline.push(moderationTrial);
         }
         
         // ========== BRIEF DEMOGRAPHICS ==========
@@ -631,6 +850,7 @@ async function setupExperiment() {
         // ========== IDEOLOGY ==========
         // (defined in post_surveys.js)
         timeline.push(politicalSurvey);
+        timeline.push(attitudeExtremitySurvey);
 
         // Run the experiment
         jsPsych.run(timeline);

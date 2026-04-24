@@ -62,7 +62,7 @@ const demographicsSurvey = {
             </div>
         </div>
     `,
-    button_label: "Submit",
+    button_label: "Next >",
     autofocus: "gender",
 
     // on_load: function() {
@@ -183,7 +183,7 @@ const politicalSurvey = {
             </div>
         </div>
     `,
-    button_label: "Submit >",
+    button_label: "Next >",
 
     on_load: function() {
 
@@ -804,6 +804,85 @@ const extreme_polarization_survey_ownNetwork = {
 };
 
 
+const attitudeExtremitySurvey = {
+    type: jsPsychSurveyHtmlForm,
+    preamble: "<h2>Political Attitudes</h2>",
+    html: `
+        <div class="survey-container">
+            <div class="survey-question">
+                <p style="font-weight: normal; margin-bottom: 14px;">
+                    Please indicate how much you oppose or support the following political positions:
+                </p>
+                <div style="display: grid; grid-template-columns: 36% 64%; margin: 0 4px 10px 4px;">
+                    <div></div>
+                    <div style="display: flex; justify-content: space-between; padding: 0 10px; font-size: 16px;">
+                        <div><strong>Strongly Oppose</strong></div>
+                        <div><strong>Strongly Support</strong></div>
+                    </div>
+                </div>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 12px 10px; width: 36%; border-top: 1px solid #e5e7eb;">Reducing access to abortion</td>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
+                            <input class="attitude-range" type="range" name="attitude_reduce_abortion" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
+                                <span>0</span><span>50</span><span>100</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Providing a path to citizenship for undocumented immigrants</td>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
+                            <input class="attitude-range" type="range" name="attitude_citizenship_undocumented" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
+                                <span>0</span><span>50</span><span>100</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Increasing restrictions on gun ownership</td>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
+                            <input class="attitude-range" type="range" name="attitude_restrict_guns" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
+                                <span>0</span><span>50</span><span>100</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Increasing government regulations to protect the environment</td>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
+                            <input class="attitude-range" type="range" name="attitude_regulate_environment" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
+                                <span>0</span><span>50</span><span>100</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Raising taxes on the wealthiest Americans</td>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
+                            <input class="attitude-range" type="range" name="attitude_raise_wealth_taxes" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
+                                <span>0</span><span>50</span><span>100</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">Expanding Medicaid to cover all currently uninsured Americans</td>
+                        <td style="padding: 12px 10px; border-top: 1px solid #e5e7eb;">
+                            <input class="attitude-range" type="range" name="attitude_expand_medicaid" min="0" max="100" step="1" value="50" style="width: 100%;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; color: #555;">
+                                <span>0</span><span>50</span><span>100</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    `,
+    button_label: "Submit >"
+};
+
+
 
 
 
@@ -818,6 +897,7 @@ if (typeof module !== 'undefined') {
         extreme_polarization_survey,
         prescriptiveSurvey_ownNetwork,
         descriptiveSurvey_ownNetwork,
-        extreme_polarization_survey_ownNetwork
+        extreme_polarization_survey_ownNetwork,
+        attitudeExtremitySurvey
     };
 }
