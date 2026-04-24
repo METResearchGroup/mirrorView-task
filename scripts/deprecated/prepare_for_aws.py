@@ -2,6 +2,8 @@
 """
 Script to prepare files for AWS S3 upload.
 This script helps organize and check which files need to be uploaded to S3.
+
+DEPRECATED: Use bash scripts/upload_to_s3/run_upload.sh or stage_public_for_s3.py + upload_public_to_s3.py (see docs/runbooks/AWS_DEPLOYMENT_GUIDE.md).
 """
 
 import os
@@ -69,12 +71,12 @@ def main():
     print("1. Follow the AWS_DEPLOYMENT_GUIDE.md")
     print("2. Create your S3 bucket and Lambda functions")
     print("3. Get your API Gateway URLs")
-    print("4. Update the URLs in main.js (see note below)")
+    print("4. Update the URLs in public/config.js (see note below)")
     print(f"5. Upload all files from {staging_dir} to your S3 bucket root")
     
-    print("\n⚠️  IMPORTANT: Don't forget to update the API URLs in main.js!")
-    print("   Look for these lines around line 199-200:")
-    print("   const GET_PARTICIPANT_ID_URL = 'https://...'")
+    print("\n⚠️  IMPORTANT: Don't forget to update the API URLs in public/config.js!")
+    print("   Update the endpoint URLs in the selected deployment mode:")
+    print("   const POST_ASSIGNMENTS_URL = 'https://...'")
     print("   const SAVE_DATA_URL = 'https://...'")
 
 if __name__ == "__main__":
