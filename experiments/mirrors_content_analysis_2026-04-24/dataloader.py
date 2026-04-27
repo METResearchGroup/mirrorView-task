@@ -7,9 +7,9 @@ from pathlib import Path
 
 from lib.timestamp_utils import get_current_timestamp
 
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.expand_frame_repr', False)
+pd.set_option("display.max_columns", None)
+pd.set_option("display.width", None)
+pd.set_option("display.expand_frame_repr", False)
 
 timestamp = get_current_timestamp()
 export_filename = f"mirrorview_pilot_trial_data_{timestamp}.csv"
@@ -17,8 +17,8 @@ export_filename = f"mirrorview_pilot_trial_data_{timestamp}.csv"
 current_dir = Path(__file__).resolve().parent
 export_fp = current_dir / export_filename
 
-def main() -> None:
 
+def main() -> None:
     csv_path = (
         "experiments/2026-04-24_mirrors_content_analysis/"
         "mirrorview_pilot_data_2026-04-15.csv"
@@ -29,9 +29,11 @@ def main() -> None:
     filtered_df = df[df["trial_type"] == "moderation-trial"].copy()
 
     # Drop attitude columns (these will be not)
-    attitude_columns = [col for col in filtered_df.columns if col.startswith("attitude_")]
+    attitude_columns = [
+        col for col in filtered_df.columns if col.startswith("attitude_")
+    ]
     filtered_df = filtered_df.drop(columns=attitude_columns)
-    
+
     # drop all NaN columns.
     filtered_df = filtered_df.dropna(axis=1, how="all")
 
