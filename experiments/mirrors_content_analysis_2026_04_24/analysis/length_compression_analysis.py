@@ -48,6 +48,8 @@ def main():
     df = dataloader.get_latest_mirrorview_run_data()
     df = dataloader.transform_latest_mirrorview_run_data(df)
 
+    breakpoint()
+
     # do analysis
     analyzer = LengthCompressionAnalyzer(df)
     analyzer.original_text_analysis()

@@ -27,14 +27,8 @@ class Dataloader:
     )
     TIMESTAMP_FORMAT = "%Y_%m_%d-%H:%M:%S"
 
-    def get_latest_mirrorview_run_data(self) -> Path:
-        """Return the path to the newest export CSV under ``scripts/``.
-
-        Files are named ``mirrorview_pilot_data_<timestamp>.csv`` by
-        ``scripts/export_study_results.py``. The latest file is chosen by the
-        timestamp embedded in the filename (same rule as
-        ``experiments/basic_summary_stats_2026_04_27/total_attrition.py``).
-        """
+    def _resolve_latest_export_csv_path(self) -> Path:
+        """Path to the newest ``mirrorview_pilot_data_*.csv`` under ``scripts/``."""
         candidates: list[tuple[datetime, Path]] = []
         for path in self.SCRIPTS_DIR.glob("mirrorview_pilot_data_*.csv"):
             match = self.EXPORT_FILENAME_PATTERN.match(path.name)
@@ -52,6 +46,23 @@ class Dataloader:
 
         _, latest_path = max(candidates, key=lambda item: item[0])
         return latest_path
+
+    @property
+    def last_loaded_export_path(self) -> Path | None:
+        """Set to the CSV path used by the last ``get_latest_mirrorview_run_data`` call."""
+        return getattr(self, "_last_loaded_export_path", None)
+
+    def get_latest_mirrorview_run_data(self) -> pd.DataFrame:
+        """Load the newest export CSV under ``scripts/`` as a DataFrame.
+
+        Files are named ``mirrorview_pilot_data_<timestamp>.csv`` by
+        ``scripts/export_study_results.py``. The latest file is chosen by the
+        timestamp embedded in the filename (same rule as
+        ``experiments/basic_summary_stats_2026_04_27/total_attrition.py``).
+        """
+        latest_path = self._resolve_latest_export_csv_path()
+        self._last_loaded_export_path = latest_path
+        return pd.read_csv(latest_path)
 
     def transform_latest_mirrorview_run_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """Filter and reshape the raw export frame into the trial-level mirrors table."""
@@ -80,11 +91,10 @@ export_fp = Dataloader.EXPERIMENT_DIR / export_filename
 
 def main() -> None:
     loader = Dataloader()
-    csv_path = loader.get_latest_mirrorview_run_data()
-    df = pd.read_csv(csv_path)
+    df = loader.get_latest_mirrorview_run_data()
     transformed_df = loader.transform_latest_mirrorview_run_data(df)
     transformed_df.to_csv(export_fp, index=False)
-    print(f"Source export: {csv_path}")
+    print(f"Source export: {loader.last_loaded_export_path}")
     print(f"Exported filtered data to {export_fp}")
     print(transformed_df.head(10))
 
