@@ -7,14 +7,36 @@ PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analy
 
 from __future__ import annotations
 
+import math
 import re
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Callable
+from pathlib import Path
+from typing import Any, Sequence
 
 import numpy as np
 import pandas as pd
+from rich import box
+from rich.console import Console
+from rich.markup import escape
+from rich.table import Table
 
 from experiments.mirrors_content_analysis_2026_04_24.dataloader import Dataloader
+
+# Display / axis ordering (normalized keys match `_normalize_condition`: lower, "-" -> "_")
+PARTY_ORDER = ["democrat", "republican"]
+CONDITION_ORDER = ["control", "training", "training_assisted"]
+CONDITION_DISPLAY_MAP = {
+    "control": "control",
+    "training": "training",
+    "training_assisted": "training-assisted",
+}
+PARTY_MARGINAL_HEADER = "Party marginal"
+CONDITION_MARGINAL_ROW = "Condition marginal"
+PARTY_CONDITION_TABLE_CAPTION = (
+    "[dim]Cells: party×condition means. Row margin: party pooled. "
+    "Footer: condition pooled. Lower-right: overall mean (partition key all).[/dim]"
+)
 
 ID_COLUMNS = [
     "prolific_id",
@@ -25,6 +47,147 @@ ID_COLUMNS = [
     "phase",
     "condition",
 ]
+
+
+def safe_divide(numerator: float, denominator: float) -> float:
+    if denominator <= 0:
+        return 0.0
+    return float(numerator / denominator)
+
+
+_WORD_RE = re.compile(r"\b\w+\b")
+_PUNCTUATION_RE = re.compile(r"[^\w\s]")
+_SENTENCE_SPLIT_RE = re.compile(r"[.!?]+")
+
+
+class CalculateMetric(ABC):
+    """Single-text scalar metric: stable ``name``, prose ``describe()``, and ``calculate()``."""
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Identifier used in column names (e.g. ``char_count``)."""
+
+    @abstractmethod
+    def describe(self) -> str:
+        """What the metric measures and exactly how it is computed from the input string."""
+
+    @abstractmethod
+    def calculate(self, text: str) -> float:
+        """Return the metric value for one normalized post string."""
+
+
+class CharCountMetric(CalculateMetric):
+    @property
+    def name(self) -> str:
+        return "char_count"
+
+    def describe(self) -> str:
+        return (
+            "Post length in characters. Counts every codepoint in the string after normalization "
+            "(including spaces, punctuation, and line breaks). Formula: float(len(text))."
+        )
+
+    def calculate(self, text: str) -> float:
+        return float(len(text))
+
+
+class WordCountMetric(CalculateMetric):
+    @property
+    def name(self) -> str:
+        return "word_count"
+
+    def describe(self) -> str:
+        return (
+            "Approximate word count via regex tokenization: count how many times the pattern "
+            r"\b\w+\b matches (word characters bounded by word boundaries). "
+            "Same notion as many simple NLP word counts; not full Unicode word segmentation."
+        )
+
+    def calculate(self, text: str) -> float:
+        return float(len(_WORD_RE.findall(text)))
+
+
+class SentenceCountMetric(CalculateMetric):
+    @property
+    def name(self) -> str:
+        return "sentence_count"
+
+    def describe(self) -> str:
+        return (
+            "Sentence count by splitting on one-or-more occurrences of ., !, or ?. "
+            "Non-empty trimmed segments after the split are counted; empty runs are ignored."
+        )
+
+    def calculate(self, text: str) -> float:
+        parts = [part.strip() for part in _SENTENCE_SPLIT_RE.split(text) if part.strip()]
+        return float(len(parts))
+
+
+class AvgSentenceLengthMetric(CalculateMetric):
+    @property
+    def name(self) -> str:
+        return "avg_sentence_length"
+
+    def describe(self) -> str:
+        return (
+            "Mean words per sentence for this post. Computed as word_count / sentence_count "
+            "using the same word and sentence definitions as the separate word and sentence metrics; "
+            "0 if sentence_count is 0 (avoids division by zero)."
+        )
+
+    def calculate(self, text: str) -> float:
+        wc = float(len(_WORD_RE.findall(text)))
+        parts = [part.strip() for part in _SENTENCE_SPLIT_RE.split(text) if part.strip()]
+        sc = float(len(parts))
+        return safe_divide(wc, sc)
+
+
+class PunctuationCountMetric(CalculateMetric):
+    @property
+    def name(self) -> str:
+        return "punctuation_count"
+
+    def describe(self) -> str:
+        return (
+            "Count of punctuation-like characters: each match of the regex [^\\w\\s] "
+            "(not a word character, not whitespace) counts as one punctuation token."
+        )
+
+    def calculate(self, text: str) -> float:
+        return float(len(_PUNCTUATION_RE.findall(text)))
+
+
+class PunctuationDensityMetric(CalculateMetric):
+    @property
+    def name(self) -> str:
+        return "punctuation_density"
+
+    def describe(self) -> str:
+        return (
+            "Punctuation per character: punctuation_count / char_count for the same string, "
+            "using the punctuation and character definitions above. 0 if the string has length 0."
+        )
+
+    def calculate(self, text: str) -> float:
+        char_count = len(text)
+        punct = float(len(_PUNCTUATION_RE.findall(text)))
+        return safe_divide(punct, float(char_count) if char_count else 0.0)
+
+
+DEFAULT_LENGTH_METRICS: tuple[CalculateMetric, ...] = (
+    CharCountMetric(),
+    WordCountMetric(),
+    SentenceCountMetric(),
+    AvgSentenceLengthMetric(),
+    PunctuationCountMetric(),
+    PunctuationDensityMetric(),
+)
+
+
+def metrics_dict_for_text(text: str, metrics: Sequence[CalculateMetric]) -> dict[str, float]:
+    """All named scalar metrics for one string (pairwise row construction)."""
+    return {m.name: float(m.calculate(text)) for m in metrics}
 
 
 @dataclass(frozen=True)
@@ -38,76 +201,308 @@ class MetricCalculation:
         return dict(self.by_partition)
 
 
-class TextMetrics:
-    """Per-string length/compression metrics; single interface for all text-derived scalars."""
+def _fmt_partition_cell(value: float | None) -> str:
+    if value is None:
+        return "—"
+    v = float(value)
+    if math.isnan(v) or math.isinf(v):
+        return "—"
+    return f"{v:.4g}"
 
-    PUNCTUATION_RE = re.compile(r"[^\w\s]")
-    WORD_RE = re.compile(r"\b\w+\b")
-    SENTENCE_SPLIT_RE = re.compile(r"[.!?]+")
 
-    @staticmethod
-    def safe_divide(numerator: float, denominator: float) -> float:
-        if denominator <= 0:
-            return 0.0
-        return float(numerator / denominator)
+def _order_known_first(values: list[str], preferred: list[str]) -> list[str]:
+    uniq = list(dict.fromkeys(values))
+    known = [x for x in preferred if x in uniq]
+    tail = sorted(x for x in uniq if x not in known)
+    return known + tail
 
-    @classmethod
-    def char_count(cls, text: str) -> float:
-        return float(len(text))
 
-    @classmethod
-    def word_count(cls, text: str) -> float:
-        return float(len(cls.WORD_RE.findall(text)))
+def _axes_for_partition_table(by_partition: dict[str, float]) -> tuple[list[str], list[str]]:
+    """Infer party / condition axis labels from keys produced by ``_partition_metric_means``."""
+    raw_parties = [
+        k[: -len("_all")]
+        for k in by_partition
+        if k.endswith("_all") and not k.startswith("all_")
+    ]
+    raw_conds = [k[4:] for k in by_partition if k.startswith("all_") and k not in ("all",) and len(k) > 4]
+    parties = _order_known_first(raw_parties, PARTY_ORDER)
+    conds = _order_known_first(raw_conds, CONDITION_ORDER)
 
-    @classmethod
-    def sentence_count(cls, text: str) -> float:
-        parts = [part.strip() for part in cls.SENTENCE_SPLIT_RE.split(text) if part.strip()]
-        return float(len(parts))
+    if not parties:
+        for p in PARTY_ORDER:
+            prefix = f"{p}_"
+            if any(
+                k.startswith(prefix)
+                and not k.startswith("all_")
+                and not k.endswith("_all")
+                and k != "all"
+                for k in by_partition
+            ):
+                parties.append(p)
+        parties = _order_known_first(parties, PARTY_ORDER)
 
-    @classmethod
-    def punctuation_count(cls, text: str) -> float:
-        return float(len(cls.PUNCTUATION_RE.findall(text)))
+    if not conds:
+        cond_stubs: set[str] = set()
+        party_list = parties or list(PARTY_ORDER)
+        for key in by_partition:
+            if key in ("all",) or key.endswith("_all") or key.startswith("all_"):
+                continue
+            for p in party_list:
+                prefix = f"{p}_"
+                if key.startswith(prefix) and len(key) > len(prefix):
+                    cond_stubs.add(key[len(prefix) :])
+        conds = _order_known_first(list(cond_stubs), CONDITION_ORDER)
 
-    @classmethod
-    def avg_sentence_length(cls, text: str) -> float:
-        return cls.safe_divide(cls.word_count(text), cls.sentence_count(text))
+    return parties, conds
 
-    @classmethod
-    def punctuation_density(cls, text: str) -> float:
-        return cls.safe_divide(cls.punctuation_count(text), cls.char_count(text))
 
-    @classmethod
-    def metrics_dict(cls, text: str) -> dict[str, float]:
-        """All standard text metrics for one string (used by pairwise rows)."""
-        char_count = len(text)
-        word_count = cls.word_count(text)
-        sentence_count = cls.sentence_count(text)
-        punctuation_count = cls.punctuation_count(text)
-        avg_sentence_length = cls.safe_divide(word_count, sentence_count)
-        punctuation_density = cls.safe_divide(punctuation_count, float(char_count) if char_count else 0.0)
-        return {
-            "char_count": float(char_count),
-            "word_count": float(word_count),
-            "sentence_count": float(sentence_count),
-            "avg_sentence_length": avg_sentence_length,
-            "punctuation_count": punctuation_count,
-            "punctuation_density": punctuation_density,
-        }
+def rich_table_for_metric_calculation(calc: MetricCalculation) -> Table:
+    """Party × condition grid with row/column marginals and grand mean from ``by_partition`` keys."""
+    by = calc.by_partition
+    parties, conds = _axes_for_partition_table(by)
+    table = Table(
+        title=f"[bold]{calc.name}[/bold] — mean",
+        caption=PARTY_CONDITION_TABLE_CAPTION,
+        box=box.ROUNDED,
+        show_header=True,
+        header_style="bold",
+        title_style="bold",
+    )
+
+    if not parties or not conds:
+        table.add_column("Note")
+        table.add_row("Not enough party×condition partition keys to build a grid for this metric.")
+        return table
+
+    table.add_column("Party \\ condition", style="bold")
+    for c in conds:
+        label = CONDITION_DISPLAY_MAP.get(c, c.replace("_", "-"))
+        table.add_column(label, justify="right", overflow="ellipsis")
+    table.add_column(PARTY_MARGINAL_HEADER, justify="right")
+
+    for p in parties:
+        row: list[str] = [p]
+        for c in conds:
+            row.append(_fmt_partition_cell(by.get(f"{p}_{c}")))
+        row.append(_fmt_partition_cell(by.get(f"{p}_all")))
+        table.add_row(*row)
+
+    footer = [CONDITION_MARGINAL_ROW]
+    for c in conds:
+        footer.append(_fmt_partition_cell(by.get(f"all_{c}")))
+    footer.append(_fmt_partition_cell(by.get("all")))
+    table.add_row(*footer, style="italic dim")
+    return table
+
+
+def print_metric_calculations_rich(
+    console: Console, section_title: str, metrics: dict[str, MetricCalculation]
+) -> None:
+    """Print one Rich table per metric (insertion order of ``metrics`` preserved)."""
+    console.rule(f"[bold]{section_title}[/bold]")
+    for calc in metrics.values():
+        console.print(rich_table_for_metric_calculation(calc))
+        console.print()
+
+
+def print_metric_glossary_rich(console: Console, metrics: Sequence[CalculateMetric]) -> None:
+    """Rich table: metric name vs prose definition (printed first in ``show_results``)."""
+    console.rule("[bold]Metric definitions[/bold]")
+    table = Table(
+        title="[bold]Length / compression metrics — glossary[/bold]",
+        box=box.ROUNDED,
+        show_header=True,
+        header_style="bold",
+        title_style="bold",
+    )
+    table.add_column("Metric", style="bold", max_width=28, overflow="ellipsis", no_wrap=True)
+    table.add_column("Description (what it measures and how it is calculated)", overflow="fold")
+    for m in metrics:
+        table.add_row(escape(m.name), escape(m.describe()))
+    console.print(table)
+    console.print()
+
+
+def _fmt_dataframe_cell(value: Any) -> str:
+    if value is None:
+        return "—"
+    if isinstance(value, (float, np.floating)):
+        v = float(value)
+        if math.isnan(v) or math.isinf(v):
+            return "—"
+        return f"{v:.4g}"
+    if isinstance(value, (np.integer, int)) and not isinstance(value, bool):
+        return str(int(value))
+    if isinstance(value, (np.bool_, bool)):
+        return str(bool(value))
+    try:
+        if pd.isna(value):
+            return "—"
+    except (TypeError, ValueError):
+        pass
+    return str(value)
+
+
+def rich_table_from_dataframe(
+    df: pd.DataFrame,
+    *,
+    title: str | None = None,
+    caption: str | None = None,
+    max_rows: int | None = None,
+    console: Console | None = None,
+) -> Table:
+    """Render a DataFrame as a Rich ``Table`` (rounded box, bold headers).
+
+    When ``console`` is set, the table gets an explicit ``width`` so Rich does
+    not assign one-character columns on wide frames (which looks broken).
+    """
+    view = df.copy()
+    if max_rows is not None:
+        view = view.head(int(max_rows))
+
+    table_width: int | None = None
+    ncols = len(view.columns)
+    if console is not None and ncols > 12:
+        try:
+            w = console.size.width
+            table_width = max(72, min(220, w - 2))
+        except Exception:
+            table_width = 120
+
+    table = Table(
+        title=title,
+        caption=caption,
+        box=box.ROUNDED,
+        show_header=True,
+        header_style="bold",
+        title_style="bold",
+        width=table_width,
+    )
+
+    if view.empty:
+        table.add_column(" ")
+        table.add_row("[dim](empty)[/dim]")
+        return table
+
+    col_kwargs: dict[str, Any] = {"overflow": "ellipsis", "no_wrap": True}
+    if ncols <= 14:
+        col_kwargs["min_width"] = max(10, min(18, 120 // max(ncols, 1)))
+
+    for col in view.columns:
+        table.add_column(str(col), **col_kwargs)
+    for _, row in view.iterrows():
+        table.add_row(*[_fmt_dataframe_cell(row[c]) for c in view.columns])
+    return table
+
+
+PAIRWISE_SAMPLE_LEAD_COLS = [
+    "party_group",
+    "condition",
+    "phase",
+    "decision",
+    "evaluation_mode",
+    "post_id",
+    "prolific_id",
+]
+
+
+def pairwise_sample_display_columns(df: pd.DataFrame, *, max_cols: int = 10) -> list[str]:
+    """Columns for pairwise preview: design fields first, then ratio_* metrics, then the rest."""
+    text_cols = {"original_text", "mirror_text"}
+    lead = [c for c in PAIRWISE_SAMPLE_LEAD_COLS if c in df.columns]
+    rest = [c for c in df.columns if c not in text_cols and c not in lead]
+    metrics_first = [c for c in rest if c.startswith("ratio_")]
+    other = [c for c in rest if c not in metrics_first]
+    ordered = lead + metrics_first + other
+    return ordered[:max_cols]
+
+
+def _looks_like_keep_remove_summary(df: pd.DataFrame) -> bool:
+    return "group_name" in df.columns and "group_value" in df.columns
+
+
+def _summary_df_metric_chunks(df: pd.DataFrame) -> list[tuple[str, pd.DataFrame]]:
+    """Split wide keep/remove summary frames into readable blocks (shared ID columns)."""
+    base_cols = [c for c in ("group_name", "group_value", "pair_count") if c in df.columns]
+    specs: list[tuple[str, list[str]]] = [
+        ("Original metrics", [c for c in df.columns if c.startswith("original_")]),
+        ("Mirror metrics", [c for c in df.columns if c.startswith("mirror_")]),
+        ("Ratio metrics", [c for c in df.columns if c.startswith("ratio_")]),
+    ]
+    out: list[tuple[str, pd.DataFrame]] = []
+    used: set[str] = set(base_cols)
+    for label, mcols in specs:
+        if not mcols:
+            continue
+        used.update(mcols)
+        out.append((label, df.loc[:, base_cols + mcols]))
+    rest = [c for c in df.columns if c not in used]
+    if rest:
+        out.append(("Other columns", df.loc[:, base_cols + rest]))
+    if not out:
+        out.append(("Summary", df))
+    return out
+
+
+def print_dataframe_rich(
+    console: Console,
+    df: pd.DataFrame,
+    *,
+    title: str | None = None,
+    caption: str | None = None,
+    wide_split_threshold: int = 10,
+) -> None:
+    """Print one or more Rich tables; splits wide keep/remove summaries by metric family."""
+    if df.empty:
+        console.print(rich_table_from_dataframe(df, title=title, caption=caption, console=console))
+        console.print()
+        return
+    if _looks_like_keep_remove_summary(df) and len(df.columns) > wide_split_threshold:
+        chunks = _summary_df_metric_chunks(df)
+        for i, (sublabel, subdf) in enumerate(chunks):
+            cap = caption if i == 0 else None
+            if title:
+                subt = f"{title} — [bold]{sublabel}[/bold]"
+            else:
+                subt = f"[bold]{sublabel}[/bold]"
+            console.print(rich_table_from_dataframe(subdf, title=subt, caption=cap, console=console))
+        console.print()
+        return
+    console.print(rich_table_from_dataframe(df, title=title, caption=caption, console=console))
+    console.print()
+
+
+def print_nested_dataframe_mapping_rich(
+    console: Console, section_title: str, mapping: dict[str, pd.DataFrame]
+) -> None:
+    """Print a section rule then one Rich table per partition key (keep/remove style)."""
+    console.rule(f"[bold]{section_title}[/bold]")
+    if not mapping:
+        console.print("[dim](no partitions)[/dim]")
+        console.print()
+        return
+    for key, tbl in mapping.items():
+        if isinstance(tbl, pd.DataFrame):
+            print_dataframe_rich(console, tbl, title=f"[bold]{key}[/bold]")
+        else:
+            console.print(f"[bold]{key}[/bold]")
+            console.print("[dim](not a DataFrame)[/dim]")
+            console.print()
 
 
 class LengthCompressionAnalyzer:
     """Length / compression metrics with design-aware pairwise filter and partition splits."""
 
-    def __init__(self, df: pd.DataFrame) -> None:
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        *,
+        metrics: Sequence[CalculateMetric] | None = None,
+    ) -> None:
         self.df = df
-        self._metric_functions: list[tuple[str, Callable[[str], float]]] = [
-            ("char_count", TextMetrics.char_count),
-            ("word_count", TextMetrics.word_count),
-            ("sentence_count", TextMetrics.sentence_count),
-            ("avg_sentence_length", TextMetrics.avg_sentence_length),
-            ("punctuation_count", TextMetrics.punctuation_count),
-            ("punctuation_density", TextMetrics.punctuation_density),
-        ]
+        self._metrics: tuple[CalculateMetric, ...] = (
+            tuple(metrics) if metrics is not None else DEFAULT_LENGTH_METRICS
+        )
         self.results: dict[str, Any] = {
             "original_text_analysis": None,
             "mirror_text_analysis": None,
@@ -120,8 +515,8 @@ class LengthCompressionAnalyzer:
         base = self._df_for_partitions(self.df)
         original_text = base["original_text"].map(self._normalize_text)
         self.results["original_text_analysis"] = {
-            name: self._metric_calculation(name, original_text.map(fn), base)
-            for name, fn in self._metric_functions
+            m.name: self._metric_calculation(m.name, original_text.map(m.calculate), base)
+            for m in self._metrics
         }
 
     def mirror_text_analysis(self) -> None:
@@ -130,8 +525,8 @@ class LengthCompressionAnalyzer:
         base = self._df_for_partitions(eligible)
         mirror_text = base["mirror_text"].map(self._normalize_text)
         self.results["mirror_text_analysis"] = {
-            name: self._metric_calculation(name, mirror_text.map(fn), base)
-            for name, fn in self._metric_functions
+            m.name: self._metric_calculation(m.name, mirror_text.map(m.calculate), base)
+            for m in self._metrics
         }
 
     def pairwise_analysis(self) -> None:
@@ -141,8 +536,7 @@ class LengthCompressionAnalyzer:
         metric_cols = [
             c
             for c in pairwise_df.columns
-            if c.startswith(("delta_", "ratio_"))
-            and c not in ("original_text", "mirror_text")
+            if c.startswith("ratio_") and c not in ("original_text", "mirror_text")
         ]
         part_means: dict[str, MetricCalculation] = {}
         base = self._df_for_partitions(pairwise_df)
@@ -163,44 +557,71 @@ class LengthCompressionAnalyzer:
 
     def show_results(self) -> None:
         """Print analysis outputs as tables."""
+        console = Console()
+        print_metric_glossary_rich(console, self._metrics)
         orig = self.results["original_text_analysis"]
         mir = self.results["mirror_text_analysis"]
         pairwise = self.results["pairwise_analysis"]
         keep_remove = self.results["keep_remove_analysis"]
 
         if orig is not None:
-            print("\n=== Original text — mean metric by partition ===")
-            print(self._metric_calculations_to_frame(orig).to_string())
+            print_metric_calculations_rich(
+                console,
+                "Original text — means by party × condition (+ marginals)",
+                orig,
+            )
 
         if mir is not None:
-            print("\n=== Mirror text — mean metric by partition ===")
-            print(self._metric_calculations_to_frame(mir).to_string())
+            print_metric_calculations_rich(
+                console,
+                "Mirror text — means by party × condition (+ marginals)",
+                mir,
+            )
 
         if isinstance(pairwise, dict):
             pw_df = pairwise.get("dataframe")
             part_means = pairwise.get("partition_means") or {}
             if isinstance(pw_df, pd.DataFrame) and not pw_df.empty:
-                text_cols = {"original_text", "mirror_text"}
-                display_cols = [c for c in pw_df.columns if c not in text_cols][:18]
-                print("\n=== Pairwise — sample rows (truncated columns) ===")
-                print(pw_df[display_cols].head(12).to_string(index=True))
+                display_cols = pairwise_sample_display_columns(pw_df, max_cols=10)
+                sample = pw_df[display_cols].head(12)
+                console.rule("[bold]Pairwise — sample rows (first 12; curated columns)[/bold]")
+                print_dataframe_rich(
+                    console,
+                    sample,
+                    caption="[dim]Design columns + ratio_* metrics; omits full original/mirror text.[/dim]",
+                )
             if part_means:
-                print("\n=== Pairwise — mean delta/ratio by partition ===")
-                print(self._metric_calculations_to_frame(part_means).to_string())
+                print_metric_calculations_rich(
+                    console,
+                    "Pairwise — mean ratio by party × condition (+ marginals)",
+                    part_means,
+                )
 
         if isinstance(keep_remove, dict):
-            print("\n=== Keep / remove — by party × condition × phase ===")
-            self._print_nested_keep_remove(keep_remove.get("by_party_condition_phase", {}))
-            print("\n=== Keep / remove — by party × condition (all phases) ===")
-            self._print_nested_keep_remove(keep_remove.get("by_party_condition", {}))
-            print("\n=== Keep / remove — by party (all conditions / phases) ===")
-            self._print_nested_keep_remove(keep_remove.get("by_party", {}))
-            print("\n=== Keep / remove — by condition (all parties / phases) ===")
-            self._print_nested_keep_remove(keep_remove.get("by_condition", {}))
-            print("\n=== Keep / remove — all rows ===")
+            print_nested_dataframe_mapping_rich(
+                console,
+                "Keep / remove — by party × condition × phase",
+                keep_remove.get("by_party_condition_phase", {}) or {},
+            )
+            print_nested_dataframe_mapping_rich(
+                console,
+                "Keep / remove — by party × condition (all phases)",
+                keep_remove.get("by_party_condition", {}) or {},
+            )
+            print_nested_dataframe_mapping_rich(
+                console,
+                "Keep / remove — by party (all conditions / phases)",
+                keep_remove.get("by_party", {}) or {},
+            )
+            print_nested_dataframe_mapping_rich(
+                console,
+                "Keep / remove — by condition (all parties / phases)",
+                keep_remove.get("by_condition", {}) or {},
+            )
             all_tbl = keep_remove.get("all")
-            if isinstance(all_tbl, pd.DataFrame) and not all_tbl.empty:
-                print(all_tbl.to_string(index=False))
+            if isinstance(all_tbl, pd.DataFrame):
+                console.rule("[bold]Keep / remove — all rows[/bold]")
+                print_dataframe_rich(console, all_tbl)
 
     def save_results(self) -> None:
         """Persist results to disk (not implemented)."""
@@ -320,8 +741,8 @@ class LengthCompressionAnalyzer:
             original_text = self._normalize_text(row.get("original_text", ""))
             mirror_text = self._normalize_text(row.get("mirror_text", ""))
 
-            original_metrics = TextMetrics.metrics_dict(original_text)
-            mirror_metrics = TextMetrics.metrics_dict(mirror_text)
+            original_metrics = metrics_dict_for_text(original_text, self._metrics)
+            mirror_metrics = metrics_dict_for_text(mirror_text, self._metrics)
 
             record: dict[str, Any] = {}
             for col in present_id_cols:
@@ -335,13 +756,11 @@ class LengthCompressionAnalyzer:
             for metric_name, value in mirror_metrics.items():
                 record[f"mirror_{metric_name}"] = value
 
-            for metric_name in original_metrics:
+            for m in self._metrics:
+                metric_name = m.name
                 original_value = float(original_metrics[metric_name])
                 mirror_value = float(mirror_metrics[metric_name])
-                delta = mirror_value - original_value
-                ratio = TextMetrics.safe_divide(mirror_value, original_value)
-                record[f"delta_{metric_name}"] = delta
-                record[f"ratio_{metric_name}"] = ratio
+                record[f"ratio_{metric_name}"] = safe_divide(mirror_value, original_value)
 
             rows.append(record)
 
@@ -354,7 +773,7 @@ class LengthCompressionAnalyzer:
         metric_columns = [
             col
             for col in pairwise_df.columns
-            if col.startswith(("original_", "mirror_", "delta_", "ratio_"))
+            if col.startswith(("original_", "mirror_", "ratio_"))
             and col not in ("original_text", "mirror_text")
         ]
         summary = pairwise_df[metric_columns].mean(numeric_only=True).to_frame().T
@@ -420,13 +839,18 @@ class LengthCompressionAnalyzer:
         out["all"] = self._build_keep_remove_dataframe(d)
         return out
 
-    def _print_nested_keep_remove(self, mapping: dict[str, pd.DataFrame]) -> None:
-        for key, tbl in mapping.items():
-            print(f"\n-- {key} --")
-            if isinstance(tbl, pd.DataFrame) and not tbl.empty:
-                print(tbl.to_string(index=False))
-            else:
-                print("(empty)")
+
+def run_analysis(
+    df: pd.DataFrame,
+    output_dir: Path,
+    run_timestamp: str,
+    dataset_path: str,
+    formats: tuple[str, ...] | list[str] | None = None,
+) -> dict[str, Any]:
+    """Write length-compression artifacts for the mirrors CLI (delegates to v1 I/O)."""
+    from .v1_length_compression_analysis import run_analysis as run_analysis_v1
+
+    return run_analysis_v1(df, output_dir, run_timestamp, dataset_path, formats)
 
 
 def main() -> None:
