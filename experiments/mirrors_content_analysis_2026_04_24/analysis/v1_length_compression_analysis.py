@@ -1,4 +1,6 @@
-"""Analysis 1: length and compression metrics for mirror text pairs."""
+"""AI-GENERATED LENGTH COMPRESSION ANALYSIS.
+
+Analysis 1: length and compression metrics for mirror text pairs."""
 
 from __future__ import annotations
 

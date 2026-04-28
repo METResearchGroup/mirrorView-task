@@ -33,7 +33,7 @@ experiments/mirrors_content_analysis_2026-04-24/ # keep this here for now while 
 ### (Analysis 1) Questions to answer
 
 - Aggregate analysis: are mirrored texts systematically longer, shorter, or denser?
-- Pairwise analysis: basic stats (ratio, absolute difference)
+- Pairwise analysis: basic stats (ratio, absolute difference). Subtract the metrics between the mirror and regular texts and just plot them.
 - Keep/remove decision: test whether longer or more compressed mirrors are more likely to be removed.
 
 ## Analysis 2: Readability/complexity
