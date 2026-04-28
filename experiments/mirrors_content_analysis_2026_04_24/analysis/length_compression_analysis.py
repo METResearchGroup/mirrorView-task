@@ -7,7 +7,6 @@ PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analy
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
 from typing import Any, Sequence
 
 import pandas as pd
@@ -22,25 +21,9 @@ from experiments.mirrors_content_analysis_2026_04_24.analysis.metric_aggregator 
     MetricAggregator,
     PairwiseAnalysisResult,
 )
+from experiments.mirrors_content_analysis_2026_04_24.analysis.interfaces import CalculateMetric
 from experiments.mirrors_content_analysis_2026_04_24.analysis.table_renderer import TableRenderer
 from experiments.mirrors_content_analysis_2026_04_24.dataloader import Dataloader
-
-
-class CalculateMetric(ABC):
-    """Single-text scalar metric: stable ``name``, prose ``describe()``, and ``calculate()``."""
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """Identifier used in column names (e.g. ``char_count``)."""
-
-    @abstractmethod
-    def describe(self) -> str:
-        """What the metric measures and exactly how it is computed from the input string."""
-
-    @abstractmethod
-    def calculate(self, text: str) -> float:
-        """Return the metric value for one normalized post string."""
 
 
 class CharCountMetric(CalculateMetric):
