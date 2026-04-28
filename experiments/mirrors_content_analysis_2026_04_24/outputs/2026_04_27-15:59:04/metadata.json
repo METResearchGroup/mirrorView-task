@@ -1,0 +1,31 @@
+{
+  "run_timestamp": "2026_04_27-15:59:04",
+  "dataset_path": "scripts/mirrorview_pilot_data_2026-04-13.csv",
+  "selected_analyses": [
+    "length_compression"
+  ],
+  "analysis_results": {
+    "length_compression": {
+      "analysis_name": "length_compression",
+      "output_files": [
+        "length_compression_pairwise.csv",
+        "length_compression_aggregate.csv",
+        "length_compression_keep_remove.csv",
+        "length_compression_pairwise.jsonl"
+      ],
+      "row_counts": {
+        "input_rows": 2880,
+        "mirror_non_empty_rows": 917,
+        "pairwise_rows": 917,
+        "aggregate_rows": 5,
+        "keep_remove_rows": 2
+      },
+      "notes": [
+        "run_timestamp=2026_04_27-15:59:04",
+        "dataset_path=scripts/mirrorview_pilot_data_2026-04-13.csv",
+        "analysis_scope=rows_with_non_empty_mirror_text"
+      ]
+    }
+  },
+  "input_row_count": 2880
+}

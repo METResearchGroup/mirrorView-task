@@ -8,7 +8,15 @@ requires-python = ">=3.12,<3.13"
 [dependency-groups]
 dev = [
     "boto3>=1.42.88",
+    "joblib>=1.5.3",
     "pandas>=3.0.2",
+    "python-dotenv>=1.2.2",
+    "questionary>=2.1.1",
+    "rich>=14.0.0",
+    "scikit-learn>=1.8.0",
+    "tabulate>=0.10.0",
+    "typer>=0.25.0",
+    "wandb>=0.26.1",
 ]
 
 [tool.uv]
