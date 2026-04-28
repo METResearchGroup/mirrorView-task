@@ -24,6 +24,12 @@ experiments/mirrors_content_analysis_2026-04-24/ # keep this here for now while 
       metadata.json # which data file was run, the run timestamp (based on the run for run_analysis.py)
 ```
 
+The setup for a lot of the analysis I think can be something like this:
+
+```bash
+load data -> for all texts, run all analysis functions -> groupby + split across condition x party group -> generate final artifact -> show results -> create visualizations -> save artifact
+```
+
 ## Analysis 1: Basic length measures
 
 - Number of chars/words/sentences
