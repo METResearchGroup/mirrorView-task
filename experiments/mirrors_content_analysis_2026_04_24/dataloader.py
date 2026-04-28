@@ -69,6 +69,10 @@ class Dataloader:
         # get the moderation trial data.
         filtered_df = df[df["trial_type"] == "moderation-trial"].copy()
 
+        # Keep only analytic phases (>0): excludes phase 0 tutorial rows and missing phase rows.
+        phase_num = pd.to_numeric(filtered_df["phase"], errors="coerce")
+        filtered_df = filtered_df.loc[phase_num.gt(0)].copy()
+
         # Drop attitude columns (these will be not)
         attitude_columns = [
             col for col in filtered_df.columns if col.startswith("attitude_")
