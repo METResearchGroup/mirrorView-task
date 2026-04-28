@@ -8,6 +8,7 @@ PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analy
 from __future__ import annotations
 
 import re
+from dataclasses import dataclass
 from typing import Any, Callable
 
 import numpy as np
@@ -25,50 +26,87 @@ ID_COLUMNS = [
     "condition",
 ]
 
-from dataclasses import dataclass
-from typing import Any
 
-@dataclass
+@dataclass(frozen=True)
 class MetricCalculation:
+    """One named metric summarized as a mean per analysis partition."""
 
-    # party x condition
-    democrat_control: Any
-    democrat_training: Any
-    democrat_training_assisted: Any
-    republican_control: Any
-    republican_training: Any
-    republican_training_assisted: Any
+    name: str
+    by_partition: dict[str, float]
 
-    # party-only
-    democrat: Any
-    republican: Any
-
-    # condition-only
-    control: Any
-    training: Any
-    training_assisted: Any
-
-    # overall
-    all: Any
+    def as_dict(self) -> dict[str, float]:
+        return dict(self.by_partition)
 
 
-
-class LengthCompressionAnalyzer:
-    """Length / compression metrics with design-aware pairwise filter and partition splits."""
+class TextMetrics:
+    """Per-string length/compression metrics; single interface for all text-derived scalars."""
 
     PUNCTUATION_RE = re.compile(r"[^\w\s]")
     WORD_RE = re.compile(r"\b\w+\b")
     SENTENCE_SPLIT_RE = re.compile(r"[.!?]+")
 
+    @staticmethod
+    def safe_divide(numerator: float, denominator: float) -> float:
+        if denominator <= 0:
+            return 0.0
+        return float(numerator / denominator)
+
+    @classmethod
+    def char_count(cls, text: str) -> float:
+        return float(len(text))
+
+    @classmethod
+    def word_count(cls, text: str) -> float:
+        return float(len(cls.WORD_RE.findall(text)))
+
+    @classmethod
+    def sentence_count(cls, text: str) -> float:
+        parts = [part.strip() for part in cls.SENTENCE_SPLIT_RE.split(text) if part.strip()]
+        return float(len(parts))
+
+    @classmethod
+    def punctuation_count(cls, text: str) -> float:
+        return float(len(cls.PUNCTUATION_RE.findall(text)))
+
+    @classmethod
+    def avg_sentence_length(cls, text: str) -> float:
+        return cls.safe_divide(cls.word_count(text), cls.sentence_count(text))
+
+    @classmethod
+    def punctuation_density(cls, text: str) -> float:
+        return cls.safe_divide(cls.punctuation_count(text), cls.char_count(text))
+
+    @classmethod
+    def metrics_dict(cls, text: str) -> dict[str, float]:
+        """All standard text metrics for one string (used by pairwise rows)."""
+        char_count = len(text)
+        word_count = cls.word_count(text)
+        sentence_count = cls.sentence_count(text)
+        punctuation_count = cls.punctuation_count(text)
+        avg_sentence_length = cls.safe_divide(word_count, sentence_count)
+        punctuation_density = cls.safe_divide(punctuation_count, float(char_count) if char_count else 0.0)
+        return {
+            "char_count": float(char_count),
+            "word_count": float(word_count),
+            "sentence_count": float(sentence_count),
+            "avg_sentence_length": avg_sentence_length,
+            "punctuation_count": punctuation_count,
+            "punctuation_density": punctuation_density,
+        }
+
+
+class LengthCompressionAnalyzer:
+    """Length / compression metrics with design-aware pairwise filter and partition splits."""
+
     def __init__(self, df: pd.DataFrame) -> None:
         self.df = df
-        self.analyzer_functions: list[tuple[str, Callable[[str], float]]] = [
-            ("char_count", self._char_count),
-            ("word_count", self._word_count),
-            ("sentence_count", self._sentence_count),
-            ("avg_sentence_length", self._avg_sentence_length),
-            ("punctuation_count", self._punctuation_count),
-            ("punctuation_density", self._punctuation_density),
+        self._metric_functions: list[tuple[str, Callable[[str], float]]] = [
+            ("char_count", TextMetrics.char_count),
+            ("word_count", TextMetrics.word_count),
+            ("sentence_count", TextMetrics.sentence_count),
+            ("avg_sentence_length", TextMetrics.avg_sentence_length),
+            ("punctuation_count", TextMetrics.punctuation_count),
+            ("punctuation_density", TextMetrics.punctuation_density),
         ]
         self.results: dict[str, Any] = {
             "original_text_analysis": None,
@@ -82,8 +120,8 @@ class LengthCompressionAnalyzer:
         base = self._df_for_partitions(self.df)
         original_text = base["original_text"].map(self._normalize_text)
         self.results["original_text_analysis"] = {
-            name: self._partition_metric_means(original_text.map(fn), base)
-            for name, fn in self.analyzer_functions
+            name: self._metric_calculation(name, original_text.map(fn), base)
+            for name, fn in self._metric_functions
         }
 
     def mirror_text_analysis(self) -> None:
@@ -92,8 +130,8 @@ class LengthCompressionAnalyzer:
         base = self._df_for_partitions(eligible)
         mirror_text = base["mirror_text"].map(self._normalize_text)
         self.results["mirror_text_analysis"] = {
-            name: self._partition_metric_means(mirror_text.map(fn), base)
-            for name, fn in self.analyzer_functions
+            name: self._metric_calculation(name, mirror_text.map(fn), base)
+            for name, fn in self._metric_functions
         }
 
     def pairwise_analysis(self) -> None:
@@ -106,10 +144,10 @@ class LengthCompressionAnalyzer:
             if c.startswith(("delta_", "ratio_"))
             and c not in ("original_text", "mirror_text")
         ]
-        part_means: dict[str, dict[str, float]] = {}
+        part_means: dict[str, MetricCalculation] = {}
         base = self._df_for_partitions(pairwise_df)
         for col in metric_cols:
-            part_means[col] = self._partition_metric_means(pairwise_df[col].astype(float), base)
+            part_means[col] = self._metric_calculation(col, pairwise_df[col].astype(float), base)
         self.results["pairwise_analysis"] = {
             "dataframe": pairwise_df,
             "partition_means": part_means,
@@ -132,11 +170,11 @@ class LengthCompressionAnalyzer:
 
         if orig is not None:
             print("\n=== Original text — mean metric by partition ===")
-            print(self._partition_dict_to_frame(orig).to_string())
+            print(self._metric_calculations_to_frame(orig).to_string())
 
         if mir is not None:
             print("\n=== Mirror text — mean metric by partition ===")
-            print(self._partition_dict_to_frame(mir).to_string())
+            print(self._metric_calculations_to_frame(mir).to_string())
 
         if isinstance(pairwise, dict):
             pw_df = pairwise.get("dataframe")
@@ -148,7 +186,7 @@ class LengthCompressionAnalyzer:
                 print(pw_df[display_cols].head(12).to_string(index=True))
             if part_means:
                 print("\n=== Pairwise — mean delta/ratio by partition ===")
-                print(self._partition_dict_to_frame(part_means).to_string())
+                print(self._metric_calculations_to_frame(part_means).to_string())
 
         if isinstance(keep_remove, dict):
             print("\n=== Keep / remove — by party × condition × phase ===")
@@ -168,7 +206,17 @@ class LengthCompressionAnalyzer:
         """Persist results to disk (not implemented)."""
         pass
 
-    # --- private helpers (ported from v1_length_compression_analysis; that module is not imported) ---
+    # --- private helpers ---
+
+    def _metric_calculation(
+        self, metric_name: str, values: pd.Series, base_df: pd.DataFrame
+    ) -> MetricCalculation:
+        return MetricCalculation(metric_name, self._partition_metric_means(values, base_df))
+
+    def _metric_calculations_to_frame(
+        self, metrics: dict[str, MetricCalculation]
+    ) -> pd.DataFrame:
+        return self._partition_dict_to_frame({k: v.by_partition for k, v in metrics.items()})
 
     def _normalize_text(self, value: Any) -> str:
         if value is None:
@@ -245,7 +293,10 @@ class LengthCompressionAnalyzer:
         if "all" in all_keys:
             index.append("all")
         return pd.DataFrame(
-            {metric: [partitions.get(k, float("nan")) for k in index] for metric, partitions in metric_to_partitions.items()},
+            {
+                metric: [partitions.get(k, float("nan")) for k in index]
+                for metric, partitions in metric_to_partitions.items()
+            },
             index=index,
         )
 
@@ -269,8 +320,8 @@ class LengthCompressionAnalyzer:
             original_text = self._normalize_text(row.get("original_text", ""))
             mirror_text = self._normalize_text(row.get("mirror_text", ""))
 
-            original_metrics = self._text_metrics_dict(original_text)
-            mirror_metrics = self._text_metrics_dict(mirror_text)
+            original_metrics = TextMetrics.metrics_dict(original_text)
+            mirror_metrics = TextMetrics.metrics_dict(mirror_text)
 
             record: dict[str, Any] = {}
             for col in present_id_cols:
@@ -288,7 +339,7 @@ class LengthCompressionAnalyzer:
                 original_value = float(original_metrics[metric_name])
                 mirror_value = float(mirror_metrics[metric_name])
                 delta = mirror_value - original_value
-                ratio = self._safe_divide(mirror_value, original_value)
+                ratio = TextMetrics.safe_divide(mirror_value, original_value)
                 record[f"delta_{metric_name}"] = delta
                 record[f"ratio_{metric_name}"] = ratio
 
@@ -296,22 +347,6 @@ class LengthCompressionAnalyzer:
 
         pairwise_df = pd.DataFrame(rows)
         return pairwise_df.replace([np.inf, -np.inf], 0.0).fillna(0.0)
-
-    def _text_metrics_dict(self, text: str) -> dict[str, float]:
-        char_count = len(text)
-        word_count = self._word_count(text)
-        sentence_count = self._sentence_count(text)
-        punctuation_count = self._punctuation_count(text)
-        avg_sentence_length = self._safe_divide(word_count, sentence_count)
-        punctuation_density = self._safe_divide(punctuation_count, float(char_count) if char_count else 0.0)
-        return {
-            "char_count": float(char_count),
-            "word_count": float(word_count),
-            "sentence_count": float(sentence_count),
-            "avg_sentence_length": avg_sentence_length,
-            "punctuation_count": punctuation_count,
-            "punctuation_density": punctuation_density,
-        }
 
     def _aggregate_for_group(
         self, pairwise_df: pd.DataFrame, group_name: str, group_value: str
@@ -392,30 +427,6 @@ class LengthCompressionAnalyzer:
                 print(tbl.to_string(index=False))
             else:
                 print("(empty)")
-
-    def _char_count(self, text: str) -> float:
-        return float(len(text))
-
-    def _word_count(self, text: str) -> float:
-        return float(len(self.WORD_RE.findall(text)))
-
-    def _sentence_count(self, text: str) -> float:
-        parts = [part.strip() for part in self.SENTENCE_SPLIT_RE.split(text) if part.strip()]
-        return float(len(parts))
-
-    def _punctuation_count(self, text: str) -> float:
-        return float(len(self.PUNCTUATION_RE.findall(text)))
-
-    def _safe_divide(self, numerator: float, denominator: float) -> float:
-        if denominator <= 0:
-            return 0.0
-        return float(numerator / denominator)
-
-    def _avg_sentence_length(self, text: str) -> float:
-        return self._safe_divide(self._word_count(text), self._sentence_count(text))
-
-    def _punctuation_density(self, text: str) -> float:
-        return self._safe_divide(self._punctuation_count(text), self._char_count(text))
 
 
 def main() -> None:
