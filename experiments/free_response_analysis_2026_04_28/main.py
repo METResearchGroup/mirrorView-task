@@ -419,14 +419,26 @@ def group_label(key: tuple[str, str]) -> str:
 
 def save_mean_influence_plot(df: pd.DataFrame) -> Path:
     keys = ordered_group_keys(df)
-    means = [
-        df.loc[(df["party_group"] == party) & (df["condition"] == condition), INFLUENCE_COL].mean()
-        for party, condition in keys
-    ]
+    means: list[float] = []
+    ci95_half_widths: list[float] = []
+    for party, condition in keys:
+        values = df.loc[(df["party_group"] == party) & (df["condition"] == condition), INFLUENCE_COL]
+        means.append(float(values.mean()))
+        std = float(values.std(ddof=1))
+        n = int(values.shape[0])
+        se = safe_divide(std, math.sqrt(n))
+        ci95_half_widths.append(1.96 * se)
     colors = ["#4C78A8" if party == "democrat" else "#F58518" for party, _ in keys]
 
     fig, ax = plt.subplots(figsize=(8.5, 5.2))
-    bars = ax.bar(range(len(keys)), means, color=colors)
+    bars = ax.bar(
+        range(len(keys)),
+        means,
+        yerr=ci95_half_widths,
+        capsize=6,
+        ecolor="#374151",
+        color=colors,
+    )
     ax.set_title("Mean Phase 1 Pair-Reflection Influence Rating")
     ax.set_ylabel("Mean rating (1-7)")
     ax.set_ylim(0, 7)
@@ -444,23 +456,26 @@ def save_mean_influence_plot(df: pd.DataFrame) -> Path:
 
 def save_rating_distribution_plot(df: pd.DataFrame) -> Path:
     keys = ordered_group_keys(df)
-    ratings = list(range(1, 8))
+    values = [
+        df.loc[(df["party_group"] == party) & (df["condition"] == condition), INFLUENCE_COL].to_numpy()
+        for party, condition in keys
+    ]
 
     fig, ax = plt.subplots(figsize=(9.5, 5.4))
-    for key in keys:
-        party, condition = key
-        group = df.loc[(df["party_group"] == party) & (df["condition"] == condition)]
-        proportions = group[INFLUENCE_COL].round().astype(int).value_counts(normalize=True)
-        y = [float(proportions.get(rating, 0.0)) for rating in ratings]
-        ax.plot(ratings, y, marker="o", linewidth=2, label=group_label(key).replace("\n", " "))
+    boxplot = ax.boxplot(
+        values,
+        tick_labels=[group_label(key) for key in keys],
+        showfliers=False,
+        patch_artist=True,
+    )
+    for box, key in zip(boxplot["boxes"], keys, strict=True):
+        box.set_facecolor("#4C78A8" if key[0] == "democrat" else "#F58518")
+        box.set_alpha(0.55)
 
-    ax.set_title("Influence Rating Distribution by Party x Condition")
-    ax.set_xlabel("Influence rating")
-    ax.set_ylabel("Proportion of responses")
-    ax.set_xticks(ratings)
-    ax.set_ylim(0, 0.32)
-    ax.grid(alpha=0.25)
-    ax.legend(frameon=False, fontsize=9)
+    ax.set_title("Rating Distribution (Box-and-Whisker)")
+    ax.set_ylabel("Influence rating (1-7)")
+    ax.set_ylim(1, 7)
+    ax.grid(axis="y", alpha=0.25)
     fig.tight_layout()
 
     path = PLOTS_DIR / "influence_rating_distribution.png"
@@ -503,17 +518,22 @@ def save_theme_heatmap(df: pd.DataFrame) -> Path:
     matrix: list[list[float]] = []
     for party, condition in keys:
         group = df.loc[(df["party_group"] == party) & (df["condition"] == condition)]
-        matrix.append([safe_divide(int(group[f"theme__{theme}"].sum()), len(group)) for theme in themes])
+        theme_counts = [int(group[f"theme__{theme}"].sum()) for theme in themes]
+        total_mentions = sum(theme_counts)
+        if total_mentions <= 0:
+            matrix.append([0.0 for _ in themes])
+        else:
+            matrix.append([count / total_mentions for count in theme_counts])
 
     fig, ax = plt.subplots(figsize=(10.5, 4.8))
     image = ax.imshow(matrix, cmap="Blues", vmin=0, vmax=max(max(row) for row in matrix) + 0.05)
-    ax.set_title("Keyword-Coded Theme Mention Proportions")
+    ax.set_title("Theme Share by Party x Condition")
     ax.set_xticks(range(len(themes)), themes, rotation=25, ha="right")
     ax.set_yticks(range(len(keys)), [group_label(key).replace("\n", " ") for key in keys])
     for row_idx, row in enumerate(matrix):
         for col_idx, value in enumerate(row):
             ax.text(col_idx, row_idx, f"{value:.2f}", ha="center", va="center", color="#111827")
-    fig.colorbar(image, ax=ax, fraction=0.035, pad=0.02, label="Proportion")
+    fig.colorbar(image, ax=ax, fraction=0.035, pad=0.02, label="Row share")
     fig.tight_layout()
 
     path = PLOTS_DIR / "theme_mentions_heatmap.png"
