@@ -64,13 +64,34 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 
 ## Analysis 2: Readability/complexity
 
-- Flesh-Kincaid (basic readability measure)
+- Flesch-Kincaid Grade Level (`flesch_kincaid_grade`)
+- Flesch Reading Ease (`flesch_reading_ease`)
+- Implementation uses spaCy sentence/token boundaries and explicit metric formulas in `analysis/readability_complexity_analysis.py`.
 
 ### (Analysis 2) Questions to answer
 
 - Aggregate analysis: do mirrored texts become simpler or more formal?
 - Pairwise: any change in readability from the base to mirror text?
 - Keep/remove decision: does more complex or simplified rhetoric get removed more often?
+
+### (Analysis 2) Findings
+
+- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis.py`
+
+- Aggregate trend (answer to Q1): mirrored texts become substantially more complex/read less easily.
+  - Original overall means: `flesch_kincaid_grade=8.814`, `flesch_reading_ease=61.38`.
+  - Mirror overall means: `flesch_kincaid_grade=10.72`, `flesch_reading_ease=49.94`.
+  - Interpretation guide: higher `flesch_kincaid_grade` = more complex; lower `flesch_reading_ease` = more complex.
+
+- Pairwise trend (answer to Q2): mirrors shift toward higher grade-level complexity and lower reading ease.
+  - Mean ratios (`mirror / original`): `ratio_flesch_kincaid_grade=1.313`, `ratio_flesch_reading_ease=0.8659`.
+  - Mean deltas (`mirror - original`): `delta_flesch_kincaid_grade=+1.927`, `delta_flesch_reading_ease=-11.53`.
+  - This pattern is stable by party and condition: `ratio_flesch_kincaid_grade` ranges from `1.307` to `1.320`; `ratio_flesch_reading_ease` ranges from `0.8516` to `0.8921`.
+
+- Keep/remove trend (answer to Q3): kept mirrors are more complex, and removed mirrors are easier to read.
+  - All rows: keep vs remove `mirror_flesch_kincaid_grade` = `10.97` vs `10.22`; `mirror_flesch_reading_ease` = `48.76` vs `52.34`.
+  - All rows: keep vs remove `ratio_flesch_kincaid_grade` = `1.317` vs `1.306`; `ratio_flesch_reading_ease` = `0.8753` vs `0.8467`.
+  - The strongest behavioral split is in absolute mirror readability: kept mirrors have higher grade level and lower reading ease than removed mirrors.
 
 ## Analysis 3: Sentiment / Toxicity
 
