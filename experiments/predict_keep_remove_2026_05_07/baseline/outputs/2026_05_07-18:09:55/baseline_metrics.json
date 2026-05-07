@@ -1,0 +1,47 @@
+{
+  "majority_keep": {
+    "keep_as_positive": {
+      "accuracy": 0.6777888446215139,
+      "precision": 0.6777888446215139,
+      "recall": 1.0,
+      "f1": 0.8079548827545265
+    },
+    "remove_as_positive": {
+      "accuracy": 0.6777888446215139,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "roc_auc_keep": 0.5
+  },
+  "majority_remove": {
+    "keep_as_positive": {
+      "accuracy": 0.32221115537848605,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "remove_as_positive": {
+      "accuracy": 0.32221115537848605,
+      "precision": 0.32221115537848605,
+      "recall": 1.0,
+      "f1": 0.4873822975517891
+    },
+    "roc_auc_keep": 0.5
+  },
+  "stratified_random": {
+    "keep_as_positive": {
+      "accuracy": 0.5697211155378487,
+      "precision": 0.6811884797666788,
+      "recall": 0.6864437913299045,
+      "f1": 0.6838060384263495
+    },
+    "remove_as_positive": {
+      "accuracy": 0.5697211155378487,
+      "precision": 0.32953652788688137,
+      "recall": 0.32418856259659967,
+      "f1": 0.32684067004285156
+    },
+    "roc_auc_keep": 0.5
+  }
+}
