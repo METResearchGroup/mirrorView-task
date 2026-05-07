@@ -1,3 +1,10 @@
+"""Intergroup classifier for MirrorView run data.
+
+To run:
+
+PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/classifier.py
+"""
+
 from __future__ import annotations
 
 from pathlib import Path
