@@ -73,3 +73,13 @@ def classify_post(post: str) -> ValenceClassification:
 def classify_posts(posts: list[str]) -> list[ValenceClassification]:
     """Classify each post with `classify_post`."""
     return [classify_post(p) for p in posts]
+
+if __name__ == "__main__":
+    posts = [
+        "I really enjoyed reading this, it made my day better!",
+        "This is awful. I can't believe people think this way.",
+        "Beautifully written and very inspiring.",
+        "This post is misleading and frustrating to read.",
+    ]
+    classifications = classify_posts(posts)
+    print(classifications)
