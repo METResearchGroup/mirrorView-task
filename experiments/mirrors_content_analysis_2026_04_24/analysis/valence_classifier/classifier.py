@@ -3,6 +3,7 @@ from __future__ import annotations
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
+from tqdm import tqdm
 
 from lib.constants import DEFAULT_LLM_MODEL
 from lib.load_env_vars import EnvVarsContainer
@@ -72,7 +73,7 @@ def classify_post(post: str) -> ValenceClassification:
 
 def classify_posts(posts: list[str]) -> list[ValenceClassification]:
     """Classify each post with `classify_post`."""
-    return [classify_post(p) for p in posts]
+    return [classify_post(p) for p in tqdm(posts, desc="Valence classification")]
 
 if __name__ == "__main__":
     posts = [
