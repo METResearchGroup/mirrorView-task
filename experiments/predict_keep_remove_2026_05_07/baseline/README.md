@@ -9,7 +9,8 @@ This directory contains baseline experiments for understanding class balance and
 - Always-remove baseline.
 - Stratified-random baseline (sampled from train keep/remove prior).
 
-All metrics are reported with a remove-focused view as well (treating `remove` as positive).
+`keep_remove_label` uses remove-focused encoding: `1=remove`, `0=keep`.
+Metrics are reported with remove as positive first, then keep-as-positive for reference.
 
 ## Run
 
@@ -36,12 +37,12 @@ Files:
 
 Reference run:
 
-- timestamp: `2026_05_07-18:22:38`
+- timestamp: `2026_05_07-18:27:36`
 - train split: `0.8`
 - seed: `42`
 - target: `keep_remove_label`
 - rows: `10600` train / `2650` test
-- train keep prior: `0.6648113207547169`
+- train remove prior: `0.335188679245283`
 
 ### `class_balance.json` (how imbalanced is the task?)
 
@@ -66,43 +67,41 @@ Interpretation:
 
 ### `baseline_metrics.json` (how strong are trivial baselines?)
 
-`majority_keep`:
-
-- Keep-as-positive:
-  - accuracy `0.6486792452830189`
-  - precision `0.6486792452830189`
-  - recall `1.0`
-  - f1 `0.7869182389937107`
-- Remove-as-positive:
-  - precision `0.0`
-  - recall `0.0`
-  - f1 `0.0`
-- `roc_auc_keep=0.5`
-
-Interpretation:
-
-- This baseline exactly matches linked-fate test keep rate in accuracy.
-- It is useless for remove detection (remove recall/f1 = 0).
-- Any real model should beat this on remove-focused metrics.
-
 `majority_remove`:
 
-- Keep-as-positive:
+- Remove-as-positive:
   - accuracy `0.35132075471698115`
+  - precision `0.35132075471698115`
+  - recall `1.0`
+- f1 `0.5199664898073164`
+- Keep-as-positive:
   - precision `0.0`
   - recall `0.0`
   - f1 `0.0`
-- Remove-as-positive:
-  - precision `0.35132075471698115`
-  - recall `1.0`
-  - f1 `0.5199664804469274`
-- `roc_auc_keep=0.5`
+- `roc_auc_remove=0.5`
 
 Interpretation:
 
-- This is the opposite extreme: catches all removes, but over-removes everything.
-- Provides an upper-bound style recall baseline for remove (`1.0`) with poor precision.
-- Useful sanity check for threshold policy tradeoffs.
+- This captures all removes (recall=1.0) but badly over-predicts remove.
+- It provides a high-recall, low-precision anchor for remove-focused thresholding.
+
+`majority_keep`:
+
+- Remove-as-positive:
+  - accuracy `0.6486792452830189`
+  - precision `0.0`
+  - recall `0.0`
+  - f1 `0.0`
+- Keep-as-positive:
+  - precision `0.6486792452830189`
+  - recall `1.0`
+  - f1 `0.7869077592126345`
+- `roc_auc_remove=0.5`
+
+Interpretation:
+
+- This is the high-accuracy but remove-blind baseline.
+- Any useful remove-focused model should beat this baseline on remove recall/F1.
 
 `stratified_random` (sample by train keep prior):
 
@@ -112,16 +111,20 @@ Interpretation:
   - recall `0.6765561372880744`
   - f1 `0.6639839034205231`
 - Remove-as-positive:
-  - precision `0.34793650793650793`
-  - recall `0.28893662728249194`
-  - f1 `0.31570449678800856`
-- `roc_auc_keep=0.5`
+  - precision `0.3854748603351955`
+  - recall `0.37056928034371645`
+  - f1 `0.3778751369112815`
+- Keep-as-positive:
+  - precision `0.6660968660968661`
+  - recall `0.6800465386852821`
+  - f1 `0.6729994242947611`
+- `roc_auc_remove=0.5`
 
 Interpretation:
 
 - This approximates chance behavior under class imbalance.
 - It is a better remove benchmark than majority_keep because it produces both classes.
-- Models should exceed this on remove precision/recall/f1 and calibration quality.
+- Models should exceed this on remove precision/recall/F1 and calibration quality.
 
 ### CSV predictions files
 
@@ -135,7 +138,7 @@ Each file includes:
 - `decision` (original label string)
 - `keep_remove_label` (ground truth target)
 - `predicted_label`
-- `predicted_keep_probability`
+- `predicted_remove_probability`
 
 Interpretation:
 

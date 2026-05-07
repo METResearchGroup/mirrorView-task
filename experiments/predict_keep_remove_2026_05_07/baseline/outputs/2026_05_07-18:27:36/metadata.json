@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026_05_07-18:27:36",
+  "train_split": 0.8,
+  "seed": 42,
+  "target_column": "keep_remove_label",
+  "train_rows": 10600,
+  "test_rows": 2650,
+  "prior_remove_from_train": 0.335188679245283,
+  "output_dir": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36"
+}

@@ -77,7 +77,8 @@ class Dataloader:
         base = base[base["evaluation_mode"] == "linked_fate"].copy()
         base["decision"] = base["decision"].astype(str).str.lower().str.strip()
         base = base[base["decision"].isin(["keep", "remove"])].copy()
-        base["keep_remove_label"] = (base["decision"] == "keep").astype(int)
+        # Target encoding: 1=remove, 0=keep (remove-focused modeling).
+        base["keep_remove_label"] = (base["decision"] == "remove").astype(int)
 
         # Keep one canonical text row per post_id for the feature joins.
         text_keys = (

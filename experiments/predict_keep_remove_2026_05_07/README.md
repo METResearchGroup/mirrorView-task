@@ -19,7 +19,7 @@ Models:
 
 Current setup (v1 baseline):
 
-- Target: `keep_remove_label` (`1=keep`, `0=remove`).
+- Target: `keep_remove_label` (`1=remove`, `0=keep`).
 - Data filter: only linked-fate moderation rows (`evaluation_mode == linked_fate`), then keep/remove decisions.
 - Split: random row split, `train_split=0.8`, `seed=42`.
 - Models trained via CLI:
@@ -43,37 +43,37 @@ This corresponds to the original 22 analysis-derived features plus 2 linked-fate
 
 ### Results so far
 
-Logistic Regression (`models/outputs/2026_05_07-18:22:53`):
+Logistic Regression (`models/outputs/2026_05_07-18:27:23`):
 
 - Train:
   - accuracy: `0.698962`
-  - precision: `0.738910`
-  - recall: `0.846176`
-  - f1: `0.788913`
-  - roc_auc: `0.675355`
+  - precision: `0.571542`
+  - recall: `0.406980`
+  - f1: `0.475423`
+  - roc_auc: `0.675368`
 - Test:
   - accuracy: `0.694717`
-  - precision: `0.724802`
-  - recall: `0.853403`
-  - f1: `0.783863`
-  - roc_auc: `0.678199`
+  - precision: `0.597444`
+  - recall: `0.401719`
+  - f1: `0.480411`
+  - roc_auc: `0.678101`
 
-XGBoost (`models/outputs/2026_05_07-18:22:57`):
+XGBoost (`models/outputs/2026_05_07-18:27:28`):
 
 - Train:
   - accuracy: `0.736981`
-  - precision: `0.756227`
-  - recall: `0.891869`
-  - f1: `0.818466`
+  - precision: `0.667104`
+  - recall: `0.429778`
+  - f1: `0.522766`
   - roc_auc: `0.777310`
 - Test:
   - accuracy: `0.692830`
-  - precision: `0.717235`
-  - recall: `0.869110`
-  - f1: `0.785902`
+  - precision: `0.603175`
+  - recall: `0.367347`
+  - f1: `0.456609`
   - roc_auc: `0.702111`
 
 Notes:
 
-- XGBoost still edges logistic regression on test ROC-AUC, with very similar test accuracy.
-- Restricting to linked-fate rows and adding `sample_toxicity_type`/`sampled_stance` materially improved separability over the prior setup.
+- With remove as the positive class, precision/recall/F1 now directly reflect remove-prediction quality.
+- XGBoost still edges logistic regression on test ROC-AUC, but both models currently have modest remove recall under the default threshold.

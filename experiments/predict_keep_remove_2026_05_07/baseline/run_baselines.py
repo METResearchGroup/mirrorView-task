@@ -32,8 +32,8 @@ def _binary_metrics(y_true: pd.Series, y_pred: pd.Series, *, pos_label: int) -> 
 
 def _class_balance(y: pd.Series) -> dict[str, float]:
     y_int = y.astype(int)
-    keep_count = int((y_int == 1).sum())
-    remove_count = int((y_int == 0).sum())
+    remove_count = int((y_int == 1).sum())
+    keep_count = int((y_int == 0).sum())
     n = int(len(y_int))
     return {
         "n": n,
@@ -44,13 +44,17 @@ def _class_balance(y: pd.Series) -> dict[str, float]:
     }
 
 
-def _evaluate_baseline(y_true: pd.Series, y_pred: pd.Series, y_prob_keep: pd.Series) -> dict[str, object]:
-    keep_metrics = _binary_metrics(y_true, y_pred, pos_label=1)
-    remove_metrics = _binary_metrics(y_true, y_pred, pos_label=0)
+def _evaluate_baseline(
+    y_true: pd.Series,
+    y_pred: pd.Series,
+    y_prob_remove: pd.Series,
+) -> dict[str, object]:
+    remove_metrics = _binary_metrics(y_true, y_pred, pos_label=1)
+    keep_metrics = _binary_metrics(y_true, y_pred, pos_label=0)
     return {
-        "keep_as_positive": keep_metrics,
         "remove_as_positive": remove_metrics,
-        "roc_auc_keep": float(roc_auc_score(y_true.astype(int), y_prob_keep.astype(float))),
+        "keep_as_positive": keep_metrics,
+        "roc_auc_remove": float(roc_auc_score(y_true.astype(int), y_prob_remove.astype(float))),
     }
 
 
@@ -86,25 +90,25 @@ def run(
         "test": _class_balance(y_test),
     }
 
-    prior_keep = float(y_train.mean())
+    prior_remove = float(y_train.mean())
     rng = np.random.default_rng(seed)
 
-    pred_majority_keep = pd.Series(np.ones(len(y_test), dtype=int), index=test_df.index)
-    prob_majority_keep = pd.Series(np.ones(len(y_test), dtype=float), index=test_df.index)
+    pred_majority_remove = pd.Series(np.ones(len(y_test), dtype=int), index=test_df.index)
+    prob_majority_remove = pd.Series(np.ones(len(y_test), dtype=float), index=test_df.index)
 
-    pred_majority_remove = pd.Series(np.zeros(len(y_test), dtype=int), index=test_df.index)
-    prob_majority_remove = pd.Series(np.zeros(len(y_test), dtype=float), index=test_df.index)
+    pred_majority_keep = pd.Series(np.zeros(len(y_test), dtype=int), index=test_df.index)
+    prob_majority_keep = pd.Series(np.zeros(len(y_test), dtype=float), index=test_df.index)
 
-    random_keep_prob = pd.Series(np.full(len(y_test), prior_keep, dtype=float), index=test_df.index)
+    random_remove_prob = pd.Series(np.full(len(y_test), prior_remove, dtype=float), index=test_df.index)
     pred_stratified_random = pd.Series(
-        (rng.random(len(y_test)) < prior_keep).astype(int),
+        (rng.random(len(y_test)) < prior_remove).astype(int),
         index=test_df.index,
     )
 
     results = {
-        "majority_keep": _evaluate_baseline(y_test, pred_majority_keep, prob_majority_keep),
         "majority_remove": _evaluate_baseline(y_test, pred_majority_remove, prob_majority_remove),
-        "stratified_random": _evaluate_baseline(y_test, pred_stratified_random, random_keep_prob),
+        "majority_keep": _evaluate_baseline(y_test, pred_majority_keep, prob_majority_keep),
+        "stratified_random": _evaluate_baseline(y_test, pred_stratified_random, random_remove_prob),
     }
 
     (output_dir / "class_balance.json").write_text(
@@ -116,15 +120,15 @@ def run(
         encoding="utf-8",
     )
 
-    def _save_predictions(name: str, pred: pd.Series, prob_keep: pd.Series) -> None:
+    def _save_predictions(name: str, pred: pd.Series, prob_remove: pd.Series) -> None:
         pred_df = test_df[["post_id", "decision", Dataloader.TARGET_COLUMN]].copy()
         pred_df["predicted_label"] = pred.astype(int).values
-        pred_df["predicted_keep_probability"] = prob_keep.astype(float).values
+        pred_df["predicted_remove_probability"] = prob_remove.astype(float).values
         pred_df.to_csv(output_dir / f"test_predictions_{name}.csv", index=False)
 
     _save_predictions("majority_keep", pred_majority_keep, prob_majority_keep)
     _save_predictions("majority_remove", pred_majority_remove, prob_majority_remove)
-    _save_predictions("stratified_random", pred_stratified_random, random_keep_prob)
+    _save_predictions("stratified_random", pred_stratified_random, random_remove_prob)
 
     metadata = {
         "timestamp": timestamp,
@@ -133,7 +137,7 @@ def run(
         "target_column": Dataloader.TARGET_COLUMN,
         "train_rows": int(len(train_df)),
         "test_rows": int(len(test_df)),
-        "prior_keep_from_train": prior_keep,
+        "prior_remove_from_train": prior_remove,
         "output_dir": str(output_dir),
     }
     (output_dir / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
