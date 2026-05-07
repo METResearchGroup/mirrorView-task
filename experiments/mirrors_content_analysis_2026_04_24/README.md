@@ -95,16 +95,56 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 
 ## Analysis 3: Sentiment / Toxicity
 
-- Analyses to run:
-  - Basic sentiment
-  - VADER
-  - Perspective API
+- Current analyses implemented:
+  - LLM valence classifier (`analysis/valence_classifier/`)
+  - LLM intergroup classifier (`analysis/intergroup_classifier/`)
+
+### (Analysis 3) Questions to answer
+
+- Aggregate analysis: do mirrors systematically shift valence and intergroup framing rates?
+- Pairwise analysis: how often do mirror labels match original labels vs switch?
+- Keep/remove decision: are kept or removed mirrors more likely to have positive/intergroup labels?
+
+### (Analysis 3) Findings
+
+- Run commands:
+  - `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/main.py`
+  - `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/main.py`
+
+- Valence trend: mirrors are modestly more likely to be classified as positive.
+  - Overall positive rate: `original=0.0950`, `mirror=0.1132` (`+0.0182` absolute).
+  - Pairwise: `match_rate=0.9017`, `more_positive_rate=0.0582`, `less_positive_rate=0.0401`.
+  - Keep/remove: keep rows are more positive than remove rows in both original and mirror text (`keep original=0.1122` vs `remove original=0.0589`; `keep mirror=0.1297` vs `remove mirror=0.0788`).
+
+- Intergroup trend: mirrors strongly increase intergroup framing rates.
+  - Overall intergroup rate: `original=0.7297`, `mirror=0.8467` (`+0.1169` absolute).
+  - Pairwise: `match_rate=0.7722`, `more_positive_rate=0.1724`, `less_positive_rate=0.0555` (net shift toward intergroup).
+  - Keep/remove: remove rows are slightly more intergroup than keep rows in both original and mirror text (`remove original=0.7677` vs `keep original=0.7118`; `remove mirror=0.8641` vs `keep mirror=0.8385`).
 
 ## Analysis 4: Moralized
 
-Moralized words (e.g., "rights", "freedom", etc)
+- Current analysis implemented:
+  - LLM PRIME classifier (`analysis/prime_classifier/`) capturing prestigious, in-group, moral, or emotional cues.
 
-Can use Billy's PRIME classifier here. Or can just do a simple LLM-based approach (like what I did before).
+### (Analysis 4) Questions to answer
+
+- Aggregate analysis: do mirrors increase PRIME content prevalence?
+- Pairwise analysis: how frequently do mirrors add/remove PRIME cues?
+- Keep/remove decision: is PRIME content associated with keep/remove decisions?
+
+### (Analysis 4) Findings
+
+- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/prime_classifier/main.py`
+
+- Aggregate trend: mirrors increase PRIME content rates from an already high baseline.
+  - Overall PRIME rate: `original=0.8697`, `mirror=0.9410` (`+0.0714` absolute).
+
+- Pairwise trend: most examples are stable, but switches are mostly toward PRIME.
+  - `match_rate=0.8761`, `more_positive_rate=0.0976`, `less_positive_rate=0.0263`.
+
+- Keep/remove trend: remove rows are more PRIME-heavy than keep rows at baseline and after mirroring.
+  - Original PRIME rate: `remove=0.9207` vs `keep=0.8453`.
+  - Mirror PRIME rate: `remove=0.9612` vs `keep=0.9313`.
 
 ## Analysis 5: Absolutism/certainty/hedging
 
