@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026_05_07-18:44:26",
+  "model": "xgboost",
+  "calibrator": "sigmoid",
+  "threshold_policy": "max_f1_remove",
+  "recall_target": 0.8,
+  "seed": 42,
+  "train_fraction": 0.64,
+  "calibration_fraction": 0.16,
+  "test_fraction": 0.19999999999999998,
+  "row_counts": {
+    "train": 8480,
+    "calibration": 2120,
+    "test": 2650
+  }
+}

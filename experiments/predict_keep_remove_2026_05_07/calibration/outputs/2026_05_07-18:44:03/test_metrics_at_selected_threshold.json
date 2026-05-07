@@ -1,0 +1,9 @@
+{
+  "accuracy": 0.6132075471698113,
+  "precision_remove": 0.4528023598820059,
+  "recall_remove": 0.6845039018952063,
+  "f1_remove": 0.5450510430537062,
+  "balanced_accuracy": 0.6306147575648308,
+  "roc_auc_remove": 0.6800197908856358,
+  "pr_auc_remove": 0.5180706895345574
+}

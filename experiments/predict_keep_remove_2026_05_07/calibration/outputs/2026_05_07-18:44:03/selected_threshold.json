@@ -1,0 +1,11 @@
+{
+  "policy": "max_f1_remove",
+  "selected_threshold": 0.27,
+  "validation_metrics": {
+    "accuracy": 0.6117924528301887,
+    "precision_remove": 0.45207956600361665,
+    "recall_remove": 0.697350069735007,
+    "f1_remove": 0.5485463521667581,
+    "balanced_accuracy": 0.6327092472694993
+  }
+}
