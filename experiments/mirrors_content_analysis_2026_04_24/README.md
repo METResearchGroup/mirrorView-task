@@ -12,8 +12,12 @@ I'm thinking a setup like this.
 ```bash
 experiments/mirrors_content_analysis_2026-04-24/ # keep this here for now while it's experimental.
   analysis/
-    length_compression_analysis.py # exposes run_analysis() function.
-    readability.py
+    length_compression_analysis/
+      main.py
+      metrics.py
+    readability_complexity_analysis/
+      main.py
+      metrics.py
     ...
   run_analysis.py # takes as CLI args which analyses to run (user could do a drop-down choice of which ones to run)
   outputs/
@@ -44,7 +48,7 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 
 ### (Analysis 1) Findings
 
-- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/length_compression_analysis.py`
+- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/length_compression_analysis/main.py`
 
 - Aggregate trend (answer to Q1): mirrored texts are systematically longer but slightly less punctuation-dense.
   - Original overall means: `char_count=204.2`, `word_count=36.02`, `sentence_count=2.727`, `avg_sentence_length=16.49`, `punctuation_density=0.03054`.
@@ -66,7 +70,7 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 
 - Flesch-Kincaid Grade Level (`flesch_kincaid_grade`)
 - Flesch Reading Ease (`flesch_reading_ease`)
-- Implementation uses spaCy sentence/token boundaries and explicit metric formulas in `analysis/readability_complexity_analysis.py`.
+- Implementation uses spaCy sentence/token boundaries and explicit metric formulas in `analysis/readability_complexity_analysis/metrics.py`.
 
 ### (Analysis 2) Questions to answer
 
@@ -76,7 +80,7 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 
 ### (Analysis 2) Findings
 
-- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis.py`
+- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis/main.py`
 
 - Aggregate trend (answer to Q1): mirrored texts become substantially more complex/read less easily.
   - Original overall means: `flesch_kincaid_grade=8.814`, `flesch_reading_ease=61.38`.
