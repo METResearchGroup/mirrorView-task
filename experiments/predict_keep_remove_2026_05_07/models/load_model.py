@@ -7,6 +7,7 @@ import pandas as pd
 from experiments.predict_keep_remove_2026_05_07.models.logistic_regression import (
     LogisticRegressionModel,
 )
+from experiments.predict_keep_remove_2026_05_07.models.xgboost import XGBoostModel
 
 
 class ModelStrategy(Protocol):
@@ -26,6 +27,7 @@ class ModelStrategy(Protocol):
 
 MODEL_REGISTRY: dict[str, type[ModelStrategy]] = {
     "logistic_regression": LogisticRegressionModel,
+    "xgboost": XGBoostModel,
 }
 
 
