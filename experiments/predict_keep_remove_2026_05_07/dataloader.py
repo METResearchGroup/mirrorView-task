@@ -33,6 +33,7 @@ class Dataloader:
 
     ORIGINAL_LABELS_FILENAME = "labels_original_text.csv"
     MIRRORS_LABELS_FILENAME = "labels_mirrors.csv"
+    TARGET_COLUMN = "keep_remove_label"
 
     def load_training_dataframe(self) -> pd.DataFrame:
         """Return one row per moderated pair with text, target, and joined labels."""
@@ -101,6 +102,24 @@ class Dataloader:
 
         out = base.merge(joined, on=["post_id", "original_text", "mirror_text"], how="left")
         return out
+
+    def generate_train_test_split(
+        self,
+        *,
+        train_split: float = 0.8,
+        random_state: int = 42,
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """Split the labeled training dataframe into train/test sets."""
+        if not 0 < train_split < 1:
+            raise ValueError(f"train_split must be in (0, 1). Got: {train_split}")
+
+        df = self.load_training_dataframe()
+        shuffled = df.sample(frac=1.0, random_state=random_state).reset_index(drop=True)
+        train_count = int(len(shuffled) * train_split)
+
+        train_df = shuffled.iloc[:train_count].copy()
+        test_df = shuffled.iloc[train_count:].copy()
+        return train_df, test_df
 
     def _merge_label_pair(
         self,
