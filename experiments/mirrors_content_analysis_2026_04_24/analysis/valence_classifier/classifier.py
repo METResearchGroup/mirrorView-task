@@ -1,4 +1,11 @@
+from __future__ import annotations
+
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
+
+from lib.constants import DEFAULT_LLM_MODEL
+from lib.load_env_vars import EnvVarsContainer
 
 BINARY_SENTIMENT_PROMPT = """
 You are a sentiment analysis expert. Your task is to determine whether the overall valence of the following social media post is positive.
@@ -39,5 +46,30 @@ Post:
 \"\"\"{post}\"\"\"
 """
 
-class SentimentClassification(BaseModel):
+
+
+class ValenceClassification(BaseModel):
     is_positive: bool
+
+
+_VALENCE_PROMPT = ChatPromptTemplate.from_messages(
+    [("human", BINARY_SENTIMENT_PROMPT)]
+)
+
+
+def get_llm(model: str = DEFAULT_LLM_MODEL) -> ChatOpenAI:
+    api_key = EnvVarsContainer.get_env_var("OPENAI_API_KEY", required=True)
+    return ChatOpenAI(model=model, api_key=api_key)
+
+
+def classify_post(post: str) -> ValenceClassification:
+    """Classify one post via OpenAI structured output (LangChain)."""
+    llm = get_llm()
+    structured = llm.with_structured_output(ValenceClassification)
+    chain = _VALENCE_PROMPT | structured
+    return chain.invoke({"post": post})
+
+
+def classify_posts(posts: list[str]) -> list[ValenceClassification]:
+    """Classify each post with `classify_post`."""
+    return [classify_post(p) for p in posts]
