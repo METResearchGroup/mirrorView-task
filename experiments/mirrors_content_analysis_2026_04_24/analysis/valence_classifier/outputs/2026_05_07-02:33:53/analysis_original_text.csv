@@ -1,0 +1,13 @@
+partition,positive_rate
+democrat_control,0.09567723342939481
+democrat_training,0.09720588235294117
+democrat_training_assisted,0.09213649851632047
+republican_control,0.09479166666666666
+republican_training,0.09394409937888198
+republican_training_assisted,0.09631901840490797
+democrat_all,0.09501953125
+republican_all,0.09502032520325203
+all_control,0.0952415812591508
+all_training,0.09561933534743203
+all_training_assisted,0.09419306184012066
+all,0.0950199203187251
