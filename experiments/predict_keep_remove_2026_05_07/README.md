@@ -20,6 +20,7 @@ Models:
 Current setup (v1 baseline):
 
 - Target: `keep_remove_label` (`1=keep`, `0=remove`).
+- Data filter: only linked-fate moderation rows (`evaluation_mode == linked_fate`), then keep/remove decisions.
 - Split: random row split, `train_split=0.8`, `seed=42`.
 - Models trained via CLI:
   - `PYTHONPATH=. uv run python experiments/predict_keep_remove_2026_05_07/train.py --model logistic_regression --seed 42`
@@ -34,42 +35,45 @@ Feature set used by both Logistic Regression and XGBoost (non-embedding):
   - char count, word count, sentence count, avg sentence length, punctuation count, punctuation density.
 - Readability metrics (original + mirror):
   - Flesch-Kincaid grade, Flesch reading ease.
+- Experimental context features:
+  - `sample_toxicity_type` (categorical; one-hot encoded in model featurization)
+  - `sampled_stance` (categorical; one-hot encoded in model featurization)
 
-This corresponds to 22 numeric analysis-derived features total.
+This corresponds to the original 22 analysis-derived features plus 2 linked-fate context features.
 
 ### Results so far
 
-Logistic Regression (`models/outputs/2026_05_07-17:58:48`):
+Logistic Regression (`models/outputs/2026_05_07-18:22:53`):
 
 - Train:
-  - accuracy: `0.677602`
-  - precision: `0.677561`
-  - recall: `0.998666`
-  - f1: `0.807358`
-  - roc_auc: `0.566377`
+  - accuracy: `0.698962`
+  - precision: `0.738910`
+  - recall: `0.846176`
+  - f1: `0.788913`
+  - roc_auc: `0.675355`
 - Test:
-  - accuracy: `0.677789`
-  - precision: `0.678277`
-  - recall: `0.997979`
-  - f1: `0.807641`
-  - roc_auc: `0.554978`
+  - accuracy: `0.694717`
+  - precision: `0.724802`
+  - recall: `0.853403`
+  - f1: `0.783863`
+  - roc_auc: `0.678199`
 
-XGBoost (`models/outputs/2026_05_07-18:00:58`):
+XGBoost (`models/outputs/2026_05_07-18:22:57`):
 
 - Train:
-  - accuracy: `0.703934`
-  - precision: `0.708795`
-  - recall: `0.954495`
-  - f1: `0.813498`
-  - roc_auc: `0.666400`
+  - accuracy: `0.736981`
+  - precision: `0.756227`
+  - recall: `0.891869`
+  - f1: `0.818466`
+  - roc_auc: `0.777310`
 - Test:
-  - accuracy: `0.692480`
-  - precision: `0.702810`
-  - recall: `0.946547`
-  - f1: `0.806669`
-  - roc_auc: `0.618905`
+  - accuracy: `0.692830`
+  - precision: `0.717235`
+  - recall: `0.869110`
+  - f1: `0.785902`
+  - roc_auc: `0.702111`
 
 Notes:
 
-- XGBoost improves over logistic regression on test accuracy and ROC-AUC with the same feature set.
-- Recall is high for both models, suggesting a tendency toward predicting `keep`; calibration/threshold tuning is a likely next step.
+- XGBoost still edges logistic regression on test ROC-AUC, with very similar test accuracy.
+- Restricting to linked-fate rows and adding `sample_toxicity_type`/`sampled_stance` materially improved separability over the prior setup.

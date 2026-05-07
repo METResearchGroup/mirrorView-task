@@ -1,0 +1,23 @@
+{
+  "overall": {
+    "n": 13250,
+    "keep_count": 8766,
+    "remove_count": 4484,
+    "keep_rate": 0.6615849056603773,
+    "remove_rate": 0.33841509433962264
+  },
+  "train": {
+    "n": 10600,
+    "keep_count": 7047,
+    "remove_count": 3553,
+    "keep_rate": 0.6648113207547169,
+    "remove_rate": 0.335188679245283
+  },
+  "test": {
+    "n": 2650,
+    "keep_count": 1719,
+    "remove_count": 931,
+    "keep_rate": 0.6486792452830189,
+    "remove_rate": 0.35132075471698115
+  }
+}

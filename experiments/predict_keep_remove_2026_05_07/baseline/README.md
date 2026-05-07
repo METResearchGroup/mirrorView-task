@@ -36,32 +36,32 @@ Files:
 
 Reference run:
 
-- timestamp: `2026_05_07-18:09:55`
+- timestamp: `2026_05_07-18:22:38`
 - train split: `0.8`
 - seed: `42`
 - target: `keep_remove_label`
-- rows: `32128` train / `8032` test
-- train keep prior: `0.6764815737051793`
+- rows: `10600` train / `2650` test
+- train keep prior: `0.6648113207547169`
 
 ### `class_balance.json` (how imbalanced is the task?)
 
 - Overall:
-  - `n=40160`
-  - `keep=27178` (`0.6767430278884462`)
-  - `remove=12982` (`0.3232569721115538`)
+  - `n=13250`
+  - `keep=8766` (`0.6615849056603773`)
+  - `remove=4484` (`0.33841509433962264`)
 - Train:
-  - `n=32128`
-  - `keep=21734` (`0.6764815737051793`)
-  - `remove=10394` (`0.3235184262948207`)
+  - `n=10600`
+  - `keep=7047` (`0.6648113207547169`)
+  - `remove=3553` (`0.335188679245283`)
 - Test:
-  - `n=8032`
-  - `keep=5444` (`0.6777888446215139`)
-  - `remove=2588` (`0.32221115537848605`)
+  - `n=2650`
+  - `keep=1719` (`0.6486792452830189`)
+  - `remove=931` (`0.35132075471698115`)
 
 Interpretation:
 
-- The dataset is strongly keep-heavy (~68/32).
-- A naive classifier can get ~0.678 test accuracy by always predicting keep.
+- The linked-fate-only dataset remains keep-heavy (~65/35), but is less skewed than before.
+- A naive classifier can get ~0.649 test accuracy by always predicting keep.
 - Because we care about remove decisions, remove-focused metrics are essential.
 
 ### `baseline_metrics.json` (how strong are trivial baselines?)
@@ -69,10 +69,10 @@ Interpretation:
 `majority_keep`:
 
 - Keep-as-positive:
-  - accuracy `0.6777888446215139`
-  - precision `0.6777888446215139`
+  - accuracy `0.6486792452830189`
+  - precision `0.6486792452830189`
   - recall `1.0`
-  - f1 `0.8079548827545265`
+  - f1 `0.7869182389937107`
 - Remove-as-positive:
   - precision `0.0`
   - recall `0.0`
@@ -81,21 +81,21 @@ Interpretation:
 
 Interpretation:
 
-- This baseline exactly matches test keep rate in accuracy.
+- This baseline exactly matches linked-fate test keep rate in accuracy.
 - It is useless for remove detection (remove recall/f1 = 0).
 - Any real model should beat this on remove-focused metrics.
 
 `majority_remove`:
 
 - Keep-as-positive:
-  - accuracy `0.32221115537848605`
+  - accuracy `0.35132075471698115`
   - precision `0.0`
   - recall `0.0`
   - f1 `0.0`
 - Remove-as-positive:
-  - precision `0.32221115537848605`
+  - precision `0.35132075471698115`
   - recall `1.0`
-  - f1 `0.4873822975517891`
+  - f1 `0.5199664804469274`
 - `roc_auc_keep=0.5`
 
 Interpretation:
@@ -107,14 +107,14 @@ Interpretation:
 `stratified_random` (sample by train keep prior):
 
 - Keep-as-positive:
-  - accuracy `0.5697211155378487`
-  - precision `0.6811884797666788`
-  - recall `0.6864437913299045`
-  - f1 `0.6838060384263495`
+  - accuracy `0.5509433962264151`
+  - precision `0.6518691588785047`
+  - recall `0.6765561372880744`
+  - f1 `0.6639839034205231`
 - Remove-as-positive:
-  - precision `0.32953652788688137`
-  - recall `0.32418856259659967`
-  - f1 `0.32684067004285156`
+  - precision `0.34793650793650793`
+  - recall `0.28893662728249194`
+  - f1 `0.31570449678800856`
 - `roc_auc_keep=0.5`
 
 Interpretation:

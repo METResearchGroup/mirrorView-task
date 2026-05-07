@@ -33,6 +33,8 @@ DEFAULT_FEATURE_COLUMNS: tuple[str, ...] = (
     "readability_complexity_flesch_reading_ease_original_text",
     "readability_complexity_flesch_kincaid_grade_mirrors",
     "readability_complexity_flesch_reading_ease_mirrors",
+    "sample_toxicity_type",
+    "sampled_stance",
 )
 
 
@@ -51,6 +53,7 @@ class LogisticRegressionModel:
         self.feature_columns = feature_columns
         self.max_iter = max_iter
         self.random_state = random_state
+        self._encoded_feature_columns: list[str] | None = None
 
     def train(
         self,
@@ -66,8 +69,8 @@ class LogisticRegressionModel:
         if target_column not in train_df.columns or target_column not in test_df.columns:
             raise KeyError(f"Missing target column: {target_column}")
 
-        X_train = self._featurize(train_df)
-        X_test = self._featurize(test_df)
+        X_train = self._featurize_train(train_df)
+        X_test = self._featurize_infer(test_df)
         y_train = train_df[target_column].astype(int)
         y_test = test_df[target_column].astype(int)
 
@@ -103,9 +106,12 @@ class LogisticRegressionModel:
         with model_path.open("wb") as f:
             pickle.dump(model, f)
 
+        if self._encoded_feature_columns is None:
+            raise RuntimeError("Encoded feature columns were not recorded during train featurization.")
+
         coefficients = pd.DataFrame(
             {
-                "feature": list(self.feature_columns),
+                "feature": self._encoded_feature_columns,
                 "coefficient": model.coef_[0].tolist(),
             }
         ).sort_values("coefficient", ascending=False)
@@ -147,8 +153,22 @@ class LogisticRegressionModel:
             "test_rows": int(len(test_df)),
         }
 
-    def _featurize(self, df: pd.DataFrame) -> pd.DataFrame:
+    def _featurize_train(self, df: pd.DataFrame) -> pd.DataFrame:
         X = df.loc[:, self.feature_columns].copy()
+        X = pd.get_dummies(X, columns=["sample_toxicity_type", "sampled_stance"], dummy_na=False)
+        for col in X.columns:
+            X[col] = pd.to_numeric(X[col], errors="coerce")
+        X = X.fillna(0.0)
+        self._encoded_feature_columns = list(X.columns)
+        return X
+
+    def _featurize_infer(self, df: pd.DataFrame) -> pd.DataFrame:
+        if self._encoded_feature_columns is None:
+            raise RuntimeError("Train featurization must run before inference featurization.")
+
+        X = df.loc[:, self.feature_columns].copy()
+        X = pd.get_dummies(X, columns=["sample_toxicity_type", "sampled_stance"], dummy_na=False)
+        X = X.reindex(columns=self._encoded_feature_columns, fill_value=0.0)
         for col in X.columns:
             X[col] = pd.to_numeric(X[col], errors="coerce")
         X = X.fillna(0.0)

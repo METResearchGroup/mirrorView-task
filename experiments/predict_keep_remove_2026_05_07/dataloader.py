@@ -41,7 +41,15 @@ class Dataloader:
         raw = pilot_loader.get_latest_mirrorview_run_data()
         trials = pilot_loader.transform_latest_mirrorview_run_data(raw)
 
-        required_trial_cols = {"post_id", "original_text", "mirror_text", "decision"}
+        required_trial_cols = {
+            "post_id",
+            "original_text",
+            "mirror_text",
+            "decision",
+            "evaluation_mode",
+            "sample_toxicity_type",
+            "sampled_stance",
+        }
         missing = required_trial_cols - set(trials.columns)
         if missing:
             raise KeyError(
@@ -55,6 +63,9 @@ class Dataloader:
                 "party_group",
                 "condition",
                 "phase",
+                "evaluation_mode",
+                "sample_toxicity_type",
+                "sampled_stance",
                 "post_id",
                 "original_text",
                 "mirror_text",
@@ -62,6 +73,8 @@ class Dataloader:
             ]
         ].copy()
         base["post_id"] = base["post_id"].astype(str)
+        base["evaluation_mode"] = base["evaluation_mode"].astype(str).str.lower().str.strip()
+        base = base[base["evaluation_mode"] == "linked_fate"].copy()
         base["decision"] = base["decision"].astype(str).str.lower().str.strip()
         base = base[base["decision"].isin(["keep", "remove"])].copy()
         base["keep_remove_label"] = (base["decision"] == "keep").astype(int)
@@ -182,6 +195,8 @@ if __name__ == "__main__":
     raw_df = pilot_loader.get_latest_mirrorview_run_data()
     base_df = pilot_loader.transform_latest_mirrorview_run_data(raw_df)
     base_df = base_df.copy()
+    base_df["evaluation_mode"] = base_df["evaluation_mode"].astype(str).str.lower().str.strip()
+    base_df = base_df[base_df["evaluation_mode"] == "linked_fate"].copy()
     base_df["decision"] = base_df["decision"].astype(str).str.lower().str.strip()
     base_df = base_df[base_df["decision"].isin(["keep", "remove"])].copy()
 
