@@ -64,7 +64,9 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 
 ## Analysis 2: Readability/complexity
 
-- Flesh-Kincaid (basic readability measure)
+- Flesch-Kincaid Grade Level (`flesch_kincaid_grade`)
+- Flesch Reading Ease (`flesch_reading_ease`)
+- Implementation uses spaCy sentence/token boundaries and explicit metric formulas in `analysis/readability_complexity_analysis.py`.
 
 ### (Analysis 2) Questions to answer
 
@@ -72,18 +74,77 @@ load data -> for all texts, run all analysis functions -> groupby + split across
 - Pairwise: any change in readability from the base to mirror text?
 - Keep/remove decision: does more complex or simplified rhetoric get removed more often?
 
+### (Analysis 2) Findings
+
+- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis.py`
+
+- Aggregate trend (answer to Q1): mirrored texts become substantially more complex/read less easily.
+  - Original overall means: `flesch_kincaid_grade=8.814`, `flesch_reading_ease=61.38`.
+  - Mirror overall means: `flesch_kincaid_grade=10.72`, `flesch_reading_ease=49.94`.
+  - Interpretation guide: higher `flesch_kincaid_grade` = more complex; lower `flesch_reading_ease` = more complex.
+
+- Pairwise trend (answer to Q2): mirrors shift toward higher grade-level complexity and lower reading ease.
+  - Mean ratios (`mirror / original`): `ratio_flesch_kincaid_grade=1.313`, `ratio_flesch_reading_ease=0.8659`.
+  - Mean deltas (`mirror - original`): `delta_flesch_kincaid_grade=+1.927`, `delta_flesch_reading_ease=-11.53`.
+  - This pattern is stable by party and condition: `ratio_flesch_kincaid_grade` ranges from `1.307` to `1.320`; `ratio_flesch_reading_ease` ranges from `0.8516` to `0.8921`.
+
+- Keep/remove trend (answer to Q3): kept mirrors are more complex, and removed mirrors are easier to read.
+  - All rows: keep vs remove `mirror_flesch_kincaid_grade` = `10.97` vs `10.22`; `mirror_flesch_reading_ease` = `48.76` vs `52.34`.
+  - All rows: keep vs remove `ratio_flesch_kincaid_grade` = `1.317` vs `1.306`; `ratio_flesch_reading_ease` = `0.8753` vs `0.8467`.
+  - The strongest behavioral split is in absolute mirror readability: kept mirrors have higher grade level and lower reading ease than removed mirrors.
+
 ## Analysis 3: Sentiment / Toxicity
 
-- Analyses to run:
-  - Basic sentiment
-  - VADER
-  - Perspective API
+- Current analyses implemented:
+  - LLM valence classifier (`analysis/valence_classifier/`)
+  - LLM intergroup classifier (`analysis/intergroup_classifier/`)
+
+### (Analysis 3) Questions to answer
+
+- Aggregate analysis: do mirrors systematically shift valence and intergroup framing rates?
+- Pairwise analysis: how often do mirror labels match original labels vs switch?
+- Keep/remove decision: are kept or removed mirrors more likely to have positive/intergroup labels?
+
+### (Analysis 3) Findings
+
+- Run commands:
+  - `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/main.py`
+  - `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/main.py`
+
+- Valence trend: mirrors are modestly more likely to be classified as positive.
+  - Overall positive rate: `original=0.0950`, `mirror=0.1132` (`+0.0182` absolute).
+  - Pairwise: `match_rate=0.9017`, `more_positive_rate=0.0582`, `less_positive_rate=0.0401`.
+  - Keep/remove: keep rows are more positive than remove rows in both original and mirror text (`keep original=0.1122` vs `remove original=0.0589`; `keep mirror=0.1297` vs `remove mirror=0.0788`).
+
+- Intergroup trend: mirrors strongly increase intergroup framing rates.
+  - Overall intergroup rate: `original=0.7297`, `mirror=0.8467` (`+0.1169` absolute).
+  - Pairwise: `match_rate=0.7722`, `more_positive_rate=0.1724`, `less_positive_rate=0.0555` (net shift toward intergroup).
+  - Keep/remove: remove rows are slightly more intergroup than keep rows in both original and mirror text (`remove original=0.7677` vs `keep original=0.7118`; `remove mirror=0.8641` vs `keep mirror=0.8385`).
 
 ## Analysis 4: Moralized
 
-Moralized words (e.g., "rights", "freedom", etc)
+- Current analysis implemented:
+  - LLM PRIME classifier (`analysis/prime_classifier/`) capturing prestigious, in-group, moral, or emotional cues.
 
-Can use Billy's PRIME classifier here. Or can just do a simple LLM-based approach (like what I did before).
+### (Analysis 4) Questions to answer
+
+- Aggregate analysis: do mirrors increase PRIME content prevalence?
+- Pairwise analysis: how frequently do mirrors add/remove PRIME cues?
+- Keep/remove decision: is PRIME content associated with keep/remove decisions?
+
+### (Analysis 4) Findings
+
+- Run command: `PYTHONPATH=. uv run python experiments/mirrors_content_analysis_2026_04_24/analysis/prime_classifier/main.py`
+
+- Aggregate trend: mirrors increase PRIME content rates from an already high baseline.
+  - Overall PRIME rate: `original=0.8697`, `mirror=0.9410` (`+0.0714` absolute).
+
+- Pairwise trend: most examples are stable, but switches are mostly toward PRIME.
+  - `match_rate=0.8761`, `more_positive_rate=0.0976`, `less_positive_rate=0.0263`.
+
+- Keep/remove trend: remove rows are more PRIME-heavy than keep rows at baseline and after mirroring.
+  - Original PRIME rate: `remove=0.9207` vs `keep=0.8453`.
+  - Mirror PRIME rate: `remove=0.9612` vs `keep=0.9313`.
 
 ## Analysis 5: Absolutism/certainty/hedging
 
