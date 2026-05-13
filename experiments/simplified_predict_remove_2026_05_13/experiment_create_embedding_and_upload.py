@@ -7,7 +7,8 @@ records bucket/key/metadata in DynamoDB, then reloads strictly through the Dynam
 ``dynamodb:GetItem``, ``dynamodb:PutItem``, and (once) ``dynamodb:CreateTable``
 if ``ensure_table_exists()`` runs.
 
-Edit ``S3_BUCKET`` and ``DYNAMODB_TABLE_NAME`` below before running.
+S3 uploads go to bucket ``jspsych-mirror-view-3`` (prefix ``embeddings/``).
+Metadata pointer rows use DynamoDB table ``jspsych-mirror-view-embedding-cache``.
 
 From repository root (sync dev deps for boto3)::
 
@@ -37,8 +38,8 @@ from lib.aws.s3 import S3
 
 # Use the same region for S3, DynamoDB, and Bedrock (see experiment_bedrock defaults).
 AWS_REGION = BEDROCK_AWS_REGION
-S3_BUCKET = ""
-DYNAMODB_TABLE_NAME = ""
+S3_BUCKET = "jspsych-mirror-view-3"
+DYNAMODB_TABLE_NAME = "jspsych-mirror-view-embedding-cache"
 S3_PREFIX = "embeddings/"
 
 
