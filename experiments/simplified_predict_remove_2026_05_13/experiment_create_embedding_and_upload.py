@@ -1,22 +1,11 @@
 """Bedrock embedding → S3 JSON + DynamoDB pointer → reload → vector equality check.
 
-Demonstrates cold-cache path: invokes Titan once, stores the embedding JSON on S3,
+Invokes Titan once, stores the embedding JSON on S3,
 records bucket/key/metadata in DynamoDB, then reloads strictly through the DynamoDB row.
 
-**IAM:** ``bedrock:InvokeModel``; ``s3:PutObject``, ``s3:GetObject`` on your prefix;
-``dynamodb:GetItem``, ``dynamodb:PutItem``, and (once) ``dynamodb:CreateTable``
-if ``ensure_table_exists()`` runs.
+Run from repository root:
 
-S3 uploads go to bucket ``jspsych-mirror-view-3`` (prefix ``embeddings/``).
-Metadata pointer rows use DynamoDB table ``jspsych-mirror-view-embedding-cache``.
-
-From repository root (sync dev deps for boto3)::
-
-    cd /Users/mark/Documents/work/mirrorView-task && uv sync --group dev
-
-    cd /Users/mark/Documents/work/mirrorView-task \\
-      && PYTHONPATH=. uv run --group dev python \\
-      experiments/simplified_predict_remove_2026_05_13/experiment_create_embedding_and_upload.py
+    PYTHONPATH=. uv run python experiments/simplified_predict_remove_2026_05_13/experiment_create_embedding_and_upload.py
 """
 
 from __future__ import annotations
@@ -36,7 +25,6 @@ from lib.aws.dynamodb import DynamoDBEmbeddingIndex
 from lib.aws.embedding_identity import embedding_identity_sha256
 from lib.aws.s3 import S3
 
-# Use the same region for S3, DynamoDB, and Bedrock (see experiment_bedrock defaults).
 AWS_REGION = BEDROCK_AWS_REGION
 S3_BUCKET = "jspsych-mirror-view-3"
 DYNAMODB_TABLE_NAME = "jspsych-mirror-view-embedding-cache"
