@@ -7,10 +7,7 @@ records bucket/key/metadata in DynamoDB, then reloads strictly through the Dynam
 ``dynamodb:GetItem``, ``dynamodb:PutItem``, and (once) ``dynamodb:CreateTable``
 if ``ensure_table_exists()`` runs.
 
-**Env (required):**
-
-- ``EMBEDDING_CACHE_S3_BUCKET``
-- ``EMBEDDING_CACHE_DYNAMODB_TABLE``
+Edit ``S3_BUCKET`` and ``DYNAMODB_TABLE_NAME`` below before running.
 
 From repository root (sync dev deps for boto3)::
 
@@ -25,7 +22,6 @@ from __future__ import annotations
 
 import json
 import math
-import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -41,20 +37,13 @@ from lib.aws.s3 import S3
 
 # Use the same region for S3, DynamoDB, and Bedrock (see experiment_bedrock defaults).
 AWS_REGION = BEDROCK_AWS_REGION
+S3_BUCKET = ""
+DYNAMODB_TABLE_NAME = ""
 S3_PREFIX = "embeddings/"
 
 
 def _utc_iso_z() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-
-
-def _require_env(name: str) -> str:
-    raw = os.environ.get(name, "").strip()
-    if not raw:
-        raise SystemExit(
-            f"Missing env var {name}. Set bucket and DynamoDB table (see module docstring)."
-        )
-    return raw
 
 
 def _vectors_equivalent(a: list[float], b: list[float]) -> tuple[bool, str]:
@@ -72,8 +61,13 @@ def _vectors_equivalent(a: list[float], b: list[float]) -> tuple[bool, str]:
 
 
 def main() -> None:
-    bucket_name = _require_env("EMBEDDING_CACHE_S3_BUCKET")
-    table_name = _require_env("EMBEDDING_CACHE_DYNAMODB_TABLE")
+    if not S3_BUCKET.strip() or not DYNAMODB_TABLE_NAME.strip():
+        raise SystemExit(
+            "Set S3_BUCKET and DYNAMODB_TABLE_NAME at the top of this file."
+        )
+
+    bucket_name = S3_BUCKET.strip()
+    table_name = DYNAMODB_TABLE_NAME.strip()
 
     sample_text = "MirrorView embedding cache round-trip smoke test string."
     normalize = True
