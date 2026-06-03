@@ -1,5 +1,11 @@
 from __future__ import annotations
 
+"""
+Run from repo root:
+
+PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/generate_flips.py
+"""
+
 import re
 from pathlib import Path
 
@@ -37,7 +43,8 @@ def _pick_latest_input_csv() -> Path:
 
 
 def _extract_input_timestamp(filename: str) -> str:
-    m = re.match(r"^sampled_posts_(.+)\\.csv$", filename)
+    # Input filenames are like: sampled_posts_2026_06_03-03:23:24.csv
+    m = re.match(r"^sampled_posts_(.+)\.csv$", filename)
     if not m:
         raise ValueError(f"Unexpected input filename format: {filename}")
     return m.group(1)
