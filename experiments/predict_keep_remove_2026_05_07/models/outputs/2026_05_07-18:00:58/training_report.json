@@ -1,0 +1,49 @@
+{
+  "model_name": "xgboost",
+  "feature_columns": [
+    "intergroup_clf_is_intergroup_original_text",
+    "intergroup_clf_is_intergroup_mirrors",
+    "prime_clf_is_prime_original_text",
+    "prime_clf_is_prime_mirrors",
+    "valence_clf_is_positive_original_text",
+    "valence_clf_is_positive_mirrors",
+    "length_compression_char_count_original_text",
+    "length_compression_word_count_original_text",
+    "length_compression_sentence_count_original_text",
+    "length_compression_avg_sentence_length_original_text",
+    "length_compression_punctuation_count_original_text",
+    "length_compression_punctuation_density_original_text",
+    "length_compression_char_count_mirrors",
+    "length_compression_word_count_mirrors",
+    "length_compression_sentence_count_mirrors",
+    "length_compression_avg_sentence_length_mirrors",
+    "length_compression_punctuation_count_mirrors",
+    "length_compression_punctuation_density_mirrors",
+    "readability_complexity_flesch_kincaid_grade_original_text",
+    "readability_complexity_flesch_reading_ease_original_text",
+    "readability_complexity_flesch_kincaid_grade_mirrors",
+    "readability_complexity_flesch_reading_ease_mirrors"
+  ],
+  "target_column": "keep_remove_label",
+  "train_rows": 32128,
+  "test_rows": 8032,
+  "train_metrics": {
+    "accuracy": 0.7039342629482072,
+    "precision": 0.7087945879458795,
+    "recall": 0.954495260881568,
+    "f1": 0.8134975099015724,
+    "roc_auc": 0.6664004966091758
+  },
+  "test_metrics": {
+    "accuracy": 0.6924800796812749,
+    "precision": 0.702809601745772,
+    "recall": 0.9465466568699485,
+    "f1": 0.8066687539135879,
+    "roc_auc": 0.6189053118615618
+  },
+  "artifacts": {
+    "model_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/model.pkl",
+    "feature_importances_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/feature_importances.csv",
+    "test_predictions_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/test_predictions.csv"
+  }
+}

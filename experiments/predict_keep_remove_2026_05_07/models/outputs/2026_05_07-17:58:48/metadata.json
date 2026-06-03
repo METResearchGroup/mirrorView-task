@@ -1,0 +1,34 @@
+{
+  "timestamp": "2026_05_07-17:58:48",
+  "model": "logistic_regression",
+  "train_split": 0.8,
+  "seed": 42,
+  "target_column": "keep_remove_label",
+  "train_rows": 32128,
+  "test_rows": 8032,
+  "result": {
+    "model_name": "logistic_regression",
+    "train_metrics": {
+      "accuracy": 0.6776020916334662,
+      "precision": 0.6775613410751077,
+      "recall": 0.998665685101684,
+      "f1": 0.8073575360809403,
+      "roc_auc": 0.5663774938358994
+    },
+    "test_metrics": {
+      "accuracy": 0.6777888446215139,
+      "precision": 0.6782771535580524,
+      "recall": 0.9979794268919912,
+      "f1": 0.8076408503047421,
+      "roc_auc": 0.5549775386200029
+    },
+    "artifacts": {
+      "model_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/model.pkl",
+      "feature_coefficients_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/feature_coefficients.csv",
+      "test_predictions_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/test_predictions.csv",
+      "training_report_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/training_report.json"
+    },
+    "train_rows": 32128,
+    "test_rows": 8032
+  }
+}

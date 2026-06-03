@@ -1,0 +1,26 @@
+{
+  "train_metrics": {
+    "accuracy": 0.8970013037809648,
+    "precision": 0.6860986547085202,
+    "recall": 0.9444444444444444,
+    "f1": 0.7948051948051948,
+    "roc_auc": 0.9657483930211204,
+    "pr_auc": 0.8650948070574027,
+    "confusion_matrix_tn": 535.0,
+    "confusion_matrix_fp": 70.0,
+    "confusion_matrix_fn": 9.0,
+    "confusion_matrix_tp": 153.0
+  },
+  "test_metrics": {
+    "accuracy": 0.8489583333333334,
+    "precision": 0.62,
+    "recall": 0.7560975609756098,
+    "f1": 0.6813186813186813,
+    "roc_auc": 0.8786948796640284,
+    "pr_auc": 0.7296375054610836,
+    "confusion_matrix_tn": 132.0,
+    "confusion_matrix_fp": 19.0,
+    "confusion_matrix_fn": 10.0,
+    "confusion_matrix_tp": 31.0
+  }
+}

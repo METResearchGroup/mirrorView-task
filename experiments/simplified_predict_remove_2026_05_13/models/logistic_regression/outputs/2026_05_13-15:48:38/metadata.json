@@ -1,0 +1,30 @@
+{
+  "timestamp": "2026_05_13-15:48:38",
+  "seed": 42,
+  "train_split": 0.8,
+  "train_rows": 767,
+  "test_rows": 192,
+  "embedding_source": {
+    "s3_bucket_default": "jspsych-mirror-view-3",
+    "ddb_table_default": "jspsych-mirror-view-embedding-cache",
+    "embedding_model_id": "amazon.titan-embed-text-v2:0",
+    "embedding_dimensions": 256,
+    "normalize_embeddings": true,
+    "s3_override": null,
+    "ddb_override": null,
+    "ddb_pointer_schema": "Dynamo embedding_id \u2192 S3 JSON containing Bedrock-compatible payload vectors"
+  },
+  "feature_set_description": "Frozen Bedrock Titan embeddings (original + mirror) with abs-diff/Hadamard/cosine features plus OneHot-encoded sampled stance/toxicity (encoder fit on train subset only).",
+  "label_encoding": {
+    "keep_remove_label_0": "keep",
+    "keep_remove_label_1": "remove"
+  },
+  "class_weight": "balanced",
+  "command": [
+    "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/train.py",
+    "--seed",
+    "42",
+    "--train-split",
+    "0.8"
+  ]
+}
