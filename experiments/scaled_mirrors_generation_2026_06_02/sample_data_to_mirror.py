@@ -198,15 +198,25 @@ def main() -> None:
     print()
 
     print("pd.value_counts by integration x toxicity_tier")
-    print(df_sampled.value_counts(subset=["integration", "toxicity_tier"]))
+    # Use a pivot for stable, readable grouping order.
+    vc_integration_tox = (
+        df_sampled.groupby(["integration", "toxicity_tier"]).size().unstack(fill_value=0)
+    )
+    print(vc_integration_tox)
     print()
 
     print("pd.value_counts by integration x political_stance")
-    print(df_sampled.value_counts(subset=["integration", "political_stance"]))
+    vc_integration_stance = (
+        df_sampled.groupby(["integration", "political_stance"]).size().unstack(fill_value=0)
+    )
+    print(vc_integration_stance)
     print()
 
     print("pd.value_counts by toxicity_tier x political_stance")
-    print(df_sampled.value_counts(subset=["toxicity_tier", "political_stance"]))
+    vc_stance_tox = (
+        df_sampled.groupby(["political_stance", "toxicity_tier"]).size().unstack(fill_value=0)
+    )
+    print(vc_stance_tox)
     print()
 
     # 6) Write output CSV (contract columns only).
