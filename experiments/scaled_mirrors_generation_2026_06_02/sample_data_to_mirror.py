@@ -21,7 +21,6 @@ from lib.timestamp_utils import get_current_timestamp
 
 TARGET_TOTAL = 11000
 SEED = 42
-FILTER_OUT_STANCES: set[str] = {"unclear", "neutral"}
 
 
 def sha256_hex(text: str) -> str:
@@ -142,13 +141,6 @@ def main() -> None:
             raise RuntimeError(f"No curated data found for integration `{integration}`.")
         dfs[integration] = pd.concat(data_by_integration[integration], ignore_index=True)
 
-    # Filter out unwanted stances before any deterministic sampling.
-    for integration, df in dfs.items():
-        if "political_stance" not in df.columns:
-            raise RuntimeError(f"Integration `{integration}` missing `political_stance` after normalization.")
-        df_filtered = df[~df["political_stance"].isin(FILTER_OUT_STANCES)].reset_index(drop=True)
-        dfs[integration] = df_filtered
-
     df_twitter = dfs["twitter"]
     df_bluesky = dfs["bluesky"]
     df_reddit = dfs["reddit"]
@@ -198,25 +190,25 @@ def main() -> None:
     print()
 
     print("pd.value_counts by integration x toxicity_tier")
-    # Use a pivot for stable, readable grouping order.
-    vc_integration_tox = (
-        df_sampled.groupby(["integration", "toxicity_tier"]).size().unstack(fill_value=0)
+    integration_tox = pd.Series(
+        list(zip(df_sampled["integration"], df_sampled["toxicity_tier"]))
     )
-    print(vc_integration_tox)
+    print(integration_tox.value_counts())
     print()
 
     print("pd.value_counts by integration x political_stance")
-    vc_integration_stance = (
-        df_sampled.groupby(["integration", "political_stance"]).size().unstack(fill_value=0)
+    print(
+        pd.Series(
+            list(zip(df_sampled["integration"], df_sampled["political_stance"]))
+        ).value_counts()
     )
-    print(vc_integration_stance)
     print()
 
     print("pd.value_counts by toxicity_tier x political_stance")
-    vc_stance_tox = (
-        df_sampled.groupby(["political_stance", "toxicity_tier"]).size().unstack(fill_value=0)
+    stance_tox = pd.Series(
+        list(zip(df_sampled["toxicity_tier"], df_sampled["political_stance"]))
     )
-    print(vc_stance_tox)
+    print(stance_tox.value_counts())
     print()
 
     # 6) Write output CSV (contract columns only).
