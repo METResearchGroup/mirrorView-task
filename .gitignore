@@ -93,3 +93,11 @@ infra/*.zip
 # Python
 __pycache__/
 *.pyc
+
+# Pair cross-encoder: ignore tokenizer dir + classifier weights per outputs/<timestamp>/
+experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cross_encoder_frozen_encoder_clf_head/outputs/*/tokenizer/
+experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cross_encoder_frozen_encoder_clf_head/outputs/*/classifier.pt
+
+# Re-include run CSV summaries (otherwise blocked by repo-wide *.csv earlier in this file).
+!experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cross_encoder_frozen_encoder_clf_head/outputs/*/preds.csv
+!experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cross_encoder_frozen_encoder_clf_head/outputs/*/test_predictions.csv
