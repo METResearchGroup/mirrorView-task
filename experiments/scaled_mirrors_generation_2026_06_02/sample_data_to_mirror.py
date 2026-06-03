@@ -21,6 +21,7 @@ from lib.timestamp_utils import get_current_timestamp
 
 TARGET_TOTAL = 11000
 SEED = 42
+FILTER_OUT_STANCES: set[str] = {"unclear", "neutral"}
 
 
 def sha256_hex(text: str) -> str:
@@ -140,6 +141,13 @@ def main() -> None:
         if not data_by_integration[integration]:
             raise RuntimeError(f"No curated data found for integration `{integration}`.")
         dfs[integration] = pd.concat(data_by_integration[integration], ignore_index=True)
+
+    # Filter out unwanted stances before any deterministic sampling.
+    for integration, df in dfs.items():
+        if "political_stance" not in df.columns:
+            raise RuntimeError(f"Integration `{integration}` missing `political_stance` after normalization.")
+        df_filtered = df[~df["political_stance"].isin(FILTER_OUT_STANCES)].reset_index(drop=True)
+        dfs[integration] = df_filtered
 
     df_twitter = dfs["twitter"]
     df_bluesky = dfs["bluesky"]
