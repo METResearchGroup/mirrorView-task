@@ -21,7 +21,7 @@ OUTPUT_PREFIX = "flips_"
 
 # Hard-coded generation settings. This script intentionally provides no CLI args.
 BATCH_SIZE = 25
-MAX_CONCURRENCY = 10
+MAX_CONCURRENCY = 40
 
 
 class FlipResponse(BaseModel):
