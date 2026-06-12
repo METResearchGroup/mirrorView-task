@@ -5,7 +5,7 @@ This script:
 - Normalizes rows into a unified internal schema
 - Deduplicates by `post_primary_key` per integration before sampling (Reddit uses `unique_reddit_id`, a composite of post and comment id)
 - Filters out `political_stance` values `unclear` and `neutral`
-- Samples exactly `TARGET_TOTAL` unique posts (Twitter prioritized, remainder split 50/50 between Bluesky and Reddit)
+- Samples up to `TARGET_TOTAL` unique posts (Twitter prioritized; among Bluesky and Reddit, all `sample_high_toxicity` posts are taken first, then the remainder is split 50/50)
 - Writes `concatenated_records/{timestamp}/records.csv`
 - Prints stdout summary `value_counts` tables
 
@@ -18,14 +18,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 
 import pandas as pd
 
 from lib.constants import REPO_ROOT
 from lib.timestamp_utils import get_current_timestamp
 
-TARGET_TOTAL = 11000
+TARGET_TOTAL = 10000
 SEED = 42
 CONCATENATED_RECORDS_DIRNAME = "concatenated_records"
 
@@ -37,6 +36,7 @@ TOXICITY_TIER_MAP = {
     "sample_middle_toxicity": "sample_middle_toxicity",
     "sample_high_toxicity": "sample_high_toxicity",
 }
+HIGH_TOXICITY = "sample_high_toxicity"
 
 
 def sha256_hex(text: str) -> str:
@@ -151,6 +151,79 @@ def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.Dat
     return normalized
 
 
+def _split_high_toxicity(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Split a shuffled frame into high-toxicity rows and all other rows."""
+
+    is_high = df["sample_toxicity_type"] == HIGH_TOXICITY
+    return df[is_high].reset_index(drop=True), df[~is_high].reset_index(drop=True)
+
+
+def _allocate_remaining_slots(
+    n_bluesky_available: int,
+    n_reddit_available: int,
+    remaining: int,
+) -> tuple[int, int]:
+    """Split remaining slots 50/50 between Bluesky and Reddit, with backfill."""
+
+    if remaining <= 0:
+        return 0, 0
+
+    n_bluesky = min(n_bluesky_available, remaining // 2)
+    n_reddit = min(n_reddit_available, remaining - n_bluesky)
+
+    fill = remaining - n_bluesky - n_reddit
+    if fill <= 0:
+        return n_bluesky, n_reddit
+
+    extra_bluesky = min(n_bluesky_available - n_bluesky, fill)
+    n_bluesky += extra_bluesky
+    fill -= extra_bluesky
+
+    extra_reddit = min(n_reddit_available - n_reddit, fill)
+    n_reddit += extra_reddit
+
+    return n_bluesky, n_reddit
+
+
+def _sample_bluesky_and_reddit(
+    df_bluesky: pd.DataFrame,
+    df_reddit: pd.DataFrame,
+    *,
+    remaining: int,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Sample Bluesky and Reddit rows, taking all high-toxicity posts first."""
+
+    bluesky_high, bluesky_other = _split_high_toxicity(df_bluesky)
+    reddit_high, reddit_other = _split_high_toxicity(df_reddit)
+
+    bluesky_sample_parts = [bluesky_high]
+    reddit_sample_parts = [reddit_high]
+
+    remaining_after_high = remaining - len(bluesky_high) - len(reddit_high)
+    if remaining_after_high > 0:
+        n_bluesky_other, n_reddit_other = _allocate_remaining_slots(
+            len(bluesky_other),
+            len(reddit_other),
+            remaining_after_high,
+        )
+        if n_bluesky_other:
+            bluesky_sample_parts.append(bluesky_other.iloc[:n_bluesky_other])
+        if n_reddit_other:
+            reddit_sample_parts.append(reddit_other.iloc[:n_reddit_other])
+
+    bluesky_sample = (
+        pd.concat(bluesky_sample_parts, ignore_index=True)
+        if bluesky_sample_parts
+        else df_bluesky.iloc[:0].copy()
+    )
+    reddit_sample = (
+        pd.concat(reddit_sample_parts, ignore_index=True)
+        if reddit_sample_parts
+        else df_reddit.iloc[:0].copy()
+    )
+    return bluesky_sample, reddit_sample
+
+
 def dedupe_rows(df: pd.DataFrame, *, integration: str, subset: list[str]) -> pd.DataFrame:
     """Drop duplicate rows on the given key columns, keeping the first row in frame order."""
 
@@ -226,38 +299,26 @@ def main() -> None:
     df_bluesky = df_bluesky.sample(frac=1.0, random_state=SEED, replace=False).reset_index(drop=True)
     df_reddit = df_reddit.sample(frac=1.0, random_state=SEED, replace=False).reset_index(drop=True)
 
-    # 5) Sample deterministically without replacement to TOTAL (unique keys only).
+    # 5) Sample deterministically without replacement (unique keys only).
+    # Twitter first, then all high-toxicity Bluesky/Reddit rows, then the remainder 50/50.
     n_twitter = min(TARGET_TOTAL, len(df_twitter))
-
     remaining = TARGET_TOTAL - n_twitter
-    n_bluesky = min(len(df_bluesky), remaining // 2)
-    n_reddit = min(len(df_reddit), remaining - n_bluesky)
-
-    selected_total = n_twitter + n_bluesky + n_reddit
-    if selected_total < TARGET_TOTAL:
-        fill = TARGET_TOTAL - selected_total
-        bluesky_remaining = len(df_bluesky) - n_bluesky
-        reddit_remaining = len(df_reddit) - n_reddit
-
-        extra_bluesky = min(bluesky_remaining, fill)
-        n_bluesky += extra_bluesky
-        fill -= extra_bluesky
-
-        extra_reddit = min(reddit_remaining, fill)
-        n_reddit += extra_reddit
-        fill -= extra_reddit
-
-        if fill > 0:
-            available_total = len(df_twitter) + len(df_bluesky) + len(df_reddit)
-            print(
-                f"Warning: only {available_total:,} unique posts available; "
-                f"sampled {n_twitter + n_bluesky + n_reddit:,} of target {TARGET_TOTAL:,} "
-                f"({fill:,} short)."
-            )
 
     df_twitter_sample = df_twitter.iloc[:n_twitter].copy()
-    df_bluesky_sample = df_bluesky.iloc[:n_bluesky].copy()
-    df_reddit_sample = df_reddit.iloc[:n_reddit].copy()
+    df_bluesky_sample, df_reddit_sample = _sample_bluesky_and_reddit(
+        df_bluesky,
+        df_reddit,
+        remaining=remaining,
+    )
+
+    selected_total = len(df_twitter_sample) + len(df_bluesky_sample) + len(df_reddit_sample)
+    if selected_total < TARGET_TOTAL:
+        available_total = len(df_twitter) + len(df_bluesky) + len(df_reddit)
+        print(
+            f"Warning: only {available_total:,} unique posts available; "
+            f"sampled {selected_total:,} of target {TARGET_TOTAL:,} "
+            f"({TARGET_TOTAL - selected_total:,} short)."
+        )
 
     df_sampled = pd.concat(
         [df_twitter_sample, df_bluesky_sample, df_reddit_sample], ignore_index=True
