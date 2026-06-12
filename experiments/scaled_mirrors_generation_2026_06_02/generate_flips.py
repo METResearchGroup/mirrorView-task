@@ -6,7 +6,6 @@ Run from repo root:
 PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/generate_flips.py
 """
 
-import re
 from pathlib import Path
 
 import pandas as pd
@@ -22,8 +21,8 @@ from lib.load_env_vars import EnvVarsContainer
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 
-INPUT_GLOB = "sampled_posts_*.csv"
-OUTPUT_PREFIX = "flips_"
+CONCATENATED_RECORDS_DIR = EXPERIMENT_DIR / "concatenated_records"
+GENERATED_FLIPS_DIR = EXPERIMENT_DIR / "generated_flips"
 
 # Hard-coded generation settings. This script intentionally provides no CLI args.
 BATCH_SIZE = 25
@@ -36,18 +35,19 @@ class FlipResponse(BaseModel):
 
 
 def _pick_latest_input_csv() -> Path:
-    candidates = sorted(EXPERIMENT_DIR.glob(INPUT_GLOB), key=lambda p: p.stat().st_mtime)
+    candidates = sorted(
+        CONCATENATED_RECORDS_DIR.glob("*/records.csv"),
+        key=lambda p: p.stat().st_mtime,
+    )
     if not candidates:
-        raise FileNotFoundError(f"No input CSVs found: {EXPERIMENT_DIR / INPUT_GLOB}")
+        raise FileNotFoundError(
+            f"No records CSVs found: {CONCATENATED_RECORDS_DIR / '*/records.csv'}"
+        )
     return candidates[-1]
 
 
-def _extract_input_timestamp(filename: str) -> str:
-    # Input filenames are like: sampled_posts_2026_06_03-03:23:24.csv
-    m = re.match(r"^sampled_posts_(.+)\.csv$", filename)
-    if not m:
-        raise ValueError(f"Unexpected input filename format: {filename}")
-    return m.group(1)
+def _extract_input_timestamp(records_csv: Path) -> str:
+    return records_csv.parent.name
 
 
 def _build_prompt_template() -> ChatPromptTemplate:
@@ -59,28 +59,35 @@ def _build_prompt_template() -> ChatPromptTemplate:
     return ChatPromptTemplate.from_messages([("human", prompt_template)])
 
 
-def _compute_target_group(political_stance: str) -> str:
+def _compute_target_group(sampled_stance: str) -> str:
     # Deterministic minimal mapping that assumes stance labels are left/right.
-    # We also map "unclear"/"neutral" to themselves so the pipeline does not crash.
     mapping = {
         "left": "right",
         "right": "left",
-        "unclear": "unclear",
-        "neutral": "neutral",
     }
-    return mapping[political_stance]
+    if sampled_stance not in mapping:
+        raise ValueError(f"Unexpected sampled_stance `{sampled_stance}`.")
+    return mapping[sampled_stance]
 
 
 def main() -> None:
     input_csv = _pick_latest_input_csv()
-    input_timestamp = _extract_input_timestamp(input_csv.name)
-    out_fp = EXPERIMENT_DIR / f"{OUTPUT_PREFIX}{input_timestamp}.csv"
+    input_timestamp = _extract_input_timestamp(input_csv)
+    out_dir = GENERATED_FLIPS_DIR / input_timestamp
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_fp = out_dir / "flips.csv"
 
     df = pd.read_csv(input_csv)
 
-    input_id_col = "id" if "id" in df.columns else "post_id"
-    if input_id_col not in df.columns:
-        raise KeyError(f"Expected input id column `{input_id_col}` in {input_csv}")
+    required_input_cols = [
+        "post_primary_key",
+        "original_text",
+        "sample_toxicity_type",
+        "sampled_stance",
+    ]
+    missing_cols = [col for col in required_input_cols if col not in df.columns]
+    if missing_cols:
+        raise KeyError(f"Missing required columns in {input_csv}: {missing_cols}")
 
     prompt = _build_prompt_template()
     api_key = EnvVarsContainer.get_env_var("OPENAI_API_KEY", required=True)
@@ -94,10 +101,13 @@ def main() -> None:
         batch = df.iloc[start : start + BATCH_SIZE]
         inputs = [
             {
-                "post_text": str(t),
+                "post_text": str(text),
                 "target_group": _compute_target_group(str(stance)),
             }
-            for t, stance in zip(batch["text"].tolist(), batch["political_stance"].tolist())
+            for text, stance in zip(
+                batch["original_text"].tolist(),
+                batch["sampled_stance"].tolist(),
+            )
         ]
 
         # Batch call via LCEL.
@@ -106,22 +116,22 @@ def main() -> None:
         for row_in, resp in zip(batch.itertuples(index=False), results, strict=True):
             rows.append(
                 {
-                    "ID": str(getattr(row_in, input_id_col)),
-                    "original_text": str(getattr(row_in, "text")),
+                    "post_primary_key": str(getattr(row_in, "post_primary_key")),
+                    "original_text": str(getattr(row_in, "original_text")),
+                    "sample_toxicity_type": str(getattr(row_in, "sample_toxicity_type")),
+                    "sampled_stance": str(getattr(row_in, "sampled_stance")),
                     "mirrored_text": str(resp.flipped_text),
-                    "toxicity_tier": str(getattr(row_in, "toxicity_tier")),
-                    "political_stance": str(getattr(row_in, "political_stance")),
                 }
             )
 
     out_df = pd.DataFrame(
         rows,
         columns=[
-            "ID",
+            "post_primary_key",
             "original_text",
+            "sample_toxicity_type",
+            "sampled_stance",
             "mirrored_text",
-            "toxicity_tier",
-            "political_stance",
         ],
     )
     out_df.to_csv(out_fp, index=False)

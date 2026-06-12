@@ -3,9 +3,15 @@
 This script:
 - Discovers curated `mirrorview.csv` exports under `experiments/scaled_mirrors_generation_2026_06_02/data/*/*/curated/*/metadata.json`
 - Normalizes rows into a unified internal schema
-- Samples exactly `TARGET_TOTAL=11000` posts (Twitter prioritized, remainder split 50/50 between Bluesky and Reddit)
-- Writes `sampled_posts_{timestamp}.csv`
+- Deduplicates by `post_primary_key` per integration before sampling (Reddit uses `unique_reddit_id`, a composite of post and comment id)
+- Filters out `political_stance` values `unclear` and `neutral`
+- Samples exactly `TARGET_TOTAL` unique posts (Twitter prioritized, remainder split 50/50 between Bluesky and Reddit)
+- Writes `concatenated_records/{timestamp}/records.csv`
 - Prints stdout summary `value_counts` tables
+
+Run from repo root:
+
+PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py
 """
 
 from __future__ import annotations
@@ -21,12 +27,32 @@ from lib.timestamp_utils import get_current_timestamp
 
 TARGET_TOTAL = 11000
 SEED = 42
+CONCATENATED_RECORDS_DIRNAME = "concatenated_records"
+
+TOXICITY_TIER_MAP = {
+    "low": "sample_low_toxicity",
+    "medium": "sample_middle_toxicity",
+    "high": "sample_high_toxicity",
+    "sample_low_toxicity": "sample_low_toxicity",
+    "sample_middle_toxicity": "sample_middle_toxicity",
+    "sample_high_toxicity": "sample_high_toxicity",
+}
 
 
 def sha256_hex(text: str) -> str:
     """Stable hex digest for deterministic IDs."""
 
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _map_sample_toxicity_type(raw_value: str) -> str:
+    normalized = raw_value.strip().lower()
+    if normalized not in TOXICITY_TIER_MAP:
+        raise ValueError(
+            f"Unexpected toxicity tier `{raw_value}`. "
+            f"Expected one of: {sorted(TOXICITY_TIER_MAP)}."
+        )
+    return TOXICITY_TIER_MAP[normalized]
 
 
 def _require_non_null(series: pd.Series, col_name: str, *, integration: str) -> None:
@@ -43,6 +69,7 @@ def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.Dat
 
     if integration == "reddit":
         id_col = "post_reddit_id"
+        comment_id_col = "comment_id"
         text_col = "body"
     elif integration == "twitter":
         id_col = "tweet_id"
@@ -68,7 +95,11 @@ def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.Dat
             "and `sample_toxicity_type` columns."
         )
 
-    for required_col in [id_col, text_col, tox_col, "political_stance"]:
+    required_cols = [id_col, text_col, tox_col, "political_stance"]
+    if integration == "reddit":
+        required_cols.append(comment_id_col)
+
+    for required_col in required_cols:
         if required_col not in df_raw.columns:
             raise ValueError(
                 f"Integration `{integration}` mirrorview export missing required column `{required_col}`."
@@ -78,23 +109,61 @@ def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.Dat
     _require_non_null(df_raw[text_col], text_col, integration=integration)
     _require_non_null(df_raw[tox_col], tox_col, integration=integration)
     _require_non_null(df_raw["political_stance"], "political_stance", integration=integration)
+    if integration == "reddit":
+        _require_non_null(df_raw[comment_id_col], comment_id_col, integration=integration)
 
     if integration == "bluesky":
         # Contract: `bluesky_{sha256(uri)}`.
-        post_id = "bluesky_" + df_raw[id_col].astype(str).map(sha256_hex)
+        post_primary_key = "bluesky_" + df_raw[id_col].astype(str).map(sha256_hex)
     else:
-        post_id = integration + "_" + df_raw[id_col].astype(str)
+        post_primary_key = integration + "_" + df_raw[id_col].astype(str)
 
-    return pd.DataFrame(
+    normalized = pd.DataFrame(
         {
-            "post_id": post_id,
-            "text": df_raw[text_col].astype(str),
-            "toxicity_tier": df_raw[tox_col].astype(str),
-            "political_stance": df_raw["political_stance"].astype(str),
+            "post_primary_key": post_primary_key,
+            "original_text": df_raw[text_col].astype(str),
+            "sample_toxicity_type": df_raw[tox_col].astype(str).map(_map_sample_toxicity_type),
+            # Normalize for downstream matching and filtering.
+            "sampled_stance": df_raw["political_stance"].astype(str).str.strip().str.lower(),
             # Kept temporarily for stdout value_counts (dropped before writing).
             "integration": integration,
         }
     )
+
+    if integration == "reddit":
+        normalized["unique_reddit_id"] = (
+            "reddit_"
+            + df_raw[id_col].astype(str)
+            + "_"
+            + df_raw[comment_id_col].astype(str)
+        )
+
+    # For this sampling run, exclude non-binary stances.
+    normalized = normalized[
+        ~normalized["sampled_stance"].isin(
+            {
+                "unclear",
+                "neutral",
+            }
+        )
+    ].reset_index(drop=True)
+
+    return normalized
+
+
+def dedupe_rows(df: pd.DataFrame, *, integration: str, subset: list[str]) -> pd.DataFrame:
+    """Drop duplicate rows on the given key columns, keeping the first row in frame order."""
+
+    n_before = len(df)
+    df_unique = df.drop_duplicates(subset=subset, keep="first")
+    n_after = len(df_unique)
+    if n_after < n_before:
+        key_label = ", ".join(subset)
+        print(
+            f"Deduplicated {integration}: {n_before:,} rows -> {n_after:,} unique rows on "
+            f"({key_label}) ({n_before - n_after:,} duplicates dropped)"
+        )
+    return df_unique.reset_index(drop=True)
 
 
 def main() -> None:
@@ -141,44 +210,54 @@ def main() -> None:
             raise RuntimeError(f"No curated data found for integration `{integration}`.")
         dfs[integration] = pd.concat(data_by_integration[integration], ignore_index=True)
 
-    df_twitter = dfs["twitter"]
-    df_bluesky = dfs["bluesky"]
-    df_reddit = dfs["reddit"]
+    df_twitter = dedupe_rows(
+        dfs["twitter"], integration="twitter", subset=["post_primary_key"]
+    )
+    df_bluesky = dedupe_rows(
+        dfs["bluesky"], integration="bluesky", subset=["post_primary_key"]
+    )
+    df_reddit = dedupe_rows(
+        dfs["reddit"], integration="reddit", subset=["unique_reddit_id"]
+    )
+    print()
 
     # Shuffle deterministically once, then slice to satisfy the sampling contract.
     df_twitter = df_twitter.sample(frac=1.0, random_state=SEED, replace=False).reset_index(drop=True)
     df_bluesky = df_bluesky.sample(frac=1.0, random_state=SEED, replace=False).reset_index(drop=True)
     df_reddit = df_reddit.sample(frac=1.0, random_state=SEED, replace=False).reset_index(drop=True)
 
-    # 5) Sample deterministically without replacement to TOTAL.
+    # 5) Sample deterministically without replacement to TOTAL (unique keys only).
     n_twitter = min(TARGET_TOTAL, len(df_twitter))
-    df_twitter_sample = df_twitter.iloc[:n_twitter].copy()
 
     remaining = TARGET_TOTAL - n_twitter
     n_bluesky = min(len(df_bluesky), remaining // 2)
     n_reddit = min(len(df_reddit), remaining - n_bluesky)
 
-    df_bluesky_sample = df_bluesky.iloc[:n_bluesky].copy()
-    df_reddit_sample = df_reddit.iloc[:n_reddit].copy()
-
-    selected_total = len(df_twitter_sample) + len(df_bluesky_sample) + len(df_reddit_sample)
+    selected_total = n_twitter + n_bluesky + n_reddit
     if selected_total < TARGET_TOTAL:
         fill = TARGET_TOTAL - selected_total
         bluesky_remaining = len(df_bluesky) - n_bluesky
         reddit_remaining = len(df_reddit) - n_reddit
 
-        if bluesky_remaining >= fill:
-            extra = df_bluesky.iloc[n_bluesky : n_bluesky + fill].copy()
-            df_bluesky_sample = pd.concat([df_bluesky_sample, extra], ignore_index=True)
-        elif reddit_remaining >= fill:
-            extra = df_reddit.iloc[n_reddit : n_reddit + fill].copy()
-            df_reddit_sample = pd.concat([df_reddit_sample, extra], ignore_index=True)
-        else:
-            raise RuntimeError(
-                "Insufficient data to sample the target amount. "
-                f"Have_total={len(df_twitter) + len(df_bluesky) + len(df_reddit)} "
-                f"Target_total={TARGET_TOTAL}."
+        extra_bluesky = min(bluesky_remaining, fill)
+        n_bluesky += extra_bluesky
+        fill -= extra_bluesky
+
+        extra_reddit = min(reddit_remaining, fill)
+        n_reddit += extra_reddit
+        fill -= extra_reddit
+
+        if fill > 0:
+            available_total = len(df_twitter) + len(df_bluesky) + len(df_reddit)
+            print(
+                f"Warning: only {available_total:,} unique posts available; "
+                f"sampled {n_twitter + n_bluesky + n_reddit:,} of target {TARGET_TOTAL:,} "
+                f"({fill:,} short)."
             )
+
+    df_twitter_sample = df_twitter.iloc[:n_twitter].copy()
+    df_bluesky_sample = df_bluesky.iloc[:n_bluesky].copy()
+    df_reddit_sample = df_reddit.iloc[:n_reddit].copy()
 
     df_sampled = pd.concat(
         [df_twitter_sample, df_bluesky_sample, df_reddit_sample], ignore_index=True
@@ -189,36 +268,47 @@ def main() -> None:
     print(df_sampled["integration"].value_counts())
     print()
 
-    print("pd.value_counts by integration x toxicity_tier")
+    print("pd.value_counts by sample_toxicity_type")
+    print(df_sampled["sample_toxicity_type"].value_counts())
+    print()
+
+    print("pd.value_counts by integration x sample_toxicity_type")
     integration_tox = pd.Series(
-        list(zip(df_sampled["integration"], df_sampled["toxicity_tier"]))
+        list(zip(df_sampled["integration"], df_sampled["sample_toxicity_type"]))
     )
     print(integration_tox.value_counts())
     print()
 
-    print("pd.value_counts by integration x political_stance")
+    print("pd.value_counts by integration x sampled_stance")
     print(
         pd.Series(
-            list(zip(df_sampled["integration"], df_sampled["political_stance"]))
+            list(zip(df_sampled["integration"], df_sampled["sampled_stance"]))
         ).value_counts()
     )
     print()
 
-    print("pd.value_counts by toxicity_tier x political_stance")
+    print("pd.value_counts by sample_toxicity_type x sampled_stance")
     stance_tox = pd.Series(
-        list(zip(df_sampled["toxicity_tier"], df_sampled["political_stance"]))
+        list(zip(df_sampled["sample_toxicity_type"], df_sampled["sampled_stance"]))
     )
     print(stance_tox.value_counts())
     print()
 
     # 6) Write output CSV (contract columns only).
-    required_cols = ["post_id", "text", "toxicity_tier", "political_stance"]
+    required_cols = [
+        "post_primary_key",
+        "original_text",
+        "sample_toxicity_type",
+        "sampled_stance",
+    ]
     for col in required_cols:
         if df_sampled[col].isna().any():
             raise ValueError(f"Nulls found in output column `{col}` after sampling.")
 
     timestamp = get_current_timestamp()
-    out_fp = output_dir / f"sampled_posts_{timestamp}.csv"
+    out_dir = output_dir / CONCATENATED_RECORDS_DIRNAME / timestamp
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_fp = out_dir / "records.csv"
     df_sampled[required_cols].to_csv(out_fp, index=False)
     print(f"Wrote {out_fp} ({len(df_sampled)} rows).")
 
