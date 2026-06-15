@@ -9,15 +9,14 @@ PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/gene
 from pathlib import Path
 
 import pandas as pd
+from langchain_aws import ChatBedrockConverse
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableConfig
-from langchain_openai import ChatOpenAI
 from pydantic import BaseModel
 from tqdm import tqdm
 
 from experiments.scaled_mirrors_generation_2026_06_02.prompts import FLIP_PROMPT
-from lib.constants import DEFAULT_LLM_MODEL
-from lib.load_env_vars import EnvVarsContainer
+from lib.constants import BEDROCK_REGION, DEFAULT_BEDROCK_SONNET_MODEL
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 
@@ -26,12 +25,27 @@ GENERATED_FLIPS_DIR = EXPERIMENT_DIR / "generated_flips"
 
 # Hard-coded generation settings. This script intentionally provides no CLI args.
 BATCH_SIZE = 25
-MAX_CONCURRENCY = 40
+MAX_CONCURRENCY = 10
+
+OUTPUT_COLUMNS = [
+    "post_primary_key",
+    "original_text",
+    "sample_toxicity_type",
+    "sampled_stance",
+    "mirrored_text",
+]
 
 
 class FlipResponse(BaseModel):
     flipped_text: str
     explanation: str
+
+
+def get_llm(
+    model: str = DEFAULT_BEDROCK_SONNET_MODEL,
+    region_name: str = BEDROCK_REGION,
+) -> ChatBedrockConverse:
+    return ChatBedrockConverse(model=model, region_name=region_name)
 
 
 def _pick_latest_input_csv() -> Path:
@@ -57,6 +71,22 @@ def _build_prompt_template() -> ChatPromptTemplate:
     # FLIP_PROMPT does not currently include the post text. Add it explicitly.
     prompt_template = prompt_template + "\n\nPost:\n{post_text}\n"
     return ChatPromptTemplate.from_messages([("human", prompt_template)])
+
+
+def _load_completed_keys(out_fp: Path) -> set[str]:
+    if not out_fp.exists():
+        return set()
+    existing = pd.read_csv(out_fp, usecols=["post_primary_key"])
+    return set(existing["post_primary_key"].astype(str))
+
+
+def _append_rows(out_fp: Path, rows: list[dict[str, str]], *, write_header: bool) -> None:
+    pd.DataFrame(rows, columns=OUTPUT_COLUMNS).to_csv(
+        out_fp,
+        mode="a",
+        header=write_header,
+        index=False,
+    )
 
 
 def _compute_target_group(sampled_stance: str) -> str:
@@ -89,13 +119,22 @@ def main() -> None:
     if missing_cols:
         raise KeyError(f"Missing required columns in {input_csv}: {missing_cols}")
 
+    completed_keys = _load_completed_keys(out_fp)
+    if completed_keys:
+        n_before = len(df)
+        df = df[~df["post_primary_key"].astype(str).isin(completed_keys)].reset_index(drop=True)
+        print(f"Resuming: skipping {n_before - len(df)} rows already in {out_fp}.")
+
+    if df.empty:
+        print(f"Nothing to do; {out_fp} already has all rows.")
+        return
+
     prompt = _build_prompt_template()
-    api_key = EnvVarsContainer.get_env_var("OPENAI_API_KEY", required=True)
-    llm = ChatOpenAI(model=DEFAULT_LLM_MODEL, api_key=api_key)
-    structured = llm.with_structured_output(FlipResponse)
+    llm = get_llm()
+    structured = llm.with_structured_output(FlipResponse, method="json_schema")
     chain = prompt | structured
 
-    rows: list[dict[str, str]] = []
+    write_header = not out_fp.exists()
     n = len(df)
     for start in tqdm(range(0, n, BATCH_SIZE), desc="Generating flips", unit="batch"):
         batch = df.iloc[start : start + BATCH_SIZE]
@@ -113,8 +152,9 @@ def main() -> None:
         # Batch call via LCEL.
         results = chain.batch(inputs, config=RunnableConfig(max_concurrency=MAX_CONCURRENCY))
 
+        batch_rows: list[dict[str, str]] = []
         for row_in, resp in zip(batch.itertuples(index=False), results, strict=True):
-            rows.append(
+            batch_rows.append(
                 {
                     "post_primary_key": str(getattr(row_in, "post_primary_key")),
                     "original_text": str(getattr(row_in, "original_text")),
@@ -124,20 +164,12 @@ def main() -> None:
                 }
             )
 
-    out_df = pd.DataFrame(
-        rows,
-        columns=[
-            "post_primary_key",
-            "original_text",
-            "sample_toxicity_type",
-            "sampled_stance",
-            "mirrored_text",
-        ],
-    )
-    out_df.to_csv(out_fp, index=False)
-    print(f"Wrote {out_fp} ({len(out_df)} rows).")
+        _append_rows(out_fp, batch_rows, write_header=write_header)
+        write_header = False
+
+    total_rows = len(pd.read_csv(out_fp))
+    print(f"Wrote {len(df)} new rows to {out_fp} ({total_rows} total).")
 
 
 if __name__ == "__main__":
     main()
-
