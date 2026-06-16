@@ -86,13 +86,12 @@ def download_tarball(*, force: bool = False) -> Path:
         import gdown
     except ImportError as exc:
         raise typer.Exit(
-            "gdown is required for --download. Run `uv sync --group dev` or pass "
+            "gdown is required for --download. Run `uv sync --frozen --no-dev` or pass "
             f"--tarball /path/to/bolun_package.tar.zst after manual download."
         ) from exc
 
-    url = f"https://drive.google.com/uc?id={BOLUN_DRIVE_FILE_ID}"
     print(f"Downloading Bolun package from Google Drive to {BOLUN_TARBALL} ...")
-    gdown.download(url, str(BOLUN_TARBALL), quiet=False, fuzzy=True)
+    gdown.download(id=BOLUN_DRIVE_FILE_ID, output=str(BOLUN_TARBALL), quiet=False)
     if not BOLUN_TARBALL.is_file():
         raise typer.Exit(f"Download failed; expected {BOLUN_TARBALL}")
     print(f"Downloaded {BOLUN_TARBALL} ({BOLUN_TARBALL.stat().st_size / 1e9:.2f} GB)")

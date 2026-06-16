@@ -7,8 +7,10 @@ Chunked, resumable pipeline for Pushshift comment `.zst` files. Filters comments
 ## Setup (local smoke test)
 
 ```bash
-brew install aria2
-uv sync --group dev
+curl -LsSf https://astral.sh/uv/install.sh | sh   # once, if uv < 0.11
+export PATH="${HOME}/.local/bin:${PATH}"
+export UV_LINK_MODE=copy
+uv sync --frozen --no-dev   # or `uv sync` locally for full dev group
 ```
 
 Set `GOOGLE_API_KEY` in repo-root `.env`.
@@ -62,11 +64,16 @@ PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/ru
 # Orchestrator (default: max 10 files attempted)
 PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py
 
-# Unlimited file cap (still stops at 50k high-toxic / 1M API calls per session)
-PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py --max-files 0
+# Unlimited file cap; Quest production uses --stem-prefix RC_2025 (see HOW_TO_RUN_ACTUAL_DATA.md)
+PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py --max-files 0 --stem-prefix RC_2025
 ```
 
-On Quest, use the Slurm template in `scripts/run_quest.slurm` — details in [HOW_TO_RUN_ACTUAL_DATA.md](HOW_TO_RUN_ACTUAL_DATA.md).
+On Quest, use Slurm templates in `scripts/`:
+
+- **`run_quest_one_month.slurm`** — calibration on one `RC_2025-*.zst` month (default `RC_2025-06`)
+- **`run_quest.slurm`** — full 2025 orchestration (`--stem-prefix RC_2025`)
+
+Details in [HOW_TO_RUN_ACTUAL_DATA.md](HOW_TO_RUN_ACTUAL_DATA.md).
 
 ## Outputs
 

@@ -1,0 +1,11 @@
+{
+  "files_processed": [
+    "RC_2025-06"
+  ],
+  "high_toxic_by_file": {
+    "RC_2025-06": 33635
+  },
+  "total_high_toxic": 33635,
+  "stop_threshold": 50000,
+  "stopped_reason": "files_exhausted"
+}

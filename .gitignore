@@ -109,3 +109,7 @@ experiments/fetch_reddit_pushshift_dump_2026_06_15/data/bolun/**
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/data/bolun/.gitkeep
 experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/**
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/.gitkeep
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/total_metadata.json
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/high_toxic_comments.parquet
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/metadata.json
