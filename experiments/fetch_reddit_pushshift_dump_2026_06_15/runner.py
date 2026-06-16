@@ -62,6 +62,7 @@ def process_input_file(input_file: Path) -> int:
     scores = run_batch_scoring(comments_to_score)
 
     high_toxic_rows: list[HighToxicCommentRow] = []
+    rows_scored = sum(1 for score in scores if score.was_successfully_labeled)
     for score in scores:
         if not score.was_successfully_labeled or score.prob_toxic is None:
             continue
@@ -77,7 +78,7 @@ def process_input_file(input_file: Path) -> int:
         source_file=str(input_file),
         rows_read=rows_read,
         rows_after_filter=len(filtered),
-        rows_scored=len(comments_to_score),
+        rows_scored=rows_scored,
         rows_high_toxic=len(high_toxic_rows),
         toxicity_threshold=TOXICITY_THRESHOLD,
     )
@@ -86,7 +87,7 @@ def process_input_file(input_file: Path) -> int:
 
     print(
         f"Processed {stem}: read={rows_read}, filtered={len(filtered)}, "
-        f"scored={len(comments_to_score)}, high_toxic={len(high_toxic_rows)}"
+        f"scored={rows_scored}, high_toxic={len(high_toxic_rows)}"
     )
     return len(high_toxic_rows)
 

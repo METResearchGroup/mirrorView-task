@@ -2,6 +2,7 @@
 
 from unittest.mock import AsyncMock, patch
 
+from experiments.fetch_reddit_pushshift_dump_2026_06_15 import api_budget
 from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import CommentToScore
 from experiments.fetch_reddit_pushshift_dump_2026_06_15.perspective import run_batch_scoring
 
@@ -11,6 +12,7 @@ from experiments.fetch_reddit_pushshift_dump_2026_06_15.perspective import run_b
     new_callable=AsyncMock,
 )
 def test_run_batch_scoring_preserves_order(mock_retry):
+    api_budget.reset_session_budget()
     mock_retry.return_value = [
         {"prob_toxic": 0.9},
         None,

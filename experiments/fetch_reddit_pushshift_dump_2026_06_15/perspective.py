@@ -10,6 +10,11 @@ from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 from tqdm import tqdm
 
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.api_budget import (
+    api_calls_remaining,
+    budget_exhausted,
+    record_api_calls,
+)
 from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
     PERSPECTIVE_BATCH_SIZE,
     PERSPECTIVE_DELAY_SECONDS,
@@ -58,6 +63,13 @@ async def process_perspective_batch(requests: list[dict]) -> list[dict | None]:
     if not requests:
         return []
 
+    original_len = len(requests)
+    allowed = min(original_len, api_calls_remaining())
+    if allowed == 0:
+        return [None] * original_len
+
+    requests_to_send = requests[:allowed]
+
     google_client = get_google_client()
     batch = google_client.new_batch_http_request()
     responses: list[dict | None] = []
@@ -72,16 +84,20 @@ async def process_perspective_batch(requests: list[dict]) -> list[dict | None]:
             return
         responses.append(_extract_toxicity(response_obj))
 
-    for request in requests:
+    for request in requests_to_send:
         batch.add(google_client.comments().analyze(body=request), callback=callback)
 
     try:
         batch.execute()
+        record_api_calls(len(requests_to_send))
     except HttpError:
-        return [None] * len(requests)
+        record_api_calls(len(requests_to_send))
+        responses = [None] * allowed
 
-    if len(responses) < len(requests):
-        responses.extend([None] * (len(requests) - len(responses)))
+    if len(responses) < allowed:
+        responses.extend([None] * (allowed - len(responses)))
+    if original_len > allowed:
+        responses.extend([None] * (original_len - allowed))
     return responses
 
 
@@ -143,7 +159,20 @@ async def _run_batch_scoring_async(
         unit="batch",
         total=len(batches),
     )
-    for batch in progress:
+    for batch_index, batch in enumerate(progress):
+        if budget_exhausted():
+            for remaining in batches[batch_index:]:
+                for item in remaining:
+                    all_scores.append(
+                        ToxicityScore(
+                            comment_id=item.comment_id,
+                            prob_toxic=None,
+                            was_successfully_labeled=False,
+                            reason="api_budget_exhausted",
+                        )
+                    )
+            break
+
         requests = [create_perspective_request(item.text) for item in batch]
         responses = await process_perspective_batch_with_retries(
             requests,
@@ -167,7 +196,7 @@ async def _run_batch_scoring_async(
                         was_successfully_labeled=True,
                     )
                 )
-        if progress.n < progress.total:
+        if progress.n < progress.total and not budget_exhausted():
             await asyncio.sleep(PERSPECTIVE_DELAY_SECONDS)
 
     return all_scores
