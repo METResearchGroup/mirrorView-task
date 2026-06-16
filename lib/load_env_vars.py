@@ -20,6 +20,7 @@ from dotenv import load_dotenv
 ENV_VAR_TYPES: Final[dict[str, type[str]]] = {
     "OPENAI_API_KEY": str,
     "WANDB_API_KEY": str,
+    "GOOGLE_API_KEY": str
 }
 
 

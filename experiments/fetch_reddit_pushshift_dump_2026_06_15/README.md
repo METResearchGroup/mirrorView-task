@@ -1,26 +1,60 @@
-# Get data from Reddit PushShift
+# Academic Torrents Reddit Pushshift Toxicity Smoke Test
 
-With our scaling-up approach, we didn't get enough high toxicity posts; therefore, we need to backfill with data from the Reddit push shift dataset. Bolun had this data, so I asked him to pull the data that we'd need.
+Chunked, resumable pipeline for raw Pushshift comment `.zst` files from [Academic Torrents](https://academictorrents.com/download/3d426c47c767d40f82c7ef0f47c3acacedd2bf44.torrent). Filters to six political subreddits, scores survivors with batched Perspective API (TOXICITY only, threshold >= 0.7), and writes per-file deliverables until 50,000 high-toxic comments are accumulated globally.
 
-He provided this as a 16GB compressed dataset via Google Drive.
+## Setup
 
-What we need to do is to load in the records and then get a subset of it that would meet our data needs and would also be of the scale to pass on to our pipeline. We need 2,500 high-toxic posts. Given that our pass rate across all six filters is maybe 5% or something (just to be extra conservative), that would mean 50,000 high toxic posts from the dataset. It looks like in practice it might be 10% or something, but we want to just get this over with TBH.
-
-So, what we'll want is to run the classifier and get p>=0.7 posts and get that for as many posts as possible.
-
-A simple format would look like:
-
-- Store all the files that we've processed.
-- For each file, save the records with p>=0.7 for toxicity.
-
-Outputs can be something like:
-
-```markdown
-outputs/
-  {original filename}/
-    metadata.json
-    high_toxic_posts.parquet
-total_metadata.json # stores list of files processed, total toxic posts per file.
+```bash
+brew install aria2
+uv sync --group dev
 ```
 
-We can then just loop through each file and run this logic.
+Set `GOOGLE_API_KEY` in repo-root `.env`.
+
+## Download sample data
+
+```bash
+bash experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/download_at_sample.sh
+# or a specific month:
+bash experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/download_at_sample.sh RC_2024-06.zst
+```
+
+Expected: `experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/RC_2024-06.zst`
+
+Tiny inspection files (e.g. `RC_2005-12.zst`) are also available in the torrent index.
+
+## Run
+
+```bash
+# Unit tests (no network)
+PYTHONPATH=. uv run pytest experiments/fetch_reddit_pushshift_dump_2026_06_15/tests/ -q
+
+# Process one file
+PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/runner.py \
+  --input-file experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/RC_2024-06.zst
+
+# Orchestrator (default: max 10 files attempted)
+PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py
+
+# Unlimited file cap (still stops at 50k high-toxic)
+PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py --max-files 0
+```
+
+## Outputs
+
+For each scanned input file `RC_YYYY-MM.zst`:
+
+```text
+outputs/{stem}/
+  metadata.json
+  high_toxic_comments.parquet   # mirrorview 13 cols + prob_toxic, prob_toxic >= 0.7 only
+outputs/total_metadata.json     # cumulative counts across files
+```
+
+Re-running a file whose `metadata.json` already exists logs `Skipping {stem}, metadata.json exists` and does not re-score.
+
+## Background
+
+Bolun's 16GB Google Drive package is deferred for this phase. We use Academic Torrents selective downloads instead so we can stream month files locally and scale up on Quest later.
+
+Reference chat with Bolun (dataset scope, columns, torrent link) is preserved in git history of this README.
