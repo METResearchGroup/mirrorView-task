@@ -29,8 +29,15 @@ module load python/3.12.3   # or: module avail python
 # Install deps once per clone
 uv sync --group dev
 
-# Perspective API key — do NOT commit this
-export GOOGLE_API_KEY='...'   # or: set in $REPO/.env
+# Perspective API key — stored in repo-root .env (gitignored), loaded at runtime
+# by lib/load_env_vars.py when perspective.py calls EnvVarsContainer.get_env_var(...)
+cat > "$REPO/.env" <<'EOF'
+GOOGLE_API_KEY=your-key-here
+EOF
+
+# Verify the key loads (do not commit .env)
+PYTHONPATH=. uv run python -c \
+  "from lib.load_env_vars import EnvVarsContainer; EnvVarsContainer.get_env_var('GOOGLE_API_KEY', required=True); print('GOOGLE_API_KEY ok')"
 ```
 
 **Disk:** reserve at least **~80GB** on project storage:
@@ -109,7 +116,7 @@ Re-running the same file skips scoring if `metadata.json` exists (resumable).
 
 ## Step 4 — Submit a Slurm job (full orchestration)
 
-Create `experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/run_quest.slurm`:
+Use `experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/run_quest.slurm`. Ensure `$REPO/.env` contains `GOOGLE_API_KEY` before submitting — the job does **not** export the key in the shell; `perspective.py` reads it via `lib/load_env_vars.py` at runtime.
 
 ```bash
 #!/bin/bash
@@ -125,7 +132,6 @@ set -euo pipefail
 cd /projects/p32375/mirrorView-task
 
 module load python/3.12.3
-export GOOGLE_API_KEY="${GOOGLE_API_KEY:?Set GOOGLE_API_KEY before sbatch}"
 
 mkdir -p logs experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs
 
@@ -188,7 +194,7 @@ Note: `RC_2024-06.zst` is **~29 GiB** per file. Prefer Bolun's pre-filtered pack
 
 | Issue | Action |
 |-------|--------|
-| `GOOGLE_API_KEY` missing | Export in shell or `.env` at repo root before job |
+| `GOOGLE_API_KEY` missing | Add `GOOGLE_API_KEY=...` to `$REPO/.env`; verify with `EnvVarsContainer.get_env_var('GOOGLE_API_KEY', required=True)` |
 | Job killed (OOM) | Increase `#SBATCH --mem`; pipeline streams JSONL and should not load full months into RAM |
 | Duplicate scoring | Remove `outputs/{stem}/metadata.json` to force re-run |
 | Slow inventory | Use `--skip-row-counts`; count rows per file later |

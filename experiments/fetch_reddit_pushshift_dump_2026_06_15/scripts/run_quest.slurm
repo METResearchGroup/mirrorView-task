@@ -7,9 +7,8 @@
 #SBATCH --job-name=reddit-toxic
 #SBATCH --output=logs/reddit-toxic-%j.out
 #
-# Submit from repo root:
+# Submit from repo root (requires $REPO/.env with GOOGLE_API_KEY):
 #   mkdir -p logs
-#   export GOOGLE_API_KEY=...
 #   sbatch experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/run_quest.slurm
 #
 # See HOW_TO_RUN_ACTUAL_DATA.md for full Quest instructions.
@@ -20,7 +19,6 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "${REPO_ROOT}"
 
 module load python/3.12.3 2>/dev/null || true
-export GOOGLE_API_KEY="${GOOGLE_API_KEY:?Set GOOGLE_API_KEY before sbatch}"
 
 mkdir -p logs experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs
 
