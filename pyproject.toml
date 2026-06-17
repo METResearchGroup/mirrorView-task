@@ -5,29 +5,34 @@ description = "jsPsych mirror view experiment — tooling and static assets"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
+    "gdown>=5.2.0",
+    "google-api-python-client>=2.187.0",
     "langchain>=1.2.17",
     "langchain-aws>=1.5.1",
     "langchain-openai>=1.2.1",
     "matplotlib>=3.10.9",
+    "pandas>=3.0.2",
+    "pyarrow>=20.0.0",
+    "pydantic>=2.12.0",
+    "python-dotenv>=1.2.2",
+    "tabulate>=0.10.0",
     "tqdm>=4.66.0",
+    "typer>=0.25.0",
     "xgboost>=3.2.0",
+    "zstandard>=0.25.0",
 ]
 
 [dependency-groups]
 dev = [
     "boto3>=1.42.88",
     "joblib>=1.5.3",
-    "pandas>=3.0.2",
-    "pyarrow>=20.0.0",
-    "python-dotenv>=1.2.2",
+    "pytest>=9.0.0",
     "questionary>=2.1.1",
     "rich>=14.0.0",
     "scikit-learn>=1.8.0",
     "spacy>=3.8.0",
-    "tabulate>=0.10.0",
     "torch>=2.12.0",
     "transformers>=5.8.1",
-    "typer>=0.25.0",
     "wandb>=0.26.1",
 ]
 
