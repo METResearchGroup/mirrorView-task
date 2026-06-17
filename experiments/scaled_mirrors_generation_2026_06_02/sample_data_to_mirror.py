@@ -5,7 +5,7 @@ This script:
 - Normalizes rows into a unified internal schema
 - Deduplicates by `post_primary_key` per integration before sampling (Reddit uses `unique_reddit_id`, a composite of post and comment id)
 - Filters out `political_stance` values `unclear` and `neutral`
-- Samples up to `TARGET_TOTAL` unique posts (Twitter prioritized; among Bluesky and Reddit, all `sample_high_toxicity` posts are taken first, then the remainder is split 50/50)
+- Samples up to `TARGET_TOTAL` unique posts with an even split across low, middle, and high toxicity tiers; within each tier, Twitter is prioritized and remaining slots are split 50/50 between Bluesky and Reddit
 - Writes `concatenated_records/{timestamp}/records.csv`
 - Prints stdout summary `value_counts` tables
 
@@ -36,7 +36,31 @@ TOXICITY_TIER_MAP = {
     "sample_middle_toxicity": "sample_middle_toxicity",
     "sample_high_toxicity": "sample_high_toxicity",
 }
+LOW_TOXICITY = "sample_low_toxicity"
+MIDDLE_TOXICITY = "sample_middle_toxicity"
 HIGH_TOXICITY = "sample_high_toxicity"
+TOXICITY_TIERS = [LOW_TOXICITY, MIDDLE_TOXICITY, HIGH_TOXICITY]
+STANCES = ["left", "right"]
+INTEGRATIONS = ["reddit", "bluesky", "twitter"]
+
+INTEGRATION_TOXICITY_ORDER = [
+    (integration, tier) for integration in INTEGRATIONS for tier in TOXICITY_TIERS
+]
+INTEGRATION_STANCE_ORDER = [
+    (integration, stance) for integration in INTEGRATIONS for stance in STANCES
+]
+TOXICITY_STANCE_ORDER = [
+    (tier, stance) for tier in TOXICITY_TIERS for stance in STANCES
+]
+
+
+def _ordered_value_counts(counts: pd.Series, order: list) -> pd.Series:
+    """Return value counts reindexed to *order* (missing keys count as 0)."""
+
+    return pd.Series(
+        [int(counts.get(key, 0)) for key in order],
+        index=pd.Index(order),
+    )
 
 
 def sha256_hex(text: str) -> str:
@@ -151,11 +175,28 @@ def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.Dat
     return normalized
 
 
-def _split_high_toxicity(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Split a shuffled frame into high-toxicity rows and all other rows."""
+def _split_by_toxicity_tier(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
+    """Split a shuffled frame into low, middle, and high toxicity rows."""
 
-    is_high = df["sample_toxicity_type"] == HIGH_TOXICITY
-    return df[is_high].reset_index(drop=True), df[~is_high].reset_index(drop=True)
+    unknown = ~df["sample_toxicity_type"].isin(TOXICITY_TIERS)
+    if unknown.any():
+        bad = sorted(df.loc[unknown, "sample_toxicity_type"].unique())
+        raise ValueError(f"Unexpected toxicity tiers: {bad}")
+
+    return {
+        tier: df[df["sample_toxicity_type"] == tier].reset_index(drop=True)
+        for tier in TOXICITY_TIERS
+    }
+
+
+def _allocate_tier_targets(total: int) -> dict[str, int]:
+    """Split *total* evenly across toxicity tiers (remainder goes to first tiers)."""
+
+    base, remainder = divmod(total, len(TOXICITY_TIERS))
+    targets = {tier: base for tier in TOXICITY_TIERS}
+    for tier in TOXICITY_TIERS[:remainder]:
+        targets[tier] += 1
+    return targets
 
 
 def _allocate_remaining_slots(
@@ -185,43 +226,35 @@ def _allocate_remaining_slots(
     return n_bluesky, n_reddit
 
 
-def _sample_bluesky_and_reddit(
+def _sample_one_tier(
+    df_twitter: pd.DataFrame,
     df_bluesky: pd.DataFrame,
     df_reddit: pd.DataFrame,
     *,
-    remaining: int,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Sample Bluesky and Reddit rows, taking all high-toxicity posts first."""
+    n: int,
+) -> pd.DataFrame:
+    """Sample up to *n* rows for one toxicity tier (Twitter first, then 50/50 Bsky/Reddit)."""
 
-    bluesky_high, bluesky_other = _split_high_toxicity(df_bluesky)
-    reddit_high, reddit_other = _split_high_toxicity(df_reddit)
+    n_twitter = min(n, len(df_twitter))
+    parts: list[pd.DataFrame] = []
+    if n_twitter:
+        parts.append(df_twitter.iloc[:n_twitter])
 
-    bluesky_sample_parts = [bluesky_high]
-    reddit_sample_parts = [reddit_high]
-
-    remaining_after_high = remaining - len(bluesky_high) - len(reddit_high)
-    if remaining_after_high > 0:
-        n_bluesky_other, n_reddit_other = _allocate_remaining_slots(
-            len(bluesky_other),
-            len(reddit_other),
-            remaining_after_high,
+    remaining = n - n_twitter
+    if remaining > 0:
+        n_bluesky, n_reddit = _allocate_remaining_slots(
+            len(df_bluesky),
+            len(df_reddit),
+            remaining,
         )
-        if n_bluesky_other:
-            bluesky_sample_parts.append(bluesky_other.iloc[:n_bluesky_other])
-        if n_reddit_other:
-            reddit_sample_parts.append(reddit_other.iloc[:n_reddit_other])
+        if n_bluesky:
+            parts.append(df_bluesky.iloc[:n_bluesky])
+        if n_reddit:
+            parts.append(df_reddit.iloc[:n_reddit])
 
-    bluesky_sample = (
-        pd.concat(bluesky_sample_parts, ignore_index=True)
-        if bluesky_sample_parts
-        else df_bluesky.iloc[:0].copy()
-    )
-    reddit_sample = (
-        pd.concat(reddit_sample_parts, ignore_index=True)
-        if reddit_sample_parts
-        else df_reddit.iloc[:0].copy()
-    )
-    return bluesky_sample, reddit_sample
+    if not parts:
+        return df_twitter.iloc[:0].copy()
+    return pd.concat(parts, ignore_index=True)
 
 
 def dedupe_rows(df: pd.DataFrame, *, integration: str, subset: list[str]) -> pd.DataFrame:
@@ -300,18 +333,26 @@ def main() -> None:
     df_reddit = df_reddit.sample(frac=1.0, random_state=SEED, replace=False).reset_index(drop=True)
 
     # 5) Sample deterministically without replacement (unique keys only).
-    # Twitter first, then all high-toxicity Bluesky/Reddit rows, then the remainder 50/50.
-    n_twitter = min(TARGET_TOTAL, len(df_twitter))
-    remaining = TARGET_TOTAL - n_twitter
+    # Even split across toxicity tiers; within each tier, Twitter first, then 50/50 Bsky/Reddit.
+    twitter_by_tier = _split_by_toxicity_tier(df_twitter)
+    bluesky_by_tier = _split_by_toxicity_tier(df_bluesky)
+    reddit_by_tier = _split_by_toxicity_tier(df_reddit)
+    tier_targets = _allocate_tier_targets(TARGET_TOTAL)
 
-    df_twitter_sample = df_twitter.iloc[:n_twitter].copy()
-    df_bluesky_sample, df_reddit_sample = _sample_bluesky_and_reddit(
-        df_bluesky,
-        df_reddit,
-        remaining=remaining,
-    )
+    sample_parts: list[pd.DataFrame] = []
+    for tier in TOXICITY_TIERS:
+        sample_parts.append(
+            _sample_one_tier(
+                twitter_by_tier[tier],
+                bluesky_by_tier[tier],
+                reddit_by_tier[tier],
+                n=tier_targets[tier],
+            )
+        )
 
-    selected_total = len(df_twitter_sample) + len(df_bluesky_sample) + len(df_reddit_sample)
+    df_sampled = pd.concat(sample_parts, ignore_index=True)
+
+    selected_total = len(df_sampled)
     if selected_total < TARGET_TOTAL:
         available_total = len(df_twitter) + len(df_bluesky) + len(df_reddit)
         print(
@@ -319,10 +360,6 @@ def main() -> None:
             f"sampled {selected_total:,} of target {TARGET_TOTAL:,} "
             f"({TARGET_TOTAL - selected_total:,} short)."
         )
-
-    df_sampled = pd.concat(
-        [df_twitter_sample, df_bluesky_sample, df_reddit_sample], ignore_index=True
-    )
 
     # 7) Print stdout summaries.
     print("pd.value_counts by integration")
@@ -333,26 +370,29 @@ def main() -> None:
     print(df_sampled["sample_toxicity_type"].value_counts())
     print()
 
+    print("pd.value_counts by sampled_stance")
+    print(df_sampled["sampled_stance"].value_counts())
+    print()
+
     print("pd.value_counts by integration x sample_toxicity_type")
     integration_tox = pd.Series(
         list(zip(df_sampled["integration"], df_sampled["sample_toxicity_type"]))
     )
-    print(integration_tox.value_counts())
+    print(_ordered_value_counts(integration_tox.value_counts(), INTEGRATION_TOXICITY_ORDER))
     print()
 
     print("pd.value_counts by integration x sampled_stance")
-    print(
-        pd.Series(
-            list(zip(df_sampled["integration"], df_sampled["sampled_stance"]))
-        ).value_counts()
+    integration_stance = pd.Series(
+        list(zip(df_sampled["integration"], df_sampled["sampled_stance"]))
     )
+    print(_ordered_value_counts(integration_stance.value_counts(), INTEGRATION_STANCE_ORDER))
     print()
 
     print("pd.value_counts by sample_toxicity_type x sampled_stance")
     stance_tox = pd.Series(
         list(zip(df_sampled["sample_toxicity_type"], df_sampled["sampled_stance"]))
     )
-    print(stance_tox.value_counts())
+    print(_ordered_value_counts(stance_tox.value_counts(), TOXICITY_STANCE_ORDER))
     print()
 
     # 6) Write output CSV (contract columns only).
