@@ -18,9 +18,8 @@ aws:
   api:
     name: jspsych-scroll-api
     stage: prod
-    # TBD — same API shape as default deployment; update after redeploy to bucket-4 stack
-    post_assignments_url: TBD
-    save_data_url: TBD
+    post_assignments_url: https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments
+    save_data_url: https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data
 
   lambda:
     get_post_assignments_name: jspsych-scroll-get-post-assignments
@@ -62,7 +61,7 @@ design:
 # Stimulus catalog
 # ---------------------------------------------------------------------------
 stimuli:
-  post_catalog_path: jobs/mirrorview_scaled_2026_06_18/flips.csv
+  post_catalog_path: img/flips_scaled_2026_06_18.csv
   post_id_field: post_primary_key
   post_number_field: post_number
   original_text_field: original_text

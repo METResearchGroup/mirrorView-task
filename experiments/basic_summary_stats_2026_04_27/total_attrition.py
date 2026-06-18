@@ -27,7 +27,7 @@ import pandas as pd
 AWS_REGION = "us-east-2"
 USER_ASSIGNMENTS_TABLE = "user_assignments"
 STUDY_ID = "mirrorview"
-STUDY_ITERATION_ID = "pilot-phase2-v3"
+STUDY_ITERATION_ID = "mirrorview_scaled_2026_06_18"
 DEFAULT_GRACE_MINUTES = 20
 
 EXPORT_FILENAME_PATTERN = re.compile(

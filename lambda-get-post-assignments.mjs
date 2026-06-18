@@ -7,12 +7,14 @@
 
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 
-const lambdaClient = new LambdaClient({ region: "us-east-2" });
+const AWS_REGION = process.env.AWS_REGION || "us-east-2";
+const lambdaClient = new LambdaClient({ region: AWS_REGION });
 
 const ASSIGNMENT_LAMBDA_NAME = process.env.ASSIGNMENT_LAMBDA_NAME;
+const TEST_ITERATION_PREFIX = process.env.TEST_ITERATION_PREFIX || "dev-";
 
 const STUDY_SPEC = Object.freeze({
-    conditions: ['control', 'training', 'training_assisted'],
+    conditions: ['training_assisted'],
     validPoliticalParties: ['democrat', 'republican'],
 });
 
@@ -89,7 +91,7 @@ async function callStudyAssignmentLambda({
 }) {
     let effectiveStudyIterationId = studyIterationId;
     if (isTest) {
-        effectiveStudyIterationId = `dev-${studyIterationId}`;
+        effectiveStudyIterationId = `${TEST_ITERATION_PREFIX}${studyIterationId}`;
         console.log(`Using dev study iteration ID: ${effectiveStudyIterationId}`);
     } else {
         console.log(`Using study iteration ID: ${effectiveStudyIterationId}`);
