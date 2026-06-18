@@ -1,0 +1,60 @@
+{
+  "dataset_id": "reddit_c3e4a5b6-7d8e-9012-3456-789012345601",
+  "name": "mirrorview",
+  "source_preprocessed_run": "preprocessed/2026_06_16-14:59:15",
+  "row_counts": {
+    "preprocessed": 10,
+    "wide": 10,
+    "after_filters": 0
+  },
+  "filter_results": [
+    {
+      "column": "news_or_opinion_category",
+      "op": "eq",
+      "value": "opinion",
+      "records_before": 10,
+      "records_passing": 6
+    },
+    {
+      "column": "is_political",
+      "op": "eq",
+      "value": true,
+      "records_before": 6,
+      "records_passing": 3
+    },
+    {
+      "column": "is_likely_spam",
+      "op": "eq",
+      "value": false,
+      "records_before": 3,
+      "records_passing": 3
+    },
+    {
+      "column": "political_stance",
+      "op": "in",
+      "value": [
+        "left",
+        "right"
+      ],
+      "records_before": 3,
+      "records_passing": 0
+    },
+    {
+      "column": "is_self_contained",
+      "op": "eq",
+      "value": true,
+      "records_before": 0,
+      "records_passing": 0
+    },
+    {
+      "column": "is_structurally_complete",
+      "op": "eq",
+      "value": true,
+      "records_before": 0,
+      "records_passing": 0
+    }
+  ],
+  "files": {
+    "export": "mirrorview.csv"
+  }
+}

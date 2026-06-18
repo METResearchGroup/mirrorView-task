@@ -101,3 +101,15 @@ experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cro
 # Re-include run CSV summaries (otherwise blocked by repo-wide *.csv earlier in this file).
 !experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cross_encoder_frozen_encoder_clf_head/outputs/*/preds.csv
 !experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cross_encoder_frozen_encoder_clf_head/outputs/*/test_predictions.csv
+
+# Academic Torrents Pushshift smoke pipeline artifacts
+experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/**
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/.gitkeep
+experiments/fetch_reddit_pushshift_dump_2026_06_15/data/bolun/**
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/data/bolun/.gitkeep
+experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/**
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/.gitkeep
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/total_metadata.json
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/high_toxic_comments.parquet
+!experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/metadata.json
