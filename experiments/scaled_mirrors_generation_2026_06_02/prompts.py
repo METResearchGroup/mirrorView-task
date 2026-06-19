@@ -5,4 +5,6 @@ Respond with exactly two JSON fields: "flipped_text" (the rewritten post) and "e
 {{"flipped_text": "Your mirrored post text here.", "explanation": "Reversed target from X to Y; kept sarcastic tone."}}
 
 All output must be valid JSON. If any text contains a double quote character inside a field value, escape it as \\"
+
+The length of the mirror should be about the same as the original post.
 """.strip()

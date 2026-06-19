@@ -27,7 +27,7 @@ variable "aws_region" {
 variable "bucket_name" {
   description = "S3 bucket name for static hosting and data writes."
   type        = string
-  default     = "jspsych-mirror-view-3"
+  default     = "jspsych-mirror-view-4"
 }
 
 variable "assignment_lambda_name" {
@@ -223,6 +223,7 @@ resource "aws_lambda_function" "get_post_assignments" {
   environment {
     variables = {
       ASSIGNMENT_LAMBDA_NAME = var.assignment_lambda_name
+      TEST_ITERATION_PREFIX  = "dev-"
     }
   }
 
@@ -245,7 +246,9 @@ resource "aws_lambda_function" "save_data" {
 
   environment {
     variables = {
-      BUCKET_NAME = var.bucket_name
+      BUCKET_NAME          = var.bucket_name
+      DATA_PREFIX_PROLIFIC = "data/prolific/"
+      DATA_PREFIX_TEST     = "data/test/"
     }
   }
 

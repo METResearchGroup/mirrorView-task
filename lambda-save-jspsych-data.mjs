@@ -1,9 +1,11 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const s3Client = new S3Client({ region: "us-east-2" });
-const BUCKET_NAME = "jspsych-mirror-view-3";
-const DATA_PREFIX_PROLIFIC = "data/prolific/";
-const DATA_PREFIX_TEST = "data/test/";
+const AWS_REGION = process.env.AWS_REGION || "us-east-2";
+const BUCKET_NAME = process.env.BUCKET_NAME || "jspsych-mirror-view-4";
+const DATA_PREFIX_PROLIFIC = process.env.DATA_PREFIX_PROLIFIC || "data/prolific/";
+const DATA_PREFIX_TEST = process.env.DATA_PREFIX_TEST || "data/test/";
+
+const s3Client = new S3Client({ region: AWS_REGION });
 
 function corsResponse(statusCode, body) {
   return {

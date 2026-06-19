@@ -1,10 +1,13 @@
-// Production-only endpoint configuration.
+// Production endpoint + study identity configuration.
+// Source of truth: jobs/config/mirrorview_scaled_2026_06_18.yaml
 const config = {
     POST_ASSIGNMENTS_URL: 'https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments',
     SAVE_DATA_URL: 'https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data',
     PROLIFIC_COMPLETION_URL: null,
     STUDY_ID: 'mirrorview',
-    STUDY_ITERATION_ID: 'pilot-phase2-v3',
+    STUDY_ITERATION_ID: 'mirrorview_scaled_2026_06_18',
+    PROLIFIC_COMPLETION_CODE: 'CE5XLP3L',
+    PROLIFIC_COMPLETION_LINK: 'https://app.prolific.com/submissions/complete?cc=CE5XLP3L',
 
     getUrls() {
         return {

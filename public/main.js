@@ -22,7 +22,7 @@ let isTestParticipant = false;
  */
 const STUDY_SPEC = Object.freeze({
     /** Written to jsPsych data as experiment_version. Used only in public/main.js (assignParticipantId). */
-    experimentVersion: 'mirrorView_phase2',
+    experimentVersion: 'mirrorview_scaled_2026_06_18',
 
     /** Prolific participant ID query key. Used only in public/main.js (setupExperiment URL parsing). */
     prolificUrlQueryParam: 'PROLIFIC_PID',
@@ -31,68 +31,43 @@ const STUDY_SPEC = Object.freeze({
     conditionUrlQueryParam: 'condition',
 
     /**
-     * Allowed condition slugs (order: control, training, training_assisted).
-     * Used in public/main.js for URL override allowlist.
-     * Must match lambda-get-post-assignments validation and handler.py DEFAULT_STUDY_CONDITIONS (+ any third condition).
+     * Allowed condition slugs.
+     * Must match lambda-get-post-assignments validation and handler.py DEFAULT_STUDY_CONDITIONS.
      */
-    conditions: Object.freeze(['control', 'training', 'training_assisted']),
+    conditions: Object.freeze(['training_assisted']),
 
-    /** Condition id for single-post both phases. Used in public/main.js (instructions, break text, condition_phase_modes key). */
+    /** Condition id for linked-fate single phase. Used in public/main.js (instructions, condition_phase_modes key). */
     CONDITION_CONTROL: 'control',
-    /** Condition id for linked-fate phase 1, single phase 2. Used in public/main.js (instructions, break text, condition_phase_modes key). */
     CONDITION_TRAINING: 'training',
-    /** Condition id for linked-fate phase 1, assisted phase 2. Used in public/main.js (instructions, break text, condition_phase_modes key). */
     CONDITION_TRAINING_ASSISTED: 'training_assisted',
 
     /**
-     * Maps each condition to jsPsych moderation trial evaluation_mode per section (phase_1 = first block, phase_2 = second).
-     * Values: "single" (one post, no pair), "linked_fate" (pair, one decision for both), "assisted" (single post + mirror shown for reference).
-     * Used in public/main.js (moderation trials via getPhaseMode / useBothDecisionLabels). Not read by lambdas; documents study UX only.
-     * Must stay consistent with instruction copy (e.g. break text for training_assisted phase_2).
+     * Maps each condition to jsPsych moderation trial evaluation_mode per section.
+     * Values: "single", "linked_fate", "assisted".
      */
     condition_phase_modes: Object.freeze({
-        control: Object.freeze({
-            phase_1: 'single',
-            phase_2: 'single',
-        }),
-        training: Object.freeze({
-            phase_1: 'linked_fate',
-            phase_2: 'single',
-        }),
         training_assisted: Object.freeze({
             phase_1: 'linked_fate',
-            phase_2: 'assisted',
         }),
     }),
 
-    /** Moderation trials per section before the break. Used in public/main.js (loops, readyToBegin copy, trial total_trials). */
-    trialsPerPhase: 10,
-    /** Number of sections (phases of the task). Used in public/main.js (readyToBegin copy). */
-    numPhases: 2,
-    /**
-     * Total evaluated posts per participant; must equal trialsPerPhase * numPhases.
-     * Used in public/main.js (num_trials property, assignment response length check).
-     * Must match each precomputed assignment row in S3 (study_participant_assignment_interface batch jobs).
-     */
+    /** Moderation trials in the single section. */
+    trialsPerPhase: 20,
+    /** Number of sections (phases of the task). */
+    numPhases: 1,
+    /** Total evaluated posts per participant; must equal trialsPerPhase * numPhases. */
     numTrials: 20,
-    /**
-     * Same as numTrials for this study; explicit for parity with assignment CSV column semantics.
-     * Used in public/main.js (assignment validation). Match handler / precomputed row length.
-     */
+    /** Same as numTrials; must match precomputed assignment row length. */
     postsPerParticipant: 20,
 
-    /**
-     * Path under public/ for the stimulus catalog fetch.
-     * Used in public/main.js (loadMirrorData). Precomputed assignments must use post IDs from this catalog.
-     */
-    postCatalogPath: 'img/all_mirrors_claude.csv',
-    /**
-     * CSV column used as canonical post id; assignment API returns these strings.
-     * Used in public/main.js (assignedPostLookup, trial post_id). Must match precomputed assignedPostIds in S3.
-     */
+    /** Path under public/ for the stimulus catalog fetch (deployed to S3). */
+    postCatalogPath: 'img/flips_scaled_2026_06_18.csv',
+    /** CSV column used as canonical post id. */
     postIdField: 'post_primary_key',
-    /** CSV column for display numeric id. Used in public/main.js (trial post_number). */
+    /** CSV column for display numeric id (optional; flips.csv has no post_number). */
     postNumberField: 'post_number',
+    /** CSV column for mirror text. */
+    mirrorTextField: 'mirrored_text',
 });
 
 if (STUDY_SPEC.numTrials !== STUDY_SPEC.trialsPerPhase * STUDY_SPEC.numPhases) {
@@ -108,11 +83,26 @@ for (const cond of STUDY_SPEC.conditions) {
     if (!row) {
         throw new Error(`STUDY_SPEC: condition_phase_modes missing entry for condition "${cond}"`);
     }
-    for (const key of ['phase_1', 'phase_2']) {
+    for (let phaseNum = 1; phaseNum <= STUDY_SPEC.numPhases; phaseNum++) {
+        const key = `phase_${phaseNum}`;
         if (!ALLOWED_EVALUATION_MODES.has(row[key])) {
             throw new Error(`STUDY_SPEC: condition_phase_modes.${cond}.${key} must be one of ${[...ALLOWED_EVALUATION_MODES].join(', ')}`);
         }
     }
+}
+
+function getPostNumber(post) {
+    if (!post) return '';
+    const num = post[STUDY_SPEC.postNumberField];
+    if (num !== undefined && num !== null && String(num).trim() !== '') {
+        return String(num);
+    }
+    return post[STUDY_SPEC.postIdField] || '';
+}
+
+function getMirrorText(post) {
+    if (!post) return '';
+    return post[STUDY_SPEC.mirrorTextField] || '';
 }
 
 const jsPsych = initJsPsych({
@@ -208,7 +198,7 @@ const jsPsych = initJsPsych({
         const urls = window.config?.getUrls?.() || {};
         const endpoint = urls.SAVE_DATA_URL;
         
-        if (!endpoint) {
+        if (!endpoint || endpoint === 'TBD') {
             console.error('No SAVE_DATA_URL configured');
             document.body.innerHTML = `
                 <div style="text-align: center; margin-top: 100px; font-family: system-ui, sans-serif;">
@@ -241,6 +231,8 @@ const jsPsych = initJsPsych({
             console.log('Data saved:', result);
             // Redirect to Prolific completion URL if available
             const prolificCompletionUrl = urls.PROLIFIC_COMPLETION_URL;
+            const prolificCompletionLink = window.config?.PROLIFIC_COMPLETION_LINK;
+            const prolificCompletionCode = window.config?.PROLIFIC_COMPLETION_CODE || 'CE5XLP3L';
             if (prolificCompletionUrl) {
                 window.location.href = prolificCompletionUrl;
             } else {
@@ -252,10 +244,10 @@ const jsPsych = initJsPsych({
                             Thank you for participating! Your responses have been recorded.
                         </p>
                         <p style="font-size: 18px; color: #4b5563;">
-                            <a href="https://app.prolific.com/submissions/complete?cc=CE5XLP3L" target="_blank">
+                            <a href="${prolificCompletionLink}" target="_blank">
                                 <b>Click here</b>
                             </a>
-                            to be redirected to Prolific (completion code <b>CE5XLP3L</b>).
+                            to be redirected to Prolific (completion code <b>${prolificCompletionCode}</b>).
                         </p>
                     </div>
                 `;
@@ -290,11 +282,12 @@ async function loadMirrorData() {
         
         // Filter to only rows with valid data
         // Each row represents one post with its Claude mirror
-        const validData = data.filter(row => 
-            row.original_text && 
+        const mirrorField = STUDY_SPEC.mirrorTextField;
+        const validData = data.filter(row =>
+            row.original_text &&
             row.original_text.trim() !== '' &&
-            row.claude_mirror &&
-            row.claude_mirror.trim() !== ''
+            row[mirrorField] &&
+            row[mirrorField].trim() !== ''
         );
         
         console.log(`Loaded ${validData.length} posts with mirrors`);
@@ -504,7 +497,7 @@ async function setupExperiment() {
                     const studyId = urls.STUDY_ID;
                     const studyIterationId = urls.STUDY_ITERATION_ID;
                     
-                    if (!postAssignmentUrl) {
+                    if (!postAssignmentUrl || postAssignmentUrl === 'TBD') {
                         throw new Error('No POST_ASSIGNMENTS_URL configured');
                     }
                     if (!studyId) {
@@ -648,9 +641,12 @@ async function setupExperiment() {
             pages: [`
                 <div class='instructions'>
                     <h2>Great! You're ready to begin.</h2>
-                    <p>There will be <b>${STUDY_SPEC.numPhases} sections</b> with <b>${STUDY_SPEC.trialsPerPhase} trials each</b>, for a total of <b>${STUDY_SPEC.numTrials} trials (posts to evaluate)</b>. 
+                    ${STUDY_SPEC.numPhases === 1
+                        ? `<p>You will evaluate <b>${STUDY_SPEC.numTrials} posts</b> in total.</p>`
+                        : `<p>There will be <b>${STUDY_SPEC.numPhases} sections</b> with <b>${STUDY_SPEC.trialsPerPhase} trials each</b>, for a total of <b>${STUDY_SPEC.numTrials} trials (posts to evaluate)</b>.
                     <br>
-                    There will be a short break in the middle after ${STUDY_SPEC.trialsPerPhase} trials.</p>
+                    There will be a short break in the middle after ${STUDY_SPEC.trialsPerPhase} trials.</p>`
+                    }
                     <br>
                     <p>Click <b>Next</b> to begin.</p>
                 </div>
@@ -665,13 +661,13 @@ async function setupExperiment() {
             const moderationTrial = {
                 type: jsPsychModerationTrial,
                 post_id: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postIdField] || '',
-                post_number: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postNumberField] || '',
+                post_number: () => getPostNumber(assignedPosts[trialIndex]),
                 context_post_id: '',
                 context_post_number: '',
                 sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
                 sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
                 original_text: () => assignedPosts[trialIndex]?.original_text || '',
-                mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
+                mirror_text: () => getMirrorText(assignedPosts[trialIndex]),
                 show_pair: () => getPhaseMode(1) !== 'single',
                 evaluation_mode: () => getPhaseMode(1),
                 prompt: "Allow or Remove?",
@@ -759,7 +755,8 @@ async function setupExperiment() {
             conditional_function: () => getPhaseMode(1) === 'linked_fate'
         });
 
-        // ========== PHASE BREAK ==========
+        // ========== PHASE BREAK (multi-phase studies only) ==========
+        if (STUDY_SPEC.numPhases > 1) {
         timeline.push({
             type: jsPsychInstructions,
             pages: () => [`
@@ -786,13 +783,13 @@ async function setupExperiment() {
             const moderationTrial = {
                 type: jsPsychModerationTrial,
                 post_id: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postIdField] || '',
-                post_number: () => assignedPosts[trialIndex]?.[STUDY_SPEC.postNumberField] || '',
+                post_number: () => getPostNumber(assignedPosts[trialIndex]),
                 context_post_id: '',
                 context_post_number: '',
                 sampled_stance: () => assignedPosts[trialIndex]?.sampled_stance || '',
                 sample_toxicity_type: () => assignedPosts[trialIndex]?.sample_toxicity_type || '',
                 original_text: () => assignedPosts[trialIndex]?.original_text || '',
-                mirror_text: () => assignedPosts[trialIndex]?.claude_mirror || '',
+                mirror_text: () => getMirrorText(assignedPosts[trialIndex]),
                 show_pair: () => getPhaseMode(2) !== 'single',
                 evaluation_mode: () => getPhaseMode(2),
                 prompt: "Allow or Remove?",
@@ -806,6 +803,7 @@ async function setupExperiment() {
                 }
             };
             timeline.push(moderationTrial);
+        }
         }
         
         // ========== BRIEF DEMOGRAPHICS ==========

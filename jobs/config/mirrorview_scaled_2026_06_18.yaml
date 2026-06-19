@@ -1,0 +1,102 @@
+# MirrorView scaled job configuration (June 2026).
+#
+# 10,000-post catalog, single condition, single linked-fate phase, 20 trials per participant.
+# Not yet consumed by the app — intended as the single source of truth for this deployment.
+
+name: mirrorview_scaled_2026_06_18
+description: >
+  10,000 posts for a scaled-up version of the MirrorView study.
+  20 trials per participant, 1 condition, 1 phase.
+
+# ---------------------------------------------------------------------------
+# AWS deployment
+# ---------------------------------------------------------------------------
+aws:
+  region: us-east-2
+  s3_bucket: jspsych-mirror-view-4
+
+  api:
+    name: jspsych-scroll-api
+    stage: prod
+    post_assignments_url: https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments
+    save_data_url: https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data
+
+  lambda:
+    get_post_assignments_name: jspsych-scroll-get-post-assignments
+    save_data_name: jspsych-scroll-save-data
+    assignment_lambda_name: get_study_assignment
+
+# ---------------------------------------------------------------------------
+# Study identity
+# ---------------------------------------------------------------------------
+study:
+  id: mirrorview
+  iteration_id: mirrorview_scaled_2026_06_18
+  experiment_version: mirrorview_scaled_2026_06_18
+  test_iteration_prefix: dev-
+
+# ---------------------------------------------------------------------------
+# Study design
+# Must stay aligned with precomputed assignment rows in S3 and
+# study_participant_assignment_interface DEFAULT_STUDY_CONDITIONS.
+# ---------------------------------------------------------------------------
+design:
+  conditions:
+    - training_assisted
+
+  condition_phase_modes:
+    training_assisted:
+      phase_1: linked_fate
+
+  trials_per_phase: 20
+  num_phases: 1
+  num_trials: 20          # must equal trials_per_phase * num_phases
+  posts_per_participant: 20
+
+  valid_political_parties:
+    - democrat
+    - republican
+
+# ---------------------------------------------------------------------------
+# Stimulus catalog
+# ---------------------------------------------------------------------------
+stimuli:
+  post_catalog_path: img/flips_scaled_2026_06_18.csv
+  post_id_field: post_primary_key
+  post_number_field: post_number
+  original_text_field: original_text
+  mirror_text_field: mirrored_text
+
+# ---------------------------------------------------------------------------
+# Prolific / participant URL params
+# ---------------------------------------------------------------------------
+prolific:
+  query_param: PROLIFIC_PID
+  condition_override_query_param: condition
+  completion_url: null
+  completion_code: CE5XLP3L
+  completion_link: https://app.prolific.com/submissions/complete?cc=CE5XLP3L
+
+# ---------------------------------------------------------------------------
+# Participant data storage
+# ---------------------------------------------------------------------------
+data:
+  prefix_prolific: data/prolific/
+  prefix_test: data/test/
+  filename_pattern: data_{timestamp_ms}.csv
+
+# ---------------------------------------------------------------------------
+# Test / manual participant detection
+# ---------------------------------------------------------------------------
+test_participants:
+  treat_missing_prolific_id_as_test: true
+  prolific_id_prefixes:
+    - UNKNOWN_
+    - TEST_
+
+# ---------------------------------------------------------------------------
+# External assignment service (study_participant_assignment_interface)
+# ---------------------------------------------------------------------------
+assignment:
+  precomputed_assignments_prefix: precomputed_assignments/
+  batch_uri: s3://jspsych-mirror-view-4/precomputed_assignments/2026_06_18-15:48:34
