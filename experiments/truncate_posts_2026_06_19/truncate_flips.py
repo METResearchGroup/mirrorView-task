@@ -32,6 +32,7 @@ INPUT_CSV = (
 )
 OUTPUT_CSV = EXPERIMENT_DIR / "truncated_flips.csv"
 OUTPUT_WITH_FLAG_CSV = EXPERIMENT_DIR / "truncated_flips_with_flag.csv"
+STANCE_ORDER = ("left", "right")
 
 app = typer.Typer(add_completion=False)
 
@@ -93,6 +94,34 @@ def _print_metrics(
             f"before={n_empty_original_before:,}, after={n_empty_original_after:,}"
         )
     print()
+
+
+def _print_metrics_by_stance(
+    *,
+    label: str,
+    stance: pd.Series,
+    mask: pd.Series,
+    original_lengths_before: pd.Series,
+    mirrored_lengths_before: pd.Series,
+    original_lengths_after: pd.Series,
+    mirrored_lengths_after: pd.Series,
+) -> None:
+    print(label)
+    for lean in STANCE_ORDER:
+        lean_mask = mask & (stance == lean)
+        n_posts = int(lean_mask.sum())
+        if n_posts == 0:
+            print(f"  {lean.capitalize()}: no posts")
+            print()
+            continue
+        _print_metrics(
+            label=f"  {lean.capitalize()}:",
+            n_posts=n_posts,
+            original_lengths_before=original_lengths_before[lean_mask],
+            mirrored_lengths_before=mirrored_lengths_before[lean_mask],
+            original_lengths_after=original_lengths_after[lean_mask],
+            mirrored_lengths_after=mirrored_lengths_after[lean_mask],
+        )
 
 
 def build_truncated_df(
@@ -202,6 +231,27 @@ def main(
         mirrored_lengths_before=mirrored_lengths_before[truncated_mask],
         original_lengths_after=original_lengths_after[truncated_mask],
         mirrored_lengths_after=mirrored_lengths_after[truncated_mask],
+    )
+
+    all_posts_mask = pd.Series(True, index=truncated.index)
+    _print_metrics_by_stance(
+        label="All posts by political lean (sampled_stance):",
+        stance=truncated["sampled_stance"],
+        mask=all_posts_mask,
+        original_lengths_before=original_lengths_before,
+        mirrored_lengths_before=mirrored_lengths_before,
+        original_lengths_after=original_lengths_after,
+        mirrored_lengths_after=mirrored_lengths_after,
+    )
+
+    _print_metrics_by_stance(
+        label="Truncated posts only by political lean (sampled_stance):",
+        stance=truncated["sampled_stance"],
+        mask=is_truncated,
+        original_lengths_before=original_lengths_before,
+        mirrored_lengths_before=mirrored_lengths_before,
+        original_lengths_after=original_lengths_after,
+        mirrored_lengths_after=mirrored_lengths_after,
     )
 
 
