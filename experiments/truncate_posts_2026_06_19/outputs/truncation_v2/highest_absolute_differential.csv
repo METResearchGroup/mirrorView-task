@@ -1,0 +1,73 @@
+post_primary_key,original_text,sample_toxicity_type,sampled_stance,mirrored_text,original_char_count,mirrored_char_count,char_differential,absolute_char_differential
+bluesky_024b70c92cf104851bd435ac8e73947dcc790c10c3be29616d80adba54709822,“Canada’s Grey New Deal” - my piece in The Star today. TLDR: wave of deregulation crash crashing across Canada can be thought of a Grey New Deal that prioritizes rapid development through deregulation and weakening of existing environmental laws. Days of considering a Green New Deal are long gone.,sample_low_toxicity,left,Canada's Green Straitjacket,298,27,-271,271
+reddit_1lhaiqa_mz2uzqf,"Fuck this administration. The Republican party is done for the next 50 years.
+
+[https://www.youtube.com/watch?v=jdxxVxtHK2M&ab\_channel=Chomsky%27sPhilosophy](https://www.youtube.com/watch?v=jdxxVxtHK2M&ab_channel=Chomsky%27sPhilosophy)",sample_high_toxicity,left,Fuck this administration. The Democrat party is done for the next 50 years.,236,75,-161,161
+reddit_1tzoooj_oqk5qmn,"Oh, he brought out Larry King's line when he'd hang up on crazy callers on his old Mutual Broadcasting System radio show.  Very vintage.
+
+Larry King considered Trump a personal friend but opposed his right-wing politics and said he wouldn't be voting for him in the 2016 election.  He said Trump was",sample_middle_toxicity,left,"Oh, she trotted out that tired old community organizer routine, straight out of the Saul Alinsky playbook. Very on-brand for the radical left.",299,142,-157,157
+twitter_2061600956173672797,"“THE BIGGER THREAT IS IN OUR STREETS”
+Steve Bannon says America's most urgent battle isn't in the Middle East—it's dealing with illegal immigration and restoring immigration enforcement at home.",sample_low_toxicity,right,THE BIGGER THREAT IS IN OUR BOARDROOMS,194,38,-156,156
+bluesky_036df8bbfed503746fa9b17bd1b6fa99a322fc489b07e4b1ecb6ee7940e9917b,"“I’ve dedicated myself to fighting for the prevention of gun violence,” Zoe Weissman writes. “I hope that by sharing what I have learned over the past eight years and two school shootings, perhaps even one person will feel less alone.”",sample_low_toxicity,left,"I've dedicated myself to fighting for the preservation of our Second Amendment rights,",235,86,-149,149
+twitter_2061183455501623763,"""We're not kids anymore. We are adults. We are professionals. We are parents."" -Blanca Sierra-Reyes, DACA recipient 
+
+Rather than strip people of their status, Congress must create a path to citizenship that keeps families together.",sample_low_toxicity,left,We're not freeloaders. We are taxpayers. We are veterans. We are citizens who played by the rules.,232,98,-134,134
+reddit_1l6yeqx_mwur7xm,"“I hope America isn't dumb enough to lose to Donald fucking Trump.” 
+
+Dude… America was already dumb enough to elect the man a second time to power, the country has already lost to him.",sample_high_toxicity,left,I hope America isn't dumb enough to keep falling for the socialist grift of the radical left.,185,93,-92,92
+reddit_1kxmwug_musc18t,"Newsom has been trying for some time to jockey for the presidential nomination. 
+
+Now every ad during the primary will be ""this bitch made mf caved to Trump. Fuck him and his mother""",sample_high_toxicity,left,Ocasio-Cortez has been angling for years to position herself as the face of the Democrat party.,182,95,-87,87
+reddit_1kmp5aw_msj414v,"Headline: Trump sucks. Don't you think he sucks? Here's why he sucks.
+
+Conservative response
+
+You: How dare you type words and full sentences when Trump sucks. I'd like to repeat one more time my rationale for Trump sucking.",sample_high_toxicity,left,How dare you type words and full sentences when Biden is a complete disaster. I'd like to repeat one more time my rationale for Biden being an absolute failure.,224,160,-64,64
+twitter_2061788873408090121,"Here is the new red line for abortion no counting weeks, equal protection is the only way to protect all life.  Your body my choice is how we save America.
+
+@j_fishback 
+@stelzner_n1150 
+@Aaron4fl6 
+@Paul_Renner 
+@podiatristdon 
+@Paranoidpropht",sample_low_toxicity,right,"Here is the new baseline for reproductive rights — no negotiating trimesters, bodily autonomy is the only way to protect all people. Your legislation my uterus is how we save America.",244,183,-61,61
+twitter_2061689270902153329,"Mainstream media is eagerly repeating the public relations triumphs of fossil fuel giants, but the fundamental laws of thermodynamics reveal a multi-billion-dollar accounting trick.
+
+The carbon capture con keeping fossil fuels alive
+~ Matthew Peel",sample_low_toxicity,left,"State-run climate propaganda outlets are breathlessly amplifying the talking points of green energy grifters, but basic economic reality exposes a multi-trillion-dollar taxpayer-funded scam.",247,190,-57,57
+twitter_2061527118505501053,"“You want to plan for the clean energy revolution, for the fact that the world is starting to do a good job at shifting away from fossil fuels,” @simondonner said. “But in terms of impacts, you still want to plan for the worst-case scenario.”",sample_low_toxicity,left,"You want to plan for the economic devastation the green energy fantasy is causing, for the fact that real working people are getting crushed by skyrocketing energy bills and job losses,",242,185,-57,57
+twitter_2059202173586579666,"The Attorney General has chosen to waste taxpayer dollars on trying to take reproductive rights away from Pennsylvanians,” said Susan Frietsche, the lead litigator on the case. 
+Source: 90.5 WESA",sample_low_toxicity,left,"The Attorney General has chosen to waste taxpayer dollars defending radical abortion policies that trample the rights of unborn Pennsylvanians,",195,143,-52,52
+reddit_1tvumlg_opkfakk,"> Four fucking years to hold a man accountable, and instead he's president.
+
+I mean, it was business as usual from the Obama admin. Not like Barry held any of the Bush admin/Wallstreet accountable. And sorta threw his base under the bus to compromise with the Right which completely backfired on the",sample_middle_toxicity,left,"Eight fucking years of Obama letting Wall Street walk free, throwing his own voters under the bus, and bending over backwards for Republicans who just spat in his face anyway. And what did we get? The Tea Party, then Trump. Thanks for nothing, Barry.",299,250,-49,49
+twitter_2060842342978838967,"Instead of people standing in front of planned parenthood and protesting, people need to stand in front of pediatricians and obstetricians offices and warn mothers to be and new mothers NOT to vaccinate themselves and their unborn children!!!!! 
+
+#plannedparenthood #vaccines",sample_low_toxicity,right,"Instead of people standing outside gun shops protesting, people need to stand in front of NRA offices and warn parents and families NOT to let their children anywhere near these weapons of mass destruction!!!!! #NRA #GunControl",275,227,-48,48
+twitter_2060058746144112965,"Women’s health initiatives span several designated observances. The International Day of Action for Women's Health (May 28) emphasizes reproductive rights and global health systems.
+I doubt this will be celebrated or even acknowledged by anyone in the GOP.",sample_low_toxicity,left,"Gun rights and Second Amendment observances happen throughout the year, yet I seriously doubt any Democrat in Congress will lift a finger to acknowledge them — too busy dismantling the Constitution to bother.",256,208,-48,48
+reddit_1lh60xh_mz1mexh,Fuck you Trump! Biden won in 2020! [Kamala won in 2024!](https://m.economictimes.com/news/international/us/kamala-harris-won-u-s-elections-2024-u-s-attorney-general-pam-bondi-asked-to-investigate-results/articleshow/121938903.cms),sample_high_toxicity,left,"Fuck you Biden! Trump won in 2020 AND 2024! The radical left stole elections and the media covered it up — wake the hell up, the evidence is everywhere and you're too brainwashed to see it!",230,189,-41,41
+twitter_2059681315583127708,"""Would Jesus build a border wall, would Jesus drive a tank?
+Would Jesus own an Arsenal,
+would Jesus run a bank?
+
+Would Jesus feel safe in his skin
+if he came to your town?
+And would you still believe in Jesus
+if you found out he was brown?""
+
+Jordan Smart - ""Who would Jesus Bomb""",sample_middle_toxicity,left,"Would Marx cancel a dissenter, would Marx silence the crowd?
+Would Marx own a mansion,
+while preaching to the proud?
+
+Would Marx feel at home in his skin
+in the gulags he'drown?
+And would you still worship Marx
+if his body count came down?",279,239,-40,40
+twitter_2060696475210781165,"Markwayne Mullin said his department is “drawing up plans” to stop processing international flights (customs/immigration services) at airports in sanctuary cities that don’t cooperate with federal immigration enforcement.
+
+Who else 1000% SUPPORTS THIS?!?",sample_low_toxicity,right,AOC announced she's pushing legislation to strip federal funding from states that criminalize sanctuary policies and refuse to protect undocumented families from predatory ICE raids. Who else is 1000% BEHIND THIS?!?,254,215,-39,39
+reddit_1l3usxn_mw3tv62,">Meanwhile, the Congressional Budget Office just released brutal numbers showing that the House GOP bill will add even more to the deficit and kick many more people off health coverage than previously thought. 
+
+
+""Big Beautiful Bill"" my ass. It's the ""Bullshit Billionaire Bill.""",sample_high_toxicity,left,"Meanwhile, the CBO just dropped numbers showing Biden's spending packages ballooned the deficit to historic highs and left millions worse off economically than before. ""Build Back Better"" my ass. It's the ""Broke Backs of the Middle Class Bill.""",279,244,-35,35
