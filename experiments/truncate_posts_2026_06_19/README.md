@@ -21,9 +21,16 @@ outputs/truncation_v2/flips_with_flag.csv
 outputs/truncation_v2/differentials.png
 outputs/truncation_v2/highest_absolute_differential.csv
 outputs/truncation_v2/sample_flips.csv
+
+outputs/truncation_v3/flips.csv
+outputs/truncation_v3/flips_with_flag.csv
+outputs/truncation_v3/differentials.png
+outputs/truncation_v3/highest_absolute_differential.csv
+outputs/truncation_v3/sample_flips.csv
+outputs/truncation_v3/sample_new_flips_with_original_flips.csv
 ```
 
-Path helpers live in `paths.py`. Analysis scripts accept `--version v1` or `--version v2`.
+Path helpers live in `paths.py`. Analysis scripts accept `--version v1`, `v2`, or `v3`.
 
 ## v1: last-period truncation (`truncate_flips.py`)
 
@@ -123,7 +130,7 @@ Outputs: `outputs/truncation_v2/flips.csv`, `outputs/truncation_v2/flips_with_fl
 | Avg \|orig − mirr\| after | ~16 chars | ~4 chars |
 | Catastrophic mirror truncations | many (e.g. 292-char gaps) | 62 |
 
-v2 fixes the worst absolute-differential cases from v1 (e.g. `"Right.."` → 7-char mirror is now ~296 chars with ~3-char gap). **Recommend v2 for export** — use `outputs/truncation_v2/flips.csv`.
+v2 fixes the worst absolute-differential cases from v1 (e.g. `"Right.."` → 7-char mirror is now ~296 chars with ~3-char gap). Use `outputs/truncation_v2/flips.csv` when length parity is the priority.
 
 ### Differential histogram & tail review
 
@@ -141,14 +148,78 @@ PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/highest_absolut
 
 **v2 remaining tail (top abs diffs):** no longer truncation artifacts. The worst rows are **LLM under-generation** — e.g. original kept at ~298 chars while the mirror is naturally short (`"Canada's Green Straitjacket"`, 27 chars). Truncation cannot lengthen a short mirror; these are generation-length mismatches, not bad cut points.
 
+### v2 problem (manual review)
+
+Sample review showed v2 still produces **incomplete sentences** on mirrors — e.g. ending on `"Conservatism is"`, `"...building our own clean"`, or `"...crime and"`. Root cause: v2 picks the **latest word boundary** within the cap, not the latest **complete sentence**.
+
+---
+
+## v3: sentence-first truncation (`truncate_flips_v3.py`)
+
+**Strategy:**
+
+1. **Sentence-first** — pick the **longest complete sentence** within `max_chars + sentence_overflow` (300 + 20).
+2. **Complete-sentence validation** — require ending `.!?` and reject dangling tails (`and`, `the`, `is`, etc.).
+3. **Independent sides** — truncate original and mirror separately (no pair-aware char matching).
+4. **Fallback cascade** — complete lines (lists) → word boundary → hard cut.
+
+Implementation: `truncation_v3.py` (core logic), `truncate_flips_v3.py` (CLI + metrics).
+
+### v3 usage
+
+```bash
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/truncate_flips_v3.py
+```
+
+Outputs: `outputs/truncation_v3/flips.csv`, `outputs/truncation_v3/flips_with_flag.csv`
+
+### v3 results (10,000 posts)
+
+**Rows truncated:** 6,277 (62.8%)
+
+| Metric | Before | After (v3) |
+|---|---|---|
+| Avg original length | 247.5 chars | 179.2 chars |
+| Avg mirrored length | 327.0 chars | 208.4 chars |
+| ≥10% length diff | 8,686 (86.9%) | 7,757 (77.6%) |
+| Complete sentences (original / mirrored) | — | **89.2% / 92.3%** |
+| Exact char-length matches | — | 111 (1.1%) |
+| Catastrophic truncations (<30% of cap) | — | original=182, mirrored=182 |
+
+### v1 vs v2 vs v3 summary
+
+| Metric | v1 | v2 | v3 |
+|---|---|---|---|
+| ≥10% length diff | 75.6% | **4.0%** | 77.6% |
+| Complete sentences (mirrored) | — | 6.8% | **92.3%** |
+| Mean differential | +16.2 chars | −4.5 chars | +29.2 chars |
+| Top-20 abs diff range | 292–245 | 271–35 | 300–262 |
+
+v3 trades length parity for **grammatical completeness**. Manual review of previously broken examples (`reddit_1tuwb8f_opevgtn`, `twitter_2060082218936983629`, etc.) now end on complete sentences. Remaining high abs-diff rows are mostly **short LLM mirrors** vs longer originals (generation mismatch), not mid-sentence cuts.
+
+**Recommend v3 for export** when completeness matters — use `outputs/truncation_v3/flips.csv`.
+
+### Differential histogram & tail review (v3)
+
+```bash
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/visualize_differentials.py --version v3
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/highest_absolute_differentials_posts.py --version v3
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v3
+```
+
 ## Other scripts
 
 ```bash
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v2
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v2 --sample-size 50
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/visualize_differentials.py --version v1
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/highest_absolute_differentials_posts.py --version v1 --top-n 20
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/validate_truncated_flips.py --version v2
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v3 --sample-size 50
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/visualize_differentials.py --version v2
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/highest_absolute_differentials_posts.py --version v2 --top-n 20
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/validate_truncated_flips.py --version v3
 ```
 
-`show_examples.py` randomly samples rows from `outputs/{version}/flips.csv` (default 25, seed 42) and writes `outputs/{version}/sample_flips.csv` for manual review.
+`show_examples.py` randomly samples rows from `outputs/{version}/flips.csv` (default 125, seed 42) and writes `outputs/{version}/sample_flips.csv` for manual review.
+
+`regenerate_sample_flips.py` takes v3 `sample_flips.csv` originals, regenerates mirrors with the original `FLIP_PROMPT` (same Bedrock setup as `generate_flips.py`), and writes `outputs/truncation_v3/sample_new_flips_with_original_flips.csv` with columns `original_text`, `original_flip` (fresh generation), and `new_flip` (v2 truncated mirrors from `sample_flips.csv`):
+
+```bash
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/regenerate_sample_flips.py
+```

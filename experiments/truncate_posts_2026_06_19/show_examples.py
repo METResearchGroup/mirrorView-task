@@ -5,8 +5,8 @@ Sample rows from a versioned flips.csv for manual review.
 
 Run from repo root:
 
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v2
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v2 --sample-size 50
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v3
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v3 --sample-size 50
 """
 
 from pathlib import Path
@@ -48,13 +48,13 @@ def sample_flips(
 @app.command()
 def main(
     version: str = typer.Option(
-        "v2",
+        "v3",
         "--version",
         "-v",
-        help="Truncation version: v1, v2, truncation_v1, or truncation_v2.",
+        help="Truncation version: v1, v2, v3, truncation_v1, truncation_v2, or truncation_v3.",
     ),
     sample_size: int = typer.Option(
-        25,
+        125,
         "--sample-size",
         "-n",
         min=1,

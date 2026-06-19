@@ -10,6 +10,7 @@ OUTPUTS_DIR = EXPERIMENT_DIR / "outputs"
 class TruncationVersion(str, Enum):
     v1 = "truncation_v1"
     v2 = "truncation_v2"
+    v3 = "truncation_v3"
 
 
 def parse_version(version: str) -> TruncationVersion:
@@ -21,9 +22,14 @@ def parse_version(version: str) -> TruncationVersion:
         "v2": TruncationVersion.v2,
         "truncation_v2": TruncationVersion.v2,
         "2": TruncationVersion.v2,
+        "v3": TruncationVersion.v3,
+        "truncation_v3": TruncationVersion.v3,
+        "3": TruncationVersion.v3,
     }
     if normalized not in aliases:
-        valid = ", ".join(sorted({"v1", "v2", "truncation_v1", "truncation_v2"}))
+        valid = ", ".join(
+            sorted({"v1", "v2", "v3", "truncation_v1", "truncation_v2", "truncation_v3"})
+        )
         raise ValueError(f"Unknown truncation version {version!r}. Expected one of: {valid}")
     return aliases[normalized]
 
@@ -50,6 +56,10 @@ def highest_absolute_differential_csv(version: TruncationVersion) -> Path:
 
 def sample_flips_csv(version: TruncationVersion) -> Path:
     return version_dir(version) / "sample_flips.csv"
+
+
+def sample_new_flips_with_original_flips_csv() -> Path:
+    return version_dir(TruncationVersion.v3) / "sample_new_flips_with_original_flips.csv"
 
 
 def ensure_version_dir(version: TruncationVersion) -> Path:

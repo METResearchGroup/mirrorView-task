@@ -21,7 +21,7 @@ app = typer.Typer(add_completion=False)
 @app.command()
 def main(
     version: str = typer.Option(
-        "v2",
+        "v3",
         "--version",
         "-v",
         help="Truncation version: v1, v2, truncation_v1, or truncation_v2.",
