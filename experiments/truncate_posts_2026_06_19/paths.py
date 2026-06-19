@@ -48,6 +48,10 @@ def highest_absolute_differential_csv(version: TruncationVersion) -> Path:
     return version_dir(version) / "highest_absolute_differential.csv"
 
 
+def sample_flips_csv(version: TruncationVersion) -> Path:
+    return version_dir(version) / "sample_flips.csv"
+
+
 def ensure_version_dir(version: TruncationVersion) -> Path:
     path = version_dir(version)
     path.mkdir(parents=True, exist_ok=True)

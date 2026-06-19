@@ -14,11 +14,13 @@ outputs/truncation_v1/flips.csv
 outputs/truncation_v1/flips_with_flag.csv
 outputs/truncation_v1/differentials.png
 outputs/truncation_v1/highest_absolute_differential.csv
+outputs/truncation_v1/sample_flips.csv
 
 outputs/truncation_v2/flips.csv
 outputs/truncation_v2/flips_with_flag.csv
 outputs/truncation_v2/differentials.png
 outputs/truncation_v2/highest_absolute_differential.csv
+outputs/truncation_v2/sample_flips.csv
 ```
 
 Path helpers live in `paths.py`. Analysis scripts accept `--version v1` or `--version v2`.
@@ -142,7 +144,11 @@ PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/highest_absolut
 ## Other scripts
 
 ```bash
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v2
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/show_examples.py --version v2 --sample-size 50
 PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/visualize_differentials.py --version v1
 PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/highest_absolute_differentials_posts.py --version v1 --top-n 20
 PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/validate_truncated_flips.py --version v2
 ```
+
+`show_examples.py` randomly samples rows from `outputs/{version}/flips.csv` (default 25, seed 42) and writes `outputs/{version}/sample_flips.csv` for manual review.
