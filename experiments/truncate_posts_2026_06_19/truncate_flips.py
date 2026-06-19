@@ -17,6 +17,12 @@ import typer
 from experiments.match_lengths_original_mirrors_2026_06_19.training_sample import (
     truncate_at_last_sentence,
 )
+from experiments.truncate_posts_2026_06_19.paths import (
+    TruncationVersion,
+    ensure_version_dir,
+    flips_csv,
+    flips_with_flag_csv,
+)
 
 MAX_ORIGINAL_CHARS = 300
 MAX_MIRRORED_CHARS = 300
@@ -30,8 +36,9 @@ INPUT_CSV = (
     / "combined_flips"
     / "flips.csv"
 )
-OUTPUT_CSV = EXPERIMENT_DIR / "truncated_flips.csv"
-OUTPUT_WITH_FLAG_CSV = EXPERIMENT_DIR / "truncated_flips_with_flag.csv"
+TRUNCATION_VERSION = TruncationVersion.v1
+OUTPUT_CSV = flips_csv(TRUNCATION_VERSION)
+OUTPUT_WITH_FLAG_CSV = flips_with_flag_csv(TRUNCATION_VERSION)
 STANCE_ORDER = ("left", "right")
 
 app = typer.Typer(add_completion=False)
@@ -194,6 +201,7 @@ def main(
     if output is not None:
         output_paths = [(output, include_truncated_flag)]
     else:
+        ensure_version_dir(TRUNCATION_VERSION)
         output_paths = [
             (OUTPUT_CSV, False),
             (OUTPUT_WITH_FLAG_CSV, True),

@@ -5,27 +5,35 @@ Validate length parity on truncated flips.
 
 Run from repo root:
 
-PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/validate_truncated_flips.py
+PYTHONPATH=. uv run python experiments/truncate_posts_2026_06_19/validate_truncated_flips.py --version v2
 """
 
-from pathlib import Path
+import typer
 
 import pandas as pd
 
-from experiments.truncate_posts_2026_06_19.truncate_flips import (
-    LENGTH_DIFF_THRESHOLD,
-    OUTPUT_CSV,
-)
+from experiments.truncate_posts_2026_06_19.paths import flips_csv, parse_version
+from experiments.truncate_posts_2026_06_19.truncate_flips import LENGTH_DIFF_THRESHOLD
 
-EXPERIMENT_DIR = Path(__file__).resolve().parent
-FLIPS_CSV = OUTPUT_CSV
+app = typer.Typer(add_completion=False)
 
 
-def main() -> None:
-    df = pd.read_csv(FLIPS_CSV)
+@app.command()
+def main(
+    version: str = typer.Option(
+        "v2",
+        "--version",
+        "-v",
+        help="Truncation version: v1, v2, truncation_v1, or truncation_v2.",
+    ),
+) -> None:
+    parsed = parse_version(version)
+    flips_path = flips_csv(parsed)
+
+    df = pd.read_csv(flips_path)
     if "original_text" not in df.columns or "mirrored_text" not in df.columns:
         raise ValueError(
-            f"Expected `original_text` and `mirrored_text` columns in {FLIPS_CSV}"
+            f"Expected `original_text` and `mirrored_text` columns in {flips_path}"
         )
 
     original_lengths = df["original_text"].fillna("").astype(str).str.len()
@@ -40,7 +48,8 @@ def main() -> None:
     n_length_diff = int(length_diff_mask.sum())
     n_empty_original = int(empty_original.sum())
 
-    print(f"Flips CSV: {FLIPS_CSV}")
+    print(f"Version: {parsed.value}")
+    print(f"Flips CSV: {flips_path}")
     print(f"Total posts: {n_posts:,}")
     print()
     print(f"Average original length (chars): {original_lengths.mean():.1f}")
@@ -59,4 +68,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    app()
