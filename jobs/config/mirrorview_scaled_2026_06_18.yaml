@@ -99,3 +99,4 @@ test_participants:
 # ---------------------------------------------------------------------------
 assignment:
   precomputed_assignments_prefix: precomputed_assignments/
+  batch_uri: s3://jspsych-mirror-view-4/precomputed_assignments/2026_06_18-15:48:34

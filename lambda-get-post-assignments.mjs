@@ -13,10 +13,25 @@ const lambdaClient = new LambdaClient({ region: AWS_REGION });
 const ASSIGNMENT_LAMBDA_NAME = process.env.ASSIGNMENT_LAMBDA_NAME;
 const TEST_ITERATION_PREFIX = process.env.TEST_ITERATION_PREFIX || "dev-";
 
+// Source of truth: jobs/config/mirrorview_scaled_2026_06_18.yaml (assignment.batch_uri)
+const SCALED_ITERATION_PREFIX = "mirrorview_scaled_2026_06_18";
+const SCALED_BATCH_URI =
+    "s3://jspsych-mirror-view-4/precomputed_assignments/2026_06_18-15:48:34";
+const PILOT_BATCH_URI =
+    "s3://jspsych-mirror-view-3/precomputed_assignments/2026_04_07-06:17:02";
+
 const STUDY_SPEC = Object.freeze({
     conditions: ['training_assisted'],
     validPoliticalParties: ['democrat', 'republican'],
 });
+
+function resolveAssignmentBatchUri(studyIterationId) {
+    const base = studyIterationId.replace(/^dev-/, "");
+    if (base === SCALED_ITERATION_PREFIX || base.startsWith(SCALED_ITERATION_PREFIX)) {
+        return SCALED_BATCH_URI;
+    }
+    return PILOT_BATCH_URI;
+}
 
 /**
  * Validate the inputs
@@ -89,19 +104,19 @@ async function callStudyAssignmentLambda({
     studyId,
     studyIterationId
 }) {
-    let effectiveStudyIterationId = studyIterationId;
     if (isTest) {
-        effectiveStudyIterationId = `${TEST_ITERATION_PREFIX}${studyIterationId}`;
-        console.log(`Using dev study iteration ID: ${effectiveStudyIterationId}`);
-    } else {
-        console.log(`Using study iteration ID: ${effectiveStudyIterationId}`);
+        console.log(`Test participant; using study iteration ID: ${studyIterationId}`);
     }
+
+    const assignmentBatchUri = resolveAssignmentBatchUri(studyIterationId);
+    console.log(`Using assignment batch URI: ${assignmentBatchUri}`);
 
     const payload = {
         study_id: studyId,
-        study_iteration_id: effectiveStudyIterationId,
+        study_iteration_id: studyIterationId,
         prolific_id: prolificId,
-        political_party: partyGroup
+        political_party: partyGroup,
+        assignment_batch_uri: assignmentBatchUri,
     };
 
     const result = await lambdaClient.send(
