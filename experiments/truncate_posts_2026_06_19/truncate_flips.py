@@ -19,7 +19,7 @@ from experiments.match_lengths_original_mirrors_2026_06_19.training_sample impor
 )
 
 MAX_ORIGINAL_CHARS = 300
-MAX_MIRRORED_CHARS = 325
+MAX_MIRRORED_CHARS = 300
 LENGTH_DIFF_THRESHOLD = 0.10
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
