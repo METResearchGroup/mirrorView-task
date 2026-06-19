@@ -75,3 +75,7 @@ PYTHONPATH=. uv run python experiments/match_lengths_original_mirrors_2026_06_19
 Output: `outputs/match_lengths_v2/2026_06_19-15:12:21.csv`
 
 **Conclusion:** Token budgeting improves parity on a token basis (46% failure vs 76% in v1), but character-level drift remains high (70%) because token and character lengths diverge. Token counts use LangChain's GPT-2 fallback tokenizer, which is approximate for Claude.
+
+## Ablation sweep (25 posts each)
+
+See [ABLATIONS.md](ABLATIONS.md) for the full 15-variant sweep (A0–G1). **Char bounds in the prompt (C1, C3, E2)** reduced character failure from ~60–76% to **28%**. Best overall char parity was **D2** (20%) but with over-shortening.
