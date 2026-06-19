@@ -43,3 +43,35 @@ PYTHONPATH=. uv run python experiments/match_lengths_original_mirrors_2026_06_19
 Output: `outputs/match_lengths/2026_06_19-15:01:18.csv`
 
 **Conclusion:** The prompt-only instruction helps slightly (76% vs 87% failure rate) but is not sufficient. Mirrors still tend to run long, and most posts fail the parity check.
+
+## v2 — token-budgeted `max_tokens` (no explanation field)
+
+**Hypothesis:** A hard output token cap set from the original post length will enforce parity better than prompt instructions alone.
+
+**Intervention:**
+
+1. Drop the `explanation` field from the structured JSON response (only `flipped_text` is returned).
+2. Count tokens in each post's `original_text` via LangChain's `get_num_tokens`.
+3. Set `max_tokens = ceil(input_tokens × 1.05) + 20` (20-token buffer for JSON overhead) per request.
+4. Invoke Bedrock per post with the bound `max_tokens`.
+
+**Run:**
+
+```bash
+PYTHONPATH=. uv run python experiments/match_lengths_original_mirrors_2026_06_19/run_match_lengths_v2.py
+```
+
+**Results (2026-06-19 run, same 50-post sample as v1):**
+
+| Metric | v1 (prompt only) | v2 (token cap) |
+|---|---|---|
+| Avg original length (chars) | 296.0 | 296.0 |
+| Avg mirrored length (chars) | 339.2 | 344.2 |
+| Posts failing ≥10% char check | 76.0% | 70.0% |
+| Avg original length (tokens) | — | 65.4 |
+| Avg mirrored length (tokens) | — | 68.3 |
+| Posts failing ≥10% token check | — | 46.0% |
+
+Output: `outputs/match_lengths_v2/2026_06_19-15:12:21.csv`
+
+**Conclusion:** Token budgeting improves parity on a token basis (46% failure vs 76% in v1), but character-level drift remains high (70%) because token and character lengths diverge. Token counts use LangChain's GPT-2 fallback tokenizer, which is approximate for Claude.
