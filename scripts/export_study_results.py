@@ -147,7 +147,9 @@ def load_downloaded_csvs(local_paths: list[Path]) -> pd.DataFrame:
     )
 
     if not filtered_frames:
-        return pd.DataFrame()
+        # Keep the output shape stable so downstream filtering can run even when
+        # no CSVs survive the "valid prolific_id" filter.
+        return pd.DataFrame(columns=["prolific_id"])
     return pd.concat(filtered_frames, ignore_index=True)
 
 
