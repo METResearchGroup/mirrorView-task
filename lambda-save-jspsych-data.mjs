@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { randomUUID } from "node:crypto";
 
 const AWS_REGION = process.env.AWS_REGION || "us-east-2";
 const BUCKET_NAME = process.env.BUCKET_NAME || "jspsych-mirror-view-4";
@@ -44,7 +45,7 @@ export const handler = async (event) => {
     const prolificId = body.prolific_id;
     const isTest = inferIsTest(prolificId, body.isTest);
     const prefix = isTest ? DATA_PREFIX_TEST : DATA_PREFIX_PROLIFIC;
-    const filename = `data_${Date.now()}.csv`;
+    const filename = `data_${Date.now()}_${randomUUID()}.csv`;
 
     await s3Client.send(
       new PutObjectCommand({

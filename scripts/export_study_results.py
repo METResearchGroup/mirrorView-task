@@ -1,6 +1,6 @@
 """Export mirror view pilot data from S3 into a single filtered CSV.
 
-Only objects named ``data_<epoch_ms>.csv`` (lambda upload time) at or after
+Only objects named ``data_<epoch_ms>.csv`` or ``data_<epoch_ms>_<uuid>.csv`` (lambda upload time) at or after
 ``--since-date`` (UTC midnight) are listed and merged. To run:
 
     - PYTHONPATH=. uv run python scripts/export_study_results.py           # skip existing files
@@ -23,7 +23,9 @@ from lib.timestamp_utils import get_current_timestamp
 BUCKET_NAME = "jspsych-mirror-view-4"
 S3_PREFIX = "data/prolific/"
 EXPECTED_FILE_COUNT = 190
-DATA_CSV_FILENAME_PATTERN = re.compile(r"^data_(\d+)\.csv$")
+DATA_CSV_FILENAME_PATTERN = re.compile(
+    r"^data_(\d+)(?:_[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})?\.csv$"
+)
 MANUAL_TEST_PATTERN = re.compile(r"^manual-test-.*$")
 INVALID_PROLIFIC_SUBSTRINGS = ("pid", "manual-test", "dev")
 DEFAULT_SINCE_DATE = date(2026, 4, 20)
@@ -40,7 +42,7 @@ def utc_midnight_ms(d: date) -> int:
 
 
 def list_csv_keys(s3_client: boto3.client, *, min_file_epoch_ms: int) -> list[str]:
-    """Return CSV object keys under the prefix that match ``data_<ms>.csv`` with ``ms >= min_file_epoch_ms``."""
+    """Return CSV object keys under the prefix that match ``data_<ms>.csv`` or ``data_<ms>_<uuid>.csv`` with ``ms >= min_file_epoch_ms``."""
     paginator = s3_client.get_paginator("list_objects_v2")
     csv_keys: list[str] = []
     skipped_non_matching = 0
@@ -145,7 +147,9 @@ def load_downloaded_csvs(local_paths: list[Path]) -> pd.DataFrame:
     )
 
     if not filtered_frames:
-        return pd.DataFrame()
+        # Keep the output shape stable so downstream filtering can run even when
+        # no CSVs survive the "valid prolific_id" filter.
+        return pd.DataFrame(columns=["prolific_id"])
     return pd.concat(filtered_frames, ignore_index=True)
 
 
@@ -171,7 +175,7 @@ def main() -> None:
         default=DEFAULT_SINCE_DATE,
         metavar="YYYY-MM-DD",
         help=(
-            "Only include objects named data_<ms>.csv where ms is at or after UTC midnight on "
+            "Only include objects named data_<ms>.csv or data_<ms>_<uuid>.csv where ms is at or after UTC midnight on "
             f"this date (ISO). Default: {DEFAULT_SINCE_DATE.isoformat()}."
         ),
     )

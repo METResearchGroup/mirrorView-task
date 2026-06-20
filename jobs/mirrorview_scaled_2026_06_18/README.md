@@ -23,3 +23,5 @@ Results:
   - avg processed mirrored chars **200.2**
 - `flips.csv`: avg original chars (**truncated**) **179.2**, avg mirrored chars **200.2**
 - Delta (`flips.csv` − `old_flips.csv`): avg mirrored chars **−126.8**
+
+We take this flips.csv and re-upload to S3 so that our already-validated UI can consume it.
