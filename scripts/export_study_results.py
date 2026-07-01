@@ -16,6 +16,7 @@ import re
 
 import boto3
 import pandas as pd
+from tqdm import tqdm
 
 from lib.timestamp_utils import get_current_timestamp
 
@@ -31,8 +32,8 @@ INVALID_PROLIFIC_SUBSTRINGS = ("pid", "manual-test", "dev")
 DEFAULT_SINCE_DATE = date(2026, 4, 20)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-TEMP_DIR = SCRIPT_DIR / "temp"
-OUTPUT_CSV = SCRIPT_DIR / f"mirrorview_pilot_data_{get_current_timestamp()}.csv"
+TEMP_DIR = SCRIPT_DIR / f"temp_{BUCKET_NAME}"
+OUTPUT_CSV = SCRIPT_DIR / f"mirrorview_data_{BUCKET_NAME}_{get_current_timestamp()}.csv"
 
 
 def utc_midnight_ms(d: date) -> int:
@@ -86,6 +87,7 @@ def download_csvs(
     downloaded = 0
     skipped = 0
 
+    work: list[tuple[str, Path, bool]] = []
     for key in csv_keys:
         file_name = Path(key).name
         if file_name in seen_names:
@@ -93,14 +95,32 @@ def download_csvs(
         seen_names.add(file_name)
 
         local_path = TEMP_DIR / file_name
-        if not force_redownload and local_path.is_file():
-            print(f"Skipping (already present): {local_path}")
-            skipped += 1
-        else:
-            print(f"Downloading s3://{BUCKET_NAME}/{key} -> {local_path}")
+        needs_download = force_redownload or not local_path.is_file()
+        work.append((key, local_path, needs_download))
+
+    to_download = sum(1 for _key, _path, needs in work if needs)
+    with tqdm(
+        total=to_download,
+        desc="Downloading CSVs",
+        unit="file",
+    ) as pbar:
+        pending_updates = 0
+        for key, local_path, needs_download in work:
+            if not needs_download:
+                skipped += 1
+                local_paths.append(local_path)
+                continue
+
             s3_client.download_file(BUCKET_NAME, key, str(local_path))
             downloaded += 1
-        local_paths.append(local_path)
+            local_paths.append(local_path)
+            pending_updates += 1
+            if pending_updates >= 10:
+                pbar.update(pending_updates)
+                pending_updates = 0
+
+        if pending_updates:
+            pbar.update(pending_updates)
 
     print(
         f"S3 CSV sync: {downloaded} downloaded, {skipped} skipped (already in {TEMP_DIR})"
