@@ -99,6 +99,12 @@ $$
 
 We observe that logistic regression generalizes better on the test set in terms of F1 and recall. XGBoost overfits more strongly, which we believe to be a symptom of the relatively small sample size. However, overall, training on the text embeddings themselves was much more performant than training on the hand-crafted text features.
 
+#### Test-set metric comparison (Accuracy / Precision / Recall / F1)
+
+Figure below compares the test-set metrics from the feature-engineered models vs. the text-embedding models, plotted on the same axes. Dashed lines correspond to models trained on feature engineering, while solid lines correspond to models trained on text embeddings. Line colors correspond to the model class (baseline vs. logistic regression vs. XGBoost).
+
+![Test-set metric line graph](experiments/predict_keep_remove_2026_07_01/outputs/test_metrics_linegraph/2026_07_02-17:46:52/results.png)
+
 ## Study 2
 
 In Study 2, we expanded on ...

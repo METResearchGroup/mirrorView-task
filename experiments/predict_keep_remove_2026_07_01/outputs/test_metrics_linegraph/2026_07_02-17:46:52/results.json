@@ -1,0 +1,164 @@
+{
+  "source_results_md": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_07_01/results.md",
+  "metric_order": [
+    "Accuracy",
+    "Precision",
+    "Recall",
+    "F1"
+  ],
+  "series": [
+    {
+      "label": "Baseline (feature engineering)",
+      "model_class": "Baseline",
+      "training_type": "feature_engineering",
+      "linestyle": "dashed",
+      "color": "#1f77b4",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.649
+        },
+        {
+          "metric": "Precision",
+          "value": 0.0
+        },
+        {
+          "metric": "Recall",
+          "value": 0.0
+        },
+        {
+          "metric": "F1",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "label": "Logistic regression (feature engineering)",
+      "model_class": "Logistic regression",
+      "training_type": "feature_engineering",
+      "linestyle": "dashed",
+      "color": "#ff7f0e",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.695
+        },
+        {
+          "metric": "Precision",
+          "value": 0.597
+        },
+        {
+          "metric": "Recall",
+          "value": 0.402
+        },
+        {
+          "metric": "F1",
+          "value": 0.48
+        }
+      ]
+    },
+    {
+      "label": "XGBoost (feature engineering)",
+      "model_class": "XGBoost",
+      "training_type": "feature_engineering",
+      "linestyle": "dashed",
+      "color": "#2ca02c",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.693
+        },
+        {
+          "metric": "Precision",
+          "value": 0.603
+        },
+        {
+          "metric": "Recall",
+          "value": 0.367
+        },
+        {
+          "metric": "F1",
+          "value": 0.457
+        }
+      ]
+    },
+    {
+      "label": "Baseline (text embeddings)",
+      "model_class": "Baseline",
+      "training_type": "text_embeddings",
+      "linestyle": "solid",
+      "color": "#1f77b4",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.649
+        },
+        {
+          "metric": "Precision",
+          "value": 0.0
+        },
+        {
+          "metric": "Recall",
+          "value": 0.0
+        },
+        {
+          "metric": "F1",
+          "value": 0.0
+        }
+      ]
+    },
+    {
+      "label": "Logistic regression (text embeddings)",
+      "model_class": "Logistic regression",
+      "training_type": "text_embeddings",
+      "linestyle": "solid",
+      "color": "#ff7f0e",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.849
+        },
+        {
+          "metric": "Precision",
+          "value": 0.62
+        },
+        {
+          "metric": "Recall",
+          "value": 0.756
+        },
+        {
+          "metric": "F1",
+          "value": 0.681
+        }
+      ]
+    },
+    {
+      "label": "XGBoost (text embeddings)",
+      "model_class": "XGBoost",
+      "training_type": "text_embeddings",
+      "linestyle": "solid",
+      "color": "#2ca02c",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.859
+        },
+        {
+          "metric": "Precision",
+          "value": 0.75
+        },
+        {
+          "metric": "Recall",
+          "value": 0.512
+        },
+        {
+          "metric": "F1",
+          "value": 0.609
+        }
+      ]
+    }
+  ],
+  "output": {
+    "results_png_path": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_07_01/outputs/test_metrics_linegraph/2026_07_02-17:46:52/results.png"
+  }
+}
