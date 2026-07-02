@@ -63,7 +63,7 @@ From our scaling curves, we don't see much improvement in recall and we only see
 
 ### Training models based on the text embeddings
 
-#### Dataset
+#### Dataset (embedding models)
 
 We also trained additional predictive models based on text embeddings. We used Amazon Bedrock's Titan Text Embeddings (`amazon.titan-embed-text-v2:0`), with `d=256` dimensions. The embeddings were also L2-normalized.
 
@@ -79,7 +79,7 @@ We generated the following vectors:
 
 We then stack these vectors into a single feature vector with shape `(1030,)`, creating a dataset with shape `(959, 1030)` for our posts.
 
-#### Results
+#### Results (embedding models)
 
 We show the model performance for predicting keep/remove decisions using Bedrock text embeddings. Precision, recall, F1, and ROC-AUC are computed with the remove decision as the positive class ($y=1$).
 
