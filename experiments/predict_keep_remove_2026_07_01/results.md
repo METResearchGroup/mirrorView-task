@@ -1,3 +1,10 @@
+---
+header-includes:
+  - \usepackage[margin=0.5in]{geometry}
+  - \usepackage{lmodern}
+  - \usepackage[T1]{fontenc}
+---
+
 # Results
 
 ## Study 1: Feasibility of Predicting Keep/Remove Decisions
@@ -47,6 +54,13 @@ $$
 
 We notice a slight lift in the logistic regression and XGBoost models as compared to a naive baseline, driven by improvements in recall of remove decisions. We also observe likely overfitting on the XGBoost model given the sparsity of our n=959 dataset.
 
+#### Scaling curves
+
+We also generated scaling curves by varying the proportion of the n=959 posts used in the training vs. test sets.
+![XGBoost scaling curves](experiments/predict_keep_remove_2026_05_07/outputs/scaling_curves/2026_07_02-14:33:42/results.png)
+
+From our scaling curves, we don't see much improvement in recall and we only see slight gains in precision and overall accuracy. We have a small dataset size overall so it's unlikely that we have the sample size to learn sufficient signal.
+
 ## Study 2
 
 In Study 2, ...
@@ -58,3 +72,5 @@ In Study 2, ...
 (model performance)
 
 #### Scaling curves
+
+![XGBoost scaling curves](experiments/predict_keep_remove_2026_05_07/outputs/scaling_curves/2026_07_02-14:33:42/results.png)
