@@ -127,13 +127,17 @@ We chose to focus on using text embeddings as features for our predictive models
 
 (explainability work)
 
-#### Detecting explainable features
+#### Developing hand-crafted explainable features
 
-(detecting explainable features)
+We compiled a taxonomy with the following features:
 
-(initial results from Study 2)
+- (foo bar)
+
+(Exploratory analyses of the explainable features and if we see any trends).
 
 #### Training a model using the explainable features
+
+(we can train on both (1) just the top N explainable features and (2) text embeddings + top N explainable features).
 
 ### Calibration
 
