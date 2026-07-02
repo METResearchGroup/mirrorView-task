@@ -11,11 +11,7 @@ header-includes:
 
 ### Motivation
 
-... In Study 1, we asked users ...
-
-### Formulating the task
-
-...
+We asked users to evaluate whether, if shown a social media post and its mirrored version (which preserves topic and intensity but flips the political stance), users would choose to keep both posts or remove both posts from a hypothetical social media platform. We then trained ML models to see if we could predict, given a post and its mirrored counterpart, whether participants would, on average, choose to keep or remove the pair.
 
 ### Dataset
 
@@ -105,10 +101,38 @@ We compare the results of the logistic regression and XGBoost models trained on 
 
 ## Study 2
 
-In Study 2, we expanded on ...
+In Study 2, we expanded on the work from Study 1.
+
+### Dataset
+
+### Training models based on the text embeddings
+
+We chose to focus on using text embeddings as features for our predictive models based on their vastly superior performance as compared to the hand-crafted features.
+
+#### Training logistic regression and XGBoost models
+
+(stuff)
+
+#### Fine-tuning a language model
+
+(LoRA tuning?)
+
+#### Scaling curves
+
+(put scaling curves here)
+
+### Explainability
+
+(explainability work)
+
+#### Detecting explainable features
+
+(detecting explainable features)
 
 (initial results from Study 2)
 
-### Model performance
+#### Training a model using the explainable features
 
-(model performance)
+### Calibration
+
+(calibration work)
