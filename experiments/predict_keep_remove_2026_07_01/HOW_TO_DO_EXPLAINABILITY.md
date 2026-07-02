@@ -16,9 +16,29 @@ Given the dataset of human-annotated moderation choices, we believe we can devel
 
 However, we also would like to know the content-level features that predict which posts get removed. This will allow us to learn more about the nature of contentious and possibly disagreeable content on social media that users, on average, would allow to exist on the platform.
 
-For our analysis, we want to focus on the average ratings for a given post and its mirrored pair. What's out of scope of our analysis is a deeper dive on consistency of individual raters.
+For our analysis, we want to focus on the average ratings for a given post and its mirrored pair. What's out of scope of our analysis is a deeper dive on consistency of individual raters. We also care more about global features rather than features for a specific post.
 
-By uncovering explainable signals, we can turn this into a series of policies that a platform can follow. It also gives us an explainable and transparent set of rules justifying why a certain piece of content online was allowed or removed.
+By uncovering explainable signals, we can turn this into a series of policies that a platform can follow. We then will have an explainable and transparent set of rules justifying why a certain piece of content online was allowed or removed.
+
+## Initial hypotheses to investigate
+
+Embeddings:
+
+- Does the text embedding of the original post alone explain the decision to keep or remove? How does that compare to considering the text embedding of both the original and the mirrored post?
+- Does the element-wise difference of the text embeddings between the original and mirrored posts explain the decision? This would tell us if the closeness of a post and its mirror has any explainable signal for the decision. It also allows us to see if our mirroring algorithm generated robust results.
+
+Considering specific hand-crafted features:
+
+- Can we design hand-curated features that can explain some of the predicted performance?
+- Are there syntactic or semantic signals that the models are learning during training? How do these differ from our hand-crafted features?
+- Can we do systematic ablations when training a model on a set of explainable features in order to know which ones have the highest importance or explainability?
+- Can we use the text embeddings to train models to predict each of these hand-crafted features? If a simple linear model which takes the text embeddings as input could predict these individual features, that lends some credence to the possibility that the model may be indirectly relying on these features during its evaluations. Namely, if a simple binary linear classifier could, given these embeddings, easily linearly separate a binary class label, we could use that as part of explaining the model's performance.
+
+Explaining a fine-tuned LLM:
+
+- Does a fine-tuned LLM outperform a simpler model like logistic regression or a tree-based model?
+- Can we use probing vectors and attention heat maps, as well as other techniques used in explainable AI research, to probe the LLM's weights?
+- Can we ask the model to also explain why it chose the decisions it did?
 
 ## Explainability for embeddings
 
