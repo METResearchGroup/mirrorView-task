@@ -12,3 +12,9 @@ What we'd like to do is the following:
 We write up the results in `results.md` (which we then compile to `results.pdf`):
 
 `pandoc experiments/predict_keep_remove_2026_07_01/results.md -o experiments/predict_keep_remove_2026_07_01/results.pdf`
+
+We have the following scripts:
+
+- `dataloader.py`: loads in the data from the raw .csv.
+- `generate_dataset_metrics.py`: generates the dataset metrics (e.g., number of posts) cited in the writeup.
+- `generate_embeddings.py`: generates the embeddings and stores in S3.
