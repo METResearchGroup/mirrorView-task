@@ -61,6 +61,12 @@ We also generated scaling curves by varying the proportion of the n=959 posts us
 
 From our scaling curves, we don't see much improvement in recall and we only see slight gains in precision and overall accuracy. We have a small dataset size overall so it's unlikely that we have the sample size to learn sufficient signal.
 
+### Training models based on the text embeddings
+
+We also trained additional predictive models based on text embeddings. We used Amazon Bedrock's Titan Text Embeddings (`amazon.titan-embed-text-v2:0`), with `d=256` dimensions. The embeddings were also L2-normalized.
+
+We stacked ... to create a dense feature vector for each pair of posts.
+
 ## Study 2
 
 In Study 2, ...
@@ -70,7 +76,3 @@ In Study 2, ...
 ### Model performance
 
 (model performance)
-
-#### Scaling curves
-
-![XGBoost scaling curves](experiments/predict_keep_remove_2026_05_07/outputs/scaling_curves/2026_07_02-14:33:42/results.png)
