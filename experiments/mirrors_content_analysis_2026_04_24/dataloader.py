@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import re
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -16,36 +14,15 @@ pd.set_option("display.expand_frame_repr", False)
 
 
 class Dataloader:
-    """Locate latest export CSVs and produce the curated trial-level table."""
+    """Load a pinned export CSV and produce the curated trial-level table."""
 
     EXPERIMENT_DIR = Path(__file__).resolve().parent
     PROJECT_ROOT = EXPERIMENT_DIR.parent.parent
     SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 
-    EXPORT_FILENAME_PATTERN = re.compile(
-        r"^mirrorview_pilot_data_(\d{4}_\d{2}_\d{2}-\d{2}:\d{2}:\d{2})\.csv$"
-    )
-    TIMESTAMP_FORMAT = "%Y_%m_%d-%H:%M:%S"
-
-    def _resolve_latest_export_csv_path(self) -> Path:
-        """Path to the newest ``mirrorview_pilot_data_*.csv`` under ``scripts/``."""
-        candidates: list[tuple[datetime, Path]] = []
-        for path in self.SCRIPTS_DIR.glob("mirrorview_pilot_data_*.csv"):
-            match = self.EXPORT_FILENAME_PATTERN.match(path.name)
-            if not match:
-                continue
-            candidates.append(
-                (datetime.strptime(match.group(1), self.TIMESTAMP_FORMAT), path)
-            )
-
-        if not candidates:
-            raise FileNotFoundError(
-                f"No timestamped mirrorview_pilot_data_*.csv under {self.SCRIPTS_DIR}. "
-                "Run: PYTHONPATH=. uv run python scripts/export_study_results.py"
-            )
-
-        _, latest_path = max(candidates, key=lambda item: item[0])
-        return latest_path
+    # Pinned export used for reproducible analysis across experiments.
+    PINNED_EXPORT_FILENAME = "mirrorview_pilot_data_2026_04_28-16:31:47.csv"
+    PINNED_EXPORT_PATH = EXPERIMENT_DIR / PINNED_EXPORT_FILENAME
 
     @property
     def last_loaded_export_path(self) -> Path | None:
@@ -53,16 +30,15 @@ class Dataloader:
         return getattr(self, "_last_loaded_export_path", None)
 
     def get_latest_mirrorview_run_data(self) -> pd.DataFrame:
-        """Load the newest export CSV under ``scripts/`` as a DataFrame.
-
-        Files are named ``mirrorview_pilot_data_<timestamp>.csv`` by
-        ``scripts/export_study_results.py``. The latest file is chosen by the
-        timestamp embedded in the filename (same rule as
-        ``experiments/basic_summary_stats_2026_04_27/total_attrition.py``).
-        """
-        latest_path = self._resolve_latest_export_csv_path()
-        self._last_loaded_export_path = latest_path
-        return pd.read_csv(latest_path)
+        """Load the pinned export CSV as a DataFrame."""
+        if not self.PINNED_EXPORT_PATH.exists():
+            raise FileNotFoundError(
+                f"Pinned export CSV not found at {self.PINNED_EXPORT_PATH}. "
+                "If you intended to use a different export, update PINNED_EXPORT_FILENAME "
+                "and ensure the file is present."
+            )
+        self._last_loaded_export_path = self.PINNED_EXPORT_PATH
+        return pd.read_csv(self.PINNED_EXPORT_PATH, low_memory=False)
 
     def transform_latest_mirrorview_run_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """Filter and reshape the raw export frame into the trial-level mirrors table."""
