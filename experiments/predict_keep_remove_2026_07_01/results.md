@@ -11,7 +11,7 @@ header-includes:
 
 ### Motivation
 
-...
+... In Study 1, we asked users ...
 
 ### Formulating the task
 
@@ -63,13 +63,45 @@ From our scaling curves, we don't see much improvement in recall and we only see
 
 ### Training models based on the text embeddings
 
+#### Dataset
+
 We also trained additional predictive models based on text embeddings. We used Amazon Bedrock's Titan Text Embeddings (`amazon.titan-embed-text-v2:0`), with `d=256` dimensions. The embeddings were also L2-normalized.
 
-We stacked ... to create a dense feature vector for each pair of posts.
+We generated the following vectors:
+
+- The original embedding vector, with shape `(256,)`.
+- The mirrored post's embedding vector, with shape `(256, )`.
+- The elementwise absolute difference between the original and mirrored post's vectors, with shape `(256, )`.
+- The Hadamard elementwise product between the original and mirrored post embedding vectors, with shape `(256, )`.
+- The scalar cosine similarity between the original and mirrored posts, with shape `(1,)`.
+- One-hot vector of the original post's political stance (left vs. right), with shape `(2,)`.
+- One-hot vector of the original post's toxicity category (low, middle, high), with shape `(3,)`.
+
+We then stack these vectors into a single feature vector with shape `(1030,)`, creating a dataset with shape `(959, 1030)` for our posts.
+
+#### Results
+
+We show the model performance for predicting keep/remove decisions using Bedrock text embeddings. Precision, recall, F1, and ROC-AUC are computed with the remove decision as the positive class ($y=1$).
+
+$$
+\begin{array}{llrrrrr}
+\hline
+\text{Model} & \text{Split} & \text{Accuracy} & \text{Precision} & \text{Recall} & \text{F1} & \text{ROC-AUC} \\
+\hline
+\text{Baseline (always predict keep)} & \text{Test} & 0.649 & 0.000 & 0.000 & 0.000 & 0.500 \\
+\text{Logistic regression} & \text{Train} & 0.897 & 0.686 & 0.944 & 0.795 & 0.966 \\
+\text{Logistic regression} & \text{Test} & 0.849 & 0.620 & 0.756 & 0.681 & 0.879 \\
+\text{XGBoost} & \text{Train} & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 \\
+\text{XGBoost} & \text{Test} & 0.859 & 0.750 & 0.512 & 0.609 & 0.860 \\
+\hline
+\end{array}
+$$
+
+We observe that logistic regression generalizes better on the test set in terms of F1 and recall. XGBoost overfits more strongly, which we believe to be a symptom of the relatively small sample size. However, overall, training on the text embeddings themselves was much more performant than training on the hand-crafted text features.
 
 ## Study 2
 
-In Study 2, ...
+In Study 2, we expanded on ...
 
 (initial results from Study 2)
 
