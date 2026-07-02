@@ -15,7 +15,7 @@ We asked users to evaluate whether, if shown a social media post and its mirrore
 
 ### Dataset
 
-Prolific participants (n=1,321) reviewed pairs of original and mirrored posts (n=959 pairs), resulting in a final dataset of n=13,250 rows, with each row representing a human keep/remove decision for the pair of posts. In these "linked fate" trials, the users saw both the original post and its mirrored equivalent, randomly ordered, and were asked to make a keep/remove decision for the pair. In this dataset, 66.2% of post pairs were kept (and 33.8% removed). We create training labels for each post by taking the modal label across all raters (average n=13.8 labels per post).
+Prolific participants (n=1,321) reviewed pairs of original and mirrored posts (n=959 pairs), resulting in a final dataset of n=13,250 rows, with each row representing a human keep/remove decision for the pair of posts. In these "linked fate" trials, the users saw both the original post and its mirrored equivalent, randomly ordered, and were asked to make a keep/remove decision for the pair. In this dataset, 66.2% of post pairs were kept and 33.8% were removed. We create training labels for each post by taking the modal label across all raters (average n=13.8 labels per post).
 
 ### Training an initial set of models with explainable text features
 
@@ -32,7 +32,7 @@ We first generated a set of explainable text features:
 
 We then trained two models on these features: a logistic regression model and an XGBoost model. We report those results in a table
 
-Caption: Model performance for predicting keep/remove decisions. Precision, recall, F1, and ROC-AUC are computed with the remove decision as the positive class ($y=1$).
+We report the model performance for predicting keep/remove decisions. Precision, recall, F1, and ROC-AUC are computed with the remove decision as the positive class ($y=1$).
 
 $$
 \begin{array}{llrrrrr}
@@ -104,6 +104,8 @@ We compare the results of the logistic regression and XGBoost models trained on 
 In Study 2, we expanded on the work from Study 1.
 
 ### Dataset
+
+Prolific participants (n=1,176) reviewed pairs of original and mirrored posts (n=8,791 pairs), resulting in a final dataset of n=23,560 rows, with each row representing a human keep/remove decision for the pair of posts. In these "linked fate" trials, the users saw both the original post and its mirrored equivalent, randomly ordered, and were asked to make a keep/remove decision for the pair. In this dataset, 68% of post pairs were kept and 32% were removed. We create training labels for each post by taking the modal label across all raters (average n=2.68 labels per post).
 
 ### Training models based on the text embeddings
 
