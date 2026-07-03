@@ -208,12 +208,6 @@ This implies that it is not the content of the mirrored text itself that affects
 
 Because we observe that there is no statistically significant difference in model performance between a model trained on just the original post's embeddings versus a model trained on both the original post and the mirrored post's embeddings, for parsimony reasons we chose to train subsequent models on just the text embeddings of the original post.
 
-### Exploring ingroup vs. outgroup content
-
-(change the name of this, but basically the idea is how does training work depending on if the original post was ingroup or outgroup for that person?)
-
-(train two models, both logistic regression, one with just the text embedding and one where we add the flag for if the original post was ingroup or not, to see if that has any extra explanatory power?)
-
 ### Fine-tuning a language model
 
 (LoRA tuning?)
