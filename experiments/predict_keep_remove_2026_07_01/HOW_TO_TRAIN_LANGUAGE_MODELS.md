@@ -45,14 +45,21 @@ We'll run these and report the results as a table here, with columns:
 - accuracy, other metrics...
 
 ### Prompting results (Experiment 1)
+
+We only completed full-dataset runs for the two one-shot / small (`gpt-5.4-nano`) ablations (original-only and original-plus-mirror). Each run scored the full 80/20 split (`n_train=7032`, `n_test=1759`; 8,791 API requests per variant). We did not run the remaining six variants (one-shot/large, few-shot/{original,original_plus_mirror}×{small,large}) for cost reasons; the two completed runs are enough of a prompting baseline to compare against the embedding classifiers and to decide whether to invest in ModernBERT / LoRA next.
+
+Precision, recall, F1, ROC-AUC, and PR-AUC use `remove` as the positive class (`y=1`).
+
 <!-- BEGIN LLM_PROMPTING_RESULTS_TABLE -->
-| type     | ablation             | model_size   | model_name   | split   |   accuracy |   precision |   recall |       f1 |   roc_auc |   pr_auc |
-|:---------|:---------------------|:-------------|:-------------|:--------|-----------:|------------:|---------:|---------:|----------:|---------:|
-| few-shot | original plus mirror | large        | gpt-5.5      | test    |      0.5   |         0.2 |        1 | 0.333333 | 0.571429  | 0.25     |
-| few-shot | original plus mirror | large        | gpt-5.5      | train   |      0.625 |         0   |        0 | 0        | 0.0714286 | 0.125    |
-| one-shot | original             | small        | gpt-5.4-nano | test    |      0.75  |         0   |        0 | 0        | 0.714286  | 0.333333 |
-| one-shot | original             | small        | gpt-5.4-nano | train   |      1     |         1   |        1 | 1        | 1         | 1        |
+| type     | ablation             | model_size | model_name   | split | accuracy | precision | recall | f1    | roc_auc | pr_auc |
+|:---------|:---------------------|:-----------|:-------------|:------|---------:|----------:|-------:|------:|--------:|-------:|
+| one-shot | original             | small      | gpt-5.4-nano | train |    0.690 |     0.519 |  0.443 | 0.478 |   0.678 |  0.491 |
+| one-shot | original             | small      | gpt-5.4-nano | test  |    0.686 |     0.510 |  0.485 | 0.497 |   0.695 |  0.515 |
+| one-shot | original plus mirror | small      | gpt-5.4-nano | train |    0.682 |     0.504 |  0.308 | 0.382 |   0.627 |  0.448 |
+| one-shot | original plus mirror | small      | gpt-5.4-nano | test  |    0.676 |     0.490 |  0.314 | 0.383 |   0.615 |  0.448 |
 <!-- END LLM_PROMPTING_RESULTS_TABLE -->
+
+On the test set, original-only one-shot prompting slightly outperforms original-plus-mirror (accuracy 0.686 vs 0.676; F1 0.497 vs 0.383), consistent with the embedding ablations where adding mirror text did not help. Absolute performance is in the same ballpark as logistic regression on original-only embeddings (test accuracy ~0.67, F1 ~0.55), so prompting alone is not a clear win over the cheaper embedding baselines.
 
 ## Experiment 2: ModernBERT
 
@@ -155,3 +162,5 @@ For our data splits, we want to do a 80:10:10 split between train/test/validatio
 ## Experiment 3: LoRA-tuned models
 
 ...
+
+We'll use a Qwen model. We'll use 2 variants of Qwen models. We'll use AWS Bedrock for training.
