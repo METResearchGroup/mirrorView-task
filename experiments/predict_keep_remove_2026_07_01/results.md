@@ -194,11 +194,27 @@ $$
 
 ![Ablation test-set metric bar graph](experiments/predict_keep_remove_2026_07_01/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:49:54/results.png)
 
-#### Fine-tuning a language model
+We observe that training a model on only the text embedding of the original post is as performant or more performant than the other ablations.
+
+Even though adding the mirrored post's text embedding doesn't improve a model's predictive performance, we know that displaying the mirrored post in addition to the original post is significant. In other work, we show that there is a significant difference in the probability of removal based on whether a participant was exposed to our "linked fate" procedure of showing both the original post and its mirror.
+
+![Removal rates by condition](experiments/predict_keep_remove_2026_07_01/assets/mechanism_linked_fate.png)
+
+We observe that the average cosine similarity between the original posts and their mirrored counterparts is [insert similarity here]. Most of the uniqueness of the content is driven by differences in the posts themselves, rather than between a post and its mirrored counterpart.
+
+This implies that it is not the content of the mirrored text itself that affects the decision. Instead, the decision to remove posts is driven by (1) the content of the original post (of which the mirrored post is a similar ideological mirror) and (2) the mere presence of the mirrored post alongside the original post.
+
+Because we observe that there is no statistically significant difference in model performance between a model trained on just the original post's embeddings versus a model trained on both the original post and the mirrored post's embeddings, for parsimony reasons we chose to train subsequent models on just the text embeddings of the original post.
+
+### Exploring ingroup vs. outgroup content
+
+(change the name of this, but basically the idea is how does training work depending on if the original post was ingroup or outgroup for that person?).
+
+### Fine-tuning a language model
 
 (LoRA tuning?)
 
-#### Scaling curves (Study 2)
+### Scaling curves (Study 2)
 
 (put scaling curves here)
 
