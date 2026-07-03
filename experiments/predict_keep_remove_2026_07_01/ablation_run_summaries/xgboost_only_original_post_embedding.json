@@ -1,0 +1,27 @@
+{
+  "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/only_original_post_embedding/2026_07_03-02:57:07/metrics.json",
+  "test_metrics": {
+    "accuracy": 0.7083570210346788,
+    "precision": 0.5534188034188035,
+    "recall": 0.46003552397868563,
+    "f1": 0.5024248302618817,
+    "roc_auc": 0.7044351509175049,
+    "pr_auc": 0.5427766136219004,
+    "confusion_matrix_tn": 987.0,
+    "confusion_matrix_fp": 209.0,
+    "confusion_matrix_fn": 304.0,
+    "confusion_matrix_tp": 259.0
+  },
+  "train_metrics": {
+    "accuracy": 0.9934584755403868,
+    "precision": 0.9833333333333333,
+    "recall": 0.9964444444444445,
+    "f1": 0.9898454746136865,
+    "roc_auc": 0.999714252521028,
+    "pr_auc": 0.9994890667679401,
+    "confusion_matrix_tn": 4744.0,
+    "confusion_matrix_fp": 38.0,
+    "confusion_matrix_fn": 8.0,
+    "confusion_matrix_tp": 2242.0
+  }
+}
