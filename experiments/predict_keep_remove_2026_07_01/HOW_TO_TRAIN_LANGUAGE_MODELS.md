@@ -81,9 +81,22 @@ Our prediction task is "predict remove", so we need to transform the training da
 
 We'll develop in the following order:
 
-1. Do zero-shot labeling, using the base ModernBERT model and collecting metrics. Here, we'll do a frozen encoder baseline.
-2. Fine-tune ModernBERT on the training data and evaluate training curves. We'll evaluate the training curves to review for overfitting.
-3. Evaluate calibration curves varying the thresholds from p=0.1 to p=0.9, in increments of 0.1.
+### Step 1: Linear probe baseline
+
+Do zero-shot labeling, using the base ModernBERT model and collecting metrics. Here, we'll do a frozen encoder baseline.
+
+### Step 2: Fine-tuning
+
+Fine-tune ModernBERT on the training data and evaluate training curves. We'll evaluate the training curves to review for overfitting. Let's fine-tune two versions:
+
+- Part A: Head-only training (frozen encoder)
+- Part B: full fine-tuning of the weights
+
+### Step 3: Calibration
+
+### More implementation details
+
+Evaluate calibration curves varying the thresholds from p=0.1 to p=0.9, in increments of 0.1.
 
 We'll store all the work in experiments/predict_keep_remove_2026_07_01/models/modernbert/
 
