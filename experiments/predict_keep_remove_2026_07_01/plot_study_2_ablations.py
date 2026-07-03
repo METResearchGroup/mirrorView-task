@@ -4,11 +4,11 @@ import argparse
 import json
 import re
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
+from matplotlib.patches import Patch
 
 # Ensure repo root is importable (so `lib/` works when running this script directly).
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -17,26 +17,6 @@ sys.path.insert(0, str(REPO_ROOT))
 from lib.timestamp_utils import get_current_timestamp  # noqa: E402
 
 METRIC_ORDER = ["Accuracy", "Precision", "Recall", "F1"]
-
-
-@dataclass(frozen=True)
-class SeriesPoint:
-    metric: str
-    value: float
-
-
-@dataclass(frozen=True)
-class PlotSeries:
-    label: str
-    model_class: str
-    ablation_variant: str
-    linestyle: str
-    color: str
-    points: tuple[SeriesPoint, ...]
-
-    def y_values_in_order(self) -> list[float]:
-        m_to_v = {p.metric: p.value for p in self.points}
-        return [float(m_to_v[m]) for m in METRIC_ORDER]
 
 
 def _parse_latex_array_rows(array_block: str) -> list[dict[str, object]]:
@@ -108,6 +88,16 @@ def _linestyle_from_variant(variant: str) -> str:
     # Solid baseline, dashed ablations.
     return "-" if variant == "baseline" else "--"
 
+def _bar_color_for_variant(variant: str) -> str:
+    # Chosen to match the user's requested "baseline grey, only original green, difference embedding orange".
+    if variant == "baseline":
+        return "#9e9e9e"
+    if variant == "only original post embedding":
+        return "#2ca02c"
+    if variant == "difference embedding":
+        return "#ff7f0e"
+    return "#7f7f7f"
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -120,7 +110,7 @@ def main() -> None:
     parser.add_argument(
         "--outputs-name",
         type=str,
-        default="study_2_ablations_test_metrics_linegraph",
+        default="study_2_ablations_test_metrics_bargraph",
         help="Subfolder under outputs/ to write results.json and results.png.",
     )
     args = parser.parse_args()
@@ -131,13 +121,8 @@ def main() -> None:
 
     rows = _parse_latex_array_rows(ablation_array_block)
 
-    color_map = {
-        "Logistic regression": "#ff7f0e",  # tab:orange
-        "XGBoost": "#2ca02c",  # tab:green
-    }
-    default_color = "#7f7f7f"
-
-    series_list: list[PlotSeries] = []
+    # values[model_class][variant][metric] = value
+    values: dict[str, dict[str, dict[str, float]]] = {}
     for r in rows:
         if str(r["split"]) != "Test":
             continue
@@ -145,29 +130,17 @@ def main() -> None:
         model_name = str(r["model"])
         model_class = _model_class_from_model_name(model_name)
         variant = _ablation_variant_from_model_name(model_name)
-        color = color_map.get(model_class, default_color)
-        linestyle = _linestyle_from_variant(variant)
 
-        label = f"{model_class} ({variant})"
-        points = (
-            SeriesPoint("Accuracy", float(r["accuracy"])),
-            SeriesPoint("Precision", float(r["precision"])),
-            SeriesPoint("Recall", float(r["recall"])),
-            SeriesPoint("F1", float(r["f1"])),
+        values.setdefault(model_class, {}).setdefault(variant, {}).update(
+            {
+                "Accuracy": float(r["accuracy"]),
+                "Precision": float(r["precision"]),
+                "Recall": float(r["recall"]),
+                "F1": float(r["f1"]),
+            }
         )
 
-        series_list.append(
-            PlotSeries(
-                label=label,
-                model_class=model_class,
-                ablation_variant=variant,
-                linestyle=linestyle,
-                color=color,
-                points=points,
-            )
-        )
-
-    if not series_list:
+    if not values:
         raise RuntimeError("No Test rows found in Ablation results table.")
 
     # Create output dir
@@ -175,21 +148,39 @@ def main() -> None:
     out_dir = results_md_path.parent / "outputs" / args.outputs_name / ts
     out_dir.mkdir(parents=True, exist_ok=False)
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    x = list(range(len(METRIC_ORDER)))
-    ax.set_xticks(x)
-    ax.set_xticklabels(METRIC_ORDER)
-    ax.set_ylabel("Test-set metric value (remove is positive)")
-    ax.set_ylim(0.0, 1.02)
-    ax.yaxis.set_major_locator(MaxNLocator(nbins=6))
-    ax.grid(True, axis="y", alpha=0.25)
+    # Two panels (matching "two sets of bar graphs": logistic regression vs XGBoost).
+    model_panels = ["Logistic regression", "XGBoost"]
+    n_panels = len(model_panels)
 
-    for s in series_list:
-        ys = s.y_values_in_order()
-        ax.plot(x, ys, linestyle=s.linestyle, color=s.color, marker="o", linewidth=2, label=s.label)
+    fig, axes = plt.subplots(1, n_panels, figsize=(14, 5), sharey=True)
+    if n_panels == 1:
+        axes = [axes]
 
-    ax.legend(loc="best", fontsize=9)
-    fig.tight_layout()
+    metric_x = list(range(len(METRIC_ORDER)))
+    group_width = 0.22
+    offsets = [-group_width, 0.0, group_width]  # baseline, only-original, difference
+
+    variants = ["baseline", "only original post embedding", "difference embedding"]
+
+    for ax, model_class in zip(axes, model_panels, strict=False):
+        for v_i, variant in enumerate(variants):
+            ys = [values.get(model_class, {}).get(variant, {}).get(m, 0.0) for m in METRIC_ORDER]
+            xs = [x + offsets[v_i] for x in metric_x]
+            ax.bar(xs, ys, width=group_width, color=_bar_color_for_variant(variant), edgecolor="black", linewidth=0.3)
+
+        ax.set_xticks(metric_x)
+        ax.set_xticklabels(METRIC_ORDER)
+        ax.set_title(model_class)
+        ax.set_ylim(0.0, 1.02)
+        ax.yaxis.set_major_locator(MaxNLocator(nbins=6))
+        ax.grid(True, axis="y", alpha=0.25)
+
+    axes[0].set_ylabel("Test-set metric value (remove is positive)")
+
+    legend_handles = [Patch(facecolor=_bar_color_for_variant(v), edgecolor="black", label=v) for v in variants]
+    fig.legend(handles=legend_handles, loc="upper center", ncol=3, frameon=False)
+
+    fig.tight_layout(rect=[0, 0, 1, 0.93])
 
     results_png_path = out_dir / "results.png"
     fig.savefig(results_png_path, dpi=200)
@@ -197,17 +188,16 @@ def main() -> None:
     results_json = {
         "source_results_md": str(results_md_path),
         "metric_order": METRIC_ORDER,
-        "series": [
-            {
-                "label": s.label,
-                "model_class": s.model_class,
-                "ablation_variant": s.ablation_variant,
-                "linestyle": s.linestyle,
-                "color": s.color,
-                "points": [{"metric": p.metric, "value": p.value} for p in s.points],
+        "values": {
+            model_class: {
+                ablation_variant: {
+                    metric: float(values[model_class][ablation_variant][metric])
+                    for metric in METRIC_ORDER
+                }
+                for ablation_variant in values[model_class].keys()
             }
-            for s in series_list
-        ],
+            for model_class in values.keys()
+        },
         "output": {"results_png_path": str(results_png_path)},
     }
     results_json_path = out_dir / "results.json"

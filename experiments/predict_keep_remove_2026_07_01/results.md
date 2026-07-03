@@ -13,7 +13,7 @@ header-includes:
 
 We asked users to evaluate whether, if shown a social media post and its mirrored version (which preserves topic and intensity but flips the political stance), users would choose to keep both posts or remove both posts from a hypothetical social media platform. We then trained ML models to see if we could predict, given a post and its mirrored counterpart, whether participants would, on average, choose to keep or remove the pair.
 
-### Dataset
+### Dataset (Study 2)
 
 Prolific participants (n=1,321) reviewed pairs of original and mirrored posts (n=959 pairs), resulting in a final dataset of n=13,250 rows, with each row representing a human keep/remove decision for the pair of posts. In these "linked fate" trials, the users saw both the original post and its mirrored equivalent, randomly ordered, and were asked to make a keep/remove decision for the pair. In this dataset, 66.2% of post pairs were kept and 33.8% were removed. We create training labels for each post by taking the modal label across all raters (average n=13.8 labels per post).
 
@@ -57,7 +57,7 @@ We also generated scaling curves by varying the proportion of the n=959 posts us
 
 From our scaling curves, we don't see much improvement in recall and we only see slight gains in precision and overall accuracy. We have a small dataset size overall so it's unlikely that we have the sample size to learn sufficient signal.
 
-### Training models based on the text embeddings
+### Training models based on the text embeddings (Study 2)
 
 #### Dataset (embedding models)
 
@@ -192,7 +192,7 @@ $$
 \end{array}
 $$
 
-![Ablation test-set metric line graph](experiments/predict_keep_remove_2026_07_01/outputs/study_2_ablations_test_metrics_linegraph/2026_07_03-14:35:29/results.png)
+![Ablation test-set metric bar graph](experiments/predict_keep_remove_2026_07_01/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:47:30/results.png)
 
 #### Fine-tuning a language model
 
