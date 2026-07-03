@@ -44,9 +44,30 @@ We'll run these and report the results as a table here, with columns:
 - split: train/test
 - accuracy, other metrics...
 
+### Prompting results (Experiment 1)
+<!-- BEGIN LLM_PROMPTING_RESULTS_TABLE -->
+| type     | ablation             | model_size   | model_name   | split   |   accuracy |   precision |   recall |       f1 |   roc_auc |   pr_auc |
+|:---------|:---------------------|:-------------|:-------------|:--------|-----------:|------------:|---------:|---------:|----------:|---------:|
+| few-shot | original plus mirror | large        | gpt-5.5      | test    |      0.5   |         0.2 |        1 | 0.333333 | 0.571429  | 0.25     |
+| few-shot | original plus mirror | large        | gpt-5.5      | train   |      0.625 |         0   |        0 | 0        | 0.0714286 | 0.125    |
+| one-shot | original             | small        | gpt-5.4-nano | test    |      0.75  |         0   |        0 | 0        | 0.714286  | 0.333333 |
+| one-shot | original             | small        | gpt-5.4-nano | train   |      1     |         1   |        1 | 1        | 1         | 1        |
+<!-- END LLM_PROMPTING_RESULTS_TABLE -->
+
 ## Experiment 2: ModernBERT
 
 We also want to use ModernBERT...
+
+We'll use the base model of ModernBERT, not the large one.
+
+notes:
+
+- Train on out-of-the-box without fine-tuning.
+- Then fine-tune, then evaluate (with naive p=0.5 probability for now, without calibration).
+
+### Calibration
+
+(Also include calibration curves, as we can't just use p>0.5 for labeling).
 
 ## Experiment 3: LoRA-tuned models
 
