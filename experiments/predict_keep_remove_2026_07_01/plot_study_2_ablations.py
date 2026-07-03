@@ -79,7 +79,11 @@ def _ablation_variant_from_model_name(model_name: str) -> str:
         return "difference embedding"
     if "only original" in n:
         return "only original post embedding"
+    # Study 2 baseline row is now labeled "Original post + mirrored post embeddings".
+    # We keep an internal key of "baseline" so the rest of the plotting logic stays simple.
     if "baseline" in n:
+        return "baseline"
+    if "original post" in n and "mirrored post" in n and "embedding" in n:
         return "baseline"
     return "variant"
 
@@ -97,6 +101,17 @@ def _bar_color_for_variant(variant: str) -> str:
     if variant == "difference embedding":
         return "#ff7f0e"
     return "#7f7f7f"
+
+
+def _variant_label_for_legend(variant: str) -> str:
+    # Only renaming Study 2 baseline as requested; leave others stable.
+    if variant == "baseline":
+        return "Original post + mirrored post embeddings"
+    if variant == "only original post embedding":
+        return "Only original post embedding"
+    if variant == "difference embedding":
+        return "Difference embedding (orig_emb - mirror_emb)"
+    return variant
 
 
 def main() -> None:
@@ -177,7 +192,10 @@ def main() -> None:
 
     axes[0].set_ylabel("Test-set metric value (remove is positive)")
 
-    legend_handles = [Patch(facecolor=_bar_color_for_variant(v), edgecolor="black", label=v) for v in variants]
+    legend_handles = [
+        Patch(facecolor=_bar_color_for_variant(v), edgecolor="black", label=_variant_label_for_legend(v))
+        for v in variants
+    ]
     fig.legend(handles=legend_handles, loc="upper center", ncol=3, frameon=False)
 
     fig.tight_layout(rect=[0, 0, 1, 0.93])
