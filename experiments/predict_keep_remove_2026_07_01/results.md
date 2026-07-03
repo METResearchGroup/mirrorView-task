@@ -202,7 +202,7 @@ Even though adding the mirrored post's text embedding doesn't improve a model's 
 
 We observe that the average cosine similarity between the original posts and their mirrored counterparts is 0.549. Most of the uniqueness of the content is driven by differences in the posts themselves, rather than between a post and its mirrored counterpart.
 
-![Average cosine similarity between a post and its mirror](experiments/predict_keep_remove_2026_07_01/outputs/cosine_similarity_histogram/2026_07_03-16:45:20/results.png)
+![Average cosine similarity between a post and its mirror](experiments/predict_keep_remove_2026_07_01/outputs/cosine_similarity_histogram/2026_07_03-16:51:20/results.png)
 
 This implies that it is not the content of the mirrored text itself that affects the decision. Instead, the decision to remove posts is driven by (1) the content of the original post (of which the mirrored post is a similar ideological mirror) and (2) the mere presence of the mirrored post alongside the original post.
 
@@ -210,7 +210,9 @@ Because we observe that there is no statistically significant difference in mode
 
 ### Exploring ingroup vs. outgroup content
 
-(change the name of this, but basically the idea is how does training work depending on if the original post was ingroup or outgroup for that person?).
+(change the name of this, but basically the idea is how does training work depending on if the original post was ingroup or outgroup for that person?)
+
+(train two models, both logistic regression, one with just the text embedding and one where we add the flag for if the original post was ingroup or not, to see if that has any extra explanatory power?)
 
 ### Fine-tuning a language model
 

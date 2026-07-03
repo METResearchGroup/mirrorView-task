@@ -49,80 +49,6 @@ def _cosine(u: np.ndarray, v: np.ndarray) -> float:
         return 0.0
     return float(np.dot(u, v) / denom)
 
-
-def _loess_smooth_1d(x: np.ndarray, y: np.ndarray, x_eval: np.ndarray, *, frac: float) -> np.ndarray:
-    """
-    Simple LOESS (degree-1) smoothing.
-
-    This is O(n*m) where n=len(x), m=len(x_eval). Here n is histogram bins, so it's fine.
-    """
-    if x.ndim != 1 or y.ndim != 1:
-        raise ValueError("x and y must be 1D arrays")
-    if len(x) != len(y):
-        raise ValueError("x and y must be same length")
-    if len(x) < 2:
-        raise ValueError("Need at least 2 points for LOESS")
-    if not (0.05 <= frac <= 1.0):
-        raise ValueError("frac must be in [0.05, 1.0]")
-
-    n = len(x)
-    k = max(2, int(math.ceil(frac * n)))
-
-    x = x.astype(np.float64)
-    y = y.astype(np.float64)
-    x_eval = x_eval.astype(np.float64)
-
-    # Ensure monotonic x for neighborhood selection stability.
-    order = np.argsort(x)
-    x_sorted = x[order]
-    y_sorted = y[order]
-
-    out = np.zeros_like(x_eval, dtype=np.float64)
-
-    for i, xe in enumerate(x_eval):
-        # Nearest k points by absolute distance.
-        d = np.abs(x_sorted - xe)
-        idx = np.argpartition(d, kth=k - 1)[:k]
-
-        xk = x_sorted[idx]
-        yk = y_sorted[idx]
-        dk = d[idx]
-
-        max_d = float(np.max(dk))
-        if max_d == 0.0:
-            out[i] = float(np.mean(yk))
-            continue
-
-        # Tricube kernel weights.
-        w = (1.0 - (dk / max_d) ** 3) ** 3
-
-        # Weighted linear regression around xe: y ~ b0 + b1*(x - xe)
-        x_centered = xk - xe
-
-        S0 = float(np.sum(w))
-        if S0 == 0.0:
-            out[i] = float(np.mean(yk))
-            continue
-
-        S1 = float(np.sum(w * x_centered))
-        S2 = float(np.sum(w * x_centered**2))
-
-        T0 = float(np.sum(w * yk))
-        T1 = float(np.sum(w * yk * x_centered))
-
-        denom = S0 * S2 - S1 * S1
-        if abs(denom) < 1e-15:
-            out[i] = T0 / S0
-            continue
-
-        b1 = (S0 * T1 - S1 * T0) / denom
-        b0 = (T0 - b1 * S1) / S0
-
-        out[i] = float(b0)  # prediction at x=xe
-
-    return out
-
-
 def _compute_cosine_similarities_for_study2(*, cache_dir: Path) -> list[float]:
     loader = Dataloader()
     train_df = loader.load_training_dataframe()
@@ -181,12 +107,6 @@ def main() -> None:
         default=30,
         help="Number of histogram bins.",
     )
-    parser.add_argument(
-        "--loess-frac",
-        type=float,
-        default=0.35,
-        help="LOESS neighborhood fraction for smoothing the histogram curve.",
-    )
     args = parser.parse_args()
 
     cache_dir = Path(args.embedding_cache_dir)
@@ -213,8 +133,6 @@ def main() -> None:
     density = counts.astype(np.float64) / (len(cos_arr) * bin_width)  # density so integrates to ~1
     bin_centers = (edges[:-1] + edges[1:]) / 2.0
 
-    density_smooth = _loess_smooth_1d(bin_centers, density, bin_centers, frac=args.loess_frac)
-
     # Plot
     fig, ax = plt.subplots(figsize=(10, 6))
 
@@ -228,9 +146,8 @@ def main() -> None:
         linewidth=0.6,
         label="Histogram",
     )
-    ax.plot(bin_centers, density_smooth, color="#1f77b4", linewidth=2, label="LOESS smoothing")
 
-    ax.axvline(mean_cosine, color="red", linestyle="--", linewidth=2, label=f"Mean = {mean_cosine_sigfigs_3}")
+    ax.axvline(mean_cosine, color="red", linestyle="--", linewidth=2, label="Mean cosine similarity")
 
     ax.set_title(
         "Average cosine similarity between a post and its mirror\n(Higher is better)",
@@ -257,7 +174,6 @@ def main() -> None:
         "dimensions": EMBEDDING_DIMENSIONS,
         "normalize": True,
         "bins": args.bins,
-        "loess_frac": args.loess_frac,
         "mean_cosine": mean_cosine,
         "mean_cosine_sigfigs_3": mean_cosine_sigfigs_3,
         "n": len(cos_arr),
