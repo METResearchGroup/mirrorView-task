@@ -2,6 +2,12 @@
 
 This document will summarize my thoughts and approach towards explainability for the MirrorView project.
 
+Here are some AI chat conversations that I referenced while writing this (though I wrote all of this document myself, manually asking questions and picking and choosing one-off ideas from the AI agents):
+
+- [Claude](https://claude.ai/chat/2415d2ef-6e84-46bf-8e97-24d91fbc4aa0)
+- [ChatGPT](https://chatgpt.com/c/6a46b85d-dba8-83ea-814f-fb0275d840e3)
+- [Gemini](https://gemini.google.com/app/edc8f31bfd8fc48d)
+
 ## Motivation
 
 Currently, content moderation on social media platforms is done through a combination of human labelers and machine learning models. Even though platforms may have a set of policies that they claim to enforce, the requirements for what is allowable on a platform are enforced top-down at the behest of the individual annotators and reviewers.
