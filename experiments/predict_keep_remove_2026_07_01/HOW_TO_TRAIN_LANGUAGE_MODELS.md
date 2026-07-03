@@ -85,6 +85,32 @@ We'll develop in the following order:
 2. Fine-tune ModernBERT on the training data and evaluate training curves. We'll evaluate the training curves to review for overfitting.
 3. Evaluate calibration curves varying the thresholds from p=0.1 to p=0.9, in increments of 0.1.
 
+We'll store all the work in experiments/predict_keep_remove_2026_07_01/models/modernbert/
+
+We'll use the following file structure:
+
+```markdown
+experiments/
+  predict_keep_remove_2026_07_01/
+    dataloader.py                  # existing raw dataframe loader
+
+    models/
+      modernbert/
+        README.md
+        dataloader.py              # wraps parent dataloader, converts labels
+        train.py                   # local/SageMaker-compatible training entrypoint
+        evaluate.py                # optional test-set evaluation
+        predict.py                 # optional inference helper
+        launch_sagemaker.py        # submits remote SageMaker job
+        requirements.txt
+        configs/
+          modernbert_base.yaml
+        artifacts/
+          .gitkeep                 # local outputs ignored by git
+```
+
+For packages, add to requirements.txt and then also add to the root pyproject.toml as optional dependencies titled "modernbert-training".
+
 ## Experiment 3: LoRA-tuned models
 
 ...
