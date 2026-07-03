@@ -111,6 +111,37 @@ experiments/
 
 For packages, add to requirements.txt and then also add to the root pyproject.toml as optional dependencies titled "modernbert-training".
 
+We can use something like this as the config:
+
+```yaml
+# experiments/predict_keep_remove_2026_07_01/models/modernbert/configs/modernbert_base.yaml
+
+model_name: answerdotai/ModernBERT-base
+
+text_col: text
+label_col: label
+
+max_length: 256
+learning_rate: 2e-5
+num_train_epochs: 10 # let's run for 10 epochs
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 16
+weight_decay: 0.01
+
+output_dir: artifacts/modernbert-base
+random_state: 42
+```
+
+For ~2,000 posts and 10 epochs, we can use a smaller GPU setup:
+
+- Instance: ml.g4dn.xlarge
+- GPU: 1 × NVIDIA T4, 16 GB GPU memory
+- Estimated SageMaker on-demand price: about $0.74/hr in us-east-2
+- Expected runtime: ~5–20 minutes
+- Expected compute cost: usually <$0.25, likely closer to $0.05–$0.15
+
+Let's use `us-east-2` for our AWS setup.
+
 ## Experiment 3: LoRA-tuned models
 
 ...
