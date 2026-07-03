@@ -56,18 +56,34 @@ We'll run these and report the results as a table here, with columns:
 
 ## Experiment 2: ModernBERT
 
-We also want to use ModernBERT...
+We also want to use ModernBERT to develop a fine-tuned classifier for our task. ModernBERT is an improvement over the original BERT model, with additions like RoPE, FlashAttention, and other techniques from language model research. The 8,192-token context window is a big practical improvement over classic BERT’s usual 512-token limit.
 
-We'll use the base model of ModernBERT, not the large one.
+HuggingFace natively supports ModernBERT. In addition, we can use AWS Sagemaker as our trainer in order to avoid having to do local computation. We'll use the base model of ModernBERT, not the large one.
 
-notes:
+We'd like to use the following:
 
-- Train on out-of-the-box without fine-tuning.
-- Then fine-tune, then evaluate (with naive p=0.5 probability for now, without calibration).
+- Weights and Biases for ML training logging.
+- HuggingFace for the interface.
+- AWS Sagemaker for the compute.
 
-### Calibration
+We'll use the same training data that we used for our other ML models (where each row is 1 post and label). We'll use only the original text, rather than the original text plus the mirrored text.
 
-(Also include calibration curves, as we can't just use p>0.5 for labeling).
+We'll collect the following metrics:
+
+- Accuracy
+- Precision
+- Recall
+- F1
+
+We'll use cross-entropy loss with 2 labels. Because of our class imbalance, we'll use weighted loss, where we multiply the loss by the class weight. We want to upweight the minority class (`remove=1`) so we prioritize getting those correct. We'll double the loss for `remove=1`. This also lets us improve recall for `remove` labels, but we'll want to be careful as we also don't want many false positives (which worsens our precision).
+
+Our prediction task is "predict remove", so we need to transform the training data to create a binary label.
+
+We'll develop in the following order:
+
+1. Do zero-shot labeling, using the base ModernBERT model and collecting metrics. Here, we'll do a frozen encoder baseline.
+2. Fine-tune ModernBERT on the training data and evaluate training curves. We'll evaluate the training curves to review for overfitting.
+3. Evaluate calibration curves varying the thresholds from p=0.1 to p=0.9, in increments of 0.1.
 
 ## Experiment 3: LoRA-tuned models
 
