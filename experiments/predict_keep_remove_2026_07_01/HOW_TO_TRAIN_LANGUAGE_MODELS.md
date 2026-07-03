@@ -43,3 +43,11 @@ We'll run these and report the results as a table here, with columns:
 - model name
 - split: train/test
 - accuracy, other metrics...
+
+## Experiment 2: ModernBERT
+
+We also want to use ModernBERT...
+
+## Experiment 3: LoRA-tuned models
+
+...
