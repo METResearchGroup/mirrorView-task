@@ -200,7 +200,9 @@ Even though adding the mirrored post's text embedding doesn't improve a model's 
 
 ![Removal rates by condition](experiments/predict_keep_remove_2026_07_01/assets/mechanism_linked_fate.png)
 
-We observe that the average cosine similarity between the original posts and their mirrored counterparts is [insert similarity here]. Most of the uniqueness of the content is driven by differences in the posts themselves, rather than between a post and its mirrored counterpart.
+We observe that the average cosine similarity between the original posts and their mirrored counterparts is 0.549. Most of the uniqueness of the content is driven by differences in the posts themselves, rather than between a post and its mirrored counterpart.
+
+![Average cosine similarity between a post and its mirror](experiments/predict_keep_remove_2026_07_01/outputs/cosine_similarity_histogram/2026_07_03-16:45:20/results.png)
 
 This implies that it is not the content of the mirrored text itself that affects the decision. Instead, the decision to remove posts is driven by (1) the content of the original post (of which the mirrored post is a similar ideological mirror) and (2) the mere presence of the mirrored post alongside the original post.
 
