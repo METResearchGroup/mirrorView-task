@@ -81,22 +81,17 @@ Our prediction task is "predict remove", so we need to transform the training da
 
 We'll develop in the following order:
 
-### Step 1: Linear probe baseline
+### Step 1: Head-only training (frozen encoder)
 
-Do zero-shot labeling, using the base ModernBERT model and collecting metrics. Here, we'll do a frozen encoder baseline.
+Fine-tune ModernBERT on the training data and evaluate training curves. We'll evaluate the training curves to review for overfitting.
 
-### Step 2: Fine-tuning
+We'll do head-only training for our task, as our training dataset is pretty small and we want something that is somewhat able to work out-of-distribution and avoid catastrophic forgetting.
 
-Fine-tune ModernBERT on the training data and evaluate training curves. We'll evaluate the training curves to review for overfitting. Let's fine-tune two versions:
+### Step 2: Calibration
 
-- Part A: Head-only training (frozen encoder)
-- Part B: full fine-tuning of the weights
-
-### Step 3: Calibration
+Given our outputs, we can evaluate calibration curves varying the binary thresholds from p=0.1 to p=0.9, in increments of 0.1.
 
 ### More implementation details
-
-Evaluate calibration curves varying the thresholds from p=0.1 to p=0.9, in increments of 0.1.
 
 We'll store all the work in experiments/predict_keep_remove_2026_07_01/models/modernbert/
 
@@ -154,6 +149,8 @@ For ~2,000 posts and 10 epochs, we can use a smaller GPU setup:
 - Expected compute cost: usually <$0.25, likely closer to $0.05–$0.15
 
 Let's use `us-east-2` for our AWS setup.
+
+For our data splits, we want to do a 80:10:10 split between train/test/validation.
 
 ## Experiment 3: LoRA-tuned models
 
