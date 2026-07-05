@@ -210,7 +210,17 @@ Because we observe that there is no statistically significant difference in mode
 
 ### Fine-tuning a language model
 
-(LoRA tuning?)
+We fine-tuned a head-only [`answerdotai/ModernBERT-base`](https://huggingface.co/answerdotai/ModernBERT-base) classifier on original post text only (encoder frozen; class-weighted cross-entropy with `remove` weight 2.0). Training used an 80/10/10 stratified split (`n_train=7032`, `n_val=879`, `n_test=880`), 10 epochs, and SageMaker `ml.g4dn.xlarge` in `us-east-2` (job `modernbert-keep-remove-2026-07-03-21-09-05-077`). Metrics at decision threshold `0.5` (`remove` = positive class):
+
+| split | accuracy | precision | recall | f1    | roc_auc | pr_auc |
+|:------|---------:|----------:|-------:|------:|--------:|-------:|
+| train |    0.691 |     0.515 |  0.585 | 0.548 |   0.719 |  0.545 |
+| val   |    0.681 |     0.502 |  0.552 | 0.525 |   0.693 |  0.525 |
+| test  |    0.694 |     0.520 |  0.596 | 0.555 |   0.742 |  0.569 |
+
+Test accuracy (0.694) and F1 (0.555) are slightly above one-shot original-only prompting and comparable to the logistic-regression embedding baseline. Train/val/test are close, as expected with a frozen encoder. Artifacts live under `experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/modernbert-base/2026_07_03-210901/`; W&B run: [modernbert-base-2026_07_03-21:18:33](https://wandb.ai/mind_technology_lab/mirrorview-keep-remove-2026-07-01/runs/modernbert-keep-remove-2026-07-03-21-09-05-077-nqx0mi-algo-1).
+
+(LoRA tuning is Experiment 3 and not yet run.)
 
 ### Scaling curves (Study 2)
 
@@ -239,8 +249,12 @@ We compiled a taxonomy with the following features:
 <!-- BEGIN LLM_PROMPTING_RESULTS_TABLE -->
 | type     | ablation             | model_size   | model_name   | split   |   accuracy |   precision |   recall |       f1 |   roc_auc |   pr_auc |
 |:---------|:---------------------|:-------------|:-------------|:--------|-----------:|------------:|---------:|---------:|----------:|---------:|
-| few-shot | original plus mirror | large        | gpt-5.5      | test    |      0.5   |         0.2 |        1 | 0.333333 | 0.571429  | 0.25     |
-| few-shot | original plus mirror | large        | gpt-5.5      | train   |      0.625 |         0   |        0 | 0        | 0.0714286 | 0.125    |
-| one-shot | original             | small        | gpt-5.4-nano | test    |      0.75  |         0   |        0 | 0        | 0.714286  | 0.333333 |
-| one-shot | original             | small        | gpt-5.4-nano | train   |      1     |         1   |        1 | 1        | 1         | 1        |
+| few-shot | original plus mirror | large        | gpt-5.5      | test    |   0.5      |    0.2      | 1        | 0.333333 | 0.571429  | 0.25     |
+| few-shot | original plus mirror | large        | gpt-5.5      | train   |   0.625    |    0        | 0        | 0        | 0.0714286 | 0.125    |
+| one-shot | original             | small        | gpt-5.4-nano | test    |   0.75     |    0        | 0        | 0        | 0.714286  | 0.333333 |
+| one-shot | original             | small        | gpt-5.4-nano | test    |   0.686185 |    0.51028  | 0.484902 | 0.497268 | 0.695442  | 0.514685 |
+| one-shot | original             | small        | gpt-5.4-nano | train   |   1        |    1        | 1        | 1        | 1         | 1        |
+| one-shot | original             | small        | gpt-5.4-nano | train   |   0.690415 |    0.519001 | 0.443111 | 0.478063 | 0.67822   | 0.490543 |
+| one-shot | original plus mirror | small        | gpt-5.4-nano | test    |   0.675952 |    0.490305 | 0.314387 | 0.383117 | 0.615037  | 0.448263 |
+| one-shot | original plus mirror | small        | gpt-5.4-nano | train   |   0.681598 |    0.504006 | 0.307556 | 0.382004 | 0.626571  | 0.447606 |
 <!-- END LLM_PROMPTING_RESULTS_TABLE -->

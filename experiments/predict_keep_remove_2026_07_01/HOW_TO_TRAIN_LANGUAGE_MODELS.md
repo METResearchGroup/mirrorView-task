@@ -157,7 +157,42 @@ For ~2,000 posts and 10 epochs, we can use a smaller GPU setup:
 
 Let's use `us-east-2` for our AWS setup.
 
-For our data splits, we want to do a 80:10:10 split between train/test/validation.
+For our data splits, we want to do a 80/10/10 split between train/validation/test.
+
+### ModernBERT results (Experiment 2)
+
+Full 10-epoch head-only fine-tune of `answerdotai/ModernBERT-base` on original post text only (`freeze_encoder=true`, class weights keep=1.0 / remove=2.0, max_length=256). Trained on SageMaker `ml.g4dn.xlarge` in `us-east-2` (job `modernbert-keep-remove-2026-07-03-21-09-05-077`; run id `2026_07_03-210901`). Split sizes: `n_train=7032`, `n_val=879`, `n_test=880`. Metrics below use decision threshold `0.5` with `remove` as the positive class (`y=1`).
+
+Artifacts: `experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/modernbert-base/2026_07_03-210901/` (`metrics.json`, predictions, `calibration.json`). S3: `s3://jspsych-mirror-view-4/modernbert-training/2026_07_03-210901/`. W&B: [modernbert-base-2026_07_03-21:18:33](https://wandb.ai/mind_technology_lab/mirrorview-keep-remove-2026-07-01/runs/modernbert-keep-remove-2026-07-03-21-09-05-077-nqx0mi-algo-1).
+
+<!-- BEGIN MODERNBERT_RESULTS_TABLE -->
+| model              | freeze_encoder | split | accuracy | precision | recall | f1    | roc_auc | pr_auc |
+|:-------------------|:---------------|:------|---------:|----------:|-------:|------:|--------:|-------:|
+| ModernBERT-base    | true           | train |    0.691 |     0.515 |  0.585 | 0.548 |   0.719 |  0.545 |
+| ModernBERT-base    | true           | val   |    0.681 |     0.502 |  0.552 | 0.525 |   0.693 |  0.525 |
+| ModernBERT-base    | true           | test  |    0.694 |     0.520 |  0.596 | 0.555 |   0.742 |  0.569 |
+<!-- END MODERNBERT_RESULTS_TABLE -->
+
+On the test set, head-only ModernBERT reaches accuracy 0.694 and F1 0.555, slightly above one-shot original-only prompting (accuracy 0.686, F1 0.497) and in line with the logistic-regression embedding baseline (test accuracy ~0.67, F1 ~0.55). Train and val metrics are close to test (no large train–test gap), consistent with a frozen encoder and a small trainable head (1,538 parameters). Threshold calibration over `0.1`–`0.9` is in `calibration.json` for follow-up threshold selection.
+
+### ModernBERT threshold tuning
+
+Test-set threshold sweep (`0.1`–`0.9`, step `0.1`) on run `2026_07_03-210901`. Artifacts: `models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/`.
+
+| metric | highest value | value at p=0.5 | threshold at highest |
+|:-------|-------------:|---------------:|---------------------:|
+| accuracy | 0.726 | 0.694 | 0.6 |
+| precision | 0.741 | 0.520 | 0.8 |
+| recall | 0.996 | 0.596 | 0.1 |
+| f1 | 0.578 | 0.555 | 0.4 |
+
+![ModernBERT test accuracy vs threshold](experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/accuracy.png)
+
+![ModernBERT test precision vs threshold](experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/precision.png)
+
+![ModernBERT test recall vs threshold](experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/recall.png)
+
+![ModernBERT test F1 vs threshold](experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/f1.png)
 
 ## Experiment 3: LoRA-tuned models
 
