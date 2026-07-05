@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026_07_05-13:57:45",
+  "split": "test",
+  "run_dir": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/modernbert-base/2026_07_03-210901",
+  "rows": [
+    {
+      "metric": "accuracy",
+      "highest_value": 0.7261363636363637,
+      "value_at_p_0.5": 0.6943181818181818,
+      "threshold_at_highest": "0.6"
+    },
+    {
+      "metric": "precision",
+      "highest_value": 0.7407407407407407,
+      "value_at_p_0.5": 0.5201238390092879,
+      "threshold_at_highest": "0.8"
+    },
+    {
+      "metric": "recall",
+      "highest_value": 0.9964539007092199,
+      "value_at_p_0.5": 0.5957446808510638,
+      "threshold_at_highest": "0.1"
+    },
+    {
+      "metric": "f1",
+      "highest_value": 0.5777777777777777,
+      "value_at_p_0.5": 0.5553719008264463,
+      "threshold_at_highest": "0.4"
+    }
+  ]
+}
