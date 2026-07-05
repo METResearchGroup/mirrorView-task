@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026_07_03-18:20:16",
+  "variant_slug": "one_shot_original_small",
+  "model_size": "small",
+  "model_name": "gpt-5.4-nano",
+  "prompt_type": "one_shot",
+  "input_mode": "original",
+  "train_split": 0.8,
+  "seed": 42,
+  "limit": 8,
+  "max_concurrency": 2,
+  "temperature": 0.0,
+  "split": {
+    "train_total_rows": 7032,
+    "train_scored_rows": 8,
+    "test_rows": 8
+  },
+  "few_shot_reserved_support": {
+    "reserved_support_count": 0,
+    "reserved_support_message_ids": []
+  },
+  "label_encoding": {
+    "keep_remove_label_0": "keep",
+    "keep_remove_label_1": "remove"
+  },
+  "command": [
+    "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/train.py",
+    "--limit",
+    "8",
+    "--max-concurrency",
+    "2"
+  ]
+}

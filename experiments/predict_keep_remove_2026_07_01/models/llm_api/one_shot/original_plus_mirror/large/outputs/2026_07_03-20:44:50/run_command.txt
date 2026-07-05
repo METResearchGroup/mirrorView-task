@@ -1,0 +1,5 @@
+[
+  "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/train.py",
+  "--max-concurrency",
+  "2"
+]
