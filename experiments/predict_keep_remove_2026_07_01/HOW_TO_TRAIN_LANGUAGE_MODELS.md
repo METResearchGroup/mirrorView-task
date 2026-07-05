@@ -194,6 +194,8 @@ Test-set threshold sweep (`0.1`–`0.9`, step `0.1`) on run `2026_07_03-210901`.
 
 ![ModernBERT test F1 vs threshold](experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/f1.png)
 
+From this experimentation, it seems like using a default threshold of p=0.5 does, on average, generally the best across all metrics.
+
 ## Experiment 3: LoRA-tuned models
 
 ...
