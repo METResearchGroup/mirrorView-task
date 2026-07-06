@@ -196,8 +196,67 @@ Test-set threshold sweep (`0.1`–`0.9`, step `0.1`) on run `2026_07_03-210901`.
 
 From this experimentation, it seems like using a default threshold of p=0.5 does, on average, generally the best across all metrics.
 
-## Experiment 3: LoRA-tuned models
+## Experiment 3: Tuning an LLM
 
-...
+### Motivation for Experiment 3
 
-We'll use a Qwen model. We'll use 2 variants of Qwen models. We'll use AWS Bedrock for training.
+Even though technically we can build explainable models using the combination of embeddings and linear models, these are not going to be as straightforward for interpretation purposes as a language model. For embeddings, we have to interpret them through approaches like clustering and dimensionality reduction. However, for a large language model, we can directly use tools such as attention maps. In addition, we can interpret models like tree models or regression models through measures of feature importance, but the individual features for a 256-dimensional embedding are not so easy to interpret. We also have the additional benefit that if we train a generative model, we can have a result that's easily usable for generative purposes. We can do something as simple as asking the model what it's looking at to be able to make certain decisions. This also drives our next order goal of figuring out a set of factors or features or policies that people are using in their interpretation and determination of content moderation policies. We again could, in theory, do all this through some workarounds related to manual feature engineering and looking at the feature importance of traditional models such as regression and tree-based models. However, it's much more straightforward for the stakeholder interpretability story, perhaps less for the robustness story, but it definitely is a compelling user experience to be able to ask a fine-tuned model what exactly it is using to make a certain set of decisions.
+
+### Design for Experiment 3
+
+For the setup here, I'm thinking that we can pass in both the original and the mirror post, but we can't tell the model which is which. We'll just say to consider these two sets of posts and have the model itself do the same mirror view task as humans.
+
+We can see how it does out of the box. We can also check that against how it does after fine-tuning. We can do this for the same model to see how it does.
+
+We'll use the following prompt, matching what we show in the actual study:
+
+```markdown
+We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
+
+
+The pairs are political mirrors of each other. This means that the mirror text recreates the original message from the opposite political stance. For example:
+
+Original Text:
+I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!
+
+Mirror Text:
+I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!
+
+Notice that the mirror text changes the core message to match that of the opposite political stance. In other words, the mirror text is not a response to the original text - it replicates the original message as if written from the opposite political stance.
+
+
+Your job is to decide whether both posts in the pair should be allowed or removed from the platform.
+
+When making your decisions, consider generally whether a post contributes to a healthy environment for political discussion, or whether it would be unhealthy for political discussion. Your goal is to evaluate the messages, using your own judgment.
+
+Post 1: {post_1_text}
+
+Post 2: {post_2_text}
+
+Allow Or Remove?
+```
+
+We want to use a Pydantic model for this, a pydantic model, IsRemoveResult, with one value, is_remove, a boolean.
+
+We'll shuffle the original and mirrored text randomly within the prompt (e.g., sometimes the original post will be Post 1, sometimes it'll be Post 2).
+
+#### Step 1: Zero-shot baseline
+
+We'll use some open source models exposed via Bedrock API as a baseline. Here's a synopsis of the models I'd like to try and what ChatGPT says about them:
+
+| Pick                                   | Bedrock runtime model ID for baseline inference |                                                                                                                                                                                                     Size / architecture | Why I’d consider it for your path                                                                                                                                                              |                                                                                   Weights-only memory to “hold the model” | Estimated LoRA / QLoRA fine-tuning requirement                                                                                                                                                                                                                                                                                                                                                      | Single-H100 verdict                                                          |
+| -------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| **Mistral Ministral 3 8B Instruct**    | `mistral.ministral-3-8b-instruct`               |                                                                                                                               **8B dense**; active Bedrock model, 128K context, 8K max output. ([AWS Documentation][1]) | Best first Mistral baseline: small enough to fine-tune cheaply, large enough to be more credible than a 3B model for nuanced classification/general instruction tasks.                         |                                      BF16 weights ≈ **16GB**; 8-bit ≈ **8GB**; 4-bit ≈ **4–5GB** before runtime overhead. | **Comfortable.** BF16 LoRA likely fits on 1×H100; QLoRA likely fits on much smaller GPUs too. Estimate: **~18–30GB VRAM** for QLoRA depending on sequence length/packing; low H100-hour cost for a small dataset.                                                                                                                                                                                   | **Strong yes.** Best “move fast” option.                                     |
+| **Mistral Ministral 14B 3.0 Instruct** | `mistral.ministral-3-14b-instruct`              |                                                                                                                              **14B dense**; active Bedrock model, 128K context, 8K max output. ([AWS Documentation][2]) | Better quality/size tradeoff than 8B while still very practical for adapter fine-tuning. I’d use this as the main Mistral candidate if Bedrock baseline looks promising.                       |                                             BF16 weights ≈ **28GB**; 8-bit ≈ **14GB**; 4-bit ≈ **7–9GB** before overhead. | **Comfortable to moderate.** BF16 LoRA should fit on 1×H100 with sane context/batch; QLoRA is easy. Estimate: **~28–45GB VRAM** for QLoRA; maybe **~0.5–2×** the H100 time of the 8B model.                                                                                                                                                                                                         | **Strong yes.** My preferred Mistral pick.                                   |
+| **Qwen3 32B**                          | `qwen.qwen3-32b-v1:0`                           | **32B dense**; active Bedrock model, 32K context, 8K max output, reasoning supported. AWS names this without an `Instruct` suffix, but it is exposed through chat/converse-style Bedrock APIs. ([AWS Documentation][3]) | Best Qwen general-purpose candidate that is still realistic on one H100. Dense architecture also makes fine-tuning behavior simpler and more predictable than MoE.                             |                                BF16 weights ≈ **64GB**; 8-bit ≈ **32GB**; 4-bit ≈ **18–22GB** with quantization overhead. | **QLoRA strongly recommended.** BF16 LoRA is too tight once you add activations/KV/optimizer overhead. Estimate: **~55–75GB VRAM** for QLoRA with short/moderate context and careful settings.                                                                                                                                                                                                      | **Yes, but use QLoRA.** My preferred Qwen pick.                              |
+| **Qwen3 Next 80B A3B**                 | `qwen.qwen3-next-80b-a3b`                       |                                                                                         **80B total / 3B active MoE**; active Bedrock model, 256K context, 8K max output, reasoning supported. ([AWS Documentation][4]) | Interesting because inference compute is efficient relative to total size, but it is a more complex fine-tuning target. I’d include it only as a stretch comparison if Qwen3 32B is promising. | BF16 weights ≈ **160GB**, so not one H100 in BF16; 8-bit ≈ **80GB** before overhead; 4-bit ≈ **45–55GB** before overhead. | **Aggressive QLoRA only.** Possible on 1×H100 only with optimized MoE support, short context, small microbatch, and careful adapter target selection. Estimate: **~65–80GB+ VRAM**; otherwise use **2×80GB** for headroom. Unsloth specifically documents Qwen3 and Qwen3 MoE fine-tuning support, though exact VRAM depends heavily on model/config. ([Unsloth - Train and Run Models Locally][5]) | **Borderline.** Good Bedrock baseline, risky as your first fine-tune target. |
+
+[1]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-ministral-3-8b.html "Ministral 3 8B - Amazon Bedrock"
+[2]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-ministral-14b-3-0.html "Ministral 14B 3.0 - Amazon Bedrock"
+[3]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-qwen-qwen3-32b.html "Qwen3 32B - Amazon Bedrock"
+[4]: https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-qwen-qwen3-next-80b-a3b.html "Qwen3 Next 80B A3B - Amazon Bedrock"
+[5]: https://unsloth.ai/docs/models/tutorials/qwen3-how-to-run-and-fine-tune?utm_source=chatgpt.com "Qwen3 - How to Run & Fine-tune"
+
+We'll put this in `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/{model name}/`. Within each, we'll have a prompt.py and a train.py. We'll keep each model's results in its `api_baselines/{model name}/outputs/` folder. We also want a baseline `api_baselines/` folder with common scripts such as a `runner.py`. We'll want to follow a lot of the same patterns available in `modernbert` and `llm_api` as to what files we need and how to structure them.
+
+We'll also use the `dataloader.py` from `experiments/predict_keep_remove_2026_07_01` to grab the data. We'll just label all the posts and then evaluate accuracy, precision, recall, and F1. Then we'll have an `api_baselines/plot_results.py` that creates JSON/PNG results for each metric, using output patterns and graphs similar to `experiments/predict_keep_remove_2026_07_01/models/modernbert/threshold_analysis.py`.
