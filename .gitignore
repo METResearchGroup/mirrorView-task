@@ -107,6 +107,17 @@ experiments/simplified_predict_remove_2026_05_13/models/language_models/pair_cro
 !experiments/predict_keep_remove_2026_07_01/models/llm_api/**/outputs/**/test_predictions.csv
 !experiments/predict_keep_remove_2026_07_01/models/llm_api/aggregate_outputs/aggregate_results.csv
 
+# Bedrock zero-shot baseline run artifacts (keep .gitkeep)
+experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/**/outputs/**
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/**/outputs/.gitkeep
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/.gitkeep
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/*/
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/*/*.png
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/**/outputs/**/predictions.csv
+!experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/aggregate_outputs/aggregate_results.csv
+
 # ModernBERT keep/remove training artifacts (keep .gitkeep)
 experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/**
 !experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/.gitkeep
