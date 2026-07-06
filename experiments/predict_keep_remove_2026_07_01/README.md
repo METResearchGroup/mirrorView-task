@@ -15,10 +15,11 @@ We write up the results in `results.md` (which we then compile to `results.pdf`)
 
 We have the following scripts:
 
-- `dataloader.py`: loads in the data from the raw .csv.
-- `generate_dataset_metrics.py`: generates the dataset metrics (e.g., number of posts) cited in the writeup.
-- `generate_embeddings.py`: generates the embeddings and stores in S3.
-- `features_concat_cosine.py`: builds the fixed feature vector by concatenating (orig_emb, mirror_emb) and appending cosine similarity.
+- `data/dataloader.py`: loads in the data from the raw .csv.
+- `reports/generate/dataset_metrics.py`: generates the dataset metrics (e.g., number of posts) cited in the writeup.
+- `embeddings/generate.py`: generates the embeddings and stores in S3.
+- `embeddings/features/concat_cosine.py`: builds the fixed feature vector by concatenating (orig_emb, mirror_emb) and appending cosine similarity.
+- `reports/`: generates figures for `results.md` (see `reports/README.md`).
 - `models/logistic_regression/train.py`: trains a logistic regression model on the concat+cosine embedding features.
 - `models/xgboost/train.py`: trains an XGBoost model on the concat+cosine embedding features.
 

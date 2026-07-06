@@ -58,3 +58,9 @@ Some ideas for explainability:
 - example-based explanations
 
 (We should also analyze this for the subset of posts where the original user's political stance disagreed with the political stance of the original post. For that subset of posts, what is predictive of allowable disagreement?)
+
+## Explainability for language models
+
+some other thoughts for explainability:
+
+- attention/attribution mass on Post 1 vs. Post 2 (If the model consistently overweights the first post, that matters)

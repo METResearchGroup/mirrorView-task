@@ -1,0 +1,3 @@
+# How to do clustering
+
+For clustering, what we're interested in is ...

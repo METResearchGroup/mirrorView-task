@@ -10,7 +10,7 @@ from typing import Literal, Optional
 
 import pandas as pd
 
-from experiments.predict_keep_remove_2026_07_01.dataloader import Dataloader
+from experiments.predict_keep_remove_2026_07_01.data.dataloader import Dataloader
 from experiments.simplified_predict_remove_2026_05_13.splits import make_train_test_split
 
 KeepRemoveLabelInt = Literal[0, 1]

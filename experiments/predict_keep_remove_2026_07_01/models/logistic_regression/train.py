@@ -20,11 +20,11 @@ import numpy as np
 import pandas as pd
 import typer
 
-from experiments.predict_keep_remove_2026_07_01.dataloader import Dataloader
-from experiments.predict_keep_remove_2026_07_01.embedding_cache_loader import (
+from experiments.predict_keep_remove_2026_07_01.data.dataloader import Dataloader
+from experiments.predict_keep_remove_2026_07_01.embeddings.cache_loader import (
     load_embeddings_via_dynamodb_and_s3_with_cache,
 )
-from experiments.predict_keep_remove_2026_07_01.features_concat_cosine import (
+from experiments.predict_keep_remove_2026_07_01.embeddings.features.concat_cosine import (
     ConcatCosineFeatureBuilder,
     build_xy_from_joined,
 )

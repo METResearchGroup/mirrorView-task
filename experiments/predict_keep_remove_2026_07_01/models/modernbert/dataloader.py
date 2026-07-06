@@ -14,7 +14,7 @@ from __future__ import annotations
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-from experiments.predict_keep_remove_2026_07_01.dataloader import Dataloader
+from experiments.predict_keep_remove_2026_07_01.data.dataloader import Dataloader
 
 
 def load_classifier_dataframe() -> pd.DataFrame:

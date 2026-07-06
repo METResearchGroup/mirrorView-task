@@ -1,0 +1,54 @@
+{
+  "source_results_md": "experiments/predict_keep_remove_2026_07_01/results.md",
+  "metric_order": [
+    "Accuracy",
+    "Precision",
+    "Recall",
+    "F1"
+  ],
+  "values": {
+    "Logistic regression": {
+      "baseline": {
+        "Accuracy": 0.671,
+        "Precision": 0.49,
+        "Recall": 0.623,
+        "F1": 0.548
+      },
+      "difference embedding": {
+        "Accuracy": 0.588,
+        "Precision": 0.398,
+        "Recall": 0.565,
+        "F1": 0.467
+      },
+      "only original post embedding": {
+        "Accuracy": 0.673,
+        "Precision": 0.491,
+        "Recall": 0.623,
+        "F1": 0.549
+      }
+    },
+    "XGBoost": {
+      "baseline": {
+        "Accuracy": 0.72,
+        "Precision": 0.583,
+        "Recall": 0.435,
+        "F1": 0.498
+      },
+      "difference embedding": {
+        "Accuracy": 0.66,
+        "Precision": 0.446,
+        "Recall": 0.258,
+        "F1": 0.327
+      },
+      "only original post embedding": {
+        "Accuracy": 0.708,
+        "Precision": 0.553,
+        "Recall": 0.46,
+        "F1": 0.502
+      }
+    }
+  },
+  "output": {
+    "results_png_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:49:54/results.png"
+  }
+}

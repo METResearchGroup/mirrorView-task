@@ -1,0 +1,164 @@
+{
+  "source_results_md": "experiments/predict_keep_remove_2026_07_01/results.md",
+  "metric_order": [
+    "Accuracy",
+    "Precision",
+    "Recall",
+    "F1"
+  ],
+  "series": [
+    {
+      "label": "Logistic regression (baseline)",
+      "model_class": "Logistic regression",
+      "ablation_variant": "baseline",
+      "linestyle": "-",
+      "color": "#ff7f0e",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.671
+        },
+        {
+          "metric": "Precision",
+          "value": 0.49
+        },
+        {
+          "metric": "Recall",
+          "value": 0.623
+        },
+        {
+          "metric": "F1",
+          "value": 0.548
+        }
+      ]
+    },
+    {
+      "label": "Logistic regression (difference embedding)",
+      "model_class": "Logistic regression",
+      "ablation_variant": "difference embedding",
+      "linestyle": "--",
+      "color": "#ff7f0e",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.588
+        },
+        {
+          "metric": "Precision",
+          "value": 0.398
+        },
+        {
+          "metric": "Recall",
+          "value": 0.565
+        },
+        {
+          "metric": "F1",
+          "value": 0.467
+        }
+      ]
+    },
+    {
+      "label": "Logistic regression (only original post embedding)",
+      "model_class": "Logistic regression",
+      "ablation_variant": "only original post embedding",
+      "linestyle": "--",
+      "color": "#ff7f0e",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.673
+        },
+        {
+          "metric": "Precision",
+          "value": 0.491
+        },
+        {
+          "metric": "Recall",
+          "value": 0.623
+        },
+        {
+          "metric": "F1",
+          "value": 0.549
+        }
+      ]
+    },
+    {
+      "label": "XGBoost (baseline)",
+      "model_class": "XGBoost",
+      "ablation_variant": "baseline",
+      "linestyle": "-",
+      "color": "#2ca02c",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.72
+        },
+        {
+          "metric": "Precision",
+          "value": 0.583
+        },
+        {
+          "metric": "Recall",
+          "value": 0.435
+        },
+        {
+          "metric": "F1",
+          "value": 0.498
+        }
+      ]
+    },
+    {
+      "label": "XGBoost (difference embedding)",
+      "model_class": "XGBoost",
+      "ablation_variant": "difference embedding",
+      "linestyle": "--",
+      "color": "#2ca02c",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.66
+        },
+        {
+          "metric": "Precision",
+          "value": 0.446
+        },
+        {
+          "metric": "Recall",
+          "value": 0.258
+        },
+        {
+          "metric": "F1",
+          "value": 0.327
+        }
+      ]
+    },
+    {
+      "label": "XGBoost (only original post embedding)",
+      "model_class": "XGBoost",
+      "ablation_variant": "only original post embedding",
+      "linestyle": "--",
+      "color": "#2ca02c",
+      "points": [
+        {
+          "metric": "Accuracy",
+          "value": 0.708
+        },
+        {
+          "metric": "Precision",
+          "value": 0.553
+        },
+        {
+          "metric": "Recall",
+          "value": 0.46
+        },
+        {
+          "metric": "F1",
+          "value": 0.502
+        }
+      ]
+    }
+  ],
+  "output": {
+    "results_png_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_linegraph/2026_07_03-14:35:29/results.png"
+  }
+}

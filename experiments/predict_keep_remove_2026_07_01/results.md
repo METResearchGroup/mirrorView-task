@@ -97,7 +97,7 @@ We observe that logistic regression generalizes better on the test set in terms 
 
 We compare the results of the logistic regression and XGBoost models trained on the hand-crafted features versus the text embeddings in the following graph:
 
-![Test-set metric line graph](experiments/predict_keep_remove_2026_07_01/outputs/test_metrics_linegraph/2026_07_02-17:46:52/results.png)
+![Test-set metric line graph](experiments/predict_keep_remove_2026_07_01/reports/outputs/test_metrics_linegraph/2026_07_02-17:46:52/results.png)
 
 ## Study 2
 
@@ -192,7 +192,7 @@ $$
 \end{array}
 $$
 
-![Ablation test-set metric bar graph](experiments/predict_keep_remove_2026_07_01/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:49:54/results.png)
+![Ablation test-set metric bar graph](experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:49:54/results.png)
 
 We observe that training a model on only the text embedding of the original post is as performant or more performant than the other ablations.
 
@@ -202,7 +202,7 @@ Even though adding the mirrored post's text embedding doesn't improve a model's 
 
 We observe that the average cosine similarity between the original posts and their mirrored counterparts is 0.549. Most of the uniqueness of the content is driven by differences in the posts themselves, rather than between a post and its mirrored counterpart.
 
-![Average cosine similarity between a post and its mirror](experiments/predict_keep_remove_2026_07_01/outputs/cosine_similarity_histogram/2026_07_03-16:51:20/results.png)
+![Average cosine similarity between a post and its mirror](experiments/predict_keep_remove_2026_07_01/reports/outputs/cosine_similarity_histogram/2026_07_03-16:51:20/results.png)
 
 This implies that it is not the content of the mirrored text itself that affects the decision. Instead, the decision to remove posts is driven by (1) the content of the original post (of which the mirrored post is a similar ideological mirror) and (2) the mere presence of the mirrored post alongside the original post.
 
