@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026_07_03-02:57:10",
+  "seed": 42,
+  "train_split": 0.8,
+  "train_rows": 7032,
+  "test_rows": 1759,
+  "embedding_source": {
+    "s3_bucket_default": "jspsych-mirror-view-3",
+    "ddb_table_default": "jspsych-mirror-view-embedding-cache",
+    "embedding_model_id": "amazon.titan-embed-text-v2:0",
+    "embedding_dimensions": 256,
+    "normalize_embeddings": true,
+    "s3_override": null,
+    "ddb_override": null
+  },
+  "feature_set_description": "Difference-only fixed dense features: (orig_emb - mirror_emb) where each is the Bedrock Titan embedding vector (d dims).",
+  "label_encoding": {
+    "keep_remove_label_0": "keep",
+    "keep_remove_label_1": "remove"
+  },
+  "class_weight": "balanced",
+  "command": [
+    "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/train_difference_embedding.py",
+    "--embedding-cache-dir",
+    "experiments/predict_keep_remove_2026_07_01/embedding_cache"
+  ]
+}
