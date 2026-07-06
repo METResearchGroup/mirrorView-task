@@ -90,13 +90,11 @@ def _load_predictions(path: Path) -> pd.DataFrame:
 
 
 def _load_done_message_ids(out_dir: Path) -> set[str]:
-    """Collect message_ids already classified in this run (current or legacy CSVs)."""
-    done_ids: set[str] = set()
-    for filename in (PREDICTIONS_FILENAME, "train_predictions.csv", "test_predictions.csv"):
-        path = out_dir / filename
-        if path.exists() and path.stat().st_size > 0:
-            done_ids.update(_load_predictions(path)["message_id"].astype(str).tolist())
-    return done_ids
+    """Collect message_ids already classified in this run."""
+    path = out_dir / PREDICTIONS_FILENAME
+    if not path.exists() or path.stat().st_size == 0:
+        return set()
+    return set(_load_predictions(path)["message_id"].astype(str).tolist())
 
 
 def _append_prediction_row(

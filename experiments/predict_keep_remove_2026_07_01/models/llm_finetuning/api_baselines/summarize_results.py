@@ -22,13 +22,9 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def _extract_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
-    if "metrics" in metrics:
-        return metrics["metrics"]
-    if "test_metrics" in metrics:
-        return metrics["test_metrics"]
-    if "train_metrics" in metrics:
-        return metrics["train_metrics"]
-    raise KeyError("metrics.json missing 'metrics' (or legacy train/test keys)")
+    if "metrics" not in metrics:
+        raise KeyError("metrics.json missing 'metrics'")
+    return metrics["metrics"]
 
 
 def _scan_variant_metadata(api_baselines_root: Path) -> Iterable[tuple[Path, dict[str, Any], dict[str, Any]]]:

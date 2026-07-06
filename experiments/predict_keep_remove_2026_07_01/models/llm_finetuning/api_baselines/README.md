@@ -25,7 +25,7 @@ Each full run scores **all rows in the dataset** (8,791 Bedrock requests). Runni
 
 - Each Bedrock response is **appended immediately** to `predictions.csv` with `fsync` before the next request starts.
 - `metadata.json` progress is updated after every completed row.
-- Re-run with `--resume <run_dir>` to skip `message_id`s already present in `predictions.csv` (also reads legacy `train_predictions.csv` / `test_predictions.csv` if present).
+- Re-run with `--resume <run_dir>` to skip `message_id`s already present in `predictions.csv`.
 
 ## Smoke test
 
