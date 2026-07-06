@@ -1,0 +1,6 @@
+# SageMaker HF DLC already ships torch/transformers/datasets/accelerate.
+# Only install extras here so we do not break the container torch/torchvision pair.
+wandb>=0.26.1
+scikit-learn>=1.5.0
+pyyaml>=6.0
+pandas>=2.0.0

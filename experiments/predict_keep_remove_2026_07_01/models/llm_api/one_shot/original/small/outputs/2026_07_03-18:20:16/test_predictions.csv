@@ -1,0 +1,9 @@
+message_id,keep_remove_label,predicted_label,predicted_remove_probability
+twitter_2061553443932717215,0,0,0.18
+bluesky_17e013d78fcdc87811e9b9c724ae84037e91406ccb168aabd442734e30845802,1,0,0.42
+reddit_1tztcf9_oqgb8bj,0,0,0.05
+twitter_2061414874459066406,0,0,0.22
+twitter_2059766444510855427,0,1,0.9
+twitter_2061217311130820812,0,0,0.08
+reddit_1tvyw6x_opw2k8y,0,0,0.43
+bluesky_24f77bed10d4cf9408b03a978ff14e31e0828b97f6fbf498fa0d9e6b16cd7853,0,0,0.12

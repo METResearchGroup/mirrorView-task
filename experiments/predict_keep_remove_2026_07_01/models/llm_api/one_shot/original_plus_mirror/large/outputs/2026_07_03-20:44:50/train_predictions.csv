@@ -1,0 +1,8 @@
+message_id,keep_remove_label,predicted_label,predicted_remove_probability
+bluesky_f478156bee53292d5162ceb4bdd7833ce39b91267fd9e6fcf988bf71facc8bee,0,0,0.18
+twitter_2061812166294921228,0,0,0.18
+bluesky_702167f15e890483b223391f38440cc954afea9d6812f255700f85ca6a5a5777,0,0,0.18
+bluesky_647da9a4d69f6c38c75c021a353e3d0d54e8572416af6c7144a95e005cb3d9c1,1,0,0.18
+bluesky_14ecb3c7484748cb08593268ef2bcb42d8957216d8a0c41c2dc0053c5b59f213,0,0,0.18
+reddit_1kn4pwm_msgxlhw,1,0,0.24
+reddit_1ll7ev6_n0avox8,1,0,0.18

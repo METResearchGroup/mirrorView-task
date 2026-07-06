@@ -1,0 +1,27 @@
+{
+  "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/only_original_post_embedding/2026_07_03-02:57:09/metrics.json",
+  "test_metrics": {
+    "accuracy": 0.672541216600341,
+    "precision": 0.4909090909090909,
+    "recall": 0.6234458259325044,
+    "f1": 0.5492957746478874,
+    "roc_auc": 0.709803845856823,
+    "pr_auc": 0.5563761423250408,
+    "confusion_matrix_tn": 832.0,
+    "confusion_matrix_fp": 364.0,
+    "confusion_matrix_fn": 212.0,
+    "confusion_matrix_tp": 351.0
+  },
+  "train_metrics": {
+    "accuracy": 0.6921217292377702,
+    "precision": 0.5147620701632512,
+    "recall": 0.6586666666666666,
+    "f1": 0.5778904269838175,
+    "roc_auc": 0.7476010502346763,
+    "pr_auc": 0.5923804677982951,
+    "confusion_matrix_tn": 3385.0,
+    "confusion_matrix_fp": 1397.0,
+    "confusion_matrix_fn": 768.0,
+    "confusion_matrix_tp": 1482.0
+  }
+}

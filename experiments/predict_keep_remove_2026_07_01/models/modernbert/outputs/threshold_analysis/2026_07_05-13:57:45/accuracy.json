@@ -1,0 +1,33 @@
+{
+  "metric": "accuracy",
+  "split": "test",
+  "run_dir": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/modernbert-base/2026_07_03-210901",
+  "predictions_csv": "/Users/mark/Documents/work/mirrorView-task/experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/modernbert-base/2026_07_03-210901/test_predictions.csv",
+  "thresholds": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "values": [
+    0.33636363636363636,
+    0.39431818181818185,
+    0.5170454545454546,
+    0.6329545454545454,
+    0.6943181818181818,
+    0.7261363636363637,
+    0.7193181818181819,
+    0.6943181818181818,
+    0.678409090909091
+  ],
+  "summary": {
+    "highest_value": 0.7261363636363637,
+    "value_at_0.5": 0.6943181818181818,
+    "threshold_at_highest": "0.6"
+  }
+}

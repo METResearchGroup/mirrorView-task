@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# PyTorch / HF weight and tensor artifacts
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.tensors
+
+# Terraform local state and provider plugins (do not commit)
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
