@@ -1,0 +1,7 @@
+# Month-level pipeline outputs: only RC_2025-05 and RC_2025-06 are tracked.
+# Root .gitignore un-ignores outputs/*/; this file re-ignores everything else.
+outputs/*
+!outputs/.gitkeep
+!outputs/total_metadata.json
+!outputs/RC_2025-05/
+!outputs/RC_2025-06/
