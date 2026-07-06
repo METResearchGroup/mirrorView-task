@@ -274,7 +274,15 @@ We ran all four Bedrock models on the **full dataset** (8,791 pairs; study linke
 | Qwen3 Next 80B A3B       | qwen.qwen3-next-80b-a3b          |   0.641451 |    0.462106 | 0.734803 | 0.56739  |
 <!-- END LLM_FINETUNING_BASELINE_RESULTS_TABLE -->
 
-**Comparison to prior baselines.** On F1, Ministral 14B (0.566) and Qwen3 Next 80B A3B (0.567) slightly exceed head-only ModernBERT (test F1 0.555) and one-shot original-only prompting (test F1 0.497). Qwen3 32B is close (F1 0.548). Ministral 8B reaches the highest accuracy (0.707) but is very conservative on the remove class (recall 0.138; F1 0.231), so it is a poor moderation baseline despite high accuracy. Qwen3 Next 80B has the highest remove recall (0.735) at the cost of lower precision (0.462). Overall, the mid/large open-weight Bedrock models are competitive with ModernBERT on this blinded mirror-view task without fine-tuning; the 8B Ministral model is not. Cross-model metric plots: `api_baselines/outputs/plot_results/2026_07_06-17:48:29/`.
+**Comparison to prior baselines.** On F1, Ministral 14B (0.566) and Qwen3 Next 80B A3B (0.567) slightly exceed head-only ModernBERT (test F1 0.555) and one-shot original-only prompting (test F1 0.497). Qwen3 32B is close (F1 0.548). Ministral 8B reaches the highest accuracy (0.707) but is very conservative on the remove class (recall 0.138; F1 0.231), so it is a poor moderation baseline despite high accuracy. Qwen3 Next 80B has the highest remove recall (0.735) at the cost of lower precision (0.462). Overall, the mid/large open-weight Bedrock models are competitive with ModernBERT on this blinded mirror-view task without fine-tuning; the 8B Ministral model is not.
+
+![Bedrock zero-shot baseline accuracy](experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/2026_07_06-17:48:29/accuracy.png)
+
+![Bedrock zero-shot baseline precision](experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/2026_07_06-17:48:29/precision.png)
+
+![Bedrock zero-shot baseline recall](experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/2026_07_06-17:48:29/recall.png)
+
+![Bedrock zero-shot baseline F1](experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/outputs/plot_results/2026_07_06-17:48:29/f1.png)
 
 #### Step 2: LoRA fine-tuning
 
