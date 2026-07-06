@@ -1,4 +1,4 @@
-"""Dataset and split helpers for Bedrock keep/remove baselines.
+"""Dataset helpers for Bedrock keep/remove baselines.
 
 Run from root: PYTHONPATH=. uv run python experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/summarize_results.py
 """
@@ -10,23 +10,11 @@ from typing import Optional
 import pandas as pd
 
 from experiments.predict_keep_remove_2026_07_01.dataloader import Dataloader
-from experiments.simplified_predict_remove_2026_05_13.splits import make_train_test_split
 
 
-def load_train_test_splits(
-    *,
-    train_split: float,
-    seed: int,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Load canonical dataset and produce a stratified train/test split."""
-    df = Dataloader().load_training_dataframe()
-    train_df, test_df = make_train_test_split(
-        df,
-        train_split=train_split,
-        seed=seed,
-        label_column="keep_remove_label",
-    )
-    return train_df, test_df
+def load_dataset() -> pd.DataFrame:
+    """Load the full canonical keep/remove dataset (no train/test split)."""
+    return Dataloader().load_training_dataframe()
 
 
 def maybe_limit_df(

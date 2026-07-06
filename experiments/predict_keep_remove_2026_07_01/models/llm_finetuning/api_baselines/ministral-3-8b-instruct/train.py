@@ -21,7 +21,6 @@ _OUTPUTS_PARENT = Path(__file__).resolve().parent / "outputs"
 
 @app.command()
 def main(
-    train_split: float = typer.Option(0.8, "--train-split", min=0.01, max=0.99),
     seed: int = typer.Option(42, "--seed"),
     limit: Optional[int] = typer.Option(None, "--limit"),
     max_concurrency: int = typer.Option(2, "--max-concurrency", min=1, max=50),
@@ -32,7 +31,6 @@ def main(
         variant_slug="ministral_3_8b_instruct",
         bedrock_model_id="mistral.ministral-3-8b-instruct",
         outputs_dir=_OUTPUTS_PARENT,
-        train_split=train_split,
         seed=seed,
         limit=limit,
         max_concurrency=max_concurrency,

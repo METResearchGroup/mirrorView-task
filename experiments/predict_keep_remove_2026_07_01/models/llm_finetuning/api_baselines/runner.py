@@ -22,7 +22,7 @@ from tqdm import tqdm
 from experiments.predict_keep_remove_2026_07_01.models.llm_finetuning.api_baselines import prompts
 from experiments.predict_keep_remove_2026_07_01.models.llm_finetuning.api_baselines.client import get_llm
 from experiments.predict_keep_remove_2026_07_01.models.llm_finetuning.api_baselines.dataset import (
-    load_train_test_splits,
+    load_dataset,
     maybe_limit_df,
 )
 from experiments.predict_keep_remove_2026_07_01.models.llm_finetuning.api_baselines.schemas import (
@@ -35,6 +35,8 @@ PRED_COLUMNS = [
     "keep_remove_label",
     "predicted_label",
 ]
+
+PREDICTIONS_FILENAME = "predictions.csv"
 
 
 def _hard_label_metrics(
@@ -87,12 +89,23 @@ def _load_predictions(path: Path) -> pd.DataFrame:
     return df[PRED_COLUMNS].copy()
 
 
+def _load_done_message_ids(out_dir: Path) -> set[str]:
+    """Collect message_ids already classified in this run (current or legacy CSVs)."""
+    done_ids: set[str] = set()
+    for filename in (PREDICTIONS_FILENAME, "train_predictions.csv", "test_predictions.csv"):
+        path = out_dir / filename
+        if path.exists() and path.stat().st_size > 0:
+            done_ids.update(_load_predictions(path)["message_id"].astype(str).tolist())
+    return done_ids
+
+
 def _append_prediction_row(
     *,
     path: Path,
     row: tuple[str, int, int],
     lock: threading.Lock,
 ) -> None:
+    """Append one prediction row and fsync so progress survives process death."""
     with lock:
         write_header = not path.exists() or path.stat().st_size == 0
         with path.open("a", encoding="utf-8", newline="") as f:
@@ -113,16 +126,13 @@ def _build_metadata(
     timestamp: str,
     variant_slug: str,
     bedrock_model_id: str,
-    train_split: float,
     seed: int,
     post_shuffle_seed: int,
     limit: Optional[int],
     max_concurrency: int,
     temperature: float,
-    n_train: int,
-    n_test: int,
-    train_done_rows: int,
-    test_done_rows: int,
+    n_total: int,
+    done_rows: int,
     cmd_parts: list[str],
     status: str,
 ) -> dict[str, Any]:
@@ -130,25 +140,19 @@ def _build_metadata(
         "timestamp": timestamp,
         "variant_slug": variant_slug,
         "bedrock_model_id": bedrock_model_id,
-        "train_split": float(train_split),
         "seed": int(seed),
         "post_shuffle_seed": int(post_shuffle_seed),
         "limit": None if limit is None else int(limit),
         "max_concurrency": int(max_concurrency),
         "temperature": float(temperature),
         "status": status,
-        "n_train": int(n_train),
-        "n_test": int(n_test),
-        "split": {
-            "train_rows": int(n_train),
-            "test_rows": int(n_test),
-            "train_done_rows": int(train_done_rows),
-            "test_done_rows": int(test_done_rows),
-            "api_requests_total": int(n_train + n_test),
-            "api_requests_done": int(train_done_rows + test_done_rows),
-            "api_requests_remaining": int(
-                (n_train - train_done_rows) + (n_test - test_done_rows)
-            ),
+        "n_total": int(n_total),
+        "progress": {
+            "total_rows": int(n_total),
+            "done_rows": int(done_rows),
+            "api_requests_total": int(n_total),
+            "api_requests_done": int(done_rows),
+            "api_requests_remaining": int(n_total - done_rows),
         },
         "label_encoding": {"keep_remove_label_0": "keep", "keep_remove_label_1": "remove"},
         "command": cmd_parts,
@@ -207,7 +211,6 @@ def run_bedrock_baseline_variant(
     variant_slug: str,
     bedrock_model_id: str,
     outputs_dir: Path,
-    train_split: float = 0.8,
     seed: int = 42,
     limit: int | None = None,
     max_concurrency: int = 2,
@@ -228,8 +231,7 @@ def run_bedrock_baseline_variant(
         out_dir = outputs_dir / timestamp
         out_dir.mkdir(parents=True, exist_ok=False)
 
-    train_pred_path = out_dir / "train_predictions.csv"
-    test_pred_path = out_dir / "test_predictions.csv"
+    pred_path = out_dir / PREDICTIONS_FILENAME
     metadata_path = out_dir / "metadata.json"
     metrics_path = out_dir / "metrics.json"
 
@@ -242,63 +244,46 @@ def run_bedrock_baseline_variant(
     prompt_tmpl = ChatPromptTemplate.from_messages([("human", "{user_prompt}")])
     chain = prompt_tmpl | structured
 
-    train_df, test_df = load_train_test_splits(train_split=train_split, seed=seed)
-    train_df = maybe_limit_df(train_df, limit=limit, seed=seed + 1)
-    test_df = maybe_limit_df(test_df, limit=limit, seed=seed + 2)
+    df = load_dataset()
+    df = maybe_limit_df(df, limit=limit, seed=seed)
 
-    existing_train = _load_predictions(train_pred_path)
-    existing_test = _load_predictions(test_pred_path)
-    done_train_ids = set(existing_train["message_id"].astype(str))
-    done_test_ids = set(existing_test["message_id"].astype(str))
+    done_ids = _load_done_message_ids(out_dir)
+    remaining_df = df[~df["message_id"].astype(str).isin(done_ids)].copy()
 
-    train_remaining_df = train_df[
-        ~train_df["message_id"].astype(str).isin(done_train_ids)
-    ].copy()
-    test_remaining_df = test_df[~test_df["message_id"].astype(str).isin(done_test_ids)].copy()
-
-    n_train = int(len(train_df))
-    n_test = int(len(test_df))
-    train_done_n = n_train - int(len(train_remaining_df))
-    test_done_n = n_test - int(len(test_remaining_df))
-    remaining_n = int(len(train_remaining_df) + len(test_remaining_df))
+    n_total = int(len(df))
+    done_n = n_total - int(len(remaining_df))
+    remaining_n = int(len(remaining_df))
 
     print(
-        f"[{variant_slug}] api_requests_total={n_train + n_test} "
-        f"(train={n_train}, test={n_test}); "
-        f"done={train_done_n + test_done_n}; remaining={remaining_n}",
+        f"[{variant_slug}] api_requests_total={n_total}; "
+        f"done={done_n}; remaining={remaining_n}",
         flush=True,
     )
 
     write_lock = threading.Lock()
-    progress_state = {"train_done": train_done_n, "test_done": test_done_n}
-    metadata_write_every = 10
+    progress_state = {"done": done_n}
 
     def _write_metadata(status: str) -> None:
         metadata = _build_metadata(
             timestamp=timestamp,
             variant_slug=variant_slug,
             bedrock_model_id=bedrock_model_id,
-            train_split=train_split,
             seed=seed,
             post_shuffle_seed=post_shuffle_seed,
             limit=limit,
             max_concurrency=max_concurrency,
             temperature=temperature,
-            n_train=n_train,
-            n_test=n_test,
-            train_done_rows=progress_state["train_done"],
-            test_done_rows=progress_state["test_done"],
+            n_total=n_total,
+            done_rows=progress_state["done"],
             cmd_parts=cmd_parts,
             status=status,
         )
         _write_json(metadata_path, metadata)
 
-    def _bump(split: str) -> None:
+    def _bump() -> None:
         with write_lock:
-            progress_state[f"{split}_done"] += 1
-            done = progress_state["train_done"] + progress_state["test_done"]
-            if done % metadata_write_every == 0:
-                _write_metadata(status="running")
+            progress_state["done"] += 1
+            _write_metadata(status="running")
 
     _write_metadata(status="running")
 
@@ -308,56 +293,33 @@ def run_bedrock_baseline_variant(
 
     async def _do_predictions() -> None:
         await _predict_rows_concurrently(
-            df=train_remaining_df,
+            df=remaining_df,
             chain=chain,
             post_shuffle_seed=post_shuffle_seed,
             max_concurrency=max_concurrency,
-            predictions_path=train_pred_path,
+            predictions_path=pred_path,
             write_lock=write_lock,
-            progress_desc=f"{variant_slug} train",
-            on_progress=lambda: _bump("train"),
-        )
-        await _predict_rows_concurrently(
-            df=test_remaining_df,
-            chain=chain,
-            post_shuffle_seed=post_shuffle_seed,
-            max_concurrency=max_concurrency,
-            predictions_path=test_pred_path,
-            write_lock=write_lock,
-            progress_desc=f"{variant_slug} test",
-            on_progress=lambda: _bump("test"),
+            progress_desc=variant_slug,
+            on_progress=_bump,
         )
 
     asyncio.run(_do_predictions())
 
-    train_pred_df = _load_predictions(train_pred_path)
-    test_pred_df = _load_predictions(test_pred_path)
+    pred_df = _load_predictions(pred_path)
 
-    if len(train_pred_df) != n_train:
+    if len(pred_df) != n_total:
         raise RuntimeError(
-            f"train predictions incomplete: got {len(train_pred_df)}, expected {n_train}"
-        )
-    if len(test_pred_df) != n_test:
-        raise RuntimeError(
-            f"test predictions incomplete: got {len(test_pred_df)}, expected {n_test}"
+            f"predictions incomplete: got {len(pred_df)}, expected {n_total}"
         )
 
-    train_metrics = _hard_label_metrics(
-        y_true=train_pred_df["keep_remove_label"].astype(int).values,
-        y_pred=train_pred_df["predicted_label"].astype(int).values,
-    )
-    test_metrics = _hard_label_metrics(
-        y_true=test_pred_df["keep_remove_label"].astype(int).values,
-        y_pred=test_pred_df["predicted_label"].astype(int).values,
+    metrics = _hard_label_metrics(
+        y_true=pred_df["keep_remove_label"].astype(int).values,
+        y_pred=pred_df["predicted_label"].astype(int).values,
     )
 
-    _write_json(
-        metrics_path,
-        {"train_metrics": train_metrics, "test_metrics": test_metrics},
-    )
+    _write_json(metrics_path, {"metrics": metrics})
 
-    progress_state["train_done"] = n_train
-    progress_state["test_done"] = n_test
+    progress_state["done"] = n_total
     _write_metadata(status="complete")
 
     print(f"[{variant_slug}] complete -> {out_dir}", flush=True)

@@ -19,7 +19,13 @@ aws bedrock list-foundation-models --region us-east-2 \
 
 ## Cost warning
 
-Each full run scores **~8,791 Bedrock requests** (80/20 stratified split, `seed=42`). Running all four models is ~35k requests total. Use `--limit 8` for smoke tests.
+Each full run scores **all rows in the dataset** (8,791 Bedrock requests). Running all four models is ~35k requests total. Use `--limit 8` for smoke tests.
+
+## Crash safety
+
+- Each Bedrock response is **appended immediately** to `predictions.csv` with `fsync` before the next request starts.
+- `metadata.json` progress is updated after every completed row.
+- Re-run with `--resume <run_dir>` to skip `message_id`s already present in `predictions.csv` (also reads legacy `train_predictions.csv` / `test_predictions.csv` if present).
 
 ## Smoke test
 
@@ -29,9 +35,9 @@ PYTHONPATH=. uv run python experiments/predict_keep_remove_2026_07_01/models/llm
 
 Expect exit code `0` and a run directory under `ministral-3-8b-instruct/outputs/<timestamp>/` with:
 
-- `train_predictions.csv` / `test_predictions.csv` (columns: `message_id`, `keep_remove_label`, `predicted_label`)
-- `metrics.json` (`train_metrics` / `test_metrics` with `accuracy`, `precision`, `recall`, `f1` only)
-- `metadata.json` (`bedrock_model_id`, `post_shuffle_seed`, `n_train`, `n_test`, `status`)
+- `predictions.csv` (columns: `message_id`, `keep_remove_label`, `predicted_label`)
+- `metrics.json` (`metrics` key with `accuracy`, `precision`, `recall`, `f1`)
+- `metadata.json` (`bedrock_model_id`, `post_shuffle_seed`, `n_total`, `status`)
 
 ## Full runs (per model)
 
@@ -51,16 +57,15 @@ PYTHONPATH=. uv run python experiments/predict_keep_remove_2026_07_01/models/llm
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--train-split` | `0.8` | Stratified train fraction |
-| `--seed` | `42` | Split + shuffle seed |
-| `--limit` | none | Subsample rows per split (smoke) |
+| `--seed` | `42` | Post-order shuffle seed |
+| `--limit` | none | Subsample rows (smoke) |
 | `--max-concurrency` | `2` | Concurrent Bedrock requests |
 | `--temperature` | `0.0` | Sampling temperature |
 | `--resume` | none | Resume an incomplete run directory |
 
 ## Resume semantics
 
-Re-run with `--resume <run_dir>` to skip `message_id`s already in the prediction CSVs. Safe to retry after interruption; completed rows are not re-requested.
+Re-run with `--resume <run_dir>` to skip rows already in `predictions.csv`. Safe to retry after interruption; completed rows are not re-requested.
 
 ## Aggregate artifacts
 

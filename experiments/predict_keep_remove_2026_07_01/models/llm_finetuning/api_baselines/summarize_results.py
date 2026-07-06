@@ -21,6 +21,16 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _extract_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
+    if "metrics" in metrics:
+        return metrics["metrics"]
+    if "test_metrics" in metrics:
+        return metrics["test_metrics"]
+    if "train_metrics" in metrics:
+        return metrics["train_metrics"]
+    raise KeyError("metrics.json missing 'metrics' (or legacy train/test keys)")
+
+
 def _scan_variant_metadata(api_baselines_root: Path) -> Iterable[tuple[Path, dict[str, Any], dict[str, Any]]]:
     for meta_path in api_baselines_root.glob("*/outputs/*/metadata.json"):
         run_dir = meta_path.parent
@@ -73,24 +83,20 @@ def main() -> None:
         variant = VARIANT_BY_SLUG.get(variant_slug)
         model_label = variant.display_name if variant else variant_slug
         bedrock_model_id = meta.get("bedrock_model_id", "")
+        split_metrics = _extract_metrics(metrics)
 
-        for split_label, split_metrics in [
-            ("train", metrics["train_metrics"]),
-            ("test", metrics["test_metrics"]),
-        ]:
-            rows.append(
-                {
-                    "model": model_label,
-                    "bedrock_model_id": bedrock_model_id,
-                    "split": split_label,
-                    "accuracy": split_metrics.get("accuracy"),
-                    "precision": split_metrics.get("precision"),
-                    "recall": split_metrics.get("recall"),
-                    "f1": split_metrics.get("f1"),
-                }
-            )
+        rows.append(
+            {
+                "model": model_label,
+                "bedrock_model_id": bedrock_model_id,
+                "accuracy": split_metrics.get("accuracy"),
+                "precision": split_metrics.get("precision"),
+                "recall": split_metrics.get("recall"),
+                "f1": split_metrics.get("f1"),
+            }
+        )
 
-    df = pd.DataFrame(rows).sort_values(["model", "split"])
+    df = pd.DataFrame(rows).sort_values(["model"])
     table_md = _md_table(df)
 
     out_dir = api_baselines_root / "aggregate_outputs"

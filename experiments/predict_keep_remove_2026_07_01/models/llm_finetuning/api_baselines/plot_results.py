@@ -26,6 +26,16 @@ def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _extract_metrics(metrics: dict[str, Any]) -> dict[str, float]:
+    if "metrics" in metrics:
+        return metrics["metrics"]
+    if "test_metrics" in metrics:
+        return metrics["test_metrics"]
+    if "train_metrics" in metrics:
+        return metrics["train_metrics"]
+    raise KeyError("metrics.json missing 'metrics' (or legacy train/test keys)")
+
+
 def _latest_run_dir(variant_folder: Path) -> Path | None:
     outputs_dir = variant_folder / "outputs"
     if not outputs_dir.is_dir():
@@ -49,47 +59,31 @@ def _collect_rows() -> list[dict[str, Any]]:
             continue
 
         meta = _read_json(run_dir / "metadata.json")
-        metrics = _read_json(run_dir / "metrics.json")
+        split_metrics = _extract_metrics(_read_json(run_dir / "metrics.json"))
         model_label = variant.display_name
 
-        for split_label, split_metrics in [
-            ("train", metrics["train_metrics"]),
-            ("test", metrics["test_metrics"]),
-        ]:
-            rows.append(
-                {
-                    "model": model_label,
-                    "variant_slug": variant.variant_slug,
-                    "bedrock_model_id": meta.get("bedrock_model_id", variant.bedrock_model_id),
-                    "split": split_label,
-                    "run_dir": str(run_dir),
-                    "accuracy": float(split_metrics["accuracy"]),
-                    "precision": float(split_metrics["precision"]),
-                    "recall": float(split_metrics["recall"]),
-                    "f1": float(split_metrics["f1"]),
-                }
-            )
+        rows.append(
+            {
+                "model": model_label,
+                "variant_slug": variant.variant_slug,
+                "bedrock_model_id": meta.get("bedrock_model_id", variant.bedrock_model_id),
+                "run_dir": str(run_dir),
+                "accuracy": float(split_metrics["accuracy"]),
+                "precision": float(split_metrics["precision"]),
+                "recall": float(split_metrics["recall"]),
+                "f1": float(split_metrics["f1"]),
+            }
+        )
     return rows
 
 
 def _plot_metric(*, df: pd.DataFrame, metric: str, out_path: Path) -> None:
     models = list(df["model"].drop_duplicates())
-    splits = ["train", "test"]
+    values = [float(df[df["model"] == m][metric].iloc[0]) for m in models]
     x = range(len(models))
-    width = 0.35
-
-    train_vals = [
-        float(df[(df["model"] == m) & (df["split"] == "train")][metric].iloc[0])
-        for m in models
-    ]
-    test_vals = [
-        float(df[(df["model"] == m) & (df["split"] == "test")][metric].iloc[0])
-        for m in models
-    ]
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.bar([i - width / 2 for i in x], train_vals, width=width, label="train", color="#1f77b4")
-    ax.bar([i + width / 2 for i in x], test_vals, width=width, label="test", color="#ff7f0e")
+    ax.bar(list(x), values, color="#1f77b4")
 
     ax.set_xticks(list(x))
     ax.set_xticklabels(models, rotation=20, ha="right")
@@ -97,7 +91,6 @@ def _plot_metric(*, df: pd.DataFrame, metric: str, out_path: Path) -> None:
     ax.set_ylabel(metric.capitalize())
     ax.set_title(f"Bedrock zero-shot baselines — {metric.capitalize()}")
     ax.grid(True, axis="y", alpha=0.3)
-    ax.legend(loc="best")
 
     fig.tight_layout()
     fig.savefig(out_path, dpi=200)
@@ -110,7 +103,7 @@ def main() -> None:
         print("No completed Bedrock baseline runs found (no metrics.json).")
         return
 
-    df = pd.DataFrame(rows).sort_values(["model", "split"])
+    df = pd.DataFrame(rows).sort_values(["model"])
     timestamp = get_current_timestamp()
     out_dir = _OUTPUTS_PARENT / timestamp
     out_dir.mkdir(parents=True, exist_ok=True)

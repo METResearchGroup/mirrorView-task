@@ -21,7 +21,6 @@ _OUTPUTS_PARENT = Path(__file__).resolve().parent / "outputs"
 
 @app.command()
 def main(
-    train_split: float = typer.Option(0.8, "--train-split", min=0.01, max=0.99),
     seed: int = typer.Option(42, "--seed"),
     limit: Optional[int] = typer.Option(None, "--limit"),
     max_concurrency: int = typer.Option(2, "--max-concurrency", min=1, max=50),
@@ -32,7 +31,6 @@ def main(
         variant_slug="qwen3_next_80b_a3b",
         bedrock_model_id="qwen.qwen3-next-80b-a3b",
         outputs_dir=_OUTPUTS_PARENT,
-        train_split=train_split,
         seed=seed,
         limit=limit,
         max_concurrency=max_concurrency,
