@@ -43,7 +43,8 @@ def _latest_run_dir(variant_folder: Path) -> Path | None:
     ]
     if not candidates:
         return None
-    return max(candidates, key=lambda p: p.name)
+    complete = [p for p in candidates if _read_json(p / "metadata.json").get("status") == "complete"]
+    return max(complete or candidates, key=lambda p: p.name)
 
 
 def _collect_rows() -> list[dict[str, Any]]:

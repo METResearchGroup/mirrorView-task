@@ -261,6 +261,21 @@ We'll put this in `experiments/predict_keep_remove_2026_07_01/models/llm_finetun
 
 We'll also use the `dataloader.py` from `experiments/predict_keep_remove_2026_07_01` to grab the data. We'll just label all the posts and then evaluate accuracy, precision, recall, and F1. Then we'll have an `api_baselines/plot_results.py` that creates JSON/PNG results for each metric, using output patterns and graphs similar to `experiments/predict_keep_remove_2026_07_01/models/modernbert/threshold_analysis.py`.
 
+#### Step 1 results (Bedrock zero-shot baseline)
+
+We ran all four Bedrock models on the **full dataset** (8,791 pairs; study linked-fate prompt with blinded Post 1/Post 2 shuffle; hard-label metrics with `remove` as the positive class). Artifacts live under `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/{model}/outputs/<timestamp>/`.
+
+<!-- BEGIN LLM_FINETUNING_BASELINE_RESULTS_TABLE -->
+| model                    | bedrock_model_id                 |   accuracy |   precision |   recall |       f1 |
+|:-------------------------|:---------------------------------|-----------:|------------:|---------:|---------:|
+| Ministral 3 14B Instruct | mistral.ministral-3-14b-instruct |   0.689683 |    0.512244 | 0.632065 | 0.565882 |
+| Ministral 3 8B Instruct  | mistral.ministral-3-8b-instruct  |   0.707314 |    0.724719 | 0.137576 | 0.231252 |
+| Qwen3 32B                | qwen.qwen3-32b-v1:0              |   0.709248 |    0.545294 | 0.549947 | 0.547611 |
+| Qwen3 Next 80B A3B       | qwen.qwen3-next-80b-a3b          |   0.641451 |    0.462106 | 0.734803 | 0.56739  |
+<!-- END LLM_FINETUNING_BASELINE_RESULTS_TABLE -->
+
+**Comparison to prior baselines.** On F1, Ministral 14B (0.566) and Qwen3 Next 80B A3B (0.567) slightly exceed head-only ModernBERT (test F1 0.555) and one-shot original-only prompting (test F1 0.497). Qwen3 32B is close (F1 0.548). Ministral 8B reaches the highest accuracy (0.707) but is very conservative on the remove class (recall 0.138; F1 0.231), so it is a poor moderation baseline despite high accuracy. Qwen3 Next 80B has the highest remove recall (0.735) at the cost of lower precision (0.462). Overall, the mid/large open-weight Bedrock models are competitive with ModernBERT on this blinded mirror-view task without fine-tuning; the 8B Ministral model is not. Cross-model metric plots: `api_baselines/outputs/plot_results/2026_07_06-17:48:29/`.
+
 #### Step 2: LoRA fine-tuning
 
 I'm thinking we use two models:

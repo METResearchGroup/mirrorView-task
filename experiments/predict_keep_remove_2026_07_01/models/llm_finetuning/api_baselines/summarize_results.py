@@ -27,12 +27,28 @@ def _extract_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
     return metrics["metrics"]
 
 
+def _latest_run_dir(variant_folder: Path) -> Path | None:
+    outputs_dir = variant_folder / "outputs"
+    if not outputs_dir.is_dir():
+        return None
+    candidates = [
+        p
+        for p in outputs_dir.iterdir()
+        if p.is_dir() and (p / "metrics.json").is_file() and (p / "metadata.json").is_file()
+    ]
+    if not candidates:
+        return None
+    complete = [p for p in candidates if _read_json(p / "metadata.json").get("status") == "complete"]
+    return max(complete or candidates, key=lambda p: p.name)
+
+
 def _scan_variant_metadata(api_baselines_root: Path) -> Iterable[tuple[Path, dict[str, Any], dict[str, Any]]]:
-    for meta_path in api_baselines_root.glob("*/outputs/*/metadata.json"):
-        run_dir = meta_path.parent
-        metrics_path = run_dir / "metrics.json"
-        if not metrics_path.exists():
+    for variant in VARIANT_BY_SLUG.values():
+        run_dir = _latest_run_dir(api_baselines_root / variant.folder)
+        if run_dir is None:
             continue
+        meta_path = run_dir / "metadata.json"
+        metrics_path = run_dir / "metrics.json"
         meta = _read_json(meta_path)
         metrics = _read_json(metrics_path)
         yield meta_path, meta, metrics
@@ -65,7 +81,7 @@ def _update_marked_table(file_path: Path, *, marker_name: str, new_table_md: str
 
 
 def main() -> None:
-    repo_root = Path(__file__).resolve().parents[4]
+    experiment_root = Path(__file__).resolve().parents[3]
     api_baselines_root = Path(__file__).resolve().parent
 
     runs = list(_scan_variant_metadata(api_baselines_root))
@@ -100,7 +116,7 @@ def main() -> None:
     (out_dir / "aggregate_results.csv").write_text(df.to_csv(index=False), encoding="utf-8")
     (out_dir / "aggregate_results.md").write_text(table_md, encoding="utf-8")
 
-    how_to = repo_root / "experiments/predict_keep_remove_2026_07_01/HOW_TO_TRAIN_LANGUAGE_MODELS.md"
+    how_to = experiment_root / "HOW_TO_TRAIN_LANGUAGE_MODELS.md"
     _update_marked_table(
         how_to,
         marker_name="LLM_FINETUNING_BASELINE_RESULTS_TABLE",
