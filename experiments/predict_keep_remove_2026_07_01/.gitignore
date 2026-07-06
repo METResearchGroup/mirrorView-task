@@ -1,3 +1,4 @@
+embedding_cache/
 */embedding_cache/*
 *.pkl
 */models/embedding_cache/*
