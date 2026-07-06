@@ -240,6 +240,10 @@ We want to use a Pydantic model for this, a pydantic model, IsRemoveResult, with
 
 We'll shuffle the original and mirrored text randomly within the prompt (e.g., sometimes the original post will be Post 1, sometimes it'll be Post 2).
 
+#### Dataset assumption: using paired posts
+
+For this step, we're using both the original and the mirrored post. This is a little unlike the other models, where we used only the original posts. We did that approach as we found a null result between using the original vs. original plus mirrored.
+
 #### Step 1: Zero-shot baseline
 
 We'll use some open source models exposed via Bedrock API as a baseline. Here's a synopsis of the models I'd like to try and what ChatGPT says about them:
@@ -291,13 +295,14 @@ I'm thinking we use two models:
 - `mistral.ministral-3-8b-instruct`
 - `mistral.ministral-3-14b-instruct`
 - `Qwen/Qwen3-8B`
-- Qwen 30B
+- `qwen.qwen3-32b-v1:0`
+- `qwen.qwen3-next-80b-a3b` (since this one did by far the best in recall from our previous testing)
 
 We can use QLoRA so that it fits comfortably on an H100.
 
 Let's use Sagemaker Training Jobs + HuggingFace. We'll track the experiments using Weights and Biases.
 
-We'll use QLoRA. We'll also shuffle the LoRA ranks between 16, 32, and 48.
+We'll use QLoRA. We'll also shuffle the LoRA ranks between 8, 16, 32, and 48.
 
 The basic setup would be something like running a SageMaker training job with the proper configurations.
 
@@ -368,7 +373,7 @@ from peft import LoraConfig
 
 peft_config = LoraConfig(
     r=16,
-    lora_alpha=32,
+    lora_alpha=32, # 2 * r
     lora_dropout=0.05,
     bias="none",
     task_type="CAUSAL_LM",
@@ -393,7 +398,9 @@ I'm thinking that we can do ablations and testing on one model, and then run on 
 Ablations:
 
 - Qwen 3 8b: baseline (done in Step 1).
-- Qwen 3 8b: LoRA fine-tuning (across r=16, 32, and 48).
+- Qwen 3 8b: LoRA fine-tuning (across r=8, 16, 32, and 48).
 - Qwen 3 8b: LoRA (bfloat16) vs. QLoRA (nf4).
 
-Once we've got a set of optimal parameters, let's train the Mistral + Qwen 30B models.
+Once we've got a set of optimal parameters, let's train the Mistral + Qwen models.
+
+We go into more detail in the `HOW_TO_DO_LLM_FINETUNING.md` file.
