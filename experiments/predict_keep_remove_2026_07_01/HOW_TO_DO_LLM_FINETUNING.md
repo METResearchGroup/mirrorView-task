@@ -118,6 +118,28 @@ I'm thinking a setup of something like this:
 
 I'm thinking that we can do ablations and testing on one model, and then run on the rest. Let's start with Qwen 3 8b.
 
+## Implementation details
+
+### Step 1: Train a small local LLM
+
+Let's get a small local LLM to work first. We'll first train `Qwen/Qwen3-0.6B`. This is in the same model family that we want to scale up to.
+
+We want to use this to prove that the full path works:
+
+- data
+- prompt formatting
+- LoRA training
+- W&B logging
+- prediction
+- metrics
+- adapter
+
+### Step 2: Train the first small Qwen model
+
+### Step 3: Training the rest of the models
+
+### Step 4: Interpretability
+
 Ablations:
 
 - Qwen 3 8b: baseline (done in Step 1).
