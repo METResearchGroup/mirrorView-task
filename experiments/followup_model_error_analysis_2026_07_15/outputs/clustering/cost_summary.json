@@ -1,0 +1,22 @@
+{
+  "scope": "v1",
+  "model_primary": "gpt-5.5",
+  "model_fallback": "gpt-5.4-nano",
+  "n_shards": 1,
+  "new_calls_this_run": 1,
+  "total_cost_usd": 0.70151,
+  "calls": [
+    {
+      "phase": "clustering",
+      "shard_id": "shard_00",
+      "model": "gpt-5.5",
+      "prompt_tokens": 84208,
+      "completion_tokens": 9349,
+      "cached_tokens": 0,
+      "cost_usd": 0.70151,
+      "call_timestamp": "2026-07-16T04:40:22.503619+00:00",
+      "scope": "v1"
+    }
+  ],
+  "updated_at": "2026-07-16T04:40:22.505831+00:00"
+}

@@ -1,0 +1,17 @@
+{
+  "phase": "extraction",
+  "batch_id": "fn/batch_0002",
+  "bucket": "fn",
+  "chunk_idx": 2,
+  "model": "gpt-5.5",
+  "prompt_tokens": 4262,
+  "completion_tokens": 13209,
+  "cached_tokens": 0,
+  "cost_usd": 0.41758,
+  "call_timestamp": "2026-07-16T04:09:20.234496+00:00",
+  "scope": "v1",
+  "n_posts": 16,
+  "n_features_kept": 179,
+  "confidence_threshold": 0.85,
+  "csv_path": "outputs/llm_features/fn/batch_0002.csv"
+}

@@ -1,0 +1,77 @@
+{
+  "experiment": "followup_model_error_analysis_2026_07_15",
+  "scope": "v1",
+  "model_primary": "gpt-5.5",
+  "model_fallback": "gpt-5.4-nano",
+  "chunk_size": 16,
+  "confidence_threshold": 0.85,
+  "v1_allocation": {
+    "fp": 8,
+    "fn": 4,
+    "tp": 4,
+    "tn": 4
+  },
+  "v2_cost_approval": false,
+  "llm_cost_summary": {
+    "scope": "v1",
+    "model_primary": "gpt-5.5",
+    "model_fallback": "gpt-5.4-nano",
+    "pricing_as_of": "2026-07-15",
+    "planned_calls": 20,
+    "skipped_existing": 0,
+    "new_calls": 20,
+    "unique_completed_batches": 20,
+    "total_prompt_tokens": 84797,
+    "total_completion_tokens": 256113,
+    "total_cached_tokens": 0,
+    "total_cost_usd": 8.107375,
+    "by_bucket": {
+      "fp": {
+        "calls": 8,
+        "cost_usd": 3.2578350000000005
+      },
+      "fn": {
+        "calls": 4,
+        "cost_usd": 1.5661399999999999
+      },
+      "tp": {
+        "calls": 4,
+        "cost_usd": 1.7375250000000002
+      },
+      "tn": {
+        "calls": 4,
+        "cost_usd": 1.545875
+      }
+    },
+    "by_model": {
+      "gpt-5.5": {
+        "calls": 20,
+        "cost_usd": 8.107375
+      }
+    },
+    "updated_at": "2026-07-16T04:37:31.607812+00:00"
+  },
+  "updated_at": "2026-07-16T04:40:22.509222+00:00",
+  "clustering_cost_summary": {
+    "scope": "v1",
+    "model_primary": "gpt-5.5",
+    "model_fallback": "gpt-5.4-nano",
+    "n_shards": 1,
+    "new_calls_this_run": 1,
+    "total_cost_usd": 0.70151,
+    "calls": [
+      {
+        "phase": "clustering",
+        "shard_id": "shard_00",
+        "model": "gpt-5.5",
+        "prompt_tokens": 84208,
+        "completion_tokens": 9349,
+        "cached_tokens": 0,
+        "cost_usd": 0.70151,
+        "call_timestamp": "2026-07-16T04:40:22.503619+00:00",
+        "scope": "v1"
+      }
+    ],
+    "updated_at": "2026-07-16T04:40:22.505831+00:00"
+  }
+}

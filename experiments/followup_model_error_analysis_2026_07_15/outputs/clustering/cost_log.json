@@ -1,0 +1,13 @@
+[
+  {
+    "phase": "clustering",
+    "shard_id": "shard_00",
+    "model": "gpt-5.5",
+    "prompt_tokens": 84208,
+    "completion_tokens": 9349,
+    "cached_tokens": 0,
+    "cost_usd": 0.70151,
+    "call_timestamp": "2026-07-16T04:40:22.503619+00:00",
+    "scope": "v1"
+  }
+]
