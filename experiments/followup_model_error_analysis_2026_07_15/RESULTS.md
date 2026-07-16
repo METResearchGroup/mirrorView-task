@@ -11,7 +11,9 @@
 
 - **V1 pilot only:** We extracted high-confidence linguistic features for ≤320 Study 2 posts across 20 planned batches (FP=8, FN=4, TP=4, TN=4) — **not** the full 8,791-post corpus.
 - **Confusion splits match prior labels:** TP=2067, TN=3572, FP=2406, FN=746 (expected 2067/3572/2406/746).
-- **FP (Qwen over-predicts remove) is the priority slice:** text mining and clustering highlight recurring surface/pragmatic patterns among false-positive removes vs true keeps.
+- **FP (Qwen over-predicts remove):** text mining and clustering highlight high-arousal style, conspiracy/elite-capture, victimhood+rights, and stacked culture-war blame among false-positive removes vs true keeps.
+- **FN (Qwen under-predicts remove):** relative to true positives, missed removals look cooler and more “policy-argumentative” — persuasion/factual framing, economic/conditional structure, less profanity/outrage/partisan targeting, with climate/energy relatively enriched.
+- **Shared:** guns + climate dominate both error types; mirror flips and moral language are pervasive; risk often comes from feature *combinations*, but FP over-stacks cues on keeps while FN under-stacks cues on removes.
 - **Cost:** extraction ≈ **$8.11** (20 completed batches); clustering ≈ **$0.70**; pipeline ≈ **$8.81**. V2 (~$140 extraction) was **not** run.
 - **Limitation:** Findings are provisional on a ~3.6% stratified sample of posts; do not generalize as full-corpus prevalence without V2 approval.
 
@@ -145,7 +147,41 @@ When Qwen predicts **remove** but humans said **keep** (FP), recurring themes in
 
 These are **pilot** signals on ≤128 FP posts (8 batches × 16). They suggest which linguistic cues may co-occur with over-removal, not causal explanations of Qwen.
 
-## 7. Limitations
+## 7. FN-focused findings
+
+When Qwen predicts **keep** but humans said **remove** (FN), recurring themes include (contrasts vs **TP**, the correctly removed human-remove baseline):
+
+- FN posts are **under-represented in high-arousal attack style** vs TP: `profanity_or_taboo_language` on **17%** of FN posts vs **42%** TP; `emphatic_outrage` **17%** vs **36%**; `ridicule_or_mockery` **27%** vs **45%**; rhetorical questions **9%** vs **19%**. Cooler register is a recurring miss signal.
+- FN posts are **over-represented in persuasion / policy-argument framing** vs TP: `persuasion_or_argumentation` **39%** vs **23%**; `factual_assertion_vs_speculation` **42%** vs **33%**. About **33/64** FN posts are “cool-argument” (persuasion or factual features without profanity/outrage) vs only **14/64** TP.
+- FN posts more often use **economic / conditional argument structure**: `economic_cost_benefit_framing` **17%** vs **8%** TP; `conditional_if_then_structure` **22%** vs **9%**. Text-mining FN-vs-TP enrichment includes `paris`, `tax`, `data`, `billionaires`, `budget`, `agreement` (climate/economy lexicon) rather than TP’s `threat`, `dangerous`, `outrage`, identity terms (`black`, `women`, `gender`).
+- FN posts are **under-represented in explicit partisan/identity targeting** vs TP: `left_right_directional_cue` **6%** vs **25%**; `us_vs_them_framing` **2%** vs **12%**; `culture_war_topic_salience` **19%** vs **30%**; `victimhood_or_persecution_framing` **14%** vs **27%**; `criticized_actor_type` **69%** vs **89%**.
+- **Climate/energy is relatively enriched in FN:** coarse domain ~**20/64 (31%)** FN vs **11/64 (17%)** TP. Clustering puts the largest FN count in climate/energy cluster **[3]** (FN=24), and media/expertise cluster **[12]** has the highest FN share (FN=10/35). FP climate over-removes demeaning/alarmist frames; FN climate under-removes evidence/cost/policy frames.
+- **FN gun posts** still dominate the slice (~**39/64**), and gun-reform cluster **[1]** has FN=21 — but relative to TP they more often read as bounded reform prescriptions, conditional regulation, credentialed advocacy, or soft satire **without** TP’s denser child-victim + outrage + culture-war package. TP gun removals more often stack threat/identity/disinformation lexicon.
+- FN posts **stack fewer co-occurring risk features** than TP (mean ~**1.0** of {profanity, outrage, victimhood, conspiracy, culture-war, us-vs-them, ridicule} vs ~**2.0** for TP). Under-removal often looks like “policy domain + moral claim” without the multi-cue intensity combo.
+- **Open-ended / niche surface features** appear on more FN posts (**19%** vs **6%** TP): technical/manual references, personal political disclaimers, absurdist animal satire, mental-health ownership caveats, donor-money idioms — oddball framing that may not match the model’s remove heuristics.
+- Soft sarcasm/mockery still appears in FN, but usually **without** the FP/TP package of profanity + all-caps + second-person attack; FN is closer to TN on arousal than to TP.
+- Relative to FP (over-removal), FN is **not** conspiracy-heavy (`conspiratorial_framing` **8%** FN ≈ **9%** TP; FP **10%** vs TN **5%**) and is **less** victimhood-heavy than both FP and TP (**14%** FN vs **27%** FP/TP).
+
+These are **pilot** signals on ≤64 FN posts (4 batches × 16). They suggest which linguistic cues may co-occur with under-removal, not causal explanations of Qwen.
+
+## 8. FP vs FN contrast (shared and divergent)
+
+**Shared across both error types**
+
+- Guns and climate/energy dominate the V1 shard in FP and FN; mirror-shift reversals and normative moral language are nearly universal.
+- Clusters **[1]** (gun reform / child-victim / anti-NRA) and **[3]** (climate/energy) and style cluster **[7]** mix FP and FN — the same domains are unstable in both directions.
+- Moderation-relevant risk is better described by **feature combinations** than by topic alone.
+
+**Divergent**
+
+| Direction | Typical cue pattern (V1) |
+| --- | --- |
+| **FP** (keep→remove) | High arousal + conspiracy/elite capture + victimhood/rights + broad outgroup condemnation vs TN |
+| **FN** (remove→keep) | Persuasion/factual + economic/conditional structure + fewer targeting/arousal cues vs TP |
+
+In short: Qwen appears over-sensitive to stacked “hot” political attack cues on human-keep posts, and under-sensitive when human-remove posts are framed as cooler policy argument.
+
+## 9. Limitations
 
 - **20-call V1 pilot** only (~320 posts); full corpus would need ~552 extraction calls.
 - Confidence gate **0.85** drops medium/low features.
@@ -154,7 +190,7 @@ These are **pilot** signals on ≤128 FP posts (8 batches × 16). They suggest w
 - **V2 not run** (would require explicit ~$140 / ~$145–$150 cost approval).
 - Run manifest: `outputs/run_manifest.json` (v2_cost_approval=False).
 
-## 8. Artifact index
+## 10. Artifact index
 
 | Artifact | Path |
 | --- | --- |
