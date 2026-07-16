@@ -1,0 +1,12 @@
+{
+  "explained_variance_ratio": [
+    0.028978916958255524,
+    0.02147134939243415
+  ],
+  "explained_variance_ratio_cumsum": [
+    0.028978916958255524,
+    0.05045026635068967
+  ],
+  "fit_on": "train_only",
+  "n_components": 2
+}

@@ -122,6 +122,10 @@ experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/*
 !experiments/model_errors_analysis_2026_07_15/outputs/base_model_llm_labels.csv
 !experiments/model_errors_analysis_2026_07_15/outputs/run_manifest.json
 
+# Model-errors analysis V1 Bedrock artifacts (csv blocked by *.csv above).
+!experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/
+!experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/**
+
 # ModernBERT keep/remove training artifacts (keep .gitkeep)
 experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/**
 !experiments/predict_keep_remove_2026_07_01/models/modernbert/artifacts/.gitkeep

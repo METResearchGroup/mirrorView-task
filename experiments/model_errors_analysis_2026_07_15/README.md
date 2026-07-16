@@ -33,6 +33,18 @@ Expected size: **8,791** rows (`classifier_id == bedrock/qwen3-next-80b-a3b`).
 
 Source run: `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/`. See `spec.md` § Primary correctness signal.
 
+## V1 analysis (shared split → logistic + 2D)
+
+```bash
+# from repo root
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_build_table.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_split.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_linear_separator.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_embed_2d.py
+```
+
+Writes under `outputs/v1_bedrock/`: analysis table, `split_ids.json`, logistic metrics, PCA/LDA plots, etc. Stakeholder writeup: **`RESULTS.md`**.
+
 ## Scope note
 
-This directory currently implements **V0 collection through `base_model_llm_labels.csv`** only. Hard-pair tables and V1 primary-classifier embedding separability (shared split → logistic probe + 2D viz on `only_original` Titan embeddings) are specified in `spec.md` but not implemented yet.
+**V0** labels CSV and **V1** error-separability (shared split → logistic probe + PCA/LDA on `only_original` Titan) are implemented. Hard-pair rate tables from the V0 checklist remain optional follow-up.

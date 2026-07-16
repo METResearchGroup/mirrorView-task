@@ -1,0 +1,298 @@
+{
+  "status": "complete",
+  "updated_at": "2026-07-16 02:05:51 UTC",
+  "classifier_id": "bedrock/qwen3-next-80b-a3b",
+  "feature_set": "only_original",
+  "target": "is_error",
+  "positive_class": "error (is_error=1)",
+  "threshold": 0.5,
+  "split": {
+    "path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/split_ids.json",
+    "seed": 42,
+    "train_split": 0.8,
+    "stratify_on": "is_error",
+    "n_train": 7032,
+    "n_test": 1759,
+    "re_split": false
+  },
+  "model": {
+    "type": "Pipeline(StandardScaler, LogisticRegression)",
+    "class_weight": "balanced",
+    "solver": "lbfgs",
+    "max_iter": 2000,
+    "random_state": 42,
+    "n_iter": 17,
+    "intercept": -0.046716457648088884
+  },
+  "train": {
+    "n": 7032,
+    "n_error": 2521,
+    "n_correct_class": 4511,
+    "error_rate": 0.35850398179749715,
+    "accuracy": 0.6026734926052332,
+    "roc_auc": 0.6543156747343596,
+    "pr_auc": 0.4883566064814508,
+    "precision_error": 0.4591194968553459,
+    "recall_error": 0.6080920269734232,
+    "f1_error": 0.5232081911262798,
+    "confusion_matrix": {
+      "labels": [
+        0,
+        1
+      ],
+      "tn": 2705,
+      "fp": 1806,
+      "fn": 988,
+      "tp": 1533,
+      "matrix": [
+        [
+          2705,
+          1806
+        ],
+        [
+          988,
+          1533
+        ]
+      ]
+    },
+    "classification_report": {
+      "correct (0)": {
+        "precision": 0.7324668291362036,
+        "recall": 0.5996453114608734,
+        "f1-score": 0.659434422233057,
+        "support": 4511.0
+      },
+      "error (1)": {
+        "precision": 0.4591194968553459,
+        "recall": 0.6080920269734232,
+        "f1-score": 0.5232081911262798,
+        "support": 2521.0
+      },
+      "accuracy": 0.6026734926052332,
+      "macro avg": {
+        "precision": 0.5957931629957748,
+        "recall": 0.6038686692171483,
+        "f1-score": 0.5913213066796684,
+        "support": 7032.0
+      },
+      "weighted avg": {
+        "precision": 0.6344707220997926,
+        "recall": 0.6026734926052332,
+        "f1-score": 0.6105967759560114,
+        "support": 7032.0
+      }
+    }
+  },
+  "test": {
+    "n": 1759,
+    "n_error": 631,
+    "n_correct_class": 1128,
+    "error_rate": 0.358726549175668,
+    "accuracy": 0.5713473564525299,
+    "roc_auc": 0.5995373492486316,
+    "pr_auc": 0.4307627460799786,
+    "precision_error": 0.4275618374558304,
+    "recall_error": 0.5752773375594294,
+    "f1_error": 0.4905405405405405,
+    "confusion_matrix": {
+      "labels": [
+        0,
+        1
+      ],
+      "tn": 642,
+      "fp": 486,
+      "fn": 268,
+      "tp": 363,
+      "matrix": [
+        [
+          642,
+          486
+        ],
+        [
+          268,
+          363
+        ]
+      ]
+    },
+    "classification_report": {
+      "correct (0)": {
+        "precision": 0.7054945054945055,
+        "recall": 0.5691489361702128,
+        "f1-score": 0.6300294406280668,
+        "support": 1128.0
+      },
+      "error (1)": {
+        "precision": 0.4275618374558304,
+        "recall": 0.5752773375594294,
+        "f1-score": 0.4905405405405405,
+        "support": 631.0
+      },
+      "accuracy": 0.5713473564525299,
+      "macro avg": {
+        "precision": 0.566528171475168,
+        "recall": 0.5722131368648211,
+        "f1-score": 0.5602849905843037,
+        "support": 1759.0
+      },
+      "weighted avg": {
+        "precision": 0.6057926785858051,
+        "recall": 0.5713473564525299,
+        "f1-score": 0.579991068851359,
+        "support": 1759.0
+      }
+    }
+  },
+  "top_abs_coefficients": [
+    {
+      "rank": 1,
+      "feature": "orig_38",
+      "dim": 38,
+      "coef": -0.10605222234216434,
+      "abs_coef": 0.10605222234216434
+    },
+    {
+      "rank": 2,
+      "feature": "orig_12",
+      "dim": 12,
+      "coef": 0.10572119849681452,
+      "abs_coef": 0.10572119849681452
+    },
+    {
+      "rank": 3,
+      "feature": "orig_4",
+      "dim": 4,
+      "coef": -0.10449126265120812,
+      "abs_coef": 0.10449126265120812
+    },
+    {
+      "rank": 4,
+      "feature": "orig_193",
+      "dim": 193,
+      "coef": 0.09917896919389471,
+      "abs_coef": 0.09917896919389471
+    },
+    {
+      "rank": 5,
+      "feature": "orig_206",
+      "dim": 206,
+      "coef": 0.09398666962627224,
+      "abs_coef": 0.09398666962627224
+    },
+    {
+      "rank": 6,
+      "feature": "orig_140",
+      "dim": 140,
+      "coef": 0.09298860699288655,
+      "abs_coef": 0.09298860699288655
+    },
+    {
+      "rank": 7,
+      "feature": "orig_57",
+      "dim": 57,
+      "coef": -0.09280419283156091,
+      "abs_coef": 0.09280419283156091
+    },
+    {
+      "rank": 8,
+      "feature": "orig_238",
+      "dim": 238,
+      "coef": 0.09186959492954892,
+      "abs_coef": 0.09186959492954892
+    },
+    {
+      "rank": 9,
+      "feature": "orig_35",
+      "dim": 35,
+      "coef": 0.09160419140505924,
+      "abs_coef": 0.09160419140505924
+    },
+    {
+      "rank": 10,
+      "feature": "orig_1",
+      "dim": 1,
+      "coef": 0.08950636821711569,
+      "abs_coef": 0.08950636821711569
+    },
+    {
+      "rank": 11,
+      "feature": "orig_65",
+      "dim": 65,
+      "coef": -0.08876279717750438,
+      "abs_coef": 0.08876279717750438
+    },
+    {
+      "rank": 12,
+      "feature": "orig_161",
+      "dim": 161,
+      "coef": 0.08580397139923504,
+      "abs_coef": 0.08580397139923504
+    },
+    {
+      "rank": 13,
+      "feature": "orig_60",
+      "dim": 60,
+      "coef": 0.08152947478758889,
+      "abs_coef": 0.08152947478758889
+    },
+    {
+      "rank": 14,
+      "feature": "orig_104",
+      "dim": 104,
+      "coef": -0.07871347475025825,
+      "abs_coef": 0.07871347475025825
+    },
+    {
+      "rank": 15,
+      "feature": "orig_13",
+      "dim": 13,
+      "coef": 0.07817778938548722,
+      "abs_coef": 0.07817778938548722
+    },
+    {
+      "rank": 16,
+      "feature": "orig_102",
+      "dim": 102,
+      "coef": -0.0774594583930588,
+      "abs_coef": 0.0774594583930588
+    },
+    {
+      "rank": 17,
+      "feature": "orig_86",
+      "dim": 86,
+      "coef": 0.0755949199972256,
+      "abs_coef": 0.0755949199972256
+    },
+    {
+      "rank": 18,
+      "feature": "orig_47",
+      "dim": 47,
+      "coef": 0.07548474123681147,
+      "abs_coef": 0.07548474123681147
+    },
+    {
+      "rank": 19,
+      "feature": "orig_144",
+      "dim": 144,
+      "coef": 0.07191610574180389,
+      "abs_coef": 0.07191610574180389
+    },
+    {
+      "rank": 20,
+      "feature": "orig_160",
+      "dim": 160,
+      "coef": 0.07149490723332297,
+      "abs_coef": 0.07149490723332297
+    }
+  ],
+  "artifacts": {
+    "metrics": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_metrics.json",
+    "metrics_alias": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/logistic_metrics.json",
+    "model": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_model.joblib",
+    "coefficients": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_coefficients.csv",
+    "predictions": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_predictions.csv"
+  },
+  "interpretation": {
+    "test_roc_auc": 0.5995373492486316,
+    "note": "High test ROC-AUC (\u226b 0.5) means Qwen errors are linearly organized in original-post Titan space; near 0.5 means not a single half-space."
+  }
+}
