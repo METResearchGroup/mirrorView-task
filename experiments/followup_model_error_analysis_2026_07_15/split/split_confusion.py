@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -31,6 +32,26 @@ BUCKET_FILES = {
 }
 
 
+def _atomic_write_csv(path: Path, df: pd.DataFrame) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=path.parent, delete=False, suffix=".tmp"
+    ) as tmp:
+        tmp_path = Path(tmp.name)
+        df.to_csv(tmp_path, index=False)
+    tmp_path.replace(path)
+
+
+def _atomic_write_text(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.NamedTemporaryFile(
+        mode="w", encoding="utf-8", dir=path.parent, delete=False, suffix=".tmp"
+    ) as tmp:
+        tmp.write(content)
+        tmp_path = Path(tmp.name)
+    tmp_path.replace(path)
+
+
 def derive_predictions(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
     out["human_is_remove"] = out["label"].astype(int)
@@ -51,9 +72,16 @@ def split_and_write(labels_path: Path = PRIOR_LABELS, out_dir: Path = OUT_DIR) -
     raw = pd.read_csv(labels_path)
     df = derive_predictions(raw)
 
+    # Store only repository-relative path
+    try:
+        relative_source = str(labels_path.relative_to(EXPERIMENT_DIR.parent))
+    except ValueError:
+        # If not under repo root, use just the name
+        relative_source = labels_path.name
+
     summary: dict = {
-        "source": str(labels_path),
-        "n_total": int(len(df)),
+        "source": relative_source,
+        "n_total": len(df),
         "buckets": {},
         "sanity": {},
     }
@@ -63,16 +91,16 @@ def split_and_write(labels_path: Path = PRIOR_LABELS, out_dir: Path = OUT_DIR) -
         part = df[df["confusion_bucket"] == bucket].copy()
         part = part.sort_values("post_id").reset_index(drop=True)
         path = out_dir / filename
-        part.to_csv(path, index=False)
+        _atomic_write_csv(path, part)
         frames[bucket] = part
         summary["buckets"][bucket] = {
-            "rows": int(len(part)),
+            "rows": len(part),
             "expected": EXPECTED[bucket],
             "path": str(path.relative_to(EXPERIMENT_DIR)),
-            "match_expected": int(len(part)) == EXPECTED[bucket],
+            "match_expected": len(part) == EXPECTED[bucket],
         }
 
-    counts = {b: int(len(frames[b])) for b in BUCKET_FILES}
+    counts = {b: len(frames[b]) for b in BUCKET_FILES}
     summary["sanity"] = {
         "union_equals_total": sum(counts.values()) == len(df),
         "pairwise_disjoint": len(df) == df["post_id"].nunique()
@@ -84,7 +112,7 @@ def split_and_write(labels_path: Path = PRIOR_LABELS, out_dir: Path = OUT_DIR) -
     }
 
     summary_path = out_dir / "split_summary.json"
-    summary_path.write_text(json.dumps(summary, indent=2) + "\n")
+    _atomic_write_text(summary_path, json.dumps(summary, indent=2) + "\n")
     print(json.dumps(summary, indent=2))
     if not summary["sanity"]["all_expected_match"]:
         raise SystemExit("Split counts do not match expected table.")

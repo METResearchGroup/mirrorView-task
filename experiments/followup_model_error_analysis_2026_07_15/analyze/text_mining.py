@@ -11,10 +11,14 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
+from experiments.followup_model_error_analysis_2026_07_15.analyze.common import (
+    _append_progress,
+    _now,
+    load_feature_rows,
+)
+
 EXPERIMENT_DIR = Path(__file__).resolve().parents[1]
-FEATURES_DIR = EXPERIMENT_DIR / "outputs" / "llm_features"
 OUT_DIR = EXPERIMENT_DIR / "outputs" / "text_mining"
-PROGRESS_PATH = EXPERIMENT_DIR / "progress.md"
 
 TOKEN_RE = re.compile(r"[a-z0-9_]+")
 STOPWORDS = {
@@ -47,24 +51,6 @@ STOPWORDS = {
     "no",
     "vs",
 }
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def _append_progress(text: str) -> None:
-    with PROGRESS_PATH.open("a", encoding="utf-8") as f:
-        f.write(text.rstrip() + "\n\n")
-
-
-def load_feature_rows() -> pd.DataFrame:
-    frames = [pd.read_csv(p) for p in sorted(FEATURES_DIR.glob("*/batch_*.csv"))]
-    if not frames:
-        raise FileNotFoundError(
-            f"No feature CSVs under {FEATURES_DIR}; run extract_features.py first."
-        )
-    return pd.concat(frames, ignore_index=True)
 
 
 def tokenize(text: str) -> list[str]:

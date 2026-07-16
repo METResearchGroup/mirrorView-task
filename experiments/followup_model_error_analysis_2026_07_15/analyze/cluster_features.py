@@ -25,29 +25,23 @@ from experiments.followup_model_error_analysis_2026_07_15.extract.prompts import
     CLUSTER_MERGE_PROMPT,
     CLUSTERING_PROMPT,
 )
+from experiments.followup_model_error_analysis_2026_07_15.analyze.common import (
+    _append_progress,
+    _now,
+    load_feature_rows,
+)
 from experiments.followup_model_error_analysis_2026_07_15.extract.schemas import (
     ClusteringResult,
 )
 
 EXPERIMENT_DIR = Path(__file__).resolve().parents[1]
-FEATURES_DIR = EXPERIMENT_DIR / "outputs" / "llm_features"
 OUT_DIR = EXPERIMENT_DIR / "outputs" / "clustering"
-PROGRESS_PATH = EXPERIMENT_DIR / "progress.md"
 
 # ~4 chars/token; stay under ~100k tokens input
 MAX_CHARS_PER_SHARD = 100_000 * 4
 
 _CLUSTER_PROMPT = ChatPromptTemplate.from_messages([("human", CLUSTERING_PROMPT)])
 _MERGE_PROMPT = ChatPromptTemplate.from_messages([("human", CLUSTER_MERGE_PROMPT)])
-
-
-def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
-
-
-def _append_progress(text: str) -> None:
-    with PROGRESS_PATH.open("a", encoding="utf-8") as f:
-        f.write(text.rstrip() + "\n\n")
 
 
 def _atomic_write_text(path: Path, content: str) -> None:
@@ -58,13 +52,6 @@ def _atomic_write_text(path: Path, content: str) -> None:
         tmp.write(content)
         tmp_path = Path(tmp.name)
     tmp_path.replace(path)
-
-
-def load_feature_rows() -> pd.DataFrame:
-    frames = [pd.read_csv(p) for p in sorted(FEATURES_DIR.glob("*/batch_*.csv"))]
-    if not frames:
-        raise FileNotFoundError("No V1 feature CSVs found; run extract_features.py first.")
-    return pd.concat(frames, ignore_index=True)
 
 
 def build_corpus(df: pd.DataFrame) -> pd.DataFrame:
@@ -262,7 +249,9 @@ def run_clustering(*, max_shards: int = 2) -> dict:
             }
         )
     elif len(shard_results) == 1:
-        _atomic_write_text(merged_path, json.dumps(shard_results[0], indent=2) + "\n")
+        single_result = shard_results[0].copy()
+        single_result["shard_id"] = "merged"
+        _atomic_write_text(merged_path, json.dumps(single_result, indent=2) + "\n")
 
     # Prefer existing cost log merge without double-count
     existing_path = OUT_DIR / "cost_log.json"

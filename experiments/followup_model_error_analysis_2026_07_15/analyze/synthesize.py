@@ -19,7 +19,10 @@ def _now() -> str:
 
 def _read_json(path: Path) -> dict:
     if not path.exists():
-        return {}
+        raise FileNotFoundError(
+            f"Required artifact missing: {path}. "
+            "Run prior pipeline phases (split, extract, text_mining, clustering) first."
+        )
     return json.loads(path.read_text())
 
 
@@ -65,9 +68,9 @@ def synthesize() -> Path:
     lines = [
         "# RESULTS — Follow-up Model Error Analysis (LLM Feature Extraction)",
         "",
-        f"**Experiment:** `experiments/followup_model_error_analysis_2026_07_15/`  ",
+        "**Experiment:** `experiments/followup_model_error_analysis_2026_07_15/`  ",
         f"**Scope:** **V1 pilot** (exactly {n_batches} extraction batches; V2 not run)  ",
-        f"**Primary model:** `gpt-5.5` (fallback `gpt-5.4-nano` only if needed)  ",
+        "**Primary model:** `gpt-5.5` (fallback `gpt-5.4-nano` only if needed)  ",
         f"**Generated:** {_now()}",
         "",
         "---",
@@ -107,7 +110,7 @@ def synthesize() -> Path:
             "## 3. V1 coverage",
             "",
             f"- Planned batches: **{n_batches}** (`outputs/llm_features/v1_batch_plan.json`)",
-            f"- Allocation: FP=8, FN=4, TP=4, TN=4 (chunk size 16)",
+            "- Allocation: FP=8, FN=4, TP=4, TN=4 (chunk size 16)",
             f"- Posts in plan: **{n_posts}** (≤320)",
             f"- Completed extraction batches (unique): **{completed}**",
             f"- New API calls this latest extraction run: **{new_calls}**",

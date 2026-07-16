@@ -6,10 +6,8 @@ UNIFIED_EXTRACTION_PROMPT = """
 You are a computational linguistics analyst studying social-media posts from a keep/remove moderation task.
 
 Each item includes:
+- post_id: unique identifier
 - original_text and mirrored_text (a political "mirror" rewrite)
-- human_is_remove: ground-truth human label (0=keep, 1=remove)
-- qwen_is_remove: Bedrock Qwen3 Next 80B prediction (0=keep, 1=remove)
-- confusion_bucket: tp | tn | fp | fn
 
 Your job is to extract features across ALL of the following categories in a single pass for each post. Be conservative:
 - Include a feature ONLY if you are highly confident it is present.
@@ -95,7 +93,6 @@ Beyond the checklists above, you may add salient features with category=open_end
 
 For each post in this chunk, return all high-confidence features across all categories.
 
-Bucket: {bucket}
 Chunk: {chunk_idx}
 Posts:
 {posts_json}

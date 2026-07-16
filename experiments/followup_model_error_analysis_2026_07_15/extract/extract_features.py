@@ -254,9 +254,6 @@ def _posts_payload(chunk: pd.DataFrame, bucket: str) -> list[dict]:
                 "post_id": str(row.post_id),
                 "original_text": str(row.original_text),
                 "mirrored_text": str(row.mirrored_text),
-                "human_is_remove": int(row.human_is_remove),
-                "qwen_is_remove": int(row.qwen_is_remove),
-                "confusion_bucket": bucket,
             }
         )
     return rows
@@ -274,7 +271,6 @@ def _invoke_extraction(
     chain = _PROMPT | structured
     result = chain.invoke(
         {
-            "bucket": bucket,
             "chunk_idx": chunk_idx,
             "posts_json": json.dumps(posts, ensure_ascii=False, indent=2),
         }
@@ -291,6 +287,38 @@ def _invoke_extraction(
     # Ensure bucket/chunk match request
     parsed.bucket = bucket  # type: ignore[misc]
     parsed.chunk_idx = chunk_idx  # type: ignore[misc]
+
+    # Validate parsed posts against requested posts
+    requested_ids = {p["post_id"] for p in posts}
+    returned_ids = [p.post_id for p in parsed.posts]
+
+    # Check for duplicates
+    seen = set()
+    duplicates = []
+    for pid in returned_ids:
+        if pid in seen:
+            duplicates.append(pid)
+        seen.add(pid)
+    if duplicates:
+        raise ValueError(
+            f"LLM returned duplicate post_ids in {bucket}/batch_{chunk_idx:04d}: {duplicates}"
+        )
+
+    # Check for unknown IDs
+    returned_set = set(returned_ids)
+    unknown = returned_set - requested_ids
+    if unknown:
+        raise ValueError(
+            f"LLM returned unknown post_ids in {bucket}/batch_{chunk_idx:04d}: {unknown}"
+        )
+
+    # Check for missing IDs
+    missing = requested_ids - returned_set
+    if missing:
+        raise ValueError(
+            f"LLM missing requested post_ids in {bucket}/batch_{chunk_idx:04d}: {missing}"
+        )
+
     return parsed, usage, model
 
 
@@ -300,6 +328,8 @@ def extract_one_batch(
     chunk_idx: int,
     post_ids: list[str],
     scope: str,
+    new_calls_so_far: int,
+    max_new_calls: int,
 ) -> dict:
     df = load_bucket_df(bucket)
     chunk = df[df["post_id"].astype(str).isin(post_ids)].copy()
@@ -309,23 +339,68 @@ def extract_one_batch(
     chunk = chunk.sort_values("_ord").drop(columns=["_ord"])
     posts = _posts_payload(chunk, bucket)
 
+    batch_id = f"{bucket}/batch_{chunk_idx:04d}"
+    attempt_ledger: list[dict] = []
+
+    # Enforce cap before primary call
+    if new_calls_so_far >= max_new_calls:
+        raise RuntimeError(
+            f"Call cap ({max_new_calls}) reached before primary attempt for {batch_id}"
+        )
+
     model_used = PRIMARY_MODEL
+    parsed = None
+    usage = {}
     try:
         parsed, usage, model_used = _invoke_extraction(
             bucket=bucket, chunk_idx=chunk_idx, posts=posts, model=PRIMARY_MODEL
         )
+        # Record successful primary attempt
+        attempt_ledger.append({
+            "model": PRIMARY_MODEL,
+            "usage": usage,
+            "cost_usd": estimate_call_cost_usd(PRIMARY_MODEL, usage),
+            "success": True,
+        })
     except Exception as primary_err:  # noqa: BLE001
+        # Record failed primary attempt with usage if available
+        attempt_ledger.append({
+            "model": PRIMARY_MODEL,
+            "usage": usage,
+            "cost_usd": estimate_call_cost_usd(PRIMARY_MODEL, usage),
+            "success": False,
+            "error": str(primary_err),
+        })
+        # Enforce cap before fallback call
+        if new_calls_so_far + len(attempt_ledger) >= max_new_calls:
+            raise RuntimeError(
+                f"Call cap ({max_new_calls}) reached before fallback attempt for {batch_id}"
+            ) from primary_err
         try:
             parsed, usage, model_used = _invoke_extraction(
                 bucket=bucket, chunk_idx=chunk_idx, posts=posts, model=FALLBACK_MODEL
             )
+            # Record successful fallback attempt
+            attempt_ledger.append({
+                "model": FALLBACK_MODEL,
+                "usage": usage,
+                "cost_usd": estimate_call_cost_usd(FALLBACK_MODEL, usage),
+                "success": True,
+            })
         except Exception as fallback_err:  # noqa: BLE001
+            # Record failed fallback attempt with usage if available
+            attempt_ledger.append({
+                "model": FALLBACK_MODEL,
+                "usage": usage,
+                "cost_usd": estimate_call_cost_usd(FALLBACK_MODEL, usage),
+                "success": False,
+                "error": str(fallback_err),
+            })
             raise RuntimeError(
                 f"Primary ({PRIMARY_MODEL}) failed: {primary_err}; "
                 f"fallback ({FALLBACK_MODEL}) failed: {fallback_err}"
             ) from fallback_err
 
-    batch_id = f"{bucket}/batch_{chunk_idx:04d}"
     ts = _now()
     rows: list[dict] = []
     for post in parsed.posts:
@@ -373,23 +448,31 @@ def extract_one_batch(
     )
     _atomic_write_csv(csv_path, out_df)
 
-    cost = estimate_call_cost_usd(model_used, usage)
+    # Sum all attempt costs for total batch cost
+    total_cost = sum(a["cost_usd"] for a in attempt_ledger)
+    # Aggregate usage from all attempts
+    total_prompt = sum(a["usage"].get("prompt_tokens", 0) for a in attempt_ledger)
+    total_completion = sum(a["usage"].get("completion_tokens", 0) for a in attempt_ledger)
+    total_cached = sum(a["usage"].get("cached_tokens", 0) for a in attempt_ledger)
+
     meta = {
         "phase": "extraction",
         "batch_id": batch_id,
         "bucket": bucket,
         "chunk_idx": chunk_idx,
         "model": model_used,
-        "prompt_tokens": int(usage.get("prompt_tokens", 0)),
-        "completion_tokens": int(usage.get("completion_tokens", 0)),
-        "cached_tokens": int(usage.get("cached_tokens", 0)),
-        "cost_usd": round(cost, 6),
+        "prompt_tokens": int(total_prompt),
+        "completion_tokens": int(total_completion),
+        "cached_tokens": int(total_cached),
+        "cost_usd": round(total_cost, 6),
         "call_timestamp": ts,
         "scope": scope,
         "n_posts": len(posts),
         "n_features_kept": len(rows),
         "confidence_threshold": CONFIDENCE_THRESHOLD,
         "csv_path": str(csv_path.relative_to(EXPERIMENT_DIR)),
+        "n_attempts": len(attempt_ledger),
+        "attempt_ledger": attempt_ledger,
     }
     _atomic_write_text(batch_meta_path(bucket, chunk_idx), json.dumps(meta, indent=2) + "\n")
     return meta
@@ -418,7 +501,18 @@ def process_bucket(
     for item in bar:
         chunk_idx = item["chunk_idx"]
         csv_path = batch_csv_path(bucket, chunk_idx)
-        if csv_path.exists() and csv_path.stat().st_size > 0:
+        meta_path = batch_meta_path(bucket, chunk_idx)
+        # A batch is complete only if both CSV and metadata exist and are valid
+        batch_complete = False
+        if csv_path.exists() and csv_path.stat().st_size > 0 and meta_path.exists():
+            try:
+                # Validate metadata is readable
+                json.loads(meta_path.read_text())
+                batch_complete = True
+            except Exception:  # noqa: BLE001
+                # Metadata corrupt or unreadable; reprocess
+                pass
+        if batch_complete:
             skipped += 1
             bar.set_description(
                 f"{bucket.upper()}: {new} new / {skipped} skipped / {len(planned)} planned"
@@ -442,10 +536,14 @@ def process_bucket(
             chunk_idx=chunk_idx,
             post_ids=item["post_ids"],
             scope=scope,
+            new_calls_so_far=new,
+            max_new_calls=remaining_budget,
         )
         metas.append(meta)
-        new += 1
-        remaining_budget -= 1
+        # Count all attempts made, not just successful ones
+        n_attempts = meta.get("n_attempts", 1)
+        new += n_attempts
+        remaining_budget -= n_attempts
         cum = sum(m["cost_usd"] for m in metas)
         bar.set_postfix(cost=f"${meta['cost_usd']:.3f}", cum=f"${cum:.3f}", new=new)
         bar.set_description(
@@ -475,15 +573,25 @@ def run_extraction(
             "Re-run after extending the plan loader if V2 is approved."
         )
 
-    plan = build_v1_batch_plan()
-    plan_path = persist_v1_plan(plan)
+    # Load existing plan if available to ensure consistent batch IDs
+    plan_path = FEATURES_DIR / "v1_batch_plan.json"
+    if plan_path.exists():
+        existing_plan_data = json.loads(plan_path.read_text())
+        plan = existing_plan_data.get("batches", [])
+    else:
+        plan = build_v1_batch_plan()
+        plan_path = persist_v1_plan(plan)
     planned_calls = len(plan)
-    already_done = sum(
-        1
-        for item in plan
-        if batch_csv_path(item["bucket"], item["chunk_idx"]).exists()
-        and batch_csv_path(item["bucket"], item["chunk_idx"]).stat().st_size > 0
-    )
+    already_done = 0
+    for item in plan:
+        csv_path = batch_csv_path(item["bucket"], item["chunk_idx"])
+        meta_path = batch_meta_path(item["bucket"], item["chunk_idx"])
+        if csv_path.exists() and csv_path.stat().st_size > 0 and meta_path.exists():
+            try:
+                json.loads(meta_path.read_text())
+                already_done += 1
+            except Exception:  # noqa: BLE001
+                pass
     remaining = planned_calls - already_done
     est = estimate_budget_usd(min(max_calls, remaining), PRIMARY_MODEL)
 
@@ -516,14 +624,19 @@ def run_extraction(
     remaining_slots = max_calls
     bucket_budgets: dict[str, int] = {}
     for bucket in V1_PLAN:
-        need = sum(
-            1
-            for item in by_bucket[bucket]
-            if not (
-                batch_csv_path(item["bucket"], item["chunk_idx"]).exists()
-                and batch_csv_path(item["bucket"], item["chunk_idx"]).stat().st_size > 0
-            )
-        )
+        need = 0
+        for item in by_bucket[bucket]:
+            csv_path = batch_csv_path(item["bucket"], item["chunk_idx"])
+            meta_path = batch_meta_path(item["bucket"], item["chunk_idx"])
+            complete = False
+            if csv_path.exists() and csv_path.stat().st_size > 0 and meta_path.exists():
+                try:
+                    json.loads(meta_path.read_text())
+                    complete = True
+                except Exception:  # noqa: BLE001
+                    pass
+            if not complete:
+                need += 1
         allot = min(need, remaining_slots)
         bucket_budgets[bucket] = allot
         remaining_slots -= allot
