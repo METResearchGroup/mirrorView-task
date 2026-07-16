@@ -174,6 +174,7 @@ experiments/model_errors_analysis_2026_07_15/
     v1_split.py                    # single post-level train/test split → split_ids.json
     v1_linear_separator.py         # branch A: logistic on shared split
     v1_embed_2d.py                 # branch B: PCA/LDA viz on shared split
+    v1_cluster.py                  # V1.4: reduced-space clustering (add-on)
   outputs/                         # gitignore bulk artifacts if large
 ```
 
@@ -272,8 +273,10 @@ flowchart TD
   T --> S[V1.2 Single train/test split]
   S --> A[V1.3A Logistic regressor]
   S --> B[V1.3B 2D PCA / LDA viz]
+  S --> C[V1.4 Reduced-space clustering]
   A --> O[outputs/v1_bedrock/]
   B --> O
+  C --> O
 ```
 
 | Step | Name | Consumes | Produces | Parallel? |
@@ -282,6 +285,7 @@ flowchart TD
 | **V1.2** | **Single train/test split** | Analysis table | `outputs/v1_bedrock/split_ids.json` | sequential (gate) |
 | **V1.3A** | Train linear / logistic separator | Analysis table + `split_ids.json` | metrics, coefs, pred CSV | **parallel with B** |
 | **V1.3B** | 2D reduction + visualization | Analysis table + `split_ids.json` | PCA/LDA plots, `embeddings_2d.csv` | **parallel with A** |
+| **V1.4** | Reduced-space clustering | Analysis table + `split_ids.json` + labels CSV | cluster assignments, lift table, plots, exemplars | after V1.2 (add-on) |
 
 ### V1.1 — Build analysis table
 
@@ -354,6 +358,38 @@ Artifacts:
 - Metrics + plots written under `outputs/v1_bedrock/` (or `outputs/v1_primary/`).
 - Short markdown note there stating whether a linear separator appears strong (e.g. test AUC ≫ 0.5) and pointing at posts this model missed.
 
+### V1.4 — Reduced-space clustering investigation (add-on)
+
+**Goal:** Given weak global linear separation of Qwen right/wrong in Titan `only_original` space (V1.3A/B), ask whether **local clusters** in reduced dimensionality are enriched or sparse for Qwen errors — i.e., whether hard cases concentrate in neighborhoods rather than forming a single half-space.
+
+This is an **add-on** after V1.3; it does **not** replace the logistic or 2D viz branches. **Do not** re-split; **do not** call Bedrock.
+
+#### Method outline
+
+1. **Reuse shared split** — load existing `outputs/v1_bedrock/split_ids.json` (`seed=42`, 80/20, stratify on `is_error`). Never re-split.
+2. **Primary space** — StandardScaler + PCA fit on **train only**, transform train+test. Choose `n_components` by cumulative explained variance (target ≈ 50–80%) or a fixed sensible default in **10–20** PCs for clustering; also keep 2D PCA for viz continuity with V1.3B.
+3. **Optional spaces (secondary)** —
+   - LDA axis + residual PCs (supervised 1D + unsupervised residuals).
+   - Sanity: k-means / GMM in full **256-d** (scaled, train-fit) if cheap.
+4. **Clusterer** — prefer **k-means** on train-fit PCA coords as the main path. Fit on **train only**; assign test via `predict`. Range `k ≈ 5–15`.
+5. **Model selection** — choose `k` via silhouette and/or BIC on **train**; note sensitivity / stability across multiple seeds (e.g. re-fit k-means with several `random_state` values and compare assignment agreement or per-cluster error rates).
+6. **Per-cluster metrics** — size (n_train / n_test), error rate, **lift vs global base rate ≈ 36%**, train vs test rate stability (absolute Δ or ratio).
+7. **Interesting clusters** — flag high-lift clusters that remain elevated on test, and near-zero-error “islands” that stay sparse on test.
+8. **Content spot-check** — for top interesting clusters, pull exemplar `original_text` / `mirrored_text` from `base_model_llm_labels.csv`.
+9. **Decision gate** — if **no** cluster shows stable test lift (or stable near-zero error), conclude Qwen errors are **diffuse** in Titan space (consistent with weak global linear separation). If stable enrichment/sparsity appears, document themes and keep those clusters as candidates for later qualitative / modeling work.
+
+#### Artifacts (under `outputs/v1_bedrock/clusters/` or `outputs/v1_bedrock/`)
+
+| Artifact | Description |
+| --- | --- |
+| Cluster assignments CSV | `post_id`, `split`, `cluster_id`, `is_error`, PCA coords, … |
+| Metrics / lift table | JSON + CSV: per-cluster size, error rates, lift, train/test Δ |
+| Plots | PCA 2D colored by cluster + error-rate annotations |
+| Exemplars | Sample posts for top interesting clusters |
+| Progress notes | Short markdown run log |
+
+Script: `analyze/v1_cluster.py`. Leakage-safe: scaler / PCA / clusterer fit on train only.
+
 ---
 
 ## Outputs / artifacts checklist
@@ -370,6 +406,7 @@ Artifacts:
 | `outputs/v1_bedrock/pca_right_vs_wrong.png` | V1.3B |
 | `outputs/v1_bedrock/lda_right_vs_wrong.png` | V1.3B |
 | `outputs/v1_bedrock/embeddings_2d.csv` | V1.3B |
+| `outputs/v1_bedrock/clusters/` | V1.4 assignments, lift metrics, plots, exemplars |
 | `outputs/v1_bedrock/README.md` | V1 writeup |
 
 ---
@@ -406,7 +443,8 @@ Artifacts:
 6. **In parallel:**
    - **V1.3A** — logistic regressor fit on train IDs / eval on test IDs from `split_ids.json`.
    - **V1.3B** — PCA/LDA fit-on-train, transform-all; plots under `outputs/v1_bedrock/` using the same IDs.
-7. Short README in this experiment dir documenting commands and artifact paths.
+7. **V1.4** — reduced-space clustering on train-fit PCA (`analyze/v1_cluster.py`); write under `outputs/v1_bedrock/clusters/`.
+8. Short README / `RESULTS.md` in this experiment dir documenting commands, artifact paths, and decision-gate verdict.
 
 ### V0 labels CSV (implemented)
 

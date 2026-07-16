@@ -1,0 +1,274 @@
+{
+  "status": "complete",
+  "updated_at": "2026-07-16 02:40:41 UTC",
+  "classifier_id": "bedrock/qwen3-next-80b-a3b",
+  "feature_set": "only_original",
+  "target": "is_error",
+  "global_error_rate": 0.35854851552724376,
+  "train_error_rate": 0.35850398179749715,
+  "test_error_rate": 0.358726549175668,
+  "split": {
+    "path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/split_ids.json",
+    "seed": 42,
+    "train_split": 0.8,
+    "n_train": 7032,
+    "n_test": 1759,
+    "re_split": false
+  },
+  "pca": {
+    "n_components": 20,
+    "variance_target": 0.5,
+    "n_min": 10,
+    "n_max": 20,
+    "explained_variance_ratio": [
+      0.028978916958255545,
+      0.021471349392434145,
+      0.020662675346826198,
+      0.016109993567942182,
+      0.015179468800303688,
+      0.013771224085778036,
+      0.012690974861913,
+      0.012418517769534763,
+      0.012016710343867238,
+      0.011162536796946083,
+      0.010488513695188136,
+      0.010117675926815376,
+      0.009921185408851261,
+      0.009777691782867876,
+      0.009487967827801496,
+      0.009175304629549803,
+      0.009116258259261012,
+      0.008954849017115754,
+      0.008661060269557638,
+      0.008331391113801604
+    ],
+    "explained_variance_ratio_cumsum": 0.2584942658546108,
+    "pca2_explained_variance_ratio": [
+      0.028978916958255545,
+      0.021471349392434145
+    ],
+    "fit_on": "train_only"
+  },
+  "kmeans": {
+    "k": 7,
+    "k_selection": "train_silhouette",
+    "train_silhouette": 0.09536110385869935,
+    "n_init": 10,
+    "random_state": 42,
+    "stability": {
+      "seeds": [
+        42,
+        0,
+        1,
+        7,
+        123
+      ],
+      "pairwise_ari_mean": 0.9704099777293932,
+      "pairwise_ari_min": 0.9416919379507047,
+      "pairwise_ari_max": 0.9914344241706226,
+      "n_pairs": 10,
+      "note": "ARI across k-means seeds on train PCA coords; low ARI \u21d2 assignment sensitive to seed"
+    }
+  },
+  "thresholds": {
+    "lift_high": 1.25,
+    "lift_low": 0.7,
+    "stable_abs_delta_max": 0.08,
+    "min_test_n_for_flag": 15
+  },
+  "clusters": [
+    {
+      "cluster_id": 0,
+      "n_train": 464,
+      "n_error_train": 144,
+      "error_rate_train": 0.3103448275862069,
+      "lift_train": 0.8655588132329775,
+      "n_test": 119,
+      "n_error_test": 33,
+      "error_rate_test": 0.2773109243697479,
+      "lift_test": 0.7734265025807278,
+      "abs_delta_rate": 0.03303390321645899,
+      "flags": "none"
+    },
+    {
+      "cluster_id": 1,
+      "n_train": 1167,
+      "n_error_train": 435,
+      "error_rate_train": 0.37275064267352187,
+      "lift_train": 1.0396100570250415,
+      "n_test": 267,
+      "n_error_test": 107,
+      "error_rate_test": 0.40074906367041196,
+      "lift_test": 1.117698292743208,
+      "abs_delta_rate": 0.027998420996890094,
+      "flags": "none"
+    },
+    {
+      "cluster_id": 2,
+      "n_train": 782,
+      "n_error_train": 252,
+      "error_rate_train": 0.32225063938618925,
+      "lift_train": 0.8987643943032962,
+      "n_test": 196,
+      "n_error_test": 74,
+      "error_rate_test": 0.37755102040816324,
+      "lift_test": 1.052998420180255,
+      "abs_delta_rate": 0.05530038102197399,
+      "flags": "none"
+    },
+    {
+      "cluster_id": 3,
+      "n_train": 1193,
+      "n_error_train": 484,
+      "error_rate_train": 0.4056999161777033,
+      "lift_train": 1.1315063334765831,
+      "n_test": 306,
+      "n_error_test": 123,
+      "error_rate_test": 0.4019607843137255,
+      "lift_test": 1.1210778092963074,
+      "abs_delta_rate": 0.003739131863977785,
+      "flags": "none"
+    },
+    {
+      "cluster_id": 4,
+      "n_train": 1075,
+      "n_error_train": 387,
+      "error_rate_train": 0.36,
+      "lift_train": 1.004048223350254,
+      "n_test": 253,
+      "n_error_test": 92,
+      "error_rate_test": 0.36363636363636365,
+      "lift_test": 1.014190124596216,
+      "abs_delta_rate": 0.0036363636363636598,
+      "flags": "none"
+    },
+    {
+      "cluster_id": 5,
+      "n_train": 699,
+      "n_error_train": 267,
+      "error_rate_train": 0.38197424892703863,
+      "lift_train": 1.0653349055576131,
+      "n_test": 166,
+      "n_error_test": 52,
+      "error_rate_test": 0.3132530120481928,
+      "lift_test": 0.8736698061280657,
+      "abs_delta_rate": 0.06872123687884585,
+      "flags": "none"
+    },
+    {
+      "cluster_id": 6,
+      "n_train": 1652,
+      "n_error_train": 552,
+      "error_rate_train": 0.3341404358353511,
+      "lift_train": 0.9319253081943437,
+      "n_test": 452,
+      "n_error_test": 150,
+      "error_rate_test": 0.33185840707964603,
+      "lift_test": 0.9255606778671219,
+      "abs_delta_rate": 0.0022820287557050456,
+      "flags": "none"
+    }
+  ],
+  "summary": {
+    "max_train_lift": 1.1315063334765831,
+    "min_train_lift": 0.8655588132329775,
+    "max_test_lift": 1.1210778092963074,
+    "min_test_lift": 0.7734265025807278,
+    "n_stable_high_lift": 0,
+    "n_stable_low_error": 0,
+    "interesting_cluster_ids": [
+      3,
+      5,
+      1,
+      0,
+      2
+    ]
+  },
+  "decision_gate": {
+    "verdict": "diffuse",
+    "note": "No cluster with stable test enrichment or sparse-error island (criteria: test n>=15, |train\u2212test rate|<=0.08, lift>=1.25 or <=0.7). Conclude errors are diffuse in Titan PCA space."
+  },
+  "full_256d_sanity": {
+    "space": "scaled_256d",
+    "k": 7,
+    "train_silhouette": 0.02595543665582604,
+    "clusters": [
+      {
+        "cluster_id": 0,
+        "n_train": 1060,
+        "n_test": 248,
+        "error_rate_train": 0.3584905660377358,
+        "error_rate_test": 0.3588709677419355,
+        "lift_train": 0.999838377550043,
+        "lift_test": 1.000899326592435
+      },
+      {
+        "cluster_id": 1,
+        "n_train": 1250,
+        "n_test": 293,
+        "error_rate_train": 0.3752,
+        "error_rate_test": 0.40955631399317405,
+        "lift_train": 1.0464413705583757,
+        "lift_test": 1.1422619150742364
+      },
+      {
+        "cluster_id": 2,
+        "n_train": 1714,
+        "n_test": 462,
+        "error_rate_train": 0.32555425904317387,
+        "error_rate_test": 0.329004329004329,
+        "lift_train": 0.9079782649900195,
+        "lift_test": 0.917600588920386
+      },
+      {
+        "cluster_id": 3,
+        "n_train": 641,
+        "n_test": 155,
+        "error_rate_train": 0.39313572542901715,
+        "error_rate_test": 0.3032258064516129,
+        "lift_train": 1.0964645184792163,
+        "lift_test": 0.8457037006713608
+      },
+      {
+        "cluster_id": 4,
+        "n_train": 1191,
+        "n_test": 304,
+        "error_rate_train": 0.4038623005877414,
+        "error_rate_test": 0.40460526315789475,
+        "lift_train": 1.1263811816201887,
+        "lift_test": 1.1284533211995726
+      },
+      {
+        "cluster_id": 5,
+        "n_train": 424,
+        "n_test": 104,
+        "error_rate_train": 0.3089622641509434,
+        "error_rate_test": 0.28846153846153844,
+        "lift_train": 0.8617028122306293,
+        "lift_test": 0.8045258199921905
+      },
+      {
+        "cluster_id": 6,
+        "n_train": 752,
+        "n_test": 193,
+        "error_rate_train": 0.3324468085106383,
+        "error_rate_test": 0.3626943005181347,
+        "lift_train": 0.9272017428988012,
+        "lift_test": 1.0115626890402674
+      }
+    ],
+    "max_test_lift": 1.1422619150742364,
+    "min_test_lift": 0.8045258199921905
+  },
+  "artifacts": {
+    "assignments": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_assignments.csv",
+    "metrics_json": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_metrics.json",
+    "metrics_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_lift_table.csv",
+    "k_selection": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/k_selection.json",
+    "plot": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/pca2d_by_cluster.png",
+    "exemplars_md": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_exemplars.md",
+    "exemplars_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_exemplars.csv",
+    "model": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/kmeans_pca_model.joblib",
+    "progress": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/progress_updates.md"
+  }
+}

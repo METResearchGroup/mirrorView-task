@@ -8,7 +8,7 @@
 
 ## 1. Executive summary
 
-Qwen3 Next 80B is wrong on about **36%** of Study 2 posts (accuracy ≈ **64.1%** on 8,791 pairs). A balanced logistic probe on original-post Titan embeddings predicts those errors only weakly out of sample (**test ROC-AUC ≈ 0.60**, accuracy ≈ **0.57**). PCA of the same features shows almost no right/wrong structure in 2D; LDA shows mild supervised separation that shrinks on the held-out set. **Conclusion:** Qwen right-vs-wrong is not a strong linear half-space in original Titan space — there is a weak but nonzero linear signal, not a cleanly separable error regime.
+Qwen3 Next 80B is wrong on about **36%** of Study 2 posts (accuracy ≈ **64.1%** on 8,791 pairs). A balanced logistic probe on original-post Titan embeddings predicts those errors only weakly out of sample (**test ROC-AUC ≈ 0.60**, accuracy ≈ **0.57**). PCA of the same features shows almost no right/wrong structure in 2D; LDA shows mild supervised separation that shrinks on the held-out set. A follow-on **reduced-space clustering** pass (train-fit PCA-20 → k-means, k=7 by silhouette) finds **no stable high-lift or near-zero-error clusters** on test (best test lift ≈ **1.12**, well below the 1.25 gate). **Conclusion:** Qwen right-vs-wrong is not a strong linear half-space in original Titan space, and errors are **diffuse** across local neighborhoods — weak global signal, no actionable local concentration.
 
 ---
 
@@ -18,7 +18,8 @@ Qwen3 Next 80B is wrong on about **36%** of Study 2 posts (accuracy ≈ **64.1%*
 2. **Linear probe beats chance only modestly.** Test ROC-AUC **0.5995** (train **0.6543**); test accuracy **0.5713** vs stratified error base rate ~0.36.
 3. **2D PCA does not reveal error clusters.** PC1+PC2 explain only **~5.05%** of Titan variance; a 2D logistic overlay in the PC plane has test accuracy **0.562**.
 4. **Supervised LDA is weak but real.** Test LD1 Cohen’s *d* (wrong − correct) **0.329** (train **0.558**); midpoint-threshold accuracy **0.567** on test.
-5. **Shared split was respected.** One stratified 80/20 split (`seed=42`) drives both logistic and 2D branches; no re-split; no Bedrock re-run.
+5. **Shared split was respected.** One stratified 80/20 split (`seed=42`) drives logistic, 2D, and clustering branches; no re-split; no Bedrock re-run.
+6. **Local clusters do not concentrate errors.** PCA-20 + k-means (k=7) yields at most **~1.12×** test lift vs the 36% base rate; decision gate → **diffuse**.
 
 ---
 
@@ -97,8 +98,9 @@ Source: `reduction_summary.json`, `pca_variance_explained.json`, `embeddings_2d.
 4. **Parallel branches on the same IDs:**
    - **V1.3A** — balanced logistic on 256-d Titan → metrics / coefs / predictions.
    - **V1.3B** — PCA + LDA viz (fit-on-train) → plots + 2D coords.
+5. **V1.4** — train-fit PCA → k-means; per-cluster lift vs ~36% base; decision gate for diffuse vs local structure.
 
-Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `v1_embed_2d.py`.
+Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `v1_embed_2d.py`, `v1_cluster.py`.
 
 ---
 
@@ -110,6 +112,54 @@ Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `
 - **No Bedrock re-run.** Results depend on the copied `predictions.csv` and the local Titan embedding cache already present for this study.
 - **Feature scope is narrow by design.** Mirror embeddings, concat/cosine, and nonlinear probes are out of V1 scope — a stronger separator might exist under other feature sets, but that is a later question.
 - **Hard-pair tables** (`post_error_rates.csv`, etc.) from the V0 checklist were not required for this V1 separability pass.
+- **Clustering silhouette is low (~0.10).** Partition stability across seeds is high (ARI ≈ 0.97), but that only means k-means finds the same weak partition — not that clusters are semantically sharp.
+
+---
+
+## 6. V1.4 Reduced-space clustering
+
+**Question:** Even if Qwen errors are not a global linear half-space, do local neighborhoods in Titan PCA space concentrate or spare errors?
+
+### 6.1 Method
+
+- Reused shared `split_ids.json` (no re-split; no Bedrock).
+- Train-fit `StandardScaler` → PCA (`n_components=20`, clipped to [10, 20]; 50% variance target unreachable — 20 PCs explain only **25.8%** of train variance).
+- k-means on train PCA coords; k selected by train silhouette over **k ∈ [5, 15]** → **k=7** (silhouette **0.095** — weak structure).
+- Test assigned via `predict`. Stability: pairwise ARI across 5 seeds ≈ **0.97** (assignments stable; structure itself is weak).
+- Decision thresholds: high lift ≥ **1.25**, low-error island ≤ **0.70**, stable if |train−test rate| ≤ **0.08** and test n ≥ **15**.
+- Sanity: same k=7 k-means in scaled full 256-d.
+
+Script: `analyze/v1_cluster.py`. Artifacts: `outputs/v1_bedrock/clusters/`.
+
+### 6.2 Per-cluster error rates (PCA-20 + k-means)
+
+Global base error rate ≈ **0.3585**.
+
+| Cluster | n_train | train rate | train lift | n_test | test rate | test lift | \|Δrate\| | flags |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 0 | 464 | 0.310 | 0.87 | 119 | 0.277 | 0.77 | 0.033 | none |
+| 1 | 1167 | 0.373 | 1.04 | 267 | 0.401 | 1.12 | 0.028 | none |
+| 2 | 782 | 0.322 | 0.90 | 196 | 0.378 | 1.05 | 0.055 | none |
+| 3 | 1193 | 0.406 | 1.13 | 306 | 0.402 | **1.12** | 0.004 | none |
+| 4 | 1075 | 0.360 | 1.00 | 253 | 0.364 | 1.01 | 0.004 | none |
+| 5 | 699 | 0.382 | 1.07 | 166 | 0.313 | 0.87 | 0.069 | none |
+| 6 | 1652 | 0.334 | 0.93 | 452 | 0.332 | 0.93 | 0.002 | none |
+
+- **Best test lift:** cluster 3 at **1.12** (error rate ≈ 0.40 vs 0.36 base) — mild, stable, but below the 1.25 gate.
+- **Lowest test lift:** cluster 0 at **0.77** — mild under-enrichment, above the 0.70 “island” gate.
+- **No** `high_lift_stable` or `low_error_island_stable` flags.
+
+### 6.3 Full-256d sanity
+
+Same k=7 on scaled 256-d: train silhouette **0.026** (weaker than PCA path). Max/min test lift **1.14 / 0.80** — same story, no strong enrichment or sparse islands.
+
+### 6.4 Decision gate
+
+**Verdict: diffuse.** No cluster clears the stable high-lift (≥1.25) or stable low-error (≤0.70) criteria on test. Mild local rate variation (~27–40% error) exists but is not actionable error concentration. This is consistent with V1.3’s weak global linear signal (test ROC-AUC ≈ 0.60): Qwen right/wrong is spread through Titan `only_original` space rather than localized in a few neighborhoods.
+
+Exemplar spot-checks (`cluster_exemplars.md`) for extreme clusters (esp. c3) show mixed political content without a crisp thematic failure mode — as expected when rates sit near the global base.
+
+Source: `clusters/cluster_metrics.json`, `cluster_lift_table.csv`, `k_selection.json`.
 
 ---
 
@@ -124,4 +174,9 @@ Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `
 | `outputs/v1_bedrock/pca_right_vs_wrong.png` | PCA scatter |
 | `outputs/v1_bedrock/lda_right_vs_wrong.png` | LDA scatter |
 | `outputs/v1_bedrock/reduction_summary.json` | PCA/LDA numeric summary |
+| `outputs/v1_bedrock/clusters/cluster_metrics.json` | V1.4 lift table + decision gate |
+| `outputs/v1_bedrock/clusters/cluster_lift_table.csv` | Per-cluster rates / lifts |
+| `outputs/v1_bedrock/clusters/cluster_assignments.csv` | post_id → cluster |
+| `outputs/v1_bedrock/clusters/pca2d_by_cluster.png` | PCA 2D colored by cluster |
+| `outputs/v1_bedrock/clusters/cluster_exemplars.md` | Spot-check texts |
 | `outputs/v1_bedrock/progress_updates*.md` | Pipeline progress notes |

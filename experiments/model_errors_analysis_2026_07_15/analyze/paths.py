@@ -29,6 +29,18 @@ LINEAR_SEPARATOR_MODEL_PATH = V1_DIR / "linear_separator_model.joblib"
 LINEAR_SEPARATOR_COEFS_PATH = V1_DIR / "linear_separator_coefficients.csv"
 LINEAR_SEPARATOR_PREDS_PATH = V1_DIR / "linear_separator_predictions.csv"
 
+# V1.4 reduced-space clustering artifacts
+CLUSTERS_DIR = V1_DIR / "clusters"
+CLUSTER_ASSIGNMENTS_PATH = CLUSTERS_DIR / "cluster_assignments.csv"
+CLUSTER_METRICS_JSON_PATH = CLUSTERS_DIR / "cluster_metrics.json"
+CLUSTER_METRICS_CSV_PATH = CLUSTERS_DIR / "cluster_lift_table.csv"
+CLUSTER_K_SELECTION_PATH = CLUSTERS_DIR / "k_selection.json"
+CLUSTER_PLOT_PATH = CLUSTERS_DIR / "pca2d_by_cluster.png"
+CLUSTER_EXEMPLARS_PATH = CLUSTERS_DIR / "cluster_exemplars.md"
+CLUSTER_EXEMPLARS_CSV_PATH = CLUSTERS_DIR / "cluster_exemplars.csv"
+CLUSTER_PROGRESS_PATH = CLUSTERS_DIR / "progress_updates.md"
+CLUSTER_MODEL_PATH = CLUSTERS_DIR / "kmeans_pca_model.joblib"
+
 PKR_ROOT = REPO_ROOT / "experiments" / "predict_keep_remove_2026_07_01"
 WORKTREE_EMBEDDING_CACHE = PKR_ROOT / "embedding_cache"
 # Populated cache from the main checkout (gitignored; shared across worktrees).

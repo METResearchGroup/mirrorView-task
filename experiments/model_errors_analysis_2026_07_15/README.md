@@ -41,10 +41,11 @@ PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/
 PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_split.py
 PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_linear_separator.py
 PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_embed_2d.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_cluster.py
 ```
 
-Writes under `outputs/v1_bedrock/`: analysis table, `split_ids.json`, logistic metrics, PCA/LDA plots, etc. Stakeholder writeup: **`RESULTS.md`**.
+Writes under `outputs/v1_bedrock/` (and `outputs/v1_bedrock/clusters/` for V1.4). Stakeholder writeup: **`RESULTS.md`**.
 
 ## Scope note
 
-**V0** labels CSV and **V1** error-separability (shared split → logistic probe + PCA/LDA on `only_original` Titan) are implemented. Hard-pair rate tables from the V0 checklist remain optional follow-up.
+**V0** labels CSV, **V1** error-separability (shared split → logistic probe + PCA/LDA on `only_original` Titan), and **V1.4** reduced-space clustering are implemented. Hard-pair rate tables from the V0 checklist remain optional follow-up.
