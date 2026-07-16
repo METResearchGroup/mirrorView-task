@@ -1,0 +1,66 @@
+{
+  "classifier_id": "bedrock/qwen3-next-80b-a3b",
+  "feature_set": "only_original",
+  "split_path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/split_ids.json",
+  "seed": 42,
+  "n_train": 7032,
+  "n_test": 1759,
+  "fit_on": "train_only",
+  "transform": "train_and_test",
+  "pca": {
+    "n_components": 2,
+    "explained_variance_ratio": [
+      0.028978916958255524,
+      0.02147134939243415
+    ],
+    "explained_variance_ratio_cumsum": [
+      0.028978916958255524,
+      0.05045026635068967
+    ],
+    "singular_values": [
+      228.40230838788807,
+      196.60252136090426
+    ]
+  },
+  "lda": {
+    "n_components": 1,
+    "note": "Binary classification \u2192 max 1 discriminant; y-axis is residual PC1 \u22a5 LD1",
+    "explained_variance_ratio": [
+      1.0
+    ],
+    "orthogonal_pc1_explained_variance_ratio": 0.0289250725857287,
+    "train_ld1_separability": {
+      "n_right": 4511,
+      "n_wrong": 2521,
+      "mean_ld1_correct": -0.20005340695386353,
+      "mean_ld1_wrong": 0.35796942434306966,
+      "cohen_d_wrong_minus_correct": 0.558022831296375,
+      "midpoint_threshold_accuracy": 0.6050910125142207
+    },
+    "test_ld1_separability": {
+      "n_right": 1128,
+      "n_wrong": 631,
+      "mean_ld1_correct": -0.11713084603254648,
+      "mean_ld1_wrong": 0.22416606255626245,
+      "cohen_d_wrong_minus_correct": 0.32856960190837264,
+      "midpoint_threshold_accuracy": 0.5667993177942012
+    }
+  },
+  "pca_2d_logistic_overlay": {
+    "train_accuracy": 0.5617178612059158,
+    "test_accuracy": 0.5622512791358727,
+    "coef_pc1_pc2": [
+      0.04515365247868877,
+      -0.02844008788016504
+    ],
+    "intercept": -0.0024837316699845187,
+    "note": "dashed contour = P(is_error)=0.5 from 2D logistic on PC1/PC2"
+  },
+  "artifacts": {
+    "pca_right_vs_wrong_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/pca_right_vs_wrong.png",
+    "lda_right_vs_wrong_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/lda_right_vs_wrong.png",
+    "pca_scatter_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/pca_scatter.png",
+    "lda_scatter_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/lda_scatter.png",
+    "embeddings_2d_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/embeddings_2d.csv"
+  }
+}

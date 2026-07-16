@@ -1,0 +1,36 @@
+{
+  "experiment": "model_errors_analysis_2026_07_15",
+  "policy": "base_model_llm_labels.csv includes only the primary Bedrock classifier (bedrock/qwen3-next-80b-a3b). Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS.",
+  "primary_classifier_id": "bedrock/qwen3-next-80b-a3b",
+  "labels_csv_path": "experiments/model_errors_analysis_2026_07_15/outputs/base_model_llm_labels.csv",
+  "labels_csv_columns": [
+    "post_id",
+    "original_text",
+    "mirrored_text",
+    "label",
+    "classifier_id",
+    "family",
+    "ablation",
+    "is_correct"
+  ],
+  "n_classifiers": 1,
+  "expected_labels_csv_rows": 8791,
+  "runs": [
+    {
+      "classifier_id": "bedrock/qwen3-next-80b-a3b",
+      "family": "bedrock",
+      "ablation": "provider=bedrock|model=qwen3-next-80b-a3b|bedrock_model_id=qwen.qwen3-next-80b-a3b|prompt=linked_fate_both_posts|input_mode=original_plus_mirror",
+      "run_dir": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43",
+      "prediction_files": [
+        "predictions.csv"
+      ],
+      "expected_rows": 8791,
+      "row_counts": {
+        "predictions.csv": 8791
+      },
+      "n_rows": 8791,
+      "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/metadata.json",
+      "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/metrics.json"
+    }
+  ]
+}
