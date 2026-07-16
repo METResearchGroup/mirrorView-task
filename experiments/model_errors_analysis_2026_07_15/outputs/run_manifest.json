@@ -1,6 +1,7 @@
 {
   "experiment": "model_errors_analysis_2026_07_15",
-  "policy": "LLM-API-only long CSV (family in {bedrock, llm_api}). Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS.",
+  "policy": "Long CSV includes only the primary Bedrock classifier (bedrock/qwen3-next-80b-a3b). Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS.",
+  "primary_classifier_id": "bedrock/qwen3-next-80b-a3b",
   "long_csv_columns": [
     "post_id",
     "original_text",
@@ -11,57 +12,9 @@
     "ablation",
     "is_correct"
   ],
-  "n_classifiers": 6,
-  "expected_long_csv_rows": 52746,
+  "n_classifiers": 1,
+  "expected_long_csv_rows": 8791,
   "runs": [
-    {
-      "classifier_id": "bedrock/ministral-3-8b-instruct",
-      "family": "bedrock",
-      "ablation": "provider=bedrock|model=ministral-3-8b-instruct|bedrock_model_id=mistral.ministral-3-8b-instruct|prompt=linked_fate_both_posts|input_mode=original_plus_mirror",
-      "run_dir": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/ministral-3-8b-instruct/outputs/2026_07_06-15:52:37",
-      "prediction_files": [
-        "predictions.csv"
-      ],
-      "expected_rows": 8791,
-      "row_counts": {
-        "predictions.csv": 8791
-      },
-      "n_rows": 8791,
-      "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/ministral-3-8b-instruct/outputs/2026_07_06-15:52:37/metadata.json",
-      "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/ministral-3-8b-instruct/outputs/2026_07_06-15:52:37/metrics.json"
-    },
-    {
-      "classifier_id": "bedrock/ministral-3-14b-instruct",
-      "family": "bedrock",
-      "ablation": "provider=bedrock|model=ministral-3-14b-instruct|bedrock_model_id=mistral.ministral-3-14b-instruct|prompt=linked_fate_both_posts|input_mode=original_plus_mirror",
-      "run_dir": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/ministral-3-14b-instruct/outputs/2026_07_06-16:12:54",
-      "prediction_files": [
-        "predictions.csv"
-      ],
-      "expected_rows": 8791,
-      "row_counts": {
-        "predictions.csv": 8791
-      },
-      "n_rows": 8791,
-      "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/ministral-3-14b-instruct/outputs/2026_07_06-16:12:54/metadata.json",
-      "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/ministral-3-14b-instruct/outputs/2026_07_06-16:12:54/metrics.json"
-    },
-    {
-      "classifier_id": "bedrock/qwen3-32b",
-      "family": "bedrock",
-      "ablation": "provider=bedrock|model=qwen3-32b|bedrock_model_id=qwen.qwen3-32b-v1:0|prompt=linked_fate_both_posts|input_mode=original_plus_mirror",
-      "run_dir": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-32b/outputs/2026_07_06-16:35:49",
-      "prediction_files": [
-        "predictions.csv"
-      ],
-      "expected_rows": 8791,
-      "row_counts": {
-        "predictions.csv": 8791
-      },
-      "n_rows": 8791,
-      "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-32b/outputs/2026_07_06-16:35:49/metadata.json",
-      "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-32b/outputs/2026_07_06-16:35:49/metrics.json"
-    },
     {
       "classifier_id": "bedrock/qwen3-next-80b-a3b",
       "family": "bedrock",
@@ -77,42 +30,6 @@
       "n_rows": 8791,
       "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/metadata.json",
       "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/metrics.json"
-    },
-    {
-      "classifier_id": "llm_api/one_shot/original/small",
-      "family": "llm_api",
-      "ablation": "provider=openai|model=gpt-5.4-nano|model_size=small|prompt_type=one_shot|input_mode=original",
-      "run_dir": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51",
-      "prediction_files": [
-        "train_predictions.csv",
-        "test_predictions.csv"
-      ],
-      "expected_rows": 8791,
-      "row_counts": {
-        "train_predictions.csv": 7032,
-        "test_predictions.csv": 1759
-      },
-      "n_rows": 8791,
-      "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/metadata.json",
-      "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/metrics.json"
-    },
-    {
-      "classifier_id": "llm_api/one_shot/original_plus_mirror/small",
-      "family": "llm_api",
-      "ablation": "provider=openai|model=gpt-5.4-nano|model_size=small|prompt_type=one_shot|input_mode=original_plus_mirror",
-      "run_dir": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14",
-      "prediction_files": [
-        "train_predictions.csv",
-        "test_predictions.csv"
-      ],
-      "expected_rows": 8791,
-      "row_counts": {
-        "train_predictions.csv": 7032,
-        "test_predictions.csv": 1759
-      },
-      "n_rows": 8791,
-      "metadata_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/metadata.json",
-      "metrics_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/metrics.json"
     }
   ]
 }

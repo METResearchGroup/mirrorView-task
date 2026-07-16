@@ -10,9 +10,47 @@ This document is an implementation spec only. Do **not** run the analysis until 
 
 ## Purpose
 
-After the July 2026 keep/remove ladder, we want a single long table of per-post correctness across **LLM API runs only** (OpenAI `llm_api` + Bedrock zero-shot `api_baselines`), then analysis that isolates **hard pairs** (posts many models miss) and, for V1, whether Bedrock right vs wrong is linearly separable in Titan embedding space.
+After the July 2026 keep/remove ladder, we want a single long table of per-post correctness for the **primary classifier** (Bedrock Qwen3 Next 80B), then analysis of that model’s right vs wrong (and, for V1, whether that signal is linearly separable in Titan embedding space).
 
-**V0 does not collect classical ML or encoder classifiers** (no logistic regression, XGBoost, ModernBERT, or other embedding-as-classifier families). Titan embeddings appear only later as **feature inputs for V1 Bedrock right-vs-wrong analysis**, not as a long-CSV classifier family.
+**V0 does not collect classical ML or encoder classifiers** (no logistic regression, XGBoost, ModernBERT, or other embedding-as-classifier families). Titan embeddings appear only later as **feature inputs for V1 right-vs-wrong analysis**, not as a long-CSV classifier family.
+
+---
+
+## Primary correctness signal (single right-vs-wrong)
+
+For any analysis that needs **one** right-vs-wrong label per post (especially **V1**, and any “use its labels and whether it was right or wrong” cut), apply this selection rule and use **only** the chosen run:
+
+### Selection rule
+
+Among complete runs with `family ∈ {bedrock, llm_api}` that also meet the inclusion criteria below (canonical study texts, full completed run, no smoke/`--limit`, etc.):
+
+1. Prefer the **largest** model by advertised parameter scale in the model name / variant slug (e.g. `80b` > `32b` > `14b` > `8b` > `nano` / `small`).
+2. Completeness and inclusion criteria are **filters first**; size ranking applies only among survivors.
+3. If two survivors are close in size, prefer **Bedrock** (user-matching linked-fate / both-posts stimulus) unless the LLM API model is clearly larger.
+
+### Chosen primary run (this worktree)
+
+| Field | Value |
+| --- | --- |
+| **Family** | `bedrock` |
+| **Model** | Qwen3 Next 80B A3B (`qwen3-next-80b-a3b`) |
+| **Bedrock model ID** | `qwen.qwen3-next-80b-a3b` |
+| **`classifier_id`** | `bedrock/qwen3-next-80b-a3b` |
+| **Ablation** | `provider=bedrock\|model=qwen3-next-80b-a3b\|bedrock_model_id=qwen.qwen3-next-80b-a3b\|prompt=linked_fate_both_posts\|input_mode=original_plus_mirror` |
+| **Run dir** | `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/` |
+| **Predictions** | `.../predictions.csv` (~8,791 posts; 8,792 lines with header) |
+| **Right/wrong signal** | Long-CSV rows where `classifier_id == bedrock/qwen3-next-80b-a3b` → use that row’s `is_correct` (vs ground-truth `label`) |
+
+**Size rationale:** Among eligible complete runs, this is the largest by named parameter scale (**80B** MoE total; A3B ≈ 3B activated). Next-largest complete Bedrock is dense **Qwen3 32B**. Complete OpenAI runs are only `gpt-5.4-nano` (`model_size=small`); `gpt-5.5` (`large`) has no full-dataset artifact here.
+
+**How to use it:** The long CSV **is** this run only. Take each row’s `is_correct` / `1 - is_correct` as the single right-vs-wrong signal. Do **not** majority-vote across other Bedrock models. Ground-truth keep/remove labels remain the study `label` column already joined in the long CSV.
+
+### Long CSV contents (locked)
+
+| Role | What |
+| --- | --- |
+| **Long CSV** | **Only** `bedrock/qwen3-next-80b-a3b` (~8,791 rows). Other complete Bedrock / `llm_api` runs exist in the worktree but are **not** collected into this CSV. |
+| **Primary right/wrong / V1** | Every long-CSV row — one correctness bit per post from that run. |
 
 ---
 
@@ -20,17 +58,17 @@ After the July 2026 keep/remove ladder, we want a single long table of per-post 
 
 ### In scope (V0 data product)
 
-Collect labels + predictions into one long CSV from **LLM API experiment runs** under `experiments/predict_keep_remove_2026_07_01/` that:
+Collect labels + predictions into one long CSV from the **primary Bedrock run only** (`qwen3-next-80b-a3b` @ `2026_07_06-16:57:43/`) under `experiments/predict_keep_remove_2026_07_01/`. That run:
 
-1. Score the Study 2 training unit (one row per `message_id` / post pair with modal keep/remove label).
-2. Use the **canonical study texts** (`original_text`, `mirror_text` from `keep_remove_results_2026_06_23.csv`) — no truncated / length-rewritten / regenerated stimulus ablations.
-3. Belong to family **`bedrock`** or **`llm_api`** only.
+1. Scores the Study 2 training unit (one row per `message_id` / post pair with modal keep/remove label).
+2. Uses the **canonical study texts** (`original_text`, `mirror_text` from `keep_remove_results_2026_06_23.csv`) — no truncated / length-rewritten / regenerated stimulus ablations.
+3. Has `family=bedrock` and `classifier_id=bedrock/qwen3-next-80b-a3b`.
 
 ### In scope (V1 analysis)
 
-Bedrock zero-shot LLM baselines only (`models/llm_finetuning/api_baselines/`), because they use the study linked-fate prompt with both posts (blinded Post 1/Post 2 shuffle) — closest match to what participants saw.
+**Primary:** right-vs-wrong for the chosen primary classifier (`bedrock/qwen3-next-80b-a3b`) — see § Primary correctness signal. That run uses the study linked-fate prompt with both posts (blinded Post 1/Post 2 shuffle), matching what participants saw.
 
-V1 may load Titan embeddings from the existing embedding cache/feature helpers as **analysis features** for the Bedrock right-vs-wrong separator. Those embeddings are **not** a V0 classifier source and must not appear as long-CSV `family` values.
+V1 may load **original-post** Titan embeddings via `embeddings/features/only_original.py` (cache: `embeddings/cache_loader.py`) as **analysis features** for that right-vs-wrong separator. Those embeddings are **not** a V0 classifier source and must not appear as long-CSV `family` values. Do **not** use `concat_cosine` or other combined embedding features for V1.
 
 ### Out of scope (for now)
 
@@ -88,14 +126,14 @@ Paths are repo-relative from the worktree root. Only these trees feed the long C
 | Aggregate narrative | `.../api_baselines/aggregate_outputs/aggregate_results.md` |
 | Plots | `.../api_baselines/outputs/plot_results/2026_07_06-17:48:29/` |
 
-**Completed full-dataset runs present (include in long CSV) — use these exact timestamp folders only:**
+**Completed full-dataset runs present (reference inventory). Long CSV includes only the primary row:**
 
-| Variant | Run dir (this worktree) | Rows |
-| --- | --- | --- |
-| Ministral 8B | `.../api_baselines/ministral-3-8b-instruct/outputs/2026_07_06-15:52:37/` | 8791 (+ header → 8792 lines) |
-| Ministral 14B | `.../api_baselines/ministral-3-14b-instruct/outputs/2026_07_06-16:12:54/` | 8791 (+ header → 8792 lines) |
-| Qwen3 32B | `.../api_baselines/qwen3-32b/outputs/2026_07_06-16:35:49/` | 8791 (+ header → 8792 lines) |
-| Qwen3 Next 80B | `.../api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/` | 8791 (+ header → 8792 lines) |
+| Variant | Run dir (this worktree) | Rows | In long CSV? |
+| --- | --- | --- | --- |
+| Ministral 8B | `.../api_baselines/ministral-3-8b-instruct/outputs/2026_07_06-15:52:37/` | 8791 (+ header → 8792 lines) | no (artifact only) |
+| Ministral 14B | `.../api_baselines/ministral-3-14b-instruct/outputs/2026_07_06-16:12:54/` | 8791 (+ header → 8792 lines) | no (artifact only) |
+| Qwen3 32B | `.../api_baselines/qwen3-32b/outputs/2026_07_06-16:35:49/` | 8791 (+ header → 8792 lines) | no (artifact only) |
+| **Qwen3 Next 80B** | `.../api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/` | 8791 (+ header → 8792 lines) | **yes — sole long-CSV classifier** |
 
 Each included run dir has `predictions.csv`, `metadata.json`, `metrics.json` (plus companion `prompt_template.txt` / `run_command.txt`).
 
@@ -105,7 +143,7 @@ Bedrock IDs: `mistral.ministral-3-8b-instruct`, `mistral.ministral-3-14b-instruc
 
 Stimulus: Study prompt + original **and** mirror texts; deterministic Post 1/Post 2 shuffle (`prompts.py`). Pred columns: `message_id`, `keep_remove_label`, `predicted_label` (no probability).
 
-**Status in this worktree:** all four complete `predictions.csv` artifacts are present at the timestamp paths above. Bedrock long-CSV rows and V1 are **unblocked**. **Do not** call Bedrock again.
+**Status in this worktree:** all four complete `predictions.csv` artifacts are present at the timestamp paths above. **Long CSV collects only** `qwen3-next-80b-a3b` @ `2026_07_06-16:57:43/`. **Do not** call Bedrock again.
 
 ### B. OpenAI LLM API prompting (`family=llm_api`)
 
@@ -114,7 +152,7 @@ Stimulus: Study prompt + original **and** mirror texts; deterministic Post 1/Pos
 | Root | `experiments/predict_keep_remove_2026_07_01/models/llm_api/` |
 | Aggregate (reference only) | `.../llm_api/aggregate_outputs/aggregate_results.csv` |
 
-**Completed full-dataset runs present (include in long CSV):**
+**Completed full-dataset runs present (not included in the long CSV; inventory / size-ranking only):**
 
 | Run dir | Rows | Notes |
 | --- | --- | --- |
@@ -130,17 +168,16 @@ Pred columns: `message_id`, `keep_remove_label`, `predicted_label`, `predicted_r
 - Other timestamp dirs under `one_shot/...` and all of `few_shot/...` (smoke `--limit`, partial CSVs, or incomplete resume fragments). Example smoke: `.../one_shot/original/small/outputs/2026_07_03-18:20:16/` (`limit: 8`).
 - Documented cost-skipped variants (few-shot / large) — no complete full-dataset artifacts suitable for inclusion.
 
-**Stimulus note:** both `original` and `original_plus_mirror` use canonical study text; `original` simply omits the mirror from the prompt (input ablation, not text rewrite). Include both in the long CSV. For “matches what users saw,” prefer `original_plus_mirror` (and Bedrock).
+**Stimulus note:** both `original` and `original_plus_mirror` use canonical study text; `original` simply omits the mirror from the prompt (input ablation, not text rewrite). They are **not** included in the long CSV (primary Bedrock only). For “matches what users saw,” prefer `original_plus_mirror` (and Bedrock) if re-expanded later.
 
 ### C. V1-only analysis inputs (not long-CSV classifier sources)
 
 | Role | Path |
 | --- | --- |
 | Embedding cache loader | `experiments/predict_keep_remove_2026_07_01/embeddings/cache_loader.py` |
-| Feature helpers | `experiments/predict_keep_remove_2026_07_01/embeddings/features/concat_cosine.py` |
-| | `experiments/predict_keep_remove_2026_07_01/embeddings/features/only_original.py` |
+| Feature helper (V1 locked) | `experiments/predict_keep_remove_2026_07_01/embeddings/features/only_original.py` |
 
-Use these **only** when building the V1 Bedrock right-vs-wrong separator. Do **not** treat logistic/XGBoost train trees as V0 sources.
+Use these **only** when building the V1 right-vs-wrong separator for the primary classifier. V1 features are **original-post Titan embeddings only** (`only_original` → shape `(256,)`). Do **not** treat logistic/XGBoost train trees as V0 sources. Do **not** use `concat_cosine`, difference, mirrored-only, or other combined embedding feature builders for V1.
 
 ---
 
@@ -191,7 +228,7 @@ The long CSV uses **only** the columns below (no extra audit columns).
 | `mirrored_text` | str | Canonical mirror (`mirror_text`) |
 | `label` | int | `keep_remove_label` (`0=keep`, `1=remove`) |
 | `classifier_id` | str | Stable slug (see families above) |
-| `family` | str | **`bedrock`** or **`llm_api` only** |
+| `family` | str | **`bedrock`** (this CSV: primary Qwen3 Next 80B only) |
 | `ablation` | str | Ablation / condition encoding (see below) |
 | `is_correct` | bool/int | `1` iff `predicted_label == label` |
 
@@ -212,16 +249,13 @@ Examples:
 - LLM API original-only small: `provider=openai|model=gpt-5.4-nano|model_size=small|prompt_type=one_shot|input_mode=original`
 - LLM API original+mirror small: `provider=openai|model=gpt-5.4-nano|model_size=small|prompt_type=one_shot|input_mode=original_plus_mirror`
 
-### Suggested `classifier_id`s
+### Long-CSV `classifier_id` (sole entry)
 
 | `classifier_id` | `family` | Source run |
 | --- | --- | --- |
-| `bedrock/ministral-3-8b-instruct` | `bedrock` | `.../api_baselines/ministral-3-8b-instruct/outputs/2026_07_06-15:52:37/` |
-| `bedrock/ministral-3-14b-instruct` | `bedrock` | `.../api_baselines/ministral-3-14b-instruct/outputs/2026_07_06-16:12:54/` |
-| `bedrock/qwen3-32b` | `bedrock` | `.../api_baselines/qwen3-32b/outputs/2026_07_06-16:35:49/` |
 | `bedrock/qwen3-next-80b-a3b` | `bedrock` | `.../api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/` |
-| `llm_api/one_shot/original/small` | `llm_api` | `.../one_shot/original/small/outputs/2026_07_03-18:30:51/` |
-| `llm_api/one_shot/original_plus_mirror/small` | `llm_api` | `.../one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/` |
+
+Other complete runs (Ministral 8B/14B, Qwen3 32B, both `llm_api` nano) remain available as artifacts for size ranking / optional diagnostics but are **not** written into the long CSV.
 
 ---
 
@@ -239,7 +273,10 @@ experiments/model_errors_analysis_2026_07_15/
     build_long_csv.py              # join texts + labels → long CSV
   analyze/
     hard_pairs.py                  # error-rate / co-miss tables
-    v1_bedrock_separability.py     # linear + 2D reduction
+    v1_build_table.py              # primary rows + only_original embeddings
+    v1_split.py                    # single post-level train/test split → split_ids.json
+    v1_linear_separator.py         # branch A: logistic on shared split
+    v1_embed_2d.py                 # branch B: PCA/LDA viz on shared split
   outputs/                         # gitignore bulk artifacts if large
 ```
 
@@ -272,10 +309,10 @@ Left-join canonical texts from `Dataloader().load_training_dataframe()` on `mess
 Assert:
 
 - Columns are exactly the target schema (no extras).
-- `family` values ⊆ `{bedrock, llm_api}`.
+- `family` is exactly `bedrock`; `classifier_id` is exactly `bedrock/qwen3-next-80b-a3b`.
 - No duplicate `(post_id, classifier_id)`.
 - `label` distribution matches training dataframe.
-- Per-classifier accuracy recomputed from the long CSV matches that run’s `metrics.json` within rounding tolerance (especially Bedrock aggregate and LLM API test metrics).
+- Accuracy recomputed from the long CSV matches that run’s `metrics.json` within rounding tolerance.
 
 ### Step 5 — Hard-pair slicing helpers (V0 analysis product)
 
@@ -292,20 +329,37 @@ From the long CSV, produce at least:
 
 ---
 
-## V1 analysis plan — Bedrock right vs wrong separator
+## V1 analysis plan — primary classifier right vs wrong separator
 
-**Goal:** For Bedrock zero-shot predictions only, ask whether Titan embeddings linearly separate posts the LLM got right vs wrong, and whether that structure is visible in 2D.
+**Goal:** Using the **primary correctness signal** (§ Primary correctness signal), ask whether **original-post** Titan embeddings (`only_original`, shape `(256,)`) linearly separate posts that classifier got right vs wrong, and whether that structure is visible in 2D.
 
-### V1 classifier filter
+### V1 classifier filter (locked)
 
-- Family = `bedrock`.
-- Include all four models that have complete `predictions.csv`.
-- **Primary target for the separator:** per-post majority vote across Bedrock models — `bedrock_majority_correct` — so one label per post.  
-  **Alternative (report both):** pool all `(post_id, classifier_id)` rows (repeated embeddings) and train on stacked rows; also run per-model separators for Ministral 14B / Qwen3 32B / Qwen3 Next 80B (skip Ministral 8B as primary — extreme remove-conservative recall makes “wrong” dominated by remove misses).
+- **`classifier_id = bedrock/qwen3-next-80b-a3b` only** for the primary right-vs-wrong target.
+- Source: long CSV rows for that `classifier_id` (equivalently the run dir in §A / the Primary table).
+- `y` / correctness comes from that row’s `is_correct` vs ground-truth `label` — **not** a majority vote across Bedrock models, and **not** pooled multi-classifier rows.
 
-Assumption to confirm: V1 “Bedrock LLM API only” means `api_baselines` (not OpenAI `llm_api`). If stakeholders meant OpenAI `original_plus_mirror` instead/additionally, reuse the same pipeline with `family=llm_api` + `classifier_id=llm_api/one_shot/original_plus_mirror/small`.
+**Optional diagnostics only (not the primary V1 target):** per-model separators for other complete Bedrock runs (e.g. Qwen3 32B, Ministral 14B), or OpenAI `llm_api/one_shot/original_plus_mirror/small`, may be reported as secondary checks. Do not substitute them for the primary signal unless the selection rule is re-run and this spec is updated.
+
+### Size inventory used for selection (eligible complete runs)
+
+| Rank (size) | Family | Model | `classifier_id` | Complete N | Eligible? | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 (chosen) | `bedrock` | Qwen3 Next 80B A3B | `bedrock/qwen3-next-80b-a3b` | 8791 | yes | Largest named scale; MoE ~80B total / ~3B active |
+| 2 | `bedrock` | Qwen3 32B | `bedrock/qwen3-32b` | 8791 | yes | Dense 32B; smaller than 80B by name |
+| 3 | `bedrock` | Ministral 14B | `bedrock/ministral-3-14b-instruct` | 8791 | yes | Smaller |
+| 4 | `bedrock` | Ministral 8B | `bedrock/ministral-3-8b-instruct` | 8791 | yes | Smaller; extreme remove-conservative |
+| — | `llm_api` | gpt-5.4-nano (`small`) | `llm_api/one_shot/original_plus_mirror/small` | 8791 | yes but smaller | User-matching input mode; nano ≪ 80B |
+| — | `llm_api` | gpt-5.4-nano (`small`) | `llm_api/one_shot/original/small` | 8791 | yes but smaller | Original-only prompt ablation |
+| — | `llm_api` | gpt-5.5 (`large`) | *(none)* | — | **no** | No complete full-dataset run in this worktree |
+
+**Excluded from primary (and why):** smaller Bedrock models (8B/14B/32B); both `llm_api` nano runs (smaller); incomplete Bedrock smoke timestamps; few-shot / large OpenAI variants; classical ML / encoder families.
+
+**MoE note:** If stakeholders later redefine “largest” as **activated** parameters rather than named total, dense Qwen3 32B (~32B active) would outrank 80B-A3B (~3B active). Until then, follow named scale literally → **80B A3B remains primary**.
 
 ### Embeddings source (analysis input only)
+
+**Why this section exists:** V0’s long CSV is correctness labels from LLM API classifiers only. V1 asks a *different* question — whether those right/wrong outcomes are linearly organized in embedding space — so it needs a numeric feature matrix joined on `post_id`. Titan embeddings from the existing cache supply that matrix. They are **not** another classifier family, do **not** appear as long-CSV `family` rows, and are **not** the keep/remove logistic/XGBoost models under `models/logistic_regression/` or `models/xgboost/`. This section pins the cache location and the **single** feature construction V1 is allowed to use.
 
 Reuse existing Titan embeddings as **features for the right-vs-wrong linear probe**, **do not** re-embed unless cache miss, and **do not** add embedding/ML classifiers to the long CSV:
 
@@ -317,52 +371,116 @@ experiments/predict_keep_remove_2026_07_01/embeddings/cache_loader.py
 # DDB: jspsych-mirror-view-embedding-cache
 ```
 
-Feature vector for V1 (lock in metadata):
+**V1 feature vector (locked — original post only):**
 
-1. **Primary:** `concat_cosine` → `[orig_emb (256), mirror_emb (256), cosine (1)]` shape `(513,)` — both posts present, matches study pair.
-2. **Ablation (optional):** `only_original` `(256,)` — diagnostically compare if errors are original-only.
+| Field | Value |
+| --- | --- |
+| Feature set | `only_original` / original-post embedding only |
+| Helper | `experiments/predict_keep_remove_2026_07_01/embeddings/features/only_original.py` |
+| Shape | `(256,)` — `orig_emb` from Titan `amazon.titan-embed-text-v2:0` |
+| Builder API | `OnlyOriginalEmbeddingFeatureBuilder` / `build_xy_from_joined` |
 
-Build via existing feature helpers:
+**Out of scope for V1 (do not use as features):**
 
-- `embeddings/features/concat_cosine.py`
-- `embeddings/features/only_original.py`
+- `concat_cosine` (`[orig_emb, mirror_emb, cosine]` → `(513,)`)
+- Difference / Hadamard / abs-diff of orig vs mirror
+- Mirrored-post embeddings alone or any concat of orig+mirror
+- Stance/toxicity OHE or other non-embedding side features from classical ML training
 
-Clarification: fitting a logistic regression **on Titan features to predict Bedrock is_error** is part of V1 analysis. It is **not** the keep/remove logistic models under `models/logistic_regression/` and must not be confused with V0 long-CSV collection.
+Clarification: fitting a logistic regression **on original-post Titan features to predict primary-classifier `is_error`** is part of V1 analysis. It is **not** the keep/remove logistic models under `models/logistic_regression/` and must not be confused with V0 long-CSV collection.
 
-### Train / eval (right vs wrong)
+### V1 pipeline topology (single split → parallel branches)
 
-Target: `y = 1` if Bedrock prediction(s) **wrong**, `y = 0` if **correct** (or invert and document; prefer `is_error` as positive class so precision/recall speak about hard cases).
+Both the linear separator and the 2D visualization **must** consume the **same** train/test post IDs. Split once; never re-split independently inside either branch.
 
-Protocol:
+```mermaid
+flowchart TD
+  L[Long CSV] --> T[V1.1 Build analysis table]
+  E[only_original Titan cache] --> T
+  T --> S[V1.2 Single train/test split]
+  S --> A[V1.3A Logistic regressor]
+  S --> B[V1.3B 2D PCA / LDA viz]
+  A --> O[outputs/v1_bedrock/]
+  B --> O
+```
 
-1. Join embeddings to posts Bedrock scored.
-2. Stratified train/test split by `post_id` (`seed=42`, `train_split=0.8`). Do **not** leak the same post across splits.
-3. Fit **logistic regression** (`class_weight='balanced'`) predicting `is_error` from Titan features.
-4. Report train/test accuracy, ROC-AUC, PR-AUC, confusion matrix for error class.
-5. Save `outputs/v1_bedrock/linear_separator_metrics.json`, coefficients or top-|coef| dims, and predictions CSV.
+| Step | Name | Consumes | Produces | Parallel? |
+| --- | --- | --- | --- | --- |
+| **V1.1** | Build analysis table | Long CSV (primary rows) + `only_original` embeddings | `outputs/v1_bedrock/analysis_table.parquet` (or `.csv`) | sequential |
+| **V1.2** | **Single train/test split** | Analysis table | `outputs/v1_bedrock/split_ids.json` | sequential (gate) |
+| **V1.3A** | Train linear / logistic separator | Analysis table + `split_ids.json` | metrics, coefs, pred CSV | **parallel with B** |
+| **V1.3B** | 2D reduction + visualization | Analysis table + `split_ids.json` | PCA/LDA plots, `embeddings_2d.csv` | **parallel with A** |
+
+### V1.1 — Build analysis table
+
+Target: from long-CSV rows with `classifier_id == bedrock/qwen3-next-80b-a3b`, set `y = 1` if that prediction is **wrong** (`is_correct == 0`), `y = 0` if **correct** (prefer `is_error` as positive class so precision/recall speak about hard cases).
+
+1. Filter long CSV to the primary `classifier_id`.
+2. Join **original-post** Titan embeddings on `post_id` via `only_original` (no mirror / concat / cosine features).
+3. Emit one row per `post_id` with: `post_id`, `label`, `is_correct`, `is_error`, and the `(256,)` embedding (stored as columns or a fixed-width vector field).
+
+Artifact: `outputs/v1_bedrock/analysis_table.parquet` (CSV acceptable if preferred).
+
+### V1.2 — Single train/test split (shared by both branches)
+
+**One** post-level split; both V1.3A and V1.3B load these IDs and must not call `train_test_split` again.
+
+| Field | Value |
+| --- | --- |
+| Unit | `post_id` (one row per post; never leak the same post across splits) |
+| Stratify on | `is_error` (right vs wrong balance in train and test) |
+| `train_split` | `0.8` |
+| `seed` | `42` |
+| Artifact | `outputs/v1_bedrock/split_ids.json` |
+
+Suggested `split_ids.json` schema:
+
+```json
+{
+  "seed": 42,
+  "train_split": 0.8,
+  "stratify_on": "is_error",
+  "classifier_id": "bedrock/qwen3-next-80b-a3b",
+  "feature_set": "only_original",
+  "train_post_ids": ["...", "..."],
+  "test_post_ids": ["...", "..."]
+}
+```
+
+Assert `train_post_ids ∩ test_post_ids = ∅` and that every analysis-table `post_id` appears in exactly one list.
+
+### V1.3A — Train linear / logistic regressor (parallel branch)
+
+Uses **only** posts listed in `split_ids.json` (`train_post_ids` for fit, `test_post_ids` for eval).
+
+1. Fit **logistic regression** (`class_weight='balanced'`) predicting `is_error` from the `(256,)` original-post Titan vector on the train set.
+2. Evaluate on the test set: accuracy, ROC-AUC, PR-AUC, confusion matrix for the error class (also report train metrics for diagnostics).
+3. Save `outputs/v1_bedrock/linear_separator_metrics.json` (alias ok: `outputs/v1_primary/`), coefficients or top-|coef| dims, and predictions CSV.
 
 Interpretation guardrail: high AUC means errors are linearly organized in embedding space; low AUC means hard pairs are not a single half-space of Titan features.
 
-### 2D reduction + visualization
+### V1.3B — 2D reduction + visualization (parallel branch)
 
-On the same feature matrix (prefer train+test all points, fit reduction on train only to avoid optimism):
+Uses the **same** `split_ids.json` as V1.3A. **Leakage-safe reduction:** fit scalers / PCA / LDA on **train only**, then transform train and test (prefer fit-on-train, transform-all for plots that show both partitions; evaluate / claim separation on the transformed test points).
 
-1. Standardize features.
-2. Run **PCA (2D)** and **linear discriminant / LDA projected to 1–2D** (LDA is the linear separator view). Optionally t-SNE/UMAP as secondary *nonlinear* viz (do not claim linear separation from them).
-3. Scatter plots colored by correct vs wrong (and optionally by `label` keep/remove as small multiples).
-4. Overlay the logistic decision boundary in the 2D PCA plane (project the hyperplane approx / show predicted region).
+1. Standardize features (**fit on train**, transform train+test).
+2. Run **PCA (2D)** and **linear discriminant / LDA projected to 1–2D** (LDA is the linear separator view) — again **fit on train**, transform all. Optionally t-SNE/UMAP as secondary *nonlinear* viz (do not claim linear separation from them; if used, still restrict fit to train or treat as exploratory only).
+3. Scatter plots colored by correct vs wrong (and optionally by `label` keep/remove as small multiples); mark train vs test if useful.
+4. Overlay the logistic decision boundary in the 2D PCA plane (project the hyperplane approx / show predicted region) — boundary comes from the V1.3A model or a 2D refit on PCA train coords; do not re-split.
 
 Artifacts:
 
 - `outputs/v1_bedrock/pca_right_vs_wrong.png`
 - `outputs/v1_bedrock/lda_right_vs_wrong.png`
-- `outputs/v1_bedrock/embeddings_2d.csv` (`post_id`, `pc1`, `pc2`, `is_correct`, `label`, …)
+- `outputs/v1_bedrock/embeddings_2d.csv` (`post_id`, `pc1`, `pc2`, `split`, `is_correct`, `label`, …)
 
 ### V1 success criteria
 
-- Pipeline runs end-to-end from long CSV (bedrock rows) + embedding cache.
-- Metrics + plots written under `outputs/v1_bedrock/`.
-- Short markdown note `outputs/v1_bedrock/README.md` stating whether a linear separator appears strong (e.g. test AUC ≫ 0.5) and pointing at hardest posts from `hard_pairs_top_k.csv` that Bedrock missed.
+- Pipeline order is **V1.1 → V1.2 → (V1.3A ∥ V1.3B)** with a single shared `split_ids.json`; neither branch invents its own split.
+- End-to-end from long CSV (**primary** `bedrock/qwen3-next-80b-a3b` rows only) + **original-post** Titan embedding cache (`only_original`).
+- PCA/LDA fit is train-only then transform (no fit on full data before reporting test separation).
+- Metrics + plots written under `outputs/v1_bedrock/` (or `outputs/v1_primary/`).
+- Short markdown note there stating whether a linear separator appears strong (e.g. test AUC ≫ 0.5) and pointing at hardest posts from multi-classifier `hard_pairs_top_k.csv` that **this primary model** also missed.
 
 ---
 
@@ -374,10 +492,12 @@ Artifacts:
 | `outputs/classifier_post_results_long.csv` | collect |
 | `outputs/post_error_rates.csv` | analyze |
 | `outputs/hard_pairs_top_k.csv` | analyze |
-| `outputs/v1_bedrock/linear_separator_metrics.json` | V1 |
-| `outputs/v1_bedrock/pca_right_vs_wrong.png` | V1 |
-| `outputs/v1_bedrock/lda_right_vs_wrong.png` | V1 |
-| `outputs/v1_bedrock/embeddings_2d.csv` | V1 |
+| `outputs/v1_bedrock/analysis_table.parquet` | V1.1 |
+| `outputs/v1_bedrock/split_ids.json` | V1.2 (shared by A and B) |
+| `outputs/v1_bedrock/linear_separator_metrics.json` | V1.3A |
+| `outputs/v1_bedrock/pca_right_vs_wrong.png` | V1.3B |
+| `outputs/v1_bedrock/lda_right_vs_wrong.png` | V1.3B |
+| `outputs/v1_bedrock/embeddings_2d.csv` | V1.3B |
 | `outputs/v1_bedrock/README.md` | V1 writeup |
 
 ---
@@ -396,14 +516,20 @@ Artifacts:
 4. **`mirrored_text` vs `mirror_text`**  
    Source column is `mirror_text`. Spec uses `mirrored_text` in the long CSV as requested; map explicitly in the builder.
 
-5. **V1 “Bedrock LLM API” naming**  
-   Assumption: means `models/llm_finetuning/api_baselines/` (Bedrock Converse), not `models/llm_api/` (OpenAI). Confirm with stakeholder if OpenAI original-plus-mirror should be co-primary.
+5. **Primary right-vs-wrong classifier (resolved)**  
+   Selection rule: largest complete `bedrock` / `llm_api` run meeting inclusion criteria. **Chosen:** `bedrock/qwen3-next-80b-a3b` @ `.../qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/`. The long CSV includes **only** this classifier (~8,791 rows). MoE caveat (named 80B vs ~3B active) documented in the V1 size inventory — change only if stakeholders redefine “largest” as activated params (then Qwen3 32B).
 
 6. **Positive class for V1 separator**  
    Assumption: predict `is_error` (wrong=1) so metrics emphasize hard cases.
 
-7. **No classical ML in V0**  
-   Assumption confirmed by scope: do not wait on or regenerate logistic/XGBoost/ModernBERT prediction CSVs for the long table. Titan embeddings remain V1 analysis input only.
+7. **V1 train/test split (resolved)**  
+   One shared post-level stratified split (`seed=42`, `train_split=0.8`, stratify on `is_error`) written to `outputs/v1_bedrock/split_ids.json`. Branches V1.3A and V1.3B both load that artifact; neither re-splits. Dimensionality reduction fits on train only, then transforms train+test.
+
+8. **No classical ML in V0**  
+   Assumption confirmed by scope: do not wait on or regenerate logistic/XGBoost/ModernBERT prediction CSVs for the long table. Titan embeddings remain V1 analysis input only — and for V1, **original-post embeddings only** (`only_original`), not `concat_cosine` or other combined feature sets.
+
+9. **V1 embedding feature set (resolved)**  
+   Use `only_original` / original-post Titan vectors only. Mirror embeddings, cosine similarity, difference features, and multi-embedding concatenations are deferred / out of V1 scope.
 
 ---
 
@@ -412,8 +538,12 @@ Artifacts:
 1. Confirm the four Bedrock timestamp folders in §A and the two full `llm_api` runs exist (read-only). **Do not** call Bedrock.
 2. `collect/manifest.py` + `collect/load_predictions.py` + `collect/build_long_csv.py` + sanity checks vs `metrics.json`.
 3. Hard-pair rate tables.
-4. V1 Bedrock embedding linear separator + PCA/LDA plots (analysis-only Titan features).
-5. Short README in this experiment dir documenting commands and artifact paths.
+4. **V1.1** — build analysis table (primary `bedrock/qwen3-next-80b-a3b` + `only_original` embeddings).
+5. **V1.2** — write **one** `outputs/v1_bedrock/split_ids.json` (stratified post-level split, `seed=42`, `train_split=0.8`).
+6. **In parallel:**
+   - **V1.3A** — logistic regressor fit on train IDs / eval on test IDs from `split_ids.json`.
+   - **V1.3B** — PCA/LDA fit-on-train, transform-all; plots under `outputs/v1_bedrock/` using the same IDs.
+7. Short README in this experiment dir documenting commands and artifact paths.
 
 ### V0 long CSV (implemented)
 
@@ -421,7 +551,7 @@ Artifacts:
 cd experiments/model_errors_analysis_2026_07_15
 uv run python collect/build_long_csv.py
 # → outputs/run_manifest.json
-# → outputs/classifier_post_results_long.csv  (6 × 8791 = 52746 rows)
+# → outputs/classifier_post_results_long.csv  (8791 rows; bedrock/qwen3-next-80b-a3b only)
 ```
 
 ### Commands / policy for later (do not run inference)

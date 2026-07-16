@@ -1,4 +1,9 @@
-"""Normalize Bedrock + llm_api prediction CSVs into a common frame."""
+"""Normalize prediction CSVs into a common frame.
+
+The V0 long CSV currently includes only the primary Bedrock run
+(`bedrock/qwen3-next-80b-a3b`). The llm_api adapter remains for optional
+diagnostics if additional runs are added back to the manifest later.
+"""
 
 from __future__ import annotations
 

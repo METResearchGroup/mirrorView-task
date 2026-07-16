@@ -1,6 +1,6 @@
-"""Enumerate eligible Bedrock + llm_api runs → run_manifest.json.
+"""Enumerate the primary Bedrock run → run_manifest.json.
 
-Hard constraint: only the pre-copied prediction artifacts listed in spec.md.
+Hard constraint: only the pre-copied Qwen3 Next 80B prediction artifact.
 Do not call Bedrock / AWS / api_baselines train scripts.
 """
 
@@ -17,7 +17,6 @@ MANIFEST_PATH = OUTPUTS_DIR / "run_manifest.json"
 
 PKR_ROOT = REPO_ROOT / "experiments" / "predict_keep_remove_2026_07_01"
 API_BASELINES = PKR_ROOT / "models" / "llm_finetuning" / "api_baselines"
-LLM_API = PKR_ROOT / "models" / "llm_api"
 
 LONG_CSV_COLUMNS = (
     "post_id",
@@ -29,6 +28,8 @@ LONG_CSV_COLUMNS = (
     "ablation",
     "is_correct",
 )
+
+PRIMARY_CLASSIFIER_ID = "bedrock/qwen3-next-80b-a3b"
 
 
 @dataclass(frozen=True)
@@ -46,56 +47,10 @@ def _rel(path: Path) -> str:
 
 
 def canonical_runs() -> list[RunSpec]:
-    """Return the exact V0 runs from the spec (fixed timestamps)."""
-    bedrock = [
+    """Return the primary classifier run only (Qwen3 Next 80B)."""
+    return [
         RunSpec(
-            classifier_id="bedrock/ministral-3-8b-instruct",
-            family="bedrock",
-            ablation=(
-                "provider=bedrock|model=ministral-3-8b-instruct|"
-                "bedrock_model_id=mistral.ministral-3-8b-instruct|"
-                "prompt=linked_fate_both_posts|input_mode=original_plus_mirror"
-            ),
-            run_dir=_rel(
-                API_BASELINES
-                / "ministral-3-8b-instruct"
-                / "outputs"
-                / "2026_07_06-15:52:37"
-            ),
-            prediction_files=("predictions.csv",),
-            expected_rows=8791,
-        ),
-        RunSpec(
-            classifier_id="bedrock/ministral-3-14b-instruct",
-            family="bedrock",
-            ablation=(
-                "provider=bedrock|model=ministral-3-14b-instruct|"
-                "bedrock_model_id=mistral.ministral-3-14b-instruct|"
-                "prompt=linked_fate_both_posts|input_mode=original_plus_mirror"
-            ),
-            run_dir=_rel(
-                API_BASELINES
-                / "ministral-3-14b-instruct"
-                / "outputs"
-                / "2026_07_06-16:12:54"
-            ),
-            prediction_files=("predictions.csv",),
-            expected_rows=8791,
-        ),
-        RunSpec(
-            classifier_id="bedrock/qwen3-32b",
-            family="bedrock",
-            ablation=(
-                "provider=bedrock|model=qwen3-32b|"
-                "bedrock_model_id=qwen.qwen3-32b-v1:0|"
-                "prompt=linked_fate_both_posts|input_mode=original_plus_mirror"
-            ),
-            run_dir=_rel(API_BASELINES / "qwen3-32b" / "outputs" / "2026_07_06-16:35:49"),
-            prediction_files=("predictions.csv",),
-            expected_rows=8791,
-        ),
-        RunSpec(
-            classifier_id="bedrock/qwen3-next-80b-a3b",
+            classifier_id=PRIMARY_CLASSIFIER_ID,
             family="bedrock",
             ablation=(
                 "provider=bedrock|model=qwen3-next-80b-a3b|"
@@ -109,41 +64,6 @@ def canonical_runs() -> list[RunSpec]:
             expected_rows=8791,
         ),
     ]
-
-    llm_api = [
-        RunSpec(
-            classifier_id="llm_api/one_shot/original/small",
-            family="llm_api",
-            ablation=(
-                "provider=openai|model=gpt-5.4-nano|model_size=small|"
-                "prompt_type=one_shot|input_mode=original"
-            ),
-            run_dir=_rel(
-                LLM_API / "one_shot" / "original" / "small" / "outputs" / "2026_07_03-18:30:51"
-            ),
-            prediction_files=("train_predictions.csv", "test_predictions.csv"),
-            expected_rows=8791,
-        ),
-        RunSpec(
-            classifier_id="llm_api/one_shot/original_plus_mirror/small",
-            family="llm_api",
-            ablation=(
-                "provider=openai|model=gpt-5.4-nano|model_size=small|"
-                "prompt_type=one_shot|input_mode=original_plus_mirror"
-            ),
-            run_dir=_rel(
-                LLM_API
-                / "one_shot"
-                / "original_plus_mirror"
-                / "small"
-                / "outputs"
-                / "2026_07_03-18:30:14"
-            ),
-            prediction_files=("train_predictions.csv", "test_predictions.csv"),
-            expected_rows=8791,
-        ),
-    ]
-    return bedrock + llm_api
 
 
 def _count_csv_rows(path: Path) -> int:
@@ -201,9 +121,11 @@ def build_manifest(*, write: bool = True) -> dict:
     manifest = {
         "experiment": "model_errors_analysis_2026_07_15",
         "policy": (
-            "LLM-API-only long CSV (family in {bedrock, llm_api}). "
+            "Long CSV includes only the primary Bedrock classifier "
+            f"({PRIMARY_CLASSIFIER_ID}). "
             "Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS."
         ),
+        "primary_classifier_id": PRIMARY_CLASSIFIER_ID,
         "long_csv_columns": list(LONG_CSV_COLUMNS),
         "n_classifiers": len(runs_out),
         "expected_long_csv_rows": sum(r["n_rows"] for r in runs_out),

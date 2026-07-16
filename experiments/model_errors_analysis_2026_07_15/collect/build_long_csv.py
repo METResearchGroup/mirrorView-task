@@ -97,8 +97,13 @@ def _assert_schema(df: pd.DataFrame) -> None:
             f"Column mismatch.\nexpected={list(LONG_CSV_COLUMNS)}\ngot={list(df.columns)}"
         )
     families = set(df["family"].unique())
-    if not families.issubset({"bedrock", "llm_api"}):
-        raise AssertionError(f"Unexpected families: {sorted(families)}")
+    if families != {"bedrock"}:
+        raise AssertionError(f"Expected family={{bedrock}}, got: {sorted(families)}")
+    clf_ids = set(df["classifier_id"].unique())
+    if clf_ids != {"bedrock/qwen3-next-80b-a3b"}:
+        raise AssertionError(
+            f"Expected classifier_id={{bedrock/qwen3-next-80b-a3b}}, got: {sorted(clf_ids)}"
+        )
     dup = df.duplicated(subset=["post_id", "classifier_id"], keep=False)
     if dup.any():
         raise AssertionError(f"Duplicate (post_id, classifier_id) rows: {int(dup.sum())}")
