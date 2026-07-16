@@ -1,0 +1,410 @@
+{
+  "shard_id": "shard_00",
+  "clusters": [
+    {
+      "cluster_id": 1,
+      "cluster_label": "Gun reform, child-victim moral appeals, and anti-NRA/GOP blame",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=guns / gun reform / gun control / gun violence",
+        "semantic_content:policy_prescription_present=advocates gun reform, gun safety laws, background checks, red flag laws, assault-weapon bans, permits/training, or federal gun reform",
+        "semantic_content:victimhood_or_persecution_framing=children, families, shooting survivors, or victims of gun violence foregrounded",
+        "semantic_content:normative_moral_language=morally condemns prioritizing gun rights over life/children/safety",
+        "target_directionality:criticized_actor_type=NRA, GOP/Republicans, gun lobby, gun-rights supporters, politicians, gun manufacturers",
+        "pragmatics_intent:emphatic_outrage / call_to_action / persuasion_or_argumentation",
+        "compositional_syntax:list_or_enumeration often listing gun-policy measures or mass-shooting events",
+        "target_directionality:mirror_shift_direction=from pro-gun-reform/anti-gun-lobby framing to anti-gun-control/pro-rights framing"
+      ],
+      "example_post_ids": [
+        "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+        "bluesky_098bcd761c09ee9dad38e74eb40f9e254725176489df2b24670185cc47b41ce0",
+        "bluesky_1cb33e47c3f79d840219e94a6c249459ca3f11004ae74c311c5fa20fbdda4a0b",
+        "bluesky_1e48a6b6e48c011f7cdf6066ca96b25a876242da2ae689f5922dae9ae9cb9b39",
+        "bluesky_20b98922d2158801409b2d1fff9f894010462b3d869d9e7ac265856fc9a02d86",
+        "bluesky_2155da4c8dd53d673c864519ce566ce27a4bf509342dbffee43b3fe27a8ec2da",
+        "bluesky_2c9344b5963913ee185924eb10f472555ac53d829ae92536f88c563475638573",
+        "bluesky_325cf265341892c14ca24769d1559a520f11292cee351713f29434d99003be85",
+        "bluesky_39e771d2849c5494ec4575ab5a9acbc44c4a6c3acd902a00dc5cd14ff3f9878d",
+        "bluesky_427407bf7a86a2969a77e06ebf8503d55e39b9c382e9b36e5cc93e2add711b4a"
+      ],
+      "bucket_mix": {
+        "tp": 24,
+        "tn": 23,
+        "fp": 27,
+        "fn": 21
+      },
+      "interpretation": "The largest recurring moderation-relevant cluster is moralized pro-gun-reform advocacy, often tied to child deaths, mass shootings, NRA/GOP blame, and enumerated policy prescriptions. It spans all buckets, but many FP and FN examples show that emotionally intense but policy-oriented gun-safety rhetoric was unstable for the classifier."
+    },
+    {
+      "cluster_id": 2,
+      "cluster_label": "Gun-rights, Second Amendment, self-defense, and anti-gun-control victimhood",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=guns / Second Amendment / gun rights / public carry / self-defense",
+        "semantic_content:policy_prescription_present=protect Second Amendment, oppose gun bans, encourage firearm ownership/carry, support concealed carry/open carry",
+        "semantic_content:victimhood_or_persecution_framing=law-abiding gun owners, armed citizens, marginalized people, trans Americans, conservatives, or soldiers framed as threatened/disarmed",
+        "semantic_content:factual_assertion_vs_speculation=claims holstered firearms pose no danger or gun laws affect law-abiding people",
+        "target_directionality:criticized_actor_type=gun-control advocates, state regulators, bureaucrats, leftists/Democrats, anti-gun activists",
+        "compositional_syntax:conditional_if_then_structure, second_person_direct_address, quote_or_attribution_embedding around constitutional phrases",
+        "target_directionality:mirror_shift_direction=often reverses from rights/self-defense framing to gun-control or policing critique"
+      ],
+      "example_post_ids": [
+        "bluesky_0116d3fab48cfd279a59400e4cfdd858d78b3f3682d5e83d7e9f89d0282e1835",
+        "bluesky_04ddcab3930b84a1090c370b43208018230e7e00cca988713a207515b302242c",
+        "bluesky_0a2b9004052bdafe88f229a9058c9d3fb514d3a54bea1ea830a2a1b4341c727d",
+        "bluesky_1475a33737aa92e13fc1b7443962df41981dcb0d51a7930efc1ab554bed18319",
+        "bluesky_1f618eb22c2517e63f0a9f3b1316090c10646898191d3772ff8b3755f98af925",
+        "bluesky_1f7720c8e9e82f16f9894d208530678d723c1a779a4fefa22edb83f0e0dc5c82",
+        "bluesky_22aa5d9ff5c91139ea8118cb74bfa7d05a7e135d363ec61e11259bf41122c272",
+        "bluesky_23745a1aa08797cba61ae4d43ff9b6a4b7a3155a9a6dfea0b89b90edd4fd3946",
+        "bluesky_281353f6c14b7f0df15a4adcb4708726a19f58b00c71bc6eb17597a0c38637d1",
+        "bluesky_35aaac022091e7dc7148f0f5d56aee4fdde5b6dd2681e83e3061316f44fb12c7"
+      ],
+      "bucket_mix": {
+        "tp": 12,
+        "tn": 14,
+        "fp": 19,
+        "fn": 10
+      },
+      "interpretation": "This cluster captures rights-protective and self-defense gun discourse. It is especially common among FP relative to TN when combined with persecution language, direct imperatives, constitutional references, or armed-protection prescriptions."
+    },
+    {
+      "cluster_id": 3,
+      "cluster_label": "Climate/energy transition advocacy versus anti-green economic-cost framing",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=climate and energy policy / climate change / fossil fuels / renewables / carbon emissions",
+        "semantic_content:causal_claim_present=fossil fuels, emissions, consumption, data centers, deportation flights, or energy choices cause climate harms",
+        "semantic_content:policy_prescription_present=renewables, electrification, climate action, carbon pricing, Paris Agreement action, sustainable policies, or emissions reduction",
+        "semantic_content:economic_cost_benefit_framing=affordability, jobs, taxpayer costs, subsidies, energy bills, fossil-fuel profits, or renewable costs",
+        "target_directionality:criticized_actor_type=fossil-fuel industry, climate deniers, green activists/alarmists, politicians, corporations, consumers",
+        "target_directionality:mirror_shift_direction=from pro-climate/pro-renewable critique to anti-green-regulation/pro-fossil framing or vice versa",
+        "pragmatics_intent:persuasion_or_argumentation, venting_or_expressive, call_to_action"
+      ],
+      "example_post_ids": [
+        "bluesky_0088ab074b1ba5d6e0753e8cf927888fbcb215413ebc7a1eea67d36c46b0bbd2",
+        "bluesky_033a8ad2eb6f884ba3da8ec9ceb08754a57a640bef3a95ff517011a4e4398bff",
+        "bluesky_0437e0af9cdf64d0748196bfc34aea0958a14752192d1e5296866566f7320f9c42ee6da2dd39b19e14f944f9dd",
+        "bluesky_0492f4b5ff49c034b728969e4f47619ce324f0ed557eb706087aa308b1b2d1f6",
+        "bluesky_055abd5f560a2c68d6e0985de974419224b741500fb72952fc885d01de259be5",
+        "bluesky_0aab9fbd9aca6c8449a27fe565d6a49e0343b82fdf4521ce0a219bb1772d18d1",
+        "bluesky_17e01810bb2f252526de98a53a3d1c6ad99f66b6196d4bbd8eada3b699a432e3",
+        "bluesky_2bca62d8496d201404993aa02255972e3fc8d2cd44f1dfb24771415ad21e5964",
+        "bluesky_3158d9de6fdb3ca6f6c7df2ab40f40ae7e89b2269aa462339026642deedc9262",
+        "bluesky_4b818c345eae2bf93fbfa202789df8647148c998aa0cae4736a7cb480125b34f"
+      ],
+      "bucket_mix": {
+        "tp": 15,
+        "tn": 25,
+        "fp": 27,
+        "fn": 24
+      },
+      "interpretation": "Climate and energy posts recur with causal claims, policy prescriptions, and cost/affordability frames. FP cases are often climate posts with anti-elite, anti-alarmist, or economic-burden language; TN cases include more technocratic or policy-summary climate/energy discussions."
+    },
+    {
+      "cluster_id": 4,
+      "cluster_label": "Conspiracy, disinformation, elite capture, and hidden-agenda narratives",
+      "defining_features": [
+        "semantic_content:conspiratorial_framing=hidden motives, disinformation campaigns, hoaxes, propaganda, dark money, corrupt donor influence, elite control",
+        "target_directionality:elite_vs_populist_framing=wealthy elites, billionaires, corporate actors, party donors, bureaucrats, media networks versus ordinary people",
+        "semantic_content:economic_cost_benefit_framing=profit, subsidies, donor money, billionaire influence, grift, exploitation",
+        "topic_subject:primary_policy_domain=climate/energy, guns, media/disinformation, elections, public policy",
+        "pragmatics_intent:emphatic_outrage, persuasion_or_argumentation, ridicule_or_mockery",
+        "compositional_syntax:list_or_enumeration often cataloging alleged actors, hoaxes, or abuses"
+      ],
+      "example_post_ids": [
+        "bluesky_00ec0adc0eaab8070cdb2b7218266684393edff48214af655a6abc77025c0360",
+        "bluesky_04f2eabe5e416de118bfd3131661ddbaef5d163028419a5393f97d7d9caf43e7",
+        "bluesky_055abd5f560a2c68d6e0985de974419224b741500fb72952fc885d01de259be5",
+        "bluesky_139786ff112907fc25b0b8fc557b7b8dba47523eb978c09f4786449da986959f",
+        "bluesky_18c90f926c5eb6ea0d02055c5d96082a133d270c7b2dbd67838e0fa292867320",
+        "bluesky_1c12cdc163cd2ace9053acbbe6361859fcf5d7298f588c019559cdd590405f91",
+        "bluesky_1f34264a989dcfef7a778915c43ce4d78e1a39e4f35d0de89bc11be2b649fecc",
+        "bluesky_2af1b3dc37f3ab642b9ab914252223b9696920888730d375275111692d48818e",
+        "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+        "bluesky_3d8c80515b4d48c643928f637b0a08ac4e57dd13d9c93c4b2e10d0639efb5a97"
+      ],
+      "bucket_mix": {
+        "tp": 8,
+        "tn": 8,
+        "fp": 17,
+        "fn": 7
+      },
+      "interpretation": "Posts in this cluster allege coordinated deception or capture by elites, media, billionaires, parties, fossil-fuel interests, gun-control donors, or climate actors. This theme is visibly over-represented among FP, suggesting the model often removed posts with conspiratorial or corruption framing even when the ground-truth bucket was keep."
+    },
+    {
+      "cluster_id": 5,
+      "cluster_label": "Partisan reversal, elections, candidate endorsements, and party accountability lists",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=elections / party accountability / candidate endorsement / intra-party ideology / presidential performance",
+        "surface_lexical:named_proper_nouns_density=politicians, parties, candidates, presidents, advocacy organizations, election dates",
+        "target_directionality:left_right_directional_cue=explicit Republican/Democrat, MAGA, left/right, Trump/Biden, GOP/Dem contrast",
+        "pragmatics_intent:call_to_action=voting mobilization, vote-out commands, candidate support/opposition",
+        "semantic_content:policy_prescription_present=list of party platform items or candidate positions",
+        "compositional_syntax:list_or_enumeration=achievement lists, policy lists, numbered lists, bullet-style endorsements",
+        "target_directionality:mirror_shift_direction=party target flips across versions"
+      ],
+      "example_post_ids": [
+        "bluesky_00a60cda611def7235d1ac6d87c60320703653e74fb39204a819ec86d6db680b",
+        "bluesky_019de9fa96e57b2d0331926a143211e6428143ba235c73b3cc84cc56109744e7",
+        "bluesky_04a6d08b014e228e972ebe258a6204b83dcb9c8ec0b853f01ca6b4b9dde67076",
+        "bluesky_08c6be77cb0d6fa981c6363ded156e4755e04ee95513c42eeb2ebb0a2e55001e",
+        "bluesky_098a5beb88d16da209edef6a49eb06e591a2b7886edf8a18e711c9e43f03bb4c",
+        "bluesky_12bf5007e428e33636e67ea54a991993a3002704ca3f4ae7b735594cecfb0000",
+        "bluesky_1d04fc0ac403e0593dd5436b6b4520576c4994c5fd194bae73935d4fce87d5d1",
+        "bluesky_1f54e43818260582f357963cdca573287b786f9edc937d310d8b74f00cbe5135",
+        "bluesky_29af712c5ce44981ee26810c4942f275b9da56fc3d2eff1f8e781eeb960852b7",
+        "bluesky_47a3dbc8797d241824663c95400b7c2ffb36f566cb3ecc89b2c5835c3861fc5f"
+      ],
+      "bucket_mix": {
+        "tp": 11,
+        "tn": 16,
+        "fp": 14,
+        "fn": 8
+      },
+      "interpretation": "This cluster contains campaign and accountability rhetoric: endorsements, vote-out commands, list-based comparisons of party records, and attacks on candidates. The moderation relevance lies less in harm content than in high-intensity partisan targeting and repeated mirror flips."
+    },
+    {
+      "cluster_id": 6,
+      "cluster_label": "Culture-war identity, rights, and us-versus-them conflict",
+      "defining_features": [
+        "topic_subject:culture_war_topic_salience=race, gender identity, LGBTQ, abortion, religion/science, immigration, gun rights, borders, woke/DEI, authoritarianism",
+        "target_directionality:us_vs_them_framing=ingroup/outgroup opposition, broad partisan or identity-group blame",
+        "semantic_content:victimhood_or_persecution_framing=minority groups, conservatives, immigrants, children, women, trans people, religious groups, or citizens framed as targeted",
+        "semantic_content:normative_moral_language=labels opponents fascist, racist, sexist, authoritarian, tyrannical, ignorant, anti-science",
+        "pragmatics_intent:ridicule_or_mockery / sarcasm_or_irony / emphatic_outrage",
+        "compositional_syntax:list_or_enumeration=long identity or issue lists; anaphora_or_parallelism common",
+        "target_directionality:mirror_shift_direction=identity target or ideological side reverses"
+      ],
+      "example_post_ids": [
+        "bluesky_048979809e66569e3efdc00b6805081a05fdaaf70551deb9dfb41f9aad85364a",
+        "bluesky_06942b8a322fe345f19cf2e996397310309f0fea816b57edf59b9285cd33344c",
+        "bluesky_08970f15af2a960b7a5119273f78c04b4205a5304ff932784b8e6bb7f15f353d",
+        "bluesky_08b02b159ef2f1a517bde4d0a07e48e67b9e41aaa6f35f19b6c301cabef44ef8",
+        "bluesky_0bd32b5cb97fddccc1185d0086be28753a0bbcc3971faa00ef052c8009bf8dfd",
+        "bluesky_12c0bc0d50004883a68ec87e864bf5f89b6c3f650819e1816c087c94a9690d17",
+        "bluesky_1f618eb22c2517e63f0a9f3b1316090c10646898191d3772ff8b3755f98af925",
+        "bluesky_2ca3b949d6fcb407be2b714098d127c399bf0aac94248795d1abe4cbcae30bd3",
+        "bluesky_2f7301e79c8c121c78f00411c4047afc381df82aee30cb83ebe111e7fc0f176b",
+        "bluesky_3e90dcf914f245dc6d16a944867bd11aa5fd7e79d22eae7c151a6b53eefa3fd7"
+      ],
+      "bucket_mix": {
+        "tp": 13,
+        "tn": 8,
+        "fp": 21,
+        "fn": 8
+      },
+      "interpretation": "These posts combine policy with identity conflict and broad moralized outgroup descriptions. FP is elevated where long identity lists, fascism/authoritarianism labels, or sweeping partisan characterizations occur, even without explicit threats."
+    },
+    {
+      "cluster_id": 7,
+      "cluster_label": "Rhetorical questions, sarcasm, mockery, profanity, and high-emotion political venting",
+      "defining_features": [
+        "surface_lexical:profanity_or_taboo_language and/or informal_register_or_slang",
+        "surface_lexical:all_caps_emphasis or high_punctuation_intensity",
+        "pragmatics_intent:ridicule_or_mockery, sarcasm_or_irony, emphatic_outrage, venting_or_expressive",
+        "compositional_syntax:rhetorical_question, second_person_direct_address, contrastive_but_however_structure",
+        "semantic_content:normative_moral_language=strong insult, moral condemnation, hypocrisy accusation",
+        "target_directionality:criticized_actor_type=political party, public figure, ideological outgroup, media outlet, interlocutor"
+      ],
+      "example_post_ids": [
+        "bluesky_019fa32e4ac2765762e9f7221a24cc4b4f3458dfb10eb57d85005cc1cb313a6c",
+        "bluesky_04b7f0b6bc4598605ef9497a7d478f8a8569f5f90f5a257fd76858c8ce0ae336",
+        "bluesky_0911962dad685aaf8c793099abd1ce0cca1c49f474fa2bcc55517b5f56b690a2",
+        "bluesky_1383519c26b38f1762cdc7ad27a9a06cb33809ab01ea8af717d528291b7f2ac3",
+        "bluesky_16ae9e85e9eacb490a349b163c714dacc0e2494c4f1bd1ce0d864339be924d89",
+        "bluesky_1ab2f57f7afd7f0ff13804fa3d180293a8f5b5b6cf7d570166d5c2832bbf7071",
+        "bluesky_2c4ba6fc6e477bdb85768cb02abe1d8d7e8574662337c096c1ee4435f97aa251",
+        "bluesky_2f14603991e7b6e746bfdc240c7c218d7e4ed9523c6fc20d98f12eaa35a153c3",
+        "bluesky_34ed87157559f2ae65d46bc3a74d2048940a26080e18d058ebc9084417b88f6d",
+        "bluesky_39b6f595379cc32a8b27155bdd71645ce80f376a0332ae9e2f9b7b2f90d3af8f"
+      ],
+      "bucket_mix": {
+        "tp": 20,
+        "tn": 9,
+        "fp": 25,
+        "fn": 14
+      },
+      "interpretation": "This is a style cluster rather than a single issue cluster. It recurs across guns, climate, immigration, and partisan posts. FP is high relative to TN when profanity, all-caps, direct insults, second-person challenge, or rhetorical-question outrage appear."
+    },
+    {
+      "cluster_id": 8,
+      "cluster_label": "Immigration, borders, policing, public safety, and enforcement analogies",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=immigration enforcement / border security / policing / public safety / crime",
+        "topic_subject:culture_war_topic_salience=open borders, sanctuary cities, ICE, soft-on-crime, policing, race/language identity",
+        "semantic_content:causal_claim_present=policies or enforcement practices cause crime, intimidation, emissions, rights loss, or public-safety outcomes",
+        "semantic_content:victimhood_or_persecution_framing=immigrants, communities, law-abiding citizens, or victims framed as threatened",
+        "target_directionality:criticized_actor_type=ICE/federal agencies, sanctuary officials, Democrats/leftists, criminals, police, government",
+        "compositional_syntax:rhetorical_question, list_or_enumeration, contrastive_but_however_structure",
+        "target_directionality:mirror_shift_direction=often shifts from gun reform to border security or from immigration enforcement critique to conservative enforcement critique"
+      ],
+      "example_post_ids": [
+        "bluesky_0124cf953eceb26614c7a5439a94d734a5e9ba3378b3dae5b4b9debc827b8aa9",
+        "bluesky_018492da4241ce43312dbc25c3a3a0663c6d623fab5bf96eb8ee76eba8124ffa",
+        "bluesky_038bb4fe0e6614fcaf63ada006aa37f2ba0a127357fbe2b123360a1977e43cbb",
+        "bluesky_1017943b8e0d21d7d898f3889d243b67c7463670d6d7b4c102e5636d04cb9069",
+        "bluesky_23cd686b1b1e49e1b9812f44ab9f67bce04f8428bfbb2f8af1acb980c6880efc",
+        "bluesky_2b71ae67511d55784cb338ad1068638d9c4f38d12eca660a72f90faaec5cbdf7",
+        "bluesky_2cd4060cb779f60165166fe743a3d3c6a99e4998e2f9ed9cfb8ab74f1dded3a6",
+        "bluesky_312b55723adc4a91d273ee1ce0d3bc2c6053322bc9ddd905dc774de1bd411e10",
+        "bluesky_31792261ffb33f5db4d5624e49c63d2c782664a9d8253817db5090624fd59c0d",
+        "bluesky_38f563e48ab134db6d6eb62167173a7346a8d43dc2e6f6eb2494c3b5a2232e5f"
+      ],
+      "bucket_mix": {
+        "tp": 5,
+        "tn": 5,
+        "fp": 13,
+        "fn": 6
+      },
+      "interpretation": "Immigration and enforcement appear both as primary topics and as mirrors of gun/climate arguments. FP is elevated where posts combine enforcement agencies, border/crime frames, victimhood, and partisan blame."
+    },
+    {
+      "cluster_id": 9,
+      "cluster_label": "Legal/constitutional interpretation, rights tradeoffs, and regulatory due-process arguments",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=law / constitutional interpretation / Second Amendment / First Amendment / voter ID / courts / civil liberties",
+        "topic_subject:specific_event_or_bill_reference=constitutional amendments, Real ID Act, Brady Bill, Federal Gun Control Act, red flag laws, court rulings",
+        "semantic_content:factual_assertion_vs_speculation=asserts legal interpretation, eligibility, regulatory facts, or constitutional inconsistency",
+        "semantic_content:policy_prescription_present=remove/protect amendments, term limits, due process, ID requirements, red-flag standards",
+        "semantic_content:normative_moral_language=rights-violation condemnation or rule-of-law appeal",
+        "compositional_syntax:quote_or_attribution_embedding, list_or_enumeration, contrastive_but_however_structure",
+        "target_directionality:mirror_shift_direction=rights target often flips between gun rights, speech rights, abortion, voting, or civil rights"
+      ],
+      "example_post_ids": [
+        "bluesky_01e3ccf4879a25601e165b9eaeff63cb297d58becae158037e396fcdc292b898",
+        "bluesky_095f79c7492d4dbc4650bf2312ff6816825472759b9961798f1ce254851727a9",
+        "bluesky_0d49276dde11fd674b3c2673d9d03d6e3c28c502248a087c8bafccd16702029a",
+        "bluesky_12da481ddafe5e70142881605c8a62098ac35149e9b6f17d3e3260171995e817",
+        "bluesky_1feb8bddddf65f2f5ce2cd6715dfce185a7ec786bd76142528f9fda0e1ff25e2",
+        "bluesky_2a575d06d4bafddcd29808ef025cfb04d193b66166ff53ef1c5e4f0d8abf0f61",
+        "bluesky_2ed3f30e63b4d6f15be88e77a483f60834d68df7d544caf9438174ec1076721d",
+        "bluesky_36ab037280ea5b85deb1f1a9f5d1613830c01e2006426931164c42a9545b3cec",
+        "bluesky_39110601a53f8ff333c4f6b32224b37088e333149631b79316cb11da7d70acd1",
+        "bluesky_468bdc88b8e661b704c481535d5eedda6c38daa104d917d1af7ca31b5f91a53e"
+      ],
+      "bucket_mix": {
+        "tp": 6,
+        "tn": 7,
+        "fp": 12,
+        "fn": 7
+      },
+      "interpretation": "These posts are legalistic or constitutional rather than purely emotive. FP is somewhat elevated when rights-abuse, Nazi/authoritarian comparisons, or amendment-removal/protection language is present."
+    },
+    {
+      "cluster_id": 10,
+      "cluster_label": "Violence, violent imagery, punitive prescriptions, and safety-threat scenarios",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=mass shootings / gun violence / criminal punishment / public safety / self-defense",
+        "open_ended:graphic_violent_imagery or extrajudicial_punishment_language where present",
+        "semantic_content:policy_prescription_present=punishment, prosecution, immediate execution, return fire, armed response, loss of gun rights, or defensive preparation",
+        "semantic_content:victimhood_or_persecution_framing=children, families, shooting victims, law-abiding citizens, or threatened communities",
+        "pragmatics_intent:call_to_action, emphatic_warning, emphatic_outrage, venting_or_expressive",
+        "target_directionality:criticized_actor_type=mass shooters, violent offenders, extremists, tyrants, armed actors, parents providing weapons"
+      ],
+      "example_post_ids": [
+        "bluesky_038c30836b0ae38c6c4ceae534d2e054f15a49aa34e26a71ea8c272c4a75f5b4",
+        "bluesky_07a570fe0db5b608dba9ed0e5bf41b30c505002a8278446d9a9d4c1c0e4a6e30",
+        "bluesky_0c0c8fe880b22cc36e08ea9f1bcfbc83148f2147c203a20d56bccd30e0d94e19",
+        "bluesky_1ab2f57f7afd7f0ff13804fa3d180293a8f5b5b6cf7d570166d5c2832bbf7071",
+        "bluesky_23745a1aa08797cba61ae4d43ff9b6a4b7a3155a9a6dfea0b89b90edd4fd3946",
+        "bluesky_285f93b00624594348a06cdc6c92e27d177f041f4cbb98ffe57a918314426975",
+        "bluesky_291177513667380b216e18b003d8a1c88211764d844492f048b94241cdd1e49d",
+        "bluesky_2ec5909cd61ce659a834bd739c27a5aa4bf5af5448188ee76105e9bb7c1b1623",
+        "bluesky_3bc8ce4f78872eb55dbb668f1a1eeff4efa469bd9f3eaa4b8a1189b9572d7e90",
+        "bluesky_3c7b3c589ef1221b33a4a2b5e730c4d828a526d1e9785b9755c3409e58f88aaa"
+      ],
+      "bucket_mix": {
+        "tp": 6,
+        "tn": 4,
+        "fp": 10,
+        "fn": 3
+      },
+      "interpretation": "A smaller but moderation-salient cluster includes violent imagery, punitive or armed-response prescriptions, and threat-preparation rhetoric. FP is high, consistent with the classifier being sensitive to safety threats and violence-adjacent language even in political argument contexts."
+    },
+    {
+      "cluster_id": 11,
+      "cluster_label": "Technocratic policy lists, comparative governance, budgets, and multi-issue platforms",
+      "defining_features": [
+        "topic_subject:primary_policy_domain=multi-issue domestic policy / healthcare / taxation / climate / military / education / public spending / governance",
+        "semantic_content:policy_prescription_present=multiple explicit policy demands or platform items",
+        "semantic_content:economic_cost_benefit_framing=budgets, taxes, subsidies, jobs, spending priorities, healthcare costs, economic competence",
+        "pragmatics_intent:persuasion_or_argumentation or call_to_action",
+        "compositional_syntax:list_or_enumeration=long enumerations, bullet lists, numbered platforms",
+        "topic_subject:geographic_scope=US, Canada, international comparisons, comparative democracies",
+        "target_directionality:mirror_shift_direction=progressive agenda reversed to conservative/free-market/nationalist agenda or vice versa"
+      ],
+      "example_post_ids": [
+        "bluesky_019de9fa96e57b2d0331926a143211e6428143ba235c73b3cc84cc56109744e7",
+        "bluesky_066b0c1d60b60f5e8bb254ac464ac95b6330bbf0afb72fdcebdc141f5ac47176",
+        "bluesky_0c758190605f2268c3af997395719b45f11879b1d38db29c041cac8b428f3deb",
+        "bluesky_0d62698c7e468970a288e1c65944d1cf964822b242a747160c04421cf89d05b8",
+        "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+        "bluesky_1dde3faa493355194b37776eafb4389afbae05699fde64e382bd49b99747da1d",
+        "bluesky_2ecf8173af6bf29b5b3f6ea05d565136be34985ecc65d35b5c08b130712d4779",
+        "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+        "bluesky_398873b7128c91a10771dff0405a3d761bf5daaef21c6ad99f66b6196d4bbd8eada3b699a432e3",
+        "bluesky_3de4cf3a349364bef2ed980ab3ce50b8ff7b6fbf78275c73bc127f5834581dc2"
+      ],
+      "bucket_mix": {
+        "tp": 4,
+        "tn": 8,
+        "fp": 8,
+        "fn": 5
+      },
+      "interpretation": "These posts are list-heavy policy platforms or comparative arguments. They are often keep-like when neutral or technocratic, but FP appears when list-based policy advocacy is paired with corruption, ridicule, or partisan retargeting."
+    },
+    {
+      "cluster_id": 12,
+      "cluster_label": "Media, science, historical analogy, and expertise-based argumentation",
+      "defining_features": [
+        "topic_subject:historical_analogy_reference=Paris Agreement, Katrina/COVID, Nazi analogy, colonial history, Jim Brady/Reagan, moon landing, long-standing climate science",
+        "topic_subject:specific_event_or_bill_reference=named shootings, climate reports, agreements, manuals, court rulings, elections",
+        "semantic_content:factual_assertion_vs_speculation=asserts evidence, statistics, historical records, expert claims, or scientific consensus",
+        "pragmatics_intent:persuasion_or_argumentation=uses history or expertise to argue hypocrisy or policy conclusions",
+        "target_directionality:criticized_actor_type=media outlets, climate deniers, politicians, ideological/religious groups, policy opponents",
+        "compositional_syntax:quote_or_attribution_embedding common"
+      ],
+      "example_post_ids": [
+        "bluesky_00627d49ea1498f0fab3e0f3a2b1caf677064b7d76c8d1154d353446a2500bf5",
+        "bluesky_04b7f0b6bc4598605ef9497a7d478f8a8569f5f90f5a257fd76858c8ce0ae336",
+        "bluesky_0b7c5f162b72e37f968d9c82f66507205d610d95048437b8a0071f469362e281",
+        "bluesky_103bcbd09e5b40df87275cafc362b920e93e8155dfef81558ec2da2c0118bb33",
+        "bluesky_1c0f99135067b1644ed96886ebf749f0efbbde030f4369e66289a08cfac508fe",
+        "bluesky_1c1bc32998443d04f33b455893d00a6eb5985debf8a11c12aca4264d42225ad7",
+        "bluesky_238406b972e6c47a062dd42704c1c1179677c9c0d8aa0a98d35823732e404118",
+        "bluesky_3a065195e7cbead358ebb7b62833d9f21cc331d34f110abd52110a037d39805a",
+        "bluesky_3af7be3366c75167e40148bebce8dfea11de28775af92b45fba71ae5bc078037",
+        "bluesky_3f881c29bcd3e75a7c237ceb2becf41198684178c4c8e4dd48a275a9013ee004"
+      ],
+      "bucket_mix": {
+        "tp": 9,
+        "tn": 6,
+        "fp": 10,
+        "fn": 10
+      },
+      "interpretation": "This cluster relies on factual, historical, scientific, or expert-reference argumentation. It cuts across climate, guns, public health, media, and law; the classifier errors are mixed because evidence-based language can co-occur with sarcasm, accusations of lying, or historical extremity analogies."
+    }
+  ],
+  "cross_cutting_themes": [
+    "Mirror-shift reversals are pervasive: many posts share the same linguistic structure while flipping target direction from right to left, fossil fuels to renewables, gun reform to gun rights, immigration enforcement to border security, or one identity group to another.",
+    "Gun policy dominates the shard: gun reform, Second Amendment rights, red flag laws, background checks, assault-weapon bans, open/concealed carry, self-defense, and NRA/gun-lobby blame recur across nearly every bucket.",
+    "Climate/energy is the second major domain: climate science, renewables, fossil fuels, Paris Agreement, carbon emissions, energy affordability, green mandates, and climate alarmism/denial appear repeatedly.",
+    "Normative moral language is nearly universal: posts frame opponents as dishonest, authoritarian, racist, ignorant, evil, corrupt, tyrannical, anti-child, anti-rights, or profit-driven.",
+    "Victimhood/persecution framing recurs across ideological sides: children, shooting survivors, law-abiding gun owners, immigrants, trans people, Black communities, women, conservatives, workers, future generations, soldiers, and ordinary families are all framed as victims.",
+    "Economic-cost and elite-capture frames cut across guns and climate: money, subsidies, donors, billionaires, taxpayer costs, energy bills, profits, budget priorities, and grift appear as recurring justifications for blame.",
+    "High-arousal style is common: profanity, all-caps, repeated punctuation, rhetorical questions, sarcasm, mockery, direct second-person address, and emphatic outrage frequently co-occur with policy argumentation.",
+    "List/enumeration structures are common in both campaign/platform posts and accusatory posts: policy lists, identity lists, achievement lists, mass-shooting lists, and lists of alleged abuses.",
+    "Historical analogy and event references are used to increase stakes: Sandy Hook, Uvalde, Parkland, Jim Brady/Reagan, Katrina/COVID, Nazi analogies, colonial history, Paris Agreement, constitutional amendments, and named court/legal events recur.",
+    "Moderation-relevant risk often arises from the combination of targeted outgroup blame plus demeaning language or violent/punitive prescriptions, rather than from the policy topic alone."
+  ],
+  "fp_specific_themes": [
+    "FP posts are over-represented in high-emotion style: profanity, all-caps, exclamation intensity, rhetorical questions, direct insults, and ridicule/mockery appear more often than in TN examples, especially in gun and climate arguments.",
+    "FP posts are over-represented in conspiratorial/hidden-agenda framing: climate hoax/alarmism, dark-money disinformation, elite control, billionaire/donor orchestration, gun-confiscation plots, deep-state/corruption frames, and media propaganda are common compared with TN.",
+    "FP posts are over-represented in victimhood/persecution plus rights language: law-abiding gun owners being disarmed, children or victims being abandoned, immigrants being targeted, groups being excluded from America, or citizens losing rights are often paired with moral condemnation.",
+    "FP posts are over-represented in broad partisan or identity-group condemnation: MAGA, Republicans, Democrats, leftists, conservatives, liberals, elites, or whole national/social groups are targeted with sweeping negative judgments more often than TN's more policy-specific criticism.",
+    "FP posts more often include explicit culture-war salience: trans issues, abortion, open borders, race/gender identity, woke/DEI, religion/science, authoritarianism/fascism, and child-protection rhetoric combined with guns or climate.",
+    "FP posts more often include economic-populist blame around climate/energy or guns: green mandates as job killers, fossil-fuel or renewable profiteers, billionaire gun-control donors, taxpayer burdens, energy bills, and elite profit/control narratives.",
+    "FP gun posts often combine policy prescriptions with emotionally charged child-victim or rights-loss framing; TN gun posts more often appear as shorter, more bounded policy discussion, factual regulation claims, or campaign/endorsement statements.",
+    "FP climate posts often frame one side as alarmists/deniers/profiteers or imply hidden harmful motives; TN climate posts more often include technocratic policy, affordability/reliability tradeoffs, or named policy summaries without the same level of demeaning outgroup language.",
+    "FP posts show more punitive or violence-adjacent language than TN: extrajudicial punishment, return-fire imperatives, graphic violent imagery, threats of armed political protection, and intense fantasies of accountability appear in FP examples.",
+    "FP posts are more likely than TN to combine several risk features at once: a controversial policy domain, direct target, moral condemnation, victimhood, conspiracy/economic capture, and high-intensity style."
+  ]
+}

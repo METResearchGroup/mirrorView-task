@@ -1,0 +1,38 @@
+{
+  "source": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/base_model_llm_labels.csv",
+  "n_total": 8791,
+  "buckets": {
+    "tp": {
+      "rows": 2067,
+      "expected": 2067,
+      "path": "outputs/confusion_splits/true_positives.csv",
+      "match_expected": true
+    },
+    "tn": {
+      "rows": 3572,
+      "expected": 3572,
+      "path": "outputs/confusion_splits/true_negatives.csv",
+      "match_expected": true
+    },
+    "fp": {
+      "rows": 2406,
+      "expected": 2406,
+      "path": "outputs/confusion_splits/false_positives.csv",
+      "match_expected": true
+    },
+    "fn": {
+      "rows": 746,
+      "expected": 746,
+      "path": "outputs/confusion_splits/false_negatives.csv",
+      "match_expected": true
+    }
+  },
+  "sanity": {
+    "union_equals_total": true,
+    "pairwise_disjoint": true,
+    "fp_plus_fn_errors": true,
+    "tp_plus_fn_human_remove": true,
+    "tn_plus_fp_human_keep": true,
+    "all_expected_match": true
+  }
+}

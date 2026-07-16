@@ -1,0 +1,12 @@
+{
+  "scope": "v1",
+  "n_feature_rows": 3341,
+  "buckets": [
+    "fn",
+    "fp",
+    "tn",
+    "tp"
+  ],
+  "n_posts": 320,
+  "snippet": "outputs/text_mining/progress_snippet.md"
+}

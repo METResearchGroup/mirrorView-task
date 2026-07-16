@@ -1,0 +1,39 @@
+{
+  "scope": "v1",
+  "model_primary": "gpt-5.5",
+  "model_fallback": "gpt-5.4-nano",
+  "pricing_as_of": "2026-07-15",
+  "planned_calls": 20,
+  "skipped_existing": 0,
+  "new_calls": 20,
+  "unique_completed_batches": 20,
+  "total_prompt_tokens": 84797,
+  "total_completion_tokens": 256113,
+  "total_cached_tokens": 0,
+  "total_cost_usd": 8.107375,
+  "by_bucket": {
+    "fp": {
+      "calls": 8,
+      "cost_usd": 3.2578350000000005
+    },
+    "fn": {
+      "calls": 4,
+      "cost_usd": 1.5661399999999999
+    },
+    "tp": {
+      "calls": 4,
+      "cost_usd": 1.7375250000000002
+    },
+    "tn": {
+      "calls": 4,
+      "cost_usd": 1.545875
+    }
+  },
+  "by_model": {
+    "gpt-5.5": {
+      "calls": 20,
+      "cost_usd": 8.107375
+    }
+  },
+  "updated_at": "2026-07-16T04:37:31.607812+00:00"
+}
