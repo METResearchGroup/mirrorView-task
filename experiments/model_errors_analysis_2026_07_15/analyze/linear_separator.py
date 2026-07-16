@@ -1,13 +1,13 @@
-"""V1.3A — Balanced logistic regression: Titan only_original → is_error.
+"""Balanced logistic regression: Titan only_original → is_error.
 
 Loads the shared ``split_ids.json`` (does **not** re-split). Fits
 ``LogisticRegression(class_weight='balanced')`` on train post IDs and evaluates
 on test. Writes metrics, model, coefficients, and predictions under
-``outputs/v1_bedrock/``.
+``outputs/analysis/``.
 
 Run from repo root::
 
-    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_linear_separator.py
+    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/linear_separator.py
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ from analyze.paths import (  # noqa: E402
     PROGRESS_UPDATES_TRAIN_PATH,
     SPLIT_IDS_PATH,
     SPLIT_SEED,
-    V1_DIR,
+    ANALYSIS_DIR,
 )
 
 
@@ -66,7 +66,7 @@ def _utc_now() -> str:
 
 
 def append_train_progress(lines: list[str]) -> None:
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     existing = ""
     if PROGRESS_UPDATES_TRAIN_PATH.is_file():
         existing = PROGRESS_UPDATES_TRAIN_PATH.read_text(encoding="utf-8")
@@ -79,7 +79,7 @@ def append_train_progress(lines: list[str]) -> None:
 def load_split_ids() -> dict[str, Any]:
     if not SPLIT_IDS_PATH.is_file():
         raise FileNotFoundError(
-            f"Missing shared split {SPLIT_IDS_PATH}. Run v1_split.py first; "
+            f"Missing shared split {SPLIT_IDS_PATH}. Run split.py first; "
             "do not re-split in this script."
         )
     payload = json.loads(SPLIT_IDS_PATH.read_text(encoding="utf-8"))
@@ -212,7 +212,7 @@ def evaluate_split(
 
 def write_metrics_partial(payload: dict[str, Any]) -> None:
     """Write metrics early / as we go (both canonical + alias paths)."""
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, indent=2) + "\n"
     LINEAR_SEPARATOR_METRICS_PATH.write_text(text, encoding="utf-8")
     LOGISTIC_METRICS_PATH.write_text(text, encoding="utf-8")

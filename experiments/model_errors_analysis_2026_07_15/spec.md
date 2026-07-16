@@ -10,13 +10,13 @@ This document is an implementation spec only. Do **not** run the analysis until 
 
 ## Purpose
 
-After the July 2026 keep/remove ladder, we want a single table of per-post correctness for **Bedrock Qwen3 Next 80B**, then analysis of that model’s right vs wrong (and, for V1, whether that signal is linearly separable in Titan embedding space).
+After the July 2026 keep/remove ladder, we want a single table of per-post correctness for **Bedrock Qwen3 Next 80B**, then analysis of that model’s right vs wrong (and whether that signal is linearly separable in Titan embedding space).
 
 ---
 
 ## Primary correctness signal
 
-For any analysis that needs **one** right-vs-wrong label per post (especially **V1**), use **only** this run:
+For any analysis that needs **one** right-vs-wrong label per post , use **only** this run:
 
 ### Why Qwen3 Next 80B
 
@@ -41,7 +41,7 @@ Among complete eligible Bedrock / LLM-API keep/remove runs in the parent study (
 
 ## Scope
 
-### In scope (V0 data product)
+### In scope (labels CSV)
 
 Collect labels + predictions into `base_model_llm_labels.csv` from the **Qwen3 Next 80B Bedrock run** (`qwen3-next-80b-a3b` @ `2026_07_06-16:57:43/`) under `experiments/predict_keep_remove_2026_07_01/`. That run:
 
@@ -49,17 +49,17 @@ Collect labels + predictions into `base_model_llm_labels.csv` from the **Qwen3 N
 2. Uses the **canonical study texts** (`original_text`, `mirror_text` from `keep_remove_results_2026_06_23.csv`).
 3. Has `family=bedrock` and `classifier_id=bedrock/qwen3-next-80b-a3b`.
 
-### In scope (V1 analysis)
+### In scope (error-separability analysis)
 
 **Primary:** right-vs-wrong for `bedrock/qwen3-next-80b-a3b` — see § Primary correctness signal. That run uses the study linked-fate prompt with both posts (blinded Post 1/Post 2 shuffle), matching what participants saw.
 
-V1 loads **original-post** Titan embeddings via `embeddings/features/only_original.py` (cache: `embeddings/cache_loader.py`) as **analysis features** for a logistic right/wrong probe and 2D viz. Those embeddings are **not** a V0 label source. Do **not** use `concat_cosine` or other combined embedding features for V1.
+Analysis loads **original-post** Titan embeddings via `embeddings/features/only_original.py` (cache: `embeddings/cache_loader.py`) as **analysis features** for a logistic right/wrong probe and 2D viz. Those embeddings are **not** a label source. Do **not** use `concat_cosine` or other combined embedding features for this analysis.
 
 ### Out of scope (for now)
 
 - Other Bedrock / LLM-API classifier runs as label sources for this experiment.
 - Length-matching / truncation experiments as classification sources.
-- Implementing explainability / clustering writeups beyond what V1 needs (see `HOW_TO_DO_CLUSTERING.md`, `HOW_TO_DO_EXPLAINABILITY.md` for later).
+- Implementing explainability / clustering writeups beyond what this experiment needs (see `HOW_TO_DO_CLUSTERING.md`, `HOW_TO_DO_EXPLAINABILITY.md` for later).
 
 ---
 
@@ -112,14 +112,14 @@ Stimulus: Study prompt + original **and** mirror texts; deterministic Post 1/Pos
 
 **Status in this worktree:** `predictions.csv` is present at the timestamp path above. **Do not** call Bedrock again.
 
-### V1-only analysis inputs (not V0 label sources)
+### Analysis inputs (embeddings — not label sources)
 
 | Role | Path |
 | --- | --- |
 | Embedding cache loader | `experiments/predict_keep_remove_2026_07_01/embeddings/cache_loader.py` |
-| Feature helper (V1 locked) | `experiments/predict_keep_remove_2026_07_01/embeddings/features/only_original.py` |
+| Feature helper (locked) | `experiments/predict_keep_remove_2026_07_01/embeddings/features/only_original.py` |
 
-Use these **only** when building the V1 right-vs-wrong separator. V1 features are **original-post Titan embeddings only** (`only_original` → shape `(256,)`). Do **not** use `concat_cosine`, difference, mirrored-only, or other combined embedding feature builders for V1.
+Use these **only** when building the right-vs-wrong separator. Features are **original-post Titan embeddings only** (`only_original` → shape `(256,)`). Do **not** use `concat_cosine`, difference, mirrored-only, or other combined embedding feature builders for this analysis.
 
 ---
 
@@ -170,11 +170,11 @@ experiments/model_errors_analysis_2026_07_15/
     build_long_csv.py              # join texts + labels → base_model_llm_labels.csv
   analyze/
     hard_pairs.py                  # error-rate tables
-    v1_build_table.py              # labels + only_original embeddings
-    v1_split.py                    # single post-level train/test split → split_ids.json
-    v1_linear_separator.py         # branch A: logistic on shared split
-    v1_embed_2d.py                 # branch B: PCA/LDA viz on shared split
-    v1_cluster.py                  # V1.4: reduced-space clustering (add-on)
+    build_table.py              # labels + only_original embeddings
+    split.py                    # single post-level train/test split → split_ids.json
+    linear_separator.py         # branch A: logistic on shared split
+    embed_2d.py                 # branch B: PCA/LDA viz on shared split
+    cluster.py                  # reduced-space clustering (add-on)
   outputs/                         # gitignore bulk artifacts if large
 ```
 
@@ -206,7 +206,7 @@ Assert:
 - `label` distribution matches training dataframe.
 - Accuracy recomputed from the labels CSV matches that run’s `metrics.json` within rounding tolerance.
 
-### Step 5 — Hard-pair slicing helpers (V0 analysis product)
+### Step 5 — Hard-pair slicing helpers (optional)
 
 From the labels CSV, produce at least:
 
@@ -220,11 +220,11 @@ From the labels CSV, produce at least:
 
 ---
 
-## V1 analysis plan — right vs wrong separator
+## Analysis plan — right vs wrong separator
 
 **Goal:** Using the **primary correctness signal** (§ Primary correctness signal), ask whether **original-post** Titan embeddings (`only_original`, shape `(256,)`) linearly separate posts that Qwen3 Next 80B got right vs wrong, and whether that structure is visible in 2D.
 
-### V1 classifier filter (locked)
+### Classifier filter (locked)
 
 - **`classifier_id = bedrock/qwen3-next-80b-a3b` only** for the right-vs-wrong target.
 - Source: `base_model_llm_labels.csv` rows (equivalently the run dir above).
@@ -232,7 +232,7 @@ From the labels CSV, produce at least:
 
 ### Embeddings source (analysis input only)
 
-V0’s labels CSV is correctness from Qwen3 Next 80B. V1 asks whether those right/wrong outcomes are linearly organized in embedding space, so it needs a numeric feature matrix joined on `post_id`. Titan embeddings from the existing cache supply that matrix. They are **not** another V0 label source.
+The labels CSV is correctness from Qwen3 Next 80B. The analysis asks whether those right/wrong outcomes are linearly organized in embedding space, so it needs a numeric feature matrix joined on `post_id`. Titan embeddings from the existing cache supply that matrix. They are **not** another label source.
 
 Reuse existing Titan embeddings as **features for the right-vs-wrong linear probe**, **do not** re-embed unless cache miss:
 
@@ -244,7 +244,7 @@ experiments/predict_keep_remove_2026_07_01/embeddings/cache_loader.py
 # DDB: jspsych-mirror-view-embedding-cache
 ```
 
-**V1 feature vector (locked — original post only):**
+**Feature vector (locked — original post only):**
 
 | Field | Value |
 | --- | --- |
@@ -253,41 +253,41 @@ experiments/predict_keep_remove_2026_07_01/embeddings/cache_loader.py
 | Shape | `(256,)` — `orig_emb` from Titan `amazon.titan-embed-text-v2:0` |
 | Builder API | `OnlyOriginalEmbeddingFeatureBuilder` / `build_xy_from_joined` |
 
-**Out of scope for V1 (do not use as features):**
+**Out of scope for this analysis (do not use as features):**
 
 - `concat_cosine` (`[orig_emb, mirror_emb, cosine]` → `(513,)`)
 - Difference / Hadamard / abs-diff of orig vs mirror
 - Mirrored-post embeddings alone or any concat of orig+mirror
 - Stance/toxicity OHE or other non-embedding side features
 
-Clarification: fitting a logistic regression **on original-post Titan features to predict Qwen `is_error`** is part of V1 analysis (a probe on the correctness signal). It is **not** a competing keep/remove classifier family.
+Clarification: fitting a logistic regression **on original-post Titan features to predict Qwen `is_error`** is part of this analysis (a probe on the correctness signal). It is **not** a competing keep/remove classifier family.
 
-### V1 pipeline topology (single split → parallel branches)
+### Pipeline topology (single split → parallel branches)
 
 Both the linear separator and the 2D visualization **must** consume the **same** train/test post IDs. Split once; never re-split independently inside either branch.
 
 ```mermaid
 flowchart TD
-  L[base_model_llm_labels.csv] --> T[V1.1 Build analysis table]
+  L[base_model_llm_labels.csv] --> T[Build analysis table]
   E[only_original Titan cache] --> T
-  T --> S[V1.2 Single train/test split]
-  S --> A[V1.3A Logistic regressor]
-  S --> B[V1.3B 2D PCA / LDA viz]
-  S --> C[V1.4 Reduced-space clustering]
-  A --> O[outputs/v1_bedrock/]
+  T --> S[Single train/test split]
+  S --> A[Logistic / linear separator]
+  S --> B[2D PCA / LDA viz]
+  S --> C[Reduced-space clustering]
+  A --> O[outputs/analysis/]
   B --> O
   C --> O
 ```
 
 | Step | Name | Consumes | Produces | Parallel? |
 | --- | --- | --- | --- | --- |
-| **V1.1** | Build analysis table | Labels CSV + `only_original` embeddings | `outputs/v1_bedrock/analysis_table.parquet` (or `.csv`) | sequential |
-| **V1.2** | **Single train/test split** | Analysis table | `outputs/v1_bedrock/split_ids.json` | sequential (gate) |
-| **V1.3A** | Train linear / logistic separator | Analysis table + `split_ids.json` | metrics, coefs, pred CSV | **parallel with B** |
-| **V1.3B** | 2D reduction + visualization | Analysis table + `split_ids.json` | PCA/LDA plots, `embeddings_2d.csv` | **parallel with A** |
-| **V1.4** | Reduced-space clustering | Analysis table + `split_ids.json` + labels CSV | cluster assignments, lift table, plots, exemplars | after V1.2 (add-on) |
+| 1 | Build analysis table | Labels CSV + `only_original` embeddings | `outputs/analysis/analysis_table.parquet` (or `.csv`) | sequential |
+| 2 | Single train/test split | Analysis table | `outputs/analysis/split_ids.json` | sequential (gate) |
+| 3A | Linear / logistic separator | Analysis table + `split_ids.json` | metrics, coefs, pred CSV | **parallel with 3B** |
+| 3B | 2D reduction + visualization | Analysis table + `split_ids.json` | PCA/LDA plots, `embeddings_2d.csv` | **parallel with 3A** |
+| 4 | Reduced-space clustering | Analysis table + `split_ids.json` + labels CSV | cluster assignments, lift table, plots, exemplars | after shared split (add-on) |
 
-### V1.1 — Build analysis table
+### Build analysis table
 
 Target: from labels-CSV rows with `classifier_id == bedrock/qwen3-next-80b-a3b`, set `y = 1` if that prediction is **wrong** (`is_correct == 0`), `y = 0` if **correct** (prefer `is_error` as positive class so precision/recall speak about hard cases).
 
@@ -295,11 +295,11 @@ Target: from labels-CSV rows with `classifier_id == bedrock/qwen3-next-80b-a3b`,
 2. Join **original-post** Titan embeddings on `post_id` via `only_original` (no mirror / concat / cosine features).
 3. Emit one row per `post_id` with: `post_id`, `label`, `is_correct`, `is_error`, and the `(256,)` embedding (stored as columns or a fixed-width vector field).
 
-Artifact: `outputs/v1_bedrock/analysis_table.parquet` (CSV acceptable if preferred).
+Artifact: `outputs/analysis/analysis_table.parquet` (CSV acceptable if preferred).
 
-### V1.2 — Single train/test split (shared by both branches)
+### Single train/test split (shared by both branches)
 
-**One** post-level split; both V1.3A and V1.3B load these IDs and must not call `train_test_split` again.
+**One** post-level split; both the linear separator and 2D reduction load these IDs and must not call `train_test_split` again.
 
 | Field | Value |
 | --- | --- |
@@ -307,7 +307,7 @@ Artifact: `outputs/v1_bedrock/analysis_table.parquet` (CSV acceptable if preferr
 | Stratify on | `is_error` (right vs wrong balance in train and test) |
 | `train_split` | `0.8` |
 | `seed` | `42` |
-| Artifact | `outputs/v1_bedrock/split_ids.json` |
+| Artifact | `outputs/analysis/split_ids.json` |
 
 Suggested `split_ids.json` schema:
 
@@ -325,49 +325,49 @@ Suggested `split_ids.json` schema:
 
 Assert `train_post_ids ∩ test_post_ids = ∅` and that every analysis-table `post_id` appears in exactly one list.
 
-### V1.3A — Train linear / logistic regressor (parallel branch)
+### Train linear / logistic separator (parallel branch)
 
 Uses **only** posts listed in `split_ids.json` (`train_post_ids` for fit, `test_post_ids` for eval).
 
 1. Fit **logistic regression** (`class_weight='balanced'`) predicting `is_error` from the `(256,)` original-post Titan vector on the train set.
 2. Evaluate on the test set: accuracy, ROC-AUC, PR-AUC, confusion matrix for the error class (also report train metrics for diagnostics).
-3. Save `outputs/v1_bedrock/linear_separator_metrics.json` (alias ok: `outputs/v1_primary/`), coefficients or top-|coef| dims, and predictions CSV.
+3. Save `outputs/analysis/linear_separator_metrics.json`, coefficients or top-|coef| dims, and predictions CSV.
 
 Interpretation guardrail: high AUC means errors are linearly organized in embedding space; low AUC means hard pairs are not a single half-space of Titan features.
 
-### V1.3B — 2D reduction + visualization (parallel branch)
+### 2D reduction + visualization (parallel branch)
 
-Uses the **same** `split_ids.json` as V1.3A. **Leakage-safe reduction:** fit scalers / PCA / LDA on **train only**, then transform train and test (prefer fit-on-train, transform-all for plots that show both partitions; evaluate / claim separation on the transformed test points).
+Uses the **same** `split_ids.json` as the linear separator. **Leakage-safe reduction:** fit scalers / PCA / LDA on **train only**, then transform train and test (prefer fit-on-train, transform-all for plots that show both partitions; evaluate / claim separation on the transformed test points).
 
 1. Standardize features (**fit on train**, transform train+test).
 2. Run **PCA (2D)** and **linear discriminant / LDA projected to 1–2D** (LDA is the linear separator view) — again **fit on train**, transform all. Optionally t-SNE/UMAP as secondary *nonlinear* viz (do not claim linear separation from them; if used, still restrict fit to train or treat as exploratory only).
 3. Scatter plots colored by correct vs wrong (and optionally by `label` keep/remove as small multiples); mark train vs test if useful.
-4. Overlay the logistic decision boundary in the 2D PCA plane (project the hyperplane approx / show predicted region) — boundary comes from the V1.3A model or a 2D refit on PCA train coords; do not re-split.
+4. Overlay the logistic decision boundary in the 2D PCA plane (project the hyperplane approx / show predicted region) — boundary comes from the linear separator model or a 2D refit on PCA train coords; do not re-split.
 
 Artifacts:
 
-- `outputs/v1_bedrock/pca_right_vs_wrong.png`
-- `outputs/v1_bedrock/lda_right_vs_wrong.png`
-- `outputs/v1_bedrock/embeddings_2d.csv` (`post_id`, `pc1`, `pc2`, `split`, `is_correct`, `label`, …)
+- `outputs/analysis/pca_right_vs_wrong.png`
+- `outputs/analysis/lda_right_vs_wrong.png`
+- `outputs/analysis/embeddings_2d.csv` (`post_id`, `pc1`, `pc2`, `split`, `is_correct`, `label`, …)
 
-### V1 success criteria
+### Success criteria
 
-- Pipeline order is **V1.1 → V1.2 → (V1.3A ∥ V1.3B)** with a single shared `split_ids.json`; neither branch invents its own split.
+- Pipeline order is **build analysis table → shared split → (linear separator ∥ 2D reduction)** with a single shared `split_ids.json`; neither branch invents its own split.
 - End-to-end from `base_model_llm_labels.csv` (`bedrock/qwen3-next-80b-a3b`) + **original-post** Titan embedding cache (`only_original`).
 - PCA/LDA fit is train-only then transform (no fit on full data before reporting test separation).
-- Metrics + plots written under `outputs/v1_bedrock/` (or `outputs/v1_primary/`).
+- Metrics + plots written under `outputs/analysis/`.
 - Short markdown note there stating whether a linear separator appears strong (e.g. test AUC ≫ 0.5) and pointing at posts this model missed.
 
-### V1.4 — Reduced-space clustering investigation (add-on)
+### Reduced-space clustering investigation (add-on)
 
-**Goal:** Given weak global linear separation of Qwen right/wrong in Titan `only_original` space (V1.3A/B), ask whether **local clusters** in reduced dimensionality are enriched or sparse for Qwen errors — i.e., whether hard cases concentrate in neighborhoods rather than forming a single half-space.
+**Goal:** Given weak global linear separation of Qwen right/wrong in Titan `only_original` space (linear separator / 2D reduction), ask whether **local clusters** in reduced dimensionality are enriched or sparse for Qwen errors — i.e., whether hard cases concentrate in neighborhoods rather than forming a single half-space.
 
-This is an **add-on** after V1.3; it does **not** replace the logistic or 2D viz branches. **Do not** re-split; **do not** call Bedrock.
+This is an **add-on** after the linear separator / 2D branches; it does **not** replace the logistic or 2D viz branches. **Do not** re-split; **do not** call Bedrock.
 
 #### Method outline
 
-1. **Reuse shared split** — load existing `outputs/v1_bedrock/split_ids.json` (`seed=42`, 80/20, stratify on `is_error`). Never re-split.
-2. **Primary space** — StandardScaler + PCA fit on **train only**, transform train+test. Choose `n_components` by cumulative explained variance (target ≈ 50–80%) or a fixed sensible default in **10–20** PCs for clustering; also keep 2D PCA for viz continuity with V1.3B.
+1. **Reuse shared split** — load existing `outputs/analysis/split_ids.json` (`seed=42`, 80/20, stratify on `is_error`). Never re-split.
+2. **Primary space** — StandardScaler + PCA fit on **train only**, transform train+test. Choose `n_components` by cumulative explained variance (target ≈ 50–80%) or a fixed sensible default in **10–20** PCs for clustering; also keep 2D PCA for viz continuity with the 2D reduction plots.
 3. **Optional spaces (secondary)** —
    - LDA axis + residual PCs (supervised 1D + unsupervised residuals).
    - Sanity: k-means / GMM in full **256-d** (scaled, train-fit) if cheap.
@@ -378,7 +378,7 @@ This is an **add-on** after V1.3; it does **not** replace the logistic or 2D viz
 8. **Content spot-check** — for top interesting clusters, pull exemplar `original_text` / `mirrored_text` from `base_model_llm_labels.csv`.
 9. **Decision gate** — if **no** cluster shows stable test lift (or stable near-zero error), conclude Qwen errors are **diffuse** in Titan space (consistent with weak global linear separation). If stable enrichment/sparsity appears, document themes and keep those clusters as candidates for later qualitative / modeling work.
 
-#### Artifacts (under `outputs/v1_bedrock/clusters/` or `outputs/v1_bedrock/`)
+#### Artifacts (under `outputs/analysis/clusters/` or `outputs/analysis/`)
 
 | Artifact | Description |
 | --- | --- |
@@ -388,7 +388,7 @@ This is an **add-on** after V1.3; it does **not** replace the logistic or 2D viz
 | Exemplars | Sample posts for top interesting clusters |
 | Progress notes | Short markdown run log |
 
-Script: `analyze/v1_cluster.py`. Leakage-safe: scaler / PCA / clusterer fit on train only.
+Script: `analyze/cluster.py`. Leakage-safe: scaler / PCA / clusterer fit on train only.
 
 ---
 
@@ -400,14 +400,14 @@ Script: `analyze/v1_cluster.py`. Leakage-safe: scaler / PCA / clusterer fit on t
 | `outputs/base_model_llm_labels.csv` | collect |
 | `outputs/post_error_rates.csv` | analyze |
 | `outputs/hard_pairs_top_k.csv` | analyze |
-| `outputs/v1_bedrock/analysis_table.parquet` | V1.1 |
-| `outputs/v1_bedrock/split_ids.json` | V1.2 (shared by A and B) |
-| `outputs/v1_bedrock/linear_separator_metrics.json` | V1.3A |
-| `outputs/v1_bedrock/pca_right_vs_wrong.png` | V1.3B |
-| `outputs/v1_bedrock/lda_right_vs_wrong.png` | V1.3B |
-| `outputs/v1_bedrock/embeddings_2d.csv` | V1.3B |
-| `outputs/v1_bedrock/clusters/` | V1.4 assignments, lift metrics, plots, exemplars |
-| `outputs/v1_bedrock/README.md` | V1 writeup |
+| `outputs/analysis/analysis_table.parquet` | Build analysis table |
+| `outputs/analysis/split_ids.json` | Shared split (linear separator + 2D) |
+| `outputs/analysis/linear_separator_metrics.json` | Linear separator |
+| `outputs/analysis/pca_right_vs_wrong.png` | 2D reduction |
+| `outputs/analysis/lda_right_vs_wrong.png` | 2D reduction |
+| `outputs/analysis/embeddings_2d.csv` | 2D reduction |
+| `outputs/analysis/clusters/` | Clustering assignments, lift metrics, plots, exemplars |
+| `outputs/analysis/README.md` | Analysis folder README |
 
 ---
 
@@ -422,14 +422,14 @@ Script: `analyze/v1_cluster.py`. Leakage-safe: scaler / PCA / clusterer fit on t
 3. **Primary right-vs-wrong classifier (resolved)**  
    **Chosen:** `bedrock/qwen3-next-80b-a3b` @ `.../qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/` — largest complete eligible Bedrock/LLM-API run by named parameter scale, with full-dataset predictions present. Labels CSV includes **only** this classifier (~8,791 rows).
 
-4. **Positive class for V1 separator**  
+4. **Positive class for linear separator**  
    Assumption: predict `is_error` (wrong=1) so metrics emphasize hard cases.
 
-5. **V1 train/test split (resolved)**  
-   One shared post-level stratified split (`seed=42`, `train_split=0.8`, stratify on `is_error`) written to `outputs/v1_bedrock/split_ids.json`. Branches V1.3A and V1.3B both load that artifact; neither re-splits. Dimensionality reduction fits on train only, then transforms train+test.
+5. **Train/test split (resolved)**  
+   One shared post-level stratified split (`seed=42`, `train_split=0.8`, stratify on `is_error`) written to `outputs/analysis/split_ids.json`. Linear separator and 2D reduction both load that artifact; neither re-splits. Dimensionality reduction fits on train only, then transforms train+test.
 
-6. **V1 embedding feature set (resolved)**  
-   Use `only_original` / original-post Titan vectors only. Mirror embeddings, cosine similarity, difference features, and multi-embedding concatenations are deferred / out of V1 scope.
+6. **Embedding feature set (resolved)**  
+   Use `only_original` / original-post Titan vectors only. Mirror embeddings, cosine similarity, difference features, and multi-embedding concatenations are deferred / out of scope for this analysis.
 
 ---
 
@@ -438,15 +438,15 @@ Script: `analyze/v1_cluster.py`. Leakage-safe: scaler / PCA / clusterer fit on t
 1. Confirm the Qwen3 Next 80B timestamp folder exists (read-only). **Do not** call Bedrock.
 2. `collect/manifest.py` + `collect/load_predictions.py` + `collect/build_long_csv.py` + sanity checks vs `metrics.json`.
 3. Hard-pair rate tables.
-4. **V1.1** — build analysis table (`bedrock/qwen3-next-80b-a3b` + `only_original` embeddings).
-5. **V1.2** — write **one** `outputs/v1_bedrock/split_ids.json` (stratified post-level split, `seed=42`, `train_split=0.8`).
+4. **Build analysis table** (`bedrock/qwen3-next-80b-a3b` + `only_original` embeddings).
+5. **Shared split** — write **one** `outputs/analysis/split_ids.json` (stratified post-level split, `seed=42`, `train_split=0.8`).
 6. **In parallel:**
-   - **V1.3A** — logistic regressor fit on train IDs / eval on test IDs from `split_ids.json`.
-   - **V1.3B** — PCA/LDA fit-on-train, transform-all; plots under `outputs/v1_bedrock/` using the same IDs.
-7. **V1.4** — reduced-space clustering on train-fit PCA (`analyze/v1_cluster.py`); write under `outputs/v1_bedrock/clusters/`.
+   - **Linear separator** — logistic regressor fit on train IDs / eval on test IDs from `split_ids.json`.
+   - **2D reduction** — PCA/LDA fit-on-train, transform-all; plots under `outputs/analysis/` using the same IDs.
+7. **Clustering** — reduced-space clustering on train-fit PCA (`analyze/cluster.py`); write under `outputs/analysis/clusters/`.
 8. Short README / `RESULTS.md` in this experiment dir documenting commands, artifact paths, and decision-gate verdict.
 
-### V0 labels CSV (implemented)
+### Labels CSV (implemented)
 
 ```bash
 cd experiments/model_errors_analysis_2026_07_15
@@ -472,5 +472,5 @@ uv run python collect/build_long_csv.py
 - `experiments/predict_keep_remove_2026_07_01/HOW_TO_TRAIN_LANGUAGE_MODELS.md` (Exp 1–3 results)
 - `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/README.md`
 - `docs/plans/2026-07-06_exp3_bedrock_zero_shot_baselines_628401/IMPLEMENTATION_PLAN.md`
-- `experiments/predict_keep_remove_2026_07_01/embeddings/README.md` (V1 feature cache only)
+- `experiments/predict_keep_remove_2026_07_01/embeddings/README.md` (feature cache for analysis only)
 - `experiments/predict_keep_remove_2026_05_07/PLAN_BUILD_DEEP_MODEL.md` (doc style reference)

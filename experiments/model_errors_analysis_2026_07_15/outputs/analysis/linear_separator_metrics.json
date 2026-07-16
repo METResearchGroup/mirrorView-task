@@ -7,7 +7,7 @@
   "positive_class": "error (is_error=1)",
   "threshold": 0.5,
   "split": {
-    "path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/split_ids.json",
+    "path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/split_ids.json",
     "seed": 42,
     "train_split": 0.8,
     "stratify_on": "is_error",
@@ -285,11 +285,11 @@
     }
   ],
   "artifacts": {
-    "metrics": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_metrics.json",
-    "metrics_alias": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/logistic_metrics.json",
-    "model": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_model.joblib",
-    "coefficients": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_coefficients.csv",
-    "predictions": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/linear_separator_predictions.csv"
+    "metrics": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_metrics.json",
+    "metrics_alias": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/logistic_metrics.json",
+    "model": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_model.joblib",
+    "coefficients": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_coefficients.csv",
+    "predictions": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_predictions.csv"
   },
   "interpretation": {
     "test_roc_auc": 0.5995373492486316,

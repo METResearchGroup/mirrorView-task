@@ -1,4 +1,4 @@
-"""V1.4 — Reduced-space clustering of Qwen right/wrong in Titan only_original.
+"""Reduced-space clustering of Qwen right/wrong in Titan only_original.
 
 Loads the shared ``split_ids.json`` (does **not** re-split). Fits StandardScaler
 + PCA on **train only**, selects k-means ``k`` via train silhouette (k=5..15),
@@ -7,7 +7,7 @@ global ~36% base rate. Optional full-256d k-means sanity pass.
 
 Run from repo root::
 
-    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_cluster.py
+    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/cluster.py
 """
 
 from __future__ import annotations
@@ -90,7 +90,7 @@ def append_progress(lines: list[str]) -> None:
 def load_split_ids() -> dict[str, Any]:
     if not SPLIT_IDS_PATH.is_file():
         raise FileNotFoundError(
-            f"Missing shared split {SPLIT_IDS_PATH}. Run v1_split.py first; "
+            f"Missing shared split {SPLIT_IDS_PATH}. Run split.py first; "
             "do not re-split in this script."
         )
     payload = json.loads(SPLIT_IDS_PATH.read_text(encoding="utf-8"))
@@ -461,7 +461,7 @@ def main() -> int:
     CLUSTERS_DIR.mkdir(parents=True, exist_ok=True)
     append_progress(
         [
-            f"## {_utc_now()} — V1.4 cluster investigation start",
+            f"## {_utc_now()} — cluster investigation start",
             "",
             f"- Shared split: `{SPLIT_IDS_PATH}` (no re-split)",
             f"- Features: `{EMBEDDING_MATRIX_PATH}`",

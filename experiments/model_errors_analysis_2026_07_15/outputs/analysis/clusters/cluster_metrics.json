@@ -8,7 +8,7 @@
   "train_error_rate": 0.35850398179749715,
   "test_error_rate": 0.358726549175668,
   "split": {
-    "path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/split_ids.json",
+    "path": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/split_ids.json",
     "seed": 42,
     "train_split": 0.8,
     "n_train": 7032,
@@ -261,14 +261,14 @@
     "min_test_lift": 0.8045258199921905
   },
   "artifacts": {
-    "assignments": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_assignments.csv",
-    "metrics_json": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_metrics.json",
-    "metrics_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_lift_table.csv",
-    "k_selection": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/k_selection.json",
-    "plot": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/pca2d_by_cluster.png",
-    "exemplars_md": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_exemplars.md",
-    "exemplars_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/cluster_exemplars.csv",
-    "model": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/kmeans_pca_model.joblib",
-    "progress": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/v1_bedrock/clusters/progress_updates.md"
+    "assignments": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_assignments.csv",
+    "metrics_json": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_metrics.json",
+    "metrics_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_lift_table.csv",
+    "k_selection": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/k_selection.json",
+    "plot": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/pca2d_by_cluster.png",
+    "exemplars_md": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_exemplars.md",
+    "exemplars_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_exemplars.csv",
+    "model": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/kmeans_pca_model.joblib",
+    "progress": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/progress_updates.md"
   }
 }

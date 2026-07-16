@@ -1,1 +1,1 @@
-"""V1 analysis helpers: analysis table, shared split, linear separator."""
+"""Analysis helpers: analysis table, shared split, linear separator, 2D reduction, clustering."""

@@ -1,8 +1,8 @@
-# RESULTS — Model Errors Analysis V1 (2026-07-15)
+# RESULTS — Model Errors Analysis (2026-07-15)
 
 **Classifier:** Bedrock Qwen3 Next 80B (`bedrock/qwen3-next-80b-a3b`)  
 **Features:** original-post Titan embeddings only (`only_original`, 256-d)  
-**Artifacts:** `outputs/v1_bedrock/`
+**Artifacts:** `outputs/analysis/`
 
 ---
 
@@ -41,7 +41,7 @@ Qwen3 Next 80B is wrong on about **36%** of Study 2 posts (accuracy ≈ **64.1%*
 
 Artifacts: `analysis_table.parquet`, `X_only_original.npy` `(8791, 256)`, `split_ids.json`.
 
-### 3.2 Logistic separator (V1.3A)
+### 3.2 Linear separator
 
 Pipeline: `StandardScaler` → `LogisticRegression(class_weight='balanced', solver=lbfgs)`, positive class = `is_error`. Fit on train IDs only; evaluate on test IDs from `split_ids.json`.
 
@@ -61,7 +61,11 @@ Largest |coefficients| are small in magnitude (top |coef| ≈ 0.106 on dim 38) �
 
 Source: `linear_separator_metrics.json` (alias `logistic_metrics.json`).
 
-### 3.3 2D reduction (V1.3B)
+### 3.3 2D reduction
+
+![PCA right vs wrong](outputs/analysis/pca_right_vs_wrong.png)
+
+![LDA right vs wrong](outputs/analysis/lda_right_vs_wrong.png)
 
 Leakage-safe: scaler / PCA / LDA fit on **train only**, then transform train+test.
 
@@ -73,7 +77,7 @@ Leakage-safe: scaler / PCA / LDA fit on **train only**, then transform train+tes
 | Cumsum (2 PCs) | 5.05% |
 | 2D logistic overlay (PC1/PC2) train / test accuracy | 0.562 / 0.562 |
 
-Plots (`pca_right_vs_wrong.png`): right and wrong clouds heavily overlap; no clear linear partition in the PC plane.
+Right and wrong clouds heavily overlap; no clear linear partition in the PC plane.
 
 **LDA (1 discriminant; y-axis = residual PC1 ⊥ LD1)**
 
@@ -84,7 +88,7 @@ Plots (`pca_right_vs_wrong.png`): right and wrong clouds heavily overlap; no cle
 | Cohen’s *d* (wrong − correct) | 0.558 | 0.329 |
 | Midpoint-threshold accuracy | 0.605 | 0.567 |
 
-Plots (`lda_right_vs_wrong.png`): mild shift along LD1 on train that attenuates on test — consistent with the ~0.60 test ROC-AUC of the full 256-d logistic.
+Mild shift along LD1 on train that attenuates on test — consistent with the ~0.60 test ROC-AUC of the full 256-d logistic.
 
 Source: `reduction_summary.json`, `pca_variance_explained.json`, `embeddings_2d.csv`.
 
@@ -96,11 +100,11 @@ Source: `reduction_summary.json`, `pca_variance_explained.json`, `embeddings_2d.
 2. **Features:** join original-post Titan vectors via `only_original` (no mirror / concat / cosine features).
 3. **Split once:** stratified post-level 80/20 → `split_ids.json`.
 4. **Parallel branches on the same IDs:**
-   - **V1.3A** — balanced logistic on 256-d Titan → metrics / coefs / predictions.
-   - **V1.3B** — PCA + LDA viz (fit-on-train) → plots + 2D coords.
-5. **V1.4** — train-fit PCA → k-means; per-cluster lift vs ~36% base; decision gate for diffuse vs local structure.
+   - **Linear separator** — balanced logistic on 256-d Titan → metrics / coefs / predictions.
+   - **2D reduction** — PCA + LDA viz (fit-on-train) → plots + 2D coords.
+5. **Clustering** — train-fit PCA → k-means; per-cluster lift vs ~36% base; decision gate for diffuse vs local structure.
 
-Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `v1_embed_2d.py`, `v1_cluster.py`.
+Scripts: `analyze/build_table.py`, `split.py`, `linear_separator.py`, `embed_2d.py`, `cluster.py`.
 
 ---
 
@@ -110,13 +114,15 @@ Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `
 - **PCA is not the right lens here.** Two PCs capture ~5% variance; visual non-separation in PCA does not by itself prove absence of higher-dimensional linear structure (the 256-d probe is the better summary).
 - **LDA overfits the train axis somewhat.** Train Cohen’s *d* 0.56 → test 0.33; report test metrics as primary.
 - **No Bedrock re-run.** Results depend on the copied `predictions.csv` and the local Titan embedding cache already present for this study.
-- **Feature scope is narrow by design.** Mirror embeddings, concat/cosine, and nonlinear probes are out of V1 scope — a stronger separator might exist under other feature sets, but that is a later question.
-- **Hard-pair tables** (`post_error_rates.csv`, etc.) from the V0 checklist were not required for this V1 separability pass.
+- **Feature scope is narrow by design.** Mirror embeddings, concat/cosine, and nonlinear probes are out of scope here — a stronger separator might exist under other feature sets, but that is a later question.
+- **Hard-pair tables** (`post_error_rates.csv`, etc.) from the labels checklist were not required for this separability pass.
 - **Clustering silhouette is low (~0.10).** Partition stability across seeds is high (ARI ≈ 0.97), but that only means k-means finds the same weak partition — not that clusters are semantically sharp.
 
 ---
 
-## 6. V1.4 Reduced-space clustering
+## 6. Reduced-space clustering
+
+![PCA 2D by cluster](outputs/analysis/clusters/pca2d_by_cluster.png)
 
 **Question:** Even if Qwen errors are not a global linear half-space, do local neighborhoods in Titan PCA space concentrate or spare errors?
 
@@ -129,7 +135,7 @@ Scripts: `analyze/v1_build_table.py`, `v1_split.py`, `v1_linear_separator.py`, `
 - Decision thresholds: high lift ≥ **1.25**, low-error island ≤ **0.70**, stable if |train−test rate| ≤ **0.08** and test n ≥ **15**.
 - Sanity: same k=7 k-means in scaled full 256-d.
 
-Script: `analyze/v1_cluster.py`. Artifacts: `outputs/v1_bedrock/clusters/`.
+Script: `analyze/cluster.py`. Artifacts: `outputs/analysis/clusters/`.
 
 ### 6.2 Per-cluster error rates (PCA-20 + k-means)
 
@@ -155,7 +161,7 @@ Same k=7 on scaled 256-d: train silhouette **0.026** (weaker than PCA path). Max
 
 ### 6.4 Decision gate
 
-**Verdict: diffuse.** No cluster clears the stable high-lift (≥1.25) or stable low-error (≤0.70) criteria on test. Mild local rate variation (~27–40% error) exists but is not actionable error concentration. This is consistent with V1.3’s weak global linear signal (test ROC-AUC ≈ 0.60): Qwen right/wrong is spread through Titan `only_original` space rather than localized in a few neighborhoods.
+**Verdict: diffuse.** No cluster clears the stable high-lift (≥1.25) or stable low-error (≤0.70) criteria on test. Mild local rate variation (~27–40% error) exists but is not actionable error concentration. This is consistent with the linear separator’s weak global signal (test ROC-AUC ≈ 0.60): Qwen right/wrong is spread through Titan `only_original` space rather than localized in a few neighborhoods.
 
 Exemplar spot-checks (`cluster_exemplars.md`) for extreme clusters (esp. c3) show mixed political content without a crisp thematic failure mode — as expected when rates sit near the global base.
 
@@ -168,15 +174,15 @@ Source: `clusters/cluster_metrics.json`, `cluster_lift_table.csv`, `k_selection.
 | Path | Role |
 | --- | --- |
 | `outputs/base_model_llm_labels.csv` | Qwen right/wrong labels |
-| `outputs/v1_bedrock/analysis_table.parquet` | Joined labels + embeddings |
-| `outputs/v1_bedrock/split_ids.json` | Shared train/test IDs |
-| `outputs/v1_bedrock/linear_separator_metrics.json` | Logistic metrics |
-| `outputs/v1_bedrock/pca_right_vs_wrong.png` | PCA scatter |
-| `outputs/v1_bedrock/lda_right_vs_wrong.png` | LDA scatter |
-| `outputs/v1_bedrock/reduction_summary.json` | PCA/LDA numeric summary |
-| `outputs/v1_bedrock/clusters/cluster_metrics.json` | V1.4 lift table + decision gate |
-| `outputs/v1_bedrock/clusters/cluster_lift_table.csv` | Per-cluster rates / lifts |
-| `outputs/v1_bedrock/clusters/cluster_assignments.csv` | post_id → cluster |
-| `outputs/v1_bedrock/clusters/pca2d_by_cluster.png` | PCA 2D colored by cluster |
-| `outputs/v1_bedrock/clusters/cluster_exemplars.md` | Spot-check texts |
-| `outputs/v1_bedrock/progress_updates*.md` | Pipeline progress notes |
+| `outputs/analysis/analysis_table.parquet` | Joined labels + embeddings |
+| `outputs/analysis/split_ids.json` | Shared train/test IDs |
+| `outputs/analysis/linear_separator_metrics.json` | Logistic metrics |
+| `outputs/analysis/pca_right_vs_wrong.png` | PCA scatter |
+| `outputs/analysis/lda_right_vs_wrong.png` | LDA scatter |
+| `outputs/analysis/reduction_summary.json` | PCA/LDA numeric summary |
+| `outputs/analysis/clusters/cluster_metrics.json` | Clustering lift table + decision gate |
+| `outputs/analysis/clusters/cluster_lift_table.csv` | Per-cluster rates / lifts |
+| `outputs/analysis/clusters/cluster_assignments.csv` | post_id → cluster |
+| `outputs/analysis/clusters/pca2d_by_cluster.png` | PCA 2D colored by cluster |
+| `outputs/analysis/clusters/cluster_exemplars.md` | Spot-check texts |
+| `outputs/analysis/progress_updates*.md` | Pipeline progress notes |

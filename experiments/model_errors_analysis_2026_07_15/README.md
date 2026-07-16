@@ -1,51 +1,42 @@
-# Model errors analysis (2026-07-15) — V0 labels CSV
+# Model errors analysis (2026-07-15)
 
-Per-post correctness for the **primary classifier only**: Bedrock **Qwen3 Next 80B** (`bedrock/qwen3-next-80b-a3b`).
+Per-post correctness for Bedrock **Qwen3 Next 80B** (`bedrock/qwen3-next-80b-a3b`), plus linear separator / 2D reduction / clustering on original-post Titan embeddings. **Do not** call Bedrock — use the copied `predictions.csv` only.
 
-**Policy:** Do **not** call Bedrock / AWS / `api_baselines/*/train.py`. Use the copied `predictions.csv` artifact only.
+**Most important files**
+
+- `RESULTS.md` — stakeholder writeup (plots + metrics)
+- `spec.md` — implementation spec
+- `outputs/base_model_llm_labels.csv` — labels CSV
+- `outputs/analysis/` — analysis artifacts
+- `collect/`, `analyze/` — pipeline code
+
+| filename | description of what it’s for |
+| --- | --- |
+| `README.md` | This experiment index |
+| `RESULTS.md` | Results writeup with core images and metrics |
+| `spec.md` | Full pipeline / schema / constraint spec |
+| `collect/` | Build labels CSV from existing predictions |
+| `analyze/` | Analysis table, shared split, linear separator, 2D, clustering |
+| `outputs/` | Labels CSV, run manifest, and `analysis/` artifacts |
 
 ## Produce the labels CSV
-
-From the repo root (needs `pandas`):
 
 ```bash
 cd experiments/model_errors_analysis_2026_07_15
 uv run python collect/build_long_csv.py
 ```
 
-Or separately:
+Expected: **8,791** rows in `outputs/base_model_llm_labels.csv`. Source run: `.../qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/`.
 
-```bash
-uv run python collect/manifest.py
-uv run python collect/build_long_csv.py
-```
-
-## Outputs
-
-| Path | Description |
-| --- | --- |
-| `outputs/run_manifest.json` | Included classifier, ablation, source run dir |
-| `outputs/base_model_llm_labels.csv` | Qwen labels + correctness (`family=bedrock`, one `classifier_id`) |
-
-Schema columns: `post_id`, `original_text`, `mirrored_text`, `label`, `classifier_id`, `family`, `ablation`, `is_correct`.
-
-Expected size: **8,791** rows (`classifier_id == bedrock/qwen3-next-80b-a3b`).
-
-Source run: `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/qwen3-next-80b-a3b/outputs/2026_07_06-16:57:43/`. See `spec.md` § Primary correctness signal.
-
-## V1 analysis (shared split → logistic + 2D)
+## Run analysis
 
 ```bash
 # from repo root
-PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_build_table.py
-PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_split.py
-PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_linear_separator.py
-PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_embed_2d.py
-PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_cluster.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/build_table.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/split.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/linear_separator.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/embed_2d.py
+PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/cluster.py
 ```
 
-Writes under `outputs/v1_bedrock/` (and `outputs/v1_bedrock/clusters/` for V1.4). Stakeholder writeup: **`RESULTS.md`**.
-
-## Scope note
-
-**V0** labels CSV, **V1** error-separability (shared split → logistic probe + PCA/LDA on `only_original` Titan), and **V1.4** reduced-space clustering are implemented. Hard-pair rate tables from the V0 checklist remain optional follow-up.
+Writes under `outputs/analysis/` (clustering under `outputs/analysis/clusters/`).

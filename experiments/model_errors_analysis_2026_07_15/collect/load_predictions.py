@@ -1,6 +1,6 @@
 """Normalize prediction CSVs into a common frame.
 
-V0 labels CSV includes only the primary Bedrock run
+Labels CSV includes only the primary Bedrock run
 (`bedrock/qwen3-next-80b-a3b`).
 """
 

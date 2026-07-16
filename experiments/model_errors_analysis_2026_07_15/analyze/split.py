@@ -1,11 +1,11 @@
-"""V1.2 — Single shared post-level train/test split for V1.3A / V1.3B.
+"""Single shared post-level train/test split for linear separator / 2D reduction.
 
 Stratified on ``is_error``, seed=42, train_split=0.8.
-Writes ``outputs/v1_bedrock/split_ids.json`` and a convenience join table.
+Writes ``outputs/analysis/split_ids.json`` and a convenience join table.
 
 Run from repo root::
 
-    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_split.py
+    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/split.py
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ from analyze.paths import (  # noqa: E402
     SPLIT_SEED,
     STRATIFY_ON,
     TRAIN_SPLIT,
-    V1_DIR,
+    ANALYSIS_DIR,
 )
 
 
@@ -46,7 +46,7 @@ def load_analysis_frame() -> pd.DataFrame:
         df = pd.read_csv(ANALYSIS_META_PATH)
     else:
         raise FileNotFoundError(
-            f"Missing analysis table. Run v1_build_table.py first "
+            f"Missing analysis table. Run build_table.py first "
             f"(expected {ANALYSIS_TABLE_PATH} or {ANALYSIS_META_PATH})."
         )
     required = {"post_id", "is_error", "is_correct", "label"}
@@ -116,13 +116,13 @@ def write_split_assignment(df: pd.DataFrame, payload: dict) -> Path:
     train_set = set(payload["train_post_ids"])
     out = df[["post_id", "label", "is_correct", "is_error"]].copy()
     out["split"] = np.where(out["post_id"].isin(train_set), "train", "test")
-    path = V1_DIR / "analysis_with_split.csv"
+    path = ANALYSIS_DIR / "analysis_with_split.csv"
     out.to_csv(path, index=False)
     return path
 
 
 def append_progress(lines: list[str]) -> None:
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     existing = ""
     if PROGRESS_UPDATES_PATH.is_file():
         existing = PROGRESS_UPDATES_PATH.read_text(encoding="utf-8")
@@ -138,7 +138,7 @@ def main() -> int:
     print(f"  rows={len(df)}")
 
     payload = make_split(df)
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     SPLIT_IDS_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
     assignment_path = write_split_assignment(df, payload)
 
@@ -157,7 +157,7 @@ def main() -> int:
 
     append_progress(
         [
-            "## V1.2 Single shared train/test split",
+            "## Single shared train/test split",
             "",
             f"- Seed={SPLIT_SEED}, train_split={TRAIN_SPLIT}, stratify_on=`{STRATIFY_ON}`",
             f"- Artifact: `{SPLIT_IDS_PATH}`",

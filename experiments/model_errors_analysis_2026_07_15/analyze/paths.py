@@ -1,4 +1,4 @@
-"""Shared paths for V1 Bedrock right/wrong analysis artifacts."""
+"""Shared paths for right/wrong analysis artifacts (Qwen labels + Titan features)."""
 
 from __future__ import annotations
 
@@ -9,28 +9,28 @@ REPO_ROOT = EXPERIMENT_ROOT.parents[1]
 OUTPUTS_DIR = EXPERIMENT_ROOT / "outputs"
 LABELS_CSV_PATH = OUTPUTS_DIR / "base_model_llm_labels.csv"
 
-V1_DIR = OUTPUTS_DIR / "v1_bedrock"
-ANALYSIS_TABLE_PATH = V1_DIR / "analysis_table.parquet"
-ANALYSIS_META_PATH = V1_DIR / "analysis_meta.csv"
-EMBEDDING_MATRIX_PATH = V1_DIR / "X_only_original.npy"
-SPLIT_IDS_PATH = V1_DIR / "split_ids.json"
-PROGRESS_UPDATES_PATH = V1_DIR / "progress_updates.md"
-PROGRESS_UPDATES_VIZ_PATH = V1_DIR / "progress_updates_viz.md"
-PCA_PLOT_PATH = V1_DIR / "pca_right_vs_wrong.png"
-LDA_PLOT_PATH = V1_DIR / "lda_right_vs_wrong.png"
-EMBEDDINGS_2D_PATH = V1_DIR / "embeddings_2d.csv"
-REDUCTION_SUMMARY_PATH = V1_DIR / "reduction_summary.json"
-PROGRESS_UPDATES_TRAIN_PATH = V1_DIR / "progress_updates_train.md"
+ANALYSIS_DIR = OUTPUTS_DIR / "analysis"
+ANALYSIS_TABLE_PATH = ANALYSIS_DIR / "analysis_table.parquet"
+ANALYSIS_META_PATH = ANALYSIS_DIR / "analysis_meta.csv"
+EMBEDDING_MATRIX_PATH = ANALYSIS_DIR / "X_only_original.npy"
+SPLIT_IDS_PATH = ANALYSIS_DIR / "split_ids.json"
+PROGRESS_UPDATES_PATH = ANALYSIS_DIR / "progress_updates.md"
+PROGRESS_UPDATES_VIZ_PATH = ANALYSIS_DIR / "progress_updates_viz.md"
+PCA_PLOT_PATH = ANALYSIS_DIR / "pca_right_vs_wrong.png"
+LDA_PLOT_PATH = ANALYSIS_DIR / "lda_right_vs_wrong.png"
+EMBEDDINGS_2D_PATH = ANALYSIS_DIR / "embeddings_2d.csv"
+REDUCTION_SUMMARY_PATH = ANALYSIS_DIR / "reduction_summary.json"
+PROGRESS_UPDATES_TRAIN_PATH = ANALYSIS_DIR / "progress_updates_train.md"
 
-# V1.3A logistic separator artifacts
-LINEAR_SEPARATOR_METRICS_PATH = V1_DIR / "linear_separator_metrics.json"
-LOGISTIC_METRICS_PATH = V1_DIR / "logistic_metrics.json"  # alias
-LINEAR_SEPARATOR_MODEL_PATH = V1_DIR / "linear_separator_model.joblib"
-LINEAR_SEPARATOR_COEFS_PATH = V1_DIR / "linear_separator_coefficients.csv"
-LINEAR_SEPARATOR_PREDS_PATH = V1_DIR / "linear_separator_predictions.csv"
+# Linear separator artifacts
+LINEAR_SEPARATOR_METRICS_PATH = ANALYSIS_DIR / "linear_separator_metrics.json"
+LOGISTIC_METRICS_PATH = ANALYSIS_DIR / "logistic_metrics.json"  # alias
+LINEAR_SEPARATOR_MODEL_PATH = ANALYSIS_DIR / "linear_separator_model.joblib"
+LINEAR_SEPARATOR_COEFS_PATH = ANALYSIS_DIR / "linear_separator_coefficients.csv"
+LINEAR_SEPARATOR_PREDS_PATH = ANALYSIS_DIR / "linear_separator_predictions.csv"
 
-# V1.4 reduced-space clustering artifacts
-CLUSTERS_DIR = V1_DIR / "clusters"
+# Reduced-space clustering artifacts
+CLUSTERS_DIR = ANALYSIS_DIR / "clusters"
 CLUSTER_ASSIGNMENTS_PATH = CLUSTERS_DIR / "cluster_assignments.csv"
 CLUSTER_METRICS_JSON_PATH = CLUSTERS_DIR / "cluster_metrics.json"
 CLUSTER_METRICS_CSV_PATH = CLUSTERS_DIR / "cluster_lift_table.csv"

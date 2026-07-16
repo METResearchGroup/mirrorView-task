@@ -1,11 +1,11 @@
-"""V1.3B — Leakage-safe PCA / LDA 2D visualization of right vs wrong.
+"""Leakage-safe PCA / LDA 2D visualization of right vs wrong.
 
 Loads the shared ``split_ids.json`` (does **not** re-split). Fits StandardScaler,
 PCA(2), and LDA on **train only**, then transforms train+test.
 
 Run from repo root::
 
-    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_embed_2d.py
+    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/embed_2d.py
 """
 
 from __future__ import annotations
@@ -44,7 +44,7 @@ from analyze.paths import (  # noqa: E402
     PROGRESS_UPDATES_VIZ_PATH,
     REDUCTION_SUMMARY_PATH,
     SPLIT_IDS_PATH,
-    V1_DIR,
+    ANALYSIS_DIR,
 )
 
 RNG = np.random.default_rng(42)
@@ -55,7 +55,7 @@ def _now() -> str:
 
 
 def append_viz_progress(lines: list[str]) -> None:
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     existing = ""
     if PROGRESS_UPDATES_VIZ_PATH.is_file():
         existing = PROGRESS_UPDATES_VIZ_PATH.read_text(encoding="utf-8")
@@ -71,7 +71,7 @@ def load_inputs() -> tuple[np.ndarray, pd.DataFrame, dict, np.ndarray, np.ndarra
     if not ANALYSIS_META_PATH.is_file():
         raise FileNotFoundError(f"Missing {ANALYSIS_META_PATH}")
     if not SPLIT_IDS_PATH.is_file():
-        raise FileNotFoundError(f"Missing {SPLIT_IDS_PATH} — run v1_split.py first")
+        raise FileNotFoundError(f"Missing {SPLIT_IDS_PATH} — run split.py first")
 
     X = np.load(EMBEDDING_MATRIX_PATH)
     meta = pd.read_csv(ANALYSIS_META_PATH)
@@ -217,7 +217,7 @@ def plot_pca(
         ax.axvline(0, color="#bbb", lw=0.6)
         ax.legend(loc="best", fontsize=8, framealpha=0.9)
 
-    # 2D logistic boundary on PCA train coords (viz-only; not the V1.3A 256-d probe).
+    # 2D logistic boundary on PCA train coords (viz-only; not the 256-d linear separator).
     clf = LogisticRegression(class_weight="balanced", max_iter=2000, random_state=42)
     y_train = meta.loc[train_mask, "is_error"].to_numpy()
     clf.fit(Z_pca[train_mask], y_train)
@@ -389,10 +389,10 @@ def build_embeddings_2d_csv(
 def main() -> int:
     append_viz_progress(
         [
-            f"## {_now()} — V1.3B start",
+            f"## {_now()} — 2D reduction start",
             "",
             f"- Loading `{EMBEDDING_MATRIX_PATH.name}`, `{ANALYSIS_META_PATH.name}`, `{SPLIT_IDS_PATH.name}`",
-            "- No re-split; no Bedrock; no 256-d logistic (V1.3A owns that).",
+            "- No re-split; no Bedrock; no 256-d logistic (linear separator owns that).",
             "",
         ]
     )
@@ -479,7 +479,7 @@ def main() -> int:
     }
     REDUCTION_SUMMARY_PATH.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     # Also write a short variance-only alias
-    var_path = V1_DIR / "pca_variance_explained.json"
+    var_path = ANALYSIS_DIR / "pca_variance_explained.json"
     var_path.write_text(
         json.dumps(
             {

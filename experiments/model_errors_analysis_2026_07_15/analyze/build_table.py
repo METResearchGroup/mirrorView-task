@@ -1,4 +1,4 @@
-"""V1.1 — Build analysis table: Qwen labels + only_original Titan embeddings.
+"""Build analysis table: Qwen labels + only_original Titan embeddings.
 
 Loads original-post embeddings from the local embedding cache (prefer cache hits;
 does not call Bedrock embed / Converse / api_baselines train). Falls back to
@@ -6,7 +6,7 @@ DynamoDB→S3 via cache_loader only if a local miss is unavoidable.
 
 Run from repo root::
 
-    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/v1_build_table.py
+    PYTHONPATH=. uv run python experiments/model_errors_analysis_2026_07_15/analyze/build_table.py
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ from analyze.paths import (  # noqa: E402
     MAIN_REPO_EMBEDDING_CACHE,
     PRIMARY_CLASSIFIER_ID,
     PROGRESS_UPDATES_PATH,
-    V1_DIR,
+    ANALYSIS_DIR,
     WORKTREE_EMBEDDING_CACHE,
 )
 from experiments.predict_keep_remove_2026_07_01.embeddings.features.only_original import (  # noqa: E402
@@ -232,16 +232,16 @@ def build_analysis_table(
 
 
 def write_artifacts(table: pd.DataFrame, X: np.ndarray, meta: dict) -> None:
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     table.to_parquet(ANALYSIS_TABLE_PATH, index=False)
     np.save(EMBEDDING_MATRIX_PATH, X.astype(np.float64, copy=False))
     table[["post_id", "label", "is_correct", "is_error"]].to_csv(ANALYSIS_META_PATH, index=False)
-    meta_path = V1_DIR / "analysis_table_meta.json"
+    meta_path = ANALYSIS_DIR / "analysis_table_meta.json"
     meta_path.write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
 
 
 def append_progress(lines: list[str]) -> None:
-    V1_DIR.mkdir(parents=True, exist_ok=True)
+    ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     existing = ""
     if PROGRESS_UPDATES_PATH.is_file():
         existing = PROGRESS_UPDATES_PATH.read_text(encoding="utf-8")
@@ -269,7 +269,7 @@ def main() -> int:
 
     append_progress(
         [
-            "## V1.1 Build analysis table",
+            "## Build analysis table",
             "",
             f"- Labels: `{LABELS_CSV_PATH}` ({len(labels)} rows, `{PRIMARY_CLASSIFIER_ID}` only)",
             f"- Feature set: `{FEATURE_SET}` / Titan `{BEDROCK_MODEL_ID}` dims={EMBEDDING_DIM}",
@@ -280,7 +280,7 @@ def main() -> int:
             f"`embedding` is length-{EMBEDDING_DIM} float64; rows={len(table)}",
             f"  - `{EMBEDDING_MATRIX_PATH}` — shape `{tuple(X.shape)}`",
             f"  - `{ANALYSIS_META_PATH}` — scalar columns only",
-            f"  - `{V1_DIR / 'analysis_table_meta.json'}` — loader / cache metadata",
+            f"  - `{ANALYSIS_DIR / 'analysis_table_meta.json'}` — loader / cache metadata",
             f"- is_error rate: {meta['is_error_rate']:.4f} "
             f"(correct={meta['is_error_counts']['0']}, error={meta['is_error_counts']['1']})",
             "",
