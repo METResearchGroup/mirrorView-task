@@ -1,10 +1,10 @@
-# Model errors analysis (2026-07-15) — V0 long CSV
+# Model errors analysis (2026-07-15) — V0 labels CSV
 
-Long table of per-post correctness for the **primary classifier only**: Bedrock **Qwen3 Next 80B** (`bedrock/qwen3-next-80b-a3b`).
+Per-post correctness for the **primary classifier only**: Bedrock **Qwen3 Next 80B** (`bedrock/qwen3-next-80b-a3b`).
 
 **Policy:** Do **not** call Bedrock / AWS / `api_baselines/*/train.py`. Use the copied `predictions.csv` artifact only.
 
-## Produce the long CSV
+## Produce the labels CSV
 
 From the repo root (needs `pandas`):
 
@@ -25,7 +25,7 @@ uv run python collect/build_long_csv.py
 | Path | Description |
 | --- | --- |
 | `outputs/run_manifest.json` | Included classifier, ablation, source run dir |
-| `outputs/classifier_post_results_long.csv` | Target long CSV (`family=bedrock`, one `classifier_id`) |
+| `outputs/base_model_llm_labels.csv` | Qwen labels + correctness (`family=bedrock`, one `classifier_id`) |
 
 Schema columns: `post_id`, `original_text`, `mirrored_text`, `label`, `classifier_id`, `family`, `ablation`, `is_correct`.
 
@@ -35,4 +35,4 @@ Source run: `experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/ap
 
 ## Scope note
 
-This directory currently implements **V0 collection through the long CSV** only. Hard-pair tables and V1 primary-classifier embedding separability are specified in `spec.md` but not implemented yet.
+This directory currently implements **V0 collection through `base_model_llm_labels.csv`** only. Hard-pair tables and V1 primary-classifier embedding separability (shared split → logistic probe + 2D viz on `only_original` Titan embeddings) are specified in `spec.md` but not implemented yet.

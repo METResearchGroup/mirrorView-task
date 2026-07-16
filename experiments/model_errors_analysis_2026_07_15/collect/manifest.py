@@ -14,11 +14,12 @@ EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = EXPERIMENT_ROOT.parents[1]
 OUTPUTS_DIR = EXPERIMENT_ROOT / "outputs"
 MANIFEST_PATH = OUTPUTS_DIR / "run_manifest.json"
+LABELS_CSV_PATH = OUTPUTS_DIR / "base_model_llm_labels.csv"
 
 PKR_ROOT = REPO_ROOT / "experiments" / "predict_keep_remove_2026_07_01"
 API_BASELINES = PKR_ROOT / "models" / "llm_finetuning" / "api_baselines"
 
-LONG_CSV_COLUMNS = (
+LABELS_CSV_COLUMNS = (
     "post_id",
     "original_text",
     "mirrored_text",
@@ -121,14 +122,15 @@ def build_manifest(*, write: bool = True) -> dict:
     manifest = {
         "experiment": "model_errors_analysis_2026_07_15",
         "policy": (
-            "Long CSV includes only the primary Bedrock classifier "
+            "base_model_llm_labels.csv includes only the primary Bedrock classifier "
             f"({PRIMARY_CLASSIFIER_ID}). "
             "Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS."
         ),
         "primary_classifier_id": PRIMARY_CLASSIFIER_ID,
-        "long_csv_columns": list(LONG_CSV_COLUMNS),
+        "labels_csv_path": _rel(LABELS_CSV_PATH),
+        "labels_csv_columns": list(LABELS_CSV_COLUMNS),
         "n_classifiers": len(runs_out),
-        "expected_long_csv_rows": sum(r["n_rows"] for r in runs_out),
+        "expected_labels_csv_rows": sum(r["n_rows"] for r in runs_out),
         "runs": runs_out,
     }
 
@@ -142,7 +144,10 @@ def build_manifest(*, write: bool = True) -> dict:
 def main() -> None:
     manifest = build_manifest(write=True)
     print(f"Wrote {MANIFEST_PATH.relative_to(REPO_ROOT)}")
-    print(f"classifiers={manifest['n_classifiers']} expected_rows={manifest['expected_long_csv_rows']}")
+    print(
+        f"classifiers={manifest['n_classifiers']} "
+        f"expected_rows={manifest['expected_labels_csv_rows']}"
+    )
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-"""Join texts + labels → classifier_post_results_long.csv.
+"""Join texts + labels → base_model_llm_labels.csv.
 
 Does not call Bedrock. Reads only existing prediction CSVs.
 """
@@ -18,7 +18,8 @@ if str(_EXPERIMENT_ROOT) not in sys.path:
 
 from collect.load_predictions import load_all_predictions
 from collect.manifest import (
-    LONG_CSV_COLUMNS,
+    LABELS_CSV_COLUMNS,
+    LABELS_CSV_PATH,
     MANIFEST_PATH,
     OUTPUTS_DIR,
     REPO_ROOT,
@@ -26,8 +27,6 @@ from collect.manifest import (
     canonical_runs,
 )
 
-PKR_ROOT = REPO_ROOT / "experiments" / "predict_keep_remove_2026_07_01"
-LONG_CSV_PATH = OUTPUTS_DIR / "classifier_post_results_long.csv"
 ACCURACY_TOL = 1e-6
 
 
@@ -92,9 +91,9 @@ def _join_texts(preds: pd.DataFrame, labels: pd.DataFrame) -> pd.DataFrame:
 
 
 def _assert_schema(df: pd.DataFrame) -> None:
-    if list(df.columns) != list(LONG_CSV_COLUMNS):
+    if list(df.columns) != list(LABELS_CSV_COLUMNS):
         raise AssertionError(
-            f"Column mismatch.\nexpected={list(LONG_CSV_COLUMNS)}\ngot={list(df.columns)}"
+            f"Column mismatch.\nexpected={list(LABELS_CSV_COLUMNS)}\ngot={list(df.columns)}"
         )
     families = set(df["family"].unique())
     if families != {"bedrock"}:
@@ -120,48 +119,10 @@ def _assert_label_distribution(df: pd.DataFrame, labels: pd.DataFrame) -> None:
             )
 
 
-def _accuracy_from_metrics(metrics: dict, family: str) -> float | None:
-    """Return overall accuracy to compare against long-CSV accuracy when possible."""
-    if family == "bedrock":
-        m = metrics.get("metrics") or metrics
-        if "accuracy" in m:
-            return float(m["accuracy"])
-        return None
-
-    # llm_api: metrics split into train/test; overall = weighted by row counts if present.
-    train = metrics.get("train_metrics") or {}
-    test = metrics.get("test_metrics") or {}
-    if "accuracy" in train and "accuracy" in test:
-        # Prefer exact overall from confusion if available; else use split sizes from metadata later.
-        return None  # handled with confusion matrices below
-    return None
-
-
-def _overall_accuracy_from_llm_api_metrics(metrics: dict) -> float | None:
-    train = metrics.get("train_metrics") or {}
-    test = metrics.get("test_metrics") or {}
-    keys = (
-        "confusion_matrix_tn",
-        "confusion_matrix_fp",
-        "confusion_matrix_fn",
-        "confusion_matrix_tp",
-    )
-    if all(k in train for k in keys) and all(k in test for k in keys):
-        correct = (
-            float(train["confusion_matrix_tn"])
-            + float(train["confusion_matrix_tp"])
-            + float(test["confusion_matrix_tn"])
-            + float(test["confusion_matrix_tp"])
-        )
-        total = correct + (
-            float(train["confusion_matrix_fp"])
-            + float(train["confusion_matrix_fn"])
-            + float(test["confusion_matrix_fp"])
-            + float(test["confusion_matrix_fn"])
-        )
-        if total <= 0:
-            return None
-        return correct / total
+def _accuracy_from_bedrock_metrics(metrics: dict) -> float | None:
+    m = metrics.get("metrics") or metrics
+    if "accuracy" in m:
+        return float(m["accuracy"])
     return None
 
 
@@ -173,18 +134,13 @@ def _assert_accuracy_vs_metrics(df: pd.DataFrame, manifest: dict) -> None:
         if not metrics_path:
             continue
         metrics = json.loads((REPO_ROOT / metrics_path).read_text(encoding="utf-8"))
-        long_acc = float(part["is_correct"].mean())
-
-        if entry["family"] == "bedrock":
-            expected = _accuracy_from_metrics(metrics, "bedrock")
-        else:
-            expected = _overall_accuracy_from_llm_api_metrics(metrics)
-
+        labels_acc = float(part["is_correct"].mean())
+        expected = _accuracy_from_bedrock_metrics(metrics)
         if expected is None:
             continue
-        if abs(long_acc - expected) > ACCURACY_TOL:
+        if abs(labels_acc - expected) > ACCURACY_TOL:
             raise AssertionError(
-                f"Accuracy mismatch for {clf}: long_csv={long_acc:.10f} metrics={expected:.10f}"
+                f"Accuracy mismatch for {clf}: labels_csv={labels_acc:.10f} metrics={expected:.10f}"
             )
 
 
@@ -193,26 +149,26 @@ def build_long_csv(*, write: bool = True) -> pd.DataFrame:
     runs = canonical_runs()
     preds = load_all_predictions(runs)
     labels = _load_training_dataframe()
-    long_df = _join_texts(preds, labels)
+    labels_df = _join_texts(preds, labels)
 
-    _assert_schema(long_df)
-    _assert_label_distribution(long_df, labels)
-    _assert_accuracy_vs_metrics(long_df, manifest)
+    _assert_schema(labels_df)
+    _assert_label_distribution(labels_df, labels)
+    _assert_accuracy_vs_metrics(labels_df, manifest)
 
-    expected_rows = manifest["expected_long_csv_rows"]
-    if len(long_df) != expected_rows:
-        raise AssertionError(f"Expected {expected_rows} long rows, got {len(long_df)}")
+    expected_rows = manifest["expected_labels_csv_rows"]
+    if len(labels_df) != expected_rows:
+        raise AssertionError(f"Expected {expected_rows} labels rows, got {len(labels_df)}")
 
     if write:
         OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
-        long_df.to_csv(LONG_CSV_PATH, index=False)
+        labels_df.to_csv(LABELS_CSV_PATH, index=False)
 
-    return long_df
+    return labels_df
 
 
 def main() -> None:
     df = build_long_csv(write=True)
-    print(f"Wrote {LONG_CSV_PATH.relative_to(REPO_ROOT)}")
+    print(f"Wrote {LABELS_CSV_PATH.relative_to(REPO_ROOT)}")
     print(f"Wrote {MANIFEST_PATH.relative_to(REPO_ROOT)}")
     print(f"rows={len(df)} classifiers={df['classifier_id'].nunique()}")
     print(df.groupby(["family", "classifier_id"])["is_correct"].agg(["count", "mean"]).to_string())

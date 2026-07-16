@@ -1,8 +1,7 @@
 """Normalize prediction CSVs into a common frame.
 
-The V0 long CSV currently includes only the primary Bedrock run
-(`bedrock/qwen3-next-80b-a3b`). The llm_api adapter remains for optional
-diagnostics if additional runs are added back to the manifest later.
+V0 labels CSV includes only the primary Bedrock run
+(`bedrock/qwen3-next-80b-a3b`).
 """
 
 from __future__ import annotations
@@ -35,38 +34,11 @@ def load_bedrock_predictions(run: RunSpec) -> pd.DataFrame:
     return df[["post_id", "keep_remove_label", "predicted_label"]].copy()
 
 
-def load_llm_api_predictions(run: RunSpec) -> pd.DataFrame:
-    run_dir = REPO_ROOT / run.run_dir
-    frames: list[pd.DataFrame] = []
-    for name in run.prediction_files:
-        path = run_dir / name
-        part = pd.read_csv(path)
-        part = _normalize_id_columns(part)
-        required = {"message_id", "keep_remove_label", "predicted_label"}
-        missing = required - set(part.columns)
-        if missing:
-            raise KeyError(f"llm_api preds missing columns {sorted(missing)}: {path}")
-        frames.append(part[["post_id", "keep_remove_label", "predicted_label"]].copy())
-
-    df = pd.concat(frames, ignore_index=True)
-    # Train/test partitions are disjoint; still dedupe defensively.
-    before = len(df)
-    df = df.drop_duplicates(subset=["post_id"], keep="first")
-    if len(df) != before:
-        raise ValueError(
-            f"llm_api train/test overlap for {run.classifier_id}: "
-            f"{before} → {len(df)} after dedupe"
-        )
-    return df
-
-
 def load_run_predictions(run: RunSpec) -> pd.DataFrame:
-    if run.family == "bedrock":
-        df = load_bedrock_predictions(run)
-    elif run.family == "llm_api":
-        df = load_llm_api_predictions(run)
-    else:
+    if run.family != "bedrock":
         raise ValueError(f"Unsupported family {run.family!r} for {run.classifier_id}")
+
+    df = load_bedrock_predictions(run)
 
     if len(df) != run.expected_rows:
         raise ValueError(

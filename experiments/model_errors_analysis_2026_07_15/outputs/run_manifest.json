@@ -1,8 +1,9 @@
 {
   "experiment": "model_errors_analysis_2026_07_15",
-  "policy": "Long CSV includes only the primary Bedrock classifier (bedrock/qwen3-next-80b-a3b). Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS.",
+  "policy": "base_model_llm_labels.csv includes only the primary Bedrock classifier (bedrock/qwen3-next-80b-a3b). Bedrock predictions reused from copied artifacts; do not call Bedrock/AWS.",
   "primary_classifier_id": "bedrock/qwen3-next-80b-a3b",
-  "long_csv_columns": [
+  "labels_csv_path": "experiments/model_errors_analysis_2026_07_15/outputs/base_model_llm_labels.csv",
+  "labels_csv_columns": [
     "post_id",
     "original_text",
     "mirrored_text",
@@ -13,7 +14,7 @@
     "is_correct"
   ],
   "n_classifiers": 1,
-  "expected_long_csv_rows": 8791,
+  "expected_labels_csv_rows": 8791,
   "runs": [
     {
       "classifier_id": "bedrock/qwen3-next-80b-a3b",
