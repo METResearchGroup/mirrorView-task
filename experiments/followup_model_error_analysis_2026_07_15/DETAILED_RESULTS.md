@@ -163,11 +163,91 @@ If the linked-fate Qwen classifier is over-sensitive to stacked attack cues and 
 
 ---
 
-## 7. Example post pairs (20 per bucket)
+## 7. Same model prediction, different human label
+
+Sections 5–6 mostly compare errors to their natural baselines: FP against TN (over-removal on keeps), FN against TP (under-removal on removes). That answers “what tip makes the model wrong relative to the correct class?” A different and often clearer question is: **holding Qwen’s prediction fixed, what still separates the posts humans agreed with from the posts humans disagreed with?**
+
+There are two such pairs:
+
+| Model says | Human agrees | Human disagrees |
+| --- | --- | --- |
+| **remove** | TP (both remove) | FP (human keep) |
+| **keep** | TN (both keep) | FN (human remove) |
+
+In other words: among everything Qwen removes, why do annotators sometimes keep? And among everything Qwen keeps, why do annotators sometimes remove? Those contrasts are what this section develops.
+
+### 7.1 When Qwen removes: true positives vs false positives
+
+Both TP and FP are posts the model treated as remove-worthy. The human label is the only thing that changes. If you read only FP examples, it is easy to think “Qwen removes angry political speech.” If you then read TP examples, they look angry and political too. The useful question is not whether heat is present — it often is in both — but **what kind of heat, and with what companions**, when humans go along with the remove versus when they refuse it.
+
+**Shared ground that makes the pair confusing.** Several cues look almost identical across TP and FP, which is exactly why the boundary feels fuzzy. Victimhood / persecution framing is **27% in both**. Normative moral language is essentially tied (**62% TP vs 63% FP**). Conspiracy is nearly tied (**9% vs 10%**). Ridicule is high in both, only modestly higher in TP (**45% vs 35%**). Outrage is elevated in both (**36% vs 25%**). So if your mental model of “why Qwen removes” is “victimhood + moral condemnation + some mockery,” you have described a region that contains **both** correct removes and over-removes. That region is real — it is the overlapping middle of the remove decision — but it does not tell you when the human will agree.
+
+**Where TP pulls away from FP.** The clearest separators, on the V1 rates, are **arousal intensity** and **explicit partisan / group targeting**. Profanity nearly doubles from FP to TP (**20% → 42%**). Left–right directional cues nearly triple (**9% → 25%**). Us-versus-them framing is scarce in FP (**2%**) and visible in TP (**12%**). Culture-war salience is higher in TP (**30% vs 20%**). All-caps emphasis and rhetorical questions also lean TP. In plain language: when Qwen removes and humans also remove, the post more often looks like a **direct, identity- or party-aimed attack with thicker style fuel** — not merely a moralized political complaint.
+
+You can hear that difference in the first-20 samples without needing the spreadsheet. TP `098bcd761c09` does not stop at opposing gun culture; it makes dead children an “acceptable price” and brands the NRA a “DOMESTIC TERRORIST” organization. TP `08b02b159ef2` is an enemy inventory (offices, traitors, anti-LGBTQIA+/POC/women tags, voters who “OWN this”). TP `06942b8a322f` puts “you” in the dock over Black women’s rights with repeated “fucking.” TP `07a570fe0db5` names the Klan, warns about children, and escalates into keeping guns and teaching kids to shoot. These are removes that do not merely express a policy side; they **perform hostility toward a named outgroup**, often with violence-adjacent or terrorist-labeling stakes.
+
+**Where FP looks remove-like to the model but keep-like to humans.** Relative to TP, FP posts are **more argumentative and less party-polarized** on the extracted features: persuasion **38% vs 23%**, factual assertion **42% vs 33%**, economic framing **16% vs 8%**. They still often carry insult, list-form blame, conspiracy, or stakes language — enough for Qwen to file them with removes — but they less often carry the TP package of explicit left–right / us-them targeting plus maximal profanity. FP `007568ddfadc` insults “stupid… drunk… hunters”; humans kept it as nasty opinion rather than a remove. FP `00ec0adc0eaa` spins an oligarch-depopulation theory; humans kept it. FP `019fa32e4ac2` is a short profanity vent about “rich bastards,” which looks TP-adjacent on style alone, yet the human label is still keep — a reminder that heat is not a sufficient human-remove rule even when the model treats it as one. FP `030577a1a44b` is the opposite texture problem: a statistical gun-law argument with little original-side profanity that the model still removes, likely helped by the hotter mirror. FP `0437e0af9cdf` goes further: a bureaucratic climate-plan original paired with a rage mirror. So the FP side of “Qwen said remove” includes (a) hot keeps the model over-punishes and (b) cooler or mirror-amplified keeps that still trip the remove prototype.
+
+**A compact way to hold TP vs FP.** When the model says remove, humans tend to agree when the post is a **dense outgroup attack** (party/identity targeting + thick arousal + absolute moral branding). Humans tend to disagree — i.e., you get an FP — when the post is still **political and often nasty**, but reads more like **persuasion, insult-as-opinion, conspiracy-tinged critique, or list blame** without the full TP targeting stack, or when the remove signal is partly coming from the mirrored twin. Shared victimhood and moral language explain why both classes get removed by Qwen; the targeting-and-intensity gap explains why annotators split.
+
+| Cue (V1 pools) | TP (agreed remove) | FP (over-remove) | Reading |
+| --- | ---: | ---: | --- |
+| profanity | 42% | 20% | TP much hotter |
+| left–right cue | 25% | 9% | TP much more explicitly partisan |
+| us-vs-them | 12% | 2% | almost a TP-only signal here |
+| culture-war salience | 30% | 20% | TP denser |
+| ridicule | 45% | 35% | high in both; TP higher |
+| victimhood | 27% | 27% | **does not separate** |
+| normative moral language | 62% | 63% | **does not separate** |
+| conspiracy | 9% | 10% | **does not separate** |
+| persuasion | 23% | 38% | FP more “argument-shaped” |
+| factual assertion | 33% | 42% | FP more claim/evidence-shaped |
+
+### 7.2 When Qwen keeps: true negatives vs false negatives
+
+Both TN and FN are posts the model treated as keepable. Again the human label is the only change. This pair is the mirror image of the previous one, and it is where under-removal becomes intuitive: Qwen’s keep region contains a lot of genuine keepable policy talk (TN) and also a set of posts humans still wanted removed (FN). If you only contrast FN with TP, FN looks “cool.” If you contrast FN with TN — the other things Qwen kept — FN does **not** look like TN. That is the clarification this subsection is for.
+
+**Shared ground that makes the pair confusing.** Both buckets live in a lower-arousal band than TP. Outrage is similar and modest (**14% TN vs 17% FN**). Economic framing is similar (**19% vs 17%**). Us-versus-them is rare in both (**5% vs 2%**). Left–right cues are actually **higher in TN (19%) than FN (6%)**, which is surprising if you expected “partisan = remove”; among model-keeps, explicit left–right language shows up more on agreed keeps (campaign/endorsement and comparative politics talk) than on missed removes. So “is it partisan?” does not cleanly separate TN from FN inside the keep prediction. Both can be political; both can mention guns or climate; both can argue.
+
+**Where TN pulls away from FN.** The strongest TN signature is **persuasion without attack fuel**. Persuasion peaks in TN at **52%** (vs **38%** FN). Profanity almost vanishes (**3%** vs **17%** FN). Ridicule is lower (**14% vs 27%**). Culture-war salience is lower (**11% vs 19%**). Normative moral language is lower (**44% vs 61%**). Victimhood is actually a bit **higher** in TN than FN (**23% vs 12%**), which at first seems backwards until you read the posts: TN victimhood is often rights- or safety-framed inside a bounded policy claim (“Americans shouldn’t be executed for exercising…”, storage negligence arguments), not the FN pattern of moralized institutional blame. In the samples, TN sounds instrumental — electrify Canada (`0088ab074b1b`), carbon-tax versus CCS frameworks (`02fc85b48790`), assault-weapon cosmetic definitions (`00efc34ac273`), conditional negligent-storage prosecution (`01150bd1790d`), achievement lists (`019de9fa96e5`). These are keeps because they read like **policy instruments and civic argument**, not because they are apolitical.
+
+**Where FN looks keep-like to the model but remove-like to humans.** Relative to TN, FN posts carry **more moral pressure and more argument scaffolding of a particular kind**: normative moral language **61% vs 44%**, conditional if/then **22% vs 9%**, factual assertion **41% vs 31%**, culture-war salience **19% vs 11%**, ridicule **27% vs 14%**, profanity **17% vs 3%**. They also show more niche/technical surface oddity than TP, and more than the clean TN technocratic voice. So inside the model’s keep pile, FN is the subset that is still **doing moral work** — accusing, prescribing, satirizing institutions, defining weapons as illegitimate, telling people to arm — but doing it in a register that lacks TP’s stacked outgroup assault. Humans hear a remove; the model hears something closer to keepable argument.
+
+Concrete FN examples make that audible against TN. FN `00627d49ea14` admits climate complicity and then morally traps the reader with an if/then about self-lying — accusation inside reflection. FN `025026f4b5fd` says no one needs an assault weapon because the purpose is in the name — a definitional moral claim, not a white-paper instrument debate like TN `00efc34ac273`. FN `15ad6f6b3568` demands enforcement of existing gun laws — process talk with blame. FN `1475a33737aa` tells trans Americans to acquire a gun under safety conditionals — a calm armament prescription TN almost never resembles. FN `083877a8fb68` nostalgically condemns what the NRA became. FN `0bd32b5cb97f` jokes about a Culture War(TM) card. None of these are TN’s “here is a regulatory pathway” voice. They are keep-shaped to Qwen because they are not TP-stacked attacks; they are remove-shaped to humans because they still push hard moral or armament content.
+
+**A compact way to hold TN vs FN.** When the model says keep, humans tend to agree when the post is **bounded policy or endorsement speech** (high persuasion, almost no profanity, low culture-war inventorying). Humans tend to disagree — i.e., you get an FN — when the post is still **morally charged, often conditional or definitional, sometimes lightly ridiculing or niche**, but not loud enough in outgroup-targeting terms to trip Qwen’s remove prototype. TN is keep-as-instrument; FN is keep-as-missed-moral-remove.
+
+| Cue (V1 pools) | TN (agreed keep) | FN (under-remove) | Reading |
+| --- | ---: | ---: | --- |
+| persuasion | 52% | 38% | TN more instrumentally argumentative |
+| profanity | 3% | 17% | FN hotter than TN (still far below TP) |
+| ridicule | 14% | 27% | FN more mocking |
+| normative moral language | 44% | 61% | FN more moralized |
+| conditional if/then | 9% | 22% | **FN signature** |
+| culture-war salience | 11% | 19% | FN more culture-war tinged |
+| factual assertion | 31% | 41% | FN more claim-like |
+| victimhood | 23% | 12% | TN victimhood is milder/rights-framed |
+| left–right cue | 19% | 6% | partisan cue alone ≠ human remove here |
+| economic framing | 19% | 17% | does not separate much |
+
+### 7.3 Why these two contrasts feel different from FP↔TN and FN↔TP
+
+It helps to say explicitly what each pairing is optimized to show:
+
+- **FP vs TN** asks: among human *keeps*, what did Qwen wrongly escalate? Answer: attack texture / capture / inventory heat on an otherwise keepable item.
+- **FN vs TP** asks: among human *removes*, what did Qwen wrongly downgrade? Answer: cooler policy/moral argument without the TP stack.
+- **TP vs FP** asks: among model *removes*, when do humans still keep? Answer: when remove-like heat lacks dense partisan/outgroup targeting — or when mirror/stakes tricks inflate a keep.
+- **TN vs FN** asks: among model *keeps*, when do humans still remove? Answer: when keep-like argument still carries moral prescription, conditionals, or institutional condemnation that annotators treat as over the line.
+
+If TP vs FP still felt unclear after the earlier sections, it is usually because both are “hot politics,” and the separating axis is **targeting density / attack performance**, not the mere presence of moral or victim language. If TN vs FN still felt unclear, it is usually because both are “policy-ish,” and the separating axis is **moral pressure and conditional/definitional force**, not the mere presence of a policy domain. The model’s keep/remove cut and the humans’ keep/remove cut are aligned on the extremes (clean TN, stacked TP) and contested in the middle (argumentative FP, moralized FN).
+
+---
+
+## 8. Example post pairs (20 per bucket)
 
 Texts are full original and mirrored strings from the confusion splits. Rows are the first 20 V1-planned posts per bucket.
 
-### 7.1 False positives (n=20 of 128 V1)
+### 8.1 False positives (n=20 of 128 V1)
 
 | # | post_id (short) | original | mirrored | human | qwen |
 | ---: | --- | --- | --- | --- | --- |
@@ -218,7 +298,7 @@ Texts are full original and mirrored strings from the confusion splits. Rows are
 
 </details>
 
-### 7.2 False negatives (n=20 of 64 V1)
+### 8.2 False negatives (n=20 of 64 V1)
 
 | # | post_id (short) | original | mirrored | human | qwen |
 | ---: | --- | --- | --- | --- | --- |
@@ -269,7 +349,7 @@ Texts are full original and mirrored strings from the confusion splits. Rows are
 
 </details>
 
-### 7.3 True positives (n=20 of 64 V1)
+### 8.3 True positives (n=20 of 64 V1)
 
 | # | post_id (short) | original | mirrored | human | qwen |
 | ---: | --- | --- | --- | --- | --- |
@@ -320,7 +400,7 @@ Texts are full original and mirrored strings from the confusion splits. Rows are
 
 </details>
 
-### 7.4 True negatives (n=20 of 64 V1)
+### 8.4 True negatives (n=20 of 64 V1)
 
 | # | post_id (short) | original | mirrored | human | qwen |
 | ---: | --- | --- | --- | --- | --- |
@@ -373,7 +453,7 @@ Texts are full original and mirrored strings from the confusion splits. Rows are
 
 ---
 
-## 8. Limitations
+## 9. Limitations
 
 - **V1 pilot only** (~320 / 8791 posts ≈ 3.6%); do not treat rates as full-corpus prevalence without V2.
 - Confidence gate **0.85** drops medium/low LLM features.
@@ -383,7 +463,7 @@ Texts are full original and mirrored strings from the confusion splits. Rows are
 
 ---
 
-## 9. Artifact index
+## 10. Artifact index
 
 | Artifact | Path |
 | --- | --- |
