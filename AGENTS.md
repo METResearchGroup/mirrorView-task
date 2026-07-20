@@ -27,7 +27,7 @@ The update script already runs `npm install` and `uv sync` on startup, so depend
 - `uv sync` installs the `dev` dependency group by default (torch/transformers/spacy — large).
 - Tests: `PYTHONPATH=. uv run pytest`. Real tests live in `experiments/fetch_reddit_pushshift_dump_2026_06_15/tests/`.
 - `testing/smoke_tests/` is a stub intended to hit the live prod Lambda; it is not a functional local test.
-- S3-touching scripts (`scripts/export_study_results.py`, `scripts/upload_to_s3/*`) need AWS credentials (not present by default). LLM/experiment scripts read API keys from a repo-root `.env` (`lib/load_env_vars.py`: `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `WANDB_API_KEY`).
+- S3-touching scripts (`scripts/export_study_results.py`, `scripts/upload_to_s3/*`) and Bedrock/Titan calls need AWS credentials (not present by default). See `docs/runbooks/ADDING_NEW_AWS_CREDENTIALS.md`. LLM/experiment scripts read API keys from a repo-root `.env` (`lib/load_env_vars.py`: `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `WANDB_API_KEY`).
 
 ### Lint / test
 
