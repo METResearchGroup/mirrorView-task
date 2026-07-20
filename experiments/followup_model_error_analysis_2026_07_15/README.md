@@ -26,4 +26,4 @@ PYTHONPATH=. uv run python experiments/followup_model_error_analysis_2026_07_15/
 
 Requires `OPENAI_API_KEY` via repo `.env` (`lib/load_env_vars.py`). Primary model: `gpt-5.5`.
 
-See `spec.md` for full design, `progress.md` for run log, `RESULTS.md` for findings.
+See `spec.md` for full design, `progress.md` for run log, `RESULTS.md` for findings, and `DETAILED_RESULTS.md` for V1 example pairs + finer pattern taxonomy.
