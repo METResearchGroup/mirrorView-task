@@ -87,6 +87,9 @@ aws-credentials.json
 # Local S3 release staging (scripts/upload_to_s3)
 s3_upload/
 
+# Experiment artifact migration SQLite DB (runtime state)
+experiments/migrate_local_artifacts_to_s3_2026_07_20/migration_tracker.db
+
 # Lambda zip artifacts produced next to Terraform module
 infra/*.zip
 

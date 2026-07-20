@@ -1,0 +1,2153 @@
+[
+  {
+    "experiment_prefix": "experiments/fetch_reddit_pushshift_dump_2026_06_15",
+    "file_size_bytes": 368,
+    "local_path": "experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/RC_2025-05/metadata.json",
+    "mtime_ns": 1783810396357540464,
+    "s3_key": "experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/RC_2025-05/metadata.json",
+    "sha256": "12a82a875f79f0e60a53bfd088fed37a1b8c9b86296551ab5a96a3366004d7f1",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/fetch_reddit_pushshift_dump_2026_06_15",
+    "file_size_bytes": 368,
+    "local_path": "experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/RC_2025-06/metadata.json",
+    "mtime_ns": 1783810396370604928,
+    "s3_key": "experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/RC_2025-06/metadata.json",
+    "sha256": "a7164075c05b313392dfb0d0a1e44969e9dc8cf28ec7e0529c78a205c3e2a04e",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/fetch_reddit_pushshift_dump_2026_06_15",
+    "file_size_bytes": 241,
+    "local_path": "experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/total_metadata.json",
+    "mtime_ns": 1783810396370667511,
+    "s3_key": "experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/total_metadata.json",
+    "sha256": "5067bceb0be0b1143a248a0a93380389dd71f4c0b0b7ac9f943e048c4bf11037",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 33199,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/cluster_batch_0.json",
+    "mtime_ns": 1784565525592108199,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/cluster_batch_0.json",
+    "sha256": "c079ba1ce71045576427ce4c2563b982db743349bc84bae05d7a2b1a4939ca67",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 33197,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/clusters_merged.json",
+    "mtime_ns": 1784565525592922951,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/clusters_merged.json",
+    "sha256": "17c29a529f707178b206943b9e129a27d102afa57d33854e744513d813407921",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 275,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/cost_log.json",
+    "mtime_ns": 1784565525593269411,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/cost_log.json",
+    "sha256": "700da9d64b72e58c82c9db5f6a1773fdfb8bcabba734f41ede8799a59cd1b1a6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 522,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/cost_summary.json",
+    "mtime_ns": 1784565525593646203,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/clustering/cost_summary.json",
+    "sha256": "51d287ef576f896da398b3809ec183dcc8b7cfe7b24682f9e3bca82dfbf234ac",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 472447,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/false_negatives.csv",
+    "mtime_ns": 1784565525596333919,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/false_negatives.csv",
+    "sha256": "62ec7f4fc2582de6665e20c5f799c8dbac6943721ddd6d24fe4116e1a28ffc7a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 1474096,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/false_positives.csv",
+    "mtime_ns": 1784565525600361638,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/false_positives.csv",
+    "sha256": "98719b1a3c450a03f8bdfe46a8691418665f721ca2e0dfa9b7a6c26c20050116",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 1014,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/split_summary.json",
+    "mtime_ns": 1784565525600710431,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/split_summary.json",
+    "sha256": "eccd651b5799f035b59ebd9748f9f378e0480b0349424ba5b299a7292b250900",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 2288341,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/true_negatives.csv",
+    "mtime_ns": 1784565525606713822,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/true_negatives.csv",
+    "sha256": "3ba3c08b947f1289738a95c7589db2e89e25b04cc42f7aba67d60f4d9bac2846",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 1169661,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/true_positives.csv",
+    "mtime_ns": 1784565525609818955,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/confusion_splits/true_positives.csv",
+    "sha256": "c430fd2a5eee168f51782fdc8bf755bc473d2e16c3db2f1962d06ba866f36383",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 9129,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/cost_log.json",
+    "mtime_ns": 1784565525610349623,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/cost_log.json",
+    "sha256": "5bb1a8eb07d7c40557c53503ea74742d460e3ad5154ba3c275f6445d4f704e23",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 796,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/cost_summary.json",
+    "mtime_ns": 1784565525610866541,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/cost_summary.json",
+    "sha256": "e97ba29178a421cf9274d58cde993b09a1d9275e3d76186d4d100d3fbe18461b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 50316,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0000.csv",
+    "mtime_ns": 1784565525611434668,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0000.csv",
+    "sha256": "01991cc61786fe4f64fc33d8143cd1bb16f6a9ba8b09f21918734deb59048433",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0000.meta.json",
+    "mtime_ns": 1784565525611658044,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0000.meta.json",
+    "sha256": "bffbd96b512f897a11deb54735c05ee7782e20211528be5b8b15860b3e5bf799",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 52887,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0001.csv",
+    "mtime_ns": 1784565525613168756,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0001.csv",
+    "sha256": "8b2fddc9e906e862cb6592fb217c9dd8cd17b6b35384a122ce0e9e213d03eafd",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0001.meta.json",
+    "mtime_ns": 1784565525613387340,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0001.meta.json",
+    "sha256": "4bf2c630999c4b062351805e6740b746f91ed34f81d18477d9fd1048f6e787f3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 60154,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0002.csv",
+    "mtime_ns": 1784565525613833633,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0002.csv",
+    "sha256": "54f4da54f13512c6a8ba295f7293f1cd51796b90fcb1fb7d89421081da66c644",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0002.meta.json",
+    "mtime_ns": 1784565525614031967,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0002.meta.json",
+    "sha256": "4b78e74e91697d4d0410a556fd589657516d67a8985bd5d8760d685b39d99ba9",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 55604,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0003.csv",
+    "mtime_ns": 1784565525614385343,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0003.csv",
+    "sha256": "b341f1e8fd37fd9bc7d8c4388778bfa615dabbdcf2a0dccd9469a75febd08e83",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0003.meta.json",
+    "mtime_ns": 1784565525614573677,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fn/batch_0003.meta.json",
+    "sha256": "7a4ba5ad504ad6e1ec6e3ef79f76407bb2927107bbd68af8ee3d1da9b9b5ba29",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 55596,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0000.csv",
+    "mtime_ns": 1784565525615023719,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0000.csv",
+    "sha256": "7ec51710a267482998c6169b62b0f8a41bdd73944b65a17cf46bb91d07d1af55",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0000.meta.json",
+    "mtime_ns": 1784565525615199928,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0000.meta.json",
+    "sha256": "5cb4276c750fb2823e1615e6cf0b0650c1fcd2f9294e71db74e19babe85cfd54",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 55131,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0001.csv",
+    "mtime_ns": 1784565525615433512,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0001.csv",
+    "sha256": "4f8791a86a579a70570c3e8b3d5fe78b4bee8fbcc93db6a8f530e0f74b30a789",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0001.meta.json",
+    "mtime_ns": 1784565525615607721,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0001.meta.json",
+    "sha256": "7536465da351e9cdcee5e0ce12bd2eac48895432e6112e05e176fa584ac906c6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 58194,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0002.csv",
+    "mtime_ns": 1784565525615874597,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0002.csv",
+    "sha256": "501e1f001225b2fa8552d606da195a1c006a8b00b52561058a8f8f9e690ced08",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0002.meta.json",
+    "mtime_ns": 1784565525616067514,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0002.meta.json",
+    "sha256": "937d32e0823555f793f9fe8b8576fab458030b4fb38276d3e0281131360cacda",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 61126,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0003.csv",
+    "mtime_ns": 1784565525616319265,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0003.csv",
+    "sha256": "7ef054d691ac03ae25a1743ec2c6eb2c720abae1d65bea5bd3f0afc2470fc2c3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0003.meta.json",
+    "mtime_ns": 1784565525616626890,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0003.meta.json",
+    "sha256": "21f8220e770fcd85fc3343f41f1054cb00d150bf0e20a1002a415c45f3c2c7d5",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 57454,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0004.csv",
+    "mtime_ns": 1784565525617104725,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0004.csv",
+    "sha256": "cea19560d5c2769de5ed83c8b5ba4a2ec552084766cebcfd5f4c880adf980923",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0004.meta.json",
+    "mtime_ns": 1784565525617286059,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0004.meta.json",
+    "sha256": "f00e0c4df1151b34a7f7bdc397a72d186ca0fd2b066652fdc6990cd3c2c5c635",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 62846,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0005.csv",
+    "mtime_ns": 1784565525617528226,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0005.csv",
+    "sha256": "a4ae3ca7695af6e75470db09fa25e4ca79fa7894a1dcdfac342a4818c22d79c5",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0005.meta.json",
+    "mtime_ns": 1784565525617697852,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0005.meta.json",
+    "sha256": "a904d5c7f8bfee728663ce4ec2d6d0cbd18c3edab92b4b4419ebcbf5817c192d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 56009,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0006.csv",
+    "mtime_ns": 1784565525618037311,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0006.csv",
+    "sha256": "b19b8af9bacbd3d16bfe2619de189e0ac8478e9b6a2483d88dc9fdf3f52f645d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0006.meta.json",
+    "mtime_ns": 1784565525618223020,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0006.meta.json",
+    "sha256": "feeac8e2a4a4a0a2a977aef82a35345cdf7d55d11e2953beee1b91c7ae57184d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 46849,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0007.csv",
+    "mtime_ns": 1784565525618580771,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0007.csv",
+    "sha256": "df5fae1e0dc3a0e2de9e180fc43e3a1ef0e2624f25aacee50c0dc8f0bb5bd66c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0007.meta.json",
+    "mtime_ns": 1784565525618785688,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/fp/batch_0007.meta.json",
+    "sha256": "1a267329fbe4738cd5ead6b711ee4adc2086bcaedb353b2ed8d68da6f687e09c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 58912,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0000.csv",
+    "mtime_ns": 1784565525619221023,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0000.csv",
+    "sha256": "24ae63fe131f604d2a77fa6ff614a8f77c80cd93db94866ffef8162debab4b4b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0000.meta.json",
+    "mtime_ns": 1784565525619546232,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0000.meta.json",
+    "sha256": "35214d1ef95f90c20a907d5cf9f35ecf4ff33dbc93a48c0ccf8e42da427f2aa2",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 45000,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0001.csv",
+    "mtime_ns": 1784565525620110691,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0001.csv",
+    "sha256": "8e1ff3178e9f35d835b3b53eee40a26e61e46ce406a0bd4cf9e2a44fca6ab245",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0001.meta.json",
+    "mtime_ns": 1784565525620354651,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0001.meta.json",
+    "sha256": "59e910a3355f07502bf384b18a531fc9675d154319155d7303ce7e0b83de73b7",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 50106,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0002.csv",
+    "mtime_ns": 1784565525620690818,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0002.csv",
+    "sha256": "ab2ea370718e434deb12ab100173feb96abdc5fc3d4b086cdbab8c2a8d7c4acb",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0002.meta.json",
+    "mtime_ns": 1784565525620939152,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0002.meta.json",
+    "sha256": "acb4d81f2e37ec06e99c15fb71b3796c03a1362587b25bf085d4845981d5e0b9",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 57267,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0003.csv",
+    "mtime_ns": 1784565525621328861,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0003.csv",
+    "sha256": "ef073ec3f6737c563378e7f2ded8c4839a25413ba98f6dc55243a021c730c8f4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0003.meta.json",
+    "mtime_ns": 1784565525621634779,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tn/batch_0003.meta.json",
+    "sha256": "ffa5c573c37f76cc48a0929adca65e9ca880b3165dd6ad7ae81737872d878b4f",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 67443,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0000.csv",
+    "mtime_ns": 1784565525622014863,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0000.csv",
+    "sha256": "b246443c4b0201be70462da38e01a5fd762df29b835b7ae825135dddcc03411c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0000.meta.json",
+    "mtime_ns": 1784565525622239239,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0000.meta.json",
+    "sha256": "e2d0e29cf7fbc4dabdc66154c4d0d8284ded87da41717069083ad6e7a09a2332",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 42184,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0001.csv",
+    "mtime_ns": 1784565525622722157,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0001.csv",
+    "sha256": "239f148fa3172430325a96316c64ab3538e48c3173db665ac0ab2d1386b4a4a6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 420,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0001.meta.json",
+    "mtime_ns": 1784565525623141616,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0001.meta.json",
+    "sha256": "cf7dd7673e046efceb9f6ba0b36e8b1093c2219b0bfcc321a25653dd7fc3b76a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 62488,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0002.csv",
+    "mtime_ns": 1784565525623549951,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0002.csv",
+    "sha256": "9581d6402a9386a50c5f6a314d47a21c426eeb7a8c256c70039ebab2be871760",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 422,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0002.meta.json",
+    "mtime_ns": 1784565525623837368,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0002.meta.json",
+    "sha256": "050c09781f0eaaef8f4a42563e97ad304e8d35140ee241fd9e6fbdd5726c4e71",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 73467,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0003.csv",
+    "mtime_ns": 1784565525624314578,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0003.csv",
+    "sha256": "524c67133da55a0d91f3eeca63e431c1fea6e03394af159ec54e21995bb1cea5",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 421,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0003.meta.json",
+    "mtime_ns": 1784565525624624829,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/tp/batch_0003.meta.json",
+    "sha256": "9b8b56c00efc77e605baa95699a120f19e89da4937f6e56d85e0902d18355d0a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 29888,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/v1_batch_plan.json",
+    "mtime_ns": 1784565525624906329,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/llm_features/v1_batch_plan.json",
+    "sha256": "53251ab62fea9ee611c6a2fabd0697b622bcb7cae0e8dc5e82d924b0c1475369",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 1845,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/run_manifest.json",
+    "mtime_ns": 1784565525625200414,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/run_manifest.json",
+    "sha256": "1c1e9d795a5522939aebb39dcb79f0c49c99c085a16318bb58a801d7d1d12e60",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 93317,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_fn.csv",
+    "mtime_ns": 1784565525625980499,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_fn.csv",
+    "sha256": "ef2d289f44f9f0fb83b31a5fa3ed8a6ebe3df096924a57e7d47954f1a1b13563",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 181054,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_fp.csv",
+    "mtime_ns": 1784565525627106960,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_fp.csv",
+    "sha256": "6b8fe7a19c6d6edde2453e3c3446ebfbaf04fcb408fb4ac524e85d69b1ec9c27",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 91335,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_tn.csv",
+    "mtime_ns": 1784565525627682712,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_tn.csv",
+    "sha256": "e22615799e22b5d8494a23ac159eeb76031f1fce991a6562863b9c1a9803be91",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 104541,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_tp.csv",
+    "mtime_ns": 1784565525628264880,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/bigram_counts_tp.csv",
+    "sha256": "0e7389629e2d02f6560f23e0693c84c4915b712b4bd870e950c33de22b107a09",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 832,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/fp_vs_tn_enriched_terms.csv",
+    "mtime_ns": 1784565525628524089,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/fp_vs_tn_enriched_terms.csv",
+    "sha256": "1a01d040b813a69b187ab704b9befb3a1ab36cae643516119cdeca9eca7d9195",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 179,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/text_mining_summary.json",
+    "mtime_ns": 1784565525628888007,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/text_mining_summary.json",
+    "sha256": "1be96764e66b44f3b43228db363bc995a247f8747b359cd8879eed2a9fc7ac12",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 23087,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_fn.csv",
+    "mtime_ns": 1784565525631431847,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_fn.csv",
+    "sha256": "dbd2485e4723102f7418dd18059aea5b9055ccc39c042b83a75cc9bdd75c8ddd",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 36223,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_fp.csv",
+    "mtime_ns": 1784565525631789598,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_fp.csv",
+    "sha256": "37508bef07197c555dc1c32ba70e8de19ce4cd4f224f1deda203e71c229e2014",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 23219,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_tn.csv",
+    "mtime_ns": 1784565525632118766,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_tn.csv",
+    "sha256": "cd6c299bb0b73ac7ad14af8aff015e039ce173e0cbf1332ec644daffcc041add",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/followup_model_error_analysis_2026_07_15",
+    "file_size_bytes": 24705,
+    "local_path": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_tp.csv",
+    "mtime_ns": 1784565525632505350,
+    "s3_key": "experiments/followup_model_error_analysis_2026_07_15/outputs/text_mining/unigram_counts_tp.csv",
+    "sha256": "9f7636d6677f8ef5040bcccf083df03951d6f787b9221d165e3ac6719a8aec72",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 28471,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/labels_mirrors.csv",
+    "mtime_ns": 1783810396374834331,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/labels_mirrors.csv",
+    "sha256": "2650a2f0879e6e48c745f4d1b2722c95920c760e77e8f544f5c6d80c7c182ca7",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 28582,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/labels_original_text.csv",
+    "mtime_ns": 1783810396374899123,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/intergroup_classifier/labels_original_text.csv",
+    "sha256": "60323f02352a039db44f294893f097d294bb5a7d6c40fb663b188e9c8079d3b1",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 29169,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/labels_mirrors.csv",
+    "mtime_ns": 1783810396377776268,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/labels_mirrors.csv",
+    "sha256": "f9693ea90db8ae275f54bfeb3d9f5f77bd754462215eb08ecd87609b81a8d5d8",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 29191,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/labels_original_text.csv",
+    "mtime_ns": 1783810396377840310,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/labels_original_text.csv",
+    "sha256": "0960ed090f61b6065e1a4e2552bf69452cbcdf50f43d7f22fbe88b02a6f11253",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 1916,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_keep_remove.csv",
+    "mtime_ns": 1783810396378164020,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_keep_remove.csv",
+    "sha256": "dfdf660956027de38ed96ddfbae54b5d9a3108c3f72dd3a810936e5a102c1134",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 467,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_mirrors.csv",
+    "mtime_ns": 1783810396378224854,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_mirrors.csv",
+    "sha256": "895983e35b3261fca88eb1bcea92164e5e7b5fd5e20f3102d44673ffbff5ed59",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 465,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_original_text.csv",
+    "mtime_ns": 1783810396378293813,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_original_text.csv",
+    "sha256": "945e4e412cf67ba80d2489865cb2504d39cfdcea8256405adb03ae489122aa54",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 592,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_pairwise.csv",
+    "mtime_ns": 1783810396378360980,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/analysis/valence_classifier/outputs/2026_05_07-02:33:53/analysis_pairwise.csv",
+    "sha256": "bd4e2cac846cdb4c25e2fd66242022da3305300dbac24ff5cc90a74fa32bcb9a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/mirrors_content_analysis_2026_04_24",
+    "file_size_bytes": 892,
+    "local_path": "experiments/mirrors_content_analysis_2026_04_24/outputs/2026_04_27-15:59:04/metadata.json",
+    "mtime_ns": 1783810396380765496,
+    "s3_key": "experiments/mirrors_content_analysis_2026_04_24/outputs/2026_04_27-15:59:04/metadata.json",
+    "sha256": "792bb5b7e6c812c68816da923ae4a217336d59c50c7b239d07c59434f99d5033",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 366648,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/analysis_meta.csv",
+    "mtime_ns": 1784565525071193416,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/analysis_meta.csv",
+    "sha256": "8816c303a85c292f3c4fad1e53acf756c1f6e82805854f3447ee8edbd6157932",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 4618,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/analysis_table_meta.json",
+    "mtime_ns": 1784565525142284150,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/analysis_table_meta.json",
+    "sha256": "486aa976bfdc7bc9a4ddbbbe6786eaff56216e54bc0a99e15e5774685d81580d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 417641,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/analysis_with_split.csv",
+    "mtime_ns": 1784565525143448028,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/analysis_with_split.csv",
+    "sha256": "d0d5f08b59b06f454246295ece5ffec1244ad5b6d183ca6f7add1b35deee3497",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 4186647,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_assignments.csv",
+    "mtime_ns": 1784565525156189604,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_assignments.csv",
+    "sha256": "8fc17ddec1a3cecd0f585127ab4acc08359bc6e9ce6ca12ebe1a40ffdc2973ed",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 13465,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_exemplars.csv",
+    "mtime_ns": 1784565525156922064,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_exemplars.csv",
+    "sha256": "170d507c6a9afe2e0a4ab5509df92c7f85a67fb4f0520c7f73ee8ab015c759e5",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 956,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_lift_table.csv",
+    "mtime_ns": 1784565525157856442,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_lift_table.csv",
+    "sha256": "7a591cd254400af2f5d044830fbbc554476d16c8e2b7fda96d0d588e2f4607b1",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 8878,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_metrics.json",
+    "mtime_ns": 1784565525158237818,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/cluster_metrics.json",
+    "sha256": "d8a2a79f5b438fcd37927040fe5e736b7dbfc3655964b02e7b7a04842eafe058",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 1322,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/k_selection.json",
+    "mtime_ns": 1784565525158841445,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/clusters/k_selection.json",
+    "sha256": "34b24671307e3b83fe0796f991a4bea403c4becfa17b17400fcbaa944c18bb18",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 1098020,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/embeddings_2d.csv",
+    "mtime_ns": 1784565525167123217,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/embeddings_2d.csv",
+    "sha256": "cf91403eb436098bcf92d9eb09233697f134b39039916c2b229626c86250e073",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 13816,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_coefficients.csv",
+    "mtime_ns": 1784565525172066480,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_coefficients.csv",
+    "sha256": "044ac10f818535c4243d2cb0035adf402a44b2c1661251410f254b31f657d99d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 7646,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_metrics.json",
+    "mtime_ns": 1784565525172381148,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_metrics.json",
+    "sha256": "4edfb5b026116844f403d825fc6a1da50975d1c859ae8310d78d86eb1de7c628",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 603591,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_predictions.csv",
+    "mtime_ns": 1784565525175002947,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/linear_separator_predictions.csv",
+    "sha256": "96b45b5b7a88a1769e5d580e7a13b5f0374a2a8f21b4b3bac76f5aaeb7d1c117",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 7646,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/logistic_metrics.json",
+    "mtime_ns": 1784565525175190530,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/logistic_metrics.json",
+    "sha256": "4edfb5b026116844f403d825fc6a1da50975d1c859ae8310d78d86eb1de7c628",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 231,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/pca_variance_explained.json",
+    "mtime_ns": 1784565525180009502,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/pca_variance_explained.json",
+    "sha256": "d702fe239343a993882a98e9e823af9aa1ddcc49c4a2b754983aa9e212095b9e",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 2641,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/reduction_summary.json",
+    "mtime_ns": 1784565525181940799,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/reduction_summary.json",
+    "sha256": "7d5b127473a58bfcacf9b4283b6eb0e38222aef16bf815c9502df06a739e35cd",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 375800,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/split_ids.json",
+    "mtime_ns": 1784565525184039388,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/analysis/split_ids.json",
+    "sha256": "e56374d3dc6354da4781dfb21a94be813c211e41e1ef38026176fdbcf7400c96",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 5342567,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/base_model_llm_labels.csv",
+    "mtime_ns": 1784565525197079631,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/base_model_llm_labels.csv",
+    "sha256": "fb2da8299ca3940d01617129df308fd1c1e6f765cd8c7459c59bc5c40f946d95",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/model_errors_analysis_2026_07_15",
+    "file_size_bytes": 1560,
+    "local_path": "experiments/model_errors_analysis_2026_07_15/outputs/run_manifest.json",
+    "mtime_ns": 1784565525197802967,
+    "s3_key": "experiments/model_errors_analysis_2026_07_15/outputs/run_manifest.json",
+    "sha256": "895882c66f2048654a4be36f71ad50602b6074e21caf223028eee2fd1b9335ee",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1112,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:09:55/baseline_metrics.json",
+    "mtime_ns": 1783810396381326125,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:09:55/baseline_metrics.json",
+    "sha256": "78c171dd14167ecb046ec8250cf374ea53ddaf20a3491776f2a7deb0571e7ed6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 484,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:09:55/class_balance.json",
+    "mtime_ns": 1783810396381380792,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:09:55/class_balance.json",
+    "sha256": "32cb7064297e75a2531fbe2857633fd8ade7d4c33b5cbd215655812d9194b573",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 349,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:09:55/metadata.json",
+    "mtime_ns": 1783810396381467751,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:09:55/metadata.json",
+    "sha256": "aa4149f7b7c5b1b5834e5eeedada3d0fe64920db923869b1ecc76eccf4fd874b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1112,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:22:38/baseline_metrics.json",
+    "mtime_ns": 1783810396381559710,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:22:38/baseline_metrics.json",
+    "sha256": "0701a093bdaa077a75120a874c5cb0d43bec7a0aa1c2102c1ef0642e20732446",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 479,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:22:38/class_balance.json",
+    "mtime_ns": 1783810396381620169,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:22:38/class_balance.json",
+    "sha256": "a8c980b5e8d23720bb0de91f638ec16438807001fd587f4cbbdecf2ae2db25d4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 349,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:22:38/metadata.json",
+    "mtime_ns": 1783810396381674002,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:22:38/metadata.json",
+    "sha256": "3654e0b3ddfb84acfa2bde3d907498c1038eb2e1b03a08054a50eab2facb9de9",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1116,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36/baseline_metrics.json",
+    "mtime_ns": 1783810396381751711,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36/baseline_metrics.json",
+    "sha256": "5286f5676cd836a746cc2e3b2c826814f62db6b65a99444ef3f7be60f0d99e83",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 479,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36/class_balance.json",
+    "mtime_ns": 1783810396381804795,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36/class_balance.json",
+    "sha256": "a8c980b5e8d23720bb0de91f638ec16438807001fd587f4cbbdecf2ae2db25d4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 350,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36/metadata.json",
+    "mtime_ns": 1783810396381859920,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/baseline/outputs/2026_05_07-18:27:36/metadata.json",
+    "sha256": "6dfeae9ee3d09ade3bf7c03dd1401bba876a6c2db973bc59aa40fc9d642bdccb",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 184,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/calibration_metrics.json",
+    "mtime_ns": 1783810396382257340,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/calibration_metrics.json",
+    "sha256": "6ce2104ea261a833d7dd07ab1a33a3a070f3bbf7e33340476d0dfa13a5fe4e73",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 348,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/metadata.json",
+    "mtime_ns": 1783810396382506216,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/metadata.json",
+    "sha256": "f6cd9ceb713eeae5e1a58f40d979fb71b55ce1bce0282dc999fa78613135ece2",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 308,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/selected_threshold.json",
+    "mtime_ns": 1783810396382819843,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/selected_threshold.json",
+    "sha256": "882594a509b9ece40586eb1e86f2f0e7e0001a8a79d6ad663c59e3159a6bb5ca",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 275,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/test_metrics_at_selected_threshold.json",
+    "mtime_ns": 1783810396382891760,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:43:57/test_metrics_at_selected_threshold.json",
+    "sha256": "8faa257284c44fc6478d84c3cb42bed32ad2ebcffb82f8cd5804197aefbe62d4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 184,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/calibration_metrics.json",
+    "mtime_ns": 1783810396383290638,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/calibration_metrics.json",
+    "sha256": "eb354f1a8d7b5020467facfbbc953d7c3457ae5372aaa2dff511f0d6d8dbbd14",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 349,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/metadata.json",
+    "mtime_ns": 1783810396383522390,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/metadata.json",
+    "sha256": "cf634f4e1804acdbbd495ef3438da1dd4e0c97ba281bd2b8544f7cbdb22b4a57",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 294,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/selected_threshold.json",
+    "mtime_ns": 1783810396383803308,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/selected_threshold.json",
+    "sha256": "577a323160f6169abd5dd1c0b77909315d3d39f6f26896e5107eea22fe69e1d4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 274,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/test_metrics_at_selected_threshold.json",
+    "mtime_ns": 1783810396383865100,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:03/test_metrics_at_selected_threshold.json",
+    "sha256": "1eb5567bee09a38d0531c6fbdc1468fdad25079ea6d08e7948ef129fd4fe4057",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 184,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/calibration_metrics.json",
+    "mtime_ns": 1783810396384197603,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/calibration_metrics.json",
+    "sha256": "6ce2104ea261a833d7dd07ab1a33a3a070f3bbf7e33340476d0dfa13a5fe4e73",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 348,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/metadata.json",
+    "mtime_ns": 1783810396384456104,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/metadata.json",
+    "sha256": "489c87f109df8a4b2cf2659c441a2db1f64473acd7e025fbac0697e280d48f42",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 308,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/selected_threshold.json",
+    "mtime_ns": 1783810396384773273,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/selected_threshold.json",
+    "sha256": "882594a509b9ece40586eb1e86f2f0e7e0001a8a79d6ad663c59e3159a6bb5ca",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 275,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/test_metrics_at_selected_threshold.json",
+    "mtime_ns": 1783810396384822232,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/2026_05_07-18:44:26/test_metrics_at_selected_threshold.json",
+    "sha256": "8faa257284c44fc6478d84c3cb42bed32ad2ebcffb82f8cd5804197aefbe62d4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2882,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/_comparisons/2026_05_07-18:47:05/run_comparison.json",
+    "mtime_ns": 1783810396385289985,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/calibration/outputs/_comparisons/2026_05_07-18:47:05/run_comparison.json",
+    "sha256": "953ba1533403963ee22697b14581838665a8ef448140d772c0a657fbaca70bfe",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1435,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/metadata.json",
+    "mtime_ns": 1783810396387321540,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/metadata.json",
+    "sha256": "92762e7cc1fecf69d0305ed4ba2c455df4be2606af80b3b2872c1d3a9f3cdfee",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2205,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/training_report.json",
+    "mtime_ns": 1783810396387445458,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-17:58:48/training_report.json",
+    "sha256": "6a1c79eb22077918354642aaae30eb5dce8bb230d6140dd0226f8feb8c3a5d8a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1408,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/metadata.json",
+    "mtime_ns": 1783810396387546875,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/metadata.json",
+    "sha256": "90d66095cc204301cc23440612d87b2dd4eceba22780bdcccc70306d37244185",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2190,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/training_report.json",
+    "mtime_ns": 1783810396389212928,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:00:58/training_report.json",
+    "sha256": "31edf0061e27bcc9d6f4c05befecda1655734facd684afe5831345c8d3e0d72f",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1434,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:53/metadata.json",
+    "mtime_ns": 1783810396389399638,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:53/metadata.json",
+    "sha256": "7fcfc806c1196196b31873570ee4dc8fc65ed0330b56b9c12153b274c92f4eba",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2254,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:53/training_report.json",
+    "mtime_ns": 1783810396389511138,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:53/training_report.json",
+    "sha256": "87f3f254f0d43619be99a8e90e4fad5fd24e7924c23c486167f24f2f81be398d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1408,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:57/metadata.json",
+    "mtime_ns": 1783810396389612972,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:57/metadata.json",
+    "sha256": "05c451c643c9273eff53399a157c064d9e432013b28cd49afef9942d0d9757f1",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2240,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:57/training_report.json",
+    "mtime_ns": 1783810396392219407,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:22:57/training_report.json",
+    "sha256": "94895f9064d4d5c71061e6043737640205da0dc4eb33ee8ae7a2f47d1c582f2c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1435,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:23/metadata.json",
+    "mtime_ns": 1783810396392302824,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:23/metadata.json",
+    "sha256": "86a9351c60531178d14d2139a8eb0ed4adee7c5f587a5ce44f00487ad4dca1b5",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2255,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:23/training_report.json",
+    "mtime_ns": 1783810396392408783,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:23/training_report.json",
+    "sha256": "b8cd4109f7ede400fd9f23d8d477aa908b0575c68319ed6f6a260e6144571576",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 1411,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:28/metadata.json",
+    "mtime_ns": 1783810396392506325,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:28/metadata.json",
+    "sha256": "f3a3afeb045f8f42f94604469e88814808bccca108c176cb53bf4fd56ecda843",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2243,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:28/training_report.json",
+    "mtime_ns": 1783810396394359129,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/models/outputs/2026_05_07-18:27:28/training_report.json",
+    "sha256": "c3c1d0e51d7bde9ddccb1dea66971e2bdd03292ff65e4e9e7f92416462eac0c5",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_05_07",
+    "file_size_bytes": 2957,
+    "local_path": "experiments/predict_keep_remove_2026_05_07/outputs/scaling_curves/2026_07_02-14:33:42/results.json",
+    "mtime_ns": 1783810396394637548,
+    "s3_key": "experiments/predict_keep_remove_2026_05_07/outputs/scaling_curves/2026_07_02-14:33:42/results.json",
+    "sha256": "f67013380fdda00b0fcec0375d860c637155daae34d00edc6d5b7db850331c75",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 873,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/logistic_difference_embedding.json",
+    "mtime_ns": 1783810396397406608,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/logistic_difference_embedding.json",
+    "sha256": "9f47ce2b052a0faf2f9352b138b15cb9f8e317734dc3096f7b00f3ac9d362701",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 889,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/logistic_only_original_post_embedding.json",
+    "mtime_ns": 1783810396397466817,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/logistic_only_original_post_embedding.json",
+    "sha256": "4ca84326c062cbf3d9ebb91acaef323d444f45954bdcd2a1caa787d12196bdda",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 871,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/xgboost_difference_embedding.json",
+    "mtime_ns": 1783810396397518609,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/xgboost_difference_embedding.json",
+    "sha256": "c4b7a4998750b7f6804dbc0d3bf6c91e3fcc613c98ff40b0a30a84fa93641c4a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 876,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/xgboost_only_original_post_embedding.json",
+    "mtime_ns": 1783810396397571610,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/ablation_run_summaries/xgboost_only_original_post_embedding.json",
+    "sha256": "e6650202efdef9b751f471e99c0af6099d765aafbc3299a218be65cada36bf37",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 10609802,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/keep_remove_results_2026_06_23.csv",
+    "mtime_ns": 1783810396424285456,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/keep_remove_results_2026_06_23.csv",
+    "sha256": "eb58b5e6ca0f8833df7536f915f89aaf8b01c4b8b81ab17cc8bf2bfc98175ade",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 741,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/aggregate_outputs/aggregate_results.csv",
+    "mtime_ns": 1783810396424958877,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/aggregate_outputs/aggregate_results.csv",
+    "sha256": "36778c535443ca85183536c623ae2a5ea808854044ddd1298006488ba69c4c69",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1037,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/metadata.json",
+    "mtime_ns": 1783810396425761966,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/metadata.json",
+    "sha256": "5d53382419cc58477b787ce9926d9ad719ac4581e65b18770ed3b25113dd6fae",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 539,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/metrics.json",
+    "mtime_ns": 1783810396425818050,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/metrics.json",
+    "sha256": "9a90eaf88f2d6d4cc1e39c7a056072925f35898efefae05ef613d45487b013b7",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 111,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/test_predictions.csv",
+    "mtime_ns": 1783810396425999426,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/test_predictions.csv",
+    "sha256": "3bdd507dc414b968386cbc1d4c00b0a2c6fe1ea63c53a49d43b4626b6718e2e2",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 156,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/train_predictions.csv",
+    "mtime_ns": 1783810396426063218,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:02:53/train_predictions.csv",
+    "sha256": "b0fec9f5077ca8f96da72a418572f41502a3be7e898777ee64acb64b73593179",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1338,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:36:19/metadata.json",
+    "mtime_ns": 1783810396426324595,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:36:19/metadata.json",
+    "sha256": "d0fe78996ed20b99426b007d8b9cb99147c80db2b695aeea49d7191aca5dc018",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 443,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:36:19/train_predictions.csv",
+    "mtime_ns": 1783810396432815430,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/large/outputs/2026_07_03-20:36:19/train_predictions.csv",
+    "sha256": "82db75da95545495973050204ae8a3677982a516108704de9e2bd5b16ce5280f",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1188,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/metadata.json",
+    "mtime_ns": 1783810396433361851,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/metadata.json",
+    "sha256": "39dbf646e39a23f50530cd30ee7d6ed11a65b30e90c9718b9c215559f2926fff",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 539,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/metrics.json",
+    "mtime_ns": 1783810396433425810,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/metrics.json",
+    "sha256": "636a3e2fbd7f9745004e3ecd3ac7fa8d7188e6fd743055c3412c9abe4069282d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 110,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/test_predictions.csv",
+    "mtime_ns": 1783810396433616061,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/test_predictions.csv",
+    "sha256": "9481b1af2b7b351b838e272f98621b596dc466b187058833e151343aff7aea08",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 156,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/train_predictions.csv",
+    "mtime_ns": 1783810396433670645,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:02:42/train_predictions.csv",
+    "sha256": "858f01a4014ddde366294b57f1936eb1bd29288cf0b85d299997242f12e590da",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1347,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:37:46/metadata.json",
+    "mtime_ns": 1783810396433950396,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:37:46/metadata.json",
+    "sha256": "1e29054e678de53a52d81ca78670c2a1593e77c629cc16ea2abd6b5e192103e3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 21081,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:37:46/train_predictions.csv",
+    "mtime_ns": 1783810396434127648,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:37:46/train_predictions.csv",
+    "sha256": "cf780b4197d3cf73c7a12b84805981c86b6b2847e640cd11aa73297fc0fbe717",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1345,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:43:32/metadata.json",
+    "mtime_ns": 1783810396434229107,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:43:32/metadata.json",
+    "sha256": "35cd13018e2db475bdb1e8c67c1ae54fd3531dad822eb44f775163d1f81811ba",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 3420,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:43:32/train_predictions.csv",
+    "mtime_ns": 1783810396434415274,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:43:32/train_predictions.csv",
+    "sha256": "75ed3ddf231904c413f2d56d515fa4f9dde20b330e683f1aa7424c814fb97a1b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1345,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:44:45/metadata.json",
+    "mtime_ns": 1783810396434512275,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:44:45/metadata.json",
+    "sha256": "75abfd3848e5279fb6f613bd1ebe81ee2e6550d5335b1222ce3e96c19143cadf",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1363,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:44:45/train_predictions.csv",
+    "mtime_ns": 1783810396434665526,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original/small/outputs/2026_07_03-20:44:45/train_predictions.csv",
+    "sha256": "ba7744a02045377a87ea65c5daec05419a832877ea75acfb1bac1c5d56eff315",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1219,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/metadata.json",
+    "mtime_ns": 1783810396434983278,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/metadata.json",
+    "sha256": "4c2d09cb83025c3e6ebb2e51fdf893f25e735d0a1ab7c25014563c72a876c01a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 590,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/metrics.json",
+    "mtime_ns": 1783810396435056571,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/metrics.json",
+    "sha256": "b621f544fe941f171d75d493f0f2b80259ddd848776c13a5394108dba3c962a7",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 450,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/test_predictions.csv",
+    "mtime_ns": 1783810396435238739,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/test_predictions.csv",
+    "sha256": "60c929a42411d72e2442bb26725616a78dff7945ec68a5a79cfb398fc8c3d711",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 535,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/train_predictions.csv",
+    "mtime_ns": 1783810396435299697,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/few_shot/original_plus_mirror/large/outputs/2026_07_03-18:21:38/train_predictions.csv",
+    "sha256": "d1bae51016fba40b7122092aeefdcb018116da43e1cae2a878f7aaf6a1ca7eca",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 773,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/metadata.json",
+    "mtime_ns": 1783810396437971382,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/metadata.json",
+    "sha256": "078e319a9c9a154679228323e520017347f278cd8bdfa8e2c1b1937777ae99a3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 570,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/metrics.json",
+    "mtime_ns": 1783810396438025716,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/metrics.json",
+    "sha256": "eed7ef9ecc6b12d44baece0f80f5b9ef9ea758247a8dec5c693554f8450c1c8e",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 449,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/test_predictions.csv",
+    "mtime_ns": 1783810396438192383,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/test_predictions.csv",
+    "sha256": "578d96f6b20918da4216651459ad11a5774532d0eb7ff45c9e11cab9afbc9a90",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 394,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/train_predictions.csv",
+    "mtime_ns": 1783810396438251551,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:20:16/train_predictions.csv",
+    "sha256": "b04ce9208b021e5b76a32470ca09241c5d7e4715ed102c4f7a8b9591444e9746",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 758,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/metadata.json",
+    "mtime_ns": 1783810396438334009,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/metadata.json",
+    "sha256": "67295d1c038f03d0891fe38c59da83ae2838d4259ae2f96c13e2fd6e91fcef70",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 737,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/metrics.json",
+    "mtime_ns": 1783810396438387843,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/metrics.json",
+    "sha256": "5be72ba19e40e20f400e44241d9fb3100032bb3c030d138cb6b44813bbc4b9b4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 76600,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/test_predictions.csv",
+    "mtime_ns": 1783810396438768846,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/test_predictions.csv",
+    "sha256": "10f7636370607e35471f92279af9ffe6e5d9b989e77e0ac3dfde83afe70ebb80",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 315688,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/train_predictions.csv",
+    "mtime_ns": 1783810396439225765,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original/small/outputs/2026_07_03-18:30:51/train_predictions.csv",
+    "sha256": "a33db6901bb7f6c9aabad3a1ef1055277bbe49cc4806edad3f8b349b0564c276",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 959,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:44:50/metadata.json",
+    "mtime_ns": 1783810396440030979,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:44:50/metadata.json",
+    "sha256": "f033003b8546b76e17a786d69cb0c554f12cdc968c502be6ce843e61c57e46eb",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 511,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:44:50/train_predictions.csv",
+    "mtime_ns": 1783810396440211480,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:44:50/train_predictions.csv",
+    "sha256": "2fd53aa1bb6f03181e97572422e235ab84b341583a47be94dc6946b6497f04a3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 961,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:45:17/metadata.json",
+    "mtime_ns": 1783810396440309148,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:45:17/metadata.json",
+    "sha256": "34142af2da04a503dd8da3e71335b1945b4481942f6871576e323a133f6fbe94",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 4667,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:45:17/train_predictions.csv",
+    "mtime_ns": 1783810396440520482,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/large/outputs/2026_07_03-20:45:17/train_predictions.csv",
+    "sha256": "4ef0c9b6f6b1b2e3fbdaad47023acb282d4152437fcd2c62d6526ce1ec0c1a44",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 794,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/metadata.json",
+    "mtime_ns": 1783810396440855401,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/metadata.json",
+    "sha256": "f47308f81a176deb4c4b5c32d041b732750ec49169958e8e125a17f185764a32",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 743,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/metrics.json",
+    "mtime_ns": 1783810396440928652,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/metrics.json",
+    "sha256": "a6a4e968459e5f22311a25fd06f63e32aefba7e57cef079fa9fab487534f90b1",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 76606,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/test_predictions.csv",
+    "mtime_ns": 1783810396441150737,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/test_predictions.csv",
+    "sha256": "82fe9f307328fce2a5230cdcc9a2bfdca52f088d7d3f87b69754368e4a20dab4",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 315718,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/train_predictions.csv",
+    "mtime_ns": 1783810396441365446,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_api/one_shot/original_plus_mirror/small/outputs/2026_07_03-18:30:14/train_predictions.csv",
+    "sha256": "41e39fba5e37bb62648b2f78309d74481349f8c86227d03aaf3e00af8caf4841",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 544,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/aggregate_outputs/aggregate_results.csv",
+    "mtime_ns": 1783810396442410662,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/llm_finetuning/api_baselines/aggregate_outputs/aggregate_results.csv",
+    "sha256": "bd7337469e7e6fa0f33640c62566475476b0dd1b3ea891e7eada69f1c3ed075b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 939,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/difference_embedding/2026_07_03-02:57:10/metadata.json",
+    "mtime_ns": 1783810396445186514,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/difference_embedding/2026_07_03-02:57:10/metadata.json",
+    "sha256": "d803da668109e1fbbeaa81b4ac6deab03ef2e4af64cdc0854a0d1346852d0bf8",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 728,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/difference_embedding/2026_07_03-02:57:10/metrics.json",
+    "mtime_ns": 1783810396445245431,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/difference_embedding/2026_07_03-02:57:10/metrics.json",
+    "sha256": "ddc6c9a3e9f3fd146fb57b9500bb8e6454c4ee006f0d111971b09ec3b8078890",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 937,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/only_original_post_embedding/2026_07_03-02:57:09/metadata.json",
+    "mtime_ns": 1783810396445373224,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/only_original_post_embedding/2026_07_03-02:57:09/metadata.json",
+    "sha256": "96ced4a74ff7443b40e3ed258efb51b27ff195f916fc952cccc5c67bd0683945",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 736,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/only_original_post_embedding/2026_07_03-02:57:09/metrics.json",
+    "mtime_ns": 1783810396445435266,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/only_original_post_embedding/2026_07_03-02:57:09/metrics.json",
+    "sha256": "50488110e87a9550c15f08cae6abe39a27e94fdc112d7d06528972e0314429c2",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 885,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/outputs/2026_07_02-21:38:58/metadata.json",
+    "mtime_ns": 1783810396445573850,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/outputs/2026_07_02-21:38:58/metadata.json",
+    "sha256": "5f63788365d505613e483a2829d09c56f9c21c3e2d1ad7a9e9c1766a9f50ab81",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 727,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/outputs/2026_07_02-21:38:58/metrics.json",
+    "mtime_ns": 1783810396445629392,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/logistic_regression/outputs/2026_07_02-21:38:58/metrics.json",
+    "sha256": "74a208ab64868db7ee764460478eb0a2ec96b3a8606a9aec1182c5ce4c34e84d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 875,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/accuracy.json",
+    "mtime_ns": 1783810396446691857,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/accuracy.json",
+    "sha256": "63e0fcdbd056a42d485273133549c5650cf3d1ef142f6922cce9604de2e15a47",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 871,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/f1.json",
+    "mtime_ns": 1783810396446974109,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/f1.json",
+    "sha256": "7910adc9f97335742a4608386999a5b99d7b9e5ac1ec66d6fd22bf6a2b037002",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 877,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/precision.json",
+    "mtime_ns": 1783810396447250653,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/precision.json",
+    "sha256": "b5d372c695eb056dcb3d8f858132b5d866ce98095b8c8976df4dd9ccd1d4506f",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 876,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/recall.json",
+    "mtime_ns": 1783810396447507738,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/recall.json",
+    "sha256": "65c7fda62c1bd5a6ac4675f238a8be4855e55f921773ed93e8aea4797c2bddb6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 888,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/summary.json",
+    "mtime_ns": 1783810396447784490,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/modernbert/outputs/threshold_analysis/2026_07_05-13:57:45/summary.json",
+    "sha256": "b8dd980b1026d1f38314d3df59474822cda772e0979dccab0e42ee3b5dd57e11",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1016,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/difference_embedding/2026_07_03-02:57:02/metadata.json",
+    "mtime_ns": 1783810396448311535,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/xgboost/difference_embedding/2026_07_03-02:57:02/metadata.json",
+    "sha256": "c4ed8bd71a9f02762ab799ea0e73a91b2156b058eb4a4b49e872b2c0cb5380b3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 737,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/difference_embedding/2026_07_03-02:57:02/metrics.json",
+    "mtime_ns": 1783810396448367994,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/xgboost/difference_embedding/2026_07_03-02:57:02/metrics.json",
+    "sha256": "7a55105095426e05145feee9c5c428db427bd2ffa8546e478a4f8bd4e3fc8234",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1072,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/only_original_post_embedding/2026_07_03-02:57:07/metadata.json",
+    "mtime_ns": 1783810396448477036,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/xgboost/only_original_post_embedding/2026_07_03-02:57:07/metadata.json",
+    "sha256": "229d82e8b5933aaf11a01b5a8ad734cc3c6fcea6c088bbc472a9cc29f4eca90a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 734,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/only_original_post_embedding/2026_07_03-02:57:07/metrics.json",
+    "mtime_ns": 1783810396448529328,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/xgboost/only_original_post_embedding/2026_07_03-02:57:07/metrics.json",
+    "sha256": "003805ad5b22919e6af1acc26bfad6fd239982bbdd362536732f4f2c7e374340",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 925,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/outputs/2026_07_02-21:20:41/metadata.json",
+    "mtime_ns": 1783810396448653662,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/xgboost/outputs/2026_07_02-21:20:41/metadata.json",
+    "sha256": "ef1a0f9baed07a4ceac0f426c1994f9ba161f62c237923b9b94b641ed990e0e2",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 718,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/models/xgboost/outputs/2026_07_02-21:20:41/metrics.json",
+    "mtime_ns": 1783810396448703704,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/models/xgboost/outputs/2026_07_02-21:20:41/metrics.json",
+    "sha256": "622a398d58d394c99a7050ac2b5392edf20f3b6801b26fef46624c338de7a655",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 606,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/cosine_similarity_histogram/2026_07_03-16:45:20/results.json",
+    "mtime_ns": 1783810396449628460,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/reports/outputs/cosine_similarity_histogram/2026_07_03-16:45:20/results.json",
+    "sha256": "269d534cbc32bf4c7511385375b43e2eb728c664001da7ea95711a50096b76b7",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 584,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/cosine_similarity_histogram/2026_07_03-16:51:20/results.json",
+    "mtime_ns": 1783810396450001421,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/reports/outputs/cosine_similarity_histogram/2026_07_03-16:51:20/results.json",
+    "sha256": "80fda28e7d0688e00bc965252512fd32f5435f2d800b95199f8ddc5039ee4f9c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1249,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:47:30/results.json",
+    "mtime_ns": 1783810396450654051,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:47:30/results.json",
+    "sha256": "ab14131bb45e8a6c87e0693eaac709129e838fd1088686bcc70b69c28f47c6fd",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 1249,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:49:54/results.json",
+    "mtime_ns": 1783810396450966803,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_bargraph/2026_07_03-14:49:54/results.json",
+    "sha256": "28c7cb104bf3770131979578be7b9bdf5b33095b4975d700f77d733b58fab6aa",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 3558,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_linegraph/2026_07_03-14:35:29/results.json",
+    "mtime_ns": 1783810396451532973,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/reports/outputs/study_2_ablations_test_metrics_linegraph/2026_07_03-14:35:29/results.json",
+    "sha256": "729bf2cd920a862119374c2f346932998f833ee446950c215daefb618b3d7977",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/predict_keep_remove_2026_07_01",
+    "file_size_bytes": 3580,
+    "local_path": "experiments/predict_keep_remove_2026_07_01/reports/outputs/test_metrics_linegraph/2026_07_02-17:46:52/results.json",
+    "mtime_ns": 1783810396452392229,
+    "s3_key": "experiments/predict_keep_remove_2026_07_01/reports/outputs/test_metrics_linegraph/2026_07_02-17:46:52/results.json",
+    "sha256": "405193c5ca4b9da093a8875942cfe8d1e174c7ac58b34ad45c26725c5f441b3b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 2849815,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/concatenated_records/2026_06_17-14:50:48/records.csv",
+    "mtime_ns": 1783810396471126230,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/concatenated_records/2026_06_17-14:50:48/records.csv",
+    "sha256": "f7a9dd23b3636dc8bdb805971d2c08040bf38d09e9d2d938599a4cfeb716db7c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1121,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_c4e8a2f1-7b3d-4e6a-9c12-8f5d3a2b1e70/curated/2026_06_01-13:35:10/metadata.json",
+    "mtime_ns": 1783810396471791652,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_c4e8a2f1-7b3d-4e6a-9c12-8f5d3a2b1e70/curated/2026_06_01-13:35:10/metadata.json",
+    "sha256": "5e08c96d1324347af18b2e55a90fd7bc7831ff0dc9722a824f3b37f5076f2507",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 922,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_05_30-00:21:32/metadata.json",
+    "mtime_ns": 1783810396471970486,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_05_30-00:21:32/metadata.json",
+    "sha256": "788dffa0ab7f2c9fc9520b3c5ebbcf5ae281c2e2008fd6c3cbb5fffab669cf1f",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 922,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_05_30-22:02:40/metadata.json",
+    "mtime_ns": 1783810396472068279,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_05_30-22:02:40/metadata.json",
+    "sha256": "a36e5dfbb3b8a19048627273bcefd243e93e8b50087e97177e98ca07fd2474f8",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 922,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_05_31-20:07:38/metadata.json",
+    "mtime_ns": 1783810396472167779,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_05_31-20:07:38/metadata.json",
+    "sha256": "a36e5dfbb3b8a19048627273bcefd243e93e8b50087e97177e98ca07fd2474f8",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1105,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-13:33:25/metadata.json",
+    "mtime_ns": 1783810396472265822,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/bluesky/bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-13:33:25/metadata.json",
+    "sha256": "ba0951d6a462cfb92b2f00167c1017af5ca3bb1112fb1d1e8fdb27176da832f3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1273,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_29747ef4-b7bb-413a-8a4c-55eb6ec6c136/curated/2026_06_12-12:23:48/metadata.json",
+    "mtime_ns": 1783810396472493615,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_29747ef4-b7bb-413a-8a4c-55eb6ec6c136/curated/2026_06_12-12:23:48/metadata.json",
+    "sha256": "817dcf4e1e28238c615705765a5e206b15af6b475c0242af132412d1b52ba248",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1222,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_c3e4a5b6-7d8e-9012-3456-789012345601/curated/2026_06_16-15:00:48/metadata.json",
+    "mtime_ns": 1783810396472659407,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_c3e4a5b6-7d8e-9012-3456-789012345601/curated/2026_06_16-15:00:48/metadata.json",
+    "sha256": "995efb71cf6b5b0aa242ba2c5735af5e382145968a01c0c64330b213cb58bc58",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1273,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_c3e4a5b6-7d8e-9012-3456-789012345601/curated/2026_06_16-19:55:39/metadata.json",
+    "mtime_ns": 1783810396472755075,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_c3e4a5b6-7d8e-9012-3456-789012345601/curated/2026_06_16-19:55:39/metadata.json",
+    "sha256": "f147a36c8f5b9ffaf9800cf384a3d122c397d3f547669ad6b7d9c4eebe842809",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1273,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_d4f5b6c7-8e9f-0123-4567-890123456702/curated/2026_06_17-03:13:53/metadata.json",
+    "mtime_ns": 1783810396472955993,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_d4f5b6c7-8e9f-0123-4567-890123456702/curated/2026_06_17-03:13:53/metadata.json",
+    "sha256": "b4e133d52098a474b851e6cf3f2424b359b3f1b90bf2f4516d047560eaa28c2d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1120,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-13:33:24/metadata.json",
+    "mtime_ns": 1783810396473129202,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-13:33:24/metadata.json",
+    "sha256": "d431fdfcd7ebff1736b3510aa20385e74dbf56b9883fcf6ce234d5b2196a0bed",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1120,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-13:40:57/metadata.json",
+    "mtime_ns": 1783810396473226120,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-13:40:57/metadata.json",
+    "sha256": "d431fdfcd7ebff1736b3510aa20385e74dbf56b9883fcf6ce234d5b2196a0bed",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1125,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-18:06:55/metadata.json",
+    "mtime_ns": 1783810396473328995,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/reddit/reddit_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-18:06:55/metadata.json",
+    "sha256": "04667496002dce47b220e5b8c9f2dd45a1197a5dff0766dd2484b133566ac0e9",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1261,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_3b46b8f9-7e73-4e44-8f6a-3d0e67cfe921/curated/2026_06_02-20:41:00/metadata.json",
+    "mtime_ns": 1783810396473593039,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_3b46b8f9-7e73-4e44-8f6a-3d0e67cfe921/curated/2026_06_02-20:41:00/metadata.json",
+    "sha256": "b86539a7a99dd54e02fc5e668e3cfab0a7350c963074a5d4448af2ac586838a2",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1118,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_a8f3c22d-6b14-4e9a-9d2f-1c7e5a9b3d48/curated/2026_06_02-02:31:53/metadata.json",
+    "mtime_ns": 1783810396473818957,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_a8f3c22d-6b14-4e9a-9d2f-1c7e5a9b3d48/curated/2026_06_02-02:31:53/metadata.json",
+    "sha256": "b0926f8847a905e14cf898aeda154db0bfca62b3a40fb01790c4362bd55195d3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1114,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_a8f3c22d-6b14-4e9a-9d2f-1c7e5a9b3d48/curated/2026_06_02-14:49:59/metadata.json",
+    "mtime_ns": 1783810396473932791,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_a8f3c22d-6b14-4e9a-9d2f-1c7e5a9b3d48/curated/2026_06_02-14:49:59/metadata.json",
+    "sha256": "f0f55b3e2dd32b0b8c1068b4571affc48b4a0eb85e7a7cf9d3fd8d81225c122c",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 1105,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-18:56:42/metadata.json",
+    "mtime_ns": 1783810396474151584,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/data/twitter/twitter_f47ac10b-58cc-4372-a567-0e02b2c3d479/curated/2026_06_01-18:56:42/metadata.json",
+    "sha256": "2dd16f8a0ec989cb39251e734b4558d482c67a7cb1563d54030da02b95dfdf1f",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 7038615,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/generated_flips/2026_06_12-12:44:13/edited_flips.csv",
+    "mtime_ns": 1783810396477825984,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/generated_flips/2026_06_12-12:44:13/edited_flips.csv",
+    "sha256": "0c070501e7ba15445003d92aa6bebbd713a8ee39e55eeee820cb6775ededdd5b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 5896306,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/generated_flips/2026_06_17-14:50:48/edited_flips.csv",
+    "mtime_ns": 1783810396480400710,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/generated_flips/2026_06_17-14:50:48/edited_flips.csv",
+    "sha256": "f55587c74045ed79fbbcbcd58d616699afdbcc2d323c3cb21fcc5cf64733f131",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/scaled_mirrors_generation_2026_06_02",
+    "file_size_bytes": 6454549,
+    "local_path": "experiments/scaled_mirrors_generation_2026_06_02/generated_flips/combined_flips/flips.csv",
+    "mtime_ns": 1783810396487763968,
+    "s3_key": "experiments/scaled_mirrors_generation_2026_06_02/generated_flips/combined_flips/flips.csv",
+    "sha256": "a9a9e53cafa3c038af5710553028394a222d052b2bd575db39c82bde9e0d1aa9",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 1043,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-15:48:38/metadata.json",
+    "mtime_ns": 1783810396489126810,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-15:48:38/metadata.json",
+    "sha256": "3ecb2f440db013a454c24d45e3c95b8e438fe0fd0d89c973778866b79585cad1",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 715,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-15:48:38/metrics.json",
+    "mtime_ns": 1783810396489185061,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-15:48:38/metrics.json",
+    "sha256": "0527461b71f22c038bc174f355e07029f83a675def3a9be60e0ebd077701c43d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 1043,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-16:11:39/metadata.json",
+    "mtime_ns": 1783810396489531605,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-16:11:39/metadata.json",
+    "sha256": "054524055bf7986c9200173af1d750cae6d75c53d44cf82490733eb57c51dbfe",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 715,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-16:11:39/metrics.json",
+    "mtime_ns": 1783810396489589397,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/logistic_regression/outputs/2026_05_13-16:11:39/metrics.json",
+    "sha256": "0527461b71f22c038bc174f355e07029f83a675def3a9be60e0ebd077701c43d",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 1095,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-15:48:39/metadata.json",
+    "mtime_ns": 1783810396490212776,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-15:48:39/metadata.json",
+    "sha256": "0fc47a356ae9acc159d33f09471c289ed50fbfa7aa216ecf095f1ccec70bc838",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 628,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-15:48:39/metrics.json",
+    "mtime_ns": 1783810396490268734,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-15:48:39/metrics.json",
+    "sha256": "3cb7906c7c6dc7e7dd7572187181656e5ee350f132b39ee490962d3b46305ee6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 1095,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-16:11:44/metadata.json",
+    "mtime_ns": 1783810396491066407,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-16:11:44/metadata.json",
+    "sha256": "be8c6d68b2edad5a6554c200ea4ea181a24c342057af07dca9b6acef687918c0",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/simplified_predict_remove_2026_05_13",
+    "file_size_bytes": 628,
+    "local_path": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-16:11:44/metrics.json",
+    "mtime_ns": 1783810396491118282,
+    "s3_key": "experiments/simplified_predict_remove_2026_05_13/models/xgboost/outputs/2026_05_13-16:11:44/metrics.json",
+    "sha256": "3cb7906c7c6dc7e7dd7572187181656e5ee350f132b39ee490962d3b46305ee6",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 4636089,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/flips.csv",
+    "mtime_ns": 1783810396498939793,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/flips.csv",
+    "sha256": "a0a913e2b06f9dcaf45569251ee304f16c5d4afc2a135c91c37809abcac829b7",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 4690420,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/flips_with_flag.csv",
+    "mtime_ns": 1783810396502506359,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/flips_with_flag.csv",
+    "sha256": "08c13b544dbba004d54b570ee8451c45816146ed797a8f838f37c403ec0752ef",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 8678,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/highest_absolute_differential.csv",
+    "mtime_ns": 1783810396502980320,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/highest_absolute_differential.csv",
+    "sha256": "4a3c6ea0f504cfb8560385af61e5981a73f35a821dfc26e7abae37bff2baf505",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 13095,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/sample_flips.csv",
+    "mtime_ns": 1783810396503131405,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v1/sample_flips.csv",
+    "sha256": "1d9622a29e3096b3d168d2b5e1ca43d27a8345fd74316d801f3185664c95eefb",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 4608334,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/flips.csv",
+    "mtime_ns": 1783810396508862443,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/flips.csv",
+    "sha256": "a6d47871701d8a57875ceceb17d8c5c97bcf17c8ddf88053338ce85214e4322b",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 4658631,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/flips_with_flag.csv",
+    "mtime_ns": 1783810396514448398,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/flips_with_flag.csv",
+    "sha256": "3f6a597bdc8b01abf57d74a6e0cf94daa4e79e1af2bf8c9b8e9566d9295a0730",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 9741,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/highest_absolute_differential.csv",
+    "mtime_ns": 1783810396518178298,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/highest_absolute_differential.csv",
+    "sha256": "7e4ad3afa12bac0b635719269c1bea46f75e82745db4a8a53e21e135d3451fcb",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 13132,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/sample_flips.csv",
+    "mtime_ns": 1783810396518296840,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v2/sample_flips.csv",
+    "sha256": "3132991c595d809eeb0c3af834fa5c4e73f83cc7596b7b58ad6ca65a8bd02daf",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 4570953,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/flips.csv",
+    "mtime_ns": 1783810396523259457,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/flips.csv",
+    "sha256": "54a43e3f4d3d339d23691d867bfb7f4b218538ef4d59544723c455eac66ce7ab",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 4624689,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/flips_with_flag.csv",
+    "mtime_ns": 1783810396529005996,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/flips_with_flag.csv",
+    "sha256": "6eec6cb789b013d606907a098aa84f539af3a2259c6834f91abee87502210d37",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 8435,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/highest_absolute_differential.csv",
+    "mtime_ns": 1783810396531026509,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/highest_absolute_differential.csv",
+    "sha256": "f3f8f224407065a6c7a72d469130667293df20ff885b6113ff279d8b459a89c9",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 59291,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/sample_flips.csv",
+    "mtime_ns": 1783810396531261928,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/sample_flips.csv",
+    "sha256": "1390d2e6332d98d8addb4e395cd1437bf4cfe4c4ec387fa2a8ca9188fd899e76",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 12503,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/sample_flips_v1.csv",
+    "mtime_ns": 1783810396531396012,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/sample_flips_v1.csv",
+    "sha256": "98c02d1f21de2f61b9ff4968a6dd81862d37fed3713547506391ee9f0f23e71a",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 18100,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/sample_new_flips_with_original_flips.csv",
+    "mtime_ns": 1783810396531458971,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v3/sample_new_flips_with_original_flips.csv",
+    "sha256": "d0686e391ff5e986ed7d806d876cc959a38838a8c3e41cfe90ee84b4c4c168a3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 85653,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v4/sample_flips.csv",
+    "mtime_ns": 1783810396531650930,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v4/sample_flips.csv",
+    "sha256": "c2c18ad4b27ac21720de6d9aa893bff32f6d84c51dbbaa7f6c719d2e8a8a71c3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 85653,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v4/sample_new_flips_with_original_flips.csv",
+    "mtime_ns": 1783810396531755473,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v4/sample_new_flips_with_original_flips.csv",
+    "sha256": "c2c18ad4b27ac21720de6d9aa893bff32f6d84c51dbbaa7f6c719d2e8a8a71c3",
+    "status": "pending"
+  },
+  {
+    "experiment_prefix": "experiments/truncate_posts_2026_06_19",
+    "file_size_bytes": 8156156,
+    "local_path": "experiments/truncate_posts_2026_06_19/outputs/truncation_v5/flips.csv",
+    "mtime_ns": 1783810396536596547,
+    "s3_key": "experiments/truncate_posts_2026_06_19/outputs/truncation_v5/flips.csv",
+    "sha256": "83fc28d5b5b81a4515853bad9c087bdbb6bac99d6fa6fdff36deb35e0a9c6fe8",
+    "status": "pending"
+  }
+]
