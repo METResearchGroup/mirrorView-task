@@ -3,7 +3,8 @@
 **Experiment:** `experiments/followup_model_error_analysis_2026_07_15/`  
 **Scope:** **V1 pilot** (exactly 20 extraction batches; V2 not run)  
 **Primary model:** `gpt-5.5` (fallback `gpt-5.4-nano` only if needed)  
-**Generated:** 2026-07-16T04:40:28.034460+00:00
+**Generated:** 2026-07-16T04:40:28.034460+00:00  
+**Detailed companion:** [`DETAILED_RESULTS.md`](DETAILED_RESULTS.md) — 20 example pairs per confusion bucket (V1 subset) + finer FP/FN/TP/TN pattern taxonomy with pointed excerpts.
 
 ---
 
@@ -196,6 +197,7 @@ In short: Qwen appears over-sensitive to stacked “hot” political attack cues
 | --- | --- |
 | Spec | `spec.md` |
 | Progress log | `progress.md` |
+| Detailed pairs + taxonomy | `DETAILED_RESULTS.md` |
 | Confusion splits | `outputs/confusion_splits/` |
 | V1 batch plan | `outputs/llm_features/v1_batch_plan.json` |
 | Feature CSVs | `outputs/llm_features/{tp,tn,fp,fn}/batch_*.csv` |
