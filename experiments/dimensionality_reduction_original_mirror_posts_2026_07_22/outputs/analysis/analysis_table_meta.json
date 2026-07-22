@@ -1,0 +1,18 @@
+{
+  "n_posts": 8791,
+  "n_rows": 17582,
+  "embedding_dim": 256,
+  "feature_set": "original_and_mirror_long",
+  "cache_dir": "/Users/mark/src/work/mirrorView-task/experiments/predict_keep_remove_2026_07_01/embedding_cache",
+  "cache_stats": {
+    "total_posts": 8791,
+    "cache_hits": 17582,
+    "cache_misses": 0,
+    "miss_sample": []
+  },
+  "model_id": "amazon.titan-embed-text-v2:0",
+  "normalize": true,
+  "aws_called": false,
+  "loader": "local_npy_cache_original_and_mirror",
+  "label_convention": "0=keep, 1=remove (modal; ties\u2192remove)"
+}

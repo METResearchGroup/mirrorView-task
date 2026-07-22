@@ -1,0 +1,67 @@
+{
+  "feature_set": "original_and_mirror_long",
+  "lda_target": "is_mirrored",
+  "split_path": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/split_ids.json",
+  "seed": 42,
+  "n_train_rows": 14064,
+  "n_test_rows": 3518,
+  "n_train_posts": 7032,
+  "n_test_posts": 1759,
+  "fit_on": "train_only",
+  "transform": "train_and_test",
+  "pca": {
+    "n_components": 2,
+    "explained_variance_ratio": [
+      0.029095055585633647,
+      0.02110976169232203
+    ],
+    "explained_variance_ratio_cumsum": [
+      0.029095055585633647,
+      0.05020481727795568
+    ],
+    "singular_values": [
+      323.6562568677238,
+      275.686866282834
+    ]
+  },
+  "lda": {
+    "n_components": 1,
+    "target": "is_mirrored",
+    "note": "Binary classification \u2192 max 1 discriminant; y-axis is residual PC1 \u22a5 LD1",
+    "explained_variance_ratio": [
+      1.0
+    ],
+    "orthogonal_pc1_explained_variance_ratio": 0.02889705215388633,
+    "train_ld1_separability": {
+      "n_original": 7032,
+      "n_mirrored": 7032,
+      "mean_ld1_original": -0.7560793758815514,
+      "mean_ld1_mirrored": 0.7560793758815519,
+      "cohen_d_mirrored_minus_original": 1.5121587517615906,
+      "midpoint_threshold_accuracy": 0.7773748577929466
+    },
+    "test_ld1_separability": {
+      "n_original": 1759,
+      "n_mirrored": 1759,
+      "mean_ld1_original": -0.7221298484575303,
+      "mean_ld1_mirrored": 0.7645403965341037,
+      "cohen_d_mirrored_minus_original": 1.4804248816201335,
+      "midpoint_threshold_accuracy": 0.7632177373507675
+    }
+  },
+  "pca_2d_logistic_overlay": {
+    "train_accuracy": 0.6227246871444824,
+    "test_accuracy": 0.6247868106878909,
+    "coef_pc1_pc2": [
+      -0.1439844473163588,
+      0.23410315478649707
+    ],
+    "intercept": 0.006398866578673461,
+    "note": "dashed contour = P(is_mirrored)=0.5 from 2D logistic on PC1/PC2"
+  },
+  "artifacts": {
+    "pca_original_vs_mirrored_png": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/pca_original_vs_mirrored.png",
+    "lda_original_vs_mirrored_png": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/lda_original_vs_mirrored.png",
+    "embeddings_2d_csv": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/embeddings_2d.csv"
+  }
+}
