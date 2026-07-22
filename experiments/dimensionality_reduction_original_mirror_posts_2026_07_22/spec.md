@@ -7,15 +7,16 @@
 
 ## Purpose
 
-Visualize Titan text embeddings of **original** vs **mirrored** post texts with leakage-safe PCA/LDA. Each study `post_id` contributes two 256-d vectors stacked into a long `(2N, 256)` matrix with binary label `is_mirrored`. Train/test split is at **post_id** level so a post’s original and mirror never cross the split.
+Visualize Titan text embeddings of **original** vs **mirrored** post texts with PCA/LDA.
+Each study `post_id` contributes two 256-d vectors stacked into a long `(2N, 256)` matrix
+with binary label `is_mirrored`. Reductions are fit on **all** rows (no train/test split).
 
 ## Forbidden in v1
 
 - Calling Bedrock embed, Converse, or `api_baselines/*/train.py`
 - Loading embeddings from S3 / DynamoDB
 - Writing under `experiments/model_errors_analysis_2026_07_15/`
-- Splitting at row level (would leak pairs)
-- Stratifying the post split on `is_mirrored` (undefined / constant at post level)
+- Introducing a train/test split or Train|Test plot panels
 
 ## Paths (`analyze/paths.py`)
 
@@ -23,9 +24,6 @@ Visualize Titan text embeddings of **original** vs **mirrored** post texts with 
 |----------|-------|
 | `FEATURE_SET` | `original_and_mirror_long` |
 | `EMBEDDING_DIM` | `256` |
-| `SPLIT_SEED` | `42` |
-| `TRAIN_SPLIT` | `0.8` |
-| `STRATIFY_ON` | `label` (keep/remove at post level) |
 | `LDA_TARGET` | `is_mirrored` |
 | Primary cache | `experiments/predict_keep_remove_2026_07_01/embedding_cache/` |
 | Optional backup | `/Users/mark/Documents/work/mirrorView-task/.../embedding_cache/` |
@@ -44,11 +42,10 @@ Visualize Titan text embeddings of **original** vs **mirrored** post texts with 
 - `X_original_and_mirror.npy`: `float64`, shape `(len(meta), 256)`, row-aligned with meta.
 - No Qwen / `is_correct` / `is_error` columns.
 
-## Split
+## Fit
 
-- Unit = unique `post_id`; expand both roles into the assigned split.
-- `set(train_post_ids) ∩ set(test_post_ids) = ∅`
-- `n_rows_train == 2 * n_train`, `n_rows_test == 2 * n_test`
+- `StandardScaler`, `PCA(2)`, `LDA(1; y=is_mirrored)`, and residual PC1 ⊥ LD1 are fit on **all** rows.
+- Plots are single-panel (no Train|Test).
 
 ## Plot / color contract
 
@@ -56,5 +53,7 @@ Visualize Titan text embeddings of **original** vs **mirrored** post texts with 
 |-------|---------------|-------|--------|
 | original | 0 | `#2A9D8F` | `o` |
 | mirrored | 1 | `#E76F51` | `x` |
+
+Axis labels: `LD1 (target=is_mirrored)`, `Residual PC1 ⊥ LD1` (no “fit on train” wording).
 
 Titles: **original vs mirrored** / **Titan original+mirror long matrix** — never “Qwen” / “right vs wrong”.

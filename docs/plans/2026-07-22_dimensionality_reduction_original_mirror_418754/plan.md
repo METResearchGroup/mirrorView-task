@@ -6,6 +6,10 @@
 **Date:** 2026-07-22  
 **UI screenshots:** skipped — no `ui/` / frontend changes (Phase 4 N/A)
 
+## Amendment (2026-07-22, user request)
+
+**Train/test split removed entirely.** Fit StandardScaler / PCA / LDA on **all** rows; plots are single-panel (no Train|Test). Deleted `analyze/split.py`, `split_ids.json` / `analysis_with_split.csv` production, and the experiment `tests/` directory. Pipeline is now `build_table.py` → `embed_2d.py` only. Sections below that describe post-level split, Train|Test panels, pair-leakage tests, or pytest for this experiment are **superseded** by this amendment.
+
 ## Remember
 - Exact file paths always
 - Exact commands with expected output

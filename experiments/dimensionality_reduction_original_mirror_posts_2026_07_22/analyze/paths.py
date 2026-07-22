@@ -12,7 +12,6 @@ ANALYSIS_DIR = OUTPUTS_DIR / "analysis"
 ANALYSIS_META_PATH = ANALYSIS_DIR / "analysis_meta.csv"
 ANALYSIS_TABLE_PATH = ANALYSIS_DIR / "analysis_table.parquet"
 EMBEDDING_MATRIX_PATH = ANALYSIS_DIR / "X_original_and_mirror.npy"
-SPLIT_IDS_PATH = ANALYSIS_DIR / "split_ids.json"
 PROGRESS_UPDATES_PATH = ANALYSIS_DIR / "progress_updates.md"
 PROGRESS_UPDATES_VIZ_PATH = ANALYSIS_DIR / "progress_updates_viz.md"
 PCA_PLOT_PATH = ANALYSIS_DIR / "pca_original_vs_mirrored.png"
@@ -33,7 +32,4 @@ MAIN_REPO_EMBEDDING_CACHE = (
 
 FEATURE_SET = "original_and_mirror_long"
 EMBEDDING_DIM = 256
-SPLIT_SEED = 42
-TRAIN_SPLIT = 0.8
-STRATIFY_ON = "label"  # post-level keep/remove; not is_mirrored
 LDA_TARGET = "is_mirrored"

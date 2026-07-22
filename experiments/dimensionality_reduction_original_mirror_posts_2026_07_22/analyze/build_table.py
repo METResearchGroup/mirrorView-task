@@ -39,7 +39,7 @@ from analyze.paths import (  # noqa: E402
     PROGRESS_UPDATES_PATH,
     WORKTREE_EMBEDDING_CACHE,
 )
-from analyze.split_lib import assert_long_table_schema  # noqa: E402
+from analyze.schema import assert_long_table_schema  # noqa: E402
 from experiments.predict_keep_remove_2026_07_01.data.dataloader import (  # noqa: E402
     Dataloader,
 )
