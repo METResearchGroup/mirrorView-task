@@ -1,0 +1,53 @@
+{
+  "feature_set": "original_and_mirror_long",
+  "lda_target": "is_mirrored",
+  "n_posts": 8791,
+  "n_rows": 17582,
+  "fit_on": "all_rows",
+  "pca": {
+    "n_components": 2,
+    "explained_variance_ratio": [
+      0.029037948282792884,
+      0.020974697945728208
+    ],
+    "explained_variance_ratio_cumsum": [
+      0.029037948282792884,
+      0.05001264622852109
+    ],
+    "singular_values": [
+      361.5239589809568,
+      307.2571360540535
+    ]
+  },
+  "lda": {
+    "n_components": 1,
+    "target": "is_mirrored",
+    "note": "Binary classification \u2192 max 1 discriminant; y-axis is residual PC1 \u22a5 LD1",
+    "explained_variance_ratio": [
+      1.0
+    ],
+    "orthogonal_pc1_explained_variance_ratio": 0.028852189257021606,
+    "ld1_separability": {
+      "n_original": 8791,
+      "n_mirrored": 8791,
+      "mean_ld1_original": -0.755674950822334,
+      "mean_ld1_mirrored": 0.7556749508223346,
+      "cohen_d_mirrored_minus_original": 1.5113499016431566,
+      "midpoint_threshold_accuracy": 0.7764190649527927
+    }
+  },
+  "pca_2d_logistic_overlay": {
+    "accuracy": 0.62290979410761,
+    "coef_pc1_pc2": [
+      -0.14208720885854356,
+      0.23944782563426165
+    ],
+    "intercept": 0.005967034030313099,
+    "note": "dashed contour = P(is_mirrored)=0.5 from 2D logistic on PC1/PC2"
+  },
+  "artifacts": {
+    "pca_original_vs_mirrored_png": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/pca_original_vs_mirrored.png",
+    "lda_original_vs_mirrored_png": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/lda_original_vs_mirrored.png",
+    "embeddings_2d_csv": "/Users/mark/src/work/mirrorView-task/experiments/dimensionality_reduction_original_mirror_posts_2026_07_22/outputs/analysis/embeddings_2d.csv"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "explained_variance_ratio": [
+    0.029037948282792884,
+    0.020974697945728208
+  ],
+  "explained_variance_ratio_cumsum": [
+    0.029037948282792884,
+    0.05001264622852109
+  ],
+  "fit_on": "all_rows",
+  "n_components": 2
+}
