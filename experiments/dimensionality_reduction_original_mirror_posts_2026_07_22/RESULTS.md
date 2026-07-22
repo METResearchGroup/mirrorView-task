@@ -37,7 +37,7 @@ Original vs mirrored is a **strong** linear axis in Titan space — much stronge
 
 - [`outputs/analysis/pca_original_vs_mirrored.png`](outputs/analysis/pca_original_vs_mirrored.png) — single panel
 - [`outputs/analysis/lda_original_vs_mirrored.png`](outputs/analysis/lda_original_vs_mirrored.png) — single panel
-- [`outputs/analysis/embeddings_2d.csv`](outputs/analysis/embeddings_2d.csv)
+- `outputs/analysis/embeddings_2d.csv` — regenerable locally; gitignored
 - [`outputs/analysis/reduction_summary.json`](outputs/analysis/reduction_summary.json)
 - [`outputs/analysis/pca_variance_explained.json`](outputs/analysis/pca_variance_explained.json)
 

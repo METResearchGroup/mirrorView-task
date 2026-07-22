@@ -46,6 +46,10 @@ Writes under `outputs/analysis/`:
 - `pca_original_vs_mirrored.png`, `lda_original_vs_mirrored.png`
 - `embeddings_2d.csv`, `reduction_summary.json`, `pca_variance_explained.json`
 
+**CSV / parquet** (`analysis_meta.csv`, `embeddings_2d.csv`, `analysis_table.parquet`, …)
+are local regenerable artifacts and are **gitignored** — re-create them with the
+commands above. PNGs and JSON summaries may remain tracked.
+
 ## Notes
 
 - LDA / plot color target = `is_mirrored` (not keep/remove, not Qwen error).
