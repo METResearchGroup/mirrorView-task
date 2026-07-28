@@ -13,30 +13,30 @@ let isTestParticipant = false;
  * Central study-design constants. Single place to align trial counts, conditions, post catalog, and IDs.
  *
  * Cross-repo / Lambda alignment (change these here and mirror elsewhere as noted):
- * - lambda-get-post-assignments.mjs — should accept the same condition strings in responses; validate
+ * - webapp/lambdas/lambda-get-post-assignments.mjs — should accept the same condition strings in responses; validate
  *   assignedPostIds.length === postsPerParticipant; forwards party_group / prolific_id plus STUDY_ID /
  *   STUDY_ITERATION_ID to the assignment Lambda.
- * - lambda-save-jspsych-data.mjs — does not read this object; persisted condition comes from jsPsych CSV columns.
+ * - webapp/lambdas/lambda-save-jspsych-data.mjs — does not read this object; persisted condition comes from jsPsych CSV columns.
  * - study_participant_assignment_interface/lambdas/get_study_assignment/handler.py — DEFAULT_STUDY_CONDITIONS and
  *   precomputed CSV rows (assignedPostIds per row) must match conditions + postsPerParticipant + post ID semantics.
  */
 const STUDY_SPEC = Object.freeze({
-    /** Written to jsPsych data as experiment_version. Used only in public/main.js (assignParticipantId). */
+    /** Written to jsPsych data as experiment_version. Used only in this file (assignParticipantId). */
     experimentVersion: 'mirrorview_scaled_2026_06_18',
 
-    /** Prolific participant ID query key. Used only in public/main.js (setupExperiment URL parsing). */
+    /** Prolific participant ID query key. Used only in this file (setupExperiment URL parsing). */
     prolificUrlQueryParam: 'PROLIFIC_PID',
 
-    /** Optional debug override for assigned condition. Used in public/main.js; sent in assignment POST body (lambda may ignore). */
+    /** Optional debug override for assigned condition. Used in this file; sent in assignment POST body (lambda may ignore). */
     conditionUrlQueryParam: 'condition',
 
     /**
      * Allowed condition slugs.
-     * Must match lambda-get-post-assignments validation and handler.py DEFAULT_STUDY_CONDITIONS.
+     * Must match webapp/lambdas/lambda-get-post-assignments validation and handler.py DEFAULT_STUDY_CONDITIONS.
      */
     conditions: Object.freeze(['training_assisted']),
 
-    /** Condition id for linked-fate single phase. Used in public/main.js (instructions, condition_phase_modes key). */
+    /** Condition id for linked-fate single phase. Used in this file (instructions, condition_phase_modes key). */
     CONDITION_CONTROL: 'control',
     CONDITION_TRAINING: 'training',
     CONDITION_TRAINING_ASSISTED: 'training_assisted',
@@ -60,7 +60,7 @@ const STUDY_SPEC = Object.freeze({
     /** Same as numTrials; must match precomputed assignment row length. */
     postsPerParticipant: 20,
 
-    /** Path under public/ for the stimulus catalog fetch (deployed to S3). */
+    /** Path relative to static site / S3 root (local file under webapp/public/). */
     postCatalogPath: 'img/flips_scaled_2026_06_18.csv',
     /** CSV column used as canonical post id. */
     postIdField: 'post_primary_key',

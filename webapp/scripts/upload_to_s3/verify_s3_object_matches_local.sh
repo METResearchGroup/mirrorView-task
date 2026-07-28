@@ -5,7 +5,7 @@ usage() {
   cat <<'EOF'
 Verify an S3 object matches a local file (metadata + hash).
 
-Example (run from repo root):
+Example (run from webapp root):
   bash scripts/upload_to_s3/verify_s3_object_matches_local.sh \
     --bucket jspsych-mirror-view-4 \
     --key img/flips_scaled_2026_06_18.csv \

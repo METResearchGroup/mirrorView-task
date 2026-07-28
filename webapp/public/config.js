@@ -1,3 +1,4 @@
+// Lives at webapp/public/config.js (deployed to S3 bucket root as config.js).
 // Production endpoint + study identity configuration.
 // Source of truth: jobs/config/mirrorview_scaled_2026_06_18.yaml
 const config = {

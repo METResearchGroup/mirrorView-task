@@ -63,7 +63,7 @@ data "archive_file" "get_post_assignments_zip" {
   output_path = "${path.module}/get-post-assignments.zip"
 
   source {
-    content  = file("${path.module}/../lambda-get-post-assignments.mjs")
+    content  = file("${path.module}/../lambdas/lambda-get-post-assignments.mjs")
     filename = "index.mjs"
   }
 }
@@ -73,7 +73,7 @@ data "archive_file" "save_data_zip" {
   output_path = "${path.module}/save-jspsych-data.zip"
 
   source {
-    content  = file("${path.module}/../lambda-save-jspsych-data.mjs")
+    content  = file("${path.module}/../lambdas/lambda-save-jspsych-data.mjs")
     filename = "index.mjs"
   }
 }
