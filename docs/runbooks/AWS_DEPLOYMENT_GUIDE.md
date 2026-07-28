@@ -18,12 +18,12 @@ This section is a quick guide for deciding what needs to be redeployed after a c
 
 Rerun Terraform whenever either Lambda source file changes:
 
-- `lambda-get-post-assignments.mjs`
-- `lambda-save-jspsych-data.mjs`
+- `webapp/lambdas/lambda-get-post-assignments.mjs`
+- `webapp/lambdas/lambda-save-jspsych-data.mjs`
 
 This repo packages those files directly into the deployed Lambda functions, so changing either file means you should run `terraform plan` and `terraform apply` again to update AWS.
 
-You should also rerun Terraform if you change infrastructure-related settings in `infra/main.tf`, such as API Gateway configuration, IAM permissions, bucket settings, or Lambda environment variables.
+You should also rerun Terraform if you change infrastructure-related settings in `webapp/infra/main.tf`, such as API Gateway configuration, IAM permissions, bucket settings, or Lambda environment variables.
 
 Useful AWS CLI checks:
 
@@ -41,18 +41,18 @@ aws lambda get-function-configuration \
   --output table
 ```
 
-### When to redeploy `public/`
+### When to redeploy `webapp/public/`
 
-Re-upload `public/` to S3 whenever any browser-served asset changes, including:
+Re-upload `webapp/public/` to S3 whenever any browser-served asset changes, including:
 
-- `public/config.js`
-- `public/index.html`
-- `public/main.js`
-- CSS, survey files, plugin files, library files, or images under `public/`
+- `webapp/public/config.js`
+- `webapp/public/index.html`
+- `webapp/public/main.js`
+- CSS, survey files, plugin files, library files, or images under `webapp/public/`
 
-This does not require rerunning Terraform unless the infrastructure itself changed. For frontend-only updates, publish the current `public/` tree to the S3 bucket using the upload toolchain (file-by-file `aws s3 cp` to the bucket root; no bucket-wide sync and no deletes).
+This does not require rerunning Terraform unless the infrastructure itself changed. For frontend-only updates, publish the current `webapp/public/` tree to the S3 bucket using the upload toolchain (file-by-file `aws s3 cp` to the bucket root; no bucket-wide sync and no deletes).
 
-Keep `public/config.js` up to date with the deployed API Gateway URLs. In particular, `POST_ASSIGNMENTS_URL` and `SAVE_DATA_URL` must match the currently deployed `jspsych-scroll-api` stage URLs. The upload scripts validate this against the live API before uploading.
+Keep `webapp/public/config.js` up to date with the deployed API Gateway URLs. In particular, `POST_ASSIGNMENTS_URL` and `SAVE_DATA_URL` must match the currently deployed `jspsych-scroll-api` stage URLs. The upload scripts validate this against the live API before uploading.
 
 Useful AWS CLI checks:
 
@@ -63,7 +63,7 @@ aws apigatewayv2 get-apis \
   --output text
 ```
 
-If that command returns `https://abc123.execute-api.us-east-2.amazonaws.com`, then the values in `public/config.js` should be:
+If that command returns `https://abc123.execute-api.us-east-2.amazonaws.com`, then the values in `webapp/public/config.js` should be:
 
 ```javascript
 POST_ASSIGNMENTS_URL: 'https://abc123.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments'
@@ -72,7 +72,7 @@ SAVE_DATA_URL: 'https://abc123.execute-api.us-east-2.amazonaws.com/prod/save-jsp
 
 ## Automated Deployment (Preferred)
 
-Use `infra/main.tf` to provision the AWS infrastructure:
+Use `webapp/infra/main.tf` to provision the AWS infrastructure:
 
 - S3 bucket for static hosting and experiment data
 - Lambda functions and IAM roles
@@ -89,34 +89,37 @@ Use `infra/main.tf` to provision the AWS infrastructure:
 
 ### What Still Requires Manual Steps
 
-- Updating `public/config.js` from Terraform outputs, if you are not generating it automatically
-- Uploading files from `public/` to S3 (use `scripts/upload_to_s3/`; see below)
+- Updating `webapp/public/config.js` from Terraform outputs, if you are not generating it automatically
+- Uploading files from `webapp/public/` to S3 (use `webapp/scripts/upload_to_s3/`; see below)
 - Validating the deployed experiment end to end
 
 ### Upload public assets to S3 (preferred)
 
-From the **repository root**:
+Upload tooling expects CWD=`webapp/` (`SOURCE_PUBLIC_DIR = public` → `webapp/public/`). Staging output lands in `webapp/s3_upload/`. From the **repository root**, either use `run_upload.sh` (self-cds into `webapp/`) or `cd webapp` before the Python steps.
 
-1. Ensure `public/config.js` matches the deployed API (the scripts query `jspsych-scroll-api` in `us-east-2` and compare exact URLs).
+1. Ensure `webapp/public/config.js` matches the deployed API (the scripts query `jspsych-scroll-api` in `us-east-2` and compare exact URLs).
 2. Stage locally, then print intended S3 keys without uploading:
 
    ```bash
    uv python install 3.12
    uv sync
+   cd webapp
    PYTHONPATH=. uv run python scripts/upload_to_s3/stage_public_for_s3.py
    ```
 
-3. Inspect the staged directory: expect `index.html`, `config.js`, `main.js`, survey JS/CSS, `jspsych/`, `plugins/`, `lib/`, and `img/` when those exist under `public/`.
+3. Inspect the staged directory under `webapp/s3_upload/`: expect `index.html`, `config.js`, `main.js`, survey JS/CSS, `jspsych/`, `plugins/`, `lib/`, and `img/` when those exist under `webapp/public/`.
 
 4. **Full deploy** (upload then verify manifest + critical keys in S3):
 
    ```bash
-   bash scripts/upload_to_s3/run_upload.sh
+   # from repository root (script cds to webapp/)
+   bash webapp/scripts/upload_to_s3/run_upload.sh
    ```
 
-   Or run the Python steps yourself:
+   Or run the Python steps yourself from `webapp/`:
 
    ```bash
+   cd webapp
    PYTHONPATH=. uv run python scripts/upload_to_s3/stage_public_for_s3.py
    PYTHONPATH=. uv run python scripts/upload_to_s3/upload_public_to_s3.py
    PYTHONPATH=. uv run python scripts/upload_to_s3/verify_s3_upload.py
@@ -125,6 +128,7 @@ From the **repository root**:
 5. **Verify a specific staged release** (optional):
 
    ```bash
+   cd webapp
    PYTHONPATH=. uv run python scripts/upload_to_s3/verify_s3_upload.py
    ```
 
@@ -142,10 +146,10 @@ Before running the automated deployment, make sure Terraform is installed and AW
 1. Install Terraform locally if it is not already installed.
 2. Authenticate to AWS using your preferred method, such as configured AWS CLI credentials or environment variables.
 3. From the repository root, change into the Terraform directory:
-   - `cd infra`
+   - `cd webapp/infra`
 4. Initialize the Terraform working directory:
    - `terraform init`
-5. Review the default variables in `infra/main.tf`, especially:
+5. Review the default variables in `webapp/infra/main.tf`, especially:
    - `aws_region`
    - `bucket_name`
    - `assignment_lambda_name`
@@ -153,7 +157,7 @@ Before running the automated deployment, make sure Terraform is installed and AW
 
 ### Suggested Terraform Workflow
 
-1. Review `infra/main.tf`
+1. Review `webapp/infra/main.tf`
 2. Run `terraform plan`
 3. Run `terraform apply`
 4. Capture the outputs for:
@@ -161,8 +165,8 @@ Before running the automated deployment, make sure Terraform is installed and AW
    - API base URL
    - `post_assignments_url`
    - `save_data_url`
-5. Update `public/config.js`
-6. Upload the `public/` assets to S3 (`bash scripts/upload_to_s3/run_upload.sh` or the `uv run` commands in [Upload public assets to S3](#upload-public-assets-to-s3-preferred))
+5. Update `webapp/public/config.js`
+6. Upload the `webapp/public/` assets to S3 (`bash webapp/scripts/upload_to_s3/run_upload.sh` or the `uv run` commands in [Upload public assets to S3](#upload-public-assets-to-s3-preferred))
 7. Test the experiment flow
 
 ### Debugging
@@ -214,7 +218,7 @@ After `terraform apply`, verify the automated deployment before uploading the fr
    - `POST /get-post-assignments`
    - `POST /save-jspsych-data`
 6. Confirm both API routes are integrated with the expected Lambda functions and that CORS allows `POST` and `OPTIONS`.
-7. After updating `public/config.js`, make sure the two endpoint URLs match the Terraform outputs exactly.
+7. After updating `webapp/public/config.js`, make sure the two endpoint URLs match the Terraform outputs exactly.
 8. After uploading the frontend assets, open the S3 website endpoint and walk through the experiment flow.
 9. Check CloudWatch logs for both Lambda functions while testing, and verify that submitted CSV data is written under the bucket's `data/` prefix.
 
@@ -252,9 +256,9 @@ S3 does not require you to pre-create folders, but you may choose to organize as
 6. **Architecture**: x86_64
 7. Click "Create function"
 
-**Code**: Use the contents from `lambda-get-post-assignments.mjs`
+**Code**: Use the contents from `webapp/lambdas/lambda-get-post-assignments.mjs`
 
-**Permissions**: Configure the `ASSIGNMENT_LAMBDA_NAME` environment variable needed by `lambda-get-post-assignments.mjs` and grant any permissions required by the downstream assignment Lambda it invokes. `STUDY_ID` and `STUDY_ITERATION_ID` are now sent by the public client request rather than read from Lambda env vars.
+**Permissions**: Configure the `ASSIGNMENT_LAMBDA_NAME` environment variable needed by `webapp/lambdas/lambda-get-post-assignments.mjs` and grant any permissions required by the downstream assignment Lambda it invokes. `STUDY_ID` and `STUDY_ITERATION_ID` are now sent by the public client request rather than read from Lambda env vars.
 If your deployment still relies on S3-backed helpers elsewhere, add the relevant S3 policy to the execution role:
 
 ```json
@@ -285,7 +289,7 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 6. **Architecture**: x86_64
 7. Click "Create function"
 
-**Code**: Use the contents from `lambda-save-jspsych-data.mjs`
+**Code**: Use the contents from `webapp/lambdas/lambda-save-jspsych-data.mjs`
 
 **Permissions**: Same S3 policy as above.
 
@@ -339,13 +343,13 @@ If your deployment still relies on S3-backed helpers elsewhere, add the relevant
 3. Click "Deploy"
 4. **Note the Invoke URL** - you'll need this for the next step!
 
-### Step 4: Update `public/config.js` with API URLs
+### Step 4: Update `webapp/public/config.js` with API URLs
 
 Your API Gateway invoke URL will look like:
 
 `https://xxxxxxxxxx.execute-api.us-east-2.amazonaws.com/prod`
 
-You'll need to update the URLs in `public/config.js`:
+You'll need to update the URLs in `webapp/public/config.js`:
 
 ```javascript
 const config = {
@@ -358,7 +362,7 @@ const config = {
 
 ### Step 5: Upload Files to S3
 
-Upload the full `public/` tree to your S3 bucket root using the same toolchain as the Terraform workflow: `bash scripts/upload_to_s3/run_upload.sh` from the repo root (after `uv sync`), or follow the `uv run python scripts/upload_to_s3/...` commands in [Upload public assets to S3](#upload-public-assets-to-s3-preferred). Do not use a sync mode that deletes remote objects; experiment data under `data/` must remain untouched.
+Upload the full `webapp/public/` tree to your S3 bucket root using the same toolchain as the Terraform workflow: `bash webapp/scripts/upload_to_s3/run_upload.sh` from the repo root (after `uv sync`), or `cd webapp` and run the `PYTHONPATH=. uv run python scripts/upload_to_s3/...` commands in [Upload public assets to S3](#upload-public-assets-to-s3-preferred). Do not use a sync mode that deletes remote objects; experiment data under `data/` must remain untouched.
 
 ### Step 6: Enable Static Website Hosting
 

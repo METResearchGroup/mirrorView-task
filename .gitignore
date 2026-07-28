@@ -69,8 +69,8 @@ participant_assignments.json
 participant_assignments.csv
 
 # Large image directories (add specific ones as needed)
-public/img/large_datasets/
-public/img/raw_stimuli/
+webapp/public/img/large_datasets/
+webapp/public/img/raw_stimuli/
 
 # AWS credentials (never commit these)
 aws-credentials.json
@@ -86,9 +86,10 @@ aws-credentials.json
 
 # Local S3 release staging (scripts/upload_to_s3)
 s3_upload/
+webapp/s3_upload/
 
 # Lambda zip artifacts produced next to Terraform module
-infra/*.zip
+webapp/infra/*.zip
 
 # Python
 __pycache__/

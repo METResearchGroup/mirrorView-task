@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Orchestrate staging, S3 upload, and post-upload verification.
-# Run from repository root: bash scripts/upload_to_s3/run_upload.sh
+# Run from webapp root: bash scripts/upload_to_s3/run_upload.sh
+# (or from repo root: bash webapp/scripts/upload_to_s3/run_upload.sh — script self-cds)
 set -euo pipefail
 
+# WEBAPP_ROOT: dirname/../.. from webapp/scripts/upload_to_s3/ → webapp/
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$REPO_ROOT"
 

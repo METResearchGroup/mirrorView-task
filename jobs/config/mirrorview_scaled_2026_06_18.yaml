@@ -2,6 +2,8 @@
 #
 # 10,000-post catalog, single condition, single linked-fate phase, 20 trials per participant.
 # Not yet consumed by the app — intended as the single source of truth for this deployment.
+# Hardcoded copies live under webapp/public/config.js, webapp/public/main.js,
+# webapp/lambdas/lambda-*.mjs, and webapp/infra/main.tf.
 
 name: mirrorview_scaled_2026_06_18
 description: >

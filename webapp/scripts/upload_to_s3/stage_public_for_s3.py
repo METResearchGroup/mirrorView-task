@@ -118,7 +118,7 @@ def _resolve_allowlisted_source(rel: Path) -> Path:
         if candidate.is_file():
             return candidate
     raise SystemExit(
-        f"Missing allowlisted file in both public/ and repo root: {rel.as_posix()}"
+        f"Missing allowlisted file in both public/ and webapp root: {rel.as_posix()}"
     )
 
 

@@ -1,12 +1,12 @@
 # MirrorView default job configuration (pilot Phase 2, April 2026 baseline).
 #
 # Captures values currently hardcoded across:
-#   - public/config.js
-#   - public/main.js (STUDY_SPEC + completion fallback)
-#   - lambda-get-post-assignments.mjs
-#   - lambda-save-jspsych-data.mjs
-#   - infra/main.tf (defaults)
-#   - scripts/upload_to_s3/constants.py
+#   - webapp/public/config.js
+#   - webapp/public/main.js (STUDY_SPEC + completion fallback)
+#   - webapp/lambdas/lambda-get-post-assignments.mjs
+#   - webapp/lambdas/lambda-save-jspsych-data.mjs
+#   - webapp/infra/main.tf (defaults)
+#   - webapp/scripts/upload_to_s3/constants.py
 #
 # Not yet consumed by the app — intended as the single source of truth for this deployment.
 
@@ -17,7 +17,7 @@ description: >
 
 # ---------------------------------------------------------------------------
 # AWS deployment
-# Sources: infra/main.tf, lambda-*.mjs, scripts/upload_to_s3/constants.py
+# Sources: webapp/infra/main.tf, webapp/lambdas/lambda-*.mjs, webapp/scripts/upload_to_s3/constants.py
 # ---------------------------------------------------------------------------
 aws:
   region: us-east-2
@@ -26,7 +26,7 @@ aws:
   api:
     name: jspsych-scroll-api
     stage: prod
-    # public/config.js — update after terraform apply if API is recreated
+    # webapp/public/config.js — update after terraform apply if API is recreated
     post_assignments_url: https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/get-post-assignments
     save_data_url: https://bgdxga8s91.execute-api.us-east-2.amazonaws.com/prod/save-jspsych-data
 
@@ -37,19 +37,19 @@ aws:
 
 # ---------------------------------------------------------------------------
 # Study identity
-# Sources: public/config.js, public/main.js (experimentVersion)
+# Sources: webapp/public/config.js, webapp/public/main.js (experimentVersion)
 # ---------------------------------------------------------------------------
 study:
   id: mirrorview
   iteration_id: pilot-phase2-v3
   experiment_version: mirrorView_phase2
 
-  # lambda-get-post-assignments.mjs — prefix applied when isTest is true
+  # webapp/lambdas/lambda-get-post-assignments.mjs — prefix applied when isTest is true
   test_iteration_prefix: dev-
 
 # ---------------------------------------------------------------------------
 # Study design
-# Sources: public/main.js (STUDY_SPEC), lambda-get-post-assignments.mjs
+# Sources: webapp/public/main.js (STUDY_SPEC), webapp/lambdas/lambda-get-post-assignments.mjs
 # Must stay aligned with precomputed assignment rows in S3 and
 # study_participant_assignment_interface DEFAULT_STUDY_CONDITIONS.
 # ---------------------------------------------------------------------------
@@ -81,10 +81,10 @@ design:
 
 # ---------------------------------------------------------------------------
 # Stimulus catalog
-# Sources: public/main.js (STUDY_SPEC + loadMirrorData)
+# Sources: webapp/public/main.js (STUDY_SPEC + loadMirrorData)
 # ---------------------------------------------------------------------------
 stimuli:
-  # Path relative to public/ (also uploaded to S3 bucket root)
+  # Path relative to static site root (webapp/public/ locally; S3 bucket root when deployed)
   post_catalog_path: img/all_mirrors_claude.csv
   post_id_field: post_primary_key
   post_number_field: post_number
@@ -93,19 +93,19 @@ stimuli:
 
 # ---------------------------------------------------------------------------
 # Prolific / participant URL params
-# Sources: public/config.js, public/main.js
+# Sources: webapp/public/config.js, webapp/public/main.js
 # ---------------------------------------------------------------------------
 prolific:
   query_param: PROLIFIC_PID
   condition_override_query_param: condition
-  completion_url: null  # public/config.js PROLIFIC_COMPLETION_URL
-  # Fallback when completion_url is null (hardcoded in public/main.js on_finish)
+  completion_url: null  # webapp/public/config.js PROLIFIC_COMPLETION_URL
+  # Fallback when completion_url is null (hardcoded in webapp/public/main.js on_finish)
   completion_code: CE5XLP3L
   completion_link: https://app.prolific.com/submissions/complete?cc=CE5XLP3L
 
 # ---------------------------------------------------------------------------
 # Participant data storage
-# Sources: lambda-save-jspsych-data.mjs
+# Sources: webapp/lambdas/lambda-save-jspsych-data.mjs
 # ---------------------------------------------------------------------------
 data:
   prefix_prolific: data/prolific/
@@ -114,7 +114,7 @@ data:
 
 # ---------------------------------------------------------------------------
 # Test / manual participant detection
-# Sources: public/main.js, lambda-save-jspsych-data.mjs
+# Sources: webapp/public/main.js, webapp/lambdas/lambda-save-jspsych-data.mjs
 # ---------------------------------------------------------------------------
 test_participants:
   # main.js: missing PROLIFIC_PID query param → isTest
