@@ -1,9 +1,4 @@
-"""Base keep/remove prompt for prompt-tuning runs."""
-
-from __future__ import annotations
-
-# Study-linked-fate instruction with blinded Post 1 / Post 2 slots.
-SYSTEM_PROMPT = """We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
+We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
 
 
 The pairs are political mirrors of each other. This means that the mirror text recreates the original message from the opposite political stance. For example:
@@ -20,12 +15,3 @@ Notice that the mirror text changes the core message to match that of the opposi
 Your job is to decide whether both posts in the pair should be allowed or removed from the platform.
 
 When making your decisions, consider generally whether a post contributes to a healthy environment for political discussion, or whether it would be unhealthy for political discussion. Your goal is to evaluate the messages, using your own judgment.
-"""
-
-
-def render_user_prompt(*, post_1_text: str, post_2_text: str) -> str:
-    return f"""Post 1: {post_1_text}
-
-Post 2: {post_2_text}
-
-Allow Or Remove?"""
