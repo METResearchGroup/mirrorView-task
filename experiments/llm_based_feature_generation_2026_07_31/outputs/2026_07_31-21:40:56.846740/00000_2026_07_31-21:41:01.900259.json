@@ -1,0 +1,74 @@
+{
+  "batch_id": 0,
+  "message_ids": [
+    "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+    "twitter_2059404130087801256"
+  ],
+  "keep_count": 1,
+  "remove_count": 1,
+  "result": {
+    "batch_index": 0,
+    "keep_group": [
+      {
+        "message_id": "twitter_2059404130087801256",
+        "features": [
+          {
+            "name": "targeted_personal_insult",
+            "value": "Uses a derogatory epithet to characterize a named individual",
+            "category": "pragmatics_intent",
+            "confidence": 0.9,
+            "evidence_span": "is  a pusillanimous hypocrite",
+            "rationale": "The post directly attacks a specific person with a negative label rather than only discussing policy."
+          },
+          {
+            "name": "policy_focus_abortion_restrictions",
+            "value": "Centers on healthcare/pregnancy impacts of abortion bans",
+            "category": "topic_subject",
+            "confidence": 0.92,
+            "evidence_span": "Under Arkansas\u00019 Abortion Ban",
+            "rationale": "The content explicitly discusses abortion bans and consequences for pregnant women."
+          },
+          {
+            "name": "medieval_or_barbaric_evaluative_framing",
+            "value": "Employs strong historical barbarism language for moral condemnation",
+            "category": "semantic_content",
+            "confidence": 0.86,
+            "evidence_span": "medieval",
+            "rationale": "It uses a highly charged descriptor to characterize the policy as morally wrong."
+          }
+        ]
+      }
+    ],
+    "remove_group": [
+      {
+        "message_id": "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+        "features": [
+          {
+            "name": "generic_group_attack",
+            "value": "Attacks a broad group with disparaging terms (e.g., gun owner/gun nut)",
+            "category": "pragmatics_intent",
+            "confidence": 0.88,
+            "evidence_span": "nutcase gun owner",
+            "rationale": "The text uses a derogatory generalization aimed at a category of people."
+          },
+          {
+            "name": "anti_nra_directive",
+            "value": "Contains an instruction not to trust/heed a named organization",
+            "category": "pragmatics_intent",
+            "confidence": 0.86,
+            "evidence_span": "don\u0019t listen to NRA",
+            "rationale": "It includes a direct call to action aimed at rejecting influence from NRA."
+          },
+          {
+            "name": "causal_reductionism_about_guns",
+            "value": "Asserts a single-cause explanation (\"It\u0019s always the guns\")",
+            "category": "semantic_content",
+            "confidence": 0.85,
+            "evidence_span": "It\u0019s always the guns.",
+            "rationale": "The post promotes a simplified causal claim about gun-related problems."
+          }
+        ]
+      }
+    ]
+  }
+}
