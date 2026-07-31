@@ -2,7 +2,7 @@
 
 ## Goal
 
-Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` item: prompt → structured feature schema → JSON row under the experiment `outputs/{timestamp}/` tree. Model id is exactly `gpt-5.4-nano`. No unit-test file; live verification is via `smoke_tests/` (Step 4).
+Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` item: prompt → structured feature schema → JSON row under the experiment `outputs/{timestamp}/` tree. Model id is exactly `gpt-5.4-nano`. Show tqdm progress for items as they complete. No unit-test file; live verification is via `smoke_tests/` (Step 4).
 
 ## Caller / unit of work
 
@@ -10,18 +10,19 @@ Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` it
 
 **In scope:** `stage1.py` (and tiny helpers only if required to keep `stage1.py` readable).
 
-**Out of scope:** stage 2, CLI flags, live API pilot, LangChain clients, edits to `shared/schemas.py`, any `tests/` package.
+**Out of scope:** stage 2, CLI flags, live API 50% run, LangChain clients, edits to `shared/schemas.py`, any `tests/` package, patching installed `research_tools`.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
 | `/Users/mark/src/work/mirrorview-wt/.venv/lib/python3.12/site-packages/research_tools/llm/recipes/runner.py` | Canonical call-site pattern |
-| `/Users/mark/src/work/mirrorview-wt/.venv/lib/python3.12/site-packages/research_tools/llm/runner.py` | `run(...)` signature and output layout |
+| `/Users/mark/src/work/mirrorview-wt/.venv/lib/python3.12/site-packages/research_tools/llm/runner.py` | `run(...)` signature, output layout, and **whether any progress callback/hook exists** |
 | `/Users/mark/src/work/mirrorview-wt/.venv/lib/python3.12/site-packages/research_tools/config/models.yaml` | Confirm `gpt-5.4-nano` registry entry (temperature 1) |
 | `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/schemas.py` | Stage-1 response model |
 | `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/prompts.py` | Stage-1 prompt builder |
 | `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/batching.py` | Batch dict shape |
+| `/Users/mark/src/work/mirrorview-wt/pyproject.toml` | Confirm `tqdm` is already a project dependency |
 
 ## Files allowed to change
 
@@ -30,7 +31,9 @@ Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` it
 ## Files forbidden to change
 
 - `/Users/mark/src/work/mirrorview-wt/shared/schemas.py`
+- `/Users/mark/src/work/mirrorview-wt/shared/data/**`
 - `/Users/mark/src/work/mirrorview-wt/experiments/followup_model_error_analysis_2026_07_15/extract/extract_features.py`
+- `/Users/mark/src/work/mirrorview-wt/experiments/predict_keep_remove_2026_07_01/**`
 - `/Users/mark/src/work/mirrorview-wt/.venv/**` (do not patch installed research_tools)
 - Do **not** create `experiments/llm_based_feature_generation_2026_07_31/tests/`
 
@@ -44,6 +47,19 @@ Match the recipe pattern in `research_tools.llm.recipes.runner`:
 4. `run(..., model="gpt-5.4-nano", output_base_path=<experiment root>, run_metadata={...})`.
 5. Do **not** pass `temperature=0.0` (registry forces temperature 1 for this model). Omit temperature or pass `1`.
 6. `run_metadata` must record at least: `stage="feature_generation"`, `sample_fraction`, `seed`, `model`, and the full list of `message_ids` processed in this stage (flat, unique).
+
+### tqdm progress (required)
+
+**Inspection finding (do this yourself before coding):** In `research_tools/llm/runner.py`, `run()` has **no** progress callback / `on_item` / hook parameter. It does `item_list = list(items)` then a bare `for index, item in enumerate(item_list):` loop. Do **not** patch files under `.venv/`.
+
+**Why wrapping `items` in `tqdm(...)` alone is wrong:** because `run()` eagerly materializes `list(items)` before any LLM call, a tqdm iterable would finish (or advance fully) before completions start.
+
+**Intended approach:** keep calling `research_tools.llm.runner.run`, but drive a `tqdm` bar from the call site in `stage1.py`:
+
+1. Materialize the batch list and open `tqdm(total=len(batches), desc=...)` (or equivalent clear stage-1 label).
+2. Wrap `writer_map_fn` so that after each successful map (i.e. after each item’s LLM completion + row build), call `pbar.update(1)`.
+3. Close the bar when `run(...)` returns (use `try`/`finally`).
+4. Do not reimplement the runner’s filesystem/metadata loop; only wrap the hooks the runner already calls (`writer_map_fn` after each item is the reliable tick point).
 
 ## Exact commands
 
@@ -68,11 +84,13 @@ print('stage1 wiring OK')
 | Imports | stage1 imports `run` from `research_tools.llm.runner` | Imports LangChain extract client |
 | Model default | default model string is exactly `gpt-5.4-nano` | Other id |
 | Wiring check | exit 0; prints `stage1 wiring OK` | ImportError / missing attrs |
+| tqdm wiring | stage1 imports/uses `tqdm` around runner items via wrapped `writer_map_fn` (or equivalent post-item tick) | Bare `run` with no progress; or tqdm wrapping only the pre-`list(items)` iterable |
 | No shared schema edit | `git diff -- shared/schemas.py` empty | Diff present |
 
 ## Done when
 
 - `stage1.py` exposes `run_stage1` using the research_tools runner recipe.
+- tqdm advances once per completed stage-1 item without patching `research_tools`.
 - Offline import/wiring check passes.
 - No LangChain extract path is imported.
 - No `tests/` package under the experiment.

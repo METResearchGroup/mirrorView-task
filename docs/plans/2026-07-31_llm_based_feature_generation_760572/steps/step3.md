@@ -2,7 +2,7 @@
 
 ## Goal
 
-Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner items whose structured output is the thematic commonality list. Same runner interface and output layout as stage 1. Prompt must not use FP/TN overrepresentation framing. No unit-test file; live verification is via `smoke_tests/` (Step 4).
+Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner items whose structured output is the thematic commonality list. Same runner interface and output layout as stage 1. Same tqdm progress pattern as stage 1. Prompt must not use FP/TN overrepresentation framing. No unit-test file; live verification is via `smoke_tests/` (Step 4).
 
 ## Caller / unit of work
 
@@ -10,14 +10,15 @@ Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner ite
 
 **In scope:** `stage2.py`, optional tiny aggregator helper colocated in `stage2.py`.
 
-**Out of scope:** live pilot, CLI, `smoke_tests/`, editing stage-1 prompts, `shared/schemas.py`, any `tests/` package.
+**Out of scope:** live 50% run, CLI, `smoke_tests/`, editing stage-1 prompts, `shared/schemas.py`, any `tests/` package, patching installed `research_tools`.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
 | `/Users/mark/src/work/mirrorview-wt/.venv/lib/python3.12/site-packages/research_tools/llm/recipes/runner.py` | Call-site pattern |
-| `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/stage1.py` | Output row shape to consume |
+| `/Users/mark/src/work/mirrorview-wt/.venv/lib/python3.12/site-packages/research_tools/llm/runner.py` | Confirm still no progress callback; same loop/materialization as Step 2 |
+| `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/stage1.py` | Output row shape to consume; reuse the same tqdm wrap pattern |
 | `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/schemas.py` | Theme response model |
 | `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/prompts.py` | Stage-2 prompt |
 | `/Users/mark/src/work/mirrorview-wt/experiments/followup_model_error_analysis_2026_07_15/extract/prompts.py` | `CLUSTERING_PROMPT` lineage (what to avoid: FP/TN language) |
@@ -29,19 +30,29 @@ Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner ite
 ## Files forbidden to change
 
 - `/Users/mark/src/work/mirrorview-wt/shared/schemas.py`
+- `/Users/mark/src/work/mirrorview-wt/shared/data/**`
 - `/Users/mark/src/work/mirrorview-wt/experiments/followup_model_error_analysis_2026_07_15/**`
+- `/Users/mark/src/work/mirrorview-wt/experiments/predict_keep_remove_2026_07_01/**`
 - Installed `research_tools` under `.venv/`
 - Do **not** create `experiments/llm_based_feature_generation_2026_07_31/tests/`
 
 ## Contracts
 
 1. Load stage-1 result JSONs from a given directory; ignore `metadata.json`.
-2. Build a single stage-2 item for the pilot path (YAGNI: no shard merge unless a single payload is impractical; for 1% pilot one item is required).
+2. Build a single stage-2 item for the production path (YAGNI: no shard merge unless a single payload is impractical; one item is required for smoke and for the 50% run unless payload size forces a later exception).
 3. `prompt_fn` embeds the aggregated feature corpus JSON into the stage-2 prompt.
 4. `response_model` = experiment theme-synthesis schema.
 5. `writer_map_fn` persists `model_dump()` of the theme result plus `source_stage1_dir` and `n_stage1_batches`.
 6. Default model `gpt-5.4-nano`; do not pass `temperature=0.0`.
 7. `run_metadata` includes `stage="theme_synthesis"` and `source_stage1_dir`.
+
+### tqdm progress (required)
+
+Same finding and approach as Step 2:
+
+- Inspect `research_tools/llm/runner.py`: **no** progress hooks; `list(items)` then bare `enumerate` loop. Do not wrap `items` alone in `tqdm` (eager materialization).
+- In `stage2.py`, open a `tqdm` bar over stage-2 items and advance it from a wrapped `writer_map_fn` after each completed item; close in `finally`.
+- Prefer matching the Stage 1 helper pattern so both stages behave the same.
 
 ## Exact commands
 
@@ -72,10 +83,12 @@ print('theme prompt OK')
 |-------|------|------|
 | Wiring check | exit 0; prints `stage2 wiring OK` | ImportError / missing attrs |
 | Prompt hygiene | no forbidden substrings | AssertionError with hits |
+| tqdm wiring | stage2 advances tqdm once per completed stage-2 item via wrapped `writer_map_fn` (same pattern as stage1) | No progress / wraps only the pre-materialized iterable |
 | No unit tests | `tests/` does not exist under the experiment | Pytest suite added |
 
 ## Done when
 
 - `stage2.py` can consume a stage-1 output folder and expose `run_stage2` on the research_tools runner.
+- tqdm advances once per completed stage-2 item without patching `research_tools`.
 - Theme prompt has no FP/TN overrepresentation framing.
 - No `tests/` package under the experiment.
