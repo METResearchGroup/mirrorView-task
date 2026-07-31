@@ -120,7 +120,9 @@ We also asked an LLM to generate flips for a given set of posts. We then asked t
 
 ## Study Phase 2: Implementing and Testing the Linked-Fate Moderation Procedure
 
-### Study Part 2, Phase 1: ...
+### Study Part 2, Phase 1: Trialing the linked-fate procedure
+
+The first phase of our study confirms that the linked-fate procedure works.
 
 #### Study Phase 2, Part 1
 
@@ -133,13 +135,15 @@ The breakdown per condition was something like:
 | control             | Single evaluations       | Single evaluations                      |
 | Training + assisted | Linked fate procedure    | Mirrored messages, but single evaluation|
 
-But then we eventually swapped to add a third condition.
+But then we eventually swapped to add a third condition. Therefore, our final dataset has data with the following 3 conditions:
 
 | Condition | Training Phase (10 posts)       | Target Phase (10 posts)                       |
 |-----------|---------------------------------|-----------------------------------------------|
 | Control   | Individual evaluations (no mirror) | Individual evaluations (no mirror)            |
 | Training  | Linked fate procedure (mirror shown) | Individual evaluations (no mirror)            |
 | Assisted  | Linked fate procedure (mirror shown) | Individual evaluations (mirror shown)         |
+
+The data for this phase is in [this folder](shared/data/raw/study_phase_2_part_1).
 
 ### Study Part 2, Phase 2: ...
 
