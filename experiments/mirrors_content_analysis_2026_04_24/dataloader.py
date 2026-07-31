@@ -7,6 +7,9 @@ from pathlib import Path
 import pandas as pd
 
 from lib.timestamp_utils import get_current_timestamp
+from shared.data import registry
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_PILOT
 
 pd.set_option("display.max_columns", None)
 pd.set_option("display.width", None)
@@ -14,15 +17,10 @@ pd.set_option("display.expand_frame_repr", False)
 
 
 class Dataloader:
-    """Load a pinned export CSV and produce the curated trial-level table."""
+    """Load Part 1 pilot results via the shared registry and produce the trial-level table."""
 
     EXPERIMENT_DIR = Path(__file__).resolve().parent
     PROJECT_ROOT = EXPERIMENT_DIR.parent.parent
-    SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-
-    # Pinned export used for reproducible analysis across experiments.
-    PINNED_EXPORT_FILENAME = "mirrorview_pilot_data_2026_04_28-16:31:47.csv"
-    PINNED_EXPORT_PATH = EXPERIMENT_DIR / PINNED_EXPORT_FILENAME
 
     @property
     def last_loaded_export_path(self) -> Path | None:
@@ -30,15 +28,9 @@ class Dataloader:
         return getattr(self, "_last_loaded_export_path", None)
 
     def get_latest_mirrorview_run_data(self) -> pd.DataFrame:
-        """Load the pinned export CSV as a DataFrame."""
-        if not self.PINNED_EXPORT_PATH.exists():
-            raise FileNotFoundError(
-                f"Pinned export CSV not found at {self.PINNED_EXPORT_PATH}. "
-                "If you intended to use a different export, update PINNED_EXPORT_FILENAME "
-                "and ensure the file is present."
-            )
-        self._last_loaded_export_path = self.PINNED_EXPORT_PATH
-        return pd.read_csv(self.PINNED_EXPORT_PATH, low_memory=False)
+        """Load the registered Part 1 pilot results table as a DataFrame."""
+        self._last_loaded_export_path = registry.resolve_path(STUDY_PHASE_2_PART_1_RESULTS_PILOT)
+        return load_dataset(STUDY_PHASE_2_PART_1_RESULTS_PILOT, low_memory=False)
 
     def transform_latest_mirrorview_run_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """Filter and reshape the raw export frame into the trial-level mirrors table."""

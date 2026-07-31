@@ -1,28 +1,18 @@
-"""Compute basic mirror-view summary tables from the latest export CSV.
+"""Compute basic mirror-view summary tables from the shared Part 1 pilot results.
 
-This script:
-1) Copies the newest ``scripts/mirrorview_pilot_data_*.csv`` into this folder as
-   ``latest_mirrorview_pilot_data.csv`` (overwrites each run). That export should
-   already reflect the desired cohort (e.g. filename cutoff applied in
-   ``scripts/export_study_results.py``).
-2) Prints three tables:
-   - User counts by political party x condition
-   - Phase 1 keep/remove counts (and proportions within each party x condition) by cell
-   - Phase 2 keep/remove counts (and proportions within each party x condition) by cell
+This script loads ``STUDY_PHASE_2_PART_1_RESULTS_PILOT`` via the shared registry
+and prints three tables:
+- User counts by political party x condition
+- Phase 1 keep/remove counts (and proportions within each party x condition) by cell
+- Phase 2 keep/remove counts (and proportions within each party x condition) by cell
 """
 
 from __future__ import annotations
 
-from pathlib import Path
-import shutil
-
 import pandas as pd
 
-
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent
-SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-LOCAL_DATA_CSV = SCRIPT_DIR / "latest_mirrorview_pilot_data.csv"
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_PILOT
 
 CONDITION_DISPLAY_MAP = {
     "control": "control",
@@ -32,23 +22,6 @@ CONDITION_DISPLAY_MAP = {
 CONDITION_ORDER = ["control", "training", "training-assisted"]
 PARTY_ORDER = ["democrat", "republican"]
 DECISION_ORDER = ["keep", "remove"]
-
-
-def find_latest_export_csv() -> Path:
-    """Return the newest ``mirrorview_pilot_data_*.csv`` under scripts/ by mtime."""
-    candidates = sorted(SCRIPTS_DIR.glob("mirrorview_pilot_data_*.csv"), key=lambda p: p.stat().st_mtime)
-    if not candidates:
-        raise FileNotFoundError(f"No mirrorview_pilot_data_*.csv under {SCRIPTS_DIR}")
-    return candidates[-1]
-
-
-def copy_latest_export_csv() -> Path:
-    """Copy the newest scripts export to ``latest_mirrorview_pilot_data.csv`` here."""
-    SCRIPT_DIR.mkdir(parents=True, exist_ok=True)
-    latest = find_latest_export_csv()
-    shutil.copy2(latest, LOCAL_DATA_CSV)
-    print(f"Copied {latest.name} -> {LOCAL_DATA_CSV} (canonical name for this run)")
-    return LOCAL_DATA_CSV
 
 
 def first_non_empty(series: pd.Series) -> str | None:
@@ -130,9 +103,11 @@ def print_table(title: str, table: pd.DataFrame) -> None:
 
 
 def main() -> None:
-    local_path = copy_latest_export_csv()
-    df = pd.read_csv(local_path)
-    print(f"Loaded {len(df):,} rows, {df['prolific_id'].nunique()} distinct prolific_id(s)")
+    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_PILOT)
+    print(
+        f"Loaded {STUDY_PHASE_2_PART_1_RESULTS_PILOT}: "
+        f"{len(df):,} rows, {df['prolific_id'].nunique()} distinct prolific_id(s)"
+    )
 
     user_df = get_user_level_frame(df)
     users_table = format_user_table(user_df)
