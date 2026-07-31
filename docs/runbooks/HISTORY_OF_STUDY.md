@@ -199,7 +199,7 @@ The data collection logic is in [this repo](https://github.com/METResearchGroup/
 
 We then update the web app, in `webapp/`, to reflect the new study design. Also, unlike the previous study version, we only have 1 phase, rather than 2, and we ask users to classify 20 posts in that 1 phase. We do this just to scale up the number of labels per post using the LFP (since Phase 2, Part 1 confirmed that the LFP procedure does work).
 
-The data for this phase is in [this folder](shared/data/raw/study_phase_2_part_2).
+The data for this phase is in [this folder](shared/data/raw/study_phase_2_part_2). The flips shown to users are in [this path](shared/data/raw/study_phase_2_part_2/flips.csv) and the subsequent user data is in [this path](shared/data/raw/study_phase_2_part_2/mirrorview_data_jspsych-mirror-view-4_2026_06_23-12:27:41.csv)
 
 ## Latest work
 
