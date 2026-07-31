@@ -1,0 +1,149 @@
+{
+  "source_stage1_dir": "/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/outputs/2026_07_31-17:31:30.195161",
+  "n_stage1_batches": 1,
+  "result": {
+    "themes": [
+      {
+        "theme_id": 1,
+        "theme_label": "High-intensity moral condemnation and sweeping negative character judgments",
+        "defining_features": [
+          "Uses extreme ideological/character labels (e.g., 'narcissistic', 'fascists') or blanket insults",
+          "Ends or pivots to direct evaluative statements like 'They are just awful people' rather than evidential argumentation",
+          "Employs intensifiers/categorical negative framing about people/groups"
+        ],
+        "example_message_ids": [
+          "reddit_1l48h1m_mw71clk",
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 1,
+          "remove": 1
+        },
+        "interpretation": "Posts in this theme use strong, absolutist condemnation and highly charged character assessments, often treating the subject as inherently bad rather than discussing claims with measured justification."
+      },
+      {
+        "theme_id": 2,
+        "theme_label": "Religious/moral punishment language to intensify condemnation",
+        "defining_features": [
+          "Includes infernal/curse phrasing (e.g., 'damned to hellfire')",
+          "Uses religious punishment as a rhetorical intensifier for moral judgment",
+          "Frames the statement within moral-retributive terms"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "The remove-labeled example amplifies disapproval through religious damnation language, converting critique into moralized punishment."
+      },
+      {
+        "theme_id": 3,
+        "theme_label": "Targeted animus framed as a motive (e.g., hatred toward a protected group)",
+        "defining_features": [
+          "States a specific hatred-based motivation for wrongdoing (e.g., 'because they hate trans people')",
+          "Provides an explanatory/casual account centered on hostility toward a group",
+          "Links condemnation to the target\u2019s alleged intent/motive rather than events alone"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "This theme explicitly attributes harmful actions to hatred toward trans people, turning the post into motive-based blame for group-directed animus."
+      },
+      {
+        "theme_id": 4,
+        "theme_label": "Escalation/pivot structure with 'No, it's far worse than that'",
+        "defining_features": [
+          "Uses explicit escalation language after an initial claim ('No, it's far worse than that')",
+          "Employs rhetorical correction/escalation patterns rather than steady argumentation",
+          "Signals a stronger-than-previous version of the accusation"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "The remove-labeled post uses a recognizable escalating rhetorical move, shifting from an initial statement to a stronger claim through a negation-and-amplify pivot."
+      },
+      {
+        "theme_id": 5,
+        "theme_label": "Victimization framing and 'convenient target' motive explanation",
+        "defining_features": [
+          "Characterizes groups as being used as an easy/strategic target (e.g., 'latest convenient target')",
+          "Suggests a need for hate/abuse with a functional motive explanation ('need someone to hate and abuse')",
+          "Connects condemnation to a perceived exploitation of victimhood"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "The post frames trans people as a convenient object of abuse and describes perpetrators as motivated by convenience/need, not only by beliefs or facts."
+      },
+      {
+        "theme_id": 6,
+        "theme_label": "Mirror-rewrite with re-targeting to child/grooming claims",
+        "defining_features": [
+          "Uses mirror or rephrased counter-accusation language that shifts to a new wrongdoing frame",
+          "Introduces child-related wrongdoing framing (e.g., 'groom kids')",
+          "Connects the child/grooming allegation to broader ideological justification (e.g., 'traditional families')"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "The remove-labeled content performs a directional rewrite that brings in child-grooming framing and ties it to ideological conflict, escalating seriousness and targeting."
+      },
+      {
+        "theme_id": 7,
+        "theme_label": "Personal-drama metaphor applied to politics (breakup/theatre framing)",
+        "defining_features": [
+          "Uses interpersonal relationship metaphors (e.g., 'break-up in public') to describe political behavior",
+          "Applies theatrical/dramatic framing ('theatre') to public acts",
+          "Depicts politics as a relational spectacle rather than policy debate"
+        ],
+        "example_message_ids": [
+          "reddit_1l48h1m_mw71clk"
+        ],
+        "label_mix": {
+          "keep": 1,
+          "remove": 0
+        },
+        "interpretation": "The keep-labeled example uses metaphorical, relationship-drama language to characterize political dynamics, focusing on theatrical framing over direct motive attribution."
+      },
+      {
+        "theme_id": 8,
+        "theme_label": "Personality/psychological trait attacks directed at a public figure",
+        "defining_features": [
+          "Asserts negative personality/mental traits about a public figure (e.g., 'lacks the forethought and impulse control')",
+          "Combines trait claims with insults or ideological labels",
+          "Uses psychological deficiency as grounds for moral condemnation"
+        ],
+        "example_message_ids": [
+          "reddit_1l48h1m_mw71clk"
+        ],
+        "label_mix": {
+          "keep": 1,
+          "remove": 0
+        },
+        "interpretation": "The keep-labeled post attacks a public figure via asserted psychological traits, casting the person\u2019s mindset as the basis for contempt."
+      }
+    ],
+    "cross_cutting_themes": [
+      "High-intensity moral condemnation and sweeping negative character judgments",
+      "Escalatory/forceful rhetorical moves (e.g., escalation pivot; categorical labeling)"
+    ]
+  }
+}

@@ -1,11 +1,17 @@
 """End-to-end smoke: 1 keep + 1 remove → stage1 + stage2 via the real CLI.
 
 Cheapest live check of the research_tools runner path. Requires OPENAI_API_KEY
-in the repo-root `.env`.
+in the repo-root `.env`. Not a pytest suite — an operable harness.
 
 Usage:
   PYTHONPATH=. uv run python \\
     experiments/llm_based_feature_generation_2026_07_31/smoke_tests/run_smoke.py
+
+Flags (passed through to main):
+  --sample-fraction 1e-6   # ceil still yields >=1 row per class
+  --keep-per-batch 1
+  --remove-per-batch 1
+  --seed 42
 """
 
 from __future__ import annotations
@@ -13,7 +19,7 @@ from __future__ import annotations
 from experiments.llm_based_feature_generation_2026_07_31.main import main
 
 # Tiny fraction still yields >=1 row per class (ceil). Batch size 1+1 → one
-# stage-1 item and one stage-2 item.
+# stage-1 item and one stage-2 item. Same without-replacement path as pilot.
 SMOKE_ARGV = [
     "--sample-fraction",
     "1e-6",

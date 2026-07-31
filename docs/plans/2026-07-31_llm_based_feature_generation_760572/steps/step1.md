@@ -2,15 +2,15 @@
 
 ## Goal
 
-Create experiment-local schemas, prompts, and a pure (no LLM) sampling/batching module under `experiments/llm_based_feature_generation_2026_07_31/`. End-to-end verification is via `smoke_tests/run_smoke.py` (not a unit-test suite).
+Create experiment-local schemas, prompts, and a pure (no LLM) sampling/batching module under `experiments/llm_based_feature_generation_2026_07_31/`. Do **not** add a `tests/` package; end-to-end verification comes later via `smoke_tests/` (Step 4).
 
 ## Caller / unit of work
 
-**Main caller:** later stages will call the batching API; this step’s immediate caller is a small `__main__` smoke print on the batching module (full pipeline smoke lands with the CLI).
+**Main caller:** later stages will call the batching API; this step’s immediate caller is a small `__main__` print on the batching module.
 
 **In scope:** `__init__.py`, `schemas.py`, `prompts.py`, `batching.py`.
 
-**Out of scope:** any LLM calls, `research_tools.llm.runner.run`, CLI, `RESULTS.md`, edits to `shared/schemas.py`.
+**Out of scope:** any LLM calls, `research_tools.llm.runner.run`, CLI, `smoke_tests/`, `RESULTS.md`, edits to `shared/schemas.py`, any `tests/` package.
 
 ## Files to inspect (read-only)
 
@@ -35,6 +35,7 @@ Create experiment-local schemas, prompts, and a pure (no LLM) sampling/batching 
 - `/Users/mark/src/work/mirrorview-wt/experiments/followup_model_error_analysis_2026_07_15/**`
 - `/Users/mark/src/work/mirrorview-wt/experiments/predict_keep_remove_2026_07_01/**`
 - Any file under `webapp/`
+- Do **not** create `experiments/llm_based_feature_generation_2026_07_31/tests/`
 
 ## Contracts to freeze
 
@@ -80,12 +81,14 @@ print('posts', len(df), 'sample', len(sample), 'batches', len(batches), 'leftove
 | Check | Pass | Fail |
 |-------|------|------|
 | Schemas import | `from experiments.llm_based_feature_generation_2026_07_31.schemas import ...` works | ImportError / missing fields |
-| Batching smoke | uniqueness assert holds; positive batch count | AssertionError / zero batches |
+| Batching check | uniqueness assert holds; positive batch count | AssertionError / zero batches |
 | No shared schema edit | `git diff -- shared/schemas.py` empty for this step | Diff touches shared schemas |
 | Prompt text | Stage-2 prompt has no substrings `FP`, `false positive`, `TN`, `false negative`, `over-represent` | Those strings present |
+| No unit tests | `tests/` does not exist under the experiment | Pytest suite added |
 
 ## Done when
 
 - Experiment-local schemas and prompts exist.
 - Batching loads Study 2 data, samples without replacement, forms unique-id batches.
+- No `tests/` package under the experiment.
 - `shared/schemas.py` unchanged.

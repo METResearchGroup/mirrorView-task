@@ -2,15 +2,15 @@
 
 ## Goal
 
-Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` item: prompt → structured feature schema → JSON row under the experiment `outputs/{timestamp}/` tree. Model id is exactly `gpt-5.4-nano`.
+Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` item: prompt → structured feature schema → JSON row under the experiment `outputs/{timestamp}/` tree. Model id is exactly `gpt-5.4-nano`. No unit-test file; live verification is via `smoke_tests/` (Step 4).
 
 ## Caller / unit of work
 
-**Main caller:** a `run_stage1(batches, *, output_base_path, model, seed, sample_fraction, ...)` function that returns the output folder path. Invoked later from the CLI (Step 4); this step may include a thin `__main__` that builds one tiny synthetic batch for a dry import check without requiring API keys.
+**Main caller:** a `run_stage1(batches, *, output_base_path, model, seed, sample_fraction, ...)` function that returns the output folder path. Invoked later from the CLI (Step 4); this step may include a thin import check without requiring API keys.
 
 **In scope:** `stage1.py` (and tiny helpers only if required to keep `stage1.py` readable).
 
-**Out of scope:** stage 2, CLI flags, live API pilot, LangChain clients, edits to `shared/schemas.py`.
+**Out of scope:** stage 2, CLI flags, live API pilot, LangChain clients, edits to `shared/schemas.py`, any `tests/` package.
 
 ## Files to inspect (read-only)
 
@@ -26,13 +26,13 @@ Wire stage 1 so each keep/remove batch is one `research_tools.llm.runner.run` it
 ## Files allowed to change
 
 - `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/stage1.py` (create)
-- (no unit-test file; verify via `smoke_tests/run_smoke.py` once CLI exists)
 
 ## Files forbidden to change
 
 - `/Users/mark/src/work/mirrorview-wt/shared/schemas.py`
 - `/Users/mark/src/work/mirrorview-wt/experiments/followup_model_error_analysis_2026_07_15/extract/extract_features.py`
 - `/Users/mark/src/work/mirrorview-wt/.venv/**` (do not patch installed research_tools)
+- Do **not** create `experiments/llm_based_feature_generation_2026_07_31/tests/`
 
 ## Contracts
 
@@ -58,7 +58,6 @@ assert hasattr(stage1, 'prompt_fn')
 assert hasattr(stage1, 'writer_map_fn')
 print('stage1 wiring OK')
 "
-
 # Expect: prints 'stage1 wiring OK'
 ```
 
@@ -68,11 +67,12 @@ print('stage1 wiring OK')
 |-------|------|------|
 | Imports | stage1 imports `run` from `research_tools.llm.runner` | Imports LangChain extract client |
 | Model default | default model string is exactly `gpt-5.4-nano` | Other id |
-| Wiring check | exit 0 | ImportError / missing attrs |
+| Wiring check | exit 0; prints `stage1 wiring OK` | ImportError / missing attrs |
 | No shared schema edit | `git diff -- shared/schemas.py` empty | Diff present |
 
 ## Done when
 
 - `stage1.py` exposes `run_stage1` using the research_tools runner recipe.
-- Offline wiring import check passes.
+- Offline import/wiring check passes.
 - No LangChain extract path is imported.
+- No `tests/` package under the experiment.

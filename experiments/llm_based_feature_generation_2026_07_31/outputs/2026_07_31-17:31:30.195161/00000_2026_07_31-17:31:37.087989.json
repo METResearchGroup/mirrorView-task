@@ -1,0 +1,100 @@
+{
+  "batch_id": 0,
+  "message_ids": [
+    "reddit_1l48h1m_mw71clk",
+    "reddit_1u0gjyt_oqjbgbx"
+  ],
+  "n_keep": 1,
+  "n_remove": 1,
+  "result": {
+    "batch_id": 0,
+    "keep_posts": [
+      {
+        "message_id": "reddit_1l48h1m_mw71clk",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "strong_personality_insult_framing",
+            "feature_value": "Uses direct negative claims about a public figure's mental traits (e.g., lack of forethought/impulse control) and calls them narcissists/fascists",
+            "category": "semantic_content",
+            "confidence": 0.92,
+            "evidence_span": "\"Trump lacks the forethought and impulse control\"",
+            "rationale": "The post attributes negative personality/psychological traits to Trump and attacks his character explicitly."
+          },
+          {
+            "feature_name": "two_party_couplet_breakup_metaphor",
+            "feature_value": "Frames political actors as a personal drama (a breakup) in public/theatre",
+            "category": "semantic_content",
+            "confidence": 0.88,
+            "evidence_span": "\"having a break-up in public\"",
+            "rationale": "The language uses interpersonal relationship metaphors ('theatre', 'break-up') to describe political behavior."
+          },
+          {
+            "feature_name": "high_intensity_moralized_character_labels",
+            "feature_value": "Employs extreme ideological labels such as 'narcissistic' and 'fascists'",
+            "category": "surface_lexical",
+            "confidence": 0.9,
+            "evidence_span": "\"two dumb narcissistic fascists\"",
+            "rationale": "The post uses strong, taboo ideological/character descriptors rather than neutral description."
+          }
+        ]
+      }
+    ],
+    "remove_posts": [
+      {
+        "message_id": "reddit_1u0gjyt_oqjbgbx",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "targeting_trans_people_as_reason_given",
+            "feature_value": "Claims perpetrators 'hate trans people' as motivation",
+            "category": "topic_subject",
+            "confidence": 0.86,
+            "evidence_span": "\"because they hate trans people\"",
+            "rationale": "The post\u2019s causal motivation explicitly cites hatred toward trans people."
+          },
+          {
+            "feature_name": "religious_infernal_moral_language",
+            "feature_value": "Uses 'damned to hellfire' religious curse/malediction",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"damned to hellfire\"",
+            "rationale": "The text invokes religious punishment language to intensify moral condemnation."
+          },
+          {
+            "feature_name": "escalation_with_no_concession_structure",
+            "feature_value": "Uses an escalating correction pattern: 'No, it's far worse than that'",
+            "category": "compositional_syntax",
+            "confidence": 0.95,
+            "evidence_span": "\"No, it's far worse than that.\"",
+            "rationale": "A clear rhetorical pivot escalates the claim after the initial statement."
+          },
+          {
+            "feature_name": "victimization_and_convenient_target_causal_claim",
+            "feature_value": "Asserts trans people are a 'convenient target' and implies a need-based motivation ('need someone to hate and abuse')",
+            "category": "semantic_content",
+            "confidence": 0.87,
+            "evidence_span": "\"latest convenient target\"",
+            "rationale": "The post provides a causal/explanatory motive tied to victimization of a target group."
+          },
+          {
+            "feature_name": "high_intensity_character_assessment",
+            "feature_value": "Concludes with sweeping condemnation ('They are just awful people.')",
+            "category": "pragmatics_intent",
+            "confidence": 0.85,
+            "evidence_span": "\"They are just awful people.\"",
+            "rationale": "The post ends with direct moral judgment rather than argumentation or evidence."
+          },
+          {
+            "feature_name": "child_grooming_frame_in_mirror_version",
+            "feature_value": "Mirror rewrite shifts to a 'groom kids' frame and asserts a family/tradition justification",
+            "category": "target_directionality",
+            "confidence": 0.86,
+            "evidence_span": "\"They want to groom kids\"",
+            "rationale": "The mirror text targets a child-related wrongdoing claim and ties it to hostility toward 'traditional families'."
+          }
+        ]
+      }
+    ]
+  }
+}

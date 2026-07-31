@@ -52,6 +52,8 @@ dev = [
 
 [tool.uv]
 package = false
+# research-tools → litellm 1.84 needs importlib-metadata>=8; sagemaker (modernbert-training) pins <7.
+override-dependencies = ["importlib-metadata>=8.0.0,<9"]
 
 [tool.uv.sources]
 research-tools = { git = "https://github.com/METResearchGroup/research_tools.git" }

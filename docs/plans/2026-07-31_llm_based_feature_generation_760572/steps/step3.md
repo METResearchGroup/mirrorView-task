@@ -2,15 +2,15 @@
 
 ## Goal
 
-Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner items whose structured output is the thematic commonality list. Same runner interface and output layout as stage 1. Prompt must not use FP/TN overrepresentation framing.
+Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner items whose structured output is the thematic commonality list. Same runner interface and output layout as stage 1. Prompt must not use FP/TN overrepresentation framing. No unit-test file; live verification is via `smoke_tests/` (Step 4).
 
 ## Caller / unit of work
 
 **Main caller:** `run_stage2(stage1_output_dir, *, output_base_path, model, ...)` that reads all `*.json` result files from a stage-1 output folder (skipping `metadata.json`), builds theme-synthesis item(s), calls `research_tools.llm.runner.run`, and returns the stage-2 output folder path.
 
-**In scope:** `stage2.py`, offline wiring tests, optional tiny aggregator helper colocated in `stage2.py`.
+**In scope:** `stage2.py`, optional tiny aggregator helper colocated in `stage2.py`.
 
-**Out of scope:** live pilot, CLI, editing stage-1 prompts, `shared/schemas.py`.
+**Out of scope:** live pilot, CLI, `smoke_tests/`, editing stage-1 prompts, `shared/schemas.py`, any `tests/` package.
 
 ## Files to inspect (read-only)
 
@@ -25,13 +25,13 @@ Wire stage 2 so aggregated stage-1 feature JSON becomes one (or more) runner ite
 ## Files allowed to change
 
 - `/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/stage2.py` (create)
-- (no unit-test file; verify via `smoke_tests/run_smoke.py` once CLI exists)
 
 ## Files forbidden to change
 
 - `/Users/mark/src/work/mirrorview-wt/shared/schemas.py`
 - `/Users/mark/src/work/mirrorview-wt/experiments/followup_model_error_analysis_2026_07_15/**`
 - Installed `research_tools` under `.venv/`
+- Do **not** create `experiments/llm_based_feature_generation_2026_07_31/tests/`
 
 ## Contracts
 
@@ -70,11 +70,12 @@ print('theme prompt OK')
 
 | Check | Pass | Fail |
 |-------|------|------|
-| Aggregator | Loads fixture JSON dir with 2 fake stage-1 files; returns list length 2 | Crash / includes metadata |
-| Wiring check | exit 0 offline | ImportError |
+| Wiring check | exit 0; prints `stage2 wiring OK` | ImportError / missing attrs |
 | Prompt hygiene | no forbidden substrings | AssertionError with hits |
+| No unit tests | `tests/` does not exist under the experiment | Pytest suite added |
 
 ## Done when
 
 - `stage2.py` can consume a stage-1 output folder and expose `run_stage2` on the research_tools runner.
-- Offline tests pass; theme prompt has no FP/TN overrepresentation framing.
+- Theme prompt has no FP/TN overrepresentation framing.
+- No `tests/` package under the experiment.

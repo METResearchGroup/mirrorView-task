@@ -32,7 +32,9 @@ Across re-runs:
 ## How to run
 
 ```bash
-# End-to-end smoke (1 keep + 1 remove → stage1 + stage2; live LLM)
+# End-to-end smoke (very small sample → ~1 batch of 1 keep + 1 remove)
+# Flags used by smoke_tests/run_smoke.py:
+#   --sample-fraction 1e-6 --keep-per-batch 1 --remove-per-batch 1 --seed 42
 PYTHONPATH=. uv run python \
   experiments/llm_based_feature_generation_2026_07_31/smoke_tests/run_smoke.py
 
