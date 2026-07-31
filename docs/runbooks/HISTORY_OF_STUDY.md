@@ -120,11 +120,9 @@ We also asked an LLM to generate flips for a given set of posts. We then asked t
 
 ## Study Phase 2: Implementing and Testing the Linked-Fate Moderation Procedure
 
-### Study Part 2, Phase 1: Trialing the linked-fate procedure
+### Study Phase 2, Part 1: Trialing the linked-fate procedure
 
 The first phase of our study confirms that the linked-fate procedure works.
-
-#### Study Phase 2, Part 1
 
 Our proposed plan was defined in [this Google Doc](https://docs.google.com/document/d/1A9kAlsCKgjk2qOlcJf_mriC7V9dbhn8VTT3Qb7HgDLc/edit?tab=t.0). This Google Doc discusses the stimuli randomization procedure as well as the design assets used in the UI.
 
@@ -145,18 +143,15 @@ But then we eventually swapped to add a third condition. Therefore, our final da
 
 The data for this phase is in [this folder](shared/data/raw/study_phase_2_part_1).
 
-### Study Part 2, Phase 2: ...
+#### Phase 2, Part 1 Findings
 
-### Writing up our results
+Here, we confirmed that our linked fate procedure does work. We wrote up Study Phase 2, Part 1's results in [this Google doc](https://docs.google.com/document/d/1owljHygH0KqP4PtNf_fsUg3Cm1pBOEZ1mcaX-4vCfbY/edit?tab=t.0#heading=h.eg1xlekxf7vb). It says "Study 1" but "Study 1" refers to our linked-fate procedure, which was Phase 2 in our intended plan.
 
-We wrote up Study Phase 2's results in [this Google doc](https://docs.google.com/document/d/1owljHygH0KqP4PtNf_fsUg3Cm1pBOEZ1mcaX-4vCfbY/edit?tab=t.0#heading=h.eg1xlekxf7vb). It says "Study 1" but "Study 1" refers to our linked-fate procedure, which was Phase 2 in our intended plan.
-
-#### LLM-generated summary of the writeup
+##### LLM-generated summary of the writeup
 
 The study shows that the Linked Fate Procedure (LFP) with mirrored posts can almost eliminate partisan bias in content moderation while preserving democratic, bottom‑up judgments, and that participants experience it as making them fairer, more speech‑protective, and more focused on harm and civility rather than political alignment.
 
-Core quantitative results
-Under standard individual moderation, participants showed clear partisan bias (bias score ≈ 0.12), whereas LFP reduced this to about 0.02–0.01, effectively erasing bias as a manipulation check.
+Core quantitative results: Under standard individual moderation, participants showed clear partisan bias (bias score ≈ 0.12), whereas LFP reduced this to about 0.02–0.01, effectively erasing bias as a manipulation check.
 
 LFP changes how decisions track toxicity: it increases removal of one’s own side’s highly toxic posts (56% vs. 47% in control), while decreasing over‑removal of the other side’s moderately toxic posts (31% vs. 38% in control).
 
@@ -167,41 +162,46 @@ Every post is paired with a “mirror” that expresses the same message and str
 
 This setup makes the relevant counterfactual explicit: people must ask, “Would I make the same decision if the opposing side said this?” shifting moderation from partisan agreement to rule‑based consistency.
 
-Reported subjective impact
-Participants reported that LFP meaningfully influenced how they moderated, with an average self‑reported influence of 4.85/7 and median 5.
+Reported subjective impact: Participants reported that LFP meaningfully influenced how they moderated, with an average self‑reported influence of 4.85/7 and median 5.
 
 Open‑ended responses (summarized via an LLM over ≈1200 LFP participants) indicate that LFP made partisan double standards more salient and encouraged participants to adopt general principles rather than react to agreement/disagreement.
 
-Emergent decision principles
-From the open‑ended data, several themes emerge about what standards people actually use under LFP:
+Emergent decision principles" From the open‑ended data, several themes emerge about what standards people actually use under LFP:
 
-Fairness and consistency: About 20% explicitly mentioned fairness, neutrality, or applying the same standard to both sides, indicating that participants consciously aimed for symmetric treatment.
+- Fairness and consistency: About 20% explicitly mentioned fairness, neutrality, or applying the same standard to both sides, indicating that participants consciously aimed for symmetric treatment.
+- Speech over position: Roughly 33% referenced free speech, open debate, and allowing political expression, emphasizing that disagreement and strong opinions should generally be allowed if expressed civilly.
+- Red lines around harm and hate: Around 23% focused on threats, violence, hate, racism, safety, and similar criteria as reasons to remove content.
+- Tone and civility: About 29% highlighted profanity, insults, aggression, personal attacks, and inflammatory language as core factors.
+- Productive discussion: Approximately 15% mentioned constructiveness, logic, evidence, or contribution to the conversation as important to their decisions.
+- A smaller group (≈8%) explicitly said the mirror comparison changed their perspective or made them more aware of their own potential bias, likely underestimating the total effect because many described the same mechanism indirectly via fairness language.
 
-Speech over position: Roughly 33% referenced free speech, open debate, and allowing political expression, emphasizing that disagreement and strong opinions should generally be allowed if expressed civilly.
-
-Red lines around harm and hate: Around 23% focused on threats, violence, hate, racism, safety, and similar criteria as reasons to remove content.
-
-Tone and civility: About 29% highlighted profanity, insults, aggression, personal attacks, and inflammatory language as core factors.
-
-Productive discussion: Approximately 15% mentioned constructiveness, logic, evidence, or contribution to the conversation as important to their decisions.
-
-A smaller group (≈8%) explicitly said the mirror comparison changed their perspective or made them more aware of their own potential bias, likely underestimating the total effect because many described the same mechanism indirectly via fairness language.
-
-Conceptual contribution
-The procedure operationalizes a notion of “justified political disagreement”: the set of posts that survive even‑handed scrutiny when people must apply the same rule to both sides.
+Conceptual contribution: The procedure operationalizes a notion of “justified political disagreement”: the set of posts that survive even‑handed scrutiny when people must apply the same rule to both sides.
 
 Crucially, this boundary is learned bottom‑up from participants’ own choices under LFP, not from top‑down platform rules, preserving democratic legitimacy while stripping out partisan asymmetry.
 
-Why simple averaging does not suffice
-A naive alternative—training a model on average decisions from a balanced partisan sample without LFP—would yield noisy, contradictory labels, especially on contested content where each side makes opposite decisions.
+Why simple averaging does not suffice: A naive alternative—training a model on average decisions from a balanced partisan sample without LFP—would yield noisy, contradictory labels, especially on contested content where each side makes opposite decisions.
 
 The resulting “midpoint” label encodes a judgment no actual moderator holds, whereas LFP produces coherent, principled labels that reflect real, consistent decisions under a shared standard.
 
-Planned next steps
-Scale up: collect ≈10,000 mirrored post pairs with ~3 LFP judgments each from a nationally representative sample to build a large corpus of debiased keep/remove decisions.
+Planned next steps: Scale up: collect ≈10,000 mirrored post pairs with ~3 LFP judgments each from a nationally representative sample to build a large corpus of debiased keep/remove decisions.
 
 Model the language boundary: use a generative model to surface linguistic features that distinguish kept vs. removed content under LFP, treating this as a data‑driven boundary for “justified political disagreement.”
 
 Behavioral validation: deploy a model trained on these decisions in a political discussion forum and compare outcomes (comfort, enjoyment, heterogeneity of views, propensity for dissent, etc.) against a chronological baseline.
 
-In this phase, we ...
+### Study Phase 2, Part 2: Scaling up the linked-fate procedure
+
+Now that we've proven that the linked-fate procedure (LFP) works, we want to gather more data samples.
+
+We scaled up our approach and collected 10,000 more posts, across Twitter, Reddit, and Bluesky.
+
+The data collection logic is in [this repo](https://github.com/METResearchGroup/lab_data_integrations_interface/tree/main/data_platform) (future work plans to move that code into this repo for consistency). The logic to assign users to experimental conditions (here, just 1) is in [this repo](https://github.com/METResearchGroup/study_participant_assignment_interface) (again, should be moved here for consistency).
+
+We then update the web app, in `webapp/`, to reflect the new study design. Also, unlike the previous study version, we only have 1 phase, rather than 2, and we ask users to classify 20 posts in that 1 phase. We do this just to scale up the number of labels per post using the LFP (since Phase 2, Part 1 confirmed that the LFP procedure does work).
+
+The data for this phase is in [this folder](shared/data/raw/study_phase_2_part_2).
+
+## Latest work
+
+(2026-07-31) Our latest work is now trying to find trends in what people choose to remove.
+
