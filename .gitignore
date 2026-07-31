@@ -152,3 +152,7 @@ experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/**
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/high_toxic_comments.parquet
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/metadata.json
+
+__pycache__/
+**/__pycache__/
+*.pyc
