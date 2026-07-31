@@ -7,7 +7,12 @@ This repo has two loosely-coupled parts that are developed independently:
 1. **jsPsych web experiment** (`webapp/public/`, `webapp/lambdas/lambda-*.mjs`, `webapp/infra/`) — the participant-facing "MirrorView" content-moderation task. Production is fully serverless (static assets on S3 + API Gateway + Lambdas).
 2. **Python data-analysis / ML tooling** (`pyproject.toml`, `scripts/`, `jobs/`, `lib/`, `experiments/`) — offline scripts managed with **uv** (Python 3.12).
 
-The update script already runs `npm install` (from `webapp/`) and `uv sync` on startup, so dependencies are ready. `uv` is installed at `~/.local/bin` and is on `PATH` in interactive shells.
+The startup/update script is intentionally minimal: it only verifies that `uv` is available (`uv --version`) and does **not** install project dependencies. The app does not need to run in this environment. If you need Python deps, run `uv sync` yourself; if you need the web deps, run `npm install` from `webapp/`. `uv` is installed at `~/.local/bin` and is on `PATH` in interactive shells (Python 3.12).
+
+### Secrets / environment variables
+
+- `METRESEARCHGROUP_GITHUB_PAT_TOKEN` — the personal access token (PAT) used for accessing GitHub (e.g. authenticated `git`/API operations against `github.com/METResearchGroup`).
+- LLM/experiment scripts read API keys from a repo-root `.env` (`lib/load_env_vars.py`: `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `WANDB_API_KEY`). `HF_TOKEN` and AWS role ARNs (`CURSOR_AWS_ASSUME_IAM_ROLE_ARN`, `SAGEMAKER_ROLE_ARN`) are also available as environment secrets.
 
 ### Running the web experiment locally (non-obvious)
 
@@ -27,7 +32,7 @@ The update script already runs `npm install` (from `webapp/`) and `uv sync` on s
 - `uv sync` installs the `dev` dependency group by default (torch/transformers/spacy — large).
 - Tests: `PYTHONPATH=. uv run pytest`. Real tests live in `experiments/fetch_reddit_pushshift_dump_2026_06_15/tests/`.
 - `webapp/testing/smoke_tests/` is a stub intended to hit the live prod Lambda; it is not a functional local test.
-- S3-touching scripts (`scripts/export_study_results.py`, `webapp/scripts/upload_to_s3/*`) need AWS credentials (not present by default). LLM/experiment scripts read API keys from a repo-root `.env` (`lib/load_env_vars.py`: `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `WANDB_API_KEY`).
+- S3-touching scripts (`scripts/export_study_results.py`, `webapp/scripts/upload_to_s3/*`) need AWS credentials. See the "Secrets / environment variables" section above for the keys available in this environment.
 
 ### Lint / test
 
