@@ -1,0 +1,206 @@
+{
+  "source_stage1_dir": "/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/outputs/2026_07_31-16:43:10.068964",
+  "n_stage1_batches": 2,
+  "result": {
+    "themes": [
+      {
+        "theme_id": 1,
+        "theme_label": "Political contempt & competence attacks (short, dismissive judgments)",
+        "defining_features": [
+          "Direct negative evaluations of political actors or their abilities (e.g., 'sucks', 'doesn\u2019t understand basic math', 'terrible at making deals')",
+          "Insults framed as brief one-sentence/derision-only claims (often with little/no justification)",
+          "Use of derogatory adjectives/nouns targeting competence or intelligence (e.g., 'stupid', 'ignorance', 'circlejerk', 'cringe')"
+        ],
+        "example_message_ids": [
+          "reddit_1lb928e_mxsuugz",
+          "reddit_1kf5pvv_mqoc9mr",
+          "reddit_1lhw3kn_mz9k6n0",
+          "reddit_1kisfrq_mrjxs61",
+          "reddit_1kp0psp_mswcimf",
+          "reddit_1tstlbr_ooyqrcg"
+        ],
+        "label_mix": {
+          "keep": 2,
+          "remove": 4
+        },
+        "interpretation": "Posts in this theme tend to rely on sharp, efficiency-focused disparagement of opponents (competence/intelligence/character). This shows up frequently in remove-labeled examples, while keep-labeled instances appear where contempt is combined with additional framing or context."
+      },
+      {
+        "theme_id": 2,
+        "theme_label": "Profanity-heavy, emotionally escalating rhetoric (interjections, all-caps intensity)",
+        "defining_features": [
+          "Profanity/expletives used as emphasis (e.g., 'Fuck...', 'What the hell...')",
+          "High-intensity formatting (all-caps headlines/words, multiple exclamation points)",
+          "Outrage interjections that front-load emotion rather than argument"
+        ],
+        "example_message_ids": [
+          "twitter_2061721147872563408",
+          "reddit_1lb928e_mxsuugz",
+          "reddit_1l97kk6_mxsuugz",
+          "reddit_1lcrv72_my47tis",
+          "twitter_2060700348235321425",
+          "reddit_1l4lkyu_mwafvap"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 5
+        },
+        "interpretation": "Where posts lead with intense profanity or all-caps outrage without substantial supporting reasoning, they more often fall into remove-labeled examples. Keep-labeled examples with strong language exist in the corpus but are typically less dominated by profanity formatting."
+      },
+      {
+        "theme_id": 3,
+        "theme_label": "Rights/civil-liberties framing with explicit moral or legal stakes",
+        "defining_features": [
+          "References to constitutional/civil-liberty principles (e.g., constitution, free assembly and speech, Second Amendment, Roe v. Wade)",
+          "Moral/legal condemnation of threats to rights (e.g., 'murder the Constitution', 'bodily autonomy')",
+          "Contrasts or questioning directed at whether protections exist/enough are provided"
+        ],
+        "example_message_ids": [
+          "reddit_1l97k96_mxahatf",
+          "twitter_2061197288836677676",
+          "twitter_2060103043576709566",
+          "twitter_2061064210269024336",
+          "reddit_1ti151j_omrriit",
+          "reddit_1l97k96_mxahatf"
+        ],
+        "label_mix": {
+          "keep": 5,
+          "remove": 0
+        },
+        "interpretation": "These posts emphasize protecting rights (or the failure to protect them) using legal/moral framing. In the provided examples, this theme strongly aligns with keep-labeled content."
+      },
+      {
+        "theme_id": 4,
+        "theme_label": "Conditional reasoning & contrastive discourse structures (but/yet/if/Despite/Imagine)",
+        "defining_features": [
+          "Explicit contrastive connectives (e.g., 'But', 'And yet...', 'Despite...')",
+          "Conditional/explanatory structures using 'If...' or counterfactual 'Imagine if...'",
+          "Quasi-argumentation templates that set up a claim then pivot/qualify it (often with rhetorical questions)"
+        ],
+        "example_message_ids": [
+          "reddit_1tu7mub_opaex54",
+          "bluesky_746f70678a24cbb408f70ae72ba77ab3928f17c30e74520f4ff659cdaea77d7b",
+          "twitter_2061064210269024336",
+          "reddit_1tvywom_opkqnsz",
+          "reddit_1lk2jrt_mzphy2n",
+          "reddit_1ti151j_omrriit"
+        ],
+        "label_mix": {
+          "keep": 4,
+          "remove": 2
+        },
+        "interpretation": "Posts that use clear discourse scaffolding for contrast/conditional reasoning appear across both labels. They tend to be kept when the structure supports a substantive rights/policy argument; they\u2019re removed when paired with high-intensity or profanity-dominant attacks."
+      },
+      {
+        "theme_id": 5,
+        "theme_label": "Policy preference lists & concrete mechanisms (actionable proposals)",
+        "defining_features": [
+          "Enumerates multiple policy issues/demands in one post (e.g., universal healthcare, gun safety reform, living wages)",
+          "Proposes concrete mechanisms or eligibility restrictions (e.g., background checks, welfare eligibility, immigrant status requirements)",
+          "Advocates with directive/imperative language tied to policy implementation"
+        ],
+        "example_message_ids": [
+          "bluesky_746f70678a24cbb408f70ae72ba77ab3928f17c30e74520f4ff659cdaea77d7b",
+          "twitter_2061518814613782857",
+          "twitter_2060947308586373373",
+          "twitter_2061477887715213396",
+          "twitter_2061609179660616164",
+          "twitter_2060103043576709566"
+        ],
+        "label_mix": {
+          "keep": 6,
+          "remove": 0
+        },
+        "interpretation": "This theme is characterized by tangible policy content\u2014lists of issues and specific mechanisms\u2014often with an explicit purpose (safety, efficiency, eligibility, governance). In the corpus, it is exclusively associated with keep-labeled posts."
+      },
+      {
+        "theme_id": 6,
+        "theme_label": "Event/time anchoring & mobilization references (weekend protests, months, launching campaigns)",
+        "defining_features": [
+          "Mentions near-term planned events (e.g., 'this weekend' protests)",
+          "Uses named awareness/campaign timeframes (e.g., 'National Gun Violence Awareness Month')",
+          "Program/campaign launch language ('we\u2019re launching') or calls to show up at an event"
+        ],
+        "example_message_ids": [
+          "reddit_1l97k96_mxahatf",
+          "twitter_2061477887715213396",
+          "twitter_2061064210269024336",
+          "twitter_2060947308586373373",
+          "bluesky_9e51d4e6682bf24031677356d3394122d754937aaa4f8906bc7c3a0305f812ce"
+        ],
+        "label_mix": {
+          "keep": 5,
+          "remove": 0
+        },
+        "interpretation": "Posts that locate arguments in time (awareness months, weekend events) and motivate participation are kept. The emphasis is on coordination around civic action rather than personal abuse."
+      },
+      {
+        "theme_id": 7,
+        "theme_label": "Delegitimization via organizational labels, institutions, or named groups",
+        "defining_features": [
+          "Mentions named institutions/organizations as targets or evidence (e.g., ICE, Border Patrol, Heritage Foundation, Planned Parenthood, media outlets)",
+          "Uses categorical labels for ideological/political groups (e.g., MAGAs, 'leftist', 'fascists')",
+          "Frames the referenced group as the source of harm or motive (e.g., extraction, coverage bias)"
+        ],
+        "example_message_ids": [
+          "reddit_1kvxd8w_mudzc3o",
+          "twitter_2061609179660616164",
+          "twitter_2060700348235321425",
+          "reddit_1tvywom_opkqnsz",
+          "reddit_1kf4k25_mqqbksi",
+          "reddit_1rqd674_o9rfscl"
+        ],
+        "label_mix": {
+          "keep": 2,
+          "remove": 4
+        },
+        "interpretation": "Using named institutions and group labels is common in both labels, but remove-labeled examples often combine this with more direct blame/derision or discriminatory-style framing (e.g., 'useful idiot', discriminatory benefit allocation)."
+      },
+      {
+        "theme_id": 8,
+        "theme_label": "Fear/harm prediction & extreme framing (future harm, Nazi/slur comparisons, harm exclamations)",
+        "defining_features": [
+          "Predicts future harm by an opposing group (e.g., fascists using gun bans to hurt trans people)",
+          "Uses extremist comparisons or slurs ('Nazi shit', 'Nazi'-style labeling)",
+          "Highly emotive harm-exclamation framing with quantified service/harm claims (e.g., mutilation headline; numbered harm figures)"
+        ],
+        "example_message_ids": [
+          "bluesky_ad557fba11cbd118d07adeb28b5b3fef86380b91d2e9cda2cfb512ea24bf95bf",
+          "twitter_2060700348235321425",
+          "reddit_1l97k96_mxahatf",
+          "twitter_2061721147872563408"
+        ],
+        "label_mix": {
+          "keep": 1,
+          "remove": 3
+        },
+        "interpretation": "When posts shift from argumentation into alarmist harm prediction plus extremist/slur framing, they align more with remove-labeled content."
+      },
+      {
+        "theme_id": 9,
+        "theme_label": "Direct personal address & targeted persuasion/attacks (2nd-person imperatives)",
+        "defining_features": [
+          "Direct second-person addressing (e.g., '@' handle; 'you failing your job'; 'How exactly does that benefit YOU?')",
+          "Imperatives or instructions aimed at a specific reader or voter bloc (e.g., 'Do what you said you\u2019d do', 'Don\u2019t give... split the ticket')",
+          "Conditional insult aimed at the addressee tied to actions (e.g., voting condition + 'fuck you')"
+        ],
+        "example_message_ids": [
+          "twitter_2061563360542654682",
+          "reddit_1kf4k25_mqqbksi",
+          "reddit_1l4lkyu_mwafvap",
+          "reddit_1lghpnj_myx3yt1"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 4
+        },
+        "interpretation": "Directly targeting the reader/voter with commands or personal attacks is consistently removed in the provided examples."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Contrastive/conditional discourse scaffolding (Theme 4) appears in both keep and remove, suggesting structure alone isn\u2019t decisive.",
+      "Policy and rights framing (Themes 3 and 5) aligns strongly with keep when paired with non-abusive, mechanism-oriented content.",
+      "High-intensity language forms a recurring pathway to removal when combined with personal address or extreme delegitimization (Themes 2, 8, 9)."
+    ]
+  }
+}

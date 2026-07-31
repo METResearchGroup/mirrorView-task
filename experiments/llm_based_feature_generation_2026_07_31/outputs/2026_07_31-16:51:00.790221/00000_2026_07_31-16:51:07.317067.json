@@ -1,0 +1,128 @@
+{
+  "source_stage1_dir": "/Users/mark/src/work/mirrorview-wt/experiments/llm_based_feature_generation_2026_07_31/outputs/2026_07_31-16:50:54.427682",
+  "n_stage1_batches": 1,
+  "result": {
+    "themes": [
+      {
+        "theme_id": 1,
+        "theme_label": "Named political-actor contrast with psychological/moral disparagement",
+        "defining_features": [
+          "Uses explicit former-president name(s) (e.g., \"Trump\") with contrastive framing against another actor (e.g., \"Biden\")",
+          "Attributes negative mental traits or behavioral control (e.g., \"lacks forethought and impulse control\") to the named actors",
+          "Uses explicit contrast structures like \"theatre vs strategy\" to deny one interpretation and replace it with another",
+          "Employs strong derogatory labels for contempt (e.g., \"dumb narcissistic fascists\")"
+        ],
+        "example_message_ids": [
+          "reddit_1l48h1m_mw71clk"
+        ],
+        "label_mix": {
+          "keep": 1,
+          "remove": 0
+        },
+        "interpretation": "Keep-labeled content centers on targeted political naming combined with psychological or character-based put-downs, often supported by contrastive/denial framing to assert an alternate explanation."
+      },
+      {
+        "theme_id": 2,
+        "theme_label": "Attributing motives for hatred toward a protected group",
+        "defining_features": [
+          "Explicitly names the targeted protected group (e.g., trans people)",
+          "States or implies an underlying motive framed as hatred (e.g., \"need someone to hate and abuse\")",
+          "Causal/psych motive language explaining why the persecutory behavior occurs"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "Remove-labeled content more directly explains persecutory behavior as driven by psychological motives of hatred toward a protected group."
+      },
+      {
+        "theme_id": 3,
+        "theme_label": "Child victimization claims (grooming/terrorizing)",
+        "defining_features": [
+          "Claims involvement in harming children, such as \"terrorize kids\" or \"groom kids\"",
+          "Centers children as the primary victims within the allegation"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "Removal aligns with posts that assert severe allegations about child victimization rather than only general condemnation."
+      },
+      {
+        "theme_id": 4,
+        "theme_label": "Extreme moral-religious condemnation",
+        "defining_features": [
+          "Uses hellfire or other extreme religious-imprecation language (e.g., \"damned to hellfire\")",
+          "Frames condemnation as absolute moral judgment rather than nuanced critique"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "Posts invoking intense religious-moral punishment appear in the remove-labeled example, signaling harsh, absolute condemnation."
+      },
+      {
+        "theme_id": 5,
+        "theme_label": "Escalation-by-contradiction discourse pattern",
+        "defining_features": [
+          "Uses explicit escalation markers such as \"No, it's far worse than that\"",
+          "Employs a two-step structure: initial claim followed by an explicit worsening of the claim"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "Remove-labeled content uses a direct escalation pattern to intensify severity after an initial assertion."
+      },
+      {
+        "theme_id": 6,
+        "theme_label": "Mirror/rewriting that adds specific motive claims",
+        "defining_features": [
+          "Uses mirror/rewrite mechanism to assign motives (e.g., \"feel morally superior while pushing radical ideology\")",
+          "Reframes ideological or moral posture as an underlying driver of actions"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "The remove example includes motive attribution via a mirror/rewrite approach, tying action to perceived moral superiority or ideological manipulation."
+      },
+      {
+        "theme_id": 7,
+        "theme_label": "Categorical, universalizing insult language",
+        "defining_features": [
+          "Uses blunt, categorical negative judgments (e.g., \"That's it\", \"They are just awful people\")",
+          "Relies on emphatic certainty without hedging"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjbgbx"
+        ],
+        "label_mix": {
+          "keep": 0,
+          "remove": 1
+        },
+        "interpretation": "The remove-labeled content contains highly absolute condemnation and dismissive labeling."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Motive attribution via psychological or moral reasoning (present in both themes 1 and 2, and also in 6): attributing underlying motives such as mental traits or hatred/moral superiority.",
+      "Contrastive/rewriting structures to assert an alternate interpretation (theme 1\u2019s theatre vs strategy denial; theme 6\u2019s mirror motive rewrite; theme 5\u2019s escalation-by-contradiction).",
+      "High-intensity disparagement language (themes 1, 4, and 7): strong derogatory labels and/or extreme moral condemnation."
+    ]
+  }
+}

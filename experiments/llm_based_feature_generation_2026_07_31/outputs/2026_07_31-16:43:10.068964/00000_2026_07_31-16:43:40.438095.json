@@ -1,0 +1,610 @@
+{
+  "batch_id": 0,
+  "message_ids": [
+    "reddit_1kisfrq_mrjxs61",
+    "reddit_1tu7mub_opaex54",
+    "twitter_2061518814613782857",
+    "bluesky_746f70678a24cbb408f70ae72ba77ab3928f17c30e74520f4ff659cdaea77d7b",
+    "reddit_1kp0psp_mswcimf",
+    "reddit_1l48h1m_mw71clk",
+    "reddit_1tt3vbp_op0nyju",
+    "twitter_2061197288836677676",
+    "reddit_1l97k96_mxahatf",
+    "twitter_2060947308586373373",
+    "reddit_1kvxd8w_mudzc3o",
+    "twitter_2061721147872563408",
+    "reddit_1lb928e_mxsuugz",
+    "twitter_2059967541829664900",
+    "reddit_1u0o8sa_oquz8f5",
+    "reddit_1rqd674_o9rfscl",
+    "reddit_1lhw3kn_mz9k6n0",
+    "reddit_1tvywom_opkqnsz",
+    "reddit_1kf5pvv_mqoc9mr",
+    "reddit_1tstlbr_ooyqrcg"
+  ],
+  "n_keep": 10,
+  "n_remove": 10,
+  "result": {
+    "batch_id": 0,
+    "keep_posts": [
+      {
+        "message_id": "reddit_1kisfrq_mrjxs61",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "trump_tariff_motive_claim",
+            "feature_value": "Claims Trump supports tariffs and is taking money from Americans due to not making items in America",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"He is taking more of our money with these tariffs\"",
+            "rationale": "The post explicitly asserts a causal motive (tariffs) and effect (taking money) tied to production not happening in America."
+          },
+          {
+            "feature_name": "direct_second_person_or_none",
+            "feature_value": "No direct address; uses third-person assertions about Trump",
+            "category": "pragmatics_intent",
+            "confidence": 0.86,
+            "evidence_span": "\"Good, Trump is a fool\"",
+            "rationale": "The language is evaluative and third-person rather than addressing a specific listener."
+          },
+          {
+            "feature_name": "moral_insulting_language",
+            "feature_value": "Uses strong negative insults for political opponent",
+            "category": "surface_lexical",
+            "confidence": 0.9,
+            "evidence_span": "\"Trump is a fool\"",
+            "rationale": "A high-intensity disparagement term is used for Trump."
+          },
+          {
+            "feature_name": "cause_effect_with_because",
+            "feature_value": "Uses a 'because we don't...' causal explanation",
+            "category": "compositional_syntax",
+            "confidence": 0.88,
+            "evidence_span": "\"because we don\u2019t make these items in America.\"",
+            "rationale": "The post builds an explanation using explicit causal connective 'because'."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1tu7mub_opaex54",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "constitution_vs_loyalty_contrast",
+            "feature_value": "Frames loyalty to Trump as competing with loyalty to the constitution",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"loyal to Trump than the constitution\"",
+            "rationale": "The post contrasts allegiance to a person vs allegiance to a constitutional principle."
+          },
+          {
+            "feature_name": "concession_then_but",
+            "feature_value": "Mentions alternative option then rejects it with a 'But they won\u2019t bc.../won\u2019t bc...' structure",
+            "category": "compositional_syntax",
+            "confidence": 0.86,
+            "evidence_span": "\"They could also... But they won\u2019t bc\"",
+            "rationale": "The sentence explicitly sets up an option and then overturns it using a contrastive conjunction."
+          },
+          {
+            "feature_name": "political_system_evaluation",
+            "feature_value": "Uses political process terms (primaries, constitution) to assess actors",
+            "category": "topic_subject",
+            "confidence": 0.86,
+            "evidence_span": "\"after losing their primaries\"",
+            "rationale": "The post situates behavior within election/constitutional institutions."
+          }
+        ]
+      },
+      {
+        "message_id": "twitter_2061518814613782857",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "first_person_multiple_wants",
+            "feature_value": "Lists many 'I want...' policy preferences and personal goals",
+            "category": "pragmatics_intent",
+            "confidence": 0.9,
+            "evidence_span": "\"I want to be able to walk at night\"",
+            "rationale": "Repeated first-person-volition 'I want' signals a personal agenda/political platform."
+          },
+          {
+            "feature_name": "moral_safety_security_frame",
+            "feature_value": "Security/personal safety concern (avoid mugging)",
+            "category": "semantic_content",
+            "confidence": 0.87,
+            "evidence_span": "\"without fear of being mugged\"",
+            "rationale": "The post centers an immediate physical-safety justification."
+          },
+          {
+            "feature_name": "benefits_limitation_proposal",
+            "feature_value": "Advocates welfare benefits only for people who need them",
+            "category": "topic_subject",
+            "confidence": 0.88,
+            "evidence_span": "\"welfare benefits to go only to people who need them\"",
+            "rationale": "The statement contains an explicit policy restriction on welfare eligibility."
+          },
+          {
+            "feature_name": "immigration_eligibility_requirements",
+            "feature_value": "Calls for foreigners to properly apply for immigrant status",
+            "category": "topic_subject",
+            "confidence": 0.86,
+            "evidence_span": "\"I want foreigners to properly apply for immigrant status\"",
+            "rationale": "It specifies an immigration process/requirement rather than general sentiment."
+          }
+        ]
+      },
+      {
+        "message_id": "bluesky_746f70678a24cbb408f70ae72ba77ab3928f17c30e74520f4ff659cdaea77d7b",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "if_not_represent_beliefs_reasoning",
+            "feature_value": "Uses an 'If...it's because either...or...' explanatory conditional",
+            "category": "compositional_syntax",
+            "confidence": 0.92,
+            "evidence_span": "\"If the messages... don't represent your beliefs: ... its because they either\"",
+            "rationale": "The post uses an explicit conditional structure to infer reasons for mismatch."
+          },
+          {
+            "feature_name": "list_of_policy_issues",
+            "feature_value": "Enumerates multiple policy demands (universal healthcare, tax the rich, gun safety reform, living wages)",
+            "category": "topic_subject",
+            "confidence": 0.89,
+            "evidence_span": "\"universal healthcare, tax the rich, gun safety reform, living wages\"",
+            "rationale": "A concrete multi-item policy list indicates the topic cluster."
+          },
+          {
+            "feature_name": "elite_extraction_motive",
+            "feature_value": "Suggests officials are in power to 'extract from the system'",
+            "category": "semantic_content",
+            "confidence": 0.87,
+            "evidence_span": "\"they're in power to extract from the system\"",
+            "rationale": "This states a suspected intent/motive of political elites."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1kp0psp_mswcimf",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "absolute_exasperation",
+            "feature_value": "Expresses strong frustration using 'cannot stand one more...'",
+            "category": "pragmatics_intent",
+            "confidence": 0.9,
+            "evidence_span": "\"I cannot stand one more min\"",
+            "rationale": "The idiom indicates intense emotional rejection."
+          },
+          {
+            "feature_name": "insulting_incompetence_terms",
+            "feature_value": "Insults opponent as ignorant/stupid; mirror uses incompetence/cognitive decline",
+            "category": "surface_lexical",
+            "confidence": 0.88,
+            "evidence_span": "\"abject ignorance and stupidity\"",
+            "rationale": "The post uses broad derogatory terms targeting mental capability."
+          },
+          {
+            "feature_name": "time_counter_unit",
+            "feature_value": "Uses short time unit 'min/second' as hyperbole",
+            "category": "surface_lexical",
+            "confidence": 0.85,
+            "evidence_span": "\"one more min\"",
+            "rationale": "Hyperbolic temporal phrasing amplifies contempt."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1l48h1m_mw71clk",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "theatre_strategy_dismissal",
+            "feature_value": "Asserts impulse/control makes it not genuine strategy (for this to be theatre)",
+            "category": "semantic_content",
+            "confidence": 0.86,
+            "evidence_span": "\"Trump lacks the forethought and impulse control for this to be theatre.\"",
+            "rationale": "The sentence evaluates intent and plausibility, denying strategic theater."
+          },
+          {
+            "feature_name": "fascists_labeling",
+            "feature_value": "Calls the figures 'narcissistic fascists'",
+            "category": "surface_lexical",
+            "confidence": 0.9,
+            "evidence_span": "\"two dumb narcissistic fascists\"",
+            "rationale": "A direct ideological labeling term appears."
+          },
+          {
+            "feature_name": "public_breakup_metaphor",
+            "feature_value": "Uses 'break-up in public' metaphor for the political conflict",
+            "category": "semantic_content",
+            "confidence": 0.86,
+            "evidence_span": "\"having a break-up in public\"",
+            "rationale": "A vivid interpersonal metaphor reframes political disagreement as a personal spat."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1tt3vbp_op0nyju",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "ellipsis_and_quote_rating",
+            "feature_value": "Uses ellipsis and a quoted evaluation label",
+            "category": "compositional_syntax",
+            "confidence": 0.88,
+            "evidence_span": "\"Trumps vision of America is fully exposed here to be...\\n\\n>A Pitiful Shame\"",
+            "rationale": "The structure '... > quote' functions as a rhetorical verdict."
+          },
+          {
+            "feature_name": "short_form_derogatory_judgment",
+            "feature_value": "Extremely concise contempt phrase 'Pitiful Shame'",
+            "category": "pragmatics_intent",
+            "confidence": 0.86,
+            "evidence_span": "\">A Pitiful Shame\"",
+            "rationale": "The post relies on brief negative appraisal rather than argument."
+          }
+        ]
+      },
+      {
+        "message_id": "twitter_2061197288836677676",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "second_amendment_nonnegotible",
+            "feature_value": "Claims Second Amendment is 'NOT-NEGOTIABLE'",
+            "category": "semantic_content",
+            "confidence": 0.93,
+            "evidence_span": "\"The Second Amendment is NOT-NEGOTIABLE.\"",
+            "rationale": "The post makes an absolute policy-rights claim with strong modality."
+          },
+          {
+            "feature_name": "all_caps_emphasis",
+            "feature_value": "Uses all-caps emphasis 'NOT-NEGOTIABLE' and 'NON-NEGOTIABLE'",
+            "category": "surface_lexical",
+            "confidence": 0.9,
+            "evidence_span": "\"NOT-NEGOTIABLE\"",
+            "rationale": "Capitalization indicates heightened rhetorical force."
+          },
+          {
+            "feature_name": "contrastive_pairing_between_accounts",
+            "feature_value": "Original and mirror pair different parties with parallel absolutist framing",
+            "category": "target_directionality",
+            "confidence": 0.85,
+            "evidence_span": "\"Trump Admin Admits\" / \"Biden/Harris Made It Clear\"",
+            "rationale": "Both sides use the same absolutist pattern, targeting political actors with parallel language."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1l97k96_mxahatf",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "anticipates_weekend_protests",
+            "feature_value": "Mentions anticipating protests this weekend",
+            "category": "topic_subject",
+            "confidence": 0.87,
+            "evidence_span": "\"anticipating protests this weekend\"",
+            "rationale": "The post situates content in a near-term planned/expected event."
+          },
+          {
+            "feature_name": "quoted_policy_threat",
+            "feature_value": "Quotes a statement about bringing 'militarized force' to stop free assembly and speech",
+            "category": "compositional_syntax",
+            "confidence": 0.9,
+            "evidence_span": "\"we're going to bring in militarized force to stop free assembly and speech.\"",
+            "rationale": "The post includes a direct quotation of a coercive plan and ties it to civil liberties."
+          },
+          {
+            "feature_name": "rights_murder_moral_frame",
+            "feature_value": "Claims they are trying to 'murder the Constitution' and 'birth a new authoritarian country'",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"they're trying to murder the Constitution\"",
+            "rationale": "The post uses extreme moral/legal condemnation and authoritarian framing."
+          },
+          {
+            "feature_name": "profanity_intensifier",
+            "feature_value": "Uses profanity to insult group",
+            "category": "surface_lexical",
+            "confidence": 0.86,
+            "evidence_span": "\"Fucking fascists.\"",
+            "rationale": "A profanity+ideology insult is used for rhetorical emphasis."
+          }
+        ]
+      },
+      {
+        "message_id": "twitter_2060947308586373373",
+        "decision": "keep",
+        "features": [
+          {
+            "feature_name": "comparative_urgency_imperative",
+            "feature_value": "Uses imperative 'Lets make...' with policy urgency",
+            "category": "pragmatics_intent",
+            "confidence": 0.89,
+            "evidence_span": "\"Lets make voting as difficult as it is to buy a gun.\"",
+            "rationale": "The post functions as a directive advocating a change in voting access."
+          },
+          {
+            "feature_name": "specific_mechanism_background_checks",
+            "feature_value": "Proposes federal background checks and implies adding requirements",
+            "category": "topic_subject",
+            "confidence": 0.88,
+            "evidence_span": "\"Federal background checks and all.\"",
+            "rationale": "It specifies a concrete mechanism linked to the proposed voting restriction."
+          }
+        ]
+      }
+    ],
+    "remove_posts": [
+      {
+        "message_id": "reddit_1kvxd8w_mudzc3o",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "useful_idiot_labeling",
+            "feature_value": "Calls an actor a 'useful idiot' for an organization",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"useful idiot for Heritage Foundation\"",
+            "rationale": "The phrase 'useful idiot' is a direct delegitimizing characterization."
+          },
+          {
+            "feature_name": "ngo_think_tank_organization_reference",
+            "feature_value": "Names specific organizations (Heritage Foundation / Project 2025)",
+            "category": "topic_subject",
+            "confidence": 0.86,
+            "evidence_span": "\"Heritage Foundation and Project 2025\"",
+            "rationale": "The post grounds its claim in proper-noun institutions."
+          }
+        ]
+      },
+      {
+        "message_id": "twitter_2061721147872563408",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "call_for_strict_laws",
+            "feature_value": "Advocates strict laws now",
+            "category": "pragmatics_intent",
+            "confidence": 0.9,
+            "evidence_span": "\"We need strict laws now\"",
+            "rationale": "It is an explicit policy demand with urgency."
+          },
+          {
+            "feature_name": "religious_ethnic_targeting",
+            "feature_value": "Targets 'Islamic Jihadis' (religious/ideological group label)",
+            "category": "topic_subject",
+            "confidence": 0.89,
+            "evidence_span": "\"these Islamic Jihadis\"",
+            "rationale": "The threat label specifies an ideological-religious group."
+          },
+          {
+            "feature_name": "outrage_marker_interjection",
+            "feature_value": "Uses 'What the hell is this' as an outrage opener",
+            "category": "pragmatics_intent",
+            "confidence": 0.86,
+            "evidence_span": "\"What the hell is this\"",
+            "rationale": "The interjection indicates emotional reaction rather than measured argument."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1lb928e_mxsuugz",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "profanity_with_personal_reproach",
+            "feature_value": "Uses profanity 'Fuck you got me' then personal evaluation of politician",
+            "category": "surface_lexical",
+            "confidence": 0.9,
+            "evidence_span": "\"Fuck you got me.  Trump sucks though.\"",
+            "rationale": "The post contains an expletive and a blunt negative appraisal ('sucks')."
+          },
+          {
+            "feature_name": "short_concise_two_clause_structure",
+            "feature_value": "Very brief two-sentence/clauses opinion swap",
+            "category": "compositional_syntax",
+            "confidence": 0.85,
+            "evidence_span": "\"Trump sucks though.\"",
+            "rationale": "The content is minimal and opinion-only, with no justification."
+          }
+        ]
+      },
+      {
+        "message_id": "twitter_2059967541829664900",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "policy_explainer_register",
+            "feature_value": "Summarizes government criticism with climate change and carbon tax",
+            "category": "topic_subject",
+            "confidence": 0.9,
+            "evidence_span": "\"Policies on climate change and the carbon tax\"",
+            "rationale": "The text is an informational description of policy domains and debate."
+          },
+          {
+            "feature_name": "hedged_interpretive_language",
+            "feature_value": "Uses 'seen as' and 'raising questions' rather than direct assertions",
+            "category": "semantic_content",
+            "confidence": 0.86,
+            "evidence_span": "\"are seen as detrimental\"",
+            "rationale": "These phrases indicate indirect framing and uncertainty."
+          },
+          {
+            "feature_name": "leadership_questioning",
+            "feature_value": "Raises questions about leadership and economic impact",
+            "category": "semantic_content",
+            "confidence": 0.85,
+            "evidence_span": "\"raising questions about leadership and economic impact\"",
+            "rationale": "The post includes explicit evaluative uncertainty about leadership."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1u0o8sa_oquz8f5",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "analogy_with_like",
+            "feature_value": "Uses 'like an...' analogy to compare immigration deportation vs tax cheating",
+            "category": "compositional_syntax",
+            "confidence": 0.9,
+            "evidence_span": "\"like an illegal immigrant with a deportation order\"",
+            "rationale": "The 'like' structure frames an analogy between two scenarios."
+          },
+          {
+            "feature_name": "legal_process_reference",
+            "feature_value": "References deportation order",
+            "category": "topic_subject",
+            "confidence": 0.86,
+            "evidence_span": "\"deportation order\"",
+            "rationale": "It references a specific legal/administrative mechanism."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1rqd674_o9rfscl",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "ingroup_outgroup_benefit_order",
+            "feature_value": "Proposes benefits taken from MAGAs first (targeted benefit allocation)",
+            "category": "semantic_content",
+            "confidence": 0.88,
+            "evidence_span": "\"benefits are taken from MAGAs first\"",
+            "rationale": "The key content is a discriminatory/prioritized redistribution plan."
+          },
+          {
+            "feature_name": "political_label_maga",
+            "feature_value": "Uses partisan acronym MAGAs",
+            "category": "surface_lexical",
+            "confidence": 0.86,
+            "evidence_span": "\"MAGAs\"",
+            "rationale": "A specific political brand term is used as the target group."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1lhw3kn_mz9k6n0",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "despite_concessive_clause",
+            "feature_value": "Uses 'Despite...' to pivot from one claim to an evaluation",
+            "category": "compositional_syntax",
+            "confidence": 0.88,
+            "evidence_span": "\"Despite his stupid book Trump is terrible at making deals.\"",
+            "rationale": "The sentence has a concessive structure that negates the implied positive premise."
+          },
+          {
+            "feature_name": "derogatory_stupid_modifier",
+            "feature_value": "Uses 'stupid' to insult the opponent's book/experience",
+            "category": "surface_lexical",
+            "confidence": 0.87,
+            "evidence_span": "\"his stupid book\"",
+            "rationale": "It contains explicit contempt language."
+          },
+          {
+            "feature_name": "competence_attack_frame",
+            "feature_value": "Argues the person is terrible at making deals/negotiation",
+            "category": "semantic_content",
+            "confidence": 0.86,
+            "evidence_span": "\"terrible at making deals\"",
+            "rationale": "The core claim attacks negotiation competence."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1tvywom_opkqnsz",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "media_outlet_callout",
+            "feature_value": "Calls out news outlets (MSNow, Fox News, New York Post; mirror: CNN, MSNBC, NYT)",
+            "category": "topic_subject",
+            "confidence": 0.9,
+            "evidence_span": "\"MSNow\"",
+            "rationale": "Proper nouns of media organizations are used to assign blame."
+          },
+          {
+            "feature_name": "accusation_of_coverage_bias",
+            "feature_value": "Claims they 'will continue to not cover it whatsoever' and describes bias about rights coverage",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"will continue to not cover it whatsoever\"",
+            "rationale": "It is an explicit, repeated accusation of omission/biased coverage."
+          },
+          {
+            "feature_name": "us_vs_them_moral_countercharge",
+            "feature_value": "Says left is 'crickets' too cowardly to fight back",
+            "category": "pragmatics_intent",
+            "confidence": 0.86,
+            "evidence_span": "\"the left is just crickets\"",
+            "rationale": "The post uses comparative/vivid ridicule to blame opponents and mobilize."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1kf5pvv_mqoc9mr",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "short_ability_insult",
+            "feature_value": "Bluntly claims Trump lacks basic math / Biden can't form sentences",
+            "category": "semantic_content",
+            "confidence": 0.9,
+            "evidence_span": "\"Trump doesn\u2019t understand basic math.\"",
+            "rationale": "The statement is a direct competence deficit accusation."
+          },
+          {
+            "feature_name": "minimalist_one_sentence_complaint",
+            "feature_value": "Single-sentence judgment without evidence or justification",
+            "category": "compositional_syntax",
+            "confidence": 0.85,
+            "evidence_span": "\"Trump doesn\u2019t understand basic math.\"",
+            "rationale": "The post is one compact claim and provides no supporting rationale."
+          }
+        ]
+      },
+      {
+        "message_id": "reddit_1tstlbr_ooyqrcg",
+        "decision": "remove",
+        "features": [
+          {
+            "feature_name": "praise_then_reject_contrast",
+            "feature_value": "Approves a parade generally then rejects a 'nationalist day parade' version",
+            "category": "compositional_syntax",
+            "confidence": 0.9,
+            "evidence_span": "\"Awesome... No thanks\"",
+            "rationale": "The text uses a clear contrast between acceptance and refusal using 'No thanks.'"
+          },
+          {
+            "feature_name": "identity_based_event_naming",
+            "feature_value": "Centers on labeled parade identities (Palestinian nationalist day parade / Pride parade with grooming-agenda)",
+            "category": "topic_subject",
+            "confidence": 0.88,
+            "evidence_span": "\"Palestinian nationalist day parade\"",
+            "rationale": "The subject is a specific named event variant tied to identity and ideology labels."
+          },
+          {
+            "feature_name": "ideological_disapproval_violent_terms",
+            "feature_value": "Rejects 'violent far right nationalist political ideologies'",
+            "category": "semantic_content",
+            "confidence": 0.86,
+            "evidence_span": "\"violent far right nationalist political ideologies\"",
+            "rationale": "The rejection is justified via ideological/violence characterization."
+          },
+          {
+            "feature_name": "mirror_pairing_of_social_categories",
+            "feature_value": "Uses parallel labeling in mirror: 'grooming-agenda pride parade' with child indoctrination frame",
+            "category": "target_directionality",
+            "confidence": 0.85,
+            "evidence_span": "\"grooming-agenda pride parade\"",
+            "rationale": "The discourse pattern shifts targets while keeping the same rhetorical structure of rejecting a stigmatized variant."
+          }
+        ]
+      }
+    ]
+  }
+}
