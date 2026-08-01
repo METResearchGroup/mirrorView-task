@@ -9,9 +9,10 @@ import sys
 from typing import Any
 
 from experiments.llm_based_feature_generation_2026_07_31.batching import (
+    FROZEN_SUBSET_CSV,
     form_batches,
     load_posts,
-    sample_posts,
+    resolve_production_sample,
 )
 from experiments.llm_based_feature_generation_2026_07_31.stage1 import DEFAULT_MODEL, run_stage1
 from experiments.llm_based_feature_generation_2026_07_31.stage2 import run_stage2
@@ -75,9 +76,9 @@ def run_pipeline(
     if not stage2_only:
         posts = load_posts()
         exclude_ids = _load_exclude_ids(exclude_ids_from) if exclude_ids_from else None
-        sampled = sample_posts(
+        sampled, sample_source = resolve_production_sample(
             posts,
-            fraction=sample_fraction,
+            sample_fraction=sample_fraction,
             seed=seed,
             exclude_ids=exclude_ids,
         )
@@ -89,8 +90,8 @@ def run_pipeline(
         _assert_unique_batch_ids(batches)
         batch_count = len(batches)
         print(
-            f"corpus={len(posts)} sample={len(sampled)} batches={batch_count} "
-            f"leftover={len(leftover)}"
+            f"corpus={len(posts)} sample={len(sampled)} ({sample_source}) "
+            f"batches={batch_count} leftover={len(leftover)}"
         )
         stage1_output = run_stage1(
             batches,

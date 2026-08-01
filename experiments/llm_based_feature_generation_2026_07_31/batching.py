@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -11,6 +12,8 @@ from shared.data.dataloader import load_dataset
 from shared.data.registry import STUDY_PHASE_2_PART_2_RESULTS_FULL
 
 _REQUIRED_COLUMNS = {"post_id", "original_text", "mirror_text", "decision"}
+FROZEN_SUBSET_CSV = Path(__file__).resolve().parent / "data" / "sampled_subset.csv"
+PRODUCTION_SAMPLE_FRACTION = 0.50
 
 
 def load_posts() -> pd.DataFrame:
@@ -114,6 +117,54 @@ def sample_posts(
         .sample(frac=1, random_state=seed)
         .reset_index(drop=True)
     )
+
+
+def load_or_create_frozen_subset(
+    posts: pd.DataFrame,
+    *,
+    fraction: float = PRODUCTION_SAMPLE_FRACTION,
+    seed: int,
+    subset_path: Path = FROZEN_SUBSET_CSV,
+) -> tuple[pd.DataFrame, bool]:
+    """Load the frozen production subset CSV, or create it on first 50% run."""
+    if subset_path.is_file():
+        loaded = pd.read_csv(subset_path, low_memory=False)
+        required = {"message_id", "original_text", "mirror_text", "decision"}
+        missing = required - set(loaded.columns)
+        if missing:
+            raise KeyError(f"Frozen subset missing columns: {sorted(missing)}")
+        return loaded[list(required)].reset_index(drop=True), False
+
+    sampled = sample_posts(posts, fraction=fraction, seed=seed)
+    subset_path.parent.mkdir(parents=True, exist_ok=True)
+    sampled.to_csv(subset_path, index=False)
+    return sampled, True
+
+
+def resolve_production_sample(
+    posts: pd.DataFrame,
+    *,
+    sample_fraction: float,
+    seed: int,
+    exclude_ids: set[str] | None = None,
+) -> tuple[pd.DataFrame, str]:
+    """Return the sampled frame and a short description of how it was chosen."""
+    if math.isclose(sample_fraction, PRODUCTION_SAMPLE_FRACTION):
+        if exclude_ids:
+            raise ValueError(
+                "--exclude-ids-from is not supported with the frozen 50% production subset."
+            )
+        sampled, created = load_or_create_frozen_subset(posts, seed=seed)
+        source = "created frozen subset" if created else "loaded frozen subset"
+        return sampled, source
+
+    sampled = sample_posts(
+        posts,
+        fraction=sample_fraction,
+        seed=seed,
+        exclude_ids=exclude_ids,
+    )
+    return sampled, f"live sample fraction={sample_fraction}"
 
 
 def form_batches(
