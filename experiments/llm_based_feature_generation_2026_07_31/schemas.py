@@ -2,16 +2,33 @@
 
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import BaseModel, Field
+
+
+class FeatureCategory(str, Enum):
+    """Fixed feature categories from the 2026-07-15 extraction prompt."""
+
+    SURFACE_LEXICAL = "surface_lexical"
+    TOPIC_SUBJECT = "topic_subject"
+    SEMANTIC_CONTENT = "semantic_content"
+    PRAGMATICS_INTENT = "pragmatics_intent"
+    TARGET_DIRECTIONALITY = "target_directionality"
+    COMPOSITIONAL_SYNTAX = "compositional_syntax"
+    OPEN_ENDED = "open_ended"
 
 
 class ExtractedFeature(BaseModel):
     """One high-confidence linguistic or content feature for a post."""
 
-    name: str = Field(description="Short snake_case feature name.")
-    value: str = Field(description="Human-readable value or short description.")
-    category: str = Field(
-        description="Feature category label, e.g. surface_lexical or open_ended."
+    feature_name: str = Field(
+        description="Short snake_case feature name, e.g. 'second_amendment_framing'."
+    )
+    feature_value: str = Field(description="Human-readable value or short description.")
+    category: FeatureCategory
+    is_open_ended: bool = Field(
+        description="True if not from the fixed category checklist."
     )
     confidence: float = Field(
         ge=0.0,

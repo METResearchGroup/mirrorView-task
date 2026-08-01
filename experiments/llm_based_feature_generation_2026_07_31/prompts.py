@@ -5,27 +5,104 @@ from __future__ import annotations
 import json
 from typing import Any
 
-FEATURE_GENERATION_SYSTEM_PROMPT = """
-You are a computational linguistics analyst studying social-media posts from a
-human keep/remove moderation study.
+# Category checklist copied verbatim from
+# experiments/followup_model_error_analysis_2026_07_15/extract/prompts.py
+# (UNIFIED_EXTRACTION_PROMPT lines 21–92).
+FEATURE_EXTRACTION_CATEGORY_SECTION = """
+## Category 1: Surface and lexical (`surface_lexical`)
 
-Each post includes:
+Fixed checklist (use when clearly present):
+- approximate_token_length_band (short/medium/long)
+- informal_register_or_slang
+- high_punctuation_intensity
+- all_caps_emphasis
+- profanity_or_taboo_language
+- hashtag_or_mention_pattern
+- named_proper_nouns_density
+
+## Category 2: Topic and subject matter (`topic_subject`)
+
+Fixed checklist:
+- primary_policy_domain (e.g., guns, climate, immigration, abortion, elections)
+- specific_event_or_bill_reference
+- geographic_scope (US_state, national, international)
+- historical_analogy_reference
+- culture_war_topic_salience
+
+## Category 3: Semantic content (`semantic_content`)
+
+Fixed checklist:
+- causal_claim_present
+- normative_moral_language
+- factual_assertion_vs_speculation
+- conspiratorial_framing
+- victimhood_or_persecution_framing
+- policy_prescription_present
+- economic_cost_benefit_framing
+
+## Category 4: Pragmatics and communicative intent (`pragmatics_intent`)
+
+Fixed checklist:
+- sarcasm_or_irony
+- ridicule_or_mockery
+- call_to_action
+- persuasion_or_argumentation
+- venting_or_expressive
+- hedging_or_qualification
+- emphatic_outrage
+
+Only tag sarcasm if cues are strong (not speculative).
+
+## Category 5: Target and directionality (`target_directionality`)
+
+Fixed checklist:
+- criticized_actor_type (politician, party, media, corporation, outgroup, ingroup, etc.)
+- praised_actor_type
+- left_right_directional_cue
+- us_vs_them_framing
+- elite_vs_populist_framing
+- mirror_shift_direction (how the mirror re-targets blame or praise vs original)
+
+Note directional shifts between original and mirror when confident.
+
+## Category 6: Compositional and syntactic structure (`compositional_syntax`)
+
+Fixed checklist:
+- conditional_if_then_structure
+- contrastive_but_however_structure
+- rhetorical_question
+- anaphora_or_parallelism
+- list_or_enumeration
+- quote_or_attribution_embedding
+- second_person_direct_address
+
+Tag structure patterns, not just single tokens.
+
+## Open-ended features
+
+Beyond the checklists above, you may add salient features with category=open_ended and is_open_ended=true.
+""".strip()
+
+FEATURE_GENERATION_SYSTEM_PROMPT = f"""
+You are a computational linguistics analyst studying social-media posts from a keep/remove moderation task.
+
+Each item includes:
 - message_id: unique identifier
-- original_text and mirror_text (a political mirror rewrite)
-- decision: human keep or remove label for the post
+- original_text and mirror_text (a political "mirror" rewrite)
+- decision: human keep or remove label for the post in this batch
 
-Your job is to extract high-confidence linguistic and content features that
-characterize or distinguish keep-rated versus remove-rated posts in the batch.
-Be conservative:
+Your job is to extract features across ALL of the following categories in a single pass for each post. Be conservative:
 - Include a feature ONLY if you are highly confident it is present.
-- Set confidence in [0, 1]; prefer features at or above 0.85 confidence.
+- Set confidence in [0,1]; features below 0.85 will be discarded downstream.
 - Provide a short evidence_span quoted from the texts.
-- Tag each feature with a category string (e.g. surface_lexical, topic_subject,
-  semantic_content, pragmatics_intent, target_directionality, compositional_syntax,
-  or open_ended).
-- Do NOT predict keep/remove labels.
-- Do NOT mention model confusion buckets or error analysis framing.
+- Tag each feature with its category (one of the six fixed categories below, or open_ended).
+- You MAY propose additional open-ended features (category=open_ended, is_open_ended=true) if they are salient and high-confidence.
+- Do NOT predict keep/remove labels. Do NOT mention model confusion buckets or error analysis framing. Only describe observable linguistic/content features.
 - Return structured JSON matching the BatchFeatureGeneration schema.
+
+{FEATURE_EXTRACTION_CATEGORY_SECTION}
+
+For each post in this batch, return all high-confidence features across all categories.
 """.strip()
 
 FEATURE_GENERATION_USER_TEMPLATE = """
