@@ -1,7 +1,9 @@
 # Smoke test results
 
-**Date:** 2026-07-31  
+**Date:** 2026-08-01  
 **Status:** Passed (`smoke: ok`)  
+**Prompt version:** Six fixed category checklists from `experiments/followup_model_error_analysis_2026_07_15/extract/prompts.py` (plus `open_ended`)
+
 **Command:**
 
 ```bash
@@ -14,12 +16,12 @@ PYTHONPATH=. uv run python \
 
 ## Summary
 
-The smoke run sampled **2 posts** from the full corpus (8,792 modal keep/remove rows), formed **1 batch** (1 keep + 1 remove), and completed both pipeline stages end-to-end. Stage 1 extracted **6 features** (3 per post). Stage 2 synthesized **6 themes** plus **2 cross-cutting themes**. No `data/sampled_subset.csv` was created.
+The smoke run sampled **2 posts** from the full corpus (8,792 modal keep/remove rows), formed **1 batch** (1 keep + 1 remove), and completed both pipeline stages end-to-end. Stage 1 extracted **31 features** using the fixed category checklists (`surface_lexical`, `topic_subject`, `semantic_content`, `pragmatics_intent`, `target_directionality`, `compositional_syntax`, plus `open_ended`). Stage 2 synthesized **7 themes** plus **5 cross-cutting themes**. No `data/sampled_subset.csv` was created.
 
 | Stage | Output directory | Result file |
 | ----- | ---------------- | ----------- |
-| 1 — feature generation | `outputs/2026_07_31-21:40:56.846740/` | `00000_2026_07_31-21:41:01.900259.json` |
-| 2 — theme synthesis | `outputs/2026_07_31-21:41:01.901175/` | `00000_2026_07_31-21:41:07.613266.json` |
+| 1 — feature generation | `outputs/2026_08_01-13:21:54.416519/` | `00000_2026_08_01-13:22:13.854743.json` |
+| 2 — theme synthesis | `outputs/2026_08_01-13:22:13.855934/` | `00000_2026_08_01-13:22:25.665480.json` |
 
 Paths are relative to `experiments/llm_based_feature_generation_2026_07_31/`.
 
@@ -30,61 +32,68 @@ Paths are relative to `experiments/llm_based_feature_generation_2026_07_31/`.
 | `twitter_2059404130087801256` | keep |
 | `bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc` | remove |
 
-## Stage 1 — extracted features
+## Stage 1 — extracted features (by category)
 
-Source: `outputs/2026_07_31-21:40:56.846740/00000_2026_07_31-21:41:01.900259.json`
+Source: `outputs/2026_08_01-13:21:54.416519/00000_2026_08_01-13:22:13.854743.json`
 
-### Keep-rated post (`twitter_2059404130087801256`)
+### Keep-rated post (`twitter_2059404130087801256`) — 15 features
 
-| Feature | Category | Confidence | Evidence |
-| ------- | -------- | ---------- | -------- |
-| `targeted_personal_insult` — Uses a derogatory epithet to characterize a named individual | pragmatics_intent | 0.90 | "is a pusillanimous hypocrite" |
-| `policy_focus_abortion_restrictions` — Centers on healthcare/pregnancy impacts of abortion bans | topic_subject | 0.92 | "Under Arkansas' Abortion Ban" |
-| `medieval_or_barbaric_evaluative_framing` — Employs strong historical barbarism language for moral condemnation | semantic_content | 0.86 | "medieval" |
+| Category | Features extracted |
+| -------- | ------------------ |
+| `surface_lexical` | `approximate_token_length_band` (long), `high_punctuation_intensity`, `hashtag_or_mention_pattern`, `named_proper_nouns_density` |
+| `topic_subject` | `primary_policy_domain` (abortion), `specific_event_or_bill_reference` (Arkansas ban miscarriage), `geographic_scope` (Arkansas/California), `culture_war_topic_salience` |
+| `semantic_content` | `normative_moral_language`, `factual_assertion_vs_speculation`, `victimhood_or_persecution_framing` |
+| `pragmatics_intent` | `ridicule_or_mockery`, `persuasion_or_argumentation` |
+| `target_directionality` | `target_directionality` (attacks @SaraHuckabeeAR; mirror attacks @GavinNewsom) |
 
-### Remove-rated post (`bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc`)
+### Remove-rated post (`bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc`) — 16 features
 
-| Feature | Category | Confidence | Evidence |
-| ------- | -------- | ---------- | -------- |
-| `generic_group_attack` — Attacks a broad group with disparaging terms (e.g., gun owner/gun nut) | pragmatics_intent | 0.88 | "nutcase gun owner" |
-| `anti_nra_directive` — Contains an instruction not to trust/heed a named organization | pragmatics_intent | 0.86 | "don't listen to NRA" |
-| `causal_reductionism_about_guns` — Asserts a single-cause explanation ("It's always the guns") | semantic_content | 0.85 | "It's always the guns." |
+| Category | Features extracted |
+| -------- | ------------------ |
+| `surface_lexical` | `approximate_token_length_band` (short), `informal_register_or_slang`, `named_proper_nouns_density` (NRA) |
+| `topic_subject` | `primary_policy_domain` (guns), `topic_subject_secondary_guns_policy` (open-ended) |
+| `semantic_content` | `causal_claim_present`, `normative_moral_language`, `persuasion_or_argumentation` |
+| `pragmatics_intent` | `call_to_action`, `ridicule_or_mockery` |
+| `target_directionality` | `us_vs_them_framing`, `left_right_directional_cue`, `mirror_shift_direction` (open-ended) |
+| `compositional_syntax` | `contrastive_but_however_structure`, `second_person_direct_address` |
 
 ## Stage 2 — synthesized themes
 
-Source: `outputs/2026_07_31-21:41:01.901175/00000_2026_07_31-21:41:07.613266.json`
+Source: `outputs/2026_08_01-13:22:13.855934/00000_2026_08_01-13:22:25.665480.json`
 
-| id | Theme | keep | remove | Example post |
-| -- | ----- | ---- | ------ | ------------ |
-| 1 | Targeted disparagement / personal insults | 1 | 0 | `twitter_2059404130087801256` |
-| 2 | Policy critique with healthcare/pregnancy impacts | 1 | 0 | `twitter_2059404130087801256` |
-| 3 | Barbaric/medieval evaluative framing for condemnation | 1 | 0 | `twitter_2059404130087801256` |
-| 4 | Generic group attacks via disparaging generalizations | 0 | 1 | `bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc` |
-| 5 | Explicit distrust / directive not to heed an organization | 0 | 1 | `bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc` |
-| 6 | Simplistic causal explanations about wrongdoing | 0 | 1 | `bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc` |
+| id | Theme | keep | remove |
+| -- | ----- | ---- | ------ |
+| 1 | Partisan culture-war policy debates (abortion/guns) | 1 | 1 |
+| 2 | Named individuals/organizations and direct @ handle mentions | 1 | 1 |
+| 3 | Mockery/derogatory labeling and negative character judgment | 1 | 1 |
+| 4 | Victimhood/persecution or harm framing (especially in abortion post) | 1 | 0 |
+| 5 | Call to action / direct audience instruction | 0 | 1 |
+| 6 | Argumentation via concrete case or causal explanation | 1 | 1 |
+| 7 | Contrast/mirror framing with reversed blame | 1 | 1 |
 
 ### Cross-cutting themes
 
-1. Use of strong disparaging language (personal insults, generic group disparagement, or barbaric framing) across both keep/remove examples.
-2. Directed negative stance toward a target (an individual, a broad group, and/or an organization) rather than purely informational discussion.
+1. Partisan culture-war policy debates (abortion/guns)
+2. Named individuals/organizations and direct @ handle mentions
+3. Mockery/derogatory labeling and negative character judgment
+4. Argumentation via concrete case or causal explanation
+5. us_vs_them framing / ideological side cues (left/right labels and mirror shifts)
 
 ## Interpretation (smoke-scale)
 
-On this tiny sample, stage 1 produced plausible, moderation-relevant features with quoted evidence spans. Stage 2 grouped them into label-aligned themes: the keep-rated post's features emphasize policy critique plus a personal insult toward a named figure; the remove-rated post's features emphasize generic group attacks, anti-NRA rhetoric, and causal reductionism about guns. This is only a 2-post sanity check — not evidence about broader keep/remove separability.
+With the aligned category checklists, stage 1 now tags features against the six fixed lists (e.g. `primary_policy_domain`, `mirror_shift_direction`, `contrastive_but_however_structure`) rather than ad-hoc feature names. The keep-rated post drew heavily from `topic_subject` and `semantic_content` around an Arkansas abortion-ban case; the remove-rated post used `target_directionality` and `compositional_syntax` around guns/NRA rhetoric with mirror reversal. This remains a 2-post sanity check only.
 
 ## Artifacts on disk
 
 ```
 experiments/llm_based_feature_generation_2026_07_31/outputs/
-├── 2026_07_31-21:40:56.846740/          # stage 1 run
+├── 2026_08_01-13:21:54.416519/          # stage 1 run
 │   ├── metadata.json
-│   └── 00000_2026_07_31-21:41:01.900259.json
-└── 2026_07_31-21:41:01.901175/          # stage 2 run
+│   └── 00000_2026_08_01-13:22:13.854743.json
+└── 2026_08_01-13:22:13.855934/          # stage 2 run
     ├── metadata.json
-    └── 00000_2026_07_31-21:41:07.613266.json
+    └── 00000_2026_08_01-13:22:25.665480.json
 ```
-
-Note: an earlier failed stage-1 attempt (`outputs/2026_07_31-21:40:43.258025/`) wrote only `metadata.json` before a schema fix; the successful run above is the one reported here.
 
 ## Next step
 
