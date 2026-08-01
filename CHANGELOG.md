@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-01
+
+1. Completed the 50% production run for the LLM feature-generation and theme-synthesis experiment: 140 stage-1 batches on the frozen subset (4,397 posts), 1,116 keep + 1,120 remove features, and 132 synthesized themes; added sharded stage-2 synthesis, `resume_production.py`, `RESULTS.md`, and checkpoint commit watcher. [PR #33](https://github.com/METResearchGroup/mirrorView-task/pull/33)
+
 ## 2026-07-31
 
 1. Documented the study history and refreshed the README, and checked in canonical Phase 2 raw CSVs under `shared/data/raw/` so experiments share one consistent narrative and dataset source. [PR #34](https://github.com/METResearchGroup/mirrorView-task/pull/34)
