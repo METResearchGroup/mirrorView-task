@@ -18,6 +18,7 @@ from research_tools.llm.runner import run
 EXPERIMENT_ROOT = pathlib.Path(__file__).resolve().parent
 DEFAULT_MODEL = "gpt-5.4-nano"
 _METADATA_FILENAME = "metadata.json"
+STAGE2_BATCHES_PER_SHARD = 10
 
 
 def load_stage1_results(stage1_dir: str | pathlib.Path) -> list[dict[str, Any]]:
@@ -36,17 +37,42 @@ def load_stage1_results(stage1_dir: str | pathlib.Path) -> list[dict[str, Any]]:
     return results
 
 
-def _build_stage2_item(
+def _compact_stage1_row(row: dict[str, Any]) -> dict[str, Any]:
+    """Keep only feature payloads needed for theme synthesis."""
+    result = row.get("result", {})
+    return {
+        "batch_id": row.get("batch_id"),
+        "keep_features": result.get("keep_features", []),
+        "remove_features": result.get("remove_features", []),
+    }
+
+
+def _build_stage2_items(
     stage1_results: list[dict[str, Any]],
     *,
     source_stage1_dir: pathlib.Path,
-) -> dict[str, Any]:
-    """Aggregate stage-1 rows into a single theme-synthesis item."""
-    return {
-        "source_stage1_dir": str(source_stage1_dir),
-        "n_stage1_batches": len(stage1_results),
-        "stage1_results": stage1_results,
-    }
+    batches_per_shard: int = STAGE2_BATCHES_PER_SHARD,
+) -> list[dict[str, Any]]:
+    """Shard compact stage-1 features into theme-synthesis items."""
+    compact_rows = [_compact_stage1_row(row) for row in stage1_results]
+    if not compact_rows:
+        raise ValueError("No stage-1 rows to synthesize")
+
+    shards: list[list[dict[str, Any]]] = [
+        compact_rows[index : index + batches_per_shard]
+        for index in range(0, len(compact_rows), batches_per_shard)
+    ]
+    n_shards = len(shards)
+    return [
+        {
+            "source_stage1_dir": str(source_stage1_dir),
+            "shard_index": shard_index,
+            "n_shards": n_shards,
+            "n_stage1_batches": len(shard_rows),
+            "stage1_results": shard_rows,
+        }
+        for shard_index, shard_rows in enumerate(shards)
+    ]
 
 
 def prompt_fn(item: dict[str, Any]) -> list[dict[str, str]]:
@@ -58,6 +84,8 @@ def writer_map_fn(item: dict[str, Any], result: ThemeSynthesisResult) -> dict[st
     """Map one synthesis item and structured result to a JSON-serializable output row."""
     return {
         "source_stage1_dir": item["source_stage1_dir"],
+        "shard_index": item["shard_index"],
+        "n_shards": item["n_shards"],
         "n_stage1_batches": item["n_stage1_batches"],
         "result": result.model_dump(),
     }
@@ -82,17 +110,22 @@ def run_stage2(
     *,
     output_base_path: str | pathlib.Path | None = None,
     model: str = DEFAULT_MODEL,
+    batches_per_shard: int = STAGE2_BATCHES_PER_SHARD,
 ) -> pathlib.Path:
     """Run theme synthesis over stage-1 outputs and return the output folder path."""
     stage1_path = pathlib.Path(stage1_output_dir)
     stage1_results = load_stage1_results(stage1_path)
-    stage2_item = _build_stage2_item(stage1_results, source_stage1_dir=stage1_path)
+    stage2_items = _build_stage2_items(
+        stage1_results,
+        source_stage1_dir=stage1_path,
+        batches_per_shard=batches_per_shard,
+    )
     base_path = pathlib.Path(output_base_path or EXPERIMENT_ROOT)
 
-    progress_bar = tqdm(total=1, desc="Stage 2 theme synthesis")
+    progress_bar = tqdm(total=len(stage2_items), desc="Stage 2 theme synthesis")
     try:
         return run(
-            [stage2_item],
+            stage2_items,
             prompt_fn=prompt_fn,
             response_model=ThemeSynthesisResult,
             model=model,
@@ -102,6 +135,8 @@ def run_stage2(
                 "stage": "theme_synthesis",
                 "source_stage1_dir": str(stage1_path),
                 "model": model,
+                "n_shards": len(stage2_items),
+                "batches_per_shard": batches_per_shard,
             },
         )
     finally:

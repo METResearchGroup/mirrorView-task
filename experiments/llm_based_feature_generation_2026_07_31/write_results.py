@@ -16,12 +16,25 @@ _METADATA_FILENAME = "metadata.json"
 
 
 def _load_stage2_themes(stage2_dir: pathlib.Path) -> dict[str, Any]:
+    themes: list[dict[str, Any]] = []
+    cross_cutting: list[str] = []
+    next_id = 1
     for path in sorted(stage2_dir.glob("*.json")):
         if path.name == _METADATA_FILENAME:
             continue
         payload = json.loads(path.read_text(encoding="utf-8"))
-        return payload.get("result", {})
-    raise FileNotFoundError(f"No stage-2 result JSON in {stage2_dir}")
+        shard_result = payload.get("result", {})
+        for theme in shard_result.get("themes", []):
+            renumbered = dict(theme)
+            renumbered["id"] = next_id
+            next_id += 1
+            themes.append(renumbered)
+        for theme in shard_result.get("cross_cutting_themes", []):
+            if theme not in cross_cutting:
+                cross_cutting.append(theme)
+    if not themes:
+        raise FileNotFoundError(f"No stage-2 theme results in {stage2_dir}")
+    return {"themes": themes, "cross_cutting_themes": cross_cutting}
 
 
 def _format_theme_table(themes: list[dict[str, Any]]) -> str:
