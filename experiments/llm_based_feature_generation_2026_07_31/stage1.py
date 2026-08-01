@@ -30,6 +30,8 @@ def writer_map_fn(batch: dict[str, Any], result: BatchFeatureGeneration) -> dict
         "message_ids": sorted(batch["message_ids"]),
         "keep_count": len(batch["keep_posts"]),
         "remove_count": len(batch["remove_posts"]),
+        "keep_feature_count": len(result.keep_features),
+        "remove_feature_count": len(result.remove_features),
         "result": result.model_dump(),
     }
 

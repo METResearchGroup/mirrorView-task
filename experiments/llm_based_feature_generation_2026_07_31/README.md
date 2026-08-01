@@ -22,7 +22,7 @@ Outputs are written under `outputs/{timestamp}/` for each stage (metadata plus p
 
 ## Smoke test (cheap validation)
 
-Run a tiny live end-to-end sample (~1 keep + 1 remove batch). Smoke uses fraction sampling only and must **not** create or overwrite `data/sampled_subset.csv` (that frozen 50% file is owned by the production Step 5 run).
+Run a live end-to-end sample with **one batch** (10 keep + 10 remove posts). Smoke uses fraction sampling only and must **not** create or overwrite `data/sampled_subset.csv` (that frozen 50% file is owned by the production Step 5 run).
 
 ```bash
 PYTHONPATH=. uv run python \
@@ -33,9 +33,9 @@ Equivalent CLI flags:
 
 ```bash
 PYTHONPATH=. uv run python -m experiments.llm_based_feature_generation_2026_07_31.main \
-  --sample-fraction 1e-6 \
-  --keep-per-batch 1 \
-  --remove-per-batch 1 \
+  --sample-fraction 0.005 \
+  --keep-per-batch 10 \
+  --remove-per-batch 10 \
   --seed 42
 ```
 

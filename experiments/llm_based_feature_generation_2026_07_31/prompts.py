@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from experiments.llm_based_feature_generation_2026_07_31.schemas import (
+    MAX_KEEP_FEATURES_PER_BATCH,
+    MAX_REMOVE_FEATURES_PER_BATCH,
+)
+
 # Category checklist copied verbatim from
 # experiments/followup_model_error_analysis_2026_07_15/extract/prompts.py
 # (UNIFIED_EXTRACTION_PROMPT lines 21–92).
@@ -91,25 +96,26 @@ Each item includes:
 - original_text and mirror_text (a political "mirror" rewrite)
 - decision: human keep or remove label for the post in this batch
 
-Your job is to extract features across ALL of the following categories in a single pass for each post. Be conservative:
+Your job is to extract features across ALL of the following categories in a single pass for this batch. Be conservative:
 - Include a feature ONLY if you are highly confident it is present.
-- Set confidence in [0,1]; features below 0.85 will be discarded downstream.
 - Provide a short evidence_span quoted from the texts.
 - Tag each feature with its category (one of the six fixed categories below, or open_ended).
-- You MAY propose additional open-ended features (category=open_ended, is_open_ended=true) if they are salient and high-confidence.
+- You MAY propose additional open-ended features (category=open_ended, is_open_ended=true) if they are salient.
+- Return at most {MAX_KEEP_FEATURES_PER_BATCH} features total in keep_features (across all keep-rated posts).
+- Return at most {MAX_REMOVE_FEATURES_PER_BATCH} features total in remove_features (across all remove-rated posts).
+- Maximum {MAX_KEEP_FEATURES_PER_BATCH + MAX_REMOVE_FEATURES_PER_BATCH} features for the entire response.
+- Each feature must include the message_id of the post it describes.
 - Do NOT predict keep/remove labels. Do NOT mention model confusion buckets or error analysis framing. Only describe observable linguistic/content features.
 - Return structured JSON matching the BatchFeatureGeneration schema.
 
 {FEATURE_EXTRACTION_CATEGORY_SECTION}
 
-For each post in this batch, return all high-confidence features across all categories.
+Distribute features across posts as appropriate. Each feature must cite its message_id.
 """.strip()
 
 FEATURE_GENERATION_USER_TEMPLATE = """
 Extract features for every post in this batch. The batch contains separate
 keep-rated and remove-rated groups.
-
-Batch index: {batch_index}
 
 Keep-rated posts:
 {keep_posts_json}
@@ -165,7 +171,6 @@ def build_feature_generation_messages(batch: dict[str, Any]) -> list[dict[str, s
         for post in batch["remove_posts"]
     ]
     user_content = FEATURE_GENERATION_USER_TEMPLATE.format(
-        batch_index=batch["batch_id"],
         keep_posts_json=json.dumps(keep_payload, indent=2),
         remove_posts_json=json.dumps(remove_payload, indent=2),
     )

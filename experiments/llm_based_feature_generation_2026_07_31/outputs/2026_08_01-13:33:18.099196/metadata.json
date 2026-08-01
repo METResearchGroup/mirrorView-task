@@ -1,0 +1,33 @@
+{
+  "start_timestamp": "2026_08_01-13:33:18.099196",
+  "total_items": 1,
+  "run_metadata": {
+    "stage": "feature_generation",
+    "sample_fraction": 0.005,
+    "seed": 42,
+    "model": "gpt-5.4-nano",
+    "message_ids": [
+      "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25",
+      "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+      "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+      "reddit_1kjndle_mrp2vs3",
+      "reddit_1la5fmz_mxit2c1",
+      "reddit_1lb8wyo_mxr2wwj",
+      "reddit_1lmjifa_n092opi",
+      "reddit_1lo82x1_n0nk59o",
+      "reddit_1trf9va_oon7csb",
+      "reddit_1u0gjyt_oqk5mob",
+      "reddit_1u225u5_oqvbe3g",
+      "twitter_2059359537673744708",
+      "twitter_2060149644953272762",
+      "twitter_2060750477227139175",
+      "twitter_2060938389461827850",
+      "twitter_2061188597785502107",
+      "twitter_2061779962810483200",
+      "twitter_2061799295783698746",
+      "twitter_2061805216790708579",
+      "twitter_2061828323722838316"
+    ]
+  },
+  "end_timestamp": "2026_08_01-13:33:27.390380"
+}

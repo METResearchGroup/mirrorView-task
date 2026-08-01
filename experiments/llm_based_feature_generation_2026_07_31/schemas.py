@@ -6,6 +6,9 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
+MAX_KEEP_FEATURES_PER_BATCH = 8
+MAX_REMOVE_FEATURES_PER_BATCH = 8
+
 
 class FeatureCategory(str, Enum):
     """Fixed feature categories from the 2026-07-15 extraction prompt."""
@@ -20,8 +23,9 @@ class FeatureCategory(str, Enum):
 
 
 class ExtractedFeature(BaseModel):
-    """One high-confidence linguistic or content feature for a post."""
+    """One linguistic or content feature attributed to a post in the batch."""
 
+    message_id: str = Field(description="Post this feature was extracted from.")
     feature_name: str = Field(
         description="Short snake_case feature name, e.g. 'second_amendment_framing'."
     )
@@ -30,35 +34,23 @@ class ExtractedFeature(BaseModel):
     is_open_ended: bool = Field(
         description="True if not from the fixed category checklist."
     )
-    confidence: float = Field(
-        ge=0.0,
-        le=1.0,
-        description="Model confidence that the feature is present.",
-    )
     evidence_span: str = Field(
         description="Short quoted substring from the original or mirror text."
     )
     rationale: str = Field(description="One sentence explaining why the feature applies.")
 
 
-class PostFeatures(BaseModel):
-    """Feature list for one post in a keep/remove batch."""
-
-    message_id: str
-    features: list[ExtractedFeature] = Field(
-        description="High-confidence features extracted for this post."
-    )
-
-
 class BatchFeatureGeneration(BaseModel):
     """Structured LLM response for one mixed keep/remove batch."""
 
     batch_index: int = Field(description="Zero-based batch index within the run.")
-    keep_group: list[PostFeatures] = Field(
-        description="Feature extractions for keep-rated posts in the batch.",
+    keep_features: list[ExtractedFeature] = Field(
+        max_length=MAX_KEEP_FEATURES_PER_BATCH,
+        description="Up to 8 features total across all keep-rated posts in the batch.",
     )
-    remove_group: list[PostFeatures] = Field(
-        description="Feature extractions for remove-rated posts in the batch.",
+    remove_features: list[ExtractedFeature] = Field(
+        max_length=MAX_REMOVE_FEATURES_PER_BATCH,
+        description="Up to 8 features total across all remove-rated posts in the batch.",
     )
 
 
