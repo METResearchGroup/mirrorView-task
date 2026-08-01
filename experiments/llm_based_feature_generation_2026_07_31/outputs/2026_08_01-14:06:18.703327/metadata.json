@@ -1,0 +1,9 @@
+{
+  "start_timestamp": "2026_08_01-14:06:18.703327",
+  "total_items": 1,
+  "run_metadata": {
+    "stage": "theme_synthesis",
+    "source_stage1_dir": "/workspace/experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+    "model": "gpt-5.4-nano"
+  }
+}
