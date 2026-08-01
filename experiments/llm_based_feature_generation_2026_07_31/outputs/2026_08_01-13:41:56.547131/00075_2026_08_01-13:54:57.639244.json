@@ -1,0 +1,180 @@
+{
+  "batch_id": 75,
+  "message_ids": [
+    "bluesky_7da842d7645eb9f58ecb56560763cf129d341a790614dcf2a41081aa0eba9e74",
+    "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+    "reddit_1kijebe_mrj4maw",
+    "reddit_1knm4f5_msk2m4f",
+    "reddit_1lk4crl_mzpo02d",
+    "reddit_1lnjf58_n0fpnpt",
+    "reddit_1lobsyw_n0nlrzv",
+    "reddit_1tqhy93_oogvcmv",
+    "reddit_1tszxri_oozc420",
+    "reddit_1u1z88l_oqull8d",
+    "reddit_1u29zb9_oqydcpn",
+    "twitter_2059465323741397166",
+    "twitter_2060186958538887664",
+    "twitter_2060233584670036166",
+    "twitter_2060708070758416550",
+    "twitter_2061032288096235596",
+    "twitter_2061529386159927499",
+    "twitter_2061546086007705601",
+    "twitter_2061811310220963917",
+    "twitter_2061826143138009262"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_7da842d7645eb9f58ecb56560763cf129d341a790614dcf2a41081aa0eba9e74",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Blames a foreign power as covertly controlling US gun and political funding",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They are bought and paid for by Russia!\"",
+        "rationale": "The text asserts hidden/controlled influence by a foreign actor on US politics."
+      },
+      {
+        "message_id": "twitter_2061546086007705601",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Uses a question to argue about legal principles",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Are \\\"stare decisis\\\"/\\\"precedent\\\" still valid?\"",
+        "rationale": "It explicitly asks a rhetorical question to challenge the legitimacy of following precedent."
+      },
+      {
+        "message_id": "twitter_2060186958538887664",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Enumerates multiple examples of what is 'narrow minded'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Commenting on someone\u2019s accent... Commenting on someone\u2019s color... Repealing abortion rights...\"",
+        "rationale": "The message stacks several items as parallel cases under the same judgment."
+      },
+      {
+        "message_id": "twitter_2061529386159927499",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates resisting an authority's restriction on doctor choice",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't let your healthcare insurance comPANy tell you that you can't choose...\"",
+        "rationale": "It directs readers to not accept limits and implies a preferred policy/consumer right."
+      },
+      {
+        "message_id": "twitter_2061811310220963917",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Focus on compensation rates and wage effects",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"labour must be compensated at @UAW rates\"",
+        "rationale": "It frames the issue in terms of labor cost/compensation tied to production decisions."
+      },
+      {
+        "message_id": "twitter_2060233584670036166",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Why is climate policy\"",
+        "rationale": "The topic directly names climate policy as the subject."
+      },
+      {
+        "message_id": "reddit_1kijebe_mrj4maw",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Calls for expelling a group (imperative targeting 'Next ... President')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Next Democrat President can ship their asses back.\"",
+        "rationale": "It issues a directive about action against an outgroup tied to a party label."
+      },
+      {
+        "message_id": "twitter_2059465323741397166",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Describes 'dire threat' to immigration policy/program",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Given this is under dire threat\"",
+        "rationale": "The language portrays an issue as under urgent attack/threat."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lk4crl_mzpo02d",
+        "feature_name": "call_to_action",
+        "feature_value": "Imperative urging political action against Trump",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"keep bugging your congress representatives to vote to impeach\"",
+        "rationale": "It directly commands readers to pressure representatives to take a specific political step."
+      },
+      {
+        "message_id": "twitter_2060708070758416550",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Ends with a political hashtag",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#REBTD\"",
+        "rationale": "A hashtag is used as part of the political messaging."
+      },
+      {
+        "message_id": "reddit_1lobsyw_n0nlrzv",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Attributes leadership to foreign schooling/control by Putin",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"nothing schooled by Putin in Russia\"",
+        "rationale": "It alleges covert influence/puppet-mastery linked to a foreign leader."
+      },
+      {
+        "message_id": "reddit_1knm4f5_msk2m4f",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity and insult-style phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"horseshit\" / \"Fuck ing apples and oranges\"",
+        "rationale": "The text contains taboo/profane language while making comparative insults."
+      },
+      {
+        "message_id": "reddit_1tszxri_oozc420",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses insulting characterization like 'stupidest shit'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"only creating policies that concern the stupidest shit\"",
+        "rationale": "It uses contemptuous language to dismiss opponents' agenda."
+      },
+      {
+        "message_id": "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Opposes conservatives vs liberals with blame reversal",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"conservatives\"...\"liberals\"",
+        "rationale": "It frames the argument as a contrast between two sides changing claims."
+      },
+      {
+        "message_id": "reddit_1lnjf58_n0fpnpt",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Blames 'billionaires' and 'tax them into poverty' costs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"sucking billionaire dick at their own expense\"",
+        "rationale": "It claims exploitation where opponents profit while Americans bear costs."
+      },
+      {
+        "message_id": "twitter_2061826143138009262",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Escalates to absolute claims and caps/strong emotive terms",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"America is being DESTROYED from within!\"",
+        "rationale": "The message uses extreme, absolute language to intensify outrage."
+      }
+    ]
+  }
+}

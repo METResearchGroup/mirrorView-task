@@ -1,0 +1,180 @@
+{
+  "batch_id": 135,
+  "message_ids": [
+    "bluesky_0aab9fbd9aca6c8449a27fe565d6a49e0343b82fdf4521ce0a219bb1772d18d1",
+    "bluesky_5a340760ce8963d3f7020eb7c782a0cb94bb20565f8c911fa03cd0b69582be81",
+    "bluesky_6071424ec819227fa2eac227024f6dcc18989dff5d8ec32b9ed20b50f4b48fba",
+    "bluesky_7e447c70edbc7c190fe4963624b534329960901f8f73670dcb3bdef51f5ee143",
+    "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2",
+    "bluesky_b562ff0c4022bfb8e926431892cb425ec8a87f4e7f7333bfa7564505603f8868",
+    "bluesky_d75824d64aa1b444ebc2cf1dfd8e439826a69b9b1e31bc3ad31dcf2b6b644ce0",
+    "bluesky_ebe1bac9d7a9764fc78e58a986c1f2174514a149d896438a9d3bdbc868a73f32",
+    "reddit_1lkiugc_mzsqqwz",
+    "reddit_1te3o84_om2by07",
+    "reddit_1ts91q8_oouzxky",
+    "reddit_1tstwrk_ooyuizx",
+    "reddit_1tt3vbp_op0184y",
+    "reddit_1tucjhu_op8yz1j",
+    "reddit_1tw3aly_opmebns",
+    "twitter_2059414276478005375",
+    "twitter_2060043856477892788",
+    "twitter_2060800749739651505",
+    "twitter_2061532971732263114",
+    "twitter_2061817653325684983"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060800749739651505",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (Trump, America, Ellis Island, Republicans)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "President Trump and his administration... Ellis Island... Republicans need to get their act together",
+        "rationale": "Multiple named entities and proper nouns are mentioned, indicating high named-proper-noun density."
+      },
+      {
+        "message_id": "twitter_2060800749739651505",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration/border sanctuary policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "sanctuary cities for migrants or immigrants... immigration legislation",
+        "rationale": "The post centers on immigration and sanctuary-city framing."
+      },
+      {
+        "message_id": "reddit_1tucjhu_op8yz1j",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "If/then dependency claim",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "if you don't test for climate change, it can't be real",
+        "rationale": "Uses an explicit conditional structure tying testing to reality of climate change."
+      },
+      {
+        "message_id": "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "1990s assault weapons ban; Bruen decision (in mirror)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "'90s assault weapons ban law reduced mass shootings by 43%... The 2022 Bruen decision restored constitutional carry rights",
+        "rationale": "Cites concrete legal/policy references and named court decision."
+      },
+      {
+        "message_id": "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Quantified causal claim about policy and outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The '90s assault weapons ban law reduced mass shootings by 43%. Mass shootings have been rising every year since it expired.",
+        "rationale": "States measurable effects and causal linkage between law and mass shootings."
+      },
+      {
+        "message_id": "bluesky_0aab9fbd9aca6c8449a27fe565d6a49e0343b82fdf4521ce0a219bb1772d18d1",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Future blame/persecution of the addressee",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Your children and grandchildren... blame you",
+        "rationale": "Frames opponents/addressee as culpable in a harm-to-others sequence."
+      },
+      {
+        "message_id": "reddit_1tw3aly_opmebns",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Sarcastic rhetorical framing about punishment/justice",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "sentence Trump to NOTHING... If you\u2019re a star, they let you do it!",
+        "rationale": "Uses contemptuous, mocking exaggeration to criticize judicial treatment."
+      },
+      {
+        "message_id": "reddit_1te3o84_om2by07",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Opposition between insiders/corps and working people",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "bail out Wall Street elites... funneling everything to the wealthy while working people get nothing",
+        "rationale": "Contrasts elite beneficiaries with a 'working people' victim group."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_7e447c70edbc7c190fe4963624b534329960901f8f73670dcb3bdef51f5ee143",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "economics/ideology (capitalism vs socialism)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Capitalism is the climate crisis... Socialism IS the economic crisis",
+        "rationale": "Targets economic-ideology framing rather than a specific policy domain."
+      },
+      {
+        "message_id": "bluesky_ebe1bac9d7a9764fc78e58a986c1f2174514a149d896438a9d3bdbc868a73f32",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Counterfactual conditional about gun ownership/NRA control",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If all the guns in America... there would have been a national ban",
+        "rationale": "Uses a structured conditional to argue a hypothetical policy outcome."
+      },
+      {
+        "message_id": "reddit_1lkiugc_mzsqqwz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck the DNC.",
+        "rationale": "Contains an explicit taboo/profane expletive."
+      },
+      {
+        "message_id": "reddit_1tt3vbp_op0184y",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Slangy vulgar intensifier ('woke and shit')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "woke and shit",
+        "rationale": "Uses informal slang and coarse phrasing."
+      },
+      {
+        "message_id": "bluesky_5a340760ce8963d3f7020eb7c782a0cb94bb20565f8c911fa03cd0b69582be81",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Imperative/second-person instruction",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Stop pretending faith supports killing babies.",
+        "rationale": "Uses a direct imperative addressing the reader implicitly."
+      },
+      {
+        "message_id": "bluesky_6071424ec819227fa2eac227024f6dcc18989dff5d8ec32b9ed20b50f4b48fba",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Quantitative comparative mortality claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "over 44,000 annual gun-related deaths... just a few thousand executions",
+        "rationale": "Provides specific numbers and compares death counts across countries."
+      },
+      {
+        "message_id": "twitter_2061532971732263114",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates criminal punishment (deportation)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "should be a crime with the punishment of deportation.",
+        "rationale": "Prescribes a concrete legal penalty."
+      },
+      {
+        "message_id": "twitter_2059414276478005375",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Hashtag reference (#FoxNews)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#FoxNews",
+        "rationale": "Includes a platform-style hashtag mention."
+      }
+    ]
+  }
+}

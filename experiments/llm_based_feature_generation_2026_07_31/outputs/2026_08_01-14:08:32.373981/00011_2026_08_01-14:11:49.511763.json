@@ -1,0 +1,202 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 11,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Policy advocacy for rights/legislation (non-punitive)",
+        "defining_features": [
+          "call_to_action",
+          "multiple policy domains in one post (enumerated advocacy)",
+          "policy_prescription_present (requests/urges action rather than punishment)",
+          "approximate_token_length_band: short PSA-style instructions (subset)"
+        ],
+        "example_message_ids": [
+          "bluesky_540f5da7330cf26f0244585938bb9a54058c60df40df6e2a5e2c451728476bd7",
+          "twitter_2061812350122930636",
+          "bluesky_67512f8d9465f28a3899606b603a5f199d15845cfdbf5663f549fc842cb548be",
+          "bluesky_5ba0c3c077c00987c51a246eaf031ed24a1688d0c965a3e513ea2339b46e4050",
+          "bluesky_75fa978dbf45e1bb00fc930620fbcf72b0e388eba103ed006e17a91858a6d29b",
+          "bluesky_2b54682d9352d825336b1dcb116f1af0edd986bbc2b158f3a46371442291a16b"
+        ],
+        "keep_count": 9,
+        "remove_count": 1,
+        "interpretation": "Keep-rated posts frequently use explicit, constructive advocacy language (e.g., urging voting-rights gun-safety education, following for information, or general PSA/instructional calls). Moderation-relevant distinction: advocacy aimed at policy change is common in keeps, while similar structure paired with punitive/legal escalation appears more in removes."
+      },
+      {
+        "id": 2,
+        "label": "High-intensity punctuation and headline-like emphasis",
+        "defining_features": [
+          "high_punctuation_intensity",
+          "high_punctuation_intensity_exclamations_caps",
+          "all_caps_emphasis",
+          "approximate_token_length_band: short (often PSA/urgent headlines)"
+        ],
+        "example_message_ids": [
+          "twitter_2061625159329706293",
+          "bluesky_3c7b3c589ef1221b33a4a2b5e730c4d828a526d1e9785b9755c3409e58f88aaa",
+          "twitter_2061812350122930636",
+          "bluesky_67512f8d9465f28a3899606b603a5f199d15845cfdbf5663f549fc842cb548be",
+          "bluesky_75fa978dbf45e1bb00fc930620fbcf72b0e388eba103ed006e17a91858a6d29b"
+        ],
+        "keep_count": 6,
+        "remove_count": 3,
+        "interpretation": "Intensified punctuation/caps appears across both labels, suggesting emotional urgency is not inherently disqualifying but can correlate with harsher rhetoric when combined with insults, profanity, or calls for punishment."
+      },
+      {
+        "id": 3,
+        "label": "Non-violent argumentative framing: evidence, conditionals, or normative persuasion",
+        "defining_features": [
+          "factual_assertion_vs_speculation (evidence/testing framing)",
+          "conditional_if_then_structure (cause-effect/conditional predictions)",
+          "us_vs_them_framing (in-group/out-group contrasts) without explicit violence",
+          "normative_moral_language (judgment/values used to argue)"
+        ],
+        "example_message_ids": [
+          "bluesky_1120? (not present) ",
+          "bluesky_5ba0c3c077c00987c51a246eaf031ed24a1688d0c965a3e513ea2339b46e4050",
+          "reddit_1tbfpk8_olllx7a",
+          "twitter_2061085287648760234",
+          "twitter_2061825169077760121",
+          "bluesky_d73a57f060b6672f8ea023c9dfbdd764944eec3d8765a8abcddaca87b5a6ed99"
+        ],
+        "keep_count": 7,
+        "remove_count": 1,
+        "interpretation": "Many keeps lean on argumentative scaffolding (evidence-oriented claims, if-then conditionals, and persuasion about how to interpret others). This looks like a moderation-relevant positive signal when it\u2019s not paired with harassment/profanity/punitive/legal demands."
+      },
+      {
+        "id": 4,
+        "label": "Victimhood/persecution and feared harm framing",
+        "defining_features": [
+          "victimhood_or_persecution_framing",
+          "victimhood_or_persecution_fear_swap_role_future_risk",
+          "victimhood_or_persecution_framing (slaughtered/targeted repeatedly, death sentence rhetoric, erased/silenced)"
+        ],
+        "example_message_ids": [
+          "bluesky_3a065195e7cbead358ebb7b62833d9f21cc331d34f110abd52110a037d39805a",
+          "bluesky_391c438dce996a0e30900403f965d7a299e16c15a865108cf4751938febc4201",
+          "twitter_2059693999280017850",
+          "twitter_2060930878126301617",
+          "bluesky_b6aa63e4e8f0965a45fa88966c29e62cfedff66da7c299373d25eb7fac2c1e8c"
+        ],
+        "keep_count": 4,
+        "remove_count": 2,
+        "interpretation": "Persecution/victimhood language is used in both directions. Moderation should consider whether victimhood is descriptive/argumentative vs used to justify dehumanization or punitive harm."
+      },
+      {
+        "id": 5,
+        "label": "Policy conflict framed as \u201crigging/corruption/warmongering\u201d against opponents",
+        "defining_features": [
+          "political_delegitimization_looting_rig_election_warmongering",
+          "conspiratorial_framing (corruption/illicit diversion/systemic capture)",
+          "causal_claim_present (systemic outcomes blamed on opponents/leaders)"
+        ],
+        "example_message_ids": [
+          "bluesky_bfc06c8cb03b8092f0e892553b9ea5f3415a7d062fea3d9ba1bd60ac76e8b5f1",
+          "bluesky_5f0fc7b21b3ee7bf3a36f7b938615da6fbc56e3122b18ce017e85a26b0643c86",
+          "bluesky_5540e64eba270aadc029e00eeaf23a64c840d6430f8d8d02f784502a55bfc519",
+          "bluesky_7a7e369317987393bff86cdd70c89723411bdd0e3854c2d5cc6ecd87c248c391",
+          "bluesky_c9837c1f2a0cbd65ed258c7c3b2618d0f27032ee5e731d428f52afc0653527d8"
+        ],
+        "keep_count": 2,
+        "remove_count": 3,
+        "interpretation": "In this corpus, delegitimization/corruption/conspiracy-style explanation is more common in remove-rated posts, suggesting that accusatory systemic blame (especially when broad or conspiratorial) correlates with higher risk rhetoric."
+      },
+      {
+        "id": 6,
+        "label": "Profanity and taboo language (as intensity/insult)",
+        "defining_features": [
+          "profanity_or_taboo_language",
+          "profanity_or_taboo_language_fck_fck",
+          "profanity_or_taboo_language_fucking_hilarious",
+          "profanity_or_taboo_language_sexual_insults",
+          "profanity_or_taboo_language (including censored partial forms like ab*rtions)"
+        ],
+        "example_message_ids": [
+          "reddit_1lh7g4h_mz44qni",
+          "reddit_1ttui2j_op5mbg3",
+          "reddit_1tw0vcu_opmak8n",
+          "reddit_1tsx0f1_op056o1",
+          "twitter_2060673758700970116",
+          "bluesky_3c7b3c589ef1221b33a4a2b5e730c4d828a526d1e9785b9755c3409e58f88aaa"
+        ],
+        "keep_count": 1,
+        "remove_count": 10,
+        "interpretation": "Profanity/taboo markers are heavily associated with remove-rated content in this shard, indicating they are strong moderation-relevant signals\u2014especially when directed at people/groups."
+      },
+      {
+        "id": 7,
+        "label": "Direct insults, ridicule, dehumanization, and disparaging labels",
+        "defining_features": [
+          "condescending_insult_targeted_presenter",
+          "ridicule_or_mockery",
+          "all_caps_markers_and_dehumanizing_language",
+          "name_calling_long_list_of_epithets",
+          "informal_register_or_slang (insult-like usage)",
+          "criticizing via dismissive labels (e.g., \u201clunatics\u201d, \u201cKaren\u201d, \u201cuseful idiot\u201d)"
+        ],
+        "example_message_ids": [
+          "reddit_1ttui2j_op5mbg3",
+          "reddit_1lhbeoa_mz2t77h (mockery/profanity present, but remove category)",
+          "reddit_1l331fv_mw0t68s",
+          "reddit_1trf9va_ooofvrv",
+          "reddit_1tsx0f1_op056o1",
+          "reddit_1tv7vfu_ophvt4q"
+        ],
+        "keep_count": 1,
+        "remove_count": 9,
+        "interpretation": "Targeted derogation and ridicule are strongly associated with remove-rated posts, particularly when combined with profanity or conspiratorial/violent framing."
+      },
+      {
+        "id": 8,
+        "label": "Calls for punishment or extreme legal outcomes (imprisonment/jail/impeachment)",
+        "defining_features": [
+          "calls_for_imprisonment",
+          "call_to_action (impeachment/jail demand for political figures)",
+          "call_to_action (judge ruling to create a record)",
+          "call_to_action (deportation for described category of crimes)"
+        ],
+        "example_message_ids": [
+          "reddit_1tt6o9m_op0ildf",
+          "twitter_2061825289647218982",
+          "reddit_1tu26w6_op6qbef",
+          "twitter_2061687250916618306",
+          "bluesky_5540e64eba270aadc029e00eeaf23a64c840d6430f8d8d02f784502a55bfc519"
+        ],
+        "keep_count": 0,
+        "remove_count": 4,
+        "interpretation": "Punitive/legal escalation against identifiable targets is present only in remove-rated posts here, making it a clear moderation-risk theme."
+      },
+      {
+        "id": 9,
+        "label": "Specific policy domains repeatedly invoked: gun control / gun safety",
+        "defining_features": [
+          "gun_law_second_amendment_framing",
+          "primary_policy_domain: guns / gun reform debate / Second Amendment",
+          "policy_prescription_present (ban on firearms / repeal or background checks as unconstitutional)",
+          "universal_healthcare_education_voting_rights_gun_safety (multi-domain but gun-safety included)"
+        ],
+        "example_message_ids": [
+          "bluesky_b6aa63e4e8f0965a45fa88966c29e62cfedff66da7c299373d25eb7fac2c1e8c",
+          "bluesky_d73a57f060b6672f8ea023c9dfbdd764944eec3d8765a8abcddaca87b5a6ed99",
+          "bluesky_a983b7ef75c994f3acaf4f5388f8a5d29d9909813723e52247e89af0a97dcc94",
+          "bluesky_75fa978dbf45e1bb00fc930620fbcf72b0e388eba103ed006e17a91858a6d29b",
+          "bluesky_2b54682d9352d825336b1dcb116f1af0edd986bbc2b158f3a46371442291a16b"
+        ],
+        "keep_count": 6,
+        "remove_count": 2,
+        "interpretation": "Gun-policy discourse appears frequently and is often expressed as constructive advocacy or constitutional framing in keeps; removals tend to appear when gun policy rhetoric is paired with profanity, dehumanization, or conspiratorial/violent implications."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Urgency/stance signaling via caps and heavy punctuation (present in both keep and remove).",
+      "In-group/out-group framing (us_vs_them_framing and enemy labeling) interacts with other cues: it can be argumentative in keeps but becomes more removal-prone when paired with profanity/ridicule.",
+      "Conspiratorial/corruption/systemic blame (conspiratorial_framing) spans both but skews toward remove when it escalates beyond evidence.",
+      "Policy advocacy structure (call_to_action/policy_prescription_present) is common in keeps; moderation risk increases when advocacy escalates into punishment (imprisonment/jail/deportation/impeachment).",
+      "Victimhood/persecution language is used across labels; its risk level likely depends on whether it motivates dehumanization or punitive action."
+    ]
+  }
+}

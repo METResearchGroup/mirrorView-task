@@ -1,0 +1,180 @@
+{
+  "batch_id": 53,
+  "message_ids": [
+    "bluesky_057a5c326ec36202fa592d4f499d89a7cb2894328f46b43f83cbb02d1e0ea995",
+    "bluesky_1d2391e6da756d5153c5425cf68b4a1116ee6b6dbd083df5784eec880cd8be0b",
+    "bluesky_480c497b10a72354f37210a67a714097ff2b56f9cecb8ca847a4f862ae895d27",
+    "reddit_1kdq5jl_mqenqo7",
+    "reddit_1lbi6xc_mxtdusn",
+    "reddit_1lfq7q5_myr99xl",
+    "reddit_1liihep_mzsjxyx",
+    "reddit_1ljgaqj_mzlatfu",
+    "reddit_1lmon84_n090uep",
+    "reddit_1tkvbmy_onde0ix",
+    "reddit_1tqcf7r_ooh4o8k",
+    "reddit_1tsvrr2_ooy2v3i",
+    "reddit_1ttx203_op7pmte",
+    "reddit_1txvz2c_oq0e8fv",
+    "twitter_2059469583879217660",
+    "twitter_2060847867166605378",
+    "twitter_2060853647311769874",
+    "twitter_2061225129435128063",
+    "twitter_2061656325793239305",
+    "twitter_2061774937107378428"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060853647311769874",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns/gun control (concealed carry laws)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Permit free concealed carry laws\"",
+        "rationale": "The post explicitly discusses concealed carry legislation."
+      },
+      {
+        "message_id": "twitter_2061774937107378428",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "uses candidate hashtags and @mentions",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#NJ11: @AnaliliaForNJ\"",
+        "rationale": "The text contains multiple hashtags and @handle mentions for named candidates."
+      },
+      {
+        "message_id": "twitter_2061225129435128063",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns/gun control (red flag laws vs constitutional carry)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Red flag laws won\u2019t fly in North Carolina. NC needs Constitutional Carry.\"",
+        "rationale": "It references specific gun-safety policy terminology and proposes constitutional carry."
+      },
+      {
+        "message_id": "twitter_2059469583879217660",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "directly addresses \u201cMr. Talarico\u201d",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Well Mr. Talarico you must have missed\"",
+        "rationale": "The speaker uses a second/third-party address format to call out an individual."
+      },
+      {
+        "message_id": "reddit_1ttx203_op7pmte",
+        "feature_name": "causal_claim_present",
+        "feature_value": "frames policy as economically inefficient vs efficient; aims to raise floor/encourage healthier eating",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"economically inefficient\" ... \"to raise the floor and encourage people to eat healthier\"",
+        "rationale": "It links governance approach to economic inefficiency and states intended causal effects of benefits."
+      },
+      {
+        "message_id": "twitter_2060847867166605378",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "grouping by demographics and opposing \u201ccommunist\u201d accusation",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"They're usually Democrat-leaning\" ... \"lose their minds calling you a communist\"",
+        "rationale": "The message contrasts a described subgroup\u2019s attitudes with an outgroup narrative about \u201ccommunist\u201d labels."
+      },
+      {
+        "message_id": "bluesky_480c497b10a72354f37210a67a714097ff2b56f9cecb8ca847a4f862ae895d27",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "multi-step technical comparison with targets and percentages",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"slow down... target\" ... \"to speed up\" ... \"to ~85%\"",
+        "rationale": "It sequences multiple policy/technology stages with quantitative targets."
+      },
+      {
+        "message_id": "reddit_1ljgaqj_mzlatfu",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "mirror swaps Trump\u2192Biden while preserving mockery/denial of advice from \u201cdisasters/fools\u201d",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump collectively is a fool\" / \"Biden collectively is a disaster\"",
+        "rationale": "The mirror re-targets negative characterization from Trump to Biden while maintaining similar rhetorical structure."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tqcf7r_ooh4o8k",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity (\u201cfuckers\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Those fuckers still talking about Biden?\"",
+        "rationale": "The post contains explicit taboo/profanity directed at others."
+      },
+      {
+        "message_id": "reddit_1tsvrr2_ooy2v3i",
+        "feature_name": "call_to_action",
+        "feature_value": "direct imperative to remove a group (\u201cget rid of\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"can we get rid of all the Nazis first?\"",
+        "rationale": "It uses an urging/command structure aimed at removing a targeted group."
+      },
+      {
+        "message_id": "reddit_1liihep_mzsjxyx",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses profanity (\u201cfucking hilarious\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"You're fucking hilarious buddy.\"",
+        "rationale": "The text includes explicit profanity as part of expressive evaluation."
+      },
+      {
+        "message_id": "reddit_1txvz2c_oq0e8fv",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "logic framed as either true or not; \u201cnot some\u201d",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Something is either true or not... not some.\"",
+        "rationale": "It uses an either/versus contrastive construction to argue correctness conditions."
+      },
+      {
+        "message_id": "twitter_2061656325793239305",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation phrased as obvious harm/control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"is obviously  being brought by men who seek control.\"",
+        "rationale": "The message expresses moral/political judgment using \u201cobviously\u201d and claims malicious intent."
+      },
+      {
+        "message_id": "reddit_1lbi6xc_mxtdusn",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insult/demeaning characterization (\u201cdraft dodging chicken shit\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a draft dodging chicken shit\"",
+        "rationale": "The post attacks a figure with a degrading insult rather than a policy argument."
+      },
+      {
+        "message_id": "reddit_1lmon84_n090uep",
+        "feature_name": "call_to_action",
+        "feature_value": "imperative addressing political faction (\u201cAttention ... Have you...\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Attention MAGA Meatheads!\" ... \"Remember, do as Fox News says!!\"",
+        "rationale": "It uses direct addressing and instructions/urging (\u201cdo as Fox News says\u201d)."
+      },
+      {
+        "message_id": "reddit_1kdq5jl_mqenqo7",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "vivid derogatory fate/deserved punishment fantasy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"will die disgraced in jail... and that\u2019s what he deserves.\"",
+        "rationale": "The text asserts an outcome as deserved, using aggressive punitive framing."
+      }
+    ]
+  }
+}

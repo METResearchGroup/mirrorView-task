@@ -1,0 +1,180 @@
+{
+  "batch_id": 59,
+  "message_ids": [
+    "bluesky_358ec42dd85fb995bd6b5229608ab4dc977e720608eb3c7c43f88fe365c71382",
+    "bluesky_83be01fa36e49b5d299786d6e9986a59373be4a05213712fb20f0b190af1cad5",
+    "bluesky_84b12cde22479d5238ef06a114e08d0fc9891bc31a4b53050752b87d09a745a5",
+    "bluesky_959e3fad6df34edb85b8a07a43eda1a3d1f4230aca4582dc883b8ad524ba0930",
+    "bluesky_95ad22ebe375fadbf7a41caefb348cd1c6336bc3485ee0713ff2ec004aadb024",
+    "bluesky_f74c9f754b2dafd2c5e4f7134f8ba93ca0daa9a7f02c65ac139cebab662eccbe",
+    "reddit_1lb928e_mxsuugz",
+    "reddit_1tp6tgh_oo6fpok",
+    "reddit_1tvll8k_opi4wgl",
+    "reddit_1tvywom_opm3ctw",
+    "reddit_1twgtct_opqea8v",
+    "reddit_1u0oc51_oqkygl8",
+    "reddit_1u225u5_oqvbe3g",
+    "twitter_2061136257275904182",
+    "twitter_2061149833256407445",
+    "twitter_2061795440342012025",
+    "twitter_2061807663994794265",
+    "twitter_2061820338451681538",
+    "twitter_2061824082115489822",
+    "twitter_2061826012812595413"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_84b12cde22479d5238ef06a114e08d0fc9891bc31a4b53050752b87d09a745a5",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple emphatic sentences and dash-free rhetorical phrasing; strong concluding claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The gop don't care about children getting shot.\"",
+        "rationale": "Clear emphatic declarative accusation framed as a closing punchline."
+      },
+      {
+        "message_id": "twitter_2061807663994794265",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Repeated \u201cWhere are\u2026?\u201d questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Where are the mass deportations?\"",
+        "rationale": "The text uses repetition of interrogatives as rhetorical criticism."
+      },
+      {
+        "message_id": "bluesky_358ec42dd85fb995bd6b5229608ad4dc977e720608eb3c7c43f88fe365c71382",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Explicit list of gun-policy measures to implement",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Give us background checks, license to purchase, red flag laws, safe storage laws...\"",
+        "rationale": "Direct advocacy for specific policy actions rather than general sentiment."
+      },
+      {
+        "message_id": "reddit_1u225u5_oqvbe3g",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Use of profanity/insult phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"shit eating grin\"",
+        "rationale": "Contains colloquial profanity used to demean a named figure."
+      },
+      {
+        "message_id": "twitter_2061149833256407445",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Direct mention of a specific person/account",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@TomSteyer\"",
+        "rationale": "A handle/individual is explicitly addressed."
+      },
+      {
+        "message_id": "bluesky_83be01fa36e49b5d299786d6e9986a59373be4a05213712fb20f0b190af1cad5",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Election/candidate voting hashtags and proposition hashtags",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#VoteDemToday\"",
+        "rationale": "Contains hashtags explicitly organizing voting instructions."
+      },
+      {
+        "message_id": "reddit_1twgtct_opqea8v",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Frames conservatives vs feminists/left as having opposite motives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The whole point of conservatives...\"",
+        "rationale": "Establishes competing in-group/out-group motives through ideological contrast."
+      },
+      {
+        "message_id": "twitter_2061820338451681538",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insulting language toward a named officeholder",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"You\u0019re a pathetic moron!\"",
+        "rationale": "Uses derogatory insult rather than policy argument alone."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_95ad22ebe375fadbf7a41caefb348cd1c6336bc3485ee0713ff2ec004aadb024",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Child sexual abuse allegation tied to gun hoarding by relatives/scouts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"childhood sexual abuse of boys\"",
+        "rationale": "Introduces a sensitive harm/victimhood claim as a rhetorical lever."
+      },
+      {
+        "message_id": "twitter_2061824082115489822",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Straits blockade threat (Iran/straits context) attributed to Marco Rubio",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"If Iran is going to shut down the straits\"",
+        "rationale": "Refers to a geopolitical incident with concrete political/military context."
+      },
+      {
+        "message_id": "reddit_1tvll8k_opi4wgl",
+        "feature_name": "venting_or_expressive",
+        "feature_value": "Short dismissive line implying repetition",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh yeah they say that kind of shit a lot.\"",
+        "rationale": "Primarily expressive dismissal rather than structured argument."
+      },
+      {
+        "message_id": "reddit_1lb928e_mxsuugz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Direct profanity and crude retort",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck you got me.\"",
+        "rationale": "Contains explicit taboo language."
+      },
+      {
+        "message_id": "reddit_1tvywom_opm3ctw",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Uses quoted speech citation before rebuttal",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\">\u00111legate him to \u001cseparate but equal\u001d facilities.\u001d\"",
+        "rationale": "Starts with an embedded quoted line and then responds to it."
+      },
+      {
+        "message_id": "bluesky_959e3fad6df34edb85b8a07a43eda1a3d1f4230aca4582dc883b8ad524ba0930",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "Accuses an opposition figure (Biden) of failures and missteps",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Biden gutted every meaningful border security measure\"",
+        "rationale": "Directly targets a specific political actor with negative claims."
+      },
+      {
+        "message_id": "reddit_1u0oc51_oqkygl8",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims DOJ/FBI were weaponized to target opponents; manufactured votes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They just weaponized DOJ and FBI to go after political opponents\"",
+        "rationale": "Uses a broad conspiratorial claim about institutional actions and election fraud."
+      },
+      {
+        "message_id": "bluesky_f74c9f754b2dafd2c5e4f7134f8ba93ca0daa9a7f02c65ac139cebab662eccbe",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Intensifying caps (\u201cSO FUCKING TIRED\u201d, \u201cFULL BORE\u201d) and threat to block",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I\u0019m SO FUCKING TIRED\"",
+        "rationale": "Contains strong capitalization/emphasis markers and aggressive communicative behavior."
+      }
+    ]
+  }
+}

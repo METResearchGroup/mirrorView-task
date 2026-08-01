@@ -1,0 +1,180 @@
+{
+  "batch_id": 4,
+  "message_ids": [
+    "bluesky_1c12cdc163cd2ace9053acbbe6361859fcf5d7298f588c019559cdd590405f91",
+    "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+    "bluesky_bef1fc3e9d0e44dd091e0ee02480737644f7e0e5373e0c8942df5a2c0b56916d",
+    "bluesky_d2dc9d31ea9c0652f04bd909fd6bcbe0cc7829954106bfa36549bb0ae3cc6ef2",
+    "bluesky_eaca8666c828b12f72d5bc57492c13d3b387f9616bf52bd8e6566b9bfd6a1785",
+    "reddit_1kgvslf_mr35zv5",
+    "reddit_1l2ndoc_mvunv76",
+    "reddit_1ll9l4x_n013h7b",
+    "reddit_1llzlg3_n045fi5",
+    "reddit_1lmjifa_n092opi",
+    "reddit_1lokvuo_n0ntzlu",
+    "reddit_1t7hgak_okpt242",
+    "reddit_1tbymrb_olk9ohj",
+    "reddit_1tecxgs_opf51ni",
+    "reddit_1toqwtm_oo36rq2",
+    "reddit_1tt6meg_op10gze",
+    "reddit_1txi7g6_opwrqme",
+    "reddit_1u31653_or3asxy",
+    "twitter_2061781528120590632",
+    "twitter_2061825668103524809"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_eaca8666c828b12f72d5bc57492c13d3b387f9616bf52bd8e6566b9bfd6a1785",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Ultimately, as we all know, what stops armed bad guys is armed good guys.",
+        "rationale": "The post is a brief quote-style sentence."
+      },
+      {
+        "message_id": "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "long multi-item policy list separated by commas/line breaks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Voting Rights, universal healthcare, unions, labor laws, pensions, gun laws, subsidized renewable, fully funded education, subsidized childcare",
+        "rationale": "It enumerates many policy domains in one passage."
+      },
+      {
+        "message_id": "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "implicit policy platform and comparison to other democracies",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "If we had these today, we'd be like other functioning democracies.",
+        "rationale": "The text proposes or promotes a set of policy goals as a remedy."
+      },
+      {
+        "message_id": "reddit_1tecxgs_opf51ni",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "low (generic ideological terms, no people/org names)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "This might as well be the top comment. It touches on many of the pillars of conservatism.",
+        "rationale": "Content is mostly abstract ideological categories rather than named entities."
+      },
+      {
+        "message_id": "twitter_2061825668103524809",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slang/wordplay nickname for parties",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Dumocrats\"",
+        "rationale": "Uses a colloquial derogatory label for political opponents."
+      },
+      {
+        "message_id": "reddit_1u31653_or3asxy",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "if/then asylum granted vs denied",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If they do get asylum status they should be allowed to stay.",
+        "rationale": "The passage uses explicit conditional branches for outcomes."
+      },
+      {
+        "message_id": "bluesky_bef1fc3e9d0e44dd091e0ee02480737644f7e0e5373e0c8942df5a2c0b56916d",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity as simile",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fighting for peace is like f*cking for your virginity.",
+        "rationale": "Includes censored taboo language and sexualized comparison."
+      },
+      {
+        "message_id": "reddit_1tt6meg_op10gze",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "original targets MAGA; mirror targets liberals",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The defense of this guy sounds exactly like MAGA defending Trump. ... It sucks MAGA has double standards",
+        "rationale": "Mirror swaps blame/analogy from MAGA/Trump to liberals/Democrats."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1llzlg3_n045fi5",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple strong insults and profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Magats have ruined this fucking country.",
+        "rationale": "Contains explicit profanity and abusive terms toward an outgroup."
+      },
+      {
+        "message_id": "reddit_1ll9l4x_n013h7b",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "none; but repeated imperative curse list",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Texas. Fuck Idaho. Fuck MAGA. Fuck Trump. Fuck Cruz.",
+        "rationale": "Uses a repeated 'Fuck X' structure as direct hostile address."
+      },
+      {
+        "message_id": "reddit_1lokvuo_n0ntzlu",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "profanity with targeted political figures/outlets",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck trump, but fuck thedailybeast as well.",
+        "rationale": "Uses direct profanity and targets both a politician and a media outlet."
+      },
+      {
+        "message_id": "reddit_1txi7g6_opwrqme",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "lmao/exclamation and rhetorical questions",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Can't make this shit up. Why are we putting up with a hostile government?",
+        "rationale": "Uses expressive punctuation and a rhetorical question for outrage."
+      },
+      {
+        "message_id": "reddit_1txi7g6_opwrqme",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration enforcement and foreign/domestic aid cuts (ICE, food aid)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Cut food aid to women and kids ... funded ICE for billions",
+        "rationale": "Mentions ICE funding and cutting food aid, indicating immigration enforcement and welfare/aid policy."
+      },
+      {
+        "message_id": "reddit_1kgvslf_mr35zv5",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "blames fascism on Democrats; ideological causation claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "all this fascist shit is because of Dems.",
+        "rationale": "Asserts a broad causal attribution of ideological outcome to a political group."
+      },
+      {
+        "message_id": "reddit_1toqwtm_oo36rq2",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "explicit legislative action (SAVE Act, PRO Act) and codifying EOs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "We need the SAVE Act, need more fiscal policies, and time to codify these EOs.",
+        "rationale": "Calls for specific policy/legislative steps and legal codification."
+      },
+      {
+        "message_id": "bluesky_1c12cdc163cd2ace9053acbbe6361859fc5d7298f588c019559cdd590405f91",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "donor-grifting/$$ framing tied to policy enforcement",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "grifting off that NRA $$$",
+        "rationale": "Uses an economic corruption motif (grifting) to criticize policy priorities."
+      }
+    ]
+  }
+}

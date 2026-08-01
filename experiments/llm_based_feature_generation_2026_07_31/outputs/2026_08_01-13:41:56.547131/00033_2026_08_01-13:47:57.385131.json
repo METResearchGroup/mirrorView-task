@@ -1,0 +1,180 @@
+{
+  "batch_id": 33,
+  "message_ids": [
+    "bluesky_2bc3a3e4b2acc46c17c92b424382a6583e262ab9e4136e6658a84109c5a194e9",
+    "bluesky_835422aab01170533eb23c4b47c04ebf511561b6292dc93698480eb5cfffac26",
+    "bluesky_85990b6cd435031e547def3a8c704fc2e310526986f0a425f8c23fb72a13ff22",
+    "bluesky_b9314ddc6ec18036e7a1e81cc60dc80ad7075a2d24dfdc56998694c824b651fa",
+    "bluesky_c8bff160fb27d84ab259a95c732de5b6e4f96118ea0ebf19f8dd9c9755121bcc",
+    "bluesky_db75ab534de2fb76553242ce78c9922ebfba0de76acc98b7351706e897988292",
+    "reddit_1kmm69e_msbbfe8",
+    "reddit_1ksnboe_mtqa6ci",
+    "reddit_1l4ab8s_mw7e0n4",
+    "reddit_1l8rkw8_mx8z5ur",
+    "reddit_1lcrv72_my47tis",
+    "reddit_1ljlipu_mznx4ff",
+    "reddit_1tbymrb_olmq852",
+    "reddit_1til7dr_on2vedx",
+    "reddit_1tqyx7p_ook8j6h",
+    "reddit_1tux6at_opewrvr",
+    "reddit_1tv4jag_opixq4s",
+    "reddit_1tznn66_oqdlxew",
+    "twitter_2059249459930808580",
+    "twitter_2059978803204559057"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_85990b6cd435031e547def3a8c704fc2e310526986f0a425f8c23fb72a13ff22",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of named entities (Second Amendment, National Guard, 1787)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The Second Amendment\" ... \"National Guard\" ... \"1787\"",
+        "rationale": "Multiple specific proper-noun/legal-historical references appear in a short passage."
+      },
+      {
+        "message_id": "bluesky_85990b6cd435031e547def3a8c704fc2e310526986f0a425f8c23fb72a13ff22",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Implicit advocacy for Second Amendment interpretation and militia framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The Second Amendment was about having a militia.\"",
+        "rationale": "The text presents a prescriptive interpretive claim about what the amendment is for."
+      },
+      {
+        "message_id": "twitter_2059249459930808580",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral/religious praise framing of one side and condemnation-by-contrast",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Glory be to God.\" / \"welcomes life.\"",
+        "rationale": "The post uses explicit religious/moral valence language to evaluate actions."
+      },
+      {
+        "message_id": "bluesky_c8bff160fb27d84ab259a95c732de5b6e4f96118ea0ebf19f8dd9c9755121bcc",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Energy policy (fossil fuels, renewables, affordability)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Fossil fuels are finite\" ... \"alternative energy sources\"",
+        "rationale": "The main subject is switching energy sources and related supply/affordability issues."
+      },
+      {
+        "message_id": "bluesky_835422aab01170533eb23c4b47c04ebf511561b6292dc93698480eb5cfffac26",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Climate change dispute used as partisan/credibility attack",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Smart people pretending there is no climate change\"",
+        "rationale": "Climate denial is directly singled out with blame/profit language."
+      },
+      {
+        "message_id": "reddit_1tv4jag_opixq4s",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "\u201cHomeless\u201d depicted as produced by harsh treatment/\u201cliberal rule\u201d critique",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Make homelessness extremely difficult and miserable\"",
+        "rationale": "The passage frames homelessness as an outcome of policy mistreatment."
+      },
+      {
+        "message_id": "reddit_1tznn66_oqdlxew",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Intense profanity and sexual offense allegation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking\" / \"Trump raped children.\"",
+        "rationale": "The text includes explicit taboo language and an allegation of sexual violence."
+      },
+      {
+        "message_id": "bluesky_b9314ddc6ec18036e7a1e81cc60dc80ad7075a2d24dfdc56998694c824b651fa",
+        "feature_name": "call_to_action",
+        "feature_value": "Instructional safety guidance to require courses and avoid unsafe handling",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"People who buy guns should be required to take a gun safety course.\"",
+        "rationale": "It prescribes requirements and behaviors aimed at changing policy/practice."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_db75ab534de2fb76553242ce78c9922ebfba0de76acc98b7351706e897988292",
+        "feature_name": "target_directionality",
+        "feature_value": "Calls out \u201cliberals\u201d then shifts to defeating \u201cfascists\u201d (ingroup vs outgroup militant framing)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"liberals\" ... \"We can get to that after we defeat the fascists.\"",
+        "rationale": "The rhetoric targets one political side and uses escalation toward an extremist enemy."
+      },
+      {
+        "message_id": "twitter_2059978803204559057",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Geographic + governor name targeting (New York, Kathy Hochul; mirror: Texas, Greg Abbott)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"new york\" ... \"Kathy Hochul\" / \"texas\" ... \"greg abbott\"",
+        "rationale": "The text explicitly names states and specific public officials."
+      },
+      {
+        "message_id": "reddit_1kmm69e_msbbfe8",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing competence insult toward Democratic leadership vs mirror on Republicans",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Democratic leadership is stupid, cowardly\" / \"Republican leadership is incompetent, spineless\"",
+        "rationale": "It uses direct disparagement of leadership groups rather than arguing a policy point."
+      },
+      {
+        "message_id": "reddit_1lcrv72_my47tis",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct abusive address (\u201cYou fucking hypocrites\u201d) and partisan blame",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"You fucking hypocrites.\"",
+        "rationale": "The message uses second-person imperatives/address with profanity to accuse others."
+      },
+      {
+        "message_id": "reddit_1ljlipu_mznx4ff",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Short derogatory slang (\u201cShitty spineless ... as per\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Shitty spineless Dems\" / \"Shitty gutless Republicans\"",
+        "rationale": "Uses informal pejoratives and abbreviations rather than formal phrasing."
+      },
+      {
+        "message_id": "reddit_1tux6at_opewrvr",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "\u201cFascist/Stalinist playbook\u201d implies systematic deception strategy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"1930s fascist playbook\" / \"Stalinist propaganda playbook\"",
+        "rationale": "The text frames wrongdoing as a deliberate propagandistic tactic across time."
+      },
+      {
+        "message_id": "bluesky_2bc3a3e4b2acc46c17c92b424382a6583e262ab9e4136e6658a84109c5a194e9",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps shouting with multiple exclamation points",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"THE GUN LOBBY\" ... \"MAKE THE MADNESS STOP!!!!\"",
+        "rationale": "Large segments are uppercase and used for emphatic, urgent messaging."
+      },
+      {
+        "message_id": "reddit_1ksnboe_mtqa6ci",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Speculative quotation about future status (\u201csupposedly be out of office\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"because trump will \\\"supposedly\\\" be out of office.\"",
+        "rationale": "Uses modal/hedging (\u201csupposedly\u201d) around a future claim tied to the cost timeline."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 107,
+  "message_ids": [
+    "bluesky_cd7f5ef7163a06934f444a679af36ad9207466b326e5f7bbad8be78199527a30",
+    "bluesky_e686be464783703d82a59d93de72769631828c8a2965647fc048f709c43c8f3d",
+    "reddit_1kfz5qd_mqwat9g",
+    "reddit_1kgbe88_mqy4bhu",
+    "reddit_1kh06sk_mr364el",
+    "reddit_1knep98_msipgrk",
+    "reddit_1kxmwug_musc18t",
+    "reddit_1l0z2b8_mvjla39",
+    "reddit_1liz1et_mzgg47e",
+    "reddit_1tbl0de_olhi4yp",
+    "reddit_1te8bkj_om2191f",
+    "reddit_1tenhje_om40jif",
+    "reddit_1ti5ovh_omsa6fo",
+    "reddit_1ttbse9_op2waon",
+    "reddit_1tttfo9_op5fwkh",
+    "reddit_1tv1z4j_opf7jvm",
+    "reddit_1u05n1d_oqizq8e",
+    "twitter_2061231010948276598",
+    "twitter_2061504370450248175",
+    "twitter_2061819373229093244"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tenhje_om40jif",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "informal colloquial phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cGreat , Trump and his generates\u2026\u201d",
+        "rationale": "Uses casual slang/wording rather than formal political language."
+      },
+      {
+        "message_id": "reddit_1te8bkj_om2191f",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls for banning entry of a group/product",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cChinese EVs should NOT be allowed into the USA.\u201d",
+        "rationale": "Advocates a specific restrictive policy action."
+      },
+      {
+        "message_id": "twitter_2061504370450248175",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "strong emphatic reframing with negation markers",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cstart calling abortion what it ACTUALLY IS\u201d",
+        "rationale": "Uses emphatic capitalization and corrective framing to express outrage."
+      },
+      {
+        "message_id": "reddit_1tbl0de_olhi4yp",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "rhetorical scenario about political actors (conditional)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cLol if any GOP politician\u2026 I get the sense that Dems wouldn\u2019t\u2026\u201d",
+        "rationale": "Employs an if-condition structure to compare party responses."
+      },
+      {
+        "message_id": "reddit_1ti5ovh_omsa6fo",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "claims elites/actors infiltrate and run propaganda 24/7",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cbought up almost all major media\u2026 to pump distractions and Republican party propaganda 24/7/365.\u201d",
+        "rationale": "Attributes coordinated wrongdoing to a shadowy, intentional manipulation scheme."
+      },
+      {
+        "message_id": "twitter_2061231010948276598",
+        "feature_name": "causal_claim_present",
+        "feature_value": "implies background checks are performative/ignored due to money",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cthey do they just don't care\u2026 isn't money\u201d",
+        "rationale": "States a motive/cause for inaction: caring only about money."
+      },
+      {
+        "message_id": "bluesky_e686be464783703d82a59d93de72769631828c8a2965647fc048f709c43c8f3d",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "diminutives/insults and dehumanizing animal metaphor",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cderpy little chud\u201d / \u201cHe's not the frog. He's the scorpion\u2026\u201d",
+        "rationale": "Uses mocking epitheting and a scorpion/frog metaphor to belittle an opponent."
+      },
+      {
+        "message_id": "reddit_1kfz5qd_mqwat9g",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cneeds to fuck off.\u201d",
+        "rationale": "Contains strong taboo language directed at a political target."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kxmwug_musc18t",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity used in attack slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cthis bitch made mf caved to Trump.\u201d",
+        "rationale": "Includes explicit derogatory/sexual profanity in the original."
+      },
+      {
+        "message_id": "reddit_1u05n1d_oqizq8e",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Elaborate allegation of crime ring and obstructing investigations/files",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cEpstein\u2019s child sex trafficking crime ring\u2026 stop investigations and the release of the Epstein files\u201d",
+        "rationale": "Presents a broad, coordinated wrongdoing claim with obstruction intent."
+      },
+      {
+        "message_id": "reddit_1kgbe88_mqy4bhu",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "generalized abusive characterization of party supporters",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cjust horrendous individuals.\u201d",
+        "rationale": "Uses blanket insult language aimed at an outgroup."
+      },
+      {
+        "message_id": "reddit_1liz1et_mzgg47e",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "explicitly references former president legacy",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cTrump legacy\u201d / \u201cBiden legacy\u201d",
+        "rationale": "Contains multiple named proper nouns (Trump/Biden) tied to negative legacy claims."
+      },
+      {
+        "message_id": "reddit_1tv1z4j_opf7jvm",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "dehumanizing condemnation and wish of eternal punishment",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cI pray that every Republican voter will burn in the hell\u201d",
+        "rationale": "Expresses severe punitive/condemnatory moral retribution toward a political group."
+      },
+      {
+        "message_id": "bluesky_cd7f5ef7163a06934f444a679af36ad9207466b326e5f7bbad8be78199527a30",
+        "feature_name": "call_to_action",
+        "feature_value": "direct imperative curses/commands toward a political group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFUCK ICE. FUCK TRUMP. FUCK MAGA.\u201d",
+        "rationale": "Uses imperative profanity to target institutions and political identities."
+      },
+      {
+        "message_id": "twitter_2061819373229093244",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple fuck/weakness invective questions",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cWhy the fuck is the world allowing\u2026\u201d",
+        "rationale": "Contains explicit profanity and interrogative invective."
+      },
+      {
+        "message_id": "reddit_1ttbse9_op2waon",
+        "feature_name": "call_to_action",
+        "feature_value": "expresses desire for imprisonment/justice with strong hostile framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201chope that at least Trump would be out of office\u2026 on his way to prison.\u201d",
+        "rationale": "Advocates punitive outcome (imprisonment) for a political figure."
+      }
+    ]
+  }
+}

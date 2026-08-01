@@ -1,0 +1,180 @@
+{
+  "batch_id": 15,
+  "message_ids": [
+    "bluesky_0c758190605f2268c3af997395719b45f11879b1d38db29c041cac8b428f3deb",
+    "bluesky_2f7301e79c8c121c78f00411c4047afc381df82aee30cb83ebe111e7fc0f176b",
+    "bluesky_49aa3e6b86039885be0cee7aaf28d2de56a60bec4cd793f5a03565a1a70da663",
+    "bluesky_f666c4d26c893240a0c70265f2e25f5746d848c5279d1da85c3986c3be3c1fa1",
+    "reddit_1kk3rr8_mvpx18l",
+    "reddit_1kksjs7_mryisbi",
+    "reddit_1klncl9_ms4j93p",
+    "reddit_1l1roga_mvopi6x",
+    "reddit_1t4fs97_ok5e7tp",
+    "reddit_1t6mb7v_okj0bnx",
+    "reddit_1tc5bjg_olpcz7g",
+    "reddit_1tw6zcr_opn1r2a",
+    "reddit_1tzs7nk_oqd3cei",
+    "reddit_1u21326_oqwiqnj",
+    "reddit_1u276eu_oqvesy1",
+    "reddit_1u28e60_oqxcavz",
+    "twitter_2061072962426409445",
+    "twitter_2061596946373189772",
+    "twitter_2061798901707890838",
+    "twitter_2061827304418840758"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_2f7301e79c8c121c78f00411c4047afc381df82aee30cb83ebe111e7fc0f176b",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Frames politics as manipulation by opposing party toward 'voters'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Republican voters\" ... \"Republican politicians are lying\" / \"Democrat voters\" ... \"Democrat politicians are manipulating them\"",
+        "rationale": "Uses outgroup-vs-outgroup language (voters of one party vs politicians of another) emphasizing manipulation."
+      },
+      {
+        "message_id": "reddit_1t4fs97_ok5e7tp",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Party/ideology labels (white supremacist vs Marxist) without full proper-name entities",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"white supremacist\" / \"open-borders Marxist\"",
+        "rationale": "Contains prominent ideology descriptors as the main lexical items driving the claim."
+      },
+      {
+        "message_id": "reddit_1kksjs7_mryisbi",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Direct insult + demeaning dismissal of the other side",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"They're just stupid\" / \"Nothing else to say really.\"",
+        "rationale": "Expressive derision is central and immediate, with a dismissive rhetorical stance."
+      },
+      {
+        "message_id": "bluesky_0c758190605f2268c3af997395719b45f11879b1d38db29c041cac8b428f3deb",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Policy platform presented as a bullet list under a project name",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Project 2029:\" \"- Medicare for All\" \"- Green New Deal\" \"- Abolish ICE\"",
+        "rationale": "Repeated bullet structure enumerates multiple policies."
+      },
+      {
+        "message_id": "twitter_2061072962426409445",
+        "feature_name": "causal_claim_present",
+        "feature_value": "States categorical relationship between laws and constitutional amendment",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Every single gun law violates the second amendment.\"",
+        "rationale": "Uses a strong declarative assertion connecting gun laws to constitutionality violations."
+      },
+      {
+        "message_id": "bluesky_49aa3e6b86039885be0cee7aaf28d2de56a60bec4cd793f5a03565a1a70da663",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Climate policy framed as imposing affordability impacts (heating homes)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"working people can't afford to heat their homes\"",
+        "rationale": "Introduces an economic/affordability consequence as justification for blame."
+      },
+      {
+        "message_id": "reddit_1u28e60_oqxcavz",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Shelf-life insult implying political figure is short-lived",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump's shelf life is shorter than it is long.\"",
+        "rationale": "Uses a belittling metaphor to undermine a political actor\u2019s staying power."
+      },
+      {
+        "message_id": "twitter_2061827304418840758",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates immediate action and specific justice approach",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Action now\" / \"no sex offender should EVER walk\"",
+        "rationale": "Contains explicit normative directives (punishment rules, action now)."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_f666c4d26c893240a0c70265f2e25f5746d848c5279d1da85c3986c3be3c1fa1",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Heavy all-caps block framing the argument",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"THE TRUE PROBLEM IS\" \"THE MAJORITY OF PRO GUN RIGHTS PEOPLE\"",
+        "rationale": "Uses all-caps emphasis throughout to present an aggressive thesis."
+      },
+      {
+        "message_id": "twitter_2061798901707890838",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "System-level claim that corruption/overreach is built in",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Corruption is a feature of American capitalism. It\u2019s built into the system.\"",
+        "rationale": "Attributes negative outcomes to inherent systemic design rather than isolated behavior."
+      },
+      {
+        "message_id": "reddit_1tc5bjg_olpcz7g",
+        "feature_name": "geographic_scope",
+        "feature_value": "US subnational partisan mapping (blue/red states)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"blue states\" / \"red states\"",
+        "rationale": "Uses regional political labeling to assign wrongdoing/critique to state blocs."
+      },
+      {
+        "message_id": "reddit_1klncl9_ms4j93p",
+        "feature_name": "sarcasm_or_irony",
+        "feature_value": "Uses 'lmao' to mark mocking tone",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"lmao\"",
+        "rationale": "Laughing acronym strongly signals sarcastic/mocking delivery in context."
+      },
+      {
+        "message_id": "twitter_2061596946373189772",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Politician/organization names in a short praise caption",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Rep. Brandon Gill\" / \"ICE\" / \"Border Patrol\"",
+        "rationale": "Includes specific named entities and agencies as the target of praise."
+      },
+      {
+        "message_id": "reddit_1u276eu_oqvesy1",
+        "feature_name": "call_to_action",
+        "feature_value": "Proposes releasing specific document files",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Let's talk about how we can get the Epstein files released.\"",
+        "rationale": "Directly advances a concrete agenda item ('files released')."
+      },
+      {
+        "message_id": "reddit_1tw6zcr_opn1r2a",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Hyperbolic universal ranking of corruption with challenge to prove",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the most corrupt human in all of human history\" / \"I challenge anyone to find me\"",
+        "rationale": "Makes sweeping factual-like assertions plus an evidentiary challenge."
+      },
+      {
+        "message_id": "reddit_1l1roga_mvopi6x",
+        "feature_name": "target_directionality",
+        "feature_value": "Uses insinuation linking actor to neo-Nazi (direct accusation)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump? The guy that retweets neonazi shit?\"",
+        "rationale": "Assigns blame/negative association to a named politician through a direct rhetorical question."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 113,
+  "message_ids": [
+    "bluesky_5f0fc7b21b3ee7bf3a36f7b938615da6fbc56e3122b18ce017e85a26b0643c86",
+    "bluesky_68ba2c62a072efcb3c266284c1ccb4156c7d9d9f871631d121d36ad7bbf872a7",
+    "bluesky_aaded40dc78db1aadf44cb45f07b706b10d189e7cdfd4d3821cae72f43e94a89",
+    "bluesky_d73a57f060b6672f8ea023c9dfbdd764944eec3d8765a8abcddaca87b5a6ed99",
+    "bluesky_eea306c58c8a7552871a9d1aae263a5e22a90fac0715e3f04eaa5ece889fcc29",
+    "reddit_1kexwzc_mqmf9iq",
+    "reddit_1kg5qlk_mr0fmi6",
+    "reddit_1kspe1b_mto7c5g",
+    "reddit_1tb0kz2_oldem36",
+    "reddit_1trf9va_ooofvrv",
+    "reddit_1tsx0f1_op056o1",
+    "reddit_1txi7g6_opvxtyp",
+    "twitter_2059732998417752418",
+    "twitter_2060664075378368776",
+    "twitter_2061201144743952847",
+    "twitter_2061455606419243366",
+    "twitter_2061471565439451569",
+    "twitter_2061714565541359667",
+    "twitter_2061820672129872311",
+    "twitter_2061825289647218982"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060664075378368776",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "abortion/reproductive health",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"reproductive health\"",
+        "rationale": "The post explicitly discusses reproductive health and pregnancy outcomes."
+      },
+      {
+        "message_id": "twitter_2060664075378368776",
+        "feature_name": "normative_moral_language",
+        "feature_value": "supportive normative framing of helping adolescents",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"are key to helping adolescents\"",
+        "rationale": "It uses value-laden language advocating what should be provided (education/support/access)."
+      },
+      {
+        "message_id": "reddit_1kexwzc_mqmf9iq",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "strong profanity for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"jesus fucking christ\"",
+        "rationale": "The wording uses a profanity intensifier in an informal outburst."
+      },
+      {
+        "message_id": "reddit_1kexwzc_mqmf9iq",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "emphatic standalone outburst punctuation/emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"jesus fucking christ.\"",
+        "rationale": "The post culminates in an emphatic exclamation-style clause with strong emphasis."
+      },
+      {
+        "message_id": "twitter_2061455606419243366",
+        "feature_name": "target_directionality",
+        "feature_value": "criticizes lawmakers/GOP legal limits; calls SCOTUS to strike down laws",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"So do you know how stupid you look\" \"SCOTUS, just rule that\"",
+        "rationale": "It attacks the perceived attempt to restrict rights and directs SCOTUS action."
+      },
+      {
+        "message_id": "twitter_2061455606419243366",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "explicit judicial instruction to end the issue",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"SCOTUS, just rule that to stop the nonsense.\"",
+        "rationale": "The post prescribes an authority action (rule) to resolve the dispute."
+      },
+      {
+        "message_id": "bluesky_d73a57f060b6672f8ea023c9dfbdd764944eec3d8765a8abcddaca87b5a6ed99",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"repeal the 2nd Amendment\"",
+        "rationale": "The content centers directly on the Second Amendment and gun rights."
+      },
+      {
+        "message_id": "reddit_1tb0kz2_oldem36",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "party contrast with fiscal-conservatism claims",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The Republican Party is no longer\" \"should be looking for new leadership\"",
+        "rationale": "It uses a comparative party assessment and concludes with a leadership-oriented directive."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tsx0f1_op056o1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "extreme profanity targeting politicians",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Trump\" \"triple fuck Mike Pence\"",
+        "rationale": "The post uses repeated explicit profanity directed at named figures."
+      },
+      {
+        "message_id": "reddit_1trf9va_ooofvrv",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting dismissal of opponent (TDS/bootlicking)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Take your TDS\" \"bootlicking MAGA brain\"",
+        "rationale": "It contains derogatory labels to belittle the other side rather than argue substantively."
+      },
+      {
+        "message_id": "bluesky_5f0fc7b21b3ee7bf3a36f7b938615da6fbc56e3122b18ce017e85a26b0643c86",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high density of institutions/actors (DOJ, Supreme Court, Congress, Trump)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The DOJ, the Supreme Court, Congress/GOP\" \"Treasury\" \"Trump\"",
+        "rationale": "It strings together many named governmental entities and a political figure."
+      },
+      {
+        "message_id": "bluesky_5f0fc7b21b3ee7bf3a36f7b938615da6fbc56e3122b18ce017e85a26b0643c86",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "corruption/illicit financial framing as systemic capture",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"DOJ... are corrupt and Treasury an ATM for Trump\"",
+        "rationale": "It alleges coordinated corruption and illicit diversion using charged metaphors."
+      },
+      {
+        "message_id": "reddit_1kspe1b_mto7c5g",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation of political groups/souls/integrity",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"sold their souls\" \"There's not a moral\"",
+        "rationale": "It uses moral/virtue language to vilify parties."
+      },
+      {
+        "message_id": "twitter_2061825289647218982",
+        "feature_name": "call_to_action",
+        "feature_value": "impeachment/jail demand for political figures",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"should be impeached\" \"should be thrown in jail\"",
+        "rationale": "It states an explicit punitive/legal action for public officials."
+      },
+      {
+        "message_id": "twitter_2061714565541359667",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "directly addresses a person with a question challenge",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"@KatieJWhite\" \"You're not being open and transparent.\"",
+        "rationale": "The post addresses the user/target directly and challenges openness via a direct statement."
+      },
+      {
+        "message_id": "bluesky_eea306c58c8a7552871a9d1aae263a5e22a90fac0715e3f04eaa5ece889fcc29",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "sarcastic reframe with absurd 'ballrooms' concept and 'few bad apples'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"ballrooms\" \"stop the \\\"few bad apples\\\"\"",
+        "rationale": "It uses mocking, exaggerated substitution to ridicule the referenced policy approach."
+      }
+    ]
+  }
+}

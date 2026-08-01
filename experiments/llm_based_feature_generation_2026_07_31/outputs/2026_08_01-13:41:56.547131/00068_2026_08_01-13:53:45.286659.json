@@ -1,0 +1,180 @@
+{
+  "batch_id": 68,
+  "message_ids": [
+    "bluesky_38f563e48ab134db6d6eb62167173a7346a8d43dc2e6f6eb2494c3b5a2232e5f",
+    "bluesky_8547b69af7f4e175e715537e9c7ae7905a4303c4e7749c5490fa6d65eb32903e",
+    "bluesky_8a941fd4cf0b5c05ae3545ed0f50ebacd20c4ac264124b4625fdde57cac72dd1",
+    "bluesky_a6ebd433e7c72230ae952158250804dc95daf60185fc870c7ad018b8bef7c3c6",
+    "reddit_1kf02u7_mqn6zxu",
+    "reddit_1t3f5jk_ojw9i1b",
+    "reddit_1t7d5jc_oko7op2",
+    "reddit_1td4d2o_olz3vvg",
+    "reddit_1tqyx7p_ookxy6j",
+    "reddit_1tsgnti_oow86pq",
+    "reddit_1tsx0f1_ooyhgjl",
+    "reddit_1tw3aly_oplzv9z",
+    "reddit_1u2nrer_oqz9woi",
+    "twitter_2059970491381887077",
+    "twitter_2060910636192931989",
+    "twitter_2061038624087433709",
+    "twitter_2061141671199268881",
+    "twitter_2061273075174293756",
+    "twitter_2061531052519342210",
+    "twitter_2061823439556452765"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tqyx7p_ookxy6j",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "So... there are folks who want to get rid of tax filing writ large.  Basically a system...",
+        "rationale": "The post contains multiple paragraphs and several explanatory sentences, indicating a long length."
+      },
+      {
+        "message_id": "reddit_1tqyx7p_ookxy6j",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "tax administration / IRS pre-filled returns",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "a system where the IRS sends you a completed return",
+        "rationale": "The central policy topic is how tax filing would be handled by the IRS."
+      },
+      {
+        "message_id": "reddit_1tqyx7p_ookxy6j",
+        "feature_name": "causal_claim_present",
+        "feature_value": "party blocks implementation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "But guess which party blocks that?  The GOP.",
+        "rationale": "The text asserts a causal relationship between a party and blocking the proposal."
+      },
+      {
+        "message_id": "reddit_1tsgnti_oow86pq",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "colloquial / conversational phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Troublesome news article?",
+        "rationale": "The register uses conversational framing and direct rhetorical questions."
+      },
+      {
+        "message_id": "reddit_1tsgnti_oow86pq",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "self-sealing belief system / cultish dynamics",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "self sealing belief system.",
+        "rationale": "Describes belief formation in a closed, reinforcing way that resembles conspiratorial/cult framing."
+      },
+      {
+        "message_id": "twitter_2061531052519342210",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "brand/person + acronyms (Pattie Gonia, LGBTQ+)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Pattie Gonia Merch... LGBTQ+ visibility.",
+        "rationale": "The post includes multiple named entities and a well-known acronym."
+      },
+      {
+        "message_id": "twitter_2061531052519342210",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate action messaging",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "climate action, outdoor culture",
+        "rationale": "The dominant topic is climate action in the context of promotional text."
+      },
+      {
+        "message_id": "twitter_2061038624087433709",
+        "feature_name": "call_to_action",
+        "feature_value": "persuasive challenge request for clarification",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Make it make sense maga.",
+        "rationale": "Uses imperative language to demand justification, functioning as a direct persuasive prompt."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1u2nrer_oqz9woi",
+        "feature_name": "pragmatics_intent",
+        "feature_value": "dismissive/derisive emphasis (masterclass in NOT doing)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "truly a masterclass in how NOT to do it",
+        "rationale": "Uses ridicule-like framing to disparage the referenced foreign policy."
+      },
+      {
+        "message_id": "twitter_2061823439556452765",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong slurs and taboo terms (racist/sex-based derogatives)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "USELESS  SHITBAG WOMEN THAT RUN THE USA",
+        "rationale": "Contains highly derogatory, taboo language aimed at a group."
+      },
+      {
+        "message_id": "twitter_2061823439556452765",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "capitalization + line breaks + emphatic shouting",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "NO. WHY??",
+        "rationale": "Multiple caps lines and exclamatory/question punctuation indicate intense emphasis."
+      },
+      {
+        "message_id": "twitter_2060910636192931989",
+        "feature_name": "geographic_scope",
+        "feature_value": "US state level (California vs Second Amendment)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "California does not get the final word on the Second Amendment",
+        "rationale": "Explicitly references California and ties it to Second Amendment governance."
+      },
+      {
+        "message_id": "twitter_2060910636192931989",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Second Amendment",
+        "rationale": "The policy domain is explicitly firearm rights."
+      },
+      {
+        "message_id": "twitter_2061273075174293756",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct challenge using 'I triple dog dare you'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "I tripe dog dare you.",
+        "rationale": "Uses a dare directly addressing an implied opponent."
+      },
+      {
+        "message_id": "reddit_1tsx0f1_ooyhgjl",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "'rape of the American people' looting victim trope",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "For the next rape of the American people.",
+        "rationale": "Portrays citizens as victims of exploitation in strongly inflammatory terms."
+      },
+      {
+        "message_id": "bluesky_8a941fd4cf0b5c05ae3545ed0f50ebacd20c4ac264124b4625fdde57cac72dd1",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "climate denier vs alarmist dichotomy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Climate change deniers, like Trump...",
+        "rationale": "Frames opposing viewpoints as fundamentally incapable of understanding, creating a polarized narrative."
+      }
+    ]
+  }
+}

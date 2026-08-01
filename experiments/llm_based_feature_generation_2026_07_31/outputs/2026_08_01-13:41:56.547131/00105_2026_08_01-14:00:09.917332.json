@@ -1,0 +1,180 @@
+{
+  "batch_id": 105,
+  "message_ids": [
+    "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+    "reddit_1kikfi4_mrgyfwl",
+    "reddit_1kl6dga_ms01wcp",
+    "reddit_1l0vp16_mvnvy67",
+    "reddit_1l7ae5z_mwvs86w",
+    "reddit_1limsav_mzdef15",
+    "reddit_1lkisll_mzrznv0",
+    "reddit_1lnv2o6_n0ln0ig",
+    "reddit_1thqwmy_omphptv",
+    "reddit_1ttmc22_op4b2rm",
+    "reddit_1twr00b_oprqesu",
+    "reddit_1u22gzn_oquux8n",
+    "twitter_2061404017675108679",
+    "twitter_2061594643284791751",
+    "twitter_2061613214564032791",
+    "twitter_2061805705623941630",
+    "twitter_2061806794683355150",
+    "twitter_2061819647175876945",
+    "twitter_2061819938440888488",
+    "twitter_2061824316346397178"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kikfi4_mrgyfwl",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses dehumanizing/insulting framing ('Fascist pigs')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fascist pigs\"",
+        "rationale": "The text uses extreme hostile labeling directed at an actor group."
+      },
+      {
+        "message_id": "reddit_1l0vp16_mvnvy67",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains strong profanity ('Fuck off', 'fucking')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck off\" / \"fucking\"",
+        "rationale": "Clear profanity and aggressive imperative language are present."
+      },
+      {
+        "message_id": "reddit_1thqwmy_omphptv",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Explicit 'if' condition tied to reaction/policy stance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"so conservatives need to react strongly to oppose that if they want\"",
+        "rationale": "The sentence uses an if-condition structure governing a recommendation."
+      },
+      {
+        "message_id": "twitter_2061806794683355150",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Includes hashtag '#Time'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#Time\"",
+        "rationale": "A hashtag token is directly appended at the end."
+      },
+      {
+        "message_id": "reddit_1u22gzn_oquux8n",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Accuses political opponent of targeting enemies and 'steal' motives; asserts projection",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"trying to steal 1.8 Billion\" / \"Everything this guy claims is wrong about this country is projection.\"",
+        "rationale": "The post attributes wrongdoing and uses projection framing as a moral/psychological claim."
+      },
+      {
+        "message_id": "reddit_1twr00b_oprqesu",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Claims 'racists and misogynists' and mentions a 'join up' coalition with 'America' framing",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"America is racist\" / \"So running a woman... just enough to get the racists and misogynists to join up.\"",
+        "rationale": "It constructs an in-group country moral indictment and identifies an out-group (racists/misogynists) as an opposing coalition."
+      },
+      {
+        "message_id": "reddit_1ttmc22_op4b2rm",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Multiple issue-clauses with 'and therefore' causal chain",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"do pointless wars... and therefore the price of goods\"",
+        "rationale": "The post strings actions to consequences using conjunctions and explicit causal linkage."
+      },
+      {
+        "message_id": "twitter_2061613214564032791",
+        "feature_name": "call_to_action",
+        "feature_value": "Invites audience to unfollow ('feel free to unfollow')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"feel free to unfollow if you'd like.\"",
+        "rationale": "The speaker issues a direct permissive instruction to readers."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061819647175876945",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Uses political hashtags '#antiTrump' and '#Israel'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#antiTrump\" / \"#Israel\"",
+        "rationale": "Hashtags are used as salient topical labels."
+      },
+      {
+        "message_id": "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun policy (magazines, 'assault weapon')",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"ban standard-capacity magazines\" / \"expanded definition of an 'assault weapon'\"",
+        "rationale": "The content centers on firearm regulation specifics."
+      },
+      {
+        "message_id": "twitter_2061404017675108679",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Line-broken enumerations of failed outcomes and 'War War War'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"No cheap gas.\" / \"No middle class renaissance.\" / \"War War War War\"",
+        "rationale": "The post uses repeated short clauses/lines as an enumerative structure."
+      },
+      {
+        "message_id": "twitter_2061805705623941630",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Civil-rights-moment comparison and deportation-raids framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"civil rights moment\" / \"deportation raids\"",
+        "rationale": "It frames a targeted group under persecution and compares to historic rights struggles."
+      },
+      {
+        "message_id": "reddit_1limsav_mzdef15",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Addresses 'you' and blames the voter directly",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"if you\u00019re hurt\" / \"you voted for him\" / \"it's your own damn fault\"",
+        "rationale": "The phrasing is directly targeted at the second person with culpability attribution."
+      },
+      {
+        "message_id": "reddit_1l7ae5z_mwvs86w",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses profanity insult 'Fuck trump'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck trump\"",
+        "rationale": "Explicit profanity is used to attack a political figure."
+      },
+      {
+        "message_id": "reddit_1kl6dga_ms01wcp",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Economic blame via tariffs and incompetence; 'net loss across the board'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"His stupid tarrifs have been a net loss across the board.\"",
+        "rationale": "A definitive causal/evaluative economic outcome is asserted."
+      },
+      {
+        "message_id": "reddit_1lnv2o6_n0ln0ig",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "Very short single-sentence insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Further evidence that republicans are pure idiots.\"",
+        "rationale": "The message is extremely brief and functions as a general insult."
+      }
+    ]
+  }
+}

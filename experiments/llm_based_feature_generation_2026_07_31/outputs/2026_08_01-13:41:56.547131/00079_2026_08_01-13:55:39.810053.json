@@ -1,0 +1,180 @@
+{
+  "batch_id": 79,
+  "message_ids": [
+    "bluesky_9691dfc8614af4ab1f3f66c0f2737ddb5c4cb1fe8035a83d4a1154e660fbfabf",
+    "bluesky_a9783e55eda3748da37362976eb57e626a43fef76687f38ab08413979b4ac841",
+    "bluesky_b6244ed86348c0e70eb3f94b96ecc6ed310c221edecb63a6a3e5c443353df0b2",
+    "bluesky_bb46eeb55eb21544e08c238ab776a240f25b4c71152680d1ede4c4097585649f",
+    "bluesky_d0e99dc743110f131ff47843e245b9345fdce5756b4fe460a71659cd338852d3",
+    "bluesky_d865e4f5aeb622082e7400fe5f68f339d8702a44dc97461e0446997ae161e44d",
+    "reddit_1kgs9fz_mr3bvx9",
+    "reddit_1khoe2q_mr9psfp",
+    "reddit_1l1e80m_mvlbds4",
+    "reddit_1lfmfhs_myq4ibi",
+    "reddit_1tnmoob_onvnypi",
+    "reddit_1ts91q8_op1ibpl",
+    "reddit_1ttsfrd_op4rbtm",
+    "reddit_1tvyw6x_opmhe21",
+    "reddit_1u0gjyt_oqitqio",
+    "reddit_1u24ryn_oqx61o4",
+    "twitter_2060630131480088657",
+    "twitter_2061014287473082558",
+    "twitter_2061254253843530192",
+    "twitter_2061810168220811634"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1l1e80m_mvlbds4",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "contains explicit vulgar phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "They dont give a fuck about anything",
+        "rationale": "The text uses a direct profanity term aimed at conservatives/liberals."
+      },
+      {
+        "message_id": "reddit_1ts91q8_op1ibpl",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "opens with assumption then rejects it",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Assuming Texas based on the name, incorrect.",
+        "rationale": "It uses an assumption frame followed by a correction."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqitqio",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions specific athlete and teams",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Brandi Chastain... Team USA",
+        "rationale": "There is notable proper-noun referencing beyond generic terms."
+      },
+      {
+        "message_id": "bluesky_bb46eeb55eb21544e08c238ab776a240f25b4c71152680d1ede4c4097585649f",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns and firearms regulation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "we\u0019ll outlaw guns... Banning assault rifles... background checks",
+        "rationale": "The post centers on gun control measures."
+      },
+      {
+        "message_id": "bluesky_d865e4f5aeb622082e7400fe5f68f339d8702a44dc97461e0446997ae161e44d",
+        "feature_name": "causal_claim_present",
+        "feature_value": "attributes harm to a specific actor\u2019s spending/behavior",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump is spending like crazy on Iran and running up huge debt as he drains the treasury",
+        "rationale": "It links Trump\u2019s actions to debt/treasury drainage."
+      },
+      {
+        "message_id": "twitter_2061014287473082558",
+        "feature_name": "normative_moral_language",
+        "feature_value": "values-centered justice/autonomy framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "reproductive health autonomy and justice",
+        "rationale": "It uses moral/normative terms to describe the movement."
+      },
+      {
+        "message_id": "reddit_1tvyw6x_opmhe21",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "accuses cuts as redirecting away from fraud/grift",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Not so, he is cutting the fraud of illegals getting Medicaid.",
+        "rationale": "The speaker proposes a justification for funding changes."
+      },
+      {
+        "message_id": "reddit_1tnmoob_onvnypi",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none; but mirror shows gendered vote-splitting target",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "him splitting the GOP vote would be fantastic!",
+        "rationale": "The utterance directly targets electoral strategy via a named party."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_a9783e55eda3748da37362976eb57e626a43fef76687f38ab08413979b4ac841",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "warning phrase in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "BEWARE RUSSIAN PROPAGANDA",
+        "rationale": "The post begins with a conspicuous all-caps warning."
+      },
+      {
+        "message_id": "bluesky_a9783e55eda3748da37362976eb57e626a43fef76687f38ab08413979b4ac841",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "blames propaganda/culpability externalization",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "the Democrats are in no way responsible nor culpable... it's 100% on Trump/GOP.",
+        "rationale": "It frames corruption/misdeeds as a coordinated external propaganda narrative."
+      },
+      {
+        "message_id": "twitter_2061254253843530192",
+        "feature_name": "call_to_action",
+        "feature_value": "explicit request for explanation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Somebody please tell me WHY Democrats keep saying",
+        "rationale": "The speaker directly asks others to tell/explain."
+      },
+      {
+        "message_id": "twitter_2061810168220811634",
+        "feature_name": "rhetorical_question",
+        "feature_value": "conditional rhetorical challenge about institutional membership",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Surely a police officer... shouldn't be in the #police?",
+        "rationale": "It uses 'Surely' plus a question mark to argue via a rhetorical challenge."
+      },
+      {
+        "message_id": "reddit_1lfmfhs_myq4ibi",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "contains explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "ICE can fuck off.",
+        "rationale": "The post uses a direct vulgar insult."
+      },
+      {
+        "message_id": "twitter_2060630131480088657",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "links taxes/regulation to investment/jobs losses",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "means less investment and less jobs.",
+        "rationale": "It claims economic downsides as a consequence of higher carbon taxes."
+      },
+      {
+        "message_id": "bluesky_d0e99dc743110f131ff47843e245b9345fdce5756b4fe460a71659cd338852d3",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "uses informal insults and self-labeling",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "milk toast bullshit... I'M RADICAL",
+        "rationale": "The language is colloquial and emotionally loaded with emphatic casing."
+      },
+      {
+        "message_id": "reddit_1ttsfrd_op4rbtm",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "imagines extreme harm (death camps) justified by supporters",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump could throw us into death camps",
+        "rationale": "The post invokes mass persecution/harm as an extreme scenario."
+      }
+    ]
+  }
+}

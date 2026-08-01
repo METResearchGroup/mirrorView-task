@@ -1,0 +1,207 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 4,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity/taboo and abusive slurs used for political delegitimization",
+        "defining_features": [
+          "profanity_or_taboo_language (explicit profanity)",
+          "profanity_or_taboo_language (sexual/filthy slurs as insult)",
+          "profanity_or_taboo_language (dehumanizing profanity terms like 'pigs', etc. when captured under taboo/insult)"
+        ],
+        "example_message_ids": [
+          "reddit_1kzpnb8_mv7pmya",
+          "twitter_2061827844309717462",
+          "reddit_1tv69vk_opgctfk",
+          "reddit_1lhc9kv_mz5q5sq",
+          "bluesky_73f2027325098335b7083ef0bd00cb08b05b21ab5a169adcbb0897f151e92a8f",
+          "bluesky_b7a4b909c372f45b16a5a0294a1ea20003730781118ef15e2d73160089a2d0b3"
+        ],
+        "keep_count": 5,
+        "remove_count": 20,
+        "interpretation": "When posts rely on explicit profanity or taboo slurs to insult political actors or groups, they are substantially more likely to be labeled remove\u2014suggesting moderation targets abusive/harassing language."
+      },
+      {
+        "id": 2,
+        "label": "Ridicule/mocking epithets instead of substantive argument",
+        "defining_features": [
+          "ridicule_or_mockery (calling opponents 'stupid', 'maggots', 'clowns', etc.)",
+          "ridicule_or_mockery (sarcastic openings like 'LoL, close?')",
+          "ridicule_or_mockery (dehumanizing animal/monster-style labels captured as mockery)"
+        ],
+        "example_message_ids": [
+          "reddit_1lkj9on_mzss677",
+          "reddit_1levqjx_mynwtf2",
+          "reddit_1tnobm9_onxadx3",
+          "reddit_1tvll8k_opicflf",
+          "reddit_1lhaiqa_mz2n60h",
+          "reddit_1l6eybs_mwrhi9t"
+        ],
+        "keep_count": 3,
+        "remove_count": 8,
+        "interpretation": "Mockery/epithets that dismiss groups rather than discuss policy tend to correlate with remove outcomes; moderation likely treats ridicule-focused content as harassment or low-credibility hostility."
+      },
+      {
+        "id": 3,
+        "label": "Normative moral condemnation plus explicit calls to ban/stop/remove",
+        "defining_features": [
+          "normative_moral_language (moral condemnation paired with demand/instruction)",
+          "policy_prescription_present (explicit policy change proposal)",
+          "call_to_action (direct instruction to remove/stop/act against a target)"
+        ],
+        "example_message_ids": [
+          "twitter_2059696137011925054",
+          "reddit_1u0oc51_oql9wo4",
+          "reddit_1t4fs97_ok3xved",
+          "reddit_1t1x818_ojjzie8",
+          "reddit_1u0gjyt_oqi8kyn"
+        ],
+        "keep_count": 5,
+        "remove_count": 4,
+        "interpretation": "Many posts that include moralized condemnation combined with direct policy prescriptions appear in both groups, but the theme captures a consistent \u201cinstructional activism\u201d pattern that may be acceptable when not paired with severe abuse/profanity."
+      },
+      {
+        "id": 4,
+        "label": "Us-vs-them directional blame and outgroup characterizations",
+        "defining_features": [
+          "us_vs_them_framing (contrasts one party/group with another)",
+          "left_right_directional_cue (ideological labeling of threat/blame side)",
+          "mirror_shift_direction (retargeting blame from one cause to another, still directional)"
+        ],
+        "example_message_ids": [
+          "twitter_2061824806564094433",
+          "reddit_1tsvd1m_ooyh3np",
+          "twitter_2061511976220598360",
+          "reddit_1u1nsuy_oqsbrbf",
+          "twitter_2061817052759789785",
+          "twitter_2061639895224094831"
+        ],
+        "keep_count": 6,
+        "remove_count": 8,
+        "interpretation": "Directional blame toward political blocs (often framed as deceitful, dangerous, fascist, etc.) appears across both labels, but it becomes more risky when paired with harassment, extreme labels, or violent/expansive in-group-out-group prescriptions."
+      },
+      {
+        "id": 5,
+        "label": "Conspiratorial/disinformation framing as explanation",
+        "defining_features": [
+          "conspiratorial_framing (gaslighting/propaganda/radicals/covert plans)",
+          "conspiratorial_framing (lists of conspiracy streams like QAnon/Flat Earth)",
+          "conspiratorial_framing (credulity framing like 'blindly swallow')"
+        ],
+        "example_message_ids": [
+          "twitter_2059991028162044034",
+          "reddit_1kubmyy_mu0ffzi",
+          "bluesky_3d8c80515b4d48c643928f637b0a08ac4e57dd13d9c93c4b2e10d0639efb5a97",
+          "reddit_1kubmyy_mu16zs3",
+          "bluesky_b2a1292a5d8bfcf822d1e4d4194fb0b69efe10dd244d2fb22ddd30343b5b293b"
+        ],
+        "keep_count": 2,
+        "remove_count": 4,
+        "interpretation": "Posts that explain politics via disinfo plots, propaganda/gaslighting, or named conspiracy movements are more likely to be removed in this corpus, indicating moderation concern with conspiracy-style claims."
+      },
+      {
+        "id": 6,
+        "label": "High-contrast emphasis and emphatic formatting (all-caps, ellipses, punctuation intensity)",
+        "defining_features": [
+          "high_punctuation_intensity (multiple punctuation marks, ellipses, dense expressive punctuation)",
+          "all_caps_emphasis (emphatic all-caps segments/slogans)",
+          "high_contrast_label_pair (slash-separated ideological labeling) when used for emphatic categorization"
+        ],
+        "example_message_ids": [
+          "twitter_2061812818752532760",
+          "twitter_2061817052759789785",
+          "bluesky_38aa068c23789e3430e3c655e6556053efca1bc377e9d9a373a48db183c9c8c5",
+          "bluesky_bd8608344c654d06521b2c029233776372ebc50752e0fcfacb3b0be09c82683d",
+          "twitter_2061427872783589498"
+        ],
+        "keep_count": 9,
+        "remove_count": 2,
+        "interpretation": "Strong emphasis/formatting is common in kept posts here and is less consistently associated with remove on its own\u2014suggesting intensity alone isn\u2019t the primary moderation trigger unless paired with abusive/profane content."
+      },
+      {
+        "id": 7,
+        "label": "Policy domain focus: guns/weapons regulation and gun violence",
+        "defining_features": [
+          "primary_policy_domain (gun violence / gun rights / assault-weapon ban / open carry)",
+          "primary_policy_domain (weapon ban legislation)"
+        ],
+        "example_message_ids": [
+          "twitter_2060747854801756448",
+          "bluesky_66683b2ac8d238b2ea38fd3e4e1941a9bdaecd0d7d39f0c770ce84aae26d51c",
+          "bluesky_6f49aeb9ce1d86a530a95dadcc8eb0327e75e5b63d97c77f72a70f06aa9ff4b8",
+          "reddit_1lhc9kv_mz34ak3",
+          "twitter_2060792161503756611"
+        ],
+        "keep_count": 4,
+        "remove_count": 1,
+        "interpretation": "Gun-policy discussions cluster as a major topic, and in this shard most are kept\u2014moderation appears more sensitive to abusive language/conspiracies than to the policy domain itself."
+      },
+      {
+        "id": 8,
+        "label": "Policy domain focus: abortion/reproductive rights (including moral rights framing)",
+        "defining_features": [
+          "primary_policy_domain (abortion/reproductive rights)",
+          "normative_moral_language (rights/obligation framing about bodily autonomy/coercion)",
+          "primary_policy_domain (abortion pill / abortion access / abortion debate)"
+        ],
+        "example_message_ids": [
+          "twitter_2059696137011925054",
+          "twitter_2060042991528513648",
+          "twitter_2061641614448333300",
+          "twitter_2061503756611"
+        ],
+        "keep_count": 2,
+        "remove_count": 2,
+        "interpretation": "Reproductive-rights content appears in both labels; risk likely increases when abortion is expressed via highly inflammatory taboo framing or extreme abusive insults captured elsewhere."
+      },
+      {
+        "id": 9,
+        "label": "Calls for targeted action against systems/agents (implicating institutions like ICE, governments, or specific agencies)",
+        "defining_features": [
+          "call_to_action (direct instruction to governments/agencies or to enforce/act)",
+          "second_person_direct_address (imperatives directed to an entity, e.g., 'ICE can start...')",
+          "policy_prescription_present (specific operational/eligibility oversight requirements)"
+        ],
+        "example_message_ids": [
+          "reddit_1l5ve6e_mwkcox3",
+          "twitter_2060968801567678581",
+          "reddit_1ke2vut_mqlccsr",
+          "reddit_1l5ve6e_mwkcox3",
+          "reddit_1tc5bjg_ollxxgv"
+        ],
+        "keep_count": 3,
+        "remove_count": 2,
+        "interpretation": "Some posts advocate concrete operational changes (e.g., agency enforcement behavior, eligibility oversight). In this corpus they appear more often in keep than remove, implying that action-oriented content is acceptable when not expressed as abusive harassment."
+      },
+      {
+        "id": 10,
+        "label": "Victimhood/persecution framing and harm-to-innocents rhetoric",
+        "defining_features": [
+          "victimhood_or_persecution_framing (families/children harmed by shootings)",
+          "victimhood_or_persecution_framing (minorities\u2019 rights threatened / persecution)",
+          "victimhood_or_persecution_framing (mass shooting tragedy used as political exploitation evidence)"
+        ],
+        "example_message_ids": [
+          "bluesky_6f49aeb9ce1d86a530a95dadcc8eb0327e75e5b63d97c77f72a70f06aa9ff4b8",
+          "twitter_2060042991528513648",
+          "reddit_1t6f49aeb9ce1d86a530a95dadcc8eb0327e75e5b63d97c77f72a70f06aa9ff4b8",
+          "bluesky_0f10f8b2e7ad35ac78d16202521045b21ebb300d2167d8ee6c7178fb17a622e6",
+          "twitter_2061064210269024336"
+        ],
+        "keep_count": 4,
+        "remove_count": 1,
+        "interpretation": "Where posts frame events as exploitation of tragedy or persecution of protected groups, they more often fall under keep in this dataset\u2014suggesting that harm/victim narratives are not, by themselves, a remove trigger."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Profanity/taboo abuse and ridicule/mocking frequently co-occur with outgroup blame (Themes 1, 2, 4), which correlates with higher remove rates.",
+      "Emphatic formatting/intensity (Theme 6) spans both labels and appears to be a lower-risk feature unless paired with abusive language (Themes 1\u20132).",
+      "Conspiratorial/disinformation explanation (Theme 5) can combine with directional blame (Theme 4), increasing the likelihood of remove in this corpus.",
+      "Policy-domain topics (Themes 7\u20138) are moderated more by the rhetorical style (Themes 1\u20136) than by the underlying issue category."
+    ]
+  }
+}

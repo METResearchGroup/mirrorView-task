@@ -1,0 +1,171 @@
+{
+  "batch_id": 29,
+  "message_ids": [
+    "bluesky_3e90dcf914f245dc6d16a944867bd11aa5fd7e79d22eae7c151a6b53eefa3fd7",
+    "bluesky_462f090b4b4bd06dc91f52b4435e84ba1afda156fe1444a341390b0e48b792b2",
+    "bluesky_670c19341a61e016f63609dbc10baf2b6ccd16a2afb72ba3ff6dff6e3160754f",
+    "bluesky_c0342070a99c39277bbf207c858162bf3671491218b92bb554274446cdf25e3c",
+    "bluesky_ce5065fdd1f827bd90e7fcb55b562fc855b4cdd63913160405ab7d76a3105799",
+    "reddit_1kce10r_mq1x36z",
+    "reddit_1kwrc53_muljhyp",
+    "reddit_1lat5d5_mxncuis",
+    "reddit_1lm2lff_n080m4i",
+    "reddit_1th143w_omkcrg4",
+    "reddit_1ti5cqx_omsl0xd",
+    "reddit_1tt6yir_op1touc",
+    "reddit_1tuwb8f_opd0nfr",
+    "reddit_1tuzkhw_opdf6j5",
+    "reddit_1u1ngzk_oqr6529",
+    "twitter_2060336028037399014",
+    "twitter_2060435665678942447",
+    "twitter_2061689827829891523",
+    "twitter_2061745046727111164",
+    "twitter_2061821573997486567"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 7,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061745046727111164",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct mobilization of \u201cvoters\u201d (wake up voters).",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Wake up voters.\"",
+        "rationale": "The text explicitly urges an audience to take action or awaken to an issue."
+      },
+      {
+        "message_id": "twitter_2061745046727111164",
+        "feature_name": "election_fraud_voter_tampering_claims",
+        "feature_value": "Claims fraudulent elections and corrupted voting systems.",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"fraudulent elections\" ... \"The voting machines and tabulators can be corrupted.\"",
+        "rationale": "It asserts election fraud and corruption of voting infrastructure as factual."
+      },
+      {
+        "message_id": "bluesky_ce5065fdd1f827bd90e7fcb55b562fc855b4cdd63913160405ab7d76a3105799",
+        "feature_name": "international_organization_named_entity_density",
+        "feature_value": "Repeated reference to UN as the subject/agent.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Same UN\" ... \"UN which has more resolutions\"",
+        "rationale": "The post repeatedly mentions \u201cUN,\u201d indicating a named entity focus."
+      },
+      {
+        "message_id": "reddit_1tt6yir_op1touc",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Frames energy debate in terms of price destabilization and economic \u201chostage.\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"destabilized oil prices\" ... \"be held economic hostage\"",
+        "rationale": "It evaluates policy alternatives via economic costs and dependence risk."
+      },
+      {
+        "message_id": "bluesky_3e90dcf914f245dc6d16a944867bd11aa5fd7e79d22eae7c151a6b53eefa3fd7",
+        "feature_name": "list_or_enumeration_of_beliefs",
+        "feature_value": "Slash-separated \u201cAnti X\u201d series targeting multiple groups/issues.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Anti First Nations - always\\nAnti women - misogynist\\nAnti migrant- white Australia\"",
+        "rationale": "The message uses a dense enumeration pattern to attribute a set of attitudes/actions."
+      },
+      {
+        "message_id": "reddit_1u1ngzk_oqr6529",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Portrays an ingroup as \u201cevil leftists\u201d overlords (sarcastic \u2018LOL\u2019).",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"evil leftists\" ... \"overlords, LOL\"",
+        "rationale": "It constructs a conflict between \u201cthey\u201d (evil leftists) and the speaker position."
+      },
+      {
+        "message_id": "reddit_1u1ngzk_oqr6529",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Makes a claim about rigging elections without proof and asks for a conclusion.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"without a single shred of proof that they did it\"",
+        "rationale": "It relies on an evidentiary assertion about lack of proof while still making a general implication."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lat5d5_mxncuis",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong taboo term(s) multiple times.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucked up thing\" ... \"fucked up thing\"",
+        "rationale": "The post contains explicit taboo wording."
+      },
+      {
+        "message_id": "reddit_1lm2lff_n080m4i",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity directed at media outlets (\u201cfuck\u201d).",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck the new york times, fuck all corporate media.\"",
+        "rationale": "The post uses direct profanity as hostility toward targets."
+      },
+      {
+        "message_id": "reddit_1kce10r_mq1x36z",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses slang/insult terms and casual dismissiveness.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"shit show\" ... \"I give no F's\"",
+        "rationale": "The language is informal with insult and meme-like phrasing."
+      },
+      {
+        "message_id": "twitter_2061821573997486567",
+        "feature_name": "corruption_and_root_cause_claim",
+        "feature_value": "Root-cause blame on corruption for privatization and evaluation failures.",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"Corruption is the root cause for privatisation of Education & Health care systems.\"",
+        "rationale": "It presents a causal explanation attributing multiple problems to \u201cCorruption.\u201d"
+      },
+      {
+        "message_id": "bluesky_c0342070a99c39277bbf3671491218b92bb554274446cdf25e3c",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun violence and gun reform framing in the US context.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Gun violence is an epidemic in America\" ... \"gun reform\"",
+        "rationale": "The core topic is gun violence/gun reform policy."
+      },
+      {
+        "message_id": "reddit_1ti5cqx_omsl0xd",
+        "feature_name": "corruption_normative_language",
+        "feature_value": "Claims voting for a party equals voting for \u201ccorruption\u201d and \u201ccorruption ... ever seen.\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"voting for the most obscene level of corruption\"",
+        "rationale": "It uses strong moral/negative valuation linked to political choice."
+      },
+      {
+        "message_id": "reddit_1kwrc53_muljhyp",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Emphatic approval plus strong condemnatory targets (\u201ccriminal assholes\u201d).",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"100%. These criminal assholes need their comeuppance.\"",
+        "rationale": "The message expresses intense approval/anger and calls for punishment."
+      },
+      {
+        "message_id": "twitter_2061689827829891523",
+        "feature_name": "targeted_actor_type_tech_elites_vs_politicians",
+        "feature_value": "Contrasts Bernie\u2019s AI rules vs Trump/AI emphasis; names tech figure (Musk in mirror).",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"Bernie wants heavy rules on AI\" ... \"Trump\u2019s aiming it at\"",
+        "rationale": "It assigns opposing approaches to specific political actors and frames them against each other."
+      }
+    ]
+  }
+}

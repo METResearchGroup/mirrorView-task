@@ -1,0 +1,204 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 13,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity / taboo insults / dehumanizing labels",
+        "defining_features": [
+          "profanity_or_taboo_language",
+          "informal_register_or_slang (insult phrasing)",
+          "ridicule_or_mockery (degrading characterization / mocking labels)"
+        ],
+        "example_message_ids": [
+          "reddit_1keojcj_mqlr5e2",
+          "reddit_1kigdcc_mrgsnzz",
+          "reddit_1trf9va_oonb3tq",
+          "reddit_1l6jnqp_mwpbia3",
+          "reddit_1lihmm4_mzdo699",
+          "bluesky_e3a27f7d4e5a9aab34be28e5f96c1ab5f456fdbb61b82b117a479426f41b9ade",
+          "reddit_1txopv4_opxng2m"
+        ],
+        "keep_count": 1,
+        "remove_count": 23,
+        "interpretation": "Posts in this theme rely on explicit profanity and derogatory/insulting language to attack people or groups; this is often moderation-relevant because it escalates hostility and can target protected classes or political opponents with abuse."
+      },
+      {
+        "id": 2,
+        "label": "Calls for action / imperatives (prosecute, fight, stop, go after, etc.)",
+        "defining_features": [
+          "call_to_action",
+          "policy_prescription_present",
+          "imperative or must/stop phrasing (expressed via existing feature values)"
+        ],
+        "example_message_ids": [
+          "reddit_1tzs7nk_oqe8446",
+          "reddit_1tzjirf_oqe9ymk",
+          "twitter_2061487131390886147",
+          "twitter_2060093420027187507",
+          "reddit_1kd68tv_mqdvza2",
+          "twitter_2061032441104495046"
+        ],
+        "keep_count": 5,
+        "remove_count": 7,
+        "interpretation": "This theme covers prescriptive, command-like communication urging concrete behavioral or political steps (e.g., \u201cMUST prosecute\u201d, \u201cStop\u201d, \u201cGo after\u201d). Moderation may focus on whether these are incitement/retaliation-adjacent versus legitimate advocacy."
+      },
+      {
+        "id": 3,
+        "label": "Outgroup vs ingroup framing (us-vs-them / \u201cyour side\u201d contrasts)",
+        "defining_features": [
+          "us_vs_them_framing",
+          "target_directionality",
+          "contrastive_but_however_structure",
+          "mirror_shift_direction"
+        ],
+        "example_message_ids": [
+          "bluesky_8fcc2b0304eb1749e5105c0235c5be9fd2dba47df66b3bf124865bbdba049f5b",
+          "reddit_1u16m18_oqpt1lh",
+          "reddit_1tzjirf_oqe9ymk",
+          "reddit_1l6jnqp_mwpbia3",
+          "twitter_206137? (none explicitly; use: )",
+          "bluesky_260ee8942834123c524ca3ad5e87645e4fe82b9b65546cd6f8943e725ed2b046",
+          "reddit_1tr6mt1_oolg76y"
+        ],
+        "keep_count": 4,
+        "remove_count": 9,
+        "interpretation": "Many posts structure disagreement through in-group/out-group contrasts, blame targeting, or mirror retargeting. This pattern can correlate with escalatory rhetoric and selective moral condemnation."
+      },
+      {
+        "id": 4,
+        "label": "Emphatic punctuation and ALL CAPS for urgency",
+        "defining_features": [
+          "all_caps_emphasis",
+          "high_punctuation_intensity"
+        ],
+        "example_message_ids": [
+          "twitter_2060249532940579284",
+          "twitter_2060364337416479047",
+          "twitter_2061789176497140214",
+          "bluesky_5ab663ba0ae92491895ea4e9d60f538de7c73bd48b0b0b2510f0afeabd7260c6",
+          "reddit_1tnf5qd_onvyes2",
+          "twitter_2061727951675105323",
+          "reddit_1tnf5qd_ontlz5o"
+        ],
+        "keep_count": 5,
+        "remove_count": 5,
+        "interpretation": "This theme signals high emotional intensity and urgency via capitalization and heavy punctuation. It\u2019s not necessarily abusive by itself, but it frequently accompanies confrontational or extreme claims."
+      },
+      {
+        "id": 5,
+        "label": "Conditional / causal claims about political outcomes and consequences",
+        "defining_features": [
+          "causal_claim_present",
+          "conditional_if_then_structure",
+          "factual_assertion_vs_speculation",
+          "conditional_if_then_structure (including if/then, whether constructions)"
+        ],
+        "example_message_ids": [
+          "twitter_2061504991550931364",
+          "twitter_2060364337416479047",
+          "reddit_1u16m18_oqpt1lh",
+          "twitter_2060558966627750177",
+          "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2",
+          "reddit_1tnf5qd_onvyes2",
+          "twitter_2059287515173916868",
+          "reddit_1txopv4_opxng2m"
+        ],
+        "keep_count": 6,
+        "remove_count": 6,
+        "interpretation": "Posts often use \u2018if/then\u2019 or cause-and-effect language to argue that policies or election results will lead to major harm. Moderation may examine whether these claims are speculative, fear-mongering, or connected to calls for harmful action."
+      },
+      {
+        "id": 6,
+        "label": "Conspiratorial framing / hoaxes / hidden motives",
+        "defining_features": [
+          "conspiratorial_framing",
+          "factual_assertion_vs_speculation (when it\u2019s presented as definitive but is conspiracy-like)",
+          "conspiratorial framing (coordinated deception, paid supporters, strategic manipulation)"
+        ],
+        "example_message_ids": [
+          "reddit_1u0l8qh_oqjpkg5",
+          "twitter_2061803063724171489",
+          "twitter_2061213441721876988 (not; use other)",
+          "reddit_1ttbe3e_op1dm94",
+          "twitter_2061822024238981315"
+        ],
+        "keep_count": 2,
+        "remove_count": 3,
+        "interpretation": "This theme attributes events to coordinated deception or covert actors (e.g., \u201cRussian hoax\u201d, \u201cbeing paid\u201d, naming elites as causes). Such framing is often moderation-relevant due to misinformation risk and can inflame hostility."
+      },
+      {
+        "id": 7,
+        "label": "Policy/legal-domain references (Second Amendment, guns, abortion, immigration, etc.)",
+        "defining_features": [
+          "primary_policy_domain",
+          "specific_event_or_bill_reference",
+          "named_proper_nouns_density (legal/court/policy entities)"
+        ],
+        "example_message_ids": [
+          "twitter_2060249532940579284",
+          "bluesky_0a533f7ea1f7602d729ea1550f9cf668ec90e6de5a2a3602c2becd2b7f741303",
+          "twitter_2059287515173916868",
+          "twitter_2060558966627750177",
+          "twitter_2059287515173916868",
+          "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2",
+          "twitter_2059980602833506754"
+        ],
+        "keep_count": 9,
+        "remove_count": 1,
+        "interpretation": "A large portion of posts are grounded in explicit policy domains (guns/Second Amendment, abortion laws, immigration/citizenship). By itself this is content-appropriate, but it becomes more risky when combined with conspiracies, dehumanizing attacks, or direct violent/retaliatory instructions."
+      },
+      {
+        "id": 8,
+        "label": "Legal/court/case and named proper nouns density",
+        "defining_features": [
+          "named_proper_nouns_density",
+          "specific_event_or_bill_reference",
+          "primary_policy_domain (when tied to named entities)"
+        ],
+        "example_message_ids": [
+          "reddit_1keojcj_mqlr5e2 (Trump Israel etc; but legal case: use twitter_2061570902219760095)",
+          "twitter_2061570902219760095",
+          "twitter_2061194186469093549",
+          "bluesky_f3e17c208202ba4824f4c8770e6628e0fe214f494f6829e24ee02eeeab28d791",
+          "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2",
+          "reddit_1tnf5qd_onvyes2"
+        ],
+        "keep_count": 6,
+        "remove_count": 2,
+        "interpretation": "Posts that heavily cite named individuals, jurisdictions, or legal/court entities tend to be more \u2018argument/documentation\u2019 style. Moderation relevance is higher when these details are paired with abusive or conspiratorial rhetoric."
+      },
+      {
+        "id": 9,
+        "label": "Ridicule / mockery via rhetorical questions, sarcasm, and contemptuous evaluation",
+        "defining_features": [
+          "ridicule_or_mockery",
+          "rhetorical_question",
+          "anaphora_or_parallelism (mocking parallel critique)"
+        ],
+        "example_message_ids": [
+          "reddit_1trf9va_oonb3tq",
+          "twitter_2061553443932717215 (not ridicule; use: )",
+          "reddit_1te3cn8_om0eppm",
+          "bluesky_9fdb049647bb225ed3a63eeef901c7f854ca7615c0d866c09e2f3bf34e1484ff",
+          "bluesky_af8f5554f15d88b20a05104cd8066e2a7a05dade8a1903d195cf60062cf8dec2 (not; use: )",
+          "reddit_1ksyz7k_mtsdilq",
+          "bluesky_9970acc74de04e1270d57ff77ca1fa4b12134f47a08c0d6a8bd2ddb4bc3a4225"
+        ],
+        "keep_count": 4,
+        "remove_count": 6,
+        "interpretation": "This theme captures sarcastic or rhetorical challenge styles that delegitimize opponents (including via contempt). It often overlaps with insults/profanity but can also occur without explicit taboo language."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Profanity / taboo insults / dehumanizing labels overlaps with outgroup framing and ridicule/mockery",
+      "Emphatic punctuation / ALL CAPS commonly co-occurs with causal or conditional consequence claims",
+      "Calls for action frequently co-occur with policy/legal-domain discussions and moralized urgency",
+      "Conspiratorial framing overlaps with causal/conditional consequences and outgroup blame targeting",
+      "Named proper nouns density often appears alongside policy/legal-domain references and jurisdiction/court citations"
+    ]
+  }
+}

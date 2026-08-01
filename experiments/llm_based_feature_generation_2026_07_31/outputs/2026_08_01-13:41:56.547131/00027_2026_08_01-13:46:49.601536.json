@@ -1,0 +1,180 @@
+{
+  "batch_id": 27,
+  "message_ids": [
+    "bluesky_23e76c2bc5c769256c47206f720124ac659cf1d146b2002240355cd71aaf0e49",
+    "bluesky_492f64f5120e1b7150050c43b0a8884b8c2c53aea2f615482f1bb7d9fa8d9a45",
+    "bluesky_55a0d42baf617179999e2022cf9b2605bbc90f55b09941d7863a09f42cda4c07",
+    "bluesky_89cef5f9caf7bcb1959f13cf9705002842982b033c6b9f866c617cc4b4ad400a",
+    "reddit_1kpmzrc_mt1p5wd",
+    "reddit_1krctyl_mtcrgi2",
+    "reddit_1ktwzfn_mtx4alt",
+    "reddit_1kv9g6t_mucd99u",
+    "reddit_1lcw1or_my5zj61",
+    "reddit_1ld36t6_my5zoeb",
+    "reddit_1thqwmy_omvjzjn",
+    "reddit_1ti0vzj_omrqaab",
+    "reddit_1twc57o_opnhuhz",
+    "reddit_1u1fnvf_oqr4j6a",
+    "twitter_2060733587326922860",
+    "twitter_2061089968609788033",
+    "twitter_2061554055978311844",
+    "twitter_2061563265197461824",
+    "twitter_2061666343196217371",
+    "twitter_2061827465866076408"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_55a0d42baf617179999e2022cf9b2605bbc90f55b09941d7863a09f42cda4c07",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "None/very low (no clear named proper nouns beyond generic 'trans/reproductive rights')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201ccommunities defending trans and reproductive rights\u201d",
+        "rationale": "The post contains largely generic political nouns without clear named individuals or organizations."
+      },
+      {
+        "message_id": "twitter_2061089968609788033",
+        "feature_name": "call_to_action",
+        "feature_value": "Encourages defensive action after a warning ('fight back')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cSuppression is real \u2014 get the facts and fight back!\u201d",
+        "rationale": "The mirror explicitly instructs readers to 'get the facts and fight back'."
+      },
+      {
+        "message_id": "reddit_1kpmzrc_mt1p5wd",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses the reader with insults and imperatives",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cYou\u2019re a fool. You deserve Trump.\u201d",
+        "rationale": "Uses second-person 'You' to target the audience."
+      },
+      {
+        "message_id": "reddit_1ld36t6_my5zoeb",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong tabooed insult metaphors (e.g., 'lunatic', 'Hitler')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cTrump is a lunatic at best and Hitler at worst.\u201d",
+        "rationale": "Employs extreme derogatory labeling including 'Hitler'."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqr4j6a",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Makes a concrete 2024 governance claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThey won all three branches of government in 2024\u201d",
+        "rationale": "Presents a specific historical/political fact claim rather than speculation."
+      },
+      {
+        "message_id": "reddit_1twc57o_opnhuhz",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "If left uncontested, future regional transformation claim",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIf left uncontested, they'll radically transform the region\u2026\u201d",
+        "rationale": "Uses an explicit 'If ... then' predictive construction."
+      },
+      {
+        "message_id": "twitter_2061563265197461824",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Direct @ mention of a named account",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@SecMarkwayneM",
+        "rationale": "Begins with a handle mention."
+      },
+      {
+        "message_id": "bluesky_492f64f5120e1b7150050c43b0a8884b8c2c53aea2f615482f1bb7d9fa8d9a45",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Uses moral framing 'pro-life' and 'life' vs control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe right-wing agenda isn\u2019t about \u2018life.\u2019 It\u2019s about control.\u201d",
+        "rationale": "Adopts explicit moral/normative critique contrasting stated values with purported motives."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1thqwmy_omvjzjn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "None; uses political economic framing only",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201ccronyism isn\u2019t capitalism.\u201d",
+        "rationale": "Characterizes economic system with ideological terms rather than profanity; included as a contrastive absence signal is not reliable\u2014so excluded would be better, but present evidence shows ideological claim."
+      },
+      {
+        "message_id": "twitter_2061827465866076408",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Cites specific cost ($180 million) and a named facility",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cCampbell coal-fired power plant\u2026 costing Michiganders an extra $180 million\u201d",
+        "rationale": "Provides concrete, checkable details (administration action, plant, and dollar amount)."
+      },
+      {
+        "message_id": "reddit_1krctyl_mtcrgi2",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses strong profanity intensifier 'fucking' / 'fucking ridiculous'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThis is fucking ridiculous.\u201d",
+        "rationale": "Contains explicit colloquial intensifier and profanity."
+      },
+      {
+        "message_id": "bluesky_89cef5f9caf7bcb1959f13cf9705002842982b033c6b9f866c617cc4b4ad400a",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Capitalized emphatic accusation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFEDERAL GOVERNMENT DOING ILLEGAL SHIT.\u201d",
+        "rationale": "Uses all-caps and slang to heighten emphasis."
+      },
+      {
+        "message_id": "twitter_2061554055978311844",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Hate/derogatory slur framing via 'cancer on the United States'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe Jews and Muslims a cancer on the United States\u201d",
+        "rationale": "Uses dehumanizing/abusive metaphor aimed at protected religious groups."
+      },
+      {
+        "message_id": "reddit_1lcw1or_my5zj61",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks a group with 'morons' plus numeric stereotype",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201c2 out of 10 MAGA morons\u2026\u201d",
+        "rationale": "Uses contemptuous labeling ('morons') and mocking quantification."
+      },
+      {
+        "message_id": "twitter_2061666343196217371",
+        "feature_name": "call_to_action",
+        "feature_value": "Encourages political participation ('keep organizing' 'bring everyone to the polls')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201ckeep organizing, bring everyone to the polls!\u201d",
+        "rationale": "Directly urges action to influence elections."
+      },
+      {
+        "message_id": "reddit_1ktwzfn_mtx4alt",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Implicit second-person/stance directive with 'Look...'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cLook absolutely fuck Trump.....\u201d",
+        "rationale": "Uses an imperative discourse marker 'Look' to direct the reader."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 20,
+  "message_ids": [
+    "bluesky_0f6fd134a9962b8e34bf1207d6d1e8ec36ac0f9d0c1c4af706d5646e3dc09ea9",
+    "bluesky_52b13dd3b9494d153d1a2dfaace31dec5c3871a78c9f0a93b71b710b1033a63e",
+    "bluesky_62861f319f80c8f37e4e9d36b8a538b598c9617c9d2e9bd6ba9c98df11dafeaf",
+    "bluesky_b5b5a207d7fd129624372f7368ceb6c5a534f924376d11fefa5c3392734a642a",
+    "bluesky_d5dcb0907e8347b4b7946fabed76bdeff641906d8e36d8c716990d750b7995da",
+    "reddit_1kjj6u8_mrpmn9w",
+    "reddit_1kouuvz_msu1l8l",
+    "reddit_1la4x0y_mxla28z",
+    "reddit_1trbmne_oos7s3p",
+    "reddit_1tsvkbx_oozsmex",
+    "reddit_1tuly4n_opakjhi",
+    "reddit_1txrv9p_opy7rk2",
+    "reddit_1u0y79a_oqunv81",
+    "reddit_1u2pvqp_or18dsl",
+    "twitter_2059101549196955978",
+    "twitter_2060043683899027923",
+    "twitter_2061583692640686146",
+    "twitter_2061806410602615017",
+    "twitter_2061811713671155976",
+    "twitter_2061826951073980751"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tsvkbx_oozsmex",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (Michael Lewis, The Fifth Risk, Trump)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The Fifth Risk\" by Michael Lewis ... Trump",
+        "rationale": "The post includes multiple named entities and a cited book/authors."
+      },
+      {
+        "message_id": "reddit_1txrv9p_opy7rk2",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Claims sanctions lead to Russia running out of funds/equipment",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Sanctions are working fantastically on Russia\" ... \"Their reserve funds are running out\"",
+        "rationale": "It asserts a direct causal relationship between sanctions and observed outcomes."
+      },
+      {
+        "message_id": "reddit_1txrv9p_opy7rk2",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames Ukrainians as victims of killing if sanctions removed",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"they'll go back to killing Ukrainians.\"",
+        "rationale": "It portrays a harm threat targeted at Ukrainians."
+      },
+      {
+        "message_id": "reddit_1tuly4n_opakjhi",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moralized condemnation (hate, pedophilia)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"American hate\" ... \"pedophilia\"",
+        "rationale": "The text uses morally loaded negative descriptors for actors."
+      },
+      {
+        "message_id": "bluesky_d5dcb0907e8347b4b7946fabed76bdeff641906d8e36d8c716990d750b7995da",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Endorses lawmakers and calls for action to gain a gun-safety majority",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I\u2019m proud to endorse\" ... \"fight for the change we all deserve.\"",
+        "rationale": "It includes an explicit political action/endorsement toward a policy goal."
+      },
+      {
+        "message_id": "bluesky_b5b5a207d7fd129624372f7368ceb6c5a534f924376d11fefa5c3392734a642a",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Accuses climate framing as a coordinated psyop",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"successful psyops in history\"",
+        "rationale": "Calling it a psyop indicates conspiratorial/propaganda framing."
+      },
+      {
+        "message_id": "twitter_2061826951073980751",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Compact direct address/assertion contrasting 'regime change'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump, this is not regime change.\"",
+        "rationale": "It is a direct quoted statement establishing a categorical claim."
+      },
+      {
+        "message_id": "bluesky_0f6fd134a9962b8e34bf1207d6d1e8ec36ac0f9d0c1c4af706d5646e3dc09ea9",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short (very brief emotional intensifier)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"y\u2019all have made me so emotional.\"",
+        "rationale": "The message is only a short intensifier phrase with emotion."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061811713671155976",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Switches from pro-Palestine to pro-Israel/Hamas blame assignment",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"supports Israel's right to defend itself\" ... \"side with Hamas\"",
+        "rationale": "The mirror frames one political side as defending itself while the other is aligned with Hamas."
+      },
+      {
+        "message_id": "reddit_1kouuvz_msu1l8l",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple explicit profanity slurs toward targets",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck right off. Fuck trump. Fuck Walmart.\"",
+        "rationale": "The text uses repeated coarse profanity targeting people and organizations."
+      },
+      {
+        "message_id": "reddit_1u0y79a_oqunv81",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses 'you' and 'your ilk'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"tell you or someone else of your ilk\"",
+        "rationale": "The author is speaking to the reader in second person."
+      },
+      {
+        "message_id": "bluesky_62861f319f80c8f37e4e9d36b8a538b598c9617c9d2e9bd6ba9c98df11dafeaf",
+        "feature_name": "call_to_action",
+        "feature_value": "Plans political/civic activities (register voters, petitions, candidates)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"register voters, gather petitions for our Dem candidates\"",
+        "rationale": "It lists intended mobilization actions rather than merely describing opinions."
+      },
+      {
+        "message_id": "reddit_1kjj6u8_mrpmn9w",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Cursing plus accusation of fascists/communists",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking fascists!\"",
+        "rationale": "The post ends with an emphatic expletive/accusation expressing anger."
+      },
+      {
+        "message_id": "reddit_1la4x0y_mxla28z",
+        "feature_name": "targeted_group_or_person_abuse",
+        "feature_value": "Labels a named politician as 'communist' in violent condemning language",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"She\u2019s a fucking communist\"",
+        "rationale": "It applies a severe ideological label with profanity to a specific named figure."
+      },
+      {
+        "message_id": "twitter_2059101549196955978",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Explicit contrast between open carry and concealed carry",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Open carry is dumb\" ... \"Concealed carry\"",
+        "rationale": "It juxtaposes two categories of gun carry with evaluative statements."
+      },
+      {
+        "message_id": "twitter_2061583692640686146",
+        "feature_name": "call_to_action",
+        "feature_value": "Imperative demand to expel visa holders/shutdown",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"All visa holders go home\" \"shut the USA down!\"",
+        "rationale": "It issues direct commands advocating exclusion and disruption."
+      }
+    ]
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 12,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity / taboo language used for emphasis or attack",
+        "defining_features": [
+          "profanity_or_taboo_language present (explicit obscenity, censored markers, sexual vulgarity, taboo accusations)",
+          "high_punctuation_intensity often co-occurs with strong taboo/profanity emphasis (e.g., expletive + urgency)"
+        ],
+        "example_message_ids": [
+          "reddit_1kisfrq_mrjxs61",
+          "reddit_1l4b2as_mw889er",
+          "reddit_1txsumx_opyjwk8",
+          "reddit_1tuwb8f_opd3wgi",
+          "twitter_2061398279808499802",
+          "reddit_1t4ruex_ok8m777"
+        ],
+        "keep_count": 6,
+        "remove_count": 18,
+        "interpretation": "Posts using explicit obscene/sexual/taboo wording\u2014especially when directed at people or groups\u2014are more often labeled for removal, indicating strong moderation risk tied to offensive language."
+      },
+      {
+        "id": 2,
+        "label": "Direct call-to-action / imperative demands (political or enforcement actions)",
+        "defining_features": [
+          "call_to_action present (appeals to support, join, urge Congress, mobilize, preserve evidence)",
+          "policy_prescription_present combined with enforcement wording (e.g., execute/ban/enforce) or procedural directives (e.g., ICE deportation steps)"
+        ],
+        "example_message_ids": [
+          "twitter_2061423216325968181",
+          "twitter_2061153477565268429",
+          "twitter_2061827570971099461",
+          "twitter_2061066935328973239",
+          "twitter_2060498779673907487",
+          "twitter_2061766701021081758"
+        ],
+        "keep_count": 9,
+        "remove_count": 8,
+        "interpretation": "Many posts contain imperative mobilization or requests for action. This theme appears in both keep and remove groups, suggesting that not all directives are equally disallowed\u2014severity likely depends on target, content type, or accompanying violence/abuse."
+      },
+      {
+        "id": 3,
+        "label": "Ridicule, mockery, or dehumanizing insults toward opponents/targets",
+        "defining_features": [
+          "ridicule_or_mockery present (demeaning comparisons, laughter/scoffing framing, contempt)",
+          "targeted_personal_insult / open_ended_insult_stereotyping present (e.g., 'man child', 'brainwashed sheep', genital/sexualized slurs)"
+        ],
+        "example_message_ids": [
+          "reddit_1kihiny_mrhca5v",
+          "reddit_1tbymrb_olkwqrw",
+          "reddit_1ksmur4_mtnigsy",
+          "reddit_1tbymrb_olxlwh2",
+          "reddit_1u2almy_oqxyac4",
+          "reddit_1lttsfrd_op6moku"
+        ],
+        "keep_count": 6,
+        "remove_count": 11,
+        "interpretation": "When rhetoric shifts from policy critique to personal/identity ridicule and dehumanizing characterization, removal rates increase\u2014moderation flags interpersonal hostility and harassment patterns."
+      },
+      {
+        "id": 4,
+        "label": "Us-vs-them / blame-shifting (in-group vs out-group framing)",
+        "defining_features": [
+          "us_vs_them_framing or target_directionality_us_vs_them_framing present",
+          "mirror shifting of blame across ideological groups (communists vs fascists) appears"
+        ],
+        "example_message_ids": [
+          "reddit_1tohbe9_oo1g5ru",
+          "bluesky_72215679ec45ef3ee06cd3b0c6b4b3860202f7f8eb92fd20e79ccc962d8a652d247",
+          "reddit_1u18ir0_oqpychq",
+          "reddit_1tuwb8f_opd3wgi",
+          "twitter_2061828050602332457",
+          "reddit_1kym5zv_mzd5b40"
+        ],
+        "keep_count": 5,
+        "remove_count": 7,
+        "interpretation": "Group-polarizing blame narratives appear across both labels but are somewhat more common in removals, consistent with moderation concerns about scapegoating and antagonistic political identity framing."
+      },
+      {
+        "id": 5,
+        "label": "Policy advocacy and prescription in specific domains (gun policy, abortion, deportation, climate)",
+        "defining_features": [
+          "primary_policy_domain present (gun violence/policy; abortion/bodily autonomy; deportation/ICE; climate/carbon taxes/emissions)",
+          "policy_prescription_present present (specific outcomes like honor permits; ban/execute/enforce; stop pandering; reduce emissions)"
+        ],
+        "example_message_ids": [
+          "bluesky_3c05fbfbe40be892837f39fc03cf7b9d94692b7e7209fba6fe72a07010532a75",
+          "reddit_1tsv1fn_oozdi95",
+          "twitter_2061802775827423337",
+          "bluesky_349d3154f264eed6e532d4737151a8a5749c30d6cd48a6607efb1273b7b7d94a",
+          "bluesky_5ffa21c24dad5e44f167e709f7de974d49b1e8c0acee82d075442ced7580b42c",
+          "twitter_2061827570971099461"
+        ],
+        "keep_count": 16,
+        "remove_count": 6,
+        "interpretation": "A large portion of content is conventional policy argumentation (even when heated). The theme is mostly in keep-rated posts, implying that domain-specific advocacy alone is not the primary removal trigger."
+      },
+      {
+        "id": 6,
+        "label": "Constitutional/legal rights argumentation (Second Amendment, emergency powers, constitutional framing)",
+        "defining_features": [
+          "primary_policy_domain includes constitutional rights / Second Amendment / constitutional interpretation",
+          "policy_prescription_present or semantic_content ties actions to constitutional or governance mechanisms (e.g., Marshal Law, constitutional rights interpretation)"
+        ],
+        "example_message_ids": [
+          "reddit_1kisfrq_mrjxs61",
+          "bluesky_8c1339e00e2ab77f713abea84e804c18c205c6c749bd739606d3fde06a48e9e9",
+          "bluesky_82ca727fbe0d6376761040c496f99b45edd0eb8f7c422556105144d8a652d247",
+          "reddit_1tbymrb_olxlwh2",
+          "twitter_2061523424355275156",
+          "bluesky_349d3154f264eed6e532d4737151a8a5749c30d6cd48a6607efb1273b7b7d94a"
+        ],
+        "keep_count": 7,
+        "remove_count": 2,
+        "interpretation": "Legal/constitutional discourse shows up primarily in keep posts, suggesting that rights-based argumentation is more acceptable than the same rhetorical intensity when paired with overt harassment or extreme violent language."
+      },
+      {
+        "id": 7,
+        "label": "Escalation threats or severe punishment language (including execution/mass shooter directives)",
+        "defining_features": [
+          "policy_prescription_present includes extreme enforcement/punishment (e.g., executing mass shooters)",
+          "call_to_action or policy prescriptions include severe procedural outcomes tied to violence or dehumanizing action"
+        ],
+        "example_message_ids": [
+          "twitter_2061825883611218336",
+          "reddit_1tupifu_opbsku3",
+          "reddit_1liejsg_mzd5b40",
+          "twitter_2061825883611218336",
+          "reddit_1tupifu_opbsku3"
+        ],
+        "keep_count": 1,
+        "remove_count": 2,
+        "interpretation": "Extreme punishment/violence directives are rare in keep posts and appear in removals, consistent with moderation thresholds focusing on lethal or inciting content."
+      },
+      {
+        "id": 8,
+        "label": "Graphic taboo sexual-violence / pedophilia references",
+        "defining_features": [
+          "profanity_or_taboo_language includes explicit sexual-violence or pedophilia terms",
+          "victimhood_or_persecution_framing describes children as victims and implies cover-up"
+        ],
+        "example_message_ids": [
+          "reddit_1tdz1jj_olz51g8",
+          "reddit_1liejsg_mzd5b40",
+          "reddit_1tdz1jj_olz51g8"
+        ],
+        "keep_count": 1,
+        "remove_count": 1,
+        "interpretation": "Explicit sexual violence and pedophilia terms are highly sensitive and occur in both label groups here; moderation would likely rely on contextual risk, severity, and whether the post is inciting/harassing."
+      },
+      {
+        "id": 9,
+        "label": "Conspiracy / motive attribution and definitive factual denial",
+        "defining_features": [
+          "conspiratorial_framing present (bribery, misinformation, plot to steal, hypocrisy, media/public discrepancy)",
+          "factual_assertion_vs_speculation combined with strong denial (e.g., 'There was never a climate crisis')"
+        ],
+        "example_message_ids": [
+          "reddit_1tztcf5_oqdcufi",
+          "reddit_1txsumx_opyjwk8",
+          "bluesky_b00ea78e485a5982e2e8cb6b35efc0ca24efdfb811b346e2764c8192abb530bb",
+          "reddit_1lm8c5i_n07oi3s",
+          "twitter_2061398279808499802",
+          "reddit_1kbza1m_mpzb0wf"
+        ],
+        "keep_count": 5,
+        "remove_count": 3,
+        "interpretation": "Posts that assert conspiratorial motives or make absolute denials show up in both groups, suggesting that misinformation alone isn\u2019t the main differentiator; rather, it may become removal-worthy when combined with harassment/profanity or extreme directives."
+      },
+      {
+        "id": 10,
+        "label": "High informality/expressive style (all-caps headlines, slang, punctuation intensity)",
+        "defining_features": [
+          "all_caps_emphasis present",
+          "informal_register_or_slang present (slang like 'fr', 'wtf', 'lmao', shorthand)",
+          "high_punctuation_intensity present (many exclamations, ellipses, agitation markers)"
+        ],
+        "example_message_ids": [
+          "twitter_2061590939261432299",
+          "reddit_1tbymrb_olkwqrw",
+          "bluesky_72215679ec45ef3ee06cd3b0c6b4b3860202f7f8eb92fd20e79ccc962d8a652d247",
+          "reddit_1u2391z_oqv7son",
+          "twitter_2061173358561996904",
+          "reddit_1lm8c5i_n07oi3s"
+        ],
+        "keep_count": 6,
+        "remove_count": 6,
+        "interpretation": "Expressive informal writing is common across labels. It likely acts as a secondary risk factor (amplifying hostility) rather than a standalone removal criterion."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Profanity/taboo language amplifies other behaviors (ridicule, direct insults, severe directives) and is more frequent in removals.",
+      "Call-to-action and policy prescription appear across both groups, but removal likelihood increases when directives involve extreme harm or dehumanizing target language.",
+      "Us-vs-them / blame-shifting framing often co-occurs with ridicule and/or conspiracy-motive attribution, contributing to antagonistic political discourse.",
+      "High expressiveness (all-caps, slang, heavy punctuation) commonly accompanies conflictual or hostile framing across both labels."
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 128,
+  "message_ids": [
+    "bluesky_1064f03f2b1d4ad0fcdf633dd3ffc53417bb112d66b85ab461578fdbfa368a09",
+    "bluesky_291177513667380b216e18b003d8a1c88211764d844492f048b94241cdd1e49d",
+    "bluesky_43f06155b22e9007bba58a593d4ce2a1f70b49c376cc1e465f3054aa712c6173",
+    "bluesky_5fb89c0de5cdb5c7b74f283bd45a892b7a325c01c1464f2346773847fdb6ac71",
+    "bluesky_d24933e604ffbf66196bafa3e0d36319865af7445f3b5e63dd16efc22a838ccc",
+    "reddit_1kgkc38_mr0jbhl",
+    "reddit_1kifvs5_mrgave1",
+    "reddit_1kym5zv_muydhms",
+    "reddit_1lhi189_mz4jfi9",
+    "reddit_1liejsg_mzd5b40",
+    "reddit_1llzlg3_n04uxu7",
+    "reddit_1u20knn_or139c1",
+    "twitter_2059530868683678006",
+    "twitter_2059676897525563700",
+    "twitter_2060390403933905135",
+    "twitter_2060413802894827713",
+    "twitter_2061066935328973239",
+    "twitter_2061766701021081758",
+    "twitter_2061825883611218336",
+    "twitter_2061827570971099461"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061066935328973239",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Only by working together can #people find a solution to the #climate crisis.",
+        "rationale": "The post is brief and consists of a single imperative statement with hashtags."
+      },
+      {
+        "message_id": "twitter_2061066935328973239",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "multiple topic hashtags",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#people ... #climate crisis ... #Join us and #share!",
+        "rationale": "Contains several hashtags used to link to campaign/community prompts."
+      },
+      {
+        "message_id": "twitter_2061766701021081758",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct @-mention and second-person interrogation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "@HaroldFordJr WHEN ARE U GOING TO EXPLAIN WHY IT IS OKAY...",
+        "rationale": "Uses an @-handle followed by an explicit \u201cWHEN ARE U GOING TO\u201d challenge."
+      },
+      {
+        "message_id": "twitter_2061825883611218336",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "asserts motive as fact (not hypothetical)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump is using it as a loyalty program.",
+        "rationale": "States the actor\u2019s purpose as a direct claim rather than speculation."
+      },
+      {
+        "message_id": "bluesky_5fb89c0de5cdb5c7b74f283bd45a892b7a325c01c1464f2346773847fdb6ac71",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "strong urgency punctuation (ellipsis/periods)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Watch till the end... No time to wait.",
+        "rationale": "Uses emphatic punctuation/short urgent sentences to pressure immediate viewing."
+      },
+      {
+        "message_id": "bluesky_291177513667380b216e18b003d8a1c88211764d844492f048b94241cdd1e49d",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "explicit policy prescriptions and enforcement (red-flag/execute/ban)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Make ammunition... Shut down gun shows. Enforce red flag laws. And start executing mass shooters...",
+        "rationale": "Lists concrete actions/laws and punishment as advocated steps."
+      },
+      {
+        "message_id": "twitter_2059676897525563700",
+        "feature_name": "call_to_action",
+        "feature_value": "direct ask to join/urge Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Will you join me in urging Congress to support the Dream Act &amp; deliver citizenship?",
+        "rationale": "Uses a direct appeal to the audience to support a specific legislative goal."
+      },
+      {
+        "message_id": "twitter_2061827570971099461",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "frames opponents as controlling/terrorist-regime threat",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "terrorists or terrorist regimes controlling countries.",
+        "rationale": "Depicts a coordinated extremist regime control narrative underpinning the argument."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1liejsg_mzd5b40",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "infanticide/abuse invective repeated in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "BABY MURDERER!!!!",
+        "rationale": "Uses extreme taboo accusation language repeatedly."
+      },
+      {
+        "message_id": "reddit_1liejsg_mzd5b40",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "multiple all-caps shout accusations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "BABY MURDERER!!!! ... BABY MURDERER!!!!",
+        "rationale": "Heavy all-caps emphasis used for emphasis/harassment."
+      },
+      {
+        "message_id": "reddit_1kym5zv_mzd5b40",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slur-like colloquial insult (\u201cshitwit\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "stop trying to normalize this fascist shitwit",
+        "rationale": "Uses informal derogatory slang targeting an outlet/person."
+      },
+      {
+        "message_id": "reddit_1u20knn_or139c1",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "references specific political event catalyst (2020 protests / George Floyd)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "the entire catalyst for the 2020 protests? ... George Floyd",
+        "rationale": "Invokes a well-known event involving a named person as the basis of the argument."
+      },
+      {
+        "message_id": "bluesky_d24933e604ffbf66196bafa3e0d36319865af7445f3b5e63dd16efc22a838ccc",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "outgroup labels tied to politics (far-right extremists)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The real threat is the far-right extremists",
+        "rationale": "Uses ideologically marked group labels as the threat focus."
+      },
+      {
+        "message_id": "reddit_1lhi189_mz4jfi9",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative directed at a political group",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Then do something about it you damned republicans",
+        "rationale": "Uses direct imperative plus second-person addressing of an outgroup."
+      },
+      {
+        "message_id": "twitter_2060390403933905135",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates shutting down a specific organization",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "shut down Planned Parenthood.",
+        "rationale": "Contains a direct action recommendation aimed at a particular institution."
+      },
+      {
+        "message_id": "reddit_1llzlg3_n04uxu7",
+        "feature_name": "call_to_action",
+        "feature_value": "explicit demand to remove an administration",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "trump administration needs to be removed from office",
+        "rationale": "Directly urges political removal/expulsion from power."
+      }
+    ]
+  }
+}

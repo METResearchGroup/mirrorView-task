@@ -1,0 +1,180 @@
+{
+  "batch_id": 24,
+  "message_ids": [
+    "bluesky_083877a8fb68602468aa9564d011eef649334136aa669a8f84845ac4f231dd03",
+    "bluesky_67e825d4565ff0ff94ff8f0f25fa280934f6d366ec861b5a10b69923a2e05e24",
+    "bluesky_6979dd071b5c68850abf118e341168fc8c0549720c5e4663ae9ff1967b961d92",
+    "bluesky_8bd506a6d648784064e6527c171d0d895f342aa5d61928b057d9d2245cc872d5",
+    "bluesky_b7c698937250ce372d5303ec4185d83135bf37c897fbf9c522a34303bb555f24",
+    "reddit_1kg5qlk_mqxttu3",
+    "reddit_1l33b15_mvxr34a",
+    "reddit_1rybeds_obikobk",
+    "reddit_1t5lm0a_ol5fy3h",
+    "reddit_1tbcpqz_olg14md",
+    "reddit_1tj4vka_on2lvi2",
+    "reddit_1tlur1u_onrmlsv",
+    "reddit_1tsgnti_oowg28n",
+    "reddit_1tvywom_opkls98",
+    "twitter_2059090231941583066",
+    "twitter_2061366217600807160",
+    "twitter_2061594906594791853",
+    "twitter_2061760417920163972",
+    "twitter_2061824002331484488",
+    "twitter_2061827730677580160"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tj4vka_on2lvi2",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The list of reasons that turned you against the Donald were recent...\"",
+        "rationale": "The post contains multiple full sentences with detailed political justification, indicating a long length."
+      },
+      {
+        "message_id": "reddit_1tj4vka_on2lvi2",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Claim that pardoning and persecution disqualify a candidate",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Particularly the pardoning of insurrectionists and persecution of the investigators and prosecutors.\"",
+        "rationale": "The text asserts specific actions lead to disqualification of fairness-minded observers."
+      },
+      {
+        "message_id": "twitter_2061824002331484488",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Calls opponent a clown; describes grift with contempt",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"one pathetic clown is still demanding a standing ovation.\"",
+        "rationale": "The statement uses derogatory framing (\u201cpathetic clown\u201d) to mock the actor."
+      },
+      {
+        "message_id": "twitter_2061824002331484488",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "\u201cGrift\u201d implies financial exploitation for benefit of insider(s)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The grift is happening under stadium lights\"",
+        "rationale": "The language centers on corrupt profit-taking rather than policy details."
+      },
+      {
+        "message_id": "reddit_1tvywom_opkls98",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Trump, MAGA, Che Guevara, BLM, Fauci, Biden-Harris)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Che Guevara... BLM merch... Fauci... Biden-Harris\"",
+        "rationale": "The mirror text is packed with multiple named figures/brands/ideology labels."
+      },
+      {
+        "message_id": "reddit_1tvywom_opkls98",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Extended list of items/imagery associated with identity branding",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"owning a full wardrobe of... watches, sneakers... covering your entire yard and or car... flags, signs, and stickers\"",
+        "rationale": "The post uses repeated itemization (\u201cwatches, sneakers\u2026\u201d, \u201cflags, signs, and stickers\u201d)."
+      },
+      {
+        "message_id": "twitter_2059090231941583066",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct advice to conceal carry",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Always conceal carry your weapon\"",
+        "rationale": "It issues imperative guidance aimed at changing audience behavior."
+      },
+      {
+        "message_id": "bluesky_8bd506a6d648784064e6527c171d0d895f342aa5d61928b057d9d2245cc872d5",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Speculates about motivations/hate of voter groups",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"It depends on how much Latino voters hate POC\"",
+        "rationale": "The statement attributes concealed intent (\u201chate\u201d) to a group as an explanatory driver."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_b7c698937250ce372d5303ec4185d83135bf37c897fbf9c522a34303bb555f24",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"is indeed a fucking shithole.\"",
+        "rationale": "The phrase includes explicit profanity (\u201cfucking\u201d, \u201cshithole\u201d)."
+      },
+      {
+        "message_id": "bluesky_b7c698937250ce372d5303ec4185d83135bf37c897fbf9c522a34303bb555f24",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Dehumanizing moral condemnation of a country\u2019s politics",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"right of children to not be massacred\"",
+        "rationale": "Uses strong moral judgment tied to extreme harm (\u201cmasacred\u201d) to condemn the stance."
+      },
+      {
+        "message_id": "twitter_2061594906594791853",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Hashtag used to label target ideology",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#ICE\"",
+        "rationale": "The post begins with a hashtag identifying the subject."
+      },
+      {
+        "message_id": "twitter_2061594906594791853",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Nonverbal aggressive/derogatory emotive content (death/violence emoji pattern)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"just \ud83e\udd2c \ud83d\udca5 all over ...\"",
+        "rationale": "The emoji sequence depicts violent/hostile intent (shock/anger \u201c\ud83e\udd2c\u201d and impact \u201c\ud83d\udca5\u201d)."
+      },
+      {
+        "message_id": "bluesky_67e825d4565ff0ff94ff8f0f25fa280934f6d366ec861b5a10b69923a2e05e24",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "\u201cDead children\u201d presented as unacceptable cost",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"When dead children became an acceptable price\"",
+        "rationale": "The text centers on child victims and frames their death as normalized by a group."
+      },
+      {
+        "message_id": "bluesky_67e825d4565ff0ff94ff8f0f25fa280934f6d366ec861b5a10b69923a2e05e24",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Target labeled as a domestic terrorist in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"became a DOMESTIC TERRORIST organization\"",
+        "rationale": "\u201cDOMESTIC TERRORIST\u201d is fully capitalized for emphasis."
+      },
+      {
+        "message_id": "reddit_1rybeds_obikobk",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Imperative condition aimed at action by outgroup (overturn the 5th Amendment)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Until those scumbags in black robes overturn the 5th Amendment, yes.\"",
+        "rationale": "Uses a \u201cuntil\u201d clause to set a condition before the stance applies."
+      },
+      {
+        "message_id": "reddit_1kg5qlk_mqxttu3",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Attacks typical supporter as \u201cdumb\u201d/predicts irrational voting",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Knowing how dumb the typical Trump supporter is... I bet they'd vote for him again\"",
+        "rationale": "The post insults a voter group and mocks their likely political behavior."
+      }
+    ]
+  }
+}

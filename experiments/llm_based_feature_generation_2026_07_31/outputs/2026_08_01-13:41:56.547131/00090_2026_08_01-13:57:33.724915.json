@@ -1,0 +1,180 @@
+{
+  "batch_id": 90,
+  "message_ids": [
+    "bluesky_4eb5715ca4b1fb5970c4fc4cdca602d4af5a0af204172a168fb917cd6896c5fe",
+    "bluesky_6bdea9ecd36cfd6c05a861ab867c2090ee48f5d7a2ec211e6ef017fc93dbcdb7",
+    "bluesky_7199b84a5f5fb056d790034dd7909ab122da57d504d3edeb4c2720a120115f56",
+    "bluesky_b66a5f9a560b10c259a0cc3b2a76e82e70280fb72d495e8dd034ff21ca5c7b66",
+    "bluesky_f215b1535d42111e0241b20bbcf29764949c14fbb16d6e3b6ba6d27547f43a1b",
+    "reddit_1kl7318_ms031t0",
+    "reddit_1kyiyst_muydlmh",
+    "reddit_1l8zsgk_mxbg6x2",
+    "reddit_1linlp2_mzdzafl",
+    "reddit_1tim947_omyeiul",
+    "reddit_1tp5g11_oo9joxr",
+    "reddit_1tsj7e8_oovqrcf",
+    "reddit_1tstlbr_ooyqrcg",
+    "reddit_1ttcapc_op1o40v",
+    "reddit_1tv4g76_opfu68f",
+    "reddit_1two3nw_opt0pch",
+    "reddit_1txnigx_opy92ef",
+    "reddit_1u2almy_oqwt336",
+    "twitter_2061009608307511761",
+    "twitter_2061821947009442102"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_7199b84a5f5fb056d790034dd7909ab122da57d504d3edeb4c2720a120115f56",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Probably a gun show. No background checks and they literally have any weapon\"",
+        "rationale": "The post is only a couple of short sentences."
+      },
+      {
+        "message_id": "bluesky_7199b84a5f5fb056d790034dd7909ab122da57d504d3edeb4c2720a120115f56",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "No all-caps text present",
+        "rationale": "No all-caps emphasis markers are present."
+      },
+      {
+        "message_id": "reddit_1tsj7e8_oovqrcf",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "insulting slang/pejoratives (e.g., \"talking shit\", \"asshole\", \"weirdos\", \"grifters\")",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"talking shit\" ... \"self serving asshole weirdos\" ... \"grifting money\"",
+        "rationale": "Uses colloquial and insulting language typical of informal partisan rants."
+      },
+      {
+        "message_id": "reddit_1tsj7e8_oovqrcf",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "collective-blame framing at party level (GOP vs claims about Democrats in mirror)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"the entire GOP\" ... \"about the entire Democrat Party\"",
+        "rationale": "Attributes negative behavior to an entire political party as a group."
+      },
+      {
+        "message_id": "reddit_1l8zsgk_mxbg6x2",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "2024 election rigging quote (election integrity allegation)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"*the 2024 election is rigged and was the most rigged election ever*\"",
+        "rationale": "Directly references the 2024 election and claims about rigging."
+      },
+      {
+        "message_id": "reddit_1l8zsgk_mxbg6x2",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "presents a quoted factual claim plus instruction to believe/disbelieve",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"is on record stating\" ... \"This is ONE time we should believe\"",
+        "rationale": "Uses attribution (on record) and a directive about belief."
+      },
+      {
+        "message_id": "reddit_1two3nw_opt0pch",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "concessive/contrast framing (\"But\" + repeated pattern)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"But conservatives always talk a big game\" ... \"and then\" ... \"It's what they do.\"",
+        "rationale": "Uses \"But\" to set up contrast followed by a repeated escalation pattern."
+      },
+      {
+        "message_id": "twitter_2061009608307511761",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "No profanity in provided text",
+        "rationale": "The text discusses trans issues but does not include explicit profanity."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1txnigx_opy92ef",
+        "feature_name": "causal_claim_present",
+        "feature_value": "blames job loss on government killing/aiding an industry",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Because the government is killing (or at least aiding) in killing the industry you work in.\"",
+        "rationale": "States a causal explanation for employment outcomes."
+      },
+      {
+        "message_id": "bluesky_4eb5715ca4b1fb5970c4fc4cdca602d4af5a0af204172a168fb917cd6896c5fe",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "negation + counterfactual style justification (\"Not because ... because\")",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Not because\" ... \"lmao no we don't.\"",
+        "rationale": "Uses a structured \"Not because X\" rationale pattern."
+      },
+      {
+        "message_id": "bluesky_6bdea9ecd36cfd6c05a861ab867c2090ee48f5d7a2ec211e6ef017fc93dbcdb7",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "all-caps interjections: \"NORWAY EXISTS\"",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"NORWAY EXISTS.\"",
+        "rationale": "Contains an all-caps emphatic sentence."
+      },
+      {
+        "message_id": "bluesky_6bdea9ecd36cfd6c05a861ab867c2090ee48f5d7a2ec211e6ef017fc93dbcdb7",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Norway, US, oil/gas context)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"NORWAY EXISTS\" ... \"On top of having\" ... \"they also tax\"",
+        "rationale": "Uses specific country reference as a key argumentative anchor."
+      },
+      {
+        "message_id": "bluesky_f215b1535d42111e0241b20bbcf29764949c14fbb16d6e3b6ba6d27547f43a1b",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "contains a quoted narrative claim about gun control/gun rights",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Narratives that paint gun control as a liberal effort to oppress conservatives\"",
+        "rationale": "Fronted by a long quoted clause functioning as an embedded thesis."
+      },
+      {
+        "message_id": "reddit_1tstlbr_ooyqrcg",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "LGBTQ/gender ideology controversy (parades, grooming agenda)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Pride parade\" ... \"Grooming-agenda\"",
+        "rationale": "Centers on contentious culture-war frames about LGBTQ content and children."
+      },
+      {
+        "message_id": "reddit_1kyiyst_muydlmh",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting dismissal (\"looser/loser\") plus punitive call",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"What a looser. Do the world a favor Trump and report to prison.\"",
+        "rationale": "Uses mockery plus an instruction advocating punitive action."
+      },
+      {
+        "message_id": "twitter_2061821947009442102",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "lists economic harms and national security costs for trade policy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"destroy US independence and US national security\" ... \"for a few extra $$$\"",
+        "rationale": "Argues a cost (jobs/security loss) in exchange for small financial gain."
+      }
+    ]
+  }
+}

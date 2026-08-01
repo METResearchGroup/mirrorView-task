@@ -1,0 +1,180 @@
+{
+  "batch_id": 41,
+  "message_ids": [
+    "bluesky_048b980b14421d93d11e58c0b9d0a8347c4f2910e655af60299241ba7c0f9c20",
+    "bluesky_38aa068c23789e3430e3c655e6556053efca1bc377e9d9a373a48db183c9c8c5",
+    "bluesky_59cd529db256c1bf8c59ff1fdedf72748a759788fea4b8030c9d110470e9e376",
+    "bluesky_a3731d1a65ff0908528dcb49dcfc644633abe36b92f4567560082fc048df28bb",
+    "bluesky_d2cfe70e07afaf45324028fee76db723193fb78bca21a8d9e7c655abb6a7937f",
+    "bluesky_d7afdb28248d0ad1490151717077c0e6a30708659c25ac7d4cd0b7e37aae16f8",
+    "reddit_1ki18ju_mrc3g6k",
+    "reddit_1kq44b8_mt4eh2d",
+    "reddit_1kzpnb8_mv7vdw7",
+    "reddit_1levqjx_mynwtf2",
+    "reddit_1li24by_mz8nqy3",
+    "reddit_1lku9rd_mzwvvea",
+    "reddit_1tc5bjg_ollxxgv",
+    "reddit_1tvll8k_opicflf",
+    "reddit_1txv06e_oq22guj",
+    "reddit_1u0gjyt_oqi8kyn",
+    "twitter_2060094698455506989",
+    "twitter_2060747854801756448",
+    "twitter_2061064441366716419",
+    "twitter_2061808066878656521"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060747854801756448",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun violence / gun rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Help Protect Children From Gun Violence",
+        "rationale": "Mentions protecting children from gun violence, indicating the gun-violence policy domain."
+      },
+      {
+        "message_id": "twitter_2060747854801756448",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "shifts blame from gun violence/children to 'government overreach on gun rights'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Protect Children From Gun Violence\" -> \"Protect Children From Government Overreach on Gun Rights\"",
+        "rationale": "The mirror retargets the problem from violence to government overreach regarding gun rights."
+      },
+      {
+        "message_id": "bluesky_38aa068c23789e3430e3c655e6556053efca1bc377e9d9a373a48db183c9c8c5",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "long enumerated list of policy topics/questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Like voting rights? Roe restored? Red flag laws? Minimum Wage? ERA? LGBTQIA protections?",
+        "rationale": "The post strings multiple policy items separated by question marks."
+      },
+      {
+        "message_id": "bluesky_38aa068c23789e3430e3c655e6556053efca1bc377e9d9a373a48db183c9c8c5",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "strong emphasis with all-caps intensifier",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Also CRIMINAL ACCOUNTABILITY FOR OLIGARCHS AND FACISTS?\"",
+        "rationale": "Uses all-caps to stress a demand."
+      },
+      {
+        "message_id": "reddit_1kzpnb8_mv7vdw7",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual/filthy slur used for violent insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "rot in a pile of shit",
+        "rationale": "Contains explicit taboo language as part of an insult."
+      },
+      {
+        "message_id": "reddit_1kzpnb8_mv7vdw7",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "political individual/far-right; references Nazi salute",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "told the far-right party in germany",
+        "rationale": "Targets an identified political actor associated with far-right/Nazi behavior."
+      },
+      {
+        "message_id": "reddit_1tc5bjg_ollxxgv",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "proposes stricter eligibility/oversight (annual evaluations, drug screening)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "I\u2019d also like to see stricter guidelines such as annual medical evaluations and drug screening for benefits.",
+        "rationale": "Explicitly advocates policy changes and specific requirements."
+      },
+      {
+        "message_id": "twitter_2061064441366716419",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "uses a hashtag to frame economic policy question",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#GlobalEconomy",
+        "rationale": "Includes a topical hashtag that anchors the content."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1u0gjyt_oqi8kyn",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "insulting dismissive slang for political voters",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "braindead morons",
+        "rationale": "Uses derogatory slang to characterize a political group."
+      },
+      {
+        "message_id": "reddit_1lku9rd_mzwvvea",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "blanket labeling of parties with extreme accusations",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "All Republicans are fascist domestic terrorists.",
+        "rationale": "Uses an all-encompassing 'All X are Y' framing that pits groups against each other."
+      },
+      {
+        "message_id": "bluesky_d7afdb28248d0ad1490151717077c0e6a30708659c25ac7d4cd0b7e37aae16f8",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "asserts legal/policy facts and claims opponent is lying",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "no federal law bans it. The Second Amendment does. Kash Patel is lying again.",
+        "rationale": "Uses declarative statements about law plus an accusatory claim of lying."
+      },
+      {
+        "message_id": "bluesky_a3731d1a65ff0908528dcb49dcfc644633abe36f92f4567560082fc048df28bb",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "multiple all-caps segments",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"THIS is why\" ... \"AND\" ... \"Extortion of pigs like Trump & Farage.\"",
+        "rationale": "Heavy emphasis via all-caps throughout the text."
+      },
+      {
+        "message_id": "bluesky_a3731d1a65ff0908528dcb49dcfc644633abe36f92f4567560082fc048df28bb",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo insult term 'pigs' applied to politicians",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "extortion of pigs like Trump & Farage.",
+        "rationale": "Uses a dehumanizing/insulting animal metaphor to attack named individuals."
+      },
+      {
+        "message_id": "reddit_1tvll8k_opicflf",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none; comparative insult construction (but removed feature captured as mock-evaluative emphasis)",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "the worst President we've ever had ... *awful*",
+        "rationale": "Uses highly evaluative comparative language and emphatic intensifiers to attack a political figure."
+      },
+      {
+        "message_id": "reddit_1li24by_mz8nqy3",
+        "feature_name": "call_to_action",
+        "feature_value": "imperative rejection and profanity directed at content",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Fuck right off.",
+        "rationale": "Uses a direct imperative to dismiss the post/content."
+      },
+      {
+        "message_id": "reddit_1levqjx_mynwtf2",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking framing 'LoL, close?' and derogatory 'maggots' target",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "LoL, *close*? ... Trump and his maggots",
+        "rationale": "Combines sarcasm-like opener with a grotesque slur toward political actors."
+      }
+    ]
+  }
+}

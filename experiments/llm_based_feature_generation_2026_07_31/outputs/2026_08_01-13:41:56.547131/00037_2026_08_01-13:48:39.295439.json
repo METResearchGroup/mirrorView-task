@@ -1,0 +1,180 @@
+{
+  "batch_id": 37,
+  "message_ids": [
+    "bluesky_20222d154b68e3efb9325e1413ab3ab567c5bb89167a267396be4fd205e49ad3",
+    "bluesky_3b6ef6962b11f9201bcd2c43154455b1e914fe1b5c6726c311962d6739bf9478",
+    "bluesky_4086f0eee340ddab2803f0b4e24944c10a6d0d4804074be3b5b31155c93fe6a6",
+    "bluesky_586c3a9353f12ddca4f6c4d1e829877854ad1fbba781cd9f2105bd1f64028422",
+    "bluesky_7c577c1d7fe9524a12c8c0f494642177e430c0e28bc944e85868cb7bc841099e",
+    "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+    "bluesky_cd02b1b74c038bb4f89ab3a61bb157e15a271ec42035ea585c5fda6b3056e71e",
+    "bluesky_f1f8e8f4e6f966a6eb022fb6ab2629a9cfc2a3b388fae7dae56f7795cf9d18e7",
+    "bluesky_f285cebbad63e0d99e74b705fb6f71c8f6a2d5e51ee8e81ab71682c76e0b27d4",
+    "reddit_1kdeuwv_mqaeubt",
+    "reddit_1ktzjih_mu9569m",
+    "reddit_1lgvmqa_mz15b89",
+    "reddit_1td5imr_olzf967",
+    "reddit_1u1fnvf_oqpvypv",
+    "twitter_2060711399865675894",
+    "twitter_2061148360015553013",
+    "twitter_2061587113901191589",
+    "twitter_2061645295759319187",
+    "twitter_2061722626532286758",
+    "twitter_2061777229613588942"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_f285cebbad63e0d99e74b705fb6f71c8f6a2d5e51ee8e81ab71682c76e0b27d4",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "control guns and you take away the immediate issue... helping low incomes is a long-term plan",
+        "rationale": "The post contains multiple multi-clause sentences and long argumentative phrasing."
+      },
+      {
+        "message_id": "bluesky_f285cebbad63e0d99e74b705fb6f71c8f6a2d5e51ee8e81ab71682c76e0b27d4",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "ABSOLUTELY",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "the tools are ABSOLUTELY part of the problem",
+        "rationale": "Contains an uppercase emphasis token."
+      },
+      {
+        "message_id": "twitter_2061722626532286758",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "housing/rent affordability",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "national strategy on rent affordability and a shift... around renting",
+        "rationale": "Main subject is rent affordability and renting mindset."
+      },
+      {
+        "message_id": "bluesky_cd02b1b74c038bb4f89ab3a61bb157e15a271ec42035ea585c5fda6b3056e71e",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (e.g., VietNam, GOP, civil rights, women's rights references)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "65+ voters... VietNam... GOP... civil rights... women's rights",
+        "rationale": "Multiple named/label-like proper nouns and political acronyms are present."
+      },
+      {
+        "message_id": "bluesky_20222d154b68e3efb9325e1413ab3ab567c5bb89167a267396be4fd205e49ad3",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "policy list with commas and ampersand-like chaining",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "term limits, remove pensions & healthcare for life for reps, gun reform, taxing corporations and the rich, healthcare and education. For free.",
+        "rationale": "The sentence enumerates many policy items in a single run-on list."
+      },
+      {
+        "message_id": "bluesky_586c3a9353f12ddca4f6c4d1e829877854ad1fbba781cd9f2105bd1f64028422",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "implicit audience addressing via values framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "That's only responsible given the priviledge of firearm ownership.",
+        "rationale": "Communicative intent is justification to a general audience rather than a purely factual statement."
+      },
+      {
+        "message_id": "reddit_1kdeuwv_mqaeubt",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting voters",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Everyone who voted for Donald Trump is an idiot.",
+        "rationale": "Uses a direct derogatory label toward a political group."
+      },
+      {
+        "message_id": "bluesky_4086f0eee340ddab2803f0b4e24944c10a6d0d4804074be3b5b31155c93fe6a6",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "quote contains if-elected then-take-guns claim",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIf [so-and-so] is elected they\u2019ll try to take our guns!\u201d",
+        "rationale": "Includes an explicit if/then conditional structure."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ktzjih_mu9569m",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "fuck (targeted insult)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "JFC, fuck these fascists.",
+        "rationale": "Contains strong profanity directed at a political group."
+      },
+      {
+        "message_id": "twitter_2061645295759319187",
+        "feature_name": "call_to_action",
+        "feature_value": "defund slogans with repetition",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "DeFund the Police.. Defund I.C.E. .. DeFund Border Patrol..",
+        "rationale": "Imperative slogans function as calls for policy/action."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqpvypv",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "speculation about allegations not true",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "these could just be allegations... and not true.",
+        "rationale": "Uses modal/speculative framing ('could just be')."
+      },
+      {
+        "message_id": "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun violence / mass shooting",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Another day, another mass shooting.",
+        "rationale": "Directly references mass shootings as the central topic."
+      },
+      {
+        "message_id": "reddit_1lgvmqa_mz15b89",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "fuck ... (two insults)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck this administration man. And fuck the American people for their ignorance.",
+        "rationale": "Contains repeated profanity/insults."
+      },
+      {
+        "message_id": "bluesky_7c577c1d7fe9524a12c8c0f494642177e430c0e28bc944e85868cb7bc841099e",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "ban them / defend the Second Amendment",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Ban them.",
+        "rationale": "Ends with an explicit policy prescription."
+      },
+      {
+        "message_id": "reddit_1td5imr_olzf967",
+        "feature_name": "rhetorical_question",
+        "feature_value": "series of 'do you think...' questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Even if I grant that, is that not better than what we have now?",
+        "rationale": "Uses a question form to challenge the reader."
+      },
+      {
+        "message_id": "bluesky_f1f8e8f4e6f966a6eb022fb6ab2629a9cfc2a3b388fae7dae56f7795cf9d18e7",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "personal tragedy as justification",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "My abusive ex murdered... my father in 2004... I feel naked when I can't carry.",
+        "rationale": "Personal harm/death is invoked as a reason for political stance."
+      }
+    ]
+  }
+}

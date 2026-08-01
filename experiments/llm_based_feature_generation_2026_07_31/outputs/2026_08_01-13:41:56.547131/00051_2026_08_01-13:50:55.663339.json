@@ -1,0 +1,180 @@
+{
+  "batch_id": 51,
+  "message_ids": [
+    "bluesky_0a6621559f8e54480b02df2847d010e17dfb97e421bcf216fb0bad53c050cec0",
+    "bluesky_114ee7f4300678b008df26be9acec408061a791e142f3a178cc9ac1b352ca388",
+    "bluesky_3fbf18e6d88a3eb0e85aec2fae5ec1d79528a7746c38c678bfbcc3441dc34e3a",
+    "bluesky_644b1983ef4c72787389a791a1daa2d8e8f02abfb4223a9057a53134a8436656",
+    "reddit_1kw78m9_mufekp3",
+    "reddit_1kxmwug_muqtuua",
+    "reddit_1lg8nfc_myuy2mf",
+    "reddit_1ln4xz0_n0cojlk",
+    "reddit_1tbymrb_olokl5i",
+    "reddit_1tn78mh_onsjcwo",
+    "reddit_1try6d7_oq53g75",
+    "reddit_1tsv1fn_ooze95b",
+    "reddit_1tsvgs3_op1nqxo",
+    "reddit_1tt6meg_op185e4",
+    "twitter_2059419372054254032",
+    "twitter_2060153841283379703",
+    "twitter_2061584395891306676",
+    "twitter_2061766156440977463",
+    "twitter_2061781410738774397",
+    "twitter_2061825832927011170"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061781410738774397",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Large percentages of Central American countries\u2019 populations were encouraged to cross border illegally",
+        "rationale": "The post contains multiple multi-sentence claims and a short paragraph-length structure."
+      },
+      {
+        "message_id": "twitter_2061781410738774397",
+        "feature_name": "inflation_causal_mechanism_claim",
+        "feature_value": "claims housing/food demand increases inflation",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "Increased demand for housing and food caused inflation to spike.",
+        "rationale": "It explicitly uses a causal construction ('caused') linking demand to inflation."
+      },
+      {
+        "message_id": "bluesky_0a6621559f8e54480b02df2847d010e17dfb97e421bcf216fb0bad53c050cec0",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "ellipsis/fragmented emphatic lines",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Illegal guns are already banned...\n\nYet, they're everywhere.",
+        "rationale": "Uses ellipses and short emphatic lines rather than full sentences."
+      },
+      {
+        "message_id": "bluesky_0a6621559f8e54480b02df2847d010e17dfb97e421bcf216fb0bad53c050cec0",
+        "feature_name": "nonstandard_command_style",
+        "feature_value": "caps-style slogan segments",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "Gun. Bans. Don't. Work.",
+        "rationale": "The text uses highly abbreviated dotted slogan phrasing to emphasize a conclusion."
+      },
+      {
+        "message_id": "reddit_1tsvgs3_op1nqxo",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "if the left/right ceded issues, they would win",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "if the left ceded these issues... they would win every race always",
+        "rationale": "Contains a clear 'if ... would ...' conditional argument."
+      },
+      {
+        "message_id": "reddit_1tsvgs3_op1nqxo",
+        "feature_name": "normative_moral_language",
+        "feature_value": "frames issues as 'real' vs 'dead horse'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "dead horse beating racial grievance",
+        "rationale": "Uses evaluative metaphors to morally/strategically dismiss a topic as non-actionable."
+      },
+      {
+        "message_id": "twitter_2059419372054254032",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo/insult language and accusatory moral claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "is a total hypocrite",
+        "rationale": "Uses strong negative moral labeling ('hypocrite') rather than neutral critique."
+      },
+      {
+        "message_id": "reddit_1tn78mh_onsjcwo",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "quoted bloc comparisons (Modern Day Libertarians / Conservatives)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Modern Day Libertarians:: \"I'll vote against both no matter what and accomplish nothing\"",
+        "rationale": "Uses an explicit two-party (block) quote-and-contrast layout."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ln4xz0_n0cojlk",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "direct curse",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck you.",
+        "rationale": "Contains explicit profanity directed at a political group."
+      },
+      {
+        "message_id": "reddit_1ln4xz0_n0cojlk",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "wishes intense harm ('indescribable pain')",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "I hope you experience indescribable pain.",
+        "rationale": "Expresses a harm-wishing statement rather than political argument."
+      },
+      {
+        "message_id": "bluesky_114ee7f4300678b008df26be9acec408061a791e142f3a178cc9ac1b352ca388",
+        "feature_name": "abrupt_slogan_style",
+        "feature_value": "shorthand accusation with numeric label",
+        "category": "compositional_syntax",
+        "is_open_ended": true,
+        "evidence_span": "GOP119thCongress, stood by & did NOTHING!",
+        "rationale": "Uses compact tag-like shorthand and an all-caps emphasis phrase."
+      },
+      {
+        "message_id": "bluesky_114ee7f4300678b008df26be9acec408061a791e142f3a178cc9ac1b352ca388",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "NONE/NOTHING in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "did NOTHING!",
+        "rationale": "Employs uppercase for emphatic condemnation."
+      },
+      {
+        "message_id": "reddit_1kw78m9_mufekp3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "vulgar insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fucking lame and pathetic",
+        "rationale": "Includes explicit profanity and demeaning descriptors about a group."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olokl5i",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "speculates outcome using 'I mean, she might have' then asserts certainty",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "I mean, she might have. But we know she definitely got in",
+        "rationale": "Switches between uncertainty and certainty while making a discriminatory admissions claim."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olokl5i",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "acknowledges possibility then contrasts with 'but we know'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "But we know she definitely got in",
+        "rationale": "Uses 'But' to pivot from speculation to a definitive assertion."
+      },
+      {
+        "message_id": "twitter_2060153841283379703",
+        "feature_name": "call_to_action",
+        "feature_value": "binary policy question with answer choice",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "Should we enforce immigration laws and deport undocumented immigrants?\nA. Yes",
+        "rationale": "Formats a direct question intended to solicit/guide a specific political response."
+      }
+    ]
+  }
+}

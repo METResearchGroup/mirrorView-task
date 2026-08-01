@@ -1,0 +1,180 @@
+{
+  "batch_id": 35,
+  "message_ids": [
+    "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+    "bluesky_a1ca8fce42888b260550f1654b19f9bac63c309f555f82f1531f71bea568d1da",
+    "bluesky_c0bd47ec6339bf0ad1f2cae70fddebb1b03a2229d30d9271a021122768050451",
+    "bluesky_d73226e1cb24c5c3a9201d02951cf5959e2f6b49461b83354df802a6d5ac1eeb",
+    "bluesky_dd8705e69f6f0c89af4aa54d68dfdc1de58327ca4d574371f2fd7fa604f8d512",
+    "reddit_1klrtv5_ms540uz",
+    "reddit_1km18ir_ms8yoji",
+    "reddit_1ktjhl8_mtuln0r",
+    "reddit_1l48h1m_mw71clk",
+    "reddit_1leqcgj_mykd9al",
+    "reddit_1lg0jx2_myslgv3",
+    "reddit_1ll6sj4_n0i0bhd",
+    "reddit_1ttbse9_op1p0we",
+    "reddit_1tuue1j_opf84js",
+    "reddit_1two3nw_opqj3ic",
+    "reddit_1tzb8pt_oqa8don",
+    "reddit_1u21326_oqwenzk",
+    "twitter_2060922997108842619",
+    "twitter_2061556346604970193",
+    "twitter_2061609390323450319"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_c0bd47ec6339bf0ad1f2cae70fddebb1b03a2229d30d9271a021122768050451",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Not right now. We have an armed paramilitary gestapo carrying out an ethnic cleansing. That needs to go before any sense of gun reform occurs. I really do mean ANY.",
+        "rationale": "The post contains multiple full sentences and detailed justifications, indicating a long length."
+      },
+      {
+        "message_id": "bluesky_c0bd47ec6339bf0ad1f2cae70fddebb1b03a2229d30d9271a021122768050451",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Not right now. We have an armed paramilitary gestapo carrying out an ethnic cleansing.",
+        "rationale": "No explicit profanity or slurs are present in the excerpt."
+      },
+      {
+        "message_id": "bluesky_c0bd47ec6339bf0ad1f2cae70fddebb1b03a2229d30d9271a021122768050451",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns and gun reform",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "before any sense of gun reform occurs",
+        "rationale": "The text explicitly discusses gun reform and self-defense in the context of guns."
+      },
+      {
+        "message_id": "bluesky_c0bd47ec6339bf0ad1f2cae70fddebb1b03a2229d30d9271a021122768050451",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "ethnic cleansing / unjust government threshold",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "armed paramilitary gestapo carrying out an ethnic cleansing",
+        "rationale": "It portrays a persecuted group situation as justification for action."
+      },
+      {
+        "message_id": "twitter_2061609390323450319",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (rep + ICE + Border Patrol + U.S.)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Rep. Brandon Gill praised ICE and Border Patrol agents... defending U.S. sovereignty",
+        "rationale": "The post references multiple named entities and organizations."
+      },
+      {
+        "message_id": "twitter_2061609390323450319",
+        "feature_name": "target_directionality",
+        "feature_value": "praises ICE/Border Patrol (mirror shifts to accusing them of terrorizing communities)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "original: \"praised ICE and Border Patrol agents\" / mirror: \"while they terrorize communities\"",
+        "rationale": "The original is laudatory toward ICE/Border Patrol, while the mirror retargets them as harmful actors."
+      },
+      {
+        "message_id": "reddit_1tzb8pt_oqa8don",
+        "feature_name": "geographic_scope",
+        "feature_value": "international (Ireland + American bases/partnerships)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "American military bases here in Ireland",
+        "rationale": "The text centers on U.S. bases in Ireland."
+      },
+      {
+        "message_id": "reddit_1ttbse9_op1p0we",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "January 6th / election events",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "on January 6th",
+        "rationale": "It explicitly references the January 6th event."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1km18ir_ms8yoji",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "short profanity-directed insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Bernie Sanders.",
+        "rationale": "Contains explicit profanity in a targeted political insult."
+      },
+      {
+        "message_id": "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "IF (17 states) ... would you (question about rights)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "IF tomorrow, 17 states chose to completely abolish the Second Amendment, would you gun-owning men consider yourselves to have lost rights?",
+        "rationale": "Uses a clear hypothetical conditional to frame a rights question."
+      },
+      {
+        "message_id": "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Second Amendment / gun rights and abortion analogy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Second Amendment",
+        "rationale": "The post directly references abolishing the Second Amendment and compares it to abortion."
+      },
+      {
+        "message_id": "twitter_2061556346604970193",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "@mentions / tagging multiple users",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Hey @ychernova maybe you should ask @dhaber @bhororitz @davidu",
+        "rationale": "It addresses several accounts using @mention formatting."
+      },
+      {
+        "message_id": "twitter_2061556346604970193",
+        "feature_name": "causal_claim_present",
+        "feature_value": "accusatory claims about ties supporting genocidal regimes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "considering they hate Mamdani, Muslims and support genocidal terrorist regimes like Israel",
+        "rationale": "It asserts causal/justificatory accusations about the target\u2019s views and alleged behavior."
+      },
+      {
+        "message_id": "bluesky_dd8705e69f6f0c89af4aa54d68dfdc1de58327ca4d574371f2fd7fa604f8d512",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "multiple question marks/exclamation-like intensity and quoted credo",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "What infuriates me is what the unspoken credo... \"It's a shame about your dead kids...\" Did you?",
+        "rationale": "The post uses an extended quote plus strong emotional framing, with frequent punctuation and dramatic language."
+      },
+      {
+        "message_id": "reddit_1leqcgj_mykd9al",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "doom framing + emphasis and bold 'consequences'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Literally Trump/RepubliKlans will ruin the entire country... consequences.",
+        "rationale": "It expresses intense negative evaluation and warns of consequences using emphatic formatting."
+      },
+      {
+        "message_id": "reddit_1ktjhl8_mtuln0r",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "rights group vs perceived boogeyman (parents/MAGA vs women/lib)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "when it's a MAGA boogeyman, like gender affirming care or abortion care",
+        "rationale": "The post contrasts a 'we/they' framing through an in-group/out-group 'boogeyman' construct."
+      }
+    ]
+  }
+}

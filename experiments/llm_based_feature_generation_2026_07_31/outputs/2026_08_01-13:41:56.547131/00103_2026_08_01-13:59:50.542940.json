@@ -1,0 +1,180 @@
+{
+  "batch_id": 103,
+  "message_ids": [
+    "bluesky_35a9b246032c2e703c833a1b144dfe7251ae4bf709a6d3dc35b64f0fd87ed459",
+    "bluesky_5d0657b0da4b30271f147659d128c3feb08ef77b2981c6607df3abc37e300e08",
+    "bluesky_843b9ba1536c1bfab6e3d37a53736a90fc26492aed8448f185107be00633504f",
+    "reddit_1kkehok_mru0swm",
+    "reddit_1ko5g2h_msohrnq",
+    "reddit_1kzjx33_mw59i9s",
+    "reddit_1l3yavl_mw5u1nu",
+    "reddit_1let2t2_myk0hxt",
+    "reddit_1lmzz33_n0ez7ts",
+    "reddit_1lo6alt_n0kpc74",
+    "reddit_1t1zmb4_ojn1dyj",
+    "reddit_1ti509f_omrvw42",
+    "reddit_1tstwrk_oozsv1w",
+    "reddit_1tuebh8_op9twf0",
+    "reddit_1tvp4r1_opis8b9",
+    "reddit_1u16m18_oqnn53c",
+    "twitter_2060841923938574355",
+    "twitter_2061236773062168821",
+    "twitter_2061799482052751415",
+    "twitter_2061802513943449771"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tstwrk_oozsv1w",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions multiple US religious/political references (America, Sermon on the Mount, Beatitudes)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "America reads the Bible thing, has the most no-name conservatives reading the Sermon on the Mount and the Beatitudes.",
+        "rationale": "The post contains several named-religious/US-cultural proper-noun phrases."
+      },
+      {
+        "message_id": "reddit_1tstwrk_oozsv1w",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "original religious/scripture cherry-picking critique mirrored into Constitution/amendment cherry-picking and gun-ownership alignment",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "They don't actually care about the Constitution; they just cherry-pick the amendments... I'm not even a gun owner... respect the whole damn document.",
+        "rationale": "The mirror reallocates blame from religious readings to constitutional amendment selective use, adding a Second Amendment/gun-ownership framing."
+      },
+      {
+        "message_id": "twitter_2061802513943449771",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration/border policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "A country either controls who enters... or it does not have a serious border policy.",
+        "rationale": "The core topic is regulating entry and border policy."
+      },
+      {
+        "message_id": "twitter_2061802513943449771",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "either/or policy binary",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "A country either controls who enters, how many enter, and on what terms, or it does not have a serious border policy.",
+        "rationale": "The argument is structured as an either/or conditional."
+      },
+      {
+        "message_id": "bluesky_843b9ba1536c1bfab6e3d37a53736a90fc26492aed8448f185107be00633504f",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fucking mansions aren't enough?",
+        "rationale": "The text opens with a high-intensity profanity token."
+      },
+      {
+        "message_id": "bluesky_35a9b246032c2e703c833a1b144dfe7251ae4bf709a6d3dc35b64f0fd87ed459",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "intensifier repetition indicating strong condemnation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "beyond shameful, beyond anything",
+        "rationale": "The repetition of extreme evaluative phrasing signals emphatic outrage."
+      },
+      {
+        "message_id": "reddit_1u16m18_oqnn53c",
+        "feature_name": "targeted_actor_type",
+        "feature_value": "blames Republicans (original) / Democrats (mirror) for avoiding responsibility",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "in this context republicans are entirely to blame... once again avoiding responsibility.",
+        "rationale": "The speaker explicitly attributes blame to a specific political party."
+      },
+      {
+        "message_id": "reddit_1kzjx33_mw59i9s",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "party/moral condemnation with in-group identity via fascist/communist labeling",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The Republicans are fully supporting a fascist which makes them fascists.",
+        "rationale": "The post uses stark in-group/out-group moral labeling to classify the opposing side."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lmzz33_n0ez7ts",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "contains vulgar insult with profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "republicans are sick fucks",
+        "rationale": "The phrase includes a strong taboo word used to insult a group."
+      },
+      {
+        "message_id": "reddit_1tuebh8_op9twf0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual violence slur",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "you are a baby raper",
+        "rationale": "The post uses an extreme violent/sexual accusation term."
+      },
+      {
+        "message_id": "reddit_1t1zmb4_ojn1dyj",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "addresses readers via conditional support framing (If you support...)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If you support trump at this point, you're not a republican, you are a baby raper",
+        "rationale": "The sentence construction uses an 'If you...' directive address pattern."
+      },
+      {
+        "message_id": "reddit_1lo6alt_n0kpc74",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting dehumanizing labels",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Maga are stupid, lying fucks",
+        "rationale": "The post mocks/attacks using derogatory labeling."
+      },
+      {
+        "message_id": "twitter_2061236773062168821",
+        "feature_name": "normative_moral_language",
+        "feature_value": "accusation of dishonesty/liars",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Democrats running on \u201caffordability are bald faced liars",
+        "rationale": "It makes a strong moral judgment claim that the targeted group lies."
+      },
+      {
+        "message_id": "reddit_1ko5g2h_msohrnq",
+        "feature_name": "infomal_register_or_slang",
+        "feature_value": "slur/vernacular and crude insults",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "wifebeating, trailerbound, maga pieces of shit",
+        "rationale": "The language includes crude slangy/verbal insults aimed at an outgroup."
+      },
+      {
+        "message_id": "twitter_2061799482052751415",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "appeals to external experts as authority",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Scientists and journalists say otherwise. Who do you believe?",
+        "rationale": "The text frames claims as expert testimony rather than speculation."
+      },
+      {
+        "message_id": "reddit_1let2t2_myk0hxt",
+        "feature_name": "call_to_action",
+        "feature_value": "urge voting out",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Vote them out.",
+        "rationale": "It directly instructs the audience to take political action."
+      }
+    ]
+  }
+}

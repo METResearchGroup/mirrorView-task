@@ -1,0 +1,180 @@
+{
+  "batch_id": 93,
+  "message_ids": [
+    "bluesky_54102eee419ba065547161152ec85cb06eaba665ccd97a887d6e91169596e96f",
+    "reddit_1kufk1l_mu14yej",
+    "reddit_1l32lt4_mw47x7d",
+    "reddit_1l4871w_mw743t1",
+    "reddit_1l6qvvm_mwvvgt8",
+    "reddit_1t6mb7v_okjqay7",
+    "reddit_1tklc7j_onj3366",
+    "reddit_1tsiloa_op978ez",
+    "reddit_1tstwrk_ooxklt6",
+    "reddit_1tt6s61_op21xtt",
+    "reddit_1tucjhu_opapfna",
+    "reddit_1tx0770_opsaim3",
+    "reddit_1u0k7q8_oqj7zgm",
+    "twitter_2059404130087801256",
+    "twitter_2060476075034206458",
+    "twitter_2061230326945317175",
+    "twitter_2061479124078575784",
+    "twitter_2061483491800317980",
+    "twitter_2061616629902168547",
+    "twitter_2061776440589271149"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060476075034206458",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "informal, conversational comparison language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThey want open borders and gun control. One group gets to come and go freely.\u201d",
+        "rationale": "Uses casual, conversational phrasing (\u201cOne group gets to\u2026 the other doesn\u2019t\u201d)."
+      },
+      {
+        "message_id": "reddit_1kufk1l_mu14yej",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insulting profanity terms (e.g., \u201cIdiot\u201d, \u201cclown\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cTrump takes credit for something he didn\u2019t do. Idiot MAGA believes it.\u201d / \u201cthis clown.\u201d",
+        "rationale": "Contains direct degrading labels used as insults."
+      },
+      {
+        "message_id": "bluesky_54102eee419ba065547161152ec85cb06eaba665ccd97a887d6e91169596e96f",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates disarmament of a group",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cYeah disarm the people who hate fascism\u2026\u201d",
+        "rationale": "The text proposes a concrete policy action (\u201cdisarm\u201d)."
+      },
+      {
+        "message_id": "reddit_1tt6s61_op21xtt",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo verb (\u201cfuck around\u201d) in colloquial expression",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cAt least he refused to fuck around with election certification.\u201d",
+        "rationale": "Includes a strong taboo phrase used idiomatically."
+      },
+      {
+        "message_id": "twitter_2061230326945317175",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration enforcement / sanctuary cities",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201csanctuary cities banned in America?\u201d / \u201cICE overreach\u2026\u201d",
+        "rationale": "Directly references sanctuary cities and ICE."
+      },
+      {
+        "message_id": "reddit_1tx0770_opsaim3",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "blames fiscal waste and regulation abuse; implies cost-cutting fixes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cguilty of wasting money and abusing regulations\u2026 Programs were cut because departments were grossly bloated.\u201d / \u201ctrim the fat.\u201d",
+        "rationale": "Uses resource-waste reasoning and \u201ctrim the fat\u201d logic."
+      },
+      {
+        "message_id": "twitter_2061776440589271149",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "named political actors/parties",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cRepublicans Should Eliminate Federal Income Taxes\u2026\u201d / \u201cDemocrats should be pushing\u2026\u201d",
+        "rationale": "Mentions major party names to anchor the claim."
+      },
+      {
+        "message_id": "twitter_2059404130087801256",
+        "feature_name": "normative_moral_language",
+        "feature_value": "strong moral condemnation (medieval/barbaric) and hypocrisy label",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cis medieval\u201d / \u201cpusillanimous hypocrite\u201d / \u201cbarbaric\u201d",
+        "rationale": "Uses moralized, condemning adjectives to evaluate the policy/actors."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l6qvvm_mwvvgt8",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "direct profanity and insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFuck you, lady.,SUPPORT TRUMP HE WILL KILL IMMIGRANTS\u2026\u201d",
+        "rationale": "Contains explicit profanity plus violent-sounding claim."
+      },
+      {
+        "message_id": "reddit_1l32lt4_mw47x7d",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo phrase \u201cfucking\u201d used for attribution",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cStill a fucking Nazi. Fuck off.\u201d",
+        "rationale": "Uses repeated profanity (\u201cfucking\u201d, \u201cFuck off\u201d)."
+      },
+      {
+        "message_id": "reddit_1tsiloa_op978ez",
+        "feature_name": "compositional_syntax",
+        "feature_value": "question/answer format with rhetorical justification",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": ">\u201cDo You Think That AI Data Centers Should Be Heavily Limited And/Or Banned? Yes Or No?\u201d \u2026 \u201cNo.\u201d \u2026 \u201cWhy Your Thoughts?\u201d \u2026 \u201cNo compelling reason to.\u201d",
+        "rationale": "Uses a quoted yes/no question and immediate short-answer structure."
+      },
+      {
+        "message_id": "twitter_2061483491800317980",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "derogatory framing of opponents (\u201clibs will go crazy over\u201d, \u201ceat up with a spoon\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cthe libs will go crazy over\u201d / \u201ceat up with a spoon\u201d",
+        "rationale": "Uses dismissive ridicule toward a group."
+      },
+      {
+        "message_id": "reddit_1l4871w_mw743t1",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "short emphatic expletive + intensifier",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cYou underestimate how dog crap the democrats are\u201d",
+        "rationale": "Highly derogatory and succinct claim using insulting noun phrase."
+      },
+      {
+        "message_id": "twitter_2061616629902168547",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual body-part insult (\u201csphincter\u201d, \u201crectum\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cis a sphincter.\u201d / \u201ccomplete rectum.\u201d",
+        "rationale": "Uses coarse, dehumanizing anatomical insults."
+      },
+      {
+        "message_id": "reddit_1u0k7q8_oqj7zgm",
+        "feature_name": "call_to_action",
+        "feature_value": "directive blame and mobilization framing (\u201cGet mad\u2026\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cGet mad at the Democrats and so-called Liberals\u2026\u201d",
+        "rationale": "Employs an imperative to encourage audience reaction."
+      },
+      {
+        "message_id": "reddit_1t6mb7v_okjqay7",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "uses specific comparative statistics without sourcing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cSweden has the highest cost per individual\u2026 at $10k. Americans are spending $15k a year.\u201d",
+        "rationale": "Presents concrete numeric claims as assertions."
+      }
+    ]
+  }
+}

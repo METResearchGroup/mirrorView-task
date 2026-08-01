@@ -1,0 +1,180 @@
+{
+  "batch_id": 114,
+  "message_ids": [
+    "bluesky_06c4c0fe842a72277bda7916dcd8f229c5bd290d59de803be1aaf5da8e64bf3e",
+    "bluesky_2b54682d9352d825336b1dcb116f1af0edd986bbc2b158f3a46371442291a16b",
+    "bluesky_31964bf7b866e44c68964dba89b5596e8090083aa8de43ddb589f1841ce9d590",
+    "bluesky_67512f8d9465f28a3899606b603a5f199d15845cfdbf5663f549fc842cb548be",
+    "bluesky_85528a3b6842d49078dba0781d5f1ae63f8b4c8dbdf7e4e782a03ff14dcc8492",
+    "reddit_1kg5qlk_mqwn2q5",
+    "reddit_1kifvs5_mrgonpm",
+    "reddit_1l7cg1o_mx04lgf",
+    "reddit_1ljlipu_mzmmk5w",
+    "reddit_1th143w_omkj0s5",
+    "reddit_1tn7lg4_ontjmrc",
+    "reddit_1tql6ez_ooh9unr",
+    "reddit_1tql6ez_oojaowy",
+    "reddit_1txnigx_oq0ys5m",
+    "reddit_1tytmjd_oq9pp0w",
+    "reddit_1tzfhxv_oqadx03",
+    "reddit_1u0gjyt_oqigk6s",
+    "twitter_2060406443090854140",
+    "twitter_2061553200524599340",
+    "twitter_2061559756838318425"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_67512f8d9465f28a3899606b603a5f199d15845cfdbf5663f549fc842cb548be",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"PSA: Buy an assault weapon, learn to use, clean, maintain, and retain it.\"",
+        "rationale": "The post is a brief PSA-style sentence with compact structure."
+      },
+      {
+        "message_id": "bluesky_67512f8d9465f28a3899606b603a5f199d15845cfdbf5663f549fc842cb548be",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative address ('learn', 'clean', 'maintain', 'retain')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Buy an assault weapon, learn to use, clean, maintain, and retain it.\"",
+        "rationale": "Multiple imperative verbs directly instruct the reader."
+      },
+      {
+        "message_id": "twitter_2061553200524599340",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "threat/vs-enemy groups ('evil, dishonest liberals... radical Muslims')",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"To the evil, dishonest liberals, globalists, and radical Muslims.\"",
+        "rationale": "The text constructs an outgroup of multiple enemy categories contrasted with 'America'."
+      },
+      {
+        "message_id": "twitter_2061553200524599340",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "claim of 'brainwashing our youth'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"brainwashing our youth.\"",
+        "rationale": "It attributes harm to an adversary via youth 'brainwashing,' implying targeted wrongdoing."
+      },
+      {
+        "message_id": "reddit_1tn7lg4_ontjmrc",
+        "feature_name": "rhetorical_question",
+        "feature_value": "questions about whose side is winning",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If Russia already won then who is Ukraine fighting?\"",
+        "rationale": "The post uses a direct rhetorical question to challenge an implied premise."
+      },
+      {
+        "message_id": "reddit_1txnigx_oq0ys5m",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate policy / market vs climate change",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"climate change\"",
+        "rationale": "The discussion centers on climate change and proposed changes to address it."
+      },
+      {
+        "message_id": "bluesky_2b54682d9352d825336b1dcb116f1af0edd986bbc2b158f3a46371442291a16b",
+        "feature_name": "call_to_action",
+        "feature_value": "advocacy to change gun laws",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"We can make a difference in Gun laws that are killing innocent people!!\"",
+        "rationale": "The speaker explicitly urges action toward altering gun laws."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqigk6s",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "quipy, slogan-like phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"A government so small it'll fit into your children's underwear.\"",
+        "rationale": "Uses a provocative one-line figurative slogan rather than formal prose."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1th143w_omkj0s5",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions public figures','AOC' not present; but includes no explicit proper names besides implied 'marriage equality' (no person names)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"supporting marriage equality\"",
+        "rationale": "No clear proper-noun density cues; however, the post is centered on political ideology and social issues with historical reference."
+      },
+      {
+        "message_id": "reddit_1ljlipu_mzmmk5w",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "derogatory slang and coarse language ('dogshit', 'swamp creatures', 'burn down')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"establishment dogshit\"",
+        "rationale": "Contains informal/insulting phrasing typical of hostile political rhetoric."
+      },
+      {
+        "message_id": "reddit_1tzfhxv_oqadx03",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "direct quote attributed to DJT",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"\u2026you know what, our country can never be great.\" - DJT",
+        "rationale": "The text embeds a quotation and attributes it to a political figure."
+      },
+      {
+        "message_id": "twitter_2061559756838318425",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "capitals for emphasis ('MUST WATCH', 'CLIMATE CHANGE')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MUST WATCH.  CLIMATE CHANGE IS A SCAM\"",
+        "rationale": "Uses all-caps headlines to stress the claim."
+      },
+      {
+        "message_id": "twitter_2061559756838318425",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "stochastic claim of a scheme ('HOW THEY'RE GOING TO GET RID OF US ALL')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"BUT IT'S HOW THEY\"RE GOING TO GET RID OF US ALL !!!\"",
+        "rationale": "Frames the topic as an orchestrated plot against people."
+      },
+      {
+        "message_id": "reddit_1l7cg1o_mx04lgf",
+        "feature_name": "target_directionality",
+        "feature_value": "ingroup/outgroup targeting by ethnicity and political party ('Latinas for Trump', 'Democrats', party left them behind')",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Latinas for Trump\" ... \"How\u00019s it looking\"",
+        "rationale": "Uses identity-based political labeling to direct criticism and ridicule."
+      },
+      {
+        "message_id": "reddit_1kifvs5_mrgonpm",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual taboo insult ('fuck little girls')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"he just wants to fuck little girls.\"",
+        "rationale": "Contains explicit sexual/taboo language and accusation."
+      },
+      {
+        "message_id": "bluesky_85528a3b6842d49078dba0781d5f1ae63f8b4c8dbdf7e4e782a03ff14dcc8492",
+        "feature_name": "semantic_content_conspiratorial_framing",
+        "feature_value": "blame attribution to 'woke leftists' and 'Democrat-run cities' as causal system",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"Most woke leftists ... wrongly think\" ... \"Democrat-run cities gutting their communities\"",
+        "rationale": "Uses sweeping, causal blame about political actors and institutions as drivers of problems."
+      }
+    ]
+  }
+}

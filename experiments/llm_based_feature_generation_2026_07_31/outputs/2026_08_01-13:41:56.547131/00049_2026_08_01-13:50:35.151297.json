@@ -1,0 +1,180 @@
+{
+  "batch_id": 49,
+  "message_ids": [
+    "bluesky_0f6e8c86a9289254b39acf70df9feb44bfcfbcfa415042c14d80af909c547103",
+    "bluesky_115c013fea974628086341470dcfb354e055717f462d6e8f7e96302d2c5f7128",
+    "bluesky_b2a1292a5d8bfcf822d1e4d4194fb0b69efe10dd244d2fb22ddd30343b5b293b",
+    "bluesky_f2e28fc96e899d7c0de8591945ec8d0d40cca429f92dba8d0cbbcb309cc3e2e9",
+    "reddit_1khn8d7_mrcnzwf",
+    "reddit_1kn4li2_msla97q",
+    "reddit_1kxna55_mur1g74",
+    "reddit_1l4c1gs_mw8qpy9",
+    "reddit_1l6eybs_mwrhi9t",
+    "reddit_1l7fyn5_mwwdih2",
+    "reddit_1lcovdy_my2cglp",
+    "reddit_1ldsaaf_myb177w",
+    "reddit_1lhzpsa_mz8bx3c",
+    "reddit_1tjno36_on2o77a",
+    "reddit_1txrv9p_oq0elzi",
+    "reddit_1u1nsuy_oqsbrbf",
+    "reddit_1u31653_or1pzcm",
+    "twitter_2059755508941168899",
+    "twitter_2060861488810598803",
+    "twitter_2061599847279444479"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u1nsuy_oqsbrbf",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Very high punctuation/quotes and emphatic sentence flow",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"concerns\" that she never actually talks about",
+        "rationale": "Contains quoted terms and dense punctuation typical of emphatic, accusatory commentary."
+      },
+      {
+        "message_id": "reddit_1u1nsuy_oqsbrbf",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blame between MAGA/war hawks vs a supposed alternate stance",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "votes with MAGA and for war 99.9% of the time anyways",
+        "rationale": "Opposes a political identity (MAGA/war) to the post's claimed 'she doesn't like' posture."
+      },
+      {
+        "message_id": "bluesky_0f6e8c86a9289254b39acf70df9feb44bfcfbcfa415042c14d80af909c547103",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple proper-noun style political anchors (fossil fuels, religion, gov, maga) and implied groups",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fossil fuels & pollution... more guns, less regulation & more religion in our govt (subversion) was the way to maga",
+        "rationale": "Uses specific policy domains plus political slogans/identifiers to anchor the claim."
+      },
+      {
+        "message_id": "reddit_1txrv9p_oq0elzi",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Direct cause-effect link from war to NATO expansion",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "this war caused multiple nations to join NATO",
+        "rationale": "States an explicit causal relation between the war and NATO membership growth."
+      },
+      {
+        "message_id": "twitter_2059755508941168899",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Attribution with quoted metaphor and outlet/year",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "NPR in 2018 describes restrictionist immigration policy as \"turning down the burner on America's melting pot.\"",
+        "rationale": "Uses media attribution plus direct quote as a rhetorical anchor."
+      },
+      {
+        "message_id": "twitter_2060861488810598803",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "General imperative target by categorical accusation (no 'you', but imperative-like blame)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Sanctuary cities and states are unconstitutional. They are causing all the violence in this country.",
+        "rationale": "Uses declarative, totalizing blame statements as an argumentative structure."
+      },
+      {
+        "message_id": "reddit_1l7fyn5_mwwdih2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual/insult profanity toward political supporters",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "suck Trump's balls and lick the boot",
+        "rationale": "Contains explicit sexual/vulgar language used for political insult."
+      },
+      {
+        "message_id": "bluesky_b2a1292a5d8bfcf822d1e4d4194fb0b69efe10dd244d2fb22ddd30343b5b293b",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Portrays climate skeptics as 'blindly swallow' predictions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "too many Americans that blindly swallow every climate alarmist prediction without question",
+        "rationale": "Uses a broad, manipulative/credulity framing that implies people are being misled."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l6eybs_mwrhi9t",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks opposing group with 'clowns'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Every accusation is a confession with these clowns.",
+        "rationale": "Uses dehumanizing/mock label to dismiss opponents."
+      },
+      {
+        "message_id": "reddit_1kxna55_mur1g74",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "F-word insult with multiple slurs",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "That fascist Nazi fuck can piss off.",
+        "rationale": "Includes strong profanity and extremist labeling."
+      },
+      {
+        "message_id": "reddit_1lhzpsa_mz8bx3c",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses derogatory insults for political figures",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "megalomaniacal fool",
+        "rationale": "Contains severe insult language directly about political targets."
+      },
+      {
+        "message_id": "reddit_1kn4li2_msla97q",
+        "feature_name": "call_to_action",
+        "feature_value": "Implied rhetorical challenge about accountability/investigation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "So WHO TF is gonna investigate HER @$$?",
+        "rationale": "Uses direct interrogative challenge aimed at assigning blame."
+      },
+      {
+        "message_id": "reddit_1tjno36_on2o77a",
+        "feature_name": "geographic_scope",
+        "feature_value": "US subnational state-to-state directive",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Every conservative in California right now, please move out of California and settle somewhere else",
+        "rationale": "Explicitly references California and settlement elsewhere."
+      },
+      {
+        "message_id": "bluesky_f2e28fc96e899d7c0de8591945ec8d0d40cca429f92dba8d0cbbcb309cc3e2e9",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Sexual violence threat used as gun-control argument",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "you\u2019re probably gonna get raped if you don\u2019t have a gun",
+        "rationale": "Frames harm as imminent and attributes it to not having a gun."
+      },
+      {
+        "message_id": "reddit_1khn8d7_mrcnzwf",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Swap target from Trump to Biden and praising replacements (Buttigieg vs DeSantis)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Donald Trump... Butti?gieg is fucking awesome... Polar opposite of the crusty old dingleberry",
+        "rationale": "Mirror redirects critique and praise to different public figures."
+      },
+      {
+        "message_id": "reddit_1l4c1gs_mw8qpy9",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks voters with profanity and blame for 'open borders and economic chaos'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Funny how liberals aren't saying 'I voted for this' today cause you fucking voted for this disaster of open borders and economic chaos",
+        "rationale": "Uses mocking rhetorical comparison plus derogatory language to attack an audience."
+      }
+    ]
+  }
+}

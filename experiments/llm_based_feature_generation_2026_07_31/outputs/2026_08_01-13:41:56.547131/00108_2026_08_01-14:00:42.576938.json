@@ -1,0 +1,180 @@
+{
+  "batch_id": 108,
+  "message_ids": [
+    "bluesky_7f9b594b3d678c753e55ded9c5706a18e94b7fcd529d20db89a4b809c38d9043",
+    "bluesky_9f4d9bbd5cb60d4e82892f6062af1bf6c71ad50cfc69425d6b52363d81aedb02",
+    "bluesky_e9b903c9328d2747a850af973749a2e679d1990ec2daa791517135b048835497",
+    "reddit_1kevmuh_mqmezzs",
+    "reddit_1kfnhqe_mqvar4o",
+    "reddit_1kjndle_mrqjw7c",
+    "reddit_1kqlad9_mt8awge",
+    "reddit_1kr91iq_mtvd2fh",
+    "reddit_1kwrc53_muootri",
+    "reddit_1l3fqcb_mw34xff",
+    "reddit_1lauyl0_mxq44dy",
+    "reddit_1t7d5jc_okobxft",
+    "reddit_1trdy16_oonakj4",
+    "reddit_1tsx0f1_ooycfn8",
+    "reddit_1ttxea2_opvw7i6",
+    "reddit_1tzrws1_oqdmoph",
+    "twitter_2060006077106663786",
+    "twitter_2061504996642816139",
+    "twitter_2061737852749406424",
+    "twitter_2061785030670549435"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_e9b903c9328d2747a850af973749a2e679d1990ec2daa791517135b048835497",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "No named entities; focus on general groups (transwomen/women)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Transwomen wanting to enter a women-only sport\"",
+        "rationale": "The post uses generic group nouns rather than specific persons/organizations."
+      },
+      {
+        "message_id": "bluesky_e9b903c9328d2747a850af973749a2e679d1990ec2daa791517135b048835497",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Calls for enforcing existing women's rights legislation / burden on other side to argue for change",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"to persuade us all... to change the hard-fought situation of creating & enforcing women's rights legislation\"",
+        "rationale": "It frames a requirement about changing policy protections and the justification needed to alter them."
+      },
+      {
+        "message_id": "twitter_2061785030670549435",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Border litigation / SCOTUS admission referenced",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"SCOTUS\"",
+        "rationale": "The mirror explicitly invokes a Supreme Court action/admission tied to border policy."
+      },
+      {
+        "message_id": "twitter_2061785030670549435",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct approval/urging of state action against illegal immigration",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"States should be allowed to stop illegal immigration at their borders!\"",
+        "rationale": "The original text advocates a specific stance with imperative framing."
+      },
+      {
+        "message_id": "bluesky_7f9b594b3d678c753e55ded9c5706a18e94b7fcd529d20db89a4b809c38d9043",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Economic cost/regulation \u2192 fewer cows/farms \u2192 methane/carbon outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"because if it costs too much to buy beef there's too many cows... producing lots of methane\"",
+        "rationale": "It provides an explicit cause-effect chain about climate impacts."
+      },
+      {
+        "message_id": "reddit_1tzrws1_oqdmoph",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses the reader as \"you\" with repeated critique",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"You logic seems heavily predicated\"",
+        "rationale": "The argument is structured around second-person interrogation/assessment."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_okobxft",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Explicit contrast via named media figures (Charlie Kirk / Rachel Maddow)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Welcome to Charlie Kirk's world\"",
+        "rationale": "It embeds attribution by invoking specific commentator identities as a punchline."
+      },
+      {
+        "message_id": "reddit_1l3fqcb_mw34xff",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Profanity/sexual slang and irreverent comparison used",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"sucking Russian cock\"",
+        "rationale": "The text uses taboo sexual language as part of a rhetorical analogy."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kwrc53_muootri",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Celebrates punishment/locked up of political figures",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"If MAGA + both Clintons got fucked i would be tickled\"",
+        "rationale": "The post expresses vengeful, punitive intent toward targeted political actors."
+      },
+      {
+        "message_id": "twitter_2061737852749406424",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual taboo term used to insult/compare priorities",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"butt fucked\"",
+        "rationale": "Contains explicit sexualized taboo language."
+      },
+      {
+        "message_id": "reddit_1tsx0f1_ooycfn8",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "Ideological mapping of Trump to conservatives; mirror maps to Biden/Harris as progressives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump... US conservative movement\" / \"Biden and Harris... US progressive movement\"",
+        "rationale": "The text assigns parties to left/right ideological movements and the mirror switches the mapping."
+      },
+      {
+        "message_id": "reddit_1kqlad9_mt8awge",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Short dehumanizing insult at a political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGA are pieces of shit\"",
+        "rationale": "Uses a severe derogatory phrase targeting an outgroup defined by ideology."
+      },
+      {
+        "message_id": "reddit_1kevmuh_mqmezzs",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Implies hidden wrongdoing beyond initial clue (tip of iceberg)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The porn watch is only the tip of the iceberg.\"",
+        "rationale": "The metaphor asserts more concealed misconduct than what is mentioned."
+      },
+      {
+        "message_id": "reddit_1kfnhqe_mqvar4o",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Strong absolute claims about never stopping support; hateful/punitive framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Polls are bullshit. MAGA will NEVER stop supporting\"",
+        "rationale": "Uses strong absolutes and dismissive outrage language."
+      },
+      {
+        "message_id": "reddit_1trdy16_oonakj4",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Generalized claims about police/public statistics and accusatory process",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"literally more than half of people put in cuffs claim police brutality.\"",
+        "rationale": "Makes broad empirical-sounding assertions without qualification."
+      },
+      {
+        "message_id": "reddit_1kr91iq_mtvd2fh",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "None; but imperative/violent-sexual coercive phrase",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"Grab the Constitution by the pussy!\"",
+        "rationale": "Contains an explicit, violent/sexualized imperative used as a rhetorical slogan."
+      }
+    ]
+  }
+}

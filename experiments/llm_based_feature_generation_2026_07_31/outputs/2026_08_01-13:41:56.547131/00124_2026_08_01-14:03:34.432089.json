@@ -1,0 +1,180 @@
+{
+  "batch_id": 124,
+  "message_ids": [
+    "bluesky_3a0872025cb6fcaea3dfa2f7b0b5a17a3a093448f28a159b6afa7bd019a6ebab",
+    "bluesky_90b38a232b2c31c6af781079b030ff3ffe5f8e31243ac24b77807ca8b249cc2a",
+    "bluesky_ec5efeb70d104972c6db5a92c393358f3c591e4f603ba678f8effc71d89f5102",
+    "reddit_1kclbrq_mqgbpxy",
+    "reddit_1kzjrzz_mv6diq4",
+    "reddit_1lcklzj_my1x6r3",
+    "reddit_1llpslt_n03galz",
+    "reddit_1lojll9_n0o6r5f",
+    "reddit_1t4dzcm_ok2gz77",
+    "reddit_1tgafkf_omhmrw3",
+    "reddit_1tohbe9_oo1g5ru",
+    "reddit_1tzrws1_or0s6af",
+    "reddit_1u0oc51_oqlcsuw",
+    "reddit_1u1fnvf_oqr54cm",
+    "reddit_1u2391z_oqv7son",
+    "reddit_1u2xqsq_or1wn9m",
+    "twitter_2061523424355275156",
+    "twitter_2061561465580998715",
+    "twitter_2061579812104184052",
+    "twitter_2061780073917690254"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u2391z_oqv7son",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Highly informal/insulting phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"constant crime\" ... \"betraying\" \"damn near\"",
+        "rationale": "Uses informal, accusatory language and profanity-adjacent slang ('damn near')."
+      },
+      {
+        "message_id": "twitter_2061579812104184052",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps headline framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"CHAOS AT OUR BORDERS, COLLAPSE AT HOME\"",
+        "rationale": "Begins with an emphatic all-caps slogan/headline."
+      },
+      {
+        "message_id": "twitter_2061561465580998715",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Abortion described with moral/justification language",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Denaying women a choice is violence.\"",
+        "rationale": "Uses normative moral judgment ('violence') to argue for a policy/position."
+      },
+      {
+        "message_id": "reddit_1tohbe9_oo1g5ru",
+        "feature_name": "target_directionality_us_vs_them_framing",
+        "feature_value": "In-group/out-group blame and label swapping via mirror (communists vs fascists)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Chaos is a communist agenda\" / \"Order and control are the fascist agenda\"",
+        "rationale": "Original attributes chaos to 'communists'; mirror reattributes authoritarianism to 'fascists,' shifting directional blame across ideological groups."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqr54cm",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Punching down rationale about groups and base vs leader",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGA is always fine with punching down\" ... \"90% of them are at the bottom\"",
+        "rationale": "Explains behavior through in-group/out-group positioning and motives."
+      },
+      {
+        "message_id": "reddit_1llpslt_n03galz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity/strong taboo insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"This is the most insane shit ever.\"",
+        "rationale": "Contains explicit profanity ('shit') used to intensify evaluation."
+      },
+      {
+        "message_id": "twitter_2061523424355275156",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Event/organization and constitutional reference",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Friends of NRA\" \"Niagara Frontier\" \"Second Amendment\"",
+        "rationale": "Includes multiple proper nouns and a named constitutional term."
+      },
+      {
+        "message_id": "reddit_1tzrws1_or0s6af",
+        "feature_name": "call_to_action",
+        "feature_value": "Discursive argumentation correcting definitions",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Racism has a definition.\" ... \"slimy tactic\"",
+        "rationale": "Communicative intent is argumentative\u2014contesting framing/definitions and attacking tactics."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lcklzj_my1x6r3",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Specific allegations about public figures and actions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump said ... were eating dogs\" / \"He stripped legal protections\"",
+        "rationale": "Makes concrete factual claims about statements and legal policy actions."
+      },
+      {
+        "message_id": "reddit_1lojll9_n0o6r5f",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity/sexual insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Elon in the ear hole.\"",
+        "rationale": "Uses strong profanity directed at an individual."
+      },
+      {
+        "message_id": "bluesky_ec5efeb70d104972c6db5a92c393358f3c591e4f603ba678f8effc71d89f5102",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Casual internet shorthand and run-on sentence",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Wtf is this guy on aboutt.\"",
+        "rationale": "Uses 'Wtf' shorthand and informal phrasing."
+      },
+      {
+        "message_id": "bluesky_3a0872025cb6fcaea3dfa2f7b0b5a17a3a093448f28a159b6afa7bd019a6ebab",
+        "feature_name": "target_directionality_us_vs_them_framing",
+        "feature_value": "Direct accusation of 'right-wingers' plus rebuttal ('not anti-gun')",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"when you right-wingers stop\" ... \"I'm not anti-gun\"",
+        "rationale": "Mirror addresses an out-group directly and clarifies the stance to rebut an anticipated critique."
+      },
+      {
+        "message_id": "reddit_1kclbrq_mqgbpxy",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple exclamation/question marks and ellipses",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Jesus fucking Christ ..\" ... \"What metric are you using\" ... \"I'll tell you now-\"",
+        "rationale": "Heavy use of punctuation for emphasis and agitation."
+      },
+      {
+        "message_id": "reddit_1tgafkf_omhmrw3",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Party labels used as subjects without specific individuals",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats\" ... \"Republicans\"",
+        "rationale": "High density of political group nouns used as the main referents."
+      },
+      {
+        "message_id": "reddit_1u0oc51_oqlcsuw",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Enumerated options labeled (a)-(e)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"(a) Sleepy Biden\" \"(b) woke\" \"(c) the 'Green Scam'\"",
+        "rationale": "Uses structured multi-item enumeration as the core rhetorical form."
+      },
+      {
+        "message_id": "reddit_1kzjrzz_mv6diq4",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dismissive profanity aimed at media outlet",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fox News can fuck off\"",
+        "rationale": "Uses contemptuous dismissal directed at a named organization."
+      }
+    ]
+  }
+}

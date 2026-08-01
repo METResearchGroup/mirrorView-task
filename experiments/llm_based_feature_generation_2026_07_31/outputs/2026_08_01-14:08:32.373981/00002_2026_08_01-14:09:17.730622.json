@@ -1,0 +1,184 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 2,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Policy prescriptions and explicit calls to action",
+        "defining_features": [
+          "policy_prescription_present",
+          "call_to_action (including mobilization like join meetings, register voters/petitions, attend Zoom, vote-related urging, or demands on policy actions)",
+          "call_to_action_abolishe_ice",
+          "call_to_action (imperatives such as 'Always conceal carry your weapon', 'Hire Americans. Pay them.')"
+        ],
+        "example_message_ids": [
+          "bluesky_cd39cca04343ce546169d8fb36104ca9e9514cdeed685bdcf20ce73c5bc94dbd",
+          "reddit_1tuly4n_opakjhi",
+          "reddit_1ke2vut_mqgh7id",
+          "reddit_1kca9zl_mq1uhu1",
+          "twitter_2061320240412152002",
+          "twitter_2061745046727111164",
+          "twitter_2059090231941583066"
+        ],
+        "keep_count": 12,
+        "remove_count": 9,
+        "interpretation": "Posts that move beyond opinion into explicit directives (policy demands, participation instructions, or behavior changes) are a recurring, moderation-relevant pattern; both kept and removed content can include action language, suggesting the need to distinguish benign advocacy from more extreme/harassing prescriptions."
+      },
+      {
+        "id": 2,
+        "label": "Strong profanity, taboo language, and coarse intensifiers",
+        "defining_features": [
+          "profanity_or_taboo_language (explicit slurs, repeated profanity, hostile taboo tokens)",
+          "high_punctuation_intensity when paired with profane emphasis (multiple exclamations, capitalization)",
+          "emphatic_outrage (often with profane tone)"
+        ],
+        "example_message_ids": [
+          "reddit_1kouuvz_msu1l8l",
+          "reddit_1la4x0y_mxla28z",
+          "reddit_1lh4m8j_mz1b8bj",
+          "reddit_1lhzhcf_mz832zz",
+          "reddit_1tgtqpq_omknbec",
+          "twitter_2061528144314601497"
+        ],
+        "keep_count": 6,
+        "remove_count": 14,
+        "interpretation": "Coarse profanity and taboo language are strongly associated with removed posts in this corpus, consistent with moderation policies that treat explicit obscene/derogatory language as higher risk."
+      },
+      {
+        "id": 3,
+        "label": "Ridicule, mockery, and insulting character labels",
+        "defining_features": [
+          "ridicule_or_mockery",
+          "inveective_emotive_evaluation (derogatory framing of voters)",
+          "ridicule_or_mockery (insult terms replacing argument)",
+          "normative_moral_language used as contempt/labeling (e.g., 'morons', demeaning descriptors)"
+        ],
+        "example_message_ids": [
+          "reddit_1kqruic_mt844zs",
+          "reddit_1ke2vut_mqgh7id",
+          "reddit_1tvywom_opkls98",
+          "reddit_1u185il_or1w7ex",
+          "reddit_1svtp7t_oicxrjn",
+          "reddit_1lnkvvz_n0i9er9"
+        ],
+        "keep_count": 6,
+        "remove_count": 10,
+        "interpretation": "Many posts rely on contemptuous labeling and ridicule rather than substantive claims. This is common across both groups but appears more often in remove-labeled content, suggesting that insult-heavy rhetoric is frequently treated as disallowed harassment or low-quality hostility."
+      },
+      {
+        "id": 4,
+        "label": "Us-vs-them / in-group out-group conflict framing",
+        "defining_features": [
+          "us_vs_them_framing",
+          "target_directionality (mirror shifts; ingroup/outgroup blame)",
+          "us_vs_them_electoral_blame (state-by-state partisan contrast)",
+          "in-group/out-group attribution (e.g., 'evil leftists', 'just republicans')"
+        ],
+        "example_message_ids": [
+          "twitter_2061811713671155976",
+          "reddit_1lh4m8j_mz1b8bj",
+          "reddit_1u1ngzk_oqr6529",
+          "bluesky_ba629650149e88f70bd7102712c558d495b941699829db0be31aff7973bf03c9",
+          "reddit_1svtp7t_oicxrjn",
+          "bluesky_755e790ffd6caacf6a21766726a5930e3d92dcef9d449e461fb9647cd9a2fb70"
+        ],
+        "keep_count": 7,
+        "remove_count": 8,
+        "interpretation": "Conflict framing by partisan or ideological in-group/out-group boundaries is prevalent and appears in both keep and remove sets. Moderation likely hinges on how this framing is coupled to dehumanization, threats, or extreme language."
+      },
+      {
+        "id": 5,
+        "label": "Causal claims that link policy/actors to harms or outcomes",
+        "defining_features": [
+          "causal_claim_present",
+          "economic_cost_benefit_framing (policy harms framed with causality)",
+          "factual_assertion_vs_speculation when used to present cause-effect as fact",
+          "economic_or_profit_motive_claim (root causes tied to profit/corruption)"
+        ],
+        "example_message_ids": [
+          "reddit_1txrv9p_opy7rk2",
+          "reddit_1tuly4n_opakjhi",
+          "reddit_1kdhcse_mqgyjuv",
+          "reddit_1tn7lg4_onu4d7k",
+          "reddit_1tj4vka_on2lvi2",
+          "reddit_1tswg2c_ooylu1z"
+        ],
+        "keep_count": 5,
+        "remove_count": 8,
+        "interpretation": "Causal storytelling (sanctions \u2192 funding depletion; policies \u2192 violence; corruption/profits \u2192 system outcomes) is a major pattern. Removal may correlate with unverifiable or extreme causal assertions, but causal reasoning alone is not sufficient for removal."
+      },
+      {
+        "id": 6,
+        "label": "Violent or dehumanizing harm framing (victimhood/persecution and threat-of-harm)",
+        "defining_features": [
+          "victimhood_or_persecution_framing (victims like Sandy Hook parents, dead children, persecuted investigators)",
+          "normative_moral_language tied to extreme harm (e.g., 'children to not be massacred')",
+          "violent-policy prescription_present (e.g., 'annihilate ... by any means necessary')",
+          "victimhood_or_persecution_framing (enemies causing death; 'playing for our enemies')"
+        ],
+        "example_message_ids": [
+          "reddit_1txrv9p_opy7rk2",
+          "reddit_1kdhcse_mqgyjuv",
+          "bluesky_67e825d4565ff0ff94ff8f0f25fa280934f6d366ec861b5a10b69923a2e05e24",
+          "reddit_1tu5tml_op7zj4t",
+          "bluesky_469224592ba723e911e83411a61df6b85dec6681277ed8a0a84fa2d92e056977",
+          "bluesky_80b68c368ad1c8155301da50b372c7c10788a208229d971b5d803a849bf3b792"
+        ],
+        "keep_count": 8,
+        "remove_count": 6,
+        "interpretation": "Many posts center threatened or inflicted harm (victimization narratives) and, in some cases, endorse violence or extreme punishment. Because both labels appear, moderation may depend on whether harm content becomes direct violent advocacy or dehumanization."
+      },
+      {
+        "id": 7,
+        "label": "Conspiratorial or propaganda-motive framing",
+        "defining_features": [
+          "conspiratorial_framing (psyop/deepstate pay-up/hidden coordination)",
+          "causal_accusation_made_up_justification (fabricated pretexts)",
+          "factual_assertion_vs_speculation used with conspiracy implications (lack of proof + broad implication)"
+        ],
+        "example_message_ids": [
+          "bluesky_b5b5a207d7fd129624372f7368ceb6c5a534f924376d11fefa5c3392734a642a",
+          "reddit_1tgtqpq_omknbec",
+          "reddit_1lcrv72_my3bpm6",
+          "reddit_1lat5d5_mxncuis",
+          "reddit_1lmypcv_n0c92da",
+          "reddit_1kkunfu_ms0z06s"
+        ],
+        "keep_count": 2,
+        "remove_count": 8,
+        "interpretation": "Conspiratorial claims and hidden-motive narratives are more often in removed content, indicating that allegations of secret plots/coordination tend to be moderated more strictly, especially when combined with hostility or implausibility."
+      },
+      {
+        "id": 8,
+        "label": "Direct address / imperative discourse to the reader",
+        "defining_features": [
+          "second_person_direct_address (using 'you', 'your ilk')",
+          "call_to_action (reader-facing imperatives like 'Wake up voters', 'fight back')",
+          "second_person_direct_address (insults + directives)",
+          "call_to_action (invite/speak up)"
+        ],
+        "example_message_ids": [
+          "reddit_1u0y79a_oqunv81",
+          "reddit_1kpmzrc_mt1p5wd",
+          "twitter_2060238548067119356",
+          "twitter_2061745046727111164",
+          "reddit_1ledflx_myflb5i",
+          "reddit_1kg5qlk_mqxttu3"
+        ],
+        "keep_count": 6,
+        "remove_count": 7,
+        "interpretation": "Reader-directed imperative/second-person constructions recur, often alongside insults or mobilization. Moderation risk likely rises when direct address is paired with abusive language or coercive threats."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Policy prescriptions and explicit calls to action span both kept and removed posts (gun control advocacy, civic mobilization, institution abolishment, and violent-policy-like prescriptions).",
+      "Us-vs-them conflict framing frequently co-occurs with ridicule/derogatory labeling and sometimes with conspiratorial framing.",
+      "Profanity/taboo language acts as a cross-cutting escalation signal that is more frequent in removed examples.",
+      "Causal claims and economic/profit/corruption root-cause narratives span both labels, but may be removed when combined with conspiratorial or extreme/unfounded assertions.",
+      "Harm/victimhood framing intersects with dehumanizing or extreme moral condemnation and with violent or punitive prescriptions in some kept examples."
+    ]
+  }
+}

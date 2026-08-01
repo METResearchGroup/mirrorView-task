@@ -1,0 +1,180 @@
+{
+  "batch_id": 30,
+  "message_ids": [
+    "bluesky_117b409f5d2bbd4b98bd9f8952b512b050c0d92ea454ae485461c38a1acd817f",
+    "bluesky_1d55947f8c1b3823caa0ef17c6177a8abea05a32ca9c52e4081e002f8f78e52d",
+    "bluesky_2ec5909cd61ce659a834bd739c27a5aa4bf5af5448188ee76105e9bb7c1b1623",
+    "bluesky_bf0c43c69c77104b50fda49a5a267b19ed153e817a614231335715d64513ee9c",
+    "reddit_1kp51f1_msv7kg7",
+    "reddit_1krctyl_mtd9bfd",
+    "reddit_1ks5fgq_mtisp1b",
+    "reddit_1kz6zu2_mv8k6hs",
+    "reddit_1t7d5jc_oktg4ot",
+    "reddit_1tp5g11_oo69myf",
+    "reddit_1ts7wt8_oouryyx",
+    "reddit_1tsydyo_op21idj",
+    "reddit_1tvumlg_oq3zne6",
+    "twitter_2060405996938297541",
+    "twitter_2060820301513113623",
+    "twitter_2061204039056965880",
+    "twitter_2061470025140056188",
+    "twitter_2061590997449285777",
+    "twitter_2061780473097929004",
+    "twitter_2061824572731564481"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_1d55947f8c1b3823caa0ef17c6177a8abea05a32ca9c52e4081e002f8f78e52d",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"We need to stop\"",
+        "rationale": "The post consists of only a couple short sentences."
+      },
+      {
+        "message_id": "bluesky_1d55947f8c1b3823caa0ef17c6177a8abea05a32ca9c52e4081e002f8f78e52d",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun policy / Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"national responsible gun laws\" / \"Second Amendment\"",
+        "rationale": "It explicitly calls for gun law changes and references the Second Amendment."
+      },
+      {
+        "message_id": "bluesky_1d55947f8c1b3823caa0ef17c6177a8abea05a32ca9c52e4081e002f8f78e52d",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Illinois vs rest of country; elites vs 'us'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"stop Illinois\" / \"coastal elites\" / \"the rest of us\"",
+        "rationale": "Language contrasts an in-group (\u201cthe rest of us\u201d) with an out-group (\u201cIllinois\u201d and \u201ccoastal elites\u201d)."
+      },
+      {
+        "message_id": "bluesky_117b409f5d2bbd4b98bd9f8952b512b050c0d92ea454ae485461c38a1acd817f",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "expressive political intensifiers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"aggressively\" / \"excellent\"",
+        "rationale": "The text uses emphatic informal/political intensifiers rather than neutral phrasing."
+      },
+      {
+        "message_id": "bluesky_117b409f5d2bbd4b98bd9f8952b512b050c0d92ea454ae485461c38a1acd817f",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate/environment and education policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"global warming\" / \"Support ... public education\"",
+        "rationale": "It mentions global warming and an education/voucher program."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_oktg4ot",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "universal healthcare / social services",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"universal healthcare\"",
+        "rationale": "The post argues about universal healthcare coverage."
+      },
+      {
+        "message_id": "twitter_2061204039056965880",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slur-like acronym framing / MAGA reference",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGA-hating liberals\"",
+        "rationale": "It uses political slang/acronym (\u201cMAGA\u201d) and direct partisan labeling."
+      },
+      {
+        "message_id": "twitter_2061204039056965880",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dehumanizing comparison via fairness scenario (queue-cutting/free riders)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"500 people ... cut in front of you and ride for free\"",
+        "rationale": "It uses a mocking illustrative scenario to ridicule the targeted group\u2019s perceived behavior."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kz6zu2_mv8k6hs",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit vulgar insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"can eat at bag of dicks\"",
+        "rationale": "Contains strong sexual/vulgar insult phrase."
+      },
+      {
+        "message_id": "reddit_1kz6zu2_mv8k6hs",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "switches target from Trump/GOP to Biden/Democrats with same insulting construction",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Donald Trump and Republican\" vs \"Joe Biden and Democrat\" / \"can eat...\" vs \"go straight to hell\"",
+        "rationale": "The mirror keeps the vitriol structure while changing the blamed/predicted actor."
+      },
+      {
+        "message_id": "reddit_1ts7wt8_oouryyx",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "direct curse words targeting political figures and immigration",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck trump\" / \"fuck ice\"",
+        "rationale": "The original includes explicit profanity aimed at named targets."
+      },
+      {
+        "message_id": "twitter_2061590997449285777",
+        "feature_name": "target_directionality",
+        "feature_value": "direct address to a named representative",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"@RepJeffries\"",
+        "rationale": "The post is directed at a specific politician via handle mention."
+      },
+      {
+        "message_id": "twitter_2061590997449285777",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "accusation of falsehood/misinformation about ICE",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"are NOT being picked up by ICE\" / \"perpetuate this lie\"",
+        "rationale": "It asserts a factual claim and frames another party as lying."
+      },
+      {
+        "message_id": "twitter_2061824572731564481",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "crypto/address and ticker-style symbol with direct vote instruction",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "\"0x0738a4D015e75D08...\" / \"$TRUMP\"",
+        "rationale": "Includes a blockchain-like address plus a stock/ticker symbol used as a campaign label."
+      },
+      {
+        "message_id": "twitter_2061824572731564481",
+        "feature_name": "call_to_action",
+        "feature_value": "explicit voting instruction",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Lock in your vote for $TRUMP\"",
+        "rationale": "It directly tells readers to vote."
+      },
+      {
+        "message_id": "twitter_2061470025140056188",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "imperative admonition not to normalize alarmist climate framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't normalize the climate crisis.\"",
+        "rationale": "Uses direct imperative urging viewers to reject the stated framing."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 89,
+  "message_ids": [
+    "bluesky_03ae0fc878f9c9c72236161a2dcddeee426ffa4456f354404f9050f67f44c230",
+    "bluesky_5f9adce227e8fb1ab0e404654da264f44e8de1bd5f479b681a8ff0382d462519",
+    "bluesky_8cd922eea888b484b07294b870f0a7ace22f8e6361b4ffa1ffd75e3d826c6ae9",
+    "bluesky_c0e9bea7d38e29f38aa9f4c366c50ca31811c42541bb15cb8f6a5910336598c0",
+    "bluesky_e00f4dcaf6cbee3b347dc53ae228f6ebe9ccbf0398abc8e0e00ed12742b0757a",
+    "reddit_1kfgftv_mqqimbj",
+    "reddit_1kiokjw_mrinhsc",
+    "reddit_1l3x8es_mw4kgvw",
+    "reddit_1lj2q80_mzkh3dv",
+    "reddit_1t24gpq_ojmfes0",
+    "reddit_1t6aimf_okg0529",
+    "reddit_1tb7nve_olhj9ij",
+    "reddit_1tikf90_omwt7f6",
+    "reddit_1tpf0kw_oog3qn4",
+    "reddit_1tq7ea2_oofnort",
+    "reddit_1tqhy93_ooh8isa",
+    "reddit_1tvr63e_opki9ge",
+    "twitter_2059701936690000148",
+    "twitter_2059708545470263644",
+    "twitter_2061242589756494191"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tq7ea2_oofnort",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long (multi-paragraph Q&A)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "So you are okay with a data center in your back yard sucking up energy...\n\nAnd will take up land and water...",
+        "rationale": "The post spans multiple paragraphs with several sentences/questions."
+      },
+      {
+        "message_id": "reddit_1tq7ea2_oofnort",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "directly addresses reader with 'you/your'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "So you are okay with a data center in your back yard...",
+        "rationale": "It uses second-person phrasing to question the audience."
+      },
+      {
+        "message_id": "twitter_2059701936690000148",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions Second Amendment / flintlocks (constitutional reference)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Second Amendment",
+        "rationale": "The text foregrounds a specific named constitutional item."
+      },
+      {
+        "message_id": "bluesky_03ae0fc878f9c9c72236161a2dcddeee426ffa4456f354404f9050f67f44c230",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates for legality boundary ('should not be legal')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "There are indeed some things that should not be legal.",
+        "rationale": "It explicitly calls for certain conduct to be illegal."
+      },
+      {
+        "message_id": "bluesky_8cd922eea888b484b07294b870f0a7ace22f8e6361b4ffa1ffd75e3d826c6ae9",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "claims lack of evidence + specific empirical framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "I have never seen any empirical evidence at all",
+        "rationale": "The author asserts an evidence claim rather than mere speculation."
+      },
+      {
+        "message_id": "reddit_1t24gpq_ojmfes0",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "very high punctuation + list formatting",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"In just ONE state, 14,000 individuals receiving SNAP benefits were driving LUXURY VEHICLES!  \n3 Bentleys",
+        "rationale": "It uses emphatic capitalization, exclamation marks, and a dense enumerated list."
+      },
+      {
+        "message_id": "reddit_1tvr63e_opki9ge",
+        "feature_name": "geographic_scope",
+        "feature_value": "US_state level (Iowa/California)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Iowa is not going to have a democratic governor...\n\nCalifornia is not going to have a Republican governor...",
+        "rationale": "The post explicitly names specific states."
+      },
+      {
+        "message_id": "bluesky_5f9adce227e8fb1ab0e404654da264f44e8de1bd5f479b681a8ff0382d462519",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "sarcastic mock scenario ('sneezing in each other's mouths')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "while sneezing in each other's mouths, sounds good man",
+        "rationale": "It uses an exaggerated, teasing image to belittle the opposing view."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l3x8es_mw4kgvw",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity/sexual taboo ('fk themselves')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "need to go fk themselves.",
+        "rationale": "Contains taboo profanity used as an insult."
+      },
+      {
+        "message_id": "reddit_1l3x8es_mw4kgvw",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "ingroup/outgroup slur style targeting political ideological group",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "these fascist chuds",
+        "rationale": "The text labels a political outgroup with an insulting epithet."
+      },
+      {
+        "message_id": "reddit_1tb7nve_olhj9ij",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "gendered sexual insult ('pussy')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump should stop being a pussy",
+        "rationale": "Uses a crude, sexualized derogatory term."
+      },
+      {
+        "message_id": "reddit_1tb7nve_olhj9ij",
+        "feature_name": "call_to_action",
+        "feature_value": "urges a person to act ('should stop ... and do it')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Trump should stop being a pussy and do it.",
+        "rationale": "It is directive language telling the target to do something."
+      },
+      {
+        "message_id": "twitter_2059708545470263644",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "uses hashtag slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#putthatinyourpipe",
+        "rationale": "Begins with a hashtag used as a framing slogan."
+      },
+      {
+        "message_id": "twitter_2059708545470263644",
+        "feature_name": "normative_moral_language",
+        "feature_value": "religious/moral justification ('Word of God', 'murder', 'war on women')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "abortion is murder and goes against the Word of God",
+        "rationale": "It uses moral-religious claims to condemn abortion."
+      },
+      {
+        "message_id": "reddit_1tpf0kw_oog3qn4",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "constitutional/legal provisions cited (10th Amendment, Article II)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "violation of the 10th Amendment as well as Article II of the Constitution",
+        "rationale": "It explicitly references legal/constitutional clauses."
+      },
+      {
+        "message_id": "twitter_2061242589756494191",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "accuses opposing politician of hating America; contrasts with 'billionaire donors'/supporters",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Mike Johnson hates America. He sides with billionaire donors",
+        "rationale": "The text draws a sharp in-group/out-group contrast through accusations and alliances."
+      }
+    ]
+  }
+}

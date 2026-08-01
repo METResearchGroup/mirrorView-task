@@ -1,0 +1,180 @@
+{
+  "batch_id": 12,
+  "message_ids": [
+    "bluesky_1e7320c13141dc8795d51d58963d048e876242da2ae689f5922dae9ae9cb9b39",
+    "bluesky_4d7ea98cbd4db454a432d136fce6dd242733929eb965c63c0bd8f4e1ca184dd8",
+    "reddit_1kf2hgg_mqpouu3",
+    "reddit_1klkbge_ms3mz7n",
+    "reddit_1kt7kxs_mtrqj9z",
+    "reddit_1l4c1gs_mwdmpiy",
+    "reddit_1rqd674_o9rk2ac",
+    "reddit_1t6icvj_okji1o1",
+    "reddit_1tksbme_onchwrg",
+    "reddit_1tp5g11_oo64hdy",
+    "reddit_1tpf0kw_ooa4h3o",
+    "reddit_1tsycwk_ooyhp4n",
+    "reddit_1tytmjd_oqaixqi",
+    "reddit_1u18ir0_oqpm64y",
+    "twitter_2060163490782879774",
+    "twitter_2060218650779357269",
+    "twitter_2060806664169947350",
+    "twitter_2061381778602959272",
+    "twitter_2061760849350443079",
+    "twitter_2061804522725368305"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kt7kxs_mtrqj9z",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Colloquial, banter-like insult framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Everyone thinks Trump is an idiot except Trump\"",
+        "rationale": "Uses casual, conversational phrasing and insult-style evaluation."
+      },
+      {
+        "message_id": "reddit_1kt7kxs_mtrqj9z",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Echoes in-group/out-group evaluation about who thinks a politician is competent",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Everyone thinks Trump is an idiot except Trump\"",
+        "rationale": "Draws a contrast between general people\u2019s view and the speaker\u2019s claimed exception."
+      },
+      {
+        "message_id": "reddit_1rqd674_o9rk2ac",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity and sexualized insult of political target",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking taxes\" ... \"that thief\"",
+        "rationale": "Contains strong taboo terms in the original text."
+      },
+      {
+        "message_id": "twitter_2060163490782879774",
+        "feature_name": "call_to_action",
+        "feature_value": "Asks audience to join supporting the named organization",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Will you join me in supporting their cause?\"",
+        "rationale": "Directly invites audience participation."
+      },
+      {
+        "message_id": "twitter_2061381778602959272",
+        "feature_name": "positive_evaluation_and_propagandistic_language",
+        "feature_value": "Positive endorsement of agreement; villain framing in mirror",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"climate crisis needs urgent attention\" ... \"step in the right direction\"",
+        "rationale": "Original explicitly endorses the agreement as helpful, while the mirror adds alarmist/elite villain language."
+      },
+      {
+        "message_id": "reddit_1t6icvj_okji1o1",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Repeated 'If you leave it...' / 'If the feds try...' conditionals",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If you leave it to the states... If the feds try...\"",
+        "rationale": "Uses explicit if-clauses to set conditions and outcomes."
+      },
+      {
+        "message_id": "reddit_1u18ir0_oqpm64y",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Implies unsustainability of an agenda and frames it as requiring control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"it's not sustainable without control.\"",
+        "rationale": "States a governing claim about sustainability tied to control."
+      },
+      {
+        "message_id": "reddit_1klkbge_ms3mz7n",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Questions about motives; binary choice ('Are they stupid or...')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Are they stupid or do they just not care?\"",
+        "rationale": "Uses rhetorical questioning to accuse and infer intent."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2060218650779357269",
+        "feature_name": "abortion_topic_marker",
+        "feature_value": "Abortion pills / reproductive autonomy topic",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "\"Planned Parenthood Wants All Women to Buy Abortion Pills\"",
+        "rationale": "Directly references abortion medication."
+      },
+      {
+        "message_id": "reddit_1tsycwk_ooyhp4n",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Coarse profanity plus mental-health insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking idiot\" \"advanced dementia\"",
+        "rationale": "Contains explicit profanity and degrading references."
+      },
+      {
+        "message_id": "twitter_2061760849350443079",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses @mention and addresses opponent directly",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"@alphagodvini I agree.\"",
+        "rationale": "Directly targets a specific user via handle."
+      },
+      {
+        "message_id": "reddit_1tytmjd_oqaixqi",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Group identity labeling ('MAGA' vs 'woke leftist') and threat of historical judgment",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"If you\u2019re MAGA... History isn\u2019t going to be kind to you.\"",
+        "rationale": "Targets labeled identity groups and warns them of consequences."
+      },
+      {
+        "message_id": "bluesky_1e7320c13141dc8795d51d58963d048e876242da2ae689f5922dae9ae9cb9b39",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Dehumanizing insult terms about political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"right-wing fuckers\" / \"left-wing clowns\"",
+        "rationale": "Uses derogatory taboo language to describe an outgroup."
+      },
+      {
+        "message_id": "bluesky_4d7ea98cbd4db454a432d136fce6dd242733929eb965c63c0bd8f4e1ca184dd8",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/gun laws and violence",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"fix the weak gun laws\"",
+        "rationale": "Explicitly discusses gun law changes."
+      },
+      {
+        "message_id": "twitter_2060806664169947350",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Empirical-sounding claims comparing gun vs crime outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"crime just disappeared\"",
+        "rationale": "Asserts cause-effect outcomes about policy and crime."
+      },
+      {
+        "message_id": "reddit_1kf2hgg_mqpouu3",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Condemning 'monster' response to cruelty; moral condemnation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"You're a monster.\"",
+        "rationale": "Uses direct moral shaming/condemnation as communicative intent."
+      }
+    ]
+  }
+}

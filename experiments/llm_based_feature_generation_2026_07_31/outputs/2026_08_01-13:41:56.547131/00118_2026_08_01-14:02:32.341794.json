@@ -1,0 +1,180 @@
+{
+  "batch_id": 118,
+  "message_ids": [
+    "bluesky_4c347d1b1002d13d1dc7145f4160ca0efb5c95a8b86884f2e6e054cd50e474ce",
+    "bluesky_c9837c1f2a0cbd65ed258c7c3b2618d0f27032ee5e731d428f52afc0653527d8",
+    "bluesky_dd072fa80becb8a259f66113407493c1cceae13aa0ee29797af6b6d049a49dd4",
+    "bluesky_e38ef32d1f621838008861f7304a1944066e918fd9981ce9e4d842356a19bf7f",
+    "reddit_1kg5azy_mqx1nec",
+    "reddit_1kze0f3_mv5hijr",
+    "reddit_1l6h0fc_mwonavm",
+    "reddit_1le53mq_myfenvc",
+    "reddit_1lis6px_mzelmnk",
+    "reddit_1t7d5jc_okpmr31",
+    "reddit_1th143w_omlfomc",
+    "reddit_1tu7mub_op8udhe",
+    "reddit_1tyu1q6_oq9bfsc",
+    "reddit_1tzs7nk_oqefhsd",
+    "reddit_1tzwh8s_oqg20gy",
+    "twitter_2060673758700970116",
+    "twitter_2060930878126301617",
+    "twitter_2061761871007400280",
+    "twitter_2061817683830800546",
+    "twitter_2061826699898007687"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1t7d5jc_okpmr31",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "You own family dinners going away. You own a society where neighbors sit on their phones rather than make traditions.",
+        "rationale": "The post contains multiple sentences and extended comparisons, indicating a long text."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_okpmr31",
+        "feature_name": "anaphora_or_parallelism",
+        "feature_value": "repeated 'You own' parallel construction",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "You own family dinners going away. You own a society where neighbors sit on their phones rather than make traditions.",
+        "rationale": "Repeated clause starters ('You own') create parallel emphasis."
+      },
+      {
+        "message_id": "reddit_1th143w_omlfomc",
+        "feature_name": "rhetorical_question",
+        "feature_value": "rhetorical question about 'genocides' and disasters",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "But I'm sorry are multiple genocides the world over, climate disaster, pandemics and two major wars not enough to move you?",
+        "rationale": "The sentence is a question used to assert insufficiency, not to request information."
+      },
+      {
+        "message_id": "reddit_1th143w_omlfomc",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "portrays speaker as affected/awakened by widespread harms",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Enough to move me to... let things get even worse?",
+        "rationale": "The harms are framed as having impacted the speaker's orientation ('move me')."
+      },
+      {
+        "message_id": "twitter_2060930878126301617",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "multi-line list of 'They are against/for' claims",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "They are against Voter ID\nThey are against ICE\nThey are against Crime Prevention\nThey are for Sanctuary Cities",
+        "rationale": "The post uses a structured sequence of repeated syntax items."
+      },
+      {
+        "message_id": "twitter_2060930878126301617",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "group blame via 'They are ...' vs implicit 'we' acceptability",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "What does this tell you about Democrats? ... Nothin\u2019 good. They are against Voter ID",
+        "rationale": "The text assigns negative traits to one political group using a 'they' accusatory framing."
+      },
+      {
+        "message_id": "bluesky_dd072fa80becb8a259f66113407493c1cceae13aa0ee29797af6b6d049a49dd4",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high density of organizations/concepts in one sentence",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Team ENOUGH and Brady are building ... free America from gun violence ... gun industry's ...",
+        "rationale": "Multiple named entities/organizations and prominent referents appear in the text."
+      },
+      {
+        "message_id": "bluesky_4c347d1b1002d13d1dc7145f4160ca0efb5c95a8b86884f2e6e054cd50e474ce",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "uses hashtag",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#bunkerfuel",
+        "rationale": "A hashtag is explicitly present."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2060673758700970116",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple strong profanities",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "How I fucking hate democrat voters, and their fucking stupidity.",
+        "rationale": "Contains explicit 'fucking' profanity."
+      },
+      {
+        "message_id": "twitter_2060673758700970116",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "sexual/biological derogation used to attack opponents",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They just want the so-called \"right\" to destroy life, after lettin' MFers cum up all inside 'em",
+        "rationale": "Uses sexualized, degrading language to frame opponents' motives."
+      },
+      {
+        "message_id": "twitter_2061761871007400280",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "race keyword used as blame target",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "99% of immigration problems are because of BROWN immigration",
+        "rationale": "Attributes problems to racialized groups ('BROWN immigration')."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqefhsd",
+        "feature_name": "normative_moral_language",
+        "feature_value": "judgmental descriptors: 'gullible', 'racist', 'misogynistic', 'vile'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "very gullible ... incredibly racist, misogynistic, and generally vile.",
+        "rationale": "The post uses evaluative moral/character judgments."
+      },
+      {
+        "message_id": "reddit_1l6h0fc_mwonavm",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "single-word strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck this inflammatory article by FOX News.",
+        "rationale": "Contains the explicit profanity 'Fuck'."
+      },
+      {
+        "message_id": "bluesky_e38ef32d1f621838008861f7304a1944066e918fd9981ce9e4d842356a19bf7f",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "direct advocacy: oppose/support",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "No one needs the government deciding which firearms law-abiding citizens can own. Oppose these unconstitutional power grabs.",
+        "rationale": "Uses imperative advocacy language to influence policy views."
+      },
+      {
+        "message_id": "bluesky_c9837c1f2a0cbd65ed258c7c3b2618d0f27032ee5e731d428f52afc0653527d8",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "calls opponent 'Karen'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "If some anti-mask Karen came up to me",
+        "rationale": "Uses a mocking label to characterize the other person."
+      },
+      {
+        "message_id": "reddit_1tyu1q6_oq9bfsc",
+        "feature_name": "target_directionality",
+        "feature_value": "accusation-based gatekeeping of criticism ('propaganda')",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Anyone who criticizes Trump is propaganda.",
+        "rationale": "The statement categorizes all criticism of a named politician as illegitimate."
+      }
+    ]
+  }
+}

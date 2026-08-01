@@ -1,0 +1,180 @@
+{
+  "batch_id": 136,
+  "message_ids": [
+    "bluesky_9970acc74de04e1270d57ff77ca1fa4b12134f47a08c0d6a8bd2ddb4bc3a4225",
+    "bluesky_d3ebe1621805d7650902d0b85a2c03eb6e6fa9d80275d3f9abe5650331ec5e39",
+    "reddit_1kbokeb_mpyonbo",
+    "reddit_1kgy4kn_mr2gufk",
+    "reddit_1kjndle_mrp2vs3",
+    "reddit_1kna992_msjyyfa",
+    "reddit_1kozgom_msu0brq",
+    "reddit_1krenw1_mtcyejg",
+    "reddit_1lhb1xc_mz34ou1",
+    "reddit_1liz1et_mzho7rb",
+    "reddit_1t6bfz8_okhbme8",
+    "reddit_1tv1z4j_opfyrdh",
+    "twitter_2060027271235182959",
+    "twitter_2060093420027187507",
+    "twitter_2060687735908626733",
+    "twitter_2060879285808759266",
+    "twitter_2061032441104495046",
+    "twitter_2061487131390886147",
+    "twitter_2061646415571321326",
+    "twitter_2061721147872563408"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060093420027187507",
+        "feature_name": "hashtag_callout_pattern",
+        "feature_value": "uses hashtag to demand stopping killings",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#PlzStopTheKilling!",
+        "rationale": "A prominent hashtag is used to frame the post as an explicit plea/call to act."
+      },
+      {
+        "message_id": "twitter_2060093420027187507",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "horror/tragedy framing with urgency",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "HORROR:",
+        "rationale": "The post uses extreme evaluative language to convey outrage about violent events."
+      },
+      {
+        "message_id": "twitter_2061032441104495046",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate/environment and public health",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Air pollution from burning fossil fuels",
+        "rationale": "The text centers on air pollution from fossil fuels and its health impacts."
+      },
+      {
+        "message_id": "twitter_2061032441104495046",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls for urgent action",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "urgent action is needed.",
+        "rationale": "The post explicitly prescribes action rather than only describing a condition."
+      },
+      {
+        "message_id": "bluesky_d3ebe1621805d7650902d0b85a2c03eb6e6fa9d80275d3f9abe5650331ec5e39",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "asserts rights are non-revocable",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "cannot be revoked",
+        "rationale": "The post states deontic claims as definitive assertions about what can and cannot happen."
+      },
+      {
+        "message_id": "bluesky_d3ebe1621805d7650902d0b85a2c03eb6e6fa9d80275d3f9abe5650331ec5e39",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "citizens vs politicians abusing power",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "cannot be stripped away by politicians",
+        "rationale": "The text draws a direct contrast between ordinary citizens and political actors."
+      },
+      {
+        "message_id": "reddit_1tv1z4j_opfyrdh",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "frames issue as constitutional test vs predicted decline",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "This is about whether our Constitution can withstand",
+        "rationale": "The sentence uses a 'whether' construction to set up a consequential scenario."
+      },
+      {
+        "message_id": "reddit_1t6bfz8_okhbme8",
+        "feature_name": "anaphora_or_parallelism",
+        "feature_value": "mirror-style substitution with rhyming metaphorical labels",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Selective memory loss by the DemocRATS / Convenient amnesia by the REPUB-LICANS",
+        "rationale": "The post uses a parallel critique structure, swapping party labels with similar phrasing."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lhb1xc_mz34ou1",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions multiple political/geopolitical actors",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Israel",
+        "rationale": "The text directly references specific geopolitical actors (e.g., Israel, America)."
+      },
+      {
+        "message_id": "reddit_1lhb1xc_mz34ou1",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "re-targets blame from Israel to Iran/globalism framing",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Israel ... we were their bitch ... nuclear deal / ... Iran's bitch ... globalism first right?",
+        "rationale": "The mirror swaps which country is blamed and changes the directionality of the insult."
+      },
+      {
+        "message_id": "reddit_1kjndle_mrp2vs3",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "uses strong profanity for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "holy shit what in the fuck",
+        "rationale": "Clear profanity and informal emphasis appear in the headline-like line."
+      },
+      {
+        "message_id": "twitter_2061646415571321326",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "mentions specific politicians/party identity via 'Democrat'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "after being elected? Besides, he's an IMMIGRANT",
+        "rationale": "The mirror ties the claim to Democratic patterns and adds a citizenship-based attack."
+      },
+      {
+        "message_id": "bluesky_9970acc74de04e1270d57ff77ca1fa4b12134f47a08c0d6a8bd2ddb4bc3a4225",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "exclusionary 'unless you're...' conditional groups",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Welcome to America... unless you're a democrat, brown, a woman",
+        "rationale": "The post constructs an in-group/out-group by listing who is excluded."
+      },
+      {
+        "message_id": "twitter_2061487131390886147",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "firearms regulation / gun ownership",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "purchase a firearm",
+        "rationale": "The content is explicitly about firearm acquisition and related legal consequences."
+      },
+      {
+        "message_id": "reddit_1kna992_msjyyfa",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses profanity and derogatory insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fucking clown show",
+        "rationale": "The phrase contains profanity used to dismiss and insult the subject."
+      },
+      {
+        "message_id": "twitter_2060687735908626733",
+        "feature_name": "call_to_action",
+        "feature_value": "urges public confrontation/response at detention centers",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "put the ice detention centers in red states ... we can all stand out there",
+        "rationale": "The text functions as an instruction to do an action in a specific location."
+      }
+    ]
+  }
+}

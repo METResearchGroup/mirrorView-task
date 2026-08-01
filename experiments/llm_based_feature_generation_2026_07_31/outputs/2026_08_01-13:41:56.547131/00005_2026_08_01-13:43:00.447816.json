@@ -1,0 +1,180 @@
+{
+  "batch_id": 5,
+  "message_ids": [
+    "bluesky_1b0580cbe7ff671f92eaba5be5bda2946c1470e37eda85dce085c13c303852e5",
+    "bluesky_5554dcd26d6889e19d5976d5067bbea7b8dc85147c117a87fb4cf262177b2bdb",
+    "bluesky_57708c7fc1a377e212ef0c69946747caeb1ab6ff5147c09e3a8c706900615c3f",
+    "bluesky_9189f5afb7423a4a8ce004466f92985f7d3a178028e167bde0a3ddba983c70d2",
+    "bluesky_b466871cdb65f3da54df463b2a94ba0ac004741c798deb6985b14aa5cab379d8",
+    "bluesky_ce04f4455cd02508677e0ad39d0c43347c2f01540fdc382e3897a7781e2a2dc4",
+    "reddit_1kc6k0f_mq18gfp",
+    "reddit_1kd8gaz_mqaf7bv",
+    "reddit_1kh4vfo_mr54gst",
+    "reddit_1khze64_mrbf3x4",
+    "reddit_1ldv50r_mychu6v",
+    "reddit_1loaept_n0m95hp",
+    "reddit_1thqwmy_omq5u7g",
+    "reddit_1tta0q0_op18ei8",
+    "reddit_1tw67am_opnihy8",
+    "reddit_1tzs7nk_oqdzxx3",
+    "reddit_1u12ug8_oqqhinh",
+    "twitter_2061457119572807948",
+    "twitter_2061533290360647769",
+    "twitter_2061824813635600554"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061824813635600554",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Frames one leader's Iran policy as causing economic harm to US/world",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"How is Trump's war on Iran affecting the economy of the US and the world?\"",
+        "rationale": "The text explicitly asks how a specific policy causes economic effects."
+      },
+      {
+        "message_id": "twitter_2061824813635600554",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Blames economic harm on Biden's Iran appeasement instead of Trump's war",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"How is Biden's appeasement of Iran affecting the economy\"",
+        "rationale": "The mirror text redirects the causal blame from Trump to Biden."
+      },
+      {
+        "message_id": "reddit_1tta0q0_op18ei8",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Economic cost/price phenomena (shrinkflation) and corporate behavior",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"corporate greed and shrinkflation\"",
+        "rationale": "The main subject is economic pricing/consumer harm attributed to corporations."
+      },
+      {
+        "message_id": "reddit_1khze64_mrbf3x4",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Insulting slur-like profanity ('butthurt') and dehumanizing language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"maga people are butthurt morons\"",
+        "rationale": "Uses a crude insult term alongside derogatory labeling."
+      },
+      {
+        "message_id": "reddit_1loaept_n0m95hp",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Goalposts moved to imply conspiratorial/manipulative reinterpretation of facts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The goalposts would be moved to outer space.\"",
+        "rationale": "Suggests ongoing dismissal by relocating standards, resembling conspiratorial framing."
+      },
+      {
+        "message_id": "reddit_1loaept_n0m95hp",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Profane/slang register ('fuckery')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"it was all fuckery\"",
+        "rationale": "Uses coarse slang/profanity in an argumentative statement."
+      },
+      {
+        "message_id": "bluesky_ce04f4455cd02508677e0ad39d0c43347c2f01540fdc382e3897a7781e2a2dc4",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Sandy Hook Elementary mass shooting / AR-15 reference",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Sandy Hook Elementary\"",
+        "rationale": "Explicitly names a widely known specific mass-casualty event."
+      },
+      {
+        "message_id": "bluesky_ce04f4455cd02508677e0ad39d0c43347c2f01540fdc382e3897a7781e2a2dc4",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct instruction to Congress to stop a policy",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Tell Congress: Stop Assault Weapon Sales Now\"",
+        "rationale": "Uses imperative language directed to an authority figure."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tzs7nk_oqdzxx3",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Catastrophic/derogatory evaluation of opponent administration; strong negative escalation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"so catastrophically bad\"",
+        "rationale": "Employs emphatic hyperbolic negative appraisal of a political leader."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqdzxx3",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Depicts audience as needing rescue/wake-up from elite control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"begging for rescue\"",
+        "rationale": "Implies a rescued group harmed by the opposing side."
+      },
+      {
+        "message_id": "reddit_1kc6k0f_mq18gfp",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Coarse profanity ('crock of shit')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"a crock of shit\"",
+        "rationale": "Contains explicit profanity used to dismiss an ideology."
+      },
+      {
+        "message_id": "reddit_1kd8gaz_mqaf7bv",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "No second-person address; but contains imperative to immigration policy ('deport me')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck it, deport me.\"",
+        "rationale": "Uses direct imperative-style phrasing aimed at an immigration outcome."
+      },
+      {
+        "message_id": "bluesky_1b0580cbe7ff671f92eaba5be5bda2946c1470e37eda85dce085c13c303852e5",
+        "feature_name": "praised_actor_type",
+        "feature_value": "Pro-NRA endorsement framing as protecting constitutional rights",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The NRA is one of the most important organizations\"",
+        "rationale": "The mirror text praises a specific organization as a defender of rights."
+      },
+      {
+        "message_id": "bluesky_9189f5afb7423a4a8ce004466f92985f7d3a178028e167bde0a3ddba983c70d2",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Repetitive shock exclamations indicating strong emotional reaction",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh shit oh fuck oh shit oh fuck\"",
+        "rationale": "The repeated exclamations signal intense expressive reaction."
+      },
+      {
+        "message_id": "bluesky_5554dcd26d6889e19d5976d5067bbea7b8dc85147c117a87fb4cf262177b2bdb",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "AI-as-technology maxim; categorical claims about presidents/policies",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"AI is a technology. Not our savior or the devil.\"",
+        "rationale": "Uses categorical statements rather than hedged speculation."
+      },
+      {
+        "message_id": "reddit_1kh4vfo_mr54gst",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Strong emphasis with repeated ellipses and ALL CAPS emphasis pattern in mirror",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Everyday\u0007\u0007\u0007 EVERDAY.\"",
+        "rationale": "Uses unusual punctuation repetition and emphasis through capitalization to intensify the message."
+      }
+    ]
+  }
+}

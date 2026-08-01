@@ -1,0 +1,180 @@
+{
+  "batch_id": 96,
+  "message_ids": [
+    "bluesky_148d83c5bf312423efbd371aa8a44e3197fb79445d274248384d591c2f18c39d",
+    "bluesky_9b99ba7c1bd4a6e62b87f68446244163fbb47cab53f546eef1eb8156bcba1a34",
+    "bluesky_a91930b6043d254a81cb1d6ef10ca7dd303247e7f86f0f7e94e85af3f8712f33",
+    "bluesky_bf5a1ecda14846d4e52603a9e3cd49e01c909a0482e45ca3a4222730fcc2f5ae",
+    "reddit_1kd654m_mqaj4t9",
+    "reddit_1kh7zbd_mr587jh",
+    "reddit_1kksj7c_mrx8q52",
+    "reddit_1knep98_mshtabs",
+    "reddit_1ksz8je_mtrfx3p",
+    "reddit_1lge9ni_mywiy8q",
+    "reddit_1lghpnj_myx3yt1",
+    "reddit_1li5i8q_mz9juvy",
+    "reddit_1td83n8_olxe6pw",
+    "reddit_1tkxn2n_oncdhxu",
+    "reddit_1tswg2c_ooy6lnp",
+    "reddit_1tws6al_opqnjwq",
+    "reddit_1u185il_oqp2u93",
+    "twitter_2059791652609577184",
+    "twitter_2060152647316046032",
+    "twitter_2061672171467108367"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_bf5a1ecda14846d4e52603a9e3cd49e01c909a0482e45ca3a4222730fcc2f5ae",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses disparaging slur-like term toward Republicans ('thugs')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republican thugs\"",
+        "rationale": "Contains derogatory language directed at a political actor."
+      },
+      {
+        "message_id": "bluesky_bf5a1ecda14846d4e52603a9e3cd49e01c909a0482e45ca3a4222730fcc2f5ae",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Implicates resolving gun control vs Constitution through the stated principle",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"shall not be infringed\" just... settle any gun control argument definitively",
+        "rationale": "Frames the citation as a decisive resolution to a policy debate."
+      },
+      {
+        "message_id": "twitter_2061672171467108367",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Structured quotes with speaker labels (movement/policymakers back-and-forth)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Women's rights movement:\n\n\"Women deserve a seat at the table.\"",
+        "rationale": "Uses embedded quoted dialogue to build an argument."
+      },
+      {
+        "message_id": "reddit_1tswg2c_ooy6lnp",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Anti-conservative framing of ideology with disguise/hood imagery",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"conservative agenda with the masks off and hoods on\"",
+        "rationale": "Uses metaphor associated with political culture-war/identity narratives."
+      },
+      {
+        "message_id": "reddit_1u185il_oqp2u93",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames Democrats for conforming to a rival leader's narrative vs 'reasonable ones'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Republican party has changed\"... \"fit the Trump narrative\"",
+        "rationale": "Uses in-group/out-group contrast anchored in leader-narrative alignment."
+      },
+      {
+        "message_id": "twitter_2060152647316046032",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Depicts women as harmed/alone after abortion pill, emphasizing aftermath",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"It kills them, and leaves women to deliver their dead children alone\"",
+        "rationale": "Frames affected individuals as victims suffering severe harm."
+      },
+      {
+        "message_id": "reddit_1ksz8je_mtrfx3p",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Characterizes opponents with extreme derogatory descriptors ('cancer ridden', 'Nazi')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"cancer ridden Dem\" over the \"Nazi\"",
+        "rationale": "Uses mocking/extreme comparative insults for persuasion."
+      },
+      {
+        "message_id": "bluesky_148d83c5bf312423efbd371aa8a44e3197fb79445d274248384d591c2f18c39d",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Direct rhetorical question about constitutional application",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"How can all of our gun laws only be constitutional if...\"",
+        "rationale": "Uses a question to challenge and argue rather than request information."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tws6al_opqnjwq",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames wrongdoing as selectively excused based on party (GOP vs Democrats)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"It\u2019s only illegal when a no-good, evil commie democrat does it\"",
+        "rationale": "Calls out perceived retaliatory/biased treatment of election fraud allegations."
+      },
+      {
+        "message_id": "reddit_1li5i8q_mz9juvy",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity ('Fuck')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck all of these islamophobic op-eds.\"",
+        "rationale": "Contains a strong taboo/profane interjection."
+      },
+      {
+        "message_id": "reddit_1kksj7c_mrx8q52",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Calls actor coward/mentally ill/bully and claims other party enables it",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"He's a coward, mentally ill, a bully.\"",
+        "rationale": "Uses highly charged insults plus blame attribution."
+      },
+      {
+        "message_id": "bluesky_9b99ba7c1bd4a6e62b87f68446244163fbb47cab53f546eef1eb8156bcba1a34",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Uses policy/tech domain terms and ideological labels (eco-fascist, electrification, renewables)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"eco fascist\" \"electrification\"",
+        "rationale": "Contains specialized climate-policy terminology and loaded ideological descriptor."
+      },
+      {
+        "message_id": "reddit_1tkxn2n_oncdhxu",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Capitalized slogan-like terms in quoted list (sanctity of marriage/family/faith-based lifestyle)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"sanctity of marriage\" \"family\" \"faith-based lifestyle\"",
+        "rationale": "Uses a condensed slogan list; quoted phrases indicate a rhetorical template."
+      },
+      {
+        "message_id": "twitter_2059791652609577184",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Immigration enforcement / undocumented immigrants framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"undocumented immigrants\"",
+        "rationale": "Directly references immigration status and enforcement context."
+      },
+      {
+        "message_id": "reddit_1lghpnj_myx3yt1",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Tax burden critique framed as why rich need lower taxes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Why do the rich need to pay less taxes?\"",
+        "rationale": "Argues about financial tradeoffs/benefits related to taxation."
+      },
+      {
+        "message_id": "reddit_1kd654m_mqaj4t9",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple 'Fuck' insults and aggressive religious targeting",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck that fucking asshole.\"",
+        "rationale": "Includes repeated explicit profanity plus hostile personal labeling."
+      }
+    ]
+  }
+}

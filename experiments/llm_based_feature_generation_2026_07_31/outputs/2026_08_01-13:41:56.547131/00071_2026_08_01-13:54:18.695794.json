@@ -1,0 +1,180 @@
+{
+  "batch_id": 71,
+  "message_ids": [
+    "bluesky_20922a9b2444779a03e2b1e5db52d3fc24564ab270d1ec6a4a73c82b082ebc3d",
+    "bluesky_44f9a69bf857f9419406e8e4f60d2f65e958c7d24349f95c82ef3bce810f7b8b",
+    "bluesky_6eaa390fe7ecd23ed6ccc14921b481745a676cea6df1121b0df12ed17d8116e9",
+    "bluesky_952fd14cb8927a4173c0b68203162b6f2278bdbd3ac52fda6f293912c1b55c49",
+    "bluesky_ac89462c56af386b01ec58733a0d7051f538c0b90876893cd0252541be3acb01",
+    "bluesky_c3e51a3e41ba0923a5178fe2cb707910565e1d19e4ae31fbf33bc17fcddf78f3",
+    "reddit_1kub3v4_mu0vdmq",
+    "reddit_1kvw690_muewa77",
+    "reddit_1l2ic4a_mvtky4s",
+    "reddit_1tlgx2b_onh0q3b",
+    "reddit_1tt4bg8_oozvqz3",
+    "reddit_1tu3uj9_opfxhkf",
+    "reddit_1tuue1j_opdkhnv",
+    "reddit_1tuue1j_opj3508",
+    "twitter_2060329747281015171",
+    "twitter_2060520286894878993",
+    "twitter_2060759224032931975",
+    "twitter_2061368976253301167",
+    "twitter_2061762945227366650",
+    "twitter_2061827523000856721"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_44f9a69bf857f9419406e8e4f60d2f65e958c7d24349f95c82ef3bce810f7b8b",
+        "feature_name": "gun_reform_discussion",
+        "feature_value": "Mentions gun reform after an active shooter scenario",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "not a damn thing will be done by them to push for gun reform",
+        "rationale": "The post directly references gun reform as a policy goal."
+      },
+      {
+        "message_id": "twitter_2061368976253301167",
+        "feature_name": "carbon_emissions_policy_domain",
+        "feature_value": "Carbon emissions / climate mitigation topic",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "tackle carbon emissions",
+        "rationale": "The text centers on carbon emissions reduction."
+      },
+      {
+        "message_id": "twitter_2060520286894878993",
+        "feature_name": "abortion_medication_risk_claim",
+        "feature_value": "Accuses abortion pill sellers of endangering women",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Abortion Pill Sellers are Putting Women\u2019s Lives at Risk With Dangerous Drugs",
+        "rationale": "The headline asserts a causal danger to women\u2019s lives."
+      },
+      {
+        "message_id": "reddit_1tu3uj9_opfxhkf",
+        "feature_name": "anti_trust_prescription",
+        "feature_value": "Advocates stronger anti-trust laws",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "significantly stronger and stricter anti-trust laws",
+        "rationale": "It proposes a specific policy prescription (anti-trust laws)."
+      },
+      {
+        "message_id": "reddit_1tt4bg8_oozvqz3",
+        "feature_name": "ingroup_outgroup_labeling",
+        "feature_value": "Uses pejorative partisan terms (Leftoids/Righties)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Leftoids always whine... Righties always screech",
+        "rationale": "The post uses faction labels to set an us-vs-them stance."
+      },
+      {
+        "message_id": "bluesky_c3e51a3e41ba0923a5178fe2cb707910565e1d19e4ae31fbf33bc17fcddf78f3",
+        "feature_name": "religious_political_nationalism_claim",
+        "feature_value": "Claims turn to White Christian nationalist country",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "turn America into a White Christian nationalist country",
+        "rationale": "The content is about religious nationalist direction for the country."
+      },
+      {
+        "message_id": "bluesky_6eaa390fe7ecd23ed6ccc14921b481745a676cea6df1121b0df12ed17d8116e9",
+        "feature_name": "nra_rhetorical_quote_present",
+        "feature_value": "Attributes a quote to NRA lobbyists/republicans",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "thanks to the NRA lobbyists and republicans \u2014 \u201cwe have lots of weapons.\u201d",
+        "rationale": "It includes attribution plus a direct quoted phrase."
+      },
+      {
+        "message_id": "bluesky_20922a9b2444779a03e2b1e5db52d3fc24564ab270d1ec6a4a73c82b082ebc3d",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "18th-century comparison",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "back - in the 18th Century - curable diseases running unchecked",
+        "rationale": "The post uses a time-period analogy to frame political change."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_952fd14cb8927a4173c0b68203162b6f2278bdbd3ac52fda6f293912c1b55c49",
+        "feature_name": "party_faction_adopts_position",
+        "feature_value": "Explains how a faction causes the whole party to adopt extreme stance",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "There is a faction of Republicans for which extreme gun rights are THE issue, so the whole party adopts their position.",
+        "rationale": "It provides a structured causal explanation about faction influence."
+      },
+      {
+        "message_id": "twitter_2060759224032931975",
+        "feature_name": "sanctuary_cities_policy_domain",
+        "feature_value": "Sanctuary cities / border policy topic with blame",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Sanctuary cities are now paying the price",
+        "rationale": "The post centers on sanctuary cities as a policy subject."
+      },
+      {
+        "message_id": "twitter_2061762945227366650",
+        "feature_name": "religious_invocation_prayer_messaging",
+        "feature_value": "Explicit prayer/faith language calling to save unborn babies",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Father God, we pray, save the unborn babies... Jesus, hear the HEARTBEATS",
+        "rationale": "The post uses devotional address and petitionary verbs tied to abortion."
+      },
+      {
+        "message_id": "bluesky_ac89462c56af386b01ec58733a0d7051f538c0b90876893cd0252541be3acb1",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Strong ALL CAPS emphasis in accusations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "TRUMP AND THE GOP... THE PARTY OF FAMILY VALUES AND PRO LIFE",
+        "rationale": "Large sections are written in uppercase for emphasis."
+      },
+      {
+        "message_id": "twitter_2060329747281015171",
+        "feature_name": "factual_assertion_about_statistics",
+        "feature_value": "Claims 90% of school shooting claims were not real",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "nearly 90% of the \u201cschool shootings\u201d we hear about... never actually happened.",
+        "rationale": "It asserts a specific quantitative factual claim."
+      },
+      {
+        "message_id": "twitter_2061827523000856721",
+        "feature_name": "sarcastic_or_outrage_style_rhetoric",
+        "feature_value": "Uses rhetorical question framing and mockery of both sides",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Have Democrats Ever Considered Not Being Insane?",
+        "rationale": "The opening is a question used to ridicule and attack."
+      },
+      {
+        "message_id": "reddit_1kub3v4_mu0vdmq",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity directed at moderates",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck moderates.",
+        "rationale": "The message begins with a vulgar insult."
+      },
+      {
+        "message_id": "reddit_1tuue1j_opj3508",
+        "feature_name": "ideological_labeling_socialism_democrats",
+        "feature_value": "Long ideological comparison between socialism and conservative parties",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "major socialist parties in Europe... de facto social democrats... Communist Party",
+        "rationale": "The post discusses political ideology categories and labels."
+      }
+    ]
+  }
+}

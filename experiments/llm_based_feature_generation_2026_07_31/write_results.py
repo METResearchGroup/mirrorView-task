@@ -58,6 +58,8 @@ def write_results_md(
     sample_fraction: float = 0.50,
 ) -> pathlib.Path:
     """Generate RESULTS.md for a completed production run."""
+    stage1_dir = stage1_dir.resolve()
+    stage2_dir = stage2_dir.resolve()
     stage1_results = load_stage1_results(stage1_dir)
     stage2_result = _load_stage2_themes(stage2_dir)
     themes = stage2_result.get("themes", [])

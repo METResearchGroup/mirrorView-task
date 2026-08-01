@@ -1,0 +1,180 @@
+{
+  "batch_id": 126,
+  "message_ids": [
+    "bluesky_4256663d93232b5d689f211851b2a7b8ab83d385bb22f26a693015ffad47ee91",
+    "bluesky_5ffa21c24dad5e44f167e709f7de974d49b1e8c0acee82d075442ced7580b42c",
+    "bluesky_80b75e0211cb6463190bf05368f05bfd5814a95c53ba44bff7e484af95eaac63",
+    "bluesky_cd1729a309622dac0c1563d7b598a89b98e813bfa1db737155624c1879fc4b89",
+    "reddit_1iv52hs_mzvwpva",
+    "reddit_1krgk27_mtgzlm8",
+    "reddit_1lnr12b_n0je2jn",
+    "reddit_1suuxc0_oidhocr",
+    "reddit_1tuue1j_opchx64",
+    "reddit_1txopv4_opxnfmd",
+    "reddit_1txrvp0_opyfkug",
+    "reddit_1tzs7nk_oqdxaiy",
+    "reddit_1u0qe3k_oqk4pae",
+    "twitter_2059960054497907123",
+    "twitter_2060464988850983379",
+    "twitter_2060846007953310102",
+    "twitter_2061284896661016580",
+    "twitter_2061510628561260924",
+    "twitter_2061578869702901913",
+    "twitter_2061802775827423337"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060464988850983379",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Everyone should reduce their carbon footprint",
+        "rationale": "The text is a brief one-sentence claim with compact wording."
+      },
+      {
+        "message_id": "twitter_2061510628561260924",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (NJ/Amazon mentioned)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Amazon faces threats from climate change.",
+        "rationale": "Uses a specific organization/entity name (Amazon) plus global framing."
+      },
+      {
+        "message_id": "reddit_1suuxc0_oidhocr",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "contains all-caps faction label (MAGA)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "MAGA extremists need to explain",
+        "rationale": "Includes the all-caps political acronym MAGA."
+      },
+      {
+        "message_id": "reddit_1txrvp0_opyfkug",
+        "feature_name": "causal_claim_present",
+        "feature_value": "climate change framed as creating arable land and resources",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Global warming... will create more arable land",
+        "rationale": "States a direct consequence of warming producing new farmland and exploitation opportunities."
+      },
+      {
+        "message_id": "bluesky_5ffa21c24dad5e44f167e709f7de974d49b1e8c0acee82d075442ced7580b42c",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "endorses changing state gun-permit policy (honor permits)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "NJ does not honor concealed carry permits",
+        "rationale": "Advocates a specific policy outcome related to concealed carry permits."
+      },
+      {
+        "message_id": "twitter_2061802775827423337",
+        "feature_name": "call_to_action",
+        "feature_value": "instruction to deport/hold detainees; procedural directive",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "then when ICE arrest them they should go right to the airport and deported",
+        "rationale": "Uses directive language proposing what to do with detained people."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqdxaiy",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insults candidates/leadership with derogatory terms",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "shitty centrist republican-lite candidates",
+        "rationale": "Employs mocking/derogatory description rather than neutral critique."
+      },
+      {
+        "message_id": "bluesky_80b75e0211cb6463190bf05368f05bfd5814a95c53ba44bff7e484af95eaac63",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (US, Greenland, Arctic actors mentioned)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "including Greenlandic peoples, from climate change impacts.",
+        "rationale": "Mentions specific geographic/cultural proper nouns tied to Arctic discourse."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_cd1729a309622dac0c1563d7b598a89b98e813bfa1db737155624c1879fc4b89",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none clear (but dehumanizing/insult framing present via 'man-child')",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "allow a man-child to buy himself an assault weapon",
+        "rationale": "Uses a derogatory insult to characterize a gun buyer."
+      },
+      {
+        "message_id": "twitter_2060846007953310102",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "multiple @mentions targeting officials/agencies",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@POTUS @VP @CivilRights @WhiteHouse",
+        "rationale": "Directly addresses several public figures/organizations via handles."
+      },
+      {
+        "message_id": "reddit_1lnr12b_n0je2jn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo slur-like insult ('shit humans')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "republicans are all shit humans",
+        "rationale": "Contains strong derogatory language."
+      },
+      {
+        "message_id": "twitter_2061578869702901913",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "directly questions/addresses a specific person ('Did you...')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Did you actually go to law school?",
+        "rationale": "Uses second-person questioning to confront the addressee."
+      },
+      {
+        "message_id": "twitter_2061284896661016580",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "news-style citation with 'via @YouTube'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "via @YouTube",
+        "rationale": "Includes a 'via' attribution referencing a platform."
+      },
+      {
+        "message_id": "bluesky_4256663d93232b5d689f211851b2a7b8ab83d385bb22f26a693015ffad47ee91",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "counterfactual conditional about vaccines/immigration causing outcomes",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Even if vaccines do cause autism",
+        "rationale": "Uses an explicit 'Even if' conditional framing."
+      },
+      {
+        "message_id": "reddit_1iv52hs_mzvwpva",
+        "feature_name": "call_to_action",
+        "feature_value": "implied urging to preserve/duplicate evidence (copies/flash drive)",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "made copies and saved it all to a flash drive",
+        "rationale": "Advocates an action related to preserving materials."
+      },
+      {
+        "message_id": "reddit_1krgk27_mtgzlm8",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "ingroup/outgroup language ('democrats'/'de ms' vs 'liberal') with antagonism",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Out of all the legitmate shit they could focus on... get fucked dems.",
+        "rationale": "Positions the writer against a political outgroup and ends with an aggressive dismissal."
+      }
+    ]
+  }
+}

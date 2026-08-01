@@ -19,7 +19,7 @@ def main() -> int:
         print(f"usage: {sys.argv[0]} <stage1-output-dir>", file=sys.stderr)
         return 2
 
-    stage1_dir = pathlib.Path(sys.argv[1])
+    stage1_dir = pathlib.Path(sys.argv[1]).resolve()
     stage2_dir = run_stage2(stage1_dir, model=DEFAULT_MODEL)
     print(f"stage2_dir={stage2_dir}")
 

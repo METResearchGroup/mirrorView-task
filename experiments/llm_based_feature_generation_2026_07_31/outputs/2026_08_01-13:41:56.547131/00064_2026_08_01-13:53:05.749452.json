@@ -1,0 +1,180 @@
+{
+  "batch_id": 64,
+  "message_ids": [
+    "bluesky_024b70c92cf104851bd435ac8e73947dcc790c10c3be29616d80adba54709822",
+    "bluesky_2442df7e41587c5ebb83337bcaa9ac24642e3933c4c14ca5775085d3076722c7",
+    "bluesky_3e1b88c6b1438622ddd85d43e461f4ed12e2390bb8a7e0c085be480850fc4f52",
+    "bluesky_96eaad10586163802dd27352d704f1cff0427bc1b755422f57bc71611f38d4f3",
+    "bluesky_ed83c77155e7eb536655ab72fe2002bd82f4860e511767923493c76b7600be80",
+    "reddit_1kc4qta_mq0uym3",
+    "reddit_1l5yq1x_mwl22kb",
+    "reddit_1l6m7xp_mwtp2ij",
+    "reddit_1lbzv5t_mxy3q1y",
+    "reddit_1liz1et_mzgct01",
+    "reddit_1lm4j5s_n0at958",
+    "reddit_1te3o84_om5qriu",
+    "reddit_1til7dr_omxdgtk",
+    "reddit_1tv4g76_oplyift",
+    "twitter_2060206610585141461",
+    "twitter_2060911849693204569",
+    "twitter_2061069128522215768",
+    "twitter_2061308236062409050",
+    "twitter_2061529464471691371",
+    "twitter_2061789686616723540"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tv4g76_oplyift",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity to insult a person",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"rubin is a fuckin idiot\"",
+        "rationale": "Contains explicit profanity as direct condemnation."
+      },
+      {
+        "message_id": "reddit_1tv4g76_oplyift",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Mentions multiple public figures/brands",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"rubin\" \"kirk\"",
+        "rationale": "High density of proper names in a short post."
+      },
+      {
+        "message_id": "twitter_2060911849693204569",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Embedded multi-clause quote with election aftermath prediction",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"I want borders, they don't want borders...\"",
+        "rationale": "Includes extensive quoted speech with policy and threat language."
+      },
+      {
+        "message_id": "twitter_2061789686616723540",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral condemnation of policy with \u201cdanger/has no place\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"only puts women's lives in danger\" \"That has no place\"",
+        "rationale": "Uses evaluative moral framing tied to harm."
+      },
+      {
+        "message_id": "twitter_2060206610585141461",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct rhetorical question to the audience",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Would YOU really slam the door in their face?\"",
+        "rationale": "Uses a direct question to urge consideration/response."
+      },
+      {
+        "message_id": "reddit_1l5yq1x_mwl22kb",
+        "feature_name": "target_directionality",
+        "feature_value": "Switch from anti-police to pro-police stance in mirror",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Original: \"Fuck the police. Victory to the rebels.\" | Mirror: \"Back the blue. Shame on the rioters.\"",
+        "rationale": "Mirror retargets praise/blame to police vs rebels/rioters."
+      },
+      {
+        "message_id": "bluesky_ed83c77155e7eb536655ab72fe2002bd82f4860e511767923493c76b7600be80",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate/environment debate (science denial framing)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"climate science\" \"anti-science\" \"environmental science denial\"",
+        "rationale": "Central subject is climate science and alleged denial."
+      },
+      {
+        "message_id": "bluesky_024b70c92cf104851bd435ac8e73947dcc790c10c3be29616d80adba54709822",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "Long-form explanation with TLDR and critique",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"TLDR:\" \"wave of deregulation crash crashing across Canada\"",
+        "rationale": "Substantial multi-sentence post with summary framing."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kc4qta_mq0uym3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Mass insult/profanity targeting an entire group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck every single Republican.\"",
+        "rationale": "Uses explicit profanity directed at a political group."
+      },
+      {
+        "message_id": "bluesky_2442df7e41587c5ebb83337bcaa9ac24642e3933c4c14ca5775085d3076722c7",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Slang marker \u201csus\u201d",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"definitely \\\"sus\\\"\"",
+        "rationale": "Uses internet slang to cast doubt."
+      },
+      {
+        "message_id": "bluesky_2442df7e41587c5ebb83337bcaa9ac24642e3933c4c14ca5775085d3076722c7",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Implied second-person instruction via refusal/judgment (contrastive stance)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"But the other \\\"Hogg was right\\\" can eat flaming dumpster shit.\"",
+        "rationale": "Imperative-like hostile directive aimed at a group."
+      },
+      {
+        "message_id": "reddit_1liz1et_mzgct01",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual profanity term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"butt fucking americas\"",
+        "rationale": "Contains explicit sexual taboo language."
+      },
+      {
+        "message_id": "bluesky_96eaad10586163802dd27352d704f1cff0427bc1b755422f57bc71611f38d4f3",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Intensive capitalization and exclamatory emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"FUCKING TERRIBLE IDEA\" \"Imma fuckin tell you right now\"",
+        "rationale": "Strong emphasis via all-caps and repeated profanity."
+      },
+      {
+        "message_id": "twitter_2061529464471691371",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Uses an extreme analogy/claim to criticize a viewpoint",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"aborting kittens\" \"at any stage of pregnancy\"",
+        "rationale": "Extreme illustrative scenario rather than a verifiable report."
+      },
+      {
+        "message_id": "reddit_1kc4qta_mq0uym3",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Totalizing blame of one party and contrast with \u201ctoken few\u201d dissenters",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans down the board\" \"token few\" \"Fuck every single Republican.\"",
+        "rationale": "Broad in-group/out-group blame with partial exceptions."
+      },
+      {
+        "message_id": "twitter_2061069128522215768",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun control / firearms policy debate after Uvalde",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun control\" \"Uvalde\" \"guns\"",
+        "rationale": "Main topic is gun control with a specific mass shooting reference."
+      }
+    ]
+  }
+}

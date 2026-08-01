@@ -1,0 +1,180 @@
+{
+  "batch_id": 39,
+  "message_ids": [
+    "bluesky_0d62698c7e468970a288e1c65944d1cf964822b242a747160c04421cf89d05b8",
+    "bluesky_7cbd2ad6b9e0e288c17d8b78743360c10164b4059579c2b8cdc7308adf38d29d",
+    "bluesky_b3d04f1e5c7e41de657a98972142ca8b9b6f32d59ca58bbd20a6afa481efe862",
+    "bluesky_d2744d820baf5aae0f22ef10242cd732b47ff300984f148a3418a03cb9180010",
+    "bluesky_d7428229edad78aa7012166c170c0a0cf9377f0cc766ad4d18b2e3b72e2b9a79",
+    "reddit_1kcx4ed_mq6555e",
+    "reddit_1khto5j_mrayepc",
+    "reddit_1knep98_msjkx4l",
+    "reddit_1l8uhae_mx9n972",
+    "reddit_1tle2vc_onf1ixe",
+    "reddit_1txnqc1_opydi81",
+    "reddit_1u08yl1_oqgk4fk",
+    "reddit_1u0ffqm_oqi2lz5",
+    "twitter_2060362498096660847",
+    "twitter_2060407479054602699",
+    "twitter_2061227498319339901",
+    "twitter_2061315136317485391",
+    "twitter_2061373271572897968",
+    "twitter_2061774876872970403",
+    "twitter_2061776061700940221"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_0d62698c7e468970a288e1c65944d1cf964822b242a747160c04421cf89d05b8",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "They have universal health care. We have GOP",
+        "rationale": "The post contains multiple multi-sentence policy comparisons with substantial length."
+      },
+      {
+        "message_id": "bluesky_0d62698c7e468970a288e1c65944d1cf964822b242a747160c04421cf89d05b8",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original frames GOP/voters blocking healthcare and gun limits; mirror shifts to Democrats blocking immigration enforcement and half-measures, changing the criticized actor/blame targets.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "We have GOP... block any attempt at it ... / We have Democrats... who block any attempt at enforcement",
+        "rationale": "The blame recipient changes from GOP to Democrats while keeping parallel structure."
+      },
+      {
+        "message_id": "bluesky_7cbd2ad6b9e0e288c17d8b78743360c10164b4059579c2b8cdc7308adf38d29d",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "low",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Conservatives don't want to live in a fact based society",
+        "rationale": "No specific individuals/organizations/cities are named; it uses broad group labels."
+      },
+      {
+        "message_id": "bluesky_7cbd2ad6b9e0e288c17d8b78743360c10164b4059579c2b8cdc7308adf38d29d",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "presented as generalized claims about groups (assertive, not hedged)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "You see it in how they view climate science, health science, social science",
+        "rationale": "The author claims observable patterns (\u201cYou see it in how\u2026\u201d) rather than framing as a hypothetical."
+      },
+      {
+        "message_id": "reddit_1txnqc1_opydi81",
+        "feature_name": "geographic_scope",
+        "feature_value": "US cities (Portland, San Francisco, Los Angeles)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "progressive cities like Portland, San Francisco, and Los Angeles",
+        "rationale": "The post cites multiple US city locations as examples."
+      },
+      {
+        "message_id": "twitter_2061776061700940221",
+        "feature_name": "call_to_action",
+        "feature_value": "explicit voting directive to remove an incumbent",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Vote to unelect Mike Rounds South Dakota today",
+        "rationale": "It directly instructs the reader to vote, indicating mobilization intent."
+      },
+      {
+        "message_id": "twitter_2061776061700940221",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct address with modal obligation (\u201cyou must\u2026\u201d)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "That means you must use your superpower and vote",
+        "rationale": "Uses second-person \u201cyou\u201d to command the audience."
+      },
+      {
+        "message_id": "reddit_1u0ffqm_oqi2lz5",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "derisive personification of media audiences with strong insults",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "have Fox News complaining about what ***animals*** big city liberals are",
+        "rationale": "The language uses dehumanizing/derogatory mockery toward a political group."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_b3d04f1e5c7e41de657a98972142ca8b9b6f32d59ca58bbd20a6afa481efe862",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo slur language (\u201cmilking\u201d) and strong negative framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "try to milk this for his vanity project",
+        "rationale": "The post uses highly inflammatory, contemptuous phrasing rather than neutral description."
+      },
+      {
+        "message_id": "reddit_1kcx4ed_mq6555e",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual-crime accusation label (rapist/pedophile)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Daily reminder that Trump is a rapist.",
+        "rationale": "Contains a direct allegation of sexual abuse using a taboo label."
+      },
+      {
+        "message_id": "twitter_2061373271572897968",
+        "feature_name": "call_to_action",
+        "feature_value": "asks what to think + policy consideration framed as women\u2019s rights/safety",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "What do you think? In the interest of women's rights and safety we should consider",
+        "rationale": "Uses an audience prompt and proposes a policy action."
+      },
+      {
+        "message_id": "twitter_2061315136317485391",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "emoji bullet list of issues",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\ud83d\udcccBetter health systems \n\ud83d\udcccStronger education pathways \n\ud83d\udcccBolder climate action",
+        "rationale": "The post structures content as multiple bullet points."
+      },
+      {
+        "message_id": "reddit_1u08yl1_oqgk4fk",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct imperative \u201cfuck you\u201d to a targeted individual class",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If you are an ICE agent fuck you.",
+        "rationale": "Uses second-person \u201cyou\u201d with an imperative insult."
+      },
+      {
+        "message_id": "reddit_1u08yl1_oqgk4fk",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "depicts targeted group as causing suffering/torment to communities; escalated persecution analogy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "I hope every moment of your life is suffering... You are a fascist. Every bit the same evil as a KKK member",
+        "rationale": "Claims the target inflicted suffering and links them to persecution/hate groups."
+      },
+      {
+        "message_id": "bluesky_d7428229edad78aa7012166c170c0a0cf9377f0cc766ad4d18b2e3b72e2b9a79",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "media narrative suppression (\u201cdoes the media make this big of a deal\u2026 No, because\u2026\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Does the media make this big of a deal about it? No, because that is just another day in the US.",
+        "rationale": "Attributes selective media coverage to a narrative fit/agenda."
+      },
+      {
+        "message_id": "reddit_1tle2vc_onf1ixe",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking competence/mental state with demeaning depiction of a clip",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "his big finale is a low budget AI clip where he dances to YMCA.",
+        "rationale": "Uses contemptuous humor to belittle political figures."
+      }
+    ]
+  }
+}

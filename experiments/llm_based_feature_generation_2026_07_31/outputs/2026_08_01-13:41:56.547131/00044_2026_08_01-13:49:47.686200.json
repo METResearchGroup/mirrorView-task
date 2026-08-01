@@ -1,0 +1,180 @@
+{
+  "batch_id": 44,
+  "message_ids": [
+    "bluesky_66f47fe334cd30165e71922f90f3f258108adc0e67ee5f619cab0023bd609123",
+    "bluesky_73f2027325098335b7083ef0bd00cb08b05b21ab5a169adcbb0897f151e92a8f",
+    "bluesky_8323c306829c22c7b979c73b2941d4bb44add0609119209fc7ffbd104f76f2dd",
+    "bluesky_88f05de05ccb8753ed6f755dd54104dccb4f7e7b336bb6b4385cda807fe657ed",
+    "bluesky_9a8fa62dab804abcccaae3aaf92e13704ecd35d8b7a42080dd8b9e768374cff2",
+    "reddit_1kcy0mu_mq6vss4",
+    "reddit_1ki5ekl_mrkyjx8",
+    "reddit_1lhaiqa_mz2n60h",
+    "reddit_1t4fs97_ok3xved",
+    "reddit_1thqwmy_ompg3at",
+    "reddit_1ttui2j_op56nhi",
+    "reddit_1ture29_opbopjf",
+    "reddit_1tv4g76_opemrhq",
+    "reddit_1tvr63e_opiuoso",
+    "twitter_2061092151866372495",
+    "twitter_2061486946799452187",
+    "twitter_2061566583906939185",
+    "twitter_2061662676418220309",
+    "twitter_2061799295783698746",
+    "twitter_2061817052759789785"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061817052759789785",
+        "feature_name": "all_caps_or_emphatic_tokens",
+        "feature_value": "capitalized endorsement/imperative framing (Long live)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Long live freedom",
+        "rationale": "The post uses a repeated emphatic slogan-like phrase with capitalized form."
+      },
+      {
+        "message_id": "twitter_2061817052759789785",
+        "feature_name": "call_to_action_present",
+        "feature_value": "direct engagement prompt to retweet",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "RT if you stand for liberty!",
+        "rationale": "It explicitly asks readers to retweet based on alignment."
+      },
+      {
+        "message_id": "bluesky_88f05de05ccb8753ed6f755dd54104dccb4f7e7b336bb6b4385cda807fe657ed",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "heavy punctuation with long sentence and contrastive structure",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "but we CAN regulate who can and can\u2019t carry",
+        "rationale": "The text is dense with strong contrast markers and emphatic punctuation/casing."
+      },
+      {
+        "message_id": "bluesky_66f47fe334cd30165e71922f90f3f258108adc0e67ee5f619cab0023bd609123",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "repeated parallel clauses with Every X / Every Y",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Every bus route eliminated... Every rail line defunded",
+        "rationale": "It uses multiple parallel \u201cEvery\u2026\u201d statements to build an argument."
+      },
+      {
+        "message_id": "twitter_2061486946799452187",
+        "feature_name": "causal_claim_present",
+        "feature_value": "policy-to-outcome causal prediction",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "When you eliminate Abortion access you Increase future crime rates!",
+        "rationale": "It asserts a direct causal effect from eliminating access to future crime."
+      },
+      {
+        "message_id": "reddit_1t4fs97_ok3xved",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "party labels and policy acronym referenced",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Dems and Republicans... GLB",
+        "rationale": "It contains named political group references plus a policy acronym."
+      },
+      {
+        "message_id": "reddit_1thqwmy_ompg3at",
+        "feature_name": "high_contrast_label_pair",
+        "feature_value": "two-sided ideological label pairing separated by slash",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "Progressivism / Critical Theory.",
+        "rationale": "The post uses a compact ideological categorization phrase."
+      },
+      {
+        "message_id": "reddit_1ture29_opbopjf",
+        "feature_name": "target_media_actor_type",
+        "feature_value": "evaluation of news/pundit television programs",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "\"talking heads\" programs like The Five or Hannity.",
+        "rationale": "It discusses specific types of TV news/opinion programming and named hosts."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_9a8fa62dab804abcccaae3aaf92e13704ecd35d8b7a42080dd8b9e768374cff2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity toward trust",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Why don\u2019t I fucking trust him?",
+        "rationale": "Contains explicit profanity for emphasis."
+      },
+      {
+        "message_id": "bluesky_73f2027325098335b7083ef0bd00cb08b05b21ab5a169adcbb0897f151e92a8f",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Uvaldi mass shooting reference",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Every single cop that was at Uvaldi",
+        "rationale": "It directly references a specific high-profile event."
+      },
+      {
+        "message_id": "twitter_2061566583906939185",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "broad antagonistic claim about a party plus exclusionary demand",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The democrats hates America... We don\u2019t need immigrants with dual citizenship",
+        "rationale": "It sets a hostile in-group/out-group contrast and argues for excluding a group."
+      },
+      {
+        "message_id": "reddit_1tv4g76_opemrhq",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insulting dismissive framing of recipients",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Poor kids.",
+        "rationale": "Uses a derogatory sympathetic trope to attack the target."
+      },
+      {
+        "message_id": "twitter_2061799295783698746",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "direct quotation attributed to Trump",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Trump said it on video... \"We had a Supreme Court decision.\"",
+        "rationale": "It embeds a lengthy direct quote and attributes it to a named actor."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2n60h",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "direct curse targeting a demographic",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck every single Trump voter.",
+        "rationale": "Contains explicit profanity and a targeted hostile imperative."
+      },
+      {
+        "message_id": "reddit_1ki5ekl_mrkyjx8",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dehumanizing/insulting labels toward supporters",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "fat disgusting evil demon... MAGA morons",
+        "rationale": "Uses derogatory epithets and mocks the targeted group."
+      },
+      {
+        "message_id": "reddit_1ttui2j_op56nhi",
+        "feature_name": "call_to_action",
+        "feature_value": "hostile imperative/insult directed at a political coalition",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Fuck you to the ends of the earth MAGA",
+        "rationale": "The post uses an explicit imperative to harass the targeted political group."
+      }
+    ]
+  }
+}

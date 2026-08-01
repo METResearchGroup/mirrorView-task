@@ -1,0 +1,180 @@
+{
+  "batch_id": 54,
+  "message_ids": [
+    "bluesky_3158d9de6fdb3ca6f6c7df2ab40f40ae7e89b2269aa462339026642deedc9262",
+    "bluesky_6b5fc948b9969f31634da80c5fd88c5c4637ab5b93606385f4efd47b42379446",
+    "bluesky_a926b95c85980a0c8a4b7496bddda70fc5e11233a4d8275c3831ddf066dc7d74",
+    "reddit_1kcqkoy_mq5biu3",
+    "reddit_1kesocd_mqmbypd",
+    "reddit_1kk6e4o_mrszapg",
+    "reddit_1kk7hs1_mrupo13",
+    "reddit_1l44grv_mwaojjo",
+    "reddit_1lfwhpi_myu1ie6",
+    "reddit_1t1x818_ojndtg6",
+    "reddit_1tu7mub_opbvykc",
+    "reddit_1u23s25_oqwa6k4",
+    "reddit_1u31653_or1r4q3",
+    "twitter_2060033795169112227",
+    "twitter_2060349245564105190",
+    "twitter_2060708592177623356",
+    "twitter_2060903378792714627",
+    "twitter_2061521903311823144",
+    "twitter_2061523963071864965",
+    "twitter_2061796235774763247"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kesocd_mqmbypd",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses casual slang ('shit', 'lol')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Damn this shit is hilarious lol.",
+        "rationale": "The text uses informal, slangy phrasing typical of social-media register."
+      },
+      {
+        "message_id": "twitter_2060708592177623356",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Uses ideological proper-noun labels (MAGA/woke)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Esoteric MAGA on my timeline today",
+        "rationale": "The post relies on named political identity labels."
+      },
+      {
+        "message_id": "bluesky_3158d9de6fdb3ca6f6c7df2ab40f40ae7e89b2269aa462339026642deedc9262",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "pour that money into climate science",
+        "rationale": "The central topic is climate science and related policy funding."
+      },
+      {
+        "message_id": "twitter_2061521903311823144",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Uppercase emphatic framing (MUST, professionals implied; mirror uses ALARMISM/SCAM)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Climate Action is a MUST",
+        "rationale": "The post explicitly uses all-caps for emphasis."
+      },
+      {
+        "message_id": "twitter_2061521903311823144",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Urges action to campaign for adaptation of climate-smart agriculture",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "It's our duty call to spearhead this campaign towards adaptation",
+        "rationale": "It contains a direct proposal for what to do ('spearhead this campaign')."
+      },
+      {
+        "message_id": "twitter_2060903378792714627",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames removal as causing humanitarian disruption",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "logistical, economic, social, and humanitarian disruption",
+        "rationale": "The post highlights humanitarian harm as a key consequence."
+      },
+      {
+        "message_id": "twitter_2061796235774763247",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Morally charged language about killing and healthcare; direct ban call",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Children are being murdered. ... End abortion!",
+        "rationale": "It uses moral outrage and a prohibitive directive."
+      },
+      {
+        "message_id": "reddit_1t1x818_ojndtg6",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses others about compliance ('you')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "However, this doesn't mean that schools, companies or anyone has to go along with you",
+        "rationale": "The grammar includes second-person reference ('you')."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kcqkoy_mq5biu3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Strong profanity and insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck em.",
+        "rationale": "Uses explicit vulgar profanity as a dismissal/insult."
+      },
+      {
+        "message_id": "reddit_1tu7mub_opbvykc",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Attacks in-group/out-group traits (civility as liability; outwardly bigoted)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "You can tell someone is a fellow republican when they\u2019re outwardly bigoted.",
+        "rationale": "Employs derisive labeling toward a political group."
+      },
+      {
+        "message_id": "bluesky_a926b95c85980a0c8a4b7496bddda70fc5e11233a4d8275c3831ddf066dc7d74",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun reform legislation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "reinstate the assault weapons ban",
+        "rationale": "The post explicitly advocates firearm-ban policy."
+      },
+      {
+        "message_id": "reddit_1l44grv_mwaojjo",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "Compares modern party to Nazi-era (1930-1940s)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "just like the 1930-1940s Nazi's were",
+        "rationale": "Uses an explicit historical analogy to intensify condemnation."
+      },
+      {
+        "message_id": "bluesky_6b5fc948b9969f31634da80c5fd88c5c4637ab5b93606385f4efd47b42379446",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Political hashtag attack",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#SorosThePuppetmaster",
+        "rationale": "Contains a branded hashtag targeting a public figure."
+      },
+      {
+        "message_id": "bluesky_6b5fc948b9969f31634da80c5fd88c5c4637ab5b93606385f4efd47b42379446",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Accuses opponent of secret payments and puppetmaster influence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "How much did Soros pay you ... #SorosThePuppetmaster",
+        "rationale": "Presents influence/control through covert funding as the explanation."
+      },
+      {
+        "message_id": "twitter_2060349245564105190",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Claims concrete distribution and medical oversight status",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The abortion pill is being mailed into American homes with zero medical oversight.",
+        "rationale": "States a specific real-world claim about actions and oversight."
+      },
+      {
+        "message_id": "reddit_1lfwhpi_myu1ie6",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Contains quoted slogans and strategic political plan phrasing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Instead of \"Fuck the Republicans\" why not \"We need to take over the Republican party like Bernie almost took over the Democratic party\"?",
+        "rationale": "Uses embedded quoted text to propose a rhetorical alternative."
+      }
+    ]
+  }
+}

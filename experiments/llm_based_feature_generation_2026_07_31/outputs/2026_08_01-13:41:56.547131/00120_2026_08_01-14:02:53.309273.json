@@ -1,0 +1,180 @@
+{
+  "batch_id": 120,
+  "message_ids": [
+    "bluesky_038c30836b0ae38c6c4ceae534d2e054f15a49aa34e26a71ea8c272c4a75f5b4",
+    "bluesky_4b818c345eae2bf93fbfa202789df8647148c998aa0cae4736a7cb480125b34f",
+    "bluesky_73e1888b9f66e61ebabc99f7cfa427146c4c7f2802fa251a850a56d5eb36eae2",
+    "bluesky_770841d0f69f445aca45082ad10be93a6fc5e9990977b39249aa35a5c9da74cd",
+    "bluesky_7cc649033c8902973f9ca856dcb4522d8070a3dfae64382356cbba11cef197e3",
+    "bluesky_8ed0dd3cceab245aafaf51ae1c35e63079dd5f5eed9680dbd9705d92da6ee958",
+    "bluesky_fff33fffcd32f29060e1f62a6e8e9708fec18f8a94276cb419e943d85d7179e2",
+    "reddit_1kbsrmm_mpyar59",
+    "reddit_1kihiny_mrhca5v",
+    "reddit_1kisfrq_mrjxs61",
+    "reddit_1ksmur4_mtnigsy",
+    "reddit_1ktjhl8_mtufvql",
+    "reddit_1lf1k51_myljmte",
+    "reddit_1t7hgak_okty6uo",
+    "reddit_1ti6ied_omshkha",
+    "reddit_1tr2x1s_ookpm7h",
+    "reddit_1tx0uiq_opsor33",
+    "twitter_2061423216325968181",
+    "twitter_2061545662307561682",
+    "twitter_2061590939261432299"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kisfrq_mrjxs61",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains obscene/emphatic profanity token",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"FUCK\" Trump campaign",
+        "rationale": "The post includes explicit profane text used for emphasis."
+      },
+      {
+        "message_id": "reddit_1kisfrq_mrjxs61",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Implied prescription to enact emergency powers via civil disobedience trigger",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"That is the trigger mechanism to enact Marshal Law.\"",
+        "rationale": "Language describes an intended/expected escalation resulting in emergency governance."
+      },
+      {
+        "message_id": "bluesky_7cc649033c8902973f9ca856dcb4522d8070a3dfae64382356cbba11cef197e3",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses second-person imperative frame (\"should be allowed\" addressed generally)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Ammosexuals should be allowed\"",
+        "rationale": "The text uses an explicit entitlement/permission modal construction to direct a stance."
+      },
+      {
+        "message_id": "twitter_2061423216325968181",
+        "feature_name": "call_to_action",
+        "feature_value": "Appeal to support a side/action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Stand with the vulnerable\"",
+        "rationale": "The mirror contains a directive encouraging the audience to take a stance."
+      },
+      {
+        "message_id": "twitter_2061545662307561682",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "UK-specific and identity/politics framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"the UK\"",
+        "rationale": "The post references a specific geographic proper noun (UK) as the setting for the claim."
+      },
+      {
+        "message_id": "bluesky_770841d0f69f445aca45082ad10be93a6fc5e9990977b39249aa35a5c9da74cd",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Uses analogy/comparative reasoning with math framing (not strict evidence)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Yes it's a math equation.\"",
+        "rationale": "The claim is presented as an analytical comparison/argument rather than a sourced fact."
+      },
+      {
+        "message_id": "reddit_1kbsrmm_mpyar59",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Expresses strong disgust and escalation threat language",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Unfortunately... salivating\"",
+        "rationale": "The wording conveys intense negative affect and an accusatory escalation scenario."
+      },
+      {
+        "message_id": "bluesky_fff33fffcd32f29060e1f62a6e8e9708fec18f8a94276cb419e943d85d7179e2",
+        "feature_name": "sarcasm_or_irony",
+        "feature_value": "Dismissive, sarcastic framing of a political label as backlash",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Turn out the real Green New Deal... was just the backlash\"",
+        "rationale": "The trope 'turns out... was just' casts the opposing program as a cynical reaction, consistent with ironic/sarcastic dismissal."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061590939261432299",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Multiple shouty all-caps directives",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"YOU NEED TO PUT A JUDGES ON THE FRONT OF THESE PLANES\"",
+        "rationale": "The post uses uppercase for imperative emphasis."
+      },
+      {
+        "message_id": "twitter_2061590939261432299",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct imperative urging a specific enforcement action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"YOU NEED TO PUT ... AND MAKE IT A ONE STOP DEPORTATION!\"",
+        "rationale": "It explicitly instructs what authorities should do."
+      },
+      {
+        "message_id": "reddit_1kihiny_mrhca5v",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing contempt term for voters/target",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"body of stupid people\" / \"brainwashed sheep\"",
+        "rationale": "The language mocks and demeans groups rather than discussing policy."
+      },
+      {
+        "message_id": "reddit_1ktjhl8_mtufvql",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity/insult directed at a person",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"orange asshole\"",
+        "rationale": "Uses a direct vulgar insult to attack the target."
+      },
+      {
+        "message_id": "reddit_1ksmur4_mtnigsy",
+        "feature_name": "targeted_personal_insult",
+        "feature_value": "Diminutive demeaning framing of candidate (\"man child\"), disease/cancer metaphor",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"this man child Trump\" ... \"a cancer\"",
+        "rationale": "The post employs derogatory characterization and biomedical metaphors to delegitimize the person."
+      },
+      {
+        "message_id": "reddit_1lf1k51_myljmte",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Obscene shorthand used for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fcking Biden\"",
+        "rationale": "The text includes censored profanity markers."
+      },
+      {
+        "message_id": "reddit_1tr2x1s_ookpm7h",
+        "feature_name": "open_ended_insult_stereotyping",
+        "feature_value": "Short binary identity insult pairing religion/politics with genital/ego slurs",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"Conservative christian small penis power.\"",
+        "rationale": "This is a concise, insulting stereotyping statement relying on sexual/gendered slurs."
+      },
+      {
+        "message_id": "bluesky_4b818c345eae2bf93fbfa202789df8647148c998aa0cae4736a7cb480125b34f",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Named international climate agreement (Paris Agreement)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Paris Agreement\"",
+        "rationale": "It references a specific named international climate treaty."
+      }
+    ]
+  }
+}

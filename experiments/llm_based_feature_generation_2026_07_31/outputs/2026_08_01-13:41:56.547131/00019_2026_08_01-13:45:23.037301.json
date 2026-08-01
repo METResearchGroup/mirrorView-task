@@ -1,0 +1,180 @@
+{
+  "batch_id": 19,
+  "message_ids": [
+    "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+    "bluesky_3c6df3b072a9a53bf02c526800f6d05dfacb75f7afd8ea4b9cdf4621a499a075",
+    "bluesky_bb310a9fc8563053ea7a958747de544161a5292dc0944c05b861ccefd3471007",
+    "bluesky_f3be1180df4ff2f2b104148f214f94a5f184a3be1a9b8c1d99d007b832124d35",
+    "reddit_1kp4a6b_msvk9fe",
+    "reddit_1kwkajn_muhzon9",
+    "reddit_1l5qzp8_mwj3dvp",
+    "reddit_1lb0ja7_mxp0lwi",
+    "reddit_1lc2f6x_mxx5rqu",
+    "reddit_1lh7ndf_mz2um9o",
+    "reddit_1tbxjhn_olkleyx",
+    "reddit_1til7dr_on3ahn3",
+    "reddit_1tswff0_ooyanex",
+    "reddit_1u008ep_oqh79iv",
+    "twitter_2059815073485332851",
+    "twitter_2061558316703072725",
+    "twitter_2061568792061206654",
+    "twitter_2061591122095612409",
+    "twitter_2061801013078643016",
+    "twitter_2061816204491198746"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061568792061206654",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "A Texas BBQ owner said beef prices have gone up \u2018quite a bit\u2019... Elect people who care about affordability! Vote blue",
+        "rationale": "The post contains multiple sentences plus a political call and voting instruction, indicating a long message."
+      },
+      {
+        "message_id": "twitter_2061568792061206654",
+        "feature_name": "call_to_action",
+        "feature_value": "explicit vote instruction",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Elect people who care about affordability! Vote blue",
+        "rationale": "It directly urges voters to elect and vote in a specific direction."
+      },
+      {
+        "message_id": "reddit_1lh7ndf_mz2um9o",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "medium (Juneteenth, U.S.)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Juneteenth... U.S. holidays",
+        "rationale": "The text centers on a specific named holiday and refers to the U.S."
+      },
+      {
+        "message_id": "reddit_1lh7ndf_mz2um9o",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "racism attribution to opposing viewpoint",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Just more racist bullshit from the racist-in-chief.",
+        "rationale": "The speaker attributes negative intent/behavior to a named opponent while positioning their claim as the negative target."
+      },
+      {
+        "message_id": "reddit_1tbxjhn_olkleyx",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting labels for supporter group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Maga morons... worship the ground he walks on.",
+        "rationale": "Uses pejorative terms to belittle a group\u2019s support."
+      },
+      {
+        "message_id": "twitter_2061591122095612409",
+        "feature_name": "normative_moral_language",
+        "feature_value": "labels actions as fascism/treason",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "This is fascism, pure and simple.",
+        "rationale": "Characterizes the described conduct with strong moral/ideological condemnation."
+      },
+      {
+        "message_id": "bluesky_f3be1180df4ff2f2b104148f214f94a5f184a3be1a9b8c1d99d007b832124d35",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "second amendment / guns",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "the second amendment",
+        "rationale": "The post explicitly invokes the Second Amendment and connects it to criminals and violence risk."
+      },
+      {
+        "message_id": "bluesky_3c6df3b072a9a53bf02c526800f6d05dfacb75f7afd8ea4b9cdf4621a499a075",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "It fucking sucks",
+        "rationale": "Contains direct profanity/strong taboo language."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lb0ja7_mxp0lwi",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "gendered slur/sexualized insult term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fucker has always been against Israel",
+        "rationale": "Uses a harsh abusive term to attack a person."
+      },
+      {
+        "message_id": "reddit_1lb0ja7_mxp0lwi",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "named foreign political actors (Bibi) with alleged involvement",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Trump wasn't involved... & didn't give Bibi the green light.",
+        "rationale": "Mentions a specific individual (Bibi) and frames involvement in a specific action ('green light')."
+      },
+      {
+        "message_id": "twitter_2061558316703072725",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / second amendment regulation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Second Amendment",
+        "rationale": "The text argues about judges and self-defense rights versus new restrictions."
+      },
+      {
+        "message_id": "twitter_2061558316703072725",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "causal framing about safety vs control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "That pattern shows control, not safety, as the goal.",
+        "rationale": "Presents a definitive causal interpretation of political intent."
+      },
+      {
+        "message_id": "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "all-caps core slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "DEMOCRACY is what I care about the most.",
+        "rationale": "Uses all-caps for a key term to emphasize the central theme."
+      },
+      {
+        "message_id": "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "threat of collective harm if democracy lost",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "UNLESS we lose our democracy. Then, we\u2019re just ALL fucked.",
+        "rationale": "Frames an existential threat to the whole group."
+      },
+      {
+        "message_id": "reddit_1l5qzp8_mwj3dvp",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit swear word",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fuck Donald trump",
+        "rationale": "Contains a direct profanity directed at a named person."
+      },
+      {
+        "message_id": "reddit_1lc2f6x_mxx5rqu",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "ideological degradation to extreme stereotypes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Nazis enjoy killing people... Bombing civilians is Republican porn.",
+        "rationale": "Reduces opponents to extreme hateful/sexualized claims rather than policy discussion."
+      }
+    ]
+  }
+}

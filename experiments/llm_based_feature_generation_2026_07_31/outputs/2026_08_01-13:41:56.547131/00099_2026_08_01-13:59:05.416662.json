@@ -1,0 +1,180 @@
+{
+  "batch_id": 99,
+  "message_ids": [
+    "bluesky_2cf56fa1e6d0cb0317b5b3d98db9ec1ac3d7b02b29982b378bbab994597686f9",
+    "bluesky_4f5cc96ea861f987eb9c5b984682518c00ec7183015ea100d2bdb728881b9ee5",
+    "bluesky_67cd6dc0e292f4ec281474f238b9ffe1bfe84d0514daa8513ac42813cef139e0",
+    "bluesky_af902269c9225f570900ec861f6136217356b6ccb558ad28f2afcdd288fae684",
+    "bluesky_bd732d8281dcca7b2ae87880551851569700a7397ee873a707f2625320ee27bc",
+    "bluesky_c7102c0a8ab2440340f6e55106a0d23e57beea9d2147d2af428aa8ea2b41c2d0",
+    "reddit_1keltha_mqjof04",
+    "reddit_1ki3k0w_mrbvh1p",
+    "reddit_1lkewtg_mzr53kr",
+    "reddit_1tsydyo_op1pp9w",
+    "reddit_1txnigx_opxnpi8",
+    "reddit_1u08yl1_oqgr65k",
+    "reddit_1u21326_oqtv345",
+    "twitter_2059387832884675063",
+    "twitter_2060456701623468278",
+    "twitter_2061476819757330924",
+    "twitter_2061560226629714094",
+    "twitter_2061614035125325876",
+    "twitter_2061814486525259786",
+    "twitter_2061824703266951566"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059387832884675063",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "All gun laws are unconstitutional including registries.",
+        "rationale": "The post is a single brief sentence, indicating a short token length."
+      },
+      {
+        "message_id": "twitter_2059387832884675063",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns/gun laws",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "All gun laws are unconstitutional",
+        "rationale": "The main subject is the legality/constitutionality of gun laws and registries."
+      },
+      {
+        "message_id": "bluesky_af902269c9225f570900ec861f6136217356b6ccb558ad28f2afcdd288fae684",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "party/policy slogan listing with caps emphasis (no hashtag)",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "Migrant Crime, Grow our Economy, Strengthen our Military and Veterans... ENSURE PEACE THROUGH STRENGTH.",
+        "rationale": "The text is structured like a slogan/pledge with emphatic capitalization and multi-issue listing."
+      },
+      {
+        "message_id": "bluesky_af902269c9225f570900ec861f6136217356b6ccb558ad28f2afcdd288fae684",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Second Amendment referenced",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Protect our always under siege Second Amendment",
+        "rationale": "A named constitutional/right reference appears explicitly."
+      },
+      {
+        "message_id": "twitter_2061824703266951566",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "mainly comparative factual claims (deportations, debt)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Obama deported more illegal immigrants. Under Obama, our debt was lower.",
+        "rationale": "The post makes concrete comparative claims rather than hypothetical or conditional statements."
+      },
+      {
+        "message_id": "twitter_2061824703266951566",
+        "feature_name": "pragmatics_intent",
+        "feature_value": "rhetorical question/what-next implication",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "What's next?",
+        "rationale": "The final line is a direct rhetorical question indicating implied concern."
+      },
+      {
+        "message_id": "bluesky_4f5cc96ea861f987eb9c5b984682518c00ec7183015ea100d2bdb728881b9ee5",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "strong anti-gun-fetish/condemnation and repeated imperatives",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "So sick of the pathetic fantasy life of gun fetishists... Grow up. At last. Please.",
+        "rationale": "The speaker uses intense negative evaluation and multiple imperative/appeal lines."
+      },
+      {
+        "message_id": "bluesky_c7102c0a8ab2440340f6e55106a0d23e57beea9d2147d2af428aa8ea2b41c2d0",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "future electoral demand (must promise)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "2028 candidates must promise to expand the Court.",
+        "rationale": "The structure expresses a requirement for candidates in an upcoming election cycle."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_67cd6dc0e292f4ec281474f238b9ffe1bfe84d0514daa8513ac42813cef139e0",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "blames NRA/government via foreign/elite influence (Putin, Soros)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "then Putin got involved and they became radical fascists... George Soros got involved",
+        "rationale": "The post attributes political change to hidden powerful actors rather than plain policy causes."
+      },
+      {
+        "message_id": "bluesky_67cd6dc0e292f4ec281474f238b9ffe1bfe84d0514daa8513ac42813cef139e0",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "claims rights are being stripped and government killing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "over one constitutional right stripped away... how many people the government has killed.",
+        "rationale": "It portrays a targeted harm/violation of rights and victimization by authorities."
+      },
+      {
+        "message_id": "reddit_1tsydyo_op1pp9w",
+        "feature_name": "target_directionality",
+        "feature_value": "ingroup/outgroup framing: American Right vs Left (mirror swap)",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "American Right should stop wasting our time... mirror: American Left should stop wasting our time with the DEI thing.",
+        "rationale": "The comment directly targets an opposing political side as wasting time."
+      },
+      {
+        "message_id": "reddit_1u21326_oqtv345",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insulting labels incl. 'asshole' and extreme nazi accusation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Abusive narcissistic asshole, and probably an actual Nazi",
+        "rationale": "Contains strong derogatory/taboo terms and accusations."
+      },
+      {
+        "message_id": "twitter_2061476819757330924",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation + policy funding demand",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Pride month is disgusting. Planned Parenthood needs to be defunded.",
+        "rationale": "The post uses moral disgust language and calls for defunding as a policy action."
+      },
+      {
+        "message_id": "twitter_2061560226629714094",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "multiple emphatic all-caps claims",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "There is NO Global Climate Crisis... Fraud a SCAM from the start! AOC Arrogant Obtuse Corrupt!",
+        "rationale": "Key assertions are written in all caps and labeled as fraud/scam."
+      },
+      {
+        "message_id": "twitter_2061614035125325876",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "emoji panic header and multi-clause stats/economic claims",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "PANIC MODE... Canada is the only G7 country in recession, poverty reports are getting worse",
+        "rationale": "Uses emojis plus dramatic framing and dense negative-economy claims."
+      },
+      {
+        "message_id": "reddit_1keltha_mqjof04",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative directive to stop and remove leader",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Stop asking him questions and get him outta there already.",
+        "rationale": "Uses direct imperatives to urge immediate action against a political figure."
+      }
+    ]
+  }
+}

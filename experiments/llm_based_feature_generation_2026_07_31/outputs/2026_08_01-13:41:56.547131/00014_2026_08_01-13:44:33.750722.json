@@ -1,0 +1,180 @@
+{
+  "batch_id": 14,
+  "message_ids": [
+    "bluesky_46cf57cc346e2362b596957d5dc971241fabd6b35f388cd9be6e3127299acaea",
+    "bluesky_7d5b9ff56be8d479301c4cd558b8c0c0c7b6383ccc3eab0074289c6b9736e7b4",
+    "bluesky_b83182615a4fc5bb2a9ad02f60ae84b862fd97f25dd4e8e0e155cfa4d74a4577",
+    "reddit_1kfo0ut_mqu5lh5",
+    "reddit_1kr256c_mtbcu7k",
+    "reddit_1ks6iff_mtli554",
+    "reddit_1t3verj_ojyi2g3",
+    "reddit_1t8ui91_okxhx16",
+    "reddit_1tsr4st_ooxcgkd",
+    "reddit_1ttx203_op6erkx",
+    "reddit_1tvll8k_ophzc2o",
+    "twitter_2059253236326940829",
+    "twitter_2059570700814602666",
+    "twitter_2059705764898341254",
+    "twitter_2060020580078719483",
+    "twitter_2060922182662852931",
+    "twitter_2061307362992882027",
+    "twitter_2061754518128193786",
+    "twitter_2061798451466444940",
+    "twitter_2061824942480531620"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059570700814602666",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple periods and expository translation framing with strong rhetorical punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Translation: they're scared their steel and cement makers can't compete globally. This is protectionism dressed up as climate policy.",
+        "rationale": "The post uses emphatic multi-sentence punctuation to deliver a persuasive reframe."
+      },
+      {
+        "message_id": "twitter_2059570700814602666",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate_policy_carbon_tariffs",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "carbon tariffs waived for heavy industry",
+        "rationale": "The text centers on carbon tariffs and climate-related policy impacts."
+      },
+      {
+        "message_id": "bluesky_b83182615a4fc5bb2a9ad02f60ae84b862fd97f25dd4e8e0e155cfa4d74a4577",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Has emphasized uppercase word usage in the text",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "That is a disgrace.",
+        "rationale": "A clearly emphasized evaluative conclusion is used (highly emphatic despite limited caps)."
+      },
+      {
+        "message_id": "bluesky_b83182615a4fc5bb2a9ad02f60ae84b862fd97f25dd4e8e0e155cfa4d74a4577",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Uses a specific percentage claim as evidence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "only 56% of college educated people agree that climate change is anthropogenic",
+        "rationale": "The argument references a quantifiable statistic to support its claim."
+      },
+      {
+        "message_id": "twitter_2061824942480531620",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Refers to groups directly through policy-facing instruction",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Biological males do not belong in women's bathrooms or locker rooms.",
+        "rationale": "The statement is a direct declarative norm-setting sentence about who belongs where."
+      },
+      {
+        "message_id": "twitter_2061824942480531620",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Investigating Title IX violations / implies enforcement action",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "investigating reported Title IX violations",
+        "rationale": "It asserts a specific government action related to Title IX."
+      },
+      {
+        "message_id": "twitter_2059570700814602666",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original blames EU for protectionism; mirror redirects blame to US gutting carbon pricing for fossil fuel billionaires",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Six EU countries want carbon tariffs waived... This is protectionism... / The US keeps gutting carbon pricing to protect fossil fuel billionaires.",
+        "rationale": "The mirror re-targets responsibility from EU heavy industry to the US federal government and fossil fuel interests."
+      },
+      {
+        "message_id": "twitter_2060020580078719483",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct repetitive mobilization slogan",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "BUILD THE BORDER WALL\nBUILD THE BORDER WALL.",
+        "rationale": "The message uses a repetitive imperative slogan to urge action."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ks6iff_mtli554",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity as personal attack",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Donald Trump. Fuck this whiny orange bitch.",
+        "rationale": "The text contains strong sexual profanity targeting named public figures."
+      },
+      {
+        "message_id": "twitter_2059705764898341254",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Cajoling/imperative style with embedded quoted phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "THE AFFORDABILITY CRISIS IN THE UNITED STATES... and you will not have to \"GO AFTER\" anyone",
+        "rationale": "The post uses informal persuasive exhortation with quoted slang-like phrasing."
+      },
+      {
+        "message_id": "twitter_2059705764898341254",
+        "feature_name": "call_to_action",
+        "feature_value": "Urges a party to focus on issues and stop targeting others",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "FOCUS ON ISSUES THAT MATTER TO MOST AMERICANS...",
+        "rationale": "It issues a directive on what Democrats/Republicans should do next."
+      },
+      {
+        "message_id": "twitter_2061754518128193786",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Predatory/abusive narrative targeting an outgroup and describing victims",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "a Muslim migrant... gang-rape... indigenous girls or young women",
+        "rationale": "The post frames crimes as a repeated threat from a stigmatized group."
+      },
+      {
+        "message_id": "reddit_1kfo0ut_mqu5lh5",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Insult uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "He's just a fucking moron",
+        "rationale": "The language uses taboo profanity to attack an individual/group."
+      },
+      {
+        "message_id": "reddit_1tvll8k_ophzc2o",
+        "feature_name": "dehumanizing_or_extreme_insulting_language",
+        "feature_value": "Body/filth metaphors portraying a politician as rot/filth",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "Trump is the shit stain upon the underside of U.S. politics",
+        "rationale": "It uses harsh demeaning metaphors rather than neutral criticism."
+      },
+      {
+        "message_id": "twitter_2061798451466444940",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Apocalyptic threat framing for a city if voters don't remove a candidate",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Voters must fire Karen Bass. If not, Los Angeles will rapidly decline into a third-world crime-infested sewer.",
+        "rationale": "The conditional warns of catastrophic decline, intensifying urgency and anger."
+      },
+      {
+        "message_id": "twitter_2060922182662852931",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original framed as stopping gun violence; mirror reframes as protecting Second Amendment rights",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "stop gun violence... / protect our Second Amendment rights.",
+        "rationale": "The mirror changes the policy moral direction from reducing harm to defending gun rights."
+      }
+    ]
+  }
+}

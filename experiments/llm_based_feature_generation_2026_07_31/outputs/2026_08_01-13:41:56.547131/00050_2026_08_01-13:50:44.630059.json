@@ -1,0 +1,180 @@
+{
+  "batch_id": 50,
+  "message_ids": [
+    "bluesky_49930e6db72d9b449068dec09e3e2a0a6332c3725c79c670b3d6ee7bd72a8e5c",
+    "bluesky_6261391a38bc0e17c9341cdb6b34e26937da5e7ef2f6bd9cbd202db1032a69bd",
+    "bluesky_6bf07634aca2e67652958b2e9f55c5a9dd5aa1c96d197196cbb3d1182b9e53b9",
+    "bluesky_76f7cce4f61e19104ca66b2f10e26f4f1c02bac20fdd9359abc8b5e51f5b756c",
+    "bluesky_e840b8d8284e554fd01caeda6679240bac956a1fccc6eab9cceb5561ee9e17b0",
+    "bluesky_ec13ad9ea1c2ffb77b4d288db8d42d1c87eb6fcd7a02900ce0fdd6bf3df6a68c",
+    "reddit_1kgcayc_mqyakjb",
+    "reddit_1klw27m_ms5h6km",
+    "reddit_1ko5jgm_mso2gje",
+    "reddit_1kub81u_mu95qkv",
+    "reddit_1lc6l57_my0bwfh",
+    "reddit_1lcws41_my4gi3t",
+    "reddit_1liq07j_mze55tk",
+    "reddit_1t7d5jc_okvd13f",
+    "reddit_1tbymrb_olo64ln",
+    "reddit_1trdy16_oornuh3",
+    "reddit_1tuwb8f_opf408q",
+    "reddit_1tzjirf_oqgmcra",
+    "twitter_2061437787492983123",
+    "twitter_2061828320023695631"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_6bf07634aca2e67652958b2e9f55c5a9dd5aa1c96d197196cbb3d1182b9e53b9",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "All cabinet members and people that require background checks and special access should have to take hair follicle tests initially, and then random piss tests.",
+        "rationale": "The post contains multiple long sentences with several clauses and additional characterization."
+      },
+      {
+        "message_id": "bluesky_6bf07634aca2e67652958b2e9f55c5a9dd5aa1c96d197196cbb3d1182b9e53b9",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "DISA is a racket PoS company.",
+        "rationale": "Contains the abbreviation 'PoS' as a derogatory term."
+      },
+      {
+        "message_id": "bluesky_76f7cce4f61e19104ca66b2f10e26f4f1c02bac20fdd9359abc8b5e51f5b756c",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun control and school security",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "gun control",
+        "rationale": "The text centers on gun control and calls for armed protection in schools."
+      },
+      {
+        "message_id": "bluesky_76f7cce4f61e19104ca66b2f10e26f4f1c02bac20fdd9359abc8b5e51f5b756c",
+        "feature_name": "call_to_action",
+        "feature_value": "advocates a policy action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "we will need to press for bulletproof ballrooms in schools",
+        "rationale": "Uses directive phrasing 'press for' proposing an intervention."
+      },
+      {
+        "message_id": "reddit_1trdy16_oornuh3",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Most cops are not protecting a legit bad cop.",
+        "rationale": "The feature is not present and cannot be inferred from the text; excluded."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_okvd13f",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "normative argument about charity effectiveness",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "voluntary which is the key distinction.",
+        "rationale": "Frames a reasoning point distinguishing voluntary aid as insufficient/contrasting systems."
+      },
+      {
+        "message_id": "bluesky_ec13ad9ea1c2ffb77b4d288db8d42d1c87eb6fcd7a02900ce0fdd6bf3df6a68c",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "embedded quoted speech with attribution",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"I just don\u0019t know what to say...\" Shreveport Police Chief Wayne Smith said.",
+        "rationale": "Contains direct quotes followed by 'said' attribution."
+      },
+      {
+        "message_id": "bluesky_49930e6db72d9b449068dec09e3e2a0a6332c3725c79c670b3d6ee7bd72a8e5c",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "multi-line election-night updates",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Every seat in every race mattered\nA very good night for Democrats\nPA voters retain 3 state Supreme Court justices",
+        "rationale": "Uses stacked lines enumerating outcomes and thanking voters."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_e840b8d8284e554fd01caeda6679240bac956a1fccc6eab9cceb5561ee9e17b0",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "claims institutional targeting/exposure framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "weaponized DOJ targeting political opponents",
+        "rationale": "Asserts a coordinated/weaponized government agency role in political persecution."
+      },
+      {
+        "message_id": "bluesky_e840b8d8284e554fd01caeda6679240bac956a1fccc6eab9cceb5561ee9e17b0",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation/insults",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Cowards.",
+        "rationale": "Uses a purely evaluative insult to judge actors."
+      },
+      {
+        "message_id": "reddit_1liq07j_mze55tk",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "generalizing insults and partisan labeling",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "America is quite dumb and naive",
+        "rationale": "Employs informal, derogatory phrasing rather than neutral description."
+      },
+      {
+        "message_id": "reddit_1kgcayc_mqyakjb",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck off.",
+        "rationale": "Contains a direct profanity-based dismissal."
+      },
+      {
+        "message_id": "reddit_1tzjirf_oqgmcra",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "argument based on claims about legal status",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "none of them have been found liable in multi billion dollar defamation or fraud lawsuits.",
+        "rationale": "Uses legal-liability assertions as justification."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olo64ln",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "partisan in-group vs out-group",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "MAGA will never be as strong as 2025...",
+        "rationale": "Opposes MAGA/GOP framing against another ideological camp and predicts their decline."
+      },
+      {
+        "message_id": "reddit_1kub81u_mu95qkv",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "imperative instructions framed as 'For fuck's sake, just say'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "For fuck's sake, just say, \"Trump is profiting off the presidency\"",
+        "rationale": "Uses imperative directive to specify an explicit statement."
+      },
+      {
+        "message_id": "reddit_1ko5jgm_mso2gje",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexually explicit insult used generically",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "These republican people are fucking evil.",
+        "rationale": "Contains strong vulgar intensifier 'fucking' with blanket condemnation."
+      }
+    ]
+  }
+}

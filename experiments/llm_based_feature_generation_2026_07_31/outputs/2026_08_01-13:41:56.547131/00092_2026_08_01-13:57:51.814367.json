@@ -1,0 +1,180 @@
+{
+  "batch_id": 92,
+  "message_ids": [
+    "bluesky_32bd5a9ef53393361f8a2a434d29c69cdf846482b3ff6bdfbdcb2d84cceb8efe",
+    "bluesky_4b1f8a3140d47e330e011925b7dde7470f044af2e6cfa8c11ec77848fefe20e2",
+    "bluesky_95d24c33f715b3a9c910bf5a5e91aff03484f4439d4ea2e3a3cd2c7e68bdd9b3",
+    "bluesky_97ed59302b452dd7db3dd46c4140fb1b286231d254e6e33dab5987f161feea22",
+    "reddit_1kdjdbr_mqbg7ah",
+    "reddit_1kg0w37_mqwf8av",
+    "reddit_1kl4k5p_ms4g6cx",
+    "reddit_1l4bw8p_mw7qjk6",
+    "reddit_1l6eybs_mx533ze",
+    "reddit_1lenxv4_myhwg1c",
+    "reddit_1tt1r86_oozojbm",
+    "reddit_1tt8k9j_op0vg9c",
+    "reddit_1tvyk2a_opqcqvn",
+    "reddit_1tw81gp_opmkf0q",
+    "reddit_1tzwh8s_oqg1v8g",
+    "twitter_2060360354623115556",
+    "twitter_2060805287859068951",
+    "twitter_2060820195287941303",
+    "twitter_2061466289613541635",
+    "twitter_2061546054416576910"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060805287859068951",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political figure/org mentions",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@UN @amyklobuchar @AOC @BernieSanders",
+        "rationale": "Multiple @mentions of organizations and prominent politicians appear in a single post."
+      },
+      {
+        "message_id": "twitter_2060805287859068951",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration/citizenship",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Immigration reform should be a path to USA Citizenship",
+        "rationale": "The text explicitly argues about immigration reform and obtaining citizenship."
+      },
+      {
+        "message_id": "reddit_1kl4k5p_ms4g6cx",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Direct profanity/sexual slang",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "cover the fuck up! ... cooming",
+        "rationale": "Uses profanity and explicit sexual slang in the argument."
+      },
+      {
+        "message_id": "reddit_1kl4k5p_ms4g6cx",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insulting/derogatory characterization of opponent",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "you're just interested in cooming. Very feminist.",
+        "rationale": "The speaker discredits a viewpoint by attributing it to sexual motives and dismisses it."
+      },
+      {
+        "message_id": "reddit_1l4bw8p_mw7qjk6",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Derisive clowning description of politician",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "they still couldn\u2019t see he\u2019s a clown.",
+        "rationale": "Uses sustained mockery to express contempt for the political figure."
+      },
+      {
+        "message_id": "bluesky_32bd5a9ef53393361f8a2a434d29c69cdf846482b3ff6bdfbdcb2d84cceb8efe",
+        "feature_name": "topic_subject_salience_reproductive_health_culture_war",
+        "feature_value": "Reproductive health vs. life values with endorsements and hashtags",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "Planned Parenthood ... #a2council ... Sexual & Reproductive Health Champion",
+        "rationale": "The post frames a values/identity debate around reproductive health and cites a specific council endorsement/hashtag."
+      },
+      {
+        "message_id": "twitter_2060360354623115556",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Gendered moral/legitimacy claim about who should legislate",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "This is why men shouldn't be legislating women's reproductive health.",
+        "rationale": "Makes a prescriptive normative statement about political authority and legislation."
+      },
+      {
+        "message_id": "reddit_1tt1r86_oozojbm",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Metaphor labels a political bloc as a disease/disorder",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "A friend of mine describes MAGA as a sickness.",
+        "rationale": "Assigns a dehumanizing/medicalized label to a partisan group."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kg0w37_mqwf8av",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Quotation-based taunt with slur-like framing and informal stance",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "stupid libs... fuck them anyways I love when these people are mad",
+        "rationale": "Contains slang/insulting rhetoric and profane dismissal presented in a quoted style."
+      },
+      {
+        "message_id": "bluesky_95d24c33f715b3a9c910bf5a5e91aff03484f4439d4ea2e3a3cd2c7e68bdd9b3",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "All-caps emphasis and multiple intensifiers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "SHOULD have been enough... NO MORALS, NO VALUES",
+        "rationale": "Uses strong capitalization and dense emphatic language typical of inflammatory rhetoric."
+      },
+      {
+        "message_id": "bluesky_95d24c33f715b3a9c910bf5a5e91aff03484f4439d4ea2e3a3cd2c7e68bdd9b3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual atrocity reference",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Baby raping SHOULD have been enough",
+        "rationale": "Mentions a sexual-violence act as justification for political condemnation."
+      },
+      {
+        "message_id": "reddit_1lenxv4_myhwg1c",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Degrading insult toward outgroup plus exaggerated scenario",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "douchebag ... poorly trained racist, violent moron... and you have ICE.",
+        "rationale": "Uses mockery and demeaning labels to discredit a political/governance actor."
+      },
+      {
+        "message_id": "bluesky_4b1f8a3140d47e330e011925b7dde7470f044af2e6cfa8c11ec77848fefe20e2",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Death of a security guard framed as victimization tied to hatred",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "security guard killed protecting children... WOULD be alive if it weren\u2019t for the hatred against Muslims",
+        "rationale": "Attributes a death to persecution/hatred and frames the person as a victim."
+      },
+      {
+        "message_id": "twitter_2061546054416576910",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Accountability call for law/police and deportation framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "need to be held accountable",
+        "rationale": "Directly calls for a punitive/accountability action."
+      },
+      {
+        "message_id": "twitter_2060820195287941303",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Uses explicit slogan with emphatic exclamation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "I believe in fucking and the second amendment!",
+        "rationale": "Strong direct exhortation/slogan style with taboo language."
+      },
+      {
+        "message_id": "reddit_1tt8k9j_op0vg9c",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims actions are an intentional evasive strategy ('easy answer' to avoid fixing systemic issues)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Immigration is the easy answer where they don't actually have fix any of the systemic issues",
+        "rationale": "Suggests deliberate avoidance of underlying problems rather than addressing them directly."
+      }
+    ]
+  }
+}

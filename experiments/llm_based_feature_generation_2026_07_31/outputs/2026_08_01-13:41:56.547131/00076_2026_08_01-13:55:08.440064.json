@@ -1,0 +1,180 @@
+{
+  "batch_id": 76,
+  "message_ids": [
+    "bluesky_15bf2c588f7a335f6dd65b3dc994c4d261c591fed93b626a5922a5dfe438358c",
+    "bluesky_3816d8a4b44dc43c8083dd7d003b90e88e96ccf7a9beb7594cae9fca4b3277a8",
+    "bluesky_559c3a97c48b01810bd1dce4e3e1d411fd27e33c4928668aa70d1f4229e521f1",
+    "bluesky_b8d4af9cc43a8dd5aedc92a79a8ea46b6e5713c10ec938b8bd130e57f4b2cdaa",
+    "reddit_1kf99b1_mqpqeu7",
+    "reddit_1kmmv93_msbgczk",
+    "reddit_1kw9xt4_mugcgkh",
+    "reddit_1tb5vg7_olf8pnx",
+    "reddit_1ti5cqx_omszsu8",
+    "reddit_1tswg2c_ooy5rzu",
+    "reddit_1tv1z4j_opfcmo9",
+    "reddit_1tvyk2a_opq1rk6",
+    "reddit_1txi7g6_opwoj7r",
+    "reddit_1txsumx_opzmgf7",
+    "reddit_1tztcf9_oqfcr5t",
+    "twitter_2061113457739522118",
+    "twitter_2061478691956224443",
+    "twitter_2061775665439887400",
+    "twitter_2061801087896887380",
+    "twitter_2061821689126658378"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1txi7g6_opwoj7r",
+        "feature_name": "mirror_shift_subsidy_directionality",
+        "feature_value": "Original contrasts taxpayer subsidies to business vs direct taxpayer support; mirror retargets as helping working people while funneling to bureaucrats/cronies.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Support taxpayer subsidies to business, but don't support taxpayers directly\" / \"Scream about helping working people, but funnel everything straight to government bureaucrats and cronies\"",
+        "rationale": "The mirror re-frames the same policy stance into a different target and blame target (bureaucrats/cronies)."
+      },
+      {
+        "message_id": "twitter_2061801087896887380",
+        "feature_name": "myth_fact_contrast_framing",
+        "feature_value": "Explicit \"Myth\" vs \"Fact\" structure with prescriptive takeaway.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Myth: Planting trees will fix climate change.\" \"Fact: Only reducing overconsumption will.\"",
+        "rationale": "The post uses a direct myth/fact contrast plus a subsequent action suggestion."
+      },
+      {
+        "message_id": "twitter_2061801087896887380",
+        "feature_name": "climate_change_overconsumption_policy_domain",
+        "feature_value": "Climate change / overconsumption framing with proposed behavioral change.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"fix climate change\" \"Only reducing overconsumption\"",
+        "rationale": "The main subject is climate change and its purported cause (overconsumption)."
+      },
+      {
+        "message_id": "reddit_1tswg2c_ooy5rzu",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses dismissive labeling (\"clown\", \"joke\") and disparaging comparisons.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Pence is a clown\" / \"Biden is a joke\"",
+        "rationale": "The communicative intent is to belittle the politician rather than argue neutrally."
+      },
+      {
+        "message_id": "reddit_1kw9xt4_mugcgkh",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity and insults.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking money\" \"greedy, villainous fucks\"",
+        "rationale": "The post contains multiple explicit taboo/profane terms."
+      },
+      {
+        "message_id": "reddit_1tztcf9_oqfcr5t",
+        "feature_name": "us_vs_them_insulting_group_labels",
+        "feature_value": "In-group/out-group split with derogatory labels for supporters.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"maga nuts\" \"woke radicals\"",
+        "rationale": "The text labels opposing group members as stupid/insufferable rather than addressing policies."
+      },
+      {
+        "message_id": "bluesky_559c3a97c48b01810bd1dce4e3e1d411fd27e33c4928668aa70d1f4229e521f1",
+        "feature_name": "second_amendment_border_military_veterans_policy_domain",
+        "feature_value": "Border security, migrant crime, military/veterans, and Second Amendment protection in one slogan.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Keep our Border SECURE\" \"Stop Migrant Crime\" \"Strengthen our Military/Veterans\" \"Protect our ... Second Amendment\"",
+        "rationale": "Multiple named policy domains and national-security themes are explicitly listed."
+      },
+      {
+        "message_id": "bluesky_b8d4af9cc43a8dd5aedc92a79a8ea46b6e5713c10ec938b8bd130e57f4b2cdaa",
+        "feature_name": "conditional_politicians_forced_by_advisory",
+        "feature_value": "Prescription that politicians should be forced to make climate claims public; referendum proposal.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Politicians should be forced\" \"make referendums\" \"amend constitutions\"",
+        "rationale": "The post prescribes political action (forcing disclosure and constitutional referendums)."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061478691956224443",
+        "feature_name": "second_amendment_rights_frame",
+        "feature_value": "Defends self-defense and Second Amendment against gun control claims.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"deserves the right to defend themselves\" \"Second Amendment freedoms\"",
+        "rationale": "The mirror re-targets the safety message into an explicit Second Amendment freedoms framing."
+      },
+      {
+        "message_id": "reddit_1kmmv93_msbgczk",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses repeated explicit profanity and insults.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck trump\" \"fuck fascism\"",
+        "rationale": "The post contains strong profanity and factional insults."
+      },
+      {
+        "message_id": "reddit_1kmmv93_msbgczk",
+        "feature_name": "conspiratorial_framing_political_ingroup_outgroup",
+        "feature_value": "Claims a hidden narrative agenda and depicts media figures as blindly following it.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"keep planting the narrative\" \"faux news\" \"brain dead\"",
+        "rationale": "Language implies manipulation/propaganda rather than a straightforward disagreement."
+      },
+      {
+        "message_id": "reddit_1tb5vg7_olf8pnx",
+        "feature_name": "us_vs_them_persecution_or_moral_judgment",
+        "feature_value": "Asserts compassion is limited to ideology-followers; mirror broadens to out-group exclusion.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"only have compassion for people who walk in lockstep\" / \"everyone else can go to hell\"",
+        "rationale": "The statement makes a broad moral claim about selective compassion, escalating to dehumanizing exclusion."
+      },
+      {
+        "message_id": "reddit_1tv1z4j_opfcmo9",
+        "feature_name": "emphatic_outcome_repeat_twice",
+        "feature_value": "Emphasizes repeated loss and outcome using italics and repetition.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Imagine losing ... twice\" \"He *WON*. Again.\" \"She *LOST*. Again.\"",
+        "rationale": "There is a structured rhetorical comparison with repeated, emphatic outcome statements."
+      },
+      {
+        "message_id": "reddit_1kf99b1_mqpqeu7",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses profanity tied to policy blame.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"what the fuck does that matter?\"",
+        "rationale": "The post includes an explicit profanity interjection."
+      },
+      {
+        "message_id": "twitter_2061775665439887400",
+        "feature_name": "economic_taxation_pension_benefits_framing",
+        "feature_value": "Argues about taxing wealthy vs benefits/bankruptcy burden; fiscal responsibility theme.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"taxes\" \"pension\" \"inflationary linked\" / \"freeloaders\" \"benefits\" \"bankrupting the hardworking taxpayer\"",
+        "rationale": "It centers economic burden and fiscal prescriptive framing (taxation vs welfare)."
+      },
+      {
+        "message_id": "reddit_1tvyk2a_opq1rk6",
+        "feature_name": "sexual_preference_child_reframing",
+        "feature_value": "Claims content is pushed on children and questions discussing kids' sexual preferences; mirror shifts to religious/political ideology.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"pushed on small children\u2019s tv shows\" \"lgbt pride books\" / \"far-right Christian nationalism books\"",
+        "rationale": "The post\u2019s subject is targeted child-oriented media and the contested identity content category (sexuality vs religion in the mirror)."
+      }
+    ]
+  }
+}

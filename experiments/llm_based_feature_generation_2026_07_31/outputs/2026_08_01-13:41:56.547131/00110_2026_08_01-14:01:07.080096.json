@@ -1,0 +1,180 @@
+{
+  "batch_id": 110,
+  "message_ids": [
+    "bluesky_3840c97b02678c2ca68bdfc9f791a6050ad718303a55bbd3db30de66f8e3b243",
+    "bluesky_3a065195e7cbead358ebb7b62833d9f21cc331d34f110abd52110a037d39805a",
+    "bluesky_540f5da7330cf26f0244585938bb9a54058c60df40df6e2a5e2c451728476bd7",
+    "bluesky_b66bf8c886f34176c55a1cdae12456a1c6c9d8a9cc385041967a6b61ce46d04e",
+    "bluesky_b6aa63e4e8f0965a45fa88966c29e62cfedff66da7c299373d25eb7fac2c1e8c",
+    "bluesky_bfc06c8cb03b8092f0e892553b9ea5f3415a7d062fea3d9ba1bd60ac76e8b5f1",
+    "reddit_1kigsq6_mri9gdh",
+    "reddit_1l331fv_mw0t68s",
+    "reddit_1l5vi3g_mwmc7fm",
+    "reddit_1lh7g4h_mz44qni",
+    "reddit_1t4fs97_ok3e83v",
+    "reddit_1tklc7j_onbcbkp",
+    "reddit_1tobgfe_oo01ggd",
+    "reddit_1tt6o9m_op0ildf",
+    "reddit_1ttui2j_op5mbg3",
+    "reddit_1tu7mub_opaex54",
+    "reddit_1u21326_oqttlws",
+    "twitter_2060236429007958046",
+    "twitter_2061543962910089583",
+    "twitter_2061625159329706293"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_b6aa63e4e8f0965a45fa88966c29e62cfedff66da7c299373d25eb7fac2c1e8c",
+        "feature_name": "gun_law_second_amendment_framing",
+        "feature_value": "Advocates stricter gun laws / Second Amendment protections",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "fighting for stricter gun laws",
+        "rationale": "The post explicitly centers gun policy and Second Amendment alignment."
+      },
+      {
+        "message_id": "twitter_2061625159329706293",
+        "feature_name": "high_punctuation_intensity_exclamations_caps",
+        "feature_value": "Heavy urgency/invective via breaking/urgent/ALL CAPS",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "breaking news, urgent now",
+        "rationale": "The text uses urgent framing and exclamatory, headline-like language."
+      },
+      {
+        "message_id": "twitter_2061625159329706293",
+        "feature_name": "call_to_action_enumerated_advocacy",
+        "feature_value": "Multiple imperative requests in one breath",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "save our education, action now! save our healthcare ... voting right act - healthcare act, other etc.",
+        "rationale": "It strings together repeated imperatives and policy appeals."
+      },
+      {
+        "message_id": "bluesky_540f5da7330cf26f0244585938bb9a54058c60df40df6e2a5e2c451728476bd7",
+        "feature_name": "universal_healthcare_education_voting_rights_gun_safety",
+        "feature_value": "Supports universal healthcare plus education/training and voting rights and gun safety",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Universal healthcare please! Free higher Education and Technical Training, Voting Rights and Gun Safety laws too!",
+        "rationale": "The post enumerates several distinct policy domains."
+      },
+      {
+        "message_id": "bluesky_bfc06c8cb03b8092f0e892553b9ea5f3415a7d062fea3d9ba1bd60ac76e8b5f1",
+        "feature_name": "political_delegitimization_looting_rig_election_warmongering",
+        "feature_value": "Accusations: rig elections, gut climate policy, run up war tabs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They rig elections, gut climate policy, run up war tabs",
+        "rationale": "The text makes direct negative claims about political actors' wrongdoing."
+      },
+      {
+        "message_id": "bluesky_bfc06c8cb03b8092f0e892553b9ea5f3415a7d062fea3d9ba1bd60ac76e8b5f1",
+        "feature_name": "economic_cost_future_debt_framing",
+        "feature_value": "Hand Gen Z the bill / mortgaging the future",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "hand Gen Z the bill",
+        "rationale": "It portrays policy harm as an economic burden on the young."
+      },
+      {
+        "message_id": "reddit_1tu7mub_opaex54",
+        "feature_name": "loyalty_over_constitution_process_statement",
+        "feature_value": "Claims actors loyal to Trump/constitution choice contrast",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "But they won\u2019t bc they\u2019re still more loyal to Trump than the constitution.",
+        "rationale": "It uses a justification/argument structure explaining refusal via loyalty comparison."
+      },
+      {
+        "message_id": "bluesky_3a065195e7cbead358ebb7b62833d9f21cc331d34f110abd52110a037d39805a",
+        "feature_name": "victimhood_or_persecution_fear_swap_role_future_risk",
+        "feature_value": "Warns of future risk if GOP/Evangelicals not broken",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "soon you will risk your life just saying that the Earth is round.",
+        "rationale": "The language expresses feared persecution and endangerment."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lh7g4h_mz44qni",
+        "feature_name": "profanity_or_taboo_language_sexual_insults",
+        "feature_value": "Sexualized vulgar insult toward media",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump's cock so far down their throats, their assholes are turning orange.",
+        "rationale": "Uses explicit sexual terms and crude insults."
+      },
+      {
+        "message_id": "reddit_1u21326_oqttlws",
+        "feature_name": "profanity_or_taboo_language_fucking_hilarious",
+        "feature_value": "Crude profanity + dismissive claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "it's fucking hilarious",
+        "rationale": "Contains strong profanity as an intensifier."
+      },
+      {
+        "message_id": "reddit_1tt6o9m_op0ildf",
+        "feature_name": "calls_for_imprisonment",
+        "feature_value": "Advocates prison for targeted person",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Actually, he belongs in prison.",
+        "rationale": "Directly proposes punitive legal action toward a person."
+      },
+      {
+        "message_id": "reddit_1ttui2j_op5mbg3",
+        "feature_name": "condescending_insult_targeted_presenter",
+        "feature_value": "Calls target an idiot and uses sexualized coercion metaphor",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "the best this idiot can hope for ... bent over the barrel like a fucking chump.",
+        "rationale": "Uses dehumanizing insult and graphic metaphor to demean a political actor."
+      },
+      {
+        "message_id": "reddit_1kigsq6_mri9gdh",
+        "feature_name": "profanity_or_taboo_language_fck_fck",
+        "feature_value": "Swearing directed at cops/activists",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "And fck these local cops too.",
+        "rationale": "Contains explicit profanity in imperative form."
+      },
+      {
+        "message_id": "reddit_1l331fv_mw0t68s",
+        "feature_name": "all_caps_markers_and_dehumanizing_language",
+        "feature_value": "Insults political figure as a puppet/master-plan agent",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump is just the useful idiot autopenning Wish Goebbels' master hate plan",
+        "rationale": "Depicts the target as an idiot automaton executing hate propaganda."
+      },
+      {
+        "message_id": "reddit_1tklc7j_onbcbkp",
+        "feature_name": "name_calling_long_list_of_epithets",
+        "feature_value": "Large enumeration of labels and historical figures",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "dictator, communist, Marxist, class war instigator, Kenyan Islamist, foreigner ... Stalin, Hitler?",
+        "rationale": "Provides an extended list of extreme accusations/nicknames."
+      },
+      {
+        "message_id": "twitter_2061543962910089583",
+        "feature_name": "violent_crime_victimization_and_sanctuary_cities_policy_conflict",
+        "feature_value": "Mentions murder/rape fears tied to sanctuary cities and 'take back'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "people ... who want o murder and rape you ... take back the sanctuary cities",
+        "rationale": "Frames opponents as violent threats and calls for policy control over sanctuary cities."
+      }
+    ]
+  }
+}

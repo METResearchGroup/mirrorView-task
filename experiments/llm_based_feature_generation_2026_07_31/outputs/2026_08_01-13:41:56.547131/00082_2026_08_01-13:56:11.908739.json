@@ -1,0 +1,180 @@
+{
+  "batch_id": 82,
+  "message_ids": [
+    "bluesky_1dde3faa493355194b37776eafb4389afbae05699fde64e382bd49b99747da1d",
+    "bluesky_b9192bfd3b29a783bcede0f1952d0c096310369a5b581b04c8ad8d638c8ba281",
+    "bluesky_e02dd5c27bf0be172d0bd0ab28d4c945c8081d7786afb3b981d482f392a51f2c",
+    "bluesky_f0b16a38b352e6f1ffa704f0482d4546acd40385f57c78876e7ccd169d8a4570",
+    "reddit_1kpxd21_mt2b10m",
+    "reddit_1lhl7ax_mz5kpu7",
+    "reddit_1ll1dyl_n00mlu2",
+    "reddit_1lojll9_n0nydr8",
+    "reddit_1rxhuk9_ob8bvnj",
+    "reddit_1tadlic_ol94tv7",
+    "reddit_1tfsdpo_omciyvs",
+    "reddit_1tsefdg_oouk61z",
+    "reddit_1tvll8k_ophnthh",
+    "reddit_1tvll8k_opii54u",
+    "twitter_2061334155334451432",
+    "twitter_2061562237613953238",
+    "twitter_2061601576985510174",
+    "twitter_2061659125520712067",
+    "twitter_2061726334863216978",
+    "twitter_2061779962810483200"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061334155334451432",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (explicit org + country count)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"ANSA\" ... \"eight African countries\"",
+        "rationale": "The post names a specific organization and references multiple countries, indicating notable proper-noun density."
+      },
+      {
+        "message_id": "twitter_2061334155334451432",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Rights-framed moral language (not privilege but right)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"not a privilege but a right\"",
+        "rationale": "Uses normative framing to characterize sexual/reproductive health as a moral/legal right."
+      },
+      {
+        "message_id": "bluesky_e02dd5c27bf0be172d0bd0ab28d4c945c8081d7786afb3b981d482f392a51f2c",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Multiple 'What about...' questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"What about when kids travel...\" \"What about the victims of Kyle Rittenhouse?\"",
+        "rationale": "Series of rhetorical questions with a repeated interrogative opener."
+      },
+      {
+        "message_id": "bluesky_e02dd5c27bf0be172d0bd0ab28d4c945c8081d7786afb3b981d482f392a51f2c",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Victims named; violence/incitement described",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"What about the victims of Kyle Rittenhouse?\"",
+        "rationale": "Centers victims of politically salient violence as the moral focus of the argument."
+      },
+      {
+        "message_id": "reddit_1tfsdpo_omciyvs",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Attributed quote with reporter cue",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Boebert said\"",
+        "rationale": "Contains a direct quoted statement with an attribution verb indicating embedded quoting."
+      },
+      {
+        "message_id": "bluesky_f0b16a38b352e6f1ffa704f0482d4546acd40385f57c78876e7ccd169d8a4570",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "None in text; but strong evaluative insults/deranged language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"deranged rants\" \"far-right hack\"",
+        "rationale": "Uses strong taboo-adjacent social-judgment terms (deranged) and pejoratives targeting a person/role."
+      },
+      {
+        "message_id": "reddit_1tvll8k_opii54u",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual profanity in outburst",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": ">\"... how the fuck is this NEWS...\"",
+        "rationale": "Contains explicit profanity ('fuck') used for emphasis in a personal reaction."
+      },
+      {
+        "message_id": "twitter_2061726334863216978",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Immigration/detention + border policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"children detained by ICE\"",
+        "rationale": "Directly references ICE detention and children at the border, placing it in immigration enforcement policy."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lojll9_n0nydr8",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct address to 'elmo' and punchline insult",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"to elmo, \\\"Hey dipshit...\\\"\"",
+        "rationale": "Uses direct address ('to elmo') plus a quoted 'Hey' insult."
+      },
+      {
+        "message_id": "reddit_1ll1dyl_n00mlu2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Strong profanity ('fucking')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I fucking hate my fascist country.\"",
+        "rationale": "Contains explicit profanity used to intensify an evaluative statement."
+      },
+      {
+        "message_id": "twitter_2061779962810483200",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Targeted partisan label 'MAGA' vs 'woke lib'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Just another MAGAt...\" \"Just another woke lib...\"",
+        "rationale": "Uses outgroup labels to contrast motives between political sides."
+      },
+      {
+        "message_id": "twitter_2061562237613953238",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Abortion rights/opposition",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"oppose abortion\"",
+        "rationale": "Explicitly frames the post around opposition/support of abortion."
+      },
+      {
+        "message_id": "reddit_1tvll8k_ophnthh",
+        "feature_name": "paraphrase_or_projection_claim",
+        "feature_value": "Claims accusation is confession/projection",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"Every single GOP accusation is actually a confession.\"",
+        "rationale": "Uses a sweeping semantic claim about the nature of political accusations (confession/projection) rather than a specific fact."
+      },
+      {
+        "message_id": "reddit_1lhl7ax_mz5kpu7",
+        "feature_name": "call_to_action",
+        "feature_value": "Advocates extreme violence ('should nuke')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Chana should nuke trump and all Republicans.\"",
+        "rationale": "Expresses a direct violent directive against named targets."
+      },
+      {
+        "message_id": "bluesky_1dde3faa493355194b37776eafb4389afbae05699fde64e382bd49b99747da1d",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Budget/amount calculations framed as evidence-seeking challenge",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"see if combined it's at all close\" \"the Paris agreement was $0\"",
+        "rationale": "Presents quantitative budget comparisons and a numeric claim as part of an argument."
+      },
+      {
+        "message_id": "reddit_1tsefdg_oouk61z",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "Binary partisan threat language (left vs right monsters)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The left are freaking monsters\" / \"The right are absolute monsters\"",
+        "rationale": "Uses strongly negative, directionally partisan labels to cast an ideological side as dangerous."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 38,
+  "message_ids": [
+    "bluesky_325cf265341892c14ca24769d1559a520f11292cee351713f29434d99003be85",
+    "bluesky_67bf62e507cbe02378f133d36d64a6e8dd0f9f54f5d2212fbb2c27621f6c8ef7",
+    "bluesky_7aa6e8bb5a14fbd35bf89f38a2f13f84095fa1c8df8c817ed41df6d7ade88e7d",
+    "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3d20d51707695c230d1a25e3f8fcb",
+    "bluesky_f62db247573fc7f42bf775880ba1e8e1aa384adf0a0992584ff7ab926d96efb8",
+    "reddit_1kgy2af_mr2x6x7",
+    "reddit_1knx7j9_mslzwad",
+    "reddit_1kpwu8r_mt36qxh",
+    "reddit_1kt8kyk_mtsnl5i",
+    "reddit_1l5icdu_mwizdiw",
+    "reddit_1la5fmz_mxit2c1",
+    "reddit_1tle2vc_onfh5nc",
+    "reddit_1tvsdbe_opjzmjf",
+    "reddit_1tygt1d_oq8v69t",
+    "reddit_1tyqb64_oq7t5em",
+    "reddit_1u16h1f_oqp42t4",
+    "twitter_2059792063470923899",
+    "twitter_2061557742591226239",
+    "twitter_2061766188795904498",
+    "twitter_2061823735917916434"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_f62db247573fc7f42bf775880ba1e8e1aa384adf0a0992584ff7ab926d96efb8",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "medium",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Thinking a lot about our planet\u000060s challenges lately.",
+        "rationale": "The post contains several sentences and fits a medium-length text band."
+      },
+      {
+        "message_id": "bluesky_f62db247573fc7f42bf775880ba1e8e1aa384adf0a0992584ff7ab926d96efb8",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "our planet\u000060s challenges lately",
+        "rationale": "No specific person/place/organization names are mentioned."
+      },
+      {
+        "message_id": "reddit_1u16h1f_oqp42t4",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "high (fuck/shit)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Holy shit. Stop with this... bull shit.",
+        "rationale": "The text uses strong profanity to express contempt."
+      },
+      {
+        "message_id": "reddit_1tyqb64_oq7t5em",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "blames voters as enabling violence/attack",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Democrats let these Republican leopards eat our faces",
+        "rationale": "Uses an animal metaphor to suggest an unexpected-but-predetermined threat by the other side."
+      },
+      {
+        "message_id": "bluesky_67bf62e507cbe02378f133d36d64a6e8dd0f9f54f5d2212fbb2c27621f6c8ef7",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "elections/ideology contest over patriotism & Constitution interpretation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "MAGA & company has tried to make \u000060patriotism\u000060 their thing",
+        "rationale": "Centers on ideological appropriation and constitutional interpretation tied to political identity."
+      },
+      {
+        "message_id": "twitter_2061557742591226239",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "taxation/fiscal cost estimates",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "VAT tax... estimated to cost more than +/-$45t over 10 years.",
+        "rationale": "Explicitly references VAT and provides budgetary cost estimates over a decade."
+      },
+      {
+        "message_id": "bluesky_325cf265341892c14ca24769d1559a520f11292cee351713f29434d99003be85",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "children victimized by gun violence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "gun violence is the number one killer of children in the US",
+        "rationale": "Frames a group (children) as victims of a harmful phenomenon to support urgency."
+      },
+      {
+        "message_id": "reddit_1tle2vc_onfh5nc",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "goalpost conditional challenge",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "So now he only succeeds if he fully dismantles democracy?",
+        "rationale": "Uses an if-then style conditional to set a burden of proof."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061766188795904498",
+        "feature_name": "rhetorical_question",
+        "feature_value": "yes/no rhetorical question",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u000060Is it a scandal when so few are scandalized?\u000061",
+        "rationale": "The statement is posed as a question but functions rhetorically."
+      },
+      {
+        "message_id": "twitter_2061766188795904498",
+        "feature_name": "normative_moral_language",
+        "feature_value": "calls for rejection rather than accommodation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "should see and reject, not shrug off and accommodate",
+        "rationale": "Uses moral/advocative verbs to prescribe behavior."
+      },
+      {
+        "message_id": "reddit_1kgy2af_mr2x6x7",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "fuck",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Yep, fuck em.",
+        "rationale": "Contains explicit profanity used to express dismissal."
+      },
+      {
+        "message_id": "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3d20d51707695c230d1a25e3f8fcb",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "minorities as denied rights vs whites",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "selectively enforced against almost exclusively minorities... to deny Black Americans the same rights White Americans do",
+        "rationale": "Contrasts in-group/out-group groups via unequal rights framing."
+      },
+      {
+        "message_id": "reddit_1kt8kyk_mtsnl5i",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "pieces of shit",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump\u000060s whole cabinet are pieces of shit",
+        "rationale": "Uses severe derogatory profanity."
+      },
+      {
+        "message_id": "twitter_2059792063470923899",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "directly addresses 'you' about gun laws",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "regarding your gun laws, you\u000192re not in charge of my life",
+        "rationale": "Uses second-person 'your/you' to address an opponent directly."
+      },
+      {
+        "message_id": "reddit_1la5fmz_mxit2c1",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "immigration enforcement group (ICE) contrasted with fascists",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "good people who enforce the law with all of ICE... Fucking fascists",
+        "rationale": "Separates 'good people' enforcing ICE from a negatively labeled group, using an editorial moral condemnation."
+      },
+      {
+        "message_id": "reddit_1kpwu8r_mt36qxh",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "hidden-information protects those who hide it",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "if something is being hiddien, it's being hidden to protect the people who are hiding it",
+        "rationale": "Argues for intentional concealment with a motive-based conspiracy implication."
+      }
+    ]
+  }
+}

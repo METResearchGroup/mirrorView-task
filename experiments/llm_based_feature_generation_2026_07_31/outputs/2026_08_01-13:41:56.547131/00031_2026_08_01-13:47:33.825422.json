@@ -1,0 +1,180 @@
+{
+  "batch_id": 31,
+  "message_ids": [
+    "bluesky_e5548cf45f42b65b38ce24e27016c7c2d68be36d56b0b11d8e2b58a063c70a4f",
+    "reddit_1kej1h4_mqjhsi8",
+    "reddit_1klrtv5_ms4wvfw",
+    "reddit_1kxo6er_mur3l3w",
+    "reddit_1lfdjpb_myoz07b",
+    "reddit_1lhmo4b_mz5q2uc",
+    "reddit_1tsptkj_ooy8va3",
+    "reddit_1tsrnbn_ooykdto",
+    "reddit_1tt1r86_oozqpn6",
+    "reddit_1txxvde_oq16lvy",
+    "reddit_1tznn66_oqcnd17",
+    "reddit_1tzwh8s_oqfvgpw",
+    "reddit_1u0gjyt_oqibjyk",
+    "twitter_2059325413784961191",
+    "twitter_2060451056837108220",
+    "twitter_2060751535869681774",
+    "twitter_2061027462176559514",
+    "twitter_2061589330217648469",
+    "twitter_2061777821220147222",
+    "twitter_2061800321374978463"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u0gjyt_oqibjyk",
+        "feature_name": "sexual_child_molestation_accusation",
+        "feature_value": "Mentions touching children's genitals / grooming children",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Touching children's genitals\"",
+        "rationale": "The text directly accuses/frames conduct as sexual abuse of children."
+      },
+      {
+        "message_id": "reddit_1klrtv5_ms4wvfw",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity toward Supreme Court",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"defending the fucking Constitution\"",
+        "rationale": "Contains explicit profanity (fucking) used for emphasis."
+      },
+      {
+        "message_id": "reddit_1lfdjpb_myoz07b",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "Media hosts (Fox News / MSNBC) framed as partisan mouthpieces in foreign policy",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Fox News host\" / \"MSNBC mouthpiece\"",
+        "rationale": "Targets specific media personalities as influencing war/foreign policy decisions."
+      },
+      {
+        "message_id": "reddit_1lfdjpb_myoz07b",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Mirror flips blame from Fox/Republicans to MSNBC/Democrats for foreign policy meddling",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Fox News host\" ... \"not involved in war decisions\" vs \"MSNBC mouthpiece\" ... \"isn't whispering in Biden's ear\"",
+        "rationale": "The mirror replaces the criticized party/actor with the opposite side while keeping the same accusation pattern."
+      },
+      {
+        "message_id": "twitter_2059325413784961191",
+        "feature_name": "religion_or_christian_frame_to_abortion",
+        "feature_value": "Christians called to fight to abolish abortion after Roe overturn",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"June is life month\" ... \"Christians need to fight\" \"abolish\" abortion",
+        "rationale": "Links a religious group to an abortion policy goal following Roe v. Wade overturn."
+      },
+      {
+        "message_id": "twitter_2061027462176559514",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Uses moral/ethical framing about unborn life vs eliminating it",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"an unborn child's life deserves protection\" / \"not eliminating one\"",
+        "rationale": "The mirror employs deontic moral language (deserves protection, should be fighting)."
+      },
+      {
+        "message_id": "bluesky_e5548cf45f42b65b38ce24e27016d",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Prescribes electing majorities and enforcing law on fossil fuel industry/oil companies; renewable energy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Electing pro-science Democratic majorities, enforcing law on fossil fuel industry/oil companies, renewable energy all KEY\"",
+        "rationale": "Provides explicit action-oriented policy recommendations."
+      },
+      {
+        "message_id": "reddit_1txxvde_oq16lvy",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Conditional question about why tariffs subsidies were ignored, plus NAFTA historical reference",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Why when discussing Trump\u2019s tariffs were subsidies completely ignored\" ... \"When NAFTA was negotiated\"",
+        "rationale": "Uses contrastive conditional inquiry (why \u2026 ignored) and references a prior negotiation event (NAFTA)."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tt1r86_oozqpn6",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Hatespeech/sexual violence accusation using 'rapist'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"morbidly obese rapist\"",
+        "rationale": "Contains extreme abusive/sexual violence labeling."
+      },
+      {
+        "message_id": "reddit_1lhmo4b_mz5q2uc",
+        "feature_name": "call_to_action",
+        "feature_value": "Threatening violent phrasing about beating AOC",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"beat his ass\"",
+        "rationale": "Expresses intent for violence as part of the message."
+      },
+      {
+        "message_id": "reddit_1tzwh8s_oqfvgpw",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Dehumanizes supporters and labels them bots/shills; suggests silencing/drowning out",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGAts are morons\" ... \"Just beat them with better propaganda\" / \"drown them out\"",
+        "rationale": "Creates an in-group/out-group contrast and prescribes propagandistic exclusion."
+      },
+      {
+        "message_id": "reddit_1kxo6er_mur3l3w",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses profanity ('fuck off') directed at an education secretary/union",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Education secretary can fuck off\"",
+        "rationale": "Contains explicit profanity used as a dismissive command."
+      },
+      {
+        "message_id": "twitter_2060751535869681774",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Rhetorical legal syllogism: murder law -> abortion against the law because murder",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Murder is against the law\" ... \"Therefore Abortion is indeed against the law\"",
+        "rationale": "Presents structured reasoning with definitive claims and a drawn conclusion."
+      },
+      {
+        "message_id": "twitter_2060451056837108220",
+        "feature_name": "religion_or_taboo_demarcation",
+        "feature_value": "Blasphemous/occult rhetoric labeling Planned Parenthood as 'devil' and using Satan/sacrifice imagery",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"Satan loves abortion\" ... \"Planned Parenthood is the devil\u2019s favorite business\"",
+        "rationale": "Uses explicit religious demonization and extreme imagery to characterize an organization."
+      },
+      {
+        "message_id": "twitter_2061589330217648469",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Attributes immigration/population anxiety to ISIS/Iraq/Syria and implies causal manipulation in mirror",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"mostly due to Iraq and ISIS\" / mirror: \"manufactured outrage\" \"Fox News panic and MAGA hysteria\"",
+        "rationale": "Frames demographic change and reactions as driven by militant actors (original) and as manufactured/inflated (mirror)."
+      },
+      {
+        "message_id": "reddit_1tsrnbn_ooykdto",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct second-person interrogatives about presidential immunity/investigation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Do you care if the president... immune from investigation forever?\"",
+        "rationale": "Uses direct 'Do you' question addressing the reader."
+      }
+    ]
+  }
+}

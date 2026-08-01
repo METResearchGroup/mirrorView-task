@@ -1,0 +1,180 @@
+{
+  "batch_id": 6,
+  "message_ids": [
+    "bluesky_d78b35f3f6fddbf83f1a994cbfc122897e5fe1f990c1f7a40a52af08095935c4",
+    "bluesky_d9d95be5567486dfefe4ed5be86d4539625e8e39c22c8d319ca652c84f8101df",
+    "reddit_1kcx4ed_mqhjkzd",
+    "reddit_1khfdka_mr6u1xt",
+    "reddit_1l9jweg_mxds70k",
+    "reddit_1lg8nfc_myxocy2",
+    "reddit_1tfvn1i_omd7uqd",
+    "reddit_1tkj0a7_ona4pku",
+    "reddit_1tnobm9_onvcgnz",
+    "reddit_1tr6mt1_oolu2ir",
+    "reddit_1trbmne_ooocimr",
+    "reddit_1tw81gp_opnf134",
+    "twitter_2059696168670580835",
+    "twitter_2059905289923752089",
+    "twitter_2060769837165547920",
+    "twitter_2060954877975466293",
+    "twitter_2061173178307600827",
+    "twitter_2061475681226121270",
+    "twitter_2061704148198866993",
+    "twitter_2061802548437074115"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tnobm9_onvcgnz",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"all human beings are created equal\"",
+        "rationale": "The text uses generic phrasing with no identifiable named entities."
+      },
+      {
+        "message_id": "reddit_1trbmne_ooocimr",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "quote marks + em dashes + heavy all-caps emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"enough!\" to DEI that vilified white people",
+        "rationale": "Multiple strong punctuation/emphasis cues (quoted enough, DEI capitalization, dense clause chaining) indicate heightened intensity."
+      },
+      {
+        "message_id": "twitter_2059905289923752089",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "short slogan-like claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans Are Trying to Kill the Abortion Pill. They Don\u2019t Stand a Chance.\"",
+        "rationale": "The post uses punchy, meme/slogan style political phrasing."
+      },
+      {
+        "message_id": "reddit_1tw81gp_opnf134",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"It's almost as if voters are OVER the constant GOP attacks, falsehoods, rumors and mudslinging\"",
+        "rationale": "It is a long multi-clause sentence with extensive detail."
+      },
+      {
+        "message_id": "reddit_1tw81gp_opnf134",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "voters vs GOP attackers",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"voters are OVER\" ... \"GOP attacks\"",
+        "rationale": "The language contrasts 'voters' with an opposing political actor bloc."
+      },
+      {
+        "message_id": "twitter_2060769837165547920",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "imperatives to act/conserve/demand change",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Act now, conserve resources, and demand change.\"",
+        "rationale": "The text contains direct behavioral directives rather than only description."
+      },
+      {
+        "message_id": "twitter_2061475681226121270",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Obergefell and Roe v. Wade references",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"overturn Obergefell\" ... \"just like we did we Roe v. Wade\"",
+        "rationale": "The post explicitly invokes specific Supreme Court-related cases."
+      },
+      {
+        "message_id": "reddit_1kcx4ed_mqhjkzd",
+        "feature_name": "normative_moral_language",
+        "feature_value": "demonizing + danger framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"severely mentally ill\" and \"a danger to the entire world\"",
+        "rationale": "It uses moralized/safety-threatening language to condemn a named individual."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2060954877975466293",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct address to public figures (Sir...)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Donald Trump @realDonaldTrump Sir\" ... \"Sir YOU just LIED\"",
+        "rationale": "The post repeatedly uses 'Sir' and second-person reference to accuse the target."
+      },
+      {
+        "message_id": "twitter_2060954877975466293",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "heavy all-caps adverbs/claims (YOU, SIR, LIED, 100%, ALL)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"SIR YOU just LIED\" ... \"SIR 100% of ALL GUN laws\"",
+        "rationale": "Multiple words are fully capitalized for emphasis."
+      },
+      {
+        "message_id": "twitter_2060954877975466293",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"unconstitutional except to criminals\"",
+        "rationale": "No explicit profanity appears in the provided text; emphasis is via capitalization and insults rather than taboo words."
+      },
+      {
+        "message_id": "twitter_2061704148198866993",
+        "feature_name": "rhetorical_question",
+        "feature_value": "question about meaning of rights categories",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If you believe in equal rights, then what do 'women's rights,' and 'gay rights,' etc. mean?\"",
+        "rationale": "It is structured as a rhetorical interrogative."
+      },
+      {
+        "message_id": "reddit_1l9jweg_mxds70k",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump can go get fucked.\"",
+        "rationale": "The post uses a direct profane insult."
+      },
+      {
+        "message_id": "reddit_1lg8nfc_myxocy2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual/profanity intensifier",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"anything under the fucking sun\"",
+        "rationale": "The phrase includes explicit profanity for emphasis."
+      },
+      {
+        "message_id": "reddit_1tfvn1i_omd7uqd",
+        "feature_name": "targeted_gendered_labeling",
+        "feature_value": "gender-based insult analogies (women party / men party)",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"awful women\" ... \"toxic/narcissistic women party\" / \"awful men\" ... \"toxic/fragile masculinity party\"",
+        "rationale": "The attack uses gendered stereotypes as political framing across original and mirror."
+      },
+      {
+        "message_id": "twitter_2061802548437074115",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "none; uses heavy capitalization and place name formatting",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Help yourselves today people of L A\"",
+        "rationale": "The message emphasizes a localized audience with unusual spacing/capitalization rather than mentions/hashtags."
+      }
+    ]
+  }
+}

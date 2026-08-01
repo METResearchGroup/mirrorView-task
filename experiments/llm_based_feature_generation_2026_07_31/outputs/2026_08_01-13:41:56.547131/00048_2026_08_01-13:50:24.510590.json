@@ -1,0 +1,180 @@
+{
+  "batch_id": 48,
+  "message_ids": [
+    "bluesky_0f10f8b2e7ad35ac78d16202521045b21ebb300d2167d8ee6c7178fb17a622e6",
+    "bluesky_49bdc150e48d44055aa3691aafa96f4e7af393d8219b7d7569d04fb3669fc031",
+    "bluesky_f8ad409331453f0067ab647802e93121e8a6479f4fedb9ca465c0cc91db829ab",
+    "reddit_1kfef9j_mqqmxru",
+    "reddit_1kr82xj_mtch67s",
+    "reddit_1l9kcqg_mxd9p9a",
+    "reddit_1lc77jc_mxz4v16",
+    "reddit_1ta0m34_ol7m9d7",
+    "reddit_1tjs35z_on41ada",
+    "reddit_1tonmo5_oo6v724",
+    "reddit_1try6d7_oor8zsa",
+    "reddit_1ts5npc_ooux6qc",
+    "reddit_1tswff0_op1kzsj",
+    "reddit_1twzt8u_opsfk08",
+    "reddit_1tzfhxv_oqc3wbo",
+    "reddit_1tztcf9_oqdpklj",
+    "twitter_2060476129337917901",
+    "twitter_2060755574401405025",
+    "twitter_2061812818752532760",
+    "twitter_2061826896699211899"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1try6d7_oor8zsa",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Very informal, emphatic personal testimony (\"I love America\" / \"It is great\")",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I think America is great and always has been, I love America\"",
+        "rationale": "First-person praise is expressed in a casual, conversational register with repetitive emphasis."
+      },
+      {
+        "message_id": "twitter_2061812818752532760",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps emphasis used for numbers and entities (EMPLOYEES/OWE/IN UNPAID TAXES)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"IRS EMPLOYEES OWE $50,000,000 IN UNPAID TAXES\"",
+        "rationale": "The post uses prominent all-caps formatting to stress claims and figures."
+      },
+      {
+        "message_id": "twitter_2061812818752532760",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of named actors/institutions (Senator Joni Ernst, IRS, Clinton/Harris referenced in mirror)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Senator Joni Ernst\" / \"IRS EMPLOYEES\"",
+        "rationale": "Mentions of specific people and organizations are explicit and frequent."
+      },
+      {
+        "message_id": "reddit_1ta0m34_ol7m9d7",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Explicit contrast clause with 'but'/'isn't a design flaw - it's a feature'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"but that isn't a design flaw - it's a feature\"",
+        "rationale": "Uses a direct contrastive construction to reframe an argument."
+      },
+      {
+        "message_id": "bluesky_0f10f8b2e7ad35ac78d16202521045b21ebb300d2167d8ee6c7178fb17a622e6",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Uses a mass shooting tragedy as evidence of political exploitation and victimization (anti-gun/political grief exploitation)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"breaking point... mass shooting in Vegas\" / \"government use a tragedy to gut the Second Amendment\"",
+        "rationale": "The text frames victims/tragedy and political actors as exploiting harm."
+      },
+      {
+        "message_id": "twitter_2060476129337917901",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple line breaks/ellipsis and rhetorical punchphrases",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Crickets\u2026\" / \"THEY HAVE ALWAYS BEEN PLAYING US\" / \"Time to wake up\"",
+        "rationale": "Frequent punctuation/ellipsis and exclamatory phrasing increase intensity."
+      },
+      {
+        "message_id": "reddit_1lc77jc_mxz4v16",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Direct insult/derogation of politician (small, weak, hypocritical)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is small, weak and hypocritical.\"",
+        "rationale": "The post attacks an actor with pejorative character judgments rather than policy analysis."
+      },
+      {
+        "message_id": "reddit_1l9kcqg_mxd9p9a",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Opposes 'violent criminals' deportation talk to employer attitudes about workers",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"deporting violent criminals\" / \"tax paying workers\"",
+        "rationale": "Contrasts an out-group notion (violent criminals) with an in-group workforce and their perceived treatment."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_49bdc150e48d44055aa3691aafa96f4e7af393d8219b7d7569d04fb3669fc031",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Implied rebuttal via generalization/mini-assertion that hot temps don\u2019t mean world ending",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"a hot summer does NOT mean the world is ending\"",
+        "rationale": "States a direct claim about interpretation of climate extremes."
+      },
+      {
+        "message_id": "reddit_1tswff0_op1kzsj",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Outgroup vs ingroup: 'MAGAts' vs implied others outside US",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGAts barely know a world outside the US exists.\"",
+        "rationale": "Uses a sweeping outgroup characterization tied to geographic limitation."
+      },
+      {
+        "message_id": "reddit_1tztcf9_oqdpklj",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing/derogatory follower imagery ('sheep') plus 'daddy/mommy' mockery",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"his sheep will continue to follow daddy trump\"",
+        "rationale": "Uses ridicule through 'sheep' metaphor and parental nicknaming."
+      },
+      {
+        "message_id": "reddit_1ts5npc_ooux6qc",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Insult term 'commies' / 'anti-american commies'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Bunch of anti-american commies.\"",
+        "rationale": "Employs a politically charged slur-like label for the target group."
+      },
+      {
+        "message_id": "reddit_1twzt8u_opsfk08",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Judgmental, moralized condemnation and celebration (\"dick move\", \"narcissistic blight\")",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"this was a dick move\" / \"narcissistic blight\"",
+        "rationale": "Uses moral/emotive condemnation terms to evaluate political behavior."
+      },
+      {
+        "message_id": "bluesky_f8ad409331453f0067ab647802e93121e8a6479f4fedb9ca465c0cc91db829ab",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Empirical-sounding contrast using lived experience and state-by-state claims",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Every blue state has a ton of firearm regulation... I've actually lived in them.\"",
+        "rationale": "Presents concrete factual comparisons and personal experience as support."
+      },
+      {
+        "message_id": "reddit_1kr82xj_mtch67s",
+        "feature_name": "call_to_action",
+        "feature_value": "Implied direct action/response plan (attend speech then walk out)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"getting up and walking out when he spouts something stupid.\"",
+        "rationale": "Communicates an intended behavioral response to political speech content."
+      },
+      {
+        "message_id": "reddit_1tjs35z_on41ada",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Cumulative attributive characterization with multiple descriptors",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"abandoned conservative principles and merely Trump\u2019s plaything and swampier than the one he claimed he was going to drain\"",
+        "rationale": "Stacks multiple related negative predicates connected by 'and' for emphasis."
+      }
+    ]
+  }
+}

@@ -123,14 +123,15 @@ def run_pipeline(
 
 
 def _count_themes(stage2_dir: pathlib.Path) -> int:
-    """Count themes in the first stage-2 result file."""
+    """Count themes across all stage-2 shard result files."""
+    total = 0
     for path in sorted(stage2_dir.glob("*.json")):
         if path.name == _METADATA_FILENAME:
             continue
         payload = json.loads(path.read_text(encoding="utf-8"))
         themes = payload.get("result", {}).get("themes", [])
-        return len(themes)
-    return 0
+        total += len(themes)
+    return total
 
 
 def build_parser() -> argparse.ArgumentParser:

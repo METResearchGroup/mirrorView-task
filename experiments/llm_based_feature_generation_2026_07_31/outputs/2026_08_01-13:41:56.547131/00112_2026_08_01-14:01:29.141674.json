@@ -1,0 +1,180 @@
+{
+  "batch_id": 112,
+  "message_ids": [
+    "bluesky_5ba0c3c077c00987c51a246eaf031ed24a1688d0c965a3e513ea2339b46e4050",
+    "bluesky_7a7e369317987393bff86cdd70c89723411bdd0e3854c2d5cc6ecd87c248c391",
+    "reddit_1kvuvro_muo69pk",
+    "reddit_1kzpmpd_mv9yp3h",
+    "reddit_1l0rot8_mvfrk9n",
+    "reddit_1lbu9k4_mxvg3ds",
+    "reddit_1lhbeoa_mz2t77h",
+    "reddit_1tbfpk8_olllx7a",
+    "reddit_1thqwmy_omqd6ie",
+    "reddit_1tsj7e8_ooxd90t",
+    "reddit_1txekxo_opx0w7h",
+    "reddit_1tyet91_oq3uqlm",
+    "twitter_2059658976040460681",
+    "twitter_2059693999280017850",
+    "twitter_2059738096799801716",
+    "twitter_2060650131960266795",
+    "twitter_2061214916502007824",
+    "twitter_2061275036837687756",
+    "twitter_2061539103053849020",
+    "twitter_2061782430990631299"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_5ba0c3c077c00987c51a246eaf031ed24a1688d0c965a3e513ea2339b46e4050",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Uses evidential phrasing implying empirical support (\u201cas evidenced by\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cas evidenced by how many have died in school shootings without significant gun reform.\u201d",
+        "rationale": "The post treats shooting death counts as direct evidence for the claim about GOP positions on child endangerment and gun reform."
+      },
+      {
+        "message_id": "twitter_2059658976040460681",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Abortion / reproductive rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cfundamental right to choose\u201d",
+        "rationale": "The language centers on the legal right to abortion/choice."
+      },
+      {
+        "message_id": "reddit_1tbfpk8_olllx7a",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Nuclear weapons / Iran-US-Israel deterrence",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cnuclear weapons are the ultimate deterrent\u201d",
+        "rationale": "The core topic is nuclear deterrence and proliferation involving Iran."
+      },
+      {
+        "message_id": "reddit_1tbfpk8_olllx7a",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "If-proposition predicting negotiation behavior contingent on Iran acquiring nukes",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIf Iran had them, the US and Israel would be forced to negotiate\u2026\u201d",
+        "rationale": "The sentence is structured as a conditional cause-and-effect claim."
+      },
+      {
+        "message_id": "twitter_2059693999280017850",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames women as harmed victims; \u201cdeath sentence\u201d rhetoric",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cdelivered a death sentence to women across America.\u201d",
+        "rationale": "The post presents abortion policy reversal as lethal harm targeted at women."
+      },
+      {
+        "message_id": "twitter_2060650131960266795",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct rhetorical questioning addressed to protestors/\u201cyou\u201d implied",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cwhy are you trying to stop someone from exercising their reproductive rights\u201d",
+        "rationale": "The syntax uses a direct \u201cwhy are you \u2026\u201d challenge."
+      },
+      {
+        "message_id": "twitter_2061214916502007824",
+        "feature_name": "call_to_action",
+        "feature_value": "Follow-for-follow promotional CTA",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFollow for follow to learn more!\u201d",
+        "rationale": "The post explicitly requests engagement through following."
+      },
+      {
+        "message_id": "twitter_2061539103053849020",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple exclamation points and emphatic punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cLet people suffer with the effects of climate change - who cares ?!!\u201d",
+        "rationale": "The repeated \u201c?!!\u201d punctuation indicates heightened emotional emphasis."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kvuvro_muo69pk",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Degrading insult via figurative language (\u201cpiece of mush\u201d, \u201cspineless jellyfish\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cpiece of mush around Putin\u201d / \u201cspineless jellyfish\u201d",
+        "rationale": "The text mocks the politician using derogatory metaphors."
+      },
+      {
+        "message_id": "reddit_1lhbeoa_mz2t77h",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFuck fascists.\u201d",
+        "rationale": "The post contains a direct taboo/profane imperative."
+      },
+      {
+        "message_id": "reddit_1kzpmpd_mv9yp3h",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct \u201cyou\u201d attack/assessment",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cSpeak for yourself\u2026 You have to be a moron to support that grifter.\u201d",
+        "rationale": "The phrasing addresses the reader directly and attacks them."
+      },
+      {
+        "message_id": "twitter_2061275036837687756",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses censored/partial taboo term for abortion (\u201cab*rtions\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cboast and brag about their ab*rtions\u201d",
+        "rationale": "The text references abortion using a censored form of the word."
+      },
+      {
+        "message_id": "bluesky_7a7e369317987393bff86cdd70c89723411bdd0e3854c2d5cc6ecd87c248c391",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of organizations/political actors (ICE, Second Amendment, Trump/MAGA, FBI/DOJ in mirror)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cRogue agencies like ICE\u2026 we ARE the enemy.\u201d",
+        "rationale": "The post references multiple specific named groups/actors that ground the claim."
+      },
+      {
+        "message_id": "reddit_1l0rot8_mvfrk9n",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Strong dehumanizing/insult language (\u201cPiece of shit humans/cowards\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cPiece of shit humans.\u201d",
+        "rationale": "The post uses an extreme insult directed at a group/agents."
+      },
+      {
+        "message_id": "reddit_1tyet91_oq3uqlm",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Criminal enterprise framing and corruption claims attributed to a leader",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cHe's the leader of his own criminal enterprise\u201d",
+        "rationale": "It asserts organized wrongdoing and trafficking of deception as a structural claim."
+      },
+      {
+        "message_id": "twitter_2059738096799801716",
+        "feature_name": "topic_subject",
+        "feature_value": "Menstrual data / reproductive rights technology surveillance",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cmenstrual cycle\u201d \u2026 \u201cmenstrual surveillance\u201d \u2026 \u201creproductive rights\u201d",
+        "rationale": "The post focuses on period-tracking studies and how data may be used regarding reproductive rights."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 102,
+  "message_ids": [
+    "bluesky_51be12f039519740ad32f0e369e1e0d99b6f79fa6b4ced7bb900a0f4401c3936",
+    "bluesky_a3642701815b09569563e94d716f05242ee2f81a9dbbea53ac8ea9c7b2035472",
+    "bluesky_d0f1ba02248d97b7dc46f56acda77c0a5eb0a84153ff9635eb8cf2c6804b93e5",
+    "bluesky_e3a9b5c8e84a30af1e92576b920594bb33809356e5eb897b11609bd5eaa73785",
+    "reddit_1kj1005_mrmb0iw",
+    "reddit_1km0iur_ms83ws3",
+    "reddit_1kwl270_muiq2wv",
+    "reddit_1l5krue_mwk22sw",
+    "reddit_1td4d2o_om1dqmn",
+    "reddit_1tgp392_omlqo5c",
+    "reddit_1th143w_omk9l50",
+    "reddit_1tux6at_opdrpba",
+    "reddit_1txm3lk_opxz1w5",
+    "twitter_2060715792807743954",
+    "twitter_2060809286645690809",
+    "twitter_2061392769462018431",
+    "twitter_2061588435840696551",
+    "twitter_2061781811408031927",
+    "twitter_2061785372594774039",
+    "twitter_2061827663967240611"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061785372594774039",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Take the Finite Living Pledge.",
+        "rationale": "The post contains multiple sentences/lines plus pledge callout, indicating a long text length."
+      },
+      {
+        "message_id": "twitter_2061785372594774039",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "ONE",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "We only have ONE.",
+        "rationale": "Uses all-caps emphasis for the word \"ONE\"."
+      },
+      {
+        "message_id": "twitter_2061785372594774039",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "pledge-style motivational phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Take the Finite Living Pledge.",
+        "rationale": "Direct, informal imperative phrasing typical of social/motivational posts."
+      },
+      {
+        "message_id": "reddit_1txm3lk_opxz1w5",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions political system terms (First-past-the-post; 50 states)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "first-past-the-post voting. ... \"50 states 50 democratic experiments\"",
+        "rationale": "Contains multiple named electoral-policy concepts rather than ordinary nouns."
+      },
+      {
+        "message_id": "twitter_2061588435840696551",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Gun violence has no place in this country.",
+        "rationale": "Feature not actually present (excluded in favor of not including); kept field shows none was not used\u2014therefore it was not applied."
+      },
+      {
+        "message_id": "twitter_2061392769462018431",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "outsiders depicted as invaders vs Ukrainians protecting the West",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Russians ... invade ... Ukrainians are protecting the West.",
+        "rationale": "Positions one group as threatening and another as defensive/protective."
+      },
+      {
+        "message_id": "twitter_2060809286645690809",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration/border policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Border wall scam.",
+        "rationale": "Explicitly references border wall and open-borders framing."
+      },
+      {
+        "message_id": "twitter_2061827663967240611",
+        "feature_name": "call_to_action",
+        "feature_value": "praise for calling out abusive behavior",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "kudos to the the next reporter for calling Trump out",
+        "rationale": "Encourages accountability by praising a reporter action."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061781811408031927",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses dismissive slur/insult framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "True 3rd worlders with no respect for the law.",
+        "rationale": "Contains derogatory, broad-brush labeling of a group."
+      },
+      {
+        "message_id": "reddit_1tux6at_opdrpba",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "quoted phrase \"freedom fries\"",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "I still remember \u201cfreedom fries\u201d",
+        "rationale": "Includes an embedded quotation of a remembered phrase."
+      },
+      {
+        "message_id": "bluesky_d0f1ba02248d97b7dc46f56acda77c0a5eb8cf2c6804b93e5",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "CREATIONISTS",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Bible Thumping \u201cCREATIONISTS\u201d",
+        "rationale": "Uses all-caps term \"CREATIONISTS\"."
+      },
+      {
+        "message_id": "reddit_1kj1005_mrmb0iw",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit sexual profanity/graphic phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "He\u2019s fucking the country.",
+        "rationale": "Uses explicit profanity \"fucking\" repeatedly."
+      },
+      {
+        "message_id": "bluesky_a3642701815b09569563e94d716f05242ee2f81a9dbbea53ac8e9c7b2035472",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "multiple hashtags and handles",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#lilJohnnyHoward ... #gun reform ... #culture wars #auspol ... #get the gun buyback",
+        "rationale": "Dense use of hashtags and topical tags."
+      },
+      {
+        "message_id": "reddit_1th143w_omk9l50",
+        "feature_name": "causal_claim_present",
+        "feature_value": "DOJ indictment -> voters fired prosecutors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Biden DOJ indicted Trump. Voters fired the people prosecuting him.",
+        "rationale": "States a cause-effect political sequence."
+      },
+      {
+        "message_id": "reddit_1kwl270_muiq2wv",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation list",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "racist, a rapist, a felon, a wannabe fascist and a child molester.",
+        "rationale": "Employs strongly condemnatory descriptors and moral accusations."
+      },
+      {
+        "message_id": "twitter_2060715792807743954",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "title-like punchy caption with emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Pro-Choice LIBERALS Get DESTROYED On Abortion Debate #shorts",
+        "rationale": "Capitalized, competitive framing functions as intense emphasis (no punctuation-heavy marks, but strong rhetorical capitalization)."
+      }
+    ]
+  }
+}

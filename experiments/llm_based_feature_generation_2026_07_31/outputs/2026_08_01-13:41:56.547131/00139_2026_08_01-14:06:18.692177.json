@@ -1,0 +1,180 @@
+{
+  "batch_id": 139,
+  "message_ids": [
+    "bluesky_0d49276dde11fd674b3c2673d9d03d6e3c28c502248a087c8bafccd16702029a",
+    "bluesky_9a08a0116bae75886323d47f200cbf19377ef1022fd5fbdf7a2599ee13561dae",
+    "bluesky_eacb2c3637ec8f777e2d0d6ab7d0434d440c51f5677edc44b8efcc88ca12bd1b",
+    "reddit_1kjzkld_mrt64we",
+    "reddit_1kytcyt_mv1nj9m",
+    "reddit_1l4c1gs_mw80gk7",
+    "reddit_1ti6ied_omvt302",
+    "reddit_1tql6ez_ooj8t37",
+    "reddit_1try6d7_oot96w0",
+    "reddit_1ttcu5f_op43e38",
+    "reddit_1tvmfag_opionmy",
+    "twitter_2059101070354252018",
+    "twitter_2060134828335321560",
+    "twitter_2060437978468470812",
+    "twitter_2061414532023533970",
+    "twitter_2061465386369888259",
+    "twitter_2061727951675105323",
+    "twitter_2061796697735389313",
+    "twitter_2061820548552786192",
+    "twitter_2061823787960557939"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061796697735389313",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (multiple named politicians/figures)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "POS Karen Bass ... Greg Abbott ... Newscum!",
+        "rationale": "The post includes several specific named individuals in quick succession."
+      },
+      {
+        "message_id": "twitter_2061796697735389313",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple exclamation points and emphatic interjections",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "appalling! ... crazy!",
+        "rationale": "Frequent exclamation marks signal strong emotional emphasis."
+      },
+      {
+        "message_id": "reddit_1l4c1gs_mw80gk7",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses profanity-like insult phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "performative bullshit",
+        "rationale": "The phrase 'bullshit' is informal and pejorative."
+      },
+      {
+        "message_id": "reddit_1try6d7_oot96w0",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Presents policy critique as asserted outcome",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Republican healthcare plan of if you get sick and are poor, die quickly.",
+        "rationale": "The post states a direct consequence of a policy plan rather than speculating."
+      },
+      {
+        "message_id": "reddit_1ttcu5f_op43e38",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Claims target is protected from accountability/audit",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "tries to exempt him and his family ... to be free of any audit by irs forever.",
+        "rationale": "It frames legal scrutiny as something that is being unfairly blocked."
+      },
+      {
+        "message_id": "bluesky_eacb2c3637ec8f777e2d0d6ab7d0434d440c51f5677edc44b8efcc88ca12bd1b",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Long condition governing when reforms occur",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "only if everyone votes for every democrat in every election ... for at least a decade",
+        "rationale": "The message uses an 'only if' condition tied to an outcome timeframe."
+      },
+      {
+        "message_id": "twitter_2060134828335321560",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit instruction to notice/response (\u201cDemocrats are paying attention\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Democrats are paying attention.",
+        "rationale": "The communicative intent is to warn/alert a political audience about consequences."
+      },
+      {
+        "message_id": "twitter_2059101070354252018",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Expressive condemnation of opponents",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "These comments are disgusting.",
+        "rationale": "The speaker uses strong evaluative language to denounce the cited behavior."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kytcyt_mv1nj9m",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "dumbest mother fucker",
+        "rationale": "Contains the explicit profanity 'mother fucker'."
+      },
+      {
+        "message_id": "reddit_1kjzkld_mrt64we",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Claims betrayal of even supporters",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump stabs everyone in the back, even his closest supporters.",
+        "rationale": "Uses a betrayal frame to depict targeted harm to followers."
+      },
+      {
+        "message_id": "twitter_2061823787960557939",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple instances of vulgar profanity and direct commands",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Where the fuck were your moral standards ... Shut the fuck up.",
+        "rationale": "The text contains repeated strong profanity and a command-like insult."
+      },
+      {
+        "message_id": "bluesky_0d49276dde11fd674b3c2673d9d03d6e3c28c502248a087c8bafccd16702029a",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns / Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Second Amendment ... guns ... Second Amendment",
+        "rationale": "The post explicitly discusses gun legislation and the Second Amendment."
+      },
+      {
+        "message_id": "reddit_1tql6ez_ooj8t37",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses 'you' with criticism",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "You went off the rails ... Since then you have been",
+        "rationale": "It repeatedly uses second-person 'you' to criticize the addressee."
+      },
+      {
+        "message_id": "twitter_2061727951675105323",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps slogan-style capitalization",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "PROOF OF CITIZENSHIP ... THE ONLY THING WE SHOULD GIVE THEM",
+        "rationale": "The post is structured as emphatic all-caps statements."
+      },
+      {
+        "message_id": "twitter_2061465386369888259",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Geographic/political proper noun",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "South Africa",
+        "rationale": "The post references a specific country as the subject of the quoted policy."
+      },
+      {
+        "message_id": "twitter_2060437978468470812",
+        "feature_name": "target_directionality",
+        "feature_value": "Pro-NRA framing vs gun-control proponents",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "and the NRA and their lapdog politicians can cry about it all they want",
+        "rationale": "The mirror attacks the NRA and associated politicians as target actors."
+      }
+    ]
+  }
+}

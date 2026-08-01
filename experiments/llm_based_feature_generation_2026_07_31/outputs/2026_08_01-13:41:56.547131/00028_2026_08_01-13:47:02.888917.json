@@ -1,0 +1,180 @@
+{
+  "batch_id": 28,
+  "message_ids": [
+    "bluesky_1feb8bddddf65f2f5ce2cd6715dfce185a7ec786bd76142528f9fda0e1ff25e2",
+    "bluesky_2af7725e21d93850bd5a27b394cbd53bb71bd0a56d28fbe9be7d098ff0abb8a6",
+    "bluesky_2ecf8173af6bf29b5b3f6ea05d565136be34985ecc65d35b5c08b130712d4779",
+    "bluesky_755e790ffd6caacf6a21766726a5930e3d92dcef9d449e461fb9647cd9a2fb70",
+    "bluesky_80b68c368ad1c8155301da50b372c7c10788a208229d971b5d803a849bf3b792",
+    "bluesky_92bd7b015db41054f87c6818460f6cc16949b37c22618f7b516e48737f91c88f",
+    "reddit_1khbe58_mr5j9h9",
+    "reddit_1kkunfu_ms0z06s",
+    "reddit_1ldl42u_my98vf2",
+    "reddit_1tsxfco_ooztj59",
+    "reddit_1tt3fgk_op0p0e0",
+    "reddit_1ttbe3e_op1fr75",
+    "reddit_1tvywom_oplqva3",
+    "reddit_1u08bq4_oqgxsek",
+    "reddit_1u185il_or1w7ex",
+    "twitter_2060164623148757078",
+    "twitter_2060238548067119356",
+    "twitter_2060663163738083787",
+    "twitter_2061435112214925391",
+    "twitter_2061810810570039778"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060238548067119356",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses direct 'your body' imperative framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "It's your body and you should have the right to choose",
+        "rationale": "The text directly addresses the reader ('your') to legitimize personal choice."
+      },
+      {
+        "message_id": "twitter_2060164623148757078",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates/justifies policy positions tied to healthcare and funding",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "abortion provider\u2019s taxpayer funding",
+        "rationale": "The post discusses policy-level elements (funding) and the rationale for intervention."
+      },
+      {
+        "message_id": "reddit_1tsxfco_ooztj59",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Attribution of failure to derogatory characterizing of leadership",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "yes-men academics and DC insiders who never ran a business a day in their lives",
+        "rationale": "It uses contemptuous labels ('yes-men', 'DC insiders') to discredit leaders."
+      },
+      {
+        "message_id": "twitter_2061435112214925391",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple organization/place proper nouns",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Greenville Republican Party Pro Life Committee... Attorney General... South Carolina",
+        "rationale": "The post contains several distinct proper nouns naming groups and locations."
+      },
+      {
+        "message_id": "bluesky_2af7725e21d93850bd5a27b394cbd53bb71bd0a56d28fbe9be7d098ff0abb8a6",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Laughing colloquial phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "It makes me laugh",
+        "rationale": "It uses informal conversational framing ('makes me laugh') rather than formal style."
+      },
+      {
+        "message_id": "twitter_2060663163738083787",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Reframes with 'just' + quoted 'But'/'True' response",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "We don't have to take women's rights away... \"But that would not prevent...\" True, but men would be free.",
+        "rationale": "The structure explicitly uses counterargument markers ('But') followed by rebuttal ('True')."
+      },
+      {
+        "message_id": "reddit_1u185il_or1w7ex",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insult-based comparison ('Redditor', 'fragile snowflake')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "She acted like a Redditor.",
+        "rationale": "It mocks a political figure by likening them to an internet stereotype."
+      },
+      {
+        "message_id": "reddit_1tvywom_oplqva3",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Claims precedent established by courts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Plenty of court cases have established a precedent",
+        "rationale": "The statement is phrased as a factual/legal assertion rather than speculation."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ttbe3e_op1fr75",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple strong insults/profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fucking idiot... JFC... moron... Fuck him",
+        "rationale": "The post includes profanity and harsh derogatory language."
+      },
+      {
+        "message_id": "bluesky_2ecf8173af6bf29b5b3f6ea05d565136be34985ecc65d35b5c08b130712d4779",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Bullet-like sequence of policy demands",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Keep the promise about pharmacare... put the carbon tax back... implement a wealth tax... invest in renewable energy...",
+        "rationale": "The text is composed as an enumerated set of policy prescriptions."
+      },
+      {
+        "message_id": "bluesky_1feb8bddddf65f2f5ce2cd6715dfce185a7ec786bd76142528f9fda0e1ff25e2",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Mentions election-related 'Trump fraud' and gun law mentions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "dismissng Trump fraud, lax gun laws and loss of human rights",
+        "rationale": "The post references discrete contested claims ('Trump fraud') and law categories."
+      },
+      {
+        "message_id": "reddit_1ldl42u_my98vf2",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Portrays political alignment as religious/puppet conspiracy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Except Trump is Putin's bitch",
+        "rationale": "The framing alleges hidden subordination to a foreign actor."
+      },
+      {
+        "message_id": "bluesky_755e790ffd6caacf6a21766726a5930e3d92dcef9d449e461fb9647cd9a2fb70",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Targets one outgroup for policy restrictions ('republicans'/'just republicans')",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "We need gun control that targets republicans... Just republicans!!!",
+        "rationale": "The policy demand is directed toward a specific political in-group/out-group distinction."
+      },
+      {
+        "message_id": "bluesky_92bd7b015db41054f87c6818460f6cc16949b37c22618f7b516e48737f91c88f",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Uses caps-like token 'cfFPOTUS47!'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "and a lawless cfFPOTUS47!",
+        "rationale": "The text includes an emphatic all-caps acronym-like string."
+      },
+      {
+        "message_id": "bluesky_80b68c368ad1c8155301da50b372c7c10788a208229d971b5d803a849bf3b792",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Death of 'innocent people' attributed to ideological enemies",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "How many more innocent people have to die because of white domestic terrorists?",
+        "rationale": "It frames threatened harm and victimization to justify ideological blame."
+      },
+      {
+        "message_id": "reddit_1kkunfu_ms0z06s",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Dehumanizing/dirty-word insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "a stain (shit stain) on democracy",
+        "rationale": "The parenthetical includes an explicit taboo word used as an insult."
+      }
+    ]
+  }
+}

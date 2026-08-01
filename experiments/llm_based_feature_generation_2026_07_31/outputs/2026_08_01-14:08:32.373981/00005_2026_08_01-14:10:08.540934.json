@@ -1,0 +1,190 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 5,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Gun policy advocacy and school/safety policy",
+        "defining_features": [
+          "primary_policy_domain: guns/gun control and/or school security",
+          "policy_prescription_present / call_to_action: advocating specific safeguards (e.g., background checks, license to purchase, red flag laws, safe storage, concealed carry positions, assault weapons ban/reinstate ban)",
+          "list_or_enumeration: multi-measure policy lists"
+        ],
+        "example_message_ids": [
+          "bluesky_76f7cce4f61e19104ca66b2f10e26f4f1c02bac20fdd9359abc8b5e51f5b756c",
+          "bluesky_0a6621559f8e54480b02df2847d010e17dfb97e421bcf216fb0bad53c050cec0",
+          "twitter_2061540479850721692",
+          "bluesky_25fc1559284edcc4f5190f0b3cdfe6dac0cf59bb584fd8eae805fd83bc923d1b",
+          "bluesky_84b12cde22479d5238ef06a114e08d0fc9891bc31a4b53050752b87d09a745a5"
+        ],
+        "keep_count": 8,
+        "remove_count": 2,
+        "interpretation": "Posts discussing firearms frequently include concrete policy prescriptions and enumerations; in this corpus they skew toward \u201ckeep\u201d unless combined with explicit incitement/harm or extreme dehumanizing rhetoric."
+      },
+      {
+        "id": 2,
+        "label": "Profanity, vulgar insults, and demeaning language",
+        "defining_features": [
+          "profanity_or_taboo_language: explicit profanity (e.g., \u201cFuck off.\u201d, \u201cFuck MAGA\u2026\u201d, \u201cgo fuck yourself\u201d, \u201cFUCKING\u2026\u201d)",
+          "ridicule_or_mockery / normative_moral_language: insult-style characterization (hypocrite, pathetic moron, chicken shit, etc.)",
+          "high_punctuation_intensity / all_caps_emphasis: emphatic outrage coupled with insult/profanity"
+        ],
+        "example_message_ids": [
+          "reddit_1kgcayc_mqyakjb",
+          "reddit_1ko5jgm_mso2gje",
+          "reddit_1kwwbcc_mukm3v1",
+          "reddit_1tqcf7r_ooh4o8k",
+          "twitter_2060685469222842710",
+          "reddit_1lfq7q5_myqtdfx"
+        ],
+        "keep_count": 4,
+        "remove_count": 10,
+        "interpretation": "Strong profanity and targeted insults are common in \u201cremove\u201d items, suggesting moderation should treat explicit vulgarity and dehumanizing mockery as high-risk even when policy is being discussed."
+      },
+      {
+        "id": 3,
+        "label": "Calls for policy action (organize, petition, vote, advocacy directives)",
+        "defining_features": [
+          "pragmatics_intent: call_to_action (press for, shut down, sign the petition, advocate background checks)",
+          "pragmatics_intent: call_to_action_organize_group (encourages organizing to investigate wrongdoing)",
+          "pragmatics_intent: vote/instructional question formats (binary choice / voting instructions) and hashtag-driven voting cues",
+          "policy_prescription_present: prescriptive policy statements"
+        ],
+        "example_message_ids": [
+          "bluesky_76f7cce4f61e19104ca66b2f10e26f4f1c02bac20fdd9359abc8b5e51f5b756c",
+          "twitter_2061470326392066189",
+          "twitter_2060734342075142586",
+          "twitter_2061821518766547289",
+          "twitter_2061794965622329757",
+          "bluesky_83be01fa36e49b5d299786d6e9986a59373be4a05213712fb20f0b190af1cad5"
+        ],
+        "keep_count": 7,
+        "remove_count": 2,
+        "interpretation": "Directive/prescriptive political language alone often appears in \u201ckeep\u201d posts; removals are more likely when calls cross into targeted removal/abolition or severe dehumanization."
+      },
+      {
+        "id": 4,
+        "label": "Mirror shifting / blame retargeting (Trump\u2194Biden or in-group vs out-group responsibility)",
+        "defining_features": [
+          "target_directionality: mirror_shift_direction (retarget responsibility from one politician/party to another)",
+          "target_directionality: us_vs_them_framing and out-group blame",
+          "compositional_syntax: parallel structure (e.g., repeated \u201cDon\u2019t ask America. Ask X\u2026\u201d; \u201cEven if \u2026 still support \u2026\u201d/conditional invariance)"
+        ],
+        "example_message_ids": [
+          "reddit_1rybeds_obun4av",
+          "reddit_1ljgaqj_mzlatfu",
+          "reddit_1tvll8k_opi4wgl",
+          "reddit_1tn78mh_onsjcwo",
+          "reddit_1u225u5_oqvbe3g"
+        ],
+        "keep_count": 6,
+        "remove_count": 0,
+        "interpretation": "Rhetorical retargeting (mirror/blame shifting) is present mostly in \u201ckeep\u201d examples, indicating this style is not itself a moderation trigger without profanity, harm-wishing, or extreme coercive language."
+      },
+      {
+        "id": 5,
+        "label": "Conspiratorial framing and claims of institutional weaponization/secret influence",
+        "defining_features": [
+          "semantic_content: conspiratorial_framing (weaponized DOJ/FBI, coup claims, puppetmaster payments, compromised institutions)",
+          "semantic_content: extreme delegitimization tied to covert control (e.g., Soros puppetmaster)",
+          "surface_lexical: branded hashtag attack (e.g., #SorosThePuppetmaster)"
+        ],
+        "example_message_ids": [
+          "bluesky_e840b8d8284e554fd01caeda6679240bac956a1fccc6eab9cceb5561ee9e17b0",
+          "reddit_1u0oc51_oqkygl8",
+          "bluesky_6b5fc948b9969f31634da80c5fd88c5c4637ab5b93606385f4efd47b42379446",
+          "bluesky_8fc8031c21f02f5af829c30036691d393dfda798938bc6f567c00246491165bb",
+          "bluesky_f74c9f754b2dafd2c5e4f7134f8ba93ca0daa9a7f02c65ac139cebab662eccbe"
+        ],
+        "keep_count": 2,
+        "remove_count": 5,
+        "interpretation": "Conspiracy-like claims about secret payments, coup outcomes, or government weaponization appear more often in removals, suggesting these are treated as higher-risk assertions."
+      },
+      {
+        "id": 6,
+        "label": "All-caps / emphatic formatting and high emotive punctuation",
+        "defining_features": [
+          "surface_lexical: all_caps_emphasis or all_caps list-style insults/emphasis",
+          "surface_lexical: high_punctuation_intensity (ellipses/fragmented emphatic lines) and exclamation intensity",
+          "compositional_syntax: slogan-like shorthand (e.g., \u201cGun. Bans. Don't. Work.\u201d)"
+        ],
+        "example_message_ids": [
+          "bluesky_0a6621559f8e54480b02df2847d010e17dfb97e421bcf216fb0bad53c050cec0",
+          "reddit_1tvzs8j_opmax6r",
+          "twitter_2061521903311823144",
+          "bluesky_86acfe88fee9d4fa6db658de8620a34b0d959de4d33a4e4d2082b7947662a20e",
+          "twitter_2061822638415073361",
+          "twitter_2060685469222842710"
+        ],
+        "keep_count": 4,
+        "remove_count": 5,
+        "interpretation": "Emphatic formatting is mixed, but it correlates with removals when combined with extreme claims or abusive language (profanity/locking away/threatening removal)."
+      },
+      {
+        "id": 7,
+        "label": "Moral condemnation and harm framing (life/death, killing, humanitarian disruption)",
+        "defining_features": [
+          "semantic_content: normative_moral_language / normative_moral_language_pro_life_vs_death (condemning pro-life; \u201cdeath of women\u201d)",
+          "semantic_content: victimhood_or_persecution_framing / humanitarian disruption (humanitarian/economic/social disruption claims)",
+          "semantic_content: pledges or punishments framed as deserved outcomes (e.g., jail/deserved punishment fantasies)"
+        ],
+        "example_message_ids": [
+          "twitter_2061796235774763247",
+          "twitter_2060903378792714627",
+          "bluesky_fdc81aee2a6b76b05b9db704f9f9cbe4c58ee554e7838d679f3f9d0f5d5a2a57",
+          "reddit_1kdq5jl_mqenqo7",
+          "reddit_1lvq7q5_myqtdfx"
+        ],
+        "keep_count": 3,
+        "remove_count": 5,
+        "interpretation": "When moral language escalates into harm-justifying or punishment/death-oriented rhetoric, it shifts toward removals; moderation should treat \u201charm framing\u201d as a risk amplifier."
+      },
+      {
+        "id": 8,
+        "label": "Non-neutral targeted removal/dehumanization directives",
+        "defining_features": [
+          "pragmatics_intent / semantic_content: policy_prescription_present or call_to_action advocating elimination/abolition or removal of groups/organizations (e.g., \u201cShut Planned Parenthood down.\u201d, \u201cget rid of all the Nazis first\u201d, \u201cMUST BE ABOLISHED\u201d, \u201cremove permanently\u201d)",
+          "surface_lexical: severe insult language used to justify elimination",
+          "semantic_content: categorical elimination tied to terrorism/crime claims"
+        ],
+        "example_message_ids": [
+          "reddit_1tbymrb_olo64ln",
+          "twitter_2061470326392066189",
+          "reddit_1tsvrr2_ooy2v3i",
+          "twitter_2061822638415073361",
+          "twitter_2061507754666189157"
+        ],
+        "keep_count": 1,
+        "remove_count": 4,
+        "interpretation": "Direct advocacy for removing/abolishing groups or organizations (especially alongside extreme labeling) is strongly associated with removals."
+      },
+      {
+        "id": 9,
+        "label": "Quoted speech / attribution blocks and slogan-like embedded statements",
+        "defining_features": [
+          "compositional_syntax: quote_or_attribution_embedding (direct quotes followed by \u201csaid\u201d, \u201cwho said\u2026\u201d, named attribution)",
+          "compositional_syntax: embedded quoted slogans used for rhetorical contrast"
+        ],
+        "example_message_ids": [
+          "bluesky_ec13ad9ea1c2ffb77b4d288db8d42d1c87eb6fcd7a02900ce0fdd6bf3df6a68c",
+          "bluesky_33fc8c27014484daa72f3def0cdfc02aa48d0a05400b584877b6eb243f7f9d84",
+          "bluesky_8fc8031c21f02f5af829c30036691d393dfda798938bc6f567c00246491165bb",
+          "reddit_1tsvgs3_op1nqxo",
+          "reddit_1tqhy93_oohwbaj"
+        ],
+        "keep_count": 4,
+        "remove_count": 1,
+        "interpretation": "Attribution/quotation is largely neutral in moderation terms here; it mainly functions as a rhetorical device unless paired with high-risk content (abuse, elimination, conspiracy extremes)."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Aggression & delegitimization tends to co-occur across multiple themes: profanity/insults (Theme 2) frequently combines with all-caps/emotive emphasis (Theme 6) and moral-harm framing (Theme 7).",
+      "Policy advocacy (Theme 1 and Theme 3) can appear in both keep/remove outcomes; removals increase when advocacy shifts into extreme elimination or punitive removal directives (Theme 8).",
+      "Rhetorical blame-shifting/mirroring (Theme 4) often rides alongside ideological targeting, but it is more likely to be \u201ckeep\u201d unless amplified with conspiracy claims (Theme 5) or explicit vulgar abuse (Theme 2).",
+      "Conspiracy framing (Theme 5) overlaps with extreme delegitimization and elimination directives (Theme 8), suggesting a moderation-risk pathway from institutional distrust to categorical demands."
+    ]
+  }
+}

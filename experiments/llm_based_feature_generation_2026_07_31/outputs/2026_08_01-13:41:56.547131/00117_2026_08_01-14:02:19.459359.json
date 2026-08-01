@@ -1,0 +1,180 @@
+{
+  "batch_id": 117,
+  "message_ids": [
+    "bluesky_391c438dce996a0e30900403f965d7a299e16c15a865108cf4751938febc4201",
+    "bluesky_acf2b8d985a5e4b2a99b1f0018aaa171f2a289fdbcfeb35787e9c979633d6e1e",
+    "bluesky_b8bffb32f4459ed9866a57375e762d295711bad97af9372e7e0e58ad086371b0",
+    "bluesky_b8ca0c27bbc162c35f09da2a97cfb839a345929e44674af30b35282f4f4124a7",
+    "bluesky_ba90ece8528617a8cc106be0a3210b6145a357a6589f7adaac7d486c84acc8a1",
+    "bluesky_fe34433f2a037c5594a2685a8fb037e5fca26d5a8ddab2141c08bde83e9b727b",
+    "reddit_1l34a0n_mw0pt72",
+    "reddit_1li1cpo_mz90x1h",
+    "reddit_1liixas_mzckz1d",
+    "reddit_1lk9lo4_mzrv40p",
+    "reddit_1rqd674_o9rfscl",
+    "reddit_1tt0mlj_op05q94",
+    "reddit_1tv7vfu_ophvt4q",
+    "reddit_1u0y79a_oqo0he3",
+    "twitter_2059500635372798443",
+    "twitter_2060036009459438033",
+    "twitter_2060531959634276550",
+    "twitter_2061570765477060847",
+    "twitter_2061583664790569246",
+    "twitter_2061825169077760121"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_391c438dce996a0e30900403f965d7a299e16c15a865108cf4751938febc4201",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density (Canada, Europe, Europe trade)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Canada\" \"Europe\" \"carbon tax\"",
+        "rationale": "The post repeatedly references specific proper nouns (e.g., Canada, Europe) to anchor its claims."
+      },
+      {
+        "message_id": "bluesky_391c438dce996a0e30900403f965d7a299e16c15a865108cf4751938febc4201",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate_policy / carbon_tax",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"charging carbon tax\" / \"carbon taxes\"",
+        "rationale": "Mentions carbon taxes and climate record as the main policy topic."
+      },
+      {
+        "message_id": "reddit_1liixas_mzckz1d",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "insults without profanity (e.g., 'stupid') in an imperative frame",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"just plain stupid\"",
+        "rationale": "Uses casual dismissive language/insults rather than formal phrasing."
+      },
+      {
+        "message_id": "reddit_1liixas_mzckz1d",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation (rascist/discriminatory)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"rascist AND unjustified\" / \"discriminatory AND unjustified\"",
+        "rationale": "Labels the target as immoral/harmful with evaluative judgments."
+      },
+      {
+        "message_id": "twitter_2061825169077760121",
+        "feature_name": "call_to_action",
+        "feature_value": "persuasion framing via contrast between 'radical' and 'normal instincts'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"It is only treated as radical because the political class...\"",
+        "rationale": "Argues about how the audience should interpret a political stance, using explanatory persuasion rather than direct instruction."
+      },
+      {
+        "message_id": "twitter_2061825169077760121",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "political class/ruling class vs 'normal instincts' / working people",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"political class\" / \"ruling class\" \"working people\"",
+        "rationale": "Relies on an in-group/out-group contrast between ordinary instincts/people and an elite political group."
+      },
+      {
+        "message_id": "bluesky_acf2b8d985a5e4b2a99b1f0018aaa171f2a289fdbcfeb35787e9c979633d6e1e",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Legal institution name (Supreme Court)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The Supreme Court\"",
+        "rationale": "Uses a specific institutional proper noun to set up the legal question."
+      },
+      {
+        "message_id": "bluesky_ba90ece8528617a8cc106be0a3210b6145a357a6589f7adaac7d486c84acc8a1",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates 'sensible regulations' and specific allowed behavior (warning shots)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Sensible regulations would allow people to fire off warning shots\"",
+        "rationale": "Proposes a concrete policy approach rather than merely describing the issue."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1li1cpo_mz90x1h",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity 'Fuck' repeatedly",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck her\" / \"And Fuck the Florida GOP too\"",
+        "rationale": "Contains direct taboo/profane invective toward individuals/parties."
+      },
+      {
+        "message_id": "reddit_1li1cpo_mz90x1h",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "political party/state party (Florida GOP)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Florida GOP\"",
+        "rationale": "Targets a political party entity for negative judgment."
+      },
+      {
+        "message_id": "reddit_1l34a0n_mw0pt72",
+        "feature_name": "causal_claim_present",
+        "feature_value": "speculates leadership replacement would continue 'destroying our country'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"find someone just as vile and stupid to carry on destroying our country\"",
+        "rationale": "States an ongoing causal outcome contingent on office leaving."
+      },
+      {
+        "message_id": "reddit_1u0y79a_oqo0he3",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "2000 election / Bush theft analogy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Bush literally stole the 2000 election\"",
+        "rationale": "Invokes a specific prior historical electoral event as an analogy."
+      },
+      {
+        "message_id": "bluesky_fe34433f2a037c5594a2685a8fb037e5fca26d5a8ddab2141c08bde83e9b727b",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "implies funds were slipped in due to distractions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They slipped in due to trump distractions\"",
+        "rationale": "Attributes policy/industry actions to covert manipulation rather than open processes."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_op05q94",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "religious conservatives vs LGBT; mirror shifts to 'Woke leftists' vs Christians/conservatives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Religious conservatives\" ... \"cheer on the deaths\" / \"Woke leftists\" / \"Christians and conservatives\"",
+        "rationale": "Frames conflict as a moral/political battle between opposing groups."
+      },
+      {
+        "message_id": "reddit_1tv7vfu_ophvt4q",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "accusations of sexual violence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Donald Trump raped little girls.\" / \"Joe Biden showered with his own daughter.\"",
+        "rationale": "Contains graphic sexual-misconduct allegations about public figures."
+      },
+      {
+        "message_id": "reddit_1rqd674_o9rfscl",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "targets benefits extraction from a partisan group",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"benefits are taken from MAGAs first\"",
+        "rationale": "Advocates a concrete redistribution/withholding policy directed at a labeled group."
+      }
+    ]
+  }
+}

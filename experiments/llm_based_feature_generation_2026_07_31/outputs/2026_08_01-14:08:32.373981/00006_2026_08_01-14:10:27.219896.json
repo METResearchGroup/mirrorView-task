@@ -1,0 +1,216 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 6,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity / taboo insults used in political disagreement",
+        "defining_features": [
+          "profanity_or_taboo_language present (e.g., explicit profanity, sexual taboo terms, \u201cshit/bastards/idiot/asshole\u201d style insults)",
+          "ridicule_or_mockery often paired with explicit insult language",
+          "high_punctuation_intensity frequently co-occurs (exclamation/caps with profanity)"
+        ],
+        "example_message_ids": [
+          "reddit_1liutti_mzeztv2",
+          "reddit_1l5piym_mwl4160",
+          "reddit_1kzmbqs_mv74jcn",
+          "twitter_2061815731952468242",
+          "reddit_1kc4qta_mq0uym3",
+          "bluesky_06942b8a322fe345f19cf2e996397310309f0fea816b57edf59b9285cd33344c"
+        ],
+        "keep_count": 10,
+        "remove_count": 14,
+        "interpretation": "Posts that rely heavily on profanity and demeaning invective toward people or groups are more likely to be moderated negatively (remove), even when discussing politics/policy."
+      },
+      {
+        "id": 2,
+        "label": "Calls to action / direct directives (vote, protest, leave, perform legal/punitive actions)",
+        "defining_features": [
+          "call_to_action present (imperatives such as \u201cvote tomorrow!\u201d, \u201cTHROW THE BUMS OUT!!!\u201d, \u201cDon\u2019t like it here then leave.\u201d)",
+          "second_person_direct_address or direct audience prompts (e.g., rhetorical questions or \u201cWould YOU\u2026?\u201d) tied to an instruction",
+          "policy_prescription_present sometimes appears as an action-oriented directive"
+        ],
+        "example_message_ids": [
+          "reddit_1l7rii5_mwz7sym",
+          "reddit_1thox1m_omp2sz2",
+          "twitter_2061445389199286643",
+          "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+          "twitter_2061725024814342629",
+          "reddit_1txzeeg_oq0r5dt"
+        ],
+        "keep_count": 6,
+        "remove_count": 7,
+        "interpretation": "Action-oriented language is common across both labels. Removal appears more frequent when directives escalate toward punitive/forceful targeting or accompany abusive language."
+      },
+      {
+        "id": 3,
+        "label": "Gun policy / self-defense / firearm regulation debate",
+        "defining_features": [
+          "primary_policy_domain includes guns/firearms (e.g., concealed carry, gun reform, Second Amendment, gun violence policy)",
+          "policy_prescription_present with specific reform measures (waiting periods, bans, registry, background checks, red-flag laws)",
+          "often includes causal_claim_present linking gun laws to deaths/shootings"
+        ],
+        "example_message_ids": [
+          "bluesky_339ffce692ea460255f738de427d",
+          "bluesky_f40467c7f99680c2151522b3c43b468bd02b20dc177558294a1b26c7cdd51694",
+          "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+          "reddit_1kndcmn_msik13u",
+          "twitter_2061069128522215768",
+          "bluesky_14e9819171983c1700187a36e8583ab567e16bb33f085b872eeb6f09a784ab70"
+        ],
+        "keep_count": 10,
+        "remove_count": 5,
+        "interpretation": "Gun-policy content is prominent and often kept when it includes policy prescriptions or structured critique, but moderation may remove when paired with extreme slurs/abuse or violent/punitive directives."
+      },
+      {
+        "id": 4,
+        "label": "Causal and evidentiary claims about harm, corruption, or hypocrisy",
+        "defining_features": [
+          "causal_claim_present (cause-effect or correlational chains, e.g., \u201clooser gun laws\u2026 correlate with higher deaths\u201d)",
+          "factual_assertion_vs_speculation (strong event reporting with concrete figures) OR conspiratorial_framing about grifting/corruption",
+          "economic_cost_benefit_framing present in some remove examples (comparative harm/cost statements)"
+        ],
+        "example_message_ids": [
+          "factual_assertion_vs_speculation: bluesky_130f0811ad7b218026451a4eea7f2869f2d550e4a0c6cf86fef357d35cf9a02d",
+          "reddit_1tgwj1b_omkaeqqz",
+          "reddit_1tucjhu_op8oifj",
+          "reddit_1kfohcu_mqts7eb",
+          "reddit_1l06djr_mvbe5w1",
+          "reddit_1kzmbqs_mv74jcn"
+        ],
+        "keep_count": 8,
+        "remove_count": 7,
+        "interpretation": "Moderation signals suggest that strong causal/evidence style arguments alone don\u2019t determine removal; removals align more with extreme claims when combined with dehumanization, profanity, or punitive language."
+      },
+      {
+        "id": 5,
+        "label": "Second-person direct address and rhetorical engagement",
+        "defining_features": [
+          "second_person_direct_address (using \u201cyou/your\u201d to instruct or accuse)",
+          "rhetorical_question present (e.g., \u201cWould YOU\u2026?\u201d \u201cWell regulated? NAH!\u201d)",
+          "call_to_action sometimes realized as direct prompts to the audience"
+        ],
+        "example_message_ids": [
+          "reddit_1tstlbr_op0jeay",
+          "twitter_2060206610585141461",
+          "twitter_2061788873408090121",
+          "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+          "bluesky_14e9819171983c1700187a36e8583ab567e16bb33f085b872eeb6f09a784ab70",
+          "bluesky_492c4ff9a5b92a4a3668096ead4bdab0edb08541a570aef3a7eb5d8a891ef0e2"
+        ],
+        "keep_count": 6,
+        "remove_count": 5,
+        "interpretation": "Directly addressing the reader/target is common in both groups; removal is more likely when the address is hostile or coupled with taboo/profane escalation."
+      },
+      {
+        "id": 6,
+        "label": "Us-vs-them / polarized blame framing",
+        "defining_features": [
+          "us_vs_them_framing (group-level hypocrisy, polarization, or blame attribution)",
+          "target_directionality with party/group targets (Democrats/Republicans/left/right; mirror retargeting often reflects this)",
+          "sometimes paired with moral condemnation language (normative_moral_language)"
+        ],
+        "example_message_ids": [
+          "bluesky_e293e0b6dc2343a15db676796bf85993c6afcb2428c7914e6e1264a00a83f4fb",
+          "reddit_1l44r75_mw7l726",
+          "bluesky_4cace324b89b23c55931e1f85374ec727372ec3101e25d9a34f40f",
+          "twitter_2061805216790708579",
+          "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+          "twitter_2061619634889990582"
+        ],
+        "keep_count": 6,
+        "remove_count": 6,
+        "interpretation": "Polarized group framing appears evenly in both labels; moderation likely depends more on accompanying hostility (profanity/dehumanization/punitive directives) than on polarization alone."
+      },
+      {
+        "id": 7,
+        "label": "Named entities, organizations, accounts, and policy/program references",
+        "defining_features": [
+          "named_proper_nouns_density (political figures, organizations like NRA, Medicaid, SNAP, IRA, named laws)",
+          "hashtag_or_mention_pattern and quote_or_attribution_embedding often appear alongside named references",
+          "topic specificity via proper nouns (e.g., program acronyms, legislation titles)"
+        ],
+        "example_message_ids": [
+          "twitter_2061815731952468242",
+          "bluesky_08c6be77cb0d6fa981c6363ded156e4755e04ee95513c42eeb2ebb0a2e55001e",
+          "reddit_1t9j11f_ol2slt0",
+          "bluesky_130f0811ad7b218026451a4eea7f2869f2d550e4a0c6cf86fef357d35cf9a02d",
+          "twitter_2060065769703002433",
+          "twitter_2061531052519342210"
+        ],
+        "keep_count": 5,
+        "remove_count": 2,
+        "interpretation": "Reference density is mostly compatible with keep outcomes; it becomes more problematic when combined with abusive/prohibitive rhetoric."
+      },
+      {
+        "id": 8,
+        "label": "Quotation/attribution embedding of slogans or cited statements",
+        "defining_features": [
+          "quote_or_attribution_embedding present (quoted speech with attributed speaker or quoted policy slogans)",
+          "quote_or_attribution_embedding correlates with high_punctuation_intensity (quotation marks)",
+          "quote_or_attribution_embedding sometimes used to counter a slogan"
+        ],
+        "example_message_ids": [
+          "twitter_2059966683909951776",
+          "bluesky_ba4bb28afa789953daefea36fb0b622b73f9b493f26a28ef4bc573a79a086624",
+          "bluesky_14ad874e325c5a89c5216dba31dcd6f7a9f907518a4d0165173b3be22a8a18bb",
+          "bluesky_ea856a11b257ee65b1872962ab42132588ab1c177c940bad567f5430dfc8d1a9",
+          "twitter_2060911849693204569",
+          "bluesky_019de9fa96e57b2d0331926a143211e6428143ba235c73b3cc84cc56109744e7"
+        ],
+        "keep_count": 4,
+        "remove_count": 4,
+        "interpretation": "Embedding quotes/slogans occurs across both outcomes; moderation effect appears indirect\u2014quotes themselves aren\u2019t the determinant."
+      },
+      {
+        "id": 9,
+        "label": "Conditional/contrastive argumentative structures",
+        "defining_features": [
+          "conditional_if_then_structure (If\u2026 then\u2026, either/or, \u201cif we stop looking\u2026\u201d)",
+          "contrastive_but_however_structure (but/however to rebut or set hypocrisy contrasts)",
+          "anaphora_or_parallelism (structured contrast like \u201cIn a world where\u2026 But unfortunately\u2026\u201d)"
+        ],
+        "example_message_ids": [
+          "twitter_2059966683909951776",
+          "reddit_1t9j11f_ol2slt0",
+          "reddit_1l5sulo_mwjxh5s",
+          "reddit_1twgtct_opqvx2o",
+          "twitter_2060811987328933954",
+          "bluesky_c2a15383999d06e370fa0f6c24e99f3a11a00872896371bb4c01004a9f1fa95c"
+        ],
+        "keep_count": 6,
+        "remove_count": 3,
+        "interpretation": "Well-structured conditional/contrast rhetoric is common and often compatible with keep labels; removal is more linked to toxicity layers (profanity, dehumanization, punitive directives)."
+      },
+      {
+        "id": 10,
+        "label": "High punctuation intensity / emphasis (exclamation marks, all caps, many quotes)",
+        "defining_features": [
+          "high_punctuation_intensity (heavy !, caps, intense quotation emphasis)",
+          "all_caps_emphasis appears in some remove cases",
+          "often accompanies imperatives and profanity"
+        ],
+        "example_message_ids": [
+          "reddit_1ljd0io_mzk5kjd",
+          "reddit_1t9j11f_ol2slt0",
+          "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+          "twitter_2062056683909951776",
+          "twitter_2061823439556452765",
+          "bluesky_5c6a5ac74f6d4ede017d4e98737902235c28feaa2ec1b9c4c56c51b6a5fbbee1"
+        ],
+        "keep_count": 4,
+        "remove_count": 5,
+        "interpretation": "Strong emphasis (caps/exclamation/profanity adjacency) correlates with removals more often, likely reflecting heightened confrontational tone."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Gun policy content (appears within multiple themes: policy prescriptions, causal claims, and conditional/prescriptive directives)",
+      "High-toxic rhetoric layers: profanity/taboo insults + high punctuation/emphasis frequently co-occur and connect to remove outcomes across different topic domains (guns, abortion, parties, candidates)",
+      "Direct engagement style: second-person addressing and rhetorical questions/calls to action span both keep and remove themes, but become more risky when paired with insult language",
+      "Polarization and blame structures: us-vs-them framing and named-entity references combine with causal/evidentiary claims to form targeted political accusations"
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 42,
+  "message_ids": [
+    "bluesky_23745a1aa08797cba61ae4d43ff9b6a4b7a3155a9a6dfea0b89b90edd4fd3946",
+    "bluesky_4b5a4c7daabf38f1b528647cc1ea099e677537bc98052133b1e712c6b2963f23",
+    "bluesky_625a763628d343873920c47e6191bc36e342a4d6304fff788752becb5daf3d8d",
+    "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+    "bluesky_beb14c62421b077a4accce00687bf8867a6e566c6d73737855b5b0a7b88d4a1f",
+    "bluesky_d08ba1316c97f667510fd86b1eb4624f9f46133f5be37493df39a6d0bed11752",
+    "reddit_1ksedw6_mtlfvfi",
+    "reddit_1kubmyy_mu16zs3",
+    "reddit_1l5y6fx_mwku2i6",
+    "reddit_1lah4yw_mxlfca5",
+    "reddit_1lk9fco_mzqzk0i",
+    "reddit_1lntb5c_n0j2p0p",
+    "reddit_1tadlic_ol8sbhr",
+    "reddit_1tsvd1m_ooyh3np",
+    "reddit_1tsydyo_op0mchi",
+    "reddit_1u0n3rj_oqkcp9a",
+    "reddit_1u28e60_oqvksow",
+    "reddit_1u28e60_oqw7kwm",
+    "twitter_2061427872783589498",
+    "twitter_2061730114095009803"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u0n3rj_oqkcp9a",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "multiple exclamation points for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Biden's DoJ is STILL persecuting him!\"",
+        "rationale": "The post uses strong emphatic punctuation with \u201cSTILL\u201d and an exclamation mark."
+      },
+      {
+        "message_id": "reddit_1u28e60_oqvksow",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none present; instead uses extreme insult language about intelligence",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"actual stupidest people\"",
+        "rationale": "While no explicit profanity appears, the text uses a strong taboo-like insult construction targeting a group."
+      },
+      {
+        "message_id": "bluesky_625a763628d343873920c47e6191bc36e342a4d6304fff788752becb5daf3d8d",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "many historical and political figures named",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Stalin, Hitler, Mussolini, or Putin\"",
+        "rationale": "The sentence lists several proper-noun historical leaders as comparison/benchmark."
+      },
+      {
+        "message_id": "bluesky_625a763628d343873920c47e6191bc36e342a4d6304fff788752becb5daf3d8d",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "compares current political actor to Stalin/Hitler/Mussolini/Putin",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"less than Stalin, Hitler, Mussolini, or Putin\"",
+        "rationale": "It explicitly frames \u201cdictator wannabe Trump\u201d via historical dictator comparisons."
+      },
+      {
+        "message_id": "twitter_2061427872783589498",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "criticizes incentive design and implies policy should differ",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Why give it the same incentives as a zero-tailpipe BEV?\"",
+        "rationale": "The text evaluates policy design and argues against the current incentive approach."
+      },
+      {
+        "message_id": "reddit_1tsvd1m_ooyh3np",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "depicts parties as deceitful vs ignorant/gullible audience",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"lies to the ignorant, gullible, and cowardly\"",
+        "rationale": "The post divides actors into an accusing outgroup (party) versus a characterized public audience."
+      },
+      {
+        "message_id": "bluesky_23745a1aa08797cba61ae4d43ff9b6a4b7a3155a9a6dfea0b89b90edd4fd3946",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "uses \u201cIf \u2026 isn\u2019t that a good reason to \u2026 ?\u201d reasoning",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If, as you say, \\\"they will do anything\\\" isn't that a good reason to have\"",
+        "rationale": "The argument is structured as an if-then justification with a rhetorical question."
+      },
+      {
+        "message_id": "bluesky_23745a1aa08797cba61ae4d43ff9b6a4b7a3155a9a6dfea0b89b90edd4fd3946",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "MAGA/extremists named as the threat side",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"If, as you say, MAGA extremists \\\"will do anything\\\"\"",
+        "rationale": "The threat actor is ideologically labeled with a directional/populist cue (MAGA)."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions NRA, Planned Parenthood, and Dem/GOP primary process",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"join the NRA\" / \"Planned Parenthood's donor rolls\"",
+        "rationale": "It references multiple named organizations in gun and abortion-related contexts."
+      },
+      {
+        "message_id": "reddit_1lntb5c_n0j2p0p",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit insult/\u201csack of shit\u201d and \u201cspineless and revolting piece of work\u201d",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"sanctimonious and annoying sack of shit\"",
+        "rationale": "The original employs direct taboo/profanity to attack a person."
+      },
+      {
+        "message_id": "reddit_1lntb5c_n0j2p0p",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "references 2017 and Al Franken resignation context",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"in 2017\" / \"Al Franken's resignation\"",
+        "rationale": "It anchors claims to a particular person and year/event."
+      },
+      {
+        "message_id": "bluesky_d08ba1316c97f667510fd86b1eb4624f9f46133f5be37493df39a6d0bed11752",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "speculative \u201chow did he obtain\u201d about watch lists",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"how did he obtain a firearm\"",
+        "rationale": "The wording is interrogative speculation rather than stated fact."
+      },
+      {
+        "message_id": "reddit_1u28e60_oqw7kwm",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "\u201csupernatural ability\u201d sarcasm about stock timing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"supernatural ability to buy the right stocks\"",
+        "rationale": "The phrase mocks the claim by attributing impossible powers to the politician."
+      },
+      {
+        "message_id": "reddit_1kubmyy_mu16zs3",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "accuses propaganda, gaslighting, and deliberate obfuscation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"This is propaganda 101\" / \"gaslighting 101\"",
+        "rationale": "It claims coordinated deception as an explanatory frame."
+      },
+      {
+        "message_id": "reddit_1ksedw6_mtlfvfi",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "directly addresses \u201cForeigners\u201d / \u201cAmericans\u201d and commands",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Foreigners, you need to stay away\"",
+        "rationale": "The imperative is aimed at an audience using second-person phrasing."
+      },
+      {
+        "message_id": "reddit_1l5y6fx_mwku2i6",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dismisses administration as lying via \u201cfull of shit\u201d",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"the trump administration is full of shit\"",
+        "rationale": "The post uses a disparaging characterization to undermine credibility through mockery."
+      }
+    ]
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 10,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity / taboo language used for political contempt",
+        "defining_features": [
+          "profanity_or_taboo_language",
+          "emphatic insults or crude sexual/violent taboo phrasing",
+          "direct targeting of political actors or identities via taboo terms"
+        ],
+        "example_message_ids": [
+          "reddit_1li4v26_mz9djxy",
+          "reddit_1ljgaqj_mzl1a7g",
+          "reddit_1tqrtho_ooorn5g",
+          "reddit_1l4jbh5_mwaljz2",
+          "twitter_2060406327273267367",
+          "reddit_1lmzz33_n0ez7ts",
+          "bluesky_7f9b594b3d678c753e55ded9c5706a18e94b7fcd529d20db89a4b809c38d9043"
+        ],
+        "keep_count": 4,
+        "remove_count": 22,
+        "interpretation": "A large fraction of removal-labeled posts use explicit profanity/taboo language to attack political groups or individuals rather than making a neutral critique\u2014this is a strong moderation-relevant signal."
+      },
+      {
+        "id": 2,
+        "label": "Second-person direct address and personal blame",
+        "defining_features": [
+          "second_person_direct_address / secondary_person_direct_address",
+          "direct 'you/your' critique or culpability assignment",
+          "rhetorical interrogations or directives aimed at the reader"
+        ],
+        "example_message_ids": [
+          "reddit_1ljgaqj_mzl1a7g",
+          "reddit_1t7d5jc_okobxft",
+          "twitter_2059777848370708856",
+          "reddit_1limsav_mzdef15",
+          "twitter_2061463002042232917",
+          "reddit_1l7ae5z_mwvs86w"
+        ],
+        "keep_count": 2,
+        "remove_count": 6,
+        "interpretation": "Directly addressing the audience with 'you'\u2014especially when paired with blame, insults, or implied incompetence\u2014correlates with higher removal rates."
+      },
+      {
+        "id": 3,
+        "label": "Us-vs-them outgroup framing (party/ideology polarization)",
+        "defining_features": [
+          "us_vs_them_framing / target_directionality",
+          "outsiders described as invaders/threats vs defenders/protectors",
+          "assigning moral blame to an outgroup (Democrats vs GOP, etc.)"
+        ],
+        "example_message_ids": [
+          "reddit_1tws6al_opquqs4",
+          "twitter_2061392769462018431",
+          "reddit_1khn8d7_mr8pq7g",
+          "reddit_1twr00b_oprqesu",
+          "twitter_2061591121290260586",
+          "bluesky_e9b903c9328d2747a850af973749a2e679d1990ec2daa791517135b048835497"
+        ],
+        "keep_count": 4,
+        "remove_count": 7,
+        "interpretation": "Polarized framing that casts one side as the malicious outgroup appears in both labels, but it more often accompanies removal when combined with harsher language or punitive intent."
+      },
+      {
+        "id": 4,
+        "label": "Policy prescription: calls to remove, restrict, ban, or act against a group",
+        "defining_features": [
+          "call_to_action / policy_prescription_present",
+          "imperatives toward institutions or groups (e.g., 'FUCK ICE', 'FUCK off', 'States should be allowed to stop...')",
+          "voting directives or advocacy to change law/policy"
+        ],
+        "example_message_ids": [
+          "reddit_1let2t2_myk0hxt",
+          "twitter_2061785030670549435",
+          "twitter_2061828385857225195",
+          "twitter_2061473040618107043",
+          "twitter_2061591121290260586",
+          "twitter_2059681636359270509"
+        ],
+        "keep_count": 3,
+        "remove_count": 7,
+        "interpretation": "Moderation concern increases when policy advocacy is expressed as aggressive action against an entity/group rather than neutral political persuasion."
+      },
+      {
+        "id": 5,
+        "label": "Emphatic outrage and absolute condemnation (intensifiers, punchy judgments)",
+        "defining_features": [
+          "emphatic_outrage",
+          "high_punctuation_intensity",
+          "strong negation/corrective reframing (e.g., repeated intensifiers, absolute claims)"
+        ],
+        "example_message_ids": [
+          "reddit_1khn8d7_mr8pq7g",
+          "twitter_2061785372594774039",
+          "bluesky_843b9ba1536c1bfab6e3d37a53736a90fc26492aed8448f185107be00633504f",
+          "bluesky_a70badff37e2b51c463474806fca3ac06aaaf2ed80485e688c57081e124d743e",
+          "twitter_2061506814584500349",
+          "reddit_1kfz5qd_mqwat9g"
+        ],
+        "keep_count": 3,
+        "remove_count": 9,
+        "interpretation": "Strong condemnation language is common; it is more likely to be removed when it escalates into hostile or dehumanizing content."
+      },
+      {
+        "id": 6,
+        "label": "Mirror/rebuttal shift: critique mirrored onto another target while reusing structure",
+        "defining_features": [
+          "mirror_shift_direction / mirror_shift_directionality",
+          "target retargeting from one group/idea to its opposite",
+          "paired blame structure that swaps subjects (e.g., Democrats->GOP; religion->Constitution/gun ownership)"
+        ],
+        "example_message_ids": [
+          "twitter_2059281098539254168",
+          "reddit_1ttx203_op5rdpf",
+          "reddit_1tstwrk_oozsv1w",
+          "reddit_1ts7wt8_oot9gi9"
+        ],
+        "keep_count": 3,
+        "remove_count": 1,
+        "interpretation": "Mirroring/blame-retargeting appears more in keep-rated posts here, suggesting this rhetorical technique alone isn\u2019t sufficient for removal without additional abusive content."
+      },
+      {
+        "id": 7,
+        "label": "Conditional / either-or argumentative structures",
+        "defining_features": [
+          "conditional_if_then_structure",
+          "either/or binary framing",
+          "rhetorical scenarios comparing party stances"
+        ],
+        "example_message_ids": [
+          "reddit_1tws6al_opquqs4",
+          "twitter_2061802513943449771",
+          "twitter_2061827838009848288",
+          "reddit_1tbl0de_olhi4yp",
+          "twitter_2060505986129969322"
+        ],
+        "keep_count": 3,
+        "remove_count": 0,
+        "interpretation": "Structured conditional reasoning is present mostly in keep-rated material and may be treated as normal argumentative style unless paired with taboo/hate content."
+      },
+      {
+        "id": 8,
+        "label": "Causal / blame-evidence chains (cause-effect claims, \u201cX led to Y\u201d)",
+        "defining_features": [
+          "causal_claim_present",
+          "factual_assertion_vs_speculation (assertive causal reasoning)",
+          "economic/moral consequence chains ('because... there's too many cows...')"
+        ],
+        "example_message_ids": [
+          "bluesky_7ae78ea2596f687aff27205561cd5f7a80cfb5ef6f057968509b661bb75f60ac",
+          "reddit_1kwl270_muiq2wv",
+          "twitter_2061802513943449771",
+          "twitter_2061785030670549435",
+          "twitter_2060406327273267367"
+        ],
+        "keep_count": 4,
+        "remove_count": 1,
+        "interpretation": "Many posts use explicit cause-effect or economic consequence framing; this by itself is generally compatible with keep, but removal may occur when combined with hostile/explicit language."
+      },
+      {
+        "id": 9,
+        "label": "Specific named references (people/organizations/events/court rulings)",
+        "defining_features": [
+          "named_proper_nouns_density",
+          "specific_event_or_bill_reference",
+          "hashtag_or_mention_pattern (sometimes alongside named entities)"
+        ],
+        "example_message_ids": [
+          "twitter_2060465612099338674",
+          "bluesky_b7017daebe6d011d76b96953d5567c69abfbd8fc6c18e12107522f70a02f52e3",
+          "reddit_1th143w_omkko0y",
+          "twitter_2061785030670549435",
+          "reddit_1tstwrk_oozsv1w"
+        ],
+        "keep_count": 7,
+        "remove_count": 3,
+        "interpretation": "Concrete anchoring to real-world entities (SCOTUS decisions, events, public figures) appears frequently and is not inherently problematic; it becomes more risky when combined with abusive language."
+      },
+      {
+        "id": 10,
+        "label": "Emotional evaluation via ridicule/mocking",
+        "defining_features": [
+          "ridicule_or_mockery",
+          "dismissive contempt phrases functioning as argument replacement",
+          "dehumanizing metaphors/epithets"
+        ],
+        "example_message_ids": [
+          "reddit_1lmuz5v_n0agbvg",
+          "reddit_1kzjx33_mw59i9s",
+          "reddit_1kq5g2h_msohrnq",
+          "bluesky_e686be464783703d82a59d93de72769631828c8a2965647fc048f709c43c8f3d",
+          "reddit_1lo6alt_n0kpc74"
+        ],
+        "keep_count": 1,
+        "remove_count": 5,
+        "interpretation": "Mocking/ridicule that replaces substantive argument tends to align with removal, especially when paired with slurs/profanity."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Hostile rhetoric escalation: profanity/taboo language and ridicule/emphatic outrage frequently co-occur (Theme 1 + Theme 10 + Theme 5), driving higher removal.",
+      "Targeting mechanisms: us-vs-them polarization (Theme 3) and mirror/rebuttal shifting (Theme 6) both describe who is blamed; moderation risk increases when the target is attacked with taboo/insults (Theme 1/10).",
+      "Argument structure vs moderation: conditional/either-or reasoning (Theme 7) and causal/evidence chains (Theme 8) show up mostly in keep-rated examples, suggesting structure/content can be tolerated absent hostile language.",
+      "Advocacy form: policy prescription/call-to-action (Theme 4) appears in both labels but tends to be removed when expressed as aggressive imperatives toward institutions or groups."
+    ]
+  }
+}

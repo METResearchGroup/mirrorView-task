@@ -1,0 +1,180 @@
+{
+  "batch_id": 83,
+  "message_ids": [
+    "bluesky_0a459eededee1466ddfa3e289d3ad497a8b966068c70c96204f6ba4b0e5fa5b6",
+    "bluesky_253f6730359b7eda8fa229a1de968acc54181c606669499dea2d62c5a5ce2d1e",
+    "bluesky_5bce719ddf39ef9f4b7b75729d10f8f83ab3f50b6053553d3d92438fcaabe363",
+    "bluesky_eda5210bb6b2fbaf98aeb6eb8b250a841e29371442435ec487293636e4b0aaef",
+    "reddit_1kcc9oq_mq1ew6m",
+    "reddit_1kk86gk_mrtbrdz",
+    "reddit_1lbyhcq_mxw9m3t",
+    "reddit_1t54vlp_okdsfx7",
+    "reddit_1tbxjhn_olk59rm",
+    "reddit_1td83n8_olu1gik",
+    "reddit_1tfqx0n_omcxb9h",
+    "reddit_1thqwmy_oms2rhn",
+    "reddit_1tsv1fn_ooykhbx",
+    "reddit_1tsw0fg_ooy02ng",
+    "reddit_1u1c4u6_oqp81v6",
+    "twitter_2059787257481978068",
+    "twitter_2060072476055351712",
+    "twitter_2060253833960313052",
+    "twitter_2061548393453834431",
+    "twitter_2061827140375441506"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kcc9oq_mq1ew6m",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "None",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump: if it ain\u2019t white, it ain\u2019t right!",
+        "rationale": "Contains a short slogan-like political contrast without clear all-caps; not tagged."
+      },
+      {
+        "message_id": "reddit_1kcc9oq_mq1ew6m",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (Trump/Biden/Dems)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump ... Biden and the Dems",
+        "rationale": "Mentions specific public figures/party directly."
+      },
+      {
+        "message_id": "reddit_1tsv1fn_ooykhbx",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "\u201cmight be in favor of \u2026 because \u2026\u201d then normative conclusion",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "they might be in favor of redistribution of wealth, because taking from one person and giving to another makes things more \u201cequal\u201d or \u201cfair.\u201d",
+        "rationale": "Uses a hypothetical (\u201cmight be in favor\u201d) followed by a causal \u201cbecause\u201d explanation."
+      },
+      {
+        "message_id": "reddit_1tsv1fn_ooykhbx",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Immorality claimed as root of policy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "But taking someone\u2019s stuff is still immoral at its root.",
+        "rationale": "Uses explicit moral judgment (\u201cimmoral\u201d)."
+      },
+      {
+        "message_id": "reddit_1t54vlp_okdsfx7",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Causal/empirical-style assertion about outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "policies do not automatically create race-neutral outcomes",
+        "rationale": "States a general causal relationship as a factual claim."
+      },
+      {
+        "message_id": "twitter_2059787257481978068",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Slogan/idiom framing with quoted phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Nothing puts more guns on the street than \"gun control\"",
+        "rationale": "Uses emphatic proverb-like structure and quoted policy term."
+      },
+      {
+        "message_id": "twitter_2059787257481978068",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/gun regulation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun control\"",
+        "rationale": "Directly about gun control and weapon access."
+      },
+      {
+        "message_id": "bluesky_5bce719ddf39ef9f4b7b75729d10f8f83ab3f50b6053553d3d92438fcaabe363",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "\u201cwipipo Rethuglicans discover gun control\u201d as opportunistic behavior",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "the wipipo Rethuglicans discover gun control",
+        "rationale": "Frames an outgroup as opportunistically changing policy in response to threat rather than principle."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tbxjhn_olk59rm",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Taboo term targeting a group/person",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "A day in the life of a thug.",
+        "rationale": "Uses a derogatory term (\u201cthug\u201d) as group characterization."
+      },
+      {
+        "message_id": "reddit_1lbyhcq_mxw9m3t",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "no fucking shit ... Fucking dumb",
+        "rationale": "Contains direct profanity (\u201cfucking\u201d)."
+      },
+      {
+        "message_id": "reddit_1td83n8_olu1gik",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "None",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Drained the swamp so dry you need a VIP snorkel with gilded FBI emblem",
+        "rationale": "No all-caps present; not tagged."
+      },
+      {
+        "message_id": "reddit_1td83n8_olu1gik",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Metaphor with stacked vivid modifiers",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "VIP snorkel with gilded FBI emblem",
+        "rationale": "Uses multiple intensifying descriptors to build an image."
+      },
+      {
+        "message_id": "bluesky_253f6730359b7eda8fa229a1de968acc54181c606669499dea2d62c5a5ce2d1e",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "MAGA tag / direct address marker",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "MAGA! You keep voting red hat",
+        "rationale": "Uses partisan tag and repeated second-person address."
+      },
+      {
+        "message_id": "bluesky_253f6730359b7eda8fa229a1de968acc54181c606669499dea2d62c5a5ce2d1e",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Implied deception/denial by outgroup",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "pretending climate change doesn\u2019t exist",
+        "rationale": "Accuses an outgroup of denying/pretending, implying harmful wrongdoing."
+      },
+      {
+        "message_id": "twitter_2061548393453834431",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "None (direct mention of speechless/video)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Ab*rtion activist left SPEECHLESS in viral video",
+        "rationale": "No second-person address; not tagged."
+      },
+      {
+        "message_id": "twitter_2061548393453834431",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Abortion/effective slur-like truncation; strong moral condemnation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Ab*rtion ... It\u2019s gotta be the most evil act human beings",
+        "rationale": "Uses highly charged moral language (\u201cevil act\u201d) and politically taboo subject term."
+      }
+    ]
+  }
+}

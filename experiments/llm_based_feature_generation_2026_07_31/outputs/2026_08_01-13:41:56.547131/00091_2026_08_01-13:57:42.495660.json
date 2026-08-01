@@ -1,0 +1,180 @@
+{
+  "batch_id": 91,
+  "message_ids": [
+    "bluesky_17b7f8b4dc69703c39879798b2e98682f4a5296c03a0bfcb56d222933a25cd14",
+    "bluesky_29f282aa918e99746ff0a1c5aca30f51d705112315be599081f2e30b64d48543",
+    "bluesky_52b31e9fa9c2072d13e07c68ecb480a95d0ac9ec2da2b70cccf7df01271c6ed4",
+    "reddit_1kf2hgg_mqq9p2i",
+    "reddit_1l9kcqg_mxd9fpn",
+    "reddit_1lb7id2_mxqqr1a",
+    "reddit_1lb8wyo_mxr2wwj",
+    "reddit_1ljeljv_mzjx98s",
+    "reddit_1ti151j_omrlwdv",
+    "reddit_1tle2vc_onfn1k0",
+    "reddit_1tppsc5_ooasdnq",
+    "reddit_1tsx0f1_ooyli84",
+    "reddit_1tupifu_opgm1tc",
+    "reddit_1tv7vfu_opg8cfp",
+    "reddit_1tx4xmh_opupzoc",
+    "reddit_1txrv9p_opypogo",
+    "twitter_2060100192901181677",
+    "twitter_2061562757468848470",
+    "twitter_2061741090814722344",
+    "twitter_2061798587575545981"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kf2hgg_mqq9p2i",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Uses strong profanity and emphatic informal phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking\"",
+        "rationale": "Contains explicit profanity alongside emphatic wording."
+      },
+      {
+        "message_id": "reddit_1kf2hgg_mqq9p2i",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Justifies/frames border enforcement as not deportation/kidnapping",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Its not deporting... its kidnapping\"",
+        "rationale": "Directly argues for a specific interpretation of enforcement actions."
+      },
+      {
+        "message_id": "bluesky_29f282aa918e99746ff0a1c5aca30f51d705112315be599081f2e30b64d48543",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple political actors and acronyms (MTG, AOC)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MTG\"; \"AOC\"",
+        "rationale": "Several named/abbreviated political figures appear in a single sentence."
+      },
+      {
+        "message_id": "bluesky_29f282aa918e99746ff0a1c5aca30f51d705112315be599081f2e30b64d48543",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun control / Second Amendment policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun laws\"; \"Second Amendment\"",
+        "rationale": "Explicitly references gun-law changes and Second Amendment rights."
+      },
+      {
+        "message_id": "reddit_1ljeljv_mzjx98s",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insults political figures using derogatory labels",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"orange-colored goblin\"; \"ego-maniacal\"",
+        "rationale": "Uses mocking/derogatory descriptions rather than neutral claims."
+      },
+      {
+        "message_id": "reddit_1ljeljv_mzjx98s",
+        "feature_name": "target_directionality",
+        "feature_value": "Mirror shifts praise to DeSantis and attacks AOC/socialists",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"That cackling, incompetent socialist\"",
+        "rationale": "Mirror re-targets positive framing toward a different actor and negative framing toward AOC."
+      },
+      {
+        "message_id": "reddit_1ti151j_omrlwdv",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "References legal/political institutions and roles (AG, DOJ, Trump control)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The AG appoints\"; \"DOJ\"",
+        "rationale": "Discusses specific institutional actors and appointment/control claims embedded in argument."
+      },
+      {
+        "message_id": "twitter_2061798587575545981",
+        "feature_name": "call_to_action",
+        "feature_value": "Implicitly endorses leadership choice as \"boots on the ground\"",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Real boots on the ground.\"",
+        "rationale": "Evaluative, promotional framing urging approval of the chosen leader."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lb7id2_mxqqr1a",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct harm/violence wish toward a political figure",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Hopefully a tank runs over the bastard Trump.\"",
+        "rationale": "Explicitly expresses a violent outcome targeted at a named politician."
+      },
+      {
+        "message_id": "reddit_1tppsc5_ooasdnq",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Labeling outgroup ideology (communists/fascists) to claim national ownership boundary",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"ceding one inch... to the communists\"",
+        "rationale": "Uses ideological outgroup terms in a boundary/territorial assertion."
+      },
+      {
+        "message_id": "reddit_1tle2vc_onfn1k0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses insulting/derogatory language toward a politician",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"throw his own diapers\"",
+        "rationale": "Degrading metaphor/insult targets the opposing president."
+      },
+      {
+        "message_id": "reddit_1txrv9p_opypogo",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Strong factual-sounding harm claim about sanctions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The sanctions do kill them though.\"",
+        "rationale": "Presents a direct causative assertion (sanctions kill people)."
+      },
+      {
+        "message_id": "twitter_2060100192901181677",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Single emphatic declarative slang tag (crisis) as nonsense",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Climate \\u201ccrisis\\u201d is bullshit\"",
+        "rationale": "Uses quoted term plus taboo language to negate the concept."
+      },
+      {
+        "message_id": "reddit_1lb8wyo_mxr2wwj",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains explicit profanity plus targeted political anger",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Biden, fuck the radical left.\"",
+        "rationale": "Includes repeated explicit profanity aimed at political actors/groups."
+      },
+      {
+        "message_id": "reddit_1tupifu_opgm1tc",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Accuses a party of covert racism while instructing re-labeling",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"be as racist as you want\"; \"just don't label it\"",
+        "rationale": "Advocates wrongdoing by framing it as an untouchable but permissible act with conditions."
+      },
+      {
+        "message_id": "twitter_2061741090814722344",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Slogan-style party-to-stance contrast separated by commas",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"DEMs sanctuary cities, open borders!\"",
+        "rationale": "Uses compact political slogan structure with exclamation and party abbreviations."
+      }
+    ]
+  }
+}

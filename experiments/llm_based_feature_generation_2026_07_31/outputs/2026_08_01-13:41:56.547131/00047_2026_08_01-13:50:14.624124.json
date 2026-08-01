@@ -1,0 +1,180 @@
+{
+  "batch_id": 47,
+  "message_ids": [
+    "bluesky_469f107d63e23d3fda750736680de1c8f5a6354d3692618093adc65fdec3bc4f",
+    "bluesky_a425c8adfa81ed7e0d67a16813a1949ae4867da39a92dee5cc5bf43868220fea",
+    "bluesky_d65c756acbd5905d1c9a24a45e1be3382359f1e3868d87de707ecfbfb7e2ff85",
+    "reddit_1kgvslf_mr287e2",
+    "reddit_1l2kwly_mvxizj3",
+    "reddit_1leau17_myeyt0t",
+    "reddit_1llvpdb_n03bb5g",
+    "reddit_1lmdum5_n0akldg",
+    "reddit_1tkxn2n_ong6bue",
+    "reddit_1trdy16_op0sdu2",
+    "reddit_1u0trnc_oqn7pvv",
+    "reddit_1u1baux_oqojo40",
+    "reddit_1u1fnvf_oqpm1vc",
+    "reddit_1u1z88l_oqtmg09",
+    "reddit_1u237rb_oquyzks",
+    "twitter_2061096734437097642",
+    "twitter_2061310438844068212",
+    "twitter_2061421524041576864",
+    "twitter_2061639895224094831",
+    "twitter_2061816005278781928"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061816005278781928",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of place/political-group proper nouns (Conservatives, Canada)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"all conservatives\" ... \"Canada\u2019s economy\"",
+        "rationale": "The post contains multiple capitalized proper nouns tied to political actors and a country."
+      },
+      {
+        "message_id": "reddit_1u0trnc_oqn7pvv",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit sexual profanity used as insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck over NYC\"",
+        "rationale": "The original text includes the taboo term \"fuck\"."
+      },
+      {
+        "message_id": "reddit_1leau17_myeyt0t",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Direct insult pile-on targeting a named politician",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"a bastard, and a vacuous ignorant moron\"",
+        "rationale": "The language uses derogatory labels rather than policy argument."
+      },
+      {
+        "message_id": "bluesky_469f107d63e23d3fda750736680de1c8f5a6354d3692618093adc65fdec3bc4f",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate policy / decarbonization and corporate emissions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"climate action\" ... \"reduce emissions\"",
+        "rationale": "The post centers on climate action and emissions reduction by a company."
+      },
+      {
+        "message_id": "twitter_2061421524041576864",
+        "feature_name": "call_to_action",
+        "feature_value": "Implicit urging to reject hate/division; identity-based framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Not MAGA hate. Our politicians want us to hate each other, not solve problems.\"",
+        "rationale": "The phrasing contrasts desired behavior (solve problems) with an undesired one (hate/division)."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqpm1vc",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Two-tier in-group/out-group legal protection claimed",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"in-groups whom the law protects\" ... \"out-groups whom the law binds\"",
+        "rationale": "The content explicitly divides groups into protected vs bound categories."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqpm1vc",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Quoted theoretical/proposition statement",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"There must be in-groups...\"",
+        "rationale": "The post embeds a substantial quoted sentence as its core content."
+      },
+      {
+        "message_id": "reddit_1tkxn2n_ong6bue",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Personal anecdote with informal evaluative language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I thought that W was the most idiotic and incompetent president\"",
+        "rationale": "It uses colloquial, subjective insults and first-person narrative style."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l2kwly_mvxizj3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity directed at immigration-related group/policy",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck ice\"",
+        "rationale": "The post begins with a direct taboo/profane command targeting ICE."
+      },
+      {
+        "message_id": "reddit_1lmdum5_n0akldg",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Degrading insults of the president and direct attack",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"spineless coward\" ... \"president is a disaster\"",
+        "rationale": "The mirror uses intense, evaluative outrage language plus a hostile insult."
+      },
+      {
+        "message_id": "reddit_1kgvslf_mr287e2",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Threat/imperative escalation against government actions; retaliation framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Get fucked.\"",
+        "rationale": "The post issues an aggressive prescription/retaliation style threat tied to a property policy dispute."
+      },
+      {
+        "message_id": "bluesky_a425c8adfa81ed7e0d67a16813a1949ae4867da39a92dee5cc5bf43868220fea",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns and firearms regulation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"proposing banning guns\"",
+        "rationale": "The explicit policy topic is banning guns."
+      },
+      {
+        "message_id": "reddit_1llvpdb_n03bb5g",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Coarse sexual profanity and intensifiers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking useless and corrupt as shit\"",
+        "rationale": "The post contains explicit profanity used for emphasis and insult."
+      },
+      {
+        "message_id": "bluesky_d65c756acbd5905d1c9a24a45e1be3382359f1e3868d87de707ecfbfb7e2ff85",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Named geographic entities and groups (Texas, Austin) and ideological comparison (Labour)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Make Texas Blue\" ... \"Austin\" ... \"Labour\"",
+        "rationale": "The text includes multiple proper nouns tied to place and political parties."
+      },
+      {
+        "message_id": "twitter_2061639895224094831",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps policy slogan and mobilization language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MASS DEPORTATION IS VITAL\"",
+        "rationale": "The message uses emphatic all-caps text to broadcast a political demand."
+      },
+      {
+        "message_id": "reddit_1u1z88l_oqtmg09",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims voter-right limitation linked to extreme ideology (fascism/communism)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Only fascist scum\" ... \"Only communist scum\"",
+        "rationale": "The mirror reframes an election-related claim as evidence of conspiratorial/ideological plot."
+      }
+    ]
+  }
+}

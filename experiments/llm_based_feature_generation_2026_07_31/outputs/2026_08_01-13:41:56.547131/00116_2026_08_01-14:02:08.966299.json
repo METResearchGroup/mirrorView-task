@@ -1,0 +1,180 @@
+{
+  "batch_id": 116,
+  "message_ids": [
+    "bluesky_5540e64eba270aadc029e00eeaf23a64c840d6430f8d8d02f784502a55bfc519",
+    "bluesky_75fa978dbf45e1bb00fc930620fbcf72b0e388eba103ed006e17a91858a6d29b",
+    "bluesky_fec21c50c5d43a9fa639c803fa0c3358341c6a3ac843538f2d1429feaa2f8c3c",
+    "reddit_1kgqsc9_mr2bfeo",
+    "reddit_1km18ir_ms9sb9u",
+    "reddit_1kthr9g_mtvqesi",
+    "reddit_1l55wkp_mwfemk5",
+    "reddit_1l5ve6e_mwk6h7r",
+    "reddit_1lb6xkk_mxtik5a",
+    "reddit_1ljlipu_mzlcn79",
+    "reddit_1lnky8r_n0iggea",
+    "reddit_1sd2zf3_oepnkz4",
+    "reddit_1ture29_opcesos",
+    "reddit_1u1k8nd_oqsd8v9",
+    "twitter_2060779532764721533",
+    "twitter_2061547497076711603",
+    "twitter_2061720277906538778",
+    "twitter_2061769085138919831",
+    "twitter_2061783231540691276",
+    "twitter_2061824388471595469"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1ture29_opcesos",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slur/insult-like informal phrasing and confrontational tone",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"like you\" ... \"disguise yourself\"",
+        "rationale": "Uses direct, informal adversarial phrasing rather than neutral discussion."
+      },
+      {
+        "message_id": "reddit_1kthr9g_mtvqesi",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "emphatic exclamatory/intensity style with multiple clause punch",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"EU, just tax back big time and Trump will fold like the little bitch he is\"",
+        "rationale": "Single sentence with strong imperative plus insult for emphasis."
+      },
+      {
+        "message_id": "twitter_2061783231540691276",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "political figure + act reference + party constituency language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Senate Majority Leader, John Thune\" ... \"SAVE AMERICA ACT\"",
+        "rationale": "Contains multiple named entities and a specific legislative act."
+      },
+      {
+        "message_id": "twitter_2061769085138919831",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "tax share argument with cause/effect about jobs/donations",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"pay ~40% of taxes\" ... \"provide jobs\" ... \"donate to civil projects\"",
+        "rationale": "Claims different groups\u2019 economic contributions and redirects blame to alleged problem actors."
+      },
+      {
+        "message_id": "twitter_2061769085138919831",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "accuses \"fraudsters stealing\" tax dollars as underlying cause",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"fraudsters stealing our tax dollars\"",
+        "rationale": "Uses accusation of deception/fraud to explain political disagreement."
+      },
+      {
+        "message_id": "bluesky_75fa978dbf45e1bb00fc930620fbcf72b0e388eba103ed006e17a91858a6d29b",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "states gun policy position tied to background checks as unconstitutional",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"background checks on private sales are an unconstitutional infringement\"",
+        "rationale": "Explicitly asserts a normative/prescriptive constitutional claim about gun policy."
+      },
+      {
+        "message_id": "reddit_1lnky8r_n0iggea",
+        "feature_name": "call_to_action",
+        "feature_value": "imperative urging continued opposition",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Stay in the fucking fight.\"",
+        "rationale": "Direct command to behave in a particular way."
+      },
+      {
+        "message_id": "reddit_1km18ir_ms9sb9u",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "conditional proposal/justification leading to conclusion (if/only way language)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"It's the only way things ever get better.\"",
+        "rationale": "Justifies a proposed political action using a restrictive conclusion pattern."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l5ve6e_mwk6h7r",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "contains strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I don't want that shit in my country\"",
+        "rationale": "Includes explicit taboo/profane word."
+      },
+      {
+        "message_id": "reddit_1l5ve6e_mwk6h7r",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "portrays ICE as Nazi-like persecutors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"ICE stop acting like a Nazi gestapo\"",
+        "rationale": "Uses persecution/historical atrocity analogy to delegitimize a group."
+      },
+      {
+        "message_id": "bluesky_5540e64eba270aadc029e00eeaf23a64c840d6430f8d8d02f784502a55bfc519",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "lists many disinformation/conspiracy claims as coordinated threats",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"disinformation and conspiracies like Flat Earth, QAnan/Pizza-gate\"",
+        "rationale": "Accumulates conspiracy-theory references as an explanatory backdrop."
+      },
+      {
+        "message_id": "bluesky_5540e64eba270aadc029e00eeaf23a64c840d6430f8d8d02f784502a55bfc519",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "ALL CAPS + long emphatic statement style",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"AS WE NOW KNOW\" ... \"DEPEND UPON TRUTH!\"",
+        "rationale": "Uppercase emphasis and exclamation-heavy moral-mission phrasing."
+      },
+      {
+        "message_id": "reddit_1u1k8nd_oqsd8v9",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "cheering destruction language to harm target",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"destroy Trump in court\"",
+        "rationale": "Expresses hostile intent toward a named political figure."
+      },
+      {
+        "message_id": "twitter_2061824388471595469",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses censored profanity and aggressive dismissal",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"F@ck off with your bankruptcy.\"",
+        "rationale": "Contains direct profanity aimed at an outgroup."
+      },
+      {
+        "message_id": "reddit_1lb6xkk_mxtik5a",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insult list targeting personal traits and criminal claims",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"felon, rapist, barely literate, fat, makeup-wearing\"",
+        "rationale": "Uses harsh personal/sexual-crime accusations and demeaning physical descriptors."
+      },
+      {
+        "message_id": "twitter_2060779532764721533",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun control / disarmament policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Gun-Free Society\" ... \"Second Amendment\"",
+        "rationale": "Directly references gun-free society and repeal of Second Amendment."
+      }
+    ]
+  }
+}

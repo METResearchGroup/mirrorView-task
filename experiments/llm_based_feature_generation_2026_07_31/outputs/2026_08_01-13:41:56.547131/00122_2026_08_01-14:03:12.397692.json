@@ -1,0 +1,180 @@
+{
+  "batch_id": 122,
+  "message_ids": [
+    "bluesky_349d3154f264eed6e532d4737151a8a5749c30d6cd48a6607efb1273b7b7d94a",
+    "bluesky_72215679ec45ef3ee06cd3b0c6b4b3860202f7f8eb92fd20e79ccc962d8bb201",
+    "bluesky_f314fb6f2dd0a9632fa4e67b40579263ecdb0bbd3930f1882045273dda50ca14",
+    "reddit_1kgvslf_mr416pu",
+    "reddit_1kxhi98_mupwkno",
+    "reddit_1l4b2as_mw7lw2e",
+    "reddit_1lo82x1_n0nk59o",
+    "reddit_1t79fp1_okvhy3r",
+    "reddit_1t7d5jc_okrkk4h",
+    "reddit_1tbymrb_olkwqrw",
+    "reddit_1tbymrb_olxlwh2",
+    "reddit_1ti151j_omsndeh",
+    "reddit_1tsv1fn_oozdi95",
+    "reddit_1tt1cw0_op23s6u",
+    "reddit_1tvll8k_opiozzo",
+    "reddit_1txrgkr_oq0zyly",
+    "reddit_1u18ir0_oqpychq",
+    "reddit_1u237rb_oqucppz",
+    "twitter_2060183092183339183",
+    "twitter_2061153477565268429"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_349d3154f264eed6e532d4737151a8a5749c30d6cd48a6607efb1273b7b7d94a",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate/carbon emissions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "reduce carbon emissions",
+        "rationale": "The post explicitly discusses reducing carbon emissions and improving conditions for the planet."
+      },
+      {
+        "message_id": "bluesky_349d3154f264eed6e532d4737151a8a5749c30d6cd48a6607efb1273b7b7d94a",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls for councils/governments to lead; reform stop pandering",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Our councils and governments must lead the way",
+        "rationale": "It issues prescriptive directives about who must act and what reform must stop doing."
+      },
+      {
+        "message_id": "reddit_1kxhi98_mupwkno",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "uses 'Lol' and casual insult phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Lol, yeah",
+        "rationale": "The text uses an informal opener and casual dismissive language."
+      },
+      {
+        "message_id": "reddit_1kxhi98_mupwkno",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insults the addressee ('so dumb')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Yall are so dumb.",
+        "rationale": "The communicative intent includes direct ridicule toward the audience."
+      },
+      {
+        "message_id": "twitter_2061153477565268429",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "uses 'left' framing but no individual names",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "the entire left wishlist",
+        "rationale": "It relies on political group labels rather than specific named individuals or entities."
+      },
+      {
+        "message_id": "twitter_2061153477565268429",
+        "feature_name": "causal_claim_present",
+        "feature_value": "asserts AI buildout = policy packages and describes outcomes (jobs/productivity)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "the AI buildout is the green new deal",
+        "rationale": "The mirror equates 'AI buildout' with a causal/definitional political-economic package and attributes effects."
+      },
+      {
+        "message_id": "reddit_1tsv1fn_oozdi95",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "abortion rights/bodily autonomy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "FULL rights to the mother and NONE to the fetus",
+        "rationale": "The content directly concerns abortion rights and fetus/mother legal status."
+      },
+      {
+        "message_id": "reddit_1tsv1fn_oozdi95",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "attributes a legal/political argument to a named speaker/debate",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "JD Vance said about it during the VP debate",
+        "rationale": "It presents a quoted/attributed argument referencing a specific political debate and speaker."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tbymrb_olkwqrw",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong pejoratives ('moronic', 'wildly stupid')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "very moronic",
+        "rationale": "The text contains highly insulting taboo-like derogation language."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olkwqrw",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "character attacks via 'left's MTG / right's AOC' comparisons",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "She's the left's MTG",
+        "rationale": "It mocks a person by likening them to a known political figure and stacking insults."
+      },
+      {
+        "message_id": "reddit_1tt1cw0_op23s6u",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "dismisses claim as false and blames emotions",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "This is complete untrue. You are clearly emotional",
+        "rationale": "It uses emphatic negation plus moral/psychological blaming to express strong opposition."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olxlwh2",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "22nd amendment / FDR term limits claim",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "22nd amendment to stop FDR from running again",
+        "rationale": "The post references a specific constitutional amendment and a historical actor/event."
+      },
+      {
+        "message_id": "bluesky_72215679ec45ef3ee06cd3b0c6b4b3860202f7f8eb92fd20e79ccc962d8bb201",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "blames 'far right' for problems and suggests scapegoating 'brown skinned people'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "They blame brown skinned people for all of the problems Republicans created.",
+        "rationale": "It describes in-group/out-group blame allocation and scapegoating."
+      },
+      {
+        "message_id": "bluesky_72215679ec45ef3ee06cd3b0c6b4b3860202f7f8eb92fd20e79ccc962d8bb201",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "depicts a fix as believing removing a group will resolve issues",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They believe that getting rid of brown people will fix their problems.",
+        "rationale": "It frames the opposing group\u2019s beliefs as extreme and patterned around a purported harmful plan."
+      },
+      {
+        "message_id": "reddit_1lo82x1_n0nk59o",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions 'NPR' and 'PBS'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "NPR and PBS",
+        "rationale": "The mirror text explicitly names multiple media organizations."
+      },
+      {
+        "message_id": "reddit_1u18ir0_oqpychq",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "work comparison (IT office vs physical jobs)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Working McDonald\u2019s or Walmart on the other hand?",
+        "rationale": "It uses a clear contrastive construction to juxtapose two types of work conditions."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 86,
+  "message_ids": [
+    "bluesky_57755dc49dcc844f9bf77209c95ef2d8fc589ce9e256697012f5efccd738f192",
+    "bluesky_a9d4421c6a2495caeb19012b16e7c60aca4f7aa216d1b2390f397aca9d27b55b",
+    "bluesky_b3753bb0a9d6473ea11e09b9b94587c6417de3340dc8ea8440c5245691cf827a",
+    "bluesky_e4cbb669ffe57e5eaeb05250633569b75a3faecacfe218a367906ff2ac90695c",
+    "reddit_1kl6ssy_ms1kwmd",
+    "reddit_1klx12p_ms7kcw6",
+    "reddit_1kq8hfn_mt5k3ol",
+    "reddit_1kwohy5_muu2dbj",
+    "reddit_1lenyao_myiryrv",
+    "reddit_1liz1et_mzgv86x",
+    "reddit_1lkj9on_mzu7g7e",
+    "reddit_1tp5g11_oo6atkk",
+    "reddit_1tqhy93_ooigm3v",
+    "reddit_1tux6at_opddc63",
+    "reddit_1u08bq4_oqi7hgj",
+    "twitter_2059359537673744708",
+    "twitter_2060717062062793151",
+    "twitter_2061196779509469462",
+    "twitter_2061767552934547545",
+    "twitter_2061803057050964165"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kl6ssy_ms1kwmd",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Frequent emphatic punctuation and repetition (e.g., multiple imperatives, exclamation/multiple periods omitted but intensity high).",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fight back. Push back. Call these idiots and hypocrites out. Don't mince words.",
+        "rationale": "The text uses rapid imperative commands and high-emphasis phrasing."
+      },
+      {
+        "message_id": "reddit_1kl6ssy_ms1kwmd",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Direct insult-based attack on political actors.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Call these idiots and hypocrites out.",
+        "rationale": "The speaker uses derogatory labels to delegitimize the target."
+      },
+      {
+        "message_id": "reddit_1kwohy5_muu2dbj",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity/taboo insult tokens.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fascist motherfucker",
+        "rationale": "Contains explicit profane insult directed at a person."
+      },
+      {
+        "message_id": "reddit_1kwohy5_muu2dbj",
+        "feature_name": "call_to_action",
+        "feature_value": "Advocates an institutional punishment action.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "***Impeach and imprison*** the bastard!",
+        "rationale": "The post issues a clear demand to impeach and imprison."
+      },
+      {
+        "message_id": "bluesky_b3753bb0a9d6473ea11e09b9b94587c6417de3340dc8ea8440c5245691cf827a",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Second Amendment / guns and weapons policy context.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "second amendment and more than 350 million weapons",
+        "rationale": "Explicitly references the Second Amendment and weapon quantity."
+      },
+      {
+        "message_id": "bluesky_e4cbb669ffe57e5eaeb05250633569b75a3faecacfe218a367906ff2ac90695c",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Strong negative moral evaluation of a group.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They literally make the world worse",
+        "rationale": "Uses absolute moral judgment language ('literally make the world worse')."
+      },
+      {
+        "message_id": "twitter_2060717062062793151",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Multiple platform mentions and tag-like handles.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@realDonaldTrump @POTUS",
+        "rationale": "Text is structured around addressing multiple named accounts."
+      },
+      {
+        "message_id": "twitter_2059359537673744708",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Cost-of-living/payoff comparisons with specific vulnerable groups.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "We know we are all paying more for everything... those on EBT got a one dollar rise last year while groceries still go up.",
+        "rationale": "Contrasts costs and relief amounts to argue for policy change."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kq8hfn_mt5k3ol",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Personal insult framing via contempt labels.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "thin skinned pathetic loser",
+        "rationale": "Uses a derogatory label rather than substantive argument."
+      },
+      {
+        "message_id": "reddit_1lkj9on_mzu7g7e",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Brief demeaning phrasing without factual content.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "What a bunch of whiny bitches.",
+        "rationale": "Contains coarse, informal insult-only language."
+      },
+      {
+        "message_id": "twitter_2061803057050964165",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Use of full uppercase for emphasis.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "I\u00020 d help, but the Communist Marxist Dems and their TDS Witch Hunt",
+        "rationale": "The post contains prominent emphatic uppercase acronyms/phrases (e.g., TDS, ALL THE FOOD)."
+      },
+      {
+        "message_id": "twitter_2061803057050964165",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Alleges wrongdoing via persecution/witch-hunt narrative.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "TDS Witch Hunt",
+        "rationale": "Frames political treatment as a 'witch hunt' with target-directed intent."
+      },
+      {
+        "message_id": "bluesky_a9d4421c6a2495caeb19012b16e7c60aca4f7aa216d1b2390f397aca9d27b55b",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Culture-war framing contrasting ideologies (white nationalism vs Western libs).",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "white nationalism isn't a global movement",
+        "rationale": "Explicit ideological/identity movement claim typical of culture-war discourse."
+      },
+      {
+        "message_id": "reddit_1tqhy93_ooigm3v",
+        "feature_name": "call_to_action",
+        "feature_value": "Proposes forming a new political party outside establishment.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Him and Bernie should start their own party outside of the bullshit DNC fuckwads.",
+        "rationale": "Directly instructs/advocates a political organizational action."
+      },
+      {
+        "message_id": "reddit_1liz1et_mzgv86x",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate/environment policy and public lands protection.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "climate initiatives... protected parks",
+        "rationale": "Targets climate initiatives and parks, indicating environmental policy domain."
+      },
+      {
+        "message_id": "bluesky_57755dc49dcc844f9bf77209c95ef2d8fc589ce9e256697012f5efccd738f192",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "Uses a historical analogy about past harms/attribution and a car/global warming comparison.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "like saying any one who drives a Car to Work is responsible for all Global Warming",
+        "rationale": "Employs an explicit analogy to argue about responsibility across time."
+      }
+    ]
+  }
+}

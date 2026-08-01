@@ -1,0 +1,180 @@
+{
+  "batch_id": 127,
+  "message_ids": [
+    "bluesky_4f9bdb1c6e82d8d48f2e66a934e664190f419306dc5e4a381fddbcb9985ca947",
+    "bluesky_8c3c5c7b2fdd8b4504f526c1c2ca1dd79202d3a1a3645f08714c8516ec766d90",
+    "bluesky_92dc77da7b7f1812bf36c1f86e138c5597126ce4529cf0daa5e6d68f5aa94a03",
+    "bluesky_cbbae2a3adadcc9065b8d25825f3f7b0f47fdd7e596cfed291d83eaf4a11056f",
+    "bluesky_d157b4f0c409a08f067a5f9c920f7680f4ae3a270f9b0b62494e8d6c48e34e41",
+    "bluesky_efbcf9c956d68b54f926444f13bc182f736d6e6ac2fe45d895c32931ca158ceb",
+    "reddit_1ksthon_mtqmivi",
+    "reddit_1ku0t3s_mty3ki7",
+    "reddit_1llzlg3_n07adq5",
+    "reddit_1tdz1jj_olz51g8",
+    "reddit_1teskmx_om6vp48",
+    "reddit_1tky7ol_onh00zn",
+    "reddit_1tt6s61_op123zh",
+    "reddit_1tuwb8f_opd3wgi",
+    "twitter_2059794280190034314",
+    "twitter_2060352577141657787",
+    "twitter_2061448464249024840",
+    "twitter_2061485042577052120",
+    "twitter_2061769432805023859",
+    "twitter_2061783332434620672"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tdz1jj_olz51g8",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit sexual violence/pedophilia terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"raping children\"; \"pedos\"",
+        "rationale": "The text contains graphic taboo sexual-violence vocabulary."
+      },
+      {
+        "message_id": "reddit_1tdz1jj_olz51g8",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames children as victims of abuse covered up by elites",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"which includes raping children and getting away with it\"",
+        "rationale": "It emphasizes harm to a vulnerable group and implied cover-up."
+      },
+      {
+        "message_id": "twitter_2061783332434620672",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Direct @mention of a political figure",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@LeaderJohnThune\"",
+        "rationale": "Contains a user/handle mention targeting a named individual."
+      },
+      {
+        "message_id": "twitter_2061783332434620672",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "References SAVE Act and FISA surveillance",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"SAVE Act\"; \"FISA\"",
+        "rationale": "Mentions specific legislation/policy mechanisms."
+      },
+      {
+        "message_id": "twitter_2061448464249024840",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Encourages activism and collective participation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Join the conversation, spark change, and be part of the movement\"",
+        "rationale": "Uses moral/values-oriented exhortation rather than neutral description."
+      },
+      {
+        "message_id": "bluesky_d157b4f0c409a08f067a5f9c920f7680f4ae3a270f9b0b62494e8d6c48e34e41",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate/energy policy argument about oil refinery and climate change",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"burning oil refinery\"; \"climate change\"",
+        "rationale": "Central topic is climate/energy impacts and the refinery action."
+      },
+      {
+        "message_id": "reddit_1tuwb8f_opd3wgi",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Portrays an outgroup as manufacturing a misogynistic backlash",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"so-called men's rights movement\"; \"misogynistic backlash\"",
+        "rationale": "Uses group labeling and blame assignment to an opposition movement."
+      },
+      {
+        "message_id": "reddit_1ksthon_mtqmivi",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct insult/tailored address to a supporter group",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"for you dipshit Trump cultists out there\"",
+        "rationale": "Second-person phrasing targets a specific audience with an insult."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1llzlg3_n07adq5",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "No proper nouns; generic ideological labels",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Liberals\"; \"Conservatives\"",
+        "rationale": "Predominantly uses broad ideological in-group/out-group labels without named entities."
+      },
+      {
+        "message_id": "bluesky_4f9bdb1c6e82d8d48f2e66a934e664190f419306dc5e4a381fddbcb9985ca947",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun rights vs police funding (gun control / defund the police)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun control\"; \"defund the police\"",
+        "rationale": "The policy debate centers on firearms and policing."
+      },
+      {
+        "message_id": "bluesky_4f9bdb1c6e82d8d48f2e66a934e664190f419306dc5e4a381fddbcb9985ca947",
+        "feature_name": "pragmatics_intent",
+        "feature_value": "Rhetorical question implying inevitability of scenario",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Isn't this exact scenario the reason they say they need guns?\"",
+        "rationale": "Uses a question form to drive a conclusion rather than seek information."
+      },
+      {
+        "message_id": "reddit_1ku0t3s_mty3ki7",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Apocalyptic insult with sexualized/hell imagery",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"If there was a hell, it wouldn't be hot enough\"",
+        "rationale": "Employs heightened, dramatic condemnation."
+      },
+      {
+        "message_id": "bluesky_92dc77da7b7f1812bf36c1f86e138c5597126ce4529cf0daa5e6d68f5aa94a03",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Accuses group of hypocrisy undermining rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They believe in it for them until people in their midst start to demur\"",
+        "rationale": "Claims systematic/strategic hypocrisy about values."
+      },
+      {
+        "message_id": "bluesky_efbcf9c956d68f54f926444f13bc182f736d6e6ac2fe45d895c32931ca158ceb",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Claims economic harm and affordability impacts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"destroying our economy\"; \"energy costs are skyrocketing\"; \"life unaffordable\"",
+        "rationale": "Uses cost/benefit style claims tied to prices and livelihoods."
+      },
+      {
+        "message_id": "reddit_1tt6s61_op123zh",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Causal attribution of responsibility as certainty",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is uniquely responsible for all the shit he's doing\"",
+        "rationale": "Makes strong causal blame without hedging."
+      },
+      {
+        "message_id": "twitter_2061769432805023859",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Uses slogan-like org/brand attribution (LifeSite)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"LifeSite\"",
+        "rationale": "Contains a named outlet reference."
+      }
+    ]
+  }
+}

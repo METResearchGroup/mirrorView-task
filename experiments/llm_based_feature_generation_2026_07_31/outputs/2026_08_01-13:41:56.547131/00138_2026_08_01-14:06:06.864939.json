@@ -1,0 +1,180 @@
+{
+  "batch_id": 138,
+  "message_ids": [
+    "bluesky_1f618eb22c2517e63f0a9f3b1316090c10646898191d3772ff8b3755f98af925",
+    "bluesky_260ee8942834123c524ca3ad5e87645e4fe82b9b65546cd6f8943e725ed2b046",
+    "bluesky_3f881c29bcd3e75a7c237ceb2becf41198684178c4c8e4dd48a275a9013ee004",
+    "bluesky_5ab663ba0ae92491895ea4e9d60f538de7c73bd48b0b0b2510f0afeabd7260c6",
+    "bluesky_9638fc5f3c379fec6f82b6b167ec105dc9fa7c7b4e96ac269e0d5e716641a34c",
+    "bluesky_e3e143c4a6a7dff770ab89ab5e9b07ed672af1027470e62830b436b2ae7a2741",
+    "bluesky_e64f8f7d661ba3950c8d305f38f337c55ab469f875b447970cb105669c86dfe9",
+    "reddit_1ksyz7k_mtsdilq",
+    "reddit_1liejsg_mzdmc4p",
+    "reddit_1td4d2o_oltso4o",
+    "reddit_1tnobm9_onvexio",
+    "reddit_1tt3m71_oozuigz",
+    "reddit_1tupifu_opcof0x",
+    "reddit_1tvsp9t_opjp30t",
+    "reddit_1tw6zcr_opo2i0o",
+    "twitter_2060868911416115228",
+    "twitter_2061495233393631526",
+    "twitter_2061538025637642511",
+    "twitter_2061776266710196661",
+    "twitter_2061798239901233373"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tt3m71_oozuigz",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Predicts loss of national assets due to corporate/billionaire control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Soon we will have nothing that belongs to USA.",
+        "rationale": "States a future causal outcome (USA assets will be lost) tied to a claimed takeover."
+      },
+      {
+        "message_id": "bluesky_5ab663ba0ae92491895ea4e9d60f538de7c73bd48b0b0b2510f0afeabd7260c6",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns_gun_control",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "We need drastic gun control measures.",
+        "rationale": "Explicitly calls for gun control measures."
+      },
+      {
+        "message_id": "bluesky_5ab663ba0ae92491895ea4e9d60f538de7c73bd48b0b0b2510f0afeabd7260c6",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple emphatic exclamations in short span",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "THIS IS NOT OKAY!",
+        "rationale": "Uses all-caps plus strong exclamation punctuation to intensify emotion."
+      },
+      {
+        "message_id": "reddit_1ksyz7k_mtsdilq",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Derogatory insults toward audiences",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "trumpkins keep harping",
+        "rationale": "Uses a mocking/derogatory label for political supporters."
+      },
+      {
+        "message_id": "twitter_2061776266710196661",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Deems certain acts disqualifying from moral character requirement",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "disqualifying from the \"good moral character\" required for citizenship.",
+        "rationale": "Uses moral/character normative framing to exclude someone."
+      },
+      {
+        "message_id": "twitter_2060868911416115228",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses readers with evaluative labels",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "called you a bigot for noticing.",
+        "rationale": "Uses 'you' to directly address the audience."
+      },
+      {
+        "message_id": "bluesky_260ee8942834123c524ca3ad5e87645e4fe82b9b65546cd6f8943e725ed2b046",
+        "feature_name": "call_to_action",
+        "feature_value": "Indicates pursuing actors responsible",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "And we're going after social media giants",
+        "rationale": "Signals an active campaign against specified targets."
+      },
+      {
+        "message_id": "reddit_1td4d2o_oltso4o",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original frames Trump schemes; mirror shifts to Biden family schemes and foreign deals",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Trump\u00019s personal enrichment schemes... / Biden's family enrichment schemes...",
+        "rationale": "The mirror rewrites the identity of the alleged beneficiary while keeping the enrichment/impact theme."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_e3e143c4a6a7dff770ab89ab5e9b07ed672af1027470e62830b436b2ae7a2741",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Portrays hypocrisy and backlash after deaths/riots",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Now these same clowns clutch their pearls over anyone daring to defend themselves.",
+        "rationale": "Frames one side as victimized by being criticized, using hypocrisy backlash language."
+      },
+      {
+        "message_id": "twitter_2061798239901233373",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Characterizes abortion in moral/graphic terms",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Dismemberment abortion \u0012involves poisoning a pre-born child and removing them piece by piece.",
+        "rationale": "Uses strongly moralized, graphic description to condemn abortion."
+      },
+      {
+        "message_id": "bluesky_1f618eb22c2517e63f0a9f3b1316090c10646898191d3772ff8b3755f98af925",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Direct gun-arming instruction and training advice",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Every trans American needs to buy a gun right now before it's too late. \n\nBuy a gun, keep it on you at all times, and regularly train with it.",
+        "rationale": "Advocates specific actions (buy/carry/train) targeting a protected group."
+      },
+      {
+        "message_id": "reddit_1liejsg_mzdmc4p",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity in slur/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Republicans are f****** idiots.",
+        "rationale": "Contains censored profanity used to insult a group."
+      },
+      {
+        "message_id": "reddit_1tnobm9_onvexio",
+        "feature_name": "target_directionality",
+        "feature_value": "Calls one party supporters a derogatory term (POS) as target",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "vote for a  POS GOP.",
+        "rationale": "Uses demeaning language toward a political actor/group."
+      },
+      {
+        "message_id": "bluesky_e64f8f7d661ba3950c8d305f38f337c55ab469f875b447970cb105669c86dfe9",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "References a specific author/work",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Roxanne Dunbar-Ortiz... \"Loaded: A Disarming History of the Second Amendment\"",
+        "rationale": "Mentions an identifiable person and a specific book title."
+      },
+      {
+        "message_id": "bluesky_3f881c29bcd3e75a7c237ceb2becf41198684178c4c8e4dd48a275a9013ee004",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Rhetorical questioning about shooting ability",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "like, who said i know how to shoot?",
+        "rationale": "Uses a rhetorical question structure to challenge competence behind carry authorization."
+      },
+      {
+        "message_id": "twitter_2061538025637642511",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "States operational/legal process details",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Immigration courts are now stacking 100+ cases into single \"mega master\" hearings.",
+        "rationale": "Makes concrete claims about procedure and consequences rather than speculation."
+      }
+    ]
+  }
+}

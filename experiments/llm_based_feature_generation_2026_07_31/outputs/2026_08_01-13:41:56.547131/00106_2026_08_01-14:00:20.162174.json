@@ -1,0 +1,180 @@
+{
+  "batch_id": 106,
+  "message_ids": [
+    "bluesky_5194017ab11fb2d46a614a0e64bcaaa2731d27ae88bc58c079703b073a53413a",
+    "bluesky_5b5b74414d59fe627796590ce0b0d0e53ae544d8f79e240c9b0ea10bca5f3abe",
+    "bluesky_80ef6c645c03d673077a3f942a53f62361acc7a960a9640c3c71df54ae3a704e",
+    "bluesky_edfe5f03e41ddfaaa5ce4554bb803b2eb58625996cafbe68d9dcf94facfe031d",
+    "bluesky_f0ab548ff625fb063a16547ed40f64207156648795b1e438869a6f0f39925871",
+    "reddit_1kkvadr_ms2g7eo",
+    "reddit_1kp0psp_msv33qs",
+    "reddit_1lbzykw_mxzr0nz",
+    "reddit_1li0ysy_mz9enah",
+    "reddit_1li51oc_mz9elhs",
+    "reddit_1scqdpt_oeincsg",
+    "reddit_1t4w5i9_ok7hz77",
+    "reddit_1tzgcp8_oqbku4u",
+    "twitter_2059777848370708856",
+    "twitter_2060527990719844776",
+    "twitter_2060836594127438322",
+    "twitter_2061138122872631604",
+    "twitter_2061506814584500349",
+    "twitter_2061511107240444400",
+    "twitter_2061827838009848288"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059777848370708856",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses 'your' to address voters directly",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"If you care about your Gun Rights in California\"",
+        "rationale": "Direct second-person framing targets the audience with 'you care/your only vote' language."
+      },
+      {
+        "message_id": "reddit_1li0ysy_mz9enah",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insults news channel as stupidity/propaganda",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fox is more of a stupidity briefing.\" / \"MSNBC is more of a propaganda briefing.\"",
+        "rationale": "Explicit derogatory labeling is used for contempt rather than neutral critique."
+      },
+      {
+        "message_id": "twitter_2060527990719844776",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Chain of rhetorical questions targeting 'experts' and climate crisis",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Since the \\u201cexperts\\u201d have had to admit... Will we be able to... Is it time to...\"",
+        "rationale": "The text is structured as questions to push a stance, not to request information."
+      },
+      {
+        "message_id": "bluesky_5194017ab11fb2d46a614a0e64bcaaa2731d27ae88bc58c079703b073a53413a",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"it's fucking stupid to say\"",
+        "rationale": "Contains a strong profanity term used for emphasis."
+      },
+      {
+        "message_id": "twitter_2061827838009848288",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "If-then threat reciprocity on straits access",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If they are going to shut down the straits for everybody, we are going to shut down the straits for them.\"",
+        "rationale": "Clear conditional construction expresses reciprocal action based on another actor\u2019s move."
+      },
+      {
+        "message_id": "twitter_2061138122872631604",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political/religious org/place names",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Planned Parenthood\" / \"Make America a Christian nation\"",
+        "rationale": "Mentions specific organizations and a political-religious slogan, increasing named-entity focus."
+      },
+      {
+        "message_id": "reddit_1t4w5i9_ok7hz77",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Generational/party in-group vs out-group voting dismissal",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The average lib voters\" / \"nonsense of the left\"",
+        "rationale": "Separates 'lib voters' (out-group) from the argument\u2019s stance and attributes refusal/denial."
+      },
+      {
+        "message_id": "bluesky_edfe5f03e41ddfaaa5ce4554bb803b2eb58625996cafbe68d9dcf94facfe031d",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Quotation marks plus exclamation for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"think happy thoughts.\" / \"Look closely: renewable energy!\"",
+        "rationale": "Uses emphatic punctuation and repeated 'Look closely' to drive attention."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_f0ab548ff625fb063a16547ed40f64207156648795b1e438869a6f0f39925871",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Implied victimized out-group vs 'if you're not one of these'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"take guns away from those deemed too dangerous\" / \"If you're a gun owner but not one of these, you needn't worry\"",
+        "rationale": "Creates a conditional split between targeted groups and an implied safe group."
+      },
+      {
+        "message_id": "reddit_1kp0psp_msv33qs",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses heavy insult/profanity terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Dumbshit\" / \"MAGA IDIOTS\" / \"Gullible sheep!\"",
+        "rationale": "Multiple derogatory insults and slurs/epithets appear in the text."
+      },
+      {
+        "message_id": "bluesky_5b5b74414d59fe627796590ce0b0d0e53ae544d8f79e240c9b0ea10bca5f3abe",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Uses identity/sexuality-coded pun to ridicule climate/green energy",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "\"fossil fuels are turning the climate gay\"",
+        "rationale": "Ridicules climate policy through a taboo/identity pun, signaling culture-war style framing."
+      },
+      {
+        "message_id": "twitter_2061506814584500349",
+        "feature_name": "call_to_action",
+        "feature_value": "Commands viewers to demand a policy amendment",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Demand the #ERA be publish.\"",
+        "rationale": "Uses directive language explicitly urging an action."
+      },
+      {
+        "message_id": "reddit_1tzgcp8_oqbku4u",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Reverses who is hero/victim and claims attacks are being done to interviewer",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"he is totally the victim\" / \"They are attacking the interviewer\"",
+        "rationale": "Frames the subject as a victim/persecuted party while attributing aggression to others."
+      },
+      {
+        "message_id": "reddit_1lbzykw_mxzr0nz",
+        "feature_name": "target_directionality",
+        "feature_value": "Direct blame to 'Christian conservatives'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Thanks Christian conservatives. You did this\"",
+        "rationale": "Assigns responsibility to a specific criticized actor group using direct second-person blame."
+      },
+      {
+        "message_id": "twitter_2060836594127438322",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Uses campaign hashtag at end",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#EndPoverty\"",
+        "rationale": "Includes a prominent hashtag associated with a policy/campaign call."
+      },
+      {
+        "message_id": "bluesky_80ef6c645c03d673077a3f942a53f62361acc7a960a9640c3c71df54ae3a704e",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Lists multiple 'enabled/controlled by' actors implying coordinated fascist/globalist control",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"He\u2019s enabled by... corrupt ... He\u2019s controlled by corrupt heads of states like Israel and Russia\"",
+        "rationale": "Uses stacked attribution of influence from many groups, consistent with conspiracy/control framing."
+      }
+    ]
+  }
+}

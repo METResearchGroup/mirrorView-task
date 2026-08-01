@@ -1,0 +1,180 @@
+{
+  "batch_id": 26,
+  "message_ids": [
+    "bluesky_8747ab78fa8d72b2e1840b49c02feaa8f5ced135f1039c8082959b503e19d208",
+    "bluesky_899b66bb6a95ca339630c292181c8fd4ba1aeee331a9c11ae75080017da23830",
+    "reddit_1ke2vut_mqheoer",
+    "reddit_1kg5azy_mx9k2fg",
+    "reddit_1khug51_mrad843",
+    "reddit_1kwzgin_musbv9y",
+    "reddit_1tgxg10_omm6lw4",
+    "reddit_1tiody8_omxz6kv",
+    "reddit_1tkkoy6_onctmds",
+    "reddit_1tn7lg4_onu4d7k",
+    "reddit_1tqfpwr_oog28zn",
+    "reddit_1tsr4st_op1h063",
+    "reddit_1tw1yjv_oq9c9hq",
+    "reddit_1twgtct_opthdhs",
+    "reddit_1txm3lk_opx361b",
+    "reddit_1u0oc51_oqmacus",
+    "reddit_1u2nrer_oqzu964",
+    "twitter_2060013479810007088",
+    "twitter_2061320240412152002",
+    "twitter_2061528144314601497"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u2nrer_oqzu964",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "foreign policy / Iran nuclear & proxy warfare",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Iran cannot be allowed to wage proxy terror wars\" / \"pursuing a nuke\"",
+        "rationale": "The post centers on US-Iran actions, proxy wars, and nuclear pursuit."
+      },
+      {
+        "message_id": "reddit_1u2nrer_oqzu964",
+        "feature_name": "causal_claim_present",
+        "feature_value": "action justified as preventing proxy terror while enabling deterrence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Taking action against Iran was correct.\"",
+        "rationale": "It asserts that acting against Iran causally supports safety outcomes."
+      },
+      {
+        "message_id": "reddit_1kwzgin_musbv9y",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Palestinian, Hamas, October 7th)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Palestinian civilians\" \"October 7th\" \"Hamas\"",
+        "rationale": "Multiple specific entities and a dated event are named."
+      },
+      {
+        "message_id": "reddit_1tn7lg4_onu4d7k",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "rhetorical question framed as direct challenge",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Why, as a conservative, should I oppose Russia and China?\"",
+        "rationale": "The sentence is a direct rhetorical question addressed by its structure."
+      },
+      {
+        "message_id": "reddit_1tiody8_omxz6kv",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "attribution via reported signal about belief/motive",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"judge in the case signaled she wasn't buying\"",
+        "rationale": "It embeds a judge\u2019s stance using reported/attributed language."
+      },
+      {
+        "message_id": "reddit_1tw1yjv_oq9c9hq",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "counterexample/contrast with 'At least try'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"At least try to pick an example\"",
+        "rationale": "The post pivots from a claim to a challenge urging a different example."
+      },
+      {
+        "message_id": "twitter_2061320240412152002",
+        "feature_name": "call_to_action",
+        "feature_value": "invite to attend a meeting and speak up",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"join the Air Resources Board meeting today on Zoom and speak up\"",
+        "rationale": "It contains an explicit directive encouraging audience participation."
+      },
+      {
+        "message_id": "reddit_1tgxg10_omm6lw4",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "DOJ weaponization attributed to both camps (Trump/MAGA vs Biden/left)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump weaponizing the doj\" / \"Biden and Garland turning the DOJ\"",
+        "rationale": "It contrasts two partisan actors as sharing a criticized practice."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1u0oc51_oqmacus",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "derogatory slur terms for conservatives/liberals",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"conservative windbag\" / \"liberal blowhard\"",
+        "rationale": "The wording mocks and insults groups rather than discussing policy."
+      },
+      {
+        "message_id": "reddit_1txm3lk_opx361b",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity targeting Trump",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Donald Trump\"",
+        "rationale": "It uses direct profanity and a hostile imperative."
+      },
+      {
+        "message_id": "reddit_1kg5azy_mx9k2fg",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insulting vulgar epithet",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"liberal dumbasses\"",
+        "rationale": "The text uses demeaning language toward a political outgroup."
+      },
+      {
+        "message_id": "twitter_2061528144314601497",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short/fragmented (single-sentence slang)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"climate change my ass rain for a week now\"",
+        "rationale": "The post is brief and written like a punchy fragment with slang."
+      },
+      {
+        "message_id": "twitter_2061528144314601497",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "claims short-term weather disproves climate science",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"ONE cold week totally disproves decades of data\"",
+        "rationale": "It presents a pseudo-empirical assertion as a conclusion."
+      },
+      {
+        "message_id": "reddit_1tqfpwr_oog28zn",
+        "feature_name": "target_directionality",
+        "feature_value": "calls for mass deportation of a political party outgroup",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans should be deported all of them.\"",
+        "rationale": "It advocates removal/deportation at group scale."
+      },
+      {
+        "message_id": "reddit_1khug51_mrad843",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "direct profanity at 'anonymous source'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh, shut the fuck up\"",
+        "rationale": "It includes explicit obscene language directed at an interlocutor."
+      },
+      {
+        "message_id": "bluesky_8747ab78fa8d72b2e1840b49c02feaa8f5ced135f1039c8082959b503e19d208",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun violence / gun control debate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"response to any shooting is more guns\" / \"loaded 9mm pistol\"",
+        "rationale": "The content centers on responses to shootings and specific firearms."
+      }
+    ]
+  }
+}
