@@ -1,9 +1,5 @@
 # Smoke test results
 
-**Date:** 2026-08-01  
-**Status:** Passed (`smoke: ok`)  
-**Prompt version:** Six fixed category checklists from `experiments/followup_model_error_analysis_2026_07_15/extract/prompts.py`; max **8 keep + 8 remove** features per batch (no `confidence` field)
-
 **Command:**
 
 ```bash
@@ -78,20 +74,4 @@ Source: `outputs/2026_08_01-13:33:27.391014/00000_2026_08_01-13:33:35.677164.jso
 
 ## Interpretation (smoke-scale)
 
-On a single 10+10 batch, the model respected the **8+8 feature cap** and tagged checklist features (no `confidence` field). Remove-rated themes skew toward profanity, ridicule, conspiracy framing, and election-process claims; keep-rated themes skew toward policy/causal argumentation and accountability language. This is one batch only — not evidence about corpus-wide separability.
-
-## Artifacts on disk
-
-```
-experiments/llm_based_feature_generation_2026_07_31/outputs/
-├── 2026_08_01-13:33:18.099196/          # stage 1 run
-│   ├── metadata.json
-│   └── 00000_2026_08_01-13:33:27.390065.json
-└── 2026_08_01-13:33:27.391014/          # stage 2 run
-    ├── metadata.json
-    └── 00000_2026_08_01-13:33:35.677164.json
-```
-
-## Next step
-
-Per the plan approval gate, **do not start Step 5** (50% production run + `RESULTS.md`) until you explicitly approve these smoke results.
+Remove-rated themes skew toward profanity, ridicule, conspiracy framing, and election-process claims; keep-rated themes skew toward policy/causal argumentation and accountability language. This is one batch only — not evidence about corpus-wide separability.

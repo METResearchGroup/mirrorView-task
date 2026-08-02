@@ -22,7 +22,7 @@ Outputs are written under `outputs/{timestamp}/` for each stage (metadata plus p
 
 ## Smoke test (cheap validation)
 
-Run a live end-to-end sample with **one batch** (10 keep + 10 remove posts). Smoke uses fraction sampling only and must **not** create or overwrite `data/sampled_subset.csv` (that frozen 50% file is owned by the production Step 5 run).
+Run a live end-to-end sample with **one batch** (10 keep + 10 remove posts). Smoke uses fraction sampling only.
 
 ```bash
 PYTHONPATH=. uv run python \
@@ -39,15 +39,9 @@ PYTHONPATH=. uv run python -m experiments.llm_based_feature_generation_2026_07_3
   --seed 42
 ```
 
-Requires `OPENAI_API_KEY` in the repo-root `.env` (loaded via `research_tools`).
+Requires `OPENAI_API_KEY`.
 
-## Approval gate before production run
-
-**Do not start the 50% production run until the user explicitly approves after reviewing Step 4 smoke results.**
-
-After smoke passes and results are reviewed, run the frozen 50% corpus (Step 5). That step persists and reuses `data/sampled_subset.csv` so re-runs do not reshuffle posts. Smoke must not write that file.
-
-## Production run (after explicit approval only)
+## Production run
 
 ```bash
 PYTHONPATH=. uv run python -m experiments.llm_based_feature_generation_2026_07_31.main \

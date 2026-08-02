@@ -10,9 +10,6 @@ from experiments.llm_based_feature_generation_2026_07_31.schemas import (
     MAX_REMOVE_FEATURES_PER_BATCH,
 )
 
-# Category checklist copied verbatim from
-# experiments/followup_model_error_analysis_2026_07_15/extract/prompts.py
-# (UNIFIED_EXTRACTION_PROMPT lines 21–92).
 FEATURE_EXTRACTION_CATEGORY_SECTION = """
 ## Category 1: Surface and lexical (`surface_lexical`)
 
