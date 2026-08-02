@@ -1,0 +1,180 @@
+{
+  "batch_id": 69,
+  "message_ids": [
+    "bluesky_14e9819171983c1700187a36e8583ab567e16bb33f085b872eeb6f09a784ab70",
+    "bluesky_1cb33e47c3f79d840219e94a6c249459ca3f11004ae74c311c5fa20fbdda4a0b",
+    "bluesky_ab1b501eca5504b5397be34f737a8db036d604816710c4ab349ea3d2d0470477",
+    "bluesky_b1a7afe05e21448dcb98be1eb83402aeed09e0e553cb6ae1234387d8b912b127",
+    "bluesky_e24047be0fa79d44ed022b7663fadf8f4d0c36bec9c615c74ffb77c422610c49",
+    "bluesky_e8964356c5eac3130698d5e7c03a96a4311d124c7149a23cbc159e0b22fbadf0",
+    "bluesky_ec63bacacd836c655a85f73b246aaa743119b53aaaaaea675ffd34dc20acb193",
+    "bluesky_fc5755a94a777ce6296a91c6c123dbea589f53586f52b8f603643621ce36d750",
+    "reddit_1kfohcu_mqts7eb",
+    "reddit_1kjz233_mrr0n2d",
+    "reddit_1ksy3bs_mtr84o5",
+    "reddit_1ksydgu_mtp9msm",
+    "reddit_1l34a0n_mvykhcp",
+    "reddit_1liz1et_mzghw2p",
+    "reddit_1lnehz0_n0ez2x2",
+    "reddit_1tsvd1m_op0md45",
+    "reddit_1tug26y_opbydy8",
+    "reddit_1twd1b6_opvlh0u",
+    "twitter_2061498615227625951",
+    "twitter_2061805216790708579"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1lnehz0_n0ez2x2",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "If the warning signs are JUST starting to appear for independent voters, we\u2019re screwed... handed him the keys TWICE!",
+        "rationale": "The post contains multiple sentences plus emphatic phrases, indicating a long length."
+      },
+      {
+        "message_id": "reddit_1lnehz0_n0ez2x2",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slang/intensifiers (e.g., 'screwed', 'stupid ass')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "we\u2019re screwed... this stupid ass country",
+        "rationale": "Uses colloquial, informal intensifiers rather than formal political language."
+      },
+      {
+        "message_id": "reddit_1lnehz0_n0ez2x2",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "uppercase emphasis ('JUST', 'TWICE')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "JUST starting... handed him the keys TWICE!",
+        "rationale": "Capitalized tokens are used to heighten emphasis."
+      },
+      {
+        "message_id": "bluesky_ab1b501eca5504b5397be34f737a8db036d604816710c4ab349ea3d2d0470477",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "uses named organizations/terms (e.g., Medicaid, snap, ice)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "g u t t i n g medicaid/Healthcare, cutting snap... ice separating families",
+        "rationale": "High density of named programs/agencies appears in the sentence."
+      },
+      {
+        "message_id": "bluesky_14e9819171983c1700187a36e8583ab567e16bb33f085b872eeb6f09a784ab70",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "rhetorical 'what are we' addressing audience implicitly",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"well regulated?\" NAH!",
+        "rationale": "Uses direct rhetorical questioning targeting the reader/audition."
+      },
+      {
+        "message_id": "bluesky_b1a7afe05e21448dcb98be1eb83402aeed09e0e553cb6ae1234387d8b912b127",
+        "feature_name": "target_directionality",
+        "feature_value": "party-direction: Democrats criticized; mirror shifts to Republicans",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Where the fuck are the dems? / mirror: The Republican Party keeps pretending...",
+        "rationale": "Original focuses on 'dems' and mirror retargets the blame/praise to the Republican Party."
+      },
+      {
+        "message_id": "twitter_2061805216790708579",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "worker-focused ingroup attacked by outgroup 'Democrats' / mirror retargets to 'Republicans'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Democrats will throw American workers... / mirror: Republicans will throw American workers...",
+        "rationale": "The claim uses an outgroup-vs-workers framing and mirror changes which party is blamed."
+      },
+      {
+        "message_id": "bluesky_ec63bacacd836c655a85f73b246aaa743119b53aaaaaea675ffd34dc20acb193",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "proposes gun-regulation prescriptions (registry, limit sales, background checks)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "I'd tweak the second... include a national firearms registry... limit gun show sales. Also mandatory background checks",
+        "rationale": "The text makes concrete recommendations for policy changes."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_1cb33e47c3f79d840219e94a6c249459ca3f11004ae74c311c5fa20fbdda4a0b",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "uppercase statistical claim 'GUNS ARE THE #1 KILLER...'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "GUNS ARE THE #1 KILLER OF CHILDREN IN THE US.",
+        "rationale": "A capitalized, attention-grabbing headline-style claim is used."
+      },
+      {
+        "message_id": "bluesky_1cb33e47c3f79d840219e94a6c249459ca3f11004ae74c311c5fa20fbdda4a0b",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "children positioned as victims; policy framed as harming children",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Why would anyone be AGAINST background checks...",
+        "rationale": "The post centers children as the harmed group and frames laws as protections."
+      },
+      {
+        "message_id": "reddit_1ksydgu_mtp9msm",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insulting 'assholes' and strong profanity ('petty', 'vindictive')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "one petty and vindictive asshole",
+        "rationale": "Uses abusive personal invective rather than policy discussion."
+      },
+      {
+        "message_id": "reddit_1ksy3bs_mtr84o5",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity/intensifier ('literal fucking children')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "literal fucking children like Trump",
+        "rationale": "Contains direct taboo/profane language."
+      },
+      {
+        "message_id": "reddit_1kfohcu_mqts7eb",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "heavy expletive with emphatic punctuation/newline structure",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "I\u2019m so fucking tired... Fuck your vendetta, Trump.",
+        "rationale": "Emotional emphasis via expletive and emphatic paragraph-breaking."
+      },
+      {
+        "message_id": "reddit_1kfohcu_mqts7eb",
+        "feature_name": "call_to_action",
+        "feature_value": "dismissive imperative targeting opponent ('Fuck your vendetta')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Fuck your vendetta, Trump.",
+        "rationale": "Uses an imperative form intended to directly confront the target."
+      },
+      {
+        "message_id": "reddit_1twd1b6_opvlh0u",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "derogatory claim of being 'brainwashed' and inability to empathize",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "You're so brainwashed you are unable to feel sorry for a White person",
+        "rationale": "Direct derogation of the audience/opponent with contempt language."
+      },
+      {
+        "message_id": "reddit_1liz1et_mzghw2p",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "references political documents/initiatives (Project 2025, Green New Deal)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "They put this in project 2025 too... mirror: buried it in the Green New Deal",
+        "rationale": "Mentions specific named political programs/documents in both versions."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 17,
+  "message_ids": [
+    "bluesky_2f413515d55dea48883ef6ccb3e00b89d872bfe5e02ca08782ac61320ebef0d5",
+    "bluesky_32d2108020be4de5ca23bde6c4b10920030fc41a0980751552267d09832544e5",
+    "bluesky_45ff73bf25d29937e6fc3d2acd886d5ff3b3a15fc271887dc5e4e574bddb9bf5",
+    "bluesky_4a27700c790a7dcc514acb0881941a5f6b1fef0c1615081dee5e22c2ae77df9e",
+    "bluesky_6e7366da93c48a381c2ad6df044dd035bfc026e47c64bd56f3481e4cced7ee16",
+    "reddit_1kjbrqd_mrpjj4l",
+    "reddit_1kkiq63_mrvc7lh",
+    "reddit_1kohwmm_msrzdqm",
+    "reddit_1kqc1ix_mt6osyo",
+    "reddit_1tqf4v3_oojf9yn",
+    "reddit_1trnhrp_ooppz7k",
+    "reddit_1tstlbr_ooy9ret",
+    "reddit_1tux6at_opdj7n2",
+    "reddit_1two3nw_opsa16w",
+    "reddit_1u0y1yy_oqo6zd5",
+    "reddit_1u1ngzk_oqr5va2",
+    "twitter_2060096254034792942",
+    "twitter_2060376049435791513",
+    "twitter_2060475083844657292",
+    "twitter_2061576358862655705"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kkiq63_mrvc7lh",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity and sexual/taboo insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Jesus fucking christ\" ... \"rapist\" ... \"self confessed pedophile\"",
+        "rationale": "Contains explicit profanity plus highly charged sexual and criminal labels."
+      },
+      {
+        "message_id": "reddit_1kkiq63_mrvc7lh",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Very high intensity of insults and compound list separated by commas",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"petulant man child, rapist, conman, traitor, felon and self confessed pedophile\"",
+        "rationale": "A long string of condemnatory terms indicates maximal rhetorical aggression."
+      },
+      {
+        "message_id": "reddit_1kkiq63_mrvc7lh",
+        "feature_name": "targeted_actor_type",
+        "feature_value": "Targets a specific top politician as corrupt and criminal (\"fascist in chief\")",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"Surely the fascist in chief\"",
+        "rationale": "Directly attacks a high-profile leader with ideological and criminal framing."
+      },
+      {
+        "message_id": "twitter_2060096254034792942",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct appeal to audience to contact/urge Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Will you join me in urging Congress to support the Dream Act & deliver citizenship?\"",
+        "rationale": "Explicit question requests action and specifies the target (Congress) and policy (Dream Act)."
+      },
+      {
+        "message_id": "twitter_2060096254034792942",
+        "feature_name": "specific_policy_domain",
+        "feature_value": "Immigration policy / DACA / Dream Act",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"DACA\" ... \"Dream Act\"",
+        "rationale": "Focuses on immigration/temporary protection program and pathway to citizenship."
+      },
+      {
+        "message_id": "bluesky_6e7366da93c48a381c2ad6df044dd035bfc026e47c64bd56f3481e4cced7ee16",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates gun control as a crime-prevention solution",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the best way to prevent these crimes is strict New York City-style gun control in every American state\"",
+        "rationale": "Presents a clear prescription tying gun control to preventing hate-crime murders."
+      },
+      {
+        "message_id": "reddit_1tux6at_opdj7n2",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Bullet-point pattern describing sequential policy behavior",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"* Bad mouth government program\" ... \"* Defund program\" ... \"* Cancel program\"",
+        "rationale": "Uses an ordered bullet list to lay out a repeated pattern over time."
+      },
+      {
+        "message_id": "reddit_1trnhrp_ooppz7k",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Contrasts 'corporations scheming us' with 'undocumented immigrants' as scapegoats",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"not undocumented immigrants\" ... \"corporations scheming us year after year\"",
+        "rationale": "Shifts blame away from an outgroup and toward elites/corporations."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tqf4v3_oojf9yn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking disgusting\"",
+        "rationale": "Contains explicit taboo language."
+      },
+      {
+        "message_id": "reddit_1tqf4v3_oojf9yn",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Dehumanizing slavery/abuse framing toward political/economic actors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"but to be a slave to the government\"",
+        "rationale": "Uses moralized, coercive imagery to condemn the targeted actors."
+      },
+      {
+        "message_id": "reddit_1kqc1ix_mt6osyo",
+        "feature_name": "targeted_actor_type",
+        "feature_value": "Direct personal insult directed at a named politician (Trump)",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"Fuck Donald Trump.\"",
+        "rationale": "Contains direct targeted hostility toward a named individual."
+      },
+      {
+        "message_id": "reddit_1tstlbr_ooy9ret",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Contradictory claims asserted as fact with repeated denials",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They literally have not occupied Gaza\" ... \"They do not go into Gaza to murder and rape\"",
+        "rationale": "Uses repeated definitive statements ('literally', 'do not') about actions over time."
+      },
+      {
+        "message_id": "bluesky_2f413515d55dea48883ef6ccb3e00b89d872bfe5e02ca08782ac61320ebef0d5",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks outgroup with derogatory labels and 'We are not the same' contrast",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"blue hair mob\" ... \"We are not the same.\"",
+        "rationale": "Employs derogatory characterization plus concluding contrast to disparage an opposing group."
+      },
+      {
+        "message_id": "reddit_1u1ngzk_oqr5va2",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims an election theft operation 'so significant and complete' leaving no evidence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"perpetrate voter fraud so significant and complete to steal an election\"",
+        "rationale": "Ascribes coordinated wrongdoing with implausibly precise certainty and evidencelessness."
+      },
+      {
+        "message_id": "reddit_1u0y1yy_oqo6zd5",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Opposes 'pride flags' as identity/attraction vs 'trump flags' as undesired class pandering",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"those pride flags\" ... \"while trump flags are just political\"",
+        "rationale": "Uses a comparative 'difference is' construction to delegitimize one group and validate another."
+      },
+      {
+        "message_id": "reddit_1two3nw_opsa16w",
+        "feature_name": "elite_vs_populist_framing",
+        "feature_value": "Frames one side as oligarch-controlled minority that 'cheats' into power",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans are a minority that get cheated into majority power by oligarchs.\"",
+        "rationale": "Blames elites/oligarchs for manipulating electoral outcomes."
+      }
+    ]
+  }
+}

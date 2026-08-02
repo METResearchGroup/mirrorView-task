@@ -1,0 +1,180 @@
+{
+  "batch_id": 18,
+  "message_ids": [
+    "bluesky_18c90f926c5eb6ea0d02055c5d96082a133d270c7b2dbd67838e0fa292867320",
+    "bluesky_1e26ac05e718df532a62c1c6444294dac2fd77d8e40dba1356e15a31b1435249",
+    "bluesky_5cca1658cb56e3bb4edd5d61e647604cfeeea86625455c4a4a876e3f7fcd0a34",
+    "bluesky_aca261125a4332dd5d7709d5c836db0229af6ab1621b9a9de4bec8c33a1cdd21",
+    "bluesky_aee7681bef4f7702c5acee7abd34d65a5a1ea157484b52d35902a8dba481cd57",
+    "bluesky_da4343612799afde10761c81683943e125d6f9b99cd24da6127350d7f6c6d501",
+    "bluesky_e920f71053cfaf8777f9f550c33255d311e0d4b225d1b3dc075aaaf9eebf03e6",
+    "reddit_1kbioxf_mpz7wuw",
+    "reddit_1khug51_mrcoad8",
+    "reddit_1kpgf6p_mszijsq",
+    "reddit_1kr5j8t_mtaoyda",
+    "reddit_1l5yq6s_mwlfwnl",
+    "reddit_1tpc5tu_oo8x0cf",
+    "reddit_1tsv1fn_ooy36yf",
+    "reddit_1txrvp0_oq1wzf3",
+    "reddit_1txsm52_oq0hj7m",
+    "reddit_1txsm52_oq1k93m",
+    "twitter_2059764455584485801",
+    "twitter_2059852379067916547",
+    "twitter_2061536446180438205"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_e920f71053cfaf8777f9f550c33255d311e0d4b225d1b3dc075aaaf9eebf03e6",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun control",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"sensible gun laws\"",
+        "rationale": "The post explicitly argues about gun laws and who could buy guns."
+      },
+      {
+        "message_id": "bluesky_e920f71053cfaf8777f9f550c33255d311e0d4b225d1b3dc075aaaf9eebf03e6",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "if we had X, then Y would not be able to happen",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If we had sensible gun laws... these j6ers wouldn't be able to buy guns.\"",
+        "rationale": "Uses an explicit if/then conditional linking gun laws to prevented gun purchases."
+      },
+      {
+        "message_id": "bluesky_aee7681bef4f7702c5acee7abd34d65a5a1ea157484b52d35902a8dba481cd57",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Democratic/Republican actors and Susan Collins)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Susan Collins\"",
+        "rationale": "Mentions a specific named political figure within an otherwise candidate-focused sentence."
+      },
+      {
+        "message_id": "bluesky_aca261125a4332dd5d7709d5c836db0229af6ab1621b9a9de4bec8c33a1cdd21",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "national gun control and mental health policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"national gun control policies\" / \"psychological disorders\"",
+        "rationale": "Combines gun control with mental-health care concerns."
+      },
+      {
+        "message_id": "twitter_2059764455584485801",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "single @mention citation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@MigrationPolicy\"",
+        "rationale": "Directly references an account/organization via an @-mention."
+      },
+      {
+        "message_id": "reddit_1tpc5tu_oo8x0cf",
+        "feature_name": "hedging_or_qualification",
+        "feature_value": "qualification and partial agreement (depends/disagrees)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Depends on the topic.\" / \"I can respect... While disagreeing...\"",
+        "rationale": "Begins with \u201cDepends\u201d and uses while-disagreement to qualify stance."
+      },
+      {
+        "message_id": "reddit_1txsm52_oq0hj7m",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "symptom/disease dichotomy opposing rival administrations",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a symptom, not the disease.\"",
+        "rationale": "Uses a metaphorical dichotomy to frame political blame directionally (Trump as symptom of deeper issue)."
+      },
+      {
+        "message_id": "twitter_2061536446180438205",
+        "feature_name": "normative_moral_language",
+        "feature_value": "life-saving vs destroying lives; value-laden morality framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Healthcare is when you save lives, not end them.\"",
+        "rationale": "Uses explicit moral valuation to define a concept in normative terms."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_da4343612799afde10761c81683943e125d6f9b99cd24da6127350d7f6c6d501",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Bjorn, Gore, AOC)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Bjorn\" / \"Gore\" / \"AOC\"",
+        "rationale": "Multiple named individuals/figures are referenced in the climate critique."
+      },
+      {
+        "message_id": "bluesky_da4343612799afde10761c81683943e125d6f9b99cd24da6127350d7f6c6d501",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "shilling/grifters/economic devastation attributed to agenda",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"shilling\" / \"Big Green energy grifters\" / \"radical climate agenda\"",
+        "rationale": "Frames actors\u2019 motives as corrupt/manipulative while attributing broad harms to their agenda."
+      },
+      {
+        "message_id": "bluesky_18c90f926c5eb6ea0d02055c5d96082a133d270c7b2dbd67838e0fa292867320",
+        "feature_name": "causal_claim_present",
+        "feature_value": "follow-the-money causal explanation of influence and wealth",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Follow the money.\" / \"Who makes TONS of money...\"",
+        "rationale": "Uses a direct motivational/cause narrative about who profits and why policy actors are influential."
+      },
+      {
+        "message_id": "reddit_1kpgf6p_mszijsq",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong profanity (fucking)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I fucking hate\"",
+        "rationale": "Contains explicit profanity indicating highly hostile tone."
+      },
+      {
+        "message_id": "reddit_1kbioxf_mpz7wuw",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting characterization with a conditional exception",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a very stupid very stubborn very cruel man. Unless you have dinner with him. Then he is nice to you.\"",
+        "rationale": "Attacks the person with stacked insults and adds an \u201cunless\u201d conditional for a contrasting portrayal."
+      },
+      {
+        "message_id": "bluesky_5cca1658cb56e3bb4edd5d61e647604cfeeea86625455c4a4a876e3f7fcd0a34",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "highly emphatic all-caps entire claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"WEARING A MASK AND CARRYING A ASSAULT WEAPON\"",
+        "rationale": "The text is written in uppercase to intensify a legal-violence claim."
+      },
+      {
+        "message_id": "reddit_1khug51_mrcoad8",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual/profanity insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"dumb gobs\" / \"fucking\"",
+        "rationale": "Uses harsh profanity and dehumanizing language toward political officials."
+      },
+      {
+        "message_id": "twitter_2059852379067916547",
+        "feature_name": "call_to_action",
+        "feature_value": "advocates abandoning activism to help opposition",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"should abandon there activism to help Dems\"",
+        "rationale": "States a directive about changing strategies (\u201cshould abandon...\u201d)."
+      }
+    ]
+  }
+}

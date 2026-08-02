@@ -1,0 +1,180 @@
+{
+  "batch_id": 67,
+  "message_ids": [
+    "bluesky_06ccffd9ead72b7b9e8879578b4627d8d24fd59c4d57474e653d5dedcd331a52",
+    "bluesky_35aaac022091e7dc7148f0f5d56aee4fdde5b6dd2681e83e3061316f44fb12c7",
+    "bluesky_492c4ff9a5b92a4a3668096ead4bdab0edb08541a570aef3a7eb5d8a891ef0e2",
+    "bluesky_4cace324b89b23c55931f030556f31e1f85374ec727372ec3101e25d9a34f40f",
+    "bluesky_7a25acdbbfefbb003955696629bb4bacf2c8db015525ff0be620fdd1b9092307",
+    "bluesky_7a733fd5cdd1247cea8a57efca5fba51db862949ca231d5b8dfa9ef94804db5d",
+    "bluesky_8500af3478053251f2d1d345030600d99698a0663756444778468a39e90480a5",
+    "bluesky_f733fac2ce3a6136410de8026b51c4c5fcc091dd83d51b815adea8d65e68cee9",
+    "reddit_1l44r75_mw7l726",
+    "reddit_1l5qzp8_mwjjeiu",
+    "reddit_1lhaiqa_mz2uzqf",
+    "reddit_1lncl3o_n0go7u5",
+    "reddit_1ti5ovh_oms4lky",
+    "reddit_1tpf0kw_oo8pj6t",
+    "reddit_1tuwb8f_opd1klp",
+    "reddit_1tz4ira_oqaclrf",
+    "reddit_1tz4l7k_oq8pi8w",
+    "reddit_1u1npgu_oqrq37w",
+    "twitter_2061619634889990582",
+    "twitter_2061686318191841410"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tuwb8f_opd1klp",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses slang/colloquial phrasing like \u201ccool n valid\u201d and \u201cuncivilized behavior\u201d",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The surrogates were cool n valid.\"",
+        "rationale": "Contains colloquial slang and informal phrasing rather than formal argumentation."
+      },
+      {
+        "message_id": "reddit_1tuwb8f_opd1klp",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Judges behavior as irresponsible/jerkish; accountability and responsibility framed morally",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"abdicate any responsibility\"",
+        "rationale": "Uses moral/ethical evaluation terms (responsibility, uncivilized, blame/accountability)."
+      },
+      {
+        "message_id": "reddit_1lncl3o_n0go7u5",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks a politician as \u201centirely empty\u201d and personality as what they saw on Fox",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"his entire personality is just whatever he saw on Fox news\"",
+        "rationale": "Uses derogatory characterization to belittle the target actor."
+      },
+      {
+        "message_id": "reddit_1lncl3o_n0go7u5",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames conservatives/liberals as groups that \u201clove\u201d the media/personalities",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"conservatives *love*\"",
+        "rationale": "Assigns blame/praise via collective in-group/out-group labeling."
+      },
+      {
+        "message_id": "bluesky_4cace324b89b23c55931e1f85374ec727372ec3101e25d9a34f40f",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "\u201cThink that would be a good one to apply\u2026\u201d and \u201cSo, yeah\u2026\u201d policy stance building",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Think that would be a good one to apply to Cops as well.\"",
+        "rationale": "Implied recommendation contingent on a comparative scenario (apply X to Y)."
+      },
+      {
+        "message_id": "twitter_2061619634889990582",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Claims stopping measurement means climate change becomes unreal / climate policy causal logic",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"if we stop looking, maybe it'll stop being real.\"",
+        "rationale": "States a cause-effect relationship in the climate-policy critique."
+      },
+      {
+        "message_id": "bluesky_492c4ff9a5b92a4a3668096ead4bdab0edb08541a570aef3a7eb5d8a891ef0e2",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct imperative style urging action (\u201cScare the fuck\u2026\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Scare the fuck out of the white people.\"",
+        "rationale": "Uses command-like wording rather than descriptive narration."
+      },
+      {
+        "message_id": "bluesky_06ccffd9ead72b7b9e8879578b4627d8d24fd59c4d57474e653d5dedcd331a52",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "Short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Less money for war and more money for social programs\"",
+        "rationale": "Very brief request/statement overall."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_f733fac2ce3a6136410de8026b51c4c5fcc091dd83d51b815adea8d65e68cee9",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High historical marker reference (1776) and rights amendment reference",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Black people were slaves in 1776\"",
+        "rationale": "Uses a specific date and rights framework to anchor the argument."
+      },
+      {
+        "message_id": "reddit_1tz4l7k_oq8pi8w",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Demographic replacement framed as deliberate \u201cdamndest to stop it\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"are doing their damndest to stop it.\"",
+        "rationale": "Treats group actions as coordinated to counter an anticipated demographic shift."
+      },
+      {
+        "message_id": "reddit_1l44r75_mw7l726",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses profanity/intensifier and dismissive slang (\u201ccopium\u201d, \u201cdrop this shit\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGA level 2020 conspiracy copium\"",
+        "rationale": "Contains internet slang and dismissive profanity."
+      },
+      {
+        "message_id": "reddit_1l5qzp8_mwjjeiu",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Swearing with \u201cFuck both of them.\u201d",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck both of them.\"",
+        "rationale": "Uses explicit taboo language targeting two political ideologies."
+      },
+      {
+        "message_id": "reddit_1u1npgu_oqrq37w",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing metaphors (\u201cmindless zombies/sheep\u201d, \u201cvirtue-signaling drones\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"turn their viewers and listeners into mindless zombies\"",
+        "rationale": "Employs mocking dehumanization rather than substantive critique."
+      },
+      {
+        "message_id": "bluesky_7a25acdbbfefbb003955696629bb4bacf2c8db015525ff0be620fdd1b9092307",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Presents broad claims about trends (\u201ccontinue to rise no matter who's power\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Avg. global temperature...continue to rise no matter who's power.\"",
+        "rationale": "States general empirical-sounding assertions without hedging."
+      },
+      {
+        "message_id": "twitter_2061686318191841410",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Advocacy/statement to redefine term (\u201cwomen's rights are not anti-men\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"women's rights are not anti-men\"",
+        "rationale": "Normatively frames a principle against a perceived misunderstanding."
+      },
+      {
+        "message_id": "bluesky_7a733fd5cdd1247cea8a57efca5fba51db862949ca231d5b8dfa9ef94804db5d",
+        "feature_name": "politicized_identity_targeting",
+        "feature_value": "Gendered actor identification plus endorsement with party/issue contrast (gun control vs Parkland/AIPAC)",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"He is my congressman\"",
+        "rationale": "Contains explicit identification of an elected official and ties their issue positions to constituency events/donations."
+      }
+    ]
+  }
+}

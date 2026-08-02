@@ -1,0 +1,180 @@
+{
+  "batch_id": 95,
+  "message_ids": [
+    "bluesky_1f87d5d327178c3255bfbd24c27e7e5f8481879b794c029fde1be80379a5d46c",
+    "bluesky_916f6e95dae8e77c735102e3a401bac7a4174eed62cff490d54327a964b9e33e",
+    "bluesky_9cd3f09c32b5547b44c622fdc652328528520051a4e4685a6cf4f3fa39355a09",
+    "bluesky_dcaf56502a5ba6c609c804d2cd3613d87c018879837e9aa5852b7c74d5492628",
+    "bluesky_e75ba727bdb4dcd84bd5b3992fbf8d15eeb44757511fa20160ed9155205b4020",
+    "reddit_1kf5pvv_mqoc9mr",
+    "reddit_1l04ga0_mvar13k",
+    "reddit_1l7uxh4_mx0f024",
+    "reddit_1l9nlap_mxfbf9g",
+    "reddit_1t3yh0u_ojyuwfn",
+    "reddit_1t7d5jc_okoil6b",
+    "reddit_1tiu061_omxazw9",
+    "reddit_1tq62gs_ooe1j96",
+    "reddit_1trnhrp_oostcnq",
+    "reddit_1tswg2c_ooyc544",
+    "reddit_1txi7g6_opy5089",
+    "reddit_1tzmvf4_oqby16e",
+    "twitter_2059337512703918474",
+    "twitter_2060546455195328611",
+    "twitter_2061533340621025685"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tzmvf4_oqby16e",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (multiple politicians named)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Donald Trump ... Barack Obama",
+        "rationale": "The post directly references two specific public figures by name."
+      },
+      {
+        "message_id": "reddit_1tzmvf4_oqby16e",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Framing as a petty grievance about telling a story",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "doesn't like when this story is told",
+        "rationale": "The wording treats the political figure as irrationally displeased, implying mockery."
+      },
+      {
+        "message_id": "reddit_1tiu061_omxazw9",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Long run-on with heavy list-like clauses",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Outrageous spending ... the list goes on.",
+        "rationale": "A long sentence with many comma/phrase-separated grievances functions as an intense rhetorical barrage."
+      },
+      {
+        "message_id": "reddit_1trnhrp_oostcnq",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Category-based justification with moral obligation claim",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "For immigrants, it's very black and white. We have no obligation to them.",
+        "rationale": "The text uses a conditional-like framing ('for X') to assert differing obligations."
+      },
+      {
+        "message_id": "bluesky_916f6e95dae8e77c735102e3a401bac7a4174eed62cff490d54327a964b9e33e",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/firearms policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Assault weapon ban expired",
+        "rationale": "The core policy subject is an assault weapon ban."
+      },
+      {
+        "message_id": "bluesky_916f6e95dae8e77c735102e3a401bac7a4174eed62cff490d54327a964b9e33e",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Innocent people dying / safety threatened",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "which is why so many innocent people are dying",
+        "rationale": "The mirror claims harm to innocents resulting from political actions."
+      },
+      {
+        "message_id": "reddit_1l9nlap_mxfbf9g",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck you, my rioters",
+        "rationale": "The original contains a direct profanity directed at police/custodial authority."
+      },
+      {
+        "message_id": "bluesky_e75ba727bdb4dcd84bd5b3992fbf8d15eeb44757511fa20160ed9155205b4020",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates personal arming for protest safety",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "consider arming yourself.",
+        "rationale": "The post gives an explicit suggestion for readers to arm themselves."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tswg2c_ooyc544",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dismisses political positions as 'sound bites' / 'virtue signaling'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Everything else is just sound bites",
+        "rationale": "The post uses dismissive phrasing to ridicule the opposite party's stance."
+      },
+      {
+        "message_id": "bluesky_1f87d5d327178c3255bfbd24c27e7e5f8481879b794c029fde1be80379a5d46c",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Taboo insult language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "shit racist tattoo",
+        "rationale": "It includes explicit crude language used as an insult."
+      },
+      {
+        "message_id": "reddit_1t3yh0u_ojyuwfn",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Out-group vs in-group political media characterization",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Democrats ... and the brown shirt media",
+        "rationale": "It constructs a hostile coalition/labeling of opponents and associated media."
+      },
+      {
+        "message_id": "reddit_1kf5pvv_mqoc9mr",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Simple insult comparing comprehension",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Trump doesn\u2019t understand basic math.",
+        "rationale": "The sentence is an overt derogatory claim attacking competence."
+      },
+      {
+        "message_id": "twitter_2060546455195328611",
+        "feature_name": "call_to_action",
+        "feature_value": "Urges viewers to contact Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Help me &amp; @ClimateHawkVote tell Congress",
+        "rationale": "The post explicitly requests an action directed at a government body."
+      },
+      {
+        "message_id": "reddit_1l04ga0_mvar13k",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Repeated profanity in insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "a shit talking, shit disturbing",
+        "rationale": "The original text uses repeated explicit profanity."
+      },
+      {
+        "message_id": "reddit_1txi7g6_opy5089",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Claims policy serves ultra-wealthy at expense of children/workers",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "safe returns for the ultra wealthy ... Screwing over hungry kids",
+        "rationale": "It contrasts benefits for the rich with harms to vulnerable groups."
+      },
+      {
+        "message_id": "twitter_2059337512703918474",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Violation/rights threat with strong accusatory phrasing (no profanity but intense caps)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "UNCONSTITUTIONAL RED FLAG LAWS",
+        "rationale": "The post uses emphatic all-caps escalation to frame an infringement on rights."
+      }
+    ]
+  }
+}

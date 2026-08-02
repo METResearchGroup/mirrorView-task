@@ -1,0 +1,180 @@
+{
+  "batch_id": 32,
+  "message_ids": [
+    "bluesky_3266413449705192d76258d22c6a8f0677739dc85903f01b1af0fe2f8f51fd0c",
+    "bluesky_9231d9cb6cd7f6ec86e71f7559cf7d58818278a0ba2b7e590285054b5d16b553",
+    "bluesky_a0ac9010794f2877f5f4946bc81fb7f1ce89d20634c866919a56e6bc51ff4ade",
+    "bluesky_e699e26656ff43b20e7730b4ddf77714733b9bbed93bd4f414f91a1440177071",
+    "reddit_1kn5i1j_mshg0kw",
+    "reddit_1kqlad9_mt6ne68",
+    "reddit_1ks5r8b_mtkw5wd",
+    "reddit_1ksy3bs_mttjace",
+    "reddit_1kv6w8n_mumrkdj",
+    "reddit_1l7yeq9_mx54w50",
+    "reddit_1ld36t6_my6879e",
+    "reddit_1llzlg3_n04uwaw",
+    "reddit_1lmjifa_n092sgi",
+    "reddit_1lnkmn7_n0g02e1",
+    "reddit_1lo5oib_n0ljnsi",
+    "reddit_1t54vlp_ok974kf",
+    "reddit_1tswg2c_ooy4cq5",
+    "reddit_1txsm52_opzjvsx",
+    "reddit_1u276eu_oqveel8",
+    "twitter_2061092945420509346"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_3266413449705192d76258d22c6a8f0677739dc85903f01b1af0fe2f8f51fd0c",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (US + global warming + sociology referenced)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "America woke up... voted Biden... deny global warming is possible",
+        "rationale": "Mentions multiple prominent topic names/terms in a short text, indicating dense named/topic references."
+      },
+      {
+        "message_id": "reddit_1kv6w8n_mumrkdj",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual/physiological vulgar insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "while he shit his adult diapers.",
+        "rationale": "Uses explicit vulgar phrasing as a derogatory insult."
+      },
+      {
+        "message_id": "bluesky_9231d9cb6cd7f6ec86e71f7559cf7d58818278a0ba2b7e590285054b5d16b553",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct 'you' addressing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Also, you think bad guys care about gun laws?",
+        "rationale": "The text directly addresses the reader with 'you think'."
+      },
+      {
+        "message_id": "bluesky_9231d9cb6cd7f6ec86e71f7559cf7d58818278a0ba2b7e590285054b5d16b553",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates removing/relaxing gun rights (implicit restriction/removal)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Maybe chose another country to live in.",
+        "rationale": "Suggests a political/legal stance about gun rights by prescribing relocation if one wants no restrictions."
+      },
+      {
+        "message_id": "bluesky_e699e26656ff43b20e7730b4ddf77714733b9bbed93bd4f414f91a1440177071",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Cause-effect claim about legislation and deaths",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The federal assault weapon ban lowered gun deaths. It's repeal created more gun deaths.",
+        "rationale": "Explicitly asserts that policy changes caused changes in gun death rates."
+      },
+      {
+        "message_id": "bluesky_e699e26656ff43b20e7730b4ddf77714733b9bbed93bd4f414f91a1440177071",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Enumerates weapon components",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "And foldable stocks, pistol grips, 30+ round magazines, and gun shrouds",
+        "rationale": "Uses multiple comma-separated items to describe specific weapon features."
+      },
+      {
+        "message_id": "reddit_1ld36t6_my6879e",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Group framed as needing to 'pull this fool down' / 'take down' opponents",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They will be the ones to pull this fool down.",
+        "rationale": "Characterizes political actors as a problem that must be removed."
+      },
+      {
+        "message_id": "reddit_1t54vlp_ok974kf",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Explicit contrast between left and conservatives/right",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "The left tries... conservatives refuse... but",
+        "rationale": "Uses 'but/refuse' to set up a direct ideological contrast."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ks5r8b_mtkw5wd",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump is a steaming pile of shit.",
+        "rationale": "Uses a strong taboo word as a direct derogatory descriptor."
+      },
+      {
+        "message_id": "reddit_1kqlad9_mt6ne68",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "F-word as direct curse",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "F*ck MAGA Senator, Trump and his lackeys!",
+        "rationale": "Contains explicit 'F*ck' to attack a political target."
+      },
+      {
+        "message_id": "reddit_1kn5i1j_mshg0kw",
+        "feature_name": "call_to_action",
+        "feature_value": "Calls for violent/malicious action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "We need to throwing bags of shit at this shitbag. Fuck trump.",
+        "rationale": "Advocates throwing objects at a target."
+      },
+      {
+        "message_id": "reddit_1llzlg3_n04uwaw",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Quotation scare-construction without CAPS; emphasizes phrase via quotes",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "Trying to \u201cslip in\u201d fascism bit by bit.",
+        "rationale": "Uses a marked quoted phrase 'slip in' to frame a stealth change in ideology."
+      },
+      {
+        "message_id": "reddit_1lmjifa_n092sgi",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Low, but constitution referenced (institutional target)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "the right shits on the constitution",
+        "rationale": "Directly targets a foundational political institution (constitution)."
+      },
+      {
+        "message_id": "reddit_1l7yeq9_mx54w50",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct instruction/imperative without 'you' (addressing readership via commands)",
+        "category": "compositional_syntax",
+        "is_open_ended": true,
+        "evidence_span": "fuck this title. Stop trying to get fElon back in our good grace.",
+        "rationale": "Uses imperative commands aimed at the audience/creator of content."
+      },
+      {
+        "message_id": "reddit_1lo5oib_n0ljnsi",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Electoral strategy framed as cost-benefit (delay consequences to win reelection)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "That way they can win reelection... before absolutely fucking the American people.",
+        "rationale": "Justifies behavior via strategic payoff (reelection before harms)."
+      },
+      {
+        "message_id": "twitter_2061092945420509346",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Has '!!' emphatic punctuation and informal emotive register (no hashtag)",
+        "category": "surface_lexical",
+        "is_open_ended": true,
+        "evidence_span": "happy pride month my babies!!!!!!!!",
+        "rationale": "Shows strong celebratory, youth slang style with heavy exclamation punctuation."
+      }
+    ]
+  }
+}

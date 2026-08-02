@@ -1,0 +1,180 @@
+{
+  "batch_id": 131,
+  "message_ids": [
+    "bluesky_0a533f7ea1f7602d729ea1550f9cf668ec90e6de5a2a3602c2becd2b7f741303",
+    "bluesky_3db3a7222fcdfe118436b6edc2694cda0429be6848ffeb8f0a98b26febe99a19",
+    "reddit_1kchkiv_mq2wx9v",
+    "reddit_1kfohcu_mqsgvmv",
+    "reddit_1l2nx8d_mvwfy4p",
+    "reddit_1lc3bu3_mxxjusf",
+    "reddit_1lccvte_myopelc",
+    "reddit_1t1xwtl_ojl2a8a",
+    "reddit_1te3cn8_om0eppm",
+    "reddit_1ti5ovh_oms3hug",
+    "reddit_1tqpaom_oomkokl",
+    "reddit_1tws6al_opqtk43",
+    "reddit_1u0l8qh_oqjpkg5",
+    "reddit_1u12ug8_oqmnjbn",
+    "reddit_1u16m18_oqpt1lh",
+    "twitter_2059287515173916868",
+    "twitter_2060364337416479047",
+    "twitter_2060437696473137155",
+    "twitter_2060456141755208008",
+    "twitter_2061477727329296411"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060364337416479047",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple emphatic colons/uppercase framing and exclamations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"HORROR:\" ... \"!!!\"",
+        "rationale": "The post uses strong punctuation (colon and triple exclamation) to intensify emotional framing."
+      },
+      {
+        "message_id": "twitter_2060364337416479047",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "No explicit profanity; uses accusatory/dehumanizing rhetoric like \"Illegal Alien\"",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Illegal Alien\"",
+        "rationale": "The text uses a taboo/derogatory label for a person group rather than neutral wording."
+      },
+      {
+        "message_id": "reddit_1u16m18_oqpt1lh",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Blames an actor for insufficient action to prevent political outcome",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Biden didn't do enough to preemptively stop trump or prevent him from taking office.\"",
+        "rationale": "The statement makes a blame-based causal assertion about failure to prevent an election outcome."
+      },
+      {
+        "message_id": "reddit_1u0l8qh_oqjpkg5",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims of conspiracies/hoaxes (e.g., laptop hoax) and political conspiracy accusations",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Hunter Biden\u2019s laptop is a Russian hoax.\"",
+        "rationale": "The text asserts a coordinated deceptive plot rather than a neutral claim."
+      },
+      {
+        "message_id": "twitter_2059287515173916868",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Abortion policy/legal ban impacts medical care",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Under Arkansas\u2019s abortion ban\"",
+        "rationale": "The post explicitly references abortion law/policy restricting outcomes after a miscarriage."
+      },
+      {
+        "message_id": "reddit_1te3cn8_om0eppm",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Many short policy points separated by line breaks",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Not just mass deportations.\" ... \"Also\" ... \"Mass deportations\"",
+        "rationale": "The structure is a multi-item enumeration of immigration/citizenship/visa proposals."
+      },
+      {
+        "message_id": "bluesky_0a533f7ea1f7602d729ea1550f9cf668ec90e6de5a2a3602c2becd2b7f741303",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun control policy and effects on marginalized groups",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"US gun control policies\"",
+        "rationale": "The post centers on gun regulation and its distributional impacts."
+      },
+      {
+        "message_id": "reddit_1u12ug8_oqmnjbn",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses crude insult phrasing about political behavior",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"legally ratfuck America.\"",
+        "rationale": "The language is derogatory and mocking about a political tactic."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kchkiv_mq2wx9v",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck those Nazi supporters.\"",
+        "rationale": "The post contains strong taboo language to target a group."
+      },
+      {
+        "message_id": "reddit_1kchkiv_mq2wx9v",
+        "feature_name": "target_directionality",
+        "feature_value": "Blame shifted from Trump/GOP to Biden/Democrat voters in mirror",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"trump\" ... \"Republican voters\" vs \"Biden and the left\" ... \"Democrat voters\"",
+        "rationale": "The mirror rewrites the target actor and voter group that 'deserve the blame'."
+      },
+      {
+        "message_id": "bluesky_3db3a7222fcdfe118436b6edc2694cda0429be6848ffeb8f0a98b26febe99a19",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate/energy (solar/wind vs oil/gas) and emissions impacts",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"global warming\"",
+        "rationale": "The argument explicitly references warming driven by energy infrastructure and policy."
+      },
+      {
+        "message_id": "reddit_1ti5ovh_oms3hug",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Use of harsh insult-like phrasing and compound slur-style terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"clusterfuck\"",
+        "rationale": "The term signals intense negative/emphatic language toward legislation."
+      },
+      {
+        "message_id": "reddit_1lccvte_myopelc",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity/insult term for a politician (schizophrenic phrase in mirror too)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"nasty piece of shite.\"",
+        "rationale": "The original uses a taboo/derogatory insult rather than a factual description."
+      },
+      {
+        "message_id": "reddit_1kfohcu_mqsgvmv",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Direct hostile profanity command",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Get fucked fascists.\"",
+        "rationale": "The message uses explicit profanity as a direct directive."
+      },
+      {
+        "message_id": "twitter_2061477727329296411",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct question to named interlocutor",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Would you have permitted this abortion?\"",
+        "rationale": "The text directly addresses an individual with a yes/no style question."
+      },
+      {
+        "message_id": "reddit_1tqpaom_oomkokl",
+        "feature_name": "venting_or_expressive",
+        "feature_value": "Sexual/gendered derogatory narrative used expressively",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"he'll fuck her again and again\"",
+        "rationale": "The post uses sexually explicit language and a story-like venting tone rather than policy argument."
+      }
+    ]
+  }
+}

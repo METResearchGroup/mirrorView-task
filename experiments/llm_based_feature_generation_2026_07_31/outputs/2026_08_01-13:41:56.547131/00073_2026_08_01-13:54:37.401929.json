@@ -1,0 +1,180 @@
+{
+  "batch_id": 73,
+  "message_ids": [
+    "bluesky_68f42aebc7d8b2070eae73ca873edf926d26484c42b94f15d6531ede2da4c74d",
+    "bluesky_7b508f2aaaede96f5c3f8630a0b81b75dc27718216a9a800c5c6e127cf26700c",
+    "bluesky_8f4b48b0097e1b665a20c2113a8606aa17d73fc2df29ff5e23b7f6e9edb0bca0",
+    "bluesky_92f96bd53afd112ba47a3b877e9344610d25fc188ef0269dc7d4834dc00b0c9e",
+    "bluesky_f59bc508b232015b6239cb9e21d8188c63a3fc8eb45c298cee57d733ebd19799",
+    "reddit_1kikfi4_mrfsmn1",
+    "reddit_1la5fmz_mxi08po",
+    "reddit_1ladra4_mxkks2w",
+    "reddit_1lefckr_myg6570",
+    "reddit_1lhfkqj_mz4mrik",
+    "reddit_1lk3x9y_mzqw16r",
+    "reddit_1tnjwbi_ony7ksg",
+    "reddit_1ttbqa6_op2h4mb",
+    "reddit_1tux6at_ophehbx",
+    "reddit_1tuzkhw_opdgv6s",
+    "reddit_1tzcqta_oqb308m",
+    "reddit_1tzgcp8_oqaqw3q",
+    "reddit_1u08bq4_oqhgcz2",
+    "twitter_2061343176817005008",
+    "twitter_2061808083987218435"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1la5fmz_mxi08po",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (Israel, Iran, Trump)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Israel bombed Iran and Trump did jack shit",
+        "rationale": "Multiple named political entities appear in a short span."
+      },
+      {
+        "message_id": "reddit_1tnjwbi_ony7ksg",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Exclamation/quoted accusation with pop-psych phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"All young men are being brainwashed by the alt right pipeline!\"",
+        "rationale": "Uses highly informal, accusatory phrasing typical of social-media commentary."
+      },
+      {
+        "message_id": "reddit_1tux6at_ophehbx",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Direct attribution of asset/puppet claims",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump is a Russian asset.",
+        "rationale": "States a definitive causal/attributive claim about the subject."
+      },
+      {
+        "message_id": "twitter_2061343176817005008",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Rights framed as not debatable",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "A woman\u2019s right to healthcare shouldn\u2019t be up for debate",
+        "rationale": "Uses normative language about what should/shouldn\u2019t be decided."
+      },
+      {
+        "message_id": "reddit_1tzcqta_oqb308m",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Recall prompt functioning like a rhetorical question",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Remember when Trump ran the first time and Paul Ryan was speaker of the house?",
+        "rationale": "Uses \u201cRemember when \u2026 ?\u201d structure to set up a comparative implication."
+      },
+      {
+        "message_id": "bluesky_8f4b48b0097e1b665a20c2113a8606aa17d73fc2df29ff5e23b7f6e9edb0bca0",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Counterfactual \u201cwhat if \u2026\u201d opener",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "But what if we could have our cake, and eat it",
+        "rationale": "Employs a hypothetical \u201cwhat if\u201d conditional framing."
+      },
+      {
+        "message_id": "reddit_1u08bq4_oqhgcz2",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "References intelligence-failure theories",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Even if you believe the theories about intelligence failures leading up to it.",
+        "rationale": "Invokes \u201ctheories\u201d tied to a security/attack explanation."
+      },
+      {
+        "message_id": "reddit_1ttbqa6_op2h4mb",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "(whatever the fuck that means)",
+        "rationale": "Contains a clear taboo/profane phrase."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ladra4_mxkks2w",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Outgroup labels and attributed violence narrative",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "maga idiots\u2026 rhetoric that BLM burned entire cities to the ground",
+        "rationale": "Uses an outgroup (\u201cmaga idiots\u201d) and attributes extreme violent acts to BLM."
+      },
+      {
+        "message_id": "bluesky_92f96bd53afd112ba47a3b877e9344610d25fc188ef0269dc7d4834dc00b0c9e",
+        "feature_name": "call_to_action",
+        "feature_value": "Spite-based advocacy toward violence/weapon acquisition (AR)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "want to go out and buy the most powerful AR I can find out of pure spite",
+        "rationale": "Expresses an intent to obtain a weapon \u201cout of pure spite.\u201d"
+      },
+      {
+        "message_id": "reddit_1lhfkqj_mz4mrik",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Calls for removal from power and voting out",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "He needs to be removed from power. \u2026 They need to be voted out",
+        "rationale": "Directly prescribes political action to remove individuals/groups."
+      },
+      {
+        "message_id": "bluesky_7b508f2aaaede96f5c3f8630a0b81b75dc27718216a9a800c5c6e127cf26700c",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Demeaning characterization with purity/perfection framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Seems to be a single-minded eco-activist. Progress isn't good enough. Only perfection will do.",
+        "rationale": "Uses dismissive comparisons and mocking tone about motivation/standards."
+      },
+      {
+        "message_id": "reddit_1kikfi4_mrfsmn1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Direct insult with profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck those Nazi scum.",
+        "rationale": "Contains explicit profanity alongside dehumanizing label."
+      },
+      {
+        "message_id": "reddit_1tzgcp8_oqaqw3q",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "\u201cCoalition of degenerates\u201d with added targets",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "And conservative media and Russia and tech billionaires and Netanyahu\u2026 Edit to add: and convicted criminals and pedophiles.",
+        "rationale": "Enumerates many entities and extends the list via \u201cEdit to add.\u201d"
+      },
+      {
+        "message_id": "bluesky_f59bc508b232015b6239cb9e21d8188c63a3fc8eb45c298cee57d733ebd19799",
+        "feature_name": "target_directionality",
+        "feature_value": "Blame reassigned to political party/lobby; proposes outlawing assault weapons (Q)",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "When the hell is Congress going to outlaw assault weapons?",
+        "rationale": "Frames an explicit policy demand while attributing responsibility to groups."
+      },
+      {
+        "message_id": "reddit_1lk3x9y_mzqw16r",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Call targets fools/delusional via judgment language",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "anybody that takes him at his word is a fool.",
+        "rationale": "Uses contemptuous labels to dismiss opposing audiences."
+      }
+    ]
+  }
+}

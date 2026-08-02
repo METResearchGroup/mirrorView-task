@@ -1,0 +1,180 @@
+{
+  "batch_id": 137,
+  "message_ids": [
+    "bluesky_6365ee2bdf4c4279ad224569a1d8fe2145ee694b492471a60c4b972aa6621f37",
+    "bluesky_71daa548c157d839e5b25d7534baf79e91b62cf45ddcadb78037f5c47ad13eaa",
+    "bluesky_e3a27f7d4e5a9aab34be28e5f96c1ab5f456fdbb61b82b117a479426f41b9ade",
+    "reddit_1kimxir_mrgbexv",
+    "reddit_1ko2gif_msn8euz",
+    "reddit_1krbubh_mtdpao3",
+    "reddit_1kw5zd9_mugnts2",
+    "reddit_1kzqfvt_mv8ka52",
+    "reddit_1t1zmb4_ojkqmr3",
+    "reddit_1tbzoap_olkxrcv",
+    "reddit_1tsurmm_ooya1ym",
+    "reddit_1ttbe3e_op1dm94",
+    "reddit_1ttv5xp_op5iog7",
+    "reddit_1tvu9kc_opky419",
+    "reddit_1twq42a_opqu5uv",
+    "reddit_1u0ljrd_oqjgebv",
+    "reddit_1u2ek28_oqx0jwn",
+    "twitter_2059068837157613634",
+    "twitter_2060604495265153290",
+    "twitter_2061442486774432007"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tvu9kc_opky419",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "NATO is far more liability than asset.",
+        "rationale": "The post is a single brief sentence with a short overall length."
+      },
+      {
+        "message_id": "reddit_1tvu9kc_opky419",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (NATO, America)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "NATO is one of the greatest strategic investments America has ever made.",
+        "rationale": "Multiple prominent named entities appear in the mirror text."
+      },
+      {
+        "message_id": "twitter_2059068837157613634",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "@mention present",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@TomSteyer has spent his career...",
+        "rationale": "An explicit Twitter handle is used."
+      },
+      {
+        "message_id": "bluesky_e3a27f7d4e5a9aab34be28e5f96c1ab5f456fdbb61b82b117a479426f41b9ade",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo language (sexed slur)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Do your job lady",
+        "rationale": "The text uses a dismissive/derogatory address term ('lady') in a confrontational context."
+      },
+      {
+        "message_id": "bluesky_71daa548c157d839e5b25d7534baf79e91b62cf45ddcadb78037f5c47ad13eaa",
+        "feature_name": "casual_claim_present",
+        "feature_value": "blames gun lobby/government for removing regulations; causal chain",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "gun lobby has bought the American government and removed gun safety regulations that save lives",
+        "rationale": "The post explicitly asserts a causal relationship between lobbying and policy removal."
+      },
+      {
+        "message_id": "twitter_2060604495265153290",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking rhetorical framing ('looking silly now')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Looking really silly now with all those gun tattoos and shit.",
+        "rationale": "The language directly mocks the targeted group\u2019s behavior."
+      },
+      {
+        "message_id": "reddit_1ttv5xp_op5iog7",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative/second-person implied guidance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "We don\u2019t have to incur injury to use lethal force in Texas.",
+        "rationale": "Uses an instructional, generalizing directive framing ('we' argument) about what action is permissible."
+      },
+      {
+        "message_id": "twitter_2061442486774432007",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "charged after 'pulling a firearm on two government workers' (event-based)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Democratic Candidate Charged with Terroristic Threat After \u2018Pulling a Firearm on two Government Workers\u2019",
+        "rationale": "The headline references a specific alleged incident described in the post."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kimxir_mrgbexv",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "animalized derogatory slur ('suckle on the teats')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "grifter comes to suckle on the teats of the Orange Pig.",
+        "rationale": "Uses dehumanizing/sexualized phrasing to insult an individual."
+      },
+      {
+        "message_id": "reddit_1kw5zd9_mugnts2",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "civil war prediction",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "I see another civil war in our future",
+        "rationale": "The post uses an explicit historical/analogical scenario (civil war) to forecast events."
+      },
+      {
+        "message_id": "reddit_1ko2gif_msn8euz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong insults (fat, loser)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "That fat fucking loser is the only argument",
+        "rationale": "Contains profanity and aggressive insult terms targeting a person."
+      },
+      {
+        "message_id": "reddit_1tsurmm_ooya1ym",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "numeric emphasis and moralizing punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "It should be a 200% tax; if you\u2019re that much of a piece of shit, you owe not just what you receive, but double",
+        "rationale": "Uses charged profanity plus strong numeric/statement punctuation for emphasis."
+      },
+      {
+        "message_id": "reddit_1t1zmb4_ojkqmr3",
+        "feature_name": "rhetorical_question",
+        "feature_value": "question used to challenge/contrast prosecution vs 'ethical high ground'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Wouldn\u2019t it make more sense to prosecute pelosi and maintain an ethical high ground rather than condone corruption on all sides?",
+        "rationale": "The post is structured as a rhetorical question advocating a different course of action."
+      },
+      {
+        "message_id": "reddit_1krbubh_mtdpao3",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "quotation-based framing; insult-only evaluation ('What a joke!')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "What a joke! Just like the rest of Biden's 'Legacy'.",
+        "rationale": "Uses exclamatory dismissive phrasing and repeated quoted labels for pointed contrast."
+      },
+      {
+        "message_id": "reddit_1u0ljrd_oqjgebv",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "built-in discrimination; distrust after slavery/Jim Crow",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "racial discrimination was built into the legal system... distrust bred... even after slavery, and even after Jim Crow.",
+        "rationale": "Frames harm across history and focuses on long-term distrust rooted in persecution experiences."
+      },
+      {
+        "message_id": "reddit_1ttbe3e_op1dm94",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "implies strategic election manipulation ('covering his own ass' / securing political future)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "He was covering his own ass.",
+        "rationale": "Assigns self-serving motives as a hidden driver behind actions, framed as intent rather than fact."
+      }
+    ]
+  }
+}

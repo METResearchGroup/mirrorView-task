@@ -1,0 +1,180 @@
+{
+  "batch_id": 10,
+  "message_ids": [
+    "bluesky_0e28a584a468cc481d514c620f0425d657dfa6092b6fd4c676c9ffba5fa98996",
+    "bluesky_17e013d78fcdc87811e9b9c724ae84037e91406ccb168aabd442734e30845802",
+    "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+    "bluesky_646783655a55f992667fd239c783b32586b52df352f7f5fd6b51f7153c7681cf",
+    "bluesky_7ce98312ac5c87f1278d52e5f6dc1c2065816007f7fe4a5ba51b5cd457d2a98e",
+    "reddit_1knbwj7_msh0alx",
+    "reddit_1kxvo0q_muspobr",
+    "reddit_1lhaiqa_mz5dk9g",
+    "reddit_1ll2jq0_mzwd15s",
+    "reddit_1ts91q8_oox7bzl",
+    "reddit_1tvp4r1_opk3apc",
+    "reddit_1tw1yjv_oprs9yw",
+    "reddit_1u08bq4_oqiee1j",
+    "reddit_1u1z88l_oqu64vx",
+    "twitter_2059666512756064572",
+    "twitter_2059675070172221893",
+    "twitter_2060988882439585866",
+    "twitter_2061604414658412555",
+    "twitter_2061789922009211022",
+    "twitter_2061824324718494204"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061789922009211022",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump Administration to Dismantle Ocean Monitoring System  \nThe ignorant, bizarre, radical #trumpAdministration does not like scientific research, esp if it is related to climate change.",
+        "rationale": "The post contains multiple sentences with a longer argumentative span."
+      },
+      {
+        "message_id": "twitter_2061789922009211022",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "uses political hashtag(s)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#trumpAdministration",
+        "rationale": "A hashtag is explicitly present in the text."
+      },
+      {
+        "message_id": "twitter_2060988882439585866",
+        "feature_name": "normative_moral_language",
+        "feature_value": "strong moral/religious valuation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "God given right  to life iam a proud Catholic and pro life no exceptions!",
+        "rationale": "Uses religious framing and absolute moral language."
+      },
+      {
+        "message_id": "twitter_2059666512756064572",
+        "feature_name": "call_to_action",
+        "feature_value": "urges audience to lobby Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Will you join me in urging Congress to support the Dream Act &amp; deliver citizenship?",
+        "rationale": "The wording directly solicits support and action."
+      },
+      {
+        "message_id": "twitter_2059666512756064572",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "claims detained DACA recipients",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Over 340 DACA recipients were detained in the last year.",
+        "rationale": "Mentions detention of a targeted group as a harm."
+      },
+      {
+        "message_id": "bluesky_0e28a584a468cc481d514c620f0425d657dfa6092b6fd4c676c9ffba5fa98996",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "cost comparison and cost-outflow claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "fossil fuels are up to 3 times more expensive than renewables... 80 million Euros leave Germany every year for fossil fuels",
+        "rationale": "Uses relative pricing and money-flow figures to argue economic superiority."
+      },
+      {
+        "message_id": "reddit_1knbwj7_msh0alx",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dismisses via profanity/insulting phrase",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Stop the bullshit.",
+        "rationale": "Uses a mocking/derogatory imperative to dismiss the claim."
+      },
+      {
+        "message_id": "bluesky_7ce98312ac5c87f1278d52e5f6dc1c2065816007f7fe4a5ba51b5cd457d2a98e",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "uses 'I mean' pivot to reframe argument",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "I mean, that\u2019s what the NRA would say.",
+        "rationale": "The text explicitly pivots using an interjection to reinterpret the preceding statement."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_646783655a55f992667fd239c783b32586b52df352f7f5fd6b51f7153c7681cf",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "People that argue against stricter gun laws are fucking idiots.",
+        "rationale": "Contains explicit profanity directed at others."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz5dk9g",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses profanity toward a state",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "I said fuck Iran, as in state funded terrorism.",
+        "rationale": "The phrase contains profanity and targets a named country."
+      },
+      {
+        "message_id": "reddit_1u08bq4_oqiee1j",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "tuition/wage comparison with magnitude claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "tuition has skyrocketed 3000% since the 80s and wages haven't kept up.",
+        "rationale": "Provides numeric growth comparison to support an economic grievance."
+      },
+      {
+        "message_id": "reddit_1tvp4r1_opk3apc",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "religious and ideological references",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Biblically",
+        "rationale": "Uses explicit religious frame that strongly references a domain (Bible/Biblically)."
+      },
+      {
+        "message_id": "reddit_1tw1yjv_oprs9yw",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "sarcastic outrage framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Oh, the persecution!",
+        "rationale": "Uses an outraged rhetorical reaction to condemn the other side."
+      },
+      {
+        "message_id": "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "blames 'deep state media'/'convinced them'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "because the deep state media has convinced them that",
+        "rationale": "Attributes political behavior to manipulation by a conspiratorial entity."
+      },
+      {
+        "message_id": "reddit_1ll2jq0_mzwd15s",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses obscenity in insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "F__ck this commie asshat",
+        "rationale": "Contains a censored swear and insult targeting an ideological opponent."
+      },
+      {
+        "message_id": "reddit_1kxvo0q_muspobr",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insults individuals as incompetents",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Hegseth is a moron.",
+        "rationale": "Direct derogatory label used to ridicule an actor."
+      }
+    ]
+  }
+}

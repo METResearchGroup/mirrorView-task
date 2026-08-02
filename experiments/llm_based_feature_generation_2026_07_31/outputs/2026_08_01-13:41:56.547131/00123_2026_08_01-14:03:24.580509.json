@@ -1,0 +1,180 @@
+{
+  "batch_id": 123,
+  "message_ids": [
+    "bluesky_72235eaea6911f5a5b129a547d546c907f9156e3061e3179aff0b67ecdf7cbb8",
+    "bluesky_83ca6dc1a3d1cf8f3fd1b2fff54d7d8b8efbbed18bd0080151d59b55d76192f5",
+    "bluesky_8c1339e00e2ab77f713abea84e804c18c205c6c749bd739606d3fde06a48e9e9",
+    "bluesky_d07547db8a3fd657945ab1ab4327387aad3deba04598378e137c562d7d2dd8a9",
+    "reddit_1kdkguy_mqdbhtr",
+    "reddit_1kdvxy1_mqfqddi",
+    "reddit_1kxjv91_muq3s0s",
+    "reddit_1l489cq_mw6yxsn",
+    "reddit_1lenxv4_myhugyl",
+    "reddit_1lh3h92_mz2k6wk",
+    "reddit_1t4ruex_ok8m777",
+    "reddit_1ti0vzj_omrv089",
+    "reddit_1txsumx_opyjwk8",
+    "reddit_1u2almy_oqxyac4",
+    "twitter_2060013075667796070",
+    "twitter_2060719948302004294",
+    "twitter_2061221429140414564",
+    "twitter_2061398279808499802",
+    "twitter_2061741175904813524",
+    "twitter_2061778251660317003"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1t4ruex_ok8m777",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (DEI, Dems, GOP, MAGA, Federalist Society, leftist/far-right)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Hence the DEI aspect. ... the Dems ... the GOP ... MAGA ... Federalist Society dogma",
+        "rationale": "The post densely references named organizations/labels and political acronyms."
+      },
+      {
+        "message_id": "twitter_2061741175904813524",
+        "feature_name": "deportation_or_immigration_policy",
+        "feature_value": "Deportation/potential deportation framing",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "They will not be spared deportation when I take power.",
+        "rationale": "It explicitly discusses deportation in a political promise."
+      },
+      {
+        "message_id": "bluesky_8c1339e00e2ab77f713abea84e804c18c205c6c749bd739606d3fde06a48e9e9",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Constitutional rights / Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Second Amendment protects an individual right",
+        "rationale": "The core subject is constitutional-rights interpretation tied to the Second Amendment."
+      },
+      {
+        "message_id": "bluesky_72235eaea6911f5a5b129a547d546c907f9156e3061e3179aff0b67ecdf7cbb8",
+        "feature_name": "call_to_action",
+        "feature_value": "Mobilization instruction to arm/vote/organize",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Calling on all Democrats to arm themselves",
+        "rationale": "The text issues an explicit directive to a political group."
+      },
+      {
+        "message_id": "reddit_1ti0vzj_omrv089",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Wealth/paying/free-stuff redistribution dispute",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "remaining 15% will get to pay for the free stuff",
+        "rationale": "It frames redistribution as a tradeoff where one group pays and another receives benefits."
+      },
+      {
+        "message_id": "reddit_1kxjv91_muq3s0s",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Vulgar insults + sexual/visceral imagery",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "take his useless golden shower dome and stick it up his orange ass",
+        "rationale": "The post includes explicit profanity/taboo language and aggressive bodily insult phrasing."
+      },
+      {
+        "message_id": "twitter_2061398279808499802",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Strong declarative denial",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "There was never a climate crisis. There was always an agenda.",
+        "rationale": "It asserts a definitive negation of a widely used factual claim."
+      },
+      {
+        "message_id": "reddit_1lenxv4_myhugyl",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Conversational conditional + blunt moral judgment",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "If I was here illegally, I would just leave.",
+        "rationale": "The phrasing is casual/colloquial and uses a hypothetical conditional for moral stance."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_83ca6dc1a3d1cf8f3fd1b2fff54d7d8b8efbbed18bd0080151d59b55d76192f5",
+        "feature_name": "call_to_action",
+        "feature_value": "Political conversion/advocacy incitement",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "gonna make me a gun rights advocate",
+        "rationale": "It frames a scenario meant to push the speaker toward advocating a policy."
+      },
+      {
+        "message_id": "reddit_1kdvxy1_mqfqddi",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Religious profanity + extreme condemnation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "god fuck maga",
+        "rationale": "The post uses taboo profanity with a religious expletive."
+      },
+      {
+        "message_id": "bluesky_d07547db8a3fd657945ab1ab4327387aad3deba04598378e137c562d7d2dd8a9",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Labeling opponents with slurs and satirical comparisons",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "MAGgots be like: \"Requiring basic gun safety is fascism\"",
+        "rationale": "It uses derogatory group labeling and mocks an argument via quoted caricature."
+      },
+      {
+        "message_id": "twitter_2060013075667796070",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Sexual violence reference",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "breaks into their house and rapes their daughter or wife",
+        "rationale": "The text invokes rape as justification for a claim about attitudes."
+      },
+      {
+        "message_id": "reddit_1txsumx_opyjwk8",
+        "feature_name": "targeted_ad_hominem_removal_request",
+        "feature_value": "Calls to remove a named politician via violent/abusive imagery",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "please remove Trump himself. Deposit him in any trash can",
+        "rationale": "It directly targets a specific individual with dehumanizing disposal language."
+      },
+      {
+        "message_id": "reddit_1u2almy_oqxyac4",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing insults and childish imagery",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Democrats are spineless cowards. All they can do is wail and cry in the corner.",
+        "rationale": "It uses derogatory labeling plus degrading behavioral depiction."
+      },
+      {
+        "message_id": "reddit_1l489cq_mw6yxsn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual vulgarity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "He\u2019s gonna fuck around and get deported lmao",
+        "rationale": "It contains explicit sexual vulgar language."
+      },
+      {
+        "message_id": "twitter_2060719948302004294",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate crisis / climate policy rhetoric",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "address the Climate Crisis.",
+        "rationale": "The post explicitly addresses climate crisis as the motivating topic."
+      }
+    ]
+  }
+}

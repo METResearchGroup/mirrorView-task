@@ -1,0 +1,184 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 7,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Gun rights / gun reform policy advocacy",
+        "defining_features": [
+          "primary_policy_domain: Guns/firearms; Second Amendment framing",
+          "policy_prescription_present: advocates specific gun reform or changes (permits, outlawing assault weapons, etc.)",
+          "call_to_action: urging action toward gun reform/rights"
+        ],
+        "example_message_ids": [
+          "twitter_2060024663548248196",
+          "bluesky_44f9a69bf857f9419406e8e4f60d2f65e958c7d24349f95c82ef3bce810f7b8b",
+          "bluesky_8b5a6ba0f266236263a223307447088b4db964d57be5dbe763620c86363f84b6",
+          "bluesky_f59bc508b232015b6239cb9e21d8188c63a3fc8eb45c298cee57d733ebd19799"
+        ],
+        "keep_count": 9,
+        "remove_count": 3,
+        "interpretation": "Many posts revolve around firearms regulation as a central moderation topic; some are policy-prescriptive and may also include sharper rhetoric, but the core theme is consistent policy debate/advocacy around guns and the Second Amendment."
+      },
+      {
+        "id": 2,
+        "label": "Strong anti-outgroup labeling and us-vs-them targeting",
+        "defining_features": [
+          "us_vs_them_framing: explicit in-group vs out-group contrasts",
+          "ingroup_outgroup_labeling: pejorative partisan faction labels (e.g., Leftoids/Righties)",
+          "mirror_shift_direction or target_directionality: blame reassigned to opposing groups/actors",
+          "us_vs_them_insulting_group_labels: derogatory labels for supporters"
+        ],
+        "example_message_ids": [
+          "twitter_2059414867551854891",
+          "reddit_1tnjwbi_ony7ksg",
+          "reddit_1u0o8sa_oquz8f5",
+          "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+          "reddit_1tb5vg7_olf8pnx"
+        ],
+        "keep_count": 6,
+        "remove_count": 6,
+        "interpretation": "A recurring moderation-relevant pattern is partisan or group-based devaluation: posts frame opponents as an outgroup, assign negative intent, and sometimes combine this with insults or categorical blame."
+      },
+      {
+        "id": 3,
+        "label": "Profanity / taboo slurs and intense personal or group insults",
+        "defining_features": [
+          "profanity_or_taboo_language: explicit profanity (e.g., fuck, cunt) and derogatory taboo terms",
+          "dehumanizing_or_hate_style_insult: extreme dehumanizing labels (e.g., \u201chuman garbage\u201d)",
+          "all_caps_emphasis: uppercase used alongside insults/accusations (often intensifying offensiveness)",
+          "high_punctuation_intensity: escalation with aggressive formatting"
+        ],
+        "example_message_ids": [
+          "reddit_1l7aqfg_mww4ljj",
+          "reddit_1kub3v4_mu0vdmq",
+          "reddit_1kikfi4_mrfsmn1",
+          "reddit_1ttui2j_op636xx",
+          "reddit_1tszxri_oozc420"
+        ],
+        "keep_count": 2,
+        "remove_count": 14,
+        "interpretation": "Profanity and dehumanizing insults are prominent in removed content, suggesting this feature cluster is a strong moderation signal even when political disagreement is otherwise present."
+      },
+      {
+        "id": 4,
+        "label": "Conspiracy / covert control / foreign agent narratives",
+        "defining_features": [
+          "conspiratorial_framing: claims hidden influence or covert control (Russia, Putin, foreign puppeteers)",
+          "accusation_of_traitor_or_foreign_agent: labeling targets as foreign assets/traitors",
+          "factual_assertion_vs_speculation: denial of mainstream evidence via certainty or counterclaims (often used in conspiratorial contexts)"
+        ],
+        "example_message_ids": [
+          "bluesky_7da842d7645eb9f58ecb56560763cf129d341a790614dcf2a41081aa0eba9e74",
+          "reddit_1l60dkx_mwl4h1p",
+          "reddit_1tsvrr2_op0p9ys",
+          "reddit_1knm4f5_msk2m4f",
+          "bluesky_986d90974eafd65d0c03e3d5598ff7aeb4b6e358b64ee3ec8a4c88b8a1945442"
+        ],
+        "keep_count": 2,
+        "remove_count": 8,
+        "interpretation": "Posts that attribute political outcomes to hidden or foreign manipulation appear frequently in the removed group, indicating conspiracy framing is often treated as higher-risk (especially when paired with hostile rhetoric)."
+      },
+      {
+        "id": 5,
+        "label": "Normative moral language about rights, fairness, and harm",
+        "defining_features": [
+          "normative_moral_language: moral judgments (rights not debatable, insanity, justice/autonomy, murder claims)",
+          "victimhood_or_persecution_framing: portray groups as victims/under attack and blame opponents",
+          "causal_claim_present: moralized causality (under attack, harms attributed to actors)"
+        ],
+        "example_message_ids": [
+          "twitter_2060520286894878993",
+          "reddit_1tyojpm_oq9c9lc",
+          "twitter_2061570616172466284",
+          "reddit_1tsvgs3_op1282q",
+          "twitter_2061479497895993622"
+        ],
+        "keep_count": 10,
+        "remove_count": 2,
+        "interpretation": "Many kept posts lean heavily on moral reasoning and victim/persecution framing. While not always moderated, this cluster signals emotionally charged normative claims that often co-occur with other risk features (profanity, targeting, threats)."
+      },
+      {
+        "id": 6,
+        "label": "Attribution-heavy political naming (proper nouns, handles, institutions)",
+        "defining_features": [
+          "named_proper_nouns_density: dense mentions of political actors/organizations/locations/institutions",
+          "quote_or_attribution_embedding or nra_rhetorical_quote_present: attribution plus quotation",
+          "hashtag_or_mention_pattern or second_person_direct_address: addressing named individuals via @mention"
+        ],
+        "example_message_ids": [
+          "bluesky_030577a1a44b939d10067fde5764c694f1a2acca1b66d170d7dc51be53fa2c68",
+          "bluesky_6eaa390fe7ecd23ed6ccc14921b481745a676cea6df1121b0df12ed17d8116e9",
+          "reddit_1ti6ied_omuzlen",
+          "twitter_2061828323722838316",
+          "twitter_2061479497895993622"
+        ],
+        "keep_count": 7,
+        "remove_count": 2,
+        "interpretation": "Naming public figures and institutions is common across both groups; on its own it\u2019s not necessarily a moderation trigger, but it increases specificity and can amplify harm when paired with insults or threat-like claims."
+      },
+      {
+        "id": 7,
+        "label": "Mockery / ridicule / dismissive rhetorical tone",
+        "defining_features": [
+          "ridicule_or_mockery: dismissive framing (wishful thinking, clown/joke)",
+          "sarcastic_or_outrage_style_rhetoric: rhetorical question used to ridicule",
+          "rhetorical_question: recall/argument prompts that function rhetorically"
+        ],
+        "example_message_ids": [
+          "bluesky_57e79c3f2462c205aad6ca63beacc02b3c5c37a4731e41c675a64028398ea120",
+          "twitter_2061827523000856721",
+          "reddit_1tswg2c_ooy5rzu",
+          "reddit_1lk3x9y_mzqw16r"
+        ],
+        "keep_count": 5,
+        "remove_count": 5,
+        "interpretation": "Ridicule and mockery are frequent and appear in both keep/remove outcomes, indicating that tone-based dismissal is present broadly; moderation likely depends on whether this combines with stronger harassment/profanity or violent/threat framing."
+      },
+      {
+        "id": 8,
+        "label": "Call to action / political participation and collective mobilization",
+        "defining_features": [
+          "call_to_action: urging others to vote, join, pressure, start movements",
+          "policy_prescription_present: prescribes political action steps (forced transparency, voting out, etc.)"
+        ],
+        "example_message_ids": [
+          "twitter_2059797226990244336",
+          "reddit_1l7it3w_mwy55f3",
+          "twitter_2061059285379866655",
+          "twitter_2061478691956224443"
+        ],
+        "keep_count": 3,
+        "remove_count": 3,
+        "interpretation": "Collective political exhortations appear in both groups; they become more moderation-relevant when they explicitly target violence/weapon acquisition or demand removal/actions against individuals."
+      },
+      {
+        "id": 9,
+        "label": "Threat-like or violent conditional harm framing",
+        "defining_features": [
+          "policy_prescription_present: directives that imply weapon use or harm toward an addressee (e.g., \u201cwould turn their guns on you\u201d, acquire AR out of spite)",
+          "call_to_action: spite/weapon acquisition",
+          "high-stakes ultimatum style: \u201cWhen fascism wins, we all die.\u201d"
+        ],
+        "example_message_ids": [
+          "bluesky_1e7aafe2b1c65e8b787c26a18a722949206add7e183bec21db99fd50ca6e9bef",
+          "reddit_1lhfkqj_mz4mrik",
+          "reddit_1lbebmn_mxs2ki0",
+          "reddit_1lhfkqj_mz4mrik"
+        ],
+        "keep_count": 0,
+        "remove_count": 4,
+        "interpretation": "Threat/violence-adjacent conditional harm and weaponization intent show up only in removed content here, suggesting this cluster is a strong safety/harms signal."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Us-vs-them targeting (Theme 2) often co-occurs with profanity/insults (Theme 3) and ridicule (Theme 7).",
+      "Policy debate around guns (Theme 1) frequently intersects with victim/persecution and harm narratives (Theme 5) and sometimes with threat-like framing (Theme 9).",
+      "Conspiratorial narratives (Theme 4) commonly pair with dense political naming (Theme 6) and aggressive or dismissive tone (Theme 3/7).",
+      "Normative moral language (Theme 5) spans many domains (abortion, immigration, climate, justice) and can appear alongside both policy prescriptions and targeting."
+    ]
+  }
+}

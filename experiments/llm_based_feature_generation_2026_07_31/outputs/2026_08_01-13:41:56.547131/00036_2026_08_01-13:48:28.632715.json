@@ -1,0 +1,180 @@
+{
+  "batch_id": 36,
+  "message_ids": [
+    "bluesky_0316ebbe50dfd1fc88ee57a54f960db2f5f2ec22e53c91712f7e2f9d45f369e4",
+    "bluesky_170f88e6002ca2e27b55f654967bfa783b563eb8781d0e0cbf152c8b4940df46",
+    "bluesky_51e910f348d8c3ce98c1fcc33d2eefdd5c5479bdbe382e5247123d6043905159",
+    "bluesky_a89a2f80198d5d375519d0fb1c2b41c15d66fe1ca028d843784543e9ec45d410",
+    "bluesky_aeddf92353b36f948ec4403137e7b3a73f28f99642eaeeb51ca708581db49fad",
+    "bluesky_bd249c0417a31399aa53ae2c269679fb55fb7d0f195483d0923a5eda9570a4ea",
+    "bluesky_fb203f9adc685cb5ad051d5d1684078a84c96137e7c11fcd5dd33e97406808b2",
+    "reddit_1l3g0j8_mw2skqf",
+    "reddit_1lkojym_mztjt1d",
+    "reddit_1t4l69v_omzbreb",
+    "reddit_1tdva8i_olynv9k",
+    "reddit_1tgwl5y_omj5a8g",
+    "reddit_1tklc7j_on9x6ef",
+    "reddit_1tsyeyo_ooyp301",
+    "reddit_1u0y79a_oqp024l",
+    "reddit_1u1k8nd_oqtkb8g",
+    "twitter_2059848531372892458",
+    "twitter_2061656608740925833",
+    "twitter_2061791550372286589",
+    "twitter_2061831855515537795"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tklc7j_on9x6ef",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Class\" is not entirely without it's merits, but the most important factor is how good of a job you can do.",
+        "rationale": "The post contains multiple sentences and quotes, indicating a longer length."
+      },
+      {
+        "message_id": "twitter_2061791550372286589",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "low (no extra punctuation; short imperative)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Stop wasting our Taxes",
+        "rationale": "The text is a very short imperative with minimal punctuation."
+      },
+      {
+        "message_id": "reddit_1l3g0j8_mw2skqf",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "none/neutral",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "A stellar anecdote of the astonishing malfeasance and stupidity of the Trump administration.",
+        "rationale": "Language is rhetorical but not strongly slangy or informal."
+      },
+      {
+        "message_id": "reddit_1u1k8nd_oqtkb8g",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "implicit second-person directive to 'push back'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "is simply to push back",
+        "rationale": "The sentence prescribes how an audience should respond (action-oriented instruction)."
+      },
+      {
+        "message_id": "reddit_1u0y79a_oqp024l",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking behavior comparison/corroboration (caves, falls asleep)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Trump literally falls asleep in cabinet meetings.",
+        "rationale": "Uses degrading imagery to undermine the criticized actor."
+      },
+      {
+        "message_id": "twitter_2059848531372892458",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration / border enforcement",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "South Africa asks undocumented immigrants to leave",
+        "rationale": "The post centers on treatment of undocumented immigrants and immigration laws."
+      },
+      {
+        "message_id": "bluesky_bd249c0417a31399aa53ae2c269679fb55fb7d0f195483d0923a5eda9570a4ea",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (NRA, gun-rights terms)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The NRA says it's not the guns",
+        "rationale": "The post includes multiple specific named entities/organizations and policy-relevant proper nouns."
+      },
+      {
+        "message_id": "bluesky_fb203f9adc685cb5ad051d5d1684078a84c96137e7c11fcd5dd33e97406808b2",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "blames groups for 'hating' leading to policy failure",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "stop hating BIPOC and LGBTQ+ more than they love their children",
+        "rationale": "It frames an antagonistic social group dynamic as preventing policy progress."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061656608740925833",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "implied 'if you can..., what's the point' structure",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "What\u2019s the point of background checks if you can just make guns",
+        "rationale": "Uses an if-condition rhetorical setup questioning policy effectiveness."
+      },
+      {
+        "message_id": "bluesky_0316ebbe50dfd1fc88ee57a54f960db2f5f2ec22e53c91712f7e2f9d45f369e4",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "strong categorical claims about ineffectiveness",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Gun laws only keep honest people honest",
+        "rationale": "The post asserts definitive causal claims rather than speculation."
+      },
+      {
+        "message_id": "reddit_1lkojym_mztjt1d",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "class-based ingroup/outgroup labels (moneyed vs broke)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "I love all the upset moneyed people.",
+        "rationale": "Uses group labels to create a binary social identity contrast."
+      },
+      {
+        "message_id": "reddit_1tsyeyo_ooyp301",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking rhetorical question + incompetence accusations",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Everything he touches really just does turn to shit, doesn\u2019t it?",
+        "rationale": "Employs contemptuous language and a taunting rhetorical question."
+      },
+      {
+        "message_id": "bluesky_aeddf92353b36f948ec4403137e7b3a73f28f99642eaeeb51ca708581db49fad",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Second Amendment quoted/partial quoted",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"\u2026the Right of the people to keep and bear arms, shall not be infringed.\"",
+        "rationale": "The text embeds direct constitutional wording."
+      },
+      {
+        "message_id": "bluesky_51e910f348d8c3ce98c1fcc33d2eefdd5c5479bdbe382e5247123d6043905159",
+        "feature_name": "call_to_action",
+        "feature_value": "urgent removal demand (yesterday)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "He needs to be taken off the street yesterday!",
+        "rationale": "Uses an immediate directive advocating action against a person."
+      },
+      {
+        "message_id": "bluesky_a89a2f80198d5d375519d0fb1c2b41c15d66fe1ca028d843784543e9ec45d410",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "heavy all-caps with repeated slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "GET RID OF ALL THE FUCKING GUNS.",
+        "rationale": "The post uses emphatic all-caps repeated imperatives."
+      },
+      {
+        "message_id": "reddit_1tdva8i_olynv9k",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "claims about food costs/inflation and policy effects",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "lower food costs",
+        "rationale": "Explicitly discusses costs for groceries and government policy impacts."
+      }
+    ]
+  }
+}

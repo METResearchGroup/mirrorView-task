@@ -1,0 +1,180 @@
+{
+  "batch_id": 2,
+  "message_ids": [
+    "bluesky_31d21d2ad0abaccfd4d3f454050a7dd1225a7d68fec373ecfa8f56f8a5aa1599",
+    "bluesky_6923617401913939b3ec186e699bc19b173ab90eb776b0f43ebef890709ec85a",
+    "bluesky_88c44cf0678ebd1009205c2b66db87089941c08b1ae570672a33213ca287b420",
+    "bluesky_ccfeb629f73afe6c25221063f9074cde5aedcb5f3f9366966ddbb5db3f997fd3",
+    "reddit_1kc5vjr_mq49xzz",
+    "reddit_1kmn7i8_msdhdwg",
+    "reddit_1ktlf42_mtvetrl",
+    "reddit_1legu6v_mygt2si",
+    "reddit_1ll7mlw_mzytgq9",
+    "reddit_1t1x818_ojlj4k1",
+    "reddit_1t7hgak_okpi6xx",
+    "reddit_1ti5cqx_omtu29r",
+    "reddit_1tu4gub_op6ys8w",
+    "reddit_1tvumlg_opjqfam",
+    "reddit_1txekxo_opwz34h",
+    "twitter_2059382154191106217",
+    "twitter_2061219723778380164",
+    "twitter_2061596765745447084",
+    "twitter_2061714532960252398",
+    "twitter_2061789326925602869"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_ccfeb629f73afe6c25221063f9074cde5aedcb5f3f9366966ddbb5db3f997fd3",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Without a healthy ocean, we do not have a healthy earth \ud83c\udf0f. Climate change is real and plastic waste is killing us.",
+        "rationale": "The post is brief and consists of two short sentences."
+      },
+      {
+        "message_id": "twitter_2061219723778380164",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "high capitalization with emphatic imperative",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The Senate Must Pass the $72 Billion ICE and Border Patrol Funding Bill!",
+        "rationale": "Uses an emphatic imperative and ends with an exclamation mark."
+      },
+      {
+        "message_id": "reddit_1kmn7i8_msdhdwg",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo insult via sexualized phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "kissing Trump's orange ass",
+        "rationale": "Contains a crude insult targeting a public figure."
+      },
+      {
+        "message_id": "reddit_1tvumlg_opjqfam",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "dismissive slang and mockery terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "give exactly zero shits about hypocrisy",
+        "rationale": "Uses colloquial phrasing ('zero shits') typical of informal registers."
+      },
+      {
+        "message_id": "bluesky_31d21d2ad0abaccfd4d3f454050a7dd1225a7d68fec373ecfa8f56f8a5aa1599",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "if-then policy conclusion",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Well if that's the case then all concealed and open carry laws in this country must be repealed",
+        "rationale": "Employs a clear conditional ('if that\u2019s the case then')."
+      },
+      {
+        "message_id": "twitter_2061596765745447084",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "outgroup vs hypocrisy contrast (silent vs loud)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Racists and white supremacists stay silent... but are awfully loud when they are non white",
+        "rationale": "Directly contrasts two behaviors attributed to different groups."
+      },
+      {
+        "message_id": "twitter_2061714532960252398",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "low (no prominent proper-noun actors; ideological slogans)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Repeal the 19th",
+        "rationale": "The text relies on political slogan phrasing rather than naming people/organizations."
+      },
+      {
+        "message_id": "bluesky_88c44cf0678ebd1009205c2b66db87089941c08b1ae570672a33213ca287b420",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "implicitly contrasts policy alternatives and outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "We could have had a Green New Deal but we are getting decarbonization regardless",
+        "rationale": "Frames policy choices and their consequences, arguing what will happen."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ll7mlw_mzytgq9",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "What the fuck is wrong with Republicans?",
+        "rationale": "Contains the explicit taboo term 'fuck'."
+      },
+      {
+        "message_id": "reddit_1txekxo_opwz34h",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "aggrievement/persecution complex narrative",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "It's the aggrievement. Conservatives have been taking L after L",
+        "rationale": "Attributes political stance to a grievance/victimhood-like mindset."
+      },
+      {
+        "message_id": "reddit_1kc5vjr_mq49xzz",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "hyperbolic insult imagining actions",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Trump could literally shit and piss in their mouths",
+        "rationale": "Uses extreme grotesque imagery to demean the target group."
+      },
+      {
+        "message_id": "reddit_1ktlf42_mtvetrl",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting competence claim",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Trump is too stupid to understand \u201csoft power\u201d",
+        "rationale": "Directly attacks intelligence/capability with a derogatory assertion."
+      },
+      {
+        "message_id": "bluesky_6923617401913939b3ec186e699bc19b173ab90eb776b0f43ebef890709ec85a",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "stacked conspiracy/disinformation references",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Russian trolls\u2019 disinformation and conspiracies like Flat Earth, QAnan/Pizza-gate",
+        "rationale": "Lists multiple conspiracy claims as a category of disinformation."
+      },
+      {
+        "message_id": "reddit_1tu4gub_op6ys8w",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexualized/vulgar bodily function metaphor",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "GOP Facists openly shitting on the constitution",
+        "rationale": "Uses 'shitting' as a crude derogatory metaphor."
+      },
+      {
+        "message_id": "reddit_1t1x818_ojlj4k1",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "generalized argumentative comparison",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "doesn't hold up when you apply it consistently",
+        "rationale": "Presents an argumentative critique of a framing rather than a concrete event report."
+      },
+      {
+        "message_id": "reddit_1legu6v_mygt2si",
+        "feature_name": "call_to_action",
+        "feature_value": "urges action/stance via rejection of war and blame",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Man fuck Republicans. We don't want more wars",
+        "rationale": "Explicitly rejects a political group and expresses a desired political outcome."
+      }
+    ]
+  }
+}

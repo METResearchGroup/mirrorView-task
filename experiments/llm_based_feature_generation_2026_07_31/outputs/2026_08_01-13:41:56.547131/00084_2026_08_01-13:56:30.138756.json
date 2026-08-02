@@ -1,0 +1,180 @@
+{
+  "batch_id": 84,
+  "message_ids": [
+    "bluesky_2f5f837031fb643d5a2da6259229e84a68193725772dfb342fa16ba86fbb5c32",
+    "bluesky_35bf782a9d4eed72e58c78facd43bd7e1e0a71326dd8475191d64dd93a5b66b5",
+    "bluesky_3fecf553ee1e02d0305d4a7ce1624cfae9e029b4a92b735e66a4afe1c5110bce",
+    "bluesky_4f7ab190f26761384f8b173d9ce50fdb8e5a1f15189ba49e26486858258aff87",
+    "bluesky_84b7655e6b445108fbc799c263fa8ff4f6ddd428a220941af774823ed0a376ad",
+    "bluesky_d195e00a2fc92abb5ef3ae31d5233607c043599e2197e34eadaa1767295b380b",
+    "reddit_1krczb8_mtdubtd",
+    "reddit_1lhaiqa_mz56qxl",
+    "reddit_1ljukdf_mzmrewd",
+    "reddit_1ll6sj4_n0ndlat",
+    "reddit_1t54vlp_ok86egt",
+    "reddit_1thqwmy_omqkvk6",
+    "reddit_1tsx0f1_oozj3p6",
+    "reddit_1ttbe3e_op1eyqv",
+    "reddit_1ttui2j_op5rbxk",
+    "reddit_1tux6at_opdn8zt",
+    "reddit_1txopv4_opyut9g",
+    "twitter_2060136751725773182",
+    "twitter_2061787433277006134",
+    "twitter_2061825995544400308"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_4f7ab190f26761384f8b173d9ce50fdb8e5a1f15189ba49e26486858258aff87",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Conclusion : What looks like a simple urban-rural divide is really the cumulative effect of territorial inequalities...",
+        "rationale": "The post contains multiple full sentences with extended clause chains, indicating a long length."
+      },
+      {
+        "message_id": "bluesky_4f7ab190f26761384f8b173d9ce50fdb8e5a1f15189ba49e26486858258aff87",
+        "feature_name": "primary_policy_domain_climate_policy",
+        "feature_value": "climate policy and inequality effects",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "...climate policy lands on unevenly.",
+        "rationale": "It explicitly centers climate policy and its uneven territorial impacts."
+      },
+      {
+        "message_id": "bluesky_4f7ab190f26761384f8b173d9ce50fdb8e5a1f15189ba49e26486858258aff87",
+        "feature_name": "causal_claim_present",
+        "feature_value": "explains 'cumulative effect' of inequalities producing political explosiveness",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "...is really the cumulative effect of territorial inequalities... these inequalities become politically explosive...",
+        "rationale": "The text asserts a causal relationship between inequalities and political consequences."
+      },
+      {
+        "message_id": "reddit_1ljukdf_mzmrewd",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "full of shit",
+        "rationale": "The phrase is explicit taboo/profane language."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz56qxl",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "accuses 'treat refugees like animals' and 'persecute innocent people'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "...treat refugees like animals, persecute innocent people...",
+        "rationale": "It portrays a group as being harmed/targeted through persecution imagery."
+      },
+      {
+        "message_id": "reddit_1t54vlp_ok86egt",
+        "feature_name": "call_to_action",
+        "feature_value": "encourages primary voting activism",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "get active voting in primaries.",
+        "rationale": "The post contains a directive suggesting a specific political action."
+      },
+      {
+        "message_id": "twitter_2061787433277006134",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates understanding over deportation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Let's choose understanding over deportation.",
+        "rationale": "It recommends a policy stance contrasting deportation with understanding."
+      },
+      {
+        "message_id": "reddit_1krczb8_mtdubtd",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "generic insult framing rather than 'you'; but uses second-person implied?",
+        "category": "compositional_syntax",
+        "is_open_ended": true,
+        "evidence_span": "Another sucker played by Trump.",
+        "rationale": "Uses an agentive insult construction (attribution of blame to Trump) without direct second-person grammar."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061825995544400308",
+        "feature_name": "primary_policy_domain_education",
+        "feature_value": "education department/program cuts; protect schools",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "ripping important programs out of the Education Department... protect students and save our schools.",
+        "rationale": "The post focuses on education policy and school protection."
+      },
+      {
+        "message_id": "twitter_2061825995544400308",
+        "feature_name": "normative_moral_language",
+        "feature_value": "imperatives and moral framing ('We must protect...')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "We must protect students and save our schools.",
+        "rationale": "It uses moral/urgent prescription language."
+      },
+      {
+        "message_id": "bluesky_d195e00a2fc92abb5ef3ae31d5233607c043599e2197e34eadaa1767295b380b",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "hashtag about Trump / thinskin",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#trumplthinskin",
+        "rationale": "A hashtag is present and central to the first line."
+      },
+      {
+        "message_id": "bluesky_d195e00a2fc92abb5ef3ae31d5233607c043599e2197e34eadaa1767295b380b",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "Harry Potter analogy (Draco Malfoy/Dumbledore)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Draco Malfoy's attempts to kill Dumbledore",
+        "rationale": "It explicitly compares political violence attempts to characters from a well-known fictional universe."
+      },
+      {
+        "message_id": "reddit_1ttbe3e_op1eyqv",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting metaphor 'traitor... rat... jumped off the ship'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Mike Pence is a traitor... another rat that jumped off the ship",
+        "rationale": "Uses contemptuous animal/ship imagery to belittle the target."
+      },
+      {
+        "message_id": "twitter_2060136751725773182",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "conditional 'If you are... are you really going to...'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If you are a Texas Conservative Republican... are you really going to...",
+        "rationale": "The sentence is structured as an explicit conditional followed by a rhetorical implication/question."
+      },
+      {
+        "message_id": "bluesky_84b7655e6b445108fbc799c263fa8ff4f6ddd428a220941af774823ed0a376ad",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity and aggressive imperative",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "I fucking hate people... FUCKING GO AWAY",
+        "rationale": "Contains repeated strong profanity and emphatic uppercase swearing."
+      },
+      {
+        "message_id": "reddit_1tsx0f1_oozj3p6",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "uses 'Nah buddy' style; not all caps\u2014key cue is direct equivalence framing",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "Being conservative is to be a racist bigot.",
+        "rationale": "Uses a direct categorical equivalence/definition-like claim about political identity."
+      }
+    ]
+  }
+}

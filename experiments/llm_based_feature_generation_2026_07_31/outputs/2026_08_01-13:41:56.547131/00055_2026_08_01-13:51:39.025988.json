@@ -1,0 +1,180 @@
+{
+  "batch_id": 55,
+  "message_ids": [
+    "bluesky_3d5179aae4338b1472ff2d1ba20545f95c98e3f541eba6207d670d930a55a3ba",
+    "bluesky_48ad6a29c383b35e1ead1c2f723848ff7cb8bf9200e78fc92c787cb24cf0483f",
+    "bluesky_5abb00d9c158713b55c2d97d043d9c2ec331f0c2a258198d067091ff8ebe5737",
+    "bluesky_86acfe88fee9d4fa6db658de8620a34b0d959de4d33a4e4d2082b7947662a20e",
+    "bluesky_9a57114b74baf2d0785a106a0322e3d755d6318747e5396b833d33cf5d698e09",
+    "reddit_1kd63h5_mqawmhf",
+    "reddit_1kpmzrc_mt4yvx1",
+    "reddit_1l0w8ik_mvgjmtx",
+    "reddit_1l4m5l4_mwb0jov",
+    "reddit_1lj8oo7_mzkc1ag",
+    "reddit_1ti5ovh_omxvwta",
+    "reddit_1tr6mt1_oolswf5",
+    "reddit_1tsvrdr_oozuxnb",
+    "reddit_1tv4g76_oqs8qvb",
+    "reddit_1tvzs8j_opmax6r",
+    "reddit_1u05n1d_oqgmvj0",
+    "twitter_2061507754666189157",
+    "twitter_2061679411074564602",
+    "twitter_2061703577085808786",
+    "twitter_2061823850740842603"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tvzs8j_opmax6r",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"threatening homelessness\" ... \"federalize daycare\"",
+        "rationale": "The post contains multiple paragraphs with several full sentences and policy discussion."
+      },
+      {
+        "message_id": "reddit_1tvzs8j_opmax6r",
+        "feature_name": "call_to_action",
+        "feature_value": "advocates policy direction (let possible; federalize)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"let\u2019s actually make that possible\"",
+        "rationale": "Uses imperative framing to push for more leave/daycare policy changes."
+      },
+      {
+        "message_id": "bluesky_3d5179aae4338b1472ff2d1ba20545f95c98e3f541eba6207d670d930a55a3ba",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "teen/colloquial emphasis (\"Are you kidding?\")",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I\u2019m sorry, are you kidding?\"",
+        "rationale": "Uses casual interjection typical of informal social media speech."
+      },
+      {
+        "message_id": "bluesky_3d5179aae4338b1472ff2d1ba20545f95c98e3f541eba6207d670d930a55a3ba",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Manchin, Pelosi, Green New Deal, FOR THE PEOPLE ACT, Republicans)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Manchin\" ... \"Green New Deal\" ... \"FOR THE PEOPLE ACT\"",
+        "rationale": "Multiple named figures/initiatives are referenced in a short span."
+      },
+      {
+        "message_id": "bluesky_5abb00d9c158713b55c2d97d043d9c2ec331f0c2a258198d067091ff8ebe5737",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate policy (carbon tax / industrial carbon tax)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"industrial carbon tax\"",
+        "rationale": "Focus is on a carbon tax and related cost discussion."
+      },
+      {
+        "message_id": "bluesky_5abb00d9c158713b55c2d97d043d9c2ec331f0c2a258198d067091ff8ebe5737",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "provides numeric cost estimate",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"50 cents to $2 per barrel\"",
+        "rationale": "Uses a concrete range as if factual rather than as hypothetical."
+      },
+      {
+        "message_id": "reddit_1l0w8ik_mvgjmtx",
+        "feature_name": "target_directionality",
+        "feature_value": "targets general 'we' for bombing; contrasts with 'enemies taking our shit'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"stop bombing people\" / \"stop letting our enemies take our shit\"",
+        "rationale": "Directionality in the mirror shifts blame to enemies/weakness, using in-group pronouns."
+      },
+      {
+        "message_id": "reddit_1tsvrdr_oozuxnb",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct imperative to another person (Honey!!/Step away/Put down)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Step away from the burgers\"",
+        "rationale": "Uses imperative commands addressing the audience directly."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_86acfe88fee9d4fa6db658de8620a34b0d959de4d33a4e4d2082b7947662a20e",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "high caps + intensive capitalization",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"100%\" ... \"Christian\" ... \"Christian\"",
+        "rationale": "Uses heavy emphasis and capitalized references within a partisan claim."
+      },
+      {
+        "message_id": "bluesky_86acfe88fee9d4fa6db658de8620a34b0d959de4d33a4e4d2082b7947662a20e",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "very high (Illinois, Fed, House, Senate, White House, GOP, Trump, Musk)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Illinois\" ... \"House, Senate, White House\" ... \"Trump/ Musk\"",
+        "rationale": "The text stacks many institutions and well-known public figures."
+      },
+      {
+        "message_id": "bluesky_48ad6a29c383b35e1ead1c2f723848ff7cb8bf9200e78fc92c787cb24cf0483f",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "school Ten Commandments display bill (and mirror sex ed curriculum bill)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"10 Commandments\" in certain public schools",
+        "rationale": "References a concrete bill topic connected to a specific policy action."
+      },
+      {
+        "message_id": "bluesky_48ad6a29c383b35e1ead1c2f723848ff7cb8bf9200e78fc92c787cb24cf0483f",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dark joke/taunt about the uncertain ones",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Made me wonder what the uncertain ones get.\"",
+        "rationale": "Uses a mocking setup question followed by a punchline framing outcomes."
+      },
+      {
+        "message_id": "reddit_1kpmzrc_mt4yvx1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity/insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"dumbass trump dick suckers\"",
+        "rationale": "Contains explicit derogatory language."
+      },
+      {
+        "message_id": "reddit_1kpmzrc_mt4yvx1",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "tariffs framed as unavoidable for daily-life purchases",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"avoid tariffs\" \"90%\" \"shit they buy\"",
+        "rationale": "Argues about economic policy burden on consumers."
+      },
+      {
+        "message_id": "twitter_2061507754666189157",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "calls for removal of groups framed as criminal illegals/refugees",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"MUST BE REMOVED PERMANENTLY\" ... \"CRIMINAL ILLEGALS\"",
+        "rationale": "Depicts a group as criminal/dangerous and prescribes removal."
+      },
+      {
+        "message_id": "reddit_1kd63h5_mqawmhf",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "contrasts MAGA vs liberals with reciprocal assertions",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Maga ...\" / \"Also Maga\" ... \"Liberal response\"",
+        "rationale": "Uses alternating group labels ('Maga', 'Liberal') to construct an in-group/out-group contrast."
+      }
+    ]
+  }
+}

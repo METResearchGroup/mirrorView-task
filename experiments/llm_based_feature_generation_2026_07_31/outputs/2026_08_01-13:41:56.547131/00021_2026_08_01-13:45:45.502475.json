@@ -1,0 +1,180 @@
+{
+  "batch_id": 21,
+  "message_ids": [
+    "bluesky_375f1b78d5b4eac33df57f9ea591d5f4ce4683f381dae284e8c9cb34cfc0b972",
+    "bluesky_a9b0b1cc131070585ef96be04798122c18802d946a888fd05adaaa99aca6937b",
+    "bluesky_b8722d2abf7bb6f20d775484d3cc85fdb0fa2579ec7b6235d3a676335fed53b1",
+    "bluesky_e47f449ca615b63511739465168871f80ced3d729d85f6054fac5871e904e928",
+    "reddit_1kdhcse_mqgyjuv",
+    "reddit_1kl4k5p_ms0pvvv",
+    "reddit_1kqruic_mt844zs",
+    "reddit_1l3n2sj_mw2chd1",
+    "reddit_1ldv50r_myc8jvz",
+    "reddit_1lf2x6s_mymcjw9",
+    "reddit_1lmagph_n089ea2",
+    "reddit_1lnkvvz_n0i9er9",
+    "reddit_1t4w5i9_ok6c56k",
+    "reddit_1t84e9i_oktel74",
+    "reddit_1u0gjyt_oqk5mob",
+    "reddit_1u1fnvf_oqpr4a9",
+    "twitter_2059652753534693586",
+    "twitter_2059967541829664900",
+    "twitter_2061824192136262143",
+    "twitter_2061826508642038254"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kdhcse_mqgyjuv",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "informal, direct appeal to other country",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Can some other country please offer to take Americans with brains as refugees.",
+        "rationale": "Uses a casual, conversational phrasing aimed at another country."
+      },
+      {
+        "message_id": "bluesky_375f1b78d5b4eac33df57f9ea591d5f4ce4683f381dae284e8c9cb34cfc0b972",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "multiple proper nouns (Democrats, Clinton, FMLA, Motor Voter Act, Brady, etc.)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Dems did with their 2 year trifecta under Clinton: FMLA, Motor Voter Act... federal assault weapon ban and Brady gun control bill.",
+        "rationale": "High concentration of proper names and bill/program titles."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqpr4a9",
+        "feature_name": "hedging_or_qualification",
+        "feature_value": "either/or framing with multiple possibilities",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "he was either joking, it was \u201clocker room talk\u201d, or it\u2019s a fake clip.",
+        "rationale": "Presents competing explanations as possibilities."
+      },
+      {
+        "message_id": "reddit_1kqruic_mt844zs",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong profanity used as intensifier",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "You take that fucking idea of yours and throw it in the garbage.",
+        "rationale": "Contains explicit profanity."
+      },
+      {
+        "message_id": "reddit_1kqruic_mt844zs",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insults + derogatory imagery",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "incontinent, incompetent, narcissistic... with the memory of a fruit fly.",
+        "rationale": "Uses mocking, degrading descriptors rather than policy argument."
+      },
+      {
+        "message_id": "reddit_1ldv50r_myc8jvz",
+        "feature_name": "causal_claim_present",
+        "feature_value": "claims policy accelerated political violence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "GOP policy has accelerated political violence in America.",
+        "rationale": "Attributes a causal outcome (violence) to GOP policy."
+      },
+      {
+        "message_id": "bluesky_e47f449ca615b63511739465168871f80ced3d729d85f6054fac5871e904e928",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "describes harm to Sandy Hook parents and babies",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "more pain and suffering to those Sandy Hook parents than they already felt after their babies were hunted down",
+        "rationale": "Focuses on inflicted harm/victimization."
+      },
+      {
+        "message_id": "twitter_2061824192136262143",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "quotation plus author attribution/handle",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cAffordability is not a binary condition...\"\n\nNew op-ed in @eldiariony from Riders Alliance member, Victor!",
+        "rationale": "Contains a direct quote and cites the source via @mention."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1t4w5i9_ok6c56k",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "multiple exclamation marks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Democrats are a special kind of stupid!!!",
+        "rationale": "Expresses heightened emotion through repeated punctuation."
+      },
+      {
+        "message_id": "reddit_1lf2x6s_mymcjw9",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity targeting group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "get fucked.",
+        "rationale": "Contains direct taboo language."
+      },
+      {
+        "message_id": "reddit_1lnkvvz_n0i9er9",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "imperative demands about hiring and paying",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Hire Americans. Pay them.",
+        "rationale": "Directly prescribes actions/policy through imperative sentences."
+      },
+      {
+        "message_id": "twitter_2059652753534693586",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "absurd claim presented as fact (Mars infection)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Greenhouse gases so bad they are infecting Mars too.",
+        "rationale": "Uses an unlikely, non-literal assertion as if it were true."
+      },
+      {
+        "message_id": "twitter_2059967541829664900",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "claims carbon tax is detrimental with economic impact",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Policies on climate change and the carbon tax are seen as detrimental to the country, raising questions about leadership and economic impact.",
+        "rationale": "Frames policy as having economic costs/harms."
+      },
+      {
+        "message_id": "reddit_1t84e9i_oktel74",
+        "feature_name": "normative_moral_language",
+        "feature_value": "value-judgment generalization about a group",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Selective outrage is a pillar of the left.",
+        "rationale": "Uses a sweeping moral/political characterization."
+      },
+      {
+        "message_id": "reddit_1lmagph_n089ea2",
+        "feature_name": "geographic_scope",
+        "feature_value": "US states used as funding narrative (Alabama, California, Texas, etc.)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Alabama... red states... California taxes... shipped his dumb ass to GITMO.",
+        "rationale": "Relies on US state comparisons and institutions."
+      },
+      {
+        "message_id": "reddit_1l3n2sj_mw2chd1",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "strong hostile statement plus intensifiers",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I can't wait for Trump to die.",
+        "rationale": "Highly emphatic, extreme expression of anger."
+      }
+    ]
+  }
+}

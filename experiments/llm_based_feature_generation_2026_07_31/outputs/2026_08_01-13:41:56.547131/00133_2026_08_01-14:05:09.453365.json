@@ -1,0 +1,180 @@
+{
+  "batch_id": 133,
+  "message_ids": [
+    "bluesky_6ea7d2524fa4dea9a16db22aa08d651d4e17fbca8f67f1f8408f8f65a90b47d2",
+    "bluesky_f3e17c208202ba4824f4c8770e6628e0fe214f494f6829e24ee02eeeab28d791",
+    "bluesky_f80a8aeb1970ae525cf7b6219069aedc7a1fafbdc18137e1e2b28c2a821b8c69",
+    "reddit_1kikfi4_mrgr92q",
+    "reddit_1knx7j9_msm9ncy",
+    "reddit_1l1gs66_mvmo1wm",
+    "reddit_1l50ui0_mwdbf03",
+    "reddit_1lihmm4_mzdo699",
+    "reddit_1ll9i06_mzy1dsk",
+    "reddit_1tnf5qd_ontlz5o",
+    "reddit_1tpf0kw_oo9ah7u",
+    "reddit_1tuebh8_opahh0t",
+    "reddit_1tvsp9t_opllsqf",
+    "reddit_1txnqc1_opxj9am",
+    "reddit_1txopv4_opxng2m",
+    "reddit_1u0l8qh_oqp9e64",
+    "twitter_2059980602833506754",
+    "twitter_2060067516647399915",
+    "twitter_2060558966627750177",
+    "twitter_2060918428773539930"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060558966627750177",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Do little baby girls in the womb have the right to choose\u2026 life?\"",
+        "rationale": "The post is a single short question about abortion rights."
+      },
+      {
+        "message_id": "twitter_2060558966627750177",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Yes (implied rhetorical question)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Do little baby girls in the womb have the right to choose\u2026 life?\"",
+        "rationale": "It is phrased as a direct question intended to assert a position."
+      },
+      {
+        "message_id": "reddit_1lihmm4_mzdo699",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses multiple highly insulting slurs/abuse",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"low IQ Nazi grifting scumbags\" ... \"Dear leader\" ... \"illiterate\" ... \"POS's\"",
+        "rationale": "Contains taboo/abusive language and derogatory insults."
+      },
+      {
+        "message_id": "reddit_1lihmm4_mzdo699",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "political leader/party (Trump) and his regime",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"This whole Trump regime\" ... \"Their Dear leader\"",
+        "rationale": "Targets Trump and associates as the blamed actor."
+      },
+      {
+        "message_id": "twitter_2060067516647399915",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "abortion rights and domestic violence/stalking laws",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"domestic violence/stalking and abortion rights\"",
+        "rationale": "Explicitly references legal protections and abortion rights."
+      },
+      {
+        "message_id": "bluesky_f3e17c208202ba4824f4c8770e6628e0fe214f494f6829e24ee02eeeab28d791",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (NRA, ACLU)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"the NRA\" / \"the ACLU\"",
+        "rationale": "Major organizations are mentioned directly."
+      },
+      {
+        "message_id": "bluesky_f3e17c208202ba4824f4c8770e6628e0fe214f494f6829e24ee02eeeab28d791",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking characterization of excuses/outrage",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"paper-thin excuses and personal delusions\"",
+        "rationale": "Uses dismissive, contemptuous wording rather than neutral description."
+      },
+      {
+        "message_id": "reddit_1tuebh8_opahh0t",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "economic indicator framing (stock market only)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the stock market is the only economic indicator that matters.\"",
+        "rationale": "Links political attitudes to a specific economic metric and implies motivation by money source."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1txopv4_opxng2m",
+        "feature_name": "call_to_action",
+        "feature_value": "vote directive",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Vote for Democrats so they can actually block Trump.\" / \"Vote Republican so we can actually stop the radical left's agenda.\"",
+        "rationale": "Contains explicit voting instructions."
+      },
+      {
+        "message_id": "reddit_1l50ui0_mwdbf03",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"shit in the mouth\"",
+        "rationale": "Uses explicit bodily/sexual profanity."
+      },
+      {
+        "message_id": "reddit_1tvsp9t_opllsqf",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "capitalized intensifiers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Not a threat. Just a remodel.\"",
+        "rationale": "The post uses emphatic violence-related phrasing and high-intensity capitalization of regime labels."
+      },
+      {
+        "message_id": "reddit_1tvsp9t_opllsqf",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "violent destruction rhetoric against regime",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"shit torn down and destroyed\"",
+        "rationale": "Presents the targeted regime as something to be torn down and destroyed."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_ontlz5o",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insult terms (dipshit) and accusations (pedo)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"googly-eyed dipshit\" ... \"pedo\"",
+        "rationale": "Includes strong insults plus allegations of child sexual abuse."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_ontlz5o",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative to stop/hold off",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Stop letting your MAGA voting friends, family, and coworkers off the hook.\"",
+        "rationale": "Uses a direct imperative addressed to the audience."
+      },
+      {
+        "message_id": "twitter_2059980602833506754",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration and citizenship policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Progressive Immigration Policy\" ... \"America is indigenous land and no human is illegal\"",
+        "rationale": "Focused on immigration policy and who counts as a legal human citizen."
+      },
+      {
+        "message_id": "reddit_1kikfi4_mrgr92q",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fucking losers.\"",
+        "rationale": "Uses explicit profanity to insult the cited actor."
+      }
+    ]
+  }
+}

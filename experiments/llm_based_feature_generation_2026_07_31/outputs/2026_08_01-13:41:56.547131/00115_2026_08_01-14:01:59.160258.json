@@ -1,0 +1,180 @@
+{
+  "batch_id": 115,
+  "message_ids": [
+    "bluesky_0e748d01a2b0acb6244580447817eef6fa7152d116e84dcc81d2bebb8e180f65",
+    "bluesky_276072294af28de3c37ab82640218bfaa45addfc7be001ef5fcceabf163c7bac",
+    "bluesky_4359735d3927eacfd6e328ed98ecf07bbb5ec7548c3e28565a93dc194a8e2b43",
+    "bluesky_762530441c44235caf1c7e47dd4e7771a5c9fa86406a49fff6f2cce31a0db59b",
+    "bluesky_91108053f2efb73c5fb62a024ccd1dd94674ed6c0b071fe78931f4b9ade8ec60",
+    "bluesky_a983b7ef75c994f3acaf4f5388f8a5d29d9909813723e52247e89af0a97dcc94",
+    "bluesky_db6ffde2da6ee9054ba420a4e9584b52f8d2889b47e857ca6ec7883888f68c4a",
+    "reddit_1kwecer_mugti91",
+    "reddit_1lc6l57_mxy9u43",
+    "reddit_1t7d5jc_oko2smc",
+    "reddit_1tpy3la_ood1p6z",
+    "reddit_1trnhrp_ooupq57",
+    "reddit_1tt0mlj_op1zgxc",
+    "reddit_1ttbse9_op1x2fp",
+    "reddit_1tuzkhw_opfmys1",
+    "reddit_1tv7vfu_opi6inm",
+    "reddit_1tvll8k_opixjd6",
+    "reddit_1tvyk2a_opsblkn",
+    "reddit_1ty27wv_oq2c3b0",
+    "reddit_1u2ek28_oqx054h"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_a983b7ef75c994f3acaf4f5388f8a5d29d9909813723e52247e89af0a97dcc94",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun reform debate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "reaction to gunshots",
+        "rationale": "The post explicitly discusses gunshots and refusing gun reform."
+      },
+      {
+        "message_id": "bluesky_a983b7ef75c994f3acaf4f5388f8a5d29d9909813723e52247e89af0a97dcc94",
+        "feature_name": "all_caps_emphasis_or_profanity_like",
+        "feature_value": "intensifier profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "so shit",
+        "rationale": "Contains strong profanity used for emphasis and insult."
+      },
+      {
+        "message_id": "bluesky_762530441c44235caf1c7e47dd4e7771a5c9fa86406a49fff6f2cce31a0db59b",
+        "feature_name": "geographic_scope",
+        "feature_value": "US state comparison (Texans vs California)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Texans ... California",
+        "rationale": "Uses sub-national jurisdictions to contrast climate action behavior."
+      },
+      {
+        "message_id": "bluesky_762530441c44235caf1c7e47dd4e7771a5c9fa86406a49fff6f2cce31a0db59b",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate / energy policy (fossil plants, heatwaves, grid)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "fossil-fueled power plant ... climate action",
+        "rationale": "Mentions fossil-fueled plants and climate action as the subject."
+      },
+      {
+        "message_id": "bluesky_91108053f2efb73c5fb62a024ccd1dd94674ed6c0b071fe78931f4b9ade8ec60",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates specific firearms ban/legislation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Dems should move quickly and put a bill together calling for a ban on all firearms",
+        "rationale": "Explicitly calls for drafting and passing a ban in certain locations."
+      },
+      {
+        "message_id": "reddit_1tuzkhw_opfmys1",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "false equivalency framing + rebuttal questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Prohibition and abortion bans are incomparable... Do the results outweigh them?",
+        "rationale": "Uses a comparative claim then follows with a direct argumentative question about tradeoffs."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_op1zgxc",
+        "feature_name": "normative_moral_language",
+        "feature_value": "human rights / rights-based condemnation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "violates human rights",
+        "rationale": "Characterizes the proposal as violating human rights and basic moral principles."
+      },
+      {
+        "message_id": "bluesky_db6ffde2da6ee9054ba420a4e9584b52f8d2889b47e857ca6ec7883888f68c4a",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "long enumerated record with repeated 'Blocked/Delayed'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "blocked the minimum wage for 17 years. Blocked paid family leave",
+        "rationale": "Uses stacked clauses to list multiple actions as a record."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lc6l57_mxy9u43",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "derogatory profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Trumps narcissistic circle jerk.",
+        "rationale": "Uses explicit profanity targeting a political figure/group."
+      },
+      {
+        "message_id": "reddit_1tvll8k_opixjd6",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insult term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Orange scum.",
+        "rationale": "Contains a dehumanizing/insult phrase directed at Trump."
+      },
+      {
+        "message_id": "reddit_1tvll8k_opixjd6",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "direct accusations of crimes/treason",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "He committed treason multiple times.",
+        "rationale": "Makes a specific criminality claim as an assertion rather than speculation."
+      },
+      {
+        "message_id": "reddit_1kwecer_mugti91",
+        "feature_name": "elite_vs_populist_framing",
+        "feature_value": "education/elite status stereotyping",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "ill-educated ... smart people",
+        "rationale": "Uses broad characterizations tied to education and social class."
+      },
+      {
+        "message_id": "reddit_1trnhrp_ooupq57",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Hart-Cellar and Citizens United references",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Hart-Cellar ... Citizens United",
+        "rationale": "Explicitly cites named legal frameworks/cases."
+      },
+      {
+        "message_id": "reddit_1tv7vfu_opi6inm",
+        "feature_name": "sarcasm_or_irony",
+        "feature_value": "cult/ hypnosis comparison",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "It's like they're hypnotized.",
+        "rationale": "Uses a figurative comparison suggesting irrational control."
+      },
+      {
+        "message_id": "reddit_1tv7vfu_opi6inm",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "brain not letting them pivot (mental control depiction)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "brains literally won't let them pivot",
+        "rationale": "Depicts the audience as controlled/disabled in their agency."
+      },
+      {
+        "message_id": "reddit_1u2ek28_oqx054h",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "caps emphasis on political slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "STATES RIGHTS!",
+        "rationale": "Ends with a slogan in all caps for emphasis."
+      }
+    ]
+  }
+}

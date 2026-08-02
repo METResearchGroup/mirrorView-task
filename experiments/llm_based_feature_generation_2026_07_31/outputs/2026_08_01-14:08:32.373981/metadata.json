@@ -1,0 +1,12 @@
+{
+  "start_timestamp": "2026_08_01-14:08:32.373981",
+  "total_items": 14,
+  "run_metadata": {
+    "stage": "theme_synthesis",
+    "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+    "model": "gpt-5.4-nano",
+    "n_shards": 14,
+    "batches_per_shard": 10
+  },
+  "end_timestamp": "2026_08_01-14:12:21.789279"
+}

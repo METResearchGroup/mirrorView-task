@@ -1,0 +1,215 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 9,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Gun control / Second Amendment policy debates",
+        "defining_features": [
+          "primary_policy_domain mentions guns/gun laws/Second Amendment",
+          "gun policy list items (e.g., background checks, waiting periods, red flag laws)",
+          "claims about constitutionality of gun laws (e.g., \"All gun laws are unconstitutional\")",
+          "discussion of disarmament and firearms-related prescriptions",
+          "references to gun-carry contexts (e.g., \"constitutional carry\")"
+        ],
+        "example_message_ids": [
+          "bluesky_29f282aa918e99746ff0a1c5aca30f51d705112315be599081f2e30b64d48543",
+          "twitter_2061824070958956668",
+          "bluesky_ee1226ee41d7911e6f616d328e6d37d62c5fed4d6e4d268caaf36e61f761a957",
+          "twitter_2059387832884675063",
+          "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670"
+        ],
+        "keep_count": 10,
+        "remove_count": 8,
+        "interpretation": "A highly recurrent moderation-relevant policy domain: posts frequently argue about gun rights/restrictions, often with embedded lists, constitutional claims, and sometimes calls for specific enforcement measures."
+      },
+      {
+        "id": 2,
+        "label": "Immigration enforcement, deportation, and sanctuary cities",
+        "defining_features": [
+          "primary_policy_domain mentions immigration, deportation, ICE, sanctuary cities",
+          "defund/justice-style or policy framing tied to immigration status",
+          "conditional or slogan-like statements about deportation as \"solution\"",
+          "us_vs_them framing connected to immigration/euro identity/gated categories"
+        ],
+        "example_message_ids": [
+          "reddit_1txnigx_opy92ef",
+          "reddit_1tx0770_opsaim3",
+          "reddit_1kufk1l_mu14yej",
+          "twitter_2061476819757330924",
+          "reddit_1twgtct_opo5fuq"
+        ],
+        "keep_count": 1,
+        "remove_count": 6,
+        "interpretation": "Immigration content appears strongly in the dataset with enforcement-centric framing (ICE/sanctuary/deportation), which can correlate with harsher rhetoric and stronger directives."
+      },
+      {
+        "id": 3,
+        "label": "Proscription via profanity, slurs, and derogatory insults",
+        "defining_features": [
+          "profanity_or_taboo_language present (explicit \"fucking\", \"fuck\", coarse insults)",
+          "ridicule_or_mockery using derogatory labels (e.g., \"idiot\", \"clown\", \"thugs\")",
+          "high_punctuation_intensity used to heighten hostility (caps, intensifiers)"
+        ],
+        "example_message_ids": [
+          "reddit_1kf2hgg_mqq9p2i",
+          "reddit_1kl4k5p_ms4g6cx",
+          "reddit_1l6qvvm_mwvvgt8",
+          "bluesky_bf5a1ecda14846d4e52603a9e3cd49e01c909a0482e45ca3a4222730fcc2f5ae",
+          "reddit_1kcy0mu_mq6vxp3"
+        ],
+        "keep_count": 2,
+        "remove_count": 13,
+        "interpretation": "A clear escalation pattern: when posts use explicit profanity or strong derogatory labeling/mocking, they are far more likely to be remove-rated."
+      },
+      {
+        "id": 4,
+        "label": "Calls for action: policy prescriptions and/or mobilization directives",
+        "defining_features": [
+          "policy_prescription_present (e.g., background checks, red flag laws, gun laws measures)",
+          "call_to_action includes imperatives or participation prompts (\"Join\", \"contact Congress\", vote prompts)",
+          "call_to_action includes accountability or punitive framing (\"held accountable\", deportation as solution)",
+          "direct endorsement framing (\"boots on the ground\")"
+        ],
+        "example_message_ids": [
+          "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670",
+          "twitter_2061565214529630679",
+          "twitter_2061562921373618283",
+          "twitter_2060476075034206458",
+          "twitter_2059404130087801256"
+        ],
+        "keep_count": 5,
+        "remove_count": 6,
+        "interpretation": "Action-oriented posts\u2014especially those prescribing concrete policy or urging mobilization\u2014are common and moderation-relevant, but appear in both keep and remove groups depending on severity and accompanying rhetoric."
+      },
+      {
+        "id": 5,
+        "label": "Dehumanization / extreme or ideological labeling (disease, fascist/nazi, cult, etc.)",
+        "defining_features": [
+          "us_vs_them_framing with dehumanizing metaphors (e.g., disease/sickness label for a bloc)",
+          "target_directionality uses extremist/loaded labels (fascist/communist/nazi) as insults",
+          "culture_war_topic_salience includes identity/culture-war metaphors (masks/hoods imagery)",
+          "ridicule_or_mockery with extreme comparative insults"
+        ],
+        "example_message_ids": [
+          "reddit_1tvzs8j_opl3fqa",
+          "reddit_1l8qyw6_mx6tqmg",
+          "reddit_1kg0w37_mqwf8av",
+          "reddit_1kdsslc_mqh5xvm",
+          "bluesky_32bd5a9ef53393361f8a2a434d29c69cdf846482b3ff6bdfbdcb2d84cceb8efe"
+        ],
+        "keep_count": 2,
+        "remove_count": 7,
+        "interpretation": "When political disagreement is expressed through dehumanizing or extremist labeling, posts become more likely to be remove-rated\u2014consistent with moderation concerns around hate/abuse language."
+      },
+      {
+        "id": 6,
+        "label": "Culture-war topics: LGBTQ/reproductive health/abortion and related moral framing",
+        "defining_features": [
+          "culture_war_topic_salience includes LGBTQ/gender ideology controversies",
+          "topic_subject_salience_reproductive_health_culture_war and abortion policy positions",
+          "normative_moral_language about who should legislate (e.g., gendered legitimacy)",
+          "ridicule_or_mockery via dismissive characterizations around reproductive or identity issues"
+        ],
+        "example_message_ids": [
+          "reddit_1tstlbr_ooyqrcg",
+          "bluesky_32bd5a9ef53393361f8a2a434d29c69cdf846482b3ff6bdfbdcb2d84cceb8efe",
+          "reddit_1tvzs8j_opl3fqa",
+          "twitter_2061672171467108367",
+          "reddit_1kg0w37_mqwf8av"
+        ],
+        "keep_count": 2,
+        "remove_count": 6,
+        "interpretation": "Culture-war subject matter frequently comes with moral/identity framing and sometimes stronger hostile rhetoric; moderation outcomes vary but remove-rate is substantial."
+      },
+      {
+        "id": 7,
+        "label": "Partisan in-group/out-group framing and mirror blame shifts",
+        "defining_features": [
+          "us_vs_them_framing (collective blame like GOP vs Democrat Party)",
+          "target_directionality includes mirror shifting praise/blame between parties",
+          "left_right_directional_cue assigns fault to one ideological side",
+          "us_vs_them_framing tied to media or coalition labeling"
+        ],
+        "example_message_ids": [
+          "reddit_1tsj7e8_oovqrcf",
+          "reddit_1l8zsgk_mxbg6x2",
+          "reddit_1lgkon2_myziyi9",
+          "reddit_1keqjfd_mqkupq0",
+          "reddit_1tws6al_opqnjwq"
+        ],
+        "keep_count": 2,
+        "remove_count": 6,
+        "interpretation": "The corpus repeatedly uses partisan boundary-making (in-group/out-group, mirror blame). This is often paired with harsher wording elsewhere, contributing to moderation risk."
+      },
+      {
+        "id": 8,
+        "label": "Constitutionality/legal-institution arguments and attribution to institutions",
+        "defining_features": [
+          "constitutional/legal framing (e.g., Constitution clauses, \"constitutional carry\", \"shall not be infringed\")",
+          "quote_or_attribution_embedding referencing legal/political institutions (AG/DOJ roles)",
+          "factual_assertion_vs_speculation using evidence conditions (court case, undisputed claims)"
+        ],
+        "example_message_ids": [
+          "bluesky_521818262b353e37b71c5665dd1accdb07440212ce5ac2da981475c26c5586e3",
+          "reddit_1trbfkm_oothhcp",
+          "bluesky_bf5a1ecda14846d4e52603a9e3cd49e01c909a0482e45ca3a4222730fcc2f5ae",
+          "twitter_2059387832884675063",
+          "reddit_1l8zsgk_mxbg6x2"
+        ],
+        "keep_count": 2,
+        "remove_count": 6,
+        "interpretation": "Posts frequently ground arguments in legal/institutional authority or constitutional claims; when combined with aggressive rhetoric or harsh insinuations, they skew toward remove-rating."
+      },
+      {
+        "id": 9,
+        "label": "Conspiracy and hidden-plot explanations",
+        "defining_features": [
+          "conspiratorial_framing (deep state, hidden coordinated plots)",
+          "blames political outcomes on hidden powerful actors (Putin/Soros/NRA/government via foreign elite)",
+          "evasive-strategy explanations framed as intentional avoidance"
+        ],
+        "example_message_ids": [
+          "reddit_1tt8kk9j_op0vg9c",
+          "reddit_1lgcokh_myvf1zx",
+          "reddit_1l4871w_mw743t1",
+          "bluesky_67cd6dc0e292f4ec281474f238b9ffe1bfe84d0514daa8513ac42813cef139e0",
+          "reddit_1tws6al_opqnjwq"
+        ],
+        "keep_count": 0,
+        "remove_count": 4,
+        "interpretation": "Conspiracy-style rationales appear in the remove group more than the keep group, aligning with moderation concerns about unverified or malign hidden-actor narratives."
+      },
+      {
+        "id": 10,
+        "label": "Assertive blame with cost/benefit or causal reasoning (jobs, costs, elections)",
+        "defining_features": [
+          "causal_claim_present (jobs lost due to government action; employment causality)",
+          "economic_cost_benefit_framing (national security costs vs small financial gains; tax burden critique)",
+          "conditional_if_then_structure predicting outcomes (election losses from actions)",
+          "factual_assertion_vs_speculation with comparative claims"
+        ],
+        "example_message_ids": [
+          "reddit_1txnigx_opy92ef",
+          "twitter_2061824703266951566",
+          "bluesky_c7102c0a8ab2440340f6e55106a0d23e57beea9d2147d2af428aa8ea2b41c2d0",
+          "reddit_1tiody8_omxs4db",
+          "reddit_1l9nlap_mxfbf9g"
+        ],
+        "keep_count": 1,
+        "remove_count": 5,
+        "interpretation": "A common argumentative style is strong causal/economic reasoning (sometimes speculative). In this corpus it co-occurs with other risk factors, hence a notable remove share."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Political partisanship boundaries (in-group/out-group, mirror blame) recur across multiple domains (guns, immigration, culture-war).",
+      "Hostility escalation correlates with explicit profanity and ridicule/mocking, and shows up repeatedly across keep/remove groups.",
+      "Action-oriented communication (policy prescriptions, accountability calls, mobilization directives, vote prompts) spans both policy debates and broader political engagement.",
+      "Legal/constitutional justification is repeatedly used to legitimize policy stances, often alongside intense evaluative language.",
+      "Culture-war subject matter (LGBTQ/reproductive health/abortion) frequently pairs with moral/legitimacy claims and stronger derogatory framing."
+    ]
+  }
+}

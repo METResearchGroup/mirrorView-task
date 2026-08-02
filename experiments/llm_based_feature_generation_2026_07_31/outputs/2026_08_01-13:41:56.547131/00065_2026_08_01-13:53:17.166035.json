@@ -1,0 +1,180 @@
+{
+  "batch_id": 65,
+  "message_ids": [
+    "bluesky_5c6a5ac74f6d4ede017d4e98737902235c28feaa2ec1b9c4c56c51b6a5fbbee1",
+    "bluesky_88d8f27ff7484895600622a8d9211313641feec68b06aec362acedbd934eb58c",
+    "bluesky_8c4774b1aeeddf007ca2da20d0fb40c49d7c0964b3aa014559f1d346aad267d4",
+    "bluesky_a581f92ca8c2faa5ff05b011ab3397ea325ec69c5fed076c47e9bbbec6e4db55",
+    "reddit_1kgrze0_mr2cyk5",
+    "reddit_1kgz5f8_mr381po",
+    "reddit_1l06djr_mvbe5w1",
+    "reddit_1l1e80m_mvktw5y",
+    "reddit_1l79rdv_mwxanrr",
+    "reddit_1lco4ck_my3ukmu",
+    "reddit_1lfh7py_myoznyd",
+    "reddit_1td83n8_olufnjm",
+    "reddit_1tgwl5y_omjkcef",
+    "reddit_1ttui2j_op5ac7l",
+    "reddit_1tuzkhw_opek7y4",
+    "reddit_1twgtct_oppkrkm",
+    "reddit_1txzeeg_oq0r5dt",
+    "twitter_2060811987328933954",
+    "twitter_2061801064085520442",
+    "twitter_2061824538585743703"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1twgtct_oppkrkm",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Low (only generic 'Traditional family' framing; no explicit named people/places)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Traditional family\" is code for the man is in charge",
+        "rationale": "Uses a generic coded phrase ('Traditional family') without introducing named entities."
+      },
+      {
+        "message_id": "reddit_1kgz5f8_mr381po",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Low punctuation; compact one-sentence insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The Trump administration is like the Harvard of stupid.",
+        "rationale": "No punctuation beyond a period; stylistically a short metaphorical jab."
+      },
+      {
+        "message_id": "reddit_1txzeeg_oq0r5dt",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct mobilization to pressure voters/actors and removal from office",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "The people need to remind trump... THROW THE BUMS OUT!!!\n\nSweep the scum out of office!",
+        "rationale": "Contains explicit imperatives and slogans advocating political removal."
+      },
+      {
+        "message_id": "reddit_1l1e80m_mvktw5y",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Taboo insult directed at political leader",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"orange asshole\"",
+        "rationale": "Uses a strong insulting term ('asshole') toward a politician."
+      },
+      {
+        "message_id": "bluesky_5c6a5ac74f6d4ede017d4e98737902235c28feaa2ec1b9c4c56c51b6a5fbbee1",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Enumerates multiple policy labels with reform framing critique",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Earlier... called their climate proposal the Green New Deal. Presenting green climate policy as affordability...",
+        "rationale": "Sequences named bills/policies across sentences and evaluates them."
+      },
+      {
+        "message_id": "reddit_1kgrze0_mr2cyk5",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Binary conditional 'either ... or ...' blame assignment",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Biden is either a fool, or a moron cause...",
+        "rationale": "Employs an 'either/or' structure to attribute cause/intent."
+      },
+      {
+        "message_id": "twitter_2060811987328933954",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Medium (explicit 'Second Amendment')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "loss of our Second Amendment rights",
+        "rationale": "Invokes a specific U.S. constitutional term."
+      },
+      {
+        "message_id": "bluesky_a581f92ca8c2faa5ff05b011ab3397ea325ec69c5fed076c47e9bbbec6e4db55",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates specific gun-reform measures / restrictions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "support common sense gun reform including assault weapon bans, waiting periods, DV prohibitions, red-flag laws",
+        "rationale": "Lists concrete policy prescriptions for gun regulation."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l06djr_mvbe5w1",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Claims mass death and moral culpability for violence toward a group",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "He has the blood of hundreds of thousands of Palestinians on his hands.",
+        "rationale": "Uses a 'blood on your hands' trope tied to mass casualties."
+      },
+      {
+        "message_id": "reddit_1l06djr_mvbe5w1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses direct profanity and hostile slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Harris and the entire Democrat establishment.",
+        "rationale": "Contains explicit profanity targeting a politician and party."
+      },
+      {
+        "message_id": "reddit_1tgwl5y_omjkcef",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Cost-shifting accusation about taxpayers vs other groups",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "hardworking taxpayers get forced to foot the bill for reparations",
+        "rationale": "Frames the debate as taxpayers bearing costs ahead of accountability for another group."
+      },
+      {
+        "message_id": "twitter_2061801064085520442",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct @mention with 'You are...' insult",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "@GovMikie You are such a commie.",
+        "rationale": "Uses direct second-person address to a tagged individual."
+      },
+      {
+        "message_id": "reddit_1l79rdv_mwxanrr",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses extreme dehumanizing profanity ('piece of shit')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "is a fascist piece of shit.",
+        "rationale": "Contains degrading profanity directed at political supporters."
+      },
+      {
+        "message_id": "bluesky_88d8f27ff7484895600622a8d9211313641feec68b06aec362acedbd934eb58c",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Attributes shootings to corruption and lobbying",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "shootings like this are daily because our Congress is corrupt and won\u2019t pass any reasonable gun reform laws",
+        "rationale": "States a cause-effect rationale for shootings."
+      },
+      {
+        "message_id": "reddit_1lfh7py_myoznyd",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profane rejection of party with added ideological self-label",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "I'm a communist. Fuck democrats too.",
+        "rationale": "Includes direct profanity targeting a political group."
+      },
+      {
+        "message_id": "reddit_1tuzkhw_opek7y4",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Abstract philosophical/argumentative claims about personhood and law",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "personhood as a concept is made up and at the whims of each and every individuals' subjective opinion.",
+        "rationale": "Presents general theoretical assertions rather than a specific event claim."
+      }
+    ]
+  }
+}

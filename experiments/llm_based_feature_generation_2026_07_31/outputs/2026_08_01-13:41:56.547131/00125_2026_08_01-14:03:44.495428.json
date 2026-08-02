@@ -1,0 +1,180 @@
+{
+  "batch_id": 125,
+  "message_ids": [
+    "bluesky_404f3fa97a2e53d8dc91ecc13c98d38de82dda4f345270b81b6b778f65814807",
+    "bluesky_5c46476ecd06618cf425c77863552cb74b05686c59642321ba3c89d22322795c",
+    "bluesky_9a7bb4ac81c87ef697d4a81c197da431ff4af96d76bbb05c64dccf2323e53f37",
+    "bluesky_9dd75ecd3894e2b5b66e84f08d7d37e43b577d6544d9ca20befffa432a898391",
+    "bluesky_b00ea78e485a5982e2e8cb6b35efc0ca24efdfb811b346e2764c8192abb530bb",
+    "bluesky_e59e17df9d4d66e9810c96f1e691f541746428ce25112739ef4b3044af707eb5",
+    "reddit_1ld36t6_my57phr",
+    "reddit_1ll1vt1_mzxv2xy",
+    "reddit_1lmagph_n07r0kt",
+    "reddit_1ti5cqx_omvmh7g",
+    "reddit_1ttsfrd_op6moku",
+    "reddit_1txrv9p_oq1cvum",
+    "reddit_1tztcf5_oqdcufi",
+    "twitter_2060310645472469042",
+    "twitter_2060498779673907487",
+    "twitter_2061387123819720888",
+    "twitter_2061536095054041500",
+    "twitter_2061756274769862675",
+    "twitter_2061826217808953561",
+    "twitter_2061828050602332457"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060498779673907487",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Uses @ mention to a politician",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@realDonaldTrump",
+        "rationale": "The post begins with a direct handle mention."
+      },
+      {
+        "message_id": "twitter_2060498779673907487",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Targets 'people in charge' and frames an outgroup coalition for removal",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "the people in charge need to be arrested too... we want them gone , illegals Islam and criminal democrat communists gone",
+        "rationale": "It constructs an in-group vs out-group that should be arrested/removed."
+      },
+      {
+        "message_id": "twitter_2060310645472469042",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/firearms policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "restore the gun rights... own a firearm",
+        "rationale": "The text is about restoring gun rights/ownership."
+      },
+      {
+        "message_id": "twitter_2060310645472469042",
+        "feature_name": "call_to_action",
+        "feature_value": "Requests specific legislative action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "can you please make another change in another law you just passed",
+        "rationale": "It directly asks for a change and restoration of rights."
+      },
+      {
+        "message_id": "bluesky_404f3fa97a2e53d8dc91ecc13c98d38de82dda4f345270b81b6b778f65814807",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses a leader (implied second-person request)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If Biden had actually stood up... I might have had a shred of respect for him",
+        "rationale": "The conditional structure evaluates a politician\u2019s actions toward gun rights."
+      },
+      {
+        "message_id": "twitter_2061828050602332457",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Uses multiple hashtags calling for political action",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#fdt #maga #trump #fafo",
+        "rationale": "It includes several partisan/action-oriented hashtags."
+      },
+      {
+        "message_id": "twitter_2061536095054041500",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Religious moral condemnation and prohibition language",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Sodomy is in direct disobedience to God's Moral Law... must not celebrate",
+        "rationale": "It uses strong moral-religious judgment terms to prescribe behavior."
+      },
+      {
+        "message_id": "bluesky_e59e17df9d4d66e9810c96f1e691f541746428ce25112739ef4b3044af707eb5",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Colloquial exhortation and emphasis with ASAP and exclamation marks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "ASAP!!! We can't keep bending the knee",
+        "rationale": "It uses informal phrasing ('bending the knee') and heavy exclamation for urgency."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ttsfrd_op6moku",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Attributes EV/renewables growth to oil-profit inertia",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "resting on the laurels of ever increasing oil profit",
+        "rationale": "It presents an explanation that benefits (oil profit) cause slower tech progress."
+      },
+      {
+        "message_id": "twitter_2061387123819720888",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Politician/party names used for blame",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Biden/Harris",
+        "rationale": "It explicitly names Biden/Harris as responsible."
+      },
+      {
+        "message_id": "twitter_2061756274769862675",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Conditional reasoning about liberals and carbon footprint",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If the Liberals really cared about Canada\u2019s carbon footprint, would they...",
+        "rationale": "The post uses an if-question framing tied to a policy implication."
+      },
+      {
+        "message_id": "bluesky_9a7bb4ac81c87ef697d4a81c197da431ff4af96d76bbb05c64dccf2323e53f37",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly instructs 'Please don't/stop'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Please don't generalize gun owners... Please stop pretending",
+        "rationale": "It addresses the reader directly with imperative phrasing."
+      },
+      {
+        "message_id": "bluesky_b00ea78e485a5982e2e8cb6b35efc0ca24efdfb811b346e2764c8192abb530bb",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Alleges large-scale bribery and misinformation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "spent hundreds of billions buying up Congress people... lying to the American people",
+        "rationale": "The language asserts coordinated corrupt action and deception."
+      },
+      {
+        "message_id": "reddit_1tztcf5_oqdcufi",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insulting description of opposing candidates",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "The MAGATS love their underqualified reality stars as candidates.",
+        "rationale": "It uses derogatory labeling to belittle a political group\u2019s candidates."
+      },
+      {
+        "message_id": "reddit_1lmagph_n07r0kt",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity and derogatory insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck all of these old fucks",
+        "rationale": "The text contains explicit profanity."
+      },
+      {
+        "message_id": "reddit_1ti5cqx_omvmh7g",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Blames 'ped o criminal fraud' cohort and frames as broad corruption",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "accept a pedo criminal fraud and his cohorts",
+        "rationale": "It attributes a coordinated/connected set of wrongdoers to a political side."
+      }
+    ]
+  }
+}

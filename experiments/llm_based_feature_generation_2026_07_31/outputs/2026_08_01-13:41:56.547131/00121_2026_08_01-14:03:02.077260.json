@@ -1,0 +1,180 @@
+{
+  "batch_id": 121,
+  "message_ids": [
+    "bluesky_3c05fbfbe40be892837f39fc03cf7b9d94692b7e7209fba6fe72a07010532a75",
+    "bluesky_82ca727fbe0d6376761040c496f99b45edd0eb8f7c422556105144d8a652d247",
+    "bluesky_8b7c6c85f2c1fec497c2c3f5ffc6c6bad13a955fad759fdfec7c434a1f9acb5e",
+    "reddit_1kcjvfv_mq4alrl",
+    "reddit_1kgj7n3_mr0h2cg",
+    "reddit_1l1roga_mvoo01l",
+    "reddit_1l4b2as_mw889er",
+    "reddit_1laslnz_mxo28k0",
+    "reddit_1t1zmb4_ojmmt4l",
+    "reddit_1tlur1u_onjn3wx",
+    "reddit_1trnhrp_op61ap9",
+    "reddit_1tw6zcr_opn8bfp",
+    "reddit_1txopv4_opyz632",
+    "reddit_1u09w82_oqizse3",
+    "reddit_1u1fnvf_oqq7ju0",
+    "twitter_2060001139089612912",
+    "twitter_2060938389461827850",
+    "twitter_2061173358561996904",
+    "twitter_2061423119185707099",
+    "twitter_2061709203501089134"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1trnhrp_op61ap9",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Open borders implies completely unregulated immigration.",
+        "rationale": "The post is a single compact sentence with few words."
+      },
+      {
+        "message_id": "reddit_1trnhrp_op61ap9",
+        "feature_name": "normative_moral_language",
+        "feature_value": "uses moralized descriptors to evaluate positions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Deportation culture implies zero compassion for human beings.",
+        "rationale": "The mirror frames deportation as lacking compassion, invoking moral judgment."
+      },
+      {
+        "message_id": "twitter_2061173358561996904",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "uses casual abbreviation markers and 'btw' phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "basically just a reverse tariff btw",
+        "rationale": "The sentence uses informal emphasis and condensed speech consistent with high informality."
+      },
+      {
+        "message_id": "twitter_2061173358561996904",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate policy / carbon taxes",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "The industrial carbon tax",
+        "rationale": "The main policy subject is an industrial carbon tax."
+      },
+      {
+        "message_id": "reddit_1laslnz_mxo28k0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "slurs/insults toward political groups",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Fascists",
+        "rationale": "The post contains explicit 'Fuck' profanity directed at an ideological group."
+      },
+      {
+        "message_id": "reddit_1laslnz_mxo28k0",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "anti-ideology culture-war rhetoric (fascists/communists)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Fascists Hate Free Speech",
+        "rationale": "The framing contrasts authoritarian ideologies and speech/authority themes."
+      },
+      {
+        "message_id": "bluesky_3c05fbfbe40be892837f39fc03cf7b9d94692b7e7209fba6fe72a07010532a75",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun violence / self-defense / gun policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "gun violence",
+        "rationale": "The content focuses on harm from gun violence and related safety/self-defense themes."
+      },
+      {
+        "message_id": "reddit_1kgj7n3_mr0h2cg",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (news outlets and politicians mentioned)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fox news ... Trump ... J.d.",
+        "rationale": "Multiple named entities (Fox News, Trump) are explicitly referenced."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l4b2as_mw889er",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "wake people the fuck up",
+        "rationale": "Contains the word 'fuck' used for emphasis."
+      },
+      {
+        "message_id": "reddit_1l4b2as_mw889er",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "claims constitutional/sovreignty harm from political actors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "trump wipes his ass with our constitution",
+        "rationale": "The user depicts political wrongdoing as disrespecting core civic rights."
+      },
+      {
+        "message_id": "reddit_1txopv4_opyz632",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "references 2016 election as prior context",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "when Trump was elected in 2016",
+        "rationale": "The text anchors the speaker\u2019s position to a specific election year."
+      },
+      {
+        "message_id": "twitter_2060938389461827850",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "internet slang/intensifiers ('fr') and casual phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "this is a global warming thing fr",
+        "rationale": "Uses 'fr' (for real) and casual shorthand typical of informal social media."
+      },
+      {
+        "message_id": "bluesky_82ca727fbe0d6376761040c496f99b45edd0eb8f7c422556105144d8a652d247",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun laws with trans-related framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "trans gun ban",
+        "rationale": "The text explicitly mentions trans gun ban and gun rights measures."
+      },
+      {
+        "message_id": "bluesky_82ca727fbe0d6376761040c496f99b45edd0eb8f7c422556105144d8a652d247",
+        "feature_name": "causal_claim_present",
+        "feature_value": "implied strategic causation using 'want to' intentions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They want to make it impossible... They want to make shitting on trans people a win",
+        "rationale": "The post attributes deliberate motives and intended effects."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqq7ju0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "any fucking worse",
+        "rationale": "Uses 'fucking' as an intensifier."
+      },
+      {
+        "message_id": "twitter_2060001139089612912",
+        "feature_name": "normative_moral_language",
+        "feature_value": "abortion opposition stated as moral absolute",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Life begins at conception \u2014 protecting the unborn IS reproductive health.",
+        "rationale": "The mirror uses definitive moral framing to argue abortion as 'killing babies' and demands."
+      }
+    ]
+  }
+}

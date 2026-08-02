@@ -1,0 +1,180 @@
+{
+  "batch_id": 134,
+  "message_ids": [
+    "bluesky_2b7a3b0959832d207bc4f8272dc9ae12b3874f4bd04e188f470ac8ac002d99f1",
+    "bluesky_37d89942a385f6efe7e11b502ed10b16355a06af8abaef5f58de2da15dfb3d64",
+    "bluesky_3f697dcb410956e7712611340fa52f73f2e20d1805ffa72b7a2f30531f2bee50",
+    "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+    "bluesky_9e5e554a57aba1c349db21fc2849b16ba0aa29919b5637417b62b48ddb431aa1",
+    "bluesky_9fdb049647bb225ed3a63eeef901c7f854ca7615c0d866c09e2f3bf34e1484ff",
+    "bluesky_b9bfc1d02ac2dc212880876cf7dd2ac14cc635bca60f3863359f44471f4ed694",
+    "bluesky_ee4be9be5cbd68751ce05452a9aadfbd4db2429e46599f331f465601adc08e3a",
+    "reddit_1kkr1xi_mrwpn3u",
+    "reddit_1ks0x2e_mthp44p",
+    "reddit_1l55wkp_mwevaw2",
+    "reddit_1te3cn8_om0gy26",
+    "reddit_1tnf5qd_onvyes2",
+    "reddit_1ttun3g_op5v3en",
+    "reddit_1tupifu_opfjibl",
+    "reddit_1u08yl1_oqgh0lv",
+    "reddit_1u22gzn_oqv6pem",
+    "twitter_2059082439784644839",
+    "twitter_2060352574700605772",
+    "twitter_2061088218507084104"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tnf5qd_onvyes2",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Only in Texas could a politician with an indictment on charges of felony securities fraud and impeachment...",
+        "rationale": "The post is multiple sentences with added line breaks and substantial commentary."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_onvyes2",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (Texas, Rump)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Only in Texas... Rump has 34 felony CONVICTIONS",
+        "rationale": "Multiple specific place/person references appear in the text."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_onvyes2",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "\"CONVICTIONS\" in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Rump has 34 felony CONVICTIONS",
+        "rationale": "The term CONVICTIONS is explicitly capitalized for emphasis."
+      },
+      {
+        "message_id": "twitter_2059082439784644839",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "explicit call to stop undermining reproductive rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Any efforts to undermine women's reproductive rights must stop.",
+        "rationale": "The language prescribes an action/stance (\u201cmust stop\u201d)."
+      },
+      {
+        "message_id": "bluesky_2b7a3b0959832d207bc4f8272dc9ae12b3874f4bd04e188f470ac8ac002d99f1",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "75% emissions tied to costs like utility bills and taxes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "save roughly 75% of middle-class household budgets... skyrocketing utility bills and useless carbon taxes",
+        "rationale": "The argument links policy changes to monetary benefits/cost savings."
+      },
+      {
+        "message_id": "bluesky_b9bfc1d02ac2dc212880876cf7dd2ac14cc635bca60f3863359f44471f4ed694",
+        "feature_name": "rhetorical_question",
+        "feature_value": "how many... didn't wish...",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "How many of us have experienced... and didn't wish there were a ballroom...",
+        "rationale": "The post is structured as a question meant to elicit agreement rather than seek information."
+      },
+      {
+        "message_id": "bluesky_9fdb049647bb225ed3a63eeef901c7f854ca7615c0d866c09e2f3bf34e1484ff",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "memorialization contrasted (not for gun violence victims)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Not for those we lost to gun violence... To a literal convicted murderer. Disgusting.",
+        "rationale": "The framing centers on victims being ignored and condemns the substitute target."
+      },
+      {
+        "message_id": "bluesky_ee4be9be5cbd68751ce05452a9aadfbd4db2429e46599f331f465601adc08e3a",
+        "feature_name": "call_to_action",
+        "feature_value": "imperatives listing actions/commands",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Spend your money! Enjoy! Consume!",
+        "rationale": "The mirror uses directive imperatives to push a stance/behavior."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ks0x2e_mthp44p",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "\"fucking\" insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump is a fucking coward",
+        "rationale": "The post includes a strong taboo slur/intensifier."
+      },
+      {
+        "message_id": "reddit_1ks0x2e_mthp44p",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "conditional about \"somebody\" and threat framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "What do you think would happen if somebody posted a video...",
+        "rationale": "It uses a direct question structure addressing the audience\u2019s perspective."
+      },
+      {
+        "message_id": "reddit_1tupifu_opfjibl",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "\"assholes\" insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Racist assholes like Pete",
+        "rationale": "Contains an abusive insult targeting a group/person."
+      },
+      {
+        "message_id": "reddit_1te3cn8_om0gy26",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "policy list with commas and \"etc.\"",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "mass denaturalization, repeal of Hart-Celler, blacklist of countries... impose severe punishments... etc.",
+        "rationale": "The sentence is built as an extended list of proposals."
+      },
+      {
+        "message_id": "reddit_1l55wkp_mwevaw2",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "\"fucking\" and hope for retaliation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Can we go one fucking day... I seriously hope CA retaliates",
+        "rationale": "Uses strong intensifier and expresses aggressive frustration."
+      },
+      {
+        "message_id": "reddit_1ttun3g_op5v3en",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "shut up command",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Shut up and go put you mouth back on trumps ass",
+        "rationale": "It directly issues an imperative insult to the reader/target."
+      },
+      {
+        "message_id": "reddit_1u08yl1_oqgh0lv",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "derisive slang/metaphor \"Orange Cheesus\"",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Orange Cheesus their entire identity",
+        "rationale": "Uses informal, mocking nicknaming and colloquial phrasing."
+      },
+      {
+        "message_id": "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+        "feature_name": "rhetorical_question",
+        "feature_value": "\"How on earth do they justify...\"",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "How on earth do they justify opposing background checks and tracing parts?",
+        "rationale": "Uses a rhetorical question to challenge and delegitimize the other side."
+      }
+    ]
+  }
+}

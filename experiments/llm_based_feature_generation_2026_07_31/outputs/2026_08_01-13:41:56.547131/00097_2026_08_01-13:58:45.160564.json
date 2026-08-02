@@ -1,0 +1,180 @@
+{
+  "batch_id": 97,
+  "message_ids": [
+    "bluesky_0e9c9a8b821c873337c71fceb028449ebc108ce56c008a98f80fdd2f244ac659",
+    "bluesky_13da40f0ff6dc230271d019f3bb5de17dc72773bb61e927d3680151732084545",
+    "reddit_1keqjfd_mqkupq0",
+    "reddit_1kq44b8_mt4ofac",
+    "reddit_1lg1iv5_myw2w3x",
+    "reddit_1t5ip7p_okhf1bx",
+    "reddit_1ti151j_omrce6d",
+    "reddit_1tsvrr2_ooyslxr",
+    "reddit_1tw6zcr_opmz0j4",
+    "reddit_1twgtct_opo5fuq",
+    "reddit_1tws6al_opqxexl",
+    "reddit_1tx4xmh_opu7ilj",
+    "reddit_1u0l8qh_oqjr3ye",
+    "twitter_2060028326949830835",
+    "twitter_2061562921373618283",
+    "twitter_2061565214529630679",
+    "twitter_2061604496422084697",
+    "twitter_2061638560374026701",
+    "twitter_2061732061648678929",
+    "twitter_2061800864210387334"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061604496422084697",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Deportation is the moderate solution.",
+        "rationale": "The post is a single short sentence."
+      },
+      {
+        "message_id": "twitter_2061732061648678929",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "implicit national/second-person framing via 'USA'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "USA keep in mind, the Democrats have no solution on \"affordability\"",
+        "rationale": "The text directly addresses an audience ('USA keep in mind')."
+      },
+      {
+        "message_id": "twitter_2061732061648678929",
+        "feature_name": "persuasion_or_argumentation",
+        "feature_value": "argument against Democrats' policy competence",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "they just say the word, but they don't understand business and economics.",
+        "rationale": "It provides a political claim intended to persuade (no solution; incompetence)."
+      },
+      {
+        "message_id": "bluesky_0e9c9a8b821c873337c71fceb028449ebc108ce56c008a98f80fdd2f244ac659",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "excessive letter repetition for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "but noooooo you had to have your forever wars",
+        "rationale": "Use of 'noooooo' indicates strong emphatic punctuation/typographic intensity."
+      },
+      {
+        "message_id": "twitter_2061562921373618283",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "SAVE AMERICA ACT / VOTER INTEGRITY ACT",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "SAVE AMERICA ACT",
+        "rationale": "The post explicitly names proposed legislation."
+      },
+      {
+        "message_id": "twitter_2061562921373618283",
+        "feature_name": "call_to_action",
+        "feature_value": "binary voting prompt with options",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Would you vote to pass the SAVE AMERICA ACT? \n\nA. YES \nB.",
+        "rationale": "It solicits audience action via a direct question and answer choices."
+      },
+      {
+        "message_id": "twitter_2061565214529630679",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "institution + political figure citation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Bulletin of the Atomic Scientists... Trump",
+        "rationale": "Multiple named entities are referenced (organization and person)."
+      },
+      {
+        "message_id": "reddit_1tws6al_opqxexl",
+        "feature_name": "sarcasm_or_irony",
+        "feature_value": "mock-surprised rhetorical stance",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I'm shocked! Shocked! Well, okay, not that shocked.",
+        "rationale": "The repeated 'shocked' followed by qualification signals ironic exaggeration."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_13da40f0ff6dc230271d019f3bb5de17dc72773bb61e927d3680151732084545",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun control",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "gun control. ... Second Amendment",
+        "rationale": "The text centers on gun control and Second Amendment protections."
+      },
+      {
+        "message_id": "reddit_1t5ip7p_okhf1bx",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "ideological side contrast (libs vs conservatives)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Corruption on both sides of the aisle, but the liberals are so egregious.",
+        "rationale": "It explicitly assigns blame to one ideological side."
+      },
+      {
+        "message_id": "reddit_1twgtct_opo5fuq",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "ingroup/outgroup based on identity and religion",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "They want YOU (euro white Christians) ... while they clog up Grindr",
+        "rationale": "It contrasts an addressed outgroup ('they') with an identity-marked in/outgroup reference."
+      },
+      {
+        "message_id": "reddit_1twgtct_opo5fuq",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "derogatory mock contrast (trophy wives / embezzling)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "their megachurch pastors are on their third trophy wife and embezzling the collection plate",
+        "rationale": "It uses scornful character attacks to demean the referenced group."
+      },
+      {
+        "message_id": "reddit_1tsvrr2_ooyslxr",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "9/11 / Iraq War counterfactual",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "9/11 might not even happened ... Iraq War.",
+        "rationale": "It invokes specific historical events and alternative timelines."
+      },
+      {
+        "message_id": "reddit_1keqjfd_mqkupq0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexualized/insult slang",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "not much smartz, tho.",
+        "rationale": "The text relies on insulting colloquial language directed at a public figure."
+      },
+      {
+        "message_id": "reddit_1ti151j_omrce6d",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "ingroup collusion rationale for political actions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "All the libs joined forces to punish Donald Trump",
+        "rationale": "It implies coordinated, motive-based action by a group."
+      },
+      {
+        "message_id": "twitter_2061638560374026701",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "tax/redistribution prescriptions with promised outcome",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Tax every billionaire and close every loophole, and the country still won't get better.",
+        "rationale": "It proposes an economic policy and claims about its (non-)effectiveness."
+      }
+    ]
+  }
+}

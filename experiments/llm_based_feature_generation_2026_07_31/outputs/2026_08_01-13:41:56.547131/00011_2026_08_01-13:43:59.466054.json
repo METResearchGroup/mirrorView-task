@@ -1,0 +1,180 @@
+{
+  "batch_id": 11,
+  "message_ids": [
+    "bluesky_caca755d4d30ef0b58c8c0312116e61fa852b60e725ddcdbc36c2030ab637106",
+    "bluesky_cb1b0aff03c89885528615801e5cff73b242af7146bbd9b555b99533614d9c47",
+    "reddit_1kouuvz_mstfzqj",
+    "reddit_1ksr6ho_mtnu98t",
+    "reddit_1kub3v4_mu15m2i",
+    "reddit_1l9jij3_mxetx1q",
+    "reddit_1lhaiqa_mz2uzd2",
+    "reddit_1tswg2c_op0beo8",
+    "reddit_1tux6at_opfac1e",
+    "reddit_1tz4l7k_oq8q7ve",
+    "reddit_1u0gyo8_oqjbci9",
+    "reddit_1u0l8qh_oqj3g9r",
+    "reddit_1u2almy_oqvycnc",
+    "reddit_1u2ek28_oqxby3h",
+    "twitter_2060756089310753109",
+    "twitter_2060992060434309180",
+    "twitter_2061392484215996758",
+    "twitter_2061453414978982337",
+    "twitter_2061569982148800755",
+    "twitter_2061816952742425036"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061453414978982337",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "They Call It Term Limits. But Whose Power Gets Limited?",
+        "rationale": "The post is primarily a brief question plus a short quoted line."
+      },
+      {
+        "message_id": "twitter_2061453414978982337",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "embedded quoted statement explaining target",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The target should be corruption, capture, and concentrated power...\"",
+        "rationale": "It includes a quoted sentence specifying what the target should be and what it shouldn\u2019t be."
+      },
+      {
+        "message_id": "reddit_1u2ek28_oqxby3h",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dismissive jab via \u201cfacts are optional\u201d",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "But hey, facts are optional.",
+        "rationale": "The phrasing mocks the opposing side\u2019s use of evidence."
+      },
+      {
+        "message_id": "reddit_1tz4l7k_oq8q7ve",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high density of politician/brand name",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump and MAGA",
+        "rationale": "The line directly names a prominent politician and movement acronym."
+      },
+      {
+        "message_id": "twitter_2061569982148800755",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "multiple direct quotes and question about DOJ",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe only thing that's going to solve this problem... is for the president to do away with the weaponization fund.\u201d",
+        "rationale": "It uses direct quotation from a named person plus a follow-up question and another quote."
+      },
+      {
+        "message_id": "reddit_1u0gyo8_oqjbci9",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "asserts legal/process facts to counter fraud claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "California law allows for tallying votes during a 7 day grace period... It doesn\u2019t make it fraud!",
+        "rationale": "The text presents legal timing/procedure as factual grounds against fraud allegations."
+      },
+      {
+        "message_id": "reddit_1u2almy_oqvycnc",
+        "feature_name": "call_to_action",
+        "feature_value": "advocacy via policy wishes (universal healthcare, no war)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "We would like have universal healthcare and no war in Iran.",
+        "rationale": "It expresses explicit policy preferences/wishes tied to the argument."
+      },
+      {
+        "message_id": "twitter_2060756089310753109",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo weapon/legal framing with AK-47 reference (no slur/profanity)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Baltimore ghetto criminals with AK-47's",
+        "rationale": "It uses weapon-associated language to support a policing/gun-law claim."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l9jij3_mxetx1q",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong profanity directive",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck trump from here to hell and back.",
+        "rationale": "Contains explicit profanity and a hostile wish targeting a public figure."
+      },
+      {
+        "message_id": "reddit_1kub3v4_mu15m2i",
+        "feature_name": "target_directionality",
+        "feature_value": "blame/hostility towards a named party (dems/Republicans)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "the dems deserve to be shit on",
+        "rationale": "The post calls for derogatory treatment of an electoral group."
+      },
+      {
+        "message_id": "bluesky_caca755d4d30ef0b58c8c0312116e61fa852b60e725ddcdbc36c2030ab637106",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "implied immunity claim tied to wearing a political symbol",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "If you're wearing a MAGA hat it provides a virtual protective layer so you can open carry without fear...",
+        "rationale": "Uses conditional/immunity framing that implies wrongdoing will be excused."
+      },
+      {
+        "message_id": "reddit_1ksr6ho_mtnu98t",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "insulting language: idiots/morons",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "They are such idiots",
+        "rationale": "Uses coarse, non-civil descriptors to attack an actor."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2uzd2",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking \u201cobviously\u201d/\u201cdumb shit\u201d and yes-man characterization",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "pull dumb shit like this",
+        "rationale": "Employs contemptuous, dismissive phrasing aimed at a political figure/persona."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2uzd2",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none (no direct \u201cyou\u201d); instead comparative political framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Vance would have no political capital...",
+        "rationale": "Only if directly addressing the listener would this apply; here it is not present."
+      },
+      {
+        "message_id": "bluesky_cb1b0aff03c89885528615801e5cff73b242af7146bbd9b555b99533614d9c47",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "parenthetical pun and dense evaluative critique",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "precious \"mental health' funding\"... magic bullet (pun intended)",
+        "rationale": "Uses punctuation/quoting and parenthetical aside to intensify the attack."
+      },
+      {
+        "message_id": "reddit_1kouuvz_mstfzqj",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "rich vs \u201clittle guy\u201d split with blame assignment",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The rich assholes... The little guy... will foot the bill",
+        "rationale": "Clearly contrasts an elite group with ordinary people and assigns costs to the latter."
+      }
+    ]
+  }
+}

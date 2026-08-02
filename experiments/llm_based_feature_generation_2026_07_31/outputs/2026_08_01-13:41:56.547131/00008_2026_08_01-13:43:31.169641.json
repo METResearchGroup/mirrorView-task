@@ -1,0 +1,180 @@
+{
+  "batch_id": 8,
+  "message_ids": [
+    "bluesky_aefbecc89718078ce16bad5cdae5aa20e8c4b60d7ea6b3cc5fc5b5a47a8b276e",
+    "reddit_1kbtl03_mpyu8h0",
+    "reddit_1kcz108_mq6rhn0",
+    "reddit_1keheq3_mqkxm08",
+    "reddit_1koq50u_mss1nw8",
+    "reddit_1kyi0c1_muxssb5",
+    "reddit_1l7xya6_mx0cmts",
+    "reddit_1lhdd2s_mz3d6k5",
+    "reddit_1tim947_omvr4ts",
+    "reddit_1tt0mlj_ooz7knf",
+    "reddit_1ttun3g_op5tlyf",
+    "reddit_1tx0jmc_optkdlv",
+    "reddit_1ty956s_oq25tiz",
+    "reddit_1tyvzoz_oqk72sd",
+    "reddit_1tzcqta_oqv2ivt",
+    "reddit_1u18ir0_oqnujto",
+    "twitter_2059627645424341261",
+    "twitter_2060794378931556597",
+    "twitter_2061260454224101652",
+    "twitter_2061524380115464597"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tzcqta_oqv2ivt",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses a strong profanity to attack a named politician",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFuck Mike Pence.\u201d",
+        "rationale": "The post contains explicit taboo/profane language directed at an identifiable public figure."
+      },
+      {
+        "message_id": "reddit_1tyvzoz_oqk72sd",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Insulting profanity aimed at the addressee",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cone dumb motherfucker\u201d",
+        "rationale": "The text uses a vulgar insult term as direct attack."
+      },
+      {
+        "message_id": "twitter_2061260454224101652",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Mentions specific U.S. constitutional amendment numbers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe Second Amendment\u2026\u201d / \u201cThe US Third Amendment\u2026\u201d",
+        "rationale": "The amendment references act as dense named/legal entities."
+      },
+      {
+        "message_id": "reddit_1tim947_omvr4ts",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original criticizes following Trump; mirror retargets to the progressive squad/Sinema",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201cfollowing Trump off a cliff\u201d vs \u201cfollowing the progressive squad off a cliff\u201d",
+        "rationale": "The mirror changes the targeted blamed actor from Trump/Massie context to Sinema/progressive squad."
+      },
+      {
+        "message_id": "reddit_1tx0jmc_optkdlv",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Implicates lack of acknowledgment as a driver of worsening outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cits only going to get worse\u201d / \u201cyou cant even get the administration to recognize there is a problem\u201d",
+        "rationale": "The statement links not acknowledging a problem to future worsening."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_ooz7knf",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames trans people/people of faith as targeted for existing/believing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201ctowards trans people for just existing\u201d / \u201cuse their religion as an excuse to be cruel\u201d",
+        "rationale": "The text characterizes a group as being harmed or attacked because of identity/religion."
+      },
+      {
+        "message_id": "twitter_2061524380115464597",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gun rights / Second Amendment framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe second amendment guarantees all the others\u201d",
+        "rationale": "The content directly invokes the Second Amendment and firearm-related rights."
+      },
+      {
+        "message_id": "reddit_1koq50u_mss1nw8",
+        "feature_name": "semantic_content_causal_claim_present",
+        "feature_value": "Accuses an actor of using a country as a tool for personal wants; parasite framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIsrael was just a tool to get what he wanted. He is a parasite on the world.\u201d",
+        "rationale": "The post asserts a motive/causation claim and uses dehumanizing/derogatory language."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lhdd2s_mz3d6k5",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity directed at impeachment/hearings",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFuck impeachment.\u201d",
+        "rationale": "A direct taboo word is used to attack the subject."
+      },
+      {
+        "message_id": "reddit_1lhdd2s_mz3d6k5",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Short, emphatic imperative lines with aggressive capitalization",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cSTRAIGHT TO JAIL.  RIGHT AWAY. NO TRIAL NO NOTHING.\u201d",
+        "rationale": "Multiple emphatic bursts and compact slogans increase intensity."
+      },
+      {
+        "message_id": "reddit_1lhdd2s_mz3d6k5",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Calls for immediate punishment without due process",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cNO TRIAL NO NOTHING.\u201d / \u201cSTRAIGHT TO JAIL.\u201d",
+        "rationale": "The text prescribes punishment and explicitly rejects procedural protections."
+      },
+      {
+        "message_id": "reddit_1l7xya6_mx0cmts",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps partisan insult label",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cRepublicans Are Pussy Egoists\u201d",
+        "rationale": "The phrase is capitalized like a headline/label and uses insulting gendered profanity."
+      },
+      {
+        "message_id": "reddit_1kbtl03_mpyu8h0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Highly derogatory slur with censorship marks aimed at a commentator",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201chatchet faced b*tches\u201d",
+        "rationale": "The text uses a strongly negative gendered insult."
+      },
+      {
+        "message_id": "reddit_1kyi0c1_muxssb5",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks the addressee as naive and reckless",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cLmao you're such a clown\u201d / \u201cso naive and reckless\u201d",
+        "rationale": "The communication uses insult and mockery rather than neutral disagreement."
+      },
+      {
+        "message_id": "reddit_1u18ir0_oqnujto",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Frames coastal elites/greens as ignoring urgent problems faced by others",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201cCoastal elites are having meltdowns\u201d / \u201cactual problems like\u2026 become more and more prevalent.\u201d",
+        "rationale": "The text contrasts an outgroup (elites/greens) with people facing practical issues."
+      },
+      {
+        "message_id": "twitter_2060794378931556597",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Claims policy will raise costs, reduce jobs, overwhelm healthcare and housing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cjobs will not be filled\u2026 Service will decline and cost will go up\u201d",
+        "rationale": "The post uses cost/capacity impacts as the argument."
+      }
+    ]
+  }
+}

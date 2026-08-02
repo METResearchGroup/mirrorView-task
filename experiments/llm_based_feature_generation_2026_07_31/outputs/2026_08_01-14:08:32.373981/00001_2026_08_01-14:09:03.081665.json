@@ -1,0 +1,186 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 1,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Direct calls to political action (contact legislators, vote, mobilize)",
+        "defining_features": [
+          "call_to_action (urges audience to lobby Congress / join supporting a cause)",
+          "call_to_action (explicit vote instruction; vote blue / vote for named candidate)",
+          "call_to_action (imperatives like BUILD THE BORDER WALL, Action now)",
+          "call_to_action (concrete agenda steps like releasing documents)"
+        ],
+        "example_message_ids": [
+          "twitter_2059666512756064572",
+          "twitter_2061689815423230088",
+          "twitter_2060020580078719483",
+          "reddit_1u276eu_oqvesy1"
+        ],
+        "keep_count": 7,
+        "remove_count": 1,
+        "interpretation": "Posts that end with explicit mobilization (vote, lobby, join, act now) are a prominent moderation-relevant signal; in this corpus they appear more often in keep than remove."
+      },
+      {
+        "id": 2,
+        "label": "Policy-domain disputes (guns/gun laws, climate policy/tariffs, abortion/reproductive rights, immigration/DACA)",
+        "defining_features": [
+          "primary_policy_domain includes guns/gun laws/Second Amendment/assault weapons",
+          "primary_policy_domain includes climate policy/carbon tariffs/affordability impacts",
+          "primary_policy_domain includes abortion/reproductive freedoms",
+          "specific_policy_domain includes immigration/DACA/Dream Act"
+        ],
+        "example_message_ids": [
+          "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+          "twitter_2059570700814602666",
+          "twitter_2059756538202632643",
+          "twitter_2060096254034792942"
+        ],
+        "keep_count": 12,
+        "remove_count": 4,
+        "interpretation": "A core theme is substantive political issue framing; moderation may need to distinguish issue debate (often kept) from escalated hostile language targeting people."
+      },
+      {
+        "id": 3,
+        "label": "Dehumanizing/abusive or highly aggressive insults (profanity, slurs, extreme labels)",
+        "defining_features": [
+          "profanity_or_taboo_language (explicit profanity or taboo insults; sexualized or violent taboo labels)",
+          "dehumanizing_or_extreme_insulting_language (filth/rot/sewer metaphors)",
+          "ridicule_or_mockery (dismissive/derisive labeling like moron/fascist in chief)",
+          "high_punctuation_intensity (maximal insult piling with intense punctuation)"
+        ],
+        "example_message_ids": [
+          "reddit_1lhaiqa_mz5dk9g",
+          "reddit_1kkiq63_mrvc7lh",
+          "bluesky_4d7ea98cbd4db454a432d136fce6dd242733929eb965c63c0bd8f4e1ca184dd8",
+          "twitter_2059852379067916547"
+        ],
+        "keep_count": 4,
+        "remove_count": 14,
+        "interpretation": "This is the strongest moderation-relevant pattern: explicit profanity and dehumanizing/extreme abuse correlate heavily with remove outcomes in the corpus."
+      },
+      {
+        "id": 4,
+        "label": "Us-vs-them / blame assignment to political groups (outgroup labels, scapegoating, bloc contrast)",
+        "defining_features": [
+          "us_vs_them_framing (ingroup/outgroup competence or ideology contrast; rich vs little guy)",
+          "target_directionality (assigns blame to named party: Democrats/Republicans, MAGA vs others)",
+          "elite_vs_populist_framing (oligarchs manipulating/cheating outcomes)",
+          "us_vs_them_framing includes shifting blame away from scapegoats (e.g., immigrants) toward elites"
+        ],
+        "example_message_ids": [
+          "reddit_1lh7ndf_mz2um9o",
+          "twitter_2061483850782609452",
+          "reddit_1kknbwj7_msh0alx",
+          "twitter_2061568792061206654"
+        ],
+        "keep_count": 8,
+        "remove_count": 5,
+        "interpretation": "Group-based antagonism and blame targeting appear in both labels; risk likely increases when combined with abusive language and/or conspiratorial certainty."
+      },
+      {
+        "id": 5,
+        "label": "Conspiracy or manipulation framing (deep state, psyop, systemic corruption built-in, election theft)",
+        "defining_features": [
+          "conspiratorial_framing (deep state/media convinced them)",
+          "conspiratorial_framing (climate crisis as manufactured psyop)",
+          "conspiratorial_framing (corruption/overreach built into the system)",
+          "conspiratorial_framing (election theft 'so significant and complete')"
+        ],
+        "example_message_ids": [
+          "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+          "twitter_2061207835707408856",
+          "reddit_1u1ngzk_oqr5va2",
+          "reddit_1lh7ndf_mz2um9o"
+        ],
+        "keep_count": 1,
+        "remove_count": 6,
+        "interpretation": "Conspiracy/mistrust narratives are more often associated with remove ratings, suggesting a moderation concern with claims that imply deception or undemocratic wrongdoing without substantiation."
+      },
+      {
+        "id": 6,
+        "label": "Moral or religious valuation and moral condemnation (pro-life, \u201cmonster,\u201d disgust framing)",
+        "defining_features": [
+          "normative_moral_language (religious framing; pro-life absolute moral claims)",
+          "normative_moral_language (moralized disgust/ethical condemnation)",
+          "ridicule_or_mockery (moral shaming like 'You're a monster')",
+          "positive_evaluation_and_propagandistic_language (endorse agreement as 'step in the right direction')"
+        ],
+        "example_message_ids": [
+          "twitter_2060988882439585866",
+          "twitter_2061441762640420963",
+          "reddit_1kf2hgg_mqpouu3",
+          "twitter_2060163490782879774"
+        ],
+        "keep_count": 5,
+        "remove_count": 1,
+        "interpretation": "Morality-based framing appears more in keep than remove here, indicating that moral argumentation itself is not necessarily the primary risk; escalation depends on hostility/profanity."
+      },
+      {
+        "id": 7,
+        "label": "Factual assertion vs speculation; numeric/empirical support",
+        "defining_features": [
+          "factual_assertion_vs_speculation (legal/process facts; cause-effect interpretations)",
+          "economic_cost_benefit_framing (relative prices, money-flow claims)",
+          "factual_assertion_vs_speculation includes percentage/statistic evidence",
+          "economic_cost_benefit_framing includes affordability/wages/leave money-flow"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gyo8_oqjbci9",
+          "twitter_2059570700814602666",
+          "bluesky_0e28a584a468cc481d514c620f0425d657dfa6092b6fd4c676c9ffba5fa98996",
+          "reddit_1u08bq4_oqiee1j"
+        ],
+        "keep_count": 7,
+        "remove_count": 2,
+        "interpretation": "Posts using empirical-sounding claims, legal/process details, and quantified comparisons tend to be kept more often, suggesting moderation favors substance over purely hostile insinuation."
+      },
+      {
+        "id": 8,
+        "label": "Quoting/attribution and mirroring argument structure (direct quotes; 'I mean' pivots; mirror shifts blame)",
+        "defining_features": [
+          "quote_or_attribution_embedding (multiple direct quotes from named persons/poems)",
+          "contrastive_but_however_structure (I mean pivot; however clauses)",
+          "mirror_shift_direction (re-target blame or moral framing via mirror)",
+          "list_or_enumeration (structured bullet lists of policy items)"
+        ],
+        "example_message_ids": [
+          "twitter_2061453414978982337",
+          "twitter_2059570700814602666",
+          "bluesky_7ce98312ac5c87f1278d52e5f6dc1c2065816007f7fe4a5ba51b5cd457d2a98e",
+          "reddit_1t6icvj_okji1o1"
+        ],
+        "keep_count": 6,
+        "remove_count": 1,
+        "interpretation": "Compositional argument techniques (quoting, pivots, mirror framing, enumeration) are present mainly in kept posts; they may help distinguish structured argumentation from raw abusive rants."
+      },
+      {
+        "id": 9,
+        "label": "Escalatory threat/urgent catastrophe framing (apocalyptic decline, existential threats, \u201cunless\u2026\u201d consequences)",
+        "defining_features": [
+          "emphatic_outrage (apocalyptic/rapid decline warnings if not removed)",
+          "victimhood_or_persecution_framing (existential threat to group; collective harm if democracy lost)",
+          "conditional_if_then_structure (If you\u2026 then catastrophe / if we lose\u2026 we\u2019re all fucked)"
+        ],
+        "example_message_ids": [
+          "twitter_2061798451466444940",
+          "twitter_2060922182662852931",
+          "twitter_2060922182662852931",
+          "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b"
+        ],
+        "keep_count": 1,
+        "remove_count": 2,
+        "interpretation": "Catastrophic or existential threat framing occurs but is less frequent in keep; when it appears alongside other aggravating features it likely contributes to removal."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Aggressive language escalation: when profanity/dehumanization (Theme 3) combines with group blame (Theme 4) or conspiracy certainty (Theme 5), removals increase markedly.",
+      "Issue debate vs personal hostility: the same policy domains (Theme 2) can be expressed with empirical/legal support (Theme 7, keep-leaning) or with extreme abuse (Theme 3, remove-leaning).",
+      "Persuasive structure without abuse: quoting/pivots/mirrors and enumerated arguments (Theme 8) often coexist with factual/empirical framing (Theme 7) in keep-rated posts.",
+      "Mobilization and political advocacy: calls to action (Theme 1) are common and mostly compatible with non-abusive, structured argumentation (Themes 7\u20138)."
+    ]
+  }
+}

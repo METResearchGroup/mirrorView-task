@@ -1,0 +1,212 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 8,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Strong profanity/insults and dehumanizing disparagement",
+        "defining_features": [
+          "profanity_or_taboo_language (explicit profanity as insults/emphasis)",
+          "ridicule_or_mockery (contempt labels; mock scenarios)",
+          "direct_insult_actor_labeling / emphatic insult tokens",
+          "animal_metaphor_for_voters / dehumanizing metaphors (e.g., cattle/animals)"
+        ],
+        "example_message_ids": [
+          "reddit_1tqdpjl_oogtmar",
+          "reddit_1u0y79a_oqunvpe",
+          "reddit_1tvll8k_opii54u",
+          "reddit_1kq66l8_mt41ijg",
+          "reddit_1l3x8es_mw4kgvw",
+          "reddit_1txi7g6_opw8x4o"
+        ],
+        "keep_count": 8,
+        "remove_count": 9,
+        "interpretation": "Posts using coarse taboo language and/or dehumanizing contempt metaphors show up in both keep and remove sets, suggesting it is a major moderation signal but not by itself sufficient to determine the label."
+      },
+      {
+        "id": 2,
+        "label": "Violence/violent threat or lethal-force advocacy",
+        "defining_features": [
+          "call_to_action / violent directives (e.g., 'should nuke')",
+          "violent_retaliation_policy_prescription (justification for killing/extermination-like logic)",
+          "threat_or_violent_intent (explicit intent to shoot/kill)",
+          "extermination-like language tied to political targets"
+        ],
+        "example_message_ids": [
+          "twitter_2061828008646676862",
+          "reddit_1lhl7ax_mz5kpu7",
+          "bluesky_1af3b6fbc2ee7eda8df377fd998d6138605eb187527992ae12b19d0e74f62b96",
+          "reddit_1lhl7ax_mz5kpu7",
+          "bluesky_61537c569f1b19af85a5a4105a4513e5a4816fa761c22ab73b95e9a942715599"
+        ],
+        "keep_count": 1,
+        "remove_count": 4,
+        "interpretation": "When posts explicitly advocate or threaten lethal violence against people/groups, they are more likely to be remove-labeled."
+      },
+      {
+        "id": 3,
+        "label": "Explicit voting/election and political mobilization directives",
+        "defining_features": [
+          "call_to_action (vote today / election-day directives)",
+          "call_to_action_demand_petition (petition/signup requests)",
+          "encourages primary voting activism",
+          "imperatives aimed at political participation"
+        ],
+        "example_message_ids": [
+          "twitter_2061759375753265356",
+          "twitter_2061287844346233239",
+          "bluesky_4f7ab190f26761384f8b173d9ce50fdb8e5a1f15189ba49e26486858258aff87",
+          "reddit_1t54vlp_okdsfx7"
+        ],
+        "keep_count": 4,
+        "remove_count": 1,
+        "interpretation": "Mobilization and direct political participation prompts appear mostly in keep-labeled content, indicating they are not inherently disqualifying unless combined with other risky cues (e.g., violence/profanity/illegal advocacy)."
+      },
+      {
+        "id": 4,
+        "label": "Policy prescriptions (gun control/rights, abortion, immigration, climate, etc.)",
+        "defining_features": [
+          "policy_prescription_present (explicit recommendations: stop/end support, support concealed carry changes, understanding over deportation, etc.)",
+          "primary_policy_domain (topic targeting: guns, abortion, immigration/detention, climate policy, education, etc.)",
+          "policy_prescription_present_stopping_or_ending (e.g., stopping sports participation)"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjg8oj",
+          "bluesky_1f7720c8e9e82f16f9894d208530678d723c1a779a4fefa22edb83f0e0dc5c82",
+          "twitter_2061562237613953238",
+          "twitter_2061334155334451432",
+          "twitter_2061787433277006134",
+          "bluesky_4f7ab190f26761384f8b173d9ce50fdb8e5a1f15189ba49e26486858258aff87"
+        ],
+        "keep_count": 8,
+        "remove_count": 6,
+        "interpretation": "Clear policy stances across multiple domains occur in both groups, suggesting the moderation label depends more on how the policy argument is expressed (e.g., violence, targeted hatred, conspiracy) rather than on policy topic alone."
+      },
+      {
+        "id": 5,
+        "label": "Targeted political attacks using partisan/ideological labeling and mirror shifts",
+        "defining_features": [
+          "target_directionality (swap blame/targets across ideological groups; outgroup relabeling)",
+          "mirror_shift_polar_left_right_labelling / mirror_shift_direction (mirror retargeting blame from one side to another)",
+          "us_vs_them_framing (binary political contrast via accusations/alliances)"
+        ],
+        "example_message_ids": [
+          "reddit_1u22gzn_oqumb02",
+          "reddit_1tqdpjl_oogtmar",
+          "twitter_2061779962810483200",
+          "bluesky_4320e502b2788e37a182222ca6d03a77a5a99465abe7dd2f4b5f750b9eaac1e6",
+          "reddit_1tupifu_opbkzkl"
+        ],
+        "keep_count": 6,
+        "remove_count": 6,
+        "interpretation": "Partisan mirror framing and ideological relabeling show up in both labels; it is a common argumentative pattern, so moderation likely hinges on escalation (e.g., dehumanization/violence) rather than on mirror framing itself."
+      },
+      {
+        "id": 6,
+        "label": "Moral justification and rights/victimhood framing",
+        "defining_features": [
+          "normative_moral_language (explicit moral worth/evil/rights; safety-protection claims)",
+          "victimhood_or_persecution_framing (victims centered; persecution imagery)",
+          "victimhood_or_persecution_framing_accepting_label (preemptive acceptance of derogatory labeling/pride)"
+        ],
+        "example_message_ids": [
+          "reddit_1u0gjyt_oqjg8oj",
+          "twitter_2059533616204460109",
+          "reddit_1tfsdpo_omciyvs",
+          "reddit_1lhaiqa_mz56qxl",
+          "twitter_2061334155334451432",
+          "reddit_1tupifu_opbkzkl"
+        ],
+        "keep_count": 9,
+        "remove_count": 4,
+        "interpretation": "Moral language and victim/persecution framing are frequent in keep-labeled material, implying they are tolerated even when heated\u2014unless paired with disallowed content such as explicit violence or extreme taboo abuse."
+      },
+      {
+        "id": 7,
+        "label": "Conspiracy, hoax/falsehood, and evidence-denial patterns",
+        "defining_features": [
+          "conspiratorial_framing (hidden plots; behind-the-scenes motives; external manipulation)",
+          "all_caps_intensity_conspiracy_like_labeling (hoax/truth framing around science)",
+          "factual_assertion_vs_speculation (claims about lack of evidence or certainty without grounding)"
+        ],
+        "example_message_ids": [
+          "bluesky_4d036cfbec8147d642d0e970d898e09da9dc8440d739881569f99d903795e5f1",
+          "reddit_1u2ekz6_oqzsqrl",
+          "reddit_1l3x8es_mw4kgvw",
+          "reddit_1knep98_msmbjen",
+          "reddit_1tqhy93_ooigm3v"
+        ],
+        "keep_count": 0,
+        "remove_count": 5,
+        "interpretation": "Conspiracy/hoax and evidence-denial style features are strongly associated with remove-labeled posts in this corpus."
+      },
+      {
+        "id": 8,
+        "label": "Aggressive emphasis/urgency formatting (all-caps, punctuation intensity, structured lists)",
+        "defining_features": [
+          "all_caps_emphasis / all_caps_intensity_conspiracy_like_labeling",
+          "high_punctuation_intensity (line breaks, exclamation, headline style)",
+          "list_or_enumeration / dense chaining of claims",
+          "approximate_token_length_band (long multi-clause delivery)"
+        ],
+        "example_message_ids": [
+          "bluesky_1a1c3565cc0afb38271239d90aa0d58dbf2fbb216b27a0e46f1acff449417706",
+          "bluesky_4d036cfbec8147d642d0e970d898e09da9dc8440d739881569f99d903795e5f1",
+          "twitter_2061759375753265356",
+          "reddit_1tbymrb_olrhvme",
+          "reddit_1tq7ea2_oofnort",
+          "reddit_1t24gpq_ojmfes0"
+        ],
+        "keep_count": 5,
+        "remove_count": 7,
+        "interpretation": "Loud formatting and dense enumerations co-occur with high moderation risk more often than not here, especially when combined with conspiracy or targeted hostility."
+      },
+      {
+        "id": 9,
+        "label": "Rhetorical questions and question-based confrontation",
+        "defining_features": [
+          "rhetorical_question (multiple 'What about...' prompts)",
+          "conditional_if_then_structure used for rhetorical implication",
+          "factual_assertion_vs_speculation sometimes phrased as challenges"
+        ],
+        "example_message_ids": [
+          "bluesky_e02dd5c27bf0be172d0bd0ab28d4c945c8081d7786afb3b981d482f392a51f2c",
+          "reddit_1tsv1fn_ooykhbx",
+          "reddit_1t4l69v_ol49ydd",
+          "twitter_2059708545470263644",
+          "reddit_1tq7ea2_oofnort"
+        ],
+        "keep_count": 3,
+        "remove_count": 2,
+        "interpretation": "Question-driven argumentation is present in both labels; by itself it\u2019s not decisive, but it often functions as the mechanism for blame/cross-examination."
+      },
+      {
+        "id": 10,
+        "label": "Harm framing via real-world incidents/victim references",
+        "defining_features": [
+          "specific_event_reference_protest_insurrection (named political episodes)",
+          "victimhood_or_persecution_framing (victims of violence; persecution)",
+          "historical_analogy_reference (analogies to past harms)"
+        ],
+        "example_message_ids": [
+          "reddit_1tbymrb_olrhvme",
+          "bluesky_e02dd5c27bf0be172d0bd0ab28d4c945c8081d7786afb3b981d482f392a51f2c",
+          "bluesky_253f6730359b7eda8fa229a1de968acc54181c606669499dea2d62c5a5ce2d1e",
+          "bluesky_d195e00a2fc92abb5ef3ae31d5233607c043599e2197e34eadaa1767295b380b"
+        ],
+        "keep_count": 3,
+        "remove_count": 2,
+        "interpretation": "References to real incidents/victims are used to strengthen moral and political claims; moderation appears sensitive mainly when such framing escalates into conspiracy or violence."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Aggression escalation chain: profanity/insults + targeted ideological labeling + high urgency formatting (often co-occurs across themes 1 and 8 and sometimes 5)",
+      "Legality/rights vs harm/punishment framing (themes 4, 6, and 9 overlap around 'should be legal/illegal', rights language, and moral justification)",
+      "Reason-giving mechanisms: causal assertions and evidence claims (themes 7, 8, and 9 overlap around how arguments are grounded or ungrounded)",
+      "Targeting and blame redirection (theme 5 overlaps with both moral/victim frames in theme 6 and incident/victim frames in theme 10)"
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 98,
+  "message_ids": [
+    "bluesky_6bcd755e0f609ccf841f11fd355f1eaa5b3a8a7eb7ece65822668cda33980755",
+    "bluesky_d5cced7a66fc3473b2946264466862fcc1d6aa15bcfb7e6fde748013e6b25e0a",
+    "bluesky_fad2f92c5f1db398955f6a8e3e7e6c653633cd9177379176924f40a65f75d76a",
+    "reddit_1kcy0mu_mq6vxp3",
+    "reddit_1kdsslc_mqh5xvm",
+    "reddit_1kqdcvk_mt6nuwo",
+    "reddit_1kvw690_mucsuyz",
+    "reddit_1l8qyw6_mx6tqmg",
+    "reddit_1let2t2_myki9oj",
+    "reddit_1tig64l_omwxi27",
+    "reddit_1trbfkm_oothhcp",
+    "reddit_1ttui2j_op5xvkf",
+    "reddit_1tvyk2a_opxkiht",
+    "reddit_1tvzs8j_opl3fqa",
+    "twitter_2061427131968520243",
+    "twitter_2061544496442052989",
+    "twitter_2061767095587619275",
+    "twitter_2061821273165177247",
+    "twitter_2061824070958956668",
+    "twitter_2061831193654345754"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tvzs8j_opl3fqa",
+        "feature_name": "abortion_scope_language",
+        "feature_value": "Explicit abortion policy position (miscarriages only vs all abortions)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Miscarriages only. Not abortions.\" / \"All abortions covered, no exceptions needed.\"",
+        "rationale": "The text directly frames an abortion exception/coverage stance."
+      },
+      {
+        "message_id": "twitter_2061427131968520243",
+        "feature_name": "constitutional_carry_second_amendment_framing",
+        "feature_value": "Discussion of constitutional carry and Second Amendment rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Constitutional Carry\" ... \"ensure Second Amendment rights\"",
+        "rationale": "It explicitly names constitutional carry and Second Amendment protection."
+      },
+      {
+        "message_id": "reddit_1l8qyw6_mx6tqmg",
+        "feature_name": "hate_racist_elite_base_targeting",
+        "feature_value": "Attacks on target group as racist/idiotic base and coastal elite",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Look tough for racist and idiotic base\" / \"clueless coastal elite\"",
+        "rationale": "Uses disparaging labels aimed at a perceived in-group/out-group coalition."
+      },
+      {
+        "message_id": "reddit_1l8qyw6_mx6tqmg",
+        "feature_name": "conditional_event_chain",
+        "feature_value": "If/then causal sequence expressed with arrows",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Issue orders for mass deportations... > pretend to be shocked... > call in the national guard\"",
+        "rationale": "The post uses a multi-step conditional-like progression of actions and reactions."
+      },
+      {
+        "message_id": "reddit_1trbfkm_oothhcp",
+        "feature_name": "voter_fraud_evidence_claiming",
+        "feature_value": "Claims undisputed text and references absence of a court case",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Nothing I wrote is disputed... Unless you have a court case Trump did manage to win\"",
+        "rationale": "It makes an evidence/verification condition tied to legal outcomes."
+      },
+      {
+        "message_id": "twitter_2061824070958956668",
+        "feature_name": "defund_target_language",
+        "feature_value": "Mentions crime support and defund framing for police/safety nets (mirror)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats: Defund the police.\" / \"Republicans: Defund social safety nets.\"",
+        "rationale": "The text explicitly contains 'Defund' prescriptions paired with different institutions."
+      },
+      {
+        "message_id": "twitter_2061544496442052989",
+        "feature_name": "event_join_call_and_color_theme",
+        "feature_value": "Community event announcement with CTA and color instruction",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Join Cure The Streets\" ... \"Wear Orange.\" / \"Join Defend The Streets\" ... \"Wear Red.\"",
+        "rationale": "It directly invites participation ('Join') and includes an instruction ('Wear')."
+      },
+      {
+        "message_id": "bluesky_d5cced7a66fc3473b2946264466862fcc1d6aa15bcfb7e6fde748013e6b25e0a",
+        "feature_name": "gun_policy_list_including_red_flag",
+        "feature_value": "List of firearm permit/waiting/red-flag concepts",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"firearm permits, waiting periods, red flag laws, etc.\"",
+        "rationale": "The post enumerates specific gun-control mechanisms."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kqdcvk_mt6nuwo",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Strong all-caps condemnation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I HATE TRUMP & COMPANY!!!!\"",
+        "rationale": "Uses all caps and multiple exclamation marks for emphatic hostility."
+      },
+      {
+        "message_id": "reddit_1let2t2_myki9oj",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity directed as an insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Yeah, fuck off.\"",
+        "rationale": "Contains explicit profanity."
+      },
+      {
+        "message_id": "reddit_1kcy0mu_mq6vxp3",
+        "feature_name": "constitution_violation_dismissive_talk",
+        "feature_value": "Claims political actors violate Constitution",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"speech and debate clause?\" ... \"Trump wipes his ass with the Constitution\"",
+        "rationale": "States a derogatory causal claim of constitutional disregard."
+      },
+      {
+        "message_id": "reddit_1kdsslc_mqh5xvm",
+        "feature_name": "nazified_comparison_and_dehumanizing_insults",
+        "feature_value": "Compares to Hitler and uses traitor/imbecile labels",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"adopting Hitler's policies\" / \"imbecile and a traitor\"",
+        "rationale": "Uses a historical analogy (Hitler) alongside severe personal insults."
+      },
+      {
+        "message_id": "reddit_1kvw690_mucsuyz",
+        "feature_name": "fascist_communist_labeling",
+        "feature_value": "Uses fascist/communist as categorical insults",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"fascist\" ... \"communists\"",
+        "rationale": "Assigns extremist labels to the targeted political group."
+      },
+      {
+        "message_id": "bluesky_fad2f92c5f1db398955f6a8e3e7e6c653633cd9177379176924f40a65f75d76a",
+        "feature_name": "numeric_goal_world_standards",
+        "feature_value": "Policy justification via death-rate reduction to 'world standards'",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"bring down its death rate to world standards\"",
+        "rationale": "Uses a quantitative/benchmark justification for gun-law tightening."
+      },
+      {
+        "message_id": "twitter_2061831193654345754",
+        "feature_name": "tax_fairness_question",
+        "feature_value": "Causal insinuation about audit/taxes plus fairness question",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"can never be audited\" ... \"they never have to pay taxes again.\\n\\nHow is this fair?\"",
+        "rationale": "Asserts an accountability/tax causal claim and follows with a rhetorical fairness query."
+      },
+      {
+        "message_id": "reddit_1ttui2j_op5xvkf",
+        "feature_name": "ingroup_cult_praise_or_doom_language",
+        "feature_value": "Uses cult framing and derogatory labels for voters",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"The MAGA cult has been beyond salvation\" / \"woke cult\"",
+        "rationale": "Employs loaded 'cult' characterization and blame framing toward political supporters."
+      }
+    ]
+  }
+}

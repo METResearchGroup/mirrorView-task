@@ -1,0 +1,180 @@
+{
+  "batch_id": 43,
+  "message_ids": [
+    "bluesky_3d8c80515b4d48c643928f637b0a08ac4e57dd13d9c93c4b2e10d0639efb5a97",
+    "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+    "bluesky_56a2eec0ef4a39f215aec7fa42876cf4c6675af5822abe28140a66417a1c4fb5",
+    "bluesky_66683b2ac8d238b2ea38fd3e4e1941a9bdaecd0d7d39f0c770ce84aae26d51c1",
+    "bluesky_6dbe52f23c11eabdc3fafcf7fd1502b8c3cabee0ab897cd05c97827bdd77781e",
+    "bluesky_bd8608344c654d06521b2c029233776372ebc50752e0fcfacb3b0be09c82683d",
+    "reddit_1kfdjk7_mqqkfiu",
+    "reddit_1l5ve6e_mwkcox3",
+    "reddit_1l94fh5_mxalxut",
+    "reddit_1lhc9kv_mz34ak3",
+    "reddit_1lhc9kv_mz5q5sq",
+    "reddit_1t1x818_ojjzie8",
+    "reddit_1td5imr_oltobq6",
+    "reddit_1tnobm9_onxadx3",
+    "reddit_1ttbse9_op4rgor",
+    "reddit_1u23s25_oqvxgpp",
+    "twitter_2060218496236335141",
+    "twitter_2060792161503756611",
+    "twitter_2061770861800018206",
+    "twitter_2061793360122360211"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_bd8608344c654d06521b2c029233776372ebc50752e0fcfacb3b0be09c82683d",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"As the ice caps began to melt and another record-breaking heatwave sweeps across the land\"",
+        "rationale": "The post contains a lengthy causal sentence chain with multiple clauses and intensifiers."
+      },
+      {
+        "message_id": "bluesky_bd8608344c654d06521b2c029233776372ebc50752e0fcfacb3b0be09c82683d",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "multiple apostrophes/elliptical breaks; dense punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"couldn\tt be assed to mitigate global warming by even one percent because they would interfere\"",
+        "rationale": "Punctuation/marking is dense with many contractions and embedded clauses, indicating high expressive intensity."
+      },
+      {
+        "message_id": "reddit_1lhc9kv_mz5q5sq",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity in mirror (f*** them)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck them\"",
+        "rationale": "The mirror includes a clear profanity used for dismissal."
+      },
+      {
+        "message_id": "bluesky_3d8c80515b4d48c643928f637b0a08ac4e57dd13d9c93c4b2e10d0639efb5a97",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "lists multiple conspiracy/disinfo references (Flat Earth, QAnon, Soros lasers, etc.)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Flat Earth, QAnan/Pizza-gate, George Soros \u001cJewish Space Lasers\u001d\"",
+        "rationale": "The text frames events as ongoing disinformation/conspiracy campaigns."
+      },
+      {
+        "message_id": "bluesky_3d8c80515b4d48c643928f637b0a08ac4e57dd13d9c93c4b2e10d0639efb5a97",
+        "feature_name": "normative_moral_language",
+        "feature_value": "ends with moral absolutism/imperative about truth",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"DEPEND UPON TRUTH!\"",
+        "rationale": "The language strongly prescribes an ethical requirement (truth) with emphatic capitalization."
+      },
+      {
+        "message_id": "reddit_1t1x818_ojjzie8",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "argues against forcing vaccinations; advocates consent/rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I don't believe it is right to risk another child or person's health\"",
+        "rationale": "The post includes explicit stance about what should/should not be done regarding vaccination."
+      },
+      {
+        "message_id": "bluesky_6dbe52f23c11eabdc3fafcf7fd1502b8c3cabee0ab897cd05c97827bdd77781e",
+        "feature_name": "call_to_action",
+        "feature_value": "imperative to stop/start and brand a movement",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Stop Greed, Build Green can deliver that by lowering bills\"",
+        "rationale": "It uses imperative phrasing (\u201cStop\u2026 Build\u2026\u201d) and promotional campaign-like directive."
+      },
+      {
+        "message_id": "reddit_1tnobm9_onxadx3",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "minimal agreement; colloquial single-word response",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Yep.\"",
+        "rationale": "The post uses a very informal, brief affirmation."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kfdjk7_mqqkfiu",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "insults with profanity/abusive terms (assholes)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republican assholes frauds\"",
+        "rationale": "The post uses a derogatory insult word."
+      },
+      {
+        "message_id": "reddit_1ttbse9_op4rgor",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "hang/rot-in-prison retributive punishment language for political figures",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"He deserves to hang along with his boss.\"",
+        "rationale": "It advocates severe punishment and retaliatory harm toward a target."
+      },
+      {
+        "message_id": "bluesky_56a2eec0ef4a39f215aec7fa42876cf4c6675af5822abe28140a66417a1c4fb5",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "many international city names + NRA reference",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Dublin, London, Tokyo, Sydney\"",
+        "rationale": "Multiple named locations appear in quick succession, indicating high proper-noun density."
+      },
+      {
+        "message_id": "reddit_1lhc9kv_mz34ak3",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "direct war framing toward Iran",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump declaring war on Iran\"",
+        "rationale": "It explicitly references a war action and names Iran."
+      },
+      {
+        "message_id": "bluesky_66683b2ac8d238b2ea38fd3e4e1941a9bdaecd0d7d39f0c770ce84aae26d51c",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun control/weapon ban legislation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"assault-weapon ban\"",
+        "rationale": "The post centers on firearm ban policy."
+      },
+      {
+        "message_id": "reddit_1l5ve6e_mwkcox3",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct imperative addressed to ICE: behave/show warrants",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"ICE can start behaving in a lawful manner\"",
+        "rationale": "It uses imperative/request language directed at a specific entity."
+      },
+      {
+        "message_id": "reddit_1l5ve6e_mwkcox3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses censored expletive (f*** off)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"He can f***off.\"",
+        "rationale": "The text contains explicit rude/profane dismissal wording."
+      },
+      {
+        "message_id": "twitter_2060792161503756611",
+        "feature_name": "semantic_content_emphatic_contrast",
+        "feature_value": "moral dichotomy via when/when structure (wanted vs not wanted)",
+        "category": "compositional_syntax",
+        "is_open_ended": true,
+        "evidence_span": "\"When a pre-born baby IS wanted\" ... \"When a pre-born baby is NOT wanted\"",
+        "rationale": "It uses repeated conditional framing to contrast two cases and label one as criminal vs \u201cempowerment.\u201d"
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 129,
+  "message_ids": [
+    "bluesky_6a0375f7784beecfa551a99f17cd9a5771480613df582dcca2510ba502af4fc5",
+    "bluesky_8a2697b0757d752249a23f2e3bd4eb7000f972071642847eb0a10f7a4dbdbf12",
+    "bluesky_b455f47325dcda9d6e7429647c0a551071a042399a7ffe6fc61e5846063f8ed1",
+    "bluesky_fee426c47a32e78c375ffee4ddcc6f900dbf22ca324d6f60fa5936dfbb27cd1f",
+    "reddit_1kbza1m_mpzb0wf",
+    "reddit_1kxxbt5_muve8j6",
+    "reddit_1llpslt_n04c3in",
+    "reddit_1lm8c5i_n07oi3s",
+    "reddit_1ti151j_omwg795",
+    "reddit_1tiody8_omx1tnn",
+    "reddit_1tqcltq_oofryhp",
+    "reddit_1tsvgs3_ooz7nqu",
+    "reddit_1ttadso_op1phzo",
+    "reddit_1tupifu_opbsku3",
+    "reddit_1twc1po_oq22qj7",
+    "reddit_1u07sud_oqhvztx",
+    "twitter_2060028364023300572",
+    "twitter_2061385277206147319",
+    "twitter_2061512239165952462",
+    "twitter_2061602223797547020"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tupifu_opbsku3",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Calls for legal punishment and moral condemnation of officials",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"needs to be tried for their crimes\"...\"They deserve to pay for their crimes.\"",
+        "rationale": "Uses explicit justice/deserving-to-pay language alongside moral framing about wrongdoing."
+      },
+      {
+        "message_id": "reddit_1twc1po_oq22qj7",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims public/media discrepancy (implied manipulation by media)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The public is way more against Trump than media platforms reflect.\"",
+        "rationale": "Asserts media misrepresents what the public thinks, implying coordinated distortion."
+      },
+      {
+        "message_id": "reddit_1kbza1m_mpzb0wf",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames an outgroup (anti-American \u201cidiot king\u201d) vs loyalty to constitution/people",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"loyalty lies with the constitution, not with your anti-American idiot king\"",
+        "rationale": "Explicitly contrasts \u201cyour\u201d opposing figure with the speaker\u2019s valued collective principle."
+      },
+      {
+        "message_id": "reddit_1tsvgs3_ooz7nqu",
+        "feature_name": "anaphora_or_parallelism",
+        "feature_value": "Repeated Q-style/label blocks with follow-up confirmations",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"\\u201cConcerned\\u201d\"...\"\\u201cLost their hold\\u201d\"...\"\\u201cAbsolutely would\\u201d\"",
+        "rationale": "Uses repeated patterned quotation headers followed by similar responses, creating parallel structure."
+      },
+      {
+        "message_id": "reddit_1tqcltq_oofryhp",
+        "feature_name": "call_to_action",
+        "feature_value": "Advocates removing political hacks and replacing with experts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Clean out *every* political hack from every agency and replace them with experts again.\"",
+        "rationale": "Contains an imperative prescription about what to do politically/administratively."
+      },
+      {
+        "message_id": "twitter_2061602223797547020",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short (single-sentence statement)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"A carbon tax is a good idea\"",
+        "rationale": "Very brief headline-style phrasing."
+      },
+      {
+        "message_id": "reddit_1tiody8_omx1tnn",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Uses strong profanity/initial expletive plus outrage escalation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Wtf?\" ...\"my outrage has certainly mounted higher and higher\"",
+        "rationale": "Expresses escalating anger and uses a strong initial outburst token."
+      },
+      {
+        "message_id": "twitter_2061512239165952462",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Action + enforcement prescription sequence (fines/charges)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"They need to be fined, and the owner needs to be charged with reckless endangerment!!!\"",
+        "rationale": "Combines multiple concrete demands in a single coordinated prescription."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lm8c5i_n07oi3s",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Dehumanizing insult phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Shit stain on the whole species.\"",
+        "rationale": "Contains extreme taboo language and dehumanizing rhetoric."
+      },
+      {
+        "message_id": "reddit_1lm8c5i_n07oi3s",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Species-extinction / harm one breath at a time escalation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"literraly extinction grade. Hes killing the species one breath at a time.\"",
+        "rationale": "Uses catastrophic harm framing aimed at an entire group/species."
+      },
+      {
+        "message_id": "twitter_2060028364023300572",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun control enforcement",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"handguns\" ...\"gun ban\"",
+        "rationale": "Discusses handgun laws and enforcement in multiple states."
+      },
+      {
+        "message_id": "bluesky_fee426c47a32e78c375ffee4ddcc6f900dbf22ca324d6f60fa5936dfbb27cd1f",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Pro-life vs left-right agenda and control framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"pro-life\" ...\"The right-wing agenda isn\u0002t about \\u201clife.\\u201d\"",
+        "rationale": "Uses moral/political identity framing around life issues and ideological intent."
+      },
+      {
+        "message_id": "reddit_1u07sud_oqhvztx",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses profanity with directive",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Yep, bulldoze right thru that fucking MAGA line\"",
+        "rationale": "Contains explicit profanity and militant-sounding imperative toward an ideological target."
+      },
+      {
+        "message_id": "bluesky_8a2697b0757d752249a23f2e3bd4eb7000f972071642847eb0a10f7a4dbdbf12",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Accuses leaders of corruption plots and theft to funnel money",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"His plot to steal $1.8 Billion from Treasury\"",
+        "rationale": "Presents alleged hidden criminal schemes with specific money flow claims."
+      },
+      {
+        "message_id": "reddit_1kxxbt5_muve8j6",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Belittling opponents as losers/clowns",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Leftists are fucking losers\" / \"nothing they say or do matters\"",
+        "rationale": "Uses contempt/insults and dismissive language aimed at a group."
+      },
+      {
+        "message_id": "reddit_1llpslt_n04c3in",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original targets Trump deportation threat; mirror reframes as billionaire class selling out",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"until trump deports their asses\" vs \"until the billionaire class sells them out again\"",
+        "rationale": "The mirror changes the blamed actor from Trump to the billionaire class."
+      }
+    ]
+  }
+}

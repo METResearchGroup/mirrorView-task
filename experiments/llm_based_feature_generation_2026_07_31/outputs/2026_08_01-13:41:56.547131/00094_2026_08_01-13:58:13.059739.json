@@ -1,0 +1,180 @@
+{
+  "batch_id": 94,
+  "message_ids": [
+    "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670",
+    "bluesky_521818262b353e37b71c5665dd1accdb07440212ce5ac2da981475c26c5586e3",
+    "bluesky_6ee0f696da723e238e981baa7acdf404d768fcc2af68bb07079b2ea575d2efc2",
+    "bluesky_c5802b75bd6779787b6edc0be894a72ac36c252c584a66a7d7d90ec3613136aa",
+    "bluesky_ee1226ee41d7911e6f616d328e6d37d62c5fed4d6e4d268caaf36e61f761a957",
+    "reddit_1lc4tz7_mxxy2z2",
+    "reddit_1lgcokh_myvf1zx",
+    "reddit_1lgkon2_myziyi9",
+    "reddit_1t9j11f_ol40aj5",
+    "reddit_1tiody8_omxs4db",
+    "reddit_1tnjwbi_onurzr4",
+    "reddit_1tnmoob_onznfoj",
+    "reddit_1tstha7_op2czlm",
+    "reddit_1tzs7nk_oqdmw0a",
+    "reddit_1u18ir0_oqotr09",
+    "reddit_1u2ekz6_or1qxth",
+    "twitter_2060326285314797840",
+    "twitter_2060781814357033044",
+    "twitter_2061475899539636271",
+    "twitter_2061517421941326091"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061475899539636271",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Event and place name (Ohio; 2026 Clean Energy Champions Awards) in promotional copy",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cShowcase your commitment to Ohio\u2019s clean energy future\u201d ... \u201cSponsor the 2026 Clean Energy Champions Awards!\u201d",
+        "rationale": "Multiple proper nouns and a specific award/event title appear in the short promotional text."
+      },
+      {
+        "message_id": "reddit_1tnmoob_onznfoj",
+        "feature_name": "causal_claim_present",
+        "feature_value": "If he keeps it up, it will cause GOP losses (explicit causal/conditional prediction)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIf he keeps it up, he's going to cause more GOP losses in Congress.\u201d",
+        "rationale": "The post makes a direct conditional cause-effect forecast about electoral outcomes."
+      },
+      {
+        "message_id": "twitter_2060781814357033044",
+        "feature_name": "anaphora_or_parallelism",
+        "feature_value": "Refrain-like parallel phrase 'On or off' repeated",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cOn or off set, Mariska Hargitay never stops fighting\u2026\u201d",
+        "rationale": "The expression uses a parallel framing pattern ('On or off ... never stops') to reinforce a claim."
+      },
+      {
+        "message_id": "bluesky_ee1226ee41d7911e6f616d328e6d37d62c5fed4d6e4d268caaf36e61f761a957",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/gun control and public safety",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cgive these separatists more gun control\u201d ... \u201ctooting guns around\u201d",
+        "rationale": "The language directly centers on gun control laws and gun-carrying."
+      },
+      {
+        "message_id": "reddit_1tnjwbi_onurzr4",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Shame/blame directed at political moderates with dismissive framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cShame on moderate liberals to be so hoodwinked\u2026\u201d",
+        "rationale": "The post uses condemnatory language ('Shame on...') and insults ('hoodwinked') toward an in-group political label."
+      },
+      {
+        "message_id": "twitter_2060326285314797840",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Insult term used as direct characterization",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cBrandon Johnson is a walking moron.\u201d",
+        "rationale": "The text uses a strong derogatory insult targeting a named individual."
+      },
+      {
+        "message_id": "reddit_1tiody8_omxs4db",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Reframes opponents as wronged and defenders as accountable (false demonization vs criminals)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cWho was falsely demonized?\u201d ... \u201cY'all have to stop criminalizing them.\u201d",
+        "rationale": "The mirror positions a group as persecuted/demonized and urges stopping their criminalization."
+      },
+      {
+        "message_id": "bluesky_521818262b353e37b71c5665dd1accdb07440212ce5ac2da981475c26c5586e3",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Narrative setup followed by contrast about indifference ('The NRA will not care')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe NRA will not care.\u201d",
+        "rationale": "After describing an incident, the post contrasts expectations versus the implied lack of concern."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_6ee0f696da723e238e981baa7acdf404d768fcc2af68bb07079b2ea575d2efc2",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Screaming/anger framing and derogatory deity metaphor",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cscream whenever a Democrat says something observably true\u201d ... \u201cCheetah God.\u201d",
+        "rationale": "The text conveys strong contempt/outrage with 'scream' plus a mocking idol reference."
+      },
+      {
+        "message_id": "bluesky_c5802b75bd6779787b6edc0be894a72ac36c252c584a66a7d7d90ec3613136aa",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Quotation-heavy, double-assertion format with embedded emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cYes, we have yearly school shootings... second amendment, guys!!\u201d",
+        "rationale": "Highly quote-dense structure with exclamatory emphasis ('guys!!')."
+      },
+      {
+        "message_id": "reddit_1u2ekz6_or1qxth",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Direct character attacks on a political figure's intelligence",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cVance isn\u2019t a moron.\u201d ... \u201cHe seems like a moron whenever he opens his mouth.\u201d",
+        "rationale": "The post uses repeated mocking/derogation ('moron') as the main communicative move."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqdmw0a",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "\u201cdeep state\u201d and coordinated weaponization narrative",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cthe deep state literally weaponized every federal agency\u201d",
+        "rationale": "It attributes political outcomes to an organized hidden plot actor."
+      },
+      {
+        "message_id": "reddit_1lgcokh_myvf1zx",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Reversal where liberals are harmed too (boomerang harm)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cAnd the only comfort I can take, is that they are getting hurt themselves.\u201d",
+        "rationale": "The text expresses schadenfreude by framing the targeted group as suffering consequences."
+      },
+      {
+        "message_id": "reddit_1lgkon2_myziyi9",
+        "feature_name": "target_directionality",
+        "feature_value": "Party blame inversion between original and mirror (Democrats vs Republicans)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe democratic party is mostly at fault\u2026\u201d (original) / \u201cThe republican party is mostly at fault\u2026\u201d (mirror)",
+        "rationale": "The post explicitly assigns fault to one party label, and the mirror swaps that blame direction."
+      },
+      {
+        "message_id": "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Calls for background checks and red flag laws",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201crequire and fund background checks and red flag laws\u201d",
+        "rationale": "It proposes specific policy measures rather than only describing opinions."
+      },
+      {
+        "message_id": "reddit_1lc4tz7_mxxy2z2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity targeting a political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cFuck Democrats too.\u201d",
+        "rationale": "The post includes direct profanity directed at a political party."
+      }
+    ]
+  }
+}

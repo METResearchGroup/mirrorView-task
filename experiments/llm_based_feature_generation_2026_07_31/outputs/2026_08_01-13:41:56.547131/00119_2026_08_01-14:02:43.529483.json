@@ -1,0 +1,180 @@
+{
+  "batch_id": 119,
+  "message_ids": [
+    "bluesky_2ae1d353565b2fed200e624da4b0d0c284837e475770381c05df2fd938ab8d23",
+    "reddit_1kohwmm_mssecom",
+    "reddit_1kr91iq_mtbm1p2",
+    "reddit_1kvrj63_muc5ul7",
+    "reddit_1kwnre0_muj2w0t",
+    "reddit_1lf2x6s_mylgblv",
+    "reddit_1rz67ht_obk2j88",
+    "reddit_1ti509f_oms2ca2",
+    "reddit_1ts7ucn_oovp8d8",
+    "reddit_1tszxri_op42eik",
+    "reddit_1tz4l7k_oq9ow4r",
+    "reddit_1tztcf9_oqfzq2b",
+    "reddit_1u28e60_oqw9q05",
+    "twitter_2059275663299785194",
+    "twitter_2060470076235469226",
+    "twitter_2061512521538765018",
+    "twitter_2061687250916618306",
+    "twitter_2061767369442103571",
+    "twitter_2061767567073522093",
+    "twitter_2061781645611459027"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1ts7ucn_oovp8d8",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Conversational, disputational register",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Because you can\u2019t seem to post facts",
+        "rationale": "Uses informal, conversational phrasing to challenge the other speaker\u2019s behavior."
+      },
+      {
+        "message_id": "reddit_1kwnre0_muj2w0t",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Profane blunt insult construction",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "small government\" my ass",
+        "rationale": "Contains a crude intensifier/insult phrase ending in \"my ass\"."
+      },
+      {
+        "message_id": "reddit_1kr91iq_mtbm1p2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity directed at an outgroup",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "FUCK YOU.",
+        "rationale": "The text contains the explicit profanity 'FUCK YOU.'"
+      },
+      {
+        "message_id": "reddit_1tszxri_op42eik",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of politician name references",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump",
+        "rationale": "References a specific prominent politician by name (Trump) in the original."
+      },
+      {
+        "message_id": "reddit_1tz4l7k_oq9ow4r",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Compares labor hours/wages vs perceived welfare exploitation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "labor intensive job for 12+ hours a day for $5/hour",
+        "rationale": "Frames a cost comparison between working and perceived receiving behavior."
+      },
+      {
+        "message_id": "twitter_2061767369442103571",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Asserts wrongdoing about taxes/donations as claims",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "You know Trump is not paying taxes on all these donations.",
+        "rationale": "Uses definitive-sounding assertion ('You know') about a specific alleged conduct."
+      },
+      {
+        "message_id": "bluesky_2ae1d353565b2fed200e624da4b0d0c284837e475770381c05df2fd938ab8d23",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "National security + climate policy + independence referendum context",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "net zero carbon emissions, but still have secure borders",
+        "rationale": "Explicitly combines emissions targets with border/security capabilities."
+      },
+      {
+        "message_id": "twitter_2061687250916618306",
+        "feature_name": "call_to_action",
+        "feature_value": "Implied policy prescription about deportation for felony offenses against minors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "should maybe face some sort of deportation process",
+        "rationale": "Advocates a punitive legal outcome for a described category of crimes."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2060470076235469226",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Frames climate summit as 'globalist power grab' and silencing critics",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "scientists who dare to question the climate alarmism narrative are being silenced",
+        "rationale": "Claims suppression of dissent and portrays the event as part of a hidden power agenda."
+      },
+      {
+        "message_id": "reddit_1lf2x6s_mylgblv",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple profane 'Fuck X' attacks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Trump, Fuck Faux News",
+        "rationale": "Contains repeated explicit profanity targeting political/media targets."
+      },
+      {
+        "message_id": "reddit_1rz67ht_obk2j88",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Mocks 'on your side' while asserting hateful commonality",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "I\u2019m on *your* side! We have a lot in common",
+        "rationale": "Uses an in-group address to highlight perceived shared hostility."
+      },
+      {
+        "message_id": "reddit_1kvrj63_muc5ul7",
+        "feature_name": "geographic_scope",
+        "feature_value": "Europe-focused institutions and countries",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Germany, France, Poland, Italy, Spain, Portugal",
+        "rationale": "Names multiple European countries and implies EU/Brussels context."
+      },
+      {
+        "message_id": "reddit_1kohwmm_mssecom",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing/mental-competence insults toward voters",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "too stupid to understand",
+        "rationale": "Attacks an attributed trait of supporters ('too stupid') as part of argumentative disdain."
+      },
+      {
+        "message_id": "twitter_2061512521538765018",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Direct rhetorical 'Time to ask... why' question",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Time to ask your politicians why they accept war as a solution!",
+        "rationale": "Uses a leading question format to push blame without expecting an answer."
+      },
+      {
+        "message_id": "twitter_2061767567073522093",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Accuses an erased/silenced group and frames concern dismissal",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "biological women and children who've been erased, silenced",
+        "rationale": "Uses 'erased' and 'silenced' to portray group persecution."
+      },
+      {
+        "message_id": "reddit_1tztcf9_oqfzq2b",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political figure names",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "George Santos",
+        "rationale": "Mentions multiple public figures by name while discussing alleged mental/behavioral traits."
+      }
+    ]
+  }
+}

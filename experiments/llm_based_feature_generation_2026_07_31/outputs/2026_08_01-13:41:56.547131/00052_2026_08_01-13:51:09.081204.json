@@ -1,0 +1,180 @@
+{
+  "batch_id": 52,
+  "message_ids": [
+    "bluesky_0b62b209113aaccc7d5b0041f1fc310cfeeb2ff35e13406955968e01b56ea1dd",
+    "bluesky_0bd32b5cb97fddccc1185d0086be28753a0bbcc3971faa00ef052c8009bf8dfd",
+    "bluesky_281353f6c14b7f0df15a4adcb4708726a19f58b00c71bc6eb17597a0c38637d1",
+    "bluesky_33fc8c27014484daa72f3def0cdfc02aa48d0a05400b584877b6eb243f7f9d84",
+    "bluesky_8fc8031c21f02f5af829c30036691d393dfda798938bc6f567c00246491165bb",
+    "reddit_1koadeo_msp6kgn",
+    "reddit_1kqoorx_mt7kcjj",
+    "reddit_1kwwbcc_mukm3v1",
+    "reddit_1rybeds_obun4av",
+    "reddit_1ti5cqx_omwkvpd",
+    "reddit_1twgtct_opql2aq",
+    "reddit_1tzmjlz_oqdr769",
+    "reddit_1tzwh8s_oqfgaxj",
+    "reddit_1u1fnvf_oqph5rz",
+    "twitter_2060386143342928146",
+    "twitter_2061470326392066189",
+    "twitter_2061540479850721692",
+    "twitter_2061613572401017205",
+    "twitter_2061806012001079748",
+    "twitter_2061821518766547289"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061540479850721692",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Even if #gas went up to $10/gallon MAGA would still support #Trump.",
+        "rationale": "The post is brief and consists of two short conditional lines."
+      },
+      {
+        "message_id": "twitter_2061540479850721692",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "repeated 'Even if' counterfactual clauses implying invariance of support",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Even if #gas went up to $10/gallon MAGA would still support #Trump.\nEven if Trump starts another war, MAGA would still vote for him.",
+        "rationale": "Uses parallel 'Even if' conditionals to argue support would not change."
+      },
+      {
+        "message_id": "reddit_1rybeds_obun4av",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "blame shifted from 'America' to a specific politician/party (Trump -> Biden/Democrats)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Don't ask America. Ask Trump. Every bit of this is his fault. / Don't ask America. Ask Biden and the Democrats. Every bit of this is their fault.",
+        "rationale": "The mirror explicitly retargets responsibility from Trump to Biden/Democrats."
+      },
+      {
+        "message_id": "bluesky_281353f6c14b7f0df15a4adcb4708726a19f58b00c71bc6eb17597a0c38637d1",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / Second Amendment / self-defense",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Bans on the instruments of self protection... the second amendment was designed for",
+        "rationale": "Directly discusses gun/self-defense restrictions and Second Amendment."
+      },
+      {
+        "message_id": "reddit_1tzmjlz_oqdr769",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "war/foreign policy re-framing used as partisan 'narrative' dispute",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "no wars, focus on domestic issues... But now that Trump has evolved into Israel first... change the 'meaning' of words to fit the new narrative.",
+        "rationale": "Uses foreign-policy messaging and narrative reframing as a partisan conflict."
+      },
+      {
+        "message_id": "bluesky_33fc8c27014484daa72f3def0cdfc02aa48d0a05400b584877b6eb243f7f9d84",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "abortion ban/restriction framed as hospital nonperformance",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "horrified by the sneaky abortion ban - it is not illegal but state owned hospitals are not performing it!",
+        "rationale": "Refers to an abortion ban and its operational effect on state-owned hospitals."
+      },
+      {
+        "message_id": "twitter_2061821518766547289",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "tax burden + healthcare affordability/coverage rationale",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "stop voting against universal healthcare and start paying your fair share of taxes.",
+        "rationale": "Links opposition to universal healthcare with who pays via taxes."
+      },
+      {
+        "message_id": "twitter_2060386143342928146",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "high repetition/emphasis with intensifiers (ever, ever, ever)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "as if Americans would ever, ever, do anything, ever",
+        "rationale": "Strong emphatic repetition signals heightened rhetorical emphasis."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kwwbcc_mukm3v1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses explicit profanity 'Fuck'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck MAGA, the GOP and their hypocrisy...",
+        "rationale": "Contains direct profanity and insult-based language."
+      },
+      {
+        "message_id": "reddit_1kwwbcc_mukm3v1",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "political outgroup framed as morally indifferent to children/workers",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "they don\u2019t give a fuck about ANY sick child... they only care about money and power",
+        "rationale": "Attributes callousness and exploitation to an opposing group."
+      },
+      {
+        "message_id": "twitter_2061470326392066189",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls for shutdown/closure of Planned Parenthood",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Shut Planned Parenthood down.",
+        "rationale": "Directly advocates an action against an organization."
+      },
+      {
+        "message_id": "twitter_2061470326392066189",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "single-line emphatic punctuation with 'Every.' repeated",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Every.\nSingle.\nYear.",
+        "rationale": "Fragmented repeated emphasis structure to intensify the message."
+      },
+      {
+        "message_id": "reddit_1koadeo_msp6kgn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses dehumanizing slur-like insult 'fascist piece of shit'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Any victory against this fascist piece of shit is a good one",
+        "rationale": "Employs severe insult language targeting an actor."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqph5rz",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "institutions 'compromised' leading to coup/takeover narrative",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "SCOTUS is Also compromised.\n\nIt's a coup.",
+        "rationale": "Uses broad institutional corruption claims with conspiratorial outcome framing."
+      },
+      {
+        "message_id": "bluesky_8fc8031c21f02f5af829c30036691d393dfda798938bc6f567c00246491165bb",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "introduces quotes with attribution 'As opposed to... who said...'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "As opposed to Trump favorite Ted Nugent who said...\n\n\u201cObama, he\u2019s a piece of shit...\"",
+        "rationale": "Key content is presented as quoted remarks attributed to a named figure."
+      },
+      {
+        "message_id": "twitter_2061613572401017205",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative/solicitation directed at an unspecified 'candidate' via 'I want to see a candidate who will say'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I want to see a candidate who will say:",
+        "rationale": "Sets up a direct political demand for what a candidate should state."
+      }
+    ]
+  }
+}

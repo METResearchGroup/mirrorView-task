@@ -1,0 +1,180 @@
+{
+  "batch_id": 101,
+  "message_ids": [
+    "bluesky_925ea2ec8fb24ff85c688f63c1045ea41f9d43eaf179cddaaaa554a6657de657",
+    "bluesky_b7017daebe6d011d76b96953d5567c69abfbd8fc6c18e12107522f70a02f52e3",
+    "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+    "reddit_1ko3yf3_msok7uj",
+    "reddit_1kouuvz_msu3nql",
+    "reddit_1kr7qlc_mtd52nu",
+    "reddit_1ljlipu_mzljqqu",
+    "reddit_1th143w_omkko0y",
+    "reddit_1tqrtho_ooorn5g",
+    "reddit_1ts7wt8_oot9gi9",
+    "reddit_1tws6al_opquqs4",
+    "reddit_1txrk7b_oq6s4ab",
+    "reddit_1tz96fb_oqajcx2",
+    "reddit_1tzdiak_oqa5sxo",
+    "reddit_1u1c4u6_oqoocvh",
+    "twitter_2060465612099338674",
+    "twitter_2060505986129969322",
+    "twitter_2061377277058027898",
+    "twitter_2061594098172346658",
+    "twitter_2061827497181032588"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1th143w_omkko0y",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of US political leaders (Lincoln, Roosevelt, Reagan, Coolidge)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Lincoln and Roosevelt\" / \"Both Reagan and Coolidge\"",
+        "rationale": "Multiple prominent proper-noun figures from US politics are referenced in the short text."
+      },
+      {
+        "message_id": "twitter_2060465612099338674",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns / gun control",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"unconstitutional gun control\" / \"gun safety laws\"",
+        "rationale": "The post explicitly discusses gun control laws and the Bruen decision."
+      },
+      {
+        "message_id": "twitter_2060465612099338674",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Direct reference to the Supreme Court Bruen decision",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Bruen decision\"",
+        "rationale": "The text names a specific court ruling that anchors the argument."
+      },
+      {
+        "message_id": "bluesky_b7017daebe6d011d76b96953d5567c69abfbd8fc6c18e12107522f70a02f52e3",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Named event reference (Rodney King riots) plus NRA reference",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Rodney King riots\" / \"NRA\"",
+        "rationale": "The wording includes a well-known event and organization."
+      },
+      {
+        "message_id": "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Impeachment / elections and party power conditions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"impeach Trump\" / \"Democrats hold majorities in House Senate\"",
+        "rationale": "The content is about impeaching a president and the congressional majorities needed."
+      },
+      {
+        "message_id": "reddit_1tws6al_opquqs4",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Claims a group engages in voter fraud and links it to restricting voting for Black people",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"They commit voter fraud\" / \"stop all black people from voting\"",
+        "rationale": "The post attributes wrongdoing to an outgroup (\u201cthey\u201d) and proposes voter suppression against a specified group."
+      },
+      {
+        "message_id": "twitter_2060505986129969322",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Explicit conditional comparison between state refusals and tax sanctuary cities",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If blue states can refuse... does that mean red states can...\"",
+        "rationale": "It uses an if/does-that-mean structure to ask a comparative implication."
+      },
+      {
+        "message_id": "bluesky_925ea2ec8fb24ff85c688f63c1045ea41f9d43eaf179cddaaaa554a6657de657",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "High sentence/fragment cadence with multiple short sentences",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Yeah, we create air pollution...\" \"We allow...\" \"We support...\" \"Not so smart.\"",
+        "rationale": "The passage is built from repeated short declaratives/clauses separated by periods, ending with a punchline."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tqrtho_ooorn5g",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of US presidents (Washington, Lincoln, Roosevelt, FDR, Trump)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Washington, Lincoln, Roosevelt, and FDR\" / \"Trump\"",
+        "rationale": "Many prominent proper nouns are stacked to frame a political durability/legacy claim."
+      },
+      {
+        "message_id": "reddit_1kouuvz_msu3nql",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity in direct address",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"the fucking moron in the white house\"",
+        "rationale": "The text includes explicit profanity."
+      },
+      {
+        "message_id": "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses charged insulting metaphors and repeated slurs (e.g., 'felon/fraud, pedophile traitor')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"felon/fraud, pedophile traitor Trump\"",
+        "rationale": "The wording attacks named individuals with extreme stigmatizing labels."
+      },
+      {
+        "message_id": "reddit_1ljlipu_mzljqqu",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity with emphatic spacing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"What. The. Fuck.\"",
+        "rationale": "Clear taboo language is used for emphasis."
+      },
+      {
+        "message_id": "twitter_2061594098172346658",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct insult and dehumanizing proposal addressed to a named person",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"@AliVelshi You are a complete idiot.\" / \"revoking your citizenship\"",
+        "rationale": "The post uses direct second-person address plus concrete harm/legal action language."
+      },
+      {
+        "message_id": "reddit_1ko3yf3_msok7uj",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple emphatic exclamations and stacked insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh goodie...\" / \"FUCK anyone\"",
+        "rationale": "The text uses heavy emphasis punctuation and starts a profanity-driven clause."
+      },
+      {
+        "message_id": "reddit_1u1c4u6_oqoocvh",
+        "feature_name": "elite_vs_populist_framing",
+        "feature_value": "Religious/underworld metaphor implying parties sink 'below' each other",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"dig a new subbasement in hell\"",
+        "rationale": "Uses a populist-moralizing metaphor (\u201chell/rock bottom\u201d) to frame political competition as degradation."
+      },
+      {
+        "message_id": "reddit_1ts7wt8_oot9gi9",
+        "feature_name": "call_to_action",
+        "feature_value": "Advocates against an agency/entity via a direct emphatic directive",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"FUCK ICE\"",
+        "rationale": "The directive form (\u201cFUCK ICE\u201d) is an imperative targeting an institution."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 13,
+  "message_ids": [
+    "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+    "bluesky_912043623ff28c4d2bf3332fcb80b079c2d8983ffd123eb462512a0edab8c367",
+    "bluesky_aca295da213219e43b20cc56eeca1a4bc7ce02908e934b5b1802e32411728186",
+    "reddit_1kmew4f_ms9mrxo",
+    "reddit_1ks8292_mtkx5hv",
+    "reddit_1l5x8n5_mwl8rjq",
+    "reddit_1lbge70_mxstzrs",
+    "reddit_1tbxjhn_olms1ty",
+    "reddit_1tfkp9u_omcm6bs",
+    "reddit_1tzgcp8_oqcgmpc",
+    "twitter_2059353507564499161",
+    "twitter_2059756538202632643",
+    "twitter_2060432152852861156",
+    "twitter_2060791852853530849",
+    "twitter_2061207835707408856",
+    "twitter_2061441762640420963",
+    "twitter_2061468816266117314",
+    "twitter_2061483850782609452",
+    "twitter_2061574786443001991",
+    "twitter_2061801714139697578"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun laws",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "pass basic, sensible gun laws",
+        "rationale": "The post explicitly focuses on passing gun laws."
+      },
+      {
+        "message_id": "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+        "feature_name": "all_caps_emphasis_or_terminal_expletives",
+        "feature_value": "WTF uppercase emphasis and exclamations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "WTF does it take",
+        "rationale": "Contains uppercase acronym emphasis expressing strong reaction."
+      },
+      {
+        "message_id": "reddit_1kmew4f_ms9mrxo",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "embedded long quote from public-domain poem",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cGive me your tired, your poor,",
+        "rationale": "The post reproduces multiple lines of a quoted poem."
+      },
+      {
+        "message_id": "twitter_2059756538202632643",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "abortion / reproductive rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "reproductive freedoms",
+        "rationale": "The text centers on reproductive freedoms and abortion votes."
+      },
+      {
+        "message_id": "twitter_2059756538202632643",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "unborn as threatened group by opponent",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "catastrophic for the unborn",
+        "rationale": "The mirror frames a group (unborn) as harmed by the named politician."
+      },
+      {
+        "message_id": "twitter_2061441762640420963",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "renewables framed as 'economic suicide' and loss of jobs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "economic suicide dressed up as virtue",
+        "rationale": "Uses economic evaluation language (economic suicide) tied to the climate-tech choice."
+      },
+      {
+        "message_id": "twitter_2061483850782609452",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "voting bloc used as 'slaves/pawns' by Democrats/Republicans",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Democrats are USING you like SLAVES for your vote",
+        "rationale": "Uses a manipulative outgroup/ingroup dynamic to assign blame to a political side."
+      },
+      {
+        "message_id": "twitter_2061574786443001991",
+        "feature_name": "call_to_action",
+        "feature_value": "urges not to allow funding increase to be used as an excuse",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "we must not let it be an excuse to greenlight the massive increases",
+        "rationale": "Uses imperative framing ('we must not let') to influence audience stance."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2060791852853530849",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "climate crisis described as manufactured globalist psyop",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "manufactured globalist \u2018psyop\u2019",
+        "rationale": "Presents climate crisis as a deliberate deception campaign."
+      },
+      {
+        "message_id": "reddit_1lbge70_mxstzrs",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple 'Fuck' expletives",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck that. Fuck those redneck farmers",
+        "rationale": "Uses strong profanity and aggressive condemnation."
+      },
+      {
+        "message_id": "reddit_1ks8292_mtkx5hv",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexualized insult phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "head up Trump's ass",
+        "rationale": "Contains a crude sexualized insult toward DOJ/Trump."
+      },
+      {
+        "message_id": "bluesky_aca295da213219e43b20cc56eeca1a4bc7ce02908e934b5b1802e32411728186",
+        "feature_name": "target_directionality",
+        "feature_value": "blames Democrats for gun ownership while contrasting 'law-abiding gun owners' vs criminals",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "another Democrat blaming law-abiding gun owners for criminals",
+        "rationale": "Assigns blame directionally to a political actor for a crime-related framing."
+      },
+      {
+        "message_id": "twitter_2061207835707408856",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Second Amendment / assault weapon ban",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "banning assault weapons",
+        "rationale": "The post is directly about assault weapon bans and Second Amendment claims."
+      },
+      {
+        "message_id": "bluesky_aca295da213219e43b20cc56eeca1a4bc7ce02908e934b5b1802e32411728186",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "derogatory intensifiers ('Fucking ...')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Fucking clown-ass political party",
+        "rationale": "Uses strong derogatory language signaling heightened anger."
+      },
+      {
+        "message_id": "twitter_2060432152852861156",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moralized/disgust framing about abortion procedure",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "fully developed baby given no say, no voice",
+        "rationale": "Uses moral/ethical assertion about the nature of abortion."
+      },
+      {
+        "message_id": "twitter_2061801714139697578",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dehumanizing/abusive labeling ('shameless antisemite', 'accomplice')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "a shameless antisemite",
+        "rationale": "Employs harsh character attacks aimed at discrediting a named individual."
+      }
+    ]
+  }
+}

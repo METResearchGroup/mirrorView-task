@@ -1,0 +1,180 @@
+{
+  "batch_id": 130,
+  "message_ids": [
+    "bluesky_1db731b21f747b5666c1e485eb58b7be5d225d3faa64cff1b9ce62314ca2311f",
+    "bluesky_49ff9c5ca57b77af6d2ef386e4667f9362e1794af5f8692bb0626a59c7825f1b",
+    "bluesky_7f79c59f27fb0856a48259a2ea8401d98105127fde01eb3a0d78839216d3ea74",
+    "bluesky_8fcc2b0304eb1749e5105c0235c5be9fd2dba47df66b3bf124865bbdba049f5b",
+    "bluesky_96608b50ec042cc188f08491b8b713df5a1caf9774258f799f8f10d195c1a835",
+    "reddit_1keojcj_mqlr5e2",
+    "reddit_1kigdcc_mrgsnzz",
+    "reddit_1ksybvd_mtq31td",
+    "reddit_1lc4tz7_mxywa8h",
+    "reddit_1lhaiqa_mz2seaw",
+    "reddit_1trf9va_oonb3tq",
+    "reddit_1tvsp9t_opk4hyd",
+    "reddit_1twc57o_opnv8ia",
+    "reddit_1tx0uiq_opsnk62",
+    "reddit_1tzs7nk_oqe8446",
+    "twitter_2060213695603712464",
+    "twitter_2060249532940579284",
+    "twitter_2061504991550931364",
+    "twitter_2061553443932717215",
+    "twitter_2061570902219760095"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060249532940579284",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Uses ALL CAPS for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"ANY State.\" / \"cannot be infringed\"",
+        "rationale": "The post contains emphatic all-caps wording."
+      },
+      {
+        "message_id": "twitter_2060249532940579284",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Second Amendment / guns",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"It's The Constitution's Second Amendment\"",
+        "rationale": "It explicitly invokes the Second Amendment as the governing policy domain."
+      },
+      {
+        "message_id": "twitter_2061553443932717215",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "14th Amendment / birthright citizenship amendment proposal",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The 14th Amendment\" / \"introducing a constitutional amendment to end automatic citizenship\"",
+        "rationale": "It references the 14th Amendment and proposes changing birthright citizenship."
+      },
+      {
+        "message_id": "twitter_2061553443932717215",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Citizenship described as sacred",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"American citizenship is sacred.\"",
+        "rationale": "The language is explicitly moral/normative rather than purely descriptive."
+      },
+      {
+        "message_id": "bluesky_8fcc2b0304eb1749e5105c0235c5be9fd2dba47df66b3bf124865bbdba049f5b",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Insulting evaluative phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Stupid people\" / \"Intelligent people\"",
+        "rationale": "The post uses informal evaluative labels rather than neutral phrasing."
+      },
+      {
+        "message_id": "bluesky_8fcc2b0304eb1749e5105c0235c5be9fd2dba47df66b3bf124865bbdba049f5b",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Two-part contrast between people and arguments",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Stupid people believe... Intelligent people recognize that...\"",
+        "rationale": "The message uses a strong contrastive structure to oppose two viewpoints."
+      },
+      {
+        "message_id": "twitter_2061504991550931364",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Warns that election outcome would end the country/democracy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"if they won this election, I don't think we'd have a country anymore.\" / \"if they win another election, I don't think we'd have a democracy anymore.\"",
+        "rationale": "It asserts a causal consequence tied to an election result."
+      },
+      {
+        "message_id": "bluesky_1db731b21f747b5666c1e485eb58b7be5d225d3faa64cff1b9ce62314ca2311f",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Calls the other commenter a troll/bait",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"is a right wing troll\" / \"You're being baited\"",
+        "rationale": "It dismisses the interlocutor via labeling and suggests manipulation."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1keojcj_mqlr5e2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong derogation/insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Except, Trump is evil, and stupid evil\" / \"dumb.\"",
+        "rationale": "The post uses overt negative characterizations as taboo-style political insults."
+      },
+      {
+        "message_id": "reddit_1kigdcc_mrgsnzz",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Insult phrasing as a standalone sentence",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Only a radical left wing moron would want this\"",
+        "rationale": "Uses informal derogatory wording ('moron') to dismiss a position."
+      },
+      {
+        "message_id": "reddit_1trf9va_oonb3tq",
+        "feature_name": "hedging_or_qualification",
+        "feature_value": "Direct sarcastic question about liberals",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"lol what\u2019s wrong liberals, can\u2019t deal with Trumps name?\"",
+        "rationale": "It uses a rhetorical questioning format to mock/attack."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqe8446",
+        "feature_name": "call_to_action",
+        "feature_value": "Imperative demand to prosecute/fight back",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats MUST prosecute\" / \"Republicans MUST fight back\"",
+        "rationale": "The post uses MUST + action verbs to prescribe conduct."
+      },
+      {
+        "message_id": "bluesky_96608b50ec042cc188f08491b8b713df5a1caf9774258f799f8f10d195c1a835",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Claims lethal cost is seen every day",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"we see the lethal cost every day.\"",
+        "rationale": "It states an observational claim about costs rather than presenting it as hypothetical."
+      },
+      {
+        "message_id": "reddit_1tvsp9t_opk4hyd",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Mocking chant-style repetition",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"HONEY HURRR HURR HURR\"",
+        "rationale": "The post uses stylized repeated mocking text."
+      },
+      {
+        "message_id": "twitter_2061570902219760095",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Legal case name and state reference",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Maryland\" / \"NRA v. Moore\"",
+        "rationale": "It contains multiple named proper nouns (jurisdictions and case name)."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2seaw",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity directed at public figures/groups",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Trump and Fuck Israel.\"",
+        "rationale": "The message uses the explicit profane verb 'Fuck' as a direct attack."
+      }
+    ]
+  }
+}

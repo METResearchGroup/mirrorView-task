@@ -1,0 +1,180 @@
+{
+  "batch_id": 46,
+  "message_ids": [
+    "bluesky_055f53182d705b94e0b101d9ca4716102833a64d55eb5e6571046b03d2c4bb2d",
+    "bluesky_08970f15af2a960b7a5119273f78c04b4205a5304ff932784b8e6bb7f15f353d",
+    "bluesky_6f49aeb9ce1d86a530a95dadcc8eb0327e75e5b63d97c77f72a70f06aa9ff4b8",
+    "bluesky_a499afdb5bd2535cfdf005ac958a5ea037a0e7b22e92b576c58c9431e3c34e42",
+    "bluesky_b7a4b909c372f45b16a5a0294a1ea20003730781118ef15e2d73160089a2d0b3",
+    "reddit_1kdsslc_mqe2hx8",
+    "reddit_1ke2vut_mqlccsr",
+    "reddit_1la39e8_mxhzb2y",
+    "reddit_1laawce_mxkqsp8",
+    "reddit_1tt99ox_op0yaon",
+    "reddit_1tw6zcr_opo4gz2",
+    "reddit_1tzmjlz_oqcb9j1",
+    "twitter_2060042991528513648",
+    "twitter_2060968801567678581",
+    "twitter_2061202225368883343",
+    "twitter_2061511976220598360",
+    "twitter_2061532873908511090",
+    "twitter_2061534578276261990",
+    "twitter_2061641614448333300",
+    "twitter_2061801524234465316"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_055f53182d705b94e0b101d9ca4716102833a64d55eb5e6571046b03d2c4bb2d",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "We don\u2019t talk enough about open carry states",
+        "rationale": "The text is a brief statement in a couple of clauses."
+      },
+      {
+        "message_id": "bluesky_055f53182d705b94e0b101d9ca4716102833a64d55eb5e6571046b03d2c4bb2d",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "conversational rhetorical phrasing ('yes we do this abnormal thing here')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cyes we do this abnormal thing here\u201d",
+        "rationale": "Uses informal quoted dialogue to frame the argument."
+      },
+      {
+        "message_id": "twitter_2060042991528513648",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "abortion/reproductive rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Reproductive health is non-negotiable.",
+        "rationale": "The post explicitly centers reproductive health/bodily autonomy."
+      },
+      {
+        "message_id": "twitter_2060042991528513648",
+        "feature_name": "normative_moral_language",
+        "feature_value": "rights/obligation framing ('free from coercion','moral obligation')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "bodily autonomy, access to safe care",
+        "rationale": "Language is value-laden and framed as rights and obligations."
+      },
+      {
+        "message_id": "twitter_2060968801567678581",
+        "feature_name": "call_to_action",
+        "feature_value": "imperative address to governments ('you governments have the technology')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "you governments have the technology to break away from fossil fuels",
+        "rationale": "Directly urges/pressures an agent using imperative-like wording."
+      },
+      {
+        "message_id": "bluesky_6f49aeb9ce1d86a530a95dadcc8eb0327e75e5b63d97c77f72a70f06aa9ff4b8",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun violence/gun rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Every day more families are destroyed by gun violence.",
+        "rationale": "The content is about gun violence and its impact."
+      },
+      {
+        "message_id": "bluesky_6f49aeb9ce1d86a530a95dadcc8eb0327e75e5b63d97c77f72a70f06aa9ff4b8",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "families/children victimized by shootings",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "more families are destroyed... Children deserve to grow up without fear.",
+        "rationale": "Depicts harm to innocents as a central theme."
+      },
+      {
+        "message_id": "reddit_1la39e8_mxhzb2y",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct 'You are' agreement with insult target",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "You are 100% correct. \ud83e\uded5Trump and his idiot cult members.",
+        "rationale": "Uses second-person agreement structure aimed at the reader."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061641614448333300",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo/derogatory 'baby murder' phrasing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "promote baby murder",
+        "rationale": "Uses highly inflammatory moral labeling."
+      },
+      {
+        "message_id": "twitter_2061641614448333300",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "abortion/pro-life vs abortion debate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "abortion lobby",
+        "rationale": "Explicitly invokes abortion politics."
+      },
+      {
+        "message_id": "twitter_2061534578276261990",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high density of people/org names",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Spencer Pratt... Lex Politica... Musk",
+        "rationale": "Multiple named entities are mentioned in sequence."
+      },
+      {
+        "message_id": "bluesky_b7a4b909c372f45b16a5a0294a1ea20003730781118ef15e2d73160089a2d0b3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong profanity ('dumb as fuck','bitch')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "dumb as fuck ... scared of a bitch",
+        "rationale": "Contains explicit abusive/profane insults."
+      },
+      {
+        "message_id": "bluesky_b7a4b909c372f45b16a5a0294a1ea20003730781118ef15e2d73160089a2d0b3",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting sarcasm about open carry ('very stupid','dumb')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "anyone who open carries... very stupid... open carrying is dumb",
+        "rationale": "Uses contemptuous ridicule rather than argument."
+      },
+      {
+        "message_id": "twitter_2061511976220598360",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "named legislative act (passed/blocked)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Deporting Fraudsters Act",
+        "rationale": "Refers to a specific bill with 'House just PASSED' framing."
+      },
+      {
+        "message_id": "twitter_2061511976220598360",
+        "feature_name": "causal_claim_present",
+        "feature_value": "claims about consequences ('automatic deportation ... why were they allowed to steal')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "automatic deportation for illegals caught defrauding American taxpayers",
+        "rationale": "Asserts causal/legal linkage between fraud and deportation."
+      },
+      {
+        "message_id": "reddit_1ke2vut_mqlccsr",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting condemnation ('piece of shit','worth a shit')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "traitors... piece of shit",
+        "rationale": "Uses dehumanizing/insult language to condemn a group."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 74,
+  "message_ids": [
+    "bluesky_319c9c9a8b5a19d414e963369566449aa0d3dc836ab38c4c1272636e70829def",
+    "bluesky_5695c15666d8e56b0b7623e5529b4e97e5fb6fbb59b04f19749db864927a274d",
+    "bluesky_8b5a6ba0f266236263a223307447088b4db964d57be5dbe763620c86363f84b6",
+    "reddit_1km298z_ms74es8",
+    "reddit_1kwzesq_mulq60v",
+    "reddit_1l62k9l_mwlm89s",
+    "reddit_1l7it3w_mwy55f3",
+    "reddit_1ld25h9_my5nlaf",
+    "reddit_1lm38hz_n07pupw",
+    "reddit_1t7d5jc_oku6sko",
+    "reddit_1tafgbu_ol9w91x",
+    "reddit_1tsvgs3_op1282q",
+    "reddit_1tyojpm_oq9c9lc",
+    "twitter_2059311112953200661",
+    "twitter_2059482224035004749",
+    "twitter_2060735826099671202",
+    "twitter_2061059285379866655",
+    "twitter_2061208445051711640",
+    "twitter_2061479497895993622",
+    "twitter_2061786442943111613"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tyojpm_oq9c9lc",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Single mother denied help due to moral condemnation; portrays being punished while church takes offerings",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I had sinned by having a baby outside of marriage, therefore I didn't deserve help\" / \"They sure as hell took my money offerings though.\"",
+        "rationale": "The post emphasizes being refused assistance and unjustly judged, framing the speaker as a victim of harsh moral policing."
+      },
+      {
+        "message_id": "reddit_1l7it3w_mwy55f3",
+        "feature_name": "call_to_action",
+        "feature_value": "Implicit directive against not voting; urges political participation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Except the presidential election isn't a restaurant you can leave.\" / \"One of those choices **will** be chosen.\" / \"Throwing a tantrum and staying home just lets... decide your future.\"",
+        "rationale": "The language discourages staying home and steers readers toward participating in the election."
+      },
+      {
+        "message_id": "twitter_2061208445051711640",
+        "feature_name": "persuasion_or_argumentation",
+        "feature_value": "Intro framing to convey information to newcomers",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"If you're new to following me there are some things you should know.\"",
+        "rationale": "The statement is a communicative setup intended to persuade/inform followers about what to believe or watch for."
+      },
+      {
+        "message_id": "bluesky_8b5a6ba0f266236263a223307447088b4db964d57be5dbe763620c86363f84b6",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Second Amendment / gun rights vs gun control",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"taking the right to arm ourselves away\" / \"Second Amendment rights\"",
+        "rationale": "It directly discusses gun rights and the Second Amendment."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_oku6sko",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Left leadership characterized as devious; contrasts empathetic/meaning-well motivations vs leadership",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Most progressively minded people mean well\" / \"The leadership of the Left is devious and chilling.\"",
+        "rationale": "The post contrasts groups (progressive/left leadership) and attributes negative intent to one side."
+      },
+      {
+        "message_id": "reddit_1tafgbu_ol9w91x",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Uses causal certainty and an explanatory thesis about socialism/capitalism",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Clearly the reason socialism fails is that nobody socialisms hard enough.\"",
+        "rationale": "The sentence uses a clear thesis structure (\u201cClearly\u2026the reason\u2026is that\u2026\u201d) to argue causation."
+      },
+      {
+        "message_id": "twitter_2061479497895993622",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple named political entities/campaign groups",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@TroyJackson207\" / \"@BernieSanders\" / \"@OurRevolution\"",
+        "rationale": "The post heavily relies on handles/organizations to specify actors and endorsements."
+      },
+      {
+        "message_id": "reddit_1ld25h9_my5nlaf",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Short dismissal with an insult",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"What a clown.\"",
+        "rationale": "The post uses direct mockery to degrade an actor or idea."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1km298z_ms74es8",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity for lying accusation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"all fucking liars\"",
+        "rationale": "The phrase contains strong profanity used to intensify the accusation."
+      },
+      {
+        "message_id": "twitter_2059311112953200661",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Abortion bans / anti-abortion framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Arkansas\u00012 Abortion Ban\" / \"VOTE BLUE\" / \"Life-Threatening Miscarriage\"",
+        "rationale": "The content centers on abortion restrictions and a related political call."
+      },
+      {
+        "message_id": "twitter_2061059285379866655",
+        "feature_name": "call_to_action",
+        "feature_value": "Urges starting a movement to stop gun violence",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Let's make a movement For Stop the Gun violence!\"",
+        "rationale": "The post issues an exhortation to take collective action."
+      },
+      {
+        "message_id": "twitter_2059482224035004749",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Attribution plus direct quotation about Christian faith and climate",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"James Talarico\" / \"You can't call yourself a Christian and destroy God's creation with greenhouse gases.\"",
+        "rationale": "It embeds a named speaker\u2019s argument as a direct quote."
+      },
+      {
+        "message_id": "bluesky_5695c15666d8e56b0b7623e5529b4e97e5fb6fbb59b04f19749db864927a274d",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Event location and institution named; identity-based framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Islamic Center of San Diego\" / \"mass shooting\"",
+        "rationale": "The post includes specific place/institution identifiers tied to the attack narrative."
+      },
+      {
+        "message_id": "twitter_2061786442943111613",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Argues deportation costs are immoral; cites huge billion-scale costs and proposes shared costs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"100%\" \"deportation costs\" / \"Hundreds of Billions\" / \"We need faster removals and shared costs\"",
+        "rationale": "It uses cost figures and policy prescriptions about cost-sharing/removals."
+      },
+      {
+        "message_id": "reddit_1tsvgs3_op1282q",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Defines abortion as murder and uses strong moral condemnation; challenges pro-LGBT meaning",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"elective abortions... is murder\" / \"we support legal immigration\" / \"What does \\\"support LGBT\\\" even mean?\"",
+        "rationale": "The text applies moral judgment (\u201cmurder\u201d) and includes a definitional challenge question."
+      },
+      {
+        "message_id": "bluesky_319c9c9a8b5a19d414e963369566449aa0d3dc836ab38c4c1272636e70829def",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Assigns blame to gun-rights advocates; \u201cvictims left defenseless\u201d framing in mirror",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Every one of these kids is on you\" / \"Every one of these victims left defenseless is on you.\"",
+        "rationale": "It frames harms to children/victims as caused by a group and attributes culpability."
+      }
+    ]
+  }
+}

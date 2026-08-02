@@ -1,0 +1,180 @@
+{
+  "batch_id": 61,
+  "message_ids": [
+    "bluesky_019de9fa96e57b2d0331926a143211e6428143ba235c73b3cc84cc56109744e7",
+    "bluesky_06942b8a322fe345f19cf2e996397310309f0fea816b57edf59b9285cd33344c",
+    "bluesky_08c6be77cb0d6fa981c6363ded156e4755e04ee95513c42eeb2ebb0a2e55001e",
+    "bluesky_14ad874e325c5a89c5216dba31dcd6f7a9f907518a4d0165173b3be22a8a18bb",
+    "bluesky_171eb60ff131d4a920d0fc1644f5cb0fbefcbaacec23057ceac34d23e57746ab",
+    "bluesky_79fb4550b133046c562edf173df59be9e36c42fe9fca1a49040af22d915afd3d",
+    "reddit_1kndcmn_msik13u",
+    "reddit_1krncfs_mthsjmt",
+    "reddit_1ljd0io_mzk5kjd",
+    "reddit_1ll6sj4_n0d0udd",
+    "reddit_1tgwj1b_omkaeqz",
+    "reddit_1tsx0f1_ooylnh8",
+    "reddit_1ttbse9_op1s1q8",
+    "reddit_1tvywom_opkqwt8",
+    "reddit_1twgtct_opoonuo",
+    "reddit_1twgtct_opqvx2o",
+    "twitter_2059527883165708722",
+    "twitter_2060052812759969934",
+    "twitter_2061286246219931800",
+    "twitter_2061801007072338414"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1ljd0io_mzk5kjd",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Repeated imperative phrase with exclamation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Impeach! Impeach! Impeach!",
+        "rationale": "The post uses repetition and strong exclamatory punctuation to intensify a political imperative."
+      },
+      {
+        "message_id": "reddit_1tsx0f1_ooylnh8",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct agreement/contrast framing using 'Thank you!!' and identity claims",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Thank you!! As an immigrant, I never understood...",
+        "rationale": "The utterance functions as an address/response using emphatic interjection and first-person identity justification."
+      },
+      {
+        "message_id": "twitter_2061286246219931800",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Degrading slang and stylized praise/blame",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"green card!\" That's American redneck tech right there!",
+        "rationale": "Uses colloquial slang ('redneck tech') and casual imperative framing."
+      },
+      {
+        "message_id": "bluesky_08c6be77cb0d6fa981c6363ded156e4755e04ee95513c42eeb2ebb0a2e55001e",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Multiple hashtags appended as tags",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#M4A #BlueMAGADelusions",
+        "rationale": "Contains hashtag markers used for ideological labeling and engagement."
+      },
+      {
+        "message_id": "bluesky_79fb4550b133046c562edf173df59be9e36c42fe9fca1a49040af22d915afd3d",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Quoting block then concluding imperative",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": ">Firearm ownership and rebellion against tyrannical govt... \n\nAt the absolute bare minimum, practice self defense",
+        "rationale": "Uses block-quote lines followed by a final imperative instruction."
+      },
+      {
+        "message_id": "bluesky_14ad874e325c5a89c5216dba31dcd6f7a9f907518a4d0165173b3be22a8a18bb",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Attributed quotation and media figure reference",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"We can't stop criminals...\"",
+        "rationale": "Includes quoted speech with a named attributed speaker and additional named commentary."
+      },
+      {
+        "message_id": "reddit_1ttbse9_op1s1q8",
+        "feature_name": "targeted_actor_type_and_victimhood_via_voting_record",
+        "feature_value": "Accuses Republicans/Trump voters of ignoring criticism; mirror targets Biden for rubber-stamping",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "They mean nothing when he walks into his polling station and votes for Trump.",
+        "rationale": "Blames political actors for dismissing prior statements; mirror shifts blame to Biden for endorsing policies."
+      },
+      {
+        "message_id": "bluesky_019de9fa96e57b2d0331926a143211e6428143ba235c73b3cc84cc56109744e7",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Explicit comparison 'including: ... Over ... failures'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Over Trump\u00142s presidential failures.",
+        "rationale": "Uses a comparative structure contrasting one figure's record vs the other's."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kndcmn_msik13u",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "US state named for partisan contrast",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Michigan republicans...",
+        "rationale": "Mentions a specific geographic political entity (Michigan) alongside partisan labels."
+      },
+      {
+        "message_id": "reddit_1tvywom_opkqwt8",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Generalized claim about legal doctrine 'still validates murdering' plus explanation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Gay panic defense still validates murdering us in 29 states.",
+        "rationale": "States a broad causal/evaluative claim and then defines the concept as a legal tactic."
+      },
+      {
+        "message_id": "twitter_2060052812759969934",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Firearms policy / concealed carry",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "concealed carry",
+        "rationale": "Directly discusses concealed carry and whether qualification prevents attacks."
+      },
+      {
+        "message_id": "twitter_2061801007072338414",
+        "feature_name": "call_to_action",
+        "feature_value": "Attribution of harm framed as political grievance (public defenders defunded, civil rights gutted)",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "They can't prosecute him properly thanks to the Repugnantcans defunding public defenders",
+        "rationale": "Uses an explanatory blame construction tied to a political cause, implying outrage at institutions."
+      },
+      {
+        "message_id": "reddit_1tgwj1b_omkaeqqz",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Disputes interpretation 'Saying it's just...'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Saying it's just to pay out his rich buddies is disingenuous.",
+        "rationale": "Challenges an asserted motive with a direct rebuttal sentence."
+      },
+      {
+        "message_id": "reddit_1twgtct_opqvx2o",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual-content framing with explicit crude imagery (implied)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "keep having gay sex at truck stops.",
+        "rationale": "Uses sexual content as a derogatory rhetorical device targeting a political group."
+      },
+      {
+        "message_id": "reddit_1krncfs_mthsjmt",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profane/graphic insult phrasing (\"orange gooch\")",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "lick Trump's orange gooch all day?",
+        "rationale": "Employs a highly taboo sexualized insult to attack a politician."
+      },
+      {
+        "message_id": "bluesky_06942b8a322fe345f19cf2e996397310309f0fea816b57edf59b9285cd33344c",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Intensifiers and profanity ('REALLY', 'fucking') plus direct scolding",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "you REALLY haven't paid any attention... very fucking first rights... pick up a fucking history book",
+        "rationale": "Uses emphatic intensifiers and profanity alongside admonishment."
+      }
+    ]
+  }
+}

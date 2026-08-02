@@ -1,0 +1,180 @@
+{
+  "batch_id": 45,
+  "message_ids": [
+    "bluesky_210abd1190312a93a02c436bb1d172a437a23b64ed6b6b6ab2aa7f4235404772",
+    "bluesky_22a2f56df53390bcc86831b029b539314ac5127b1a9469662ef945473e51ee96",
+    "bluesky_e603d584fe92320092eaa9780404cffe4f7e4ce36ece56b740a8b33d33d735b4",
+    "bluesky_f65c2e1ba851542072b7f8f92c7e23d1452667a47dcb72a32abc3dc50aea483b",
+    "reddit_1kvxd8w_mudzc3o",
+    "reddit_1kyhobv_muxfjy9",
+    "reddit_1kyojif_muzm02o",
+    "reddit_1l5rpaw_mwj7ggo",
+    "reddit_1l6owby_mwqjfvf",
+    "reddit_1lfkced_myp19he",
+    "reddit_1t7d5jc_okpu9zp",
+    "reddit_1ti5ovh_omtae4r",
+    "reddit_1tutxzr_opdn8rc",
+    "reddit_1tv69vk_opgctfk",
+    "reddit_1tzfhxv_oqbao73",
+    "reddit_1u0oc51_oql9wo4",
+    "twitter_2059996002669494581",
+    "twitter_2061064210269024336",
+    "twitter_2061714432624132199",
+    "twitter_2061809738363306422"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tv69vk_opgctfk",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political proper nouns/parties (Democrats/Republicans/Union)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats\" seceding from the Union ... and then ... allowed to continue as a \"party\".",
+        "rationale": "The post repeatedly references named political entities and historical actors."
+      },
+      {
+        "message_id": "reddit_1tv69vk_opgctfk",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "Civil War/secession + slavery analogy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"trying to secede and maintain slavery\"",
+        "rationale": "It invokes a specific historical event/period as an analogy for current politics."
+      },
+      {
+        "message_id": "bluesky_22a2f56df53390bcc86831b029b539314ac5127b1a9469662ef945473e51ee96",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Framing opponents as maintaining \u201choaxes\u201d/pretense",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"woke dei hoaxes\"",
+        "rationale": "The text characterizes the opposing view as deliberate falsehood/pretending."
+      },
+      {
+        "message_id": "reddit_1u0oc51_oql9wo4",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct imperative to remove programs",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Get rid of them!\"",
+        "rationale": "It uses an explicit instruction to take action."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_okpu9zp",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses second-person hypothetical address (\u201cyou are\u2026\u201d)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Let's say you are a full-time factory worker\"",
+        "rationale": "The structure directly addresses the reader with a hypothetical scenario."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_okpu9zp",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Enumerates multiple public services in a series",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Police, firefighting, ambulance services, drivers licensing and navigable roads, and primary school education\"",
+        "rationale": "The sentence stacks many service categories using commas and coordination."
+      },
+      {
+        "message_id": "twitter_2061064210269024336",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Claims minorities\u2019 rights are being threatened; calls to defend them",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"When minorities' rights are openly threatened\"",
+        "rationale": "It frames targeted groups as under threat/persecution and emphasizes defense."
+      },
+      {
+        "message_id": "bluesky_f65c2e1ba851542072b7f8f92c7e23d1452667a47dcb72a32abc3dc50aea483b",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity/sexual taboo term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"\\u201cfuck it\\u201d\"",
+        "rationale": "The text contains strong taboo language in quoted form."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2059996002669494581",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Slur/insult and sexual profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"climate scam dickhead\" ... \"fck him\"",
+        "rationale": "Contains degrading insult terms plus an obscenity."
+      },
+      {
+        "message_id": "twitter_2059996002669494581",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Named organization/person handle mention",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@s_guilbeault\"",
+        "rationale": "The post directly addresses a specific account/individual via a handle."
+      },
+      {
+        "message_id": "bluesky_e603d584fe92320092eaa9780404cffe4f7e4ce36ece56b740a8b33d33d735b4",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "No direct address; uses analogy framing with generic sentence transformation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"it's not \\\"Dog bites person\\\" but \\\"Dog shoots person\\\"\"",
+        "rationale": "The structure is a comparative contrast that flips scenario severity using fixed template phrasing."
+      },
+      {
+        "message_id": "reddit_1ti5ovh_omtae4r",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Mocks/labels people as stupid; insults leaders",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"calling half the country stupid\" ... \"The only thing trump 'obviously' is, is a narcissist.\"",
+        "rationale": "It uses derogatory labels and ridicule rather than policy argumentation."
+      },
+      {
+        "message_id": "reddit_1l5rpaw_mwj7ggo",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong insulting language (\u201cbullshit\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"self'-serving bullshit\"",
+        "rationale": "The text includes coarse taboo-ish political insult."
+      },
+      {
+        "message_id": "reddit_1kyhobv_muxfjy9",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct instruction demanding uniform/badges/no mask for a group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"All Ice agents should be uniformed, with badges, no mask. And then, still, fuck those guys.\"",
+        "rationale": "It gives concrete directives about how a group should be treated/handled."
+      },
+      {
+        "message_id": "reddit_1tzfhxv_oqbao73",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Presents allegations as definitive \u201cis a lie\u201d + cites evidence (reports, voicemail)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"This is a lie.\" ... \"The evidence shows repeated contact\"",
+        "rationale": "It asserts factual claims and supports them with stated evidence types."
+      },
+      {
+        "message_id": "reddit_1kyojif_muzm02o",
+        "feature_name": "targeted_political_insulting_language",
+        "feature_value": "Accuses opposition of authoritarianism; uses \u201cFucking wild\u201d intensity",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"Full blown fascism\" ... \"Fucking wild is comparing\"",
+        "rationale": "The post uses strong political labeling plus emphatic insult framing not fully captured by fixed checklists."
+      }
+    ]
+  }
+}

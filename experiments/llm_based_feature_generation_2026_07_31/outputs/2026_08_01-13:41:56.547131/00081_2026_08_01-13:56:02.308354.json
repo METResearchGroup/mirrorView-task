@@ -1,0 +1,171 @@
+{
+  "batch_id": 81,
+  "message_ids": [
+    "bluesky_1f7720c8e9e82f16f9894d208530678d723c1a779a4fefa22edb83f0e0dc5c82",
+    "bluesky_2473483756185fd49d6e835368f9fae71ef8fac52a20efd8bd90e0ad53735e67",
+    "bluesky_4e60a985bfdef76f8f12ef53948ba622ba4abbe046bb83e28ed412065303a6ea",
+    "bluesky_55b977a1712ca9415b8218ef0128478892598b72c8cad1226723c852b8afff70",
+    "bluesky_cc2c94eb9ff631dca7181733ad1b6021078fd1e659dfcb7d8076e94beeca297f",
+    "reddit_1klsgwq_ms4thit",
+    "reddit_1l7fyn5_mwx674y",
+    "reddit_1lkpphk_n0kppwf",
+    "reddit_1trbp3u_oomvxx0",
+    "reddit_1tt0mlj_oozoji8",
+    "reddit_1ttbse9_op2rm7k",
+    "reddit_1u0l8qh_oql4yxf",
+    "reddit_1u16m18_oqpzrds",
+    "reddit_1u2ekz6_oqzsqrl",
+    "reddit_1u31653_or1to0f",
+    "twitter_2059756222744604849",
+    "twitter_2061440299638141369",
+    "twitter_2061549339005046951",
+    "twitter_2061751996466503859",
+    "twitter_2061759375753265356"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 7,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059756222744604849",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Reminder for Missouri voters: you are more likely to know someone or be related to someone impacted by an abortion ban than a transgender person.",
+        "rationale": "The post contains a full comparative explanation with multiple clauses, indicating a long length."
+      },
+      {
+        "message_id": "twitter_2059756222744604849",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Implicit framing urging readers not to be swayed (fear-baiting) in abortion policy context",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Republicans are trying to fear-bait you into endangering the women in your life.",
+        "rationale": "The text characterizes political actors as trying to push a voter behavior/outcome regarding abortion policy."
+      },
+      {
+        "message_id": "twitter_2061759375753265356",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "multiple line breaks and exclamation; headline style",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Election Day in California! \n\nIt\u2019s the outsiders vs. the failed status quo: clean streets, fix homelessness, cut waste",
+        "rationale": "Frequent punctuation (exclamation points, colon) plus line breaks suggests high punctuation intensity."
+      },
+      {
+        "message_id": "twitter_2061759375753265356",
+        "feature_name": "call_to_action",
+        "feature_value": "Vote today / election-day directive",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "If you're in CA/LA, vote today!",
+        "rationale": "Direct imperative encourages immediate political action."
+      },
+      {
+        "message_id": "bluesky_2473483756185fd49d6e835368f9fae71ef8fac52a20efd8bd90e0ad53735e67",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "none (but includes multiple campaign slogan segments and endorsements)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Scott Bedke has my Complete and Total Endorsement for Re-Election.",
+        "rationale": "Mentions a specific candidate endorsement and election date as part of campaign-style messaging (no hashtags/mentions explicitly shown)."
+      },
+      {
+        "message_id": "reddit_1klsgwq_ms4thit",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting incompetence framing via 'too stupid/clueless'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Just the fact that he's too stupid to understand the optics should be grounds for impeachment.",
+        "rationale": "The statement attacks an individual\u2019s competence with contemptuous wording."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_oozoji8",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct address to 'Please' and 'Nobody alone' about support/equality",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Please reach out for support. ... Nobody alone can fight for equality.",
+        "rationale": "The text explicitly addresses the reader/requester and uses a universal claim."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1u0l8qh_oql4yxf",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo comparison to Hitler; moral condemnation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The worker is more evil than Hitler by that metric.",
+        "rationale": "Contains a highly inflammatory taboo reference/insulting comparison."
+      },
+      {
+        "message_id": "reddit_1u0l8qh_oql4yxf",
+        "feature_name": "normative_moral_language",
+        "feature_value": "calls abortion equivalently murder/evil; strong moral judgment",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"committing 50 million murders\" ... more evil than Hitler",
+        "rationale": "Uses explicit moral evaluation and dehumanizing/violent framing."
+      },
+      {
+        "message_id": "reddit_1u16m18_oqpzrds",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexualized/abusive allegations ('Pedo-in-Chief')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Look at everyone in the Pedo-in-Chief's admin",
+        "rationale": "Uses a taboo and inflammatory accusation label."
+      },
+      {
+        "message_id": "twitter_2061549339005046951",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "politician named; one-line clash slogan",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Charlie Kirk OWNS liberal on abortion",
+        "rationale": "Contains a named public figure and a short confrontation phrase."
+      },
+      {
+        "message_id": "bluesky_1f7720c8e9e82f16f9894d208530678d723c1a779a4fefa22edb83f0e0dc5c82",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun control",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Gun control only serves those in search of their virgins.",
+        "rationale": "Directly discusses gun control and policy proposals."
+      },
+      {
+        "message_id": "bluesky_1f7720c8e9e82f16f9894d208530678d723c1a779a4fefa22edb83f0e0dc5c82",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls to support concealed carry reciprocity + remove sensitive place restrictions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Support national concealed carry reciprocity and the elimination of useless sensitive place restrictions.",
+        "rationale": "Explicitly recommends specific firearms policy changes."
+      },
+      {
+        "message_id": "reddit_1u2ekz6_oqzsqrl",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "speculates about a behind-the-scenes plot using a named conspiracy figure",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "It's more likely they want Ghislaine Maxwell to tell everyone that Democrats were behind everything.",
+        "rationale": "Attributes hidden intent/coordination to others, framed as likely underlying motive."
+      },
+      {
+        "message_id": "reddit_1lkpphk_n0kppwf",
+        "feature_name": "target_directionality",
+        "feature_value": "direct insult/anger toward immigration official; blames agency actions",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Tom Homan. He runs an agency responsible for separating families. He doesn't get to complain.",
+        "rationale": "Uses strong negative address to a specific actor and claims responsibility for a harmful policy outcome."
+      }
+    ]
+  }
+}

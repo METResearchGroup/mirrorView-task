@@ -1,0 +1,180 @@
+{
+  "batch_id": 87,
+  "message_ids": [
+    "bluesky_3331a3aab6f3da4cda57bb71826039c54163babbd20d3694c5743e0a9bdd797e",
+    "bluesky_4320e502b2788e37a182222ca6d03a77a5a99465abe7dd2f4b5f750b9eaac1e6",
+    "bluesky_61537c569f1b19af85a5a4105a4513e5a4816fa761c22ab73b95e9a942715599",
+    "bluesky_6603e3f219cf0f44c9b84912e6c9fd3378172b93fa269798a8e9c8aca24db927",
+    "bluesky_7355254ef74a5d804b7d7e18b89f1a78e9f4b747392c420a73cd28ea3a3443a6",
+    "bluesky_a16fe448901b8572cc3348d237272281e3babcd35cb01d55d291a84fcb399d34",
+    "bluesky_a7ad68fab04a491c4b67157eeab0b09d29fbdade520ae3a9e3d003e9b94ab093",
+    "bluesky_af8db3c07e4084ded55da8ad826abec9361c1dd80d919e682119edbc52b1667d",
+    "bluesky_ed4e6b2ebc2d0175171c6e1d3ed54dccc405e18fc6b505ed478ce2b36d90ea6d",
+    "reddit_1knep98_msmbjen",
+    "reddit_1kr82xj_mtge5yd",
+    "reddit_1kzbtoc_mv78rvv",
+    "reddit_1kzdllm_mv77owa",
+    "reddit_1tiu061_omxubjx",
+    "reddit_1tql6ez_ooha8vq",
+    "reddit_1tswg2c_op1aht0",
+    "reddit_1tupifu_opbkzkl",
+    "reddit_1tzwh8s_oqfrfus",
+    "twitter_2060345418026811519",
+    "twitter_2061111507648208971"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tiu061_omxubjx",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of named political/media figures and TV show references",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The View\" appearances.  Maybe Rand Paul can cry about it too.",
+        "rationale": "The post lists multiple named people (Anna Navarro, Liz Cheney, Dan Crenshaw, Rand Paul) plus a specific show."
+      },
+      {
+        "message_id": "bluesky_3331a3aab6f3da4cda57bb71826039c54163babbd20d3694c5743e0a9bdd797e",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The worst fucking part",
+        "rationale": "The phrase includes an explicit profanity token."
+      },
+      {
+        "message_id": "twitter_2060345418026811519",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Second Amendment / gun rights framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "The Second Amendment wasn\u2019t written",
+        "rationale": "Explicit reference to the Second Amendment and gun freedom theme."
+      },
+      {
+        "message_id": "twitter_2060345418026811519",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Freedom/safety moral valuation presented as the proper meaning of rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "so we could stay free",
+        "rationale": "Uses evaluative moral framing (\u201cstay free\u201d) to define the purpose of constitutional rights."
+      },
+      {
+        "message_id": "bluesky_4320e502b2788e37a182222ca6d03a77a5a99465abe7dd2f4b5f750b9eaac1e6",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Blames left/UK opposition in mirror (Starmer/Guardian/BBC) vs Blair in original",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Blair spouts 'abandon net zero'... when even a moron can see how dangerous and deranged Trump is.",
+        "rationale": "Original targets Blair while mirror retargets to Starmer and shifts blame toward \u201cthe left\u2019s green agenda.\u201d"
+      },
+      {
+        "message_id": "bluesky_7355254ef74a5d804b7d7e18b89f1a78e9f4b747392c420a73cd28ea3a3443a6",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Implied policy-injury causality with conditional framing via warnings and stated need to avert",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "had to adopt effective... to avert worsening climate-driven risks",
+        "rationale": "The text states governments needed to take action \u201cto avert\u201d worsening risks, indicating goal/conditional causation."
+      },
+      {
+        "message_id": "twitter_2061111507648208971",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Causal chain: CO2 reduction lowers plant productivity; accusation of intent to starve",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Reducing co2... will lower plant productivity. They are trying to starve us out of existence.",
+        "rationale": "Contains explicit cause-effect language (\u201cwill lower\u201d) followed by an asserted malicious intent."
+      },
+      {
+        "message_id": "reddit_1tupifu_opbkzkl",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Framing trans people as being targeted \u201cthe same way\u201d as being labeled mentally ill",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "they are going after trans people the same way.",
+        "rationale": "Uses persecution/pathologizing history to frame current targeting of trans people."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tzwh8s_oqfrfus",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dehumanizing/reality-denial insult targeting political group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Republicans are deeply lost in their cult and no longer live in reality.",
+        "rationale": "Uses contemptuous metaphors (\u201ccult\u201d, \u201cno longer live in reality\u201d)."
+      },
+      {
+        "message_id": "reddit_1knep98_msmbjen",
+        "feature_name": "target_directionality",
+        "feature_value": "Agreement with specific politician in original; mirror swaps to different politician and shifts blame to billionaires buying elections",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "I agree with Donald Trump... The proof is that he is the President.",
+        "rationale": "The post asserts alignment with one named politician and provides a justification; mirror changes to Bernie Sanders and changes attribution of the \u201cproof.\u201d"
+      },
+      {
+        "message_id": "reddit_1kr82xj_mtge5yd",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Starts with profanity to attack a political figure",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck trump and his cult.",
+        "rationale": "Contains explicit profanity directed at an actor."
+      },
+      {
+        "message_id": "reddit_1kzdllm_mv77owa",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple insults/profanity; sexual/derogatory language about men and conservatives",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Conservatives raised a shit load of weak fucking men",
+        "rationale": "Uses obscene terms (\u201cshit\u201d, \u201cfucking\u201d) and derogatory sexual commentary."
+      },
+      {
+        "message_id": "reddit_1tql6ez_ooha8vq",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Emphatic all-caps discourse marker",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "This is PRECISELY what KINGS do.",
+        "rationale": "Includes \u201cPRECISELY\u201d in all caps for emphasis."
+      },
+      {
+        "message_id": "reddit_1tswg2c_op1aht0",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Extreme conspiracy-style portrayal (fascist autocrat with dementia; Jim Crow 2.0; pedophilia as pillar)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "he knows trump is a fascist autocrat with dementia... entire maga movement is just Jim Crow 2.0, now with pedophilia as a main pillar.",
+        "rationale": "Attributes multiple severe hidden traits/plots and labels the whole movement with criminalized claims."
+      },
+      {
+        "message_id": "bluesky_61537c569f1b19af85a5a4105a4513e5a4816fa761c22ab73b95e9a942715599",
+        "feature_name": "call_to_action",
+        "feature_value": "Proposal to distribute weapons/gear to specified group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "start issuing plush toy AR-15s to all the cowards",
+        "rationale": "Uses directive/prescriptive language (\u201cstart issuing\u2026\u201d) aimed at an action."
+      },
+      {
+        "message_id": "bluesky_af8db3c07e4084ded55da8ad826abec9361c1dd80d919e682119edbc52b1667d",
+        "feature_name": "target_directionality",
+        "feature_value": "Frames mislabeling of trans discourse as rights-stealing from women; mirror adds us-vs-them rhetoric against \u201ctrans ideology\u201d",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "steamrolling their rights to center trans ideology.",
+        "rationale": "Blames an in-group/out-group dynamic (women\u2019s rights vs \u201ctrans ideology\u201d) and implies targeted ideological harm."
+      }
+    ]
+  }
+}

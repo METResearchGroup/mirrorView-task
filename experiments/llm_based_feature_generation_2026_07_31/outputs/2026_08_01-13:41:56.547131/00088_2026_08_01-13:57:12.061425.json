@@ -1,0 +1,180 @@
+{
+  "batch_id": 88,
+  "message_ids": [
+    "bluesky_2177b4d3386104f3cdfb3e7f6dac99cba763352036c5217963e2df0bd53aeb00",
+    "bluesky_981bec256ee2147794427338e54c7636559714bf4c8d03bc5677e2eb08dec56e",
+    "reddit_1ksecvh_mtlaw7n",
+    "reddit_1lenxv4_myi556m",
+    "reddit_1lf8jgq_mym70ib",
+    "reddit_1ljgsrb_mzl9rjj",
+    "reddit_1lmiumo_n08xupb",
+    "reddit_1lmshjn_n0abpg2",
+    "reddit_1t4l69v_ol49ydd",
+    "reddit_1ti5cqx_oms4w49",
+    "reddit_1til7dr_omxx2tg",
+    "reddit_1ttun3g_op8nwr1",
+    "reddit_1u1ngzk_oqrx5xt",
+    "twitter_2060336361178087728",
+    "twitter_2060356010397577630",
+    "twitter_2060414391615393938",
+    "twitter_2060841587467333696",
+    "twitter_2061467569052110866",
+    "twitter_2061507833602928803",
+    "twitter_2061583587875635586"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u1ngzk_oqrx5xt",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity/taboo word",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"republicans bullshit\"",
+        "rationale": "The text contains the taboo/profane term \"bullshit\" directed at a political group."
+      },
+      {
+        "message_id": "twitter_2061583587875635586",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses slang intensifier/approach marker",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Lowkey loving\"",
+        "rationale": "\"Lowkey\" is informal slang indicating casual stance."
+      },
+      {
+        "message_id": "twitter_2061583587875635586",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple emojis and exclamation style upbeat punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"\\ud83c\\udf0d\" and \"Time to build\" + \"!\"",
+        "rationale": "The post uses an emoji and emphatic exclamation-like phrasing to energize the message."
+      },
+      {
+        "message_id": "twitter_2060414391615393938",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Headings in ALL CAPS",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"SECOND AMENDMENT CLARIFICATION\"",
+        "rationale": "The first line is presented in all caps, functioning as emphatic emphasis."
+      },
+      {
+        "message_id": "twitter_2060336361178087728",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/gun rights vs gun control debate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"debate over gun rights\"",
+        "rationale": "The central topic explicitly concerns gun rights/defense."
+      },
+      {
+        "message_id": "twitter_2060356010397577630",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Frames the issue in moral terms about life and weight",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"same moral weight\"",
+        "rationale": "The argument uses moral valuation language rather than only descriptive claims."
+      },
+      {
+        "message_id": "reddit_1til7dr_omxx2tg",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Enumerates multiple issue areas with punctuation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"are: limiting war powers ... limiting censorship, and Epstien document release\"",
+        "rationale": "The post uses a colon and lists several policy deviations/issues."
+      },
+      {
+        "message_id": "bluesky_981bec256ee2147794427338e54c7636559714bf4c8d03bc5677e2eb08dec56e",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Strong evaluative claims presented as assertions (not hedged)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Billionaires adding to their wealth via renewables achieves nothing.\"",
+        "rationale": "The post states definitive evaluative outcomes with no modal hedging."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lmshjn_n0abpg2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses derogatory insult language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fat\" and \"moron followers murder\"",
+        "rationale": "The text uses degrading insults and violent/derogatory phrasing about supporters."
+      },
+      {
+        "message_id": "reddit_1lmshjn_n0abpg2",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "Strong dismissive/angered tone about political actors",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I'm probably painful\" / \"does not care\"",
+        "rationale": "The wording expresses intense negative emotion and condemnation."
+      },
+      {
+        "message_id": "reddit_1lmiumo_n08xupb",
+        "feature_name": "target_directionality",
+        "feature_value": "Direct target is Israel and its moralizing",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Israel is the last country that should be going around trying to claim\"",
+        "rationale": "The sentence assigns moral superiority responsibility specifically to Israel."
+      },
+      {
+        "message_id": "reddit_1lmiumo_n08xupb",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Who the fuck are we\"",
+        "rationale": "The post contains the explicit profanity phrase \"Who the fuck are we\"."
+      },
+      {
+        "message_id": "reddit_1t4l69v_ol49ydd",
+        "feature_name": "compositional_syntax",
+        "feature_value": "Question/contrastive dialogue with quoted turns",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\">Why is now different? Because Trump?\"",
+        "rationale": "It uses quoted back-and-forth reasoning plus a rhetorical question structure."
+      },
+      {
+        "message_id": "reddit_1t4l69v_ol49ydd",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Cause attribution about policy action",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Because Trump?\" / \"he pulled out of the deal.\"",
+        "rationale": "It directly attributes a policy outcome to a particular action (pulling out of the deal)."
+      },
+      {
+        "message_id": "twitter_2061467569052110866",
+        "feature_name": "call_to_action",
+        "feature_value": "Imperative urging inaction/leave them alone",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"LET THEM DO THEIR JOBS.\" / \"LEAVE THEM THE HELL ALONE.\"",
+        "rationale": "Both original/mirror include imperative commands directed at authorities/others."
+      },
+      {
+        "message_id": "bluesky_2177b4d3386104f3cdfb3e7f6dac99cba763352036c5217963e2df0bd53aeb00",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Mentions ideological/political reference via proper-noun-style terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Soros Democrat world\"",
+        "rationale": "The post invokes a specific named political figure/brand (Soros) as part of the framing."
+      }
+    ]
+  }
+}

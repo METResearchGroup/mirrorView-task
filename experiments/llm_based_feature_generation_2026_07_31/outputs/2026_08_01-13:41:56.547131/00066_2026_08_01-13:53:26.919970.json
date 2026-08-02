@@ -1,0 +1,180 @@
+{
+  "batch_id": 66,
+  "message_ids": [
+    "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+    "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+    "bluesky_c2a15383999d06e370fa0f6c24e99f3a11a00872896371bb4c01004a9f1fa95c",
+    "bluesky_d42993adc79e2daec482a7df5fb929e0b81ed7009db8757fc95abf16ec9b55f2",
+    "reddit_1kzmbqs_mv74jcn",
+    "reddit_1l5sulo_mwjxh5s",
+    "reddit_1lah4yw_mxmb885",
+    "reddit_1t3n2ml_ojwbxjg",
+    "reddit_1tgwl5y_omjzf52",
+    "reddit_1thqwmy_oms9fxc",
+    "reddit_1tuue1j_opc9dji",
+    "reddit_1u1z88l_oqtp3fq",
+    "reddit_1u2194a_oqwf5b0",
+    "reddit_1u2pvqp_oqzzqt9",
+    "twitter_2059681315583127708",
+    "twitter_2060722916195500455",
+    "twitter_2060726087995293835",
+    "twitter_2061172350905721032",
+    "twitter_2061189131783250079",
+    "twitter_2061725024814342629"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns/gun violence policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Most gun violence isn\u2019t ideological.",
+        "rationale": "The post explicitly discusses gun violence and related policy/legal factors."
+      },
+      {
+        "message_id": "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+        "feature_name": "causal_claim_present",
+        "feature_value": "correlational/causal chain linking gun laws and deaths",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "looser gun laws, which correlate with higher firearm deaths.",
+        "rationale": "It asserts that gun-law looseness relates to higher firearm deaths."
+      },
+      {
+        "message_id": "reddit_1kzmbqs_mv74jcn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple strong insults/profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "shit",
+        "rationale": "Uses explicit taboo language along with heavy insults toward media figures."
+      },
+      {
+        "message_id": "reddit_1kzmbqs_mv74jcn",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "derogatory contempt for outlets/actors",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "these trashy, greedy bastards.",
+        "rationale": "The communicative intent is to mock/disparage rather than make a neutral claim."
+      },
+      {
+        "message_id": "bluesky_d42993adc79e2daec482a7df5fb929e0b81ed7009db8757fc95abf16ec9b55f2",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "start forming/training imperative tied to militia formation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Start forming and training to have Dem militias at polling stations",
+        "rationale": "Syntactically it issues directive guidance about forming/training and where to position them."
+      },
+      {
+        "message_id": "twitter_2060726087995293835",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Pro choice is an abomination.",
+        "rationale": "It uses strong moral judgment terms to evaluate positions/actions."
+      },
+      {
+        "message_id": "twitter_2060726087995293835",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "genocide/slaughter framing of Gaza and abortion comparison",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "anti the genocide of Gaza",
+        "rationale": "The post uses genocide/slaughter language to describe harms and political stances."
+      },
+      {
+        "message_id": "bluesky_c2a15383999d06e370fa0f6c24e99f3a11a00872896371bb4c01004a9f1fa95c",
+        "feature_name": "target_directionality",
+        "feature_value": "criticizes Christian candidate; contrasts Christian scripture vs abortion rights",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "I can't vote for a Christian who attempts to frame abortion rights",
+        "rationale": "The target is a religiously identified actor/persuasion strategy tied to abortion policy."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tgwl5y_omjzf52",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "martyr/persecution whining prediction",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "it'll just give Republicans an excuse to cry victim.",
+        "rationale": "The mirror claims the criticized group will portray themselves as victims regardless of actions."
+      },
+      {
+        "message_id": "twitter_2061172350905721032",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "direct quoted hypothetical pledge to sign/veto a bill",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If a bill... I would veto it as your next governor.",
+        "rationale": "It uses a direct quote with an if-then hypothetical about a legislative action."
+      },
+      {
+        "message_id": "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "caps/large emphasis plus question",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "ANY LENGTHS NECESSARY... How many more must die?",
+        "rationale": "Highly emphatic capitalization and rhetorical ending question convey urgency."
+      },
+      {
+        "message_id": "bluesky_07ed5cdebdf14cb04866e2dad61dcd6b088cbd8ef1b2d4c0969cf4cc85d09252",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "\"force\" political actors via deaths/motivation claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "endless gun deaths of kids are not enough to motivate the Public",
+        "rationale": "Uses a cost/insufficient-motivation framing to justify political pressure."
+      },
+      {
+        "message_id": "twitter_2060722916195500455",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "dismisses Planned Parenthood; promotes alternative health care framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "No one needs Planned Parenthood.",
+        "rationale": "The post makes a prescriptive claim about what people should need/avoid."
+      },
+      {
+        "message_id": "twitter_2059681315583127708",
+        "feature_name": "rhetorical_question",
+        "feature_value": "series of Would X... questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Would Jesus build a border wall, would Jesus drive a tank?",
+        "rationale": "It uses repeated interrogative 'Would' to create a rhetorical comparison."
+      },
+      {
+        "message_id": "twitter_2061725024814342629",
+        "feature_name": "call_to_action",
+        "feature_value": "imperative list of punitive actions",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Cancel every musk government contract. Seize his companies. Strip his citizenship. Deport.",
+        "rationale": "It directly commands multiple actions, functioning as a directive."
+      },
+      {
+        "message_id": "reddit_1l5sulo_mwjxh5s",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "condemning disgust at alleged misuse of government power",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Trump using the power of the US government... Fucking disgusting.",
+        "rationale": "Uses an evaluative insult to express outrage at a political wrongdoing allegation."
+      }
+    ]
+  }
+}

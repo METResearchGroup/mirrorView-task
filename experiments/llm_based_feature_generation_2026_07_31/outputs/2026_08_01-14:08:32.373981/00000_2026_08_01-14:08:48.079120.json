@@ -1,0 +1,183 @@
+{
+  "source_stage1_dir": "experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:41:56.547131",
+  "shard_index": 0,
+  "n_shards": 14,
+  "n_stage1_batches": 10,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity and taboo/informal insults",
+        "defining_features": [
+          "profanity_or_taboo_language (explicit profanity, sexualized/vulgar insults, slur-like terms)",
+          "informal_register_or_slang (colloquial crude phrasing, meme/slogan insults)",
+          "ridicule_or_mockery (derogatory labels, mocking comparisons) when paired with taboo language"
+        ],
+        "example_message_ids": [
+          "reddit_1tvro8z_opjy30q",
+          "reddit_1tt0mlj_op0j7fh",
+          "reddit_1tnobm9_onvcgnz",
+          "reddit_1lhdd2s_mz3d6k5",
+          "twitter_2060954877975466293"
+        ],
+        "keep_count": 5,
+        "remove_count": 20,
+        "interpretation": "Moderation-relevant because many remove-rated posts rely on explicit taboo language and demeaning address; these likely correlate with abusive/hostile tone beyond substantive political debate."
+      },
+      {
+        "id": 2,
+        "label": "Call to action / imperatives to change policy or mobilize",
+        "defining_features": [
+          "call_to_action (imperatives to Congress/authorities or direct urging to join/support)",
+          "policy_prescription_present (advocacy instructions, legislative steps, \u201cact now\u201d, \u201cstop X\u201d)",
+          "second_person_direct_address when used as command/urging"
+        ],
+        "example_message_ids": [
+          "bluesky_3f3f09aa3e4e573851fc54b7c5e5fe8f6c695f52660d0466fa1ce702f73b3604",
+          "reddit_1u16h1f_oqqeac8",
+          "twitter_2059348850574594280",
+          "bluesky_ce04f4455cd02508677e0ad39d0c43347c2f01540fdc382e3897a7781e2a2dc4",
+          "reddit_1tzb8pt_oqce0oe"
+        ],
+        "keep_count": 8,
+        "remove_count": 6,
+        "interpretation": "This theme captures pro-mobilization / pro-legislation rhetoric. It spans both labels, suggesting that policy advocacy itself isn\u2019t the sole determinant of moderation outcome; tone and other signals (insults, due-process rejection, violence-adjacent content) likely interact with it."
+      },
+      {
+        "id": 3,
+        "label": "Strong causal claims (cause \u2192 blame/outcome)",
+        "defining_features": [
+          "causal_claim_present (explicit cause-and-effect about events or policies)",
+          "semantic_content_causal_claim_present (motive/cause assertions tied to harm or worsening)",
+          "mirror_shift_direction when used to re-assign causal blame"
+        ],
+        "example_message_ids": [
+          "twitter_2061788979091890436",
+          "bluesky_2016605cc067a74a47c4b204447d55bee038f51c7fbab975e71813dc26ad366a",
+          "twitter_2061824813635600554",
+          "reddit_1tt0mlj_ooz7knf",
+          "reddit_1tx0jmc_optkdlv"
+        ],
+        "keep_count": 6,
+        "remove_count": 8,
+        "interpretation": "Many posts make definitive causal assertions (often blame-heavy). Removes may correlate with causal language paired with dehumanization, conspiratorial implication, or extreme certainty."
+      },
+      {
+        "id": 4,
+        "label": "Us-vs-them / antagonistic framing by political bloc",
+        "defining_features": [
+          "us_vs_them_framing (outgroup vs in-group contrast, hypocrisy contrasts, spite-voting)",
+          "target_directionality (assigns negative traits to a group/category like \u201cGOP\u201d, \u201cliberals\u201d, \u201cgreens\u201d, \u201cgovernment\u201d)"
+        ],
+        "example_message_ids": [
+          "bluesky_6a6c356e59f7d689a1ea0200d26f31281729f8f1e5366d97c85d27da560896bd",
+          "reddit_1u1c4u6_oqpzqip",
+          "twitter_2061596765745447084",
+          "reddit_1tzb8pt_oqce0oe",
+          "bluesky_8a54925a25ca846de2e115b92255e55c459d3f8fb6b52a6b8bc8ab96b311ece7"
+        ],
+        "keep_count": 3,
+        "remove_count": 9,
+        "interpretation": "Antagonistic bloc framing appears more often in remove-rated examples, suggesting it\u2019s a signal for heightened conflict language (especially when combined with insults or conspiracy-style certainty)."
+      },
+      {
+        "id": 5,
+        "label": "Conspiratorial / disinformation framing",
+        "defining_features": [
+          "conspiratorial_framing (labels claims as disinformation/conspiracies, reinterprets crisis as pretext)",
+          "factual_assertion_vs_speculation when used as dismissal by \u201cgoalposts moved\u201d/evidence absence (adjacent pattern in corpus)"
+        ],
+        "example_message_ids": [
+          "bluesky_dfb08c8b0467178086b73f7b79054d83d2193197f0c72ea240f1f282a6a3142a",
+          "reddit_1ll7mlw_mzytgq9",
+          "twitter_2061757984967922137",
+          "reddit_1loaept_n0m95hp",
+          "reddit_1kp0psp_msuspys"
+        ],
+        "keep_count": 2,
+        "remove_count": 6,
+        "interpretation": "Moderation-relevant because many remove-rated posts explicitly categorize events as conspiracy/disinformation or allege covert schemes; even when content is political, this pattern may push toward misinformation risk."
+      },
+      {
+        "id": 6,
+        "label": "Policy domain advocacy/argument clusters (guns, immigration, abortion, climate, elections)",
+        "defining_features": [
+          "primary_policy_domain (guns/gun laws, elections/redistricting, climate/emissions, immigration/border/ICE, abortion, healthcare/DEI-related)",
+          "specific_event_or_bill_reference (named bills/cases like Brady Bill, Obergefell/Roe, SAVE Act/PRO Act, etc.)"
+        ],
+        "example_message_ids": [
+          "bluesky_1c0f99135067b1644ed96886ebf749f0efbbde030f4369e66289a08cfac508fe",
+          "twitter_2061260454224101652",
+          "bluesky_1c0f99135067b1644ed96886ebf749f0efbbde030f4369e66289a08cfac508fe",
+          "reddit_1tnf5qd_onvv20i",
+          "reddit_1kmn7i8_msdhdwg"
+        ],
+        "keep_count": 12,
+        "remove_count": 11,
+        "interpretation": "Shows that political topics are distributed across both labels. Moderation outcome likely depends less on the domain itself and more on the co-occurring tone signals (profanity/antagonism) and procedural/violence-adjacent prescriptions."
+      },
+      {
+        "id": 7,
+        "label": "Policy certainty and cost/benefit impact arguments",
+        "defining_features": [
+          "economic_cost_benefit_framing (claims about reduced income/cost increases, emissions benefits/harms)",
+          "factual_assertion_vs_speculation when paired with \u201c100%/certainty\u201d or evidence-dismissal contrasts (adjacent)"
+        ],
+        "example_message_ids": [
+          "bluesky_f49141645a6fe53f2be01dd7ca3d4c1b24fb739a610565f611375207723a37c0",
+          "twitter_2061825668103524809",
+          "reddit_1lhdd2s_mz3d6k5",
+          "reddit_1tzcqta_oqv2ivt",
+          "twitter_2060287617204412665"
+        ],
+        "keep_count": 4,
+        "remove_count": 4,
+        "interpretation": "Impact-based reasoning (costs, jobs, emissions outcomes) appears in both labels. This suggests it\u2019s not inherently problematic; rather, it\u2019s the combination with hostile language or extreme prescriptions that may drive removals."
+      },
+      {
+        "id": 8,
+        "label": "High-emphasis / high-intensity rhetoric (punctuation, capitalization, outrage)",
+        "defining_features": [
+          "high_punctuation_intensity (dense punctuation, emphatic lists)",
+          "all_caps_emphasis (ALL CAPS for emphasis, shouted claims)",
+          "emphatic_outrage (shock/exclamation, intense negativity)"
+        ],
+        "example_message_ids": [
+          "bluesky_dfb08c8b0467178086b73f7b79054d83d2193197f0c72ea240f1f282a6a3142a",
+          "twitter_2061219723778380164",
+          "bluesky_9189f5afb7423a4a8ce004466f92985f7d3a178028e167bde0a3ddba983c70d2",
+          "reddit_1lhaiqa_mz3l0ob",
+          "reddit_1l7cu2s_mww9spb"
+        ],
+        "keep_count": 4,
+        "remove_count": 10,
+        "interpretation": "High-intensity typography and outrage markers correlate more with removals, likely because they co-occur with abusive or de-escalation-resistant rhetoric."
+      },
+      {
+        "id": 9,
+        "label": "Targeted attacks on identifiable people/entities (named officials, politicians, outlets)",
+        "defining_features": [
+          "targeted_actor_politician_or_official (specific mayor/politician named)",
+          "named_proper_nouns_density (leader/outlet density)",
+          "target_directionality (dehumanizing or moral labeling tied to a named target)"
+        ],
+        "example_message_ids": [
+          "reddit_1tle2vc_onfso9a",
+          "bluesky_2016605cc067a74a47c4b204447d55bee038f51c7fbab975e71813dc26ad366a",
+          "reddit_1tjs35z_on5nh4x",
+          "twitter_2061188597785502107",
+          "reddit_1lhdd2s_mz3d6k5"
+        ],
+        "keep_count": 5,
+        "remove_count": 7,
+        "interpretation": "Direct personalization of attacks (specific named targets) appears in both groups but more often in removals, especially when combined with profanity, dehumanizing moral language, or extreme directives."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Hostility intensity stacking: profanity/taboo language (Theme 1) combined with high-emphasis rhetoric (Theme 8) and antagonistic us-vs-them framing (Theme 4).",
+      "Policy advocacy with blame certainty: call_to_action/policy_prescription_present (Theme 2) combined with causal_claim_present (Theme 3) or policy certainty via cost/benefit impacts (Theme 7).",
+      "Misinformation risk pairing: conspiratorial_framing (Theme 5) co-occurs with dense named-entity attribution and/or high-emphasis rhetoric (Themes 9 and 8).",
+      "Topic-agnostic conflict cues: Themes 4, 1, and 8 appear across multiple primary_policy_domain categories (Theme 6), suggesting moderation outcomes depend more on tone than on the policy area."
+    ]
+  }
+}

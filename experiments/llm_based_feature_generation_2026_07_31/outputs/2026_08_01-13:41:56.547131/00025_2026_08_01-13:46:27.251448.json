@@ -1,0 +1,180 @@
+{
+  "batch_id": 25,
+  "message_ids": [
+    "bluesky_0911962dad685aaf8c793099abd1ce0cca1c49f474fa2bcc55517b5f56b690a2",
+    "bluesky_469224592ba723e911e83411a61df6b85dec6681277ed8a0a84fa2d92e056977",
+    "bluesky_5033af4c9438460743f5141a7b913d35c67d181581f009fbbf87379940545139",
+    "bluesky_531420bf8532ccb2af4129343d7a977ae5b6199415ea747ac03a0d0e2e219e5c",
+    "bluesky_a7884922c387c967628afa680c69092ff1f3980690375ecf916b3a663c1188e3",
+    "bluesky_ba629650149e88f70bd7102712c558d495b941699829db0be31aff7973bf03c9",
+    "bluesky_fd3b5915793135abfc44946247a75da280751b7ae3cd83cdbb512bafa6efacb7",
+    "reddit_1kca9zl_mq1uhu1",
+    "reddit_1lcrv72_my3bpm6",
+    "reddit_1ldv50r_mybaffg",
+    "reddit_1ledflx_myflb5i",
+    "reddit_1lf1k51_mykyymd",
+    "reddit_1lfq7q5_myrxob6",
+    "reddit_1tswg2c_ooylu1z",
+    "reddit_1tt8k9j_op1k1s6",
+    "reddit_1ttui2j_op5wnwg",
+    "twitter_2059743786218008919",
+    "twitter_2061467874120679813",
+    "twitter_2061807082345746733",
+    "twitter_2061823678363656542"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kca9zl_mq1uhu1",
+        "feature_name": "call_to_action_abolishe_ice",
+        "feature_value": "Explicit call to abolish ICE",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cICE needs to be abolished. Fuck ICE!\u201d",
+        "rationale": "The post contains a direct imperative advocating elimination of a specific institution."
+      },
+      {
+        "message_id": "twitter_2061467874120679813",
+        "feature_name": "normative_politics_argument_prompts",
+        "feature_value": "Question framed as requesting an argument for pro-life/pro-choice",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cWhat is your single most powerful pro-life argument? Drop it below.\u201d",
+        "rationale": "It directly solicits persuasive content via a question targeting political/moral positions."
+      },
+      {
+        "message_id": "bluesky_5033af4c9438460743f5141a7b913d35c67d181581f009fbbf87379940545139",
+        "feature_name": "list_of_gun_policy_features",
+        "feature_value": "Enumerates multiple gun-law claims (permits, training, background checks, red flag laws)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cNo permit required... No license, no training mandate. Minimal background check gaps... Red flag laws? None.\u201d",
+        "rationale": "The text uses repeated short clauses and a question marker to list and compare policy elements."
+      },
+      {
+        "message_id": "reddit_1lfq7q5_myrxob6",
+        "feature_name": "inveective_emotive_evaluation",
+        "feature_value": "Derogatory framing of voters via insult terms",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cso vile and dumb enough to vote for a person like Trump\u201d",
+        "rationale": "It assigns negative moral/cognitive attributes to a group for political support."
+      },
+      {
+        "message_id": "bluesky_ba629650149e88f70bd7102712c558d495b941699829db0be31aff7973bf03c9",
+        "feature_name": "us_vs_them_electoral_blame",
+        "feature_value": "State-by-state partisan contrast (CA Democrats vs Republicans nationally; mirror uses TX/Democrats)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201ckeeps CA a stronghold... while Republicans nationally attack...\u201d",
+        "rationale": "It contrasts an ingroup state stronghold with an outgroup national opposition actor."
+      },
+      {
+        "message_id": "reddit_1tt8k9j_op1k1s6",
+        "feature_name": "economic_or_profit_motive_claim",
+        "feature_value": "Claims system puts profits over people",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThis system just puts profits over everything else.\u201d",
+        "rationale": "It asserts a motivating causal driver (profit motive) shaping outcomes."
+      },
+      {
+        "message_id": "bluesky_531420bf8532ccb2af4129343d7a977ae5b6199415ea747ac03a0d0e2e219e5c",
+        "feature_name": "policy_concessions_medicaid_abortion",
+        "feature_value": "Demands specific policy outcomes (expanded Medicaid, abortion access)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cWhere\u2019s our expanded medicaid? Our abortion access?\u201d",
+        "rationale": "It references concrete health/policy programs as unmet needs."
+      },
+      {
+        "message_id": "reddit_1tswg2c_ooylu1z",
+        "feature_name": "historical_label_definitional_argument",
+        "feature_value": "Argues about vague ideology labels and asserts historical pattern",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201c\u2018Conservative\u2019 is a vague word... Historically, you will find conservatives always defending the ruling regime\u201d",
+        "rationale": "It combines definitional critique with a generalized historical claim."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061807082345746733",
+        "feature_name": "conspiratorial_or_evil_person_framing",
+        "feature_value": "Depicts Putin as 'beyond evil' and emphasizes relentless aggression",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cPutin is beyond evil.\u201d",
+        "rationale": "The language assigns extreme moral depravity to a named individual."
+      },
+      {
+        "message_id": "bluesky_469224592ba723e911e83411a61df6b85dec6681277ed8a0a84fa2d92e056977",
+        "feature_name": "ideology_group_targeting_gun_policy",
+        "feature_value": "Claims gun control will only affect a specific ideological side",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cthis system as it stands will only take guns from leftists\u201d",
+        "rationale": "It asserts a selective causal impact tied to ideological in/out-groups."
+      },
+      {
+        "message_id": "bluesky_0911962dad685aaf8c793099abd1ce0cca1c49f474fa2bcc55517b5f56b690a2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit insult terms toward followers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cHis followers are imbeciles.\u201d",
+        "rationale": "It contains a strongly derogatory label targeting a group."
+      },
+      {
+        "message_id": "reddit_1lcrv72_my3bpm6",
+        "feature_name": "second_person_indirect_threat_surveillance",
+        "feature_value": "Advocates surveillance and data tracking and sending to admins",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "\u201cdeserves to be spied on the entire time with all their data tracked and sent to the admin.\u201d",
+        "rationale": "It prescribes coercive treatment (surveillance/data handling) as justified punishment."
+      },
+      {
+        "message_id": "twitter_2061823678363656542",
+        "feature_name": "all_caps_emphasis_or_expletive_praise",
+        "feature_value": "Positive appraisal with exclamation and direct thanks to Trump",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThank You President Trump!!\u201d",
+        "rationale": "The message uses emphatic punctuation and attribution of improvement to a politician."
+      },
+      {
+        "message_id": "reddit_1ldv50r_mybaffg",
+        "feature_name": "gendered_actor_reference_sarcasm",
+        "feature_value": "Uses gendered mockery and role-based disparagement (rode o clowns/circus performers)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cTrump's fucking rodeo clowns\u201d",
+        "rationale": "It frames the target as a mock entertainment performer, signaling ridicule."
+      },
+      {
+        "message_id": "reddit_1ledflx_myflb5i",
+        "feature_name": "causal_accusation_made_up_justification",
+        "feature_value": "Claims a fabricated pretext for invading Iraq",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThey just made shit up to justify invading Iraq.\u201d",
+        "rationale": "The statement asserts intentional fabrication as the causal reason for war."
+      },
+      {
+        "message_id": "reddit_1lf1k51_mykyymd",
+        "feature_name": "sexual_predation_accusations",
+        "feature_value": "Labeled as 'rapist' and 'pedophile' / 'groomers' framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201csupport this RAPIST... PEDOPHILE\u201d",
+        "rationale": "The post uses extreme sexual-crime allegations as the primary evaluative content."
+      }
+    ]
+  }
+}

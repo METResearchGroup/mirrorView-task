@@ -1,0 +1,180 @@
+{
+  "batch_id": 0,
+  "message_ids": [
+    "bluesky_3f3f09aa3e4e573851fc54b7c5e5fe8f6c695f52660d0466fa1ce702f73b3604",
+    "bluesky_6a6c356e59f7d689a1ea0200d26f31281729f8f1e5366d97c85d27da560896bd",
+    "reddit_1knkb0i_msjhtgl",
+    "reddit_1kp5lm5_msw4qcq",
+    "reddit_1ks3br8_mtin319",
+    "reddit_1t6g0j7_okhsjgx",
+    "reddit_1tbymrb_ollmjzr",
+    "reddit_1ti509f_oms79tg",
+    "reddit_1tle2vc_onf49sq",
+    "reddit_1tle2vc_onfso9a",
+    "reddit_1tt0mlj_op0j7fh",
+    "reddit_1ttadso_op45dt3",
+    "reddit_1tuue1j_opdqqjv",
+    "reddit_1tvro8z_opjy30q",
+    "reddit_1u16h1f_oqqeac8",
+    "reddit_1u1c4u6_oqpzqip",
+    "reddit_1u1ijaj_oqr7v79",
+    "twitter_2059970894815006935",
+    "twitter_2061788979091890436",
+    "twitter_2061823587128836417"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tle2vc_onfso9a",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (leader names)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump ... Biden",
+        "rationale": "The text directly targets named political figures."
+      },
+      {
+        "message_id": "reddit_1tuue1j_opdqqjv",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "elections / redistricting / gerrymandering",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "redistricting ... gerrymandering",
+        "rationale": "The post focuses on how district boundaries affect electoral fairness."
+      },
+      {
+        "message_id": "reddit_1tuue1j_opdqqjv",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "Gerrymandering (institutional practice)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "literally the entire point of gerrymandering",
+        "rationale": "It explicitly references gerrymandering rather than a generic election topic."
+      },
+      {
+        "message_id": "reddit_1u1ijaj_oqr7v79",
+        "feature_name": "targeted_actor_type",
+        "feature_value": "media institutions (left/right media outlets)",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "the liberal media ... the consensus-forming institution",
+        "rationale": "The message describes a media type as influential and uses that as the core target."
+      },
+      {
+        "message_id": "twitter_2061788979091890436",
+        "feature_name": "causal_claim_present",
+        "feature_value": "direct causal attribution about cause of California fires",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "nothing to do with climate change ... everything to do with the mismanagement",
+        "rationale": "It makes a strong causal claim about what the fires are or are not caused by."
+      },
+      {
+        "message_id": "twitter_2061823587128836417",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "None (first-person and solidarity framing)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "We don't want our military merged with Israel's either.",
+        "rationale": "The post uses inclusive first-person plural stance rather than second-person commands."
+      },
+      {
+        "message_id": "bluesky_3f3f09aa3e4e573851fc54b7c5e5fe8f6c695f52660d0466fa1ce702f73b3604",
+        "feature_name": "call_to_action",
+        "feature_value": "policy redirection request",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "How about we focus on gun safety regulations?",
+        "rationale": "It explicitly redirects attention to another policy priority."
+      },
+      {
+        "message_id": "bluesky_6a6c356e59f7d689a1ea0200d26f31281729f8f1e5366d97c85d27da560896bd",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "pro-gun side vs 'government terrorize' side",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "helping the government terrorize the rest of us into silence",
+        "rationale": "It contrasts an outgroup (government) against 'the rest of us'."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tvro8z_opjy30q",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple profanity/toilet insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "swallowing their own shit",
+        "rationale": "The post uses explicit taboo language."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_op0j7fh",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "direct profanity command",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fuck off with the redirection bullshit",
+        "rationale": "It contains strong abusive language and dismissal."
+      },
+      {
+        "message_id": "reddit_1u16h1f_oqqeac8",
+        "feature_name": "call_to_action",
+        "feature_value": "command/ultimatum framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Run on Healthcare for All or shut the fuck up.",
+        "rationale": "It demands a specific platform promise or issues an instruction."
+      },
+      {
+        "message_id": "reddit_1kp5lm5_msw4qcq",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting metaphors for politicians",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "elected this idiot again ... dumb nightmare ... pathetic",
+        "rationale": "It uses derogatory labels and mocking comparisons."
+      },
+      {
+        "message_id": "twitter_2059970894815006935",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "organizing/advocacy instruction for gun rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Support gun rights organizations",
+        "rationale": "It prescribes political action/support."
+      },
+      {
+        "message_id": "reddit_1ks3br8_mtin319",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct 'you' addressing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "You're talking to liberal leaning reddit",
+        "rationale": "The text directly addresses the reader."
+      },
+      {
+        "message_id": "reddit_1knkb0i_msjhtgl",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slur-like partisan shorthand",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "MAGA snowflakes. Fuck them all.",
+        "rationale": "It uses casual slang ('snowflakes') and an aggressive imperative."
+      },
+      {
+        "message_id": "reddit_1u1c4u6_oqpzqip",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "spite-voting against opposing side",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "voting for him to spite the libs",
+        "rationale": "It frames voting motivations as opposition-driven against 'libs'."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 70,
+  "message_ids": [
+    "bluesky_030577a1a44b939d10067fde5764c694f1a2acca1b66d170d7dc51be53fa2c68",
+    "bluesky_0c0c8fe880b22cc36e08ea9f1bcfbc83148f2147c203a20d56bccd30e0d94e19",
+    "bluesky_57e79c3f2462c205aad6ca63beacc02b3c5c37a4731e41c675a64028398ea120",
+    "bluesky_971024c74e8fb13524775b997ab9ab4af596b8267f846af5abacb0c394a13d97",
+    "bluesky_9daf6547cb4befb7dbb5d16c8224442bb3d7e6cec4fce8f610644ffa07c9a889",
+    "bluesky_c471d701e86f4ab8d13acbb12440965dca4b6a4982cd8d7bf0e6c144f48e71d9",
+    "reddit_1kjl2by_mrrph92",
+    "reddit_1kkmvb6_mrxrv5u",
+    "reddit_1kxif9q_mupln2i",
+    "reddit_1l7aqfg_mww4ljj",
+    "reddit_1lcw1w7_mya5g4j",
+    "reddit_1lm10zl_n049yc3",
+    "reddit_1tsgnti_opgif6g",
+    "reddit_1tszmoe_ooz9wa1",
+    "reddit_1tz96fb_oqarwzp",
+    "twitter_2059414867551854891",
+    "twitter_2060024663548248196",
+    "twitter_2060340786328109279",
+    "twitter_2061251887089774730",
+    "twitter_2061827782171037796"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2060340786328109279",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses casual slang and conversational asides ('boomer blaming account', 'Um YEAH!')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cUm YEAH!\n\nAnd the Greatest Gen\u201d",
+        "rationale": "The wording is informal and conversational with slang-like framing."
+      },
+      {
+        "message_id": "twitter_2060340786328109279",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Mentions generational cohorts and Roe v Wade",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cSilent Gen\u2026 Roe v Wade\u2026 Greatest Gen\u201d",
+        "rationale": "The post contains multiple named/label-like proper nouns or named references."
+      },
+      {
+        "message_id": "twitter_2059414867551854891",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct insults/labeling without quotation but addressed as a claim about a person/actor",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cTexas Senate leader is a Rhino!\u201d",
+        "rationale": "The sentence uses a direct evaluative label meant to target a specific actor."
+      },
+      {
+        "message_id": "twitter_2059414867551854891",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Contrasts Paxton/Trump alignment vs Cornyn as outgroup (Rhino)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201cPaxton always voted with President Trump!\u2026 Texas Senate leader is a Rhino!\u201d",
+        "rationale": "The text positions one actor as aligned with 'Trump' and another as betraying the in-group."
+      },
+      {
+        "message_id": "twitter_2060024663548248196",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns / firearms regulation and Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201cChicago gun laws\u2026 2nd Amendment\u2026 bare arms.\u201d",
+        "rationale": "The post directly targets gun laws and the Second Amendment."
+      },
+      {
+        "message_id": "twitter_2060024663548248196",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates removing permit requirements ('U shouldn't need a permit')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cU shouldn't need a permit to bare arms.\u201d",
+        "rationale": "It prescribes a specific policy change."
+      },
+      {
+        "message_id": "bluesky_57e79c3f2462c205aad6ca63beacc02b3c5c37a4731e41c675a64028398ea120",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses dismissive framing ('wishful thinking', 'You're telling me')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThat's some wishful thinking\u2026 You're telling me that\u2026?\u201d",
+        "rationale": "The tone dismisses the other side and questions their claim."
+      },
+      {
+        "message_id": "bluesky_030577a1a44b939d10067fde5764c694f1a2acca1b66d170d7dc51be53fa2c68",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Uses strong evidence-oriented assertions ('The evidence is overwhelming')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThe pattern is unmistakable\u2026 The evidence is overwhelming \u2014 stronger gun laws save lives.\u201d",
+        "rationale": "It presents declarative claims and evidence framing rather than speculation."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kkmvb6_mrxrv5u",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses demeaning taboo insult ('bullshit', 'fascist garbage')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIdentity declarations and compliance policing are communist bullshit\u201d",
+        "rationale": "Contains explicit derogatory slang."
+      },
+      {
+        "message_id": "reddit_1l7aqfg_mww4ljj",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses harsh negative adjectives to insult political figures",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cTrump is an odious, feckless and corrupt creature.\u201d",
+        "rationale": "The phrasing is strongly pejorative and character-attack focused."
+      },
+      {
+        "message_id": "reddit_1lm10zl_n049yc3",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses insult term 'snowflakes' for a political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cRepublicans are such fucking snowflakes\u201d",
+        "rationale": "The post uses informal slang-like political insult."
+      },
+      {
+        "message_id": "reddit_1kjl2by_mrrph92",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Second-person confrontation ('who the fuck you think you're talking to')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cI don't know who the fuck you think you're talking to\u201d",
+        "rationale": "It directly addresses the reader with 'you' and confrontational wording."
+      },
+      {
+        "message_id": "reddit_1kxif9q_mupln2i",
+        "feature_name": "target_directionality",
+        "feature_value": "Names a specific politician and accuses of Nazi affiliation; violent/deserving harm language",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201cStephen Miller is a Nazi\u2026 who deserves to die under a bridge\u201d",
+        "rationale": "The message targets a named person with extremist accusation and dehumanizing/violent condemnation."
+      },
+      {
+        "message_id": "reddit_1tz96fb_oqarwzp",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "WW2 as historical context for destruction and memorials",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201csmall French villages that were destroyed in WW2\u201d",
+        "rationale": "WW2 is a clear historical reference used to frame the anecdote."
+      },
+      {
+        "message_id": "bluesky_0c0c8fe880b22cc36e08ea9f1bcfbc83148f2147c203a20d56bccd30e0d94e19",
+        "feature_name": "call_to_action",
+        "feature_value": "Criticizes inaction and urges/insists on gun reform",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cnot a damn thing will be done by them to push for gun reform tomorrow morning\u201d",
+        "rationale": "The text is directed toward a specific policy agenda ('gun reform') and frames urgency."
+      },
+      {
+        "message_id": "twitter_2061251887089774730",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Mirror reframes climate action from health/well-being to wallet/economy costs ('climate alarmism')",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\u201cclimate action impacts not just the planet but our health\u2026 prioritize sustainable choices\u201d / \u201cclimate alarmism impacts\u2026 not just our wallets but our entire economy\u201d",
+        "rationale": "The mirror shifts evaluation and blame from pro-climate action to perceived economic harm."
+      }
+    ]
+  }
+}

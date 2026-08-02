@@ -1,0 +1,180 @@
+{
+  "batch_id": 104,
+  "message_ids": [
+    "bluesky_a70badff37e2b51c463474806fca3ac06aaaf2ed80485e688c57081e124d743e",
+    "reddit_1l4jbh5_mwaljz2",
+    "reddit_1l67snm_mwnqm6u",
+    "reddit_1lf7hkx_mylzxwu",
+    "reddit_1t4ruex_ok6zv1p",
+    "reddit_1tqcf7r_oohc1uf",
+    "reddit_1ts7wt8_oou1zwn",
+    "reddit_1ttca9v_op1jeaj",
+    "reddit_1tvr63e_opk1fxu",
+    "reddit_1tvywom_opkrf4h",
+    "reddit_1u0l8qh_oqotlq2",
+    "twitter_2059284417420698037",
+    "twitter_2060244141074776362",
+    "twitter_2060983633494593579",
+    "twitter_2061267297096835097",
+    "twitter_2061442588457021813",
+    "twitter_2061519977262231706",
+    "twitter_2061520951783637484",
+    "twitter_2061571983586816368",
+    "twitter_2061591121290260586"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061571983586816368",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I want every person who was targeted for censorship\"",
+        "rationale": "The post is a long multi-clause sentence listing multiple grievances."
+      },
+      {
+        "message_id": "twitter_2061571983586816368",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "no",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"I want every person\"",
+        "rationale": "No all-caps emphasis beyond normal casing is present."
+      },
+      {
+        "message_id": "bluesky_a70badff37e2b51c463474806fca3ac06aaaf2ed80485e688c57081e124d743e",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "high (question mark + many caps)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"BECAUSE ... AND qualified immunity to murder us\"",
+        "rationale": "Uses strong emphasis in all-caps and heavy punctuation within a single interrogative."
+      },
+      {
+        "message_id": "bluesky_a70badff37e2b51c463474806fca3ac06aaaf2ed80485e688c57081e124d743e",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"So wait, the opinion is that law enforcement\"",
+        "rationale": "No direct 'you' addressing; it uses third-person framing and a rhetorical question."
+      },
+      {
+        "message_id": "twitter_2059284417420698037",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "informal emphatic interjections",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"But but but\" / \"Oh\u00196..\"",
+        "rationale": "Contains colloquial repetition and interjections typical of casual social-media tone."
+      },
+      {
+        "message_id": "reddit_1u0l8qh_oqotlq2",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "predominantly factual-assertive with causal explanation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They didn't find a ring. Because they're corrupt? No. Because there was no ring.\"",
+        "rationale": "Uses direct assertions and explicit causal reasoning rather than hypothetical language."
+      },
+      {
+        "message_id": "reddit_1ts7wt8_oou1zwn",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "frequent strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck ICE. Fuck Trump. Fuck\"",
+        "rationale": "Repeated use of strong profanity targeting multiple political actors."
+      },
+      {
+        "message_id": "twitter_2060244141074776362",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "urban planning / transportation / climate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"urban planning\" / \"less car traffic\" / \"lower carbon emissions\"",
+        "rationale": "Explicitly discusses city planning, cars/traffic, and carbon emissions."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061519977262231706",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo/insult rhetoric (\"communist race hustler\",\"racist country\")",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"racist country\" / \"communist race hustler\"",
+        "rationale": "Relies on hostile derogatory labels rather than neutral description."
+      },
+      {
+        "message_id": "twitter_2061519977262231706",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (multiple named figures)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@AliVelshi\"",
+        "rationale": "Mentions a named host/figure and refers to US citizenship context directly."
+      },
+      {
+        "message_id": "reddit_1tqcf7r_oohc1uf",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"piece of shit\"",
+        "rationale": "Contains explicit profanity as a negative evaluation."
+      },
+      {
+        "message_id": "reddit_1tqcf7r_oohc1uf",
+        "feature_name": "call_to_action",
+        "feature_value": "cut/removal instruction",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Reminder to cut\"",
+        "rationale": "Direct imperative telling readers to remove targeted people from their lives."
+      },
+      {
+        "message_id": "reddit_1l4jbh5_mwaljz2",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "accusatory insult framing (liar/child rapist)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a liar and child rapist\"",
+        "rationale": "Uses shaming accusations in place of argumentation."
+      },
+      {
+        "message_id": "twitter_2061591121290260586",
+        "feature_name": "call_to_action",
+        "feature_value": "escalation/ordering violence-like stance",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"GO EVEN HARDER, ICE!\"",
+        "rationale": "Ends with an imperative encouraging harsher action."
+      },
+      {
+        "message_id": "twitter_2061591121290260586",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "agency vs rioters/others polarity",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"ICE Newark\" / \"rioters\"",
+        "rationale": "Positions ICE as the controlling in-group and rioters as the out-group to be dominated."
+      },
+      {
+        "message_id": "reddit_1lf7hkx_mylzxwu",
+        "feature_name": "secondary_person_direct_address",
+        "feature_value": "none",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Its popular with the \\\"lgbtq+ people shouldn't exist\\\" crowd\"",
+        "rationale": "No direct 'you' address; it describes a group using a quoted phrase."
+      }
+    ]
+  }
+}

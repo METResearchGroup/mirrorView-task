@@ -1,0 +1,180 @@
+{
+  "batch_id": 22,
+  "message_ids": [
+    "bluesky_3bc6d99f062cddea4d79fcc3afd31ca69751ef0ef08d98b0319c3f4444e03372",
+    "bluesky_cd39cca04343ce546169d8fb36104ca9e9514cdeed685bdcf20ce73c5bc94dbd",
+    "bluesky_e9f5163161f0bd15c8445979cd63d3295301e85f731959396d1fd411c0046ea4",
+    "reddit_1kccelo_mq29bcc",
+    "reddit_1kuxsho_mu7qkne",
+    "reddit_1kxhjol_mupe0ei",
+    "reddit_1l8ha5n_mx5ng9w",
+    "reddit_1lh4m8j_mz1b8bj",
+    "reddit_1lhzhcf_mz832zz",
+    "reddit_1lmypcv_n0c92da",
+    "reddit_1svtp7t_oicxrjn",
+    "reddit_1t9dxnw_ol1outb",
+    "reddit_1thox1m_omoznyr",
+    "reddit_1tu5tml_op7zj4t",
+    "reddit_1tztcf9_oqdvqzo",
+    "reddit_1u0gjyt_oqin086",
+    "twitter_2060021614134104160",
+    "twitter_2060782031055802684",
+    "twitter_2061494752780939642",
+    "twitter_2061761983561797641"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1lh4m8j_mz1b8bj",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Profanity used for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck War.  And *especially* fuck war with Iran\"",
+        "rationale": "Uses explicit profanity in a casual argumentative style."
+      },
+      {
+        "message_id": "reddit_1lh4m8j_mz1b8bj",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Original attributes anti-war stance to Democrats; mirror shifts to Republicans/ border-security stance",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Most Dems... / Most Republicans... \"Secure the border\"",
+        "rationale": "The mirror changes which party is framed as aligned against the referenced policy."
+      },
+      {
+        "message_id": "twitter_2061494752780939642",
+        "feature_name": "call_to_action",
+        "feature_value": "Polarized question framed as forcing a side",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"then come on if your on the right or you on the left ?\"",
+        "rationale": "Directly challenges the audience to choose sides."
+      },
+      {
+        "message_id": "twitter_2060782031055802684",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple periods/ellipses and emphatic capitalization",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't be Fooled.  ATF trace data, NYPD crime stats\"",
+        "rationale": "Dense punctuation plus emphasis via capitalization and compact citations."
+      },
+      {
+        "message_id": "reddit_1tu5tml_op7zj4t",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates annihilation \u201cby any means necessary\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"annihilate the Iranian regime by any means necessary\"",
+        "rationale": "Contains a direct violent-policy prescription regarding Iran."
+      },
+      {
+        "message_id": "reddit_1tu5tml_op7zj4t",
+        "feature_name": "geographic_scope",
+        "feature_value": "International (Iran) / regime-targeting",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Iranian regime\"",
+        "rationale": "Explicit focus on Iran rather than a local/national policy only."
+      },
+      {
+        "message_id": "reddit_1thox1m_omoznyr",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Elections/institutional reform (electoral college)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The electoral college has also ran its course\"",
+        "rationale": "Targets the electoral college as an election system."
+      },
+      {
+        "message_id": "reddit_1kuxsho_mu7qkne",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Strong derogatory sexual insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is literally a prostitute\"",
+        "rationale": "Uses a taboo, highly demeaning label toward a named public figure."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_cd39cca04343ce546169d8fb36104ca9e9514cdeed685bdcf20ce73c5bc94dbd",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Named entity (ATF/NYPD not present in this text) but explicit policy domain; includes numeric thresholds and multiple gun measures",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "\"Large majorities (80 % +)\"",
+        "rationale": "Prominent quantified claims accompanying a list of policy proposals (included as open-ended due to lacking named entities)."
+      },
+      {
+        "message_id": "bluesky_cd39cca04343ce546169d8fb36104ca9e9514cdeed685bdcf20ce73c5bc94dbd",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Multiple specific gun-control measures enumerated",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Universal background checks... raising the legal gun-purchase age... 'red flag' laws...\"",
+        "rationale": "Contains a chain of distinct policy items in one sentence."
+      },
+      {
+        "message_id": "reddit_1kxhjol_mupe0ei",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Short contemptuous idiom",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Sounds like some DEI shit to me\"",
+        "rationale": "Uses slang (\u201cshit\u201d) and a brief dismissal."
+      },
+      {
+        "message_id": "reddit_1kxhjol_mupe0ei",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Implicit in-group vs out-group via \u201cgood ol' boys network\u201d",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"good ol' boys network shit\"",
+        "rationale": "Depicts a favored in-group as the source of exclusion (open-ended tagging due to being implicit)."
+      },
+      {
+        "message_id": "reddit_1lhzhcf_mz832zz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Severe profanity and \u201cfuck all of \u2026\u201d phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck all of ICE\"",
+        "rationale": "Contains explicit taboo profanity and a broad hostile target."
+      },
+      {
+        "message_id": "reddit_1lmypcv_n0c92da",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insulting dismissal phrase",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Senate GOP can kiss my ass\"",
+        "rationale": "Uses a mocking, hostile idiom directed at a political group."
+      },
+      {
+        "message_id": "reddit_1svtp7t_oicxrjn",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Claims enemies/using America for enrichment",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"playing for our enemies\"",
+        "rationale": "Frames the target as harmful to the nation and aligned with adversaries."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqin086",
+        "feature_name": "target_directionality",
+        "feature_value": "Targets \u201cChristian nationalists\u201d with a criticism of transphobia",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Christian nationalists need to get over their transphobia\"",
+        "rationale": "Directly calls out a political/religious out-group for a negative trait."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 60,
+  "message_ids": [
+    "bluesky_130f0811ad7b218026451a4eea7f2869f2d550e4a0c6cf86fef357d35cf9a02d",
+    "bluesky_87cf305fb7f59eb88fab40211cc8a49ab14771f2d4d47ccffbd9b490dbefaf26",
+    "bluesky_ba4bb28afa789953daefea36fb0b622b73f9b493f26a28ef4bc573a79a086624",
+    "bluesky_c8e3e0e0114f041b748534e094e1df26e1ce1ffad49d004921728d8d3729f352",
+    "reddit_1kmchko_ms98lqu",
+    "reddit_1l5piym_mwl4160",
+    "reddit_1l7rii5_mwz7sym",
+    "reddit_1lbaya0_mxrwz1u",
+    "reddit_1liutti_mzeztv2",
+    "reddit_1t1x818_ojjwqp6",
+    "reddit_1tle2vc_onfa3pn",
+    "reddit_1tle5je_onfuicp",
+    "reddit_1tstlbr_op0jeay",
+    "reddit_1tw1yjv_opq90hg",
+    "reddit_1txsm52_oq0g7r0",
+    "twitter_2059370022644953565",
+    "twitter_2059966683909951776",
+    "twitter_2060065769703002433",
+    "twitter_2061628079852675121",
+    "twitter_2061711514198003928"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059966683909951776",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Uses repeated 'If ... then ... / If we ...' conditional framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If we purity tested on abortion policy we\u2019d have Roe v Wade codified. If we don\u2019t purity test on AI regulation, it won\u2019t happen.\"",
+        "rationale": "The text repeatedly uses conditional 'If' clauses to argue outcomes of political choices."
+      },
+      {
+        "message_id": "twitter_2059966683909951776",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Very high quotation marks to signal slogans/claims",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"don\u2019t do purity tests\"",
+        "rationale": "Frequent use of quoted framing emphasizes a contested slogan/phrase."
+      },
+      {
+        "message_id": "twitter_2060065769703002433",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Contains a specific account mention and named climate topic",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@thecoastguy\" ... \"sea level rise\"",
+        "rationale": "Direct mention plus topical proper noun-like entity (the account) and specific phenomenon."
+      },
+      {
+        "message_id": "reddit_1liutti_mzeztv2",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses profanity and direct insult framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"What the fuck?\"",
+        "rationale": "The post contains explicit profanity."
+      },
+      {
+        "message_id": "reddit_1liutti_mzeztv2",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Equates lip movement with lying (implied causality)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"If Trump\u2019s lips are moving, he\u2019s lying.\"",
+        "rationale": "Uses an 'If' condition to assert a cause-effect claim about behavior and truthfulness."
+      },
+      {
+        "message_id": "reddit_1kmchko_ms98lqu",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Argues against invasion as strategically harmful; sets condition for hypothetical permission",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"No he\u2019s not invading Iran because it\u2019s a bloody stupid idea\"",
+        "rationale": "The statement provides a strategic rationale discouraging the policy action."
+      },
+      {
+        "message_id": "bluesky_130f0811ad7b218026451a4eea7f2869f2d550e4a0c6cf86fef357d35cf9a02d",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Strong factual event claim (mass shooting numbers)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Sixteen Jewish people, one a child, have just been shot to death\"",
+        "rationale": "Uses concrete numerical details to present as factual reporting."
+      },
+      {
+        "message_id": "reddit_1tw1yjv_opq90hg",
+        "feature_name": "anaphora_or_parallelism",
+        "feature_value": "Contrastive world-models using 'In a world where...' then 'But unfortunately we live...'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"In a world where ... then yes its bad. But unfortunately we live in a world where ...\"",
+        "rationale": "Parallel 'world' framing builds a structured contrast about politics."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_c8e3e0e0114f041b748534e094e1df26e1ce1ffad49d004921728d8d3729f352",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Mentions major US orgs and specific 2A cases/acts",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"NRA\" ... \"Philando Castile\" ... \"Mulford act\"",
+        "rationale": "High density of named organizations and references."
+      },
+      {
+        "message_id": "reddit_1l5piym_mwl4160",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong derogatory profanity-like insult term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"disgustingly depraved moron\"",
+        "rationale": "Contains highly abusive negative labeling."
+      },
+      {
+        "message_id": "reddit_1l5piym_mwl4160",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit punitive prescription (prison)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"should be in prison\"",
+        "rationale": "Advocates a direct legal punishment."
+      },
+      {
+        "message_id": "bluesky_ba4bb28afa789953daefea36fb0b622b73f9b493f26a28ef4bc573a79a086624",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Directly quotes a slogan/phrase and counters it",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"\u2018Good guy with a gun\u2019 designs...\"",
+        "rationale": "Uses embedded quotation marks to frame the argument."
+      },
+      {
+        "message_id": "reddit_1tstlbr_op0jeay",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Addresses 'YOUR government' and instructs behavior",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"when YOUR government\" ... \"Stop doing nazi shit\"",
+        "rationale": "Uses direct second-person possessive and imperative instruction."
+      },
+      {
+        "message_id": "reddit_1l7rii5_mwz7sym",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit 'leave' instruction",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Don\u2019t like it here then leave.\"",
+        "rationale": "It tells the target to take action (leave the country)."
+      },
+      {
+        "message_id": "reddit_1tle5je_onfuicp",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Implements comparative morbidity/impact statistic framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"more Europeans die from guns than Americans die of heat\"",
+        "rationale": "Uses a cross-group comparison to argue relative harm magnitude."
+      },
+      {
+        "message_id": "twitter_2061628079852675121",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral judgment of policy identity claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"abandoning your child ... is not pro-life\"",
+        "rationale": "Uses evaluative moral labeling to reject an identity-based stance."
+      }
+    ]
+  }
+}

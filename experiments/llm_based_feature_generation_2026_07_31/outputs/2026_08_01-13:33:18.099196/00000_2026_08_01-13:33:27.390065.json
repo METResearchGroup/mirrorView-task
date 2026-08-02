@@ -1,0 +1,180 @@
+{
+  "batch_id": 0,
+  "message_ids": [
+    "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25",
+    "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+    "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+    "reddit_1kjndle_mrp2vs3",
+    "reddit_1la5fmz_mxit2c1",
+    "reddit_1lb8wyo_mxr2wwj",
+    "reddit_1lmjifa_n092opi",
+    "reddit_1lo82x1_n0nk59o",
+    "reddit_1trf9va_oon7csb",
+    "reddit_1u0gjyt_oqk5mob",
+    "reddit_1u225u5_oqvbe3g",
+    "twitter_2059359537673744708",
+    "twitter_2060149644953272762",
+    "twitter_2060750477227139175",
+    "twitter_2060938389461827850",
+    "twitter_2061188597785502107",
+    "twitter_2061779962810483200",
+    "twitter_2061799295783698746",
+    "twitter_2061805216790708579",
+    "twitter_2061828323722838316"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059359537673744708",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"We know we are all paying more for everything\"",
+        "rationale": "The post is multi-sentence with detailed comparisons, indicating a long token length band."
+      },
+      {
+        "message_id": "twitter_2059359537673744708",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "cost_of_living/benefits (COLA, EBT)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"worked on the COLA\" / \"EBT\"",
+        "rationale": "Mentions COLA and EBT benefit increases, tying the message to cost-of-living policy."
+      },
+      {
+        "message_id": "reddit_1u225u5_oqvbe3g",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "contains explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"shit eating grin\"",
+        "rationale": "Uses an explicit profane phrase to describe a figure."
+      },
+      {
+        "message_id": "reddit_1u225u5_oqvbe3g",
+        "feature_name": "causal_claim_present",
+        "feature_value": "links optimism to credit-card spending/interest costs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"As evidenced by people using their credit cards more frequently with 15 percent interest\"",
+        "rationale": "Frames an outcome (credit-card use) as evidence/cause of economic claim."
+      },
+      {
+        "message_id": "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25",
+        "feature_name": "normative_moral_language",
+        "feature_value": "implies need for oversight/scrutiny",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"before anything actually happened\" / \"public scrutiny\"",
+        "rationale": "Emphasizes accountability and scrutiny as a normative requirement."
+      },
+      {
+        "message_id": "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "if policy passes -> more scrutiny/oversight",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"if something like the green New deal actually passed, it would get hundreds of hours\"",
+        "rationale": "Uses an explicit if-conditional to describe downstream effects."
+      },
+      {
+        "message_id": "twitter_2061828323722838316",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "blames US/Trump for backing Israel/Netanyahu",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump... kisses Iran\u2019s ass and tells Netanyahu to back off and stop fighting\"",
+        "rationale": "Attributes diplomatic/strategic blame to Trump while centering Israel/Hezbollah conflict."
+      },
+      {
+        "message_id": "twitter_2061188597785502107",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none; statement about actor (indirect)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Mayor Jacob Frey believes cities should be able\"",
+        "rationale": "Syntactically it is a third-person descriptive claim without direct you-address; included as a structural cue."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kjndle_mrp2vs3",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "uses strong slang/insults in first clause",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"holy shit\"",
+        "rationale": "Employs highly informal expletive phrasing."
+      },
+      {
+        "message_id": "reddit_1kjndle_mrp2vs3",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking reaction question",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"holy shit what in the fuck are they smoking?\"",
+        "rationale": "Uses a derisive rhetorical question to ridicule the referenced group."
+      },
+      {
+        "message_id": "reddit_1lmjifa_n092opi",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "explicit insult term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking scumbags\"",
+        "rationale": "Contains direct taboo-language targeting a group."
+      },
+      {
+        "message_id": "reddit_1lo82x1_n0nk59o",
+        "feature_name": "target_directionality",
+        "feature_value": "targets journalists/media with contempt and calls for refusal of accountability",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"including the \u2018journalists\u2019.\"",
+        "rationale": "Directly targets a profession/group and embeds hostile stance."
+      },
+      {
+        "message_id": "twitter_2060149644953272762",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "voter ID / election participation described as illegal/suppression",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"voter ID\" / \"register to vote\"",
+        "rationale": "References voter ID and election participation mechanics as the core topic."
+      },
+      {
+        "message_id": "twitter_2060149644953272762",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "claims coordination by think tanks/dark money",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"think tanks and dark money groups... coordinate this\"",
+        "rationale": "Asserts coordinated hidden influence by groups."
+      },
+      {
+        "message_id": "reddit_1lb8wyo_mxr2wwj",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "broad blame plus violent hostility toward a political actor",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Biden, fuck the radical left.\"",
+        "rationale": "Uses emphatic profanity aimed at a political coalition."
+      },
+      {
+        "message_id": "twitter_2061799295783698746",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "purports to quote video warning/foreknowledge",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump said it on video months before the riots started\"",
+        "rationale": "Frames events as backed by a specific quoted claim, presented as factual."
+      }
+    ]
+  }
+}

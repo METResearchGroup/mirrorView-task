@@ -1,0 +1,180 @@
+{
+  "batch_id": 132,
+  "message_ids": [
+    "bluesky_a3f93e747c98f00788de889005756369a480025e50d23b7b6d0ecd9881990bda",
+    "bluesky_d3e76502ab487398f2bc2e48efd3f85e244c3f743f60044a18e14422a173c7b1",
+    "bluesky_d6794ae1fdf557cc564a9a6635ce8fda2f8bf32a5ece5a72b0ec9dcf8be62bf1",
+    "reddit_1kd68tv_mqdvza2",
+    "reddit_1klrtv5_ms9eso4",
+    "reddit_1l09372_mvchjvf",
+    "reddit_1l4tpmm_mwds8su",
+    "reddit_1l6jnqp_mwpbia3",
+    "reddit_1l74253_mwv1kww",
+    "reddit_1tr6mt1_oolg76y",
+    "reddit_1tzjirf_oqe9ymk",
+    "reddit_1u0gjyt_oqi3psa",
+    "reddit_1u0gjyt_oqis9q8",
+    "twitter_2061137301284245888",
+    "twitter_2061194186469093549",
+    "twitter_2061213441721876988",
+    "twitter_2061789176497140214",
+    "twitter_2061803063724171489",
+    "twitter_2061822024238981315",
+    "twitter_2061825438020747300"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061822024238981315",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Attributes political violence/crime to specific named elites",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Soros and Obama are the cause of all this",
+        "rationale": "The post directly names prominent figures as the cause of the claimed violence/crime."
+      },
+      {
+        "message_id": "bluesky_d6794ae1fdf557cc564a9a6635ce8fda2f8bf32a5ece5a72b0ec9dcf8be62bf1",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Calls for gun policy changes with moral accusation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Your idea of gun reform is letting your politicians give an unlimited budget",
+        "rationale": "The post argues for/against a specific gun-policy mechanism as part of the policy dispute."
+      },
+      {
+        "message_id": "twitter_2061825438020747300",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "References Sec. Marco Rubio and a specific geopolitical stance",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Sec. Marco Rubio: If Iran is going to shut down the straits",
+        "rationale": "The text includes an identifiable politician and a named international chokepoint action."
+      },
+      {
+        "message_id": "twitter_2061789176497140214",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Sustained uppercase emphasis and emphatic warnings",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "HE THINKS HE HAS THE POWER TO MAKE GAS 3.00. IF YOU BELIEVE THAT BS",
+        "rationale": "Multiple sentences are written in all caps to heighten urgency and persuasion."
+      },
+      {
+        "message_id": "reddit_1tzjirf_oqe9ymk",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Contrasts one camp\u2019s claims with another camp\u2019s acceptance of lies",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Yet, you're ok with Trump spewing those lies every day?",
+        "rationale": "The rhetorical structure targets an outgroup behavior while contrasting credibility assumptions."
+      },
+      {
+        "message_id": "twitter_2061194186469093549",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Mentions another user handle and compares energy sources across regions",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@afneil ... wind and solar ... across Europe and Texas",
+        "rationale": "The post includes a mention and multiple geographic/proper-noun references tied to energy claims."
+      },
+      {
+        "message_id": "twitter_2061213441721876988",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Frames climate direction in terms of energy policy impact",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "turning point in the climate crisis",
+        "rationale": "The post presents an implied cost/benefit shift by linking directionality of policy to climate impacts."
+      },
+      {
+        "message_id": "bluesky_a3f93e747c98f00788de889005756369a480025e50d23b7b6d0ecd9881990bda",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Contains quoted legal/policy rights language about climate and human rights",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Our fast-tracking, dealmaking and Treaty Rights-ignoring is part of a global backslide",
+        "rationale": "The quote-like phrasing uses formal policy/legal terminology."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1l6jnqp_mwpbia3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses gendered insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Bitch, you voted for all this shit.",
+        "rationale": "The post begins with a direct insult containing profanity."
+      },
+      {
+        "message_id": "reddit_1l6jnqp_mwpbia3",
+        "feature_name": "targeted_second_person_direct_address",
+        "feature_value": "Directly addresses a specific voter and assigns blame",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Bitch, you voted for all this shit.",
+        "rationale": "The sentence uses second-person 'you' to condemn a person\u2019s voting."
+      },
+      {
+        "message_id": "twitter_2061803063724171489",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims protesters are paid to support deported people",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "they are being paid to support them",
+        "rationale": "The text alleges covert payment as the underlying cause."
+      },
+      {
+        "message_id": "twitter_2061803063724171489",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Justifies harm claims and portrays target as immoral threats",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "No matter if illegals are killing and rapeing they need their votes!",
+        "rationale": "It asserts extreme harm allegations while arguing about voting rights, intensifying dehumanizing framing."
+      },
+      {
+        "message_id": "reddit_1tr6mt1_oolg76y",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Degrades target group with insulting descriptors",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "The self hating Westerners",
+        "rationale": "The phrase is a derogatory label meant to mock and delegitimize a group."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqis9q8",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Uses religious framing with a coined slur/name",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "American Christian nationalists (I call them the Y'all Qaeda)",
+        "rationale": "The post invokes a religious-political identity and adds a branded insult."
+      },
+      {
+        "message_id": "reddit_1kd68tv_mqdvza2",
+        "feature_name": "call_to_action",
+        "feature_value": "Advocates party purge/removal of political opponents",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "We need to remake the Democratic Party and remove everyone",
+        "rationale": "The post explicitly urges organizational restructuring and removal of others."
+      },
+      {
+        "message_id": "reddit_1l4tpmm_mwds8su",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses profanity/violent death claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck nazis.",
+        "rationale": "The post contains a direct profane condemnation."
+      }
+    ]
+  }
+}

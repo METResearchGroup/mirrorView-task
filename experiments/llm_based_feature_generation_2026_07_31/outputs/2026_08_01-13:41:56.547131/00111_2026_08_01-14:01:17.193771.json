@@ -1,0 +1,180 @@
+{
+  "batch_id": 111,
+  "message_ids": [
+    "bluesky_3c7b3c589ef1221b33a4a2b5e730c4d828a526d1e9785b9755c3409e58f88aaa",
+    "bluesky_9d2564c6561d2a97bc994471e31024c670844a1e2c205573d9f2b366f70ef122",
+    "bluesky_d625ca3409a1c108fa1322d050398e99bdc2f2289711c78ef1d87b593a56c777",
+    "bluesky_f3f8eba67203bd6c0565ad8777f37eae3771de3e91c56974092022e961441987",
+    "reddit_1kgs9fz_mr383ul",
+    "reddit_1ki553n_mrf43g8",
+    "reddit_1llpslt_n03dyf9",
+    "reddit_1t7d5jc_oktwy16",
+    "reddit_1thwlss_omvbdad",
+    "reddit_1tlu4l3_onibp6r",
+    "reddit_1tu26w6_op6qbef",
+    "reddit_1tw0vcu_opmak8n",
+    "reddit_1txme1m_opzds45",
+    "reddit_1txnigx_opx7syx",
+    "twitter_2059446161069539442",
+    "twitter_2061085287648760234",
+    "twitter_2061491664275780019",
+    "twitter_2061759461656560124",
+    "twitter_2061807709813408099",
+    "twitter_2061812350122930636"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_3c7b3c589ef1221b33a4a2b5e730c4d828a526d1e9785b9755c3409e58f88aaa",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"It's a fucking shame\"",
+        "rationale": "The post contains the profanity token \"fucking.\""
+      },
+      {
+        "message_id": "bluesky_3c7b3c589ef1221b33a4a2b5e730c4d828a526d1e9785b9755c3409e58f88aaa",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames a group as being slaughtered/targeted repeatedly",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"school children are slaughtered\" / \"unborn children are slaughtered\"",
+        "rationale": "The text depicts continuous victimization (slaughter) in both original and mirror."
+      },
+      {
+        "message_id": "twitter_2061812350122930636",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct policy restraint recommendation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Therefore,  Trump should restrain Lebanon!\"",
+        "rationale": "It explicitly urges an action toward a named political actor."
+      },
+      {
+        "message_id": "twitter_2061812350122930636",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Uses comparison between America and another group/state\u2019s actions",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"If America were under constant terror attack\" ... \"Therefore,  Trump should restrain Lebanon!\"",
+        "rationale": "The argument sets up an in-group (America) scenario and then draws blame/direction toward an out-group (Lebanon/Netanyahu context)."
+      },
+      {
+        "message_id": "twitter_2061085287648760234",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Contrasts claims with scientific evidence/testing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"in science you should to test theories against evidence.\"",
+        "rationale": "The text makes an evidence-oriented instructional claim rather than speculation."
+      },
+      {
+        "message_id": "reddit_1thwlss_omvbdad",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Explicit reference to legal protection distinction and named acronym CVA",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"the law makes a distinction\" ... \"especially with the CVA\"",
+        "rationale": "The post discusses legal categories of protection and introduces an acronym as a reference point."
+      },
+      {
+        "message_id": "twitter_2061491664275780019",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Strong declarative intensifier plus hashtags",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"obviously global warming is a scam\" #climatechange #adhd #genz #biggerz #climatecrisis #ecoanxiety",
+        "rationale": "The wording uses an emphatic adverb and multiple hashtags for stance signaling (including \"obviously\" and the accusatory \"scam\")."
+      },
+      {
+        "message_id": "reddit_1txme1m_opzds45",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Targets named public figures with accusations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Susan Collins\"",
+        "rationale": "The post contains specific personal/proper-noun targeting of a known politician."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tw0vcu_opmak8n",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck this corrupt SCOTUS!\"",
+        "rationale": "The message begins with the profanity \"Fuck.\""
+      },
+      {
+        "message_id": "reddit_1tw0vcu_opmak8n",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "Attacks judicial/political party actors",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"SCOTUS\" ... \"Republicans\" ... \"Democrat run states\"",
+        "rationale": "It criticizes courts (SCOTUS) and assigns responsibility along party/state-control lines."
+      },
+      {
+        "message_id": "reddit_1tu26w6_op6qbef",
+        "feature_name": "call_to_action",
+        "feature_value": "Wants a judge\u2019s ruling to create a record",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I want a judge to rule against it so there a record\"",
+        "rationale": "It explicitly expresses an intended legal outcome."
+      },
+      {
+        "message_id": "twitter_2059446161069539442",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses the interlocutor accusing lying",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Why are you lying Bernardo ?\"",
+        "rationale": "The sentence uses second-person \"you\" with a direct accusation."
+      },
+      {
+        "message_id": "twitter_2059446161069539442",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "Mirror swaps target: Netanyahu/open-borders discussion retargets to AOC and Ted Cruz with cruelty framing",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"@berniemoreno\" ... \"does not support open borders\" / \"@AOC\" ... \"Ted Cruz\"",
+        "rationale": "The mirror changes the addressed handle and reframes the blame target."
+      },
+      {
+        "message_id": "twitter_2061759461656560124",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Characterizes others as lacking understanding and calls them 'lunatics'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Your lunatics and have no understanding of civics\"",
+        "rationale": "It uses morally charged, judgmental language about the addressee."
+      },
+      {
+        "message_id": "reddit_1tlu4l3_onibp6r",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "Compares political situation to '2nd coming of Hitler'",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"country is under occupation by 2nd coming of Hitler\"",
+        "rationale": "It uses an explicit Hitler-based analogy for political claim framing."
+      },
+      {
+        "message_id": "reddit_1llpslt_n03dyf9",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Uses colloquial \u201cfucking\u201d and \u201cI got mine\u201d autocracy phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The old guard Dems are fuck you I got mine\u0003-ing\"",
+        "rationale": "The wording employs slangy, idiomatic phrasing and profanity."
+      }
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "batch_id": 77,
+  "message_ids": [
+    "bluesky_1e7aafe2b1c65e8b787c26a18a722949206add7e183bec21db99fd50ca6e9bef",
+    "reddit_1krenw1_mtdjzcl",
+    "reddit_1kwnre0_mujt2td",
+    "reddit_1l0qzn0_mvhr3a4",
+    "reddit_1l60dkx_mwl4h1p",
+    "reddit_1lhrgof_mz6vo58",
+    "reddit_1t4fs97_ok2mgto",
+    "reddit_1th143w_omm015k",
+    "reddit_1ts7wt8_oovyi71",
+    "reddit_1tsx0f1_ooycwq8",
+    "reddit_1ttui2j_op636xx",
+    "reddit_1tuzkhw_oped55l",
+    "reddit_1tvp4r1_opl7pzl",
+    "reddit_1txsumx_opyf364",
+    "reddit_1u3bvdh_or4x7tv",
+    "twitter_2061011318816034890",
+    "twitter_2061453808505389252",
+    "twitter_2061771764300943646",
+    "twitter_2061824992929591420",
+    "twitter_2061828323722838316"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1th143w_omm015k",
+        "feature_name": "question_invitation_to_name_actor",
+        "feature_value": "Rhetorical question prompting user to name a specific actor",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Who? Name one establishment Democrat\"",
+        "rationale": "Uses a direct prompt/question structure to elicit a specific named example."
+      },
+      {
+        "message_id": "twitter_2061771764300943646",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit profanity directed at taxes/corporations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck taxes\" / \"Fuck corporations\"",
+        "rationale": "Contains strong taboo profanity in the original and mirror."
+      },
+      {
+        "message_id": "twitter_2061828323722838316",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political actors and entities (Israel, Hezbollah, Iran, Trump, Netanyahu, Gaza, Biden)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Israel\" \"Hezbollah\" \"Iran\" \"Trump\" \"Netanyahu\" \"Gaza\" \"Biden\"",
+        "rationale": "Mentions many proper nouns/actors in a single sentence chain."
+      },
+      {
+        "message_id": "twitter_2061828323722838316",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Depicts civilian victims and slaughter in direct terms",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"while Palestinians are slaughtered in the streets\"",
+        "rationale": "Explicit victim/persecution framing for a targeted population."
+      },
+      {
+        "message_id": "twitter_2061011318816034890",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Short dismissive claim implying incorrectness of mainstream framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The only \u2018global warming\u2019 is the change of colours\"",
+        "rationale": "Presents a definitive counter-claim about global warming."
+      },
+      {
+        "message_id": "reddit_1l60dkx_mwl4h1p",
+        "feature_name": "accusation_of_traitor_or_foreign_agent",
+        "feature_value": "Treats target as foreign asset/traitor",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"trump is a russian asset fucking traitor\"",
+        "rationale": "Uses strong accusation of being a foreign asset/traitor."
+      },
+      {
+        "message_id": "reddit_1ts7wt8_oovyi71",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct appeal and rights discussion; invites addressing \u201cyour\u201d side implicitly",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"I haven't done anything wrong but maybe practice my first amendment right.\"",
+        "rationale": "Expressive, first-person intent tied to rights; uses direct rhetorical setup around constitutional freedoms."
+      },
+      {
+        "message_id": "bluesky_1e7aafe2b1c65e8b787c26a18a722949206add7e183bec21db99fd50ca6e9bef",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocacy-like moral claim about turning guns on \u201cyou\u201d (threat framing)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"would turn their guns on you\"",
+        "rationale": "Contains actionable threat/conditional harm framing toward an addressee."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061824992929591420",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Blames war outcome on adversaries/enablers and \u201cproxies\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"enabled Hamas and Hezbollah\" / \"and its proxies\"",
+        "rationale": "Assigns causality for geopolitical escalation to a coordinated network/proxies."
+      },
+      {
+        "message_id": "reddit_1lhrgof_mz6vo58",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Acronym presented in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"DEI = Don't Employ Idiots.\"",
+        "rationale": "Uses uppercase acronym labeling as a standalone slogan."
+      },
+      {
+        "message_id": "reddit_1lhrgof_mz6vo58",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Derogatory reinterpretation of DEI as excluding/idiots",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't Employ Idiots.\" / \"Definitely Excludes Ignorance.\"",
+        "rationale": "Provides a moralized/derogatory gloss on a social policy acronym."
+      },
+      {
+        "message_id": "reddit_1u3bvdh_or4x7tv",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Content about alliances, NATO, and blame for obligations",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"We aren\u2019t allies with Ukraine\" / \"NATO\"",
+        "rationale": "Discusses international alliance posture and obligations in a partisan contest of responsibility."
+      },
+      {
+        "message_id": "reddit_1txsumx_opyf364",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct request to remove a specific leader",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Now please remove Donald Trump's ass from the White House.\"",
+        "rationale": "Contains an explicit imperative demanding removal from office."
+      },
+      {
+        "message_id": "reddit_1l0qzn0_mvhr3a4",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual-crime accusations (rapist, pedophile)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Donald Trump is a rapist and a pedophile\"",
+        "rationale": "Uses highly sensitive taboo criminal/sexual allegations targeting a person."
+      },
+      {
+        "message_id": "reddit_1ttui2j_op636xx",
+        "feature_name": "dehumanizing_or_hate_style_insult",
+        "feature_value": "Global negative labeling plus \u201cevil piece of shit\u201d/\u201chuman garbage\u201d",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"every single Republican is an evil piece of shit. Human garbage.\"",
+        "rationale": "Employs extreme dehumanizing insults toward an entire group."
+      },
+      {
+        "message_id": "reddit_1tuzkhw_oped55l",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Hypothetical choice framed as would-you-save scenario",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Would you save a baby or 10 fertilized zygotes in a freezer?\"",
+        "rationale": "Uses a counterfactual/choice question to argue by forced comparison."
+      }
+    ]
+  }
+}

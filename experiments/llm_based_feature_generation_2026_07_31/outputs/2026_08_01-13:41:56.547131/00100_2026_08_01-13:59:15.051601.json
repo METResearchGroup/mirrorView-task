@@ -1,0 +1,180 @@
+{
+  "batch_id": 100,
+  "message_ids": [
+    "bluesky_7ae78ea2596f687aff27205561cd5f7a80cfb5ef6f057968509b661bb75f60ac",
+    "bluesky_f1236dbeb8361c26933857b506b4c1787aefde40d249404d8f6fbf744b1dabb6",
+    "reddit_1kdqb0w_mqee6sj",
+    "reddit_1khn8d7_mr8pq7g",
+    "reddit_1kjndle_mrodv47",
+    "reddit_1ku5bsi_mu07mz0",
+    "reddit_1ldrkkb_mydptyj",
+    "reddit_1li4v26_mz9djxy",
+    "reddit_1ljgaqj_mzl1a7g",
+    "reddit_1llkodo_n00qp4w",
+    "reddit_1tsyeyo_oozyo2c",
+    "reddit_1ttbse9_op1fq6m",
+    "reddit_1ttx203_op5rdpf",
+    "reddit_1tzjirf_oqbqwvw",
+    "twitter_2059281098539254168",
+    "twitter_2059715428822208731",
+    "twitter_2060753103583150325",
+    "twitter_2061258953162461216",
+    "twitter_2061473040618107043",
+    "twitter_2061520591702966670"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059281098539254168",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Federal policy has made it lightyears easier to build a perilous gas pipeline than the high capacity electric transmission this country needs",
+        "rationale": "The post is a multi-clause sentence with substantial length, indicating a long token band."
+      },
+      {
+        "message_id": "twitter_2059281098539254168",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "energy/climate infrastructure (gas pipelines vs electric transmission)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "build a perilous gas pipeline than the high capacity electric transmission this country needs to truly enable clean energy",
+        "rationale": "It explicitly contrasts gas pipeline building with electric transmission for clean energy/Green New Deal."
+      },
+      {
+        "message_id": "twitter_2059281098539254168",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "cost/affordability justification in mirror (keep lights on and energy affordable)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "reliable gas pipelines this country actually needs to keep the lights on and energy affordable",
+        "rationale": "The argument appeals to practical economic outcomes (affordability and power reliability)."
+      },
+      {
+        "message_id": "twitter_2059715428822208731",
+        "feature_name": "call_to_action",
+        "feature_value": "explicit community/policy stance directive (implicit) in original via 'report/order' and framing of serious issue",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "The judge then order guns removed from the student's home.",
+        "rationale": "The structure describes a procedural remedy and implicitly advocates the policy mechanism."
+      },
+      {
+        "message_id": "reddit_1ttx203_op5rdpf",
+        "feature_name": "target_directionality",
+        "feature_value": "blame/critique shifted from Democrats to GOP in mirror (DNC vs GOP)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The Democrat machine will block any good candidates\" ... \"The truth is that the GOP\" vs \"The Republican machine\" ... \"The truth is that the DNC\"",
+        "rationale": "The mirror retargets the blocking/blame mechanism and party labels to the opposite side."
+      },
+      {
+        "message_id": "reddit_1khn8d7_mr8pq7g",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "strong dismissal/expletive evaluation ('Such bullshit')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Such bullshit.",
+        "rationale": "The phrase is an emphatic negative verdict expressing outrage toward the described argument."
+      },
+      {
+        "message_id": "reddit_1khn8d7_mr8pq7g",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "bullet-like enumeration of claims (Cuts funding..., Planes crash)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "*Cuts funding to FAA*  \n*Planes crash*  \n\"It's the Biden Admin's fault!\"",
+        "rationale": "It uses line breaks/bullets to enumerate related events and attributions."
+      },
+      {
+        "message_id": "twitter_2061520591702966670",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "memey analogy + handle mention; casual phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Illegal immigration is like buying LA Rams tickets but somebody took your seats @ramsnfl",
+        "rationale": "The comparison is casual/meme-like and includes a direct mention/handle."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1li4v26_mz9djxy",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity against a political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "MAGA is a fucking disease.",
+        "rationale": "The post contains explicit profanity ('fucking')."
+      },
+      {
+        "message_id": "reddit_1ljgaqj_mzl1a7g",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct 'you' attack on an implied interlocutor",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Unfortunately, you and your ilk are too stupid to tell the difference.",
+        "rationale": "It directly addresses the reader with 'you' and judges their competence."
+      },
+      {
+        "message_id": "reddit_1ljgaqj_mzl1a7g",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "propaganda/brainwashing positioning as being deceived by media",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "too brainwashed by Fox News",
+        "rationale": "The mirror frames the target as misled/indoctrinated, a form of persecution/false-consciousness framing."
+      },
+      {
+        "message_id": "twitter_2061473040618107043",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration enforcement / ICE policy (needs ICE vs abolish ICE)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Here's why I believe America still needs ICE.",
+        "rationale": "The post centers on whether the U.S. needs ICE, clearly an immigration enforcement domain."
+      },
+      {
+        "message_id": "twitter_2061473040618107043",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "catalyst evidence with morally charged imagery (cages, exploitation)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "children held in cages",
+        "rationale": "The mirror uses highly emotive language that signals strong moral outrage."
+      },
+      {
+        "message_id": "bluesky_7ae78ea2596f687aff27205561cd5f7a80cfb5ef6f057968509b661bb75f60ac",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "civil liberties vs gun policy post-9/11 (assault weapons/red flag laws)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "we can't deal with assault weapons or red flag laws because someone might want to puree a deer",
+        "rationale": "It explicitly discusses assault weapons and red flag laws alongside civil liberties."
+      },
+      {
+        "message_id": "bluesky_7ae78ea2596f687aff27205561cd5f7a80cfb5ef6f057968509b661bb75f60ac",
+        "feature_name": "causal_claim_present",
+        "feature_value": "9/11 -> gave up civil liberties; inability to deal with guns due to speculative scenario",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "It's insane that we gave up so many civil liberties after 9/11, yet we can't deal with assault weapons or red flag laws",
+        "rationale": "It asserts causal/justificatory connections between past events and present policy inaction."
+      },
+      {
+        "message_id": "reddit_1kdqb0w_mqee6sj",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity/insult ('fuck you, suck my dick')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "AOC\u2019s \u201cfuck you, suck my dick\u201d energy",
+        "rationale": "The post includes explicit sexual profanity in quotation form."
+      }
+    ]
+  }
+}

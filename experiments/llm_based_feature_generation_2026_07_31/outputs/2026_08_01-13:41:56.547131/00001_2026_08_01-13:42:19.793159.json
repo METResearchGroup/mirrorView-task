@@ -1,0 +1,180 @@
+{
+  "batch_id": 1,
+  "message_ids": [
+    "bluesky_1c0f99135067b1644ed96886ebf749f0efbbde030f4369e66289a08cfac508fe",
+    "bluesky_5217bb1fcb9fafb438c355e358a6835ca021388438550707fc11d8799432460b",
+    "bluesky_79f082eb9dc786dc147aa62a58fd3cf29fff731848d28edac4cc7e60407820fa",
+    "bluesky_8b68b03ba5d7c0e5d023eef1f44ebc862d9fe11021516005d7749f8460275daf",
+    "bluesky_a7681feab8055d78565148621cea6a3ea78351f6d5949b2a0d2e6118788fc2db",
+    "bluesky_dfb08c8b0467178086b73f7b79054d83d2193197f0c72ea240f1f282a6a3142a",
+    "bluesky_f49141645a6fe53f2be01dd7ca3d4c1b24fb739a610565f611375207723a37c0",
+    "reddit_1kexd68_mqmczz7",
+    "reddit_1kp0psp_msv921k",
+    "reddit_1let2t2_myjhkwv",
+    "reddit_1t7d5jc_okwsv3o",
+    "reddit_1tjs35z_on5nh4x",
+    "reddit_1tqyx7p_ooleqwm",
+    "reddit_1tvr63e_opn1sx9",
+    "reddit_1txsm52_oq2vvm5",
+    "reddit_1u2almy_oqw7hcj",
+    "twitter_2059348850574594280",
+    "twitter_2061429377762500985",
+    "twitter_2061513964308345235",
+    "twitter_2061688932924805388"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_dfb08c8b0467178086b73f7b79054d83d2193197f0c72ea240f1f282a6a3142a",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Heavy use of punctuation and list-like punctuation (dashes, quotes, commas, exclamation)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"AS WE NOW KNOW - after years/decades of Trump\u2019s, Fox/RW Media, and Russian trolls\u2019 disinformation and conspiracies like Flat Earth, QAnan/Pizza-gate... DEPEND UPON TRUTH!\"",
+        "rationale": "The text contains dense dash/quote/comma structures and ends with an emphatic exclamation."
+      },
+      {
+        "message_id": "bluesky_dfb08c8b0467178086b73f7b79054d83d2193197f0c72ea240f1f282a6a3142a",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Frames multiple claims as disinformation/conspiracies (e.g., Flat Earth, QAnon, Soros 'Jewish Space Lasers')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"disinformation and conspiracies like Flat Earth, QAnan/Pizza-gate, George Soros \u2018Jewish Space Lasers\u2019\"",
+        "rationale": "The post explicitly labels several topics as conspiracies/disinformation."
+      },
+      {
+        "message_id": "bluesky_dfb08c8b0467178086b73f7b79054d83d2193197f0c72ea240f1f282a6a3142a",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Many named entities (Trump, Fox, Soros, etc.)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump\u2019s, Fox/RW Media, Russian trolls\u2019... George Soros... Big Oil/Russian/Trump\"",
+        "rationale": "The sentence contains numerous well-known proper nouns in rapid succession."
+      },
+      {
+        "message_id": "bluesky_1c0f99135067b1644ed96886ebf749f0efbbde030f4369e66289a08cfac508fe",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns/gun laws (Brady Bill, concealed changes)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"advocated for the Brady Bill for changes to gun laws\"",
+        "rationale": "The main policy focus is explicitly gun legislation."
+      },
+      {
+        "message_id": "bluesky_1c0f99135067b1644ed96886ebf749f0efbbde030f4369e66289a08cfac508fe",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Use of assassination attempt as causal basis for political blame/support",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Regan used his assassination attempt to advocated for the Brady Bill... Trump used his assassination attempt to blame immigrants and democrats.\"",
+        "rationale": "The post asserts an argumentative/causal use of the assassination attempt."
+      },
+      {
+        "message_id": "bluesky_f49141645a6fe53f2be01dd7ca3d4c1b24fb739a610565f611375207723a37c0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"That\u2019s a bullshit answer.\"",
+        "rationale": "The post contains explicit profanity used to dismiss an answer."
+      },
+      {
+        "message_id": "bluesky_f49141645a6fe53f2be01dd7ca3d4c1b24fb739a610565f611375207723a37c0",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Claims policy changes reduce income for poorest; compares rebate vs lost income",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"neutral change in revenue overall and a big reduction in income to the poorest people\"",
+        "rationale": "It evaluates the policy by costs/benefits to different income groups."
+      },
+      {
+        "message_id": "twitter_2059348850574594280",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct encouragement to get a concealed carry permit and join an event",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't put off getting your concealed carry permit any longer. Make the decision. Get yours now... Join us Sunday, May 31st.\"",
+        "rationale": "The post uses imperative sentences and an event invitation."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_a7681feab8055d78565148621cea6a3ea78351f6d5949b2a0d2e6118788fc2db",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames one political wing as inherently fragile/weak/snowflake",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The right wing is the most fragile, weak and snowflake people\"",
+        "rationale": "The statement attributes negative traits to an in-group/out-group political category."
+      },
+      {
+        "message_id": "bluesky_8b68b03ba5d7c0e5d023eef1f44ebc862d9fe11021516005d7749f8460275daf",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Climate/renewable energy and emissions policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"transition to renewable energy, climate policy, and success in lowering emissions\"",
+        "rationale": "The text centers on climate policy and emissions reductions."
+      },
+      {
+        "message_id": "bluesky_8b68b03ba5d7c0e5d023eef1f44ebc862d9fe11021516005d7749f8460275daf",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses insult/derogatory language toward an opponent",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"idiotically trying to stop\"",
+        "rationale": "It characterizes the opposing actor\u2019s behavior with an insulting adverb."
+      },
+      {
+        "message_id": "reddit_1tjs35z_on5nh4x",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity targeting a person (fuck)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck that maybe-pedo but definitely a trash human Donald Trump.\"",
+        "rationale": "The post begins with explicit profanity and uses degrading labels."
+      },
+      {
+        "message_id": "reddit_1tjs35z_on5nh4x",
+        "feature_name": "target_directionality",
+        "feature_value": "Dehumanizing attack on a named politician",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Donald Trump\"",
+        "rationale": "It directly targets a specific political figure with derogatory language."
+      },
+      {
+        "message_id": "twitter_2061513964308345235",
+        "feature_name": "call_to_action",
+        "feature_value": "Demand for mass deportations; imperative policing language",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Can we please get the mass deportations we voted for? Stop this madness and get these savages out of our damn country!\"",
+        "rationale": "The post uses direct demands and imperatives aimed at political action."
+      },
+      {
+        "message_id": "reddit_1let2t2_myjhkwv",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insulting demeaning group label for voters",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Absolutely useless jackasses for voting for any of Trump's fascist clowns.\"",
+        "rationale": "It mocks and degrades a political group of voters with contemptuous labels."
+      },
+      {
+        "message_id": "reddit_1t7d5jc_okwsv3o",
+        "feature_name": "metaphor_or_analogy_present",
+        "feature_value": "Metaphor comparing AI data centers to smokestacks/eyesores",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"They\u2019re the smokestacks of the 21st century.\"",
+        "rationale": "It uses a strong metaphor/analogy to characterize AI facilities."
+      }
+    ]
+  }
+}

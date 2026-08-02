@@ -1,0 +1,180 @@
+{
+  "batch_id": 80,
+  "message_ids": [
+    "bluesky_1a1c3565cc0afb38271239d90aa0d58dbf2fbb216b27a0e46f1acff449417706",
+    "bluesky_1de7f143b2e14fd681a2e9db182cedaaf0dec30ad41542fe37c5e3477482153d",
+    "bluesky_4d036cfbec8147d642d0e970d898e09da9dc8440d739881569f99d903795e5f1",
+    "bluesky_cfe8c1418ed3f878f9954b13fd148b5f72274e96abf7f14c56258c6aaa325038",
+    "reddit_1kpgf6p_msyfy3k",
+    "reddit_1kx7c8d_musgtn4",
+    "reddit_1t1zmb4_ojlq2pi",
+    "reddit_1tbymrb_olrhvme",
+    "reddit_1tgxg10_omle9dp",
+    "reddit_1tqdpjl_oogtmar",
+    "reddit_1ttdpd3_op1v30d",
+    "reddit_1tw1yjv_opmfrpd",
+    "reddit_1twd1b6_opsdppc",
+    "reddit_1txxvde_or1wb84",
+    "reddit_1u0gjyt_oqjg8oj",
+    "reddit_1u0y79a_oqunvpe",
+    "reddit_1u1c4u6_oqoxb2x",
+    "reddit_1u22gzn_oqumb02",
+    "twitter_2059533616204460109",
+    "twitter_2061828008646676862"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u22gzn_oqumb02",
+        "feature_name": "quote_embedding_traditional_slogans",
+        "feature_value": "Uses quoted political slogans/slogans as evidence",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\u201cDon\u2019t tread On me\u201d, \u201ccold dead hands\u201d, \u201cstates rights\u201d",
+        "rationale": "The post embeds multiple quoted catchphrases to characterize conservatives."
+      },
+      {
+        "message_id": "reddit_1u22gzn_oqumb02",
+        "feature_name": "mirror_shift_polar_left_right_labelling",
+        "feature_value": "Mirror retargets blame/labeling from conservatives to liberals/progressives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\u201cThat's still liberals, right? ... the left operates\u201d",
+        "rationale": "The mirror reframes the rhetorical question so the same pattern is applied to the left."
+      },
+      {
+        "message_id": "reddit_1tqdpjl_oogtmar",
+        "feature_name": "direct_insult_actor_labeling",
+        "feature_value": "Dehumanizing/insulting group labeling",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "MAGAts are the worst people on earth.",
+        "rationale": "The speaker uses an absolute negative evaluation aimed at an in-group/out-group political label."
+      },
+      {
+        "message_id": "reddit_1tqdpjl_oogtmar",
+        "feature_name": "target_directionality_outgroup_relabel_in_mirror",
+        "feature_value": "Mirror swaps target group from MAGA to 'woke leftists'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Woke leftists are the most insufferable people on the planet.",
+        "rationale": "The mirror changes the criticized actor type from MAGA to the opposite ideological group."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqjg8oj",
+        "feature_name": "policy_prescription_present_stopping_or_ending",
+        "feature_value": "Argues for stopping/ending a policy affecting sports participation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "This is about STOPPING girls in sports.",
+        "rationale": "The text frames a categorical desired outcome for regulation of girls/who can play."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqjg8oj",
+        "feature_name": "normative_moral_language_prohibitive_intensity",
+        "feature_value": "Strong moral/normative justification (sexual assault, parental protection)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "No parent in their right mind is going to allow their child... to be sexually assaulted",
+        "rationale": "The claim uses moral language and safety framing to justify the policy stance."
+      },
+      {
+        "message_id": "twitter_2059533616204460109",
+        "feature_name": "victimhood_or_persecution_framing_accepting_label",
+        "feature_value": "Reframes criticism as label acceptance/pride",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "If fighting... is xenophobic, then I gladly accept the labeling.",
+        "rationale": "The speaker preempts a derogatory label and converts it into voluntary self-identification."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olrhvme",
+        "feature_name": "specific_event_reference_protest_insurrection",
+        "feature_value": "Mentions specific political episodes as justification examples",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "BLM rioting and looting ... January 6th insurrection",
+        "rationale": "The post cites named contemporaneous events to support the speaker\u2019s critique."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_1a1c3565cc0afb38271239d90aa0d58dbf2fbb216b27a0e46f1acff449417706",
+        "feature_name": "all_caps_emphasis_legislation_terms",
+        "feature_value": "All-caps emphasis and specific law/organization references",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "RED FLAG LAWS ... MA. books. ... the NRA HATES MA.",
+        "rationale": "The post uses all-caps for key items and references NRA and red-flag laws."
+      },
+      {
+        "message_id": "reddit_1txxvde_or1wb84",
+        "feature_name": "ingroup_vs_ingroup_directional_economics_subsidies",
+        "feature_value": "Contrasts left/right opposition to corporate subsidies using moralized labels",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "The left doesn\u2019t like subsidies going to corporations and billionaires.",
+        "rationale": "The content directly concerns economic/policy debate about subsidies."
+      },
+      {
+        "message_id": "reddit_1kx7c8d_musgtn4",
+        "feature_name": "list_or_enumeration_multiple_political_claims",
+        "feature_value": "Dense enumeration of multiple events/policies attributed to a person",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Nader enabled Iraq War, 9/11, Citizens United, mortgage crisis, Great Recession, gun ban lifted.",
+        "rationale": "The sentence chains many named outcomes into a single list-like structure."
+      },
+      {
+        "message_id": "bluesky_4d036cfbec8147d642d0e970d898e09da9dc8440d739881569f99d903795e5f1",
+        "feature_name": "all_caps_intensity_conspiracy_like_labeling",
+        "feature_value": "All-caps urgency + 'hoax'/'truth' framing about climate science",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "IT\u2019S CRUCIAL ... to convince us that Climate Science ... is all \u201cA HOAX\u201d",
+        "rationale": "The post asserts a rhetorical conspiracy/falsehood framing around climate science."
+      },
+      {
+        "message_id": "bluesky_4d036cfbec8147d642d0e970d898e09da9dc8440d739881569f99d903795e5f1",
+        "feature_name": "casual_claim_present_science_causes_by_industry",
+        "feature_value": "Causal attribution from fossil fuels to extreme weather",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "extreme weather catastrophes -which Big Oil/Fossil Fuel use causes",
+        "rationale": "It makes an explicit cause claim linking industry activity to climate impacts."
+      },
+      {
+        "message_id": "twitter_2061828008646676862",
+        "feature_name": "violent_retaliation_policy_prescription",
+        "feature_value": "Advocates lethal force and extermination-like logic",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "If they won\u2019t repent, they die.",
+        "rationale": "The post presents direct justification for killing enemies."
+      },
+      {
+        "message_id": "reddit_1u0y79a_oqunvpe",
+        "feature_name": "emphatic_outrage_and_insult",
+        "feature_value": "Use of profanity/emotion plus 'dementia-addled' insult",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "dementia-addled brain daily",
+        "rationale": "The language is aggressively evaluative and attacks mental capacity."
+      },
+      {
+        "message_id": "reddit_1tw1yjv_opmfrpd",
+        "feature_name": "factual_assertion_vs_speculation_claims_on_election_crime",
+        "feature_value": "Alleges criminal/illegal actions as direct assertions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "tried to overturn a legitimate election, incite a mob to storm the Capitol, and get fake electors installed",
+        "rationale": "The mirror lists specific allegedly illegal actions presented as fact."
+      }
+    ]
+  }
+}

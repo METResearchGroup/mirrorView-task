@@ -1,0 +1,180 @@
+{
+  "batch_id": 9,
+  "message_ids": [
+    "bluesky_4d2df404776d82ffeacc42108296ea823ddb5cc760e8d4e6170cd2f088ab2fbc",
+    "reddit_1kc5vjr_mq0d69m",
+    "reddit_1kcm2gn_mq6bfl7",
+    "reddit_1ki6xuj_mrqxa53",
+    "reddit_1kp0psp_msuspys",
+    "reddit_1kxq41x_murapcs",
+    "reddit_1l7cu2s_mww9spb",
+    "reddit_1l971n7_mxavc8y",
+    "reddit_1lhaiqa_mz3l0ob",
+    "reddit_1tt3m71_op0eww4",
+    "reddit_1twgtct_oppt13l",
+    "reddit_1tzs7nk_oqda87x",
+    "reddit_1tzs7nk_oqdwasa",
+    "twitter_2059279074258715042",
+    "twitter_2060287617204412665",
+    "twitter_2060786729624244395",
+    "twitter_2061378324538999061",
+    "twitter_2061789240913227927",
+    "twitter_2061805629807665644",
+    "twitter_2061817040680161756"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1kxq41x_murapcs",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses insulting slur ('bitch')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"crybaby bitch\"",
+        "rationale": "The post contains a strong sexual/taboo insult directed at a person/actor."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqdwasa",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Labels one side as racists/white supremacists and the other as communists/anti-America",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Closet racists\" ... \"inner white supremacy\"",
+        "rationale": "It assigns hostile group identities to opponents rather than discussing policies neutrally."
+      },
+      {
+        "message_id": "twitter_2061789240913227927",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of named political figures",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Democratic House Leader Jeffries\" ... \"Jefferis\"",
+        "rationale": "The text directly references specific leaders/roles as targets."
+      },
+      {
+        "message_id": "twitter_2061789240913227927",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct insult/imputation to an actor labeled as 'nut job'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Jefferis is a nut job!\"",
+        "rationale": "The communicative act is an explicit negative evaluation aimed at a named actor."
+      },
+      {
+        "message_id": "twitter_2061378324538999061",
+        "feature_name": "call_to_action",
+        "feature_value": "Engagement request to follow/join conversation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Join the conversation\u2014follow for follow\"",
+        "rationale": "The post explicitly instructs readers to take an action on social media."
+      },
+      {
+        "message_id": "reddit_1ki6xuj_mrqxa53",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Claims about what others will do ('will run with it') paired with evidence framing (\"little to no evidence\")",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"run with it\" ... \"little to no evidence\"",
+        "rationale": "It contrasts evidence presence/absence and distinguishes verifiable claims from unsupported narratives."
+      },
+      {
+        "message_id": "twitter_2060287617204412665",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Cost/benefit style claims about reducing emissions vs negative impacts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"reduce carbon emissions, improve air quality\"",
+        "rationale": "It uses outcome-based cost/benefit language tied to policy/technology promotion."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqda87x",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "Long enumerated list of election problems/methods",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Gerrymandering, polling location elimination, goons with guns and BO, removing people from voter rolls, new ID requirements\"",
+        "rationale": "The structure is a comma-separated enumeration of multiple claims."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "twitter_2061805629807665644",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses insulting gendered slur 'Pussy boy'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Pussy boy @realDonaldTrump\"",
+        "rationale": "The post includes a taboo/insult phrase directed at a political figure."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz3l0ob",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains violence/eradication incitement toward a religious group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck Iran. Islam needs to be eradicated!\"",
+        "rationale": "The language advocates extreme harm/erasure and uses profanity."
+      },
+      {
+        "message_id": "reddit_1tt3m71_op0eww4",
+        "feature_name": "target_directionality",
+        "feature_value": "Blames government actors and corporations/industry; frames 'you are the problem' as admonition",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Whoever posted this, look in the mirror and realize you are the problem.\"",
+        "rationale": "The text directs responsibility/condemnation back at the unspecified poster/reader."
+      },
+      {
+        "message_id": "reddit_1kc5vjr_mq0d69m",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral condemnation via harsh phrasing about abortion stance",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck them kids\" train",
+        "rationale": "Uses dehumanizing/condemning moral language about child harm in abortion politics."
+      },
+      {
+        "message_id": "twitter_2059279074258715042",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Epstein-file insinuation compared to border wall",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"All the Epstein files with your name on it\"",
+        "rationale": "It implies a hidden/illicit association via an insinuated document set, rather than a verifiable claim."
+      },
+      {
+        "message_id": "reddit_1kp0psp_msuspys",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Short insult with vulgar exaggeration 'SUCKS' and 'morons'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"The GOP literally SUCKS at governing\"",
+        "rationale": "Uses informal, slang-like emphatic phrasing and insults rather than argument."
+      },
+      {
+        "message_id": "bluesky_4d2df404776d82ffeacc42108296ea823ddb5cc760e8d4e6170cd2f088ab2fbc",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Accuses opponents of covert plan to purge voters and restrict gun rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't hide it, that's your plan\"",
+        "rationale": "The post alleges concealed intent and operational scheme by political opponents."
+      },
+      {
+        "message_id": "reddit_1l7cu2s_mww9spb",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Uses emphatic shorthand and profanity-based insult target",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"absolutely fucking worthless\"",
+        "rationale": "The post is dominated by emphatic vulgar insult aimed at a named figure."
+      }
+    ]
+  }
+}

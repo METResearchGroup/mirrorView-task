@@ -1,0 +1,180 @@
+{
+  "batch_id": 7,
+  "message_ids": [
+    "bluesky_2c3a7dc21e767f5342c8805ee5a5e0032466f7e779c83101daca5b0471e631b2",
+    "bluesky_8a54925a25ca846de2e115b92255e55c459d3f8fb6b52a6b8bc8ab96b311ece7",
+    "bluesky_b3f638708296105ab27617f717b6edbd87b5dfa4cba7ed29f374232e07da15f2",
+    "bluesky_dbc6112dea41f23158d73b08e3df2c3c773d40fbf47f5005cc6b4250130af847",
+    "bluesky_dc5604c0748e912144b799393d4012dbb430418d6c28434519a170ee2c696117",
+    "reddit_1kpmzrc_mt0paez",
+    "reddit_1ll1vt1_n0krdsp",
+    "reddit_1u2almy_oqw3e3w",
+    "reddit_1u2eldl_oqxourg",
+    "twitter_2059351148222468405",
+    "twitter_2059383299424899104",
+    "twitter_2059431088900931851",
+    "twitter_2060758270881701904",
+    "twitter_2061324018263720219",
+    "twitter_2061492782355685453",
+    "twitter_2061546367076503606",
+    "twitter_2061654798852575620",
+    "twitter_2061763204410229146",
+    "twitter_2061806288246620665",
+    "twitter_2061819641253580996"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u2eldl_oqxourg",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The U.S. has sent hundreds of billionaires of dollars in aid.",
+        "rationale": "The post is multi-sentence with several quoted questions and statements, indicating long length."
+      },
+      {
+        "message_id": "bluesky_dc5604c0748e912144b799393d4012dbb430418d6c28434519a170ee2c696117",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "uses acronym-like organization mentions (DPMS, PSA)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "DPMS and Palmetto State Armory.  \n PSA states that its \u00011mission is to maximize freedom, not our profits.",
+        "rationale": "The text includes explicit organization-name shorthand (DPMS, PSA) and a quoted statement."
+      },
+      {
+        "message_id": "twitter_2059351148222468405",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (explicit policy framing with 'Second Amendment' and 'American')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "All gun laws are unconstitutional and anti american.",
+        "rationale": "Mentions a core US legal/political concept and national identity marker in a single short statement."
+      },
+      {
+        "message_id": "twitter_2060758270881701904",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration/border security",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "illegals now; neither border is secure",
+        "rationale": "The content directly discusses border security and unauthorized entry/deportations."
+      },
+      {
+        "message_id": "twitter_2061546367076503606",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "advocates aggressive affordable-housing construction",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "by building more housing, but aggressively building more *affordable* housing.",
+        "rationale": "It proposes a concrete governmental approach to address housing affordability."
+      },
+      {
+        "message_id": "twitter_2059431088900931851",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral condemnation via 'evil man' and 'hypocrite' framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "you evil man, When God says it is better...",
+        "rationale": "The mirror/original contains explicit moral slurs and claims about hypocrisy and wrongdoing."
+      },
+      {
+        "message_id": "bluesky_b3f638708296105ab27617f717b6edbd87b5dfa4cba7ed29f374232e07da15f2",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "uses dismissive language and repeated 'bull shit' with gun-law controversy sarcasm",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "It's all bull shit. Here is a perfect example of the bull shit \u0001f447\u0001f447\u0001f447",
+        "rationale": "The speaker uses slang insult/derogation ('bull shit') and escalation via repetition."
+      },
+      {
+        "message_id": "reddit_1kpmzrc_mt0paez",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "colloquial insult via movie quote",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"What an asshole.\"",
+        "rationale": "The post relies on a casual, profanity-adjacent insult quote to express judgment."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ll1vt1_n0krdsp",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mutual political blame assignment with profanity ('fucking awful')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I agree Trump is fucking awful for this country.",
+        "rationale": "Contains strong profanity-based negative evaluation directed at a named politician."
+      },
+      {
+        "message_id": "twitter_2061324018263720219",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls for criminalizing abortion and supporting nationwide abortion ban",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "support a nationwide abortion ban... criminalize abortion and close down all planned parenthood\u0002\ts",
+        "rationale": "The text includes explicit legal/policy directives."
+      },
+      {
+        "message_id": "twitter_2061654798852575620",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "argumentative claim framed as certainty ('100%')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "it is 100% about controlling someone else.",
+        "rationale": "Uses absolute percentage certainty to argue that anti-abortion claims have a single motive."
+      },
+      {
+        "message_id": "twitter_2061819641253580996",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "uses uppercase emphasis 'THE'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "got him THE Trump stamp of approval!",
+        "rationale": "Capitalized token emphasizes the rhetorical point in the sentence."
+      },
+      {
+        "message_id": "bluesky_8a54925a25ca846de2e115b92255e55c459d3f8fb6b52a6b8bc8ab96b311ece7",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity ('fuck')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "why the fuck would you think I want them to be the only people with guns?!",
+        "rationale": "Contains explicit profane language in a rhetorical question."
+      },
+      {
+        "message_id": "reddit_1u2almy_oqw3e3w",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "dismisses with 'Zero proof/evidence' challenge",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Such a \"vibe\" statement.  Zero proof.",
+        "rationale": "Directly critiques the evidential basis of a claim."
+      },
+      {
+        "message_id": "twitter_2059383299424899104",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "gratuitous dehumanizing remark about people and pregnancy/clinic context",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "thank God the abortion clinic was still open that day... praise him",
+        "rationale": "The post makes a dehumanizing evaluative statement tied to abortion/clinic access."
+      },
+      {
+        "message_id": "bluesky_dbc6112dea41f23158d73b08e3df2c3c773d40fbf47f5005cc6b4250130af847",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "contrasts Republicans vs Democrats with gun control positions as 'political cure-all'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Republicans * spend 30 years refusing...* ... while ... promoting... \n...Democrats * spend 30 years pushing...",
+        "rationale": "The structure explicitly pits two parties against each other in an antagonistic comparison."
+      }
+    ]
+  }
+}

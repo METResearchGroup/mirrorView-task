@@ -1,0 +1,180 @@
+{
+  "batch_id": 85,
+  "message_ids": [
+    "bluesky_1af3b6fbc2ee7eda8df377fd998d6138605eb187527992ae12b19d0e74f62b96",
+    "bluesky_82ddf9268037b4c3b08c6deffb13cd1b1a72bf5a13ebe29458c1084b382361f9",
+    "bluesky_a414b62e9f6aa3df174494900a8c9c48381d48d226375ef0e50b93892f6aad55",
+    "reddit_1kmcfwr_ms92wr5",
+    "reddit_1kn5i1j_msgoaf7",
+    "reddit_1koaxap_msotklj",
+    "reddit_1kq66l8_mt41ijg",
+    "reddit_1ld16hb_my4xjqa",
+    "reddit_1til7dr_omzmcn6",
+    "reddit_1tonmo5_oo4j0lc",
+    "reddit_1tuwb8f_opdzrmf",
+    "reddit_1tw6zcr_opodhna",
+    "reddit_1txi7g6_opw8x4o",
+    "reddit_1u0k7q8_oqkevst",
+    "twitter_2059414135176045034",
+    "twitter_2059500334813515902",
+    "twitter_2061001468119814605",
+    "twitter_2061287844346233239",
+    "twitter_2061798923698684273",
+    "twitter_2061803959527133482"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1koaxap_msotklj",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "question with emphatic punctuation/spacing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cMessy? That\u2019s what you call the shit TRUMP caused?\u201d",
+        "rationale": "The short, emphatic quoted question uses high-attitude punctuation and a taboo term."
+      },
+      {
+        "message_id": "reddit_1til7dr_omzmcn6",
+        "feature_name": "first_person_direct_address_and_urgency",
+        "feature_value": "first-person intent + aggressive metaphor",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "I want to rail road the dems into oblivion.",
+        "rationale": "Uses first-person volition to express an aggressive political goal."
+      },
+      {
+        "message_id": "twitter_2061287844346233239",
+        "feature_name": "call_to_action_demand_petition",
+        "feature_value": "imperatives + petition signup request",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Demand a profits tax now! Sign @GreenpeaceCA's petition",
+        "rationale": "Contains direct commands encouraging immediate action."
+      },
+      {
+        "message_id": "twitter_2061287844346233239",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "policy tied to affordability crisis funding",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The money can address the affordability crisis.",
+        "rationale": "Justifies a profits tax by linking revenue to reducing economic hardship."
+      },
+      {
+        "message_id": "twitter_2061798923698684273",
+        "feature_name": "targeting_topic_gun_lobbies_and_nra",
+        "feature_value": "guns/violence industry profit accusation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "wave of profits for Jewish gun lobbies like the NRA.",
+        "rationale": "Primary subject is mass shootings and the alleged profit motives of specific gun organizations."
+      },
+      {
+        "message_id": "twitter_2061798923698684273",
+        "feature_name": "causal_claim_present",
+        "feature_value": "implied causal link between mass shootings and profits",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Another mass shooting, another wave of profits",
+        "rationale": "Frames shootings as producing profit, presenting an explanatory causal pattern."
+      },
+      {
+        "message_id": "reddit_1txi7g6_opw8x4o",
+        "feature_name": "animal_metaphor_for_voters",
+        "feature_value": "dehumanizing metaphor comparing voters to animals",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "Democratic voters in primaries seem to behave like cattle",
+        "rationale": "Uses a dehumanizing animal comparison to characterize political supporters."
+      },
+      {
+        "message_id": "twitter_2061001468119814605",
+        "feature_name": "named_geographic_scope_international",
+        "feature_value": "Pakistan women\u2019s rights context",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "In Pakistan, women's rights are hindered",
+        "rationale": "Explicitly references a specific country as the setting."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1ld16hb_my4xjqa",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity directed at a named politician",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Donald the dictator Trump can go fuck himself",
+        "rationale": "Contains direct taboo language used as an insult."
+      },
+      {
+        "message_id": "twitter_2059500334813515902",
+        "feature_name": "call_to_action_query_address",
+        "feature_value": "addresses senators and asks if they\u2019re paying attention",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "pound sand @JohnCornyn ... You paying attention @SenatorWicker?",
+        "rationale": "Uses a direct address/interaction cue toward named individuals."
+      },
+      {
+        "message_id": "twitter_2059500334813515902",
+        "feature_name": "specific_bill_reference",
+        "feature_value": "PACT Act referenced",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "after you stalled the PACT Act",
+        "rationale": "Mentions a specific piece of legislation."
+      },
+      {
+        "message_id": "reddit_1kmcfwr_ms92wr5",
+        "feature_name": "second_person_direct_address_and_slur",
+        "feature_value": "second-person imperative with profanity",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "STOP BREAKING THE LAW ASSHOLE.",
+        "rationale": "Directly commands and insults another party using second-person style."
+      },
+      {
+        "message_id": "reddit_1kq66l8_mt41ijg",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "blames manipulation by foreign actor",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "played by Putin ... will just blame Fake News",
+        "rationale": "Attributes events to covert manipulation by an external actor."
+      },
+      {
+        "message_id": "bluesky_1af3b6fbc2ee7eda8df377fd998d6138605eb187527992ae12b19d0e74f62b96",
+        "feature_name": "list_or_enumeration",
+        "feature_value": "numbered triad with concluding sentence",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "The holy trinity of Fuckface and Maga: 1. Racism. 2. Sexism. 3. Climate crisis denial.",
+        "rationale": "Uses an explicit numbered list structure."
+      },
+      {
+        "message_id": "bluesky_a414b62e9f6aa3df174494900a8c9c48381d48d226375ef0e50b93892f6aad55",
+        "feature_name": "threat_or_violent_intent",
+        "feature_value": "violent statement about shooting",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "I would have shot the crazy b*tch!!",
+        "rationale": "Expresses intent to shoot another person, indicating violent content."
+      },
+      {
+        "message_id": "bluesky_82ddf9268037b4c3b08c6deffb13cd1b1a72bf5a13ebe29458c1084b382361f9",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "dead children as acceptable price; condemns NRA/terrorist label",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "When dead children became an acceptable price to pay ... the NRA became a DOMESTIC TERRORIST organization",
+        "rationale": "Uses a moral condemnation and extreme labeling grounded in harm to victims."
+      }
+    ]
+  }
+}

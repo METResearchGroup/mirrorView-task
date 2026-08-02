@@ -1,0 +1,171 @@
+{
+  "batch_id": 58,
+  "message_ids": [
+    "bluesky_0124cf953eceb26614c7a5439a94d734a5e9ba3378b3dae5b4b9debc827b8aa9",
+    "bluesky_098bcd761c09ee9dad38e74eb40f9e254725176489df2b24670185cc47b41ce0",
+    "bluesky_23cd686b1b1e49e1b9812f44ab9f67bce04f8428bfbb2f8af1acb980c6880efc",
+    "bluesky_25fc1559284edcc4f5190f0b3cdfe6dac0cf59bb584fd8eae805fd83bc923d1b",
+    "bluesky_29af712c5ce44981ee26810c4942f275b9da56fc3d2eff1f8e781eeb960852b7",
+    "bluesky_504f0357ecf1451c8af3831cfe8cdd8d37de3f6a85ead4475933ad637a7b2e73",
+    "bluesky_6f1ff441d3530c0e2f5abfa35e94ca27dea87aaba7e4d9ccd9c061570561daa2",
+    "bluesky_93f32176d435fecd71b7fada62081a3e701cf685fa54a6465366eed2e1d24297",
+    "reddit_1lm38hz_n05eb4h",
+    "reddit_1tkvbmy_oncpvkz",
+    "reddit_1tqhy93_oohwbaj",
+    "reddit_1tv99t4_opjcoir",
+    "twitter_2060132819976753572",
+    "twitter_2060438853614231931",
+    "twitter_2060734342075142586",
+    "twitter_2061036743785123973",
+    "twitter_2061256231764017378",
+    "twitter_2061425001803235727",
+    "twitter_2061486685993803848",
+    "twitter_2061489029950910977"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 7,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1tv99t4_opjcoir",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses the reader with 'you' / conditional questioning",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If you believe Conservatives...\" \"why would there be discussion\"",
+        "rationale": "Uses second-person 'you' in repeated conditional questions to address the reader."
+      },
+      {
+        "message_id": "twitter_2060734342075142586",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit petition/signing instruction in mirror",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Sign the petition telling Congress to vote YES\"",
+        "rationale": "Contains an imperative urging users to sign a petition."
+      },
+      {
+        "message_id": "twitter_2061256231764017378",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple media outlets tagged/mentioned",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@cnn @msnow @CBSNews @abcnews @NBCNews\" \"@theview\"",
+        "rationale": "Includes several high-profile news organizations in @mention form."
+      },
+      {
+        "message_id": "bluesky_25fc1559284edcc4f5190f0b3cdfe6dac0cf59bb584fd8eae805fd83bc923d1b",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates background checks requirement as a policy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"requires background checks on all gun sales\"",
+        "rationale": "States a specific gun-policy mandate as a requirement."
+      },
+      {
+        "message_id": "twitter_2061036743785123973",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Dismisses proposal as 'soft-on-crime nonsense'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"soft-on-crime nonsense\"",
+        "rationale": "Uses derogatory phrasing to belittle an opposing position."
+      },
+      {
+        "message_id": "bluesky_23cd686b1b1e49e1b9812f44ab9f67bce04f8428bfbb2f8af1acb980c6880efc",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Frames outsiders/ICE agents as incompetent/thuggish vs safer community outcomes",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"thuggery of ICE \\\"agents\\\"\" \"harassment?\"",
+        "rationale": "Contrasts a targeted group (ICE agents) with community harms/insecurity."
+      },
+      {
+        "message_id": "bluesky_6f1ff441d3530c0e2f5abfa35e94ca27dea87aaba7e4d9ccd9c061570561daa2",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Rhetorical 'vote in a lockstep' claim contrasted with examples in two sections",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"What do you mean by \\\"vote in a lockstep\\\"\" \"But about locksteps:\"",
+        "rationale": "Uses question framing and then a contrasting 'But' section to structure argument."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lm38hz_n05eb4h",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity/adult insult in comparison label",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump administration is prejudice as fuck\"",
+        "rationale": "Contains explicit taboo word 'fuck' used as intensifier."
+      },
+      {
+        "message_id": "twitter_2060438853614231931",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Quantified economic/job losses and spending impacts",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"$8B in annual visitor spending lost\" \"50,000 jobs at risk\"",
+        "rationale": "Uses dollar amounts and job impacts as justification/argument."
+      },
+      {
+        "message_id": "bluesky_29af712c5ce44981ee26810c4942f275b9da56fc3d2eff1f8e781eeb960852b7",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Stigmatizes nonvoters as deserving insult; lists harms from gun/anti-choice/gerrymandering",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They deserve to be insulted\" \"Gun laws that kill kids\"",
+        "rationale": "Blames a group and foregrounds harm-causing policies as reasons."
+      },
+      {
+        "message_id": "bluesky_098bcd761c09ee9dad38e74eb40f9e254725176489df2b24670185cc47b41ce0",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Religious expletive / emphatic intensifier 'for Christ's sake'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"for Christ's sake\"",
+        "rationale": "Uses a religious intensifier/expletive to heighten emotion."
+      },
+      {
+        "message_id": "bluesky_098bcd761c09ee9dad38e74eb40f9e254725176489df2b24670185cc47b41ce0",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Accuses NRA/GOP of being complicit in acceptable killings; frames as extremist 'DOMESTIC TERRORIST'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the NRA became a DOMESTIC TERRORIST organization\" \"complicit GOP\"",
+        "rationale": "Uses extreme delegitimization and claims of complicity in lethal outcomes."
+      },
+      {
+        "message_id": "bluesky_93f32176d435fecd71b7fada62081a3e701cf685fa54a6465366eed2e1d24297",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses direct insult 'What a hypocrite!'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"What a hypocrite!\"",
+        "rationale": "Concludes with an evaluative taunt targeting a person."
+      },
+      {
+        "message_id": "twitter_2061425001803235727",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral hypocrisy labels using life/death rhetoric ('So \"pro-life\"!')",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"So \\\"pro-life\\\"!\" \"more children could die in school shootings\"",
+        "rationale": "Invokes moral stance labels to condemn hypocrisy, tying it to deaths."
+      },
+      {
+        "message_id": "reddit_1tqhy93_oohwbaj",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Insult phrase 'brain damaged' targeting voters",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republican voters are all brain damaged.\"",
+        "rationale": "Uses blunt, informal derogatory labeling aimed at a political group."
+      }
+    ]
+  }
+}

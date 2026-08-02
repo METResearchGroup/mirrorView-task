@@ -1,0 +1,180 @@
+{
+  "batch_id": 3,
+  "message_ids": [
+    "bluesky_15b6b87de926a0902498d3dc89f10cf2f464c5c88a788231294f23b00cc846f8",
+    "bluesky_2016605cc067a74a47c4b204447d55bee038f51c7fbab975e71813dc26ad366a",
+    "bluesky_881c36a33219402aa44ed70acf7ebf6e92f4536611f13dd830215c60000e69fe",
+    "bluesky_c3f510d0a06abe2343808c311fd2d87bb31d56de96939d0c64a567d8b2be6b85",
+    "bluesky_dc6adea3b60f1877d03209619a205a6e868acda39c0f51f3be5f942d0a025131",
+    "reddit_1kcxplk_mq8lhvh",
+    "reddit_1kpwu8r_mt1x16q",
+    "reddit_1lihh6h_mzcpoe8",
+    "reddit_1tnf5qd_onvv20i",
+    "reddit_1ttbse9_op1gwco",
+    "reddit_1ttx203_op5upai",
+    "reddit_1tux6at_opdam72",
+    "reddit_1tv1z4j_opi6zks",
+    "reddit_1tzb8pt_oqce0oe",
+    "reddit_1tztcf9_oqfz6s0",
+    "reddit_1u0gjyt_oqj0n27",
+    "reddit_1u1c4u6_oqouolr",
+    "twitter_2060407590849216584",
+    "twitter_2061188597785502107",
+    "twitter_2061757984967922137"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_2016605cc067a74a47c4b204447d55bee038f51c7fbab975e71813dc26ad366a",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate/energy emissions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Thanks to carbon emissions\"",
+        "rationale": "The post directly attributes heatwave severity to carbon emissions, placing it in climate policy."
+      },
+      {
+        "message_id": "bluesky_2016605cc067a74a47c4b204447d55bee038f51c7fbab975e71813dc26ad366a",
+        "feature_name": "causal_claim_present",
+        "feature_value": "explicit causal attribution (emissions -> paying the price/heat)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Thanks to carbon emissions we are paying the price.\"",
+        "rationale": "It states a direct cause-and-effect relationship rather than speculation."
+      },
+      {
+        "message_id": "bluesky_2016605cc067a74a47c4b204447d55bee038f51c7fbab975e71813dc26ad366a",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "slangy insult phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"It is morons like Trump\"",
+        "rationale": "Uses informal derogatory wording ('morons')."
+      },
+      {
+        "message_id": "twitter_2061188597785502107",
+        "feature_name": "targeted_actor_politician_or_official",
+        "feature_value": "Mayor Jacob Frey",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"Mayor Jacob Frey believes\"",
+        "rationale": "The message centers on a specific named public official."
+      },
+      {
+        "message_id": "twitter_2061188597785502107",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "high (named official + party/rights concepts)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Mayor Jacob Frey\" / \"Second Amendment\"",
+        "rationale": "It includes a specific person\u2019s name and constitutional/legal terminology."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_onvv20i",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "intense negativity with mock framing about parties",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"managed to get their voters out. Twice.\"",
+        "rationale": "Uses pointed emphasis and contrastive phrasing to express judgment about electoral outcomes."
+      },
+      {
+        "message_id": "reddit_1tv1z4j_opi6zks",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "media outlets framed as biased",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"NYT has been consistently critical of Trump\"",
+        "rationale": "The target is journalism/media framing rather than a policy domain."
+      },
+      {
+        "message_id": "reddit_1tv1z4j_opi6zks",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "uses scare-quoted journalism term",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"sanewashing\"",
+        "rationale": "It embeds a labeled concept via quotation marks to characterize an editorial behavior."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tztcf9_oqfz6s0",
+        "feature_name": "venting_or_expressive",
+        "feature_value": "short fear/affect statement",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"That is exactly what scares me.\" / \"terrifies me.\"",
+        "rationale": "The text is primarily an affective reaction without policy argumentation."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqj0n27",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "strong moral condemnation of groups",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Christian Nationalists are evil.\" / \"Woke ideologues are evil.\"",
+        "rationale": "Uses absolute moral labeling ('evil') aimed at ideological groups."
+      },
+      {
+        "message_id": "reddit_1tux6at_opdam72",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "damage to public understanding; 'everyone confused or angry'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the pain will happen and everyone will be either confused or angry.\"",
+        "rationale": "Frames harm as inevitable and broadly affecting people\u2019s mental state."
+      },
+      {
+        "message_id": "reddit_1ttbse9_op1gwco",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none; instead direct cursing targeting a party identity",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "\"He\u2019s still a republican, so fuck him.\"",
+        "rationale": "Uses direct insult/cursing aimed at an actor defined by party."
+      },
+      {
+        "message_id": "reddit_1tzb8pt_oqce0oe",
+        "feature_name": "call_to_action",
+        "feature_value": "urges policy change: stop bombing / stop opening borders",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"How about we stop bombing countries\"",
+        "rationale": "The imperative construction proposes an immediate action/policy shift."
+      },
+      {
+        "message_id": "twitter_2060407590849216584",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "multiple protest-style hashtags",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#TheWorldlsAwakening\" / \"#SaveourChildren\"",
+        "rationale": "The post is structured around hashtags."
+      },
+      {
+        "message_id": "twitter_2061757984967922137",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "government overreach blamed; 'crisis' dismissed as excuse",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The so-called 'coral reef crisis' is just another excuse for government overreach.\"",
+        "rationale": "Frames climate crisis narratives as strategic/manipulative pretext."
+      },
+      {
+        "message_id": "reddit_1lihh6h_mzcpoe8",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "explicit condition/exception logic",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If a strike is allowed by the capitalists it isn't a real\"",
+        "rationale": "Uses 'If...' to define a conditional argument about legitimacy."
+      }
+    ]
+  }
+}

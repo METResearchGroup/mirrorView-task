@@ -1,0 +1,180 @@
+{
+  "batch_id": 72,
+  "message_ids": [
+    "bluesky_1475a33737aa92e13fc1b7443962df41981dcb0d51a7930efc1ab554bed18319",
+    "bluesky_499e668d0cb7ae9d38a09b3d85c1c685af1b5d04fcec61cb6ff824c112f8fc3b",
+    "bluesky_5cebb5a0d9271c7bd1b3a30068f1bbc5eb5d6df224033f9c4c5c466113c26b4a",
+    "bluesky_cfd97f28ccd90b795234a873eef857d5d127abb83dbba5ca315ea7376948fe4a",
+    "bluesky_db4d8ca86d7bbb91419ad89b3800c461d9f39edde9332639793bba1cd9195cef",
+    "reddit_1kea4ww_mqhf6as",
+    "reddit_1kmahx0_ms9gt18",
+    "reddit_1kthr9g_mttuxg3",
+    "reddit_1l6j2st_mwpccw0",
+    "reddit_1lbebmn_mxs2ki0",
+    "reddit_1ti6ied_omuzlen",
+    "reddit_1tr0y3m_oomn4t3",
+    "reddit_1ttx203_op5rjl1",
+    "reddit_1txsumx_opzxzlz",
+    "reddit_1u0o8sa_oquz8f5",
+    "twitter_2059379114868625494",
+    "twitter_2059388940193288606",
+    "twitter_2059797226990244336",
+    "twitter_2061592861825437927",
+    "twitter_2061829951653904550"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1ti6ied_omuzlen",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High (political party + offices)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": ">This is why republicans lose... Because we applaud the outlier rep or senator",
+        "rationale": "Includes multiple named political entities/labels (republicans) and roles (rep, senator)."
+      },
+      {
+        "message_id": "bluesky_db4d8ca86d7bbb91419ad89b3800c461d9f39edde9332639793bba1cd9195cef",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Presumes a policy/moral stance about executions and gun possession",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Americans shouldn't be executed for exercising their constitutional right to bear arms.",
+        "rationale": "Explicit normative claim about what should/shouldn\u2019t happen to people under a policy domain (guns/rights)."
+      },
+      {
+        "message_id": "twitter_2059388940193288606",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct address via @mention",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "@JohnCornyn \ndude your done,",
+        "rationale": "Uses a handle and second-person imperative/insult framing directed at the target."
+      },
+      {
+        "message_id": "reddit_1l6j2st_mwpccw0",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Trans-in-sports as the emphasized issue",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "trans in sports. Those are the issues that are truly causing everything else",
+        "rationale": "Selects a culture-war topic (trans athletics) and claims it drives other events."
+      },
+      {
+        "message_id": "bluesky_cfd97f28ccd90b795234a873eef857d5d127abb83dbba5ca315ea7376948fe4a",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims rights were targeted to prevent a corrupt government",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "their right to bear arms was targeted to prevent a corrupt government such as the Trump regime.",
+        "rationale": "Attributes an intended covert purpose to the political targeting of gun rights."
+      },
+      {
+        "message_id": "bluesky_499e668d0cb7ae9d38a09b3d85c1c685af1b5d04fcec61cb6ff824c112f8fc3b",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Perceived numbness to crimes; mass shootings referenced as recurring harm",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "America has become as numb... as the rest of the world... is when we hear about another mass shooting in the US.",
+        "rationale": "Frames society as desensitized to victimization events (mass shootings)."
+      },
+      {
+        "message_id": "reddit_1tr0y3m_oomn4t3",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral principle about criminals/rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "a pretty basic human principle.",
+        "rationale": "Uses explicit moral evaluation rather than neutral description."
+      },
+      {
+        "message_id": "twitter_2059797226990244336",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct request to join and urge Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Will you join me in urging Congress to support the Dream Act & deliver citizenship?",
+        "rationale": "Contains an explicit call to action and political advocacy request."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_1475a33737aa92e13fc1b7443962df41981dcb0d51a7930efc1ab554bed18319",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Direct instructive imperative phrasing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Fellow trans Americans - acquire a gun.",
+        "rationale": "Uses imperative/directive language to recommend acquiring firearms."
+      },
+      {
+        "message_id": "bluesky_5cebb5a0d9271c7bd1b3a30068f1bbc5eb5d6df224033f9c4c5c466113c26b4a",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple strong insults targeting people",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "How anyone can vote for that cunt is beyond me.",
+        "rationale": "Contains explicit derogatory taboo slur toward a political actor."
+      },
+      {
+        "message_id": "reddit_1kmahx0_ms9gt18",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Overuse of uppercase for emphasis and labeling",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": ">Every CONGRESSMAN* CONGRESSPERSON*",
+        "rationale": "Uses all-caps tokens for emphatic rhetorical framing."
+      },
+      {
+        "message_id": "reddit_1kea4ww_mqhf6as",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Single strong profanity against OSHA/workers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck off OSHA, says Trump.",
+        "rationale": "Contains explicit profanity used as a dismissal directed at an entity."
+      },
+      {
+        "message_id": "reddit_1u0o8sa_oquz8f5",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Analogical claim comparing immigration to tax cheating",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Yea, like an illegal immigrant with a deportation order getting deported.",
+        "rationale": "Presents a comparison/example to refute an implied claim, not cautious or conditional."
+      },
+      {
+        "message_id": "twitter_2061829951653904550",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Causal explanation for Rust Belt hollowing out",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The Rust Belt hollowed out when manufacturing moved to Asia.",
+        "rationale": "Uses a 'when' causal construction describing why a region declined."
+      },
+      {
+        "message_id": "reddit_1lbebmn_mxs2ki0",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "High intensity punctuation + caps/statement escalation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "When fascism wins, we all die.",
+        "rationale": "Uses dramatic punctuation/absolute ultimatum style tied to high-stakes outcome."
+      },
+      {
+        "message_id": "twitter_2061592861825437927",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "No proper nouns; statistic comparison framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Your abortion rate is still one of (if not the highest) in the world.",
+        "rationale": "Leans on quantified comparative claim without referencing specific names or institutions."
+      }
+    ]
+  }
+}

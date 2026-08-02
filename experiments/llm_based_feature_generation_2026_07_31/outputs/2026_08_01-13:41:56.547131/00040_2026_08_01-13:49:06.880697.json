@@ -1,0 +1,171 @@
+{
+  "batch_id": 40,
+  "message_ids": [
+    "bluesky_17bae65dd19a3b9a4e7bd8954885f0bdc64431b6a348917f2bec6df7c096a50f",
+    "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+    "reddit_1kgvslf_mr3asvc",
+    "reddit_1kubmyy_mu0ffzi",
+    "reddit_1kzpnb8_mv7pmya",
+    "reddit_1l6v4ad_mwtm24f",
+    "reddit_1l7fyn5_mwxh1h4",
+    "reddit_1lkj9on_mzss677",
+    "reddit_1tkvbmy_onfdw9t",
+    "reddit_1u276eu_oqv88kg",
+    "twitter_2059696137011925054",
+    "twitter_2059991028162044034",
+    "twitter_2060364776186757383",
+    "twitter_2061078361015980285",
+    "twitter_2061089093115625527",
+    "twitter_2061781429789548884",
+    "twitter_2061809072970588574",
+    "twitter_2061824806564094433",
+    "twitter_2061827844309717462",
+    "twitter_2061827909715701807"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 7,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061827909715701807",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Frequent question marks/exclamation marks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Where did all the money go????\" ... \"WAKE UP CALIFORNIA!\"",
+        "rationale": "The post uses multiple trailing question marks and a strong exclamation to intensify outrage."
+      },
+      {
+        "message_id": "twitter_2060364776186757383",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple politicians/organizations named",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@NedLamont\" ... \"NRA\"",
+        "rationale": "Contains several named political actors/organizations in a short statement."
+      },
+      {
+        "message_id": "reddit_1tkvbmy_onfdw9t",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Immigration / border enforcement",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"illegal immigration\" ... \"overstayed their visa\"",
+        "rationale": "The main subject is illegal immigration and related visa overstay."
+      },
+      {
+        "message_id": "twitter_2059696137011925054",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Uses moral condemnation plus direct ban demand",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"hidden dangers\" ... \"Ban the abortion pill now!\"",
+        "rationale": "Presents a negative evaluation of a practice and issues an explicit normative instruction."
+      },
+      {
+        "message_id": "twitter_2061824806564094433",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Criticizes one party while contrasting against another",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"If you're a Republican\" ... \"Apparently, you attack Big Insurance.\"",
+        "rationale": "Directional blame is assigned to a political group for attacking a target."
+      },
+      {
+        "message_id": "twitter_2061809072970588574",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Conditional future-imagination framing to motivate taxes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Now imagine the tax savings\"",
+        "rationale": "The claim is framed as hypothetical ('imagine') rather than direct evidence."
+      },
+      {
+        "message_id": "bluesky_17bae65dd19a3b9a4e7bd8954885f0bdc096a50f",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct imperative to audience",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Same! Like, ...\" ... (no)",
+        "rationale": "No strong second-person imperative cues in this text; omitted. (Kept features only reflect strong cues.)"
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1kzpnb8_mv7pmya",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple slurs/insults (e.g., 'fucks', 'cucks')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"dumb right wing fucks\" ... \"cucks\"",
+        "rationale": "Uses explicit profanity and derogatory slur terms to delegitimize actors."
+      },
+      {
+        "message_id": "twitter_2061089093115625527",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Hashtags advocating EVs/clean cars",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#CleanerCars and #EVs\"",
+        "rationale": "Contains hashtag activism/branding for a policy stance."
+      },
+      {
+        "message_id": "twitter_2061078361015980285",
+        "feature_name": "left_right_directional_cue",
+        "feature_value": "Gun control racialized claim",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun control is racist\"",
+        "rationale": "The statement ties a policy domain (gun control) to race-based framing."
+      },
+      {
+        "message_id": "reddit_1lkj9on_mzss677",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Insults aimed at political group kids",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"You republican kids are dumb as shit.\"",
+        "rationale": "Uses derogatory ridicule rather than substantive argument."
+      },
+      {
+        "message_id": "reddit_1l7fyn5_mwxh1h4",
+        "feature_name": "call_to_action",
+        "feature_value": "Advocates removal of target group/person",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Only place Marines should be going is the White House to remove this piece of shit.\"",
+        "rationale": "Directly prescribes what action a group should take against a target."
+      },
+      {
+        "message_id": "reddit_1kubmyy_mu0ffzi",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Dehumanizing profanity toward Democrats/Republicans",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats are shit\"",
+        "rationale": "Uses taboo/profane evaluative labeling of an entire political group."
+      },
+      {
+        "message_id": "twitter_2061827844309717462",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexualized slur for Trump plus corruption framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"the cunt trump is\"",
+        "rationale": "Includes an explicit slur and asserts corruption."
+      },
+      {
+        "message_id": "twitter_2059991028162044034",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Claims regime plan to disarm 'patriots' and supports radicals/criminals",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"imports radicals and protects criminals\" ... \"now disarms patriots\"",
+        "rationale": "Portrays intentional covert wrongdoing and adversarial plotting by a governing regime."
+      }
+    ]
+  }
+}

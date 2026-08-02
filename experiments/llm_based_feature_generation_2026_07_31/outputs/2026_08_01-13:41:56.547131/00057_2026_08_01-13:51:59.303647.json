@@ -1,0 +1,180 @@
+{
+  "batch_id": 57,
+  "message_ids": [
+    "bluesky_042ac13fcf272d1a3717e6fce311df73a517da37329780f960422d6c02161f45",
+    "bluesky_0b7a0c0c3e5d42d297fb798271916d56fe643feca084a86e8e94bc626e6e15c5",
+    "bluesky_54d85d53c1f44acf107b8eca5c3d5cc90b3315450720f31cbf997d6542540f5d",
+    "bluesky_762b8063ded8ec072519ca1b696471677e0f41f88789554f044883cf172d3e9a",
+    "bluesky_ef47bcd415f8d57e196ac0c78742b66a747848f88303e14751ac96ec6ac9d0aa",
+    "reddit_1ldv2n6_mybpggj",
+    "reddit_1lel8xy_myl6ln3",
+    "reddit_1lfq7q5_myqtdfx",
+    "reddit_1tb0kz2_ole63ba",
+    "reddit_1tnf5qd_onvkvic",
+    "reddit_1trbmne_oon2mtx",
+    "reddit_1tsj7e8_ooxdvzj",
+    "reddit_1u2ipxp_oqyljt4",
+    "twitter_2059406630861803999",
+    "twitter_2059768128280674563",
+    "twitter_2060592337840160809",
+    "twitter_2060685469222842710",
+    "twitter_2061597955153408201",
+    "twitter_2061759584507711624",
+    "twitter_2061828055736230093"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2059768128280674563",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Uses all-caps emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"BUT THEY HAVE STRICT GUN LAWS\"",
+        "rationale": "The post begins with an all-caps claim to intensify the message."
+      },
+      {
+        "message_id": "twitter_2059768128280674563",
+        "feature_name": "contrastive_wait_criminals_dont_obey_logic",
+        "feature_value": "Uses 'Oh wait' reversal/contrast to argue laws don't stop criminals",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh wait criminals don't obey gun laws\"",
+        "rationale": "The structure contrasts an asserted policy with an exception introduced by 'Oh wait'."
+      },
+      {
+        "message_id": "reddit_1lel8xy_myl6ln3",
+        "feature_name": "taboo_profanity_present",
+        "feature_value": "Profanity used to refer to a politician",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"orange fuck\"",
+        "rationale": "The original contains an insulting profanity-directed phrase."
+      },
+      {
+        "message_id": "reddit_1tsj7e8_ooxdvzj",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Uses negative moral judgment of politicians (lying, salesman)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"well practiced braggart\"; \"experience lying\"",
+        "rationale": "The wording describes the target's character and behavior with strongly negative moral evaluation."
+      },
+      {
+        "message_id": "bluesky_ef47bcd415f8d57e196ac0c78742b66a747848f88303e14751ac96ec6ac9d0aa",
+        "feature_name": "list_or_enumeration_of_concerns",
+        "feature_value": "Enumerates multiple gun-policy/campaign claims in separate lines",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"They can't decide...\" \"Guns don't make shopping...\"",
+        "rationale": "The post is structured as multiple short lines presenting related arguments."
+      },
+      {
+        "message_id": "twitter_2059406630861803999",
+        "feature_name": "amendments_legality_assertion",
+        "feature_value": "Cites specific constitutional amendments and claims illegality",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"It violates the 2nd and 8th Amendments\"; \"illegally enacted\"",
+        "rationale": "It explicitly references amendment numbers and asserts the law was unlawfully enacted."
+      },
+      {
+        "message_id": "reddit_1tb0kz2_ole63ba",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Frames parties as serving Trump/donors vs working-class Americans",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"whatever the radical base demands\"; \"donor class\"; \"working-class Americans\"",
+        "rationale": "The language separates an 'elite/donor base' from 'working-class' people."
+      },
+      {
+        "message_id": "bluesky_0b7a0c0c3e5d42d297fb798271916d56fe643feca084a86e8e94bc626e6e15c5",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Claims political leaders use gun-control rhetoric/tragedies to achieve political goals",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"He's using this as a push for his ballroom\"",
+        "rationale": "It attributes a direct motive/effect relationship between actions and political ambition."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lfq7q5_myqtdfx",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Direct profanity used in an insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"go fuck yourself\"",
+        "rationale": "The phrase contains strong profanity directed at the opponent."
+      },
+      {
+        "message_id": "twitter_2060592337840160809",
+        "feature_name": "call_to_action",
+        "feature_value": "Imperative demand to abolish NFA and stop interference",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"ABOLISH THE NFA... PERIOD\"",
+        "rationale": "The post issues direct demands using imperative language."
+      },
+      {
+        "message_id": "twitter_2060592337840160809",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Highly emphatic all-caps text",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"STOP\"; \"SCREWING WITH OUR SECOND AMENDMENT\"; \"LIARS!!\"",
+        "rationale": "Multiple lines are written in all caps to intensify the message."
+      },
+      {
+        "message_id": "reddit_1ldv2n6_mybpggj",
+        "feature_name": "targeted_insult_to_media_personality",
+        "feature_value": "Attacks a named TV host's credibility",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Fucker Carlson doesn't know jack\"",
+        "rationale": "The post targets a specific person (named media figure) with credibility-denying insults."
+      },
+      {
+        "message_id": "twitter_2060685469222842710",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple misogynistic/insulting slurs and profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"FUCKING SOCIETYYY\"; \"STUPID BITCHHHHHH\"",
+        "rationale": "The text includes repeated strong insults and slurs."
+      },
+      {
+        "message_id": "twitter_2060685469222842710",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses the reader with 'you'/'u'",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"U STUPID BITCHHHHHH\"",
+        "rationale": "The message uses direct second-person address to confront the audience."
+      },
+      {
+        "message_id": "bluesky_762b8063ded8ec072519ca1b696471677e0f41f88789554f044883cf172d3e9a",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Parodic 'PETA in this case' attribution",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"-PETA in this case\"",
+        "rationale": "The post includes a hyphenated attribution/tagging line functioning as an embedded aside."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_onvkvic",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses dismissive obscene phrase and escalating contempt toward 'Unity'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Unity can kiss my ass.\"",
+        "rationale": "It uses a mocking insult to dismiss an opposing political framing."
+      }
+    ]
+  }
+}

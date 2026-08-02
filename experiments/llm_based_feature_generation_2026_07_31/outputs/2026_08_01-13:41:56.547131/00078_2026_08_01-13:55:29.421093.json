@@ -1,0 +1,180 @@
+{
+  "batch_id": 78,
+  "message_ids": [
+    "bluesky_4d2c4db478d67dc3d3a26c6627026858d78341e22159eb932220096ce7bd717d",
+    "bluesky_986d90974eafd65d0c03e3d5598ff7aeb4b6e358b64ee3ec8a4c88b8a1945442",
+    "bluesky_c1be63d161232b79d83c837a67ded6a938f5f4cc9f647ef3134bc2620a9ad671",
+    "bluesky_d048a3ad84eb4382ecc0c27ab31a6f68b2d3ac5090ea223b6f66e71aadbc5f43",
+    "reddit_1kfc5yi_mqpmayg",
+    "reddit_1lenyao_myhvqsg",
+    "reddit_1lj78qb_mzxg2uy",
+    "reddit_1llwd8t_n04a4ag",
+    "reddit_1t54vlp_ok8gay6",
+    "reddit_1tsvrr2_op0p9ys",
+    "reddit_1tvyw6x_oposdns",
+    "reddit_1twq42a_oqbw8wp",
+    "reddit_1u05n1d_oqi5581",
+    "reddit_1u1nsuy_oqsepu7",
+    "twitter_2060352157484810733",
+    "twitter_2061227114670719275",
+    "twitter_2061493566430482496",
+    "twitter_2061570616172466284",
+    "twitter_2061799904914088329",
+    "twitter_2061824717078540707"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "reddit_1u1nsuy_oqsepu7",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Self-applied labels emphasized in all caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "labels that people  SELF-APPLY on themselves",
+        "rationale": "The phrase includes an all-caps token used for emphasis."
+      },
+      {
+        "message_id": "reddit_1tsvrr2_op0p9ys",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Long run-on sentence with multiple commas and list-like phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "hearing about their citizens getting arbitrarily detained and thrown into concentration camps by ICE",
+        "rationale": "The text uses dense punctuation and extended clauses to intensify the claim."
+      },
+      {
+        "message_id": "twitter_2061227114670719275",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Single high-salience public figure mention",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Elon Musk\u2019s commitment",
+        "rationale": "A major named individual anchors the sentence."
+      },
+      {
+        "message_id": "twitter_2060352157484810733",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Immigration / border enforcement",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\u201czero tolerance\u201d immigration policy",
+        "rationale": "It directly references a specific immigration policy and border outcomes."
+      },
+      {
+        "message_id": "bluesky_4d2c4db478d67dc3d3a26c6627026858d78341e22159eb932220096ce7bd717d",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Insane / imperative shutdown",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Watching the world die for love of fossil fuels is insane. The industry needs to shut down.",
+        "rationale": "Uses moralized evaluation ('insane') and a direct normative prescription."
+      },
+      {
+        "message_id": "twitter_2061570616172466284",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Claims opponents don't care about women/babies in detention",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They say they don't care if these pregnant women or their baby's die in ICE custody.",
+        "rationale": "Frames a protected group as harmed by the other side's indifference."
+      },
+      {
+        "message_id": "twitter_2061493566430482496",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Equality reversed / under attack",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "the point is women's rights specifically ARE under attack.",
+        "rationale": "Asserts a causal-seeming deterioration of rights, not merely description."
+      },
+      {
+        "message_id": "bluesky_d048a3ad84eb4382ecc0c27ab31a6f68b2d3ac5090ea223b6f66e71aadbc5f43",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Industry/elite 'lobby' and 'friends' promoting hoax/existential crisis",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "despite THE FOSSIL FUEL LOBBY\u2019s ... TRUMP\u2019s baseless claim that it\u2019s a \u201cHOAX!\u201d",
+        "rationale": "Attributes climate-denial to coordinated influence networks and propagandistic claims."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lj78qb_mzxg2uy",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity-based insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Peace of Shit Trump",
+        "rationale": "Contains a strong taboo insult targeting a politician."
+      },
+      {
+        "message_id": "reddit_1llwd8t_n04a4ag",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity in constitutional mandate claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "override the fucking constitution.",
+        "rationale": "Includes explicit profanity directed at political behavior."
+      },
+      {
+        "message_id": "reddit_1lenyao_myhvqsg",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Direct 'Fuck' insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Trump and his ghouls.",
+        "rationale": "Uses explicit profanity and dehumanizing/derogatory wording."
+      },
+      {
+        "message_id": "reddit_1t54vlp_ok8gay6",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Slur used to describe ideological group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The r-tard right is, unsurprisingly, infested with unironic neo nazis.",
+        "rationale": "Contains a derogatory slur alongside hate/terror-associated labeling."
+      },
+      {
+        "message_id": "reddit_1twq42a_oqbw8wp",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Appeals to documents/testimony to assert electoral intervention context",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "documents released by the DoJ of declassified material",
+        "rationale": "Presents the claim as evidence-based by referencing released documents."
+      },
+      {
+        "message_id": "twitter_2061799904914088329",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "Direct mention of a politician",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@CoryBooker",
+        "rationale": "Uses an @-mention to address a named individual directly."
+      },
+      {
+        "message_id": "bluesky_986d90974eafd65d0c03e3d5598ff7aeb4b6e358b64ee3ec8a4c88b8a1945442",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Derisive opener",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Too fucking funny.",
+        "rationale": "Opens with a mocking/emphatic ridicule phrase."
+      },
+      {
+        "message_id": "twitter_2061824717078540707",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames 'billionaire class'/corporate greed versus 'our American people'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "their own American people ... The elderly, women, and children are being treated like disposable pawns by the billionaire class.",
+        "rationale": "Contrasts ordinary Americans with elites as opposing sides."
+      }
+    ]
+  }
+}

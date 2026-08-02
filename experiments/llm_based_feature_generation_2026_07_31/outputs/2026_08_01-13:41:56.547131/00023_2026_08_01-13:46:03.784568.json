@@ -1,0 +1,180 @@
+{
+  "batch_id": 23,
+  "message_ids": [
+    "bluesky_93d923d8a208e419fd3f74f426170e1fdfe8cfb20604713060afd94b38a7311a",
+    "bluesky_a86b316dcd38e655773c26f42f70cbe2d3d3affa99d427a8dbb3dd4d452c813b",
+    "bluesky_c7eb9a488dee43ed47937e977500496ddfefd22e5d9d65ce7f0b859635645c50",
+    "reddit_1kduyqe_mqefpvx",
+    "reddit_1ke2vut_mqgh7id",
+    "reddit_1kttbwx_mtztpr9",
+    "reddit_1l4vovt_mwdqn0x",
+    "reddit_1lnjntp_n0ft1kz",
+    "reddit_1tgtqpq_omknbec",
+    "reddit_1tsvd1m_ooyw3jx",
+    "reddit_1tu5tml_op9o023",
+    "reddit_1u1z88l_oqu3wg4",
+    "twitter_2059403706647581054",
+    "twitter_2059446574892073169",
+    "twitter_2061212501954502755",
+    "twitter_2061256666373562703",
+    "twitter_2061447204544405572",
+    "twitter_2061484264978575823",
+    "twitter_2061499198877601826",
+    "twitter_2061613240207986840"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061613240207986840",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Domestic dispute. Horrific. There\u0019s too many guns.\"",
+        "rationale": "The post contains multiple short paragraphs and a multi-sentence account."
+      },
+      {
+        "message_id": "twitter_2061613240207986840",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "very high (line breaks + exclamation)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh my god.\"",
+        "rationale": "Uses strong interjection and heavy punctuation/segmentation to emphasize emotion."
+      },
+      {
+        "message_id": "twitter_2061613240207986840",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns / gun violence",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"There\u0019s too many guns.\"",
+        "rationale": "Explicitly links the incident to firearms availability."
+      },
+      {
+        "message_id": "twitter_2061613240207986840",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "states incident as fact",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"6 people shot and killed by a family member\"",
+        "rationale": "Reports the described event as a factual claim."
+      },
+      {
+        "message_id": "reddit_1ke2vut_mqgh7id",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "direct insults to a political figure",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a Moron, a Lair and a Traitor\"",
+        "rationale": "Uses derogatory labels rather than neutral criticism."
+      },
+      {
+        "message_id": "reddit_1ke2vut_mqgh7id",
+        "feature_name": "call_to_action",
+        "feature_value": "urges removal/sending out party leader",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Dump the Trump!\" / \"Send the whole corrupt machine packing!\"",
+        "rationale": "Uses imperatives to mobilize political action."
+      },
+      {
+        "message_id": "twitter_2061256666373562703",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "none (philosophical rhetorical framing)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The question isn\u0019t whether the Second Amendment exists.\"",
+        "rationale": "No second-person pronouns; includes a direct framing question-like construction."
+      },
+      {
+        "message_id": "twitter_2061256666373562703",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "implied modal constraint (can they exercise?) rather than explicit if/then",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"whether regular people can realistically exercise it\"",
+        "rationale": "Core structure contrasts existence vs practical ability to exercise rights."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1lnjntp_n0ft1kz",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "US-state partisan shorthand (Red/Blue states)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Red states will be dead states\"",
+        "rationale": "Uses partisan state-color labeling as the main subject referent."
+      },
+      {
+        "message_id": "reddit_1lnjntp_n0ft1kz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "contains profanity/derogatory term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"These fuckers\"",
+        "rationale": "Uses explicit profanity to attack a group."
+      },
+      {
+        "message_id": "twitter_2061212501954502755",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration / sanctuary cities / ICE",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"riots against ICE\" / \"sanctuary cities\"",
+        "rationale": "Centers enforcement against immigration and sanctuary policies."
+      },
+      {
+        "message_id": "twitter_2061212501954502755",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "humorous/metaphorical slang",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"luney tunes\"",
+        "rationale": "Uses a colloquial, pop-culture-style insult."
+      },
+      {
+        "message_id": "reddit_1tgtqpq_omknbec",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "all-caps shouting block",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#I'M GETTING A LOT OF HATE MESSAGES\"",
+        "rationale": "Headline-style all-caps intensity."
+      },
+      {
+        "message_id": "reddit_1tgtqpq_omknbec",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "deepstate conspiracy pay-up framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"NOW THE DEEPSTATE NEES TO PAY UP FOR THEIR LIES\"",
+        "rationale": "Attributes wrongdoing to a hidden conspiratorial group."
+      },
+      {
+        "message_id": "bluesky_93d923d8a208e419fd3f74f426170e1fdfe8cfb20604713060afd94b38a7311a",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple explicit profanity tokens",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"this shit\" / \"shut the fuck up\" / \"get the fuck out\"",
+        "rationale": "Contains repeated profanity directed at another person."
+      },
+      {
+        "message_id": "reddit_1kttbwx_mtztpr9",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "stacked abusive insults at a politician",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"You're a usurper, an inserectionist, a tyrant, and a traitor\"",
+        "rationale": "Uses an enumerated list of derogatory accusations."
+      }
+    ]
+  }
+}

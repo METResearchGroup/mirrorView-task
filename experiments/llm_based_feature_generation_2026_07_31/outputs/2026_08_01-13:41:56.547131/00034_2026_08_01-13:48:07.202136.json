@@ -1,0 +1,180 @@
+{
+  "batch_id": 34,
+  "message_ids": [
+    "bluesky_2b143c0138375b933a231c65c7c94e0a03996b85de95cd49f35ec6c9175cdf85",
+    "bluesky_b4e05c89ab89b03c6decb94992756614e459d28e2e7f9fb4c5c51fc7aa2706b7",
+    "bluesky_c174f1e221f030a00bf48158ee25d6b5b35a3da12be6722865cf7f82ce22441e",
+    "reddit_1kg5qlk_mr1z9om",
+    "reddit_1kjdjwq_mrlv92j",
+    "reddit_1l1jhna_mvlee3c",
+    "reddit_1tenhje_om4ni2g",
+    "reddit_1tgxg10_omvq49e",
+    "reddit_1ti6ied_omsbfee",
+    "reddit_1tsvrr2_ooyz7z0",
+    "reddit_1tuwb8f_opcw6z6",
+    "reddit_1twr00b_opr0gdk",
+    "reddit_1txsumx_oq0td6x",
+    "twitter_2060122353573527583",
+    "twitter_2061315883415556564",
+    "twitter_2061319138832679023",
+    "twitter_2061423942544338990",
+    "twitter_2061523472766153009",
+    "twitter_2061760504650235937",
+    "twitter_2061817588683075880"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "bluesky_c174f1e221f030a00bf48158ee25d6b5b35a3da12be6722865cf7f82ce22441e",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "gun reform / firearm policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "pass sensible gun reform",
+        "rationale": "The post explicitly discusses reform related to guns and safety."
+      },
+      {
+        "message_id": "bluesky_c174f1e221f030a00bf48158ee25d6b5b35a3da12be6722865cf7f82ce22441e",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "fucking ballroom",
+        "rationale": "Contains explicit profanity used for emphasis."
+      },
+      {
+        "message_id": "bluesky_c174f1e221f030a00bf48158ee25d6b5b35a3da12be6722865cf7f82ce22441e",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "children as victims; harm from current policy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "children who have to go through active shooter drills",
+        "rationale": "Frames a protected group as directly suffering from the discussed policy environment."
+      },
+      {
+        "message_id": "twitter_2061523472766153009",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration / DACA / Dream Act",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "DACA recipients detained",
+        "rationale": "The post centers on DACA and urges support for the Dream Act/citizenship."
+      },
+      {
+        "message_id": "twitter_2061523472766153009",
+        "feature_name": "call_to_action",
+        "feature_value": "urges audience to contact/pressure Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Will you join me in urging Congress",
+        "rationale": "Uses a direct engagement question to prompt political action."
+      },
+      {
+        "message_id": "twitter_2060122353573527583",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "organization/brand name mention",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@santanderuk",
+        "rationale": "References a specific named entity (Santander UK) and other linked details."
+      },
+      {
+        "message_id": "twitter_2061760504650235937",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate change / environmental policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "climate change demands urgent global action",
+        "rationale": "Explicitly mentions climate change and calls for action to mitigate impacts."
+      },
+      {
+        "message_id": "reddit_1tsvrr2_ooyz7z0",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "rhetorical question challenging alternative stance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Are you suggesting all civilized nations stop enforcing immigration?",
+        "rationale": "Uses an implied-contrast interrogation to argue against the alternative view."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "bluesky_2b143c0138375b933a231c65c7c94e0a03996b85de95cd49f35ec6c9175cdf85",
+        "feature_name": "semantic_content_conspiratorial_framing",
+        "feature_value": "frames laws as backdoor power grab",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Red-flag laws are just backdoor gun grabs",
+        "rationale": "Portrays legislation as deceptive maneuvering rather than neutral policy."
+      },
+      {
+        "message_id": "bluesky_2b143c0138375b933a231c65c7c94e0a03996b85de95cd49f35ec6c9175cdf85",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "government vs constitutional-right holder",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The government stripping your constitutional rights",
+        "rationale": "Opposes an in-group individual/right-holder to a government actor."
+      },
+      {
+        "message_id": "reddit_1tenhje_om4ni2g",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "insulting group label",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "You maga folk are a seriously demented bunch.",
+        "rationale": "Uses derogatory labeling as direct attack."
+      },
+      {
+        "message_id": "twitter_2061817588683075880",
+        "feature_name": "pragmatics_intent_venting_or_expressive",
+        "feature_value": "expresses frustration about discussing politics",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "omfg talking abt politics... is so exhausting",
+        "rationale": "Leans on expressive complaint rather than argument."
+      },
+      {
+        "message_id": "twitter_2061423942544338990",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "lynching analogy used for abortion-style logic",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "lynching is murder",
+        "rationale": "Invokes a historical atrocity as an argumentative analogy."
+      },
+      {
+        "message_id": "reddit_1kjdjwq_mrlv92j",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "claims weaponized justice system and rigged proceedings",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Biden and his DOJ weaponized the entire justice system",
+        "rationale": "Attributes motives and coordination to officials to explain outcomes."
+      },
+      {
+        "message_id": "reddit_1tuwb8f_opcw6z6",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "second-person not present; instead gendered address ('As a woman/man')",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "As a woman, terrible.",
+        "rationale": "Starts with person-based framing using 'As a woman' / 'As a man' to generalize ideology."
+      },
+      {
+        "message_id": "reddit_1kg5qlk_mr1z9om",
+        "feature_name": "call_to_action",
+        "feature_value": "revenge/satisfaction expression tied to voter choice",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I\u0019m glad it directly affected you. I love conservative tears.",
+        "rationale": "Expresses schadenfreude toward a target group based on their political choice."
+      }
+    ]
+  }
+}

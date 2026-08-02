@@ -1,0 +1,180 @@
+{
+  "batch_id": 62,
+  "message_ids": [
+    "bluesky_339ffce692ea460255f738de427d2b43876b925b8be244a18e333c63341c057d",
+    "bluesky_97bb9ea9727f05f35481eb8f504e46659102420e061b13f7e5962c418bb780a1",
+    "bluesky_e293e0b6dc2343a15db676796bf85993c6afcb2428c7914e6e1264a00a83f4fb",
+    "bluesky_e92f7d78b728d6c1d25d44face7af72f735deb531a176dbb171615d9a6719626",
+    "reddit_1ldfp3f_my9la2q",
+    "reddit_1ldol6t_my9ueql",
+    "reddit_1ljlipu_mzn5grv",
+    "reddit_1ll25sk_mzwnxnr",
+    "reddit_1t1zmb4_ojlnqi7",
+    "reddit_1t7hgak_okrxjwa",
+    "reddit_1th143w_omkfs3u",
+    "reddit_1ti151j_omrekdv",
+    "reddit_1tt39gf_oozrdk1",
+    "reddit_1tucjhu_op8oifj",
+    "reddit_1tv1z4j_opdrsoq",
+    "twitter_2060790561762582583",
+    "twitter_2061143936207302806",
+    "twitter_2061401867750379644",
+    "twitter_2061776874708099503",
+    "twitter_2061815731952468242"
+  ],
+  "keep_count": 10,
+  "remove_count": 10,
+  "keep_feature_count": 8,
+  "remove_feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "keep_features": [
+      {
+        "message_id": "twitter_2061815731952468242",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political names (Sanders/Trump) and program names (IRA, Inflation Reduction Act, Tax Scam)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Bernie Sanders\" ... \"HEY BERNIE\" ... \"INFLATION REDUCTION ACT\" ... \"HEY TRUMP\" ... \"2017 TAX SCAM\"",
+        "rationale": "The post repeatedly uses specific proper nouns and named legislation/program references."
+      },
+      {
+        "message_id": "twitter_2061815731952468242",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct address + implied accountability challenge (HEY ... WHAT HAPPENED ...)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"HEY BERNIE, WHAT HAPPENED TO THE TRILLION DOLLARS\"",
+        "rationale": "It uses imperative-style rhetorical prompts directed at named individuals."
+      },
+      {
+        "message_id": "bluesky_339ffce692ea460255f738de427d",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Guns / self-defense / gun reform",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"shooting\" ... \"stand your ground laws\" ... \"Gun Reform\"",
+        "rationale": "The subject is explicitly gun policy and self-defense laws."
+      },
+      {
+        "message_id": "bluesky_e293e0b6dc2343a15db676796bf85993c6afcb2428c7914e6e1264a00a83f4fb",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates removing militias (or not needing them) while contrasting past security forces",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"We don't NEED militias any more.\"",
+        "rationale": "The text contains an explicit prescriptive stance about security/militias."
+      },
+      {
+        "message_id": "reddit_1t1zmb4_ojlnqi7",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Generalized belief in grifting/corruption across policies regardless of party/person",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I just assume someone is grifting no matter what the policy is\"",
+        "rationale": "It frames political actors as systematically corrupt/grifting rather than evaluating specific policies."
+      },
+      {
+        "message_id": "reddit_1ll25sk_mzwnxnr",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity and insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck the Trump Regime\" ... \"fucking loser\" ... \"dumbass\"",
+        "rationale": "There is explicit taboo/profane language targeting political figures."
+      },
+      {
+        "message_id": "bluesky_e92f7d78b728d6c1d25d44face7af72f735deb531a176dbb171615d9a6719626",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Children framed as harmed/persecuted due to lack of gun reform and officials dismissing them",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"school shootings\" ... \"elected officials thinking children are expendable\"",
+        "rationale": "The post emphasizes harm to children and moral condemnation of officials."
+      },
+      {
+        "message_id": "bluesky_97bb9ea9727f05f35481eb8f504e46659102420e061b13f7e5962c418bb780a1",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Accuses a political group (left/left says) of hypocrisy and manipulative motives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The left says they care about children\" ... \"That's a lie.\"",
+        "rationale": "It sets up a polarized group-vs-\u201cwe\u201d moral contrast and uses attribution of motives to the other side."
+      }
+    ],
+    "remove_features": [
+      {
+        "message_id": "reddit_1tucjhu_op8oifj",
+        "feature_name": "historical_analogy_reference",
+        "feature_value": "\u201cUnderbelly\u201d metaphor and incendiary \u201cburn this country down\u201d phrasing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"America\u2019s racist underbelly\" ... \"burn this country down\"",
+        "rationale": "It relies on metaphorical/hyperbolic framing of political groups as capable of destruction."
+      },
+      {
+        "message_id": "reddit_1tt39gf_oozrdk1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Derogatory insults about intelligence (low IQ / brain-dead)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"low IQ liberals\" ... \"brain-dead conservatives\"",
+        "rationale": "The language attacks groups via perceived cognitive deficiency terms."
+      },
+      {
+        "message_id": "reddit_1ldol6t_my9ueql",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps campaign slogan text embedded in quotes",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"TRUMP WAS RIGHT ABOUT EVERYTHING\" / \"HARRIS WAS RIGHT ABOUT EVERYTHING\"",
+        "rationale": "The post uses prominent all-caps slogan emphasis."
+      },
+      {
+        "message_id": "reddit_1ldol6t_my9ueql",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Laughing + contempt via \u201cpathetic\u201d and mock campaign framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"How fucking pathetic!\"",
+        "rationale": "It expresses ridicule directed at a political figure and their campaign behavior."
+      },
+      {
+        "message_id": "twitter_2061401867750379644",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Insulting, dismissive language (morons/cowards) and challenge framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Global warming morons\" ... \"utter cowards\"",
+        "rationale": "The register is highly derisive and informal with direct insult terms."
+      },
+      {
+        "message_id": "reddit_1ljlipu_mzn5grv",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Not present; instead uses argumentative contrast and allegations of electoral manipulation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"It's so weird that Democrats will... but will say third party voters...\"",
+        "rationale": "The structure uses a contrastive comparison (\u201cbut\u201d) to support the claim of hypocrisy."
+      },
+      {
+        "message_id": "reddit_1ljlipu_mzn5grv",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Explicit contrast: split vote vs claiming third-party subversion",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"But\" \"It's like they're completely full of shit.\"",
+        "rationale": "It uses \u201cbut\u201d to set up hypocrisy via opposing behaviors/claims."
+      },
+      {
+        "message_id": "reddit_1t7hgak_okrxjwa",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Immigration policy (illegal immigration, ICE raids)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"illegal immigration\" ... \"ICE\" ... \"raids on farms\"",
+        "rationale": "The post discusses border/immigration enforcement and ICE actions."
+      }
+    ]
+  }
+}

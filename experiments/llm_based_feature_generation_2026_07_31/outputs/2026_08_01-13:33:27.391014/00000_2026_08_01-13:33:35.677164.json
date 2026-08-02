@@ -1,0 +1,126 @@
+{
+  "source_stage1_dir": "/workspace/experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-13:33:18.099196",
+  "n_stage1_batches": 1,
+  "result": {
+    "themes": [
+      {
+        "id": 1,
+        "label": "Profanity / taboo language used for emphasis or insults",
+        "defining_features": [
+          "profanity_or_taboo_language",
+          "informal_register_or_slang",
+          "emphatic_outrage",
+          "ridicule_or_mockery"
+        ],
+        "example_message_ids": [
+          "reddit_1u225u5_oqvbe3g",
+          "reddit_1kjndle_mrp2vs3",
+          "reddit_1lmjifa_n092opi",
+          "reddit_1lb8wyo_mxr2wwj"
+        ],
+        "keep_count": 1,
+        "remove_count": 4,
+        "interpretation": "Posts use explicit expletives and taboo insults; this appears more strongly in the remove-rated group, suggesting profanity/insulting register is a key moderation risk signal here."
+      },
+      {
+        "id": 2,
+        "label": "Political blame via us-vs-them / targeted attribution",
+        "defining_features": [
+          "us_vs_them_framing",
+          "target_directionality"
+        ],
+        "example_message_ids": [
+          "twitter_2061828323722838316",
+          "reddit_1lo82x1_n0nk59o"
+        ],
+        "keep_count": 1,
+        "remove_count": 1,
+        "interpretation": "Content attributes blame to specific political actors or groups (e.g., US/Trump) or directs hostility toward a profession/group (e.g., journalists), aligning with hostile targeting patterns."
+      },
+      {
+        "id": 3,
+        "label": "Conspiratorial or hidden-coordination claims",
+        "defining_features": [
+          "conspiratorial_framing"
+        ],
+        "example_message_ids": [
+          "twitter_2060149644953272762"
+        ],
+        "keep_count": 0,
+        "remove_count": 1,
+        "interpretation": "Some remove-rated content asserts coordinated influence by concealed organizations (e.g., dark money/think tanks), indicating conspiracy framing as a moderation-relevant theme."
+      },
+      {
+        "id": 4,
+        "label": "Election/voter process claims (voter ID, registration, participation mechanics)",
+        "defining_features": [
+          "specific_event_or_bill_reference"
+        ],
+        "example_message_ids": [
+          "twitter_2060149644953272762"
+        ],
+        "keep_count": 0,
+        "remove_count": 1,
+        "interpretation": "A remove-rated post centers on election/voting mechanics (voter ID and registration) and frames them as illegal or suppression-related\u2014moderation may flag procedural-election claims when combined with other risk factors."
+      },
+      {
+        "id": 5,
+        "label": "Causal/evidence-oriented economic or policy linkage",
+        "defining_features": [
+          "causal_claim_present",
+          "primary_policy_domain"
+        ],
+        "example_message_ids": [
+          "twitter_2059359537673744708"
+        ],
+        "keep_count": 1,
+        "remove_count": 0,
+        "interpretation": "Keep-rated content frames cost-of-living/benefits topics and uses causal/evidence-style language (e.g., outcomes tied to interest costs) rather than hostile or conspiratorial rhetoric."
+      },
+      {
+        "id": 6,
+        "label": "Accountability / oversight as a normative requirement",
+        "defining_features": [
+          "normative_moral_language"
+        ],
+        "example_message_ids": [
+          "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25"
+        ],
+        "keep_count": 1,
+        "remove_count": 0,
+        "interpretation": "Keep-rated messaging explicitly invokes scrutiny/oversight and accountability norms, which contrasts with the more aggressive or contemptuous framing in remove-rated examples."
+      },
+      {
+        "id": 7,
+        "label": "Conditional policy \u201cif-then\u201d downstream effects",
+        "defining_features": [
+          "conditional_if_then_structure"
+        ],
+        "example_message_ids": [
+          "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25"
+        ],
+        "keep_count": 1,
+        "remove_count": 0,
+        "interpretation": "Keep-rated content uses conditional structures to predict downstream outcomes from policy passage, suggesting more explanatory/analytical rhetoric."
+      },
+      {
+        "id": 8,
+        "label": "Event-claiming with quoted/foreknowledge framing",
+        "defining_features": [
+          "factual_assertion_vs_speculation"
+        ],
+        "example_message_ids": [
+          "twitter_2061799295783698746"
+        ],
+        "keep_count": 0,
+        "remove_count": 1,
+        "interpretation": "Remove-rated content presents a specific quoted warning/foreknowledge as factual (e.g., \u201csaid months before\u201d), indicating risk where strong event-witnessing claims are asserted."
+      }
+    ],
+    "cross_cutting_themes": [
+      "Use of political framing (blame attribution, election process discussion) spans multiple themes and appears in both keep and remove groups.",
+      "Hostile rhetoric escalation (profanity/insults/ridicule) strongly clusters in remove-rated examples and intersects with targeted directionality.",
+      "Risky belief-structure claims (conspiracy framing, strong event-assertion/foreknowledge) appear in remove-rated themes alongside conspiratorial or factual-extrapolation cues."
+    ]
+  }
+}
