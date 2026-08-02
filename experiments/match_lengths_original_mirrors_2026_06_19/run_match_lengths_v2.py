@@ -18,14 +18,15 @@ from tqdm import tqdm
 
 from experiments.match_lengths_original_mirrors_2026_06_19.prompts import FLIP_PROMPT_V2
 from experiments.match_lengths_original_mirrors_2026_06_19.run_match_lengths import (
-    INPUT_CSV,
     LENGTH_DIFF_THRESHOLD,
     RANDOM_SEED,
     _compute_target_group,
     _output_timestamp,
     _sample_posts,
     _validate_equal_lengths,
+    default_stimuli_source_path,
     get_llm,
+    load_default_stimuli,
 )
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
@@ -109,10 +110,8 @@ def _validate_token_lengths(df: pd.DataFrame) -> None:
 
 
 def main() -> None:
-    if not INPUT_CSV.exists():
-        raise FileNotFoundError(f"Input CSV not found: {INPUT_CSV}")
-
-    df = pd.read_csv(INPUT_CSV)
+    stimuli_path = default_stimuli_source_path()
+    df = load_default_stimuli()
     required_cols = [
         "post_primary_key",
         "original_text",
@@ -121,10 +120,10 @@ def main() -> None:
     ]
     missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
-        raise KeyError(f"Missing required columns in {INPUT_CSV}: {missing_cols}")
+        raise KeyError(f"Missing required columns in {stimuli_path}: {missing_cols}")
 
     sampled = _sample_posts(df)
-    print(f"Sampled {len(sampled)} posts from {INPUT_CSV} (seed={RANDOM_SEED}).")
+    print(f"Sampled {len(sampled)} posts from {stimuli_path} (seed={RANDOM_SEED}).")
 
     results = _generate_flips(sampled)
 

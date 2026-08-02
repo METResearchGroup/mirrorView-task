@@ -10,16 +10,19 @@ from pathlib import Path
 
 import pandas as pd
 
-EXPERIMENT_DIR = Path(__file__).resolve().parent
-FLIPS_CSV = EXPERIMENT_DIR / "generated_flips/combined_flips/flips.csv"
+from shared.data import registry
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_2_STIMULI
+
 LENGTH_DIFF_THRESHOLD = 0.10
 
 
 def main() -> None:
-    df = pd.read_csv(FLIPS_CSV)
+    stimuli_path = registry.resolve_path(STUDY_PHASE_2_PART_2_STIMULI)
+    df = load_dataset(STUDY_PHASE_2_PART_2_STIMULI)
     if "original_text" not in df.columns or "mirrored_text" not in df.columns:
         raise ValueError(
-            f"Expected `original_text` and `mirrored_text` columns in {FLIPS_CSV}"
+            f"Expected `original_text` and `mirrored_text` columns in {stimuli_path}"
         )
 
     original_lengths = df["original_text"].fillna("").astype(str).str.len()
@@ -34,7 +37,7 @@ def main() -> None:
     n_length_diff = int(length_diff_mask.sum())
     n_empty_original = int(empty_original.sum())
 
-    print(f"Flips CSV: {FLIPS_CSV}")
+    print(f"Flips CSV: {stimuli_path}")
     print(f"Total posts: {n_posts:,}")
     print()
     print(f"Average original length (chars): {original_lengths.mean():.1f}")

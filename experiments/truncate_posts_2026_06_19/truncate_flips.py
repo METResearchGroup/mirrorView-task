@@ -23,25 +23,37 @@ from experiments.truncate_posts_2026_06_19.paths import (
     flips_csv,
     flips_with_flag_csv,
 )
+from shared.data import registry
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_2_STIMULI
 
 MAX_ORIGINAL_CHARS = 300
 MAX_MIRRORED_CHARS = 300
 LENGTH_DIFF_THRESHOLD = 0.10
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-INPUT_CSV = (
-    Path(__file__).resolve().parents[1]
-    / "scaled_mirrors_generation_2026_06_02"
-    / "generated_flips"
-    / "combined_flips"
-    / "flips.csv"
-)
 TRUNCATION_VERSION = TruncationVersion.v1
 OUTPUT_CSV = flips_csv(TRUNCATION_VERSION)
 OUTPUT_WITH_FLAG_CSV = flips_with_flag_csv(TRUNCATION_VERSION)
 STANCE_ORDER = ("left", "right")
 
 app = typer.Typer(add_completion=False)
+
+
+def load_default_stimuli() -> pd.DataFrame:
+    """Load the registered Part 2 stimuli table via the shared registry."""
+    return load_dataset(STUDY_PHASE_2_PART_2_STIMULI)
+
+
+def default_stimuli_source_path() -> Path:
+    """Absolute path to the canonical Part 2 stimuli CSV."""
+    return registry.resolve_path(STUDY_PHASE_2_PART_2_STIMULI)
+
+
+def _load_input_df(source_csv: Path | None = None) -> pd.DataFrame:
+    if source_csv is None:
+        return load_default_stimuli()
+    return pd.read_csv(source_csv)
 
 
 def _char_lengths(series: pd.Series) -> pd.Series:
@@ -132,12 +144,13 @@ def _print_metrics_by_stance(
 
 
 def build_truncated_df(
-    source_csv: Path = INPUT_CSV,
+    source_csv: Path | None = None,
 ) -> tuple[pd.DataFrame, pd.Series, pd.Series, pd.Series]:
-    df = pd.read_csv(source_csv)
+    input_path = source_csv if source_csv is not None else default_stimuli_source_path()
+    df = _load_input_df(source_csv)
     if "original_text" not in df.columns or "mirrored_text" not in df.columns:
         raise ValueError(
-            f"Expected `original_text` and `mirrored_text` columns in {source_csv}"
+            f"Expected `original_text` and `mirrored_text` columns in {input_path}"
         )
 
     original_before = df["original_text"].fillna("").astype(str)
@@ -207,7 +220,7 @@ def main(
             (OUTPUT_WITH_FLAG_CSV, True),
         ]
 
-    print(f"Input CSV: {INPUT_CSV}")
+    print(f"Input CSV: {default_stimuli_source_path()}")
     print(f"Truncation limits: original={MAX_ORIGINAL_CHARS}, mirrored={MAX_MIRRORED_CHARS}")
     print(f"Rows truncated (is_truncated=True): {n_truncated:,} ({n_truncated / n_posts:.1%})")
     print()

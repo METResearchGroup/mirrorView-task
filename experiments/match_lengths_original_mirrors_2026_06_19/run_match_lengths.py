@@ -20,15 +20,11 @@ from tqdm import tqdm
 
 from experiments.scaled_mirrors_generation_2026_06_02.prompts import FLIP_PROMPT
 from lib.constants import BEDROCK_REGION, DEFAULT_BEDROCK_SONNET_MODEL
+from shared.data import registry
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_2_STIMULI
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
-INPUT_CSV = (
-    Path(__file__).resolve().parents[1]
-    / "scaled_mirrors_generation_2026_06_02"
-    / "generated_flips"
-    / "combined_flips"
-    / "flips.csv"
-)
 OUTPUT_DIR = EXPERIMENT_DIR / "outputs" / "match_lengths"
 
 SAMPLE_SIZE = 50
@@ -49,6 +45,16 @@ OUTPUT_COLUMNS = [
 class FlipResponse(BaseModel):
     flipped_text: str
     explanation: str
+
+
+def load_default_stimuli() -> pd.DataFrame:
+    """Load the registered Part 2 stimuli table via the shared registry."""
+    return load_dataset(STUDY_PHASE_2_PART_2_STIMULI)
+
+
+def default_stimuli_source_path() -> Path:
+    """Absolute path to the canonical Part 2 stimuli CSV."""
+    return registry.resolve_path(STUDY_PHASE_2_PART_2_STIMULI)
 
 
 def get_llm(
@@ -161,10 +167,8 @@ def _validate_equal_lengths(df: pd.DataFrame, *, flips_csv: Path) -> None:
 
 
 def main() -> None:
-    if not INPUT_CSV.exists():
-        raise FileNotFoundError(f"Input CSV not found: {INPUT_CSV}")
-
-    df = pd.read_csv(INPUT_CSV)
+    stimuli_path = default_stimuli_source_path()
+    df = load_default_stimuli()
     required_cols = [
         "post_primary_key",
         "original_text",
@@ -173,10 +177,10 @@ def main() -> None:
     ]
     missing_cols = [col for col in required_cols if col not in df.columns]
     if missing_cols:
-        raise KeyError(f"Missing required columns in {INPUT_CSV}: {missing_cols}")
+        raise KeyError(f"Missing required columns in {stimuli_path}: {missing_cols}")
 
     sampled = _sample_posts(df)
-    print(f"Sampled {len(sampled)} posts from {INPUT_CSV} (seed={RANDOM_SEED}).")
+    print(f"Sampled {len(sampled)} posts from {stimuli_path} (seed={RANDOM_SEED}).")
 
     results = _generate_flips(sampled)
 

@@ -20,8 +20,8 @@ from experiments.match_lengths_original_mirrors_2026_06_19.ablation_lib import (
     generate_ablation,
 )
 from experiments.match_lengths_original_mirrors_2026_06_19.run_match_lengths import (
-    INPUT_CSV,
     _output_timestamp,
+    load_default_stimuli,
 )
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
@@ -33,7 +33,7 @@ RANDOM_SEED = 42
 
 
 def _load_sample() -> pd.DataFrame:
-    df = pd.read_csv(INPUT_CSV)
+    df = load_default_stimuli()
     if len(df) < SAMPLE_SIZE:
         raise ValueError(f"Input has {len(df)} rows; need at least {SAMPLE_SIZE}.")
     return df.sample(n=SAMPLE_SIZE, random_state=RANDOM_SEED).reset_index(drop=True)
@@ -65,7 +65,7 @@ def _write_ablations_md(rows: list[str]) -> None:
 
 Character parity (≥10% relative diff) is the **primary** metric. Token parity is **diagnostic**.
 
-Each ablation uses **25 posts** sampled from `combined_flips/flips.csv` with `random_state=42`.
+Each ablation uses **25 posts** sampled from the shared Part 2 stimuli registry with `random_state=42`.
 
 | Ablation | Changes | Char fail | Token fail | Too long | Too short | Parse fail | Avg chars (mirr/orig) | Avg tokens (mirr/orig) | Output CSV |
 |---|---|---:|---:|---:|---:|---:|---|---:|---|
@@ -129,9 +129,6 @@ def main() -> None:
         ablation_ids = args.ablation
     else:
         parser.error("Specify --ablation ID or --all")
-
-    if not INPUT_CSV.exists():
-        raise FileNotFoundError(f"Input CSV not found: {INPUT_CSV}")
 
     for ablation_id in ablation_ids:
         run_ablation(ablation_id, skip_existing=args.skip_existing)
