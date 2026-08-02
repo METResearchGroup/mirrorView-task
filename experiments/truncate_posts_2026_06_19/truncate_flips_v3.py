@@ -20,12 +20,13 @@ from experiments.truncate_posts_2026_06_19.truncation_v3 import (
     truncate_pair,
 )
 from experiments.truncate_posts_2026_06_19.truncate_flips import (
-    INPUT_CSV,
     STANCE_ORDER,
     _char_lengths,
     _print_metrics,
     _print_metrics_by_stance,
     _write_output,
+    default_stimuli_source_path,
+    _load_input_df,
 )
 from experiments.truncate_posts_2026_06_19.truncate_flips_v2 import (
     _catastrophic_truncation_count,
@@ -57,12 +58,13 @@ def _complete_sentence_counts(
 
 
 def build_truncated_df_v3(
-    source_csv: Path = INPUT_CSV,
+    source_csv: Path | None = None,
 ) -> tuple[pd.DataFrame, pd.Series, pd.Series, pd.Series]:
-    df = pd.read_csv(source_csv)
+    input_path = source_csv if source_csv is not None else default_stimuli_source_path()
+    df = _load_input_df(source_csv)
     if "original_text" not in df.columns or "mirrored_text" not in df.columns:
         raise ValueError(
-            f"Expected `original_text` and `mirrored_text` columns in {source_csv}"
+            f"Expected `original_text` and `mirrored_text` columns in {input_path}"
         )
 
     original_before = df["original_text"].fillna("").astype(str)
@@ -119,7 +121,7 @@ def main(
             (OUTPUT_WITH_FLAG_CSV, True),
         ]
 
-    print(f"Input CSV: {INPUT_CSV}")
+    print(f"Input CSV: {default_stimuli_source_path()}")
     print(
         f"Truncation strategy: v3 sentence-first "
         f"(max_chars={MAX_CHARS}, sentence_overflow={SENTENCE_OVERFLOW}, independent sides)"

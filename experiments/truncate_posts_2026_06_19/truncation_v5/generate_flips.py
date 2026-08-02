@@ -10,8 +10,7 @@ This is the v5 extension of the v4 prompt intervention:
     topic has no natural opposite-stance position.
 
 Inputs
-  - Default input CSV:
-      experiments/scaled_mirrors_generation_2026_06_02/generated_flips/combined_flips/flips.csv
+  - Default input: ``STUDY_PHASE_2_PART_2_STIMULI`` via the shared registry loader.
     Required columns:
       - post_primary_key
       - original_text
@@ -57,20 +56,15 @@ from experiments.truncate_posts_2026_06_19.truncation_v3 import (
     truncate_social_post,
 )
 from lib.constants import BEDROCK_REGION, DEFAULT_BEDROCK_SONNET_MODEL
+from shared.data import registry
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_2_STIMULI
 
 app = typer.Typer(add_completion=False)
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = EXPERIMENT_DIR / "outputs" / "truncation_v5"
 OUTPUT_CSV = OUTPUT_DIR / "flips.csv"
-
-DEFAULT_INPUT_CSV = (
-    EXPERIMENT_DIR.parent
-    / "scaled_mirrors_generation_2026_06_02"
-    / "generated_flips"
-    / "combined_flips"
-    / "flips.csv"
-)
 
 BATCH_SIZE = 25
 MAX_CONCURRENCY = 10
@@ -155,8 +149,11 @@ def _append_rows(out_fp: Path, rows: list[dict[str, str]], *, write_header: bool
     )
 
 
-def _iter_input_rows(input_csv: Path) -> tuple[int | None, "pd.io.parsers.TextFileReader"]:
-    # TextFileReader supports chunked iteration without loading the full CSV into memory.
+def _iter_input_rows(
+    input_csv: Path | None,
+) -> tuple[int | None, "pd.io.parsers.TextFileReader | list[pd.DataFrame]"]:
+    if input_csv is None:
+        return None, [load_dataset(STUDY_PHASE_2_PART_2_STIMULI)]
     reader = pd.read_csv(input_csv, chunksize=CHUNK_SIZE)
     return None, reader
 
@@ -175,12 +172,17 @@ def _validate_input_cols(df: pd.DataFrame, *, input_csv: Path) -> None:
 
 def generate_flips(
     *,
-    input_csv: Path = DEFAULT_INPUT_CSV,
+    input_csv: Path | None = None,
     output_csv: Path = OUTPUT_CSV,
     max_posts: int | None = None,
     force: bool = False,
 ) -> None:
-    if not input_csv.exists():
+    input_label = (
+        str(registry.resolve_path(STUDY_PHASE_2_PART_2_STIMULI))
+        if input_csv is None
+        else str(input_csv)
+    )
+    if input_csv is not None and not input_csv.exists():
         raise FileNotFoundError(f"Missing input CSV: {input_csv}")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -248,7 +250,7 @@ def generate_flips(
     for chunk in reader:
         if chunk.empty:
             continue
-        _validate_input_cols(chunk, input_csv=input_csv)
+        _validate_input_cols(chunk, input_csv=Path(input_label))
 
         # De-dupe within chunk to avoid repeated ids causing duplicate writes inside one run.
         chunk = chunk.drop_duplicates(subset=["post_primary_key"], keep="first")
@@ -302,10 +304,10 @@ def generate_flips(
 
 @app.command()
 def main(
-    input_csv: Path = typer.Option(
-        DEFAULT_INPUT_CSV,
+    input_csv: Path | None = typer.Option(
+        None,
         "--input-csv",
-        help="Source CSV of originals to mirror.",
+        help="Source CSV of originals to mirror (default: shared Part 2 stimuli registry).",
     ),
     max_posts: int | None = typer.Option(
         None,

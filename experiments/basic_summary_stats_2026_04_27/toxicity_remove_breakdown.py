@@ -12,7 +12,7 @@ Run from repo root::
 
     PYTHONPATH=. uv run python experiments/basic_summary_stats_2026_04_27/toxicity_remove_breakdown.py
 
-Uses the newest ``scripts/mirrorview_pilot_data_*.csv`` (same discovery rule as
+Loads ``STUDY_PHASE_2_PART_1_RESULTS_PILOT`` via the shared registry (same source as
 ``summary_stats.py``).
 """
 
@@ -20,10 +20,9 @@ from __future__ import annotations
 
 import pandas as pd
 
-from experiments.basic_summary_stats_2026_04_27.summary_stats import (
-    CONDITION_DISPLAY_MAP,
-    find_latest_export_csv,
-)
+from experiments.basic_summary_stats_2026_04_27.summary_stats import CONDITION_DISPLAY_MAP
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_PILOT
 
 # Observed pilot label for the middle bucket (see also ``public/main.js`` / post assignments).
 MIDDLE_TOXICITY_CANONICAL = "sample_middle_toxicity"
@@ -164,16 +163,8 @@ def print_empirical(df: pd.DataFrame) -> None:
 
 def main() -> None:
     print_pipeline_finding()
-    try:
-        path = find_latest_export_csv()
-    except FileNotFoundError as err:
-        print(
-            "\nNo export CSV found under scripts/ (run scripts/export_study_results.py). "
-            f"Detail: {err}"
-        )
-        return
-    print(f"\nLoaded export: {path}")
-    df = pd.read_csv(path, low_memory=False)
+    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_PILOT, low_memory=False)
+    print(f"\nLoaded dataset: {STUDY_PHASE_2_PART_1_RESULTS_PILOT}")
     print_empirical(df)
 
 

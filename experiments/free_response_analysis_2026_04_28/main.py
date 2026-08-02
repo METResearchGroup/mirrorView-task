@@ -22,10 +22,12 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_PILOT
+
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = SCRIPT_DIR.parent.parent
-SOURCE_CSV = PROJECT_ROOT / "scripts" / "mirrorview_pilot_data_2026_04_28-16:31:47.csv"
 FILTERED_CSV = SCRIPT_DIR / "phase1_free_response_filtered.csv"
 PLOTS_DIR = SCRIPT_DIR / "plots"
 
@@ -93,15 +95,11 @@ def safe_divide(numerator: int | float, denominator: int | float) -> float:
 
 
 def generate_filtered_dataframe(
-    source_csv: Path = SOURCE_CSV,
     *,
     export_csv: Path = FILTERED_CSV,
 ) -> pd.DataFrame:
     """Create and export rows with populated phase 1 reflection text and influence rating."""
-    if not source_csv.exists():
-        raise FileNotFoundError(f"Source CSV not found: {source_csv}")
-
-    df = pd.read_csv(source_csv, low_memory=False)
+    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_PILOT, low_memory=False)
     required = {
         "prolific_id",
         "party_group",
@@ -207,7 +205,7 @@ def render_overview(console: Console, df: pd.DataFrame) -> None:
     table = make_table("Overview")
     table.add_column("Measure")
     table.add_column("Value", justify="right")
-    table.add_row("Source CSV", SOURCE_CSV.name)
+    table.add_row("Source dataset", STUDY_PHASE_2_PART_1_RESULTS_PILOT)
     table.add_row("Filtered CSV", str(FILTERED_CSV.relative_to(PROJECT_ROOT)))
     table.add_row("Filtered rows", f"{len(df):,}")
     table.add_row("Distinct users", f"{df['prolific_id'].nunique():,}")
