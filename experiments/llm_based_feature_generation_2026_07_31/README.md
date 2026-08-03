@@ -12,11 +12,10 @@ Once that's done, we'll take that final list as our substantive experimental res
 
 ## Pipeline
 
-1. Load Study Phase 2 Part 2 results via `shared/data/`.
-2. Derive one modal keep/remove label per post (tie → remove).
-3. Sample a configurable fraction without replacement and form mixed keep/remove batches.
-4. Stage 1: feature generation per batch via `research_tools.llm.runner.run`.
-5. Stage 2: thematic commonality synthesis over aggregated stage-1 features.
+1. Load shared modal keep/remove labels via `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS`.
+2. Sample a configurable fraction without replacement and form mixed keep/remove batches.
+3. Stage 1: feature generation per batch via `research_tools.llm.runner.run`.
+4. Stage 2: thematic commonality synthesis over aggregated stage-1 features.
 
 Outputs are written under `outputs/{timestamp}/` for each stage (metadata plus per-item JSON).
 

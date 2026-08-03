@@ -1,4 +1,8 @@
-"""Raw-only loader for datasets registered in ``shared.data.registry``."""
+"""Loader for datasets registered in ``shared.data.registry``.
+
+Resolves any registered name (raw or transformed) to its CSV path and reads it
+with no further transforms.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +13,8 @@ from shared.data import registry
 
 def load_dataset(name: str, *, low_memory: bool = False) -> pd.DataFrame:
     """Load a registered study CSV by name with no transforms.
+
+    Works for raw and transformed registry entries alike.
 
     Raises:
         KeyError: If ``name`` is not in the registry.
