@@ -42,139 +42,55 @@ Compare two experimental arms. **Vary only the prompt.** Same posts, same batchi
 
 | Arm | Prompt |
 | --- | ------ |
-| **Control** | Regular keep/remove classification prompt (study-linked-fate style; pinned above) |
-| **Treatment** | Classification prompt built from the truncated feature set produced in Part 1 |
+| **A (control)** | Regular keep/remove classification prompt (study-linked-fate style; pinned above) |
+| **B (treatment)** | Classification prompt built from the combined keep + remove criteria lists |
 
-Two parts:
+Split across two experiment folders:
 
-1. **Part 1 — Feature selection.** Turn the mined feature/theme pool into a small, deduplicated, topic-artifact-filtered feature set.
-2. **Part 2 — Prompt comparison.** Run both arms on the same 500-post subset and compare agreement with human modal keep/remove labels.
+| Work | Folder | Detail plan |
+| ---- | ------ | ----------- |
+| Feature curation (extract → cluster → dedupe), run separately for keep and remove | `experiments/create_llm_feature_clusters_2026_08_02/` | `PLAN.md` there |
+| Prompt comparison (Arm A vs Arm B on 500 posts) | `experiments/prompt_engineering_llm_feature_clusters_2026_08_02/` | `PLAN.md` there |
 
 ```text
-PR #33 stage-1 features (+ stage-2 themes as auxiliary signal)
+PR #33 stage-1 features
         │
         ▼
-Part 1: extract → pool (+ metadata) → cluster → dedupe → filter topic artifacts
+create_llm_feature_clusters_2026_08_02/
+  keep/   part_1 → part_2 → part_3   → keep criteria list
+  remove/ part_1 → part_2 → part_3   → remove criteria list
         │
-        ▼
-truncated feature checklist
-        │
-        ▼
-Part 2: 500 posts → batches of 5 → Control prompt vs Feature prompt → compare to human labels
+        ▼  combine keep + remove checklists
+prompt_engineering_llm_feature_clusters_2026_08_02/
+  500 posts → batches of 5 → Arm A vs Arm B → score vs human labels
 ```
 
 ---
 
-## Part 1: Figure out which features we want to use
+## Experiment 1: Create feature clusters (`create_llm_feature_clusters_2026_08_02`)
 
-We already have the upstream mining from PR #33. Part 1 reuses those outputs and runs a three-step curation pipeline (plus a topic-artifact filter) to produce a truncated feature set suitable for a classification prompt:
+Full plan: `experiments/create_llm_feature_clusters_2026_08_02/PLAN.md`.
 
-1. **Extract** — flatten discovered features into a base pool, with metadata tagging.
-2. **Cluster** — build categories up from the features themselves (not a fixed taxonomy), then assign every feature to one category.
-3. **Dedupe** — within each category, merge features that say the same thing, joining their provenance into one survivor.
+Run the same three-part pipeline independently on **keep** features and **remove** features so we get criteria predictive of each class:
 
-### Step 1 — Extract into a base pool (with metadata)
+1. **Part 1 — Extract** — flatten label-specific PR #33 features into a pool (+ metadata); filter topic-domain artifacts (guns/abortion/etc. as domain tags).
+2. **Part 2 — Cluster + label** — run **both** k-means and hierarchical clustering (+ dendrogram); each method writes the same `categories.json` schema; then `generate_categories_for_clusters.py` asks an LLM for a category label per cluster.
+3. **Part 3 — Dedupe** — merge near-duplicates within categories; emit the final criteria list for that label class.
 
-Flatten stage-1 feature records (and optionally stage-2 theme rows as secondary sources) into a single pool.
-
-Each pool item should carry enough metadata to support clustering, filtering, and audit:
-
-| Field | Purpose |
-| ----- | ------- |
-| `id` | Stable pool id |
-| `feature_text` / `feature_name` + `feature_value` | Concrete feature statement |
-| `category` | Stage-1 category tag if present (`surface_lexical`, `topic_subject`, …, `open_ended`) |
-| `label_affinity` | `keep`, `remove`, or both (from which side it was extracted / theme keep-vs-remove counts) |
-| `source_batch_ids` / `source_message_ids` | Provenance |
-| `evidence_span` / `rationale` | Audit trail |
-| `is_topic_domain` | Provisional flag for policy-topic features (guns, abortion, …) — see filter below |
-| `source_stage` | `stage1_feature` vs `stage2_theme` |
-
-Output: a pool JSON under a new experiment folder that is the only input to clustering.
-
-### Step 2 — Cluster and build categories from the features
-
-Do **not** start from a fixed taxonomy. Let categories emerge from the pool itself.
-
-Clustering options to investigate (pick one after a small bake-off; document the choice):
-
-1. **Embedding + K-means** — embed `feature_text`, choose \(k\) via silhouette / elbow, assign each feature to a cluster; name clusters with a short LLM pass over cluster members.
-2. **Hierarchical clustering + dendrogram** — agglomerative clustering on the same embeddings; cut the tree at a height that yields a readable number of categories; inspect the dendrogram before freezing the cut.
-3. **LLM-assisted clustering** — shard the pool, ask an LLM to propose categories from the features and assign each feature; useful as a qualitative check against the geometric methods.
-
-Deliverables from this step:
-
-- Emergent taxonomy with short category definitions
-- Assignment of every pool item to one category
-- Optional: dendrogram / cluster diagnostics figure for the review writeup
-
-### Step 3 — Dedupe within categories
-
-Category by category, merge features that say the same thing (near-duplicate wording or same operational cue). Join provenance lists (`source_batch_ids`, keep/remove counts) onto the survivor.
-
-Output: a merged feature list — still pre-filter.
-
-### Topic-artifact filter (required)
-
-**Filter out rules whose substance is “this post is about guns / abortion / …”** (and similarly immigration, climate, elections *as topic tags*). Those are artifacts of how we ingested data: we intentionally queried for keywords including `"guns"` and `"abortion"`, among others. Topic presence is not a stance-neutral signal of justified disagreement; the discovery run’s own interpretation already notes that tone/form dominates topic.
-
-Keep features that are **form / rhetoric / pragmatics** even when the example text happens to be about guns or abortion (e.g. “profanity + us-vs-them”, “conspiratorial framing”, “call to violence”). Drop features whose *definition* is the policy domain itself (e.g. theme rows like “Gun rights / gun reform policy advocacy”, “Policy domain focus: abortion/reproductive rights”).
-
-Apply this filter after dedupe (or as a hard exclusion during extract for obvious `primary_policy_domain` / topic-only items). Record excluded items in an audit file so the cut is reviewable.
-
-### Part 1 exit criteria
-
-A short, human-reviewable **truncated feature checklist** (target: small enough to fit in a classification prompt — order-of-magnitude tens of features, not hundreds), grouped by emergent categories, with:
-
-- No topic-domain artifact features
-- Provenance back to the PR #33 pool
-- Keep-vs-remove affinity notes where stable
-
-This checklist becomes the only feature content injected into the treatment prompt in Part 2.
+Layout: `keep/{part_1,part_2,part_3}/` and `remove/{part_1,part_2,part_3}/`.
 
 ---
 
-## Part 2: Compare feature-based prompt vs regular classification prompt
+## Experiment 2: Prompt comparison (`prompt_engineering_llm_feature_clusters_2026_08_02`)
 
-### Dataset
+Full plan: `experiments/prompt_engineering_llm_feature_clusters_2026_08_02/PLAN.md`.
 
-- Source: Study Phase 2 Part 2 results via `shared/data/` (`STUDY_PHASE_2_PART_2_RESULTS_FULL`), modal keep/remove per post (tie → remove), same recipe as PR #33.
-- Sample: **500 posts**, stratified by keep/remove, frozen to a CSV with a fixed seed so re-runs do not reshuffle.
-- Prefer posts **held out** from the PR #33 50% discovery subset when possible, so Part 2 is not scoring the same posts that minted the features. If full holdout is impractical, document overlap and treat results as exploratory.
+- Freeze **500** posts (modal keep/remove); batches of **5**.
+- **Arm A:** regular study-linked-fate prompt.
+- **Arm B:** same task + combined keep/remove criteria from Experiment 1 Part 3.
+- Metrics: accuracy/F1 vs human labels; agreement between arms; disagreement cases.
 
-### Batching
-
-- Group into **batches of 5 posts** per LLM call (100 batches).
-- Batch composition: decide and pin before the run (e.g. mixed keep/remove within each batch vs homogeneous). Mixed is closer to the discovery setup; either is fine as long as both arms see identical batches.
-
-### Experimental design
-
-| Factor | Value |
-| ------ | ----- |
-| Varied | Prompt only (control vs feature-conditioned) |
-| Held fixed | Model, temperature / decoding, post texts, batch membership, seed |
-| Labels | Human modal keep/remove |
-| Unit of analysis | Per-post predicted label (and optional confidence) |
-
-**Control arm:** pinned regular classification prompt (study-linked-fate template).
-
-**Treatment arm:** same task framing, but the system/user instructions include the Part 1 truncated feature checklist as the criteria to weigh (e.g. “prefer remove when these remove-leaning cues are present; prefer keep when these keep-leaning cues dominate; ignore policy topic alone”). Exact wording is an implementation detail; the scientific constraint is that treatment content is derived only from the Part 1 checklist.
-
-### Metrics (minimal)
-
-- Accuracy / F1 vs human modal label (overall and per class)
-- Agreement between control and treatment (where they diverge is as interesting as who wins)
-- Optional: calibration of remove probability if the schema asks for it
-
-No need for a large metric suite in v1; the question is whether feature grounding changes decisions in a label-aligned way.
-
-### Outputs
-
-Under a new experiment folder (name TBD at implementation time), write:
-
-- Frozen 500-post subset CSV
-- Per-arm per-batch JSON predictions
-- A short `RESULTS.md` comparing the two arms
+Depends on Experiment 1 finishing both `keep/part_3` and `remove/part_3`.
 
 ---
 
@@ -196,18 +112,19 @@ Under a new experiment folder (name TBD at implementation time), write:
 
 ## Open decisions for review
 
-1. **Clustering method:** K-means vs hierarchical dendrogram cut vs LLM-assisted (or geometric first, LLM naming second).
-2. **Target size of truncated checklist** after dedupe + topic filter (e.g. ~15–40 features).
-3. **Control prompt pin:** study-linked-fate `STUDY_PROMPT_TEMPLATE` vs a simpler one-shot original/mirror prompt from `models/llm_api/`.
-4. **Holdout:** require zero overlap with the PR #33 50% subset, or allow overlap and flag it.
-5. **Batch label mix:** mixed keep/remove in each batch of 5 vs random batches.
-6. **Model:** stay on `gpt-5.4-nano` for cheap iteration, or match a stronger baseline used in prior keep/remove LLM runs.
+See open decisions in each experiment `PLAN.md`. Cross-cutting ones:
+
+1. Embedding model and how \(k\) / dendrogram cut are chosen.
+2. Target size of each final criteria list.
+3. Whether Arm B uses k-means lists, hierarchical lists, or a reviewed merge.
+4. Holdout from the PR #33 50% discovery subset.
+5. Batch label mix and model id for the prompt comparison.
 
 ---
 
 ## Suggested next steps after this draft is approved
 
-1. Implement Part 1 as a small experiment/script package that reads PR #33 outputs → writes pool / taxonomy / assignments / truncated checklist.
-2. Human review of the truncated checklist (especially the topic-artifact cut).
-3. Implement Part 2 runner (500 posts, batches of 5, two prompt arms).
-4. Write `RESULTS.md` and decide whether feature-conditioned prompting is worth scaling or folding into a trained model.
+1. Implement `experiments/create_llm_feature_clusters_2026_08_02/` (keep + remove, parts 1–3).
+2. Human review of the final keep/remove criteria lists (especially the topic-artifact cut).
+3. Implement `experiments/prompt_engineering_llm_feature_clusters_2026_08_02/` and run Arm A vs Arm B.
+4. Write that experiment’s `RESULTS.md` and decide whether feature-conditioned prompting is worth scaling.
