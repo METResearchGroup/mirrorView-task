@@ -70,7 +70,16 @@ bash experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/download_at_samp
 
 Tiny inspection files (e.g. `RC_2005-12.zst`, ~143 KB) are useful for format checks, but are not actually useful for development (as these don't have the posts we want and are far too old).
 
-## Run
+### Run the full extraction and classification
+
+Once we get a sense for the format, we can now run the full extraction and classification pipeline.
+
+This involves:
+
+1. Loading in a given file.
+2. Running it through the Perspective API to get toxicity scores.
+3. Saving the ones that meet our criteria for "high toxicity".
+4. Continuing until a stop condition is met.
 
 ```bash
 
@@ -81,16 +90,14 @@ PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/ru
 # Orchestrator (default: max 10 files attempted)
 PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py
 
-# Unlimited file cap; Quest production uses --stem-prefix RC_2025 (see HOW_TO_RUN_ACTUAL_DATA.md)
+# Unlimited file cap; Quest production uses --stem-prefix RC_2025
 PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/main.py --max-files 0 --stem-prefix RC_2025
 ```
 
-On Quest, use Slurm templates in `scripts/`:
+Since there's not enough memory to run this as a regular Python script on the default login nodes on Quest, we have to submit these as Slurm jobs. We have two scripts for this:
 
-- **`run_quest_one_month.slurm`** — calibration on one `RC_2025-*.zst` month (default `RC_2025-06`)
-- **`run_quest.slurm`** — full 2025 orchestration (`--stem-prefix RC_2025`)
-
-Details in [HOW_TO_RUN_ACTUAL_DATA.md](HOW_TO_RUN_ACTUAL_DATA.md).
+- `run_quest_one_month.slurm`: a test run on one file`RC_2025-*.zst` month (default `RC_2025-06`)
+- `run_quest.slurm` — full run on all 2025 data (`--stem-prefix RC_2025`)
 
 ## Outputs
 
@@ -99,14 +106,8 @@ For each scanned input file `RC_YYYY-MM.zst`:
 ```text
 outputs/{stem}/
   metadata.json
-  high_toxic_comments.parquet   # mirrorview 13 cols + prob_toxic, prob_toxic >= 0.7 only
+  high_toxic_comments.parquet
 outputs/total_metadata.json     # cumulative counts across files
 ```
 
-Re-running a file whose `metadata.json` already exists logs `Skipping {stem}, metadata.json exists` and does not re-score.
-
-## Limits (config.py)
-
-- `GLOBAL_STOP_COUNT = 50_000` — high-toxic comments across all files
-- `MAX_SESSION_API_CALLS = 1_000_000` — Perspective API calls per `main.py` session
-- `MAX_FILES_TO_PROCESS = 10` — testing cap (override with `--max-files 0`)
+We want to avoid expensive re-computation, so re-running a file whose `metadata.json` already exists logs `Skipping {stem}, metadata.json exists` and does not re-score (this assumes that file completed processing, which is an OK assumption on our end).
