@@ -1,4 +1,4 @@
-"""Named catalog of canonical study datasets under ``shared/data/raw/``."""
+"""Named catalog of canonical study datasets under ``shared/data/``."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-DatasetKind = Literal["results", "stimuli"]
+DatasetKind = Literal["results", "stimuli", "transformed"]
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -15,6 +15,7 @@ STUDY_PHASE_2_PART_1_RESULTS_FULL = "STUDY_PHASE_2_PART_1_RESULTS_FULL"
 STUDY_PHASE_2_PART_1_STIMULI = "STUDY_PHASE_2_PART_1_STIMULI"
 STUDY_PHASE_2_PART_2_RESULTS_FULL = "STUDY_PHASE_2_PART_2_RESULTS_FULL"
 STUDY_PHASE_2_PART_2_STIMULI = "STUDY_PHASE_2_PART_2_STIMULI"
+STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS = "STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS"
 
 
 @dataclass(frozen=True)
@@ -56,6 +57,14 @@ DATASETS: dict[str, DatasetEntry] = {
         name=STUDY_PHASE_2_PART_2_STIMULI,
         relative_path=Path("shared/data/raw/study_phase_2_part_2/stimuli/flips.csv"),
         kind="stimuli",
+        study_phase="study_phase_2_part_2",
+    ),
+    STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS: DatasetEntry(
+        name=STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS,
+        relative_path=Path(
+            "shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv"
+        ),
+        kind="transformed",
         study_phase="study_phase_2_part_2",
     ),
 }
