@@ -1,4 +1,4 @@
-"""Export one Bolun comment Parquet month to Pushshift-shaped JSONL .zst for runner.py."""
+"""Export one Bolun comment month to the scorer's Pushshift-like input format."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ import pyarrow.parquet as pq
 import typer
 import zstandard as zstd
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import (
     BOLUN_EXTRACTED_DIR,
     BOLUN_STAGED_DIR,
 )
@@ -21,10 +21,14 @@ BATCH_SIZE = 10_000
 
 
 def parquet_path_for_month(month: str) -> Path:
+    """Return the expected extracted Parquet path for a comment month."""
+
     return EXTRACT_ROOT / "parquet" / "comments" / f"month={month}" / "comments.parquet"
 
 
 def row_to_pushshift(record: dict) -> dict:
+    """Map one Parquet record into the fields consumed by the scorer."""
+
     return {
         "id": record["comment_id"],
         "author": record["author"],
@@ -47,6 +51,8 @@ def main(
         help="Output .zst path (default: data/raw/bolun/comments/RC_{month}.zst)",
     ),
 ) -> None:
+    """Write a month of comment data as compressed JSONL for pipeline testing."""
+
     src = parquet_path_for_month(month)
     if not src.is_file():
         raise typer.Exit(f"Parquet not found: {src}")

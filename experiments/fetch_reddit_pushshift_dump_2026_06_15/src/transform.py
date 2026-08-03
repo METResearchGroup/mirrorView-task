@@ -1,11 +1,11 @@
-"""Map filtered Pushshift comments to mirrorview row shape."""
+"""Convert filtered Pushshift comments into mirrorview-ready rows."""
 
 from __future__ import annotations
 
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.models import (
     MirrorviewCommentRow,
     PushshiftCommentRaw,
 )
@@ -33,7 +33,12 @@ def compute_depth(
     comment: PushshiftCommentRaw,
     parent_lookup: dict[str, PushshiftCommentRaw],
 ) -> int:
-    """Walk parent_id chain within filtered comments; top-level replies depth=0."""
+    """Estimate reply depth using only comments available in the current file.
+
+    Depth is measured relative to the submission root. Missing parents and
+    cycles terminate the walk early so partial datasets still produce a stable
+    depth value.
+    """
 
     if comment.parent_id.startswith("t3_"):
         return 0
@@ -65,7 +70,7 @@ def to_mirrorview_row(
     depth: int,
     sync_timestamp: str,
 ) -> MirrorviewCommentRow:
-    """Convert a filtered Pushshift comment to mirrorview column shape."""
+    """Project one filtered Pushshift comment into mirrorview column names."""
 
     permalink = comment.permalink or _synthesize_permalink(comment)
     if not permalink.startswith("/"):
@@ -93,7 +98,15 @@ def build_mirrorview_rows(
     comments: list[PushshiftCommentRaw],
     sync_timestamp: str,
 ) -> list[MirrorviewCommentRow]:
-    """Build mirrorview rows with depth computed from in-file parent lookup."""
+    """Build mirrorview rows and derive depth from in-file parent references.
+
+    Parameters
+    ----------
+    comments : list of PushshiftCommentRaw
+        Filtered comments from a single input file.
+    sync_timestamp : str
+        Timestamp stamped onto every emitted row for downstream lineage.
+    """
 
     parent_lookup = {c.id: c for c in comments}
     return [
