@@ -1,4 +1,4 @@
-"""Load Study Phase 2 Part 2 posts, derive modal keep/remove labels, and form batches."""
+"""Load shared Part 2 modal keep/remove labels and form batches."""
 
 from __future__ import annotations
 
@@ -9,81 +9,15 @@ from typing import Any
 import pandas as pd
 
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_2_RESULTS_FULL
+from shared.data.registry import STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS
 
-_REQUIRED_COLUMNS = {"post_id", "original_text", "mirror_text", "decision"}
 FROZEN_SUBSET_CSV = Path(__file__).resolve().parent / "data" / "sampled_subset.csv"
 PRODUCTION_SAMPLE_FRACTION = 0.50
 
 
 def load_posts() -> pd.DataFrame:
-    """Load Part 2 results and derive one modal keep/remove row per post."""
-    raw = load_dataset(STUDY_PHASE_2_PART_2_RESULTS_FULL, low_memory=False)
-    return _derive_training_frame(raw)
-
-
-def _derive_training_frame(raw: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate trial rows to one modal keep/remove decision per post."""
-    trials = raw.copy()
-    trials["decision"] = trials["decision"].astype(str).str.lower().str.strip()
-
-    if "evaluation_mode" in trials.columns:
-        trials["evaluation_mode"] = (
-            trials["evaluation_mode"].astype(str).str.lower().str.strip()
-        )
-        trials = trials[trials["evaluation_mode"] == "linked_fate"].copy()
-
-    trials = trials[trials["decision"].isin(["keep", "remove"])].copy()
-
-    missing = _REQUIRED_COLUMNS - set(trials.columns)
-    if missing:
-        raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
-
-    trials["post_id"] = trials["post_id"].astype(str)
-
-    text_nunique = (
-        trials.groupby("post_id", dropna=False)
-        .agg(
-            original_text_nunique=("original_text", lambda series: series.fillna("").nunique()),
-            mirror_text_nunique=("mirror_text", lambda series: series.fillna("").nunique()),
-        )
-        .reset_index()
-    )
-    unstable = text_nunique[
-        (text_nunique["original_text_nunique"] != 1)
-        | (text_nunique["mirror_text_nunique"] != 1)
-    ]
-    if len(unstable):
-        example_post = str(unstable.iloc[0]["post_id"])
-        raise ValueError(
-            "Expected stable original/mirror text per post_id, but found conflicts. "
-            f"Example problematic post_id={example_post}."
-        )
-
-    counts = (
-        trials.groupby(["post_id", "decision"], dropna=False)
-        .size()
-        .unstack(fill_value=0)
-        .reset_index()
-    )
-    if "keep" not in counts.columns:
-        counts["keep"] = 0
-    if "remove" not in counts.columns:
-        counts["remove"] = 0
-
-    counts["decision"] = counts.apply(
-        lambda row: "keep" if int(row["keep"]) > int(row["remove"]) else "remove",
-        axis=1,
-    )
-
-    texts = trials.drop_duplicates(subset=["post_id"])[
-        ["post_id", "original_text", "mirror_text"]
-    ]
-    out = counts.merge(texts, on="post_id", how="left")
-    out = out.rename(columns={"post_id": "message_id"})
-    return out[["message_id", "original_text", "mirror_text", "decision"]].reset_index(
-        drop=True
-    )
+    """Load shared modal keep/remove labels (one row per post)."""
+    return load_dataset(STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS, low_memory=False)
 
 
 def sample_posts(
