@@ -16,4 +16,4 @@ We can take their free responses and mine them for insights.
 ## Proposed solution
 
 1. Histogram: what was the distribution of the Likert scores?
-2. Mine the free responses for features (we have some details on this in `experiments/create_llm_feature_clusters_2026_08_02/PLAN.md`).
+2. Mine the free responses for features (we have some details on this in `experiments/create_llm_feature_clusters_2026_08_02/PLAN.md`). We filter for users whose Likert score was >= 4.
