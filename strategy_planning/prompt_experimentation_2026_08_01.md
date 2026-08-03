@@ -67,19 +67,15 @@ Part 2: 500 posts → batches of 5 → Control prompt vs Feature prompt → comp
 
 ## Part 1: Figure out which features we want to use
 
-Inspired by the three-step pipeline in [docwriter-org/mine-writing-rules](https://github.com/docwriter-org/mine-writing-rules/blob/main/README.md):
+We already have the upstream mining from PR #33. Part 1 reuses those outputs and runs a three-step curation pipeline (plus a topic-artifact filter) to produce a truncated feature set suitable for a classification prompt:
 
-> First, an extraction step read each guide and pulled out its concrete style rules. This produced the pool in `data/pool.json`.
->
-> Second, a clustering step read the whole pool and built the categories up from the rules themselves, rather than starting from a fixed list. It then assigned every rule to one category.
->
-> Third, a dedupe step went category by category and merged rules that said the same thing, joining their source lists into one.
-
-We already have the upstream “mining” from PR #33. Part 1 reuses those outputs as the raw pool and runs extract → cluster → dedupe (plus a topic-artifact filter) to produce a truncated feature set suitable for a classification prompt.
+1. **Extract** — flatten discovered features into a base pool, with metadata tagging.
+2. **Cluster** — build categories up from the features themselves (not a fixed taxonomy), then assign every feature to one category.
+3. **Dedupe** — within each category, merge features that say the same thing, joining their provenance into one survivor.
 
 ### Step 1 — Extract into a base pool (with metadata)
 
-Flatten stage-1 feature records (and optionally stage-2 theme rows as secondary sources) into a single pool, analogous to `data/pool.json` in mine-writing-rules.
+Flatten stage-1 feature records (and optionally stage-2 theme rows as secondary sources) into a single pool.
 
 Each pool item should carry enough metadata to support clustering, filtering, and audit:
 
@@ -94,29 +90,29 @@ Each pool item should carry enough metadata to support clustering, filtering, an
 | `is_topic_domain` | Provisional flag for policy-topic features (guns, abortion, …) — see filter below |
 | `source_stage` | `stage1_feature` vs `stage2_theme` |
 
-Output: a pool JSON (e.g. `data/pool.json` under a new experiment folder) that is the only input to clustering.
+Output: a pool JSON under a new experiment folder that is the only input to clustering.
 
 ### Step 2 — Cluster and build categories from the features
 
-Do **not** start from a fixed taxonomy. Let categories emerge from the pool itself (same philosophy as mine-writing-rules `workflows/cluster.js`).
+Do **not** start from a fixed taxonomy. Let categories emerge from the pool itself.
 
 Clustering options to investigate (pick one after a small bake-off; document the choice):
 
 1. **Embedding + K-means** — embed `feature_text`, choose \(k\) via silhouette / elbow, assign each feature to a cluster; name clusters with a short LLM pass over cluster members.
 2. **Hierarchical clustering + dendrogram** — agglomerative clustering on the same embeddings; cut the tree at a height that yields a readable number of categories; inspect the dendrogram before freezing the cut.
-3. **LLM-assisted clustering (mine-writing-rules style)** — shard the pool, ask an LLM to propose categories from the rules and assign each rule; useful as a qualitative check against the geometric methods.
+3. **LLM-assisted clustering** — shard the pool, ask an LLM to propose categories from the features and assign each feature; useful as a qualitative check against the geometric methods.
 
 Deliverables from this step:
 
-- `data/taxonomy.json` — emergent categories with short definitions
-- `data/assignments.json` — every pool item → one category
+- Emergent taxonomy with short category definitions
+- Assignment of every pool item to one category
 - Optional: dendrogram / cluster diagnostics figure for the review writeup
 
 ### Step 3 — Dedupe within categories
 
 Category by category, merge features that say the same thing (near-duplicate wording or same operational cue). Join provenance lists (`source_batch_ids`, keep/remove counts) onto the survivor.
 
-Output: a merged feature list (analogous to `writing-rules.json`) — still pre-filter.
+Output: a merged feature list — still pre-filter.
 
 ### Topic-artifact filter (required)
 
