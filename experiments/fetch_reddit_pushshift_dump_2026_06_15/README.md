@@ -1,30 +1,45 @@
 # Academic Torrents Reddit Pushshift Toxicity Pipeline
 
-Chunked, resumable pipeline for Pushshift comment `.zst` files. Filters comments, scores survivors with batched Perspective API (TOXICITY only, threshold >= 0.7), and writes per-file deliverables until 50,000 high-toxic comments are accumulated globally.
+## Context
 
-**Production runs on Quest HPC:** see **[HOW_TO_RUN_ACTUAL_DATA.md](HOW_TO_RUN_ACTUAL_DATA.md)** for Bolun package ingest, Slurm submission, disk/API budgets, and monitoring.
+We needed to up-sample toxic posts. However, we could not sample enough data from the Reddit API, the Bluesky API, and the Twitter API in order to do so, so we made use of the PushShift dataset. In our HPC cluster, we have a terabyte of this data compressed into a series of files. We needed a way to sample relatively recent content and get a subset that met our criteria for high-toxic posts as determined by the Google Perspective API.
 
-## Setup (local smoke test)
+## Solution
+
+This folder contains all the work related to this solution.
+
+The steps include:
+
+1. Logging into Quest
+2. Downloading and extracting a dataset from Bolun's data.
+3. Run a one-month test run, to get the code working.
+4. Run for all 2025 posts, until you get enough toxic samples.
+
+There are a few other files that are used as well.
+
+We received ~109M comments (from 6 political subreddits, given certain keywords) as a ~16GB `tar.zst` file in Google Drive.
+
+We downloaded the files from Google Drive to Quest (see `prepare_bolun_package`). We confirmed that we had data from January to June 2025.
+
+Then we did a test run on one-month, June 2025, to check some basic stats before committing to a full run. We wanted to take each post and run the Google Perspective API to classify its toxicity and then grab the posts that met our threshold for "high toxicity" (p >= 0.7).
+
+Once we confirmed this, we ran a larger batch job, running for all posts in our data dump until we either hit 50k high-toxicity posts or 1M API calls, whichever came first.
+
+## Setup
+
+We use `uv` for the Python setup.
 
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh   # once, if uv < 0.11
 export PATH="${HOME}/.local/bin:${PATH}"
-export UV_LINK_MODE=copy
 uv sync --frozen --no-dev   # or `uv sync` locally for full dev group
 ```
 
-Set `GOOGLE_API_KEY` in repo-root `.env`.
+## Implementation steps
 
-## Data sources
+### Extracting records from the Google Drive data dump
 
-| Source | Use case | Ingest |
-|--------|----------|--------|
-| **Bolun package** (Google Drive, ~16GB tar.zst) | Production — pre-filtered six subreddits, ~109M comments | `scripts/prepare_bolun_package.py` |
-| **Academic Torrents** | Local smoke / single-month probes | `scripts/download_at_sample.sh` |
-
-### Bolun package (production)
-
-Bolun's archive contains Parquet + raw JSONL `.zst` partitioned by month. The pipeline consumes **comment JSONL** (`RC_*.zst`).
+Bolun's archive contains Parquet + raw JSONL `.zst` partitioned by month.
 
 ```bash
 # Full prepare: download, extract, stage symlinks, print inventory table
@@ -38,24 +53,26 @@ PYTHONPATH=. uv run python \
   --extract --stage --inventory --skip-row-counts
 ```
 
-Staged inputs land in `data/raw/bolun/comments/RC_*.zst` (symlinks into `data/bolun/extracted/`). Inventory is cached at `data/bolun/inventory.json`.
+Staged inputs land in `data/raw/bolun/comments/RC_*.zst` (symlinks into `data/bolun/extracted/`).
 
-Drive link: `https://drive.google.com/file/d/17412qQBz9UTkDGCO0F-vHjWMkJNOdTgh/view`
+We keep track of what's in the compressed file during extraction using a `inventory.json`. This stores the files that were successfully extracted, for which month, and the relative size. This gives us a peek into how extraction is going as well as how large each file is, without loading each file.
 
-### Academic Torrents (smoke)
+[Here's the Google Drive link to the data dump.](https://drive.google.com/file/d/17412qQBz9UTkDGCO0F-vHjWMkJNOdTgh/view)
+
+### Getting a sense for the data types without loading the data
+
+Given the size of the extracted datasets (they were ~16GB compressed, so they were a bit larger uncompressed), we wanted to iterate quickly using some test data. Downloading Reddit PushShift data from  early on, e.g., 2005, yields only a few rows, but the fields are consistent, so we can iterate on our scripts using these as starter datasets.
 
 ```bash
 bash experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/download_at_sample.sh
 bash experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/download_at_sample.sh RC_2005-12.zst
 ```
 
-Tiny inspection files (e.g. `RC_2005-12.zst`, ~143 KB) are useful for format checks. Raw early-month AT files are **not** pre-filtered to the six political subreddits.
+Tiny inspection files (e.g. `RC_2005-12.zst`, ~143 KB) are useful for format checks, but are not actually useful for development (as these don't have the posts we want and are far too old).
 
 ## Run
 
 ```bash
-# Unit tests (no network)
-PYTHONPATH=. uv run pytest experiments/fetch_reddit_pushshift_dump_2026_06_15/tests/ -q
 
 # Process one file
 PYTHONPATH=. uv run python experiments/fetch_reddit_pushshift_dump_2026_06_15/runner.py \
