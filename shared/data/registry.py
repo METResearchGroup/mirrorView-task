@@ -20,6 +20,12 @@ STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS = "STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABE
 
 @dataclass(frozen=True)
 class DatasetEntry:
+    """Immutable catalog record for one registered study CSV.
+
+    ``kind`` is ``results`` or ``stimuli`` for raw inputs, or
+    ``transformed`` for derived artifacts under ``shared/data/transformed/``.
+    """
+
     name: str
     relative_path: Path
     kind: DatasetKind

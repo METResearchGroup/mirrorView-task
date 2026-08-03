@@ -1,8 +1,8 @@
-"""Materialize modal keep/remove labels for Study Phase 2 Part 2.
+"""Build and materialize modal keep/remove labels from Part 2 raw results.
 
-Reads the registered raw Part 2 results CSV, filters to linked-fate keep/remove
-trials with non-null ``post_id``, aggregates to one modal decision per post
-(ties → remove), and writes ``keep_remove_labels.csv`` beside this script.
+Public entrypoints: ``build_keep_remove_labels`` (in-memory frame) and
+``write_keep_remove_labels`` (persist ``keep_remove_labels.csv`` beside this
+script).
 
 Run from repo root::
 
@@ -31,7 +31,16 @@ _OUTPUT_COLUMNS = [
 
 
 def _load_slim_trial_frame(raw: pd.DataFrame) -> pd.DataFrame:
-    """Layer A: linked-fate keep/remove trials with non-null post_id."""
+    """Select linked-fate keep/remove trials with a usable ``post_id``.
+
+    Normalizes ``decision`` and ``evaluation_mode`` for comparison. Rows with
+    null, empty, or literal ``"nan"`` post IDs are dropped.
+
+    Raises
+    ------
+    KeyError
+        If ``evaluation_mode`` or ``post_id`` is missing from ``raw``.
+    """
     trials = raw.copy()
     trials["decision"] = trials["decision"].astype(str).str.lower().str.strip()
 
@@ -56,7 +65,18 @@ def _load_slim_trial_frame(raw: pd.DataFrame) -> pd.DataFrame:
 
 
 def _aggregate_modal_labels(trials: pd.DataFrame) -> pd.DataFrame:
-    """Layer B: one row per post with modal decision (tie → remove)."""
+    """Aggregate trials to one modal keep/remove label per post.
+
+    Tie votes become ``remove``. ``message_id`` aliases ``post_id``;
+    ``keep_remove_label`` is 1 for remove and 0 for keep.
+
+    Raises
+    ------
+    KeyError
+        If required trial columns are missing.
+    ValueError
+        If a post has conflicting ``original_text`` or ``mirror_text``.
+    """
     required = {"post_id", "original_text", "mirror_text", "decision"}
     missing = required - set(trials.columns)
     if missing:
@@ -109,7 +129,27 @@ def _aggregate_modal_labels(trials: pd.DataFrame) -> pd.DataFrame:
 def build_keep_remove_labels(
     raw: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    """Build the modal keep/remove training frame from Part 2 results."""
+    """Build the modal keep/remove training frame from Part 2 results.
+
+    Parameters
+    ----------
+    raw : pandas.DataFrame, optional
+        Part 2 results. When omitted, loads
+        ``STUDY_PHASE_2_PART_2_RESULTS_FULL`` via the shared dataloader.
+
+    Returns
+    -------
+    pandas.DataFrame
+        One row per post with ``message_id``, ``original_text``,
+        ``mirror_text``, ``decision``, and ``keep_remove_label``.
+
+    Raises
+    ------
+    KeyError
+        If required columns are missing from the source frame.
+    ValueError
+        If a post has conflicting original or mirror text across trials.
+    """
     if raw is None:
         raw = load_dataset(STUDY_PHASE_2_PART_2_RESULTS_FULL, low_memory=False)
     trials = _load_slim_trial_frame(raw)
@@ -117,7 +157,22 @@ def build_keep_remove_labels(
 
 
 def write_keep_remove_labels(path: Path = OUTPUT_CSV) -> pd.DataFrame:
-    """Materialize ``keep_remove_labels.csv`` and return the dataframe."""
+    """Write modal keep/remove labels to CSV and return the frame.
+
+    Creates parent directories as needed. By default writes
+    ``keep_remove_labels.csv`` next to this script (the path registered as
+    ``STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS``).
+
+    Parameters
+    ----------
+    path : pathlib.Path, optional
+        Destination CSV path.
+
+    Returns
+    -------
+    pandas.DataFrame
+        The same frame written to disk.
+    """
     df = build_keep_remove_labels()
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(path, index=False)

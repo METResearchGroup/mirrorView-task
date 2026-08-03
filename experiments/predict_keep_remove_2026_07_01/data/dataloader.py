@@ -1,12 +1,13 @@
 """Data loading for keep/remove prediction (2026-07-01 run).
 
-This experiment uses a CSV export `keep_remove_results_2026_06_23.csv` containing
-linked-fate keep/remove trials.
+Trial-level rows come from the experiment CSV
+``keep_remove_results_2026_06_23.csv``. Training labels come from the shared
+registry dataset ``STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS`` (one modal
+keep/remove row per post; ties → remove).
 
 We provide:
-1) `load_trial_dataframe()`: one row per trial (i.e. the raw linked-fate decision rows).
-2) `load_training_dataframe()`: one row per `post_id` with modal decision across raters.
-   If keep/remove counts are tied, we choose `remove`.
+1) `load_trial_dataframe()`: one row per trial (slim linked-fate CSV).
+2) `load_training_dataframe()`: shared materialized modal labels.
 """
 
 from __future__ import annotations
@@ -14,6 +15,9 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+
+from shared.data.dataloader import load_dataset
+from shared.data.registry import STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS
 
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 CSV_PATH = EXPERIMENT_ROOT / "keep_remove_results_2026_06_23.csv"
@@ -50,70 +54,8 @@ class Dataloader:
         return df
 
     def load_training_dataframe(self) -> pd.DataFrame:
-        """Return one row per post with modal decision (tie => remove)."""
-        trials = self.load_trial_dataframe()
-
-        required_cols = {
-            "post_id",
-            "original_text",
-            "mirror_text",
-            "decision",
-        }
-        missing = required_cols - set(trials.columns)
-        if missing:
-            raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
-
-        # Validate that each post_id has a stable text pair (otherwise modal decision alone
-        # wouldn't define a unique example).
-        text_nunique = (
-            trials.groupby("post_id", dropna=False)
-            .agg(
-                original_text_nunique=("original_text", lambda s: s.fillna("").nunique()),
-                mirror_text_nunique=("mirror_text", lambda s: s.fillna("").nunique()),
-            )
-            .reset_index()
-        )
-        bad = text_nunique[
-            (text_nunique["original_text_nunique"] != 1)
-            | (text_nunique["mirror_text_nunique"] != 1)
-        ]
-        if len(bad):
-            example_post = str(bad.iloc[0]["post_id"])
-            raise ValueError(
-                "Expected stable original/mirror text per post_id, but found conflicts. "
-                f"Example problematic post_id={example_post}."
-            )
-
-        # Modal decision with explicit tie-breaking: remove wins ties.
-        counts = (
-            trials.groupby(["post_id", "decision"], dropna=False)
-            .size()
-            .unstack(fill_value=0)
-            .reset_index()
-        )
-
-        # Ensure both columns exist.
-        if "keep" not in counts.columns:
-            counts["keep"] = 0
-        if "remove" not in counts.columns:
-            counts["remove"] = 0
-
-        counts["decision"] = counts.apply(
-            lambda r: "keep" if int(r["keep"]) > int(r["remove"]) else "remove", axis=1
-        )
-        counts["keep_remove_label"] = (counts["decision"] == "remove").astype(int)
-
-        # Attach canonical text pair (take first; validated unique above).
-        texts = (
-            trials.drop_duplicates(subset=["post_id"])[["post_id", "original_text", "mirror_text"]]
-        )
-
-        out = counts.merge(texts, on="post_id", how="left")
-
-        # Provide both keys for downstream compatibility.
-        out = out.rename(columns={"post_id": "message_id"})
-        out = out[["message_id", "original_text", "mirror_text", "decision", "keep_remove_label"]]
-        return out
+        """Return one row per post with modal decision from the shared registry."""
+        return load_dataset(STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS, low_memory=False)
 
 
 if __name__ == "__main__":
