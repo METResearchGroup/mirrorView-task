@@ -111,3 +111,5 @@ outputs/total_metadata.json     # cumulative counts across files
 ```
 
 We want to avoid expensive re-computation, so re-running a file whose `metadata.json` already exists logs `Skipping {stem}, metadata.json exists` and does not re-score (this assumes that file completed processing, which is an OK assumption on our end).
+
+In `experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs`, we store the outputs from `2025-05` and `2025-06`, as running these datasets gave us the total amount of high-toxicity posts that we needed (see `experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/total_metadata.json` for more details).
