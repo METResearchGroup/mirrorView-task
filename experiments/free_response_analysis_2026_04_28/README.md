@@ -14,15 +14,11 @@ Some things we hoped to answer during this analysis include:
 - If there's any interaction of political party vs. (training | training_assisted) condition.
 - If the intervention seems relatively consistent across political parties.
 
-## Purpose
+## Approach
 
-Establish a descriptive read of whether the Phase 1 pair-reflection exercise felt influential, and what users say they attended to when reflecting.
+We load the pilot data from Phase 2, Part 1. We wanted some simple low-effort quick analysis (as this was just pilot data anyways).
 
-The experiment is intended to identify:
-
-- Whether assisted training looks more influential than unassisted training
-- Whether party × condition cells differ in rating level or distribution shape
-- Whether reflection themes align with MirrorView design goals (form and conversational value of speech, not pure ideological agreement)
+...
 
 ## Setup
 
