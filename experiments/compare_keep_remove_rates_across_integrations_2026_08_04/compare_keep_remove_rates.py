@@ -48,12 +48,7 @@ PLATFORM_COLORS: dict[str, str] = {
     "Reddit": "#E36A2E",
     "Twitter": "#2A9D8F",
 }
-TOXICITY_OPACITY: dict[str, float] = {
-    "low toxicity": 0.35,
-    "medium toxicity": 0.65,
-    "high toxicity": 1.0,
-}
-KEEP_OPACITY_SCALE = 0.45
+KEEP_LIGHTEN = 0.55
 PLATFORM_GROUP_GAP = 0.8
 FIGURE_DPI = 200
 
@@ -174,6 +169,13 @@ def parse_platform_toxicity_column(column: str) -> tuple[str, str]:
     raise ValueError(f"Unrecognized platform×toxicity column: {column!r}")
 
 
+def lighten_rgb(
+    rgb: tuple[float, float, float], amount: float
+) -> tuple[float, float, float]:
+    """Blend ``rgb`` toward white by ``amount`` in [0, 1]."""
+    return tuple(channel + (1.0 - channel) * amount for channel in rgb)
+
+
 def bar_x_positions(n_columns: int, group_size: int) -> list[float]:
     """X positions with a gap after each platform group."""
     positions: list[float] = []
@@ -188,7 +190,7 @@ def bar_x_positions(n_columns: int, group_size: int) -> list[float]:
 def plot_platform_toxicity_proportions(
     proportions: pd.DataFrame, output_path: Path
 ) -> None:
-    """Stacked keep/remove bars; platform hue, toxicity opacity; crosstab order."""
+    """Stacked keep/remove bars; solid platform colors; crosstab column order."""
     columns = list(proportions.columns)
     if columns != list(PLATFORM_TOXICITY_COLUMNS):
         raise ValueError("Proportion columns must match PLATFORM_TOXICITY_COLUMNS order")
@@ -197,16 +199,15 @@ def plot_platform_toxicity_proportions(
     keep_values = [float(proportions.loc["keep", col]) for col in columns]
     remove_values = [float(proportions.loc["remove", col]) for col in columns]
 
-    keep_colors: list[tuple[float, float, float, float]] = []
-    remove_colors: list[tuple[float, float, float, float]] = []
+    keep_colors: list[tuple[float, float, float]] = []
+    remove_colors: list[tuple[float, float, float]] = []
     for column in columns:
-        platform, toxicity = parse_platform_toxicity_column(column)
+        platform, _toxicity = parse_platform_toxicity_column(column)
         rgb = to_rgb(PLATFORM_COLORS[platform])
-        opacity = TOXICITY_OPACITY[toxicity]
-        keep_colors.append((*rgb, opacity * KEEP_OPACITY_SCALE))
-        remove_colors.append((*rgb, opacity))
+        keep_colors.append(lighten_rgb(rgb, KEEP_LIGHTEN))
+        remove_colors.append(rgb)
 
-    fig, ax = plt.subplots(figsize=(12, 5.5))
+    fig, ax = plt.subplots(figsize=(12, 6.5))
     ax.bar(
         x_positions,
         keep_values,
@@ -214,7 +215,6 @@ def plot_platform_toxicity_proportions(
         color=keep_colors,
         edgecolor="#333333",
         linewidth=0.6,
-        label="keep",
     )
     ax.bar(
         x_positions,
@@ -224,7 +224,6 @@ def plot_platform_toxicity_proportions(
         color=remove_colors,
         edgecolor="#333333",
         linewidth=0.6,
-        label="remove",
     )
 
     toxicity_tick_labels = [
@@ -247,7 +246,7 @@ def plot_platform_toxicity_proportions(
         ]
         ax.text(
             (group[0] + group[-1]) / 2.0,
-            -0.12,
+            -0.14,
             platform,
             transform=ax.get_xaxis_transform(),
             ha="center",
@@ -261,35 +260,24 @@ def plot_platform_toxicity_proportions(
         Patch(facecolor=PLATFORM_COLORS[platform], edgecolor="#333333", label=platform)
         for platform in PLATFORM_COLUMNS
     ]
-    toxicity_handles = [
-        Patch(
-            facecolor=(0.2, 0.2, 0.2, TOXICITY_OPACITY[toxicity]),
-            edgecolor="#333333",
-            label=toxicity.removesuffix(" toxicity"),
-        )
-        for toxicity in TOXICITY_ORDER
-    ]
     decision_handles = [
         Patch(
-            facecolor=(0.4, 0.4, 0.4, KEEP_OPACITY_SCALE),
+            facecolor=lighten_rgb((0.4, 0.4, 0.4), KEEP_LIGHTEN),
             edgecolor="#333333",
             label="keep",
         ),
-        Patch(facecolor=(0.4, 0.4, 0.4, 1.0), edgecolor="#333333", label="remove"),
+        Patch(facecolor=(0.4, 0.4, 0.4), edgecolor="#333333", label="remove"),
     ]
-    legend_platforms = ax.legend(
-        handles=platform_handles, title="Platform", loc="upper left"
+    fig.subplots_adjust(bottom=0.30)
+    fig.legend(
+        handles=platform_handles + decision_handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 0.08),
+        ncol=len(platform_handles) + len(decision_handles),
+        frameon=False,
+        fontsize=10,
     )
-    ax.add_artist(legend_platforms)
-    legend_toxicity = ax.legend(
-        handles=toxicity_handles, title="Toxicity", loc="upper center"
-    )
-    ax.add_artist(legend_toxicity)
-    ax.legend(handles=decision_handles, title="Decision", loc="upper right")
-
-    fig.tight_layout()
-    fig.subplots_adjust(bottom=0.18)
-    fig.savefig(output_path, dpi=FIGURE_DPI)
+    fig.savefig(output_path, dpi=FIGURE_DPI, bbox_inches="tight")
     plt.close(fig)
 
 
