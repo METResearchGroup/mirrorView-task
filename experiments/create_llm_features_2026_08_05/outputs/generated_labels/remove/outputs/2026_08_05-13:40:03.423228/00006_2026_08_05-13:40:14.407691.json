@@ -1,0 +1,21 @@
+{
+  "cluster_id": 6,
+  "label_class": "remove",
+  "n_members": 9,
+  "sampled_feature_ids": [
+    "13_4",
+    "0_4",
+    "4_5",
+    "14_2",
+    "37_5",
+    "30_3",
+    "17_6",
+    "48_5"
+  ],
+  "result": {
+    "cluster_id": 6,
+    "cluster_label": "Moralized, hostile political condemnation",
+    "definition": "REMOVE posts that use explicit normative/moral condemnation and emotionally charged delegitimization combined with direct hostile or imperative attacks toward political actors or systems.",
+    "salience_notes": "All sampled features show strong moral/emotive language (e.g., disgust/contempt, \u201cfucking,\u201d \u201ctraitorous,\u201d absolute/doom-like consequences) paired with direct targeting or prescriptive demands (e.g., \u201cStop\u2026,\u201d imperatives)."
+  }
+}

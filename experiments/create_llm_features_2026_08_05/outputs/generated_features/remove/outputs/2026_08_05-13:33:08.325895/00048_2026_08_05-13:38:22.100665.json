@@ -1,0 +1,94 @@
+{
+  "batch_id": 48,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1kej1h4_mqjhsi8",
+    "reddit_1ks5r8b_mtkw5wd",
+    "reddit_1l0rot8_mvfrk9n",
+    "reddit_1l6h0fc_mwonavm",
+    "reddit_1lhfkqj_mz4mrik",
+    "reddit_1ts5npc_ooux6qc",
+    "reddit_1u0y79a_oqo0he3",
+    "reddit_1u29zb9_oqydcpn",
+    "twitter_2059414276478005375",
+    "twitter_2061272489318027656"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ts5npc_ooux6qc",
+        "feature_name": "ingroup_outgroup_labeling",
+        "feature_value": "Negative political outgroup labeling (anti-American/commies; fascist/authoritarians).",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"anti-american commies\" / \"fascist, flag-waving authoritarians\"",
+        "rationale": "The post uses harsh ideological labels to cast an outgroup as illegitimate."
+      },
+      {
+        "message_id": "reddit_1lhfkqj_mz4mrik",
+        "feature_name": "violent_war_metaphor_and_removal_request",
+        "feature_value": "Claims a religious war and calls for removal from power; includes profanity and hate toward political groups.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"religious war\" ... \"He needs to be removed from power\" ... \"fuck Netanyahu\"",
+        "rationale": "The text asserts an armed-conflict frame and prescribes political removal, with explicit profanity."
+      },
+      {
+        "message_id": "reddit_1l0rot8_mvfrk9n",
+        "feature_name": "dehumanizing_profane_abuse",
+        "feature_value": "Uses dehumanizing insult/profanity toward targeted group; characterizes actions as criminal wrongdoing.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"real criminals\" ... \"Piece of shit humans.\"",
+        "rationale": "Strong expressive abuse is directed at the actor group while asserting criminality."
+      },
+      {
+        "message_id": "reddit_1l6h0fc_mwonavm",
+        "feature_name": "anti_media_partisan_blasphemy",
+        "feature_value": "Profanity targeting a news outlet article with partisan attribution (FOX vs MSNBC).",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck this inflammatory article by FOX News.\" / \"by MSNBC.\"",
+        "rationale": "The post employs profanity and directly attacks a partisan media source."
+      },
+      {
+        "message_id": "twitter_2059414276478005375",
+        "feature_name": "abortion_rights_bible_argumentation",
+        "feature_value": "Abortion policy framed via religious authority/Bible quotation plus call to stop pretending.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"invokes faith to defend abortion rights\" ... \"The Bible is silent on abortion'\"",
+        "rationale": "The post centers abortion rights and uses explicit scriptural discourse as evidence."
+      },
+      {
+        "message_id": "twitter_2059414276478005375",
+        "feature_name": "normative_moral_language_and_delegitimization",
+        "feature_value": "Moral condemnation (disgusting), accusation of erasing Christian values, and prescriptive demand (Stop...).",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"This is disgusting\" ... \"erase Christian values\" ... \"Stop pretending faith supports killing babies.\"",
+        "rationale": "It uses moral outrage and delegitimization along with a direct imperative."
+      },
+      {
+        "message_id": "reddit_1u29zb9_oqydcpn",
+        "feature_name": "us_vs_them_performative_claim",
+        "feature_value": "Accuses the opposing side of performative concern; shifts blame to energy harms (birds) and compares industries.",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"It's just a talking point.\" / \"It's just performative outrage\"",
+        "rationale": "The post characterizes the other's stance as insincere and pivots to counter-claims about ecological impact."
+      },
+      {
+        "message_id": "reddit_1u0y79a_oqo0he3",
+        "feature_name": "quote_reply_structure_and_election_claim_contrast",
+        "feature_value": "Block-quoted rebuttal format with conditional comparison to past election theft; multiple short lines.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": ">\"Did you feel that way in 2024\" ... \"He didnt \\\"literally try to steal an election\\\"\" ... \"Bush literally stole the 2000 election\"",
+        "rationale": "The post uses a back-and-forth quoted structure to invert election-fraud claims with historical comparison."
+      }
+    ]
+  }
+}

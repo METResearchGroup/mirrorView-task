@@ -2,8 +2,9 @@
 
 ## 2026-08-05
 
-1. Shipped a four-stage BERTopic pipeline on Study Phase 2 Part 2 original-post Titan embeddings (local cache, fit without re-embedding, post-hoc `gpt-5.4-nano` labels, three UMAP overlays) with smoke and full-corpus results. [PR #45](https://github.com/METResearchGroup/mirrorView-task/pull/45)
-2. Added a keep/remove × platform crosstab experiment for Study Phase 2 Part 2 modal labels (Bluesky / Reddit / Twitter), with a runnable script and terse RESULTS table. [PR #42](https://github.com/METResearchGroup/mirrorView-task/pull/42)
+1. Shipped a four-stage BERTopic pipeline on Study Phase 2 Part 2 original-post Titan embeddings. [PR #45](https://github.com/METResearchGroup/mirrorView-task/pull/45)
+2. Completed the keep/remove LLM feature pipeline under `experiments/create_llm_features_2026_08_05/`. [PR #46](https://github.com/METResearchGroup/mirrorView-task/pull/46)
+3. Added a keep/remove × platform crosstab experiment for Study Phase 2 Part 2 modal labels (Bluesky / Reddit / Twitter), with a runnable script and terse RESULTS table. [PR #42](https://github.com/METResearchGroup/mirrorView-task/pull/42)
 
 ## 2026-08-03
 

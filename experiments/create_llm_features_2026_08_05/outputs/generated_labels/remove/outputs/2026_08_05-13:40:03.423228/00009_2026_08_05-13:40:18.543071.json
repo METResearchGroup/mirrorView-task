@@ -1,0 +1,21 @@
+{
+  "cluster_id": 9,
+  "label_class": "remove",
+  "n_members": 15,
+  "sampled_feature_ids": [
+    "40_2",
+    "15_6",
+    "39_6",
+    "20_2",
+    "33_2",
+    "47_1",
+    "45_7",
+    "46_4"
+  ],
+  "result": {
+    "cluster_id": 9,
+    "cluster_label": "Imperative political/speech-action demands",
+    "definition": "REMOVE posts that use direct imperatives or targeted calls to action (often with @mentions) urging the audience or public figures to take political/legal action or silence/expel an opponent.",
+    "salience_notes": "The sampled features share a pragmatic structure of urgent commands paired with explicit action goals (contact Congress, legal outcomes, changing support/donations, or directing officials/opponents) sometimes intensified by addressing named targets."
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 42,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_ee4be9be5cbd68751ce05452a9aadfbd4db2429e46599f331f465601adc08e3a",
+    "reddit_1t4fs97_ok2nzyi",
+    "reddit_1tafgbu_ol9w91x",
+    "reddit_1tsd2hr_oouiuzg",
+    "reddit_1tstlbr_ooy9jg2",
+    "reddit_1tsvgs3_ooy8j12",
+    "reddit_1tsydyo_op21idj",
+    "reddit_1u1baux_oqpqlct",
+    "reddit_1u1fnvf_oqr4j6a",
+    "twitter_2060930878126301617"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tafgbu_ol9w91x",
+        "feature_name": "extreme_intensity_hyperbole_all_caps",
+        "feature_value": "Hyperbolic extreme phrasing with emphasis via ALL caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"starve ALL the people ALL the way to death\"",
+        "rationale": "Uses emphatic capitalization plus exaggerated doom framing to intensify the argument."
+      },
+      {
+        "message_id": "twitter_2060930878126301617",
+        "feature_name": "list_of_party_claims_against_other_side",
+        "feature_value": "Bulleted/serial claims attributing many stances to a political party",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"They are against Voter ID\\nThey are against ICE\\nThey are against Crime Prevention\"",
+        "rationale": "Repeating 'They are...' structure is a persuasive accusatory list of opponents\u2019 positions."
+      },
+      {
+        "message_id": "twitter_2060930878126301617",
+        "feature_name": "us_vs_them_party_contrast_questioning",
+        "feature_value": "Direct contrast framing with rhetorical questions about what it 'tells you'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"What does this tell you about Democrats?  Hmmmm?\"",
+        "rationale": "Frames the political actors as an outgroup ('Democrats' vs implied 'you') and uses suggestive questioning to steer judgment."
+      },
+      {
+        "message_id": "reddit_1tsydyo_op21idj",
+        "feature_name": "second_person_direct_address_questions",
+        "feature_value": "Multiple second-person interrogatives organizing policy/identity positions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Are you socially conservative?\"",
+        "rationale": "Uses direct questions to solicit alignment with a moral/policy bundle."
+      },
+      {
+        "message_id": "reddit_1tsydyo_op21idj",
+        "feature_name": "culture_war_reproductive_social_policy_bundle",
+        "feature_value": "Culture-war mix: abortion, gender, marriage, divorce, Pride; also pro-/anti-natalism framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"support legal abortions, gender nonsense, gay marriage, no-fault divorce, Pride\"",
+        "rationale": "The post clusters highly salient culture-war social issues as a package for ideological sorting."
+      },
+      {
+        "message_id": "reddit_1u1baux_oqpqlct",
+        "feature_name": "inconsistent_fraud_vs_no_fraud_hypocrisy",
+        "feature_value": "Hypocrisy claim via win/loss conditional contrast (fraud vs no fraud)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Every time a Republican loses they always claim fraud, but when they win there was no fraud.\"",
+        "rationale": "Attributes contradictory behavior to an actor and labels the behavior as hypocritical/defeated."
+      },
+      {
+        "message_id": "bluesky_ee4be9be5cbd68751ce05452a9aadfbd4db2429e46599f331f465601adc08e3a",
+        "feature_name": "emphatic_imperatives_then_outcome_list_tragedies",
+        "feature_value": "Imperative escalation followed by a list of tragedies/calamities",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Spend your money! Enjoy! Consume!\"",
+        "rationale": "Starts with imperative commands and then shifts to numerous specific adverse events, creating stark contrast."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqr4j6a",
+        "feature_name": "election_outcome_cultural_gatekeeping_and_media_critique",
+        "feature_value": "Uses 2024 government-branches outcome and attacks as 'cultural gatekeepers' plus media critique metrics",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "\"They won all three branches of government in 2024\"",
+        "rationale": "Links recent election success to ongoing cultural gatekeeping claims and adds quantitative media reception cues in the mirror."
+      }
+    ]
+  }
+}

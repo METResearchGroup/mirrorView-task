@@ -1,0 +1,94 @@
+{
+  "batch_id": 11,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_0c0c8fe880b22cc36e08ea9f1bcfbc83148f2147c203a20d56bccd30e0d94e19",
+    "reddit_1kkq6f9_mrx9c37",
+    "reddit_1ko3yf3_msok7uj",
+    "reddit_1liejsg_mzdmc4p",
+    "reddit_1t6aimf_okg0529",
+    "reddit_1te3cn8_om0gy26",
+    "reddit_1twq42a_oqbw8wp",
+    "twitter_2061172350905721032",
+    "twitter_2061616629902168547",
+    "twitter_2061654798852575620"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ko3yf3_msok7uj",
+        "feature_name": "targeted_insult_and_threatening_justification",
+        "feature_value": "Uses direct profanity and retaliatory sentiment toward political voters (\u201cdeserve everything coming\u201d).",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck anyone who ever voted for Trump, they deserve everything coming.\"",
+        "rationale": "The post pairs profanity with a sanctioning/justice claim aimed at an outgroup based on voting behavior."
+      },
+      {
+        "message_id": "reddit_1ko3yf3_msok7uj",
+        "feature_name": "us_vs_them_voter_blame_swap_in_mirror",
+        "feature_value": "Blames/condemns one side\u2019s voters in original and the opposite side in the mirror.",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"voted for Trump\" / \"voted for Biden/Harris\"",
+        "rationale": "The mirror retargets the same moral condemnation toward the other party\u2019s voter group, indicating factional, side-based directionality."
+      },
+      {
+        "message_id": "twitter_2061616629902168547",
+        "feature_name": "profanity_taboo_language",
+        "feature_value": "Strong sexual anatomy insults used as slurs.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"is a sphincter\" / \"complete rectum\"",
+        "rationale": "Explicit taboo/sexual-body-word insults are used to attack named media figures."
+      },
+      {
+        "message_id": "twitter_2061616629902168547",
+        "feature_name": "call_to_action_punitive_policy",
+        "feature_value": "Advocates coercive relocation/self-deportation to penal locations.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"These @rats should self deport to santuary cities?\"",
+        "rationale": "The text proposes punitive \u201cshould\u201d actions directed at a group."
+      },
+      {
+        "message_id": "reddit_1twq42a_oqbw8wp",
+        "feature_name": "factual_claim_then_counter_claim_with_zero_evidence",
+        "feature_value": "Claims document/testimony support one side; then asserts the other side had accusations with no evidence.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"documents released by the DoJ\" ... \"0 evidence\"",
+        "rationale": "It uses a purported factual basis (\u201cdocuments\u2026\u201d) and a contrasting challenge to evidence strength (\u201c0 evidence\u201d)."
+      },
+      {
+        "message_id": "twitter_2061654798852575620",
+        "feature_name": "conditional_argument_structure",
+        "feature_value": "\u201cShow me X and I\u2019ll show you Y\u201d argumentative conditional framing.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Show me any anti-abortion argument and I'll show you...\"",
+        "rationale": "The post uses a conditional setup to advance a specific interpretation of the topic."
+      },
+      {
+        "message_id": "reddit_1liejsg_mzdmc4p",
+        "feature_name": "high_intensity_generalized_insult",
+        "feature_value": "Bald, generalized dehumanizing insult without argument.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans are f****** idiots.\"",
+        "rationale": "A direct, generalized insult targets a political actor group with high hostility."
+      },
+      {
+        "message_id": "bluesky_0c0c8fe880b22cc36e08ea9f1bcfbc83148f2147c203a20d56bccd30e0d94e19",
+        "feature_name": "gun_reform_demand_after_mass_casualty_scene",
+        "feature_value": "Active-shooter fear narrative plus critique for not pushing gun reform.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"active shooter\" ... \"gun reform\"",
+        "rationale": "The content centers on gun violence and explicitly references gun reform as the contested policy outcome."
+      }
+    ]
+  }
+}

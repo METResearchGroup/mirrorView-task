@@ -1,0 +1,21 @@
+{
+  "cluster_id": 8,
+  "label_class": "keep",
+  "n_members": 27,
+  "sampled_feature_ids": [
+    "42_2",
+    "24_3",
+    "31_1",
+    "40_7",
+    "37_1",
+    "48_4",
+    "32_4",
+    "10_2"
+  ],
+  "result": {
+    "cluster_id": 8,
+    "cluster_label": "Us-vs-them mirror blame targeting parties",
+    "definition": "KEEP posts that use explicit in-group/out-group contrast and mirror-style blame shifting to target specific opposing political parties/actors, often via rhetorical questions or exclusionary directives.",
+    "salience_notes": "The sample repeatedly pairs outgroup framing with re-targeted responsibility (mirror blame) rather than isolated policy commentary."
+  }
+}

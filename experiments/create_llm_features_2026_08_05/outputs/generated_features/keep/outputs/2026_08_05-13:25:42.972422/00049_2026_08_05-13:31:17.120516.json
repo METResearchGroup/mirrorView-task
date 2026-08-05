@@ -1,0 +1,94 @@
+{
+  "batch_id": 49,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_048b980b14421d93d11e58c0b9d0a8347c4f2910e655af60299241ba7c0f9c20",
+    "bluesky_260ee8942834123c524ca3ad5e87645e4fe82b9b65546cd6f8943e725ed2b046",
+    "bluesky_bfede3099b4069900998832bd50876896ac03d1b4055c5cd22f1e800efa15ac8",
+    "reddit_1l5x8n5_mwl8rjq",
+    "reddit_1trc1na_oooihjc",
+    "twitter_2060727805751759229",
+    "twitter_2060801190426972559",
+    "twitter_2061141671199268881",
+    "twitter_2061723734139109736",
+    "twitter_2061770861800018206"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2060727805751759229",
+        "feature_name": "ballot_to_supreme_court_docket_narrative",
+        "feature_value": "Blames/praises hinging on ballot status and Supreme Court involvement (repeat 'on the ballot' vs 'before/on the docket').",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"it\u0019s not on the ballot Joe it\u0019s on the ballot of the United States Supreme Court\"",
+        "rationale": "The post centers a legal/process framing linking election-ballot issues to Supreme Court adjudication."
+      },
+      {
+        "message_id": "twitter_2060727805751759229",
+        "feature_name": "repeated_name_interjection_emphatic",
+        "feature_value": "Repetitive second-name addressing with emphatic refrains (\"Joe\") and repeated clause structure.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"it\u0019s on the ballot Joe it\u0019s on the ballot\"",
+        "rationale": "Frequent repetition and direct address create a forceful, emphatic rhetorical style."
+      },
+      {
+        "message_id": "twitter_2061141671199268881",
+        "feature_name": "foundational_constitution_bill_of_rights_list",
+        "feature_value": "Appeals to Founding Fathers and enumerates constitutional documents/amendments.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The Founding Fathers... The Bill of Rights... The Constitution. The Second Amendment.\"",
+        "rationale": "The message uses a foundational-legal checklist to justify a viewpoint."
+      },
+      {
+        "message_id": "twitter_2061141671199268881",
+        "feature_name": "rhetorical_question_condemning_inaction",
+        "feature_value": "Uses a rhetorical question urging action and implying danger if ignored.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Are we just going to throw it all away\"",
+        "rationale": "A direct rhetorical question pressures readers toward a particular stance."
+      },
+      {
+        "message_id": "twitter_2061770861800018206",
+        "feature_name": "quote_attribution_with_framed_claim",
+        "feature_value": "Includes a quoted statistic/claim about savings from clean energy and ties it to geopolitics.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Clean energy saved EU \u000391 billion in 2025\"",
+        "rationale": "The post blends a sourced quote with causal claims about renewable leadership and external events."
+      },
+      {
+        "message_id": "bluesky_bfede3099b4069900998832bd50876896ac03d1b4055c5cd22f1e800efa15ac8",
+        "feature_name": "unless_if_then_prevention_future_outcome",
+        "feature_value": "Conditional structure warning of a preventable shooting if government fails to regulate.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Anyway yeah unless the government steps in... then we\u0019re going to have to expect a shooting\"",
+        "rationale": "The text uses an 'unless/then' conditional to predict a future event."
+      },
+      {
+        "message_id": "bluesky_bfede3099b4069900998832bd50876896ac03d1b4055c5cd22f1e800efa15ac8",
+        "feature_name": "self_defense_victimhood_and_avoidability_frame",
+        "feature_value": "Frames victims as law-abiding people losing self-defense; claims event will be preventable/avoidable.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"watch law-abiding citizens get stripped of their only means of self-defense\"",
+        "rationale": "It employs a harm/victimhood narrative plus an avoidability claim to strengthen urgency."
+      },
+      {
+        "message_id": "twitter_2060801190426972559",
+        "feature_name": "bullet_list_symbols_and_sloganized_beliefs",
+        "feature_value": "Uses arrow bullets and parenthetical slogans to present policy/cultural stance; 'Love it or hate it' wrap-up.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"\u0005 One American flag\" \"\u0005 Strong border security (No Illegals)\" \"Love it or hate it\"",
+        "rationale": "The compact bullet-point formatting and slogan-style language are prominent surface features."
+      }
+    ]
+  }
+}

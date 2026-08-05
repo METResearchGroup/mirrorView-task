@@ -1,0 +1,94 @@
+{
+  "batch_id": 16,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_a1ca8fce42888b260550f1654b19f9bac63c309f555f82f1531f71bea568d1da",
+    "reddit_1ljlipu_mznx4ff",
+    "reddit_1lkj9on_mzu7g7e",
+    "reddit_1llvpdb_n03bb5g",
+    "reddit_1t7d5jc_okwsv3o",
+    "reddit_1ttbe3e_op1dm94",
+    "twitter_2060722916195500455",
+    "twitter_2061559756838318425",
+    "twitter_2061803057050964165",
+    "twitter_2061820548552786192"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1llvpdb_n03bb5g",
+        "feature_name": "profanity_taboo_language",
+        "feature_value": "Uses strong profanity/insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking useless and corrupt as shit democrats\"",
+        "rationale": "Contains explicit taboo language and derogatory labeling."
+      },
+      {
+        "message_id": "reddit_1llvpdb_n03bb5g",
+        "feature_name": "us_vs_them_antagonistic_grouping",
+        "feature_value": "Outgroup/ingroup framing with 'only alternative'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"are the only alternative\"",
+        "rationale": "Positions one political side as the sole acceptable option against an opposing side."
+      },
+      {
+        "message_id": "twitter_2061803057050964165",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "All-caps emphasis token(s)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"eating ALL THE FOOD\"",
+        "rationale": "Uses all-caps intensification to stress a claim."
+      },
+      {
+        "message_id": "twitter_2061803057050964165",
+        "feature_name": "ridicule_or_mockery_nonliteral_comparison",
+        "feature_value": "Mocking scenarios/cartoony insults (e.g., asylum, hunger, de-Nazify)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Pootin needs ASYLUM\"",
+        "rationale": "Uses exaggerated, insulting hypotheticals as ridicule."
+      },
+      {
+        "message_id": "twitter_2061803057050964165",
+        "feature_name": "conspiratorial_framing_motive_attack",
+        "feature_value": "Claims others seek to 'De-Nazify' / witch hunt",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"his Generals want to \\\"De-Nazify\\\" him\"",
+        "rationale": "Suggests a hostile coordinated motive behind actions, presented as problematic framing."
+      },
+      {
+        "message_id": "twitter_2061820548552786192",
+        "feature_name": "hashtag_mention_pattern_political_tags",
+        "feature_value": "Hashtags for multiple geopolitical actors plus @mention",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#usa #america #israel #palestine #iran\"",
+        "rationale": "Heavy use of topic hashtags signals politicized, cross-actor conflict discussion."
+      },
+      {
+        "message_id": "bluesky_a1ca8fce42888b260550f1654b19f9bac63c309f555f82f1531f71bea568d1da",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Uses rhetorical 'TBF' and question-style framing to contrast orgs",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"TBF, when, EVER, has the NRA promoted\"",
+        "rationale": "Employs an embedded argumentative structure to set up comparative critique."
+      },
+      {
+        "message_id": "twitter_2061559756838318425",
+        "feature_name": "high_punctuation_intensity_emphatic_outrage",
+        "feature_value": "Caps headline + multiple exclamation marks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"MUST WATCH\"",
+        "rationale": "Highly emphatic formatting (caps) aligned with intense punctuation/urgency cues."
+      }
+    ]
+  }
+}

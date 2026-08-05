@@ -1,0 +1,94 @@
+{
+  "batch_id": 24,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1kikfi4_mrgr92q",
+    "reddit_1kr82xj_mtch67s",
+    "reddit_1kwl270_muiq2wv",
+    "reddit_1lmypcv_n0c92da",
+    "reddit_1tbymrb_olokl5i",
+    "reddit_1tqcf7r_oohc1uf",
+    "reddit_1tucjhu_opapfna",
+    "reddit_1txopv4_opyz632",
+    "twitter_2061236773062168821",
+    "twitter_2061513964308345235"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tqcf7r_oohc1uf",
+        "feature_name": "high_profanity_taboo_insulting_language",
+        "feature_value": "Contains strong profanity and dehumanizing insult terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"cut every piece of shit MAGA deranged Trumper\"",
+        "rationale": "The post uses explicit profanity and derogatory insults targeting a political group."
+      },
+      {
+        "message_id": "twitter_2061513964308345235",
+        "feature_name": "high_punctuation_intensity_line_breaks",
+        "feature_value": "Multiple emphatic exclamatory/imperative questions with stacked lines",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Stop this madness...\" \"Why are you allowing the inmates to run the asylum?\"",
+        "rationale": "The communicative form is a sequence of emphatic commands and rhetorical-style questions."
+      },
+      {
+        "message_id": "twitter_2061513964308345235",
+        "feature_name": "named_proper_nouns_multiactor_tagging",
+        "feature_value": "Mentions multiple named political figures in @ handles",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@SenMullin @marcorubio @realDonaldTrump\"",
+        "rationale": "The post targets specific individuals via @-mentions, increasing directness of political targeting."
+      },
+      {
+        "message_id": "reddit_1tucjhu_opapfna",
+        "feature_name": "geographic_scope_informal_location_reference",
+        "feature_value": "Uses place-name location references to political targets",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Mar-a-Lago\"",
+        "rationale": "The text references a specific location associated with a political figure as a site of destruction/violence imagery."
+      },
+      {
+        "message_id": "reddit_1txopv4_opyz632",
+        "feature_name": "vindication_i_told_you_so_retrospective_claim",
+        "feature_value": "Uses 'vindication'/'I told you so' retrospective framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"weird and sad sense of \\\"vindication\\\"\"",
+        "rationale": "The post presents an evaluative retrospective narrative implying prior warnings were correct."
+      },
+      {
+        "message_id": "reddit_1kikfi4_mrgr92q",
+        "feature_name": "normative_moral_language_and_ridicule",
+        "feature_value": "Uses moral condemnation plus derogatory labels for group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck\u00ading losers. No wonder no one likes\"",
+        "rationale": "Strong negative moral judgment and ridicule are directed at the implicated actor(s)."
+      },
+      {
+        "message_id": "reddit_1lmypcv_n0c92da",
+        "feature_name": "profanity_escape_phrase_against_institution",
+        "feature_value": "Brevity plus vulgar dismissal toward party-associated institution",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Senate GOP can kiss my ass\"",
+        "rationale": "Contains a common vulgar dismissal used to attack an identified political actor group."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olokl5i",
+        "feature_name": "causal_attribution_to_race_or_identity_discrimination",
+        "feature_value": "Argues eligibility is affected by race/identity-based admissions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"We can't know that she would have gotten in had she not gotten the boost from being hispanic.\"",
+        "rationale": "The post makes a causal claim about admissions benefits tied to identity/selection criteria."
+      }
+    ]
+  }
+}

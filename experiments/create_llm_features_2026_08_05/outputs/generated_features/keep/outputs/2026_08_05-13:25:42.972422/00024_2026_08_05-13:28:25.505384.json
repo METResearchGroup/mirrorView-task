@@ -1,0 +1,94 @@
+{
+  "batch_id": 24,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_0e9c9a8b821c873337c71fceb028449ebc108ce56c008a98f80fdd2f244ac659",
+    "reddit_1kze0f3_mv5kldc",
+    "reddit_1thwlss_omvbdad",
+    "reddit_1txtwqc_oq45ead",
+    "twitter_2060414073435467948",
+    "twitter_2060544855038709988",
+    "twitter_2061036743785123973",
+    "twitter_2061522834820829620",
+    "twitter_2061553988965675358",
+    "twitter_2061593922267132149"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_0e9c9a8b821c873337c71fceb028449ebc108ce56c008a98f80fdd2f244ac659",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Triple-letter elongated negation/emphasis (nooooo)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"but noooooo you had to have your forever wars and scam vaporware\"",
+        "rationale": "The exaggerated elongation 'noooooo' signals emphatic rhetorical contrast."
+      },
+      {
+        "message_id": "twitter_2061522834820829620",
+        "feature_name": "call_for_policy_change",
+        "feature_value": "Question framed as request for tighter requirements (citizenship proof/customs or fair labor standards)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Can't Customs require proof of Citizenship to enter custom areas?\"",
+        "rationale": "The post explicitly asks for institutional action/requirements via a modal question."
+      },
+      {
+        "message_id": "twitter_2061522834820829620",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Uses domain-specific institutions and location (Customs, LA harbor)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Can't Customs require proof of Citizenship to enter custom areas?\"",
+        "rationale": "References to governmental bodies and a specific port location anchor the topic."
+      },
+      {
+        "message_id": "reddit_1txtwqc_oq45ead",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Urban vs rural/landowners vs city residents power imbalance",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"people who live in cities\" ... \"people who don't own land\"",
+        "rationale": "The argument contrasts two groups by residence/land ownership to frame political power distribution."
+      },
+      {
+        "message_id": "reddit_1kze0f3_mv5kldc",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Derogatory dismissiveness about a political group and attribution of blame",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"You think maga gives a shit? They could murder kids and maga would somehow blame libs and Biden.\"",
+        "rationale": "The line uses a confrontational rhetorical setup to belittle the opposing side\u2019s accountability."
+      },
+      {
+        "message_id": "twitter_2061593922267132149",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Enumerates concrete tools then pivots to funding/implementation needs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"We have the tools\u2014biometric systems, scanning tech, adequate staffing.\"",
+        "rationale": "The post presents specific capabilities as established facts before making an actionable demand."
+      },
+      {
+        "message_id": "twitter_2060414073435467948",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Not used; instead uses third-person evaluation + loaded characterization of actor",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"DHS lapdog Mullin wants to punish blue cities by sabotaging airport customs\"",
+        "rationale": "Direct agent naming plus pejorative labeling (\u201clapdog\u201d, \u201cblue cities\u201d, \u201cauthoritarian petulance\u201d) structures a targeted attack on a named actor and policy direction."
+      },
+      {
+        "message_id": "twitter_2061553988965675358",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Links governance actions to gas prices/inflation/cost-of-living harms and corruption",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"spiked gas prices, and drove up inflation\" ... \"Trump's corruption is endless.\"",
+        "rationale": "It claims policy decisions produce measurable economic harms, then adds a moral/corruption conclusion."
+      }
+    ]
+  }
+}

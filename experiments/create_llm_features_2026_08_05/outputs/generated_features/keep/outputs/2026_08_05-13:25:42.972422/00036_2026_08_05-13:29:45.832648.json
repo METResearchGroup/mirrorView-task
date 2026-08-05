@@ -1,0 +1,94 @@
+{
+  "batch_id": 36,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_0bbbce0a684006e23c8ca9717acbc2acd15b8131d1d54c07fe6f303ed0aeb653",
+    "bluesky_69a370f2a2e059134eeae77d833ba5dd688350aff98814765173466b50efabd3",
+    "bluesky_bf5df864ac2d3ae0258dc4ff21784f38b08775f73f3c777b20b3373967c21868",
+    "reddit_1t4fs97_ok3e83v",
+    "reddit_1twgtct_opowga3",
+    "twitter_2060708592177623356",
+    "twitter_2061357181757186283",
+    "twitter_2061564080792494417",
+    "twitter_2061654713381089756",
+    "twitter_2061782712109691343"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_69a370f2a2e059134eeae77d833ba5dd688350aff98814765173466b50efabd3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains explicit profanity directed at Democrats",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"What the fuck is wrong with Democrats?\"",
+        "rationale": "The post uses a strong taboo profanity phrase."
+      },
+      {
+        "message_id": "bluesky_69a370f2a2e059134eeae77d833ba5dd688350aff98814765173466b50efabd3",
+        "feature_name": "list_or_enumeration_of_policies",
+        "feature_value": "Long enumerated list of policy demands",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Medicare for all. Free school lunches nationwide. End Citizens United. Reclaim the dept of Ed...\"",
+        "rationale": "A sequence of policy statements is presented as an itemized list."
+      },
+      {
+        "message_id": "bluesky_69a370f2a2e059134eeae77d833ba5dd688350aff98814765173466b50efabd3",
+        "feature_name": "normative_moral_language_and_emphatic_outrage",
+        "feature_value": "Outrage question plus moral/normative evaluations",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"This isn't hard. I can write Project 2029 from Brooklyn.\"",
+        "rationale": "It expresses frustration/outrage with emphatic evaluative language."
+      },
+      {
+        "message_id": "reddit_1t4fs97_ok3e83v",
+        "feature_name": "praise_actor_and_ideological_alignment",
+        "feature_value": "Compliments a subgroup as having backbone and hopes for ideological shift",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"conservatives who actually show backbone\"",
+        "rationale": "The text praises an in-group-like ideological faction and calls for further movement."
+      },
+      {
+        "message_id": "reddit_1t4fs97_ok3e83v",
+        "feature_name": "conditional_hedged_future_expectation",
+        "feature_value": "Hopes statement about a future GOP/Democratic shift",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Hopefully the GOP shifts more...\"",
+        "rationale": "The dominant communicative act is a future-looking hopeful request."
+      },
+      {
+        "message_id": "twitter_2061357181757186283",
+        "feature_name": "us_vs_them_usual_elites_mediator_framing",
+        "feature_value": "Claims elites ignore border crisis",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"For years, elites in both political parties have ignored the illegal immigration crisis\"",
+        "rationale": "It frames a neglected crisis by elites across parties (in-group vs out-group neglect)."
+      },
+      {
+        "message_id": "twitter_2061564080792494417",
+        "feature_name": "rhetorical_question_political_accountability",
+        "feature_value": "Short accountability question about promised deportations",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"What happened to the mass deportation we were promised?\"",
+        "rationale": "A direct rhetorical question challenges broken political promises."
+      },
+      {
+        "message_id": "twitter_2061782712109691343",
+        "feature_name": "culture_war_topic_salience_reproductive_and_sports",
+        "feature_value": "Attacks party positions on pro-life/abortion and men in women\u2019s sports",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Pro Life... keeping Men out of Women\u2019s Sports!!!\"",
+        "rationale": "The post centers on highly salient culture-war issues: abortion/pro-life and sex-segregated sports."
+      }
+    ]
+  }
+}

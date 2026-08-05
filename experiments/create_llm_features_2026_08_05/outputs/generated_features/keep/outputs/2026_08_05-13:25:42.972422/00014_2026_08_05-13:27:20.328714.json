@@ -1,0 +1,94 @@
+{
+  "batch_id": 14,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_25c61f6d4af06dcbd1668e0e8741d599abed5eb802e7065f8fe5473e8012e80d",
+    "bluesky_276072294af28de3c37ab82640218bfaa45addfc7be001ef5fcceabf163c7bac",
+    "reddit_1kr91iq_mtbm1p2",
+    "reddit_1til7dr_on3ahn3",
+    "reddit_1ty956s_oq21aua",
+    "reddit_1u31653_or1pzcm",
+    "twitter_2059960054497907123",
+    "twitter_2061491430716219660",
+    "twitter_2061763204410229146",
+    "twitter_2061782425324384582"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061782425324384582",
+        "feature_name": "tax_cut_imported_evs_contrast",
+        "feature_value": "Opposes giving tax cuts for imported plug-in EVs as not aligned with 'green transition'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "supporting local manufacturing, not giving tax cuts to imported PHEVs.",
+        "rationale": "The post makes a specific policy contrast (local manufacturing vs tax cuts for imported EVs)."
+      },
+      {
+        "message_id": "twitter_2061782425324384582",
+        "feature_name": "us_praise_vs_china_blame",
+        "feature_value": "Frames American industry as worthy while blaming Chinese EVs/China for receiving subsidies",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "backing American industry, not subsidizing Chinese EVs",
+        "rationale": "It uses a national/international blame-praise split tied to policy beneficiaries."
+      },
+      {
+        "message_id": "twitter_2061763204410229146",
+        "feature_name": "jobs_affordability_growth_claims",
+        "feature_value": "Claims renewables create jobs and make energy more affordable over time",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "creating jobs and making energy more affordable each year.",
+        "rationale": "The post asserts a causal economic outcome of clean energy scaling."
+      },
+      {
+        "message_id": "twitter_2061763204410229146",
+        "feature_name": "renewables_scaling_leading_cause_sequence",
+        "feature_value": "Uses an effect chain: renewables lead to capacity \u2192 jobs \u2192 affordability",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "renewables leading to new power capacity, creating jobs and making energy more affordable",
+        "rationale": "It explicitly strings together multiple causal results in a single sentence."
+      },
+      {
+        "message_id": "reddit_1u31653_or1pzcm",
+        "feature_name": "refugee_temporary_status_condition",
+        "feature_value": "Proposes conditional policy for refugee status tied to specific incidents declared by Congress",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "temporary status to specific incidents of war or natural disaster, with Congress declaring the incident",
+        "rationale": "It embeds an if/then-like conditional policy mechanism (temporary status; Congress declaration)."
+      },
+      {
+        "message_id": "reddit_1u31653_or1pzcm",
+        "feature_name": "international_law_normative_frame",
+        "feature_value": "Advocates humanitarian protections guided by international law against politicians gutting them",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "robust, humane, and guided by international law",
+        "rationale": "The mirror includes normative language ('robust, humane') anchored in legal/ethical standards."
+      },
+      {
+        "message_id": "bluesky_276072294af28de3c37ab82640218bfaa45addfc7bac",
+        "feature_name": "high_punctuation_intensity_outrage",
+        "feature_value": "Uses strong emphatic phrasing including profanity and repeated 'When...' framing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Fucking backwards.",
+        "rationale": "The text includes profanity and an emphatic condemnation indicating strong expressive intent."
+      },
+      {
+        "message_id": "bluesky_276072294af28de3c37ab82640218bfaa45addfc7bac",
+        "feature_name": "rights_self_defense_objection_to_gun_ban",
+        "feature_value": "Claims stripping self-defense violates constitutional rights; links gun law changes to tragedy narratives",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Every tragedy becomes an excuse to strip law-abiding citizens of their only means of self-defense.",
+        "rationale": "It makes a normative-rights argument and a causal linkage from tragedy to policy restriction."
+      }
+    ]
+  }
+}

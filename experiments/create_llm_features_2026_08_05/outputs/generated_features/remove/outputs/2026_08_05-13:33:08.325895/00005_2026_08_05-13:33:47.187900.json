@@ -1,0 +1,94 @@
+{
+  "batch_id": 5,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_92f96bd53afd112ba47a3b877e9344610d25fc188ef0269dc7d4834dc00b0c9e",
+    "reddit_1kj1005_mrmb0iw",
+    "reddit_1lah4yw_mxlfca5",
+    "reddit_1lat5d5_mxncuis",
+    "reddit_1lg0jx2_myslgv3",
+    "reddit_1tql6ez_ooh9unr",
+    "reddit_1ts7wt8_oouryyx",
+    "reddit_1tsx0f1_ooyhgjl",
+    "twitter_2061775665439887400",
+    "twitter_2061821947009442102"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kj1005_mrmb0iw",
+        "feature_name": "sexual_vernacular_abusive_metaphor",
+        "feature_value": "Uses sexual/vulgar \u201cfuck/us\u201d rhetoric as an abusive metaphor",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"He\u2019s fucking the country. He\u2019s fucking the people\"",
+        "rationale": "Clear vulgar, sexualized intensifier used to attack political actors."
+      },
+      {
+        "message_id": "reddit_1kj1005_mrmb0iw",
+        "feature_name": "conditional_rhetorical_question_swap",
+        "feature_value": "Rhetorical conditional comparison framed as \u201cWould X \u2026 without Y like Z did?\u201d",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Would Kamala fuck us so hard without lube like trump is doing?\"",
+        "rationale": "A counterfactual rhetorical question structure is used to argue superiority/blameworthiness."
+      },
+      {
+        "message_id": "reddit_1lat5d5_mxncuis",
+        "feature_name": "high_degree_generalization_about_outgroup",
+        "feature_value": "Universal/near-universal blame claim (\u201cevery reason under the sun\u201d, \u201calways find\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I hate conservatives for just about every reason under the sun\" / \"you will always find\"",
+        "rationale": "Absolute generalizations connect historical wrongdoing to an ideological outgroup."
+      },
+      {
+        "message_id": "reddit_1lat5d5_mxncuis",
+        "feature_name": "historical_backprojection_argumentation",
+        "feature_value": "Invokes a long historical time horizon to justify claims",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"if you go back 80 years\"",
+        "rationale": "Historically anchored causal insinuation supports the linked-fate style ideological narrative."
+      },
+      {
+        "message_id": "twitter_2061775665439887400",
+        "feature_name": "economic_tax_welfare_policy_domain",
+        "feature_value": "Argues about taxing wealthy vs welfare/benefits and inflation-linked pensions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"taxing the wealthy\" / \"welfare\" / \"pension should be inflationary linked\"",
+        "rationale": "Strong policy-and-economic finance framing around redistribution and benefits."
+      },
+      {
+        "message_id": "twitter_2061775665439887400",
+        "feature_name": "accusatory_us_vs_them_framing",
+        "feature_value": "\u201cPoliticians\u201d vs \u201criches/taxpayers\u201d plus \u201cfreeloaders\u201d language",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Politicians obsessing over taxing the wealthy\" / \"the freeloaders\" / \"hardworking taxpayer\"",
+        "rationale": "Creates ingroup/outgroup contrast that assigns blame to a favored vs blamed group."
+      },
+      {
+        "message_id": "reddit_1tsx0f1_ooyhgjl",
+        "feature_name": "sexual_violence_phrase_against_people",
+        "feature_value": "Uses extreme sexual violence wording (\u201crape of the American people / looting\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"For the next rape of the American people.\"",
+        "rationale": "Highly inflammatory dehumanizing/violence metaphor intensifies threat/corruption framing."
+      },
+      {
+        "message_id": "bluesky_92f96bd53afd112ba47a3b877e9344610d25fc188ef0269dc7d4834dc00b0c9e",
+        "feature_name": "weapon_purchase_intent",
+        "feature_value": "Expresses intent to buy a powerful AR \u201cout of pure spite\u201d",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"want to go out and buy the most powerful AR\"",
+        "rationale": "Direct linkage of spite to acquiring a firearm is an observable escalation cue."
+      }
+    ]
+  }
+}

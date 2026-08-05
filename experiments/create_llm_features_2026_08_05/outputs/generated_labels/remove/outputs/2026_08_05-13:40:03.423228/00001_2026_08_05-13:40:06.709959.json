@@ -1,0 +1,21 @@
+{
+  "cluster_id": 1,
+  "label_class": "remove",
+  "n_members": 8,
+  "sampled_feature_ids": [
+    "34_3",
+    "17_2",
+    "19_6",
+    "14_4",
+    "32_5",
+    "44_2",
+    "26_3",
+    "39_4"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Explicit policy or legal prescriptions",
+    "definition": "REMOVE posts that explicitly advocate concrete policy changes or legal/punitive actions (e.g., bans, criminalization, regulatory requirements, voting instructions, or legality violations) rather than merely discussing or criticizing issues.",
+    "salience_notes": "The sampled features share direct, normative prescriptions with actionable specifics (what should be banned/required/done, and under what legal/political rationale)."
+  }
+}

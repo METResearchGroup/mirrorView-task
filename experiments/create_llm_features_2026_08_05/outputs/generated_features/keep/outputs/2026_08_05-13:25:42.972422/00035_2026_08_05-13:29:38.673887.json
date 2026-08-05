@@ -1,0 +1,94 @@
+{
+  "batch_id": 35,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_098549922c77af51809a99c6aa62c8f814e0e9b733e76e49e2cfae307088554f",
+    "bluesky_4e60a985bfdef76f8f12ef53948ba622ba4abbe046bb83e28ed412065303a6ea",
+    "bluesky_816d15def235ef603346cef95479c4516aa6f14a3565951d0ecf7c403b92ffc6",
+    "bluesky_d02341aa46653727c3e5e25f95a609850c61fee1dcd84a2e8bc8187a85c0f1d0",
+    "bluesky_d5dcb0907e8347b4b7946fabed76bdeff641906d8e36d8c716990d750b7995da",
+    "bluesky_ef595919d0d73cf9fca931bc173521fccbf0e0094afaa64e8cff862c8ec7daf3",
+    "reddit_1ll4zo9_mzwzocn",
+    "reddit_1thqwmy_oms2rhn",
+    "twitter_2060364929887031694",
+    "twitter_2060756089310753109"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_d02341aa46653727c3e5e25f95a609850c61fee1dcd84a2e8bc8187a85c0f1d0",
+        "feature_name": "quote_attribution_second_amendment_embedding",
+        "feature_value": "Direct quotation of 'well regulated militia' from the Second Amendment with inline interpretation",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"well regulated militia\"refers to a citizen military force",
+        "rationale": "The post embeds a constitutional quote and then defines it in-text, indicating quote/attribution embedding."
+      },
+      {
+        "message_id": "bluesky_d02341aa46653727c3e5e25f95a609850c61fee1dcd84a2e8bc8187a85c0f1d0",
+        "feature_name": "rhetorical_questions_and_nah_emphasis",
+        "feature_value": "Multiple rhetorical questions culminating in emphatic dismissal",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "what are we when we have more guns then people...\"well regulated?\"NAH!",
+        "rationale": "The structure uses question forms and a punchline-like 'NAH!' to intensify persuasion."
+      },
+      {
+        "message_id": "bluesky_d5dcb0907e8347b4b7946fabed76bdeff641906d8e36d8c716990d750b7995da",
+        "feature_name": "call_to_action_and_praise_endorsement",
+        "feature_value": "Self-presentation as endorser/supporter of specific leaders with an explicit goal statement",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I\u0003m proud to endorse these leaders... fight for the change we all deserve",
+        "rationale": "The post includes endorsement/praise and frames it as action-oriented advocacy."
+      },
+      {
+        "message_id": "bluesky_d5dcb0907e8347b4b7946fabed76bdeff641906d8e36d8c716990d750b7995da",
+        "feature_name": "us_vs_them_us_house_majority_framing",
+        "feature_value": "Opposes 'lawmakers in Washington' while positioning 'pro-Second Amendment majority' as the desired in-group outcome",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "take action on America\u0003s gun violence crisis...take back a gun safety majority in the U.S. House",
+        "rationale": "The text contrasts an out-group resisting action with an in-group majority to be achieved."
+      },
+      {
+        "message_id": "twitter_2060756089310753109",
+        "feature_name": "outgroup_criminality_statement",
+        "feature_value": "Direct negative characterization of a group linked to weapons",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Baltimore ghetto criminals with AK-47's don't seem to obey gun laws.",
+        "rationale": "It asserts wrongdoing/illegality attributed to a target group, using a descriptive causal claim about noncompliance."
+      },
+      {
+        "message_id": "bluesky_ef595919d0d73cf9fca931bc173521fccbf0e0094afaa64e8cff862c8ec7daf3",
+        "feature_name": "high_polarization_slogan_sequence",
+        "feature_value": "Cluster of ideological/culture-war terms with a quoted 'perhaps we should' transition",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "racism-misogyny-patriarchy is still all the rage...perhaps we should have a serious-honest discussion about it",
+        "rationale": "The post uses a rapid list of tag-like terms followed by a deliberative setup ('perhaps we should')."
+      },
+      {
+        "message_id": "bluesky_816d15def235ef603346cef95479c4516aa6f14a3565951d0ecf7c403b92ffc6",
+        "feature_name": "counterfactual_positive_outcome_rescoring",
+        "feature_value": "Attributes mixed outcomes and claims a positive offset despite a negative action",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "positive effect large enough to offset the negative impact",
+        "rationale": "The causal framing explicitly weighs negative impact and then claims offsetting benefits."
+      },
+      {
+        "message_id": "reddit_1thqwmy_oms2rhn",
+        "feature_name": "rebuttal_dialogue_form_worthy_lens",
+        "feature_value": "Two-turn style argument with explicit 'No,' rejection and repetition of a concept label",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Sure. But isn't that...\"...\"No, it isn't a worthy lense...\"",
+        "rationale": "The structure uses quoted back-and-forth and a repeated judgment, creating an argumentative exchange format."
+      }
+    ]
+  }
+}

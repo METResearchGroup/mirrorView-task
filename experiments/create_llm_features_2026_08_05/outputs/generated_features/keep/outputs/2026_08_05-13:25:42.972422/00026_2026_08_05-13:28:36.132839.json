@@ -1,0 +1,94 @@
+{
+  "batch_id": 26,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_462f090b4b4bd06dc91f52b4435e84ba1afda156fe1444a341390b0e48b792b2",
+    "bluesky_a033a6ea5ce7158d3e16db1dc32a9bad9bafde45cef60970d4c4993b3cb980a4",
+    "bluesky_bd249c0417a31399aa53ae2c269679fb55fb7d0f195483d0923a5eda9570a4ea",
+    "bluesky_d4bbd52fbbd004d8f371aa4808b7d0ae169acc98023ac977cfa9f42836bdf084",
+    "reddit_1l60dkx_mwl4h1p",
+    "reddit_1lh3h92_mz2k6wk",
+    "twitter_2061194186469093549",
+    "twitter_2061203484049830038",
+    "twitter_2061206146682335452",
+    "twitter_2061220016868229615"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1lh3h92_mz2k6wk",
+        "feature_name": "profanity_taboo_term_present",
+        "feature_value": "Uses strong profanity/insulting vulgar term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"walking shit stain\"",
+        "rationale": "The post contains explicit taboo language used as an extreme personal insult."
+      },
+      {
+        "message_id": "twitter_2061194186469093549",
+        "feature_name": "at_mention_present",
+        "feature_value": "Includes an @mention attribution",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@afneil\"",
+        "rationale": "The message is explicitly addressed to a specific account via a handle."
+      },
+      {
+        "message_id": "bluesky_d4bbd52fbbd004d8f371aa4808b7d0ae169acc98023ac977cfa9f42836bdf084",
+        "feature_name": "mass_shooting_and_gun_control_linked_claim",
+        "feature_value": "Links gun violence and climate/heat comparison with policy language",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Every time there is another mass shooting\"",
+        "rationale": "The post centers on gun violence and contrasts it with another domain (heat/climate) using a statistical/mortality comparison."
+      },
+      {
+        "message_id": "bluesky_a033a6ea5ce7158d3e16db1dc32a9bad9bafde45cef60970d4c4993b3cb980a4",
+        "feature_name": "mixed_group_comparison_and_policy_fix_argument",
+        "feature_value": "Critiques an opposing faction\u2019s proposed fix while acknowledging partial agreement",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"mourning a white nationalist is heinous\"",
+        "rationale": "The text blends moral condemnation with an argument that a proposed policy response won\u2019t solve the problem."
+      },
+      {
+        "message_id": "reddit_1l60dkx_mwl4h1p",
+        "feature_name": "foreign_actor_puppet_traitor_accusations",
+        "feature_value": "Alleges leader is a foreign asset/puppet",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"russian asset\"",
+        "rationale": "The post uses a foreign-influence framing (asset/traitor/political betrayal) as a core claim."
+      },
+      {
+        "message_id": "twitter_2061220016868229615",
+        "feature_name": "call_to_action_via_imperative_wish",
+        "feature_value": "Imperative/wish about future extreme conditions",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Lets Hope Global Temperature Stays Elevated\"",
+        "rationale": "The speaker uses an imperative-style wish/request aimed at a desired future outcome."
+      },
+      {
+        "message_id": "twitter_2061203484049830038",
+        "feature_name": "policy_prescription_with_problem_solved_slogan",
+        "feature_value": "Proposes a policy and claims it fully solves the issue",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Make prostitution illegal, take women's rights away.\\n\\nProblem solved.\"",
+        "rationale": "It contains explicit policy prescriptions paired with a definitive 'problem solved' conclusion."
+      },
+      {
+        "message_id": "bluesky_bd249c0417a31399aa53ae2c269679fb55fb7d0f195483d0923a5eda9570a4ea",
+        "feature_name": "rhetorical_question_series",
+        "feature_value": "Multiple rhetorical questions structured as 'When/Unless/Surely not' sequence",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Unless it's just the mentally ill who can access guns far too easily?\"",
+        "rationale": "The post uses a multi-step rhetorical-question sequence to challenge an argument and guide readers toward a conclusion."
+      }
+    ]
+  }
+}

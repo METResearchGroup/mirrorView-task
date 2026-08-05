@@ -1,0 +1,94 @@
+{
+  "batch_id": 19,
+  "label_class": "keep",
+  "message_ids": [
+    "reddit_1t4fs97_okdu8ik",
+    "reddit_1tnobm9_onxadx3",
+    "reddit_1ts91q8_op1ibpl",
+    "reddit_1tu5tml_op7f1ie",
+    "reddit_1tzcqta_oqb308m",
+    "reddit_1u0l8qh_oqotlq2",
+    "twitter_2060369757598076962",
+    "twitter_2061038624087433709",
+    "twitter_2061230706408477113",
+    "twitter_2061785306945204244"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061038624087433709",
+        "feature_name": "question_make_it_make_sense_callout",
+        "feature_value": "Uses a rhetorical/imperative 'Make it make sense' question to call out inconsistency",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Make it make sense maga.\"",
+        "rationale": "The post ends with a pointed 'Make it make sense' challenge after listing two contrasting claims."
+      },
+      {
+        "message_id": "twitter_2061038624087433709",
+        "feature_name": "named_person_mention_density",
+        "feature_value": "Mentions a named public figure handle",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@DougBurgum\"",
+        "rationale": "Directly addresses a specific politician by handle."
+      },
+      {
+        "message_id": "twitter_2061785306945204244",
+        "feature_name": "quote_attribution_embedding_house_hearing",
+        "feature_value": "Embeds a quoted statement attributed to a House hearing context",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"We have no idea who is in our communities.\" This testimony from the House hearing",
+        "rationale": "The structure uses an explicit quotation followed by attribution ('This testimony from the House hearing')."
+      },
+      {
+        "message_id": "twitter_2061785306945204244",
+        "feature_name": "human_rights_emotional_frame",
+        "feature_value": "Frames the issue with human impact/persecution-like language",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"families are being torn apart\"",
+        "rationale": "The language emphasizes personal harm ('torn apart'), signaling a moralized/empathic framing."
+      },
+      {
+        "message_id": "reddit_1u0l8qh_oqotlq2",
+        "feature_name": "us_vs_them_elite_vs_establishment_claim",
+        "feature_value": "Attributes outcomes to corruption/being 'played' vs mainstream institutions",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Because they're corrupt? No. Because there was no ring. The left got played.\"",
+        "rationale": "Uses a corrective denial followed by an accusation of manipulation by a specific outgroup ('the left')."
+      },
+      {
+        "message_id": "reddit_1ts91q8_op1ibpl",
+        "feature_name": "normative_moral_language_person_vs_unborn",
+        "feature_value": "Explicit moral preference contrasting living person vs unborn child",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I'd rather save a person who is here and living a life than an unborn child\"",
+        "rationale": "The post performs a direct normative comparison using moral language about who should be saved."
+      },
+      {
+        "message_id": "twitter_2060369757598076962",
+        "feature_name": "geographic_scope_state_level_policy",
+        "feature_value": "Promises policy protection at the state level (Pennsylvania)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"here in Pennsylvania.\"",
+        "rationale": "The statement specifies a U.S. state as the locus of the policy claim."
+      },
+      {
+        "message_id": "reddit_1tnobm9_onxadx3",
+        "feature_name": "minimal_response_agreement_emoji_free",
+        "feature_value": "Single-token/short emphatic affirmation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Yep.\"",
+        "rationale": "The post is extremely short and purely agreement-based, indicating strong alignment with minimal content."
+      }
+    ]
+  }
+}

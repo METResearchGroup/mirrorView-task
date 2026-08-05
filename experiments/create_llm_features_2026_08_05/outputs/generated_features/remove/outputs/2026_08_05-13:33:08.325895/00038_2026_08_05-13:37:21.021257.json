@@ -1,0 +1,94 @@
+{
+  "batch_id": 38,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_aeddf92353b36f948ec4403137e7b3a73f28f99642eaeeb51ca708581db49fad",
+    "bluesky_cd1729a309622dac0c1563d7b598a89b98e813bfa1db737155624c1879fc4b89",
+    "bluesky_eea306c58c8a7552871a9d1aae263a5e22a90fac0715e3f04eaa5ece889fcc29",
+    "reddit_1kspe1b_mto7c5g",
+    "reddit_1lenyao_myiryrv",
+    "reddit_1ttbse9_op2waon",
+    "reddit_1tw6zcr_opo4gz2",
+    "reddit_1tzs7nk_oqefhsd",
+    "twitter_2061520951783637484",
+    "twitter_2061810168220811634"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ttbse9_op2waon",
+        "feature_name": "targeting_specific_persons_parties",
+        "feature_value": "Mentions political figure(s) and opposition party/ideology in blame/redemption context",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"at least Trump\" ... \"radical antifa leftist\"",
+        "rationale": "Direct reference to specific partisan actors and ideological group indicates targeted partisan directionality."
+      },
+      {
+        "message_id": "reddit_1ttbse9_op2waon",
+        "feature_name": "imprisonment_or_rotting_in_cell_fate_wish",
+        "feature_value": "Expresses punishment fantasy (prison/rotting in a cell) for political opponents",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"hope that at least Trump would be out of office\" ... \"on his way to prison\"",
+        "rationale": "Linked-fate moderation cues often include extreme personal fate language toward political targets."
+      },
+      {
+        "message_id": "bluesky_aeddf92353b36f948ec4403137e7b3a73f28f99642eaeeb51ca708581db49fad",
+        "feature_name": "foundational_rights_citation_amendment",
+        "feature_value": "Uses constitutional amendment wording to argue gun-rights interpretation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"the Right of the people to keep and bear arms, shall not be infringed\"",
+        "rationale": "Citing the Second Amendment and quoting its text grounds the post in a specific policy/rights debate."
+      },
+      {
+        "message_id": "bluesky_cd1729a309622dac0c1563d7b598a89b98e813bfa1db737155624c1879fc4b89",
+        "feature_name": "explicit_policy_domain_guns_and_school_shootings",
+        "feature_value": "Frames amendment in terms of assault weapons and killing schoolchildren",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"allow a man-child to buy himself an assault weapon\" ... \"slaughter schoolkids\"",
+        "rationale": "Directly ties guns to school violence, a salient linked-fate moderation topic."
+      },
+      {
+        "message_id": "reddit_1kspe1b_mto7c5g",
+        "feature_name": "religious_damnation_and_moral_judgment",
+        "feature_value": "Uses moral condemnation with afterlife threat language",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Damn them all to Hell.\"",
+        "rationale": "Strong moralized invective increases intensity and can be a cue for removal."
+      },
+      {
+        "message_id": "reddit_1kspe1b_mto7c5g",
+        "feature_name": "devil_personification_and_party_soul_selling",
+        "feature_value": "Accuses an entire party of selling souls to the devil",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"all republicans sol(led) their souls to devil trump\"",
+        "rationale": "Apocalyptic/diabolic attribution is aggressive, party-wide, and adversarial in semantic framing."
+      },
+      {
+        "message_id": "twitter_2061520951783637484",
+        "feature_name": "mocking_affordability_with_contrast_to_terrorism_election",
+        "feature_value": "Mocks negotiation/priorities by contrasting with affordability/elections concerns",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Please ignore the high prices\" ... \"I got all the time in the world\"",
+        "rationale": "Irony-like critique of a political statement using contrasted priorities suggests persuasive/argumentative attack."
+      },
+      {
+        "message_id": "twitter_2061810168220811634",
+        "feature_name": "rhetorical_conditional_diagnostic_question",
+        "feature_value": "Uses 'Surely' rhetorical question contrasting race-based decisions in policing/justice",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Surely a police officer who takes the side of one person... shouldn't be in the #police?\"",
+        "rationale": "A rhetorical question with a conditional setup signals confrontational evaluative intent."
+      }
+    ]
+  }
+}

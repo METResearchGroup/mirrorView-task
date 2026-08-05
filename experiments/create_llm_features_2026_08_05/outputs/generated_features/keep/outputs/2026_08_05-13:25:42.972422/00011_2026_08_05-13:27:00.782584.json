@@ -1,0 +1,94 @@
+{
+  "batch_id": 11,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_0af8e6dd910ad07d23db7eeffbf2663846e7c36ec7f9cd77e9b82633508662cd",
+    "bluesky_b5c540d45fcdfe437d7cbbdcf9e488b1c1665e596e9a6f6e2065ceebb31ce3e1",
+    "reddit_1legu6v_myhek0e",
+    "reddit_1trdy16_oornuh3",
+    "reddit_1tw57mx_opmq8md",
+    "twitter_2059387832884675063",
+    "twitter_2060525706883309757",
+    "twitter_2061110867987447965",
+    "twitter_2061145721890357263",
+    "twitter_2061523949066850567"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1trdy16_oornuh3",
+        "feature_name": "majority_generalization_usvs_them",
+        "feature_value": "Uses 'Most' generalization to draw a categorical distinction between legitimate/protecting and illegitimate/protecting.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Most cops are not protecting a legit bad cop.\"",
+        "rationale": "A blanket 'Most' claim establishes a moral judgment about which group is (not) defending what."
+      },
+      {
+        "message_id": "reddit_1tw57mx_opmq8md",
+        "feature_name": "personal_but_permissive_position_statement",
+        "feature_value": "Expresses personal experience plus a conditional stance allowing individual choice while arguing for a structural restriction.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I\u001520m not saying that women shouldn\u001520t be in the military... If a female wants to go... there\u001520s no reason the should not\"",
+        "rationale": "The post combines first-person validation with a nuanced conditional permission while maintaining an overall argument."
+      },
+      {
+        "message_id": "twitter_2059387832884675063",
+        "feature_name": "constitutionalism_absolutist_policy_claim",
+        "feature_value": "Absolute claim that a broad set of policies/laws is unconstitutional.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"All gun laws are unconstitutional\"",
+        "rationale": "Normative/legal framing (\u201cunconstitutional\u201d) is used to assert sweeping illegitimacy."
+      },
+      {
+        "message_id": "twitter_2061145721890357263",
+        "feature_name": "second_person_inquiry_and_us_vs_them_blame",
+        "feature_value": "Directly addresses readers with rhetorical observation and then blames an opposing political group for demonizing immigrants.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Have you noticed...\"",
+        "rationale": "The post uses direct audience engagement and sets up an in-group/out-group blame structure."
+      },
+      {
+        "message_id": "twitter_2061110867987447965",
+        "feature_name": "quote_style_evidence_and_parenthetical_year",
+        "feature_value": "Provides a support-and-evidence sequence with a bracketed/parenthetical year and explicit legislative action descriptors.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Here's the evidence:\\n\\nPermitless Concealed Carry (2023): Sponsored legislation... Signed into law\"",
+        "rationale": "The structure embeds attribution and concrete policy examples with a year marker to support an argument."
+      },
+      {
+        "message_id": "twitter_2061523949066850567",
+        "feature_name": "institutional_solidarity_prosocial_call",
+        "feature_value": "Recommits to awareness, prevention efforts, and protecting lives during a named observance month.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"During National Gun Violence Awareness Month, we recommit to raising awareness... and protecting lives.\"",
+        "rationale": "Appeals to shared civic action tied to a specific public campaign context."
+      },
+      {
+        "message_id": "bluesky_0af8e6dd910ad07d23db7eeffbf2663846e7c36ec7f9cd77e9b82633508662cd",
+        "feature_name": "contrastive_political_mirror_with_emotive_interjection",
+        "feature_value": "Uses contrast (\u201cand then suddenly\u201d) plus an interjection of outrage (\u201chow dare you\u201d) and swaps actor/opposition in the mirror.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"and then suddenly half the wonks have decided... (how dare you)\"",
+        "rationale": "The post\u2019s emotional contrastive framing and mirror retargeting signal partisan opposition."
+      },
+      {
+        "message_id": "reddit_1legu6v_myhek0e",
+        "feature_name": "profanity_and_ingroup_outrage_allocation",
+        "feature_value": "Uses profanity to condemn an entire party and frames voters as complicit, then argues against accepting a scapegoat narrative.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"No, fuck *Republicans*. All of them, voters included.\"",
+        "rationale": "Swearing plus totalizing condemnation and narrative rejection are strong linguistic cues of aggressive moral stance."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 40,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_1de7f143b2e14fd681a2e9db182cedaaf0dec30ad41542fe37c5e3477482153d",
+    "bluesky_57708c7fc1a377e212ef0c69946747caeb1ab6ff5147c09e3a8c706900615c3f",
+    "bluesky_5f9adce227e8fb1ab0e404654da264f44e8de1bd5f479b681a8ff0382d462519",
+    "reddit_1kduyqe_mqefpvx",
+    "reddit_1kx7c8d_mut44my",
+    "reddit_1tsx0f1_ooycwq8",
+    "reddit_1txopv4_opyut9g",
+    "twitter_2061031033475096816",
+    "twitter_2061791165561586087",
+    "twitter_2061812407358398679"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061812407358398679",
+        "feature_name": "high_punctuation_intensity_and_caps_emphasis",
+        "feature_value": "All-caps headings plus strong punctuation (\"!\") and short declarative paragraphs",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"TRUMP JUST SHOWED THE WORLD HOW ALLIANCES REALLY WORK\" ... \"Then Monday happened.\"",
+        "rationale": "The post uses emphatic all-caps and punchy exclamation-like structure to frame a major revelation."
+      },
+      {
+        "message_id": "twitter_2061812407358398679",
+        "feature_name": "us_alliances_israel_usrael_call_as_specific_event_frame",
+        "feature_value": "Alliance/Israel-U.S. calls framed as validation vs lack of support",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The Trump-Netanyahu call\"",
+        "rationale": "It centers on a specific Israel\u2013U.S. alliance episode (Trump\u2013Netanyahu call) to make political claims."
+      },
+      {
+        "message_id": "twitter_2061812407358398679",
+        "feature_name": "normative_warning_signal_causal_implication",
+        "feature_value": "Signal/validation/warning language implying causal link between actions and alliance behavior",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"wasn't just heated it was a SIGNAL\" ... \"Trump seemed to validate that.\"",
+        "rationale": "Semantic markers (\u201cSIGNAL\u201d, \u201cvalidate\u201d, \u201cblank check\u201d) convey consequential meaning beyond neutral description."
+      },
+      {
+        "message_id": "reddit_1kduyqe_mqefpvx",
+        "feature_name": "profanity_and_informal_spoken_style",
+        "feature_value": "Uses explicit profanity and conversational, first-person media commentary",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"he's just fucking around\"",
+        "rationale": "The post\u2019s register is informal and uses taboo language for emphasis."
+      },
+      {
+        "message_id": "reddit_1kduyqe_mqefpvx",
+        "feature_name": "persuasion_or_argumentation_via_personal_abandonment",
+        "feature_value": "First-person stance change: accept criticism but claims to stop being \"trolled\"",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I don\u2019t like him, but I\u2019m not getting trolled by him anymore.\"",
+        "rationale": "The communicative intent is argumentative/justificatory, using personal experience and conclusion."
+      },
+      {
+        "message_id": "bluesky_1de7f143b2e14fd681a2e9db182cedaaf0dec30ad41542fe37c5e3477482153d",
+        "feature_name": "primary_policy_domain_gun_control_red_flag_enforcement",
+        "feature_value": "Gun control enforcement and red flag laws; mentions FBI/DOJ-style institutions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun control laws\" ... \"red flag laws\" ... \"fbi\"",
+        "rationale": "The post directly concerns gun policy and the implementation of red flag laws."
+      },
+      {
+        "message_id": "twitter_2061791165561586087",
+        "feature_name": "biological_justification_to_normative_policy_statement",
+        "feature_value": "Biological premise \u2192 personhood claim \u2192 prescriptive abortion condemnation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"A baby in the womb has different DNA than the mother. Therefore... Is its own person. Abortion is to kill.\"",
+        "rationale": "It uses an explicit argument chain (therefore) connecting facts to moral/legal conclusion."
+      },
+      {
+        "message_id": "bluesky_57708c7fc1a377e212ef0c69946747caeb1ab6ff5147c09e3a8c706900615c3f",
+        "feature_name": "us_vs_them_targeting_political_party_and_call_for_removal",
+        "feature_value": "Direct party-level blame and advocacy to remove opposing party",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"get rid of every republican\" ... \"children die in school\"",
+        "rationale": "The text targets an outgroup (Republicans) and expresses an exclusionary directive, intensifying moral-safety framing."
+      }
+    ]
+  }
+}

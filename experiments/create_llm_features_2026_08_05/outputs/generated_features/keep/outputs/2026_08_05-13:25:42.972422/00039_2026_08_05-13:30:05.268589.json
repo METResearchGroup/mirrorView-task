@@ -1,0 +1,94 @@
+{
+  "batch_id": 39,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_e699e26656ff43b20e7730b4ddf77714733b9bbed93bd4f414f91a1440177071",
+    "bluesky_e8a81b0cf65b9d2d863dedd896ccfbe29995018fca3e409b4a9e44f672220612",
+    "reddit_1kclz6v_mq6ew13",
+    "reddit_1kuxsho_mu7qkne",
+    "reddit_1lg6glt_mytzb3b",
+    "reddit_1t7hgak_okpi6xx",
+    "reddit_1tx0770_opsaim3",
+    "reddit_1tz4ira_oqaclrf",
+    "twitter_2061377063567688185",
+    "twitter_2061758335276154948"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061758335276154948",
+        "feature_name": "all_caps_question_title",
+        "feature_value": "All-caps rhetorical title question framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"IS UNIVERSAL BASIC INCOME REALISTIC?\"",
+        "rationale": "The post begins with an all-caps question that sets up an argument."
+      },
+      {
+        "message_id": "twitter_2061758335276154948",
+        "feature_name": "redistribution_by_tax_contrast",
+        "feature_value": "Explains a policy as redistribution via higher taxes/cutting benefits (vs alternative)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"they just redistribute it through significantly higher taxes\"",
+        "rationale": "The semantic core is a causal/functional description of how a proposal would work."
+      },
+      {
+        "message_id": "reddit_1tx0770_opsaim3",
+        "feature_name": "blame_causal_proposition_trimming_fat",
+        "feature_value": "Causal blame: government misuse leads to budget cuts; uses body-fat metaphor",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"wasting money and abusing regulations\" ... \"trim the fat\"",
+        "rationale": "The text directly links a political actor to a claimed cause and uses moralized metaphor."
+      },
+      {
+        "message_id": "reddit_1kclz6v_mq6ew13",
+        "feature_name": "insult_intensifier_dehumanizing",
+        "feature_value": "Strong derogatory insults with identity-based slurs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"100% low IQ white trash\"",
+        "rationale": "The post uses emphatic personal attacks rather than policy discussion."
+      },
+      {
+        "message_id": "reddit_1t7hgak_okpi6xx",
+        "feature_name": "second_person_direct_address_and_rhetorical_question",
+        "feature_value": "Direct second-person rhetorical question about entitlement",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Do you feel entitled to speak that way?\"",
+        "rationale": "Uses direct address plus a question to challenge the speaker\u2019s right to speak."
+      },
+      {
+        "message_id": "bluesky_e8a81b0cf65b9d2d863dedd896ccfbe29995018fca3e409b4a9e44f672220612",
+        "feature_name": "named_candidate_endorsement_election_run",
+        "feature_value": "Candidate endorsement + state senate candidacy in Montana (district 43)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"endorse Kathy Love! Kathy is running for state senate in Montana's district 43\"",
+        "rationale": "Contains concrete electoral participation and geographic specificity."
+      },
+      {
+        "message_id": "bluesky_e699e26656ff43b20e7730b4ddf77714733b9bbed93bd4f414f91a1440177071",
+        "feature_name": "policy_cause_effect_debate_ban_repeal",
+        "feature_value": "Binary policy efficacy claim: ban lowered deaths; repeal increased deaths",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The federal assault weapon ban lowered gun deaths. It's repeal created more gun deaths.\"",
+        "rationale": "Presents competing causal assertions about specific firearms legislation."
+      },
+      {
+        "message_id": "reddit_1kuxsho_mu7qkne",
+        "feature_name": "short_allusive_insult_like_form",
+        "feature_value": "One-line 'literally' equivalence insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is literally a prostitute\"",
+        "rationale": "Uses a very short, emphatic 'literally' accusation as the entire communicative content."
+      }
+    ]
+  }
+}

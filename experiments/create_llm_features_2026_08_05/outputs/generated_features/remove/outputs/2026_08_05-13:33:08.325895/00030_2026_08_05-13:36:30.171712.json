@@ -1,0 +1,94 @@
+{
+  "batch_id": 30,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_49bdc150e48d44055aa3691aafa96f4e7af393d8219b7d7569d04fb3669fc031",
+    "bluesky_caca755d4d30ef0b58c8c0312116e61fa852b60e725ddcdbc36c2030ab637106",
+    "bluesky_efbcf9c956d68b54f926444f13bc182f736d6e6ac2fe45d895c32931ca158ceb",
+    "reddit_1l5sulo_mwjxh5s",
+    "reddit_1lenxv4_myhwg1c",
+    "reddit_1ln4xz0_n0cojlk",
+    "reddit_1t6mb7v_okjqay7",
+    "reddit_1tvp4r1_opk3apc",
+    "twitter_2059500334813515902",
+    "twitter_2061558316703072725"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2059500334813515902",
+        "feature_name": "profanity_taboo_language_present",
+        "feature_value": "Contains strong profanity/insults toward named political figures",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"pound sand @JohnCornyn you traitorous fuck\"",
+        "rationale": "Explicit taboo/profanity is used to attack individuals, increasing likelihood of removal."
+      },
+      {
+        "message_id": "twitter_2059500334813515902",
+        "feature_name": "named_proper_nouns_density_high",
+        "feature_value": "Multiple senator handles/names in one post",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@JohnCornyn\" ... \"@SenatorWicker\"",
+        "rationale": "The post directly names several politicians, making it a targeted political attack."
+      },
+      {
+        "message_id": "twitter_2059500334813515902",
+        "feature_name": "policy_domain_pact_act_guns_veterans",
+        "feature_value": "PACT Act stall + gun rights + veteran pensions framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"stalled the PACT Act\" ... \"went after gun rights\"",
+        "rationale": "Specific legislative topic(s) are central to the claim."
+      },
+      {
+        "message_id": "twitter_2059500334813515902",
+        "feature_name": "normative_emphatic_outrage_and_targeted_attack",
+        "feature_value": "Strong imperative/hostile rhetoric directed at politicians",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"pound sand\" ... \"you traitorous\"",
+        "rationale": "Normative moral condemnation plus direct hostility to named actors signals high-intensity political confrontation."
+      },
+      {
+        "message_id": "reddit_1l5sulo_mwjxh5s",
+        "feature_name": "profanity_taboo_language_present",
+        "feature_value": "Profanity used as evaluation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fucking disgusting.\"",
+        "rationale": "The post uses explicit profanity to denounce the subject."
+      },
+      {
+        "message_id": "reddit_1l5sulo_mwjxh5s",
+        "feature_name": "us_vs_them_doj_weaponization_claim",
+        "feature_value": "Claims government power used to target donors by party",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump using the power of the US government to block someone donating to a Democrat\"",
+        "rationale": "A causal/intentional framing (weaponizing power) targets an outgroup via institutional action."
+      },
+      {
+        "message_id": "twitter_2061558316703072725",
+        "feature_name": "profanity_or_taboo_language_absent_but_emphatic_moral_judgment",
+        "feature_value": "Body-count safety/power language with moral contrast",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"body count\" ... \"profit, not protection\"",
+        "rationale": "Uses evaluative moral framing about safety vs profit to argue underlying intent."
+      },
+      {
+        "message_id": "bluesky_caca755d4d30ef0b58c8c0312116e61fa852b60e725ddcdbc36c2030ab637106",
+        "feature_name": "second_person_direct_address_and_conditional",
+        "feature_value": "Conditional protective/free-pass framing to justify violence claims",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If you're wearing a MAGA hat\"",
+        "rationale": "Conditional 'if' structure is used to link an identity marker to perceived impunity/behavior."
+      }
+    ]
+  }
+}

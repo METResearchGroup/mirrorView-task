@@ -1,0 +1,94 @@
+{
+  "batch_id": 41,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_20e0f7d04ad04a2c6f77ad7f9ff42bf1bef2e80e55aa328a99ef3d15b44bfa0e",
+    "bluesky_2b7a3b0959832d207bc4f8272dc9ae12b3874f4bd04e188f470ac8ac002d99f1",
+    "bluesky_2fb1b097afc3d17b0bac090d76ed14cb33730dd26e5b87825e85034ebcc047d9",
+    "bluesky_47c6d52f09beb5f76624fb6d55b558fc041f569fdaa377847c2da6d4209adf3b",
+    "bluesky_d6794ae1fdf557cc564a9a6635ce8fda2f8bf32a5ece5a72b0ec9dcf8be62bf1",
+    "reddit_1t7d5jc_okpg6u8",
+    "reddit_1tvr63e_opki9ge",
+    "reddit_1twd1b6_oprp5qx",
+    "twitter_2061720825783275743",
+    "twitter_2061830006373007780"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_d6794ae1fdf557cc564a9a6635ce8fda2f8bf32a5ece5a72b0ec9dcf8be62bf1",
+        "feature_name": "gun_reform_vs_gun_control_framing",
+        "feature_value": "Argues over gun policy by contrasting reform/control approaches and claiming they aid perpetrators",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun reform\" ... \"unlimited budget\" ... \"people who have killed\"",
+        "rationale": "The post centers on gun policy and frames reform/control as enabling violent actors."
+      },
+      {
+        "message_id": "twitter_2061720825783275743",
+        "feature_name": "anti_party_vote_slate",
+        "feature_value": "Lists negative outcomes under a party government and ends with an explicit voting directive",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Never Vote Labour Again\" / \"Never Vote Conservative Again\"",
+        "rationale": "A compact complaint list culminates in a direct instruction to vote against the referenced party."
+      },
+      {
+        "message_id": "twitter_2061830006373007780",
+        "feature_name": "tariffs_or_open_borders_blame_transfer_claim",
+        "feature_value": "Uses a causal blame claim with an economic-migration/policy contrast (foreigners/democrats vs true payers)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Foreigners don't pay them - we do!\"",
+        "rationale": "The text asserts a direct causal/economic claim about who bears costs under the policy."
+      },
+      {
+        "message_id": "bluesky_2fb1b097afc3d17b0bac090d76ed14cb33730dd26e5b87825e85034ebcc047d9",
+        "feature_name": "repeated_imperative_get_them_stop",
+        "feature_value": "Multiple 'get the ... to stop' imperatives in a tight block",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"get the dems to stop going after gun rights\" / \"get the dems to stop\"",
+        "rationale": "The post is structured as repeated imperatives, driving a clear persuasive demand."
+      },
+      {
+        "message_id": "bluesky_47c6d52f09beb5f76624fb6d55b558fc041f569fdaa377847c2da6d4209adf3b",
+        "feature_name": "culture_war_religion_party_alliance_claim",
+        "feature_value": "Connects a religious identity (MAGA Catholics) to multiple hot-button issues with moral condemnation",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGA Catholics gave us Dobbs\" / \"gutted Voting Rights\"",
+        "rationale": "It explicitly ties faith-based political alignment to election/voting and abortion-related stakes."
+      },
+      {
+        "message_id": "reddit_1twd1b6_oprp5qx",
+        "feature_name": "ingroup_outgroup_media_coverage_explanation",
+        "feature_value": "Claims lack of attention is due to news coverage rather than absence of advocacy",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The only reason you don't hear about BLM\" \"is because your news isn't covering it.\"",
+        "rationale": "It provides an explanatory causal account for perceived selective visibility via media omission."
+      },
+      {
+        "message_id": "bluesky_2b7a3b0959832d207bc4f8272dc9ae12b3874f4bd04e188f470ac8ac002d99f1",
+        "feature_name": "quantified_emissions_tradeoff_argument",
+        "feature_value": "Uses a specific quantitative estimate (roughly 75%) tied to ending war and reduced carbon emissions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"roughly 75% of carbon emissions\"",
+        "rationale": "The argument makes a concrete numeric claim linked to policy action and environmental outcomes."
+      },
+      {
+        "message_id": "bluesky_20e0f7d04ad04a2c6f77ad7f9ff42bf1bef2e80e55aa328a99ef3d15b44bfa0e",
+        "feature_name": "second_person_moral_blame_lawmakers_blindness",
+        "feature_value": "Uses moralized critique of lawmakers and frames response as 'progress' vs 'none' with uncertainty",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"lawmakers can be so willfully blind\"",
+        "rationale": "The post employs normative moral evaluation and a rhetorical critique of lawmakers\u2019 understanding."
+      }
+    ]
+  }
+}

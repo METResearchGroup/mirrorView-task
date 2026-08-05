@@ -1,0 +1,20 @@
+{
+  "cluster_id": 8,
+  "label_class": "remove",
+  "n_members": 7,
+  "sampled_feature_ids": [
+    "6_4",
+    "46_7",
+    "14_3",
+    "0_7",
+    "18_4",
+    "19_7",
+    "4_3"
+  ],
+  "result": {
+    "cluster_id": 8,
+    "cluster_label": "Victim/persecution framing with blame",
+    "definition": "REMOVE posts that use victimhood or persecution language to depict a targeted group as harmed or endangered, often paired with assigning moral blame or validating/endorsing the harm.",
+    "salience_notes": "The sample consistently centers suffering/death or unjust burden and strengthens the moral stance with blaming/undeservedness or accomplice-to-hate framing."
+  }
+}

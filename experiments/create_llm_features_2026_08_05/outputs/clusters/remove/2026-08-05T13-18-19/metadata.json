@@ -1,0 +1,35 @@
+{
+  "label_class": "remove",
+  "source_embeddings_run_dir": "experiments/create_llm_features_2026_08_05/outputs/generated_embeddings/remove/2026-08-05T13-18-17",
+  "seed": 42,
+  "scaler": "StandardScaler_fit_all_rows",
+  "downstream_method": "hdbscan",
+  "hdbscan_noise_policy": "skip_noise_for_labeling",
+  "n_features": 8,
+  "embedding_dim": 256,
+  "min_cluster_size_requested": 5,
+  "hdbscan": {
+    "method": "hdbscan",
+    "min_cluster_size": 2,
+    "min_samples": 1,
+    "metric": "euclidean",
+    "n_clusters": 3,
+    "n_noise": 0,
+    "hdbscan_noise_policy": "skip_noise_for_labeling",
+    "min_cluster_size_override_reason": "n_features=8 < 20: min_cluster_size=2, min_samples=1 (requested min_cluster_size=5)"
+  },
+  "kmeans": {
+    "method": "kmeans",
+    "selected_k": 3,
+    "k_selection": "silhouette_max",
+    "n_init": 10,
+    "max_iter": 300,
+    "comparison_only": true
+  },
+  "class_root_pngs": {
+    "hdbscan": "/workspace/experiments/create_llm_features_2026_08_05/outputs/clusters/remove/cluster_hdbscan.png",
+    "kmeans": "/workspace/experiments/create_llm_features_2026_08_05/outputs/clusters/remove/cluster_kmeans.png"
+  },
+  "assignments_format": "json",
+  "sklearn_HDBSCAN": "sklearn.cluster.HDBSCAN"
+}

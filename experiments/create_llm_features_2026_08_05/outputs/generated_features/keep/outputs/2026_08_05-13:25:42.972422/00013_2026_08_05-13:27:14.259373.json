@@ -1,0 +1,94 @@
+{
+  "batch_id": 13,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_b5b5a207d7fd129624372f7368ceb6c5a534f924376d11fefa5c3392734a642a",
+    "bluesky_d2379014e035997f8433346071e3d950b300d4748c093b61152c981fcdd4f539",
+    "reddit_1tbzoap_olkxrcv",
+    "reddit_1tz4l7k_oq9ovum",
+    "twitter_2060017768708079630",
+    "twitter_2061529386159927499",
+    "twitter_2061541440388243817",
+    "twitter_2061776440589271149",
+    "twitter_2061782432911663539",
+    "twitter_2061826329784324139"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061782432911663539",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Florida lawmakers opened a special session\"",
+        "rationale": "The post contains multiple clauses and a full argument sentence, making it clearly longer than a short slogan."
+      },
+      {
+        "message_id": "twitter_2061782432911663539",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Florida lawmakers / voters (US-state named)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Florida lawmakers\"",
+        "rationale": "It uses a specific US state entity as the main subject."
+      },
+      {
+        "message_id": "twitter_2061541440388243817",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "multiple hashtags about stance/issue",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#prolife #abortion #abolition\"",
+        "rationale": "The post is explicitly organized around several issue hashtags."
+      },
+      {
+        "message_id": "twitter_2061776440589271149",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Republicans (party reference) + US context",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans Should Eliminate Federal Income Taxes\"",
+        "rationale": "It names a US political party and targets a federal tax policy."
+      },
+      {
+        "message_id": "reddit_1tz4l7k_oq9ovum",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "\"woke leftists\" vs \"administration\"; mirror shifts to \"MAGA loyalists\" vs \"oligarchs\"",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"woke leftists\" ... \"administration\"",
+        "rationale": "The discourse contrasts in-group/out-group types and, in the mirror, reframes the opposing group as serving elites."
+      },
+      {
+        "message_id": "bluesky_b5b5a207d7fd129624372f7368ceb6c5a534f924376d11fefa5c3392734a642a",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "\"psyops\" claim about climate discourse",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"successful psyops in history\"",
+        "rationale": "Calling climate messaging a \"psyops\" indicates conspiratorial manipulation framing."
+      },
+      {
+        "message_id": "twitter_2061529386159927499",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "direct imperative to reader",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Don't let your healthcare insurance\"",
+        "rationale": "It directly addresses the reader with an imperative starting with \"Don't let\"."
+      },
+      {
+        "message_id": "twitter_2060017768708079630",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "normative restriction tied to political stance",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"should receive armed protection\"",
+        "rationale": "It states a prescriptive rule about what politicians \"should\" not be allowed to receive."
+      }
+    ]
+  }
+}

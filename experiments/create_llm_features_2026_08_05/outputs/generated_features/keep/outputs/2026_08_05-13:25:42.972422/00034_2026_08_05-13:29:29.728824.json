@@ -1,0 +1,94 @@
+{
+  "batch_id": 34,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_019de9fa96e57b2d0331926a143211e6428143ba235c73b3cc84cc56109744e7",
+    "bluesky_d0fce4352ffd318fb3402d52f98df2048bb20109e002a61161c70a432f012424",
+    "reddit_1l90b35_mx9a2nz",
+    "reddit_1tohbe9_oo1g5ru",
+    "reddit_1tsx0f1_op1qjqr",
+    "reddit_1ttbqa6_op2h4mb",
+    "reddit_1tuwb8f_opf408q",
+    "twitter_2061231010948276598",
+    "twitter_2061528539128648031",
+    "twitter_2061553395043832298"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1l90b35_mx9a2nz",
+        "feature_name": "short_text_insulting_generalization",
+        "feature_value": "Very short (~3 tokens) with direct insult toward an entire group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Conservative are so dumb\"",
+        "rationale": "The post uses a minimal, blanket derogatory statement targeting a political group."
+      },
+      {
+        "message_id": "reddit_1tsx0f1_op1qjqr",
+        "feature_name": "mirror_shift_personal_grift_claim",
+        "feature_value": "Alleges personal corruption/personal benefit as motive; mirrors blame from one politician to another",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"enables his mafia shakedown\" ... \"everything else is just a pretext for a grift\"",
+        "rationale": "It asserts a cynical causal motive (personal grift) and reassigns it to another figure in the mirror."
+      },
+      {
+        "message_id": "reddit_1tohbe9_oo1g5ru",
+        "feature_name": "extreme_rhetoric_all_caps_goal_language",
+        "feature_value": "Uses emphatic goal framing and absolutist language (LITERAL GOAL)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"it's literally their whole GOAL!\"",
+        "rationale": "The text attributes a totalizing intent to the outgroup using high-intensity emphasis."
+      },
+      {
+        "message_id": "bluesky_d0fce4352ffd318fb3402d52f98df2048bb20109e002a61161c70a432f012424",
+        "feature_name": "conditional_concession_contrast_agreement_on_issue",
+        "feature_value": "Concedes agreement with one side, then contrasts with past opposition; includes policy domain (gun laws)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"to be clear i actually agree with Trump... (regarding red flag laws)\" ... \"but gun nuts\"",
+        "rationale": "The speaker uses a clear concession/qualification followed by argumentative contrast about reactions to gun legislation."
+      },
+      {
+        "message_id": "reddit_1ttbqa6_op2h4mb",
+        "feature_name": "quote_recasting_vs_other_policy",
+        "feature_value": "Quote-and-reframe structure contrasting reproductive rights with gun rights; suggests precedent threat",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Maybe because the court was ruling against precedent...\"",
+        "rationale": "It embeds quoted phrases and uses a comparative causal explanation pattern."
+      },
+      {
+        "message_id": "twitter_2061553395043832298",
+        "feature_name": "call_to_action_about_conversations",
+        "feature_value": "Encourages action: push back via conversations with loved ones; supports with named guide",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"How do we push back... By having fearless conversations with our loved ones.\"",
+        "rationale": "It directly instructs what to do and offers a resource to help carry it out."
+      },
+      {
+        "message_id": "twitter_2061528539128648031",
+        "feature_name": "pre_post_contrastive_structuring",
+        "feature_value": "Uses 'Pre' vs 'Post' framing with a must-do urgency statement",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Pre FWS Supreme Court Win:\" ... \"Post FWS Supreme Court Win:\" ... \"We must do something!\"",
+        "rationale": "The message is organized as a before/after contrast and culminates in an action-oriented imperative."
+      },
+      {
+        "message_id": "reddit_1tuwb8f_opf408q",
+        "feature_name": "normative_body_rights_argument",
+        "feature_value": "Normative justification using personhood/body autonomy framing; abortion policy focus",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Even though it is HER body, HER health, and HER life on the line.\"",
+        "rationale": "It uses moral-justificatory language tied to reproductive rights and bodily autonomy under restriction."
+      }
+    ]
+  }
+}

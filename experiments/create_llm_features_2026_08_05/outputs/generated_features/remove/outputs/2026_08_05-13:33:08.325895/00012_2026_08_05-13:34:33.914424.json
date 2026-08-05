@@ -1,0 +1,94 @@
+{
+  "batch_id": 12,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+    "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+    "reddit_1l6owby_mwqjfvf",
+    "reddit_1liz1et_mzgv86x",
+    "reddit_1ll9l4x_n013h7b",
+    "reddit_1tb7nve_olhj9ij",
+    "reddit_1tt6meg_op185e4",
+    "reddit_1u0gjyt_oqin086",
+    "reddit_1u20knn_or139c1",
+    "twitter_2061759461656560124"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ll9l4x_n013h7b",
+        "feature_name": "multiple_fword_insults_piling",
+        "feature_value": "Multiple 'Fuck' + named political actors (direct hostile invective)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Texas. Fuck Idaho. Fuck MAGA. Fuck Trump. Fuck Cruz.\"",
+        "rationale": "The post uses repeated profanity-directed condemnations toward groups and politicians, signaling strong hostile intent."
+      },
+      {
+        "message_id": "reddit_1ll9l4x_n013h7b",
+        "feature_name": "targeted_political_actors_named",
+        "feature_value": "Named partisan/political figures and entities in a list",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck MAGA. Fuck Trump. Fuck Cruz.\"",
+        "rationale": "The targets are explicitly political (party acronym, president, senator), making the directionality clear."
+      },
+      {
+        "message_id": "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+        "feature_name": "gaslighting_normative_attack_with_policy_tradeoff",
+        "feature_value": "Accusation framing ('Stop gaslighting') plus policy causal/tradeoff claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Stop gaslighting Minnesotans.\"",
+        "rationale": "The opener is a direct accusatory/imperative frame and the text asserts a policy consequence tradeoff."
+      },
+      {
+        "message_id": "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+        "feature_name": "gun_policy_increase_definition_of_assault_weapons",
+        "feature_value": "Magazine-capacity ban + expanded 'assault weapon' definition reference",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"ban standard-capacity magazines\" ... \"expanded definition of an \\\"assault weapon\\\"\"",
+        "rationale": "The post centers firearm regulation specifics, indicating a primary weapons/policy domain."
+      },
+      {
+        "message_id": "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+        "feature_name": "rhetorical_question_about_conservatives_liberal_position_change",
+        "feature_value": "Rhetorical question calling out perceived reversal over time",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Have you noticed that conservatives are saying you deserve to be shot... now\"",
+        "rationale": "It uses a leading rhetorical question to highlight an asserted inconsistency."
+      },
+      {
+        "message_id": "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+        "feature_name": "deserving_violent_outcome_framing_for_carry_rights",
+        "feature_value": "Claims of 'deserve to be shot/killed' for open-carry/concealed-carry",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"you deserve to be shot and/or killed if you open-carry or concealed-carry\"",
+        "rationale": "The semantic content includes threatening/violent entitlement language tied to self-defense rights."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqin086",
+        "feature_name": "taboo_topic_sexual_content_maybe_porngrams",
+        "feature_value": "Sexual content reference tied to regional political stereotypes",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Red states watch more trans porn than anyone.\"",
+        "rationale": "The post foregrounds explicit sexual-content framing connected to political geography."
+      },
+      {
+        "message_id": "reddit_1liz1et_mzgv86x",
+        "feature_name": "climate_policy_then_mocking_property_damage",
+        "feature_value": "Conditional imperative 'Let's roll back...' accusing opponents of economic harm",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Great idea GOP! Let's roll back any & all climate initiatives\"",
+        "rationale": "It uses a directive ('Let's...') to argue against climate policy while alleging harming protected parks for profit."
+      }
+    ]
+  }
+}

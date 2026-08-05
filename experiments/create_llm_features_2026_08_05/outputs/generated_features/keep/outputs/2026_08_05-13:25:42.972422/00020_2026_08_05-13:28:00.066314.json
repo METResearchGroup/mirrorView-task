@@ -1,0 +1,94 @@
+{
+  "batch_id": 20,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_245718a4bc9231cff4711cdecfa3bbcbdf67f78c484d9285ddba9685b4337bc7",
+    "bluesky_cec1a4afb7aa129e06746d247374cdc01fff35db64e8fa2c1a8a6ac0e57e7b5d",
+    "reddit_1l6g0yr_mwoztq7",
+    "reddit_1t3n2ml_ojwbxjg",
+    "reddit_1t6icvj_okji1o1",
+    "reddit_1td5imr_om08cs6",
+    "reddit_1tdva8i_om00wwf",
+    "reddit_1th143w_omm015k",
+    "reddit_1tki53j_on9j9zl",
+    "twitter_2061594643284791751"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1th143w_omm015k",
+        "feature_name": "question_head_imperative_callout",
+        "feature_value": "Rhetorical question + directive to name an actor",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Who? Name one establishment Democrat that has been publicly pushing to expand SCOTUS for years.\"",
+        "rationale": "Uses a leading question followed by an imperative instruction to identify a specific target."
+      },
+      {
+        "message_id": "reddit_1l6g0yr_mwoztq7",
+        "feature_name": "extreme_outrage_and_propaganda_claims",
+        "feature_value": "Strong dismissal + propaganda framing + taxpayer waste",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump\u00014s administration\u00014s shenanigans are complete propaganda. A complete waste of taxpayer money\"",
+        "rationale": "Makes an emphatic accusatory claim that actions are propaganda and wasteful."
+      },
+      {
+        "message_id": "bluesky_245718a4bc9231cff4711cdecfa3bbcbdf67f78c484d9285ddba9685b4337bc7",
+        "feature_name": "no_matter_who_in_power_continuity_claim",
+        "feature_value": "Explicit invariant claim across regimes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"continue to rise no matter who is power\"",
+        "rationale": "Employs a cross-context invariance structure to assert continuity regardless of political control."
+      },
+      {
+        "message_id": "bluesky_cec1a4afb7aa129e06746d247374cdc01fff35db64e8fa2c1a8a6ac0e57e7b5d",
+        "feature_name": "multi_clause_policy_proposal_and_foreign_policy_blame",
+        "feature_value": "Actionable geopolitical prescriptions (exit + energy transition + Israel stance)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The U.S. should get out of the Middle East--by (1) creating alternatives to fossil fuels, and (2) quit being Israel's forever bodyguard.\"",
+        "rationale": "Gives enumerated policy steps tied to Middle East/Israel positioning."
+      },
+      {
+        "message_id": "reddit_1t3n2ml_ojwbxjg",
+        "feature_name": "if_then_qualification_conditionals",
+        "feature_value": "Conditional logic contrasting scenarios (works great when\u2026; can break assumptions)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The free market works great when companies have to compete for customers \\*and\\* employees.\"",
+        "rationale": "Uses a condition (\u201cwhen\u201d) to specify the conditions under which the claim holds."
+      },
+      {
+        "message_id": "reddit_1tdva8i_om00wwf",
+        "feature_name": "mirror_shift_opponent_substitution_trump_to_biden",
+        "feature_value": "Blame/critique template preserved while actor swapped (Trump vs Biden)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"aren't saying anything about Trump\" / \"aren't saying anything about Biden\"",
+        "rationale": "The mirror keeps the argumentative structure while substituting the criticized president."
+      },
+      {
+        "message_id": "reddit_1t6icvj_okji1o1",
+        "feature_name": "gerrymandering_state_vs_feds_conditional_framing",
+        "feature_value": "States-versus-feds conditional argument with policy harm claims",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"If you leave it to the states, they'll gerrymander. If the feds try to cram down a solution\"",
+        "rationale": "Uses paired \u201cIf\u201d clauses to argue expected consequences from different governance levels."
+      },
+      {
+        "message_id": "reddit_1tki53j_on9j9zl",
+        "feature_name": "absolute_degree_operator_ban_completely",
+        "feature_value": "Extreme proposal with contrast between public and private",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"need to be banned completely. Private ones, at least, can go out of business\"",
+        "rationale": "Contains strong absolute language (\u201cbanned completely\u201d) plus a public/private contrast framing the proposal."
+      }
+    ]
+  }
+}

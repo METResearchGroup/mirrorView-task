@@ -1,0 +1,94 @@
+{
+  "batch_id": 12,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_191ffceeaffb39acb8ba7bcde950e0764ae0690ca99ba832a1c9e42dae9e92d3",
+    "bluesky_193874e9f0a88af8e8d42385baab3d7b163ade74298411c32e417c98bc8176c0",
+    "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+    "bluesky_381f0c5af5b7aead156fe2a59e23e4825cf3cec4592fc4cbc3a192414320f55e",
+    "bluesky_670c19341a61e016f63609dbc10baf2b6ccd16a2afb72ba3ff6dff6e3160754f",
+    "bluesky_b7017daebe6d011d76b96953d5567c69abfbd8fc6c18e12107522f70a02f52e3",
+    "twitter_2059284417420698037",
+    "twitter_2061121742911991965",
+    "twitter_2061783553499631990",
+    "twitter_2061823876783325433"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+        "feature_name": "policy_proposal_list_parataxis",
+        "feature_value": "Long enumerative list of policy domains (benefits + regulation)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Voting Rights, universal healthcare, unions, labor laws, pensions, gun laws, subsidized renewable, fully funded education, subsidized childcare\"",
+        "rationale": "A comma-separated sequence of multiple policy items signals an organized platform-style framing."
+      },
+      {
+        "message_id": "bluesky_34b052b56489f4ad9395dad5e566d271b39a777464750f0e52711d29c640fa54",
+        "feature_name": "high_emotive_personalized_blame",
+        "feature_value": "Blame cast as intentional theft by \u201cpoliticians\u201d portrayed with extreme moral/psychological insult",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"we've been robbed of every day by politicians purchased by psychopaths\"",
+        "rationale": "Uses strong moral/emotive language and a causal blame attribution to a named actor class."
+      },
+      {
+        "message_id": "bluesky_381f0c5af5b7aead156fe2a59e23e4825cf3cec4592fc4cbc3a192414320f55e",
+        "feature_name": "moralized_political_abuse_fossil_fuels",
+        "feature_value": "Question framed as accusing others of harming through fossil-fuel allegiance; includes pejorative metaphor",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"slobbery fealty to the fossil fuels industry\"",
+        "rationale": "Contains normative accusation and abusive figurative language toward a target stance."
+      },
+      {
+        "message_id": "bluesky_381f0c5af5b7aead156fe2a59e23e4825cf3cec4592fc4cbc3a192414320f55e",
+        "feature_name": "rhetorical_question_call_for_policy_alternatives",
+        "feature_value": "Interrogative that implies an intent to alleviate suffering and contrasts priorities",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Excuse me, are you trying to do something to alleviate the suffering\"",
+        "rationale": "The post uses a direct question to prompt/press for a policy change while implicitly assigning responsibility."
+      },
+      {
+        "message_id": "twitter_2061121742911991965",
+        "feature_name": "iterative_policy_failure_then_more_of_same",
+        "feature_value": "Repetitive pattern: \u201cWhen X didn\u2019t work, you make MORE X; those also don\u2019t work\u201d",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"When previous gun laws didn't work.  You make MORE gun laws.  Those also don't work.\"",
+        "rationale": "Shows an explicit cause\u2192failure\u2192intensification sequence repeated across paragraphs."
+      },
+      {
+        "message_id": "twitter_2061121742911991965",
+        "feature_name": "criminals_terrorists_noncompliance_framing",
+        "feature_value": "Claim that criminals/\u201ccrazies\u201d/terrorists do not obey laws",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Criminals crazies and terrorists don't obey the law.\"",
+        "rationale": "A factual-assertive justification linking lawmaking to enforcement limits."
+      },
+      {
+        "message_id": "bluesky_191ffceeaffb39acb8ba7bcde950e0764ae0690ca99ba832a1c9e42dae9e92d3",
+        "feature_name": "terminology_debate_with_teachable_moment",
+        "feature_value": "Uses \u201cteach able moment\u201d to argue that labeling weapons is beside the point; explicitly corrects scope",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"It is a teachable moment that you think it matters\"",
+        "rationale": "Meta-discursive framing evaluates what \u201cmatters\u201d and redirects the argument."
+      },
+      {
+        "message_id": "twitter_2061783553499631990",
+        "feature_name": "explicit_microtargeted_call_to_action",
+        "feature_value": "Solicits money with specific amount to influence election/persuasion",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Chip in $20 to flip the script.\"",
+        "rationale": "Contains a direct fundraising call-to-action and uses an identifier-like comparison of \u201cme\u201d vs \u201cmy opponent\u201d."
+      }
+    ]
+  }
+}

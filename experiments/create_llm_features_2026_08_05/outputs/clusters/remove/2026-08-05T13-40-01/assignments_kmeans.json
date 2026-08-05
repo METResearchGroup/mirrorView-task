@@ -1,0 +1,4002 @@
+[
+  {
+    "feature_id": "0_0",
+    "message_id": "reddit_1la5fmz_mxit2c1",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Contains extreme slurs/profanity targeting a political group",
+    "category": "surface_lexical",
+    "rationale": "Uses explicit profanity paired with a political ideology label.",
+    "evidence_span": "\"Fucking fascists\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "0_1",
+    "message_id": "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+    "feature_name": "named_proper_nouns_density",
+    "feature_value": "Mentions specific gun-rights organization and uses political group labeling",
+    "category": "surface_lexical",
+    "rationale": "References a well-known organization as part of the argument.",
+    "evidence_span": "\"NRA\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "0_2",
+    "message_id": "twitter_2060938389461827850",
+    "feature_name": "informal_register_or_slang",
+    "feature_value": "Uses casual internet slang and filler discourse",
+    "category": "surface_lexical",
+    "rationale": "Heavy use of informal 'fr' emphasis and colloquial phrasing.",
+    "evidence_span": "\"thing fr\" / \"save the earth guys fr\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "0_3",
+    "message_id": "reddit_1lb8wyo_mxr2wwj",
+    "feature_name": "causal_claim_present",
+    "feature_value": "Asserts intent and coordination as a causal characterization",
+    "category": "semantic_content",
+    "rationale": "Claims purposeful action and potential coordination rather than neutral description.",
+    "evidence_span": "\"it's clearly targeted\" / \"looks like it could be coordinated\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "0_4",
+    "message_id": "reddit_1tjs35z_on41ada",
+    "feature_name": "normative_moral_language",
+    "feature_value": "Uses value-laden accusations about parties abandoning principles",
+    "category": "semantic_content",
+    "rationale": "Frames political actors as morally illegitimate through evaluative verbs and labels.",
+    "evidence_span": "\"abandoned\" / \"radical elites\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "0_5",
+    "message_id": "reddit_1lo82x1_n0nk59o",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Directs a mandate-like instruction toward 'Anyone'",
+    "category": "compositional_syntax",
+    "rationale": "Uses direct directive language aimed at a group of people.",
+    "evidence_span": "\"Anyone who works for state-funded media has a public duty\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "0_6",
+    "message_id": "reddit_1tle2vc_onf49sq",
+    "feature_name": "ridicule_or_mockery",
+    "feature_value": "Attacks a named politician with insulting characterization",
+    "category": "pragmatics_intent",
+    "rationale": "Relies on contemptuous insults rather than policy discussion.",
+    "evidence_span": "\"just a fucking\" / \"bratty child\"",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "0_7",
+    "message_id": "twitter_2061801714139697578",
+    "feature_name": "victimhood_or_persecution_framing",
+    "feature_value": "Attributes Jew-hatred and labels the target as an accomplice to hate",
+    "category": "semantic_content",
+    "rationale": "Uses persecution/hate framing by connecting an actor to antisemitism and communal threat.",
+    "evidence_span": "\"accomplice to Jew-hatred\" / \"enemy of the Jewish community\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "1_0",
+    "message_id": "reddit_1lmjifa_n092opi",
+    "feature_name": "profanity_direct_insult_to_group",
+    "feature_value": "Uses explicit profanity to insult an ideological group",
+    "category": "surface_lexical",
+    "rationale": "The post uses taboo language plus a derogatory label targeting a political group.",
+    "evidence_span": "\"Conservatives are such fucking scumbags.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "1_1",
+    "message_id": "reddit_1li1cpo_mz90x1h",
+    "feature_name": "profanity_direct_insult_and_targeted_grouping",
+    "feature_value": "Multiple instances of profanity aimed at a person and an entire party",
+    "category": "surface_lexical",
+    "rationale": "Direct profanity is coupled with negative labeling and explicit targeting of a political party.",
+    "evidence_span": "\"Fuck her... And Fuck the Florida GOP too.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "1_2",
+    "message_id": "twitter_2061477727329296411",
+    "feature_name": "second_person_question_about_abortion_case",
+    "feature_value": "Rhetorical/direct second-person question about legality of abortion in a rape scenario",
+    "category": "compositional_syntax",
+    "rationale": "A direct \"you\" question is asked about a high-salience moral/legal issue (abortion) tied to a rape victim.",
+    "evidence_span": "\"Would you have permitted this abortion?\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "1_3",
+    "message_id": "twitter_2060149644953272762",
+    "feature_name": "elections_voter_suppression_illegality_claims",
+    "feature_value": "Claims illegal voting/participation and links it to institutions encouraging it",
+    "category": "topic_subject",
+    "rationale": "The post centers on voting/elections and alleges wrongdoing in how certain groups participate.",
+    "evidence_span": "\"DACA recipients have been issued state ID... then they can register to vote... elections illegally.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "1_4",
+    "message_id": "twitter_2061799295783698746",
+    "feature_name": "insurrection_act_preemptive_causal_claim",
+    "feature_value": "Attributes future violence/riots to prior video statements and frames it as foreknowledge",
+    "category": "semantic_content",
+    "rationale": "It makes a causal/anticipatory claim that an earlier statement predicted subsequent riots.",
+    "evidence_span": "\"Trump said it on video months before the riots started\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "1_5",
+    "message_id": "twitter_2061757984967922137",
+    "feature_name": "policy_rejecting_labeling_of_discourse",
+    "feature_value": "Rejects climate framing as government overreach and uses counter-narrative",
+    "category": "semantic_content",
+    "rationale": "The text uses delegitimizing framing to oppose a policy discourse (climate/environment).",
+    "evidence_span": "\"The so-called 'coral reef crisis' is just another excuse for government overreach.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "1_6",
+    "message_id": "bluesky_cd39cca04343ce546169d8fb36104cc94dbd",
+    "feature_name": "gun_control_comparison_list_with_quantifiers",
+    "feature_value": "Enumerates multiple specific gun-control measures with percentage support",
+    "category": "topic_subject",
+    "rationale": "It focuses on gun policy and provides a detailed list of measures plus quantitative claims.",
+    "evidence_span": "\"Large majorities (80 % +) back specific gun control measures like: Universal background checks... raising the legal gun-purchase age to 21\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "1_7",
+    "message_id": "twitter_2061799295783698746",
+    "feature_name": "normative_unconstitutional_power_grab_moral_eval",
+    "feature_value": "Calls an action unconstitutional and describes it as illegal power grab",
+    "category": "semantic_content",
+    "rationale": "The post uses strong legal/moral condemnation language tied to governance and authority.",
+    "evidence_span": "\"He telegraphed the whole unconstitutional power grab in advance.\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "2_0",
+    "message_id": "reddit_1tqfpwr_oog28zn",
+    "feature_name": "deportation_call_targeted_demographic",
+    "feature_value": "Advocates deporting a political group (Republicans in original; Democrats in mirror).",
+    "category": "semantic_content",
+    "rationale": "The post directly calls for deportation of an identified political group.",
+    "evidence_span": "\"Republicans should be deported all of them.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "2_1",
+    "message_id": "twitter_2061762945227366650",
+    "feature_name": "religious_imprecation_and_prolife_language",
+    "feature_value": "Prayer/imprecation framing opposing abortion; references saving unborn babies.",
+    "category": "semantic_content",
+    "rationale": "Uses explicit religious address and pro-life/anti-abortion language to urge action.",
+    "evidence_span": "\"Father God, we pray, save the unborn babies. We pray end abortion in America!\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "2_2",
+    "message_id": "bluesky_96eaad10586163802dd27352d704f1cff0427bc1b755422f57bc71611f38d4f3",
+    "feature_name": "extreme_profanity_and_emphatic_interjection",
+    "feature_value": "Highly profane, emphatic negative evaluation of a bill/idea.",
+    "category": "surface_lexical",
+    "rationale": "Contains strong profanity plus all-caps emphasis to intensify condemnation.",
+    "evidence_span": "\"Imma fuckin tell you right now that is a FUCKING TERRIBLE IDEA\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "2_3",
+    "message_id": "bluesky_61d5ae3d028ebf40852a53a9f298c64ab4d91aa6b904bb0b83a5fb1267001a57",
+    "feature_name": "rhetorical_why_motifs_questioning_belief",
+    "feature_value": "Two rhetorical 'Why would...' questions about deception and government motives.",
+    "category": "compositional_syntax",
+    "rationale": "The argument is structured as rhetorical questions demanding implied answers.",
+    "evidence_span": "\"Why would the masses believe... ? Why would they believe our governments... ?\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "2_4",
+    "message_id": "twitter_2059446574892073169",
+    "feature_name": "accusatory_attribution_glorified_activists",
+    "feature_value": "Blames climate scientists for activism; claims disconnect is caused by them.",
+    "category": "semantic_content",
+    "rationale": "Uses causal blame attribution with a derogatory characterization.",
+    "evidence_span": "\"climate scientists are entirely to blame because they are glorified activists.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "2_5",
+    "message_id": "twitter_2061596946373189772",
+    "feature_name": "ice_border_patrol_praise_by_named_representative",
+    "feature_value": "Single-line praise of ICE/Border Patrol by a named representative.",
+    "category": "topic_subject",
+    "rationale": "Directly attributes praise to a named actor for specific immigration enforcement institutions.",
+    "evidence_span": "\"Rep. Brandon Gill praises ICE, Border Patrol\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "2_6",
+    "message_id": "reddit_1tqrtho_ooorn5g",
+    "feature_name": "historical_figure_list_with_future_projection",
+    "feature_value": "Lists US presidents/doc topics and predicts documentary framing based on Trump outcomes.",
+    "category": "topic_subject",
+    "rationale": "Combines historical references with a conditional future projection about Trump being covered.",
+    "evidence_span": "\"Washington, Lincoln, Roosevelt, and FDR\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "2_7",
+    "message_id": "reddit_1rqd674_o9rfscl",
+    "feature_name": "us_vs_them_benefit_priority_grouping",
+    "feature_value": "Advocates taking benefits from one political group first (MAGA vs liberals in mirror).",
+    "category": "target_directionality",
+    "rationale": "Expresses an in-group/out-group material priority targeting a named partisan group.",
+    "evidence_span": "\"benefits are taken from MAGAs first.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "3_0",
+    "message_id": "reddit_1kxmwug_muqtuua",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses strong profanity",
+    "category": "surface_lexical",
+    "rationale": "The post includes explicit taboo/profane language targeting a group.",
+    "evidence_span": "People are fucking stupid",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "3_1",
+    "message_id": "reddit_1ksecvh_mtlnef1",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "Intensive exclamation/imperative formatting",
+    "category": "surface_lexical",
+    "rationale": "Repeated imperative/exclamation marks increase emotional intensity.",
+    "evidence_span": "Don't!   Resist!",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "3_2",
+    "message_id": "reddit_1ksecvh_mtlnef1",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Direct commands to audience",
+    "category": "compositional_syntax",
+    "rationale": "Imperative phrasing directly addresses the reader.",
+    "evidence_span": "Don't!   Resist!",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "3_3",
+    "message_id": "reddit_1ttbse9_op4rgor",
+    "feature_name": "call_to_action_or_violent_retaliation",
+    "feature_value": "Advocates violent punishment/hanging/rotting in prison",
+    "category": "semantic_content",
+    "rationale": "The text calls for severe punishment against an actor.",
+    "evidence_span": "He deserves to hang along with his boss.",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "3_4",
+    "message_id": "bluesky_e840b8d8284e554fd01caeda6679240bac956a1fccc6eab9cceb5561ee9e17b0",
+    "feature_name": "primary_policy_domain_guns",
+    "feature_value": "Gun laws/Second Amendment dispute",
+    "category": "topic_subject",
+    "rationale": "The post centers a firearms policy argument.",
+    "evidence_span": "responsible gun laws",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "3_5",
+    "message_id": "bluesky_e840b8d8284e554fd01caeda6679240bac956a1fccc6eab9cceb5561ee9e17b0",
+    "feature_name": "factual_assertion_vs_speculation_strong_debunking",
+    "feature_value": "Claims an argument is debunked plus observational allegations",
+    "category": "semantic_content",
+    "rationale": "Uses definitive rebuttal language and asserts claims about who supports the policy.",
+    "evidence_span": "has been completely debunked",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "3_6",
+    "message_id": "reddit_1tc5bjg_olpcz7g",
+    "feature_name": "us_vs_them_framing_by_geography",
+    "feature_value": "Geographic in-group/out-group (blue vs red states)",
+    "category": "target_directionality",
+    "rationale": "Uses regional political identities to attribute wrongdoing to an out-group.",
+    "evidence_span": "Good luck with blue states... They love fraud",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "3_7",
+    "message_id": "reddit_1td83n8_olufnjm",
+    "feature_name": "target_specific_actor_with_moralized_labeling",
+    "feature_value": "Targets a political leader with criminal/sexual misconduct labels",
+    "category": "semantic_content",
+    "rationale": "Assigns extreme moral/criminal labels to a specific figure to delegitimize them.",
+    "evidence_span": "we have a pedo for a president",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "4_0",
+    "message_id": "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "Uses hyphenated epithets and dense commas/semicolons; long multi-clause sentence",
+    "category": "surface_lexical",
+    "rationale": "The post is packed with repeated appositive fragments and heavy punctuation, increasing confrontational emphasis.",
+    "evidence_span": "Because the faux-\\u201cChristian, Big Oil owned, Climate Science denying GOP Republicans are as weak, pathetic, and as corrupt as Russian owned, felon/fraud, pedophile traitor Trump, there\\u2019s no chance to impeach Trump unless or until Democrats hold majorities",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "4_1",
+    "message_id": "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+    "feature_name": "named_proper_nouns_density",
+    "feature_value": "Multiple political/religious/organization names in one sentence",
+    "category": "surface_lexical",
+    "rationale": "High concentration of named political actors/labels increases direct partisan targeting and clarity of blame assignment.",
+    "evidence_span": "GOP Republicans",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "4_2",
+    "message_id": "twitter_2059738096799801716",
+    "feature_name": "culture_war_topic_salience",
+    "feature_value": "Reproductive rights/menstrual surveillance framed as political conflict",
+    "category": "topic_subject",
+    "rationale": "The topic is explicitly about reproductive-rights governance and surveillance concerns that commonly trigger moderation.",
+    "evidence_span": "issue of menstrual surveillance. what about what's going on with reproductive rights",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "4_3",
+    "message_id": "twitter_2059738096799801716",
+    "feature_name": "victimhood_or_persecution_framing",
+    "feature_value": "Implies data/tech will be used against women",
+    "category": "semantic_content",
+    "rationale": "The mirror asserts harmful intent toward a protected group (women) using surveillance data.",
+    "evidence_span": "they're the ones who actually want to use that data against women.",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "4_4",
+    "message_id": "reddit_1tsvd1m_ooyw3jx",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Direct contrast between parties with value judgments",
+    "category": "target_directionality",
+    "rationale": "The post constructs an ingroup/outgroup contrast (Democrats vs Republicans) with delegitimizing claims.",
+    "evidence_span": "It\u00111s the democrats who have entirely fallen out of relevance",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "4_5",
+    "message_id": "twitter_2061798901707890838",
+    "feature_name": "normative_moral_language",
+    "feature_value": "System-feature claims presented as evaluative/ideological rather than descriptive",
+    "category": "semantic_content",
+    "rationale": "Uses strong moralized causal framing (built-in corruption) that can be read as incitement-like ideological condemnation.",
+    "evidence_span": "Corruption is a feature of American capitalism. It\u0011s built into the system.",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "4_6",
+    "message_id": "bluesky_469224592ba723e911e83411a61df6b85dec6681277ed8a0a84fa2d92e056977",
+    "feature_name": "conditional_if_then_structure",
+    "feature_value": "Time-bound conditional policy stance",
+    "category": "compositional_syntax",
+    "rationale": "The post uses an explicit 'not until' conditional structure to justify withholding/withdrawing policy.",
+    "evidence_span": "Now is not the time for gun control legislation. Not until our fascism problem is over.",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "4_7",
+    "message_id": "reddit_1kc5vjr_mq49xzz",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Vulgar bodily-function insult used as hyperbole",
+    "category": "surface_lexical",
+    "rationale": "The language includes taboo/vulgarity and dehumanizing mockery, increasing content severity under linked-fate moderation.",
+    "evidence_span": "Trump could literally shit and piss in their mouths",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "5_0",
+    "message_id": "reddit_1kj1005_mrmb0iw",
+    "feature_name": "sexual_vernacular_abusive_metaphor",
+    "feature_value": "Uses sexual/vulgar \u201cfuck/us\u201d rhetoric as an abusive metaphor",
+    "category": "surface_lexical",
+    "rationale": "Clear vulgar, sexualized intensifier used to attack political actors.",
+    "evidence_span": "\"He\u2019s fucking the country. He\u2019s fucking the people\"",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "5_1",
+    "message_id": "reddit_1kj1005_mrmb0iw",
+    "feature_name": "conditional_rhetorical_question_swap",
+    "feature_value": "Rhetorical conditional comparison framed as \u201cWould X \u2026 without Y like Z did?\u201d",
+    "category": "compositional_syntax",
+    "rationale": "A counterfactual rhetorical question structure is used to argue superiority/blameworthiness.",
+    "evidence_span": "\"Would Kamala fuck us so hard without lube like trump is doing?\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "5_2",
+    "message_id": "reddit_1lat5d5_mxncuis",
+    "feature_name": "high_degree_generalization_about_outgroup",
+    "feature_value": "Universal/near-universal blame claim (\u201cevery reason under the sun\u201d, \u201calways find\u201d)",
+    "category": "semantic_content",
+    "rationale": "Absolute generalizations connect historical wrongdoing to an ideological outgroup.",
+    "evidence_span": "\"I hate conservatives for just about every reason under the sun\" / \"you will always find\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "5_3",
+    "message_id": "reddit_1lat5d5_mxncuis",
+    "feature_name": "historical_backprojection_argumentation",
+    "feature_value": "Invokes a long historical time horizon to justify claims",
+    "category": "topic_subject",
+    "rationale": "Historically anchored causal insinuation supports the linked-fate style ideological narrative.",
+    "evidence_span": "\"if you go back 80 years\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "5_4",
+    "message_id": "twitter_2061775665439887400",
+    "feature_name": "economic_tax_welfare_policy_domain",
+    "feature_value": "Argues about taxing wealthy vs welfare/benefits and inflation-linked pensions",
+    "category": "topic_subject",
+    "rationale": "Strong policy-and-economic finance framing around redistribution and benefits.",
+    "evidence_span": "\"taxing the wealthy\" / \"welfare\" / \"pension should be inflationary linked\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "5_5",
+    "message_id": "twitter_2061775665439887400",
+    "feature_name": "accusatory_us_vs_them_framing",
+    "feature_value": "\u201cPoliticians\u201d vs \u201criches/taxpayers\u201d plus \u201cfreeloaders\u201d language",
+    "category": "target_directionality",
+    "rationale": "Creates ingroup/outgroup contrast that assigns blame to a favored vs blamed group.",
+    "evidence_span": "\"Politicians obsessing over taxing the wealthy\" / \"the freeloaders\" / \"hardworking taxpayer\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "5_6",
+    "message_id": "reddit_1tsx0f1_ooyhgjl",
+    "feature_name": "sexual_violence_phrase_against_people",
+    "feature_value": "Uses extreme sexual violence wording (\u201crape of the American people / looting\u201d)",
+    "category": "semantic_content",
+    "rationale": "Highly inflammatory dehumanizing/violence metaphor intensifies threat/corruption framing.",
+    "evidence_span": "\"For the next rape of the American people.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "5_7",
+    "message_id": "bluesky_92f96bd53afd112ba47a3b877e9344610d25fc188ef0269dc7d4834dc00b0c9e",
+    "feature_name": "weapon_purchase_intent",
+    "feature_value": "Expresses intent to buy a powerful AR \u201cout of pure spite\u201d",
+    "category": "open_ended",
+    "rationale": "Direct linkage of spite to acquiring a firearm is an observable escalation cue.",
+    "evidence_span": "\"want to go out and buy the most powerful AR\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "6_0",
+    "message_id": "reddit_1ttui2j_op5rbxk",
+    "feature_name": "profanity_taboo_language_present",
+    "feature_value": "Contains explicit profanity",
+    "category": "surface_lexical",
+    "rationale": "The post uses strong taboo language (e.g., f**king), increasing intensity and aggression.",
+    "evidence_span": "\"fucking right wing counter programming\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "6_1",
+    "message_id": "reddit_1lc4tz7_mxywa8h",
+    "feature_name": "call_to_action_exclusion",
+    "feature_value": "Directly excludes an outgroup from \u201cleftist/right-wing spaces\u201d",
+    "category": "pragmatics_intent",
+    "rationale": "The speaker issues an exclusionary instruction about who should be allowed in political spaces.",
+    "evidence_span": "\"I don't want these people in leftist spaces\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "6_2",
+    "message_id": "reddit_1lcw1w7_mya5g4j",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Uses direct address and insults toward the reader",
+    "category": "compositional_syntax",
+    "rationale": "The text targets the addressee with a second-person implication plus a derogatory conclusion.",
+    "evidence_span": "\"So, congrats, moron.\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "6_3",
+    "message_id": "reddit_1lhzhcf_mz832zz",
+    "feature_name": "all_caps_emphasis",
+    "feature_value": "Emphatic all-caps/strong emphasis via formatting",
+    "category": "surface_lexical",
+    "rationale": "Bold all-caps style emphasis amplifies the extremist/violent-contempt framing toward a targeted agency.",
+    "evidence_span": "\"**DONE WITH THESE BASTARDS, FUCK ALL OF ICE**\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "6_4",
+    "message_id": "reddit_1limsav_mzdef15",
+    "feature_name": "victimhood_or_persecution_framing_with_blame",
+    "feature_value": "Attributes harm to victims\u2019 own choices (\u201cyour fault\u201d)",
+    "category": "semantic_content",
+    "rationale": "The post uses a moralized blame stance toward those harmed, rather than expressing sympathy.",
+    "evidence_span": "\"if you\u00019re hurt by Trump\u00019s actions... it\u00019s your own damn fault\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "6_5",
+    "message_id": "reddit_1ts7wt8_oot9gi9",
+    "feature_name": "violent_or_terrorist_labeling",
+    "feature_value": "Labels a political group/agency as terrorists/saboteurs",
+    "category": "semantic_content",
+    "rationale": "Using \u201cdomestic terrorists\u201d is dehumanizing/terrorism-implicating language about an institutional target.",
+    "evidence_span": "\"FUCK ICE, they\u2019re nothing but domestic terrorists.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "6_6",
+    "message_id": "twitter_2061511976220598360",
+    "feature_name": "specific_bill_or_act_reference",
+    "feature_value": "References legislation with acronyms/caps name",
+    "category": "topic_subject",
+    "rationale": "The post centers on a named act and legislative outcomes, a clear policy/event trigger.",
+    "evidence_span": "\"Deporting Fraudsters Act\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "6_7",
+    "message_id": "reddit_1kym5zv_muydhms",
+    "feature_name": "media_outlet_targeting",
+    "feature_value": "Criticizes named news outlets for framing narratives",
+    "category": "target_directionality",
+    "rationale": "Directly targets specific media organizations and accuses them of normalizing/demonizing political actors via framing.",
+    "evidence_span": "\"Hey CBS\" / \"Hey MSNBC\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "7_0",
+    "message_id": "reddit_1km18ir_ms8yoji",
+    "feature_name": "direct_profanity_swear_insult",
+    "feature_value": "Uses explicit profanity as a standalone dismissal/insult",
+    "category": "surface_lexical",
+    "rationale": "The post relies on a profanity-first direct attack rather than argument or policy detail.",
+    "evidence_span": "Fuck Bernie Sanders.",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "7_1",
+    "message_id": "bluesky_bfdb5d8ca743bb6b82c59a70c532e8263aa842b31d2900440ff521f01fb8ab52",
+    "feature_name": "profanity_and_emphatic_all_caps",
+    "feature_value": "Profanity plus strong emphasis via ALL CAPS",
+    "category": "surface_lexical",
+    "rationale": "The combination of taboo language and emphatic capitalization is a salient lexical style cue.",
+    "evidence_span": "how the fuck did you get that... EVERYONE",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "7_2",
+    "message_id": "twitter_2061254253843530192",
+    "feature_name": "inter_party_hypocrisy_attack",
+    "feature_value": "Accuses one party of hypocrisy and contrasts with claimed democratic process",
+    "category": "semantic_content",
+    "rationale": "The content frames the opposing party as hypocritical and undermines legitimacy claims.",
+    "evidence_span": "WHY Democrats keep saying \"Democracy\" is as stake... NEVER \"democratically\" asked us",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "7_3",
+    "message_id": "reddit_1u0ljrd_oqjgebv",
+    "feature_name": "historical_systemic_discrimination_claim",
+    "feature_value": "Claims discrimination was built into the legal system with slavery/Jim Crow timeline",
+    "category": "semantic_content",
+    "rationale": "A causal/historical narrative about entrenched discrimination and distrust is present.",
+    "evidence_span": "built into the legal system... even after slavery, and even after Jim Crow.",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "7_4",
+    "message_id": "reddit_1lj78qb_mzxg2uy",
+    "feature_name": "heavy_personal_corruption_accusations",
+    "feature_value": "Series of criminal/malfeasance claims about a named politician",
+    "category": "semantic_content",
+    "rationale": "The post uses stacked allegations to portray the targeted actor as corrupt.",
+    "evidence_span": "lied, cheated, stolen, embezzled, bankrupted, gifted",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "7_5",
+    "message_id": "reddit_1u0gjyt_oqi3psa",
+    "feature_name": "culture_war_sexual_moral_question",
+    "feature_value": "Targets a political ideology with sexualized child-related moral concern question",
+    "category": "topic_subject",
+    "rationale": "The subject matter is explicitly about children/genitals and is framed as a culture-war issue.",
+    "evidence_span": "conservatives so worried about children\t\t\t\t\t genitals",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "7_6",
+    "message_id": "reddit_1kzjrzz_mv6diq4",
+    "feature_name": "media_outlet_targeting_with_profanity",
+    "feature_value": "Direct attack on a specific news network using profanity",
+    "category": "target_directionality",
+    "rationale": "The post targets a media actor and uses a dismissal imperative.",
+    "evidence_span": "Fox News can fuck off",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "7_7",
+    "message_id": "bluesky_d2cfe70e07afaf45324028fee76db723193fb78bca21a8d9e7c655abb6a7937f",
+    "feature_name": "callous_affront_to_billionaires_related_to_policy",
+    "feature_value": "Targets billionaires for causing global warming; linked with climate crisis reference and policy blame",
+    "category": "topic_subject",
+    "rationale": "This combines an outgroup economic actor (billionaires) with climate-crisis causality language and aggressive profanity.",
+    "evidence_span": "billionaire fuckers that drive global warming",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "8_0",
+    "message_id": "reddit_1tvro8z_opjy30q",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses highly vulgar insult/sexual scatological language",
+    "category": "surface_lexical",
+    "rationale": "The post contains explicit taboo/vulgar wording (\"shit\", \"cum\") in addition to dehumanizing imagery.",
+    "evidence_span": "\"swallowing their own shit like a human centipede cum Ouroboros\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "8_1",
+    "message_id": "reddit_1tvro8z_opjy30q",
+    "feature_name": "extreme_animal_or_dehumanizing_imagery",
+    "feature_value": "Dehumanizing animal/monster comparison (human centipede, Ouroboros)",
+    "category": "open_ended",
+    "rationale": "The language uses vivid dehumanization/metaphor to portray political opponents as disgusting monsters.",
+    "evidence_span": "\"like a human centipede cum Ouroboros\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "8_2",
+    "message_id": "reddit_1svtp7t_oicxrjn",
+    "feature_name": "historical_analogy_reference",
+    "feature_value": "Compares Trump to Julius Caesar (dictator analogy)",
+    "category": "topic_subject",
+    "rationale": "The post relies on a historical comparison to frame one actor as a specific kind of threat.",
+    "evidence_span": "\"a dictator like Julius Caesar and one like Trump\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "8_3",
+    "message_id": "reddit_1svtp7t_oicxrjn",
+    "feature_name": "conspiratorial_framing",
+    "feature_value": "Claims intent to harm the country/serve enemies",
+    "category": "semantic_content",
+    "rationale": "It asserts covert/hostile motives, presenting the opponent as acting for an external adversary.",
+    "evidence_span": "\"playing for our enemies\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "8_4",
+    "message_id": "reddit_1kohwmm_mssecom",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Binary framing opposing voter groups and their motives",
+    "category": "target_directionality",
+    "rationale": "It assigns malicious intent to an outgroup (\u201cRepublicans\u201d) and contrasts them against \u201cpeople\u201d/neighbors.",
+    "evidence_span": "\"They vote republican in order to hurt people\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "8_5",
+    "message_id": "bluesky_0d49276dde11fd674b3c2673d9d03d6e3c28c502248a087c8bafccd16702029a",
+    "feature_name": "named_policy_domain_guns_second_amendment",
+    "feature_value": "Second Amendment/gun legislation debate",
+    "category": "topic_subject",
+    "rationale": "The post directly engages gun rights/civil liberties via constitutional amendment language.",
+    "evidence_span": "\"the Amendment does not say that any legislation about guns is disallowed\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "8_6",
+    "message_id": "bluesky_f2e28fc96e899d7c0de8591945ec8d0d40cca429f92dba8d0cbbcb309cc3e2e9",
+    "feature_name": "risky_scenario_argument_by_prohibition",
+    "feature_value": "Catastrophic rape/self-harm predictions used as scare claims",
+    "category": "semantic_content",
+    "rationale": "It employs fear-based causal claims (extreme harm) tied to gun access versus no gun.",
+    "evidence_span": "\"you're probably gonna get raped if you don\u2019t have a gun\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "8_7",
+    "message_id": "twitter_2061092945420509346",
+    "feature_name": "hashtag_or_mention_pattern",
+    "feature_value": "Uses emphatic ends with repeated exclamation and identity-based slogan style",
+    "category": "pragmatics_intent",
+    "rationale": "The communicative style uses exuberant, identity-affirming slogans with strong emotional emphasis (many exclamation marks).",
+    "evidence_span": "\"happy pride month my babies!!!!!!!!\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "9_0",
+    "message_id": "reddit_1tw6zcr_opn8bfp",
+    "feature_name": "approx_token_length_band",
+    "feature_value": "short",
+    "category": "surface_lexical",
+    "rationale": "The post is a single brief sentence, indicating a short length band.",
+    "evidence_span": "Putin runs the entire Russian government like its his own personal bank account.",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "9_1",
+    "message_id": "twitter_2061562237613953238",
+    "feature_name": "sexualized_or_taboo_profanity",
+    "feature_value": "none (but strong ideological conflict + taboo concept: abortion)",
+    "category": "semantic_content",
+    "rationale": "Although not profane, it centers on a highly contentious taboo-adjacent policy topic (abortion) with direct moral/political framing.",
+    "evidence_span": "Countless women oppose abortion.",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "9_2",
+    "message_id": "reddit_1tstwrk_ooxklt6",
+    "feature_name": "conditional_if_then_structure",
+    "feature_value": "if-it-weren't-for conditional blaming gatekeeping argument quality",
+    "category": "compositional_syntax",
+    "rationale": "Uses an explicit 'If... then...' counterfactual structure to attribute lack of arguments to opponents' dishonesty.",
+    "evidence_span": "If it weren't for outright lies and bad faith arguments maga would have no argument at all.",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "9_3",
+    "message_id": "reddit_1l0qzn0_mvhr3a4",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "taboo sexual accusation language (rapist/pedophile)",
+    "category": "semantic_content",
+    "rationale": "Contains severe taboo/sexual criminal accusation terms toward a named public figure.",
+    "evidence_span": "Donald Trump is a rapist and a pedophile.",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "9_4",
+    "message_id": "reddit_1kjdjwq_mrlv92j",
+    "feature_name": "emphatic_outrage",
+    "feature_value": "highly indignant insults + 'half the country just clapped along'",
+    "category": "pragmatics_intent",
+    "rationale": "Expresses emphatic outrage using dehumanizing/insulting metaphors.",
+    "evidence_span": "half the country just clapped along like trained seals. What a bunch of fools we are",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "9_5",
+    "message_id": "twitter_2061704148198866993",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "implicit 'you believe' second-person framing",
+    "category": "compositional_syntax",
+    "rationale": "Begins with 'If you...' addressing a presumed reader\u2019s beliefs.",
+    "evidence_span": "If you believe in equal rights, then what do 'women's rights,' and 'gay rights,' etc. mean?",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "9_6",
+    "message_id": "reddit_1lh7g4h_mz44qni",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "heavy quotation/colloquial phrasing with multiple punctuation marks",
+    "category": "surface_lexical",
+    "rationale": "Uses graphic sexualized insults and strong punctuation/quotation emphasis.",
+    "evidence_span": "\"Time\" has got Trump's cock so far down their throats, their assholes are turning orange.",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "9_7",
+    "message_id": "reddit_1ti151j_omrce6d",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "ingroup/blame groups ('all the libs' / 'MAGA crowd')",
+    "category": "target_directionality",
+    "rationale": "Attributes collective coordinated behavior to a political outgroup, setting an adversarial group-vs-group frame.",
+    "evidence_span": "All the libs joined forces to punish Donald Trump",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "10_0",
+    "message_id": "reddit_1u2almy_oqxyac4",
+    "feature_name": "high_political_insult_attacks",
+    "feature_value": "Direct dehumanizing/derogatory insults aimed at a political party",
+    "category": "pragmatics_intent",
+    "rationale": "Uses strong derogatory labeling and mocking behavior claims about an opposing political group.",
+    "evidence_span": "\"Democrats are spineless cowards. All they can do is wail and cry in the corner.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "10_1",
+    "message_id": "reddit_1u2almy_oqxyac4",
+    "feature_name": "targeted_party_contrast_us_them",
+    "feature_value": "US-vs-them framing via opponent vs opponent (Democrats vs Democrats counterpart in mirror)",
+    "category": "target_directionality",
+    "rationale": "Blame/praise is directed at an entire political party rather than an individual or policy detail.",
+    "evidence_span": "\"Democrats\" / \"Republicans\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "10_2",
+    "message_id": "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3f8fcb",
+    "feature_name": "selective_enforcement_discrimination_framing",
+    "feature_value": "Claims laws are selectively enforced to deny rights to a racial group",
+    "category": "semantic_content",
+    "rationale": "Explicit discrimination/victimhood mechanism is asserted, linking enforcement to racial oppression.",
+    "evidence_span": "\"gun laws selectively enforced against almost exclusively minorities\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "10_3",
+    "message_id": "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3f8fcb",
+    "feature_name": "gun_policy_second_amendment_rights_topic",
+    "feature_value": "Gun laws + rights denial/equal rights discussion",
+    "category": "topic_subject",
+    "rationale": "Primary topic is firearms regulation framed as impacting constitutional/rights outcomes.",
+    "evidence_span": "\"gun laws\" \"same rights\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "10_4",
+    "message_id": "twitter_2061829951653904550",
+    "feature_name": "economic_cause_claim_offshoring",
+    "feature_value": "Causal claim about hollowing out due to manufacturing moving + hiring foreigners",
+    "category": "semantic_content",
+    "rationale": "States a direct causal explanation for economic decline tied to labor/offshoring.",
+    "evidence_span": "\"The Rust Belt hollowed out when manufacturing moved to Asia.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "10_5",
+    "message_id": "twitter_2061829951653904550",
+    "feature_name": "elite_corporation_blame_component",
+    "feature_value": "Blame directed to corporations/greed as an agent",
+    "category": "target_directionality",
+    "rationale": "Attributes negative outcomes to a powerful corporate actor/class, not to neutral factors.",
+    "evidence_span": "\"corporations chose greed over workers\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "10_6",
+    "message_id": "twitter_2061737852749406424",
+    "feature_name": "taboo_profanity_sexual_content",
+    "feature_value": "Sexual/verbal taboo used as insult/derogation",
+    "category": "surface_lexical",
+    "rationale": "Contains explicit sexual taboo language used to demean a political stance.",
+    "evidence_span": "\"butt fucked\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "10_7",
+    "message_id": "reddit_1tuttj1_opf3fiy",
+    "feature_name": "conditional_future_hypothesis_structure",
+    "feature_value": "If-then structure about a hypothetical test of support",
+    "category": "compositional_syntax",
+    "rationale": "Uses conditional logic to predict political support change under a specific scenario.",
+    "evidence_span": "\"If Trump got the same tattoo tomorrow fully knowing what it was his support would drop\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "11_0",
+    "message_id": "reddit_1ko3yf3_msok7uj",
+    "feature_name": "targeted_insult_and_threatening_justification",
+    "feature_value": "Uses direct profanity and retaliatory sentiment toward political voters (\u201cdeserve everything coming\u201d).",
+    "category": "pragmatics_intent",
+    "rationale": "The post pairs profanity with a sanctioning/justice claim aimed at an outgroup based on voting behavior.",
+    "evidence_span": "\"Fuck anyone who ever voted for Trump, they deserve everything coming.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "11_1",
+    "message_id": "reddit_1ko3yf3_msok7uj",
+    "feature_name": "us_vs_them_voter_blame_swap_in_mirror",
+    "feature_value": "Blames/condemns one side\u2019s voters in original and the opposite side in the mirror.",
+    "category": "target_directionality",
+    "rationale": "The mirror retargets the same moral condemnation toward the other party\u2019s voter group, indicating factional, side-based directionality.",
+    "evidence_span": "\"voted for Trump\" / \"voted for Biden/Harris\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "11_2",
+    "message_id": "twitter_2061616629902168547",
+    "feature_name": "profanity_taboo_language",
+    "feature_value": "Strong sexual anatomy insults used as slurs.",
+    "category": "surface_lexical",
+    "rationale": "Explicit taboo/sexual-body-word insults are used to attack named media figures.",
+    "evidence_span": "\"is a sphincter\" / \"complete rectum\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "11_3",
+    "message_id": "twitter_2061616629902168547",
+    "feature_name": "call_to_action_punitive_policy",
+    "feature_value": "Advocates coercive relocation/self-deportation to penal locations.",
+    "category": "semantic_content",
+    "rationale": "The text proposes punitive \u201cshould\u201d actions directed at a group.",
+    "evidence_span": "\"These @rats should self deport to santuary cities?\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "11_4",
+    "message_id": "reddit_1twq42a_oqbw8wp",
+    "feature_name": "factual_claim_then_counter_claim_with_zero_evidence",
+    "feature_value": "Claims document/testimony support one side; then asserts the other side had accusations with no evidence.",
+    "category": "semantic_content",
+    "rationale": "It uses a purported factual basis (\u201cdocuments\u2026\u201d) and a contrasting challenge to evidence strength (\u201c0 evidence\u201d).",
+    "evidence_span": "\"documents released by the DoJ\" ... \"0 evidence\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "11_5",
+    "message_id": "twitter_2061654798852575620",
+    "feature_name": "conditional_argument_structure",
+    "feature_value": "\u201cShow me X and I\u2019ll show you Y\u201d argumentative conditional framing.",
+    "category": "compositional_syntax",
+    "rationale": "The post uses a conditional setup to advance a specific interpretation of the topic.",
+    "evidence_span": "\"Show me any anti-abortion argument and I'll show you...\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "11_6",
+    "message_id": "reddit_1liejsg_mzdmc4p",
+    "feature_name": "high_intensity_generalized_insult",
+    "feature_value": "Bald, generalized dehumanizing insult without argument.",
+    "category": "pragmatics_intent",
+    "rationale": "A direct, generalized insult targets a political actor group with high hostility.",
+    "evidence_span": "\"Republicans are f****** idiots.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "11_7",
+    "message_id": "bluesky_0c0c8fe880b22cc36e08ea9f1bcfbc83148f2147c203a20d56bccd30e0d94e19",
+    "feature_name": "gun_reform_demand_after_mass_casualty_scene",
+    "feature_value": "Active-shooter fear narrative plus critique for not pushing gun reform.",
+    "category": "topic_subject",
+    "rationale": "The content centers on gun violence and explicitly references gun reform as the contested policy outcome.",
+    "evidence_span": "\"active shooter\" ... \"gun reform\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "12_0",
+    "message_id": "reddit_1ll9l4x_n013h7b",
+    "feature_name": "multiple_fword_insults_piling",
+    "feature_value": "Multiple 'Fuck' + named political actors (direct hostile invective)",
+    "category": "pragmatics_intent",
+    "rationale": "The post uses repeated profanity-directed condemnations toward groups and politicians, signaling strong hostile intent.",
+    "evidence_span": "\"Fuck Texas. Fuck Idaho. Fuck MAGA. Fuck Trump. Fuck Cruz.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "12_1",
+    "message_id": "reddit_1ll9l4x_n013h7b",
+    "feature_name": "targeted_political_actors_named",
+    "feature_value": "Named partisan/political figures and entities in a list",
+    "category": "target_directionality",
+    "rationale": "The targets are explicitly political (party acronym, president, senator), making the directionality clear.",
+    "evidence_span": "\"Fuck MAGA. Fuck Trump. Fuck Cruz.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "12_2",
+    "message_id": "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+    "feature_name": "gaslighting_normative_attack_with_policy_tradeoff",
+    "feature_value": "Accusation framing ('Stop gaslighting') plus policy causal/tradeoff claim",
+    "category": "semantic_content",
+    "rationale": "The opener is a direct accusatory/imperative frame and the text asserts a policy consequence tradeoff.",
+    "evidence_span": "\"Stop gaslighting Minnesotans.\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "12_3",
+    "message_id": "bluesky_d584d9056bd7f0bd104b4622d04babaa5bd6d19484e58e1141f8b03203f71ceb",
+    "feature_name": "gun_policy_increase_definition_of_assault_weapons",
+    "feature_value": "Magazine-capacity ban + expanded 'assault weapon' definition reference",
+    "category": "topic_subject",
+    "rationale": "The post centers firearm regulation specifics, indicating a primary weapons/policy domain.",
+    "evidence_span": "\"ban standard-capacity magazines\" ... \"expanded definition of an \\\"assault weapon\\\"\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "12_4",
+    "message_id": "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+    "feature_name": "rhetorical_question_about_conservatives_liberal_position_change",
+    "feature_value": "Rhetorical question calling out perceived reversal over time",
+    "category": "compositional_syntax",
+    "rationale": "It uses a leading rhetorical question to highlight an asserted inconsistency.",
+    "evidence_span": "\"Have you noticed that conservatives are saying you deserve to be shot... now\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "12_5",
+    "message_id": "bluesky_c94d3164687596d7e91647ad960ebf964c119a2f917f6db883cd9813a47ca69a",
+    "feature_name": "deserving_violent_outcome_framing_for_carry_rights",
+    "feature_value": "Claims of 'deserve to be shot/killed' for open-carry/concealed-carry",
+    "category": "semantic_content",
+    "rationale": "The semantic content includes threatening/violent entitlement language tied to self-defense rights.",
+    "evidence_span": "\"you deserve to be shot and/or killed if you open-carry or concealed-carry\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "12_6",
+    "message_id": "reddit_1u0gjyt_oqin086",
+    "feature_name": "taboo_topic_sexual_content_maybe_porngrams",
+    "feature_value": "Sexual content reference tied to regional political stereotypes",
+    "category": "topic_subject",
+    "rationale": "The post foregrounds explicit sexual-content framing connected to political geography.",
+    "evidence_span": "\"Red states watch more trans porn than anyone.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "12_7",
+    "message_id": "reddit_1liz1et_mzgv86x",
+    "feature_name": "climate_policy_then_mocking_property_damage",
+    "feature_value": "Conditional imperative 'Let's roll back...' accusing opponents of economic harm",
+    "category": "pragmatics_intent",
+    "rationale": "It uses a directive ('Let's...') to argue against climate policy while alleging harming protected parks for profit.",
+    "evidence_span": "\"Great idea GOP! Let's roll back any & all climate initiatives\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "13_0",
+    "message_id": "reddit_1kpmzrc_mt4yvx1",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses strong insult/profanity and vulgar phrasing",
+    "category": "surface_lexical",
+    "rationale": "The post contains highly taboo/inflammatory language targeting an outgroup.",
+    "evidence_span": "\"dumbass trump dick suckers\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "13_1",
+    "message_id": "reddit_1lhaiqa_mz2seaw",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Explicit repeated profanity directed at political figures/groups",
+    "category": "surface_lexical",
+    "rationale": "Direct use of the word \u201cFuck\u201d twice with political targets is a strong lexical moderation cue.",
+    "evidence_span": "\"Fuck Trump and Fuck Israel.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "13_2",
+    "message_id": "reddit_1l74253_mwv1kww",
+    "feature_name": "informal_register_or_slang",
+    "feature_value": "Dismissive, slangy framing of political actors",
+    "category": "surface_lexical",
+    "rationale": "The post uses casual contempt terms (\u201cgarbage\u201d) rather than policy discussion.",
+    "evidence_span": "\"More right wing garbage.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "13_3",
+    "message_id": "reddit_1lhaiqa_mz2seaw",
+    "feature_name": "targeted_actor_is_political_figures",
+    "feature_value": "Direct negative calls against specific political actors",
+    "category": "target_directionality",
+    "rationale": "The language is aimed at named political figure(s) and an international political target.",
+    "evidence_span": "\"Fuck Trump and Fuck Israel.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "13_4",
+    "message_id": "reddit_1llpslt_n03dyf9",
+    "feature_name": "normative_moral_language",
+    "feature_value": "Moral condemnation and contempt about actors enabling autocracy/serfdom",
+    "category": "semantic_content",
+    "rationale": "Normative outrage/condemnation (\u201cfuck you\u2026 autocracy\u201d) indicates strongly negative evaluation tied to power abuse.",
+    "evidence_span": "\"fuck you I got mine\u0019ing their base into autocracy.\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "13_5",
+    "message_id": "reddit_1lhaiqa_mz2uzd2",
+    "feature_name": "us_vs_them_directional_blame_switch",
+    "feature_value": "Mirror re-targets blame from Trump/Vance camp to Biden/Kamala camp",
+    "category": "target_directionality",
+    "rationale": "The mirror swaps which party leader is blamed while keeping the same evaluative structure, signaling partisan antagonism.",
+    "evidence_span": "\"Trump is the worst\" / \"Biden was the worst\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "13_6",
+    "message_id": "reddit_1tuzkhw_oped55l",
+    "feature_name": "rhetorical_question",
+    "feature_value": "Direct rhetorical choice question to argue abortion stance",
+    "category": "compositional_syntax",
+    "rationale": "The conditional-choice framing is an argumentative structure commonly used in contentious policy debates.",
+    "evidence_span": "\"Would you save a baby or 10 fertilized zygotes in a freezer?\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "13_7",
+    "message_id": "bluesky_c5802b75bd6779787b6edc0be894a72ac36c252c584a66a7d7d90ec3613136aa",
+    "feature_name": "contrastive_but_however_structure",
+    "feature_value": "\u201cYes, \u2026 but we can\u2019t \u2026\u201d juxtaposition of competing claims",
+    "category": "compositional_syntax",
+    "rationale": "The text uses a contrastive \u2018yes-but\u2019 pattern to rebut a policy position.",
+    "evidence_span": "\"Yes, we have yearly school shootings, but we can\u0019t ban guns\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "14_0",
+    "message_id": "bluesky_62861f319f80c8f37e4e9d36b8a538b598c9617c9d2e9bd6ba9c98df11dafeaf",
+    "feature_name": "approx_token_length_band",
+    "feature_value": "short",
+    "category": "surface_lexical",
+    "rationale": "The post is a brief paragraph with a few clauses and a short sequence of planned actions.",
+    "evidence_span": "\u201cInstead of arguing whether or not an assault weapon ban leads to less gun violence\u201d",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "14_1",
+    "message_id": "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+    "feature_name": "all_caps_emphasis",
+    "feature_value": "high use of ALL CAPS slogans/blocks",
+    "category": "surface_lexical",
+    "rationale": "The text is structured around emphatic all-caps lines.",
+    "evidence_span": "\u201cDEMOCRACY is what I care about the most.\u201d / \u201cALL that shit can be fixed\u201d",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "14_2",
+    "message_id": "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+    "feature_name": "normative_moral_language_and_embedded_outrage",
+    "feature_value": "morality framing + doom-like moral consequence",
+    "category": "semantic_content",
+    "rationale": "Uses moral/absolute framing (\u201cunLESS\u2026 Then\u2026\u201d) and severe consequence language.",
+    "evidence_span": "\u201cALL that shit can be fixed\u2026 UNLESS we lose our democracy. Then, we\u2019re just ALL fucked.\u201d",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "14_3",
+    "message_id": "twitter_2061786442943111613",
+    "feature_name": "victimhood_or_persecution_framing",
+    "feature_value": "taxpayers are harmed; immoral cost-shifting",
+    "category": "semantic_content",
+    "rationale": "Depicts a group as unjustly burdened and frames it as immoral.",
+    "evidence_span": "\u201cIt is immoral that The U.S.A. taxpayers shoulders 100% all deportation costs.\u201d",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "14_4",
+    "message_id": "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670",
+    "feature_name": "policy_prescription_present",
+    "feature_value": "explicit policy solutions (background checks, red flag laws)",
+    "category": "semantic_content",
+    "rationale": "The post advocates concrete policy measures.",
+    "evidence_span": "\u201crequire and fund background checks and red flag laws\u201d",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "14_5",
+    "message_id": "reddit_1lhrgof_mz6vo58",
+    "feature_name": "informal_register_or_slang_plus_acronym_abuse",
+    "feature_value": "short derogatory redefinition acronym",
+    "category": "surface_lexical",
+    "rationale": "A terse, informal hostile redefinition of a political acronym is used.",
+    "evidence_span": "\u201cDEI = Don't Employ Idiots.\u201d",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "14_6",
+    "message_id": "reddit_1tpy3la_ood1p6z",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "sexual profanity / insult threat",
+    "category": "surface_lexical",
+    "rationale": "Contains explicit taboo/sexual profanity used as an insult.",
+    "evidence_span": "\u201ceat a great big flying dick!\u201d",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "14_7",
+    "message_id": "reddit_1kqlad9_mt6ne68",
+    "feature_name": "second_person_direct_address_and_targeted_attack",
+    "feature_value": "direct curse targeting political figures/side (F*ck ... )",
+    "category": "pragmatics_intent",
+    "rationale": "Uses an imperative curse aimed at specific political actors, indicating targeted hostility.",
+    "evidence_span": "\u201cF*ck MAGA Senator, Trump and his lackeys!\u201d",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "15_0",
+    "message_id": "reddit_1tr2x1s_ookpm7h",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "No explicit punctuation, but heavy insult phrasing without hedging",
+    "category": "surface_lexical",
+    "rationale": "The post uses direct sexual/insult lexicon aimed at a political identity, indicating an abrasive register.",
+    "evidence_span": "Conservative christian small penis power.",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "15_1",
+    "message_id": "reddit_1linlp2_mzdzafl",
+    "feature_name": "short_approx_token_length_band_short",
+    "feature_value": "Very short (single sentence)",
+    "category": "surface_lexical",
+    "rationale": "Single brief clause targets a specific political figure with an evaluative label.",
+    "evidence_span": "This is another example of how stupid Trump is.",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "15_2",
+    "message_id": "bluesky_68ba2c62a072efcb3c266284c1ccb4156c7d9d9f871631d121d36ad7bbf872a7",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Profanity/sexual vulgarity used",
+    "category": "surface_lexical",
+    "rationale": "Use of vulgar profanity increases tone harshness and may make content more likely to be removed.",
+    "evidence_span": "shooting the shit",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "15_3",
+    "message_id": "bluesky_68ba2c62a072efcb3c266284c1ccb4156c7d9d9f871631d121d36ad7bbf872a7",
+    "feature_name": "named_proper_nouns_density",
+    "feature_value": "Multiple named entities (TSA, ICE, major airports; Prez Dingleberry; GOP)",
+    "category": "surface_lexical",
+    "rationale": "The sentence packs many institutional and party references, producing dense named-entity political content.",
+    "evidence_span": "TSA agents",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "15_4",
+    "message_id": "reddit_1u1fnvf_oqq7ju0",
+    "feature_name": "conspiratorial_framing",
+    "feature_value": "Leak/cover-up insinuations with escalating wrongdoing",
+    "category": "semantic_content",
+    "rationale": "Framed as hidden/ongoing wrongdoing to be revealed, using escalation logic consistent with conspiracy-like insinuation.",
+    "evidence_span": "All that's left to leak is that he raped and molested",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "15_5",
+    "message_id": "reddit_1u237rb_oqucppz",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Blame depends on which side loses; party-based us/them logic",
+    "category": "target_directionality",
+    "rationale": "Conditional blame attribution based on party outcomes creates an adversarial in-group/out-group narrative.",
+    "evidence_span": "it's not rigged if a dem loses",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "15_6",
+    "message_id": "reddit_1tu26w6_op6qbef",
+    "feature_name": "call_to_action",
+    "feature_value": "Explicit preference for legal outcome/record-keeping",
+    "category": "pragmatics_intent",
+    "rationale": "Directly states a desired action/outcome (judge/court decision), reflecting persuasive/advocacy intent.",
+    "evidence_span": "I want a judge to rule against it so there a record of it being squashed.",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "15_7",
+    "message_id": "reddit_1lihh6h_mzcpoe8",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Imperative instructions to perform illegal action",
+    "category": "compositional_syntax",
+    "rationale": "Uses imperative structure directing the audience to take action, increasing confrontational intent.",
+    "evidence_span": "Then do it fucking illegally.",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "16_0",
+    "message_id": "reddit_1llvpdb_n03bb5g",
+    "feature_name": "profanity_taboo_language",
+    "feature_value": "Uses strong profanity/insults",
+    "category": "surface_lexical",
+    "rationale": "Contains explicit taboo language and derogatory labeling.",
+    "evidence_span": "\"fucking useless and corrupt as shit democrats\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "16_1",
+    "message_id": "reddit_1llvpdb_n03bb5g",
+    "feature_name": "us_vs_them_antagonistic_grouping",
+    "feature_value": "Outgroup/ingroup framing with 'only alternative'",
+    "category": "target_directionality",
+    "rationale": "Positions one political side as the sole acceptable option against an opposing side.",
+    "evidence_span": "\"are the only alternative\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "16_2",
+    "message_id": "twitter_2061803057050964165",
+    "feature_name": "all_caps_emphasis",
+    "feature_value": "All-caps emphasis token(s)",
+    "category": "surface_lexical",
+    "rationale": "Uses all-caps intensification to stress a claim.",
+    "evidence_span": "\"eating ALL THE FOOD\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "16_3",
+    "message_id": "twitter_2061803057050964165",
+    "feature_name": "ridicule_or_mockery_nonliteral_comparison",
+    "feature_value": "Mocking scenarios/cartoony insults (e.g., asylum, hunger, de-Nazify)",
+    "category": "pragmatics_intent",
+    "rationale": "Uses exaggerated, insulting hypotheticals as ridicule.",
+    "evidence_span": "\"Pootin needs ASYLUM\"",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "16_4",
+    "message_id": "twitter_2061803057050964165",
+    "feature_name": "conspiratorial_framing_motive_attack",
+    "feature_value": "Claims others seek to 'De-Nazify' / witch hunt",
+    "category": "semantic_content",
+    "rationale": "Suggests a hostile coordinated motive behind actions, presented as problematic framing.",
+    "evidence_span": "\"his Generals want to \\\"De-Nazify\\\" him\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "16_5",
+    "message_id": "twitter_2061820548552786192",
+    "feature_name": "hashtag_mention_pattern_political_tags",
+    "feature_value": "Hashtags for multiple geopolitical actors plus @mention",
+    "category": "surface_lexical",
+    "rationale": "Heavy use of topic hashtags signals politicized, cross-actor conflict discussion.",
+    "evidence_span": "\"#usa #america #israel #palestine #iran\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "16_6",
+    "message_id": "bluesky_a1ca8fce42888b260550f1654b19f9bac63c309f555f82f1531f71bea568d1da",
+    "feature_name": "quote_or_attribution_embedding",
+    "feature_value": "Uses rhetorical 'TBF' and question-style framing to contrast orgs",
+    "category": "compositional_syntax",
+    "rationale": "Employs an embedded argumentative structure to set up comparative critique.",
+    "evidence_span": "\"TBF, when, EVER, has the NRA promoted\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "16_7",
+    "message_id": "twitter_2061559756838318425",
+    "feature_name": "high_punctuation_intensity_emphatic_outrage",
+    "feature_value": "Caps headline + multiple exclamation marks",
+    "category": "surface_lexical",
+    "rationale": "Highly emphatic formatting (caps) aligned with intense punctuation/urgency cues.",
+    "evidence_span": "\"MUST WATCH\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "17_0",
+    "message_id": "twitter_2061529464471691371",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses harsh/taboo image-based language about abortion (kittens)",
+    "category": "semantic_content",
+    "rationale": "The post employs extreme, vivid language to describe abortion, increasing the intensity of the content.",
+    "evidence_span": "\"aborting kittens\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "17_1",
+    "message_id": "reddit_1tswg2c_op0beo8",
+    "feature_name": "contrastive_but_however_structure",
+    "feature_value": "Oppositional framing using 'opposite of' plus contrasting descriptors",
+    "category": "compositional_syntax",
+    "rationale": "A structured contrast between ideological labels is used to argue for an inversion of political roles.",
+    "evidence_span": "\"The Democrats have been acting as conservatives... The opposite of conservative.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "17_2",
+    "message_id": "bluesky_1475a33737aa92e13fc1b7443962df41981dcb0d51a7930efc1ab554bed18319",
+    "feature_name": "policy_prescription_present",
+    "feature_value": "Direct safety/ownership instruction about acquiring firearms",
+    "category": "semantic_content",
+    "rationale": "The text provides an explicit behavioral prescription rather than only criticizing.",
+    "evidence_span": "\"acquire a gun\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "17_3",
+    "message_id": "reddit_1kzdllm_mv77owa",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Contains explicit profanity/insulting sexual-language",
+    "category": "surface_lexical",
+    "rationale": "The post uses strong profanity and derogatory sexualized insults toward a political group.",
+    "evidence_span": "\"a shit load of weak fucking men\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "17_4",
+    "message_id": "reddit_1kx7c8d_musgtn4",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Blame directed at voters as an outgroup; dehumanizing appraisal",
+    "category": "target_directionality",
+    "rationale": "It generalizes about 'his/her voters' and concludes with a blanket negative judgment.",
+    "evidence_span": "\"All his voters care about... They're trash.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "17_5",
+    "message_id": "reddit_1lm38hz_n07pupw",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "Strong exclamations and escalating insults",
+    "category": "surface_lexical",
+    "rationale": "Multiple exclamation marks and mocking laughter signal heightened expressive tone.",
+    "evidence_span": "\"Ahahahaha!!!\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "17_6",
+    "message_id": "reddit_1la4x0y_mxla28z",
+    "feature_name": "normative_moral_language",
+    "feature_value": "Strong condemnation using 'fucking' and communist/treason-like framing",
+    "category": "semantic_content",
+    "rationale": "The post uses intense moral/ideological condemnation rather than neutral description.",
+    "evidence_span": "\"She\u2019s a fucking communist\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "17_7",
+    "message_id": "reddit_1kl7318_ms031t0",
+    "feature_name": "approximate_token_length_band",
+    "feature_value": "Very short one-sentence ideological insult",
+    "category": "surface_lexical",
+    "rationale": "The brevity and direct evaluative insult indicate a low-information but strongly hostile stance.",
+    "evidence_span": "\"Conservatives still suck.\"",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "18_0",
+    "message_id": "bluesky_9e5e554a57aba1c349db21fc2849b16ba0aa29919b5637417b62b48ddb431aa1",
+    "feature_name": "approx_token_length_band",
+    "feature_value": "medium",
+    "category": "surface_lexical",
+    "rationale": "The post is a multi-sentence reminder with several key claims, fitting a medium length band.",
+    "evidence_span": "\"Reminder that Louisiana does NOT have universal background checks\"",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "18_1",
+    "message_id": "bluesky_9e5e554a57aba1c349db21fc2849b16ba0aa29919b5637417b62b48ddb431aa1",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "uses emphasis capitalization and newline-separated blocks",
+    "category": "surface_lexical",
+    "rationale": "Multiple emphatic uppercase tokens (NOT) and a structured two-paragraph layout indicate heightened punctuation/emphasis.",
+    "evidence_span": "\"Louisiana does NOT have universal background checks or red flag laws.\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "18_2",
+    "message_id": "bluesky_2d16cd95c7d7ed0e7d81971362aee0ad794cb3024587c3fac468f4316053a170",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "taboo insult term used",
+    "category": "surface_lexical",
+    "rationale": "The text contains profanity (\u201cshit\u201d) in the context of disparaging a political position.",
+    "evidence_span": "\"ai' shit\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "18_3",
+    "message_id": "reddit_1tvywom_opkqwt8",
+    "feature_name": "named_proper_nouns_density",
+    "feature_value": "mentions specific identity categories and legal context; no named individuals",
+    "category": "surface_lexical",
+    "rationale": "The phrase includes specific socially salient named categories (\u201cGay\u201d, \u201ctrans\u201d) rather than generic references.",
+    "evidence_span": "\"Gay (and trans) panic defense\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "18_4",
+    "message_id": "reddit_1tvywom_opkqwt8",
+    "feature_name": "victimhood_or_persecution_framing",
+    "feature_value": "frames victims as harmed/validated by law",
+    "category": "semantic_content",
+    "rationale": "The post presents legal doctrine as enabling harm against a targeted group (\u201cmurdering us\u201d).",
+    "evidence_span": "\"Gay panic defense still validates murdering us\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "18_5",
+    "message_id": "bluesky_56a2eec0ef4a39f215aec7fa42876cf4c6675af5822abe28140a66417a1c4fb5",
+    "feature_name": "list_or_enumeration",
+    "feature_value": "enumerates multiple global cities/countries",
+    "category": "compositional_syntax",
+    "rationale": "The message uses a city list to generalize across locations.",
+    "evidence_span": "\"everyone in Dublin, London, Tokyo, Sydney\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "18_6",
+    "message_id": "reddit_1lntb5c_n0j2p0p",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "none; instead contains attribution and direct evaluation",
+    "category": "compositional_syntax",
+    "rationale": "The post uses explicit biographical/attribution framing centered on named public figures and evaluation.",
+    "evidence_span": "\"Kirsten Gillibrand was the first Democratic senator\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "18_7",
+    "message_id": "reddit_1ki3k0w_mrbvh1p",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "strong profanity in insult",
+    "category": "surface_lexical",
+    "rationale": "Contains a high-intensity profanity (\u201cfuck\u201d) used to insult an identified political group (\u201cTrump and his base\u201d).",
+    "evidence_span": "\"absolute stupidest fucks\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "19_0",
+    "message_id": "reddit_1kd654m_mqaj4t9",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses explicit profanity and insults",
+    "category": "surface_lexical",
+    "rationale": "Direct use of profanity and derogatory labeling indicates highly aggressive lexical content.",
+    "evidence_span": "\"Fuck that fucking asshole.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "19_1",
+    "message_id": "reddit_1ll9i06_mzy1dsk",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "Short utterances with strong stop punctuation",
+    "category": "surface_lexical",
+    "rationale": "Multiple clipped sentences with emphatic phrasing increase intensity and dismissal.",
+    "evidence_span": "\"Trump opens mouth.  Bullshit lies come out.  Next.\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "19_2",
+    "message_id": "reddit_1tx4xmh_opupzoc",
+    "feature_name": "informal_register_or_slang",
+    "feature_value": "Internet slang/abbreviations and casual tone",
+    "category": "surface_lexical",
+    "rationale": "\u201cbe like\u201d plus \u201cmaga\u201d signals informal, meme-like political commentary.",
+    "evidence_span": "\"maga be like\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "19_3",
+    "message_id": "reddit_1l1jhna_mvlee3c",
+    "feature_name": "approximate_token_length_band",
+    "feature_value": "short",
+    "category": "surface_lexical",
+    "rationale": "Content is brief with only a few sentences.",
+    "evidence_span": "\"Republicans win points ... denying global warming.\"",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "19_4",
+    "message_id": "reddit_1l1jhna_mvlee3c",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "climate change / global warming",
+    "category": "topic_subject",
+    "rationale": "The post centers on climate policy/acceptance claims.",
+    "evidence_span": "\"denying global warming\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "19_5",
+    "message_id": "twitter_2059279074258715042",
+    "feature_name": "conspiratorial_framing",
+    "feature_value": "Speculative allegation via Epstein files implying hidden wrongdoing",
+    "category": "semantic_content",
+    "rationale": "Frames wrongdoing through alleged secret documentation tied to named targets.",
+    "evidence_span": "\"All the Epstein files with your name on it\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "19_6",
+    "message_id": "twitter_2060043683899027923",
+    "feature_name": "policy_prescription_present",
+    "feature_value": "Advocates legal/political action to support a position",
+    "category": "semantic_content",
+    "rationale": "Uses explicit commitment to take action regarding health/political mandates and related policy.",
+    "evidence_span": "\"My office will fight every day\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "19_7",
+    "message_id": "reddit_1kdq5jl_mqenqo7",
+    "feature_name": "victimhood_or_persecution_framing",
+    "feature_value": "Dehumanizing death/deservedness language",
+    "category": "semantic_content",
+    "rationale": "Assigns \u201cdeserve\u201d/punishment framing with personal harm language toward a political figure.",
+    "evidence_span": "\"will die disgraced in jail\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "20_0",
+    "message_id": "reddit_1kea4ww_mqhf6as",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses explicit profanity/insult",
+    "category": "surface_lexical",
+    "rationale": "The post contains a direct profane command/request.",
+    "evidence_span": "\"Fuck off OSHA\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "20_1",
+    "message_id": "reddit_1kvw690_muewa77",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Sexual profanity / obscene insult",
+    "category": "surface_lexical",
+    "rationale": "Contains explicit sexual/obscene wording aimed at a political figure.",
+    "evidence_span": "\"Trump can eat my entire ass\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "20_2",
+    "message_id": "twitter_2061590939261432299",
+    "feature_name": "call_to_action",
+    "feature_value": "Imperative demand about policy/legal action",
+    "category": "pragmatics_intent",
+    "rationale": "Uses an urgent imperative to instruct action.",
+    "evidence_span": "\"YOU NEED TO PUT A JUDGES ON THE FRONT OF THESE PLANES\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "20_3",
+    "message_id": "reddit_1l5ve6e_mwk6h7r",
+    "feature_name": "call_to_action",
+    "feature_value": "Demand/command to stop a specific agency behavior",
+    "category": "pragmatics_intent",
+    "rationale": "The utterance is framed as a direct demand to halt conduct.",
+    "evidence_span": "\"I demand ICE stop acting\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "20_4",
+    "message_id": "reddit_1l5ve6e_mwk6h7r",
+    "feature_name": "targeted_outgroup_policing_imagery",
+    "feature_value": "Nazis/gestapo analogy to characterize ICE",
+    "category": "semantic_content",
+    "rationale": "Employs loaded historical persecution imagery to condemn the target.",
+    "evidence_span": "\"like a Nazi gestapo\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "20_5",
+    "message_id": "reddit_1tgwl5y_omj5a8g",
+    "feature_name": "ridicule_or_mockery",
+    "feature_value": "Derogatory evaluation + dismissal",
+    "category": "pragmatics_intent",
+    "rationale": "Opens with a single-word insult and then a rhetorical question criticizing behavior.",
+    "evidence_span": "\"Stupid. Why should we reward bad behavior?\"",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "20_6",
+    "message_id": "reddit_1tupifu_opfjibl",
+    "feature_name": "hate_or_dehumanizing_insults_toward_groups",
+    "feature_value": "Uses demeaning slurs for political/ethnic identity linked actors",
+    "category": "target_directionality",
+    "rationale": "The post attacks actors using harsh derogatory language tied to race/political ideology.",
+    "evidence_span": "\"Racist assholes like Pete\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "20_7",
+    "message_id": "bluesky_d78b35f3f6fddbf83f1a994cbfc122897e5fe1f990c1f7a40a52af08095935c4",
+    "feature_name": "policy_domain_gun_control_2a_framing",
+    "feature_value": "Gun rights/mass-shooting argument anchored to 2A and founding-era weapon rules",
+    "category": "topic_subject",
+    "rationale": "Grounds the claim in firearms regulation and constitutional framing tied to the 2nd Amendment.",
+    "evidence_span": "\"Hard to become a mass shooter\" / \"when the Founders wrote the 2A\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "21_0",
+    "message_id": "reddit_1ti509f_oms79tg",
+    "feature_name": "informal_slang_insulting_collective",
+    "feature_value": "Uses derogatory slang toward an opposing political group",
+    "category": "surface_lexical",
+    "rationale": "The post relies on informal, insulting phrasing (\u201cbutthurt\u201d) aimed at a political in-group/out-group.",
+    "evidence_span": "\"All the butthurt fellow Conservatives\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "21_1",
+    "message_id": "reddit_1l5y6fx_mwku2i6",
+    "feature_name": "strong_profanity_or_taboo_language",
+    "feature_value": "Uses explicit profanity as accusation",
+    "category": "surface_lexical",
+    "rationale": "\u201cfull of shit\u201d is a strong taboo/profanity marker coupled with allegations.",
+    "evidence_span": "\"the trump administration is full of shit\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "21_2",
+    "message_id": "twitter_2060437978468470812",
+    "feature_name": "pro_gun_policy_direct_claim_and_counterargument",
+    "feature_value": "Advocates Second Amendment / anti-government framing and claims regulations are not protection",
+    "category": "topic_subject",
+    "rationale": "This text centers a weapons/right-to-carry policy domain with direct argumentative framing.",
+    "evidence_span": "\"The Second Amendment Is For Fighting the Government!\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "21_3",
+    "message_id": "twitter_2060437978468470812",
+    "feature_name": "normative_advocacy_with_targeted_actor_attack",
+    "feature_value": "Argues for gun-friendly norms while attacking NRA and \u201clapdog politicians\u201d",
+    "category": "semantic_content",
+    "rationale": "It uses moral/normative language and hostility toward specific actors, which is characteristic of linked-blame narratives.",
+    "evidence_span": "\"the NRA and their lapdog politicians can cry about it all they want.\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "21_4",
+    "message_id": "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+    "feature_name": "mass_shooting_specific_event_plus_unsuccessful_thoughts_prayers",
+    "feature_value": "References mass shooting and rejects \u201cthoughts and prayers\u201d as ineffective",
+    "category": "topic_subject",
+    "rationale": "A timely, high-salience violent event is cited alongside a rejection of a common response.",
+    "evidence_span": "\"Another day, another mass shooting. Thoughts and prayers don't work.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "21_5",
+    "message_id": "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+    "feature_name": "causal_claim_present_about_policy_enforcement",
+    "feature_value": "Claims a specific causal mechanism: failure to enforce existing laws",
+    "category": "semantic_content",
+    "rationale": "It makes a direct causal assertion about governmental failure, aligning with blame-based moderation triggers.",
+    "evidence_span": "\"government failure to enforce the laws already on the books.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "21_6",
+    "message_id": "reddit_1tql6ez_ooha8vq",
+    "feature_name": "second_person_argumentation_with_qualifier_clause",
+    "feature_value": "Appeals to debunking \u201cinciting violence\u201d accusation using \u201cespecially when\u201d qualifier and question",
+    "category": "compositional_syntax",
+    "rationale": "The structure is argumentative with explicit qualification (\u201cespecially when\u201d) and ends in a rhetorical prompt.",
+    "evidence_span": "\"And no, calling Trump so doesn't amount to \\\"inciting violence;\\\" especially when it's accurate. Need more convincing?\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "21_7",
+    "message_id": "bluesky_e8964356c5eac3130698d5e7d03a96a4311d124c7149a23cbc159e0b22fbadf0",
+    "feature_name": "abortion_case_reference_and_high_polarization_tagging",
+    "feature_value": "References Roe v. Wade/Dobbs with dehumanizing shorthand and aligned actor blame/enemy claim",
+    "category": "topic_subject",
+    "rationale": "It includes explicit named legal precedents and assigns enemy status to a named official in an abortion policy context.",
+    "evidence_span": "\"Roe v. Wade\" \"Dobbs\" \"AG Ken Paxton is an enemy to women's liberty.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "22_0",
+    "message_id": "reddit_1kpwu8r_mt36qxh",
+    "feature_name": "profanity_taboo_none_but_insulting_intensity",
+    "feature_value": "Uses direct derogatory insult ('stupid') toward an outgroup (implied people hiding info).",
+    "category": "pragmatics_intent",
+    "rationale": "Linked-fate removals are often associated with hostile, blame-centric language that targets groups as incompetent/malicious.",
+    "evidence_span": "\"they are too stupid to realize\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "22_1",
+    "message_id": "reddit_1tvll8k_ophzc2o",
+    "feature_name": "us_vs_them_targeting_with_elite_corruption_frame",
+    "feature_value": "Binary framing of 'ugly filth/corruption' vs opposition as exposing/dragging out rot.",
+    "category": "target_directionality",
+    "rationale": "Semantic opposition and directionality toward specific political actors with corruption rhetoric can trigger removal under linked-fate norms.",
+    "evidence_span": "\"all the ugly filth and corruption of the system\" / \"drag into the open\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "22_2",
+    "message_id": "twitter_2061822638415073361",
+    "feature_name": "abolition_or_must_be_action_call",
+    "feature_value": "Explicit abolition call: abolish UNRWA/UN support terrorism.",
+    "category": "semantic_content",
+    "rationale": "Strong policy prescription targeting organizations (abolition) is a salient removal cue.",
+    "evidence_span": "\"UNRWA & U.N SUPPORT TERROR & MUST BE ABOLISHED.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "22_3",
+    "message_id": "twitter_2061802548437074115",
+    "feature_name": "local_election_candidate_call_to_action",
+    "feature_value": "Direct urging to local voters to choose a named candidate; includes violent/decay-style negatives.",
+    "category": "topic_subject",
+    "rationale": "Candidate-specific mobilization language directed at a geographic locality is clearly present.",
+    "evidence_span": "\"vote for SPENCER\" / \"Help yourselves today people of L A\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "22_4",
+    "message_id": "twitter_2061802548437074115",
+    "feature_name": "conditional_unless_structure_with_negative_outcomes",
+    "feature_value": "Uses 'UNLESS YOU PERFER' conditional threat-like structure enumerating harms.",
+    "category": "compositional_syntax",
+    "rationale": "Conditionals that predicate undesirable outcomes on choosing differently are a common linked-fate moderation cue.",
+    "evidence_span": "\"UNLESS YOU PERFER LIVING IN A FILTH, CRIME ,NO WATER FOR FIRES\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "22_5",
+    "message_id": "reddit_1txvz2c_oq0e8fv",
+    "feature_name": "rhetorical_question_license_quote_comparison",
+    "feature_value": "Refers to an argument via quoted analogy and then asserts binary truth/violence.",
+    "category": "compositional_syntax",
+    "rationale": "Analogical framing that escalates seriousness (via rape-insinuation/insurrection parallel) adds aggressive rhetorical structure.",
+    "evidence_span": "\"Ah yes, the same logic as 'it's not rape-rape\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "22_6",
+    "message_id": "bluesky_fec21c50c5d43a9fa639c803fa0c3358341c6a3ac843538f2d1429feaa2f8c3c",
+    "feature_name": "paris_agreement_and_climate_abandonment_reference",
+    "feature_value": "Mentions Paris Agreement and claims US abandoned international commitment.",
+    "category": "topic_subject",
+    "rationale": "Specific international climate-policy reference provides clear topic anchoring for removal decisions.",
+    "evidence_span": "\"pulled out of the Paris agreement\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "22_7",
+    "message_id": "twitter_2059708545470263644",
+    "feature_name": "abortion_murder_religious_argumentation_with_hashtag",
+    "feature_value": "Religious moral condemnation of abortion; includes #putthatinyourpipe hashtag and claims 'abortion is murder'.",
+    "category": "semantic_content",
+    "rationale": "Normative moral language plus explicit religious framing around abortion is directly observable.",
+    "evidence_span": "\"abortion is murder\" / \"goes against the Word of God\" / \"#putthatinyourpipe\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "23_0",
+    "message_id": "reddit_1ldl42u_my98vf2",
+    "feature_name": "mirror_religious_metaphor_of_politicians",
+    "feature_value": "Uses religious/Messianic framing to equate political leaders with God/Messiah/Diciples",
+    "category": "semantic_content",
+    "rationale": "The text casts political actors as religious figures, which is a distinctive semantic frame and often accompanies hostile linked-fate blame.",
+    "evidence_span": "\"Trump is their God\" / \"Biden is their Messiah\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "23_1",
+    "message_id": "reddit_1l6eybs_mx533ze",
+    "feature_name": "profanity_and_anti_state_swearing",
+    "feature_value": "Includes strong profanity and anti-establishment slurs",
+    "category": "surface_lexical",
+    "rationale": "High-intensity taboo language and accusatory targets are prominent lexical cues.",
+    "evidence_span": "\"Fuck the deep state and fuck communism.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "23_2",
+    "message_id": "reddit_1u18ir0_oqpychq",
+    "feature_name": "second_person_not_present_contrast_two_jobs_comparison",
+    "feature_value": "Expresses a comparison/contrast between desk IT work vs hard physical service work, plus implied class contempt",
+    "category": "semantic_content",
+    "rationale": "The post uses a workers/conditions contrast to moralize about who is looked down on, indicating contested social group boundaries.",
+    "evidence_span": "\"I work IT\" ... \"Working McDonald\u000027s or Walmart\" ... \"Drives me nuts.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "23_3",
+    "message_id": "reddit_1l4871w_mw743t1",
+    "feature_name": "short_ranked_insult",
+    "feature_value": "Very short one-line insult attacking a political party",
+    "category": "surface_lexical",
+    "rationale": "A terse, derogatory partisan evaluation suggests antagonistic linked-fate stance even without additional argumentation.",
+    "evidence_span": "\"You underestimate how dog crap the democrats are\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "23_4",
+    "message_id": "reddit_1tstlbr_op0jeay",
+    "feature_name": "charged_pejoratives_for_enemy_groups",
+    "feature_value": "Uses Nazi/Hamas-related pejoratives plus calls to stop violence and build a two-state solution",
+    "category": "semantic_content",
+    "rationale": "Strong moral condemnation coupled with group labeling and a policy prescription is a salient linked-fate style signal.",
+    "evidence_span": "\"Stop doing nazi shit\" / \"Hamas supporters\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "23_5",
+    "message_id": "bluesky_3e1b88c6b1438622ddd85d43e461f4ed12e2390bb8a7e0c085be480850fc4f52",
+    "feature_name": "dehumanizing_excise_from_populace_proposal",
+    "feature_value": "Calls for removing groups from the rest of society (excise)",
+    "category": "semantic_content",
+    "rationale": "An exclusionary action framing (\u201cexcise\u201d) is a direct, coercive social-boundary claim.",
+    "evidence_span": "\"we need a solution to excise these people from the rest of the populace.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "23_6",
+    "message_id": "reddit_1ko5g2h_msohrnq",
+    "feature_name": "contemptuous_stereotype_list_of_traits",
+    "feature_value": "Attacks a group using insulting stereotype descriptors and vehicle/slogan imagery",
+    "category": "target_directionality",
+    "rationale": "Stereotype accumulation (\u201cwifebeating\u2026 trailerbound\u2026\u201d) plus faction markers indicates strong us-vs-them directionality.",
+    "evidence_span": "\"insecure, wifebeating, trailerbound, maga pieces of shit\" / \"FJB stickers\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "23_7",
+    "message_id": "reddit_1llzlg3_n045fi5",
+    "feature_name": "ingroup_rejection_explosive_emotion",
+    "feature_value": "Rejects affiliation with a faction and uses emphatic outrage",
+    "category": "pragmatics_intent",
+    "rationale": "Emphatic venting with heavy profanity and categorical rejection of an outgroup/faction is a communicative intent cue.",
+    "evidence_span": "\"Magats have ruined this fucking country\" ... \"I want nothing to fucking do with these people!!\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "24_0",
+    "message_id": "reddit_1tqcf7r_oohc1uf",
+    "feature_name": "high_profanity_taboo_insulting_language",
+    "feature_value": "Contains strong profanity and dehumanizing insult terms",
+    "category": "surface_lexical",
+    "rationale": "The post uses explicit profanity and derogatory insults targeting a political group.",
+    "evidence_span": "\"cut every piece of shit MAGA deranged Trumper\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "24_1",
+    "message_id": "twitter_2061513964308345235",
+    "feature_name": "high_punctuation_intensity_line_breaks",
+    "feature_value": "Multiple emphatic exclamatory/imperative questions with stacked lines",
+    "category": "surface_lexical",
+    "rationale": "The communicative form is a sequence of emphatic commands and rhetorical-style questions.",
+    "evidence_span": "\"Stop this madness...\" \"Why are you allowing the inmates to run the asylum?\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "24_2",
+    "message_id": "twitter_2061513964308345235",
+    "feature_name": "named_proper_nouns_multiactor_tagging",
+    "feature_value": "Mentions multiple named political figures in @ handles",
+    "category": "surface_lexical",
+    "rationale": "The post targets specific individuals via @-mentions, increasing directness of political targeting.",
+    "evidence_span": "\"@SenMullin @marcorubio @realDonaldTrump\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "24_3",
+    "message_id": "reddit_1tucjhu_opapfna",
+    "feature_name": "geographic_scope_informal_location_reference",
+    "feature_value": "Uses place-name location references to political targets",
+    "category": "topic_subject",
+    "rationale": "The text references a specific location associated with a political figure as a site of destruction/violence imagery.",
+    "evidence_span": "\"Mar-a-Lago\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "24_4",
+    "message_id": "reddit_1txopv4_opyz632",
+    "feature_name": "vindication_i_told_you_so_retrospective_claim",
+    "feature_value": "Uses 'vindication'/'I told you so' retrospective framing",
+    "category": "semantic_content",
+    "rationale": "The post presents an evaluative retrospective narrative implying prior warnings were correct.",
+    "evidence_span": "\"weird and sad sense of \\\"vindication\\\"\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "24_5",
+    "message_id": "reddit_1kikfi4_mrgr92q",
+    "feature_name": "normative_moral_language_and_ridicule",
+    "feature_value": "Uses moral condemnation plus derogatory labels for group",
+    "category": "pragmatics_intent",
+    "rationale": "Strong negative moral judgment and ridicule are directed at the implicated actor(s).",
+    "evidence_span": "\"Fuck\u00ading losers. No wonder no one likes\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "24_6",
+    "message_id": "reddit_1lmypcv_n0c92da",
+    "feature_name": "profanity_escape_phrase_against_institution",
+    "feature_value": "Brevity plus vulgar dismissal toward party-associated institution",
+    "category": "surface_lexical",
+    "rationale": "Contains a common vulgar dismissal used to attack an identified political actor group.",
+    "evidence_span": "\"Senate GOP can kiss my ass\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "24_7",
+    "message_id": "reddit_1tbymrb_olokl5i",
+    "feature_name": "causal_attribution_to_race_or_identity_discrimination",
+    "feature_value": "Argues eligibility is affected by race/identity-based admissions",
+    "category": "semantic_content",
+    "rationale": "The post makes a causal claim about admissions benefits tied to identity/selection criteria.",
+    "evidence_span": "\"We can't know that she would have gotten in had she not gotten the boost from being hispanic.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "25_0",
+    "message_id": "reddit_1kxna55_mur1g74",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses multiple slurs/profanity toward a named individual",
+    "category": "surface_lexical",
+    "rationale": "Direct taboo/profane insult terms are present, escalating hostile rhetoric.",
+    "evidence_span": "\"That fascist Nazi fuck\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "25_1",
+    "message_id": "reddit_1t4l69v_ol49ydd",
+    "feature_name": "named_proper_nouns_density",
+    "feature_value": "High density of political figures and institutions (Iran, Obama, Trump)",
+    "category": "surface_lexical",
+    "rationale": "The post references multiple prominent actors/events, enabling targeted political framing.",
+    "evidence_span": "\"Obama did the Iran nuclear deal\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "25_2",
+    "message_id": "reddit_1t4l69v_ol49ydd",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "Iran nuclear deal / nuclear weapons policy",
+    "category": "topic_subject",
+    "rationale": "The core subject is nuclear nonproliferation and a specific arms-control agreement.",
+    "evidence_span": "\"Iran nuclear deal\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "25_3",
+    "message_id": "reddit_1tuwb8f_opd0nfr",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "Gender/family ideology framed as population/birthrate issue",
+    "category": "topic_subject",
+    "rationale": "The post centers on feminism/relationships and connects it to birthrate outcomes.",
+    "evidence_span": "\"falling birthrate\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "25_4",
+    "message_id": "reddit_1tuwb8f_opd0nfr",
+    "feature_name": "causal_claim_present",
+    "feature_value": "States feminism/patriarchy caused societal decline",
+    "category": "semantic_content",
+    "rationale": "Uses a strong cause-effect construction assigning responsibility for social problems.",
+    "evidence_span": "\"Feminism ruined women\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "25_5",
+    "message_id": "reddit_1twq42a_opqu5uv",
+    "feature_name": "quote_or_attribution_embedding",
+    "feature_value": "Uses an embedded quote-like phrase and comparative group claims",
+    "category": "compositional_syntax",
+    "rationale": "The argument is structured around quoted wording and refutation of a broad claim.",
+    "evidence_span": "\"we all\"? Maybe you did, maybe you didn't.",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "25_6",
+    "message_id": "twitter_2061666343196217371",
+    "feature_name": "call_to_action",
+    "feature_value": "Mobilization/organizing and electoral push in mirror (explicit instruction)",
+    "category": "pragmatics_intent",
+    "rationale": "Contains explicit motivational directives rather than only commentary.",
+    "evidence_span": "\"keep organizing, bring everyone to the polls!\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "25_7",
+    "message_id": "reddit_1u1c4u6_oqp81v6",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Blames an identifiable voter group as incapable",
+    "category": "target_directionality",
+    "rationale": "Uses group-based dehumanizing/generalizing language to cast an outgroup as unable to act correctly.",
+    "evidence_span": "\"People who voted for Maga aren't capable\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "26_0",
+    "message_id": "bluesky_762b8063ded8ec072519ca1b696471677e0f41f88789554f044883cf172d3e9a",
+    "feature_name": "second_amendment_rights_gun_framing",
+    "feature_value": "Invokes 2nd Amendment / right to carry a gun.",
+    "category": "topic_subject",
+    "rationale": "The post centers gun-rights/2nd-amendment legitimacy as the core subject.",
+    "evidence_span": "\"2nd Amendment\" right to carry a gun",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "26_1",
+    "message_id": "reddit_1lcrv72_my47tis",
+    "feature_name": "culture_war_hypocrisy_maga_makes_it_hard_frame",
+    "feature_value": "Accuses political side of hypocrisy with intense enumerated ridicule.",
+    "category": "semantic_content",
+    "rationale": "Uses moralized hypocrisy language tied to a partisan culture-war identity.",
+    "evidence_span": "\"The fucking hypocrisy. MAGA makes it so hard to WANT to care about America.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "26_2",
+    "message_id": "reddit_1leqcgj_mykd9al",
+    "feature_name": "doom_statement_predicts_country_ruin",
+    "feature_value": "Claims the named actor will ruin the entire country.",
+    "category": "semantic_content",
+    "rationale": "Contains an extreme negative causal prediction about political opponents.",
+    "evidence_span": "\"Literally Trump/RepubliKlans will ruin the entire country.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "26_3",
+    "message_id": "reddit_1ts91q8_oouzxky",
+    "feature_name": "policy_prescription_inclusion_argument",
+    "feature_value": "Argues against legalizing harmful acts and proposes policy prerequisites (UBI/sex-bots).",
+    "category": "semantic_content",
+    "rationale": "Moves from hypothetical justification to an explicit policy prescription/conditional rationale.",
+    "evidence_span": "\"That doesnt mean we make those things legal until we have UBI and sex-bots available to all.\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "26_4",
+    "message_id": "reddit_1tt6s61_op123zh",
+    "feature_name": "blame_attribution_without_disclaimer_language",
+    "feature_value": "Claims one named figure is uniquely responsible; accountability framed as separate.",
+    "category": "semantic_content",
+    "rationale": "Uses direct blame attribution and causal responsibility framing.",
+    "evidence_span": "\"Trump is uniquely responsible for all the shit he's doing.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "26_5",
+    "message_id": "reddit_1lcrv72_my47tis",
+    "feature_name": "enumeration_with_emphatic_repetition",
+    "feature_value": "Intensifies with repeated profanity/emphatic sequence \"Every. Fucking. Republican.\"",
+    "category": "compositional_syntax",
+    "rationale": "Structured repetition/enumeration amplifies collective blame toward a party.",
+    "evidence_span": "\"Every. Fucking. Republican.\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "26_6",
+    "message_id": "bluesky_f74c9f754b2dafd2c5e4f7134f8ba93ca0daa9a7f02c65ac139cebab662eccbe",
+    "feature_name": "high_punctuation_and_all_caps_emphasis",
+    "feature_value": "Uses multiple exclamation markers and ALL CAPS emphasis plus threats to block.",
+    "category": "surface_lexical",
+    "rationale": "Highly emphatic wording and capitalization signal strong affect and confrontational framing.",
+    "evidence_span": "\"SO FUCKING TIRED\" ... \"FULL BORE\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "26_7",
+    "message_id": "reddit_1kpxd21_mt2b10m",
+    "feature_name": "misogynistic_or_dehumanizing_target_label_use",
+    "feature_value": "Uses demeaning labels \"useful idiot\" / \"useful puppet\" and \"corporate lackeys\" directed at an opposing figure.",
+    "category": "target_directionality",
+    "rationale": "Targets specific political actors via degrading labels, strengthening us-vs-them antagonism.",
+    "evidence_span": "\"useful idiot\" ... \"corporate lackeys\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "27_0",
+    "message_id": "reddit_1koadeo_msp6kgn",
+    "feature_name": "high_profanity_taboo_insult",
+    "feature_value": "Uses strong sexual profanity + dehumanizing insult term",
+    "category": "surface_lexical",
+    "rationale": "Contains explicit taboo profanity and harsh insult toward an ideological actor.",
+    "evidence_span": "\"fascist piece of shit\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "27_1",
+    "message_id": "reddit_1kchkiv_mq2wx9v",
+    "feature_name": "religious_or_ideological_slur_retargeting",
+    "feature_value": "Ideological hate-labels (Nazi/communist) used as targets; blame shifted to opposing party voters",
+    "category": "target_directionality",
+    "rationale": "The post targets an in-group/out-group via extremist labels and attributes blame based on party-voter choice.",
+    "evidence_span": "\"Fuck those Nazi supporters\" / \"Fuck those communist sympathizers\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "27_2",
+    "message_id": "reddit_1kchkiv_mq2wx9v",
+    "feature_name": "callout_blame_for_voter_choice",
+    "feature_value": "States voters 'chose this' and 'deserve the blame'",
+    "category": "semantic_content",
+    "rationale": "Explicit causal/normative blame attribution to a political constituency.",
+    "evidence_span": "\"The Republican voters chose this and deserve the blame.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "27_3",
+    "message_id": "twitter_2061478691956224443",
+    "feature_name": "issue_domain_gun_policy_with_month_awareness",
+    "feature_value": "Gun violence policy awareness month framing",
+    "category": "topic_subject",
+    "rationale": "Direct reference to gun violence as the primary policy topic and a specific commemorative event.",
+    "evidence_span": "\"National Gun Violence Awareness Month\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "27_4",
+    "message_id": "twitter_2061478691956224443",
+    "feature_name": "second_amendment_fight_against_elites",
+    "feature_value": "Second Amendment defense used to oppose 'radical left' stripping freedoms",
+    "category": "semantic_content",
+    "rationale": "Uses a rights-protection theme paired with an adversarial elite/out-group framing.",
+    "evidence_span": "\"Second Amendment\" / \"radical left's obsession\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "27_5",
+    "message_id": "reddit_1u16m18_oqpzrds",
+    "feature_name": "conspiratorial_villain_label_pedo_in_chief",
+    "feature_value": "Prominent conspiracy-style insult naming 'Pedo-in-Chief' administration",
+    "category": "semantic_content",
+    "rationale": "Employs an accusatory, extreme villain label to characterize government leadership.",
+    "evidence_span": "\"Ped o-in-Chief's admin\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "27_6",
+    "message_id": "reddit_1l34a0n_mvykhcp",
+    "feature_name": "quote_style_misinformation_ref_frame",
+    "feature_value": "Uses quoted propaganda phrase 'they\u2019re eating the dogs' with candidate-year attack",
+    "category": "compositional_syntax",
+    "rationale": "Relies on embedded quotation/propaganda meme language to signal deception and ideological misconduct.",
+    "evidence_span": "\"they\u00189re eating the dogs!\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "27_7",
+    "message_id": "reddit_1kgs9fz_mr383ul",
+    "feature_name": "economic_system_contrast_claim",
+    "feature_value": "Depicts shift from 'late-stage capitalism' to 'hardcore socialism' embracing opposite economic stance",
+    "category": "semantic_content",
+    "rationale": "Compares economic systems while asserting an incongruent policy outcome as a factual evaluative claim.",
+    "evidence_span": "\"late-stage capitalism\" / \"hardcore socialism\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "28_0",
+    "message_id": "twitter_2060753103583150325",
+    "feature_name": "approx_token_length_band",
+    "feature_value": "short",
+    "category": "surface_lexical",
+    "rationale": "The post is a compact couple of sentences, indicating a short length band.",
+    "evidence_span": "Michael Bloomberg is still pushing for ridiculous gun restrictions.",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "28_1",
+    "message_id": "twitter_2060753103583150325",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "none",
+    "category": "surface_lexical",
+    "rationale": "No explicit profanity/taboo terms appear in the provided text.",
+    "evidence_span": "ridiculous gun restrictions",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "28_2",
+    "message_id": "twitter_2060753103583150325",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "guns/gun control and concealed carry policy",
+    "category": "topic_subject",
+    "rationale": "The content centers on concealed carry and gun restrictions.",
+    "evidence_span": "concealed carry policy guide",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "28_3",
+    "message_id": "twitter_2060753103583150325",
+    "feature_name": "factual_assertion_vs_speculation",
+    "feature_value": "strong negative assertions framed as unconstitutional mandates",
+    "category": "semantic_content",
+    "rationale": "It states as fact that the policy guide contains unconstitutional mandates.",
+    "evidence_span": "ripe with unconstitutional mandates",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "28_4",
+    "message_id": "twitter_2060753103583150325",
+    "feature_name": "mirror_shift_direction",
+    "feature_value": "targets shift from Bloomberg to Bernie Sanders as anti-gun",
+    "category": "target_directionality",
+    "rationale": "The mirror rewrite changes the blamed/pushed actor from Bloomberg to Sanders while keeping the anti-gun claim.",
+    "evidence_span": "Michael Bloomberg... / Bernie Sanders is still pushing his ridiculous anti-gun agenda.",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "28_5",
+    "message_id": "bluesky_0bd32b5cb97fddccc1185d0086be28753a0bbcc3971faa00ef052c8009bf8dfd",
+    "feature_name": "culture_war_topic_salience",
+    "feature_value": "culture war card about climate, same-sex bathrooms, gun rights",
+    "category": "topic_subject",
+    "rationale": "The post bundles multiple contentious social topics into a culture-war framing.",
+    "evidence_span": "Culture War(TM) card, with details of your position on climate change, same sex bathrooms and gun rights",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "28_6",
+    "message_id": "reddit_1tt3vbp_op0184y",
+    "feature_name": "ridicule_or_mockery",
+    "feature_value": "mocking/derisive framing using 'woke' and profanity",
+    "category": "pragmatics_intent",
+    "rationale": "The phrasing uses a dismissive insult-like construction and taboo modifier.",
+    "evidence_span": "so therefore that\u2019s woke and shit.",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "28_7",
+    "message_id": "reddit_1tvr63e_opn1sx9",
+    "feature_name": "call_to_action_or_actional_intent",
+    "feature_value": "explicit refusal to debate plus intent to mock/ridicule an outgroup",
+    "category": "pragmatics_intent",
+    "rationale": "It explicitly states communicative behavior toward the targeted political group.",
+    "evidence_span": "I refuse to debate them. I will still mock and ridicule them.",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "29_0",
+    "message_id": "reddit_1tu4gub_op6ys8w",
+    "feature_name": "high_punctuation_intensity_expletive_insulting_style",
+    "feature_value": "Very informal, vulgar profanity and insult-like language",
+    "category": "surface_lexical",
+    "rationale": "Contains strong profanity (\u201cshitting\u201d) and an insult-like framing.",
+    "evidence_span": "\"GOP Facists openly shitting on the constitution\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "29_1",
+    "message_id": "bluesky_13da40f0ff6dc230271d019f3bb5de17dc72773bb61e927d3680151732084545",
+    "feature_name": "gun_control_mass_shooting_topic",
+    "feature_value": "Gun-control and mass shooting victimization topic",
+    "category": "topic_subject",
+    "rationale": "Explicitly references Sandy Hook and argues about whether the country will act on gun control.",
+    "evidence_span": "\"After Sandy Hook\" / \"gun control\" / \"murdering children\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "29_2",
+    "message_id": "bluesky_2c3a7dc21e767f5342c8805ee5a5e0032466f7e779c83101daca5b0471e631b2",
+    "feature_name": "australia_gun_ban_comparative_policy_reference",
+    "feature_value": "Uses Australia gun ban as a comparative policy example",
+    "category": "topic_subject",
+    "rationale": "Directly cites a specific foreign policy case to argue about present U.S. policy outcomes.",
+    "evidence_span": "\"Australia's Gun Ban Worked\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "29_3",
+    "message_id": "reddit_1l44grv_mw7odp0",
+    "feature_name": "extreme_ideology_nazi_fascist_dehumanizing_claim",
+    "feature_value": "Direct Nazi\u2194communist/fascist ideological attack",
+    "category": "topic_subject",
+    "rationale": "Uses extreme ideological labels and Nazi comparison to condemn actors.",
+    "evidence_span": "\"Damn those communists... Nazis\" / \"Damn those fascists\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "29_4",
+    "message_id": "reddit_1tyu1q6_oq9bfsc",
+    "feature_name": "conspiratorial_propaganda_asset_labeling",
+    "feature_value": "Frames political criticism as propaganda/Russian asset",
+    "category": "semantic_content",
+    "rationale": "Treats dissent as coordinated or covertly motivated rather than legitimate critique.",
+    "evidence_span": "\"Anyone who criticizes Trump is propaganda.\" / \"Anyone who criticizes Biden is a Russian asset.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "29_5",
+    "message_id": "bluesky_8b68b03ba5d7c0e5d023eef1f44ebc862d9fe11021516005d7749f8460275daf",
+    "feature_name": "climate_policy_economic_worst_case_framing",
+    "feature_value": "Economic \u2018worst case scenarios\u2019 framed around climate/renewables vs opposition",
+    "category": "topic_subject",
+    "rationale": "Uses economic scenario language linked to climate/energy policy to assert predictions are implausible.",
+    "evidence_span": "\"The worst case scenarios\" \"transition to renewable energy\" \"lowering emissions\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "29_6",
+    "message_id": "twitter_2061543962910089583",
+    "feature_name": "us_vs_europe_immigration_sanctuary_cities_criminality",
+    "feature_value": "Immigration/neighborhood residency framed via sanctuary cities and criminals",
+    "category": "topic_subject",
+    "rationale": "Mentions sanctuary cities and portrays certain residents as dangerous criminals.",
+    "evidence_span": "\"sanctuary cities\" / \"criminals taking dollars for death\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "29_7",
+    "message_id": "reddit_1tt3m71_op0eww4",
+    "feature_name": "second_person_direct_address_moral_blaming",
+    "feature_value": "Second-person \u201clook in the mirror\u201d blame-directive",
+    "category": "pragmatics_intent",
+    "rationale": "Directly addresses the reader in second person and assigns personal blame via a \u2018mirror\u2019 exhortation.",
+    "evidence_span": "\"Whoever posted this, look in the mirror and realize you are the problem.\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "30_0",
+    "message_id": "twitter_2059500334813515902",
+    "feature_name": "profanity_taboo_language_present",
+    "feature_value": "Contains strong profanity/insults toward named political figures",
+    "category": "surface_lexical",
+    "rationale": "Explicit taboo/profanity is used to attack individuals, increasing likelihood of removal.",
+    "evidence_span": "\"pound sand @JohnCornyn you traitorous fuck\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "30_1",
+    "message_id": "twitter_2059500334813515902",
+    "feature_name": "named_proper_nouns_density_high",
+    "feature_value": "Multiple senator handles/names in one post",
+    "category": "surface_lexical",
+    "rationale": "The post directly names several politicians, making it a targeted political attack.",
+    "evidence_span": "\"@JohnCornyn\" ... \"@SenatorWicker\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "30_2",
+    "message_id": "twitter_2059500334813515902",
+    "feature_name": "policy_domain_pact_act_guns_veterans",
+    "feature_value": "PACT Act stall + gun rights + veteran pensions framing",
+    "category": "topic_subject",
+    "rationale": "Specific legislative topic(s) are central to the claim.",
+    "evidence_span": "\"stalled the PACT Act\" ... \"went after gun rights\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "30_3",
+    "message_id": "twitter_2059500334813515902",
+    "feature_name": "normative_emphatic_outrage_and_targeted_attack",
+    "feature_value": "Strong imperative/hostile rhetoric directed at politicians",
+    "category": "pragmatics_intent",
+    "rationale": "Normative moral condemnation plus direct hostility to named actors signals high-intensity political confrontation.",
+    "evidence_span": "\"pound sand\" ... \"you traitorous\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "30_4",
+    "message_id": "reddit_1l5sulo_mwjxh5s",
+    "feature_name": "profanity_taboo_language_present",
+    "feature_value": "Profanity used as evaluation",
+    "category": "surface_lexical",
+    "rationale": "The post uses explicit profanity to denounce the subject.",
+    "evidence_span": "\"Fucking disgusting.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "30_5",
+    "message_id": "reddit_1l5sulo_mwjxh5s",
+    "feature_name": "us_vs_them_doj_weaponization_claim",
+    "feature_value": "Claims government power used to target donors by party",
+    "category": "semantic_content",
+    "rationale": "A causal/intentional framing (weaponizing power) targets an outgroup via institutional action.",
+    "evidence_span": "\"Trump using the power of the US government to block someone donating to a Democrat\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "30_6",
+    "message_id": "twitter_2061558316703072725",
+    "feature_name": "profanity_or_taboo_language_absent_but_emphatic_moral_judgment",
+    "feature_value": "Body-count safety/power language with moral contrast",
+    "category": "semantic_content",
+    "rationale": "Uses evaluative moral framing about safety vs profit to argue underlying intent.",
+    "evidence_span": "\"body count\" ... \"profit, not protection\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "30_7",
+    "message_id": "bluesky_caca755d4d30ef0b58c8c0312116e61fa852b60e725ddcdbc36c2030ab637106",
+    "feature_name": "second_person_direct_address_and_conditional",
+    "feature_value": "Conditional protective/free-pass framing to justify violence claims",
+    "category": "compositional_syntax",
+    "rationale": "Conditional 'if' structure is used to link an identity marker to perceived impunity/behavior.",
+    "evidence_span": "\"If you're wearing a MAGA hat\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "31_0",
+    "message_id": "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "Multiple exclamation marks and emphatic short caps-like lines",
+    "category": "surface_lexical",
+    "rationale": "Heavy use of exclamation points signals high emotional intensity and argumentative emphasis.",
+    "evidence_span": "WOW! Talk about denial of facts.",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "31_1",
+    "message_id": "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+    "feature_name": "named_proper_nouns_geographic_election_refs",
+    "feature_value": "US state/city references and election/proposition language",
+    "category": "topic_subject",
+    "rationale": "The post centers on specific US locales and election results, anchoring political conflict in concrete places.",
+    "evidence_span": "Maine is a blue city and state? ... How about Virginia flipping 15 State House seats",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "31_2",
+    "message_id": "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+    "feature_name": "confrontational_denial_lies_claiming",
+    "feature_value": "Accusations of misinformation (denial of facts / denial and lies)",
+    "category": "semantic_content",
+    "rationale": "Directly labels opposing claims as false, a common linked-fate trigger when blame is moralized.",
+    "evidence_span": "Talk about denial of facts. ... DENIAL AND LIES!",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "31_3",
+    "message_id": "reddit_1l1roga_mvoo01l",
+    "feature_name": "derogatory_insults_dehumanizing",
+    "feature_value": "Pejoratives targeting a person (pathetic ass, old racist)",
+    "category": "pragmatics_intent",
+    "rationale": "Uses ridicule/derogation toward an identified individual/persona to intensify stance.",
+    "evidence_span": "Pathetic ass old racist.",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "31_4",
+    "message_id": "reddit_1ko2gif_msn8euz",
+    "feature_name": "profanity_taboo_directed_at_person",
+    "feature_value": "Strong profanity modifier + dismissive insult",
+    "category": "surface_lexical",
+    "rationale": "Explicit profanity and personal insult indicate highly hostile tone rather than policy debate.",
+    "evidence_span": "That fat fucking loser",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "31_5",
+    "message_id": "twitter_2060755574401405025",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Uses colloquial framing 'Call me Florida' with implied self/contrast but not full second person; still a conversational direct stance",
+    "category": "compositional_syntax",
+    "rationale": "Conversational, stance-inviting construction frames gun control as an obvious dispute.",
+    "evidence_span": "Call me Florida but I don\u2019t see what\u2019s the big deal again gun control.",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "31_6",
+    "message_id": "reddit_1kna992_msjyyfa",
+    "feature_name": "ingroup_outgroup_race_or_religion_replacement",
+    "feature_value": "Mirror swaps trans people to brown people, indicating identity-targeted blame",
+    "category": "target_directionality",
+    "rationale": "Identity-based outgroup framing is central, and the mirror retargets the blame to a different protected group.",
+    "evidence_span": "trans women in the public bathrooms... brown people at the border",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "31_7",
+    "message_id": "twitter_2060028364023300572",
+    "feature_name": "policy_domain_guns_and_unconstitutional_law_claim",
+    "feature_value": "Specific gun ban/handgun enforcement dispute; includes constitutional/unconstitutional claim",
+    "category": "topic_subject",
+    "rationale": "Clear firearms policy dispute with legality framing provides concrete linked-fate political content.",
+    "evidence_span": "Maryland just outlawed certain handguns... refusing to enforce the unconstitutional gun ban",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "32_0",
+    "message_id": "twitter_2061032288096235596",
+    "feature_name": "approx_token_length_band",
+    "feature_value": "long",
+    "category": "surface_lexical",
+    "rationale": "The post is a multi-sentence statement with several claims and a closing imperative, indicating a long length.",
+    "evidence_span": "Climate change was nothing but a tax grab. Now they need those \u201ccheap fossil fuels\u201d",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "32_1",
+    "message_id": "twitter_2061032288096235596",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "ellipsis and exclamations",
+    "category": "surface_lexical",
+    "rationale": "Use of ellipsis plus repeated strong emphasis punctuation is visible.",
+    "evidence_span": "Oh\u2026 so us \u201cconspiracy theorists\u201d were right. Again.",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "32_2",
+    "message_id": "twitter_2061032288096235596",
+    "feature_name": "conspiracy_or_denial_framing",
+    "feature_value": "portrays prior dissent as right/denial as wrong; 'conspiracy theorists' label",
+    "category": "semantic_content",
+    "rationale": "The text frames a disputed group (conspiracy theorists) as vindicated and treats opposing views as incorrect.",
+    "evidence_span": "Oh\u2026 so us \u201cconspiracy theorists\u201d were right. Again.",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "32_3",
+    "message_id": "twitter_2061032288096235596",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "climate/environment",
+    "category": "topic_subject",
+    "rationale": "The core topic is climate change and fossil fuels.",
+    "evidence_span": "Climate change was nothing but a tax grab.",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "32_4",
+    "message_id": "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "guns/gun laws and voting strategy",
+    "category": "topic_subject",
+    "rationale": "Gun legislation and the NRA are central to the proposal.",
+    "evidence_span": "join the NRA and vote out the leadership pushing for zero gun laws",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "32_5",
+    "message_id": "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+    "feature_name": "policy_prescription_present",
+    "feature_value": "explicit electoral manipulation/primary voting instruction",
+    "category": "semantic_content",
+    "rationale": "The post provides a direct instruction about how people should vote.",
+    "evidence_span": "All the Dems need to vote in GOP primaries.",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "32_6",
+    "message_id": "reddit_1tppsc5_ooasdnq",
+    "feature_name": "hate_or_extremist_ideology_targeting",
+    "feature_value": "ideological insult framing of outgroup",
+    "category": "semantic_content",
+    "rationale": "The post targets an ideological group ('communists') as the threat, with absolute territorial rhetoric.",
+    "evidence_span": "I\u2019m not ceding one inch of the USA to the communists.",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "32_7",
+    "message_id": "reddit_1l55wkp_mwfemk5",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "multiple swear words",
+    "category": "surface_lexical",
+    "rationale": "Strong taboo language is used repeatedly to attack political targets.",
+    "evidence_span": "Fuck Trump. Fuck MAGA. Fuck the billionaires.",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "33_0",
+    "message_id": "reddit_1liejsg_mzd5b40",
+    "feature_name": "high_punctuation_intensity_exclamations",
+    "feature_value": "Repeated exclamation-mark style abuse",
+    "category": "surface_lexical",
+    "rationale": "The post uses highly emphatic, repeated exclamations for harsh invective.",
+    "evidence_span": "\"BABY MURDERER!!!!\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "33_1",
+    "message_id": "reddit_1kp0psp_msv921k",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses strong profanity",
+    "category": "surface_lexical",
+    "rationale": "Explicit profanity targets an identified political figure.",
+    "evidence_span": "\"Trump is a fucking lunatic\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "33_2",
+    "message_id": "twitter_2061824388471595469",
+    "feature_name": "call_to_action_imperative_avoidance",
+    "feature_value": "Direct command telling opponent to leave",
+    "category": "pragmatics_intent",
+    "rationale": "Contains an imperative directive aimed at the opposing side.",
+    "evidence_span": "\"F@ck off with your bankruptcy\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "33_3",
+    "message_id": "twitter_2061803063724171489",
+    "feature_name": "conspiratorial_framing_paid_support_claim",
+    "feature_value": "Claims protesters/defenders are paid",
+    "category": "semantic_content",
+    "rationale": "Attributes political behavior to bribery/paying, implying hidden manipulation.",
+    "evidence_span": "\"because they are being paid to support them\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "33_4",
+    "message_id": "reddit_1txsm52_oq0g7r0",
+    "feature_name": "normative_moral_evaluation_and_ridicule",
+    "feature_value": "Character assassination via 'deranged/demented'",
+    "category": "semantic_content",
+    "rationale": "Uses moralized negative labels to delegitimize the actors being discussed.",
+    "evidence_span": "\"The entire Administration is deranged\" / \"The man was demented\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "33_5",
+    "message_id": "reddit_1ti5cqx_omvmh7g",
+    "feature_name": "us_vs_them_ingroup_outgroup_political_framing",
+    "feature_value": "Contrasts American conservatives with European cues (implied outgroup comparison)",
+    "category": "target_directionality",
+    "rationale": "Frames a cross-group political contrast to explain differing beliefs/actions.",
+    "evidence_span": "\"Why do you think American conservatives don't accept cues from European ones?\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "33_6",
+    "message_id": "bluesky_4b818c345eae2bf93fbfa202789df8647148c998aa0cae4736a7cb480125b34f",
+    "feature_name": "primary_policy_domain_climate_agreement",
+    "feature_value": "Paris Agreement climate policy reference",
+    "category": "topic_subject",
+    "rationale": "The post centers on climate international agreements and their evaluation.",
+    "evidence_span": "\"Ten years on from the Paris Agreement\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "33_7",
+    "message_id": "reddit_1liejsg_mzd5b40",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Directly addresses 'you' repeatedly",
+    "category": "compositional_syntax",
+    "rationale": "Uses second-person pronouns to directly attack the reader/target.",
+    "evidence_span": "\"You had an abortion\" / \"so is this\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "34_0",
+    "message_id": "reddit_1tt0mlj_op05q94",
+    "feature_name": "high_generalization_outgroup_labeling",
+    "feature_value": "Uses broad 'in general' framing about a religious conservative outgroup",
+    "category": "semantic_content",
+    "rationale": "Broad sweeping generalizations about an outgroup are a salient linked-fate cue.",
+    "evidence_span": "\"Religious conservatives in general\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "34_1",
+    "message_id": "reddit_1tt0mlj_op05q94",
+    "feature_name": "normative_legal_violence_claim",
+    "feature_value": "Claims laws 'oppresse' and enable 'bully or kill' LGBT",
+    "category": "semantic_content",
+    "rationale": "Direct claims about legal permission for harm escalate severity and connected wrongdoing.",
+    "evidence_span": "\"passing bills that oppress them, making it legal to bully or kill them\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "34_2",
+    "message_id": "reddit_1tt0mlj_op05q94",
+    "feature_name": "praise_for_deaths_by_group",
+    "feature_value": "Attributes cheering on deaths/harm to the targeted group",
+    "category": "semantic_content",
+    "rationale": "Assigning celebratory victimization to a whole group supports linked-fate style attribution.",
+    "evidence_span": "\"cheer on the deaths or harm of LGBT\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "34_3",
+    "message_id": "twitter_2061324018263720219",
+    "feature_name": "direct_policy_proscription_nationwide_ban",
+    "feature_value": "Advocates criminalizing abortion and nationwide abortion ban",
+    "category": "semantic_content",
+    "rationale": "Calls for restrictive policy and criminalization are concrete prescription cues.",
+    "evidence_span": "\"support a nationwide abortion ban\" ... \"criminalize abortion\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "34_4",
+    "message_id": "twitter_2061069128522215768",
+    "feature_name": "emphatic_out_of_context_case_reference",
+    "feature_value": "References Uvalde and contrasts inaction vs gun policy debate",
+    "category": "topic_subject",
+    "rationale": "Specific mass-violence event reference often drives high-intensity argumentation and linked causal claims.",
+    "evidence_span": "\"outside Uvalde school\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "34_5",
+    "message_id": "twitter_2061069128522215768",
+    "feature_name": "conditional_causal_argument_more_guns",
+    "feature_value": "Causal/policy rebuttal using contrastive question ('Tell me again how MORE guns...')",
+    "category": "pragmatics_intent",
+    "rationale": "Uses a rhetorical challenge to assert causal insufficiency of gun-control prescriptions.",
+    "evidence_span": "\"Tell me again how MORE guns would have stopped this\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "34_6",
+    "message_id": "bluesky_82ddf9268037b4c3b08c6deffb13cd1b1a72bf5a13ebe29458c1084b382361f9",
+    "feature_name": "all_caps_domestic_terrorist_label",
+    "feature_value": "All-caps 'DOMESTIC TERRORIST' designation",
+    "category": "surface_lexical",
+    "rationale": "Highly emphatic labeling in ALL CAPS is a strong tone marker for removal under linked-fate moderation.",
+    "evidence_span": "\"became a DOMESTIC TERRORIST organization\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "34_7",
+    "message_id": "twitter_2061594098172346658",
+    "feature_name": "second_person_personal_insult_and_deportation",
+    "feature_value": "Direct address with 'complete idiot/moron' plus citizenship revocation and deportation",
+    "category": "pragmatics_intent",
+    "rationale": "Targeted personal attack coupled with removal/deprivation action (citizenship/deportation) is an explicit targeting cue.",
+    "evidence_span": "\"You are a complete idiot\" ... \"revoking your citizenship and deporting you\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "35_0",
+    "message_id": "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+    "feature_name": "conditional_counterfactual_if_then",
+    "feature_value": "Uses an 'IF tomorrow...' counterfactual conditional comparing two policies",
+    "category": "compositional_syntax",
+    "rationale": "The post is structured as a hypothetical conditional that invites a moral/political judgment about rights and abortion.",
+    "evidence_span": "\"IF tomorrow, 17 states chose to completely abolish the Second Amendment\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "35_1",
+    "message_id": "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+    "feature_name": "second_amendment_abortion_linked_comparison",
+    "feature_value": "Explicit cross-topic comparison (Second Amendment vs abortion)",
+    "category": "topic_subject",
+    "rationale": "A linked-fate style comparison is signaled by directly mapping one policy-rights claim onto abortion.",
+    "evidence_span": "\"abolish the Second Amendment\" ... \"That's exactly what happened with abortion.\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "35_2",
+    "message_id": "reddit_1l33b15_mvxr34a",
+    "feature_name": "religious_actor_insulting",
+    "feature_value": "Uses 'Jesus' as a partisan proxy and insults",
+    "category": "topic_subject",
+    "rationale": "Attacking a political actor through an ironic religious label is a salient incendiary cue for moderation.",
+    "evidence_span": "\"Republican Jesus is kind of a dick.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "35_3",
+    "message_id": "reddit_1l33b15_mvxr34a",
+    "feature_name": "ridicule_mockery",
+    "feature_value": "Direct mocking/derogatory phrasing",
+    "category": "pragmatics_intent",
+    "rationale": "The language uses blunt ridicule rather than policy discussion.",
+    "evidence_span": "\"is kind of a dick\"",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "35_4",
+    "message_id": "twitter_2061538025637642511",
+    "feature_name": "immigration_procedure_backlog_specifics",
+    "feature_value": "Specific procedural claim about immigration courts' 'mega master' hearings and due process",
+    "category": "topic_subject",
+    "rationale": "Concrete institutional/procedural details can make the post inflammatory and linked to perceived enforcement harms.",
+    "evidence_span": "\"mega master\" hearings. Show up late or miss it, and you can get a deportation order on the spot.",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "35_5",
+    "message_id": "twitter_2061538025637642511",
+    "feature_name": "causal_claim_system_overload",
+    "feature_value": "Cause-effect framing about open-border policies leading to backlog",
+    "category": "semantic_content",
+    "rationale": "The post asserts a causal chain that assigns blame and emphasizes downstream consequences.",
+    "evidence_span": "\"open-border policies dumped millions of cases into the system\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "35_6",
+    "message_id": "reddit_1llpslt_n04c3in",
+    "feature_name": "targeted_blasphemy_or_slur_teasing_about_deportation",
+    "feature_value": "Threatening deportation tied to a political group identity",
+    "category": "semantic_content",
+    "rationale": "A dehumanizing insult plus deportation threat targets a group and escalates conflict.",
+    "evidence_span": "\"until trump deports their asses.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "35_7",
+    "message_id": "reddit_1u1fnvf_oqph5rz",
+    "feature_name": "elite_vs_populist_us_them_overthrow_narrative",
+    "feature_value": "Insurrection/coup language; 'criminals and domestic terrorists'; 'It's a coup/ takeover'",
+    "category": "semantic_content",
+    "rationale": "The post uses extreme delegitimization (criminality/domestic terrorism + coup/takeover) that signals high-risk linked-fate style rhetoric.",
+    "evidence_span": "\"It's a coup.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "36_0",
+    "message_id": "reddit_1kc4qta_mq0uym3",
+    "feature_name": "group_label_topic_opposition_plural",
+    "feature_value": "Uses repeated party labels as the main targets (Republicans/Democrats)",
+    "category": "topic_subject",
+    "rationale": "The post is structured around an across-the-board critique of a political party group.",
+    "evidence_span": "\"Republicans\" ... \"Fuck every single Republican\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "36_1",
+    "message_id": "reddit_1kc4qta_mq0uym3",
+    "feature_name": "profanity_taboo_mass_insult",
+    "feature_value": "Strong profanity directed at a political group",
+    "category": "surface_lexical",
+    "rationale": "Uses explicit profanity as part of the dismissal/condemnation of the target group.",
+    "evidence_span": "\"Fuck every single Republican.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "36_2",
+    "message_id": "reddit_1kr82xj_mtge5yd",
+    "feature_name": "profanity_taboo_mass_insult",
+    "feature_value": "Short profanity-based attack on a politician + followers",
+    "category": "surface_lexical",
+    "rationale": "The core content is an explicit profanity attack.",
+    "evidence_span": "\"Fuck trump and his cult.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "36_3",
+    "message_id": "twitter_2061826508642038254",
+    "feature_name": "tax_inequality_corruption_theme",
+    "feature_value": "Claim about who pays taxes plus corruption/illegal-immigrant blame",
+    "category": "topic_subject",
+    "rationale": "Centers on fiscal responsibility framed with corruption and immigration accusations.",
+    "evidence_span": "\"The poor dont pay taxes\" ... \"corruption\" ... \"illegal foreigners\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "36_4",
+    "message_id": "bluesky_4359735d3927eacfd6e328ed98ecf07bbb5ec7548c3e28565a93dc194a8e2b43",
+    "feature_name": "firearms_policy_red_flag_laws_reference",
+    "feature_value": "Gun-control policy with named mechanism (red flag laws)",
+    "category": "topic_subject",
+    "rationale": "Explicitly references firearm regulation via red flag laws.",
+    "evidence_span": "\"There are red flag laws\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "36_5",
+    "message_id": "bluesky_4359735d3927eacfd6e328ed98ecf07bbb5ec7548c3e28565a93dc194a8e2b43",
+    "feature_name": "dehumanizing_slur_in_group",
+    "feature_value": "Dehumanizing language for target individuals",
+    "category": "semantic_content",
+    "rationale": "Uses a dehumanizing label to characterize the people being criticized.",
+    "evidence_span": "\"Neanderthals\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "36_6",
+    "message_id": "reddit_1l4tpmm_mwds8su",
+    "feature_name": "conspiracy_like_personal_immorality_claim",
+    "feature_value": "Accuses a specific ideological actor of profiteering/fraud and ends with obscene dismissal",
+    "category": "semantic_content",
+    "rationale": "Frames the target as exploiting others and highlights wrongdoing through extreme moral/personal claims.",
+    "evidence_span": "\"billionaire to dirt poor\" ... \"dying overdosed on fentanyl\" ... \"Fuck nazis.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "36_7",
+    "message_id": "reddit_1td5imr_olzf967",
+    "feature_name": "counterfactual_and_rhetorical_question_sequence",
+    "feature_value": "Conditional concession plus series of rhetorical/leading questions about voter perspectives",
+    "category": "compositional_syntax",
+    "rationale": "Uses an 'even if' concession and questions to steer interpretation of political/legal changes.",
+    "evidence_span": "\"Even if I grant that, is that not better\" ... \"Do you think\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "37_0",
+    "message_id": "twitter_2061819641253580996",
+    "feature_name": "high_profanity_taboo_language",
+    "feature_value": "Uses multiple derogatory labels including sexual crime allegation and slur-like insults",
+    "category": "semantic_content",
+    "rationale": "Strong defamatory allegations and hostile labeling indicate high-severity political vitriol.",
+    "evidence_span": "\"The rapist, draft dodger\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "37_1",
+    "message_id": "reddit_1lfq7q5_myqtdfx",
+    "feature_name": "direct_anti_target_profanity",
+    "feature_value": "Second-person direct address with profanity",
+    "category": "pragmatics_intent",
+    "rationale": "The post uses an imperative/second-person attack with explicit profanity toward a named political figure.",
+    "evidence_span": "\"go fuck yourself Trump\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "37_2",
+    "message_id": "reddit_1ttui2j_op56nhi",
+    "feature_name": "extreme_profanity_imperative",
+    "feature_value": "Coarse expletive directed broadly at a political group",
+    "category": "surface_lexical",
+    "rationale": "The opening profanity plus hostile targeting of a political faction is a clear moderation cue.",
+    "evidence_span": "\"Fuck you to the ends of the earth MAGA\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "37_3",
+    "message_id": "twitter_2061819641253580996",
+    "feature_name": "us_vs_them_maga_vs_antimaga_tagging",
+    "feature_value": "Has hashtag partisan identity and blame shift in mirror (Trump->Biden-Harris demigod)",
+    "category": "target_directionality",
+    "rationale": "Partisan identity tagging and actor swapping in the mirror indicate adversarial group framing.",
+    "evidence_span": "\"#maga demigod\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "37_4",
+    "message_id": "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+    "feature_name": "primary_policy_domain_guns_background_checks",
+    "feature_value": "Gun-law policy debate with background checks and tracing",
+    "category": "topic_subject",
+    "rationale": "The post centers on firearm regulation specifics that commonly appear in high-conflict political moderation.",
+    "evidence_span": "\"commonsense gun laws\" / \"background checks and tracing parts\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "37_5",
+    "message_id": "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+    "feature_name": "normative_moral_language_and_victimization",
+    "feature_value": "Uses emotionally charged outrage and treats opponents as attacking rights/citizens",
+    "category": "semantic_content",
+    "rationale": "Outrage framing and moral condemnation toward political opponents are prominent semantic cues.",
+    "evidence_span": "\"expected ruthless attacks\" / \"treating law-abiding citizens like criminals\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "37_6",
+    "message_id": "reddit_1kzpnb8_mv7pmya",
+    "feature_name": "call_to_action_stop_paying_homage",
+    "feature_value": "Persuasive instruction to stop platforming/reading about opponents",
+    "category": "pragmatics_intent",
+    "rationale": "Direct imperative persuasion urging behavioral change toward information sharing.",
+    "evidence_span": "\"Stop paying homage to these cucks by writing about them. Focus on the people and their plight.\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "37_7",
+    "message_id": "reddit_1lj8oo7_mzkc1ag",
+    "feature_name": "list_of_insults_with_parenthetical_definitions",
+    "feature_value": "Bulky insult list with parenthetical glosses and hyperbolic epithets",
+    "category": "compositional_syntax",
+    "rationale": "Compositional insult piling with parenthetical redefinitions intensifies hostile tone and readability.",
+    "evidence_span": "\"DEI-(dummy, egregious idiocy) prize\" / \"Orange poo for brains\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "38_0",
+    "message_id": "reddit_1ttbse9_op2waon",
+    "feature_name": "targeting_specific_persons_parties",
+    "feature_value": "Mentions political figure(s) and opposition party/ideology in blame/redemption context",
+    "category": "target_directionality",
+    "rationale": "Direct reference to specific partisan actors and ideological group indicates targeted partisan directionality.",
+    "evidence_span": "\"at least Trump\" ... \"radical antifa leftist\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "38_1",
+    "message_id": "reddit_1ttbse9_op2waon",
+    "feature_name": "imprisonment_or_rotting_in_cell_fate_wish",
+    "feature_value": "Expresses punishment fantasy (prison/rotting in a cell) for political opponents",
+    "category": "semantic_content",
+    "rationale": "Linked-fate moderation cues often include extreme personal fate language toward political targets.",
+    "evidence_span": "\"hope that at least Trump would be out of office\" ... \"on his way to prison\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "38_2",
+    "message_id": "bluesky_aeddf92353b36f948ec4403137e7b3a73f28f99642eaeeb51ca708581db49fad",
+    "feature_name": "foundational_rights_citation_amendment",
+    "feature_value": "Uses constitutional amendment wording to argue gun-rights interpretation",
+    "category": "topic_subject",
+    "rationale": "Citing the Second Amendment and quoting its text grounds the post in a specific policy/rights debate.",
+    "evidence_span": "\"the Right of the people to keep and bear arms, shall not be infringed\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "38_3",
+    "message_id": "bluesky_cd1729a309622dac0c1563d7b598a89b98e813bfa1db737155624c1879fc4b89",
+    "feature_name": "explicit_policy_domain_guns_and_school_shootings",
+    "feature_value": "Frames amendment in terms of assault weapons and killing schoolchildren",
+    "category": "topic_subject",
+    "rationale": "Directly ties guns to school violence, a salient linked-fate moderation topic.",
+    "evidence_span": "\"allow a man-child to buy himself an assault weapon\" ... \"slaughter schoolkids\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "38_4",
+    "message_id": "reddit_1kspe1b_mto7c5g",
+    "feature_name": "religious_damnation_and_moral_judgment",
+    "feature_value": "Uses moral condemnation with afterlife threat language",
+    "category": "semantic_content",
+    "rationale": "Strong moralized invective increases intensity and can be a cue for removal.",
+    "evidence_span": "\"Damn them all to Hell.\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "38_5",
+    "message_id": "reddit_1kspe1b_mto7c5g",
+    "feature_name": "devil_personification_and_party_soul_selling",
+    "feature_value": "Accuses an entire party of selling souls to the devil",
+    "category": "semantic_content",
+    "rationale": "Apocalyptic/diabolic attribution is aggressive, party-wide, and adversarial in semantic framing.",
+    "evidence_span": "\"all republicans sol(led) their souls to devil trump\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "38_6",
+    "message_id": "twitter_2061520951783637484",
+    "feature_name": "mocking_affordability_with_contrast_to_terrorism_election",
+    "feature_value": "Mocks negotiation/priorities by contrasting with affordability/elections concerns",
+    "category": "pragmatics_intent",
+    "rationale": "Irony-like critique of a political statement using contrasted priorities suggests persuasive/argumentative attack.",
+    "evidence_span": "\"Please ignore the high prices\" ... \"I got all the time in the world\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "38_7",
+    "message_id": "twitter_2061810168220811634",
+    "feature_name": "rhetorical_conditional_diagnostic_question",
+    "feature_value": "Uses 'Surely' rhetorical question contrasting race-based decisions in policing/justice",
+    "category": "compositional_syntax",
+    "rationale": "A rhetorical question with a conditional setup signals confrontational evaluative intent.",
+    "evidence_span": "\"Surely a police officer who takes the side of one person... shouldn't be in the #police?\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "39_0",
+    "message_id": "reddit_1ke2vut_mqlccsr",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses explicit profanity to attack actors",
+    "category": "surface_lexical",
+    "rationale": "The post contains strong taboo wording directed at specific political/religious targets.",
+    "evidence_span": "\"Fuck everybody on that article\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "39_1",
+    "message_id": "reddit_1kmm69e_msbbfe8",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Portrays one party leadership as incompetent vs contrasting implied opposite",
+    "category": "target_directionality",
+    "rationale": "The language assigns negative traits to a political group leadership, creating an in-group/out-group contrast.",
+    "evidence_span": "\"Democratic leadership is stupid, cowardly, and incapable\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "39_2",
+    "message_id": "reddit_1cy0mu_mq6vxp3",
+    "feature_name": "contrastive_but_however_structure",
+    "feature_value": "Juxtaposes constitutional reference with personal insult framing",
+    "category": "compositional_syntax",
+    "rationale": "The question/response construction uses a contrast between legal concept and dismissive insult.",
+    "evidence_span": "\"speech and debate clause? Hello?\" ... \"Oh right, Trump wipes his ass with the Constitution.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "39_3",
+    "message_id": "reddit_1lkisll_mzrznv0",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Direct address via implied rebuttal to another person/reader",
+    "category": "compositional_syntax",
+    "rationale": "The speaker explicitly responds to a prior commenter\u2019s information and positions the audience relative to it.",
+    "evidence_span": "\"But thanks for the information/explanation\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "39_4",
+    "message_id": "bluesky_35aaac022091e7dc7148f0f5d56aee4fdde5b6dd2681e83e3061316f44fb12c7",
+    "feature_name": "policy_prescription_present",
+    "feature_value": "Explicitly frames as violating constitutional right and targeting threatened groups",
+    "category": "semantic_content",
+    "rationale": "The post makes a rule/legality claim tied to protection of threatened minorities, indicating policy-normative framing.",
+    "evidence_span": "\"goes against the second amendment\" ... \"Especially when trans and queer individuals are constantly being threatened!\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "39_5",
+    "message_id": "bluesky_a20063f49a99029dab5316a2cf49ef54796fcffadfdcccda746c7681d6b446ef",
+    "feature_name": "economic_cost_benefit_framing",
+    "feature_value": "Argues diplomatic actions kneecap industry and weaken institutions",
+    "category": "semantic_content",
+    "rationale": "It assigns negative economic and strategic consequences to the other side\u2019s foreign policy.",
+    "evidence_span": "\"re-entered the Paris Agreement just to kneecap American industry\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "39_6",
+    "message_id": "twitter_2060820301513113623",
+    "feature_name": "call_to_action",
+    "feature_value": "Declares no longer donating/supporting an organization",
+    "category": "pragmatics_intent",
+    "rationale": "The text uses a stated decision/behavior change to influence others\u2019 support (linked to donation/sponsorship).",
+    "evidence_span": "\"I will no longer donate to Planned Parenthood\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "39_7",
+    "message_id": "reddit_1tzfhxv_oqbao73",
+    "feature_name": "factual_assertion_vs_speculation",
+    "feature_value": "Uses repeated 'lie' claims and cites evidence types",
+    "category": "semantic_content",
+    "rationale": "It repeatedly asserts factual wrongdoing while characterizing others as not verifying, signaling strong factual accusation language.",
+    "evidence_span": "\"This is a lie.\" ... \"Trump doesn't read reports. He doesn't verify facts.\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "40_0",
+    "message_id": "reddit_1kl4k5p_ms0pvvv",
+    "feature_name": "us_vs_them_framing",
+    "feature_value": "Blames one political group for making it hard to take the other side seriously",
+    "category": "target_directionality",
+    "rationale": "The post draws a divide between an in-group sentiment and an out-group label.",
+    "evidence_span": "impossible for me to like anyone in the Republican/MAGA group",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "40_1",
+    "message_id": "twitter_2059681636359270509",
+    "feature_name": "primary_policy_domain",
+    "feature_value": "Immigration / DACA / Dream Act",
+    "category": "topic_subject",
+    "rationale": "The central subject is immigration policy tied to DACA and the Dream Act.",
+    "evidence_span": "DACA is turning 14... urging Congress to support the Dream Act",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "40_2",
+    "message_id": "twitter_2059681636359270509",
+    "feature_name": "call_to_action",
+    "feature_value": "Direct appeal to the reader to contact Congress",
+    "category": "pragmatics_intent",
+    "rationale": "It explicitly asks the audience to take political action.",
+    "evidence_span": "Will you join me in urging Congress",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "40_3",
+    "message_id": "reddit_1kp51f1_msv7kg7",
+    "feature_name": "ridicule_or_mockery",
+    "feature_value": "Uses gendered insult to disparage a party",
+    "category": "pragmatics_intent",
+    "rationale": "The text uses mocking language to attack an actor (GOP).",
+    "evidence_span": "The GOP is full of pussies.",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "40_4",
+    "message_id": "reddit_1kp51f1_msv7kg7",
+    "feature_name": "criticized_actor_type",
+    "feature_value": "Political party (GOP / Democrats in mirror) attacked via insult",
+    "category": "target_directionality",
+    "rationale": "A specific political organization is the target of negative characterization.",
+    "evidence_span": "The GOP is full of pussies.",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "40_5",
+    "message_id": "reddit_1l6jnqp_mwpbia3",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Uses sexualized slur/insult toward a person addressing vote/ICE",
+    "category": "surface_lexical",
+    "rationale": "Contains explicit derogatory language aimed at another user/figure.",
+    "evidence_span": "Bitch, you voted for all this shit.",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "40_6",
+    "message_id": "bluesky_646783655a55f992667fd239c783b32586b52df352f7f5fd6b51f7153c7681cf",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Insults opponents as 'fucking idiots'",
+    "category": "surface_lexical",
+    "rationale": "The post uses strong profanity paired with dehumanizing/insulting language.",
+    "evidence_span": "People that argue against stricter gun laws are fucking idiots.",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "40_7",
+    "message_id": "reddit_1lk9fco_mzqzk0i",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Direct imperative asking a target to shut up",
+    "category": "compositional_syntax",
+    "rationale": "The message embeds a direct command targeted at an identifiable figure/persona.",
+    "evidence_span": "tell that bumbling orange twat to \u201cshut the fuck up\u201d",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "41_0",
+    "message_id": "twitter_2059353507564499161",
+    "feature_name": "hashtag_presence",
+    "feature_value": "Contains media outlet hashtags",
+    "category": "surface_lexical",
+    "rationale": "Hashtags are used as direct partisan/media cues in the post.",
+    "evidence_span": "#FoxNews",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "41_1",
+    "message_id": "twitter_2059353507564499161",
+    "feature_name": "high_punctuation_intensity_and_ellipsis",
+    "feature_value": "Multiple ellipses/strong punctuation",
+    "category": "surface_lexical",
+    "rationale": "Parenthetical/ellipsis-style intensity is used to reinforce a dismissive claim.",
+    "evidence_span": "because, well, they're criminals!",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "41_2",
+    "message_id": "reddit_1kxo6er_mur3l3w",
+    "feature_name": "profanity_taboo_language",
+    "feature_value": "Uses explicit profanity",
+    "category": "surface_lexical",
+    "rationale": "Direct profanity targets a named political figure.",
+    "evidence_span": "can fuck off",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "41_3",
+    "message_id": "reddit_1kxo6er_mur3l3w",
+    "feature_name": "second_person_direct_address_callout",
+    "feature_value": "Direct dismissal and imperative to leave",
+    "category": "pragmatics_intent",
+    "rationale": "Commands the target to leave and stop interfering, signaling aggressive direction.",
+    "evidence_span": "Go back to your mansion and leave the American people alone.",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "41_4",
+    "message_id": "reddit_1l7xya6_mx0cmts",
+    "feature_name": "short_length_affirmative_slang_insult",
+    "feature_value": "Very short partisan insult phrasing",
+    "category": "surface_lexical",
+    "rationale": "Compressed, derogatory labeling with slang-like slur content.",
+    "evidence_span": "Republicans Are Pussy Egoists",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "41_5",
+    "message_id": "reddit_1ks3br8_mtin319",
+    "feature_name": "ingroup_outgroup_reference",
+    "feature_value": "Addresses audience as \u201cliberal leaning reddit\u201d",
+    "category": "target_directionality",
+    "rationale": "Uses audience labeling to position speaker vs target (directional framing).",
+    "evidence_span": "You're talking to liberal leaning reddit....",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "41_6",
+    "message_id": "reddit_1txi7g6_opwrqme",
+    "feature_name": "policy_contrast_money_misalignment",
+    "feature_value": "Contrasts cutting aid with funding ICE",
+    "category": "semantic_content",
+    "rationale": "Compares two policy actions to argue hypocrisy or harmful priorities.",
+    "evidence_span": "Cut food aid to women and kids ... funded ICE for billions",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "41_7",
+    "message_id": "twitter_2061589330217648469",
+    "feature_name": "causal_claim_and_normative_outgroup_framing",
+    "feature_value": "Blames specific political media/outlets for driving fear narratives",
+    "category": "semantic_content",
+    "rationale": "Attributes social conditions to partisan/manufactured fear, using a causal and normative frame.",
+    "evidence_span": "mostly fueled by Fox News panic and MAGA hysteria",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "42_0",
+    "message_id": "reddit_1kcx4ed_mq6555e",
+    "feature_name": "profanity_taboo_personal_insult",
+    "feature_value": "Uses sexual-deviance accusations as direct insults (rapist/pedophile)",
+    "category": "semantic_content",
+    "rationale": "The post makes a strong factual-sounding sexual allegation about a named person.",
+    "evidence_span": "\"Daily reminder that Trump is a rapist.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "42_1",
+    "message_id": "reddit_1tqf4v3_oojf9yn",
+    "feature_name": "emphatic_outrage_callout_tax_slash_gut",
+    "feature_value": "Strong emphatic outrage plus moralized blame for taxing/slashing and making people slaves",
+    "category": "pragmatics_intent",
+    "rationale": "High-intensity emotional expression coupled with severe negative framing of policy effects.",
+    "evidence_span": "\"That's so fucking disgusting.\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "42_2",
+    "message_id": "reddit_1tqf4v3_oojf9yn",
+    "feature_name": "economic_cost_benefit_slavery_outcome",
+    "feature_value": "Economic deprivation framing culminating in loss of freedom/enslavement",
+    "category": "semantic_content",
+    "rationale": "Uses cost/benefit language with an extreme downstream outcome.",
+    "evidence_span": "\"until they have taken it all and you have nothing left but to be a slave to the government.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "42_3",
+    "message_id": "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+    "feature_name": "us_vs_them_authoritarian_deep_state_framing",
+    "feature_value": "Attributes electorate behavior to manipulation by a 'deep state'/'media' while opposing authoritarianism",
+    "category": "target_directionality",
+    "rationale": "Establishes an in-group/out-group narrative with blame directed at the system that 'convinced them'.",
+    "evidence_span": "\"the dictatorship has convinced them\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "42_4",
+    "message_id": "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+    "feature_name": "conditional_normative_anti_authoritarian_claim",
+    "feature_value": "Normative claim about people who claim to fight fascism not doing so; causal-consequential explanation",
+    "category": "semantic_content",
+    "rationale": "Presents a causal explanation for perceived hypocrisy using normative/accusatory semantics.",
+    "evidence_span": "\"are not fighting against the fascist dictatorship because the dictatorship has convinced them\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "42_5",
+    "message_id": "twitter_2060992060434309180",
+    "feature_name": "second_person_direct_address_and_critique_named_actor",
+    "feature_value": "Direct dialogue/attribution with named political actors; critique via immigration-verbiage dispute",
+    "category": "compositional_syntax",
+    "rationale": "Contains embedded quotes and explicit address/interaction structured as a mini-debate.",
+    "evidence_span": "\"Pat \u00171cit\u00187's called immigration policy, not \u00171stealing\u00187 Trevor\u00187\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "42_6",
+    "message_id": "reddit_1lcw1or_my5zj61",
+    "feature_name": "numeric_proportion_group_labeling",
+    "feature_value": "Quantified hostile labeling of political groups (e.g., 2 out of 10 MAGA...)",
+    "category": "compositional_syntax",
+    "rationale": "Uses a statistical-sounding proportion construction to categorize groups as ideological extremes.",
+    "evidence_span": "\"2 out of 10 MAGA morons are confirmed as fascist leaning.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "42_7",
+    "message_id": "twitter_2061201144743952847",
+    "feature_name": "abortion_policy_possessive_directive",
+    "feature_value": "Framed as coercive control over women's reproductive decisions",
+    "category": "topic_subject",
+    "rationale": "Primary subject is abortion policy with explicit coercion/forcing language toward a protected group.",
+    "evidence_span": "\"Republicans want to force every woman to carry a pregnancy to term\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "43_0",
+    "message_id": "reddit_1ksedw6_mtlfvfi",
+    "feature_name": "extreme_outgroup_dehumanizing_language",
+    "feature_value": "Uses harsh dehumanizing/hostile language toward a target group (e.g., foreigners) and compares safety outcomes",
+    "category": "semantic_content",
+    "rationale": "This contains strong hostile lexical framing and threat/safety claims directed at an outgroup.",
+    "evidence_span": "\"Foreigners, you need to stay away. It ain't fuckin safe.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "43_1",
+    "message_id": "twitter_2060432152852861156",
+    "feature_name": "moral_reasoning_and_questions_on_personhood",
+    "feature_value": "Normative argument with a rhetorical-style question about abortion equating it to rape circumstances",
+    "category": "pragmatics_intent",
+    "rationale": "The post uses explicit moral disagreement and culminates in a question to press a persuasive equivalence claim.",
+    "evidence_span": "\"I asked, doesn\u0015t abortion do the same thing?\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "43_2",
+    "message_id": "twitter_2061554055978311844",
+    "feature_name": "group_blaming_cancer_metaphor",
+    "feature_value": "Depicts multiple religious groups as harmful (\u201ccancer\u201d) and asserts lack of freedom",
+    "category": "semantic_content",
+    "rationale": "Cancer-as-metaphor is a strongly negative evaluative frame targeting religious groups.",
+    "evidence_span": "\"the Jews and Muslims a cancer\" ... \"apparently Mormons are too.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "43_3",
+    "message_id": "bluesky_d3e76502ab487398f2bc2e48efd3f85e244c3f743f60044a18e14422a173c7b1",
+    "feature_name": "armed_actor_standoff_framing",
+    "feature_value": "Claims armed opponents at rallies; implies confrontation by unknown number of armed opponents",
+    "category": "semantic_content",
+    "rationale": "The post centers escalation/armed threat framing as the key content.",
+    "evidence_span": "\"contingent of armed MAGAts\" ... \"unknown number of armed opponents.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "43_4",
+    "message_id": "bluesky_6ee0f696da723e238e981baa7acdf404d768fcc2af68bb07079b2ea575d2efc2",
+    "feature_name": "elite_cynicism_and_counterpart_reframing",
+    "feature_value": "Directs accusation at the opposing party/media while contrasting what is 'ok' vs 'dangerous' rhetoric",
+    "category": "target_directionality",
+    "rationale": "It contrasts two sides by asserting hypocrisy and legitimizing violence claims.",
+    "evidence_span": "\"tone-down the-rhetoric!\" Republicans ... \"gun violence and stochastic terrorism is ok\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "43_5",
+    "message_id": "bluesky_755e790ffd6caacf6a21766726a5930e3d92dcef9d449e461fb9647cd9a2fb70",
+    "feature_name": "targeted_policy_exclusion_of_specific_party",
+    "feature_value": "Proposes gun-control/veto framed as targeting one party while exempting others; uses explicit preference/entitlement toward excluding owners",
+    "category": "topic_subject",
+    "rationale": "The policy prescription is explicitly conditional on political identity and includes exclusionary eligibility language.",
+    "evidence_span": "\"gun control that targets republicans\" ... \"Racists should not be allowed to own guns.\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "43_6",
+    "message_id": "reddit_1tvsp9t_opk4hyd",
+    "feature_name": "high_emotion_memetic_sarcasm_quotes",
+    "feature_value": "Uses repetitive meme/affect (\u201cHONEY HURRR HURR\u201d) and quoted punchline to mock a political figure; economic complaint list",
+    "category": "pragmatics_intent",
+    "rationale": "The phrasing is performative mockery and relies on quoted, highly affective meme language.",
+    "evidence_span": "\"HONEY HURRR HURR HURR DIDJA SEE HOW...\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "43_7",
+    "message_id": "reddit_1u3bvdh_or4x7tv",
+    "feature_name": "second_person_direct_address_and_assertive_denial_structure",
+    "feature_value": "Uses second-person direct address plus explicit corrective framing of alliance obligations",
+    "category": "compositional_syntax",
+    "rationale": "The structure includes direct address and a corrective admonition tied to geopolitical commitments.",
+    "evidence_span": "\"don't you dare blame everyone else for our failures.\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "44_0",
+    "message_id": "reddit_1kbioxf_mpz7wuw",
+    "feature_name": "approx_token_length_band",
+    "feature_value": "short",
+    "category": "surface_lexical",
+    "rationale": "The post is a brief insult-based comparison with only a couple short sentences.",
+    "evidence_span": "\"Trump is a very stupid very stubborn very cruel man.\"",
+    "cluster_id": 6
+  },
+  {
+    "feature_id": "44_1",
+    "message_id": "reddit_1kbioxf_mpz7wuw",
+    "feature_name": "person_character_assessment_triplet",
+    "feature_value": "stacked trait insults (very X very Y very Z)",
+    "category": "surface_lexical",
+    "rationale": "Uses a repeated 'very' pattern to intensify negative personal claims about a named politician.",
+    "evidence_span": "\"a very stupid very stubborn very cruel man\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "44_2",
+    "message_id": "bluesky_3816d8a4b44dc43c8083dd7d003b90e88e96ccf7a9beb7594cae9fca4b3277a8",
+    "feature_name": "policy_prescription_mass_shooting_prevention",
+    "feature_value": "explicit gun-ban policy prescription tied to mass shootings",
+    "category": "semantic_content",
+    "rationale": "The text advocates a specific policy action aimed at preventing future violence.",
+    "evidence_span": "\"how fast a gun ban can be enacted so another mass shooting can\u2019t take place again.\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "44_3",
+    "message_id": "bluesky_3816d8a4b44dc43c8083dd7d003b90e88e96ccf7a9beb7594cae9fca4b3277a8",
+    "feature_name": "conspiratorial_or_dehumanizing_framing",
+    "feature_value": "Nazi/leftist mind-losing dehumanizing attribution",
+    "category": "semantic_content",
+    "rationale": "Employs extreme ideological labeling to portray opponents as irrational or dangerous.",
+    "evidence_span": "\"Nazi\u2019s losing their minds\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "44_4",
+    "message_id": "bluesky_17e013d78fcdc87811e9b9c724ae84037e91406ccb168aabd442734e30845802",
+    "feature_name": "all_caps_emphasis_and_misinfo_claim",
+    "feature_value": "all-caps 'LIED' plus high-stakes death claim about COVID",
+    "category": "surface_lexical",
+    "rationale": "Uses all-caps emphasis and strong factual-sounding allegations about deception and mass death.",
+    "evidence_span": "\"he LIED TO THE AMERICAN PEOPLE ABOUT COVID\" ... \"SO 100s of 1000s OF PEOPLE DIED\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "44_5",
+    "message_id": "reddit_1tvywom_opm3ctw",
+    "feature_name": "quoted_attribution_embedding",
+    "feature_value": "quotes a civil-rights phrase then attacks it",
+    "category": "compositional_syntax",
+    "rationale": "Includes an embedded quote and follows with evaluative critique.",
+    "evidence_span": "\"relegate him to \u2018separate but equal\u2019 facilities.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "44_6",
+    "message_id": "reddit_1tvywom_opm3ctw",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "imperative/you-style condemnation implied via insult phrase",
+    "category": "pragmatics_intent",
+    "rationale": "Directly targets an outgroup ('jackasses like this') to condemn and blame, indicating an argumentative/targeting stance.",
+    "evidence_span": "\"jackasses like this want to force trans kids\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "44_7",
+    "message_id": "twitter_2061645295759319187",
+    "feature_name": "list_of_actions_with_ellipsis",
+    "feature_value": "repeated 'Defund/ Fund' slogan series",
+    "category": "compositional_syntax",
+    "rationale": "Uses a parallel, enumerated slogan with repeated imperative framing to urge a policy shift.",
+    "evidence_span": "\"DeFund the Police.. Defund I.C.E. .. DeFund Border Patrol..\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "45_0",
+    "message_id": "reddit_1lcklzj_my1x6r3",
+    "feature_name": "verbal_profanity_intensity",
+    "feature_value": "Uses strong profanity/insults",
+    "category": "surface_lexical",
+    "rationale": "Profane dismissal of an opponent frames the content as hostile/attacking.",
+    "evidence_span": "\"bullshit\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "45_1",
+    "message_id": "reddit_1lcklzj_my1x6r3",
+    "feature_name": "refugee_migration_policy_claims",
+    "feature_value": "Claims about migrants/immigration protections being removed",
+    "category": "topic_subject",
+    "rationale": "Explicit immigration/legal-protections policy allegations are a clear policy domain cue.",
+    "evidence_span": "\"He stripped legal protections from hundreds of thousands of migrants\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "45_2",
+    "message_id": "reddit_1lcklzj_my1x6r3",
+    "feature_name": "conspiracy_or_claimed_misinformation_about_outgroup",
+    "feature_value": "Accuses political figure of making a false/violent stereotype claim about Haitians",
+    "category": "semantic_content",
+    "rationale": "The post centers on a contested atrocity/violent-evidence claim about an outgroup.",
+    "evidence_span": "\"Trump said the Haitians in Springfield were eating dogs.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "45_3",
+    "message_id": "reddit_1tjno36_on2o77a",
+    "feature_name": "call_to_action_for_political_migration",
+    "feature_value": "Direct instruction to relocate due to politics",
+    "category": "pragmatics_intent",
+    "rationale": "A direct directive functions as an action request aimed at an outgroup.",
+    "evidence_span": "\"please move out of California\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "45_4",
+    "message_id": "reddit_1tjno36_on2o77a",
+    "feature_name": "geographic_scope_state_specific",
+    "feature_value": "U.S. state-to-state movement framing (California/Texas)",
+    "category": "topic_subject",
+    "rationale": "State names indicate targeted geographic political subject matter.",
+    "evidence_span": "\"California\" / \"Texas\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "45_5",
+    "message_id": "reddit_1kz6zu2_mv8k6hs",
+    "feature_name": "hate_assault_style_insult",
+    "feature_value": "Graphic insulting phrasing toward political group",
+    "category": "surface_lexical",
+    "rationale": "Aggressive, sexualized insult language escalates hostility toward named actors.",
+    "evidence_span": "\"can eat at bag of dicks\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "45_6",
+    "message_id": "reddit_1kz6zu2_mv8k6hs",
+    "feature_name": "mirror_shift_to_opposite_party_moral_dishonesty",
+    "feature_value": "Blames opposite party with 'intellectually dishonest' narrative",
+    "category": "target_directionality",
+    "rationale": "Uses moral condemnation (dishonesty) and mirrors blame from one party to the other.",
+    "evidence_span": "\"This \\\"both sides\\\" ... narrative is so intellectually dishonest\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "45_7",
+    "message_id": "twitter_2061721147872563408",
+    "feature_name": "targeted_call_to_action_with_mentions_and_dehumanizing_labels",
+    "feature_value": "Urges immediate action; tags public figures; uses extremist labels",
+    "category": "pragmatics_intent",
+    "rationale": "Contains an explicit action request plus targeted @mentions and extremist framing.",
+    "evidence_span": "\"Please take immediate action @RahulGandhi @INCIndia\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "46_0",
+    "message_id": "twitter_2061816204491198746",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "Multiple repeated emojis used for emphasis (anger/insistence).",
+    "category": "surface_lexical",
+    "rationale": "The post uses a high density of repeated angry emojis to intensify the claim.",
+    "evidence_span": "\"takes 80% as taxes \ud83d\ude21\ud83d\ude21\ud83d\ude21\ud83d\ude21\ud83d\ude21\ud83d\ude21\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "46_1",
+    "message_id": "bluesky_d07547db8a3fd657945ab4327387aad3deba04598378e137c562d7d2dd8a9",
+    "feature_name": "mocking_sarcastic_pronoun_labeling",
+    "feature_value": "Ridicule via group slur-style labels (e.g., \u201cMAGgots\u201d, \u201cLibtards\u201d).",
+    "category": "pragmatics_intent",
+    "rationale": "The communicative style uses mocking group-label framing to attack an opposing side.",
+    "evidence_span": "\"MAGgots be like:\" / \"Libtards be like:\"",
+    "cluster_id": 3
+  },
+  {
+    "feature_id": "46_2",
+    "message_id": "bluesky_68f42aebc7d8b2070eae73ca873edf926d26484c42b94f15d6531ede2da4c74d",
+    "feature_name": "conditional_if_then_structure",
+    "feature_value": "Patterned conditional about something happening whenever a group gains traction.",
+    "category": "compositional_syntax",
+    "rationale": "The sentence builds an 'whenever X happens, Y follows' conditional explanation.",
+    "evidence_span": "\"whenever a climate focused org... starts getting traction... something happens; a change of leadership\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "46_3",
+    "message_id": "bluesky_68f42aebc7d8b2070eae73ca873edf926d26484c42b94f15d6531ede2da4c74d",
+    "feature_name": "conspiratorial_framing_with_influence",
+    "feature_value": "Implied hidden influence behind moderation/softening (leadership/funding changes).",
+    "category": "semantic_content",
+    "rationale": "The post suggests an underlying mechanism that causes advocates to backtrack.",
+    "evidence_span": "\"a change of leadership, new funding etc and suddenly... 'reasonable compromises'\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "46_4",
+    "message_id": "twitter_2061587113901191589",
+    "feature_name": "call_to_action_with_direct_address",
+    "feature_value": "Direct imperative urging action plus tag mentions.",
+    "category": "pragmatics_intent",
+    "rationale": "It uses an imperative to press officials and includes @mentions to direct the message.",
+    "evidence_span": "\"Better get building those houses... @AlboMP @JEChalmers\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "46_5",
+    "message_id": "twitter_2061587113901191589",
+    "feature_name": "second_person_direct_address",
+    "feature_value": "Mentions officials using second-person-ish directive framing (imperative).",
+    "category": "compositional_syntax",
+    "rationale": "The grammar addresses others with direct urging rather than only describing events.",
+    "evidence_span": "\"Better get building those houses... @AlboMP @JEChalmers\"",
+    "cluster_id": 12
+  },
+  {
+    "feature_id": "46_6",
+    "message_id": "bluesky_9970acc74de04e1270d57ff77ca1fa4b12134f47a08c0d6a8bd2ddb4bc3a4225",
+    "feature_name": "culture_war_topic_salience",
+    "feature_value": "Broad identity-based exclusion list (Democrat/brown/women/science/free press/protest).",
+    "category": "topic_subject",
+    "rationale": "The post foregrounds culture-war issues via an extensive list of contested identity/values.",
+    "evidence_span": "\"unless you're a democrat, brown, a woman... believe in science... universal health care... free press\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "46_7",
+    "message_id": "reddit_1txrv9p_opypogo",
+    "feature_name": "victimhood_or_persecution_framing",
+    "feature_value": "Direct emphasis that policies kill vulnerable people; suffering is central.",
+    "category": "semantic_content",
+    "rationale": "The argument centers on harm to vulnerable groups, using victim-centered language.",
+    "evidence_span": "\"Sanctions kill the young, old, and most vulnerable. ... people die.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "47_0",
+    "message_id": "twitter_2061823787960557939",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "Multiple uses of strong profanity",
+    "category": "surface_lexical",
+    "rationale": "The post includes explicit profanity directed at others as part of a condemnatory reply.",
+    "evidence_span": "\"Where the fuck were your moral standards\"; \"Shut the fuck up.\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "47_1",
+    "message_id": "twitter_2061823787960557939",
+    "feature_name": "call_to_action_imperative",
+    "feature_value": "Uses imperative demand to silence the target",
+    "category": "pragmatics_intent",
+    "rationale": "An imperative instruction is used to stop or silence an opposing speaker.",
+    "evidence_span": "\"Shut the fuck up.\"",
+    "cluster_id": 9
+  },
+  {
+    "feature_id": "47_2",
+    "message_id": "twitter_2061267297096835097",
+    "feature_name": "ableist_or_taboo_insults",
+    "feature_value": "Slurs/insults targeting disability or intellect",
+    "category": "surface_lexical",
+    "rationale": "The text uses a derogatory slur as a direct attack in the argument.",
+    "evidence_span": "\"you're insane or retarded.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "47_3",
+    "message_id": "reddit_1lku9rd_mzwvvea",
+    "feature_name": "totalizing_group_who_is",
+    "feature_value": "Absolute claims that equate an entire party with criminal/terrorist ideology",
+    "category": "semantic_content",
+    "rationale": "The post uses blanket attribution (\u201cAll X are Y\u201d) assigning extreme wrongdoing to an entire group.",
+    "evidence_span": "\"All Republicans are fascist domestic terrorists.\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "47_4",
+    "message_id": "reddit_1l8ha5n_mx5ng9w",
+    "feature_name": "single_actor_insult",
+    "feature_value": "Direct insult targeting a named politician",
+    "category": "semantic_content",
+    "rationale": "A named individual is disparaged with an insulting epithet rather than discussing policy.",
+    "evidence_span": "\"Well Newsom is a fucking moron.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "47_5",
+    "message_id": "bluesky_6a0375f7784beecfa551a99f17cd9a5771480613df582dcca2510ba502af4fc5",
+    "feature_name": "slur_and_dehumanizing_terms_dense",
+    "feature_value": "Very high density of pejoratives/slurs and accusatory labels",
+    "category": "surface_lexical",
+    "rationale": "The post heavily stacks negative labels (including identity-targeting terms) in a single string.",
+    "evidence_span": "\"thieves,traitors, ... misogynoire, greedy2%, anti LGBTQIA+/abortion/POC/women/woke\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "47_6",
+    "message_id": "bluesky_6a0375f7784beecfa551a99f17cd9a5771480613df582dcca2510ba502af4fc5",
+    "feature_name": "political_actor_blame_list_owns",
+    "feature_value": "Accusatory \u201cOWN this!\u201d attribution across election cycles",
+    "category": "semantic_content",
+    "rationale": "It assigns responsibility to a political cohort for prior cycles using a blame/ownership framing.",
+    "evidence_span": "\"2016/20/22/24 GOPvoters OWN this!\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "47_7",
+    "message_id": "reddit_1kubmyy_mu16zs3",
+    "feature_name": "conspiracy_style_gaslighting_propaganda",
+    "feature_value": "Claims propaganda/gaslighting and asserts manipulative intent",
+    "category": "semantic_content",
+    "rationale": "The post uses conspiracy-like manipulation accusations (\u201cpropaganda 101\u201d, \u201cgaslighting\u201d) to explain the opposing side\u2019s claims.",
+    "evidence_span": "\"this is propaganda 101\"; \"They are obfuscating the truth\"; \"this is gaslighting 101\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "48_0",
+    "message_id": "reddit_1ts5npc_ooux6qc",
+    "feature_name": "ingroup_outgroup_labeling",
+    "feature_value": "Negative political outgroup labeling (anti-American/commies; fascist/authoritarians).",
+    "category": "target_directionality",
+    "rationale": "The post uses harsh ideological labels to cast an outgroup as illegitimate.",
+    "evidence_span": "\"anti-american commies\" / \"fascist, flag-waving authoritarians\"",
+    "cluster_id": 11
+  },
+  {
+    "feature_id": "48_1",
+    "message_id": "reddit_1lhfkqj_mz4mrik",
+    "feature_name": "violent_war_metaphor_and_removal_request",
+    "feature_value": "Claims a religious war and calls for removal from power; includes profanity and hate toward political groups.",
+    "category": "semantic_content",
+    "rationale": "The text asserts an armed-conflict frame and prescribes political removal, with explicit profanity.",
+    "evidence_span": "\"religious war\" ... \"He needs to be removed from power\" ... \"fuck Netanyahu\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "48_2",
+    "message_id": "reddit_1l0rot8_mvfrk9n",
+    "feature_name": "dehumanizing_profane_abuse",
+    "feature_value": "Uses dehumanizing insult/profanity toward targeted group; characterizes actions as criminal wrongdoing.",
+    "category": "pragmatics_intent",
+    "rationale": "Strong expressive abuse is directed at the actor group while asserting criminality.",
+    "evidence_span": "\"real criminals\" ... \"Piece of shit humans.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "48_3",
+    "message_id": "reddit_1l6h0fc_mwonavm",
+    "feature_name": "anti_media_partisan_blasphemy",
+    "feature_value": "Profanity targeting a news outlet article with partisan attribution (FOX vs MSNBC).",
+    "category": "surface_lexical",
+    "rationale": "The post employs profanity and directly attacks a partisan media source.",
+    "evidence_span": "\"Fuck this inflammatory article by FOX News.\" / \"by MSNBC.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "48_4",
+    "message_id": "twitter_2059414276478005375",
+    "feature_name": "abortion_rights_bible_argumentation",
+    "feature_value": "Abortion policy framed via religious authority/Bible quotation plus call to stop pretending.",
+    "category": "topic_subject",
+    "rationale": "The post centers abortion rights and uses explicit scriptural discourse as evidence.",
+    "evidence_span": "\"invokes faith to defend abortion rights\" ... \"The Bible is silent on abortion'\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "48_5",
+    "message_id": "twitter_2059414276478005375",
+    "feature_name": "normative_moral_language_and_delegitimization",
+    "feature_value": "Moral condemnation (disgusting), accusation of erasing Christian values, and prescriptive demand (Stop...).",
+    "category": "semantic_content",
+    "rationale": "It uses moral outrage and delegitimization along with a direct imperative.",
+    "evidence_span": "\"This is disgusting\" ... \"erase Christian values\" ... \"Stop pretending faith supports killing babies.\"",
+    "cluster_id": 8
+  },
+  {
+    "feature_id": "48_6",
+    "message_id": "reddit_1u29zb9_oqydcpn",
+    "feature_name": "us_vs_them_performative_claim",
+    "feature_value": "Accuses the opposing side of performative concern; shifts blame to energy harms (birds) and compares industries.",
+    "category": "semantic_content",
+    "rationale": "The post characterizes the other's stance as insincere and pivots to counter-claims about ecological impact.",
+    "evidence_span": "\"It's just a talking point.\" / \"It's just performative outrage\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "48_7",
+    "message_id": "reddit_1u0y79a_oqo0he3",
+    "feature_name": "quote_reply_structure_and_election_claim_contrast",
+    "feature_value": "Block-quoted rebuttal format with conditional comparison to past election theft; multiple short lines.",
+    "category": "compositional_syntax",
+    "rationale": "The post uses a back-and-forth quoted structure to invert election-fraud claims with historical comparison.",
+    "evidence_span": ">\"Did you feel that way in 2024\" ... \"He didnt \\\"literally try to steal an election\\\"\" ... \"Bush literally stole the 2000 election\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "49_0",
+    "message_id": "reddit_1lf2x6s_mylgblv",
+    "feature_name": "profanity_taboo_slur_heavy",
+    "feature_value": "Uses repeated profanity to attack political figures/media/outgroups.",
+    "category": "surface_lexical",
+    "rationale": "The post contains multiple instances of explicit profanity aimed at political actors and affiliations.",
+    "evidence_span": "\"Fuck Trump, Fuck Faux News, and Fuck this so-called \\\"manosphere\\\".\"",
+    "cluster_id": 4
+  },
+  {
+    "feature_id": "49_1",
+    "message_id": "reddit_1lf2x6s_mylgblv",
+    "feature_name": "list_of_targets_with_repetition",
+    "feature_value": "Triadic repeated structure 'Fuck X, Fuck Y, and Fuck Z'.",
+    "category": "compositional_syntax",
+    "rationale": "The comma-separated, repeated imperative form targets several entities in a patterned escalation.",
+    "evidence_span": "\"Fuck Trump, Fuck Faux News, and Fuck this so-called \\\"manosphere\\\".\"",
+    "cluster_id": 10
+  },
+  {
+    "feature_id": "49_2",
+    "message_id": "reddit_1t54vlp_ok8gay6",
+    "feature_name": "right_left_insulting_labeling",
+    "feature_value": "Pejorative labels for ideologies/groups (e.g., neo Nazis, brain-dead, Antifa thugs).",
+    "category": "target_directionality",
+    "rationale": "The text labels in-group/out-group groups with dehumanizing/insulting ideological terms.",
+    "evidence_span": "\"The brain-dead left...\" / \"...neo nazis\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "49_3",
+    "message_id": "reddit_1t54vlp_ok8gay6",
+    "feature_name": "us_vs_them_balance_claim",
+    "feature_value": "\u201cSilver lining/upside\u201d justification that frames the opposing group as non-Americans to 'balance out'.",
+    "category": "semantic_content",
+    "rationale": "A justificatory moral/strategic claim is used to rationalize hostility toward the target group.",
+    "evidence_span": "\"The silver lining is that these people are often not even Americans so it balances out.\"",
+    "cluster_id": 7
+  },
+  {
+    "feature_id": "49_4",
+    "message_id": "reddit_1llkodo_n00qp4w",
+    "feature_name": "questioning_conditional_rhetoric",
+    "feature_value": "Series of rhetorical questions about legality and staying status after crossing/bypassing rules.",
+    "category": "compositional_syntax",
+    "rationale": "The post uses successive \u201cseriously?\u201d rhetorical questions to challenge an immigration policy outcome.",
+    "evidence_span": "\"Illegal immigrants should stay? Seriously? Cross border illegally and hide long enough and you get to stay?\"",
+    "cluster_id": 5
+  },
+  {
+    "feature_id": "49_5",
+    "message_id": "reddit_1llkodo_n00qp4w",
+    "feature_name": "immigration_border_policy_domain",
+    "feature_value": "Focus on illegal immigration/crossing borders and deportation/stay permission.",
+    "category": "topic_subject",
+    "rationale": "Core subject matter is border crossing legality and residency/deportation decisions.",
+    "evidence_span": "\"Cross border illegally\" / \"Deport everyone?\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "49_6",
+    "message_id": "twitter_2061795440342012025",
+    "feature_name": "capitalized_emphatic_infinite_claim",
+    "feature_value": "All-caps exclamatory style ending with 'IT\u2019S NEVER ENDING!!!' (also in mirror).",
+    "category": "surface_lexical",
+    "rationale": "High-intensity capitalization and emphatic punctuation marks strong outrage and extremity of claims.",
+    "evidence_span": "\"IT\u00195 NEVER ENDING!!!\"",
+    "cluster_id": 13
+  },
+  {
+    "feature_id": "49_7",
+    "message_id": "twitter_2061795440342012025",
+    "feature_name": "conspiratorial_factuality_without_evidence",
+    "feature_value": "Accusations of election interference/corruption with precise-sounding claims (Ukraine money funnel, fake IDs to vote).",
+    "category": "semantic_content",
+    "rationale": "The post advances sweeping, conspiratorial allegations presented as assertion (not hedged) about fraud and corruption.",
+    "evidence_span": "\"China Sent 10\u00195 Of Thousands Of Fake ID\u00195 To Biden Camp To Illegally Vote In Presidential Election!!!\"",
+    "cluster_id": 5
+  }
+]

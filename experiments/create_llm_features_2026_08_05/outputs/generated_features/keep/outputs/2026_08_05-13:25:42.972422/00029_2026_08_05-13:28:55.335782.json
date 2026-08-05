@@ -1,0 +1,94 @@
+{
+  "batch_id": 29,
+  "label_class": "keep",
+  "message_ids": [
+    "reddit_1t4ruex_ok6zv1p",
+    "reddit_1tqdpjl_oogtmar",
+    "reddit_1ttbse9_op1e1eg",
+    "reddit_1tvumlg_opjvid3",
+    "reddit_1txnigx_opxnpi8",
+    "reddit_1tztcf9_oqfcr5t",
+    "twitter_2061477629312516163",
+    "twitter_2061555055858516235",
+    "twitter_2061579013500600524",
+    "twitter_2061753754957799588"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tvumlg_opjvid3",
+        "feature_name": "insurrection_election_dropin_last_minute_reference",
+        "feature_value": "Mentions Jan 6 insurrection handling and dropping out of election at last possible moment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"handling of the insurrection\" / \"choice to drop out of the election at the last possible second\"",
+        "rationale": "The post ties a legacy judgement to a specific political event (insurrection/January 6) and election timing."
+      },
+      {
+        "message_id": "twitter_2061579013500600524",
+        "feature_name": "pro_life_pro_choice_value_assertion",
+        "feature_value": "Defines pro-life/pro-choice via a one-sentence moral assertion about human value",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Human beings have value!\" / \"Women are full human beings too!\"",
+        "rationale": "The core content is a normative, rights-based claim stated as a succinct principle."
+      },
+      {
+        "message_id": "reddit_1t4ruex_ok6zv1p",
+        "feature_name": "scotus_appointment_jurisprudence_direction_claim",
+        "feature_value": "Claims an SCOTUS nomination was wasted on an ineffective ideologue/advocate and frames direction of jurisprudence",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"SCOTUS nomination\" / \"steering the jurisprudence of the country to the left\"",
+        "rationale": "It centers on a concrete institutional process (SCOTUS nomination) combined with a directional claim about legal influence."
+      },
+      {
+        "message_id": "reddit_1txnigx_opxnpi8",
+        "feature_name": "energy_source_tradeoff_reasoning_analogy",
+        "feature_value": "Compares renewables vs fossil/coal and later nuclear vs wind using practical tradeoffs (time, cost, safety, location)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Waiting for a sunny or windy day is easier than carving up a mountain\" / \"Building a reactor takes decades and costs billions\"",
+        "rationale": "The text provides pragmatic causal comparisons and policy-relevant cost/safety/timing reasoning rather than pure sloganizing."
+      },
+      {
+        "message_id": "reddit_1tqdpjl_oogtmar",
+        "feature_name": "extreme_stigma_outgroup_slander",
+        "feature_value": "Uses absolute superlatives to dehumanize/insult an opposed group",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"MAGAts are the worst people on earth.\" / \"Woke leftists are the most insufferable people on the planet.\"",
+        "rationale": "The language is emphatic and hostile, directly labeling a target group with maximal negative evaluation."
+      },
+      {
+        "message_id": "twitter_2061555055858516235",
+        "feature_name": "endorsement_candidate_with_support_credibility_claims",
+        "feature_value": "Direct endorsement listing credentials, arrest by ICE, cross-endorsement, solidarity, polling, and vote date",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"We proudly endorse @bradlander for U.S. Congress NY-10.\" / \"Vote June 23.\"",
+        "rationale": "This is a persuasive endorsement post built as an information list intended to motivate voting."
+      },
+      {
+        "message_id": "twitter_2061753754957799588",
+        "feature_name": "rights_frame_against_government_gift",
+        "feature_value": "Frames freedom as a natural right and uses contrastive 'not a gift' construction",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Freedom is not a gift from the government \u2014 it is our natural right.\"",
+        "rationale": "The claim uses explicit contrastive negation to establish a moral principle and then reassert an alternative foundation."
+      },
+      {
+        "message_id": "reddit_1tztcf9_oqfcr5t",
+        "feature_name": "no_way_to_reason_rationality_claim",
+        "feature_value": "Claims attempts at conversation fail because targets are not \u201cmoored to reality/facts/reason,\u201d paired with family-members framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"There is just no way to reason with people who are not moored to reality, facts or reason.\" / \"replaced common sense with ideology\"",
+        "rationale": "It contains a blanket factual-like assertion about communicative impossibility grounded in claims of irrationality."
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cluster_id": 5,
+  "label_class": "remove",
+  "n_members": 10,
+  "sampled_feature_ids": [
+    "19_5",
+    "44_3",
+    "47_7",
+    "32_2",
+    "16_4",
+    "29_4",
+    "15_4",
+    "8_3"
+  ],
+  "result": {
+    "cluster_id": 5,
+    "cluster_label": "Conspiracy-style motive and cover-up framing",
+    "definition": "REMOVE posts that use conspiracy rhetoric to allege hidden wrongdoing or covert manipulation by opponents, often by asserting secret documents/leaks, propaganda/gaslighting tactics, and/or hostile coordinated motives toward an external enemy.",
+    "salience_notes": "The sample repeatedly attributes opponents\u2019 actions to concealed motives (enemies/assets/propaganda), uses gaslighting/manipulation labels, and escalates toward cover-ups or secret evidence."
+  }
+}

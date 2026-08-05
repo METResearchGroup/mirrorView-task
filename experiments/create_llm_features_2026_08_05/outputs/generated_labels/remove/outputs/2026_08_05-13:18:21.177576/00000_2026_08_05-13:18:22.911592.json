@@ -1,0 +1,17 @@
+{
+  "cluster_id": 0,
+  "label_class": "remove",
+  "n_members": 4,
+  "sampled_feature_ids": [
+    "0_0",
+    "0_4",
+    "0_7",
+    "0_2"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Profanity-fueled politician ridicule",
+    "definition": "REMOVE posts that use brief, targeted ridicule or derogatory infantilization toward specific political figures/groups, often paired with profanity and an implicit call to condemn or separate them.",
+    "salience_notes": "Co-occurs with short post length and direct blame/condemnation framed through insults (mirror/contrast) and profanity."
+  }
+}

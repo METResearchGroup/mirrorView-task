@@ -1,0 +1,94 @@
+{
+  "batch_id": 8,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_02fc85b4879039c20bc0c451acf76fb4143bd0d7aaf46e2126d8357be8b0209c",
+    "reddit_1kinrnc_mrh0e5f",
+    "reddit_1t4fs97_ok3xved",
+    "reddit_1tonmo5_oo6v724",
+    "reddit_1tzmjlz_oqdr769",
+    "reddit_1u185il_oqrqen9",
+    "twitter_2060060431402623014",
+    "twitter_2061149964529508688",
+    "twitter_2061729902705988033",
+    "twitter_2061817653325684983"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tzmjlz_oqdr769",
+        "feature_name": "goalpost_moving_metaphor",
+        "feature_value": "Uses the idiom/metaphor 'moving those goal posts' to accuse opponents of shifting narratives.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"moving those goal posts\"",
+        "rationale": "The phrase explicitly frames opponent messaging as changing standards over time."
+      },
+      {
+        "message_id": "reddit_1tzmjlz_oqdr769",
+        "feature_name": "mirror_shift_party_directionality",
+        "feature_value": "Original blame on MAGA/Trump narrative; mirror shifts blame to the left/Biden-Ukraine foreign conflicts.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Damn MAGA\" ... \"now that Trump has evolved into Israel first\" vs \"Damn the left\" ... \"Biden handed over billions\"",
+        "rationale": "The mirror re-targets the shifting-blame claim to a different political actor and policy area."
+      },
+      {
+        "message_id": "reddit_1t4fs97_ok3xved",
+        "feature_name": "bipartisan_crony_capitalism_claim",
+        "feature_value": "Argues both parties engage in crony capitalism while still making a performance comparison by branch.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Dems and Republicans enjoy crony capitalism\"",
+        "rationale": "Directly states a causal/characterization about both parties' economic behavior."
+      },
+      {
+        "message_id": "twitter_2061817653325684983",
+        "feature_name": "class_impact_tax_harm_framing",
+        "feature_value": "Frames gas tax increases as harming the poor/lower class.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Gas taxes hurt the poor and lower class more than anyone\"",
+        "rationale": "The post explicitly assigns negative distributional effects to a policy."
+      },
+      {
+        "message_id": "twitter_2061817653325684983",
+        "feature_name": "partisan_recipient_of_policy_action",
+        "feature_value": "Attacks Democrats for raising gas taxes.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"yet Democrats keep on raising gas taxes\"",
+        "rationale": "The criticized actor type is clearly a specific party taking repeated policy action."
+      },
+      {
+        "message_id": "reddit_1kinrnc_mrh0e5f",
+        "feature_name": "derogatory_association_and_intent_to_persuade",
+        "feature_value": "Uses insults about 'kissing [candidate]' and claims media/agents spin dementia rants into 'bullshit' for a 'cult'.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"kissing Trump's ass\" ... \"spin\" \"dementia-ridden rants\" into \"bullshit\" \"cult\"",
+        "rationale": "The wording signals mockery/derogation and implies a persuasive manipulation process."
+      },
+      {
+        "message_id": "twitter_2061729902705988033",
+        "feature_name": "extreme_emotive_taboo_style_markers",
+        "feature_value": "Uses strong anti-climate rhetoric and hyperbole ('scam', 'alarmist lies') with exclamation emphasis.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"biggest scam ever\" ... \"alarmist lies!!!\"",
+        "rationale": "The language contains overtly evaluative labels and emphatic punctuation to intensify outrage."
+      },
+      {
+        "message_id": "twitter_2061729902705988033",
+        "feature_name": "high_risk_outcome_projection",
+        "feature_value": "Predicts mass death/town devastation (or in mirror, billions wasted/economies devastated) tied to global warming claims.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Thousands will die\" & \"whole towns can  devastated\"",
+        "rationale": "It foregrounds severe projected consequences as a core content element."
+      }
+    ]
+  }
+}

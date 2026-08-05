@@ -1,0 +1,21 @@
+{
+  "cluster_id": 10,
+  "label_class": "remove",
+  "n_members": 17,
+  "sampled_feature_ids": [
+    "3_1",
+    "24_1",
+    "33_0",
+    "31_0",
+    "32_1",
+    "17_5",
+    "18_1",
+    "9_6"
+  ],
+  "result": {
+    "cluster_id": 10,
+    "cluster_label": "Exclamatory imperative and insult punctuation",
+    "definition": "REMOVE posts that rely on highly emphatic punctuation (e.g., repeated exclamation marks, emphatic question/imperative forms, ellipses) used to intensify aggressive or abusive rhetoric.",
+    "salience_notes": "The sample repeatedly pairs strong punctuation with command/taunt structure and harsh invective, with capitalization/newline stacking reinforcing emotional escalation."
+  }
+}

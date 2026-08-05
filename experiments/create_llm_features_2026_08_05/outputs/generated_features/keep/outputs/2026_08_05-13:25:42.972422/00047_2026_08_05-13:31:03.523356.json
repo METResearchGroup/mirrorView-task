@@ -1,0 +1,94 @@
+{
+  "batch_id": 47,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_9a57114b74baf2d0785a106a0322e3d755d6318747e5396b833d33cf5d698e09",
+    "reddit_1klrtv5_ms4wvfw",
+    "reddit_1trbmne_oos7s3p",
+    "reddit_1tsxfco_ooztj59",
+    "reddit_1u0k7q8_oqkevst",
+    "reddit_1u1z88l_oqull8d",
+    "twitter_2059406900933087367",
+    "twitter_2061195333623783508",
+    "twitter_2061529349250253260",
+    "twitter_2061774787781791781"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1klrtv5_ms4wvfw",
+        "feature_name": "high_profanity_intensity",
+        "feature_value": "Uses explicit profanity to intensify criticism/praise",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking Constitution\" / \"fucking rights\"",
+        "rationale": "The text directly contains strong taboo/profanity terms."
+      },
+      {
+        "message_id": "reddit_1klrtv5_ms4wvfw",
+        "feature_name": "normative_constitutional_language",
+        "feature_value": "Normative moral/rights framing around the Constitution and rights",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"defending the\" \"Constitution\" / \"protecting people's\" \"rights\"",
+        "rationale": "It asserts a should-be role for courts in protecting rights, using normative phrasing."
+      },
+      {
+        "message_id": "twitter_2059406900933087367",
+        "feature_name": "all_caps_initial_claim",
+        "feature_value": "All-caps emphasis in headline-style claim",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"It's Completely Legal\"",
+        "rationale": "Capitalization is used for emphatic, headline-like legal/permission assertion."
+      },
+      {
+        "message_id": "twitter_2059406900933087367",
+        "feature_name": "gun_policy_domain_framing",
+        "feature_value": "Directly discusses machine guns and open carry/gun laws",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Walk around Las Vegas With A Machine Gun\" / \"openly Carry A Machine Gun\"",
+        "rationale": "The primary topic is firearms policy, specifically machine gun legality/open carry."
+      },
+      {
+        "message_id": "bluesky_9a57114b74baf2d0785a106a0322e3d755d6318747e5396b833d33cf5d698e09",
+        "feature_name": "geographic_scope_state_level",
+        "feature_value": "State-specific subject (Texan vs Californians)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"A Texan\" / \"A Californian\"",
+        "rationale": "The post centers on individuals identified by their US state affiliation."
+      },
+      {
+        "message_id": "bluesky_9a57114b74baf2d0785a106a0322e3d755d6318747e5396b833d33cf5d698e09",
+        "feature_name": "search_timeline_observation_claim",
+        "feature_value": "Empirical-leaning method claim using timeline search",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I searched her timeline for \\\"climate change\\\"\"",
+        "rationale": "It presents an observed evidence-gathering step to support a claim."
+      },
+      {
+        "message_id": "twitter_2061774787781791781",
+        "feature_name": "immigration_border_cost_moral_question",
+        "feature_value": "Immigration/shelter framing with rhetorical question about fairness and costs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"200 illegals\" / \"make them pay\" \"fair share\" / \"Why isn't anybody saying\"",
+        "rationale": "It combines immigration policy cost framing with a fairness appeal in question form."
+      },
+      {
+        "message_id": "reddit_1u1z88l_oqull8d",
+        "feature_name": "us_vs_them_party_polarization_parallelism",
+        "feature_value": "Parallel contrast between Democrats vs Republicans",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats\" ... \"Republicans\" ... \"Republicans\" ... \"Democrats\"",
+        "rationale": "The structure alternates party actors and assigns opposing behaviors, creating a clear in-group/out-group contrast."
+      }
+    ]
+  }
+}

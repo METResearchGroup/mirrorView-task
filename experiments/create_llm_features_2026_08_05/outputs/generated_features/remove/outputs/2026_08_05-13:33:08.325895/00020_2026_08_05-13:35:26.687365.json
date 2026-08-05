@@ -1,0 +1,94 @@
+{
+  "batch_id": 20,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_d78b35f3f6fddbf83f1a994cbfc122897e5fe1f990c1f7a40a52af08095935c4",
+    "reddit_1kea4ww_mqhf6as",
+    "reddit_1kq66l8_mt41ijg",
+    "reddit_1kvw690_muewa77",
+    "reddit_1l06djr_mvbe5w1",
+    "reddit_1l5ve6e_mwk6h7r",
+    "reddit_1tgwl5y_omj5a8g",
+    "reddit_1tupifu_opfjibl",
+    "reddit_1tuwb8f_opcw6z6",
+    "twitter_2061590939261432299"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kea4ww_mqhf6as",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck off OSHA\"",
+        "rationale": "The post contains a direct profane command/request."
+      },
+      {
+        "message_id": "reddit_1kvw690_muewa77",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Sexual profanity / obscene insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump can eat my entire ass\"",
+        "rationale": "Contains explicit sexual/obscene wording aimed at a political figure."
+      },
+      {
+        "message_id": "twitter_2061590939261432299",
+        "feature_name": "call_to_action",
+        "feature_value": "Imperative demand about policy/legal action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"YOU NEED TO PUT A JUDGES ON THE FRONT OF THESE PLANES\"",
+        "rationale": "Uses an urgent imperative to instruct action."
+      },
+      {
+        "message_id": "reddit_1l5ve6e_mwk6h7r",
+        "feature_name": "call_to_action",
+        "feature_value": "Demand/command to stop a specific agency behavior",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I demand ICE stop acting\"",
+        "rationale": "The utterance is framed as a direct demand to halt conduct."
+      },
+      {
+        "message_id": "reddit_1l5ve6e_mwk6h7r",
+        "feature_name": "targeted_outgroup_policing_imagery",
+        "feature_value": "Nazis/gestapo analogy to characterize ICE",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"like a Nazi gestapo\"",
+        "rationale": "Employs loaded historical persecution imagery to condemn the target."
+      },
+      {
+        "message_id": "reddit_1tgwl5y_omj5a8g",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Derogatory evaluation + dismissal",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Stupid. Why should we reward bad behavior?\"",
+        "rationale": "Opens with a single-word insult and then a rhetorical question criticizing behavior."
+      },
+      {
+        "message_id": "reddit_1tupifu_opfjibl",
+        "feature_name": "hate_or_dehumanizing_insults_toward_groups",
+        "feature_value": "Uses demeaning slurs for political/ethnic identity linked actors",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"Racist assholes like Pete\"",
+        "rationale": "The post attacks actors using harsh derogatory language tied to race/political ideology."
+      },
+      {
+        "message_id": "bluesky_d78b35f3f6fddbf83f1a994cbfc122897e5fe1f990c1f7a40a52af08095935c4",
+        "feature_name": "policy_domain_gun_control_2a_framing",
+        "feature_value": "Gun rights/mass-shooting argument anchored to 2A and founding-era weapon rules",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Hard to become a mass shooter\" / \"when the Founders wrote the 2A\"",
+        "rationale": "Grounds the claim in firearms regulation and constitutional framing tied to the 2nd Amendment."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 15,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_265989c226f15adc392d904c714059c7fb2781178612d87d923d088ba188326c",
+    "bluesky_9b11ecd39695d5645a66579f3e3b5957566186fc71ced9f48fc86d42e4da2b65",
+    "reddit_1t6bfz8_okhbme8",
+    "reddit_1tuue1j_opchx64",
+    "reddit_1u2cel1_oqwlu61",
+    "twitter_2060663163738083787",
+    "twitter_2060808237427933457",
+    "twitter_2061066935328973239",
+    "twitter_2061755837203226976",
+    "twitter_2061804353774555529"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061804353774555529",
+        "feature_name": "economic_downturn_linked_to_leader_corpus",
+        "feature_value": "Frames economy hurting people; mirrors blame shift between leaders (Trump->Biden).",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump\u0019s Economy Is Hurting Americans\" / \"Biden's Economy Destroyed the Middle Class\"",
+        "rationale": "The post centers on economic harm and explicitly contrasts which leader is responsible in the mirror."
+      },
+      {
+        "message_id": "reddit_1t6bfz8_okhbme8",
+        "feature_name": "mnemonic_slang_name_plays_party_labels",
+        "feature_value": "Uses playful altered party labels (DemocRATS/REPUB-LICANS) implying selective memory/amnesia.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Selective memory loss by the DemocRATS\" / \"Convenient amnesia by the REPUB-LICANS\"",
+        "rationale": "On its face it uses informal, stylized party naming to accuse the opposing side of memory/manipulation."
+      },
+      {
+        "message_id": "reddit_1u2cel1_oqwlu61",
+        "feature_name": "systematic_grift_kickbacks_to_private_companies",
+        "feature_value": "Alleges grift, inflated contracts, kickbacks, and looting of treasury/taxpayers.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"all a grift\" ... \"inflated contracts\" ... \"kickbacks\" ... \"loot the US treasury\"",
+        "rationale": "The wording is a strong factual-sounding corruption claim with financial harm mechanisms."
+      },
+      {
+        "message_id": "twitter_2061066935328973239",
+        "feature_name": "climate_crisis_call_to_action_with_hashtags",
+        "feature_value": "Pro-climate unity/campaign message with hashtag call to action.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Only by working together\" / \"#people\" \"#climate crisis\" \"#Join us\" \"#share!\"",
+        "rationale": "This is explicitly about climate policy engagement and uses hashtags for mobilization."
+      },
+      {
+        "message_id": "twitter_2061066935328973239",
+        "feature_name": "anti_authoritarian_moralized_scam_framing_in_mirror",
+        "feature_value": "Mirror reframes climate crisis as control scam and urges awakening.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"just another excuse for big government to control your life\" ... \"#WakeUp and stop falling for the scam\"",
+        "rationale": "The mirror asserts a moralized deception/control narrative and prescribes a response (wake up/stop)."
+      },
+      {
+        "message_id": "twitter_2060663163738083787",
+        "feature_name": "gender_rights_zero_sum_tradeoff_frame",
+        "feature_value": "Claims women/men rights must be adjusted to grant equal rights; includes quoted rebuttal.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"take women's rights away\" ... \"free men and give them equal rights\" / \"True, but men would be free.\"",
+        "rationale": "The structure argues a normative rights tradeoff and contains a counterargument-and-rejoinder."
+      },
+      {
+        "message_id": "twitter_2060663163738083787",
+        "feature_name": "counterargument_quote_and_resolution_structure",
+        "feature_value": "Uses quoted objection plus \"True, but...\" resolution.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"But that would not prevent the collapse of the west.\" True, but men would be free.",
+        "rationale": "The quote introduces a challenge, then the text resolves it with a concessive pattern."
+      },
+      {
+        "message_id": "bluesky_265989c226f15adc392d904c714059c7fb2781178612d87d923d088ba188326c",
+        "feature_name": "rhetorical_question_assault_weapon_legitimacy",
+        "feature_value": "Challenges assault weapons with an explicit rhetorical question targeting need/ownership.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Why on earth does anyone need an assault weapon?\"",
+        "rationale": "The post uses a direct rhetorical question as the main argumentative device."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 44,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_019fa32e4ac2765762e9f7221a24cc4b4f3458dfb10eb57d85005cc1cb313a6c",
+    "bluesky_3bf444de2438eb824955a82d4783b43b14327315eb9935a6bd9bad520ece7e4b",
+    "bluesky_cf845deac0e0c1d5522e8e4f42b52219084f5e0407ec9dae4e1d85fb3c35f09c",
+    "reddit_1t9j11f_ol2rd6t",
+    "reddit_1tgwl5y_omrjga7",
+    "reddit_1tobgfe_oo0boja",
+    "reddit_1u1ijaj_oqr7v79",
+    "twitter_2060065054037246354",
+    "twitter_2061673390692315427",
+    "twitter_2061767396038209886"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tgwl5y_omrjga7",
+        "feature_name": "approx_token_length_band_medium",
+        "feature_value": "medium length (\u224825\u201335 tokens)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": ">There is zero evidence it was because of Jan 6. None. If anything, instead of the 3 hours on Jan 6, it was more likely due to the defund the police movement, and the BLM riots in DC that went on for months.",
+        "rationale": "The post is a short argument with multiple clauses and specific references, fitting a medium-length band."
+      },
+      {
+        "message_id": "twitter_2061767396038209886",
+        "feature_name": "hashtag_or_mention_pattern_flash_facts_intro",
+        "feature_value": "Uses attention-getting \u201cFlash facts!\u201d framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Flash facts!\"",
+        "rationale": "The opening uses an imperative \u201cFlash facts!\u201d to signal quick factual claims."
+      },
+      {
+        "message_id": "twitter_2061767396038209886",
+        "feature_name": "economic_cost_benefit_framing_multiple_x_multiplier",
+        "feature_value": "Cost-benefit comparison using 5 to 20 times less/more",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Would cost 5 to 20 times less\" / \"cost 5 to 20 times MORE\"",
+        "rationale": "The argument centers on quantified cost multipliers to evaluate policy options."
+      },
+      {
+        "message_id": "reddit_1tobgfe_oo0boja",
+        "feature_name": "profanity_or_taboo_language_direct_exhortation",
+        "feature_value": "Profanity used in command (\u201cfuck off\u201d / \u201cshut the hell up\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Name names or fuck off.\"",
+        "rationale": "A taboo/profane imperative directly challenges the target."
+      },
+      {
+        "message_id": "bluesky_cf845deac0e0c1d5522e8e4f42b52219084f5e0407ec9dae4e1d85fb3c35f09c",
+        "feature_name": "second_amendment_framing_right_to_remove",
+        "feature_value": "\u201c2nd/Second amendment\u201d invoked as justification",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"exercise their second amendment right\" / \"2A exists for a reason.\"",
+        "rationale": "The core subject is gun-rights (Second Amendment) used to support a stated stance."
+      },
+      {
+        "message_id": "bluesky_cf845deac0e0c1d5522e8e4f42b52219084f5e0407ec9dae4e1d85fb3c35f09c",
+        "feature_name": "ridicule_or_mockery_abusive_personalization",
+        "feature_value": "\u201ccowards/fools\u201d evaluative labels",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"cowards\" ... \"fools who gatekeep\"",
+        "rationale": "The speaker uses derogatory labels to dismiss opposing actors and justify their view."
+      },
+      {
+        "message_id": "bluesky_3bf444de2438eb824955a82d4783b43b14327315eb9935a6bd9bad520ece7e4b",
+        "feature_name": "factual_assertion_vs_speculation_statistics_causal_data",
+        "feature_value": "Statistical claims + evidence/courage-to-act framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"45,000 Americans die\" ... \"We have the data\" ... \"What we lack is political courage\"",
+        "rationale": "The post asserts figures and evidence and uses a practical concluding claim about what\u2019s missing."
+      },
+      {
+        "message_id": "twitter_2060065054037246354",
+        "feature_name": "call_to_action_defunding_unless_catch_phrase",
+        "feature_value": "Urgent deadline + \u201cunless Congress acts/fight back\u201d mobilization",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"There are 37 Days until July 4!\" ... \"unless Congress acts!\" / \"unless we fight back!\"",
+        "rationale": "It combines a countdown with an explicit conditional call to action to intervene politically."
+      }
+    ]
+  }
+}

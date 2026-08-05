@@ -1,0 +1,21 @@
+{
+  "cluster_id": 7,
+  "label_class": "remove",
+  "n_members": 18,
+  "sampled_feature_ids": [
+    "11_1",
+    "40_0",
+    "17_4",
+    "9_7",
+    "3_6",
+    "13_5",
+    "38_0",
+    "42_3"
+  ],
+  "result": {
+    "cluster_id": 7,
+    "cluster_label": "Partisan voters blamed via us-vs-them",
+    "definition": "REMOVE posts that frame political opposition as an out-group and assign collective blame or condemnation to the other side\u2019s voters/party (often by mirroring blame across factions) using an adversarial in-group vs out-group narrative.",
+    "salience_notes": "The sample consistently uses group-based partisan labeling (e.g., \u201call the libs,\u201d \u201cMAGA crowd,\u201d \u201cblue/red states\u201d) with blanket negative judgments and, in some cases, mirrored blame swapping between parties."
+  }
+}

@@ -1,0 +1,82 @@
+[
+  {
+    "feature_id": "0_0",
+    "message_id": "bluesky_de734bc474bc703ef18a57dd0912b0e59942c19e460a057eda0be98463c587dc",
+    "feature_name": "approximate_token_length_band",
+    "feature_value": "short",
+    "category": "surface_lexical",
+    "rationale": "The post is a brief sentence with a compact clause structure.",
+    "evidence_span": "\"Another nutcase gun owner, don\u2019t listen to NRA and gun nut lies.\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "0_1",
+    "message_id": "reddit_1la5fmz_mxit2c1",
+    "feature_name": "profanity_or_taboo_language",
+    "feature_value": "contains slur/profanity term",
+    "category": "surface_lexical",
+    "rationale": "The text uses explicit vulgar profanity as an insult.",
+    "evidence_span": "\"Fucking fascists\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "0_2",
+    "message_id": "reddit_1la5fmz_mxit2c1",
+    "feature_name": "call_to_action",
+    "feature_value": "implicit exhortation via classification/condemnation",
+    "category": "pragmatics_intent",
+    "rationale": "The speaker performs a direct directive framing (separating groups) rather than neutral description.",
+    "evidence_span": "\"I choose to separate the good people...\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "0_3",
+    "message_id": "reddit_1lb8wyo_mxr2wwj",
+    "feature_name": "high_punctuation_intensity",
+    "feature_value": "emphasis via repeated punctuation/ellipsis-free run-on style",
+    "category": "surface_lexical",
+    "rationale": "Dash-separated emphatic assertions create strong intensity.",
+    "evidence_span": "\"Of course it\u2019s intentional - it\u2019s clearly targeted and looks like it could be coordinated.\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "0_4",
+    "message_id": "reddit_1lb8wyo_mxr2wwj",
+    "feature_name": "targeted_anti_politician_insult_in_mirror",
+    "feature_value": "anti-Biden / anti-radical left blame in mirror",
+    "category": "target_directionality",
+    "rationale": "The mirror rewrites blame toward specific political groups with direct profanity.",
+    "evidence_span": "\"Fuck Biden, fuck the radical left.\"",
+    "cluster_id": 0
+  },
+  {
+    "feature_id": "0_5",
+    "message_id": "twitter_2060938389461827850",
+    "feature_name": "informal_register_or_slang",
+    "feature_value": "internet slang/intensifiers",
+    "category": "surface_lexical",
+    "rationale": "Uses casual discourse markers like \"fr\" and informal address.",
+    "evidence_span": "\"this is a global warming thing fr like the grass is burning\"",
+    "cluster_id": 1
+  },
+  {
+    "feature_id": "0_6",
+    "message_id": "reddit_1tjs35z_on41ada",
+    "feature_name": "named_proper_nouns_density",
+    "feature_value": "high (party names/political figures)",
+    "category": "surface_lexical",
+    "rationale": "The text explicitly references multiple political proper nouns and entities.",
+    "evidence_span": "\"Republican Party\" \"Trump\"",
+    "cluster_id": 2
+  },
+  {
+    "feature_id": "0_7",
+    "message_id": "reddit_1tle2vc_onf49sq",
+    "feature_name": "ridicule_or_mockery",
+    "feature_value": "personal insult/derogatory infantilization",
+    "category": "pragmatics_intent",
+    "rationale": "Uses degrading mockery aimed at a named political figure in the mirror/original contrast.",
+    "evidence_span": "\"He\u2019s just a fucking bratty child that never grew up.\"",
+    "cluster_id": 1
+  }
+]

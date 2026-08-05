@@ -1,0 +1,19 @@
+{
+  "cluster_id": 0,
+  "label_class": "remove",
+  "n_members": 6,
+  "sampled_feature_ids": [
+    "4_1",
+    "18_3",
+    "25_1",
+    "15_3",
+    "0_1",
+    "30_1"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Dense named political/religious entities",
+    "definition": "REMOVE posts that pack multiple named entities (e.g., politicians, parties, institutions, organizations, or salient identity categories) into a single statement to enable direct, targeted blame or argument clarity.",
+    "salience_notes": "These examples repeatedly show high concentration of specific names/labels (political actors, government agencies, parties, and identity/legal references) in one sentence or post."
+  }
+}

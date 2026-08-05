@@ -1,0 +1,19 @@
+{
+  "cluster_id": 10,
+  "label_class": "keep",
+  "n_members": 6,
+  "sampled_feature_ids": [
+    "27_7",
+    "23_2",
+    "9_7",
+    "0_1",
+    "44_5",
+    "24_4"
+  ],
+  "result": {
+    "cluster_id": 10,
+    "cluster_label": "Ridicule, slurs, and derisive targeting",
+    "definition": "KEEP posts in this cluster use explicit mockery\u2014often with personal insults, slurs, or derisive labels\u2014to belittle opponents and dismiss their credibility or motives.",
+    "salience_notes": "All sampled features share contempt-focused pragmatics (derision markers like \u201cloooool,\u201d gendered slurs, \u201ccowards/fools,\u201d and insulting framing) directed at political or identity-related targets."
+  }
+}

@@ -49,3 +49,77 @@ This repo has the following setup:
   - generated_embeddings/{keep,remove}
   - clusters/{keep,remove}
   - generated_labels/{keep,remove}
+
+### Run on a small batch
+
+```bash
+# --- KEEP ---
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/llm_generate_features.py \
+  --label-class keep --sample-size 10 --posts-per-batch 10 --seed 42
+# Record KEEP_FEAT_DIR=.../outputs/generated_features/keep/outputs/<TS>
+# Or omit --features-run-dir below to use latest timestamp
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_embeddings.py \
+  --label-class keep --features-run-dir "$KEEP_FEAT_DIR"
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py \
+  --label-class keep --embeddings-run-dir "$KEEP_EMB_DIR" --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py \
+  --label-class keep --clusters-run-dir "$KEEP_CLUS_DIR" --sample-per-cluster 8 --seed 42
+
+# --- REMOVE ---
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/llm_generate_features.py \
+  --label-class remove --sample-size 10 --posts-per-batch 10 --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_embeddings.py \
+  --label-class remove --features-run-dir "$REMOVE_FEAT_DIR"
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py \
+  --label-class remove --embeddings-run-dir "$REMOVE_EMB_DIR" --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py \
+  --label-class remove --clusters-run-dir "$REMOVE_CLUS_DIR" --sample-per-cluster 8 --seed 42
+```
+
+Stages 2–4 also accept omitting the `*-run-dir` flag to use the latest timestamp under that class’s stage root.
+
+### Run on a larger batch
+
+```bash
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/llm_generate_features.py \
+  --label-class keep --sample-size 500 --posts-per-batch 10 --seed 42
+# → 50 prompts; leftover_message_ids empty
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_embeddings.py \
+  --label-class keep
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py \
+  --label-class keep --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py \
+  --label-class keep --sample-per-cluster 8 --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/llm_generate_features.py \
+  --label-class remove --sample-size 500 --posts-per-batch 10 --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_embeddings.py \
+  --label-class remove
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py \
+  --label-class remove --seed 42
+
+PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py \
+  --label-class remove --sample-per-cluster 8 --seed 42
+```
+
+Do **not** run production until smoke artifacts (including the four class-root cluster PNGs) are reviewed and explicitly approved. Write `RESULTS.md` only from the production run.
+
+### Artifact formats
+
+| Stage | Primary artifacts |
+|-------|-------------------|
+| 1 | `outputs/generated_features/{class}/outputs/{ts}/` (runner `metadata.json` + item JSON) |
+| 2 | `outputs/generated_embeddings/{class}/{ts}/features.jsonl` + `embeddings.npy` + `feature_ids.json` |
+| 3 | `outputs/clusters/{class}/{ts}/assignments_hdbscan.json` (+ `assignments_kmeans.json`); class-root PNGs |
+| 4 | `outputs/generated_labels/{class}/outputs/{ts}/` (runner rows with `result.cluster_label`) |

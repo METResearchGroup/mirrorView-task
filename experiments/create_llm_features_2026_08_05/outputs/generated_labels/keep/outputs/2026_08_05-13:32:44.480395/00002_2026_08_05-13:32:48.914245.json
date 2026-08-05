@@ -1,0 +1,21 @@
+{
+  "cluster_id": 2,
+  "label_class": "keep",
+  "n_members": 8,
+  "sampled_feature_ids": [
+    "10_4",
+    "17_4",
+    "24_5",
+    "44_6",
+    "23_6",
+    "2_2",
+    "22_3",
+    "45_5"
+  ],
+  "result": {
+    "cluster_id": 2,
+    "cluster_label": "Declarative claims with quantified evidence",
+    "definition": "KEEP posts that present non-hypothetical declarative claims supported by concrete observation, statistics, or enumerated specifics rather than vague speculation.",
+    "salience_notes": "The shared pattern is a stance of certainty\u2014using firsthand reportage, numeric/statistical figures, and concrete tool/action lists to ground conclusions and prescriptions."
+  }
+}
