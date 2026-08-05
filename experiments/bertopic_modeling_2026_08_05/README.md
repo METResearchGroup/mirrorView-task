@@ -24,6 +24,11 @@ Later on, we then visualize the post clusters on a 2-D cluster map. We'll create
 - By cluster, but coloring each post on whether it was kept (green) or removed (red)
 - By cluster, but coloring each post on whether the labels were unanimous (green) or not unanimous (red). This requires a merge with the `STUDY_PHASE_2_PART_2_RESULTS_FULL` dataset from the shared dataloader.
 
+For the topic representation step, we'll use two methods:
+
+- The default c-TF-IDF, to get keywords
+- LLM-based labeling.
+
 We have the following Python files, in src/:
 
 - load_embeddings.py
@@ -64,4 +69,34 @@ topic_model = BERTopic(
 )
 
 topics, probs = topic_model.fit_transform(docs, embeddings)
+```
+
+For generating topics with the LLM, we'll do something like this:
+
+```python
+from bertopic.representation import OpenAI
+import openai
+
+client = openai.OpenAI()  # OPENAI_API_KEY from .env
+representation_model = OpenAI(
+    client,
+    model="gpt-5.4-nano",  # align with create_llm_features
+    chat=True,
+    nr_docs=4,
+    diversity=0.1,
+    doc_length=150,
+    tokenizer="whitespace",
+    prompt="""I have a topic that contains the following documents:
+[DOCUMENTS]
+The topic is described by the following keywords: [KEYWORDS]
+
+Based on the information above, extract a short topic label in the following format:
+topic: <topic label>
+""",
+)
+
+# After fit: update representations without re-clustering
+topic_model.update_topics(docs, representation_model=representation_model)
+# or multi-aspect at fit time:
+# BERTopic(representation_model={"ctfidf_keywords": ..., "llm": representation_model})
 ```
