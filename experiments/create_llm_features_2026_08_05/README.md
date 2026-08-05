@@ -50,8 +50,6 @@ This repo has the following setup:
   - clusters/{keep,remove}
   - generated_labels/{keep,remove}
 
-## Stage run order
-
 Per label class: `keep` | `remove`. Stages are class-conditional (never mix keep and remove in one LLM batch).
 
 Pinned sizes:
@@ -64,7 +62,7 @@ Pinned sizes:
 
 Requires `OPENAI_API_KEY` (repo-root `.env` or env) and AWS credentials for Bedrock Titan.
 
-### Smoke (both classes)
+### Run on a small batch
 
 ```bash
 # --- KEEP ---
@@ -98,7 +96,7 @@ PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/genera
 
 Stages 2–4 also accept omitting the `*-run-dir` flag to use the latest timestamp under that class’s stage root.
 
-### Production (after smoke approval only)
+### Run on a larger batch
 
 ```bash
 PYTHONPATH=. uv run python experiments/create_llm_features_2026_08_05/src/llm_generate_features.py \
