@@ -19,16 +19,33 @@ We'll run this in a pipeline-like approach.
 
 We have the following Python files, in src/
 
-- llm_generate_features.py
+- llm_generate_features.py # uses the `runner` from research_tools
 - generate_embeddings.py
 - cluster_embeddings.py
-- generate_labels_for_embeddings.py
+- generate_labels_for_embeddings.py # uses the `runner` from research_tools
 
 We store our results in outputs/, as
 
-- generated_features/
-- generated_embeddings/
-- clusters/
-- generated_labels/
+- generated_features/{keep,remove}
+- generated_embeddings/{keep,remove}
+- clusters/{keep,remove}
+- generated_labels/{keep,remove}
+
+We keep all generated outputs in this folder.
 
 We use `gpt5.4-nano` for our LLM. We use Amazon Titan for the embeddings (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized).
+
+This repo has the following setup:
+
+- README.md
+- RESULTS.md
+- src/
+  - llm_generate_features.py
+  - generate_embeddings.py
+  - cluster_embeddings.py
+  - generate_labels_for_embeddings.py
+- outputs/
+  - generated_features/{keep,remove}
+  - generated_embeddings/{keep,remove}
+  - clusters/{keep,remove}
+  - generated_labels/{keep,remove}
