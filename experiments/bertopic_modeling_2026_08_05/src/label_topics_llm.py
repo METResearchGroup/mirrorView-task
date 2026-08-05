@@ -113,7 +113,27 @@ def run_label_topics_llm(topics_run_dir: Path | None) -> LabelResult:
         doc_length=DOC_LENGTH,
         tokenizer=TOKENIZER,
         prompt=LLM_PROMPT,
+        generator_kwargs={"temperature": 1},
     )
+    # BERTopic defaults stop="\n" when stop is missing/falsy; gpt-5.4-nano rejects stop.
+    representation_model.generator_kwargs.pop("stop", None)
+
+    _orig_extract = representation_model.extract_topics
+
+    def _extract_skip_noise(topic_model, documents, c_tf_idf, topics):
+        representation_model.generator_kwargs.pop("stop", None)
+        filtered = {
+            topic_id: words
+            for topic_id, words in topics.items()
+            if int(topic_id) != NOISE_TOPIC_ID
+        }
+        labeled = _orig_extract(topic_model, documents, c_tf_idf, filtered)
+        if NOISE_TOPIC_ID in topics or str(NOISE_TOPIC_ID) in topics:
+            noise_key = NOISE_TOPIC_ID if NOISE_TOPIC_ID in topics else str(NOISE_TOPIC_ID)
+            labeled[noise_key] = topics[noise_key]
+        return labeled
+
+    representation_model.extract_topics = _extract_skip_noise  # type: ignore[method-assign]
     topic_model.update_topics(docs, representation_model=representation_model)
 
     topic_info = topic_model.get_topic_info()
