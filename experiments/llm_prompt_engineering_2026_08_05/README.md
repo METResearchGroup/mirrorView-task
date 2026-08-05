@@ -19,4 +19,4 @@ We do the following:
 
 We use the same Pydantic model in `shared/schemas.py` for our response class.
 
-We use `gpt5.4-nano` here, as in our other experiments.
+We use `gpt5.4-nano` here, as in our other experiments. For running the LLM experiments, we use `research_tools.llm.runner.run`.
