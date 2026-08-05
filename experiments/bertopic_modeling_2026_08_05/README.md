@@ -180,8 +180,10 @@ experiments/bertopic_modeling_2026_08_05/
     │       └── <UTC_TS>/
     │           ├── metadata.json
     │           ├── assignments.parquet   # message_id, topic, probability
+    │           ├── assignments.json      # same rows as parquet (JSON records)
     │           ├── probabilities.npy     # optional soft probs
     │           ├── topic_info.parquet    # c-TF-IDF keywords / names
+    │           ├── topic_info.json       # same rows as parquet (JSON records)
     │           ├── umap_2d.npy
     │           └── model/                # topic_model.save(...)
     ├── labels/
