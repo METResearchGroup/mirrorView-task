@@ -1,0 +1,16 @@
+{
+  "cluster_id": 0,
+  "label_class": "keep",
+  "n_members": 3,
+  "sampled_feature_ids": [
+    "0_5",
+    "0_0",
+    "0_4"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Moral outrage with insulting taboo language",
+    "definition": "KEEP posts in this cluster use moral/rights-based outrage framing while pairing it with contemptuous insult or taboo/harsh labeling toward an opposing group or supporters.",
+    "salience_notes": "The co-occurrence of normative rights language with dismissive profanity or dehumanizing descriptors signals an aggressive, contempt-driven rhetorical stance rather than neutral critique."
+  }
+}

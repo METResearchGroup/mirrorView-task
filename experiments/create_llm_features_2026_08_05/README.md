@@ -60,7 +60,7 @@ Pinned sizes:
 - Production (Step 7, **only after explicit smoke approval**): `--sample-size 500 --posts-per-batch 10` → 50 keep + 50 remove feature-gen prompts; ≤8 features/prompt → ≤800 features to embed
 - Clustering (Stage 3): both HDBSCAN + KMeans; PNGs at `outputs/clusters/{keep,remove}/cluster_{hdbscan,kmeans}.png`
 - Labeling (Stage 4): **HDBSCAN assignments only** (KMeans is comparison-only). Noise (`cluster_id=-1`) is skipped for labeling.
-- HDBSCAN `min_cluster_size` defaults to 5; for tiny smoke `n` it is auto-lowered (documented in Stage-3 metadata).
+- HDBSCAN `min_cluster_size` defaults to 5; for tiny smoke `n` (`n_features < 20`) it is auto-set to `min_cluster_size=2`, `min_samples=1` (documented in Stage-3 metadata) so clusters can form for labeling.
 
 Requires `OPENAI_API_KEY` (repo-root `.env` or env) and AWS credentials for Bedrock Titan.
 

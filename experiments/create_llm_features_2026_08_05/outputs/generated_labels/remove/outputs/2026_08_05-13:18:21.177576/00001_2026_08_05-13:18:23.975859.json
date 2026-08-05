@@ -1,0 +1,15 @@
+{
+  "cluster_id": 1,
+  "label_class": "remove",
+  "n_members": 2,
+  "sampled_feature_ids": [
+    "0_1",
+    "0_5"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Profanity-laced informal internet insults",
+    "definition": "REMOVE posts that combine explicit taboo/profane or slur-like language with casual internet/slang register in an insulting or contemptuous manner.",
+    "salience_notes": "Both members show surface-level lexical cues (profanity/slur and informal internet discourse markers) co-occurring in aggressive phrasing."
+  }
+}

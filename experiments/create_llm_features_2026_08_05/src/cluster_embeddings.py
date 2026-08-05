@@ -110,34 +110,62 @@ def load_stage2_embeddings(embeddings_run_dir: Path) -> tuple[np.ndarray, list[d
     return matrix, records
 
 
-def resolve_min_cluster_size(n_features: int, requested: int) -> int:
-    """Choose HDBSCAN min_cluster_size, lowering for tiny smoke runs.
+def resolve_hdbscan_params(
+    n_features: int,
+    requested_min_cluster_size: int,
+) -> tuple[int, int, str | None]:
+    """Choose HDBSCAN min_cluster_size and min_samples for the run size.
+
+    Production-scale n keeps the requested min_cluster_size. Tiny smoke n
+    (e.g. ≤8 features) lowers min_cluster_size to 2 and min_samples to 1 so
+    clusters can form; otherwise all points become noise and Stage 4 cannot
+    label.
 
     Parameters
     ----------
     n_features
         Number of feature vectors.
-    requested
+    requested_min_cluster_size
         Preferred min_cluster_size (default 5).
 
     Returns
     -------
-    int
-        Effective min_cluster_size (at least 2 when n_features >= 2).
+    tuple[int, int, str | None]
+        Effective min_cluster_size, min_samples, and optional override reason.
     """
     if n_features < 2:
         raise ValueError(f"Need at least 2 features to cluster, got {n_features}")
-    if n_features >= requested * 2:
-        return requested
-    return max(2, min(requested, n_features // 2))
+    if n_features >= requested_min_cluster_size * 2:
+        return requested_min_cluster_size, requested_min_cluster_size, None
+    effective_size = max(2, min(requested_min_cluster_size, n_features // 2))
+    # For very small smoke corpora, prefer denser core points so clusters form.
+    if n_features < 20:
+        effective_size = 2
+        min_samples = 1
+        reason = (
+            f"n_features={n_features} < 20: "
+            f"min_cluster_size=2, min_samples=1 "
+            f"(requested min_cluster_size={requested_min_cluster_size})"
+        )
+        return effective_size, min_samples, reason
+    reason = (
+        f"n_features={n_features} < 2 * requested={requested_min_cluster_size}"
+    )
+    return effective_size, effective_size, reason
 
 
 def fit_hdbscan(
     scaled_matrix: np.ndarray,
     min_cluster_size: int,
+    min_samples: int,
 ) -> tuple[np.ndarray, dict[str, Any]]:
     """Fit sklearn HDBSCAN and return labels plus params metadata."""
-    model = HDBSCAN(min_cluster_size=min_cluster_size, metric=HDBSCAN_METRIC)
+    model = HDBSCAN(
+        min_cluster_size=min_cluster_size,
+        min_samples=min_samples,
+        metric=HDBSCAN_METRIC,
+        copy=True,
+    )
     labels = model.fit_predict(scaled_matrix)
     unique = set(int(label) for label in labels)
     n_noise = int(np.sum(labels == -1))
@@ -145,6 +173,7 @@ def fit_hdbscan(
     params = {
         "method": "hdbscan",
         "min_cluster_size": min_cluster_size,
+        "min_samples": min_samples,
         "metric": HDBSCAN_METRIC,
         "n_clusters": n_clusters,
         "n_noise": n_noise,
@@ -432,15 +461,17 @@ def run_cluster_embeddings(
     matrix, records = load_stage2_embeddings(source_dir)
     scaled = StandardScaler().fit_transform(matrix)
 
-    effective_min_cluster_size = resolve_min_cluster_size(
+    effective_size, min_samples, override_reason = resolve_hdbscan_params(
         matrix.shape[0],
         min_cluster_size,
     )
-    hdbscan_labels, hdbscan_params = fit_hdbscan(scaled, effective_min_cluster_size)
-    if effective_min_cluster_size != min_cluster_size:
-        hdbscan_params["min_cluster_size_override_reason"] = (
-            f"n_features={matrix.shape[0]} < 2 * requested={min_cluster_size}"
-        )
+    hdbscan_labels, hdbscan_params = fit_hdbscan(
+        scaled,
+        effective_size,
+        min_samples,
+    )
+    if override_reason is not None:
+        hdbscan_params["min_cluster_size_override_reason"] = override_reason
 
     selected_k, k_rows, k_mode = select_k_silhouette(scaled, seed)
     kmeans_labels = fit_kmeans(scaled, selected_k, seed)

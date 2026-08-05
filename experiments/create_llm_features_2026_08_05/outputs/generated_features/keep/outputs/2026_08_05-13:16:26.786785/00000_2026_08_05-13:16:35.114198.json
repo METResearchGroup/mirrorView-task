@@ -1,0 +1,94 @@
+{
+  "batch_id": 0,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_0adc8f441279c4feef55a2a5094a1803aecbf64f1cdf46536e8d9f9b16d08f12",
+    "bluesky_e33e77c87442bed068fac31f5ea7d6bafa6b245e7fe52329e4ee0969e85608f4",
+    "bluesky_ed4e6b2ebc2d0175171c6e1d3ed54dccc405e18fc6b505ed478ce2b36d90ea6d",
+    "reddit_1l48h1m_mw71clk",
+    "reddit_1l5ve6e_mwlu3ze",
+    "reddit_1ljukdf_mzmrewd",
+    "reddit_1t9dxnw_ol60a9d",
+    "reddit_1tws6al_opr0kf7",
+    "twitter_2060103043576709566",
+    "twitter_2060947308586373373"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1l48h1m_mw71clk",
+        "feature_name": "high_profanity_or_taboo_language",
+        "feature_value": "No profanity; strong slur/labeling (e.g., 'fascists', 'narcissistic')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"dumb narcissistic fascists\"",
+        "rationale": "The post uses harsh ideological labeling and degrading descriptors rather than neutral disagreement."
+      },
+      {
+        "message_id": "reddit_1tws6al_opr0kf7",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames one party for wrongdoing in the original and the mirror shifts to the other party",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Almost every time there\u2019s actual election fraud, it\u2019s Republicans.\" / \"...voter suppression... Democrats\"",
+        "rationale": "The structure attributes systematic wrongdoing to an in-group/out-group contrast (party blame)."
+      },
+      {
+        "message_id": "bluesky_e33e77c87442bed068fac31f5ea7d6bafa6b245e7fe52329e4ee0969e85608f4",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Uses an explicit conditional framing with 'If' in the question and 'When' in the mirror",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"*If* climate change continues...?\" / \"*When* energy prices bankrupt working families...\"",
+        "rationale": "The post pivots from an if-clause hypothesis to a presumed consequence ('When'), guiding an argumentative comparison."
+      },
+      {
+        "message_id": "twitter_2060947308586373373",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Direct proposal about making voting access harder/easier, with policy details",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Lets make voting as difficult as it is to buy a gun. Federal background checks and all.\"",
+        "rationale": "The post contains an explicit normative call for policy change and specific mechanism language (background checks/hoops)."
+      },
+      {
+        "message_id": "bluesky_ed4e6b2ebc2d0175171c6e1d3ed54dccc405e18fc6b505ed478ce2b36d90ea6d",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Rights-based moral/normative framing of violations and constitutional protection",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"blatant violation of people's second amendment rights\" / \"blatant attack on people's constitutional right\"",
+        "rationale": "The language treats the issue as a blatant rights violation requiring attention."
+      },
+      {
+        "message_id": "reddit_1ljukdf_mzmrewd",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity used for dismissal/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"full of shit\"",
+        "rationale": "The post includes coarse taboo language to express contempt toward supporters."
+      },
+      {
+        "message_id": "reddit_1l5ve6e_mwlu3ze",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit hostile imperative targeting a group and their families",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck you, fuck ICE, fuck their families, rot in hell.\"",
+        "rationale": "Imperative/framing directives ('Fuck...') function as an aggressive communicative act rather than a discussion."
+      },
+      {
+        "message_id": "twitter_2060103043576709566",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Rhetorical questions plus reference to Roe v. Wade as a causal/justificatory anchor",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"...but who is the bill protecting?? Why is the government so obsessed... The overturned Roe v. Wade is another obsession.\"",
+        "rationale": "Uses multiple rhetorical questions and a factual/legal reference ('overturned Roe v. Wade') to argue about government motives."
+      }
+    ]
+  }
+}

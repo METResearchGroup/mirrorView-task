@@ -1,0 +1,20 @@
+{
+  "start_timestamp": "2026_08_05-13:18:21.177576",
+  "total_items": 3,
+  "run_metadata": {
+    "stage": "cluster_labeling",
+    "label_class": "remove",
+    "source_clusters_run_dir": "experiments/create_llm_features_2026_08_05/outputs/clusters/remove/2026-08-05T13-18-19",
+    "clustering_method": "hdbscan",
+    "sample_per_cluster": 8,
+    "seed": 42,
+    "model": "gpt-5.4-nano",
+    "cluster_ids": [
+      0,
+      1,
+      2
+    ],
+    "n_noise_skipped": 0
+  },
+  "end_timestamp": "2026_08_05-13:18:25.395422"
+}

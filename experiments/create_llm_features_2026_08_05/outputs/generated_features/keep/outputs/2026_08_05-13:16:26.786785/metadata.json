@@ -1,0 +1,27 @@
+{
+  "start_timestamp": "2026_08_05-13:16:26.786785",
+  "total_items": 1,
+  "run_metadata": {
+    "stage": "feature_generation",
+    "label_class": "keep",
+    "sample_size": 10,
+    "posts_per_batch": 10,
+    "seed": 42,
+    "model": "gpt-5.4-nano",
+    "max_features_per_batch": 8,
+    "message_ids": [
+      "bluesky_0adc8f441279c4feef55a2a5094a1803aecbf64f1cdf46536e8d9f9b16d08f12",
+      "bluesky_e33e77c87442bed068fac31f5ea7d6bafa6b245e7fe52329e4ee0969e85608f4",
+      "bluesky_ed4e6b2ebc2d0175171c6e1d3ed54dccc405e18fc6b505ed478ce2b36d90ea6d",
+      "reddit_1l48h1m_mw71clk",
+      "reddit_1l5ve6e_mwlu3ze",
+      "reddit_1ljukdf_mzmrewd",
+      "reddit_1t9dxnw_ol60a9d",
+      "reddit_1tws6al_opr0kf7",
+      "twitter_2060103043576709566",
+      "twitter_2060947308586373373"
+    ],
+    "leftover_message_ids": []
+  },
+  "end_timestamp": "2026_08_05-13:16:35.114404"
+}
