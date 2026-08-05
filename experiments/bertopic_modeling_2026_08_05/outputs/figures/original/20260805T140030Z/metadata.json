@@ -1,0 +1,24 @@
+{
+  "source_topics_run": "experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z",
+  "source_labels_run": "experiments/bertopic_modeling_2026_08_05/outputs/labels/original/20260805T140017Z",
+  "unanimous_rule_id": "all_linked_fate_raters_same_decision",
+  "n_points": 8790,
+  "figures": [
+    "clusters_by_topic.html",
+    "clusters_by_topic.png",
+    "clusters_by_keep_remove.html",
+    "clusters_by_keep_remove.png",
+    "clusters_by_unanimous.html",
+    "clusters_by_unanimous.png"
+  ],
+  "color_legend": {
+    "keep_remove": {
+      "keep": "green",
+      "remove": "red"
+    },
+    "unanimous": {
+      "unanimous": "green",
+      "not_unanimous": "red"
+    }
+  }
+}

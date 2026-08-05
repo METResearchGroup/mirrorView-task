@@ -246,4 +246,12 @@ PYTHONPATH=. uv run --extra bertopic python \
 
 # Smoke (Step 6): --sample-size 50, then stop for approval
 # Production (Step 7, after approval): omit --sample-size (all original posts)
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/label_topics_llm.py \
+  --topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/<UTC_TS>
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/visualize_clusters.py \
+  --topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/<UTC_TS>
 ```

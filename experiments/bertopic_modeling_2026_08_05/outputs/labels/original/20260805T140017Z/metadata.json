@@ -1,0 +1,12 @@
+{
+  "model": "gpt-5.4-nano",
+  "prompt": "I have a topic that contains the following documents:\n[DOCUMENTS]\nThe topic is described by the following keywords: [KEYWORDS]\n\nBased on the information above, extract a short topic label in the following format:\ntopic: <topic label>\n",
+  "source_topics_run": "experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z",
+  "nr_docs": 4,
+  "diversity": 0.1,
+  "doc_length": 150,
+  "tokenizer": "whitespace",
+  "noise_label_policy": "llm_label_null_skip_api",
+  "n_topics_labeled": 53,
+  "unanimous_rule_id": null
+}
