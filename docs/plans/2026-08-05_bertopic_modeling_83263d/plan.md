@@ -57,35 +57,35 @@ Keep stages isolated so UMAP/HDBSCAN retunes never re-spend OpenAI calls: embedd
 
 ## Steps
 
-Detail for each step will live under `steps/` after this draft is confirmed.
+Full contracts, file allow/forbid lists, and pass/fail commands: [`steps/`](./steps/).
 
 ### Step 1: Scaffold package, paths, data join, and optional dependencies
 
-Create `experiments/bertopic_modeling_2026_08_05/src/` with `__init__.py`, `paths.py`, and `data.py` (keep/remove load + unanimous join from `STUDY_PHASE_2_PART_2_RESULTS_FULL`, rule recorded in run metadata). Add a `bertopic` entry under `[project.optional-dependencies]` in `pyproject.toml` (mirror the `modernbert-training` extra shape; allow bertopic’s usual UMAP/HDBSCAN transitive deps; do not touch default `dependencies` or `dependency-groups.dev`). Document stage CLI order in the existing README, including `uv sync --extra bertopic` and `uv run --extra bertopic` (commands only).
+[`steps/step1.md`](./steps/step1.md) — Create `src/` (`paths.py`, `data.py` with unanimous join rule `all_linked_fate_raters_same_decision`, four stage stubs), add optional `bertopic` extra in `pyproject.toml`, document CLI order in README.
 
 ### Step 2: Implement Titan embedding cache loader
 
-Implement `experiments/bertopic_modeling_2026_08_05/src/load_embeddings.py`: default path loads a complete `outputs/embeddings/original/` cache; `--backfill` fills missing `message_id` rows via `shared/embeddings/bedrock.py` only. Cache holds vectors + id index; post text always reloads from the dataset by `message_id`.
+[`steps/step2.md`](./steps/step2.md) — Implement `load_embeddings.py`: local cache under `outputs/embeddings/original/`; DynamoDB+S3 identity-cache refresh; optional Bedrock `--backfill` for residuals only.
 
 ### Step 3: Implement BERTopic fit (no LLM)
 
-Implement `experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py`: `fit_transform` with embeddings passed in, UMAP + HDBSCAN + CountVectorizer settings from the README, soft probabilities on, write timestamped artifacts under `outputs/topics/original/<UTC_TS>/` including assignments, c-TF-IDF topic info, optional probability matrix, `umap_2d.npy`, saved model, and `metadata.json`.
+[`steps/step3.md`](./steps/step3.md) — Implement `fit_bertopic.py`: README UMAP/HDBSCAN/CountVectorizer; embeddings passed in; smoke `--sample-size 50` with `min_cluster_size` override; topics artifacts + `umap_2d.npy`.
 
 ### Step 4: Implement post-hoc LLM topic labeling
 
-Implement `experiments/bertopic_modeling_2026_08_05/src/label_topics_llm.py`: `update_topics` with `bertopic.representation.OpenAI` (`gpt-5.4-nano`, prompt shape from README), skip noise topic `-1`, write under `outputs/labels/original/<UTC_TS>/` with pointer to the source topics run.
+[`steps/step4.md`](./steps/step4.md) — Implement `label_topics_llm.py`: `update_topics` + `bertopic.representation.OpenAI` (`gpt-5.4-nano`); skip topic `-1`; labels run linked to source topics run.
 
 ### Step 5: Implement three-overlay cluster visualizations
 
-Implement `experiments/bertopic_modeling_2026_08_05/src/visualize_clusters.py`: load one shared `umap_2d.npy` plus assignments and overlay columns; emit Plotly HTML and PNG for topic, keep/remove, and unanimous under `outputs/figures/original/<UTC_TS>/`.
+[`steps/step5.md`](./steps/step5.md) — Implement `visualize_clusters.py`: one shared `umap_2d.npy`; topic / keep-remove / unanimous overlays; six Plotly HTML+PNG files.
 
 ### Step 6: Smoke end-to-end on 50 posts (approval gate)
 
-Run stages 1–4 on a fixed sample of **50** original posts. Confirm cache, topics, labels, and all six figure files land. **Stop and wait for explicit user approval.** Do not run the full-corpus production path or write production `RESULTS.md` here.
+[`steps/step6.md`](./steps/step6.md) — Run stages 1–4 on 50 posts; verify artifacts; **stop for explicit approval** before full corpus.
 
 ### Step 7: Full-corpus production run and RESULTS.md
 
-Only after Step-6 approval: run stages 2–4 on **all** original posts (reuse embedding cache), then write `experiments/bertopic_modeling_2026_08_05/RESULTS.md` with model/embedding ids, fit params, topic counts (including noise), label model, figure paths, and artifact run directories.
+[`steps/step7.md`](./steps/step7.md) — After approval: fit/label/viz on all original cached posts; write `RESULTS.md`.
 
 ## What "done" looks like
 
