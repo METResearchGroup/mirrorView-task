@@ -19,4 +19,47 @@ We do the following:
 
 We use the same Pydantic model in `shared/schemas.py` for our response class.
 
-We use `gpt5.4-nano` here, as in our other experiments. For running the LLM experiments, we use `research_tools.llm.runner.run`.
+We use `gpt-5.4-nano` here, as in our other experiments. For running the LLM experiments, we use `research_tools.llm.runner.run`.
+
+## Commands
+
+Freeze the evaluation subset (random sample, seed 42):
+
+```bash
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_2026_08_05/build_subset.py
+```
+
+Smoke both arms on 5 rows (requires `OPENAI_API_KEY` in repo-root `.env`). Review metrics, then approve before production:
+
+```bash
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_2026_08_05/run_classifier.py \
+  --arm both --limit 5 --model gpt-5.4-nano
+```
+
+Production (full 500 × both arms; only after smoke approval):
+
+```bash
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_2026_08_05/run_classifier.py \
+  --arm both --model gpt-5.4-nano
+```
+
+Score one arm or write the two-row RESULTS table:
+
+```bash
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_2026_08_05/evaluate.py \
+  --run-dir experiments/llm_prompt_engineering_2026_08_05/outputs/control/outputs/<TS>
+
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_2026_08_05/evaluate.py \
+  --control-run-dir experiments/llm_prompt_engineering_2026_08_05/outputs/control/outputs/<TS> \
+  --tuned-run-dir experiments/llm_prompt_engineering_2026_08_05/outputs/tuned/outputs/<TS> \
+  --write-results experiments/llm_prompt_engineering_2026_08_05/RESULTS.md
+```
+
+## RESULTS.md shape
+
+| Arm | Accuracy | Precision | Recall | F1 |
+| --- | --- | --- | --- | --- |
+| control | … | … | … | … |
+| prompt-tuned | … | … | … | … |
+
+Positive class for precision / recall / F1 is remove (`keep_remove_label=1`). See [RESULTS.md](RESULTS.md) after the production run.
