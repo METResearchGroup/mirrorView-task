@@ -1,19 +1,19 @@
 # Part 2 smoke notes (approval gate)
 
-**Date:** 2026-08-05  
-**Status:** Smoke complete — approved; production documented in `RESULTS.md`  
+**Date:** 2026-08-05
+**Status:** Smoke complete and approved. Production is documented in `RESULTS.md`.
 **Do not treat as production RESULTS.**
 
 ## Smoke settings
 
 | Setting | Low | High |
 | ------- | --- | ---- |
-| Stage-1 sample size | 10 | 20 (seed 43; first seed-42 / n=10 smoke had 8 features, all HDBSCAN noise) |
+| Stage 1 sample size | 10 | 20 (seed 43; the first seed 42 / n=10 smoke had 8 features, and all were HDBSCAN noise) |
 | Docs per batch | 10 | 10 |
-| Seed | 42 | 43 (Stage 1); Stage 2–4 seed 42 |
+| Seed | 42 | 43 for Stage 1; Stages 2 to 4 use seed 42 |
 | Feature-gen batches | 1 | 2 |
 | Features embedded | 7 | 16 |
-| Stage-3 `min_cluster_size` | 5 (auto-lowered to 2 for n&lt;20) | **2** (explicit; default 5 left all 16 points as noise) |
+| Stage 3 `min_cluster_size` | 5 (auto-lowered to 2 for n&lt;20) | 2 (explicit; default 5 left all 16 points as noise) |
 
 ## Artifact paths
 
@@ -26,7 +26,7 @@
 | 3 | `outputs/clusters/low/2026-08-05T21-07-26` |
 | 4 | `outputs/generated_labels/low/outputs/2026_08_05-21:08:20.328434` |
 
-HDBSCAN: 3 clusters, 0 noise. KMeans k=3 (comparison).
+HDBSCAN found 3 clusters and 0 noise. KMeans selected k=3 for comparison.
 
 ### High
 
@@ -37,7 +37,7 @@ HDBSCAN: 3 clusters, 0 noise. KMeans k=3 (comparison).
 | 3 | `outputs/clusters/high/2026-08-05T21-08-17` |
 | 4 | `outputs/generated_labels/high/outputs/2026_08_05-21:08:33.354578` |
 
-HDBSCAN: 2 clusters, 4 noise. KMeans k=2 (comparison).
+HDBSCAN found 2 clusters and 4 noise. KMeans selected k=2 for comparison.
 
 ## Class-root PNGs
 
@@ -65,8 +65,8 @@ HDBSCAN: 2 clusters, 4 noise. KMeans k=2 (comparison).
 
 ## Checklist
 
-1. Stage-1 dirs for low and high: yes  
-2. Stage-2 `embeddings.npy` + `features.jsonl` + `feature_ids.json`: yes  
-3. Stage-3 assignments + class-root PNGs (both methods, both groups): yes  
-4. Stage-4 labels for non-noise HDBSCAN clusters: yes  
-5. Approved; production full-corpus run + `RESULTS.md` completed separately
+1. Stage 1 dirs for low and high: yes
+2. Stage 2 `embeddings.npy` + `features.jsonl` + `feature_ids.json`: yes
+3. Stage 3 assignments + class-root PNGs (both methods, both groups): yes
+4. Stage 4 labels for non-noise HDBSCAN clusters: yes
+5. Approved. The full-corpus production run and `RESULTS.md` are separate.
