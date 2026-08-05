@@ -35,6 +35,12 @@ modernbert-training = [
     "sagemaker>=2.240.0,<3",
     "boto3>=1.42.88",
 ]
+bertopic = [
+    "bertopic>=0.17.0",
+    "openai>=1.0.0",
+    "plotly>=5.0.0",
+    "kaleido>=0.2.1",
+]
 
 [dependency-groups]
 dev = [
