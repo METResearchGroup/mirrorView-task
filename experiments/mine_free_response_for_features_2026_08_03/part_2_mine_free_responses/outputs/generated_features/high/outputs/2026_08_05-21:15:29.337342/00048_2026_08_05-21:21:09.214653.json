@@ -1,0 +1,97 @@
+{
+  "batch_id": 48,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988206397_r47qmmgw2",
+    "P_1781988351702_6zh6v7e0a",
+    "P_1781989085945_ckjeb8shb",
+    "P_1781989237407_nvybwjsla",
+    "P_1781989537252_074dl65d2",
+    "P_1781990861317_fp7c08k3q",
+    "P_1781991267654_slnob3guy",
+    "P_1781993920821_amr5t1vnf",
+    "P_1781999727071_xwnh3zbrm",
+    "P_1782143869964_38nd5v43a"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 48,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989237407_nvybwjsla",
+        "feature_name": "prioritized_curbing_abusive_language",
+        "feature_value": "Focused on limiting name-calling/cursing to decide keep/remove.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"trying to limit the name calling and cursing\"",
+        "rationale": "The participant explicitly ties their decision to reducing profanity and name-calling."
+      },
+      {
+        "participant_id": "P_1781990861317_fp7c08k3q",
+        "feature_name": "tone_language_affects_productivity_assessment",
+        "feature_value": "Used tone/language cues to judge whether posts could lead to productive conversation.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"the tone and the language used\" ... \"certain messages would never lead to productive conversations\"",
+        "rationale": "They describe how tone/language determines whether a post is considered dialog-friendly."
+      },
+      {
+        "participant_id": "P_1781999727071_xwnh3zbrm",
+        "feature_name": "violence_or_profanity_threshold_for_removal",
+        "feature_value": "Removal if profane or endorsing violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If it was profane or endorsing violence it needs to be removed\"",
+        "rationale": "They state a direct rule linking profane/violent endorsement to removal."
+      },
+      {
+        "participant_id": "P_1781989537252_074dl65d2",
+        "feature_name": "argument_substance_over_personal_insults",
+        "feature_value": "Kept when posts made a real political argument; removed when mainly mean/insulting.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"making a real political argument or just being mean and insulting\"",
+        "rationale": "They use an argument-vs-insult distinction as the key criterion."
+      },
+      {
+        "participant_id": "P_1781988206397_r47qmmgw2",
+        "feature_name": "fairness_reasonableness_and_no_violence",
+        "feature_value": "Wanted posts to be reasonable to others even without agreement, and ensured it wasn\u2019t a call for violence.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"make sure that it was reasonable to people\" ... \"and it wasn't just a call for violence\"",
+        "rationale": "Their criteria emphasize fair-minded reasonableness and specifically exclude violence calls."
+      },
+      {
+        "participant_id": "P_1781991267654_slnob3guy",
+        "feature_name": "context_drives_interpretation_of_both_posts",
+        "feature_value": "Decisions based on the context/meaning of both versions.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"the context and the meaning of both contexts\"",
+        "rationale": "They explicitly report using contextual meaning from both items to decide."
+      },
+      {
+        "participant_id": "P_1781988351702_6zh6v7e0a",
+        "feature_name": "remove_aggressive_or_trolling_not_views",
+        "feature_value": "Removed posts that seemed aggressive or like trolling; notes views weren\u2019t largely different across pair.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"removed the ones that seemed aggressive or like trolling\"",
+        "rationale": "They frame influence as identifying aggression/trolling rather than ideological disagreement."
+      },
+      {
+        "participant_id": "P_1781993920821_amr5t1vnf",
+        "feature_name": "avoided_removing_below_incitement_line",
+        "feature_value": "Tried not to remove unless crossing a line that might incite violence or overreaction.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"didn't cross a line that  might incite violence or other over reaction\"",
+        "rationale": "They articulate a threshold-based approach tied to incitement/overreaction risk."
+      }
+    ]
+  }
+}

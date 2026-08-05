@@ -1,0 +1,97 @@
+{
+  "batch_id": 9,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988217722_zzta332cp",
+    "P_1781988263777_uuinqqrc9",
+    "P_1781988614436_02rc3xpi3",
+    "P_1781988615018_5pz1fihk6",
+    "P_1781988691382_cqvk4zqxo",
+    "P_1781988732923_wrmq0vt0t",
+    "P_1781989197963_jr8zm9w33",
+    "P_1781989562276_e1q00w1st",
+    "P_1781997780656_ehjkq70sa",
+    "P_1782005199188_lj960blbi"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 9,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781997780656_ehjkq70sa",
+        "feature_name": "threat_violence_removal_trigger",
+        "feature_value": "Would remove only when implied/encouraged threats of violence appear; otherwise allow expression.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "implied or encouraged threats of violence",
+        "rationale": "The participant explicitly states violence-related threat content is the criterion for removal."
+      },
+      {
+        "participant_id": "P_1781988217722_zzta332cp",
+        "feature_name": "name_calling_or_personal_attack_blocks_keep",
+        "feature_value": "Allows if making a point but not if it becomes name-calling/viciously attacking a person or group.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "not just name-calling or viciously attacking a person or group of people",
+        "rationale": "They describe a boundary between acceptable argumentation and unacceptable personal/group attacks."
+      },
+      {
+        "participant_id": "P_1781989562276_e1q00w1st",
+        "feature_name": "profanity_specificity_based_on_words",
+        "feature_value": "Used specific profanity words/length cues as a deciding factor (e.g., certain sex-act or insult terms) to cross the line.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Four letter words for a sex act",
+        "rationale": "They tie decisions to particular profane word types and lengths."
+      },
+      {
+        "participant_id": "P_1781988263777_uuinqqrc9",
+        "feature_name": "curse_word_targeting_not_needed",
+        "feature_value": "Removes pairs when foul language is used, especially when it seems someone is targeted with curse words; free speech but curb harassment.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Attacking someone with curse words isn't needed",
+        "rationale": "They state foul language targeting/attacking drove removal despite valuing free speech."
+      },
+      {
+        "participant_id": "P_1781988691382_cqvk4zqxo",
+        "feature_name": "no_threat_no_red_flag_approach",
+        "feature_value": "Decision based on whether anything felt threatening; if no red flags/threats, keep.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Didn't see anything that raised a red flag",
+        "rationale": "They explicitly use absence of threatening cues as the basis for their keep/remove decision."
+      },
+      {
+        "participant_id": "P_1781988732923_wrmq0vt0t",
+        "feature_name": "indifference_to_pair_influence_free_opinion_norm",
+        "feature_value": "Claims their decision was not really influenced; believes people are entitled to their opinions without judgment.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "Nothing really influenced my decision",
+        "rationale": "They directly attribute minimal impact from the pair and rely on a general norm about opinions."
+      },
+      {
+        "participant_id": "P_1781988615018_5pz1fihk6",
+        "feature_name": "misinformation_as_truth_not_allowed",
+        "feature_value": "Accepts free speech generally but removes when misinformation is presented as truth, plus removes violence-directed content.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "misinformation described as truth is not",
+        "rationale": "They set a substantive criterion for removal beyond violence: misinformation framed as truth."
+      },
+      {
+        "participant_id": "P_1781988614436_02rc3xpi3",
+        "feature_name": "argument_quality_guides_keep_with_minor_threat_edge_case",
+        "feature_value": "Kept posts that made an argument/meaningful opinion; only removed when close to a death-threat or otherwise less substantive.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "made an argument or expressed a meaningful opinion",
+        "rationale": "They use argument quality as the main rule, with an edge-case removal tied to threat-likeness."
+      }
+    ]
+  }
+}

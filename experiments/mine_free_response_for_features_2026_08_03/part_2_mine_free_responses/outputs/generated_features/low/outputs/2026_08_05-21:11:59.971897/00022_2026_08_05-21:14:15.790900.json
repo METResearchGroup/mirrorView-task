@@ -1,0 +1,79 @@
+{
+  "batch_id": 22,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988352041_gzvq5objx",
+    "P_1781988699013_pqvab7tbt",
+    "P_1781988898022_qmeczd3yi",
+    "P_1781988919290_ntz4op4a9",
+    "P_1781990210243_4gx3m4pff",
+    "P_1781991647845_9hinr66tv",
+    "P_1781994235676_hrk0xxq80",
+    "P_1781994766296_lbuwnu62i",
+    "P_1781995788311_eh4u8gmy8",
+    "P_1782013589597_x3ox94dfm"
+  ],
+  "feature_count": 6,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 22,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781995788311_eh4u8gmy8",
+        "feature_name": "violence_encouragement_is_removal_trigger",
+        "feature_value": "Treats condoning/encouraging violence as a reason to remove quickly (stamps out).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "anything condoning or encouraging violence on EITHER opposite political party should be stamped out asap.",
+        "rationale": "The reflection explicitly states a removal rule focused on violence encouragement."
+      },
+      {
+        "participant_id": "P_1781990210243_4gx3m4pff",
+        "feature_name": "hate_is_primary_allow_condition",
+        "feature_value": "Allows unless hate is being spewed.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Just as long no hate was being spewed I will allowit.",
+        "rationale": "Their criterion for allowing content is specifically the absence of hate."
+      },
+      {
+        "participant_id": "P_1781994235676_hrk0xxq80",
+        "feature_name": "tone_level_aggression_affects_allow_ban",
+        "feature_value": "Allows constructive arguments with appropriate language; bans overly aggressive/profane posts.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If someone was making a constructive argument with mostly appropriate language, I allowed the post. If they were overly aggressive with profanities, I banned the posts.",
+        "rationale": "They provide a clear language/tone threshold tying profanity/aggression to bans."
+      },
+      {
+        "participant_id": "P_1781994766296_lbuwnu62i",
+        "feature_name": "violent_language_check_only_minor_influence",
+        "feature_value": "Decision focused on whether any violent language is used; finds most content mild and not easily offended.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I was reading to make sure there wasn\u00198t any violent language used... I am also no easily offended either way",
+        "rationale": "Their process emphasizes checking violence and suggests insensitivity to other differences, consistent with low pair influence."
+      },
+      {
+        "participant_id": "P_1782013589597_x3ox94dfm",
+        "feature_name": "pair_experiment_insensitivity",
+        "feature_value": "Did not meaningfully compare the pair; just held a general free speech stance.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "My main thought as I read each one was that freedom of speech is real.",
+        "rationale": "The reflection indicates decisions were driven by a general principle rather than the original-vs-mirror comparison."
+      },
+      {
+        "participant_id": "P_1781988919290_ntz4op4a9",
+        "feature_name": "viewpoint_fairness_across_sides",
+        "feature_value": "Moderation aimed to allow viewpoints from both sides regardless of political side.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "allow the viewpoints of each side regardless of which political side it comes from.",
+        "rationale": "They describe a strategy of equal treatment across partisan perspectives."
+      }
+    ]
+  }
+}

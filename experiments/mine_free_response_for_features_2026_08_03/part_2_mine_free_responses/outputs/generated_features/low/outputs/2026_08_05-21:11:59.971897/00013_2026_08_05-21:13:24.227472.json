@@ -1,0 +1,97 @@
+{
+  "batch_id": 13,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988157590_07yjc9e60",
+    "P_1781988469930_2a14wbx1j",
+    "P_1781988474563_k3i6hbzqy",
+    "P_1781988864714_gmgk3b52n",
+    "P_1781989483041_7e3ids78n",
+    "P_1781990728073_e32wfsrpy",
+    "P_1781995697366_wgseyafr4",
+    "P_1782003038740_09qlniojh",
+    "P_1782008114287_53booj3b4",
+    "P_1782018232807_k125r3iot"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 13,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988474563_k3i6hbzqy",
+        "feature_name": "free_speech_do_not_discriminate_by_side",
+        "feature_value": "Strongly favors letting both sides\u2019 comments through regardless of political orientation; argues neither side should restrict others and frames bias as bad.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Any sort of political social media platform should let all comments through, no matter the side.",
+        "rationale": "The participant explicitly states they allow both sides and oppose side-based restriction."
+      },
+      {
+        "participant_id": "P_1781988864714_gmgk3b52n",
+        "feature_name": "violence_call_is_key_threshold",
+        "feature_value": "Allows political voicing as long as there are no calls for violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "As long as there wasn't any calls for violence, I didn't have a problem with either side voicing their opinion.",
+        "rationale": "They define a specific content boundary (no calls for violence) as the main criterion."
+      },
+      {
+        "participant_id": "P_1781995697366_wgseyafr4",
+        "feature_name": "line_at_wishing_death_public_figures",
+        "feature_value": "Keeps nonviolent discourse but removes content that wishes death on public figures.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I drew the line at wishing for deaths of public figures.",
+        "rationale": "They describe a concrete \u201cline\u201d tied to harm/wishing death."
+      },
+      {
+        "participant_id": "P_1781990728073_e32wfsrpy",
+        "feature_name": "vulgarity_drives_removal",
+        "feature_value": "Removes posts primarily when they contain vulgar/disgusting language; claims focus on being unbiased.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Some post had vulgar and disgusting language.So those were the ones I tended to remove.",
+        "rationale": "They directly link vulgar/disgusting language to removal decisions."
+      },
+      {
+        "participant_id": "P_1781988469930_2a14wbx1j",
+        "feature_name": "tone_aggression_and_making_a_point",
+        "feature_value": "Judges based on how aggressive the author sounds and whether they are making a point.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I considered how aggressive the author sounded and if they were making any kind of point.",
+        "rationale": "Their stated criteria emphasize perceived author aggression and argumentative intent."
+      },
+      {
+        "participant_id": "P_1782008114287_53booj3b4",
+        "feature_name": "default_to_not_censor",
+        "feature_value": "Wants to err on the side of not censoring posts.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I wanted to err on the side of not censoring posts",
+        "rationale": "They state a general conservative-with-censorship principle."
+      },
+      {
+        "participant_id": "P_1781988157590_07yjc9e60",
+        "feature_name": "minimal_moderation_catharsis_view",
+        "feature_value": "Opposes censorship/moderation; sees caustic/inflammatory expression as emotional release/catharsis and stress reduction.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "I don't believe in censorship or moderating the responses.",
+        "rationale": "They articulate a rationale for why they resist moderation decisions."
+      },
+      {
+        "participant_id": "P_1782018232807_k125r3iot",
+        "feature_name": "mirror_influence_non_engaged_generic",
+        "feature_value": "Provides no meaningful reflection beyond a generic assertion that both views are wrong.",
+        "category": "process_meta",
+        "is_open_ended": true,
+        "evidence_span": "Both views are totally wrong",
+        "rationale": "The reflection does not describe decision factors, suggesting limited engagement/detail."
+      }
+    ]
+  }
+}

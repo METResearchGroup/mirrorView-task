@@ -1,0 +1,97 @@
+{
+  "batch_id": 20,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988431014_owfrgqubo",
+    "P_1781988925854_4odas3ray",
+    "P_1781988993646_ll2fwjfy1",
+    "P_1781989650827_0gbyi19k5",
+    "P_1781989848456_noxlkrj6l",
+    "P_1781991943645_l4z7dwlxo",
+    "P_1781992781732_wf4acz71p",
+    "P_1781993222430_rixudidcl",
+    "P_1782009075106_553bexan9",
+    "P_1782186743295_0ufa9hw65"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 20,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988431014_owfrgqubo",
+        "feature_name": "constructive_vs_hostile_content_test",
+        "feature_value": "Used whether posts contributed to constructive political discussion vs relied on harassment/dehumanization/slurs/incitement; removed abusive/harmful ones in both",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "whether the content contributed to constructive political discussion versus whether it relied on harassment, dehumanization, slurs, or incitement to violence",
+        "rationale": "Clearly states a keep/remove basis grounded in hostility vs constructiveness and ties removals to abusive violence-related content."
+      },
+      {
+        "participant_id": "P_1781989848456_noxlkrj6l",
+        "feature_name": "swearing_triggers_removal",
+        "feature_value": "Looked specifically for swearing and rejected posts containing it",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I basically looked for any swearing. I rejected those",
+        "rationale": "Directly identifies swearing as the decisive cue for rejection."
+      },
+      {
+        "participant_id": "P_1781988925854_4odas3ray",
+        "feature_name": "healthy_debate_vs_hostility_and_equitable_language_check",
+        "feature_value": "Considered whether mirrored posts were hostile vs stimulating healthy debate; assessed foul/derogatory/exclusionist comments equally regardless of political bias",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "whether the posts would stimulate healthy debate or were hostile... considering foul language, derogatory remarks, and exclusionist comments equally.",
+        "rationale": "Explicitly describes hostility cues and an equity rule applied across the two mirrored items."
+      },
+      {
+        "participant_id": "P_1781988993646_ll2fwjfy1",
+        "feature_name": "reciprocity_symmetry_between_mirrored_pair",
+        "feature_value": "Wanted posts to be reciprocal/symmetric so the pair equally reflected both sides, not weighted one way",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I tried to reject ones that weren't reciprocal... the two posts collectively to equally reflect both sides",
+        "rationale": "Indicates a comparison strategy focused on balance/reciprocity across the pair."
+      },
+      {
+        "participant_id": "P_1781989650827_0gbyi19k5",
+        "feature_name": "objective_argument_vs_personal_attack_threshold",
+        "feature_value": "Kept when objectively argued/supporting an argument; removed when it seemed like personal attacks without substantial evidence",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "what was their objective... were they trying to personaly attack... If I thoght it was just an attack with no substantial evidence or unfair I didnt like it",
+        "rationale": "States an evidence/objectivity vs personal-attack distinction driving removal decisions."
+      },
+      {
+        "participant_id": "P_1782009075106_553bexan9",
+        "feature_name": "harm_and_violence_concern_plus_misinformation_flag",
+        "feature_value": "Removed content likely to cause harm/lead to more violence and removed anything interpretable as misinformation",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "remove posts that were going to cause harm on both sides and more violence... removing anything that could be interpreted wrong or as misinformation.",
+        "rationale": "Directly names harm/violence and misinformation as elimination criteria."
+      },
+      {
+        "participant_id": "P_1781991943645_l4z7dwlxo",
+        "feature_name": "paired_context_to_separate_passion_from_policy_violations",
+        "feature_value": "Using pair contrast as context helped distinguish passionate expression from actual policy violations and made joint decisions fair/consistent across viewpoints",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "highlighted how different sides frame the exact same issue... distinguish between passionate political expression and actual policy violations",
+        "rationale": "Describes using mirrored-pair context to differentiate general passion from rule-breaking."
+      },
+      {
+        "participant_id": "P_1782186743295_0ufa9hw65",
+        "feature_name": "open_mind_not_playing_favorites",
+        "feature_value": "Tried to keep an open mind and not favor one side; noted some posts sounded ridiculous but overall saw no harm statements",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "i tried to keep an open mind and not play favorites",
+        "rationale": "Shows a stated attitude aimed at reducing bias while still assessing content ridiculousness."
+      }
+    ]
+  }
+}

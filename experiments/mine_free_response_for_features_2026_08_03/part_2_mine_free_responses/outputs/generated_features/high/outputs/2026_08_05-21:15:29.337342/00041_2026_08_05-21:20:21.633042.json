@@ -1,0 +1,97 @@
+{
+  "batch_id": 41,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988815229_r820cdafk",
+    "P_1781988906209_odjvrpupo",
+    "P_1781989129906_65neswwnw",
+    "P_1781989592313_x0mq90kz5",
+    "P_1781990409471_rmoo0lo6r",
+    "P_1781991176946_bz7b66g57",
+    "P_1781992258654_7jlzgpfm7",
+    "P_1781992845933_oqn9bvkoz",
+    "P_1781994607874_5mmqlcrc2",
+    "P_1782002110183_bto9dcgrz"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 41,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989129906_65neswwnw",
+        "feature_name": "tone_symmetry_focus",
+        "feature_value": "Compared the pair mainly by whether their tone was similarly heated/demeaning rather than by political side; if symmetrical, treated them the same.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "focused more on whether they were similarly heated or demeaning rather than what political side they came from",
+        "rationale": "The reflection explicitly describes using tone similarity across the pair as the primary basis for decisions."
+      },
+      {
+        "participant_id": "P_1781991176946_bz7b66g57",
+        "feature_name": "mirror_only_strategy_ignored_discussion",
+        "feature_value": "Checked whether one post was just a mirror of the other; mirror posts were viewed as disrespectful and not adding discussion.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "evaluate if the posts were genuinely different, or just a mirror of each other. The mirror posts don't provide further discussion, and come across as disrespectful.",
+        "rationale": "They describe a specific comparison criterion (genuine difference vs mirror) tied to perceived disrespect and lack of added discussion."
+      },
+      {
+        "participant_id": "P_1781992258654_7jlzgpfm7",
+        "feature_name": "remove_on_inflammatory_or_threatening",
+        "feature_value": "Removal focus on posts that were inflammatory via profanity or that threatened public figures.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "only concerned if the posts were inflammatory in regards to profanity or threatening to public figures",
+        "rationale": "They name concrete conditions (profanity/inflammatory; threats to public figures) as triggers for removal."
+      },
+      {
+        "participant_id": "P_1781992845933_oqn9bvkoz",
+        "feature_name": "remove_intentional_inflammatory_or_profanity_attack",
+        "feature_value": "Removed only if intentionally inflammatory or profanity-laced personal attack; otherwise kept both versions.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "only removed a post if it was intentionally inflammatory or it was a profanity-laced personal attack. Otherwise, I kept both posts",
+        "rationale": "The participant states a clear keep/remove rule with exception conditions."
+      },
+      {
+        "participant_id": "P_1781989592313_x0mq90kz5",
+        "feature_name": "free_speech_allow_name_calling_no_call_to_action",
+        "feature_value": "Allowed name calling as long as there was no call to action they felt was inappropriate; grounded in belief in free speech over censoring opinions.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I allowed all of them even ones that were name calling because I believe in free speech... none of them madeca call to action",
+        "rationale": "The reflection ties permissiveness to a free-speech rationale and an explicit boundary (no inappropriate call to action)."
+      },
+      {
+        "participant_id": "P_1781988815229_r820cdafk",
+        "feature_name": "pair_side_by_side_improves_objectivity_and_equivalence",
+        "feature_value": "Saying they became more objective side-by-side; treated both as the same kind of heated venting unless crossing lines like hate, threats, or doxing.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "seeing them side by side made it a lot easier to stay objective",
+        "rationale": "They connect the paired view directly to increased objectivity and fairness judgments."
+      },
+      {
+        "participant_id": "P_1781990409471_rmoo0lo6r",
+        "feature_name": "free_speech_merit_allow_heated_arguments",
+        "feature_value": "Loved both sides and allowed heated language if there is some merit/truth; emphasized protecting free speech.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "As long as there is some merit of truth or resemblance, I allowed it. I think we should always protect free speech",
+        "rationale": "They describe a specific criterion (merit/truth/resemblance) combined with a free-speech principle."
+      },
+      {
+        "participant_id": "P_1781994607874_5mmqlcrc2",
+        "feature_name": "ideology_alignment_guided_support",
+        "feature_value": "Stated ideological identification (communist) and supported the communist posts.",
+        "category": "other",
+        "is_open_ended": false,
+        "evidence_span": "I'm a communist. I supported the communist posts.",
+        "rationale": "The decision basis is explicitly ideological, not procedural pair-comparison or content moderation criteria."
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "batch_id": 59,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988284217_4s41evkqt",
+    "P_1781989081770_8z3kgvf12",
+    "P_1781989104029_epg7eims8",
+    "P_1781989825945_tw4raep5y",
+    "P_1781989842652_wcvzm1w3g",
+    "P_1781989945736_mycu9fkkm",
+    "P_1781992764953_rng99iwtq",
+    "P_1782018508431_bxchwokqa",
+    "P_1782026185597_q2g2nfyp2",
+    "P_1782028070267_7dp2683t7"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 59,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989825945_tw4raep5y",
+        "feature_name": "agreement_threshold_for_keep",
+        "feature_value": "Kept the pair when the participant agreed moderately with the messages; removed when it felt \u201ctoo wack.\u201d",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If I agreed moderately with the messages I kept it. If it was too wack I didn't.\"",
+        "rationale": "The reflection explicitly describes an agreement-based threshold that governed keep vs remove decisions."
+      },
+      {
+        "participant_id": "P_1781989081770_8z3kgvf12",
+        "feature_name": "oppositeness_checking_without_personal_opinions",
+        "feature_value": "Focused on whether the statements were truly opposite and tried to set aside personal opinions.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"trying to determine if they were indeed opposite statements and trying to leave my own personal opinions out of it\"",
+        "rationale": "They describe a specific comparison goal (opposite vs not) and an attempt to bracket personal bias."
+      },
+      {
+        "participant_id": "P_1781988284217_4s41evkqt",
+        "feature_name": "remove_for_attacks_or_profanity",
+        "feature_value": "Did not include pairs that were \u201cbashing the other side\u201d or involved cursing; endorsed censoring some content.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"If it was purely bashing the other side or cursing I did not include the pair. Some people should clearly be censored!\"",
+        "rationale": "The decision rule is tied to adversarial/insulting and profanity cues."
+      },
+      {
+        "participant_id": "P_1781989842652_wcvzm1w3g",
+        "feature_name": "inflammatory_language_signal",
+        "feature_value": "Used inflammatory language and curse words to decide whether to remove or keep both.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"I looked at inflammatory language and curse words in deciding if I want to remove or keep both.\"",
+        "rationale": "They directly link inflammatory/profane wording to the keep/remove choice."
+      },
+      {
+        "participant_id": "P_1781989945736_mycu9fkkm",
+        "feature_name": "perspective_taking_about_opposing_views",
+        "feature_value": "Even when harshness seemed unfair, considering how opposing-view people could feel helped them decide.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"Even though it seems a little harsh, it does put into perspective what other people with opposing views could feel like\"",
+        "rationale": "They emphasize perspective-taking as an important factor after noticing harsh differences between paired posts."
+      },
+      {
+        "participant_id": "P_1781992764953_rng99iwtq",
+        "feature_name": "explicit_both_sides_bias_focus",
+        "feature_value": "The main influence was perceiving bias on either side.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"The bias on either side\"",
+        "rationale": "Despite being brief, it clearly identifies bias perception as the driving cue."
+      },
+      {
+        "participant_id": "P_1781989104029_epg7eims8",
+        "feature_name": "fact_vs_falsehood_difference_drives_flip_handling",
+        "feature_value": "Did not flip some pairs because one side relied on facts while the other relied on falsehoods that could be scientifically proven.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"one based on fact and one based on falsehoods that can be scientifically proven.\"",
+        "rationale": "They report a fact-checking criterion (fact vs scientifically provable falsehood) affecting decisions."
+      },
+      {
+        "participant_id": "P_1782018508431_bxchwokqa",
+        "feature_name": "read_all_content_before_deciding",
+        "feature_value": "Ensured they read all content before deciding to leave or remove.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"i was making sure i read everyone of the content before making my decision whether to leave it or remove it\"",
+        "rationale": "The reflection focuses on process diligence (reading everything) as part of the decision."
+      }
+    ]
+  }
+}

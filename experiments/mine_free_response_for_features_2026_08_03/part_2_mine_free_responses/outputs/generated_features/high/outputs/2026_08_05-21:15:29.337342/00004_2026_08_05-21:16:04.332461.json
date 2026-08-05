@@ -1,0 +1,97 @@
+{
+  "batch_id": 4,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988272870_mhv9kxenz",
+    "P_1781988737572_3ftdr3l6p",
+    "P_1781989128220_mmaux35dk",
+    "P_1781989260654_ud72teovm",
+    "P_1781989590042_vfjlc3qge",
+    "P_1781990101425_sprqw69nl",
+    "P_1781992700304_65m976rcm",
+    "P_1781992823568_ra9vgy7t2",
+    "P_1781994684626_4okyk81sb",
+    "P_1781996220417_f4947cd40"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 4,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989590042_vfjlc3qge",
+        "feature_name": "truth_bending_as_comparison_criterion",
+        "feature_value": "Compared versions by how much the truth was bent by each side; difficult to allow both when clearly aligned with one side.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "It was a judgment based upon how much the truth was bent by each side.",
+        "rationale": "The participant explicitly describes using \u201ctruth bent\u201d and side alignment to compare the pair and guide removal/approval."
+      },
+      {
+        "participant_id": "P_1781996220417_f4947cd40",
+        "feature_name": "over_the_top_or_derogatory_gradations",
+        "feature_value": "Used whether posts were blatantly over the top/derogatory vs genuinely harmful or too radical; otherwise let slide.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "seeing whether or not they were just blatantly over the top or just flat out derogatory... If things werent genuinely harmful or too radical, i usually would just let them slide.",
+        "rationale": "Their decision hinges on radicalness/toxicity gradations inferred across the pair."
+      },
+      {
+        "participant_id": "P_1781990101425_sprqw69nl",
+        "feature_name": "targeted_offensive_language_removal_rule",
+        "feature_value": "Removed posts containing offensive/targeting language toward individuals or groups.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I looked for offensive or targeting language toward another individual or group or people, and if I saw a post with that language then I removed them.",
+        "rationale": "They state a concrete rule linking targeting language to removal."
+      },
+      {
+        "participant_id": "P_1781988272870_mhv9kxenz",
+        "feature_name": "approve_when_no_profanity_or_dangerous_attacks",
+        "feature_value": "Approved when both posts expressed thoughts/feelings without profanity or dangerously worded attacks.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "approve when both posts were expressing their thoughts and feelings without profanity or dangerously worded attacks.",
+        "rationale": "The approval criterion is explicitly conditioned on profanity and attack severity."
+      },
+      {
+        "participant_id": "P_1781989260654_ud72teovm",
+        "feature_name": "relative_harm_can_force_blocking_both",
+        "feature_value": "Considered harm level for each post; sometimes one was more harmful and warranted blocking both.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "in some cases, one post might have felt more harmful than the other and warranted the decision of blocking both posts",
+        "rationale": "They describe a comparative harm assessment that can escalate to blocking both items."
+      },
+      {
+        "participant_id": "P_1781988737572_3ftdr3l6p",
+        "feature_name": "danger_to_group_or_individual_screening",
+        "feature_value": "Evaluated whether either post contained anything dangerous to a group or individual.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "I evaluated both to see if either contained anything dangerous to a group or individual.",
+        "rationale": "Their screening focus is explicitly on \u201cdangerous\u201d content aimed at groups/individuals."
+      },
+      {
+        "participant_id": "P_1781992700304_65m976rcm",
+        "feature_name": "free_speech_do_not_pick_a_side",
+        "feature_value": "Believes everything should be posted; moderators should keep on topic, not decide a side.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "everything should be posted... The moderators job is to keep people on topic. NOT DECIDE PICK A SIDE.",
+        "rationale": "This reflects a meta-level policy about impartial moderation and not partisan selection."
+      },
+      {
+        "participant_id": "P_1781992823568_ra9vgy7t2",
+        "feature_name": "backlash_or_health_of_conversation_as_criterion",
+        "feature_value": "For harder choices, considered potential backlash and whether discussion would be healthy or incite hate.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "A big influence for the harder choice ones was the backlash it would have. Would the conversation surrounding it be healthy? If it would just incite more hate, it was a definite no.",
+        "rationale": "They describe a conditional decision process driven by anticipated backlash and incitement risk."
+      }
+    ]
+  }
+}

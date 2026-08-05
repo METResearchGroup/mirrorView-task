@@ -1,0 +1,88 @@
+{
+  "batch_id": 1,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988288998_birqczteo",
+    "P_1781988773453_c1oyb2wul",
+    "P_1781988924540_1rlr6905i",
+    "P_1781989559215_7ti9l2nsg",
+    "P_1781989686872_0ykdav4ry",
+    "P_1781991354295_wucim6wck",
+    "P_1781991974321_r3oezwyca",
+    "P_1781995091051_v66r1djvo",
+    "P_1781998808345_0cnbm8u58",
+    "P_1782013742740_njvdts2y1"
+  ],
+  "feature_count": 7,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 0,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1782013742740_njvdts2y1",
+        "feature_name": "offense_intent_and_attack_assessment",
+        "feature_value": "Used perceived intent/offense and whether it attacked an individual or group; reported being more lenient with political figures.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"how offended I was by the intent\" ... \"whether or not it attacked an individual or group\" ... \"more lenient with political figures\"",
+        "rationale": "The participant explicitly lists multiple criteria they applied when deciding."
+      },
+      {
+        "participant_id": "P_1781991354295_wucim6wck",
+        "feature_name": "hateful_immigrant_content_removal",
+        "feature_value": "Removed posts perceived as hateful toward immigrants, saying they shouldn't be seen even if another post contradicted it.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"The ones that were hateful towards immigrants should not be allowed\" ... \"Even if there was another post\" ... \"should not be seen by anyone\"",
+        "rationale": "They directly connect immigrant-hate content with the removal decision and mention the pair didn't change that."
+      },
+      {
+        "participant_id": "P_1781995091051_v66r1djvo",
+        "feature_name": "offensive_language_blocked",
+        "feature_value": "Would not allow posts that used offensive language, including swearing.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"didn't want to allow anything that used offensive language including swearing\"",
+        "rationale": "They clearly state a language-based threshold driving keep/remove choices."
+      },
+      {
+        "participant_id": "P_1781988924540_1rlr6905i",
+        "feature_name": "vulgar_language_as_trigger",
+        "feature_value": "Treated vulgar language as a reason to be influenced (implied toward removal).",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"If they contained vulgar language\"",
+        "rationale": "Although brief, it directly ties the criterion to their decision process."
+      },
+      {
+        "participant_id": "P_1781988773453_c1oyb2wul",
+        "feature_name": "freedom_of_speech_norm_but_remove_borderline_unhinged",
+        "feature_value": "Stated they support free speech and felt pained about keeping both, yet removed only items they saw as borderline unhinged with foul/disturbing language.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"support freedom of speech\" ... \"pained me\" ... \"hit \\\"keep both\\\"\" ... \"only voted to remove\" ... \"borderline unhinged\"",
+        "rationale": "They describe their approach and how their judgment differed from the baseline free-speech stance."
+      },
+      {
+        "participant_id": "P_1781998808345_0cnbm8u58",
+        "feature_name": "violence_threat_exception",
+        "feature_value": "Looked for threats of violence and used that as a reason to limit speech; if none, they avoided restricting.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"didn't see anything (such as threats of violence)\" ... \"necessitated limiting freedom of speech\"",
+        "rationale": "They present an explicit conditional rule centered on violence threats."
+      },
+      {
+        "participant_id": "P_1781991974321_r3oezwyca",
+        "feature_name": "objectivity_veto_on_gibberish",
+        "feature_value": "Claimed objectivity and said removed items sounded like gibberish to them.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"tried to be objective\" ... \"sounded like gibberish\"",
+        "rationale": "They attribute their decision (removals) to perceived incoherence/gibberish."
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "batch_id": 0,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988268588_j27nz4nie",
+    "P_1781988288054_15t9omflg",
+    "P_1781988309389_fpjt3r7yw",
+    "P_1781988902882_5fma4323l",
+    "P_1781989919276_irascg3hn",
+    "P_1781993123138_2zcijm1jo",
+    "P_1781994165543_cxah2p8zo",
+    "P_1781994642135_po9y5yqgu",
+    "P_1781995651448_81rfpzcsq",
+    "P_1781996524647_3owobm2jk"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 0,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781994642135_po9y5yqgu",
+        "feature_name": "blocked_when_both_sides_emotionally_inflamatory",
+        "feature_value": "Indicates they would block when emotional invectives appear, and that they were not influenced into removing based on a substantive difference but rather on tone from both sides.",
+        "category": "affect_or_confidence",
+        "is_open_ended": true,
+        "evidence_span": "purely emotional invectives from either side caused me to block both.",
+        "rationale": "The participant explicitly ties their blocking decision to emotional invective rather than a specific content change in the pair."
+      },
+      {
+        "participant_id": "P_1781989919276_irascg3hn",
+        "feature_name": "freedom_of_speech_default_with_language_weighting",
+        "feature_value": "Default to keeping due to freedom of speech, but more removal for posts with lots of language.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "I believe everyone has the right to freedom of speech. Posts with lots of language I tended to remove more of.",
+        "rationale": "They describe a keep-first principle and a secondary threshold related to intensity/amount of language."
+      },
+      {
+        "participant_id": "P_1781993123138_2zcijm1jo",
+        "feature_name": "allowed_unless_harmful_threat_to_group_person_or_identity",
+        "feature_value": "Keep as long as content is not harmful or threatening to a group/person/identity (e.g., death directive).",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "So long as nothing harmful or threatening towards a group, person, or identity (like actually telling a person to die",
+        "rationale": "They give an explicit harm/threat criterion as the deciding factor."
+      },
+      {
+        "participant_id": "P_1781988309389_fpjt3r7yw",
+        "feature_name": "removed_namecalling_cursing_hyperbole",
+        "feature_value": "Rejects posts that resort to name calling/cursing/hyperbole; keeps if it\u2019s a reasonable argument in replies.",
+        "category": "content_cues",
+        "is_open_ended": true,
+        "evidence_span": "reject anything that resorted to name calling, cursing or hyperbole.",
+        "rationale": "They list specific rhetorical behaviors that drive rejection/removal."
+      },
+      {
+        "participant_id": "P_1781994165543_cxah2p8zo",
+        "feature_name": "harsh_language_not_civil_conversation",
+        "feature_value": "Evaluates based on whether there is harsh language that is not conducive to a civil conversation.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "if they had harsh language that is not conducive to a civil conversation.",
+        "rationale": "They define a clarity/civility criterion tied to harsh language."
+      },
+      {
+        "participant_id": "P_1781995651448_81rfpzcsq",
+        "feature_name": "impartiality_to_keep_but_emotional_maturity_concern",
+        "feature_value": "Wants impartiality and thinks many are debate-worthy, but emotional maturity would undermine real responses\u2014leading them to be hesitant about removing decisions.",
+        "category": "process_meta",
+        "is_open_ended": true,
+        "evidence_span": "I wanted to be impartial... Unfortunately, the emotional maturity would undermine the opportunity to hear real response.",
+        "rationale": "They describe their decision approach (impartiality) and a concern about impact on discourse quality."
+      },
+      {
+        "participant_id": "P_1781988288054_15t9omflg",
+        "feature_name": "allow_most_unless_verbal_abuse_and_foul_language",
+        "feature_value": "Allows pretty much anything unless it becomes verbally abusive and foul; values limited civility rather than censorship.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "allow pretty much anything unless it got verbal abusive and foul language.",
+        "rationale": "They provide a concrete threshold for when to remove."
+      },
+      {
+        "participant_id": "P_1781988268588_j27nz4nie",
+        "feature_name": "minimal_removal_harm_threshold_plurality_free_speech",
+        "feature_value": "Only a small number are harmful; otherwise they keep because free speech exists for a reason.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "There were only one or two that I would consider harmful. Otherwise, free speech exists for a reason.",
+        "rationale": "They emphasize a low removal rate and justify it with a general free-speech principle."
+      }
+    ]
+  }
+}

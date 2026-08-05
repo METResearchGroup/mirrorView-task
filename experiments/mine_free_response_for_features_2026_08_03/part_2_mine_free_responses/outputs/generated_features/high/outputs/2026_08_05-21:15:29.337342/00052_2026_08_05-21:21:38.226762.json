@@ -1,0 +1,97 @@
+{
+  "batch_id": 52,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988433123_brcgpgruv",
+    "P_1781988712949_3oit0lr75",
+    "P_1781988783513_89usvgflw",
+    "P_1781989436537_0clflu9sj",
+    "P_1781989462320_dhdghsiqw",
+    "P_1781989749001_jtrz55v59",
+    "P_1781992166039_4ea9107f6",
+    "P_1781994753223_ff309y00b",
+    "P_1782005860142_3uj5ca0hh",
+    "P_1782026475424_u59wnkotc"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 52,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988712949_3oit0lr75",
+        "feature_name": "symmetrical_standard_across_pair",
+        "feature_value": "Used fairness/same criteria for both versions (tone/target/language) rather than political stance; removal consistency across sides.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"Evaluating them as a pair made me focus on fairness\"",
+        "rationale": "The reflection explicitly states that comparing as a pair increased focus on applying identical standards to both sides."
+      },
+      {
+        "participant_id": "P_1781988712949_3oit0lr75",
+        "feature_name": "tone_and_harassment_boundary_rule",
+        "feature_value": "Decided based on whether posts stayed in political argument or crossed into personal attacks/slurs/harassment.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"crossed into personal attacks, slurs, or harassment\"",
+        "rationale": "The participant lists a concrete boundary condition for removal related to tone and harmful language."
+      },
+      {
+        "participant_id": "P_1781989462320_dhdghsiqw",
+        "feature_name": "content_over_political_side",
+        "feature_value": "Applied the same standard to both versions, focusing on substance and tone rather than which political side it represented.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"I focus on substance and tone, not political side\"",
+        "rationale": "They describe using the pair to compare by criteria independent of partisan labeling."
+      },
+      {
+        "participant_id": "P_1781992166039_4ea9107f6",
+        "feature_name": "stupidity_as_removal_motivation",
+        "feature_value": "Wanted to delete based on viewing the posts as primarily stupidity/idiocy; not seeing offensive content but still leaning toward removal.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Part of me wanted to delete all of them\"",
+        "rationale": "The reflection links desire to remove to perceived low quality/idiocy rather than explicit offensiveness."
+      },
+      {
+        "participant_id": "P_1782026475424_u59wnkotc",
+        "feature_name": "bizarre_false_content_drives_influence",
+        "feature_value": "Bizarre/false elements were the main influence; also suggests being fairly accurate (even if phrasing is unclear).",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Some of them were just too bizarre and false\"",
+        "rationale": "The participant attributes influence primarily to the posts seeming bizarre and false."
+      },
+      {
+        "participant_id": "P_1781994753223_ff309y00b",
+        "feature_name": "free_speech_with_hateful_language_limit",
+        "feature_value": "Supports free speech but opposes hateful division/disgusting rhetoric; believes some expression goes overboard and can have opposite effects.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"not disgusting words and rhetoric that cause hateful division\"",
+        "rationale": "They articulate a conditional support for speech with a specific limit tied to hateful/rhetorically harmful content."
+      },
+      {
+        "participant_id": "P_1781989749001_jtrz55v59",
+        "feature_name": "even_playfield_with_pair_handling",
+        "feature_value": "Kept/enabled both sides to create an even playing field for both sides.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"allowed both to create an even playing field\"",
+        "rationale": "They directly state their pairing decision aimed to balance treatment across sides."
+      },
+      {
+        "participant_id": "P_1781989462320_dhdghsiqw",
+        "feature_name": "process_meta_apply_same_standard",
+        "feature_value": "Explicit process statement: applied the same standard to both versions while evaluating.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"applied the same standard to both versions\"",
+        "rationale": "This is a clear meta-level description of how they processed the pair."
+      }
+    ]
+  }
+}

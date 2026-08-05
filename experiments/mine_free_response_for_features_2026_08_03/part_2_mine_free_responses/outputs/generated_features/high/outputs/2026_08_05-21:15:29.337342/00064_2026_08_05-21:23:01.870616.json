@@ -1,0 +1,97 @@
+{
+  "batch_id": 64,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988545820_kt95pejf3",
+    "P_1781988786650_dne1du2yf",
+    "P_1781990188255_uz2dl87v2",
+    "P_1781990526467_bbfbnjasp",
+    "P_1781991546066_lv3162fsf",
+    "P_1781992192576_sg62aazuf",
+    "P_1781992612426_c3umhstsp",
+    "P_1781995521292_p63n2izod",
+    "P_1781996825027_qqk08ktay",
+    "P_1782001480283_cfj85mixf"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 64,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781992192576_sg62aazuf",
+        "feature_name": "content_cues_inappropriate_graphic_language",
+        "feature_value": "Graphic language was considered unacceptable even if context might justify it",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "The graphic language used was not acceptable even though the context may have been",
+        "rationale": "The participant explicitly links disapproval to the presence of graphic/inappropriate language when making keep/remove decisions."
+      },
+      {
+        "participant_id": "P_1781992612426_c3umhstsp",
+        "feature_name": "decision_criteria_incendiary_focus_on_profanity_vs_personal_attack",
+        "feature_value": "They judged whether language felt incendiary; profanity ok but not if it attacks a person",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Profanity is acceptable but not attacking another person.",
+        "rationale": "They articulate a specific rule distinguishing acceptable profanity from unacceptable personal attacks based on incendiary/targeted intent."
+      },
+      {
+        "participant_id": "P_1782001480283_cfj85mixf",
+        "feature_name": "decision_criteria_norms_override_free_speech_cursing",
+        "feature_value": "Cursing was the main influencer; free speech is supported but norms should restrict cursing",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "the only thing that majorly influenced my decision was the posts with a lot of cursing....we do have freedom of speech...but the norms are to not allow the cursing.",
+        "rationale": "They clearly name cursing as the dominant decision driver and explicitly balance it against free speech norms."
+      },
+      {
+        "participant_id": "P_1781990526467_bbfbnjasp",
+        "feature_name": "content_cues_cursing_in_public_for_children_concern",
+        "feature_value": "Disliked cursing on public platforms because kids might read them",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "I just don't agree with the cursing on public platforms where kids might be reading",
+        "rationale": "They justify removal/negative evaluation via audience/children exposure rather than threat-to-safety."
+      },
+      {
+        "participant_id": "P_1781990188255_uz2dl87v2",
+        "feature_name": "process_meta_conditional_moderation_attacks_and_expletives",
+        "feature_value": "Direct attacks were moderated; expletives reviewed but not auto-removed",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "directly attacked another were moderated. Posts with explitives were reviewed but not automatically removed.",
+        "rationale": "They describe a conditional policy-like process distinguishing attacks vs profanity for removal decisions."
+      },
+      {
+        "participant_id": "P_1781988786650_dne1du2yf",
+        "feature_name": "decision_criteria_no_threats_protected_by_freedom_of_speech",
+        "feature_value": "Harsh/aggressive language was accepted because no specific calls for violence or threats were made",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "none outright called specifically for violence... Since no threats were made, each pairing was protected by freedom of speech and I chose to accept them all.",
+        "rationale": "Their keep decision is explicitly tied to absence of violence threats/calls for violence."
+      },
+      {
+        "participant_id": "P_1781995521292_p63n2izod",
+        "feature_name": "decision_criteria_balance_freedom_of_expression_with_hate_or_violent_language_removal",
+        "feature_value": "Aimed to keep expression while removing hateful and violent language",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "support freedom of expression, while removing hateful and violent language.",
+        "rationale": "They state a dual-purpose rule that directly governs which content gets removed."
+      },
+      {
+        "participant_id": "P_1781996825027_qqk08ktay",
+        "feature_name": "decision_criteria_disinformation_threshold",
+        "feature_value": "Free speech is broad; line crossed when genuine disinformation spreads on serious topics",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "The line is crossed when genuine disinformation is being spread about serious topics.",
+        "rationale": "They specify a concrete threshold (genuine disinformation) as the point where they would diverge from free-speech acceptance."
+      }
+    ]
+  }
+}

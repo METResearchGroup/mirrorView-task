@@ -1,0 +1,97 @@
+{
+  "batch_id": 19,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988391942_2riixawcz",
+    "P_1781988467971_vc4utezcg",
+    "P_1781988501438_005g9h239",
+    "P_1781988936647_jnne3etqe",
+    "P_1781989521851_3qhzuvbra",
+    "P_1781989639159_nb4h1dbfq",
+    "P_1781989766056_lnuhyu31r",
+    "P_1781991214113_ikb72kn96",
+    "P_1781991922010_41bds4d93",
+    "P_1781992699471_vf7xy8irq"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 19,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781991214113_ikb72kn96",
+        "feature_name": "pair_comparison_inflammatory_cue",
+        "feature_value": "Used the pair to judge clarity/fairness; if either side seemed inflammatory or crude, removed both.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "If there was responses on either side that seemed inflammatory or crude I said to remove them both",
+        "rationale": "The participant explicitly describes comparing both versions and applying an inflammatory/crude rule across either side."
+      },
+      {
+        "participant_id": "P_1781991922010_41bds4d93",
+        "feature_name": "hostility_profanity_rudeness_rule",
+        "feature_value": "Removal triggered by hostile language, profanity, or being generally rude; claims not based on personal viewpoints.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "remove posts that used hostile language or profanity, or were just rude in general. I did not consider my own personal viewpoints.",
+        "rationale": "They specify concrete linguistic/behavioral criteria and note independence from personal views."
+      },
+      {
+        "participant_id": "P_1781989766056_lnuhyu31r",
+        "feature_name": "remove_hate_keep_opinions_fairness",
+        "feature_value": "Differentiated allowed opinions vs removed hate; seeing both sides helped them stay fair.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I allowed opinions. I removed hate. Seeing both sides helped me stay fair.",
+        "rationale": "The participant gives a clear keep/remove contrast and attributes fairness to seeing both versions."
+      },
+      {
+        "participant_id": "P_1781988467971_vc4utezcg",
+        "feature_name": "disinformation_harm_weighting",
+        "feature_value": "Focused on harm/disinformation; even when only one post was problematic, it was still removed.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "how harmful the posts were or how much disinformation was being spread",
+        "rationale": "They define their content-based harm/disinformation lens and mention how the pair affected decisions even if only one item was problematic."
+      },
+      {
+        "participant_id": "P_1781988501438_005g9h239",
+        "feature_name": "hate_speech_filter_with_free_speech_tradeoff",
+        "feature_value": "Removed posts using hateful words while protecting free speech.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "removed posts that used hateful words while protecting free speech.",
+        "rationale": "They articulate a specific criterion (hateful words) paired with an explicit free-speech constraint."
+      },
+      {
+        "participant_id": "P_1781992699471_vf7xy8irq",
+        "feature_name": "reasonable_to_share_goal",
+        "feature_value": "Chose based on which post seemed most reasonable to share.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I looked for the most reasonable post to share",
+        "rationale": "Their decision logic is explicitly framed as selecting the most reasonable option from the paired materials."
+      },
+      {
+        "participant_id": "P_1781989521851_3qhzuvbra",
+        "feature_name": "tone_down_anger_inflammatoriness",
+        "feature_value": "Wanted posters to tone down anger; some posts felt too inflammatory for practical discussion.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "some of these posters need to tone down the anger... to inflmmatory to provide practical discussion.",
+        "rationale": "They cite anger/inflammatoriness as a key cue influencing keep/remove."
+      },
+      {
+        "participant_id": "P_1781988391942_2riixawcz",
+        "feature_name": "conversation_quality_vs_namecalling",
+        "feature_value": "Evaluated whether comments advanced proper conversation versus devolving into rude namecalling.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Weather the comments pushed a proper conversation, or just rude namecalling",
+        "rationale": "They describe a qualitative conversation-quality criterion tied to interpersonal tone."
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cluster_id": 2,
+  "likert_group": "high",
+  "n_members": 11,
+  "sampled_feature_ids": [
+    "69_0",
+    "29_5",
+    "12_3",
+    "13_4",
+    "84_5",
+    "27_2",
+    "8_4",
+    "31_2"
+  ],
+  "result": {
+    "cluster_id": 2,
+    "cluster_label": "Free speech with violence/threat exceptions",
+    "definition": "Participants endorse keeping most speech (including opposing opinions) while justifying removal only when content involves threats, intent to harm, or violence and sometimes closely related \u201cbad language\u201d or profanity.",
+    "salience_notes": "The shared pattern is a broadly permissive free-speech default paired with specific carve-outs targeting threats/kill or promoting harm/violence."
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "batch_id": 80,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988235069_ub2lj8vpd",
+    "P_1781988400952_wi2rnpkcw",
+    "P_1781988405121_vtgpsyg2u",
+    "P_1781988422249_xaeavm74o",
+    "P_1781988672124_b8q7u21n7",
+    "P_1781990710663_1hc1ygyjg",
+    "P_1781990718703_ex83gn3is",
+    "P_1781990984684_lnmijuy06",
+    "P_1781993048632_0z2jf9wzm",
+    "P_1782052720794_4svdi26w9"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 80,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781990710663_1hc1ygyjg",
+        "feature_name": "need_for_both_sides_balance",
+        "feature_value": "Kept/considered keeping based on the idea that to have one side heard, the other side must also be heard; only removed truly dangerous items.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": true,
+        "evidence_span": "\"if I wanted my opinion's side to be heard the other side had to be heard as well\"",
+        "rationale": "The participant frames their decision around balancing hearing both sides, indicating the pair helped them justify non-removal except for danger."
+      },
+      {
+        "participant_id": "P_1781993048632_0z2jf9wzm",
+        "feature_name": "profanity_or_insult_removal_rule",
+        "feature_value": "Removed posts with profanity or direct insults; kept posts that were logical arguments.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "\"Removed anything that included profanity or direct insults.  Kept things that were logical arguments.\"",
+        "rationale": "They explicitly state content-based criteria linking language (profanity/insults) to removal and reasoning to keeping."
+      },
+      {
+        "participant_id": "P_1781988400952_wi2rnpkcw",
+        "feature_name": "threat_and_vulgarity_suppression",
+        "feature_value": "Removed content perceived as a threat to the US/people/groups and removed messages using vulgar language to make political points.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "\"removed any of them if the message could be taken as a threat to the US\"",
+        "rationale": "Their criteria emphasize threat cues and vulgar language as grounds for removal."
+      },
+      {
+        "participant_id": "P_1782052720794_4svdi26w9",
+        "feature_name": "forward_discussion_over_personal_attacks",
+        "feature_value": "Would keep both if at least one advances conversation; dislikes arguing/insulting between people.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "\"I would keep both posts if at least one of them was moving the conversation forward\"",
+        "rationale": "They provide a decision rule prioritizing conversational progress over hostility."
+      },
+      {
+        "participant_id": "P_1781990984684_lnmijuy06",
+        "feature_name": "anti_aggression_norm",
+        "feature_value": "Belief that aggressive approach and language are not needed to express opinions.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"Aggressive approach and language are not needed to express opinions\"",
+        "rationale": "This reflects a normative principle against aggression shaping keep/remove beyond specific thresholds."
+      },
+      {
+        "participant_id": "P_1781988422249_xaeavm74o",
+        "feature_name": "reasoning_and_substance_over_rudeness_length",
+        "feature_value": "Kept posts that expressed opinions with supporting reasoning; removed rude/hurtful content lacking real claims, regardless of being longer.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "\"Others were just being rude and hurtful... without any real claims\"",
+        "rationale": "They distinguish substantive reasoning from mere rudeness and note that length alone doesn\u2019t matter."
+      },
+      {
+        "participant_id": "P_1781988672124_b8q7u21n7",
+        "feature_name": "fairness_with_pair_tone_comparison",
+        "feature_value": "Used both versions to compare treatment more fairly, focusing on whether posts were harmful to political discussion; tolerated harsh/sarcastic tone unless direct threats/targeted serious harassment.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": true,
+        "evidence_span": "\"Seeing both versions helped me compare them more fairly\"",
+        "rationale": "The participant explicitly says the paired exposure enabled a fairer comparison of tone and context, influencing what they allowed."
+      },
+      {
+        "participant_id": "P_1781990718703_ex83gn3is",
+        "feature_name": "no_cussing_qualified_as_intelligent",
+        "feature_value": "Chose 'intelligent ones' characterized by a healthy debate and no cussing.",
+        "category": "content_cues",
+        "is_open_ended": true,
+        "evidence_span": "\"healthy debate no cussing\"",
+        "rationale": "They connect profanity avoidance to perceived intelligence/quality, indicating a cue-driven keep preference."
+      }
+    ]
+  }
+}

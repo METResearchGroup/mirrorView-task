@@ -1,7 +1,7 @@
 # Part 2 smoke notes (approval gate)
 
 **Date:** 2026-08-05  
-**Status:** Smoke complete — awaiting explicit approval before production (Step 7)  
+**Status:** Smoke complete — approved; production documented in `RESULTS.md`  
 **Do not treat as production RESULTS.**
 
 ## Smoke settings
@@ -69,4 +69,4 @@ HDBSCAN: 2 clusters, 4 noise. KMeans k=2 (comparison).
 2. Stage-2 `embeddings.npy` + `features.jsonl` + `feature_ids.json`: yes  
 3. Stage-3 assignments + class-root PNGs (both methods, both groups): yes  
 4. Stage-4 labels for non-noise HDBSCAN clusters: yes  
-5. Stopped for approval — no production run, no `RESULTS.md`
+5. Approved; production full-corpus run + `RESULTS.md` completed separately

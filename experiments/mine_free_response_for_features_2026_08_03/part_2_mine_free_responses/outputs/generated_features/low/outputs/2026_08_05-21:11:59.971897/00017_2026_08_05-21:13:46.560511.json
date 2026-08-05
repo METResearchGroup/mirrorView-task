@@ -1,0 +1,97 @@
+{
+  "batch_id": 17,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988224917_ly260s5fm",
+    "P_1781988853201_8h8c0x2q3",
+    "P_1781988859649_dx4dgrr8c",
+    "P_1781989847052_dy82unxg7",
+    "P_1781990785367_r7tczlf7m",
+    "P_1781990870220_3fwv1sr10",
+    "P_1781993208926_kby1uf9fv",
+    "P_1781995214578_73ne0d1hn",
+    "P_1782004140775_1zv20qlaf",
+    "P_1782004980558_gspr53zf6"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 17,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988853201_8h8c0x2q3",
+        "feature_name": "single_view_evaluation_process",
+        "feature_value": "Evaluated the posts as if they were random/social-media posts, not leveraging the pair comparison much.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"evaluated the posts as I would reading a random post\"",
+        "rationale": "The participant describes using a generic single-post evaluation rather than comparing the original vs mirror."
+      },
+      {
+        "participant_id": "P_1781989847052_dy82unxg7",
+        "feature_name": "profanity_based_removal_rule",
+        "feature_value": "Removed when profanity appeared in at least one version; kept both if neither had profanity.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"only took out ones that had profanity in one at least\"",
+        "rationale": "They state a clear, concrete rule tied to profanity across the pair."
+      },
+      {
+        "participant_id": "P_1781990870220_3fwv1sr10",
+        "feature_name": "hate_or_name_calling_cue_for_removal",
+        "feature_value": "Would remove content framed as hate, name-calling, or hate-mongering; supports respectful political discussion.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"straight hate or name-calling or hate-mongering\"",
+        "rationale": "Their criteria explicitly targets hateful/abusive rhetoric rather than political disagreement."
+      },
+      {
+        "participant_id": "P_1782004980558_gspr53zf6",
+        "feature_name": "misinformation_verifiability_threshold",
+        "feature_value": "Kept speech generally but removed non-verifiable statistics to avoid misinformation.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Anytime there is a non verifiable statistic I'd remove it\"",
+        "rationale": "They provide a specific decision rule based on verifiability/misinformation."
+      },
+      {
+        "participant_id": "P_1781988859649_dx4dgrr8c",
+        "feature_name": "strong_no_moderation_norm",
+        "feature_value": "Believes all speech should be permitted, with no moderation.",
+        "category": "other",
+        "is_open_ended": false,
+        "evidence_span": "\"All speech should be permitted\"",
+        "rationale": "The reflection expresses an unconditional stance toward removal/keeping that likely reduces sensitivity to the pair."
+      },
+      {
+        "participant_id": "P_1782004140775_1zv20qlaf",
+        "feature_name": "first_amendment_minimizes_pair_effect",
+        "feature_value": "Allowed posts based on First Amendment / free speech rationale.",
+        "category": "other",
+        "is_open_ended": false,
+        "evidence_span": "\"allowed all of the posts because of the first amendment\"",
+        "rationale": "They justify decisions via a broad free-speech principle rather than using the mirror comparison."
+      },
+      {
+        "participant_id": "P_1781988224917_ly260s5fm",
+        "feature_name": "malice_quality_cue",
+        "feature_value": "Implied removal/concern driven by perceived malice and lack of substantive thought.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"The malice and lack of real thought behind the post\"",
+        "rationale": "They highlight content tone/intent (malice) and low thought as the key driver."
+      },
+      {
+        "participant_id": "P_1781990785367_r7tczlf7m",
+        "feature_name": "respectfulness_admonition",
+        "feature_value": "Saw posts as immature and needing more respectful language.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"immature\" and \"express in a respectful way\"",
+        "rationale": "Their evaluation emphasizes tone/maturity and respectful expression as the salient factor."
+      }
+    ]
+  }
+}

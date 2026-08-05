@@ -1,0 +1,97 @@
+{
+  "batch_id": 85,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988180304_vwbxx2ano",
+    "P_1781988265313_7kpbqs4pj",
+    "P_1781988339028_jaxjars6t",
+    "P_1781989071916_k6m5vxz9p",
+    "P_1781989406401_llwm8clqe",
+    "P_1781989749543_xhdld3gq6",
+    "P_1781989978986_rz6go91y6",
+    "P_1781990309251_ck3tm6m4i",
+    "P_1781991426732_jb2lyueae",
+    "P_1781996311958_qrxl8ovdb"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 85,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988180304_vwbxx2ano",
+        "feature_name": "decision_by_style_and_caps",
+        "feature_value": "Used writing-style/tone cues (e.g., vulgarity, ALL CAPS) as a basis for keep/remove",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"The level of vulgarity or the inappropriate writing style (e.g., ALL CAPS).\"",
+        "rationale": "The participant explicitly ties their decisions to vulgarity and formatting/style markers."
+      },
+      {
+        "participant_id": "P_1781989749543_xhdld3gq6",
+        "feature_name": "remove_when_name_calling_only",
+        "feature_value": "Kept most pairs; focused deletions on posts that add nothing except name calling/invective",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"removing posts that added nothing to the conversation but name calling or invective\"",
+        "rationale": "They describe a specific deletion trigger centered on invective rather than the underlying claims."
+      },
+      {
+        "participant_id": "P_1781991426732_jb2lyueae",
+        "feature_name": "violence_or_hate_triggers_threshold",
+        "feature_value": "Considered threats of violence/hurting a person or group as the key line for removal",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Threats of violence... when it turns to hurting a person or group that's a big line crossed.\"",
+        "rationale": "They draw the keep/remove boundary at violence/threats and harm to a group."
+      },
+      {
+        "participant_id": "P_1781988339028_jaxjars6t",
+        "feature_name": "first_amendment_side_symmetry_misinfo",
+        "feature_value": "Argued for limiting restrictions and allowing misinformation symmetrically (both directions) absent real measurable harm/incitement",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"if misinformation is allowed in one direction it needs to be allowed in both directions\"",
+        "rationale": "They frame decisions around comparative symmetry between paired versions and a harm/rights threshold."
+      },
+      {
+        "participant_id": "P_1781988265313_7kpbqs4pj",
+        "feature_name": "paired_comparison_to_reduce_bias",
+        "feature_value": "Compared the paired posts on like-for-like rhetoric (hyperbole, unsourced claims, aggression) to avoid internal bias",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"By pairing up rather than evaluating in isolation, I could compare...\"",
+        "rationale": "They describe using the pairing itself to keep standards constant and minimize bias."
+      },
+      {
+        "participant_id": "P_1781989406401_llwm8clqe",
+        "feature_name": "fairness_without_bias",
+        "feature_value": "Used a fairness criterion\u2014evaluating decisions as fair without being biased",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"What was fair without being biased is how i evaluated each decision\"",
+        "rationale": "Their reflection directly states a fairness/no-bias evaluation principle."
+      },
+      {
+        "participant_id": "P_1781996311958_qrxl8ovdb",
+        "feature_name": "delete_only_inflammatory",
+        "feature_value": "Chose deletions mainly for inflammatory content; otherwise left posts alone",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I only really opted to delete posts that were inflammatory. The rest seemed fine\"",
+        "rationale": "They specify a narrow decision rule: delete only when inflammatory."
+      },
+      {
+        "participant_id": "P_1781989071916_k6m5vxz9p",
+        "feature_name": "keep_if_not_unnecessarily_hateful_hostile",
+        "feature_value": "Allowed posts if not unnecessarily hateful/hostile, framing even disagreement as worth discussion",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I allowed them as long as they were not unnecessarily hateful/hostile\"",
+        "rationale": "They state keep conditions based on the presence/absence of hostility."
+      }
+    ]
+  }
+}

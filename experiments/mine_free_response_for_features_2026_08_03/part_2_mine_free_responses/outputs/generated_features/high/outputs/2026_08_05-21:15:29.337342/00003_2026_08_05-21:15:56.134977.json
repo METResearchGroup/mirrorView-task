@@ -1,0 +1,97 @@
+{
+  "batch_id": 3,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988237290_xr6m46mtb",
+    "P_1781988428622_hsv17arev",
+    "P_1781988496102_fx34lwusz",
+    "P_1781988620375_p0cbnkfeu",
+    "P_1781988690711_3d1mh8acw",
+    "P_1781989169555_jupbq5yth",
+    "P_1781989522457_qik47qjy9",
+    "P_1781990647993_19c6243py",
+    "P_1781991222122_jw1vxs69y",
+    "P_1781996554304_yaxr8y722"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 3,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988690711_3d1mh8acw",
+        "feature_name": "civil_forum_toxicity_threshold",
+        "feature_value": "Used a civil-forum standard: remove when it crosses into toxicity (slurs/ad hominem), keep when substantive.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "maintaining a civil forum",
+        "rationale": "The participant explicitly describes a rule distinguishing substantive debate from toxicity and dehumanizing language."
+      },
+      {
+        "participant_id": "P_1781989522457_qik47qjy9",
+        "feature_name": "name_cursing_expletives_disallowed",
+        "feature_value": "Removed posts with name-calling or unnecessary expletives; aimed to be \u201cdo no harm.\u201d",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "disallowed anything that included name-calling or unnecessary expletives",
+        "rationale": "They cite specific linguistic markers (name-calling, expletives) as removal triggers."
+      },
+      {
+        "participant_id": "P_1781988428622_hsv17arev",
+        "feature_name": "hate_speech_priority_and_mixed_pair_handling",
+        "feature_value": "Removed the clearly hateful items; when one was \u201cgood\u201d and the other \u201cbad,\u201d they weighed whether to delete both or keep for the support of one comment.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "clearly hate speech",
+        "rationale": "They describe how they treated hate speech differently and how they handled mixed valence within a pair."
+      },
+      {
+        "participant_id": "P_1781988237290_xr6m46mtb",
+        "feature_name": "flammatory_language_shuts_down_discussion",
+        "feature_value": "Removal choices focused on whether language was flammatory enough to shut down healthy discussion.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "flammatory language that would shut down healthy discussion",
+        "rationale": "They directly connect the removal rationale to discussion-dampening inflammatory language."
+      },
+      {
+        "participant_id": "P_1781989169555_jupbq5yth",
+        "feature_name": "offensive_unnecessary_off_limits",
+        "feature_value": "Kept based on free-speech but removed when it became too offensive and unnecessary; censorship viewed as generally undesirable.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "when it got too offensive and unneccisary",
+        "rationale": "They articulate an affective/values-based threshold for offensiveness while noting the preference not to censor."
+      },
+      {
+        "participant_id": "P_1781989522457_qik47qjy9",
+        "feature_name": "objectivity_with_concern_for_untruths_inanity",
+        "feature_value": "Tried to stay objective; looked for statements that were untrue or inane in addition to discouraging insults/expletives.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "watched for statements that were untrue and those that were inane",
+        "rationale": "They describe a specific evaluation process including truthfulness/meaningfulness checks."
+      },
+      {
+        "participant_id": "P_1781990647993_19c6243py",
+        "feature_name": "constructive_vs_cursing_flow",
+        "feature_value": "Judged the \u201cflow of the perspective\u201d and removed when it became cursing to curse rather than constructive discussion.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "based on the flow of the perspective, whether it was constructive or just cursing to curse",
+        "rationale": "They indicate a comparative/transformative criterion (constructive vs devolving into cursing) rather than purely topical reasons."
+      },
+      {
+        "participant_id": "P_1781988620375_p0cbnkfeu",
+        "feature_name": "healthy_debate_contribution_check",
+        "feature_value": "Used a contribution-to-healthy-debate check; if unsure, they typically did not remove.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If I wasn't sure, I typically decided not to remove them.",
+        "rationale": "They state a decision rule tied to uncertainty and whether the post supports healthy political debate."
+      }
+    ]
+  }
+}

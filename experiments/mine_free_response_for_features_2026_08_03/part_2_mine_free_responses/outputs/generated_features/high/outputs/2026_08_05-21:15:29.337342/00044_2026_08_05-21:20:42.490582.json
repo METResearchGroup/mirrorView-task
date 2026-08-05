@@ -1,0 +1,97 @@
+{
+  "batch_id": 44,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988977468_rio7wzn4v",
+    "P_1781989505651_trk8vktic",
+    "P_1781989626096_nkdpq0ciq",
+    "P_1781990083924_zp696ut9t",
+    "P_1781990736192_6kxl67nez",
+    "P_1781991417377_wowuz41c3",
+    "P_1781992014266_mi5qplkpy",
+    "P_1781997042591_nldiyc22s",
+    "P_1781999283356_loq39791k",
+    "P_1782074014430_gbns40px5"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 44,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781999283356_loq39791k",
+        "feature_name": "pair_focus_shift_tone_vs_substance",
+        "feature_value": "Using the mirror pair to focus on tone/substance rather than being swayed by partisan leanings",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "focus on tone and substance rather than falling into partisan bias",
+        "rationale": "The participant explicitly credits seeing both versions for redirecting attention from partisanship to tone/substance."
+      },
+      {
+        "participant_id": "P_1781988977468_rio7wzn4v",
+        "feature_name": "over_the_top_negative_triggers_removal_threshold",
+        "feature_value": "Keep if it\u2019s an honest opinion; remove/flag when content is over the top or overly negative",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Typically if the post was just an honest opinion... I felt it was fine to allow",
+        "rationale": "They describe a criterion linking perceived negativity/extremity to allowing vs disallowing."
+      },
+      {
+        "participant_id": "P_1781992014266_mi5qplkpy",
+        "feature_name": "ad_hominem_vs_conversation_assessment",
+        "feature_value": "Distinguishing whether additions create true political conversation vs ad hominem attacks disguised as commentary",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "whether the statements added to a true conversation... or if they were ad hominem attacks thinly veiled as political commentary",
+        "rationale": "They use an explicit content distinction (conversation vs disguised ad hominem) to evaluate influence on decisions."
+      },
+      {
+        "participant_id": "P_1781989626096_nkdpq0ciq",
+        "feature_name": "profanity_constraint",
+        "feature_value": "Accept both sides as long as there is no profanity",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "as long as there was not any profanity",
+        "rationale": "They provide a clear gating condition about profanity."
+      },
+      {
+        "participant_id": "P_1781990083924_zp696ut9t",
+        "feature_name": "initial_partisan_inclination_present",
+        "feature_value": "Acknowledging a pre-existing Republican lean that could bias judgment",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "my inclination as a republican did",
+        "rationale": "They reference their political leaning as part of what the paired judgment process addressed."
+      },
+      {
+        "participant_id": "P_1781989505651_trk8vktic",
+        "feature_name": "neutral_standard_equitable_judgment",
+        "feature_value": "Aim to judge both posts equally using a neutral standard",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "ensuring i nmaintain a neutral stardard to both piece of contentThe goal was to judge both posts equally",
+        "rationale": "They explicitly describe a process of using neutral/equitable evaluation across the pair."
+      },
+      {
+        "participant_id": "P_1781991417377_wowuz41c3",
+        "feature_name": "free_speech_right_boundary",
+        "feature_value": "Support free speech provided it is nonharmful or nonthreatening",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "right to speak freely in a nonharmful or threatening way",
+        "rationale": "They set a harm/threat boundary within their decision framing."
+      },
+      {
+        "participant_id": "P_1781990736192_6kxl67nez",
+        "feature_name": "some_pairs_seen_as_unnecessary",
+        "feature_value": "Some paired content was considered similar, while other pairs were 'dumb and unnecessary'",
+        "category": "other",
+        "is_open_ended": false,
+        "evidence_span": "some of the pairs were just dumb and unnecessary",
+        "rationale": "They reference the perceived redundancy/needlessness of pairs as part of their reflection."
+      }
+    ]
+  }
+}

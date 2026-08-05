@@ -1,0 +1,97 @@
+{
+  "batch_id": 60,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988638281_txk3j1mcz",
+    "P_1781988928666_z008ziu68",
+    "P_1781990634195_vp8udnzbp",
+    "P_1781991633068_vpt4tjufj",
+    "P_1781996530303_xm78qrr0s",
+    "P_1781998065193_42ct5oc5l",
+    "P_1781999135073_dq7x4awbk",
+    "P_1782010011242_f9v3jw2s4",
+    "P_1782030305457_18l4mg58g",
+    "P_1782039907051_dpbpgpqwb"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 60,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781999135073_dq7x4awbk",
+        "feature_name": "profanity_not_required_for_political_point",
+        "feature_value": "Believed curse words/foul language aren\u2019t necessary to make the point; preferred keeping standards without lowering to profanity",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"there is really any need for that you can get your point across\"",
+        "rationale": "They explicitly use presence/absence of curse words as a criterion for keep/remove decisions."
+      },
+      {
+        "participant_id": "P_1782039907051_dpbpgpqwb",
+        "feature_name": "threats_or_profanity_triggers_remove",
+        "feature_value": "Tended to remove posts containing profanity or threats",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If it contained profanity or threats, I tended to remove.\"",
+        "rationale": "The reflection links specific content cues (profanity/threats) to removal."
+      },
+      {
+        "participant_id": "P_1781990634195_vp8udnzbp",
+        "feature_name": "moderation_in_controversy_increases_keep",
+        "feature_value": "If controversial issues were stated more moderately, it felt more logical to keep both",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"controversial issues stated in a more moderate way then it was more logical to keep both.\"",
+        "rationale": "They describe how the comparative framing/degree of moderation across the pair affected keeping."
+      },
+      {
+        "participant_id": "P_1781991633068_vpt4tjufj",
+        "feature_name": "useful_dialogue_vs_insult_slinging",
+        "feature_value": "Tried to approve posts useful for political conversation and disapprove pure insult slinging; keep not necessarily banned but limited",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"Approving useful ones and disapproving insults respectively.\"",
+        "rationale": "They articulate a strategy that differentiates pair members by usefulness vs insults."
+      },
+      {
+        "participant_id": "P_1781998065193_42ct5oc5l",
+        "feature_name": "against_filtering_political_speech",
+        "feature_value": "Argued political speech (even if not fully positive or contains coarse words) should be free of filtering",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Political speech ... should be free of filtering\"",
+        "rationale": "They state a rule-like stance minimizing filtering even when language is coarse."
+      },
+      {
+        "participant_id": "P_1781988928666_z008ziu68",
+        "feature_name": "stance_match_and_mutual_advocacy_check",
+        "feature_value": "Decision based on whether they supported the stance and whether they wanted to see advocacy for the other side",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"if i supported the stance or not\"",
+        "rationale": "They describe evaluation criteria tied to stance and desire for cross-side advocacy."
+      },
+      {
+        "participant_id": "P_1781988638281_txk3j1mcz",
+        "feature_name": "partisan_talking_points_trigger_rapid_remove",
+        "feature_value": "Removed posts immediately when they were seen as one-sided left/right talking points; partially agreed ones were passed through",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Most posts were retarded left and right wing talking points so I dumped those immediately.\"",
+        "rationale": "They connect perceived partisan talking-point status to immediate removal versus retention."
+      },
+      {
+        "participant_id": "P_1782030305457_18l4mg58g",
+        "feature_name": "no_reflection_provided",
+        "feature_value": "Reflection text was empty/none",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"none\"",
+        "rationale": "There is no usable thematic content beyond indicating absence of reflection."
+      }
+    ]
+  }
+}

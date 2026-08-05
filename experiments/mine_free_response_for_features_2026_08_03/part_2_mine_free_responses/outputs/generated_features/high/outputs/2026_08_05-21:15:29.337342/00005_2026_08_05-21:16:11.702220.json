@@ -1,0 +1,97 @@
+{
+  "batch_id": 5,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988422179_9zlg185wn",
+    "P_1781988478805_guiax8s3f",
+    "P_1781988908520_f82yquvm2",
+    "P_1781989935496_d7qaq39uj",
+    "P_1781990096105_xh2wwm5b9",
+    "P_1781990699957_nwi58ay1b",
+    "P_1781990774318_s8g7avb5p",
+    "P_1781992984892_vhi3a9b8o",
+    "P_1781996187446_4q22o5zbl",
+    "P_1781996365551_7apk93kl6"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 5,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781996365551_7apk93kl6",
+        "feature_name": "respectful_conversation_over_insults",
+        "feature_value": "Favored posts that were not insulting and aimed to contribute to healthy conversation; avoided/penalized crudeness/insults",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "ones that weren't insulting others off the bat",
+        "rationale": "The participant explicitly ties influence/choice to whether the posts insulted others and promoted healthy conversation."
+      },
+      {
+        "participant_id": "P_1781988478805_guiax8s3f",
+        "feature_name": "name_calling_profanity_breaks_respectful_rules",
+        "feature_value": "Allowed most posts as healthy discourse, but rejected when there was name calling/profanity or extreme personal accusations (e.g., calling Trump a 'cancer')",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "when there was name calling, profanity or for instance accusing President Trump as being \"...a cancer...\"",
+        "rationale": "They describe a concrete threshold (respectful debating) that fails specifically for profanity/name-calling/harsh personal labels."
+      },
+      {
+        "participant_id": "P_1781988908520_f82yquvm2",
+        "feature_name": "followup_viability_openness_vs_insults",
+        "feature_value": "Preferred open-ended, discussion-suitable prompts; viewed some statements as dead ends/unfollowable, while pure insults were unnecessary and not tied to political topics",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "dead ends and cannot follow up on a proper discussion",
+        "rationale": "They contrast posts by whether they invite proper discussion (open-ended) versus being dead ends or merely insults."
+      },
+      {
+        "participant_id": "P_1781990096105_xh2wwm5b9",
+        "feature_name": "harm_and_evidence_weighting",
+        "feature_value": "Used a risk/effect lens: considered whether the posts could cause further harm and whether there was evidence supporting the ideas",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "if further harm might be produced by either of the posts",
+        "rationale": "They state their criteria directly as harm potential and presence of evidence."
+      },
+      {
+        "participant_id": "P_1781996187446_4q22o5zbl",
+        "feature_name": "attempted_fairness_not_bias",
+        "feature_value": "Tried to judge impartially and avoid bias",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I just tried to be fair, not biased.",
+        "rationale": "The reflection explicitly describes an impartiality goal as their approach."
+      },
+      {
+        "participant_id": "P_1781989935496_d7qaq39uj",
+        "feature_name": "free_speech_priority_with_limit_on_badmouthing",
+        "feature_value": "Emphasized freedom of speech but treated bad-mouthing other parties as unhelpful for addressing real national problems",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "bad mouthing other parties doesn't help",
+        "rationale": "They articulate a balancing principle: allow speech broadly, but disfavor degrading attacks aimed at parties."
+      },
+      {
+        "participant_id": "P_1781990699957_nwi58ay1b",
+        "feature_name": "skepticism_about_mutual_understanding",
+        "feature_value": "Believed misunderstanding between sides is inevitable, implying limited expectation that pairing/seeing both would resolve conflict",
+        "category": "affect_or_confidence",
+        "is_open_ended": true,
+        "evidence_span": "There is always a lack of understanding on each side",
+        "rationale": "They express a generalized belief about persistent misunderstanding, shaping their stance toward the task."
+      },
+      {
+        "participant_id": "P_1781988422179_9zlg185wn",
+        "feature_name": "both_viewpoints_as_essential",
+        "feature_value": "Viewed showing both viewpoints as essential to understanding each side and reaching conclusions; supports free speech in general",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "open discussion showing both viewpoints is essential",
+        "rationale": "They explicitly justify influence via the value of seeing both sides for understanding and decision-making."
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "batch_id": 13,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988308565_nmrad1q5o",
+    "P_1781988720728_7dmobt7if",
+    "P_1781989514741_wr59094oi",
+    "P_1781989556623_1d7xdyn1n",
+    "P_1781989776158_mzps43mvo",
+    "P_1781990501129_hjvg9faoi",
+    "P_1781991657612_37wnpcvea",
+    "P_1781996332194_89bhhi7hg",
+    "P_1781998176596_xmpt9a8kl",
+    "P_1782000963653_0hrhcgcn3"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 13,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989776158_mzps43mvo",
+        "feature_name": "language_profanity_drives_removal_or_attention",
+        "feature_value": "Focus on profanity/bad language as the main (or notable) cue for keep/remove decisions",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Mostly the curse words and bad language.",
+        "rationale": "The participant explicitly ties their influence/decision to curse words and bad language."
+      },
+      {
+        "participant_id": "P_1781989514741_wr59094oi",
+        "feature_name": "profanity_or_personal_hurt_leads_to_reject_both",
+        "feature_value": "Checks similarities and flags profanity or hurtful language toward a specific person as grounds to decline both posts",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "If there was profanity or hurtful lnaugag4 relating to a specific person then i woul decline both.",
+        "rationale": "They describe a comparison step and a specific rule about profanity/hurtful person-directed language resulting in declining both."
+      },
+      {
+        "participant_id": "P_1781988308565_nmrad1q5o",
+        "feature_name": "factual_verifiability_used_as_primary_criterion",
+        "feature_value": "Uses whether statements can be backed up with facts as the key decision criterion",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "making sure the statements had facts. i wanted to make sure the statements could be backed up.",
+        "rationale": "Their stated priority is factual accuracy/being backed up by facts."
+      },
+      {
+        "participant_id": "P_1781998176596_xmpt9a8kl",
+        "feature_name": "misinformation_harm_preoccupation",
+        "feature_value": "Concern about misinformation spreading into public opinion drives decisions",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "I just hate it when misinformation gets into the echo-sphere of public opinion.",
+        "rationale": "They frame the decision as minimizing harm from misinformation, explicitly stating strong dislike."
+      },
+      {
+        "participant_id": "P_1781996332194_89bhhi7hg",
+        "feature_name": "free_speech_default_with_threat_exception",
+        "feature_value": "Default to free speech if no threats; removal only if threats/intent to harm are present",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "both sides deserve free speech... If someone mad threats... then that is different i think then they should be taken down but i didn't see any threats",
+        "rationale": "They articulate a rule: keep unless threats/intent to hurt appear."
+      },
+      {
+        "participant_id": "P_1781988720728_7dmobt7if",
+        "feature_name": "government_silencing_not_role_and_threats_only_barrier",
+        "feature_value": "Belief that silencing isn\u2019t government\u2019s job unless there\u2019s a direct violence threat; leads to keeping most posts",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "silencing someone because of what they said is not the job of the government as long as it is not a direct threat of violence",
+        "rationale": "They give an explicit principle tied to direct threats and report keeping almost all posts."
+      },
+      {
+        "participant_id": "P_1781989556623_1d7xdyn1n",
+        "feature_name": "allow_discussion_but_reject_violent_speech",
+        "feature_value": "Values open discussion even amid 'ignorance', but rejects any violent speech",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "we have to be able to discuss it. But no voilent speak should be tolerated.",
+        "rationale": "They contrast discussion tolerance with a firm exclusion rule for violent speech."
+      },
+      {
+        "participant_id": "P_1781991657612_37wnpcvea",
+        "feature_name": "careful_read_no_threats_found",
+        "feature_value": "Reports careful review; apart from foul language, saw nothing alarming/threatening to justify removal",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I read all the sentences very carefully. Aside from foul language, I did not find anything alarming or threatening to warrant removal",
+        "rationale": "They emphasize a careful reading process and a threat-detection criterion."
+      }
+    ]
+  }
+}

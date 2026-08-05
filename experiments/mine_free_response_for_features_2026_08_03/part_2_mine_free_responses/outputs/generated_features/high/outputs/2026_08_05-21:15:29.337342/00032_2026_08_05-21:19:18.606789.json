@@ -1,0 +1,97 @@
+{
+  "batch_id": 32,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988215171_es1z5cn0p",
+    "P_1781988508945_hncd6snwu",
+    "P_1781988738891_7h9upc12z",
+    "P_1781989105740_ye6rqmprr",
+    "P_1781989765556_ikbyg8qip",
+    "P_1781990302769_jovfk7w1r",
+    "P_1781993979307_jbhpi2l6b",
+    "P_1782004261390_8vikb1xc3",
+    "P_1782009948641_gqwpol9fl",
+    "P_1782055083529_vjseuf093"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 32,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988508945_hncd6snwu",
+        "feature_name": "language_utility_not_mean_spirited",
+        "feature_value": "Focused on whether language was useful/helpful and not mean-spirited.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "focused on  the language used to determined if the posts were useful or helpful and not mean-spirited.",
+        "rationale": "The reflection explicitly states a criterion centered on helpful/useful language versus mean-spiritedness."
+      },
+      {
+        "participant_id": "P_1781993979307_jbhpi2l6b",
+        "feature_name": "ignore_political_content_and_interpret_tone",
+        "feature_value": "Tried to ignore political content and interpret content as venting vs argumentative.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I tried to ignore the political content. I looked for swearing and words that weren't about making an argument, but about venting anger.",
+        "rationale": "The participant describes a specific approach to downweight politics and use intent/tone cues (venting anger)."
+      },
+      {
+        "participant_id": "P_1781989765556_ikbyg8qip",
+        "feature_name": "bipartisan_evaluate_and_only_reject_attacks",
+        "feature_value": "Attempted to stay bipartisan; rejected only outright attacks/degrading comments.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I tried to remain bipartisan when evaluating both views. I only rejected out right attacks or degrading comments made to the president or elected officials.",
+        "rationale": "The reflection clearly identifies an evaluation stance (bipartisan) and a rejection threshold (attacks/degrading)."
+      },
+      {
+        "participant_id": "P_1781989105740_ye6rqmprr",
+        "feature_name": "respect_threshold_with_harmful_language_rule",
+        "feature_value": "Approved heated posts if respectful; removed posts with harmful language or unproductive conversation.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "approving politically heated posts as long as they were remaining respectful... chose to remove posts that contained harmful language or just didn't promote productive conversation.",
+        "rationale": "The participant provides explicit keep/remove rules based on respectfulness and whether language promotes productive dialogue."
+      },
+      {
+        "participant_id": "P_1781988215171_es1z5cn0p",
+        "feature_name": "remove_vulgar_conspiracy_unfactual",
+        "feature_value": "Removed vulgar posts and those based on conspiracy theories or unfounded self-serving opinions.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "posts that were vulgar, based in conspiracy theories or in self-serving opinions not based in any facts got the boot.",
+        "rationale": "The participant links removal to specific content types (vulgarity, conspiracy, lack of factual basis)."
+      },
+      {
+        "participant_id": "P_1781988738891_7h9upc12z",
+        "feature_name": "combative_content_and_party_opposition_affect",
+        "feature_value": "Declined exceedingly combative/overly accusatory/low-quality posts; also felt annoyed reading conservative statements due to opposing their party.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "It annoyed me to read the conservative statement, no matter what it was, because I am so opposed to their party.",
+        "rationale": "The reflection explicitly includes an affective/attitudinal factor (annoyance tied to party opposition) alongside content quality cues."
+      },
+      {
+        "participant_id": "P_1781990302769_jovfk7w1r",
+        "feature_name": "insults_demeaning_removed_allow_constructive",
+        "feature_value": "Objective moderation: removed insulting/demeaning posts; allowed constructive criticism.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I removed insulting and demeaning posts. I allowed constructive criticism posts.",
+        "rationale": "The participant states a clear keep/remove distinction centered on whether posts are insulting vs constructive."
+      },
+      {
+        "participant_id": "P_1782004261390_8vikb1xc3",
+        "feature_name": "misinformation_falsehood_vs_speech_frame",
+        "feature_value": "Saw some as mere \u201cFreedom of Speech,\u201d while others as outright false misinformation.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Some of the statements were simply \"Freedom of Speech\" where others were outright false statements and mis-information.",
+        "rationale": "The participant uses explicit content validity cues (false misinformation vs speech framing) to guide decisions."
+      }
+    ]
+  }
+}

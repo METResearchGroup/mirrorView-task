@@ -1,0 +1,88 @@
+{
+  "batch_id": 24,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988305881_rmf1wodo3",
+    "P_1781988901365_o99yoe2a5",
+    "P_1781989155406_6fmzj6d0d",
+    "P_1781989439078_5k8q3s5yp",
+    "P_1781990117839_owo37cxah",
+    "P_1781994014333_0wr2xlpvl",
+    "P_1781995636026_iv0csl64z",
+    "P_1781996813624_9lioscb7c",
+    "P_1781996938483_jl7a4288l",
+    "P_1782158148061_awrfjyoca"
+  ],
+  "feature_count": 7,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 24,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989439078_5k8q3s5yp",
+        "feature_name": "mirror_similarity_indifference",
+        "feature_value": "Treating the original and political mirror as effectively the same, so the pairing did not sway decisions",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "they were literally just mirrors. I read both sides as the same",
+        "rationale": "They explicitly state the mirror version didn\u2019t matter because both sides were read as the same."
+      },
+      {
+        "participant_id": "P_1781996813624_9lioscb7c",
+        "feature_name": "first_amendment_floor",
+        "feature_value": "Deferential to free-speech unless the post promotes violence/illegal activity",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "unless posts are promoting violence and encouraging people to break the law, I believe in the first amendment",
+        "rationale": "Their keep/remove criteria hinges on protecting speech except for violence/illegal encouragement."
+      },
+      {
+        "participant_id": "P_1781996938483_jl7a4288l",
+        "feature_name": "ban_namecalling_foul_language",
+        "feature_value": "Rejecting primarily when there is name calling or lots of foul language",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I only rejected if there was name calling or lots of foul language",
+        "rationale": "They give a clear minimal content rule for rejection related to insulting language."
+      },
+      {
+        "participant_id": "P_1781990117839_owo37cxah",
+        "feature_name": "toxicity_or_dehumanization_threshold",
+        "feature_value": "Allow strong opinions but reject when it becomes hate/dehumanizing toward groups",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "crossed into hate or dehumanizing stuff. If it was just strong opinions I let it go and if it got really toxic about whole groups I didn't",
+        "rationale": "They set a threshold focused on hate/dehumanization while permitting disagreement."
+      },
+      {
+        "participant_id": "P_1781988901365_o99yoe2a5",
+        "feature_name": "profanity_based_filtering",
+        "feature_value": "Removing anything that uses profanity",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "i got rid of anything that used profanity",
+        "rationale": "They identify profanity as the specific reason for removal."
+      },
+      {
+        "participant_id": "P_1781995636026_iv0csl64z",
+        "feature_name": "fact_check_and_caution_for_false_info",
+        "feature_value": "Passing content despite perceived false information, with emphasis on reader precaution/fact-checking",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I passed several with what I felt had false information but the reader should always take a type of precaution and fact check anything",
+        "rationale": "They describe a lenient decision approach paired with a cautionary stance toward misinformation."
+      },
+      {
+        "participant_id": "P_1781988305881_rmf1wodo3",
+        "feature_name": "fair_platform_without_insult_inflame",
+        "feature_value": "Keep posts that discuss topics without insulting or inflaming the other group to maintain a fair platform",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "allow posts that discussed a topic, and did not insult or inflame the other group, to have a fair platform",
+        "rationale": "Their stated criteria center on non-insult/non-inflaming content to preserve fairness."
+      }
+    ]
+  }
+}

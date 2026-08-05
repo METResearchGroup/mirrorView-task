@@ -1,0 +1,97 @@
+{
+  "batch_id": 69,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988688323_0y382om4g",
+    "P_1781988858059_md1xw6w1v",
+    "P_1781990072141_5gpy8u6ta",
+    "P_1781990153863_8wvmf83o5",
+    "P_1781990651214_dirr7g8sh",
+    "P_1781990780591_fpl77lmnk",
+    "P_1781993323142_2qy9iauuz",
+    "P_1781994278008_if10kkcmv",
+    "P_1781995974333_rkc38pjle",
+    "P_1782043259564_f2cnlirdw"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 69,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781994278008_if10kkcmv",
+        "feature_name": "free_speech_with_harm_exceptions",
+        "feature_value": "Supports keeping speech in general but allows removal for hate speech or threats of violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I believe in free speech, unless it is very hateful hate speech or threats of violence.\"",
+        "rationale": "The participant states a conditional free-speech rule tied to hate/violence threats."
+      },
+      {
+        "participant_id": "P_1781990072141_5gpy8u6ta",
+        "feature_name": "incitement_or_extreme_profanity_threshold",
+        "feature_value": "Inclined to keep both unless content explicitly incites violence or is very profane; convictions about allowing speech with clear exceptions.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"allowing speech unless it explicitly incites violence or is very profane.\"",
+        "rationale": "They describe specific disqualifying thresholds (incitement/very profane)."
+      },
+      {
+        "participant_id": "P_1781990153863_8wvmf83o5",
+        "feature_name": "killing_language_and_cursing_as_violence_cue",
+        "feature_value": "Removed when it referenced \u201ckilling\u201d or used excessive cursing that sounded like a call to violence.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"reference \\\"killing\\\"... or used excessive cursing that sounded like call to vilolience\"",
+        "rationale": "They explicitly link certain words/styles to violence intent cues for removal."
+      },
+      {
+        "participant_id": "P_1781990651214_dirr7g8sh",
+        "feature_name": "factual_inaccuracy_removal_rule",
+        "feature_value": "If claims weren\u2019t true or weren\u2019t backed by facts, they removed both; misinformation drives removal.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If anything was not true or actually backed up factually, I removed them both.\"",
+        "rationale": "Their criterion is factual verification; false/unsupported claims lead to removal."
+      },
+      {
+        "participant_id": "P_1781988858059_md1xw6w1v",
+        "feature_name": "misinformation_and_extreme_tradeoff_critique",
+        "feature_value": "Influence came from noticing extreme tradeoffs (one extreme + one normal) and that misinformation existed, making the moderation approach seem wrong.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"blatent misinformation\"...\"I either have to ok two possibly extreme views, or... ok 1 extreme view and one view that's relatively normal.\"",
+        "rationale": "They criticize the decision process/approach while mentioning misinformation and extreme framing."
+      },
+      {
+        "participant_id": "P_1781993323142_2qy9iauuz",
+        "feature_name": "respectful_vs_insulting_personal_attack",
+        "feature_value": "Would allow posting if phrased respectfully; remove if it was just insulting someone with no reason.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If put in a respectful way if would let them post it. If it was just insulting a person for no reason\"",
+        "rationale": "They give a stylistic/normative distinction (respect vs pointless insults) tied to posting decisions."
+      },
+      {
+        "participant_id": "P_1781988688323_0y382om4g",
+        "feature_name": "civility_and_rumor_detection",
+        "feature_value": "Kept when mostly civil; removed when it seemed like complete rumors.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If posts seemed mostly civil... If they seemed like complete rumors, they needed to go.\"",
+        "rationale": "They describe two observable cues (civility and rumor-ness) guiding keep/remove."
+      },
+      {
+        "participant_id": "P_1781995974333_rkc38pjle",
+        "feature_name": "argument_quality_over_content",
+        "feature_value": "Says the construction/validity of arguments mattered; poorly voiced opinions on either side weren\u2019t worth debating.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": true,
+        "evidence_span": "\"The construction and validity of each argument. Poorly voiced opinions on either side do not seem worthwhile debating\"",
+        "rationale": "Their reflection emphasizes evaluating argument validity/quality rather than only content cues."
+      }
+    ]
+  }
+}

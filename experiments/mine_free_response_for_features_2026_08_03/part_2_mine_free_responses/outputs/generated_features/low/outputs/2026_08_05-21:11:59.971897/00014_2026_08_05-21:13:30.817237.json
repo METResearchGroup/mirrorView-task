@@ -1,0 +1,97 @@
+{
+  "batch_id": 14,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988164796_o1d1rt7e6",
+    "P_1781988183450_a55wxzoo4",
+    "P_1781988542468_qs3okfzrs",
+    "P_1781989578438_t0hr1x2p6",
+    "P_1781990365971_9fqt70ltu",
+    "P_1781990544134_w6syp8lde",
+    "P_1781990684014_c35ee2zk3",
+    "P_1781991178040_fdyqb0u1u",
+    "P_1781993912798_636z7p05t",
+    "P_1782003651445_a43go78gn"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 14,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988164796_o1d1rt7e6",
+        "feature_name": "insult_name_calling_triggers_removal",
+        "feature_value": "Removes when posts are primarily insulting/name-calling; prefers many viewpoints but not blatant disrespect.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "it was because it was more about insulting and name calling",
+        "rationale": "The participant explicitly ties their (limited) removals to insulting/name-calling rather than politics content."
+      },
+      {
+        "participant_id": "P_1781988542468_qs3okfzrs",
+        "feature_name": "pairwise_consideration_respectfulness_rule",
+        "feature_value": "Kept/remade decisions by considering both versions together, anchored in respect for both parties.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I decided to make the decisions as a pair",
+        "rationale": "They describe their strategy as making decisions for the pair while applying a respect-based standard."
+      },
+      {
+        "participant_id": "P_1781993912798_636z7p05t",
+        "feature_name": "inappropriate_language_affects_vote",
+        "feature_value": "Language that attacks/uses inappropriate terms influences their judgment to remove/keep.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Inappropriate language and attacking individuals influence my vote.",
+        "rationale": "Their stated decision driver is inappropriate language and attacking individuals."
+      },
+      {
+        "participant_id": "P_1781991178040_fdyqb0u1u",
+        "feature_name": "first_amendment_free_speech_threshold_no_direct_threats",
+        "feature_value": "Uses a First Amendment framing; since no direct threats to individuals, posts are acceptable.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "None of these posts had direct threats toward a single individual, so they are fine",
+        "rationale": "They specify a concrete threshold (no direct threats) under a general free-speech principle."
+      },
+      {
+        "participant_id": "P_1781990684014_c35ee2zk3",
+        "feature_name": "allow_more_often_under_1st_amendment",
+        "feature_value": "Leans toward allowing speech even if it\u2019s inflammatory, citing the 1st amendment and only blocking the truly inflammatory/bad.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I erred on teh side of allowing it since we have the 1st amendment",
+        "rationale": "They explicitly state their tendency and rationale for allowing over removing."
+      },
+      {
+        "participant_id": "P_1781990544134_w6syp8lde",
+        "feature_name": "ad_hominem_stoking_reaction_draws_line",
+        "feature_value": "Draws a line at insulting opposite views via emotional/ad hominem rhetoric not backed by facts (intended to provoke rage).",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "insulting people of opposite views with emotional/hysterical ad hominem language",
+        "rationale": "They describe a specific content pattern (ad hominem, emotionally manipulative framing) as the removal criterion."
+      },
+      {
+        "participant_id": "P_1781990365971_9fqt70ltu",
+        "feature_name": "notion_of_online_appropriateness_only",
+        "feature_value": "Visualizes posts as if seen online and chooses those that don\u2019t seem appropriate to remove.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I imagined seeing the posts online and chose the ones that didn\u0003t seem appropriate to remove.",
+        "rationale": "Their method is about imagined online impact/appropriateness, not comparing ideology between pair versions."
+      },
+      {
+        "participant_id": "P_1781989578438_t0hr1x2p6",
+        "feature_name": "pair_inconsistency_confusion",
+        "feature_value": "Confused by agreeing with one but not the other; sees it as making no sense.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "I did not like that I agreed with one but not the other I thought this does not make any sense",
+        "rationale": "Their reflection centers on discomfort/confusion about inconsistent judgments across the pair."
+      }
+    ]
+  }
+}

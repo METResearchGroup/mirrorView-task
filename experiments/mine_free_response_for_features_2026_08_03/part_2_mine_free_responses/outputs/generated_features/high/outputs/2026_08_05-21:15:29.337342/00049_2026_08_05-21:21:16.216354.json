@@ -1,0 +1,97 @@
+{
+  "batch_id": 49,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988271451_7aggow4a6",
+    "P_1781988446343_zkrym71se",
+    "P_1781988957207_8fys6g9mi",
+    "P_1781988968576_4bkk4xsc0",
+    "P_1781989222156_c055r5j2v",
+    "P_1781990295533_fxmfyv4p0",
+    "P_1781990908883_q49ffdlg2",
+    "P_1781992156073_cn94ifqub",
+    "P_1781993344802_m0kdva6sg",
+    "P_1781993629709_fxuz5oolw"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 49,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781992156073_cn94ifqub",
+        "feature_name": "opinion_vs_hostile_language_criterion",
+        "feature_value": "Decision hinged on distinguishing political opinions from insults/dehumanizing/hostile language; kept when both sides were opinion-only, omitted when both were hostile/insulting.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "distinction between political opinion and insults or dehumanizing and hostile language",
+        "rationale": "The participant explicitly describes a keep/omit rule based on whether language is opinion versus hostile/dehumanizing."
+      },
+      {
+        "participant_id": "P_1781989222156_c055r5j2v",
+        "feature_name": "minimal_moderation_after_threshold",
+        "feature_value": "Chose not to moderate most content; would only remove when someone threatens or possibly breaks the law, viewing censorship as harmful.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Unless someone is threatening someone or possibly breaking the law",
+        "rationale": "Their criteria specify a high threshold for removal (threats/lawbreaking) and a general bias against moderation."
+      },
+      {
+        "participant_id": "P_1781988271451_7aggow4a6",
+        "feature_name": "allow_disagreement_but_flag_vulgarity_and_violence",
+        "feature_value": "Sought to remove excessive vulgar language and anything promoting violence, while feeling that disagreement should generally be allowed.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Excessive vulgar language, anything promoting violence. Essentially no matter how much I disagree",
+        "rationale": "They state a specific content-based target (vulgarity/violence) paired with an explicit exception for disagreement."
+      },
+      {
+        "participant_id": "P_1781990908883_q49ffdlg2",
+        "feature_name": "threats_inciting_violence_expectation_assessment",
+        "feature_value": "Looked for direct threats/inciting violence but found less than expected; still generally viewed content as acceptable for political discussion despite being depressing/unintelligent.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "expecting more direct threats and inciting violence, but thankfully it wasn't present",
+        "rationale": "They describe assessing severity by checking for threats/incitement and adjusting their moderation decision accordingly."
+      },
+      {
+        "participant_id": "P_1781988446343_zkrym71se",
+        "feature_name": "keep_grounded_realistic_over_propaganda_inflammatory",
+        "feature_value": "Removed emotional/inflammatory posts; kept posts grounded in reality/parties\u2019 opinions and not just propaganda.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "remove posts that were emotional and inflammatory. I kept posts that seemed grounded in reality",
+        "rationale": "Their reflections attribute influence to perceived tone (emotional/inflammatory) and framing quality (realistic vs propaganda)."
+      },
+      {
+        "participant_id": "P_1781990295533_fxmfyv4p0",
+        "feature_name": "profanity_seen_as_unhelpful",
+        "feature_value": "Assessed social-media posts by anticipating negative/positive impact and viewed profanity as not always useful in conversation; leaned toward positivity.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Using profanity is not always useful in a conversation",
+        "rationale": "They connect moderation with a conversational-impact evaluation that specifically mentions profanity."
+      },
+      {
+        "participant_id": "P_1781993629709_fxuz5oolw",
+        "feature_name": "disrespect_avoidance_bias",
+        "feature_value": "Rejected only when it didn\u2019t add to a healthy, positive discussion; otherwise kept based on having merit and not wanting to be disrespectful.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "Plus I don\u0019t want to be disrespectful",
+        "rationale": "They justify keep/remove using a norm of respectful tone and the perceived value for healthy discussion."
+      },
+      {
+        "participant_id": "P_1781993344802_m0kdva6sg",
+        "feature_name": "pair_similarity_or_sense_check",
+        "feature_value": "Rejected when some pairs seemed too similar or didn\u2019t make sense at all.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "too similar or didn\u0019t make sense at all",
+        "rationale": "They describe a structural/consistency sanity check on the paired items that informed rejection."
+      }
+    ]
+  }
+}

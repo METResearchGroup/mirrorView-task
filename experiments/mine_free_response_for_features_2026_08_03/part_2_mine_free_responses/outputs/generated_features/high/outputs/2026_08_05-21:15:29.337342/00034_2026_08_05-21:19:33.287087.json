@@ -1,0 +1,97 @@
+{
+  "batch_id": 34,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988249533_2h2rjqbwu",
+    "P_1781989065854_uyyr4a08k",
+    "P_1781990080204_pbadaqhye",
+    "P_1781991144210_0q2b6wfgp",
+    "P_1781991484283_8nr01au65",
+    "P_1781993457429_v7nkk0593",
+    "P_1781994562033_aikbyc8k9",
+    "P_1781995650639_lyxv3ggex",
+    "P_1781997132849_bokkzagol",
+    "P_1782004456788_ln5b78upk"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 34,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1782004456788_ln5b78upk",
+        "feature_name": "offense_and_value_add_threshold",
+        "feature_value": "Keeps speech but blocks posts seen as offensive/mean or as adding nothing to discussion.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"blocked what I considered offensive, mean, and/or adds nothing to the discussion\"",
+        "rationale": "The reflection explicitly states concrete criteria for removal (offensive/mean) and low value (adds nothing)."
+      },
+      {
+        "participant_id": "P_1781995650639_lyxv3ggex",
+        "feature_name": "symmetry_in_hate_assessment",
+        "feature_value": "If one version is bad, treat both sides as bad (symmetric application of hate/anger cues).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If its bad enough one way, its bad both ways.\"",
+        "rationale": "They describe a rule for how disagreement between pair versions is resolved into a symmetric decision."
+      },
+      {
+        "participant_id": "P_1781990080204_pbadaqhye",
+        "feature_name": "moderate_open_minded_with_hate_exclusion",
+        "feature_value": "Attempts to consider both sides from a moderate viewpoint, but removes anything hateful/offensive immediately.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"consider both sides from a moderate viewpoint\" ... \"Anything hateful or offensive immediately went out.\"",
+        "rationale": "They connect pair-influenced evaluation to openness balanced by an immediate exclusion rule for hateful/offensive content."
+      },
+      {
+        "participant_id": "P_1781991484283_8nr01au65",
+        "feature_name": "facts_over_rhetoric_and_willingness_to_converge",
+        "feature_value": "Relies more on facts than hearsay; favors content where agreement might be possible and distrusts name-calling dynamics.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"I based the choices on more about facts then hear says\" ... \"felt more like name calling\"",
+        "rationale": "The participant describes a comparison approach that prioritizes factualness and perceived potential for agreement, rejecting escalatory rhetoric."
+      },
+      {
+        "participant_id": "P_1781989065854_uyyr4a08k",
+        "feature_name": "coherence_vs_incoherent_or_caps_spam",
+        "feature_value": "Uses format/clarity cues: removes incoherent all-caps \u201cspewed bs,\u201d allows coherent points without bias.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"If it was people typing their sentences in all caps incoherently, they are removed.\"",
+        "rationale": "The reflection gives a specific content-quality heuristic (coherence/format) tied to accept/remove decisions."
+      },
+      {
+        "participant_id": "P_1781991144210_0q2b6wfgp",
+        "feature_name": "derogatory_offense_focus",
+        "feature_value": "Primarily filters based on whether posts are offensive in a derogatory way.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"made sure they weren't offensive in a derogatory way.\"",
+        "rationale": "This statement directly indicates the main criterion driving their pair-informed evaluation."
+      },
+      {
+        "participant_id": "P_1781988249533_2h2rjqbwu",
+        "feature_name": "hostile_sensational_insult_unneeded_even_if_free_speech",
+        "feature_value": "Even supporting free speech, removes content that is overly hostile, sensationalistic, or insulting; values opinions but rejects hostile tools.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"overly hostile, sensationalistic, or insulting\"",
+        "rationale": "They ground influence in identifiable negative tone categories (hostile/insulting/sensational)."
+      },
+      {
+        "participant_id": "P_1781997132849_bokkzagol",
+        "feature_name": "social_media_use_limits",
+        "feature_value": "Decides based on what they want to see on social media; sees social media as for expressing opinions, not going further.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"Social media is usefull to express opinions but not to go further than that.\"",
+        "rationale": "Their criterion is a platform-norm limit rather than specific hate/offense or factuality comparisons."
+      }
+    ]
+  }
+}

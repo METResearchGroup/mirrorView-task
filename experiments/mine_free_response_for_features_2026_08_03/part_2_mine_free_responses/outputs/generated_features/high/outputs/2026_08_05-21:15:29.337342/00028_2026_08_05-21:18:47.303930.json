@@ -1,0 +1,97 @@
+{
+  "batch_id": 28,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988550627_fblkh52vf",
+    "P_1781988919118_ac7mlj0cv",
+    "P_1781989503836_wwqppw9iq",
+    "P_1781990422249_uh18m0ys9",
+    "P_1781991936331_ufk36lblh",
+    "P_1782001845918_2pmx6cf5f",
+    "P_1782002792288_dyhwrhq4l",
+    "P_1782002848278_5cg2or3ox",
+    "P_1782005431969_0yxrv5mt7",
+    "P_1782059305456_13q1uvgva"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 28,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989503836_wwqppw9iq",
+        "feature_name": "toxicity_or_cursing_threshold",
+        "feature_value": "Removed/blocked posts based on presence of curse words or disrespectful tone",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"I could not allow any message with curse words or disrespect.\"",
+        "rationale": "The participant explicitly states cursing/disrespect was a disqualifier driving their decisions."
+      },
+      {
+        "participant_id": "P_1782005431969_0yxrv5mt7",
+        "feature_name": "offensive_language_disallowed_but_open_dialogue_retained",
+        "feature_value": "Disallowed offensive/cussing language, while tolerating harsher messages if they seemed to encourage dialogue",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"not allowing cussing or offensive language\" ... \"Others had tough messages, but I felt they welcomed open dialogue.\"",
+        "rationale": "They draw a distinction between profanity/offense (rejected) and perceived openness to dialogue (accepted)."
+      },
+      {
+        "participant_id": "P_1781991936331_ufk36lblh",
+        "feature_name": "wording_drives_decision_via_ethical_values",
+        "feature_value": "Focused on the wording and framed it as an ethics/values consideration",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"it was mostly about the wording used\" ... \"ethical values need to be taken into consideration\"",
+        "rationale": "The reflection ties their keep/remove judgment primarily to wording and ethical valuation."
+      },
+      {
+        "participant_id": "P_1782059305456_13q1uvgva",
+        "feature_name": "explicitness_and_manipulation_as_red_flags",
+        "feature_value": "Rejected content when language was too explicit or involved 'mindgaming'",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "\"Weather it was too explicit in language or mindgaming too much.\"",
+        "rationale": "They cite two specific content qualities they considered disqualifying."
+      },
+      {
+        "participant_id": "P_1781988919118_ac7mlj0cv",
+        "feature_name": "contrast_original_vs_mirror_focus_check",
+        "feature_value": "Judged based on how the overall wording and focus of statements contrasted against one another",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"overall wording and focus of each statement stood against one another.\"",
+        "rationale": "They describe using a comparison/contrast between the paired statements as the basis for influence."
+      },
+      {
+        "participant_id": "P_1781990422249_uh18m0ys9",
+        "feature_name": "partisan_trust_bias_steering_reading",
+        "feature_value": "Used their political stance/trust perceptions to interpret the mirrored content",
+        "category": "content_cues",
+        "is_open_ended": true,
+        "evidence_span": "\"I tried to look at my political stance\" ... \"I don\u2019t trust a single thing they say or promote.\"",
+        "rationale": "Their stated reasoning relies on partisan trust/distrust while reading the pair."
+      },
+      {
+        "participant_id": "P_1782002848278_5cg2or3ox",
+        "feature_name": "negativity_and_cuss_words_drive_rejection",
+        "feature_value": "Rejected most posts due to negativity and cuss words",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"posts were very negative, and used a lot of unnecessary cuss words\" ... \"I chose to reject most of the posts because of the negativity and cuss words alone.\"",
+        "rationale": "This directly links the emotional valence (negativity) and profanity to rejection decisions."
+      },
+      {
+        "participant_id": "P_1782002792288_dyhwrhq4l",
+        "feature_name": "mirror_effect_as_rule_foul_language_remove",
+        "feature_value": "Used the mirror effect; removed anything containing foul language",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"based it on the mirror effect\" ... \"anything that had foul language i removed\"",
+        "rationale": "They explicitly state that mirror-effect reasoning plus a foul-language rule guided decisions."
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "batch_id": 91,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988279536_5if8t7id3",
+    "P_1781988324828_b39ze6er1",
+    "P_1781988464969_pwsxchcc0",
+    "P_1781988477974_xip6ot17h",
+    "P_1781989032249_24hycw8dz",
+    "P_1781989205283_e1ac0b35e",
+    "P_1781989611673_7s7434f34",
+    "P_1781992111939_49rjbne55",
+    "P_1781994121095_bp91bjbc0",
+    "P_1782007859656_gdet9amdw"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 91,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989205283_e1ac0b35e",
+        "feature_name": "safety_language_cue_vulgarity_violence",
+        "feature_value": "Removed when profanity and violence were present",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Profanity and violence were the things I was looking for to remove",
+        "rationale": "The participant explicitly states the specific content cues they used to decide removal."
+      },
+      {
+        "participant_id": "P_1781992111939_49rjbne55",
+        "feature_name": "removal_threshold_no_violence_no_vulgar_language",
+        "feature_value": "Chose to leave posts if they lacked violence or vulgar language",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If the message didn't call for violence or have vulgar language I generally chose to leave it.",
+        "rationale": "They describe a clear conditional rule for keeping versus removing."
+      },
+      {
+        "participant_id": "P_1781988477974_xip6ot17h",
+        "feature_name": "rights_respect_over_agreement",
+        "feature_value": "Respected the right to express opposing viewpoints even when disagreeing",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "While I might not agree with both viewpoints, I respect the right' to have them.",
+        "rationale": "They emphasize a normative stance (respecting expression) rather than agreement."
+      },
+      {
+        "participant_id": "P_1781989032249_24hycw8dz",
+        "feature_name": "discourse_value_room_for_discussion",
+        "feature_value": "Kept if posts offered points and room for discussion; removed if just name-calling/anger",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "if I felt that the posts were not just hating on another group/person and made some sort of point that showed maybe there was room for discussion",
+        "rationale": "They contrast constructive discussion versus demeaning/angry content as the deciding factor."
+      },
+      {
+        "participant_id": "P_1781988464969_pwsxchcc0",
+        "feature_name": "respectful_discourse_contribution",
+        "feature_value": "Influence from whether posts contributed to respectful political discourse",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If they contributed to respectful political discourse",
+        "rationale": "Their criterion directly references respectful discourse as the basis for decisions."
+      },
+      {
+        "participant_id": "P_1781994121095_bp91bjbc0",
+        "feature_name": "pair_based_consistency_application_of_standards",
+        "feature_value": "Seeing posts together prompted consistent application of the same standards to both sides",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Seeing the posts together encouraged me to apply the same standards to both sides and make a consistent judgment",
+        "rationale": "They explicitly tie the paired format to applying consistent standards across perspectives."
+      },
+      {
+        "participant_id": "P_1781988279536_5if8t7id3",
+        "feature_name": "inflammatory_content_over_substantive_value",
+        "feature_value": "Checked whether both sides articulated positions with value vs just inflammatory talking points; factual inaccuracy reduced approval",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "if both sides actually articulated their position or if they were just saying inflammatory things without adding value",
+        "rationale": "They describe evaluating substantive articulation/value and also mention difficulty due to factual inaccuracy."
+      },
+      {
+        "participant_id": "P_1782007859656_gdet9amdw",
+        "feature_name": "minimal_reflection_pair_description_only",
+        "feature_value": "Reflection focused only on describing the mirror-imaging of arguments",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "The mirror image of the argument from the opposite perspective.",
+        "rationale": "This participant provides almost no decision criteria beyond describing the mirror relationship."
+      }
+    ]
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "batch_id": 17,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988212469_e2hzca3e1",
+    "P_1781988387976_oh3cnj9mz",
+    "P_1781988469987_8twwgoomf",
+    "P_1781989553065_oj74a8qsc",
+    "P_1781989745614_kz4v3lae4",
+    "P_1781989812952_y7ct2zmw6",
+    "P_1781990126305_ccy2to7kf",
+    "P_1781990249458_19z0njf31",
+    "P_1781992605050_wtfpna5j6",
+    "P_1781996264686_5qsqacj0m"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 17,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781996264686_5qsqacj0m",
+        "feature_name": "harm_based_decision_rule",
+        "feature_value": "Used an explicit harm/actual risk threshold to decide keep vs remove.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I evaluated if there would be actual harm if one of the messages was allowed to be up",
+        "rationale": "The participant describes evaluating real harm from allowing a post, which directly guides their decision."
+      },
+      {
+        "participant_id": "P_1781989812952_y7ct2zmw6",
+        "feature_name": "consistency_via_same_standard_on_both_sides",
+        "feature_value": "Focused on applying the same standard to both original and mirror versions to stay consistent.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Seeing both versions helped me stay consistent and apply the same standard to each side.",
+        "rationale": "They explicitly credit seeing both versions for enabling consistent application of criteria to each side."
+      },
+      {
+        "participant_id": "P_1781988469987_8twwgoomf",
+        "feature_name": "threat_violence_and_dialogue_impact_scan",
+        "feature_value": "Checked whether content felt threatening/violent and whether it would help vs hinder conversation.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Was it threatening? Was it violent? Would this help or just hinder the conversation?",
+        "rationale": "Their reflection centers on threat/violence cues and perceived conversational impact."
+      },
+      {
+        "participant_id": "P_1781988387976_oh3cnj9mz",
+        "feature_name": "tone_drives_influence",
+        "feature_value": "Reported that the comment tone was the main influence on their judgment.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "The tone of the comment",
+        "rationale": "They provide a direct, narrow cue: tone."
+      },
+      {
+        "participant_id": "P_1781989745614_kz4v3lae4",
+        "feature_name": "free_speech_boundary_with_rudeness_only",
+        "feature_value": "De-emphasized agreement with the content and relied on a free-speech rule, removing only when posts were explicitly rude/insulting.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "My opinion is irrelevant... The only times I refused to allow the posts were when they were explicitly rude",
+        "rationale": "They articulate a boundary condition: keep for speech rights unless explicitly rude/insulting."
+      },
+      {
+        "participant_id": "P_1781989553065_oj74a8qsc",
+        "feature_name": "allow_all_perspectives_except_cannot_remove_single",
+        "feature_value": "Preferred leaving posts up to provide full perspectives, noting emotionally charged claims without evidence but constraints on removing only one.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "People deserve to have all perspective's laid out before them even if we don't trust them to be able to decipher reason from hysteria.",
+        "rationale": "Their rationale emphasizes preserving both perspectives and mentions emotional charge/evidence constraints alongside a limitation."
+      },
+      {
+        "participant_id": "P_1781990126305_ccy2to7kf",
+        "feature_name": "extremity_and_selective_acceptance",
+        "feature_value": "Said examples/perspectives were too extreme to accept, though they still judged some issues as needing attention.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Most of the examples and perspectives were too extreme for me to accept",
+        "rationale": "They directly tie influence to perceived extremity of the perspectives."
+      },
+      {
+        "participant_id": "P_1781990249458_19z0njf31",
+        "feature_name": "civility_and_libel_checks",
+        "feature_value": "Used a brief check for civility, language quality, and whether content involved libel.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "level of civility and language and if any libel or similar",
+        "rationale": "They reference specific compliance-like criteria: civility/language and libel."
+      }
+    ]
+  }
+}

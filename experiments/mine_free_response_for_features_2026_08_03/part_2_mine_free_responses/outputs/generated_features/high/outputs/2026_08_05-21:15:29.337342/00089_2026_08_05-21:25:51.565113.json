@@ -1,0 +1,97 @@
+{
+  "batch_id": 89,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988829033_pll26bb8s",
+    "P_1781989027316_91rkba9j8",
+    "P_1781989470115_hixv90e8p",
+    "P_1781989737135_zbq3etf09",
+    "P_1781989745836_sta48ztdt",
+    "P_1781989993708_dd22p9dk3",
+    "P_1781990106796_brj3aure1",
+    "P_1781990178004_lgabnt0ma",
+    "P_1781996270235_03r7yv6pn",
+    "P_1782000036434_eeu6ewtdk"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 89,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988829033_pll26bb8s",
+        "feature_name": "pairwise_harassment_language_check",
+        "feature_value": "Used the pair to detect identical aggressive/insulting phrasing and focused on harassment/dehumanization over politics",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Evaluating them as a pair made it easier to spot when both sides used the exact same aggressive or insulting phrasing",
+        "rationale": "The participant explicitly describes using the paired comparison to find hostile language patterns rather than political viewpoint differences."
+      },
+      {
+        "participant_id": "P_1781989993708_dd22p9dk3",
+        "feature_name": "decision_frame_free_speech_vs_hate_rhetoric",
+        "feature_value": "Decided based on whether it fit free speech or hate rhetoric",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "if it was free speech or hate rhetoric",
+        "rationale": "They state the exact decision criterion they used to evaluate the post as a pair."
+      },
+      {
+        "participant_id": "P_1781990178004_lgabnt0ma",
+        "feature_name": "remove_for_misinformation_inflammatory_noncontributive",
+        "feature_value": "Removed when misinformation, excessive inflammation, or lack of contribution",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "mainly removed the comment if it stated misinformation, was excessively inflammatory or did not contribute",
+        "rationale": "Their reflection lists specific removal triggers that guided moderation decisions."
+      },
+      {
+        "participant_id": "P_1781990106796_brj3aure1",
+        "feature_name": "omit_angry_or_vulgar_nonconstructive",
+        "feature_value": "Omitted comments that were angry or vulgar and lacked constructive conversational value",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "simply angry or vulgar in their comments, and had nothing constructive added",
+        "rationale": "They directly connect \u201cangry/vulgar\u201d with \u201cnothing constructive\u201d as the basis for omitting."
+      },
+      {
+        "participant_id": "P_1781989470115_hixv90e8p",
+        "feature_name": "curse_words_feel_unnecessary",
+        "feature_value": "Disliked curse words as feeling unnecessary at that moment",
+        "category": "affect_or_confidence",
+        "is_open_ended": true,
+        "evidence_span": "didn't really like the ones with the curse words, it just felt unnecessary for those to be there at that moment",
+        "rationale": "They describe a subjective negative reaction to profanity shaping their moderation/selection."
+      },
+      {
+        "participant_id": "P_1781996270235_03r7yv6pn",
+        "feature_name": "accept_if_objective_well_stated_vs_crude_insulting",
+        "feature_value": "Accepted both when most of each post was well-stated and mostly objective; otherwise rejected when intentionally crude/insulting",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If most of each post was well-stated and mostly objective, I chose to accept both",
+        "rationale": "They set a comparative rule about crudeness/insults versus objectivity to decide accept/omit."
+      },
+      {
+        "participant_id": "P_1781989027316_91rkba9j8",
+        "feature_name": "bias_reduction_by_diversified_two_sided_views",
+        "feature_value": "Chose options that appeared to represent diversified views on both sides",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "looked like they had a diversified view of both sides in my decision making",
+        "rationale": "They describe using balanced representation across the pair to guide their choices."
+      },
+      {
+        "participant_id": "P_1782000036434_eeu6ewtdk",
+        "feature_name": "intrinsic_engagement_affecting_tolerance",
+        "feature_value": "Felt they would actually engage with the posts; this positive engagement made the survey pleasing",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "I felt as If these posts were posts that I would actually engage in",
+        "rationale": "Their influence appears driven by anticipated engagement and positive feelings rather than explicit moderation rules."
+      }
+    ]
+  }
+}

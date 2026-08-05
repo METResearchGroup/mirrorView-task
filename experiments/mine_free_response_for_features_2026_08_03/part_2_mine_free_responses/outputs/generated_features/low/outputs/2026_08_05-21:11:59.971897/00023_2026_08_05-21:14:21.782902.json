@@ -1,0 +1,97 @@
+{
+  "batch_id": 23,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988172391_vxtwtkb8e",
+    "P_1781988246801_owiddf2uk",
+    "P_1781989117702_hw6jb22i3",
+    "P_1781989535132_rl9axyacb",
+    "P_1781989627080_et4fmrggi",
+    "P_1781990526577_k0kdnielo",
+    "P_1781991538553_4w4l964wm",
+    "P_1781991577414_d9h9svmzb",
+    "P_1781992036658_h13n1912b",
+    "P_1782007425084_s76kawsl4"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 23,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988246801_owiddf2uk",
+        "feature_name": "safety_violation_not_found",
+        "feature_value": "Stated that nothing in the paired posts violated safety issues or pushed beyond mainstream beliefs.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Nothing I saw violated any safety issues",
+        "rationale": "They explicitly use the absence of safety violations as their basis for keeping/removing, implying the pair didn\u2019t change that."
+      },
+      {
+        "participant_id": "P_1781988172391_vxtwtkb8e",
+        "feature_name": "violence_or_falsehood_threshold",
+        "feature_value": "Focused on rejecting only threatened violence or statements presented as law/complete lies.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I was looking for any threatened violence, or complete lies stated as something that's a law",
+        "rationale": "They describe a specific content threshold (violence/falsehood-as-law) driving decisions."
+      },
+      {
+        "participant_id": "P_1781991577414_d9h9svmzb",
+        "feature_name": "free_speech_right_drives_keep",
+        "feature_value": "Even if they disagreed, they supported others\u2019 right to speak.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "I am for free speech",
+        "rationale": "Their reflection emphasizes rights-based acceptance despite disagreement."
+      },
+      {
+        "participant_id": "P_1781989535132_rl9axyacb",
+        "feature_name": "censorship_worry_and_need_both_sides",
+        "feature_value": "Believed censoring one side would never stop; wanted to see both sides and rely on personal fact-checking.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I want to see both sides even if they are wrong",
+        "rationale": "They frame their decision as preferring exposure to both versions/stances rather than using the pair to restrict."
+      },
+      {
+        "participant_id": "P_1781989627080_et4fmrggi",
+        "feature_name": "civility_and_rage_bait_exclusion",
+        "feature_value": "Goal was maintaining civil discussion; excluded clearly rage-bait posts.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "My main goal was maintaining \"civil\" conversation",
+        "rationale": "They state a process/criterion focused on civility and rage-bait as the deciding factor."
+      },
+      {
+        "participant_id": "P_1781989117702_hw6jb22i3",
+        "feature_name": "limited_modification_scope",
+        "feature_value": "Only removed profanity and personal attacks; left everything else unchanged.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I removed profanity and personal attacks. Everything else stayed.",
+        "rationale": "They describe a narrow set of edits that likely minimized influence from seeing the paired version."
+      },
+      {
+        "participant_id": "P_1781990526577_k0kdnielo",
+        "feature_name": "malicious_targeting_not_acceptable",
+        "feature_value": "Allowed disagreement/opinions but rejected bad language directed maliciously at people.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Bad language and directed at people in a malicious way is not acceptable.",
+        "rationale": "They highlight directed malice as the key removal criterion rather than the presence of disagreement itself."
+      },
+      {
+        "participant_id": "P_1781992036658_h13n1912b",
+        "feature_name": "uncertainty_and_difficulty_deciding",
+        "feature_value": "Mentioned not knowing what some initials meant and finding it hard to make a decision.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "I didn't know what some initials meant... hard to make a decision",
+        "rationale": "They indicate comprehension gaps that affected decisional confidence, limiting how much the pair changed their judgment."
+      }
+    ]
+  }
+}

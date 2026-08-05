@@ -1,0 +1,97 @@
+{
+  "batch_id": 86,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988991522_73o835c64",
+    "P_1781989284233_09dbh8at0",
+    "P_1781989719419_ci3zqp5bp",
+    "P_1781990243711_8in0aspgd",
+    "P_1781991541139_vf4okzwiz",
+    "P_1781991880959_ngwjlofde",
+    "P_1782001239416_9xhi9npbs",
+    "P_1782003523101_j2qckh8yt",
+    "P_1782070792731_dlzwzcokl",
+    "P_1782150214066_chjkykoun"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 86,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988991522_73o835c64",
+        "feature_name": "vulgarity_as_removal_trigger",
+        "feature_value": "Vulgar language/cursing led them to remove the pair to avoid undermining constructive discussion",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"removed posts that had vulgar language\"",
+        "rationale": "The participant explicitly states that vulgar language caused them to remove posts to keep discussions political/encouraging."
+      },
+      {
+        "participant_id": "P_1782003523101_j2qckh8yt",
+        "feature_name": "civility_and_fact_checking_criterion",
+        "feature_value": "They were more willing to keep when discussion was civil and facts were checked; name-calling/profanity/unsubstantiated claims pushed toward removal",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"allowed to stand when the discussion was civil\"",
+        "rationale": "They connect the keep/remove decision to civility and truthfulness, contrasting with profanity and unsubstantiated claims."
+      },
+      {
+        "participant_id": "P_1781991541139_vf4okzwiz",
+        "feature_name": "no_threats_or_derogatory_language_allowed",
+        "feature_value": "Allow posts expressing valid viewpoints as long as they avoid threats/violence and derogatory or racist remarks",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"without resorting to threats of violence or making derogatory or racist remarks\"",
+        "rationale": "They give a conditional rule for keeping vs removing based on absence of threats and abusive/racist content."
+      },
+      {
+        "participant_id": "P_1781990243711_8in0aspgd",
+        "feature_name": "swear_words_mapped_to_violence",
+        "feature_value": "They equated swear words with a form of violence, making removal appropriate",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Using swear words shows a form of violence, therefor should be removed\"",
+        "rationale": "The participant provides an explicit reasoning chain from profanity to violence and then to removal."
+      },
+      {
+        "participant_id": "P_1782001239416_9xhi9npbs",
+        "feature_name": "curse_words_primary_signal",
+        "feature_value": "Whether to keep/remove was primarily driven by presence of curse words",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"whether they contained curse words\"",
+        "rationale": "They state that curse words were the main influence on their decision."
+      },
+      {
+        "participant_id": "P_1781991880959_ngwjlofde",
+        "feature_name": "pair_level_rejection_for_egregiousness",
+        "feature_value": "They declined the entire pair if either post was egregiously erroneous/unhelpful/rage-baiting/inciting hatred/crass; otherwise tried to preserve pairs for productive conversation despite disagreement",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"declined the entire pair\"",
+        "rationale": "They describe a rule for how one problematic member of a pair affects the whole pair decision."
+      },
+      {
+        "participant_id": "P_1782070792731_dlzwzcokl",
+        "feature_name": "favor_non_negative_constructive_discussion",
+        "feature_value": "They looked for posts that were not negative/attacking and would enable longer, more beneficial conversation",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"not negative or attacking\"",
+        "rationale": "They describe their screening focus on negativity/attacks and anticipated conversation quality."
+      },
+      {
+        "participant_id": "P_1782150214066_chjkykoun",
+        "feature_name": "profanity_name_calling_bias",
+        "feature_value": "Profanity and name-calling were influential; they preferred posts that ask for feedback/follow-up rather than aggressive language",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"I was influenced by profanity and name calling\"",
+        "rationale": "They identify aggressive language as the main influence and contrast it with more constructive engagement requests."
+      }
+    ]
+  }
+}

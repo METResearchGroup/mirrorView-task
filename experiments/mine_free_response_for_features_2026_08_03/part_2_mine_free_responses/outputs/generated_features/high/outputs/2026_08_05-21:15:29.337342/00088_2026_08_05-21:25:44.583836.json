@@ -1,0 +1,97 @@
+{
+  "batch_id": 88,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988242937_f6m19q4vc",
+    "P_1781988444481_3mia4thve",
+    "P_1781989312110_nsnnfues1",
+    "P_1781989551270_syklrcguc",
+    "P_1781990144971_10egdcoxu",
+    "P_1781990179380_cil20ohvz",
+    "P_1781991365772_5n7qg1oyx",
+    "P_1781993438988_a4sgju0tv",
+    "P_1781995661200_qhasbc0fd",
+    "P_1782006061306_l0q23xaas"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 88,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988444481_3mia4thve",
+        "feature_name": "content_filters_language_hate_speech",
+        "feature_value": "Used language/hate-speech checks as the main criterion; claimed inability to judge right vs wrong",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "checked for language and hate speech",
+        "rationale": "The participant explicitly states they mainly evaluated for language and hate speech and avoided judging whose view is right."
+      },
+      {
+        "participant_id": "P_1781989312110_nsnnfues1",
+        "feature_name": "violence_incitation_blocks_posts",
+        "feature_value": "Would not allow content that incites violence",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Anything to incite violence I didn't allow.",
+        "rationale": "A clear stated rule for removal/denial when violence incitement is present."
+      },
+      {
+        "participant_id": "P_1782006061306_l0q23xaas",
+        "feature_name": "threats_or_extreme_racism_removal_rule",
+        "feature_value": "Looked for threats to life and extreme racism; otherwise treated it as differing opinions",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "nothing was said that was threathing to anyones life or extremely racist",
+        "rationale": "The participant specifies threat-to-life and extreme racism as key removal triggers while accepting disagreement."
+      },
+      {
+        "participant_id": "P_1781995661200_qhasbc0fd",
+        "feature_name": "remove_if_offensive_or_antagonizing",
+        "feature_value": "Deleted if either post contained offensive or antagonizing content",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "delete both if either one of them had offensive or antagonizing",
+        "rationale": "They describe a conditional rule: if either post was offensive/antagonizing, both were deleted."
+      },
+      {
+        "participant_id": "P_1781990144971_10egdcoxu",
+        "feature_name": "detect_redundant_same_content_different_words",
+        "feature_value": "Concluded many were effectively the same content rephrased, implying low post-uniqueness/acceptability",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": true,
+        "evidence_span": "pretty much sounded like the same thing but differently worded",
+        "rationale": "They characterize the pair as highly redundant across versions, leading to their judgments."
+      },
+      {
+        "participant_id": "P_1781990179380_cil20ohvz",
+        "feature_name": "mutual_insult_awareness_pol_tinted_bias",
+        "feature_value": "Assessed whether posts could insult the other side and emphasized that both sides contain bad actors",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": true,
+        "evidence_span": "assessed both posts according to the content and how they might insult the other party",
+        "rationale": "They frame evaluation around impact toward the other party and note symmetry (bad people on both sides)."
+      },
+      {
+        "participant_id": "P_1781991365772_5n7qg1oyx",
+        "feature_name": "allow_perspectives_but_block_obscene_rude_vulgar",
+        "feature_value": "Let both perspectives through, but only blocked obscene/rude/vulgar posts",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I allowed both perspectives to get posted...not allowing obscene rude vulgar posts.",
+        "rationale": "They explicitly contrast permitting perspectives with a specific prohibition for vulgar/obscene content."
+      },
+      {
+        "participant_id": "P_1781988242937_f6m19q4vc",
+        "feature_name": "free_speech_open_with_limited_removals_calls_to_violence",
+        "feature_value": "Generally supports free speech; removal mainly for calls to violence/coded calls; wants more punishment for misinformation networks",
+        "category": "affect_or_confidence",
+        "is_open_ended": true,
+        "evidence_span": "I'm pretty open to free speech...only things that should be removed are calls to violence or coded ones.",
+        "rationale": "They state a strong pro-free-speech stance with narrow removal criteria based on violence."
+      }
+    ]
+  }
+}

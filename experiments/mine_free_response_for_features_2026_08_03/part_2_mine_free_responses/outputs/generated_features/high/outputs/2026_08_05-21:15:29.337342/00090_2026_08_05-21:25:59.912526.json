@@ -1,0 +1,97 @@
+{
+  "batch_id": 90,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988520570_z9g4o51b8",
+    "P_1781988548969_43w7ni69c",
+    "P_1781988813145_8c5eblr94",
+    "P_1781989267688_x49wy2o65",
+    "P_1781989501820_mjdzckunn",
+    "P_1781989503018_hfgpv095t",
+    "P_1781989871771_aggy9scxl",
+    "P_1781992847202_wl6v28vg4",
+    "P_1781993090365_se8b8tv49",
+    "P_1782012833531_o9upxflw4"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 0,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988813145_8c5eblr94",
+        "feature_name": "fact_vs_opinion_used_as_filter",
+        "feature_value": "Removed posts when they were solely opinion-based; assessed whether content was fact-based vs interpretation/opinion.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I tried to evaluate whether the posts were based in fact ... or merely opinion. I removed them if they were solely opinion-based.",
+        "rationale": "The participant explicitly states evaluating factual basis vs mere opinion and using that to decide removal."
+      },
+      {
+        "participant_id": "P_1782012833531_o9upxflw4",
+        "feature_name": "toxicity_language_triggers_deletion",
+        "feature_value": "Deleted content that was inappropriate, included cuss words, or hate.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If it was inappropriate,used cuss words and hate I deleted both",
+        "rationale": "The participant uses explicit language/toxicity markers (cuss words, hate) as the deletion criterion."
+      },
+      {
+        "participant_id": "P_1781988520570_z9g4o51b8",
+        "feature_name": "name_calling_and_arsh_language_rejected",
+        "feature_value": "Rejected posts that called other posters names or used harsh language; did not restrict purely political responses.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "rejected posts calling other posters names  or using arsh language towards other posters. I did not limit purely political responses",
+        "rationale": "The reflection centers on interpersonal abuse (name-calling/harsh language) as the basis for rejection."
+      },
+      {
+        "participant_id": "P_1781989503018_hfgpv095t",
+        "feature_name": "opinion_vs_hate_speech_split",
+        "feature_value": "Decided based on whether posts expressed opinion versus hate speech.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I made the decision based on the extent to which the posts seemed to express an opinion vs hate speech.",
+        "rationale": "The participant directly describes the opinion/hate-speech distinction as the decision rule."
+      },
+      {
+        "participant_id": "P_1781992847202_wl6v28vg4",
+        "feature_name": "inflammatory_effect_and_no_gain_motivation",
+        "feature_value": "Removed posts expected to be inflammatory or yield nothing gained; expressed frustration about constant fighting.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "remove posts that I thought would be inflammatory and that would result with nothing gained if posted. We fight about everything and it's time to stop it.",
+        "rationale": "The participant describes a motivation tied to expected impact (inflammatory/no added value) affecting keep/remove."
+      },
+      {
+        "participant_id": "P_1781993090365_se8b8tv49",
+        "feature_name": "free_speech_balanced_with_truth_and_provocation",
+        "feature_value": "Balanced free speech against provocation and content being not true.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "balance free speach with something being said that was provokactive and more importanly, not true.",
+        "rationale": "They explicitly state a balancing approach using provocation and (in)truth as key considerations."
+      },
+      {
+        "participant_id": "P_1781989267688_x49wy2o65",
+        "feature_name": "debatability_distance_limited_discussion",
+        "feature_value": "Considered whether points were debatable; removed when too far from debatable statements to enable discussion.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Too many were so far away from a debatable statement so there wasn\u0019t any way to come to a point of discussion.",
+        "rationale": "The reflection frames the pair/decision around whether the content remains within a debatable range for discussion."
+      },
+      {
+        "participant_id": "P_1781989871771_aggy9scxl",
+        "feature_name": "meaningful_constructive_vs_censorship_tension",
+        "feature_value": "Focused on whether content was meaningful/constructive while also not wanting to censor opinions or free speech.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "whether the content of the posts was actually meaningful or constructive. I also did not really want to censor one\u0019s opinion or right to free speech.",
+        "rationale": "The participant expresses an explicit tension between content quality and the desire not to censor."
+      }
+    ]
+  }
+}

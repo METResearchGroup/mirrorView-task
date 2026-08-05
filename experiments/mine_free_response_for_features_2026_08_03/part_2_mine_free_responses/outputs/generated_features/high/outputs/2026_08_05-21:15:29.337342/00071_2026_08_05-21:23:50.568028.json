@@ -1,0 +1,97 @@
+{
+  "batch_id": 71,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781989206047_k2msvle6a",
+    "P_1781989235587_t63q8e2qj",
+    "P_1781989378073_4b6nn7ohx",
+    "P_1781989447614_p0bihlz1l",
+    "P_1781989925487_5zveuy4zp",
+    "P_1781991153175_jve2rv2mr",
+    "P_1781991958813_wt7oxxpne",
+    "P_1781992714581_o0b83sd4m",
+    "P_1781993535241_h0xqzvebu",
+    "P_1782001861227_e3p1rjvzf"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 71,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989378073_4b6nn7ohx",
+        "feature_name": "debate_health_and_fact_checking",
+        "feature_value": "Evaluated whether the pair supported respectful debate and whether claims were factually correct.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "promote a healthy atmosphere for actual debate",
+        "rationale": "The reflection explicitly ties influence to debate tone and factual correctness."
+      },
+      {
+        "participant_id": "P_1781991153175_jve2rv2mr",
+        "feature_name": "perceived_rightwing_stupidity_and_correct_characterization",
+        "feature_value": "Negative reaction to the right-wing version as being \u201cdumb,\u201d while also viewing it as correctly characterized.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "painful reading any of the right-wing ones because of how dumb and correctly-characterized they were.",
+        "rationale": "They describe a strong affective response to right-wing content along with an assessment of characterization."
+      },
+      {
+        "participant_id": "P_1781989925487_5zveuy4zp",
+        "feature_name": "polarization_and_unclear_fact_based_differences",
+        "feature_value": "Saw political disagreement as highly polarized and often not clearly articulated with facts; some people \u201cspout off whatever comes to mind.\u201d",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "people dont necessarily articulate their differences clearly from either side backed with facts.",
+        "rationale": "Their justification focuses on clarity of differences and factual grounding."
+      },
+      {
+        "participant_id": "P_1782001861227_e3p1rjvzf",
+        "feature_name": "tone_as_moral_correctness_signal",
+        "feature_value": "Used message tone to judge whether statements felt \u201cmore wrong\u201d or incorrect; also accepted opposing viewpoints as \u201cfine.\u201d",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "What influenced me was the tone of the messages.",
+        "rationale": "They attribute influence primarily to tone and then discuss correctness/acceptability of opposite views."
+      },
+      {
+        "participant_id": "P_1781993535241_h0xqzvebu",
+        "feature_name": "violence_threshold_for_disallowing",
+        "feature_value": "Would not remove/disallow content if it was not violent, despite disagreeing with it.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "They were not violent so I wouldn't disallow them on my forum.",
+        "rationale": "They state a clear criterion (no violence) for disallowing decisions."
+      },
+      {
+        "participant_id": "P_1781989235587_t63q8e2qj",
+        "feature_name": "impartial_balancing_strategy",
+        "feature_value": "Attempted to be impartial and look for positive and negative sides of each party.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "tried to be as impartial as possible",
+        "rationale": "They describe a deliberate balancing approach across the political pair/parties."
+      },
+      {
+        "participant_id": "P_1781992714581_o0b83sd4m",
+        "feature_name": "language_as_primary_signal",
+        "feature_value": "Mainly influenced by the language used.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "Mainly the language that was used",
+        "rationale": "They directly credit language choice as the principal driver of their decision."
+      },
+      {
+        "participant_id": "P_1781989206047_k2msvle6a",
+        "feature_name": "misinformation_and_violence_invitation_rules",
+        "feature_value": "Based decisions on \u201cblatant misinformation\u201d and whether content could invite violence; allowed expressing opinions for free speech.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "blatant misinformation or could invite violence",
+        "rationale": "They specify the governing decision rules and note a free-speech rationale when only opinions were expressed."
+      }
+    ]
+  }
+}

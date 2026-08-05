@@ -1,0 +1,97 @@
+{
+  "batch_id": 70,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781989259599_svkf059gn",
+    "P_1781989447042_eg45k52j7",
+    "P_1781989805978_1dyunq4jd",
+    "P_1781991633784_kki1n6uq1",
+    "P_1781992925354_169ypleqt",
+    "P_1781993456193_pbb47aj8p",
+    "P_1781994594100_a3kwoyvel",
+    "P_1781999672920_b3200mlz6",
+    "P_1782004630437_jok4kplhd",
+    "P_1782071502478_g8af2kq6x"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 70,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989447042_eg45k52j7",
+        "feature_name": "affiliation_and_comment_wording_bias",
+        "feature_value": "Their political affiliation and how the comments were worded affected their decisions.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"my own political affiliation impacted my response\" ... \"as well as the way the comments were worded.\"",
+        "rationale": "The reflection explicitly ties their responses to personal affiliation and perceived wording."
+      },
+      {
+        "participant_id": "P_1781999672920_b3200mlz6",
+        "feature_name": "profanity_triggers_rejects_even_if_partial_agreement",
+        "feature_value": "Profanity/\u201cprofan language\u201d led them to reject both, even when they agreed with one part.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"The profain language automatically made me reject both arguements\"",
+        "rationale": "They describe an automatic rejection rule driven by profane language."
+      },
+      {
+        "participant_id": "P_1781991633784_kki1n6uq1",
+        "feature_name": "healthiness_for_unbiased_public_discussion",
+        "feature_value": "They suggested removal for posts they felt weren\u2019t healthy for unbiased public contribution.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"wasn't healthy for public unbiased contribution and consumption\"",
+        "rationale": "They state a specific criterion about protecting unbiased, healthy public discourse."
+      },
+      {
+        "participant_id": "P_1781992925354_169ypleqt",
+        "feature_name": "moral_compass_and_belief_consistency_override",
+        "feature_value": "They followed their gut/moral compass and removed items that were offensive or that conflicted with their beliefs.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"follow my gut\" ... \"My moral compass came into view\" ... \"Some were actually offensive\" ... \"totally did not agree\"",
+        "rationale": "They ground decisions in moral beliefs/gut and disagreement offensiveness."
+      },
+      {
+        "participant_id": "P_1781989805978_1dyunq4jd",
+        "feature_name": "focus_on_constructiveness_vs_generic_trolling",
+        "feature_value": "They removed generic \u201cshit-talking\u201d or middle-school name-calling; kept content that supported constructive discussion.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"I generally only removed any that were generic shit-talking instead of constructive conversation\" ... \"If the comment didn't add anything to a discussion or was just middle school name calling, I'd remove.\"",
+        "rationale": "They describe a content-based comparison between constructive points vs trolling/name-calling."
+      },
+      {
+        "participant_id": "P_1782071502478_g8af2kq6x",
+        "feature_name": "harm_threshold_hate_harassment_incitation",
+        "feature_value": "They based decisions on whether the post contributed to discussion or crossed into harmful content (threats/harassment/incitement).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"whether the post contributed to political discussion or crossed a line into harmful content such as threats, harassment or incitement.\"",
+        "rationale": "They provide an explicit line/threshold for harmful content."
+      },
+      {
+        "participant_id": "P_1782004630437_jok4kplhd",
+        "feature_name": "audience_negative_reaction_as_signal",
+        "feature_value": "They referenced whether someone would feel negative about it as an influence.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"When someone saw it, and felt negative about it.\"",
+        "rationale": "The criterion is about perceived negative impact on viewers, without specifying other content categories."
+      },
+      {
+        "participant_id": "P_1781993456193_pbb47aj8p",
+        "feature_name": "hate_speech_threats_drive_removal",
+        "feature_value": "They removed content containing hate speech, found language, or threats; hate is pointless.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"If it was hate speech or found language or threats I took them.down\" ... \"hate is pointless and helps no one\"",
+        "rationale": "They explicitly list hate/threat cues as reasons for removal."
+      }
+    ]
+  }
+}

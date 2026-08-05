@@ -1,0 +1,97 @@
+{
+  "batch_id": 18,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988274537_och6nbub5",
+    "P_1781988474177_73m6ff2qi",
+    "P_1781988682644_6a3ptpqe1",
+    "P_1781989010690_5i070k3ng",
+    "P_1781989184812_7g8za4kv9",
+    "P_1781989198681_1d9k0guja",
+    "P_1781989959032_ebkiw7trc",
+    "P_1781992100540_whsjk7z9q",
+    "P_1781993089593_5362hw51p",
+    "P_1782009735116_4ucnllqna"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 18,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988682644_6a3ptpqe1",
+        "feature_name": "threat_or_profanity_or_misinformation_search",
+        "feature_value": "Used a removal screen for threats/danger plus blatant profanity and misinformation; reported finding none in either version.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I was looking for comments that could be dangerous to individuals (threats) or just blatant profanity/misinformation for removal, but none of those comments seemed like anything but political discourse.",
+        "rationale": "The participant explicitly describes the criteria they applied to decide remove/keep and states the criteria were not triggered."
+      },
+      {
+        "participant_id": "P_1781992100540_whsjk7z9q",
+        "feature_name": "no_threats_found_free_speech_framing",
+        "feature_value": "Checked for threats/incitement/harm and concluded there was only expression of opinions (free speech).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I looked for threats, inciting violence, or trying to cause harm to a person or persons. I seen nothing like that. ... nothing more than free speech.",
+        "rationale": "They report specific safety checks and the outcome (no threats/incitement) leading to acceptance."
+      },
+      {
+        "participant_id": "P_1781989010690_5i070k3ng",
+        "feature_name": "content_tone_only_rules_offensive_vulgar_removed",
+        "feature_value": "Decision driven by overall tone/message; removed if vulgar/offensive; accepted if communicated appropriately/constructively.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If the statements appeared too vulgar or offensive I chose to remove both. ... if both messages were communicated appropriately and constructively I chose to accept.",
+        "rationale": "This participant provides a clear rule based on offensiveness/constructiveness rather than political affiliation."
+      },
+      {
+        "participant_id": "P_1781989010690_5i070k3ng",
+        "feature_name": "political_affiliation_does_not_matter",
+        "feature_value": "Stated political affiliation had no bearing on accept/remove decisions.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "The message itself or the political affiliation associated with the messages had no bearing on my decisions to accept or remove.",
+        "rationale": "They directly mention an independence criterion from political cues."
+      },
+      {
+        "participant_id": "P_1781988474177_73m6ff2qi",
+        "feature_name": "foul_or_inflammatory_language_line",
+        "feature_value": "Drew the line at foul language and derogatory/inflammatory language (right to others' opinions otherwise).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Where I drew the line was people used foul language or used deragary or inflammatory language.",
+        "rationale": "They define a threshold criterion centered on linguistic offensiveness/inflammatory language."
+      },
+      {
+        "participant_id": "P_1782009735116_4ucnllqna",
+        "feature_name": "not_swayed_by_pair_or_opinion_mismatch",
+        "feature_value": "Said the decision was not swayed by disagreement with statements/others' convictions.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "The decision was easy, fair is fair. ... I was not swayed.",
+        "rationale": "They indicate low susceptibility to influence, attributing it to fairness/steadfast convictions."
+      },
+      {
+        "participant_id": "P_1781989959032_ebkiw7trc",
+        "feature_name": "free_speech_with_incitement_exception",
+        "feature_value": "Supported free speech but with an exception for inciting violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I support free speech unless it incites violence.",
+        "rationale": "They express a conditional rule for removal/retention tied to violence incitement."
+      },
+      {
+        "participant_id": "P_1781989184812_7g8za4kv9",
+        "feature_name": "dangerous_or_overtly_racist_and_specific_code_terms",
+        "feature_value": "Looked for overt racism/dangerous calls to action; mentioned 'globalist' as a dog-whistle term for Jews.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "anything dangerous or overtly racist... or the term \"globalist\" ... used as a dog whistle for \"Jews\"",
+        "rationale": "They reference specific content types/terms they considered relevant to deciding."
+      }
+    ]
+  }
+}

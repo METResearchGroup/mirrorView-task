@@ -1,0 +1,97 @@
+{
+  "batch_id": 40,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988329828_3d9xz56og",
+    "P_1781988707443_ole7f18tm",
+    "P_1781988778762_mvbmiqjr6",
+    "P_1781988807643_c1cc9rkdk",
+    "P_1781989712420_7a8sao40g",
+    "P_1781990571746_z6h5s8ktv",
+    "P_1781991782085_75kuqkpnm",
+    "P_1781993532299_90t4pguqs",
+    "P_1782000810126_zzxinwshb",
+    "P_1782044882100_esfo79uuo"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 40,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988807643_c1cc9rkdk",
+        "feature_name": "content_based_moderation_over_political_perspective",
+        "feature_value": "Evaluated the paired posts against moderation guidelines and same standards, focusing on content rather than viewpoint.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Evaluating them as a pair helped me apply the same standards consistently and base my decision on the content itself rather than the perspective being expressed.",
+        "rationale": "The participant explicitly describes using the pair to apply consistent, content-based moderation rather than perspective."
+      },
+      {
+        "participant_id": "P_1781988329828_3d9xz56og",
+        "feature_name": "hate_abuse_threshold_for_removal",
+        "feature_value": "Removed only when the text constituted hate speech or abusive language.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "anything that constitutes as hate speech or abusive language. If it seemed abusive or hateful then I would choose to remove it.",
+        "rationale": "They state a clear rule tied to hate/abuse for removal."
+      },
+      {
+        "participant_id": "P_1781989712420_7a8sao40g",
+        "feature_name": "intuition_driven_from_poster_sentiment",
+        "feature_value": "Used gut feelings tied to the negativity of remarks as an influence on decisions.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "Gut feelings of those that posted negative remarks",
+        "rationale": "They describe reliance on gut feelings about negative remarks."
+      },
+      {
+        "participant_id": "P_1781993532299_90t4pguqs",
+        "feature_name": "swearing_or_threats_cues",
+        "feature_value": "Looked for profanity (\u201ccuss words\u201d) or threats as decision cues.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "if they where saying cuss words or threats",
+        "rationale": "The participant names specific linguistic cues (cuss words, threats) guiding decisions."
+      },
+      {
+        "participant_id": "P_1781988778762_mvbmiqjr6",
+        "feature_name": "perceived_harmfulness_as_driver",
+        "feature_value": "Decisions were guided by how harmful the posts felt to them.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "How harmful they felt to me",
+        "rationale": "This reflection directly states perceived harm as the basis."
+      },
+      {
+        "participant_id": "P_1781988707443_ole7f18tm",
+        "feature_name": "free_speech_fallback_when_not_harmful_or_inciting",
+        "feature_value": "Did not remove posts despite disagreement, citing free speech and that none seemed harmful or inciting.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "support free speech and none of the posts seemed that harmful or inciting to me.",
+        "rationale": "They set a boundary: keep unless posts are harmful/inciting."
+      },
+      {
+        "participant_id": "P_1781991782085_75kuqkpnm",
+        "feature_name": "anti_censorship_with_offensiveness_exception",
+        "feature_value": "Opposed censoring differing viewpoints, but would remove only if posts were offensive toward a group (and mentioned misinformation concerns).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I don\u0006t think it\u0006s right to censor that... you shouldn\u0006t remove any post just because someone spoke their mind unless it was really like offensive towards a group of people.",
+        "rationale": "They articulate a general anti-censorship principle with a specific offensiveness exception."
+      },
+      {
+        "participant_id": "P_1782044882100_esfo79uuo",
+        "feature_name": "task_experience_positivity",
+        "feature_value": "Reported the task as simple and good, with no substantive decision reasoning.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "This was a great and simple task",
+        "rationale": "The reflection provides only overall task evaluation rather than explicit moderation/decision logic."
+      }
+    ]
+  }
+}

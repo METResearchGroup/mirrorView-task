@@ -1,0 +1,21 @@
+{
+  "cluster_id": 0,
+  "likert_group": "high",
+  "n_members": 17,
+  "sampled_feature_ids": [
+    "12_0",
+    "76_2",
+    "80_6",
+    "50_1",
+    "47_6",
+    "47_4",
+    "9_0",
+    "51_0"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Apply same moderation standard across both sides",
+    "definition": "Participants reported that seeing original-plus-mirror pairs helped them judge more consistently and fairly by applying identical moderation criteria regardless of political viewpoint.",
+    "salience_notes": "Features cohere around symmetric pairwise comparison to prevent double standards, audit personal bias, and base keep/remove decisions on guideline violations/tone rather than ideology."
+  }
+}

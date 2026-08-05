@@ -1,0 +1,88 @@
+{
+  "batch_id": 46,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988295386_sdd1uoq0o",
+    "P_1781988407805_cel0nsn4q",
+    "P_1781988886005_ol9twazj4",
+    "P_1781989164058_p1ndi6auu",
+    "P_1781989312822_xpweuo863",
+    "P_1781989941252_75d8z0eh2",
+    "P_1781989989313_rfgb0l04f",
+    "P_1781991892720_evzxp256j",
+    "P_1781993395178_y0wjbavv6",
+    "P_1782005014786_jlpbz8pwt"
+  ],
+  "feature_count": 7,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 46,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988295386_sdd1uoq0o",
+        "feature_name": "free_speech_delete_tradeoff",
+        "feature_value": "Kept posts to preserve opposing viewpoints visibility; prioritized free speech unless threats",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I was thinking about free speech... If I decided to delete most of the posts, that means that the opposing viewpoints... wouldn\u2019t have any visibility",
+        "rationale": "The participant explicitly describes a decision rule balancing deletion against preserving viewpoint visibility under a free-speech principle."
+      },
+      {
+        "participant_id": "P_1781989941252_75d8z0eh2",
+        "feature_name": "hate_speech_removal_threshold",
+        "feature_value": "Removed content deemed hate-filled; framed focus as opinions vs hate speech",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If something was hate filled I thought it should be removed.",
+        "rationale": "They state a clear threshold for removal based on whether the content is hate-filled rather than merely an opinion."
+      },
+      {
+        "participant_id": "P_1781989312822_xpweuo863",
+        "feature_name": "attack_vs_opinion_separation",
+        "feature_value": "Compared original vs mirror by looking for attacks on the commenter vs opinion/continuing thought; removed attacks",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "looked for places they were attacking the commenter vs providing an opinion... The attacks I removed",
+        "rationale": "Their strategy is specifically to distinguish attacking language from opinion when evaluating the pair."
+      },
+      {
+        "participant_id": "P_1781988886005_ol9twazj4",
+        "feature_name": "appropriateness_language_cursing_personal_attacks",
+        "feature_value": "Used appropriateness of language (avoid cursing/personal attacks) as the main criterion",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "if they used appropriate language instead resorting to cursing or personal attacks.",
+        "rationale": "They describe evaluating for cursing/personal attacks as the driver of influence."
+      },
+      {
+        "participant_id": "P_1781989989313_rfgb0l04f",
+        "feature_name": "term_elimination_approach",
+        "feature_value": "Used an 'elimination of the terms' style evaluation strategy",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "simple strategy of evaluation and elimination of the terms.",
+        "rationale": "They characterize their method as a straightforward terms-elimination approach for deciding."
+      },
+      {
+        "participant_id": "P_1781993395178_y0wjbavv6",
+        "feature_name": "factual_validity_and_genuineness_gate",
+        "feature_value": "Considered whether posts denied actual facts and whether they represented genuine beliefs",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Whether they denied actual facts and whether they seemed to be genuine beliefs.",
+        "rationale": "They list explicit evaluation dimensions about factual denial and authenticity."
+      },
+      {
+        "participant_id": "P_1781989164058_p1ndi6auu",
+        "feature_name": "rudeness_to_better_comment_expectation",
+        "feature_value": "Noted many comments were rude and felt they should try to give better comments",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "many comments were rude... we should try and give better comments",
+        "rationale": "The participant\u2019s reasoning is grounded in perceived rudeness and a normative reaction to improve comment quality."
+      }
+    ]
+  }
+}

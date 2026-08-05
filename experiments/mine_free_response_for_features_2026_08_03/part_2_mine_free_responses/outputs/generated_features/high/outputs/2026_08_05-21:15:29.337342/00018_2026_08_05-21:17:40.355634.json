@@ -1,0 +1,97 @@
+{
+  "batch_id": 18,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988253057_espnjwuom",
+    "P_1781988276345_he0choz05",
+    "P_1781988382621_bqavgwd5i",
+    "P_1781988706239_4y90ahwk7",
+    "P_1781990043484_b2hh2jisv",
+    "P_1781990270937_4m1l1afja",
+    "P_1781995221636_50ffbsni3",
+    "P_1781999946596_y9wshb4ut",
+    "P_1782021877060_n0chk1115",
+    "P_1782087681783_ywjlsn8ho"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 18,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781995221636_50ffbsni3",
+        "feature_name": "harm_as_decision_threshold",
+        "feature_value": "Uses potential harm/informativeness to decide removal; removes if harmful and allows if not overly inflammatory.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"thought of the information would be harmful\"...\"If it was harmful then I decided to remove them\"",
+        "rationale": "The participant explicitly describes harmfulness as the deciding criterion for keep vs remove."
+      },
+      {
+        "participant_id": "P_1782021877060_n0chk1115",
+        "feature_name": "dangerousness_and_free_speech_consequences_balance",
+        "feature_value": "Keeps unless statements are dangerous/harmful; acknowledges free speech plus consequences.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"kept in mind if the statements were dangerous\"...\"we should not censor statements that are not dangerous or harmful\"",
+        "rationale": "They ground decisions in a dangerousness threshold while still valuing free speech."
+      },
+      {
+        "participant_id": "P_1782087681783_ywjlsn8ho",
+        "feature_name": "extreme_views_and_actions_concern",
+        "feature_value": "Material influence driven by concern about extreme views/actions being expressed.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"concerned about extreme views and actions being expressed\"",
+        "rationale": "Their reflection centers on being wary of extremity as a key factor in decisions."
+      },
+      {
+        "participant_id": "P_1781990043484_b2hh2jisv",
+        "feature_name": "misinformation_and_divisive_rhetoric_negative_signal",
+        "feature_value": "Removes/axes posts for factual misleading info and intentionally divisive rhetoric.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Factually misleading info and intentionally divisive rhetoric was axed.\"",
+        "rationale": "They identify specific content qualities (misleading + divisive) as drivers of removal."
+      },
+      {
+        "participant_id": "P_1781988706239_4y90ahwk7",
+        "feature_name": "politeness_affects_allowance",
+        "feature_value": "More likely to keep/allow when the point is argued politely.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If the point was argued politely, I decided they deserved to voice their opinion.\"",
+        "rationale": "They describe politeness as directly increasing their willingness to allow the post."
+      },
+      {
+        "participant_id": "P_1781988382621_bqavgwd5i",
+        "feature_name": "frame_and_derogatory_language_matter",
+        "feature_value": "Evaluates wording/framing; cussing/derogatory language is unnecessary and reduces acceptance.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"mainly focused on the wording and how things were framed\"...\"cussing and using derogatory wording are very unnecessary\"",
+        "rationale": "They report a focus on how the paired versions phrase/frame the content and how that changes their judgment."
+      },
+      {
+        "participant_id": "P_1781990270937_4m1l1afja",
+        "feature_name": "prefers_fruitful_discussion_over_hostility",
+        "feature_value": "Looks for fruitful discussion rather than hatred/angry words.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"fruitful instead of hatered and angry words\"",
+        "rationale": "They tie acceptance to whether the interaction promotes productive discussion vs hostility."
+      },
+      {
+        "participant_id": "P_1781999946596_y9wshb4ut",
+        "feature_name": "contextual_view_showing_both_ideas_but_critical_thinking_gap",
+        "feature_value": "Wants exposure to political ideas for understanding; concerns include society lacking critical thinking; also rejects monetizing speech.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"people should be exposed to both political ideas\"...\"society we live in lacks critical thinking\"",
+        "rationale": "Their influence reasoning emphasizes broader values (exposure/critical thinking) rather than a single keep/remove threshold."
+      }
+    ]
+  }
+}

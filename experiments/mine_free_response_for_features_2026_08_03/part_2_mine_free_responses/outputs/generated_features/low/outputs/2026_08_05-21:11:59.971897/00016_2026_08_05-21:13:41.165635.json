@@ -1,0 +1,88 @@
+{
+  "batch_id": 16,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988457170_n3tw39z7h",
+    "P_1781988607594_8gz3wu8xe",
+    "P_1781988882004_qv3aibfxi",
+    "P_1781989450887_940thxvy7",
+    "P_1781989470303_bvt4b3mu7",
+    "P_1781992416920_prcpdeu5d",
+    "P_1781994671111_i5vgz69nh",
+    "P_1781996652311_zxiuw7cyw",
+    "P_1781997293946_flnuxltie",
+    "P_1782002990303_73bqyxcwh"
+  ],
+  "feature_count": 7,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 16,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988457170_n3tw39z7h",
+        "feature_name": "content_safety_threshold_equal_treatment",
+        "feature_value": "Guidelines focused on not violating explicit safety rules (e.g., threats of violence/doxxing), otherwise judged both versions equally",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "As long as neither post violated terms like threats of violence or doxxing, I tried to judge both equally",
+        "rationale": "The participant states a specific condition for \u201cequal\u201d judging across the pair."
+      },
+      {
+        "participant_id": "P_1781988607594_8gz3wu8xe",
+        "feature_name": "free_speech_with_harm_limit",
+        "feature_value": "Permissive of opinion differences, but only problematic if involving harm (physical/doxxing)",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "As long as it doesn't not involve harming a person (physically or doxing as a way of harming their livelihood) I see no problem",
+        "rationale": "They articulate a harm-based boundary for keeping/removing."
+      },
+      {
+        "participant_id": "P_1781989450887_940thxvy7",
+        "feature_name": "violence_incitation_triggers_removal",
+        "feature_value": "Any content that could incite violence was flagged",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Something that could possibly incite violence was flagged for me.",
+        "rationale": "They describe a direct trigger leading to removal decisions."
+      },
+      {
+        "participant_id": "P_1781996652311_zxiuw7cyw",
+        "feature_name": "death_related_language_forbidden_no_matter_party",
+        "feature_value": "Death threats/assassination/killing language leads to removal; allowed dissent otherwise",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Calling people morons... is not a contentious issue... But you cross the line when you take about death, death threats, assassination and the like.",
+        "rationale": "They distinguish insults from death/violence content as the real deciding line."
+      },
+      {
+        "participant_id": "P_1782002990303_73bqyxcwh",
+        "feature_name": "profanity_not_as_bad_as_some_other_content",
+        "feature_value": "Profanity alone wasn\u2019t decisive; both posts seemed valid from the opposing viewpoint and not too incendiary",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Both posts seemed valid when taken from the opposing party point of view and there's nothing wrong at all with voicing your opinions... there was nothing too incendiary",
+        "rationale": "They explicitly downweight offensiveness/hate concerns and emphasize viewpoint validity."
+      },
+      {
+        "participant_id": "P_1781997293946_flnuxltie",
+        "feature_name": "perceived_partisan_bias_and_naming_language_concern",
+        "feature_value": "Noted more left-leaning than right; concern centered on name-calling/foul language and harm risk (killed people) rather than ideology itself",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "i definitely saw more left wing than right.. It seem to be a little libral biased... Mostly the one i said delete both had name calling and foul language,,, I have no problem with both liberal ideas and conservative ideas",
+        "rationale": "Their reflection ties deletion mainly to name-calling/foul language and perceived real-world harm."
+      },
+      {
+        "participant_id": "P_1781992416920_prcpdeu5d",
+        "feature_name": "low_reflection_effort_generic_comment_impact",
+        "feature_value": "Didn\u2019t articulate specific pair-based reasons; reflected that the comments looked familiar",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I was just thinking all of these comments seem like something I would come across.",
+        "rationale": "The reflection doesn\u2019t reference the pair\u2019s comparative differences or clear criteria."
+      }
+    ]
+  }
+}

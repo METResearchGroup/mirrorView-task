@@ -1,0 +1,97 @@
+{
+  "batch_id": 22,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988596910_ylxwm4glj",
+    "P_1781988670301_ebmnom2kn",
+    "P_1781989257724_0qskmqas4",
+    "P_1781989640519_he3ti7k87",
+    "P_1781989779089_lwkqcbxgf",
+    "P_1781992700751_hwzhz9nhw",
+    "P_1781995601696_f8vs29ad8",
+    "P_1781995831257_zp9t1kebw",
+    "P_1781998175861_8vhok53f2",
+    "P_1782002958702_zv98nbf44"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 22,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781995601696_f8vs29ad8",
+        "feature_name": "removed_if_foul_or_incendiary",
+        "feature_value": "Remove when either post uses foul/incendiary language (apply to both versions).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If either post used foul or incendiary language I removed both.\"",
+        "rationale": "The participant states a specific language-trigger rule that led to removing both items."
+      },
+      {
+        "participant_id": "P_1781995831257_zp9t1kebw",
+        "feature_name": "tone_language_safety_threshold",
+        "feature_value": "Keep if tone/language is not dehumanizing, racist, or promoting violence; otherwise willing to remove.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"As long as post did not use dehumanizing language... racism, promote violence etc. I was willing to allow the post to remain visible.\"",
+        "rationale": "They explicitly list disqualifying content categories and tie it to the keep decision."
+      },
+      {
+        "participant_id": "P_1781988596910_ylxwm4glj",
+        "feature_name": "sincerity_vs_trolling_assessment",
+        "feature_value": "Choose the more sincere one with actual talking points vs trolling/rage bait; decide based on perceived critical vs overly hateful.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"which ones seemed sincere and had actual talking points... bs what came off as sort of trolling or rage bait\"",
+        "rationale": "They describe comparing the pair by sincerity/talking points and distinguishing hate from criticism."
+      },
+      {
+        "participant_id": "P_1781998175861_8vhok53f2",
+        "feature_name": "vulgarity_and_threat_check",
+        "feature_value": "Assess vulgarity and whether it reads as opinion vs threats.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I looked at how vulgar they were and if they were just opinions or threats.\"",
+        "rationale": "They specify two content checks that guide their judgment."
+      },
+      {
+        "participant_id": "P_1781989779089_lwkqcbxgf",
+        "feature_name": "threat_then_topic_review_flow",
+        "feature_value": "First look for threatening language; if none, evaluate the topic (even if language disliked).",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"first I looked to see if there was any threatening language. Then If there wasn't I would see the topic.\"",
+        "rationale": "They describe an explicit two-step evaluation sequence for the pair."
+      },
+      {
+        "participant_id": "P_1781992700751_hwzhz9nhw",
+        "feature_name": "cursing_calling_names_rejected_as_counterproductive",
+        "feature_value": "Remove posts with calling names/cursing because it shifts attention to emotion/attacks.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"calling names and cursing were counter-productive... focused more emotional attention to the attack. Hence, I deleted these.\"",
+        "rationale": "They connect a specific style (cursing/insults) to a negative effect on discussion, leading to deletion."
+      },
+      {
+        "participant_id": "P_1781988670301_ebmnom2kn",
+        "feature_name": "curse_and_insult_blocks_respectful_discourse",
+        "feature_value": "Deny posts that use curse words and insulting statements toward the other side for lack of respectful discourse.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If there were curse words and insulting statements... chose to deny those posts.\"",
+        "rationale": "They articulate a discourse-respect criterion tied directly to curses/insults."
+      },
+      {
+        "participant_id": "P_1781989640519_he3ti7k87",
+        "feature_name": "no_interpretive_details_provided",
+        "feature_value": "No usable reflection content (only 'none').",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"none\"",
+        "rationale": "The participant provided no details about the influence mechanism beyond an empty response."
+      }
+    ]
+  }
+}

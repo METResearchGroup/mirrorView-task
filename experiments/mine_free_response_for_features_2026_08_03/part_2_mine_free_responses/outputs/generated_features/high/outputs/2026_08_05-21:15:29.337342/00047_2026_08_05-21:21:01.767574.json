@@ -1,0 +1,97 @@
+{
+  "batch_id": 47,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988232926_hfe0uyaa9",
+    "P_1781988440113_1cubrrl59",
+    "P_1781988870534_n2d0d5hyi",
+    "P_1781989139628_cn6ibtl67",
+    "P_1781989446896_5zwal0ky3",
+    "P_1781989466277_0iapuslza",
+    "P_1781991774047_f4n1r0vs7",
+    "P_1781993620016_0d6tc574z",
+    "P_1781995046236_iwhavtai0",
+    "P_1781998104430_bqlmmtfow"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 47,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989446896_5zwal0ky3",
+        "feature_name": "bullying_or_direct_derision_cue",
+        "feature_value": "Direct bullying/derisive wording flagged as a key negative cue driving stricter decisions",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"direct bullying wording of a group\"",
+        "rationale": "The participant explicitly cites bullying wording as influencing their keep/remove."
+      },
+      {
+        "participant_id": "P_1781988870534_n2d0d5hyi",
+        "feature_name": "foul_language_triggers_removal",
+        "feature_value": "Strongly linked profanity/foul language with immediate removal",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Foul language, instant removal\"",
+        "rationale": "They state foul language leads directly to instant removal."
+      },
+      {
+        "participant_id": "P_1781993620016_0d6tc574z",
+        "feature_name": "cursing_and_cruelty_avoidance",
+        "feature_value": "Personal discomfort with swearing and also with cruelty in opinions",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"I don't agree with swearing and cursing\"",
+        "rationale": "They describe an attitude against cursing and cruelty that likely guided their judgments."
+      },
+      {
+        "participant_id": "P_1781988440113_1cubrrl59",
+        "feature_name": "civility_based_threshold_and_one_sided_critique_risk",
+        "feature_value": "Used civility and perceived one-sided derision/foulness as risk for 'bad blood'",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"kept track of the civility\"",
+        "rationale": "They describe a concrete criterion (civility) and why posts that deride one side or use foul language were treated negatively."
+      },
+      {
+        "participant_id": "P_1781988232926_hfe0uyaa9",
+        "feature_name": "pair_comparison_reduces_double_standard",
+        "feature_value": "Seeing both versions together made them less likely to apply a double standard (would remove one side until seeing the other mirrored)",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"Seeing both posts together like that definitely influenced my decision\"",
+        "rationale": "They explicitly attribute influence to the paired view and describe how it changed a prior bias."
+      },
+      {
+        "participant_id": "P_1781998104430_bqlmmtfow",
+        "feature_name": "incitement_safety_floor_for_accepting_both_viewpoints",
+        "feature_value": "Only rejected content if it incited violence; otherwise inclined to allow both viewpoints",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"incite violence\"",
+        "rationale": "They set a safety-related threshold and state a permissive default when that condition isn\u2019t present."
+      },
+      {
+        "participant_id": "P_1781989139628_cn6ibtl67",
+        "feature_name": "fair_tone_vs_hateful_filth_distinction",
+        "feature_value": "Tried to keep posts with equal/respectful tone; removed ones described as hateful/filthy",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"seemed fair to both sides\"",
+        "rationale": "They describe comparing tone/fairness across sides and removing content characterized as hateful."
+      },
+      {
+        "participant_id": "P_1781995046236_iwhavtai0",
+        "feature_name": "topic_can_be_valid_despite_disagreement",
+        "feature_value": "Recognized some statements as valid even when not personally agreeable",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"There were alot of valid points being made\"",
+        "rationale": "They highlight reasoning validity despite disagreement, indicating the influence came from evaluating argument quality rather than agreement."
+      }
+    ]
+  }
+}

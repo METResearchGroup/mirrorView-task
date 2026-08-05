@@ -1,0 +1,97 @@
+{
+  "batch_id": 76,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988220999_1kwkf00j8",
+    "P_1781988858172_qyhxcon1s",
+    "P_1781988934147_jta8zo62n",
+    "P_1781989428812_yvvp6sbrb",
+    "P_1781990269234_ax7tmnv3a",
+    "P_1781991072675_fcd57klr0",
+    "P_1781992651092_0a6046gkm",
+    "P_1781996435889_ozpn6befk",
+    "P_1781997926631_5o6a436no",
+    "P_1782000424856_nsxsnxsus"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 76,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781991072675_fcd57klr0",
+        "feature_name": "decision_rule_moderation_for_individual_attack_or_vulgarity",
+        "feature_value": "Remove automatically when vulgar language/inappropriate personal-directed content; allow when argument/opinion is valid.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If there was any vulgar language or inappropriate things directed towards individuals, I automatically opted to remove.\"",
+        "rationale": "The participant states a clear removal trigger (vulgar/personal-directed content) and allows otherwise."
+      },
+      {
+        "participant_id": "P_1782000424856_nsxsnxsus",
+        "feature_name": "decision_rule_threats_override_free_speech",
+        "feature_value": "Deny posts that seem even remotely threatening, while valuing free speech.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Anything that seemed even remotely threatening I denied posting.\"",
+        "rationale": "They describe threat-detection as the primary rejection criterion despite their free-speech emphasis."
+      },
+      {
+        "participant_id": "P_1781989428812_yvvp6sbrb",
+        "feature_name": "pair_comparison_moderation_consistency_not_politics",
+        "feature_value": "Use moderation-guideline violations to decide, using both versions to apply the same standards more fairly.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"focusing on whether the content violated moderation guidelines rather than on the political viewpoint being expressed\"",
+        "rationale": "They explicitly frame their comparison approach as consistency against moderation rules rather than political stance."
+      },
+      {
+        "participant_id": "P_1781988934147_jta8zo62n",
+        "feature_name": "ideology_driven_evaluation_conservative_democrat",
+        "feature_value": "Weigh views across conservative-democrat and other party perspectives to justify responses.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"based on the ideologies I have a s a conservative democrat\"",
+        "rationale": "They indicate their ideology and cross-party consideration shaped their judgments."
+      },
+      {
+        "participant_id": "P_1781988220999_1kwkf00j8",
+        "feature_name": "call_to_violence_as_primary_removal_trigger",
+        "feature_value": "Removed item due to implying a call to violence; other controversy not enough for removal.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"implying a call to violence\"",
+        "rationale": "They give a specific content trigger for removal (call to violence)."
+      },
+      {
+        "participant_id": "P_1781990269234_ax7tmnv3a",
+        "feature_name": "outrageous_cursing_and_nonsense_rejected",
+        "feature_value": "Reject tweets that seem outrageous plus cursing and nonsense.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Tweets that seemed outrageous got rejected as well as cursing and nonsense\"",
+        "rationale": "They list concrete rejection cues: outrageousness/cursing/nonsense."
+      },
+      {
+        "participant_id": "P_1781996435889_ozpn6befk",
+        "feature_name": "high_bar_for_removal_calls_to_action_inflammatory_lies",
+        "feature_value": "Most posts seen as opinions; removal only if really inflammatory language, outrageous lies, or calls to action; generally OK.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I was looking for really inflammatory language, outrageous lies, or \\\"calls to action\\\"..\"",
+        "rationale": "They describe an explicit threshold for removing and claim most posts did not meet it."
+      },
+      {
+        "participant_id": "P_1781992651092_0a6046gkm",
+        "feature_name": "interpretation_as_point_or_insult",
+        "feature_value": "Perceived both comments as trying to make a point or insult.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"both comments trying to make a point or insult.\"",
+        "rationale": "They characterize how the content was understood (point/insult), but do not state a moderation rule or comparison mechanism beyond that."
+      }
+    ]
+  }
+}

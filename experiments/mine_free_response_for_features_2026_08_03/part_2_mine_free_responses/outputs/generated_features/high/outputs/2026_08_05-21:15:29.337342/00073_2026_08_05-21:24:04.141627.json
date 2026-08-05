@@ -1,0 +1,97 @@
+{
+  "batch_id": 73,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988676801_es50f00uk",
+    "P_1781991111368_pp2vq9ck1",
+    "P_1781991223876_5xadw7iz4",
+    "P_1781991443554_s1lj5ugdq",
+    "P_1781992680918_cuh0p26d7",
+    "P_1781997079095_w2zpmkffi",
+    "P_1781997953413_2k8mydubp",
+    "P_1782005882885_st56vwjgw",
+    "P_1782020418705_hbl4semma",
+    "P_1782073787873_9sib4p1jg"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 73,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781997953413_2k8mydubp",
+        "feature_name": "decision_involves_factual_basis_and_inflammatoryness",
+        "feature_value": "They decided based on whether the content had factual support and debate value vs being merely inflammatory/ill-informed.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "evaluated whether they had any factual basis and debate/discusion value or were merely inflammatory and ill informed",
+        "rationale": "The reflection explicitly describes criteria of factual basis and discussion value versus inflammatory misinformation."
+      },
+      {
+        "participant_id": "P_1781997079095_w2zpmkffi",
+        "feature_name": "threats_personal_attacks_and_profanity_reduce_acceptance",
+        "feature_value": "They felt removal/should-not-allow when posts threatened or used personal attacks with profanity.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "posed a threat and used personal attacks that used profanity",
+        "rationale": "The participant ties allowance to absence of threats and profanity-laden personal attacks."
+      },
+      {
+        "participant_id": "P_1781991223876_5xadw7iz4",
+        "feature_name": "expletives_inject_vitriol",
+        "feature_value": "Expletives are unnecessary and increase perceived vitriol, influencing the decision.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "the use of expletives is unnecessary and injects a level of vitriol",
+        "rationale": "They cite expletives as the cue that makes discourse more vitriolic, affecting approval/removal."
+      },
+      {
+        "participant_id": "P_1781991443554_s1lj5ugdq",
+        "feature_name": "name_calling_disliked",
+        "feature_value": "They disliked name-calling, which influenced whether to approve/remove.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "I don't like name calling",
+        "rationale": "The reflection directly attributes influence to aversion to name calling."
+      },
+      {
+        "participant_id": "P_1781991111368_pp2vq9ck1",
+        "feature_name": "checks_for_elaboration_irrationality_and_violence_calling",
+        "feature_value": "They tried to determine whether the stance was elaborated/irrational and whether it suggested resorting to violence.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "check if they were suggesting resorting to violence",
+        "rationale": "The participant\u2019s stated evaluation includes checking for violence and assessing reasoning quality."
+      },
+      {
+        "participant_id": "P_1782005882885_st56vwjgw",
+        "feature_name": "accept_if_supports_conversation_without_personal_derogation",
+        "feature_value": "Allowed if it furthers conversation and is not offensive/derogatory in a personal sense.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "furthers conversation without being offensive in a personal sense or derogatory",
+        "rationale": "They specify an acceptability rule centered on conversational value and lack of personal derogation."
+      },
+      {
+        "participant_id": "P_1781992680918_cuh0p26d7",
+        "feature_name": "remove_clearly_false_information",
+        "feature_value": "They attempted to remove clearly false things while generally thinking most content should be allowed.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I tried to remove clearly false things.",
+        "rationale": "The participant explicitly states their removal target as clearly false information."
+      },
+      {
+        "participant_id": "P_1782020418705_hbl4semma",
+        "feature_name": "permits_rude_accusatory_but_not_crossing_line",
+        "feature_value": "They interpreted the pair as similar to real social media debate; they allowed rude/accusatory content as part of online debate as long as it didn't cross a line.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Some were rude and accusatory but that should be allowed in an online debate.",
+        "rationale": "The reflection emphasizes comparing to real conversational patterns and concludes that rudeness/accusations were still acceptable."
+      }
+    ]
+  }
+}

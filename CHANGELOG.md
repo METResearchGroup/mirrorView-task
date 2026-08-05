@@ -2,7 +2,7 @@
 
 ## 2026-08-05
 
-1. Built Part 2 free-response feature mining (low/high Likert split) with shared Stage-2/3 helpers, Part-2-owned Stage-1/4 prompts including garbage QA, and completed end-to-end smoke for both groups pending production approval. [PR #41](https://github.com/METResearchGroup/mirrorView-task/pull/41)
+1. Completed Part 2 free-response feature mining on full low/high Likert reflection corpora: shared Stage-2/3 helpers, Part-2 Stage-1/4 with garbage QA, 916 embedded features, and 5 labeled HDBSCAN themes in `RESULTS.md`. [PR #41](https://github.com/METResearchGroup/mirrorView-task/pull/41)
 2. Tested new discovered features by adding it to a baseline prompt and comparing its performance against the regular baseline prompt [PR #47](https://github.com/METResearchGroup/mirrorView-task/pull/47)
 3. Shipped a four-stage BERTopic pipeline on Study Phase 2 Part 2 original-post Titan embeddings. [PR #45](https://github.com/METResearchGroup/mirrorView-task/pull/45)
 4. Completed the keep/remove LLM feature pipeline under `experiments/create_llm_features_2026_08_05/`. [PR #46](https://github.com/METResearchGroup/mirrorView-task/pull/46)

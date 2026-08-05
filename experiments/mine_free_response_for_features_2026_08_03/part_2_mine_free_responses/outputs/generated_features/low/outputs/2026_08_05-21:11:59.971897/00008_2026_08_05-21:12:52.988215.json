@@ -1,0 +1,79 @@
+{
+  "batch_id": 8,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988253085_qt73si2md",
+    "P_1781988567082_ihabpsnp8",
+    "P_1781989053312_k3wn2fmt3",
+    "P_1781989453148_a0gddfpe4",
+    "P_1781990172581_qgekxds7c",
+    "P_1781990197422_y6q51kmje",
+    "P_1781991836142_kdf9sr9ag",
+    "P_1781992220018_8qhuf2l43",
+    "P_1781993363258_u3jod55ky",
+    "P_1781993863450_3drfozmdb"
+  ],
+  "feature_count": 6,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 8,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781993363258_u3jod55ky",
+        "feature_name": "minimal_pair_influence_freedom_of_speech_frame",
+        "feature_value": "Pair comparison had little effect; evaluation driven by general freedom-of-speech concern.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "nothing infulencing how i evaluated the posts as a pair other than that concern.",
+        "rationale": "They explicitly state the pair did not influence their evaluation beyond a freedom-of-speech principle."
+      },
+      {
+        "participant_id": "P_1781990197422_y6q51kmje",
+        "feature_name": "first_amendment_absolutism_allow_both_sides",
+        "feature_value": "Absolutist First Amendment stance; allow both sides unless harm is involved.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "unless there\u2019s something that is going to cause physical harm or a threat of harm to someone",
+        "rationale": "They describe a specific threshold (harm/threat) aligned with absolutist speech protection."
+      },
+      {
+        "participant_id": "P_1781991836142_kdf9sr9ag",
+        "feature_name": "freedom_of_speech_despite_belief_opposition",
+        "feature_value": "Focus on allowing speech even when it conflicts with personal beliefs; reject only perceived threats/violence.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "as long as they did not seem like a threat or a possible act of violence, I allowed them.",
+        "rationale": "They tie their decision to perceived threat/violence and emphasize speech even against their beliefs."
+      },
+      {
+        "participant_id": "P_1781993863450_3drfozmdb",
+        "feature_name": "violence_or_derogatory_content_as_primary_criterion",
+        "feature_value": "Decision based on whether either post is violent or derogatory.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I evaluated at how violent or derogatory either post was.",
+        "rationale": "Their stated evaluation criterion directly targets violence/derogation."
+      },
+      {
+        "participant_id": "P_1781989053312_k3wn2fmt3",
+        "feature_name": "swearing_allowed_but_manner_of_usage_matters",
+        "feature_value": "Swearing alone tolerated; concern is how it is used (e.g., directed at others).",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Swearing it self wasn't the problem, it was how it was used.",
+        "rationale": "They distinguish profanity from harmful usage, indicating manner/direction as the cue."
+      },
+      {
+        "participant_id": "P_1781992220018_8qhuf2l43",
+        "feature_name": "balance_goal_even_if_context_far_reaching",
+        "feature_value": "Aiming for balanced evaluation despite viewpoints being far-reaching.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "ensure it was a balanced evaluation even though most of the viewpoints and context was a bit far reaching.",
+        "rationale": "They describe an approach centered on balance across viewpoints during evaluation."
+      }
+    ]
+  }
+}

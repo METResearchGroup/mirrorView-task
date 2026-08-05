@@ -1,0 +1,97 @@
+{
+  "batch_id": 4,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988443015_ru2f7lmwh",
+    "P_1781988725753_8iggoxefe",
+    "P_1781989096005_v6cfl02kh",
+    "P_1781989417078_e9ondjm3l",
+    "P_1781993189087_fepuzx9s2",
+    "P_1781993586737_wdf2qcr19",
+    "P_1781994797447_f1bm50fu5",
+    "P_1781995615370_ujlj2dxtm",
+    "P_1781995875369_mcrs8zxy3",
+    "P_1782005960118_qfm6lweul"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 4,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781993189087_fepuzx9s2",
+        "feature_name": "violence_hate_incitation_removal_threshold",
+        "feature_value": "They would remove only if a post could incite/encourage hatred or violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "remove posts if one of them could potentially incite or encourage hatred or violence.",
+        "rationale": "The reflection states a specific removal criterion tied to incitement/hatred/violence."
+      },
+      {
+        "participant_id": "P_1781995615370_ujlj2dxtm",
+        "feature_name": "threats_to_safety_or_inciting_violence_rule",
+        "feature_value": "Removal only when posts threaten people\u2019s safety or attempt to incite violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If it threatened peoples safety or attempted to incite violence I believe it should be removed.",
+        "rationale": "This directly defines the condition under which they support removal."
+      },
+      {
+        "participant_id": "P_1782005960118_qfm6lweul",
+        "feature_name": "insensitivity_low_priority_unless_extreme_demeaning",
+        "feature_value": "Insensitive language alone doesn\u2019t justify removal; only extremely demeaning/degrading content bordering on hate speech should be taken down.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I am generally disinclined to take down posts, even if they use insensitive language. Only if the posts were extremely demeaning and degrading and appeared to border on hate speech",
+        "rationale": "They describe a tolerance floor for insensitive language and an elevated threshold for hate-like demeaning content."
+      },
+      {
+        "participant_id": "P_1781993586737_wdf2qcr19",
+        "feature_name": "pro_free_speech_ignores_pair_difference",
+        "feature_value": "They say the pair didn\u2019t influence them, because they want freedom of speech on social media.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "the posts didn't influence me at all because I want there to be freedom of speech on social media.",
+        "rationale": "They explicitly attribute low influence to a free-speech orientation."
+      },
+      {
+        "participant_id": "P_1781994797447_f1bm50fu5",
+        "feature_name": "focus_on_beneficial_factual_content_not_pair_effect",
+        "feature_value": "They evaluated each post for beneficial factual content and largely followed a rule-based assessment rather than being swayed by the pair comparison.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I evaluated each post for some beneficial factual content.",
+        "rationale": "Their stated basis is per-post factual benefit, not a meaningful pairwise influence."
+      },
+      {
+        "participant_id": "P_1781988725753_8iggoxefe",
+        "feature_name": "first_amendment_right_to_express_not_agreement",
+        "feature_value": "Reading both versions reminded them of First Amendment rights: disagreement doesn\u2019t negate someone\u2019s right to express views (with a private-platform nuance).",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Reading both pairs of posts helped to remind me how important the first amendment",
+        "rationale": "They tie the influence to constitutional rights framing and a right-to-speak justification."
+      },
+      {
+        "participant_id": "P_1781988443015_ru2f7lmwh",
+        "feature_name": "no_moderation_needed_for_opinions_exaggeration_ok",
+        "feature_value": "They saw no need for moderation because posts were just opinions (even if exaggerated/non-realistic).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "There was nothing that needed to be moderated. Moderation is for completely out of line things, these were just people expressing their opinions.",
+        "rationale": "They justify lack of moderation based on viewing content as ordinary opinion/exaggeration rather than problematic speech."
+      },
+      {
+        "participant_id": "P_1781989417078_e9ondjm3l",
+        "feature_name": "allow_both_total_free_speech_except_violence",
+        "feature_value": "They found none close enough to remove; they support total free speech unless advocating violence, making choosing to allow both easy.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "None of the posts were even remotely close to being bad enough to be removed. I am for total free speech unless it's advocating violence",
+        "rationale": "They indicate both a strong disposition toward non-removal and a clear violence-only exception."
+      }
+    ]
+  }
+}

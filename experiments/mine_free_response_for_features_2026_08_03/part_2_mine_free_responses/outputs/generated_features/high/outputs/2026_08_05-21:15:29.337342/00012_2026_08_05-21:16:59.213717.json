@@ -1,0 +1,79 @@
+{
+  "batch_id": 12,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781953632248_glqm2wltq",
+    "P_1781988969970_qz2j44vvx",
+    "P_1781989312821_syz5lstmp",
+    "P_1781989742794_iaqttmpsy",
+    "P_1781989996572_7h75cibx0",
+    "P_1781992048665_kkaby145l",
+    "P_1781992222835_itku22vcw",
+    "P_1781992542298_wu9vx6wg7",
+    "P_1781993797656_97apaema9",
+    "P_1782000712711_zxam8wg3y"
+  ],
+  "feature_count": 6,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 12,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988969970_qz2j44vvx",
+        "feature_name": "pair_consistency_moderation_standard",
+        "feature_value": "Applied the same moderation criteria to both versions to check for consistency and avoid bias toward a viewpoint.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"apply the same moderation standard to both posts\"",
+        "rationale": "They explicitly describe using side-by-side comparison to apply an identical standard to both versions."
+      },
+      {
+        "participant_id": "P_1781989312821_syz5lstmp",
+        "feature_name": "distinguish_ideological_argument_from_personal_attack",
+        "feature_value": "Removed when the content mainly attacks/rips the other side apart; allowed when it reads as an argument or ideology.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If it was too completely just ripping the other side apart, I removed it... If it was an argument or a ideology, I let it go through.\"",
+        "rationale": "Their decision rule turns on whether the text is portrayed as adversarial attack vs argument/ideology."
+      },
+      {
+        "participant_id": "P_1781953632248_glqm2wltq",
+        "feature_name": "hateful_content_zero_tolerance",
+        "feature_value": "Hate speech should be removed regardless of framing; non-hateful opinions can be allowed.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Hate speech should be removed no matter what.\"",
+        "rationale": "They state a categorical removal rule for hate speech and conditional allowance otherwise."
+      },
+      {
+        "participant_id": "P_1781992542298_wu9vx6wg7",
+        "feature_name": "allow_opinions_but_reject_profanity_and_violence",
+        "feature_value": "Profanity and promoting violence should not be allowed; opinions should be allowed from both viewpoints.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"profanity should not be allowed. promoting violence should not be allowed.\"",
+        "rationale": "They enumerate specific disallowed content types while affirming broad allowance for opinions."
+      },
+      {
+        "participant_id": "P_1781989742794_iaqttmpsy",
+        "feature_name": "abuse_threshold_reasonableness",
+        "feature_value": "Allowed content if it did not seem overly abusive.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I allowed them if they didn't seem overly abusive.\"",
+        "rationale": "They use a relative threshold (\u201coverly abusive\u201d) to decide allowance."
+      },
+      {
+        "participant_id": "P_1781992048665_kkaby145l",
+        "feature_name": "garbage_reflection_fragment",
+        "feature_value": "Uninterpretable/insufficient content for extracting an influence theme (only \"a lot has\").",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"a lot has\"",
+        "rationale": "The response is too fragmentary to confidently map to a moderation decision theme, but it is present and text-extractable."
+      }
+    ]
+  }
+}

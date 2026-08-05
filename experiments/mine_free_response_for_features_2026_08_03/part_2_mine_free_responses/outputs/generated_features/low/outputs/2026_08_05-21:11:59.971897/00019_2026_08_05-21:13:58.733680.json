@@ -1,0 +1,97 @@
+{
+  "batch_id": 19,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988181651_gkqn8vp7r",
+    "P_1781988286378_h91p9fqaa",
+    "P_1781988311980_5xi8zfahe",
+    "P_1781989144224_4axyg854c",
+    "P_1781989589508_ikdgcexv2",
+    "P_1781989976287_ulf0q2030",
+    "P_1781992861601_nhgo6e0xu",
+    "P_1781999022532_35rilazmw",
+    "P_1782003200891_l456d8c24",
+    "P_1782004617080_9mh86ann0"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 19,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1782004617080_9mh86ann0",
+        "feature_name": "content_value_over_pairing",
+        "feature_value": "Decision driven by whether the post adds to conversation vs is just rhetoric/insults; pair viewing has little effect.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "whether the post contributed something to a conversation or not",
+        "rationale": "The participant explicitly states their criterion for allowing/removing based on conversational contribution rather than the influence of seeing both versions."
+      },
+      {
+        "participant_id": "P_1782003200891_l456d8c24",
+        "feature_name": "free_speech_default_with_exception_for_hate",
+        "feature_value": "General allow both sides; only remove when genuinely heinous/hateful (very broad tolerance).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "both sides should get a chance to speak",
+        "rationale": "Their stated rule centers on free speech and only excluding extreme hateful content, implying limited sensitivity to the paired format."
+      },
+      {
+        "participant_id": "P_1781989589508_ikdgcexv2",
+        "feature_name": "no_censorship_freedom_of_speech",
+        "feature_value": "Believes no posts should be removed; worries about social media censoring speech.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "I wouldn't remove any posts",
+        "rationale": "A strong stance against removal is stated directly, consistent with low influence from the pair comparison."
+      },
+      {
+        "participant_id": "P_1781988286378_h91p9fqaa",
+        "feature_name": "remove_only_extreme_inflammatory_defamatory_due_to_safety",
+        "feature_value": "Allows most statements; removes only highly inflammatory/defamatory due to risk of real-world violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "highly inflammatory and defamatory which could lead to real world violence",
+        "rationale": "They describe a narrow removal threshold tied to safety consequences, indicating the paired versions did not shift their threshold much."
+      },
+      {
+        "participant_id": "P_1781988181651_gkqn8vp7r",
+        "feature_name": "tone_cues_profanity_threshold",
+        "feature_value": "Permits anger/discourse but removes when profanity becomes extreme.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "when then profanity got extreme I felt those posts should be removed",
+        "rationale": "They reference profanity intensity as the key cue for removal, suggesting pair viewing did not alter content-based judgment."
+      },
+      {
+        "participant_id": "P_1781989976287_ulf0q2030",
+        "feature_name": "independent_identity_buffers_pairing_effect",
+        "feature_value": "Independent political identity; seeing both sides doesn't sway them much.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I'm an independent so this plays very well in my political standpoint",
+        "rationale": "They attribute limited influence to their independent stance and comfort with both sides."
+      },
+      {
+        "participant_id": "P_1781988311980_5xi8zfahe",
+        "feature_name": "self_anchored_judgment_not_swayed_by_pair",
+        "feature_value": "Not swayed by either argument beyond their own view.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "i wasnt really swayed by either argument other than my own.",
+        "rationale": "They explicitly say the paired material did not sway them, directly capturing low influence."
+      },
+      {
+        "participant_id": "P_1781999022532_35rilazmw",
+        "feature_name": "overall_craziness_as_simple_heuristic",
+        "feature_value": "Uses how 'crazy' the statements are as the main influence/criterion.",
+        "category": "other",
+        "is_open_ended": false,
+        "evidence_span": "How crazy the statements were.",
+        "rationale": "The participant provides a minimal heuristic that bypasses detailed pair comparison effects."
+      }
+    ]
+  }
+}

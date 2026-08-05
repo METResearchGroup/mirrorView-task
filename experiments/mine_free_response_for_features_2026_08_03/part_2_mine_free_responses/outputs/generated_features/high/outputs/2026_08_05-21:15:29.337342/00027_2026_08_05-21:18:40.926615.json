@@ -1,0 +1,88 @@
+{
+  "batch_id": 27,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988789082_v0ftr1jlw",
+    "P_1781989662475_6mdowkfy3",
+    "P_1781989669951_6vqwkapao",
+    "P_1781989926635_cz0yvmmvx",
+    "P_1781990038963_7dkgrccac",
+    "P_1781990054920_mye8qaaix",
+    "P_1781990115367_r5jj4xz9l",
+    "P_1781990353467_a4hmebrif",
+    "P_1781991068066_il91k6a4q",
+    "P_1781993017313_re6vw2uoy"
+  ],
+  "feature_count": 7,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 27,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989669951_6vqwkapao",
+        "feature_name": "pairwise_fairness_consistency",
+        "feature_value": "They changed decisions based on seeing both sides together, questioning why one would be allowed but not the other.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"why allow one but not the other\"",
+        "rationale": "The participant explicitly links influence to how paired right- and left-leaning posts affected comparative allowance decisions."
+      },
+      {
+        "participant_id": "P_1781991068066_il91k6a4q",
+        "feature_name": "remove_on_fact_claims_and_policy_politician_fault",
+        "feature_value": "They removed posts making \u201cfacts\u201d from recent articles or blaming specific politicians/policies for things, viewing them as likely misleading.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"read a recent article with \\\"facts\\\"\"",
+        "rationale": "Their removal rationale centers on specific claim types (fact-claiming and causal blame) rather than general tone/profanity."
+      },
+      {
+        "participant_id": "P_1781990054920_mye8qaaix",
+        "feature_name": "free_speech_but_exclude_intent_to_inspire_harm",
+        "feature_value": "They broadly support free speech but would remove content that aims to inspire harm (e.g., calls for someone to 'die').",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"except when it's intent is to purely inspire potential harm\"",
+        "rationale": "The reflection sets an explicit exception to free-speech while keeping most speech allowed."
+      },
+      {
+        "participant_id": "P_1781988789082_v0ftr1jlw",
+        "feature_name": "speech_protection_unless_illegal_actions_or_harm",
+        "feature_value": "They generally oppose takedowns for disagreement, allowing speech unless it leads to actions/violations of law (violence/harassment/excitement).",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Disagreement or opposing ideas is not a reason to take down a post.\"",
+        "rationale": "They articulate rights-to-speech and a limiting condition based on illegality/violence-related content."
+      },
+      {
+        "participant_id": "P_1781989926635_cz0yvmmvx",
+        "feature_name": "avoid_outright_harmful_and_rude_content",
+        "feature_value": "They looked for opinions that weren\u2019t outright harmful or rude when deciding.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"wasn't outright harmful and rude\"",
+        "rationale": "Their decision criterion is directly tied to presence/absence of harmful or rude language."
+      },
+      {
+        "participant_id": "P_1781990115367_r5jj4xz9l",
+        "feature_name": "gut_based_first_impression",
+        "feature_value": "They mainly relied on gut feeling and the first thought rather than detailed comparison.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"followed my gut feeling\"",
+        "rationale": "The reflection describes an immediate heuristic rather than systematic evaluation of the pair."
+      },
+      {
+        "participant_id": "P_1781993017313_re6vw2uoy",
+        "feature_name": "preference_rule_for_allowing_visibility",
+        "feature_value": "They decided based on whether they personally wanted to see the posts; if not, they removed them.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"If I wouldn't then I did not allow them.\"",
+        "rationale": "Their process is described as a personal want-to-see threshold for keep vs remove."
+      }
+    ]
+  }
+}

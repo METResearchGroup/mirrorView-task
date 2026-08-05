@@ -1,0 +1,97 @@
+{
+  "batch_id": 84,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988186011_2bpgzspes",
+    "P_1781988391301_j31w1p64i",
+    "P_1781988493969_5yxghglna",
+    "P_1781989163610_5xxyvt9us",
+    "P_1781989230072_64nm9ok95",
+    "P_1781989878424_7s66wtsw2",
+    "P_1781990520028_cfpmw5mnh",
+    "P_1781991407198_drt1382ct",
+    "P_1781997499540_1fdubto5u",
+    "P_1782008187817_ep32ll4j4"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 84,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989878424_7s66wtsw2",
+        "feature_name": "open_discussion_benefit",
+        "feature_value": "Keep/decision driven by belief that the content enables open discussion and that disagreements can be addressed through discussion.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "cannot be solved with out open discussion",
+        "rationale": "They explicitly link the appropriateness of keeping content to whether it supports open discussion."
+      },
+      {
+        "participant_id": "P_1781988186011_2bpgzspes",
+        "feature_name": "gut_feelings_as_driver",
+        "feature_value": "Decision largely based on personal intuition rather than detailed comparison criteria.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I went off my gut feelings",
+        "rationale": "The reflection states that they relied on gut feelings for their choices."
+      },
+      {
+        "participant_id": "P_1782008187817_ep32ll4j4",
+        "feature_name": "fairness_and_non_vulgarity",
+        "feature_value": "Use fairness and avoid vulgarity/vulgar language as key moderation criteria.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "judged them by fairness as much as possible and by if they weren\u0014t vulgar",
+        "rationale": "They name fairness and non-vulgarity as the standards guiding judgments."
+      },
+      {
+        "participant_id": "P_1781991407198_drt1382ct",
+        "feature_name": "debate_value_focus",
+        "feature_value": "Evaluate whether content can spark constructive debates by considering both viewpoints.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "looked at them from both view points",
+        "rationale": "They describe using both viewpoints to select content intended to encourage good debate."
+      },
+      {
+        "participant_id": "P_1781997499540_1fdubto5u",
+        "feature_name": "vulgarity_derogatory_removal",
+        "feature_value": "Vulgarity and derogatory language trigger removal.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "vulgar and used derogatory language",
+        "rationale": "They explicitly state they got rid of posts containing vulgar/derogatory terms."
+      },
+      {
+        "participant_id": "P_1781989230072_64nm9ok95",
+        "feature_name": "free_speech_limit_threats",
+        "feature_value": "Strong free-speech stance with specific limits around threats; some concern about children online.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "as long as you are not threatening to kill people",
+        "rationale": "They define an exception for violent threats and mention age-related constraints."
+      },
+      {
+        "participant_id": "P_1781990520028_cfpmw5mnh",
+        "feature_name": "damaging_to_conversation_derogatory_terms",
+        "feature_value": "Moderation based on how damaging posts are to productive political conversation, especially via derogatory/profane language.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "assess how damaging the posts were to productive conversation",
+        "rationale": "They connect influence to perceived harm to discussion and point to derogatory/profanity as a driver."
+      },
+      {
+        "participant_id": "P_1781989163610_5xxyvt9us",
+        "feature_name": "marker_based_cross_pair_comparison",
+        "feature_value": "Compared original vs mirror by labeling ideological slant, then using markers to ensure both posts address the same topic before deciding.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "initially label the individual post... as either Conservative slant or Liberal slant",
+        "rationale": "They describe a method for identifying differing viewpoints and confirming shared topic before keep/remove judgments."
+      }
+    ]
+  }
+}

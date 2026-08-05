@@ -1,0 +1,97 @@
+{
+  "batch_id": 39,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988246771_yhwgim22w",
+    "P_1781988369332_uitgt3706",
+    "P_1781988533114_xtgzvodok",
+    "P_1781990206407_nbmbh0alb",
+    "P_1781991053063_f7gtfr6vc",
+    "P_1781991166590_by3ke9gre",
+    "P_1781991805351_ljwcdt0y3",
+    "P_1781994325370_g118zee66",
+    "P_1782004258405_r0ocziztu",
+    "P_1782005941966_ug9ygb0q4"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 39,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781991166590_by3ke9gre",
+        "feature_name": "policy_violation_over_politics",
+        "feature_value": "They focused on whether each post violated policy rather than on the political side.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"i focused onwhether each post violated policy not the political side\"",
+        "rationale": "The reflection explicitly states the comparison/decision basis was policy violation, not partisanship."
+      },
+      {
+        "participant_id": "P_1781991805351_ljwcdt0y3",
+        "feature_name": "aggressive_language_drives_rejects",
+        "feature_value": "Aggressive or genuinely upsetting language led to rejecting both versions, while some cursing was considered ignorable if balanced.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If there was really aggressive language, I rejected both.\"",
+        "rationale": "They describe a conditional rule tied to severity of language and real-life impact."
+      },
+      {
+        "participant_id": "P_1781991053063_f7gtfr6vc",
+        "feature_name": "paired_consistency_constraint",
+        "feature_value": "If they removed one version, they felt they had to remove the other as well.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"if there was one I wanted to remove I had to remove my the other\"",
+        "rationale": "This states a consistency requirement between the paired posts."
+      },
+      {
+        "participant_id": "P_1781988369332_uitgt3706",
+        "feature_name": "symmetry_equal_point_check",
+        "feature_value": "They compared whether both posts made equal/same-level points from different sides.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"make sure they were making the same point but from different sides.\"",
+        "rationale": "The reflection centers on checking equivalence/symmetry of claims across the pair."
+      },
+      {
+        "participant_id": "P_1781994325370_g118zee66",
+        "feature_name": "tone_volatility_ragebait_threshold",
+        "feature_value": "They prioritized tone, volatility, and whether posts were conducive to discussion; rage-bait/violent rhetoric and over-swaring were disqualifiers.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Language, volatility, and whether the posts were conducive to further discussion\"",
+        "rationale": "They list concrete content/tone criteria and mention specific disqualifying elements."
+      },
+      {
+        "participant_id": "P_1782004258405_r0ocziztu",
+        "feature_name": "fairness_balancing_via_mirroring",
+        "feature_value": "They tried to keep things equal by considering the Republican side too; viewed vulgar language as unnecessary.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"I was trying to be equal.\"",
+        "rationale": "They report an equality/fairness goal and connect it to removing vulgarity rather than political content."
+      },
+      {
+        "participant_id": "P_1781994325370_g118zee66",
+        "feature_name": "close_to_line_follow_instinct",
+        "feature_value": "When posts were near the boundary, they followed their instinct to decide.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"Some where close to the line so I just followed my instict.\"",
+        "rationale": "They describe uncertainty and reliance on intuition near thresholds."
+      },
+      {
+        "participant_id": "P_1781988246771_yhwgim22w",
+        "feature_name": "ban_both_fairness_rule",
+        "feature_value": "Fairness required banning both versions if banning one; otherwise both should be allowed.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"if you ban one, you have to ban the other out of fairness\"",
+        "rationale": "The reflection gives a direct rule about symmetric treatment for fairness."
+      }
+    ]
+  }
+}

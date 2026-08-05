@@ -1,0 +1,97 @@
+{
+  "batch_id": 20,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988611877_55p4o6kjr",
+    "P_1781989048561_2zxnih1ve",
+    "P_1781989100749_5rrfsx01l",
+    "P_1781989140589_g052b90bs",
+    "P_1781989553340_2ajhe2v9o",
+    "P_1781990706755_r465ke6ou",
+    "P_1781996309568_mdx7w5xj9",
+    "P_1781997122384_mafj6ts8x",
+    "P_1782002894773_yynoignxk",
+    "P_1782004710568_la0605ahc"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 20,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989140589_g052b90bs",
+        "feature_name": "free_speech_as_default_acceptance",
+        "feature_value": "Uses freedom of speech as a default reason to not find the posts problematic / not remove",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Freedom of speech is important.  I did not see anything problematic about the posts.",
+        "rationale": "The participant explicitly anchors their decision to the importance of free speech and reports no problematic content."
+      },
+      {
+        "participant_id": "P_1782002894773_yynoignxk",
+        "feature_name": "focus_on_language_vulgarity_and_debate_value",
+        "feature_value": "Checks mainly for vulgar/offensive language and whether there are valid points for debate",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "making sure the language wasn't vulgar or offensive. I also looked for valid points of view for debate",
+        "rationale": "They describe a concrete content-screening approach centered on vulgarity/offense and debate usefulness."
+      },
+      {
+        "participant_id": "P_1781990706755_r465ke6ou",
+        "feature_name": "nonviolent_language_criterion",
+        "feature_value": "Evaluates based on language quality and whether the post is not violent",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I've evaluated based on language and the idea that the post was not violent.",
+        "rationale": "Their stated criteria directly mention non-violence and language."
+      },
+      {
+        "participant_id": "P_1781989048561_2zxnih1ve",
+        "feature_name": "violence_triggers_removal",
+        "feature_value": "If the posts involve violence or murder, removal is preferred",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "if any of the posts talked about violence or murder, I thought it best to remove them.",
+        "rationale": "They set a specific removal condition tied to violence/murder."
+      },
+      {
+        "participant_id": "P_1781989100749_5rrfsx01l",
+        "feature_name": "legality_only_rule",
+        "feature_value": "Uses whether speech is legal as the deciding factor (and concludes it would be legal)",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "All that matters was if the speech would be legal or not, which all of it would be",
+        "rationale": "They explicitly state legality as the sole criterion for taking posts down."
+      },
+      {
+        "participant_id": "P_1781996309568_mdx7w5xj9",
+        "feature_name": "censorship_only_for_crime_advocacy",
+        "feature_value": "Would not censor most viewpoints; only remove if advocating crime",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "unless the person is advocating some kind of crime, their perspective should not be censored.",
+        "rationale": "They provide a narrow exception to their general permissiveness."
+      },
+      {
+        "participant_id": "P_1782004710568_la0605ahc",
+        "feature_name": "limited_tolerance_for_extremism_and_personal_attacks",
+        "feature_value": "Allows even extremists to speak in principle but draws lines at explicit sexual content and open personal attacks; cites extremist historical danger",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "I stop at virtual pornography or open personal attacks. Even extremists have their right to speak",
+        "rationale": "They describe their boundary conditions (pornography/personal attacks) and mention extremists historically."
+      },
+      {
+        "participant_id": "P_1781989553340_2ajhe2v9o",
+        "feature_name": "minimal_or_placeholder_reflection",
+        "feature_value": "Reflection contains no interpretable rationale beyond a vague word",
+        "category": "process_meta",
+        "is_open_ended": true,
+        "evidence_span": "fairly",
+        "rationale": "The response is too sparse to reliably infer a theme beyond non-informative content."
+      }
+    ]
+  }
+}

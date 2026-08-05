@@ -1,0 +1,88 @@
+{
+  "batch_id": 21,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988733013_me4s931cx",
+    "P_1781988922124_99bogniwr",
+    "P_1781988961961_x7r0vskxn",
+    "P_1781989691627_w0v6dt7jo",
+    "P_1781989712771_dxv00wj4v",
+    "P_1781990674480_122h7y71d",
+    "P_1781991419322_ftkq926g5",
+    "P_1781993076130_mcaww5rbr",
+    "P_1781995870514_xzopz37kb",
+    "P_1782000166680_waamjke1t"
+  ],
+  "feature_count": 7,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 21,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781990674480_122h7y71d",
+        "feature_name": "violence_call_as_primary_remove_trigger",
+        "feature_value": "Removed content that seemed to call for violence; supported moderation for violence calls despite free-speech orientation.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"The only post I selected to remove was one that seemed to call for violence.\"",
+        "rationale": "The reflection explicitly ties the removal decision to perceived calls for violence."
+      },
+      {
+        "participant_id": "P_1781988922124_99bogniwr",
+        "feature_name": "cursing_and_explicit_hate_changes_policy_allowance",
+        "feature_value": "Cursing and explicit hatred made them more likely to not allow both posts; they would restrict when too explicit/hatred-heavy.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"I was influenced if there was cursing in the posts.\"",
+        "rationale": "They describe cursing and perceived excess hatred/explicitness as the influence on keeping/removing."
+      },
+      {
+        "participant_id": "P_1781988961961_x7r0vskxn",
+        "feature_name": "tone_impact_childish_rude_after_foul_language",
+        "feature_value": "Foul language led them to view posts as childish/rude and thus more removable; preference for respectful language.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"Once foul language is used, it really becomes very childish and rude.\"",
+        "rationale": "The participant links foul language to a negative tone judgment that drove their decision."
+      },
+      {
+        "participant_id": "P_1781995870514_xzopz37kb",
+        "feature_name": "platform_intent_meaningful_political_discussion_filters_mudslinging",
+        "feature_value": "Removed posts with mudslinging/cursing/distasteful comments that detract from meaningful political discussion; otherwise allowed strongly worded comments.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"intention of this platform is a place to have meaningful discussion about politics.\"",
+        "rationale": "They specify a criterion based on maintaining meaningful political discussion versus allowing other strong wording."
+      },
+      {
+        "participant_id": "P_1781993076130_mcaww5rbr",
+        "feature_name": "fairness_without_slinging_as_core_principle",
+        "feature_value": "Focused on fairness/defensibility of views without slinging statements; influenced by whether debates were conducted respectfully.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"fairness of being able to defend their views without slinging statements\"",
+        "rationale": "Their reflection centers the decision on fair expression without antagonistic slinging."
+      },
+      {
+        "participant_id": "P_1781988733013_me4s931cx",
+        "feature_name": "avoid_disagreeing_based_selective_moderation",
+        "feature_value": "Recognized both prompts were essentially saying the same thing; resisted removing one purely due to political disagreement to preserve fairness.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"it wouldn't be fair to delete a post purely because I disagree with the political standpoint.\"",
+        "rationale": "They describe using a step back and comparing standpoints to prevent bias from political preference."
+      },
+      {
+        "participant_id": "P_1781989712771_dxv00wj4v",
+        "feature_name": "neutral_evaluation_and_explicit_threat_or_racist_content_checks",
+        "feature_value": "Used a neutral lens and focused on whether content could be misconstrued as a call to violence or racist.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"I based my decisions on if the post(s) said anything that could be misconstrued as a call to violence or racist.\"",
+        "rationale": "They explicitly state the checks/conditions used to guide decisions."
+      }
+    ]
+  }
+}

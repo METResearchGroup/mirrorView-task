@@ -1,0 +1,97 @@
+{
+  "batch_id": 72,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988821299_3yisuev6x",
+    "P_1781989289742_jm6xohxub",
+    "P_1781989662147_fmdbua4mw",
+    "P_1781989921013_gwt6ifyxe",
+    "P_1781990578520_e7cfo2ga7",
+    "P_1781990821923_kofwlwtbw",
+    "P_1781992247058_7whwo3gzx",
+    "P_1781995850784_3fltxsih0",
+    "P_1782016492420_rhj9brp5v",
+    "P_1782093151607_3vcpm2cmn"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 72,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781989289742_jm6xohxub",
+        "feature_name": "respect_for_both_sides_over_agreement",
+        "feature_value": "Kept most arguments despite not approving; emphasized respecting both sides while weeding out personal attacks.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "",
+        "rationale": "The participant explicitly frames their criteria as respecting both viewpoints while rejecting personal attacks."
+      },
+      {
+        "participant_id": "P_1782016492420_rhj9brp5v",
+        "feature_name": "insult_free_language_threshold",
+        "feature_value": "Would not accept content with insults; accepted respectful writing without disturbances.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If they had insults I would not accept it. If they had respectful writing without any disturbances, then I would accept it.\"",
+        "rationale": "Their decision rule is directly tied to presence/absence of insults."
+      },
+      {
+        "participant_id": "P_1781992247058_7whwo3gzx",
+        "feature_name": "apply_same_language_to_both_sides",
+        "feature_value": "Used identical standards across both versions; focused on slurs/targeting protected groups, harassment, and how expressed (insults/identity attacks).",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"I tried to apply the same standard to both sides rather than deciding based on whether I agreed\"",
+        "rationale": "They describe comparing the pair using consistent criteria rather than political agreement."
+      },
+      {
+        "participant_id": "P_1781992247058_7whwo3gzx",
+        "feature_name": "language_cues_for_harm_harassment",
+        "feature_value": "Paid attention to slurs/demeaning labels and whether the post encouraged harm or crossed into harassment.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"whether the comments are respectful\"",
+        "rationale": "Their stated cues for removal/acceptance center on harassment/hate speech indicators."
+      },
+      {
+        "participant_id": "P_1782093151607_3vcpm2cmn",
+        "feature_name": "intent_over_arguments",
+        "feature_value": "Focused less on the arguments and more on intent (meaningful purpose vs venting) and whether respect was given.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I tried to think less about the arguments and more about intent. Did they serve a meaningful purpose or lean towards simple venting? Was respect given?\"",
+        "rationale": "They specify an intent/respect-based evaluation strategy independent of argument content."
+      },
+      {
+        "participant_id": "P_1781989662147_fmdbua4mw",
+        "feature_name": "compromise_and_compassion_frame",
+        "feature_value": "Saw both sides as in conflict needing compromise/compassion rather than a 'he said she said' dynamic.",
+        "category": "other",
+        "is_open_ended": true,
+        "evidence_span": "\"theres a thing called compromise\"",
+        "rationale": "Their reflection attributes influence to a reconciliation/compromise framing rather than specific language rules."
+      },
+      {
+        "participant_id": "P_1781990821923_kofwlwtbw",
+        "feature_name": "increased_perspective_taking",
+        "feature_value": "Seeing both versions made them think more, visualize more perspectives, and 'open my mind'.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "\"made me think about my decision more and opened my mind to visualize more perspectives\"",
+        "rationale": "They describe an internal shift in openness and deliberation driven by the pair comparison."
+      },
+      {
+        "participant_id": "P_1781989921013_gwt6ifyxe",
+        "feature_name": "vague_resonance_based_evaluation_process",
+        "feature_value": "Described comparing how the post resonates (more/less) and whether removing one improves the other.",
+        "category": "process_meta",
+        "is_open_ended": true,
+        "evidence_span": "\"measuring each deck as the resonation sits between desiring either one more or less\"",
+        "rationale": "Their reflection focuses on an unclear, process-like comparison logic based on resonance rather than explicit criteria."
+      }
+    ]
+  }
+}

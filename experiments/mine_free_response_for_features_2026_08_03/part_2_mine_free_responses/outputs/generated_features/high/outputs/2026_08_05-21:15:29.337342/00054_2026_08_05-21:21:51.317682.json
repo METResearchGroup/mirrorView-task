@@ -1,0 +1,97 @@
+{
+  "batch_id": 54,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988379959_4d9om038m",
+    "P_1781988468654_dzp1dbxyp",
+    "P_1781988613712_fopd9kqur",
+    "P_1781989302428_dxonihu9c",
+    "P_1781990276298_nc8voadbc",
+    "P_1781991720668_dc48y2g7p",
+    "P_1781992511105_1k2mj3o9f",
+    "P_1781993971722_dv0tg451i",
+    "P_1781998406763_v80y0qddh",
+    "P_1782000303514_ufnbp61ml"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 54,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781990276298_nc8voadbc",
+        "feature_name": "first_amendment_as_primary_decision_anchor",
+        "feature_value": "Used First Amendment/\u201cnothing about violence\u201d as the key justification for decisions.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"the First Amendment helped a lot\"",
+        "rationale": "The participant explicitly states the First Amendment and absence of violence influenced their decisions."
+      },
+      {
+        "participant_id": "P_1781989302428_dxonihu9c",
+        "feature_name": "violence_threshold_for_censorship",
+        "feature_value": "Censorship/ removal justified only when there is a threat of violence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Opinions shouldn't be censored unless there is a threat of violence.\"",
+        "rationale": "They provide a clear threshold criterion tying removal to violence risk."
+      },
+      {
+        "participant_id": "P_1782000303514_ufnbp61ml",
+        "feature_name": "tone_harassment_threat_focus_over_politics",
+        "feature_value": "Evaluated tone/language/impact and whether posts were harassment/threats/harm, not agreement with viewpoint.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"whether the posts crossed the line into harassment, threats, or harmful behavior\"",
+        "rationale": "They describe using side-by-side comparison to apply the same harm/impact standard rather than political position."
+      },
+      {
+        "participant_id": "P_1781993971722_dv0tg451i",
+        "feature_name": "discussion_quality_evidence_over_strawman_ad_hominem",
+        "feature_value": "Preferred content that could be discussed with evidence/examples; rejected ideas framed as strawman/ad hominem as unlikely to promote discussion.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"strawman arguments or ad hominem attacks\"",
+        "rationale": "They distinguish between discussion-promoting, evidence-based viewpoints versus manipulative/attacking rhetoric."
+      },
+      {
+        "participant_id": "P_1781991720668_dc48y2g7p",
+        "feature_name": "extremity_and_misinformation_rejection_rule",
+        "feature_value": "Weighed extremity and rejected both if views were too extreme or if either felt like misinformation.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If one or both leaned too extreme, I would reject both\"",
+        "rationale": "They articulate a concrete rejection rule based on extremity and misinformation."
+      },
+      {
+        "participant_id": "P_1781988379959_4d9om038m",
+        "feature_name": "mirror_views_helped_identify_removals",
+        "feature_value": "Reading mirrored opposing perspectives helped them decide what should be removed.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"It helped me identify what I felt should be removed.\"",
+        "rationale": "They directly attribute improved removal judgment to the mirrored pair format."
+      },
+      {
+        "participant_id": "P_1781992511105_1k2mj3o9f",
+        "feature_name": "free_speech_consistency_with_falsehood_caveat",
+        "feature_value": "Held a broad free-speech stance even while disagreeing politically, with removal only for verifiably false/absolutely false content.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Even though I'm a Democrat and absolutely detest Trump\"",
+        "rationale": "They explicitly state a free-speech baseline and a conditional exception for verifiable falsehoods."
+      },
+      {
+        "participant_id": "P_1781988468654_dzp1dbxyp",
+        "feature_name": "forced_pair_symmetry_both_or_neither_logic",
+        "feature_value": "Factor was the constraint that they couldn't remove/keep only one; either both must be silenced or both allowed to express.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"Knowing that I could not remove just one or keep just one\"",
+        "rationale": "They describe how the required symmetry of the pair strongly affected their decisions."
+      }
+    ]
+  }
+}

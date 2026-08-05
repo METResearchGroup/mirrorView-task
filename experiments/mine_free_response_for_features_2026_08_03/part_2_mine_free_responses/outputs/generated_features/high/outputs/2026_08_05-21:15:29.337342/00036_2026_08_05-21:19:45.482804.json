@@ -1,0 +1,97 @@
+{
+  "batch_id": 36,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988833449_y3xc6036o",
+    "P_1781989497359_bpr3vc0bq",
+    "P_1781989523856_co7ratlta",
+    "P_1781989925527_c2saza9qf",
+    "P_1781990238366_6htcgrzqt",
+    "P_1781991037737_vqg572mer",
+    "P_1781992684843_qghmew8f4",
+    "P_1782014921058_qt7o3ikzf",
+    "P_1782025064345_dvo1598e3",
+    "P_1782045644433_a8muor1rz"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 36,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1782045644433_a8muor1rz",
+        "feature_name": "respectful_fact_based_over_partisan",
+        "feature_value": "Chose keep/remove based on whether posts were respectful and fact-based, not which political side they represented; having both versions helped check consistency.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "focused on whether each post was respectful and fact-based, rather than which side it took",
+        "rationale": "The participant explicitly states their criteria centered on respect/factualness rather than stance, and that the pair helped them judge similarly across political versions."
+      },
+      {
+        "participant_id": "P_1781992684843_qghmew8f4",
+        "feature_name": "remove_personal_attacks_and_vulgarity",
+        "feature_value": "Removed posts containing personal attacks or obvious vulgar language.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If there were personal attacks between posters I would remove them. If there is obvious vulgar language I would remove them.",
+        "rationale": "Their reflection names specific disqualifying content types that trigger removal."
+      },
+      {
+        "participant_id": "P_1781991037737_vqg572mer",
+        "feature_name": "exclude_inflammatory_for_inflammatory_sake",
+        "feature_value": "Removed inflammatory content when it was intended only to be inflammatory rather than to support civil discussion.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "inflammatory just to be inflammatory were removed",
+        "rationale": "They tie removal to whether inflammatory statements serve substantive civil discussion versus being performatively inflammatory."
+      },
+      {
+        "participant_id": "P_1781989523856_co7ratlta",
+        "feature_name": "profanity_or_hate_as_remove_cue",
+        "feature_value": "Flagged excessive profanity or hate speech as grounds for removal.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Excessive profanity or hate speech.",
+        "rationale": "The participant directly labels profanity/hate as the relevant cue impacting decisions."
+      },
+      {
+        "participant_id": "P_1782014921058_qt7o3ikzf",
+        "feature_name": "curse_words_unnecessary",
+        "feature_value": "Evaluated curse words and viewed them as unnecessary, implying they reduce keep likelihood.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "I also evaluated the curse words. I think those were unnecessary.",
+        "rationale": "They indicate they considered profanity (curse words) and judged it unwarranted, linking it to their decision process."
+      },
+      {
+        "participant_id": "P_1781989925527_c2saza9qf",
+        "feature_name": "remove_offensive_or_threatening",
+        "feature_value": "Removed posts with offensive language and potential threats; otherwise kept posts representing differing opinions.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "removed the posts with offensive language and what could be seen as a threat",
+        "rationale": "They specify both removal triggers (offensive language, threats) and the default to keep for non-offensive differing opinions."
+      },
+      {
+        "participant_id": "P_1781990238366_6htcgrzqt",
+        "feature_name": "keep_if_only_expressions_without_expletives",
+        "feature_value": "Allowed both to pass when they were just opinions without expletives.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If they were just opinions expressed without expletive then I let both pass.",
+        "rationale": "They describe a conditional rule: keep if content is opinion only and lacks expletives."
+      },
+      {
+        "participant_id": "P_1781988833449_y3xc6036o",
+        "feature_name": "pair_supported_constructive_debate",
+        "feature_value": "Was influenced because both messages were constructive and enabled discussion/debate.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "both messages were constructive in the sense that they allowed for an actual discussion or debate to be had",
+        "rationale": "They state the influence came from constructive/dialectical value, indicating a positive evaluative basis for keep decisions."
+      }
+    ]
+  }
+}

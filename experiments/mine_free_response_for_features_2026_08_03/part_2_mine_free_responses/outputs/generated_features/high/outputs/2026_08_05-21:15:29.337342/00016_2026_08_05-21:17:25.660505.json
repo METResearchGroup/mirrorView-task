@@ -1,0 +1,97 @@
+{
+  "batch_id": 16,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988380481_82gt05u42",
+    "P_1781988684037_defszebtf",
+    "P_1781988716749_x36fwfxz0",
+    "P_1781989176298_6hb2pos2m",
+    "P_1781989330964_tsl9442xi",
+    "P_1781990844218_n2527vzk6",
+    "P_1781991499708_7yhnbneyp",
+    "P_1781991876620_93ffpim34",
+    "P_1781993718896_089c3moeu",
+    "P_1782019569397_8z207r0eo"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 16,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781990844218_n2527vzk6",
+        "feature_name": "no_explicit_hate_or_violence_threshold",
+        "feature_value": "Kept items because they didn\u2019t see content promoting violence or hate.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I didn't see any post that promoted violence or hate so I felt that they were all acceptable.",
+        "rationale": "The participant explicitly states the absence of violence/hate drove acceptability decisions."
+      },
+      {
+        "participant_id": "P_1781988684037_defszebtf",
+        "feature_name": "offensive_language_screening",
+        "feature_value": "Focused on checking for foul language or offensiveness, then decided based on that.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "I looked for any foul language or anything super offensive to one group or the other and decided from there.",
+        "rationale": "Their decision rule is to look for foul/offensive language."
+      },
+      {
+        "participant_id": "P_1781988380481_82gt05u42",
+        "feature_name": "profanity_rudeness_removal_rule",
+        "feature_value": "Chose to remove posts containing profanity/rude remarks to individuals; accepted political opinions otherwise.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "Any post that had profanity or rude remarks towards individuals I opted to remove.",
+        "rationale": "They describe a direct keep/remove rule tied to profanity/rudeness."
+      },
+      {
+        "participant_id": "P_1781989330964_tsl9442xi",
+        "feature_name": "permission_to_speak_except_cursing_condition",
+        "feature_value": "Believed opinions should be heard as long as people aren\u2019t \u201ccussing each other out.\u201d",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "As long as people aren't cussing each other out, I think everyone's opinion should be heard.",
+        "rationale": "They provide a conditional threshold that allows content unless it turns into direct abusive cursing."
+      },
+      {
+        "participant_id": "P_1781988716749_x36fwfxz0",
+        "feature_name": "pair_retains_or_loses_main_point_check",
+        "feature_value": "Used whether the main point was kept vs lost as a criterion.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "I tried to see if the main point was kept or if it was lost",
+        "rationale": "Their comparison strategy is centered on the preservation of the main point across versions."
+      },
+      {
+        "participant_id": "P_1781991876620_93ffpim34",
+        "feature_name": "ad_hominem_without_substance_downweighting",
+        "feature_value": "Was influenced when the content was agreement/ad hominem without substantive debate.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "when an agreement was merely ad homenem without substance to debate about,",
+        "rationale": "They flag ad hominem lacking substance as a relevant cue for their judgments."
+      },
+      {
+        "participant_id": "P_1782019569397_8z207r0eo",
+        "feature_name": "free_speech_consequences_and_compare_both",
+        "feature_value": "Considered consequences, fit with free speech, and weighed both responses against each other to decide keep/remove.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "I was thinking about the consequences... if it fell into the category of free speech... weighed both responses against each other to decide whether to keep both or remove both.",
+        "rationale": "They describe an explicit multi-step process including consequences/free-speech framing and comparing both versions."
+      },
+      {
+        "participant_id": "P_1781989176298_6hb2pos2m",
+        "feature_name": "language_quality_influences_perceived_intelligence",
+        "feature_value": "Denied some based on language used; believed cussing made both sides sound unintelligent.",
+        "category": "affect_or_confidence",
+        "is_open_ended": false,
+        "evidence_span": "A lot of the ones I denied simply because of the language used. Cussing made both sides sound unintelligent.",
+        "rationale": "Their judgment is driven by perceived intelligibility/quality of language, not partisan alignment."
+      }
+    ]
+  }
+}

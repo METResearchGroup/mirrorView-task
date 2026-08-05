@@ -1,0 +1,97 @@
+{
+  "batch_id": 77,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988803496_ustwcs1nc",
+    "P_1781989984011_ptywa3iil",
+    "P_1781991007229_ihabafnf4",
+    "P_1781991404631_jc5jssdbj",
+    "P_1781991437412_1qvv6kiy9",
+    "P_1781993718999_pblzcdwb6",
+    "P_1781994787169_stjo4e7t2",
+    "P_1781995017943_w7mrl5myl",
+    "P_1781995292008_syr728gjg",
+    "P_1782001449256_jf6uu32wx"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 77,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781991437412_1qvv6kiy9",
+        "feature_name": "mirror_similarity_check",
+        "feature_value": "Used a side-by-side check of how well the mirrored posts matched each other.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "checking to see how well the mirrored each other",
+        "rationale": "The participant explicitly describes evaluating the pair by comparing how closely the mirror versions align."
+      },
+      {
+        "participant_id": "P_1781991007229_ihabafnf4",
+        "feature_name": "consistency_across_political_perspective",
+        "feature_value": "Focused on content/tone to apply the same standard regardless of political viewpoint; reflection increased thinking about consistency.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "made me think more about consistency",
+        "rationale": "They state they used content and tone and that seeing both versions helped evaluate whether they applied the same standard."
+      },
+      {
+        "participant_id": "P_1781993718999_pblzcdwb6",
+        "feature_name": "violence_threshold_rule",
+        "feature_value": "Removal/keep depended on whether the post called for violence; otherwise both were allowed.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "only looked to see if there was any call for violence",
+        "rationale": "They describe a clear criterion: only violence-related calls triggered removal."
+      },
+      {
+        "participant_id": "P_1781995292008_syr728gjg",
+        "feature_name": "violence_search_focus",
+        "feature_value": "Looked specifically for messages that promoted violence.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "looking for the messages that maybe promoted violence",
+        "rationale": "They indicate their attention was narrowly directed toward violence promotion cues."
+      },
+      {
+        "participant_id": "P_1782001449256_jf6uu32wx",
+        "feature_name": "misinformation_and_valid_point_criterion",
+        "feature_value": "Accepts profanity but rejects misinformation and failure to make a valid point.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "misinformation and not making a valid point is not okay",
+        "rationale": "They explicitly list misinformation and lack of a valid point as decisive negatives despite tolerance for profanity."
+      },
+      {
+        "participant_id": "P_1781991404631_jc5jssdbj",
+        "feature_name": "remove_both_when_stretching_facts",
+        "feature_value": "If one side lies by stretching facts, the standard requires eliminating both.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "you have to eliminate both",
+        "rationale": "They articulate a rule-like approach for handling both versions when misinformation/lying occurs."
+      },
+      {
+        "participant_id": "P_1781989984011_ptywa3iil",
+        "feature_name": "rudeness_based_judgment",
+        "feature_value": "Judged posts primarily by how rude they were.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "judge them based on how rude they were being",
+        "rationale": "This reflection directly names rudeness as the main cue guiding the decision."
+      },
+      {
+        "participant_id": "P_1781988803496_ustwcs1nc",
+        "feature_name": "perceived_same_content_different_perspectives",
+        "feature_value": "Concluded the mirrored posts were essentially the same underlying misinformation/harm threats, just from different points of view.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "realize that they were basically the same thing from different points of view",
+        "rationale": "They connect seeing both versions to concluding identity/sameness across viewpoints."
+      }
+    ]
+  }
+}

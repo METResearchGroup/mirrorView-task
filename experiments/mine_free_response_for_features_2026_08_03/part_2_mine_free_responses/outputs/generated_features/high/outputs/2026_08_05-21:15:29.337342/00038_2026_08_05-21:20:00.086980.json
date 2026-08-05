@@ -1,0 +1,97 @@
+{
+  "batch_id": 38,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988563793_87b9i61eh",
+    "P_1781988685754_d63rxr59s",
+    "P_1781988785009_oemqi3v0g",
+    "P_1781988877561_gciygi3mn",
+    "P_1781989557421_rop867cve",
+    "P_1781990192522_90nmxjroa",
+    "P_1781990894074_ka2s3cvso",
+    "P_1781991270132_039zue69m",
+    "P_1782004672022_uv8wh7xzq",
+    "P_1782094288316_5nszf4tzu"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 38,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988877561_gciygi3mn",
+        "feature_name": "pairwise_egregiousness_comparison",
+        "feature_value": "Compared how egregious both sides were to decide keep vs remove.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": true,
+        "evidence_span": "looking at both statements to see how egregious they were on both sides",
+        "rationale": "The participant explicitly describes using a bilateral comparison of severity across the pair."
+      },
+      {
+        "participant_id": "P_1781988685754_d63rxr59s",
+        "feature_name": "free_speech_harassment_boundary",
+        "feature_value": "Used a boundary between free speech and harassment/violent rhetoric.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "line between free speech and what I would consider genuine harassment or violent rhetoric",
+        "rationale": "They state a specific decision rule: allow speech unless it crosses into harassment/violence."
+      },
+      {
+        "participant_id": "P_1781990192522_90nmxjroa",
+        "feature_name": "hostility_reduces_dialogue_safety",
+        "feature_value": "Removed comments perceived as hostile/insulting; emphasized dialogue and safety for minors.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "stick to comments where each side was trying to make a point that might actually start a dialogue",
+        "rationale": "They connect keep/remove to whether the tone enables dialogue and whether content is safe for minors."
+      },
+      {
+        "participant_id": "P_1781988785009_oemqi3v0g",
+        "feature_name": "vileness_drives_removal_threshold",
+        "feature_value": "Removal depended on how vile the comments were.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "depended on how vile the comments were",
+        "rationale": "A clear intensity threshold is described as guiding the decision."
+      },
+      {
+        "participant_id": "P_1781990894074_ka2s3cvso",
+        "feature_name": "inaccuracy_weighted_against_allowing",
+        "feature_value": "Chose not to allow the opposing content if it was very inaccurate.",
+        "category": "content_cues",
+        "is_open_ended": true,
+        "evidence_span": "If the opposition was very inaccurate, I chose not to allow it through.",
+        "rationale": "They identify factual accuracy of the opposing side as a decisive cue in the pair comparison."
+      },
+      {
+        "participant_id": "P_1782004672022_uv8wh7xzq",
+        "feature_name": "free_speech_principle_over_contents",
+        "feature_value": "Relied on a free-speech principle even when disagreeing with the content.",
+        "category": "affect_or_confidence",
+        "is_open_ended": true,
+        "evidence_span": "I believe in free speech.  I didn't agree with most of what was written",
+        "rationale": "They justify their decision with an overriding norm rather than content-specific disapproval."
+      },
+      {
+        "participant_id": "P_1782094288316_5nszf4tzu",
+        "feature_name": "mutual_respect_and_thoughtfulness_criterion",
+        "feature_value": "Considered mutual respect, whether intent mattered vs venting, and how thought-provoking the ideas were.",
+        "category": "decision_criteria",
+        "is_open_ended": true,
+        "evidence_span": "Mutual respect. Was intent more important than just venting? How thought-provoking were the ideas",
+        "rationale": "They describe multiple evaluative criteria focused on intent, respect, and idea value."
+      },
+      {
+        "participant_id": "P_1781988563793_87b9i61eh",
+        "feature_name": "stop_hateful_speech_for_positive_communication",
+        "feature_value": "Wanted to shut down offensive/permanent hateful speech to enable more positive communication.",
+        "category": "content_cues",
+        "is_open_ended": true,
+        "evidence_span": "facilitate more positive communication rather than so much hateful speech",
+        "rationale": "They explicitly mention hateful/offensive speech as the cue and a positive-communication goal as the motive."
+      }
+    ]
+  }
+}

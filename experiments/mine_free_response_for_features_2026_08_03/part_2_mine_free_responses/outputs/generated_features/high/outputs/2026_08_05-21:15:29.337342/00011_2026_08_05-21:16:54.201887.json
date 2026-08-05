@@ -1,0 +1,97 @@
+{
+  "batch_id": 11,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988618579_88t1r1cgm",
+    "P_1781989062997_v38ighiga",
+    "P_1781989141628_jre2tgtx9",
+    "P_1781989141730_npmx1qcg3",
+    "P_1781989564681_23bgl2hrb",
+    "P_1781989669530_6hxeec3fg",
+    "P_1781989927292_etihh73n6",
+    "P_1781991414375_nqmn2seyl",
+    "P_1781996351820_tzudo3qoo",
+    "P_1782088159241_6oy8446vk"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 11,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988618579_88t1r1cgm",
+        "feature_name": "inflammatory_language_triggers_remove",
+        "feature_value": "Avoided posts with inflammatory language to prevent unproductive political conversation.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"inflammatory language\"",
+        "rationale": "The participant explicitly links avoiding removal/keeping decisions to presence of inflammatory language."
+      },
+      {
+        "participant_id": "P_1781989062997_v38ighiga",
+        "feature_name": "threat_or_signals_of_harm_as_filter",
+        "feature_value": "Looked for any sign of a threat; treated the pair as mutual blame/finger-pointing and rejected both.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"looking for any sign of what could be deemed as a threat\"",
+        "rationale": "Their decision depends on whether the content contains threatening elements."
+      },
+      {
+        "participant_id": "P_1781989141730_npmx1qcg3",
+        "feature_name": "coherent_civil_kept_incoherent_inflammatory_removed",
+        "feature_value": "Kept posts if coherent and civil; canceled if incoherent, inflammatory, and bigoted.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"coherent and civil\"",
+        "rationale": "They provide a clear two-part content quality threshold for keep vs remove."
+      },
+      {
+        "participant_id": "P_1781989927292_etihh73n6",
+        "feature_name": "foul_language_main_criterion",
+        "feature_value": "Main criterion was disallowing foul language; viewed it as inappropriate for online debate.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"I did not allow any foul language\"",
+        "rationale": "They state foul language alone was the key keeping/rejecting rule."
+      },
+      {
+        "participant_id": "P_1782088159241_6oy8446vk",
+        "feature_name": "profanity_and_aggression_bad_manner",
+        "feature_value": "Believed profanity and aggressive discussion is poor conduct for getting a point across.",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "\"profanity\"",
+        "rationale": "They tie removal/avoidance to profanity/aggressive tone as a normative criterion."
+      },
+      {
+        "participant_id": "P_1781996351820_tzudo3qoo",
+        "feature_name": "harmful_inflammatory_eliminated_both_extremes",
+        "feature_value": "Eliminated both posts when language was harmful/inflammatory; pairs eliminated were often extreme.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"eliminated both posts\"",
+        "rationale": "They describe making the same removal choice for both versions based on harmful/inflammatory cues and extremity."
+      },
+      {
+        "participant_id": "P_1781991414375_nqmn2seyl",
+        "feature_name": "value_vs_bashing_quality_assessment",
+        "feature_value": "Focused on the value of the discussion; rejected when it was just bashing with no valid points/debate value.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"just two people bashing\"",
+        "rationale": "Their criterion is whether the pair produces value beyond interpersonal attacks."
+      },
+      {
+        "participant_id": "P_1781989669530_6hxeec3fg",
+        "feature_name": "free_speech_but_not_offensive",
+        "feature_value": "Allowed content as long as it was not offensive, invoking respect for free speech.",
+        "category": "other",
+        "is_open_ended": false,
+        "evidence_span": "\"I respect free speech\"",
+        "rationale": "They articulate a boundary condition for inclusion: free speech broadly, exclusion when offensive."
+      }
+    ]
+  }
+}

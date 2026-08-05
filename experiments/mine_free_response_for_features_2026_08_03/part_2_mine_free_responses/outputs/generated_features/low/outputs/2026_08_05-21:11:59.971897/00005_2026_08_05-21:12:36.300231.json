@@ -1,0 +1,97 @@
+{
+  "batch_id": 5,
+  "likert_group": "low",
+  "participant_ids": [
+    "P_1781988650246_c4pxwu8us",
+    "P_1781988746610_8klw7eqe9",
+    "P_1781988911419_mv1tx1bih",
+    "P_1781988942347_1ubf3llah",
+    "P_1781989865091_j768nv8pg",
+    "P_1781989908622_e3ytxwu3c",
+    "P_1781990035908_j4ddlbeq6",
+    "P_1781990928026_7g73hj2gl",
+    "P_1781993047044_pswb0ywld",
+    "P_1781998708574_zm6787zus"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 5,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781993047044_pswb0ywld",
+        "feature_name": "freedom_of_speech_as_default_standard",
+        "feature_value": "Uses constitutional/free-speech rights as a primary reason to keep/approve regardless of paired influence.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"Our freedom of speech is a constitutional protected right.\"",
+        "rationale": "The participant explicitly grounds their decision in freedom-of-speech/constitutional protection."
+      },
+      {
+        "participant_id": "P_1781988650246_c4pxwu8us",
+        "feature_name": "minimization_of_pair_effect_and_global_approval",
+        "feature_value": "Indicates they approved essentially all posts and frames any vulgarity as not disqualifying; pair comparison did not change decisions.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"So I approved all of them.\"",
+        "rationale": "Their reflection centers on blanket approval, implying the paired view had little impact on their keep/remove judgments."
+      },
+      {
+        "participant_id": "P_1781988746610_8klw7eqe9",
+        "feature_name": "good_faith_argument_vs_anger_name_calling",
+        "feature_value": "Looks for whether opinions are made in good faith; disallows angry name-calling/violent rhetoric.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"evaluated the posts... whether or not the opinions were adequately made in good faith\"",
+        "rationale": "They specify a content quality criterion (good faith) and a threshold tied to rhetoric style."
+      },
+      {
+        "participant_id": "P_1781988911419_mv1tx1bih",
+        "feature_name": "anti_silencing_logic_even_when_disagreeing",
+        "feature_value": "Opposes removing both versions because it would silence a belief they might agree with; relies on representation/permission to hear the other side.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"If both posts were removed then an belief I did align with would be silenced.\"",
+        "rationale": "They articulate a decision rule focused on not silencing beliefs, even if they personally disagree."
+      },
+      {
+        "participant_id": "P_1781990928026_7g73hj2gl",
+        "feature_name": "focus_on_individual_content_quality_not_pair_difference",
+        "feature_value": "States they examined each post individually to judge argument quality vs crass language/name-calling.",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "\"I tried to look at the content of each post individually.\"",
+        "rationale": "Their described approach emphasizes single-post evaluation rather than leveraging the mirror/pair comparison."
+      },
+      {
+        "participant_id": "P_1781988942347_1ubf3llah",
+        "feature_name": "pair_mirroring_reduces_effort_joint_decision",
+        "feature_value": "Notes the pair mirrored each other adequately, making a joint decision easy; influence perceived as low.",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "\"The pairs did seem to mirror each other adaquetly so making a joint decision was easy.\"",
+        "rationale": "They explicitly connect mirror similarity to decision ease, implying limited additional influence from seeing both."
+      },
+      {
+        "participant_id": "P_1781989865091_j768nv8pg",
+        "feature_name": "bounds_of_speech_plus_intent_and_information_quality_buffer",
+        "feature_value": "Applies a free-speech bounds test plus an intentionality buffer and considers whether misinformation is malicious enough.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"without crossing into hate speech, misinformation or disinformation\"",
+        "rationale": "They enumerate specific decision criteria including intent and maliciousness related to misinformation."
+      },
+      {
+        "participant_id": "P_1781989908622_e3ytxwu3c",
+        "feature_name": "threshold_for_extreme_or_offensive_language",
+        "feature_value": "Allows expression but removes/limits when language is too extreme.",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "\"not to include too extreme languages.\"",
+        "rationale": "They describe an explicit threshold around extremity of language."
+      }
+    ]
+  }
+}

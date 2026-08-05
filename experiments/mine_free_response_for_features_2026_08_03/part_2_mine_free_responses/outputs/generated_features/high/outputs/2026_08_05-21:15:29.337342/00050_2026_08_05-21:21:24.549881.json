@@ -1,0 +1,97 @@
+{
+  "batch_id": 50,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988549258_dkx7fj5ns",
+    "P_1781989307873_5brauf0rk",
+    "P_1781989608647_ssgwods0r",
+    "P_1781989647713_6q52gjj9q",
+    "P_1781989977821_0rsx0own5",
+    "P_1781991421313_kuj7xm7ji",
+    "P_1781992265798_1ebu4wt9e",
+    "P_1781992597069_ky7amkf9c",
+    "P_1781993123518_1v2y3pzli",
+    "P_1782003694767_6y6lcpgfx"
+  ],
+  "feature_count": 8,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 50,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988549258_dkx7fj5ns",
+        "feature_name": "constructive_vs_attack_threshold",
+        "feature_value": "Allow when constructive; remove when primarily attacking or making unverifiable claims",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "As long as the posts were not overly hostile and provided something constructive to say, I allowed them. If the posts seemed to only be attacking the other side or making claims that weren't verified, I removed them.",
+        "rationale": "The participant explicitly states constructive/verified cues as the basis for keep/remove."
+      },
+      {
+        "participant_id": "P_1781989307873_5brauf0rk",
+        "feature_name": "apply_same_standard_across_sides",
+        "feature_value": "Seeing both versions prompted applying the same harassment/abuse standard regardless of political alignment",
+        "category": "pair_comparison_strategy",
+        "is_open_ended": false,
+        "evidence_span": "Seeing both versions made me to apply the same standard to each side, even when one side was closer to my own views.",
+        "rationale": "They describe the pair-viewing effect as forcing symmetric application of criteria."
+      },
+      {
+        "participant_id": "P_1781989647713_6q52gjj9q",
+        "feature_name": "independent_item_level_harassment_check",
+        "feature_value": "Assess each item independently using the same rules (e.g., harassment) rather than comparing viewpoints",
+        "category": "process_meta",
+        "is_open_ended": false,
+        "evidence_span": "intended approach is to assess each item against the same rules independently looking at things like whether there is harassment",
+        "rationale": "They articulate a procedure of independent rule-based evaluation centered on harassment."
+      },
+      {
+        "participant_id": "P_1781991421313_kuj7xm7ji",
+        "feature_name": "unclear_gibberish_with_threats_signal",
+        "feature_value": "Mentions that threats/harassment matter, but reflection text is partially garbled",
+        "category": "affect_or_confidence",
+        "is_open_ended": true,
+        "evidence_span": "I threats were made.",
+        "rationale": "Only a fragment about threats is interpretable; included cautiously due to limited context."
+      },
+      {
+        "participant_id": "P_1781993123518_1v2y3pzli",
+        "feature_name": "free_speech_cutoff_no_direct_threats_or_crude_language",
+        "feature_value": "Treat as protected unless there is a direct threat or crude language",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If not a direct threat or crude language then it comes under free speech",
+        "rationale": "They set explicit boundary conditions tied to free-speech framing."
+      },
+      {
+        "participant_id": "P_1781992265798_1ebu4wt9e",
+        "feature_name": "remove_hateful_remarks_about_division_discrimination",
+        "feature_value": "Remove content that makes hateful remarks about division and discrimination",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "remove those that made hateful remarks about division and discrimination",
+        "rationale": "The participant directly names the content type that triggers removal."
+      },
+      {
+        "participant_id": "P_1781992597069_ky7amkf9c",
+        "feature_name": "framing_differences_across_mirror_pair",
+        "feature_value": "Alternate perspective framing affected judgment (e.g., naming a person vs generic reference)",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "conservative post was generic but the liberal post mentioned someone by name",
+        "rationale": "They cite specific framing differences as influencing their evaluation."
+      },
+      {
+        "participant_id": "P_1781989977821_0rsx0own5",
+        "feature_name": "opinion_allowed_but_false_or_harmful_removed",
+        "feature_value": "Keep opinions; remove if nonsense/lies with harmful effects",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If it was something that was mainly an opinion, I thought it should stay... If it appeared to be nonsense... and I thought it was actually harmful, I thought it should be removed... But if they are flat out lies, I think they should not remain.",
+        "rationale": "They provide a rule differentiating opinions from unverified harmful falsehoods."
+      }
+    ]
+  }
+}

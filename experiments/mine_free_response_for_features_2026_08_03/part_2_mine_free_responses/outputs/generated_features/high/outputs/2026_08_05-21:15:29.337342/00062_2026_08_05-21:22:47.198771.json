@@ -1,0 +1,79 @@
+{
+  "batch_id": 62,
+  "likert_group": "high",
+  "participant_ids": [
+    "P_1781988253627_c4n62lei7",
+    "P_1781988255163_he4kg0j8w",
+    "P_1781988620308_b5pbdcrjn",
+    "P_1781988675942_bndp8kg7t",
+    "P_1781989209959_02zeknuwj",
+    "P_1781989754149_9ymtda5l2",
+    "P_1781995878822_v2oln645g",
+    "P_1782011123509_9zv8cbhbr",
+    "P_1782025152517_62nlh6hcd",
+    "P_1782153118416_r5z96vjj7"
+  ],
+  "feature_count": 6,
+  "qa_status": "usable",
+  "result": {
+    "batch_index": 62,
+    "qa_status": "usable",
+    "qa_notes": "",
+    "features": [
+      {
+        "participant_id": "P_1781988620308_b5pbdcrjn",
+        "feature_name": "speech_rights_leniency_with_violent_threat_threshold",
+        "feature_value": "Keeps disagreeable beliefs unless there are direct actionable violent threats or disproportionately violent/rage-bait language",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "as long as they aren't overtly provocative \"rage-bait\" or are using disproportionately violent speech",
+        "rationale": "The participant explicitly frames a Free Speech approach with specific exceptions for violence and rage-bait/proportionality."
+      },
+      {
+        "participant_id": "P_1781988253627_c4n62lei7",
+        "feature_name": "anti_censorship_free_speech_principle",
+        "feature_value": "Avoids blocking/censoring; treats it as words/opinions and prefers debate and majority decisions",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "we shouldn't censor ANY speech... It's free speech. It's a right. Let them say whatever",
+        "rationale": "A strong normative rule against censorship drives the decision."
+      },
+      {
+        "participant_id": "P_1781988675942_bndp8kg7t",
+        "feature_name": "offensive_language_weighting",
+        "feature_value": "Considers offensiveness level and the importance of the message even when words are slang/offensive",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "scale the offensive language and determine the importance of the messages/posts",
+        "rationale": "They describe a method for interpreting offensiveness relative to message importance."
+      },
+      {
+        "participant_id": "P_1781989754149_9ymtda5l2",
+        "feature_name": "call_of_violence_primary_risk_check",
+        "feature_value": "Primary concern is calls of violence or content that \u201cgreen lights\u201d crimes",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "Mostly looking for calls of violence, or something about green lighting crimes.",
+        "rationale": "Their decision focus is explicitly on violence/crime authorization language."
+      },
+      {
+        "participant_id": "P_1781988255163_he4kg0j8w",
+        "feature_name": "slander_obscenity_removal_rule",
+        "feature_value": "Removes posts that are slanderous against the other side or contain obscenities",
+        "category": "decision_criteria",
+        "is_open_ended": false,
+        "evidence_span": "If the post was slanderous against the other side I removed it. If it included obscenities, I removed it as well.",
+        "rationale": "They state two clear removal triggers: slander and obscenities."
+      },
+      {
+        "participant_id": "P_1781989209959_02zeknuwj",
+        "feature_name": "tone_insult_sensitivity",
+        "feature_value": "Uses word/tone and whether it could be perceived as an insult as a factor",
+        "category": "content_cues",
+        "is_open_ended": false,
+        "evidence_span": "The words and tone used. And if they said anything that could be perceived as a insult",
+        "rationale": "Their influence/decision criteria hinge on tone and perceived insulting content."
+      }
+    ]
+  }
+}
