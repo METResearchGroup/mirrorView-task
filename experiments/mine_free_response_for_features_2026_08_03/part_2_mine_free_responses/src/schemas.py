@@ -58,17 +58,15 @@ class BatchFeatureGeneration(BaseModel):
     """Structured LLM response for one free-response reflection batch."""
 
     batch_index: int = Field(description="Zero-based batch index within the run.")
-    qa_status: QaStatus = Field(
-        description="usable or rejected_garbage after the QA gate."
-    )
+    # No Field(description=...) on Enum: OpenAI rejects $ref + sibling keywords.
+    qa_status: QaStatus
     qa_notes: str = Field(
         description="Short reject reason when rejected; empty string when usable."
     )
     features: list[ExtractedReflectionFeature] = Field(
-        default_factory=list,
         max_length=MAX_FEATURES_PER_BATCH,
         description=(
             "Up to 8 features across the batch; must be empty when "
-            "qa_status is rejected_garbage."
+            "qa_status is rejected_garbage. Min length 0 is allowed."
         ),
     )

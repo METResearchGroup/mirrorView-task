@@ -1,0 +1,15 @@
+{
+  "cluster_id": 1,
+  "likert_group": "high",
+  "n_members": 2,
+  "sampled_feature_ids": [
+    "0_3",
+    "1_7"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Preference for factual, non-emotive content",
+    "definition": "Participants indicated that seeing the original+mirror pair influenced their keep/remove decisions by favoring opinion or fact-based framing and rejecting posts that felt overly emotion-provoking or not personally engaging.",
+    "salience_notes": "Cohesion comes from both features emphasizing content acceptability via framing (factual/opinion vs emotionality) and receptiveness/pleasing engagement with the materials."
+  }
+}
