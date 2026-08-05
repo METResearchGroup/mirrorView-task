@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-05
+
+1. Added a keep/remove × platform crosstab experiment for Study Phase 2 Part 2 modal labels (Bluesky / Reddit / Twitter), with a runnable script and terse RESULTS table. [PR #42](https://github.com/METResearchGroup/mirrorView-task/pull/42)
+
 ## 2026-08-03
 
 1. Added a shared transformed keep/remove label dataset for Study Phase 2 Part 2 (modal linked-fate decisions, ties → remove) and extended the registry/`load_dataset` path so callers can load it by name instead of rebuilding labels per experiment. [PR #40](https://github.com/METResearchGroup/mirrorView-task/pull/40)
