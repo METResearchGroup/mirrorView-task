@@ -1,10 +1,8 @@
-"""Amazon Bedrock Titan Text Embeddings V2 helpers.
+"""Amazon Bedrock Titan Text Embeddings helpers.
 
-Region, model id, and embedding size are fixed constants below (256-d Titan v2).
-
-Requires AWS credentials and the ``dev`` dependency group (``boto3``)::
-
-    uv sync --group dev
+Provides ``create_embedding`` for live Bedrock calls and ``cosine_similarity``
+for comparing vectors. Default model, region, and dimensions are module
+constants. Requires AWS credentials with Bedrock invoke access.
 """
 
 from __future__ import annotations
@@ -29,7 +27,10 @@ R = TypeVar("R")
 
 
 def timed_embedding_calls(fn: Callable[P, R]) -> Callable[P, R]:
-    """Record wall-clock seconds per call on ``fn.embedding_times``."""
+    """Append each call's wall-clock seconds to ``fn.embedding_times``.
+
+    Latencies are recorded even when the wrapped function raises.
+    """
 
     times: list[float] = []
 
@@ -52,7 +53,32 @@ def create_embedding(
     dimensions: int = EMBEDDING_DIMENSIONS,
     normalize: bool = True,
 ) -> dict[str, Any]:
-    """Generate an embedding via Amazon Bedrock Titan Text Embeddings V2."""
+    """Invoke Titan Text Embeddings and return the vector plus request metadata.
+
+    Defaults match the shared embedding-cache identity (256-d, L2-normalized).
+    Decorated by :func:`timed_embedding_calls`, so latencies accumulate on
+    ``create_embedding.embedding_times``.
+
+    Parameters
+    ----------
+    text : str
+        Non-empty input; whitespace-only strings are rejected.
+    normalize : bool
+        When True, Bedrock returns an L2-normalized vector.
+
+    Returns
+    -------
+    dict
+        Keys include ``text``, ``model_id``, ``dimensions``, ``normalize``,
+        ``embedding``, and ``input_text_token_count`` (may be ``None``).
+
+    Raises
+    ------
+    ValueError
+        If ``text`` is empty or whitespace-only.
+    RuntimeError
+        If the Bedrock call fails or the response has no ``embedding`` field.
+    """
     if not text or not text.strip():
         raise ValueError("text must be a non-empty string")
 
@@ -91,7 +117,16 @@ def create_embedding(
 
 
 def cosine_similarity(a: list[float], b: list[float]) -> float:
-    """Cosine similarity; if vectors are already L2-normalized, equals the dot product."""
+    """Return the cosine similarity of two equal-length vectors.
+
+    Zero-norm vectors yield ``0.0``. For already L2-normalized inputs this
+    equals the dot product.
+
+    Raises
+    ------
+    ValueError
+        If ``a`` and ``b`` have different lengths.
+    """
     if len(a) != len(b):
         raise ValueError(f"length mismatch: {len(a)} vs {len(b)}")
     dot = sum(x * y for x, y in zip(a, b, strict=True))
