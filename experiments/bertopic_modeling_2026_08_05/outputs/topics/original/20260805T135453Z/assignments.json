@@ -1,0 +1,252 @@
+[
+  {
+    "message_id": "bluesky_4768a1f36c78c1bddc20d403befb5f72c79a50416514a06868ebe7b9b0352ce2",
+    "topic": -1,
+    "probability": 0.4552313737745902
+  },
+  {
+    "message_id": "bluesky_4b16e2835cb18a323154e4f1fce0e5ea7a6c463903b0dbdad226074a88415987",
+    "topic": -1,
+    "probability": 0.4431209668384272
+  },
+  {
+    "message_id": "bluesky_5f0fc7b21b3ee7bf3a36f7b938615da6fbc56e3122b18ce017e85a26b0643c86",
+    "topic": 1,
+    "probability": 1.0
+  },
+  {
+    "message_id": "bluesky_633948539f6a9f3703587fccc107a1154ff133f3d734f7653c54497d434c8b14",
+    "topic": -1,
+    "probability": 0.6423681537851681
+  },
+  {
+    "message_id": "bluesky_66f47fe334cd30165e71922f90f3f258108adc0e67ee5f619cab0023bd609123",
+    "topic": 1,
+    "probability": 0.8184431709424288
+  },
+  {
+    "message_id": "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+    "topic": 0,
+    "probability": 0.6690460111996346
+  },
+  {
+    "message_id": "bluesky_8ffc59d79b03ae838e9304ab782ca773c845f928ace91ceac524141c48742b33",
+    "topic": 0,
+    "probability": 1.0
+  },
+  {
+    "message_id": "bluesky_ba06664a3fd223aee62838f12792e98d41bb67911f1a000dc5a2a88c6b58ab05",
+    "topic": -1,
+    "probability": 0.5962021770688568
+  },
+  {
+    "message_id": "bluesky_cf845deac0e0c1d5522e8e4f42b52219084f5e0407ec9dae4e1d85fb3c35f09c",
+    "topic": -1,
+    "probability": 0.3418160189554838
+  },
+  {
+    "message_id": "bluesky_e4cff671825cb99db2c4a4a13a62fd04ab112adda63eae33612b69cc50bba735",
+    "topic": -1,
+    "probability": 0.307704635852201
+  },
+  {
+    "message_id": "reddit_1kc0109_mpz1fdv",
+    "topic": 0,
+    "probability": 0.5398874344488593
+  },
+  {
+    "message_id": "reddit_1kouuvz_msu3nql",
+    "topic": -1,
+    "probability": 0.5121694921284622
+  },
+  {
+    "message_id": "reddit_1lc4tz7_mxxy2z2",
+    "topic": -1,
+    "probability": 0.4679904883249072
+  },
+  {
+    "message_id": "reddit_1lg0ws3_myu5put",
+    "topic": 1,
+    "probability": 0.7317277809915788
+  },
+  {
+    "message_id": "reddit_1lmagph_n09pghr",
+    "topic": 0,
+    "probability": 1.0
+  },
+  {
+    "message_id": "reddit_1t7d5jc_okwsv3o",
+    "topic": -1,
+    "probability": 0.41411392715871476
+  },
+  {
+    "message_id": "reddit_1tafgbu_ol9w91x",
+    "topic": -1,
+    "probability": 0.4410078427024594
+  },
+  {
+    "message_id": "reddit_1tbzoap_olkvns8",
+    "topic": -1,
+    "probability": 0.40488836695865527
+  },
+  {
+    "message_id": "reddit_1td5imr_oltobq6",
+    "topic": 0,
+    "probability": 1.0
+  },
+  {
+    "message_id": "reddit_1te3cn8_om0eppm",
+    "topic": -1,
+    "probability": 0.6524273122213069
+  },
+  {
+    "message_id": "reddit_1te3o84_om5qriu",
+    "topic": 0,
+    "probability": 1.0
+  },
+  {
+    "message_id": "reddit_1tp6tgh_oo72pwj",
+    "topic": -1,
+    "probability": 0.5168903759851189
+  },
+  {
+    "message_id": "reddit_1tr6mt1_oolg76y",
+    "topic": 0,
+    "probability": 1.0
+  },
+  {
+    "message_id": "reddit_1tsrnbn_ooy9ccb",
+    "topic": 0,
+    "probability": 0.5030521919717645
+  },
+  {
+    "message_id": "reddit_1tt1cw0_op0gk78",
+    "topic": -1,
+    "probability": 0.39331860658876167
+  },
+  {
+    "message_id": "reddit_1ttadso_op226g0",
+    "topic": 0,
+    "probability": 0.79634326275631
+  },
+  {
+    "message_id": "reddit_1txrk7b_oq7cdgz",
+    "topic": -1,
+    "probability": 0.34411880293733244
+  },
+  {
+    "message_id": "reddit_1tymfag_oq6guvp",
+    "topic": -1,
+    "probability": 0.5262668831622028
+  },
+  {
+    "message_id": "reddit_1tzgcp8_oqcgmpc",
+    "topic": -1,
+    "probability": 0.6103527033627408
+  },
+  {
+    "message_id": "reddit_1u0y79a_oqunvpe",
+    "topic": 1,
+    "probability": 0.6978248101261619
+  },
+  {
+    "message_id": "reddit_1u225u5_oqvbe3g",
+    "topic": 0,
+    "probability": 0.7452419454419762
+  },
+  {
+    "message_id": "reddit_1u276eu_oqwja3u",
+    "topic": 1,
+    "probability": 1.0
+  },
+  {
+    "message_id": "twitter_2059301074125644151",
+    "topic": 0,
+    "probability": 0.5611771557440506
+  },
+  {
+    "message_id": "twitter_2059720977534292025",
+    "topic": 1,
+    "probability": 1.0
+  },
+  {
+    "message_id": "twitter_2060188646091743524",
+    "topic": -1,
+    "probability": 0.5146041189534025
+  },
+  {
+    "message_id": "twitter_2060213695603712464",
+    "topic": -1,
+    "probability": 0.4849434901378208
+  },
+  {
+    "message_id": "twitter_2060394551295029281",
+    "topic": -1,
+    "probability": 0.37324557135100894
+  },
+  {
+    "message_id": "twitter_2060474149366124900",
+    "topic": 1,
+    "probability": 0.8954514618911482
+  },
+  {
+    "message_id": "twitter_2060477468457234795",
+    "topic": -1,
+    "probability": 0.2716766650030417
+  },
+  {
+    "message_id": "twitter_2060533942894141756",
+    "topic": -1,
+    "probability": 0.38092691424439246
+  },
+  {
+    "message_id": "twitter_2061111507648208971",
+    "topic": -1,
+    "probability": 0.6056683855189743
+  },
+  {
+    "message_id": "twitter_2061171437612773505",
+    "topic": 1,
+    "probability": 0.589481421346506
+  },
+  {
+    "message_id": "twitter_2061259839897227548",
+    "topic": 0,
+    "probability": 0.5878275981585144
+  },
+  {
+    "message_id": "twitter_2061448212435648941",
+    "topic": -1,
+    "probability": 0.37005727874056726
+  },
+  {
+    "message_id": "twitter_2061461782170943708",
+    "topic": -1,
+    "probability": 0.5353137691856076
+  },
+  {
+    "message_id": "twitter_2061556509344186830",
+    "topic": 1,
+    "probability": 1.0
+  },
+  {
+    "message_id": "twitter_2061570765477060847",
+    "topic": 1,
+    "probability": 1.0
+  },
+  {
+    "message_id": "twitter_2061746076156059947",
+    "topic": -1,
+    "probability": 0.4715387681260598
+  },
+  {
+    "message_id": "twitter_2061812227573723223",
+    "topic": 1,
+    "probability": 0.7224303281958442
+  },
+  {
+    "message_id": "twitter_2061813309477945741",
+    "topic": -1,
+    "probability": 0.35003514672203984
+  }
+]

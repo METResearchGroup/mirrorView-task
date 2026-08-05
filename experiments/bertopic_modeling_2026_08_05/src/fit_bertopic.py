@@ -210,9 +210,17 @@ def run_fit_bertopic(
         }
     )
     assignments.to_parquet(run_dir / "assignments.parquet", index=False)
+    (run_dir / "assignments.json").write_text(
+        assignments.to_json(orient="records", indent=2, force_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
     topic_info = topic_model.get_topic_info()
     topic_info.to_parquet(run_dir / "topic_info.parquet", index=False)
+    (run_dir / "topic_info.json").write_text(
+        topic_info.to_json(orient="records", indent=2, force_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
     np.save(run_dir / "umap_2d.npy", np.asarray(umap_2d, dtype=np.float64))
     if probs is not None:
