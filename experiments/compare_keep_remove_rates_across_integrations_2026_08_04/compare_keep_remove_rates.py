@@ -41,8 +41,17 @@ def build_crosstab(labels: pd.DataFrame) -> pd.DataFrame:
     return table.reindex(index=list(DECISION_ROWS), columns=list(PLATFORM_COLUMNS)).fillna(0).astype(int)
 
 
-def format_markdown_table(table: pd.DataFrame) -> str:
-    """Format the crosstab as a markdown table with a decision column."""
+PROPORTION_DECIMALS = 4
+
+
+def column_proportions(counts: pd.DataFrame) -> pd.DataFrame:
+    """Keep/remove share within each platform (columns sum to 1)."""
+    totals = counts.sum(axis=0).replace(0, pd.NA)
+    return (counts / totals).astype(float)
+
+
+def format_counts_table(table: pd.DataFrame) -> str:
+    """Format count crosstab as a markdown table."""
     lines = [
         "| decision | Bluesky | Reddit | Twitter |",
         "|---|---:|---:|---:|",
@@ -52,13 +61,42 @@ def format_markdown_table(table: pd.DataFrame) -> str:
         lines.append(
             f"| {decision} | {int(row['Bluesky'])} | {int(row['Reddit'])} | {int(row['Twitter'])} |"
         )
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines)
+
+
+def format_proportions_table(table: pd.DataFrame) -> str:
+    """Format per-platform keep/remove proportions as a markdown table."""
+    lines = [
+        "| decision | Bluesky | Reddit | Twitter |",
+        "|---|---:|---:|---:|",
+    ]
+    for decision in DECISION_ROWS:
+        row = table.loc[decision]
+        lines.append(
+            "| {decision} | {bluesky:.{n}f} | {reddit:.{n}f} | {twitter:.{n}f} |".format(
+                decision=decision,
+                bluesky=float(row["Bluesky"]),
+                reddit=float(row["Reddit"]),
+                twitter=float(row["Twitter"]),
+                n=PROPORTION_DECIMALS,
+            )
+        )
+    return "\n".join(lines)
+
+
+def format_results_markdown(counts: pd.DataFrame, proportions: pd.DataFrame) -> str:
+    """Render counts then per-platform proportions."""
+    return (
+        f"{format_counts_table(counts)}\n\n"
+        f"{format_proportions_table(proportions)}\n"
+    )
 
 
 def main() -> None:
     labels = load_dataset(STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS)
-    table = build_crosstab(labels)
-    markdown = format_markdown_table(table)
+    counts = build_crosstab(labels)
+    proportions = column_proportions(counts)
+    markdown = format_results_markdown(counts, proportions)
     RESULTS_PATH.write_text(markdown, encoding="utf-8")
     print(markdown, end="")
 
