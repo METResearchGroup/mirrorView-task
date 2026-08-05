@@ -20,5 +20,6 @@
       "unanimous": "green",
       "not_unanimous": "red"
     }
-  }
+  },
+  "marker_opacity": 0.5
 }

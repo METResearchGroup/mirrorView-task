@@ -92,6 +92,9 @@ def _build_plot_frame(topics_run: Path) -> pd.DataFrame:
     return merged
 
 
+MARKER_OPACITY = 0.5
+
+
 def _write_scatter(
     frame: pd.DataFrame,
     color_col: str,
@@ -109,8 +112,10 @@ def _write_scatter(
         hover_data=["message_id", "topic", "decision", "is_unanimous"],
         title=title,
         color_discrete_map=color_discrete_map,
+        opacity=MARKER_OPACITY,
     )
     fig.update_layout(template="plotly_white")
+    fig.update_traces(marker={"opacity": MARKER_OPACITY})
     fig.write_html(str(out_html))
     fig.write_image(str(out_png))
 
