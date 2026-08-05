@@ -1,0 +1,94 @@
+{
+  "batch_id": 44,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_17e013d78fcdc87811e9b9c724ae84037e91406ccb168aabd442734e30845802",
+    "bluesky_3816d8a4b44dc43c8083dd7d003b90e88e96ccf7a9beb7594cae9fca4b3277a8",
+    "reddit_1kbioxf_mpz7wuw",
+    "reddit_1krenw1_mtdjzcl",
+    "reddit_1kwkajn_muhzon9",
+    "reddit_1l2ndoc_mvunv76",
+    "reddit_1l50ui0_mwdbf03",
+    "reddit_1let2t2_myk0hxt",
+    "reddit_1tvywom_opm3ctw",
+    "twitter_2061645295759319187"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kbioxf_mpz7wuw",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a very stupid very stubborn very cruel man.\"",
+        "rationale": "The post is a brief insult-based comparison with only a couple short sentences."
+      },
+      {
+        "message_id": "reddit_1kbioxf_mpz7wuw",
+        "feature_name": "person_character_assessment_triplet",
+        "feature_value": "stacked trait insults (very X very Y very Z)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"a very stupid very stubborn very cruel man\"",
+        "rationale": "Uses a repeated 'very' pattern to intensify negative personal claims about a named politician."
+      },
+      {
+        "message_id": "bluesky_3816d8a4b44dc43c8083dd7d003b90e88e96ccf7a9beb7594cae9fca4b3277a8",
+        "feature_name": "policy_prescription_mass_shooting_prevention",
+        "feature_value": "explicit gun-ban policy prescription tied to mass shootings",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"how fast a gun ban can be enacted so another mass shooting can\u2019t take place again.\"",
+        "rationale": "The text advocates a specific policy action aimed at preventing future violence."
+      },
+      {
+        "message_id": "bluesky_3816d8a4b44dc43c8083dd7d003b90e88e96ccf7a9beb7594cae9fca4b3277a8",
+        "feature_name": "conspiratorial_or_dehumanizing_framing",
+        "feature_value": "Nazi/leftist mind-losing dehumanizing attribution",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Nazi\u2019s losing their minds\"",
+        "rationale": "Employs extreme ideological labeling to portray opponents as irrational or dangerous."
+      },
+      {
+        "message_id": "bluesky_17e013d78fcdc87811e9b9c724ae84037e91406ccb168aabd442734e30845802",
+        "feature_name": "all_caps_emphasis_and_misinfo_claim",
+        "feature_value": "all-caps 'LIED' plus high-stakes death claim about COVID",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"he LIED TO THE AMERICAN PEOPLE ABOUT COVID\" ... \"SO 100s of 1000s OF PEOPLE DIED\"",
+        "rationale": "Uses all-caps emphasis and strong factual-sounding allegations about deception and mass death."
+      },
+      {
+        "message_id": "reddit_1tvywom_opm3ctw",
+        "feature_name": "quoted_attribution_embedding",
+        "feature_value": "quotes a civil-rights phrase then attacks it",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"relegate him to \u2018separate but equal\u2019 facilities.\"",
+        "rationale": "Includes an embedded quote and follows with evaluative critique."
+      },
+      {
+        "message_id": "reddit_1tvywom_opm3ctw",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative/you-style condemnation implied via insult phrase",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"jackasses like this want to force trans kids\"",
+        "rationale": "Directly targets an outgroup ('jackasses like this') to condemn and blame, indicating an argumentative/targeting stance."
+      },
+      {
+        "message_id": "twitter_2061645295759319187",
+        "feature_name": "list_of_actions_with_ellipsis",
+        "feature_value": "repeated 'Defund/ Fund' slogan series",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"DeFund the Police.. Defund I.C.E. .. DeFund Border Patrol..\"",
+        "rationale": "Uses a parallel, enumerated slogan with repeated imperative framing to urge a policy shift."
+      }
+    ]
+  }
+}

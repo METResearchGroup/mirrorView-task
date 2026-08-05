@@ -1,0 +1,94 @@
+{
+  "batch_id": 10,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_53d5e9a73be4c5fc3b8c31259849d73f786ac7a6d9689c61d35c6dff65493489",
+    "bluesky_74027309c8d578e3578d1c3d99454ab7a197b872bbe0116932d96f6601e35770",
+    "bluesky_9eeaea220fae80f2bab2a8c8db754eb867e3b45c9d5342ad710640f849d5f716",
+    "reddit_1kerfxk_mqmhx74",
+    "reddit_1kmn7i8_msdhdwg",
+    "reddit_1kwxky0_muorq3y",
+    "reddit_1tshfyq_oovh0mi",
+    "twitter_2059695338668396671",
+    "twitter_2060352574700605772",
+    "twitter_2061774876872970403"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kwxky0_muorq3y",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Heavy use of ellipses and exclamatory punctuation for emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"taking time out of his day to attack a 16 year old trans student\u2026\"",
+        "rationale": "The post uses multiple ellipses and strong exclamations to intensify emotional impact."
+      },
+      {
+        "message_id": "reddit_1kerfxk_mqmhx74",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Explicit calls for legal/financial policy change",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I think that most police shooting settlements should not be paid.\"",
+        "rationale": "The speaker directly advocates changing how settlements and liability are handled."
+      },
+      {
+        "message_id": "bluesky_9eeaea220fae80f2bab2a8c8db754eb867e3b45c9d5342ad710640f849d5f716",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames opposing party actors for violence while contrasting with favored enforcement",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Gotta love the GOP DOJ and the NRA influence... And then THEY complain about the Dems\"",
+        "rationale": "The language sets up an in-group/out-group contrast (GOP/DOJ/NRA vs Dems) around responsibility for shootings."
+      },
+      {
+        "message_id": "twitter_2061774876872970403",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Rhetorical question accusing hypocrisy",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Isn\u2019t it hypocritical to take a few Bible verses...\"",
+        "rationale": "The sentence is structured as a rhetorical question to frame the target\u2019s stance as inconsistent."
+      },
+      {
+        "message_id": "twitter_2059695338668396671",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "First-person, observational reportage with concrete actions and quantities",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I spent 9 years documenting border wall construction across Arizona. I watched DHS pump millions of gallons\"",
+        "rationale": "The post asserts lived documentation and specific observations rather than presenting hypothetical claims."
+      },
+      {
+        "message_id": "bluesky_74027309c8d578e3578d1c3d99454ab7a197b872bbe0116932d96f6601e35770",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Frames a death as caused by hatred toward a religious group and specific political actors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Died a hero, but WOULD be alive if it weren\u000615t for the hatred against Muslims\"",
+        "rationale": "The text emphasizes victimization/persecution tied to hate and names political blame targets."
+      },
+      {
+        "message_id": "reddit_1kmn7i8_msdhdwg",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of named political figures and parties",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Mike Johnson\" \"Trump\" \"Hakeem Jeffries\"",
+        "rationale": "The post relies on multiple specific politicians to direct the accusation."
+      },
+      {
+        "message_id": "twitter_2060352574700605772",
+        "feature_name": "loaded_causal_moral_assessment",
+        "feature_value": "Uses moralized, high-emotion framing of an organization",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"This is the dark truth of Planned Parenthood!\"",
+        "rationale": "The language uses a strong moral/emotive label (\u201cdark truth\u201d) to characterize the subject negatively."
+      }
+    ]
+  }
+}

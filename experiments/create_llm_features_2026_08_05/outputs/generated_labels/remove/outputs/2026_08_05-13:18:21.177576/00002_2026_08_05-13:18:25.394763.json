@@ -1,0 +1,15 @@
+{
+  "cluster_id": 2,
+  "label_class": "remove",
+  "n_members": 2,
+  "sampled_feature_ids": [
+    "0_6",
+    "0_3"
+  ],
+  "result": {
+    "cluster_id": 2,
+    "cluster_label": "Targeted political name-dropping with emphatic punctuation",
+    "definition": "REMOVE posts that heavily reference multiple political proper nouns/figures while using high-intensity punctuation or dash-separated emphatic assertions to drive a targeted claim.",
+    "salience_notes": "The cluster coheres around surface cues of political entity name-dropping (e.g., parties/figures) paired with emphatic punctuation (dashes/strong assertive punctuation) rather than neutral discussion."
+  }
+}

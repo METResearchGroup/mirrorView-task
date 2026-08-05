@@ -1,0 +1,21 @@
+{
+  "cluster_id": 3,
+  "label_class": "remove",
+  "n_members": 9,
+  "sampled_feature_ids": [
+    "14_0",
+    "15_1",
+    "44_0",
+    "28_0",
+    "32_0",
+    "17_7",
+    "18_0",
+    "19_3"
+  ],
+  "result": {
+    "cluster_id": 3,
+    "cluster_label": "Brevity with direct ideological insult",
+    "definition": "REMOVE posts that are very short and rely on a direct, evaluative insult or hostile ideological labeling rather than sustained argument or explanation.",
+    "salience_notes": "All sampled members emphasize compact/one- to few-sentence length combined with straightforward contempt toward a political/ideological target (e.g., \u201cstupid Trump,\u201d \u201cConservatives still suck\u201d)."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cluster_id": 6,
+  "label_class": "keep",
+  "n_members": 8,
+  "sampled_feature_ids": [
+    "0_6",
+    "13_6",
+    "2_7",
+    "42_3",
+    "24_6",
+    "17_1",
+    "39_4",
+    "27_5"
+  ],
+  "result": {
+    "cluster_id": 6,
+    "cluster_label": "Direct second-person imperative persuasion",
+    "definition": "KEEP posts that use direct second-person address (you/your/we/let\u2019s) to persuade or pressure the audience via imperatives and/or direct rhetorical questions.",
+    "salience_notes": "All sampled members share a second-person framing that engages the reader directly (imperatives, warnings, entitlement questions, or in-group address) to organize the message as targeted persuasion."
+  }
+}

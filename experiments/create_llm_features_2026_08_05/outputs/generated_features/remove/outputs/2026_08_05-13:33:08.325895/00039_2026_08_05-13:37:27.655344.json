@@ -1,0 +1,94 @@
+{
+  "batch_id": 39,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_35aaac022091e7dc7148f0f5d56aee4fdde5b6dd2681e83e3061316f44fb12c7",
+    "bluesky_a20063f49a99029dab5316a2cf49ef54796fcffadfdcccda746c7681d6b446ef",
+    "reddit_1kcy0mu_mq6vxp3",
+    "reddit_1ke2vut_mqlccsr",
+    "reddit_1kmm69e_msbbfe8",
+    "reddit_1kyiyst_muydlmh",
+    "reddit_1lkisll_mzrznv0",
+    "reddit_1tzfhxv_oqbao73",
+    "twitter_2059500635372798443",
+    "twitter_2060820301513113623"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ke2vut_mqlccsr",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity to attack actors",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck everybody on that article\"",
+        "rationale": "The post contains strong taboo wording directed at specific political/religious targets."
+      },
+      {
+        "message_id": "reddit_1kmm69e_msbbfe8",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Portrays one party leadership as incompetent vs contrasting implied opposite",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Democratic leadership is stupid, cowardly, and incapable\"",
+        "rationale": "The language assigns negative traits to a political group leadership, creating an in-group/out-group contrast."
+      },
+      {
+        "message_id": "reddit_1cy0mu_mq6vxp3",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Juxtaposes constitutional reference with personal insult framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"speech and debate clause? Hello?\" ... \"Oh right, Trump wipes his ass with the Constitution.\"",
+        "rationale": "The question/response construction uses a contrast between legal concept and dismissive insult."
+      },
+      {
+        "message_id": "reddit_1lkisll_mzrznv0",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct address via implied rebuttal to another person/reader",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"But thanks for the information/explanation\"",
+        "rationale": "The speaker explicitly responds to a prior commenter\u2019s information and positions the audience relative to it."
+      },
+      {
+        "message_id": "bluesky_35aaac022091e7dc7148f0f5d56aee4fdde5b6dd2681e83e3061316f44fb12c7",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Explicitly frames as violating constitutional right and targeting threatened groups",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"goes against the second amendment\" ... \"Especially when trans and queer individuals are constantly being threatened!\"",
+        "rationale": "The post makes a rule/legality claim tied to protection of threatened minorities, indicating policy-normative framing."
+      },
+      {
+        "message_id": "bluesky_a20063f49a99029dab5316a2cf49ef54796fcffadfdcccda746c7681d6b446ef",
+        "feature_name": "economic_cost_benefit_framing",
+        "feature_value": "Argues diplomatic actions kneecap industry and weaken institutions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"re-entered the Paris Agreement just to kneecap American industry\"",
+        "rationale": "It assigns negative economic and strategic consequences to the other side\u2019s foreign policy."
+      },
+      {
+        "message_id": "twitter_2060820301513113623",
+        "feature_name": "call_to_action",
+        "feature_value": "Declares no longer donating/supporting an organization",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I will no longer donate to Planned Parenthood\"",
+        "rationale": "The text uses a stated decision/behavior change to influence others\u2019 support (linked to donation/sponsorship)."
+      },
+      {
+        "message_id": "reddit_1tzfhxv_oqbao73",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "Uses repeated 'lie' claims and cites evidence types",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"This is a lie.\" ... \"Trump doesn't read reports. He doesn't verify facts.\"",
+        "rationale": "It repeatedly asserts factual wrongdoing while characterizing others as not verifying, signaling strong factual accusation language."
+      }
+    ]
+  }
+}

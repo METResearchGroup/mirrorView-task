@@ -1,0 +1,94 @@
+{
+  "batch_id": 32,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_020894350e42852fb34ec32025417a7abb5cce7317a5346be664c9b48e75d1c4",
+    "bluesky_790a3e30c3a364b985101f4fad49a3917fc2795bc0de29926fe3b0976b62c9d2",
+    "reddit_1kl0ksq_mrzdxf5",
+    "reddit_1lmzz33_n0bzgm1",
+    "reddit_1t54vlp_oka2zni",
+    "reddit_1tn7lg4_ontjmrc",
+    "reddit_1toqwtm_oo3q4ze",
+    "reddit_1tzfhxv_oqc3wbo",
+    "twitter_2060918428773539930",
+    "twitter_2061395465493483884"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1lmzz33_n0bzgm1",
+        "feature_name": "insulting_slur_profanity_targeting",
+        "feature_value": "Heavy personal insults toward political figures with profanity/taboo language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"orange felon rapist\"",
+        "rationale": "Uses extreme derogatory labels to characterize a named political actor."
+      },
+      {
+        "message_id": "reddit_1lmzz33_n0bzgm1",
+        "feature_name": "call_to_action_or_direct_engagement_none",
+        "feature_value": "Direct second-person/imperative-free statement; primarily expressive condemnation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Wouldn't be surprised if\"",
+        "rationale": "Communicative intent is speculative but framed as expressive political outrage rather than instructions."
+      },
+      {
+        "message_id": "reddit_1tn7lg4_ontjmrc",
+        "feature_name": "international_war_domain_russia_ukraine_framing",
+        "feature_value": "War/foreign policy topic with Russia\u2013Ukraine conflict question framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"If Russia already won then who is Ukraine fighting?\"",
+        "rationale": "Directly references the Russia\u2013Ukraine conflict and questions its premises."
+      },
+      {
+        "message_id": "reddit_1tn7lg4_ontjmrc",
+        "feature_name": "rhetorical_question_and_argumentative_rebuttal",
+        "feature_value": "Uses a rhetorical question followed by explanatory causal claims",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If Russia already won then who is Ukraine fighting?\"",
+        "rationale": "The structure is question\u2192argument with claims about intent and territorial expansion."
+      },
+      {
+        "message_id": "bluesky_020894350e42852fb34ec32025417a7abb5cce7317a5346be664c9b48e75d1c4",
+        "feature_name": "mirror_shift_from_green_party_to_gop_establishment",
+        "feature_value": "Mirror retargets blame from Green Party/Force the Vote to GOP establishment/MAGA grassroots",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The US Green Party had no part\" ... \"That was Jimmy Dore\"",
+        "rationale": "The post explicitly identifies an actor and replaces it in the mirror with a different party/network."
+      },
+      {
+        "message_id": "bluesky_790a3e30c3a364b985101f4fad49a3917fc2795bc0de29926fe3b0976b62c9d2",
+        "feature_name": "contrastive_two_sides_translation_claim",
+        "feature_value": "Claim of non-equivalence (anti-X not translating into pro-Y) plus party-by-party value mapping",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Anti-Trump doesn\u000027t translate into pro-work/life benefits.\"",
+        "rationale": "Uses a negation/translation framing to argue that stated opposition doesn\u2019t yield policy benefits."
+      },
+      {
+        "message_id": "twitter_2061395465493483884",
+        "feature_name": "abortion_position_normative_moral_language",
+        "feature_value": "Strong normative pro-choice stance and trimester/age limits",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"I\u2019m very pro-choice!\"",
+        "rationale": "Explicit abortion policy preference framed with moral/legal permissibility boundaries."
+      },
+      {
+        "message_id": "twitter_2060918428773539930",
+        "feature_name": "hedging_or_qualified_strategic_hypothesis_with_timeline",
+        "feature_value": "Strategic expression tied to a temporal trigger (until election)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"until the election is over.\"",
+        "rationale": "Links communication/word choice to election timing, indicating a qualified tactical plan."
+      }
+    ]
+  }
+}

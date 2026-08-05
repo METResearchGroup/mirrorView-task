@@ -1,0 +1,94 @@
+{
+  "batch_id": 1,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_a9d4421c6a2495caeb19012b16e7c60aca4f7aa216d1b2390f397aca9d27b55b",
+    "bluesky_cd39cca04343ce546169d8fb36104ca9e9514cdeed685bdcf20ce73c5bc94dbd",
+    "reddit_1l6m7xp_mwtp2ij",
+    "reddit_1l7fyn5_mwxbldl",
+    "reddit_1li1cpo_mz90x1h",
+    "reddit_1lmjifa_n092opi",
+    "twitter_2060149644953272762",
+    "twitter_2061477727329296411",
+    "twitter_2061757984967922137",
+    "twitter_2061799295783698746"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1lmjifa_n092opi",
+        "feature_name": "profanity_direct_insult_to_group",
+        "feature_value": "Uses explicit profanity to insult an ideological group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Conservatives are such fucking scumbags.\"",
+        "rationale": "The post uses taboo language plus a derogatory label targeting a political group."
+      },
+      {
+        "message_id": "reddit_1li1cpo_mz90x1h",
+        "feature_name": "profanity_direct_insult_and_targeted_grouping",
+        "feature_value": "Multiple instances of profanity aimed at a person and an entire party",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck her... And Fuck the Florida GOP too.\"",
+        "rationale": "Direct profanity is coupled with negative labeling and explicit targeting of a political party."
+      },
+      {
+        "message_id": "twitter_2061477727329296411",
+        "feature_name": "second_person_question_about_abortion_case",
+        "feature_value": "Rhetorical/direct second-person question about legality of abortion in a rape scenario",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Would you have permitted this abortion?\"",
+        "rationale": "A direct \"you\" question is asked about a high-salience moral/legal issue (abortion) tied to a rape victim."
+      },
+      {
+        "message_id": "twitter_2060149644953272762",
+        "feature_name": "elections_voter_suppression_illegality_claims",
+        "feature_value": "Claims illegal voting/participation and links it to institutions encouraging it",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"DACA recipients have been issued state ID... then they can register to vote... elections illegally.\"",
+        "rationale": "The post centers on voting/elections and alleges wrongdoing in how certain groups participate."
+      },
+      {
+        "message_id": "twitter_2061799295783698746",
+        "feature_name": "insurrection_act_preemptive_causal_claim",
+        "feature_value": "Attributes future violence/riots to prior video statements and frames it as foreknowledge",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump said it on video months before the riots started\"",
+        "rationale": "It makes a causal/anticipatory claim that an earlier statement predicted subsequent riots."
+      },
+      {
+        "message_id": "twitter_2061757984967922137",
+        "feature_name": "policy_rejecting_labeling_of_discourse",
+        "feature_value": "Rejects climate framing as government overreach and uses counter-narrative",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The so-called 'coral reef crisis' is just another excuse for government overreach.\"",
+        "rationale": "The text uses delegitimizing framing to oppose a policy discourse (climate/environment)."
+      },
+      {
+        "message_id": "bluesky_cd39cca04343ce546169d8fb36104cc94dbd",
+        "feature_name": "gun_control_comparison_list_with_quantifiers",
+        "feature_value": "Enumerates multiple specific gun-control measures with percentage support",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Large majorities (80 % +) back specific gun control measures like: Universal background checks... raising the legal gun-purchase age to 21\"",
+        "rationale": "It focuses on gun policy and provides a detailed list of measures plus quantitative claims."
+      },
+      {
+        "message_id": "twitter_2061799295783698746",
+        "feature_name": "normative_unconstitutional_power_grab_moral_eval",
+        "feature_value": "Calls an action unconstitutional and describes it as illegal power grab",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"He telegraphed the whole unconstitutional power grab in advance.\"",
+        "rationale": "The post uses strong legal/moral condemnation language tied to governance and authority."
+      }
+    ]
+  }
+}

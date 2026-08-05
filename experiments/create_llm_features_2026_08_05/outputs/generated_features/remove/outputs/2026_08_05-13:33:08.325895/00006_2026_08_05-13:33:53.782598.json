@@ -1,0 +1,94 @@
+{
+  "batch_id": 6,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1kdsslc_mqh5xvm",
+    "reddit_1kym5zv_muydhms",
+    "reddit_1lc4tz7_mxywa8h",
+    "reddit_1lcw1w7_mya5g4j",
+    "reddit_1lhzhcf_mz832zz",
+    "reddit_1limsav_mzdef15",
+    "reddit_1ts7wt8_oot9gi9",
+    "reddit_1ttui2j_op5rbxk",
+    "reddit_1tux6at_opdrpba",
+    "twitter_2061511976220598360"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ttui2j_op5rbxk",
+        "feature_name": "profanity_taboo_language_present",
+        "feature_value": "Contains explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fucking right wing counter programming\"",
+        "rationale": "The post uses strong taboo language (e.g., f**king), increasing intensity and aggression."
+      },
+      {
+        "message_id": "reddit_1lc4tz7_mxywa8h",
+        "feature_name": "call_to_action_exclusion",
+        "feature_value": "Directly excludes an outgroup from \u201cleftist/right-wing spaces\u201d",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I don't want these people in leftist spaces\"",
+        "rationale": "The speaker issues an exclusionary instruction about who should be allowed in political spaces."
+      },
+      {
+        "message_id": "reddit_1lcw1w7_mya5g4j",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses direct address and insults toward the reader",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"So, congrats, moron.\"",
+        "rationale": "The text targets the addressee with a second-person implication plus a derogatory conclusion."
+      },
+      {
+        "message_id": "reddit_1lhzhcf_mz832zz",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "Emphatic all-caps/strong emphasis via formatting",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"**DONE WITH THESE BASTARDS, FUCK ALL OF ICE**\"",
+        "rationale": "Bold all-caps style emphasis amplifies the extremist/violent-contempt framing toward a targeted agency."
+      },
+      {
+        "message_id": "reddit_1limsav_mzdef15",
+        "feature_name": "victimhood_or_persecution_framing_with_blame",
+        "feature_value": "Attributes harm to victims\u2019 own choices (\u201cyour fault\u201d)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"if you\u00019re hurt by Trump\u00019s actions... it\u00019s your own damn fault\"",
+        "rationale": "The post uses a moralized blame stance toward those harmed, rather than expressing sympathy."
+      },
+      {
+        "message_id": "reddit_1ts7wt8_oot9gi9",
+        "feature_name": "violent_or_terrorist_labeling",
+        "feature_value": "Labels a political group/agency as terrorists/saboteurs",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"FUCK ICE, they\u2019re nothing but domestic terrorists.\"",
+        "rationale": "Using \u201cdomestic terrorists\u201d is dehumanizing/terrorism-implicating language about an institutional target."
+      },
+      {
+        "message_id": "twitter_2061511976220598360",
+        "feature_name": "specific_bill_or_act_reference",
+        "feature_value": "References legislation with acronyms/caps name",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Deporting Fraudsters Act\"",
+        "rationale": "The post centers on a named act and legislative outcomes, a clear policy/event trigger."
+      },
+      {
+        "message_id": "reddit_1kym5zv_muydhms",
+        "feature_name": "media_outlet_targeting",
+        "feature_value": "Criticizes named news outlets for framing narratives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Hey CBS\" / \"Hey MSNBC\"",
+        "rationale": "Directly targets specific media organizations and accuses them of normalizing/demonizing political actors via framing."
+      }
+    ]
+  }
+}

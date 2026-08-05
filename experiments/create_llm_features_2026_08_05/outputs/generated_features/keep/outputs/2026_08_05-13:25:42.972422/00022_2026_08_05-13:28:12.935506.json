@@ -1,0 +1,94 @@
+{
+  "batch_id": 22,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_210abd1190312a93a02c436bb1d172a437a23b64ed6b6b6ab2aa7f4235404772",
+    "bluesky_65cc2f29f257bb839510ddc8db31fe3eb16acca304c9273757676221776e9a24",
+    "bluesky_b83182615a4fc5bb2a9ad02f60ae84b862fd97f25dd4e8e0e155cfa4d74a4577",
+    "reddit_1kwqre2_mum12c6",
+    "reddit_1tsvgs3_op1nqxo",
+    "reddit_1u0oc51_oqjxbry",
+    "reddit_1u22gzn_oqumb02",
+    "twitter_2060027857615663141",
+    "twitter_2061226399328084080",
+    "twitter_2061507149574951112"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kwqre2_mum12c6",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple exclamation marks/ellipses and strong emphatic punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"really fucked up.\" ... \"future..\"",
+        "rationale": "The post uses heavy punctuation and emphatic markers to intensify outrage."
+      },
+      {
+        "message_id": "reddit_1kwqre2_mum12c6",
+        "feature_name": "targeted_political_actor_personalization_democrats",
+        "feature_value": "Explicitly blames named political figures/party",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"it's Biden, Harris, and the Democrats.\"",
+        "rationale": "The mirror directly attributes wrongdoing to specific Democratic leadership."
+      },
+      {
+        "message_id": "bluesky_b83182615a4fc5bb2a9ad02f60ae84b862fd97f25dd4e8e0e155cfa4d74a4577",
+        "feature_name": "approximate_token_length_band_medium",
+        "feature_value": "Medium-length argumentative statement",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Maybe this whole democracy thing has been such a failure... That is a disgrace.\"",
+        "rationale": "The post is a single paragraph combining critique with a statistic."
+      },
+      {
+        "message_id": "bluesky_b83182615a4fc5bb2a9ad02f60ae84b862fd97f25dd4e8e0e155cfa4d74a4577",
+        "feature_name": "factual_assertion_vs_speculation_with_statistic",
+        "feature_value": "Cites a concrete percentage from an article",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"only 56% of college educated people\"",
+        "rationale": "It presents a specific numeric claim as evidence for broader condemnation."
+      },
+      {
+        "message_id": "reddit_1u0oc51_oqjxbry",
+        "feature_name": "question_form_with_intentional_challenge",
+        "feature_value": "Rhetorical question framed as questioning motives/intent",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"What's the deal with cutting health things?\"",
+        "rationale": "It uses a direct \u201cwhat\u2019s the deal\u201d question to cast policy decisions as suspicious."
+      },
+      {
+        "message_id": "bluesky_210abd1190312a93a02c436bb1d172a437a23b64ed6b6b6ab2aa7f4235404772",
+        "feature_name": "mirror_shift_direction_framing_far_right_vs_far_left_gun_context",
+        "feature_value": "Mirror swaps blamed side from far right gun reaction to far left anti-gun overreach hysteria",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"far right\" ... \"gun lobby\" (original) vs \"far left\" ... \"anti-gun crowd\" (mirror)",
+        "rationale": "Directionality is retargeted in the mirror from right-wing to left-wing actors while keeping the gun-policy debate."
+      },
+      {
+        "message_id": "twitter_2061507149574951112",
+        "feature_name": "call_to_action_defensive_mobilization",
+        "feature_value": "Defensive mobilizing stance (\u201cwe\u2019re not letting\u2026 win\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"But we\u2019re not letting anti-abortion extremists win.\"",
+        "rationale": "The communicative intent is explicitly mobilizing against an opposing group."
+      },
+      {
+        "message_id": "reddit_1tsvgs3_op1nqxo",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Counterfactual \u201cif X, they would win\u201d with follow-up qualification",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"if the left ceded these issues... they would win\"",
+        "rationale": "It uses an if/then logic structure to argue about electoral outcomes based on issue focus."
+      }
+    ]
+  }
+}

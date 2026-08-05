@@ -1,0 +1,94 @@
+{
+  "batch_id": 41,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_e603d584fe92320092eaa9780404cffe4f7e4ce36ece56b740a8b33d33d735b4",
+    "reddit_1ks3br8_mtin319",
+    "reddit_1kxo6er_mur3l3w",
+    "reddit_1l7xya6_mx0cmts",
+    "reddit_1lbzykw_mxzr0nz",
+    "reddit_1tikf90_omwt7f6",
+    "reddit_1txi7g6_opwrqme",
+    "reddit_1tztcf9_oqfz6s0",
+    "twitter_2059353507564499161",
+    "twitter_2061589330217648469"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2059353507564499161",
+        "feature_name": "hashtag_presence",
+        "feature_value": "Contains media outlet hashtags",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#FoxNews",
+        "rationale": "Hashtags are used as direct partisan/media cues in the post."
+      },
+      {
+        "message_id": "twitter_2059353507564499161",
+        "feature_name": "high_punctuation_intensity_and_ellipsis",
+        "feature_value": "Multiple ellipses/strong punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "because, well, they're criminals!",
+        "rationale": "Parenthetical/ellipsis-style intensity is used to reinforce a dismissive claim."
+      },
+      {
+        "message_id": "reddit_1kxo6er_mur3l3w",
+        "feature_name": "profanity_taboo_language",
+        "feature_value": "Uses explicit profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "can fuck off",
+        "rationale": "Direct profanity targets a named political figure."
+      },
+      {
+        "message_id": "reddit_1kxo6er_mur3l3w",
+        "feature_name": "second_person_direct_address_callout",
+        "feature_value": "Direct dismissal and imperative to leave",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Go back to your mansion and leave the American people alone.",
+        "rationale": "Commands the target to leave and stop interfering, signaling aggressive direction."
+      },
+      {
+        "message_id": "reddit_1l7xya6_mx0cmts",
+        "feature_name": "short_length_affirmative_slang_insult",
+        "feature_value": "Very short partisan insult phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Republicans Are Pussy Egoists",
+        "rationale": "Compressed, derogatory labeling with slang-like slur content."
+      },
+      {
+        "message_id": "reddit_1ks3br8_mtin319",
+        "feature_name": "ingroup_outgroup_reference",
+        "feature_value": "Addresses audience as \u201cliberal leaning reddit\u201d",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "You're talking to liberal leaning reddit....",
+        "rationale": "Uses audience labeling to position speaker vs target (directional framing)."
+      },
+      {
+        "message_id": "reddit_1txi7g6_opwrqme",
+        "feature_name": "policy_contrast_money_misalignment",
+        "feature_value": "Contrasts cutting aid with funding ICE",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Cut food aid to women and kids ... funded ICE for billions",
+        "rationale": "Compares two policy actions to argue hypocrisy or harmful priorities."
+      },
+      {
+        "message_id": "twitter_2061589330217648469",
+        "feature_name": "causal_claim_and_normative_outgroup_framing",
+        "feature_value": "Blames specific political media/outlets for driving fear narratives",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "mostly fueled by Fox News panic and MAGA hysteria",
+        "rationale": "Attributes social conditions to partisan/manufactured fear, using a causal and normative frame."
+      }
+    ]
+  }
+}

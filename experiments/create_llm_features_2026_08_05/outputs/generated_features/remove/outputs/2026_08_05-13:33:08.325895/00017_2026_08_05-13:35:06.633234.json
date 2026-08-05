@@ -1,0 +1,94 @@
+{
+  "batch_id": 17,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_1475a33737aa92e13fc1b7443962df41981dcb0d51a7930efc1ab554bed18319",
+    "reddit_1kl7318_ms031t0",
+    "reddit_1klw27m_ms5h6km",
+    "reddit_1kn5i1j_msgoaf7",
+    "reddit_1kx7c8d_musgtn4",
+    "reddit_1kzdllm_mv77owa",
+    "reddit_1la4x0y_mxla28z",
+    "reddit_1lm38hz_n07pupw",
+    "reddit_1tswg2c_op0beo8",
+    "twitter_2061529464471691371"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061529464471691371",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses harsh/taboo image-based language about abortion (kittens)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"aborting kittens\"",
+        "rationale": "The post employs extreme, vivid language to describe abortion, increasing the intensity of the content."
+      },
+      {
+        "message_id": "reddit_1tswg2c_op0beo8",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "Oppositional framing using 'opposite of' plus contrasting descriptors",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The Democrats have been acting as conservatives... The opposite of conservative.\"",
+        "rationale": "A structured contrast between ideological labels is used to argue for an inversion of political roles."
+      },
+      {
+        "message_id": "bluesky_1475a33737aa92e13fc1b7443962df41981dcb0d51a7930efc1ab554bed18319",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Direct safety/ownership instruction about acquiring firearms",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"acquire a gun\"",
+        "rationale": "The text provides an explicit behavioral prescription rather than only criticizing."
+      },
+      {
+        "message_id": "reddit_1kzdllm_mv77owa",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Contains explicit profanity/insulting sexual-language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"a shit load of weak fucking men\"",
+        "rationale": "The post uses strong profanity and derogatory sexualized insults toward a political group."
+      },
+      {
+        "message_id": "reddit_1kx7c8d_musgtn4",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blame directed at voters as an outgroup; dehumanizing appraisal",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"All his voters care about... They're trash.\"",
+        "rationale": "It generalizes about 'his/her voters' and concludes with a blanket negative judgment."
+      },
+      {
+        "message_id": "reddit_1lm38hz_n07pupw",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Strong exclamations and escalating insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Ahahahaha!!!\"",
+        "rationale": "Multiple exclamation marks and mocking laughter signal heightened expressive tone."
+      },
+      {
+        "message_id": "reddit_1la4x0y_mxla28z",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Strong condemnation using 'fucking' and communist/treason-like framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"She\u2019s a fucking communist\"",
+        "rationale": "The post uses intense moral/ideological condemnation rather than neutral description."
+      },
+      {
+        "message_id": "reddit_1kl7318_ms031t0",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "Very short one-sentence ideological insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Conservatives still suck.\"",
+        "rationale": "The brevity and direct evaluative insult indicate a low-information but strongly hostile stance."
+      }
+    ]
+  }
+}

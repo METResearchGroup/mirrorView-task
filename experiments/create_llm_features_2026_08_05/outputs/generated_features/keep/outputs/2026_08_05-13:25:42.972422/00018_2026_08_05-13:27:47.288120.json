@@ -1,0 +1,94 @@
+{
+  "batch_id": 18,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_3266413449705192d76258d22c6a8f0677739dc85903f01b1af0fe2f8f51fd0c",
+    "bluesky_59e8cfe023637cc9e1edf58ace4d3a2ed17d67a13307c03089214dc6910da38f",
+    "bluesky_dca4a520565f2bedadeeeeeb2557eef060c9711d2441abbb78af22bcd3a13e11",
+    "reddit_1tkvbmy_one416x",
+    "reddit_1tsvd1m_ooxx5s8",
+    "reddit_1tyk2vf_oqc32ou",
+    "reddit_1u28e60_oqw9q05",
+    "twitter_2060585494077952426",
+    "twitter_2061751996466503859",
+    "twitter_2061821665906938253"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061751996466503859",
+        "feature_name": "call_to_action_vote_today",
+        "feature_value": "Explicit voting encouragement",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Time to kick the bought-and-paid-for politicians out\" ... \"If you're in CA/LA, vote today!\"",
+        "rationale": "The post directly urges readers to vote, functioning as a call to action."
+      },
+      {
+        "message_id": "twitter_2061751996466503859",
+        "feature_name": "outsiders_vs_status_quo_contrast",
+        "feature_value": "Binary framing (outsiders vs failed status quo)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"It\u2019s the outsiders vs. the failed status quo\"",
+        "rationale": "It uses an explicit in-group/out-group contrast to structure political blame."
+      },
+      {
+        "message_id": "bluesky_59e8cfe023637cc9e1edf58ace4d3a2ed17d67a13307c03089214dc6910da38f",
+        "feature_name": "reframing_gun_control_to_gun_safety",
+        "feature_value": "Terminology reframing paired with conditional constraint",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"stop calling it gun control. It should be called gun safety\" ... \"If you wanna own a bazooka... Fine... But you're gonna have to jump through some hoops.\"",
+        "rationale": "The argument hinges on a re-labeling move followed by an if-then style constraint."
+      },
+      {
+        "message_id": "bluesky_dca4a520565f2bedadeeeeeb2557eef060c9711d2441abbb78af22bcd3a13e11",
+        "feature_name": "hashtag_topic_climatechange_activism",
+        "feature_value": "Hashtag + climate organizations critique",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#climatechange organizations\"",
+        "rationale": "The post explicitly tags the climate topic and calls out organizations\u2019 omission."
+      },
+      {
+        "message_id": "bluesky_dca4a520565f2bedadeeeeeb2557eef060c9711d2441abbb78af22bcd3a13e11",
+        "feature_name": "scapegoating_and_ignoring_other_cause_claim",
+        "feature_value": "Accuses target of overlooking/ignoring key cause",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"overlook\" ... \"keep scapegoating animal agriculture while ignoring the real economic carnage\"",
+        "rationale": "It makes a blame/omission claim about what organizations focus on vs ignore."
+      },
+      {
+        "message_id": "reddit_1tsvd1m_ooxx5s8",
+        "feature_name": "historical_analogy_fascism_nazis_deception",
+        "feature_value": "Historical analogy using Nazi/Stalin claims",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The Nazi's did the same\" ... \"while they would pull the strings\"",
+        "rationale": "The post frames a political dynamic through a specific historical comparison (Nazis/Stalinists)."
+      },
+      {
+        "message_id": "reddit_1tyk2vf_oqc32ou",
+        "feature_name": "persuasion_argumentation_market_vs_mechanisms",
+        "feature_value": "Argument that pay is driven by structural incentives, not only market",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"But the pay for doctors\" ... \"Capitalism dictates\" ... (mirror) \"propped up by artificial licensing monopolies and insurance kickbacks\"",
+        "rationale": "It presents a reasoning chain contrasting market framing with licensing/insurance mechanism claims."
+      },
+      {
+        "message_id": "twitter_2061821665906938253",
+        "feature_name": "emphatic_personal_insult_named_target",
+        "feature_value": "Direct insult of political figure with caps",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Presedint BONE SPUR DONNIE TRUMP\" ... \"Your a felon Dementia Donnie!\"",
+        "rationale": "The text uses emphatic naming/capitalization and personal derogatory labels toward an identifiable politician."
+      }
+    ]
+  }
+}

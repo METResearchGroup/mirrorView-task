@@ -1,0 +1,94 @@
+{
+  "batch_id": 9,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1kjdjwq_mrlv92j",
+    "reddit_1ku0t3s_mty3ki7",
+    "reddit_1l0qzn0_mvhr3a4",
+    "reddit_1lfh7py_myoznyd",
+    "reddit_1lh7g4h_mz44qni",
+    "reddit_1ti151j_omrce6d",
+    "reddit_1tstwrk_ooxklt6",
+    "reddit_1tw6zcr_opn8bfp",
+    "twitter_2061562237613953238",
+    "twitter_2061704148198866993"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tw6zcr_opn8bfp",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Putin runs the entire Russian government like its his own personal bank account.",
+        "rationale": "The post is a single brief sentence, indicating a short length band."
+      },
+      {
+        "message_id": "twitter_2061562237613953238",
+        "feature_name": "sexualized_or_taboo_profanity",
+        "feature_value": "none (but strong ideological conflict + taboo concept: abortion)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Countless women oppose abortion.",
+        "rationale": "Although not profane, it centers on a highly contentious taboo-adjacent policy topic (abortion) with direct moral/political framing."
+      },
+      {
+        "message_id": "reddit_1tstwrk_ooxklt6",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "if-it-weren't-for conditional blaming gatekeeping argument quality",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If it weren't for outright lies and bad faith arguments maga would have no argument at all.",
+        "rationale": "Uses an explicit 'If... then...' counterfactual structure to attribute lack of arguments to opponents' dishonesty."
+      },
+      {
+        "message_id": "reddit_1l0qzn0_mvhr3a4",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "taboo sexual accusation language (rapist/pedophile)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Donald Trump is a rapist and a pedophile.",
+        "rationale": "Contains severe taboo/sexual criminal accusation terms toward a named public figure."
+      },
+      {
+        "message_id": "reddit_1kjdjwq_mrlv92j",
+        "feature_name": "emphatic_outrage",
+        "feature_value": "highly indignant insults + 'half the country just clapped along'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "half the country just clapped along like trained seals. What a bunch of fools we are",
+        "rationale": "Expresses emphatic outrage using dehumanizing/insulting metaphors."
+      },
+      {
+        "message_id": "twitter_2061704148198866993",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "implicit 'you believe' second-person framing",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "If you believe in equal rights, then what do 'women's rights,' and 'gay rights,' etc. mean?",
+        "rationale": "Begins with 'If you...' addressing a presumed reader\u2019s beliefs."
+      },
+      {
+        "message_id": "reddit_1lh7g4h_mz44qni",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "heavy quotation/colloquial phrasing with multiple punctuation marks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Time\" has got Trump's cock so far down their throats, their assholes are turning orange.",
+        "rationale": "Uses graphic sexualized insults and strong punctuation/quotation emphasis."
+      },
+      {
+        "message_id": "reddit_1ti151j_omrce6d",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "ingroup/blame groups ('all the libs' / 'MAGA crowd')",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "All the libs joined forces to punish Donald Trump",
+        "rationale": "Attributes collective coordinated behavior to a political outgroup, setting an adversarial group-vs-group frame."
+      }
+    ]
+  }
+}

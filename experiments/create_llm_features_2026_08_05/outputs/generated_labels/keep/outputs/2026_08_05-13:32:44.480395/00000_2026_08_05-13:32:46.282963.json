@@ -1,0 +1,19 @@
+{
+  "cluster_id": 0,
+  "label_class": "keep",
+  "n_members": 6,
+  "sampled_feature_ids": [
+    "13_0",
+    "22_2",
+    "25_0",
+    "17_0",
+    "2_0",
+    "44_0"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Mixed-length argumentative commentary",
+    "definition": "KEEP posts where the text is primarily argumentative commentary (not just a slogan), often spanning multiple clauses/sentences, with approximate token length falling in short-to-long ranges.",
+    "salience_notes": "The shared pattern in the sample is substantive argumentative phrasing reflected by extended clause structure and multi-sentence reasoning, rather than purely minimal or single-clause statements."
+  }
+}

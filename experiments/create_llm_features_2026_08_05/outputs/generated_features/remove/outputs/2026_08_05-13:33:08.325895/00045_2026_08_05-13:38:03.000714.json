@@ -1,0 +1,94 @@
+{
+  "batch_id": 45,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1kz6zu2_mv8k6hs",
+    "reddit_1lcklzj_my1x6r3",
+    "reddit_1ldrkkb_mydptyj",
+    "reddit_1lhw3kn_mz9k6n0",
+    "reddit_1ll6sj4_n0i0bhd",
+    "reddit_1tjno36_on2o77a",
+    "reddit_1txopv4_opxng2m",
+    "twitter_2061387123819720888",
+    "twitter_2061404017675108679",
+    "twitter_2061721147872563408"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1lcklzj_my1x6r3",
+        "feature_name": "verbal_profanity_intensity",
+        "feature_value": "Uses strong profanity/insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"bullshit\"",
+        "rationale": "Profane dismissal of an opponent frames the content as hostile/attacking."
+      },
+      {
+        "message_id": "reddit_1lcklzj_my1x6r3",
+        "feature_name": "refugee_migration_policy_claims",
+        "feature_value": "Claims about migrants/immigration protections being removed",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"He stripped legal protections from hundreds of thousands of migrants\"",
+        "rationale": "Explicit immigration/legal-protections policy allegations are a clear policy domain cue."
+      },
+      {
+        "message_id": "reddit_1lcklzj_my1x6r3",
+        "feature_name": "conspiracy_or_claimed_misinformation_about_outgroup",
+        "feature_value": "Accuses political figure of making a false/violent stereotype claim about Haitians",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump said the Haitians in Springfield were eating dogs.\"",
+        "rationale": "The post centers on a contested atrocity/violent-evidence claim about an outgroup."
+      },
+      {
+        "message_id": "reddit_1tjno36_on2o77a",
+        "feature_name": "call_to_action_for_political_migration",
+        "feature_value": "Direct instruction to relocate due to politics",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"please move out of California\"",
+        "rationale": "A direct directive functions as an action request aimed at an outgroup."
+      },
+      {
+        "message_id": "reddit_1tjno36_on2o77a",
+        "feature_name": "geographic_scope_state_specific",
+        "feature_value": "U.S. state-to-state movement framing (California/Texas)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"California\" / \"Texas\"",
+        "rationale": "State names indicate targeted geographic political subject matter."
+      },
+      {
+        "message_id": "reddit_1kz6zu2_mv8k6hs",
+        "feature_name": "hate_assault_style_insult",
+        "feature_value": "Graphic insulting phrasing toward political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"can eat at bag of dicks\"",
+        "rationale": "Aggressive, sexualized insult language escalates hostility toward named actors."
+      },
+      {
+        "message_id": "reddit_1kz6zu2_mv8k6hs",
+        "feature_name": "mirror_shift_to_opposite_party_moral_dishonesty",
+        "feature_value": "Blames opposite party with 'intellectually dishonest' narrative",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"This \\\"both sides\\\" ... narrative is so intellectually dishonest\"",
+        "rationale": "Uses moral condemnation (dishonesty) and mirrors blame from one party to the other."
+      },
+      {
+        "message_id": "twitter_2061721147872563408",
+        "feature_name": "targeted_call_to_action_with_mentions_and_dehumanizing_labels",
+        "feature_value": "Urges immediate action; tags public figures; uses extremist labels",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Please take immediate action @RahulGandhi @INCIndia\"",
+        "rationale": "Contains an explicit action request plus targeted @mentions and extremist framing."
+      }
+    ]
+  }
+}

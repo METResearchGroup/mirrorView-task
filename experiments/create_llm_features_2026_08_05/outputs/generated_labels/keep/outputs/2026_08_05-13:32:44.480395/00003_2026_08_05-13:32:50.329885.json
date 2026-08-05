@@ -1,0 +1,19 @@
+{
+  "cluster_id": 3,
+  "label_class": "keep",
+  "n_members": 6,
+  "sampled_feature_ids": [
+    "13_2",
+    "25_2",
+    "21_0",
+    "45_7",
+    "28_4",
+    "43_1"
+  ],
+  "result": {
+    "cluster_id": 3,
+    "cluster_label": "Hashtag/mention-driven political framing",
+    "definition": "KEEP posts that heavily use hashtags and/or @mentions as organizing labels to frame a stance or campaign and directly target issues or political actors.",
+    "salience_notes": "The sample coheres around dense hashtag usage (sometimes paired with @handles) that functions as the main structural device for political/advocacy messaging, including targeted candidates and explicit solidarity language."
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 2,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_0b7a0c0c3e5d42d297fb798271916d56fe643feca084a86e8e94bc626e6e15c5",
+    "bluesky_1aab0671d390797381f7a9885df2c15cb2da318d77779bc4621061c0846b6d25",
+    "bluesky_2c2e52f56731275a9f21f877e854c35338592ddcec4dd848ae62a08e5bf9a826",
+    "bluesky_4a661596e62625a0dbc1abdf3a1a4d634cfa70560fcdbd64acc3a1364b47331e",
+    "reddit_1l97k96_mxahatf",
+    "reddit_1t7hgak_okpt242",
+    "reddit_1ti151j_omrriit",
+    "reddit_1ttx203_op6erkx",
+    "reddit_1tv99t4_ophmbix",
+    "reddit_1u0l8qh_oqj0m6j"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_2c2e52f56731275a9f21f877e854c35338592ddcec4dd848ae62a08e5bf9a826",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"It doesn't mean anything.\"",
+        "rationale": "The post is brief and centered on a short argument about gun-reform language."
+      },
+      {
+        "message_id": "bluesky_2c2e52f56731275a9f21f877e854c35338592ddcec4dd848ae62a08e5bf9a826",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "mentions US Second Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"protecting the Second Amendment\"",
+        "rationale": "The mirror explicitly references a specific US constitutional proper-noun construct."
+      },
+      {
+        "message_id": "bluesky_2c2e52f56731275a9f21f877e854c35338592ddcec4dd848ae62a08e5bf9a826",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "asserts language is meaningless (non-speculative claim)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"But the language you use is meaningless. It doesn't mean anything.\"",
+        "rationale": "The text makes direct declarative claims rather than conditional speculation."
+      },
+      {
+        "message_id": "reddit_1l97k96_mxahatf",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "uses slur/profane insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fucking fascists.\"",
+        "rationale": "The original contains strong taboo language aimed at a political group."
+      },
+      {
+        "message_id": "reddit_1l97k96_mxahatf",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "calls for force framing (bring militarized force/stop free assembly)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"we're going to bring in militarized force to stop free assembly and speech.\"",
+        "rationale": "The content frames a proposed government action related to policing speech/assembly."
+      },
+      {
+        "message_id": "reddit_1l97k96_mxahatf",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "moral condemnation of one side; replacement of labels in mirror",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"they're trying to murder the Constitution\" / \"Fucking anarchists.\"",
+        "rationale": "The text uses an outgroup 'they' to condemn and the mirror retargets the blame to different actors."
+      },
+      {
+        "message_id": "bluesky_4a661596e62625a0dbc1abdf3a1a4d634cfa70560fcdbd64acc3a1364b47331e",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "carbon tax / climate proposals reference experts",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"a carbon tax, which experts say is inadequate\"",
+        "rationale": "It references a particular policy instrument (carbon tax) and cites expert evaluation."
+      },
+      {
+        "message_id": "reddit_1u0l8qh_oqj0m6j",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "addresses others via in-group conversation (\"my ... friends\")",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"explain to my liberal friends\"",
+        "rationale": "The communication is structured as a direct interpersonal explanation to a specific audience."
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cluster_id": 11,
+  "label_class": "remove",
+  "n_members": 43,
+  "sampled_feature_ids": [
+    "0_0",
+    "15_2",
+    "42_0",
+    "33_1",
+    "30_4",
+    "20_1",
+    "30_0",
+    "25_0"
+  ],
+  "result": {
+    "cluster_id": 11,
+    "cluster_label": "Profanity and sexual slur attacks",
+    "definition": "REMOVE-rated posts in this cluster use explicit profanity or sexual/abusive taboo language as direct insults or hostile character attacks toward named individuals or political groups.",
+    "salience_notes": "The shared signal is escalation via taboo wording (including sexual-content insults) paired with targeted political-person/group references."
+  }
+}

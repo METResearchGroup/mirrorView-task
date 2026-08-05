@@ -1,0 +1,94 @@
+{
+  "batch_id": 2,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_61d5ae3d028ebf40852a53a9f298c64ab4d91aa6b904bb0b83a5fb1267001a57",
+    "bluesky_96eaad10586163802dd27352d704f1cff0427bc1b755422f57bc71611f38d4f3",
+    "bluesky_fe34433f2a037c5594a2685a8fb037e5fca26d5a8ddab2141c08bde83e9b727b",
+    "reddit_1rqd674_o9rfscl",
+    "reddit_1tqfpwr_oog28zn",
+    "reddit_1tqrtho_ooorn5g",
+    "reddit_1tztcf5_oqdcufi",
+    "twitter_2059446574892073169",
+    "twitter_2061596946373189772",
+    "twitter_2061762945227366650"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tqfpwr_oog28zn",
+        "feature_name": "deportation_call_targeted_demographic",
+        "feature_value": "Advocates deporting a political group (Republicans in original; Democrats in mirror).",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans should be deported all of them.\"",
+        "rationale": "The post directly calls for deportation of an identified political group."
+      },
+      {
+        "message_id": "twitter_2061762945227366650",
+        "feature_name": "religious_imprecation_and_prolife_language",
+        "feature_value": "Prayer/imprecation framing opposing abortion; references saving unborn babies.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Father God, we pray, save the unborn babies. We pray end abortion in America!\"",
+        "rationale": "Uses explicit religious address and pro-life/anti-abortion language to urge action."
+      },
+      {
+        "message_id": "bluesky_96eaad10586163802dd27352d704f1cff0427bc1b755422f57bc71611f38d4f3",
+        "feature_name": "extreme_profanity_and_emphatic_interjection",
+        "feature_value": "Highly profane, emphatic negative evaluation of a bill/idea.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Imma fuckin tell you right now that is a FUCKING TERRIBLE IDEA\"",
+        "rationale": "Contains strong profanity plus all-caps emphasis to intensify condemnation."
+      },
+      {
+        "message_id": "bluesky_61d5ae3d028ebf40852a53a9f298c64ab4d91aa6b904bb0b83a5fb1267001a57",
+        "feature_name": "rhetorical_why_motifs_questioning_belief",
+        "feature_value": "Two rhetorical 'Why would...' questions about deception and government motives.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Why would the masses believe... ? Why would they believe our governments... ?\"",
+        "rationale": "The argument is structured as rhetorical questions demanding implied answers."
+      },
+      {
+        "message_id": "twitter_2059446574892073169",
+        "feature_name": "accusatory_attribution_glorified_activists",
+        "feature_value": "Blames climate scientists for activism; claims disconnect is caused by them.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"climate scientists are entirely to blame because they are glorified activists.\"",
+        "rationale": "Uses causal blame attribution with a derogatory characterization."
+      },
+      {
+        "message_id": "twitter_2061596946373189772",
+        "feature_name": "ice_border_patrol_praise_by_named_representative",
+        "feature_value": "Single-line praise of ICE/Border Patrol by a named representative.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Rep. Brandon Gill praises ICE, Border Patrol\"",
+        "rationale": "Directly attributes praise to a named actor for specific immigration enforcement institutions."
+      },
+      {
+        "message_id": "reddit_1tqrtho_ooorn5g",
+        "feature_name": "historical_figure_list_with_future_projection",
+        "feature_value": "Lists US presidents/doc topics and predicts documentary framing based on Trump outcomes.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Washington, Lincoln, Roosevelt, and FDR\"",
+        "rationale": "Combines historical references with a conditional future projection about Trump being covered."
+      },
+      {
+        "message_id": "reddit_1rqd674_o9rfscl",
+        "feature_name": "us_vs_them_benefit_priority_grouping",
+        "feature_value": "Advocates taking benefits from one political group first (MAGA vs liberals in mirror).",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"benefits are taken from MAGAs first.\"",
+        "rationale": "Expresses an in-group/out-group material priority targeting a named partisan group."
+      }
+    ]
+  }
+}

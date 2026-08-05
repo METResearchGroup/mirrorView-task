@@ -1,0 +1,21 @@
+{
+  "cluster_id": 1,
+  "label_class": "keep",
+  "n_members": 9,
+  "sampled_feature_ids": [
+    "45_0",
+    "16_4",
+    "22_7",
+    "49_5",
+    "20_4",
+    "38_7",
+    "37_4",
+    "1_1"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Conditional if/then policy or prediction",
+    "definition": "KEEP posts that use explicit conditional logic (if/then, unless, or counterfactual if/then) to link scenarios to a stated responsibility, policy prescription, justification, or anticipated outcome.",
+    "salience_notes": "All sampled features share overt conditional connectors and dependency qualifiers that structure claims around hypothetical or conditional futures (including rhetorical if/then questions)."
+  }
+}

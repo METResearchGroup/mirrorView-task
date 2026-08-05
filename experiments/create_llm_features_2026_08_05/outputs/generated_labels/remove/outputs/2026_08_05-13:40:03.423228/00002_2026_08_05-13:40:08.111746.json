@@ -1,0 +1,21 @@
+{
+  "cluster_id": 2,
+  "label_class": "remove",
+  "n_members": 15,
+  "sampled_feature_ids": [
+    "38_3",
+    "28_2",
+    "10_3",
+    "21_2",
+    "40_1",
+    "37_4",
+    "8_5",
+    "26_0"
+  ],
+  "result": {
+    "cluster_id": 2,
+    "cluster_label": "Gun policy framed as rights/violence",
+    "definition": "REMOVE posts that focus on firearms or gun-control policy while rhetorically framing it in terms of Second Amendment/rights arguments and/or violent school shooting outcomes.",
+    "salience_notes": "Shared pattern: explicit gun-policy content paired with constitutional-rights or extreme-violence framing (e.g., concealed carry, background checks, \u201cassault weapons,\u201d and constitutional denial/equal-rights language)."
+  }
+}

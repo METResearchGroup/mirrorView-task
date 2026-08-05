@@ -1,0 +1,94 @@
+{
+  "batch_id": 47,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_6a0375f7784beecfa551a99f17cd9a5771480613df582dcca2510ba502af4fc5",
+    "reddit_1kd63h5_mqawmhf",
+    "reddit_1ke2vut_mqheoer",
+    "reddit_1kubmyy_mu16zs3",
+    "reddit_1l8ha5n_mx5ng9w",
+    "reddit_1lku9rd_mzwvvea",
+    "reddit_1tsx0f1_oozj3p6",
+    "reddit_1u2xqsq_or1wn9m",
+    "twitter_2061267297096835097",
+    "twitter_2061823787960557939"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061823787960557939",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Multiple uses of strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Where the fuck were your moral standards\"; \"Shut the fuck up.\"",
+        "rationale": "The post includes explicit profanity directed at others as part of a condemnatory reply."
+      },
+      {
+        "message_id": "twitter_2061823787960557939",
+        "feature_name": "call_to_action_imperative",
+        "feature_value": "Uses imperative demand to silence the target",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Shut the fuck up.\"",
+        "rationale": "An imperative instruction is used to stop or silence an opposing speaker."
+      },
+      {
+        "message_id": "twitter_2061267297096835097",
+        "feature_name": "ableist_or_taboo_insults",
+        "feature_value": "Slurs/insults targeting disability or intellect",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"you're insane or retarded.\"",
+        "rationale": "The text uses a derogatory slur as a direct attack in the argument."
+      },
+      {
+        "message_id": "reddit_1lku9rd_mzwvvea",
+        "feature_name": "totalizing_group_who_is",
+        "feature_value": "Absolute claims that equate an entire party with criminal/terrorist ideology",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"All Republicans are fascist domestic terrorists.\"",
+        "rationale": "The post uses blanket attribution (\u201cAll X are Y\u201d) assigning extreme wrongdoing to an entire group."
+      },
+      {
+        "message_id": "reddit_1l8ha5n_mx5ng9w",
+        "feature_name": "single_actor_insult",
+        "feature_value": "Direct insult targeting a named politician",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Well Newsom is a fucking moron.\"",
+        "rationale": "A named individual is disparaged with an insulting epithet rather than discussing policy."
+      },
+      {
+        "message_id": "bluesky_6a0375f7784beecfa551a99f17cd9a5771480613df582dcca2510ba502af4fc5",
+        "feature_name": "slur_and_dehumanizing_terms_dense",
+        "feature_value": "Very high density of pejoratives/slurs and accusatory labels",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"thieves,traitors, ... misogynoire, greedy2%, anti LGBTQIA+/abortion/POC/women/woke\"",
+        "rationale": "The post heavily stacks negative labels (including identity-targeting terms) in a single string."
+      },
+      {
+        "message_id": "bluesky_6a0375f7784beecfa551a99f17cd9a5771480613df582dcca2510ba502af4fc5",
+        "feature_name": "political_actor_blame_list_owns",
+        "feature_value": "Accusatory \u201cOWN this!\u201d attribution across election cycles",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"2016/20/22/24 GOPvoters OWN this!\"",
+        "rationale": "It assigns responsibility to a political cohort for prior cycles using a blame/ownership framing."
+      },
+      {
+        "message_id": "reddit_1kubmyy_mu16zs3",
+        "feature_name": "conspiracy_style_gaslighting_propaganda",
+        "feature_value": "Claims propaganda/gaslighting and asserts manipulative intent",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"this is propaganda 101\"; \"They are obfuscating the truth\"; \"this is gaslighting 101\"",
+        "rationale": "The post uses conspiracy-like manipulation accusations (\u201cpropaganda 101\u201d, \u201cgaslighting\u201d) to explain the opposing side\u2019s claims."
+      }
+    ]
+  }
+}

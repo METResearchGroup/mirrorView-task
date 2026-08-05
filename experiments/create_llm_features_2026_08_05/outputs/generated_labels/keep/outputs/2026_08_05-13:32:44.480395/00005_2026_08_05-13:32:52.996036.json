@@ -1,0 +1,18 @@
+{
+  "cluster_id": 5,
+  "label_class": "keep",
+  "n_members": 5,
+  "sampled_feature_ids": [
+    "38_5",
+    "43_3",
+    "0_3",
+    "13_5",
+    "25_7"
+  ],
+  "result": {
+    "cluster_id": 5,
+    "cluster_label": "Conspiratorial manipulation framing",
+    "definition": "KEEP posts that depict political or informational actors as deliberately coordinating deception or psychological manipulation (e.g., propaganda, \u201cmachines\u201d that protect themselves, psyops, or gaslighting) to control outcomes or shut down debate.",
+    "salience_notes": "These examples share attribution of intent, coordination, and systematic concealment\u2014framing disputes as manipulative operations rather than ordinary disagreement."
+  }
+}

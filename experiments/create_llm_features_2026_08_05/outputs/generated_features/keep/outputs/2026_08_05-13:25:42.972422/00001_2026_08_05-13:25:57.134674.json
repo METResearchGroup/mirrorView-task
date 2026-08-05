@@ -1,0 +1,94 @@
+{
+  "batch_id": 1,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_5abb00d9c158713b55c2d97d043d9c2ec331f0c2a258198d067091ff8ebe5737",
+    "bluesky_746f70678a24cbb408f70ae72ba77ab3928f17c30e74520f4ff659cdaea77d7b",
+    "bluesky_77196379ba92c291c31ec312137500eeea94d1ac01ab4721d64cf14cf201324d",
+    "reddit_1t1vs4b_ojkx5ee",
+    "reddit_1tt3vbp_op0nyju",
+    "reddit_1tzs7nk_oqdo6uc",
+    "reddit_1tzwh8s_oqg1v8g",
+    "twitter_2060007928619278416",
+    "twitter_2061197288836677676",
+    "twitter_2061492782355685453"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061197288836677676",
+        "feature_name": "second_amendment_nonnegotiable_framing",
+        "feature_value": "Uses Second Amendment rights presented as non-negotiable",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The Second Amendment is NOT-NEGOTIABLE.\"",
+        "rationale": "The post centers the Second Amendment and explicitly frames it as absolute."
+      },
+      {
+        "message_id": "bluesky_746f70678a24cbb408f70ae72ba77ab3928f17c30e74520f4ff659cdaea77d7b",
+        "feature_name": "elected_representative_beliefs_if_then_justification",
+        "feature_value": "Conditional justification tied to whether representatives reflect beliefs",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If the messages from your elected representative government don't represent your beliefs... it's because they either dont believe the message, or, they're in power\"",
+        "rationale": "It uses an if-then structure to explain why messaging differs from the speaker\u2019s beliefs."
+      },
+      {
+        "message_id": "reddit_1t1vs4b_ojkx5ee",
+        "feature_name": "insulting_characterization_via_nonsense_matter_metaphors",
+        "feature_value": "Dehumanizing insult using head of lettuce/turnip metaphors",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "\"The average leftist has the intellect of a head of lettuce.\"",
+        "rationale": "The text relies on mocking insults to delegitimize an outgroup (leftists/right-wingers) rather than policy debate."
+      },
+      {
+        "message_id": "reddit_1tzs7nk_oqdo6uc",
+        "feature_name": "unite_against_extreme_partner_political_choice",
+        "feature_value": "Calls for unity only in a high-stakes contrast (left vs fascism / right vs communism)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"when it comes to left vs fascism, all decent people will unite\"",
+        "rationale": "It draws a moral-consensus claim that people must unite against an extreme threat."
+      },
+      {
+        "message_id": "twitter_2061492782355685453",
+        "feature_name": "elite_vs_outgroup_personal_hypocrisy_accusation",
+        "feature_value": "Accuses a named public figure of profiting from the opposite cause",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Steyer became a billionaire... He hates fossil fuels that he made billions off of now.\"",
+        "rationale": "The argument targets hypocrisy by contrasting stated beliefs with prior business gains."
+      },
+      {
+        "message_id": "bluesky_5abb00d9c158713b55c2d97d043d9c2ec331f0c2a258198d067091ff8ebe5737",
+        "feature_name": "rhetorical_question_cost_benchmarking",
+        "feature_value": "Uses cost figures and a rhetorical question framed as criticism",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Remember: the per-barrel costs... is anywhere from 50 cents to $2 per barrel... This is \\\"strangling\\\"?\"",
+        "rationale": "It presents numeric cost information and then challenges a label via a rhetorical question."
+      },
+      {
+        "message_id": "reddit_1tzwh8s_oqg1v8g",
+        "feature_name": "us_vs_them_polarized_group_labels",
+        "feature_value": "Uses in-group/out-group slang labels (Magats/Libs) and puppet framing",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Magats...\" / \"Libs are shocked\" / \"their puppet in Congress\"",
+        "rationale": "Group-denigrating labels and \u201cpuppet\u201d language create sharp us-vs-them directionality in a political comparison."
+      },
+      {
+        "message_id": "twitter_2060007928619278416",
+        "feature_name": "emphatic_outgroup_exhaustion_framing",
+        "feature_value": "Expresses negative affect about ongoing political period",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"This is going to be a tiring 6 months\"",
+        "rationale": "The post is primarily expressive, venting about an expected period of political discourse."
+      }
+    ]
+  }
+}

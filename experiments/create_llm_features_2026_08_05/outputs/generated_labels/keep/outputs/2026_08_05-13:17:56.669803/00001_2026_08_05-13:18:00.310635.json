@@ -1,0 +1,16 @@
+{
+  "cluster_id": 1,
+  "label_class": "keep",
+  "n_members": 3,
+  "sampled_feature_ids": [
+    "0_6",
+    "0_1",
+    "0_2"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Hostile imperative plus us-vs-them blame",
+    "definition": "KEEP posts use aggressive imperatives and/or conditional mirroring to frame an out-group as responsible for wrongdoing, often shifting blame via an in-group/out-group contrast.",
+    "salience_notes": "The three features cohere through adversarial rhetoric: direct hostile directives, explicit us-vs-them attribution, and a conditional pivot that presumes harmful consequences for the targeted side."
+  }
+}

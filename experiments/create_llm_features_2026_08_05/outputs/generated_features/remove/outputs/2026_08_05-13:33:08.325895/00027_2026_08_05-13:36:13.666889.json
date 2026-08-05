@@ -1,0 +1,94 @@
+{
+  "batch_id": 27,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_b00ea78e485a5982e2e8cb6b35efc0ca24efdfb811b346e2764c8192abb530bb",
+    "reddit_1kchkiv_mq2wx9v",
+    "reddit_1kg5azy_mx9k2fg",
+    "reddit_1kgs9fz_mr383ul",
+    "reddit_1koadeo_msp6kgn",
+    "reddit_1l34a0n_mvykhcp",
+    "reddit_1u16m18_oqpzrds",
+    "twitter_2060820195287941303",
+    "twitter_2061478691956224443",
+    "twitter_2061766188795904498"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1koadeo_msp6kgn",
+        "feature_name": "high_profanity_taboo_insult",
+        "feature_value": "Uses strong sexual profanity + dehumanizing insult term",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fascist piece of shit\"",
+        "rationale": "Contains explicit taboo profanity and harsh insult toward an ideological actor."
+      },
+      {
+        "message_id": "reddit_1kchkiv_mq2wx9v",
+        "feature_name": "religious_or_ideological_slur_retargeting",
+        "feature_value": "Ideological hate-labels (Nazi/communist) used as targets; blame shifted to opposing party voters",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck those Nazi supporters\" / \"Fuck those communist sympathizers\"",
+        "rationale": "The post targets an in-group/out-group via extremist labels and attributes blame based on party-voter choice."
+      },
+      {
+        "message_id": "reddit_1kchkiv_mq2wx9v",
+        "feature_name": "callout_blame_for_voter_choice",
+        "feature_value": "States voters 'chose this' and 'deserve the blame'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The Republican voters chose this and deserve the blame.\"",
+        "rationale": "Explicit causal/normative blame attribution to a political constituency."
+      },
+      {
+        "message_id": "twitter_2061478691956224443",
+        "feature_name": "issue_domain_gun_policy_with_month_awareness",
+        "feature_value": "Gun violence policy awareness month framing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"National Gun Violence Awareness Month\"",
+        "rationale": "Direct reference to gun violence as the primary policy topic and a specific commemorative event."
+      },
+      {
+        "message_id": "twitter_2061478691956224443",
+        "feature_name": "second_amendment_fight_against_elites",
+        "feature_value": "Second Amendment defense used to oppose 'radical left' stripping freedoms",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Second Amendment\" / \"radical left's obsession\"",
+        "rationale": "Uses a rights-protection theme paired with an adversarial elite/out-group framing."
+      },
+      {
+        "message_id": "reddit_1u16m18_oqpzrds",
+        "feature_name": "conspiratorial_villain_label_pedo_in_chief",
+        "feature_value": "Prominent conspiracy-style insult naming 'Pedo-in-Chief' administration",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"Ped o-in-Chief's admin\"",
+        "rationale": "Employs an accusatory, extreme villain label to characterize government leadership."
+      },
+      {
+        "message_id": "reddit_1l34a0n_mvykhcp",
+        "feature_name": "quote_style_misinformation_ref_frame",
+        "feature_value": "Uses quoted propaganda phrase 'they\u2019re eating the dogs' with candidate-year attack",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"they\u00189re eating the dogs!\"",
+        "rationale": "Relies on embedded quotation/propaganda meme language to signal deception and ideological misconduct."
+      },
+      {
+        "message_id": "reddit_1kgs9fz_mr383ul",
+        "feature_name": "economic_system_contrast_claim",
+        "feature_value": "Depicts shift from 'late-stage capitalism' to 'hardcore socialism' embracing opposite economic stance",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"late-stage capitalism\" / \"hardcore socialism\"",
+        "rationale": "Compares economic systems while asserting an incongruent policy outcome as a factual evaluative claim."
+      }
+    ]
+  }
+}

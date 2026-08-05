@@ -1,0 +1,94 @@
+{
+  "batch_id": 16,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_787ac3daf20103cba0779d2f3d57222a9a316bc263b5fe821f5311ad12c19c02",
+    "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+    "reddit_1t1x818_ojjsgmt",
+    "reddit_1tc212o_oll9ory",
+    "twitter_2059415623524831503",
+    "twitter_2060343480589951260",
+    "twitter_2061070189521997965",
+    "twitter_2061427872783589498",
+    "twitter_2061789824978174174",
+    "twitter_2061797689906381157"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061797689906381157",
+        "feature_name": "us_vs_them_election_framing",
+        "feature_value": "Urges a state vote; frames opponent side as corrupt/treasonous left/right in us-vs-them terms",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"California! Please Do not throw your vote away on Bianco!... Save yourselves!... corruption of the Seditious left!\"",
+        "rationale": "The post directly targets voters in California and contrasts a preferred candidate with a branded opposing political faction."
+      },
+      {
+        "message_id": "twitter_2061797689906381157",
+        "feature_name": "call_to_action_vote_language",
+        "feature_value": "Direct vote imperative(s) to a named candidate",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Vote Steve Hilton\"",
+        "rationale": "Contains explicit voting instructions aimed at persuading the audience."
+      },
+      {
+        "message_id": "twitter_2061797689906381157",
+        "feature_name": "high_punctuation_exclamation_ellipses",
+        "feature_value": "Highly emphatic punctuation with multiple exclamations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"California! Please Do not throw your vote away... This is chance to save yourselves!\"",
+        "rationale": "Frequent exclamation marks intensify the message\u2019s emotional tone."
+      },
+      {
+        "message_id": "reddit_1t1x818_ojjsgmt",
+        "feature_name": "caregiving_responsibility_policy_frame",
+        "feature_value": "Advocates caregiver responsibilities and alternative care routes (adoption/foster/safe haven)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"if a parent is unwilling or unable... it is the caregivers responsibility to find someone who can through adoption, foster care, safe haven drop offs.\"",
+        "rationale": "Focuses on child welfare/placement mechanisms, a concrete subject-matter frame."
+      },
+      {
+        "message_id": "reddit_1t1x818_ojjsgmt",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "If parent unwilling/unable, then caregivers must find alternatives",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"if a parent is unwilling or unable... it is the caregivers responsibility to find someone who can\"",
+        "rationale": "Uses explicit conditional logic to prescribe a responsibility outcome."
+      },
+      {
+        "message_id": "reddit_1tc212o_oll9ory",
+        "feature_name": "profanity_taboo_insult_clause",
+        "feature_value": "Uses strong profanity-based insult about political actors",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans will never pass up an opportunity to be a piece of shit\"",
+        "rationale": "The text contains a direct, taboo insult targeting a political group."
+      },
+      {
+        "message_id": "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+        "feature_name": "gun_laws_policy_domain",
+        "feature_value": "Advocates/complains about passing basic gun laws (Second Amendment rights)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"basic, sensible gun laws\"",
+        "rationale": "The primary policy issue is gun regulation, referenced explicitly."
+      },
+      {
+        "message_id": "bluesky_82cbf58e44ff4a8ef7c96c02f58bd607bf028106005d7a110593b1a77dd65575",
+        "feature_name": "ridicule_outrage_register",
+        "feature_value": "Expressive condemnation with WTF and horror/sickening language",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"WTF does it take to pass... The horror... Sickening!\"",
+        "rationale": "Combines ridicule-style \"WTF\" with emotive outrage markers."
+      }
+    ]
+  }
+}

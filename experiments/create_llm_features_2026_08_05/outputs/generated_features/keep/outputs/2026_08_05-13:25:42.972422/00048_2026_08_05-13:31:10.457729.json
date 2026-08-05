@@ -1,0 +1,94 @@
+{
+  "batch_id": 48,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_00efc34ac2738154e7f93b9e110637107b810be4ae2173e8657241f3d1fdd206",
+    "bluesky_d11a9024f770b990a5dfbcdde71e6279a4c48d42e3b661ac00a197f3d4f11282",
+    "reddit_1kl4k5p_ms4g6cx",
+    "reddit_1l9nlap_mxfbf9g",
+    "reddit_1tnf5qd_oo5svy9",
+    "reddit_1u1k8nd_oqrrizs",
+    "twitter_2061256666373562703",
+    "twitter_2061569742343741653",
+    "twitter_2061774474630885866",
+    "twitter_2061803843483287608"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061256666373562703",
+        "feature_name": "second_amendment_vs_voting_rights_parallel",
+        "feature_value": "Threatenability/feasibility frame via parallel 'question isn't whether X exists' construction; mirror shifts X from Second Amendment to voting rights",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"The question isn\u0019t whether the Second Amendment exists. It\u0019s whether regular people can realistically exercise it.\"",
+        "rationale": "Uses a repeated 'question isn't whether X' pattern with a feasibility qualifier, and the mirror retargets the same structure to voting rights."
+      },
+      {
+        "message_id": "twitter_2061256666373562703",
+        "feature_name": "government_retaliation_fear_frame",
+        "feature_value": "Risk of government retaliation discouraging lawful exercise",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Without fear of their government coming after them.\"",
+        "rationale": "Explicitly ties ability to exercise rights to fear of state enforcement."
+      },
+      {
+        "message_id": "reddit_1tnf5qd_oo5svy9",
+        "feature_name": "ingroup_outgroup_insulting_generative_comparison",
+        "feature_value": "Direct insult + corruption analogy using 'damn dumb' and 'Orangutan in Chief' label",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"How are Texas Republicans this damn dumb??? Paxton is a more corrupt version of the Orangutan in Chief\"",
+        "rationale": "Uses highly contemptuous insults and a pejorative animal/derogatory comparison to delegitimize targeted actors."
+      },
+      {
+        "message_id": "reddit_1l9nlap_mxfbf9g",
+        "feature_name": "profanity_plus_direct_quotes_as_redirection",
+        "feature_value": "Profanity embedded in attribution; rhetorical retargeting from capital police to border agents",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump to the capital police \\\"Fuck you, my rioters are all I care about, not you\\\".\"",
+        "rationale": "Contains explicit taboo language and quote-style attribution that sets up a blame/priority contrast."
+      },
+      {
+        "message_id": "reddit_1l9nlap_mxfbf9g",
+        "feature_name": "us_vs_them_policy_directional_mirror",
+        "feature_value": "Mirror shifts blame from handling domestic 'rioters' to immigration enforcement vs 'open borders agenda'",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Biden to the border patrol agents: 'Fuck you, my open borders agenda is all I care about, not you.'\"",
+        "rationale": "The mirror clearly re-targets the same communicative 'who you care about' framing to a different political issue and actor group."
+      },
+      {
+        "message_id": "reddit_1kl4k5p_ms4g6cx",
+        "feature_name": "gender_clothing_abortion_related_culture_war_salience",
+        "feature_value": "Women's right to choose clothing; policing framed as domination/control; 'Very feminist' vs 'Very pro-life' mirror tag",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"women shouldn't have this choice. They need to cover the fuck up!\"",
+        "rationale": "Centers a culture-war subject (women's autonomy) with strong moral/political framing."
+      },
+      {
+        "message_id": "reddit_1kl4k5p_ms4g6cx",
+        "feature_name": "second_person_control_accusation_and_policing_verbs",
+        "feature_value": "Second-person conditional argument about who is 'interested' in 'cooming' / control of female bodies",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"If you think shorts are appropriate for a woman to wear you're just interested in cooming.\"",
+        "rationale": "Uses an 'If you think...' persuasive challenge addressed to the reader, coupled with accusatory motivation language."
+      },
+      {
+        "message_id": "twitter_2061774474630885866",
+        "feature_name": "capitalism_vs_socialism_economy_prescription_exchange",
+        "feature_value": "Ideological causal claims + policy prescription via quoted generalization and 'job of any govt is to...'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Socialists are the destroyers of any economy in the world, and they're the enablers of public corruption\"...\"the job of any govt is to regulate\"",
+        "rationale": "Employs an economy-wide causal claim about ideologies and follows with an explicit government role prescription; mirror swaps to the opposite ideological thesis."
+      }
+    ]
+  }
+}

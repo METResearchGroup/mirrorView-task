@@ -1,0 +1,94 @@
+{
+  "batch_id": 5,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_36c7d99d611619a27731b5529e3fec6b0ed0e5802ee9796dcce93b683a5babb8",
+    "bluesky_4320e502b2788e37a182222ca6d03a77a5a99465abe7dd2f4b5f750b9eaac1e6",
+    "bluesky_45ff73bf25d29937e6fc3d2acd886d5ff3b3a15fc271887dc5e4e574bddb9bf5",
+    "bluesky_ccfeb629f73afe6c25221063f9074cde5aedcb5f3f9366966ddbb5db3f997fd3",
+    "reddit_1l1e80m_mvktw5y",
+    "reddit_1tu7mub_opaex54",
+    "twitter_2059358541409079421",
+    "twitter_2059428588630212847",
+    "twitter_2060890451461157328",
+    "twitter_2061776357445566791"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2060890451461157328",
+        "feature_name": "short_medium_length",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Good they should not enforce illegal gun laws.",
+        "rationale": "The post is a brief sentence expressing a policy stance."
+      },
+      {
+        "message_id": "twitter_2059428588630212847",
+        "feature_name": "profanity_and_taboo_language",
+        "feature_value": "uses strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Now shut the fuck up",
+        "rationale": "Contains explicit taboo language used to punctuate the directive."
+      },
+      {
+        "message_id": "twitter_2059428588630212847",
+        "feature_name": "call_to_action_imperative",
+        "feature_value": "direct imperatives to the audience",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Now shut the fuck up and go watch The Price Is Right.",
+        "rationale": "Uses imperative phrasing telling the target what to do."
+      },
+      {
+        "message_id": "bluesky_ccfeb629f73afe6c25221063f9074cde5aedcb5f3f9366966ddbb5db3f997fd3",
+        "feature_name": "climate_policy_rebuttal_framing",
+        "feature_value": "anti-climate-alarmism + counter-claim about regulation harm (in mirror)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Climate alarmism is overblown and green regulations are killing us.",
+        "rationale": "Centers climate and regulation as a central topic with a counter-narrative."
+      },
+      {
+        "message_id": "bluesky_4320e502b2788e37a182222ca6d03a77a5a99465abe7dd2f4b5f750b9eaac1e6",
+        "feature_name": "elite_media_platforming_shame",
+        "feature_value": "claims media outlet platforms opposing figure",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Pity that the Guardian has platformed Blair.",
+        "rationale": "Blames a media institution for amplifying a political opponent."
+      },
+      {
+        "message_id": "reddit_1tu7mub_opaex54",
+        "feature_name": "loyalty_vs_constitution_in_group_out_group",
+        "feature_value": "loyalty accusation vs rule-of-law (mirror swaps to democratic process)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "But they won\u2019t bc they\u2019re still more loyal to Trump than the constitution.",
+        "rationale": "Frames the target as rejecting foundational norms, contrasting allegiance with constitutional/democratic legitimacy."
+      },
+      {
+        "message_id": "twitter_2059358541409079421",
+        "feature_name": "historical_analogy_case_law_chain",
+        "feature_value": "compares to multiple landmark legal rulings",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "from Dred Scott to Roe v. Wade combined",
+        "rationale": "Uses a comparative historical/legal timeline to argue scale of wrongdoing."
+      },
+      {
+        "message_id": "twitter_2061776357445566791",
+        "feature_name": "economic_cost_benefit_trade_implication",
+        "feature_value": "jobs win/China ripping off (mirror: prices up, industries harmed)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "protecting American workers and bringing manufacturing back home. No more getting ripped off by China.",
+        "rationale": "Makes an economic cause-effect claim about tariffs benefiting workers and (in mirror) raising prices and harming industries."
+      }
+    ]
+  }
+}

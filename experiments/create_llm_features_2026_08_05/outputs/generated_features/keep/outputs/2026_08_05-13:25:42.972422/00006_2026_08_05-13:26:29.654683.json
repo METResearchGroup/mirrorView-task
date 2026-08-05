@@ -1,0 +1,94 @@
+{
+  "batch_id": 6,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_1d2391e6da756d5153c5425cf68b4a1116ee6b6dbd083df5784eec880cd8be0b",
+    "bluesky_62595db61e0a64aa294b77c2de4cdca6a2c1e33dac1de87f755dd9958d1205e0",
+    "bluesky_9d2564c6561d2a97bc994471e31024c670844a1e2c205573d9f2b366f70ef122",
+    "bluesky_fca4c043c834a1ce7005f437c9fa3347171582bd7f2da381af2abb68b939c6b1",
+    "reddit_1tt6o9m_op1412z",
+    "reddit_1two3nw_opq6x8j",
+    "reddit_1txv06e_oq22guj",
+    "reddit_1u21326_oqwenzk",
+    "twitter_2060026156246602113",
+    "twitter_2060550697007874060"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1txv06e_oq22guj",
+        "feature_name": "religious_freedom_founders_constitution_framing",
+        "feature_value": "Cites founding fathers/Constitution to support broad religious liberty and oppose state church/theocracy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"founding fathers and the constitution\"",
+        "rationale": "The post grounds the argument in the Constitution and founding-era intent about religion."
+      },
+      {
+        "message_id": "reddit_1tt6o9m_op1412z",
+        "feature_name": "us_vs_them_eliminationist_project_allegation",
+        "feature_value": "Claims there is \"no daylight\" between two groups and labels it as an \"ethnic cleansing\"/\"eliminationist\" project targeting a people",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"no daylight\"...\"ethnic cleansing\"",
+        "rationale": "The language asserts ideological equivalence and describes mass harm as a coordinated project."
+      },
+      {
+        "message_id": "bluesky_1d2391e6da756d5153c5425cf68b4a1116ee6b6dbd083df5784eec880cd8be0b",
+        "feature_name": "oligarchs_opposition_and_normative_claims",
+        "feature_value": "Blames \"Oligarchs\" and uses moralized/accusatory wording about profiteering and resistance to climate action",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Oligarchs did this. Selfish-egomaniacs.\"",
+        "rationale": "The post uses accusatory, blame-centered semantics and frames the opposing side as morally failing."
+      },
+      {
+        "message_id": "reddit_1u21326_oqwenzk",
+        "feature_name": "purity_testing_guilt_through_association",
+        "feature_value": "Argues against \"purity testing\" and calls \"guilt through association\" a tactic used by a political side",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"purity testing\"...\"Guilt through association\"",
+        "rationale": "The semantic content highlights a specific argumentative tactic and its application to an in-group/out-group."
+      },
+      {
+        "message_id": "bluesky_fca4c043c834a1ce7005f437c9fa3347171582bd7f2da381af2abb68b939c6b1",
+        "feature_name": "gun_violence_policy_targeting_nra_counterframing",
+        "feature_value": "Defines acceptable gun-violence response narrowly and accuses readers of doing the NRA/anti-2A lobby\u2019s job",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"if your answer to gun violence\"...\"doing the NRA\u0019s job\"",
+        "rationale": "The post directly conditions a stance on gun-violence policy and applies blaming rhetoric to the audience."
+      },
+      {
+        "message_id": "bluesky_62595db61e0a64aa294b77c2de4cdca6a2c1e33dac1de87f755dd9958d1205e0",
+        "feature_name": "all_caps_emphasis_and_conspiracy_labeling",
+        "feature_value": "Uses heavy emphasis and conspiracy-style labels (RINO, \"Conspiracy Theory\") with emphatic capitalization/markers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"*ALL* of them = RINO TRUMP Party Members\"",
+        "rationale": "The post is visually emphasized with caps/asterisk formatting and frames climate claims with conspiratorial labeling."
+      },
+      {
+        "message_id": "bluesky_9d2564c6561d2a97bc994471e31024c670844a1e2c205573d9f2b366f70ef122",
+        "feature_name": "media_critique_wilful_incompetence",
+        "feature_value": "Criticizes a media outlet for not mentioning burning fossil fuels and calls it \"Wilful incompetence\"",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Wilful incompetence.\"",
+        "rationale": "It is an expressive critique targeting communicative omission and uses an evaluative judgment."
+      },
+      {
+        "message_id": "twitter_2060550697007874060",
+        "feature_name": "list_enumeration_of_political_ills_no_voting_out_of",
+        "feature_value": "Uses a \"come to the conclusion\" structure followed by a bullet list of problems not solvable via voting",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"come to the conclusion\"...\"-Pedophiles running our government\"",
+        "rationale": "The post combines a definitive premise with list-style enumeration of multiple grievances."
+      }
+    ]
+  }
+}

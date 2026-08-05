@@ -1,0 +1,94 @@
+{
+  "batch_id": 42,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+    "reddit_1kcqkoy_mq5biu3",
+    "reddit_1kcx4ed_mq6555e",
+    "reddit_1lcw1or_my5zj61",
+    "reddit_1ledflx_myflb5i",
+    "reddit_1tqf4v3_oojf9yn",
+    "reddit_1twgtct_oppt13l",
+    "twitter_2060992060434309180",
+    "twitter_2061201144743952847",
+    "twitter_2061780473097929004"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kcx4ed_mq6555e",
+        "feature_name": "profanity_taboo_personal_insult",
+        "feature_value": "Uses sexual-deviance accusations as direct insults (rapist/pedophile)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Daily reminder that Trump is a rapist.\"",
+        "rationale": "The post makes a strong factual-sounding sexual allegation about a named person."
+      },
+      {
+        "message_id": "reddit_1tqf4v3_oojf9yn",
+        "feature_name": "emphatic_outrage_callout_tax_slash_gut",
+        "feature_value": "Strong emphatic outrage plus moralized blame for taxing/slashing and making people slaves",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"That's so fucking disgusting.\"",
+        "rationale": "High-intensity emotional expression coupled with severe negative framing of policy effects."
+      },
+      {
+        "message_id": "reddit_1tqf4v3_oojf9yn",
+        "feature_name": "economic_cost_benefit_slavery_outcome",
+        "feature_value": "Economic deprivation framing culminating in loss of freedom/enslavement",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"until they have taken it all and you have nothing left but to be a slave to the government.\"",
+        "rationale": "Uses cost/benefit language with an extreme downstream outcome."
+      },
+      {
+        "message_id": "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+        "feature_name": "us_vs_them_authoritarian_deep_state_framing",
+        "feature_value": "Attributes electorate behavior to manipulation by a 'deep state'/'media' while opposing authoritarianism",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"the dictatorship has convinced them\"",
+        "rationale": "Establishes an in-group/out-group narrative with blame directed at the system that 'convinced them'."
+      },
+      {
+        "message_id": "bluesky_32b339e1fe54e89544b5f403000235c224fc4a7478248c737d3173128ad71323",
+        "feature_name": "conditional_normative_anti_authoritarian_claim",
+        "feature_value": "Normative claim about people who claim to fight fascism not doing so; causal-consequential explanation",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"are not fighting against the fascist dictatorship because the dictatorship has convinced them\"",
+        "rationale": "Presents a causal explanation for perceived hypocrisy using normative/accusatory semantics."
+      },
+      {
+        "message_id": "twitter_2060992060434309180",
+        "feature_name": "second_person_direct_address_and_critique_named_actor",
+        "feature_value": "Direct dialogue/attribution with named political actors; critique via immigration-verbiage dispute",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Pat \u00171cit\u00187's called immigration policy, not \u00171stealing\u00187 Trevor\u00187\"",
+        "rationale": "Contains embedded quotes and explicit address/interaction structured as a mini-debate."
+      },
+      {
+        "message_id": "reddit_1lcw1or_my5zj61",
+        "feature_name": "numeric_proportion_group_labeling",
+        "feature_value": "Quantified hostile labeling of political groups (e.g., 2 out of 10 MAGA...)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"2 out of 10 MAGA morons are confirmed as fascist leaning.\"",
+        "rationale": "Uses a statistical-sounding proportion construction to categorize groups as ideological extremes."
+      },
+      {
+        "message_id": "twitter_2061201144743952847",
+        "feature_name": "abortion_policy_possessive_directive",
+        "feature_value": "Framed as coercive control over women's reproductive decisions",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans want to force every woman to carry a pregnancy to term\"",
+        "rationale": "Primary subject is abortion policy with explicit coercion/forcing language toward a protected group."
+      }
+    ]
+  }
+}

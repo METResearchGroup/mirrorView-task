@@ -1,0 +1,94 @@
+{
+  "batch_id": 34,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_82ddf9268037b4c3b08c6deffb13cd1b1a72bf5a13ebe29458c1084b382361f9",
+    "reddit_1lcws41_my4gi3t",
+    "reddit_1lenyao_myhvqsg",
+    "reddit_1tbcpqz_olg14md",
+    "reddit_1tgwl5y_omjzf52",
+    "reddit_1tt0mlj_op05q94",
+    "twitter_2061069128522215768",
+    "twitter_2061196779509469462",
+    "twitter_2061324018263720219",
+    "twitter_2061594098172346658"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tt0mlj_op05q94",
+        "feature_name": "high_generalization_outgroup_labeling",
+        "feature_value": "Uses broad 'in general' framing about a religious conservative outgroup",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Religious conservatives in general\"",
+        "rationale": "Broad sweeping generalizations about an outgroup are a salient linked-fate cue."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_op05q94",
+        "feature_name": "normative_legal_violence_claim",
+        "feature_value": "Claims laws 'oppresse' and enable 'bully or kill' LGBT",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"passing bills that oppress them, making it legal to bully or kill them\"",
+        "rationale": "Direct claims about legal permission for harm escalate severity and connected wrongdoing."
+      },
+      {
+        "message_id": "reddit_1tt0mlj_op05q94",
+        "feature_name": "praise_for_deaths_by_group",
+        "feature_value": "Attributes cheering on deaths/harm to the targeted group",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"cheer on the deaths or harm of LGBT\"",
+        "rationale": "Assigning celebratory victimization to a whole group supports linked-fate style attribution."
+      },
+      {
+        "message_id": "twitter_2061324018263720219",
+        "feature_name": "direct_policy_proscription_nationwide_ban",
+        "feature_value": "Advocates criminalizing abortion and nationwide abortion ban",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"support a nationwide abortion ban\" ... \"criminalize abortion\"",
+        "rationale": "Calls for restrictive policy and criminalization are concrete prescription cues."
+      },
+      {
+        "message_id": "twitter_2061069128522215768",
+        "feature_name": "emphatic_out_of_context_case_reference",
+        "feature_value": "References Uvalde and contrasts inaction vs gun policy debate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"outside Uvalde school\"",
+        "rationale": "Specific mass-violence event reference often drives high-intensity argumentation and linked causal claims."
+      },
+      {
+        "message_id": "twitter_2061069128522215768",
+        "feature_name": "conditional_causal_argument_more_guns",
+        "feature_value": "Causal/policy rebuttal using contrastive question ('Tell me again how MORE guns...')",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Tell me again how MORE guns would have stopped this\"",
+        "rationale": "Uses a rhetorical challenge to assert causal insufficiency of gun-control prescriptions."
+      },
+      {
+        "message_id": "bluesky_82ddf9268037b4c3b08c6deffb13cd1b1a72bf5a13ebe29458c1084b382361f9",
+        "feature_name": "all_caps_domestic_terrorist_label",
+        "feature_value": "All-caps 'DOMESTIC TERRORIST' designation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"became a DOMESTIC TERRORIST organization\"",
+        "rationale": "Highly emphatic labeling in ALL CAPS is a strong tone marker for removal under linked-fate moderation."
+      },
+      {
+        "message_id": "twitter_2061594098172346658",
+        "feature_name": "second_person_personal_insult_and_deportation",
+        "feature_value": "Direct address with 'complete idiot/moron' plus citizenship revocation and deportation",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"You are a complete idiot\" ... \"revoking your citizenship and deporting you\"",
+        "rationale": "Targeted personal attack coupled with removal/deprivation action (citizenship/deportation) is an explicit targeting cue."
+      }
+    ]
+  }
+}

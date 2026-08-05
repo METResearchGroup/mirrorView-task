@@ -1,0 +1,13 @@
+{
+  "start_timestamp": "2026_08_05-15:13:01.411702",
+  "total_items": 5,
+  "run_metadata": {
+    "arm": "tuned",
+    "model": "gpt-5.4-nano",
+    "n_items": 5,
+    "subset_path": "/Users/mark/src/work/mirrorView-task/experiments/llm_prompt_engineering_2026_08_05/subset_labels.csv",
+    "limit": 5,
+    "subset_seed": 42
+  },
+  "end_timestamp": "2026_08_05-15:13:04.774504"
+}

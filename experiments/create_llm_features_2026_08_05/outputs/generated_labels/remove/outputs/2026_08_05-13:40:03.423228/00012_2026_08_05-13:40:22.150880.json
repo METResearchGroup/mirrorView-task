@@ -1,0 +1,21 @@
+{
+  "cluster_id": 12,
+  "label_class": "remove",
+  "n_members": 15,
+  "sampled_feature_ids": [
+    "3_2",
+    "46_5",
+    "31_5",
+    "39_3",
+    "9_5",
+    "15_7",
+    "6_2",
+    "42_5"
+  ],
+  "result": {
+    "cluster_id": 12,
+    "cluster_label": "Imperative second-person confrontations",
+    "definition": "REMOVE posts that directly address the reader/audience with imperative or direct-dialogue framing to urge, challenge, or insult them, often embedding a confrontational exchange.",
+    "salience_notes": "The cluster coheres around second-person stance-taking (\"you/your\"-type implied audience) plus commanding or rebuttal-style directives (including quoted mini-debates) rather than neutral description."
+  }
+}

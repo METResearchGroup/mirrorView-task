@@ -1,0 +1,94 @@
+{
+  "batch_id": 14,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670",
+    "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+    "bluesky_253f6730359b7eda8fa229a1de968acc54181c606669499dea2d62c5a5ce2d1e",
+    "bluesky_62861f319f80c8f37e4e9d36b8a538b598c9617c9d2e9bd6ba9c98df11dafeaf",
+    "reddit_1kp0psp_msuspys",
+    "reddit_1kqlad9_mt6ne68",
+    "reddit_1lhrgof_mz6vo58",
+    "reddit_1tpy3la_ood1p6z",
+    "twitter_2061766156440977463",
+    "twitter_2061786442943111613"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_62861f319f80c8f37e4e9d36b8a538b598c9617c9d2e9bd6ba9c98df11dafeaf",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cInstead of arguing whether or not an assault weapon ban leads to less gun violence\u201d",
+        "rationale": "The post is a brief paragraph with a few clauses and a short sequence of planned actions."
+      },
+      {
+        "message_id": "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "high use of ALL CAPS slogans/blocks",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cDEMOCRACY is what I care about the most.\u201d / \u201cALL that shit can be fixed\u201d",
+        "rationale": "The text is structured around emphatic all-caps lines."
+      },
+      {
+        "message_id": "bluesky_1d6a04ddc72d2bce48e9d0018fdeb4b31c426ed9ebcaf7b5949e43e925fafb2b",
+        "feature_name": "normative_moral_language_and_embedded_outrage",
+        "feature_value": "morality framing + doom-like moral consequence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cALL that shit can be fixed\u2026 UNLESS we lose our democracy. Then, we\u2019re just ALL fucked.\u201d",
+        "rationale": "Uses moral/absolute framing (\u201cunLESS\u2026 Then\u2026\u201d) and severe consequence language."
+      },
+      {
+        "message_id": "twitter_2061786442943111613",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "taxpayers are harmed; immoral cost-shifting",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201cIt is immoral that The U.S.A. taxpayers shoulders 100% all deportation costs.\u201d",
+        "rationale": "Depicts a group as unjustly burdened and frames it as immoral."
+      },
+      {
+        "message_id": "bluesky_1587088017937595ef57cd0fccf03f45185a08ef12101e7e4a524b1353f2f670",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "explicit policy solutions (background checks, red flag laws)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\u201crequire and fund background checks and red flag laws\u201d",
+        "rationale": "The post advocates concrete policy measures."
+      },
+      {
+        "message_id": "reddit_1lhrgof_mz6vo58",
+        "feature_name": "informal_register_or_slang_plus_acronym_abuse",
+        "feature_value": "short derogatory redefinition acronym",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201cDEI = Don't Employ Idiots.\u201d",
+        "rationale": "A terse, informal hostile redefinition of a political acronym is used."
+      },
+      {
+        "message_id": "reddit_1tpy3la_ood1p6z",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "sexual profanity / insult threat",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\u201ceat a great big flying dick!\u201d",
+        "rationale": "Contains explicit taboo/sexual profanity used as an insult."
+      },
+      {
+        "message_id": "reddit_1kqlad9_mt6ne68",
+        "feature_name": "second_person_direct_address_and_targeted_attack",
+        "feature_value": "direct curse targeting political figures/side (F*ck ... )",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\u201cF*ck MAGA Senator, Trump and his lackeys!\u201d",
+        "rationale": "Uses an imperative curse aimed at specific political actors, indicating targeted hostility."
+      }
+    ]
+  }
+}

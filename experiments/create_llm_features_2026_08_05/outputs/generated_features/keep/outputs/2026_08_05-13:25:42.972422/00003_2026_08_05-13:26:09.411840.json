@@ -1,0 +1,94 @@
+{
+  "batch_id": 3,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_7cc649033c8902973f9ca856dcb4522d8070a3dfae64382356cbba11cef197e3",
+    "reddit_1kiip7v_mrf22ag",
+    "reddit_1klsgwq_ms4thit",
+    "reddit_1krctyl_mtdvevw",
+    "reddit_1kszqwu_mtq7ij8",
+    "reddit_1tecxgs_opf51ni",
+    "reddit_1tsj7e8_ooxd90t",
+    "twitter_2061477887715213396",
+    "twitter_2061518814613782857",
+    "twitter_2061609179660616164"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061518814613782857",
+        "feature_name": "first_person_goal_list_want_construct",
+        "feature_value": "Multiple first-person goals using repeated 'I want' policy demands",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"I want to be able to walk at night without fear\" ... \"I want welfare benefits\" ... \"I want foreigners\" ... \"I want voters\"",
+        "rationale": "The post uses a parallel series of 'I want' statements to enumerate policy prescriptions."
+      },
+      {
+        "message_id": "reddit_1tsj7e8_ooxd90t",
+        "feature_name": "leader_crimes_or_appeasement_claim",
+        "feature_value": "Direct accusatory claim about leaders' stance toward dictators",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump has never said a bad thing about Putin and many other dictators because he idolizes them.\"",
+        "rationale": "It asserts a specific causal relationship between admiration and lack of criticism."
+      },
+      {
+        "message_id": "reddit_1kszqwu_mtq7ij8",
+        "feature_name": "profanity_and_slur_expression",
+        "feature_value": "Use of censored profanity / taboo language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"a lot of stupid sh*t\" ... \"economy is in the shitter\"",
+        "rationale": "The text contains strong taboo language used to intensify critique of policy/economy."
+      },
+      {
+        "message_id": "twitter_2061609179660616164",
+        "feature_name": "immigration_law_enforcement_frame",
+        "feature_value": "Pro/anti ICE and Border Patrol framing tied to sovereignty/community safety",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"praised ICE and the Border Patrol for the role they play in defending U.S. sovereignty\"",
+        "rationale": "It centers immigration enforcement and public safety as the primary subject matter."
+      },
+      {
+        "message_id": "reddit_1tecxgs_opf51ni",
+        "feature_name": "comparison_branding_conservatism_vs_progressivism",
+        "feature_value": "Explicit ideology-pillar discussion with 'pivots' and contrast in second paragraph",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"pillars of conservatism\" ... \"I agree this is one of conservatisms worst accurate criticisms\" ... \"pillars of progressivism\"",
+        "rationale": "The post discusses multiple ideological principles (conservatism/progressivism) and their 'worst accurate criticisms.'"
+      },
+      {
+        "message_id": "reddit_1kiip7v_mrf22ag",
+        "feature_name": "hypocrisy_attack_and_moral_critique",
+        "feature_value": "Claims anti-abortion hypocrisy; follow-on neglect of support; mockery",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They want to force women to have children\" ... \"once the kid is born they'll do nothing\" ... \"They make idiots look smart.\"",
+        "rationale": "It combines a normative critique (hypocrisy/neglect) with a dismissive evaluative line."
+      },
+      {
+        "message_id": "reddit_1krctyl_mtdvevw",
+        "feature_name": "short_approval_and_future_action_promise",
+        "feature_value": "Minimal positive reaction plus explicit intention to mobilize political action",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Good.\" ... \"start dragging these radical leftists in front of Congress\"",
+        "rationale": "The structure pairs a brief approval with a concrete call to pursue accountability through Congress."
+      },
+      {
+        "message_id": "bluesky_7cc649033c8902973f9ca856dcb4522d8070a3dfae64382356cbba11cef197e3",
+        "feature_name": "second_amendment_reference_with_weapon_terms",
+        "feature_value": "Second Amendment mention plus gun ownership vocabulary",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"read the second amendment\" ... \"hand-made circa 1776 muskets\"",
+        "rationale": "It invokes the Second Amendment and frames gun ownership via historical/weapon-specific terms."
+      }
+    ]
+  }
+}

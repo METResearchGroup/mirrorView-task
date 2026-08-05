@@ -1,0 +1,94 @@
+{
+  "batch_id": 21,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_1af3b6fbc2ee7eda8df377fd998d6138605eb187527992ae12b19d0e74f62b96",
+    "bluesky_1f7720c8e9e82f16f9894d208530678d723c1a779a4fefa22edb83f0e0dc5c82",
+    "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+    "bluesky_e8964356c5eac3130698d5e7c03a96a4311d124c7149a23cbc159e0b22fbadf0",
+    "reddit_1l5krue_mwk22sw",
+    "reddit_1l5y6fx_mwku2i6",
+    "reddit_1ti509f_oms79tg",
+    "reddit_1tql6ez_ooha8vq",
+    "reddit_1tswg2c_ooy4cq5",
+    "twitter_2060437978468470812"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ti509f_oms79tg",
+        "feature_name": "informal_slang_insulting_collective",
+        "feature_value": "Uses derogatory slang toward an opposing political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"All the butthurt fellow Conservatives\"",
+        "rationale": "The post relies on informal, insulting phrasing (\u201cbutthurt\u201d) aimed at a political in-group/out-group."
+      },
+      {
+        "message_id": "reddit_1l5y6fx_mwku2i6",
+        "feature_name": "strong_profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity as accusation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"the trump administration is full of shit\"",
+        "rationale": "\u201cfull of shit\u201d is a strong taboo/profanity marker coupled with allegations."
+      },
+      {
+        "message_id": "twitter_2060437978468470812",
+        "feature_name": "pro_gun_policy_direct_claim_and_counterargument",
+        "feature_value": "Advocates Second Amendment / anti-government framing and claims regulations are not protection",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The Second Amendment Is For Fighting the Government!\"",
+        "rationale": "This text centers a weapons/right-to-carry policy domain with direct argumentative framing."
+      },
+      {
+        "message_id": "twitter_2060437978468470812",
+        "feature_name": "normative_advocacy_with_targeted_actor_attack",
+        "feature_value": "Argues for gun-friendly norms while attacking NRA and \u201clapdog politicians\u201d",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the NRA and their lapdog politicians can cry about it all they want.\"",
+        "rationale": "It uses moral/normative language and hostility toward specific actors, which is characteristic of linked-blame narratives."
+      },
+      {
+        "message_id": "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+        "feature_name": "mass_shooting_specific_event_plus_unsuccessful_thoughts_prayers",
+        "feature_value": "References mass shooting and rejects \u201cthoughts and prayers\u201d as ineffective",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Another day, another mass shooting. Thoughts and prayers don't work.\"",
+        "rationale": "A timely, high-salience violent event is cited alongside a rejection of a common response."
+      },
+      {
+        "message_id": "bluesky_9d9a59628197eb0d5909e7d9c3e21a9fbdc97065c86fb5559cd976e9e4aa2be9",
+        "feature_name": "causal_claim_present_about_policy_enforcement",
+        "feature_value": "Claims a specific causal mechanism: failure to enforce existing laws",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"government failure to enforce the laws already on the books.\"",
+        "rationale": "It makes a direct causal assertion about governmental failure, aligning with blame-based moderation triggers."
+      },
+      {
+        "message_id": "reddit_1tql6ez_ooha8vq",
+        "feature_name": "second_person_argumentation_with_qualifier_clause",
+        "feature_value": "Appeals to debunking \u201cinciting violence\u201d accusation using \u201cespecially when\u201d qualifier and question",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"And no, calling Trump so doesn't amount to \\\"inciting violence;\\\" especially when it's accurate. Need more convincing?\"",
+        "rationale": "The structure is argumentative with explicit qualification (\u201cespecially when\u201d) and ends in a rhetorical prompt."
+      },
+      {
+        "message_id": "bluesky_e8964356c5eac3130698d5e7d03a96a4311d124c7149a23cbc159e0b22fbadf0",
+        "feature_name": "abortion_case_reference_and_high_polarization_tagging",
+        "feature_value": "References Roe v. Wade/Dobbs with dehumanizing shorthand and aligned actor blame/enemy claim",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Roe v. Wade\" \"Dobbs\" \"AG Ken Paxton is an enemy to women's liberty.\"",
+        "rationale": "It includes explicit named legal precedents and assigns enemy status to a named official in an abortion policy context."
+      }
+    ]
+  }
+}
