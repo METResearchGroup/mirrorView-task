@@ -15,7 +15,7 @@ Your job is to decide whether both posts in the pair should be allowed or remove
 
 When making your decisions, consider generally whether a post contributes to a healthy environment for political discussion, or whether it would be unhealthy for political discussion. Your goal is to evaluate the messages, using your own judgment.
 
-{KEEP_REMOVE_FEATURES_ADDENDUM}
+{ADD_KEEP_REMOVE_FEATURES_ADDENDUM}
 
 Post 1: {post_1_text}
 
