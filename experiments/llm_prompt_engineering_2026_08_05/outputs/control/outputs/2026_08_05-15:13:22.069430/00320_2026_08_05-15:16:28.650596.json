@@ -1,0 +1,11 @@
+{
+  "message_id": "twitter_2061811713671155976",
+  "arm": "control",
+  "keep_remove_label": 1,
+  "decision": "remove",
+  "predicted_is_remove": true,
+  "predicted_label": 1,
+  "result": {
+    "is_remove": true
+  }
+}

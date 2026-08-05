@@ -1,0 +1,11 @@
+{
+  "message_id": "reddit_1tug26y_opbydy8",
+  "arm": "control",
+  "keep_remove_label": 0,
+  "decision": "keep",
+  "predicted_is_remove": false,
+  "predicted_label": 0,
+  "result": {
+    "is_remove": false
+  }
+}

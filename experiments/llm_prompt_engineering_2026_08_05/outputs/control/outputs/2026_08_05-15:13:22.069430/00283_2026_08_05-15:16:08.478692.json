@@ -1,0 +1,11 @@
+{
+  "message_id": "bluesky_098d2712c2dc7203ff167b6e0e25cbd0737fa99229b8d523d4e4412ec4186f27",
+  "arm": "control",
+  "keep_remove_label": 1,
+  "decision": "remove",
+  "predicted_is_remove": false,
+  "predicted_label": 0,
+  "result": {
+    "is_remove": false
+  }
+}

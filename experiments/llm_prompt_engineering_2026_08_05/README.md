@@ -55,11 +55,4 @@ PYTHONPATH=. uv run python experiments/llm_prompt_engineering_2026_08_05/evaluat
   --write-results experiments/llm_prompt_engineering_2026_08_05/RESULTS.md
 ```
 
-## RESULTS.md shape
-
-| Arm | Accuracy | Precision | Recall | F1 |
-| --- | --- | --- | --- | --- |
-| control | … | … | … | … |
-| prompt-tuned | … | … | … | … |
-
 Positive class for precision / recall / F1 is remove (`keep_remove_label=1`). See [RESULTS.md](RESULTS.md) after the production run.

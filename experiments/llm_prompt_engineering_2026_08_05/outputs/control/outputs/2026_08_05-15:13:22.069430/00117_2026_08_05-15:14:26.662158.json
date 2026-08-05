@@ -1,0 +1,11 @@
+{
+  "message_id": "reddit_1tt8k9j_op1eyny",
+  "arm": "control",
+  "keep_remove_label": 1,
+  "decision": "remove",
+  "predicted_is_remove": true,
+  "predicted_label": 1,
+  "result": {
+    "is_remove": true
+  }
+}
