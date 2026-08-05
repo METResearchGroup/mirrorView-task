@@ -18,13 +18,51 @@ We can take their free responses and mine them for insights.
 1. Histogram: what was the distribution of the Likert scores?
 2. Mine the free responses for features (we have some details on this in `experiments/create_llm_feature_clusters_2026_08_02/PLAN.md`).
 
+### Part 1: Graphing the distribution of the Likert scores
+
+We graph the distribution of Likert scores, in `part_1_histogram`.
+
+### Part 2: Mining free responses
+
+We store the work for Part 2 in `part_2_mine_free_responses`.
+
 We'll actually split out analysis into two parts:
 
-- Users who gave a Likert score < 4
-- Users who gave a Likert score > 4
+- Users who gave a Likert score < 4 (we'll call this the `low` group)
+- Users who gave a Likert score >= 4 (we'll call this the `high` group)
 
-We'll use an LLM-based approach, modeling [this experiment](../create_llm_features_2026_08_05/), as relying on BERTopic for a sample size of ...
+| Group | n |
+| --- | ---: |
+| Total users with free response + Likert | 1177 |
+| Likert < 4 | 255 |
+| Likert >= 4 | 922 |
 
+We'll use an LLM-based approach, modeling [this experiment](../create_llm_features_2026_08_05/), as relying on BERTopic for a relatively small sample size might prove to be noisy.
+
+Just like in our previous experiment, our approach is something like:
+
+1. Give an LLM bunches of documents all at once and then ask it to generate features.
+2. Get a semantic embedding of each generated feature.
+3. Cluster the semantic embeddings.
+4. Ask a language model to give a name/label for each cluster, by giving it a random sample of documents from the cluster.
+
+We'll run this in a pipeline-like approach.
+
+We have the following Python files, in src/
+
+- llm_generate_features.py # uses the `runner` from research_tools
+- generate_embeddings.py
+- cluster_embeddings.py
+- generate_labels_for_embeddings.py # uses the `runner` from research_tools
+
+We store our results in outputs/, as
+
+- generated_features/{low,high}
+- generated_embeddings/{low,high}
+- clusters/{low,high}
+- generated_labels/{low,high}
+
+We use `gpt5.4-nano` for our LLM. We use Amazon Titan for the embeddings (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized). We generate the embeddings from scratch and key on the user ID (TODO: check if this is the best choice for ID).
 
 ## How we can mine text for features
 
