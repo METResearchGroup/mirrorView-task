@@ -1,0 +1,94 @@
+{
+  "batch_id": 31,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_b8ca0c27bbc162c35f09da2a97cfb839a345929e44674af30b35282f4f4124a7",
+    "bluesky_e75ba727bdb4dcd84bd5b3992fbf8d15eeb44757511fa20160ed9155205b4020",
+    "reddit_1kwzgin_musbv9y",
+    "reddit_1tgxg10_omm6lw4",
+    "reddit_1tuwb8f_opd3wgi",
+    "reddit_1tvywom_opkrf4h",
+    "reddit_1u1fnvf_oqr54cm",
+    "twitter_2060435240712053171",
+    "twitter_2061441762640420963",
+    "twitter_2061484264978575823"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tgxg10_omm6lw4",
+        "feature_name": "hypocrisy_moral_labeling",
+        "feature_value": "Uses explicit hypocrisy framing comparing two political actors",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Hypocrisy: the maga motto.\"",
+        "rationale": "The post labels the opposing stance as hypocrisy, a moral/valuative claim tied to actors."
+      },
+      {
+        "message_id": "reddit_1tgxg10_omm6lw4",
+        "feature_name": "mirror_shift_blame_between_parties",
+        "feature_value": "Blames one side in original (Trump/DOJ) and the opposite side in mirror (Biden/Garland/DOJ)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump weaponizing the doj\" / \"Biden and Garland turning the DOJ into a Democrat hit squad\"",
+        "rationale": "Directionality flips blame/praise toward different political figures while keeping the same rhetorical target structure."
+      },
+      {
+        "message_id": "twitter_2060435240712053171",
+        "feature_name": "counterfactual_policy_prescription_list",
+        "feature_value": "Proposes treating guns and e-bikes/scooters like cars with enforcement tools (license, registration, insurance, fines, seizure)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"license, registration, insurance, fines, seizure.\"",
+        "rationale": "The text contains a concrete policy prescription with enumerated measures."
+      },
+      {
+        "message_id": "twitter_2060435240712053171",
+        "feature_name": "whatabout_whataboutism_discussion_structure",
+        "feature_value": "Debates a 'what about' argument and reassigns its use to different groups",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"whining \\\"what about cars\\\"\"",
+        "rationale": "The post uses an explicit 'what about' structure to frame differing interpretations by groups."
+      },
+      {
+        "message_id": "twitter_2061484264978575823",
+        "feature_name": "immigration_enforcement_policy_domain",
+        "feature_value": "Calls to support ICE/Border Patrol/DHS and enforce illegal immigration crimes",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"support of ICE, Border Patrol, DHS\"",
+        "rationale": "The post centers U.S. immigration enforcement institutions and criminal enforcement."
+      },
+      {
+        "message_id": "twitter_2061484264978575823",
+        "feature_name": "month_named_campaign_call",
+        "feature_value": "Advocates dedicating a specific month to a cause",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"see the month of June dedicated\"",
+        "rationale": "This is a time-bounded mobilization call, indicating a clear communicative intent."
+      },
+      {
+        "message_id": "bluesky_e75ba727bdb4dcd84bd5b3992fbf8d15eeb44757511fa20160ed9155205b4020",
+        "feature_name": "vigilantism_or_armed_self_defense_advice",
+        "feature_value": "Advocates being armed at protests; distrusts police and assumes hostile 'nut' arrival",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"consider arming yourself\" / \"most cops are cowards\"",
+        "rationale": "It provides direct self-defense guidance and includes a negative assertion about law enforcement behavior."
+      },
+      {
+        "message_id": "bluesky_b8ca0c27bbc162c35f09da2a97cfb839a345929e44674af30b35282f4f4124a7",
+        "feature_name": "political_actor_targeting_with_watch_him_squirm",
+        "feature_value": "Urges pushing Farage/Starmer on issues and 'watch him squirm/tie himself in knots'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Press Farage on these and watch him squirm.\" / \"Push Starmer... and watch him tie himself in knots.\"",
+        "rationale": "The message uses direct political prompting plus a mock-consequence phrasing to persuade through anticipated failure."
+      }
+    ]
+  }
+}

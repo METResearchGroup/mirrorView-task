@@ -1,0 +1,94 @@
+{
+  "batch_id": 37,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+    "reddit_1kjz233_mrr0n2d",
+    "reddit_1kzpnb8_mv7pmya",
+    "reddit_1l5qzp8_mwj3dvp",
+    "reddit_1l94fh5_mxalxut",
+    "reddit_1lfq7q5_myqtdfx",
+    "reddit_1lj8oo7_mzkc1ag",
+    "reddit_1ttui2j_op56nhi",
+    "twitter_2061597955153408201",
+    "twitter_2061819641253580996"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061819641253580996",
+        "feature_name": "high_profanity_taboo_language",
+        "feature_value": "Uses multiple derogatory labels including sexual crime allegation and slur-like insults",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The rapist, draft dodger\"",
+        "rationale": "Strong defamatory allegations and hostile labeling indicate high-severity political vitriol."
+      },
+      {
+        "message_id": "reddit_1lfq7q5_myqtdfx",
+        "feature_name": "direct_anti_target_profanity",
+        "feature_value": "Second-person direct address with profanity",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"go fuck yourself Trump\"",
+        "rationale": "The post uses an imperative/second-person attack with explicit profanity toward a named political figure."
+      },
+      {
+        "message_id": "reddit_1ttui2j_op56nhi",
+        "feature_name": "extreme_profanity_imperative",
+        "feature_value": "Coarse expletive directed broadly at a political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck you to the ends of the earth MAGA\"",
+        "rationale": "The opening profanity plus hostile targeting of a political faction is a clear moderation cue."
+      },
+      {
+        "message_id": "twitter_2061819641253580996",
+        "feature_name": "us_vs_them_maga_vs_antimaga_tagging",
+        "feature_value": "Has hashtag partisan identity and blame shift in mirror (Trump->Biden-Harris demigod)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"#maga demigod\"",
+        "rationale": "Partisan identity tagging and actor swapping in the mirror indicate adversarial group framing."
+      },
+      {
+        "message_id": "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+        "feature_name": "primary_policy_domain_guns_background_checks",
+        "feature_value": "Gun-law policy debate with background checks and tracing",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"commonsense gun laws\" / \"background checks and tracing parts\"",
+        "rationale": "The post centers on firearm regulation specifics that commonly appear in high-conflict political moderation."
+      },
+      {
+        "message_id": "bluesky_685a61bb1b6be541a679c2b294c2283430f5d6a75b55a4acf2a9483069550c19",
+        "feature_name": "normative_moral_language_and_victimization",
+        "feature_value": "Uses emotionally charged outrage and treats opponents as attacking rights/citizens",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"expected ruthless attacks\" / \"treating law-abiding citizens like criminals\"",
+        "rationale": "Outrage framing and moral condemnation toward political opponents are prominent semantic cues."
+      },
+      {
+        "message_id": "reddit_1kzpnb8_mv7pmya",
+        "feature_name": "call_to_action_stop_paying_homage",
+        "feature_value": "Persuasive instruction to stop platforming/reading about opponents",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Stop paying homage to these cucks by writing about them. Focus on the people and their plight.\"",
+        "rationale": "Direct imperative persuasion urging behavioral change toward information sharing."
+      },
+      {
+        "message_id": "reddit_1lj8oo7_mzkc1ag",
+        "feature_name": "list_of_insults_with_parenthetical_definitions",
+        "feature_value": "Bulky insult list with parenthetical glosses and hyperbolic epithets",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"DEI-(dummy, egregious idiocy) prize\" / \"Orange poo for brains\"",
+        "rationale": "Compositional insult piling with parenthetical redefinitions intensifies hostile tone and readability."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 33,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_4b818c345eae2bf93fbfa202789df8647148c998aa0cae4736a7cb480125b34f",
+    "bluesky_86acfe88fee9d4fa6db658de8620a34b0d959de4d33a4e4d2082b7947662a20e",
+    "reddit_1kp0psp_msv921k",
+    "reddit_1liejsg_mzd5b40",
+    "reddit_1ti5cqx_omvmh7g",
+    "reddit_1tsyeyo_ooyp301",
+    "reddit_1txsm52_oq0g7r0",
+    "twitter_2059970894815006935",
+    "twitter_2061803063724171489",
+    "twitter_2061824388471595469"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1liejsg_mzd5b40",
+        "feature_name": "high_punctuation_intensity_exclamations",
+        "feature_value": "Repeated exclamation-mark style abuse",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"BABY MURDERER!!!!\"",
+        "rationale": "The post uses highly emphatic, repeated exclamations for harsh invective."
+      },
+      {
+        "message_id": "reddit_1kp0psp_msv921k",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong profanity",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is a fucking lunatic\"",
+        "rationale": "Explicit profanity targets an identified political figure."
+      },
+      {
+        "message_id": "twitter_2061824388471595469",
+        "feature_name": "call_to_action_imperative_avoidance",
+        "feature_value": "Direct command telling opponent to leave",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"F@ck off with your bankruptcy\"",
+        "rationale": "Contains an imperative directive aimed at the opposing side."
+      },
+      {
+        "message_id": "twitter_2061803063724171489",
+        "feature_name": "conspiratorial_framing_paid_support_claim",
+        "feature_value": "Claims protesters/defenders are paid",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"because they are being paid to support them\"",
+        "rationale": "Attributes political behavior to bribery/paying, implying hidden manipulation."
+      },
+      {
+        "message_id": "reddit_1txsm52_oq0g7r0",
+        "feature_name": "normative_moral_evaluation_and_ridicule",
+        "feature_value": "Character assassination via 'deranged/demented'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The entire Administration is deranged\" / \"The man was demented\"",
+        "rationale": "Uses moralized negative labels to delegitimize the actors being discussed."
+      },
+      {
+        "message_id": "reddit_1ti5cqx_omvmh7g",
+        "feature_name": "us_vs_them_ingroup_outgroup_political_framing",
+        "feature_value": "Contrasts American conservatives with European cues (implied outgroup comparison)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Why do you think American conservatives don't accept cues from European ones?\"",
+        "rationale": "Frames a cross-group political contrast to explain differing beliefs/actions."
+      },
+      {
+        "message_id": "bluesky_4b818c345eae2bf93fbfa202789df8647148c998aa0cae4736a7cb480125b34f",
+        "feature_name": "primary_policy_domain_climate_agreement",
+        "feature_value": "Paris Agreement climate policy reference",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Ten years on from the Paris Agreement\"",
+        "rationale": "The post centers on climate international agreements and their evaluation."
+      },
+      {
+        "message_id": "reddit_1liejsg_mzd5b40",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Directly addresses 'you' repeatedly",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"You had an abortion\" / \"so is this\"",
+        "rationale": "Uses second-person pronouns to directly attack the reader/target."
+      }
+    ]
+  }
+}

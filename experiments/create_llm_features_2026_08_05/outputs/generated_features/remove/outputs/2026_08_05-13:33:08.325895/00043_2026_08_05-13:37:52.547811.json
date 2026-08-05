@@ -1,0 +1,94 @@
+{
+  "batch_id": 43,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_6ee0f696da723e238e981baa7acdf404d768fcc2af68bb07079b2ea575d2efc2",
+    "bluesky_755e790ffd6caacf6a21766726a5930e3d92dcef9d449e461fb9647cd9a2fb70",
+    "bluesky_d3e76502ab487398f2bc2e48efd3f85e244c3f743f60044a18e14422a173c7b1",
+    "reddit_1ksedw6_mtlfvfi",
+    "reddit_1td4d2o_olz3vvg",
+    "reddit_1tvsp9t_opk4hyd",
+    "reddit_1u3bvdh_or4x7tv",
+    "twitter_2060432152852861156",
+    "twitter_2061173178307600827",
+    "twitter_2061554055978311844"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ksedw6_mtlfvfi",
+        "feature_name": "extreme_outgroup_dehumanizing_language",
+        "feature_value": "Uses harsh dehumanizing/hostile language toward a target group (e.g., foreigners) and compares safety outcomes",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Foreigners, you need to stay away. It ain't fuckin safe.\"",
+        "rationale": "This contains strong hostile lexical framing and threat/safety claims directed at an outgroup."
+      },
+      {
+        "message_id": "twitter_2060432152852861156",
+        "feature_name": "moral_reasoning_and_questions_on_personhood",
+        "feature_value": "Normative argument with a rhetorical-style question about abortion equating it to rape circumstances",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"I asked, doesn\u0015t abortion do the same thing?\"",
+        "rationale": "The post uses explicit moral disagreement and culminates in a question to press a persuasive equivalence claim."
+      },
+      {
+        "message_id": "twitter_2061554055978311844",
+        "feature_name": "group_blaming_cancer_metaphor",
+        "feature_value": "Depicts multiple religious groups as harmful (\u201ccancer\u201d) and asserts lack of freedom",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the Jews and Muslims a cancer\" ... \"apparently Mormons are too.\"",
+        "rationale": "Cancer-as-metaphor is a strongly negative evaluative frame targeting religious groups."
+      },
+      {
+        "message_id": "bluesky_d3e76502ab487398f2bc2e48efd3f85e244c3f743f60044a18e14422a173c7b1",
+        "feature_name": "armed_actor_standoff_framing",
+        "feature_value": "Claims armed opponents at rallies; implies confrontation by unknown number of armed opponents",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"contingent of armed MAGAts\" ... \"unknown number of armed opponents.\"",
+        "rationale": "The post centers escalation/armed threat framing as the key content."
+      },
+      {
+        "message_id": "bluesky_6ee0f696da723e238e981baa7acdf404d768fcc2af68bb07079b2ea575d2efc2",
+        "feature_name": "elite_cynicism_and_counterpart_reframing",
+        "feature_value": "Directs accusation at the opposing party/media while contrasting what is 'ok' vs 'dangerous' rhetoric",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"tone-down the-rhetoric!\" Republicans ... \"gun violence and stochastic terrorism is ok\"",
+        "rationale": "It contrasts two sides by asserting hypocrisy and legitimizing violence claims."
+      },
+      {
+        "message_id": "bluesky_755e790ffd6caacf6a21766726a5930e3d92dcef9d449e461fb9647cd9a2fb70",
+        "feature_name": "targeted_policy_exclusion_of_specific_party",
+        "feature_value": "Proposes gun-control/veto framed as targeting one party while exempting others; uses explicit preference/entitlement toward excluding owners",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun control that targets republicans\" ... \"Racists should not be allowed to own guns.\"",
+        "rationale": "The policy prescription is explicitly conditional on political identity and includes exclusionary eligibility language."
+      },
+      {
+        "message_id": "reddit_1tvsp9t_opk4hyd",
+        "feature_name": "high_emotion_memetic_sarcasm_quotes",
+        "feature_value": "Uses repetitive meme/affect (\u201cHONEY HURRR HURR\u201d) and quoted punchline to mock a political figure; economic complaint list",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"HONEY HURRR HURR HURR DIDJA SEE HOW...\"",
+        "rationale": "The phrasing is performative mockery and relies on quoted, highly affective meme language."
+      },
+      {
+        "message_id": "reddit_1u3bvdh_or4x7tv",
+        "feature_name": "second_person_direct_address_and_assertive_denial_structure",
+        "feature_value": "Uses second-person direct address plus explicit corrective framing of alliance obligations",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"don't you dare blame everyone else for our failures.\"",
+        "rationale": "The structure includes direct address and a corrective admonition tied to geopolitical commitments."
+      }
+    ]
+  }
+}

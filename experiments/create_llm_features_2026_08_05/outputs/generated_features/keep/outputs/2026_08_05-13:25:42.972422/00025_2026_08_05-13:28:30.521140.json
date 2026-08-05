@@ -1,0 +1,94 @@
+{
+  "batch_id": 25,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_8c79beb0738dcfba49bff55d04b342052786607ed913096dd836b3a60b3195a6",
+    "bluesky_d381534ce8b5bb1c6995c98f826c8dc15785347ddefb4f3eb005325d1cff3cf1",
+    "reddit_1tbymrb_ollmjzr",
+    "reddit_1ti6ied_omvt302",
+    "reddit_1ttxea2_op8np5l",
+    "reddit_1tzrws1_oqdmoph",
+    "twitter_2060037504032752117",
+    "twitter_2060421768913793130",
+    "twitter_2061544976383627651",
+    "twitter_2061780864548188670"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tzrws1_oqdmoph",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"You logic seems heavily predicated\" ... \"It\u2019s bad logic.\"",
+        "rationale": "The post spans multiple sentences/paragraphs with extended argumentation."
+      },
+      {
+        "message_id": "twitter_2060037504032752117",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "low (mostly one sentence, no exclamation)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Newsom and Bonta just cooking up some new gun laws\"",
+        "rationale": "Punctuation is minimal and mostly standard, with no strong punctuation markers (kept as a negative/limited-intensity cue only where clearly visible)."
+      },
+      {
+        "message_id": "twitter_2061544976383627651",
+        "feature_name": "hashtag_or_mention_pattern",
+        "feature_value": "@mention present",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"@paulfritzss\"",
+        "rationale": "The post begins with an @handle addressing a specific user."
+      },
+      {
+        "message_id": "twitter_2060421768913793130",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "named speaker + quoted statement",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Sen. Jim Banks: \\\"I think it's a great idea\"",
+        "rationale": "It embeds a direct quote attributed to a named politician."
+      },
+      {
+        "message_id": "reddit_1ti6ied_omvt302",
+        "feature_name": "persuasion_or_argumentation",
+        "feature_value": "disagreement + advocacy request",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Respectfully, I disagree.\" ... \"We need people who are willing to advocate\"",
+        "rationale": "The speaker counters an opposing position and issues a normative call for specific kinds of people/advocacy."
+      },
+      {
+        "message_id": "twitter_2061780864548188670",
+        "feature_name": "normative_moral_language",
+        "feature_value": "moral-collapse/authoritarian framing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"moral collapse and authoritarian nightmares\"",
+        "rationale": "The mirror ties secularism to moral degeneration and authoritarian outcomes."
+      },
+      {
+        "message_id": "twitter_2060421768913793130",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "immigration/sanctuary cities",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"blocking international flights into sanctuary cities\"",
+        "rationale": "The quoted policy targets sanctuary cities and illegal immigration."
+      },
+      {
+        "message_id": "bluesky_8c79beb0738dcfba49bff55d04b342052786607ed913096dd836b3a60b3195a6",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "meta-accusation of misinformation/gaslighting",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"This used to be called gaslighting or just plain dishonest.\"",
+        "rationale": "It characterizes opposing actors\u2019 statements as dishonest/gaslighting rather than neutral policy debate."
+      }
+    ]
+  }
+}

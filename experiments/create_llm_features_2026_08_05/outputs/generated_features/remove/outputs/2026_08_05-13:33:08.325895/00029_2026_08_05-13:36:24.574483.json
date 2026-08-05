@@ -1,0 +1,94 @@
+{
+  "batch_id": 29,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_13da40f0ff6dc230271d019f3bb5de17dc72773bb61e927d3680151732084545",
+    "bluesky_2c3a7dc21e767f5342c8805ee5a5e0032466f7e779c83101daca5b0471e631b2",
+    "bluesky_8b68b03ba5d7c0e5d023eef1f44ebc862d9fe11021516005d7749f8460275daf",
+    "reddit_1kce10r_mq1x36z",
+    "reddit_1l44grv_mw7odp0",
+    "reddit_1tt3m71_op0eww4",
+    "reddit_1tu4gub_op6ys8w",
+    "reddit_1tyu1q6_oq9bfsc",
+    "twitter_2060329747281015171",
+    "twitter_2061543962910089583"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tu4gub_op6ys8w",
+        "feature_name": "high_punctuation_intensity_expletive_insulting_style",
+        "feature_value": "Very informal, vulgar profanity and insult-like language",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"GOP Facists openly shitting on the constitution\"",
+        "rationale": "Contains strong profanity (\u201cshitting\u201d) and an insult-like framing."
+      },
+      {
+        "message_id": "bluesky_13da40f0ff6dc230271d019f3bb5de17dc72773bb61e927d3680151732084545",
+        "feature_name": "gun_control_mass_shooting_topic",
+        "feature_value": "Gun-control and mass shooting victimization topic",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"After Sandy Hook\" / \"gun control\" / \"murdering children\"",
+        "rationale": "Explicitly references Sandy Hook and argues about whether the country will act on gun control."
+      },
+      {
+        "message_id": "bluesky_2c3a7dc21e767f5342c8805ee5a5e0032466f7e779c83101daca5b0471e631b2",
+        "feature_name": "australia_gun_ban_comparative_policy_reference",
+        "feature_value": "Uses Australia gun ban as a comparative policy example",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Australia's Gun Ban Worked\"",
+        "rationale": "Directly cites a specific foreign policy case to argue about present U.S. policy outcomes."
+      },
+      {
+        "message_id": "reddit_1l44grv_mw7odp0",
+        "feature_name": "extreme_ideology_nazi_fascist_dehumanizing_claim",
+        "feature_value": "Direct Nazi\u2194communist/fascist ideological attack",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Damn those communists... Nazis\" / \"Damn those fascists\"",
+        "rationale": "Uses extreme ideological labels and Nazi comparison to condemn actors."
+      },
+      {
+        "message_id": "reddit_1tyu1q6_oq9bfsc",
+        "feature_name": "conspiratorial_propaganda_asset_labeling",
+        "feature_value": "Frames political criticism as propaganda/Russian asset",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Anyone who criticizes Trump is propaganda.\" / \"Anyone who criticizes Biden is a Russian asset.\"",
+        "rationale": "Treats dissent as coordinated or covertly motivated rather than legitimate critique."
+      },
+      {
+        "message_id": "bluesky_8b68b03ba5d7c0e5d023eef1f44ebc862d9fe11021516005d7749f8460275daf",
+        "feature_name": "climate_policy_economic_worst_case_framing",
+        "feature_value": "Economic \u2018worst case scenarios\u2019 framed around climate/renewables vs opposition",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The worst case scenarios\" \"transition to renewable energy\" \"lowering emissions\"",
+        "rationale": "Uses economic scenario language linked to climate/energy policy to assert predictions are implausible."
+      },
+      {
+        "message_id": "twitter_2061543962910089583",
+        "feature_name": "us_vs_europe_immigration_sanctuary_cities_criminality",
+        "feature_value": "Immigration/neighborhood residency framed via sanctuary cities and criminals",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"sanctuary cities\" / \"criminals taking dollars for death\"",
+        "rationale": "Mentions sanctuary cities and portrays certain residents as dangerous criminals."
+      },
+      {
+        "message_id": "reddit_1tt3m71_op0eww4",
+        "feature_name": "second_person_direct_address_moral_blaming",
+        "feature_value": "Second-person \u201clook in the mirror\u201d blame-directive",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Whoever posted this, look in the mirror and realize you are the problem.\"",
+        "rationale": "Directly addresses the reader in second person and assigns personal blame via a \u2018mirror\u2019 exhortation."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 17,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_44f9a69bf857f9419406e8e4f60d2f65e958c7d24349f95c82ef3bce810f7b8b",
+    "bluesky_babd142d3e6fa62a6cf5ceff8bed2218a15b3885280b17aba93633186bf79c68",
+    "reddit_1tkic8a_onb9vab",
+    "reddit_1trbmne_oomy1jp",
+    "reddit_1ttcu5f_op43e38",
+    "reddit_1tuly4n_opbbt0y",
+    "reddit_1tvyk2a_oppx4vp",
+    "twitter_2060213695603712464",
+    "twitter_2060805025644028059",
+    "twitter_2060968801567678581"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_babd142d3e6fa62a6cf5ceff8bed2218a15b3885280b17aba93633186bf79c68",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "The outrage from every single rwnj media outlet would be so immediate and strong, heads would explode.",
+        "rationale": "The post is a multi-sentence comment with several clause chains and examples."
+      },
+      {
+        "message_id": "reddit_1tkic8a_onb9vab",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "uses implicit audience framing via first-person collective 'our country'",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "make it easier for foreign invaders to take over our country.",
+        "rationale": "The claim is directed to a general audience about what the First Amendment should not enable."
+      },
+      {
+        "message_id": "bluesky_44f9a69bf857f9419406e8e4f60d2f65e958c7d24349f95c82ef3bce810f7b8b",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "portrays powerful people as fearing for their lives during an active shooter and claims inaction on gun reform",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They feared for their lives. And somehow, not a damn thing will be done by them to push for gun reform tomorrow morning.",
+        "rationale": "It explicitly describes perceived danger/victimization and then contrasts it with no follow-through."
+      },
+      {
+        "message_id": "reddit_1trbmne_oomy1jp",
+        "feature_name": "normative_moral_language",
+        "feature_value": "labels ideological opponents as revolutionary/destroying vs reactionary/regressive/destroying",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The radical left are the socio-political faction that are revolutionary.",
+        "rationale": "It uses value-laden descriptors to moralize political factions as inherently harmful."
+      },
+      {
+        "message_id": "reddit_1tvyk2a_oppx4vp",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "assertion about public attitudes not changing due to legislation/parades",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Nobody cares if you\u2019re black. And nobody cares if you\u2019re gay.",
+        "rationale": "The statement presents broad claims about what people care about and implies legislative ineffectiveness."
+      },
+      {
+        "message_id": "twitter_2060805025644028059",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "religious moral endorsement of abortion/clinic transition via 'Glory be to God'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "They transformed a place that ended lives into a place that welcomes life. Glory be to God.",
+        "rationale": "The post takes a clear stance on abortion-related institutions with prescriptive moral framing."
+      },
+      {
+        "message_id": "twitter_2060213695603712464",
+        "feature_name": "all_caps_emphasis",
+        "feature_value": "heavy all-caps used for 'ALL ELECTED OFFICIALS' and enforcement claims",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "@JesseBWatters ALL ELECTED OFFICIALS, WHEN SWORN IN, TAKE AN OATH",
+        "rationale": "Capitalization is used to emphasize key directives and imperative concepts."
+      },
+      {
+        "message_id": "reddit_1tuly4n_opbbt0y",
+        "feature_name": "causal_claim_present",
+        "feature_value": "electoral event linked to media behavior and FCC merger-enabling (cause\u2192effect)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "When he got elected a second time, most remaining hold-out billionaires decided it was time to stop resisting... And trump's FCC continues to enable consolidation of media...",
+        "rationale": "It explicitly ties election outcomes to changes in media control and regulatory actions."
+      }
+    ]
+  }
+}

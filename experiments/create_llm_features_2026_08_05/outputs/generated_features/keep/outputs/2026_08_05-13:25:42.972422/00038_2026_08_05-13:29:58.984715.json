@@ -1,0 +1,94 @@
+{
+  "batch_id": 38,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_4f5cc96ea861f987eb9c5b984682518c00ec7183015ea100d2bdb728881b9ee5",
+    "bluesky_7f79c59f27fb0856a48259a2ea8401d98105127fde01eb3a0d78839216d3ea74",
+    "bluesky_a9b0b1cc131070585ef96be04798122c18802d946a888fd05adaaa99aca6937b",
+    "bluesky_d73226e1cb24c5c3a9201d02951cf5959e2f6b49461b83354df802a6d5ac1eeb",
+    "reddit_1tux6at_opdrjia",
+    "reddit_1ty956s_oq25tiz",
+    "reddit_1u1z88l_oqtzdzz",
+    "reddit_1u22gzn_oquefor",
+    "twitter_2061323601731793390",
+    "twitter_2061547420748578936"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1u1z88l_oqtzdzz",
+        "feature_name": "informal_register_slang",
+        "feature_value": "Uses informal phrasing and slang-like tone",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Kinda shocked\"",
+        "rationale": "The post uses casual colloquial language rather than formal register."
+      },
+      {
+        "message_id": "reddit_1u1z88l_oqtzdzz",
+        "feature_name": "us_vs_them_party_labeling",
+        "feature_value": "Direct left/right partisan contrast (Republicans vs left) via mirror",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"I gotta hand it to Republicans.\" / \"I gotta hand it to the left.\"",
+        "rationale": "The mirror changes the praise target to a different partisan bloc, reflecting us-vs-them directionality."
+      },
+      {
+        "message_id": "reddit_1ty956s_oq25tiz",
+        "feature_name": "first_amendment_personhood_framing",
+        "feature_value": "1st Amendment interpreted as protecting individuals and corporations (personhood)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"I understood the 1st amendment to protect individuals and corporations with personhood\"",
+        "rationale": "The post explicitly invokes a constitutional right and a specific legal interpretation."
+      },
+      {
+        "message_id": "reddit_1ty956s_oq25tiz",
+        "feature_name": "named_proper_nouns_density_high",
+        "feature_value": "Multiple named entities including person/group labels and government institutions",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump\" \"DoJ\" \"white house\"",
+        "rationale": "High density of proper nouns (Trump, DOJ, White House) anchors the argument in identifiable actors."
+      },
+      {
+        "message_id": "bluesky_a9b0b1cc131070585ef96be04798122c18802d946a888fd05adaaa99aca6937b",
+        "feature_name": "high_punctuation_intensity_profanity",
+        "feature_value": "Uses strong profanity and aggressive punctuation/emphasis",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"jerkoffs\" \"still fucking joke\"",
+        "rationale": "The language is marked by taboo/profane intensifiers and insulting terms."
+      },
+      {
+        "message_id": "bluesky_a9b0b1cc131070585ef96be04798122c18802d946a888fd05adaaa99aca6937b",
+        "feature_name": "conspiratorial_or_propaganda_framing",
+        "feature_value": "Claims rebranding is propaganda to manufacture panic and shut down debate",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"was pure propaganda to manufacture panic and shut down debate\"",
+        "rationale": "The text attributes institutional action to deliberate deceptive intent."
+      },
+      {
+        "message_id": "bluesky_7f79c59f27fb0856a48259a2ea8401d98105127fde01eb3a0d78839216d3ea74",
+        "feature_name": "policy_prescription_call_to_action",
+        "feature_value": "Explicit policy demand: strengthen red flag laws",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Strengthen red flag laws!\"",
+        "rationale": "The post includes a direct prescription for legal/policy change."
+      },
+      {
+        "message_id": "reddit_1u22gzn_oquefor",
+        "feature_name": "conditional_if_then_structure_question",
+        "feature_value": "Counterfactual conditional followed by two-choice questions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If Trump bans all irs investigations... would you accept... ? Or would you\"",
+        "rationale": "The structure uses an \u201cIf \u2026 would you \u2026 ? Or would you \u2026 ?\u201d rhetorical format."
+      }
+    ]
+  }
+}

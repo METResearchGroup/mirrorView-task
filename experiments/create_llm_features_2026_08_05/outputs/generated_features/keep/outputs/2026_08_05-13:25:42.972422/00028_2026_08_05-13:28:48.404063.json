@@ -1,0 +1,94 @@
+{
+  "batch_id": 28,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_14ad874e325c5a89c5216dba31dcd6f7a9f907518a4d0165173b3be22a8a18bb",
+    "bluesky_6a6c356e59f7d689a1ea0200d26f31281729f8f1e5366d97c85d27da560896bd",
+    "bluesky_795acff9e33d971483f311ae5bfb9f00827acb7c0c00fad56b1749ba1fc3f9fa",
+    "bluesky_7f81d071407daaddf711d20bcdfbac078c21a62c6da0c5cbc59d67540825369d",
+    "reddit_1txopv4_opxh0dd",
+    "reddit_1tzmvf4_oqfrtny",
+    "twitter_2060603806170145047",
+    "twitter_2061455574655533441",
+    "twitter_2061493148044366263",
+    "twitter_2061816844571292059"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061455574655533441",
+        "feature_name": "condensed_imperative_polarity_flip",
+        "feature_value": "Advocacy framed as imperative slogan with opposite action verbs (REJECT vs DEFEND)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"REJECT Planned Parenthood: Discrimination shouldn\u2019t be funded by taxpayers\" / \"DEFEND Planned Parenthood: Healthcare rights shouldn't be stripped by government zealots\"",
+        "rationale": "The post uses a direct directive (imperative) to take a stance, and the mirror flips the advocated action."
+      },
+      {
+        "message_id": "twitter_2061816844571292059",
+        "feature_name": "evidence_over_lies_rhetorical_contrast",
+        "feature_value": "Ends with anti-propaganda contrast phrase (Data/Evidence over Lies/Propaganda)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Data over lies.\" / \"Evidence over propaganda.\"",
+        "rationale": "A clear argumentative contrast positions one side as truthful and the other as misleading."
+      },
+      {
+        "message_id": "twitter_2061816844571292059",
+        "feature_name": "causal_claim_present_with_anti_sabotage",
+        "feature_value": "Causal/attribution claim blaming \u201csabotage\u201d while asserting policy success",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Despite a brutal political sabotage... it\u2019s falling.\" / \"Despite vicious corporate lobbying and Republican obstruction... workers are actually seeing real gains.\"",
+        "rationale": "The wording asserts causal responsibility and attributes changes to political obstruction."
+      },
+      {
+        "message_id": "twitter_2061493148044366263",
+        "feature_name": "month_activism_awareness_frames",
+        "feature_value": "National awareness month with educational/supportive call content",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"June is National Gun Violence Awareness Month. Learn how to recognize warning signs, support others, and help build safer schools\"",
+        "rationale": "The post centers on a named recurring observance and provides guidance on recognizing and responding to risk."
+      },
+      {
+        "message_id": "twitter_2061493148044366263",
+        "feature_name": "hashtag_ampersand_community_building_register",
+        "feature_value": "Uses symbol punctuation and community-safety language (\u201c&amp; communities\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"safer schools &amp; communities.\"",
+        "rationale": "The text uses community-building phrasing and an HTML entity ampersand as part of the promotional message style."
+      },
+      {
+        "message_id": "bluesky_795acff9e33d971483f311ae5bfb9f00827acb7c0c00fad56b1749ba1fc3f9fa",
+        "feature_name": "conditional_if_then_remove_one_dead_letter",
+        "feature_value": "If/then-style conditional logic: remove one element \u2192 dead letter; ballot/local races emphasized",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Remove any one and it's a dead letter. The local offices you skip on the ballot matter most.\"",
+        "rationale": "The post uses a conditional structure to argue that success depends on multiple coordinated actors."
+      },
+      {
+        "message_id": "bluesky_6a6c356e59f7d689a1ea0200d26f31281729f8f1e5366d97c85d27da560896bd",
+        "feature_name": "us_vs_them_tyranny_directional_claim",
+        "feature_value": "Claims government \u201ctyranny\u201d against people without guns/critics; mirror shifts blame to gun owners enabling terror",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"the USA government is committing the tyranny over.\" / \"helping the government terrorize the rest of us\"",
+        "rationale": "The rhetoric establishes an adversarial us-vs-them framing centered on oppression/terror and shifts target direction in the mirror."
+      },
+      {
+        "message_id": "reddit_1tzmvf4_oqfrtny",
+        "feature_name": "emphatic_expletive_and_insulting_eval",
+        "feature_value": "Strong profanity/expletive plus escalating negative evaluation (\u201cHoly shit\u2026 fucked\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Holy shit. Those people are so fucked.\"",
+        "rationale": "The post is highly expressive and uses blunt insult language rather than policy discussion."
+      }
+    ]
+  }
+}

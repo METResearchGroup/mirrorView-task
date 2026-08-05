@@ -1,0 +1,94 @@
+{
+  "batch_id": 9,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_37d89942a385f6efe7e11b502ed10b16355a06af8abaef5f58de2da15dfb3d64",
+    "bluesky_59309b675fbb53bb494f46bcf12b4b9d5e1383c1d9def6b8eb4892325b2cf824",
+    "reddit_1laawce_mxkqsp8",
+    "twitter_2059325413784961191",
+    "twitter_2059675070172221893",
+    "twitter_2060456141755208008",
+    "twitter_2061438462876631380",
+    "twitter_2061601576985510174",
+    "twitter_2061619918366536162",
+    "twitter_2061808083987218435"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2060456141755208008",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple short lines with sentence-ending periods and ellipsis-free emphatic phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Voting rights weakened.\\nReproductive freedom stripped away.\"",
+        "rationale": "The post uses rapid, repeated declarative clauses with terminal punctuation to build emphasis."
+      },
+      {
+        "message_id": "twitter_2060456141755208008",
+        "feature_name": "court_based_linked_actor_framing",
+        "feature_value": "Appeal to the Roberts Court as an elite institutional actor causing power shifts",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The Roberts Court keeps taking power from the people\"",
+        "rationale": "Blame/power-taking is directed at a specific judicial institution."
+      },
+      {
+        "message_id": "twitter_2060456141755208008",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moralized evaluation of democracy/citizens",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"taking power from the people and handing it to those at the top.\"",
+        "rationale": "The text frames actions as unjust, involving normative claims about who deserves power."
+      },
+      {
+        "message_id": "bluesky_59309b675fbb53bb494f46bcf12b4b9d5e1383c1d9def6b8eb4892325b2cf824",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Specific murder of a named person by police used as justification for policy critique",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Tamir Rice was murdered by police\"",
+        "rationale": "A named victim and alleged lethal violence anchors the argument."
+      },
+      {
+        "message_id": "bluesky_59309b675fbb53bb494f46bcf12b4b9d5e1383c1d9def6b8eb4892325b2cf824",
+        "feature_name": "call_to_action_via_policy_slogan",
+        "feature_value": "Policy imperative presented as command (\"Ban toy guns\") with rebuttal",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Ban toy guns-- Oh, wait.\"",
+        "rationale": "It uses a direct policy directive and immediately contests it."
+      },
+      {
+        "message_id": "twitter_2061619918366536162",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit request to audience to urge Congress; advocacy for Dream Act/citizenship",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Will you join me in urging Congress\"",
+        "rationale": "The speaker directly calls on the reader to take political action."
+      },
+      {
+        "message_id": "twitter_2061619918366536162",
+        "feature_name": "specific_event_or_bill_reference",
+        "feature_value": "References DACA age milestone and the Dream Act and citizenship",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"support the Dream Act &amp; deliver citizenship\"",
+        "rationale": "The post ties the argument to a particular legislative proposal and immigration program."
+      },
+      {
+        "message_id": "reddit_1laawce_mxkqsp8",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses insulting slang and derogatory framing about religious and political motives",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"religious crap\" / \"fool evangelicals.\"",
+        "rationale": "The language attacks targets with contemptuous terms and claims manipulative intent."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 4,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_469224592ba723e911e83411a61df6b85dec6681277ed8a0a84fa2d92e056977",
+    "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+    "bluesky_da4343612799afde10761c81683943e125d6f9b99cd24da6127350d7f6c6d501",
+    "reddit_1kc5vjr_mq49xzz",
+    "reddit_1tstlbr_ooy9ret",
+    "reddit_1tsvd1m_ooyw3jx",
+    "twitter_2059738096799801716",
+    "twitter_2061059285379866655",
+    "twitter_2061714565541359667",
+    "twitter_2061798901707890838"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Uses hyphenated epithets and dense commas/semicolons; long multi-clause sentence",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Because the faux-\\u201cChristian, Big Oil owned, Climate Science denying GOP Republicans are as weak, pathetic, and as corrupt as Russian owned, felon/fraud, pedophile traitor Trump, there\\u2019s no chance to impeach Trump unless or until Democrats hold majorities",
+        "rationale": "The post is packed with repeated appositive fragments and heavy punctuation, increasing confrontational emphasis."
+      },
+      {
+        "message_id": "bluesky_bb91ab3da2f5ba879edabb5441e8e9fd7037b1a5a1917a9310b93ec4a3a9f7b4",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple political/religious/organization names in one sentence",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "GOP Republicans",
+        "rationale": "High concentration of named political actors/labels increases direct partisan targeting and clarity of blame assignment."
+      },
+      {
+        "message_id": "twitter_2059738096799801716",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Reproductive rights/menstrual surveillance framed as political conflict",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "issue of menstrual surveillance. what about what's going on with reproductive rights",
+        "rationale": "The topic is explicitly about reproductive-rights governance and surveillance concerns that commonly trigger moderation."
+      },
+      {
+        "message_id": "twitter_2059738096799801716",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Implies data/tech will be used against women",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "they're the ones who actually want to use that data against women.",
+        "rationale": "The mirror asserts harmful intent toward a protected group (women) using surveillance data."
+      },
+      {
+        "message_id": "reddit_1tsvd1m_ooyw3jx",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Direct contrast between parties with value judgments",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "It\u00111s the democrats who have entirely fallen out of relevance",
+        "rationale": "The post constructs an ingroup/outgroup contrast (Democrats vs Republicans) with delegitimizing claims."
+      },
+      {
+        "message_id": "twitter_2061798901707890838",
+        "feature_name": "normative_moral_language",
+        "feature_value": "System-feature claims presented as evaluative/ideological rather than descriptive",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Corruption is a feature of American capitalism. It\u0011s built into the system.",
+        "rationale": "Uses strong moralized causal framing (built-in corruption) that can be read as incitement-like ideological condemnation."
+      },
+      {
+        "message_id": "bluesky_469224592ba723e911e83411a61df6b85dec6681277ed8a0a84fa2d92e056977",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Time-bound conditional policy stance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Now is not the time for gun control legislation. Not until our fascism problem is over.",
+        "rationale": "The post uses an explicit 'not until' conditional structure to justify withholding/withdrawing policy."
+      },
+      {
+        "message_id": "reddit_1kc5vjr_mq49xzz",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Vulgar bodily-function insult used as hyperbole",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Trump could literally shit and piss in their mouths",
+        "rationale": "The language includes taboo/vulgarity and dehumanizing mockery, increasing content severity under linked-fate moderation."
+      }
+    ]
+  }
+}

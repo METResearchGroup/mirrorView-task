@@ -1,0 +1,94 @@
+{
+  "batch_id": 40,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_646783655a55f992667fd239c783b32586b52df352f7f5fd6b51f7153c7681cf",
+    "bluesky_7b508f2aaaede96f5c3f8630a0b81b75dc27718216a9a800c5c6e127cf26700c",
+    "bluesky_8ed0dd3cceab245aafaf51ae1c35e63079dd5f5eed9680dbd9705d92da6ee958",
+    "reddit_1kl4k5p_ms0pvvv",
+    "reddit_1kp51f1_msv7kg7",
+    "reddit_1l6jnqp_mwpbia3",
+    "reddit_1lk9fco_mzqzk0i",
+    "reddit_1lkiugc_mzsqqwz",
+    "reddit_1tsx0f1_ooycfn8",
+    "twitter_2059681636359270509"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kl4k5p_ms0pvvv",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames one political group for making it hard to take the other side seriously",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "impossible for me to like anyone in the Republican/MAGA group",
+        "rationale": "The post draws a divide between an in-group sentiment and an out-group label."
+      },
+      {
+        "message_id": "twitter_2059681636359270509",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Immigration / DACA / Dream Act",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "DACA is turning 14... urging Congress to support the Dream Act",
+        "rationale": "The central subject is immigration policy tied to DACA and the Dream Act."
+      },
+      {
+        "message_id": "twitter_2059681636359270509",
+        "feature_name": "call_to_action",
+        "feature_value": "Direct appeal to the reader to contact Congress",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Will you join me in urging Congress",
+        "rationale": "It explicitly asks the audience to take political action."
+      },
+      {
+        "message_id": "reddit_1kp51f1_msv7kg7",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "Uses gendered insult to disparage a party",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "The GOP is full of pussies.",
+        "rationale": "The text uses mocking language to attack an actor (GOP)."
+      },
+      {
+        "message_id": "reddit_1kp51f1_msv7kg7",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "Political party (GOP / Democrats in mirror) attacked via insult",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "The GOP is full of pussies.",
+        "rationale": "A specific political organization is the target of negative characterization."
+      },
+      {
+        "message_id": "reddit_1l6jnqp_mwpbia3",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses sexualized slur/insult toward a person addressing vote/ICE",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Bitch, you voted for all this shit.",
+        "rationale": "Contains explicit derogatory language aimed at another user/figure."
+      },
+      {
+        "message_id": "bluesky_646783655a55f992667fd239c783b32586b52df352f7f5fd6b51f7153c7681cf",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Insults opponents as 'fucking idiots'",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "People that argue against stricter gun laws are fucking idiots.",
+        "rationale": "The post uses strong profanity paired with dehumanizing/insulting language."
+      },
+      {
+        "message_id": "reddit_1lk9fco_mzqzk0i",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Direct imperative asking a target to shut up",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "tell that bumbling orange twat to \u201cshut the fuck up\u201d",
+        "rationale": "The message embeds a direct command targeted at an identifiable figure/persona."
+      }
+    ]
+  }
+}

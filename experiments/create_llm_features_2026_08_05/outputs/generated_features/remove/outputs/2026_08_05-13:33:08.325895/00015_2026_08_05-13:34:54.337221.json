@@ -1,0 +1,94 @@
+{
+  "batch_id": 15,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_68ba2c62a072efcb3c266284c1ccb4156c7d9d9f871631d121d36ad7bbf872a7",
+    "reddit_1kg5qlk_mqwn2q5",
+    "reddit_1lihh6h_mzcpoe8",
+    "reddit_1linlp2_mzdzafl",
+    "reddit_1llzlg3_n04uxu7",
+    "reddit_1tr2x1s_ookpm7h",
+    "reddit_1tu26w6_op6qbef",
+    "reddit_1u1fnvf_oqq7ju0",
+    "reddit_1u237rb_oqucppz",
+    "twitter_2061756274769862675"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1tr2x1s_ookpm7h",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "No explicit punctuation, but heavy insult phrasing without hedging",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Conservative christian small penis power.",
+        "rationale": "The post uses direct sexual/insult lexicon aimed at a political identity, indicating an abrasive register."
+      },
+      {
+        "message_id": "reddit_1linlp2_mzdzafl",
+        "feature_name": "short_approx_token_length_band_short",
+        "feature_value": "Very short (single sentence)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "This is another example of how stupid Trump is.",
+        "rationale": "Single brief clause targets a specific political figure with an evaluative label."
+      },
+      {
+        "message_id": "bluesky_68ba2c62a072efcb3c266284c1ccb4156c7d9d9f871631d121d36ad7bbf872a7",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Profanity/sexual vulgarity used",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "shooting the shit",
+        "rationale": "Use of vulgar profanity increases tone harshness and may make content more likely to be removed."
+      },
+      {
+        "message_id": "bluesky_68ba2c62a072efcb3c266284c1ccb4156c7d9d9f871631d121d36ad7bbf872a7",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "Multiple named entities (TSA, ICE, major airports; Prez Dingleberry; GOP)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "TSA agents",
+        "rationale": "The sentence packs many institutional and party references, producing dense named-entity political content."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqq7ju0",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Leak/cover-up insinuations with escalating wrongdoing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "All that's left to leak is that he raped and molested",
+        "rationale": "Framed as hidden/ongoing wrongdoing to be revealed, using escalation logic consistent with conspiracy-like insinuation."
+      },
+      {
+        "message_id": "reddit_1u237rb_oqucppz",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blame depends on which side loses; party-based us/them logic",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "it's not rigged if a dem loses",
+        "rationale": "Conditional blame attribution based on party outcomes creates an adversarial in-group/out-group narrative."
+      },
+      {
+        "message_id": "reddit_1tu26w6_op6qbef",
+        "feature_name": "call_to_action",
+        "feature_value": "Explicit preference for legal outcome/record-keeping",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I want a judge to rule against it so there a record of it being squashed.",
+        "rationale": "Directly states a desired action/outcome (judge/court decision), reflecting persuasive/advocacy intent."
+      },
+      {
+        "message_id": "reddit_1lihh6h_mzcpoe8",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Imperative instructions to perform illegal action",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Then do it fucking illegally.",
+        "rationale": "Uses imperative structure directing the audience to take action, increasing confrontational intent."
+      }
+    ]
+  }
+}

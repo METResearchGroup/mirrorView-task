@@ -2,7 +2,7 @@
 
 ## 2026-08-05
 
-1. Stood up a class-conditional keep/remove LLM feature pipeline (generate → Titan embed → HDBSCAN+KMeans cluster → LLM label) under `experiments/create_llm_features_2026_08_05/`, with live smoke on 10 posts/class and production 500/500 gated on smoke approval. [PR #46](https://github.com/METResearchGroup/mirrorView-task/pull/46)
+1. Completed the keep/remove LLM feature pipeline under `experiments/create_llm_features_2026_08_05/`: 500+500 production sample → 50+50 feature prompts → 800 Titan embeddings → HDBSCAN labels (11 keep / 13 remove clusters) with dual-method PNGs and `RESULTS.md`. [PR #46](https://github.com/METResearchGroup/mirrorView-task/pull/46)
 2. Added a keep/remove × platform crosstab experiment for Study Phase 2 Part 2 modal labels (Bluesky / Reddit / Twitter), with a runnable script and terse RESULTS table. [PR #42](https://github.com/METResearchGroup/mirrorView-task/pull/42)
 
 ## 2026-08-03

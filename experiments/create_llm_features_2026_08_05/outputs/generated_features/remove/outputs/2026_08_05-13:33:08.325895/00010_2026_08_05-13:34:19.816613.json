@@ -1,0 +1,94 @@
+{
+  "batch_id": 10,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_9b99ba7c1bd4a6e62b87f68446244163fbb47cab53f546eef1eb8156bcba1a34",
+    "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3d20d51707695c230d1a25e3f8fcb",
+    "bluesky_f314fb6f2dd0a9632fa4e67b40579263ecdb0bbd3930f1882045273dda50ca14",
+    "reddit_1l4m5l4_mwb0jov",
+    "reddit_1tnobm9_onvexio",
+    "reddit_1tuttj1_opf3fiy",
+    "reddit_1tytmjd_oq9pp0w",
+    "reddit_1u2almy_oqxyac4",
+    "twitter_2061737852749406424",
+    "twitter_2061829951653904550"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1u2almy_oqxyac4",
+        "feature_name": "high_political_insult_attacks",
+        "feature_value": "Direct dehumanizing/derogatory insults aimed at a political party",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats are spineless cowards. All they can do is wail and cry in the corner.\"",
+        "rationale": "Uses strong derogatory labeling and mocking behavior claims about an opposing political group."
+      },
+      {
+        "message_id": "reddit_1u2almy_oqxyac4",
+        "feature_name": "targeted_party_contrast_us_them",
+        "feature_value": "US-vs-them framing via opponent vs opponent (Democrats vs Democrats counterpart in mirror)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Democrats\" / \"Republicans\"",
+        "rationale": "Blame/praise is directed at an entire political party rather than an individual or policy detail."
+      },
+      {
+        "message_id": "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3f8fcb",
+        "feature_name": "selective_enforcement_discrimination_framing",
+        "feature_value": "Claims laws are selectively enforced to deny rights to a racial group",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"gun laws selectively enforced against almost exclusively minorities\"",
+        "rationale": "Explicit discrimination/victimhood mechanism is asserted, linking enforcement to racial oppression."
+      },
+      {
+        "message_id": "bluesky_c918b2404bac9985c0e1b612f356dcfef7e3f8fcb",
+        "feature_name": "gun_policy_second_amendment_rights_topic",
+        "feature_value": "Gun laws + rights denial/equal rights discussion",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"gun laws\" \"same rights\"",
+        "rationale": "Primary topic is firearms regulation framed as impacting constitutional/rights outcomes."
+      },
+      {
+        "message_id": "twitter_2061829951653904550",
+        "feature_name": "economic_cause_claim_offshoring",
+        "feature_value": "Causal claim about hollowing out due to manufacturing moving + hiring foreigners",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The Rust Belt hollowed out when manufacturing moved to Asia.\"",
+        "rationale": "States a direct causal explanation for economic decline tied to labor/offshoring."
+      },
+      {
+        "message_id": "twitter_2061829951653904550",
+        "feature_name": "elite_corporation_blame_component",
+        "feature_value": "Blame directed to corporations/greed as an agent",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"corporations chose greed over workers\"",
+        "rationale": "Attributes negative outcomes to a powerful corporate actor/class, not to neutral factors."
+      },
+      {
+        "message_id": "twitter_2061737852749406424",
+        "feature_name": "taboo_profanity_sexual_content",
+        "feature_value": "Sexual/verbal taboo used as insult/derogation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"butt fucked\"",
+        "rationale": "Contains explicit sexual taboo language used to demean a political stance."
+      },
+      {
+        "message_id": "reddit_1tuttj1_opf3fiy",
+        "feature_name": "conditional_future_hypothesis_structure",
+        "feature_value": "If-then structure about a hypothetical test of support",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If Trump got the same tattoo tomorrow fully knowing what it was his support would drop\"",
+        "rationale": "Uses conditional logic to predict political support change under a specific scenario."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 4,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_69ed8454f5fbe1b7bd473216f68dacc622bddf406f5612ab87a078912893ccaf",
+    "bluesky_9e51d4e6682bf24031677356d3394122d754937aaa4f8906bc7c3a0305f812ce",
+    "bluesky_f9bf2fcd51d018b840d7a10dad073844e8e1a010d40f2d046d3b6e34687bf39f",
+    "reddit_1kisfrq_mrjxs61",
+    "reddit_1kp0psp_mswcimf",
+    "reddit_1tiu061_omxazw9",
+    "twitter_2060717033612878133",
+    "twitter_2061064210269024336",
+    "twitter_2061781388961989046",
+    "twitter_2061808781630083490"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2060717033612878133",
+        "feature_name": "informal_question_direct_suestion",
+        "feature_value": "Rhetorical/clarifying question to the reader",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"what is so difficult here ?\"",
+        "rationale": "The post ends with a direct 'what is so difficult' question used rhetorically."
+      },
+      {
+        "message_id": "twitter_2060717033612878133",
+        "feature_name": "ingroup_outgroup_migration_framing",
+        "feature_value": "Outgroup targeting via undocumented/must go back home framing",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Undocumented immigrants\" \"must go back home\"",
+        "rationale": "Uses a specific outgroup label ('Undocumented immigrants') plus a removal/expulsion directive."
+      },
+      {
+        "message_id": "bluesky_f9bf2fcd51d018b840d7a10dad073844e8e1a010d40f2d046d3b6e34687bf39f",
+        "feature_name": "named_politician_bill_reference",
+        "feature_value": "Named state representative and gun legislation in courthouses",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Idaho Rep. Brent Crane\" called a bill",
+        "rationale": "Mentions a specific named politician and explicitly refers to a bill."
+      },
+      {
+        "message_id": "bluesky_f9bf2fcd51d018b840d7a10dad073844e8e1a010d40f2d046d3b6e34687bf39f",
+        "feature_name": "nra_rating_and_vote_record_claim",
+        "feature_value": "Cites organizational voting record percentage claim",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"100% voting record with the NRA\"",
+        "rationale": "Contains a concrete factual-style claim about a voting record tied to an organization."
+      },
+      {
+        "message_id": "twitter_2061064210269024336",
+        "feature_name": "call_to_action_defend_group",
+        "feature_value": "Urges showing up to defend threatened rights",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"it shouldn't be hard to show up and defend them.\"",
+        "rationale": "Explicit encouragement toward action ('show up and defend')."
+      },
+      {
+        "message_id": "twitter_2061064210269024336",
+        "feature_name": "us_vs_them_normative_rights_threat",
+        "feature_value": "Rights threatened for minority groups; implies contrast with antagonists",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"When minorities' rights are openly threatened\"",
+        "rationale": "Uses a victim-rights threat framing with an implied opposing side."
+      },
+      {
+        "message_id": "bluesky_69ed8454f5fbe1b7bd473216f68dacc622bddf406f5612ab87a078912893ccaf",
+        "feature_name": "emphatic_expletive_swearing",
+        "feature_value": "Uses strong profanity/intensifiers ('FFS', 'bloody', 'fuck(er)')",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Oh, FFS!\" \"religious fucker\"",
+        "rationale": "Contains explicit taboo language and intensifiers indicating high emotional tone."
+      },
+      {
+        "message_id": "reddit_1kp0psp_mswcimf",
+        "feature_name": "direct_actor_character_attack",
+        "feature_value": "Insult-focused dismissal of a political figure",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump\u000432\u0004\nt\u000432\u0004s abject ignorance and stupidity\"",
+        "rationale": "Uses a direct negative characterization (ignorance/stupidity) of a named leader."
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 28,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_0bd32b5cb97fddccc1185d0086be28753a0bbcc3971faa00ef052c8009bf8dfd",
+    "bluesky_5554dcd26d6889e19d5976d5067bbea7b8dc85147c117a87fb4cf262177b2bdb",
+    "bluesky_5f0fc7b21b3ee7bf3a36f7b938615da6fbc56e3122b18ce017e85a26b0643c86",
+    "reddit_1km298z_ms74es8",
+    "reddit_1kq44b8_mt4eh2d",
+    "reddit_1kub3v4_mu15m2i",
+    "reddit_1l1roga_mvopi6x",
+    "reddit_1tt3vbp_op0184y",
+    "reddit_1tvr63e_opn1sx9",
+    "twitter_2060753103583150325"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2060753103583150325",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Michael Bloomberg is still pushing for ridiculous gun restrictions.",
+        "rationale": "The post is a compact couple of sentences, indicating a short length band."
+      },
+      {
+        "message_id": "twitter_2060753103583150325",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "ridiculous gun restrictions",
+        "rationale": "No explicit profanity/taboo terms appear in the provided text."
+      },
+      {
+        "message_id": "twitter_2060753103583150325",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns/gun control and concealed carry policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "concealed carry policy guide",
+        "rationale": "The content centers on concealed carry and gun restrictions."
+      },
+      {
+        "message_id": "twitter_2060753103583150325",
+        "feature_name": "factual_assertion_vs_speculation",
+        "feature_value": "strong negative assertions framed as unconstitutional mandates",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "ripe with unconstitutional mandates",
+        "rationale": "It states as fact that the policy guide contains unconstitutional mandates."
+      },
+      {
+        "message_id": "twitter_2060753103583150325",
+        "feature_name": "mirror_shift_direction",
+        "feature_value": "targets shift from Bloomberg to Bernie Sanders as anti-gun",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Michael Bloomberg... / Bernie Sanders is still pushing his ridiculous anti-gun agenda.",
+        "rationale": "The mirror rewrite changes the blamed/pushed actor from Bloomberg to Sanders while keeping the anti-gun claim."
+      },
+      {
+        "message_id": "bluesky_0bd32b5cb97fddccc1185d0086be28753a0bbcc3971faa00ef052c8009bf8dfd",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "culture war card about climate, same-sex bathrooms, gun rights",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Culture War(TM) card, with details of your position on climate change, same sex bathrooms and gun rights",
+        "rationale": "The post bundles multiple contentious social topics into a culture-war framing."
+      },
+      {
+        "message_id": "reddit_1tt3vbp_op0184y",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "mocking/derisive framing using 'woke' and profanity",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "so therefore that\u2019s woke and shit.",
+        "rationale": "The phrasing uses a dismissive insult-like construction and taboo modifier."
+      },
+      {
+        "message_id": "reddit_1tvr63e_opn1sx9",
+        "feature_name": "call_to_action_or_actional_intent",
+        "feature_value": "explicit refusal to debate plus intent to mock/ridicule an outgroup",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "I refuse to debate them. I will still mock and ridicule them.",
+        "rationale": "It explicitly states communicative behavior toward the targeted political group."
+      }
+    ]
+  }
+}

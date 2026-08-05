@@ -1,0 +1,94 @@
+{
+  "batch_id": 37,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_cfd97f28ccd90b795234a873eef857d5d127abb83dbba5ca315ea7376948fe4a",
+    "bluesky_f1d1cda2371c1aacbb2d9d6ed3e057a655349134207ed6ba75c77107911cfcde",
+    "reddit_1kc0109_mpz1fdv",
+    "reddit_1tb0kz2_oldpduo",
+    "reddit_1tsv1fn_ooy36yf",
+    "reddit_1tvr63e_opiuoso",
+    "twitter_2059788511419531334",
+    "twitter_2060042991528513648",
+    "twitter_2060361295967228042",
+    "twitter_2061567089517961656"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_f1d1cda2371c1aacbb2d9d6ed3e057a655349134207ed6ba75c77107911cfcde",
+        "feature_name": "second_amendment_framing",
+        "feature_value": "Explicit reference to the Second Amendment and gun policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"40 years of white liberals\" trying to undermine the second amendment",
+        "rationale": "The post centers its argument on Second Amendment undermining and related gun-policy disputes."
+      },
+      {
+        "message_id": "bluesky_f1d1cda2371c1aacbb2d9d6ed3e057a655349134207ed6ba75c77107911cfcde",
+        "feature_name": "us_vs_them_colored_by_race_ideology",
+        "feature_value": "Blame attributed to white liberals/conservatives",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"white liberals\" / \"white conservatives\"",
+        "rationale": "The speaker contrasts an outgroup ideological/racial grouping as the actor driving the alleged policy change."
+      },
+      {
+        "message_id": "reddit_1kc0109_mpz1fdv",
+        "feature_name": "profanity_direct_rejection",
+        "feature_value": "Uses insulting profanity to dismiss opponents",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck off.\" / \"fuck right off.\"",
+        "rationale": "The post employs strong profanity as a direct dismissal of a group."
+      },
+      {
+        "message_id": "reddit_1kc0109_mpz1fdv",
+        "feature_name": "ingroup_outgroup_membership_ownership_rights",
+        "feature_value": "Claims long-term belonging/ownership vs newcomers",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"those people whose families have been here for generations think they own the place\"",
+        "rationale": "It frames legitimacy as tied to generational membership and asserts a right to decide who belongs."
+      },
+      {
+        "message_id": "reddit_1tsv1fn_ooy36yf",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Begins with dependency qualifier then offers aligned/disaligned positions",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Depends on the topic.\"",
+        "rationale": "The message explicitly conditions its stance on the topic before stating support and disagreement."
+      },
+      {
+        "message_id": "twitter_2060042991528513648",
+        "feature_name": "bodily_autonomy_normative_moral_language",
+        "feature_value": "Non-negotiable rights framing and coercion/moral claims",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Reproductive health is non-negotiable\" / \"right to make decisions\"",
+        "rationale": "The post uses strong normative language about rights, autonomy, and freedom from coercion."
+      },
+      {
+        "message_id": "twitter_2060042991528513648",
+        "feature_name": "second_person_free_from_coercion_implied_argument",
+        "feature_value": "Directly argues against coercion with moral justification",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"free from coercion.\"",
+        "rationale": "The communicative intent is persuasive/justificatory, grounding opposition to restrictions in moral/righs-based rhetoric."
+      },
+      {
+        "message_id": "twitter_2060361295967228042",
+        "feature_name": "hashtag_dense_emotive_messaging",
+        "feature_value": "Very high hashtag density + strong emotive labels (horror/tragedy)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#IllegalAlien\" \"#DACA\" \"#MassDeportationsNow\" \"#deportthemall\"",
+        "rationale": "The post packages policy conflict around a headline-style event using many hashtags and emotive descriptors."
+      }
+    ]
+  }
+}

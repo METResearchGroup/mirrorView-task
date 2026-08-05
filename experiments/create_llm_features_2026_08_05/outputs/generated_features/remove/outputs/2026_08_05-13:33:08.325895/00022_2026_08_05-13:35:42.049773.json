@@ -1,0 +1,94 @@
+{
+  "batch_id": 22,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_92bd7b015db41054f87c6818460f6cc16949b37c22618f7b516e48737f91c88f",
+    "bluesky_ebe1bac9d7a9764fc78e58a986c1f2174514a149d896438a9d3bdbc868a73f32",
+    "bluesky_fec21c50c5d43a9fa639c803fa0c3358341c6a3ac843538f2d1429feaa2f8c3c",
+    "reddit_1kp4a6b_msvk9fe",
+    "reddit_1kpwu8r_mt36qxh",
+    "reddit_1tvll8k_ophzc2o",
+    "reddit_1txvz2c_oq0e8fv",
+    "twitter_2059708545470263644",
+    "twitter_2061802548437074115",
+    "twitter_2061822638415073361"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kpwu8r_mt36qxh",
+        "feature_name": "profanity_taboo_none_but_insulting_intensity",
+        "feature_value": "Uses direct derogatory insult ('stupid') toward an outgroup (implied people hiding info).",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"they are too stupid to realize\"",
+        "rationale": "Linked-fate removals are often associated with hostile, blame-centric language that targets groups as incompetent/malicious."
+      },
+      {
+        "message_id": "reddit_1tvll8k_ophzc2o",
+        "feature_name": "us_vs_them_targeting_with_elite_corruption_frame",
+        "feature_value": "Binary framing of 'ugly filth/corruption' vs opposition as exposing/dragging out rot.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"all the ugly filth and corruption of the system\" / \"drag into the open\"",
+        "rationale": "Semantic opposition and directionality toward specific political actors with corruption rhetoric can trigger removal under linked-fate norms."
+      },
+      {
+        "message_id": "twitter_2061822638415073361",
+        "feature_name": "abolition_or_must_be_action_call",
+        "feature_value": "Explicit abolition call: abolish UNRWA/UN support terrorism.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"UNRWA & U.N SUPPORT TERROR & MUST BE ABOLISHED.\"",
+        "rationale": "Strong policy prescription targeting organizations (abolition) is a salient removal cue."
+      },
+      {
+        "message_id": "twitter_2061802548437074115",
+        "feature_name": "local_election_candidate_call_to_action",
+        "feature_value": "Direct urging to local voters to choose a named candidate; includes violent/decay-style negatives.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"vote for SPENCER\" / \"Help yourselves today people of L A\"",
+        "rationale": "Candidate-specific mobilization language directed at a geographic locality is clearly present."
+      },
+      {
+        "message_id": "twitter_2061802548437074115",
+        "feature_name": "conditional_unless_structure_with_negative_outcomes",
+        "feature_value": "Uses 'UNLESS YOU PERFER' conditional threat-like structure enumerating harms.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"UNLESS YOU PERFER LIVING IN A FILTH, CRIME ,NO WATER FOR FIRES\"",
+        "rationale": "Conditionals that predicate undesirable outcomes on choosing differently are a common linked-fate moderation cue."
+      },
+      {
+        "message_id": "reddit_1txvz2c_oq0e8fv",
+        "feature_name": "rhetorical_question_license_quote_comparison",
+        "feature_value": "Refers to an argument via quoted analogy and then asserts binary truth/violence.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Ah yes, the same logic as 'it's not rape-rape\"",
+        "rationale": "Analogical framing that escalates seriousness (via rape-insinuation/insurrection parallel) adds aggressive rhetorical structure."
+      },
+      {
+        "message_id": "bluesky_fec21c50c5d43a9fa639c803fa0c3358341c6a3ac843538f2d1429feaa2f8c3c",
+        "feature_name": "paris_agreement_and_climate_abandonment_reference",
+        "feature_value": "Mentions Paris Agreement and claims US abandoned international commitment.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"pulled out of the Paris agreement\"",
+        "rationale": "Specific international climate-policy reference provides clear topic anchoring for removal decisions."
+      },
+      {
+        "message_id": "twitter_2059708545470263644",
+        "feature_name": "abortion_murder_religious_argumentation_with_hashtag",
+        "feature_value": "Religious moral condemnation of abortion; includes #putthatinyourpipe hashtag and claims 'abortion is murder'.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"abortion is murder\" / \"goes against the Word of God\" / \"#putthatinyourpipe\"",
+        "rationale": "Normative moral language plus explicit religious framing around abortion is directly observable."
+      }
+    ]
+  }
+}

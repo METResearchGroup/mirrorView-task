@@ -1,0 +1,94 @@
+{
+  "batch_id": 0,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_0adc8f441279c4feef55a2a5094a1803aecbf64f1cdf46536e8d9f9b16d08f12",
+    "bluesky_e33e77c87442bed068fac31f5ea7d6bafa6b245e7fe52329e4ee0969e85608f4",
+    "bluesky_ed4e6b2ebc2d0175171c6e1d3ed54dccc405e18fc6b505ed478ce2b36d90ea6d",
+    "reddit_1l48h1m_mw71clk",
+    "reddit_1l5ve6e_mwlu3ze",
+    "reddit_1ljukdf_mzmrewd",
+    "reddit_1t9dxnw_ol60a9d",
+    "reddit_1tws6al_opr0kf7",
+    "twitter_2060103043576709566",
+    "twitter_2060947308586373373"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1l48h1m_mw71clk",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none; contains strong insult terms (\u201cnarcissistic fascists\u201d)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"two dumb narcissistic fascists\"",
+        "rationale": "The post uses taboo-political insult language aimed at individuals/ideologues rather than neutral description."
+      },
+      {
+        "message_id": "reddit_1l48h1m_mw71clk",
+        "feature_name": "ridicule_or_mockery",
+        "feature_value": "dismisses claim as \u201ctheatre\u201d and insults as a public breakup",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"lacks the forethought and impulse control for this to be theatre\"",
+        "rationale": "It mocks the situation as performative and characterizes actors as irrational, undermining seriousness."
+      },
+      {
+        "message_id": "reddit_1l48h1m_mw71clk",
+        "feature_name": "criticized_actor_type",
+        "feature_value": "US political figure/side (Trump in original; Biden in mirror)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump lacks the\" / \"Biden never had\"",
+        "rationale": "The attack targets a named political leader, making directionality salient."
+      },
+      {
+        "message_id": "reddit_1tws6al_opr0kf7",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "implies recurring election fraud attributed to one party",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Almost every time there\u2019s actual election fraud, it\u2019s Republicans.\"",
+        "rationale": "The phrasing suggests a persistent pattern of illicit wrongdoing rather than isolated incidents."
+      },
+      {
+        "message_id": "reddit_1tws6al_opr0kf7",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "party-blame attribution (Republicans vs Democrats in mirror)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"it\u2019s Republicans\" / \"it\u2019s Democrats running the cities where it happens\"",
+        "rationale": "It constructs an in-group/out-group dynamic by assigning blame to opposing parties."
+      },
+      {
+        "message_id": "twitter_2060947308586373373",
+        "feature_name": "call_to_action",
+        "feature_value": "proposal to change voting rules using gun-control analogy",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Lets make voting as difficult as it is to buy a gun.\"",
+        "rationale": "The post uses an imperative to advocate a specific policy direction."
+      },
+      {
+        "message_id": "twitter_2060947308586373373",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "imperative-style directive (\"Let's\" framing)",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Lets make\"",
+        "rationale": "It addresses the audience collectively through a directive construction rather than stating an opinion passively."
+      },
+      {
+        "message_id": "bluesky_ed4e6b2ebc2d0175171c6e1d3ed54dccc405e18fc6b505ed478ce2b36d90ea6d",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "none; strong rights-violation wording",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"blatant violation of people\u2019s second amendment rights\"",
+        "rationale": "It employs high-intensity legal/rights language that signals moral/legal condemnation."
+      }
+    ]
+  }
+}

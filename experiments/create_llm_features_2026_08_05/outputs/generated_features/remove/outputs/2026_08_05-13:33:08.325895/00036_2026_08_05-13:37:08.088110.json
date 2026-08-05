@@ -1,0 +1,94 @@
+{
+  "batch_id": 36,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_4359735d3927eacfd6e328ed98ecf07bbb5ec7548c3e28565a93dc194a8e2b43",
+    "bluesky_af8db3c07e4084ded55da8ad826abec9361c1dd80d919e682119edbc52b1667d",
+    "reddit_1kc4qta_mq0uym3",
+    "reddit_1kr82xj_mtge5yd",
+    "reddit_1l4tpmm_mwds8su",
+    "reddit_1lhi189_mz4jfi9",
+    "reddit_1td5imr_olzf967",
+    "reddit_1tzwh8s_oqfvgpw",
+    "twitter_2061826508642038254",
+    "twitter_2061828055736230093"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kc4qta_mq0uym3",
+        "feature_name": "group_label_topic_opposition_plural",
+        "feature_value": "Uses repeated party labels as the main targets (Republicans/Democrats)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans\" ... \"Fuck every single Republican\"",
+        "rationale": "The post is structured around an across-the-board critique of a political party group."
+      },
+      {
+        "message_id": "reddit_1kc4qta_mq0uym3",
+        "feature_name": "profanity_taboo_mass_insult",
+        "feature_value": "Strong profanity directed at a political group",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck every single Republican.\"",
+        "rationale": "Uses explicit profanity as part of the dismissal/condemnation of the target group."
+      },
+      {
+        "message_id": "reddit_1kr82xj_mtge5yd",
+        "feature_name": "profanity_taboo_mass_insult",
+        "feature_value": "Short profanity-based attack on a politician + followers",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck trump and his cult.\"",
+        "rationale": "The core content is an explicit profanity attack."
+      },
+      {
+        "message_id": "twitter_2061826508642038254",
+        "feature_name": "tax_inequality_corruption_theme",
+        "feature_value": "Claim about who pays taxes plus corruption/illegal-immigrant blame",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"The poor dont pay taxes\" ... \"corruption\" ... \"illegal foreigners\"",
+        "rationale": "Centers on fiscal responsibility framed with corruption and immigration accusations."
+      },
+      {
+        "message_id": "bluesky_4359735d3927eacfd6e328ed98ecf07bbb5ec7548c3e28565a93dc194a8e2b43",
+        "feature_name": "firearms_policy_red_flag_laws_reference",
+        "feature_value": "Gun-control policy with named mechanism (red flag laws)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"There are red flag laws\"",
+        "rationale": "Explicitly references firearm regulation via red flag laws."
+      },
+      {
+        "message_id": "bluesky_4359735d3927eacfd6e328ed98ecf07bbb5ec7548c3e28565a93dc194a8e2b43",
+        "feature_name": "dehumanizing_slur_in_group",
+        "feature_value": "Dehumanizing language for target individuals",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Neanderthals\"",
+        "rationale": "Uses a dehumanizing label to characterize the people being criticized."
+      },
+      {
+        "message_id": "reddit_1l4tpmm_mwds8su",
+        "feature_name": "conspiracy_like_personal_immorality_claim",
+        "feature_value": "Accuses a specific ideological actor of profiteering/fraud and ends with obscene dismissal",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"billionaire to dirt poor\" ... \"dying overdosed on fentanyl\" ... \"Fuck nazis.\"",
+        "rationale": "Frames the target as exploiting others and highlights wrongdoing through extreme moral/personal claims."
+      },
+      {
+        "message_id": "reddit_1td5imr_olzf967",
+        "feature_name": "counterfactual_and_rhetorical_question_sequence",
+        "feature_value": "Conditional concession plus series of rhetorical/leading questions about voter perspectives",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Even if I grant that, is that not better\" ... \"Do you think\"",
+        "rationale": "Uses an 'even if' concession and questions to steer interpretation of political/legal changes."
+      }
+    ]
+  }
+}

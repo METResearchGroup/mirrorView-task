@@ -1,0 +1,94 @@
+{
+  "batch_id": 35,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_54d85d53c1f44acf107b8eca5c3d5cc90b3315450720f31cbf997d6542540f5d",
+    "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+    "bluesky_90b38a232b2c31c6af781079b030ff3ffe5f8e31243ac24b77807ca8b249cc2a",
+    "reddit_1kigsq6_mri9gdh",
+    "reddit_1l33b15_mvxr34a",
+    "reddit_1lk4crl_mzpo02d",
+    "reddit_1llpslt_n04c3in",
+    "reddit_1tux6at_opdam72",
+    "reddit_1u1fnvf_oqph5rz",
+    "twitter_2061538025637642511"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+        "feature_name": "conditional_counterfactual_if_then",
+        "feature_value": "Uses an 'IF tomorrow...' counterfactual conditional comparing two policies",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"IF tomorrow, 17 states chose to completely abolish the Second Amendment\"",
+        "rationale": "The post is structured as a hypothetical conditional that invites a moral/political judgment about rights and abortion."
+      },
+      {
+        "message_id": "bluesky_81ceeb2d44f707be4c42a772e990165362ba3baaaee241cdc49cd3bc571fb045",
+        "feature_name": "second_amendment_abortion_linked_comparison",
+        "feature_value": "Explicit cross-topic comparison (Second Amendment vs abortion)",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"abolish the Second Amendment\" ... \"That's exactly what happened with abortion.\"",
+        "rationale": "A linked-fate style comparison is signaled by directly mapping one policy-rights claim onto abortion."
+      },
+      {
+        "message_id": "reddit_1l33b15_mvxr34a",
+        "feature_name": "religious_actor_insulting",
+        "feature_value": "Uses 'Jesus' as a partisan proxy and insults",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Republican Jesus is kind of a dick.\"",
+        "rationale": "Attacking a political actor through an ironic religious label is a salient incendiary cue for moderation."
+      },
+      {
+        "message_id": "reddit_1l33b15_mvxr34a",
+        "feature_name": "ridicule_mockery",
+        "feature_value": "Direct mocking/derogatory phrasing",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"is kind of a dick\"",
+        "rationale": "The language uses blunt ridicule rather than policy discussion."
+      },
+      {
+        "message_id": "twitter_2061538025637642511",
+        "feature_name": "immigration_procedure_backlog_specifics",
+        "feature_value": "Specific procedural claim about immigration courts' 'mega master' hearings and due process",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"mega master\" hearings. Show up late or miss it, and you can get a deportation order on the spot.",
+        "rationale": "Concrete institutional/procedural details can make the post inflammatory and linked to perceived enforcement harms."
+      },
+      {
+        "message_id": "twitter_2061538025637642511",
+        "feature_name": "causal_claim_system_overload",
+        "feature_value": "Cause-effect framing about open-border policies leading to backlog",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"open-border policies dumped millions of cases into the system\"",
+        "rationale": "The post asserts a causal chain that assigns blame and emphasizes downstream consequences."
+      },
+      {
+        "message_id": "reddit_1llpslt_n04c3in",
+        "feature_name": "targeted_blasphemy_or_slur_teasing_about_deportation",
+        "feature_value": "Threatening deportation tied to a political group identity",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"until trump deports their asses.\"",
+        "rationale": "A dehumanizing insult plus deportation threat targets a group and escalates conflict."
+      },
+      {
+        "message_id": "reddit_1u1fnvf_oqph5rz",
+        "feature_name": "elite_vs_populist_us_them_overthrow_narrative",
+        "feature_value": "Insurrection/coup language; 'criminals and domestic terrorists'; 'It's a coup/ takeover'",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"It's a coup.\"",
+        "rationale": "The post uses extreme delegitimization (criminality/domestic terrorism + coup/takeover) that signals high-risk linked-fate style rhetoric."
+      }
+    ]
+  }
+}

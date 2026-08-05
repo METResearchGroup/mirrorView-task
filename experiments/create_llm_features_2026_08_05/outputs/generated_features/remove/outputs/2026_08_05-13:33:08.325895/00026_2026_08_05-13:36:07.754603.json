@@ -1,0 +1,94 @@
+{
+  "batch_id": 26,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_762b8063ded8ec072519ca1b696471677e0f41f88789554f044883cf172d3e9a",
+    "bluesky_e3a9b5c8e84a30af1e92576b920594bb33809356e5eb897b11609bd5eaa73785",
+    "bluesky_f74c9f754b2dafd2c5e4f7134f8ba93ca0daa9a7f02c65ac139cebab662eccbe",
+    "reddit_1kpxd21_mt2b10m",
+    "reddit_1ktwzfn_mtxjm0l",
+    "reddit_1kzpmpd_mv9yp3h",
+    "reddit_1lcrv72_my47tis",
+    "reddit_1leqcgj_mykd9al",
+    "reddit_1ts91q8_oouzxky",
+    "reddit_1tt6s61_op123zh"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_762b8063ded8ec072519ca1b696471677e0f41f88789554f044883cf172d3e9a",
+        "feature_name": "second_amendment_rights_gun_framing",
+        "feature_value": "Invokes 2nd Amendment / right to carry a gun.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"2nd Amendment\" right to carry a gun",
+        "rationale": "The post centers gun-rights/2nd-amendment legitimacy as the core subject."
+      },
+      {
+        "message_id": "reddit_1lcrv72_my47tis",
+        "feature_name": "culture_war_hypocrisy_maga_makes_it_hard_frame",
+        "feature_value": "Accuses political side of hypocrisy with intense enumerated ridicule.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The fucking hypocrisy. MAGA makes it so hard to WANT to care about America.\"",
+        "rationale": "Uses moralized hypocrisy language tied to a partisan culture-war identity."
+      },
+      {
+        "message_id": "reddit_1leqcgj_mykd9al",
+        "feature_name": "doom_statement_predicts_country_ruin",
+        "feature_value": "Claims the named actor will ruin the entire country.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Literally Trump/RepubliKlans will ruin the entire country.\"",
+        "rationale": "Contains an extreme negative causal prediction about political opponents."
+      },
+      {
+        "message_id": "reddit_1ts91q8_oouzxky",
+        "feature_name": "policy_prescription_inclusion_argument",
+        "feature_value": "Argues against legalizing harmful acts and proposes policy prerequisites (UBI/sex-bots).",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"That doesnt mean we make those things legal until we have UBI and sex-bots available to all.\"",
+        "rationale": "Moves from hypothetical justification to an explicit policy prescription/conditional rationale."
+      },
+      {
+        "message_id": "reddit_1tt6s61_op123zh",
+        "feature_name": "blame_attribution_without_disclaimer_language",
+        "feature_value": "Claims one named figure is uniquely responsible; accountability framed as separate.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is uniquely responsible for all the shit he's doing.\"",
+        "rationale": "Uses direct blame attribution and causal responsibility framing."
+      },
+      {
+        "message_id": "reddit_1lcrv72_my47tis",
+        "feature_name": "enumeration_with_emphatic_repetition",
+        "feature_value": "Intensifies with repeated profanity/emphatic sequence \"Every. Fucking. Republican.\"",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Every. Fucking. Republican.\"",
+        "rationale": "Structured repetition/enumeration amplifies collective blame toward a party."
+      },
+      {
+        "message_id": "bluesky_f74c9f754b2dafd2c5e4f7134f8ba93ca0daa9a7f02c65ac139cebab662eccbe",
+        "feature_name": "high_punctuation_and_all_caps_emphasis",
+        "feature_value": "Uses multiple exclamation markers and ALL CAPS emphasis plus threats to block.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"SO FUCKING TIRED\" ... \"FULL BORE\"",
+        "rationale": "Highly emphatic wording and capitalization signal strong affect and confrontational framing."
+      },
+      {
+        "message_id": "reddit_1kpxd21_mt2b10m",
+        "feature_name": "misogynistic_or_dehumanizing_target_label_use",
+        "feature_value": "Uses demeaning labels \"useful idiot\" / \"useful puppet\" and \"corporate lackeys\" directed at an opposing figure.",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"useful idiot\" ... \"corporate lackeys\"",
+        "rationale": "Targets specific political actors via degrading labels, strengthening us-vs-them antagonism."
+      }
+    ]
+  }
+}

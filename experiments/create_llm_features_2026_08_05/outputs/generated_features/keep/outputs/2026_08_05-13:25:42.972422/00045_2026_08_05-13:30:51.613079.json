@@ -1,0 +1,94 @@
+{
+  "batch_id": 45,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_3f3f09aa3e4e573851fc54b7c5e5fe8f6c695f52660d0466fa1ce702f73b3604",
+    "bluesky_5e61d4f0e463acc30041c9a3b72091ebd8f9bc96a12639f5f43f65eb9fe96eca",
+    "bluesky_e47f449ca615b63511739465168871f80ced3d729d85f6054fac5871e904e928",
+    "bluesky_f5f37d2e1f8745b5dde9495ec30394d325a512afe9c28e0580f20c0b21b7f131",
+    "reddit_1t6icvj_okhzxat",
+    "reddit_1tyojpm_oqco8dy",
+    "twitter_2061453779908927727",
+    "twitter_2061576511853940916",
+    "twitter_2061714432624132199",
+    "twitter_2061827764114665831"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061576511853940916",
+        "feature_name": "conditional_if_then_citizenship",
+        "feature_value": "If-then rule tying residence/work behavior and a test to earning citizenship",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If an immigrant holds down a job for 6 or more months... and passes a citizenship test... they should earn citizenship.\"",
+        "rationale": "Uses an explicit conditional structure to argue for a policy outcome."
+      },
+      {
+        "message_id": "twitter_2061576511853940916",
+        "feature_name": "us_vs_them_immigrant_criteria_framing",
+        "feature_value": "Outgroup/ingroup distinction via immigrant vs societal contribution criteria",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"If an immigrant... hasn't committed any crimes since they arrived...\"",
+        "rationale": "Defines eligibility through a contrasted perspective on newcomers and their alleged behavior."
+      },
+      {
+        "message_id": "bluesky_e47f449ca615b63511739465168871f80ced3d729d85f6054fac5871e904e928",
+        "feature_name": "victimhood_mass_shooting_reference",
+        "feature_value": "References Sandy Hook parents and assault weapon targeting of babies",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Sandy Hook parents\" ... \"their babies were hunted down\"",
+        "rationale": "Introduces a specific high-salience mass-shooting context with victims as central subjects."
+      },
+      {
+        "message_id": "bluesky_e47f449ca615b63511739465168871f80ced3d729d85f6054fac5871e904e928",
+        "feature_name": "normative_moral_language_blame",
+        "feature_value": "Strong moral condemnation of a speaker for causing pain and suffering",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"inflicted more pain and suffering\"",
+        "rationale": "Employs evaluative moral language assigning harm to a named actor."
+      },
+      {
+        "message_id": "bluesky_3f3f09aa3e4e573851fc54b7c5e5fe8f6c695f52660d0466fa1ce702f73b3604",
+        "feature_name": "left_right_issue_flip",
+        "feature_value": "Calls out one side\u2019s focus then proposes a different policy priority (guns vs AIPAC; mirror flips to border vs Second Amendment)",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"leftists... insisting our biggest issue is AIPAC. How about we focus on gun safety regulations?\"",
+        "rationale": "Uses directional partisan framing to redirect blame/attention toward different issues."
+      },
+      {
+        "message_id": "bluesky_3f3f09aa3e4e573851fc54b7c5e5fe8f6c695f52660d0466fa1ce702f73b3604",
+        "feature_name": "topical_statistical_justification",
+        "feature_value": "Quantified claim about child deaths from gun violence",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"gun violence is the #1 cause of death of children ages 1-19\"",
+        "rationale": "Grounds the prescription with a numerical/quantified comparative claim."
+      },
+      {
+        "message_id": "twitter_2061827764114665831",
+        "feature_name": "religio_political_scapegoat_genocide_apartheid_labeling",
+        "feature_value": "Characterizes Israel with extreme delegitimizing labels",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"genocidal, criminal, apartheid state of Israel\"",
+        "rationale": "Uses highly charged terms to morally and politically condemn the targeted entity."
+      },
+      {
+        "message_id": "twitter_2061714432624132199",
+        "feature_name": "hashtag_mention_and_emoji_praise_solidarity",
+        "feature_value": "Hashtag campaign language with multiple emojis and explicit solidarity call",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"On #FestaDellaRepubblica\" ... \"Grazie for standing #WithRefugees!\"",
+        "rationale": "Combines hashtag signaling with affective emoji and an explicit pro-refugee stance."
+      }
+    ]
+  }
+}

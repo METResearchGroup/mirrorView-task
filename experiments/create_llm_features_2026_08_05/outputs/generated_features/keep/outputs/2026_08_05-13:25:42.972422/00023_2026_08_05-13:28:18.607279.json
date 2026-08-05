@@ -1,0 +1,94 @@
+{
+  "batch_id": 23,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_2ae1d353565b2fed200e624da4b0d0c284837e475770381c05df2fd938ab8d23",
+    "reddit_1kr5j8t_mtaoyda",
+    "reddit_1kwohy5_muu2dbj",
+    "reddit_1kxq41x_murapcs",
+    "reddit_1t54vlp_ok86egt",
+    "reddit_1tv1z4j_opfjja9",
+    "reddit_1u276eu_oqveel8",
+    "twitter_2060475859392196795",
+    "twitter_2060510905251561828",
+    "twitter_2061173358561996904"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kwohy5_muu2dbj",
+        "feature_name": "profanity_taboo_language",
+        "feature_value": "Uses strong profanity/insult terms",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"fascist motherfucker\"",
+        "rationale": "The post includes a high-intensity abusive slur/profanity directed at a political actor."
+      },
+      {
+        "message_id": "reddit_1kwohy5_muu2dbj",
+        "feature_name": "call_to_action_impeach_imprison",
+        "feature_value": "Explicit direct call to action (impeach/imprison/recall)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"***Impeach and imprison***\"",
+        "rationale": "A bold imperative demands removal and punishment rather than discussing policy."
+      },
+      {
+        "message_id": "reddit_1kxq41x_murapcs",
+        "feature_name": "ridicule_or_mockery_personal_insult",
+        "feature_value": "Personal mockery via gendered slur and leadership derision",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"crybaby bitch\"",
+        "rationale": "The communication targets an individual with contemptuous language to undermine perceived leadership."
+      },
+      {
+        "message_id": "reddit_1tv1z4j_opfjja9",
+        "feature_name": "us_vs_them_elite_cultural_cues",
+        "feature_value": "Elite-vs-public media catering narrative",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"wealthy people they cater to\"",
+        "rationale": "It frames media behavior as serving an outgroup (wealthy/coastal elites) rather than the public."
+      },
+      {
+        "message_id": "bluesky_2ae1d353565b2fed200e624da4b0d0c284837e475770381c05df2fd938ab8d23",
+        "feature_name": "geographic_independence_referendum_framing",
+        "feature_value": "Scotland independence within UK; references SNP and independence",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Scotland\" ... \"The SNP's independence fantasy\"",
+        "rationale": "The post is centered on a geographic self-determination debate with explicit parties/organizations."
+      },
+      {
+        "message_id": "twitter_2060475859392196795",
+        "feature_name": "party_membership_cross_issue_contrast",
+        "feature_value": "Cross-label mismatch: self-identified party supports opposing issue positions",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"identify as Republicans but support gun control and higher taxes\"",
+        "rationale": "It uses a contrastive structure to assert an inconsistency between party identity and policy views."
+      },
+      {
+        "message_id": "reddit_1kr5j8t_mtaoyda",
+        "feature_name": "factual_assertion_with_loaded_judgment",
+        "feature_value": "Claims about abandonment/lying plus multi-clause accusation chain",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"abandoned any pretense\" ... \"bullshit\"",
+        "rationale": "It presents assertions about another actor\u2019s conduct and reliability, using strong negative judgments."
+      },
+      {
+        "message_id": "twitter_2060510905251561828",
+        "feature_name": "event_counting_and_increase_claim",
+        "feature_value": "Good news framing + closure tally since 2025 (counting rhetoric)",
+        "category": "open_ended",
+        "is_open_ended": true,
+        "evidence_span": "\"We are up to 57 Planned Parenthood closures since the start of 2025!\"",
+        "rationale": "The post relies on a repeated numeric aggregate to emphasize the scale of closures."
+      }
+    ]
+  }
+}

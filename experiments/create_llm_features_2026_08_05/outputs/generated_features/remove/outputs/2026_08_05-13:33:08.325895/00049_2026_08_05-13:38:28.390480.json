@@ -1,0 +1,94 @@
+{
+  "batch_id": 49,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1let2t2_myjhkwv",
+    "reddit_1lf1k51_myljmte",
+    "reddit_1lf2x6s_mylgblv",
+    "reddit_1llkodo_n00qp4w",
+    "reddit_1t54vlp_ok8gay6",
+    "reddit_1tqyx7p_ooky1hc",
+    "twitter_2060708070758416550",
+    "twitter_2061532873908511090",
+    "twitter_2061795440342012025",
+    "twitter_2061827140375441506"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1lf2x6s_mylgblv",
+        "feature_name": "profanity_taboo_slur_heavy",
+        "feature_value": "Uses repeated profanity to attack political figures/media/outgroups.",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Trump, Fuck Faux News, and Fuck this so-called \\\"manosphere\\\".\"",
+        "rationale": "The post contains multiple instances of explicit profanity aimed at political actors and affiliations."
+      },
+      {
+        "message_id": "reddit_1lf2x6s_mylgblv",
+        "feature_name": "list_of_targets_with_repetition",
+        "feature_value": "Triadic repeated structure 'Fuck X, Fuck Y, and Fuck Z'.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Trump, Fuck Faux News, and Fuck this so-called \\\"manosphere\\\".\"",
+        "rationale": "The comma-separated, repeated imperative form targets several entities in a patterned escalation."
+      },
+      {
+        "message_id": "reddit_1t54vlp_ok8gay6",
+        "feature_name": "right_left_insulting_labeling",
+        "feature_value": "Pejorative labels for ideologies/groups (e.g., neo Nazis, brain-dead, Antifa thugs).",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"The brain-dead left...\" / \"...neo nazis\"",
+        "rationale": "The text labels in-group/out-group groups with dehumanizing/insulting ideological terms."
+      },
+      {
+        "message_id": "reddit_1t54vlp_ok8gay6",
+        "feature_name": "us_vs_them_balance_claim",
+        "feature_value": "\u201cSilver lining/upside\u201d justification that frames the opposing group as non-Americans to 'balance out'.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The silver lining is that these people are often not even Americans so it balances out.\"",
+        "rationale": "A justificatory moral/strategic claim is used to rationalize hostility toward the target group."
+      },
+      {
+        "message_id": "reddit_1llkodo_n00qp4w",
+        "feature_name": "questioning_conditional_rhetoric",
+        "feature_value": "Series of rhetorical questions about legality and staying status after crossing/bypassing rules.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Illegal immigrants should stay? Seriously? Cross border illegally and hide long enough and you get to stay?\"",
+        "rationale": "The post uses successive \u201cseriously?\u201d rhetorical questions to challenge an immigration policy outcome."
+      },
+      {
+        "message_id": "reddit_1llkodo_n00qp4w",
+        "feature_name": "immigration_border_policy_domain",
+        "feature_value": "Focus on illegal immigration/crossing borders and deportation/stay permission.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Cross border illegally\" / \"Deport everyone?\"",
+        "rationale": "Core subject matter is border crossing legality and residency/deportation decisions."
+      },
+      {
+        "message_id": "twitter_2061795440342012025",
+        "feature_name": "capitalized_emphatic_infinite_claim",
+        "feature_value": "All-caps exclamatory style ending with 'IT\u2019S NEVER ENDING!!!' (also in mirror).",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"IT\u00195 NEVER ENDING!!!\"",
+        "rationale": "High-intensity capitalization and emphatic punctuation marks strong outrage and extremity of claims."
+      },
+      {
+        "message_id": "twitter_2061795440342012025",
+        "feature_name": "conspiratorial_factuality_without_evidence",
+        "feature_value": "Accusations of election interference/corruption with precise-sounding claims (Ukraine money funnel, fake IDs to vote).",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"China Sent 10\u00195 Of Thousands Of Fake ID\u00195 To Biden Camp To Illegally Vote In Presidential Election!!!\"",
+        "rationale": "The post advances sweeping, conspiratorial allegations presented as assertion (not hedged) about fraud and corruption."
+      }
+    ]
+  }
+}

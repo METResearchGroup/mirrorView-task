@@ -1,0 +1,94 @@
+{
+  "batch_id": 32,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_55b977a1712ca9415b8218ef0128478892598b72c8cad1226723c852b8afff70",
+    "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+    "reddit_1kfohcu_mqts7eb",
+    "reddit_1kg5qlk_mr1z9om",
+    "reddit_1kzqfvt_mv8ka52",
+    "reddit_1l55wkp_mwfemk5",
+    "reddit_1tppsc5_ooasdnq",
+    "reddit_1ts91q8_oox7bzl",
+    "twitter_2061032288096235596",
+    "twitter_2061483491800317980"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061032288096235596",
+        "feature_name": "approx_token_length_band",
+        "feature_value": "long",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Climate change was nothing but a tax grab. Now they need those \u201ccheap fossil fuels\u201d",
+        "rationale": "The post is a multi-sentence statement with several claims and a closing imperative, indicating a long length."
+      },
+      {
+        "message_id": "twitter_2061032288096235596",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "ellipsis and exclamations",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Oh\u2026 so us \u201cconspiracy theorists\u201d were right. Again.",
+        "rationale": "Use of ellipsis plus repeated strong emphasis punctuation is visible."
+      },
+      {
+        "message_id": "twitter_2061032288096235596",
+        "feature_name": "conspiracy_or_denial_framing",
+        "feature_value": "portrays prior dissent as right/denial as wrong; 'conspiracy theorists' label",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Oh\u2026 so us \u201cconspiracy theorists\u201d were right. Again.",
+        "rationale": "The text frames a disputed group (conspiracy theorists) as vindicated and treats opposing views as incorrect."
+      },
+      {
+        "message_id": "twitter_2061032288096235596",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate/environment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Climate change was nothing but a tax grab.",
+        "rationale": "The core topic is climate change and fossil fuels."
+      },
+      {
+        "message_id": "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "guns/gun laws and voting strategy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "join the NRA and vote out the leadership pushing for zero gun laws",
+        "rationale": "Gun legislation and the NRA are central to the proposal."
+      },
+      {
+        "message_id": "bluesky_6bd9e07ddaa9d0a60cde9883940e5b4d355d0696dc7c7eaa791e6997f1ffde73",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "explicit electoral manipulation/primary voting instruction",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "All the Dems need to vote in GOP primaries.",
+        "rationale": "The post provides a direct instruction about how people should vote."
+      },
+      {
+        "message_id": "reddit_1tppsc5_ooasdnq",
+        "feature_name": "hate_or_extremist_ideology_targeting",
+        "feature_value": "ideological insult framing of outgroup",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "I\u2019m not ceding one inch of the USA to the communists.",
+        "rationale": "The post targets an ideological group ('communists') as the threat, with absolute territorial rhetoric."
+      },
+      {
+        "message_id": "reddit_1l55wkp_mwfemk5",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "multiple swear words",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Trump. Fuck MAGA. Fuck the billionaires.",
+        "rationale": "Strong taboo language is used repeatedly to attack political targets."
+      }
+    ]
+  }
+}

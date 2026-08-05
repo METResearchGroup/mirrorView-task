@@ -1,0 +1,21 @@
+{
+  "cluster_id": 9,
+  "label_class": "keep",
+  "n_members": 22,
+  "sampled_feature_ids": [
+    "38_4",
+    "10_0",
+    "36_0",
+    "14_6",
+    "32_0",
+    "9_0",
+    "44_3",
+    "46_0"
+  ],
+  "result": {
+    "cluster_id": 9,
+    "cluster_label": "Profane, punctuation-heavy aggressive condemnation",
+    "definition": "KEEP posts that use taboo/profane language and strong emphatic punctuation (e.g., ellipses/exclamations or emphatic sentence breaks) to deliver an aggressive insult or direct challenge toward a target.",
+    "salience_notes": "The shared pattern is high-intensity rhetorical delivery combining profanity/taboo terms with expressive punctuation and declarative/imperative condemnation."
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 27,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_3b387d9a87a13a61da957859e0f5eb701ded6260ce67fb0060495fb47232c929",
+    "reddit_1ljlipu_mzm5cxs",
+    "reddit_1til7dr_omzmcn6",
+    "reddit_1tlu4l3_onkm5j3",
+    "reddit_1tsv1fn_ooykhbx",
+    "twitter_2059753669495497077",
+    "twitter_2059777848370708856",
+    "twitter_2060435780447633608",
+    "twitter_2061381778602959272",
+    "twitter_2061466289613541635"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061466289613541635",
+        "feature_name": "all_caps_emphasis_lede",
+        "feature_value": "Uses imperative all-caps framing at start (e.g., END THE ...).",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"END THE SCAM:\"",
+        "rationale": "The post begins with an all-caps directive that signals strong framing."
+      },
+      {
+        "message_id": "twitter_2061466289613541635",
+        "feature_name": "civic_process_policy_census_counting",
+        "feature_value": "Focus on U.S. Census inclusion/exclusion and vote fairness.",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"kick illegal aliens out of the U.S. Census\"",
+        "rationale": "The main topic is census counting as a civic representation mechanism."
+      },
+      {
+        "message_id": "twitter_2061466289613541635",
+        "feature_name": "normative_fairness_restore_framing",
+        "feature_value": "Normative moral language about fairness/citizens only.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"restoring fairness to citizens only\"",
+        "rationale": "The argument is justified using fairness/rightness rather than neutral description."
+      },
+      {
+        "message_id": "twitter_2061466289613541635",
+        "feature_name": "rhetorical_why_questions",
+        "feature_value": "Uses multiple rhetorical \"Why should...\" questions.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Why should lawbreakers dilute American votes\"",
+        "rationale": "The post employs interrogatives to imply wrongdoing without requiring a response."
+      },
+      {
+        "message_id": "twitter_2059777848370708856",
+        "feature_name": "call_to_vote_directive",
+        "feature_value": "Directs readers to vote for a specific candidate.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"your only Vote is for Chad Bianco\"",
+        "rationale": "It functions as an explicit voting recommendation."
+      },
+      {
+        "message_id": "twitter_2059777848370708856",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Addresses audience directly with \"you\" and \"your\" in voting argument.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"If you care about\"",
+        "rationale": "Second-person pronouns structure a persuasion attempt to the reader."
+      },
+      {
+        "message_id": "reddit_1til7dr_omzmcn6",
+        "feature_name": "ingroup_outgroup_goal_railroadsteamroll",
+        "feature_value": "Expresses desire to defeat one political group before discussing policy.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I want to rail road the dems into oblivion. Once they are gone\"",
+        "rationale": "It is a sequential partisan strategy: remove the other side, then debate issues."
+      },
+      {
+        "message_id": "reddit_1tlu4l3_onkm5j3",
+        "feature_name": "ridicule_loool_and_targeted_rhetoric",
+        "feature_value": "Uses mockery/derision marker and asserts the other side as dangerous.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"loooool.\"",
+        "rationale": "The \"loooool\" is a strong cue of ridicule accompanying political accusation."
+      }
+    ]
+  }
+}

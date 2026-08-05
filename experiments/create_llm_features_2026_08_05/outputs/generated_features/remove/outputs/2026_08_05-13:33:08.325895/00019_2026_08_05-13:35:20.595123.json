@@ -1,0 +1,94 @@
+{
+  "batch_id": 19,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_cfe8c1418ed3f878f9954b13fd148b5f72274e96abf7f14c56258c6aaa325038",
+    "reddit_1kd654m_mqaj4t9",
+    "reddit_1kdq5jl_mqenqo7",
+    "reddit_1l1jhna_mvlee3c",
+    "reddit_1l7aqfg_mww4ljj",
+    "reddit_1ll9i06_mzy1dsk",
+    "reddit_1tx4xmh_opupzoc",
+    "twitter_2059279074258715042",
+    "twitter_2060043683899027923",
+    "twitter_2060733587326922860"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kd654m_mqaj4t9",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses explicit profanity and insults",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck that fucking asshole.\"",
+        "rationale": "Direct use of profanity and derogatory labeling indicates highly aggressive lexical content."
+      },
+      {
+        "message_id": "reddit_1ll9i06_mzy1dsk",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Short utterances with strong stop punctuation",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump opens mouth.  Bullshit lies come out.  Next.\"",
+        "rationale": "Multiple clipped sentences with emphatic phrasing increase intensity and dismissal."
+      },
+      {
+        "message_id": "reddit_1tx4xmh_opupzoc",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Internet slang/abbreviations and casual tone",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"maga be like\"",
+        "rationale": "\u201cbe like\u201d plus \u201cmaga\u201d signals informal, meme-like political commentary."
+      },
+      {
+        "message_id": "reddit_1l1jhna_mvlee3c",
+        "feature_name": "approximate_token_length_band",
+        "feature_value": "short",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Republicans win points ... denying global warming.\"",
+        "rationale": "Content is brief with only a few sentences."
+      },
+      {
+        "message_id": "reddit_1l1jhna_mvlee3c",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "climate change / global warming",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"denying global warming\"",
+        "rationale": "The post centers on climate policy/acceptance claims."
+      },
+      {
+        "message_id": "twitter_2059279074258715042",
+        "feature_name": "conspiratorial_framing",
+        "feature_value": "Speculative allegation via Epstein files implying hidden wrongdoing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"All the Epstein files with your name on it\"",
+        "rationale": "Frames wrongdoing through alleged secret documentation tied to named targets."
+      },
+      {
+        "message_id": "twitter_2060043683899027923",
+        "feature_name": "policy_prescription_present",
+        "feature_value": "Advocates legal/political action to support a position",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"My office will fight every day\"",
+        "rationale": "Uses explicit commitment to take action regarding health/political mandates and related policy."
+      },
+      {
+        "message_id": "reddit_1kdq5jl_mqenqo7",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Dehumanizing death/deservedness language",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"will die disgraced in jail\"",
+        "rationale": "Assigns \u201cdeserve\u201d/punishment framing with personal harm language toward a political figure."
+      }
+    ]
+  }
+}

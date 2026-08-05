@@ -1,0 +1,94 @@
+{
+  "batch_id": 13,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_1feb8bddddf65f2f5ce2cd6715dfce185a7ec786bd76142528f9fda0e1ff25e2",
+    "bluesky_c5802b75bd6779787b6edc0be894a72ac36c252c584a66a7d7d90ec3613136aa",
+    "reddit_1kpmzrc_mt4yvx1",
+    "reddit_1l74253_mwv1kww",
+    "reddit_1lhaiqa_mz2seaw",
+    "reddit_1lhaiqa_mz2uzd2",
+    "reddit_1llpslt_n03dyf9",
+    "reddit_1th143w_omkfs3u",
+    "reddit_1tuzkhw_oped55l",
+    "twitter_2060132819976753572"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kpmzrc_mt4yvx1",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses strong insult/profanity and vulgar phrasing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"dumbass trump dick suckers\"",
+        "rationale": "The post contains highly taboo/inflammatory language targeting an outgroup."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2seaw",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Explicit repeated profanity directed at political figures/groups",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck Trump and Fuck Israel.\"",
+        "rationale": "Direct use of the word \u201cFuck\u201d twice with political targets is a strong lexical moderation cue."
+      },
+      {
+        "message_id": "reddit_1l74253_mwv1kww",
+        "feature_name": "informal_register_or_slang",
+        "feature_value": "Dismissive, slangy framing of political actors",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"More right wing garbage.\"",
+        "rationale": "The post uses casual contempt terms (\u201cgarbage\u201d) rather than policy discussion."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2seaw",
+        "feature_name": "targeted_actor_is_political_figures",
+        "feature_value": "Direct negative calls against specific political actors",
+        "category": "target_directionality",
+        "is_open_ended": true,
+        "evidence_span": "\"Fuck Trump and Fuck Israel.\"",
+        "rationale": "The language is aimed at named political figure(s) and an international political target."
+      },
+      {
+        "message_id": "reddit_1llpslt_n03dyf9",
+        "feature_name": "normative_moral_language",
+        "feature_value": "Moral condemnation and contempt about actors enabling autocracy/serfdom",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"fuck you I got mine\u0019ing their base into autocracy.\"",
+        "rationale": "Normative outrage/condemnation (\u201cfuck you\u2026 autocracy\u201d) indicates strongly negative evaluation tied to power abuse."
+      },
+      {
+        "message_id": "reddit_1lhaiqa_mz2uzd2",
+        "feature_name": "us_vs_them_directional_blame_switch",
+        "feature_value": "Mirror re-targets blame from Trump/Vance camp to Biden/Kamala camp",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is the worst\" / \"Biden was the worst\"",
+        "rationale": "The mirror swaps which party leader is blamed while keeping the same evaluative structure, signaling partisan antagonism."
+      },
+      {
+        "message_id": "reddit_1tuzkhw_oped55l",
+        "feature_name": "rhetorical_question",
+        "feature_value": "Direct rhetorical choice question to argue abortion stance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Would you save a baby or 10 fertilized zygotes in a freezer?\"",
+        "rationale": "The conditional-choice framing is an argumentative structure commonly used in contentious policy debates."
+      },
+      {
+        "message_id": "bluesky_c5802b75bd6779787b6edc0be894a72ac36c252c584a66a7d7d90ec3613136aa",
+        "feature_name": "contrastive_but_however_structure",
+        "feature_value": "\u201cYes, \u2026 but we can\u2019t \u2026\u201d juxtaposition of competing claims",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Yes, we have yearly school shootings, but we can\u0019t ban guns\"",
+        "rationale": "The text uses a contrastive \u2018yes-but\u2019 pattern to rebut a policy position."
+      }
+    ]
+  }
+}

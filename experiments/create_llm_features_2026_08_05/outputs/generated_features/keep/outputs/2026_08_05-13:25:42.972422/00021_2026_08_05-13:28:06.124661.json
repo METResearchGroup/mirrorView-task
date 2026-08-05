@@ -1,0 +1,94 @@
+{
+  "batch_id": 21,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_9757c6d4449a71c72a2e8c668c7a95e90006f35f6b0ee505ef9b61ca8ac27194",
+    "bluesky_9a08a0116bae75886323d47f200cbf19377ef1022fd5fbdf7a2599ee13561dae",
+    "bluesky_e686be464783703d82a59d93de72769631828c8a2965647fc048f709c43c8f3d",
+    "reddit_1kpmzrc_mt0paez",
+    "reddit_1trnhrp_op61ap9",
+    "twitter_2060879672355979576",
+    "twitter_2061432567740440899",
+    "twitter_2061555941875601534",
+    "twitter_2061741175904813524",
+    "twitter_2061781429789548884"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061555941875601534",
+        "feature_name": "hashtag_driven_frame",
+        "feature_value": "Multiple hashtags used as organizing labels (#FoodSystems, #FoodSecurity)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"#FoodSystems\" ... \"#FoodSecurity\"",
+        "rationale": "The post foregrounds its argument via hashtag-labeled thematic pillars."
+      },
+      {
+        "message_id": "twitter_2061781429789548884",
+        "feature_name": "myth_vs_fact_contrast",
+        "feature_value": "Explicit myth/fact dichotomy with checkmark",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Myth: Planting trees...\" \"Fact: Only reducing overconsumption will.\"",
+        "rationale": "The structure contrasts competing claims to establish a preferred causal explanation."
+      },
+      {
+        "message_id": "twitter_2060879672355979576",
+        "feature_name": "all_caps_panic_emphasis",
+        "feature_value": "All-caps emphatic political escalation phrase",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"DEMS IN FULL MELTDOWN MODE!\"",
+        "rationale": "Capitalized, high-intensity wording marks strong emotional framing toward a party actor."
+      },
+      {
+        "message_id": "bluesky_9a08a0116bae75886323d47f200cbf19377ef1022fd5fbdf7a2599ee13561dae",
+        "feature_name": "named_politician_with_quote",
+        "feature_value": "Named senator (Tom Cotton) + attributed direct quote",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Sen. Tom Cotton (R-Oil):\" \"For far too long...\"",
+        "rationale": "Uses attribution and quotation to deliver a partisan argument as reported speech."
+      },
+      {
+        "message_id": "bluesky_e686be464783703d82a59d93de72769631828c8a2965647fc048f709c43c8f3d",
+        "feature_name": "dehumanizing_humor_insulting_targets",
+        "feature_value": "Mocking, derogatory labels for a named political figure",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"derpy little chud\" / \"He's the scorpion\"",
+        "rationale": "The communicative intent relies on ridicule and degrading characterization to delegitimize the target."
+      },
+      {
+        "message_id": "twitter_2061741175904813524",
+        "feature_name": "deportation_power_condition",
+        "feature_value": "Threat framed as future action contingent on taking power",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"They will not be spared deportation when I take power.\"",
+        "rationale": "Expresses a policy threat using a conditional temporal/power-based stance."
+      },
+      {
+        "message_id": "reddit_1trnhrp_op61ap9",
+        "feature_name": "equivalence_rule_about_policy_terms",
+        "feature_value": "Short definitional mapping of an immigration stance to a moral stance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Open borders implies completely unregulated immigration.\" / \"Deportation culture implies zero compassion\"",
+        "rationale": "The argument proceeds via implication/definition-like reformulations of policy labels."
+      },
+      {
+        "message_id": "twitter_2061432567740440899",
+        "feature_name": "fundraising_call_to_action",
+        "feature_value": "Donation/price solicitation with branded merchandise",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"gift of $25 or more\" \"exclusive pro-life t-shirts\"",
+        "rationale": "Provides a direct call to action tied to political messaging and material incentives."
+      }
+    ]
+  }
+}

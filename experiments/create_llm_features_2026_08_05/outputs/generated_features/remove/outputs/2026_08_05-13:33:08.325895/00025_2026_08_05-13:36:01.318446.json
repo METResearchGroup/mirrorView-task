@@ -1,0 +1,94 @@
+{
+  "batch_id": 25,
+  "label_class": "remove",
+  "message_ids": [
+    "reddit_1kxna55_mur1g74",
+    "reddit_1l34a0n_mw0pt72",
+    "reddit_1lhmo4b_mz5q2uc",
+    "reddit_1t4l69v_ol49ydd",
+    "reddit_1ti509f_omrvw42",
+    "reddit_1tuwb8f_opd0nfr",
+    "reddit_1twq42a_opqu5uv",
+    "reddit_1txsumx_opzxzlz",
+    "reddit_1u1c4u6_oqp81v6",
+    "twitter_2061666343196217371"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1kxna55_mur1g74",
+        "feature_name": "profanity_or_taboo_language",
+        "feature_value": "Uses multiple slurs/profanity toward a named individual",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"That fascist Nazi fuck\"",
+        "rationale": "Direct taboo/profane insult terms are present, escalating hostile rhetoric."
+      },
+      {
+        "message_id": "reddit_1t4l69v_ol49ydd",
+        "feature_name": "named_proper_nouns_density",
+        "feature_value": "High density of political figures and institutions (Iran, Obama, Trump)",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Obama did the Iran nuclear deal\"",
+        "rationale": "The post references multiple prominent actors/events, enabling targeted political framing."
+      },
+      {
+        "message_id": "reddit_1t4l69v_ol49ydd",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Iran nuclear deal / nuclear weapons policy",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Iran nuclear deal\"",
+        "rationale": "The core subject is nuclear nonproliferation and a specific arms-control agreement."
+      },
+      {
+        "message_id": "reddit_1tuwb8f_opd0nfr",
+        "feature_name": "primary_policy_domain",
+        "feature_value": "Gender/family ideology framed as population/birthrate issue",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"falling birthrate\"",
+        "rationale": "The post centers on feminism/relationships and connects it to birthrate outcomes."
+      },
+      {
+        "message_id": "reddit_1tuwb8f_opd0nfr",
+        "feature_name": "causal_claim_present",
+        "feature_value": "States feminism/patriarchy caused societal decline",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Feminism ruined women\"",
+        "rationale": "Uses a strong cause-effect construction assigning responsibility for social problems."
+      },
+      {
+        "message_id": "reddit_1twq42a_opqu5uv",
+        "feature_name": "quote_or_attribution_embedding",
+        "feature_value": "Uses an embedded quote-like phrase and comparative group claims",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"we all\"? Maybe you did, maybe you didn't.",
+        "rationale": "The argument is structured around quoted wording and refutation of a broad claim."
+      },
+      {
+        "message_id": "twitter_2061666343196217371",
+        "feature_name": "call_to_action",
+        "feature_value": "Mobilization/organizing and electoral push in mirror (explicit instruction)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"keep organizing, bring everyone to the polls!\"",
+        "rationale": "Contains explicit motivational directives rather than only commentary."
+      },
+      {
+        "message_id": "reddit_1u1c4u6_oqp81v6",
+        "feature_name": "us_vs_them_framing",
+        "feature_value": "Blames an identifiable voter group as incapable",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"People who voted for Maga aren't capable\"",
+        "rationale": "Uses group-based dehumanizing/generalizing language to cast an outgroup as unable to act correctly."
+      }
+    ]
+  }
+}

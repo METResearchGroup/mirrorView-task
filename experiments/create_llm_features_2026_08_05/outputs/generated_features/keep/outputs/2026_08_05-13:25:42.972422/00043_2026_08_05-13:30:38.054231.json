@@ -1,0 +1,94 @@
+{
+  "batch_id": 43,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_7828419c48fc0121af59e53d12bd126d094fd204348bdd0a38f204d6a4373e45",
+    "reddit_1ljhl23_mzmpmt9",
+    "reddit_1tbymrb_olmq852",
+    "reddit_1tpf0kw_ool5zg6",
+    "reddit_1u0gjyt_oqk5mob",
+    "twitter_2060148111683785114",
+    "twitter_2061342061035442504",
+    "twitter_2061549070464999793",
+    "twitter_2061812227573723223",
+    "twitter_2061828360574283822"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_7828419c48fc0121af59e53d12bd126d094fd204348bdd0a38f204d6a4373e45",
+        "feature_name": "lmao_informal_interjection",
+        "feature_value": "Uses slangy interjection \"lmao\" with humorous framing",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"lmao\"",
+        "rationale": "The post includes the explicit internet/slang marker \"lmao\" to set an informal, dismissive tone."
+      },
+      {
+        "message_id": "twitter_2061812227573723223",
+        "feature_name": "hashtag_political_targeting",
+        "feature_value": "Multiple hashtags naming a state candidate and the opposed politician with praise",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "#Georgia\u2019s #JonOssoff \"BRINGING IT\" indeed against #trump",
+        "rationale": "The text uses hashtag formatting to directly tag political actors and then asserts approval."
+      },
+      {
+        "message_id": "reddit_1tpf0kw_ool5zg6",
+        "feature_name": "timeline_inference_argument",
+        "feature_value": "Argument grounded in timeline reconstruction and claimed reasoning about political motives",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"look at the timeline\" - it\u2019s not hard to put together what the original reason for Trump running even was",
+        "rationale": "The structure invites the reader to infer intent from a stated chronological sequence."
+      },
+      {
+        "message_id": "reddit_1tpf0kw_ool5zg6",
+        "feature_name": "conspiratorial_machine_framing",
+        "feature_value": "Suggests a protected political \u201cmachine\u201d and concealed wrongdoing",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"the whole damn machine protects its own\"",
+        "rationale": "The \u201cmachine protects its own\u201d phrasing implies coordinated concealment rather than ordinary disagreement."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqk5mob",
+        "feature_name": "us_vs_them_fascist_vs_authoritarian_moral_boundary",
+        "feature_value": "Defines an outgroup threat (\u201cfascists\u201d/\u201csocialist collapse\u201d) and vows resistance",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"fall into the hands of fascists\" / \"socialist collapse\"",
+        "rationale": "The text draws a stark in-group/out-group boundary with an existential threat framing."
+      },
+      {
+        "message_id": "reddit_1tbymrb_olmq852",
+        "feature_name": "quote_or_attribution_embedding_offensive_labeling",
+        "feature_value": "Uses an upfront example to justify calling someone \u201cstupid/clueless\u201d vs \u201cdisingenuous/deliberately dishonest\u201d",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"I call her either stupid or in disingenuous\" / \"why I call him either completely clueless or deliberately dishonest\"",
+        "rationale": "It embeds justification via a labeled assessment and then pivots to a concrete example."
+      },
+      {
+        "message_id": "twitter_2061342061035442504",
+        "feature_name": "urgent_call_to_action_policy_domain_climate",
+        "feature_value": "Direct urgency directive to act on climate with a cited science source",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"We need to take urgent #ClimateAction right now\"",
+        "rationale": "The post explicitly instructs immediate action in the climate policy domain."
+      },
+      {
+        "message_id": "twitter_2061828360574283822",
+        "feature_name": "condemnation_of_unilateral_retaliation_plus_normalizing_victimhood",
+        "feature_value": "Frames aid-cutting as punishing dissent; uses strong ridicule (\u201ctoddler throwing a tantrum\u201d)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"That's not strength, that's a toddler throwing a tantrum.\"",
+        "rationale": "It uses a mocking analogy while condemning the proposed punishment for disagreement."
+      }
+    ]
+  }
+}

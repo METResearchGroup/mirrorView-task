@@ -1,0 +1,94 @@
+{
+  "batch_id": 7,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_9dd75ecd3894e2b5b66e84f08d7d37e43b577d6544d9ca20befffa432a898391",
+    "bluesky_bfdb5d8ca743bb6b82c59a70c532e8263aa842b31d2900440ff521f01fb8ab52",
+    "bluesky_d2cfe70e07afaf45324028fee76db723193fb78bca21a8d9e7c655abb6a7937f",
+    "bluesky_f8ad409331453f0067ab647802e93121e8a6479f4fedb9ca465c0cc91db829ab",
+    "reddit_1km18ir_ms8yoji",
+    "reddit_1kzjrzz_mv6diq4",
+    "reddit_1lj78qb_mzxg2uy",
+    "reddit_1u0gjyt_oqi3psa",
+    "reddit_1u0ljrd_oqjgebv",
+    "twitter_2061254253843530192"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1km18ir_ms8yoji",
+        "feature_name": "direct_profanity_swear_insult",
+        "feature_value": "Uses explicit profanity as a standalone dismissal/insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Fuck Bernie Sanders.",
+        "rationale": "The post relies on a profanity-first direct attack rather than argument or policy detail."
+      },
+      {
+        "message_id": "bluesky_bfdb5d8ca743bb6b82c59a70c532e8263aa842b31d2900440ff521f01fb8ab52",
+        "feature_name": "profanity_and_emphatic_all_caps",
+        "feature_value": "Profanity plus strong emphasis via ALL CAPS",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "how the fuck did you get that... EVERYONE",
+        "rationale": "The combination of taboo language and emphatic capitalization is a salient lexical style cue."
+      },
+      {
+        "message_id": "twitter_2061254253843530192",
+        "feature_name": "inter_party_hypocrisy_attack",
+        "feature_value": "Accuses one party of hypocrisy and contrasts with claimed democratic process",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "WHY Democrats keep saying \"Democracy\" is as stake... NEVER \"democratically\" asked us",
+        "rationale": "The content frames the opposing party as hypocritical and undermines legitimacy claims."
+      },
+      {
+        "message_id": "reddit_1u0ljrd_oqjgebv",
+        "feature_name": "historical_systemic_discrimination_claim",
+        "feature_value": "Claims discrimination was built into the legal system with slavery/Jim Crow timeline",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "built into the legal system... even after slavery, and even after Jim Crow.",
+        "rationale": "A causal/historical narrative about entrenched discrimination and distrust is present."
+      },
+      {
+        "message_id": "reddit_1lj78qb_mzxg2uy",
+        "feature_name": "heavy_personal_corruption_accusations",
+        "feature_value": "Series of criminal/malfeasance claims about a named politician",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "lied, cheated, stolen, embezzled, bankrupted, gifted",
+        "rationale": "The post uses stacked allegations to portray the targeted actor as corrupt."
+      },
+      {
+        "message_id": "reddit_1u0gjyt_oqi3psa",
+        "feature_name": "culture_war_sexual_moral_question",
+        "feature_value": "Targets a political ideology with sexualized child-related moral concern question",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "conservatives so worried about children\t\t\t\t\t genitals",
+        "rationale": "The subject matter is explicitly about children/genitals and is framed as a culture-war issue."
+      },
+      {
+        "message_id": "reddit_1kzjrzz_mv6diq4",
+        "feature_name": "media_outlet_targeting_with_profanity",
+        "feature_value": "Direct attack on a specific news network using profanity",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Fox News can fuck off",
+        "rationale": "The post targets a media actor and uses a dismissal imperative."
+      },
+      {
+        "message_id": "bluesky_d2cfe70e07afaf45324028fee76db723193fb78bca21a8d9e7c655abb6a7937f",
+        "feature_name": "callous_affront_to_billionaires_related_to_policy",
+        "feature_value": "Targets billionaires for causing global warming; linked with climate crisis reference and policy blame",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "billionaire fuckers that drive global warming",
+        "rationale": "This combines an outgroup economic actor (billionaires) with climate-crisis causality language and aggressive profanity."
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cluster_id": 4,
+  "label_class": "remove",
+  "n_members": 8,
+  "sampled_feature_ids": [
+    "28_6",
+    "16_3",
+    "20_5",
+    "46_1",
+    "49_2",
+    "40_3",
+    "0_6",
+    "35_3"
+  ],
+  "result": {
+    "cluster_id": 4,
+    "cluster_label": "Derisive ridicule and mockery toward targets",
+    "definition": "REMOVE posts that primarily use insulting, sarcastic, or mock-label framing (including slur-like group labels or contemptuous characterization) to belittle a person, party, or ideology rather than engage substantively.",
+    "salience_notes": "All samples feature contempt-first rhetoric: ridicule_or_mockery, sarcastic pronoun/group labeling, and insulting pejorative labels with taboo/profanity or nonliteral, exaggerated comparisons."
+  }
+}

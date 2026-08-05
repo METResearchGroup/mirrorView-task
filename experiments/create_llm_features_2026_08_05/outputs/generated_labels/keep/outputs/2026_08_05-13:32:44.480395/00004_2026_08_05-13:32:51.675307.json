@@ -1,0 +1,19 @@
+{
+  "cluster_id": 4,
+  "label_class": "keep",
+  "n_members": 6,
+  "sampled_feature_ids": [
+    "19_1",
+    "24_2",
+    "10_6",
+    "13_3",
+    "38_3",
+    "13_1"
+  ],
+  "result": {
+    "cluster_id": 4,
+    "cluster_label": "High-density political proper-noun referencing",
+    "definition": "KEEP posts that heavily anchor their claim or accusation by naming specific public figures, political parties, and/or government institutions or locations using proper nouns.",
+    "salience_notes": "The cluster coheres around rhetorical concreteness via multiple named actors (politicians/parties) and identifiable institutions/places, rather than generic commentary."
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "batch_id": 30,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_1b07759d34873be93924916adada578e2765d3f2a0abdc1919ff1d006cfea9aa",
+    "bluesky_531420bf8532ccb2af4129343d7a977ae5b6199415ea747ac03a0d0e2e219e5c",
+    "bluesky_e92f7d78b728d6c1d25d44face7af72f735deb531a176dbb171615d9a6719626",
+    "bluesky_eaca8666c828b12f72d5bc57492c13d3b387f9616bf52bd8e6566b9bfd6a1785",
+    "reddit_1la5fmz_mxi08po",
+    "reddit_1t7d5jc_okoil6b",
+    "reddit_1trbp3u_oomvxx0",
+    "reddit_1twr00b_oprzjjt",
+    "twitter_2061390316351984011",
+    "twitter_2061716145531433137"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1la5fmz_mxi08po",
+        "feature_name": "international_conflict_actor_action",
+        "feature_value": "References Israel bombing Iran / retaliation framing in Middle East context",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Israel bombed Iran",
+        "rationale": "The post centers on an international conflict involving named countries and military action."
+      },
+      {
+        "message_id": "reddit_1la5fmz_mxi08po",
+        "feature_name": "hard_blame_missing_action_vs_proactive_blame",
+        "feature_value": "Blames US president for inaction (did jack shit)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Trump did jack shit to stop them.",
+        "rationale": "The core semantic move is explicit accusation that a political actor failed to act."
+      },
+      {
+        "message_id": "bluesky_1b07759d34873be93924916adada578e2765d3f2a0abdc1919ff1d006cfea9aa",
+        "feature_name": "mass_casualty_crisis_context",
+        "feature_value": "Invokes mass shooting and casualties as a situational trigger",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "mass shooting w/a lot of casualties",
+        "rationale": "The text uses a high-stakes violent incident to justify discussion and criticize avoidance."
+      },
+      {
+        "message_id": "bluesky_1b07759d34873be93924916adada578e2765d3f2a0abdc1919ff1d006cfea9aa",
+        "feature_name": "normative_time_to_discuss_then_denounce_deferral",
+        "feature_value": "Argues it's never the right time to excuse the 'bad shit' people do",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "It\u2019s never the right time to discuss that bad shit",
+        "rationale": "The communicative intent is evaluative and prescriptive, rejecting attempts to defer debate."
+      },
+      {
+        "message_id": "bluesky_eaca8666c828b12f72d5bc57492c13d3b387f9616bf52bd8e6566b9bfd6a1785",
+        "feature_name": "politician_ideologue_quote_attribution",
+        "feature_value": "Uses a named senator and quote framed as what stops harm",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Sen. Ted Cruz (R-TX)... \u201cUltimately... what stops armed bad guys is armed good guys.\u201d",
+        "rationale": "It embeds a quoted statement by an identified political figure as central content."
+      },
+      {
+        "message_id": "twitter_2061716145531433137",
+        "feature_name": "identity_vs_merit_us_them_framing",
+        "feature_value": "Mirror contrasts group-based inclusion vs rule of law/merit",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "identity politics decides who gets 'seen' and who gets ignored",
+        "rationale": "The text establishes an in-group/out-group logic via identity-based treatment contrasted with equal merit/rule of law."
+      },
+      {
+        "message_id": "reddit_1trbp3u_oomvxx0",
+        "feature_name": "stance_on_media_objectivity_and_source_diet",
+        "feature_value": "Explicitly distinguishes news vs skepticism; talks about independent/non-MSM sources",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "I did not present it as news... incorporate independent reporting sources",
+        "rationale": "The post provides a self-reflective claim about epistemic framing and source selection."
+      },
+      {
+        "message_id": "bluesky_e92f7d78b728d6c1d25d44face7af72f735deb531a176dbb171615d9a6719626",
+        "feature_name": "anaphoric_emphatic_outrage_on_officials",
+        "feature_value": "Repetitive 'I'm tired of...' anger directed at elected officials",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "I\u2019m tired of seeing... I\u2019m tired of elected officials thinking... How\u2019s that book tour?",
+        "rationale": "It uses strong anaphora and a closing rhetorical jab to target officials and express frustration."
+      }
+    ]
+  }
+}

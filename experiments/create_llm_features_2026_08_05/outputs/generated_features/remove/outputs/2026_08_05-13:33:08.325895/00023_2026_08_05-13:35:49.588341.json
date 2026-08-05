@@ -1,0 +1,94 @@
+{
+  "batch_id": 23,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_3e1b88c6b1438622ddd85d43e461f4ed12e2390bb8a7e0c085be480850fc4f52",
+    "bluesky_7a733fd5cdd1247cea8a57efca5fba51db862949ca231d5b8dfa9ef94804db5d",
+    "reddit_1ko5g2h_msohrnq",
+    "reddit_1l4871w_mw743t1",
+    "reddit_1l6eybs_mx533ze",
+    "reddit_1ldl42u_my98vf2",
+    "reddit_1llzlg3_n045fi5",
+    "reddit_1tstlbr_op0jeay",
+    "reddit_1tuue1j_opj3508",
+    "reddit_1u18ir0_oqpychq"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1ldl42u_my98vf2",
+        "feature_name": "mirror_religious_metaphor_of_politicians",
+        "feature_value": "Uses religious/Messianic framing to equate political leaders with God/Messiah/Diciples",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is their God\" / \"Biden is their Messiah\"",
+        "rationale": "The text casts political actors as religious figures, which is a distinctive semantic frame and often accompanies hostile linked-fate blame."
+      },
+      {
+        "message_id": "reddit_1l6eybs_mx533ze",
+        "feature_name": "profanity_and_anti_state_swearing",
+        "feature_value": "Includes strong profanity and anti-establishment slurs",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"Fuck the deep state and fuck communism.\"",
+        "rationale": "High-intensity taboo language and accusatory targets are prominent lexical cues."
+      },
+      {
+        "message_id": "reddit_1u18ir0_oqpychq",
+        "feature_name": "second_person_not_present_contrast_two_jobs_comparison",
+        "feature_value": "Expresses a comparison/contrast between desk IT work vs hard physical service work, plus implied class contempt",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"I work IT\" ... \"Working McDonald\u000027s or Walmart\" ... \"Drives me nuts.\"",
+        "rationale": "The post uses a workers/conditions contrast to moralize about who is looked down on, indicating contested social group boundaries."
+      },
+      {
+        "message_id": "reddit_1l4871w_mw743t1",
+        "feature_name": "short_ranked_insult",
+        "feature_value": "Very short one-line insult attacking a political party",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"You underestimate how dog crap the democrats are\"",
+        "rationale": "A terse, derogatory partisan evaluation suggests antagonistic linked-fate stance even without additional argumentation."
+      },
+      {
+        "message_id": "reddit_1tstlbr_op0jeay",
+        "feature_name": "charged_pejoratives_for_enemy_groups",
+        "feature_value": "Uses Nazi/Hamas-related pejoratives plus calls to stop violence and build a two-state solution",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Stop doing nazi shit\" / \"Hamas supporters\"",
+        "rationale": "Strong moral condemnation coupled with group labeling and a policy prescription is a salient linked-fate style signal."
+      },
+      {
+        "message_id": "bluesky_3e1b88c6b1438622ddd85d43e461f4ed12e2390bb8a7e0c085be480850fc4f52",
+        "feature_name": "dehumanizing_excise_from_populace_proposal",
+        "feature_value": "Calls for removing groups from the rest of society (excise)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"we need a solution to excise these people from the rest of the populace.\"",
+        "rationale": "An exclusionary action framing (\u201cexcise\u201d) is a direct, coercive social-boundary claim."
+      },
+      {
+        "message_id": "reddit_1ko5g2h_msohrnq",
+        "feature_name": "contemptuous_stereotype_list_of_traits",
+        "feature_value": "Attacks a group using insulting stereotype descriptors and vehicle/slogan imagery",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"insecure, wifebeating, trailerbound, maga pieces of shit\" / \"FJB stickers\"",
+        "rationale": "Stereotype accumulation (\u201cwifebeating\u2026 trailerbound\u2026\u201d) plus faction markers indicates strong us-vs-them directionality."
+      },
+      {
+        "message_id": "reddit_1llzlg3_n045fi5",
+        "feature_name": "ingroup_rejection_explosive_emotion",
+        "feature_value": "Rejects affiliation with a faction and uses emphatic outrage",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Magats have ruined this fucking country\" ... \"I want nothing to fucking do with these people!!\"",
+        "rationale": "Emphatic venting with heavy profanity and categorical rejection of an outgroup/faction is a communicative intent cue."
+      }
+    ]
+  }
+}

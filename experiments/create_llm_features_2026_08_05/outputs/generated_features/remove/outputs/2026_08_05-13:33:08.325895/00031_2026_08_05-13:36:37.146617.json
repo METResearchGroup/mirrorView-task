@@ -1,0 +1,94 @@
+{
+  "batch_id": 31,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+    "bluesky_d65c756acbd5905d1c9a24a45e1be3382359f1e3868d87de707ecfbfb7e2ff85",
+    "reddit_1kna992_msjyyfa",
+    "reddit_1kndcmn_msik13u",
+    "reddit_1ko2gif_msn8euz",
+    "reddit_1l1roga_mvoo01l",
+    "reddit_1tp5g11_oo6atkk",
+    "twitter_2059967541829664900",
+    "twitter_2060028364023300572",
+    "twitter_2060755574401405025"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple exclamation marks and emphatic short caps-like lines",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "WOW! Talk about denial of facts.",
+        "rationale": "Heavy use of exclamation points signals high emotional intensity and argumentative emphasis."
+      },
+      {
+        "message_id": "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+        "feature_name": "named_proper_nouns_geographic_election_refs",
+        "feature_value": "US state/city references and election/proposition language",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Maine is a blue city and state? ... How about Virginia flipping 15 State House seats",
+        "rationale": "The post centers on specific US locales and election results, anchoring political conflict in concrete places."
+      },
+      {
+        "message_id": "bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a",
+        "feature_name": "confrontational_denial_lies_claiming",
+        "feature_value": "Accusations of misinformation (denial of facts / denial and lies)",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Talk about denial of facts. ... DENIAL AND LIES!",
+        "rationale": "Directly labels opposing claims as false, a common linked-fate trigger when blame is moralized."
+      },
+      {
+        "message_id": "reddit_1l1roga_mvoo01l",
+        "feature_name": "derogatory_insults_dehumanizing",
+        "feature_value": "Pejoratives targeting a person (pathetic ass, old racist)",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "Pathetic ass old racist.",
+        "rationale": "Uses ridicule/derogation toward an identified individual/persona to intensify stance."
+      },
+      {
+        "message_id": "reddit_1ko2gif_msn8euz",
+        "feature_name": "profanity_taboo_directed_at_person",
+        "feature_value": "Strong profanity modifier + dismissive insult",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "That fat fucking loser",
+        "rationale": "Explicit profanity and personal insult indicate highly hostile tone rather than policy debate."
+      },
+      {
+        "message_id": "twitter_2060755574401405025",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Uses colloquial framing 'Call me Florida' with implied self/contrast but not full second person; still a conversational direct stance",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "Call me Florida but I don\u2019t see what\u2019s the big deal again gun control.",
+        "rationale": "Conversational, stance-inviting construction frames gun control as an obvious dispute."
+      },
+      {
+        "message_id": "reddit_1kna992_msjyyfa",
+        "feature_name": "ingroup_outgroup_race_or_religion_replacement",
+        "feature_value": "Mirror swaps trans people to brown people, indicating identity-targeted blame",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "trans women in the public bathrooms... brown people at the border",
+        "rationale": "Identity-based outgroup framing is central, and the mirror retargets the blame to a different protected group."
+      },
+      {
+        "message_id": "twitter_2060028364023300572",
+        "feature_name": "policy_domain_guns_and_unconstitutional_law_claim",
+        "feature_value": "Specific gun ban/handgun enforcement dispute; includes constitutional/unconstitutional claim",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "Maryland just outlawed certain handguns... refusing to enforce the unconstitutional gun ban",
+        "rationale": "Clear firearms policy dispute with legality framing provides concrete linked-fate political content."
+      }
+    ]
+  }
+}

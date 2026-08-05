@@ -1,0 +1,94 @@
+{
+  "batch_id": 7,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_03ae0fc878f9c9c72236161a2dcddeee426ffa4456f354404f9050f67f44c230",
+    "reddit_1knep98_msjkx4l",
+    "reddit_1lccvte_my22llo",
+    "reddit_1tta0q0_op18ei8",
+    "reddit_1u1z88l_oqtm4h5",
+    "reddit_1u1z88l_oqtvcd2",
+    "reddit_1u237rb_oqvo47u",
+    "twitter_2061554920180891977",
+    "twitter_2061760504650235937",
+    "twitter_2061816297713795484"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061554920180891977",
+        "feature_name": "birthright_citizenship_14th_amendment_framing",
+        "feature_value": "Proposes ending automatic citizenship for children born to parents here illegally; invokes the 14th Amendment",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"end automatic citizenship for children born on U.S. soil\" / \"The 14th Amendment\"",
+        "rationale": "The post centers on birthright citizenship tied explicitly to the 14th Amendment."
+      },
+      {
+        "message_id": "twitter_2061816297713795484",
+        "feature_name": "second_amendment_vs_firearm_ban_positional_tagline",
+        "feature_value": "Short anti-ban slogan using constitutional rights language",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "\"Ban Firearm Manufacturing?!\" / \"Gut the Second Amendment?!\"",
+        "rationale": "It directly references the Second Amendment and frames a ban as an attack on rights."
+      },
+      {
+        "message_id": "reddit_1tta0q0_op18ei8",
+        "feature_name": "economic_issue_shrinkflation_corporate_greed_causal_claim",
+        "feature_value": "Argues corporate greed/shrinkflation are causing people to have less",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"corporate greed and shrinkflation are getting us\" / \"much, much less\"",
+        "rationale": "Uses a causal attribution about economic conditions worsening due to specific factors."
+      },
+      {
+        "message_id": "reddit_1u1z88l_oqtm4h5",
+        "feature_name": "rule_of_law_constitution_trampling_claim",
+        "feature_value": "Claims Constitution/rule of law were violated by specific administration",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"The Trump admin has already trampled on the rule of law.\" / \"constitution was enforced solely by vibes\"",
+        "rationale": "Makes a strong factual-sounding claim that an administration undermined rule of law."
+      },
+      {
+        "message_id": "reddit_1knep98_msjkx4l",
+        "feature_name": "personalized_insult_candidate_character_attack",
+        "feature_value": "Attacks a named candidate with extreme derogatory labeling",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump's right!\" ... \"absurdly ignorant lying crook\" \"as president...twice\"",
+        "rationale": "Uses in-group alignment plus aggressive character assassination of a political figure."
+      },
+      {
+        "message_id": "reddit_1lccvte_my22llo",
+        "feature_name": "psychological_trait_personal_attack",
+        "feature_value": "Attributes inability to interact/tough questions to narcissism/fragility",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Trump is such a narcissist he can\u2019t handle\" / \"Biden is such a fragile old man\"",
+        "rationale": "Frames political conflict via extreme personal psychological traits."
+      },
+      {
+        "message_id": "reddit_1u237rb_oqvo47u",
+        "feature_name": "dehumanizing_intelligence_insults_generalized_group",
+        "feature_value": "Broadly characterizes Americans/leftist voters as very dumb/gullible with escalating emphasis",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Americans can be really really really dumb\" / \"leftist voters can be really really really gullible\"",
+        "rationale": "Relies on sweeping group-level disparagement of intelligence/competence."
+      },
+      {
+        "message_id": "bluesky_03ae0fc878f9c9c72236161a2dcddeee426ffa4456f354404f9050f67f44c230",
+        "feature_name": "gun_rights_policy_prescription_defenseless_victims",
+        "feature_value": "Argues against restricting carry rights; frames restriction as making law-abiding citizens defenseless",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"stripping constitutional rights\" / \"forcing law-abiding citizens to be defenseless victims\"",
+        "rationale": "Uses normative and policy-direction language tied to gun-carry restrictions and right-stripping."
+      }
+    ]
+  }
+}

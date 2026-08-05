@@ -1,0 +1,94 @@
+{
+  "batch_id": 46,
+  "label_class": "keep",
+  "message_ids": [
+    "bluesky_84b12cde22479d5238ef06a114e08d0fc9891bc31a4b53050752b87d09a745a5",
+    "bluesky_8bd506a6d648784064e6527c171d0d895f342aa5d61928b057d9d2245cc872d5",
+    "bluesky_dd072fa80becb8a259f66113407493c1cceae13aa0ee29797af6b6d049a49dd4",
+    "reddit_1tklc7j_onc3fb1",
+    "reddit_1tt6meg_op10gze",
+    "reddit_1tv69vk_opgctfk",
+    "reddit_1twgtct_oppujke",
+    "reddit_1u0gyo8_oqjbci9",
+    "reddit_1u26v2r_or1fm4d",
+    "twitter_2061088486397301203"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "reddit_1twgtct_oppujke",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Moderate punctuation with quoted phrase and multiple clauses",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "Well to them \"traditional family values\" entails a system where men aren't held accountable for abuse towards their spouses.",
+        "rationale": "The post uses direct quotation marks around a contested phrase and dense multi-clause structure with strong evaluative wording."
+      },
+      {
+        "message_id": "reddit_1tklc7j_onc3fb1",
+        "feature_name": "causal_claim_present",
+        "feature_value": "Inferential causal reasoning from two observations",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "Illegal aliens work under the table. Poor people get free government healthcare. Let's put two and two together.",
+        "rationale": "It explicitly links two asserted facts via an inference trope to imply wrongdoing."
+      },
+      {
+        "message_id": "reddit_1u26v2r_or1fm4d",
+        "feature_name": "rhetorical_contrast_definition",
+        "feature_value": "Definitions via explicit contrasts (not X, but Y) and doctrinal argument",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "I said it GRANTS no rights, not that it doesn't acknowledge one.",
+        "rationale": "The text repeatedly uses \u201cnot \u2026 but \u2026\u201d style definitional contrasts to structure the argument."
+      },
+      {
+        "message_id": "reddit_1tt6meg_op10gze",
+        "feature_name": "call_out_double_standards_persuasion",
+        "feature_value": "Persuasive framing urging against reciprocal double standards",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "It sucks MAGA has double standards, but that doesn't mean we should hold them too.",
+        "rationale": "It contains an explicit normative conclusion about what people should or should not do."
+      },
+      {
+        "message_id": "bluesky_84b12cde22479d5238ef06a114e08d0fc9891bc31a4b53050752b87d09a745a5",
+        "feature_name": "primary_policy_domain_gun_violence",
+        "feature_value": "School shootings/gun reform and solutions debate",
+        "category": "topic_subject",
+        "is_open_ended": false,
+        "evidence_span": "stop school shootings just to justify everyone can have guns when basic gun reform would help.",
+        "rationale": "The primary subject is gun violence prevention and gun policy."
+      },
+      {
+        "message_id": "bluesky_84b12cde22479d5238ef06a114e08d0fc9891bc31a4b53050752b87d09a745a5",
+        "feature_name": "extreme_group_indifference_claim",
+        "feature_value": "Attribution of disregard to a party using moral outrage language",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "The gop don't care about children getting shot.",
+        "rationale": "It uses a stark motive/intent claim (\u201cdon\u2019t care\u201d) directed at an in-group/out-group."
+      },
+      {
+        "message_id": "bluesky_dd072fa80becb8a259f66113407493c1cceae13aa0ee29797af6b6d049a49dd4",
+        "feature_name": "mobilization_call_to_action",
+        "feature_value": "Fundraising/volunteer request to support movement",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "and we need your help.",
+        "rationale": "The post explicitly solicits audience support for a political initiative."
+      },
+      {
+        "message_id": "twitter_2061088486397301203",
+        "feature_name": "elite_actor_attack_scam_claim",
+        "feature_value": "Direct attack on Elon Musk with \u201cdelusional/obession\u201d and \u201ctaxpayer-subsidized scam\u201d",
+        "category": "target_directionality",
+        "is_open_ended": false,
+        "evidence_span": "Elon Musk's delusional obsession with so-called 'sustainable' energy is just a taxpayer-subsidized scam",
+        "rationale": "It targets a prominent elite figure with negative characterization and alleges fraud/scam motives."
+      }
+    ]
+  }
+}

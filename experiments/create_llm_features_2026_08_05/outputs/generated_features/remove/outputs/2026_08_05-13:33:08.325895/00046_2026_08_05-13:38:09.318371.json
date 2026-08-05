@@ -1,0 +1,94 @@
+{
+  "batch_id": 46,
+  "label_class": "remove",
+  "message_ids": [
+    "bluesky_68f42aebc7d8b2070eae73ca873edf926d26484c42b94f15d6531ede2da4c74d",
+    "bluesky_9970acc74de04e1270d57ff77ca1fa4b12134f47a08c0d6a8bd2ddb4bc3a4225",
+    "bluesky_d07547db8a3fd657945ab1ab4327387aad3deba04598378e137c562d7d2dd8a9",
+    "reddit_1lhc9kv_mz34ak3",
+    "reddit_1lj2q80_mzkh3dv",
+    "reddit_1tvr63e_opk1fxu",
+    "reddit_1txrv9p_opypogo",
+    "reddit_1u0oc51_oqmacus",
+    "twitter_2061587113901191589",
+    "twitter_2061816204491198746"
+  ],
+  "feature_count": 8,
+  "result": {
+    "batch_index": 0,
+    "features": [
+      {
+        "message_id": "twitter_2061816204491198746",
+        "feature_name": "high_punctuation_intensity",
+        "feature_value": "Multiple repeated emojis used for emphasis (anger/insistence).",
+        "category": "surface_lexical",
+        "is_open_ended": false,
+        "evidence_span": "\"takes 80% as taxes \ud83d\ude21\ud83d\ude21\ud83d\ude21\ud83d\ude21\ud83d\ude21\ud83d\ude21\"",
+        "rationale": "The post uses a high density of repeated angry emojis to intensify the claim."
+      },
+      {
+        "message_id": "bluesky_d07547db8a3fd657945ab4327387aad3deba04598378e137c562d7d2dd8a9",
+        "feature_name": "mocking_sarcastic_pronoun_labeling",
+        "feature_value": "Ridicule via group slur-style labels (e.g., \u201cMAGgots\u201d, \u201cLibtards\u201d).",
+        "category": "pragmatics_intent",
+        "is_open_ended": true,
+        "evidence_span": "\"MAGgots be like:\" / \"Libtards be like:\"",
+        "rationale": "The communicative style uses mocking group-label framing to attack an opposing side."
+      },
+      {
+        "message_id": "bluesky_68f42aebc7d8b2070eae73ca873edf926d26484c42b94f15d6531ede2da4c74d",
+        "feature_name": "conditional_if_then_structure",
+        "feature_value": "Patterned conditional about something happening whenever a group gains traction.",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"whenever a climate focused org... starts getting traction... something happens; a change of leadership\"",
+        "rationale": "The sentence builds an 'whenever X happens, Y follows' conditional explanation."
+      },
+      {
+        "message_id": "bluesky_68f42aebc7d8b2070eae73ca873edf926d26484c42b94f15d6531ede2da4c74d",
+        "feature_name": "conspiratorial_framing_with_influence",
+        "feature_value": "Implied hidden influence behind moderation/softening (leadership/funding changes).",
+        "category": "semantic_content",
+        "is_open_ended": true,
+        "evidence_span": "\"a change of leadership, new funding etc and suddenly... 'reasonable compromises'\"",
+        "rationale": "The post suggests an underlying mechanism that causes advocates to backtrack."
+      },
+      {
+        "message_id": "twitter_2061587113901191589",
+        "feature_name": "call_to_action_with_direct_address",
+        "feature_value": "Direct imperative urging action plus tag mentions.",
+        "category": "pragmatics_intent",
+        "is_open_ended": false,
+        "evidence_span": "\"Better get building those houses... @AlboMP @JEChalmers\"",
+        "rationale": "It uses an imperative to press officials and includes @mentions to direct the message."
+      },
+      {
+        "message_id": "twitter_2061587113901191589",
+        "feature_name": "second_person_direct_address",
+        "feature_value": "Mentions officials using second-person-ish directive framing (imperative).",
+        "category": "compositional_syntax",
+        "is_open_ended": false,
+        "evidence_span": "\"Better get building those houses... @AlboMP @JEChalmers\"",
+        "rationale": "The grammar addresses others with direct urging rather than only describing events."
+      },
+      {
+        "message_id": "bluesky_9970acc74de04e1270d57ff77ca1fa4b12134f47a08c0d6a8bd2ddb4bc3a4225",
+        "feature_name": "culture_war_topic_salience",
+        "feature_value": "Broad identity-based exclusion list (Democrat/brown/women/science/free press/protest).",
+        "category": "topic_subject",
+        "is_open_ended": true,
+        "evidence_span": "\"unless you're a democrat, brown, a woman... believe in science... universal health care... free press\"",
+        "rationale": "The post foregrounds culture-war issues via an extensive list of contested identity/values."
+      },
+      {
+        "message_id": "reddit_1txrv9p_opypogo",
+        "feature_name": "victimhood_or_persecution_framing",
+        "feature_value": "Direct emphasis that policies kill vulnerable people; suffering is central.",
+        "category": "semantic_content",
+        "is_open_ended": false,
+        "evidence_span": "\"Sanctions kill the young, old, and most vulnerable. ... people die.\"",
+        "rationale": "The argument centers on harm to vulnerable groups, using victim-centered language."
+      }
+    ]
+  }
+}

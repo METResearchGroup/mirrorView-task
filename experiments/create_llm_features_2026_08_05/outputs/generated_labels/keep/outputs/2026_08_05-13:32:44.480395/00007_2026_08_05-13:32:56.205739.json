@@ -1,0 +1,21 @@
+{
+  "cluster_id": 7,
+  "label_class": "keep",
+  "n_members": 31,
+  "sampled_feature_ids": [
+    "17_5",
+    "23_1",
+    "31_2",
+    "13_7",
+    "2_4",
+    "24_1",
+    "38_6",
+    "26_7"
+  ],
+  "result": {
+    "cluster_id": 7,
+    "cluster_label": "Imperative policy or punishment demands",
+    "definition": "KEEP posts that explicitly advocate concrete policy change or enforcement actions using direct prescriptions (e.g., enumerate legal measures, make imperative demands, or call for punishment) rather than merely discussing ideas.",
+    "salience_notes": "The sample coheres around assertive, action-oriented language: direct calls to action (impeach/imprison/strengthen laws), enumerated enforcement tools, and rhetorical questioning that steers toward specific institutional outcomes."
+  }
+}
