@@ -211,3 +211,47 @@ Prefer `parquet` / `json` / `npy` over `csv` for artifacts we commit. OK to giti
 - Mirror-text BERTopic run (same layout under `outputs/**/mirror/` later)
 - Using topic features in a keep/remove classifier (`export_features.py` can come after viz)
 - Re-embedding posts with SentenceTransformers or any non-Titan model inside BERTopic
+
+## Run order
+
+UTC run stamps use format `YYYYMMDDTHHMMSSZ` (e.g. `20260805T131500Z`).
+
+```bash
+# Install optional BERTopic stack (once per env)
+uv sync --extra bertopic
+
+# Stage 1 — Titan cache for original posts (no Bedrock when cache complete)
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/load_embeddings.py
+# First populate / refresh from DynamoDB+S3 identity cache:
+# PYTHONPATH=. uv run --extra bertopic python \
+#   experiments/bertopic_modeling_2026_08_05/src/load_embeddings.py \
+#   --refresh-from-identity-cache
+# Optional Bedrock for residuals only:
+#   ... --refresh-from-identity-cache --backfill
+
+# Stage 2 — fit BERTopic (no LLM); smoke uses --sample-size 50
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py --sample-size 50
+
+# Stage 3 — post-hoc LLM labels (gpt-5.4-nano); skip topic -1
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/label_topics_llm.py \
+  --topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/<UTC_TS>
+
+# Stage 4 — three overlays from shared umap_2d.npy
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/visualize_clusters.py \
+  --topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/<UTC_TS>
+
+# Smoke (Step 6): --sample-size 50, then stop for approval
+# Production (Step 7, after approval): omit --sample-size (all original posts)
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/label_topics_llm.py \
+  --topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/<UTC_TS>
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_modeling_2026_08_05/src/visualize_clusters.py \
+  --topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/<UTC_TS>
+```
