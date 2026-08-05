@@ -100,3 +100,112 @@ topic_model.update_topics(docs, representation_model=representation_model)
 # or multi-aspect at fit time:
 # BERTopic(representation_model={"ctfidf_keywords": ..., "llm": representation_model})
 ```
+
+## Pipeline stages
+
+Run as four separate scripts so clustering can be retuned without burning LLM calls:
+
+1. **`load_embeddings.py`** — load posts + resolve Titan vectors into the local cache (or load the cache if already complete). Default path should not call Bedrock once the cache exists; optional `--backfill` for missing rows only.
+2. **`fit_bertopic.py`** — `fit_transform(docs, embeddings)` with `embedding_model=None`. Writes topic assignments, c-TF-IDF topic info, optional soft probabilities, saved model, and a shared 2-D UMAP for viz. No LLM in this stage.
+3. **`label_topics_llm.py`** — post-hoc `update_topics` with `bertopic.representation.OpenAI` ([LLM & Generative AI](https://maartengr.github.io/BERTopic/getting_started/representation/llm.html)). Labels use keywords + a few representative docs per topic only. Skip topic `-1` (HDBSCAN noise).
+4. **`visualize_clusters.py`** — one 2-D projection, three color overlays (topic / keep-remove / unanimous).
+
+Optional later: `export_features.py` to turn topic ids / soft probs into downstream ML features.
+
+## Data
+
+| Need | Source |
+|------|--------|
+| Post texts + modal keep/remove | `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS` via `shared.data.dataloader` (`message_id`, `original_text`, `mirror_text`, `decision`, `keep_remove_label`) |
+| Unanimous vs not | Join from `STUDY_PHASE_2_PART_2_RESULTS_FULL` (linked-fate keep/remove trials aggregated per `post_id` / `message_id`). Exact rule (e.g. all raters same decision) recorded in run `metadata.json`. |
+| Embeddings | Precomputed Amazon Titan Text Embeddings V2 (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized), loaded from DynamoDB/S3 identity cache into `outputs/embeddings/` |
+
+v1 fits on **all** posts for the **original** text role. Mirror is the same pipeline under `mirror/` later. Keep/remove and unanimous labels are for visualization only — they are not used when fitting BERTopic.
+
+## Precomputed embeddings
+
+Pass Titan vectors explicitly so BERTopic does not re-embed ([Custom Embeddings](https://maartengr.github.io/BERTopic/getting_started/embeddings/embeddings.html)):
+
+```python
+topics, probs = topic_model.fit_transform(docs, embeddings)
+```
+
+- `docs` must be `original_text` when `embeddings` are Titan(`original_text`) — row-aligned by `message_id`.
+- For any later `transform` on new posts, pass embeddings again (or set an `embedding_model`); with `embedding_model=None`, omitting embeddings will fail or pull a default model.
+- Cache stores vectors + id index only; reload post text from the dataset by `message_id`.
+
+## LLM topic labels
+
+See [6B. LLM & Generative AI](https://maartengr.github.io/BERTopic/getting_started/representation/llm.html).
+
+- Prefer **fit first, label second** (`update_topics`) so UMAP/HDBSCAN params can change without re-calling the API.
+- Prompt tags: `[DOCUMENTS]` (top representative docs) and `[KEYWORDS]` (c-TF-IDF). Keep the trailing `topic: <topic label>` line so BERTopic’s OpenAI parser can extract the label cleanly.
+- Useful knobs already in the Approach snippet: `nr_docs`, `diversity`, `doc_length`, `tokenizer`.
+- Model: `gpt-5.4-nano`
+
+## Visualizations
+
+Reuse a single `(n, 2)` UMAP written at fit time (`umap_2d.npy`), then recolor:
+
+1. By topic id
+2. Keep (green) / remove (red) from modal labels
+3. Unanimous (green) / not unanimous (red) from the results join
+
+Emit both interactive HTML (e.g. Plotly) and PNG copies for `RESULTS.md`.
+
+## File structure
+
+```text
+experiments/bertopic_modeling_2026_08_05/
+├── README.md
+├── RESULTS.md
+├── src/
+│   ├── paths.py                 # experiment roots; role = original | mirror
+│   ├── data.py                  # KEEP_REMOVE_LABELS + unanimous join from RESULTS_FULL
+│   ├── load_embeddings.py
+│   ├── fit_bertopic.py
+│   ├── label_topics_llm.py
+│   └── visualize_clusters.py
+└── outputs/
+    ├── embeddings/              # committed local Titan cache
+    │   ├── original/
+    │   │   ├── embeddings.npy   # (n, 256)
+    │   │   ├── index.parquet    # row_id, message_id
+    │   │   └── metadata.json
+    │   └── mirror/              # later
+    ├── topics/
+    │   └── original/
+    │       └── <UTC_TS>/
+    │           ├── metadata.json
+    │           ├── assignments.parquet   # message_id, topic, probability
+    │           ├── probabilities.npy     # optional soft probs
+    │           ├── topic_info.parquet    # c-TF-IDF keywords / names
+    │           ├── umap_2d.npy
+    │           └── model/                # topic_model.save(...)
+    ├── labels/
+    │   └── original/
+    │       └── <UTC_TS>/
+    │           ├── metadata.json         # model, prompt, source_topics_run
+    │           ├── topic_labels.parquet  # topic_id, ctfidf_name, llm_label, n_docs
+    │           └── prompts.jsonl         # optional audit
+    └── figures/
+        └── original/
+            └── <UTC_TS>/
+                ├── clusters_by_topic.{html,png}
+                ├── clusters_by_keep_remove.{html,png}
+                └── clusters_by_unanimous.{html,png}
+```
+
+Prefer `parquet` / `json` / `npy` over `csv` for artifacts we commit. OK to gitignore large `models/` dirs. Assignments, topic tables, embedding cache, and figures are the important reproducible artifacts.
+
+## Dependencies
+
+- Add `bertopic` (pulls `umap-learn`; typically also standalone `hdbscan`).
+- OpenAI client for `bertopic.representation.OpenAI`.
+- Existing: `scikit-learn`, `matplotlib`, AWS/`boto3` for one-time embedding cache backfill, dataset loader under `shared/data/`.
+
+## Out of scope (v1)
+
+- Mirror-text BERTopic run (same layout under `outputs/**/mirror/` later)
+- Using topic features in a keep/remove classifier (`export_features.py` can come after viz)
+- Re-embedding posts with SentenceTransformers or any non-Titan model inside BERTopic
