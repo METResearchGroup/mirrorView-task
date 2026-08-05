@@ -156,3 +156,9 @@ experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/**
 __pycache__/
 **/__pycache__/
 *.pyc
+# BERTopic identity-cache download scratch
+experiments/bertopic_modeling_2026_08_05/outputs/embeddings/.identity_disk_cache/
+
+# BERTopic experiment large / scratch artifacts
+experiments/bertopic_modeling_2026_08_05/outputs/embeddings/.identity_disk_cache/
+experiments/bertopic_modeling_2026_08_05/outputs/topics/original/*/model/

@@ -223,6 +223,12 @@ uv sync --extra bertopic
 # Stage 1 — Titan cache for original posts (no Bedrock when cache complete)
 PYTHONPATH=. uv run --extra bertopic python \
   experiments/bertopic_modeling_2026_08_05/src/load_embeddings.py
+# First populate / refresh from DynamoDB+S3 identity cache:
+# PYTHONPATH=. uv run --extra bertopic python \
+#   experiments/bertopic_modeling_2026_08_05/src/load_embeddings.py \
+#   --refresh-from-identity-cache
+# Optional Bedrock for residuals only:
+#   ... --refresh-from-identity-cache --backfill
 
 # Stage 2 — fit BERTopic (no LLM); smoke uses --sample-size 50
 PYTHONPATH=. uv run --extra bertopic python \
