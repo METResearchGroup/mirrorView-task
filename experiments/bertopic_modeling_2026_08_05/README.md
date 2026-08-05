@@ -16,7 +16,7 @@ The steps for BERTopic, at a high level, are:
    - Optional: KeyBERT-style keywords, MMR diversification, LLM labels, etc.
 5. Return topic assignments + topic representations
 
-For our use case, we run BERTopic on the original post embeddings. We've already previously generated the text embeddings, using Amazon Titan, for other experiments we've done in this repo. Later work will replicate this but for the mirrored post embeddings. We fit on all the posts.
+For our use case, we run BERTopic on the original post embeddings. We reuse existing Titan post embeddings from the prior keep/remove embedding pipeline (`experiments/predict_keep_remove_2026_07_01/`) via the DynamoDB+S3 identity cache (`jspsych-mirror-view-embedding-cache`). Any posts missing a cached vector are filtered out, which is OK as we've already embedded all the posts. Later work will replicate this but for the mirrored post embeddings. We fit on all the posts.
 
 Later on, we then visualize the post clusters on a 2-D cluster map. We'll create three sets of visualizations:
 
@@ -105,7 +105,7 @@ topic_model.update_topics(docs, representation_model=representation_model)
 
 Run as four separate scripts so clustering can be retuned without burning LLM calls:
 
-1. **`load_embeddings.py`** — load posts + resolve Titan vectors into the local cache (or load the cache if already complete). Default path should not call Bedrock once the cache exists; optional `--backfill` for missing rows only.
+1. **`load_embeddings.py`** — load posts + resolve Titan vectors from the identity cache into `outputs/embeddings/` (or load that local cache if already complete). Drop any posts still missing a vector. Default path should not call Bedrock once the cache exists; optional `--backfill` for missing rows only.
 2. **`fit_bertopic.py`** — `fit_transform(docs, embeddings)` with `embedding_model=None`. Writes topic assignments, c-TF-IDF topic info, optional soft probabilities, saved model, and a shared 2-D UMAP for viz. No LLM in this stage.
 3. **`label_topics_llm.py`** — post-hoc `update_topics` with `bertopic.representation.OpenAI` ([LLM & Generative AI](https://maartengr.github.io/BERTopic/getting_started/representation/llm.html)). Labels use keywords + a few representative docs per topic only. Skip topic `-1` (HDBSCAN noise).
 4. **`visualize_clusters.py`** — one 2-D projection, three color overlays (topic / keep-remove / unanimous).
@@ -118,7 +118,7 @@ Optional later: `export_features.py` to turn topic ids / soft probs into downstr
 |------|--------|
 | Post texts + modal keep/remove | `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS` via `shared.data.dataloader` (`message_id`, `original_text`, `mirror_text`, `decision`, `keep_remove_label`) |
 | Unanimous vs not | Join from `STUDY_PHASE_2_PART_2_RESULTS_FULL` (linked-fate keep/remove trials aggregated per `post_id` / `message_id`). Exact rule (e.g. all raters same decision) recorded in run `metadata.json`. |
-| Embeddings | Precomputed Amazon Titan Text Embeddings V2 (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized), loaded from DynamoDB/S3 identity cache into `outputs/embeddings/` |
+| Embeddings | Reused Amazon Titan Text Embeddings V2 (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized) from the keep/remove DynamoDB/S3 identity cache into `outputs/embeddings/`; posts without a vector are filtered out |
 
 v1 fits on **all** posts for the **original** text role. Mirror is the same pipeline under `mirror/` later. Keep/remove and unanimous labels are for visualization only — they are not used when fitting BERTopic.
 
@@ -130,6 +130,8 @@ Pass Titan vectors explicitly so BERTopic does not re-embed ([Custom Embeddings]
 topics, probs = topic_model.fit_transform(docs, embeddings)
 ```
 
+- Prefer the existing post Titan cache (keep/remove pipeline / DynamoDB+S3); write into `outputs/embeddings/{original,mirror}/` and skip Bedrock when the local cache is already complete.
+- Filter out any `message_id` without a vector. Coverage is effectively complete, so dropping those rows does not change how general the results are.
 - `docs` must be `original_text` when `embeddings` are Titan(`original_text`) — row-aligned by `message_id`.
 - For any later `transform` on new posts, pass embeddings again (or set an `embedding_model`); with `embedding_model=None`, omitting embeddings will fail or pull a default model.
 - Cache stores vectors + id index only; reload post text from the dataset by `message_id`.

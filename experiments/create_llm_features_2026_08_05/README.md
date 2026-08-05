@@ -33,7 +33,7 @@ We store our results in outputs/, as
 
 We keep all generated outputs in this folder.
 
-We use `gpt5.4-nano` for our LLM. We use Amazon Titan for the embeddings (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized).
+We use `gpt5.4-nano` for our LLM. We use Amazon Titan for the embeddings (`shared/embeddings/bedrock.py`: `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized). Note: this experiment embeds *feature* texts, not posts. Shared Titan post embeddings from the prior keep/remove pipeline (DynamoDB+S3 identity cache) are already available for reuse elsewhere (e.g. BERTopic); any missing post vectors can be filtered out without affecting generality.
 
 This repo has the following setup:
 
