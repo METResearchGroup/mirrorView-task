@@ -85,14 +85,24 @@ def compute_metrics(
     }
 
 
+def _validate_prediction_row(payload: dict[str, Any], source: str) -> None:
+    """Raise if a prediction row is missing required keys."""
+    missing = [key for key in REQUIRED_PRED_KEYS if key not in payload]
+    if missing:
+        raise ValueError(f"{source} missing keys: {missing}")
+
+
 def load_predictions(run_dir: Path) -> pd.DataFrame:
-    """Load per-item prediction JSON files from a runner output directory.
+    """Load predictions from ``predictions.jsonl`` or per-item ``*.json`` files.
+
+    Prefers consolidated ``predictions.jsonl`` when present; otherwise falls
+    back to per-item runner JSON files (excluding ``metadata.json``).
 
     Parameters
     ----------
     run_dir
-        Timestamped runner folder containing ``metadata.json`` and prediction
-        ``*.json`` files.
+        Timestamped runner folder containing ``metadata.json`` and either
+        ``predictions.jsonl`` or per-item prediction ``*.json`` files.
 
     Returns
     -------
@@ -112,17 +122,30 @@ def load_predictions(run_dir: Path) -> pd.DataFrame:
         raise FileNotFoundError(f"Missing metadata.json under {run_dir}")
 
     rows: list[dict[str, Any]] = []
-    for path in sorted(run_dir.glob("*.json")):
-        if path.name == "metadata.json":
-            continue
-        payload = json.loads(path.read_text(encoding="utf-8"))
-        missing = [key for key in REQUIRED_PRED_KEYS if key not in payload]
-        if missing:
-            raise ValueError(f"{path} missing keys: {missing}")
-        rows.append(payload)
+    jsonl_path = run_dir / "predictions.jsonl"
+    if jsonl_path.is_file():
+        for line_no, line in enumerate(
+            jsonl_path.read_text(encoding="utf-8").splitlines(),
+            start=1,
+        ):
+            if not line.strip():
+                continue
+            payload = json.loads(line)
+            _validate_prediction_row(payload, f"{jsonl_path}:{line_no}")
+            rows.append(payload)
+    else:
+        for path in sorted(run_dir.glob("*.json")):
+            if path.name == "metadata.json":
+                continue
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            _validate_prediction_row(payload, str(path))
+            rows.append(payload)
 
     if not rows:
-        raise ValueError(f"No prediction JSON files found under {run_dir}")
+        raise ValueError(
+            f"No predictions found under {run_dir} "
+            "(expected predictions.jsonl or per-item *.json)"
+        )
 
     frame = pd.DataFrame(rows)
     if frame["message_id"].duplicated().any():
