@@ -1,0 +1,297 @@
+"""Stage 4: label HDBSCAN clusters with Part-2-owned free-response prompts.
+
+Run from repo root::
+
+    PYTHONPATH=. uv run python experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/src/generate_labels_for_embeddings.py \\
+      --likert-group low \\
+      --clusters-run-dir experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/clusters/low/<STAGE3_TS> \\
+      --sample-per-cluster 8 \\
+      --seed 42
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from collections import defaultdict
+from collections.abc import Callable
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+from tqdm import tqdm
+
+from experiments.mine_free_response_for_features_2026_08_03.part_2_mine_free_responses.src.paths import (
+    LikertGroup,
+    latest_timestamp_subdir,
+    stage3_root,
+    stage4_root,
+    validate_likert_group,
+)
+from experiments.mine_free_response_for_features_2026_08_03.part_2_mine_free_responses.src.prompts import (
+    build_cluster_label_messages,
+)
+from research_tools.llm.runner import run
+from shared.feature_discovery.llm_based.schemas import ClusterLabelResult
+
+DEFAULT_MODEL = "gpt-5.4-nano"
+DEFAULT_SAMPLE_PER_CLUSTER = 8
+DEFAULT_SEED = 42
+_METADATA_FILENAME = "metadata.json"
+ASSIGNMENTS_HDBSCAN_FILENAME = "assignments_hdbscan.json"
+NOISE_CLUSTER_ID = -1
+
+
+def prompt_fn(item: dict[str, Any]) -> list[dict[str, str]]:
+    """Build chat messages for one HDBSCAN cluster labeling item."""
+    return build_cluster_label_messages(item)
+
+
+def writer_map_fn(item: dict[str, Any], result: ClusterLabelResult) -> dict[str, Any]:
+    """Map one cluster item and structured result to a JSON-serializable row."""
+    return {
+        "cluster_id": item["cluster_id"],
+        "likert_group": item["likert_group"],
+        "n_members": item["n_members"],
+        "sampled_feature_ids": [
+            feature["feature_id"] for feature in item["sampled_features"]
+        ],
+        "result": result.model_dump(),
+    }
+
+
+def _wrap_writer_with_progress(
+    base_writer: Callable[[dict[str, Any], ClusterLabelResult], dict[str, Any]],
+    progress_bar: tqdm,
+) -> Callable[[dict[str, Any], ClusterLabelResult], dict[str, Any]]:
+    """Advance the progress bar after each completed runner item."""
+
+    def wrapped(item: dict[str, Any], result: ClusterLabelResult) -> dict[str, Any]:
+        row = base_writer(item, result)
+        progress_bar.update(1)
+        return row
+
+    return wrapped
+
+
+def resolve_clusters_run_dir(
+    likert_group: str,
+    clusters_run_dir: str | None,
+) -> Path:
+    """Resolve Stage-3 run directory from an explicit path or the latest timestamp."""
+    if clusters_run_dir:
+        path = Path(clusters_run_dir)
+        if not path.is_dir():
+            raise FileNotFoundError(f"clusters-run-dir not found: {path}")
+        return path
+    return latest_timestamp_subdir(stage3_root(likert_group))
+
+
+def load_hdbscan_assignments(
+    clusters_run_dir: Path,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Load HDBSCAN assignments and Stage-3 metadata.
+
+    Parameters
+    ----------
+    clusters_run_dir
+        Stage-3 timestamped run directory.
+
+    Returns
+    -------
+    tuple[list[dict[str, Any]], dict[str, Any]]
+        Assignment rows and metadata dict.
+    """
+    assignments_path = clusters_run_dir / ASSIGNMENTS_HDBSCAN_FILENAME
+    if not assignments_path.is_file():
+        raise FileNotFoundError(
+            f"Missing {ASSIGNMENTS_HDBSCAN_FILENAME} in {clusters_run_dir}. "
+            "Do not fall back to KMeans assignments."
+        )
+    assignments = json.loads(assignments_path.read_text(encoding="utf-8"))
+    metadata_path = clusters_run_dir / _METADATA_FILENAME
+    metadata: dict[str, Any] = {}
+    if metadata_path.is_file():
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        downstream = metadata.get("downstream_method")
+        if downstream is not None and downstream != "hdbscan":
+            raise ValueError(
+                f"Expected downstream_method='hdbscan', got {downstream!r}"
+            )
+    return assignments, metadata
+
+
+def _member_feature_payload(row: dict[str, Any]) -> dict[str, Any]:
+    """Project an assignment row to the sampled-feature payload for prompts."""
+    payload: dict[str, Any] = {
+        "feature_id": row["feature_id"],
+        "feature_name": row["feature_name"],
+        "feature_value": row["feature_value"],
+        "category": str(row.get("category") or ""),
+        "rationale": str(row.get("rationale") or ""),
+        "evidence_span": row.get("evidence_span"),
+    }
+    if "participant_id" in row and row["participant_id"] is not None:
+        payload["participant_id"] = row["participant_id"]
+    return payload
+
+
+def build_cluster_label_items(
+    assignments: list[dict[str, Any]],
+    likert_group: str,
+    sample_per_cluster: int,
+    seed: int,
+) -> tuple[list[dict[str, Any]], int]:
+    """Build one runner item per non-noise HDBSCAN cluster.
+
+    Parameters
+    ----------
+    assignments
+        HDBSCAN assignment rows.
+    likert_group
+        low or high.
+    sample_per_cluster
+        Max members sampled per cluster.
+    seed
+        Base RNG seed; salted with cluster_id.
+
+    Returns
+    -------
+    tuple[list[dict[str, Any]], int]
+        Runner items and count of noise rows skipped.
+    """
+    if sample_per_cluster <= 0:
+        raise ValueError(
+            f"sample_per_cluster must be positive, got {sample_per_cluster}"
+        )
+
+    by_cluster: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    n_noise_skipped = 0
+    for row in assignments:
+        cluster_id = int(row["cluster_id"])
+        if cluster_id == NOISE_CLUSTER_ID:
+            n_noise_skipped += 1
+            continue
+        by_cluster[cluster_id].append(row)
+
+    items: list[dict[str, Any]] = []
+    for cluster_id in sorted(by_cluster):
+        members = by_cluster[cluster_id]
+        rng = np.random.default_rng(seed + int(cluster_id))
+        n_sample = min(sample_per_cluster, len(members))
+        indices = rng.choice(len(members), size=n_sample, replace=False)
+        sampled = [_member_feature_payload(members[int(i)]) for i in indices]
+        items.append(
+            {
+                "cluster_id": int(cluster_id),
+                "likert_group": likert_group,
+                "n_members": len(members),
+                "sampled_features": sampled,
+            }
+        )
+    return items, n_noise_skipped
+
+
+def run_cluster_labeling(
+    items: list[dict[str, Any]],
+    likert_group: str,
+    source_clusters_run_dir: Path,
+    sample_per_cluster: int,
+    seed: int,
+    n_noise_skipped: int,
+    model: str,
+) -> Any:
+    """Run LLM labeling for each HDBSCAN cluster and return the output path."""
+    if not items:
+        raise ValueError(
+            "No non-noise HDBSCAN clusters to label. "
+            f"n_noise_skipped={n_noise_skipped}"
+        )
+
+    progress_bar = tqdm(
+        total=len(items),
+        desc=f"Stage 4 labels ({likert_group})",
+    )
+    try:
+        return run(
+            items,
+            prompt_fn=prompt_fn,
+            response_model=ClusterLabelResult,
+            model=model,
+            output_base_path=stage4_root(likert_group),
+            writer_map_fn=_wrap_writer_with_progress(writer_map_fn, progress_bar),
+            run_metadata={
+                "stage": "cluster_labeling",
+                "likert_group": likert_group,
+                "source_clusters_run_dir": str(source_clusters_run_dir),
+                "clustering_method": "hdbscan",
+                "sample_per_cluster": sample_per_cluster,
+                "seed": seed,
+                "model": model,
+                "cluster_ids": [item["cluster_id"] for item in items],
+                "n_noise_skipped": n_noise_skipped,
+            },
+        )
+    finally:
+        progress_bar.close()
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse CLI arguments for Stage 4."""
+    parser = argparse.ArgumentParser(
+        description=(
+            "Label HDBSCAN free-response feature clusters with gpt-5.4-nano "
+            "(not KMeans)."
+        )
+    )
+    parser.add_argument(
+        "--likert-group",
+        required=True,
+        choices=[LikertGroup.LOW.value, LikertGroup.HIGH.value],
+    )
+    parser.add_argument(
+        "--clusters-run-dir",
+        default=None,
+        help="Stage-3 run dir; defaults to latest under stage3_root/.",
+    )
+    parser.add_argument(
+        "--sample-per-cluster",
+        type=int,
+        default=DEFAULT_SAMPLE_PER_CLUSTER,
+    )
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
+    parser.add_argument("--model", default=DEFAULT_MODEL)
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> None:
+    """CLI entry: label HDBSCAN clusters for one Likert group."""
+    args = parse_args(argv)
+    likert_group = validate_likert_group(args.likert_group).value
+    clusters_run_dir = resolve_clusters_run_dir(likert_group, args.clusters_run_dir)
+    assignments, _metadata = load_hdbscan_assignments(clusters_run_dir)
+    items, n_noise_skipped = build_cluster_label_items(
+        assignments,
+        likert_group,
+        args.sample_per_cluster,
+        args.seed,
+    )
+    print(
+        f"likert_group={likert_group} clusters={len(items)} "
+        f"n_noise_skipped={n_noise_skipped} "
+        f"source={clusters_run_dir}"
+    )
+    output_dir = run_cluster_labeling(
+        items,
+        likert_group,
+        clusters_run_dir,
+        args.sample_per_cluster,
+        args.seed,
+        n_noise_skipped,
+        args.model,
+    )
+    print(f"Wrote Stage-4 labels to {output_dir}")
+
+
+if __name__ == "__main__":
+    main()

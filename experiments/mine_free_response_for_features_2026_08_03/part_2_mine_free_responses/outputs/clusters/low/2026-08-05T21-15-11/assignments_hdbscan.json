@@ -1,0 +1,1892 @@
+[
+  {
+    "feature_id": "0_0",
+    "feature_name": "blocked_when_both_sides_emotionally_inflamatory",
+    "feature_value": "Indicates they would block when emotional invectives appear, and that they were not influenced into removing based on a substantive difference but rather on tone from both sides.",
+    "category": "affect_or_confidence",
+    "rationale": "The participant explicitly ties their blocking decision to emotional invective rather than a specific content change in the pair.",
+    "evidence_span": "purely emotional invectives from either side caused me to block both.",
+    "cluster_id": -1,
+    "participant_id": "P_1781994642135_po9y5yqgu"
+  },
+  {
+    "feature_id": "0_1",
+    "feature_name": "freedom_of_speech_default_with_language_weighting",
+    "feature_value": "Default to keeping due to freedom of speech, but more removal for posts with lots of language.",
+    "category": "decision_criteria",
+    "rationale": "They describe a keep-first principle and a secondary threshold related to intensity/amount of language.",
+    "evidence_span": "I believe everyone has the right to freedom of speech. Posts with lots of language I tended to remove more of.",
+    "cluster_id": 0,
+    "participant_id": "P_1781989919276_irascg3hn"
+  },
+  {
+    "feature_id": "0_2",
+    "feature_name": "allowed_unless_harmful_threat_to_group_person_or_identity",
+    "feature_value": "Keep as long as content is not harmful or threatening to a group/person/identity (e.g., death directive).",
+    "category": "decision_criteria",
+    "rationale": "They give an explicit harm/threat criterion as the deciding factor.",
+    "evidence_span": "So long as nothing harmful or threatening towards a group, person, or identity (like actually telling a person to die",
+    "cluster_id": 0,
+    "participant_id": "P_1781993123138_2zcijm1jo"
+  },
+  {
+    "feature_id": "0_3",
+    "feature_name": "removed_namecalling_cursing_hyperbole",
+    "feature_value": "Rejects posts that resort to name calling/cursing/hyperbole; keeps if it\u2019s a reasonable argument in replies.",
+    "category": "content_cues",
+    "rationale": "They list specific rhetorical behaviors that drive rejection/removal.",
+    "evidence_span": "reject anything that resorted to name calling, cursing or hyperbole.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988309389_fpjt3r7yw"
+  },
+  {
+    "feature_id": "0_4",
+    "feature_name": "harsh_language_not_civil_conversation",
+    "feature_value": "Evaluates based on whether there is harsh language that is not conducive to a civil conversation.",
+    "category": "decision_criteria",
+    "rationale": "They define a clarity/civility criterion tied to harsh language.",
+    "evidence_span": "if they had harsh language that is not conducive to a civil conversation.",
+    "cluster_id": -1,
+    "participant_id": "P_1781994165543_cxah2p8zo"
+  },
+  {
+    "feature_id": "0_5",
+    "feature_name": "impartiality_to_keep_but_emotional_maturity_concern",
+    "feature_value": "Wants impartiality and thinks many are debate-worthy, but emotional maturity would undermine real responses\u2014leading them to be hesitant about removing decisions.",
+    "category": "process_meta",
+    "rationale": "They describe their decision approach (impartiality) and a concern about impact on discourse quality.",
+    "evidence_span": "I wanted to be impartial... Unfortunately, the emotional maturity would undermine the opportunity to hear real response.",
+    "cluster_id": -1,
+    "participant_id": "P_1781995651448_81rfpzcsq"
+  },
+  {
+    "feature_id": "0_6",
+    "feature_name": "allow_most_unless_verbal_abuse_and_foul_language",
+    "feature_value": "Allows pretty much anything unless it becomes verbally abusive and foul; values limited civility rather than censorship.",
+    "category": "decision_criteria",
+    "rationale": "They provide a concrete threshold for when to remove.",
+    "evidence_span": "allow pretty much anything unless it got verbal abusive and foul language.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988288054_15t9omflg"
+  },
+  {
+    "feature_id": "0_7",
+    "feature_name": "minimal_removal_harm_threshold_plurality_free_speech",
+    "feature_value": "Only a small number are harmful; otherwise they keep because free speech exists for a reason.",
+    "category": "other",
+    "rationale": "They emphasize a low removal rate and justify it with a general free-speech principle.",
+    "evidence_span": "There were only one or two that I would consider harmful. Otherwise, free speech exists for a reason.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988268588_j27nz4nie"
+  },
+  {
+    "feature_id": "1_0",
+    "feature_name": "name_calling_as_primary_trigger",
+    "feature_value": "Whether there was targeted hateful name-calling was the main deciding factor",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly states their decision hinge was targeted hateful name-calling.",
+    "evidence_span": "The main deciding factor was whether there was targeted hateful \"name-calling\".",
+    "cluster_id": -1,
+    "participant_id": "P_1782002946915_vrva51kuy"
+  },
+  {
+    "feature_id": "1_1",
+    "feature_name": "free_speech_default_except_violence",
+    "feature_value": "Default to keeping for free speech, removing only when inciting violence",
+    "category": "decision_criteria",
+    "rationale": "They describe a specific rule: keep under free speech but remove when violence is being incited.",
+    "evidence_span": "Free speech is a protected right. The only time I said remove both was when they were inciting violence.",
+    "cluster_id": 0,
+    "participant_id": "P_1781997475173_gzts3670t"
+  },
+  {
+    "feature_id": "1_2",
+    "feature_name": "personal_insults_and_foul_language_limit",
+    "feature_value": "Accepts free expression but draws the line at personal insults and excessive foul language",
+    "category": "decision_criteria",
+    "rationale": "Their stated boundary is personal insults/foul language.",
+    "evidence_span": "drew the line at personal insults and excessive foul language",
+    "cluster_id": 0,
+    "participant_id": "P_1781988438678_5wzdbdnxx"
+  },
+  {
+    "feature_id": "1_3",
+    "feature_name": "neutrality_and_context_focus_on_threats",
+    "feature_value": "Stays neutral and focuses on targeted threats; otherwise allows more broadly",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe their approach/criteria for judging regardless of the pair\u2019s political framing.",
+    "evidence_span": "I decided to atay netural to the context and focus on typical sensors such as targetted threats, otherwise anything goes.",
+    "cluster_id": -1,
+    "participant_id": "P_1781995771902_21309yg64"
+  },
+  {
+    "feature_id": "1_4",
+    "feature_name": "adult_political_context_mitigates_offensiveness",
+    "feature_value": "Initially considers offensiveness for children, later reframes as adult political news",
+    "category": "content_cues",
+    "rationale": "They report that recognizing adult political-news context reduced how offensive they considered the posts.",
+    "evidence_span": "But then Midway I thought maybe this might be a social media content about political news probably more for adults.",
+    "cluster_id": -1,
+    "participant_id": "P_1781999150924_wjvwwki8m"
+  },
+  {
+    "feature_id": "1_5",
+    "feature_name": "anger_or_desire_to_join_conversation",
+    "feature_value": "Felt anger at times and wanted to get in the conversation",
+    "category": "affect_or_confidence",
+    "rationale": "The reflection directly mentions emotional reaction (anger) and desire to engage.",
+    "evidence_span": "I felt angry at times. Some times I wanted to get in the conversation",
+    "cluster_id": -1,
+    "participant_id": "P_1781992747385_h5g8dshic"
+  },
+  {
+    "feature_id": "1_6",
+    "feature_name": "explicit_partisan_name_caller_content_present",
+    "feature_value": "Uses strong partisan slurs/anti-censorship rhetoric in describing what to remove",
+    "category": "content_cues",
+    "rationale": "The participant\u2019s reflection contains explicit partisan insults, indicating sensitivity/attention to this kind of language.",
+    "evidence_span": "Democrats are white hating communist retards.   Censorship is what communists do.",
+    "cluster_id": -1,
+    "participant_id": "P_1781990798285_f0cr8mj8b"
+  },
+  {
+    "feature_id": "2_0",
+    "feature_name": "hate_speech_threshold_low",
+    "feature_value": "Only looked for hate speech; if none detected, kept all",
+    "category": "content_cues",
+    "rationale": "The participant explicitly uses absence of hate speech as the decision basis and reports keeping all.",
+    "evidence_span": "\"None of it seemed like hate speech so I said yes to all.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988616237_kxli6rhvx"
+  },
+  {
+    "feature_id": "2_1",
+    "feature_name": "vulgarity_or_misinformation_cue_focus",
+    "feature_value": "Decided mainly based on whether content was too vulgar or contained misinformation",
+    "category": "content_cues",
+    "rationale": "They state their primary check is vulgarity and misinformation.",
+    "evidence_span": "\"whether it was too vulgar or misinformation.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989874736_hjrdardpn"
+  },
+  {
+    "feature_id": "2_2",
+    "feature_name": "violence_personal_attack_grounds_removal",
+    "feature_value": "Remove when posts are too violent or contain personal attacks without justification",
+    "category": "decision_criteria",
+    "rationale": "They describe specific removal criteria tied to violence/personal attacks.",
+    "evidence_span": "\"too violent or personal attacks without justification, I voted to remove them.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1782045676636_w8g4csfqm"
+  },
+  {
+    "feature_id": "2_3",
+    "feature_name": "discussion_quality_signal_influences_removal",
+    "feature_value": "Removed content likely to cause non-serious discussion or echo-chamber agreement; uncivil discourse doesn't advance thought",
+    "category": "decision_criteria",
+    "rationale": "They tie decisions to expected impact on the quality/seriousness of discussion.",
+    "evidence_span": "\"considered the amount of serious discussion each pair would generate\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781991211462_r8ov57vfp"
+  },
+  {
+    "feature_id": "2_4",
+    "feature_name": "anti_attack_bias_and_unbiased_moderation",
+    "feature_value": "Claimed effort to stay unbiased; used whether posts attacked the other side/disrupted discussion as the deciding factor",
+    "category": "process_meta",
+    "rationale": "They describe their moderation approach and a deciding factor about attacks disrupting discussion.",
+    "evidence_span": "\"stay as unbiased as possible\"",
+    "cluster_id": -1,
+    "participant_id": "P_1782009232934_69948k759"
+  },
+  {
+    "feature_id": "2_5",
+    "feature_name": "free_speech_line_drawing_uncertainty",
+    "feature_value": "Uncertainty about where to draw the line between protecting free speech and combating fake news/bullies",
+    "category": "affect_or_confidence",
+    "rationale": "They report uncertainty and discuss balancing free speech with countering harmful content.",
+    "evidence_span": "\"I just wasnt really sure what you were looking for here\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988263897_d231rte3t"
+  },
+  {
+    "feature_id": "2_6",
+    "feature_name": "extreme_hate_call_only_removal",
+    "feature_value": "Kept unless it called for murder, racism, or extreme hateful content",
+    "category": "decision_criteria",
+    "rationale": "They set a high bar for removal based on extreme hateful calls.",
+    "evidence_span": "\"As long as it didn\u0019t call for murder, racism, or any extreme hateful content, i let it all through.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781988751395_r96s1ec83"
+  },
+  {
+    "feature_id": "2_7",
+    "feature_name": "intolerance_insult_motive_seen_as_issue",
+    "feature_value": "Looked for intolerance and foul-mouthed group insults meant as fun/insult rather than argument",
+    "category": "content_cues",
+    "rationale": "They characterize harmful content as group-targeted insult framed as entertainment rather than substantive point.",
+    "evidence_span": "\"looking for intolerance and foul mouthing a group\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781990219257_etr5zoq7l"
+  },
+  {
+    "feature_id": "3_0",
+    "feature_name": "abuse_or_harm_language_as_removal_cue",
+    "feature_value": "Remove when abusive/harmful language appears; allow posts with a legitimate point vs name-calling",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly ties deletion to abusive/harmful language while allowing others.",
+    "evidence_span": "\"I looked for abusive and harmful language to remove.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781988472440_xjc98c3qw"
+  },
+  {
+    "feature_id": "3_1",
+    "feature_name": "threat_assessment_first",
+    "feature_value": "Primary check is whether there is real violence/threatening; otherwise allow",
+    "category": "decision_criteria",
+    "rationale": "They describe a threat/violence test as the deciding factor.",
+    "evidence_span": "\"checked to see if anyone was threatening real violence.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989184161_5dvu11tv4"
+  },
+  {
+    "feature_id": "3_2",
+    "feature_name": "rudeness_without_point_kept_but_free_speech_frame",
+    "feature_value": "Rude language that doesn\u2019t make a point did not override keeping; free speech applied to allow even when disagreeing",
+    "category": "decision_criteria",
+    "rationale": "They state rude, non-point language did not drive removal because they permitted it under free speech.",
+    "evidence_span": "\"rude language that didn't really make a point\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781991260063_9fajbws6j"
+  },
+  {
+    "feature_id": "3_3",
+    "feature_name": "expletives_not_ban_reason",
+    "feature_value": "Expletives/expletive-heavy posts not sufficient for banning; focus on hateful/threatening",
+    "category": "decision_criteria",
+    "rationale": "They explicitly downweight expletives as a removal criterion.",
+    "evidence_span": "\"expletives were not a reason to ban.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781996367839_qhifysxe6"
+  },
+  {
+    "feature_id": "3_4",
+    "feature_name": "language_priority_over_politics",
+    "feature_value": "Politics mention matters less than whether there is cursing (delete both if cursing present)",
+    "category": "content_cues",
+    "rationale": "They describe a process of prioritizing language cues over political content.",
+    "evidence_span": "\"I was more focused on language than the politics mentioned.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989199060_63cuux0d4"
+  },
+  {
+    "feature_id": "3_5",
+    "feature_name": "listening_to_others_affecting_removal_resistance",
+    "feature_value": "Wants to remove many posts but refrains because they are others\u2019 thoughts worth hearing",
+    "category": "affect_or_confidence",
+    "rationale": "They justify keeping based on respecting audience hearing despite offense.",
+    "evidence_span": "\"its people's thoughts .. they deserve to be heard\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781999018480_zoubu4kw0"
+  },
+  {
+    "feature_id": "3_6",
+    "feature_name": "free_speech_principle_resists_mod_deletion",
+    "feature_value": "Belief in freedom of speech; personal taste/offense shouldn\u2019t grant the right to delete",
+    "category": "process_meta",
+    "rationale": "They base decisions on a general principle that overrules removing for bad taste.",
+    "evidence_span": "\"I believe in freedom of speech.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781990473826_5huyihp2w"
+  },
+  {
+    "feature_id": "3_7",
+    "feature_name": "no_explanation_or_random_response",
+    "feature_value": "No meaningful reflection beyond stating it was random",
+    "category": "process_meta",
+    "rationale": "The reflection provides no discernible decision criterion beyond randomness.",
+    "evidence_span": "\"just kinda random\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781994313771_2f3b2ywl0"
+  },
+  {
+    "feature_id": "4_0",
+    "feature_name": "violence_hate_incitation_removal_threshold",
+    "feature_value": "They would remove only if a post could incite/encourage hatred or violence.",
+    "category": "decision_criteria",
+    "rationale": "The reflection states a specific removal criterion tied to incitement/hatred/violence.",
+    "evidence_span": "remove posts if one of them could potentially incite or encourage hatred or violence.",
+    "cluster_id": 0,
+    "participant_id": "P_1781993189087_fepuzx9s2"
+  },
+  {
+    "feature_id": "4_1",
+    "feature_name": "threats_to_safety_or_inciting_violence_rule",
+    "feature_value": "Removal only when posts threaten people\u2019s safety or attempt to incite violence.",
+    "category": "decision_criteria",
+    "rationale": "This directly defines the condition under which they support removal.",
+    "evidence_span": "If it threatened peoples safety or attempted to incite violence I believe it should be removed.",
+    "cluster_id": 0,
+    "participant_id": "P_1781995615370_ujlj2dxtm"
+  },
+  {
+    "feature_id": "4_2",
+    "feature_name": "insensitivity_low_priority_unless_extreme_demeaning",
+    "feature_value": "Insensitive language alone doesn\u2019t justify removal; only extremely demeaning/degrading content bordering on hate speech should be taken down.",
+    "category": "decision_criteria",
+    "rationale": "They describe a tolerance floor for insensitive language and an elevated threshold for hate-like demeaning content.",
+    "evidence_span": "I am generally disinclined to take down posts, even if they use insensitive language. Only if the posts were extremely demeaning and degrading and appeared to border on hate speech",
+    "cluster_id": -1,
+    "participant_id": "P_1782005960118_qfm6lweul"
+  },
+  {
+    "feature_id": "4_3",
+    "feature_name": "pro_free_speech_ignores_pair_difference",
+    "feature_value": "They say the pair didn\u2019t influence them, because they want freedom of speech on social media.",
+    "category": "affect_or_confidence",
+    "rationale": "They explicitly attribute low influence to a free-speech orientation.",
+    "evidence_span": "the posts didn't influence me at all because I want there to be freedom of speech on social media.",
+    "cluster_id": -1,
+    "participant_id": "P_1781993586737_wdf2qcr19"
+  },
+  {
+    "feature_id": "4_4",
+    "feature_name": "focus_on_beneficial_factual_content_not_pair_effect",
+    "feature_value": "They evaluated each post for beneficial factual content and largely followed a rule-based assessment rather than being swayed by the pair comparison.",
+    "category": "pair_comparison_strategy",
+    "rationale": "Their stated basis is per-post factual benefit, not a meaningful pairwise influence.",
+    "evidence_span": "I evaluated each post for some beneficial factual content.",
+    "cluster_id": 1,
+    "participant_id": "P_1781994797447_f1bm50fu5"
+  },
+  {
+    "feature_id": "4_5",
+    "feature_name": "first_amendment_right_to_express_not_agreement",
+    "feature_value": "Reading both versions reminded them of First Amendment rights: disagreement doesn\u2019t negate someone\u2019s right to express views (with a private-platform nuance).",
+    "category": "content_cues",
+    "rationale": "They tie the influence to constitutional rights framing and a right-to-speak justification.",
+    "evidence_span": "Reading both pairs of posts helped to remind me how important the first amendment",
+    "cluster_id": -1,
+    "participant_id": "P_1781988725753_8iggoxefe"
+  },
+  {
+    "feature_id": "4_6",
+    "feature_name": "no_moderation_needed_for_opinions_exaggeration_ok",
+    "feature_value": "They saw no need for moderation because posts were just opinions (even if exaggerated/non-realistic).",
+    "category": "decision_criteria",
+    "rationale": "They justify lack of moderation based on viewing content as ordinary opinion/exaggeration rather than problematic speech.",
+    "evidence_span": "There was nothing that needed to be moderated. Moderation is for completely out of line things, these were just people expressing their opinions.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988443015_ru2f7lmwh"
+  },
+  {
+    "feature_id": "4_7",
+    "feature_name": "allow_both_total_free_speech_except_violence",
+    "feature_value": "They found none close enough to remove; they support total free speech unless advocating violence, making choosing to allow both easy.",
+    "category": "affect_or_confidence",
+    "rationale": "They indicate both a strong disposition toward non-removal and a clear violence-only exception.",
+    "evidence_span": "None of the posts were even remotely close to being bad enough to be removed. I am for total free speech unless it's advocating violence",
+    "cluster_id": 0,
+    "participant_id": "P_1781989417078_e9ondjm3l"
+  },
+  {
+    "feature_id": "5_0",
+    "feature_name": "freedom_of_speech_as_default_standard",
+    "feature_value": "Uses constitutional/free-speech rights as a primary reason to keep/approve regardless of paired influence.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly grounds their decision in freedom-of-speech/constitutional protection.",
+    "evidence_span": "\"Our freedom of speech is a constitutional protected right.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781993047044_pswb0ywld"
+  },
+  {
+    "feature_id": "5_1",
+    "feature_name": "minimization_of_pair_effect_and_global_approval",
+    "feature_value": "Indicates they approved essentially all posts and frames any vulgarity as not disqualifying; pair comparison did not change decisions.",
+    "category": "pair_comparison_strategy",
+    "rationale": "Their reflection centers on blanket approval, implying the paired view had little impact on their keep/remove judgments.",
+    "evidence_span": "\"So I approved all of them.\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781988650246_c4pxwu8us"
+  },
+  {
+    "feature_id": "5_2",
+    "feature_name": "good_faith_argument_vs_anger_name_calling",
+    "feature_value": "Looks for whether opinions are made in good faith; disallows angry name-calling/violent rhetoric.",
+    "category": "decision_criteria",
+    "rationale": "They specify a content quality criterion (good faith) and a threshold tied to rhetoric style.",
+    "evidence_span": "\"evaluated the posts... whether or not the opinions were adequately made in good faith\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988746610_8klw7eqe9"
+  },
+  {
+    "feature_id": "5_3",
+    "feature_name": "anti_silencing_logic_even_when_disagreeing",
+    "feature_value": "Opposes removing both versions because it would silence a belief they might agree with; relies on representation/permission to hear the other side.",
+    "category": "decision_criteria",
+    "rationale": "They articulate a decision rule focused on not silencing beliefs, even if they personally disagree.",
+    "evidence_span": "\"If both posts were removed then an belief I did align with would be silenced.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988911419_mv1tx1bih"
+  },
+  {
+    "feature_id": "5_4",
+    "feature_name": "focus_on_individual_content_quality_not_pair_difference",
+    "feature_value": "States they examined each post individually to judge argument quality vs crass language/name-calling.",
+    "category": "process_meta",
+    "rationale": "Their described approach emphasizes single-post evaluation rather than leveraging the mirror/pair comparison.",
+    "evidence_span": "\"I tried to look at the content of each post individually.\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781990928026_7g73hj2gl"
+  },
+  {
+    "feature_id": "5_5",
+    "feature_name": "pair_mirroring_reduces_effort_joint_decision",
+    "feature_value": "Notes the pair mirrored each other adequately, making a joint decision easy; influence perceived as low.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They explicitly connect mirror similarity to decision ease, implying limited additional influence from seeing both.",
+    "evidence_span": "\"The pairs did seem to mirror each other adaquetly so making a joint decision was easy.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988942347_1ubf3llah"
+  },
+  {
+    "feature_id": "5_6",
+    "feature_name": "bounds_of_speech_plus_intent_and_information_quality_buffer",
+    "feature_value": "Applies a free-speech bounds test plus an intentionality buffer and considers whether misinformation is malicious enough.",
+    "category": "decision_criteria",
+    "rationale": "They enumerate specific decision criteria including intent and maliciousness related to misinformation.",
+    "evidence_span": "\"without crossing into hate speech, misinformation or disinformation\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989865091_j768nv8pg"
+  },
+  {
+    "feature_id": "5_7",
+    "feature_name": "threshold_for_extreme_or_offensive_language",
+    "feature_value": "Allows expression but removes/limits when language is too extreme.",
+    "category": "decision_criteria",
+    "rationale": "They describe an explicit threshold around extremity of language.",
+    "evidence_span": "\"not to include too extreme languages.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989908622_e3ytxwu3c"
+  },
+  {
+    "feature_id": "6_0",
+    "feature_name": "focus_on_violence_threats_rule",
+    "feature_value": "Kept most content unless it had lots of language or threats of violence.",
+    "category": "decision_criteria",
+    "rationale": "The participant describes a keep/remove rule centered on threats of violence and other intense language.",
+    "evidence_span": "\"rejected stuff that had lots of language or threats of violence\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989992306_p4fcigepn"
+  },
+  {
+    "feature_id": "6_1",
+    "feature_name": "ignore_political_pair_contrast",
+    "feature_value": "Tried to ignore the political positions and instead remove the most inflammatory/insulting items.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They explicitly state they did not use the paired opposing views as the basis for decisions.",
+    "evidence_span": "\"ignore the political positions\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781990635284_quff7d9qv"
+  },
+  {
+    "feature_id": "6_2",
+    "feature_name": "pair_opposition_did_not_change_intent",
+    "feature_value": "Opposing views in the pair didn\u2019t really change the underlying intent; relied on threat/slur/inflammatory checks.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They attribute low influence to the idea that pair presentation didn\u2019t affect perceived intent.",
+    "evidence_span": "\"didn't really change the underlying intent of the post\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781991024251_wo5f1dqaz"
+  },
+  {
+    "feature_id": "6_3",
+    "feature_name": "first_amendment_hate_threat_threshold",
+    "feature_value": "Searched for hate speech, direct threats, or other disallowed speech under the 1st amendment.",
+    "category": "decision_criteria",
+    "rationale": "They describe a legal/scope-based criterion for removal that is independent of political mirroring.",
+    "evidence_span": "\"hate speech, direct threats\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989421219_duigsvx30"
+  },
+  {
+    "feature_id": "6_4",
+    "feature_name": "profanity_argument_minimum_requirement",
+    "feature_value": "Removed posts that lacked an argument and used profanity/cursing.",
+    "category": "decision_criteria",
+    "rationale": "They state specific content requirements (argument presence) and a profanity-based removal trigger.",
+    "evidence_span": "\"didn't have an argument\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781993850109_em7lpko57"
+  },
+  {
+    "feature_id": "6_5",
+    "feature_name": "blatant_rudeness_without_argument",
+    "feature_value": "Removed blatant cursing and name-calling when there was no argument.",
+    "category": "decision_criteria",
+    "rationale": "They tie removal to impoliteness (cursing/name-calling) plus absence of argumentation.",
+    "evidence_span": "\"name calling without any argument\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781993423530_vtha9dypc"
+  },
+  {
+    "feature_id": "6_6",
+    "feature_name": "low_salience_of_threats_and_slurs",
+    "feature_value": "Checked for explicit threats/slurs/inflammatory calls to violence and found none, so kept them.",
+    "category": "affect_or_confidence",
+    "rationale": "They report confidence in the absence of disqualifying elements, explaining minimal influence.",
+    "evidence_span": "\"None of them really did\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781991024251_wo5f1dqaz"
+  },
+  {
+    "feature_id": "6_7",
+    "feature_name": "free_speech_attitude_minimizes_removal",
+    "feature_value": "Believes in free speech; offensiveness alone wasn\u2019t enough to remove posts.",
+    "category": "other",
+    "rationale": "Their stated value (free speech) implies a general reluctance to remove based solely on offensiveness.",
+    "evidence_span": "\"just believe in free speech\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989907167_f54ogwuwt"
+  },
+  {
+    "feature_id": "7_0",
+    "feature_name": "pair_joint_removal_when_offensiveness_found",
+    "feature_value": "If one post seemed removable, they would remove both versions together; otherwise they largely allowed content.",
+    "category": "pair_comparison_strategy",
+    "rationale": "The participant explicitly describes using the pair as a coupled decision (remove both when warranted).",
+    "evidence_span": "\"if I felt one of the posts should be removed, I would click to remove both\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781988918495_fkkz7i57b"
+  },
+  {
+    "feature_id": "7_1",
+    "feature_name": "free_speech_threshold_inciting_violence_or_unsubstantiated_slander",
+    "feature_value": "Primary removal criteria were direct incitement to violence or slander without corroboration; they allowed offensive speech otherwise.",
+    "category": "decision_criteria",
+    "rationale": "They list concrete triggers for removal and state they generally permitted offensive speech consistent with freedom of speech.",
+    "evidence_span": "\"inciting violence\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781988918495_fkkz7i57b"
+  },
+  {
+    "feature_id": "7_2",
+    "feature_name": "intent_to_censor_limited_to_unhealthy_conversation_angry_or_violent",
+    "feature_value": "They targeted comments that seemed particularly angry/violent and said task framing was to avoid promoting unhealthy conversation.",
+    "category": "decision_criteria",
+    "rationale": "They anchor their decision rule to the task\u2019s goal and specify what kinds of content they removed.",
+    "evidence_span": "\"remove comments that would not promote \\\"healthy\\\" conversation\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989396112_tv9vjp78q"
+  },
+  {
+    "feature_id": "7_3",
+    "feature_name": "free_speech_conditional_on_no_direct_call_to_violence",
+    "feature_value": "They supported free speech on both sides, but would remove only if there were a direct call to violence; they saw none.",
+    "category": "decision_criteria",
+    "rationale": "They define a clear exception threshold (direct call to violence) and report observing none.",
+    "evidence_span": "\"unless there\u2019s a direct call to violence\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989920464_yg2v1yg5x"
+  },
+  {
+    "feature_id": "7_4",
+    "feature_name": "pair_purpose_seek_truth_across_sides",
+    "feature_value": "They used the pair to check whether either side contained truth.",
+    "category": "pair_comparison_strategy",
+    "rationale": "Their reflection centers on evaluating both sides for truth when considering the pair.",
+    "evidence_span": "\"wanted to see if either side had any truth to it\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989981340_t7r4orf92"
+  },
+  {
+    "feature_id": "7_5",
+    "feature_name": "similarity_reduces_removal_bias",
+    "feature_value": "They let through posts that were nearly identical but removed those that were overly opinionated and felt like bullying/vulgarity.",
+    "category": "content_cues",
+    "rationale": "They connect a specific comparison cue (near-identical posts) to allowing decisions, and cite bullying/vulgar tone as removal driver.",
+    "evidence_span": "\"nearly identical\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989312296_tppaaxijv"
+  },
+  {
+    "feature_id": "7_6",
+    "feature_name": "process_meta_avoid_bias_and_stay_neutral",
+    "feature_value": "They focused on not letting bias determine choices while still promoting free speech and discussion.",
+    "category": "process_meta",
+    "rationale": "They describe the decision-making process as bias-mitigation tied to platform goals.",
+    "evidence_span": "\"not letting my bias determine my choices\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988430052_rqdnfs3ks"
+  },
+  {
+    "feature_id": "7_7",
+    "feature_name": "neutrality_goal_left_right_balance",
+    "feature_value": "They aimed to stay neutral and not lean left or right when deciding whether to allow/remove both.",
+    "category": "process_meta",
+    "rationale": "The participant explicitly states neutrality (not leaning left/right) as their guiding process when evaluating the pair.",
+    "evidence_span": "\"stay neutral\"",
+    "cluster_id": -1,
+    "participant_id": "P_1782011014873_olgksvcdc"
+  },
+  {
+    "feature_id": "8_0",
+    "feature_name": "minimal_pair_influence_freedom_of_speech_frame",
+    "feature_value": "Pair comparison had little effect; evaluation driven by general freedom-of-speech concern.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They explicitly state the pair did not influence their evaluation beyond a freedom-of-speech principle.",
+    "evidence_span": "nothing infulencing how i evaluated the posts as a pair other than that concern.",
+    "cluster_id": 1,
+    "participant_id": "P_1781993363258_u3jod55ky"
+  },
+  {
+    "feature_id": "8_1",
+    "feature_name": "first_amendment_absolutism_allow_both_sides",
+    "feature_value": "Absolutist First Amendment stance; allow both sides unless harm is involved.",
+    "category": "decision_criteria",
+    "rationale": "They describe a specific threshold (harm/threat) aligned with absolutist speech protection.",
+    "evidence_span": "unless there\u2019s something that is going to cause physical harm or a threat of harm to someone",
+    "cluster_id": -1,
+    "participant_id": "P_1781990197422_y6q51kmje"
+  },
+  {
+    "feature_id": "8_2",
+    "feature_name": "freedom_of_speech_despite_belief_opposition",
+    "feature_value": "Focus on allowing speech even when it conflicts with personal beliefs; reject only perceived threats/violence.",
+    "category": "affect_or_confidence",
+    "rationale": "They tie their decision to perceived threat/violence and emphasize speech even against their beliefs.",
+    "evidence_span": "as long as they did not seem like a threat or a possible act of violence, I allowed them.",
+    "cluster_id": -1,
+    "participant_id": "P_1781991836142_kdf9sr9ag"
+  },
+  {
+    "feature_id": "8_3",
+    "feature_name": "violence_or_derogatory_content_as_primary_criterion",
+    "feature_value": "Decision based on whether either post is violent or derogatory.",
+    "category": "decision_criteria",
+    "rationale": "Their stated evaluation criterion directly targets violence/derogation.",
+    "evidence_span": "I evaluated at how violent or derogatory either post was.",
+    "cluster_id": 0,
+    "participant_id": "P_1781993863450_3drfozmdb"
+  },
+  {
+    "feature_id": "8_4",
+    "feature_name": "swearing_allowed_but_manner_of_usage_matters",
+    "feature_value": "Swearing alone tolerated; concern is how it is used (e.g., directed at others).",
+    "category": "content_cues",
+    "rationale": "They distinguish profanity from harmful usage, indicating manner/direction as the cue.",
+    "evidence_span": "Swearing it self wasn't the problem, it was how it was used.",
+    "cluster_id": -1,
+    "participant_id": "P_1781989053312_k3wn2fmt3"
+  },
+  {
+    "feature_id": "8_5",
+    "feature_name": "balance_goal_even_if_context_far_reaching",
+    "feature_value": "Aiming for balanced evaluation despite viewpoints being far-reaching.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe an approach centered on balance across viewpoints during evaluation.",
+    "evidence_span": "ensure it was a balanced evaluation even though most of the viewpoints and context was a bit far reaching.",
+    "cluster_id": -1,
+    "participant_id": "P_1781992220018_8qhuf2l43"
+  },
+  {
+    "feature_id": "9_0",
+    "feature_name": "threat_violence_removal_trigger",
+    "feature_value": "Would remove only when implied/encouraged threats of violence appear; otherwise allow expression.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly states violence-related threat content is the criterion for removal.",
+    "evidence_span": "implied or encouraged threats of violence",
+    "cluster_id": 0,
+    "participant_id": "P_1781997780656_ehjkq70sa"
+  },
+  {
+    "feature_id": "9_1",
+    "feature_name": "name_calling_or_personal_attack_blocks_keep",
+    "feature_value": "Allows if making a point but not if it becomes name-calling/viciously attacking a person or group.",
+    "category": "decision_criteria",
+    "rationale": "They describe a boundary between acceptable argumentation and unacceptable personal/group attacks.",
+    "evidence_span": "not just name-calling or viciously attacking a person or group of people",
+    "cluster_id": 0,
+    "participant_id": "P_1781988217722_zzta332cp"
+  },
+  {
+    "feature_id": "9_2",
+    "feature_name": "profanity_specificity_based_on_words",
+    "feature_value": "Used specific profanity words/length cues as a deciding factor (e.g., certain sex-act or insult terms) to cross the line.",
+    "category": "content_cues",
+    "rationale": "They tie decisions to particular profane word types and lengths.",
+    "evidence_span": "Four letter words for a sex act",
+    "cluster_id": 0,
+    "participant_id": "P_1781989562276_e1q00w1st"
+  },
+  {
+    "feature_id": "9_3",
+    "feature_name": "curse_word_targeting_not_needed",
+    "feature_value": "Removes pairs when foul language is used, especially when it seems someone is targeted with curse words; free speech but curb harassment.",
+    "category": "content_cues",
+    "rationale": "They state foul language targeting/attacking drove removal despite valuing free speech.",
+    "evidence_span": "Attacking someone with curse words isn't needed",
+    "cluster_id": -1,
+    "participant_id": "P_1781988263777_uuinqqrc9"
+  },
+  {
+    "feature_id": "9_4",
+    "feature_name": "no_threat_no_red_flag_approach",
+    "feature_value": "Decision based on whether anything felt threatening; if no red flags/threats, keep.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They explicitly use absence of threatening cues as the basis for their keep/remove decision.",
+    "evidence_span": "Didn't see anything that raised a red flag",
+    "cluster_id": 0,
+    "participant_id": "P_1781988691382_cqvk4zqxo"
+  },
+  {
+    "feature_id": "9_5",
+    "feature_name": "indifference_to_pair_influence_free_opinion_norm",
+    "feature_value": "Claims their decision was not really influenced; believes people are entitled to their opinions without judgment.",
+    "category": "process_meta",
+    "rationale": "They directly attribute minimal impact from the pair and rely on a general norm about opinions.",
+    "evidence_span": "Nothing really influenced my decision",
+    "cluster_id": -1,
+    "participant_id": "P_1781988732923_wrmq0vt0t"
+  },
+  {
+    "feature_id": "9_6",
+    "feature_name": "misinformation_as_truth_not_allowed",
+    "feature_value": "Accepts free speech generally but removes when misinformation is presented as truth, plus removes violence-directed content.",
+    "category": "decision_criteria",
+    "rationale": "They set a substantive criterion for removal beyond violence: misinformation framed as truth.",
+    "evidence_span": "misinformation described as truth is not",
+    "cluster_id": -1,
+    "participant_id": "P_1781988615018_5pz1fihk6"
+  },
+  {
+    "feature_id": "9_7",
+    "feature_name": "argument_quality_guides_keep_with_minor_threat_edge_case",
+    "feature_value": "Kept posts that made an argument/meaningful opinion; only removed when close to a death-threat or otherwise less substantive.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They use argument quality as the main rule, with an edge-case removal tied to threat-likeness.",
+    "evidence_span": "made an argument or expressed a meaningful opinion",
+    "cluster_id": -1,
+    "participant_id": "P_1781988614436_02rc3xpi3"
+  },
+  {
+    "feature_id": "10_0",
+    "feature_name": "tone_content_over_politics_standard",
+    "feature_value": "Focused on threats/harassment/hate/violence and tone/content rather than agreeing/disagreeing with the political viewpoint.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly states they used a content/tone safety standard rather than political agreement.",
+    "evidence_span": "focused more on the tone and content of the posts than on the political viewpoint being expressed",
+    "cluster_id": -1,
+    "participant_id": "P_1781989490239_bfsf4ukmd"
+  },
+  {
+    "feature_id": "10_1",
+    "feature_name": "pair_side_by_side_consistency_check",
+    "feature_value": "Using both versions helped them apply the same standard consistently across political perspectives, though it didn\u2019t strongly change decisions.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They attribute limited influence to a consistency-check benefit from seeing both versions.",
+    "evidence_span": "Seeing both versions side by side helped me check for consistency and apply the same standard",
+    "cluster_id": -1,
+    "participant_id": "P_1781989490239_bfsf4ukmd"
+  },
+  {
+    "feature_id": "10_2",
+    "feature_name": "offensive_language_removal_goal_with_non_bias_claim",
+    "feature_value": "Removed items with offensive language and claimed they were not biased.",
+    "category": "process_meta",
+    "rationale": "They describe their removal target and explicitly deny bias.",
+    "evidence_span": "remove the ones with offensive language. I don\u2019t think I was being biased at all",
+    "cluster_id": -1,
+    "participant_id": "P_1781988830886_gdi5ftzb5"
+  },
+  {
+    "feature_id": "10_3",
+    "feature_name": "allow_profanity_if_not_personal_attack",
+    "feature_value": "Would tolerate vitriol/profanity if not personal attacks; rejected only when personal attacks occurred.",
+    "category": "decision_criteria",
+    "rationale": "They define a specific conditional rule for acceptance vs rejection.",
+    "evidence_span": "I don't mind some vitriol and profanity... I only rejected ones that made personal attacks",
+    "cluster_id": -1,
+    "participant_id": "P_1782006171530_joksyrrkm"
+  },
+  {
+    "feature_id": "10_4",
+    "feature_name": "rage_bait_extremeness_and_dislike",
+    "feature_value": "Reacted to extreme statements as sad/anger-inducing and suspected rage bait while believing people may hold those views; low influence overall.",
+    "category": "affect_or_confidence",
+    "rationale": "Their reflection centers on emotional reaction (sad/extreme) and a suspicion about intent.",
+    "evidence_span": "The statements were extreme... It is very sad... It seemed like rage bait",
+    "cluster_id": -1,
+    "participant_id": "P_1781990079152_w0tiak4ga"
+  },
+  {
+    "feature_id": "10_5",
+    "feature_name": "explicit_low_threshold_acceptance_without_vulgarity_or_threats",
+    "feature_value": "Allowed posts as long as there wasn\u2019t vulgar language or threats.",
+    "category": "decision_criteria",
+    "rationale": "They provide a clear acceptance threshold tied to vulgarity/threats.",
+    "evidence_span": "As long as there wasn't vulgar language or threats I allowed it.",
+    "cluster_id": 0,
+    "participant_id": "P_1781991188016_01bkpej5b"
+  },
+  {
+    "feature_id": "10_6",
+    "feature_name": "free_speech_rights_override_for_nonviolent_content",
+    "feature_value": "Supports free speech and opposes censorship except when language incites violence; acknowledges disagreement with appropriateness of language.",
+    "category": "decision_criteria",
+    "rationale": "They use a free-speech-with-incitement-exception rule that limits removal.",
+    "evidence_span": "I believe in free speech... I don't believe in censorship unless it is actually inciting people to violence",
+    "cluster_id": 0,
+    "participant_id": "P_1782001381040_umq42r8as"
+  },
+  {
+    "feature_id": "11_0",
+    "feature_name": "free_speech_default_with_threat_exception",
+    "feature_value": "Prefers very little moderation/silencing unless there are specific threats or terrorism planning.",
+    "category": "decision_criteria",
+    "rationale": "They explicitly state a low-moderation rule with narrow exceptions, which characterizes their decision criteria.",
+    "evidence_span": "\"very little moderation\" \"unless there is actual target specific threats or terrorism planning\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989027026_4d3i1mwe1"
+  },
+  {
+    "feature_id": "11_1",
+    "feature_name": "keep_content_with_argument_over_personal_attack",
+    "feature_value": "Removes only posts that are non-informative or mainly personal attacks; disagreement alone is acceptable if it includes argument/information.",
+    "category": "decision_criteria",
+    "rationale": "They describe what kinds of content warrant removal versus keeping.",
+    "evidence_span": "\"only remove the posts that provided no information\" \"attack on people or a person\" \"Even the stances that I disagree with are valid\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989915131_i6q8wi4rk"
+  },
+  {
+    "feature_id": "11_2",
+    "feature_name": "political_leaning_secondary_to_harm_risk",
+    "feature_value": "Political leaning wasn\u2019t important; the key factor was whether there was dangerous/harmful content like threats of violence.",
+    "category": "content_cues",
+    "rationale": "They state an explicit prioritization: ignore political leaning, focus on threat/harm.",
+    "evidence_span": "\"political leaning was not important\" \"dangerous or harmful content like threats of violence\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989422142_k6wxyx0v7"
+  },
+  {
+    "feature_id": "11_3",
+    "feature_name": "lax_moderation_rules_based_on_direct_threats_or_doxxing",
+    "feature_value": "Generally lax: allow as long as there are no direct personal threats or doxxing.",
+    "category": "decision_criteria",
+    "rationale": "Their moderation criteria is framed as permissive with specific red lines.",
+    "evidence_span": "\"fairly lax\" \"No direct personal threats, no doxxing\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989947438_8by70sq6h"
+  },
+  {
+    "feature_id": "11_4",
+    "feature_name": "bans_create_moral_authority_discomfort",
+    "feature_value": "Felt uncomfortable about banning opinions and questioned their own authority/knowledge.",
+    "category": "affect_or_confidence",
+    "rationale": "Their reflection centers on discomfort and doubts about legitimacy of moderation.",
+    "evidence_span": "\"It felt uncomfortable\" \"kept asking myself whether I had enough knowledge or moral authority\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781992439198_pb6aqkzep"
+  },
+  {
+    "feature_id": "11_5",
+    "feature_name": "focus_on_comparative_bias_evaluation",
+    "feature_value": "Tried to determine if both versions were equally biased.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe a comparison approach oriented around bias rather than content harm.",
+    "evidence_span": "\"trying to determine if both were equally biased\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781991995313_z7a1u5r9g"
+  },
+  {
+    "feature_id": "11_6",
+    "feature_name": "need_clear_rules_to_moderate_properly",
+    "feature_value": "Wanted more details on the group\u2019s purpose and clearer rules to moderate correctly.",
+    "category": "process_meta",
+    "rationale": "They express process/task understanding issues (insufficient rule clarity) affecting moderation.",
+    "evidence_span": "\"wanted to know more about the purpose\" \"more details on rules\" \"need clearer understanding of the rules\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781994412644_s6wf4jt8y"
+  },
+  {
+    "feature_id": "11_7",
+    "feature_name": "vulgarity_allowed_if_not_inciting_or_hateful",
+    "feature_value": "Left posts up unless they incited violence or were raw hate; vulgarity not treated as a problem (platform context/humor), but would remove for kids.",
+    "category": "content_cues",
+    "rationale": "They articulate content-based boundaries involving incitement/hate and an exception about audience (kids).",
+    "evidence_span": "\"IF a post did not actually incite violence or raw hate, I left it up\" \"vulgar language was not presented as a problem\" \"If this was for, eh, kids, I'd have nixed the vulgarity\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781991336746_oss90vojz"
+  },
+  {
+    "feature_id": "12_0",
+    "feature_name": "profanity_as_removal_signal",
+    "feature_value": "Uses presence of open cussing/profanity as the key reason for removing content.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly ties their keep/remove decision to profanity.",
+    "evidence_span": "The open cussing is how I decided what shuld be thrown out.",
+    "cluster_id": 0,
+    "participant_id": "P_1781990718594_8oymxzsqh"
+  },
+  {
+    "feature_id": "12_1",
+    "feature_name": "curse_words_offensiveness_check",
+    "feature_value": "Focuses on whether there are curse words or very offensive statements.",
+    "category": "decision_criteria",
+    "rationale": "Their stated evaluation criteria centers on curse/offensiveness.",
+    "evidence_span": "if there were any curse words or very offensive statements",
+    "cluster_id": 0,
+    "participant_id": "P_1781988389030_dpt0l5565"
+  },
+  {
+    "feature_id": "12_2",
+    "feature_name": "civility_and_name_calling_banned",
+    "feature_value": "Rejects content with foul language or name calling; emphasizes staying civil and avoiding hate/offensive influence for youth.",
+    "category": "decision_criteria",
+    "rationale": "They clearly state profanity/name-calling as disqualifying, with youth-appropriateness as justification.",
+    "evidence_span": "I did not approve any content that used foul language or name calling",
+    "cluster_id": 0,
+    "participant_id": "P_1781991641572_yrlvo40ay"
+  },
+  {
+    "feature_id": "12_3",
+    "feature_name": "harm_based_content_priority_over_party",
+    "feature_value": "Indicates party-focused framing had little impact; prioritizes harm cues like dangerous medical advice or promoting violence.",
+    "category": "content_cues",
+    "rationale": "They directly compare pair influence to a harm-focused decision criterion and say party focus mattered little.",
+    "evidence_span": "The fact that they were both party focused really had no effect on me... harmful (known bad medical advice) or promote violence.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988796367_6o27xaq7o"
+  },
+  {
+    "feature_id": "12_4",
+    "feature_name": "bullying_and_profane_linked_to_removal",
+    "feature_value": "Removal rationale centers on bullying and profanity while endorsing respectful discourse if civil.",
+    "category": "content_cues",
+    "rationale": "Their keep/remove explanation explicitly links bullying/profanity to removal and civility to allowance.",
+    "evidence_span": "I removed posts these were Bullying and Profane. I think respectful discourse is great, if it stays civil.",
+    "cluster_id": 0,
+    "participant_id": "P_1781996005705_o694uzh90"
+  },
+  {
+    "feature_id": "12_5",
+    "feature_name": "no_instant_logic_other_than_language",
+    "feature_value": "Gives a terse language-abuse/no-discussion statement implying limited consideration beyond profanity/verbal abuse.",
+    "category": "process_meta",
+    "rationale": "The reflection is short and primarily lists language-abuse-related cues with little elaboration about the pair.",
+    "evidence_span": "Swearing, verbal abuse, no issues, no discussion, no point",
+    "cluster_id": -1,
+    "participant_id": "P_1781994274924_fad3q310w"
+  },
+  {
+    "feature_id": "12_6",
+    "feature_name": "extremity_flag_not_pair_specific",
+    "feature_value": "Describes the posts as very extreme without detailing pair comparison effects.",
+    "category": "other",
+    "rationale": "This provides a single general content appraisal (extreme) rather than a pair-based influence mechanism.",
+    "evidence_span": "These posts were very extreme.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988954777_rl9p6srbp"
+  },
+  {
+    "feature_id": "12_7",
+    "feature_name": "symmetry_of_partisan_frames_no_pair_effect",
+    "feature_value": "Perceives both sides expressing disagreements/making the other the bad guy; suggests this broad partisan dynamic provides limited impact.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They characterize the content as broadly partisan across both versions/sides, aligning with low perceived influence.",
+    "evidence_span": "MOSTLY from both liberals as well as conservatives... want to make the other out to be the bad guy",
+    "cluster_id": -1,
+    "participant_id": "P_1782063013540_so2ctq4m2"
+  },
+  {
+    "feature_id": "13_0",
+    "feature_name": "free_speech_do_not_discriminate_by_side",
+    "feature_value": "Strongly favors letting both sides\u2019 comments through regardless of political orientation; argues neither side should restrict others and frames bias as bad.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly states they allow both sides and oppose side-based restriction.",
+    "evidence_span": "Any sort of political social media platform should let all comments through, no matter the side.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988474563_k3i6hbzqy"
+  },
+  {
+    "feature_id": "13_1",
+    "feature_name": "violence_call_is_key_threshold",
+    "feature_value": "Allows political voicing as long as there are no calls for violence.",
+    "category": "decision_criteria",
+    "rationale": "They define a specific content boundary (no calls for violence) as the main criterion.",
+    "evidence_span": "As long as there wasn't any calls for violence, I didn't have a problem with either side voicing their opinion.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988864714_gmgk3b52n"
+  },
+  {
+    "feature_id": "13_2",
+    "feature_name": "line_at_wishing_death_public_figures",
+    "feature_value": "Keeps nonviolent discourse but removes content that wishes death on public figures.",
+    "category": "decision_criteria",
+    "rationale": "They describe a concrete \u201cline\u201d tied to harm/wishing death.",
+    "evidence_span": "I drew the line at wishing for deaths of public figures.",
+    "cluster_id": -1,
+    "participant_id": "P_1781995697366_wgseyafr4"
+  },
+  {
+    "feature_id": "13_3",
+    "feature_name": "vulgarity_drives_removal",
+    "feature_value": "Removes posts primarily when they contain vulgar/disgusting language; claims focus on being unbiased.",
+    "category": "content_cues",
+    "rationale": "They directly link vulgar/disgusting language to removal decisions.",
+    "evidence_span": "Some post had vulgar and disgusting language.So those were the ones I tended to remove.",
+    "cluster_id": 0,
+    "participant_id": "P_1781990728073_e32wfsrpy"
+  },
+  {
+    "feature_id": "13_4",
+    "feature_name": "tone_aggression_and_making_a_point",
+    "feature_value": "Judges based on how aggressive the author sounds and whether they are making a point.",
+    "category": "pair_comparison_strategy",
+    "rationale": "Their stated criteria emphasize perceived author aggression and argumentative intent.",
+    "evidence_span": "I considered how aggressive the author sounded and if they were making any kind of point.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988469930_2a14wbx1j"
+  },
+  {
+    "feature_id": "13_5",
+    "feature_name": "default_to_not_censor",
+    "feature_value": "Wants to err on the side of not censoring posts.",
+    "category": "decision_criteria",
+    "rationale": "They state a general conservative-with-censorship principle.",
+    "evidence_span": "I wanted to err on the side of not censoring posts",
+    "cluster_id": 0,
+    "participant_id": "P_1782008114287_53booj3b4"
+  },
+  {
+    "feature_id": "13_6",
+    "feature_name": "minimal_moderation_catharsis_view",
+    "feature_value": "Opposes censorship/moderation; sees caustic/inflammatory expression as emotional release/catharsis and stress reduction.",
+    "category": "affect_or_confidence",
+    "rationale": "They articulate a rationale for why they resist moderation decisions.",
+    "evidence_span": "I don't believe in censorship or moderating the responses.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988157590_07yjc9e60"
+  },
+  {
+    "feature_id": "13_7",
+    "feature_name": "mirror_influence_non_engaged_generic",
+    "feature_value": "Provides no meaningful reflection beyond a generic assertion that both views are wrong.",
+    "category": "process_meta",
+    "rationale": "The reflection does not describe decision factors, suggesting limited engagement/detail.",
+    "evidence_span": "Both views are totally wrong",
+    "cluster_id": -1,
+    "participant_id": "P_1782018232807_k125r3iot"
+  },
+  {
+    "feature_id": "14_0",
+    "feature_name": "insult_name_calling_triggers_removal",
+    "feature_value": "Removes when posts are primarily insulting/name-calling; prefers many viewpoints but not blatant disrespect.",
+    "category": "content_cues",
+    "rationale": "The participant explicitly ties their (limited) removals to insulting/name-calling rather than politics content.",
+    "evidence_span": "it was because it was more about insulting and name calling",
+    "cluster_id": 0,
+    "participant_id": "P_1781988164796_o1d1rt7e6"
+  },
+  {
+    "feature_id": "14_1",
+    "feature_name": "pairwise_consideration_respectfulness_rule",
+    "feature_value": "Kept/remade decisions by considering both versions together, anchored in respect for both parties.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe their strategy as making decisions for the pair while applying a respect-based standard.",
+    "evidence_span": "I decided to make the decisions as a pair",
+    "cluster_id": -1,
+    "participant_id": "P_1781988542468_qs3okfzrs"
+  },
+  {
+    "feature_id": "14_2",
+    "feature_name": "inappropriate_language_affects_vote",
+    "feature_value": "Language that attacks/uses inappropriate terms influences their judgment to remove/keep.",
+    "category": "content_cues",
+    "rationale": "Their stated decision driver is inappropriate language and attacking individuals.",
+    "evidence_span": "Inappropriate language and attacking individuals influence my vote.",
+    "cluster_id": -1,
+    "participant_id": "P_1781993912798_636z7p05t"
+  },
+  {
+    "feature_id": "14_3",
+    "feature_name": "first_amendment_free_speech_threshold_no_direct_threats",
+    "feature_value": "Uses a First Amendment framing; since no direct threats to individuals, posts are acceptable.",
+    "category": "decision_criteria",
+    "rationale": "They specify a concrete threshold (no direct threats) under a general free-speech principle.",
+    "evidence_span": "None of these posts had direct threats toward a single individual, so they are fine",
+    "cluster_id": 0,
+    "participant_id": "P_1781991178040_fdyqb0u1u"
+  },
+  {
+    "feature_id": "14_4",
+    "feature_name": "allow_more_often_under_1st_amendment",
+    "feature_value": "Leans toward allowing speech even if it\u2019s inflammatory, citing the 1st amendment and only blocking the truly inflammatory/bad.",
+    "category": "decision_criteria",
+    "rationale": "They explicitly state their tendency and rationale for allowing over removing.",
+    "evidence_span": "I erred on teh side of allowing it since we have the 1st amendment",
+    "cluster_id": 0,
+    "participant_id": "P_1781990684014_c35ee2zk3"
+  },
+  {
+    "feature_id": "14_5",
+    "feature_name": "ad_hominem_stoking_reaction_draws_line",
+    "feature_value": "Draws a line at insulting opposite views via emotional/ad hominem rhetoric not backed by facts (intended to provoke rage).",
+    "category": "content_cues",
+    "rationale": "They describe a specific content pattern (ad hominem, emotionally manipulative framing) as the removal criterion.",
+    "evidence_span": "insulting people of opposite views with emotional/hysterical ad hominem language",
+    "cluster_id": -1,
+    "participant_id": "P_1781990544134_w6syp8lde"
+  },
+  {
+    "feature_id": "14_6",
+    "feature_name": "notion_of_online_appropriateness_only",
+    "feature_value": "Visualizes posts as if seen online and chooses those that don\u2019t seem appropriate to remove.",
+    "category": "process_meta",
+    "rationale": "Their method is about imagined online impact/appropriateness, not comparing ideology between pair versions.",
+    "evidence_span": "I imagined seeing the posts online and chose the ones that didn\u0003t seem appropriate to remove.",
+    "cluster_id": -1,
+    "participant_id": "P_1781990365971_9fqt70ltu"
+  },
+  {
+    "feature_id": "14_7",
+    "feature_name": "pair_inconsistency_confusion",
+    "feature_value": "Confused by agreeing with one but not the other; sees it as making no sense.",
+    "category": "affect_or_confidence",
+    "rationale": "Their reflection centers on discomfort/confusion about inconsistent judgments across the pair.",
+    "evidence_span": "I did not like that I agreed with one but not the other I thought this does not make any sense",
+    "cluster_id": -1,
+    "participant_id": "P_1781989578438_t0hr1x2p6"
+  },
+  {
+    "feature_id": "15_0",
+    "feature_name": "threat_assessment_decision_rule",
+    "feature_value": "Kept posts if they lacked slurs and were not viewed as threatening, even if hateful",
+    "category": "decision_criteria",
+    "rationale": "Participant ties keep/remove to whether content includes slurs and whether it is threatening.",
+    "evidence_span": "\"none of them used slurs\" ... \"I wouldn't necessarily say any of them were threatening\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781995056729_mcnb9rfft"
+  },
+  {
+    "feature_id": "15_1",
+    "feature_name": "remove_hate_without_other_merit",
+    "feature_value": "Removed mainly posts seen as having no purpose beyond spreading hatred; if either side had merit, they should not be deleted",
+    "category": "decision_criteria",
+    "rationale": "Their justification centers on perceived lack of merit/purpose and hatred-only content.",
+    "evidence_span": "\"only ones that had no other point to exist than spread hatred\" ... \"If both or at least one side had a point it had merit to not be deleted.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781993851777_yv0irtssy"
+  },
+  {
+    "feature_id": "15_2",
+    "feature_name": "violence_or_fact_misrepresentation_censor_threshold",
+    "feature_value": "Would remove if a post states opinion as fact or calls for violence",
+    "category": "decision_criteria",
+    "rationale": "They specify a concrete threshold involving violence and misleading presentation.",
+    "evidence_span": "\"If one of the posts was stating opinion as fact or calling out to violence I would remove.\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989044309_1elxe2szh"
+  },
+  {
+    "feature_id": "15_3",
+    "feature_name": "pair_comparison_ignored_banned_both_for_name_curse",
+    "feature_value": "Did not evaluate as a pair; banned both when both had name-calling/curse words",
+    "category": "process_meta",
+    "rationale": "They explicitly report a non-pairwise process and a shared content trigger for removal.",
+    "evidence_span": "\"I didn't evaluate it as a pair\" ... \"name calling and curse words. I banned both\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988755098_0s2glj0qr"
+  },
+  {
+    "feature_id": "15_4",
+    "feature_name": "inflammatory_language_deal_breaker",
+    "feature_value": "Inflammatory language served as the deal breaker; alternate perspectives were otherwise acceptable",
+    "category": "decision_criteria",
+    "rationale": "They contrast sensitivity to inflammatory language with openness to alternate perspectives.",
+    "evidence_span": "\"considered inflammatory language as the deal breaker\" ... \"Otherwise seeing alternate perspectives was acceptable.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781992662870_viextkoqs"
+  },
+  {
+    "feature_id": "15_5",
+    "feature_name": "pair_asymmetry_in_antagonism_harder_cases",
+    "feature_value": "Hardest cases were when one mirror version was much more antagonistic than the other",
+    "category": "pair_comparison_strategy",
+    "rationale": "Their pair reasoning depends on asymmetry in tone/antagonism across versions.",
+    "evidence_span": "\"in some cases, one version was significantly more antagonistic than the other\" ... \"hardest time with.\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781991845116_ir6403g69"
+  },
+  {
+    "feature_id": "16_0",
+    "feature_name": "content_safety_threshold_equal_treatment",
+    "feature_value": "Guidelines focused on not violating explicit safety rules (e.g., threats of violence/doxxing), otherwise judged both versions equally",
+    "category": "decision_criteria",
+    "rationale": "The participant states a specific condition for \u201cequal\u201d judging across the pair.",
+    "evidence_span": "As long as neither post violated terms like threats of violence or doxxing, I tried to judge both equally",
+    "cluster_id": 0,
+    "participant_id": "P_1781988457170_n3tw39z7h"
+  },
+  {
+    "feature_id": "16_1",
+    "feature_name": "free_speech_with_harm_limit",
+    "feature_value": "Permissive of opinion differences, but only problematic if involving harm (physical/doxxing)",
+    "category": "decision_criteria",
+    "rationale": "They articulate a harm-based boundary for keeping/removing.",
+    "evidence_span": "As long as it doesn't not involve harming a person (physically or doxing as a way of harming their livelihood) I see no problem",
+    "cluster_id": 0,
+    "participant_id": "P_1781988607594_8gz3wu8xe"
+  },
+  {
+    "feature_id": "16_2",
+    "feature_name": "violence_incitation_triggers_removal",
+    "feature_value": "Any content that could incite violence was flagged",
+    "category": "decision_criteria",
+    "rationale": "They describe a direct trigger leading to removal decisions.",
+    "evidence_span": "Something that could possibly incite violence was flagged for me.",
+    "cluster_id": 0,
+    "participant_id": "P_1781989450887_940thxvy7"
+  },
+  {
+    "feature_id": "16_3",
+    "feature_name": "death_related_language_forbidden_no_matter_party",
+    "feature_value": "Death threats/assassination/killing language leads to removal; allowed dissent otherwise",
+    "category": "decision_criteria",
+    "rationale": "They distinguish insults from death/violence content as the real deciding line.",
+    "evidence_span": "Calling people morons... is not a contentious issue... But you cross the line when you take about death, death threats, assassination and the like.",
+    "cluster_id": -1,
+    "participant_id": "P_1781996652311_zxiuw7cyw"
+  },
+  {
+    "feature_id": "16_4",
+    "feature_name": "profanity_not_as_bad_as_some_other_content",
+    "feature_value": "Profanity alone wasn\u2019t decisive; both posts seemed valid from the opposing viewpoint and not too incendiary",
+    "category": "content_cues",
+    "rationale": "They explicitly downweight offensiveness/hate concerns and emphasize viewpoint validity.",
+    "evidence_span": "Both posts seemed valid when taken from the opposing party point of view and there's nothing wrong at all with voicing your opinions... there was nothing too incendiary",
+    "cluster_id": -1,
+    "participant_id": "P_1782002990303_73bqyxcwh"
+  },
+  {
+    "feature_id": "16_5",
+    "feature_name": "perceived_partisan_bias_and_naming_language_concern",
+    "feature_value": "Noted more left-leaning than right; concern centered on name-calling/foul language and harm risk (killed people) rather than ideology itself",
+    "category": "content_cues",
+    "rationale": "Their reflection ties deletion mainly to name-calling/foul language and perceived real-world harm.",
+    "evidence_span": "i definitely saw more left wing than right.. It seem to be a little libral biased... Mostly the one i said delete both had name calling and foul language,,, I have no problem with both liberal ideas and conservative ideas",
+    "cluster_id": 0,
+    "participant_id": "P_1781997293946_flnuxltie"
+  },
+  {
+    "feature_id": "16_6",
+    "feature_name": "low_reflection_effort_generic_comment_impact",
+    "feature_value": "Didn\u2019t articulate specific pair-based reasons; reflected that the comments looked familiar",
+    "category": "process_meta",
+    "rationale": "The reflection doesn\u2019t reference the pair\u2019s comparative differences or clear criteria.",
+    "evidence_span": "I was just thinking all of these comments seem like something I would come across.",
+    "cluster_id": -1,
+    "participant_id": "P_1781992416920_prcpdeu5d"
+  },
+  {
+    "feature_id": "17_0",
+    "feature_name": "single_view_evaluation_process",
+    "feature_value": "Evaluated the posts as if they were random/social-media posts, not leveraging the pair comparison much.",
+    "category": "process_meta",
+    "rationale": "The participant describes using a generic single-post evaluation rather than comparing the original vs mirror.",
+    "evidence_span": "\"evaluated the posts as I would reading a random post\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988853201_8h8c0x2q3"
+  },
+  {
+    "feature_id": "17_1",
+    "feature_name": "profanity_based_removal_rule",
+    "feature_value": "Removed when profanity appeared in at least one version; kept both if neither had profanity.",
+    "category": "decision_criteria",
+    "rationale": "They state a clear, concrete rule tied to profanity across the pair.",
+    "evidence_span": "\"only took out ones that had profanity in one at least\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781989847052_dy82unxg7"
+  },
+  {
+    "feature_id": "17_2",
+    "feature_name": "hate_or_name_calling_cue_for_removal",
+    "feature_value": "Would remove content framed as hate, name-calling, or hate-mongering; supports respectful political discussion.",
+    "category": "content_cues",
+    "rationale": "Their criteria explicitly targets hateful/abusive rhetoric rather than political disagreement.",
+    "evidence_span": "\"straight hate or name-calling or hate-mongering\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781990870220_3fwv1sr10"
+  },
+  {
+    "feature_id": "17_3",
+    "feature_name": "misinformation_verifiability_threshold",
+    "feature_value": "Kept speech generally but removed non-verifiable statistics to avoid misinformation.",
+    "category": "decision_criteria",
+    "rationale": "They provide a specific decision rule based on verifiability/misinformation.",
+    "evidence_span": "\"Anytime there is a non verifiable statistic I'd remove it\"",
+    "cluster_id": 0,
+    "participant_id": "P_1782004980558_gspr53zf6"
+  },
+  {
+    "feature_id": "17_4",
+    "feature_name": "strong_no_moderation_norm",
+    "feature_value": "Believes all speech should be permitted, with no moderation.",
+    "category": "other",
+    "rationale": "The reflection expresses an unconditional stance toward removal/keeping that likely reduces sensitivity to the pair.",
+    "evidence_span": "\"All speech should be permitted\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988859649_dx4dgrr8c"
+  },
+  {
+    "feature_id": "17_5",
+    "feature_name": "first_amendment_minimizes_pair_effect",
+    "feature_value": "Allowed posts based on First Amendment / free speech rationale.",
+    "category": "other",
+    "rationale": "They justify decisions via a broad free-speech principle rather than using the mirror comparison.",
+    "evidence_span": "\"allowed all of the posts because of the first amendment\"",
+    "cluster_id": -1,
+    "participant_id": "P_1782004140775_1zv20qlaf"
+  },
+  {
+    "feature_id": "17_6",
+    "feature_name": "malice_quality_cue",
+    "feature_value": "Implied removal/concern driven by perceived malice and lack of substantive thought.",
+    "category": "content_cues",
+    "rationale": "They highlight content tone/intent (malice) and low thought as the key driver.",
+    "evidence_span": "\"The malice and lack of real thought behind the post\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781988224917_ly260s5fm"
+  },
+  {
+    "feature_id": "17_7",
+    "feature_name": "respectfulness_admonition",
+    "feature_value": "Saw posts as immature and needing more respectful language.",
+    "category": "affect_or_confidence",
+    "rationale": "Their evaluation emphasizes tone/maturity and respectful expression as the salient factor.",
+    "evidence_span": "\"immature\" and \"express in a respectful way\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781990785367_r7tczlf7m"
+  },
+  {
+    "feature_id": "18_0",
+    "feature_name": "threat_or_profanity_or_misinformation_search",
+    "feature_value": "Used a removal screen for threats/danger plus blatant profanity and misinformation; reported finding none in either version.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly describes the criteria they applied to decide remove/keep and states the criteria were not triggered.",
+    "evidence_span": "I was looking for comments that could be dangerous to individuals (threats) or just blatant profanity/misinformation for removal, but none of those comments seemed like anything but political discourse.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988682644_6a3ptpqe1"
+  },
+  {
+    "feature_id": "18_1",
+    "feature_name": "no_threats_found_free_speech_framing",
+    "feature_value": "Checked for threats/incitement/harm and concluded there was only expression of opinions (free speech).",
+    "category": "decision_criteria",
+    "rationale": "They report specific safety checks and the outcome (no threats/incitement) leading to acceptance.",
+    "evidence_span": "I looked for threats, inciting violence, or trying to cause harm to a person or persons. I seen nothing like that. ... nothing more than free speech.",
+    "cluster_id": 0,
+    "participant_id": "P_1781992100540_whsjk7z9q"
+  },
+  {
+    "feature_id": "18_2",
+    "feature_name": "content_tone_only_rules_offensive_vulgar_removed",
+    "feature_value": "Decision driven by overall tone/message; removed if vulgar/offensive; accepted if communicated appropriately/constructively.",
+    "category": "decision_criteria",
+    "rationale": "This participant provides a clear rule based on offensiveness/constructiveness rather than political affiliation.",
+    "evidence_span": "If the statements appeared too vulgar or offensive I chose to remove both. ... if both messages were communicated appropriately and constructively I chose to accept.",
+    "cluster_id": 0,
+    "participant_id": "P_1781989010690_5i070k3ng"
+  },
+  {
+    "feature_id": "18_3",
+    "feature_name": "political_affiliation_does_not_matter",
+    "feature_value": "Stated political affiliation had no bearing on accept/remove decisions.",
+    "category": "content_cues",
+    "rationale": "They directly mention an independence criterion from political cues.",
+    "evidence_span": "The message itself or the political affiliation associated with the messages had no bearing on my decisions to accept or remove.",
+    "cluster_id": -1,
+    "participant_id": "P_1781989010690_5i070k3ng"
+  },
+  {
+    "feature_id": "18_4",
+    "feature_name": "foul_or_inflammatory_language_line",
+    "feature_value": "Drew the line at foul language and derogatory/inflammatory language (right to others' opinions otherwise).",
+    "category": "decision_criteria",
+    "rationale": "They define a threshold criterion centered on linguistic offensiveness/inflammatory language.",
+    "evidence_span": "Where I drew the line was people used foul language or used deragary or inflammatory language.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988474177_73m6ff2qi"
+  },
+  {
+    "feature_id": "18_5",
+    "feature_name": "not_swayed_by_pair_or_opinion_mismatch",
+    "feature_value": "Said the decision was not swayed by disagreement with statements/others' convictions.",
+    "category": "affect_or_confidence",
+    "rationale": "They indicate low susceptibility to influence, attributing it to fairness/steadfast convictions.",
+    "evidence_span": "The decision was easy, fair is fair. ... I was not swayed.",
+    "cluster_id": -1,
+    "participant_id": "P_1782009735116_4ucnllqna"
+  },
+  {
+    "feature_id": "18_6",
+    "feature_name": "free_speech_with_incitement_exception",
+    "feature_value": "Supported free speech but with an exception for inciting violence.",
+    "category": "decision_criteria",
+    "rationale": "They express a conditional rule for removal/retention tied to violence incitement.",
+    "evidence_span": "I support free speech unless it incites violence.",
+    "cluster_id": 0,
+    "participant_id": "P_1781989959032_ebkiw7trc"
+  },
+  {
+    "feature_id": "18_7",
+    "feature_name": "dangerous_or_overtly_racist_and_specific_code_terms",
+    "feature_value": "Looked for overt racism/dangerous calls to action; mentioned 'globalist' as a dog-whistle term for Jews.",
+    "category": "content_cues",
+    "rationale": "They reference specific content types/terms they considered relevant to deciding.",
+    "evidence_span": "anything dangerous or overtly racist... or the term \"globalist\" ... used as a dog whistle for \"Jews\"",
+    "cluster_id": -1,
+    "participant_id": "P_1781989184812_7g8za4kv9"
+  },
+  {
+    "feature_id": "19_0",
+    "feature_name": "content_value_over_pairing",
+    "feature_value": "Decision driven by whether the post adds to conversation vs is just rhetoric/insults; pair viewing has little effect.",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly states their criterion for allowing/removing based on conversational contribution rather than the influence of seeing both versions.",
+    "evidence_span": "whether the post contributed something to a conversation or not",
+    "cluster_id": -1,
+    "participant_id": "P_1782004617080_9mh86ann0"
+  },
+  {
+    "feature_id": "19_1",
+    "feature_name": "free_speech_default_with_exception_for_hate",
+    "feature_value": "General allow both sides; only remove when genuinely heinous/hateful (very broad tolerance).",
+    "category": "decision_criteria",
+    "rationale": "Their stated rule centers on free speech and only excluding extreme hateful content, implying limited sensitivity to the paired format.",
+    "evidence_span": "both sides should get a chance to speak",
+    "cluster_id": 0,
+    "participant_id": "P_1782003200891_l456d8c24"
+  },
+  {
+    "feature_id": "19_2",
+    "feature_name": "no_censorship_freedom_of_speech",
+    "feature_value": "Believes no posts should be removed; worries about social media censoring speech.",
+    "category": "affect_or_confidence",
+    "rationale": "A strong stance against removal is stated directly, consistent with low influence from the pair comparison.",
+    "evidence_span": "I wouldn't remove any posts",
+    "cluster_id": 0,
+    "participant_id": "P_1781989589508_ikdgcexv2"
+  },
+  {
+    "feature_id": "19_3",
+    "feature_name": "remove_only_extreme_inflammatory_defamatory_due_to_safety",
+    "feature_value": "Allows most statements; removes only highly inflammatory/defamatory due to risk of real-world violence.",
+    "category": "decision_criteria",
+    "rationale": "They describe a narrow removal threshold tied to safety consequences, indicating the paired versions did not shift their threshold much.",
+    "evidence_span": "highly inflammatory and defamatory which could lead to real world violence",
+    "cluster_id": 0,
+    "participant_id": "P_1781988286378_h91p9fqaa"
+  },
+  {
+    "feature_id": "19_4",
+    "feature_name": "tone_cues_profanity_threshold",
+    "feature_value": "Permits anger/discourse but removes when profanity becomes extreme.",
+    "category": "content_cues",
+    "rationale": "They reference profanity intensity as the key cue for removal, suggesting pair viewing did not alter content-based judgment.",
+    "evidence_span": "when then profanity got extreme I felt those posts should be removed",
+    "cluster_id": 0,
+    "participant_id": "P_1781988181651_gkqn8vp7r"
+  },
+  {
+    "feature_id": "19_5",
+    "feature_name": "independent_identity_buffers_pairing_effect",
+    "feature_value": "Independent political identity; seeing both sides doesn't sway them much.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They attribute limited influence to their independent stance and comfort with both sides.",
+    "evidence_span": "I'm an independent so this plays very well in my political standpoint",
+    "cluster_id": -1,
+    "participant_id": "P_1781989976287_ulf0q2030"
+  },
+  {
+    "feature_id": "19_6",
+    "feature_name": "self_anchored_judgment_not_swayed_by_pair",
+    "feature_value": "Not swayed by either argument beyond their own view.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They explicitly say the paired material did not sway them, directly capturing low influence.",
+    "evidence_span": "i wasnt really swayed by either argument other than my own.",
+    "cluster_id": -1,
+    "participant_id": "P_1781988311980_5xi8zfahe"
+  },
+  {
+    "feature_id": "19_7",
+    "feature_name": "overall_craziness_as_simple_heuristic",
+    "feature_value": "Uses how 'crazy' the statements are as the main influence/criterion.",
+    "category": "other",
+    "rationale": "The participant provides a minimal heuristic that bypasses detailed pair comparison effects.",
+    "evidence_span": "How crazy the statements were.",
+    "cluster_id": -1,
+    "participant_id": "P_1781999022532_35rilazmw"
+  },
+  {
+    "feature_id": "20_0",
+    "feature_name": "free_speech_as_default_acceptance",
+    "feature_value": "Uses freedom of speech as a default reason to not find the posts problematic / not remove",
+    "category": "decision_criteria",
+    "rationale": "The participant explicitly anchors their decision to the importance of free speech and reports no problematic content.",
+    "evidence_span": "Freedom of speech is important.  I did not see anything problematic about the posts.",
+    "cluster_id": 0,
+    "participant_id": "P_1781989140589_g052b90bs"
+  },
+  {
+    "feature_id": "20_1",
+    "feature_name": "focus_on_language_vulgarity_and_debate_value",
+    "feature_value": "Checks mainly for vulgar/offensive language and whether there are valid points for debate",
+    "category": "content_cues",
+    "rationale": "They describe a concrete content-screening approach centered on vulgarity/offense and debate usefulness.",
+    "evidence_span": "making sure the language wasn't vulgar or offensive. I also looked for valid points of view for debate",
+    "cluster_id": 0,
+    "participant_id": "P_1782002894773_yynoignxk"
+  },
+  {
+    "feature_id": "20_2",
+    "feature_name": "nonviolent_language_criterion",
+    "feature_value": "Evaluates based on language quality and whether the post is not violent",
+    "category": "decision_criteria",
+    "rationale": "Their stated criteria directly mention non-violence and language.",
+    "evidence_span": "I've evaluated based on language and the idea that the post was not violent.",
+    "cluster_id": 0,
+    "participant_id": "P_1781990706755_r465ke6ou"
+  },
+  {
+    "feature_id": "20_3",
+    "feature_name": "violence_triggers_removal",
+    "feature_value": "If the posts involve violence or murder, removal is preferred",
+    "category": "decision_criteria",
+    "rationale": "They set a specific removal condition tied to violence/murder.",
+    "evidence_span": "if any of the posts talked about violence or murder, I thought it best to remove them.",
+    "cluster_id": 0,
+    "participant_id": "P_1781989048561_2zxnih1ve"
+  },
+  {
+    "feature_id": "20_4",
+    "feature_name": "legality_only_rule",
+    "feature_value": "Uses whether speech is legal as the deciding factor (and concludes it would be legal)",
+    "category": "decision_criteria",
+    "rationale": "They explicitly state legality as the sole criterion for taking posts down.",
+    "evidence_span": "All that matters was if the speech would be legal or not, which all of it would be",
+    "cluster_id": -1,
+    "participant_id": "P_1781989100749_5rrfsx01l"
+  },
+  {
+    "feature_id": "20_5",
+    "feature_name": "censorship_only_for_crime_advocacy",
+    "feature_value": "Would not censor most viewpoints; only remove if advocating crime",
+    "category": "decision_criteria",
+    "rationale": "They provide a narrow exception to their general permissiveness.",
+    "evidence_span": "unless the person is advocating some kind of crime, their perspective should not be censored.",
+    "cluster_id": -1,
+    "participant_id": "P_1781996309568_mdx7w5xj9"
+  },
+  {
+    "feature_id": "20_6",
+    "feature_name": "limited_tolerance_for_extremism_and_personal_attacks",
+    "feature_value": "Allows even extremists to speak in principle but draws lines at explicit sexual content and open personal attacks; cites extremist historical danger",
+    "category": "other",
+    "rationale": "They describe their boundary conditions (pornography/personal attacks) and mention extremists historically.",
+    "evidence_span": "I stop at virtual pornography or open personal attacks. Even extremists have their right to speak",
+    "cluster_id": 0,
+    "participant_id": "P_1782004710568_la0605ahc"
+  },
+  {
+    "feature_id": "20_7",
+    "feature_name": "minimal_or_placeholder_reflection",
+    "feature_value": "Reflection contains no interpretable rationale beyond a vague word",
+    "category": "process_meta",
+    "rationale": "The response is too sparse to reliably infer a theme beyond non-informative content.",
+    "evidence_span": "fairly",
+    "cluster_id": -1,
+    "participant_id": "P_1781989553340_2ajhe2v9o"
+  },
+  {
+    "feature_id": "21_0",
+    "feature_name": "tone_respectfulness_as_decision_driver",
+    "feature_value": "Used tone/respectfulness (e.g., cursing, mudslinging, unproductive argument) to justify evaluation and moderation.",
+    "category": "content_cues",
+    "rationale": "The participant explicitly ties cursing/mudslinging and lack of respect to how they evaluated posts.",
+    "evidence_span": "Bad grammar, illogical thoughts, cursing, and unproductive mudslinging",
+    "cluster_id": -1,
+    "participant_id": "P_1781997181032_k3cah7o1c"
+  },
+  {
+    "feature_id": "21_1",
+    "feature_name": "inflammatory_or_cursing_triggers_remove_both",
+    "feature_value": "Removed both when speech was inflammatory or included cursing (treated as a trigger).",
+    "category": "decision_criteria",
+    "rationale": "They state a direct rule linking inflammatory wording/cursing to removing both versions.",
+    "evidence_span": "If the statements were inflammatory... I chose to remove both posts... If there was cursing, I chose to remove both posts",
+    "cluster_id": 0,
+    "participant_id": "P_1781993859014_s88nf97qs"
+  },
+  {
+    "feature_id": "21_2",
+    "feature_name": "violence_call_is_primary_threshold",
+    "feature_value": "Only removes if content calls for violence.",
+    "category": "decision_criteria",
+    "rationale": "They clearly identify violence calls as the condition for removal.",
+    "evidence_span": "I only really would remove them if any called for violence",
+    "cluster_id": 0,
+    "participant_id": "P_1781996570772_j0qj8ylv6"
+  },
+  {
+    "feature_id": "21_3",
+    "feature_name": "default_leave_up_except_profanity_or_violence",
+    "feature_value": "Default to leave up; remove only when profanity or violence is present (and only one pair due to profanity).",
+    "category": "decision_criteria",
+    "rationale": "They state an explicit default rule with exceptions tied to profanity/violence.",
+    "evidence_span": "My default position is leave them all up unless they are profane or promote violence",
+    "cluster_id": -1,
+    "participant_id": "P_1782002790827_d1b6q06dl"
+  },
+  {
+    "feature_id": "21_4",
+    "feature_name": "tone_over_party_content_pairing",
+    "feature_value": "Even when disagreeing with political side, tone cues (profanity, anger, leaning toward violent wording) determined permit vs remove for both.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe using tone-related features to decide whether to allow/discard both posts.",
+    "evidence_span": "made my decisions based on the tone of what was posted... word(profane) choices and how angry(leaning toward violent) wording",
+    "cluster_id": 0,
+    "participant_id": "P_1781992642189_vdh1qnp8k"
+  },
+  {
+    "feature_id": "21_5",
+    "feature_name": "symmetry_fairness_for_opposing_views",
+    "feature_value": "If they agree with one opinion, they feel they should not remove the other; removes only if both are harmful (e.g., racism/ablelism).",
+    "category": "pair_comparison_strategy",
+    "rationale": "They articulate a symmetry rule between paired opinions and a harmfulness threshold.",
+    "evidence_span": "If I agreed to one, then I don't think I have the right to remove the other opinion",
+    "cluster_id": -1,
+    "participant_id": "P_1781997790755_89jmi7pkj"
+  },
+  {
+    "feature_id": "21_6",
+    "feature_name": "fair_stance_vs_emotional_reaction_considered",
+    "feature_value": "Evaluated whether content was a fair stance rather than an emotional reaction.",
+    "category": "decision_criteria",
+    "rationale": "They define a criterion contrasting fair stance versus pure emotionality.",
+    "evidence_span": "content seemed like a fair stance rather than just a reaction to pure emotion",
+    "cluster_id": -1,
+    "participant_id": "P_1781988480744_jqcagq9nb"
+  },
+  {
+    "feature_id": "22_0",
+    "feature_name": "violence_encouragement_is_removal_trigger",
+    "feature_value": "Treats condoning/encouraging violence as a reason to remove quickly (stamps out).",
+    "category": "decision_criteria",
+    "rationale": "The reflection explicitly states a removal rule focused on violence encouragement.",
+    "evidence_span": "anything condoning or encouraging violence on EITHER opposite political party should be stamped out asap.",
+    "cluster_id": 0,
+    "participant_id": "P_1781995788311_eh4u8gmy8"
+  },
+  {
+    "feature_id": "22_1",
+    "feature_name": "hate_is_primary_allow_condition",
+    "feature_value": "Allows unless hate is being spewed.",
+    "category": "decision_criteria",
+    "rationale": "Their criterion for allowing content is specifically the absence of hate.",
+    "evidence_span": "Just as long no hate was being spewed I will allowit.",
+    "cluster_id": 0,
+    "participant_id": "P_1781990210243_4gx3m4pff"
+  },
+  {
+    "feature_id": "22_2",
+    "feature_name": "tone_level_aggression_affects_allow_ban",
+    "feature_value": "Allows constructive arguments with appropriate language; bans overly aggressive/profane posts.",
+    "category": "decision_criteria",
+    "rationale": "They provide a clear language/tone threshold tying profanity/aggression to bans.",
+    "evidence_span": "If someone was making a constructive argument with mostly appropriate language, I allowed the post. If they were overly aggressive with profanities, I banned the posts.",
+    "cluster_id": -1,
+    "participant_id": "P_1781994235676_hrk0xxq80"
+  },
+  {
+    "feature_id": "22_3",
+    "feature_name": "violent_language_check_only_minor_influence",
+    "feature_value": "Decision focused on whether any violent language is used; finds most content mild and not easily offended.",
+    "category": "pair_comparison_strategy",
+    "rationale": "Their process emphasizes checking violence and suggests insensitivity to other differences, consistent with low pair influence.",
+    "evidence_span": "I was reading to make sure there wasn\u00198t any violent language used... I am also no easily offended either way",
+    "cluster_id": 0,
+    "participant_id": "P_1781994766296_lbuwnu62i"
+  },
+  {
+    "feature_id": "22_4",
+    "feature_name": "pair_experiment_insensitivity",
+    "feature_value": "Did not meaningfully compare the pair; just held a general free speech stance.",
+    "category": "process_meta",
+    "rationale": "The reflection indicates decisions were driven by a general principle rather than the original-vs-mirror comparison.",
+    "evidence_span": "My main thought as I read each one was that freedom of speech is real.",
+    "cluster_id": 1,
+    "participant_id": "P_1782013589597_x3ox94dfm"
+  },
+  {
+    "feature_id": "22_5",
+    "feature_name": "viewpoint_fairness_across_sides",
+    "feature_value": "Moderation aimed to allow viewpoints from both sides regardless of political side.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe a strategy of equal treatment across partisan perspectives.",
+    "evidence_span": "allow the viewpoints of each side regardless of which political side it comes from.",
+    "cluster_id": 0,
+    "participant_id": "P_1781988919290_ntz4op4a9"
+  },
+  {
+    "feature_id": "23_0",
+    "feature_name": "safety_violation_not_found",
+    "feature_value": "Stated that nothing in the paired posts violated safety issues or pushed beyond mainstream beliefs.",
+    "category": "decision_criteria",
+    "rationale": "They explicitly use the absence of safety violations as their basis for keeping/removing, implying the pair didn\u2019t change that.",
+    "evidence_span": "Nothing I saw violated any safety issues",
+    "cluster_id": -1,
+    "participant_id": "P_1781988246801_owiddf2uk"
+  },
+  {
+    "feature_id": "23_1",
+    "feature_name": "violence_or_falsehood_threshold",
+    "feature_value": "Focused on rejecting only threatened violence or statements presented as law/complete lies.",
+    "category": "decision_criteria",
+    "rationale": "They describe a specific content threshold (violence/falsehood-as-law) driving decisions.",
+    "evidence_span": "I was looking for any threatened violence, or complete lies stated as something that's a law",
+    "cluster_id": 0,
+    "participant_id": "P_1781988172391_vxtwtkb8e"
+  },
+  {
+    "feature_id": "23_2",
+    "feature_name": "free_speech_right_drives_keep",
+    "feature_value": "Even if they disagreed, they supported others\u2019 right to speak.",
+    "category": "affect_or_confidence",
+    "rationale": "Their reflection emphasizes rights-based acceptance despite disagreement.",
+    "evidence_span": "I am for free speech",
+    "cluster_id": -1,
+    "participant_id": "P_1781991577414_d9h9svmzb"
+  },
+  {
+    "feature_id": "23_3",
+    "feature_name": "censorship_worry_and_need_both_sides",
+    "feature_value": "Believed censoring one side would never stop; wanted to see both sides and rely on personal fact-checking.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They frame their decision as preferring exposure to both versions/stances rather than using the pair to restrict.",
+    "evidence_span": "I want to see both sides even if they are wrong",
+    "cluster_id": -1,
+    "participant_id": "P_1781989535132_rl9axyacb"
+  },
+  {
+    "feature_id": "23_4",
+    "feature_name": "civility_and_rage_bait_exclusion",
+    "feature_value": "Goal was maintaining civil discussion; excluded clearly rage-bait posts.",
+    "category": "decision_criteria",
+    "rationale": "They state a process/criterion focused on civility and rage-bait as the deciding factor.",
+    "evidence_span": "My main goal was maintaining \"civil\" conversation",
+    "cluster_id": 0,
+    "participant_id": "P_1781989627080_et4fmrggi"
+  },
+  {
+    "feature_id": "23_5",
+    "feature_name": "limited_modification_scope",
+    "feature_value": "Only removed profanity and personal attacks; left everything else unchanged.",
+    "category": "process_meta",
+    "rationale": "They describe a narrow set of edits that likely minimized influence from seeing the paired version.",
+    "evidence_span": "I removed profanity and personal attacks. Everything else stayed.",
+    "cluster_id": -1,
+    "participant_id": "P_1781989117702_hw6jb22i3"
+  },
+  {
+    "feature_id": "23_6",
+    "feature_name": "malicious_targeting_not_acceptable",
+    "feature_value": "Allowed disagreement/opinions but rejected bad language directed maliciously at people.",
+    "category": "decision_criteria",
+    "rationale": "They highlight directed malice as the key removal criterion rather than the presence of disagreement itself.",
+    "evidence_span": "Bad language and directed at people in a malicious way is not acceptable.",
+    "cluster_id": -1,
+    "participant_id": "P_1781990526577_k0kdnielo"
+  },
+  {
+    "feature_id": "23_7",
+    "feature_name": "uncertainty_and_difficulty_deciding",
+    "feature_value": "Mentioned not knowing what some initials meant and finding it hard to make a decision.",
+    "category": "affect_or_confidence",
+    "rationale": "They indicate comprehension gaps that affected decisional confidence, limiting how much the pair changed their judgment.",
+    "evidence_span": "I didn't know what some initials meant... hard to make a decision",
+    "cluster_id": -1,
+    "participant_id": "P_1781992036658_h13n1912b"
+  },
+  {
+    "feature_id": "24_0",
+    "feature_name": "mirror_similarity_indifference",
+    "feature_value": "Treating the original and political mirror as effectively the same, so the pairing did not sway decisions",
+    "category": "pair_comparison_strategy",
+    "rationale": "They explicitly state the mirror version didn\u2019t matter because both sides were read as the same.",
+    "evidence_span": "they were literally just mirrors. I read both sides as the same",
+    "cluster_id": -1,
+    "participant_id": "P_1781989439078_5k8q3s5yp"
+  },
+  {
+    "feature_id": "24_1",
+    "feature_name": "first_amendment_floor",
+    "feature_value": "Deferential to free-speech unless the post promotes violence/illegal activity",
+    "category": "decision_criteria",
+    "rationale": "Their keep/remove criteria hinges on protecting speech except for violence/illegal encouragement.",
+    "evidence_span": "unless posts are promoting violence and encouraging people to break the law, I believe in the first amendment",
+    "cluster_id": -1,
+    "participant_id": "P_1781996813624_9lioscb7c"
+  },
+  {
+    "feature_id": "24_2",
+    "feature_name": "ban_namecalling_foul_language",
+    "feature_value": "Rejecting primarily when there is name calling or lots of foul language",
+    "category": "decision_criteria",
+    "rationale": "They give a clear minimal content rule for rejection related to insulting language.",
+    "evidence_span": "I only rejected if there was name calling or lots of foul language",
+    "cluster_id": 0,
+    "participant_id": "P_1781996938483_jl7a4288l"
+  },
+  {
+    "feature_id": "24_3",
+    "feature_name": "toxicity_or_dehumanization_threshold",
+    "feature_value": "Allow strong opinions but reject when it becomes hate/dehumanizing toward groups",
+    "category": "decision_criteria",
+    "rationale": "They set a threshold focused on hate/dehumanization while permitting disagreement.",
+    "evidence_span": "crossed into hate or dehumanizing stuff. If it was just strong opinions I let it go and if it got really toxic about whole groups I didn't",
+    "cluster_id": 0,
+    "participant_id": "P_1781990117839_owo37cxah"
+  },
+  {
+    "feature_id": "24_4",
+    "feature_name": "profanity_based_filtering",
+    "feature_value": "Removing anything that uses profanity",
+    "category": "decision_criteria",
+    "rationale": "They identify profanity as the specific reason for removal.",
+    "evidence_span": "i got rid of anything that used profanity",
+    "cluster_id": 0,
+    "participant_id": "P_1781988901365_o99yoe2a5"
+  },
+  {
+    "feature_id": "24_5",
+    "feature_name": "fact_check_and_caution_for_false_info",
+    "feature_value": "Passing content despite perceived false information, with emphasis on reader precaution/fact-checking",
+    "category": "decision_criteria",
+    "rationale": "They describe a lenient decision approach paired with a cautionary stance toward misinformation.",
+    "evidence_span": "I passed several with what I felt had false information but the reader should always take a type of precaution and fact check anything",
+    "cluster_id": -1,
+    "participant_id": "P_1781995636026_iv0csl64z"
+  },
+  {
+    "feature_id": "24_6",
+    "feature_name": "fair_platform_without_insult_inflame",
+    "feature_value": "Keep posts that discuss topics without insulting or inflaming the other group to maintain a fair platform",
+    "category": "decision_criteria",
+    "rationale": "Their stated criteria center on non-insult/non-inflaming content to preserve fairness.",
+    "evidence_span": "allow posts that discussed a topic, and did not insult or inflame the other group, to have a fair platform",
+    "cluster_id": -1,
+    "participant_id": "P_1781988305881_rmf1wodo3"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "label_class": "high",
+  "source_features_run_dir": "/workspace/experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/generated_features/high/outputs/2026_08_05-21:07:00.322105",
+  "model_id": "amazon.titan-embed-text-v2:0",
+  "dimensions": 256,
+  "normalize": true,
+  "n_features": 8,
+  "feature_id_scheme": "batch_id_index_in_batch",
+  "primary_format": "features.jsonl + embeddings.npy + feature_ids.json"
+}

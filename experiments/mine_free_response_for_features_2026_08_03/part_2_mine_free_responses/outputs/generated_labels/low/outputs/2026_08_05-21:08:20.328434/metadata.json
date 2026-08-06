@@ -1,0 +1,20 @@
+{
+  "start_timestamp": "2026_08_05-21:08:20.328434",
+  "total_items": 3,
+  "run_metadata": {
+    "stage": "cluster_labeling",
+    "likert_group": "low",
+    "source_clusters_run_dir": "/workspace/experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/clusters/low/2026-08-05T21-07-26",
+    "clustering_method": "hdbscan",
+    "sample_per_cluster": 8,
+    "seed": 42,
+    "model": "gpt-5.4-nano",
+    "cluster_ids": [
+      0,
+      1,
+      2
+    ],
+    "n_noise_skipped": 0
+  },
+  "end_timestamp": "2026_08_05-21:08:30.309577"
+}
