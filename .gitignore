@@ -12,6 +12,7 @@ test_data/*.csv
 
 # LLM prompt-engineering frozen eval subset (otherwise blocked by *.csv).
 !experiments/llm_prompt_engineering_2026_08_05/subset_labels.csv
+!experiments/llm_prompt_engineering_v2_2026_08_05/subset_labels.csv
 
 # OS generated files
 .DS_Store
