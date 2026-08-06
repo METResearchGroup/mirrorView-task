@@ -2,7 +2,7 @@
 
 ## 2026-08-06
 
-1. Added the v2 prompt-engineering keep/remove classifier experiment on a balanced 1,000-post subset (500/500) with Qwen 3.6 (`qwen/qwen3.6-plus`), reusing v1 prompts and scoring via imports; smoke both arms complete, production gated on approval. [PR #49](https://github.com/METResearchGroup/mirrorView-task/pull/49)
+1. Added the v2 prompt-engineering keep/remove classifier experiment on a balanced 1,000-post subset (500/500) with Qwen 3.6 (`qwen/qwen3.6-plus`); feature-tuned prompt raised remove F1 from 0.628 to 0.700 versus control. [PR #49](https://github.com/METResearchGroup/mirrorView-task/pull/49)
 
 ## 2026-08-05
 
