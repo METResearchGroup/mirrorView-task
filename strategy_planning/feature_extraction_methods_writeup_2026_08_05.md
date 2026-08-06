@@ -88,4 +88,9 @@ We divided these into two groups, ...
 
 (add latest results from latest run)
 
+| Arm | Accuracy | Precision | Recall | F1 |
+| --- | ---: | ---: | ---: | ---: |
+| control | 0.6600 | 0.6932 | 0.5740 | 0.6280 |
+| prompt-tuned | 0.6490 | 0.6114 | 0.8180 | 0.6997 |
+
 (foop)
