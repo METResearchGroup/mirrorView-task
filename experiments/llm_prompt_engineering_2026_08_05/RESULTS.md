@@ -11,3 +11,6 @@
 | --- | --- | --- | --- | --- |
 | control | 0.6940 | 0.5425 | 0.6725 | 0.6005 |
 | prompt-tuned | 0.5560 | 0.4278 | 0.8830 | 0.5763 |
+| prompt-tuned (goal) | 0.7412 | 0.5798 | 0.8830 | 0.7000 |
+
+We haven't yet hit the goal amount but with a bit more prompt tuning and prompt engineering (especially upsampling the base class), we should be able to hit the goal F1.
