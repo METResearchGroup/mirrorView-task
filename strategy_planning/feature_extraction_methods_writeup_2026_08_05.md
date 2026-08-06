@@ -84,13 +84,11 @@ We divided these into two groups, ...
 
 ## Training a preliminary model with these features
 
-...
-
-(add latest results from latest run)
+Given our uncovered features, we prompted an LLM to perform the keep/remove classification task. In our control prompt, we gave the exact same stimuli and instructions that we gave to human participants. In our prompt-tuned version, we added the list of keep/remove criteria mined from the BERTopic and LLM feature exploration. We sampled 1,000 posts, 500 posts kept and 500 posts removed by human annotators, and used Qwen 3.6 as our LLM for open-source reproducibility. For our task, we asked the LLM to predict if a post would be removed by human annotators. We observed a significant improvement in both recall and F1 driven by our ablation.
 
 | Arm | Accuracy | Precision | Recall | F1 |
 | --- | ---: | ---: | ---: | ---: |
 | control | 0.6600 | 0.6932 | 0.5740 | 0.6280 |
 | prompt-tuned | 0.6490 | 0.6114 | 0.8180 | 0.6997 |
 
-(foop)
+This gives us (implications)...
