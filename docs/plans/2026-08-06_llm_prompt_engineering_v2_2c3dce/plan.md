@@ -35,25 +35,37 @@ Clone the v1 experiment shape by **import and override**, not by forking logic. 
 
 ## Steps
 
-### Step 1: Scaffold the v2 experiment package and brief README
+Detail for each step lives under `steps/`.
 
-Create `experiments/llm_prompt_engineering_v2_2026_08_05/` with a terse README that states it mirrors v1 (link to `experiments/llm_prompt_engineering_2026_08_05/README.md`) and lists only the three deltas: 1,000 posts, 500/500 balance, Qwen 3.6. Add thin entrypoint modules that import from v1 where possible.
+### Step 1: Scaffold v2 package, brief README, and balanced 1,000-post subset
 
-### Step 2: Freeze a balanced 1,000-post evaluation subset
+→ [steps/step1.md](steps/step1.md)
 
-Adapt subset freezing so the committed CSV under the v2 tree has exactly 500 keep and 500 remove (seed 42), sourced from the same Study Phase 2 Part 2 labels catalog entry used by v1. Reuse v1 load/validate helpers via import; replace only the sampling policy.
+Create `experiments/llm_prompt_engineering_v2_2026_08_05/` with a terse README (link to v1; three deltas only). Freeze a git-tracked balanced subset: **500 keep + 500 remove** (seed 42) by importing v1 load/write helpers and replacing only the sampling policy.
 
-### Step 3: Wire dual-arm classification and evaluation defaults for v2
+### Step 2: Wire dual-arm classifier defaults for v2 (Qwen 3.6)
 
-Expose classifier and evaluate entrypoints under the v2 tree that reuse v1 prompt rendering, runner wiring, and metrics code, with defaults pointed at the v2 subset, v2 outputs directory, and the research_tools Qwen 3.6 model id. Do not reimplement scoring or prompt text.
+→ [steps/step2.md](steps/step2.md)
+
+Add a v2 classifier entrypoint that imports v1 prompt/writer/item helpers and runs both arms via `research_tools`, defaulting to the v2 subset, v2 outputs tree, and model id `qwen/qwen3.6-plus`.
+
+### Step 3: Wire evaluation / RESULTS shape for v2 (n=1000, Qwen header)
+
+→ [steps/step3.md](steps/step3.md)
+
+Import v1 scorers; assemble the two-row RESULTS markdown with v2 provenance (`n=1000`, balanced note, Qwen model id). Do not edit v1’s hardcoded `n=500` helper — reassemble the header in v2 only.
 
 ### Step 4: Smoke both arms on a tiny slice (approval gate)
 
-Run a live smoke on a handful of subset rows for both arms with Qwen 3.6. Stop for explicit user approval before any full-subset production pass.
+→ [steps/step4.md](steps/step4.md)
+
+Live smoke on **5** rows × both arms with `qwen/qwen3.6-plus` (Bedrock AWS creds). **Stop for explicit user approval.** Do not run the full 1000×2 pass in this step.
 
 ### Step 5: Production run on 1,000 and write RESULTS.md
 
-After Step-4 approval only: run both arms on the full frozen balanced subset and write `experiments/llm_prompt_engineering_v2_2026_08_05/RESULTS.md` with the same two-row control vs prompt-tuned metrics shape as v1.
+→ [steps/step5.md](steps/step5.md)
+
+Only after Step-4 approval: run both arms on the full frozen balanced subset and write `experiments/llm_prompt_engineering_v2_2026_08_05/RESULTS.md`.
 
 ## What "done" looks like
 
