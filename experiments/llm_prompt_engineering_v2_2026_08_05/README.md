@@ -45,3 +45,12 @@ PYTHONPATH=. uv run python experiments/llm_prompt_engineering_v2_2026_08_05/eval
 ```
 
 Positive class for precision / recall / F1 is remove (`keep_remove_label=1`). See [RESULTS.md](RESULTS.md) after the production run.
+
+Collapse per-item `NNNNN_*.json` files in a run folder into `predictions.jsonl` (then delete the per-item files; leaves `metadata.json`):
+
+```bash
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_v2_2026_08_05/consolidate_predictions.py
+
+PYTHONPATH=. uv run python experiments/llm_prompt_engineering_v2_2026_08_05/consolidate_predictions.py \
+  --run-dir experiments/llm_prompt_engineering_v2_2026_08_05/outputs/control/outputs/<TS>
+```
