@@ -68,7 +68,19 @@ We use a systematic prompt to extract features across all these categories. We t
 
 The resulting clusters summarize recurring rhetorical and linguistic patterns in keep-rated and remove-rated posts. The topic analysis describes the policy areas and political themes in the corpus. The feature analysis describes rhetorical and linguistic patterns associated with each moderation decision. We use the two analyses as separate descriptive views of the data.
 
-(Include the visualizations here)
+![LLM feature cluster visualization (kept posts)](../experiments/create_llm_features_2026_08_05/outputs/clusters/keep/cluster_hdbscan_clean.png)
+
+![LLM feature cluster visualization (removed posts)](../experiments/create_llm_features_2026_08_05/outputs/clusters/remove/cluster_hdbscan_clean.png)
+
+We observe a cleaner separation of features used to decide what posts to keep or what posts to remove using this new LLM-based method as compared to the BERTopic-based method. This is because our LLM prompting scheme can consider a richer set of criteria for what features to extract. We also notice a wider set of features uncovered for posts that were removed as compared to posts that were kept.
+
+## Comparing extracted features against reasons cited by participants
+
+Both BERTopic and the LLM-based feature extraction generated a list of candidate features. We now compare them against features that were cited by study participants themselves. We asked our n=1,178 participants to answer, on a 1-7 Likert Scale, how much seeing the political mirror affected their moderation decision, as well as fill out a brief free-response section explaining their rationale. After filtering for noncompliance and invalid responses, we collected n=(TODO: insert amount) valid user responses.
+
+We divided these into two groups, ...
+
+(Add the remaining analysis here).
 
 ## Training a preliminary model with these features
 
