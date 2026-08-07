@@ -1,0 +1,167 @@
+{
+  "batch_index": 4,
+  "feature_ids": [
+    "18_7",
+    "19_0",
+    "19_5",
+    "19_6",
+    "19_7",
+    "20_4",
+    "20_5",
+    "20_7",
+    "21_0",
+    "21_3",
+    "21_5",
+    "21_6",
+    "22_2",
+    "23_0",
+    "23_2",
+    "23_3",
+    "23_5",
+    "23_6",
+    "23_7",
+    "24_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "18_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Flags overt racism/dangerous signaling (e.g., \u201cglobalist\u201d as a dog whistle).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps/removes based on conversational contribution rather than meaningful pairing effects.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Claims independence so seeing both sides doesn\u2019t sway their decision.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly says the pair did not sway them beyond their own view.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses \u201ccraziness\u201d as a heuristic rather than describing pairing influence or harm thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Relies on legality as the sole criterion, not framed as harm/toxicity thresholds per se.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Allows most views but removes only for advocacy of crime (a specific harm threshold exception).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Too vague/sparse to map to the defined themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Moderation justified by disrespect/cursing/mudslinging as toxic tone cues.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Default leave-up with removal for profanity/violence (toxicity/harm boundary).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_5",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Uses a symmetry/fairness rule across paired opinions; not clearly about low pair-influence independent of the comparison.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Criterion is fair stance vs emotional reaction, not directly harm/toxicity threshold or low-influence pairing claim.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "22_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Allows constructive content but bans overly aggressive/profane language (toxicity threshold).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Keeps content because nothing violates safety issues (harm/safety boundary).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_2",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Rights-based support for free speech without mapping to specific thresholds or pair-independence mechanism.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_3",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Explicitly prefers seeing both sides and personal fact-checking, but doesn\u2019t clearly claim pair comparison barely influenced decisions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Describes limited modifications (process metadata) without clearly asserting threshold or low pairing influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Rejects maliciously directed bad language as the removal criterion (toxicity/harm boundary).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decision difficulty/uncertainty due to comprehension gaps, not harm thresholds or pairing influence claims.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "States the mirror versions are effectively the same, so pairing didn\u2019t sway decisions.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

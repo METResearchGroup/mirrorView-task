@@ -1,0 +1,167 @@
+{
+  "batch_index": 11,
+  "feature_ids": [
+    "33_3",
+    "33_4",
+    "33_5",
+    "33_6",
+    "33_7",
+    "34_0",
+    "34_1",
+    "34_2",
+    "34_3",
+    "34_4",
+    "34_5",
+    "34_6",
+    "34_7",
+    "35_0",
+    "35_1",
+    "35_2",
+    "35_3",
+    "35_4",
+    "35_5",
+    "35_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "33_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Allows most speech while removing only direct calls for violence and direct harmful targeting.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Endorses broad free speech (even dissent/foul language) and removes only conspiracy-ish content that incites violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses a pair-based hurtfulness/aggressiveness comparison, not explicitly framed as violence/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Claims the pair isn\u2019t truly mirrored and removes overly abusive content; no clear explicit violence/threat exception rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on argument validity and accuracy rather than the moderation thresholds in themes 0\u20132.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes content deemed offensive/mean or low value, consistent with toxicity/offensiveness-based removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_1",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Applies hate/anger assessment symmetrically to both sides when one side is considered bad.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Considers both sides moderately but removes anything hateful/offensive immediately.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Emphasizes facts over rhetoric and convergence potential; not a violence/toxicity threshold statement from themes 0\u20132.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses coherence/format (all-caps incoherent spam) as a cue rather than threats/toxicity criteria in themes 1\u20132.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Main removal criterion is whether posts are derogatorily offensive.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps opinions but removes content that is overly hostile/sensational/insulting.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses a general social-media-norm limit rather than threat/toxicity moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Treats emotional non-factual ranting as negative/unacceptable, aligning with filtering toxic/inflammatory content broadly.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_1",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Explicitly balances free speech with filtering dangerous/inciting language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Decision depends on intent rather than the specific moderation exceptions/standards in themes 0\u20132.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Influence varies with perceived severity; doesn\u2019t specify a violence/threat or toxicity threshold rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Tone and insulting comments make posts unpublishable, matching toxicity/offensiveness filtering.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Disfavors vulgarity and name-calling even if opposing views are acceptable.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses a rant-vs-genuine-feelings rubric; not clearly one of the violence/toxicity exception themes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

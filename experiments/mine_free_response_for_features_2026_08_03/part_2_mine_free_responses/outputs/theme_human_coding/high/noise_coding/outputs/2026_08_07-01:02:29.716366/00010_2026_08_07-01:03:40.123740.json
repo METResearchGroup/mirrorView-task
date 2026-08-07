@@ -1,0 +1,167 @@
+{
+  "batch_index": 10,
+  "feature_ids": [
+    "29_6",
+    "29_7",
+    "30_0",
+    "30_2",
+    "30_3",
+    "30_5",
+    "30_6",
+    "30_7",
+    "31_3",
+    "31_5",
+    "31_6",
+    "31_7",
+    "32_0",
+    "32_1",
+    "32_2",
+    "32_4",
+    "32_5",
+    "32_6",
+    "32_7",
+    "33_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "29_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Controversy attributed to one-sidedness, not to threats/toxicity or consistent standards across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "29_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Meta goal to prevent 'shit slinging' but no clear threats/toxicity or violence exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "30_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal tied to violence/harm toward persons or groups.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "30_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects posts when demeaning content undermines argument advancement (toxicity/insult).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "30_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Personal attacks and vulgarity are leading factors for rejection.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "30_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Distinguishes productive argument vs attacks/name-calling as basis for removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "30_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decisions based on perceived reasonableness/education/credibility rather than threat/toxicity triggers.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "30_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focus is on balancing views with appropriate language, not explicit violence/toxicity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "31_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Foul language leads to not supporting posts.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "31_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Profanity changes their thinking about civility, reflecting a toxicity/language consideration.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "31_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Judges based on believability of a typical audience/speaker plausibility, not threat/toxicity or equal moderation across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "31_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects rude/condescending/argumentative content to keep discussion civil.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes based on mean-spiritedness vs helpful/useful language (toxicity/civility).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Strategy to downweight politics and interpret intent/tone (venting) rather than explicit moderation thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Stays bipartisan and rejects only outright attacks/degrading comments (attack/toxic content removal).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes vulgar and conspiracy/unfactual content as grounds for rejection.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Declines low-quality combative content; includes affective annoyance tied to opposition party.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicit keep/remove distinction: remove insulting/demeaning, allow constructive criticism.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "32_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Distinguishes misinformation/falsity vs speech framing; not clearly about violence/threat or general toxicity bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Main influence is wording/tone (civil/educational vs accusatory), aligning with toxicity/civility moderation.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

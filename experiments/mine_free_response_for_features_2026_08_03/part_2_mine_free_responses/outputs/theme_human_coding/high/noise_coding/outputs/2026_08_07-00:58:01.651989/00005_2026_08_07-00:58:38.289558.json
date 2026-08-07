@@ -1,0 +1,167 @@
+{
+  "batch_index": 5,
+  "feature_ids": [
+    "15_0",
+    "15_1",
+    "15_2",
+    "15_3",
+    "15_4",
+    "15_5",
+    "15_6",
+    "15_7",
+    "16_0",
+    "16_3",
+    "16_4",
+    "16_5",
+    "16_6",
+    "16_7",
+    "17_2",
+    "17_3",
+    "17_4",
+    "17_5",
+    "17_6",
+    "17_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "15_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses aggression/fear and personal attacks as the main removal/decision criteria, matching toxicity/aggression moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Downweights mere insults/cursing in favor of substantive content, consistent with removing low-toxicity/harassing material.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Treats physical violence as a hard deal-breaker while otherwise keeping speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps only when arguments lack personal attacks/foul framing; personal attacks drive moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Supports free speech while disliking excessive foulness; this aligns with a speech-allowed baseline with profanity not being disallowed per se.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on debate worthiness/common ground (low-signal dunking) rather than explicit threat/toxicity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Pair selection based on oppositional contrast is a comparison strategy, not a moderation standard tied to threats/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mentions extremeness and false-claim spreading without explicitly framing as threat/toxicity-based removal in the codebook themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly keeps because there is no promotion of violence or hate, matching the violence/hate exception model.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Allows opinions unless people are 'cussing each other out,' which resembles removing toxic/vulgar personal aggression.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Checks whether the main point is kept vs lost, which is not a moderation/toxicity/threat boundary.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Downweights ad hominem without substance as a cue for influence/acceptance, aligning with removing non-substantive toxic behavior.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_6",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Describes weighing both responses with free-speech consequences, but not specifically applying identical moderation criteria across both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Cussing leading to lower perceived intelligence is about handling vulgar/toxic language; closest to toxicity removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly scans for threatening/violent content and its impact on dialogue.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "States tone is the main influence for judgment; aligns with moderation based on toxic/inflammatory presentation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Uses a free-speech boundary that removes only when posts are explicitly rude/insulting.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Emphasizes preserving perspectives and constraints on removing only one; not a clear threat/toxicity moderation rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Influenced mainly by perceived extremity, without clear mapping to threat/violence/toxicity or profanity rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses civility/language quality and libel checks as moderation cues, consistent with removing toxic/harassing/inflammatory content.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "batch_index": 12,
+  "feature_ids": [
+    "35_7",
+    "36_0",
+    "36_4",
+    "36_6",
+    "36_7",
+    "37_1",
+    "37_2",
+    "37_3",
+    "37_4",
+    "37_5",
+    "37_6",
+    "37_7",
+    "38_0",
+    "38_2",
+    "38_4",
+    "38_5",
+    "38_6",
+    "38_7",
+    "39_0",
+    "39_1"
+  ],
+  "assignments": [
+    {
+      "feature_id": "35_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Explicitly says hate/bad-language removal happened but the original-vs-mirror pairing was not influential.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "States criteria were respect/fact-based rather than side, and pairing helped judge similarly across political versions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity/curses are treated as unnecessary and thereby increase removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Allows content when it is opinion without expletives, implying curse words are a removal trigger.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Influence comes from constructive debate value, not primarily from threats/toxicity thresholds or pair-consistency fairness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal is triggered by disrespect/personal attacks/bullying, consistent with removing toxic harassment.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision cue is whether language is argumentative vs truthful, not clearly mapped to the threat/toxicity removal themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes for vulgar/toxic content and Nazi analogies while allowing general debate/criticism.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focus is on discussion/engagement vs insulting, without clear explicit reliance on threats/violence exceptions or pair fairness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal likelihood increases with hostility, blatant insults, and cursing (toxic/inflammatory tone).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Mentions using the pairing for political-context interpretation; not explicitly about consistent application across sides or about threat/toxicity exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General reasonableness threshold for keeping both versions, without clear tie to the codebook moderation-standard or toxicity/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Directly compares egregiousness across the pair; this is not the theme of applying identical standards regardless of viewpoint.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes hostile/insulting comments to preserve dialogue safety (especially for minors), aligning with removing toxicity/hostility.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Inaccuracy is used as a cue, but this is not one of the threat/toxicity or pair-standard themes in the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Invokes an overarching free-speech principle despite disagreement; no explicit threats/violence exception stated.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Multiple criteria (mutual respect/intent/thought-provoking) but not clearly about hate/bad language thresholds or pair-consistency across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly targets shutting down offensive/permanent hateful speech to enable more positive communication.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Says they focused on policy violations rather than political side, consistent with applying the same standard across both versions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects both for aggressive genuinely upsetting language; treats some cursing as ignorable\u2014tone/language severity drives removal.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

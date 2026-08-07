@@ -1,0 +1,167 @@
+{
+  "batch_index": 24,
+  "feature_ids": [
+    "73_0",
+    "73_1",
+    "73_2",
+    "73_3",
+    "73_4",
+    "73_5",
+    "73_6",
+    "73_7",
+    "74_1",
+    "74_2",
+    "74_3",
+    "74_4",
+    "74_5",
+    "74_6",
+    "74_7",
+    "75_1",
+    "75_2",
+    "75_4",
+    "75_5",
+    "75_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "73_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removal/approval is tied to factual support vs inflammatory/ill-informed content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly says threats/personal attacks with profanity reduce acceptance.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Expletives are treated as a toxic cue that increases vitriol and drives removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Dislikes name-calling, which functions as a personal/toxic content bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Checks whether the stance suggests resorting to violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Keeps content that furthers conversation without personal derogation/being offensive.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_6",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Mentions removing clearly false information while broadly allowing most content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "73_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Focuses on tolerating rudeness/accusations via debate-likeness rather than threats/toxicity removal criteria explicitly.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses language-quality/foul-abuse distinction to delete abusive/foul content while allowing harsh substance.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Appears to use pair-symmetry/aggression to reject both, but not clearly framed as threat/toxicity exception policy.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Allows political critique but removes when it becomes overly personal (crossing a line).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Claims free speech but removes hateful/distasteful/cursing\u2014closest to violence/threat exceptions with profanity caveat.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Downplays pair-side differences and frames decisions purely as \u201cnothing crossed the line\u201d with free-speech tolerance.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Rejects based on lack of coherence/understandability, not threats/toxicity or moderation consistency across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "74_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rejects both due to unfair paired behavior, without clear threat/toxicity exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "75_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Penalizes misspellings/grammar/awkwardness as acceptability cues rather than toxicity/threat or factual/violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "75_2",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Judges based on bait/invalidity; does not clearly map to threat/toxicity moderation bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "75_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Prohibits profanity/hyperbole/inaccurate info as fostering animosity, leading to rejection.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "75_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Decision criterion is how much violence the statement might provoke.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "75_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Claims seeing translations to both sides made it clearer to judge the posts as a whole, implying consistent criteria across sides.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

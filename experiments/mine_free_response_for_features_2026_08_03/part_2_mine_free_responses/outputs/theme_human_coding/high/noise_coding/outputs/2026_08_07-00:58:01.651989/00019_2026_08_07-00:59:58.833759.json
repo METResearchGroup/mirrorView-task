@@ -1,0 +1,167 @@
+{
+  "batch_index": 19,
+  "feature_ids": [
+    "58_4",
+    "58_5",
+    "58_6",
+    "58_7",
+    "59_0",
+    "59_1",
+    "59_2",
+    "59_3",
+    "59_4",
+    "59_5",
+    "59_6",
+    "59_7",
+    "60_0",
+    "60_2",
+    "60_3",
+    "60_4",
+    "60_5",
+    "60_6",
+    "60_7",
+    "61_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "58_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Treats hate/violence endorsement as grounds for removal, aligning with threat/violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_5",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Mentions fairness to both sides and an accidental click, but not identical moderation criteria or a clear fixation on threats/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Claims fair evaluation of both parties while using relative importance to decide what to remove/keep.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_7",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Side-by-side comparison is described as helpful, but it\u2019s about the process rather than applying identical moderation standards across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_0",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses vague agreement/\u201ctoo wack\u201d threshold without linking to toxicity, threats, or consistent cross-side criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_1",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Focuses on checking true oppositeness and bracketing personal opinions, supporting consistent evaluation across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Endorses suppressing bashing/profanity, consistent with removing toxic/excessively vulgar content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Links inflammatory/profane wording directly to keep vs remove decisions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Emphasizes perspective-taking/feelings rather than explicit moderation exceptions or a defined toxicity/threat rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Mentions bias perception as the cue but doesn\u2019t clearly map to threat/toxicity removal or cross-side standardization.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Fact vs scientifically provable falsehood criterion affects flips, not clearly threat/toxicity or bilateral identical moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Process diligence (reading all content) without a specific moderation rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_0",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Prohibits relying on profanity for decisions, but does not specify threats/violence exceptions or toxic-removal criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_2",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "States that more moderate phrasing makes keeping more logical; not clearly about applying identical criteria across political viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Differentiates useful dialogue from insults and disapproves insult slinging, fitting toxicity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Advocates not filtering political speech even if coarse; resembles free-speech leaning (though not explicitly threat/violence-based exceptions).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses stance support/cross-side advocacy as decision criteria, not clearly mapped to the provided moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_6",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Removes immediate \u201cpartisan talking points\u201d; overlaps with removing low-quality/toxic persuasion but not clearly tied to threats or profanity/toxicity rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "No reflection content provided.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses profanity/cuss words and likelihood of offense as a key keep/remove criterion.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

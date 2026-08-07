@@ -1,0 +1,167 @@
+{
+  "batch_index": 3,
+  "feature_ids": [
+    "13_7",
+    "14_1",
+    "14_2",
+    "14_5",
+    "14_6",
+    "14_7",
+    "15_1",
+    "15_3",
+    "15_4",
+    "15_5",
+    "16_3",
+    "16_4",
+    "16_6",
+    "17_0",
+    "17_4",
+    "17_5",
+    "17_6",
+    "17_7",
+    "18_3",
+    "18_5"
+  ],
+  "assignments": [
+    {
+      "feature_id": "13_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Generic statement both views are wrong; no clear mirror/pair or harm-threshold decision criterion described.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Reports deciding as a pair using a respect-based standard; this is pair-strategy but not clearly the 'barely influenced' theme definition.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Explicitly cites inappropriate/attacking language as influencing removal/keeping.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses insulting/ad hominem emotionally manipulative rhetoric as the line for removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Chooses based on imagined online appropriateness rather than comparing the original vs mirror pair.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on confusion about inconsistency across the pair; not a clear claim that pair influence is minimal or that a specific harm threshold was applied.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_1",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removes mainly when content is hatred with no other merit; draws a toxicity/lack-of-permissibility boundary.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Explicitly not evaluated as a pair; bans both based on shared name-calling/curse-word trigger.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Inflammatory language is the deal breaker while other perspectives could be acceptable (tone/toxicity threshold).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "15_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Hardest cases depend on asymmetry in antagonism across versions; not a 'barely influenced' claim.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Death threats/violent killing language crosses a firm line for removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Profanity not decisive; relies on overall viewpoint validity/incendiary level rather than a clearly articulated harm threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "16_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Low specificity; implies generic familiarity rather than meaningful comparison of the pair.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly evaluates as if reading random/social-media posts, not leveraging mirror comparison.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Unconditional 'all speech permitted' stance does not match harm-threshold boundaries in theme 0 or the pair-influence theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Justifies decisions via First Amendment/free-speech rationale rather than the codebook pair-influence or harm-threshold criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Malice and lack of substantive thought function as the deciding line for removal concern (toxicity/malice threshold).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "17_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on immaturity and being respectful; not clearly a harm/toxicity threshold nor an explicit low pair-influence claim.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "States political affiliation has no bearing; not a harm-threshold or pair-influence reflection.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_5",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Claims not swayed (decision easy/fair) but does not explicitly state independence from mirror/pair comparison.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

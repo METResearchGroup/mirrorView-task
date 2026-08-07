@@ -1,0 +1,167 @@
+{
+  "batch_index": 4,
+  "feature_ids": [
+    "11_5",
+    "11_6",
+    "12_1",
+    "12_2",
+    "12_4",
+    "12_5",
+    "13_1",
+    "13_2",
+    "13_3",
+    "13_5",
+    "13_6",
+    "13_7",
+    "14_0",
+    "14_1",
+    "14_2",
+    "14_3",
+    "14_4",
+    "14_5",
+    "14_6",
+    "14_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "11_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removed both posts when language was harmful/inflammatory and often extreme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rejected for low discussion value/bashing without tying specifically to threats/toxicity removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rule distinguishes attacks vs arguments/ideology, not explicitly framed as toxicity/threats exceptions or violence-only.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Categorical removal rule for hate speech regardless of framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_4",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Uses an 'overly abusive' threshold, but not clearly tied to the threat/toxicity removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Fragmentary content about an influence theme; no clear moderation rationale tied to codebook themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Declines both when profanity or person-directed hurtful language is present.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Primary criterion is factual verifiability/being backed by facts, not a match to the codebook moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Concerns about misinformation spread into opinion, which doesn\u2019t map to violence/threat or toxicity removal categories.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Keeps most speech unless there is a direct threat of violence; government silencing only justified for threats.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Supports open discussion but excludes violent speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Careful read; aside from foul language, nothing alarming/threatening to justify removal (toxicity/profanity considered).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Process constraint about choosing delete both vs keep both; not about moderation standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_1",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Free speech default to keep offensive content; justification not explicitly limited to violence/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_2",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Disagreement triggers removing the pair, which doesn\u2019t align with the codebook themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Dismisses pairs due to profanity or violence-suggestion cues (toxicity/abusive language leading to removal).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Insults incompatible with healthy discussion; rejects insulting content (abusive/toxic framing).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly aimed to make the mirror images balanced, applying the same paired handling to maintain consistency.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General goal of conversation health/reflection, not specific to the codebook moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes accusatory/insulting content vs valid points, aligning with removing toxic/abusive content.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

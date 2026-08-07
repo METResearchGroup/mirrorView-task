@@ -1,0 +1,167 @@
+{
+  "batch_index": 1,
+  "feature_ids": [
+    "3_2",
+    "3_5",
+    "3_6",
+    "3_7",
+    "4_0",
+    "4_1",
+    "4_3",
+    "4_4",
+    "4_5",
+    "4_6",
+    "4_7",
+    "5_0",
+    "5_1",
+    "5_2",
+    "5_3",
+    "5_4",
+    "5_5",
+    "5_6",
+    "5_7",
+    "6_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "3_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Describes removing clearly hateful items and handling mixed-good/mixed-bad valence with deletion decisions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_5",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Mentions checking whether statements are untrue/inane, but not explicitly tied to threat/violence exceptions or toxicity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes when discussion devolves into cursing rather than constructive discussion, consistent with removing toxic/vulgar content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses a healthy-debate contribution rule and uncertainty to avoid removal; not clearly threat/toxicity or free-speech-with-violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_0",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses truth-bending/side alignment to compare a pair; codebook themes don\u2019t match this pair-comparison rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Applies a bar distinguishing blatantly over-the-top/derogatory content from genuinely harmful, implying removal for toxic gradations.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Approves only when there is no profanity or dangerously worded attacks, i.e., removing toxic/profane content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Comparatively assesses harm and may block both; aligns with high bar removal to prevent harmful/toxic content (though not explicitly about threats/violence).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly screens for anything dangerous to a group or individual, aligning with violence/threat exception logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Advocates posting/keeping on-topic and not picking a side, implying consistent standards across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses anticipated backlash and incitement risk to decide harder cases, consistent with removing when content becomes inflammatory/toxic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Favors respectful, non-insulting posts and penalizes crudeness/insults, matching toxicity/threat-informed removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects name calling/profanity and extreme personal accusations (e.g., 'cancer'), which is explicitly toxic-language removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Compares follow-up viability/openness vs dead ends/insults; not clearly a threat/toxicity or violence-exception criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses harm potential (and evidence) to decide; harm focus fits the removal-for-toxicity/high-bar theme more than free-speech-with-violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Explicitly aims to be fair and not biased, supporting applying the same moderation standard across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Advocates free speech while limiting degrading 'bad-mouthing'; not specifically framed as threats/violence exceptions, but it is a free-speech-with-limit stance.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Believes misunderstanding is inevitable, shaping expectations about pairing; not tied to any moderation standard theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Claims both viewpoints are essential for understanding and supports free speech via showing both, implying consistent criteria across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes when posts likely cause broad controversy; this reflects keeping a higher bar to avoid inflammatory/toxic outcomes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

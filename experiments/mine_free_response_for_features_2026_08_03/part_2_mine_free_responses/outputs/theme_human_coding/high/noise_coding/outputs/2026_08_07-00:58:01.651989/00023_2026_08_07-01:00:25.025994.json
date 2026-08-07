@@ -1,0 +1,167 @@
+{
+  "batch_index": 23,
+  "feature_ids": [
+    "70_1",
+    "70_2",
+    "70_3",
+    "70_4",
+    "70_6",
+    "71_0",
+    "71_1",
+    "71_2",
+    "71_3",
+    "71_5",
+    "71_6",
+    "71_7",
+    "72_0",
+    "72_1",
+    "72_2",
+    "72_3",
+    "72_4",
+    "72_5",
+    "72_6",
+    "72_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "70_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity triggers rejection even if only one side disagrees, fitting high bar removing toxic/vulgar content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "\u201cNot healthy for unbiased public contribution\u201d is a discourse-health criterion not clearly threat/toxicity or violence exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removing offensiveness based on moral compass aligns with removing toxic/offensive content, though threats are not mentioned.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Targets generic name-calling/trolling (\u201cshit-talking\u201d) for removal while keeping constructive speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Audience negative reaction is mentioned, but the rationale isn\u2019t clearly mapped to threats/toxicity or violence rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_0",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Fact-checking and respectful debate are discussed, but it\u2019s unclear this is specifically framed as toxicity/threat moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses affect toward right-wing content (\u201cdumb\u201d) rather than explicit toxicity/threat or violence criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on polarization and whether differences are clearly factual, not directly on threat/toxicity removal rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Tone and perceived correctness drive influence, but it doesn\u2019t clearly specify removal criteria for threats/toxicity/violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_5",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Impartial balancing is described, but not explicitly that identical moderation standards are applied across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Credits language as the main driver without specifying the standard relates to toxicity/threats/violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit rules: remove for blatant misinformation and content that could invite violence, while permitting opinions for free speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Respect both sides while rejecting personal attacks matches applying consistent standards across political viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Direct insult-free threshold: won\u2019t accept content with insults while accepting respectful writing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "States identical standards applied to both sides, focused on harassment/slurs and similar criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Cues center on slurs/demeaning labels and harassment/harm, fitting removing toxic/harassing content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Evaluates intent/venting and whether respect was given; aligns more with removing disrespectful/toxic behavior than violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Compromise/compassion framing is a general reconciliation perspective without clear moderation thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Increased perspective taking/opening mind describes an internal effect, not specific moderation rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Vague resonance-based comparison process is described without mapping to the codebook\u2019s specific moderation categories.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

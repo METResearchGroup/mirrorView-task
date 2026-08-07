@@ -1,0 +1,167 @@
+{
+  "batch_index": 2,
+  "feature_ids": [
+    "6_1",
+    "6_2",
+    "6_3",
+    "6_4",
+    "6_5",
+    "6_6",
+    "6_7",
+    "7_0",
+    "7_1",
+    "7_2",
+    "7_3",
+    "7_4",
+    "7_5",
+    "7_6",
+    "7_7",
+    "8_0",
+    "8_1",
+    "8_2",
+    "8_3",
+    "8_5"
+  ],
+  "assignments": [
+    {
+      "feature_id": "6_1",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Removal justified for misinformation/conspiracy plus personal attacks/egregious rhetoric, fitting speech-then-remove-for-violating-exceptions style.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly checks for calls to violence or harm as the key removal trigger.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses respectfulness and discussion contribution as removal/influence criteria, aligning with toxicity/threat removal logic though framed as conduct.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Prohibits cursing/name-calling/language meant to incite, consistent with removing toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Links graphic/profane offensiveness to higher likelihood of removal (toxicity/inflammatory rationale).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Describes inconsistency and shift mid-task with healthy dialogue, but not clearly a threat/toxicity or free-speech exception rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_7",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Argues keep because it is free speech with no threats; matches violence/threat exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Treats language/tone as the main cue; most consistent with removing toxic/uncivil content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Flags derogatory/derogatory remarks regardless of affiliation\u2014removal to avoid toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Uses harm-vs-insult distinction, removing stronger harmful accusations (violence/harm exceptions logic).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_3",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Pair-equivalence checking strategy, but does not clearly state identical moderation criteria across sides/fairness mechanism.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Even representation with exceptions for disrespect/misleading; closest to removing toxic/disrespectful content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General factualness plus impact-on-others without clearly matching the threat/toxicity or violence-exception code definitions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Simple removal rule for personal attacks aligns with removing toxic/threatening behavior.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Reports no clear basis/influence factor.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Angry/uncivil tone and lack of respect reduce acceptance\u2014removal driven by toxic/uncivil content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_1",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Checks for lies/propaganda and civility; overlaps but is less specifically threat/violence than theme_id=1/2\u2014leans toward speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Insults present as salient signal leading to removal/less acceptance (toxicity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses an 'egregiousness threshold' based on past experience, not clearly tied to threats/violence or to the specific toxicity rule set.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Broad free-speech bias driving over-permission error; not phrased as a threat-violence exception rule.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "batch_index": 4,
+  "feature_ids": [
+    "11_5",
+    "11_6",
+    "12_1",
+    "12_2",
+    "12_4",
+    "12_5",
+    "13_1",
+    "13_2",
+    "13_3",
+    "13_5",
+    "13_6",
+    "13_7",
+    "14_0",
+    "14_1",
+    "14_2",
+    "14_3",
+    "14_4",
+    "14_5",
+    "14_6",
+    "14_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "11_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Eliminated both versions based on harmful/inflammatory cues that trigger removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Judges by discussion value vs bashing, which isn\u2019t specifically threat/toxicity or violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes adversarial personal attacks/ripping apart rather than arguments, aligning with removing toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Categorically removes hate speech regardless of framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses an abuse level threshold ('overly abusive') consistent with removing toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Process/meta issue about fragmentary content rather than a moderation exception/standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Profanity or hurtful person-directed language leads them to decline both posts.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Fact-verifiability as a criterion is not covered by the provided threat/toxicity/violence exception themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Misinformation harm motivation drives decisions, which is outside the given violence/toxicity themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Says silencing isn\u2019t government\u2019s job unless there\u2019s a direct violence threat, implying violence-threshold removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Allows discussion but rejects any violent speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_7",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Threat-detection plus allowing unless alarming; closest fit is the remove-toxic standard, though it\u2019s framed more as threat/no-threat.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Interface/pair-level constraint rather than a moderation rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_1",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Free speech default and keeping offensive content is more about a universal standard than specific threat/toxicity removal; weak fit to theme 0.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Removing both due to disagreement is not aligned with the provided toxicity/violence/hate themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity or suggestions of violence cue pair dismissal, consistent with removing toxic/threatening content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Insults are rejected because they undermine healthy discussion, aligning with toxicity/inflammatory removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Strategy to balance mirror images, not a moderation criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Evaluating whether posts enable healthy conversation/reflection doesn\u2019t map clearly to the given themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "14_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Distinguishes valid points from insulting/accusatory attacks; aligns with removing toxic/inflammatory personal framing.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

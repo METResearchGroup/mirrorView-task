@@ -1,0 +1,17 @@
+{
+  "start_timestamp": "2026_08_07-00:57:17.294244",
+  "total_items": 6,
+  "run_metadata": {
+    "stage": "noise_theme_coding",
+    "likert_group": "low",
+    "model": "gpt-5.4-nano",
+    "batch_size": 20,
+    "n_noise_features": 103,
+    "theme_ids": [
+      "0",
+      "1",
+      "other"
+    ]
+  },
+  "end_timestamp": "2026_08_07-00:57:47.294356"
+}

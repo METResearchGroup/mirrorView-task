@@ -1,0 +1,167 @@
+{
+  "batch_index": 13,
+  "feature_ids": [
+    "39_2",
+    "39_3",
+    "39_4",
+    "39_5",
+    "39_6",
+    "39_7",
+    "40_0",
+    "40_2",
+    "40_3",
+    "40_4",
+    "40_5",
+    "40_6",
+    "40_7",
+    "41_0",
+    "41_1",
+    "41_4",
+    "41_5",
+    "41_6",
+    "41_7",
+    "42_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "39_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Reports a fairness/consistency rule that removing one requires removing the other across the pair.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Describes checking symmetry/equivalence of points across sides to judge consistently.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses a high moderation bar driven by tone/volatility; rage-bait and violent rhetoric are disqualifiers.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Aims to keep things equal by considering both sides and removing vulgarity rather than viewpoint.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Relies on instinct near the boundary; no clear tie to pair-consistency or threat/toxicity exception rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly states a ban-both-for-fairness rule across the paired versions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly applies the same content-based standards to both sides rather than judging perspective.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Gut feelings from negativity guide removal, consistent with a toxicity/over-inflammation style threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Uses profanity and threats as direct cues for removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Perceived harmfulness drives decisions in a way consistent with removing toxic/threatening content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Keeps posts unless they seem harmful or inciting, despite disagreement.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Opposes censoring viewpoints, removing only when posts are offensive toward a group (and cites related concerns).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "General positivity about the task with no primary moderation/removal rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses tone similarity across the pair to treat them consistently regardless of political side.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on whether one is a mirror and treats mirrors as disrespectful; not clearly about fairness consistency or threat/toxicity exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Advocates free speech broadly, with removal bounded by inappropriate call-to-action rather than threats/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Side-by-side pairing is used to stay objective and apply the same standard, with symmetric treatment.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_6",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Free-speech principle allowing heated arguments unless they cross lines; emphasizes protecting speech based on merit/truth.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decision is explicitly driven by ideological identification/support, not moderation standards or safety exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes when content becomes too inflammatory or random personal attacks; keeps productive/harmless items.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

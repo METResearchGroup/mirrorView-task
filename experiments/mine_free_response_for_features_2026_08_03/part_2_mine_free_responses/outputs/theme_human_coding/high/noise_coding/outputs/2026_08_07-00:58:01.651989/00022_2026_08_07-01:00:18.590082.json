@@ -1,0 +1,167 @@
+{
+  "batch_index": 22,
+  "feature_ids": [
+    "67_1",
+    "67_2",
+    "67_4",
+    "67_5",
+    "67_6",
+    "67_7",
+    "68_0",
+    "68_1",
+    "68_2",
+    "68_3",
+    "68_4",
+    "68_6",
+    "68_7",
+    "69_1",
+    "69_3",
+    "69_4",
+    "69_5",
+    "69_6",
+    "69_7",
+    "70_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "67_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses harsh/profane tone/outlandishness as a moderation basis to reject keep opinions when it becomes profane.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes when posts add no conversational value, fitting a general removal-by-standards approach for keeping non-toxic opinions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "\u201cProfessionalism standard\u201d isn\u2019t explicitly a threat/toxicity rule or a free-speech-with-violence exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Threatening/vicious tone and major cussing drive removal, aligning with keeping speech except violence/threats and closely related bad language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly applies the same moderation standard to both sides to avoid viewpoint bias, with tone/target sub-rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Clear profanity threshold (reject if cursing/foul language) while allowing if civil, consistent with violence/threat exceptions plus bad-language boundary.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Rejects angry/cursing/name-calling but allows opinions/questions without strict name-calling\u2014tone/toxicity boundary under speech-allowing approach.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes personal/side attacks rather than information, which functions like a toxicity/threatening/insult removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Free-speech absolutism with removal primarily for attacking or unthoughtful reactions; closest match to keeping most speech with exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Anti-censorship removal only for bad grammar/syntax/insult behavior doesn\u2019t align cleanly with violence/threat or specific toxicity criteria in the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Allows most speech but draws a line for vulgarity made purely to be vulgar\u2014exception-based tolerance.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Removes based on plausibility/falsehood that could harm readers via perspective-taking, not primarily threat/toxicity or violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "68_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Separates \u201ctrue viewpoint\u201d vs \u201cnonsense\u201d for both sides\u2014content-quality discrimination not covered by threat/toxicity themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "69_1",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Keeps unless content explicitly incites violence or is very profane\u2014directly matches violence/threat exceptions with bad-language constraint.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "69_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Removal rule is factual inaccuracy/misinformation, which isn\u2019t specified in the threat/toxicity or free-speech-with-violence themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "69_4",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Critiques the approach due to misinformation/extreme tradeoffs; doesn\u2019t map to the moderation standard/tone rules in themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "69_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Respectful vs insulting personal attack guides allow/remove, fitting a toxicity/insult-based removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "69_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Keeps mostly civil but removes when it seems like complete rumors\u2014operates as a removal standard tied to harmful/low-quality content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "69_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on argument construction/validity and quality rather than threat/toxicity or profanity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_0",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Notes political affiliation and wording affected decisions\u2014affect/confidence factor not covered by the provided moderation standard themes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "batch_index": 18,
+  "feature_ids": [
+    "55_3",
+    "55_4",
+    "55_5",
+    "55_6",
+    "55_7",
+    "56_0",
+    "56_1",
+    "56_2",
+    "56_4",
+    "56_6",
+    "56_7",
+    "57_0",
+    "57_1",
+    "57_2",
+    "57_3",
+    "57_4",
+    "57_5",
+    "57_6",
+    "58_0",
+    "58_3"
+  ],
+  "assignments": [
+    {
+      "feature_id": "55_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses extremity differential as the comparison cue, which is not a moderation standard theme in the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Applies a cordiality/social-norm threshold and removes when there is swearing or heavy attacking.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Foul language is treated as a disqualifier leading to removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Pair-level topic/opposition matching is described, but not tied to a specific moderation standard in themes 0-2.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mentions reinstatement of mirror pairs as a unit, but not clearly as consistency across sides or as a threat/toxicity/free-speech rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Claims decisions were heavily guided by whether items mirrored, without linking to the codebook moderation principles.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "States mirroring was the main influence, which does not match the defined moderation-standard themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes reading/thinking about both sides, but not that identical moderation criteria were applied across political viewpoints (theme 0) or threat/toxicity/free-speech exceptions (themes 1-2).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity/rant-like language is treated as unacceptable and leads to removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Generally permissive but removes for threatening language/vulgarity/unclear statements\u2014fits speech-retention with safety exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit free-speech/legal standard with removal limited to obscene/clearly illegal content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decision is attributed to clicking/moving on rather than moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Platform-appropriateness rule to remove content, not clearly matching themes 0-2.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Difficulty deciding due to encountering both left/right views is not a specific moderation-removal standard in the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Wants removal based on ideological source/annoyance even if fake; does not fit free-speech exception (2) or consistency across sides (0) cleanly, but is closer to a toxicity/threat-related removal theme than others.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Removes rants/complaints because they are not helpful; not framed as threats/toxicity or free-speech legality exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Aggression/insulting tone from both sides is used as influence; aligns with removing toxic/inflammatory content (theme 1).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "After comparing both biases, they claim to focus on objective moderation standards rather than alignment, matching applying consistent criteria across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Free speech is the primary rule; would not remove based on political side.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Balances evaluating radical/ridiculous content with maintaining freedom of speech, implying removal within speech-allowed bounds.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "batch_index": 13,
+  "feature_ids": [
+    "39_2",
+    "39_3",
+    "39_4",
+    "39_5",
+    "39_6",
+    "39_7",
+    "40_0",
+    "40_2",
+    "40_3",
+    "40_4",
+    "40_5",
+    "40_6",
+    "40_7",
+    "41_0",
+    "41_1",
+    "41_4",
+    "41_5",
+    "41_6",
+    "41_7",
+    "42_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "39_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Pair-consistency fairness rule about removing both when one is removed fits high-bar removal of toxic material.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Checking whether both sides make the same-level point emphasizes applying identical standards across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicit thresholds using tone/volatility and rage-bait as disqualifiers match toxicity/threat removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Trying to be equal by considering both sides aligns with applying the same moderation standard across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Reliance on gut instinct near the boundary is not a clear fit to any provided moderation-content themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Rule that banning one requires banning the other out of fairness matches consistent moderation across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "States content-based evaluation of the pair to apply the same standards regardless of perspective.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_2",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Gut feelings about negativity could relate to removing toxic content, but the mapping is indirect.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Using profanity and threats as cues aligns with allowing speech except when threats/violence or closely related bad language appear.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Perceived harmfulness is consistent with a higher-moderation bar that removes threatening/toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Free-speech fallback: keep despite disagreement unless posts seem harmful/inciting.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Opposes censorship but allows removal when posts are offensive toward a group (and mentions misinformation concerns)\u2014violence/threat exception framing fits best among options.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "40_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "General positivity about the task with no moderation rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Using tone similarity across the pair to treat them the same reflects consistent standards across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Treating mirror posts as disrespectful/non-discursive is a procedural pair criterion, but it most resembles exclusion for harmful/toxic dynamics.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Allows name-calling under free-speech principle while drawing limits; best matches speech-with-exceptions category.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Side-by-side comparison to stay objective and treat both as the same kind of heated venting matches applying consistent criteria across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Protects free speech by allowing heated arguments if there is merit/truth, with no blanket removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "41_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decision is based on ideological identification/support rather than moderation logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keep if productive/harmless; remove when too inflammatory or personal attacks\u2014fits removing toxic/inflammatory content under a higher bar.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

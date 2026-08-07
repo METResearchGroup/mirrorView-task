@@ -1,0 +1,167 @@
+{
+  "batch_index": 26,
+  "feature_ids": [
+    "79_1",
+    "79_2",
+    "79_3",
+    "79_4",
+    "79_5",
+    "79_6",
+    "79_7",
+    "80_0",
+    "80_3",
+    "80_4",
+    "80_5",
+    "80_7",
+    "81_1",
+    "81_2",
+    "81_4",
+    "81_5",
+    "81_6",
+    "81_7",
+    "82_3",
+    "82_5"
+  ],
+  "assignments": [
+    {
+      "feature_id": "79_1",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Tone/antagonistic/foul language triggers deletion, fitting the profanity/adjacent moderation exception style.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit/implicit threats are removed while other speech is protected.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Ad hominem attacks are singled out for removal, consistent with removing toxic/abusive content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes statements wishing death and heavy profanity\u2014removed for highly toxic/offensive threats/vulgarity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Nasty language is disallowed as unhealthy/toxic, aligning with the toxicity-removal theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Incitement of violence against group/individual is treated as disqualifying.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Main cues are vulgar/offensive/direct attacks (with some borderline/context), matching toxicity filtering.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_0",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Focus is on hearing both sides rather than explicitly equal standards across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Prioritizes forward discussion over personal attacks; not clearly captured by the provided threat/toxicity/free-speech themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "General norm against aggression; does not map cleanly to specific removal exceptions in the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes rude/hurtful content lacking real claims; resembles toxicity/low-substance deletion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Prohibits cussing as part of quality/intelligent debate, which aligns with profanity/toxicity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_1",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Mentions removal for encroaching on hate speech; closest match is threat/toxicity exceptions but hate-speech isn\u2019t explicitly in themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Vulgar language leads to immediate rejection while discussion intent may still be considered.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Decision driven by being horrified/lack of knowledge, not a specific moderation exception cue.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Pair-comparison via underlying attitude; not a moderation-rule/toxicity/violence exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Same-event vs different-events negatively perceived by opponents\u2014pair-comparison strategy not in given moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Distinguishes targeting groups vs individuals; not directly tied to threat/toxicity removal criteria in the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "82_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Keeps speech unless it incites violence against specific people, which should be deleted.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "82_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Abusive language is rejected even while other expression rights are respected.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}
