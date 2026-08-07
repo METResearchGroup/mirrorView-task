@@ -1,0 +1,167 @@
+{
+  "batch_index": 6,
+  "feature_ids": [
+    "18_1",
+    "18_2",
+    "18_3",
+    "18_4",
+    "18_5",
+    "18_6",
+    "18_7",
+    "19_0",
+    "19_1",
+    "19_2",
+    "19_3",
+    "19_4",
+    "19_5",
+    "19_6",
+    "19_7",
+    "20_0",
+    "20_2",
+    "20_3",
+    "20_4",
+    "20_5"
+  ],
+  "assignments": [
+    {
+      "feature_id": "18_1",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses a dangerousness/harm threshold while still valuing free speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_2",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Concern about extremity/actions, but not clearly mapped to threats/toxicity language removals.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes for factual misleading info and intentionally divisive rhetoric (toxicity/divisiveness).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Politeness increases allowance; fits the toxicity/lowers-when-uncivil pattern.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Focus on wording/framing where cussing/derogatory language reduces acceptance (toxicity filter).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Prefers fruitful/pro-social discussion over hatred/angry hostile words (keeps non-toxic content).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "18_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focus on exposure/critical thinking and rejection of monetizing speech, not clearly the codebook\u2019s threat/toxicity/free-speech-exceptions themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes both sides if either is inflammatory/crude, aligning with removing toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal triggered by hostile/profane/rude language (toxicity) regardless of viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Distinguishes opinions vs hate and credits fairness from seeing both sides; primarily removal of hate aligns with toxicity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Harm/disinformation drives removal even if only one side is problematic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly removes hateful words while protecting free speech\u2014violence-free speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Chooses the most reasonable to share; does not clearly map to threat/toxicity criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Wants to tone down anger/inflammatoriness because it\u2019s too inflammatory\u2014toxicity/inflammatory language filter.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Conversation quality vs rude namecalling; removes when devolving into harassment/namecalling (toxicity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_0",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Constructive vs hostility/harassment/incitement to violence; removal for violence-related abuse fits violence/threat exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Assesses hostility/foul/derogatory/exclusionist comments and applies equally across sides\u2014removing toxic language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_3",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Reciprocity/symmetry across mirrored pair is about equal treatment, but not clearly about applying identical moderation criteria across political viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Evidence/objectivity vs personal attack; personal-attack removal aligns with removing toxic/harassing content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Removes harm/violence risk and misinformation; violence/harm-based exception to keep speech.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

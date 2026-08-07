@@ -1,0 +1,16 @@
+{
+  "cluster_id": 0,
+  "likert_group": "low",
+  "n_members": 3,
+  "sampled_feature_ids": [
+    "0_6",
+    "0_1",
+    "0_2"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Free speech permissive removal",
+    "definition": "Participants in this cluster reported keeping most posts and opposing removal except when there was clear, concrete misbehavior such as name-calling or excessive harsh language, often justified by a general freedom-of-speech stance.",
+    "salience_notes": "The sampled features cohere around reluctance to remove due to free-speech values, with removal framed as only necessary under specific linguistic transgressions (e.g., cursing/hyperbole/name calling)."
+  }
+}

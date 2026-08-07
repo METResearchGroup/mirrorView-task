@@ -1,0 +1,167 @@
+{
+  "batch_index": 26,
+  "feature_ids": [
+    "79_1",
+    "79_2",
+    "79_3",
+    "79_4",
+    "79_5",
+    "79_6",
+    "79_7",
+    "80_0",
+    "80_3",
+    "80_4",
+    "80_5",
+    "80_7",
+    "81_1",
+    "81_2",
+    "81_4",
+    "81_5",
+    "81_6",
+    "81_7",
+    "82_3",
+    "82_5"
+  ],
+  "assignments": [
+    {
+      "feature_id": "79_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Deletion triggered by antagonistic/foul (toxic/abusive) tone.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit/implicit threats trigger removal while other speech is kept.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Targeted ad hominem attacks are treated as the cue for deletion (toxic/abusive behavior).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Wishes of death and heavy profanity are disallowed (threat/violence-adjacent exception).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Nasty language removed to reduce toxicity/unhealthy discourse.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Incitement of violence against a group/individual is treated as disqualifying.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Primarily checks for vulgar/offensive/direct attacks, with some borderline/context handling.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_0",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focus on hearing both sides; no claim that mirror/original comparison enabled consistent standards across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Keeps content that advances discussion; removes hostility/insulting (reduced toxicity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "General anti-aggression norm, not tied to explicit thresholds like threats/toxicity removals.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes rude/hurtful content lacking real claims; aligns with keeping vs toxic/offensive speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "80_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Prohibits cussing as a quality/toxicity cue for keep/remove.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Remove items seen as encroaching on hate speech; fits toxicity/safety removal more than purely threat/violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Vulgar language leads to immediate rejection (toxicity trigger).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Relies on being horrified/lack of knowledge; no clear link to the defined threat/toxicity rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Pair comparison is used to infer attitudes, but not about consistency across sides or explicit threat/toxicity boundaries.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Event-sameness/negative-light by opposing party is pair-level reasoning, not matching the defined moderation-standard theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "81_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Group vs individual targeting affects decisions, but not clearly threat/toxicity removal or same-standard-across-sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "82_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Inciting violence against specific people overrides free speech and leads to deletion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "82_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Right to express views is respected, but abusive language is not allowed.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "batch_index": 21,
+  "feature_ids": [
+    "64_3",
+    "64_4",
+    "64_5",
+    "64_6",
+    "64_7",
+    "65_1",
+    "65_2",
+    "65_3",
+    "65_4",
+    "65_5",
+    "65_6",
+    "65_7",
+    "66_0",
+    "66_1",
+    "66_2",
+    "66_3",
+    "66_4",
+    "66_5",
+    "66_7",
+    "67_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "64_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Dislikes cursing mainly due to audience/children exposure, but the rationale is still an exception-based removal of profane/toxic language rather than a threat/violence justification.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Describes moderating direct attacks while reviewing profanity without automatic removal\u2014reflects removing toxicity/threats with a lower bar for non-toxic profanity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly accepts harsh language unless it includes threats/calls for violence; aligns with violence/threat exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "States removing hateful and violent language while keeping expression\u2014fits toxicity/threat removal rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses a disinformation threshold for divergence from free-speech acceptance; this is not captured by the threat/toxicity or same-criteria pair-mirroring themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal decision driven by offensiveness/uncivil behavior (name-calling), consistent with removing toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Avoids platforming extreme positions; not clearly tied to threats/violence/toxicity removal criteria in the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Freedom of expression is accepted unless it harms others\u2014closest to violence/threat exception logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_4",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Explicitly uses a pair/mirror strategy preference for discussion over provocation; none of the listed themes match this pair-strategy claim.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Personal attacks cause refusal while criticism is acceptable; personal attacks align with removing toxic/inflammatory behavior.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Combines fact-verification attempts with a civility/mean-ness removal reason; does not clearly match the threat/toxicity-only or free-speech-exception themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Professionalism/fact-based writing influences keep decisions; not covered by threat/toxicity or same-standard pair criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Kept for constructive discussion; removed for name-calling/purposefully inflammatory or not adding\u2014matches removing inflammatory/toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on calibrating intensity/out-of-proportion across the pair; not the same-criteria fairness theme and not a threat/toxicity exception claim.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Allows only if not too aggressive/vulgar and not verbal attacking; reflects removing toxic/incendiary language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Removes when political alignment sounds extremely right/too influential/appropriate; not clearly anchored to threats/violence/toxicity exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal cue is offensive/incendiary language; many others seem fine\u2014fits removing toxicity/inflammatory language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Criterion contrasts factual claims vs whining/crying; this is neither threat/violence exception nor profanity/toxicity removal per the definitions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "First Amendment justification with focus on absence of harm toward someone\u2014aligns with keeping most speech unless harm/threat concerns arise.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Bad/profane language strongly drives evaluation; best fit is toxicity removal behavior (though it\u2019s stated as pair-driver, not explicitly threats).",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

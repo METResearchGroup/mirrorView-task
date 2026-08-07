@@ -1,0 +1,167 @@
+{
+  "batch_index": 23,
+  "feature_ids": [
+    "70_1",
+    "70_2",
+    "70_3",
+    "70_4",
+    "70_6",
+    "71_0",
+    "71_1",
+    "71_2",
+    "71_3",
+    "71_5",
+    "71_6",
+    "71_7",
+    "72_0",
+    "72_1",
+    "72_2",
+    "72_3",
+    "72_4",
+    "72_5",
+    "72_6",
+    "72_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "70_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity triggered rejecting both versions under a toxicity/profanity removal bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_2",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Healthiness-for-unbiased-discussion is not explicitly tied to threats/violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Removal is driven by gut/moral compass and offensiveness/conflict with beliefs without clear threat/toxicity threshold framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Generic name-calling/profanity-like \u201cshit-talking\u201d is removed while constructive content is kept.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "70_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "References negative audience reaction but does not specify threat/toxicity or consistent pair-moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Focus on respectful debate and factual correctness supports maintaining speech quality while removing problematic content, but toxicity/threat is not explicit.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Assesses right-wing content as \u201cdumb\u201d yet correctly characterized; not clearly a removal-for-toxicity/threat rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Concerns about polarization and unclear factual articulation are not mapped to explicit removal categories.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Tone is used as a judgment signal, with acceptability of opposing viewpoints; not clearly tied to toxicity/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "States an impartial balancing approach across parties without claiming identical moderation standards on both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Credits language as the main driver, but does not specify slur/harassment/profanity thresholds or violence threats.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "71_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly uses misinformation and violence-invitation as removal rules while allowing opinions for free speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes respecting both sides while removing personal attacks, but does not clearly match the \u201csame standard across both sides\u201d definition.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Insolt/insults threshold: would not accept content with insults.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly applies the same standard to both versions rather than deciding based on agreement.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses slurs/harassment indicators and targeting protected groups as cues for moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Intent vs venting and whether respect was given, without clear threat/toxicity exception linkage.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Compromise/compassion framing without explicit moderation-rule correspondence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Perspective-taking/opening mind from seeing both versions; not about pair-consistency moderation criteria or removal thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "72_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Vague resonance-based comparison process; lacks clear linkage to violence/toxicity or same-standard moderation.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

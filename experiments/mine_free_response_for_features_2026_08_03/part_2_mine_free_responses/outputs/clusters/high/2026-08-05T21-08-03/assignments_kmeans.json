@@ -1,0 +1,162 @@
+[
+  {
+    "feature_id": "0_0",
+    "feature_name": "abusive_language_threshold",
+    "feature_value": "They allowed/remained willing unless the post seemed overly abusive.",
+    "category": "decision_criteria",
+    "rationale": "The reflection explicitly states an abuse-based criterion for keeping content.",
+    "evidence_span": "allowed them if they didn't seem overly abusive.",
+    "cluster_id": 1,
+    "participant_id": "P_1781989742794_iaqttmpsy"
+  },
+  {
+    "feature_id": "0_1",
+    "feature_name": "honest_expression_and_inflammation_rejection",
+    "feature_value": "They checked for honest debate spirit, and rejected curse/inflammatory language.",
+    "category": "decision_criteria",
+    "rationale": "The participant ties keep/remove decisions to honest debate framing plus specific inflammatory/cursing cues.",
+    "evidence_span": "written in the spirit of honest expression and debate. Then, I considered the language being used... Lists with curse words or inflammatory language were out.",
+    "cluster_id": 1,
+    "participant_id": "P_1781988647827_bjsmgny84"
+  },
+  {
+    "feature_id": "0_2",
+    "feature_name": "anti_cursing_and_namecalling_policy",
+    "feature_value": "They used an explicit rule against cursing, name calling, and incitement.",
+    "category": "decision_criteria",
+    "rationale": "This is a direct list of linguistic features they disfavored when deciding.",
+    "evidence_span": "voted against cursing, name calling, language that would incite the other side",
+    "cluster_id": 1,
+    "participant_id": "P_1781994199697_j45tigb19"
+  },
+  {
+    "feature_id": "0_3",
+    "feature_name": "content_framing_opinion_vs_emotion",
+    "feature_value": "They favored opinion/fact-based posts and avoided excessive emotion-provoking language.",
+    "category": "content_cues",
+    "rationale": "The reflection distinguishes acceptable framing (opinion/facts) from unacceptable emotionality.",
+    "evidence_span": "favored posts that were primarily opinion or fact-based, without excessive emotion-provoking language.",
+    "cluster_id": 1,
+    "participant_id": "P_1781990684331_8jiit7kc7"
+  },
+  {
+    "feature_id": "0_4",
+    "feature_name": "entitlement_to_opinion_norm",
+    "feature_value": "They kept content because opposing views are still entitled to be expressed.",
+    "category": "affect_or_confidence",
+    "rationale": "The participant frames the decision around a tolerance/rights norm.",
+    "evidence_span": "they are entitled to their own opinion.",
+    "cluster_id": 1,
+    "participant_id": "P_1781996188139_xvaqxyzh7"
+  },
+  {
+    "feature_id": "0_5",
+    "feature_name": "no_hate_or_threat_requirement_for_dialogue",
+    "feature_value": "They supported open dialog but not content that is hateful or threatening.",
+    "category": "decision_criteria",
+    "rationale": "Their criterion centers on prohibiting hate/threat while allowing respectful dialogue.",
+    "evidence_span": "should not be hateful or threatening in nature.",
+    "cluster_id": 1,
+    "participant_id": "P_1781989557421_rop867cve"
+  },
+  {
+    "feature_id": "0_6",
+    "feature_name": "constructive_not_only_attack_or_unverified_claims",
+    "feature_value": "They kept constructive/low-hostility posts; removed posts that mainly attacked others or had unverified claims.",
+    "category": "pair_comparison_strategy",
+    "rationale": "This explicitly contrasts what to do with different kinds of pair content (constructive vs attack/unverified).",
+    "evidence_span": "provided something constructive... only be attacking the other side or making claims that weren't verified, I removed them.",
+    "cluster_id": 1,
+    "participant_id": "P_1781988549258_dkx7fj5ns"
+  },
+  {
+    "feature_id": "0_7",
+    "feature_name": "bare_partisan_affinity_without_explanation",
+    "feature_value": "Their decision influence is described only as Republican inclination.",
+    "category": "process_meta",
+    "rationale": "The reflection attributes influence to partisan identity without further content-based criteria.",
+    "evidence_span": "my inclination as a republican did",
+    "cluster_id": 0,
+    "participant_id": "P_1781990083924_zp696ut9t"
+  },
+  {
+    "feature_id": "1_0",
+    "feature_name": "pairwise_same_standard_bias_check",
+    "feature_value": "Used the pair to apply the same judgment criteria across sides and check their own bias (would allow the same tone from the opposite side).",
+    "category": "pair_comparison_strategy",
+    "rationale": "The reflection explicitly credits pair-viewing with bias-checking while using an even standard for both political sides.",
+    "evidence_span": "\"Seeing them as pairs helped me check my own bias\"",
+    "cluster_id": 0,
+    "participant_id": "P_1781988645394_69s0jet6t"
+  },
+  {
+    "feature_id": "1_1",
+    "feature_name": "harm_threshold_compared_between_versions",
+    "feature_value": "Compared perceived harm between the two versions and sometimes concluded both warranted blocking.",
+    "category": "decision_criteria",
+    "rationale": "The participant describes a harm-based comparison that drives whether to block one or both posts.",
+    "evidence_span": "\"considered how harmful each posts could be\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781989260654_ud72teovm"
+  },
+  {
+    "feature_id": "1_2",
+    "feature_name": "content_cues_slurs_harassment_crossed_standard",
+    "feature_value": "Evaluated language features (slurs, demeaning labels, identity-based attacks, insults) and removed when they encouraged harm or harassment.",
+    "category": "content_cues",
+    "rationale": "This participant grounds decisions in specific harmful language cues and whether they function as harassment.",
+    "evidence_span": "\"use the slurs or demeaning labels encouraged harm or crossed into harassment\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781992247058_7whwo3gzx"
+  },
+  {
+    "feature_id": "1_3",
+    "feature_name": "decision_locus_on_expletives_vitriol",
+    "feature_value": "Allowed opinions but removed/penalized expletives because they add vitriol to public discourse.",
+    "category": "decision_criteria",
+    "rationale": "They separate acceptable opinion from unacceptable profanity and link it to a discourse-impact criterion.",
+    "evidence_span": "\"the use of expletives is unnecessary and injects a level of vitriol\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781991223876_5xadw7iz4"
+  },
+  {
+    "feature_id": "1_4",
+    "feature_name": "violence_or_profanity_removal_rule",
+    "feature_value": "Used a simple rule: remove if profane or endorsing violence.",
+    "category": "decision_criteria",
+    "rationale": "The reflection states an explicit removal threshold tied to profanity and violence endorsement.",
+    "evidence_span": "\"If it was profane or endorsing violence it needs to be removed\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781999727071_xwnh3zbrm"
+  },
+  {
+    "feature_id": "1_5",
+    "feature_name": "respectful_language_as_normative_basis",
+    "feature_value": "Decision based on respectfulness; foul language seen as childish/rude and therefore unacceptable.",
+    "category": "decision_criteria",
+    "rationale": "They define the governing criterion as maintaining respectful sentence-level tone and judge foul language as violating it.",
+    "evidence_span": "\"being respected and using sentances that are respectful\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781988961961_x7r0vskxn"
+  },
+  {
+    "feature_id": "1_6",
+    "feature_name": "preference_for_non_insulting_tone",
+    "feature_value": "Chose versions that were not insulting upfront; treated curses/emotion as sometimes part of conversation but still used a filter favoring civility.",
+    "category": "pair_comparison_strategy",
+    "rationale": "They describe a tone-based selection rule informed by comparing which version insulted others.",
+    "evidence_span": "\"went with the ones that weren't insulting others\"",
+    "cluster_id": 1,
+    "participant_id": "P_1781996365551_7apk93kl6"
+  },
+  {
+    "feature_id": "1_7",
+    "feature_name": "engagement_based_receptiveness",
+    "feature_value": "Perceived the posts as ones they would engage in and felt the survey was pleasing, implying influence through personal relevance.",
+    "category": "affect_or_confidence",
+    "rationale": "Unlike the others, this participant highlights affect and engagement with the issues as the driver of their reaction/influence.",
+    "evidence_span": "\"I found this survey very pleasing\"",
+    "cluster_id": 1,
+    "participant_id": "P_1782000036434_eeu6ewtdk"
+  }
+]

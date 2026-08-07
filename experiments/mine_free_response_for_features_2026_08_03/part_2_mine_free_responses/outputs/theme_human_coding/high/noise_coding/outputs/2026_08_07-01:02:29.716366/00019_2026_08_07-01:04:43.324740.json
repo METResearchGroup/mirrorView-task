@@ -1,0 +1,167 @@
+{
+  "batch_index": 19,
+  "feature_ids": [
+    "58_4",
+    "58_5",
+    "58_6",
+    "58_7",
+    "59_0",
+    "59_1",
+    "59_2",
+    "59_3",
+    "59_4",
+    "59_5",
+    "59_6",
+    "59_7",
+    "60_0",
+    "60_2",
+    "60_3",
+    "60_4",
+    "60_5",
+    "60_6",
+    "60_7",
+    "61_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "58_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses hate/violence endorsement as explicit suppression criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Mentions fairness and an accidental click, not a standard/threat/toxicity rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Claims fairness but the described mechanism is keeping based on importance, not identical standards across both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Says side-by-side viewing helped, but doesn\u2019t claim identical moderation criteria across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Keep/remove based on level of agreement (\u201ctoo wack\u201d), not threat/toxicity or violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on checking oppositeness and bracketing personal opinions, not moderation criteria around toxicity/threats.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Endorses removal for bashing and cursing (toxicity/vulgarity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Links inflammatory language and curse words to keep/remove decisions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Perspective-taking about how others may feel, not a violence/toxicity removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Main cue is perceived bias, not threat/toxicity or violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses fact vs falsehood to decide flips, not moderation removal for threats/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "59_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Process diligence (read everything) without tying to moderation standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Says profanity isn\u2019t needed, but doesn\u2019t frame removal as a threat/toxicity exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Moderation degree affects keeping, but not an explicit violence/threat or identical-criteria fairness claim.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Differentiates useful dialogue vs insult slinging, not explicitly violence/threat removal criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Argues against filtering political speech; no clear violence/threat exception standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision based on stance support and desire for cross-side advocacy, not moderation standard for toxicity/threats.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Removes perceived one-sided talking points; no explicit threat/toxicity/violence exception rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "60_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "No reflection provided.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses profanity/being offended as key criteria for keep/remove, aligning with toxicity removal.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

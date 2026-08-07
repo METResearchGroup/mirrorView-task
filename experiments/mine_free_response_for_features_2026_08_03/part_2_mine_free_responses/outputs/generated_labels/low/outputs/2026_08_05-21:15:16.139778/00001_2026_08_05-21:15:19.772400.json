@@ -1,0 +1,18 @@
+{
+  "cluster_id": 1,
+  "likert_group": "low",
+  "n_members": 5,
+  "sampled_feature_ids": [
+    "22_4",
+    "5_1",
+    "8_0",
+    "4_4",
+    "5_4"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Pair comparison barely influenced decisions",
+    "definition": "In these low-influence reflections, participants report keeping/removing based on general principles or per-post content quality rather than any meaningful comparison between the original and mirror pair.",
+    "salience_notes": "The common thread is explicitly minimizing pair effects (e.g., blanket approval or freedom-of-speech framing) and judging posts individually on factual/argument quality or whether content is harmful/vulgar."
+  }
+}

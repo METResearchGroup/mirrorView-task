@@ -1,0 +1,167 @@
+{
+  "batch_index": 20,
+  "feature_ids": [
+    "61_1",
+    "61_2",
+    "61_3",
+    "61_4",
+    "61_5",
+    "61_6",
+    "61_7",
+    "62_0",
+    "62_1",
+    "62_2",
+    "62_3",
+    "62_5",
+    "63_3",
+    "63_4",
+    "63_5",
+    "63_6",
+    "63_7",
+    "64_0",
+    "64_1",
+    "64_2"
+  ],
+  "assignments": [
+    {
+      "feature_id": "61_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mentions absence of profanity but does not make it a threats/toxicity or violence-exception moderation rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses pair context to judge rhetorical intent, but no explicit claim about removing threats/toxicity or about applying identical standards across both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Frames a speech vs hate boundary test without explicitly tying it to threat/violence or toxicity removal rules in the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Substance vs insult distinction is described, but not mapped to the codebook\u2019s specific moderation-removal themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Checks opinion vs facts and personal attacks, but not clearly the violence/threat exception or toxicity threshold theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses a harm-based keep rule and mentions mirroring, but does not clearly state a threats/toxicity removal threshold or identical moderation standards across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Attributes influence to side-by-side revealing one-sided bashing and rude language, without stating identical standards across sides or an explicit threats/toxicity removal bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit free-speech keeping with exceptions for actionable violent threats/provoking rage-bait.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_1",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Norm against censorship/free speech principle, but no explicit violence/threat exception or profanity/toxicity removal threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Discusses weighting offensiveness vs message importance, not specifically threats/violence exceptions or toxicity removal bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Primary check is calls of violence/\u201cgreen lighting\u201d crimes, matching violence/threat exception theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Tone insult sensitivity is mentioned, but not tied to the codebook\u2019s specific threat/violence or toxicity removal thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Wants balance/right to express feelings without vile thoughts; does not clearly map to the codebook\u2019s specific moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Acceptability based on respectful rhetoric and absence of slurs, but not explicitly framed as threat/toxicity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Says vulgarity and possible violence contribute to removal, aligning with removing toxic/inflammatory content (though \u201cpossible violence\u201d is not the primary exception framing).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Inflammatory rhetoric triggers denying both; fits the idea of removing inflammatory/toxic content, but not explicitly with threats language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Language quality (reasoning/openness) preference is described, not a clear violence/threat exception or profanity/toxicity removal rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Graphic/inappropriate language is explicitly deemed unacceptable, matching removal for toxicity/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Profanity may be acceptable, but unacceptable when it becomes an attack/personal incendiary content\u2014consistent with removing toxic/incendiary content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Cursing is the main influencer while still invoking free speech norms; aligns with removing excessive vulgar/toxic language.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

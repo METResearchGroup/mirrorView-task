@@ -1,0 +1,1134 @@
+{
+  "likert_group": "low",
+  "clusters_run_dir": "experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/clusters/low/2026-08-05T21-15-11",
+  "labels_run_dir": "experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/generated_labels/low/outputs/2026_08_05-21:15:16.139778",
+  "method": {
+    "hdbscan": "Hard HDBSCAN labels from assignments_hdbscan.json; cluster_id=-1 is noise.",
+    "human_annotated_read": "HDBSCAN core members kept on their labeled theme. Each cluster_id=-1 feature was coded by an LLM against the Stage-4 theme definitions (human-style thematic assignment), or marked other. Residual themes are optional groupings within leftover other features.",
+    "model": "gpt-5.4-nano"
+  },
+  "corpus": {
+    "n_features_total": 189,
+    "n_participants_with_features": 185,
+    "n_hdbscan_noise_features": 103,
+    "n_hdbscan_labeled_features": 86
+  },
+  "noise_soft_assignment_confidence_counts": {
+    "high": 40,
+    "medium": 43,
+    "low": 20
+  },
+  "themes": [
+    {
+      "theme_id": "0",
+      "source": "hdbscan_labeled",
+      "cluster_label": "Harm/toxicity thresholds within free speech",
+      "definition": "Participants set keep/remove boundaries based on specific harm, threats, violence, or dehumanizing/toxic language while treating ordinary strong opinions as permissible free speech.",
+      "hdbscan": {
+        "n_features": 81,
+        "n_participants": 80,
+        "example": {
+          "feature_id": "16_5",
+          "feature_name": "perceived_partisan_bias_and_naming_language_concern",
+          "feature_value": "Noted more left-leaning than right; concern centered on name-calling/foul language and harm risk (killed people) rather than ideology itself",
+          "evidence_span": "i definitely saw more left wing than right.. It seem to be a little libral biased... Mostly the one i said delete both had name calling and foul language,,, I have no problem with both liberal ideas and conservative ideas",
+          "participant_id": "P_1781997293946_flnuxltie"
+        }
+      },
+      "human_annotated_read": {
+        "n_features": 130,
+        "n_participants": 129,
+        "n_features_from_hdbscan_core": 81,
+        "n_features_soft_assigned_from_noise": 49,
+        "example": {
+          "feature_id": "16_5",
+          "feature_name": "perceived_partisan_bias_and_naming_language_concern",
+          "feature_value": "Noted more left-leaning than right; concern centered on name-calling/foul language and harm risk (killed people) rather than ideology itself",
+          "evidence_span": "i definitely saw more left wing than right.. It seem to be a little libral biased... Mostly the one i said delete both had name calling and foul language,,, I have no problem with both liberal ideas and conservative ideas",
+          "participant_id": "P_1781997293946_flnuxltie"
+        }
+      }
+    },
+    {
+      "theme_id": "1",
+      "source": "hdbscan_labeled",
+      "cluster_label": "Pair comparison barely influenced decisions",
+      "definition": "In these low-influence reflections, participants report keeping/removing based on general principles or per-post content quality rather than any meaningful comparison between the original and mirror pair.",
+      "hdbscan": {
+        "n_features": 5,
+        "n_participants": 5,
+        "example": {
+          "feature_id": "8_0",
+          "feature_name": "minimal_pair_influence_freedom_of_speech_frame",
+          "feature_value": "Pair comparison had little effect; evaluation driven by general freedom-of-speech concern.",
+          "evidence_span": "nothing infulencing how i evaluated the posts as a pair other than that concern.",
+          "participant_id": "P_1781993363258_u3jod55ky"
+        }
+      },
+      "human_annotated_read": {
+        "n_features": 24,
+        "n_participants": 24,
+        "n_features_from_hdbscan_core": 5,
+        "n_features_soft_assigned_from_noise": 19,
+        "example": {
+          "feature_id": "12_7",
+          "feature_name": "symmetry_of_partisan_frames_no_pair_effect",
+          "feature_value": "Perceives both sides expressing disagreements/making the other the bad guy; suggests this broad partisan dynamic provides limited impact.",
+          "evidence_span": "MOSTLY from both liberals as well as conservatives... want to make the other out to be the bad guy",
+          "participant_id": "P_1782063013540_so2ctq4m2"
+        }
+      }
+    }
+  ],
+  "other_after_human_coding": {
+    "theme_id": "other",
+    "n_features": 35,
+    "n_participants": 35,
+    "example": {
+      "feature_id": "16_4",
+      "feature_name": "profanity_not_as_bad_as_some_other_content",
+      "feature_value": "Profanity alone wasn\u2019t decisive; both posts seemed valid from the opposing viewpoint and not too incendiary",
+      "evidence_span": "Both posts seemed valid when taken from the opposing party point of view and there's nothing wrong at all with voicing your opinions... there was nothing too incendiary",
+      "participant_id": "P_1782002990303_73bqyxcwh"
+    },
+    "residual_themes": [
+      {
+        "theme_key": "bias_mitigation_balance_neutrality",
+        "theme_label": "Bias mitigation and left-right neutrality",
+        "definition": "Decision-making centered on avoiding bias and maintaining neutrality (including balancing evaluations across left/right viewpoints), even when viewpoints feel far-reaching or asymmetrical.",
+        "member_feature_ids": [
+          "7_6",
+          "7_7",
+          "11_5",
+          "8_5",
+          "10_2"
+        ],
+        "n_features": 5,
+        "n_participants": 5,
+        "example": {
+          "feature_id": "8_5",
+          "feature_name": "balance_goal_even_if_context_far_reaching",
+          "feature_value": "Aiming for balanced evaluation despite viewpoints being far-reaching.",
+          "evidence_span": "ensure it was a balanced evaluation even though most of the viewpoints and context was a bit far reaching.",
+          "participant_id": "P_1781992220018_8qhuf2l43"
+        }
+      },
+      {
+        "theme_key": "language_profanity_cue_rules_over_politics",
+        "theme_label": "Language/profanity cues prioritized over politics",
+        "definition": "Moderation choices were driven primarily by whether language was vulgar/offensive (or whether profanity alone mattered), with political content explicitly treated as secondary.",
+        "member_feature_ids": [
+          "2_1",
+          "3_4",
+          "16_4",
+          "18_3",
+          "23_5"
+        ],
+        "n_features": 5,
+        "n_participants": 5,
+        "example": {
+          "feature_id": "16_4",
+          "feature_name": "profanity_not_as_bad_as_some_other_content",
+          "feature_value": "Profanity alone wasn\u2019t decisive; both posts seemed valid from the opposing viewpoint and not too incendiary",
+          "evidence_span": "Both posts seemed valid when taken from the opposing party point of view and there's nothing wrong at all with voicing your opinions... there was nothing too incendiary",
+          "participant_id": "P_1782002990303_73bqyxcwh"
+        }
+      },
+      {
+        "theme_key": "free_speech_balancing_and_uncertainty_of_line",
+        "theme_label": "Free-speech balancing with uncertainty about moderation boundaries",
+        "definition": "Participants justify or resist removals using free-speech principles while expressing discomfort/uncertainty about where to draw the line versus misinformation or harmful conduct.",
+        "member_feature_ids": [
+          "2_5",
+          "11_4",
+          "13_6",
+          "17_5",
+          "17_4",
+          "23_2",
+          "11_5"
+        ],
+        "n_features": 7,
+        "n_participants": 7,
+        "example": {
+          "feature_id": "11_4",
+          "feature_name": "bans_create_moral_authority_discomfort",
+          "feature_value": "Felt uncomfortable about banning opinions and questioned their own authority/knowledge.",
+          "evidence_span": "\"It felt uncomfortable\" \"kept asking myself whether I had enough knowledge or moral authority\"",
+          "participant_id": "P_1781992439198_pb6aqkzep"
+        }
+      },
+      {
+        "theme_key": "emotion_cued_inflamed_ragebait_reactivity",
+        "theme_label": "Emotional reactivity to extremity/aggression (including rage-bait suspicion)",
+        "definition": "Evaluation relied on emotional response to aggression/extremity (e.g., anger/sadness/dislike) and sometimes suspected intent such as rage bait, rather than detailed pair-based comparison.",
+        "member_feature_ids": [
+          "1_5",
+          "10_4",
+          "13_7",
+          "14_7",
+          "13_4"
+        ],
+        "n_features": 5,
+        "n_participants": 5,
+        "example": {
+          "feature_id": "14_7",
+          "feature_name": "pair_inconsistency_confusion",
+          "feature_value": "Confused by agreeing with one but not the other; sees it as making no sense.",
+          "evidence_span": "I did not like that I agreed with one but not the other I thought this does not make any sense",
+          "participant_id": "P_1781989578438_t0hr1x2p6"
+        }
+      },
+      {
+        "theme_key": "minimal_or_random_heuristic_processing",
+        "theme_label": "Minimal reasoning / heuristics (randomness, craziness, terse criteria)",
+        "definition": "Responses used very limited or single heuristics (e.g., 'it was random' or 'how crazy it was') and/or provided sparse rationales that bypass substantive pair comparison.",
+        "member_feature_ids": [
+          "3_7",
+          "12_5",
+          "19_7",
+          "20_7",
+          "13_7"
+        ],
+        "n_features": 5,
+        "n_participants": 5,
+        "example": {
+          "feature_id": "12_5",
+          "feature_name": "no_instant_logic_other_than_language",
+          "feature_value": "Gives a terse language-abuse/no-discussion statement implying limited consideration beyond profanity/verbal abuse.",
+          "evidence_span": "Swearing, verbal abuse, no issues, no discussion, no point",
+          "participant_id": "P_1781994274924_fad3q310w"
+        }
+      }
+    ],
+    "n_features_still_ungrouped": 10
+  },
+  "noise_assignments": [
+    {
+      "feature_id": "0_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They would block specifically due to emotional invectives/tone rather than substantive content change.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781994642135_po9y5yqgu",
+      "feature_name": "blocked_when_both_sides_emotionally_inflamatory"
+    },
+    {
+      "feature_id": "0_4",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They set keep/remove boundaries based on harsh, non-civil language.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781994165543_cxah2p8zo",
+      "feature_name": "harsh_language_not_civil_conversation"
+    },
+    {
+      "feature_id": "0_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "They consider discourse-impact/maturity effects as a threshold for removal, tied to emotional tone.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781995651448_81rfpzcsq",
+      "feature_name": "impartiality_to_keep_but_emotional_maturity_concern"
+    },
+    {
+      "feature_id": "1_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Targeted hateful name-calling is named as the main deciding removal criterion.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782002946915_vrva51kuy",
+      "feature_name": "name_calling_as_primary_trigger"
+    },
+    {
+      "feature_id": "1_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "They use a context-neutral threat-targeting criterion, allowing more when threats are absent.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781995771902_21309yg64",
+      "feature_name": "neutrality_and_context_focus_on_threats"
+    },
+    {
+      "feature_id": "1_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "They mitigate offensiveness by reframing content as adult political news.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781999150924_wjvwwki8m",
+      "feature_name": "adult_political_context_mitigates_offensiveness"
+    },
+    {
+      "feature_id": "1_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Anger/desire to join is affective but does not clearly state a keep/remove boundary.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781992747385_h5g8dshic",
+      "feature_name": "anger_or_desire_to_join_conversation"
+    },
+    {
+      "feature_id": "1_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicit partisan slurs/insults are treated as relevant content cues.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990798285_f0cr8mj8b",
+      "feature_name": "explicit_partisan_name_caller_content_present"
+    },
+    {
+      "feature_id": "2_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They keep all based on absence of hate speech, using a harm/toxicity threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988616237_kxli6rhvx",
+      "feature_name": "hate_speech_threshold_low"
+    },
+    {
+      "feature_id": "2_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision relies on vulgarity/misinformation rather than the specified harm/toxicity vs free speech threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989874736_hjrdardpn",
+      "feature_name": "vulgarity_or_misinformation_cue_focus"
+    },
+    {
+      "feature_id": "2_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removal is tied to preventing uncivil/non-serious discourse, which functions as a language/toxicity boundary.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991211462_r8ov57vfp",
+      "feature_name": "discussion_quality_signal_influences_removal"
+    },
+    {
+      "feature_id": "2_4",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Stated bias avoidance and handling of attacks is more about process than a clear free-speech harm threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782009232934_69948k759",
+      "feature_name": "anti_attack_bias_and_unbiased_moderation"
+    },
+    {
+      "feature_id": "2_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uncertainty about balancing free speech with misinformation/fake news doesn't match the harm/threat boundary theme cleanly.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988263897_d231rte3t",
+      "feature_name": "free_speech_line_drawing_uncertainty"
+    },
+    {
+      "feature_id": "2_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They look for intolerance and group-targeted foul-mouthed insults as the harmful language to remove.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990219257_etr5zoq7l",
+      "feature_name": "intolerance_insult_motive_seen_as_issue"
+    },
+    {
+      "feature_id": "3_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They primarily allow unless there is real threatening/violence, a harm threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989184161_5dvu11tv4",
+      "feature_name": "threat_assessment_first"
+    },
+    {
+      "feature_id": "3_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Rudeness without a point does not override keeping due to a free-speech line-drawing.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991260063_9fajbws6j",
+      "feature_name": "rudeness_without_point_kept_but_free_speech_frame"
+    },
+    {
+      "feature_id": "3_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They explicitly downweight expletives and focus on hateful/threatening language as the threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781996367839_qhifysxe6",
+      "feature_name": "expletives_not_ban_reason"
+    },
+    {
+      "feature_id": "3_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "They prioritize language cues over political content, not harm vs free-speech thresholds per the codebook.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989199060_63cuux0d4",
+      "feature_name": "language_priority_over_politics"
+    },
+    {
+      "feature_id": "3_5",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Keeping because others' thoughts deserve to be heard is not explicitly a harm/toxicity threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781999018480_zoubu4kw0",
+      "feature_name": "listening_to_others_affecting_removal_resistance"
+    },
+    {
+      "feature_id": "3_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Random/no meaningful criterion does not fit harm thresholds or pair-comparison influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781994313771_2f3b2ywl0",
+      "feature_name": "no_explanation_or_random_response"
+    },
+    {
+      "feature_id": "4_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Sets removal threshold only for extremely demeaning/hate-adjacent content, not for mere insensitivity.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782005960118_qfm6lweul",
+      "feature_name": "insensitivity_low_priority_unless_extreme_demeaning"
+    },
+    {
+      "feature_id": "4_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Claims the pair didn\u2019t influence them, framing low influence via general free-speech stance.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781993586737_wdf2qcr19",
+      "feature_name": "pro_free_speech_ignores_pair_difference"
+    },
+    {
+      "feature_id": "4_5",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Mentions First Amendment framing based on reading both versions; not explicitly a non-influence/independence claim.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988725753_8iggoxefe",
+      "feature_name": "first_amendment_right_to_express_not_agreement"
+    },
+    {
+      "feature_id": "4_6",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Says no moderation needed for ordinary opinions/exaggeration; doesn\u2019t clearly specify harm/toxicity thresholds.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988443015_ru2f7lmwh",
+      "feature_name": "no_moderation_needed_for_opinions_exaggeration_ok"
+    },
+    {
+      "feature_id": "5_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses content-style/quality threshold (good faith) while disallowing angry name-calling/violent rhetoric.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988746610_8klw7eqe9",
+      "feature_name": "good_faith_argument_vs_anger_name_calling"
+    },
+    {
+      "feature_id": "5_3",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Anti-silencing rationale; not primarily about harm/toxicity thresholds.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988911419_mv1tx1bih",
+      "feature_name": "anti_silencing_logic_even_when_disagreeing"
+    },
+    {
+      "feature_id": "5_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Says mirrored pairs made a joint decision easy and thus had limited additional influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988942347_1ubf3llah",
+      "feature_name": "pair_mirroring_reduces_effort_joint_decision"
+    },
+    {
+      "feature_id": "5_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Explicit free-speech bounds test with buffers; removal tied to crossing into hate speech and malicious misinformation.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989865091_j768nv8pg",
+      "feature_name": "bounds_of_speech_plus_intent_and_information_quality_buffer"
+    },
+    {
+      "feature_id": "6_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly says they ignored pair political positions as the basis for decisions.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990635284_quff7d9qv",
+      "feature_name": "ignore_political_pair_contrast"
+    },
+    {
+      "feature_id": "6_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Claims opposition in the pair didn\u2019t change underlying intent; relied on independent checks.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991024251_wo5f1dqaz",
+      "feature_name": "pair_opposition_did_not_change_intent"
+    },
+    {
+      "feature_id": "7_2",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Task-goal/healthy-conversation framing for removal; not clearly mapped to harm/toxicity threshold definition.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989396112_tv9vjp78q",
+      "feature_name": "intent_to_censor_limited_to_unhealthy_conversation_angry_or_violent"
+    },
+    {
+      "feature_id": "7_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses the pair to check truth across sides, which is not captured by the low-influence or harm-threshold themes.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989981340_t7r4orf92",
+      "feature_name": "pair_purpose_seek_truth_across_sides"
+    },
+    {
+      "feature_id": "7_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Process meta about avoiding bias/neutrality rather than explicit harm thresholds or pair non-influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988430052_rqdnfs3ks",
+      "feature_name": "process_meta_avoid_bias_and_stay_neutral"
+    },
+    {
+      "feature_id": "7_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Neutrality goal (not leaning left/right) during evaluation; not primarily harm-threshold or pair non-influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782011014873_olgksvcdc",
+      "feature_name": "neutrality_goal_left_right_balance"
+    },
+    {
+      "feature_id": "8_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Absolutist free-speech stance with removal only when there is physical harm/threat.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990197422_y6q51kmje",
+      "feature_name": "first_amendment_absolutism_allow_both_sides"
+    },
+    {
+      "feature_id": "8_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Allows unless posts seem like a threat or act of violence, making harm a key threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991836142_kdf9sr9ag",
+      "feature_name": "freedom_of_speech_despite_belief_opposition"
+    },
+    {
+      "feature_id": "8_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Swearing tolerated; removal depends on harmful/misdirected usage rather than profanity alone (toxic/harm framing implied).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989053312_k3wn2fmt3",
+      "feature_name": "swearing_allowed_but_manner_of_usage_matters"
+    },
+    {
+      "feature_id": "8_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Aims for balanced evaluation across far-reaching viewpoints; not specifically non-influence or harm threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781992220018_8qhuf2l43",
+      "feature_name": "balance_goal_even_if_context_far_reaching"
+    },
+    {
+      "feature_id": "9_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Foul language targeting/harassment drives removal despite free-speech values, using a harm/harassment-like threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988263777_uuinqqrc9",
+      "feature_name": "curse_word_targeting_not_needed"
+    },
+    {
+      "feature_id": "9_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "States decision was not really influenced by the pair, relying on a general entitlement-to-opinion norm.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988732923_wrmq0vt0t",
+      "feature_name": "indifference_to_pair_influence_free_opinion_norm"
+    },
+    {
+      "feature_id": "9_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses a removal threshold for misinformation presented as truth (and violence), not just strong opinions.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988615018_5pz1fihk6",
+      "feature_name": "misinformation_as_truth_not_allowed"
+    },
+    {
+      "feature_id": "9_7",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removal driven by a threat/harm-related edge case alongside general argument quality.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988614436_02rc3xpi3",
+      "feature_name": "argument_quality_guides_keep_with_minor_threat_edge_case"
+    },
+    {
+      "feature_id": "10_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Employs harm/tone thresholds (threats, harassment, hate, violence) rather than political agreement.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989490239_bfsf4ukmd",
+      "feature_name": "tone_content_over_politics_standard"
+    },
+    {
+      "feature_id": "10_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Reports a side-by-side consistency check that only minimally changed decisions.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989490239_bfsf4ukmd",
+      "feature_name": "pair_side_by_side_consistency_check"
+    },
+    {
+      "feature_id": "10_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Describes removing offensive language and denying bias, but not clearly tied to explicit harm/toxicity thresholds or pair influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988830886_gdi5ftzb5",
+      "feature_name": "offensive_language_removal_goal_with_non_bias_claim"
+    },
+    {
+      "feature_id": "10_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Accepts profanity/vitriol unless it becomes personal attack, implying a harm/toxicity boundary.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782006171530_joksyrrkm",
+      "feature_name": "allow_profanity_if_not_personal_attack"
+    },
+    {
+      "feature_id": "10_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on emotional reaction and suspicion of rage bait/extremeness rather than an explicit harm-threshold rule.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990079152_w0tiak4ga",
+      "feature_name": "rage_bait_extremeness_and_dislike"
+    },
+    {
+      "feature_id": "11_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly prioritizes dangerous/harmful content (e.g., threats of violence) over political leaning.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989422142_k6wxyx0v7",
+      "feature_name": "political_leaning_secondary_to_harm_risk"
+    },
+    {
+      "feature_id": "11_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Permissive rule with red lines: remove only for direct personal threats or doxxing.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989947438_8by70sq6h",
+      "feature_name": "lax_moderation_rules_based_on_direct_threats_or_doxxing"
+    },
+    {
+      "feature_id": "11_4",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Expresses discomfort and doubts about moral authority for banning, not a specific threshold or pair influence mechanism.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781992439198_pb6aqkzep",
+      "feature_name": "bans_create_moral_authority_discomfort"
+    },
+    {
+      "feature_id": "11_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Attempts to evaluate comparative bias between versions, but this does not match the 'pair comparison barely influenced' theme.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991995313_z7a1u5r9g",
+      "feature_name": "focus_on_comparative_bias_evaluation"
+    },
+    {
+      "feature_id": "11_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Requests clearer rules/purpose details; this is process understanding rather than harm thresholds or low influence pair comparison.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781994412644_s6wf4jt8y",
+      "feature_name": "need_clear_rules_to_moderate_properly"
+    },
+    {
+      "feature_id": "12_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "States party-focus had little impact and that harm cues like dangerous medical advice/promoting violence mattered.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988796367_6o27xaq7o",
+      "feature_name": "harm_based_content_priority_over_party"
+    },
+    {
+      "feature_id": "12_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Short statement about language abuse with little elaboration; does not clearly fit harm-threshold theme 0 or pair-influence theme 1.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781994274924_fad3q310w",
+      "feature_name": "no_instant_logic_other_than_language"
+    },
+    {
+      "feature_id": "12_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General statement that posts were very extreme with no primary harm-line or pair comparison claim.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988954777_rl9p6srbp",
+      "feature_name": "extremity_flag_not_pair_specific"
+    },
+    {
+      "feature_id": "12_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Frames a broad partisan dynamic as affecting both sides similarly and implies limited pair influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782063013540_so2ctq4m2",
+      "feature_name": "symmetry_of_partisan_frames_no_pair_effect"
+    },
+    {
+      "feature_id": "13_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Strong free-speech preference to allow both sides; includes opposition to side-based restriction, though harm thresholds are not explicit.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988474563_k3i6hbzqy",
+      "feature_name": "free_speech_do_not_discriminate_by_side"
+    },
+    {
+      "feature_id": "13_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Draws a clear harm-related line: remove content wishing death on public figures.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781995697366_wgseyafr4",
+      "feature_name": "line_at_wishing_death_public_figures"
+    },
+    {
+      "feature_id": "13_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Criteria centers on aggression and whether the author is making a point; not clearly framed as harm/toxicity thresholds or pair influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988469930_2a14wbx1j",
+      "feature_name": "tone_aggression_and_making_a_point"
+    },
+    {
+      "feature_id": "13_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Opposes moderation/censorship on catharsis/emotional release grounds rather than applying harm thresholds.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988157590_07yjc9e60",
+      "feature_name": "minimal_moderation_catharsis_view"
+    },
+    {
+      "feature_id": "13_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Generic statement both views are wrong; no clear mirror/pair or harm-threshold decision criterion described.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782018232807_k125r3iot",
+      "feature_name": "mirror_influence_non_engaged_generic"
+    },
+    {
+      "feature_id": "14_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Reports deciding as a pair using a respect-based standard; this is pair-strategy but not clearly the 'barely influenced' theme definition.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988542468_qs3okfzrs",
+      "feature_name": "pairwise_consideration_respectfulness_rule"
+    },
+    {
+      "feature_id": "14_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Explicitly cites inappropriate/attacking language as influencing removal/keeping.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781993912798_636z7p05t",
+      "feature_name": "inappropriate_language_affects_vote"
+    },
+    {
+      "feature_id": "14_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses insulting/ad hominem emotionally manipulative rhetoric as the line for removal.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990544134_w6syp8lde",
+      "feature_name": "ad_hominem_stoking_reaction_draws_line"
+    },
+    {
+      "feature_id": "14_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Chooses based on imagined online appropriateness rather than comparing the original vs mirror pair.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990365971_9fqt70ltu",
+      "feature_name": "notion_of_online_appropriateness_only"
+    },
+    {
+      "feature_id": "14_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on confusion about inconsistency across the pair; not a clear claim that pair influence is minimal or that a specific harm threshold was applied.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989578438_t0hr1x2p6",
+      "feature_name": "pair_inconsistency_confusion"
+    },
+    {
+      "feature_id": "15_1",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removes mainly when content is hatred with no other merit; draws a toxicity/lack-of-permissibility boundary.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781993851777_yv0irtssy",
+      "feature_name": "remove_hate_without_other_merit"
+    },
+    {
+      "feature_id": "15_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Explicitly not evaluated as a pair; bans both based on shared name-calling/curse-word trigger.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988755098_0s2glj0qr",
+      "feature_name": "pair_comparison_ignored_banned_both_for_name_curse"
+    },
+    {
+      "feature_id": "15_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Inflammatory language is the deal breaker while other perspectives could be acceptable (tone/toxicity threshold).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781992662870_viextkoqs",
+      "feature_name": "inflammatory_language_deal_breaker"
+    },
+    {
+      "feature_id": "15_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Hardest cases depend on asymmetry in antagonism across versions; not a 'barely influenced' claim.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991845116_ir6403g69",
+      "feature_name": "pair_asymmetry_in_antagonism_harder_cases"
+    },
+    {
+      "feature_id": "16_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Death threats/violent killing language crosses a firm line for removal.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781996652311_zxiuw7cyw",
+      "feature_name": "death_related_language_forbidden_no_matter_party"
+    },
+    {
+      "feature_id": "16_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Profanity not decisive; relies on overall viewpoint validity/incendiary level rather than a clearly articulated harm threshold.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782002990303_73bqyxcwh",
+      "feature_name": "profanity_not_as_bad_as_some_other_content"
+    },
+    {
+      "feature_id": "16_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Low specificity; implies generic familiarity rather than meaningful comparison of the pair.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781992416920_prcpdeu5d",
+      "feature_name": "low_reflection_effort_generic_comment_impact"
+    },
+    {
+      "feature_id": "17_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly evaluates as if reading random/social-media posts, not leveraging mirror comparison.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988853201_8h8c0x2q3",
+      "feature_name": "single_view_evaluation_process"
+    },
+    {
+      "feature_id": "17_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Unconditional 'all speech permitted' stance does not match harm-threshold boundaries in theme 0 or the pair-influence theme.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988859649_dx4dgrr8c",
+      "feature_name": "strong_no_moderation_norm"
+    },
+    {
+      "feature_id": "17_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Justifies decisions via First Amendment/free-speech rationale rather than the codebook pair-influence or harm-threshold criterion.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782004140775_1zv20qlaf",
+      "feature_name": "first_amendment_minimizes_pair_effect"
+    },
+    {
+      "feature_id": "17_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Malice and lack of substantive thought function as the deciding line for removal concern (toxicity/malice threshold).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988224917_ly260s5fm",
+      "feature_name": "malice_quality_cue"
+    },
+    {
+      "feature_id": "17_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on immaturity and being respectful; not clearly a harm/toxicity threshold nor an explicit low pair-influence claim.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990785367_r7tczlf7m",
+      "feature_name": "respectfulness_admonition"
+    },
+    {
+      "feature_id": "18_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "States political affiliation has no bearing; not a harm-threshold or pair-influence reflection.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989010690_5i070k3ng",
+      "feature_name": "political_affiliation_does_not_matter"
+    },
+    {
+      "feature_id": "18_5",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Claims not swayed (decision easy/fair) but does not explicitly state independence from mirror/pair comparison.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782009735116_4ucnllqna",
+      "feature_name": "not_swayed_by_pair_or_opinion_mismatch"
+    },
+    {
+      "feature_id": "18_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Flags overt racism/dangerous signaling (e.g., \u201cglobalist\u201d as a dog whistle).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989184812_7g8za4kv9",
+      "feature_name": "dangerous_or_overtly_racist_and_specific_code_terms"
+    },
+    {
+      "feature_id": "19_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps/removes based on conversational contribution rather than meaningful pairing effects.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782004617080_9mh86ann0",
+      "feature_name": "content_value_over_pairing"
+    },
+    {
+      "feature_id": "19_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Claims independence so seeing both sides doesn\u2019t sway their decision.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989976287_ulf0q2030",
+      "feature_name": "independent_identity_buffers_pairing_effect"
+    },
+    {
+      "feature_id": "19_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly says the pair did not sway them beyond their own view.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988311980_5xi8zfahe",
+      "feature_name": "self_anchored_judgment_not_swayed_by_pair"
+    },
+    {
+      "feature_id": "19_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses \u201ccraziness\u201d as a heuristic rather than describing pairing influence or harm thresholds.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781999022532_35rilazmw",
+      "feature_name": "overall_craziness_as_simple_heuristic"
+    },
+    {
+      "feature_id": "20_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Relies on legality as the sole criterion, not framed as harm/toxicity thresholds per se.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989100749_5rrfsx01l",
+      "feature_name": "legality_only_rule"
+    },
+    {
+      "feature_id": "20_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Allows most views but removes only for advocacy of crime (a specific harm threshold exception).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781996309568_mdx7w5xj9",
+      "feature_name": "censorship_only_for_crime_advocacy"
+    },
+    {
+      "feature_id": "20_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Too vague/sparse to map to the defined themes.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989553340_2ajhe2v9o",
+      "feature_name": "minimal_or_placeholder_reflection"
+    },
+    {
+      "feature_id": "21_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Moderation justified by disrespect/cursing/mudslinging as toxic tone cues.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781997181032_k3cah7o1c",
+      "feature_name": "tone_respectfulness_as_decision_driver"
+    },
+    {
+      "feature_id": "21_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Default leave-up with removal for profanity/violence (toxicity/harm boundary).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1782002790827_d1b6q06dl",
+      "feature_name": "default_leave_up_except_profanity_or_violence"
+    },
+    {
+      "feature_id": "21_5",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Uses a symmetry/fairness rule across paired opinions; not clearly about low pair-influence independent of the comparison.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781997790755_89jmi7pkj",
+      "feature_name": "symmetry_fairness_for_opposing_views"
+    },
+    {
+      "feature_id": "21_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Criterion is fair stance vs emotional reaction, not directly harm/toxicity threshold or low-influence pairing claim.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988480744_jqcagq9nb",
+      "feature_name": "fair_stance_vs_emotional_reaction_considered"
+    },
+    {
+      "feature_id": "22_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Allows constructive content but bans overly aggressive/profane language (toxicity threshold).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781994235676_hrk0xxq80",
+      "feature_name": "tone_level_aggression_affects_allow_ban"
+    },
+    {
+      "feature_id": "23_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Keeps content because nothing violates safety issues (harm/safety boundary).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988246801_owiddf2uk",
+      "feature_name": "safety_violation_not_found"
+    },
+    {
+      "feature_id": "23_2",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Rights-based support for free speech without mapping to specific thresholds or pair-independence mechanism.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781991577414_d9h9svmzb",
+      "feature_name": "free_speech_right_drives_keep"
+    },
+    {
+      "feature_id": "23_3",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Explicitly prefers seeing both sides and personal fact-checking, but doesn\u2019t clearly claim pair comparison barely influenced decisions.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989535132_rl9axyacb",
+      "feature_name": "censorship_worry_and_need_both_sides"
+    },
+    {
+      "feature_id": "23_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Describes limited modifications (process metadata) without clearly asserting threshold or low pairing influence.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989117702_hw6jb22i3",
+      "feature_name": "limited_modification_scope"
+    },
+    {
+      "feature_id": "23_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Rejects maliciously directed bad language as the removal criterion (toxicity/harm boundary).",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781990526577_k0kdnielo",
+      "feature_name": "malicious_targeting_not_acceptable"
+    },
+    {
+      "feature_id": "23_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decision difficulty/uncertainty due to comprehension gaps, not harm thresholds or pairing influence claims.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781992036658_h13n1912b",
+      "feature_name": "uncertainty_and_difficulty_deciding"
+    },
+    {
+      "feature_id": "24_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "States the mirror versions are effectively the same, so pairing didn\u2019t sway decisions.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781989439078_5k8q3s5yp",
+      "feature_name": "mirror_similarity_indifference"
+    },
+    {
+      "feature_id": "24_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses free-speech default with exceptions for violence or illegal activity.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781996813624_9lioscb7c",
+      "feature_name": "first_amendment_floor"
+    },
+    {
+      "feature_id": "24_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Bases decisions on perceived false info with a reader fact-check caution, not harm/toxicity thresholds.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781995636026_iv0csl64z",
+      "feature_name": "fact_check_and_caution_for_false_info"
+    },
+    {
+      "feature_id": "24_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Keeps content by requiring it not insult or inflame others, aligning with de-toxifying thresholds.",
+      "was_hdbscan_noise": true,
+      "participant_id": "P_1781988305881_rmf1wodo3",
+      "feature_name": "fair_platform_without_insult_inflame"
+    }
+  ]
+}

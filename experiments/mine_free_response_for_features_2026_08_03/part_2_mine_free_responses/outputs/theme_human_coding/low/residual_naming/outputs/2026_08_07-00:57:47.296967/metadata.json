@@ -1,0 +1,13 @@
+{
+  "start_timestamp": "2026_08_07-00:57:47.296967",
+  "total_items": 1,
+  "run_metadata": {
+    "stage": "residual_theme_naming",
+    "likert_group": "low",
+    "model": "gpt-5.4-nano",
+    "n_other_features_in_prompt": 23,
+    "n_other_features_total": 23,
+    "max_themes": 5
+  },
+  "end_timestamp": "2026_08_07-00:57:50.247252"
+}

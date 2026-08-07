@@ -1,0 +1,464 @@
+{
+  "low": {
+    "likert_group": "low",
+    "clusters_run_dir": "experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/clusters/low/2026-08-05T21-15-11",
+    "labels_run_dir": "experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/generated_labels/low/outputs/2026_08_05-21:15:16.139778",
+    "method": {
+      "hdbscan": "Hard HDBSCAN labels from assignments_hdbscan.json; cluster_id=-1 is noise.",
+      "human_annotated_read": "HDBSCAN core members kept on their labeled theme. Each cluster_id=-1 feature was coded by an LLM against the Stage-4 theme definitions (human-style thematic assignment), or marked other. Residual themes are optional groupings within leftover other features.",
+      "model": "gpt-5.4-nano"
+    },
+    "corpus": {
+      "n_features_total": 189,
+      "n_participants_with_features": 185,
+      "n_hdbscan_noise_features": 103,
+      "n_hdbscan_labeled_features": 86
+    },
+    "noise_soft_assignment_confidence_counts": {
+      "high": 40,
+      "medium": 43,
+      "low": 20
+    },
+    "themes": [
+      {
+        "theme_id": "0",
+        "source": "hdbscan_labeled",
+        "cluster_label": "Harm/toxicity thresholds within free speech",
+        "definition": "Participants set keep/remove boundaries based on specific harm, threats, violence, or dehumanizing/toxic language while treating ordinary strong opinions as permissible free speech.",
+        "hdbscan": {
+          "n_features": 81,
+          "n_participants": 80,
+          "example": {
+            "feature_id": "16_5",
+            "feature_name": "perceived_partisan_bias_and_naming_language_concern",
+            "feature_value": "Noted more left-leaning than right; concern centered on name-calling/foul language and harm risk (killed people) rather than ideology itself",
+            "evidence_span": "i definitely saw more left wing than right.. It seem to be a little libral biased... Mostly the one i said delete both had name calling and foul language,,, I have no problem with both liberal ideas and conservative ideas",
+            "participant_id": "P_1781997293946_flnuxltie"
+          }
+        },
+        "human_annotated_read": {
+          "n_features": 130,
+          "n_participants": 129,
+          "n_features_from_hdbscan_core": 81,
+          "n_features_soft_assigned_from_noise": 49,
+          "example": {
+            "feature_id": "16_5",
+            "feature_name": "perceived_partisan_bias_and_naming_language_concern",
+            "feature_value": "Noted more left-leaning than right; concern centered on name-calling/foul language and harm risk (killed people) rather than ideology itself",
+            "evidence_span": "i definitely saw more left wing than right.. It seem to be a little libral biased... Mostly the one i said delete both had name calling and foul language,,, I have no problem with both liberal ideas and conservative ideas",
+            "participant_id": "P_1781997293946_flnuxltie"
+          }
+        }
+      },
+      {
+        "theme_id": "1",
+        "source": "hdbscan_labeled",
+        "cluster_label": "Pair comparison barely influenced decisions",
+        "definition": "In these low-influence reflections, participants report keeping/removing based on general principles or per-post content quality rather than any meaningful comparison between the original and mirror pair.",
+        "hdbscan": {
+          "n_features": 5,
+          "n_participants": 5,
+          "example": {
+            "feature_id": "8_0",
+            "feature_name": "minimal_pair_influence_freedom_of_speech_frame",
+            "feature_value": "Pair comparison had little effect; evaluation driven by general freedom-of-speech concern.",
+            "evidence_span": "nothing infulencing how i evaluated the posts as a pair other than that concern.",
+            "participant_id": "P_1781993363258_u3jod55ky"
+          }
+        },
+        "human_annotated_read": {
+          "n_features": 24,
+          "n_participants": 24,
+          "n_features_from_hdbscan_core": 5,
+          "n_features_soft_assigned_from_noise": 19,
+          "example": {
+            "feature_id": "12_7",
+            "feature_name": "symmetry_of_partisan_frames_no_pair_effect",
+            "feature_value": "Perceives both sides expressing disagreements/making the other the bad guy; suggests this broad partisan dynamic provides limited impact.",
+            "evidence_span": "MOSTLY from both liberals as well as conservatives... want to make the other out to be the bad guy",
+            "participant_id": "P_1782063013540_so2ctq4m2"
+          }
+        }
+      }
+    ],
+    "other_after_human_coding": {
+      "theme_id": "other",
+      "n_features": 35,
+      "n_participants": 35,
+      "example": {
+        "feature_id": "16_4",
+        "feature_name": "profanity_not_as_bad_as_some_other_content",
+        "feature_value": "Profanity alone wasn\u2019t decisive; both posts seemed valid from the opposing viewpoint and not too incendiary",
+        "evidence_span": "Both posts seemed valid when taken from the opposing party point of view and there's nothing wrong at all with voicing your opinions... there was nothing too incendiary",
+        "participant_id": "P_1782002990303_73bqyxcwh"
+      },
+      "residual_themes": [
+        {
+          "theme_key": "bias_mitigation_balance_neutrality",
+          "theme_label": "Bias mitigation and left-right neutrality",
+          "definition": "Decision-making centered on avoiding bias and maintaining neutrality (including balancing evaluations across left/right viewpoints), even when viewpoints feel far-reaching or asymmetrical.",
+          "member_feature_ids": [
+            "7_6",
+            "7_7",
+            "11_5",
+            "8_5",
+            "10_2"
+          ],
+          "n_features": 5,
+          "n_participants": 5,
+          "example": {
+            "feature_id": "8_5",
+            "feature_name": "balance_goal_even_if_context_far_reaching",
+            "feature_value": "Aiming for balanced evaluation despite viewpoints being far-reaching.",
+            "evidence_span": "ensure it was a balanced evaluation even though most of the viewpoints and context was a bit far reaching.",
+            "participant_id": "P_1781992220018_8qhuf2l43"
+          }
+        },
+        {
+          "theme_key": "language_profanity_cue_rules_over_politics",
+          "theme_label": "Language/profanity cues prioritized over politics",
+          "definition": "Moderation choices were driven primarily by whether language was vulgar/offensive (or whether profanity alone mattered), with political content explicitly treated as secondary.",
+          "member_feature_ids": [
+            "2_1",
+            "3_4",
+            "16_4",
+            "18_3",
+            "23_5"
+          ],
+          "n_features": 5,
+          "n_participants": 5,
+          "example": {
+            "feature_id": "16_4",
+            "feature_name": "profanity_not_as_bad_as_some_other_content",
+            "feature_value": "Profanity alone wasn\u2019t decisive; both posts seemed valid from the opposing viewpoint and not too incendiary",
+            "evidence_span": "Both posts seemed valid when taken from the opposing party point of view and there's nothing wrong at all with voicing your opinions... there was nothing too incendiary",
+            "participant_id": "P_1782002990303_73bqyxcwh"
+          }
+        },
+        {
+          "theme_key": "free_speech_balancing_and_uncertainty_of_line",
+          "theme_label": "Free-speech balancing with uncertainty about moderation boundaries",
+          "definition": "Participants justify or resist removals using free-speech principles while expressing discomfort/uncertainty about where to draw the line versus misinformation or harmful conduct.",
+          "member_feature_ids": [
+            "2_5",
+            "11_4",
+            "13_6",
+            "17_5",
+            "17_4",
+            "23_2",
+            "11_5"
+          ],
+          "n_features": 7,
+          "n_participants": 7,
+          "example": {
+            "feature_id": "11_4",
+            "feature_name": "bans_create_moral_authority_discomfort",
+            "feature_value": "Felt uncomfortable about banning opinions and questioned their own authority/knowledge.",
+            "evidence_span": "\"It felt uncomfortable\" \"kept asking myself whether I had enough knowledge or moral authority\"",
+            "participant_id": "P_1781992439198_pb6aqkzep"
+          }
+        },
+        {
+          "theme_key": "emotion_cued_inflamed_ragebait_reactivity",
+          "theme_label": "Emotional reactivity to extremity/aggression (including rage-bait suspicion)",
+          "definition": "Evaluation relied on emotional response to aggression/extremity (e.g., anger/sadness/dislike) and sometimes suspected intent such as rage bait, rather than detailed pair-based comparison.",
+          "member_feature_ids": [
+            "1_5",
+            "10_4",
+            "13_7",
+            "14_7",
+            "13_4"
+          ],
+          "n_features": 5,
+          "n_participants": 5,
+          "example": {
+            "feature_id": "14_7",
+            "feature_name": "pair_inconsistency_confusion",
+            "feature_value": "Confused by agreeing with one but not the other; sees it as making no sense.",
+            "evidence_span": "I did not like that I agreed with one but not the other I thought this does not make any sense",
+            "participant_id": "P_1781989578438_t0hr1x2p6"
+          }
+        },
+        {
+          "theme_key": "minimal_or_random_heuristic_processing",
+          "theme_label": "Minimal reasoning / heuristics (randomness, craziness, terse criteria)",
+          "definition": "Responses used very limited or single heuristics (e.g., 'it was random' or 'how crazy it was') and/or provided sparse rationales that bypass substantive pair comparison.",
+          "member_feature_ids": [
+            "3_7",
+            "12_5",
+            "19_7",
+            "20_7",
+            "13_7"
+          ],
+          "n_features": 5,
+          "n_participants": 5,
+          "example": {
+            "feature_id": "12_5",
+            "feature_name": "no_instant_logic_other_than_language",
+            "feature_value": "Gives a terse language-abuse/no-discussion statement implying limited consideration beyond profanity/verbal abuse.",
+            "evidence_span": "Swearing, verbal abuse, no issues, no discussion, no point",
+            "participant_id": "P_1781994274924_fad3q310w"
+          }
+        }
+      ],
+      "n_features_still_ungrouped": 10
+    }
+  },
+  "high": {
+    "likert_group": "high",
+    "clusters_run_dir": "experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/clusters/high/2026-08-05T21-28-38",
+    "labels_run_dir": "experiments/mine_free_response_for_features_2026_08_03/part_2_mine_free_responses/outputs/generated_labels/high/outputs/2026_08_05-21:28:45.562172",
+    "method": {
+      "hdbscan": "Hard HDBSCAN labels from assignments_hdbscan.json; cluster_id=-1 is noise.",
+      "human_annotated_read": "HDBSCAN core members kept on their labeled theme. Each cluster_id=-1 feature was coded by an LLM against the Stage-4 theme definitions (human-style thematic assignment), or marked other. Residual themes are optional groupings within leftover other features.",
+      "model": "gpt-5.4-nano"
+    },
+    "corpus": {
+      "n_features_total": 727,
+      "n_participants_with_features": 717,
+      "n_hdbscan_noise_features": 596,
+      "n_hdbscan_labeled_features": 131
+    },
+    "noise_soft_assignment_confidence_counts": {
+      "high": 262,
+      "medium": 234,
+      "low": 100
+    },
+    "themes": [
+      {
+        "theme_id": "0",
+        "source": "hdbscan_labeled",
+        "cluster_label": "Apply same moderation standard across both sides",
+        "definition": "Participants reported that seeing original-plus-mirror pairs helped them judge more consistently and fairly by applying identical moderation criteria regardless of political viewpoint.",
+        "hdbscan": {
+          "n_features": 17,
+          "n_participants": 17,
+          "example": {
+            "feature_id": "82_4",
+            "feature_name": "pair_side_by_side_reduces_bias_and_focuses_on_core",
+            "feature_value": "Seeing the posts side-by-side helps them avoid bias and focus on whether each enables healthy debate",
+            "evidence_span": "Seeing both posts side-by-side puts the words into perspective... I was just trying to focus on the core of each post and whether or not it would provide a well-intentioned space for healthy debate or discussion.",
+            "participant_id": "P_1781989315842_cbajjjjw1"
+          }
+        },
+        "human_annotated_read": {
+          "n_features": 59,
+          "n_participants": 58,
+          "n_features_from_hdbscan_core": 17,
+          "n_features_soft_assigned_from_noise": 42,
+          "example": {
+            "feature_id": "26_5",
+            "feature_name": "substance_for_healthy_conversation_and_mirror_images",
+            "feature_value": "They look for substance for healthy conversation; profanity/rhetoric leads to rejection, and mirror-image reasoning suggests common ground.",
+            "evidence_span": "I look for some substance that could spark healthy conversation... If the messages were mostly rhetoric or contained profanity, I rejected... how the reasoning could be created into \"mirror images\"... we should be able to find some common ground.",
+            "participant_id": "P_1781988324526_5rhdb3e14"
+          }
+        }
+      },
+      {
+        "theme_id": "1",
+        "source": "hdbscan_labeled",
+        "cluster_label": "Remove for threats and toxicity",
+        "definition": "High-influence reflections describe using a high bar for moderation that generally keeps opinions but removes posts when they become threatening, excessively vulgar, slanderous, or otherwise toxic/inflammatory.",
+        "hdbscan": {
+          "n_features": 103,
+          "n_participants": 103,
+          "example": {
+            "feature_id": "32_3",
+            "feature_name": "respect_threshold_with_harmful_language_rule",
+            "feature_value": "Approved heated posts if respectful; removed posts with harmful language or unproductive conversation.",
+            "evidence_span": "approving politically heated posts as long as they were remaining respectful... chose to remove posts that contained harmful language or just didn't promote productive conversation.",
+            "participant_id": "P_1781989105740_ye6rqmprr"
+          }
+        },
+        "human_annotated_read": {
+          "n_features": 320,
+          "n_participants": 319,
+          "n_features_from_hdbscan_core": 103,
+          "n_features_soft_assigned_from_noise": 217,
+          "example": {
+            "feature_id": "79_3",
+            "feature_name": "disallowed_ad_hominem_specific_person_attacks_even_if_free_speech",
+            "feature_value": "Supports free speech generally but targeted ad hominem attacks at specific people for removal.",
+            "evidence_span": "I'm a fan of free speech but I disagree with ad hominem... attacks where people say horrible things about a specific person... Only one pair of posts contained an ad hominem attack and that was the pair I indicated I would remove.",
+            "participant_id": "P_1781989868898_zrl9pxdqp"
+          }
+        }
+      },
+      {
+        "theme_id": "2",
+        "source": "hdbscan_labeled",
+        "cluster_label": "Free speech with violence/threat exceptions",
+        "definition": "Participants endorse keeping most speech (including opposing opinions) while justifying removal only when content involves threats, intent to harm, or violence and sometimes closely related \u201cbad language\u201d or profanity.",
+        "hdbscan": {
+          "n_features": 11,
+          "n_participants": 11,
+          "example": {
+            "feature_id": "13_4",
+            "feature_name": "free_speech_default_with_threat_exception",
+            "feature_value": "Default to free speech if no threats; removal only if threats/intent to harm are present",
+            "evidence_span": "both sides deserve free speech... If someone mad threats... then that is different i think then they should be taken down but i didn't see any threats",
+            "participant_id": "P_1781996332194_89bhhi7hg"
+          }
+        },
+        "human_annotated_read": {
+          "n_features": 118,
+          "n_participants": 118,
+          "n_features_from_hdbscan_core": 11,
+          "n_features_soft_assigned_from_noise": 107,
+          "example": {
+            "feature_id": "87_3",
+            "feature_name": "only_extreme_outrage_violent_calls_direct_moderation",
+            "feature_value": "Typically keep; only remove for outrageously sensationalized, likely faked statistical claims or violent calls to action",
+            "evidence_span": "none of the post pairs were nearly extreme or problematic enough to warrant removal except for the one outrageously sensationalized... violent calls to action are the only things",
+            "participant_id": "P_1781990908220_mo3mvjpth"
+          }
+        }
+      }
+    ],
+    "other_after_human_coding": {
+      "theme_id": "other",
+      "n_features": 230,
+      "n_participants": 229,
+      "example": {
+        "feature_id": "50_7",
+        "feature_name": "opinion_allowed_but_false_or_harmful_removed",
+        "feature_value": "Keep opinions; remove if nonsense/lies with harmful effects",
+        "evidence_span": "If it was something that was mainly an opinion, I thought it should stay... If it appeared to be nonsense... and I thought it was actually harmful, I thought it should be removed... But if they are flat out lies, I think they should not remain.",
+        "participant_id": "P_1781989977821_0rsx0own5"
+      },
+      "residual_themes": [
+        {
+          "theme_key": "pair_level_reasonableness_and_argument_quality",
+          "theme_label": "Pair-level \u201creasonableness\u201d / argument quality as the keep-or-remove driver",
+          "definition": "Across leftover items, decisions are guided by whether each paired post (and/or the pair together) is reasonable, coherent, substantive, and makes a real argument (vs nonsense, rambling, name-calling, trolling, or incoherence).",
+          "member_feature_ids": [
+            "0_3",
+            "9_4",
+            "12_1",
+            "30_6",
+            "33_7",
+            "37_7",
+            "48_1",
+            "54_3"
+          ],
+          "n_features": 8,
+          "n_participants": 8,
+          "example": {
+            "feature_id": "9_4",
+            "feature_name": "nonsensical_vs_point_based_allow",
+            "feature_value": "Used a point-or-nonsense check; if arguments could be made, tended to allow",
+            "evidence_span": "make sure that each post was making a point or was it nonsensical dribble... If you could argue for each point, I generally decided to allow them",
+            "participant_id": "P_1781993369699_phnrf1x6u"
+          }
+        },
+        {
+          "theme_key": "avoid_inflammatory_trolling_rudeness",
+          "theme_label": "Avoidance of inflammatory, trolling, or disrespectful language/intent",
+          "definition": "A recurring residual idea is to reject content when it is seen as inflammatory, crude, abusive, hateful/bad-language, a rant, or trolling\u2014because it undermines productive discussion/healthy debate or signals low informational value.",
+          "member_feature_ids": [
+            "10_6",
+            "16_7",
+            "19_0",
+            "29_7",
+            "32_1",
+            "33_5",
+            "35_6",
+            "36_7",
+            "43_6",
+            "49_5",
+            "49_6",
+            "54_4"
+          ],
+          "n_features": 12,
+          "n_participants": 12,
+          "example": {
+            "feature_id": "32_1",
+            "feature_name": "ignore_political_content_and_interpret_tone",
+            "feature_value": "Tried to ignore political content and interpret content as venting vs argumentative.",
+            "evidence_span": "I tried to ignore the political content. I looked for swearing and words that weren't about making an argument, but about venting anger.",
+            "participant_id": "P_1781993979307_jbhpi2l6b"
+          }
+        },
+        {
+          "theme_key": "factuality_and_misinformation_falsehood_controls",
+          "theme_label": "Factuality, verifiability, and misinformation control",
+          "definition": "Decisions hinge on whether statements are fact-based, verifiable, accurate, or not provably false/misinformation. Falsehoods or harmful misinformation trigger removal even when other factors (e.g., free-speech framing) might otherwise support inclusion.",
+          "member_feature_ids": [
+            "13_2",
+            "13_3",
+            "25_0",
+            "27_1",
+            "32_7",
+            "33_7",
+            "38_6",
+            "42_7",
+            "50_7",
+            "54_4"
+          ],
+          "n_features": 10,
+          "n_participants": 10,
+          "example": {
+            "feature_id": "50_7",
+            "feature_name": "opinion_allowed_but_false_or_harmful_removed",
+            "feature_value": "Keep opinions; remove if nonsense/lies with harmful effects",
+            "evidence_span": "If it was something that was mainly an opinion, I thought it should stay... If it appeared to be nonsense... and I thought it was actually harmful, I thought it should be removed... But if they are flat out lies, I think they should not remain.",
+            "participant_id": "P_1781989977821_0rsx0own5"
+          }
+        },
+        {
+          "theme_key": "healthy_debate_contribution_and_discussion_fit",
+          "theme_label": "Healthy debate / discussion-conduciveness as the selection criterion",
+          "definition": "A set of residual items focuses on whether content supports healthy political dialogue\u2014e.g., encourages discussion/engagement, offers constructive debate/value, and remains within a conversational boundary. Uncertainty often leads to not removing/allowing rules aligned with discussion goals.",
+          "member_feature_ids": [
+            "36_7",
+            "37_4",
+            "38_6",
+            "3_7",
+            "6_6",
+            "11_6",
+            "14_6",
+            "7_3",
+            "48_3",
+            "5_2"
+          ],
+          "n_features": 10,
+          "n_participants": 10,
+          "example": {
+            "feature_id": "6_6",
+            "feature_name": "consistency_shift_and_healthy_dialogue_effect",
+            "feature_value": "Not fully consistent; later realized some allowed content wasn\u2019t conducive to healthy political dialogue.",
+            "evidence_span": "I'm not sure I was entirely consistent... Some of what I allowed was not conducive to healthy political dialogue.",
+            "participant_id": "P_1781989941715_fsyqlxuzu"
+          }
+        },
+        {
+          "theme_key": "pair_symmetry_unit_constraints_and_pair_as_single_decision_unit",
+          "theme_label": "Pair-as-a-unit constraints (symmetry / cannot remove one)",
+          "definition": "Several features reflect residual process constraints where the interface or the decision logic forces pair-level treatment\u2014either both are kept/removed, both are considered together as a unit, or reciprocal/symmetric mirroring is required.",
+          "member_feature_ids": [
+            "14_0",
+            "2_1",
+            "14_6",
+            "20_3",
+            "17_5",
+            "41_7",
+            "54_7",
+            "55_7",
+            "20_3"
+          ],
+          "n_features": 9,
+          "n_participants": 8,
+          "example": {
+            "feature_id": "17_5",
+            "feature_name": "allow_all_perspectives_except_cannot_remove_single",
+            "feature_value": "Preferred leaving posts up to provide full perspectives, noting emotionally charged claims without evidence but constraints on removing only one.",
+            "evidence_span": "People deserve to have all perspective's laid out before them even if we don't trust them to be able to decipher reason from hysteria.",
+            "participant_id": "P_1781989553065_oj74a8qsc"
+          }
+        }
+      ],
+      "n_features_still_ungrouped": 187
+    }
+  }
+}

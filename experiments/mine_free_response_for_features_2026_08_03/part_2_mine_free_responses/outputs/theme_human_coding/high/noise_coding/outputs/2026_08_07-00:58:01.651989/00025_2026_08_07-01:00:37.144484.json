@@ -1,0 +1,167 @@
+{
+  "batch_index": 25,
+  "feature_ids": [
+    "75_7",
+    "76_1",
+    "76_3",
+    "76_4",
+    "76_5",
+    "76_7",
+    "77_0",
+    "77_1",
+    "77_3",
+    "77_4",
+    "77_5",
+    "77_6",
+    "77_7",
+    "78_2",
+    "78_3",
+    "78_4",
+    "78_5",
+    "78_6",
+    "78_7",
+    "79_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "75_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Profanity is treated as making discourse toxic enough to shift away from constructive debate.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "76_1",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Threat-detection is an overriding removal trigger while valuing free speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "76_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Ideology/cross-party perspective used to evaluate responses, not a moderation rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "76_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly cites call to violence as the removal criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "76_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Rejects for cursing/outrageousness/nonsense, aligning with removing overly toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "76_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Describes interpretation as point/insult without stating keep/remove criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Pair similarity comparison strategy, not directly a moderation standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Same content/tone standard applied across political viewpoints to judge consistently.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Focus on cues promoting violence points toward violence/threat exception logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity tolerated, but misinformation/invalid point rejected as decisive negatives.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Rule to eliminate both when stretching facts emphasizes consistent criteria across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Rudeness is the primary cue driving removals, consistent with toxicity-related rejection.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "77_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Perceived sameness across viewpoints is a pair-comparison conclusion, not moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "78_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Vulgar language treated as signaling lack of value, leading to removal decisions in toxic/low-substance cases.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "78_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Default to allow, but remove when not welcoming open communication (discursive exception rather than explicit threats).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "78_4",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Strong anti-moderation/free-speech stance; not clearly tied to threat/toxicity exception rules in the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "78_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Good-faith ideology kept; remove hate/nonsense\u2014matches toxicity-driven removal more than pure violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "78_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Mostly neutral allow policy with a specific sexual-reference exception; no clear threat/toxicity framing matching themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "78_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision based on aggression/out-of-order vs which side has the correct point; not a defined moderation exception category.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "79_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Applies the same standard across the pair, distinguishing normal criticism from threats/violence/harassment.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

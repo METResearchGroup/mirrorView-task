@@ -1,0 +1,167 @@
+{
+  "batch_index": 1,
+  "feature_ids": [
+    "4_2",
+    "4_3",
+    "4_5",
+    "4_6",
+    "5_2",
+    "5_3",
+    "5_5",
+    "5_6",
+    "6_1",
+    "6_2",
+    "7_2",
+    "7_4",
+    "7_6",
+    "7_7",
+    "8_1",
+    "8_2",
+    "8_4",
+    "8_5",
+    "9_3",
+    "9_5"
+  ],
+  "assignments": [
+    {
+      "feature_id": "4_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Sets a high removal threshold for extreme demeaning/hate-adjacent content while tolerating insensitive language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Claims the posts didn\u2019t influence them, framed as a low-influence decision.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses First Amendment rights framing with a harm-based boundary for removal, aligning with free-speech thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "4_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Believes moderation isn\u2019t needed because content is ordinary opinions/exaggeration, implying permissive speech boundaries.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses a harm/toxicity-adjacent threshold (good faith vs angry/violent rhetoric) to decide removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Opposes removal to avoid silencing viewpoints, fitting a free-speech boundary logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Notes mirror similarity makes the joint decision easy, indicating pair comparisons barely influenced decisions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "5_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Applies free-speech bounds with intent/maliciousness and disallows crossing into hate speech or misinformation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly ignores political pair contrast and bases decisions on other criteria, indicating low pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "6_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Says the opposing views didn\u2019t change perceived intent; relies on checks rather than pair-driven influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removal is limited to content viewed as unhealthy/angry/violent, which functions as a harm/toxicity threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses the pair to check for truth across sides, which doesn\u2019t match the provided harm-threshold or low-influence themes directly.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on meta-process neutrality and bias mitigation rather than explicit harm thresholds or lack of pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "7_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "States a neutrality goal (stay neutral) without clear mapping to harm thresholds or pair-ineffectiveness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Absolutist First Amendment stance with removal only when harm/threat is present.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Allows speech unless it appears to be a threat or act of violence, using harm-based permissive logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Tolerates swearing unless used harmfully/directed at others\u2014an explicit toxicity/manner threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "8_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Aims for balance across far-reaching viewpoints, not clearly about harm thresholds or pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "9_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removes when foul language targets/attacks someone, reflecting a toxicity/harassment threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "9_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "States their decision was not really influenced and relies on an opinions-entitlement norm, indicating minimal pair influence.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

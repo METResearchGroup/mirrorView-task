@@ -1,0 +1,167 @@
+{
+  "batch_index": 17,
+  "feature_ids": [
+    "52_0",
+    "52_1",
+    "52_3",
+    "52_4",
+    "52_5",
+    "52_6",
+    "52_7",
+    "53_0",
+    "53_3",
+    "53_4",
+    "53_6",
+    "53_7",
+    "54_0",
+    "54_2",
+    "54_3",
+    "54_4",
+    "54_5",
+    "54_6",
+    "54_7",
+    "55_2"
+  ],
+  "assignments": [
+    {
+      "feature_id": "52_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "States fairness via identical moderation criteria across both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal boundary based on personal attacks/slurs/harassment and toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Wants removal due to perceived idiocy/low quality rather than threats/toxicity or fairness framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on bizarre/false content as influence without clearly mapping to threat/toxicity or symmetric criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Supports free speech but allows limits for hateful/divisive/disgusting rhetoric.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Aims to keep both sides for even treatment and consistent standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Meta-process explicitly applies the same standard to both versions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Treats both items as acceptable baseline speech and frames pair as not changing consistent judgment across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes content mainly for spewing hate/hostility, consistent with removing toxic material.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses whether constructive discussion could follow and rejects incitement; fits violence/threat exception logic.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Mentions focusing on each party but does not specify the moderation exception criteria clearly.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Says the reflection is too brief/personal knowledge, not a specific moderation standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_0",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses First Amendment/absence of violence as the deciding justification, aligning with violence exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly applies the same harm/impact standard via tone/harassment/threat evaluation rather than viewpoint.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on discussion quality and rejecting strawman/ad hominem, not clearly threat/toxicity or violence-based exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rejection rule based on extremity and misinformation, which doesn\u2019t fit the provided threat/toxicity themes directly.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Attributes better removal decisions to using mirrored opposing perspectives, consistent with fairness/pair-based consistency.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_6",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Free-speech stance with removal only for verifiably false content; not explicitly violence/threat or toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_7",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes forced symmetry (both-or-neither) affecting decisions, aligning with same standard across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses intensity/impact/debate value criteria without a clear mapping to the specific moderation themes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

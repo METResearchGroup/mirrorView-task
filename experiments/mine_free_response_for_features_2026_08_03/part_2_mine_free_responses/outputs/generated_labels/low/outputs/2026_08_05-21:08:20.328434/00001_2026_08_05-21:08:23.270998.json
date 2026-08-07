@@ -1,0 +1,15 @@
+{
+  "cluster_id": 1,
+  "likert_group": "low",
+  "n_members": 2,
+  "sampled_feature_ids": [
+    "0_0",
+    "0_5"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Content screened via harm and explicit threats",
+    "definition": "Participants described making keep/remove decisions based on whether posts contained harmful or threatening content (e.g., death threats) and other explicit content cues.",
+    "salience_notes": "Both features emphasize explicit screening criteria tied to harm/threat detection rather than nuanced interpretation of the original+mirror pairing."
+  }
+}

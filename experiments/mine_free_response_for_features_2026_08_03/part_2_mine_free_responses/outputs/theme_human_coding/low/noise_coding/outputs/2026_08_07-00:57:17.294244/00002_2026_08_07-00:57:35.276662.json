@@ -1,0 +1,167 @@
+{
+  "batch_index": 2,
+  "feature_ids": [
+    "9_6",
+    "9_7",
+    "10_0",
+    "10_1",
+    "10_2",
+    "10_3",
+    "10_4",
+    "11_2",
+    "11_3",
+    "11_4",
+    "11_5",
+    "11_6",
+    "12_3",
+    "12_5",
+    "12_6",
+    "12_7",
+    "13_0",
+    "13_2",
+    "13_4",
+    "13_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "9_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses a harm/threshold criterion (misinformation framed as truth, beyond violence) to remove content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "9_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Keeps mainly based on argument/meaningfulness, with only rare removal for near-death-threat edge cases (minimal pair influence).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "10_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Applies harm/tone-based removal rather than political agreement, aligning with toxicity/harm boundaries.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "10_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Describes side-by-side as a consistency check with limited impact (barely influenced decisions).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "10_2",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removes offensive language using a safety/purity criterion (denying bias) consistent with harm/toxicity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "10_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Conditional acceptance based on avoiding personal attacks while tolerating profanity fits harm/toxicity boundaries.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "10_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on perceived rage-bait/extremeness and emotional reaction more than explicit harm thresholds or pair-comparison effects.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly prioritizes dangerous/harmful content (threats/violence) over politics.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Permissive approach with specific red lines (no direct threats/doxxing) is a harm/toxicity threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Centers on discomfort with banning/authority concerns rather than content criteria or pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Attempts to evaluate bias equivalence across versions rather than describing substantial pair-driven decision changes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "11_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Requests clearer rules/purpose information\u2014process understanding rather than decision criteria or pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Party framing has little effect; removal is driven by harm cues like dangerous medical advice/violence promotion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Very terse language-abuse mention with little elaboration; no clear mapping to harm thresholds or pair strategy.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "General statement that posts are extreme; not tied to a specific moderation boundary or pair comparison mechanism.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "12_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Perceives symmetric partisan framing across both versions leading to limited pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Advocates allowing both sides regardless of political orientation; operates as a free-speech boundary against side-based discrimination.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Draws a harm-based line at wishing death on public figures.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Judges aggression and whether the author is making a point; suggests low pair-comparison impact (more general content/quality gating).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "13_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Frames resistance to moderation as catharsis/stress relief, not a harm threshold or pair comparison principle.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

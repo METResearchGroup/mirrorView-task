@@ -1,0 +1,76 @@
+{
+  "themes": [
+    {
+      "theme_key": "paired_mirror_and_balance_validity_checks",
+      "theme_label": "Paired mirroring/balance sanity checks",
+      "definition": "Decisions were guided by whether the two versions truly mirrored each other and/or were balanced/mirror-like as a pair (e.g., not actually true mirrors, ensure mirror images and balance).",
+      "member_feature_ids": [
+        "14_5",
+        "33_6",
+        "56_0",
+        "56_1"
+      ],
+      "n_features": 4
+    },
+    {
+      "theme_key": "truth_facts_and_misinformation_weighting",
+      "theme_label": "Truth, verifiability, and misinformation penalties",
+      "definition": "The influence/keep-remove decision emphasized factual backing/verifiability and penalized false, untrue, or misinformation-like content (sometimes contrasted with generic free-speech framing).",
+      "member_feature_ids": [
+        "3_5",
+        "13_2",
+        "13_3",
+        "27_1",
+        "32_7",
+        "38_4",
+        "52_4",
+        "59_6"
+      ],
+      "n_features": 8
+    },
+    {
+      "theme_key": "healthy_debate_productivity_discussion_rules",
+      "theme_label": "Healthy debate / productive discussion contribution",
+      "definition": "Evaluated whether the pair would support healthy, meaningful, or productive political conversation (often using uncertainty/fit/engagement checks, discouraging devolution, bashing-only, or dead ends).",
+      "member_feature_ids": [
+        "3_7",
+        "11_6",
+        "36_7",
+        "37_4",
+        "40_7",
+        "48_1",
+        "54_3"
+      ],
+      "n_features": 7
+    },
+    {
+      "theme_key": "tone_language_for_aggression_insanity",
+      "theme_label": "Tone/language as a signal of aggression, incoherence, or \u201cgibberish\u201d",
+      "definition": "Used linguistic and format cues\u2014arguing vs truth, anger vs sense, hurtful/aggressive/trolling, incoherence/all-caps gibberish, extreme/radicalized-sounding language\u2014as grounds for removal or allowing.",
+      "member_feature_ids": [
+        "10_6",
+        "34_4",
+        "41_7",
+        "1_6",
+        "23_7",
+        "33_5",
+        "37_2",
+        "48_6"
+      ],
+      "n_features": 8
+    },
+    {
+      "theme_key": "pair_level_constraints_and_default_keep_deletion",
+      "theme_label": "Interface/decision constraints forcing pair-level outcomes",
+      "definition": "The participant\u2019s process was shaped by constraints that made pair-level removal/keeping mandatory (e.g., must delete both, can\u2019t delete single items), sometimes leading to difficulty deciding, inability to justify removal, or defaulting to keeping both.",
+      "member_feature_ids": [
+        "2_1",
+        "10_2",
+        "14_0",
+        "10_5",
+        "14_2"
+      ],
+      "n_features": 5
+    }
+  ]
+}

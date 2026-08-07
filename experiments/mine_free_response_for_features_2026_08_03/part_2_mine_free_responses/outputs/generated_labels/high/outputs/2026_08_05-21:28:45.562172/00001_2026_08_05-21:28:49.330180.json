@@ -1,0 +1,21 @@
+{
+  "cluster_id": 1,
+  "likert_group": "high",
+  "n_members": 103,
+  "sampled_feature_ids": [
+    "31_4",
+    "49_1",
+    "41_2",
+    "82_0",
+    "62_4",
+    "2_3",
+    "56_3",
+    "3_0"
+  ],
+  "result": {
+    "cluster_id": 1,
+    "cluster_label": "Remove for threats and toxicity",
+    "definition": "High-influence reflections describe using a high bar for moderation that generally keeps opinions but removes posts when they become threatening, excessively vulgar, slanderous, or otherwise toxic/inflammatory.",
+    "salience_notes": "The sampled features cohere around specific removal triggers (personal threats, profanity/vulgarity, slander/obscenity) and a civil/toxic threshold, with an overall bias toward minimal moderation unless harm signals appear."
+  }
+}

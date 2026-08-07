@@ -1,0 +1,167 @@
+{
+  "batch_index": 28,
+  "feature_ids": [
+    "86_3",
+    "86_4",
+    "86_5",
+    "86_6",
+    "86_7",
+    "87_0",
+    "87_2",
+    "87_3",
+    "87_4",
+    "87_5",
+    "87_6",
+    "87_7",
+    "88_0",
+    "88_1",
+    "88_4",
+    "88_5",
+    "88_6",
+    "88_7",
+    "89_1",
+    "89_3"
+  ],
+  "assignments": [
+    {
+      "feature_id": "86_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Equates profanity with violence and therefore calls for removal under toxic/threatening content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "86_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "States curse words were the main driver for removal, fitting the toxicity/profanity removal theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "86_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Declines the whole pair when one side is crass/rage-bait/inciting hatred\u2014consistent with removing toxic/egregious content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "86_6",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Focuses on non-negative/constructive conversation; this is more about quality than specifically threat/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "86_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Says profanity and name-calling influenced removal preferences, aligning with removing vulgar/toxic language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_0",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Keeps both versions unless red-flag violations like foul language/threats/over-the-top messaging occur.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Combines hateful language with misinformation as a reason to remove (toxic content removal).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Generally keeps speech and removes only for extreme sensationalized/faked stats or violent calls to action.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Tone/politeness and absence of insults drive allowing, which maps loosely to keeping while removing toxic/aggressive language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General claim that language influenced judgment without specifying threats/toxicity/removal criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Emphasizes being open to both sides as a process step rather than a specific moderation rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "87_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses a specific 2nd-amendment lens for removal of false/slander\u2014does not cleanly match the provided theme definitions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "88_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses language/hate-speech checks as the main criterion, aligning with removal for toxic language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "88_1",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly blocks content that incites violence\u2014fits the violence/threat exception theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "88_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Judges based on redundancy/rephrasing rather than violence/toxicity or fairness pairing rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "88_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on symmetry/other side insults rather than clear threat/toxicity or violence removal criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "88_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Allows both perspectives but blocks obscene/rude/vulgar posts, matching profanity/vulgarity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "88_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Pro free-speech stance with narrow removals for calls to violence/coded calls.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Decision framed as 'free speech vs hate rhetoric' without tying to the specific violence/profanity/toxicity rule themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Omit angry/vulgar non-constructive comments, which aligns with removing toxic/vulgar content.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}
