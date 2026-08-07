@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-06
+
+1. Complete methods writeup from the current study phase. [PR #51](https://github.com/METResearchGroup/mirrorView-task/pull/51/)
+
 ## 2026-08-05
 
 1. Tested new discovered features by adding it to a baseline prompt and comparing its performance against the regular baseline prompt [PR #47](https://github.com/METResearchGroup/mirrorView-task/pull/47)
