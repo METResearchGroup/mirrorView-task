@@ -1,7 +1,7 @@
 """Deterministically sample posts to create a mirrorview mirror dataset.
 
 This script:
-- Discovers curated `mirrorview.csv` exports under `experiments/scaled_mirrors_generation_2026_06_02/data/*/*/curated/*/metadata.json`
+- Discovers curated `mirrorview.csv` exports under `data_platform/data/*/*/curated/*/metadata.json`
 - Normalizes rows into a unified internal schema
 - Deduplicates by `post_primary_key` per integration before sampling (Reddit uses `unique_reddit_id`, a composite of post and comment id)
 - Filters out `political_stance` values `unclear` and `neutral`
@@ -273,9 +273,7 @@ def dedupe_rows(df: pd.DataFrame, *, integration: str, subset: list[str]) -> pd.
 
 
 def main() -> None:
-    data_root = (
-        REPO_ROOT / "experiments/scaled_mirrors_generation_2026_06_02/data"
-    ).resolve()
+    data_root = (REPO_ROOT / "data_platform" / "data").resolve()
     output_dir = (REPO_ROOT / "experiments/scaled_mirrors_generation_2026_06_02").resolve()
 
     # 1) Discover curated runs by globbing metadata.json
