@@ -1,3 +1,8 @@
+---
+header-includes:
+  - \usepackage[margin=0.5in]{geometry}
+---
+
 # Feature extraction methods
 
 In the latest study, we annotated 8,791 posts from 1,178 users. Each user was tasked with annotating 20 unique posts.
