@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-07
+
+1. Added a pre-study political-expression attention check to the MirrorView webapp (select-all comprehension). Participants always continue; `attention_check_passed` / `attention_check_selected` are saved on every CSV row for post-hoc filtering. [PR #52](https://github.com/METResearchGroup/mirrorView-task/pull/52)
+
 ## 2026-08-06
 
 1. Added the larger-scale prompt-engineering keep/remove classifier experiment on a balanced 1,000-post subset (500/500) with Qwen 3.6. Feature-tuned prompt raised remove F1 from 0.628 to 0.700 versus control. [PR #49](https://github.com/METResearchGroup/mirrorView-task/pull/49)

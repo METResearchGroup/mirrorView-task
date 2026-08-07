@@ -37,11 +37,11 @@ Reuse the existing pre-survey HTML-form plugin (already loaded) rather than addi
 | What | Path |
 |------|------|
 | Before (no attention check in timeline) | [images/before/no_attention_check_timeline.png](images/before/no_attention_check_timeline.png) |
-| After UI mockup (target screen) | [images/after/attention_check_ui.png](images/after/attention_check_ui.png) |
-| After data-field mockup (filter column) | [images/after/attention_check_data_field.png](images/after/attention_check_data_field.png) |
-| Static HTML sources for mockups | [images/mockups/](images/mockups/) |
+| After UI (live jsPsych trial) | [images/after/attention_check_ui.png](images/after/attention_check_ui.png) |
+| After data field (live `addProperties` values) | [images/after/attention_check_data_field.png](images/after/attention_check_data_field.png) |
+| Static HTML sources for earlier mockups | [images/mockups/](images/mockups/) |
 
-Implementation Step 4 re-captures live screenshots from the running webapp and overwrites the after images.
+After images were re-captured from the live `politicalExpressionAttentionCheck` trial (jsPsych) after implementation.
 
 ## Steps
 
