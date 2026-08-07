@@ -1,0 +1,14 @@
+{
+  "start_timestamp": "2026_08_06-00:23:40.261093",
+  "total_items": 1000,
+  "run_metadata": {
+    "arm": "control",
+    "model": "qwen/qwen3.6-plus",
+    "n_items": 1000,
+    "subset_path": "/workspace/experiments/llm_prompt_engineering_v2_2026_08_05/subset_labels.csv",
+    "limit": null,
+    "subset_seed": 42,
+    "experiment": "llm_prompt_engineering_v2_2026_08_05"
+  },
+  "end_timestamp": "2026_08_06-00:30:36.481749"
+}
