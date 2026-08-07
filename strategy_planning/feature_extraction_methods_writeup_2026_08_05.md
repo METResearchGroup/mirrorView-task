@@ -76,11 +76,25 @@ We observe a cleaner separation of features used to decide what posts to keep or
 
 ## Comparing extracted features against reasons cited by participants
 
-Both BERTopic and the LLM-based feature extraction generated a list of candidate features. We now compare them against features that were cited by study participants themselves. We asked our n=1,178 participants to answer, on a 1-7 Likert Scale, how much seeing the political mirror affected their moderation decision, as well as fill out a brief free-response section explaining their rationale. After filtering for noncompliance and invalid responses, we collected n=(TODO: insert amount) valid user responses.
+Both BERTopic and the LLM-based feature extraction generated a list of candidate features. We now compare them against features that were cited by study participants themselves. W We analyzed free-text reflections from participants who reported low vs high influence of the pair view (Likert < 4: n=255; >= 4: n=922). An LLM extracted decision-rule features from these texts. Then, we embedded those features and clustered them with HDBSCAN. Because responses are heterogeneous and noisy, many features were left as noise. Below we report the largest coherent themes.
 
-We divided these into two groups, ...
+For users (n=255) who said that the political mirror intervention didn't affect their moderation decision strongly (score < 4), we found that they commonly cited some variation of what we coded as "Harm/toxicity thresholds within free speech", where as long as they didn't perceive the text to be doing harm, they permitted it.
 
-(Add the remaining analysis here).
+
+| Feature                                     | Number of samples | Example                                                                                                  |
+|----------------------------------------------|-------------------|----------------------------------------------------------------------------------------------------------|
+| Harm/toxicity thresholds within free speech  | 130                | “So long as nothing harmful or threatening towards a group, person, or identity (like actually telling a person to die…)” |
+| Pair comparison barely influenced decisions  | 24                 | “I tried to look at the content of each post individually.”                                              |
+
+For users (n=922) who said that the intervention did affect their moderation decision (score >= 4), we found more heterogeneity around the justifications they used for their removals. Some annotators cited removing toxic or threatening posts, while others cited fairness in moderating both sides. A third common theme observed was citing exceptions to free speech.
+ 
+
+| Feature                                   | Number of samples | Example                                                                                                                           |
+|--------------------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| Remove for threats and toxicity            | 320               | “I looked for offensive or targeting language toward another individual or group or people, and if I saw a post with that language then I removed them.” |
+| Apply same moderation standard across both sides | 118                | “Seeing them as pairs helped me check my own bias, because I had to ask whether I would allow the same tone if it came from the opposite side.” |
+| Free speech with violence/threat exceptions| 59                | “I believe in free speech, unless it is very hateful hate speech or threats of violence.”                                         |
+
 
 ## Training a preliminary model with these features
 
@@ -91,4 +105,5 @@ Given our uncovered features, we prompted an LLM to perform the keep/remove clas
 | control | 0.6600 | 0.6932 | 0.5740 | 0.6280 |
 | prompt-tuned | 0.6490 | 0.6114 | 0.8180 | 0.6997 |
 
-This gives us (implications)...
+Our approach of extracting features across posts that were kept versus removed by human annotators led to a data-driven set of community norms, broadly agreed to by our annotators, around content moderation, allowable speech, and permissible disagreement. Passing these rules to an LLM and asking it to make decisions with respect to those rules generated a 42.5% increase in the recall and an 11% improvement in F1 score. This suggests that with additional scale, feature generation, and prompt engineering, we could possibly generate a more comprehensive and fine-grained series of annotator-driven human norms that align with how real people make content moderation decisions.
+
