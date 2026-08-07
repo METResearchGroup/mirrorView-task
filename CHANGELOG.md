@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-06
+
+1. Landed Bluesky, Twitter, and Reddit ingest through curation in this repository under `data_platform/`, with local-disk durability for Twitter/Reddit, opt-in Bluesky S3 upload, and sample discovery pointed at in-repo curated exports. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+
 ## 2026-08-05
 
 1. Tested new discovered features by adding it to a baseline prompt and comparing its performance against the regular baseline prompt [PR #47](https://github.com/METResearchGroup/mirrorView-task/pull/47)
