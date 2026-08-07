@@ -156,6 +156,8 @@ const jsPsych = initJsPsych({
             'political_affiliation',
             'party_lean',
             'party_group',
+            'attention_check_passed',
+            'attention_check_selected',
             'condition',
             // Demographics (if collected)
             'age',
@@ -454,6 +456,10 @@ async function setupExperiment() {
         // ========== POLITICAL AFFILIATION CONFIRMATION ==========
         // (defined in pre_surveys.js)
         timeline.push(politicalAffiliation);
+
+        // ========== POLITICAL EXPRESSION ATTENTION CHECK ==========
+        // Comprehension check; failures still continue (filter post-hoc on attention_check_passed)
+        timeline.push(politicalExpressionAttentionCheck);
         
         // ========== ASSIGN PARTICIPANT ID ==========
         let ParticipantID = null;

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attention check data field mockup</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --pass: #16a34a;
+      --fail: #dc2626;
+      --accent: #38bdf8;
+      --hl: #1e293b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, #1e293b, var(--bg) 55%);
+      color: var(--text);
+      font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+      padding: 36px 24px 56px;
+    }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    .sub { color: var(--muted); margin: 0 0 24px; line-height: 1.5; max-width: 720px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .panel-h {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 650;
+    }
+    .panel-b { padding: 16px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #1f2937;
+      white-space: nowrap;
+    }
+    th { color: var(--muted); font-weight: 600; background: var(--hl); }
+    tr:last-child td { border-bottom: none; }
+    .pass { color: var(--pass); font-weight: 700; }
+    .fail { color: var(--fail); font-weight: 700; }
+    .hl-col {
+      background: rgba(56, 189, 248, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.35);
+    }
+    code {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12.5px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px 6px;
+      color: #bae6fd;
+    }
+    .csv {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre;
+      overflow-x: auto;
+      background: #0b1220;
+      border-radius: 8px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+    }
+    .csv .key { color: #38bdf8; }
+    .note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pill.ok { background: rgba(22,163,74,.15); color: var(--pass); }
+    .pill.bad { background: rgba(220,38,38,.15); color: var(--fail); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Post-hoc filter field (plan mockup)</h1>
+    <p class="sub">
+      Participants always continue into the experiment. After export, reviewers filter on
+      <code>attention_check_passed</code> (1 = exact correct set selected; 0 = any mismatch).
+      Raw selections are kept in <code>attention_check_selected</code> for audit.
+    </p>
+
+    <div class="panel">
+      <div class="panel-h">Participant-level review table (one row per prolific_id)</div>
+      <div class="panel-b" style="padding:0;">
+        <table>
+          <thead>
+            <tr>
+              <th>prolific_id</th>
+              <th>party_group</th>
+              <th class="hl-col">attention_check_passed</th>
+              <th>attention_check_selected</th>
+              <th>review</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>5f2a…c91</td>
+              <td>democrat</td>
+              <td class="hl-col pass">1</td>
+              <td>Q3|Q4|Q5|Q6</td>
+              <td><span class="pill ok">keep</span></td>
+            </tr>
+            <tr>
+              <td>61bb…0e2</td>
+              <td>republican</td>
+              <td class="hl-col fail">0</td>
+              <td>Q1|Q3|Q6</td>
+              <td><span class="pill bad">filter out</span></td>
+            </tr>
+            <tr>
+              <td>manual-test-1</td>
+              <td>democrat</td>
+              <td class="hl-col pass">1</td>
+              <td>Q3|Q4|Q5|Q6</td>
+              <td><span class="pill ok">keep</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">How it appears in the saved jsPsych CSV (columnsToKeep)</div>
+      <div class="panel-b">
+        <div class="csv">trial_type,trial_index,...,prolific_id,party_group,<span class="key">attention_check_passed</span>,<span class="key">attention_check_selected</span>,condition,...
+survey-html-form,2,...,5f2a…c91,democrat,<span class="key">1</span>,Q3|Q4|Q5|Q6,training_assisted,...
+moderation-trial,12,...,5f2a…c91,democrat,<span class="key">1</span>,Q3|Q4|Q5|Q6,training_assisted,...</div>
+        <p class="note">
+          Both fields are written with <code>jsPsych.data.addProperties</code> so they repeat on every trial row,
+          matching how <code>party_group</code> already works. Filter with
+          <code>df[df.attention_check_passed == 1]</code> after <code>scripts/export_study_results.py</code>.
+        </p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
