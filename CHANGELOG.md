@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-08
+
+1. Added a shared Study Phase 2 Part 2 keep/remove dataset of posts with at least three linked-fate ratings and unanimous agreement (1644 posts), loadable by registry name for high-agreement modeling. [PR #53](https://github.com/METResearchGroup/mirrorView-task/pull/53)
+
 ## 2026-08-07
 
 1. Added a pre-study political-expression attention check to the MirrorView webapp (select-all comprehension). Participants always continue; `attention_check_passed` / `attention_check_selected` are saved on every CSV row for post-hoc filtering. [PR #52](https://github.com/METResearchGroup/mirrorView-task/pull/52)
