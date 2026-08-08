@@ -13,7 +13,8 @@ Materialized CSVs derived from the raw Part 2 results.
 | --- | --- |
 | `transform.py` | Keep/remove modal labels only, written to `keep_remove_labels.csv` |
 | `transform_get_user_reflection_feedback.py` | Per-user Phase 1 reflection feedback, written to `user_reflection_feedback.csv` |
-| `main.py` | Runs both transforms. Prefer this when regenerating everything. |
+| `transform_keep_remove_labels_unanimous_min3.py` | Unanimous min-3 keep/remove labels, written to `keep_remove_labels_unanimous_min3.csv` |
+| `main.py` | Runs all three transforms. Prefer this when regenerating everything. |
 
 ## Transforms
 
@@ -51,15 +52,32 @@ Per-participant Phase 1 reflection survey answers after linked-fate keep/remove 
 - Columns: `participant_id`, `prolific_id`, `phase1_pair_reflection_text`, `phase1_pair_influence_rating`
 - Expected size: about 1177 rows (one per participant with usable reflection text)
 
+### Unanimous min-3 keep/remove labels (`transform_keep_remove_labels_unanimous_min3.py`)
+
+High-agreement subset derived from results-full (not a filter of the modal labels CSV).
+
+1. Apply the same linked-fate keep/remove slim-trial filter as modal labels (steps 1–4 above).
+2. Aggregate per `post_id`: `n_raters`, unique decisions, keep/remove counts.
+3. Keep posts where `n_raters >= 3` and all raters share the same decision (unanimous).
+4. Set `decision` to that shared label; set `keep_remove_label` to `1` for remove and `0` for keep.
+5. Expose `message_id` as an alias of `post_id` and include `n_raters`.
+
+**Output**
+
+- File: `keep_remove_labels_unanimous_min3.csv`
+- Registry: `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3`
+- Columns: `message_id`, `original_text`, `mirror_text`, `decision`, `keep_remove_label`, `n_raters`
+- Expected size: about 1644 rows (about 1490 keep / 154 remove)
+
 ## Regenerate
 
-Both artifacts (recommended):
+All three artifacts (recommended):
 
 ```bash
 PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2/main.py
 ```
 
-Keep/remove only:
+Keep/remove modal labels only:
 
 ```bash
 PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2/transform.py
@@ -69,4 +87,10 @@ User reflection feedback only:
 
 ```bash
 PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2/transform_get_user_reflection_feedback.py
+```
+
+Unanimous min-3 keep/remove labels only:
+
+```bash
+PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2/transform_keep_remove_labels_unanimous_min3.py
 ```
