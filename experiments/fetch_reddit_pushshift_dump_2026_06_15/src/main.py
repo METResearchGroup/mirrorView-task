@@ -1,4 +1,4 @@
-"""Orchestrate Pushshift .zst files until stop threshold or file cap."""
+"""Orchestrate file-by-file scoring across staged Pushshift inputs."""
 
 from __future__ import annotations
 
@@ -6,19 +6,19 @@ from pathlib import Path
 
 import typer
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.api_budget import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.api_budget import (
     api_calls_used,
     budget_exhausted,
     reset_session_budget,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import (
     GLOBAL_STOP_COUNT,
     MAX_FILES_TO_PROCESS,
     MAX_SESSION_API_CALLS,
     RAW_DATA_DIR,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.runner import process_input_file
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.writer import load_total_metadata
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.runner import process_input_file
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.writer import load_total_metadata
 
 app = typer.Typer(add_completion=False)
 
@@ -26,6 +26,19 @@ IGNORED_INPUT_STEMS = frozenset({"RC_smoke_fixture"})
 
 
 def discover_input_files(prefixes: tuple[str, ...] | None = None) -> list[Path]:
+    """Discover staged comment archives eligible for orchestration.
+
+    Parameters
+    ----------
+    prefixes : tuple of str or None, optional
+        Filename stem prefixes to include, such as ``("RC_2025",)``.
+
+    Returns
+    -------
+    list of pathlib.Path
+        Sorted candidate input files under the configured raw-data tree.
+    """
+
     files = [
         path
         for path in RAW_DATA_DIR.glob("**/RC_*.zst")
@@ -37,6 +50,8 @@ def discover_input_files(prefixes: tuple[str, ...] | None = None) -> list[Path]:
 
 
 def resolve_max_files(max_files: int | None) -> int | None:
+    """Normalize the CLI file cap, treating ``0`` as unlimited."""
+
     if max_files == 0:
         return None
     if max_files is not None:
@@ -57,6 +72,18 @@ def main(
         help="Comma-separated filename stem prefixes to include (e.g. RC_2005,RC_2006).",
     ),
 ) -> None:
+    """Score staged input files until a stop condition or file cap is reached.
+
+    Parameters
+    ----------
+    max_files : int or None, optional
+        Maximum number of files to attempt in discovery order. ``0`` disables
+        the cap.
+    stem_prefix : str or None, optional
+        Comma-separated list of filename stem prefixes used to restrict the
+        candidate file set.
+    """
+
     reset_session_budget()
     cap = resolve_max_files(max_files)
     prefixes = tuple(p.strip() for p in stem_prefix.split(",") if p.strip()) if stem_prefix else None

@@ -1,15 +1,10 @@
-"""Download, extract, stage, and inventory Bolun's Reddit Pushshift package.
+"""Prepare Bolun's packaged Reddit dump for this experiment's scorer.
 
-Bolun's package is a single tar.zst (~16GB) containing pre-filtered Parquet and
-raw Pushshift JSONL.zst files for six political subreddits. The toxicity pipeline
-consumes comment JSONL files (RC_*.zst); this script stages them under
-data/raw/bolun/comments/ for main.py discovery.
+Run from the repo root:
 
-Example:
-
-PYTHONPATH=. uv run python \\
-  experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/prepare_bolun_package.py \\
-  --download --extract --stage --inventory
+    PYTHONPATH=. uv run python \\
+      experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/prepare_bolun_package.py \\
+      --download --extract --stage --inventory
 """
 
 from __future__ import annotations
@@ -25,13 +20,13 @@ import typer
 import zstandard as zstd
 from tabulate import tabulate
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.bolun_ingest import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.bolun_ingest import (
     InventoryRow,
     infer_kind,
     infer_month,
 )
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import (
     BOLUN_DATA_DIR,
     BOLUN_DRIVE_FILE_ID,
     BOLUN_EXTRACTED_DIR,
@@ -77,6 +72,8 @@ def _count_rows(path: Path, kind: str) -> int | None:
 
 
 def download_tarball(*, force: bool = False) -> Path:
+    """Download the packaged Bolun archive unless a local copy already exists."""
+
     _ensure_dirs()
     if BOLUN_TARBALL.is_file() and not force:
         print(f"Tarball already exists: {BOLUN_TARBALL}")
@@ -99,6 +96,8 @@ def download_tarball(*, force: bool = False) -> Path:
 
 
 def extract_tarball(tarball: Path, *, force: bool = False) -> Path:
+    """Extract the Bolun tarball into the experiment's data directory."""
+
     _ensure_dirs()
     if EXTRACT_MARKER.is_file() and not force:
         print(f"Extract already complete: {BOLUN_EXTRACTED_DIR}")
@@ -137,6 +136,8 @@ def build_inventory(
     count_rows: bool = True,
     use_cache: bool = True,
 ) -> list[InventoryRow]:
+    """Build or reuse a file inventory for the extracted Bolun package."""
+
     if use_cache and BOLUN_INVENTORY_PATH.is_file():
         cached = json.loads(BOLUN_INVENTORY_PATH.read_text())
         return [InventoryRow(**row) for row in cached]
@@ -170,6 +171,8 @@ def build_inventory(
 
 
 def print_inventory_table(rows: list[InventoryRow]) -> None:
+    """Print a compact summary table for the discovered extracted files."""
+
     table_rows = [
         [
             row.kind,
@@ -200,6 +203,8 @@ def print_inventory_table(rows: list[InventoryRow]) -> None:
 
 
 def stage_comment_zst_files(root: Path, *, force: bool = False) -> list[Path]:
+    """Symlink comment archives into the raw-data staging directory."""
+
     BOLUN_STAGED_DIR.mkdir(parents=True, exist_ok=True)
     staged: list[Path] = []
     for src in sorted(root.glob("**/RC_*.zst")):
@@ -247,7 +252,7 @@ def main(
         help="Equivalent to --download --extract --stage --inventory.",
     ),
 ) -> None:
-    """Prepare Bolun's pre-filtered Reddit package for the toxicity pipeline."""
+    """Prepare downloaded data so the scorer can discover staged comment files."""
 
     if all_steps:
         download = extract = stage = inventory = True
