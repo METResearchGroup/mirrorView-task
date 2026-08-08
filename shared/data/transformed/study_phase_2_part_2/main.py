@@ -1,6 +1,7 @@
 """Regenerate all Study Phase 2 Part 2 transformed artifacts.
 
-Runs keep/remove labels and user reflection feedback transforms.
+Runs keep/remove modal labels, user reflection feedback, and unanimous
+min-3 keep/remove labels transforms.
 
 Run from repo root::
 
@@ -17,6 +18,10 @@ from shared.data.transformed.study_phase_2_part_2.transform_get_user_reflection_
     USER_REFLECTION_FEEDBACK_CSV,
     write_user_reflection_feedback,
 )
+from shared.data.transformed.study_phase_2_part_2.transform_keep_remove_labels_unanimous_min3 import (
+    OUTPUT_CSV as UNANIMOUS_MIN3_CSV,
+    write_keep_remove_labels_unanimous_min3,
+)
 
 
 def main() -> None:
@@ -30,6 +35,12 @@ def main() -> None:
     print(f"Wrote {USER_REFLECTION_FEEDBACK_CSV}")
     print(f"rows={len(reflections)}")
     print(f"columns={list(reflections.columns)}")
+
+    unanimous = write_keep_remove_labels_unanimous_min3()
+    print(f"Wrote {UNANIMOUS_MIN3_CSV}")
+    print(f"rows={len(unanimous)}")
+    print(unanimous["decision"].value_counts().to_dict())
+    print(f"columns={list(unanimous.columns)}")
 
 
 if __name__ == "__main__":
