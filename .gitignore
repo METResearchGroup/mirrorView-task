@@ -14,6 +14,11 @@ test_data/*.csv
 !experiments/llm_prompt_engineering_2026_08_05/subset_labels.csv
 !experiments/llm_prompt_engineering_v2_2026_08_05/subset_labels.csv
 
+# Unanimous vs majority labels experiment outputs (otherwise blocked by *.csv).
+!experiments/unanimous_vs_majority_labels_2026_08_08/outputs/
+!experiments/unanimous_vs_majority_labels_2026_08_08/outputs/**
+!experiments/unanimous_vs_majority_labels_2026_08_08/outputs/**/*.csv
+
 # OS generated files
 .DS_Store
 .DS_Store?

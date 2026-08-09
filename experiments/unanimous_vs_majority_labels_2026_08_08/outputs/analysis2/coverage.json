@@ -1,0 +1,11 @@
+{
+  "cohort_n": 3718,
+  "reused_n": 232,
+  "generated_n": 3486,
+  "missing_after_run_n": 0,
+  "prior_runs_used": [
+    "experiments/create_llm_features_2026_08_05/outputs/generated_features/keep/outputs/2026_08_05-13:25:42.972422",
+    "experiments/create_llm_features_2026_08_05/outputs/generated_features/remove/outputs/2026_08_05-13:33:08.325895"
+  ],
+  "merged_feature_rows": 12911
+}
