@@ -118,9 +118,13 @@ def format_metric(value: float) -> str:
     return f"{value:.4f}"
 
 
+DEFAULT_DATA_DESCRIPTION = "unanimous min-3 balanced n=308; seed=1; 80/20"
+
+
 def render_results_markdown(
     train_metrics: dict[str, dict[str, float]],
     test_metrics: dict[str, dict[str, float]],
+    data_description: str = DEFAULT_DATA_DESCRIPTION,
 ) -> str:
     """Render RESULTS.md with train and test comparison tables."""
 
@@ -147,7 +151,7 @@ def render_results_markdown(
             "# Qwen3-4B LoRA fine-tune keep/remove results",
             "",
             f"- Model: `{MODEL_ID}`",
-            "- Data: unanimous min-3 balanced n=308; seed=1; 80/20",
+            f"- Data: {data_description}",
             "- Positive class: remove",
             "- Exploratory teachability run (no numeric success bar)",
             "",
