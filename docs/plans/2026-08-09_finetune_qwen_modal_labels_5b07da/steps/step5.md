@@ -25,14 +25,14 @@ terraform plan
 | Path | Why |
 |------|-----|
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/infra/main.tf` | Current role, S3 prefix condition, ECR repo allow-list, PassRole user policy |
-| `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/launch_sagemaker.py` | Expected ECR/S3 names from Step 4 |
+| `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/launch_sagemaker.py` | Expected ECR/S3 names from Step 4 |
 | `/workspace/AGENTS.md` | Cloud Agent AWS credential notes |
 
 ## Files allowed to change
 
 - `/workspace/experiments/finetune_qwen_model_2026_08_08/infra/main.tf` (preferred: add second prefix + ECR to allow-lists; keep existing unanimous prefix working)
-- **or** `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/infra/main.tf` (create) that attaches additional inline policy to the existing role `mirrorview-qwen-finetune-sm-exec` — must not create a second competing PassRole user policy name that fights the first
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/README.md` (IAM/apply notes)
+- **or** `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/infra/main.tf` (create) that attaches additional inline policy to the existing role `mirrorview-qwen-finetune-sm-exec` — must not create a second competing PassRole user policy name that fights the first
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/README.md` (IAM/apply notes)
 - `/workspace/CHANGELOG.md` (brief note)
 
 ## Files forbidden to change
@@ -49,8 +49,8 @@ terraform plan
 |----------|-------|
 | Execution role name | `mirrorview-qwen-finetune-sm-exec` (reuse) |
 | S3 bucket | `mirrorview-experimental-artifacts` |
-| S3 prefixes | **both** `mirrorview-finetune_qwen_model_2026_08_08` and `mirrorview-finetune_qwen_model_modal_labels_2026_08_09` |
-| ECR repos | **both** `mirrorview-finetune_qwen_model_2026_08_08` and `mirrorview-finetune_qwen_model_modal_labels_2026_08_09` |
+| S3 prefixes | **both** `mirrorview-finetune_qwen_model_2026_08_08` and `mirrorview-larger_finetune_qwen_model_2026_08_08` |
+| ECR repos | **both** `mirrorview-finetune_qwen_model_2026_08_08` and `mirrorview-larger_finetune_qwen_model_2026_08_08` |
 | Launcher user | `mark_iam_credentials` PassRole to the same execution role (already present; do not break it) |
 
 ### Security

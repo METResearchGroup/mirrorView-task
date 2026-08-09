@@ -8,7 +8,7 @@
 
 ## Overview
 
-Stand up `experiments/finetune_qwen_model_modal_labels_2026_08_09/` as a **near-clone** of the completed unanimous-min3 teachability run (`experiments/finetune_qwen_model_2026_08_08/`, PR #54), but train on the **modal** Study Phase 2 Part 2 keep/remove set (`STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS` → `shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv`). Keep the same model, LoRA recipe, prompt, split math (1:1 keep/remove, 80/20, `seed=1`), SageMaker custom-image path, and baseline-vs-adapter comparison. Prefer **imports from the prior experiment** over copying code; new files should be thin path/registry/S3 wrappers.
+Stand up `experiments/larger_finetune_qwen_model_2026_08_08/` as a **near-clone** of the completed unanimous-min3 teachability run (`experiments/finetune_qwen_model_2026_08_08/`, PR #54), but train on the **modal** Study Phase 2 Part 2 keep/remove set (`STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS` → `shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv`). Keep the same model, LoRA recipe, prompt, split math (1:1 keep/remove, 80/20, `seed=1`), SageMaker custom-image path, and baseline-vs-adapter comparison. Prefer **imports from the prior experiment** over copying code; new files should be thin path/registry/S3 wrappers.
 
 **Out of scope:** changing the prior experiment’s scientific results or frozen unanimous data; QLoRA or hyperparam sweeps; prompt ablations; editing the shared modal-label transform; local GPU train as the acceptance path.
 

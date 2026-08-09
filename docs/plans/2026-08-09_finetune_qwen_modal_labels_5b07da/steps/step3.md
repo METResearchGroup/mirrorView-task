@@ -2,7 +2,7 @@
 
 ## Goal
 
-Provide `train.py`, `inference.py`, and `evaluate.py` under `experiments/finetune_qwen_model_modal_labels_2026_08_09/` that expose the **same CLIs and scientific behavior** as the prior experiment, with defaults pointed at the new experiment paths and W&B project name. Prefer calling into `experiments.finetune_qwen_model_2026_08_08` rather than copying TRL/PEFT/generation/metric code.
+Provide `train.py`, `inference.py`, and `evaluate.py` under `experiments/larger_finetune_qwen_model_2026_08_08/` that expose the **same CLIs and scientific behavior** as the prior experiment, with defaults pointed at the new experiment paths and W&B project name. Prefer calling into `experiments.finetune_qwen_model_2026_08_08` rather than copying TRL/PEFT/generation/metric code.
 
 Do **not** require a full local GPU train for acceptance; dry-run / import / config tests are enough. Remote train is Step 6.
 
@@ -12,24 +12,24 @@ Do **not** require a full local GPU train for acceptance; dry-run / import / con
 
 ```bash
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
-  experiments/finetune_qwen_model_modal_labels_2026_08_09/train.py \
-  --train-jsonl experiments/finetune_qwen_model_modal_labels_2026_08_09/data/chat_train.jsonl \
+  experiments/larger_finetune_qwen_model_2026_08_08/train.py \
+  --train-jsonl experiments/larger_finetune_qwen_model_2026_08_08/data/chat_train.jsonl \
   --output-dir /tmp/qwen_lora_modal_dry \
   --dry-run
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
-  experiments/finetune_qwen_model_modal_labels_2026_08_09/inference.py \
-  --chat-jsonl experiments/finetune_qwen_model_modal_labels_2026_08_09/data/chat_test.jsonl \
+  experiments/larger_finetune_qwen_model_2026_08_08/inference.py \
+  --chat-jsonl experiments/larger_finetune_qwen_model_2026_08_08/data/chat_test.jsonl \
   --output-csv /tmp/modal_test_labels.csv \
   --mode baseline \
   --help
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
-  experiments/finetune_qwen_model_modal_labels_2026_08_09/evaluate.py \
+  experiments/larger_finetune_qwen_model_2026_08_08/evaluate.py \
   --help
 ```
 
-**Happy path (non-dry-run train — remote later):** identical to prior experiment: bf16 LoRA on `Qwen/Qwen3-4B-Instruct-2507`, assistant-only loss, frozen hyperparams, W&B project `mirrorview-finetune-qwen-modal-labels-2026-08-09`.
+**Happy path (non-dry-run train — remote later):** identical to prior experiment: bf16 LoRA on `Qwen/Qwen3-4B-Instruct-2507`, assistant-only loss, frozen hyperparams, W&B project `mirrorview-larger-finetune-qwen-2026-08-08`.
 
 **Out of scope:** Docker; SageMaker submit; regenerating data; changing LoRA rank / lr / epochs.
 
@@ -46,12 +46,12 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 ## Files allowed to change
 
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/train.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/inference.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/evaluate.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/src/` only for thin re-exports (e.g. `train_config.py` that imports prior hyperparams and overrides `WANDB_PROJECT`)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/tests/` (dry-run / import / metric wiring)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/README.md` (CLI docs)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/train.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/inference.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/evaluate.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/src/` only for thin re-exports (e.g. `train_config.py` that imports prior hyperparams and overrides `WANDB_PROJECT`)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/tests/` (dry-run / import / metric wiring)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/README.md` (CLI docs)
 - `/workspace/experiments/finetune_qwen_model_2026_08_08/train.py` / `inference.py` / `evaluate.py` / `src/train_config.py` **only** for minimal extractions that make identity-free helpers importable (prior CLI defaults and W&B project for the unanimous experiment must remain unchanged)
 
 ## Files forbidden to change
@@ -83,9 +83,9 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 | Item | Value |
 |------|-------|
-| Default data paths | under `experiments/finetune_qwen_model_modal_labels_2026_08_09/` |
-| W&B project | `mirrorview-finetune-qwen-modal-labels-2026-08-09` |
-| RESULTS path | `experiments/finetune_qwen_model_modal_labels_2026_08_09/RESULTS.md` |
+| Default data paths | under `experiments/larger_finetune_qwen_model_2026_08_08/` |
+| W&B project | `mirrorview-larger-finetune-qwen-2026-08-08` |
+| RESULTS path | `experiments/larger_finetune_qwen_model_2026_08_08/RESULTS.md` |
 
 ### DRY gate
 
@@ -102,13 +102,13 @@ If prior modules cannot be imported without executing unanimous-specific default
 cd /workspace
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
-  experiments/finetune_qwen_model_modal_labels_2026_08_09/train.py \
-  --train-jsonl experiments/finetune_qwen_model_modal_labels_2026_08_09/data/chat_train.jsonl \
+  experiments/larger_finetune_qwen_model_2026_08_08/train.py \
+  --train-jsonl experiments/larger_finetune_qwen_model_2026_08_08/data/chat_train.jsonl \
   --output-dir /tmp/qwen_lora_modal_dry \
   --dry-run
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 pytest \
-  experiments/finetune_qwen_model_modal_labels_2026_08_09/tests/ \
+  experiments/larger_finetune_qwen_model_2026_08_08/tests/ \
   -q
 
 # Prior experiment still imports cleanly

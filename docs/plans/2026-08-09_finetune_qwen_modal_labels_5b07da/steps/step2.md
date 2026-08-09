@@ -2,7 +2,7 @@
 
 ## Goal
 
-Materialize reproducible local training artifacts under `experiments/finetune_qwen_model_modal_labels_2026_08_09/data/` from the **modal** keep/remove registry, using the **same balance and split helpers** as the prior experiment. Build chat JSONL by importing the prior prompt/chat helpers (do not re-vendor rubric text).
+Materialize reproducible local training artifacts under `experiments/larger_finetune_qwen_model_2026_08_08/data/` from the **modal** keep/remove registry, using the **same balance and split helpers** as the prior experiment. Build chat JSONL by importing the prior prompt/chat helpers (do not re-vendor rubric text).
 
 Do **not** train or call SageMaker.
 
@@ -11,8 +11,8 @@ Do **not** train or call SageMaker.
 **Main caller:** CLI that builds splits then chat files.
 
 ```bash
-PYTHONPATH=. uv run python experiments/finetune_qwen_model_modal_labels_2026_08_09/src/build_splits.py --force
-PYTHONPATH=. uv run python experiments/finetune_qwen_model_modal_labels_2026_08_09/src/create_chat_dataset.py --force
+PYTHONPATH=. uv run python experiments/larger_finetune_qwen_model_2026_08_08/src/build_splits.py --force
+PYTHONPATH=. uv run python experiments/larger_finetune_qwen_model_2026_08_08/src/create_chat_dataset.py --force
 ```
 
 **Happy path:**
@@ -38,14 +38,14 @@ PYTHONPATH=. uv run python experiments/finetune_qwen_model_modal_labels_2026_08_
 
 ## Files allowed to change
 
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/src/build_splits.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/src/create_chat_dataset.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/data/train.csv` (generated)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/data/test.csv` (generated)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/data/chat_train.jsonl` (generated)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/data/chat_test.jsonl` (generated)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/README.md` (commands only, if needed)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/tests/` (optional: assert registry + import wiring + counts)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/src/build_splits.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/src/create_chat_dataset.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/data/train.csv` (generated)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/data/test.csv` (generated)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/data/chat_train.jsonl` (generated)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/data/chat_test.jsonl` (generated)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/README.md` (commands only, if needed)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/tests/` (optional: assert registry + import wiring + counts)
 - `/workspace/experiments/finetune_qwen_model_2026_08_08/src/build_splits.py` **only if** a pure helper must be extracted to accept an already-loaded frame / output dir without hardcoding the unanimous registry — keep the prior CLI behavior identical
 
 ## Files forbidden to change
@@ -92,15 +92,15 @@ Same as prior experiment:
 
 ### DRY gate
 
-`rg -n "Allow Or Remove|You are a content moderation" experiments/finetune_qwen_model_modal_labels_2026_08_09` must find **no** rubric body (only possible references in README pointing at the prior package).
+`rg -n "Allow Or Remove|You are a content moderation" experiments/larger_finetune_qwen_model_2026_08_08` must find **no** rubric body (only possible references in README pointing at the prior package).
 
 ## Exact commands
 
 ```bash
 cd /workspace
 
-PYTHONPATH=. uv run python experiments/finetune_qwen_model_modal_labels_2026_08_09/src/build_splits.py --force
-PYTHONPATH=. uv run python experiments/finetune_qwen_model_modal_labels_2026_08_09/src/create_chat_dataset.py --force
+PYTHONPATH=. uv run python experiments/larger_finetune_qwen_model_2026_08_08/src/build_splits.py --force
+PYTHONPATH=. uv run python experiments/larger_finetune_qwen_model_2026_08_08/src/create_chat_dataset.py --force
 
 PYTHONPATH=. uv run python -c "
 import json
@@ -118,7 +118,7 @@ expected_train = 2 * n_train_per
 expected_test = 2 * n_test_per
 expected_total = 2 * n_remove
 
-root = Path('experiments/finetune_qwen_model_modal_labels_2026_08_09/data')
+root = Path('experiments/larger_finetune_qwen_model_2026_08_08/data')
 train = pd.read_csv(root / 'train.csv')
 test = pd.read_csv(root / 'test.csv')
 assert len(train) + len(test) == expected_total, (len(train), len(test), expected_total)
@@ -143,11 +143,11 @@ print('step2 data OK', expected_total, expected_train, expected_test)
 "
 
 # Reproducibility
-PYTHONPATH=. uv run python experiments/finetune_qwen_model_modal_labels_2026_08_09/src/build_splits.py --force
+PYTHONPATH=. uv run python experiments/larger_finetune_qwen_model_2026_08_08/src/build_splits.py --force
 PYTHONPATH=. uv run python -c "
 import pandas as pd
 from pathlib import Path
-root = Path('experiments/finetune_qwen_model_modal_labels_2026_08_09/data')
+root = Path('experiments/larger_finetune_qwen_model_2026_08_08/data')
 # second freeze must match first; compare against files just rewritten is tautological —
 # instead assert seed path: rebuild twice in-process via importing balance helpers.
 from experiments.finetune_qwen_model_2026_08_08.src.build_splits import (

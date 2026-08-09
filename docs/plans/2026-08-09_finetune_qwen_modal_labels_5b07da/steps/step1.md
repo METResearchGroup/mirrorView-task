@@ -2,7 +2,7 @@
 
 ## Goal
 
-Create `experiments/finetune_qwen_model_modal_labels_2026_08_09/` with a design-frozen README and a thin package tree whose modules **import** from `experiments.finetune_qwen_model_2026_08_08` rather than copying implementations. Reuse the existing optional-deps group `finetune-qwen-2026-08-08` (do not add a duplicate extra unless a hard packaging conflict appears).
+Create `experiments/larger_finetune_qwen_model_2026_08_08/` with a design-frozen README and a thin package tree whose modules **import** from `experiments.finetune_qwen_model_2026_08_08` rather than copying implementations. Reuse the existing optional-deps group `finetune-qwen-2026-08-08` (do not add a duplicate extra unless a hard packaging conflict appears).
 
 Do **not** freeze data, train, build Docker, or submit SageMaker jobs in this step.
 
@@ -31,18 +31,18 @@ Do **not** freeze data, train, build Docker, or submit SageMaker jobs in this st
 
 ## Files allowed to change
 
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/README.md` (create)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/IMPLEMENTATION_DETAILS.md` (optional one-line pointer to README / prior experiment)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/__init__.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/src/__init__.py`
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/src/build_splits.py` (stub/wrapper shell only)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/src/create_chat_dataset.py` (stub/wrapper shell only)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/train.py` (stub/wrapper shell only)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/inference.py` (stub/wrapper shell only)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/evaluate.py` (stub/wrapper shell only)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/launch_sagemaker.py` (stub/wrapper shell only)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/Dockerfile` (placeholder OK; real image in Step 4)
-- `/workspace/experiments/finetune_qwen_model_modal_labels_2026_08_09/entrypoint.sh` (placeholder OK)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/README.md` (create)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/IMPLEMENTATION_DETAILS.md` (optional one-line pointer to README / prior experiment)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/__init__.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/src/__init__.py`
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/src/build_splits.py` (stub/wrapper shell only)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/src/create_chat_dataset.py` (stub/wrapper shell only)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/train.py` (stub/wrapper shell only)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/inference.py` (stub/wrapper shell only)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/evaluate.py` (stub/wrapper shell only)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/launch_sagemaker.py` (stub/wrapper shell only)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/Dockerfile` (placeholder OK; real image in Step 4)
+- `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/entrypoint.sh` (placeholder OK)
 - `/workspace/CHANGELOG.md` (one bullet noting the new experiment plan/scaffold if the repo convention requires it for this PR slice)
 
 ## Files forbidden to change
@@ -72,9 +72,9 @@ Do **not** freeze data, train, build Docker, or submit SageMaker jobs in this st
 | LoRA | `r=16`, `alpha=32`, `dropout=0.05`, attn+MLP targets |
 | Hyperparams | 3 epochs; lr `2e-4`; cosine + 3–5% warmup; batch 1 × grad accum 8; `max_seq_length=2048`; seed `1` |
 | SageMaker | Custom Docker; modes `train` / `infer_baseline` / `infer_adapter`; `ml.g5.xlarge`; `us-east-2` |
-| ECR | `mirrorview-finetune_qwen_model_modal_labels_2026_08_09` |
-| S3 | bucket `mirrorview-experimental-artifacts`; prefix `mirrorview-finetune_qwen_model_modal_labels_2026_08_09/` with `data/`, `adapters/<run_id>/`, `preds/{baseline,fine_tuned}/` |
-| W&B | project `mirrorview-finetune-qwen-modal-labels-2026-08-09` |
+| ECR | `mirrorview-larger_finetune_qwen_model_2026_08_08` |
+| S3 | bucket `mirrorview-experimental-artifacts`; prefix `mirrorview-larger_finetune_qwen_model_2026_08_08/` with `data/`, `adapters/<run_id>/`, `preds/{baseline,fine_tuned}/` |
+| W&B | project `mirrorview-larger-finetune-qwen-2026-08-08` |
 | Env | `HF_TOKEN` (required remote), `WANDB_API_KEY` via `EnvVarsContainer`, `SAGEMAKER_ROLE_ARN` for launch |
 | Metrics | Local `evaluate.py` → `RESULTS.md`; positive class = remove |
 | Deps install | `uv sync --extra finetune-qwen-2026-08-08` |
@@ -99,7 +99,7 @@ uv sync --extra finetune-qwen-2026-08-08
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python -c "
 from pathlib import Path
-root = Path('experiments/finetune_qwen_model_modal_labels_2026_08_09')
+root = Path('experiments/larger_finetune_qwen_model_2026_08_08')
 required = [
     root / 'README.md',
     root / 'train.py',
@@ -115,7 +115,7 @@ text = (root / 'README.md').read_text(encoding='utf-8')
 assert 'STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS' in text
 assert 'UNANIMOUS_MIN3' not in text
 assert 'chat_train.jsonl' in text and 'chat_test.jsonl' in text
-assert 'mirrorview-finetune_qwen_model_modal_labels_2026_08_09' in text
+assert 'mirrorview-larger_finetune_qwen_model_2026_08_08' in text
 assert 'Qwen/Qwen3-4B-Instruct-2507' in text
 assert 'finetune-qwen-2026-08-08' in text
 assert 'finetune_qwen_model_2026_08_08' in text  # prior import / reference
