@@ -2,8 +2,10 @@
 
 ## 2026-08-09
 
-1. Shipped a descriptive analysis that splits linked-fate keep and remove labels into unanimous and majority cells (ties dropped), with surface metrics, Stage 1 word clouds, and stance tables by toxicity stratum. Unanimous cells sit at clearer extremes, and heavy remove aligns more with high toxicity than with left or right stance. [PR #56](https://github.com/METResearchGroup/mirrorView-task/pull/56)
+1. Completed the Qwen3-4B LoRA keep/remove teachability run on SageMaker (`ml.g5.xlarge`): balanced unanimous-min3 chat data, TRL/PEFT train + baseline/adapter infer, and local `RESULTS.md` (test remove-F1 0.74 → 0.97). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)
 2. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
+3. Completed the larger modal-label Qwen3-4B LoRA teachability run (1 epoch on SageMaker `ml.g5.xlarge`): balanced Study Phase 2 Part 2 modal keep/remove data, thin wrappers over the unanimous recipe, and local `RESULTS.md` (test accuracy 0.64 → 0.70; remove-F1 0.72 → 0.70). [PR #57](https://github.com/METResearchGroup/mirrorView-task/pull/57)
+4. Shipped a descriptive analysis that splits linked-fate keep and remove labels into unanimous and majority cells (ties dropped), with surface metrics, Stage 1 word clouds, and stance tables by toxicity stratum. Unanimous cells sit at clearer extremes, and heavy remove aligns more with high toxicity than with left or right stance. [PR #56](https://github.com/METResearchGroup/mirrorView-task/pull/56)
 
 ## 2026-08-08
 
