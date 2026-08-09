@@ -49,7 +49,7 @@ The outputs are `outputs/analysis1/per_post_features.csv` and `outputs/analysis1
 
 Analysis 2 uses Stage 1 language model features only. It does not run embed, cluster, or label stages.
 
-Every four-cell post needs a Stage 1 feature set. When a `message_id` already has Stage 1 rows under `experiments/create_llm_features_2026_08_05/`, those rows are reused. Missing ids are generated with the dual text prompt that includes original and mirror text, so new rows stay comparable to reused rows. New files are written only under this experiment, and the older experiment outputs tree is not changed.
+Every post in the four cells needs a Stage 1 feature set. When a `message_id` already has Stage 1 rows under `experiments/create_llm_features_2026_08_05/`, those rows are reused. Missing ids are generated with the dual text prompt that includes original and mirror text, so new rows stay comparable to reused rows. New files are written only under this experiment, and the older experiment outputs tree is not changed.
 
 Token counting for the word clouds follows these steps:
 

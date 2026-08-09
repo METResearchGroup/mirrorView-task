@@ -2,7 +2,7 @@
 
 ## 2026-08-09
 
-1. Shipped a four-cell descriptive analysis of unanimous versus majority keep/remove labels on linked-fate posts (ties dropped), with surface metrics, Stage 1 word clouds, and stance-by-toxicity tables showing unanimous cells at clearer extremes and heavy remove aligning more with high toxicity than left/right stance. [PR #56](https://github.com/METResearchGroup/mirrorView-task/pull/56)
+1. Shipped a descriptive analysis that splits linked-fate keep and remove labels into unanimous and majority cells (ties dropped), with surface metrics, Stage 1 word clouds, and stance tables by toxicity stratum. Unanimous cells sit at clearer extremes, and heavy remove aligns more with high toxicity than with left or right stance. [PR #56](https://github.com/METResearchGroup/mirrorView-task/pull/56)
 2. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
 
 ## 2026-08-08
