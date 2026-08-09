@@ -1,0 +1,167 @@
+{
+  "batch_index": 0,
+  "feature_ids": [
+    "0_0",
+    "0_4",
+    "0_5",
+    "1_0",
+    "1_3",
+    "1_4",
+    "1_5",
+    "1_6",
+    "2_0",
+    "2_1",
+    "2_3",
+    "2_4",
+    "2_5",
+    "2_7",
+    "3_1",
+    "3_2",
+    "3_3",
+    "3_4",
+    "3_5",
+    "3_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "0_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They would block specifically due to emotional invectives/tone rather than substantive content change.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_4",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They set keep/remove boundaries based on harsh, non-civil language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "They consider discourse-impact/maturity effects as a threshold for removal, tied to emotional tone.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Targeted hateful name-calling is named as the main deciding removal criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "They use a context-neutral threat-targeting criterion, allowing more when threats are absent.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "They mitigate offensiveness by reframing content as adult political news.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Anger/desire to join is affective but does not clearly state a keep/remove boundary.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicit partisan slurs/insults are treated as relevant content cues.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They keep all based on absence of hate speech, using a harm/toxicity threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision relies on vulgarity/misinformation rather than the specified harm/toxicity vs free speech threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Removal is tied to preventing uncivil/non-serious discourse, which functions as a language/toxicity boundary.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_4",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Stated bias avoidance and handling of attacks is more about process than a clear free-speech harm threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uncertainty about balancing free speech with misinformation/fake news doesn't match the harm/threat boundary theme cleanly.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They look for intolerance and group-targeted foul-mouthed insults as the harmful language to remove.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They primarily allow unless there is real threatening/violence, a harm threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Rudeness without a point does not override keeping due to a free-speech line-drawing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_3",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "They explicitly downweight expletives and focus on hateful/threatening language as the threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "They prioritize language cues over political content, not harm vs free-speech thresholds per the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_5",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Keeping because others' thoughts deserve to be heard is not explicitly a harm/toxicity threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Random/no meaningful criterion does not fit harm thresholds or pair-comparison influence.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

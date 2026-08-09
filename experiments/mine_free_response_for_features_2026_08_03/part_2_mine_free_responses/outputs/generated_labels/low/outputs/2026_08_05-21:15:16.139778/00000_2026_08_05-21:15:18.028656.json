@@ -1,0 +1,21 @@
+{
+  "cluster_id": 0,
+  "likert_group": "low",
+  "n_members": 81,
+  "sampled_feature_ids": [
+    "24_3",
+    "18_1",
+    "20_3",
+    "16_1",
+    "23_4",
+    "11_0",
+    "1_2",
+    "18_4"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Harm/toxicity thresholds within free speech",
+    "definition": "Participants set keep/remove boundaries based on specific harm, threats, violence, or dehumanizing/toxic language while treating ordinary strong opinions as permissible free speech.",
+    "salience_notes": "The shared decision logic is permissive toward disagreement, with removal triggered only by clear toxicity/dehumanization or concrete safety-related harms (threats/violence/incitement) or highly offensive/inflammatory personal language."
+  }
+}

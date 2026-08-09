@@ -1,0 +1,167 @@
+{
+  "batch_index": 11,
+  "feature_ids": [
+    "33_3",
+    "33_4",
+    "33_5",
+    "33_6",
+    "33_7",
+    "34_0",
+    "34_1",
+    "34_2",
+    "34_3",
+    "34_4",
+    "34_5",
+    "34_6",
+    "34_7",
+    "35_0",
+    "35_1",
+    "35_2",
+    "35_3",
+    "35_4",
+    "35_5",
+    "35_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "33_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Broad permissiveness with removal only for direct violence calls or harmful targeting.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Endorses broad dissent/foul language; removals tied to inciting violence (and conspiracy-like framing).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on pairing for relative aggressiveness/hurtfulness rather than threat/toxicity thresholds in the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Centers mirror-validity/disbelief and abusiveness asymmetry, which isn\u2019t directly captured by the provided themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "33_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses argument validity/accuracy as the main rule, not specifically mapped to toxicity/threat or free-speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes content deemed offensive/mean and low value\u2014fits the 'remove for threats and toxicity' concept.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Symmetric application: if one side is bad enough, treat both sides as bad.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Moderate/open-minded approach but immediately excludes anything hateful/offensive (toxicity removal).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Prioritizes factualness and willingness to converge; not clearly an explicit threat/toxicity exception rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses coherence/format heuristics (all-caps incoherence) rather than toxicity/threat/free-speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly removes based on whether posts are derogatory/offensive.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Even while valuing free speech, removes overly hostile/sensational/insulting content (toxicity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "34_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Platform-norm limitation about what social media is 'for' rather than specific moderation thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Non-factual emotional ranting treated as negative signal leading to removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_1",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit balancing between free speech and filtering dangerous language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision based on intent rather than the codebook\u2019s specific toxicity/threat or symmetry standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Severity-based influence magnitude; doesn\u2019t map cleanly to removal criteria themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Tone and insulting comments make posts unpublishable (toxicity/hostility).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Cursing and name-calling are disfavored; keeps disagreement but removes vulgar attacks.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "35_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rant vs genuine feelings as a rubric is not directly represented in the threat/toxicity/free-speech exception themes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

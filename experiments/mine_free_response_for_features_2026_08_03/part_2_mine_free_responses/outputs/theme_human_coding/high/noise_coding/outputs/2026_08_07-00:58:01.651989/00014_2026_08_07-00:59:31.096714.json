@@ -1,0 +1,167 @@
+{
+  "batch_index": 14,
+  "feature_ids": [
+    "42_2",
+    "42_3",
+    "42_4",
+    "42_5",
+    "42_6",
+    "42_7",
+    "43_1",
+    "43_2",
+    "43_3",
+    "43_4",
+    "43_5",
+    "43_6",
+    "44_0",
+    "44_2",
+    "44_3",
+    "44_4",
+    "44_5",
+    "44_7",
+    "45_0",
+    "45_2"
+  ],
+  "assignments": [
+    {
+      "feature_id": "42_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Uses incitement-to-violence as the removal threshold while permitting broader speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Disallows slurs/bad/off-putting content as toxic speech, consistent with removing toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects profanity/intense mockery while allowing respectful disagreement, aligning with removing toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on reasoning soundness and penalizing anger rather than threat/toxicity criteria in the codebook.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Relies on severity/tone and framing; fits removal for hostile/toxic/inflammatory language more than violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "42_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Affect and perceived truthfulness drive passing decisions; not clearly threat/toxicity or violence-specific.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "43_1",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes fair/respectful/constructive dialogue and avoiding division, closer to consistent equitable judging than violence/toxicity-only thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "43_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes mostly for vitriol/hostility and expects facts over hostile opinions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "43_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Treats profanity/vulgar language as an automatic disqualifier due to animosity/arguments (toxicity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "43_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Filters offensive language and directed targeting; primarily a toxicity/offensiveness removal rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "43_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Swearing alone is tolerated, but attacks on people are not\u2014matches removing threats/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "43_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses rationality vs name-calling to judge potential devolution; not directly captured by the provided themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "44_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Credits the mirror-pair with enforcing consistent attention to tone/substance across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "44_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Distinguishes true conversation from ad hominem attacks; aligns with removing toxic/hostile content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "44_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses profanity as a hard gating rule; aligns with removing toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "44_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Mentions baseline partisan inclination as affecting judgment; not a specific moderation threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "44_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly aims for neutral/equitable evaluation across the pair, applying the same standard to both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "44_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Concerns redundancy/needlessness of pairs, which is outside the toxicity/violence/equitable-standard themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Default allow with removal triggers for inciting violence or attacking a person/group.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses a general harm/harmlessness criterion, which is not explicitly mapped to the codebook's violence/toxicity themes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

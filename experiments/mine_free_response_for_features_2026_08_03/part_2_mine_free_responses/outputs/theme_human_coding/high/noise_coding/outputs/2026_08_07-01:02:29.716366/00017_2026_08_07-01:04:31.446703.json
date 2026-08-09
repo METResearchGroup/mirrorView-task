@@ -1,0 +1,167 @@
+{
+  "batch_index": 17,
+  "feature_ids": [
+    "52_0",
+    "52_1",
+    "52_3",
+    "52_4",
+    "52_5",
+    "52_6",
+    "52_7",
+    "53_0",
+    "53_3",
+    "53_4",
+    "53_6",
+    "53_7",
+    "54_0",
+    "54_2",
+    "54_3",
+    "54_4",
+    "54_5",
+    "54_6",
+    "54_7",
+    "55_2"
+  ],
+  "assignments": [
+    {
+      "feature_id": "52_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly reports that evaluating the pair focused them on applying identical fairness standards to both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses removal when crossing into personal attacks, slurs, or harassment (toxic/inflammatory behavior).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Mentions deleting due to perceived stupidity/low quality rather than threats/toxicity or violence-based exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Attributes influence mainly to bizarre/false content without clearly mapping to the specific threat/toxicity or violence exceptions themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Endorses free speech but supports limits for hateful/disgusting rhetoric (threat/violence exception framing fits best, though it\u2019s not explicit threats).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Says pairing aimed for an even playing field across sides using consistent handling.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "52_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Directly states they applied the same standard to both versions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Claims both items were acceptable free speech and the pair didn\u2019t introduce concerns, not specifically about consistent moderation criteria or threat/toxicity removal rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes content framed as purposeless hate/hostility, aligning with removing toxic/inflammatory material.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_4",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Focuses on whether constructive discussion could follow vs incitement, but it does not clearly emphasize violence/threats and instead centers discourse quality/intent.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Mentions evaluating each party/side, but does not clearly claim pair comparison drove consistency or that removals followed a specific toxicity/threat rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "53_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Provides minimal process content (personal knowledge) and doesn\u2019t match a defined pair/standard or threat/toxicity removal theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_0",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses First Amendment/absence of violence as the primary anchor, matching the violence/threat exception logic best among themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Explicitly focuses on applying the same harm/impact standard (harassment/threats) rather than viewpoint.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Uses discussion quality (avoid strawman/ad hominem) as the criterion rather than the defined threat/toxicity or free-speech exception thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rejects for extremity or misinformation; doesn\u2019t align cleanly with threat/toxicity or violence exception themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Says mirrored opposing views helped identify what to remove, indicating pair-driven moderation but not explicitly \u201csame criteria regardless of viewpoint.\u201d",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_6",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Broad free-speech stance with removal only for (verifiably) false content; resembles free-speech with conditional exceptions more than toxicity/threat removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "54_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Reports a constraint about forced pair symmetry affecting decisions, but does not claim applying identical standards across sides (theme 0) nor a toxicity/threat removal rule (themes 1/2).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_2",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses intensity and debate value criteria; not a match to the defined moderation-standard symmetry or threat/toxicity/violence exception themes.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

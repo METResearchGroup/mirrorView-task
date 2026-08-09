@@ -1,0 +1,167 @@
+{
+  "batch_index": 21,
+  "feature_ids": [
+    "64_3",
+    "64_4",
+    "64_5",
+    "64_6",
+    "64_7",
+    "65_1",
+    "65_2",
+    "65_3",
+    "65_4",
+    "65_5",
+    "65_6",
+    "65_7",
+    "66_0",
+    "66_1",
+    "66_2",
+    "66_3",
+    "66_4",
+    "66_5",
+    "66_7",
+    "67_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "64_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Removal justified by concern about kids reading cursing, not threats/toxicity or fairness standard across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Describes a moderation approach that keeps opinions/attacks removed while expletives are reviewed rather than auto-removed, consistent with removing toxic/threatening content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Accepts harsh language because there are no calls for violence/threats, aligning with violence/threat exceptions to free speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly aims to keep expression while removing hateful and violent language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_7",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses a disinformation threshold while maintaining broad free speech; best fit is violence/threat exceptions, though the exception is misinformation-based.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Civility/offensiveness and name-calling drive removal, matching removal of excessively vulgar/toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Platform-withholding for being too extreme is not clearly about threats/violence/tosxicity or mirroring fairness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Freedom of expression is conditioned on not harming others, aligning with allowing speech except harm/violence-related content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Preference for discussion over provocation is not captured by the provided themes (threat/toxicity, violence exceptions, or cross-side fairness).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Personal attacks are disallowed while criticism is allowed, fitting removal of toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Combines fact-checking with a general rule about being 'downright mean' plus cuss words; 'mean'/'vulgarity' doesn\u2019t map cleanly to the defined themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "65_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Evaluations depend on professionalism/fact-based writing rather than the threat/toxicity or violence-exception criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps constructive discussion and removes name-calling/purposefully inflammatory content, aligning with removing toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on calibrating intensity/out-of-proportion rather than specific threat/violence/toxicity categories.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Allows dialogue when tone isn\u2019t too aggressive/vulgar and treats verbal attacks as improper, consistent with removing toxic/aggressive content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Rejects both for sounding extremely extreme/too influential, which is not clearly threat/toxicity or violence/threat-based.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal decisions are driven by detecting offensive/incendiary language, fitting removal of toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Preference for facts over whining/crying is content quality-based and not explicitly tied to threats/violence/toxicity categories.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "66_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "First Amendment framing and removal only tied to absence of harm fits the violence/threat-exception style allowance.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "67_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "States profanity/bad language is the main influence, aligning with removal criteria related to vulgar/toxic language.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

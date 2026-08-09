@@ -1,0 +1,167 @@
+{
+  "batch_index": 12,
+  "feature_ids": [
+    "35_7",
+    "36_0",
+    "36_4",
+    "36_6",
+    "36_7",
+    "37_1",
+    "37_2",
+    "37_3",
+    "37_4",
+    "37_5",
+    "37_6",
+    "37_7",
+    "38_0",
+    "38_2",
+    "38_4",
+    "38_5",
+    "38_6",
+    "38_7",
+    "39_0",
+    "39_1"
+  ],
+  "assignments": [
+    {
+      "feature_id": "35_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal based on hate/bad language, but pair exposure not influential (still fits toxicity/hate removal).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_0",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Decision focused on respect/factfulness with the goal of applying consistent criteria across political sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity/curse words treated as unnecessary, leading to removal under a toxicity/behavioral moderation bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keep allowed only when no expletives\u2014conditional profanity tolerance aligns with removing toxic/vulgar content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "36_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Constructiveness/debate quality as the influence mechanism doesn\u2019t clearly map to the provided hate/threat/profanity or same-standard themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Primary trigger is disrespect/personal attacks and bullying\u2014consistent with removing toxic/threatening behavior.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Judging whether language is argumentative vs truthful is not explicitly about threats/toxicity/profanity or cross-side identical moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Specific removals for vulgar/toxic language and Nazi analogies fall under high-bar toxicity/threat-related removals.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focus on encouraging discussion vs insulting is not a clear match to the provided themes (toxicity/hate/threat vs identical moderation across sides vs violence exceptions).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal likelihood increases with hostility, blatant insults, or cursing\u2014fits toxicity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Pairing used for political-context interpretation about effects since Trump; not clearly about same moderation standard or specific threat/toxicity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "37_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "General reasonableness threshold for allowing both versions isn\u2019t clearly tied to hate/threat/profanity rules or identical criteria across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Bilateral egregiousness comparison is a pairwise strategy but doesn\u2019t fit the specific codebook themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes hostile/insulting comments and emphasizes dialogue safety for minors\u2014aligns with toxicity/safety-based removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Accuracy/inaccuracy weighting is a factuality cue, not specifically threat/toxicity/profanity or same-criteria moderation across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Explicit free-speech principle over content disapproval suggests retaining opposing views unless exceptional removals apply.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mutual respect/intent/thoughtfulness criteria are broader than the listed hate/threat/profanity or cross-side identical standard themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "38_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Wants to shut down hateful/offensive speech to enable positive communication\u2014direct hate/offensive removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_0",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Focused on policy violation rather than politics; this could overlap with toxicity removal but doesn\u2019t explicitly specify threats/toxicity/profanity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "39_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects when aggressive/strongly upsetting language appears; cursing can be ignorable if mild\u2014fits toxicity/language severity moderation.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

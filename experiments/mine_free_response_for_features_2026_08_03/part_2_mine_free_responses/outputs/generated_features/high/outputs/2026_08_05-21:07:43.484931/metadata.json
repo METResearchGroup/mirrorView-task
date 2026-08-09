@@ -1,0 +1,37 @@
+{
+  "start_timestamp": "2026_08_05-21:07:43.484931",
+  "total_items": 2,
+  "run_metadata": {
+    "stage": "feature_generation",
+    "likert_group": "high",
+    "sample_size": 20,
+    "docs_per_batch": 10,
+    "seed": 43,
+    "model": "gpt-5.4-nano",
+    "max_features_per_batch": 8,
+    "participant_ids": [
+      "P_1781988549258_dkx7fj5ns",
+      "P_1781988645394_69s0jet6t",
+      "P_1781988647827_bjsmgny84",
+      "P_1781988961961_x7r0vskxn",
+      "P_1781989260654_ud72teovm",
+      "P_1781989557421_rop867cve",
+      "P_1781989742794_iaqttmpsy",
+      "P_1781990083924_zp696ut9t",
+      "P_1781990684331_8jiit7kc7",
+      "P_1781991223876_5xadw7iz4",
+      "P_1781991270132_039zue69m",
+      "P_1781992247058_7whwo3gzx",
+      "P_1781994199697_j45tigb19",
+      "P_1781996188139_xvaqxyzh7",
+      "P_1781996365551_7apk93kl6",
+      "P_1781999727071_xwnh3zbrm",
+      "P_1782000036434_eeu6ewtdk",
+      "P_1782000712711_zxam8wg3y",
+      "P_1782002110183_bto9dcgrz",
+      "P_1782005882885_st56vwjgw"
+    ],
+    "leftover_participant_ids": []
+  },
+  "end_timestamp": "2026_08_05-21:07:57.253712"
+}

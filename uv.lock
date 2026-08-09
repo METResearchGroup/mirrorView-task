@@ -1457,6 +1457,20 @@ bertopic = [
     { name = "openai" },
     { name = "plotly" },
 ]
+finetune-qwen-2026-08-08 = [
+    { name = "accelerate" },
+    { name = "boto3" },
+    { name = "datasets" },
+    { name = "pandas" },
+    { name = "peft" },
+    { name = "pyyaml" },
+    { name = "sagemaker" },
+    { name = "scikit-learn" },
+    { name = "torch" },
+    { name = "transformers" },
+    { name = "trl" },
+    { name = "wandb" },
+]
 modernbert-training = [
     { name = "accelerate" },
     { name = "boto3" },
@@ -1485,10 +1499,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "accelerate", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=1.0.0" },
     { name = "accelerate", marker = "extra == 'modernbert-training'", specifier = ">=1.0.0" },
     { name = "atproto", specifier = ">=0.0.68" },
     { name = "bertopic", marker = "extra == 'bertopic'", specifier = ">=0.17.0" },
+    { name = "boto3", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=1.42.88" },
     { name = "boto3", marker = "extra == 'modernbert-training'", specifier = ">=1.42.88" },
+    { name = "datasets", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=3.0.0" },
     { name = "datasets", marker = "extra == 'modernbert-training'", specifier = ">=3.0.0" },
     { name = "duckdb", specifier = ">=1.0.0" },
     { name = "gdown", specifier = ">=5.2.0" },
@@ -1501,28 +1518,37 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.9" },
     { name = "openai", marker = "extra == 'bertopic'", specifier = ">=1.0.0" },
     { name = "pandas", specifier = ">=3.0.2" },
+    { name = "pandas", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=3.0.2" },
+    { name = "peft", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=0.14.0" },
     { name = "plotly", marker = "extra == 'bertopic'", specifier = ">=5.0.0" },
     { name = "praw", specifier = ">=7.7.0" },
     { name = "pyarrow", specifier = ">=20.0.0" },
     { name = "pydantic", specifier = ">=2.12.0" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "pyyaml", specifier = ">=6.0.0" },
+    { name = "pyyaml", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=6.0" },
     { name = "pyyaml", marker = "extra == 'modernbert-training'", specifier = ">=6.0" },
     { name = "research-tools", git = "https://github.com/METResearchGroup/research_tools.git" },
+    { name = "sagemaker", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=2.240.0,<3" },
     { name = "sagemaker", marker = "extra == 'modernbert-training'", specifier = ">=2.240.0,<3" },
+    { name = "scikit-learn", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=1.8.0" },
     { name = "scikit-learn", marker = "extra == 'modernbert-training'", specifier = ">=1.8.0" },
     { name = "tabulate", specifier = ">=0.10.0" },
     { name = "tenacity", specifier = ">=9.0.0" },
+    { name = "torch", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=2.12.0" },
     { name = "torch", marker = "extra == 'modernbert-training'", specifier = ">=2.12.0" },
     { name = "tqdm", specifier = ">=4.66.0" },
+    { name = "transformers", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=5.8.1" },
     { name = "transformers", marker = "extra == 'modernbert-training'", specifier = ">=5.8.1" },
+    { name = "trl", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=0.15.0" },
     { name = "tweepy", specifier = ">=4.14.0" },
     { name = "typer", specifier = ">=0.25.0" },
+    { name = "wandb", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=0.26.1" },
     { name = "wandb", marker = "extra == 'modernbert-training'", specifier = ">=0.26.1" },
     { name = "xgboost", specifier = ">=3.2.0" },
     { name = "zstandard", specifier = ">=0.25.0" },
 ]
-provides-extras = ["modernbert-training", "bertopic"]
+provides-extras = ["modernbert-training", "bertopic", "finetune-qwen-2026-08-08"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1952,6 +1978,27 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/32/37/0c730979d3890f8096a86af2683fac74edd4d15cb037391098dca70dcb1d/pathos-0.3.5.tar.gz", hash = "sha256:8fe041b8545c5d3880a038f866022bdebf935e5cf68f56ed3407cb7e65193a61", size = 166975, upload-time = "2026-01-20T00:06:57.848Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/37/44/be2146c650ee9ca4d9a770c995f5c92c1ea52292dcf618ce1a336d3146dd/pathos-0.3.5-py3-none-any.whl", hash = "sha256:c95b04103c40a16c08db69cd4b5c52624d55208beadf1348681edece809ec4f8", size = 82248, upload-time = "2026-01-20T00:06:56.291Z" },
+]
+
+[[package]]
+name = "peft"
+version = "0.20.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "accelerate" },
+    { name = "huggingface-hub" },
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "psutil" },
+    { name = "pyyaml" },
+    { name = "safetensors" },
+    { name = "torch" },
+    { name = "tqdm" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b4/08/02541a2c29be7c78698f73d438bc0e733b214f3f35ec5db79fca8da8fc61/peft-0.20.0.tar.gz", hash = "sha256:4769c8093a4ca145fd6fb3fd4dd50449675f5fe46434ad1e98b285a132d4b1d0", size = 880503, upload-time = "2026-07-28T13:46:01.85Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/28/79/13bcabb8048126422d5c4b880575d40886c726f354db88cfeed4325525bb/peft-0.20.0-py3-none-any.whl", hash = "sha256:0fbba16ffebfad3de96e06f2da6860fd860292324b85b6141909fa1e26ea9233", size = 775777, upload-time = "2026-07-28T13:45:59.809Z" },
 ]
 
 [[package]]
@@ -3042,6 +3089,22 @@ dependencies = [
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f7/13/ec05adfcd87311d532ba61e3af143e8be59fcd26675884c4682841406a20/triton-3.7.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a4bf49b00a7a377a68a6da603a876e797614e6455a80e9021669c476a953ad9a", size = 188505104, upload-time = "2026-05-07T19:05:09.843Z" },
     { url = "https://files.pythonhosted.org/packages/62/7b/468a576e35beef1426e0828e28e9ba9e65f5474d496f16ee126c15646324/triton-3.7.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:8f111161d49bf903c0eaedde3962353a3d841c08a836839b7cc1025b8426efcf", size = 201457567, upload-time = "2026-05-07T18:46:13.505Z" },
+]
+
+[[package]]
+name = "trl"
+version = "1.9.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "accelerate" },
+    { name = "datasets" },
+    { name = "jinja2" },
+    { name = "packaging" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ac/30/d1da1df32ebbf4f7723a8bf83fc15b043fbd0cc3648cb3d1c12be174ab9b/trl-1.9.2.tar.gz", hash = "sha256:8107d5c6d45478205aead0f211e6bbc2f673388421972de635fe40ae1d5f5e61", size = 740662, upload-time = "2026-07-28T10:27:45.042Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9b/80/edd509e740009b58d966b82b25183080c21f30812f2097263d4b6ef3bbb0/trl-1.9.2-py3-none-any.whl", hash = "sha256:27847cd9b429af83365b311bb9d93e24bc8cdcc80a54973a6c6cb18a084bce75", size = 889029, upload-time = "2026-07-28T10:27:43.654Z" },
 ]
 
 [[package]]

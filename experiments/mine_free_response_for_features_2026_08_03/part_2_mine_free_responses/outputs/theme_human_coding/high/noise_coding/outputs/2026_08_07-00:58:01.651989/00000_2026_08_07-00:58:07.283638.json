@@ -1,0 +1,167 @@
+{
+  "batch_index": 0,
+  "feature_ids": [
+    "0_0",
+    "0_1",
+    "0_2",
+    "0_3",
+    "0_4",
+    "0_5",
+    "0_6",
+    "0_7",
+    "1_0",
+    "1_1",
+    "1_4",
+    "1_5",
+    "1_6",
+    "2_0",
+    "2_1",
+    "2_2",
+    "2_4",
+    "2_5",
+    "2_7",
+    "3_1"
+  ],
+  "assignments": [
+    {
+      "feature_id": "0_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Pair-level constructiveness criterion rather than explicitly uniform moderation across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Discussion vs insults/negativity functions as a toxicity/rudeness removal gate.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Removal/acceptance turns on whether posts incite violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Ragebait vs discussable maps to keeping speech while filtering for inflammatory/abusive content, though not explicitly threat/violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Cursing is allowed unless it involves threats of violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Aggressive rudeness with low contribution leads to removal; framed as moderation for toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes based on radical misinformation while treating other criticism as acceptable; closest to high-bar moderation for problematic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "0_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Over-the-line cursing/out-of-line language leads to stricter threshold, removing toxic/inflammatory speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses intent/offense and attacks as criteria, with higher leniency for political figures\u2014fits general toxicity/threat moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes perceived hate toward immigrants (toxic/hateful content).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Claims free-speech support but removes only content viewed as borderline unhinged with disturbing language; violence exception not explicit.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit threats-of-violence exception drives limiting speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "1_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decisions based on perceived gibberish/objectivity rather than violence/toxicity or uniform criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes personal attacks/political attacks and irrelevance; best matches removing toxic/inflammatory content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_1",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Meta-process difficulty due to pair-removal constraint, not a moderation principle.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Only disallows particularly offensive/disruptive content\u2014high-bar moderation to prevent toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Keeps speech if not violent/calling for violence; rejects censorship framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Emotion/irritation drives difficulty accepting views; not a clear violence/toxicity criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "2_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Uses the same objective rules across posts in the pair (consistent criteria across sides).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "3_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes name-calling/expletives as harmful linguistic/toxic content.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

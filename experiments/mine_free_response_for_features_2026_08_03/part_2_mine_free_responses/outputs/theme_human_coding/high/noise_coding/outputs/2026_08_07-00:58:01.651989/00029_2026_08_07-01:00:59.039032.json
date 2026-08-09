@@ -1,0 +1,135 @@
+{
+  "batch_index": 29,
+  "feature_ids": [
+    "89_4",
+    "89_5",
+    "89_6",
+    "89_7",
+    "90_0",
+    "90_2",
+    "90_3",
+    "90_4",
+    "90_5",
+    "90_6",
+    "90_7",
+    "91_2",
+    "91_3",
+    "91_4",
+    "91_6",
+    "91_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "89_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Disliked curse words/profanity, which aligns with removing excessively vulgar/toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Rejects intentionally crude/insulting phrasing, fitting removal for interpersonal abuse/toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_6",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Chooses diversified two-sided representation but not clearly about applying identical moderation criteria across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Motivated by anticipated engagement/positive feelings rather than stated moderation rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_0",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes posts when solely opinion-based; the closest match is a general moderation bar that filters content, though not explicitly toxicity/threat.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly rejects name-calling/harsh language (interpersonal abuse/toxicity) while allowing political disagreement.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses an opinion vs hate speech distinction; hate/inflammatory speech suggests keeping most speech with exceptions for extreme harmful content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_4",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Mentions removing expected inflammation/no added value; not clearly threats/violence, so only a weak fit to threat/exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Balances free speech with removal based on provocation/being not true; aligns with permissive stance with caveats.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on debatable distance to maintain discussion, not directly about threats/toxicity or equal-criteria fairness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Tension between meaningful/constructive content and not censoring, but not tied to the specific threat/toxicity exceptions in theme 1/2.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_2",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Respecting rights to express opposing viewpoints could relate to fairness across sides, but it\u2019s not explicitly identical moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps constructive points/room for discussion and removes name-calling/anger, matching toxicity/interpersonal abuse filtering.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses respectful discourse contribution as a criterion; best aligns with removing harmful/toxic content rather than the other themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Rejects inflammatory talk without value and reduces approval for factual inaccuracy; aligns with filtering inflammatory/toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Only describes the mirror-imaging process, providing no substantive moderation/exception criteria.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

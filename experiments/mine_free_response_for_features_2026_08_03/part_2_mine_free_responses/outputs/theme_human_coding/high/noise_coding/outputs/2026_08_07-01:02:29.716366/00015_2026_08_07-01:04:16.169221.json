@@ -1,0 +1,167 @@
+{
+  "batch_index": 15,
+  "feature_ids": [
+    "45_4",
+    "45_5",
+    "45_6",
+    "45_7",
+    "46_0",
+    "46_2",
+    "46_3",
+    "46_4",
+    "46_5",
+    "46_6",
+    "47_0",
+    "47_2",
+    "47_5",
+    "47_7",
+    "48_0",
+    "48_1",
+    "48_3",
+    "48_4",
+    "48_5",
+    "48_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "45_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly supports removal for racist/threatening rhetoric and incitement to violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "De-centers party identity when judging the original-vs-mirror pair, treating criteria as not party-dependent.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Describes pairing as similarity/difference comparison without stating identical standards across sides or the removal thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses affective 'toxic and evil' framing to justify removal, consistent with high-bar removal of toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly balances free-speech preservation with deletion exceptions for threats.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mentions separating attacks vs opinions in the pair, but does not clearly claim a pair-symmetric standard or a violence-only exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses appropriateness of language (avoiding cursing/personal attacks) as the driver of removal, aligning with toxicity-based removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General 'elimination of the terms' process without mapping to the codebook themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_5",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Gate based on factual denial/authenticity, but the codebook themes are specifically about threats/violence/tough toxicity or pair fairness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focus on improving rude comments rather than the specified removal/exception principles.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Direct bullying/derisive wording is cited as a negative cue driving stricter moderation (removal of toxic content).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Personal discomfort with swearing/cruelty guides moderation consistent with removing toxic language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Permissive default allowing both viewpoints, rejecting only when content incites violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Notes some statements can be valid despite disagreement; not a threat/violence or toxic-removal principle.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly aims to curb abusive language (name-calling/cursing) to decide keep/remove.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses tone/language productivity assessment without explicit violence/toxicity removal framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Distinguishes argument substance from personal insults, but does not clearly match the codebook\u2019s threat/violence or paired fairness standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes reasonableness and explicitly excludes calls for violence; aligns most with violence/threat exception handling.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses context/meaning of both versions, but no explicit claim about identical moderation standards or the violence-only exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Removes aggressive/trolling and notes ideological views weren\u2019t much different, without explicit pair-symmetric criteria or threat/violence exception claim.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Attention check mockup — Political Expression</title>
+  <style>
+    :root {
+      --brand: #5b2d8e;
+      --brand-dark: #3d1c63;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #4b5563;
+      --border: #e5e7eb;
+      --callout-bg: #f3f4f6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: linear-gradient(180deg, #ebe4f5 0%, var(--bg) 40%, #e8eef5 100%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 40px 16px 64px;
+    }
+    .card {
+      width: min(720px, 100%);
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(61, 28, 99, 0.12);
+      padding: 28px 32px 24px;
+    }
+    h1 {
+      margin: 0 0 16px;
+      font-size: 28px;
+      color: var(--brand-dark);
+      font-weight: 700;
+    }
+    .callout {
+      background: var(--callout-bg);
+      border-left: 5px solid var(--brand);
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .prompt {
+      font-size: 16px;
+      line-height: 1.55;
+      margin: 0 0 18px;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      background: #fff;
+      cursor: default;
+    }
+    .option.selected {
+      border-color: var(--brand);
+      background: #f7f2fc;
+    }
+    .option input {
+      margin-top: 3px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--brand);
+    }
+    .option span {
+      font-size: 15px;
+      line-height: 1.4;
+    }
+    .continue {
+      display: block;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      background: var(--brand);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 650;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 14px 16px;
+      cursor: default;
+    }
+    .badge {
+      display: inline-block;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brand);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">Plan mockup · pre-study attention check</div>
+    <h1>Political Expression</h1>
+    <div class="callout">
+      The next section is about expressing political views on social media.
+      By political expression, we mean any sort of public display of your political opinions —
+      this includes posts, reposts, and comments.
+    </div>
+    <p class="prompt">
+      To make sure we are on the same page, select the messages expressing a political view.
+      Do not judge the message based on whether you agree with it, only whether it expresses a political view.
+      <strong>Select all that apply.</strong>
+    </p>
+    <div class="options">
+      <label class="option">
+        <input type="checkbox" disabled />
+        <span>I thought the new ice cream place was pretty good but not great.</span>
+      </label>
+      <label class="option">
+        <input type="checkbox" disabled />
+        <span>Hot take: Winter is simply the best season. I can't wait for the cold weather.</span>
+      </label>
+      <label class="option selected">
+        <input type="checkbox" checked disabled />
+        <span>I support Democrats' positions to protect basic human rights.</span>
+      </label>
+      <label class="option selected">
+        <input type="checkbox" checked disabled />
+        <span>It's so awful how Texas is taking away Women's rights. I won't stand for it any longer!</span>
+      </label>
+      <label class="option selected">
+        <input type="checkbox" checked disabled />
+        <span>It completely breaks my heart to see how immigrants are treated these days.</span>
+      </label>
+      <label class="option selected">
+        <input type="checkbox" checked disabled />
+        <span>I stand with Republicans who support our second amendment rights.</span>
+      </label>
+    </div>
+    <button class="continue" type="button">Continue</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,167 @@
+{
+  "batch_index": 16,
+  "feature_ids": [
+    "48_7",
+    "49_0",
+    "49_2",
+    "49_3",
+    "49_4",
+    "49_5",
+    "49_6",
+    "49_7",
+    "50_0",
+    "50_2",
+    "50_3",
+    "50_4",
+    "50_5",
+    "50_6",
+    "50_7",
+    "51_3",
+    "51_4",
+    "51_5",
+    "51_6",
+    "51_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "48_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Threshold tied to incitement/violence risk for removal while otherwise allowing discussion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Keeps opinions but omits insults/dehumanizing/hostile language\u2014violence/threat exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes excessive vulgarity and violence-promoting content while allowing disagreement.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Assesses presence of threats/incitement to decide acceptability for political discussion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes emotional/inflammatory posts and keeps grounded/realistic ones, consistent with toxicity/inflammatory removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Profanity judged as not useful; supports keeping by removing toxic/vulgar elements.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_6",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Primarily a respect/healthy discussion rationale rather than explicit threat/toxicity standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "49_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mentions rejecting pairs that are too similar or nonsensical; not clearly threat/toxicity or free-speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Constructive/verified vs attacking/unverifiable claims maps to removing harmful/toxic content while keeping opinions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Process of assessing each item independently; no direct fit to removal for threats/toxicity or free-speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Garbled reflection provides minimal, unclear criteria about threats/harassment.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit free-speech rule: keep unless direct threats or crude language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes hateful remarks about division/discrimination, aligning with toxicity/harm removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on framing differences affecting judgment, not specifically threats/toxicity/free-speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "50_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Keeps opinions but removes nonsense/lies with harmful effects\u2014harm/toxicity driven removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "51_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Expresses tension about censorship (value stance) rather than specific moderation criteria (threats/toxicity/free-speech rule).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "51_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejects posts with curses, fitting removal for vulgar/toxic language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "51_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly aims to eliminate profanity and other non-constructive language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "51_6",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes entitlement to express opposing opinions, with exceptions implied rather than explicit threat/toxicity criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "51_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "States insufficient/unclear moderation-relevant context, so no thematic match.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,15 +1,33 @@
 # CHANGELOG
 
+## 2026-08-09
+
+1. Completed the Qwen3-4B LoRA keep/remove teachability run on SageMaker (`ml.g5.xlarge`): balanced unanimous-min3 chat data, TRL/PEFT train + baseline/adapter infer, and local `RESULTS.md` (test remove-F1 0.74 → 0.97). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)
+2. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
+3. Completed the larger modal-label Qwen3-4B LoRA teachability run (1 epoch on SageMaker `ml.g5.xlarge`): balanced Study Phase 2 Part 2 modal keep/remove data, thin wrappers over the unanimous recipe, and local `RESULTS.md` (test accuracy 0.64 → 0.70; remove-F1 0.72 → 0.70). [PR #57](https://github.com/METResearchGroup/mirrorView-task/pull/57)
+4. Shipped a descriptive analysis that splits linked-fate keep and remove labels into unanimous and majority cells (ties dropped), with surface metrics, Stage 1 word clouds, and stance tables by toxicity stratum. Unanimous cells sit at clearer extremes, and heavy remove aligns more with high toxicity than with left or right stance. [PR #56](https://github.com/METResearchGroup/mirrorView-task/pull/56)
+
+## 2026-08-08
+
+1. Added a shared Study Phase 2 Part 2 keep/remove dataset of posts with at least three linked-fate ratings and unanimous agreement (1644 posts), loadable by registry name for high-agreement modeling. [PR #53](https://github.com/METResearchGroup/mirrorView-task/pull/53)
+
+## 2026-08-07
+
+1. Added a pre-study political-expression attention check to the MirrorView webapp (select-all comprehension). Participants always continue; `attention_check_passed` / `attention_check_selected` are saved on every CSV row for post-hoc filtering. [PR #52](https://github.com/METResearchGroup/mirrorView-task/pull/52)
+
 ## 2026-08-06
 
 1. Landed Bluesky, Twitter, and Reddit ingest through curation in this repository under `data_platform/`, with local-disk durability for Twitter/Reddit, opt-in Bluesky S3 upload, and sample discovery pointed at in-repo curated exports. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+2. Added the larger-scale prompt-engineering keep/remove classifier experiment on a balanced 1,000-post subset (500/500) with Qwen 3.6. Feature-tuned prompt raised remove F1 from 0.628 to 0.700 versus control. [PR #49](https://github.com/METResearchGroup/mirrorView-task/pull/49)
+3. Complete methods writeup from the current study phase. [PR #51](https://github.com/METResearchGroup/mirrorView-task/pull/51/)
 
 ## 2026-08-05
 
-1. Tested new discovered features by adding it to a baseline prompt and comparing its performance against the regular baseline prompt [PR #47](https://github.com/METResearchGroup/mirrorView-task/pull/47)
-2. Shipped a four-stage BERTopic pipeline on Study Phase 2 Part 2 original-post Titan embeddings. [PR #45](https://github.com/METResearchGroup/mirrorView-task/pull/45)
-3. Completed the keep/remove LLM feature pipeline under `experiments/create_llm_features_2026_08_05/`. [PR #46](https://github.com/METResearchGroup/mirrorView-task/pull/46)
-4. Added a keep/remove × platform crosstab experiment for Study Phase 2 Part 2 modal labels (Bluesky / Reddit / Twitter), with a runnable script and terse RESULTS table. [PR #42](https://github.com/METResearchGroup/mirrorView-task/pull/42)
+1. Completed Part 2 free-response feature mining on full low/high Likert reflection corpora: shared Stage-2/3 helpers, Part-2 Stage-1/4 with garbage QA, 916 embedded features, and 5 labeled HDBSCAN themes in `RESULTS.md`. [PR #41](https://github.com/METResearchGroup/mirrorView-task/pull/41)
+2. Tested new discovered features by adding it to a baseline prompt and comparing its performance against the regular baseline prompt [PR #47](https://github.com/METResearchGroup/mirrorView-task/pull/47)
+3. Shipped a four-stage BERTopic pipeline on Study Phase 2 Part 2 original-post Titan embeddings. [PR #45](https://github.com/METResearchGroup/mirrorView-task/pull/45)
+4. Completed the keep/remove LLM feature pipeline under `experiments/create_llm_features_2026_08_05/`. [PR #46](https://github.com/METResearchGroup/mirrorView-task/pull/46)
+5. Added a keep/remove × platform crosstab experiment for Study Phase 2 Part 2 modal labels (Bluesky / Reddit / Twitter), with a runnable script and terse RESULTS table. [PR #42](https://github.com/METResearchGroup/mirrorView-task/pull/42)
 
 ## 2026-08-03
 

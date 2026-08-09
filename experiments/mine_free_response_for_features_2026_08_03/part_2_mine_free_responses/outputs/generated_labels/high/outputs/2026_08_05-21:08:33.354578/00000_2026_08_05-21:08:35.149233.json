@@ -1,0 +1,21 @@
+{
+  "cluster_id": 0,
+  "likert_group": "high",
+  "n_members": 10,
+  "sampled_feature_ids": [
+    "1_5",
+    "1_6",
+    "1_4",
+    "1_1",
+    "1_3",
+    "0_2",
+    "0_0",
+    "0_5"
+  ],
+  "result": {
+    "cluster_id": 0,
+    "cluster_label": "Civility and non-abusive content filter",
+    "definition": "Participants applied selection/keep-remove decisions using explicit thresholds that prioritize respectful, non-insulting dialogue while removing profanity, name-calling, hate, threats, or violence endorsement.",
+    "salience_notes": "The shared logic across reflections is a tone/harm/discourse criterion centered on civility (avoid vitriol/expletives/insults) plus hard exclusions for hateful or threatening/violent content."
+  }
+}

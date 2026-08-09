@@ -1,0 +1,167 @@
+{
+  "batch_index": 8,
+  "feature_ids": [
+    "23_5",
+    "23_6",
+    "23_7",
+    "24_1",
+    "24_2",
+    "24_3",
+    "24_4",
+    "24_5",
+    "24_6",
+    "24_7",
+    "25_0",
+    "25_1",
+    "25_2",
+    "25_4",
+    "25_5",
+    "25_6",
+    "25_7",
+    "26_1",
+    "26_2",
+    "26_3"
+  ],
+  "assignments": [
+    {
+      "feature_id": "23_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses a factuality-versus-hate-speech cue to decide what to remove.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes low-substance insult-only posts as a toxicity/low-quality criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Removal for incoherent/radicalized or possibly mentally ill language doesn\u2019t clearly match threat/toxicity or violence exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_1",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Allows rude/cussing but draws a line when it becomes hateful direct disrespect.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Discounts/removes posts based on attack/fear-mongering tone rather than argument quality.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Specifically looks for threatening content and other-side-focused threats/offside cues.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_4",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit removal criteria include defamatory/threatening content and excessively negative content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_5",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Critiques inconsistent pair moderation and calls for applying the same standard across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Describes a mirror-test self-regulation method rather than a moderation threshold tied to threats/toxicity/violence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses an offense/inflammatory/danger threshold with preference for minimal moderation when harms aren\u2019t present.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_0",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Focuses on provable lies and keeping both sides; not clearly about threats/violence/toxicity removals.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_1",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Broadly allows both perspectives grounded in general free speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Permits opposing views but sets red lines against calls for violence and property damage.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Treats excessive abuse and projected violence as grounds for filtering.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Pairwise comparison by similarity/difference doesn\u2019t specify a threat/toxicity removal rule.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "General multi-factor content/context/tone analysis without specifying the moderation exception types.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "25_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Explains influence via polarization framing rather than a concrete removal exception.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "26_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Exception criteria target extreme language/hate speech and inappropriate targeting (toxicity/hate).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "26_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Directly cites hate-baiting and fear-mongering as cues driving removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "26_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Weighs honest debate spirit while rejecting inflammatory/curse-word language (toxicity/insult language).",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

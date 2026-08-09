@@ -1,0 +1,31 @@
+{
+  "batch_index": 5,
+  "feature_ids": [
+    "24_1",
+    "24_5",
+    "24_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "24_1",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Keeps/removes based on First Amendment deference, with an exception for violence/illegal encouragement.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on caution/fact-checking despite perceived false info rather than harm/toxicity thresholds or pair-comparison effects.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses non-insult/non-inflaming criteria to preserve a non-toxic, non-dehumanizing platform.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+# Keep build context focused; still allow shared/lib/both experiment packages.
+**/.git
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/node_modules
+**/webapp
+**/docs
+**/.cursor
+**/experiments/*
+!**/experiments/finetune_qwen_model_2026_08_08
+!**/experiments/larger_finetune_qwen_model_2026_08_08
+**/experiments/finetune_qwen_model_2026_08_08/data
+**/experiments/finetune_qwen_model_2026_08_08/preds
+**/experiments/finetune_qwen_model_2026_08_08/RESULTS.md
+**/experiments/larger_finetune_qwen_model_2026_08_08/data
+**/experiments/larger_finetune_qwen_model_2026_08_08/preds
+**/experiments/larger_finetune_qwen_model_2026_08_08/RESULTS.md
+**/.env
+**/*.pem

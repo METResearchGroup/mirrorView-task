@@ -1,0 +1,71 @@
+{
+  "themes": [
+    {
+      "theme_key": "bias_mitigation_balance_neutrality",
+      "theme_label": "Bias mitigation and left-right neutrality",
+      "definition": "Decision-making centered on avoiding bias and maintaining neutrality (including balancing evaluations across left/right viewpoints), even when viewpoints feel far-reaching or asymmetrical.",
+      "member_feature_ids": [
+        "7_6",
+        "7_7",
+        "11_5",
+        "8_5",
+        "10_2"
+      ],
+      "n_features": 5
+    },
+    {
+      "theme_key": "language_profanity_cue_rules_over_politics",
+      "theme_label": "Language/profanity cues prioritized over politics",
+      "definition": "Moderation choices were driven primarily by whether language was vulgar/offensive (or whether profanity alone mattered), with political content explicitly treated as secondary.",
+      "member_feature_ids": [
+        "2_1",
+        "3_4",
+        "16_4",
+        "18_3",
+        "23_5"
+      ],
+      "n_features": 5
+    },
+    {
+      "theme_key": "free_speech_balancing_and_uncertainty_of_line",
+      "theme_label": "Free-speech balancing with uncertainty about moderation boundaries",
+      "definition": "Participants justify or resist removals using free-speech principles while expressing discomfort/uncertainty about where to draw the line versus misinformation or harmful conduct.",
+      "member_feature_ids": [
+        "2_5",
+        "11_4",
+        "13_6",
+        "17_5",
+        "17_4",
+        "23_2",
+        "11_5"
+      ],
+      "n_features": 7
+    },
+    {
+      "theme_key": "emotion_cued_inflamed_ragebait_reactivity",
+      "theme_label": "Emotional reactivity to extremity/aggression (including rage-bait suspicion)",
+      "definition": "Evaluation relied on emotional response to aggression/extremity (e.g., anger/sadness/dislike) and sometimes suspected intent such as rage bait, rather than detailed pair-based comparison.",
+      "member_feature_ids": [
+        "1_5",
+        "10_4",
+        "13_7",
+        "14_7",
+        "13_4"
+      ],
+      "n_features": 5
+    },
+    {
+      "theme_key": "minimal_or_random_heuristic_processing",
+      "theme_label": "Minimal reasoning / heuristics (randomness, craziness, terse criteria)",
+      "definition": "Responses used very limited or single heuristics (e.g., 'it was random' or 'how crazy it was') and/or provided sparse rationales that bypass substantive pair comparison.",
+      "member_feature_ids": [
+        "3_7",
+        "12_5",
+        "19_7",
+        "20_7",
+        "13_7"
+      ],
+      "n_features": 5
+    }
+  ]
+}

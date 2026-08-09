@@ -1,0 +1,167 @@
+{
+  "batch_index": 15,
+  "feature_ids": [
+    "45_4",
+    "45_5",
+    "45_6",
+    "45_7",
+    "46_0",
+    "46_2",
+    "46_3",
+    "46_4",
+    "46_5",
+    "46_6",
+    "47_0",
+    "47_2",
+    "47_5",
+    "47_7",
+    "48_0",
+    "48_1",
+    "48_3",
+    "48_4",
+    "48_5",
+    "48_6"
+  ],
+  "assignments": [
+    {
+      "feature_id": "45_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Supports removal for misinformation and threatening/racist/inciting-violence rhetoric.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Seeks balance and treats party framing as not decisive, aligning with consistent standards across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Describes pairing as similarity/difference comparison, not clearly about moderation standards or threat/toxicity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "45_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal is based on emotionally framed toxicity/evil.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Prioritizes free speech and visibility of opposing viewpoints unless threats are present.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Looks for attacks vs opinion within the pair; fits content cueing but not explicitly in the provided threat/toxicity frameworks.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses avoidance of cursing/personal attacks as a moderation criterion (toxicity-related), though framed as appropriateness.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_4",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Mentions a terms-elimination process without clear mapping to toxicity/threat or consistent cross-side moderation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Gates removal on factual denial/authenticity, which aligns with removing misinformation.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "46_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Normatively wants better comments due to rudeness, but doesn\u2019t specify the codebook\u2019s violence/toxicity removal standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Direct bullying/derisive wording is a negative cue driving removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Avoids swearing/cruelty; aligns with removing excessively vulgar/cruel or toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_5",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Only rejects content when it incites violence; otherwise allows both viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "47_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Notes statements can be valid despite disagreement; doesn\u2019t clearly fit a specific moderation/threat/toxicity theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Focuses on limiting name-calling/cursing as the criterion for keep/remove.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses tone/language to predict productive conversation, without explicit threat/toxicity/free-speech rule matching.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes mainly mean/insulting content rather than substantive argument; overlaps with toxicity/bullying removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Wants reasonableness even without agreement and excludes calls for violence (threat exception).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses contextual meaning from both versions; doesn\u2019t specify the moderation principles in the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "48_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Removes aggressive/trolling content and notes views aren\u2019t largely different; not clearly tied to the threat/toxicity or cross-side consistency themes as defined.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "themes": [
+    {
+      "theme_key": "pair_level_reasonableness_and_argument_quality",
+      "theme_label": "Pair-level \u201creasonableness\u201d / argument quality as the keep-or-remove driver",
+      "definition": "Across leftover items, decisions are guided by whether each paired post (and/or the pair together) is reasonable, coherent, substantive, and makes a real argument (vs nonsense, rambling, name-calling, trolling, or incoherence).",
+      "member_feature_ids": [
+        "0_3",
+        "9_4",
+        "12_1",
+        "30_6",
+        "33_7",
+        "37_7",
+        "48_1",
+        "54_3"
+      ],
+      "n_features": 8
+    },
+    {
+      "theme_key": "avoid_inflammatory_trolling_rudeness",
+      "theme_label": "Avoidance of inflammatory, trolling, or disrespectful language/intent",
+      "definition": "A recurring residual idea is to reject content when it is seen as inflammatory, crude, abusive, hateful/bad-language, a rant, or trolling\u2014because it undermines productive discussion/healthy debate or signals low informational value.",
+      "member_feature_ids": [
+        "10_6",
+        "16_7",
+        "19_0",
+        "29_7",
+        "32_1",
+        "33_5",
+        "35_6",
+        "36_7",
+        "43_6",
+        "49_5",
+        "49_6",
+        "54_4"
+      ],
+      "n_features": 12
+    },
+    {
+      "theme_key": "factuality_and_misinformation_falsehood_controls",
+      "theme_label": "Factuality, verifiability, and misinformation control",
+      "definition": "Decisions hinge on whether statements are fact-based, verifiable, accurate, or not provably false/misinformation. Falsehoods or harmful misinformation trigger removal even when other factors (e.g., free-speech framing) might otherwise support inclusion.",
+      "member_feature_ids": [
+        "13_2",
+        "13_3",
+        "25_0",
+        "27_1",
+        "32_7",
+        "33_7",
+        "38_6",
+        "42_7",
+        "50_7",
+        "54_4"
+      ],
+      "n_features": 10
+    },
+    {
+      "theme_key": "healthy_debate_contribution_and_discussion_fit",
+      "theme_label": "Healthy debate / discussion-conduciveness as the selection criterion",
+      "definition": "A set of residual items focuses on whether content supports healthy political dialogue\u2014e.g., encourages discussion/engagement, offers constructive debate/value, and remains within a conversational boundary. Uncertainty often leads to not removing/allowing rules aligned with discussion goals.",
+      "member_feature_ids": [
+        "36_7",
+        "37_4",
+        "38_6",
+        "3_7",
+        "6_6",
+        "11_6",
+        "14_6",
+        "7_3",
+        "48_3",
+        "5_2"
+      ],
+      "n_features": 10
+    },
+    {
+      "theme_key": "pair_symmetry_unit_constraints_and_pair_as_single_decision_unit",
+      "theme_label": "Pair-as-a-unit constraints (symmetry / cannot remove one)",
+      "definition": "Several features reflect residual process constraints where the interface or the decision logic forces pair-level treatment\u2014either both are kept/removed, both are considered together as a unit, or reciprocal/symmetric mirroring is required.",
+      "member_feature_ids": [
+        "14_0",
+        "2_1",
+        "14_6",
+        "20_3",
+        "17_5",
+        "41_7",
+        "54_7",
+        "55_7",
+        "20_3"
+      ],
+      "n_features": 9
+    }
+  ]
+}

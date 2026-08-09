@@ -1,0 +1,15 @@
+{
+  "cluster_id": 2,
+  "likert_group": "low",
+  "n_members": 2,
+  "sampled_feature_ids": [
+    "0_4",
+    "0_3"
+  ],
+  "result": {
+    "cluster_id": 2,
+    "cluster_label": "Impartial debate-quality evaluation",
+    "definition": "Participants judged keep/remove primarily by whether the posts promoted genuine debate and impartial, constructive discourse rather than emotional or inflammatory rhetoric.",
+    "salience_notes": "Both features emphasize assessing discourse tone (inflammatory vs debate-like) and whether content enables fair, substantive responses."
+  }
+}

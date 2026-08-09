@@ -1,0 +1,167 @@
+{
+  "batch_index": 20,
+  "feature_ids": [
+    "61_1",
+    "61_2",
+    "61_3",
+    "61_4",
+    "61_5",
+    "61_6",
+    "61_7",
+    "62_0",
+    "62_1",
+    "62_2",
+    "62_3",
+    "62_5",
+    "63_3",
+    "63_4",
+    "63_5",
+    "63_6",
+    "63_7",
+    "64_0",
+    "64_1",
+    "64_2"
+  ],
+  "assignments": [
+    {
+      "feature_id": "61_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Judgment cue is absence/presence of profanity, aligning with removing toxic/vulgar content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on rhetorical intent (talking points vs rage-bait) without clearly mapping to the codebook\u2019s core keep/remove standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Uses a speech vs hate boundary, with removal justified for hate-like crossing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Distinguishes debatable substance vs insult-only, which doesn\u2019t cleanly match threat/toxicity or mirroring/fairness themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Checks factuality vs opinion and personal attacks; no clear mapping to the provided moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses harm threshold plus mirroring in pair context, fitting consistent moderation across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "61_7",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Side-by-side reveals one-sided bashing and rude/cursing language leading to removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicit free-speech leniency with exceptions for direct violent threats/rage-bait/proportionality.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_1",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Strong anti-censorship/free-speech principle with implied exceptions fits the broader free-speech-with-exceptions theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_2",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Offensiveness weighting is used, but without clear threat/toxicity removal language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Primary check is calls of violence/\u201cgreen lighting\u201d crimes, matching violence/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "62_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses tone/insult sensitivity to decide keep/remove, consistent with removing overly toxic/insulting content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes balance and right to express feelings/opinions while avoiding extreme vileness; aligns with keeping most speech with limits.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Permits speech if rhetoric is respectful and lacks slurs/foul language\u2014removal of toxic/hate content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Vulgarity and possible violence are cited as contributors to removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_6",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Inflammatory rhetoric triggers denying both; fits toxicity/inflammatory removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "63_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Focuses on reasoning/openness and language quality rather than the codebook\u2019s moderation thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Graphic/inappropriate language considered unacceptable, aligning with removing toxic/vulgar content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_1",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Incendiary rule: profanity may be okay but personal attacks are not\u2014fits removing toxicity.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "64_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Cursing is the main influencer; balances free speech with norms restricting vulgarity.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

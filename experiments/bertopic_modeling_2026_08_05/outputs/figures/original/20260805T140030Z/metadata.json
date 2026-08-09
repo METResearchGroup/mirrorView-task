@@ -3,6 +3,33 @@
   "source_labels_run": "experiments/bertopic_modeling_2026_08_05/outputs/labels/original/20260805T140017Z",
   "unanimous_rule_id": "all_linked_fate_raters_same_decision",
   "n_points": 8790,
+  "n_points_topic_plot": 3864,
+  "topic_plot_top_n": 10,
+  "topic_plot_topic_ids": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "topic_plot_labels": [
+    "Debate over U.S. gun rights and gun control (Second Amendment, NRA, and violence)",
+    "Climate policy and energy transition amid global crisis",
+    "Criticism of MAGA and related political beliefs",
+    "Criticism of Democrats vs Republicans (DNC/MAGA) and claims of dishonesty and weak agendas",
+    "Criticism of Republicans and GOP policies/actions",
+    "Deportation and illegal immigration debate",
+    "Biden and Democratic immigration policy criticism",
+    "Political debate and criticism of left vs. right wing rhetoric",
+    "Trump corruption and alleged sexual abuse/pardon/power of the president",
+    "Conservative politics and party loyalty versus progressive change"
+  ],
+  "topic_legend_max_per_column": 3,
   "figures": [
     "clusters_by_topic.html",
     "clusters_by_topic.png",
@@ -19,7 +46,17 @@
     "unanimous": {
       "unanimous": "green",
       "not_unanimous": "red"
+    },
+    "titles": {
+      "topic_label": "Topic Label",
+      "decision": "Did human annotators choose to keep or remove this post?",
+      "unanimous_label": "Were human annotators unanimous?"
     }
   },
-  "marker_opacity": 0.5
+  "marker_opacity": 0.2,
+  "axis_labels": {
+    "umap_x": "Dimension 1",
+    "umap_y": "Dimension 2"
+  },
+  "legend_position": "bottom"
 }

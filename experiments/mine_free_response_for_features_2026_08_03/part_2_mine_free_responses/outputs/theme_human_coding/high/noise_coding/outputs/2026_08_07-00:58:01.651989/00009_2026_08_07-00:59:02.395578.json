@@ -1,0 +1,167 @@
+{
+  "batch_index": 9,
+  "feature_ids": [
+    "26_4",
+    "26_5",
+    "26_6",
+    "26_7",
+    "27_1",
+    "27_3",
+    "27_4",
+    "27_5",
+    "27_6",
+    "28_2",
+    "28_3",
+    "28_4",
+    "28_5",
+    "28_6",
+    "28_7",
+    "29_0",
+    "29_1",
+    "29_2",
+    "29_3",
+    "29_4"
+  ],
+  "assignments": [
+    {
+      "feature_id": "26_4",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on general content cues (language/tone) without clearly matching the specific threat/toxicity or fairness/mirror-pair standard themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "26_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Rejects rhetoric/profanity while seeking substance for healthy conversation, aligning with removing vulgar/toxic material.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "26_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Emphasizes distancing from feelings and allowing equal time, consistent with applying a consistent moderation standard across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "26_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Accepts speech broadly but removes/concerns arise only when inciting/encouraging violence (with related constraints).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "27_1",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Removal based on fact-claims and blaming politicians/policies is not clearly threat/toxicity or violence-exception content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "27_3",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Speech is protected except for illegal/harm/violence-related content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "27_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Avoids harmful/rude content, which fits the \u2018remove for threats and toxicity\u2019 moderation bar.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "27_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Describes a gut-first heuristic without mapping to any specific moderation rule theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "27_6",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Personal preference ('want to see it') for keep vs remove does not fit the codebook themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "28_2",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Frames decisions as ethical-values wording, which doesn\u2019t clearly correspond to the defined threat/toxicity or violence-exception rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "28_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Treats explicit language/manipulation as disqualifying; closest to removing content that becomes toxic or unacceptable.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "28_4",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses contrast between original vs mirror focus/wording, aligning with applying consistent comparison criteria across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "28_5",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Relies on partisan trust/distrust to interpret mirrored content, which is not a moderation-standard theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "28_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly rejects based on negativity and cuss words (toxicity/vulgarity cue removal).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "28_7",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes based on mirror effect plus a foul-language rule, matching toxicity/vulgarity removal.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "29_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Keep most viewpoints and remove only when crossing a clear line, framed as free-speech boundary exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "29_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Says nothing seemed worth removing; this is more overall stance than a specific rule consistent with the themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "29_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Concrete standard: no personal attacks/bad language while restricting harassment/toxic content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "29_3",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removes for misinformation plus rudeness/mean-spiritedness and all-caps\u2014explicit toxicity/uncivility cues.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "29_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes ad-hoc/emotionally phrased attacks, corresponding to toxicity/unacceptable attack content removal.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

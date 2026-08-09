@@ -1,8 +1,9 @@
-"""Build and materialize modal keep/remove labels from Part 2 raw results.
+"""Build and materialize Part 2 keep/remove training labels.
 
-Public entrypoints: ``build_keep_remove_labels`` (in-memory frame) and
-``write_keep_remove_labels`` (persist ``keep_remove_labels.csv`` beside this
-script).
+Public entrypoints:
+
+- ``build_keep_remove_labels`` / ``write_keep_remove_labels`` →
+  ``keep_remove_labels.csv``
 
 Run from repo root::
 
@@ -180,8 +181,8 @@ def write_keep_remove_labels(path: Path = OUTPUT_CSV) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    frame = write_keep_remove_labels()
+    labels = write_keep_remove_labels()
     print(f"Wrote {OUTPUT_CSV}")
-    print(f"rows={len(frame)}")
-    print(frame["decision"].value_counts().to_dict())
-    print(f"columns={list(frame.columns)}")
+    print(f"rows={len(labels)}")
+    print(labels["decision"].value_counts().to_dict())
+    print(f"columns={list(labels.columns)}")

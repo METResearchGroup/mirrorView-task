@@ -1,0 +1,167 @@
+{
+  "batch_index": 4,
+  "feature_ids": [
+    "18_7",
+    "19_0",
+    "19_5",
+    "19_6",
+    "19_7",
+    "20_4",
+    "20_5",
+    "20_7",
+    "21_0",
+    "21_3",
+    "21_5",
+    "21_6",
+    "22_2",
+    "23_0",
+    "23_2",
+    "23_3",
+    "23_5",
+    "23_6",
+    "23_7",
+    "24_0"
+  ],
+  "assignments": [
+    {
+      "feature_id": "18_7",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Identifies dangerous/overt racist signaling (e.g., 'globalist' as a dog-whistle) as a moderation cue.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Decision based on conversational contribution/rhetoric rather than meaningful influence of the mirror pair.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Claims independence makes both sides not sway them, aligning with low-influence reflections.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Explicitly states they were not swayed by either argument beyond their own view.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "19_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses 'craziness' as a heuristic; not specifically harm thresholds or pair-comparison.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_4",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uses legality alone as the sole decision rule; neither harm-threshold nor pair-comparison theme fits.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_5",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Sets an exception for advocating crime while otherwise allowing views, aligning with harm/toxicity boundaries.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "20_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Too vague/minimal to infer a coherent moderation theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Uses tone/respectfulness cues (cursing/mudslinging) to decide; fits toxicity/harm boundary more than pair influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_3",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Default keep with removals for profanity/violence corresponds to toxicity/harm thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Uses symmetry/fairness across opposing views; reflects general principles rather than being driven by comparison effects.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "21_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Evaluates fairness vs emotional reaction as the criterion; best matches filtering based on content quality/toxic framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "22_2",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Bans overly aggressive/profane posts while allowing constructive language\u2014clear toxicity threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_0",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Keeps because no safety violations were found, mapping to harm/toxicity thresholding.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_2",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Rights-based 'I am for free speech' is an affect/confidence framing; closest but not clearly harm-threshold.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Wants to see both sides and avoid restricting, but frames it as preference rather than harm thresholds; aligns with low pair-influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Describes narrow modification scope (process meta) rather than a harm threshold or pair influence mechanism.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_6",
+      "theme_id": "0",
+      "confidence": "high",
+      "brief_reason": "Rejects malicious directed bad language toward people as the removal criterion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "23_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Uncertainty/comprehension gaps, not moderation criteria or pair-comparison strategy.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "24_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Mirror similarity makes the pair effectively irrelevant to decisions (explicit low influence).",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

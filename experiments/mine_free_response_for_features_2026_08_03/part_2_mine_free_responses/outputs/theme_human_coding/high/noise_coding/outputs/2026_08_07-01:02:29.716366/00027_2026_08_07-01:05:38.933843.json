@@ -1,0 +1,167 @@
+{
+  "batch_index": 27,
+  "feature_ids": [
+    "82_6",
+    "82_7",
+    "83_1",
+    "83_2",
+    "83_3",
+    "83_4",
+    "83_5",
+    "83_6",
+    "83_7",
+    "84_0",
+    "84_1",
+    "84_2",
+    "84_3",
+    "84_6",
+    "84_7",
+    "85_0",
+    "85_1",
+    "85_3",
+    "85_5",
+    "86_2"
+  ],
+  "assignments": [
+    {
+      "feature_id": "82_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Explicitly favors free speech while allowing removal only for harm/negative influence.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "82_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Describes difficulty making a joint paired decision, without stating why under moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Sets a line at name-calling, swearing, or inciting violence\u2014specific toxicity/threat removal trigger.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Allows most because no direct physical-violence threats are present.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Uses harm-to-a-group as a criterion, consistent with harm-based removal exceptions while generally allowing speech.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_4",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "General free-speech allowance with an exception when comments feel too degrading.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_5",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focuses on whole-message integration and avoiding group generalization; not clearly free-speech/harm exception or pair-mirror consistency.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Sensationalist language as an influence cue; not clearly framed as harm/toxicity thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "83_7",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Uses constructiveness tone to guide decisions, but does not map to the threat/toxicity or free-speech exception themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "84_0",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Justifies keep/remove based on enabling open discussion rather than the codebook harm/toxicity/free-speech exception axes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "84_1",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "States decisions were driven by gut feelings (process); no fit to the defined moderation themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "84_2",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Calls out fairness and avoiding vulgarity; vulgarity aligns with the \u201cremove for threats/toxicity\u201d theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "84_3",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Looks for content that sparks debate using both viewpoints; not primarily about paired moderation symmetry or harm/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "84_6",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Removal/assessment based on how damaging posts are to conversation via derogatory/profane language (toxicity).",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "84_7",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Describes marker-based cross-pair comparison steps; not claiming applying same moderation standard across both sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "85_0",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses vulgarity/ALL CAPS writing-style cues as a keep/remove basis\u2014toxicity-ish content boundary.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "85_1",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Focuses deletions on name calling/invective\u2014explicit toxicity trigger.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "85_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Argues for symmetric allowance of misinformation absent measurable harm/incitement; aligns with free speech with violence/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "85_5",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Fairness without bias is stated as an evaluation principle, but not tied to the specific mirror-pair standardization theme.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "86_2",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Allows viewpoints absent threats/violence and derogatory/racist remarks\u2014conditional removal based on harm/abuse exceptions.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

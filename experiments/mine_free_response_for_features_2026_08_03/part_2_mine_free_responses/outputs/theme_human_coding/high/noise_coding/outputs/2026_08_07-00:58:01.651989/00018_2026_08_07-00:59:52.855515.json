@@ -1,0 +1,167 @@
+{
+  "batch_index": 18,
+  "feature_ids": [
+    "55_3",
+    "55_4",
+    "55_5",
+    "55_6",
+    "55_7",
+    "56_0",
+    "56_1",
+    "56_2",
+    "56_4",
+    "56_6",
+    "56_7",
+    "57_0",
+    "57_1",
+    "57_2",
+    "57_3",
+    "57_4",
+    "57_5",
+    "57_6",
+    "58_0",
+    "58_3"
+  ],
+  "assignments": [
+    {
+      "feature_id": "55_3",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Compares which post is more extreme, which is not captured by the threat/toxicity or side-consistency themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Uses a cordiality threshold and removes when there is swearing or heavy attacking.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Foul language is treated as a salient disqualifier for keeping.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_6",
+      "theme_id": "other",
+      "confidence": "low",
+      "brief_reason": "Topic alignment across opposing views is a pair-comparison strategy but not tied to the codebook\u2019s moderation standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "55_7",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Notes mirrored/reinstated statements behave as a unit, suggesting consistent application across both versions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Decision is driven by whether statements are mirrored, which is meta/pair-format rather than threat/toxicity or fairness-by-standard.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Mirroring between statements is the main influence; not clearly about threats/toxicity or identical moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_2",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Considering both sides before deciding could reflect consistent criteria, but it doesn\u2019t explicitly mention applying the same standard across viewpoints.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_4",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Profanity/rant-like language is treated as unacceptable.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_6",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Generally permissive but removes for threatening language, vulgarity, or unclear statements.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "56_7",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Free-speech/legal principle: keep if legal; remove only for obscene/clearly illegal content.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_0",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Decision attributed to moving on/wanting to finish rather than moderation criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_1",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Platform-appropriateness rule (\u2018should not be put on a social site\u2019) doesn\u2019t map cleanly to the provided moderation/toxicity/safety themes.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_2",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Difficulty due to two-sided politics is about task framing, not specific keep/remove criteria.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_3",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Wants removal from the right even if fake\u2014targeting ideological source rather than toxicity/threat standards.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removes rants/complaints as unhelpful; this aligns more with excluding problematic content than threat-only exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_5",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Emphasizes both sides being extremely aggressive, fitting a toxicity/inflammatory removal rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "57_6",
+      "theme_id": "0",
+      "confidence": "medium",
+      "brief_reason": "Comparing biases led them to focus on objective moderation standards rather than personal alignment, consistent with applying a standard fairly across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_0",
+      "theme_id": "2",
+      "confidence": "high",
+      "brief_reason": "Free speech is the core rule; would not remove based on political side.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "58_3",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Assesses radical/ridiculous content while still balancing with freedom of speech; exception-based moderation best fits theme 2.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

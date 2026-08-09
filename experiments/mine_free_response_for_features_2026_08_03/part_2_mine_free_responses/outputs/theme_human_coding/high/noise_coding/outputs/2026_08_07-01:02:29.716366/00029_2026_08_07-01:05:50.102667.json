@@ -1,0 +1,135 @@
+{
+  "batch_index": 29,
+  "feature_ids": [
+    "89_4",
+    "89_5",
+    "89_6",
+    "89_7",
+    "90_0",
+    "90_2",
+    "90_3",
+    "90_4",
+    "90_5",
+    "90_6",
+    "90_7",
+    "91_2",
+    "91_3",
+    "91_4",
+    "91_6",
+    "91_7"
+  ],
+  "assignments": [
+    {
+      "feature_id": "89_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Disliked curse words as unnecessary, leading to rejection/removal when profanity was present.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_5",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Used a moderation bar to reject intentionally crude/insulting phrasing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_6",
+      "theme_id": "0",
+      "confidence": "low",
+      "brief_reason": "Chose diversified views across both sides, but without explicit claim of identical moderation standards regardless of political viewpoint.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "89_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Motivated by anticipated personal engagement/positive feelings rather than moderation thresholds.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_0",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Used fact vs opinion as a filter, but this is not clearly framed as threat/toxicity removal or free-speech exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_2",
+      "theme_id": "1",
+      "confidence": "high",
+      "brief_reason": "Rejected name-calling and harsh/arsh language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Decision rule separates opinion from hate speech, implying removal when crossing into toxicity/hate.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_4",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removed content expected to be inflammatory with no added value, reflecting a toxicity/inflammatory removal rationale.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_5",
+      "theme_id": "2",
+      "confidence": "medium",
+      "brief_reason": "Frames decisions as balancing free speech with exceptions for provocation and untruth.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Focused on keeping discussion debatable, not specifically on threats/toxicity or identical standards across sides.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "90_7",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Expresses tension about not censoring opinions, but does not clearly specify violence/threat exceptions.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_2",
+      "theme_id": "2",
+      "confidence": "low",
+      "brief_reason": "Respects rights to express opposing viewpoints, but without clear violence/threat exception language.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_3",
+      "theme_id": "1",
+      "confidence": "medium",
+      "brief_reason": "Removed content that was just name-calling/anger, keeping constructive room for discussion.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_4",
+      "theme_id": "1",
+      "confidence": "low",
+      "brief_reason": "Used respectful discourse as criterion, but did not explicitly tie it to toxicity/threat moderation rules.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_6",
+      "theme_id": "other",
+      "confidence": "medium",
+      "brief_reason": "Evaluated substantive articulation/value and factual accuracy; not clearly threat/toxicity removal or free-speech exception framing.",
+      "was_hdbscan_noise": true
+    },
+    {
+      "feature_id": "91_7",
+      "theme_id": "other",
+      "confidence": "high",
+      "brief_reason": "Only described mirror-imaging of arguments; no clear moderation/removal rationale.",
+      "was_hdbscan_noise": true
+    }
+  ]
+}

@@ -1,22 +1,12 @@
-"""Protocols/interfaces shared by analysis modules."""
+"""Protocols/interfaces shared by analysis modules.
+
+To run:
+
+PYTHONPATH=. uv run python -c "from experiments.mirrors_content_analysis_2026_04_24.analysis.interfaces import CalculateMetric"
+"""
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from shared.textual_features.base import CalculateMetric
 
-
-class CalculateMetric(ABC):
-    """Single-text scalar metric: stable ``name``, prose ``describe()``, and ``calculate()``."""
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """Identifier used in column names (e.g. ``char_count``)."""
-
-    @abstractmethod
-    def describe(self) -> str:
-        """What the metric measures and exactly how it is computed from the input string."""
-
-    @abstractmethod
-    def calculate(self, text: str) -> float:
-        """Return the metric value for one normalized post string."""
+__all__ = ["CalculateMetric"]
