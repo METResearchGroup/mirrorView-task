@@ -2,7 +2,11 @@
 
 ## 2026-08-09
 
+<<<<<<< HEAD
 1. Stood up the Qwen3-4B LoRA keep/remove teachability experiment: balanced unanimous-min3 chat data, TRL/PEFT train and inference entrypoints, local evaluate writer, custom ECR image, and SageMaker launcher (remote train blocked pending `iam:PassRole` / execution-role IAM). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)
+=======
+1. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
+>>>>>>> origin/main
 
 ## 2026-08-08
 
