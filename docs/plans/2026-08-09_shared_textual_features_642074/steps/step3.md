@@ -44,7 +44,7 @@ Move the three language-model classifiers into `shared/textual_features/{valence
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/**/link_mirrorview_run_to_labels.py`
 - Length and readability metric modules completed in Step 2 (unless a registry-only edit is required)
 
-## Contracts to freeze
+## Contracts to lock
 
 ### Shared module public API (each of valence / intergroup / prime)
 

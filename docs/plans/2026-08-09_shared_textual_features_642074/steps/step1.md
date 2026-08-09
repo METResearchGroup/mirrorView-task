@@ -56,7 +56,7 @@ Create `/workspace/shared/textual_features/` so it matches the finalized tree in
 - `/workspace/shared/data/**`
 - `/workspace/pyproject.toml` (no new dependencies in this step)
 
-## Contracts to freeze
+## Contracts to lock
 
 ### `CalculateMetric` (`shared/textual_features/base.py`)
 
@@ -132,7 +132,7 @@ print("FK", FleschKincaidGradeMetric().calculate(text))
 print("RE", FleschReadingEaseMetric().calculate(text))
 PY
 
-# After scaffold + failing tests:
+# After creating stubs and failing tests:
 PYTHONPATH=. uv run pytest shared/textual_features/tests/ -q
 ```
 
