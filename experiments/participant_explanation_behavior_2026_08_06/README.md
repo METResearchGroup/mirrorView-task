@@ -21,3 +21,5 @@ We compare specifically for the following:
 - Are they more consistent?
 
 (We need something here to link a post to a reason - maybe something like "if the post would have been removed by that policy?". Unsure)
+
+Key difficulty is: what makes two posts similar? The easiest approach is embedding similarity. But two posts can be similar in embedding distance and yet not have the topical similarities that we care about? We also didn't control for showing posts that had similarity. A simple v1 could just be embedding distance, while another could be assigning features to each post, somehow (BERTopic or LLM-generated) and then reviewing how consistent participants were when they saw two posts that had the same features. This approach could require us just labeling posts with features. We already have features for toxicity, intergroup, positive, PRIME, etc. and we can imagine using either just using those or also adding other labeled features as well (e.g., "is_{whatever other features we found}").
