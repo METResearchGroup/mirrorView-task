@@ -1,4 +1,4 @@
-# Step 1: Freeze shared package layout, registry names, and matching-output contract
+# Step 1: Lock shared package layout, registry names, and matching-output contract
 
 ## Goal
 

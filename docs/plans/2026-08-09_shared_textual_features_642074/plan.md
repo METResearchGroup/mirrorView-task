@@ -166,7 +166,7 @@ Copy the existing metric math and classifier prompts into shared modules under s
 
 Detail for each step lives under `steps/`.
 
-### Step 1: Freeze shared package layout, registry names, and matching-output contract
+### Step 1: Lock shared package layout, registry names, and matching-output contract
 
 → [steps/step1.md](steps/step1.md)
 
