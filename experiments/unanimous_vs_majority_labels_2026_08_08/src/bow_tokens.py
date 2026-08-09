@@ -115,6 +115,7 @@ _STOPWORDS = frozenset(
     }
 )
 _META_TOKENS = frozenset({"mirror", "original", "mirrors", "mirrored"})
+_EXTRA_EXCLUDED = frozenset({"vs", "framing", "uses", "short", "via"})
 
 
 def tokenize_feature_value(feature_value: str) -> set[str]:
@@ -128,7 +129,7 @@ def tokenize_feature_value(feature_value: str) -> set[str]:
     Returns
     -------
     set[str]
-        Lowercased tokens after stopword and meta-token scrubbing.
+        Lowercased tokens after stopword, meta-token, and extra exclusion scrubbing.
     """
     lowered = str(feature_value).lower()
     raw_tokens = [tok for tok in _NON_LETTER_SPLIT.split(lowered) if tok]
@@ -139,6 +140,8 @@ def tokenize_feature_value(feature_value: str) -> set[str]:
         if token in _STOPWORDS:
             continue
         if token in _META_TOKENS:
+            continue
+        if token in _EXTRA_EXCLUDED:
             continue
         kept.add(token)
     return kept
