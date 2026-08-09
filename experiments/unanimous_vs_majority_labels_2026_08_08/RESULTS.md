@@ -61,61 +61,61 @@ The full top token table is `outputs/analysis2/top_tokens_by_cell.csv`. The top 
 
 | Rank | Token | n posts |
 | ---: | ----- | ------: |
-| 1 | vs | 351 |
-| 2 | framing | 334 |
-| 3 | short | 318 |
-| 4 | policy | 266 |
-| 5 | uses | 246 |
-| 6 | blame | 204 |
-| 7 | medium | 197 |
-| 8 | multiple | 188 |
-| 9 | explicit | 179 |
-| 10 | via | 179 |
+| 1 | policy | 266 |
+| 2 | blame | 204 |
+| 3 | medium | 197 |
+| 4 | multiple | 188 |
+| 5 | explicit | 179 |
+| 6 | political | 161 |
+| 7 | gun | 150 |
+| 8 | climate | 144 |
+| 9 | claim | 143 |
+| 10 | moral | 143 |
 
 ### Majority keep
 
 | Rank | Token | n posts |
 | ---: | ----- | ------: |
-| 1 | vs | 328 |
-| 2 | uses | 318 |
-| 3 | short | 308 |
-| 4 | framing | 283 |
-| 5 | blame | 248 |
-| 6 | multiple | 205 |
-| 7 | policy | 202 |
-| 8 | via | 189 |
-| 9 | political | 189 |
-| 10 | explicit | 183 |
+| 1 | blame | 248 |
+| 2 | multiple | 205 |
+| 3 | policy | 202 |
+| 4 | political | 189 |
+| 5 | explicit | 183 |
+| 6 | medium | 162 |
+| 7 | direct | 161 |
+| 8 | gun | 156 |
+| 9 | moral | 146 |
+| 10 | strong | 141 |
 
 ### Majority remove
 
 | Rank | Token | n posts |
 | ---: | ----- | ------: |
-| 1 | uses | 165 |
-| 2 | political | 120 |
-| 3 | profanity | 110 |
-| 4 | blame | 103 |
-| 5 | framing | 100 |
-| 6 | short | 99 |
-| 7 | direct | 80 |
-| 8 | vs | 79 |
-| 9 | group | 76 |
-| 10 | strong | 75 |
+| 1 | political | 120 |
+| 2 | profanity | 110 |
+| 3 | blame | 103 |
+| 4 | direct | 80 |
+| 5 | group | 76 |
+| 6 | strong | 75 |
+| 7 | explicit | 75 |
+| 8 | insult | 71 |
+| 9 | multiple | 69 |
+| 10 | moral | 62 |
 
 ### Unanimous remove
 
 | Rank | Token | n posts |
 | ---: | ----- | ------: |
 | 1 | profanity | 54 |
-| 2 | uses | 54 |
-| 3 | political | 41 |
-| 4 | explicit | 29 |
-| 5 | strong | 28 |
-| 6 | short | 28 |
-| 7 | insult | 27 |
-| 8 | blame | 26 |
-| 9 | group | 25 |
-| 10 | framing | 24 |
+| 2 | political | 41 |
+| 3 | explicit | 29 |
+| 4 | strong | 28 |
+| 5 | insult | 27 |
+| 6 | blame | 26 |
+| 7 | group | 25 |
+| 8 | direct | 24 |
+| 9 | insults | 22 |
+| 10 | multiple | 21 |
 
 ## Analysis 3, stance by cell within toxicity strata
 

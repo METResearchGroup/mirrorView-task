@@ -54,7 +54,7 @@ Every post in the four cells needs a Stage 1 feature set. When a `message_id` al
 Token counting for the word clouds follows these steps:
 
 1. Split each `feature_value` on non letter characters and lowercase the tokens.
-2. Drop stopwords, single character tokens, low content tokens, and meta tokens such as `mirror` and `original`.
+2. Drop stopwords, single character tokens, low content tokens, meta tokens such as `mirror` and `original`, and the extra word cloud exclusions `vs`, `framing`, `uses`, `short`, and `via`.
 3. Count each remaining token at most once per post inside each cell.
 4. Keep the top 30 tokens by that post count.
 
