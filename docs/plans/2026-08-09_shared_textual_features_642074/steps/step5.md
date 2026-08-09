@@ -1,8 +1,8 @@
-# Step 5: Smoke parity and import checks
+# Step 5: Run smoke checks for matching outputs and imports
 
 ## Goal
 
-Prove the shared package is the source of truth, migrated experiment wrappers still import cleanly, registry coverage is complete, and `experiments/predict_keep_remove_2026_05_07/dataloader.py` still points at the existing mirrors analysis label CSV directories (no join-path rewrite).
+Show that the shared package is the source of truth, that migrated experiment wrappers still import cleanly, that registry coverage is complete, and that `experiments/predict_keep_remove_2026_05_07/dataloader.py` still points at the existing mirrors analysis label CSV directories (with no join-path rewrite).
 
 ## Caller / unit of work
 
@@ -12,7 +12,7 @@ Prove the shared package is the source of truth, migrated experiment wrappers st
 2. Short `PYTHONPATH=. uv run python` smoke scripts in Exact commands
 3. Import of `experiments.predict_keep_remove_2026_05_07.dataloader.Dataloader` path constants
 
-**Out of scope:** re-running full mirrors analyses; calling OpenAI for corpus labeling; changing keep/remove model code; deleting legacy experiment files beyond Step 4’s thinning.
+**Out of scope:** re-running full mirrors analyses; calling OpenAI for corpus labeling; changing keep-or-remove model code; deleting legacy experiment files beyond Step 4's thinning.
 
 ## Files to inspect (read-only)
 
@@ -25,10 +25,10 @@ Prove the shared package is the source of truth, migrated experiment wrappers st
 
 ## Files allowed to change
 
-- `/workspace/shared/textual_features/tests/test_registry.py` (only if adding a final completeness assertion missing earlier)
-- `/workspace/docs/plans/2026-08-09_shared_textual_features_642074/plan.md` (optional: mark smoke results / note completed verification—prefer leaving plan stable)
+- `/workspace/shared/textual_features/tests/test_registry.py` (only if adding a final completeness assertion that was missing earlier)
+- `/workspace/docs/plans/2026-08-09_shared_textual_features_642074/plan.md` (optional note of completed verification; prefer leaving the plan stable)
 
-No production code changes expected in this step. If a smoke failure reveals a bug, fix in the owning earlier step’s allowed files and re-run this step.
+No production code changes are expected in this step. If a smoke failure reveals a bug, fix it in the owning earlier step's allowed files and re-run this step.
 
 ## Files forbidden to change
 
@@ -101,7 +101,7 @@ PYTHONPATH=. uv run python - <<'PY'
 from pathlib import Path
 from experiments.predict_keep_remove_2026_05_07.dataloader import Dataloader
 
-root = Path("experiments/mirrors_content_analysis_2026_04_24/analysis")
+root = Path("experiments/mirrors_content_analysis_2026_04_24/analysis").resolve()
 assert Dataloader.INTERGROUP_DIR == root / "intergroup_classifier"
 assert Dataloader.PRIME_DIR == root / "prime_classifier"
 assert Dataloader.VALENCE_DIR == root / "valence_classifier"
@@ -121,9 +121,9 @@ PY
 
 **Pass when:**
 1. All shared textual-features unit tests pass.
-2. All 11 registry names resolve; metrics calculate; classifiers expose `classify_post`.
-3. Migrated experiment modules import without error and `CalculateMetric` is the shared ABC.
-4. Keep/remove dataloader label directories remain under the mirrors analysis tree.
-5. No production edits were required beyond fixes that belong to Steps 1–4.
+2. All 11 registry names resolve, metrics calculate, and classifiers expose `classify_post`.
+3. Migrated experiment modules import without error, and `CalculateMetric` is the shared base class.
+4. Keep-or-remove dataloader label directories remain under the mirrors analysis tree.
+5. No production edits were required beyond fixes that belong to Steps 1 to 4.
 
-**Fail when:** tests are skipped to force green; keep/remove paths are “fixed” by rewriting the dataloader; smoke requires regenerating label CSVs; OpenAI live calls are treated as mandatory.
+**Fail when:** tests are skipped to force a green result; keep-or-remove paths are "fixed" by rewriting the dataloader; smoke requires regenerating label CSV files; OpenAI live calls are treated as required.

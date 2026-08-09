@@ -1,8 +1,8 @@
-# Step 4: Migrate mirrors content analysis to the shared package
+# Step 4: Point mirrors content analysis at the shared package
 
 ## Goal
 
-Delete duplicated formulas/prompts from the mirrors analysis metric and classifier modules. Make those files thin wrappers that import from `shared.textual_features` while preserving public names used by `main.py`, aggregators, and label CSV exporters. Keep on-disk label CSV paths and keep/remove join paths unchanged.
+Remove duplicated formulas and prompts from the mirrors analysis metric and classifier modules. Make those files short wrappers that import from `shared.textual_features`, while keeping the public names used by `main.py`, aggregators, and label CSV exporters. Leave on-disk label CSV paths and keep-or-remove join paths unchanged.
 
 ## Caller / unit of work
 
@@ -12,9 +12,9 @@ Delete duplicated formulas/prompts from the mirrors analysis metric and classifi
 2. Experiment `classifier.py` `classify_post` / `classify_texts` / `classify_posts` used by `__main__` and any direct imports.
 3. `experiments/mirrors_content_analysis_2026_04_24/analysis/interfaces.py` consumers importing `CalculateMetric`.
 
-**Slice:** experiment modules re-export shared implementations; local formula/prompt bodies removed.
+**Slice:** experiment modules re-export shared implementations, and local formula and prompt bodies are removed.
 
-**Out of scope:** changing aggregator/renderer logic; regenerating `labels_*.csv`; editing `predict_keep_remove_2026_05_07/dataloader.py` join directories; renaming feature columns.
+**Out of scope:** changing aggregator or renderer logic; regenerating `labels_*.csv`; editing `predict_keep_remove_2026_05_07/dataloader.py` join directories; renaming feature columns.
 
 ## Files to inspect (read-only)
 
@@ -42,48 +42,48 @@ Delete duplicated formulas/prompts from the mirrors analysis metric and classifi
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis/main.py`
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/metric_aggregator.py`
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/table_renderer.py`
-- `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/analysis_utils.py` (still used by aggregator party/condition helpers)
+- `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/analysis_utils.py` (still used by aggregator party and condition helpers)
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/**/link_mirrorview_run_to_labels.py`
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/**/main.py` for classifiers
 - `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/**/labels_*.csv`
 - `/workspace/experiments/predict_keep_remove_2026_05_07/**`
-- `/workspace/shared/textual_features/**` (behavior frozen; only import from it)
+- `/workspace/shared/textual_features/**` (behavior is fixed; only import from it)
 
 ## Per-file changes (exact)
 
 ### 1. `analysis/interfaces.py`
 
-Replace the local ABC body with:
+Replace the local base-class body with:
 
 ```text
 from shared.textual_features.base import CalculateMetric
 __all__ = ["CalculateMetric"]
 ```
 
-(or equivalent re-export). Do not keep a second ABC definition.
+(or an equivalent re-export). Do not keep a second base-class definition.
 
 ### 2. `length_compression_analysis/metrics.py`
 
 - Remove local class bodies and regex imports from `analysis_utils` used only for metrics.
-- Import `CharCountMetric`, `WordCountMetric`, `SentenceCountMetric`, `AvgSentenceLengthMetric`, `PunctuationCountMetric`, `PunctuationDensityMetric` from the matching `shared.textual_features.*` modules.
-- Keep `DEFAULT_LENGTH_METRICS` tuple with the same order and class names as today.
+- Import `CharCountMetric`, `WordCountMetric`, `SentenceCountMetric`, `AvgSentenceLengthMetric`, `PunctuationCountMetric`, and `PunctuationDensityMetric` from the matching `shared.textual_features.*` modules.
+- Keep `DEFAULT_LENGTH_METRICS` with the same order and class names as today.
 
 ### 3. `readability_complexity_analysis/metrics.py`
 
-- Remove local spaCy/syllable helpers and class bodies.
+- Remove local spaCy and syllable helpers and class bodies.
 - Import `FleschKincaidGradeMetric` from `shared.textual_features.flesch_kincaid_grade` and `FleschReadingEaseMetric` from `shared.textual_features.reading_ease`.
 - Keep `DEFAULT_READABILITY_METRICS` order identical.
 
 ### 4. `valence_classifier/classifier.py`
 
-- Remove local prompt strings, `ValenceClassification`, `get_llm`, `classify_post`, `classify_texts` implementations.
+- Remove local prompt strings, `ValenceClassification`, `get_llm`, `classify_post`, and `classify_texts` implementations.
 - Re-export those symbols from `shared.textual_features.valence`.
-- **Keep** experiment-local: `VALENCE_CLASSIFIER_DIR`, label paths, `_all_mirrors_claude_path`, `_build_posts_frame`, `_label_posts_dataframe`, `classify_posts`, and `if __name__ == "__main__"`.
+- **Keep** experiment-local code: `VALENCE_CLASSIFIER_DIR`, label paths, `_all_mirrors_claude_path`, `_build_posts_frame`, `_label_posts_dataframe`, `classify_posts`, and `if __name__ == "__main__"`.
 - `classify_posts` must call the shared `classify_texts` (via re-export) so labeling still works.
 
 ### 5. `intergroup_classifier/classifier.py` and `prime_classifier/classifier.py`
 
-Same pattern as valence: shared classify API re-exported; CSV batch helpers remain local.
+Same pattern as valence. Shared classify API is re-exported. CSV batch helpers remain local.
 
 ## Exact commands
 
@@ -142,10 +142,10 @@ rg -n "float\\(len\\(text\\)\\)|Flesch-Kincaid Grade Level|PRIME_SYSTEM_PROMPT|B
 ## Pass / fail for this step
 
 **Pass when:**
-1. Experiment `metrics.py` / classifier classify helpers are thin re-exports of shared code.
-2. `DEFAULT_LENGTH_METRICS` / `DEFAULT_READABILITY_METRICS` still importable with identical names/order.
+1. Experiment `metrics.py` files and classifier classify helpers are short re-exports of shared code.
+2. `DEFAULT_LENGTH_METRICS` and `DEFAULT_READABILITY_METRICS` are still importable with identical names and order.
 3. Classifier CSV batch helpers and label paths remain under the experiment packages.
-4. No changes to keep/remove dataloader paths or label CSV contents.
-5. `rg` check reports `NO_LOCAL_BODIES`.
+4. No changes to keep-or-remove dataloader paths or label CSV contents.
+5. The `rg` check reports `NO_LOCAL_BODIES`.
 
-**Fail when:** aggregator/main files are edited “for convenience”; label CSVs regenerated; prompts left duplicated in experiment classifiers; shared package is redesigned during migration.
+**Fail when:** aggregator or main files are edited "for convenience"; label CSV files are regenerated; prompts are left duplicated in experiment classifiers; the shared package is redesigned during migration.

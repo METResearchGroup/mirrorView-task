@@ -2,7 +2,7 @@
 
 ## 2026-08-09
 
-1. Extracted length, readability, valence, intergroup, and PRIME text features into a shared `shared/textual_features/` registry so experiments compute them from one library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
+1. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
 
 ## 2026-08-08
 
