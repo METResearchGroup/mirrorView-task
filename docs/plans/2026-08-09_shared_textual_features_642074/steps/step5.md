@@ -2,7 +2,7 @@
 
 ## Goal
 
-Show that the shared package is the source of truth, that migrated experiment wrappers still import cleanly, that registry coverage is complete, and that `experiments/predict_keep_remove_2026_05_07/dataloader.py` still points at the existing mirrors analysis label CSV directories (with no join-path rewrite).
+Confirm the shared package owns the feature implementations, and confirm the migrated experiment wrappers still import cleanly. Also confirm the registry covers every feature name, and confirm `experiments/predict_keep_remove_2026_05_07/dataloader.py` still points at the existing mirrors analysis label CSV directories with no join-path rewrite.
 
 ## Caller / unit of work
 
