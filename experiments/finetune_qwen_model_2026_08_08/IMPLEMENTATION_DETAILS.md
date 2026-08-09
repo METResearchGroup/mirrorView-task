@@ -1,5 +1,7 @@
 # Implementation details
 
+Canonical operator docs: see `README.md` in this folder.
+
 (Generated from chatting back and forth with the AI agent)
 
 Goal

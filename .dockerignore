@@ -1,0 +1,16 @@
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+node_modules
+webapp
+docs
+.cursor
+.env
+*.pem
+experiments/*
+!experiments/finetune_qwen_model_2026_08_08
+experiments/finetune_qwen_model_2026_08_08/data
+experiments/finetune_qwen_model_2026_08_08/preds
+experiments/finetune_qwen_model_2026_08_08/RESULTS.md
