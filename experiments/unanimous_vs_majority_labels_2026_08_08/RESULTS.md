@@ -1,16 +1,16 @@
-# RESULTS — Unanimous vs majority labels
+# Results, unanimous vs majority labels
 
 **Date:** 2026-08-09  
 **Status:** Complete  
 **Method:** Descriptive only (no hypothesis tests, no confidence intervals)
 
-Contract: [`GRILL.md`](./GRILL.md). Runbook: [`README.md`](./README.md).
+The design contract is in [`GRILL.md`](./GRILL.md). The run commands are in [`README.md`](./README.md).
 
 ## Cohort
 
-Source: `outputs/cohort/four_cell_cohort.csv`
+The cohort file is `outputs/cohort/four_cell_cohort.csv`.
 
-Linked-fate posts with at least three raters. Exact ties dropped. Total **n = 3,718**.
+The analysis set is linked-fate posts with at least three raters. Exact ties are dropped. The total count is **n = 3,718**.
 
 | Cell | n |
 | ---- | -: |
@@ -19,9 +19,9 @@ Linked-fate posts with at least three raters. Exact ties dropped. Total **n = 3,
 | `majority_remove` | 594 |
 | `unanimous_remove` | 154 |
 
-## Analysis 1 — Surface metrics and classifiers (original text)
+## Analysis 1, surface metrics and classifiers on original text
 
-Source: `outputs/analysis1/cell_summary.csv`
+The cell summary file is `outputs/analysis1/cell_summary.csv`.
 
 Continuous columns are cell medians. Classifier columns are cell shares.
 
@@ -32,11 +32,11 @@ Continuous columns are cell medians. Classifier columns are cell shares.
 | `majority_remove` | 594 | 52.5% | 146.0 | 26.0 | 2.0 | 12.00 | 0.030 | 7.05 | 66.83 | 0.040 | 0.842 | 0.958 |
 | `unanimous_remove` | 154 | 70.8% | 131.5 | 24.0 | 2.0 | 10.38 | 0.032 | 6.68 | 66.37 | 0.032 | 0.851 | 0.948 |
 
-Per-post rows: `outputs/analysis1/per_post_features.csv`
+The rows for each post are in `outputs/analysis1/per_post_features.csv`.
 
-## Analysis 2 — Stage 1 features and word clouds
+## Analysis 2, Stage 1 features and word clouds
 
-Coverage (`outputs/analysis2/coverage.json`):
+Coverage counts come from `outputs/analysis2/coverage.json`.
 
 | Quantity | Value |
 | -------- | ----: |
@@ -46,16 +46,16 @@ Coverage (`outputs/analysis2/coverage.json`):
 | Missing after run | 0 |
 | Merged feature rows | 12,911 |
 
-Merged features: `outputs/analysis2/merged_stage1_features.jsonl`
+The merged features file is `outputs/analysis2/merged_stage1_features.jsonl`.
 
-Word clouds (token size follows post document frequency):
+Word size in each cloud follows how many posts in the cell contain the token. The cloud images are:
 
 - `outputs/analysis2/wordcloud_unanimous_keep.png`
 - `outputs/analysis2/wordcloud_majority_keep.png`
 - `outputs/analysis2/wordcloud_majority_remove.png`
 - `outputs/analysis2/wordcloud_unanimous_remove.png`
 
-Top tokens by cell (`outputs/analysis2/top_tokens_by_cell.csv`; top 10 shown):
+The full top token table is `outputs/analysis2/top_tokens_by_cell.csv`. The top 10 tokens for each cell are shown below.
 
 ### Unanimous keep
 
@@ -117,9 +117,9 @@ Top tokens by cell (`outputs/analysis2/top_tokens_by_cell.csv`; top 10 shown):
 | 9 | group | 25 |
 | 10 | framing | 24 |
 
-## Analysis 3 — Stance by cell within toxicity strata
+## Analysis 3, stance by cell within toxicity strata
 
-Source: `outputs/analysis3/stance_by_cell_all_strata.csv` (and the three stratum-specific wide CSVs). Cell counts sum to 3,718 across strata.
+The long table is `outputs/analysis3/stance_by_cell_all_strata.csv`, and the three wide tables for each toxicity stratum sit beside it. Cell counts sum to 3,718 across the three strata.
 
 ### Low toxicity (n = 1,043)
 
@@ -144,15 +144,15 @@ Source: `outputs/analysis3/stance_by_cell_all_strata.csv` (and the three stratum
 
 ## Descriptive reading
 
-Primary claim: The four cells line up as a gradient. High-toxicity share rises from unanimous keep (4.6%) through majority keep (19.2%) and majority remove (52.5%) to unanimous remove (70.8%). Median original-text length falls along the same order (203 → 183.5 → 146 → 131.5 characters). Positive valence falls and intergroup and PRIME shares rise toward the remove cells. Unanimous cells sit at the ends; majority cells sit in between.
+The primary claim is supported in a descriptive sense by a clear order across the four cells. High toxicity share rises from unanimous keep (4.6%) through majority keep (19.2%) and majority remove (52.5%) to unanimous remove (70.8%). Median original text length falls in the same order, from 203 characters to 183.5, then 146, then 131.5. The share of positive valence falls toward the remove cells, while the intergroup and PRIME shares rise. Unanimous cells sit at the ends of those patterns, and majority cells sit between them.
 
-Secondary claim: Remove cells are not a clean left-versus-right story. In high toxicity, both left and right posts appear in majority remove and unanimous remove in large numbers. Stance alone does not separate keep from remove the way high toxicity does. Stage 1 token tables reinforce a threshold-violation flavor in remove cells: `profanity` and `insult` rise toward unanimous remove, while keep cells stay closer to framing and policy language.
+The secondary claim is also supported in a descriptive sense. Remove cells are not a clean left versus right story. In the high toxicity stratum, both left and right posts appear in majority remove and unanimous remove in large numbers, so stance alone does not separate keep from remove the way high toxicity does. The Stage 1 token tables point in the same direction, because tokens such as `profanity` and `insult` rise toward unanimous remove, while keep cells stay closer to framing and policy language.
 
-These readings are descriptive. They do not claim statistical significance.
+The readings above are descriptive. They do not claim statistical significance.
 
 ## Limitations
 
 - Valence, intergroup, and PRIME classifier labels can change across model calls.
-- Stage 1 features used the dual-text prompt (original + mirror) for parity with reused rows from `create_llm_features`.
-- PRIME is reported as one binary `is_prime` label, not four separate prestige / in-group / moral / emotional cue columns.
-- Exact ties were excluded and are not characterized here.
+- Stage 1 features used the dual text prompt with original and mirror text, so that new rows stay comparable to reused rows from `create_llm_features`.
+- PRIME is reported as one binary `is_prime` label, not as four separate prestige, in group, moral, and emotional cue columns.
+- Exact ties were excluded, and they are not described here.

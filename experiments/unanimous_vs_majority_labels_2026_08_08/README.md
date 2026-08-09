@@ -1,22 +1,20 @@
 # Unanimous vs majority labels (2026-08-08)
 
-Linked-fate Study Phase 2 Part 2 posts can receive the same keep or remove label whether every rater agrees or only a strict majority agrees. This experiment asks whether those cases differ in measurable ways.
+In Study Phase 2 Part 2, linked-fate raters give each post a keep or remove label. A post can get that label when every rater agrees, and it can get the same label when only a strict majority agrees. The experiment asks whether those two cases differ in measurable ways.
 
-The grill lock is in [`GRILL.md`](./GRILL.md). Descriptive findings live in [`RESULTS.md`](./RESULTS.md).
+The locked design is in [`GRILL.md`](./GRILL.md). The descriptive findings are in [`RESULTS.md`](./RESULTS.md).
 
 ## Claims
 
-Primary: Unanimous keep and unanimous remove sit at clearer extremes of content. Strict-majority keep and remove sit more in the middle on toxicity and length and look more arguable.
+The primary claim is that unanimous keep and unanimous remove sit at clearer extremes of content, while strict majority keep and remove sit more in the middle on toxicity and length and look more arguable.
 
-Secondary: Heavy remove looks more like high toxicity than like a left versus right political split. That claim is descriptive only, tested with toxicity strata and stance tables.
+The secondary claim is that heavy remove looks more like high toxicity than like a left versus right political split. The secondary claim is descriptive only, and it is tested with toxicity strata and stance tables.
 
-Method: Descriptive only. No hypothesis tests and no confidence intervals.
+The method is descriptive only. The work does not run hypothesis tests, and it does not report confidence intervals.
 
 ## Cohort
 
-Universe: linked-fate trials with at least three raters.
-
-Four cells:
+The analysis set is linked-fate trials with at least three raters. Posts fall into four cells, with the expected sizes on the current data shown below.
 
 | Cell | Expected n (current data) |
 | ---- | ------------------------: |
@@ -25,42 +23,42 @@ Four cells:
 | `majority_remove` | 594 |
 | `unanimous_remove` | 154 |
 
-Exact ties are dropped and are not analyzed. The cohort file is experiment-local. It is not a new shared registry dataset.
+Exact ties are dropped, and they are not analyzed. The cohort file stays inside this experiment directory, and it is not added as a new shared registry dataset.
 
-Path: `outputs/cohort/four_cell_cohort.csv`
+The cohort path is `outputs/cohort/four_cell_cohort.csv`.
 
 ## Text and joins
 
-Analyses 1 and 3 (and length or toxicity summaries) use `original_text` only.
+Analyses 1 and 3, along with the length and toxicity summaries, use `original_text` only.
 
-Toxicity strata come from `sample_toxicity_type` in `{low, middle, high}`.
+Toxicity strata come from `sample_toxicity_type`, which takes values in `{low, middle, high}`.
 
-Stance comes from stimuli `sampled_stance` in `{left, right}`.
+Stance comes from the stimuli field `sampled_stance`, which takes values in `{left, right}`.
 
 ## Analysis 1
 
-Surface metrics and classifiers on original text, summarized by cell:
+Analysis 1 computes surface metrics and classifiers on original text, then summarizes them by cell. The locked list is:
 
-- Length and structure: character, word, and sentence counts; average sentence length; punctuation density
-- Readability: Flesch–Kincaid grade; reading ease
-- Classifiers from `shared/textual_features/`: valence (`is_positive`), intergroup (`is_intergroup`), and PRIME as the shared binary `is_prime` label (not four separate cue columns)
+- Length and structure, including character, word, and sentence counts, average sentence length, and punctuation density
+- Readability, including Flesch-Kincaid grade and reading ease
+- Classifiers from `shared/textual_features/`, including valence (`is_positive`), intergroup (`is_intergroup`), and PRIME as the shared binary `is_prime` label rather than four separate cue columns
 
-Outputs: `outputs/analysis1/per_post_features.csv`, `outputs/analysis1/cell_summary.csv`
+The outputs are `outputs/analysis1/per_post_features.csv` and `outputs/analysis1/cell_summary.csv`.
 
 ## Analysis 2
 
-Stage 1 LLM features only (no embed, cluster, or label stages).
+Analysis 2 uses Stage 1 language model features only. It does not run embed, cluster, or label stages.
 
-Cover every four-cell post. Reuse Stage 1 rows from `experiments/create_llm_features_2026_08_05/` when `message_id` overlaps. Generate only missing ids with the dual-text prompt (original + mirror) so new rows stay comparable to reused rows. Do not write into that experiment’s outputs tree.
+Every four-cell post needs a Stage 1 feature set. When a `message_id` already has Stage 1 rows under `experiments/create_llm_features_2026_08_05/`, those rows are reused. Missing ids are generated with the dual text prompt that includes original and mirror text, so new rows stay comparable to reused rows. New files are written only under this experiment, and the older experiment outputs tree is not changed.
 
-Token counting for word clouds:
+Token counting for the word clouds follows these steps:
 
-1. Split `feature_value` on non-letter characters and lowercase
-2. Drop stopwords, single-character tokens, low-content tokens, and meta tokens (`mirror`, `original`, …)
-3. Count each remaining token at most once per post inside each cell
-4. Take the top 30 tokens by that post count
+1. Split each `feature_value` on non letter characters and lowercase the tokens.
+2. Drop stopwords, single character tokens, low content tokens, and meta tokens such as `mirror` and `original`.
+3. Count each remaining token at most once per post inside each cell.
+4. Keep the top 30 tokens by that post count.
 
-Outputs:
+The outputs are:
 
 - `outputs/analysis2/coverage.json`
 - `outputs/analysis2/merged_stage1_features.jsonl`
@@ -69,13 +67,13 @@ Outputs:
 
 ## Analysis 3
 
-Three stance-by-cell tables, one per toxicity stratum: `sampled_stance` (left or right) × the four cells.
+Analysis 3 builds three tables of stance by cell, one table for each toxicity stratum. Each table crosses `sampled_stance` (left or right) with the four cells.
 
-Outputs: `outputs/analysis3/stance_by_cell_{low,middle,high}_toxicity.csv` and `outputs/analysis3/stance_by_cell_all_strata.csv`
+The outputs are `outputs/analysis3/stance_by_cell_{low,middle,high}_toxicity.csv` and `outputs/analysis3/stance_by_cell_all_strata.csv`.
 
 ## How to run
 
-From the repo root:
+From the repo root, run:
 
 ```bash
 PYTHONPATH=. uv run python experiments/unanimous_vs_majority_labels_2026_08_08/src/build_cohort.py
@@ -85,13 +83,15 @@ PYTHONPATH=. uv run --with wordcloud python experiments/unanimous_vs_majority_la
 PYTHONPATH=. uv run python experiments/unanimous_vs_majority_labels_2026_08_08/src/run_analysis3.py
 ```
 
-Analysis 2 feature generation needs an OpenAI API key in the environment (same path as other LLM experiment scripts).
+Analysis 2 feature generation needs an OpenAI API key in the environment, using the same path as other language model experiment scripts.
 
 ## Out of scope
+
+The following work is out of scope for this experiment:
 
 - Analyzing exact ties
 - Formal statistical tests or confidence intervals
 - Work under `experiments/rater_agreement_2026_08_06/`
-- Stages 2 through 4 of `experiments/create_llm_features_2026_08_05/` (embed, cluster, label)
+- Stages 2 through 4 of `experiments/create_llm_features_2026_08_05/` (embed, cluster, and label)
 - New shared transformed catalog entries
 - A strategy document writeup
