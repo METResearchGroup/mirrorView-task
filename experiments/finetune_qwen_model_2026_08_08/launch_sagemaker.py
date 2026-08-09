@@ -85,6 +85,9 @@ def _load_sagemaker_role_arn() -> str:
         raise ValueError(
             "SAGEMAKER_ROLE_ARN is required to launch SageMaker jobs."
         )
+    # Guard against a truncated env secret that drops the final 'n'.
+    if role.endswith("modernbert-sagemaker-executio"):
+        role = f"{role}n"
     return role
 
 

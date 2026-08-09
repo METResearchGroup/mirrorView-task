@@ -121,6 +121,13 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 Required env for launch: `SAGEMAKER_ROLE_ARN`, `HF_TOKEN`; `WANDB_API_KEY` required for `--mode train`.
 
+If `CreateTrainingJob` fails with `iam:PassRole`, apply the execution-role Terraform under `infra/` (requires IAM write access), then set `SAGEMAKER_ROLE_ARN` to the output ARN:
+
+```bash
+cd experiments/finetune_qwen_model_2026_08_08/infra
+terraform init && terraform apply
+```
+
 Launcher dry-run (no submit):
 
 ```bash
@@ -133,8 +140,8 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 | Field | Value |
 |-------|-------|
-| `run_id` | _(filled after Step 8)_ |
-| Train job | _(filled after Step 8)_ |
-| Adapter S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/<run_id>/` |
-| Preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/preds/` |
-| Results | `experiments/finetune_qwen_model_2026_08_08/RESULTS.md` |
+| Data S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/data/` (uploaded) |
+| ECR image | `517478598677.dkr.ecr.us-east-2.amazonaws.com/mirrorview-finetune_qwen_model_2026_08_08:latest` (pushed) |
+| `run_id` | blocked — `iam:PassRole` denied for `mark_iam_credentials` |
+| Train / infer | pending IAM fix (`infra/main.tf` + PassRole) |
+| Results | `experiments/finetune_qwen_model_2026_08_08/RESULTS.md` (pending remote preds) |

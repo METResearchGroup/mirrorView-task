@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-09
+
+1. Stood up the Qwen3-4B LoRA keep/remove teachability experiment: balanced unanimous-min3 chat data, TRL/PEFT train and inference entrypoints, local evaluate writer, custom ECR image, and SageMaker launcher (remote train blocked pending `iam:PassRole` / execution-role IAM). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)
+
 ## 2026-08-08
 
 1. Added a shared Study Phase 2 Part 2 keep/remove dataset of posts with at least three linked-fate ratings and unanimous agreement (1644 posts), loadable by registry name for high-agreement modeling. [PR #53](https://github.com/METResearchGroup/mirrorView-task/pull/53)
