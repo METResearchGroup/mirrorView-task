@@ -35,8 +35,14 @@ locals {
   launcher_user_policy_name = "pass-mirrorview-qwen-finetune-sm-exec"
 
   s3_bucket = "mirrorview-experimental-artifacts"
-  s3_prefix = "mirrorview-finetune_qwen_model_2026_08_08"
-  ecr_repo  = "mirrorview-finetune_qwen_model_2026_08_08"
+  s3_prefixes = [
+    "mirrorview-finetune_qwen_model_2026_08_08",
+    "mirrorview-larger_finetune_qwen_model_2026_08_08",
+  ]
+  ecr_repos = [
+    "mirrorview-finetune_qwen_model_2026_08_08",
+    "mirrorview-larger_finetune_qwen_model_2026_08_08",
+  ]
 
   # Also allow PassRole to the legacy ModernBERT role (optional reuse).
   modernbert_execution_role_arn = "arn:aws:iam::${local.account_id}:role/modernbert-sagemaker-execution"
@@ -85,10 +91,12 @@ resource "aws_iam_role_policy" "qwen_sagemaker_execution" {
         Resource = "arn:aws:s3:::${local.s3_bucket}"
         Condition = {
           StringLike = {
-            "s3:prefix" = [
-              local.s3_prefix,
-              "${local.s3_prefix}/*",
-            ]
+            "s3:prefix" = flatten([
+              for prefix in local.s3_prefixes : [
+                prefix,
+                "${prefix}/*",
+              ]
+            ])
           }
         }
       },
@@ -102,7 +110,7 @@ resource "aws_iam_role_policy" "qwen_sagemaker_execution" {
           "s3:AbortMultipartUpload",
           "s3:ListMultipartUploadParts",
         ]
-        Resource = "arn:aws:s3:::${local.s3_bucket}/${local.s3_prefix}/*"
+        Resource = [for prefix in local.s3_prefixes : "arn:aws:s3:::${local.s3_bucket}/${prefix}/*"]
       },
       {
         Sid    = "CloudWatchLogs"
@@ -135,7 +143,8 @@ resource "aws_iam_role_policy" "qwen_sagemaker_execution" {
           "ecr:BatchGetImage",
         ]
         Resource = [
-          "arn:aws:ecr:${local.aws_region}:${local.account_id}:repository/${local.ecr_repo}",
+          for repo in local.ecr_repos :
+          "arn:aws:ecr:${local.aws_region}:${local.account_id}:repository/${repo}"
         ]
       },
       {

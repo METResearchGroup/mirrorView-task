@@ -27,6 +27,9 @@ AWS_REGION = "us-east-2"
 ECR_REPO_NAME = "mirrorview-finetune_qwen_model_2026_08_08"
 INSTANCE_TYPE = "ml.g5.xlarge"
 WANDB_PROJECT = "mirrorview-finetune-qwen-2026-08-08"
+DEFAULT_CONTAINER_ENTRY_POINT = (
+    "/app/experiments/finetune_qwen_model_2026_08_08/entrypoint.sh",
+)
 
 
 class LaunchMode(str, Enum):
@@ -52,6 +55,7 @@ class JobConfig:
     adapter_s3_uri: str | None
     environment: dict[str, str]
     container_arguments: list[str]
+    container_entry_point: list[str]
 
 
 def _run_id() -> str:
@@ -91,14 +95,18 @@ def _load_sagemaker_role_arn() -> str:
     return role
 
 
-def resolve_image_uri(region: str, account_id: str | None = None) -> str:
+def resolve_image_uri(
+    region: str,
+    account_id: str | None = None,
+    ecr_repo_name: str = ECR_REPO_NAME,
+) -> str:
     """Build ECR image URI for the experiment repository."""
     if account_id is None:
         sts = boto3.client("sts", region_name=region)
         account_id = sts.get_caller_identity()["Account"]
     return (
         f"{account_id}.dkr.ecr.{region}.amazonaws.com/"
-        f"{ECR_REPO_NAME}:latest"
+        f"{ecr_repo_name}:latest"
     )
 
 
@@ -111,24 +119,33 @@ def build_job_config(
     image_uri: str,
     region: str = AWS_REGION,
     instance_type: str = INSTANCE_TYPE,
+    s3_bucket: str = S3_BUCKET,
+    s3_prefix: str = S3_PREFIX,
+    wandb_project: str = WANDB_PROJECT,
+    container_entry_point: list[str] | tuple[str, ...] | None = None,
 ) -> JobConfig:
     """Construct frozen job config for a mode (no AWS submit)."""
-    data_s3_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/data"
-    adapter_s3_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/adapters/{run_id}"
+    data_s3_uri = f"s3://{s3_bucket}/{s3_prefix}/data"
+    adapter_s3_uri = f"s3://{s3_bucket}/{s3_prefix}/adapters/{run_id}"
+    entry_point = list(
+        container_entry_point
+        if container_entry_point is not None
+        else DEFAULT_CONTAINER_ENTRY_POINT
+    )
     if mode is LaunchMode.TRAIN:
         output_s3_uri = adapter_s3_uri
         container_arguments = ["train"]
         environment = {
             "HF_TOKEN": hf_token,
             "WANDB_API_KEY": str(wandb_api_key),
-            "WANDB_PROJECT": WANDB_PROJECT,
+            "WANDB_PROJECT": wandb_project,
             "RUN_ID": run_id,
             "MODE": mode.value,
             "AWS_REGION": region,
             "ADAPTER_S3_URI": adapter_s3_uri,
         }
     elif mode is LaunchMode.INFER_BASELINE:
-        output_s3_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/preds/baseline"
+        output_s3_uri = f"s3://{s3_bucket}/{s3_prefix}/preds/baseline"
         container_arguments = ["infer_baseline"]
         environment = {
             "HF_TOKEN": hf_token,
@@ -139,7 +156,7 @@ def build_job_config(
         }
         adapter_s3_uri = None
     else:
-        output_s3_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/preds/fine_tuned"
+        output_s3_uri = f"s3://{s3_bucket}/{s3_prefix}/preds/fine_tuned"
         container_arguments = ["infer_adapter"]
         environment = {
             "HF_TOKEN": hf_token,
@@ -161,6 +178,7 @@ def build_job_config(
         adapter_s3_uri=adapter_s3_uri,
         environment=environment,
         container_arguments=container_arguments,
+        container_entry_point=entry_point,
     )
 
 
@@ -199,7 +217,7 @@ def submit_job(config: JobConfig, wait: bool) -> str:
         environment=config.environment,
         base_job_name=f"qwen-lora-{config.mode.value.replace('_', '-')}",
         hyperparameters={},
-        container_entry_point=["/app/experiments/finetune_qwen_model_2026_08_08/entrypoint.sh"],
+        container_entry_point=config.container_entry_point,
         container_arguments=config.container_arguments,
     )
 
