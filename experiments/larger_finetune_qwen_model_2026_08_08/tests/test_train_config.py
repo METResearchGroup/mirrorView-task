@@ -5,6 +5,7 @@ from __future__ import annotations
 from experiments.finetune_qwen_model_2026_08_08.src import train_config as prior_cfg
 from experiments.larger_finetune_qwen_model_2026_08_08.src.train_config import (
     MODEL_ID,
+    NUM_TRAIN_EPOCHS,
     WANDB_PROJECT,
     default_hyperparams,
 )
@@ -13,8 +14,8 @@ from experiments.larger_finetune_qwen_model_2026_08_08.src.train_config import (
 class TestDefaultHyperparams:
     """Tests for default_hyperparams()."""
 
-    def test_overrides_wandb_only(self):
-        """Keeps scientific knobs and changes only the W&B project."""
+    def test_overrides_wandb_and_epochs(self):
+        """Keeps shared knobs; overrides W&B project and epoch count."""
         result = default_hyperparams()
         prior = prior_cfg.default_hyperparams()
 
@@ -25,3 +26,6 @@ class TestDefaultHyperparams:
         assert result.wandb_project == WANDB_PROJECT
         assert prior.wandb_project == "mirrorview-finetune-qwen-2026-08-08"
         assert WANDB_PROJECT == "mirrorview-larger-finetune-qwen-2026-08-08"
+        assert NUM_TRAIN_EPOCHS == 1
+        assert result.num_train_epochs == 1
+        assert prior.num_train_epochs == 3

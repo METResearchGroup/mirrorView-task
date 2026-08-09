@@ -18,7 +18,7 @@ This package is a thin wrapper over that earlier experiment. It imports balance,
 | Prompt | Same vendored rubric as prior experiment (imported, not recopied) |
 | Train stack | TRL `SFTTrainer` + PEFT LoRA; assistant-only loss; bf16 LoRA (not QLoRA) |
 | LoRA | `r=16`, `alpha=32`, `dropout=0.05`, attn+MLP targets |
-| Hyperparams | 3 epochs; lr `2e-4`; cosine + 3–5% warmup; batch 1 × grad accum 8; `max_seq_length=2048`; seed `1` |
+| Hyperparams | 1 epoch; lr `2e-4`; cosine + 3–5% warmup; batch 1 × grad accum 8; `max_seq_length=2048`; seed `1` |
 | SageMaker | Custom Docker; modes `train` / `infer_baseline` / `infer_adapter`; `ml.g5.xlarge`; `us-east-2` |
 | ECR | `mirrorview-larger_finetune_qwen_model_2026_08_08` |
 | S3 | bucket `mirrorview-experimental-artifacts`; prefix `mirrorview-larger_finetune_qwen_model_2026_08_08/` with `data/`, `adapters/<run_id>/`, `preds/{baseline,fine_tuned}/` |

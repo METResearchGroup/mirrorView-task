@@ -15,6 +15,8 @@ from __future__ import annotations
 import argparse
 import sys
 
+import os
+
 from experiments.finetune_qwen_model_2026_08_08 import launch_sagemaker as prior
 
 S3_BUCKET = "mirrorview-experimental-artifacts"
@@ -26,8 +28,19 @@ WANDB_PROJECT = "mirrorview-larger-finetune-qwen-2026-08-08"
 CONTAINER_ENTRY_POINT = (
     "/app/experiments/larger_finetune_qwen_model_2026_08_08/entrypoint.sh",
 )
+DEFAULT_SAGEMAKER_ROLE_ARN = (
+    "arn:aws:iam::517478598677:role/mirrorview-qwen-finetune-sm-exec"
+)
 
 LaunchMode = prior.LaunchMode
+
+
+def _load_sagemaker_role_arn() -> str:
+    """Return SAGEMAKER_ROLE_ARN, with a known-role fallback if redacted."""
+    role = os.environ.get("SAGEMAKER_ROLE_ARN", "").strip()
+    if not role or role.startswith("[REDACTED]"):
+        return DEFAULT_SAGEMAKER_ROLE_ARN
+    return prior._load_sagemaker_role_arn()
 
 
 def resolve_image_uri(region: str, account_id: str | None = None) -> str:
@@ -101,7 +114,7 @@ def main(argv: list[str] | None = None) -> None:
     mode = LaunchMode(args.mode)
     run_id = args.run_id or prior._run_id()
 
-    role_arn = prior._load_sagemaker_role_arn()
+    role_arn = _load_sagemaker_role_arn()
     hf_token = prior._require_hf_token()
     wandb_key: str | None = None
     if mode is LaunchMode.TRAIN:

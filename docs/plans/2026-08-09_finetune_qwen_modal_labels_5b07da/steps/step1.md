@@ -70,7 +70,7 @@ Work that is out of scope includes writing `data/*`, implementing real train or 
 | Prompt | Same vendored rubric as the earlier experiment (import it; do not copy the text again) |
 | Train stack | TRL `SFTTrainer` plus PEFT LoRA, assistant-only loss, bf16 LoRA (not QLoRA) |
 | LoRA | `r=16`, `alpha=32`, `dropout=0.05`, attention and MLP targets |
-| Hyperparams | 3 epochs, learning rate `2e-4`, cosine schedule with 3% to 5% warmup, batch 1 with gradient accumulation 8, `max_seq_length=2048`, seed `1` |
+| Hyperparams | 1 epoch, learning rate `2e-4`, cosine schedule with 3% to 5% warmup, batch 1 with gradient accumulation 8, `max_seq_length=2048`, seed `1` |
 | SageMaker | Custom Docker, modes `train`, `infer_baseline`, and `infer_adapter`, instance `ml.g5.xlarge`, region `us-east-2` |
 | ECR | `mirrorview-larger_finetune_qwen_model_2026_08_08` |
 | S3 | Bucket `mirrorview-experimental-artifacts`, prefix `mirrorview-larger_finetune_qwen_model_2026_08_08/` with `data/`, `adapters/<run_id>/`, and `preds/{baseline,fine_tuned}/` |

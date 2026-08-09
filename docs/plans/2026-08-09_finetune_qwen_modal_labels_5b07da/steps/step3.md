@@ -71,7 +71,7 @@ Work that is out of scope includes Docker, SageMaker submit, regenerating data, 
 | Model | `Qwen/Qwen3-4B-Instruct-2507` |
 | LoRA | `r=16`, `alpha=32`, `dropout=0.05` |
 | Precision | bf16 LoRA (not QLoRA) |
-| Epochs, learning rate, and schedule | 3 epochs, `2e-4`, cosine with 3% to 5% warmup |
+| Epochs, learning rate, and schedule | 1 epoch, `2e-4`, cosine with 3% to 5% warmup |
 | Batch | 1 with gradient accumulation 8 |
 | `max_seq_length` | 2048 |
 | Seed | 1 |
