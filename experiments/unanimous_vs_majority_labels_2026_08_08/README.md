@@ -1,64 +1,97 @@
-# Unanimous vs. majority labels, 2026-08-08
+# Unanimous vs majority labels (2026-08-08)
 
-We want to see if there's a tangible difference between posts that are rated unanimously vs. posts that have a majority label. Right now, it seems like the cleanest takeaway is "Consensus appears at the clearest ends of the moderation spectrum; disagreement concentrates around rhetorically “hot” but substantively arguable boundary cases."
+Linked-fate Study Phase 2 Part 2 posts can receive the same keep or remove label whether every rater agrees or only a strict majority agrees. This experiment asks whether those cases differ in measurable ways.
 
-We'll split posts into two groups:
+The grill lock is in [`GRILL.md`](./GRILL.md). Descriptive findings live in [`RESULTS.md`](./RESULTS.md).
 
-- unanimous
-- majority-labeled (not unanimous)
+## Claims
 
-Current counts:
+Primary: Unanimous keep and unanimous remove sit at clearer extremes of content. Strict-majority keep and remove sit more in the middle on toxicity and length and look more arguable.
 
-- Unanimous keep: 1,490
-- Unanimous remove: 154
-- Strict-majority keep: 1,480
-- Strict-majority remove: 594
-- Exact ties: 275 (we'll keep these separate)
+Secondary: Heavy remove looks more like high toxicity than like a left versus right political split. That claim is descriptive only, tested with toxicity strata and stance tables.
 
-Each will have either keep or remove labels. This creates a 2x2 separation, between unanimous keep/remove and majority-labeled keep/remove.
+Method: Descriptive only. No hypothesis tests and no confidence intervals.
 
-Strong preliminary signal:
+## Cohort
 
-A quick descriptive comparison of the four strict cells shows a nearly monotonic toxicity gradient:
+Universe: linked-fate trials with at least three raters.
 
-- Unanimous keep: 4.6% high toxicity
-- Majority keep: 19.2% high toxicity
-- Majority remove: 52.5% high toxicity
-- Unanimous remove: 70.8% high toxicity
+Four cells:
 
-Median original-post length similarly declines:
+| Cell | Expected n (current data) |
+| ---- | ------------------------: |
+| `unanimous_keep` | 1,490 |
+| `majority_keep` | 1,480 |
+| `majority_remove` | 594 |
+| `unanimous_remove` | 154 |
 
-- Unanimous keep: 203 characters
-- Majority keep: 184
-- Majority remove: 146
-- Unanimous remove: 132
+Exact ties are dropped and are not analyzed. The cohort file is experiment-local. It is not a new shared registry dataset.
 
-Right now, what it seems like is "unanimous removal is driven by stacked, explicit threshold violations rather than political disagreement itself."
+Path: `outputs/cohort/four_cell_cohort.csv`
+
+## Text and joins
+
+Analyses 1 and 3 (and length or toxicity summaries) use `original_text` only.
+
+Toxicity strata come from `sample_toxicity_type` in `{low, middle, high}`.
+
+Stance comes from stimuli `sampled_stance` in `{left, right}`.
 
 ## Analysis 1
 
-Some things we want to look at include:
+Surface metrics and classifiers on original text, summarized by cell:
 
-- Character, word, and sentence counts
-- Average sentence length
-- Punctuation density
-- Flesch–Kincaid grade
-- Reading ease
-- Valence
-- Intergroup discussion
-- PRIME cues: prestige, in-group, moral, emotional
+- Length and structure: character, word, and sentence counts; average sentence length; punctuation density
+- Readability: Flesch–Kincaid grade; reading ease
+- Classifiers from `shared/textual_features/`: valence (`is_positive`), intergroup (`is_intergroup`), and PRIME as the shared binary `is_prime` label (not four separate cue columns)
+
+Outputs: `outputs/analysis1/per_post_features.csv`, `outputs/analysis1/cell_summary.csv`
 
 ## Analysis 2
 
-We'll also re-use the [previously generated features](../create_llm_features_2026_08_05/). For each of the 4 cells, we'll generate a word cloud of the most commonly mentioned key topical words and features.
+Stage 1 LLM features only (no embed, cluster, or label stages).
+
+Cover every four-cell post. Reuse Stage 1 rows from `experiments/create_llm_features_2026_08_05/` when `message_id` overlaps. Generate only missing ids with the dual-text prompt (original + mirror) so new rows stay comparable to reused rows. Do not write into that experiment’s outputs tree.
+
+Token counting for word clouds:
+
+1. Split `feature_value` on non-letter characters and lowercase
+2. Drop stopwords, single-character tokens, low-content tokens, and meta tokens (`mirror`, `original`, …)
+3. Count each remaining token at most once per post inside each cell
+4. Take the top 30 tokens by that post count
+
+Outputs:
+
+- `outputs/analysis2/coverage.json`
+- `outputs/analysis2/merged_stage1_features.jsonl`
+- `outputs/analysis2/top_tokens_by_cell.csv`
+- `outputs/analysis2/wordcloud_<cell>.png` for each of the four cells
 
 ## Analysis 3
 
-Lastly, we'll pull the raw data, from `STUDY_PHASE_2_PART_2_STIMULI`, and compare the `sampled_stance` against the 4-cell matrix and report a table with two rows (left/right) and 4 columns (unanimous keep, majority keep, majority remove, unanimous remove).
+Three stance-by-cell tables, one per toxicity stratum: `sampled_stance` (left or right) × the four cells.
 
-## Actual steps
+Outputs: `outputs/analysis3/stance_by_cell_{low,middle,high}_toxicity.csv` and `outputs/analysis3/stance_by_cell_all_strata.csv`
 
-Steps:
+## How to run
 
-1. Get datasets. ...
-...
+From the repo root:
+
+```bash
+PYTHONPATH=. uv run python experiments/unanimous_vs_majority_labels_2026_08_08/src/build_cohort.py
+PYTHONPATH=. uv run python experiments/unanimous_vs_majority_labels_2026_08_08/src/run_analysis1.py
+PYTHONPATH=. uv run python experiments/unanimous_vs_majority_labels_2026_08_08/src/run_analysis2_features.py
+PYTHONPATH=. uv run --with wordcloud python experiments/unanimous_vs_majority_labels_2026_08_08/src/run_analysis2_wordclouds.py
+PYTHONPATH=. uv run python experiments/unanimous_vs_majority_labels_2026_08_08/src/run_analysis3.py
+```
+
+Analysis 2 feature generation needs an OpenAI API key in the environment (same path as other LLM experiment scripts).
+
+## Out of scope
+
+- Analyzing exact ties
+- Formal statistical tests or confidence intervals
+- Work under `experiments/rater_agreement_2026_08_06/`
+- Stages 2 through 4 of `experiments/create_llm_features_2026_08_05/` (embed, cluster, label)
+- New shared transformed catalog entries
+- A strategy document writeup
