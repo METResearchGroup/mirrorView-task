@@ -1,9 +1,15 @@
-# SageMaker execution role for Qwen LoRA fine-tune (us-east-2).
-# Scoped to s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/*
-# and ECR repo mirrorview-finetune_qwen_model_2026_08_08.
+# SageMaker IAM for Qwen LoRA fine-tune (us-east-2).
 #
-# Apply (from this directory) after configuring AWS credentials with IAM write access:
-#   terraform init && terraform apply
+# Creates:
+# 1) Execution role mirrorview-qwen-finetune-sm-exec (S3 + ECR + logs)
+# 2) Inline user policy on mark_iam_credentials (PassRole + SageMaker APIs)
+#
+# Apply from this directory with credentials that can write IAM:
+#   unset AWS_SESSION_TOKEN
+#   export AWS_ACCESS_KEY_ID=...
+#   export AWS_SECRET_ACCESS_KEY=...
+#   export AWS_DEFAULT_REGION=us-east-2
+#   terraform init && terraform apply -auto-approve
 
 terraform {
   required_version = ">= 1.5.0"
@@ -21,18 +27,25 @@ provider "aws" {
 }
 
 locals {
-  role_name  = "mirrorview-qwen-finetune-sm-exec"
-  s3_bucket  = "mirrorview-experimental-artifacts"
-  s3_prefix  = "mirrorview-finetune_qwen_model_2026_08_08"
-  ecr_repo   = "mirrorview-finetune_qwen_model_2026_08_08"
-  aws_region = "us-east-2"
   account_id = data.aws_caller_identity.current.account_id
+  aws_region = "us-east-2"
+
+  execution_role_name = "mirrorview-qwen-finetune-sm-exec"
+  launcher_user_name  = "mark_iam_credentials"
+  launcher_user_policy_name = "pass-mirrorview-qwen-finetune-sm-exec"
+
+  s3_bucket = "mirrorview-experimental-artifacts"
+  s3_prefix = "mirrorview-finetune_qwen_model_2026_08_08"
+  ecr_repo  = "mirrorview-finetune_qwen_model_2026_08_08"
+
+  # Also allow PassRole to the legacy ModernBERT role (optional reuse).
+  modernbert_execution_role_arn = "arn:aws:iam::${local.account_id}:role/modernbert-sagemaker-execution"
 }
 
 data "aws_caller_identity" "current" {}
 
 resource "aws_iam_role" "qwen_sagemaker_execution" {
-  name = local.role_name
+  name = local.execution_role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -48,7 +61,7 @@ resource "aws_iam_role" "qwen_sagemaker_execution" {
   })
 
   tags = {
-    Name       = local.role_name
+    Name       = local.execution_role_name
     Project    = "mirrorview"
     Experiment = "finetune_qwen_model_2026_08_08"
     ManagedBy  = "terraform"
@@ -56,7 +69,7 @@ resource "aws_iam_role" "qwen_sagemaker_execution" {
 }
 
 resource "aws_iam_role_policy" "qwen_sagemaker_execution" {
-  name = local.role_name
+  name = local.execution_role_name
   role = aws_iam_role.qwen_sagemaker_execution.id
 
   policy = jsonencode({
@@ -140,19 +153,21 @@ resource "aws_iam_role_policy" "qwen_sagemaker_execution" {
   })
 }
 
-# PassRole for the lab IAM user that launches jobs from Cloud Agent.
 resource "aws_iam_user_policy" "mark_pass_qwen_sagemaker_role" {
-  name = "pass-mirrorview-qwen-finetune-sm-exec"
-  user = "mark_iam_credentials"
+  name = local.launcher_user_policy_name
+  user = local.launcher_user_name
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Sid      = "PassQwenSageMakerExecutionRole"
-        Effect   = "Allow"
-        Action   = ["iam:PassRole"]
-        Resource = aws_iam_role.qwen_sagemaker_execution.arn
+        Sid    = "PassSageMakerExecutionRoles"
+        Effect = "Allow"
+        Action = ["iam:PassRole"]
+        Resource = [
+          aws_iam_role.qwen_sagemaker_execution.arn,
+          local.modernbert_execution_role_arn,
+        ]
         Condition = {
           StringEquals = {
             "iam:PassedToService" = "sagemaker.amazonaws.com"
@@ -160,7 +175,7 @@ resource "aws_iam_user_policy" "mark_pass_qwen_sagemaker_role" {
         }
       },
       {
-        Sid    = "CreateSageMakerTrainingJobs"
+        Sid    = "SageMakerTrainingJobs"
         Effect = "Allow"
         Action = [
           "sagemaker:CreateTrainingJob",
@@ -176,6 +191,11 @@ resource "aws_iam_user_policy" "mark_pass_qwen_sagemaker_role" {
 }
 
 output "sagemaker_execution_role_arn" {
-  description = "IAM role ARN for Qwen SageMaker jobs; set SAGEMAKER_ROLE_ARN to this value."
+  description = "Set SAGEMAKER_ROLE_ARN to this value for Qwen SageMaker jobs."
   value       = aws_iam_role.qwen_sagemaker_execution.arn
+}
+
+output "launcher_user_policy_name" {
+  description = "Inline policy name attached to mark_iam_credentials."
+  value       = local.launcher_user_policy_name
 }
