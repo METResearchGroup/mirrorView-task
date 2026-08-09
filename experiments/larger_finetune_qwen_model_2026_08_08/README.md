@@ -145,12 +145,12 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 | Field | Value |
 |-------|-------|
 | Data S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/data/` |
-| ECR image | _(fill after push)_ |
-| `run_id` | _(fill after remote run)_ |
+| ECR image | `517478598677.dkr.ecr.us-east-2.amazonaws.com/mirrorview-larger_finetune_qwen_model_2026_08_08:latest` |
+| `run_id` | `modal_larger_1ep_2026_08_09` |
 | Exec role | IAM role `mirrorview-qwen-finetune-sm-exec` (via `SAGEMAKER_ROLE_ARN`) |
-| Train job | _(fill after remote run)_ |
-| Adapter S3 | _(fill after remote run)_ |
-| Baseline infer | _(fill after remote run)_ |
-| Adapter infer | _(fill after remote run)_ |
+| Train job | `qwen-lora-train-2026-08-09-02-37-10-277` (Completed; 1 epoch) |
+| Adapter S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/adapters/modal_larger_1ep_2026_08_09/` |
+| Baseline infer | `qwen-lora-infer-baseline-2026-08-09-04-02-15-269` (Completed) |
+| Adapter infer | `qwen-lora-infer-adapter-2026-08-09-04-32-44-609` (Completed) |
 | Preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/{baseline,fine_tuned}/` |
-| Results | `experiments/larger_finetune_qwen_model_2026_08_08/RESULTS.md` |
+| Results | `experiments/larger_finetune_qwen_model_2026_08_08/RESULTS.md` — test remove-F1 baseline **0.7210** → fine-tuned **0.6962**; accuracy 0.6385 → 0.7016 |
