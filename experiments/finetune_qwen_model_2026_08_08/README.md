@@ -140,8 +140,13 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 | Field | Value |
 |-------|-------|
-| Data S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/data/` (uploaded) |
-| ECR image | `517478598677.dkr.ecr.us-east-2.amazonaws.com/mirrorview-finetune_qwen_model_2026_08_08:latest` (pushed) |
-| `run_id` | blocked — `iam:PassRole` denied for `mark_iam_credentials` |
-| Train / infer | pending IAM fix (`infra/main.tf` + PassRole) |
-| Results | `experiments/finetune_qwen_model_2026_08_08/RESULTS.md` (pending remote preds) |
+| Data S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/data/` |
+| ECR image | `517478598677.dkr.ecr.us-east-2.amazonaws.com/mirrorview-finetune_qwen_model_2026_08_08:latest` |
+| `run_id` | `passrole_probe3` |
+| Exec role | IAM role `mirrorview-qwen-finetune-sm-exec` (via `SAGEMAKER_ROLE_ARN`) |
+| Train job | `qwen-lora-train-2026-08-09-00-40-25-347` (Completed) |
+| Adapter S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/passrole_probe3/` |
+| Baseline infer | `qwen-lora-infer-baseline-2026-08-09-00-58-57-462` (Completed) |
+| Adapter infer | `qwen-lora-infer-adapter-2026-08-09-01-08-09-472` (Completed) |
+| Preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/preds/{baseline,fine_tuned}/` |
+| Results | `experiments/finetune_qwen_model_2026_08_08/RESULTS.md` — test remove-F1 baseline **0.7407** → fine-tuned **0.9688** (0 invalids) |
