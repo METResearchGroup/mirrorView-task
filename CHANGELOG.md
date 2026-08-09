@@ -2,7 +2,8 @@
 
 ## 2026-08-09
 
-1. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
+1. Completed the Qwen3-4B LoRA keep/remove teachability run on SageMaker (`ml.g5.xlarge`): balanced unanimous-min3 chat data, TRL/PEFT train + baseline/adapter infer, and local `RESULTS.md` (test remove-F1 0.74 → 0.97). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)
+2. Moved length, readability, valence, intergroup, and PRIME text features into `shared/textual_features/` with a registry, so experiments call one shared library instead of duplicated mirrors-analysis code. [PR #55](https://github.com/METResearchGroup/mirrorView-task/pull/55)
 
 ## 2026-08-08
 
