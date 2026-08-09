@@ -20,8 +20,8 @@ Fill in every length and readability feature module, and `text_utils.py`, so `ca
 | Path | Why |
 |------|-----|
 | `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/analysis_utils.py` | `WORD_RE`, `PUNCTUATION_RE`, `SENTENCE_SPLIT_RE`, `safe_divide` |
-| `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/length_compression_analysis/metrics.py` | Source of truth for length formulas |
-| `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis/metrics.py` | Source of truth for Flesch-Kincaid and reading ease, plus spaCy syllable path |
+| `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/length_compression_analysis/metrics.py` | Current length formulas to match |
+| `/workspace/experiments/mirrors_content_analysis_2026_04_24/analysis/readability_complexity_analysis/metrics.py` | Current Flesch-Kincaid and reading ease formulas, plus spaCy syllable path |
 | `/workspace/docs/plans/2026-08-09_shared_textual_features_642074/steps/step1.md` | Fixed fixtures and contracts |
 | `/workspace/shared/textual_features/tests/test_length_metrics.py` | Targets to make pass |
 | `/workspace/shared/textual_features/tests/test_readability_metrics.py` | Targets to make pass |
