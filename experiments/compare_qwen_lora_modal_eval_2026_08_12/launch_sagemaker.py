@@ -18,6 +18,8 @@ import sys
 from dataclasses import replace
 from enum import Enum
 
+import boto3
+
 from experiments.finetune_qwen_model_2026_08_08 import launch_sagemaker as prior
 from experiments.larger_finetune_qwen_model_2026_08_08 import (
     launch_sagemaker as larger,
@@ -114,6 +116,52 @@ def build_job_config(
     )
 
 
+def submit_job(config: prior.JobConfig, wait: bool) -> str:
+    """Submit a SageMaker job with Debugger and Profiler disabled.
+
+    New SageMaker accounts cannot enable Debugger (maintenance mode). Prior
+    teachability jobs worked before that restriction.
+    """
+    import sagemaker
+    from sagemaker.estimator import Estimator
+
+    session = sagemaker.Session(
+        boto_session=boto3.Session(region_name=config.region),
+    )
+    estimator = Estimator(
+        image_uri=config.image_uri,
+        role=config.role_arn,
+        instance_count=1,
+        instance_type=config.instance_type,
+        output_path=config.output_s3_uri,
+        sagemaker_session=session,
+        environment=config.environment,
+        base_job_name=f"qwen-lora-{config.mode.value.replace('_', '-')}",
+        hyperparameters={},
+        container_entry_point=config.container_entry_point,
+        container_arguments=config.container_arguments,
+        debugger_hook_config=False,
+        disable_profiler=True,
+    )
+
+    inputs: dict[str, str] = {"data": config.data_s3_uri}
+    if (
+        config.mode is prior.LaunchMode.INFER_ADAPTER
+        and config.adapter_s3_uri is not None
+    ):
+        inputs["adapter"] = config.adapter_s3_uri
+
+    estimator.fit(inputs=inputs, wait=wait)
+    job_name = estimator.latest_training_job.name
+    print(f"SageMaker job: {job_name}")
+    print(f"Data URI: {config.data_s3_uri}/")
+    print(f"Output URI: {config.output_s3_uri}/")
+    if config.adapter_s3_uri:
+        print(f"Adapter URI: {config.adapter_s3_uri}/")
+    print(f"Run id: {config.run_id}")
+    return str(job_name)
+
+
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse CLI arguments."""
     parser = argparse.ArgumentParser(
@@ -181,7 +229,7 @@ def main(argv: list[str] | None = None) -> None:
         image_uri=image_uri,
     )
     prior.print_job_config(config)
-    prior.submit_job(config, wait=bool(args.wait))
+    submit_job(config, wait=bool(args.wait))
 
 
 if __name__ == "__main__":
