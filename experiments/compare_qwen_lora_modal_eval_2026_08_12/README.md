@@ -12,20 +12,20 @@ No retraining happens here. Evaluation reuses the frozen chat files from `experi
 
 | Topic | Value |
 |-------|-------|
-| Goal | Same-dataset comparison of baseline, unanimous LoRA, and modal LoRA |
+| Goal | Compare three keep/remove arms on one modal-label eval set |
+| Arms | `baseline` (no LoRA), `unanimous_lora` (pull request 54 adapter `passrole_probe3`), `modal_lora` (pull request 57 adapter `modal_larger_1ep_2026_08_09`) |
 | Model | `Qwen/Qwen3-4B-Instruct-2507` |
-| Eval data | Frozen files in `experiments/larger_finetune_qwen_model_2026_08_08/data/` from `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS` |
-| Eval rows | Balanced 1:1 modal splits; seed 1; train 4500 / test 1126 |
-| Arms | `baseline`, `unanimous_lora`, `modal_lora` |
+| Eval data source | `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS` via frozen files in `experiments/larger_finetune_qwen_model_2026_08_08/data/` |
+| Eval rows | Same balanced 1:1 modal splits as the larger experiment: train 4500 / test 1126; seed 1 |
+| No train | Do not retrain adapters |
 | Pred layout | `preds/{baseline,unanimous_lora,modal_lora}/{train,test}_labels.csv` |
 | Metrics | Accuracy, precision, recall, F1; positive class = remove |
 | Remote image | Reuse ECR `mirrorview-larger_finetune_qwen_model_2026_08_08:latest` |
+| Unanimous adapter S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/passrole_probe3/` |
 | Modal data S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/data/` |
-| Unanimous adapter source | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/passrole_probe3/` |
-| Unanimous adapter infer channel | Lean copy at `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/adapters/unanimous_passrole_probe3_lean/` |
 | Existing preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/{baseline,fine_tuned}/` |
 | New preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/unanimous_lora/` |
-| Env | `HF_TOKEN`, `SAGEMAKER_ROLE_ARN` (prefer `mirrorview-qwen-finetune-sm-exec`) |
+| Deps | `uv sync --extra finetune-qwen-2026-08-08` |
 
 ## Install
 
@@ -36,10 +36,6 @@ uv sync --extra finetune-qwen-2026-08-08
 ## 1. Sync existing baseline and modal preds
 
 ```bash
-export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
-export AWS_DEFAULT_REGION=us-east-2
-
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/compare_qwen_lora_modal_eval_2026_08_12/sync_existing_preds.py \
   --preds-dir experiments/compare_qwen_lora_modal_eval_2026_08_12/preds \
@@ -49,21 +45,10 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 ## 2. Infer the unanimous adapter on the modal splits
 
 ```bash
-export SAGEMAKER_ROLE_ARN=arn:aws:iam::517478598677:role/mirrorview-qwen-finetune-sm-exec
-
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/compare_qwen_lora_modal_eval_2026_08_12/launch_sagemaker.py \
   --mode infer_unanimous_adapter \
   --wait
-```
-
-Dry-run (no submit):
-
-```bash
-PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
-  experiments/compare_qwen_lora_modal_eval_2026_08_12/launch_sagemaker.py \
-  --mode infer_unanimous_adapter \
-  --dry-run
 ```
 
 ## 3. Download unanimous preds and write RESULTS.md
@@ -83,12 +68,4 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 ## Run record
 
-| Field | Value |
-|-------|-------|
-| Eval data | `experiments/larger_finetune_qwen_model_2026_08_08/data/` |
-| Unanimous adapter (source) | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/passrole_probe3/` |
-| Unanimous adapter (lean infer channel) | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/adapters/unanimous_passrole_probe3_lean/` |
-| Modal adapter (source of modal_lora preds) | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/adapters/modal_larger_1ep_2026_08_09/` |
-| Unanimous infer job | (fill after run) |
-| Unanimous preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/unanimous_lora/` |
-| Results | `experiments/compare_qwen_lora_modal_eval_2026_08_12/RESULTS.md` |
+Filled in Step 4 after the remote infer job completes.
