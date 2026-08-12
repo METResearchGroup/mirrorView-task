@@ -21,7 +21,7 @@ No retraining happens here. Evaluation reuses the frozen chat files from `experi
 | Pred layout | `preds/{baseline,unanimous_lora,modal_lora}/{train,test}_labels.csv` |
 | Metrics | Accuracy, precision, recall, F1; positive class = remove |
 | Remote image | Reuse ECR `mirrorview-larger_finetune_qwen_model_2026_08_08:latest` |
-| Unanimous adapter S3 | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/passrole_probe3/` |
+| Unanimous adapter S3 | Source `.../adapters/passrole_probe3/`; lean infer channel `.../adapters/unanimous_passrole_probe3_lean/` |
 | Modal data S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/data/` |
 | Existing preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/{baseline,fine_tuned}/` |
 | New preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/unanimous_lora/` |
@@ -45,6 +45,11 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 ## 2. Infer the unanimous adapter on the modal splits
 
 ```bash
+export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
+export AWS_DEFAULT_REGION=us-east-2
+export SAGEMAKER_ROLE_ARN  # must be the mirrorview-qwen-finetune-sm-exec role ARN
+
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/compare_qwen_lora_modal_eval_2026_08_12/launch_sagemaker.py \
   --mode infer_unanimous_adapter \
