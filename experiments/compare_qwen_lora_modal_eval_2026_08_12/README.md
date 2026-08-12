@@ -36,6 +36,10 @@ uv sync --extra finetune-qwen-2026-08-08
 ## 1. Sync existing baseline and modal preds
 
 ```bash
+export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
+export AWS_DEFAULT_REGION=us-east-2
+
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/compare_qwen_lora_modal_eval_2026_08_12/sync_existing_preds.py \
   --preds-dir experiments/compare_qwen_lora_modal_eval_2026_08_12/preds \
@@ -45,15 +49,22 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 ## 2. Infer the unanimous adapter on the modal splits
 
 ```bash
-export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
-export AWS_DEFAULT_REGION=us-east-2
 export SAGEMAKER_ROLE_ARN  # must be the mirrorview-qwen-finetune-sm-exec role ARN
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/compare_qwen_lora_modal_eval_2026_08_12/launch_sagemaker.py \
   --mode infer_unanimous_adapter \
+  --run-id unanimous_on_modal_2026_08_12 \
   --wait
+```
+
+Dry-run (no submit):
+
+```bash
+PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
+  experiments/compare_qwen_lora_modal_eval_2026_08_12/launch_sagemaker.py \
+  --mode infer_unanimous_adapter \
+  --dry-run
 ```
 
 ## 3. Download unanimous preds and write RESULTS.md
@@ -73,4 +84,13 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 ## Run record
 
-Filled in Step 4 after the remote infer job completes.
+| Field | Value |
+|-------|-------|
+| Eval data | `experiments/larger_finetune_qwen_model_2026_08_08/data/` |
+| Unanimous adapter source | `s3://mirrorview-experimental-artifacts/mirrorview-finetune_qwen_model_2026_08_08/adapters/passrole_probe3/` |
+| Unanimous adapter lean channel | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/adapters/unanimous_passrole_probe3_lean/` |
+| Modal adapter (source of modal_lora preds) | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/adapters/modal_larger_1ep_2026_08_09/` |
+| Unanimous infer job | `qwen-lora-infer-adapter-2026-08-12-16-13-38-540` (Completed) |
+| Unanimous preds S3 | `s3://mirrorview-experimental-artifacts/mirrorview-larger_finetune_qwen_model_2026_08_08/preds/unanimous_lora/` |
+| Results | `experiments/compare_qwen_lora_modal_eval_2026_08_12/RESULTS.md` |
+| Test remove-F1 | baseline 0.7210; unanimous_lora 0.6842; modal_lora 0.6962 |
