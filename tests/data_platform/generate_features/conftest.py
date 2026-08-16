@@ -76,7 +76,7 @@ def write_preprocessed_posts(
     preprocessed_dir.mkdir(parents=True)
     pd.DataFrame(list(records)).to_csv(preprocessed_dir / "posts.csv", index=False)
     (preprocessed_dir / "metadata.json").write_text(
-        json.dumps({"s3_upload_status": True}), encoding="utf-8"
+        json.dumps({"sync_status": "completed"}), encoding="utf-8"
     )
     return preprocessed_dir
 

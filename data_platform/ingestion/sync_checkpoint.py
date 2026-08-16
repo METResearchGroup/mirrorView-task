@@ -91,15 +91,8 @@ def finalize_local_disk_sync(
     output_dir: Path,
     metadata: dict[str, Any],
 ) -> None:
-    """Set sync_status from tasks and mark a completed local run durable.
-
-    Twitter and Reddit never upload to S3; local disk is the durability store.
-    Setting ``s3_upload_status`` true lets ``require_all_runs_uploaded`` pass
-    before preprocess without a fake cloud upload.
-    """
+    """Set sync_status from tasks and flush metadata for a completed local sync run."""
     metadata["sync_status"] = sync_status_from_tasks(get_task_progress(metadata)).value
-    if metadata["sync_status"] == SyncStatus.COMPLETED.value:
-        metadata["s3_upload_status"] = True
     flush_run_metadata(storage, output_dir, metadata)
 
 
@@ -147,7 +140,7 @@ def find_resume_run_dir(
         if not metadata_path.exists():
             continue
         metadata = storage.load_run_metadata(path)
-        if not metadata.get("s3_upload_status", False):
+        if metadata.get("sync_status") != SyncStatus.COMPLETED.value:
             candidates.append((path.name, path))
 
     if not candidates:
@@ -185,7 +178,6 @@ def build_base_sync_metadata(
 ) -> dict[str, Any]:
     metadata: dict[str, Any] = {
         "sync_status": SyncStatus.IN_PROGRESS.value,
-        "s3_upload_status": False,
         "dataset_id": require_dataset_id(config),
         "name": config["name"],
         "description": config["description"],

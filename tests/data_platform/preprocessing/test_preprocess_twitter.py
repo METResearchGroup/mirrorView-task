@@ -119,7 +119,6 @@ def test_preprocess_records_writes_output(data_root) -> None:
         run_dir,
         {
             "sync_status": "completed",
-            "s3_upload_status": True,
             "row_count": 2,
         },
     )
@@ -148,7 +147,6 @@ def test_preprocess_records_strips_tco_from_saved_text(data_root) -> None:
         run_dir,
         {
             "sync_status": "completed",
-            "s3_upload_status": True,
             "row_count": 1,
         },
     )
@@ -184,7 +182,6 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
         older_run,
         {
             "sync_status": "completed",
-            "s3_upload_status": True,
             "row_count": 1,
         },
     )
@@ -197,7 +194,6 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
         newer_run,
         {
             "sync_status": "completed",
-            "s3_upload_status": True,
             "row_count": 1,
         },
     )

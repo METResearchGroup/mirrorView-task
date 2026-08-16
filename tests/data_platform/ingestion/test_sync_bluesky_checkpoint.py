@@ -143,9 +143,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         )
 
     monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
-    monkeypatch.setattr(
-        storage, "load_seen_ids_from_athena", lambda: {"at://did:plc:ex/app.bsky.feed.post/old"}
-    )
 
     sync_bluesky.run_sync_tasks(
         MagicMock(),
@@ -157,8 +154,11 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         filename=storage.records_filename,
     )
 
-    assert storage.load_seen_uris(run_dir) == {"at://did:plc:ex/app.bsky.feed.post/new"}
-    assert metadata["posts_skipped_as_duplicates"] == 1
+    assert storage.load_seen_uris(run_dir) == {
+        "at://did:plc:ex/app.bsky.feed.post/old",
+        "at://did:plc:ex/app.bsky.feed.post/new",
+    }
+    assert metadata["posts_skipped_as_duplicates"] == 0
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(

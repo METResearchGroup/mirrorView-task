@@ -31,7 +31,6 @@ ENV_VAR_TYPES: Final[dict[str, type[str]]] = {
     "X_BEARER_TOKEN": str,
     "X_CONSUMER_KEY": str,
     "X_SECRET_KEY": str,
-    "DATA_PLATFORM_BLUESKY_S3_UPLOAD": str,
 }
 
 

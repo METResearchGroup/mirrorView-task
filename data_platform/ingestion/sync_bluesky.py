@@ -21,17 +21,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from data_platform.aws.athena import Athena
-from data_platform.aws.constants import S3_BUCKET
-from data_platform.aws.s3 import S3
 from data_platform.ingestion.bluesky_retry import retry_bluesky_request
 from data_platform.ingestion.sync_checkpoint import (
-    SyncStatus,
     TaskStatus,
     build_base_sync_metadata,
     ensure_dataset_manifest,
-    flush_run_metadata,
-    get_task_progress,
+    finalize_local_disk_sync,
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
@@ -40,12 +35,10 @@ from data_platform.ingestion.sync_checkpoint import (
     require_dataset_id,
     run_checkpointed_sync,
     run_sync_cli,
-    sync_status_from_tasks,
 )
 from data_platform.ingestion.sync_clients import init_bluesky_client
 from data_platform.utils.config_paths import load_yaml_config
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.utils.local_durability import is_bluesky_s3_upload_enabled
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 
 if TYPE_CHECKING:
@@ -331,46 +324,7 @@ def sync_records(
         filename=filename,
     )
 
-    metadata["sync_status"] = sync_status_from_tasks(get_task_progress(metadata)).value
-    try:
-        is_completed = metadata["sync_status"] == SyncStatus.COMPLETED.value
-        if is_completed and (output_dir / filename).exists():
-            if is_bluesky_s3_upload_enabled():
-                key = (
-                    f"raw/platform=bluesky/dataset_id={dataset_id}/"
-                    f"run_dir={output_dir.name}/{filename}"
-                )
-                S3().upload_file(output_dir / filename, S3_BUCKET, key)
-                print(f"sync_records: uploaded raw to s3://{S3_BUCKET}/{key}")
-                metadata["s3_upload_status"] = True
-
-                if (output_dir / filename).suffix == ".parquet":
-                    s3_location = (
-                        f"s3://{S3_BUCKET}/raw/platform=bluesky"
-                        f"/dataset_id={dataset_id}/run_dir={output_dir.name}/"
-                    )
-                    Athena().register_partition(
-                        "bluesky_raw",
-                        {
-                            "platform": "bluesky",
-                            "dataset_id": dataset_id,
-                            "run_dir": output_dir.name,
-                        },
-                        s3_location,
-                    )
-                    print(
-                        f"sync_records: registered partition platform=bluesky"
-                        f" dataset_id={dataset_id} run_dir={output_dir.name}"
-                    )
-            else:
-                metadata["s3_upload_status"] = True
-                print(
-                    "sync_records: Bluesky S3 upload disabled "
-                    "(set DATA_PLATFORM_BLUESKY_S3_UPLOAD=1 to enable); "
-                    "run marked local-durable"
-                )
-    finally:
-        flush_run_metadata(storage, output_dir, metadata)
+    finalize_local_disk_sync(storage, output_dir, metadata)
 
     total_rows = metadata["row_count"]
     print(

@@ -110,13 +110,11 @@ def test_run_sync_tasks_skips_prior_run_comments(
     comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
     post_storage = comment_storage.post_storage()
 
-    prior_run = comment_storage.create_new_run_dir("2026_05_29-10:00:00")
+    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     comment_storage.append_records(
         [mock_comment_row("t1_comment_old", subreddit="alphasub")],
-        prior_run,
+        run_dir,
     )
-
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
@@ -149,7 +147,6 @@ def test_run_sync_tasks_skips_prior_run_comments(
         )
 
     monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
-    monkeypatch.setattr(comment_storage, "load_seen_ids_from_athena", lambda: {"t1_comment_old"})
 
     sync_reddit.run_sync_tasks(
         MagicMock(),
@@ -164,7 +161,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
     )
 
     seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
-    assert seen == {"t1_comment_new"}
+    assert seen == {"t1_comment_old", "t1_comment_new"}
     assert metadata["comments_skipped_as_duplicates"] == 1
 
 
@@ -218,7 +215,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         )
 
     monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
-    monkeypatch.setattr(comment_storage, "load_seen_ids_from_athena", lambda: {"t1_comment_old"})
 
     sync_reddit.run_sync_tasks(
         MagicMock(),
@@ -233,8 +229,8 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     )
 
     seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
-    assert seen == {"t1_comment_new"}
-    assert metadata["comments_skipped_as_duplicates"] == 1
+    assert seen == {"t1_comment_old", "t1_comment_new"}
+    assert metadata["comments_skipped_as_duplicates"] == 0
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(

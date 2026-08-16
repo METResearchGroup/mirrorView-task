@@ -15,27 +15,28 @@ def bluesky_storage(data_root) -> BlueskyStorageManager:
     return BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
 
 
-def write_stage_metadata(run_dir: Path, *, s3_upload_status: bool | None = True) -> Path:
-    """Write a metadata.json under run_dir, omitting s3_upload_status entirely if None."""
+def write_stage_metadata(
+    run_dir: Path,
+    *,
+    sync_status: str | None = "completed",
+) -> Path:
+    """Write a metadata.json under run_dir for local completeness checks."""
     run_dir.mkdir(parents=True, exist_ok=True)
     payload: dict[str, object] = {}
-    if s3_upload_status is not None:
-        payload["s3_upload_status"] = s3_upload_status
+    if sync_status is not None:
+        payload["sync_status"] = sync_status
     path = run_dir / METADATA_FILENAME
     path.write_text(json.dumps(payload), encoding="utf-8")
     return path
 
 
-def seed_fully_uploaded_dataset() -> Path:
-    """Write real, fully-uploaded metadata.json files for every stage of the bluesky
-    VALID_DATASET_ID dataset, so gate-check/cleanup/orchestration tests have genuine
-    files on disk to check and delete. Requires the data_root fixture to be active."""
+def seed_complete_dataset() -> Path:
+    """Write metadata.json files for every stage so disk-cleanup tests have real files."""
     for stage in (StorageStage.RAW, StorageStage.PREPROCESSED, StorageStage.CURATED):
         storage = BlueskyStorageManager(stage, VALID_DATASET_ID)
-        write_stage_metadata(
-            storage.create_new_run_dir("2026_01_01-00:00:00"), s3_upload_status=True
-        )
+        write_stage_metadata(storage.create_new_run_dir("2026_01_01-00:00:00"))
     write_stage_metadata(
-        dataset_root("bluesky", VALID_DATASET_ID) / StorageStage.FEATURES, s3_upload_status=True
+        dataset_root("bluesky", VALID_DATASET_ID) / StorageStage.FEATURES,
+        sync_status=None,
     )
     return dataset_root("bluesky", VALID_DATASET_ID)

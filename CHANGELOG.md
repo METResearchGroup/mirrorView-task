@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-16
+
+1. Removed Glue table setup and S3 writes from `data_platform/`. Curation is the last pipeline stage, and artifacts stay under `data_platform/data/`. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+
 ## 2026-08-09
 
 1. Completed the Qwen3-4B LoRA keep/remove teachability run on SageMaker (`ml.g5.xlarge`): balanced unanimous-min3 chat data, TRL/PEFT train + baseline/adapter infer, and local `RESULTS.md` (test remove-F1 0.74 → 0.97). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from unittest.mock import patch
 
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.storage import BlueskyStorageManager, RedditStorageManager, StorageStage
@@ -72,17 +71,15 @@ def test_append_deduped_records_skips_current_run_duplicates(bluesky_storage) ->
 
 def test_append_deduped_records_skips_prior_run_duplicates(data_root) -> None:
     comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    prior_run = comment_storage.create_new_run_dir("2026_05_29-10:00:00")
     current_run = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     comment_storage.append_records(
         [mock_comment_row("t1_comment_a")],
-        prior_run,
+        current_run,
         filename="comments.csv",
     )
     config = DedupeConfig(id_column="comment_fullname", filename="comments.csv")
     dedupe_session = DedupeSession(config)
-    with patch.object(comment_storage, "load_seen_ids_from_athena", return_value={"t1_comment_a"}):
-        dedupe_session.warm(comment_storage, current_run)
+    dedupe_session.warm(comment_storage, current_run)
 
     result = comment_storage.append_deduped_records(
         [
@@ -98,10 +95,10 @@ def test_append_deduped_records_skips_prior_run_duplicates(data_root) -> None:
     assert result.skipped == 1
     assert comment_storage.load_seen_ids_from_disk(
         current_run, "comment_fullname", filename="comments.csv"
-    ) == {"t1_comment_b"}
+    ) == {"t1_comment_a", "t1_comment_b"}
 
 
-def test_append_deduped_records_skips_platform_duplicates(data_root) -> None:
+def test_append_deduped_records_does_not_dedupe_across_datasets(data_root) -> None:
     dataset_a = "reddit_00000000-0000-4000-8000-000000000001"
     dataset_b = "reddit_00000000-0000-4000-8000-000000000002"
     storage_a = RedditStorageManager(StorageStage.RAW, dataset_a)
@@ -115,8 +112,7 @@ def test_append_deduped_records_skips_platform_duplicates(data_root) -> None:
     )
     config = DedupeConfig(id_column="comment_fullname", filename="comments.csv")
     dedupe_session = DedupeSession(config)
-    with patch.object(storage_b, "load_seen_ids_from_athena", return_value={"t1_comment_a"}):
-        dedupe_session.warm(storage_b, current_run_b)
+    dedupe_session.warm(storage_b, current_run_b)
 
     result = storage_b.append_deduped_records(
         [
@@ -128,8 +124,8 @@ def test_append_deduped_records_skips_platform_duplicates(data_root) -> None:
         filename="comments.csv",
     )
 
-    assert result.kept == 1
-    assert result.skipped == 1
+    assert result.kept == 2
+    assert result.skipped == 0
 
 
 def test_append_deduped_records_returns_empty_when_all_duplicates(bluesky_storage) -> None:

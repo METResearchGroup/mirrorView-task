@@ -46,7 +46,6 @@ class FeatureRunMetadata:
     migrated_from: str | None = None
     migrated_at: str | None = None
     updated_at: str | None = None
-    s3_upload_status: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize metadata to the features/metadata.json document shape."""
@@ -74,7 +73,6 @@ class FeatureRunMetadata:
                 else {}
             ),
             "updated_at": self.updated_at,
-            "s3_upload_status": self.s3_upload_status,
         }
 
     @classmethod
@@ -108,7 +106,6 @@ class FeatureRunMetadata:
             migrated_from=data.get("migrated_from"),
             migrated_at=data.get("migrated_at"),
             updated_at=data.get("updated_at"),
-            s3_upload_status=data.get("s3_upload_status", False),
         )
 
 

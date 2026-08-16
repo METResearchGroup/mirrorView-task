@@ -23,18 +23,6 @@ OPENAI_API_KEY=
 GOOGLE_API_KEY=
 ```
 
-AWS credentials are only needed if you enable Bluesky S3 upload (see below).
-
-## Bluesky S3 default
-
-Bluesky sync is local-only by default. It does not write to the shared lab S3 bucket unless you set:
-
-```bash
-export DATA_PLATFORM_BLUESKY_S3_UPLOAD=1
-```
-
-Twitter and Reddit are always local-disk pipelines. Successful local syncs are marked durable so preprocess can run without a cloud upload.
-
 ## Per-platform commands
 
 Edit or clone ingestion YAML under `data_platform/ingestion/configs/<platform>/` (keywords, limits, `dataset_id`). Then run each stage with that `dataset_id`.
@@ -42,6 +30,10 @@ Edit or clone ingestion YAML under `data_platform/ingestion/configs/<platform>/`
 ### Bluesky
 
 ```bash
+# Small local smoke collection (~100 posts):
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+  --config data_platform/ingestion/configs/bluesky/smoke.yaml
+
 PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
   --config data_platform/ingestion/configs/bluesky/mirrorview.yaml
 
@@ -54,6 +46,8 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
 PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
+
+The smoke config uses `dataset_id: bluesky_c0ffee00-0000-4000-8000-000000000100`. Curation is the last stage. Files stay under `data_platform/data/`.
 
 ### Twitter
 
@@ -104,7 +98,7 @@ After curated `mirrorview.csv` exists for all three platforms:
 PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py
 ```
 
-That discovers metadata under `data_platform/data/*/…/curated/*/metadata.json` and writes `concatenated_records/<timestamp>/records.csv` under the experiment folder.
+That discovers metadata under `data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/metadata.json` and writes `concatenated_records/<timestamp>/records.csv` under the experiment folder.
 
 Then continue with flip generation / balance in that experiment, promote a job CSV, and follow:
 

@@ -32,7 +32,6 @@ class DedupeSession:
                 filename=self.config.filename,
             )
         )
-        seen.update(storage.load_seen_ids_from_athena())
         self.seen_ids = seen
 
     def filter_rows(self, rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:

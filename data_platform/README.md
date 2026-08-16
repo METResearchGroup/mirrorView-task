@@ -8,17 +8,9 @@ ingestion → preprocessing → generate_features → curate
 
 Each logical collection is identified by **`dataset_id`** (`{platform}_<uuid>`), pinned in ingestion YAML (e.g. `mirrorview.yaml`) and recorded under `data_platform/data/{platform}/{dataset_id}/`. Downstream CLIs require `--dataset-id`; curate YAML is filter-only.
 
+Curation is the final stage: all artifacts stay on local disk under `data_platform/data/`. The pipeline does not upload to S3 or register Glue tables.
+
 Operator runbook: [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md).
-
-## Local durability
-
-Twitter and Reddit syncs write only to local disk. On successful completion they set `s3_upload_status: true` so preprocess can run.
-
-Bluesky is local-only unless you opt in:
-
-```bash
-export DATA_PLATFORM_BLUESKY_S3_UPLOAD=1
-```
 
 ## Stages
 
@@ -39,9 +31,12 @@ export DATA_PLATFORM_BLUESKY_S3_UPLOAD=1
 
 ## Commands
 
-Ingestion reads `dataset_id` from the ingestion config. Pass config paths relative to the repo root:
+Ingestion reads `dataset_id` from the ingestion config. Pass config paths relative to the repo root. `smoke.yaml` collects about 100 Bluesky posts for a local dry run.
 
 ```bash
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+  --config data_platform/ingestion/configs/bluesky/smoke.yaml
+
 PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
   --config data_platform/ingestion/configs/bluesky/mirrorview.yaml
 

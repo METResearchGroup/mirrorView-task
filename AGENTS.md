@@ -9,7 +9,6 @@ The startup/update script is intentionally minimal: it only verifies that `uv` i
 - `METRESEARCHGROUP_GITHUB_PAT_TOKEN` — the personal access token (PAT) used for accessing GitHub (e.g. authenticated `git`/API operations against `github.com/METResearchGroup`).
 - LLM/experiment scripts read API keys from a repo-root `.env` (`lib/load_env_vars.py`: `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `WANDB_API_KEY`). `HF_TOKEN` and AWS role ARNs (`CURSOR_AWS_ASSUME_IAM_ROLE_ARN`, `SAGEMAKER_ROLE_ARN`) are also available as environment secrets.
 - Platform ingest (`data_platform/`) also loads from `.env`: `BLUESKY_HANDLE`, `BLUESKY_PASSWORD`, `REDDIT_CLIENT_ID`, `REDDIT_SECRET`, `REDDIT_REDIRECT_URI`, `REDDIT_USERNAME`, `REDDIT_PASSWORD`, `X_BEARER_TOKEN`, `X_CONSUMER_KEY`, `X_SECRET_KEY`.
-- `DATA_PLATFORM_BLUESKY_S3_UPLOAD` — set to `1` or `true` to upload Bluesky raw runs to the shared lab S3 bucket; default is local-only. See `docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md`.
 - Ingest CLIs: `PYTHONPATH=. uv run python data_platform/...` (e.g. `data_platform/ingestion/sync_bluesky.py`).
 
 ### AWS credentials

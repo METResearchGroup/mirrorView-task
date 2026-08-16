@@ -112,13 +112,11 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
     sync_tasks = sync_twitter.build_sync_tasks(ingestion_params)
     storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
 
-    prior_run = storage.create_new_run_dir("2026_05_29-10:00:00")
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     storage.append_records(
         [mock_tweet_row("1000000000000000000", keyword="alpha")],
-        prior_run,
+        run_dir,
     )
-
-    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
@@ -144,7 +142,6 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         )
 
     monkeypatch.setattr(sync_twitter, "fetch_posts_for_keyword", fake_fetch)
-    monkeypatch.setattr(storage, "load_seen_ids_from_athena", lambda: {"1000000000000000000"})
 
     sync_twitter.run_sync_tasks(
         MagicMock(),
@@ -157,7 +154,10 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {"1000000000000000001"}
+    assert storage.load_seen_tweet_ids(run_dir) == {
+        "1000000000000000000",
+        "1000000000000000001",
+    }
     assert metadata["tweets_skipped_as_duplicates"] == 1
 
 
@@ -264,7 +264,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         )
 
     monkeypatch.setattr(sync_twitter, "fetch_posts_for_keyword", fake_fetch)
-    monkeypatch.setattr(storage, "load_seen_ids_from_athena", lambda: {"1000000000000000000"})
 
     sync_twitter.run_sync_tasks(
         MagicMock(),
@@ -277,8 +276,11 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {"1000000000000000001"}
-    assert metadata["tweets_skipped_as_duplicates"] == 1
+    assert storage.load_seen_tweet_ids(run_dir) == {
+        "1000000000000000000",
+        "1000000000000000001",
+    }
+    assert metadata["tweets_skipped_as_duplicates"] == 0
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(
