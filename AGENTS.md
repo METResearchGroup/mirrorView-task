@@ -8,6 +8,8 @@ The startup/update script is intentionally minimal: it only verifies that `uv` i
 
 - `METRESEARCHGROUP_GITHUB_PAT_TOKEN` — the personal access token (PAT) used for accessing GitHub (e.g. authenticated `git`/API operations against `github.com/METResearchGroup`).
 - LLM/experiment scripts read API keys from a repo-root `.env` (`lib/load_env_vars.py`: `OPENAI_API_KEY`, `GOOGLE_API_KEY`, `WANDB_API_KEY`). `HF_TOKEN` and AWS role ARNs (`CURSOR_AWS_ASSUME_IAM_ROLE_ARN`, `SAGEMAKER_ROLE_ARN`) are also available as environment secrets.
+- Platform ingest (`data_platform/`) also loads from `.env`: `BLUESKY_HANDLE`, `BLUESKY_PASSWORD`, `REDDIT_CLIENT_ID`, `REDDIT_SECRET`, `REDDIT_REDIRECT_URI`, `REDDIT_USERNAME`, `REDDIT_PASSWORD`, `X_BEARER_TOKEN`, `X_CONSUMER_KEY`, `X_SECRET_KEY`.
+- Ingest CLIs: `PYTHONPATH=. uv run python data_platform/...` (e.g. `data_platform/ingestion/sync_bluesky.py`).
 
 ### AWS credentials
 
@@ -25,7 +27,7 @@ The repo's boto3 clients (`lib/aws/`, `scripts/export_study_results.py`, etc.) u
 
 - Always prefix commands with `PYTHONPATH=.` — scripts import repo-root packages (`lib/`, etc.). Example: `PYTHONPATH=. uv run python scripts/export_study_results.py --help`.
 - `uv sync` installs the `dev` dependency group by default (torch/transformers/spacy — large).
-- Tests: `PYTHONPATH=. uv run pytest`. Real tests live in `experiments/fetch_reddit_pushshift_dump_2026_06_15/tests/`.
+- Tests: `PYTHONPATH=. uv run pytest`. Ingest unit tests: `PYTHONPATH=. uv run pytest tests/data_platform`. Other real tests live in `experiments/fetch_reddit_pushshift_dump_2026_06_15/tests/`.
 - `webapp/testing/smoke_tests/` is a stub intended to hit the live prod Lambda; it is not a functional local test.
 - S3-touching scripts (`scripts/export_study_results.py`, `webapp/scripts/upload_to_s3/*`) need AWS credentials. See the "Secrets / environment variables" section above for the keys available in this environment.
 

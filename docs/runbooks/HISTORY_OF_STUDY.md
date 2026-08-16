@@ -195,7 +195,7 @@ Now that we've proven that the linked-fate procedure (LFP) works, we want to gat
 
 We scaled up our approach and collected 10,000 more posts, across Twitter, Reddit, and Bluesky.
 
-The data collection logic is in [this repo](https://github.com/METResearchGroup/lab_data_integrations_interface/tree/main/data_platform) (future work plans to move that code into this repo for consistency). The logic to assign users to experimental conditions (here, just 1) is in [this repo](https://github.com/METResearchGroup/study_participant_assignment_interface) (again, should be moved here for consistency).
+The data collection ingest and curation logic lives in this repo under [`data_platform/`](../../data_platform/); see [HOW_TO_RUN_DATA_INGESTION.md](HOW_TO_RUN_DATA_INGESTION.md). The logic to assign users to experimental conditions (here, just 1) is in [this repo](https://github.com/METResearchGroup/study_participant_assignment_interface) (still external until that is migrated here).
 
 We then update the web app, in `webapp/`, to reflect the new study design. Also, unlike the previous study version, we only have 1 phase, rather than 2, and we ask users to classify 20 posts in that 1 phase. We do this just to scale up the number of labels per post using the LFP (since Phase 2, Part 1 confirmed that the LFP procedure does work).
 
