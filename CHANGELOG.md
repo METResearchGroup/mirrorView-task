@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-12
+
+1. Added a same-dataset comparison of baseline Qwen3-4B, the unanimous min-3 LoRA from pull request 54, and the modal LoRA from pull request 57, all scored on the frozen Study Phase 2 Part 2 modal keep/remove splits.
+
 ## 2026-08-09
 
 1. Completed the Qwen3-4B LoRA keep/remove teachability run on SageMaker (`ml.g5.xlarge`): balanced unanimous-min3 chat data, TRL/PEFT train + baseline/adapter infer, and local `RESULTS.md` (test remove-F1 0.74 → 0.97). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)
