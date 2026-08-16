@@ -1,0 +1,16 @@
+score_name,abstain_fraction,coverage,n_evaluated,accuracy
+minority_share,0.0,1.0,3718,0.6522323830016138
+minority_share,0.1,0.9,3346,0.6640765092647938
+minority_share,0.2,0.8,2974,0.6724949562878278
+minority_share,0.3,0.7,2603,0.6876680752977334
+minority_share,0.5,0.5,1859,0.7154384077461
+ambiguity_score,0.0,1.0,3718,0.6522323830016138
+ambiguity_score,0.1,0.9,3346,0.6297071129707112
+ambiguity_score,0.2,0.8,2974,0.6136516476126429
+ambiguity_score,0.3,0.7,2603,0.6311947752593162
+ambiguity_score,0.5,0.5,1859,0.6761699838622915
+adjusted_ambiguity_score,0.0,1.0,3718,0.6522323830016138
+adjusted_ambiguity_score,0.1,0.9,3346,0.6270173341303048
+adjusted_ambiguity_score,0.2,0.8,2974,0.6082716879623403
+adjusted_ambiguity_score,0.3,0.7,2603,0.6438724548597772
+adjusted_ambiguity_score,0.5,0.5,1859,0.6847767616998386

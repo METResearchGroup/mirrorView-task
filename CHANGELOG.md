@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-08-16
+
+1. Ran the ambiguous-cases series on Study Phase 2 Part 2 linked-fate data: continuous ambiguity scores, rater-versus-post disagreement split, response-time and rule-group checks, text predictability, model abstention curves, and a close-reading sample, with findings in `RESULTS.md`. [PR #61](https://github.com/METResearchGroup/mirrorView-task/pull/61)
+
 ## 2026-08-09
 
 1. Completed the Qwen3-4B LoRA keep/remove teachability run on SageMaker (`ml.g5.xlarge`): balanced unanimous-min3 chat data, TRL/PEFT train + baseline/adapter infer, and local `RESULTS.md` (test remove-F1 0.74 → 0.97). [PR #54](https://github.com/METResearchGroup/mirrorView-task/pull/54)

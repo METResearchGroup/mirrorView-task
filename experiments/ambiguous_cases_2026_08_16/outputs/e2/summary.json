@@ -1,0 +1,11 @@
+{
+  "var_post_effects": 0.1332352495697261,
+  "var_rater_effects": 0.4298165075691815,
+  "share_var_post": 0.23663055461676916,
+  "share_var_rater": 0.7633694453832309,
+  "party_stance_mismatch_coef": -0.4307268921690524,
+  "n_trials_fit": 16375,
+  "n_posts": 3993,
+  "n_raters": 1178,
+  "seed": 42
+}

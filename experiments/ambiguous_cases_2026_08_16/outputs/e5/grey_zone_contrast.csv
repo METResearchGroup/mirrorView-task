@@ -1,0 +1,3 @@
+group,n,n_grey_flag,share_grey_flag
+top_ambiguity_quartile,930,857,0.921505376344086
+bottom_ambiguity_quartile,930,580,0.6236559139784946

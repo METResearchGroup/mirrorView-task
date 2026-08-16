@@ -1,0 +1,12 @@
+{
+  "label_test_accuracy": 0.8145161290322581,
+  "label_test_roc_auc": 0.7674803591470258,
+  "ambiguity_test_r2": 0.19838061963707898,
+  "ambiguity_test_pearson_r": 0.4581175217093091,
+  "n_train": 2974,
+  "n_test": 744,
+  "n_one_or_two_rater_label_check": 4797,
+  "one_or_two_rater_label_accuracy": 0.780279341254951,
+  "seed": 42,
+  "n_posts_with_embeddings": 3993
+}

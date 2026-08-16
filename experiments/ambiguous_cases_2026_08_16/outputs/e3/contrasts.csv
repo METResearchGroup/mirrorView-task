@@ -1,0 +1,4 @@
+contrast_name,group_a,group_b,mean_log_rt_a,mean_log_rt_b,diff_a_minus_b,n_a,n_b
+minority_vs_majority_on_splits,minority,majority,9.428841480558996,9.45731434110758,-0.028472860548584222,2660,6386
+tie_vs_unanimous,tie,unanimous,9.472492509566186,9.51613775156135,-0.04364524199516495,1248,6081
+top_vs_bottom_e2_ambiguity_quartile,top_quartile,bottom_quartile,9.37181239631601,9.560534265214901,-0.18872186889889164,4096,4097

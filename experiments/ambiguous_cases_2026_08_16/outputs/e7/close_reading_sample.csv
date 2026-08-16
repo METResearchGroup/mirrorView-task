@@ -1,0 +1,252 @@
+stratum,post_id,original_text,n_raters,keep_count,remove_count,ambiguity_score,adjusted_ambiguity_score,sample_toxicity_type,sampled_stance
+tie,bluesky_9e2b7bc07b8b336ed749f968f8034abfacd4c2a53d454f73e84f811bf3baa475,"So what you’re telling me is that you had MORE than47 hours of training??? /s
+
+They didn’t hire these goons because of their experience. They hired them to give them experience. 
+
+“You want to kill?",4,2,2,0.7779202155273284,0.7330952372650367,sample_middle_toxicity,right
+tie,reddit_1tjs35z_on41ada,Feelings?  No.  Strongly of the opinion that the Republican Party has abandoned conservative principles and merely Trump’s plaything and swampier than the one he claimed he was going to drain?  Yes.,4,2,2,0.7779202155273284,0.735446436041515,sample_middle_toxicity,left
+tie,reddit_1u28e60_oqw7kwm,"Trump claims things are ""going really well.""  If I had his supernatural ability to buy the right stocks at precisely the right time, I'd agree that things are going really well too.",4,2,2,0.7779202155273284,0.7925009966144733,sample_middle_toxicity,left
+tie,reddit_1lo5oib_n0ljnsi,Trump and the GOP are doing this with so many things. All the shit hits either after 2026 or 2028. That way they can win reelection (while elections matter) before absolutely fucking the American people.,4,2,2,0.7779202155273284,0.7614549549860162,sample_high_toxicity,left
+tie,twitter_2060673958442160524,"🚨 BREAKING NEWS
+Congresswoman Ilhan Omar Claims:""Trump wants to deport undocumented immigrants —
+but Americans don’t want this.
+
+""Do you agree with Ilhan Omar?",4,2,2,0.7779202155273284,0.7614305094342396,sample_middle_toxicity,left
+tie,twitter_2061532873908511090,"Hey  Californians, tom Steyer is supported by Ro Khanna, Mamdani, and Jane “Hanoi” Fonda, all Progressive Socialist, we don’t need more Socialist (commies) in our government. 
+Look at what’s happening to Seattle,Washington, New York City, is that what California needs. NOPE!",4,2,2,0.7779202155273284,0.728382479420967,sample_middle_toxicity,right
+tie,twitter_2061731997160993092,"Britain - #restorebritain
+Germany-  #Afd 
+France - #nationalrally.
+
+All of these can be elected in the next 5 years.
+The 3 most powerful nations in western europe.
+If we do this europe will become European again.
+Mass remigration and deportation will be achieved.",4,2,2,0.7779202155273284,0.7542768847335036,sample_middle_toxicity,right
+tie,twitter_2059731702574936330,"Abortion isn't a right. Men have no rights because they cannot legally do anything to prevent women from aborting their unborn child. But that doesn't matter, right?
+
+Also, see gun laws and guess what happens when you crOsS stAtE LiNeS?",4,2,2,0.7779202155273284,0.8022819468199851,sample_middle_toxicity,right
+tie,twitter_2061759461656560124,"I'm all for legal immigration and legit political asylum claims but we already had some 40 million ""dreamers"" trying to get citizenship.  Get in line. You give driver license to undocumented people with no vetting at all. Your lunatics and have no understanding of civics at all.",4,2,2,0.7779202155273284,0.7637975899569711,sample_middle_toxicity,right
+tie,reddit_1tl3tai_oneuzql,Scumback pieces of shit like Schiff are the exact reason Tulsi left the DNC.,6,3,3,0.8471663696105847,0.7997526108797847,sample_high_toxicity,right
+tie,reddit_1kvuvro_muo69pk,Trump turns into an even bigger piece of mush around Putin.,4,2,2,0.7779202155273284,0.7829363347757271,sample_high_toxicity,left
+tie,reddit_1u2ek28_oqx054h,Executive Orders don't override state election laws.  So goofy. We need to stop pretending EOs mean jack shit. STATES RIGHTS!,4,2,2,0.7779202155273284,0.7519161478866582,sample_middle_toxicity,right
+tie,twitter_2061350776803303478,"So now @times has joined the gang of globalist co**su**ers. ""Public suggests""= complete bullshit! There is no climate crisis just the biggest scam in history!",4,2,2,0.7779202155273284,0.7853427738887228,sample_high_toxicity,right
+tie,twitter_2061798330263314773,AMERICANS: PAY ATTENTION TO HOW THE REPUBLICANS.,6,3,3,0.8471663696105847,0.7853347874893551,sample_middle_toxicity,right
+tie,twitter_2061795440342012025,"Biden/ Democrats Corruption!!!
+Funneling USAID Money (Taxpayer Money) Through Ukraine Back To USA Into Biden Campaign 2020!!!  
+China Sent 10’s Of Thousands Of Fake ID’s To Biden Camp To Illegally Vote In Presidential Election!!!
+IT’S NEVER ENDING!!!",4,2,2,0.7779202155273284,0.7876930490013054,sample_middle_toxicity,right
+tie,reddit_1tn7lg4_ontelek,"I think a major thing is lack of understanding. If I look at many comments about this and discussion about this the sentiment that comes through is that Ukraine is ""Europe's problem"". 
+
+In fact, Ukraine was never a European ally.",4,2,2,0.7779202155273284,0.7543082597395071,sample_middle_toxicity,left
+tie,twitter_2059482224035004749,"James Talarico argument for climate change,
+
+“You can't call yourself a Christian and destroy God's creation with greenhouse gases.”",4,2,2,0.7779202155273284,0.7167569295538739,sample_middle_toxicity,left
+tie,reddit_1klodyp_ms3wln1,"Unfortunately, Dems won’t take advantage of this and still focus on silly social issues such as trans rights. 🤦🏻‍♂️
+
+It’s always been the economy, stupid.",8,4,4,0.8934404101219868,0.8658389572457563,sample_high_toxicity,right
+tie,reddit_1kziugd_mv6bp6p,Joe Biden is one of the kindest people on the planet. Fuck Donald Trump.,4,2,2,0.7779202155273284,0.7974409889557434,sample_high_toxicity,left
+tie,twitter_2061551820212723789,Any American citizen that holds dual citizenship of any other nation by default must not be treated equal in the eyes of law. Default assumption must be that their loyalties are not absolute. And this shouldn’t be a controversial statement.,4,2,2,0.7779202155273284,0.7519292579437575,sample_low_toxicity,right
+tie,bluesky_f53ff14293cadca19de5d639a25a8b87395713c147881e8c98d14f599f35a906,"Guess he'll be taking everyone's guns away now. 
+
+And the NRA stooges won't say shit about it. 
+
+Because this was *never* about freedom.",4,2,2,0.7779202155273284,0.7638362264603488,sample_middle_toxicity,right
+tie,reddit_1ksedw6_mtlfvfi,"Holy shit. Foreigners, you need to stay away. It ain't fuckin safe. Even if you have nowhere to go in your home country, homeless is better than cecot.",8,4,4,0.8934404101219868,0.7877878611086966,sample_high_toxicity,right
+tie,reddit_1tws6al_opqnnmd,"No, no, no. Voter fraud is only when gay, blue haired illegal immigrants with nose rings do it",4,2,2,0.7779202155273284,0.7638162250399488,sample_middle_toxicity,right
+tie,twitter_2060424465364746267,"Booker: Trump’s Immigration Enforcement Is ‘Chaotic, Cruel and Corrupt’.
+Say's Spartacus and he would know!  Never mind that the Biden immigration policy was so chaotic that is caused all this to begin with. Biden BROKE the law by not enforcing immigration law in the first place.",6,3,3,0.8471663696105847,0.8119535557156805,sample_middle_toxicity,right
+tie,reddit_1txrv9p_opypogo,"The sanctions do kill them though. Sanctions kill the young, old, and most vulnerable. You can definitely make an argument that it’s the minimal amount and it’s worth it, but people die.",4,2,2,0.7779202155273284,0.7805834726096718,sample_middle_toxicity,left
+tie,twitter_2060418622149779570,Real advocacy for women reproductive health is fucking numbing when getting cervical exams and iuds etc. not REQUIRING women to give  birth on your back. Not forcing mammograms Etc. not having the right to butcher a child just because it isn’t born yet.,6,3,3,0.8471663696105847,0.8558767131347644,sample_middle_toxicity,right
+tie,reddit_1tuue1j_opdmiro,"Consider the Democratic Party is not MIA but has been so focused on Trump it can no longer function as a viable political party.  
+  
+The Democratic Party's vengeance has become self-destructive. It has become their entire purpose.",4,2,2,0.7779202155273284,0.7877036633537993,sample_middle_toxicity,right
+tie,bluesky_dcfc0d8f71870f18dc62a68cea16aa71ed29a39deb247ee68d057cab322314ff,"I'm sorry it's so soon to talk about a ballroom,we can't politicalize the tragedy, isn't that what republicans say about gun reform after every mass school shootings?",4,2,2,0.7779202155273284,0.7757349466862077,sample_middle_toxicity,left
+tie,bluesky_4350062add82fd9b3187a35becbd70043aa091cf0a25a97c11461d0709f4131a,"WOW! Talk about denial of facts.  The blue wave will shut you down permanently next year, buddy!  
+
+And, btw, Maine is a blue city and state?  They voted 60 - 40 for “blue” props (no voter suppression and red flag laws).
+
+How about Virginia flipping 15 State House seats - 15!!!
+
+DENIAL AND LIES!",4,2,2,0.7779202155273284,0.7637681520573214,sample_middle_toxicity,right
+tie,reddit_1lk9r75_mzq7ul4,Those damn democrats!,6,3,3,0.8471663696105847,0.7827996715446102,sample_high_toxicity,right
+tie,bluesky_762b8063ded8ec072519ca1b696471677e0f41f88789554f044883cf172d3e9a,That dog has a 2nd Amendment right to carry a gun and we will defend those rights.,4,2,2,0.7779202155273284,0.7519506582829212,sample_middle_toxicity,right
+tie,reddit_1lfwhpi_myu1ie6,"> Instead of ""Fuck the Democrats"" why not ""We need to take over the democratic party like Trump took over the Republican party""? O
+
+We can have both. We *must* have both.",4,2,2,0.7779202155273284,0.8289578368879998,sample_high_toxicity,right
+tie,bluesky_8501873f102fba65e36deec282eb1ecf9ecd7380a4dbe5fc7d527d55e15b4a3f,"The ways citizens' lives are being impacted, I feel that a revolt is building. 
+
+Remember that ReTHUGlicans and the NRA have pushed for widespread ownership and use of guns.",4,2,2,0.7779202155273284,0.8265255544448953,sample_low_toxicity,left
+tie,reddit_1llhla8_mzzudo3,"So the Second Amendment is sacred writ, but the First? Fuck it, right?",4,2,2,0.7779202155273284,0.7853586764008792,sample_high_toxicity,right
+tie,reddit_1t1x818_ojn7brr,"That's why I support compulsory vaccination. Fuck your feelings, fuck my feelings too. Vaccinate them and give them decades of free will, instead of dying early or being constrained by some lingering disability.",4,2,2,0.7779202155273284,0.8436451004392447,sample_high_toxicity,left
+tie,reddit_1ksr6ho_mtnu98t,"Because it's so stupid that nobody would trust Republcans ever again.
+
+They are such idiots, they are tacking trillions on the debt by lowering taxes on Elon Musk and Trump.",4,2,2,0.7779202155273284,0.7353686791317608,sample_high_toxicity,left
+tie,twitter_2061471986811826307,Abortion = Democrats murdering babies,4,2,2,0.7779202155273284,0.8192045933021124,sample_middle_toxicity,right
+tie,twitter_2061520951783637484,"President @realDonaldTrump:
+
+""Please ignore the high prices. I got all the time in the world to negotiate a deal with the terrorists in #Iran. I could care less about the #midterms and all this mumbo jumbo talk about affordability.",4,2,2,0.7779202155273284,0.7901466343974141,sample_middle_toxicity,right
+tie,bluesky_1d04fc0ac403e0593dd5436b6b4520576c4994c5fd194bae73935d4fce87d5d1,"Want to know how we got where we are? A bunch of shit posters decided it would be really super cool to sit the election out & pushed the narrative that Dems don’t do anything.
+
+The ACA, protection for same-sex & interracial marriages, FMLA, equal pay, red flag laws ALL DEMOCRATIC Laws.",4,2,2,0.7779202155273284,0.7637886364808509,sample_middle_toxicity,left
+tie,reddit_1krbubh_mtdpao3,"What an idiot!  Just like the rest of Trump's 'Administration'.
+
+Trump's 'hold card':
+
+Never put anyone in charge of anything that you want to personally control, who knows what they're doing.",4,2,2,0.7779202155273284,0.7708141513667588,sample_high_toxicity,left
+high_ambiguity_multi_rater,twitter_2061519977262231706,"@AliVelshi &lt;--They come from around the world to criticize the US, to get a US citizenship in this racist country instead of improving their country of origin. Another communist race hustler making a hefty paycheck on American television.",6,2,4,0.9144837987662224,0.9980914710262474,sample_middle_toxicity,right
+high_ambiguity_multi_rater,bluesky_b62231a74bfb7d9b6befeebcdf79c2eca95cbccada7a7ea2b4b5344eaed5176d,"Trump already did that at least once before. Remember him asking someone to use a ""Second Amendment solution"" against Hillary?
+
+Trump is fucking scum.",6,2,4,0.9144837987662224,0.9980719062790424,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1l8ha5n_mx5ng9w,Well Newsom is a fucking moron.,11,5,6,0.9575198287126868,0.9977666160444628,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1l90e05_mx94ch3,"Pretty sure the constitution says I can say racist shit and own a firearm under any circumstances, the rest is boring stuff. Habeas schmabeas!",6,2,4,0.9144837987662224,0.9969287879094364,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1tv7vfu_opiimgu,"Jimmy Carter had a fucking peanut farm
+
+Fuck the GOP now and til the end of time.",6,2,4,0.9144837987662224,0.9955713128369398,sample_high_toxicity,left
+high_ambiguity_multi_rater,reddit_1tzwh8s_oqfvgpw,"MAGAts are morons and many are Ruzzian bots.
+
+Literally no sense intelligently responding to them. Just beat them with better propaganda.",6,2,4,0.9144837987662224,0.9931328184292472,sample_high_toxicity,left
+high_ambiguity_multi_rater,reddit_1lhvap3_mz7b303,"Most people in the US are quite OK with it. They want immigrants out. An overwhelming part are for it. F\*ck the US. The country has been built on people like him.
+
+I hate you, detest you and you can all to go hell as you have forgotten basic humanity and decency.",8,3,5,0.9398878458071548,0.9930754456252452,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1kd63h5_mqawmhf,"Maga response, ""well it didn't belong to us initially anyway.""  Also Maga, ""fck immigrants.""",8,3,5,0.9398878458071548,0.9918225079447772,sample_high_toxicity,right
+high_ambiguity_multi_rater,twitter_2060417305813610523,"Hey commie Berger you’re gun laws won’t be unforced by your own prosecutors and sheriffs impeach this communist, traitor, for not upholding her constitutional oath",6,2,4,0.9144837987662224,0.991773641754133,sample_middle_toxicity,right
+high_ambiguity_multi_rater,reddit_1liejsg_mzd5b40,"BABY MURDERER!!!!  You had an abortion\~!!  IF miscarriage is now considered an abortion, so is this.  BABY MURDERER!!!!
+
+BABY MURDERER!!!!
+
+BABY MURDERER!!!!",6,2,4,0.9144837987662224,0.9905953848663104,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1tutxzr_opctx4z,Obligatory fuck the Green Party. Commie stooges one and all.,6,2,4,0.9144837987662224,0.9905619471592236,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1kg5azy_mx9k2fg,Nobody cares. Go back to burning flags liberal dumbasses.,8,3,5,0.9398878458071548,0.9905024354620724,sample_high_toxicity,right
+high_ambiguity_multi_rater,twitter_2061824026234790380,"PATRIOTISM! DOES ANY AMERICAN OWNED SUN MEDIA IN CANADA KNOW THE MEANING OF PATRIOTISM? I THINK NOT! All any sun media in Canada does IS SHIT ON CANADA, OUR PM AND OUR LIBERAL POLITICIANS! Then praise @PierrePoilievre and trump! PROVE ME WRONG!",8,3,5,0.9398878458071548,0.9893458302493257,sample_middle_toxicity,right
+high_ambiguity_multi_rater,reddit_1ke1hwf_mqiwyr3,I hope these assholes “taking down” trump will donate to elect people who aren’t deranged.,10,4,6,0.957417960987462,0.986789256825348,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1kccd08_mq25puz,"Authoritarians seek to disarm the populace.
+  
+Fuck these chumps who consistently infringe upon the rights of the people.",8,3,5,0.9398878458071548,0.9867798464212396,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1lhc2z7_mz3clbl,The adults are in charge now! Get out of the fucking way.,7,2,5,0.9142725834471024,0.9864127648511174,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1ti151j_omrce6d,Sure. All the libs joined forces to punish Donald Trump just because they didn't like him. Maybe consider that he brings this shit on himself with his shitty actions?,11,5,6,0.9575198287126868,0.9852693697135138,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1knep98_msmbjen,I agree with Donald Trump. This is a stupid country of suckers and the proof is that he is the President.,7,2,5,0.9142725834471024,0.9833117434207896,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1km18ir_ms8yoji,Fuck Bernie Sanders.,6,2,4,0.9144837987662224,0.983041985870182,sample_high_toxicity,right
+high_ambiguity_multi_rater,twitter_2061273075174293756,"Seriously I challenge any white conservative or libertarian male who loves the Constitution and the Second Amendment to a friendly conversational ""debate"" on X tonight. I got a few more hours until I'll be too drunk.
+
+I tripe dog dare you.",6,2,4,0.9144837987662224,0.9829638614482796,sample_middle_toxicity,right
+high_ambiguity_multi_rater,reddit_1l489cq_mw6yxsn,He’s gonna fuck around and get deported lmao,6,2,4,0.9144837987662224,0.9828585569672958,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1tuebh8_op919im,You mean the millions of fucking idiots who voted for it and were specifically warned of it?  I do feel sorry for the ones who did not ask for this and voted against him.,11,4,7,0.9573161980808776,0.9807863383896338,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1ladra4_mxkks2w,"to this day the maga idiots still spew the rhetoric that BLM burned entire cities to the ground, too.",7,2,5,0.9142725834471024,0.9807573557627094,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1ktwzfn_mtxjm0l,"Pelosi is literally the most effective Speaker in US history. 
+
+This stupid anti-Pelosi, ageist circlejerk is so fucking cringe. 
+
+But good work defending trump with your whataboutisms.",6,1,5,0.8461335106224761,0.9794393971151114,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1lcovdy_my2cglp,Now he wants to bring up “the “transgender”. He is such a fool! Whoever can’t see through this BS is beyond me. He’s trash!,14,6,8,0.9782721903295516,0.978002305098034,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1kfohcu_mqt90f3,The transgender sports thing is so fucked up. One place you don't need inclusivity.,6,2,4,0.9144837987662224,0.9779495076002797,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1ljy33e_mzp8b9t,People like you are why the Dems are weak do nothing pussies.,9,4,5,0.940033785559368,0.9770665017873882,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1kndcmn_msik13u,Michigan republicans pulled similar shit with legal weed.,6,2,4,0.9144837987662224,0.9754121228161156,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1lgcokh_myvf1zx,"And the only comfort I can take, is that they are getting hurt themselves.",6,2,4,0.9144837987662224,0.9754044029302597,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1tt1cw0_op0kv5f,"Yes let’s get rid of the democrats, that should solve our problems",7,2,5,0.9142725834471024,0.9732259279721056,sample_middle_toxicity,right
+high_ambiguity_multi_rater,twitter_2059978803204559057,whyyy does new york have the most cucked gun laws i hate this fucking state i hate kathy hochul godfuckingdamnit,6,2,4,0.9144837987662224,0.9729254137982328,sample_high_toxicity,right
+high_ambiguity_multi_rater,twitter_2061513964308345235,"@SenMullin @marcorubio @realDonaldTrump 
+@RealTomHoman
+
+Can we please get the mass deportations we voted for? 
+
+Stop this madness and get these savages out of our damn country! 
+
+Why are you allowing the inmates to run the asylum?
+
+Why are you letting this happen?",6,2,4,0.9144837987662224,0.9703307318705672,sample_middle_toxicity,right
+high_ambiguity_multi_rater,reddit_1kmcfwr_ms92wr5,"Well I’d suggest maybe telling your democrat buddies, to ya know…..STOP BREAKING THE LAW ASSHOLE.",8,2,6,0.8927172634719791,0.9698064392350654,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1tle2vc_onf0wb4,Trump’s a pedophile.,7,2,5,0.9142725834471024,0.9682123359476458,sample_high_toxicity,left
+high_ambiguity_multi_rater,reddit_1kkmvb6_mrxrv5u,Identity declarations and compliance policing are communist bullshit,9,3,6,0.9397420798445432,0.9682001005851502,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1lgg7uy_myw40xj,Trump doesn't need Schumer's permission to bomb Iranian nuclear reactors. Or anybody else's for that matter. Stick it up your self-important ass Chuck.,8,3,5,0.9398878458071548,0.9678774647796504,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1kwjws0_mui9c5p,"Idiots like this mayor are not upholding the law when they do this. They are here illegally, they broke immigration law and have to be deported. That's what would happen to me if I went into any other country and snuck over the border. Especially as an American. Get them out now.",6,2,4,0.9144837987662224,0.9678446054610572,sample_high_toxicity,right
+high_ambiguity_multi_rater,reddit_1lc4tz7_mxywa8h,"Good. I don't want these people in leftist spaces. I don't want to have to make affordances for their shitty ideas. 
+
+They're shitty people who bought into shitty lies because it fit their shitty narrative about the way the world is.
+
+Fuck them. The right can keep them.",8,3,5,0.9398878458071548,0.9678240981046564,sample_high_toxicity,right
+high_ambiguity_multi_rater,twitter_2061423942544338990,"Pro-life logic: Society isn’t ready to accept lynching is murder, and those doing the lynching are victims of the lynching system, so let’s regulate lynching and protect those doing the lynching from going to jail…",8,3,5,0.9398878458071548,0.967813240308129,sample_middle_toxicity,right
+high_ambiguity_multi_rater,reddit_1tt3vbp_op0184y,Because critical thinking is critical race theory so therefore that’s woke and shit.,8,3,5,0.9398878458071548,0.9653828938963476,sample_high_toxicity,right
+reclassified_unanimous,reddit_1kpmzrc_mszvn5s,> Fuck trump. Fuck republicans. And fuck the people who voted for them.,3,0,3,0.8201728525283785,0.942991809234876,sample_high_toxicity,left
+reclassified_unanimous,reddit_1th143w_omljdea,"Exactly.
+
+Once upon a time, I would have wrung my hands over Democrats turning into the enemy, but not now.
+
+Now I want Democrats to form their own ~~evil cabal~~ version of the Heritage Foundation that does nothing but think of every dirty, underhanded legal trickery possible to fuck over Republicans, 24/7.",3,0,3,0.8201728525283785,0.9488195027307909,sample_middle_toxicity,left
+reclassified_unanimous,reddit_1lokvuo_n0ntzlu,"Too many paywalls, too clickbaity of a headline.  
+
+Fuck trump, but fuck thedailybeast as well.",3,0,3,0.8201728525283785,0.9914606775792668,sample_high_toxicity,left
+reclassified_unanimous,reddit_1l6yeqx_mwu6voo,"The nice thing about the “asshole problem” is that they self identify.  You don’t have to waste time getting to know people, who ultimately turn into assholes…
+
+That guy is a red cap? Asshole.  Trump 2028 bumper sticker? Massive asshole. Trump banner on their house? Giant POS.",3,0,3,0.8201728525283785,0.958082015128792,sample_high_toxicity,left
+reclassified_unanimous,reddit_1kyosf3_muzfu6y,"The fact that they would do this at all is fucking suspicious. Trump’s ties to Epstein are damning, and they’ve been fanning the flames of their conspiratorial base.",3,0,3,0.8201728525283785,0.9959318558502244,sample_high_toxicity,left
+reclassified_unanimous,reddit_1ktuzvj_mty41j0,"The GOP wants Americans Sick, Stupid and Dead!",3,0,3,0.8201728525283785,0.9908804734293396,sample_high_toxicity,left
+reclassified_unanimous,twitter_2061586780835512463,"DEMOCRATS ARE LITERALLY INSANE. THEY ALL NEED TO BE LOCKED AWAY IN AN INSANE ASYLUM.
+STOP THIS NONSENSE.",3,0,3,0.8201728525283785,0.9889352548365395,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1l5qzp8_mwjjeiu,Democrats don’t like nazis.  Fuck both of them.,3,0,3,0.8201728525283785,0.998454431445018,sample_high_toxicity,left
+reclassified_unanimous,bluesky_cd1729a309622dac0c1563d7b598a89b98e813bfa1db737155624c1879fc4b89,"Finally I find something we can agree on !
+
+What's the point of having a 2nd amendment if the only thing you're going to do with it is allow a man-child to buy himself an assault weapon easily in order to slaughter schoolkids at the rate of a dozen a pop ?",3,0,3,0.8201728525283785,0.9782628461079804,sample_middle_toxicity,left
+reclassified_unanimous,bluesky_17902fcc120525204a60f76bca2a0ce1baefdf486d85fc03ee5c3a00624624df,"Oh look guys, it's a hit dog hollering. I so love when allegedly ""liberal"" white men get mad when you point out the obvious white male supremacy destroying our country in myriad ways, including climate science denial. If the shoe fits, wear it I guess.",3,0,3,0.8201728525283785,0.99845610550744,sample_middle_toxicity,left
+reclassified_unanimous,reddit_1kh7zbd_mr5d7p4,"Fuck everyone that voted for Trump ""for the economy 🤡""",3,0,3,0.8201728525283785,0.9782583848619244,sample_high_toxicity,left
+reclassified_unanimous,reddit_1kpvbpj_mt0v0r7,God forbid taxes be spent on healthcare. Fuck this bullshit article. Medicare for all!,3,0,3,0.8201728525283785,0.9429887536920674,sample_high_toxicity,left
+reclassified_unanimous,twitter_2061804769539228124,I want my taxes to go to free meals and transgender medical procedures. Israel deserves none of our fucking money.,3,0,3,0.8201728525283785,0.9908754549753758,sample_high_toxicity,left
+reclassified_unanimous,twitter_2061117135586287757,"ENC state representative's controversial new bill igniting a fierce debate over reproductive rights.
+
+ This cunt should not be representing any Americans.",3,0,3,0.8201728525283785,0.9889176896399636,sample_middle_toxicity,left
+reclassified_unanimous,reddit_1ttui2j_op636xx,Here's another reminder that every single Republican is an evil piece of shit. Human garbage.,3,0,3,0.8201728525283785,0.9934012435651238,sample_high_toxicity,left
+reclassified_unanimous,bluesky_7d96c2e21f7170b352bda8f0aac62708cacaf94f8678ae577615fcc162b6790a,"'tough on immigration'
+
+Caring about due process.
+
+You think that is comparable to 'they are eating your cats and dogs'???
+
+You are a silly simple fool.
+
+Plenty separate and proud of Biden/Harris accomplishments.",3,0,3,0.8201728525283785,0.968765538243622,sample_high_toxicity,right
+reclassified_unanimous,reddit_1tz4l7k_oqa0hhl,Trump rapes children?  Here's how this is bad news for Biden.,3,0,3,0.8201728525283785,0.988920202282678,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1kr82xj_mtcnus7,"Trump as the president openly saying stuff about asses, and shoving stuff up asses, and kissing ass is pretty heavy compared to when republicans tried to crucify Obama for wearing a fucking tan suit and choosing to put Dijon mustard on his goddamn sandwich.",3,0,3,0.8201728525283785,0.9663821938994048,sample_high_toxicity,left
+reclassified_unanimous,bluesky_e603d584fe92320092eaa9780404cffe4f7e4ce36ece56b740a8b33d33d735b4,"Of course in 🇺🇸 it's not ""Dog bites person"" but ""Dog shoots person"".",3,0,3,0.8201728525283785,0.985832627209861,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1klrtv5_msgj7zr,Fuck you Trump. You implied the same thing before and that's what got you arrestrd the first time when you tried to start a coup.,3,0,3,0.8201728525283785,0.9838818064416188,sample_high_toxicity,left
+reclassified_unanimous,twitter_2061824717078540707,"TRUMP &amp; RUBIO should look first at their own American people, who are being slaughtered by judicial corruption. And the elderly, women, and children are being treated worse than prisoners of war.""",3,0,3,0.8201728525283785,0.9990179499844968,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1lhovep_mz5mk8q,Good. Fuck Trump and this unauthorized attack.,3,0,3,0.8201728525283785,0.9883564763233011,sample_high_toxicity,left
+reclassified_unanimous,reddit_1kik1os_mrfrlcc,Moron donors and enablers getting upset that Trump screwed them is peak idiocy. Not like there's 50 years of history of him being a dishonest grifter.,3,0,3,0.8201728525283785,0.9990171125818352,sample_high_toxicity,left
+reclassified_unanimous,reddit_1tklc7j_onbcbkp,"How about dictator, communist, Marxist, class war instigator, Kenyan Islamist, foreigner trying to destroy the country, America hater, Stalin, Hitler? I.e everything that Fox and Donald Trump said about Obama before he even was inaugurated.
+
+And yeah it was widespread.",3,0,3,0.8201728525283785,0.9964922973038224,sample_middle_toxicity,left
+reclassified_unanimous,reddit_1l4uuac_mxnhu9w,Yep we know Trump is a pedophile,3,0,3,0.8201728525283785,0.965651857641892,sample_high_toxicity,left
+reclassified_unanimous,twitter_2061817588683075880,"omfg talking abt politics with liberals irl is so exhausting like why are we arguing over a prison sentencing when tbh I don't think anyone should be going to our current prison system, no matter what crime they committed in the eyes of the justice system",3,0,3,0.8201728525283785,0.9639792258351092,sample_middle_toxicity,left
+reclassified_unanimous,reddit_1kdsslc_mqn7ysp,Sick motherfuckin joke of an orange bastard. Donald Trump is a goddamn traitor.,3,0,3,0.8201728525283785,0.9813443547174114,sample_high_toxicity,left
+reclassified_unanimous,reddit_1tqfpwr_oog28zn,Good don’t come back. Republicans should be deported all of them.,3,0,3,0.8201728525283785,0.9833176010232534,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1ktpom5_mtxg7px,Ffs fuck all these fascists,3,0,3,0.8201728525283785,0.9883556386629831,sample_high_toxicity,left
+reclassified_unanimous,bluesky_a7681feab8055d78565148621cea6a3ea78351f6d5949b2a0d2e6118788fc2db,"The right wing is the most fragile, weak and snowflake people I have ever known.",3,0,3,0.8201728525283785,0.9556268836072644,sample_middle_toxicity,left
+reclassified_unanimous,twitter_2060967434576953751,"WTF !
+
+A bunch of bastard hooligans
+attacking defenseless women!
+
+Where has European society
+reached, especially French society?
+To rock bottom?
+All because of a completely
+failed immigration policy!!!",3,0,3,0.8201728525283785,0.970691654613167,sample_high_toxicity,right
+reclassified_unanimous,bluesky_d195e00a2fc92abb5ef3ae31d5233607c043599e2197e34eadaa1767295b380b,"America has a long history of assassinations and gun violence, yet #trumplthinskin is still alive.
+I'm not calling for his assassination, but some these attempts are like Draco Malfoy's attempts to kill Dumbledore, pathetic, amateurish, staged even.",3,0,3,0.8201728525283785,0.9782603373042132,sample_middle_toxicity,left
+reclassified_unanimous,twitter_2061826825228362207,"Day two of Pride. Say it with me now:
+Trans rights are human rights
+Protect queer kids
+My body my choice
+Black Lives Matter
+Love isn't a sin, hate is
+No one is illegal on stolen land
+Fuck Trump, he deserves death
+Abolish Ice
+Fuck Israel and Free Palestine, can’t believe I forgot.",3,0,3,0.8201728525283785,0.975738518548585,sample_high_toxicity,left
+reclassified_unanimous,reddit_1liwnnw_mzfdw9h,"Typical Trump bullshit. Create a huge mess, then just declare it fixed as he leaves a smoldering crater in his wake and everyone else is left to pick up the pieces.",3,0,3,0.8201728525283785,0.9959329729047874,sample_high_toxicity,left
+reclassified_unanimous,reddit_1knq26w_msm8lau,Glad this loser is dead. One less MAGA mouth breather.,3,0,3,0.8201728525283785,0.983940494970378,sample_high_toxicity,right
+reclassified_unanimous,reddit_1tay1l3_olckboz,And the Democrats will still deny they are literal brown shirted Nazis on the streets of california and NY.,3,0,3,0.8201728525283785,0.990881590409494,sample_middle_toxicity,right
+reclassified_unanimous,bluesky_8547b69af7f4e175e715537e9c7ae7905a4303c4e7749c5490fa6d65eb32903e,"This. We know Domestic Violence is a strong indicator of escalated violence. But cops ignore it, they don't want to be bothered with the paperwork. We need stronger red flag laws that remove guns from offenders.",3,0,3,0.8201728525283785,0.973862946447232,sample_low_toxicity,left
+reclassified_unanimous,reddit_1tuwb8f_opd0nfr,"* Feminism ruined women because women were propagandised to seek careers instead of just being under her husband and saving our falling birthrate.
+
+Eh this is a dumb take.",3,0,3,0.8201728525283785,0.9681833916162454,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1tenhje_om4ni2g,You maga folk are a seriously demented bunch. Hillary was far too kind.,3,0,3,0.8201728525283785,0.999014884481428,sample_middle_toxicity,right
+reclassified_unanimous,reddit_1krctyl_mtcrgi2,Then blue states should stop sending tax revenue to Washington. This is fucking ridiculous.,3,0,3,0.8201728525283785,0.9763518063182012,sample_high_toxicity,right

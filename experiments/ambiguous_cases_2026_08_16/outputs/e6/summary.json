@@ -1,0 +1,8 @@
+{
+  "base_accuracy_ge3_nontie": 0.6522323830016138,
+  "best_score_at_30pct_abstain": "minority_share",
+  "best_accuracy_at_30pct_abstain": 0.6876680752977334,
+  "error_rate_unanimous": 0.2755474452554745,
+  "error_rate_close": 0.4022842639593909,
+  "n_posts_joined": 3993
+}
