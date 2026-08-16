@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from data_platform.ingestion.sync_clients import BLUESKY_PUBLIC_APPVIEW, init_bluesky_client
 
 
@@ -42,3 +44,20 @@ def test_init_bluesky_client_uses_public_appview_when_credentials_missing() -> N
     assert result is mock_client
     client_cls.assert_called_once_with(BLUESKY_PUBLIC_APPVIEW)
     mock_client.login.assert_not_called()
+
+
+def test_init_bluesky_client_rejects_partial_credentials() -> None:
+    def _get_env(name: str, required: bool = False) -> str:
+        values = {"BLUESKY_HANDLE": "user.bsky.social", "BLUESKY_PASSWORD": ""}
+        return values.get(name, "")
+
+    with (
+        patch(
+            "data_platform.ingestion.sync_clients.EnvVarsContainer.get_env_var",
+            side_effect=_get_env,
+        ),
+        patch("atproto.Client") as client_cls,
+        pytest.raises(ValueError, match="both be set"),
+    ):
+        init_bluesky_client()
+    client_cls.assert_not_called()

@@ -44,6 +44,12 @@ def init_bluesky_client() -> Client:
 
     handle = EnvVarsContainer.get_env_var("BLUESKY_HANDLE", required=False).strip()
     password = EnvVarsContainer.get_env_var("BLUESKY_PASSWORD", required=False).strip()
+    if bool(handle) != bool(password):
+        raise ValueError(
+            "BLUESKY_HANDLE and BLUESKY_PASSWORD must both be set, or both be unset. "
+            "When both are unset, keyword search uses the public Bluesky API at "
+            f"{BLUESKY_PUBLIC_APPVIEW}."
+        )
     if handle and password:
         client = Client()
         client.login(handle, password)
