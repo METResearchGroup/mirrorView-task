@@ -200,6 +200,25 @@ class StorageManager:
             reader = csv.DictReader(f)
             return {row[id_column] for row in reader if row.get(id_column)}
 
+    def load_seen_ids_from_all_runs(
+        self,
+        id_column: str,
+        *,
+        filename: str | None = None,
+    ) -> set[str]:
+        """Union ids from every timestamped run dir under this stage root."""
+        if not self.root_dir.exists():
+            return set()
+        seen: set[str] = set()
+        for run_dir in self.root_dir.iterdir():
+            if run_dir.is_dir():
+                seen.update(
+                    self.load_seen_ids_from_disk(
+                        run_dir, id_column, filename=filename
+                    )
+                )
+        return seen
+
     def append_deduped_records(
         self,
         rows: list[dict[str, Any]],

@@ -38,7 +38,11 @@ from data_platform.ingestion.sync_checkpoint import (
 from data_platform.ingestion.sync_clients import init_twitter_client
 from data_platform.ingestion.twitter_client import fetch_posts_for_keyword
 from data_platform.utils.config_paths import load_yaml_config
-from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.utils.deduplication import (
+    DedupeConfig,
+    DedupeSession,
+    policy_includes_prior_runs,
+)
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 POSTS_CSV = "posts.csv"
@@ -112,7 +116,15 @@ def run_sync_tasks(
     max_rows_int = parse_max_rows(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
-    dedupe_session = DedupeSession(DedupeConfig(id_column="tweet_id", filename=csv_filename))
+    dedupe_session = DedupeSession(
+        DedupeConfig(
+            id_column="tweet_id",
+            filename=csv_filename,
+            include_prior_runs=policy_includes_prior_runs(
+                ingestion_params.get("dedupe_policy")
+            ),
+        )
+    )
     dedupe_session.warm(storage, output_dir)
 
     def process_task(task: TwitterTask, entry: dict[str, Any]) -> None:

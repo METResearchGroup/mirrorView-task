@@ -3,10 +3,14 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.utils.deduplication import (
+    DedupeConfig,
+    DedupeSession,
+    policy_includes_prior_runs,
+)
 
 
-def test_session_warm_calls_local_disk_only() -> None:
+def test_session_warm_loads_current_run_only_by_default() -> None:
     storage = MagicMock()
     storage.load_seen_ids_from_disk.return_value = {"uri-a"}
     config = DedupeConfig(id_column="uri", filename="posts.csv")
@@ -17,6 +21,30 @@ def test_session_warm_calls_local_disk_only() -> None:
     storage.load_seen_ids_from_disk.assert_called_once_with(
         Path("/tmp/run"), "uri", filename="posts.csv"
     )
+    storage.load_seen_ids_from_all_runs.assert_not_called()
+
+
+def test_session_warm_unions_prior_runs_when_enabled() -> None:
+    storage = MagicMock()
+    storage.load_seen_ids_from_disk.return_value = {"uri-a"}
+    storage.load_seen_ids_from_all_runs.return_value = {"uri-b"}
+    config = DedupeConfig(
+        id_column="uri", filename="posts.csv", include_prior_runs=True
+    )
+    session = DedupeSession(config)
+    session.warm(storage, Path("/tmp/run"))
+
+    assert session.seen_ids == {"uri-a", "uri-b"}
+    storage.load_seen_ids_from_all_runs.assert_called_once_with(
+        "uri", filename="posts.csv"
+    )
+
+
+def test_policy_includes_prior_runs() -> None:
+    assert policy_includes_prior_runs(["current_run"]) is False
+    assert policy_includes_prior_runs(["current_run", "prior_runs_same_dataset"]) is True
+    assert policy_includes_prior_runs(["prior_runs_all_datasets"]) is True
+    assert policy_includes_prior_runs(None) is False
 
 
 def test_session_filter_rows_skips_seen() -> None:

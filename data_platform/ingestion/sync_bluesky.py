@@ -38,7 +38,11 @@ from data_platform.ingestion.sync_checkpoint import (
 )
 from data_platform.ingestion.sync_clients import init_bluesky_client
 from data_platform.utils.config_paths import load_yaml_config
-from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.utils.deduplication import (
+    DedupeConfig,
+    DedupeSession,
+    policy_includes_prior_runs,
+)
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 
 if TYPE_CHECKING:
@@ -216,7 +220,15 @@ def run_sync_tasks(
     without aborting the full run.
     """
     max_rows_int = parse_max_rows(ingestion_params)
-    dedupe_session = DedupeSession(DedupeConfig(id_column="uri", filename=filename))
+    dedupe_session = DedupeSession(
+        DedupeConfig(
+            id_column="uri",
+            filename=filename,
+            include_prior_runs=policy_includes_prior_runs(
+                ingestion_params.get("dedupe_policy")
+            ),
+        )
+    )
     dedupe_session.warm(storage, output_dir)
 
     def process_task(task: BlueskyTask, entry: dict[str, Any]) -> None:

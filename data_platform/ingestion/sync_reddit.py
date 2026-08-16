@@ -47,7 +47,11 @@ from data_platform.ingestion.sync_checkpoint import (
 )
 from data_platform.ingestion.sync_clients import init_reddit_client
 from data_platform.utils.config_paths import load_yaml_config
-from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.utils.deduplication import (
+    DedupeConfig,
+    DedupeSession,
+    policy_includes_prior_runs,
+)
 from data_platform.utils.storage import RedditStorageManager, StorageStage
 
 COMMENTS_RECORD_TYPE = "reddit.comment"
@@ -372,12 +376,24 @@ def _open_reddit_dedupe_sessions(
     post_dedupe_session: DedupeSession | None = None
     if include_comments:
         comment_dedupe_session = DedupeSession(
-            DedupeConfig(id_column="comment_fullname", filename=comments_csv)
+            DedupeConfig(
+                id_column="comment_fullname",
+                filename=comments_csv,
+                include_prior_runs=policy_includes_prior_runs(
+                    ingestion_params.get("comments_dedupe_policy")
+                ),
+            )
         )
         comment_dedupe_session.warm(comment_storage, output_dir)
     if include_posts:
         post_dedupe_session = DedupeSession(
-            DedupeConfig(id_column="reddit_fullname", filename=posts_csv)
+            DedupeConfig(
+                id_column="reddit_fullname",
+                filename=posts_csv,
+                include_prior_runs=policy_includes_prior_runs(
+                    ingestion_params.get("posts_dedupe_policy")
+                ),
+            )
         )
         post_dedupe_session.warm(post_storage, output_dir)
     return comment_dedupe_session, post_dedupe_session

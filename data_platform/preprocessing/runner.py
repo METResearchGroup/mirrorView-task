@@ -174,7 +174,12 @@ def preprocess_records(
         raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
     require_all_runs_complete(raw_storage, dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-    dedupe_session = DedupeSession(DedupeConfig(id_column=spec.binding.records_id_column))
+    dedupe_session = DedupeSession(
+        DedupeConfig(
+            id_column=spec.binding.records_id_column,
+            include_prior_runs=True,
+        )
+    )
     dedupe_session.warm(preprocessed_storage, preprocessed_storage.root_dir)
 
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)

@@ -98,6 +98,32 @@ def test_append_deduped_records_skips_prior_run_duplicates(data_root) -> None:
     ) == {"t1_comment_a", "t1_comment_b"}
 
 
+def test_append_deduped_records_skips_ids_from_prior_run_dirs(bluesky_storage) -> None:
+    prior_run = bluesky_storage.create_new_run_dir("2026_05_29-10:00:00")
+    current_run = bluesky_storage.create_new_run_dir("2026_05_30-10:00:00")
+    prior_uri = "at://did:plc:ex/app.bsky.feed.post/prior"
+    bluesky_storage.append_records([make_ingestion_row(uri=prior_uri)], prior_run)
+    config = DedupeConfig(id_column="uri", include_prior_runs=True)
+    dedupe_session = DedupeSession(config)
+    dedupe_session.warm(bluesky_storage, current_run)
+
+    result = bluesky_storage.append_deduped_records(
+        [
+            make_ingestion_row(uri=prior_uri),
+            make_ingestion_row(uri="at://did:plc:ex/app.bsky.feed.post/new"),
+        ],
+        current_run,
+        dedupe_session=dedupe_session,
+    )
+
+    assert result.kept == 1
+    assert result.skipped == 1
+    assert bluesky_storage.load_seen_ids_from_all_runs("uri") == {
+        prior_uri,
+        "at://did:plc:ex/app.bsky.feed.post/new",
+    }
+
+
 def test_append_deduped_records_does_not_dedupe_across_datasets(data_root) -> None:
     dataset_a = "reddit_00000000-0000-4000-8000-000000000001"
     dataset_b = "reddit_00000000-0000-4000-8000-000000000002"
