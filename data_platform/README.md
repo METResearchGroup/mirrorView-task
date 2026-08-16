@@ -6,11 +6,11 @@ Batch pipeline per platform (run from this repository root with `PYTHONPATH=.`):
 ingestion → preprocessing → generate_features → curate
 ```
 
-Each logical collection is identified by **`dataset_id`** (`{platform}_<uuid>`), pinned in ingestion YAML (e.g. `mirrorview.yaml`) and recorded under `data_platform/data/{platform}/{dataset_id}/`. Downstream CLIs require `--dataset-id`; curate YAML is filter-only.
+Each logical collection is identified by **`dataset_id`** (`{platform}_<uuid>`), pinned in ingestion YAML (e.g. `mirrorview.yaml`) and recorded under `data_platform/data/{platform}/{dataset_id}/`. Downstream CLIs require `--dataset-id`. Curate YAML files contain only filter rules.
 
-Curation is the final stage: all artifacts stay on local disk under `data_platform/data/`. The pipeline does not upload to S3 or register Glue tables.
+Curation is the final stage. All artifacts stay on local disk under `data_platform/data/`. The pipeline does not upload to S3 or register AWS Glue tables.
 
-Operator runbook: [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md).
+See the operator runbook at [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md).
 
 ## Stages
 
@@ -31,7 +31,7 @@ Operator runbook: [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs/runbooks/
 
 ## Commands
 
-Ingestion reads `dataset_id` from the ingestion config. Pass config paths relative to the repo root. `smoke.yaml` collects about 100 Bluesky posts for a local dry run.
+The ingestion CLI reads `dataset_id` from the ingestion config. Pass config paths relative to the repo root. The `smoke.yaml` config collects about 100 Bluesky posts for a local dry run.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
@@ -72,7 +72,7 @@ Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter
 
 ## Curate (join + business rules)
 
-Joins the latest preprocessed posts with all feature label CSVs (DuckDB), then applies YAML filters.
+The curate step joins the latest preprocessed posts with all feature label CSVs using DuckDB, and then applies YAML filters.
 
 Mirrorview configs: `data_platform/curate/configs/{bluesky,twitter,reddit}/mirrorview.yaml`
 

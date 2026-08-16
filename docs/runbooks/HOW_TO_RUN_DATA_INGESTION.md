@@ -1,6 +1,6 @@
 # How to run data ingestion
 
-Sync Bluesky, Twitter, and Reddit through preprocess → features → curate in this repository. Curated exports land under `data_platform/data/` and feed the existing sample and stimuli path.
+Sync Bluesky, Twitter, and Reddit through preprocess → features → curate in this repository. Curated exports are written under `data_platform/data/`, and they are the input for `experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py`.
 
 ## Prerequisites
 
@@ -8,7 +8,7 @@ Sync Bluesky, Twitter, and Reddit through preprocess → features → curate in 
 2. Always use `PYTHONPATH=.`
 3. Put API keys in repo-root `.env`. Bluesky keyword search can run without
 `BLUESKY_HANDLE` and `BLUESKY_PASSWORD`. In that case the client uses the
-public AppView at `https://api.bsky.app`. Set the Bluesky vars if you need a
+public Bluesky API at `https://api.bsky.app`. Set the Bluesky vars if you need a
 logged-in session. Feature generation still needs `OPENAI_API_KEY` and
 `GOOGLE_API_KEY`.
 
@@ -102,9 +102,9 @@ After curated `mirrorview.csv` exists for all three platforms:
 PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py
 ```
 
-That discovers metadata under `data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/metadata.json` and writes `concatenated_records/<timestamp>/records.csv` under the experiment folder.
+`sample_data_to_mirror.py` reads metadata under `data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/metadata.json`, and it writes `concatenated_records/<timestamp>/records.csv` under the experiment folder.
 
-Then continue with flip generation / balance in that experiment, promote a job CSV, and follow:
+Then run flip generation and balancing in that experiment. Promote a job CSV, and follow the runbooks below.
 
 - [HOW_TO_REPLACE_STIMULI_DATASET.md](HOW_TO_REPLACE_STIMULI_DATASET.md)
 - [SETTING_UP_A_NEW_DATA_COLLECTION_RUN.md](SETTING_UP_A_NEW_DATA_COLLECTION_RUN.md)

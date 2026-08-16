@@ -1,4 +1,4 @@
-# Local smoke collection: about 100 posts total. Do not use for production.
+# Local smoke collection of about 100 posts total. Do not use for production.
 dataset_id: bluesky_c0ffee00-0000-4000-8000-000000000100
 name: bluesky-smoke
 description: Small Bluesky keyword collection for a local pipeline smoke test

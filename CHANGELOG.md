@@ -2,9 +2,9 @@
 
 ## 2026-08-16
 
-1. Removed Glue table setup and S3 writes from `data_platform/`. Curation is the last pipeline stage, and artifacts stay under `data_platform/data/`. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
-2. Incremental sync and preprocess now union record ids from every local run directory for a dataset when YAML asks for prior-run dedupe, because Athena is no longer used for seen-id lookups. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
-3. Bluesky keyword search uses the public AppView when `BLUESKY_HANDLE` and `BLUESKY_PASSWORD` are unset, so a small local collection can run without an account. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+1. Removed AWS Glue table setup and S3 writes from `data_platform/`. Curation is the last pipeline stage, and artifacts stay under `data_platform/data/`. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+2. Incremental sync and preprocessing now combine record ids from every local run directory for a dataset when the YAML config enables deduplication across prior runs. The pipeline no longer uses Amazon Athena to look up ids it has already seen. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+3. Bluesky keyword search uses the public Bluesky API at `https://api.bsky.app` when `BLUESKY_HANDLE` and `BLUESKY_PASSWORD` are unset, so you can run a small local collection without a Bluesky account. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
 
 ## 2026-08-09
 
