@@ -6,7 +6,11 @@ Sync Bluesky, Twitter, and Reddit through preprocess → features → curate in 
 
 1. From repo root: `uv sync`
 2. Always use `PYTHONPATH=.`
-3. Put API keys in repo-root `.env`:
+3. Put API keys in repo-root `.env`. Bluesky keyword search can run without
+`BLUESKY_HANDLE` and `BLUESKY_PASSWORD`. In that case the client uses the
+public AppView at `https://api.bsky.app`. Set the Bluesky vars if you need a
+logged-in session. Feature generation still needs `OPENAI_API_KEY` and
+`GOOGLE_API_KEY`.
 
 ```text
 BLUESKY_HANDLE=

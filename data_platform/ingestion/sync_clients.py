@@ -30,16 +30,25 @@ def init_reddit_client() -> praw.Reddit:
     )
 
 
+BLUESKY_PUBLIC_APPVIEW = "https://api.bsky.app"
+
+
 def init_bluesky_client() -> Client:
-    """Authenticate an atproto Client using BLUESKY_HANDLE and BLUESKY_PASSWORD env vars."""
+    """Return an atproto Client for Bluesky keyword search.
+
+    When BLUESKY_HANDLE and BLUESKY_PASSWORD are both set, log in on the
+    default PDS. When they are missing, use the public AppView host, which
+    serves searchPosts without an account.
+    """
     from atproto import Client
 
-    client = Client()
-    client.login(
-        EnvVarsContainer.get_env_var("BLUESKY_HANDLE", required=True),
-        EnvVarsContainer.get_env_var("BLUESKY_PASSWORD", required=True),
-    )
-    return client
+    handle = EnvVarsContainer.get_env_var("BLUESKY_HANDLE", required=False).strip()
+    password = EnvVarsContainer.get_env_var("BLUESKY_PASSWORD", required=False).strip()
+    if handle and password:
+        client = Client()
+        client.login(handle, password)
+        return client
+    return Client(BLUESKY_PUBLIC_APPVIEW)
 
 
 def init_twitter_client() -> tweepy.Client:
