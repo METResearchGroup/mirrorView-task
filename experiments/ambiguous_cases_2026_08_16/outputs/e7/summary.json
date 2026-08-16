@@ -1,0 +1,10 @@
+{
+  "seed": 42,
+  "n_total": 120,
+  "n_by_stratum": {
+    "tie": 40,
+    "high_ambiguity_multi_rater": 40,
+    "reclassified_unanimous": 40
+  },
+  "median_ambiguity_score": 0.5068029795233617
+}

@@ -1,0 +1,9 @@
+{
+  "alpha_hat": 1.3570295485611104,
+  "beta_hat": 3.3494593998086493,
+  "n_posts": 3993,
+  "half_split_pearson_r": 0.38211054449679566,
+  "half_split_n_posts": 572,
+  "contamination_majority_keep_at_3": 0.5987378385485144,
+  "seed": 42
+}

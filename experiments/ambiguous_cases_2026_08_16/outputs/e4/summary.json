@@ -1,0 +1,9 @@
+{
+  "n_raters_assigned": 215,
+  "n_raters_unassigned": 963,
+  "observed_cross_group_share": 0.5860805860805861,
+  "null_mean_cross_group_share": 0.6273626373626374,
+  "null_p_greater": 0.935,
+  "n_disagree_pairs_used": 273,
+  "seed": 42
+}

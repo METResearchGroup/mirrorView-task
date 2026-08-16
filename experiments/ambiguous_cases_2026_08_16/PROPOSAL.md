@@ -61,7 +61,7 @@ The experiments below are chosen so that each source shows up differently in the
 
 All of the following exists locally in the repo or in existing experiment outputs, so every experiment in this proposal runs on current data.
 
-- Per-trial records for 24,738 linked-fate keep/remove decisions, with `participant_id`, `post_id`, `decision`, `response_time_ms` on every trial, and trial order within the session (`shared/data/raw/study_phase_2_part_2/results/full.csv`).
+- Per-trial records for 23,560 linked-fate keep/remove decisions, with `participant_id`, `post_id`, `decision`, `response_time_ms` on every trial, and trial order within the session (`shared/data/raw/study_phase_2_part_2/results/full.csv`).
 - Per-rater covariates joinable on `participant_id`, including party affiliation, ideology, demographics, six issue-attitude items, the 1 to 7 linked-fate influence rating, and the free-text reflection.
 - Per-post stimulus fields, including original and mirror text, stance (`sampled_stance`), and the three-way toxicity stratum (`sample_toxicity_type`).
 - 3,993 posts with 3 or more raters, including the 275 tied posts that earlier work dropped, and 2,411 single-rater plus 2,387 two-rater posts that can serve as held-out text for predictive checks.

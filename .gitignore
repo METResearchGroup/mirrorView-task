@@ -19,6 +19,11 @@ test_data/*.csv
 !experiments/unanimous_vs_majority_labels_2026_08_08/outputs/**
 !experiments/unanimous_vs_majority_labels_2026_08_08/outputs/**/*.csv
 
+# Ambiguous-cases experiment outputs (otherwise blocked by *.csv).
+!experiments/ambiguous_cases_2026_08_16/outputs/
+!experiments/ambiguous_cases_2026_08_16/outputs/**
+!experiments/ambiguous_cases_2026_08_16/outputs/**/*.csv
+
 # OS generated files
 .DS_Store
 .DS_Store?

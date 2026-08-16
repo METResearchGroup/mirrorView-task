@@ -68,7 +68,7 @@ Path: `/workspace/experiments/ambiguous_cases_2026_08_16/outputs/frames/trial_fr
 | `mirror_text` | mirror text |
 | `char_count` | character length of original text |
 
-Expected row count on current data: 24738.
+Expected row count on current data: 23560.
 
 ### Post frame columns
 
@@ -116,7 +116,7 @@ PYTHONPATH=. uv run python experiments/ambiguous_cases_2026_08_16/src/build_anal
 Expected stdout includes:
 
 ```text
-trial_rows 24738
+trial_rows 23560
 post_rows_ge3 3993
 tie_rows 275
 ```
@@ -129,7 +129,7 @@ PYTHONPATH=. uv run python - <<'PY'
 import pandas as pd
 trials = pd.read_csv("experiments/ambiguous_cases_2026_08_16/outputs/frames/trial_frame.csv")
 posts = pd.read_csv("experiments/ambiguous_cases_2026_08_16/outputs/frames/post_frame.csv")
-assert len(trials) == 24738
+assert len(trials) == 23560
 assert len(posts) == 3993
 assert int(posts["is_tie"].sum()) == 275
 assert posts["n_raters"].min() >= 3
@@ -140,7 +140,7 @@ PY
 Expected:
 
 ```text
-frame_ok 24738 3993 275
+frame_ok 23560 3993 275
 ```
 
 ## Pass / fail
