@@ -8,7 +8,7 @@ from typing import Protocol
 
 from tqdm import tqdm
 
-from collector.retry import retry_llm_completion
+from data_platform.generate_features.llm_retry import retry_llm_completion
 from data_platform.generate_features.deadletter import append_deadletter_batch
 from data_platform.generate_features.models import (
     BatchRunStats,

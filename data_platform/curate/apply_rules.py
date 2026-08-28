@@ -9,7 +9,12 @@ import yaml
 from pydantic import BaseModel, Field
 
 BOOL_COLUMNS: frozenset[str] = frozenset(
-    {"is_political", "is_self_contained", "is_structurally_complete"}
+    {
+        "is_political",
+        "is_likely_spam",
+        "is_self_contained",
+        "is_structurally_complete",
+    }
 )
 
 

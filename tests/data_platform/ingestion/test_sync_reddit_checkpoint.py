@@ -366,3 +366,15 @@ def test_resume_skips_completed_subreddits(
     assert calls == ["BetaSub"]
     assert resumed_metadata["tasks"]["betasub"]["status"] == "completed"
     assert resumed_metadata["row_count"] == 2
+
+
+def test_build_sync_tasks_strips_r_prefix() -> None:
+    tasks = sync_reddit.build_sync_tasks({"subreddits": ["r/Politics"]})
+    assert len(tasks) == 1
+    assert tasks[0].task_id == "politics"
+    assert tasks[0].subreddit == "Politics"
+
+
+def test_build_sync_tasks_rejects_duplicate_normalized_subreddits() -> None:
+    with pytest.raises(ValueError, match="Duplicate subreddit task_id"):
+        sync_reddit.build_sync_tasks({"subreddits": ["r/politics", "politics"]})

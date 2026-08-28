@@ -1,6 +1,8 @@
 import re
 
-from langdetect import LangDetectException, detect  # pyright: ignore[reportMissingImports]
+from langdetect import DetectorFactory, LangDetectException, detect  # pyright: ignore[reportMissingImports]
+
+DetectorFactory.seed = 0
 
 
 def check_if_not_phone(text: str) -> bool:

@@ -29,7 +29,7 @@ import praw.models
 import prawcore.exceptions
 from praw.models.comment_forest import CommentForest
 
-from data_platform.ingestion.reddit_retry import retry_reddit_request
+from data_platform.ingestion.retry import retry_reddit_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
@@ -132,7 +132,7 @@ def _expand_more_comments(comments_forest: CommentForest) -> None:
     """Fetch MoreComments batches until none remain or expansion stalls."""
     while _has_more_comments(comments_forest):
         previous_len = len(comments_forest)
-        comments_forest.replace_more(limit=32)
+        comments_forest.replace_more(limit=0)
         if len(comments_forest) == previous_len:
             break
 
@@ -208,11 +208,18 @@ def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[RedditTask]:
         raise ValueError("ingestion_params must include 'subreddits' as a non-empty list")
 
     items: list[RedditTask] = []
+    seen_task_ids: set[str] = set()
     for subreddit in subreddits:
         if not isinstance(subreddit, str) or not subreddit.strip():
             raise ValueError("ingestion_params.subreddits entries must be non-empty strings")
-        task_id = _normalize_subreddit_key(subreddit)
-        items.append(RedditTask(task_id=task_id, subreddit=subreddit.strip()))
+        normalized_subreddit = subreddit.strip().removeprefix("r/")
+        task_id = _normalize_subreddit_key(normalized_subreddit)
+        if task_id in seen_task_ids:
+            raise ValueError(
+                f"Duplicate subreddit task_id after normalization: {task_id!r}"
+            )
+        seen_task_ids.add(task_id)
+        items.append(RedditTask(task_id=task_id, subreddit=normalized_subreddit))
     return items
 
 

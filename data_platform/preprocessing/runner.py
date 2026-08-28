@@ -100,6 +100,9 @@ def load_raw_records(
     run_dirs = sorted([p for p in raw_root.iterdir() if p.is_dir()])
     validated_rows: list[dict[str, Any]] = []
     for run_dir in run_dirs:
+        records_path = run_dir / raw_storage.records_filename
+        if not records_path.exists():
+            continue
         df = raw_storage.load_records(run_dir=run_dir)
         if df.empty:
             continue
@@ -187,8 +190,8 @@ def preprocess_records(
         records, spec.binding.records_id_column, dedupe_session.seen_ids
     )
 
-    preprocessed = filter_records(records, spec)
-    preprocessed = apply_text_transform(preprocessed, spec)
+    preprocessed = apply_text_transform(records, spec)
+    preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(
         preprocessed,
         spec,

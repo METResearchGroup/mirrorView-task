@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import typer
 
 from data_platform.curate.apply_rules import ApplyRulesResult, apply_rules, load_rules_config
 from data_platform.curate.consolidate import ConsolidateConfig, build_wide_table
+from data_platform.utils.config_paths import resolve_config_path
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.platform_ids import PlatformIdBinding
 from data_platform.utils.storage import StorageManager
@@ -111,3 +114,54 @@ def run_curation(
         f"{spec.record_noun} -> {run_dir}"
     )
     return output_path
+
+
+def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpec) -> Path:
+    """Run curation for a platform spec, hashing the rules config for metadata."""
+    rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
+    return run_curation(config_path, dataset_id, spec, rules_hash=rules_hash)
+
+
+def run_curate_main(
+    *,
+    spec: CuratePlatformSpec,
+    configs_dir: Path,
+    configs_help: str,
+    dataset_id: str,
+    config: Path,
+) -> None:
+    """Shared Typer main for Reddit/Twitter curate CLIs."""
+    config_path = resolve_config_path(config, configs_dir)
+    curate_with_spec(config_path, dataset_id, spec)
+
+
+def make_curate_cli(
+    spec: CuratePlatformSpec,
+    configs_dir: Path,
+    *,
+    configs_help: str,
+) -> Callable[[], None]:
+    """Build a Typer CLI entrypoint for a platform curate script."""
+
+    def main(
+        dataset_id: str = typer.Option(
+            ...,
+            "--dataset-id",
+            help=f"Dataset identifier from ingestion YAML ({spec.platform}_<uuid>)",
+        ),
+        config: Path = typer.Option(
+            Path("mirrorview.yaml"),
+            "--config",
+            "-c",
+            help=configs_help,
+        ),
+    ) -> None:
+        run_curate_main(
+            spec=spec,
+            configs_dir=configs_dir,
+            configs_help=configs_help,
+            dataset_id=dataset_id,
+            config=config,
+        )
+
+    return main

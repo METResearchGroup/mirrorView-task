@@ -10,81 +10,38 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pandas as pd
 import typer
-from pydantic import BaseModel
 
-from data_platform.generate_features.generate_features import FeatureGenerationConfig
-from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
+    FeaturePlatformSpec,
+    build_feature_config,
     features_from_cli,
-    generate_feature_subset,
-    run_feature_generation,
+    generate_platform_features,
+    load_preprocessed_records,
 )
-from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.models.sync import SyncTwitterPostModel
-from data_platform.utils.dataset import validate_dataset_id
-from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.platform_ids import TWITTER_BINDING
-from data_platform.utils.storage import StorageManager, StorageStage, TwitterStorageManager
+from data_platform.utils.storage import TwitterStorageManager
+
+TWITTER_SPEC = FeaturePlatformSpec(
+    platform="twitter",
+    storage_cls=TwitterStorageManager,
+    model_cls=SyncTwitterPostModel,
+    binding=TWITTER_BINDING,
+    empty_message="generate_twitter_features: no preprocessed posts found",
+)
 
 ID_COLUMN = TWITTER_BINDING.records_id_column
 TEXT_COLUMN = TWITTER_BINDING.text_column
 FEATURE_FILE_ID_COLUMN = TWITTER_BINDING.feature_file_id_column
 
 
-def twitter_feature_config(
-    dataset_id: str,
-    *,
-    run_config: FeatureRunConfig,
-    features_subset: tuple[str, ...] | None = None,
-) -> FeatureGenerationConfig:
-    """Build a FeatureGenerationConfig for Twitter flat feature CSV output."""
-    dataset_id = validate_dataset_id(dataset_id)
-    registry = FEATURE_REGISTRY
-    if features_subset:
-        registry = {name: FEATURE_REGISTRY[name] for name in features_subset}
-
-    binding = TWITTER_BINDING
-    feature_label_storage = StorageManager(
-        "twitter",
-        StorageStage.FEATURES,
-        BaseModel,
-        dataset_id,
-        records_filename="features",
-    )
-    return FeatureGenerationConfig(
-        platform="twitter",
-        id_column=binding.records_id_column,
-        text_column=binding.text_column,
-        feature_registry=registry,
-        input_storage=TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id),
-        features_dir=feature_label_storage.root_dir,
-        feature_label_query=FeatureLabelQuery(
-            feature_storage=feature_label_storage,
-            id_column=binding.records_id_column,
-            feature_file_id_column=binding.feature_file_id_column,
-        ),
-        run_config=run_config,
-    )
+def twitter_feature_config(*args, **kwargs):
+    return build_feature_config(TWITTER_SPEC, *args, **kwargs)
 
 
-def load_posts(dataset_id: str) -> pd.DataFrame:
-    """Load preprocessed posts from all preprocessed run dirs."""
-    storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    if not storage.root_dir.exists():
-        return pd.DataFrame()
-    all_rows = []
-    for run_dir in sorted(storage.root_dir.iterdir()):
-        if not run_dir.is_dir():
-            continue
-        posts = storage.load_records(run_dir=run_dir)
-        if posts.empty:
-            continue
-        all_rows.extend(posts.to_dict(orient="records"))
-    if not all_rows:
-        return pd.DataFrame()
-    return pd.DataFrame(SyncTwitterPostModel.model_validate(row).model_dump() for row in all_rows)
+def load_posts(dataset_id: str):
+    return load_preprocessed_records(TWITTER_SPEC, dataset_id)
 
 
 def generate_twitter_features(
@@ -96,24 +53,13 @@ def generate_twitter_features(
     feature_subset: list[str] | None = None,
 ) -> dict[str, Path]:
     """Load Twitter posts and generate the requested feature labels."""
-    dataset_id = validate_dataset_id(dataset_id)
-    features_subset = generate_feature_subset(feature_subset)
-
-    run_config = FeatureRunConfig(
+    return generate_platform_features(
+        TWITTER_SPEC,
+        dataset_id,
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         opik_enabled=opik_enabled,
-    )
-    posts = load_posts(dataset_id)
-    config = twitter_feature_config(
-        dataset_id,
-        run_config=run_config,
-        features_subset=features_subset,
-    )
-    return run_feature_generation(
-        posts,
-        config,
-        empty_message="generate_twitter_features: no preprocessed posts found",
+        feature_subset=feature_subset,
     )
 
 

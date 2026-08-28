@@ -11,9 +11,10 @@ from tests.data_platform.constants import VALID_DATASET_ID
 from tests.data_platform.utils.conftest import write_stage_metadata
 
 
-def test_require_all_runs_complete_passes_when_root_missing(data_root: Path) -> None:
+def test_require_all_runs_complete_raises_when_root_missing(data_root: Path) -> None:
     storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
-    require_all_runs_complete(storage, VALID_DATASET_ID)
+    with pytest.raises(RuntimeError, match="No raw runs found"):
+        require_all_runs_complete(storage, VALID_DATASET_ID)
 
 
 def test_require_all_runs_complete_passes_when_sync_completed(data_root: Path) -> None:

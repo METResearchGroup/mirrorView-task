@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from data_platform.ingestion.bluesky_retry import retry_bluesky_request
+from data_platform.ingestion.retry import retry_bluesky_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
@@ -136,12 +136,25 @@ def fetch_posts_for_keyword(
     query: str,
     *,
     task_id: str,
+    max_rows: int | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Paginate searchPosts until limit rows are collected or results are exhausted.
 
     Returns rows and per-task stats (pages fetched, hits_total from the first page, etc.).
     """
     target = int(ingestion_params["limit"])
+    if max_rows is not None:
+        target = min(target, max_rows)
+    if target <= 0:
+        stats = {
+            "task_id": task_id,
+            "query_len": len(query),
+            "per_query_limit": target,
+            "pages_fetched": 0,
+            "rows_collected": 0,
+            "hits_total": None,
+        }
+        return [], stats
     rows: list[dict[str, Any]] = []
     cursor: str | None = None
     pages_fetched = 0
@@ -235,12 +248,19 @@ def run_sync_tasks(
         """Fetch one keyword, persist deduped rows, and update the task ledger entry."""
         mark_task_in_progress(entry, storage, output_dir, metadata)
 
+        remaining: int | None = None
+        if max_rows_int is not None:
+            remaining = max_rows_int - int(metadata["row_count"])
+            if remaining <= 0:
+                return
+
         try:
             rows, stats = fetch_posts_for_keyword(
                 client,
                 ingestion_params,
                 task.query,
                 task_id=task.task_id,
+                max_rows=remaining,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
             mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)

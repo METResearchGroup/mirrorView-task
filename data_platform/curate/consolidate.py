@@ -66,7 +66,10 @@ def _feature_cte_sql(
     SELECT {id_column}, {outer_cols}
     FROM (
         SELECT {feature_id_expr}, {inner_cols},
-            ROW_NUMBER() OVER (PARTITION BY {partition_id} ORDER BY {partition_id}) AS rn
+            ROW_NUMBER() OVER (
+                PARTITION BY {partition_id}
+                ORDER BY label_timestamp DESC NULLS LAST, {partition_id}
+            ) AS rn
         FROM {read_expr}
     )
     WHERE rn = 1

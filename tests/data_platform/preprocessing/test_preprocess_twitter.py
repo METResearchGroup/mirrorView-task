@@ -211,3 +211,28 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
     assert "source_raw_runs" in metadata
     assert len(metadata["source_raw_runs"]) == 2
     assert metadata["source_raw_runs"][-1] == metadata["source_raw_run"]
+
+
+def test_second_preprocess_run_skips_already_preprocessed_ids(data_root) -> None:
+    dataset_id = VALID_TWITTER_DATASET_ID
+    raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-13:00:00")
+    tweet_id = "1000000000000000001"
+    raw_storage.write_records([_tweet_row(tweet_id=tweet_id)], run_dir)
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 1,
+        },
+    )
+
+    first_output = preprocess_twitter.preprocess_records(dataset_id)
+    preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
+    assert len(preprocessed_storage.load_records(first_output)) == 1
+
+    second_output = preprocess_twitter.preprocess_records(dataset_id)
+    second_metadata = preprocessed_storage.load_run_metadata(second_output)
+    assert second_metadata["row_counts"]["input"] == 0
+    assert second_metadata["row_counts"]["output"] == 0
+    assert len(preprocessed_storage.load_records(second_output)) == 0

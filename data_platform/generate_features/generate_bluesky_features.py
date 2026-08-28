@@ -10,75 +10,35 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pandas as pd
 import typer
-from pydantic import BaseModel
 
-from data_platform.generate_features.generate_features import FeatureGenerationConfig
+from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
+    FeaturePlatformSpec,
+    build_feature_config,
     features_from_cli,
     generate_feature_subset,
+    load_preprocessed_records,
     run_feature_generation,
 )
-from data_platform.generate_features.registry import FEATURE_REGISTRY
-from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.models.sync import SyncBlueskyPostModel
-from data_platform.utils.dataset import dataset_root, validate_dataset_id
-from data_platform.utils.feature_labels import FeatureLabelQuery
+from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.gate_checks import require_all_runs_complete
 from data_platform.utils.platform_ids import BLUESKY_BINDING
-from data_platform.utils.storage import BlueskyStorageManager, StorageManager, StorageStage
+from data_platform.utils.storage import BlueskyStorageManager, StorageStage
+
+BLUESKY_SPEC = FeaturePlatformSpec(
+    platform="bluesky",
+    storage_cls=BlueskyStorageManager,
+    model_cls=SyncBlueskyPostModel,
+    binding=BLUESKY_BINDING,
+    empty_message="generate_bluesky_features: no preprocessed posts found",
+    require_all_runs_complete=True,
+)
 
 
-def bluesky_feature_config(
-    dataset_id: str,
-    *,
-    run_config: FeatureRunConfig,
-    features_subset: tuple[str, ...] | None = None,
-) -> FeatureGenerationConfig:
-    """Build a FeatureGenerationConfig for Bluesky flat feature CSV output."""
-    dataset_id = validate_dataset_id(dataset_id)
-    registry = FEATURE_REGISTRY
-    if features_subset:
-        registry = {name: FEATURE_REGISTRY[name] for name in features_subset}
-
-    binding = BLUESKY_BINDING
-    feature_label_storage = StorageManager(
-        "bluesky",
-        StorageStage.FEATURES,
-        BaseModel,
-        dataset_id,
-        records_filename="features",
-    )
-    return FeatureGenerationConfig(
-        platform="bluesky",
-        id_column=binding.records_id_column,
-        text_column=binding.text_column,
-        feature_registry=registry,
-        input_storage=BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id),
-        features_dir=feature_label_storage.root_dir,
-        feature_label_query=FeatureLabelQuery(
-            feature_storage=feature_label_storage,
-            id_column=binding.records_id_column,
-        ),
-        run_config=run_config,
-    )
-
-
-def load_all_posts(dataset_id: str) -> pd.DataFrame:
-    """Load preprocessed posts from all preprocessed run dirs."""
-    storage = BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    all_rows = []
-    for run_dir in sorted(storage.root_dir.iterdir()):
-        if not run_dir.is_dir():
-            continue
-        posts = storage.load_records(run_dir=run_dir)
-        if posts.empty:
-            continue
-        all_rows.extend(posts.to_dict(orient="records"))
-    if not all_rows:
-        return pd.DataFrame()
-    return pd.DataFrame(SyncBlueskyPostModel.model_validate(row).model_dump() for row in all_rows)
+def load_all_posts(dataset_id: str):
+    return load_preprocessed_records(BLUESKY_SPEC, dataset_id)
 
 
 def generate_bluesky_features(
@@ -104,16 +64,13 @@ def generate_bluesky_features(
         opik_enabled=opik_enabled,
     )
     posts = load_all_posts(dataset_id)
-    config = bluesky_feature_config(
+    config = build_feature_config(
+        BLUESKY_SPEC,
         dataset_id,
         run_config=run_config,
         features_subset=features_subset,
     )
-    return run_feature_generation(
-        posts,
-        config,
-        empty_message="generate_bluesky_features: no preprocessed posts found",
-    )
+    return run_feature_generation(posts, config, empty_message=BLUESKY_SPEC.empty_message)
 
 
 def main(

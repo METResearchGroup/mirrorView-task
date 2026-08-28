@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.storage import BlueskyStorageManager, RedditStorageManager, StorageStage
 from tests.data_platform.conftest import make_ingestion_row
@@ -181,3 +183,12 @@ def test_write_run_metadata_atomic(bluesky_storage) -> None:
     metadata_path = run_dir / "metadata.json"
     assert not (run_dir / "metadata.json.tmp").exists()
     assert json.loads(metadata_path.read_text(encoding="utf-8")) == payload
+
+
+def test_write_records_validates_rows(bluesky_storage) -> None:
+    run_dir = bluesky_storage.create_new_run_dir("2026_05_30-11:00:00")
+    with pytest.raises(Exception):
+        bluesky_storage.write_records(
+            [{"uri": "at://missing-fields"}],
+            run_dir,
+        )

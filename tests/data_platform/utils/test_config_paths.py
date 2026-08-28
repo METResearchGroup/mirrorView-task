@@ -55,3 +55,11 @@ def test_load_yaml_config(tmp_path: Path) -> None:
     loaded = load_yaml_config(config_file)
 
     assert loaded == {"dataset_id": "bluesky_abc"}
+
+
+def test_load_yaml_config_rejects_non_dict_root(tmp_path: Path) -> None:
+    config_file = tmp_path / "list.yaml"
+    config_file.write_text("- item\n", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="mapping"):
+        load_yaml_config(config_file)

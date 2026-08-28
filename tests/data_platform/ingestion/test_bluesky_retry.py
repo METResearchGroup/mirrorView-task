@@ -4,25 +4,28 @@ import pytest
 from atproto_client.exceptions import RequestException, UnauthorizedError
 from atproto_client.request import Response
 
-from data_platform.ingestion.bluesky_retry import _is_retryable_bluesky_error, retry_bluesky_request
+from data_platform.ingestion.retry import (
+    is_retryable_bluesky_error,
+    retry_bluesky_request,
+)
 
 
 @pytest.fixture
 def no_retry_delay(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(
-        "data_platform.ingestion.bluesky_retry.wait_exponential_jitter",
+        "data_platform.ingestion.retry.wait_exponential_jitter",
         lambda **kwargs: lambda _retry_state: 0,
     )
 
 
 def test_is_retryable_on_429_request_exception() -> None:
     response = Response(success=False, status_code=429, content=None, headers={})
-    assert _is_retryable_bluesky_error(RequestException(response)) is True
+    assert is_retryable_bluesky_error(RequestException(response)) is True
 
 
 def test_is_not_retryable_on_401() -> None:
     response = Response(success=False, status_code=401, content=None, headers={})
-    assert _is_retryable_bluesky_error(UnauthorizedError(response)) is False
+    assert is_retryable_bluesky_error(UnauthorizedError(response)) is False
 
 
 @pytest.mark.usefixtures("no_retry_delay")
