@@ -2,7 +2,7 @@
 
 ## 2026-08-16
 
-1. Removed AWS Glue table setup and S3 writes from `data_platform/`. Curation is the last pipeline stage, and artifacts stay under `data_platform/data/`. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+1. Removed AWS Glue table setup, S3 writes, DynamoDB pipeline-run tracking, and Prefect orchestration from `data_platform/`. Curation is the last pipeline stage, and artifacts stay under `data_platform/data/`. Run each stage via its CLI (see `data_platform/README.md`). [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
 2. Incremental sync and preprocessing now combine record ids from every local run directory for a dataset when the YAML config enables deduplication across prior runs. The pipeline no longer uses Amazon Athena to look up ids it has already seen. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
 3. Bluesky keyword search uses the public Bluesky API at `https://api.bsky.app` when `BLUESKY_HANDLE` and `BLUESKY_PASSWORD` are unset, so you can run a small local collection without a Bluesky account. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
 
@@ -23,7 +23,7 @@
 
 ## 2026-08-06
 
-1. Landed Bluesky, Twitter, and Reddit ingest through curation in this repository under `data_platform/`, with local-disk durability for Twitter/Reddit, opt-in Bluesky S3 upload, and sample discovery pointed at in-repo curated exports. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
+1. Landed Bluesky, Twitter, and Reddit ingest through curation in this repository under `data_platform/`, with local-disk durability and sample discovery pointed at in-repo curated exports. [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)
 2. Added the larger-scale prompt-engineering keep/remove classifier experiment on a balanced 1,000-post subset (500/500) with Qwen 3.6. Feature-tuned prompt raised remove F1 from 0.628 to 0.700 versus control. [PR #49](https://github.com/METResearchGroup/mirrorView-task/pull/49)
 3. Complete methods writeup from the current study phase. [PR #51](https://github.com/METResearchGroup/mirrorView-task/pull/51/)
 
