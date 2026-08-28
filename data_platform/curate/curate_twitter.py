@@ -8,13 +8,11 @@ Run from the repo root:
 
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 import typer
 
-from data_platform.curate.runner import CuratePlatformSpec, run_curation
-from data_platform.curate.utils import resolve_curate_config_path
+from data_platform.curate.runner import CuratePlatformSpec, curate_with_spec, make_curate_cli
 from data_platform.utils.platform_ids import TWITTER_BINDING
 from data_platform.utils.storage import TwitterStorageManager
 
@@ -34,26 +32,16 @@ FEATURE_FILE_ID_COLUMN = TWITTER_BINDING.feature_file_id_column
 
 
 def curate(config_path: Path, dataset_id: str) -> Path:
-    rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
-    return run_curation(config_path, dataset_id, TWITTER_CURATE_SPEC, rules_hash=rules_hash)
+    return curate_with_spec(config_path, dataset_id, TWITTER_CURATE_SPEC)
 
 
-@app.command()
-def main(
-    dataset_id: str = typer.Option(
-        ...,
-        "--dataset-id",
-        help="Dataset identifier from ingestion YAML (twitter_<uuid>)",
-    ),
-    config: Path = typer.Option(
-        Path("mirrorview.yaml"),
-        "--config",
-        "-c",
-        help="Curate config under data_platform/curate/configs/twitter/",
-    ),
-) -> None:
-    config_path = resolve_curate_config_path(config, CONFIGS_DIR)
-    curate(config_path, dataset_id)
+main = make_curate_cli(
+    TWITTER_CURATE_SPEC,
+    CONFIGS_DIR,
+    configs_help="Curate config under data_platform/curate/configs/twitter/",
+)
+
+app.command()(main)
 
 
 if __name__ == "__main__":

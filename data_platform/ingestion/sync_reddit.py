@@ -29,7 +29,7 @@ import praw.models
 import prawcore.exceptions
 from praw.models.comment_forest import CommentForest
 
-from data_platform.ingestion.reddit_retry import retry_reddit_request
+from data_platform.ingestion.retry import retry_reddit_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,

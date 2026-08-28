@@ -7,7 +7,7 @@ from typing import Any
 
 import tweepy
 
-from data_platform.ingestion.twitter_retry import retry_twitter_request
+from data_platform.ingestion.retry import retry_twitter_request
 
 logger = logging.getLogger(__name__)
 

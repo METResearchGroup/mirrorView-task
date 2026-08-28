@@ -21,7 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from data_platform.ingestion.bluesky_retry import retry_bluesky_request
+from data_platform.ingestion.retry import retry_bluesky_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,

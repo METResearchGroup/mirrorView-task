@@ -142,12 +142,12 @@ def test_generate_reddit_features_defaults_to_opik_disabled(monkeypatch) -> None
         return {}
 
     monkeypatch.setattr(
-        "data_platform.generate_features.generate_reddit_features.run_feature_generation",
+        "data_platform.generate_features.platform_cli.run_feature_generation",
         fake_run_feature_generation,
     )
     monkeypatch.setattr(
-        "data_platform.generate_features.generate_reddit_features.load_comments",
-        lambda dataset_id: pd.DataFrame([{ID_COLUMN: "1", TEXT_COLUMN: "hello"}]),
+        "data_platform.generate_features.platform_cli.load_preprocessed_records",
+        lambda spec, dataset_id: pd.DataFrame([{ID_COLUMN: "1", TEXT_COLUMN: "hello"}]),
     )
 
     generate_reddit_features(VALID_REDDIT_DATASET_ID)

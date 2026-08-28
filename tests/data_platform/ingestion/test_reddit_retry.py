@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import prawcore.exceptions
 import pytest
 
-from data_platform.ingestion import reddit_retry
+from data_platform.ingestion import retry
 
 
 def _mock_response(*, status_code: int = 429) -> MagicMock:
@@ -16,7 +16,7 @@ def _mock_response(*, status_code: int = 429) -> MagicMock:
 def test_retry_reddit_request_retries_transient_errors() -> None:
     attempts = {"count": 0}
 
-    @reddit_retry.retry_reddit_request(max_attempts=3, initial_delay=0.01, max_delay=0.02)
+    @retry.retry_reddit_request(max_attempts=3, initial_delay=0.01, max_delay=0.02)
     def flaky() -> str:
         attempts["count"] += 1
         if attempts["count"] < 3:
@@ -28,7 +28,7 @@ def test_retry_reddit_request_retries_transient_errors() -> None:
 
 
 def test_retry_reddit_request_reraises_after_max_attempts() -> None:
-    @reddit_retry.retry_reddit_request(max_attempts=2, initial_delay=0.01, max_delay=0.02)
+    @retry.retry_reddit_request(max_attempts=2, initial_delay=0.01, max_delay=0.02)
     def always_fails() -> None:
         raise prawcore.exceptions.ServerError(_mock_response(status_code=503))
 

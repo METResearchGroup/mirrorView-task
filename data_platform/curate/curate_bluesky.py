@@ -15,7 +15,7 @@ from pathlib import Path
 import typer
 
 from data_platform.curate.runner import CuratePlatformSpec, run_curation
-from data_platform.curate.utils import resolve_curate_config_path
+from data_platform.utils.config_paths import resolve_config_path
 from data_platform.generate_features.metadata import metadata_path
 from data_platform.generate_features.models import FeatureRunMetadata
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
@@ -115,7 +115,7 @@ def main(
         help="Curate config under data_platform/curate/configs/bluesky/",
     ),
 ) -> None:
-    config_path = resolve_curate_config_path(config, CONFIGS_DIR)
+    config_path = resolve_config_path(config, CONFIGS_DIR)
     curate(config_path, dataset_id)
 
 
