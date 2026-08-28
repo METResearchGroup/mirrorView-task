@@ -20,6 +20,11 @@ data_platform/data/
 !experiments/unanimous_vs_majority_labels_2026_08_08/outputs/**
 !experiments/unanimous_vs_majority_labels_2026_08_08/outputs/**/*.csv
 
+# Bluesky data-ingestion smoke artifacts (otherwise blocked by *.csv).
+!experiments/data_ingestion_smoke_2026_08_28/
+!experiments/data_ingestion_smoke_2026_08_28/**
+!experiments/data_ingestion_smoke_2026_08_28/**/*.csv
+
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -39,6 +44,8 @@ Thumbs.db
 # Logs
 logs
 *.log
+# Smoke-test stage logs (otherwise blocked by *.log).
+!experiments/data_ingestion_smoke_2026_08_28/**/*.log
 
 # Runtime data
 pids

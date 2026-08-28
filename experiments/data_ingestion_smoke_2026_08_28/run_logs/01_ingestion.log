@@ -1,0 +1,6 @@
+sync_records: started new run /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/raw/2026_08_28-16:45:41
+sync_records: climate change -> 25 rows (appended 25, pages=2)
+sync_records: gun control -> 25 rows (appended 22, pages=2)
+sync_records: abortion -> 25 rows (appended 25, pages=1)
+sync_records: immigration -> 25 rows (appended 25, pages=2)
+sync_records: wrote 97 rows to /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/raw/2026_08_28-16:45:41 (status=completed)
