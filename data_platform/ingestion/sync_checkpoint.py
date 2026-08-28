@@ -281,7 +281,7 @@ def ensure_dataset_manifest(
             dataset_id,
             name=str(config["name"]),
             ingestion_config=str(config_path.relative_to(REPO_ROOT)),
-            format=output_format,
+            data_format=output_format,
         )
 
 

@@ -38,6 +38,15 @@ def test_session_warm_unions_prior_runs_when_enabled() -> None:
     storage.load_seen_ids_from_all_runs.assert_called_once_with(
         "uri", filename="posts.csv"
     )
+    storage = MagicMock()
+    storage.load_seen_ids_from_disk.return_value = {"uri-b"}
+    config = DedupeConfig(id_column="uri", filename="posts.csv")
+    session = DedupeSession(config)
+    session.seen_ids = {"uri-a"}
+    session.warm(storage, Path("/tmp/run"))
+
+    assert session.seen_ids == {"uri-a", "uri-b"}
+    storage.load_seen_ids_from_all_runs.assert_not_called()
 
 
 def test_policy_includes_prior_runs() -> None:

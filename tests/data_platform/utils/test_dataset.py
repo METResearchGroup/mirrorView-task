@@ -43,6 +43,11 @@ def test_dataset_root_resolves_under_data_root(data_root) -> None:
     assert root == data_root / "bluesky" / VALID_DATASET_ID
 
 
+def test_dataset_root_rejects_mismatched_platform_prefix() -> None:
+    with pytest.raises(ValueError, match="does not match dataset_id prefix"):
+        dataset_root("reddit", VALID_DATASET_ID)
+
+
 def test_write_and_load_dataset_manifest(data_root) -> None:
     path = write_dataset_manifest(
         "bluesky",

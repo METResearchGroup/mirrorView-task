@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -32,11 +32,7 @@ class DedupeConfig:
 @dataclass
 class DedupeSession:
     config: DedupeConfig
-    seen_ids: set[str]
-
-    def __init__(self, config: DedupeConfig) -> None:
-        self.config = config
-        self.seen_ids: set[str] = set()
+    seen_ids: set[str] = field(default_factory=set)
 
     def warm(self, storage: StorageManager, output_dir: Path) -> None:  # noqa: F821
         seen: set[str] = set()
@@ -54,7 +50,7 @@ class DedupeSession:
                     filename=self.config.filename,
                 )
             )
-        self.seen_ids = seen
+        self.seen_ids |= seen
 
     def filter_rows(self, rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
         new_rows = [row for row in rows if row[self.config.id_column] not in self.seen_ids]

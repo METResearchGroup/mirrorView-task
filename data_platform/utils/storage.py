@@ -147,12 +147,13 @@ class StorageManager:
         *,
         filename: str | None = None,
     ) -> Path:
+        validated = [self.model.model_validate(row).model_dump() for row in rows]
         out_path = run_dir / (filename or self.records_filename)
         fieldnames = list(self.model.model_fields.keys())
         if self.format == "parquet":
-            _write_parquet(rows, out_path, fieldnames)
+            _write_parquet(validated, out_path, fieldnames)
         else:
-            _write_csv(rows, out_path, fieldnames)
+            _write_csv(validated, out_path, fieldnames)
         return out_path
 
     def append_records(

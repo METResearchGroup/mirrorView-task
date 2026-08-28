@@ -122,6 +122,34 @@ def test_orchestrator_calls_label_records(
     mock_build_engine.label_records.assert_called_once()
 
 
+def test_does_not_mark_feature_completed_when_batches_fail(
+    data_root,
+    features_dir,
+    mock_build_engine,
+) -> None:
+    write_preprocessed_posts(data_root, sample_preprocessed_records(1))
+
+    spec = FeatureSpec(
+        name="feat_a",
+        model=DummyModel,  # type: ignore[arg-type]
+        engine_type="thread_pool",
+        generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
+    )
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"feat_a": spec},
+    )
+    mock_build_engine.label_records.return_value = BatchRunStats(labeled=0, failed_batches=1)
+
+    records = pd.DataFrame([{"uri": URI_POST_A, "text": "one"}])
+    generate_features(records, config)
+
+    metadata = load_or_init_metadata(config, feature_names=("feat_a",))
+    assert metadata.features["feat_a"].status == "in_progress"
+    assert metadata.features["feat_a"].failed_batches == 1
+    assert metadata.sync_status != "completed"
+
+
 def test_default_feature_run_config_disables_opik() -> None:
     assert FeatureRunConfig().opik_enabled is False
 

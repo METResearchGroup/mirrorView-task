@@ -40,15 +40,18 @@ def _is_up_to_date(
     all_preprocessed_run_dirs: list[Path],
     root: Path,
     rules_hash: str,
+    features_meta: FeatureRunMetadata,
 ) -> Path | None:
     """Return the existing output path if curation inputs haven't changed, else None."""
+    current_runs = [relative_run_path(root, d) for d in all_preprocessed_run_dirs]
+    if features_meta.source_preprocessed_runs != current_runs:
+        return None
     if not curated_storage.root_dir.exists():
         return None
     run_dirs = sorted(p for p in curated_storage.root_dir.iterdir() if p.is_dir())
     if not run_dirs:
         return None
     latest_meta = curated_storage.load_run_metadata(run_dirs[-1])
-    current_runs = [relative_run_path(root, d) for d in all_preprocessed_run_dirs]
     if latest_meta.get("source_preprocessed_runs") != current_runs:
         return None
     if latest_meta.get("rules_hash") != rules_hash:
@@ -83,7 +86,13 @@ def curate(config_path: Path, dataset_id: str) -> Path:
     )
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
 
-    existing = _is_up_to_date(curated_storage, all_preprocessed_run_dirs, root, rules_hash)
+    existing = _is_up_to_date(
+        curated_storage,
+        all_preprocessed_run_dirs,
+        root,
+        rules_hash,
+        features_meta,
+    )
     if existing is not None:
         print(f"curate_bluesky: already up to date, skipping ({existing})")
         return existing.parent

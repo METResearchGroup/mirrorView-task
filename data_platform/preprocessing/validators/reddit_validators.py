@@ -22,7 +22,7 @@ DIRECT_URL_PATTERN = re.compile(
 MEDIA_HOST_PATTERN = re.compile(
     r"(?i)\b(?:imgur|i\.redd\.it|v\.redd\.it|youtube|youtu\.be|gfycat|redgifs)\b"
 )
-MENTION_PATTERN = re.compile(r"(?i)(?:u/|r/)")
+MENTION_PATTERN = re.compile(r"(?i)(?<!\w)(?:u|r)/\w+")
 
 
 def check_if_body_not_removed(text: str) -> bool:

@@ -21,6 +21,7 @@ from data_platform.generate_features.models import (
     FeatureGenerationConfig,
     FeatureRunMetadata,
     FeatureSpec,
+    FeatureStatus,
     LabelTask,
 )
 from data_platform.utils.storage import StorageManager, StorageStage
@@ -87,7 +88,20 @@ def _run_feature_labeling(
         on_batch_complete=_make_on_batch_complete(metadata, feature_name, config.features_dir),
     )
 
-    total_labeled = metadata.features[feature_name].labeled
+    feature_status = metadata.features.setdefault(feature_name, FeatureStatus())
+    if stats.failed_batches > feature_status.failed_batches:
+        update_batch_counts(
+            metadata,
+            feature_name,
+            labeled_delta=0,
+            failed_batches_delta=stats.failed_batches - feature_status.failed_batches,
+        )
+
+    if stats.failed_batches > 0 or feature_status.failed_batches > 0:
+        flush_metadata(config.features_dir, metadata)
+        return stats
+
+    total_labeled = feature_status.labeled
     mark_feature_completed(metadata, feature_name, total_labeled)
     flush_metadata(config.features_dir, metadata)
     return stats
@@ -149,7 +163,9 @@ def _mark_sync_completed(
 ) -> None:
     """Set sync_status completed when every feature entry is marked completed."""
     all_done = all(
-        metadata.features.get(name) and metadata.features[name].status == "completed"
+        metadata.features.get(name)
+        and metadata.features[name].status == "completed"
+        and metadata.features[name].failed_batches == 0
         for name in feature_names
     )
     if all_done:

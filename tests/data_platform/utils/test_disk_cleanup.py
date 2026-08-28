@@ -24,3 +24,8 @@ def test_delete_dataset_local_files_raises_file_not_found_when_dataset_root_miss
 ) -> None:
     with pytest.raises(FileNotFoundError):
         delete_dataset_local_files("bluesky", VALID_DATASET_ID)
+
+
+def test_delete_dataset_local_files_rejects_unknown_platform(data_root: Path) -> None:
+    with pytest.raises(ValueError, match="Unsupported platform"):
+        delete_dataset_local_files("facebook", VALID_DATASET_ID)

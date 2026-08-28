@@ -30,7 +30,12 @@ def validate_dataset_id(dataset_id: str) -> str:
 
 
 def dataset_root(platform: str, dataset_id: str) -> Path:
-    validate_dataset_id(dataset_id)
+    dataset_id = validate_dataset_id(dataset_id)
+    expected_prefix = dataset_id.split("_", 1)[0]
+    if platform != expected_prefix:
+        raise ValueError(
+            f"platform {platform!r} does not match dataset_id prefix {expected_prefix!r}"
+        )
     return _DATA_ROOT / platform / dataset_id
 
 
@@ -65,7 +70,7 @@ def write_dataset_manifest(
     *,
     name: str,
     ingestion_config: str,
-    format: ValidDataFormats = ValidDataFormats.CSV,
+    data_format: ValidDataFormats = ValidDataFormats.CSV,
     created_at: str | None = None,
 ) -> Path:
     root = dataset_root(platform, dataset_id)
@@ -76,7 +81,7 @@ def write_dataset_manifest(
         "name": name,
         "created_at": created_at or datetime.now(UTC).isoformat(),
         "ingestion_config": ingestion_config,
-        "format": format.value,
+        "format": data_format.value,
     }
     path = root / MANIFEST_FILENAME
     with path.open("w", encoding="utf-8") as f:

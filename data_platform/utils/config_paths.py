@@ -25,4 +25,9 @@ def resolve_config_path(config: Path, base_dir: Path) -> Path:
 
 def load_yaml_config(config_path: Path) -> dict[str, Any]:
     with config_path.open(encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        raw = yaml.safe_load(f)
+    if not isinstance(raw, dict):
+        raise ValueError(
+            f"YAML config root must be a mapping, got {type(raw).__name__}: {config_path}"
+        )
+    return raw

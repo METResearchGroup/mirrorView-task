@@ -35,12 +35,13 @@ def _write_features_meta(
     dataset_id: str,
     *,
     sync_status: str = "completed",
+    source_preprocessed_runs: list[str] | None = None,
 ) -> None:
     features_dir = data_root / "bluesky" / dataset_id / "features"
     features_dir.mkdir(parents=True, exist_ok=True)
     meta = FeatureRunMetadata(
         dataset_id=dataset_id,
-        source_preprocessed_runs=[],
+        source_preprocessed_runs=source_preprocessed_runs or [],
         sync_status=sync_status,
     )
     (features_dir / "metadata.json").write_text(json.dumps(meta.to_dict()), encoding="utf-8")
@@ -118,7 +119,11 @@ class TestCurateEarlyExit:
         self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         config_path, rules_hash = _config_and_hash(tmp_path)
-        _write_features_meta(data_root, VALID_DATASET_ID)
+        _write_features_meta(
+            data_root,
+            VALID_DATASET_ID,
+            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+        )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         existing_run = _write_curated_run(
             data_root,
@@ -140,7 +145,11 @@ class TestCurateEarlyExit:
         self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         config_path, rules_hash = _config_and_hash(tmp_path)
-        _write_features_meta(data_root, VALID_DATASET_ID)
+        _write_features_meta(
+            data_root,
+            VALID_DATASET_ID,
+            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+        )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         _write_curated_run(
             data_root,
@@ -163,7 +172,11 @@ class TestCurateEarlyExit:
         self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         config_path, _ = _config_and_hash(tmp_path)
-        _write_features_meta(data_root, VALID_DATASET_ID)
+        _write_features_meta(
+            data_root,
+            VALID_DATASET_ID,
+            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+        )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         _write_curated_run(
             data_root,
@@ -181,11 +194,44 @@ class TestCurateEarlyExit:
 
         mock_run_curation.assert_called_once()
 
+    def test_reruns_if_features_preprocessed_runs_changed(
+        self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        config_path, rules_hash = _config_and_hash(tmp_path)
+        _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
+        features_dir = data_root / "bluesky" / VALID_DATASET_ID / "features"
+        features_dir.mkdir(parents=True, exist_ok=True)
+        meta = FeatureRunMetadata(
+            dataset_id=VALID_DATASET_ID,
+            source_preprocessed_runs=["preprocessed/stale_run"],
+            sync_status="completed",
+        )
+        (features_dir / "metadata.json").write_text(json.dumps(meta.to_dict()), encoding="utf-8")
+        _write_curated_run(
+            data_root,
+            VALID_DATASET_ID,
+            "2026_06_01-00:00:00",
+            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            rules_hash=rules_hash,
+        )
+
+        fake_output = _make_fake_new_run(data_root, VALID_DATASET_ID)
+        mock_run_curation = MagicMock(return_value=fake_output)
+        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+
+        curate(config_path, VALID_DATASET_ID)
+
+        mock_run_curation.assert_called_once()
+
     def test_reruns_if_export_file_missing(
         self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         config_path, rules_hash = _config_and_hash(tmp_path)
-        _write_features_meta(data_root, VALID_DATASET_ID)
+        _write_features_meta(
+            data_root,
+            VALID_DATASET_ID,
+            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+        )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         _write_curated_run(
             data_root,

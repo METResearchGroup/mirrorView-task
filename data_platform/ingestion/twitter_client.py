@@ -34,7 +34,12 @@ def build_query(
     """Build a recent-search query for original posts matching keyword."""
     term = _quote_query_term(keyword)
     parts = [term, f"lang:{lang}"]
-    for item in exclude or ("reply", "retweet", "quote"):
+    exclude_items: tuple[str, ...] | list[str]
+    if exclude is None:
+        exclude_items = ("reply", "retweet", "quote")
+    else:
+        exclude_items = exclude
+    for item in exclude_items:
         clause = _EXCLUDE_CLAUSES.get(item)
         if clause:
             parts.append(clause)
