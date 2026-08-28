@@ -20,7 +20,17 @@ from dotenv import load_dotenv
 ENV_VAR_TYPES: Final[dict[str, type[str]]] = {
     "OPENAI_API_KEY": str,
     "WANDB_API_KEY": str,
-    "GOOGLE_API_KEY": str
+    "GOOGLE_API_KEY": str,
+    "BLUESKY_HANDLE": str,
+    "BLUESKY_PASSWORD": str,
+    "REDDIT_CLIENT_ID": str,
+    "REDDIT_SECRET": str,
+    "REDDIT_REDIRECT_URI": str,
+    "REDDIT_USERNAME": str,
+    "REDDIT_PASSWORD": str,
+    "X_BEARER_TOKEN": str,
+    "X_CONSUMER_KEY": str,
+    "X_SECRET_KEY": str,
 }
 
 
