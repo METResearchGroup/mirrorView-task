@@ -1,19 +1,13 @@
-"""Report pipeline handling of toxicity labels and empirical removal rates by party x toxicity.
+"""Removal rates by party × sampled toxicity for Part 1 full results.
 
-The export pipeline and downstream loaders reviewed here do **not** drop rows because
-``sample_toxicity_type`` is ``sample_middle_toxicity``. The script prints **how often**
-participants choose **remove**, broken down by **Democrat vs Republican** and by
-``sample_toxicity_type`` (low / middle / high), on the same trial slice as ``summary_stats``.
+Loads ``STUDY_PHASE_2_PART_1_RESULTS_FULL`` and reports how often participants
+choose remove across ``sample_toxicity_type`` buckets, using the same party /
+condition / phase filters as :mod:`summary_stats`. Also notes that middle-
+toxicity trials are not dropped by the export or reviewed loaders.
 
-Toxicity is stored in exports as ``sample_toxicity_type`` (jsPsych / CSV). Some modeling
-code renames that to ``sampled_toxicity`` after aggregation — same underlying field.
-
-Run from repo root::
+Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/basic_summary_stats_2026_04_27/toxicity_remove_breakdown.py
-
-Loads ``STUDY_PHASE_2_PART_1_RESULTS_PILOT`` via the shared registry (same source as
-``summary_stats.py``).
 """
 
 from __future__ import annotations
@@ -22,9 +16,9 @@ import pandas as pd
 
 from experiments.basic_summary_stats_2026_04_27.summary_stats import CONDITION_DISPLAY_MAP
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_PILOT
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_FULL
 
-# Observed pilot label for the middle bucket (see also ``public/main.js`` / post assignments).
+# Canonical middle-bucket label in exports / stimulus sampling.
 MIDDLE_TOXICITY_CANONICAL = "sample_middle_toxicity"
 
 TOXICITY_ROW_ORDER = (
@@ -37,7 +31,11 @@ PARTY_ORDER = ("democrat", "republican")
 
 
 def moderation_phase_frame(df: pd.DataFrame) -> pd.DataFrame:
-    """Same trial selection style as ``summary_stats.format_phase_table`` (both phases)."""
+    """Return keep/remove trial rows in phases 1–2 with known party and condition.
+
+    Aligns with the cell filters used by :func:`summary_stats.format_phase_table`,
+    but keeps both phases.
+    """
     d = df.copy()
     d["phase_num"] = pd.to_numeric(d["phase"], errors="coerce")
     d["decision"] = d["decision"].astype(str).str.strip().str.lower()
@@ -52,6 +50,7 @@ def moderation_phase_frame(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def print_pipeline_finding() -> None:
+    """Print that reviewed loaders do not drop middle-toxicity rows."""
     print("\n--- Pipeline / code finding ---")
     print(
         "No reviewed step removes or excludes posts solely because "
@@ -65,15 +64,30 @@ def print_pipeline_finding() -> None:
 
 
 def _toxicity_series(trials: pd.DataFrame) -> pd.Series:
+    """Normalize ``sample_toxicity_type`` to stripped strings (NA → empty)."""
     return trials["sample_toxicity_type"].fillna("").astype(str).str.strip()
 
 
 def _count_remove(series: pd.Series) -> int:
+    """Count values equal to ``remove``."""
     return int((series == "remove").sum())
 
 
 def party_x_toxicity_removal_table(trials: pd.DataFrame) -> pd.DataFrame:
-    """One row per (party_group, sample_toxicity_type) with counts and removal rate."""
+    """Aggregate trial counts and removal rates by party × toxicity label.
+
+    Parameters
+    ----------
+    trials : pandas.DataFrame
+        Filtered moderation trials with ``party_group``, ``decision``, and
+        ``sample_toxicity_type``.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Columns ``party_group``, ``sample_toxicity_type``, ``n_trials``,
+        ``n_remove``, ``prop_remove``.
+    """
     t = trials.copy()
     t["_tox"] = _toxicity_series(t)
     agg = (
@@ -90,7 +104,7 @@ def party_x_toxicity_removal_table(trials: pd.DataFrame) -> pd.DataFrame:
 
 
 def print_party_x_toxicity_removal(trials: pd.DataFrame) -> None:
-    """Print removal frequency by ``sample_toxicity_type`` for Democrats and Republicans."""
+    """Print long and wide removal-rate tables by party × toxicity."""
     full = party_x_toxicity_removal_table(trials)
     print("\n--- Removal by political party x sampled toxicity ---")
     for party in PARTY_ORDER:
@@ -134,6 +148,10 @@ def print_party_x_toxicity_removal(trials: pd.DataFrame) -> None:
 
 
 def print_empirical(df: pd.DataFrame) -> None:
+    """Print toxicity value counts, decision crosstabs, and party breakdowns.
+
+    No-ops with a message if ``sample_toxicity_type`` is missing.
+    """
     if "sample_toxicity_type" not in df.columns:
         print("\nEmpirical: column 'sample_toxicity_type' missing; skip breakdown.")
         return
@@ -162,9 +180,10 @@ def print_empirical(df: pd.DataFrame) -> None:
 
 
 def main() -> None:
+    """Print the pipeline note and empirical toxicity removal breakdown."""
     print_pipeline_finding()
-    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_PILOT, low_memory=False)
-    print(f"\nLoaded dataset: {STUDY_PHASE_2_PART_1_RESULTS_PILOT}")
+    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_FULL, low_memory=False)
+    print(f"\nLoaded dataset: {STUDY_PHASE_2_PART_1_RESULTS_FULL}")
     print_empirical(df)
 
 
