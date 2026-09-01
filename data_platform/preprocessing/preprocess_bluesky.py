@@ -31,7 +31,7 @@ from data_platform.preprocessing.validators.validators import (
 )
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
-from data_platform.utils.storage import BlueskyStorageManager, StorageStage
+from data_platform.utils.storage import BlueskyStorageManager
 
 POST_TEXT_VALIDATORS: tuple[TextValidator, ...] = (
     check_if_not_phone,
