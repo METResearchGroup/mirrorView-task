@@ -1,0 +1,15 @@
+{
+  "dataset_id": "bluesky_c0ffee00-0000-4000-8000-000000000100",
+  "source_raw_run": "raw/2026_08_28-16:45:41",
+  "source_raw_runs": [
+    "raw/2026_08_28-16:45:41"
+  ],
+  "preprocess_timestamp": "2026_08_28-16:45:56",
+  "row_counts": {
+    "input": 97,
+    "output": 54
+  },
+  "files": {
+    "posts": "posts.csv"
+  }
+}

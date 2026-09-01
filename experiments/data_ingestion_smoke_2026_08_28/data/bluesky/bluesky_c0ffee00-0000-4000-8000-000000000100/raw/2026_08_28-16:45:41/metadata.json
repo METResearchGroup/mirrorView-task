@@ -1,0 +1,66 @@
+{
+  "sync_status": "completed",
+  "dataset_id": "bluesky_c0ffee00-0000-4000-8000-000000000100",
+  "name": "bluesky-smoke",
+  "description": "Small Bluesky keyword collection for a local pipeline smoke test",
+  "date": "2026-08-16",
+  "sync_timestamp": "2026_08_28-16:45:41",
+  "ingestion_config": "smoke.yaml",
+  "record_types": [
+    "app.bsky.feed.post"
+  ],
+  "ingestion_params": {
+    "dedupe_policy": [
+      "current_run"
+    ],
+    "limit": 25,
+    "max_rows": 100,
+    "sort": "latest",
+    "keywords": [
+      "climate change",
+      "gun control",
+      "abortion",
+      "immigration"
+    ]
+  },
+  "row_count": 97,
+  "tasks": {
+    "climate change": {
+      "status": "completed",
+      "kind": "bluesky",
+      "keyword": "climate change",
+      "pages_fetched": 2,
+      "rows_collected": 25,
+      "hits_total": 10000,
+      "last_error": null
+    },
+    "gun control": {
+      "status": "completed",
+      "kind": "bluesky",
+      "keyword": "gun control",
+      "pages_fetched": 2,
+      "rows_collected": 25,
+      "hits_total": 10000,
+      "last_error": null
+    },
+    "abortion": {
+      "status": "completed",
+      "kind": "bluesky",
+      "keyword": "abortion",
+      "pages_fetched": 1,
+      "rows_collected": 25,
+      "hits_total": 10000,
+      "last_error": null
+    },
+    "immigration": {
+      "status": "completed",
+      "kind": "bluesky",
+      "keyword": "immigration",
+      "pages_fetched": 2,
+      "rows_collected": 25,
+      "hits_total": 10000,
+      "last_error": null
+    }
+  },
+  "posts_skipped_as_duplicates": 3
+}

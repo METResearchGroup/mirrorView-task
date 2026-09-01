@@ -1,0 +1,22 @@
+Generating features for is_news_or_opinion
+generate_features: is_news_or_opinion -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/is_news_or_opinion.csv
+Completed feature generation for is_news_or_opinion
+Generating features for is_political
+generate_features: is_political -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/is_political.csv
+Completed feature generation for is_political
+Generating features for is_likely_spam
+generate_features: is_likely_spam -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/is_likely_spam.csv
+Completed feature generation for is_likely_spam
+Generating features for is_self_contained
+generate_features: is_self_contained -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/is_self_contained.csv
+Completed feature generation for is_self_contained
+Generating features for is_structurally_complete
+generate_features: is_structurally_complete -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/is_structurally_complete.csv
+Completed feature generation for is_structurally_complete
+Generating features for is_toxic_tiered
+generate_features: is_toxic_tiered -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/is_toxic_tiered.csv
+Completed feature generation for is_toxic_tiered
+Generating features for political_stance
+generate_features: political_stance -> 54 new labels (0 failed batches) -> /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features/political_stance.csv
+Completed feature generation for political_stance
+generate_features: finished 7 features under /workspace/data_platform/data/bluesky/bluesky_c0ffee00-0000-4000-8000-000000000100/features
