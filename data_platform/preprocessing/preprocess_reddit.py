@@ -42,7 +42,7 @@ from data_platform.preprocessing.validators.validators import (
     check_if_not_phone,
     check_if_text_english,
 )
-from data_platform.utils.platform_ids import REDDIT_BINDING
+from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS
 from data_platform.utils.storage import RedditStorageManager
 
 COMMENT_TEXT_VALIDATORS: tuple[TextValidator, ...] = (
@@ -61,7 +61,7 @@ REDDIT_SPEC = PreprocessPlatformSpec(
     platform="reddit",
     storage_cls=RedditStorageManager,
     model_cls=SyncRedditCommentModel,
-    binding=REDDIT_BINDING,
+    columns=REDDIT_COLUMNS,
     text_validators=COMMENT_TEXT_VALIDATORS,
     row_validators=COMMENT_ROW_VALIDATORS,
 )
@@ -90,7 +90,7 @@ def filter_comments(
         platform=REDDIT_SPEC.platform,
         storage_cls=REDDIT_SPEC.storage_cls,
         model_cls=REDDIT_SPEC.model_cls,
-        binding=REDDIT_SPEC.binding,
+        columns=REDDIT_SPEC.columns,
         text_validators=tuple(text_validators),
         row_validators=tuple(row_validators),
     )

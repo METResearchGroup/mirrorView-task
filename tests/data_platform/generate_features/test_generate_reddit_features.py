@@ -62,7 +62,7 @@ def make_reddit_feature_generation_config(
     )
 
 
-def test_reddit_feature_config_bindings(data_root) -> None:
+def test_reddit_feature_config_columns(data_root) -> None:
     config = reddit_feature_config(
         VALID_REDDIT_DATASET_ID,
         run_config=FeatureRunConfig(opik_enabled=False),

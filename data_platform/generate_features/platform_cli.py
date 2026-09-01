@@ -18,7 +18,7 @@ from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.gate_checks import require_all_runs_complete
-from data_platform.utils.platform_ids import PlatformIdBinding
+from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager, StorageStage
 
 StorageManagerFactory = Callable[..., StorageManager]
@@ -29,7 +29,7 @@ class FeaturePlatformSpec:
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
-    binding: PlatformIdBinding
+    columns: PlatformSpecificColumns
     empty_message: str
     require_all_runs_complete: bool = False
 
@@ -77,7 +77,7 @@ def build_feature_config(
     if features_subset:
         registry = {name: FEATURE_REGISTRY[name] for name in features_subset}
 
-    binding = spec.binding
+    columns = spec.columns
     feature_label_storage = StorageManager(
         spec.platform,
         StorageStage.FEATURES,
@@ -87,15 +87,15 @@ def build_feature_config(
     )
     return FeatureGenerationConfig(
         platform=spec.platform,
-        id_column=binding.records_id_column,
-        text_column=binding.text_column,
+        id_column=columns.records_id_column,
+        text_column=columns.text_column,
         feature_registry=registry,
         input_storage=spec.storage_cls(StorageStage.PREPROCESSED, dataset_id),
         features_dir=feature_label_storage.root_dir,
         feature_label_query=FeatureLabelQuery(
             feature_storage=feature_label_storage,
-            id_column=binding.records_id_column,
-            feature_file_id_column=binding.feature_file_id_column,
+            id_column=columns.records_id_column,
+            feature_file_id_column=columns.feature_file_id_column,
         ),
         run_config=run_config,
     )

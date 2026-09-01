@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-01
+
+1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
+
 ## 2026-08-16
 
 1. Removed AWS Glue table setup, S3 writes, DynamoDB pipeline-run tracking, and Prefect orchestration from `data_platform/`. Curation is the last pipeline stage, and artifacts stay under `data_platform/data/`. Run each stage via its CLI (see `data_platform/README.md`). [PR #50](https://github.com/METResearchGroup/mirrorView-task/pull/50)

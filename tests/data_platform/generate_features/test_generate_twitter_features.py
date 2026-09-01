@@ -57,7 +57,7 @@ def make_twitter_feature_generation_config(
     )
 
 
-def test_twitter_feature_config_bindings(data_root) -> None:
+def test_twitter_feature_config_columns(data_root) -> None:
     config = twitter_feature_config(
         VALID_TWITTER_DATASET_ID,
         run_config=FeatureRunConfig(opik_enabled=False),

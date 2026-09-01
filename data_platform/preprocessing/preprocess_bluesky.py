@@ -30,7 +30,7 @@ from data_platform.preprocessing.validators.validators import (
     check_if_valid_post_length,
 )
 from data_platform.utils.dataset import validate_dataset_id
-from data_platform.utils.platform_ids import BLUESKY_BINDING
+from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager
 
 POST_TEXT_VALIDATORS: tuple[TextValidator, ...] = (
@@ -44,7 +44,7 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
     platform="bluesky",
     storage_cls=BlueskyStorageManager,
     model_cls=SyncBlueskyPostModel,
-    binding=BLUESKY_BINDING,
+    columns=BLUESKY_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
 )
 
@@ -57,7 +57,7 @@ def filter_posts(
         platform=BLUESKY_SPEC.platform,
         storage_cls=BLUESKY_SPEC.storage_cls,
         model_cls=BLUESKY_SPEC.model_cls,
-        binding=BLUESKY_SPEC.binding,
+        columns=BLUESKY_SPEC.columns,
         text_validators=tuple(validators),
     )
     return filter_records(posts, spec)

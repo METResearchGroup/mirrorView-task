@@ -20,20 +20,20 @@ from data_platform.generate_features.platform_cli import (
     load_preprocessed_records,
 )
 from data_platform.models.sync import SyncTwitterPostModel
-from data_platform.utils.platform_ids import TWITTER_BINDING
+from data_platform.utils.platform_specific_columns import TWITTER_COLUMNS
 from data_platform.utils.storage import TwitterStorageManager
 
 TWITTER_SPEC = FeaturePlatformSpec(
     platform="twitter",
     storage_cls=TwitterStorageManager,
     model_cls=SyncTwitterPostModel,
-    binding=TWITTER_BINDING,
+    columns=TWITTER_COLUMNS,
     empty_message="generate_twitter_features: no preprocessed posts found",
 )
 
-ID_COLUMN = TWITTER_BINDING.records_id_column
-TEXT_COLUMN = TWITTER_BINDING.text_column
-FEATURE_FILE_ID_COLUMN = TWITTER_BINDING.feature_file_id_column
+ID_COLUMN = TWITTER_COLUMNS.records_id_column
+TEXT_COLUMN = TWITTER_COLUMNS.text_column
+FEATURE_FILE_ID_COLUMN = TWITTER_COLUMNS.feature_file_id_column
 
 
 def twitter_feature_config(*args, **kwargs):
