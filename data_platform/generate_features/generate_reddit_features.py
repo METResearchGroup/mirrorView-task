@@ -20,20 +20,20 @@ from data_platform.generate_features.platform_cli import (
     load_preprocessed_records,
 )
 from data_platform.models.sync import SyncRedditCommentModel
-from data_platform.utils.platform_ids import REDDIT_BINDING
+from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS
 from data_platform.utils.storage import RedditStorageManager
 
 REDDIT_SPEC = FeaturePlatformSpec(
     platform="reddit",
     storage_cls=RedditStorageManager,
     model_cls=SyncRedditCommentModel,
-    binding=REDDIT_BINDING,
+    columns=REDDIT_COLUMNS,
     empty_message="generate_reddit_features: no preprocessed comments found",
 )
 
-ID_COLUMN = REDDIT_BINDING.records_id_column
-TEXT_COLUMN = REDDIT_BINDING.text_column
-FEATURE_FILE_ID_COLUMN = REDDIT_BINDING.feature_file_id_column
+ID_COLUMN = REDDIT_COLUMNS.records_id_column
+TEXT_COLUMN = REDDIT_COLUMNS.text_column
+FEATURE_FILE_ID_COLUMN = REDDIT_COLUMNS.feature_file_id_column
 
 
 def reddit_feature_config(*args, **kwargs):

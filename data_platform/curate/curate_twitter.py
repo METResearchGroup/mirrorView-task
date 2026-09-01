@@ -13,7 +13,7 @@ from pathlib import Path
 import typer
 
 from data_platform.curate.runner import CuratePlatformSpec, curate_with_spec, make_curate_cli
-from data_platform.utils.platform_ids import TWITTER_BINDING
+from data_platform.utils.platform_specific_columns import TWITTER_COLUMNS
 from data_platform.utils.storage import TwitterStorageManager
 
 CONFIGS_DIR = Path(__file__).resolve().parent / "configs" / "twitter"
@@ -23,12 +23,12 @@ app = typer.Typer(add_completion=False)
 TWITTER_CURATE_SPEC = CuratePlatformSpec(
     platform="twitter",
     storage_cls=TwitterStorageManager,
-    binding=TWITTER_BINDING,
+    columns=TWITTER_COLUMNS,
     record_noun="posts",
 )
 
-ID_COLUMN = TWITTER_BINDING.records_id_column
-FEATURE_FILE_ID_COLUMN = TWITTER_BINDING.feature_file_id_column
+ID_COLUMN = TWITTER_COLUMNS.records_id_column
+FEATURE_FILE_ID_COLUMN = TWITTER_COLUMNS.feature_file_id_column
 
 
 def curate(config_path: Path, dataset_id: str) -> Path:

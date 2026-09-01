@@ -166,7 +166,7 @@ Entrypoints:
 | Raw output | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/` with `posts.csv` and `comments.csv` |
 | Checkpoint unit | One task per keyword | One task per keyword | One task per subreddit |
 | Preprocess module | `preprocess_bluesky.py` | `preprocess_twitter.py` | `preprocess_reddit.py` |
-| Primary record id | `uri` | tweet id column per `platform_ids` | composite reddit id |
+| Primary record id | `uri` | tweet id column per `platform_specific_columns` | composite reddit id |
 | Feature CLI | `generate_bluesky_features.py` | `generate_twitter_features.py` | `generate_reddit_features.py` |
 | Curate CLI | `curate_bluesky.py` | `curate_twitter.py` | `curate_reddit.py` |
 | Curated export | `mirrorview.csv` | `mirrorview.csv` | `mirrorview.csv` |

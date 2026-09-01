@@ -13,7 +13,7 @@ from pathlib import Path
 import typer
 
 from data_platform.curate.runner import CuratePlatformSpec, curate_with_spec, make_curate_cli
-from data_platform.utils.platform_ids import REDDIT_BINDING
+from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS
 from data_platform.utils.storage import RedditStorageManager
 
 CONFIGS_DIR = Path(__file__).resolve().parent / "configs" / "reddit"
@@ -23,12 +23,12 @@ app = typer.Typer(add_completion=False)
 REDDIT_CURATE_SPEC = CuratePlatformSpec(
     platform="reddit",
     storage_cls=RedditStorageManager,
-    binding=REDDIT_BINDING,
+    columns=REDDIT_COLUMNS,
     record_noun="comments",
 )
 
-ID_COLUMN = REDDIT_BINDING.records_id_column
-FEATURE_FILE_ID_COLUMN = REDDIT_BINDING.feature_file_id_column
+ID_COLUMN = REDDIT_COLUMNS.records_id_column
+FEATURE_FILE_ID_COLUMN = REDDIT_COLUMNS.feature_file_id_column
 
 
 def curate(config_path: Path, dataset_id: str) -> Path:

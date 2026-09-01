@@ -20,7 +20,7 @@ from data_platform.generate_features.metadata import metadata_path
 from data_platform.generate_features.models import FeatureRunMetadata
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.gate_checks import require_all_runs_complete, require_features_complete
-from data_platform.utils.platform_ids import BLUESKY_BINDING
+from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 
 CONFIGS_DIR = Path(__file__).resolve().parent / "configs" / "bluesky"
@@ -30,7 +30,7 @@ app = typer.Typer(add_completion=False)
 BLUESKY_CURATE_SPEC = CuratePlatformSpec(
     platform="bluesky",
     storage_cls=BlueskyStorageManager,
-    binding=BLUESKY_BINDING,
+    columns=BLUESKY_COLUMNS,
     record_noun="posts",
 )
 
