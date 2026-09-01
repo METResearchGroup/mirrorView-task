@@ -15,7 +15,7 @@ from data_platform.curate.apply_rules import ApplyRulesResult, apply_rules, load
 from data_platform.curate.consolidate import ConsolidateConfig, build_wide_table
 from data_platform.utils.config_paths import resolve_config_path
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
-from data_platform.utils.platform_ids import PlatformIdBinding
+from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
 
@@ -26,7 +26,7 @@ StorageManagerFactory = Callable[..., StorageManager]
 class CuratePlatformSpec:
     platform: str
     storage_cls: StorageManagerFactory
-    binding: PlatformIdBinding
+    columns: PlatformSpecificColumns
     record_noun: str
 
 
@@ -84,9 +84,9 @@ def run_curation(
         "posts_file": posts_glob,
         "features_root": features_root,
     }
-    if spec.binding.records_id_column != "uri":
-        consolidate_kwargs["id_column"] = spec.binding.records_id_column
-        consolidate_kwargs["feature_file_id_column"] = spec.binding.feature_file_id_column
+    if spec.columns.records_id_column != "uri":
+        consolidate_kwargs["id_column"] = spec.columns.records_id_column
+        consolidate_kwargs["feature_file_id_column"] = spec.columns.feature_file_id_column
 
     wide_df = build_wide_table(ConsolidateConfig(**consolidate_kwargs))
     rules_result = apply_rules(wide_df, rules)

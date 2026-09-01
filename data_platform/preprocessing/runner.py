@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.gate_checks import require_all_runs_complete
-from data_platform.utils.platform_ids import PlatformIdBinding
+from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager, StorageStage
 
 TextValidator = Callable[[str], bool]
@@ -29,7 +29,7 @@ class PreprocessPlatformSpec:
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
-    binding: PlatformIdBinding
+    columns: PlatformSpecificColumns
     text_validators: tuple[TextValidator, ...]
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
@@ -42,7 +42,7 @@ def apply_text_transform(
     if spec.text_transform is None or df.empty:
         return df
     out = df.copy()
-    text_col = spec.binding.text_column
+    text_col = spec.columns.text_column
     transform = spec.text_transform
     out[text_col] = out[text_col].map(lambda v: transform(str(v)))
     return out
@@ -67,7 +67,7 @@ def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFra
     if df.empty:
         return df.copy()
 
-    text_col = spec.binding.text_column
+    text_col = spec.columns.text_column
     text_mask = df[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
     )
@@ -144,7 +144,7 @@ def save_preprocessed(
             "output": len(records),
         },
         "files": {
-            spec.binding.records_file_key: preprocessed_storage.records_filename,
+            spec.columns.records_file_key: preprocessed_storage.records_filename,
         },
     }
     preprocessed_storage.write_run_metadata(output_dir, metadata)
@@ -179,7 +179,7 @@ def preprocess_records(
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     dedupe_session = DedupeSession(
         DedupeConfig(
-            id_column=spec.binding.records_id_column,
+            id_column=spec.columns.records_id_column,
             include_prior_runs=True,
         )
     )
@@ -187,7 +187,7 @@ def preprocess_records(
 
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
     records, skipped = _drop_already_preprocessed(
-        records, spec.binding.records_id_column, dedupe_session.seen_ids
+        records, spec.columns.records_id_column, dedupe_session.seen_ids
     )
 
     preprocessed = apply_text_transform(records, spec)
@@ -199,7 +199,7 @@ def preprocess_records(
         input_count=len(records),
         source_raw_run_dirs=source_raw_run_dirs,
     )
-    noun = spec.binding.records_file_key
+    noun = spec.columns.records_file_key
     print(
         f"preprocess_records: kept {len(preprocessed)} of {len(records)} {noun}"
         f" (skipped {skipped} already preprocessed) -> {output_dir}"

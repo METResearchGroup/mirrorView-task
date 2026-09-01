@@ -35,7 +35,7 @@ from data_platform.preprocessing.validators.validators import (
     check_if_not_phone,
     check_if_text_english,
 )
-from data_platform.utils.platform_ids import TWITTER_BINDING
+from data_platform.utils.platform_specific_columns import TWITTER_COLUMNS
 from data_platform.utils.storage import TwitterStorageManager
 
 POST_TEXT_VALIDATORS: tuple[TextValidator, ...] = (
@@ -49,7 +49,7 @@ TWITTER_SPEC = PreprocessPlatformSpec(
     platform="twitter",
     storage_cls=TwitterStorageManager,
     model_cls=SyncTwitterPostModel,
-    binding=TWITTER_BINDING,
+    columns=TWITTER_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
     text_transform=strip_tco_links,
 )
@@ -70,7 +70,7 @@ def filter_posts(
         platform=TWITTER_SPEC.platform,
         storage_cls=TWITTER_SPEC.storage_cls,
         model_cls=TWITTER_SPEC.model_cls,
-        binding=TWITTER_SPEC.binding,
+        columns=TWITTER_SPEC.columns,
         text_validators=tuple(validators),
     )
     return filter_records(posts, spec)

@@ -24,14 +24,14 @@ from data_platform.generate_features.platform_cli import (
 from data_platform.models.sync import SyncBlueskyPostModel
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.gate_checks import require_all_runs_complete
-from data_platform.utils.platform_ids import BLUESKY_BINDING
+from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 
 BLUESKY_SPEC = FeaturePlatformSpec(
     platform="bluesky",
     storage_cls=BlueskyStorageManager,
     model_cls=SyncBlueskyPostModel,
-    binding=BLUESKY_BINDING,
+    columns=BLUESKY_COLUMNS,
     empty_message="generate_bluesky_features: no preprocessed posts found",
     require_all_runs_complete=True,
 )
