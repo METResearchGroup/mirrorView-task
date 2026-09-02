@@ -10,6 +10,8 @@ from data_platform.generate_features.metadata import (
     mark_feature_completed,
     mark_feature_in_progress,
     metadata_path,
+    model_id_for_spec,
+    prompt_hash,
     set_sync_status_completed,
     update_batch_counts,
 )
@@ -100,3 +102,24 @@ def test_load_or_init_metadata_rejects_model_id_change_on_resume(features_dir) -
 
     with pytest.raises(ValueError, match="identity changed"):
         load_or_init_metadata(config, feature_names=("is_political",))
+
+
+def test_model_id_follows_engine_type() -> None:
+    """Given registry specs, when reading model id, then langchain uses the LLM and thread_pool uses Perspective."""
+    from dataclasses import replace
+
+    assert model_id_for_spec(FEATURE_REGISTRY["is_political"]) == DEFAULT_LLM_MODEL
+    assert model_id_for_spec(FEATURE_REGISTRY["is_toxic_tiered"]) == "perspective-api"
+    promptless = replace(FEATURE_REGISTRY["is_political"], system_prompt=None)
+    assert model_id_for_spec(promptless) == DEFAULT_LLM_MODEL
+    assert prompt_hash(promptless.system_prompt) is None
+
+
+def test_prompt_hash_changes_when_prompt_changes() -> None:
+    """Given two different prompts, when hashing, then the hashes differ."""
+    first = prompt_hash(FEATURE_REGISTRY["is_political"].system_prompt)
+    second = prompt_hash(FEATURE_REGISTRY["is_likely_spam"].system_prompt)
+    assert first is not None
+    assert second is not None
+    assert first != second
+    assert len(first) == 64

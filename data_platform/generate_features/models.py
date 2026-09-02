@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal, NamedTuple
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -27,13 +27,6 @@ class FeatureRunConfig:
     max_concurrency: int = 80
     opik_enabled: bool = False
     max_label_retries: int = 3
-
-
-class FeatureIdentity(NamedTuple):
-    """Prompt and model identity recorded on a feature-generation run."""
-
-    model_id: str
-    prompt_hash: str | None
 
 
 @dataclass

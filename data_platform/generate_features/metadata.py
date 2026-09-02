@@ -2,18 +2,22 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
-from data_platform.generate_features.identity import identity_for_spec
 from data_platform.generate_features.models import (
     FeatureGenerationConfig,
     FeatureRunMetadata,
+    FeatureSpec,
     FeatureStatus,
 )
 from data_platform.utils.dataset import dataset_root, relative_run_path
 from data_platform.utils.storage import METADATA_FILENAME
+from lib.constants import DEFAULT_LLM_MODEL
 from lib.timestamp_utils import get_current_timestamp
+
+PERSPECTIVE_MODEL_ID = "perspective-api"
 
 
 def metadata_path(features_dir: Path) -> Path:
@@ -45,51 +49,41 @@ def resolve_source_preprocessed_runs(config: FeatureGenerationConfig) -> list[st
     ]
 
 
-def apply_feature_identities(
+def prompt_hash(system_prompt: str | None) -> str | None:
+    """Return a SHA-256 hex digest of ``system_prompt``, or None when omitted."""
+    if system_prompt is None:
+        return None
+    return hashlib.sha256(system_prompt.encode("utf-8")).hexdigest()
+
+
+def model_id_for_spec(spec: FeatureSpec) -> str:
+    """Return the default LLM model id, or Perspective for thread-pool features."""
+    if spec.engine_type == "thread_pool":
+        return PERSPECTIVE_MODEL_ID
+    return DEFAULT_LLM_MODEL
+
+
+def _stamp_or_check_identity(
     metadata: FeatureRunMetadata,
     config: FeatureGenerationConfig,
     feature_names: tuple[str, ...],
-) -> FeatureRunMetadata:
-    """Write current prompt hash and model id onto each feature status entry.
-
-    Parameters
-    ----------
-    metadata
-        Feature-run metadata document to update in place.
-    config
-        Run config whose registry supplies prompts and engine types.
-    feature_names
-        Feature keys to stamp. Names missing from the registry are skipped.
-
-    Returns
-    -------
-    FeatureRunMetadata
-        The same metadata object after identity fields are updated.
-
-    Raises
-    ------
-    ValueError
-        When a stored identity does not match the current spec. Start a new
-        timestamped run instead of appending into the old folder.
-    """
+) -> None:
     for name in feature_names:
         spec = config.feature_registry.get(name)
         if spec is None:
             continue
-        identity = identity_for_spec(spec)
+        model_id = model_id_for_spec(spec)
+        hashed_prompt = prompt_hash(spec.system_prompt)
         status = metadata.features.setdefault(name, FeatureStatus())
-        stored_model_id = status.model_id
-        stored_prompt_hash = status.prompt_hash
-        if stored_model_id is None and stored_prompt_hash is None:
-            status.model_id = identity.model_id
-            status.prompt_hash = identity.prompt_hash
+        if status.model_id is None and status.prompt_hash is None:
+            status.model_id = model_id
+            status.prompt_hash = hashed_prompt
             continue
-        if stored_model_id != identity.model_id or stored_prompt_hash != identity.prompt_hash:
+        if status.model_id != model_id or status.prompt_hash != hashed_prompt:
             raise ValueError(
                 f"Feature {name} identity changed for this run directory. "
                 "Start a new generate_features run without --run-dir."
             )
-    return metadata
 
 
 def load_or_init_metadata(
@@ -104,7 +98,7 @@ def load_or_init_metadata(
         with path.open(encoding="utf-8") as f:
             metadata = FeatureRunMetadata.from_dict(json.load(f))
         metadata.source_preprocessed_runs = source_preprocessed_runs
-        apply_feature_identities(metadata, config, feature_names)
+        _stamp_or_check_identity(metadata, config, feature_names)
         flush_metadata(config.features_dir, metadata)
         return metadata
 
@@ -117,7 +111,7 @@ def load_or_init_metadata(
         config=config.run_config,
         updated_at=get_current_timestamp(),
     )
-    apply_feature_identities(metadata, config, feature_names)
+    _stamp_or_check_identity(metadata, config, feature_names)
     flush_metadata(config.features_dir, metadata)
     return metadata
 

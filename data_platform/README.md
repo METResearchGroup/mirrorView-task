@@ -70,6 +70,13 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
 
 Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents). Feature generation writes each run into `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt.
 
+If a dataset still has leftover files directly under `features/` from the old layout, copy them into a timestamp folder once:
+
+```bash
+PYTHONPATH=. uv run python data_platform/generate_features/copy_flat_features.py \
+  --platform bluesky --dataset-id bluesky_<uuid>
+```
+
 ## Curate (join + business rules)
 
 The curate step joins the latest preprocessed posts with all feature label CSVs using DuckDB, and then applies YAML filters.

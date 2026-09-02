@@ -15,7 +15,6 @@ from data_platform.generate_features.generate_features import (
 )
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.registry import FEATURE_REGISTRY
-from data_platform.generate_features.run_layout import resolve_features_run_dir
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
@@ -64,6 +63,28 @@ def run_feature_generation(
     return generate_features(records, config)
 
 
+def feature_run_dir(
+    feature_storage: StorageManager,
+    run_dir_name: str | None,
+) -> Path:
+    """Return ``features/{timestamp}/``, creating the directory if needed.
+
+    ``run_dir_name`` must be a single folder name when set. Absolute paths,
+    ``.``, ``..``, and names with extra path parts are rejected here so a
+    CLI ``--run-dir`` cannot write outside the features stage.
+    """
+    if run_dir_name is None:
+        return feature_storage.create_new_run_dir()
+    requested_path = Path(run_dir_name)
+    if (
+        requested_path.is_absolute()
+        or len(requested_path.parts) != 1
+        or requested_path.name in {".", ".."}
+    ):
+        raise ValueError("run_dir_name must be a single feature run directory name")
+    return feature_storage.create_new_run_dir(run_dir_name)
+
+
 def build_feature_config(
     spec: FeaturePlatformSpec,
     dataset_id: str,
@@ -86,7 +107,7 @@ def build_feature_config(
         dataset_id,
         records_filename="features",
     )
-    features_dir = resolve_features_run_dir(feature_label_storage, run_dir_name)
+    features_dir = feature_run_dir(feature_label_storage, run_dir_name)
     return FeatureGenerationConfig(
         platform=spec.platform,
         id_column=columns.records_id_column,
@@ -147,6 +168,9 @@ def generate_platform_features(
         opik_enabled=opik_enabled,
     )
     records = load_preprocessed_records(spec, dataset_id)
+    if records.empty:
+        print(spec.empty_message)
+        return {}
     config = build_feature_config(
         spec,
         dataset_id,
