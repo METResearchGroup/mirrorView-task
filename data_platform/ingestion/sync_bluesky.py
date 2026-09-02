@@ -77,8 +77,16 @@ def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
     return items
 
 
-def _posts_to_rows(response: Any) -> list[dict[str, Any]]:
-    """Map a searchPosts API response to flat dict rows for CSV storage."""
+def _posts_to_rows(response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
+    """Map a searchPosts API response to flat dict rows for CSV storage.
+
+    Parameters
+    ----------
+    response
+        Bluesky searchPosts API response.
+    sync_timestamp
+        Run timestamp written onto each raw row.
+    """
     rows: list[dict[str, Any]] = []
     for post in response.posts:
         rkey = post.uri.split("/")[-1]
@@ -93,6 +101,7 @@ def _posts_to_rows(response: Any) -> list[dict[str, Any]]:
                 "repost_count": post.repost_count,
                 "reply_count": post.reply_count,
                 "quote_count": post.quote_count,
+                "sync_timestamp": sync_timestamp,
             }
         )
     return rows
@@ -129,11 +138,20 @@ def fetch_posts_for_keyword(
     query: str,
     *,
     task_id: str,
+    sync_timestamp: str,
     max_rows: int | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Paginate searchPosts until limit rows are collected or results are exhausted.
 
-    Returns rows and per-task stats (pages fetched, hits_total from the first page, etc.).
+    Parameters
+    ----------
+    sync_timestamp
+        Run timestamp written onto each raw row.
+
+    Returns
+    -------
+    tuple[list[dict[str, Any]], dict[str, Any]]
+        Rows and per-task stats (pages fetched, hits_total from the first page, etc.).
     """
     target = int(ingestion_params["limit"])
     if max_rows is not None:
@@ -160,7 +178,7 @@ def fetch_posts_for_keyword(
         )
         if pages_fetched == 0:
             hits_total = response.hits_total
-        page_rows = _posts_to_rows(response)
+        page_rows = _posts_to_rows(response, sync_timestamp)
         if not page_rows:
             break
         rows.extend(page_rows)
@@ -253,6 +271,7 @@ def run_sync_tasks(
                 ingestion_params,
                 task.query,
                 task_id=task.task_id,
+                sync_timestamp=str(metadata["sync_timestamp"]),
                 max_rows=remaining,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
