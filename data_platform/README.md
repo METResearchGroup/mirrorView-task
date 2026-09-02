@@ -68,7 +68,7 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents). Feature labels write to `features/<timestamp>/`. Resume an interrupted feature run with `--run-dir <timestamp>`.
+Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents). Feature generation writes each run into `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt.
 
 ## Curate (join + business rules)
 

@@ -65,6 +65,12 @@ def apply_feature_identities(
     -------
     FeatureRunMetadata
         The same metadata object after identity fields are updated.
+
+    Raises
+    ------
+    ValueError
+        When a stored identity does not match the current spec. Start a new
+        timestamped run instead of appending into the old folder.
     """
     for name in feature_names:
         spec = config.feature_registry.get(name)
@@ -72,8 +78,17 @@ def apply_feature_identities(
             continue
         identity = identity_for_spec(spec)
         status = metadata.features.setdefault(name, FeatureStatus())
-        status.model_id = identity.model_id
-        status.prompt_hash = identity.prompt_hash
+        stored_model_id = status.model_id
+        stored_prompt_hash = status.prompt_hash
+        if stored_model_id is None and stored_prompt_hash is None:
+            status.model_id = identity.model_id
+            status.prompt_hash = identity.prompt_hash
+            continue
+        if stored_model_id != identity.model_id or stored_prompt_hash != identity.prompt_hash:
+            raise ValueError(
+                f"Feature {name} identity changed for this run directory. "
+                "Start a new generate_features run without --run-dir."
+            )
     return metadata
 
 

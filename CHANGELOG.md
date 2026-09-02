@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Feature generation writes each run under `features/{timestamp}/`, which matches how the other pipeline stages store runs. Each run records prompt and model identity in metadata, and posts that already have labels are still skipped. [PR #93](https://github.com/METResearchGroup/mirrorView-task/pull/93)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from data_platform.generate_features.metadata import (
     flush_metadata,
     load_or_init_metadata,
@@ -70,8 +72,8 @@ def test_load_or_init_metadata_records_feature_identity(features_dir) -> None:
     assert metadata.features["is_political"].prompt_hash is not None
 
 
-def test_load_or_init_metadata_records_identity_change_on_resume(features_dir) -> None:
-    """Given existing metadata with a different prompt hash, when reloading, then the new hash is stored."""
+def test_load_or_init_metadata_rejects_identity_change_on_resume(features_dir) -> None:
+    """Given existing metadata with a different prompt hash, when reloading, then raise."""
     spec = FEATURE_REGISTRY["is_political"]
     config = make_feature_generation_config(
         features_dir,
@@ -82,7 +84,5 @@ def test_load_or_init_metadata_records_identity_change_on_resume(features_dir) -
     metadata.features["is_political"].model_id = "old-model"
     flush_metadata(features_dir, metadata)
 
-    reloaded = load_or_init_metadata(config, feature_names=("is_political",))
-
-    assert reloaded.features["is_political"].model_id == DEFAULT_LLM_MODEL
-    assert reloaded.features["is_political"].prompt_hash != "old-hash"
+    with pytest.raises(ValueError, match="identity changed"):
+        load_or_init_metadata(config, feature_names=("is_political",))

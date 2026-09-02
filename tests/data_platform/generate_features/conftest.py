@@ -19,6 +19,7 @@ from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.storage import BlueskyStorageManager, StorageManager
 from tests.data_platform.constants import (
     FEATURES_DATASET_ID,
+    LABEL_TIMESTAMP,
     PREPROCESSED_RUN_DIR,
     URI_POST_A,
     URI_POST_B,
@@ -37,7 +38,7 @@ class DummyModel:
 
 @pytest.fixture
 def features_dir(data_root: Path) -> Path:
-    path = data_root / "bluesky" / FEATURES_DATASET_ID / "features"
+    path = data_root / "bluesky" / FEATURES_DATASET_ID / "features" / LABEL_TIMESTAMP
     path.mkdir(parents=True, exist_ok=True)
     return path
 

@@ -18,7 +18,11 @@ def test_labeled_ids_from_feature_csv(data_root) -> None:
     feature_storage = StorageManager(
         "bluesky", "features", BaseModel, FEATURES_DATASET_ID, records_filename="features"
     )
-    write_feature_csv(feature_storage.root_dir, "is_political", make_political_feature_rows())
+    write_feature_csv(
+        feature_storage.root_dir / LABEL_TIMESTAMP,
+        "is_political",
+        make_political_feature_rows(),
+    )
 
     query = FeatureLabelQuery(feature_storage=feature_storage)
     labeled = query.labeled_ids("is_political")
@@ -30,7 +34,7 @@ def test_filter_unlabeled_excludes_labeled_uris(data_root) -> None:
         "bluesky", "features", BaseModel, FEATURES_DATASET_ID, records_filename="features"
     )
     write_feature_csv(
-        feature_storage.root_dir,
+        feature_storage.root_dir / LABEL_TIMESTAMP,
         "is_political",
         [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
     )
@@ -47,13 +51,21 @@ def test_filter_unlabeled_excludes_labeled_uris(data_root) -> None:
     assert pending.iloc[0]["uri"] == URI_POST_B
 
 
-def test_labeled_ids_unions_timestamped_run_dirs(data_root) -> None:
-    """Given labels in a timestamped run dir, when querying labeled ids, then those ids are returned."""
+def test_labeled_ids_unions_two_timestamped_run_dirs(data_root) -> None:
+    """Given labels in two run dirs, when querying labeled ids, then both ids are returned."""
     feature_storage = StorageManager(
         "bluesky", "features", BaseModel, FEATURES_DATASET_ID, records_filename="features"
     )
-    run_dir = feature_storage.root_dir / LABEL_TIMESTAMP
-    write_feature_csv(run_dir, "is_political", make_political_feature_rows())
+    write_feature_csv(
+        feature_storage.root_dir / "2026_01_01-00:00:00",
+        "is_political",
+        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
+    )
+    write_feature_csv(
+        feature_storage.root_dir / "2026_02_01-00:00:00",
+        "is_political",
+        [{"uri": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "is_political": False}],
+    )
 
     query = FeatureLabelQuery(feature_storage=feature_storage)
     labeled = query.labeled_ids("is_political")

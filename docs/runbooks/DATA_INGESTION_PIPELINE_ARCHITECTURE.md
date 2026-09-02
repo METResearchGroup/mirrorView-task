@@ -65,7 +65,7 @@ data_platform/data/
 
 Raw, preprocessed, features, and curated stages use timestamped run directories. The timestamp format comes from `lib.timestamp_utils.get_current_timestamp` (for example `2026_08_16-14:30:00`).
 
-A new `generate_*_features.py` invocation writes `features/<timestamp>/`. Pass `--run-dir <timestamp>` to resume the same folder after an interrupt. Unlabeled skip still unions labels from every feature run, so already labeled posts are not scored again. Each feature status in `metadata.json` records `model_id` and `prompt_hash` so a prompt or model change is visible. Curate keeps the latest `label_timestamp` when the same id appears in more than one run.
+Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt. When the script decides which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
 
 Do not commit files under `data_platform/data/`.
 
