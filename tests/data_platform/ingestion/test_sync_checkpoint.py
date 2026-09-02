@@ -117,14 +117,15 @@ def test_build_base_sync_metadata_includes_tasks() -> None:
     metadata = build_base_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         [_StubTask("alpha")],
         task_progress_builder=lambda task: {"status": TaskStatus.PENDING.value, "id": task.task_id},
         extra_fields={"post_row_count": 0},
     )
     assert metadata["sync_status"] == SyncStatus.IN_PROGRESS.value
     assert metadata["tasks"]["alpha"]["status"] == TaskStatus.PENDING.value
+    assert metadata["row_count"] == 0
     assert metadata["post_row_count"] == 0
+    assert "sync_timestamp" not in metadata
 
 
 def test_find_resume_run_dir_specific_run(data_root) -> None:

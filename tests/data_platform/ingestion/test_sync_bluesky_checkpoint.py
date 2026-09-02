@@ -39,13 +39,13 @@ def test_init_sync_metadata_task_ledger() -> None:
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     assert metadata["sync_status"] == "in_progress"
     assert set(metadata["tasks"]) == {"alpha", "beta"}
     assert metadata["tasks"]["alpha"]["status"] == "pending"
     assert metadata["tasks"]["alpha"]["kind"] == "bluesky"
+    assert "sync_timestamp" not in metadata
 
 
 def test_run_sync_tasks_appends_per_keyword(
@@ -60,7 +60,6 @@ def test_run_sync_tasks_appends_per_keyword(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -124,7 +123,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -190,7 +188,6 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -232,7 +229,6 @@ def test_run_sync_tasks_dedupes_within_run(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     duplicate_uri = "at://did:plc:ex/app.bsky.feed.post/dup"
@@ -275,7 +271,6 @@ def test_resume_skips_completed_tasks(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     metadata["tasks"]["alpha"]["status"] = "completed"
@@ -323,6 +318,7 @@ def test_resume_skips_completed_tasks(
     assert calls == ["beta"]
     assert resumed_metadata["tasks"]["beta"]["status"] == "completed"
     assert resumed_metadata["row_count"] == 2
+    assert "sync_timestamp" not in resumed_metadata
 
 
 def test_resume_dedupes_against_records_from_completed_tasks(
@@ -337,7 +333,6 @@ def test_resume_dedupes_against_records_from_completed_tasks(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -419,7 +414,6 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
     metadata = sync_bluesky.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 

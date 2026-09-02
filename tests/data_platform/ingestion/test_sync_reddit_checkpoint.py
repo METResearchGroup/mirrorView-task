@@ -23,13 +23,13 @@ def test_init_sync_metadata_subreddit_task_ledger() -> None:
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     assert metadata["sync_status"] == "in_progress"
     assert set(metadata["tasks"]) == {"alphasub", "betasub"}
     assert metadata["tasks"]["alphasub"]["status"] == "pending"
     assert metadata["tasks"]["alphasub"]["kind"] == "reddit"
+    assert "sync_timestamp" not in metadata
 
 
 def test_run_sync_tasks_appends_per_subreddit(
@@ -45,7 +45,6 @@ def test_run_sync_tasks_appends_per_subreddit(
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -119,7 +118,6 @@ def test_run_sync_tasks_skips_prior_run_comments(
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -187,7 +185,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -256,7 +253,6 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -313,7 +309,6 @@ def test_resume_skips_completed_subreddits(
     metadata = sync_reddit.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     metadata["tasks"]["alphasub"]["status"] = "completed"
@@ -337,9 +332,13 @@ def test_resume_skips_completed_subreddits(
         include_comments: bool,
     ):
         calls.append(subreddit)
+        post_row = mock_post_row("t3_post_b1", subreddit="betasub")
+        post_row["sync_timestamp"] = sync_timestamp
+        comment_row = mock_comment_row("t1_comment_b1", subreddit="betasub")
+        comment_row["sync_timestamp"] = sync_timestamp
         return (
-            [mock_post_row("t3_post_b1", subreddit="betasub")],
-            [mock_comment_row("t1_comment_b1", subreddit="betasub")],
+            [post_row],
+            [comment_row],
             {
                 "subreddit": subreddit,
                 "listing": "hot",
@@ -367,6 +366,14 @@ def test_resume_skips_completed_subreddits(
     assert calls == ["BetaSub"]
     assert resumed_metadata["tasks"]["betasub"]["status"] == "completed"
     assert resumed_metadata["row_count"] == 2
+    assert "sync_timestamp" not in resumed_metadata
+    folder_name = Path(run_dir).name
+    assert folder_name != run_dir
+    comment_rows = comment_storage.load_records(f"{run_dir}/{COMMENTS_FILENAME}")
+    post_rows = post_storage.load_records(f"{run_dir}/{POSTS_FILENAME}")
+    second_wave_comments = comment_rows[comment_rows["comment_fullname"] == "t1_comment_b1"]
+    assert (second_wave_comments["sync_timestamp"] == folder_name).all()
+    assert (post_rows["sync_timestamp"] == folder_name).all()
 
 
 def test_build_sync_tasks_strips_r_prefix() -> None:
