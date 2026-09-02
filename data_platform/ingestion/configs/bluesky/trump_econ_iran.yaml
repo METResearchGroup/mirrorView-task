@@ -5,11 +5,10 @@ date: "2026-06-07"
 output_format: parquet
 record_types:
   - app.bsky.feed.post
-fetch:
+ingestion_params:
   limit: 334
   sort: latest
-  query_batch_size: 1
-  keyword:
+  keywords:
     - trump
     - economy
     - iran

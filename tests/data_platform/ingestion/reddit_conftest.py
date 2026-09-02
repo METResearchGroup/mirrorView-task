@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from data_platform.ingestion import sync_reddit
+from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
 
 
@@ -14,8 +15,8 @@ def minimal_reddit_sync_config() -> dict[str, Any]:
         "date": "2026-05-31",
         "record_types": [sync_reddit.COMMENTS_RECORD_TYPE, sync_reddit.POSTS_RECORD_TYPE],
         "ingestion_params": {
-            "comments_dedupe_policy": ["current_run", "prior_runs_all_datasets"],
-            "posts_dedupe_policy": ["current_run", "prior_runs_all_datasets"],
+            "comments_dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
+            "posts_dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "subreddits": ["AlphaSub", "BetaSub"],
             "listing": "hot",
             "limit_per_subreddit": 2,

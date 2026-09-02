@@ -9,7 +9,7 @@ record_types:
 ingestion_params:
   dedupe_policy:
     - current_run
-    - prior_runs_all_datasets
+    - prior_runs_same_dataset
   limit: 700
   sort: latest
   max_rows: 20000
