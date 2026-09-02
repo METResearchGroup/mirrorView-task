@@ -7,7 +7,9 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
-_DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
+from data_platform.constants import PACKAGE_ROOT
+
+_DATA_ROOT = PACKAGE_ROOT / "data"
 
 DATASET_ID_PATTERN = re.compile(
     r"^(bluesky|reddit|twitter)_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
@@ -51,26 +53,12 @@ def load_dataset_manifest(platform: str, dataset_id: str) -> dict[str, Any]:
         return json.load(f)
 
 
-def load_dataset_format(platform: str, dataset_id: str) -> ValidDataFormats:
-    """Read the output format from dataset.json, defaulting to csv for existing datasets."""
-    try:
-        manifest = load_dataset_manifest(platform, dataset_id)
-    except FileNotFoundError:
-        return ValidDataFormats.CSV
-    fmt = manifest.get("format", "csv")
-    try:
-        return ValidDataFormats(fmt)
-    except ValueError as e:
-        raise ValueError(f"Invalid format in dataset manifest: {fmt!r}") from e
-
-
 def write_dataset_manifest(
     platform: str,
     dataset_id: str,
     *,
     name: str,
     ingestion_config: str,
-    data_format: ValidDataFormats = ValidDataFormats.CSV,
     created_at: str | None = None,
 ) -> Path:
     root = dataset_root(platform, dataset_id)
@@ -81,7 +69,6 @@ def write_dataset_manifest(
         "name": name,
         "created_at": created_at or datetime.now(UTC).isoformat(),
         "ingestion_config": ingestion_config,
-        "format": data_format.value,
     }
     path = root / MANIFEST_FILENAME
     with path.open("w", encoding="utf-8") as f:

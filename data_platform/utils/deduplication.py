@@ -34,20 +34,20 @@ class DedupeSession:
     config: DedupeConfig
     seen_ids: set[str] = field(default_factory=set)
 
-    def warm(self, storage: StorageManager, output_dir: Path) -> None:  # noqa: F821
+    def warm(self, storage: StorageManager, relative_file_path: str) -> None:  # noqa: F821
         seen: set[str] = set()
         seen.update(
             storage.load_seen_ids_from_disk(
-                output_dir,
+                relative_file_path,
                 self.config.id_column,
-                filename=self.config.filename,
             )
         )
         if self.config.include_prior_runs:
+            file_name = self.config.filename or Path(relative_file_path).name
             seen.update(
                 storage.load_seen_ids_from_all_runs(
                     self.config.id_column,
-                    filename=self.config.filename,
+                    file_name,
                 )
             )
         self.seen_ids |= seen
