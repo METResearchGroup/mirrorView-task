@@ -35,31 +35,15 @@ class DedupeSession:
     seen_ids: set[str] = field(default_factory=set)
 
     def warm(self, storage: StorageManager, output_dir: Path) -> None:  # noqa: F821
-        seen: set[str] = set()
-        seen.update(
-            storage.load_seen_ids_from_disk(
-                output_dir,
-                self.config.id_column,
-                filename=self.config.filename,
-            )
-        )
+        self.load_seen_ids(storage, output_dir)
         if self.config.include_prior_runs:
-            seen.update(
-                storage.load_seen_ids_from_all_runs(
-                    self.config.id_column,
-                    filename=self.config.filename,
-                )
-            )
-        self.seen_ids |= seen
+            self.load_seen_ids_from_all_runs(storage)
 
     def filter_rows(self, rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
-        new_rows = [row for row in rows if row[self.config.id_column] not in self.seen_ids]
-        skipped = len(rows) - len(new_rows)
-        return new_rows, skipped
+        return self.exclude_seen_ids(rows)
 
     def note_appended(self, rows: list[dict[str, Any]]) -> None:
-        for row in rows:
-            self.seen_ids.add(row[self.config.id_column])
+        self.add_seen_ids(rows)
 
     def load_seen_ids(self, storage: StorageManager, run_dir: Path) -> None:  # noqa: F821
         self.seen_ids |= storage.load_seen_ids_from_disk(
