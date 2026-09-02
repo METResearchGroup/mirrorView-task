@@ -61,10 +61,6 @@ from data_platform.utils.storage import RedditStorageManager, StorageStage
 
 COMMENTS_RECORD_TYPE = "reddit.comment"
 POSTS_RECORD_TYPE = "reddit.post"
-DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE = {
-    POSTS_RECORD_TYPE: "posts_skipped_as_duplicates",
-    COMMENTS_RECORD_TYPE: "comments_skipped_as_duplicates",
-}
 DEFAULT_LISTING = "hot"
 VALID_LISTING_TIME_FILTERS = frozenset({"all", "day", "hour", "month", "week", "year"})
 
@@ -458,7 +454,6 @@ def _append_subreddit_deduped_rows(
             metadata,
             record_type=POSTS_RECORD_TYPE,
             skipped=post_result.skipped,
-            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
 
     if include_comments and comment_rows and comment_dedupe_session is not None:
@@ -472,7 +467,6 @@ def _append_subreddit_deduped_rows(
             metadata,
             record_type=COMMENTS_RECORD_TYPE,
             skipped=comment_result.skipped,
-            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
 
     comment_count = (

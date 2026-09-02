@@ -191,77 +191,30 @@ def resolve_dedupe_policy(ingestion_params: dict[str, Any]) -> object:
     return ingestion_params.get(DEDUPE_POLICY_KEY)
 
 
-def bootstrap_duplicate_skip_counters(
-    metadata: dict[str, Any],
-    *,
-    legacy_by_record_type: dict[str, str],
-) -> None:
-    """Seed canonical skip counters from leftover platform names when missing.
-
-    Parameters
-    ----------
-    metadata
-        Run metadata. ``rows_skipped_as_duplicates`` is the run-level total.
-        ``skipped_as_duplicates_by_record_type`` is the per-record-type map.
-        Leftover names such as ``posts_skipped_as_duplicates`` are read only
-        when those canonical keys are missing.
-    legacy_by_record_type
-        Map from record type to leftover metadata key. When a leftover key is
-        present and that record type is not already in the breakdown, its
-        integer value seeds that type. Missing canonical keys are then set
-        from the seed map (total 0 and an empty map when no leftover names
-        are present). When both canonical keys already exist, do nothing.
-        Leftover names are not deleted or rewritten.
-    """
-    if (
-        ROWS_SKIPPED_AS_DUPLICATES_KEY in metadata
-        and SKIPPED_BY_RECORD_TYPE_KEY in metadata
-    ):
-        return
-
-    existing_breakdown = metadata.get(SKIPPED_BY_RECORD_TYPE_KEY)
-    breakdown_keys = existing_breakdown if isinstance(existing_breakdown, dict) else {}
-    seed: dict[str, int] = {}
-    for record_type, legacy_key in legacy_by_record_type.items():
-        if legacy_key in metadata and record_type not in breakdown_keys:
-            seed[record_type] = int(metadata[legacy_key])
-
-    if ROWS_SKIPPED_AS_DUPLICATES_KEY not in metadata:
-        metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] = sum(seed.values())
-    if SKIPPED_BY_RECORD_TYPE_KEY not in metadata:
-        metadata[SKIPPED_BY_RECORD_TYPE_KEY] = dict(seed)
-
-
 def increment_duplicate_skip_counters(
     metadata: dict[str, Any],
     *,
     record_type: str,
     skipped: int,
-    legacy_by_record_type: dict[str, str],
 ) -> None:
     """Add skipped rows to canonical skip counters after a dedupe append.
 
     Parameters
     ----------
     metadata
-        Run metadata to update in place. Seeds canonical keys from leftover
-        names first via ``bootstrap_duplicate_skip_counters``.
+        Run metadata to update in place. ``rows_skipped_as_duplicates`` is the
+        run-level total. ``skipped_as_duplicates_by_record_type`` is the
+        per-record-type map.
     record_type
         Record type bucket to increment, e.g. ``app.bsky.feed.post``.
     skipped
         Number of rows skipped by this append.
-    legacy_by_record_type
-        Leftover name map passed through to bootstrap. Those leftover keys
-        are never written back.
     """
-    bootstrap_duplicate_skip_counters(
-        metadata,
-        legacy_by_record_type=legacy_by_record_type,
-    )
+    metadata.setdefault(ROWS_SKIPPED_AS_DUPLICATES_KEY, 0)
+    breakdown = metadata.setdefault(SKIPPED_BY_RECORD_TYPE_KEY, {})
     metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] = (
         int(metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY]) + skipped
     )
-    breakdown = metadata[SKIPPED_BY_RECORD_TYPE_KEY]
     breakdown[record_type] = int(breakdown.get(record_type, 0)) + skipped
 
 

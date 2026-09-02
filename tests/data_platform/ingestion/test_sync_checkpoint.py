@@ -12,7 +12,6 @@ from data_platform.ingestion.sync_checkpoint import (
     SKIPPED_BY_RECORD_TYPE_KEY,
     SyncStatus,
     TaskStatus,
-    bootstrap_duplicate_skip_counters,
     build_base_sync_metadata,
     ensure_dataset_manifest,
     find_resume_run_dir,
@@ -441,63 +440,6 @@ class TestResolveDedupePolicy:
 
 
 BLUESKY_POST_RECORD_TYPE = "app.bsky.feed.post"
-BLUESKY_SKIP_LEGACY = {BLUESKY_POST_RECORD_TYPE: "posts_skipped_as_duplicates"}
-REDDIT_SKIP_LEGACY = {
-    "reddit.post": "posts_skipped_as_duplicates",
-    "reddit.comment": "comments_skipped_as_duplicates",
-}
-
-
-class TestBootstrapDuplicateSkipCounters:
-    """Tests for bootstrap_duplicate_skip_counters()."""
-
-    def test_seeds_zero_when_empty(self) -> None:
-        metadata: dict[str, Any] = {}
-        expected_total = 0
-        expected_breakdown: dict[str, int] = {}
-
-        bootstrap_duplicate_skip_counters(
-            metadata,
-            legacy_by_record_type=BLUESKY_SKIP_LEGACY,
-        )
-
-        assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
-        assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
-
-    def test_seeds_reddit_legacy_keys_into_total_and_breakdown(self) -> None:
-        metadata = {
-            "posts_skipped_as_duplicates": 2,
-            "comments_skipped_as_duplicates": 5,
-        }
-        expected_total = 7
-        expected_breakdown = {"reddit.post": 2, "reddit.comment": 5}
-
-        bootstrap_duplicate_skip_counters(
-            metadata,
-            legacy_by_record_type=REDDIT_SKIP_LEGACY,
-        )
-
-        assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
-        assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
-        assert metadata["posts_skipped_as_duplicates"] == 2
-        assert metadata["comments_skipped_as_duplicates"] == 5
-
-    def test_does_not_copy_legacy_when_canonical_keys_exist(self) -> None:
-        metadata = {
-            ROWS_SKIPPED_AS_DUPLICATES_KEY: 9,
-            SKIPPED_BY_RECORD_TYPE_KEY: {BLUESKY_POST_RECORD_TYPE: 9},
-            "posts_skipped_as_duplicates": 3,
-        }
-        expected_total = 9
-        expected_breakdown = {BLUESKY_POST_RECORD_TYPE: 9}
-
-        bootstrap_duplicate_skip_counters(
-            metadata,
-            legacy_by_record_type=BLUESKY_SKIP_LEGACY,
-        )
-
-        assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
-        assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
 
 
 class TestIncrementDuplicateSkipCounters:
@@ -512,15 +454,16 @@ class TestIncrementDuplicateSkipCounters:
             metadata,
             record_type=BLUESKY_POST_RECORD_TYPE,
             skipped=2,
-            legacy_by_record_type=BLUESKY_SKIP_LEGACY,
         )
 
         assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
         assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
-        assert "posts_skipped_as_duplicates" not in metadata
 
-    def test_seeds_legacy_then_adds_skipped(self) -> None:
-        metadata = {"posts_skipped_as_duplicates": 3}
+    def test_adds_to_existing_canonical_keys(self) -> None:
+        metadata = {
+            ROWS_SKIPPED_AS_DUPLICATES_KEY: 3,
+            SKIPPED_BY_RECORD_TYPE_KEY: {BLUESKY_POST_RECORD_TYPE: 3},
+        }
         expected_total = 4
         expected_breakdown = {BLUESKY_POST_RECORD_TYPE: 4}
 
@@ -528,9 +471,7 @@ class TestIncrementDuplicateSkipCounters:
             metadata,
             record_type=BLUESKY_POST_RECORD_TYPE,
             skipped=1,
-            legacy_by_record_type=BLUESKY_SKIP_LEGACY,
         )
 
         assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
         assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
-        assert metadata["posts_skipped_as_duplicates"] == 3

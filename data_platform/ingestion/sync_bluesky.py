@@ -55,9 +55,6 @@ if TYPE_CHECKING:
 API_MAX_LIMIT = 100
 
 POSTS_RECORD_TYPE = "app.bsky.feed.post"
-DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE = {
-    POSTS_RECORD_TYPE: "posts_skipped_as_duplicates",
-}
 
 
 @dataclass(frozen=True)
@@ -302,7 +299,6 @@ def run_sync_tasks(
             metadata,
             record_type=POSTS_RECORD_TYPE,
             skipped=result.skipped,
-            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
         metadata["row_count"] = len(dedupe_session.seen_ids)
         mark_task_completed(
