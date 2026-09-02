@@ -60,6 +60,21 @@ def _mock_comment() -> SimpleNamespace:
     )
 
 
+def _tweet(*, created_at: datetime | None) -> SimpleNamespace:
+    return SimpleNamespace(
+        id="123",
+        text="hello",
+        author_id="99",
+        created_at=created_at,
+        public_metrics={
+            "like_count": 0,
+            "retweet_count": 0,
+            "reply_count": 0,
+            "quote_count": 0,
+        },
+    )
+
+
 class TestFetchPostsForKeyword:
     """Tests for fetch_posts_for_keyword()."""
 
@@ -91,13 +106,12 @@ class TestFetchPostsForKeyword:
 class TestSubmissionToRow:
     """Tests for submission_to_row()."""
 
-    def test_writes_iso_created_at_and_keeps_created_utc_alias(self) -> None:
-        """submission_to_row writes ISO created_at and keeps created_utc as an alias."""
+    def test_writes_iso_created_at_without_created_utc(self) -> None:
+        """submission_to_row writes ISO created_at and omits created_utc."""
         result = submission_to_row(_mock_submission(), SYNC_TIMESTAMP)
 
-        expected = CREATED_AT_ISO
-        assert result["created_at"] == expected
-        assert result["created_utc"] == expected
+        assert result["created_at"] == CREATED_AT_ISO
+        assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
         SyncRedditPostModel.model_validate(result)
 
@@ -105,8 +119,8 @@ class TestSubmissionToRow:
 class TestCommentToRow:
     """Tests for comment_to_row()."""
 
-    def test_writes_iso_created_at_and_keeps_created_utc_alias(self) -> None:
-        """comment_to_row writes ISO created_at and keeps created_utc as an alias."""
+    def test_writes_iso_created_at_without_created_utc(self) -> None:
+        """comment_to_row writes ISO created_at and omits created_utc."""
         result = comment_to_row(
             _mock_comment(),
             _mock_submission(),
@@ -115,9 +129,8 @@ class TestCommentToRow:
             comment_rank=1,
         )
 
-        expected = CREATED_AT_ISO
-        assert result["created_at"] == expected
-        assert result["created_utc"] == expected
+        assert result["created_at"] == CREATED_AT_ISO
+        assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
         SyncRedditCommentModel.model_validate(result)
 
@@ -125,29 +138,28 @@ class TestCommentToRow:
 class TestTweetToRow:
     """Tests for tweet_to_row()."""
 
-    def test_keeps_created_at_and_sync_timestamp(self) -> None:
-        """tweet_to_row still writes ISO created_at and sync_timestamp."""
+    def test_writes_iso_created_at_and_sync_timestamp(self) -> None:
+        """tweet_to_row writes ISO created_at and sync_timestamp."""
         created_at = datetime(2026, 5, 30, tzinfo=timezone.utc)
-        tweet = SimpleNamespace(
-            id="123",
-            text="hello",
-            author_id="99",
-            created_at=created_at,
-            public_metrics={
-                "like_count": 0,
-                "retweet_count": 0,
-                "reply_count": 0,
-                "quote_count": 0,
-            },
-        )
-
         result = tweet_to_row(
-            tweet,
+            _tweet(created_at=created_at),
             username="user",
             keyword="alpha",
             sync_timestamp=SYNC_TIMESTAMP,
         )
 
-        assert datetime.fromisoformat(str(result["created_at"])) == created_at
+        assert result["created_at"] == CREATED_AT_ISO
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
         SyncTwitterPostModel.model_validate(result)
+
+    def test_writes_empty_created_at_when_payload_time_is_missing(self) -> None:
+        """tweet_to_row writes an empty created_at when the payload time is missing."""
+        result = tweet_to_row(
+            _tweet(created_at=None),
+            username="user",
+            keyword="alpha",
+            sync_timestamp=SYNC_TIMESTAMP,
+        )
+
+        assert result["created_at"] == ""
+        assert result["sync_timestamp"] == SYNC_TIMESTAMP
