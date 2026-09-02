@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 from data_platform.models.sync import (
     PreprocessedRedditCommentModel,
+    PreprocessedTwitterPostModel,
     SyncBlueskyPostModel,
     SyncRedditCommentModel,
     SyncRedditPostModel,
@@ -394,11 +395,16 @@ class TwitterStorageManager(StorageManager):
         dataset_id: str = "",
         *,
         records_filename: str = "posts.csv",
+        model: type[BaseModel] | None = None,
     ) -> None:
+        if model is None and stage == StorageStage.PREPROCESSED:
+            resolved_model: type[BaseModel] = PreprocessedTwitterPostModel
+        else:
+            resolved_model = model or SyncTwitterPostModel
         super().__init__(
             "twitter",
             stage,
-            SyncTwitterPostModel,
+            resolved_model,
             dataset_id,
             records_filename=records_filename,
         )

@@ -19,14 +19,14 @@ from data_platform.generate_features.platform_cli import (
     generate_platform_features,
     load_preprocessed_records,
 )
-from data_platform.models.sync import SyncTwitterPostModel
+from data_platform.models.sync import PreprocessedTwitterPostModel
 from data_platform.utils.platform_specific_columns import TWITTER_COLUMNS
 from data_platform.utils.storage import TwitterStorageManager
 
 TWITTER_SPEC = FeaturePlatformSpec(
     platform="twitter",
     storage_cls=TwitterStorageManager,
-    model_cls=SyncTwitterPostModel,
+    model_cls=PreprocessedTwitterPostModel,
     columns=TWITTER_COLUMNS,
     empty_message="generate_twitter_features: no preprocessed posts found",
 )

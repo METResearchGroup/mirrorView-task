@@ -34,6 +34,7 @@ def _sample_preprocessed_comments(count: int = 1) -> list[dict[str, Any]]:
     ]
     for row in rows:
         row["text"] = row["body"]
+        row["author_handle"] = row["author"]
     return rows
 
 

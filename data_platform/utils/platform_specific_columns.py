@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 CANONICAL_TEXT_COLUMN = "text"
+CANONICAL_AUTHOR_HANDLE_COLUMN = "author_handle"
 REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN = "body"
 
 

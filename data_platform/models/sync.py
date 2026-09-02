@@ -74,10 +74,21 @@ class SyncRedditCommentModel(BaseModel):
 
 
 class PreprocessedRedditCommentModel(SyncRedditCommentModel):
-    """A Reddit comment after preprocess, with original body and shared text.
+    """A Reddit comment after preprocess, with original body, shared text, and shared author handle.
 
     Raw ingest still uses ``SyncRedditCommentModel``. Feature generation reads
     ``text`` from the preprocessed CSV described by this model.
     """
 
     text: str
+    author_handle: str
+
+
+class PreprocessedTwitterPostModel(SyncTwitterPostModel):
+    """A Twitter post after preprocess, with shared author handle.
+
+    Raw ingest still uses ``SyncTwitterPostModel``. ``author_id`` stays on the
+    inherited sync model.
+    """
+
+    author_handle: str
