@@ -87,7 +87,10 @@ PYTHONPATH=. uv run python data_platform/curate/curate_reddit.py \
 
 Confirm outputs:
 
+Preprocess writes `preprocessed/<timestamp>/posts.csv` or `comments.csv`, plus `metadata.json` whose keys are only `dataset_id`, `source_raw_runs`, and `row_counts`.
+
 ```text
+data_platform/data/<platform>/<dataset_id>/preprocessed/<timestamp>/metadata.json
 data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/mirrorview.csv
 data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/metadata.json
 ```

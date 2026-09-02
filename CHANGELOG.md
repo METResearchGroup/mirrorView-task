@@ -4,6 +4,7 @@
 
 1. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
 2. Storage load and write take an explicit package-relative file path, so csv versus parquet comes from the suffix, not from the dataset manifest. [PR #97](https://github.com/METResearchGroup/mirrorView-task/pull/97)
+3. New preprocess metadata is only dataset id, the raw runs considered, and row counts. [PR #98](https://github.com/METResearchGroup/mirrorView-task/pull/98)
 
 ## 2026-09-01
 

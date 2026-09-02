@@ -132,9 +132,10 @@ def test_preprocess_records_writes_output(data_root) -> None:
 
     assert len(output) == 1
     assert output.iloc[0]["tweet_id"] == "1000000000000000001"
+    assert set(metadata.keys()) == {"dataset_id", "source_raw_runs", "row_counts"}
+    assert metadata["dataset_id"] == dataset_id
     assert metadata["row_counts"]["input"] == 2
     assert metadata["row_counts"]["output"] == 1
-    assert metadata["files"]["posts"] == "posts.csv"
 
 
 def test_preprocess_records_strips_tco_from_saved_text(data_root) -> None:
@@ -209,9 +210,9 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
     # Newest wins: we keep the row from the newer run after deduping.
     assert output_df.iloc[0]["text"] == newer_text
 
-    assert "source_raw_runs" in metadata
+    assert set(metadata.keys()) == {"dataset_id", "source_raw_runs", "row_counts"}
+    assert metadata["dataset_id"] == dataset_id
     assert len(metadata["source_raw_runs"]) == 2
-    assert metadata["source_raw_runs"][-1] == metadata["source_raw_run"]
     assert metadata["source_raw_runs"][0] == (
         f"data/twitter/{dataset_id}/raw/2026_05_31-11:00:00"
     )

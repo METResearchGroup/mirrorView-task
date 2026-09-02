@@ -137,7 +137,18 @@ def save_preprocessed(
     *,
     source_raw_run_dirs: list[str],
 ) -> str:
-    """Persist preprocessed records to a new timestamped run directory."""
+    """Write preprocessed records and metadata to a new run directory.
+
+    Parameters
+    ----------
+    source_raw_run_dirs
+        Package-relative raw run directories that were considered.
+
+    Returns
+    -------
+    str
+        Package-relative preprocess run directory.
+    """
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     file_name = _records_file_name(spec)
 
@@ -146,19 +157,12 @@ def save_preprocessed(
         records.to_dict(orient="records"),
         f"{output_dir}/{file_name}",
     )
-    source_raw_runs = list(source_raw_run_dirs)
-    source_raw_run = source_raw_runs[-1] if source_raw_runs else None
     metadata: dict[str, Any] = {
         "dataset_id": dataset_id,
-        "source_raw_run": (source_raw_run),
-        "source_raw_runs": source_raw_runs,
-        "preprocess_timestamp": output_dir.rsplit("/", 1)[-1],
+        "source_raw_runs": list(source_raw_run_dirs),
         "row_counts": {
             "input": input_count,
             "output": len(records),
-        },
-        "files": {
-            spec.columns.records_file_key: file_name,
         },
     }
     preprocessed_storage.write_run_metadata(output_dir, metadata)
