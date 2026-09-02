@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from typing import Any
 
 from data_platform.ingestion import sync_bluesky
+from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from tests.data_platform.constants import VALID_DATASET_ID
 
 
@@ -35,7 +36,7 @@ def minimal_sync_config() -> dict[str, Any]:
         "date": "2026-05-30",
         "record_types": [sync_bluesky.POSTS_RECORD_TYPE],
         "ingestion_params": {
-            "dedupe_policy": ["current_run", "prior_runs_all_datasets"],
+            "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "limit": 2,
             "sort": "latest",
             "keywords": ["alpha", "beta"],

@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_reddit
+from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import RedditStorageManager, StorageStage
 from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
 from tests.data_platform.ingestion.reddit_conftest import (
@@ -105,7 +106,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
 ) -> None:
     config = minimal_reddit_sync_config()
     ingestion_params = config["ingestion_params"]
-    ingestion_params["comments_dedupe_policy"] = ["current_run", "prior_runs_same_dataset"]
+    ingestion_params["comments_dedupe_policy"] = ["current_run", PRIOR_RUN_POLICY]
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
     comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
     post_storage = comment_storage.post_storage()
