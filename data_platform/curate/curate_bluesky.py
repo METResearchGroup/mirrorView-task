@@ -18,8 +18,9 @@ from data_platform.curate.runner import CuratePlatformSpec, run_curation
 from data_platform.utils.config_paths import resolve_config_path
 from data_platform.generate_features.metadata import metadata_path
 from data_platform.generate_features.models import FeatureRunMetadata
-from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
+from data_platform.utils.dataset import dataset_root, validate_dataset_id
 from data_platform.utils.gate_checks import require_all_runs_complete, require_features_complete
+from data_platform.utils.paths import resolve_package_path, to_package_relative
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 
@@ -38,12 +39,11 @@ BLUESKY_CURATE_SPEC = CuratePlatformSpec(
 def _is_up_to_date(
     curated_storage: BlueskyStorageManager,
     all_preprocessed_run_dirs: list[Path],
-    root: Path,
     rules_hash: str,
     features_meta: FeatureRunMetadata,
 ) -> Path | None:
     """Return the existing output path if curation inputs haven't changed, else None."""
-    current_runs = [relative_run_path(root, d) for d in all_preprocessed_run_dirs]
+    current_runs = [to_package_relative(d) for d in all_preprocessed_run_dirs]
     if features_meta.source_preprocessed_runs != current_runs:
         return None
     if not curated_storage.root_dir.exists():
@@ -51,7 +51,7 @@ def _is_up_to_date(
     run_dirs = sorted(p for p in curated_storage.root_dir.iterdir() if p.is_dir())
     if not run_dirs:
         return None
-    latest_meta = curated_storage.load_run_metadata(run_dirs[-1])
+    latest_meta = curated_storage.load_run_metadata(to_package_relative(run_dirs[-1]))
     if latest_meta.get("source_preprocessed_runs") != current_runs:
         return None
     if latest_meta.get("rules_hash") != rules_hash:
@@ -80,7 +80,6 @@ def curate(config_path: Path, dataset_id: str) -> Path:
     preprocessed_storage = BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id)
     require_all_runs_complete(preprocessed_storage, dataset_id)
 
-    root = dataset_root("bluesky", dataset_id)
     all_preprocessed_run_dirs = sorted(
         p for p in preprocessed_storage.root_dir.iterdir() if p.is_dir()
     )
@@ -89,7 +88,6 @@ def curate(config_path: Path, dataset_id: str) -> Path:
     existing = _is_up_to_date(
         curated_storage,
         all_preprocessed_run_dirs,
-        root,
         rules_hash,
         features_meta,
     )
@@ -97,8 +95,8 @@ def curate(config_path: Path, dataset_id: str) -> Path:
         print(f"curate_bluesky: already up to date, skipping ({existing})")
         return existing.parent
 
-    output_path = run_curation(config_path, dataset_id, BLUESKY_CURATE_SPEC, rules_hash=rules_hash)
-    return output_path.parent
+    output_relative = run_curation(config_path, dataset_id, BLUESKY_CURATE_SPEC, rules_hash=rules_hash)
+    return resolve_package_path(output_relative).parent
 
 
 @app.command()

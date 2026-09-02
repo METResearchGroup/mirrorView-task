@@ -35,10 +35,6 @@ def dataset_root(platform: str, dataset_id: str) -> Path:
     return _DATA_ROOT / platform / dataset_id
 
 
-def relative_run_path(dataset_root_path: Path, run_dir: Path) -> str:
-    return str(run_dir.relative_to(dataset_root_path))
-
-
 def load_dataset_manifest(platform: str, dataset_id: str) -> dict[str, Any]:
     path = dataset_root(platform, dataset_id) / MANIFEST_FILENAME
     if not path.exists():

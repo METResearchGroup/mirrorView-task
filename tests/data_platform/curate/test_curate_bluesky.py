@@ -11,7 +11,13 @@ from data_platform.curate.curate_bluesky import curate
 from data_platform.generate_features.models import FeatureRunMetadata
 from tests.data_platform.constants import VALID_DATASET_ID
 
-MINIMAL_CONFIG = "name: test\noutput:\n  stem: test\nfilters: []\n"
+MINIMAL_CONFIG = "name: test\noutput:\n  filename: test.csv\nfilters: []\n"
+
+
+def _package_preprocessed_run(
+    dataset_id: str, run_name: str = "2026_01_01-00:00:00"
+) -> str:
+    return f"data/bluesky/{dataset_id}/preprocessed/{run_name}"
 
 
 def _write_preprocessed_run(
@@ -76,13 +82,13 @@ def _write_curated_run(
 
 def _make_fake_new_run(
     data_root: Path, dataset_id: str, run_name: str = "2026_06_26-00:00:00"
-) -> Path:
+) -> str:
     new_run_dir = data_root / "bluesky" / dataset_id / "curated" / run_name
     new_run_dir.mkdir(parents=True)
     fake_output = new_run_dir / "test.csv"
     fake_output.write_text("")
     (new_run_dir / "metadata.json").write_text(json.dumps({}), encoding="utf-8")
-    return fake_output
+    return f"data/bluesky/{dataset_id}/curated/{run_name}/test.csv"
 
 
 def _config_and_hash(tmp_path: Path, content: str = MINIMAL_CONFIG) -> tuple[Path, str]:
@@ -122,14 +128,14 @@ class TestCurateEarlyExit:
         _write_features_meta(
             data_root,
             VALID_DATASET_ID,
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
         )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         existing_run = _write_curated_run(
             data_root,
             VALID_DATASET_ID,
             "2026_06_01-00:00:00",
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
             rules_hash=rules_hash,
         )
 
@@ -148,14 +154,14 @@ class TestCurateEarlyExit:
         _write_features_meta(
             data_root,
             VALID_DATASET_ID,
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
         )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         _write_curated_run(
             data_root,
             VALID_DATASET_ID,
             "2026_06_01-00:00:00",
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
             rules_hash=rules_hash,
         )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_02_01-00:00:00")
@@ -175,14 +181,14 @@ class TestCurateEarlyExit:
         _write_features_meta(
             data_root,
             VALID_DATASET_ID,
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
         )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         _write_curated_run(
             data_root,
             VALID_DATASET_ID,
             "2026_06_01-00:00:00",
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
             rules_hash="stale_hash_from_old_config",
         )
 
@@ -203,7 +209,7 @@ class TestCurateEarlyExit:
         features_dir.mkdir(parents=True, exist_ok=True)
         meta = FeatureRunMetadata(
             dataset_id=VALID_DATASET_ID,
-            source_preprocessed_runs=["preprocessed/stale_run"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID, "stale_run")],
             sync_status="completed",
         )
         (features_dir / "metadata.json").write_text(json.dumps(meta.to_dict()), encoding="utf-8")
@@ -211,7 +217,7 @@ class TestCurateEarlyExit:
             data_root,
             VALID_DATASET_ID,
             "2026_06_01-00:00:00",
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
             rules_hash=rules_hash,
         )
 
@@ -230,14 +236,14 @@ class TestCurateEarlyExit:
         _write_features_meta(
             data_root,
             VALID_DATASET_ID,
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
         )
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
         _write_curated_run(
             data_root,
             VALID_DATASET_ID,
             "2026_06_01-00:00:00",
-            source_preprocessed_runs=["preprocessed/2026_01_01-00:00:00"],
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
             rules_hash=rules_hash,
             write_output_file=False,
         )

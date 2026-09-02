@@ -6,7 +6,7 @@ from typing import Any, Literal, cast
 
 import pandas as pd
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 BOOL_COLUMNS: frozenset[str] = frozenset(
     {
@@ -25,7 +25,9 @@ class FilterRule(BaseModel):
 
 
 class OutputConfig(BaseModel):
-    stem: str = "dataset"
+    model_config = ConfigDict(extra="forbid")
+
+    filename: str = "dataset.csv"
 
 
 class CurateRulesConfig(BaseModel):
