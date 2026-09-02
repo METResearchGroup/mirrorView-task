@@ -71,4 +71,14 @@ def to_package_relative(path: str | Path) -> str:
     ValueError
         If ``path`` is not absolute or does not resolve inside ``PACKAGE_ROOT``.
     """
-    raise NotImplementedError
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        raise ValueError(f"Path must be absolute: {path}")
+    package_root = PACKAGE_ROOT.resolve()
+    resolved = candidate.resolve()
+    if not resolved.is_relative_to(package_root):
+        raise ValueError(f"Path is outside the data-platform package: {path}")
+    relative = resolved.relative_to(package_root).as_posix()
+    if relative == "":
+        return "."
+    return relative
