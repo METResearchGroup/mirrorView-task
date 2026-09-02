@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable, Iterator
+from pathlib import Path
 from typing import Protocol
 
 from tqdm import tqdm
@@ -33,6 +34,7 @@ class BatchExecutionEngine(Protocol):
         labels: list[dict],
         *,
         feature_storage: StorageManager,
+        run_dir: Path | None = None,
     ) -> None: ...
 
     def label_records(
@@ -44,6 +46,7 @@ class BatchExecutionEngine(Protocol):
         batch_size: int,
         on_batch_complete: Callable[[int, int], None],
         id_column: str,
+        run_dir: Path | None = None,
     ) -> BatchRunStats: ...
 
 
@@ -51,6 +54,7 @@ def filter_seen_tasks(
     tasks: list[LabelTask],
     feature_storage: StorageManager,
     id_column: str,
+    run_dir: Path | None = None,
 ) -> list[LabelTask]:
     """Drop tasks whose LabelTask.uri is already present in the feature file.
 
@@ -58,7 +62,7 @@ def filter_seen_tasks(
     uses ``LabelTask.uri``, which holds the record id from the input table.
     """
     seen = feature_storage.load_seen_ids_from_disk(
-        feature_storage.root_dir,
+        run_dir or feature_storage.root_dir,
         id_column,
     )
     if not seen:
@@ -89,11 +93,12 @@ class BaseBatchExecutionEngine:
         labels: list[dict],
         *,
         feature_storage: StorageManager,
+        run_dir: Path | None = None,
     ) -> None:
         """Validate and append label rows via StorageManager."""
         if not labels:
             return
-        feature_storage.append_records(labels, feature_storage.root_dir)
+        feature_storage.append_records(labels, run_dir or feature_storage.root_dir)
 
     def label_records(
         self,
@@ -104,6 +109,7 @@ class BaseBatchExecutionEngine:
         batch_size: int,
         on_batch_complete: Callable[[int, int], None],
         id_column: str,
+        run_dir: Path | None = None,
     ) -> BatchRunStats:
         """Label records using feature classifier.
 
@@ -113,6 +119,7 @@ class BaseBatchExecutionEngine:
         """
         stats = BatchRunStats()
         max_retries = self.run_config.max_label_retries
+        output_dir = run_dir or feature_storage.root_dir
 
         @retry_llm_completion(max_retries=max_retries)
         def _batch_with_retry(chunk: list[LabelTask]) -> list[dict]:
@@ -126,7 +133,7 @@ class BaseBatchExecutionEngine:
         )
         try:
             for batch_index, chunk in enumerate(batched(tasks, batch_size)):
-                pending = filter_seen_tasks(chunk, feature_storage, id_column)
+                pending = filter_seen_tasks(chunk, feature_storage, id_column, output_dir)
                 if not pending:
                     continue
 
@@ -137,7 +144,7 @@ class BaseBatchExecutionEngine:
                     labels = _batch_with_retry(pending)
                 except Exception as exc:
                     append_deadletter_batch(
-                        feature_storage.root_dir,
+                        output_dir,
                         feature=feature_name,
                         uris=uris,
                         error=f"{type(exc).__name__}: {exc}",
@@ -153,7 +160,9 @@ class BaseBatchExecutionEngine:
                     continue
 
                 # Step 2: Write labeled records.
-                self.batch_write_records(labels, feature_storage=feature_storage)
+                self.batch_write_records(
+                    labels, feature_storage=feature_storage, run_dir=output_dir
+                )
                 stats.labeled += len(labels)
                 pbar.update(len(labels))
                 on_batch_complete(len(labels), 0)

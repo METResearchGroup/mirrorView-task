@@ -63,14 +63,37 @@ def run_feature_generation(
     return generate_features(records, config)
 
 
+def feature_run_dir(
+    feature_storage: StorageManager,
+    run_dir_name: str | None,
+) -> Path:
+    """Return ``features/{timestamp}/``, creating the directory if needed.
+
+    ``run_dir_name`` must be a single folder name when set. Absolute paths,
+    ``.``, ``..``, and names with extra path parts are rejected here so a
+    CLI ``--run-dir`` cannot write outside the features stage.
+    """
+    if run_dir_name is None:
+        return feature_storage.create_new_run_dir()
+    requested_path = Path(run_dir_name)
+    if (
+        requested_path.is_absolute()
+        or len(requested_path.parts) != 1
+        or requested_path.name in {".", ".."}
+    ):
+        raise ValueError("run_dir_name must be a single feature run directory name")
+    return feature_storage.create_new_run_dir(run_dir_name)
+
+
 def build_feature_config(
     spec: FeaturePlatformSpec,
     dataset_id: str,
     *,
     run_config: FeatureRunConfig,
     features_subset: tuple[str, ...] | None = None,
+    run_dir_name: str | None = None,
 ) -> FeatureGenerationConfig:
-    """Build a FeatureGenerationConfig for flat feature CSV output."""
+    """Build a FeatureGenerationConfig for timestamped feature CSV output."""
     dataset_id = validate_dataset_id(dataset_id)
     registry = FEATURE_REGISTRY
     if features_subset:
@@ -84,13 +107,14 @@ def build_feature_config(
         dataset_id,
         records_filename="features",
     )
+    features_dir = feature_run_dir(feature_label_storage, run_dir_name)
     return FeatureGenerationConfig(
         platform=spec.platform,
         id_column=columns.records_id_column,
         text_column=columns.text_column,
         feature_registry=registry,
         input_storage=spec.storage_cls(StorageStage.PREPROCESSED, dataset_id),
-        features_dir=feature_label_storage.root_dir,
+        features_dir=features_dir,
         feature_label_query=FeatureLabelQuery(
             feature_storage=feature_label_storage,
             id_column=columns.records_id_column,
@@ -125,6 +149,7 @@ def generate_platform_features(
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
+    run_dir_name: str | None = None,
 ) -> dict[str, Path]:
     """Load platform records and generate the requested feature labels."""
     dataset_id = validate_dataset_id(dataset_id)
@@ -141,10 +166,14 @@ def generate_platform_features(
         max_concurrency=max_concurrency,
     )
     records = load_preprocessed_records(spec, dataset_id)
+    if records.empty:
+        print(spec.empty_message)
+        return {}
     config = build_feature_config(
         spec,
         dataset_id,
         run_config=run_config,
         features_subset=features_subset,
+        run_dir_name=run_dir_name,
     )
     return run_feature_generation(records, config, empty_message=spec.empty_message)

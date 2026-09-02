@@ -37,6 +37,7 @@ def generate_bluesky_features(
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
+    run_dir_name: str | None = None,
 ) -> dict[str, Path]:
     """Load Bluesky posts and generate the requested feature labels."""
     return generate_platform_features(
@@ -45,6 +46,7 @@ def generate_bluesky_features(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
+        run_dir_name=run_dir_name,
     )
 
 
@@ -61,6 +63,11 @@ def main(
         "--features",
         help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
     ),
+    run_dir: str | None = typer.Option(
+        None,
+        "--run-dir",
+        help="Feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
+    ),
 ) -> None:
     """CLI entrypoint for resumable Bluesky feature generation."""
     generate_bluesky_features(
@@ -68,6 +75,7 @@ def main(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=features_from_cli(features),
+        run_dir_name=run_dir,
     )
 
 

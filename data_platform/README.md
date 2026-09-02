@@ -18,15 +18,15 @@ See the operator runbook at [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs
 |----------|-------|--------|--------|
 | bluesky | Ingestion | `data_platform/ingestion/` | `data_platform/data/bluesky/{dataset_id}/raw/{timestamp}/` |
 | bluesky | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/posts.csv` |
-| bluesky | Features | `data_platform/generate_features/` | `.../features/{feature}.csv`, `metadata.json` |
+| bluesky | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | bluesky | Curate | `data_platform/curate/` | `.../curated/{timestamp}/` |
 | twitter | Ingestion | `data_platform/ingestion/` | `data_platform/data/twitter/{dataset_id}/raw/{timestamp}/posts.csv` |
 | twitter | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/posts.csv` |
-| twitter | Features | `data_platform/generate_features/` | `.../features/{feature}.csv`, `metadata.json` |
+| twitter | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | twitter | Curate | `data_platform/curate/` | `.../curated/{timestamp}/mirrorview.csv` |
 | reddit | Ingestion | `data_platform/ingestion/` | `data_platform/data/reddit/{dataset_id}/raw/{timestamp}/` |
 | reddit | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/` |
-| reddit | Features | `data_platform/generate_features/` | `.../features/{feature}.csv`, `metadata.json` |
+| reddit | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | reddit | Curate | `data_platform/curate/` | `.../curated/{timestamp}/mirrorview.csv` |
 
 ## Commands
@@ -68,7 +68,14 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents).
+Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents). Feature generation writes each run into `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt.
+
+If a dataset still has leftover files directly under `features/` from the old layout, copy them into a timestamp folder once:
+
+```bash
+PYTHONPATH=. uv run python data_platform/generate_features/copy_flat_features.py \
+  --platform bluesky --dataset-id bluesky_<uuid>
+```
 
 ## Curate (join + business rules)
 

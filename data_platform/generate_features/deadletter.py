@@ -1,4 +1,4 @@
-"""Append exhausted atomic-batch failures to features/deadletter.jsonl."""
+"""Append exhausted atomic-batch failures to features/{timestamp}/deadletter.jsonl."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from lib.timestamp_utils import get_current_timestamp
 
 
 def deadletter_path(features_dir: Path) -> Path:
-    """Return the path to features/deadletter.jsonl for a dataset."""
+    """Return the path to deadletter.jsonl in a feature run directory."""
     return features_dir / "deadletter.jsonl"
 
 

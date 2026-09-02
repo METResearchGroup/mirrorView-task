@@ -133,14 +133,21 @@ def run_curation(
 
 
 def load_features_run_metadata(platform: str, dataset_id: str) -> FeatureRunMetadata:
-    """Load features/metadata.json for a dataset.
+    """Load the latest timestamped features/metadata.json for a dataset.
 
     Raises
     ------
     FileNotFoundError
-        When the features metadata file does not exist.
+        When no feature run directory or metadata file exists.
     """
-    features_meta_path = metadata_path(dataset_root(platform, dataset_id) / "features")
+    features_root = dataset_root(platform, dataset_id) / "features"
+    if not features_root.exists():
+        raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
+    run_dirs = [path for path in features_root.iterdir() if path.is_dir()]
+    if not run_dirs:
+        raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
+    latest = max(run_dirs, key=lambda path: path.name)
+    features_meta_path = metadata_path(latest)
     if not features_meta_path.exists():
         raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
     with features_meta_path.open(encoding="utf-8") as handle:

@@ -2,12 +2,16 @@ from __future__ import annotations
 
 import json
 
+import pytest
+
 from data_platform.generate_features.metadata import (
     flush_metadata,
     load_or_init_metadata,
     mark_feature_completed,
     mark_feature_in_progress,
     metadata_path,
+    model_id_for_spec,
+    prompt_hash,
     set_sync_status_completed,
     update_batch_counts,
 )
@@ -17,6 +21,8 @@ from data_platform.generate_features.models import (
     FeatureStatus,
 )
 from tests.data_platform.constants import FEATURES_DATASET_ID, PREPROCESSED_RUN
+from data_platform.generate_features.registry import FEATURE_REGISTRY
+from lib.constants import DEFAULT_LLM_MODEL
 from tests.data_platform.generate_features.conftest import make_feature_generation_config
 
 
@@ -52,3 +58,68 @@ def test_flush_metadata_round_trip(features_dir) -> None:
     assert data["sync_status"] == "completed"
     assert data["features"]["is_political"]["labeled"] == 5
     assert data["features"]["is_political"]["failed_batches"] == 1
+
+
+def test_load_or_init_metadata_records_feature_identity(features_dir) -> None:
+    """Given a new feature run, when metadata is created, then prompt/model identity is stored."""
+    spec = FEATURE_REGISTRY["is_political"]
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"is_political": spec},
+    )
+
+    metadata = load_or_init_metadata(config, feature_names=("is_political",))
+
+    assert metadata.features["is_political"].model_id == DEFAULT_LLM_MODEL
+    assert metadata.features["is_political"].prompt_hash is not None
+
+
+def test_load_or_init_metadata_rejects_prompt_hash_change_on_resume(features_dir) -> None:
+    """Given existing metadata with a different prompt hash, when reloading, then raise."""
+    spec = FEATURE_REGISTRY["is_political"]
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"is_political": spec},
+    )
+    metadata = load_or_init_metadata(config, feature_names=("is_political",))
+    metadata.features["is_political"].prompt_hash = "old-hash"
+    flush_metadata(features_dir, metadata)
+
+    with pytest.raises(ValueError, match="identity changed"):
+        load_or_init_metadata(config, feature_names=("is_political",))
+
+
+def test_load_or_init_metadata_rejects_model_id_change_on_resume(features_dir) -> None:
+    """Given existing metadata with a different model id, when reloading, then raise."""
+    spec = FEATURE_REGISTRY["is_political"]
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"is_political": spec},
+    )
+    metadata = load_or_init_metadata(config, feature_names=("is_political",))
+    metadata.features["is_political"].model_id = "old-model"
+    flush_metadata(features_dir, metadata)
+
+    with pytest.raises(ValueError, match="identity changed"):
+        load_or_init_metadata(config, feature_names=("is_political",))
+
+
+def test_model_id_follows_engine_type() -> None:
+    """Given registry specs, when reading model id, then langchain uses the LLM and thread_pool uses Perspective."""
+    from dataclasses import replace
+
+    assert model_id_for_spec(FEATURE_REGISTRY["is_political"]) == DEFAULT_LLM_MODEL
+    assert model_id_for_spec(FEATURE_REGISTRY["is_toxic_tiered"]) == "perspective-api"
+    promptless = replace(FEATURE_REGISTRY["is_political"], system_prompt=None)
+    assert model_id_for_spec(promptless) == DEFAULT_LLM_MODEL
+    assert prompt_hash(promptless.system_prompt) is None
+
+
+def test_prompt_hash_changes_when_prompt_changes() -> None:
+    """Given two different prompts, when hashing, then the hashes differ."""
+    first = prompt_hash(FEATURE_REGISTRY["is_political"].system_prompt)
+    second = prompt_hash(FEATURE_REGISTRY["is_likely_spam"].system_prompt)
+    assert first is not None
+    assert second is not None
+    assert first != second
+    assert len(first) == 64

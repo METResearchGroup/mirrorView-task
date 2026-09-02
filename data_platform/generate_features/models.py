@@ -33,6 +33,8 @@ class FeatureStatus:
     status: Literal["pending", "in_progress", "completed"] = "pending"
     labeled: int = 0
     failed_batches: int = 0
+    model_id: str | None = None
+    prompt_hash: str | None = None
 
 
 @dataclass
@@ -47,7 +49,7 @@ class FeatureRunMetadata:
     updated_at: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        """Serialize metadata to the features/metadata.json document shape."""
+        """Serialize metadata to the features/{timestamp}/metadata.json document shape."""
         return {
             "dataset_id": self.dataset_id,
             "source_preprocessed_runs": self.source_preprocessed_runs,
@@ -57,6 +59,8 @@ class FeatureRunMetadata:
                     "status": status.status,
                     "labeled": status.labeled,
                     "failed_batches": status.failed_batches,
+                    "model_id": status.model_id,
+                    "prompt_hash": status.prompt_hash,
                 }
                 for name, status in self.features.items()
             },
@@ -75,7 +79,7 @@ class FeatureRunMetadata:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> FeatureRunMetadata:
-        """Load metadata from a parsed features/metadata.json dict."""
+        """Load metadata from a parsed features/{timestamp}/metadata.json dict."""
         config_raw = data.get("config", {})
         config = FeatureRunConfig(
             batch_size=config_raw.get("batch_size", 64),
@@ -88,6 +92,8 @@ class FeatureRunMetadata:
                 status=feat.get("status", "pending"),
                 labeled=feat.get("labeled", 0),
                 failed_batches=feat.get("failed_batches", 0),
+                model_id=feat.get("model_id"),
+                prompt_hash=feat.get("prompt_hash"),
             )
         legacy_single = data.get("source_preprocessed_run")
         source_preprocessed_runs = data.get(

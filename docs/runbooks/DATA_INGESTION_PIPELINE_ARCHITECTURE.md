@@ -50,10 +50,11 @@ data_platform/data/
           posts.csv
           metadata.json
       features/
-        is_political.csv
-        political_stance.csv
-        ...
-        metadata.json
+        <timestamp>/
+          is_political.csv
+          political_stance.csv
+          ...
+          metadata.json
       curated/
         <timestamp>/
           mirrorview.csv
@@ -62,9 +63,9 @@ data_platform/data/
 
 `dataset.json` at the dataset root records the platform, human-readable name, ingestion config path, and output format (csv or parquet). It is written on first sync by `ensure_dataset_manifest` in `data_platform/ingestion/sync_checkpoint.py`.
 
-Raw, preprocessed, and curated stages use timestamped run directories. The timestamp format comes from `lib.timestamp_utils.get_current_timestamp` (for example `2026_08_16-14:30:00`).
+Raw, preprocessed, features, and curated stages use timestamped run directories. The timestamp format comes from `lib.timestamp_utils.get_current_timestamp` (for example `2026_08_16-14:30:00`).
 
-The features stage is different. Feature label files sit directly under `features/` as `{feature_name}.csv`. Feature run state lives in `features/metadata.json`, not in per-run subfolders.
+Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt. When the script decides which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old flat layout stay unused until you copy them with `data_platform/generate_features/copy_flat_features.py`.
 
 Do not commit files under `data_platform/data/`.
 
@@ -96,7 +97,7 @@ On startup, `find_resume_run_dir` looks for the newest raw run whose `sync_statu
 
 When all tasks finish, `finalize_local_disk_sync` sets `sync_status` from task states and flushes metadata to disk. `finalize_local_disk_sync` is the durability helper for a finished local sync.
 
-Feature generation uses a separate checkpoint model in `data_platform/generate_features/metadata.py`. Progress is tracked per feature name in `features/metadata.json`.
+Feature generation uses a separate checkpoint model in `data_platform/generate_features/metadata.py`. Progress is tracked per feature name in `features/<timestamp>/metadata.json`.
 
 ### metadata.json at each stage
 
@@ -104,7 +105,7 @@ Feature generation uses a separate checkpoint model in `data_platform/generate_f
 |-------|------|-------------|
 | Raw sync | `raw/<timestamp>/metadata.json` | `tasks`, `row_count`, `sync_status`, config snapshot |
 | Preprocessed | `preprocessed/<timestamp>/metadata.json` | source raw runs, row counts, validation stats |
-| Features | `features/metadata.json` | per-feature status, batch counts, source preprocessed runs |
+| Features | `features/<timestamp>/metadata.json` | per-feature status, batch counts, `model_id`, `prompt_hash`, source preprocessed runs |
 | Curated | `curated/<timestamp>/metadata.json` | filter results, `files.export`, `source_preprocessed_runs` |
 
 Curate writes export paths into metadata so `sample_data_to_mirror.py` can find the CSV without hardcoded timestamps.
@@ -139,7 +140,7 @@ Entrypoints:
 - `data_platform/generate_features/generate_twitter_features.py`
 - `data_platform/generate_features/generate_reddit_features.py`
 
-Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, and `is_toxic_tiered`. Each feature writes `features/{name}.csv`. Failed atomic batches may append to `features/deadletter.jsonl`.
+Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, and `is_toxic_tiered`. Each feature writes `features/<timestamp>/{name}.csv`. Failed atomic batches may append to `features/<timestamp>/deadletter.jsonl`.
 
 Feature generation needs `OPENAI_API_KEY` and `GOOGLE_API_KEY` in the repo-root `.env`.
 
@@ -211,7 +212,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   --dataset-id bluesky_c0ffee00-0000-4000-8000-000000000100 --batch-size 64
 ```
 
-Files written under `features/`:
+Files written under `features/<timestamp>/`:
 
 - `is_political.csv`, `political_stance.csv`, `is_likely_spam.csv`, and other registered features
 - `metadata.json` (and optionally `deadletter.jsonl` if batches fail)

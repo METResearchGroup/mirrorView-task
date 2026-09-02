@@ -17,8 +17,9 @@ def _write_twitter_feature_csv(
     feature_name: str,
     rows: list[dict[str, object]],
 ) -> None:
-    features_root.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows).to_csv(features_root / f"{feature_name}.csv", index=False)
+    run_dir = features_root / LABEL_TIMESTAMP
+    run_dir.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows).to_csv(run_dir / f"{feature_name}.csv", index=False)
 
 
 def test_build_wide_table_joins_twitter_posts_on_tweet_id(tmp_path: Path) -> None:
@@ -176,7 +177,8 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             ),
         ]
         for feature_name, payload in feature_payloads:
-            path = features_root / f"{feature_name}.csv"
+            path = features_root / LABEL_TIMESTAMP / f"{feature_name}.csv"
+            path.parent.mkdir(parents=True, exist_ok=True)
             rows = []
             if path.exists():
                 rows = pd.read_csv(path, keep_default_na=False).to_dict(orient="records")

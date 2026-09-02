@@ -1,22 +1,27 @@
-"""Load and flush features/metadata.json for resumable feature generation."""
+"""Load and flush features/{timestamp}/metadata.json for resumable feature generation."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
 from data_platform.generate_features.models import (
     FeatureGenerationConfig,
     FeatureRunMetadata,
+    FeatureSpec,
     FeatureStatus,
 )
 from data_platform.utils.dataset import dataset_root, relative_run_path
 from data_platform.utils.storage import METADATA_FILENAME
+from lib.constants import DEFAULT_LLM_MODEL
 from lib.timestamp_utils import get_current_timestamp
+
+PERSPECTIVE_MODEL_ID = "perspective-api"
 
 
 def metadata_path(features_dir: Path) -> Path:
-    """Return the path to features/metadata.json for a dataset."""
+    """Return the path to metadata.json in a feature run directory."""
     return features_dir / METADATA_FILENAME
 
 
@@ -44,6 +49,43 @@ def resolve_source_preprocessed_runs(config: FeatureGenerationConfig) -> list[st
     ]
 
 
+def prompt_hash(system_prompt: str | None) -> str | None:
+    """Return a SHA-256 hex digest of ``system_prompt``, or None when omitted."""
+    if system_prompt is None:
+        return None
+    return hashlib.sha256(system_prompt.encode("utf-8")).hexdigest()
+
+
+def model_id_for_spec(spec: FeatureSpec) -> str:
+    """Return the default LLM model id, or Perspective for thread-pool features."""
+    if spec.engine_type == "thread_pool":
+        return PERSPECTIVE_MODEL_ID
+    return DEFAULT_LLM_MODEL
+
+
+def _stamp_or_check_identity(
+    metadata: FeatureRunMetadata,
+    config: FeatureGenerationConfig,
+    feature_names: tuple[str, ...],
+) -> None:
+    for name in feature_names:
+        spec = config.feature_registry.get(name)
+        if spec is None:
+            continue
+        model_id = model_id_for_spec(spec)
+        hashed_prompt = prompt_hash(spec.system_prompt)
+        status = metadata.features.setdefault(name, FeatureStatus())
+        if status.model_id is None and status.prompt_hash is None:
+            status.model_id = model_id
+            status.prompt_hash = hashed_prompt
+            continue
+        if status.model_id != model_id or status.prompt_hash != hashed_prompt:
+            raise ValueError(
+                f"Feature {name} identity changed for this run directory. "
+                "Start a new generate_features run without --run-dir."
+            )
+
+
 def load_or_init_metadata(
     config: FeatureGenerationConfig,
     *,
@@ -56,6 +98,8 @@ def load_or_init_metadata(
         with path.open(encoding="utf-8") as f:
             metadata = FeatureRunMetadata.from_dict(json.load(f))
         metadata.source_preprocessed_runs = source_preprocessed_runs
+        _stamp_or_check_identity(metadata, config, feature_names)
+        flush_metadata(config.features_dir, metadata)
         return metadata
 
     features = {name: FeatureStatus() for name in feature_names}
@@ -67,6 +111,7 @@ def load_or_init_metadata(
         config=config.run_config,
         updated_at=get_current_timestamp(),
     )
+    _stamp_or_check_identity(metadata, config, feature_names)
     flush_metadata(config.features_dir, metadata)
     return metadata
 

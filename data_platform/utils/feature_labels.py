@@ -9,18 +9,18 @@ from data_platform.utils.storage import StorageManager
 
 @dataclass(frozen=True)
 class FeatureLabelQuery:
-    """Look up labeled record ids from feature files at the features root"""
+    """Query labeled record ids from feature files across timestamped runs."""
 
     feature_storage: StorageManager
     id_column: str = "uri"
     feature_file_id_column: str = "uri"
 
     def labeled_ids(self, feature_name: str) -> set[str]:
-        """Return ids labeled for feature_name from local feature files."""
-        return self.feature_storage.load_seen_ids_from_disk(
-            self.feature_storage.root_dir,
+        """Return ids labeled for feature_name from timestamped feature run directories."""
+        filename = self.feature_storage.filename_for(feature_name)
+        return self.feature_storage.load_seen_ids_from_all_runs(
             self.feature_file_id_column,
-            filename=self.feature_storage.filename_for(feature_name),
+            filename=filename,
         )
 
     def filter_unlabeled(

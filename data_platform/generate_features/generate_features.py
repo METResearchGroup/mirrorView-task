@@ -86,6 +86,7 @@ def _run_feature_labeling(
         batch_size=config.run_config.batch_size,
         on_batch_complete=_make_on_batch_complete(metadata, feature_name, config.features_dir),
         id_column=config.feature_label_query.feature_file_id_column,
+        run_dir=config.features_dir,
     )
 
     feature_status = metadata.features.setdefault(feature_name, FeatureStatus())
@@ -123,7 +124,7 @@ def _process_one_feature(
         config.input_storage.dataset_id,
         records_filename=feature_name,
     )
-    feature_path = feature_storage.root_dir / feature_storage.records_filename
+    feature_path = config.features_dir / feature_storage.records_filename
 
     # Compare input posts against saved labels, to see which records need features.
     pending_df = filter_records_needing_features(records, feature_name, config)
@@ -177,7 +178,7 @@ def generate_features(
     records: pd.DataFrame,
     config: FeatureGenerationConfig,
 ) -> dict[str, Path]:
-    """Generate configured features with resumable append to per-feature CSV files."""
+    """Generate configured features with resumable append to timestamped run files."""
     if records.empty:
         print("generate_features: no records to label")
         return {}

@@ -13,14 +13,18 @@ from tests.data_platform.conftest import (
 from tests.data_platform.constants import LABEL_TIMESTAMP, URI_POST_A, URI_POST_B
 
 
+def _feature_run_dir(features_root: Path) -> Path:
+    return features_root / LABEL_TIMESTAMP
+
+
 def test_build_wide_table_joins_features(tmp_path: Path) -> None:
     posts_file = tmp_path / "posts.csv"
     write_posts_file(posts_file)
 
     features_root = tmp_path / "features"
-    write_feature_csv(features_root, "is_political", make_political_feature_rows())
+    write_feature_csv(_feature_run_dir(features_root), "is_political", make_political_feature_rows())
     write_feature_csv(
-        features_root,
+        _feature_run_dir(features_root),
         "is_likely_spam",
         [
             {"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_likely_spam": False},
@@ -28,7 +32,7 @@ def test_build_wide_table_joins_features(tmp_path: Path) -> None:
         ],
     )
     write_feature_csv(
-        features_root,
+        _feature_run_dir(features_root),
         "is_news_or_opinion",
         [
             {"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "category": "news"},
@@ -67,7 +71,7 @@ def test_build_wide_table_supports_reddit_id_column_mapping(tmp_path: Path) -> N
 
     features_root = tmp_path / "features"
     write_feature_csv(
-        features_root,
+        _feature_run_dir(features_root),
         "is_political",
         [{"uri": "t1_a", "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
     )
@@ -94,7 +98,7 @@ def test_build_wide_table_picks_latest_label_timestamp_for_duplicate_ids(tmp_pat
 
     features_root = tmp_path / "features"
     write_feature_csv(
-        features_root,
+        _feature_run_dir(features_root),
         "is_political",
         [
             {
@@ -120,3 +124,45 @@ def test_build_wide_table_picks_latest_label_timestamp_for_duplicate_ids(tmp_pat
 
     assert len(wide) == 2
     assert wide.loc[wide["uri"] == URI_POST_A, "is_political"].iloc[0] in {True, "True"}
+
+
+def test_build_wide_table_picks_latest_label_across_timestamped_runs(tmp_path: Path) -> None:
+    """Given two feature runs, when consolidating, then the latest label_timestamp wins."""
+    posts_file = tmp_path / "posts.csv"
+    write_posts_file(posts_file)
+
+    features_root = tmp_path / "features"
+    write_feature_csv(
+        features_root / "2026_01_01-00:00:00",
+        "is_political",
+        [
+            {
+                "uri": URI_POST_A,
+                "label_timestamp": "2026_01_01-00:00:00",
+                "is_political": False,
+            }
+        ],
+    )
+    write_feature_csv(
+        features_root / "2026_02_01-00:00:00",
+        "is_political",
+        [
+            {
+                "uri": URI_POST_A,
+                "label_timestamp": "2026_02_01-00:00:00",
+                "is_political": True,
+            }
+        ],
+    )
+
+    wide = build_wide_table(
+        ConsolidateConfig(
+            posts_file=posts_file,
+            features_root=features_root,
+            feature_names=("is_political",),
+        )
+    )
+
+    matching = wide.loc[wide["uri"] == URI_POST_A]
+    assert len(matching) == 1
+    assert matching["is_political"].iloc[0] in {True, "True"}

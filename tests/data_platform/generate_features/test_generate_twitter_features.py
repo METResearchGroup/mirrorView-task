@@ -88,7 +88,8 @@ def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> N
     feature_storage = StorageManager(
         "twitter", "features", BaseModel, VALID_TWITTER_DATASET_ID, records_filename="features"
     )
-    feature_storage.root_dir.mkdir(parents=True, exist_ok=True)
+    run_dir = feature_storage.root_dir / LABEL_TIMESTAMP
+    run_dir.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(
         [
             {
@@ -97,7 +98,7 @@ def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> N
                 "is_political": True,
             }
         ],
-    ).to_csv(feature_storage.root_dir / "is_political.csv", index=False)
+    ).to_csv(run_dir / "is_political.csv", index=False)
 
     records = pd.DataFrame(
         [
