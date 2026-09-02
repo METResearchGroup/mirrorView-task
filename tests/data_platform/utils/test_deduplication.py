@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 from data_platform.utils.deduplication import (
     DedupeConfig,
     DedupeSession,
@@ -149,3 +151,8 @@ def test_add_seen_ids_updates_seen_ids() -> None:
     session.add_seen_ids([{"uri": "uri-b"}])
 
     assert session.seen_ids == {"uri-a", "uri-b"}
+
+
+def test_dedupe_config_rejects_include_prior_runs() -> None:
+    with pytest.raises(TypeError):
+        DedupeConfig(id_column="uri", include_prior_runs=True)
