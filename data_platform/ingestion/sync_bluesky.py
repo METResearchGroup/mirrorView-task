@@ -148,7 +148,7 @@ def fetch_posts_for_keyword(
     *,
     task_id: str,
     sync_timestamp: str,
-    max_rows: int | None = None,
+    remaining_posts: int | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Paginate searchPosts until limit rows are collected or results are exhausted.
 
@@ -163,8 +163,8 @@ def fetch_posts_for_keyword(
         Rows and per-task stats (pages fetched, hits_total from the first page, etc.).
     """
     target = resolve_limit_per_task(ingestion_params)
-    if max_rows is not None:
-        target = min(target, max_rows)
+    if remaining_posts is not None:
+        target = min(target, remaining_posts)
     if target <= 0:
         stats = {
             "task_id": task_id,
@@ -281,7 +281,7 @@ def run_sync_tasks(
                 task.query,
                 task_id=task.task_id,
                 sync_timestamp=str(metadata["sync_timestamp"]),
-                max_rows=remaining,
+                remaining_posts=remaining,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
             mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)

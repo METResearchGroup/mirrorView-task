@@ -173,52 +173,46 @@ def stop_at_record_cap(
 LIMIT_PER_TASK_KEY = "limit_per_task"
 MAX_POSTS_KEY = "max_posts"
 MAX_COMMENTS_KEY = "max_comments"
-MAX_ROWS_ALIAS = "max_rows"
 
 
 def _parse_optional_int_cap(
     ingestion_params: dict[str, Any],
-    primary_key: str,
+    key: str,
 ) -> int | None:
-    if primary_key in ingestion_params:
-        value = ingestion_params[primary_key]
-        return int(value) if value is not None else None
-    value = ingestion_params.get(MAX_ROWS_ALIAS)
+    if key not in ingestion_params:
+        return None
+    value = ingestion_params[key]
     return int(value) if value is not None else None
 
 
 def parse_max_posts(ingestion_params: dict[str, Any]) -> int | None:
-    """Return the run-wide post cap, preferring max_posts over max_rows.
+    """Return the run-wide post cap from ``max_posts``.
 
     Parameters
     ----------
     ingestion_params
-        Ingest YAML params. ``max_posts`` is the primary post cap. ``max_rows``
-        is a fallback for older Bluesky and Twitter configs. ``max_comments``
-        is ignored.
+        Ingest YAML params. Only ``max_posts`` is read; ``max_comments`` is ignored.
 
     Returns
     -------
     int | None
-        Max posts for the run, or None when neither key is set.
+        Max posts for the run, or None when ``max_posts`` is unset.
     """
     return _parse_optional_int_cap(ingestion_params, MAX_POSTS_KEY)
 
 
 def parse_max_comments(ingestion_params: dict[str, Any]) -> int | None:
-    """Return the run-wide comment cap, preferring max_comments over max_rows.
+    """Return the run-wide comment cap from ``max_comments``.
 
     Parameters
     ----------
     ingestion_params
-        Ingest YAML params. ``max_comments`` is the primary comment cap.
-        ``max_rows`` is a fallback for older Reddit configs. ``max_posts``
-        is ignored.
+        Ingest YAML params. Only ``max_comments`` is read; ``max_posts`` is ignored.
 
     Returns
     -------
     int | None
-        Max comments for the run, or None when neither key is set.
+        Max comments for the run, or None when ``max_comments`` is unset.
     """
     return _parse_optional_int_cap(ingestion_params, MAX_COMMENTS_KEY)
 
