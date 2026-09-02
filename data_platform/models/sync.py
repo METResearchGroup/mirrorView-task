@@ -31,7 +31,6 @@ class SyncRedditPostModel(BaseModel):
     upvote_ratio: float
     num_comments: int
     created_at: str
-    created_utc: str
     permalink: str
     url: str
     is_self: bool
@@ -68,7 +67,6 @@ class SyncRedditCommentModel(BaseModel):
     body: str
     score: int
     created_at: str
-    created_utc: str
     permalink: str
     depth: int
     comment_rank: int
