@@ -6,7 +6,7 @@ import pytest
 from data_platform.preprocessing.preprocess_bluesky import BLUESKY_SPEC
 from data_platform.preprocessing.preprocess_reddit import REDDIT_SPEC
 from data_platform.preprocessing.preprocess_twitter import TWITTER_SPEC
-from data_platform.preprocessing.runner import add_canonical_source_record_id
+from data_platform.preprocessing.shared_columns import add_canonical_source_record_id
 from data_platform.utils.platform_specific_columns import CANONICAL_SOURCE_RECORD_ID_COLUMN
 from tests.data_platform.conftest import make_post_row
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row

@@ -12,9 +12,11 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.preprocessing.shared_columns import add_canonical_author_columns
+from data_platform.preprocessing.shared_columns import (
+    add_canonical_author_columns,
+    add_canonical_source_record_id,
+)
 from data_platform.utils.platform_specific_columns import (
-    CANONICAL_SOURCE_RECORD_ID_COLUMN,
     CANONICAL_TEXT_COLUMN,
     PlatformSpecificColumns,
 )
@@ -39,39 +41,6 @@ class PreprocessPlatformSpec:
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
     original_platform_text_column: str = CANONICAL_TEXT_COLUMN
-
-
-def add_canonical_source_record_id(
-    df: pd.DataFrame,
-    spec: PreprocessPlatformSpec,
-) -> pd.DataFrame:
-    """Copy the platform's original record id onto the shared ``source_record_id`` column.
-
-    You still have original fields such as Bluesky ``uri``, Reddit
-    ``comment_fullname``, and Twitter ``tweet_id`` on the returned frame. The
-    function does not modify the input frame.
-
-    Parameters
-    ----------
-    spec
-        ``spec.columns.records_id_column`` is the copy source. The destination
-        is always shared ``source_record_id``.
-
-    Returns
-    -------
-    pd.DataFrame
-        A new frame that includes ``source_record_id``.
-
-    Raises
-    ------
-    KeyError
-        When the original record id column is missing from the frame.
-    """
-    out = df.copy()
-    source_column = spec.columns.records_id_column
-    original_id = out[source_column]
-    out[CANONICAL_SOURCE_RECORD_ID_COLUMN] = original_id.map(lambda value: str(value))
-    return out
 
 
 def add_canonical_text_column(
