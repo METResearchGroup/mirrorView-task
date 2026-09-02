@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 
 import pytest
 
@@ -9,6 +8,7 @@ from data_platform.ingestion.sync_checkpoint import (
     SyncStatus,
     TaskStatus,
     build_base_sync_metadata,
+    ensure_dataset_manifest,
     find_resume_run_dir,
     flush_run_metadata,
     get_task_progress,
@@ -21,15 +21,37 @@ from data_platform.ingestion.sync_checkpoint import (
     sync_status_from_tasks,
     validate_tasks_for_resume,
 )
+from data_platform.utils.dataset import load_dataset_manifest
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.utils.storage import StorageStage, TwitterStorageManager
-from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
+from data_platform.utils.storage import BlueskyStorageManager, StorageStage, TwitterStorageManager
+from lib.constants import REPO_ROOT
+from tests.data_platform.constants import VALID_DATASET_ID, VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
+
+BLUESKY_MIRRORVIEW_CONFIG = (
+    REPO_ROOT / "data_platform" / "ingestion" / "configs" / "bluesky" / "mirrorview.yaml"
+)
+TWITTER_MIRRORVIEW_CONFIG = (
+    REPO_ROOT / "data_platform" / "ingestion" / "configs" / "twitter" / "mirrorview.yaml"
+)
+EXPECTED_BLUESKY_RELATIVE = "data_platform/ingestion/configs/bluesky/mirrorview.yaml"
+EXPECTED_TWITTER_RELATIVE = "data_platform/ingestion/configs/twitter/mirrorview.yaml"
 
 
 @dataclass(frozen=True)
 class _StubTask:
     task_id: str
+
+
+def _twitter_sync_config() -> dict:
+    return {
+        "dataset_id": VALID_TWITTER_DATASET_ID,
+        "name": "test",
+        "description": "desc",
+        "date": "2026-05-31",
+        "record_types": ["twitter.tweet"],
+        "ingestion_params": {},
+    }
 
 
 def test_get_task_progress_missing_tasks_raises_key_error() -> None:
@@ -105,17 +127,10 @@ def test_parse_max_rows_none_when_unset() -> None:
 
 
 def test_build_base_sync_metadata_includes_tasks() -> None:
-    config = {
-        "dataset_id": VALID_TWITTER_DATASET_ID,
-        "name": "test",
-        "description": "desc",
-        "date": "2026-05-31",
-        "record_types": ["twitter.tweet"],
-        "ingestion_params": {},
-    }
+    config = _twitter_sync_config()
     metadata = build_base_sync_metadata(
         config,
-        Path("test.yaml"),
+        TWITTER_MIRRORVIEW_CONFIG,
         "2026_05_30-10:00:00",
         [_StubTask("alpha")],
         task_progress_builder=lambda task: {"status": TaskStatus.PENDING.value, "id": task.task_id},
@@ -193,3 +208,96 @@ def test_append_deduped_records_skips_seen_ids(data_root) -> None:
     assert result.skipped == 1
     assert result.kept == 1
     assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {"1", "2"}
+
+
+class TestBuildBaseSyncMetadata:
+    """Tests for build_base_sync_metadata()."""
+
+    def test_stores_repo_relative_bluesky_config_path(self) -> None:
+        """Verifies run metadata stores the Bluesky YAML as a repo-relative POSIX path."""
+        config = _twitter_sync_config()
+        config["dataset_id"] = VALID_DATASET_ID
+        expected = EXPECTED_BLUESKY_RELATIVE
+
+        result = build_base_sync_metadata(
+            config,
+            BLUESKY_MIRRORVIEW_CONFIG,
+            "2026_05_30-10:00:00",
+            [_StubTask("alpha")],
+            task_progress_builder=lambda task: {
+                "status": TaskStatus.PENDING.value,
+                "id": task.task_id,
+            },
+        )
+
+        assert result["ingestion_config"] == expected
+
+    def test_same_basename_twitter_config_stays_distinct(self) -> None:
+        """Verifies a Twitter YAML with the same file name is not stored as the Bluesky path."""
+        config = _twitter_sync_config()
+        expected = EXPECTED_TWITTER_RELATIVE
+
+        result = build_base_sync_metadata(
+            config,
+            TWITTER_MIRRORVIEW_CONFIG,
+            "2026_05_30-10:00:00",
+            [_StubTask("alpha")],
+            task_progress_builder=lambda task: {
+                "status": TaskStatus.PENDING.value,
+                "id": task.task_id,
+            },
+        )
+
+        assert result["ingestion_config"] == expected
+        assert result["ingestion_config"] != EXPECTED_BLUESKY_RELATIVE
+
+
+class TestEnsureDatasetManifest:
+    """Tests for ensure_dataset_manifest()."""
+
+    def test_stores_repo_relative_config_path(self, data_root) -> None:
+        """Verifies a new dataset manifest stores the repo-relative POSIX config path."""
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        config = {"name": "mirrorview"}
+        expected = EXPECTED_BLUESKY_RELATIVE
+
+        ensure_dataset_manifest(
+            storage,
+            "bluesky",
+            VALID_DATASET_ID,
+            config,
+            BLUESKY_MIRRORVIEW_CONFIG,
+        )
+        result = load_dataset_manifest("bluesky", VALID_DATASET_ID)
+
+        assert result["ingestion_config"] == expected
+
+    def test_matches_run_metadata_config_path(self, data_root) -> None:
+        """Verifies run metadata and the dataset manifest store the same config path."""
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        config = _twitter_sync_config()
+        config["dataset_id"] = VALID_DATASET_ID
+        expected = EXPECTED_BLUESKY_RELATIVE
+
+        metadata = build_base_sync_metadata(
+            config,
+            BLUESKY_MIRRORVIEW_CONFIG,
+            "2026_05_30-10:00:00",
+            [_StubTask("alpha")],
+            task_progress_builder=lambda task: {
+                "status": TaskStatus.PENDING.value,
+                "id": task.task_id,
+            },
+        )
+        ensure_dataset_manifest(
+            storage,
+            "bluesky",
+            VALID_DATASET_ID,
+            {"name": "mirrorview"},
+            BLUESKY_MIRRORVIEW_CONFIG,
+        )
+        manifest = load_dataset_manifest("bluesky", VALID_DATASET_ID)
+
+        assert metadata["ingestion_config"] == expected
+        assert manifest["ingestion_config"] == expected
+        assert metadata["ingestion_config"] == manifest["ingestion_config"]
