@@ -182,6 +182,29 @@ def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
 ) -> Path:
+    """Skip ids from prior preprocessed runs, collapse remaining ids, then filter and save.
+
+    The skip set is loaded from every existing preprocessed run before the new
+    run directory is created. The printed skip count is prior-run ids only, and
+    does not include rows removed when duplicate ids in the current batch collapse.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset whose raw runs are preprocessed.
+    spec
+        Platform storage, columns, validators, and optional text transform.
+
+    Returns
+    -------
+    Path
+        New preprocessed run directory.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the dataset has no raw runs.
+    """
     dataset_id = validate_dataset_id(dataset_id)
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
     if raw_storage.latest_run_dir() is None:
