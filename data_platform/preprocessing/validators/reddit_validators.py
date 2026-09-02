@@ -25,6 +25,10 @@ MEDIA_HOST_PATTERN = re.compile(
 MENTION_PATTERN = re.compile(r"(?i)(?<!\w)(?:u|r)/\w+")
 
 
+def check_if_valid_reddit_comment_min_length(text: str) -> bool:
+    raise NotImplementedError
+
+
 def check_if_body_not_removed(text: str) -> bool:
     """Reject Reddit deleted/removed/unavailable comment sentinel bodies."""
     return text.strip().lower() not in REMOVED_BODY_SENTINELS
