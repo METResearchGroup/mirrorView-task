@@ -41,7 +41,6 @@ def build_curate_metadata(
     wide_df: pd.DataFrame,
     filtered_df: pd.DataFrame,
     rules_result: ApplyRulesResult,
-    export_filename: str,
 ) -> dict[str, Any]:
     return {
         "dataset_id": dataset_id,
@@ -61,7 +60,6 @@ def build_curate_metadata(
             }
             for step in rules_result.steps
         ],
-        "files": {"export": export_filename},
     }
 
 
@@ -117,7 +115,6 @@ def run_curation(
         wide_df=wide_df,
         filtered_df=filtered_df,
         rules_result=rules_result,
-        export_filename=rules.output.filename,
     )
     curated_storage.write_run_metadata(relative_run_dir, metadata)
 
