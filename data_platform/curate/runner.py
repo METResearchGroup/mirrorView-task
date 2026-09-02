@@ -222,7 +222,7 @@ def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpe
     """
     dataset_id = validate_dataset_id(dataset_id)
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
-    features_meta = _maybe_load_and_gate_features(spec, dataset_id)
+    features_meta = _load_and_gate_features(spec, dataset_id)
     if spec.require_all_runs_complete:
         require_all_runs_complete(spec.storage_cls("preprocessed", dataset_id), dataset_id)
     if spec.skip_if_up_to_date:
@@ -235,9 +235,15 @@ def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpe
     return run_curation(config_path, dataset_id, spec, rules_hash=rules_hash)
 
 
-def _maybe_load_and_gate_features(
+def _load_and_gate_features(
     spec: CuratePlatformSpec, dataset_id: str
 ) -> FeatureRunMetadata | None:
+    """Load features metadata when completeness or skip flags require it.
+
+    Returns None when both ``require_features_complete`` and
+    ``skip_if_up_to_date`` are false, because those callers do not read
+    features metadata.
+    """
     if not spec.require_features_complete and not spec.skip_if_up_to_date:
         return None
     features_meta = load_features_run_metadata(spec.platform, dataset_id)

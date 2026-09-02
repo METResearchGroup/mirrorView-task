@@ -145,7 +145,7 @@ def test_generate_reddit_features_defaults_to_opik_disabled(monkeypatch) -> None
     )
     monkeypatch.setattr(
         "data_platform.generate_features.platform_cli.load_preprocessed_records",
-        lambda spec, dataset_id: pd.DataFrame([{REDDIT_COLUMNS.records_id_column: "1", REDDIT_COLUMNS.text_column: "hello"}]),
+        lambda _spec, _dataset_id: pd.DataFrame([{REDDIT_COLUMNS.records_id_column: "1", REDDIT_COLUMNS.text_column: "hello"}]),
     )
 
     generate_reddit_features(VALID_REDDIT_DATASET_ID)

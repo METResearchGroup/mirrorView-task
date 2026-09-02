@@ -177,7 +177,7 @@ def test_generate_twitter_features_defaults_to_opik_disabled(monkeypatch) -> Non
     )
     monkeypatch.setattr(
         "data_platform.generate_features.platform_cli.load_preprocessed_records",
-        lambda spec, dataset_id: pd.DataFrame([{TWITTER_COLUMNS.records_id_column: "1", TWITTER_COLUMNS.text_column: "hello"}]),
+        lambda _spec, _dataset_id: pd.DataFrame([{TWITTER_COLUMNS.records_id_column: "1", TWITTER_COLUMNS.text_column: "hello"}]),
     )
 
     generate_twitter_features(VALID_TWITTER_DATASET_ID)
