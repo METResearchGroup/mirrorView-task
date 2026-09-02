@@ -2,7 +2,7 @@
 
 ## 2026-09-02
 
-1. Collapsed duplicate skip, path, completeness, and search-term helpers in `data_platform` so feature skip, run gates, filenames, and keyword quoting each have one API, and the models package exports every sync record model. [PR #90](https://github.com/METResearchGroup/mirrorView-task/pull/90)
+1. Feature skip, run completeness checks, feature filenames, and keyword quoting in `data_platform` each use one shared helper instead of copies under different names. The `data_platform.models` package now exports every sync record model. [PR #90](https://github.com/METResearchGroup/mirrorView-task/pull/90)
 
 ## 2026-09-01
 

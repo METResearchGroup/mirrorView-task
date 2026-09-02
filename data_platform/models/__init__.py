@@ -1,4 +1,4 @@
-"""Sync record models for every ingest platform."""
+"""Export the sync record models for every ingest platform."""
 
 from data_platform.models.sync import (
     SyncBlueskyPostModel,

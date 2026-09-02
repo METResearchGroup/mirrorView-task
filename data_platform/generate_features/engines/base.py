@@ -64,8 +64,8 @@ def load_seen_ids_from_features_dir(
     Returns
     -------
     set of str
-        Distinct ids already written for this feature. Empty when the file
-        is missing.
+        Distinct ids already in the feature file. The set is empty when
+        the file is missing.
     """
     return feature_storage.load_seen_ids_from_disk(
         feature_storage.root_dir,
@@ -78,7 +78,11 @@ def filter_seen_tasks(
     feature_storage: StorageManager,
     id_column: str,
 ) -> list[LabelTask]:
-    """Drop tasks whose id is already labeled in the on-disk feature file."""
+    """Drop tasks whose LabelTask.uri is already present in the feature file.
+
+    ``id_column`` selects the column to read from disk. Task matching still
+    uses ``LabelTask.uri``, which holds the record id from the input table.
+    """
     seen = load_seen_ids_from_features_dir(feature_storage, id_column)
     if not seen:
         return tasks

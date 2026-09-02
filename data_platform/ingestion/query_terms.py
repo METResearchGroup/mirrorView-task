@@ -1,6 +1,6 @@
-"""Quote keyword search terms shared by Bluesky and Twitter ingest.
+"""Quote keyword search terms that Bluesky ingest and Twitter ingest share.
 
-Run from the repo root:
+Run this import from the repo root with
 
     PYTHONPATH=. uv run python -c \\
         "from data_platform.ingestion.query_terms import quote_query_term"
@@ -14,7 +14,7 @@ ESCAPED_QUOTE = '\\"'
 
 
 def quote_query_term(keyword: str) -> str:
-    """Return a search term, quoted when it needs search-syntax escaping.
+    """Return the keyword as a search term, and wrap it in quotes when it needs escaping.
 
     Parameters
     ----------
@@ -24,8 +24,8 @@ def quote_query_term(keyword: str) -> str:
     Returns
     -------
     str
-        The original keyword, or a double-quoted escaped form when the
-        keyword contains whitespace or search operators.
+        The original keyword if it has no whitespace or search operators.
+        Otherwise the keyword in double quotes, with inner quotes escaped.
     """
     needs_quotes = any(ch.isspace() for ch in keyword) or any(
         ch in keyword for ch in SEARCH_SYNTAX_CHARS

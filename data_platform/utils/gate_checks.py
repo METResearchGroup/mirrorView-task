@@ -5,7 +5,7 @@ from data_platform.utils.storage import StorageManager
 
 
 def require_all_runs_complete(storage: StorageManager, dataset_id: str) -> None:
-    """Raise when storage reports a missing or incomplete stage run."""
+    """Raise when the stage has no run directory, or when a run is incomplete."""
     storage.require_all_runs_complete(dataset_id)
 
 

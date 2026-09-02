@@ -1,6 +1,6 @@
-"""Resolve feature-label file paths using StorageManager filename rules.
+"""Build paths to feature label files with the same filename helper as StorageManager.
 
-Run from the repo root:
+Run this import from the repo root with
 
     PYTHONPATH=. uv run python -c \\
         "from data_platform.utils.duckdb_features import feature_glob"

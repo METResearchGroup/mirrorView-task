@@ -51,7 +51,7 @@ def format_filename(stem: str, file_format: ValidDataFormats) -> str:
     stem
         File name without a suffix, such as a feature name or ``posts``.
     file_format
-        CSV or parquet suffix owned by the dataset manifest.
+        CSV or parquet suffix from the dataset manifest.
 
     Returns
     -------
@@ -105,7 +105,7 @@ class StorageManager:
         self.dataset_id = validate_dataset_id(dataset_id)
         self.format: ValidDataFormats = load_dataset_format(platform, dataset_id)
         stem = Path(records_filename).stem
-        self.records_filename = f"{stem}.{self.format.value}"
+        self.records_filename = format_filename(stem, self.format)
 
     @property
     def platform_data_root(self) -> Path:
