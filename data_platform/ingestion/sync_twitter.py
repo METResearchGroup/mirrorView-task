@@ -54,13 +54,13 @@ class TwitterTask:
     keyword: str
 
 
+def _resolve_search_terms(ingestion_params: dict[str, Any]) -> list[str]:
+    raise NotImplementedError
+
+
 def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[TwitterTask]:
-    keyword = ingestion_params.get("keyword")
-    if isinstance(keyword, list) and keyword:
-        return [TwitterTask(task_id=str(k), keyword=str(k)) for k in keyword]
-    if isinstance(keyword, str) and keyword:
-        return [TwitterTask(task_id=keyword, keyword=keyword)]
-    raise ValueError("ingestion_params must include 'keyword' as a string or list of strings")
+    terms = _resolve_search_terms(ingestion_params)
+    return [TwitterTask(task_id=term, keyword=term) for term in terms]
 
 
 def _initial_task_progress(task: TwitterTask) -> dict[str, Any]:
