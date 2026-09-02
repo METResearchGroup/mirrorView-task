@@ -25,10 +25,10 @@ REDDIT_CURATE_SPEC = CuratePlatformSpec(
     storage_cls=RedditStorageManager,
     columns=REDDIT_COLUMNS,
     record_noun="comments",
+    require_features_complete=False,
+    require_all_runs_complete=False,
+    skip_if_up_to_date=False,
 )
-
-ID_COLUMN = REDDIT_COLUMNS.records_id_column
-FEATURE_FILE_ID_COLUMN = REDDIT_COLUMNS.feature_file_id_column
 
 
 def curate(config_path: Path, dataset_id: str) -> Path:

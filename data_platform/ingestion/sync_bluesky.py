@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from data_platform.ingestion.query_terms import quote_query_term
 from data_platform.ingestion.retry import retry_bluesky_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
@@ -61,14 +62,6 @@ class BlueskyTask:
     query: str
 
 
-def _quote_query_term(keyword: str) -> str:
-    """Wrap a keyword in quotes when it contains whitespace or search-syntax characters."""
-    if any(ch.isspace() for ch in keyword) or any(ch in keyword for ch in ('"', ":", "(", ")")):
-        escaped = keyword.replace('"', '\\"')
-        return f'"{escaped}"'
-    return keyword
-
-
 def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
     """Build one checkpoint task per entry in ingestion_params.keywords."""
     keywords = ingestion_params.get("keywords")
@@ -80,7 +73,7 @@ def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
         if not isinstance(raw, str) or not raw.strip():
             raise ValueError("ingestion_params.keywords entries must be non-empty strings")
         keyword = raw.strip()
-        items.append(BlueskyTask(task_id=keyword, query=_quote_query_term(keyword)))
+        items.append(BlueskyTask(task_id=keyword, query=quote_query_term(keyword)))
     return items
 
 

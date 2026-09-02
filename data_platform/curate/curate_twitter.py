@@ -25,10 +25,10 @@ TWITTER_CURATE_SPEC = CuratePlatformSpec(
     storage_cls=TwitterStorageManager,
     columns=TWITTER_COLUMNS,
     record_noun="posts",
+    require_features_complete=False,
+    require_all_runs_complete=False,
+    skip_if_up_to_date=False,
 )
-
-ID_COLUMN = TWITTER_COLUMNS.records_id_column
-FEATURE_FILE_ID_COLUMN = TWITTER_COLUMNS.feature_file_id_column
 
 
 def curate(config_path: Path, dataset_id: str) -> Path:

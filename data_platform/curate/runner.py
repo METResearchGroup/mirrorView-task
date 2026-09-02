@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,8 +14,11 @@ import typer
 
 from data_platform.curate.apply_rules import ApplyRulesResult, apply_rules, load_rules_config
 from data_platform.curate.consolidate import ConsolidateConfig, build_wide_table
+from data_platform.generate_features.metadata import metadata_path
+from data_platform.generate_features.models import FeatureRunMetadata
 from data_platform.utils.config_paths import resolve_config_path
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
+from data_platform.utils.gate_checks import require_features_complete
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
@@ -24,10 +28,22 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class CuratePlatformSpec:
+    """Settings object for one platform's curate command-line script.
+
+    Bluesky sets the completeness and skip flags to true. Reddit and Twitter
+    leave ``require_features_complete``, ``require_all_runs_complete``, and
+    ``skip_if_up_to_date`` false, so each call writes a new curated run. If you
+    set any of those flags to true on another platform, ``curate_with_spec``
+    honors them the same way.
+    """
+
     platform: str
     storage_cls: StorageManagerFactory
     columns: PlatformSpecificColumns
     record_noun: str
+    require_features_complete: bool = False
+    require_all_runs_complete: bool = False
+    skip_if_up_to_date: bool = False
 
 
 def build_curate_metadata(
@@ -116,10 +132,124 @@ def run_curation(
     return output_path
 
 
+def load_features_run_metadata(platform: str, dataset_id: str) -> FeatureRunMetadata:
+    """Load features/metadata.json for a dataset.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the features metadata file does not exist.
+    """
+    features_meta_path = metadata_path(dataset_root(platform, dataset_id) / "features")
+    if not features_meta_path.exists():
+        raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
+    with features_meta_path.open(encoding="utf-8") as handle:
+        return FeatureRunMetadata.from_dict(json.load(handle))
+
+
+def _preprocessed_run_dirs(spec: CuratePlatformSpec, dataset_id: str) -> list[Path]:
+    preprocessed_storage = spec.storage_cls("preprocessed", dataset_id)
+    if not preprocessed_storage.root_dir.exists():
+        return []
+    return sorted(path for path in preprocessed_storage.root_dir.iterdir() if path.is_dir())
+
+
+def curated_export_if_up_to_date(
+    spec: CuratePlatformSpec,
+    dataset_id: str,
+    rules_hash: str,
+    features_meta: FeatureRunMetadata,
+) -> Path | None:
+    """Return the path of the latest curated export when the preprocess runs and
+    the rules file have not changed.
+
+    The function compares the current preprocess run list and the rules hash
+    with the latest curated run. It returns None when you need a new curated
+    export.
+    """
+    root = dataset_root(spec.platform, dataset_id)
+    current_runs = [
+        relative_run_path(root, path) for path in _preprocessed_run_dirs(spec, dataset_id)
+    ]
+    if features_meta.source_preprocessed_runs != current_runs:
+        return None
+    curated_storage = spec.storage_cls("curated", dataset_id)
+    if not curated_storage.root_dir.exists():
+        return None
+    run_dirs = sorted(path for path in curated_storage.root_dir.iterdir() if path.is_dir())
+    if not run_dirs:
+        return None
+    return _matching_curated_export(curated_storage, run_dirs[-1], current_runs, rules_hash)
+
+
+def _matching_curated_export(
+    curated_storage: StorageManager,
+    latest_run_dir: Path,
+    current_runs: list[str],
+    rules_hash: str,
+) -> Path | None:
+    latest_meta = curated_storage.load_run_metadata(latest_run_dir)
+    if latest_meta.get("source_preprocessed_runs") != current_runs:
+        return None
+    if latest_meta.get("rules_hash") != rules_hash:
+        return None
+    output_filename = latest_meta.get("files", {}).get("export")
+    if not output_filename:
+        return None
+    output_path = latest_run_dir / output_filename
+    if not output_path.exists():
+        return None
+    return output_path
+
+
 def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpec) -> Path:
-    """Run curation for a platform spec, hashing the rules config for metadata."""
+    """Run curation for one platform, using the completeness and skip flags on
+    ``spec``.
+
+    Reddit and Twitter leave those flags false. Bluesky sets them true.
+
+    Returns
+    -------
+    Path
+        Path of the curated export CSV.
+
+    Raises
+    ------
+    FileNotFoundError
+        When required features metadata is missing.
+    RuntimeError
+        When a completeness check fails.
+    """
+    dataset_id = validate_dataset_id(dataset_id)
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
+    features_meta = _load_and_gate_features(spec, dataset_id)
+    if spec.require_all_runs_complete:
+        spec.storage_cls("preprocessed", dataset_id).require_all_runs_complete(dataset_id)
+    if spec.skip_if_up_to_date:
+        if features_meta is None:
+            raise RuntimeError(f"Features metadata required to skip curation for {dataset_id}")
+        existing = curated_export_if_up_to_date(spec, dataset_id, rules_hash, features_meta)
+        if existing is not None:
+            print(f"curate_{spec.platform}: already up to date, skipping ({existing})")
+            return existing
     return run_curation(config_path, dataset_id, spec, rules_hash=rules_hash)
+
+
+def _load_and_gate_features(
+    spec: CuratePlatformSpec, dataset_id: str
+) -> FeatureRunMetadata | None:
+    """Load features metadata when completeness or skip flags require it.
+
+    Returns None when both ``require_features_complete`` and
+    ``skip_if_up_to_date`` are false, because those callers do not read
+    features metadata.
+    """
+    if not spec.require_features_complete and not spec.skip_if_up_to_date:
+        return None
+    features_meta = load_features_run_metadata(spec.platform, dataset_id)
+    if spec.require_features_complete:
+        require_features_complete(features_meta, dataset_id)
+    return features_meta
 
 
 def run_curate_main(
@@ -130,7 +260,7 @@ def run_curate_main(
     dataset_id: str,
     config: Path,
 ) -> None:
-    """Shared Typer main for Reddit/Twitter curate CLIs."""
+    """Shared Typer ``main`` used by each platform curate script."""
     config_path = resolve_config_path(config, configs_dir)
     curate_with_spec(config_path, dataset_id, spec)
 
@@ -141,7 +271,7 @@ def make_curate_cli(
     *,
     configs_help: str,
 ) -> Callable[[], None]:
-    """Build a Typer CLI entrypoint for a platform curate script."""
+    """Return a Typer ``main`` function for a platform curate script."""
 
     def main(
         dataset_id: str = typer.Option(
