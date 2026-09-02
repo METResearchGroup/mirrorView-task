@@ -454,6 +454,57 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
     assert metadata["tasks"]["beta"]["status"] == "skipped"
 
 
+def test_run_sync_tasks_caps_fetch_by_remaining_max_posts(
+    data_root,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = minimal_sync_config()
+    ingestion_params = dict(config["ingestion_params"])
+    ingestion_params["max_posts"] = 2
+    ingestion_params["limit"] = 5
+    sync_tasks = sync_bluesky.build_sync_tasks(ingestion_params)
+    storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+    metadata = sync_bluesky.init_sync_metadata(
+        config,
+        TEST_INGEST_CONFIG_PATH,
+        "2026_05_30-10:00:00",
+        sync_tasks,
+    )
+
+    def fake_search(
+        client: Any,
+        fetch_cfg: dict[str, Any],
+        query: str,
+        *,
+        page_limit: int,
+        cursor: str | None = None,
+    ):
+        return mock_search_response(
+            [
+                mock_post(f"at://did:plc:ex/app.bsky.feed.post/{query}-1"),
+                mock_post(f"at://did:plc:ex/app.bsky.feed.post/{query}-2"),
+                mock_post(f"at://did:plc:ex/app.bsky.feed.post/{query}-3"),
+            ]
+        )
+
+    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+
+    sync_bluesky.run_sync_tasks(
+        MagicMock(),
+        ingestion_params,
+        run_dir,
+        storage,
+        metadata,
+        sync_tasks,
+        filename=storage.records_filename,
+    )
+
+    assert metadata["row_count"] == 2
+    assert metadata["tasks"]["alpha"]["status"] == "completed"
+    assert metadata["tasks"]["beta"]["status"] == "skipped"
+
+
 class TestResolveSearchAuthor:
     """Tests for _resolve_search_author."""
 
