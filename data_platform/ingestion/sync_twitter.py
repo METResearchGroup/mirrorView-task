@@ -218,7 +218,8 @@ def sync_records(
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
     record_types: list[str] = config["record_types"]
-    raise NotImplementedError
+    if TWEETS_RECORD_TYPE not in record_types:
+        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
     client = init_twitter_client()
 
     output_dir, metadata = prepare_sync_run(
