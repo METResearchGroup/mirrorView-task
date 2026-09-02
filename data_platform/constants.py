@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-PACKAGE_ROOT: Path = Path()
-POSTS_FILENAME: str = ""
-COMMENTS_FILENAME: str = ""
-METADATA_FILENAME: str = ""
+PACKAGE_ROOT: Path = Path(__file__).resolve().parent
+POSTS_FILENAME: str = "posts.csv"
+COMMENTS_FILENAME: str = "comments.csv"
+METADATA_FILENAME: str = "metadata.json"
