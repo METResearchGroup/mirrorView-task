@@ -18,8 +18,6 @@ ingestion_params:
   limit_per_task: 300
   comments_per_post: 300
   min_comment_body_length: 30
-  comments_dedupe_policy:
-    - current_run
+  dedupe_policy:
     - prior_runs_same_dataset
-  posts_dedupe_policy:
-    - current_run
+  posts_dedupe_policy: []

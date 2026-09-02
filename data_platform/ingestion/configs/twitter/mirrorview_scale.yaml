@@ -15,7 +15,6 @@ ingestion_params:
     - retweet
     - quote
   dedupe_policy:
-    - current_run
     - prior_runs_same_dataset
   keywords:
     # gun_control
