@@ -63,6 +63,16 @@ class TestPolicyIncludesPriorRuns:
         expected = True
         assert result is expected
 
+    def test_shared_policy_token_alone_includes_prior_runs(self) -> None:
+        result = policy_includes_prior_runs([PRIOR_RUN_POLICY])
+        expected = True
+        assert result is expected
+
+    def test_empty_policy_does_not_include_prior_runs(self) -> None:
+        result = policy_includes_prior_runs([])
+        expected = False
+        assert result is expected
+
     def test_unknown_policy_token_does_not_include_prior_runs(self) -> None:
         result = policy_includes_prior_runs(["current_run", "unknown_policy"])
         expected = False
