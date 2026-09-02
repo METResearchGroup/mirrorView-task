@@ -69,7 +69,10 @@ class DedupeSession:
         )
 
     def load_seen_ids_from_all_runs(self, storage: StorageManager) -> None:  # noqa: F821
-        raise NotImplementedError
+        self.seen_ids |= storage.load_seen_ids_from_all_runs(
+            self.config.id_column,
+            filename=self.config.filename,
+        )
 
     def exclude_seen_ids(
         self, rows: list[dict[str, Any]]
