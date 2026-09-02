@@ -9,7 +9,6 @@ Run from the repo root:
 from __future__ import annotations
 
 from collections.abc import Sequence
-from pathlib import Path
 
 import pandas as pd
 import typer
@@ -63,7 +62,7 @@ def filter_posts(
     return filter_records(posts, spec)
 
 
-def preprocess_records(dataset_id: str) -> Path:
+def preprocess_records(dataset_id: str) -> str:
     dataset_id = validate_dataset_id(dataset_id)
     return run_preprocess_records(dataset_id, BLUESKY_SPEC)
 
