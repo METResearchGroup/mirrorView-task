@@ -45,8 +45,24 @@ def add_canonical_text_column(
 ) -> pd.DataFrame:
     """Copy native post or comment text onto the shared ``text`` column.
 
-    Native fields stay on the frame. Downstream stages read ``spec.columns.text_column``.
+    Native fields such as Reddit ``body`` stay on the frame for audit.
     The input frame is not modified.
+
+    Parameters
+    ----------
+    spec
+        ``native_text_column`` is the copy source. The destination is always
+        canonical ``text``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame that includes ``text``.
+
+    Raises
+    ------
+    KeyError
+        When ``spec.native_text_column`` is missing from the frame.
     """
     out = df.copy()
     native_text = out[spec.native_text_column]
