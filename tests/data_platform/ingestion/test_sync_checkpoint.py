@@ -6,6 +6,8 @@ from typing import Any
 import pytest
 
 from data_platform.ingestion.sync_checkpoint import (
+    COMMENTS_DEDUPE_POLICY_KEY,
+    POSTS_DEDUPE_POLICY_KEY,
     SyncStatus,
     TaskStatus,
     build_base_sync_metadata,
@@ -19,13 +21,14 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_posts,
     record_type_to_filename,
     require_dataset_id,
+    resolve_dedupe_policy,
     resolve_limit_per_task,
     stop_at_record_cap,
     sync_status_from_tasks,
     validate_tasks_for_resume,
 )
 from data_platform.utils.dataset import load_dataset_manifest
-from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.utils.deduplication import DedupeConfig, DedupeSession, PRIOR_RUN_POLICY
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage, TwitterStorageManager
 from lib.constants import REPO_ROOT
 from tests.data_platform.constants import VALID_DATASET_ID, VALID_TWITTER_DATASET_ID
@@ -403,3 +406,72 @@ class TestParseMaxComments:
         result = parse_max_comments(ingestion_params)
 
         assert result == expected
+
+
+class TestResolveDedupePolicy:
+    """Tests for resolve_dedupe_policy()."""
+
+    def test_returns_shared_policy_when_no_override(self) -> None:
+        ingestion_params = {"dedupe_policy": [PRIOR_RUN_POLICY]}
+        expected = [PRIOR_RUN_POLICY]
+
+        result = resolve_dedupe_policy(ingestion_params)
+
+        assert result == expected
+
+    def test_falls_back_to_type_key_when_shared_key_is_absent(self) -> None:
+        ingestion_params = {COMMENTS_DEDUPE_POLICY_KEY: [PRIOR_RUN_POLICY]}
+        expected = [PRIOR_RUN_POLICY]
+
+        result = resolve_dedupe_policy(ingestion_params, COMMENTS_DEDUPE_POLICY_KEY)
+
+        assert result == expected
+
+    def test_empty_override_does_not_fall_back_to_shared_key(self) -> None:
+        ingestion_params = {
+            "dedupe_policy": [PRIOR_RUN_POLICY],
+            POSTS_DEDUPE_POLICY_KEY: [],
+        }
+        expected: list[str] = []
+
+        result = resolve_dedupe_policy(ingestion_params, POSTS_DEDUPE_POLICY_KEY)
+
+        assert result == expected
+
+    def test_type_key_wins_when_both_set(self) -> None:
+        ingestion_params = {
+            "dedupe_policy": [],
+            COMMENTS_DEDUPE_POLICY_KEY: [PRIOR_RUN_POLICY],
+        }
+        expected = [PRIOR_RUN_POLICY]
+
+        result = resolve_dedupe_policy(ingestion_params, COMMENTS_DEDUPE_POLICY_KEY)
+
+        assert result == expected
+
+    def test_present_none_override_does_not_fall_back(self) -> None:
+        ingestion_params = {
+            "dedupe_policy": [PRIOR_RUN_POLICY],
+            POSTS_DEDUPE_POLICY_KEY: None,
+        }
+        expected = None
+
+        result = resolve_dedupe_policy(ingestion_params, POSTS_DEDUPE_POLICY_KEY)
+
+        assert result is expected
+
+    def test_returns_none_when_unset(self) -> None:
+        ingestion_params: dict[str, Any] = {}
+        expected = None
+
+        result = resolve_dedupe_policy(ingestion_params)
+
+        assert result is expected
+
+    def test_ignores_type_keys_when_no_override(self) -> None:
+        ingestion_params = {COMMENTS_DEDUPE_POLICY_KEY: [PRIOR_RUN_POLICY]}
+        expected = None
+
+        result = resolve_dedupe_policy(ingestion_params)
+
+        assert result is expected

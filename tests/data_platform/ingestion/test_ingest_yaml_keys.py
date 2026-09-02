@@ -15,9 +15,12 @@ INGEST_CONFIGS_DIR = (
 UNREAD_INGEST_YAML_KEYS = frozenset(
     {"query_batch_size", "dedupe_comments_from_prior_raw_runs"}
 )
-ALLOWED_DEDUPE_POLICY_TOKENS = frozenset({"current_run", PRIOR_RUN_POLICY})
+ALLOWED_DEDUPE_POLICY_TOKENS = frozenset({PRIOR_RUN_POLICY})
 DEDUPE_POLICY_KEYS = frozenset(
     {"dedupe_policy", "comments_dedupe_policy", "posts_dedupe_policy"}
+)
+REDDIT_TYPE_DEDUPE_POLICY_KEYS = frozenset(
+    {"comments_dedupe_policy", "posts_dedupe_policy"}
 )
 
 
@@ -312,3 +315,79 @@ class TestRunWideCapYamlKeys:
         params = loaded["ingestion_params"]
         result = params.get(cap_key)
         assert result == expected
+
+
+class TestDedupePolicyYamlShape:
+    """Tests that ingest YAML uses one skip list and drops current_run."""
+
+    def test_committed_ingest_yaml_does_not_use_current_run_token(self) -> None:
+        found: list[str] = []
+        for platform in INGEST_PLATFORMS:
+            for path in sorted((INGEST_CONFIGS_DIR / platform).glob("*.yaml")):
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if not isinstance(params, dict):
+                    continue
+                for key in DEDUPE_POLICY_KEYS:
+                    raw_policy = params.get(key)
+                    if not isinstance(raw_policy, list):
+                        continue
+                    if "current_run" in raw_policy:
+                        found.append(f"{path}: {key}")
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_bluesky_twitter_yaml_does_not_use_type_keys(self) -> None:
+        found: list[str] = []
+        for platform in ("bluesky", "twitter"):
+            for path in sorted((INGEST_CONFIGS_DIR / platform).glob("*.yaml")):
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if not isinstance(params, dict):
+                    continue
+                for key in sorted(REDDIT_TYPE_DEDUPE_POLICY_KEYS & params.keys()):
+                    found.append(f"{path}: {key}")
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_reddit_shared_policy_files_omit_type_keys(self) -> None:
+        found: list[str] = []
+        for name in ("default.yaml", "mirrorview.yaml"):
+            path = INGEST_CONFIGS_DIR / "reddit" / name
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if not isinstance(params, dict):
+                found.append(f"{path}: missing ingestion_params")
+                continue
+            if params.get("dedupe_policy") != [PRIOR_RUN_POLICY]:
+                found.append(f"{path}: dedupe_policy")
+            for key in sorted(REDDIT_TYPE_DEDUPE_POLICY_KEYS & params.keys()):
+                found.append(f"{path}: {key}")
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_reddit_scale_files_override_posts(self) -> None:
+        found: list[str] = []
+        for name in ("mirrorview_scale.yaml", "mirrorview_scale_run_2.yaml"):
+            path = INGEST_CONFIGS_DIR / "reddit" / name
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if not isinstance(params, dict):
+                found.append(f"{path}: missing ingestion_params")
+                continue
+            if params.get("dedupe_policy") != [PRIOR_RUN_POLICY]:
+                found.append(f"{path}: dedupe_policy")
+            if params.get("posts_dedupe_policy") != []:
+                found.append(f"{path}: posts_dedupe_policy")
+            if "comments_dedupe_policy" in params:
+                found.append(f"{path}: comments_dedupe_policy")
+        expected: list[str] = []
+        assert found == expected
+
+    def test_bluesky_smoke_yaml_omits_dedupe_policy(self) -> None:
+        path = INGEST_CONFIGS_DIR / "bluesky" / "smoke.yaml"
+        loaded = _load_yaml_mapping(path)
+        params = loaded["ingestion_params"]
+        result = "dedupe_policy" in params
+        expected = False
+        assert result is expected
