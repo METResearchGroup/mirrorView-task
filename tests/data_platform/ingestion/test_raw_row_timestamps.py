@@ -1,4 +1,4 @@
-"""Tests that raw ingest rows carry ISO created_at and sync_timestamp.
+"""These tests check that raw ingest rows include ISO created_at and sync_timestamp.
 
 Run from the repo root:
 
@@ -92,7 +92,7 @@ class TestSubmissionToRow:
     """Tests for submission_to_row()."""
 
     def test_writes_iso_created_at_and_keeps_created_utc_alias(self) -> None:
-        """Reddit posts write ISO created_at and keep created_utc as an alias."""
+        """submission_to_row writes ISO created_at and keeps created_utc as an alias."""
         result = submission_to_row(_mock_submission(), SYNC_TIMESTAMP)
 
         expected = CREATED_AT_ISO
@@ -106,7 +106,7 @@ class TestCommentToRow:
     """Tests for comment_to_row()."""
 
     def test_writes_iso_created_at_and_keeps_created_utc_alias(self) -> None:
-        """Reddit comments write ISO created_at and keep created_utc as an alias."""
+        """comment_to_row writes ISO created_at and keeps created_utc as an alias."""
         result = comment_to_row(
             _mock_comment(),
             _mock_submission(),
@@ -126,7 +126,7 @@ class TestTweetToRow:
     """Tests for tweet_to_row()."""
 
     def test_keeps_created_at_and_sync_timestamp(self) -> None:
-        """Twitter rows already persist ISO created_at and sync_timestamp."""
+        """tweet_to_row still writes ISO created_at and sync_timestamp."""
         tweet = SimpleNamespace(
             id="123",
             text="hello",

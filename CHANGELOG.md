@@ -2,7 +2,7 @@
 
 ## 2026-09-02
 
-1. Raw ingest rows on Bluesky, Reddit, and Twitter now share ISO `created_at` and run `sync_timestamp`, so later stages can read one time pair. Reddit still writes `created_utc` as the same ISO alias. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
+1. Ingest now writes ISO `created_at` and the run `sync_timestamp` on Bluesky, Reddit, and Twitter rows, so later stages can read those two fields. Reddit still also writes `created_utc` as the same ISO string. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
 
 ## 2026-09-01
 
