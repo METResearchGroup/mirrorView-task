@@ -25,6 +25,9 @@ TWITTER_CURATE_SPEC = CuratePlatformSpec(
     storage_cls=TwitterStorageManager,
     columns=TWITTER_COLUMNS,
     record_noun="posts",
+    require_features_complete=False,
+    require_all_runs_complete=False,
+    skip_if_up_to_date=False,
 )
 
 

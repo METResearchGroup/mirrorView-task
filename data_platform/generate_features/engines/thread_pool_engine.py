@@ -8,12 +8,19 @@ from data_platform.generate_features.engines.base import (
     BaseBatchExecutionEngine,
     row_with_label_timestamp,
 )
-from data_platform.generate_features.models import LabelTask
+from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
 from lib.timestamp_utils import get_current_timestamp
 
 
 class ThreadPoolBatchEngine(BaseBatchExecutionEngine):
     """Label tasks by calling generate_fn concurrently in a thread pool."""
+
+    def __init__(self, spec: FeatureSpec, run_config: FeatureRunConfig) -> None:
+        super().__init__(spec, run_config)
+        generate_fn = spec.generate_fn
+        if generate_fn is None:
+            raise ValueError(f"Feature {spec.name} requires generate_fn")
+        self._generate_fn = generate_fn
 
     def batch_label_records(self, tasks: list[LabelTask]) -> list[dict]:
         """Score each task with generate_fn and return validated label dict rows."""
@@ -24,9 +31,7 @@ class ThreadPoolBatchEngine(BaseBatchExecutionEngine):
         rows: list[dict] = []
 
         def _label_one(task: LabelTask) -> dict:
-            if self.spec.generate_fn is None:
-                raise ValueError(f"Feature {self.spec.name} requires generate_fn")
-            result = self.spec.generate_fn(task.uri, task.text)
+            result = self._generate_fn(task.uri, task.text)
             return row_with_label_timestamp(
                 result.model_dump(),
                 label_timestamp=label_timestamp,

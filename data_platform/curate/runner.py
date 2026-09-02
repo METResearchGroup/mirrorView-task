@@ -28,12 +28,13 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class CuratePlatformSpec:
-    """Platform binding for the shared curate CLI.
+    """Settings object for one platform's curate command-line script.
 
-    Completeness gates and skip-if-up-to-date are Bluesky-only on purpose.
-    Reddit and Twitter leave these flags false so every call writes a new
-    curated run. The shared runner applies a true flag the same way on any
-    platform.
+    Bluesky sets the completeness and skip flags to true. Reddit and Twitter
+    leave ``require_features_complete``, ``require_all_runs_complete``, and
+    ``skip_if_up_to_date`` false, so each call writes a new curated run. If you
+    set any of those flags to true on another platform, ``curate_with_spec``
+    honors them the same way.
     """
 
     platform: str
@@ -159,10 +160,12 @@ def curated_export_if_up_to_date(
     rules_hash: str,
     features_meta: FeatureRunMetadata,
 ) -> Path | None:
-    """Return the latest export path when curated inputs have not changed.
+    """Return the path of the latest curated export when the preprocess runs and
+    the rules file have not changed.
 
-    Compares the current preprocessed run list and rules hash against the
-    latest curated run. Returns None when a new curated export is needed.
+    The function compares the current preprocess run list and the rules hash
+    with the latest curated run. It returns None when you need a new curated
+    export.
     """
     root = dataset_root(spec.platform, dataset_id)
     current_runs = [
@@ -200,22 +203,22 @@ def _matching_curated_export(
 
 
 def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpec) -> Path:
-    """Run gated, optionally skipped curation for a platform spec.
+    """Run curation for one platform, using the completeness and skip flags on
+    ``spec``.
 
-    Completeness and skip behavior come from flags on ``spec``. Reddit and
-    Twitter leave those flags false; Bluesky sets them true.
+    Reddit and Twitter leave those flags false. Bluesky sets them true.
 
     Returns
     -------
     Path
-        Path to the curated export CSV.
+        Path of the curated export CSV.
 
     Raises
     ------
     FileNotFoundError
         When required features metadata is missing.
     RuntimeError
-        When a completeness gate fails.
+        When a completeness check fails.
     """
     dataset_id = validate_dataset_id(dataset_id)
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
@@ -251,7 +254,7 @@ def run_curate_main(
     dataset_id: str,
     config: Path,
 ) -> None:
-    """Shared Typer main for platform curate CLIs."""
+    """Shared Typer ``main`` used by each platform curate script."""
     config_path = resolve_config_path(config, configs_dir)
     curate_with_spec(config_path, dataset_id, spec)
 
@@ -262,7 +265,7 @@ def make_curate_cli(
     *,
     configs_help: str,
 ) -> Callable[[], None]:
-    """Build a Typer CLI entrypoint for a platform curate script."""
+    """Return a Typer ``main`` function for a platform curate script."""
 
     def main(
         dataset_id: str = typer.Option(

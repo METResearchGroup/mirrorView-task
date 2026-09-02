@@ -16,7 +16,6 @@ from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
     features_from_cli,
     generate_platform_features,
-    load_preprocessed_records,
 )
 from data_platform.models.sync import SyncBlueskyPostModel
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
@@ -30,10 +29,6 @@ BLUESKY_SPEC = FeaturePlatformSpec(
     empty_message="generate_bluesky_features: no preprocessed posts found",
     require_all_runs_complete=True,
 )
-
-
-def load_all_posts(dataset_id: str):
-    return load_preprocessed_records(BLUESKY_SPEC, dataset_id)
 
 
 def generate_bluesky_features(

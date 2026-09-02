@@ -41,7 +41,6 @@ def test_thread_pool_batch_engine_requires_generate_fn() -> None:
         model=_RowModel,
         engine_type="thread_pool",
     )
-    engine = ThreadPoolBatchEngine(spec, FeatureRunConfig(max_concurrency=1))
     with pytest.raises(ValueError, match="generate_fn"):
-        engine.batch_label_records([LabelTask(uri=URI_POST_A, text="hi")])
+        ThreadPoolBatchEngine(spec, FeatureRunConfig(max_concurrency=1))
 
