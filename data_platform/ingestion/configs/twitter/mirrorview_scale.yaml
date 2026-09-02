@@ -7,7 +7,7 @@ date: "2026-06-01"
 record_types:
   - twitter.tweet
 ingestion_params:
-  max_rows: 10000
+  max_posts: 10000
   limit_per_task: 200
   lang: en
   exclude:

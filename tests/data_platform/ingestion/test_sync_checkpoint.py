@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import pytest
 
@@ -14,11 +15,12 @@ from data_platform.ingestion.sync_checkpoint import (
     get_task_progress,
     mark_remaining_tasks_skipped,
     mark_task_completed,
-    parse_max_rows,
+    parse_max_comments,
+    parse_max_posts,
     record_type_to_filename,
     require_dataset_id,
     resolve_limit_per_task,
-    stop_at_max_rows,
+    stop_at_record_cap,
     sync_status_from_tasks,
     validate_tasks_for_resume,
 )
@@ -122,11 +124,6 @@ def test_record_type_to_filename_known_types() -> None:
     assert record_type_to_filename("custom.record") == "record.csv"
 
 
-def test_parse_max_rows_none_when_unset() -> None:
-    assert parse_max_rows({}) is None
-    assert parse_max_rows({"max_rows": 100}) == 100
-
-
 def test_build_base_sync_metadata_includes_tasks() -> None:
     config = _twitter_sync_config()
     metadata = build_base_sync_metadata(
@@ -182,7 +179,7 @@ def test_mark_task_completed_updates_entry_and_metadata(data_root) -> None:
     )
 
 
-def test_stop_at_max_rows_marks_pending_skipped(data_root) -> None:
+def test_stop_at_record_cap_marks_pending_skipped(data_root) -> None:
     storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = {
@@ -192,7 +189,7 @@ def test_stop_at_max_rows_marks_pending_skipped(data_root) -> None:
             "b": {"status": TaskStatus.COMPLETED.value},
         },
     }
-    assert stop_at_max_rows(metadata, storage, run_dir, 10) is True
+    assert stop_at_record_cap(metadata, storage, run_dir, 10) is True
     assert metadata["tasks"]["a"]["status"] == TaskStatus.SKIPPED.value
 
 
@@ -326,3 +323,83 @@ class TestResolveLimitPerTask:
     def test_missing_limit_per_task_raises_key_error(self) -> None:
         with pytest.raises(KeyError):
             resolve_limit_per_task({})
+
+
+class TestParseMaxPosts:
+    """Tests for parse_max_posts()."""
+
+    def test_prefers_max_posts(self) -> None:
+        ingestion_params = {"max_posts": 7}
+        expected = 7
+
+        result = parse_max_posts(ingestion_params)
+
+        assert result == expected
+
+    def test_accepts_zero_max_posts(self) -> None:
+        ingestion_params = {"max_posts": 0}
+        expected = 0
+
+        result = parse_max_posts(ingestion_params)
+
+        assert result == expected
+
+    def test_returns_none_when_unset(self) -> None:
+        ingestion_params: dict[str, Any] = {}
+        expected = None
+
+        result = parse_max_posts(ingestion_params)
+
+        assert result == expected
+
+    def test_returns_none_when_primary_is_explicit_none(self) -> None:
+        ingestion_params = {"max_posts": None}
+        expected = None
+
+        result = parse_max_posts(ingestion_params)
+
+        assert result == expected
+
+    def test_ignores_max_comments(self) -> None:
+        ingestion_params = {"max_comments": 9}
+        expected = None
+
+        result = parse_max_posts(ingestion_params)
+
+        assert result == expected
+
+
+class TestParseMaxComments:
+    """Tests for parse_max_comments()."""
+
+    def test_prefers_max_comments(self) -> None:
+        ingestion_params = {"max_comments": 8}
+        expected = 8
+
+        result = parse_max_comments(ingestion_params)
+
+        assert result == expected
+
+    def test_accepts_zero_max_comments(self) -> None:
+        ingestion_params = {"max_comments": 0}
+        expected = 0
+
+        result = parse_max_comments(ingestion_params)
+
+        assert result == expected
+
+    def test_returns_none_when_unset(self) -> None:
+        ingestion_params: dict[str, Any] = {}
+        expected = None
+
+        result = parse_max_comments(ingestion_params)
+
+        assert result == expected
+
+    def test_ignores_max_posts(self) -> None:
+        ingestion_params = {"max_posts": 7}
+        expected = None
+
+        result = parse_max_comments(ingestion_params)
+
+        assert result == expected

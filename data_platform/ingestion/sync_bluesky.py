@@ -31,7 +31,7 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
-    parse_max_rows,
+    parse_max_posts,
     prepare_sync_run,
     require_dataset_id,
     resolve_limit_per_task,
@@ -148,7 +148,7 @@ def fetch_posts_for_keyword(
     *,
     task_id: str,
     sync_timestamp: str,
-    max_rows: int | None = None,
+    remaining_posts: int | None = None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     """Paginate searchPosts until limit rows are collected or results are exhausted.
 
@@ -163,8 +163,8 @@ def fetch_posts_for_keyword(
         Rows and per-task stats (pages fetched, hits_total from the first page, etc.).
     """
     target = resolve_limit_per_task(ingestion_params)
-    if max_rows is not None:
-        target = min(target, max_rows)
+    if remaining_posts is not None:
+        target = min(target, remaining_posts)
     if target <= 0:
         stats = {
             "task_id": task_id,
@@ -249,10 +249,10 @@ def run_sync_tasks(
 ) -> None:
     """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
 
-    Skips completed tasks on resume, stops early when max_rows is reached, and records failures
+    Skips completed tasks on resume, stops early when max_posts is reached, and records failures
     without aborting the full run.
     """
-    max_rows_int = parse_max_rows(ingestion_params)
+    max_posts_int = parse_max_posts(ingestion_params)
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="uri",
@@ -269,8 +269,8 @@ def run_sync_tasks(
         mark_task_in_progress(entry, storage, output_dir, metadata)
 
         remaining: int | None = None
-        if max_rows_int is not None:
-            remaining = max_rows_int - int(metadata["row_count"])
+        if max_posts_int is not None:
+            remaining = max_posts_int - int(metadata["row_count"])
             if remaining <= 0:
                 return
 
@@ -281,7 +281,7 @@ def run_sync_tasks(
                 task.query,
                 task_id=task.task_id,
                 sync_timestamp=str(metadata["sync_timestamp"]),
-                max_rows=remaining,
+                remaining_posts=remaining,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
             mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
@@ -319,7 +319,7 @@ def run_sync_tasks(
         metadata,
         storage,
         output_dir,
-        max_rows_int=max_rows_int,
+        record_cap=max_posts_int,
         tqdm_desc="Syncing keywords",
         process_task=process_task,
     )

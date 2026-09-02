@@ -9,7 +9,7 @@ ingestion_params:
   dedupe_policy:
     - current_run
     - prior_runs_same_dataset
-  max_rows: 50
+  max_posts: 50
   limit_per_task: 25
   lang: en
   exclude:

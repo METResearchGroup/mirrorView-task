@@ -104,6 +104,84 @@ def test_run_sync_tasks_appends_per_subreddit(
     assert len(comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")) == 2
 
 
+def _run_two_subreddit_comment_sync(
+    monkeypatch: pytest.MonkeyPatch,
+    ingestion_params: dict[str, Any],
+    config: dict[str, Any],
+) -> dict[str, Any]:
+    sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
+    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    post_storage = comment_storage.post_storage()
+    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    metadata = sync_reddit.init_sync_metadata(
+        config,
+        TEST_INGEST_CONFIG_PATH,
+        "2026_05_30-10:00:00",
+        sync_tasks,
+    )
+
+    rows_by_subreddit = {
+        "AlphaSub": (
+            [mock_post_row("t3_post_a1", subreddit="alphasub")],
+            [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
+        ),
+        "BetaSub": (
+            [mock_post_row("t3_post_b1", subreddit="betasub")],
+            [mock_comment_row("t1_comment_b1", subreddit="betasub")],
+        ),
+    }
+
+    def fake_fetch(
+        reddit: Any,
+        fetch_cfg: dict[str, Any],
+        subreddit: str,
+        *,
+        sync_timestamp: str,
+        include_posts: bool,
+        include_comments: bool,
+    ):
+        post_rows, comment_rows = rows_by_subreddit[subreddit]
+        stats = {
+            "subreddit": subreddit,
+            "listing": fetch_cfg.get("listing", "hot"),
+            "limit_per_subreddit": fetch_cfg["limit_per_task"],
+            "posts_collected": len(post_rows),
+            "comments_collected": len(comment_rows),
+        }
+        return post_rows, comment_rows, stats
+
+    monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
+
+    sync_reddit.run_sync_tasks(
+        MagicMock(),
+        ingestion_params,
+        run_dir,
+        comment_storage,
+        post_storage,
+        metadata,
+        sync_tasks,
+        include_comments=True,
+        include_posts=True,
+    )
+    return metadata
+
+
+def test_run_sync_tasks_caps_comments_by_max_comments(
+    data_root,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = minimal_reddit_sync_config()
+    ingestion_params = dict(config["ingestion_params"])
+    ingestion_params["max_comments"] = 1
+    metadata = _run_two_subreddit_comment_sync(
+        monkeypatch, ingestion_params, config
+    )
+
+    assert metadata["row_count"] == 1
+    assert metadata["tasks"]["alphasub"]["status"] == "completed"
+    assert metadata["tasks"]["betasub"]["status"] == "skipped"
+
+
 def test_run_sync_tasks_skips_prior_run_comments(
     data_root,
     monkeypatch: pytest.MonkeyPatch,

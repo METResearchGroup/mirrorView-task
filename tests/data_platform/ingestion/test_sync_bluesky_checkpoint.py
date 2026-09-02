@@ -403,13 +403,13 @@ def test_resume_legacy_keywords_metadata_raises_key_error() -> None:
         validate_tasks_for_resume(sync_tasks, legacy_metadata, entity_label="keywords")
 
 
-def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
+def test_run_sync_tasks_caps_fetch_by_remaining_max_posts(
     data_root,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     config = minimal_sync_config()
     ingestion_params = dict(config["ingestion_params"])
-    ingestion_params["max_rows"] = 2
+    ingestion_params["max_posts"] = 2
     ingestion_params["limit_per_task"] = 5
     sync_tasks = sync_bluesky.build_sync_tasks(ingestion_params)
     storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
