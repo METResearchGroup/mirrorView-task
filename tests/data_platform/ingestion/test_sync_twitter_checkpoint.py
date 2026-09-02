@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_twitter
+from data_platform.ingestion.sync_checkpoint import parse_max_posts
 from data_platform.utils.dataset import ValidDataFormats, write_dataset_manifest
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
@@ -640,5 +641,30 @@ class TestEffectiveLimitPerKeyword:
         expected = 3
 
         result = sync_twitter._effective_limit_per_keyword(ingestion_params, 3)
+
+        assert result == expected
+
+
+class TestRemainingPostBudget:
+    """Tests for parse_max_posts() with Twitter remaining-row budget."""
+
+    def test_remaining_budget_uses_max_posts(self) -> None:
+        ingestion_params = {"max_posts": 8}
+        metadata = {"row_count": 3}
+        expected = 5
+
+        cap = parse_max_posts(ingestion_params)
+        result = sync_twitter._remaining_row_budget(metadata, cap)
+
+        assert result == expected
+
+    def test_effective_limit_uses_max_posts_remaining(self) -> None:
+        ingestion_params = {"max_posts": 8, "limit_per_task": 8}
+        metadata = {"row_count": 0}
+        expected = 8
+
+        cap = parse_max_posts(ingestion_params)
+        remaining = sync_twitter._remaining_row_budget(metadata, cap)
+        result = sync_twitter._effective_limit_per_keyword(ingestion_params, remaining)
 
         assert result == expected

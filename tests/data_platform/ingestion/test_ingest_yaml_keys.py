@@ -222,3 +222,93 @@ class TestLimitPerTaskYamlKey:
         params = loaded["ingestion_params"]
         result = params.get("limit_per_task")
         assert result == expected
+
+
+class TestRunWideCapYamlKeys:
+    """Tests that ingest YAML uses max_posts or max_comments, not max_rows."""
+
+    def test_committed_ingest_yaml_does_not_use_max_rows(self) -> None:
+        found: list[str] = []
+        for platform in INGEST_PLATFORMS:
+            for path in sorted((INGEST_CONFIGS_DIR / platform).glob("*.yaml")):
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if isinstance(params, dict) and "max_rows" in params:
+                    found.append(str(path))
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_bluesky_twitter_yaml_does_not_use_max_comments(self) -> None:
+        found: list[str] = []
+        for platform in ("bluesky", "twitter"):
+            for path in sorted((INGEST_CONFIGS_DIR / platform).glob("*.yaml")):
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if isinstance(params, dict) and "max_comments" in params:
+                    found.append(str(path))
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_reddit_yaml_does_not_use_max_posts(self) -> None:
+        found: list[str] = []
+        for path in sorted((INGEST_CONFIGS_DIR / "reddit").glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if isinstance(params, dict) and "max_posts" in params:
+                found.append(str(path))
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_run_wide_caps_use_primary_keys(self) -> None:
+        missing: list[str] = []
+        required_max_posts = {
+            "bluesky": (
+                "default.yaml",
+                "smoke.yaml",
+                "mirrorview_scale.yaml",
+            ),
+            "twitter": (
+                "default.yaml",
+                "mirrorview.yaml",
+                "mirrorview_scale.yaml",
+                "mirrorview_scale_2.yaml",
+                "keyword_politics_econ_7000.yaml",
+            ),
+        }
+        for platform, names in required_max_posts.items():
+            for name in names:
+                path = INGEST_CONFIGS_DIR / platform / name
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if not isinstance(params, dict) or not isinstance(
+                    params.get("max_posts"), int
+                ):
+                    missing.append(str(path))
+        reddit_default = INGEST_CONFIGS_DIR / "reddit" / "default.yaml"
+        reddit_params = _load_yaml_mapping(reddit_default).get("ingestion_params")
+        if not isinstance(reddit_params, dict) or not isinstance(
+            reddit_params.get("max_comments"), int
+        ):
+            missing.append(str(reddit_default))
+        expected: list[str] = []
+        assert missing == expected
+
+    @pytest.mark.parametrize(
+        "platform,cap_key,expected",
+        [
+            ("bluesky", "max_posts", 200),
+            ("twitter", "max_posts", 50),
+            ("reddit", "max_comments", 100),
+        ],
+    )
+    def test_default_yaml_keeps_run_wide_cap_values(
+        self,
+        platform: str,
+        cap_key: str,
+        expected: int,
+    ) -> None:
+        path = INGEST_CONFIGS_DIR / platform / "default.yaml"
+        loaded = _load_yaml_mapping(path)
+        params = loaded["ingestion_params"]
+        result = params.get(cap_key)
+        assert result == expected
