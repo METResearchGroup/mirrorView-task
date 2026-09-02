@@ -65,7 +65,7 @@ data_platform/data/
 
 Raw, preprocessed, features, and curated stages use timestamped run directories. The timestamp format comes from `lib.timestamp_utils.get_current_timestamp` (for example `2026_08_16-14:30:00`).
 
-Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt. When the script decides which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old flat layout stay unused until you copy them with `data_platform/generate_features/copy_flat_features.py`.
+Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt. When the script decides which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old flat layout stay unused until you move them into a `features/<timestamp>/` folder and delete the leftovers at the features root.
 
 Do not commit files under `data_platform/data/`.
 
