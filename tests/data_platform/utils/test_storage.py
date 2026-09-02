@@ -231,3 +231,35 @@ class TestTwitterStorageManagerRecordsFilename:
         result = storage.records_filename
 
         assert result == expected
+
+
+class TestRedditStorageManagerRecordsFilename:
+    """Tests for RedditStorageManager.records_filename."""
+
+    def test_defaults_to_csv_names_without_manifest(self, data_root) -> None:
+        """Verifies Reddit comment and post storage use csv names with no dataset.json."""
+        comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+        post_storage = comment_storage.post_storage()
+
+        assert comment_storage.records_filename == "comments.csv"
+        assert post_storage.records_filename == "posts.csv"
+
+    def test_uses_parquet_suffix_when_manifest_format_is_parquet(self, data_root) -> None:
+        """Verifies Reddit storage restems comments and posts from dataset.json."""
+        write_dataset_manifest(
+            "reddit",
+            VALID_REDDIT_DATASET_ID,
+            name="test",
+            ingestion_config="data_platform/ingestion/configs/reddit/mirrorview.yaml",
+            data_format=ValidDataFormats.PARQUET,
+        )
+        comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+        post_storage = comment_storage.post_storage()
+        expected_comments = "comments.parquet"
+        expected_posts = "posts.parquet"
+
+        result_comments = comment_storage.records_filename
+        result_posts = post_storage.records_filename
+
+        assert result_comments == expected_comments
+        assert result_posts == expected_posts
