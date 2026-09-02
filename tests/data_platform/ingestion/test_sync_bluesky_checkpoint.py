@@ -458,27 +458,8 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
 class TestResolveSearchAuthor:
     """Tests for _resolve_search_author."""
 
-    def test_prefers_author_filter(self) -> None:
+    def test_returns_author_filter(self) -> None:
         ingestion_params = {"author_filter": "alice.bsky.social"}
-        expected = "alice.bsky.social"
-
-        result = sync_bluesky._resolve_search_author(ingestion_params)
-
-        assert result == expected
-
-    def test_falls_back_to_handle(self) -> None:
-        ingestion_params = {"handle": "old.bsky.social"}
-        expected = "old.bsky.social"
-
-        result = sync_bluesky._resolve_search_author(ingestion_params)
-
-        assert result == expected
-
-    def test_author_filter_wins_when_both_set(self) -> None:
-        ingestion_params = {
-            "author_filter": "alice.bsky.social",
-            "handle": "old.bsky.social",
-        }
         expected = "alice.bsky.social"
 
         result = sync_bluesky._resolve_search_author(ingestion_params)
@@ -490,10 +471,7 @@ class TestResolveSearchAuthor:
         [
             {},
             {"author_filter": ""},
-            {"handle": ""},
-            {"author_filter": "", "handle": ""},
             {"author_filter": None},
-            {"handle": None},
         ],
     )
     def test_returns_none_when_keys_are_missing_or_empty(
@@ -528,19 +506,6 @@ class TestSearchPostsPage:
         assert result == expected_author
         assert params["q"] == "alpha"
         assert params["limit"] == 10
-
-    def test_passes_handle_alias_as_search_author(self) -> None:
-        client = self._client_with_empty_search()
-        ingestion_params = {"sort": "latest", "handle": "old.bsky.social"}
-        expected_author = "old.bsky.social"
-
-        sync_bluesky._search_posts_page(
-            client, ingestion_params, "alpha", page_limit=10
-        )
-
-        params = client.app.bsky.feed.search_posts.call_args.kwargs["params"]
-        result = params.get("author")
-        assert result == expected_author
 
     def test_omits_author_when_filter_is_absent(self) -> None:
         client = self._client_with_empty_search()
