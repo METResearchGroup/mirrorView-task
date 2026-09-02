@@ -173,6 +173,16 @@ def stop_at_record_cap(
 LIMIT_PER_TASK_KEY = "limit_per_task"
 MAX_POSTS_KEY = "max_posts"
 MAX_COMMENTS_KEY = "max_comments"
+DEDUPE_POLICY_KEY = "dedupe_policy"
+COMMENTS_DEDUPE_POLICY_KEY = "comments_dedupe_policy"
+POSTS_DEDUPE_POLICY_KEY = "posts_dedupe_policy"
+
+
+def resolve_dedupe_policy(
+    ingestion_params: dict[str, Any],
+    override_key: str | None = None,
+) -> object:
+    raise NotImplementedError
 
 
 def _parse_optional_int_cap(

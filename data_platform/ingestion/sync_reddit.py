@@ -31,6 +31,8 @@ from praw.models.comment_forest import CommentForest
 
 from data_platform.ingestion.retry import retry_reddit_request
 from data_platform.ingestion.sync_checkpoint import (
+    COMMENTS_DEDUPE_POLICY_KEY,
+    POSTS_DEDUPE_POLICY_KEY,
     TaskStatus,
     build_base_sync_metadata,
     ensure_dataset_manifest,
@@ -41,6 +43,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_comments,
     prepare_sync_run,
     require_dataset_id,
+    resolve_dedupe_policy,
     resolve_limit_per_task,
     run_checkpointed_sync,
     run_sync_cli,
@@ -389,7 +392,9 @@ def _open_reddit_dedupe_sessions(
                 id_column="comment_fullname",
                 filename=comments_filename,
                 include_prior_runs=policy_includes_prior_runs(
-                    ingestion_params.get("comments_dedupe_policy")
+                    resolve_dedupe_policy(
+                        ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
+                    )
                 ),
             )
         )
@@ -400,7 +405,7 @@ def _open_reddit_dedupe_sessions(
                 id_column="reddit_fullname",
                 filename=posts_filename,
                 include_prior_runs=policy_includes_prior_runs(
-                    ingestion_params.get("posts_dedupe_policy")
+                    resolve_dedupe_policy(ingestion_params, POSTS_DEDUPE_POLICY_KEY)
                 ),
             )
         )
