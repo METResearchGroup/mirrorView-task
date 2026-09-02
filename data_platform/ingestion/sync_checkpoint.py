@@ -154,7 +154,15 @@ def stop_at_record_cap(
     output_dir: Path,
     record_cap: int | None,
 ) -> bool:
-    """Mark pending tasks skipped and flush when the counted-record cap is reached."""
+    """Mark pending tasks skipped and flush when the counted-record cap is reached.
+
+    Parameters
+    ----------
+    record_cap
+        Run-wide cap already resolved by ``parse_max_posts`` or
+        ``parse_max_comments``. Compared against ``metadata["row_count"]``.
+        None means no cap.
+    """
     if record_cap is None or metadata["row_count"] < record_cap:
         return False
     mark_remaining_tasks_skipped(get_task_progress(metadata))
@@ -178,10 +186,38 @@ MAX_ROWS_ALIAS = "max_rows"
 
 
 def parse_max_posts(ingestion_params: dict[str, Any]) -> int | None:
+    """Return the run-wide post cap, preferring max_posts over max_rows.
+
+    Parameters
+    ----------
+    ingestion_params
+        Ingest YAML params. ``max_posts`` is the primary post cap. ``max_rows``
+        is a fallback for older Bluesky and Twitter configs. ``max_comments``
+        is ignored.
+
+    Returns
+    -------
+    int | None
+        Max posts for the run, or None when neither key is set.
+    """
     raise NotImplementedError
 
 
 def parse_max_comments(ingestion_params: dict[str, Any]) -> int | None:
+    """Return the run-wide comment cap, preferring max_comments over max_rows.
+
+    Parameters
+    ----------
+    ingestion_params
+        Ingest YAML params. ``max_comments`` is the primary comment cap.
+        ``max_rows`` is a fallback for older Reddit configs. ``max_posts``
+        is ignored.
+
+    Returns
+    -------
+    int | None
+        Max comments for the run, or None when neither key is set.
+    """
     raise NotImplementedError
 
 
