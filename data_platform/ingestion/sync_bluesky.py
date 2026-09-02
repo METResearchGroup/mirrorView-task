@@ -85,7 +85,15 @@ def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
 
 
 def _posts_to_rows(response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
-    """Map a searchPosts API response to flat dict rows for CSV storage."""
+    """Map a searchPosts API response to flat dict rows for CSV storage.
+
+    Parameters
+    ----------
+    response
+        Bluesky searchPosts API response.
+    sync_timestamp
+        Run timestamp written onto each raw row.
+    """
     rows: list[dict[str, Any]] = []
     for post in response.posts:
         rkey = post.uri.split("/")[-1]
@@ -100,6 +108,7 @@ def _posts_to_rows(response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
                 "repost_count": post.repost_count,
                 "reply_count": post.reply_count,
                 "quote_count": post.quote_count,
+                "sync_timestamp": sync_timestamp,
             }
         )
     return rows
