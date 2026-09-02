@@ -163,4 +163,6 @@ def test_build_wide_table_picks_latest_label_across_timestamped_runs(tmp_path: P
         )
     )
 
-    assert wide.loc[wide["uri"] == URI_POST_A, "is_political"].iloc[0] in {True, "True"}
+    matching = wide.loc[wide["uri"] == URI_POST_A]
+    assert len(matching) == 1
+    assert matching["is_political"].iloc[0] in {True, "True"}

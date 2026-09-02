@@ -72,7 +72,7 @@ def test_load_or_init_metadata_records_feature_identity(features_dir) -> None:
     assert metadata.features["is_political"].prompt_hash is not None
 
 
-def test_load_or_init_metadata_rejects_identity_change_on_resume(features_dir) -> None:
+def test_load_or_init_metadata_rejects_prompt_hash_change_on_resume(features_dir) -> None:
     """Given existing metadata with a different prompt hash, when reloading, then raise."""
     spec = FEATURE_REGISTRY["is_political"]
     config = make_feature_generation_config(
@@ -81,6 +81,20 @@ def test_load_or_init_metadata_rejects_identity_change_on_resume(features_dir) -
     )
     metadata = load_or_init_metadata(config, feature_names=("is_political",))
     metadata.features["is_political"].prompt_hash = "old-hash"
+    flush_metadata(features_dir, metadata)
+
+    with pytest.raises(ValueError, match="identity changed"):
+        load_or_init_metadata(config, feature_names=("is_political",))
+
+
+def test_load_or_init_metadata_rejects_model_id_change_on_resume(features_dir) -> None:
+    """Given existing metadata with a different model id, when reloading, then raise."""
+    spec = FEATURE_REGISTRY["is_political"]
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"is_political": spec},
+    )
+    metadata = load_or_init_metadata(config, feature_names=("is_political",))
     metadata.features["is_political"].model_id = "old-model"
     flush_metadata(features_dir, metadata)
 

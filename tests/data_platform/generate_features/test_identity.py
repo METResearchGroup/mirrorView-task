@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from data_platform.generate_features.identity import identity_for_spec
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from lib.constants import DEFAULT_LLM_MODEL
@@ -35,4 +37,13 @@ class TestIdentityForSpec:
         result = identity_for_spec(spec)
 
         assert result.model_id == "perspective-api"
+        assert result.prompt_hash is None
+
+    def test_promptless_langchain_feature_keeps_llm_model_id(self) -> None:
+        """Given a langchain spec without a prompt, when hashing identity, then model id is the LLM."""
+        spec = replace(FEATURE_REGISTRY["is_political"], system_prompt=None)
+
+        result = identity_for_spec(spec)
+
+        assert result.model_id == DEFAULT_LLM_MODEL
         assert result.prompt_hash is None

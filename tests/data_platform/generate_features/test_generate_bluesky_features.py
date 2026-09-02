@@ -70,6 +70,7 @@ class TestGenerateBlueskyFeatures:
             max_concurrency=4,
             opik_enabled=False,
             feature_subset=["is_political"],
+            run_dir_name=None,
         )
 
     def test_require_all_runs_complete_is_on_spec(self) -> None:

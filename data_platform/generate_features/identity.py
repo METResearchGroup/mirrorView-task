@@ -23,8 +23,8 @@ def prompt_hash(system_prompt: str | None) -> str | None:
 
 
 def model_id_for_spec(spec: FeatureSpec) -> str:
-    """Return the default LLM model id, or Perspective for non-LLM features."""
-    if spec.system_prompt is None:
+    """Return the default LLM model id, or Perspective for thread-pool features."""
+    if spec.engine_type == "thread_pool":
         return PERSPECTIVE_MODEL_ID
     return DEFAULT_LLM_MODEL
 

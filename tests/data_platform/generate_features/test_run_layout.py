@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from data_platform.generate_features.run_layout import resolve_features_run_dir
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 from tests.data_platform.constants import FEATURES_DATASET_ID, PREPROCESSED_RUN_DIR
@@ -50,3 +52,14 @@ class TestResolveFeaturesRunDir:
 
         assert result == storage.root_dir / PREPROCESSED_RUN_DIR
         assert result.is_dir()
+
+    def test_rejects_path_escape_in_run_dir_name(self, data_root: Path) -> None:
+        """Given a run name with path separators, when resolving, then raise."""
+        storage = BlueskyStorageManager(
+            StorageStage.FEATURES,
+            FEATURES_DATASET_ID,
+            records_filename="features",
+        )
+
+        with pytest.raises(ValueError, match="single feature run directory name"):
+            resolve_features_run_dir(storage, "../other-dir")

@@ -32,4 +32,11 @@ def resolve_features_run_dir(
     """
     if run_dir_name is None:
         return feature_storage.create_new_run_dir()
+    requested_path = Path(run_dir_name)
+    if (
+        requested_path.is_absolute()
+        or len(requested_path.parts) != 1
+        or requested_path.name in {".", ".."}
+    ):
+        raise ValueError("run_dir_name must be a single feature run directory name")
     return feature_storage.create_new_run_dir(run_dir_name)
