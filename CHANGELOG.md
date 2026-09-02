@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Collapsed duplicate skip, path, completeness, and search-term helpers in `data_platform` so feature skip, run gates, filenames, and keyword quoting each have one API, and the models package exports every sync record model. [PR #90](https://github.com/METResearchGroup/mirrorView-task/pull/90)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
