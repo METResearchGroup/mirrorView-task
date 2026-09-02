@@ -196,6 +196,23 @@ def bootstrap_duplicate_skip_counters(
     *,
     legacy_by_record_type: dict[str, str],
 ) -> None:
+    """Seed canonical skip counters from leftover platform names when missing.
+
+    Parameters
+    ----------
+    metadata
+        Run metadata. ``rows_skipped_as_duplicates`` is the run-level total.
+        ``skipped_as_duplicates_by_record_type`` is the per-record-type map.
+        Leftover names such as ``posts_skipped_as_duplicates`` are read only
+        when those canonical keys are missing.
+    legacy_by_record_type
+        Map from record type to leftover metadata key. When a leftover key is
+        present and that record type is not already in the breakdown, its
+        integer value seeds that type. Missing canonical keys are then set
+        from the seed map (total 0 and an empty map when no leftover names
+        are present). When both canonical keys already exist, do nothing.
+        Leftover names are not deleted or rewritten.
+    """
     raise NotImplementedError
 
 
@@ -206,6 +223,21 @@ def increment_duplicate_skip_counters(
     skipped: int,
     legacy_by_record_type: dict[str, str],
 ) -> None:
+    """Add skipped rows to canonical skip counters after a dedupe append.
+
+    Parameters
+    ----------
+    metadata
+        Run metadata to update in place. Seeds canonical keys from leftover
+        names first via ``bootstrap_duplicate_skip_counters``.
+    record_type
+        Record type bucket to increment, e.g. ``app.bsky.feed.post``.
+    skipped
+        Number of rows skipped by this append.
+    legacy_by_record_type
+        Leftover name map passed through to bootstrap. Those leftover keys
+        are never written back.
+    """
     raise NotImplementedError
 
 
