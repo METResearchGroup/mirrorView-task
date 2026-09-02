@@ -47,32 +47,6 @@ class BatchExecutionEngine(Protocol):
     ) -> BatchRunStats: ...
 
 
-def load_seen_ids_from_features_dir(
-    feature_storage: StorageManager,
-    id_column: str,
-) -> set[str]:
-    """Load labeled ids from the feature file at the features stage root.
-
-    Parameters
-    ----------
-    feature_storage
-        Storage whose ``root_dir`` holds the feature file named by
-        ``records_filename``.
-    id_column
-        Column in that file that holds the record id.
-
-    Returns
-    -------
-    set of str
-        Distinct ids already in the feature file. The set is empty when
-        the file is missing.
-    """
-    return feature_storage.load_seen_ids_from_disk(
-        feature_storage.root_dir,
-        id_column,
-    )
-
-
 def filter_seen_tasks(
     tasks: list[LabelTask],
     feature_storage: StorageManager,
@@ -83,7 +57,10 @@ def filter_seen_tasks(
     ``id_column`` selects the column to read from disk. Task matching still
     uses ``LabelTask.uri``, which holds the record id from the input table.
     """
-    seen = load_seen_ids_from_features_dir(feature_storage, id_column)
+    seen = feature_storage.load_seen_ids_from_disk(
+        feature_storage.root_dir,
+        id_column,
+    )
     if not seen:
         return tasks
     return [task for task in tasks if task.uri not in seen]

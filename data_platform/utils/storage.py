@@ -43,24 +43,6 @@ class StorageStage(StrEnum):
     CURATED = "curated"
 
 
-def format_filename(stem: str, file_format: ValidDataFormats) -> str:
-    """Build a records filename from a stem and dataset format.
-
-    Parameters
-    ----------
-    stem
-        File name without a suffix, such as a feature name or ``posts``.
-    file_format
-        CSV or parquet suffix from the dataset manifest.
-
-    Returns
-    -------
-    str
-        ``stem`` plus the format suffix, for example ``is_political.csv``.
-    """
-    return f"{stem}.{file_format.value}"
-
-
 def _write_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
     with output_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -105,7 +87,7 @@ class StorageManager:
         self.dataset_id = validate_dataset_id(dataset_id)
         self.format: ValidDataFormats = load_dataset_format(platform, dataset_id)
         stem = Path(records_filename).stem
-        self.records_filename = format_filename(stem, self.format)
+        self.records_filename = f"{stem}.{self.format.value}"
 
     @property
     def platform_data_root(self) -> Path:
@@ -304,7 +286,7 @@ class StorageManager:
 
     def filename_for(self, stem: str) -> str:
         """Return the format-correct filename for a given stem."""
-        return format_filename(stem, self.format)
+        return f"{stem}.{self.format.value}"
 
     def require_all_runs_complete(self, dataset_id: str) -> None:
         """Raise when this stage has no run directory or an incomplete run.

@@ -11,7 +11,6 @@ from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     finalize_local_disk_sync,
 )
-from data_platform.utils.gate_checks import require_all_runs_complete
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 
@@ -31,7 +30,7 @@ class TestFinalizeLocalDiskSync:
 
         loaded = storage.load_run_metadata(run_dir)
         assert loaded["sync_status"] == SyncStatus.COMPLETED.value
-        require_all_runs_complete(storage, dataset_id)
+        storage.require_all_runs_complete(dataset_id)
 
     def test_incomplete_run_keeps_sync_status_in_progress(self, data_root: Path) -> None:
         dataset_id = "twitter_00000000-0000-0000-0000-000000000002"
@@ -50,4 +49,4 @@ class TestFinalizeLocalDiskSync:
         loaded = storage.load_run_metadata(run_dir)
         assert loaded["sync_status"] == SyncStatus.IN_PROGRESS.value
         with pytest.raises(RuntimeError):
-            require_all_runs_complete(storage, dataset_id)
+            storage.require_all_runs_complete(dataset_id)

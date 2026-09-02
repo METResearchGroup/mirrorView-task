@@ -12,7 +12,6 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.utils.gate_checks import require_all_runs_complete
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager, StorageStage
 
@@ -175,7 +174,7 @@ def preprocess_records(
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
     if raw_storage.latest_run_dir() is None:
         raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
-    require_all_runs_complete(raw_storage, dataset_id)
+    raw_storage.require_all_runs_complete(dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     dedupe_session = DedupeSession(
         DedupeConfig(

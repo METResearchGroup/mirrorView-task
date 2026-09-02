@@ -18,7 +18,7 @@ from data_platform.generate_features.metadata import metadata_path
 from data_platform.generate_features.models import FeatureRunMetadata
 from data_platform.utils.config_paths import resolve_config_path
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
-from data_platform.utils.gate_checks import require_all_runs_complete, require_features_complete
+from data_platform.utils.gate_checks import require_features_complete
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
@@ -224,7 +224,7 @@ def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpe
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
     features_meta = _load_and_gate_features(spec, dataset_id)
     if spec.require_all_runs_complete:
-        require_all_runs_complete(spec.storage_cls("preprocessed", dataset_id), dataset_id)
+        spec.storage_cls("preprocessed", dataset_id).require_all_runs_complete(dataset_id)
     if spec.skip_if_up_to_date:
         if features_meta is None:
             raise RuntimeError(f"Features metadata required to skip curation for {dataset_id}")
