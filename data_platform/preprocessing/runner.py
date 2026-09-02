@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.platform_specific_columns import (
+    CANONICAL_AUTHOR_HANDLE_COLUMN,
     CANONICAL_TEXT_COLUMN,
     PlatformSpecificColumns,
 )
@@ -68,7 +69,15 @@ def add_canonical_author_columns(
         When the source column, or ``author_handle`` on a passthrough
         platform, is missing from the frame.
     """
-    raise NotImplementedError
+    out = df.copy()
+    source_column = spec.author_handle_source_column
+    if source_column is None:
+        if CANONICAL_AUTHOR_HANDLE_COLUMN not in out.columns:
+            raise KeyError(CANONICAL_AUTHOR_HANDLE_COLUMN)
+        return out
+    original_handle = out[source_column]
+    out[CANONICAL_AUTHOR_HANDLE_COLUMN] = original_handle.map(lambda value: str(value))
+    return out
 
 
 def add_canonical_text_column(
