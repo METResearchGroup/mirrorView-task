@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Preprocess writes a canonical `text` column on kept Bluesky, Twitter, and Reddit-comment rows, and Reddit features now read that column while native `body` stays on the record for audit. [PR #91](https://github.com/METResearchGroup/mirrorView-task/pull/91)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
