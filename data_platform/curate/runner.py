@@ -132,7 +132,13 @@ def run_curation(
 
 
 def load_features_run_metadata(platform: str, dataset_id: str) -> FeatureRunMetadata:
-    """Load features/metadata.json for a dataset, or raise if it is missing."""
+    """Load features/metadata.json for a dataset.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the features metadata file does not exist.
+    """
     features_meta_path = metadata_path(dataset_root(platform, dataset_id) / "features")
     if not features_meta_path.exists():
         raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
@@ -153,9 +159,15 @@ def curated_export_if_up_to_date(
     rules_hash: str,
     features_meta: FeatureRunMetadata,
 ) -> Path | None:
-    """Return the latest export path when curated inputs match, else None."""
+    """Return the latest export path when curated inputs have not changed.
+
+    Compares the current preprocessed run list and rules hash against the
+    latest curated run. Returns None when a new curated export is needed.
+    """
     root = dataset_root(spec.platform, dataset_id)
-    current_runs = [relative_run_path(root, path) for path in _preprocessed_run_dirs(spec, dataset_id)]
+    current_runs = [
+        relative_run_path(root, path) for path in _preprocessed_run_dirs(spec, dataset_id)
+    ]
     if features_meta.source_preprocessed_runs != current_runs:
         return None
     curated_storage = spec.storage_cls("curated", dataset_id)
@@ -188,7 +200,23 @@ def _matching_curated_export(
 
 
 def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpec) -> Path:
-    """Run curation for a platform spec, hashing the rules config for metadata."""
+    """Run gated, optionally skipped curation for a platform spec.
+
+    Completeness and skip behavior come from flags on ``spec``. Reddit and
+    Twitter leave those flags false; Bluesky sets them true.
+
+    Returns
+    -------
+    Path
+        Path to the curated export CSV.
+
+    Raises
+    ------
+    FileNotFoundError
+        When required features metadata is missing.
+    RuntimeError
+        When a completeness gate fails.
+    """
     dataset_id = validate_dataset_id(dataset_id)
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
     features_meta = _maybe_load_and_gate_features(spec, dataset_id)
