@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pytest
 from pydantic import BaseModel
 
 from data_platform.generate_features.engines.thread_pool_engine import ThreadPoolBatchEngine
@@ -32,3 +33,15 @@ def test_thread_pool_batch_engine_labels_tasks() -> None:
     assert len(labels) == 2
     assert labels[0]["value"] == 2
     assert labels[1]["value"] == 3
+
+
+def test_thread_pool_batch_engine_requires_generate_fn() -> None:
+    spec = FeatureSpec(
+        name="test_feature",
+        model=_RowModel,
+        engine_type="thread_pool",
+    )
+    engine = ThreadPoolBatchEngine(spec, FeatureRunConfig(max_concurrency=1))
+    with pytest.raises(ValueError, match="generate_fn"):
+        engine.batch_label_records([LabelTask(uri=URI_POST_A, text="hi")])
+

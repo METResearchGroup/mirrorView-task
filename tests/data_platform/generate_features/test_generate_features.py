@@ -165,12 +165,12 @@ def test_generate_bluesky_features_defaults_to_opik_disabled(
         return {}
 
     monkeypatch.setattr(
-        "data_platform.generate_features.generate_bluesky_features.run_feature_generation",
+        "data_platform.generate_features.platform_cli.run_feature_generation",
         fake_run_feature_generation,
     )
     monkeypatch.setattr(
-        "data_platform.generate_features.generate_bluesky_features.load_all_posts",
-        lambda dataset_id: pd.DataFrame([{"uri": "1", "text": "hello"}]),
+        "data_platform.generate_features.platform_cli.load_preprocessed_records",
+        lambda spec, dataset_id: pd.DataFrame([{"uri": "1", "text": "hello"}]),
     )
     write_preprocessed_posts(data_root, sample_preprocessed_records(1))
 
