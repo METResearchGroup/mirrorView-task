@@ -29,7 +29,6 @@ class CuratePlatformSpec:
     platform: str
     storage_cls: StorageManagerFactory
     columns: PlatformSpecificColumns
-    record_noun: str
 
 
 def build_curate_metadata(
@@ -120,7 +119,7 @@ def run_curation(
 
     print(
         f"curate_{spec.platform}: kept {len(filtered_df)} of {len(wide_df)} "
-        f"{spec.record_noun} -> {relative_run_dir}"
+        f"records -> {relative_run_dir}"
     )
     return relative_file_path
 

@@ -32,7 +32,6 @@ BLUESKY_CURATE_SPEC = CuratePlatformSpec(
     platform="bluesky",
     storage_cls=BlueskyStorageManager,
     columns=BLUESKY_COLUMNS,
-    record_noun="posts",
 )
 
 

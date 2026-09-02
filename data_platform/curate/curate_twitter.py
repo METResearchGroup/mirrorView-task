@@ -24,7 +24,6 @@ TWITTER_CURATE_SPEC = CuratePlatformSpec(
     platform="twitter",
     storage_cls=TwitterStorageManager,
     columns=TWITTER_COLUMNS,
-    record_noun="posts",
 )
 
 ID_COLUMN = TWITTER_COLUMNS.records_id_column
