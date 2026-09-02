@@ -67,7 +67,7 @@ class TestFetchPostsForKeyword:
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Bluesky rows include ISO created_at and the run sync_timestamp."""
-        ingestion_params = {"limit": 1, "sort": "latest"}
+        ingestion_params = {"limit_per_task": 1, "sort": "latest"}
         response = mock_search_response([mock_post("at://did:plc:ex/app.bsky.feed.post/a1")])
         monkeypatch.setattr(
             "data_platform.ingestion.sync_bluesky._search_posts_page",

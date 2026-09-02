@@ -22,7 +22,6 @@ from pathlib import Path
 from typing import Any
 
 from data_platform.ingestion.sync_checkpoint import (
-    LIMIT_PER_TASK_KEY,
     TaskStatus,
     build_base_sync_metadata,
     ensure_dataset_manifest,
@@ -48,8 +47,6 @@ from data_platform.utils.deduplication import (
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 TWEETS_RECORD_TYPE = "twitter.tweet"
-TWITTER_LIMIT_ALIAS = "limit_per_keyword"
-TWITTER_DEFAULT_LIMIT_PER_TASK = 25
 
 
 @dataclass(frozen=True)
@@ -100,13 +97,7 @@ def init_sync_metadata(
 
 
 def _effective_limit_per_keyword(ingestion_params: dict[str, Any], remaining: int | None) -> int:
-    if (
-        LIMIT_PER_TASK_KEY not in ingestion_params
-        and TWITTER_LIMIT_ALIAS not in ingestion_params
-    ):
-        per_keyword = TWITTER_DEFAULT_LIMIT_PER_TASK
-    else:
-        per_keyword = resolve_limit_per_task(ingestion_params, TWITTER_LIMIT_ALIAS)
+    per_keyword = resolve_limit_per_task(ingestion_params)
     if remaining is None:
         return per_keyword
     return max(0, min(per_keyword, remaining))

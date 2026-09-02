@@ -307,37 +307,11 @@ class TestEnsureDatasetManifest:
 class TestResolveLimitPerTask:
     """Tests for resolve_limit_per_task()."""
 
-    def test_prefers_limit_per_task(self) -> None:
+    def test_returns_limit_per_task_when_present(self) -> None:
         ingestion_params = {"limit_per_task": 7}
         expected = 7
 
-        result = resolve_limit_per_task(ingestion_params, "limit")
-
-        assert result == expected
-
-    @pytest.mark.parametrize(
-        "alias_key,ingestion_params,expected",
-        [
-            ("limit", {"limit": 4}, 4),
-            ("limit_per_keyword", {"limit_per_keyword": 9}, 9),
-            ("limit_per_subreddit", {"limit_per_subreddit": 3}, 3),
-        ],
-    )
-    def test_falls_back_to_alias_when_primary_is_absent(
-        self,
-        alias_key: str,
-        ingestion_params: dict[str, Any],
-        expected: int,
-    ) -> None:
-        result = resolve_limit_per_task(ingestion_params, alias_key)
-
-        assert result == expected
-
-    def test_limit_per_task_wins_when_both_set(self) -> None:
-        ingestion_params = {"limit_per_task": 7, "limit": 4}
-        expected = 7
-
-        result = resolve_limit_per_task(ingestion_params, "limit")
+        result = resolve_limit_per_task(ingestion_params)
 
         assert result == expected
 
@@ -345,10 +319,10 @@ class TestResolveLimitPerTask:
         ingestion_params = {"limit_per_task": 0}
         expected = 0
 
-        result = resolve_limit_per_task(ingestion_params, "limit")
+        result = resolve_limit_per_task(ingestion_params)
 
         assert result == expected
 
-    def test_missing_primary_and_alias_raises_key_error(self) -> None:
+    def test_missing_limit_per_task_raises_key_error(self) -> None:
         with pytest.raises(KeyError):
-            resolve_limit_per_task({}, "limit")
+            resolve_limit_per_task({})

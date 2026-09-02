@@ -19,7 +19,7 @@ def minimal_reddit_sync_config() -> dict[str, Any]:
             "posts_dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "subreddits": ["AlphaSub", "BetaSub"],
             "listing": "hot",
-            "limit_per_subreddit": 2,
+            "limit_per_task": 2,
             "comments_per_post": 5,
             "min_comment_body_length": 10,
         },
