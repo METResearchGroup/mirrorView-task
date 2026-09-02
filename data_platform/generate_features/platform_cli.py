@@ -134,7 +134,7 @@ def generate_platform_features(
         preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
         if preprocessed_storage.latest_run_dir() is None:
             raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
-        preprocessed_storage.require_all_runs_complete(dataset_id)
+        preprocessed_storage.require_all_runs_complete()
 
     features_subset = generate_feature_subset(feature_subset)
     run_config = FeatureRunConfig(

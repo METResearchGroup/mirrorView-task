@@ -174,7 +174,7 @@ def preprocess_records(
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
     if raw_storage.latest_run_dir() is None:
         raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
-    raw_storage.require_all_runs_complete(dataset_id)
+    raw_storage.require_all_runs_complete()
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     dedupe_session = DedupeSession(
         DedupeConfig(

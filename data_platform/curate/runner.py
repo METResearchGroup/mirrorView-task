@@ -224,7 +224,7 @@ def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpe
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
     features_meta = _load_and_gate_features(spec, dataset_id)
     if spec.require_all_runs_complete:
-        spec.storage_cls("preprocessed", dataset_id).require_all_runs_complete(dataset_id)
+        spec.storage_cls("preprocessed", dataset_id).require_all_runs_complete()
     if spec.skip_if_up_to_date:
         if features_meta is None:
             raise RuntimeError(f"Features metadata required to skip curation for {dataset_id}")

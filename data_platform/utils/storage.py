@@ -22,12 +22,6 @@ from lib.timestamp_utils import get_current_timestamp
 
 DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
 METADATA_FILENAME = "metadata.json"
-MISSING_STAGE_RUNS_MESSAGE = (
-    "No {stage} runs found for dataset {dataset_id} under {root}"
-)
-INCOMPLETE_STAGE_RUNS_MESSAGE = (
-    "Not all {stage} runs for dataset {dataset_id} are complete locally"
-)
 
 
 @dataclass(frozen=True)
@@ -288,13 +282,8 @@ class StorageManager:
         """Return the format-correct filename for a given stem."""
         return f"{stem}.{self.format.value}"
 
-    def require_all_runs_complete(self, dataset_id: str) -> None:
+    def require_all_runs_complete(self) -> None:
         """Raise when this stage has no run directory or an incomplete run.
-
-        Parameters
-        ----------
-        dataset_id
-            Dataset id used in the error text.
 
         Raises
         ------
@@ -303,18 +292,13 @@ class StorageManager:
         """
         if not self.root_dir.exists():
             raise RuntimeError(
-                MISSING_STAGE_RUNS_MESSAGE.format(
-                    stage=self.stage,
-                    dataset_id=dataset_id,
-                    root=self.root_dir,
-                )
+                f"No {self.stage} runs found for dataset {self.dataset_id} "
+                f"under {self.root_dir}"
             )
         if not self.all_runs_complete():
             raise RuntimeError(
-                INCOMPLETE_STAGE_RUNS_MESSAGE.format(
-                    stage=self.stage,
-                    dataset_id=dataset_id,
-                )
+                f"Not all {self.stage} runs for dataset {self.dataset_id} "
+                "are complete locally"
             )
 
     def load_run_metadata(
