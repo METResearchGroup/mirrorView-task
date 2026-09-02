@@ -11,7 +11,7 @@ from typing import Any, Protocol, TypeVar
 import typer
 from tqdm import tqdm
 
-from data_platform.utils.config_paths import resolve_config_path
+from data_platform.utils.config_paths import resolve_config_path, to_repo_relative
 from data_platform.utils.dataset import (
     ValidDataFormats,
     validate_dataset_id,
@@ -183,7 +183,7 @@ def build_base_sync_metadata(
         "description": config["description"],
         "date": config["date"],
         "sync_timestamp": sync_timestamp,
-        "ingestion_config": config_path.name,
+        "ingestion_config": to_repo_relative(config_path, REPO_ROOT),
         "record_types": config["record_types"],
         "ingestion_params": config["ingestion_params"],
         "row_count": 0,
