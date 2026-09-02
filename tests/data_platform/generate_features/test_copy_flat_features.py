@@ -75,6 +75,32 @@ def test_copy_flat_features_into_run_refuses_overwrite(tmp_path: Path) -> None:
         copy_flat_features_into_run(features_root, run_dir)
 
 
+def test_copy_flat_features_into_run_preflights_second_file_collision(tmp_path: Path) -> None:
+    """Given two leftovers and a collision on the later name, when copying, then neither dest file is written."""
+    features_root = tmp_path / "features"
+    write_feature_csv(
+        features_root,
+        "is_political",
+        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
+    )
+    write_feature_csv(
+        features_root,
+        "is_likely_spam",
+        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_likely_spam": False}],
+    )
+    run_dir = features_root / "2026_02_01-00:00:00"
+    write_feature_csv(
+        run_dir,
+        "is_political",
+        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": False}],
+    )
+
+    with pytest.raises(FileExistsError, match="is_political.csv"):
+        copy_flat_features_into_run(features_root, run_dir)
+
+    assert not (run_dir / "is_likely_spam.csv").exists()
+
+
 def test_copy_flat_features_for_dataset_creates_run(data_root: Path) -> None:
     """Given leftover files on a dataset, when copying, then they land in a timestamped run."""
     features_root = data_root / "bluesky" / FEATURES_DATASET_ID / "features"

@@ -45,12 +45,13 @@ def copy_flat_features_into_run(features_root: Path, run_dir: Path) -> list[Path
     sources = flat_feature_files(features_root)
     if not sources:
         return []
+    destinations = [run_dir / src.name for src in sources]
+    existing = next((dest for dest in destinations if dest.exists()), None)
+    if existing is not None:
+        raise FileExistsError(f"Refusing to overwrite {existing}")
     run_dir.mkdir(parents=True, exist_ok=True)
     copied: list[Path] = []
-    for src in sources:
-        dest = run_dir / src.name
-        if dest.exists():
-            raise FileExistsError(f"Refusing to overwrite {dest}")
+    for src, dest in zip(sources, destinations, strict=True):
         shutil.copy2(src, dest)
         copied.append(dest)
     return copied
