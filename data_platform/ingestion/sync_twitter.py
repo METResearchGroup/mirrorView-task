@@ -112,7 +112,7 @@ def run_sync_tasks(
     sync_tasks: list[TwitterTask],
     *,
     sync_timestamp: str,
-    csv_filename: str,
+    filename: str,
 ) -> None:
     max_rows_int = parse_max_rows(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
@@ -120,7 +120,7 @@ def run_sync_tasks(
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="tweet_id",
-            filename=csv_filename,
+            filename=filename,
             include_prior_runs=policy_includes_prior_runs(
                 ingestion_params.get("dedupe_policy")
             ),
@@ -152,7 +152,7 @@ def run_sync_tasks(
             rows,
             output_dir,
             dedupe_session=dedupe_session,
-            filename=csv_filename,
+            filename=filename,
         )
         metadata["tweets_skipped_as_duplicates"] = (
             int(metadata.get("tweets_skipped_as_duplicates", 0)) + result.skipped
@@ -242,7 +242,7 @@ def sync_records(
         metadata,
         sync_tasks,
         sync_timestamp=sync_timestamp,
-        csv_filename=POSTS_CSV,
+        filename=POSTS_CSV,
     )
     finalize_local_disk_sync(storage, output_dir, metadata)
 
