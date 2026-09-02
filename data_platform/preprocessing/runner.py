@@ -36,12 +36,38 @@ class PreprocessPlatformSpec:
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
     original_platform_text_column: str = CANONICAL_TEXT_COLUMN
+    author_handle_source_column: str | None = None
 
 
 def add_canonical_author_columns(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
+    """Copy the platform's original author handle onto the shared ``author_handle`` column.
+
+    You still have original fields such as Reddit ``author`` and Twitter
+    ``username`` on the returned frame. The function does not modify the input
+    frame. ``author_id`` is left as it is. Bluesky and Reddit frames do not get
+    an ``author_id`` column.
+
+    Parameters
+    ----------
+    spec
+        ``author_handle_source_column`` is the copy source. ``None`` means the
+        frame already has shared ``author_handle``. The destination is always
+        shared ``author_handle``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame that includes ``author_handle``.
+
+    Raises
+    ------
+    KeyError
+        When the source column, or ``author_handle`` on a passthrough
+        platform, is missing from the frame.
+    """
     raise NotImplementedError
 
 
