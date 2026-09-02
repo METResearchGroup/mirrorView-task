@@ -24,6 +24,14 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class CuratePlatformSpec:
+    """Platform binding for the shared curate CLI.
+
+    Completeness gates and skip-if-up-to-date are Bluesky-only on purpose.
+    Reddit and Twitter leave these flags false so every call writes a new
+    curated run. The shared runner applies a true flag the same way on any
+    platform.
+    """
+
     platform: str
     storage_cls: StorageManagerFactory
     columns: PlatformSpecificColumns

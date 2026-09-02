@@ -32,6 +32,9 @@ BLUESKY_CURATE_SPEC = CuratePlatformSpec(
     storage_cls=BlueskyStorageManager,
     columns=BLUESKY_COLUMNS,
     record_noun="posts",
+    require_features_complete=True,
+    require_all_runs_complete=True,
+    skip_if_up_to_date=True,
 )
 
 
