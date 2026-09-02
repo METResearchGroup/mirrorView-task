@@ -38,6 +38,13 @@ class PreprocessPlatformSpec:
     original_platform_text_column: str = CANONICAL_TEXT_COLUMN
 
 
+def add_canonical_author_columns(
+    df: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    raise NotImplementedError
+
+
 def add_canonical_text_column(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
