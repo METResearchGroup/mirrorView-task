@@ -36,7 +36,6 @@ def generate_bluesky_features(
     *,
     batch_size: int = 64,
     max_concurrency: int = 80,
-    opik_enabled: bool = False,
     feature_subset: list[str] | None = None,
 ) -> dict[str, Path]:
     """Load Bluesky posts and generate the requested feature labels."""
@@ -45,7 +44,6 @@ def generate_bluesky_features(
         dataset_id,
         batch_size=batch_size,
         max_concurrency=max_concurrency,
-        opik_enabled=opik_enabled,
         feature_subset=feature_subset,
     )
 
@@ -58,7 +56,6 @@ def main(
     ),
     batch_size: int = typer.Option(64, "--batch-size"),
     max_concurrency: int = typer.Option(80, "--max-concurrency"),
-    opik_enabled: bool = typer.Option(False, "--opik", help="Enable Opik telemetry"),
     features: list[str] | None = typer.Option(
         None,
         "--features",
@@ -70,7 +67,6 @@ def main(
         dataset_id,
         batch_size=batch_size,
         max_concurrency=max_concurrency,
-        opik_enabled=opik_enabled,
         feature_subset=features_from_cli(features),
     )
 

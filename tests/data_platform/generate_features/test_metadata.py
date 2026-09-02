@@ -23,7 +23,7 @@ from tests.data_platform.generate_features.conftest import make_feature_generati
 def test_load_or_init_metadata_creates_file(features_dir) -> None:
     config = make_feature_generation_config(
         features_dir,
-        run_config=FeatureRunConfig(batch_size=32, opik_enabled=False),
+        run_config=FeatureRunConfig(batch_size=32),
     )
     metadata = load_or_init_metadata(
         config,

@@ -124,7 +124,6 @@ def generate_platform_features(
     *,
     batch_size: int = 64,
     max_concurrency: int = 80,
-    opik_enabled: bool = False,
     feature_subset: list[str] | None = None,
 ) -> dict[str, Path]:
     """Load platform records and generate the requested feature labels."""
@@ -140,7 +139,6 @@ def generate_platform_features(
     run_config = FeatureRunConfig(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
-        opik_enabled=opik_enabled,
     )
     records = load_preprocessed_records(spec, dataset_id)
     config = build_feature_config(
