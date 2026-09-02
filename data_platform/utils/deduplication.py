@@ -82,4 +82,5 @@ class DedupeSession:
         return new_rows, skipped
 
     def add_seen_ids(self, rows: list[dict[str, Any]]) -> None:
-        raise NotImplementedError
+        for row in rows:
+            self.seen_ids.add(row[self.config.id_column])
