@@ -17,6 +17,13 @@ We use 3 separate data sources:
 2. Twitter
 3. Reddit (we use both `praw` as well as the Reddit PushShift dataset)
 
+We also get data dumps from 2 sources:
+
+1. Bluesky, from the lab data integrations interface project (see [this repo](https://github.com/METResearchGroup/lab_data_integrations_interface/tree/main/data_platform))
+2. Reddit, from the pushshift data dump.
+
+These data dumps live in `data_platform/ingestion/dumps`. They're intended to follow the same data models that the other ingestion models follow, for consistency.
+
 ## Where does data live?
 
 Data is stored in the following folder format:
@@ -36,7 +43,7 @@ Each platform is an independent dataset under `data_platform/data/{platform}/{da
 
 ## Stage 2: Preprocessing
 
-After ingestion finishes, you run preprocessing as a separate local CLI step. The code lives in `data_platform/preprocessing/`. Preprocessing does not call ingestion, and ingestion does not call preprocessing. You do not need environment variables or S3 for preprocessing. You read and write only on disk under `data_platform/data/{platform}/{dataset_id}/`.
+After ingestion finishes, you run preprocessing as a separate local CLI step. The code lives in `data_platform/preprocessing/`.
 
 Reddit preprocessing works on comments only, not posts. You can preprocess Reddit comments from any ingestion source, as long as the file matches the expected schema.
 
@@ -51,7 +58,7 @@ Reddit preprocessing works on comments only, not posts. You can preprocess Reddi
    - Bluesky and Reddit pick `csv` or `parquet` from `dataset.json` via `StorageManager` in `data_platform/utils/storage.py`.
 4. `metadata.json` in every raw run directory. If `sync_status` is present, it must be `completed` (`require_all_runs_complete` in `data_platform/utils/gate_checks.py`).
 
-You invoke preprocessing from the repo root:
+You run preprocessing from the repo root:
 
 ```bash
 PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \
@@ -74,25 +81,19 @@ In each `preprocess_*.py` file, you define a `PreprocessPlatformSpec` and call `
 
 Record schemas live in `data_platform/models/sync.py`.
 
-**Bluesky post fields** (`SyncBlueskyPostModel`)
+You look up per-platform CSV column names in `PlatformSpecificColumns` (`data_platform/utils/platform_specific_columns.py`). In each platform CLI, you set `spec.columns` to `BLUESKY_COLUMNS`, `TWITTER_COLUMNS`, or `REDDIT_COLUMNS`. During preprocessing, you read three fields on `PlatformSpecificColumns`.
 
-- `uri`, `url`, `author_handle`, `text`, `created_at`, `like_count`, `repost_count`, `reply_count`, `quote_count`
+- `records_id_column` for dedupe
+- `text_column` for validators and transforms
+- `records_file_key` for the records filename (`posts` vs `comments`)
 
-**Twitter post fields** (`SyncTwitterPostModel`)
+Feature generation and curation also read `feature_file_id_column`, which is `uri` for all three platforms.
 
-- `tweet_id`, `text`, `author_id`, `username`, `created_at`, `like_count`, `retweet_count`, `reply_count`, `quote_count`, `url`, `keyword`, `sync_timestamp`
-
-**Reddit comment fields** (`SyncRedditCommentModel`)
-
-- `post_reddit_id`, `post_reddit_fullname`, `subreddit`, `comment_id`, `comment_fullname`, `parent_id`, `author`, `body`, `score`, `created_utc`, `permalink`, `depth`, `comment_rank`, `sync_timestamp`
-
-ID and text column bindings are in `PlatformIdBinding` (`data_platform/utils/platform_ids.py`).
-
-| Platform | ID column | Text column | Records file key |
-| --- | --- | --- | --- |
-| Bluesky | `uri` | `text` | `posts` |
-| Twitter | `tweet_id` | `text` | `posts` |
-| Reddit | `comment_fullname` | `body` | `comments` |
+| Platform | `records_id_column` | `text_column` | `records_file_key` | `feature_file_id_column` |
+| --- | --- | --- | --- | --- |
+| Bluesky | `uri` | `text` | `posts` | `uri` |
+| Twitter | `tweet_id` | `text` | `posts` | `uri` |
+| Reddit | `comment_fullname` | `body` | `comments` | `uri` |
 
 ### Preprocessing outputs
 
@@ -134,7 +135,7 @@ flowchart TD
 - `platform`
 - `storage_cls`
 - `model_cls`
-- `binding` (`PlatformIdBinding`)
+- `columns` (`PlatformSpecificColumns`)
 - `text_validators`
 - `row_validators` (optional; Reddit only)
 - `text_transform` (optional; Twitter only)
