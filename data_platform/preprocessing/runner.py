@@ -209,6 +209,7 @@ def preprocess_records(
         records, spec.columns.records_id_column, dedupe_session.seen_ids
     )
 
+    records = add_canonical_text_column(records, spec)
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(
