@@ -162,7 +162,9 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         "1000000000000000000",
         "1000000000000000001",
     }
-    assert metadata["tweets_skipped_as_duplicates"] == 1
+    assert metadata["rows_skipped_as_duplicates"] == 1
+    assert metadata["skipped_as_duplicates_by_record_type"]["twitter.tweet"] == 1
+    assert "tweets_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
@@ -223,7 +225,8 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
         "1000000000000000000",
         "1000000000000000001",
     }
-    assert metadata.get("tweets_skipped_as_duplicates", 0) == 0
+    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
+    assert "tweets_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_skips_ids_from_other_dataset(
@@ -284,7 +287,9 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         "1000000000000000000",
         "1000000000000000001",
     }
-    assert metadata["tweets_skipped_as_duplicates"] == 0
+    assert metadata["rows_skipped_as_duplicates"] == 0
+    assert metadata["skipped_as_duplicates_by_record_type"]["twitter.tweet"] == 0
+    assert "tweets_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(
@@ -340,7 +345,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     )
 
     assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {"1000000000000000000"}
-    assert metadata.get("tweets_skipped_as_duplicates", 0) == 0
+    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
+    assert "tweets_skipped_as_duplicates" not in metadata
 
 
 def test_resume_skips_completed_tasks(

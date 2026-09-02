@@ -245,7 +245,9 @@ def test_run_sync_tasks_skips_prior_run_comments(
 
     seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_old", "t1_comment_new"}
-    assert metadata["comments_skipped_as_duplicates"] == 1
+    assert metadata["rows_skipped_as_duplicates"] == 1
+    assert metadata["skipped_as_duplicates_by_record_type"]["reddit.comment"] == 1
+    assert "comments_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_skips_ids_from_other_dataset(
@@ -313,7 +315,9 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
 
     seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_old", "t1_comment_new"}
-    assert metadata["comments_skipped_as_duplicates"] == 0
+    assert metadata["rows_skipped_as_duplicates"] == 0
+    assert metadata["skipped_as_duplicates_by_record_type"].get("reddit.comment", 0) == 0
+    assert "comments_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(
@@ -379,7 +383,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
 
     seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_old"}
-    assert metadata.get("comments_skipped_as_duplicates", 0) == 0
+    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
+    assert "comments_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
@@ -448,7 +453,9 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
 
     seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_new"}
-    assert metadata["comments_skipped_as_duplicates"] == 1
+    assert metadata["rows_skipped_as_duplicates"] == 1
+    assert metadata["skipped_as_duplicates_by_record_type"]["reddit.comment"] == 1
+    assert "comments_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_empty_posts_override_does_not_skip_prior_posts(
@@ -517,7 +524,9 @@ def test_run_sync_tasks_empty_posts_override_does_not_skip_prior_posts(
 
     seen = post_storage.load_seen_ids_from_disk(run_dir, "reddit_fullname")
     assert seen == {"t3_post_old", "t3_post_new"}
-    assert metadata.get("posts_skipped_as_duplicates", 0) == 0
+    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
+    assert metadata.get("skipped_as_duplicates_by_record_type", {}).get("reddit.post", 0) == 0
+    assert "posts_skipped_as_duplicates" not in metadata
 
 
 def test_resume_skips_completed_subreddits(

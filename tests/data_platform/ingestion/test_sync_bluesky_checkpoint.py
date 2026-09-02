@@ -157,7 +157,9 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         "at://did:plc:ex/app.bsky.feed.post/old",
         "at://did:plc:ex/app.bsky.feed.post/new",
     }
-    assert metadata["posts_skipped_as_duplicates"] == 0
+    assert metadata["rows_skipped_as_duplicates"] == 0
+    assert metadata["skipped_as_duplicates_by_record_type"]["app.bsky.feed.post"] == 0
+    assert "posts_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(
@@ -215,7 +217,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     )
 
     assert storage.load_seen_ids_from_disk(run_dir, "uri") == {"at://did:plc:ex/app.bsky.feed.post/old"}
-    assert metadata.get("posts_skipped_as_duplicates", 0) == 0
+    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
+    assert "posts_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_dedupes_within_run(
@@ -388,7 +391,81 @@ def test_resume_dedupes_against_records_from_completed_tasks(
         already_seen_uri,
         "at://did:plc:ex/app.bsky.feed.post/b1",
     }
-    assert resumed_metadata["posts_skipped_as_duplicates"] == 1
+    assert resumed_metadata["rows_skipped_as_duplicates"] == 1
+    assert resumed_metadata["skipped_as_duplicates_by_record_type"]["app.bsky.feed.post"] == 1
+    assert "posts_skipped_as_duplicates" not in resumed_metadata
+    assert resumed_metadata["row_count"] == 2
+
+
+def test_resume_seeds_legacy_skip_counter_then_increments(
+    data_root,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    config = minimal_sync_config()
+    ingestion_params = config["ingestion_params"]
+    sync_tasks = sync_bluesky.build_sync_tasks(ingestion_params)
+    storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+    metadata = sync_bluesky.init_sync_metadata(
+        config,
+        TEST_INGEST_CONFIG_PATH,
+        "2026_05_30-10:00:00",
+        sync_tasks,
+    )
+
+    already_seen_uri = "at://did:plc:ex/app.bsky.feed.post/a1"
+    metadata["tasks"]["alpha"]["status"] = "completed"
+    metadata["tasks"]["alpha"]["rows_collected"] = 1
+    storage.append_records(
+        [
+            make_ingestion_row(
+                uri=already_seen_uri,
+                url="https://bsky.app/profile/user/post/a1",
+                author_handle="user",
+                text="x",
+            )
+        ],
+        run_dir,
+    )
+    metadata["row_count"] = 1
+    metadata["posts_skipped_as_duplicates"] = 3
+    storage.write_run_metadata_atomic(run_dir, metadata)
+
+    def fake_search(
+        client: Any,
+        fetch_cfg: dict[str, Any],
+        query: str,
+        *,
+        page_limit: int,
+        cursor: str | None = None,
+    ):
+        return mock_search_response(
+            [
+                mock_post(already_seen_uri),
+                mock_post("at://did:plc:ex/app.bsky.feed.post/b1"),
+            ]
+        )
+
+    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+
+    resumed_metadata = storage.load_run_metadata(run_dir)
+    sync_bluesky.run_sync_tasks(
+        MagicMock(),
+        ingestion_params,
+        run_dir,
+        storage,
+        resumed_metadata,
+        sync_tasks,
+        filename=storage.records_filename,
+    )
+
+    assert storage.load_seen_ids_from_disk(run_dir, "uri") == {
+        already_seen_uri,
+        "at://did:plc:ex/app.bsky.feed.post/b1",
+    }
+    assert resumed_metadata["rows_skipped_as_duplicates"] == 4
+    assert resumed_metadata["skipped_as_duplicates_by_record_type"]["app.bsky.feed.post"] == 4
+    assert resumed_metadata["posts_skipped_as_duplicates"] == 3
     assert resumed_metadata["row_count"] == 2
 
 
