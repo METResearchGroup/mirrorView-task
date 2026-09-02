@@ -114,6 +114,16 @@ def run_sync_tasks(
     sync_timestamp: str,
     filename: str,
 ) -> None:
+    """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
+
+    Skips completed tasks on resume, stops early when max_rows is reached, and records failures
+    without aborting the full run.
+
+    Parameters
+    ----------
+    filename
+        Records file name from ``storage.records_filename``, including the dataset format suffix.
+    """
     max_rows_int = parse_max_rows(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
