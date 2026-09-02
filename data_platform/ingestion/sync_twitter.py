@@ -193,7 +193,16 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Twitter records per config and write raw CSV + metadata."""
+    """Fetch Twitter records per config and write raw CSV + metadata.
+
+    Raises
+    ------
+    KeyError
+        When the config has no ``record_types`` key.
+    ValueError
+        When ``record_types`` is empty or does not include
+        ``TWEETS_RECORD_TYPE``.
+    """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="twitter")
     storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
