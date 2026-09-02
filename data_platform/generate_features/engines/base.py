@@ -73,11 +73,6 @@ def load_seen_ids_from_features_dir(
     )
 
 
-def load_seen_uris_from_features_dir(feature_storage: StorageManager) -> set[str]:
-    """Return URIs already present in the feature file under the features dir."""
-    return feature_storage.load_seen_uris(feature_storage.root_dir)
-
-
 def filter_seen_tasks(
     tasks: list[LabelTask],
     feature_storage: StorageManager,

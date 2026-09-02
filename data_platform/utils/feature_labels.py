@@ -9,7 +9,12 @@ from data_platform.utils.storage import StorageManager
 
 @dataclass(frozen=True)
 class FeatureLabelQuery:
-    """Query labeled record ids from feature files at the features root."""
+    """Query labeled record ids from feature files at the features root.
+
+    Feature skip stays here rather than on ``DedupeSession``. Feature files
+    live at the features stage root, not in timestamped ingest/preprocess
+    run directories, so the ingest skip-set session type does not fit.
+    """
 
     feature_storage: StorageManager
     id_column: str = "uri"

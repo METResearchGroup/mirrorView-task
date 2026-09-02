@@ -259,14 +259,6 @@ class StorageManager:
             dedupe_session.note_appended(kept_rows)
         return AppendResult(kept=len(kept_rows), skipped=skipped)
 
-    def load_seen_uris(
-        self,
-        run_dir: Path,
-        *,
-        filename: str | None = None,
-    ) -> set[str]:
-        return self.load_seen_ids_from_disk(run_dir, "uri", filename=filename)
-
     def load_records(
         self,
         run_dir: Path | None = None,
@@ -441,11 +433,3 @@ class TwitterStorageManager(StorageManager):
             keep_default_na=False,
             dtype={"tweet_id": "string", "author_id": "string"},
         )
-
-    def load_seen_tweet_ids(
-        self,
-        run_dir: Path,
-        *,
-        filename: str | None = None,
-    ) -> set[str]:
-        return self.load_seen_ids_from_disk(run_dir, "tweet_id", filename=filename)
