@@ -16,4 +16,5 @@ ingestion_params:
     - reply
     - retweet
     - quote
-  keyword: example
+  keywords:
+    - example

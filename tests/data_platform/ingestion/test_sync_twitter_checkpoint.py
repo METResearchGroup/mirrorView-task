@@ -22,7 +22,7 @@ def _minimal_twitter_sync_config() -> dict[str, Any]:
         "record_types": [sync_twitter.TWEETS_RECORD_TYPE],
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
-            "keyword": ["alpha", "beta"],
+            "keywords": ["alpha", "beta"],
             "limit_per_keyword": 2,
             "lang": "en",
             "exclude": ["reply", "retweet", "quote"],
@@ -569,3 +569,50 @@ class TestSyncRecords:
 
         assert init_client.called is True
         assert result == expected
+
+
+class TestBuildSyncTasks:
+    """Tests for build_sync_tasks()."""
+
+    def test_builds_one_task_per_keywords_entry(self) -> None:
+        ingestion_params = {"keywords": ["alpha", "beta"]}
+        expected = [
+            sync_twitter.TwitterTask(task_id="alpha", keyword="alpha"),
+            sync_twitter.TwitterTask(task_id="beta", keyword="beta"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected
+
+    def test_strips_keywords_entries_and_does_not_quote(self) -> None:
+        ingestion_params = {"keywords": [" gun control "]}
+        expected = [
+            sync_twitter.TwitterTask(task_id="gun control", keyword="gun control"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected
+
+    def test_rejects_blank_keywords_entries(self) -> None:
+        ingestion_params = {"keywords": ["alpha", ""]}
+
+        with pytest.raises(ValueError, match="non-empty strings"):
+            sync_twitter.build_sync_tasks(ingestion_params)
+
+    @pytest.mark.parametrize(
+        "ingestion_params",
+        [
+            {},
+            {"keywords": []},
+            {"keywords": "example"},
+            {"keywords": None},
+        ],
+    )
+    def test_rejects_missing_or_invalid_search_terms(
+        self,
+        ingestion_params: dict[str, Any],
+    ) -> None:
+        with pytest.raises(ValueError, match="keywords"):
+            sync_twitter.build_sync_tasks(ingestion_params)

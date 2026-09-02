@@ -55,12 +55,18 @@ class TwitterTask:
 
 
 def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[TwitterTask]:
-    keyword = ingestion_params.get("keyword")
-    if isinstance(keyword, list) and keyword:
-        return [TwitterTask(task_id=str(k), keyword=str(k)) for k in keyword]
-    if isinstance(keyword, str) and keyword:
-        return [TwitterTask(task_id=keyword, keyword=keyword)]
-    raise ValueError("ingestion_params must include 'keyword' as a string or list of strings")
+    """Build one checkpoint task per search term in ingestion_params."""
+    keywords = ingestion_params.get("keywords")
+    if not isinstance(keywords, list) or not keywords:
+        raise ValueError("ingestion_params must include 'keywords' as a non-empty list of strings")
+
+    items: list[TwitterTask] = []
+    for raw in keywords:
+        if not isinstance(raw, str) or not raw.strip():
+            raise ValueError("ingestion_params.keywords entries must be non-empty strings")
+        keyword = raw.strip()
+        items.append(TwitterTask(task_id=keyword, keyword=keyword))
+    return items
 
 
 def _initial_task_progress(task: TwitterTask) -> dict[str, Any]:
