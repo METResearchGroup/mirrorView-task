@@ -2,10 +2,11 @@
 
 ## 2026-09-02
 
-1. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)
-2. Bluesky, Twitter, and Reddit ingest pick one skip-set load from YAML policy, then drop known ids, persist remaining rows, and extend the skip set. Persist uses the explicit exclude and extend helpers, and ingest no longer passes the prior-runs flag. [PR #92](https://github.com/METResearchGroup/mirrorView-task/pull/92)
-3. Preprocess loads ids from every prior preprocessed run before creating the new run directory, drops known ids with pandas, then collapses remaining ids so the later row wins. The skip count names prior-run ids only. [PR #94](https://github.com/METResearchGroup/mirrorView-task/pull/94)
-4. Skip-set sessions no longer expose warmup, filter, or note helpers, and the session config no longer has a prior-runs flag. The stimuli runbook treats skip-set load as work before the new preprocess run directory, not as a preprocess stage. [PR #96](https://github.com/METResearchGroup/mirrorView-task/pull/96)
+1. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
+2. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)
+3. Bluesky, Twitter, and Reddit ingest pick one skip-set load from YAML policy, then drop known ids, persist remaining rows, and extend the skip set. Persist uses the explicit exclude and extend helpers, and ingest no longer passes the prior-runs flag. [PR #92](https://github.com/METResearchGroup/mirrorView-task/pull/92)
+4. Preprocess loads ids from every prior preprocessed run before creating the new run directory, drops known ids with pandas, then collapses remaining ids so the later row wins. The skip count names prior-run ids only. [PR #94](https://github.com/METResearchGroup/mirrorView-task/pull/94)
+5. Skip-set sessions no longer expose warmup, filter, or note helpers, and the session config no longer has a prior-runs flag. The stimuli runbook treats skip-set load as work before the new preprocess run directory, not as a preprocess stage. [PR #96](https://github.com/METResearchGroup/mirrorView-task/pull/96)
 
 ## 2026-09-01
 
