@@ -24,6 +24,28 @@ def resolve_config_path(config: Path, base_dir: Path) -> Path:
 
 
 def to_repo_relative(path: str | Path, repo_root: Path) -> str:
+    """Return the POSIX path of an absolute location relative to the repo root.
+
+    The target file does not need to exist.
+
+    Parameters
+    ----------
+    path
+        Absolute path that must resolve inside ``repo_root``.
+    repo_root
+        Repository root used as the relative base.
+
+    Returns
+    -------
+    str
+        Forward-slash relative path with no leading slash. The repo root
+        itself is ``"."``.
+
+    Raises
+    ------
+    ValueError
+        If ``path`` is not absolute or does not resolve inside ``repo_root``.
+    """
     raise NotImplementedError
 
 
