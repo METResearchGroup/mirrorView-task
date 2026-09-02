@@ -47,7 +47,10 @@ def tweet_to_row(
     keyword: str,
     sync_timestamp: str,
 ) -> dict[str, object]:
-    """Normalize a Tweepy Tweet to a flat dict matching the raw CSV schema."""
+    """Normalize a Tweepy Tweet to a flat dict matching the raw CSV schema.
+
+    ``created_at`` is UTC ISO-8601 from the tweet payload, or ``""`` when missing.
+    """
     metrics = getattr(tweet, "public_metrics", None) or {}
     tweet_id = str(tweet.id)
     return {

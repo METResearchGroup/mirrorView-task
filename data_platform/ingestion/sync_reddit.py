@@ -68,7 +68,11 @@ logger = logging.getLogger(__name__)
 
 
 def submission_to_row(post: praw.models.Submission, sync_timestamp: str) -> dict[str, Any]:
-    """Normalize a PRAW Submission to a flat dict matching the CSV schema."""
+    """Normalize a PRAW Submission to a flat dict matching the CSV schema.
+
+    ``created_at`` is UTC ISO-8601 from the payload unix time. Output has no
+    ``created_utc`` column.
+    """
     author = "[deleted]" if post.author is None else str(post.author)
     created_at = datetime.fromtimestamp(post.created_utc, tz=timezone.utc).isoformat()
     return {
@@ -109,7 +113,11 @@ def comment_to_row(
     depth: int,
     comment_rank: int,
 ) -> dict[str, Any]:
-    """Normalize a PRAW Comment to a flat dict matching the comment CSV schema."""
+    """Normalize a PRAW Comment to a flat dict matching the comment CSV schema.
+
+    ``created_at`` is UTC ISO-8601 from the payload unix time. Output has no
+    ``created_utc`` column.
+    """
     author = "[deleted]" if comment.author is None else str(comment.author)
     created_at = datetime.fromtimestamp(comment.created_utc, tz=timezone.utc).isoformat()
     return {
