@@ -37,6 +37,7 @@ from data_platform.preprocessing.validators.reddit_validators import (
     check_if_no_media_hosts,
     check_if_no_reddit_mentions,
     check_if_not_automoderator,
+    check_if_valid_reddit_comment_min_length,
 )
 from data_platform.preprocessing.validators.validators import (
     check_if_not_phone,
@@ -50,6 +51,7 @@ from data_platform.utils.storage import RedditStorageManager
 
 COMMENT_TEXT_VALIDATORS: tuple[TextValidator, ...] = (
     check_if_body_not_removed,
+    check_if_valid_reddit_comment_min_length,
     check_if_no_reddit_mentions,
     check_if_no_markdown_links,
     check_if_no_direct_urls,
