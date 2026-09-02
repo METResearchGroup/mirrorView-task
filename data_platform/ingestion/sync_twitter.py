@@ -32,6 +32,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_posts,
     prepare_sync_run,
     require_dataset_id,
+    resolve_dedupe_policy,
     resolve_limit_per_task,
     run_checkpointed_sync,
     run_sync_cli,
@@ -138,7 +139,7 @@ def run_sync_tasks(
             id_column="tweet_id",
             filename=filename,
             include_prior_runs=policy_includes_prior_runs(
-                ingestion_params.get("dedupe_policy")
+                resolve_dedupe_policy(ingestion_params)
             ),
         )
     )
