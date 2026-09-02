@@ -71,7 +71,7 @@ class TestFetchPostsForKeyword:
         response = mock_search_response([mock_post("at://did:plc:ex/app.bsky.feed.post/a1")])
         monkeypatch.setattr(
             "data_platform.ingestion.sync_bluesky._search_posts_page",
-            lambda *args, **kwargs: response,
+            lambda *_args, **_kwargs: response,
         )
 
         rows, _stats = fetch_posts_for_keyword(
@@ -147,6 +147,7 @@ class TestTweetToRow:
             sync_timestamp=SYNC_TIMESTAMP,
         )
 
-        assert result["created_at"]
+        expected_created_at = datetime(2026, 5, 30, tzinfo=UTC)
+        assert datetime.fromisoformat(str(result["created_at"])) == expected_created_at
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
         SyncTwitterPostModel.model_validate(result)
