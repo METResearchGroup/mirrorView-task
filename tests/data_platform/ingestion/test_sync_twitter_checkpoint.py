@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_twitter
+from data_platform.utils.dataset import ValidDataFormats, write_dataset_manifest
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 from tests.data_platform.constants import TEST_INGEST_CONFIG_PATH, VALID_TWITTER_DATASET_ID
@@ -96,6 +97,8 @@ def test_run_sync_tasks_appends_per_keyword(
     assert metadata["tasks"]["alpha"]["status"] == "completed"
     assert metadata["tasks"]["beta"]["status"] == "completed"
     assert metadata["row_count"] == 2
+    assert (run_dir / "posts.csv").exists()
+    assert not (run_dir / "posts.parquet").exists()
     assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000001",
         "1000000000000000002",
@@ -399,6 +402,62 @@ def test_resume_skips_completed_tasks(
     assert resumed_metadata["row_count"] == 2
 
 
+def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
+    data_root,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verifies the Twitter write loop stores posts.parquet for a parquet dataset."""
+    write_dataset_manifest(
+        "twitter",
+        VALID_TWITTER_DATASET_ID,
+        name="test",
+        ingestion_config="data_platform/ingestion/configs/twitter/mirrorview.yaml",
+        data_format=ValidDataFormats.PARQUET,
+    )
+    config = _minimal_twitter_sync_config()
+    ingestion_params = config["ingestion_params"]
+    sync_tasks = sync_twitter.build_sync_tasks(ingestion_params)
+    storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+    metadata = sync_twitter.init_sync_metadata(
+        config,
+        TEST_INGEST_CONFIG_PATH,
+        "2026_05_30-10:00:00",
+        sync_tasks,
+    )
+
+    def fake_fetch(
+        client: Any,
+        keyword: str,
+        *,
+        limit: int,
+        lang: str,
+        exclude: list[str],
+        sync_timestamp: str,
+    ):
+        return (
+            [mock_tweet_row("1000000000000000001", keyword=keyword)],
+            {"pages_fetched": 1, "rows_collected": 1},
+        )
+
+    monkeypatch.setattr(sync_twitter, "fetch_posts_for_keyword", fake_fetch)
+
+    sync_twitter.run_sync_tasks(
+        MagicMock(),
+        ingestion_params,
+        run_dir,
+        storage,
+        metadata,
+        sync_tasks[:1],
+        sync_timestamp="2026_05_30-10:00:00",
+        filename=storage.records_filename,
+    )
+
+    assert storage.records_filename == "posts.parquet"
+    assert (run_dir / "posts.parquet").exists()
+    assert not (run_dir / "posts.csv").exists()
+
+
 class TestSyncRecords:
     """Tests for sync_records."""
 
@@ -489,3 +548,24 @@ class TestSyncRecords:
 
         init_client.assert_not_called()
         run_tasks.assert_not_called()
+
+    def test_passes_parquet_filename_when_output_format_is_parquet(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Verifies sync_records passes posts.parquet after writing a parquet manifest."""
+        config = _minimal_twitter_sync_config()
+        config["output_format"] = "parquet"
+        monkeypatch.setattr(sync_twitter, "load_config", lambda path: config)
+        init_client = MagicMock(name="init_twitter_client")
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_twitter, "init_twitter_client", init_client)
+        monkeypatch.setattr(sync_twitter, "run_sync_tasks", run_tasks)
+        expected = "posts.parquet"
+
+        sync_twitter.sync_records(TEST_INGEST_CONFIG_PATH)
+        result = run_tasks.call_args.kwargs["filename"]
+
+        assert init_client.called is True
+        assert result == expected
