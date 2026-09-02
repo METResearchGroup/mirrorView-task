@@ -16,12 +16,20 @@ class FeatureLabelQuery:
     feature_file_id_column: str = "uri"
 
     def labeled_ids(self, feature_name: str) -> set[str]:
-        """Return ids labeled for feature_name from local feature files."""
-        return self.feature_storage.load_seen_ids_from_disk(
-            self.feature_storage.root_dir,
+        """Return ids labeled for feature_name from all feature run directories."""
+        filename = self.feature_storage.filename_for(feature_name)
+        labeled = self.feature_storage.load_seen_ids_from_all_runs(
             self.feature_file_id_column,
-            filename=self.feature_storage.filename_for(feature_name),
+            filename=filename,
         )
+        labeled.update(
+            self.feature_storage.load_seen_ids_from_disk(
+                self.feature_storage.root_dir,
+                self.feature_file_id_column,
+                filename=filename,
+            )
+        )
+        return labeled
 
     def filter_unlabeled(
         self,
