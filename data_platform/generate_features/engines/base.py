@@ -50,7 +50,22 @@ def load_seen_ids_from_features_dir(
     feature_storage: StorageManager,
     id_column: str,
 ) -> set[str]:
-    """Return ids already present in the feature file under the features dir."""
+    """Load labeled ids from the feature file at the features stage root.
+
+    Parameters
+    ----------
+    feature_storage
+        Storage whose ``root_dir`` holds the feature file named by
+        ``records_filename``.
+    id_column
+        Column in that file that holds the record id.
+
+    Returns
+    -------
+    set of str
+        Distinct ids already written for this feature. Empty when the file
+        is missing.
+    """
     raise NotImplementedError
 
 

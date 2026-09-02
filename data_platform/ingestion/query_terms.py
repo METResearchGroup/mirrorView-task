@@ -1,4 +1,4 @@
-"""Quote keyword search terms for Bluesky and Twitter ingest queries.
+"""Quote keyword search terms shared by Bluesky and Twitter ingest.
 
 Run from the repo root:
 
@@ -10,5 +10,17 @@ from __future__ import annotations
 
 
 def quote_query_term(keyword: str) -> str:
-    """Wrap a keyword in quotes when it contains whitespace or search-syntax characters."""
+    """Return a search term, quoted when it needs search-syntax escaping.
+
+    Parameters
+    ----------
+    keyword
+        Raw keyword from ingest YAML.
+
+    Returns
+    -------
+    str
+        The original keyword, or a double-quoted escaped form when the
+        keyword contains whitespace or search operators.
+    """
     raise NotImplementedError

@@ -38,7 +38,20 @@ class StorageStage(StrEnum):
 
 
 def format_filename(stem: str, file_format: ValidDataFormats) -> str:
-    """Return ``stem`` with the dataset file-format suffix."""
+    """Build a records filename from a stem and dataset format.
+
+    Parameters
+    ----------
+    stem
+        File name without a suffix, such as a feature name or ``posts``.
+    file_format
+        CSV or parquet suffix owned by the dataset manifest.
+
+    Returns
+    -------
+    str
+        ``stem`` plus the format suffix, for example ``is_political.csv``.
+    """
     raise NotImplementedError
 
 
@@ -296,7 +309,18 @@ class StorageManager:
         return f"{stem}.{self.format.value}"
 
     def require_all_runs_complete(self, dataset_id: str) -> None:
-        """Raise when this stage has no run dirs or an incomplete run."""
+        """Raise when this stage has no run directory or an incomplete run.
+
+        Parameters
+        ----------
+        dataset_id
+            Dataset id used in the error text.
+
+        Raises
+        ------
+        RuntimeError
+            When the stage root is missing or a timestamped run is incomplete.
+        """
         raise NotImplementedError
 
     def load_run_metadata(
