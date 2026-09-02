@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from data_platform.preprocessing import preprocess_twitter
+from data_platform.preprocessing.runner import collapse_candidates_by_id
 from data_platform.preprocessing.validators import twitter_validators
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
@@ -236,3 +237,96 @@ def test_second_preprocess_run_skips_already_preprocessed_ids(data_root) -> None
     assert second_metadata["row_counts"]["input"] == 0
     assert second_metadata["row_counts"]["output"] == 0
     assert len(preprocessed_storage.load_records(second_output)) == 0
+
+
+def test_collapse_candidates_by_id_keeps_last_text() -> None:
+    records = pd.DataFrame(
+        [
+            {"tweet_id": "a", "text": "first"},
+            {"tweet_id": "a", "text": "second"},
+        ]
+    )
+
+    result = collapse_candidates_by_id(records, "tweet_id", keep="last")
+
+    assert len(result) == 1
+    assert result.iloc[0]["tweet_id"] == "a"
+    assert result.iloc[0]["text"] == "second"
+
+
+def test_pandas_drop_then_collapse_skips_only_prior_run_ids() -> None:
+    seen_ids = {"a"}
+    records = pd.DataFrame(
+        [
+            {"tweet_id": "a", "text": "already seen"},
+            {"tweet_id": "b", "text": "first b"},
+            {"tweet_id": "b", "text": "second b"},
+        ]
+    )
+    id_col = "tweet_id"
+
+    is_new = ~records[id_col].isin(list(seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    records = records.loc[is_new].reset_index(drop=True)
+    result = collapse_candidates_by_id(records, id_col, keep="last")
+
+    assert skipped == 1
+    assert list(result[id_col]) == ["b"]
+    assert result.iloc[0]["text"] == "second b"
+
+
+def test_first_preprocess_run_prints_zero_prior_run_skips(data_root, capsys) -> None:
+    dataset_id = VALID_TWITTER_DATASET_ID
+    raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-14:00:00")
+    raw_storage.write_records(
+        [
+            _tweet_row(tweet_id="1000000000000000001"),
+            _tweet_row(
+                tweet_id="1000000000000000001",
+                text=_valid_text() + " later duplicate",
+            ),
+        ],
+        run_dir,
+    )
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 2,
+        },
+    )
+
+    output_dir = preprocess_twitter.preprocess_records(dataset_id)
+    preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
+    output = preprocessed_storage.load_records(output_dir)
+    metadata = preprocessed_storage.load_run_metadata(output_dir)
+    captured = capsys.readouterr()
+
+    assert len(output) == 1
+    assert output.iloc[0]["text"] == _valid_text() + " later duplicate"
+    assert metadata["row_counts"]["input"] == 1
+    assert "skipped 0 already in a prior preprocessed run" in captured.out
+
+
+def test_second_preprocess_run_print_names_prior_preprocessed_run(
+    data_root, capsys
+) -> None:
+    dataset_id = VALID_TWITTER_DATASET_ID
+    raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-15:00:00")
+    raw_storage.write_records([_tweet_row(tweet_id="1000000000000000001")], run_dir)
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 1,
+        },
+    )
+
+    preprocess_twitter.preprocess_records(dataset_id)
+    capsys.readouterr()
+    preprocess_twitter.preprocess_records(dataset_id)
+    captured = capsys.readouterr()
+
+    assert "skipped 1 already in a prior preprocessed run" in captured.out
