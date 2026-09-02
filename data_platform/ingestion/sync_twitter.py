@@ -195,6 +195,9 @@ def sync_records(
 ) -> Path:
     """Fetch Twitter records per config and write raw CSV + metadata.
 
+    Stops before creating the Twitter client when ``record_types`` is missing
+    or does not include ``TWEETS_RECORD_TYPE``.
+
     Raises
     ------
     KeyError
