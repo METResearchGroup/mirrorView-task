@@ -2,7 +2,7 @@
 
 ## 2026-09-02
 
-1. Ingest YAML now uses one prior-run skip token (`prior_runs_same_dataset`), drops unread keys, and still accepts the leftover Athena name with a warning. [PR #87](https://github.com/METResearchGroup/mirrorView-task/pull/87)
+1. Ingest YAML uses `prior_runs_same_dataset` to skip ids from earlier local runs of the same dataset. We removed `query_batch_size` and `dedupe_comments_from_prior_raw_runs`, and `prior_runs_all_datasets` still skips the same ids with a warning. [PR #87](https://github.com/METResearchGroup/mirrorView-task/pull/87)
 
 ## 2026-09-01
 

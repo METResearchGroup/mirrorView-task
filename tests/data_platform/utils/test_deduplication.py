@@ -63,13 +63,13 @@ class TestPolicyIncludesPriorRuns:
 
     def test_canonical_token_includes_prior_runs_without_warning(self) -> None:
         with warnings.catch_warnings():
-            warnings.simplefilter("error", DeprecationWarning)
+            warnings.simplefilter("error", UserWarning)
             result = policy_includes_prior_runs(["current_run", PRIOR_RUN_POLICY])
         expected = True
         assert result is expected
 
     def test_legacy_alias_includes_prior_runs_and_warns(self) -> None:
-        with pytest.warns(DeprecationWarning, match="prior_runs_all_datasets"):
+        with pytest.warns(UserWarning, match="prior_runs_all_datasets"):
             result = policy_includes_prior_runs(["prior_runs_all_datasets"])
         expected = True
         assert result is expected

@@ -1,15 +1,16 @@
-"""In-memory skip-set session for ingest identity dedupe.
+"""This module keeps a set of record ids in memory so ingest can skip records it
+has already stored.
 
-YAML policy tokens choose whether to load ids from earlier local runs.
-The canonical prior-run token is ``prior_runs_same_dataset``.
+YAML ``dedupe_policy`` lists (and Reddit comment/post policy lists) decide
+whether to load ids from earlier local runs. Use ``prior_runs_same_dataset``.
 """
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
-import warnings
 
 if TYPE_CHECKING:
     from data_platform.utils.storage import StorageManager
@@ -17,47 +18,41 @@ if TYPE_CHECKING:
 PRIOR_RUN_POLICY = "prior_runs_same_dataset"
 PRIOR_RUN_POLICY_ALIASES = frozenset({"prior_runs_all_datasets"})
 PRIOR_RUN_POLICIES = frozenset({PRIOR_RUN_POLICY}) | PRIOR_RUN_POLICY_ALIASES
-_DEPRECATION_STACKLEVEL = 3
-
-
-def _deprecated_prior_run_tokens(policy: list[Any]) -> frozenset[str]:
-    return frozenset(item for item in policy if item in PRIOR_RUN_POLICY_ALIASES)
-
-
-def _warn_deprecated_prior_run_tokens(tokens: frozenset[str]) -> None:
-    if not tokens:
-        return
-    alias_list = ", ".join(sorted(tokens))
-    warnings.warn(
-        f"{alias_list} is a deprecated alias of {PRIOR_RUN_POLICY}",
-        DeprecationWarning,
-        stacklevel=_DEPRECATION_STACKLEVEL,
-    )
 
 
 def policy_includes_prior_runs(policy: Any) -> bool:
-    """True when YAML policy asks to skip ids already stored in earlier local runs.
+    """Return True when YAML policy skips ids already stored in earlier local runs.
 
-    The canonical token is ``prior_runs_same_dataset``. Local storage only sees
+    Use ``prior_runs_same_dataset`` in the policy list. Local storage only has
     run directories for the current dataset_id, so that name matches the scan.
 
-    ``prior_runs_all_datasets`` is a leftover Athena name. Callers may still
-    pass it; it enables the same scan and should warn so configs can migrate.
+    ``prior_runs_all_datasets`` is an old Athena name. It still loads ids from
+    earlier local runs of the same dataset, and this function emits UserWarning
+    so the YAML can be renamed.
 
     Parameters
     ----------
     policy
-        YAML list of policy tokens, or any other value. Non-lists are treated
-        as "do not skip prior runs."
+        A YAML list of strings, or any other value. Non-lists return False.
 
     Returns
     -------
     bool
-        True when the list includes the canonical token or its documented alias.
+        True when the list contains ``prior_runs_same_dataset`` or
+        ``prior_runs_all_datasets``.
     """
     if not isinstance(policy, list):
         return False
-    _warn_deprecated_prior_run_tokens(_deprecated_prior_run_tokens(policy))
+    alias_names = sorted(
+        str(item) for item in policy if item in PRIOR_RUN_POLICY_ALIASES
+    )
+    if alias_names:
+        warnings.warn(
+            f"{', '.join(alias_names)} is an old name for {PRIOR_RUN_POLICY}. "
+            "Rename it in YAML. Skip behavior is the same.",
+            UserWarning,
+            stacklevel=2,
+        )
     return any(item in PRIOR_RUN_POLICIES for item in policy)
 
 
