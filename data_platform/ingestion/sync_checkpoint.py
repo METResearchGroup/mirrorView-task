@@ -200,7 +200,9 @@ def resolve_dedupe_policy(
         The YAML list, or None when neither the override nor ``dedupe_policy``
         is set.
     """
-    raise NotImplementedError
+    if override_key is not None and override_key in ingestion_params:
+        return ingestion_params[override_key]
+    return ingestion_params.get(DEDUPE_POLICY_KEY)
 
 
 def _parse_optional_int_cap(
