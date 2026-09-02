@@ -1,4 +1,4 @@
-"""Sync Twitter posts from YAML config to raw CSV storage.
+"""Sync Twitter posts from YAML config to raw records storage.
 
 Run from the repo root:
 
