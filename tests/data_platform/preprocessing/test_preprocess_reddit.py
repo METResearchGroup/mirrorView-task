@@ -130,6 +130,41 @@ def test_preprocess_records_writes_output(data_root) -> None:
     assert metadata["files"]["comments"] == "comments.csv"
 
 
+SHORT_ENGLISH_BODY = "This is a short English note."
+MIN_LENGTH_ENGLISH_BODY = "This is clearly English text!!"
+
+
+class TestRedditCommentMinLength:
+    """Tests that Reddit preprocess enforces the minimum comment length."""
+
+    def test_passes_all_validators_rejects_short_english_body(self) -> None:
+        """An otherwise valid English comment shorter than 30 characters is dropped."""
+        assert len(SHORT_ENGLISH_BODY) == 29
+        result = preprocess_reddit.passes_all_validators(SHORT_ENGLISH_BODY)
+        assert result is False
+
+    def test_passes_all_validators_keeps_english_body_at_minimum(self) -> None:
+        """An otherwise valid English comment of exactly 30 characters is kept."""
+        assert len(MIN_LENGTH_ENGLISH_BODY) == 30
+        result = preprocess_reddit.passes_all_validators(MIN_LENGTH_ENGLISH_BODY)
+        assert result is True
+
+    def test_filter_comments_drops_short_english_row(self) -> None:
+        """filter_comments keeps the valid row and drops the short English row."""
+        comments = pd.DataFrame(
+            [
+                _comment_row(comment_fullname="t1_keep"),
+                _comment_row(
+                    comment_fullname="t1_drop_short",
+                    body=SHORT_ENGLISH_BODY,
+                ),
+            ]
+        )
+        result = preprocess_reddit.filter_comments(comments)
+        expected_ids = ["t1_keep"]
+        assert result["comment_fullname"].tolist() == expected_ids
+
+
 def test_individual_reddit_validator_functions() -> None:
     assert reddit_validators.check_if_body_not_removed(_valid_body())
     assert not reddit_validators.check_if_body_not_removed("[removed]")

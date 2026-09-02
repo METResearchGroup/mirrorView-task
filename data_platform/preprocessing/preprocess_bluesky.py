@@ -23,11 +23,13 @@ from data_platform.preprocessing.runner import (
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
 )
+from data_platform.preprocessing.validators.bluesky_validators import (
+    check_if_valid_post_length,
+)
 from data_platform.preprocessing.validators.validators import (
     check_if_not_phone,
     check_if_post_has_no_urls,
     check_if_text_english,
-    check_if_valid_post_length,
 )
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager

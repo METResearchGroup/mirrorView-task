@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from data_platform.preprocessing.content_filter_policy import REDDIT_COMMENT_MIN_LENGTH
+
 REMOVED_BODY_SENTINELS = frozenset(
     {
         "[removed]",
@@ -23,6 +25,11 @@ MEDIA_HOST_PATTERN = re.compile(
     r"(?i)\b(?:imgur|i\.redd\.it|v\.redd\.it|youtube|youtu\.be|gfycat|redgifs)\b"
 )
 MENTION_PATTERN = re.compile(r"(?i)(?<!\w)(?:u|r)/\w+")
+
+
+def check_if_valid_reddit_comment_min_length(text: str) -> bool:
+    """Return True when comment text meets the preprocess Reddit minimum length."""
+    return len(text) >= REDDIT_COMMENT_MIN_LENGTH
 
 
 def check_if_body_not_removed(text: str) -> bool:

@@ -10,14 +10,6 @@ def check_if_not_phone(text: str) -> bool:
     return not re.search(phone_pattern, text)
 
 
-def check_if_valid_post_length(text: str) -> bool:
-    """For Bluesky/Twitter posts, check if the length is valid.
-
-    (Yes, arbitrary cutoff, but determined by consensus)
-    """
-    return len(text) >= 100 and len(text) <= 300
-
-
 def check_if_post_has_no_urls(text: str) -> bool:
     """Checks if a post has no URLs.
 
