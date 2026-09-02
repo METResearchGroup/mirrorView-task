@@ -9,6 +9,7 @@
 5. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
 6. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)
 7. Bluesky feature generation and curation now call the same platform command-line scripts as Reddit and Twitter. Bluesky still uses settings flags for its extra completeness checks and for skipping curation when inputs have not changed. LangChain feature settings no longer set a generate_fn that the LangChain engine never calls. [PR #89](https://github.com/METResearchGroup/mirrorView-task/pull/89)
+8. Feature generation no longer sends LLM traces to Opik. The `--opik` flag is gone, and existing metadata files that stored `opik_enabled` still load. [PR #101](https://github.com/METResearchGroup/mirrorView-task/pull/101)
 
 ## 2026-09-01
 
