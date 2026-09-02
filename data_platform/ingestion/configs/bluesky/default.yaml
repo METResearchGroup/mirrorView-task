@@ -13,5 +13,5 @@ ingestion_params:
   keywords:
     - example
   limit_per_task: 50
-  max_rows: 200
+  max_posts: 200
   sort: latest
