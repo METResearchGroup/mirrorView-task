@@ -4,7 +4,7 @@
 
 Follow the conventions defined in https://github.com/mark-torres10/ai_tools/blob/main/conventions/vocabulary.md.
 
-All timestamp generation, formatting, and parsing lives in `lib/timestamp_utils.py`. Import those helpers. Do not add timestamp format strings or conversion functions in other files.
+All current timestamps come from `lib.timestamp_utils.get_current_timestamp`. That helper is UTC. Do not add more timestamp generators.
 
 ## Cursor Cloud specific instructions
 

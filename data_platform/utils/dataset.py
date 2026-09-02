@@ -6,7 +6,7 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
-from lib.timestamp_utils import get_current_iso_created_at
+from lib.timestamp_utils import get_current_timestamp
 
 _DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
 
@@ -80,7 +80,7 @@ def write_dataset_manifest(
         "dataset_id": validate_dataset_id(dataset_id),
         "platform": platform,
         "name": name,
-        "created_at": created_at or get_current_iso_created_at(),
+        "created_at": created_at or get_current_timestamp(),
         "ingestion_config": ingestion_config,
         "format": data_format.value,
     }

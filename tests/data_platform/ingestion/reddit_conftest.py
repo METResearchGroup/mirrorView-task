@@ -3,11 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from data_platform.ingestion import sync_reddit
-from lib.timestamp_utils import format_iso_created_at, format_run_timestamp, utc_datetime
 from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
-
-_CREATED_AT = format_iso_created_at(utc_datetime(2026, 5, 30, 0, 0, 0))
-_SYNC_TIMESTAMP = format_run_timestamp(utc_datetime(2026, 5, 30, 10, 0, 0))
 
 
 def minimal_reddit_sync_config() -> dict[str, Any]:
@@ -45,12 +41,12 @@ def mock_comment_row(
         "author": "user",
         "body": "comment text long enough",
         "score": 1,
-        "created_at": _CREATED_AT,
-        "created_utc": _CREATED_AT,
+        "created_at": "2026-05-30T00:00:00+00:00",
+        "created_utc": "2026-05-30T00:00:00+00:00",
         "permalink": f"/r/{subreddit}/comments/{post_reddit_id}/x/{comment_fullname}/",
         "depth": 0,
         "comment_rank": 1,
-        "sync_timestamp": _SYNC_TIMESTAMP,
+        "sync_timestamp": "2026_05_30-10:00:00",
     }
 
 
@@ -70,10 +66,10 @@ def mock_post_row(
         "score": 1,
         "upvote_ratio": 0.5,
         "num_comments": 1,
-        "created_at": _CREATED_AT,
-        "created_utc": _CREATED_AT,
+        "created_at": "2026-05-30T00:00:00+00:00",
+        "created_utc": "2026-05-30T00:00:00+00:00",
         "permalink": f"/r/{subreddit}/comments/{reddit_id}/title/",
         "url": f"https://reddit.com/r/{subreddit}/comments/{reddit_id}/title/",
         "is_self": True,
-        "sync_timestamp": _SYNC_TIMESTAMP,
+        "sync_timestamp": "2026_05_30-10:00:00",
     }

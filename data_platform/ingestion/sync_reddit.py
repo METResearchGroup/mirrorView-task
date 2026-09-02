@@ -20,6 +20,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Iterator
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -52,7 +53,6 @@ from data_platform.utils.deduplication import (
     policy_includes_prior_runs,
 )
 from data_platform.utils.storage import RedditStorageManager, StorageStage
-from lib.timestamp_utils import iso_created_at_from_unix
 
 COMMENTS_RECORD_TYPE = "reddit.comment"
 POSTS_RECORD_TYPE = "reddit.post"
@@ -65,7 +65,7 @@ logger = logging.getLogger(__name__)
 def submission_to_row(post: praw.models.Submission, sync_timestamp: str) -> dict[str, Any]:
     """Normalize a PRAW Submission to a flat dict matching the CSV schema."""
     author = "[deleted]" if post.author is None else str(post.author)
-    created_at = iso_created_at_from_unix(post.created_utc)
+    created_at = datetime.fromtimestamp(post.created_utc, tz=timezone.utc).isoformat()
     return {
         "reddit_id": post.id,
         "reddit_fullname": post.name,
@@ -106,7 +106,7 @@ def comment_to_row(
 ) -> dict[str, Any]:
     """Normalize a PRAW Comment to a flat dict matching the comment CSV schema."""
     author = "[deleted]" if comment.author is None else str(comment.author)
-    created_at = iso_created_at_from_unix(comment.created_utc)
+    created_at = datetime.fromtimestamp(comment.created_utc, tz=timezone.utc).isoformat()
     return {
         "post_reddit_id": submission.id,
         "post_reddit_fullname": submission.name,
