@@ -11,6 +11,30 @@ from pathlib import Path
 
 from data_platform.constants import PACKAGE_ROOT
 
+_PARENT_DIR = ".."
+
+
+def _validated_relative_path(relative_path: str | Path) -> Path:
+    if relative_path == "":
+        raise ValueError("Package-relative path must not be empty.")
+    candidate = Path(relative_path)
+    if candidate.is_absolute():
+        raise ValueError(f"Package-relative path must not be absolute: {relative_path}")
+    if _PARENT_DIR in candidate.parts:
+        raise ValueError(
+            f"Package-relative path must not contain parent segments: {relative_path}"
+        )
+    return candidate
+
+
+def _require_resolved_inside_package(resolved: Path, source: str | Path) -> Path:
+    package_root = PACKAGE_ROOT.resolve()
+    if not resolved.is_relative_to(package_root):
+        raise ValueError(
+            f"Path is outside the data-platform package: {source}"
+        )
+    return package_root
+
 
 def resolve_package_path(relative_path: str | Path) -> Path:
     """Return the resolved path of a location under the data-platform package.
@@ -34,21 +58,10 @@ def resolve_package_path(relative_path: str | Path) -> Path:
         If ``relative_path`` is empty, absolute, contains ``..``, or would
         resolve outside ``PACKAGE_ROOT``.
     """
-    if relative_path == "":
-        raise ValueError("Package-relative path must not be empty.")
-    candidate = Path(relative_path)
-    if candidate.is_absolute():
-        raise ValueError(f"Package-relative path must not be absolute: {relative_path}")
-    if ".." in candidate.parts:
-        raise ValueError(
-            f"Package-relative path must not contain parent segments: {relative_path}"
-        )
+    candidate = _validated_relative_path(relative_path)
     package_root = PACKAGE_ROOT.resolve()
     resolved = (package_root / candidate).resolve()
-    if not resolved.is_relative_to(package_root):
-        raise ValueError(
-            f"Resolved path is outside the data-platform package: {relative_path}"
-        )
+    _require_resolved_inside_package(resolved, relative_path)
     return resolved
 
 
@@ -74,11 +87,6 @@ def to_package_relative(path: str | Path) -> str:
     candidate = Path(path)
     if not candidate.is_absolute():
         raise ValueError(f"Path must be absolute: {path}")
-    package_root = PACKAGE_ROOT.resolve()
     resolved = candidate.resolve()
-    if not resolved.is_relative_to(package_root):
-        raise ValueError(f"Path is outside the data-platform package: {path}")
-    relative = resolved.relative_to(package_root).as_posix()
-    if relative == "":
-        return "."
-    return relative
+    package_root = _require_resolved_inside_package(resolved, path)
+    return resolved.relative_to(package_root).as_posix()
