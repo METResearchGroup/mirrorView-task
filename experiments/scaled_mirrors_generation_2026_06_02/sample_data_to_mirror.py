@@ -17,7 +17,7 @@ PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/samp
 from __future__ import annotations
 
 import hashlib
-import json
+from pathlib import Path
 
 import pandas as pd
 
@@ -293,8 +293,7 @@ def main() -> None:
             # Ignore any unexpected folder names under `data/`.
             continue
 
-        metadata = json.loads(metadata_fp.read_text(encoding="utf-8"))
-        export_name = metadata["files"]["export"]
+        export_name = f"{Path('mirrorview.yaml').stem}.csv"
         export_fp = metadata_fp.parent / export_name
 
         if not export_fp.exists():
