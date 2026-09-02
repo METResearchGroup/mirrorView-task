@@ -32,8 +32,8 @@ def test_flat_feature_files_ignores_run_directories(tmp_path: Path) -> None:
     assert [path.name for path in leftover] == ["is_political.csv"]
 
 
-def test_copy_flat_features_into_run_leaves_originals(tmp_path: Path) -> None:
-    """Given leftover files, when copying, then the timestamp folder has copies and the originals remain."""
+def test_copy_flat_features_into_run_deletes_leftovers(tmp_path: Path) -> None:
+    """Given leftover files, when copying, then the timestamp folder has copies and the leftovers are gone."""
     features_root = tmp_path / "features"
     write_feature_csv(
         features_root,
@@ -51,7 +51,9 @@ def test_copy_flat_features_into_run_leaves_originals(tmp_path: Path) -> None:
         "metadata.json",
         "deadletter.jsonl",
     }
-    assert (features_root / "is_political.csv").exists()
+    assert not (features_root / "is_political.csv").exists()
+    assert not (features_root / "metadata.json").exists()
+    assert not (features_root / "deadletter.jsonl").exists()
     assert (run_dir / "is_political.csv").exists()
     assert (run_dir / "metadata.json").read_text(encoding="utf-8") == "{}"
 
@@ -73,6 +75,8 @@ def test_copy_flat_features_into_run_refuses_overwrite(tmp_path: Path) -> None:
 
     with pytest.raises(FileExistsError, match="Refusing to overwrite"):
         copy_flat_features_into_run(features_root, run_dir)
+
+    assert (features_root / "is_political.csv").exists()
 
 
 def test_copy_flat_features_into_run_preflights_second_file_collision(tmp_path: Path) -> None:
@@ -99,6 +103,8 @@ def test_copy_flat_features_into_run_preflights_second_file_collision(tmp_path: 
         copy_flat_features_into_run(features_root, run_dir)
 
     assert not (run_dir / "is_likely_spam.csv").exists()
+    assert (features_root / "is_political.csv").exists()
+    assert (features_root / "is_likely_spam.csv").exists()
 
 
 def test_copy_flat_features_for_dataset_creates_run(data_root: Path) -> None:
@@ -115,7 +121,7 @@ def test_copy_flat_features_for_dataset_creates_run(data_root: Path) -> None:
     assert dest is not None
     assert dest.parent == features_root
     assert (dest / "is_political.csv").exists()
-    assert (features_root / "is_political.csv").exists()
+    assert not (features_root / "is_political.csv").exists()
 
 
 def test_copy_flat_features_for_dataset_noop_when_nothing_leftover(data_root: Path) -> None:

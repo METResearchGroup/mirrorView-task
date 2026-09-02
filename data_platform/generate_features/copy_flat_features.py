@@ -37,10 +37,11 @@ def flat_feature_files(features_root: Path) -> list[Path]:
 
 
 def copy_flat_features_into_run(features_root: Path, run_dir: Path) -> list[Path]:
-    """Copy leftover root-level feature files into ``run_dir``.
+    """Copy leftover root-level feature files into ``run_dir``, then delete the leftovers.
 
-    Leaves the originals in place. Raises if a name already exists in the
-    destination so a live timestamped run is not overwritten.
+    Raises if a name already exists in the destination so a live timestamped
+    run is not overwritten. Leftover files are removed only after every copy
+    succeeds.
     """
     sources = flat_feature_files(features_root)
     if not sources:
@@ -54,6 +55,8 @@ def copy_flat_features_into_run(features_root: Path, run_dir: Path) -> list[Path
     for src, dest in zip(sources, destinations, strict=True):
         shutil.copy2(src, dest)
         copied.append(dest)
+    for src in sources:
+        src.unlink()
     return copied
 
 
@@ -95,7 +98,7 @@ def main(
     if dest is None:
         print(f"copy_flat_features: no leftover files under {platform}/{dataset_id}/features/")
         return
-    print(f"copy_flat_features: copied leftover files into {dest}")
+    print(f"copy_flat_features: moved leftover files into {dest}")
 
 
 if __name__ == "__main__":

@@ -60,7 +60,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/copy_flat_features.py
   --platform bluesky --dataset-id bluesky_<uuid>
 ```
 
-The originals stay in place. Skip and curate read only timestamped folders, so those leftover files are unused until you copy them.
+The leftover files are deleted after the copy succeeds. Skip and curate read only timestamped folders.
 
 The smoke config uses `dataset_id: bluesky_c0ffee00-0000-4000-8000-000000000100`. Curation is the last stage. Files stay under `data_platform/data/`.
 
