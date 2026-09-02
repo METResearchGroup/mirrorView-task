@@ -472,6 +472,11 @@ def run_sync_tasks(
     include_comments: bool,
     include_posts: bool,
 ) -> None:
+    """Run the checkpointed subreddit loop and write comments and posts.
+
+    Filenames come from ``comment_storage.records_filename`` and
+    ``post_storage.records_filename`` so the suffix matches the dataset format.
+    """
     max_rows_int = parse_max_rows(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
     comments_filename = record_type_to_filename(COMMENTS_RECORD_TYPE)
