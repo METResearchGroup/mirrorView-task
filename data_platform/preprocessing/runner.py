@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from pydantic import BaseModel
@@ -176,22 +176,6 @@ def collapse_candidates_by_id(
         A new frame with one row per id and a reset index.
     """
     return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
-
-
-def _drop_already_preprocessed(
-    records: pd.DataFrame, id_col: str, seen_ids: set[str]
-) -> tuple[pd.DataFrame, int]:
-    """Drop rows already preprocessed in a prior run, then dedupe by id within this batch.
-
-    Returns the surviving records and how many rows were dropped for being seen before.
-    """
-    id_series = cast(pd.Series, records[id_col])
-    is_new = ~id_series.isin(list(seen_ids))
-    skipped = len(records) - int(is_new.sum())
-    deduped = (
-        records.loc[is_new].drop_duplicates(subset=[id_col], keep="last").reset_index(drop=True)
-    )
-    return deduped, skipped
 
 
 def preprocess_records(
