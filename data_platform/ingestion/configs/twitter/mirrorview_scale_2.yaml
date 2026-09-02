@@ -17,7 +17,7 @@ ingestion_params:
   dedupe_policy:
     - current_run
     - prior_runs_same_dataset
-  keyword:
+  keywords:
     # gun_control
     - gun control
     - gun rights
