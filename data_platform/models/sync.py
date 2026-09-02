@@ -15,6 +15,7 @@ class SyncBlueskyPostModel(BaseModel):
     repost_count: int
     reply_count: int
     quote_count: int
+    sync_timestamp: str
 
 
 class SyncRedditPostModel(BaseModel):
@@ -29,6 +30,7 @@ class SyncRedditPostModel(BaseModel):
     score: int
     upvote_ratio: float
     num_comments: int
+    created_at: str
     created_utc: str
     permalink: str
     url: str
@@ -65,6 +67,7 @@ class SyncRedditCommentModel(BaseModel):
     author: str
     body: str
     score: int
+    created_at: str
     created_utc: str
     permalink: str
     depth: int
