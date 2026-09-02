@@ -45,7 +45,6 @@ from data_platform.utils.deduplication import (
 )
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
-POSTS_CSV = "posts.csv"
 TWEETS_RECORD_TYPE = "twitter.tweet"
 
 
@@ -203,8 +202,9 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Twitter records per config and write raw CSV + metadata.
+    """Fetch Twitter records per config and write raw records plus metadata.
 
+    Creates the dataset manifest first so storage can read the declared format.
     Stops before creating the Twitter client when ``record_types`` is missing
     or does not include ``TWEETS_RECORD_TYPE``.
 
@@ -218,15 +218,14 @@ def sync_records(
     """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="twitter")
-    storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
-
     ensure_dataset_manifest(
-        storage,
+        TwitterStorageManager(StorageStage.RAW, dataset_id),
         "twitter",
         dataset_id,
         config,
         config_path,
     )
+    storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
@@ -243,6 +242,7 @@ def sync_records(
         entity_label="keywords",
     )
     sync_timestamp = str(metadata["sync_timestamp"])
+    filename = storage.records_filename
 
     run_sync_tasks(
         client,
@@ -252,7 +252,7 @@ def sync_records(
         metadata,
         sync_tasks,
         sync_timestamp=sync_timestamp,
-        filename=POSTS_CSV,
+        filename=filename,
     )
     finalize_local_disk_sync(storage, output_dir, metadata)
 
