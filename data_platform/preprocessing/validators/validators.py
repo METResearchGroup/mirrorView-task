@@ -2,22 +2,12 @@ import re
 
 from langdetect import DetectorFactory, LangDetectException, detect  # pyright: ignore[reportMissingImports]
 
-from data_platform.preprocessing.content_filter_policy import (
-    BLUESKY_POST_MAX_LENGTH,
-    BLUESKY_POST_MIN_LENGTH,
-)
-
 DetectorFactory.seed = 0
 
 
 def check_if_not_phone(text: str) -> bool:
     phone_pattern = r"\b\d{3}[-.]?\d{3}[-.]?\d{4}\b|\(\d{3}\)\s?\d{3}[-.]?\d{4}|\b\d{10}\b"
     return not re.search(phone_pattern, text)
-
-
-def check_if_valid_post_length(text: str) -> bool:
-    """Return True when Bluesky post text is within the preprocess length bounds."""
-    return BLUESKY_POST_MIN_LENGTH <= len(text) <= BLUESKY_POST_MAX_LENGTH
 
 
 def check_if_post_has_no_urls(text: str) -> bool:

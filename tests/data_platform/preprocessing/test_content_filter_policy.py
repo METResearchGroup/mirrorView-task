@@ -9,13 +9,15 @@ from data_platform.preprocessing.content_filter_policy import (
     TWITTER_POST_MAX_LENGTH,
     TWITTER_POST_MIN_LENGTH,
 )
+from data_platform.preprocessing.validators.bluesky_validators import (
+    check_if_valid_post_length,
+)
 from data_platform.preprocessing.validators.reddit_validators import (
     check_if_valid_reddit_comment_min_length,
 )
 from data_platform.preprocessing.validators.twitter_validators import (
     check_if_valid_twitter_post_length,
 )
-from data_platform.preprocessing.validators.validators import check_if_valid_post_length
 
 
 class TestContentFilterPolicy:
