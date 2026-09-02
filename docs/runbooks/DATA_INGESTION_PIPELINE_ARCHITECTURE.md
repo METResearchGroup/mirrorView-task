@@ -103,7 +103,7 @@ Feature generation uses a separate checkpoint model in `data_platform/generate_f
 | Stage | Path | Main fields |
 |-------|------|-------------|
 | Raw sync | `raw/<timestamp>/metadata.json` | `tasks`, `row_count`, `sync_status`, config snapshot |
-| Preprocessed | `preprocessed/<timestamp>/metadata.json` | source raw runs, row counts, validation stats |
+| Preprocessed | `preprocessed/<timestamp>/metadata.json` | `dataset_id`, `source_raw_runs`, `row_counts` |
 | Features | `features/metadata.json` | per-feature status, batch counts, source preprocessed runs |
 | Curated | `curated/<timestamp>/metadata.json` | filter results, `files.export`, `source_preprocessed_runs` |
 
