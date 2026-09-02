@@ -12,7 +12,10 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.preprocessing.shared_columns import add_canonical_author_columns
+from data_platform.preprocessing.shared_columns import (
+    add_canonical_author_columns,
+    add_canonical_source_record_id,
+)
 from data_platform.utils.platform_specific_columns import (
     CANONICAL_TEXT_COLUMN,
     PlatformSpecificColumns,
@@ -231,6 +234,7 @@ def preprocess_records(
 
     records = add_canonical_text_column(records, spec)
     records = add_canonical_author_columns(records, spec)
+    records = add_canonical_source_record_id(records, spec)
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(

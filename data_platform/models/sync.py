@@ -73,8 +73,18 @@ class SyncRedditCommentModel(BaseModel):
     sync_timestamp: str
 
 
+class PreprocessedBlueskyPostModel(SyncBlueskyPostModel):
+    """A Bluesky post after preprocess, with shared source record id.
+
+    Raw ingest still uses ``SyncBlueskyPostModel``. The original ``uri`` stays
+    on the inherited sync model.
+    """
+
+    source_record_id: str
+
+
 class PreprocessedRedditCommentModel(SyncRedditCommentModel):
-    """A Reddit comment after preprocess, with original body, shared text, and shared author handle.
+    """A Reddit comment after preprocess, with original body, shared text, shared author handle, and shared source record id.
 
     Raw ingest still uses ``SyncRedditCommentModel``. Feature generation reads
     ``text`` from the preprocessed CSV described by this model.
@@ -82,13 +92,15 @@ class PreprocessedRedditCommentModel(SyncRedditCommentModel):
 
     text: str
     author_handle: str
+    source_record_id: str
 
 
 class PreprocessedTwitterPostModel(SyncTwitterPostModel):
-    """A Twitter post after preprocess, with shared author handle.
+    """A Twitter post after preprocess, with shared author handle and shared source record id.
 
     Raw ingest still uses ``SyncTwitterPostModel``. ``author_id`` stays on the
     inherited sync model.
     """
 
     author_handle: str
+    source_record_id: str

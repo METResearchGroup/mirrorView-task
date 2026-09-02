@@ -11,6 +11,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 from data_platform.models.sync import (
+    PreprocessedBlueskyPostModel,
     PreprocessedRedditCommentModel,
     PreprocessedTwitterPostModel,
     SyncBlueskyPostModel,
@@ -340,11 +341,16 @@ class BlueskyStorageManager(StorageManager):
         dataset_id: str = "",
         *,
         records_filename: str = "posts.csv",
+        model: type[BaseModel] | None = None,
     ) -> None:
+        if model is None and stage == StorageStage.PREPROCESSED:
+            resolved_model: type[BaseModel] = PreprocessedBlueskyPostModel
+        else:
+            resolved_model = model or SyncBlueskyPostModel
         super().__init__(
             "bluesky",
             stage,
-            SyncBlueskyPostModel,
+            resolved_model,
             dataset_id,
             records_filename=records_filename,
         )
@@ -424,5 +430,5 @@ class TwitterStorageManager(StorageManager):
         return pd.read_csv(
             csv_path,
             keep_default_na=False,
-            dtype={"tweet_id": "string", "author_id": "string"},
+            dtype={"tweet_id": "string", "author_id": "string", "source_record_id": "string"},
         )

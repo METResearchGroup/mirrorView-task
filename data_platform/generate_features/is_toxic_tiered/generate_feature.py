@@ -23,7 +23,7 @@ HIGH_MIN = 0.7
 
 
 class IsToxicTieredModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     toxicity_prob: float = Field(description="Perspective API TOXICITY probability in [0, 1].")
     toxicity_tier: ToxicityTier = Field(
@@ -44,7 +44,7 @@ def generate_feature(uri: str, text: str) -> IsToxicTieredModel:
     """Score text toxicity and return the tiered label."""
     toxicity_prob = get_toxicity_prob(text)
     return IsToxicTieredModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         toxicity_prob=toxicity_prob,
         toxicity_tier=toxicity_tier_from_prob(toxicity_prob),

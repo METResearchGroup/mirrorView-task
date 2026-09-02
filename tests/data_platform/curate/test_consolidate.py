@@ -27,16 +27,16 @@ def test_build_wide_table_joins_features(tmp_path: Path) -> None:
         _feature_run_dir(features_root),
         "is_likely_spam",
         [
-            {"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_likely_spam": False},
-            {"uri": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "is_likely_spam": True},
+            {"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_likely_spam": False},
+            {"source_record_id": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "is_likely_spam": True},
         ],
     )
     write_feature_csv(
         _feature_run_dir(features_root),
         "is_news_or_opinion",
         [
-            {"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "category": "news"},
-            {"uri": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "category": "opinion"},
+            {"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "category": "news"},
+            {"source_record_id": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "category": "opinion"},
         ],
     )
 
@@ -73,7 +73,7 @@ def test_build_wide_table_supports_reddit_id_column_mapping(tmp_path: Path) -> N
     write_feature_csv(
         _feature_run_dir(features_root),
         "is_political",
-        [{"uri": "t1_a", "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
+        [{"source_record_id": "t1_a", "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
     )
 
     wide = build_wide_table(
@@ -82,7 +82,7 @@ def test_build_wide_table_supports_reddit_id_column_mapping(tmp_path: Path) -> N
             features_root=features_root,
             feature_names=("is_political",),
             id_column="comment_fullname",
-            feature_file_id_column="uri",
+            feature_file_id_column="source_record_id",
         )
     )
 
@@ -102,12 +102,12 @@ def test_build_wide_table_picks_latest_label_timestamp_for_duplicate_ids(tmp_pat
         "is_political",
         [
             {
-                "uri": URI_POST_A,
+                "source_record_id": URI_POST_A,
                 "label_timestamp": "2026_01_01-00:00:00",
                 "is_political": False,
             },
             {
-                "uri": URI_POST_A,
+                "source_record_id": URI_POST_A,
                 "label_timestamp": "2026_02_01-00:00:00",
                 "is_political": True,
             },
@@ -137,7 +137,7 @@ def test_build_wide_table_picks_latest_label_across_timestamped_runs(tmp_path: P
         "is_political",
         [
             {
-                "uri": URI_POST_A,
+                "source_record_id": URI_POST_A,
                 "label_timestamp": "2026_01_01-00:00:00",
                 "is_political": False,
             }
@@ -148,7 +148,7 @@ def test_build_wide_table_picks_latest_label_across_timestamped_runs(tmp_path: P
         "is_political",
         [
             {
-                "uri": URI_POST_A,
+                "source_record_id": URI_POST_A,
                 "label_timestamp": "2026_02_01-00:00:00",
                 "is_political": True,
             }

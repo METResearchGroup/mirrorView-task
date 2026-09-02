@@ -30,6 +30,6 @@ def test_generate_feature_returns_expected_schema(monkeypatch) -> None:
     result = generate_feature("at://example/post/1", "click this link")
 
     assert isinstance(result, IsLikelySpamModel)
-    assert result.uri == "at://example/post/1"
+    assert result.source_record_id == "at://example/post/1"
     assert result.label_timestamp == "2026-06-02T00:00:00Z"
     assert result.is_likely_spam is True

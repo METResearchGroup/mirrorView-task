@@ -7,6 +7,7 @@ import duckdb
 import pandas as pd
 
 from data_platform.utils.duckdb_features import feature_glob
+from data_platform.utils.platform_specific_columns import CANONICAL_SOURCE_RECORD_ID_COLUMN
 
 # Columns selected from each feature CSV (excluding the feature id column).
 # Keys match FEATURE_REGISTRY.
@@ -30,14 +31,14 @@ class ConsolidateConfig:
 
     ``id_column`` is the join key on the preprocessed records CSV (e.g. ``uri`` for
     Bluesky, ``comment_fullname`` for Reddit). ``feature_file_id_column`` is the id
-    column stored in feature CSV files (defaults to ``uri`` for all platforms today).
+    column stored in feature CSV files (``source_record_id`` for every platform).
     """
 
     posts_file: Path
     features_root: Path
     feature_names: tuple[str, ...] = tuple(FEATURE_WIDE_COLUMNS.keys())
     id_column: str = "uri"
-    feature_file_id_column: str = "uri"
+    feature_file_id_column: str = CANONICAL_SOURCE_RECORD_ID_COLUMN
 
 
 def _feature_cte_sql(

@@ -62,7 +62,7 @@ class LlmIsSelfContainedModel(BaseModel):
 
 
 class IsSelfContainedModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     is_self_contained: bool
 
@@ -75,7 +75,7 @@ def generate_feature(uri: str, text: str) -> IsSelfContainedModel:
         system_prompt=SYSTEM_PROMPT,
     )
     return IsSelfContainedModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         is_self_contained=result.is_self_contained,
     )

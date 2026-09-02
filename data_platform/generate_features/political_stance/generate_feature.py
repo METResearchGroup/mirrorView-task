@@ -67,7 +67,7 @@ class LlmPoliticalStanceModel(BaseModel):
 
 
 class PoliticalStanceModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     political_stance: Literal["left", "right", "neutral", "unclear"]
 
@@ -80,7 +80,7 @@ def generate_feature(uri: str, text: str) -> PoliticalStanceModel:
         system_prompt=SYSTEM_PROMPT,
     )
     return PoliticalStanceModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         political_stance=result.political_stance,
     )

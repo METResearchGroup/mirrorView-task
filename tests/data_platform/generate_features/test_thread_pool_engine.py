@@ -9,14 +9,14 @@ from tests.data_platform.constants import URI_POST_A, URI_POST_B
 
 
 class _RowModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     value: int
 
 
 def test_thread_pool_batch_engine_labels_tasks() -> None:
     def generate_fn(uri: str, text: str) -> _RowModel:
-        return _RowModel(uri=uri, label_timestamp="ignored", value=len(text))
+        return _RowModel(source_record_id=uri, label_timestamp="ignored", value=len(text))
 
     spec = FeatureSpec(
         name="test_feature",

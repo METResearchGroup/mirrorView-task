@@ -54,7 +54,7 @@ class LlmIsPoliticalModel(BaseModel):
 
 
 class IsPoliticalModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     is_political: bool
 
@@ -67,7 +67,7 @@ def generate_feature(uri: str, text: str) -> IsPoliticalModel:
         system_prompt=SYSTEM_PROMPT,
     )
     return IsPoliticalModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         is_political=result.is_political,
     )

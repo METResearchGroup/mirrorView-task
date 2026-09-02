@@ -43,7 +43,7 @@ class LlmIsLikelySpamModel(BaseModel):
 
 
 class IsLikelySpamModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     is_likely_spam: bool
 
@@ -56,7 +56,7 @@ def generate_feature(uri: str, text: str) -> IsLikelySpamModel:
         system_prompt=SYSTEM_PROMPT,
     )
     return IsLikelySpamModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         is_likely_spam=result.is_likely_spam,
     )

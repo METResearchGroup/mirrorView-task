@@ -56,7 +56,7 @@ class LlmIsNewsOrOpinionModel(BaseModel):
 
 
 class IsNewsOrOpinionModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     category: Literal["news", "opinion", "neither"]
 
@@ -69,7 +69,7 @@ def generate_feature(uri: str, text: str) -> IsNewsOrOpinionModel:
         system_prompt=SYSTEM_PROMPT,
     )
     return IsNewsOrOpinionModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         category=result.category,
     )

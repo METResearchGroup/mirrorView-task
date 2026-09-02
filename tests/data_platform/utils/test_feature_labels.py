@@ -36,7 +36,7 @@ def test_filter_unlabeled_excludes_labeled_uris(data_root) -> None:
     write_feature_csv(
         feature_storage.root_dir / LABEL_TIMESTAMP,
         "is_political",
-        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
+        [{"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
     )
 
     records = pd.DataFrame(
@@ -59,12 +59,12 @@ def test_labeled_ids_unions_two_timestamped_run_dirs(data_root) -> None:
     write_feature_csv(
         feature_storage.root_dir / "2026_01_01-00:00:00",
         "is_political",
-        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
+        [{"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "is_political": True}],
     )
     write_feature_csv(
         feature_storage.root_dir / "2026_02_01-00:00:00",
         "is_political",
-        [{"uri": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "is_political": False}],
+        [{"source_record_id": URI_POST_B, "label_timestamp": LABEL_TIMESTAMP, "is_political": False}],
     )
 
     query = FeatureLabelQuery(feature_storage=feature_storage)

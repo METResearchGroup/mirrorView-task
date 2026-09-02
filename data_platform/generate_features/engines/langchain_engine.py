@@ -46,7 +46,7 @@ class LangChainBatchEngine(BaseBatchExecutionEngine):
         for task, result in zip(tasks, results, strict=True):
             fields = result.model_dump() if hasattr(result, "model_dump") else dict(result)
             row = row_with_label_timestamp(
-                {"uri": task.uri, **fields},
+                {"source_record_id": task.uri, **fields},
                 label_timestamp=self._label_timestamp,
             )
             validated = self.spec.model.model_validate(row)
