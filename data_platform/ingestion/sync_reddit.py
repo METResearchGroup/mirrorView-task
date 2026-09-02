@@ -40,7 +40,6 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_in_progress,
     parse_max_rows,
     prepare_sync_run,
-    record_type_to_filename,
     require_dataset_id,
     run_checkpointed_sync,
     run_sync_cli,
@@ -479,8 +478,8 @@ def run_sync_tasks(
     """
     max_rows_int = parse_max_rows(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
-    comments_filename = record_type_to_filename(COMMENTS_RECORD_TYPE)
-    posts_filename = record_type_to_filename(POSTS_RECORD_TYPE)
+    comments_filename = comment_storage.records_filename
+    posts_filename = post_storage.records_filename
 
     comment_dedupe_session, post_dedupe_session = _open_reddit_dedupe_sessions(
         comment_storage,
@@ -566,19 +565,21 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Reddit records per config and write raw CSV + metadata."""
+    """Fetch Reddit records per config and write raw records plus metadata.
+
+    Creates the dataset manifest first so storage can read the declared format.
+    """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="reddit")
-    comment_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
-    post_storage = comment_storage.post_storage()
-
     ensure_dataset_manifest(
-        comment_storage,
+        RedditStorageManager(StorageStage.RAW, dataset_id),
         "reddit",
         dataset_id,
         config,
         config_path,
     )
+    comment_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
+    post_storage = comment_storage.post_storage()
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
