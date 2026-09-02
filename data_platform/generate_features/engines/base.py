@@ -46,6 +46,14 @@ class BatchExecutionEngine(Protocol):
     ) -> BatchRunStats: ...
 
 
+def load_seen_ids_from_features_dir(
+    feature_storage: StorageManager,
+    id_column: str,
+) -> set[str]:
+    """Return ids already present in the feature file under the features dir."""
+    raise NotImplementedError
+
+
 def load_seen_uris_from_features_dir(feature_storage: StorageManager) -> set[str]:
     """Return URIs already present in the feature file under the features dir."""
     return feature_storage.load_seen_uris(feature_storage.root_dir)

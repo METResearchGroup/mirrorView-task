@@ -37,6 +37,11 @@ class StorageStage(StrEnum):
     CURATED = "curated"
 
 
+def format_filename(stem: str, file_format: ValidDataFormats) -> str:
+    """Return ``stem`` with the dataset file-format suffix."""
+    raise NotImplementedError
+
+
 def _write_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
     with output_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -289,6 +294,10 @@ class StorageManager:
     def filename_for(self, stem: str) -> str:
         """Return the format-correct filename for a given stem."""
         return f"{stem}.{self.format.value}"
+
+    def require_all_runs_complete(self, dataset_id: str) -> None:
+        """Raise when this stage has no run dirs or an incomplete run."""
+        raise NotImplementedError
 
     def load_run_metadata(
         self,
