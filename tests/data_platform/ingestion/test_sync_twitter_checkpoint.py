@@ -454,13 +454,15 @@ class TestSyncRecords:
         [
             [],
             ["twitter.user"],
+            "twitter.tweet",
+            None,
         ],
     )
     def test_rejects_empty_or_wrong_record_types(
         self,
         data_root,
         monkeypatch: pytest.MonkeyPatch,
-        record_types: list[str],
+        record_types: Any,
     ) -> None:
         config = _minimal_twitter_sync_config()
         config["record_types"] = record_types
