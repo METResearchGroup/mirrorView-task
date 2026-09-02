@@ -29,7 +29,6 @@ from data_platform.preprocessing.validators.validators import (
     check_if_text_english,
     check_if_valid_post_length,
 )
-from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager
 
@@ -64,7 +63,6 @@ def filter_posts(
 
 
 def preprocess_records(dataset_id: str) -> Path:
-    dataset_id = validate_dataset_id(dataset_id)
     return run_preprocess_records(dataset_id, BLUESKY_SPEC)
 
 

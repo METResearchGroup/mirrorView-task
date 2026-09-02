@@ -31,10 +31,6 @@ REDDIT_SPEC = FeaturePlatformSpec(
     empty_message="generate_reddit_features: no preprocessed comments found",
 )
 
-ID_COLUMN = REDDIT_COLUMNS.records_id_column
-TEXT_COLUMN = REDDIT_COLUMNS.text_column
-FEATURE_FILE_ID_COLUMN = REDDIT_COLUMNS.feature_file_id_column
-
 
 def reddit_feature_config(*args, **kwargs):
     return build_feature_config(REDDIT_SPEC, *args, **kwargs)

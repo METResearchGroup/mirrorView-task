@@ -33,7 +33,6 @@ def test_langchain_batch_engine_writes_rows(monkeypatch: pytest.MonkeyPatch) -> 
         name="test_feature",
         model=_RowModel,
         engine_type="langchain",
-        generate_fn=lambda uri, text: _RowModel(uri=uri, label_timestamp="t", score=True),
         system_prompt="test",
         llm_output_schema=_LlmOut,
     )
@@ -46,3 +45,14 @@ def test_langchain_batch_engine_writes_rows(monkeypatch: pytest.MonkeyPatch) -> 
     assert len(labels) == 2
     assert labels[0]["uri"] == URI_POST_A
     assert "label_timestamp" in labels[0]
+
+
+def test_langchain_registry_specs_omit_generate_fn() -> None:
+    from data_platform.generate_features.registry import FEATURE_REGISTRY
+
+    for spec in FEATURE_REGISTRY.values():
+        if spec.engine_type == "langchain":
+            assert spec.generate_fn is None
+        else:
+            assert spec.generate_fn is not None
+
