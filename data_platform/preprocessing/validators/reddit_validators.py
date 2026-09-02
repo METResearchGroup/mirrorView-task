@@ -26,6 +26,7 @@ MENTION_PATTERN = re.compile(r"(?i)(?<!\w)(?:u|r)/\w+")
 
 
 def check_if_valid_reddit_comment_min_length(text: str) -> bool:
+    """Return True when comment text meets the preprocess Reddit minimum length."""
     raise NotImplementedError
 
 
