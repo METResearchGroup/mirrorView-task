@@ -137,9 +137,7 @@ def save_preprocessed(
     *,
     source_raw_run_dirs: list[str],
 ) -> str:
-    """Write preprocessed records and provenance metadata to a new run directory.
-
-    Metadata contains only ``dataset_id``, ``source_raw_runs``, and ``row_counts``.
+    """Write preprocessed records and metadata to a new run directory.
 
     Parameters
     ----------
