@@ -5,6 +5,7 @@ from typing import Any
 
 import yaml
 
+from data_platform.ingestion.sync_twitter import TWEETS_RECORD_TYPE
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 
 INGEST_CONFIGS_DIR = (
@@ -87,3 +88,21 @@ class TestIngestYamlKeys:
                 found.append(str(path))
         expected: list[str] = []
         assert found == expected
+
+
+class TestTwitterIngestYamlRecordTypes:
+    """Tests that Twitter ingest YAML lists the tweet record type."""
+
+    def test_twitter_ingest_yaml_includes_tweets_record_type(self) -> None:
+        twitter_dir = INGEST_CONFIGS_DIR / "twitter"
+        missing: list[str] = []
+        for path in sorted(twitter_dir.glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            record_types = loaded.get("record_types")
+            if (
+                not isinstance(record_types, list)
+                or TWEETS_RECORD_TYPE not in record_types
+            ):
+                missing.append(str(path))
+        expected: list[str] = []
+        assert missing == expected

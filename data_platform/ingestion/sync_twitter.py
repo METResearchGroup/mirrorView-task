@@ -46,6 +46,7 @@ from data_platform.utils.deduplication import (
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 POSTS_CSV = "posts.csv"
+TWEETS_RECORD_TYPE = "twitter.tweet"
 
 
 @dataclass(frozen=True)
@@ -192,7 +193,19 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Twitter records per config and write raw CSV + metadata."""
+    """Fetch Twitter records per config and write raw CSV + metadata.
+
+    Stops before creating the Twitter client when ``record_types`` is missing
+    or does not include ``TWEETS_RECORD_TYPE``.
+
+    Raises
+    ------
+    KeyError
+        When the config has no ``record_types`` key.
+    ValueError
+        When ``record_types`` is empty or does not include
+        ``TWEETS_RECORD_TYPE``.
+    """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="twitter")
     storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
@@ -207,6 +220,9 @@ def sync_records(
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
+    record_types = config["record_types"]
+    if not isinstance(record_types, list) or TWEETS_RECORD_TYPE not in record_types:
+        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
     client = init_twitter_client()
 
     output_dir, metadata = prepare_sync_run(

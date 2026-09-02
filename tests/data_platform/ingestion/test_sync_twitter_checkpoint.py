@@ -19,7 +19,7 @@ def _minimal_twitter_sync_config() -> dict[str, Any]:
         "name": "test",
         "description": "test",
         "date": "2026-05-31",
-        "record_types": ["twitter.tweet"],
+        "record_types": [sync_twitter.TWEETS_RECORD_TYPE],
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "keyword": ["alpha", "beta"],
@@ -398,3 +398,95 @@ def test_resume_skips_completed_tasks(
     assert calls == ["beta"]
     assert resumed_metadata["tasks"]["beta"]["status"] == "completed"
     assert resumed_metadata["row_count"] == 2
+
+
+class TestSyncRecords:
+    """Tests for sync_records."""
+
+    def _patch_load_and_fetch(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+        config: dict[str, Any],
+    ) -> tuple[MagicMock, MagicMock]:
+        monkeypatch.setattr(sync_twitter, "load_config", lambda path: config)
+        monkeypatch.setattr(
+            sync_twitter, "ensure_dataset_manifest", lambda *args, **kwargs: None
+        )
+        init_client = MagicMock(name="init_twitter_client")
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_twitter, "init_twitter_client", init_client)
+        monkeypatch.setattr(sync_twitter, "run_sync_tasks", run_tasks)
+        return init_client, run_tasks
+
+    def test_accepts_tweets_record_type(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        config = _minimal_twitter_sync_config()
+        init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
+
+        result = sync_twitter.sync_records(Path("test.yaml"))
+
+        expected_called = True
+        assert result is not None
+        assert init_client.called is expected_called
+        assert run_tasks.called is expected_called
+
+    def test_allows_extra_record_types_when_tweet_present(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        config = _minimal_twitter_sync_config()
+        config["record_types"] = [sync_twitter.TWEETS_RECORD_TYPE, "twitter.user"]
+        init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
+
+        result = sync_twitter.sync_records(Path("test.yaml"))
+
+        expected_called = True
+        assert result is not None
+        assert init_client.called is expected_called
+        assert run_tasks.called is expected_called
+
+    @pytest.mark.parametrize(
+        "record_types",
+        [
+            [],
+            ["twitter.user"],
+            "twitter.tweet",
+            None,
+        ],
+    )
+    def test_rejects_empty_or_wrong_record_types(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+        record_types: Any,
+    ) -> None:
+        config = _minimal_twitter_sync_config()
+        config["record_types"] = record_types
+        init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
+
+        with pytest.raises(
+            ValueError, match="Unsupported record types for checkpoint sync"
+        ):
+            sync_twitter.sync_records(Path("test.yaml"))
+
+        init_client.assert_not_called()
+        run_tasks.assert_not_called()
+
+    def test_rejects_missing_record_types(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        config = _minimal_twitter_sync_config()
+        del config["record_types"]
+        init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
+
+        with pytest.raises(KeyError):
+            sync_twitter.sync_records(Path("test.yaml"))
+
+        init_client.assert_not_called()
+        run_tasks.assert_not_called()
