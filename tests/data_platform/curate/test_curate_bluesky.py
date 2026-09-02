@@ -37,7 +37,7 @@ def _write_features_meta(
     sync_status: str = "completed",
     source_preprocessed_runs: list[str] | None = None,
 ) -> None:
-    features_dir = data_root / "bluesky" / dataset_id / "features"
+    features_dir = data_root / "bluesky" / dataset_id / "features" / "2026_01_01-00:00:00"
     features_dir.mkdir(parents=True, exist_ok=True)
     meta = FeatureRunMetadata(
         dataset_id=dataset_id,
@@ -199,7 +199,7 @@ class TestCurateEarlyExit:
     ) -> None:
         config_path, rules_hash = _config_and_hash(tmp_path)
         _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
-        features_dir = data_root / "bluesky" / VALID_DATASET_ID / "features"
+        features_dir = data_root / "bluesky" / VALID_DATASET_ID / "features" / "2026_01_01-00:00:00"
         features_dir.mkdir(parents=True, exist_ok=True)
         meta = FeatureRunMetadata(
             dataset_id=VALID_DATASET_ID,

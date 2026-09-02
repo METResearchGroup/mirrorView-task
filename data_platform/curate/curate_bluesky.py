@@ -16,12 +16,11 @@ import typer
 
 from data_platform.curate.runner import CuratePlatformSpec, run_curation
 from data_platform.utils.config_paths import resolve_config_path
-from data_platform.generate_features.metadata import metadata_path
 from data_platform.generate_features.models import FeatureRunMetadata
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.gate_checks import require_all_runs_complete, require_features_complete
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
-from data_platform.utils.storage import BlueskyStorageManager, StorageStage
+from data_platform.utils.storage import BlueskyStorageManager, StorageStage, METADATA_FILENAME
 
 CONFIGS_DIR = Path(__file__).resolve().parent / "configs" / "bluesky"
 
@@ -70,7 +69,15 @@ def curate(config_path: Path, dataset_id: str) -> Path:
 
     curated_storage = BlueskyStorageManager(StorageStage.CURATED, dataset_id)
 
-    features_meta_path = metadata_path(dataset_root("bluesky", dataset_id) / "features")
+    features_storage = BlueskyStorageManager(
+        StorageStage.FEATURES,
+        dataset_id,
+        records_filename="features",
+    )
+    features_run_dir = features_storage.latest_run_dir()
+    if features_run_dir is None:
+        raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
+    features_meta_path = features_run_dir / METADATA_FILENAME
     if not features_meta_path.exists():
         raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
     with features_meta_path.open(encoding="utf-8") as f:
