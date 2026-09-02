@@ -46,8 +46,12 @@ def add_canonical_text_column(
     """Copy native post or comment text onto the shared ``text`` column.
 
     Native fields stay on the frame. Downstream stages read ``spec.columns.text_column``.
+    The input frame is not modified.
     """
-    raise NotImplementedError
+    out = df.copy()
+    native_text = out[spec.native_text_column]
+    out[CANONICAL_TEXT_COLUMN] = native_text.map(lambda value: str(value))
+    return out
 
 
 def apply_text_transform(
