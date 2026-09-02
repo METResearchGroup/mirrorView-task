@@ -58,7 +58,7 @@ def tweet_to_row(
         "text": tweet.text or "",
         "author_id": str(tweet.author_id) if tweet.author_id else "",
         "username": username,
-        "created_at": str(tweet.created_at) if tweet.created_at else "",
+        "created_at": tweet.created_at.isoformat() if tweet.created_at else "",
         "like_count": metrics.get("like_count", 0),
         "retweet_count": metrics.get("retweet_count", 0),
         "reply_count": metrics.get("reply_count", 0),
