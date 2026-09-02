@@ -228,11 +228,22 @@ class StorageManager:
         dedupe_session: DedupeSession,
         filename: str | None = None,
     ) -> AppendResult:
-        kept_rows, skipped = dedupe_session.filter_rows(rows)
+        """Drop rows whose ids are already in the skip set, then append the rest.
+
+        The caller must already have loaded ``dedupe_session.seen_ids``. Ids from
+        kept rows are added to the skip set only after those rows are written.
+        When every incoming row is already seen, the CSV is left unchanged.
+
+        Returns
+        -------
+        AppendResult
+            Counts of rows written and rows skipped.
+        """
+        kept_rows, skipped = dedupe_session.exclude_seen_ids(rows)
         resolved_filename = filename or dedupe_session.config.filename
         if kept_rows:
             self.append_records(kept_rows, run_dir, filename=resolved_filename)
-            dedupe_session.note_appended(kept_rows)
+            dedupe_session.add_seen_ids(kept_rows)
         return AppendResult(kept=len(kept_rows), skipped=skipped)
 
     def load_seen_uris(
