@@ -103,10 +103,10 @@ def _effective_limit_per_keyword(ingestion_params: dict[str, Any], remaining: in
     return max(0, min(per_keyword, remaining))
 
 
-def _remaining_row_budget(metadata: dict[str, Any], max_rows_int: int | None) -> int | None:
-    if max_rows_int is None:
+def _remaining_post_budget(metadata: dict[str, Any], max_posts_int: int | None) -> int | None:
+    if max_posts_int is None:
         return None
-    return max_rows_int - metadata["row_count"]
+    return max_posts_int - metadata["row_count"]
 
 
 def run_sync_tasks(
@@ -149,7 +149,7 @@ def run_sync_tasks(
 
         limit = _effective_limit_per_keyword(
             ingestion_params,
-            _remaining_row_budget(metadata, max_posts_int),
+            _remaining_post_budget(metadata, max_posts_int),
         )
         try:
             rows, stats = fetch_posts_for_keyword(

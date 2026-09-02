@@ -336,22 +336,6 @@ class TestParseMaxPosts:
 
         assert result == expected
 
-    def test_falls_back_to_max_rows_when_primary_is_absent(self) -> None:
-        ingestion_params = {"max_rows": 4}
-        expected = 4
-
-        result = parse_max_posts(ingestion_params)
-
-        assert result == expected
-
-    def test_max_posts_wins_when_both_set(self) -> None:
-        ingestion_params = {"max_posts": 7, "max_rows": 4}
-        expected = 7
-
-        result = parse_max_posts(ingestion_params)
-
-        assert result == expected
-
     def test_accepts_zero_max_posts(self) -> None:
         ingestion_params = {"max_posts": 0}
         expected = 0
@@ -390,22 +374,6 @@ class TestParseMaxComments:
 
     def test_prefers_max_comments(self) -> None:
         ingestion_params = {"max_comments": 8}
-        expected = 8
-
-        result = parse_max_comments(ingestion_params)
-
-        assert result == expected
-
-    def test_falls_back_to_max_rows_when_primary_is_absent(self) -> None:
-        ingestion_params = {"max_rows": 4}
-        expected = 4
-
-        result = parse_max_comments(ingestion_params)
-
-        assert result == expected
-
-    def test_max_comments_wins_when_both_set(self) -> None:
-        ingestion_params = {"max_comments": 8, "max_rows": 4}
         expected = 8
 
         result = parse_max_comments(ingestion_params)

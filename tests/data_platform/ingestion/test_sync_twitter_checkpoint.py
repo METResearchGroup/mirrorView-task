@@ -646,7 +646,7 @@ class TestEffectiveLimitPerKeyword:
 
 
 class TestRemainingPostBudget:
-    """Tests for parse_max_posts() with Twitter remaining-row budget."""
+    """Tests for parse_max_posts() with Twitter remaining post budget."""
 
     def test_remaining_budget_uses_max_posts(self) -> None:
         ingestion_params = {"max_posts": 8}
@@ -654,7 +654,7 @@ class TestRemainingPostBudget:
         expected = 5
 
         cap = parse_max_posts(ingestion_params)
-        result = sync_twitter._remaining_row_budget(metadata, cap)
+        result = sync_twitter._remaining_post_budget(metadata, cap)
 
         assert result == expected
 
@@ -664,7 +664,7 @@ class TestRemainingPostBudget:
         expected = 8
 
         cap = parse_max_posts(ingestion_params)
-        remaining = sync_twitter._remaining_row_budget(metadata, cap)
+        remaining = sync_twitter._remaining_post_budget(metadata, cap)
         result = sync_twitter._effective_limit_per_keyword(ingestion_params, remaining)
 
         assert result == expected

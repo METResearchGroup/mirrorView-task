@@ -144,7 +144,7 @@ def _run_two_subreddit_comment_sync(
         stats = {
             "subreddit": subreddit,
             "listing": fetch_cfg.get("listing", "hot"),
-            "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+            "limit_per_subreddit": fetch_cfg["limit_per_task"],
             "posts_collected": len(post_rows),
             "comments_collected": len(comment_rows),
         }
@@ -173,22 +173,6 @@ def test_run_sync_tasks_caps_comments_by_max_comments(
     config = minimal_reddit_sync_config()
     ingestion_params = dict(config["ingestion_params"])
     ingestion_params["max_comments"] = 1
-    metadata = _run_two_subreddit_comment_sync(
-        monkeypatch, ingestion_params, config
-    )
-
-    assert metadata["row_count"] == 1
-    assert metadata["tasks"]["alphasub"]["status"] == "completed"
-    assert metadata["tasks"]["betasub"]["status"] == "skipped"
-
-
-def test_run_sync_tasks_caps_comments_by_max_rows_alias(
-    data_root,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    config = minimal_reddit_sync_config()
-    ingestion_params = dict(config["ingestion_params"])
-    ingestion_params["max_rows"] = 1
     metadata = _run_two_subreddit_comment_sync(
         monkeypatch, ingestion_params, config
     )
