@@ -254,7 +254,15 @@ def increment_duplicate_skip_counters(
         Leftover name map passed through to bootstrap. Those leftover keys
         are never written back.
     """
-    raise NotImplementedError
+    bootstrap_duplicate_skip_counters(
+        metadata,
+        legacy_by_record_type=legacy_by_record_type,
+    )
+    metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] = (
+        int(metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY]) + skipped
+    )
+    breakdown = metadata[SKIPPED_BY_RECORD_TYPE_KEY]
+    breakdown[record_type] = int(breakdown.get(record_type, 0)) + skipped
 
 
 def _parse_optional_int_cap(
