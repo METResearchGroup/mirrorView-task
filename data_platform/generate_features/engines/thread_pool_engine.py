@@ -24,6 +24,8 @@ class ThreadPoolBatchEngine(BaseBatchExecutionEngine):
         rows: list[dict] = []
 
         def _label_one(task: LabelTask) -> dict:
+            if self.spec.generate_fn is None:
+                raise ValueError(f"Feature {self.spec.name} requires generate_fn")
             result = self.spec.generate_fn(task.uri, task.text)
             return row_with_label_timestamp(
                 result.model_dump(),
