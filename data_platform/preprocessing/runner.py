@@ -35,6 +35,17 @@ class PreprocessPlatformSpec:
     text_transform: Callable[[str], str] | None = None
 
 
+def add_canonical_text_column(
+    df: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    """Copy native post or comment text onto the shared ``text`` column.
+
+    Native fields stay on the frame. Downstream stages read ``spec.columns.text_column``.
+    """
+    raise NotImplementedError
+
+
 def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
