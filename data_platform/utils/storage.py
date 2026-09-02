@@ -11,6 +11,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 from data_platform.models.sync import (
+    PreprocessedRedditCommentModel,
     SyncBlueskyPostModel,
     SyncRedditCommentModel,
     SyncRedditPostModel,
@@ -357,10 +358,14 @@ class RedditStorageManager(StorageManager):
         records_filename: str = "comments.csv",
         model: type[BaseModel] | None = None,
     ) -> None:
+        if model is None and stage == StorageStage.PREPROCESSED:
+            resolved_model: type[BaseModel] = PreprocessedRedditCommentModel
+        else:
+            resolved_model = model or SyncRedditCommentModel
         super().__init__(
             "reddit",
             stage,
-            model or SyncRedditCommentModel,
+            resolved_model,
             dataset_id,
             records_filename=records_filename,
         )
