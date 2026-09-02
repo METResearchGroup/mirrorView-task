@@ -107,13 +107,13 @@ def run_sync_tasks(
     metadata: dict[str, Any],
     sync_tasks: list[TwitterTask],
     *,
-    sync_timestamp: str,
     csv_filename: str,
 ) -> None:
     max_rows_int = parse_max_rows(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
     relative_file_path = f"{relative_run_dir}/{csv_filename}"
+    sync_timestamp = Path(relative_run_dir).name
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="tweet_id",
@@ -213,7 +213,6 @@ def sync_records(
         init_metadata_fn=lambda: init_sync_metadata(config, config_path, sync_tasks),
         entity_label="keywords",
     )
-    sync_timestamp = str(metadata["sync_timestamp"])
 
     run_sync_tasks(
         client,
@@ -222,7 +221,6 @@ def sync_records(
         storage,
         metadata,
         sync_tasks,
-        sync_timestamp=sync_timestamp,
         csv_filename=POSTS_FILENAME,
     )
     finalize_local_disk_sync(storage, output_dir, metadata)
