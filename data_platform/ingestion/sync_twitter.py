@@ -77,7 +77,29 @@ def _resolve_search_terms(ingestion_params: dict[str, Any]) -> list[str]:
         strings, or when ``keywords`` is absent and ``keyword`` is missing or
         empty.
     """
-    raise NotImplementedError
+    if "keywords" in ingestion_params:
+        keywords = ingestion_params.get("keywords")
+        if not isinstance(keywords, list) or not keywords:
+            raise ValueError(
+                "ingestion_params must include 'keywords' as a non-empty list of strings"
+            )
+        items: list[str] = []
+        for raw in keywords:
+            if not isinstance(raw, str) or not raw.strip():
+                raise ValueError(
+                    "ingestion_params.keywords entries must be non-empty strings"
+                )
+            items.append(raw.strip())
+        return items
+
+    keyword = ingestion_params.get("keyword")
+    if isinstance(keyword, list) and keyword:
+        return [str(k) for k in keyword]
+    if isinstance(keyword, str) and keyword:
+        return [keyword]
+    raise ValueError(
+        "ingestion_params must include 'keywords' as a non-empty list of strings"
+    )
 
 
 def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[TwitterTask]:
