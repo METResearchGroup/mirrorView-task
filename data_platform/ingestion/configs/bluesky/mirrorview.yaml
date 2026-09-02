@@ -8,7 +8,7 @@ ingestion_params:
   dedupe_policy:
     - current_run
     - prior_runs_same_dataset
-  limit: 100
+  limit_per_task: 100
   sort: latest
   keywords:
     # gun_control

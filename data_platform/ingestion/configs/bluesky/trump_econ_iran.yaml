@@ -6,7 +6,7 @@ output_format: parquet
 record_types:
   - app.bsky.feed.post
 ingestion_params:
-  limit: 334
+  limit_per_task: 334
   sort: latest
   keywords:
     - trump

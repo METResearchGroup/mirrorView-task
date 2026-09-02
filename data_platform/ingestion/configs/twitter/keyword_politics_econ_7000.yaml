@@ -6,7 +6,7 @@ record_types:
   - twitter.tweet
 ingestion_params:
   max_rows: 10000 # changed from 7,000 originally.
-  limit_per_keyword: 1000
+  limit_per_task: 1000
   lang: en
   exclude:
     - reply
