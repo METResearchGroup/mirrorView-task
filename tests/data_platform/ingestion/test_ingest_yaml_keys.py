@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+import pytest
 import yaml
 
 from data_platform.ingestion.sync_twitter import TWEETS_RECORD_TYPE
@@ -169,12 +170,55 @@ class TestTwitterKeywordsYamlKey:
         expected = ["example"]
         assert result == expected
 
-    def test_committed_twitter_yaml_keeps_limit_per_keyword(self) -> None:
+
+OLD_LIMIT_KEYS = frozenset({"limit", "limit_per_keyword", "limit_per_subreddit"})
+INGEST_PLATFORMS = ("bluesky", "twitter", "reddit")
+
+
+class TestLimitPerTaskYamlKey:
+    """Tests that ingest YAML uses limit_per_task, not older platform cap keys."""
+
+    def test_committed_ingest_yaml_does_not_use_older_cap_keys(self) -> None:
+        found: list[str] = []
+        for platform in INGEST_PLATFORMS:
+            for path in sorted((INGEST_CONFIGS_DIR / platform).glob("*.yaml")):
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if not isinstance(params, dict):
+                    continue
+                for key in sorted(OLD_LIMIT_KEYS & params.keys()):
+                    found.append(f"{path}: {key}")
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_ingest_yaml_sets_limit_per_task_int(self) -> None:
         missing: list[str] = []
-        for path in sorted((INGEST_CONFIGS_DIR / "twitter").glob("*.yaml")):
-            loaded = _load_yaml_mapping(path)
-            params = loaded.get("ingestion_params")
-            if not isinstance(params, dict) or "limit_per_keyword" not in params:
-                missing.append(str(path))
+        for platform in INGEST_PLATFORMS:
+            for path in sorted((INGEST_CONFIGS_DIR / platform).glob("*.yaml")):
+                loaded = _load_yaml_mapping(path)
+                params = loaded.get("ingestion_params")
+                if not isinstance(params, dict) or not isinstance(
+                    params.get("limit_per_task"), int
+                ):
+                    missing.append(str(path))
         expected: list[str] = []
         assert missing == expected
+
+    @pytest.mark.parametrize(
+        "platform,expected",
+        [
+            ("bluesky", 50),
+            ("twitter", 25),
+            ("reddit", 5),
+        ],
+    )
+    def test_default_yaml_keeps_platform_cap_values(
+        self,
+        platform: str,
+        expected: int,
+    ) -> None:
+        path = INGEST_CONFIGS_DIR / platform / "default.yaml"
+        loaded = _load_yaml_mapping(path)
+        params = loaded["ingestion_params"]
+        result = params.get("limit_per_task")
+        assert result == expected

@@ -481,3 +481,40 @@ class TestSyncRecords:
         assert init_client.called is True
         assert result_comments == expected_comments
         assert result_posts == expected_posts
+
+
+class TestFetchRecordsForSubredditLimitPerTask:
+    """Tests that fetch_records_for_subreddit reads limit_per_task."""
+
+    def test_passes_limit_per_task_to_listing_fetch(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ingestion_params = {"limit_per_task": 1}
+        expected = 1
+        captured: dict[str, int] = {}
+
+        def fake_page(
+            reddit: Any,
+            subreddit: str,
+            listing: str,
+            limit: int,
+            *,
+            time_filter: str | None = None,
+        ):
+            captured["limit"] = limit
+            return []
+
+        monkeypatch.setattr(sync_reddit, "_fetch_subreddit_page", fake_page)
+
+        sync_reddit.fetch_records_for_subreddit(
+            MagicMock(),
+            ingestion_params,
+            "politics",
+            sync_timestamp="2026_05_30-10:00:00",
+            include_posts=True,
+            include_comments=False,
+        )
+        result = captured["limit"]
+
+        assert result == expected

@@ -616,3 +616,31 @@ class TestBuildSyncTasks:
     ) -> None:
         with pytest.raises(ValueError, match="keywords"):
             sync_twitter.build_sync_tasks(ingestion_params)
+
+
+class TestEffectiveLimitPerKeyword:
+    """Tests for _effective_limit_per_keyword()."""
+
+    def test_uses_limit_per_task_when_alias_is_absent(self) -> None:
+        ingestion_params = {"limit_per_task": 8}
+        expected = 8
+
+        result = sync_twitter._effective_limit_per_keyword(ingestion_params, None)
+
+        assert result == expected
+
+    def test_defaults_to_25_when_neither_key_is_set(self) -> None:
+        ingestion_params: dict[str, Any] = {}
+        expected = 25
+
+        result = sync_twitter._effective_limit_per_keyword(ingestion_params, None)
+
+        assert result == expected
+
+    def test_clamps_limit_per_task_to_remaining_rows(self) -> None:
+        ingestion_params = {"limit_per_task": 10}
+        expected = 3
+
+        result = sync_twitter._effective_limit_per_keyword(ingestion_params, 3)
+
+        assert result == expected
