@@ -23,6 +23,10 @@ def resolve_config_path(config: Path, base_dir: Path) -> Path:
     raise FileNotFoundError(f"Config not found: {config}")
 
 
+def to_repo_relative(path: str | Path, repo_root: Path) -> str:
+    raise NotImplementedError
+
+
 def load_yaml_config(config_path: Path) -> dict[str, Any]:
     with config_path.open(encoding="utf-8") as f:
         raw = yaml.safe_load(f)
