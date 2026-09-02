@@ -470,7 +470,7 @@ def run_sync_tasks(
     include_posts: bool,
 ) -> None:
     max_rows_int = parse_max_rows(ingestion_params)
-    sync_timestamp = str(metadata["sync_timestamp"])
+    sync_timestamp = Path(relative_run_dir).name
     comments_csv = COMMENTS_FILENAME
     posts_csv = POSTS_FILENAME
 
