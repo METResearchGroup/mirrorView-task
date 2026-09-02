@@ -569,3 +569,83 @@ class TestSyncRecords:
 
         assert init_client.called is True
         assert result == expected
+
+
+class TestBuildSyncTasks:
+    """Tests for build_sync_tasks()."""
+
+    def test_builds_one_task_per_keywords_entry(self) -> None:
+        ingestion_params = {"keywords": ["alpha", "beta"]}
+        expected = [
+            sync_twitter.TwitterTask(task_id="alpha", keyword="alpha"),
+            sync_twitter.TwitterTask(task_id="beta", keyword="beta"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected
+
+    def test_strips_keywords_entries_and_does_not_quote(self) -> None:
+        ingestion_params = {"keywords": [" gun control "]}
+        expected = [
+            sync_twitter.TwitterTask(task_id="gun control", keyword="gun control"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected
+
+    def test_rejects_blank_keywords_entries(self) -> None:
+        ingestion_params = {"keywords": ["alpha", ""]}
+
+        with pytest.raises(ValueError, match="non-empty strings"):
+            sync_twitter.build_sync_tasks(ingestion_params)
+
+    @pytest.mark.parametrize(
+        "ingestion_params",
+        [
+            {},
+            {"keywords": []},
+            {"keywords": "example"},
+            {"keywords": None},
+            {"keyword": ""},
+            {"keyword": []},
+        ],
+    )
+    def test_rejects_missing_or_invalid_search_terms(
+        self,
+        ingestion_params: dict[str, Any],
+    ) -> None:
+        with pytest.raises(ValueError, match="keywords"):
+            sync_twitter.build_sync_tasks(ingestion_params)
+
+    def test_falls_back_to_keyword_list(self) -> None:
+        ingestion_params = {"keyword": ["alpha", "beta"]}
+        expected = [
+            sync_twitter.TwitterTask(task_id="alpha", keyword="alpha"),
+            sync_twitter.TwitterTask(task_id="beta", keyword="beta"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected
+
+    def test_falls_back_to_keyword_string(self) -> None:
+        ingestion_params = {"keyword": "example"}
+        expected = [
+            sync_twitter.TwitterTask(task_id="example", keyword="example"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected
+
+    def test_keywords_wins_when_both_set(self) -> None:
+        ingestion_params = {"keywords": ["alpha"], "keyword": "ignored"}
+        expected = [
+            sync_twitter.TwitterTask(task_id="alpha", keyword="alpha"),
+        ]
+
+        result = sync_twitter.build_sync_tasks(ingestion_params)
+
+        assert result == expected

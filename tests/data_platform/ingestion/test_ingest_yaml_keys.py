@@ -128,3 +128,53 @@ class TestBlueskyAuthorFilterYamlKey:
         result = params.get("author_filter")
         expected = "user.bsky.social"
         assert result == expected
+
+
+class TestTwitterKeywordsYamlKey:
+    """Tests that Twitter ingest YAML uses keywords, not keyword."""
+
+    def test_committed_twitter_yaml_does_not_use_keyword_key(self) -> None:
+        found: list[str] = []
+        for path in sorted((INGEST_CONFIGS_DIR / "twitter").glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if isinstance(params, dict) and "keyword" in params:
+                found.append(str(path))
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_twitter_yaml_sets_keywords_list(self) -> None:
+        found: list[str] = []
+        for path in sorted((INGEST_CONFIGS_DIR / "twitter").glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if not isinstance(params, dict):
+                found.append(f"{path}: missing ingestion_params")
+                continue
+            keywords = params.get("keywords")
+            if (
+                not isinstance(keywords, list)
+                or not keywords
+                or not all(isinstance(item, str) and item.strip() for item in keywords)
+            ):
+                found.append(str(path))
+        expected: list[str] = []
+        assert found == expected
+
+    def test_default_twitter_yaml_sets_keywords_example(self) -> None:
+        path = INGEST_CONFIGS_DIR / "twitter" / "default.yaml"
+        loaded = _load_yaml_mapping(path)
+        params = loaded["ingestion_params"]
+        result = params.get("keywords")
+        expected = ["example"]
+        assert result == expected
+
+    def test_committed_twitter_yaml_keeps_limit_per_keyword(self) -> None:
+        missing: list[str] = []
+        for path in sorted((INGEST_CONFIGS_DIR / "twitter").glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if not isinstance(params, dict) or "limit_per_keyword" not in params:
+                missing.append(str(path))
+        expected: list[str] = []
+        assert missing == expected
