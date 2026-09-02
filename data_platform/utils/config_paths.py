@@ -46,7 +46,14 @@ def to_repo_relative(path: str | Path, repo_root: Path) -> str:
     ValueError
         If ``path`` is not absolute or does not resolve inside ``repo_root``.
     """
-    raise NotImplementedError
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        raise ValueError(f"Path must be absolute: {path}")
+    resolved = candidate.resolve()
+    root = repo_root.resolve()
+    if not resolved.is_relative_to(root):
+        raise ValueError(f"Path is outside the repository: {path}")
+    return resolved.relative_to(root).as_posix()
 
 
 def load_yaml_config(config_path: Path) -> dict[str, Any]:
