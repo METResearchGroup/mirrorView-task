@@ -15,7 +15,7 @@ ingestion_params:
     - reply
     - retweet
     - quote
-  keyword:
+  keywords:
     # gun_control
     - gun control
     - gun rights
