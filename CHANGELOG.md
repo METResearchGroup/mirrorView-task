@@ -2,7 +2,7 @@
 
 ## 2026-09-02
 
-1. Preprocess writes a canonical `text` column on kept Bluesky, Twitter, and Reddit-comment rows, and Reddit features now read that column while native `body` stays on the record for audit. [PR #91](https://github.com/METResearchGroup/mirrorView-task/pull/91)
+1. The preprocess step adds a shared `text` column on Bluesky, Twitter, and Reddit comment rows that pass the filters. Reddit feature code now reads that column, and the original `body` field is still on the record so you can check it. [PR #91](https://github.com/METResearchGroup/mirrorView-task/pull/91)
 
 ## 2026-09-01
 

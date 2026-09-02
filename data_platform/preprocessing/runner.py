@@ -43,16 +43,16 @@ def add_canonical_text_column(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
-    """Copy native post or comment text onto the shared ``text`` column.
+    """Copy the platform's original post or comment text onto the shared ``text`` column.
 
-    Native fields such as Reddit ``body`` stay on the frame for audit.
-    The input frame is not modified.
+    You still have original fields such as Reddit ``body`` on the returned frame.
+    The function does not modify the input frame.
 
     Parameters
     ----------
     spec
         ``native_text_column`` is the copy source. The destination is always
-        canonical ``text``.
+        shared ``text``.
 
     Returns
     -------
@@ -102,7 +102,9 @@ def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFra
     if df.empty:
         return df.copy()
 
-    prepared = add_canonical_text_column(df, spec)
+    prepared = df
+    if spec.columns.text_column not in df.columns:
+        prepared = add_canonical_text_column(df, spec)
     text_col = spec.columns.text_column
     text_mask = prepared[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)

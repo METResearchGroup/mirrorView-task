@@ -73,10 +73,10 @@ class SyncRedditCommentModel(BaseModel):
 
 
 class PreprocessedRedditCommentModel(SyncRedditCommentModel):
-    """Preprocessed Reddit comment with native ``body`` and canonical ``text``.
+    """A Reddit comment after preprocess, with original body and shared text.
 
-    Raw ingest still uses ``SyncRedditCommentModel``. This model is the
-    preprocessed CSV contract so feature generation can read ``text``.
+    Raw ingest still uses ``SyncRedditCommentModel``. Feature generation reads
+    ``text`` from the preprocessed CSV described by this model.
     """
 
     text: str

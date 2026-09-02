@@ -79,6 +79,17 @@ def test_filter_comments_drops_invalid_rows() -> None:
     assert filtered.iloc[0]["comment_fullname"] == "t1_keep"
 
 
+def test_filter_comments_does_not_replace_existing_text_from_body() -> None:
+    """Existing canonical text is what validators see, even if body would fail."""
+    comments = pd.DataFrame([_comment_row(comment_fullname="t1_keep")])
+    comments["text"] = _valid_body()
+    comments["body"] = "[removed]"
+    filtered = preprocess_reddit.filter_comments(comments)
+    assert len(filtered) == 1
+    assert filtered.iloc[0]["text"] == _valid_body()
+    assert filtered.iloc[0]["body"] == "[removed]"
+
+
 def test_preprocess_records_writes_output(data_root) -> None:
     dataset_id = VALID_REDDIT_DATASET_ID
     raw_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
