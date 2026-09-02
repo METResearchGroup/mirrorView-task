@@ -80,3 +80,72 @@ def test_note_appended_updates_seen_ids() -> None:
     session.note_appended([{"uri": "uri-b"}, {"uri": "uri-c"}])
 
     assert session.seen_ids == {"uri-a", "uri-b", "uri-c"}
+
+
+def test_load_seen_ids_unions_current_run_only() -> None:
+    storage = MagicMock()
+    storage.load_seen_ids_from_disk.return_value = {"uri-a"}
+    config = DedupeConfig(id_column="uri", filename="posts.csv")
+    session = DedupeSession(config)
+
+    session.load_seen_ids(storage, Path("/tmp/run"))
+
+    assert session.seen_ids == {"uri-a"}
+    storage.load_seen_ids_from_disk.assert_called_once_with(
+        Path("/tmp/run"), "uri", filename="posts.csv"
+    )
+    storage.load_seen_ids_from_all_runs.assert_not_called()
+
+
+def test_load_seen_ids_from_all_runs_does_not_call_disk() -> None:
+    storage = MagicMock()
+    storage.load_seen_ids_from_all_runs.return_value = {"uri-b"}
+    config = DedupeConfig(id_column="uri", filename="posts.csv")
+    session = DedupeSession(config)
+
+    session.load_seen_ids_from_all_runs(storage)
+
+    assert session.seen_ids == {"uri-b"}
+    storage.load_seen_ids_from_all_runs.assert_called_once_with(
+        "uri", filename="posts.csv"
+    )
+    storage.load_seen_ids_from_disk.assert_not_called()
+
+
+def test_load_seen_ids_unions_into_existing_seen_ids() -> None:
+    storage = MagicMock()
+    storage.load_seen_ids_from_disk.return_value = {"uri-b"}
+    config = DedupeConfig(id_column="uri", filename="posts.csv")
+    session = DedupeSession(config)
+    session.seen_ids = {"uri-a"}
+
+    session.load_seen_ids(storage, Path("/tmp/run"))
+
+    assert session.seen_ids == {"uri-a", "uri-b"}
+    storage.load_seen_ids_from_all_runs.assert_not_called()
+
+
+def test_exclude_seen_ids_skips_seen() -> None:
+    config = DedupeConfig(id_column="uri")
+    session = DedupeSession(config)
+    session.seen_ids = {"uri-a"}
+
+    kept, skipped = session.exclude_seen_ids(
+        [
+            {"uri": "uri-a", "text": "dup"},
+            {"uri": "uri-b", "text": "new"},
+        ]
+    )
+
+    assert kept == [{"uri": "uri-b", "text": "new"}]
+    assert skipped == 1
+
+
+def test_add_seen_ids_updates_seen_ids() -> None:
+    config = DedupeConfig(id_column="uri")
+    session = DedupeSession(config)
+    session.seen_ids = {"uri-a"}
+
+    session.add_seen_ids([{"uri": "uri-b"}])
+
+    assert session.seen_ids == {"uri-a", "uri-b"}
