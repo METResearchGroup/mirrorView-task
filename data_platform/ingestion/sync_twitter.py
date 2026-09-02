@@ -29,7 +29,7 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
-    parse_max_rows,
+    parse_max_posts,
     prepare_sync_run,
     require_dataset_id,
     resolve_limit_per_task,
@@ -122,7 +122,7 @@ def run_sync_tasks(
 ) -> None:
     """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
 
-    Skips completed tasks on resume, stops early when max_rows is reached, and records failures
+    Skips completed tasks on resume, stops early when max_posts is reached, and records failures
     without aborting the full run.
 
     Parameters
@@ -130,7 +130,7 @@ def run_sync_tasks(
     filename
         Records file name from ``storage.records_filename``, including the dataset format suffix.
     """
-    max_rows_int = parse_max_rows(ingestion_params)
+    max_posts_int = parse_max_posts(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
     dedupe_session = DedupeSession(
@@ -149,7 +149,7 @@ def run_sync_tasks(
 
         limit = _effective_limit_per_keyword(
             ingestion_params,
-            _remaining_row_budget(metadata, max_rows_int),
+            _remaining_row_budget(metadata, max_posts_int),
         )
         try:
             rows, stats = fetch_posts_for_keyword(
@@ -195,7 +195,7 @@ def run_sync_tasks(
         metadata,
         storage,
         output_dir,
-        max_rows_int=max_rows_int,
+        record_cap=max_posts_int,
         tqdm_desc="Syncing keywords",
         process_task=process_task,
     )

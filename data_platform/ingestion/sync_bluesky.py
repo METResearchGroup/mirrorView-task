@@ -31,7 +31,7 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
-    parse_max_rows,
+    parse_max_posts,
     prepare_sync_run,
     require_dataset_id,
     resolve_limit_per_task,
@@ -249,10 +249,10 @@ def run_sync_tasks(
 ) -> None:
     """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
 
-    Skips completed tasks on resume, stops early when max_rows is reached, and records failures
+    Skips completed tasks on resume, stops early when max_posts is reached, and records failures
     without aborting the full run.
     """
-    max_rows_int = parse_max_rows(ingestion_params)
+    max_posts_int = parse_max_posts(ingestion_params)
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="uri",
@@ -269,8 +269,8 @@ def run_sync_tasks(
         mark_task_in_progress(entry, storage, output_dir, metadata)
 
         remaining: int | None = None
-        if max_rows_int is not None:
-            remaining = max_rows_int - int(metadata["row_count"])
+        if max_posts_int is not None:
+            remaining = max_posts_int - int(metadata["row_count"])
             if remaining <= 0:
                 return
 
@@ -319,7 +319,7 @@ def run_sync_tasks(
         metadata,
         storage,
         output_dir,
-        max_rows_int=max_rows_int,
+        record_cap=max_posts_int,
         tqdm_desc="Syncing keywords",
         process_task=process_task,
     )

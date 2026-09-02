@@ -148,26 +148,45 @@ def find_resume_run_dir(
     return max(candidates, key=lambda item: item[0])[1]
 
 
-def stop_at_max_rows(
+def stop_at_record_cap(
     metadata: dict[str, Any],
     storage: StorageManager,
     output_dir: Path,
-    max_rows_int: int | None,
+    record_cap: int | None,
 ) -> bool:
-    """Mark pending tasks skipped and flush when row cap is reached."""
-    if max_rows_int is None or metadata["row_count"] < max_rows_int:
+    """Mark pending tasks skipped and flush when the counted-record cap is reached."""
+    if record_cap is None or metadata["row_count"] < record_cap:
         return False
     mark_remaining_tasks_skipped(get_task_progress(metadata))
     flush_run_metadata(storage, output_dir, metadata)
     return True
 
 
+def stop_at_max_rows(
+    metadata: dict[str, Any],
+    storage: StorageManager,
+    output_dir: Path,
+    max_rows_int: int | None,
+) -> bool:
+    return stop_at_record_cap(metadata, storage, output_dir, max_rows_int)
+
+
 LIMIT_PER_TASK_KEY = "limit_per_task"
+MAX_POSTS_KEY = "max_posts"
+MAX_COMMENTS_KEY = "max_comments"
+MAX_ROWS_ALIAS = "max_rows"
+
+
+def parse_max_posts(ingestion_params: dict[str, Any]) -> int | None:
+    raise NotImplementedError
+
+
+def parse_max_comments(ingestion_params: dict[str, Any]) -> int | None:
+    raise NotImplementedError
 
 
 def parse_max_rows(ingestion_params: dict[str, Any]) -> int | None:
-    max_rows = ingestion_params.get("max_rows")
-    return int(max_rows) if max_rows is not None else None
+    return parse_max_posts(ingestion_params)
 
 
 def resolve_limit_per_task(ingestion_params: dict[str, Any]) -> int:
@@ -250,7 +269,7 @@ def run_checkpointed_sync(
     storage: StorageManager,
     output_dir: Path,
     *,
-    max_rows_int: int | None,
+    record_cap: int | None,
     tqdm_desc: str,
     process_task: Callable[[TTask, dict[str, Any]], None],
 ) -> None:
@@ -265,12 +284,12 @@ def run_checkpointed_sync(
         if entry["status"] in (TaskStatus.COMPLETED.value, TaskStatus.SKIPPED.value):
             continue
 
-        if stop_at_max_rows(metadata, storage, output_dir, max_rows_int):
+        if stop_at_record_cap(metadata, storage, output_dir, record_cap):
             break
 
         process_task(task, entry)
 
-        if stop_at_max_rows(metadata, storage, output_dir, max_rows_int):
+        if stop_at_record_cap(metadata, storage, output_dir, record_cap):
             break
 
 

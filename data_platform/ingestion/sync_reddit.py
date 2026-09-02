@@ -38,7 +38,7 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
-    parse_max_rows,
+    parse_max_comments,
     prepare_sync_run,
     require_dataset_id,
     resolve_limit_per_task,
@@ -477,7 +477,7 @@ def run_sync_tasks(
     Filenames come from ``comment_storage.records_filename`` and
     ``post_storage.records_filename`` so the suffix matches the dataset format.
     """
-    max_rows_int = parse_max_rows(ingestion_params)
+    max_comments_int = parse_max_comments(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
     comments_filename = comment_storage.records_filename
     posts_filename = post_storage.records_filename
@@ -552,7 +552,7 @@ def run_sync_tasks(
         metadata,
         comment_storage,
         output_dir,
-        max_rows_int=max_rows_int,
+        record_cap=max_comments_int,
         tqdm_desc="Syncing subreddits",
         process_task=process_task,
     )
