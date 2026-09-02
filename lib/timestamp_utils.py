@@ -32,6 +32,11 @@ def unix_seconds(value: datetime) -> float:
     return value.timestamp()
 
 
+def utc_now() -> datetime:
+    """Return the current time as an aware UTC datetime."""
+    return datetime.now(timezone.utc)
+
+
 def format_run_timestamp(value: datetime) -> str:
     """Format a datetime as a pipeline run-directory timestamp."""
     return value.astimezone(timezone.utc).strftime(RUN_TIMESTAMP_FORMAT)
@@ -39,7 +44,7 @@ def format_run_timestamp(value: datetime) -> str:
 
 def get_current_timestamp() -> str:
     """Return the current UTC time as a pipeline run-directory timestamp."""
-    return format_run_timestamp(datetime.now(timezone.utc))
+    return format_run_timestamp(utc_now())
 
 
 def format_iso_created_at(value: datetime) -> str:
@@ -49,6 +54,11 @@ def format_iso_created_at(value: datetime) -> str:
     else:
         aware = value.astimezone(timezone.utc)
     return aware.isoformat()
+
+
+def get_current_iso_created_at() -> str:
+    """Return the current UTC time as ISO-8601 created_at."""
+    return format_iso_created_at(utc_now())
 
 
 def iso_created_at_from_unix(unix_seconds_value: float) -> str:

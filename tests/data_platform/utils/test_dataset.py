@@ -8,6 +8,7 @@ from data_platform.utils.dataset import (
     validate_dataset_id,
     write_dataset_manifest,
 )
+from lib.timestamp_utils import format_iso_created_at, utc_datetime
 from tests.data_platform.constants import VALID_DATASET_ID
 
 
@@ -54,9 +55,30 @@ def test_write_and_load_dataset_manifest(data_root) -> None:
         VALID_DATASET_ID,
         name="mirrorview",
         ingestion_config="data_platform/ingestion/configs/bluesky/mirrorview.yaml",
-        created_at="2026-05-29T12:00:00+00:00",
+        created_at=format_iso_created_at(utc_datetime(2026, 5, 29, 12, 0, 0)),
     )
     assert path.exists()
     loaded = load_dataset_manifest("bluesky", VALID_DATASET_ID)
     assert loaded["dataset_id"] == VALID_DATASET_ID
     assert loaded["name"] == "mirrorview"
+    assert loaded["created_at"] == format_iso_created_at(utc_datetime(2026, 5, 29, 12, 0, 0))
+
+
+def test_write_dataset_manifest_defaults_created_at(
+    data_root, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    expected = format_iso_created_at(utc_datetime(2026, 6, 1, 8, 0, 0))
+    monkeypatch.setattr(
+        "data_platform.utils.dataset.get_current_iso_created_at",
+        lambda: expected,
+    )
+
+    write_dataset_manifest(
+        "bluesky",
+        VALID_DATASET_ID,
+        name="mirrorview",
+        ingestion_config="data_platform/ingestion/configs/bluesky/mirrorview.yaml",
+    )
+
+    loaded = load_dataset_manifest("bluesky", VALID_DATASET_ID)
+    assert loaded["created_at"] == expected

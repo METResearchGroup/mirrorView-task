@@ -12,11 +12,13 @@ from datetime import timezone
 from lib.timestamp_utils import (
     format_iso_created_at,
     format_run_timestamp,
+    get_current_iso_created_at,
     get_current_timestamp,
     iso_created_at_from_unix,
     parse_iso_created_at,
     unix_seconds,
     utc_datetime,
+    utc_now,
 )
 
 
@@ -40,6 +42,15 @@ class TestUnixSeconds:
         result = unix_seconds(moment)
         expected = moment.timestamp()
         assert result == expected
+
+
+class TestUtcNow:
+    """Tests for utc_now()."""
+
+    def test_returns_aware_utc_datetime(self) -> None:
+        """utc_now is timezone-aware UTC."""
+        result = utc_now()
+        assert result.tzinfo is timezone.utc
 
 
 class TestFormatRunTimestamp:
@@ -73,6 +84,16 @@ class TestFormatIsoCreatedAt:
         result = format_iso_created_at(utc_datetime(2026, 5, 30, 0, 0, 0))
         expected = "2026-05-30T00:00:00+00:00"
         assert result == expected
+
+
+class TestGetCurrentIsoCreatedAt:
+    """Tests for get_current_iso_created_at()."""
+
+    def test_returns_parseable_iso_utc(self) -> None:
+        """Current ISO created_at parses back to UTC."""
+        result = get_current_iso_created_at()
+        parsed = parse_iso_created_at(result)
+        assert parsed.tzinfo is timezone.utc
 
 
 class TestIsoCreatedAtFromUnix:
