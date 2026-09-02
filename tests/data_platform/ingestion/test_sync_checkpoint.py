@@ -7,6 +7,9 @@ import pytest
 
 from data_platform.ingestion.sync_checkpoint import (
     COMMENTS_DEDUPE_POLICY_KEY,
+    POSTS_DEDUPE_POLICY_KEY,
+    ROWS_SKIPPED_AS_DUPLICATES_KEY,
+    SKIPPED_BY_RECORD_TYPE_KEY,
     SyncStatus,
     TaskStatus,
     build_base_sync_metadata,
@@ -14,6 +17,7 @@ from data_platform.ingestion.sync_checkpoint import (
     find_resume_run_dir,
     flush_run_metadata,
     get_task_progress,
+    increment_duplicate_skip_counters,
     mark_remaining_tasks_skipped,
     mark_task_completed,
     parse_max_comments,
@@ -433,3 +437,41 @@ class TestResolveDedupePolicy:
         result = resolve_dedupe_policy(ingestion_params)
 
         assert result is expected
+
+
+BLUESKY_POST_RECORD_TYPE = "app.bsky.feed.post"
+
+
+class TestIncrementDuplicateSkipCounters:
+    """Tests for increment_duplicate_skip_counters()."""
+
+    def test_writes_canonical_keys_on_empty_metadata(self) -> None:
+        metadata: dict[str, Any] = {}
+        expected_total = 2
+        expected_breakdown = {BLUESKY_POST_RECORD_TYPE: 2}
+
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=BLUESKY_POST_RECORD_TYPE,
+            skipped=2,
+        )
+
+        assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
+        assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
+
+    def test_adds_to_existing_canonical_keys(self) -> None:
+        metadata = {
+            ROWS_SKIPPED_AS_DUPLICATES_KEY: 3,
+            SKIPPED_BY_RECORD_TYPE_KEY: {BLUESKY_POST_RECORD_TYPE: 3},
+        }
+        expected_total = 4
+        expected_breakdown = {BLUESKY_POST_RECORD_TYPE: 4}
+
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=BLUESKY_POST_RECORD_TYPE,
+            skipped=1,
+        )
+
+        assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
+        assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown

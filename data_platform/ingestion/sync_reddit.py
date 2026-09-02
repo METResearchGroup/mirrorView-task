@@ -38,6 +38,7 @@ from data_platform.ingestion.sync_checkpoint import (
     build_base_sync_metadata,
     ensure_dataset_manifest,
     finalize_local_disk_sync,
+    increment_duplicate_skip_counters,
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
@@ -449,8 +450,10 @@ def _append_subreddit_deduped_rows(
             dedupe_session=post_dedupe_session,
             filename=posts_filename,
         )
-        metadata["posts_skipped_as_duplicates"] = (
-            int(metadata.get("posts_skipped_as_duplicates", 0)) + post_result.skipped
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=POSTS_RECORD_TYPE,
+            skipped=post_result.skipped,
         )
 
     if include_comments and comment_rows and comment_dedupe_session is not None:
@@ -460,8 +463,10 @@ def _append_subreddit_deduped_rows(
             dedupe_session=comment_dedupe_session,
             filename=comments_filename,
         )
-        metadata["comments_skipped_as_duplicates"] = (
-            int(metadata.get("comments_skipped_as_duplicates", 0)) + comment_result.skipped
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=COMMENTS_RECORD_TYPE,
+            skipped=comment_result.skipped,
         )
 
     comment_count = (

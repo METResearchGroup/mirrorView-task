@@ -157,7 +157,9 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         "at://did:plc:ex/app.bsky.feed.post/old",
         "at://did:plc:ex/app.bsky.feed.post/new",
     }
-    assert metadata["posts_skipped_as_duplicates"] == 0
+    assert metadata["rows_skipped_as_duplicates"] == 0
+    assert metadata["skipped_as_duplicates_by_record_type"]["app.bsky.feed.post"] == 0
+    assert "posts_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_respects_current_run_only_policy(
@@ -215,7 +217,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     )
 
     assert storage.load_seen_ids_from_disk(run_dir, "uri") == {"at://did:plc:ex/app.bsky.feed.post/old"}
-    assert metadata.get("posts_skipped_as_duplicates", 0) == 0
+    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
+    assert "posts_skipped_as_duplicates" not in metadata
 
 
 def test_run_sync_tasks_dedupes_within_run(
@@ -388,19 +391,21 @@ def test_resume_dedupes_against_records_from_completed_tasks(
         already_seen_uri,
         "at://did:plc:ex/app.bsky.feed.post/b1",
     }
-    assert resumed_metadata["posts_skipped_as_duplicates"] == 1
+    assert resumed_metadata["rows_skipped_as_duplicates"] == 1
+    assert resumed_metadata["skipped_as_duplicates_by_record_type"]["app.bsky.feed.post"] == 1
+    assert "posts_skipped_as_duplicates" not in resumed_metadata
     assert resumed_metadata["row_count"] == 2
 
 
-def test_resume_legacy_keywords_metadata_raises_key_error() -> None:
+def test_resume_keywords_metadata_without_tasks_raises_key_error() -> None:
     config = minimal_sync_config()
     sync_tasks = sync_bluesky.build_sync_tasks(config["ingestion_params"])
-    legacy_metadata = {
+    old_metadata = {
         "sync_status": "in_progress",
         "keywords": {"alpha": {"status": "pending"}},
     }
     with pytest.raises(KeyError):
-        validate_tasks_for_resume(sync_tasks, legacy_metadata, entity_label="keywords")
+        validate_tasks_for_resume(sync_tasks, old_metadata, entity_label="keywords")
 
 
 def test_run_sync_tasks_caps_fetch_by_remaining_max_posts(

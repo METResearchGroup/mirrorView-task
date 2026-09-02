@@ -176,6 +176,8 @@ MAX_COMMENTS_KEY = "max_comments"
 DEDUPE_POLICY_KEY = "dedupe_policy"
 COMMENTS_DEDUPE_POLICY_KEY = "comments_dedupe_policy"
 POSTS_DEDUPE_POLICY_KEY = "posts_dedupe_policy"
+ROWS_SKIPPED_AS_DUPLICATES_KEY = "rows_skipped_as_duplicates"
+SKIPPED_BY_RECORD_TYPE_KEY = "skipped_as_duplicates_by_record_type"
 
 
 def resolve_dedupe_policy(ingestion_params: dict[str, Any]) -> object:
@@ -187,6 +189,33 @@ def resolve_dedupe_policy(ingestion_params: dict[str, Any]) -> object:
         The YAML list, or None when ``dedupe_policy`` is unset.
     """
     return ingestion_params.get(DEDUPE_POLICY_KEY)
+
+
+def increment_duplicate_skip_counters(
+    metadata: dict[str, Any],
+    *,
+    record_type: str,
+    skipped: int,
+) -> None:
+    """Add skipped rows to canonical skip counters after a dedupe append.
+
+    Parameters
+    ----------
+    metadata
+        Run metadata to update in place. ``rows_skipped_as_duplicates`` is the
+        run-level total. ``skipped_as_duplicates_by_record_type`` is the
+        per-record-type map.
+    record_type
+        Record type bucket to increment, e.g. ``app.bsky.feed.post``.
+    skipped
+        Number of rows skipped by this append.
+    """
+    metadata.setdefault(ROWS_SKIPPED_AS_DUPLICATES_KEY, 0)
+    breakdown = metadata.setdefault(SKIPPED_BY_RECORD_TYPE_KEY, {})
+    metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] = (
+        int(metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY]) + skipped
+    )
+    breakdown[record_type] = int(breakdown.get(record_type, 0)) + skipped
 
 
 def _parse_optional_int_cap(
