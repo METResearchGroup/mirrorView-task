@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-PACKAGE_ROOT = Path()
-POSTS_FILENAME = ""
-COMMENTS_FILENAME = ""
-METADATA_FILENAME = ""
+PACKAGE_ROOT: Path = Path()
+POSTS_FILENAME: str = ""
+COMMENTS_FILENAME: str = ""
+METADATA_FILENAME: str = ""
