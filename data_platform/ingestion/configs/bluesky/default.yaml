@@ -7,7 +7,6 @@ record_types:
   - app.bsky.feed.post
 ingestion_params:
   dedupe_policy:
-    - current_run
     - prior_runs_same_dataset
   author_filter: user.bsky.social
   keywords:

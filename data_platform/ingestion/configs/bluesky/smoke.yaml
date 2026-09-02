@@ -6,8 +6,6 @@ date: "2026-08-16"
 record_types:
   - app.bsky.feed.post
 ingestion_params:
-  dedupe_policy:
-    - current_run
   limit_per_task: 25
   max_posts: 100
   sort: latest
