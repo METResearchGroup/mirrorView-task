@@ -195,7 +195,9 @@ def resolve_limit_per_task(
     KeyError
         When ``limit_per_task`` is absent and ``alias_key`` is also absent.
     """
-    raise NotImplementedError
+    if LIMIT_PER_TASK_KEY in ingestion_params:
+        return int(ingestion_params[LIMIT_PER_TASK_KEY])
+    return int(ingestion_params[alias_key])
 
 
 def build_base_sync_metadata(
