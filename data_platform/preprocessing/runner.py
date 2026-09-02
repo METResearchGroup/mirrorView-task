@@ -151,6 +151,33 @@ def save_preprocessed(
     return output_dir
 
 
+def collapse_candidates_by_id(
+    df: pd.DataFrame,
+    id_col: str,
+    keep: str = "last",
+) -> pd.DataFrame:
+    """Return one row per id, keeping the last duplicate when keep is "last".
+
+    Preprocess uses keep="last" so a later raw run wins when the same id appears
+    more than once in the current batch.
+
+    Parameters
+    ----------
+    df
+        Candidate records after prior-run ids have already been dropped.
+    id_col
+        Column that identifies a record.
+    keep
+        Which duplicate to keep. Preprocess callers pass ``"last"``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame with one row per id and a reset index.
+    """
+    raise NotImplementedError
+
+
 def _drop_already_preprocessed(
     records: pd.DataFrame, id_col: str, seen_ids: set[str]
 ) -> tuple[pd.DataFrame, int]:
