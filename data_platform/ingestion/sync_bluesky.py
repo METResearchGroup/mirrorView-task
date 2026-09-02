@@ -108,22 +108,8 @@ def _posts_to_rows(response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
 
 
 def _resolve_search_author(ingestion_params: dict[str, Any]) -> str | None:
-    """Return the YAML search author filter, preferring author_filter over handle.
-
-    Parameters
-    ----------
-    ingestion_params
-        Bluesky ingest YAML params. ``author_filter`` is the search author.
-        ``handle`` is a fallback for older configs. This does not read env
-        ``BLUESKY_HANDLE``.
-
-    Returns
-    -------
-    str | None
-        The author string to pass to searchPosts, or None when both keys are
-        missing or empty.
-    """
-    author = ingestion_params.get("author_filter") or ingestion_params.get("handle")
+    """Return ingestion_params author_filter when non-empty, else None."""
+    author = ingestion_params.get("author_filter")
     if author:
         return author
     return None
@@ -138,11 +124,7 @@ def _search_posts_page(
     page_limit: int,
     cursor: str | None = None,
 ) -> Any:
-    """Fetch one page of searchPosts results, optionally scoped to one author.
-
-    Uses YAML ``author_filter``, then the older ``handle`` key. Does not read
-    env ``BLUESKY_HANDLE``.
-    """
+    """Fetch one page of searchPosts results, optionally scoped to one author."""
     base_params = {
         "q": query,
         "limit": page_limit,
