@@ -106,3 +106,25 @@ class TestTwitterIngestYamlRecordTypes:
                 missing.append(str(path))
         expected: list[str] = []
         assert missing == expected
+
+
+class TestBlueskyAuthorFilterYamlKey:
+    """Tests that Bluesky ingest YAML uses author_filter, not handle."""
+
+    def test_committed_bluesky_yaml_does_not_use_handle_key(self) -> None:
+        found: list[str] = []
+        for path in sorted((INGEST_CONFIGS_DIR / "bluesky").glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            params = loaded.get("ingestion_params")
+            if isinstance(params, dict) and "handle" in params:
+                found.append(str(path))
+        expected: list[str] = []
+        assert found == expected
+
+    def test_default_bluesky_yaml_sets_author_filter(self) -> None:
+        path = INGEST_CONFIGS_DIR / "bluesky" / "default.yaml"
+        loaded = _load_yaml_mapping(path)
+        params = loaded["ingestion_params"]
+        result = params.get("author_filter")
+        expected = "user.bsky.social"
+        assert result == expected

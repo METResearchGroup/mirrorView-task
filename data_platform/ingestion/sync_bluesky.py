@@ -107,6 +107,14 @@ def _posts_to_rows(response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
     return rows
 
 
+def _resolve_search_author(ingestion_params: dict[str, Any]) -> str | None:
+    """Return ingestion_params author_filter when non-empty, else None."""
+    author = ingestion_params.get("author_filter")
+    if author:
+        return author
+    return None
+
+
 @retry_bluesky_request()
 def _search_posts_page(
     client: Client,
@@ -116,7 +124,7 @@ def _search_posts_page(
     page_limit: int,
     cursor: str | None = None,
 ) -> Any:
-    """Fetch one page of searchPosts results, optionally scoped to a single author handle."""
+    """Fetch one page of searchPosts results, optionally scoped to one author."""
     base_params = {
         "q": query,
         "limit": page_limit,
@@ -124,10 +132,10 @@ def _search_posts_page(
     }
     if cursor:
         base_params["cursor"] = cursor
-    handle = ingestion_params.get("handle")
-    if handle:
+    author = _resolve_search_author(ingestion_params)
+    if author:
         return client.app.bsky.feed.search_posts(
-            params={**base_params, "author": handle},  # type: ignore[arg-type]
+            params={**base_params, "author": author},  # type: ignore[arg-type]
         )
     return client.app.bsky.feed.search_posts(params=base_params)  # type: ignore[arg-type]
 

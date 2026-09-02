@@ -9,7 +9,7 @@ ingestion_params:
   dedupe_policy:
     - current_run
     - prior_runs_same_dataset
-  handle: user.bsky.social
+  author_filter: user.bsky.social
   keywords:
     - example
   limit: 50
