@@ -54,62 +54,19 @@ class TwitterTask:
     keyword: str
 
 
-def _resolve_search_terms(ingestion_params: dict[str, Any]) -> list[str]:
-    """Return Twitter search terms, preferring keywords over the older keyword key.
-
-    Parameters
-    ----------
-    ingestion_params
-        Twitter ingest YAML params. ``keywords`` must be a non-empty list of
-        non-empty strings when that key is present. ``keyword`` is a fallback
-        for older configs and may be a string or a list.
-
-    Returns
-    -------
-    list[str]
-        One search term per checkpoint task, in YAML order. Terms from
-        ``keywords`` are stripped. Terms are not quoted.
-
-    Raises
-    ------
-    ValueError
-        When ``keywords`` is present and is not a non-empty list of non-empty
-        strings, or when ``keywords`` is absent and ``keyword`` is missing or
-        empty.
-    """
-    if "keywords" in ingestion_params:
-        keywords = ingestion_params.get("keywords")
-        if not isinstance(keywords, list) or not keywords:
-            raise ValueError(
-                "ingestion_params must include 'keywords' as a non-empty list of strings"
-            )
-        items: list[str] = []
-        for raw in keywords:
-            if not isinstance(raw, str) or not raw.strip():
-                raise ValueError(
-                    "ingestion_params.keywords entries must be non-empty strings"
-                )
-            items.append(raw.strip())
-        return items
-
-    keyword = ingestion_params.get("keyword")
-    if isinstance(keyword, list) and keyword:
-        return [str(k) for k in keyword]
-    if isinstance(keyword, str) and keyword:
-        return [keyword]
-    raise ValueError(
-        "ingestion_params must include 'keywords' as a non-empty list of strings"
-    )
-
-
 def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[TwitterTask]:
-    """Build one checkpoint task per search term in ingestion_params.
+    """Build one checkpoint task per search term in ingestion_params."""
+    keywords = ingestion_params.get("keywords")
+    if not isinstance(keywords, list) or not keywords:
+        raise ValueError("ingestion_params must include 'keywords' as a non-empty list of strings")
 
-    Prefers ``keywords`` as a non-empty list of strings. When that key is
-    absent, accepts the older ``keyword`` key as a string or a list.
-    """
-    terms = _resolve_search_terms(ingestion_params)
-    return [TwitterTask(task_id=term, keyword=term) for term in terms]
+    items: list[TwitterTask] = []
+    for raw in keywords:
+        if not isinstance(raw, str) or not raw.strip():
+            raise ValueError("ingestion_params.keywords entries must be non-empty strings")
+        keyword = raw.strip()
+        items.append(TwitterTask(task_id=keyword, keyword=keyword))
+    return items
 
 
 def _initial_task_progress(task: TwitterTask) -> dict[str, Any]:
