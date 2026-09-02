@@ -2,7 +2,8 @@
 
 ## 2026-09-02
 
-1. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)
+1. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
+2. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)
 
 ## 2026-09-01
 
