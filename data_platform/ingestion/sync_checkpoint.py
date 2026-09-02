@@ -176,6 +176,8 @@ MAX_COMMENTS_KEY = "max_comments"
 DEDUPE_POLICY_KEY = "dedupe_policy"
 COMMENTS_DEDUPE_POLICY_KEY = "comments_dedupe_policy"
 POSTS_DEDUPE_POLICY_KEY = "posts_dedupe_policy"
+ROWS_SKIPPED_AS_DUPLICATES_KEY = "rows_skipped_as_duplicates"
+SKIPPED_BY_RECORD_TYPE_KEY = "skipped_as_duplicates_by_record_type"
 
 
 def resolve_dedupe_policy(ingestion_params: dict[str, Any]) -> object:
@@ -187,6 +189,24 @@ def resolve_dedupe_policy(ingestion_params: dict[str, Any]) -> object:
         The YAML list, or None when ``dedupe_policy`` is unset.
     """
     return ingestion_params.get(DEDUPE_POLICY_KEY)
+
+
+def bootstrap_duplicate_skip_counters(
+    metadata: dict[str, Any],
+    *,
+    legacy_by_record_type: dict[str, str],
+) -> None:
+    raise NotImplementedError
+
+
+def increment_duplicate_skip_counters(
+    metadata: dict[str, Any],
+    *,
+    record_type: str,
+    skipped: int,
+    legacy_by_record_type: dict[str, str],
+) -> None:
+    raise NotImplementedError
 
 
 def _parse_optional_int_cap(

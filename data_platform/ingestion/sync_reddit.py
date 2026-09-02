@@ -38,6 +38,7 @@ from data_platform.ingestion.sync_checkpoint import (
     build_base_sync_metadata,
     ensure_dataset_manifest,
     finalize_local_disk_sync,
+    increment_duplicate_skip_counters,
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
@@ -60,6 +61,10 @@ from data_platform.utils.storage import RedditStorageManager, StorageStage
 
 COMMENTS_RECORD_TYPE = "reddit.comment"
 POSTS_RECORD_TYPE = "reddit.post"
+DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE = {
+    POSTS_RECORD_TYPE: "posts_skipped_as_duplicates",
+    COMMENTS_RECORD_TYPE: "comments_skipped_as_duplicates",
+}
 DEFAULT_LISTING = "hot"
 VALID_LISTING_TIME_FILTERS = frozenset({"all", "day", "hour", "month", "week", "year"})
 
@@ -449,8 +454,11 @@ def _append_subreddit_deduped_rows(
             dedupe_session=post_dedupe_session,
             filename=posts_filename,
         )
-        metadata["posts_skipped_as_duplicates"] = (
-            int(metadata.get("posts_skipped_as_duplicates", 0)) + post_result.skipped
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=POSTS_RECORD_TYPE,
+            skipped=post_result.skipped,
+            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
 
     if include_comments and comment_rows and comment_dedupe_session is not None:
@@ -460,8 +468,11 @@ def _append_subreddit_deduped_rows(
             dedupe_session=comment_dedupe_session,
             filename=comments_filename,
         )
-        metadata["comments_skipped_as_duplicates"] = (
-            int(metadata.get("comments_skipped_as_duplicates", 0)) + comment_result.skipped
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=COMMENTS_RECORD_TYPE,
+            skipped=comment_result.skipped,
+            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
 
     comment_count = (
