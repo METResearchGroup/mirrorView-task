@@ -2,7 +2,7 @@
 
 ## 2026-09-02
 
-1. Feature generation writes each run under `features/{timestamp}/`, which matches how the other pipeline stages store runs. Each run records prompt and model identity in metadata, and posts that already have labels are still skipped. Copy leftover flat `features/*.csv` files into a timestamp folder with `copy_flat_features.py`. [PR #93](https://github.com/METResearchGroup/mirrorView-task/pull/93)
+1. Feature generation writes each run under `features/{timestamp}/`, which matches how the other pipeline stages store runs. Each run records prompt and model identity in metadata, and posts that already have labels are still skipped. [PR #93](https://github.com/METResearchGroup/mirrorView-task/pull/93)
 2. Ingest YAML uses `prior_runs_same_dataset` to skip ids from earlier local runs of the same dataset. We removed `query_batch_size` and `dedupe_comments_from_prior_raw_runs`. [PR #87](https://github.com/METResearchGroup/mirrorView-task/pull/87)
 3. Ingest now writes ISO `created_at` and the run `sync_timestamp` on Bluesky, Reddit, and Twitter rows, so later stages can read those two fields. Reddit still also writes `created_utc` as the same ISO string. Current timestamps in `data_platform` use UTC `get_current_timestamp`. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
 4. The preprocess step adds a shared `text` column on Bluesky, Twitter, and Reddit comment rows that pass the filters. Reddit feature code now reads that column, and the original `body` field is still on the record so you can check it. [PR #91](https://github.com/METResearchGroup/mirrorView-task/pull/91)
