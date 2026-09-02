@@ -21,6 +21,7 @@ from data_platform.generate_features.models import (
     FeatureSpec,
     FeatureStatus,
 )
+from data_platform.utils.platform_specific_columns import CANONICAL_TEXT_COLUMN
 from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_REDDIT_DATASET_ID
 from tests.data_platform.generate_features.conftest import DummyModel
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
@@ -70,6 +71,7 @@ def test_reddit_feature_config_columns(data_root) -> None:
     assert config.platform == "reddit"
     assert config.id_column == ID_COLUMN
     assert config.text_column == TEXT_COLUMN
+    assert TEXT_COLUMN == CANONICAL_TEXT_COLUMN
     assert config.feature_label_query.id_column == ID_COLUMN
     assert config.feature_label_query.feature_file_id_column == FEATURE_FILE_ID_COLUMN
     assert config.input_storage.platform == "reddit"
