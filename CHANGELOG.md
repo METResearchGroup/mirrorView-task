@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Ingest YAML now uses one prior-run skip token (`prior_runs_same_dataset`), drops unread keys, and still accepts the leftover Athena name with a warning. [PR #87](https://github.com/METResearchGroup/mirrorView-task/pull/87)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
