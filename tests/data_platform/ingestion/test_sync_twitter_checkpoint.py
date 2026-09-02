@@ -22,7 +22,7 @@ def _minimal_twitter_sync_config() -> dict[str, Any]:
         "record_types": [sync_twitter.TWEETS_RECORD_TYPE],
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
-            "keyword": ["alpha", "beta"],
+            "keywords": ["alpha", "beta"],
             "limit_per_keyword": 2,
             "lang": "en",
             "exclude": ["reply", "retweet", "quote"],
@@ -608,8 +608,6 @@ class TestBuildSyncTasks:
             {"keywords": []},
             {"keywords": "example"},
             {"keywords": None},
-            {"keyword": ""},
-            {"keyword": []},
         ],
     )
     def test_rejects_missing_or_invalid_search_terms(
@@ -618,34 +616,3 @@ class TestBuildSyncTasks:
     ) -> None:
         with pytest.raises(ValueError, match="keywords"):
             sync_twitter.build_sync_tasks(ingestion_params)
-
-    def test_falls_back_to_keyword_list(self) -> None:
-        ingestion_params = {"keyword": ["alpha", "beta"]}
-        expected = [
-            sync_twitter.TwitterTask(task_id="alpha", keyword="alpha"),
-            sync_twitter.TwitterTask(task_id="beta", keyword="beta"),
-        ]
-
-        result = sync_twitter.build_sync_tasks(ingestion_params)
-
-        assert result == expected
-
-    def test_falls_back_to_keyword_string(self) -> None:
-        ingestion_params = {"keyword": "example"}
-        expected = [
-            sync_twitter.TwitterTask(task_id="example", keyword="example"),
-        ]
-
-        result = sync_twitter.build_sync_tasks(ingestion_params)
-
-        assert result == expected
-
-    def test_keywords_wins_when_both_set(self) -> None:
-        ingestion_params = {"keywords": ["alpha"], "keyword": "ignored"}
-        expected = [
-            sync_twitter.TwitterTask(task_id="alpha", keyword="alpha"),
-        ]
-
-        result = sync_twitter.build_sync_tasks(ingestion_params)
-
-        assert result == expected
