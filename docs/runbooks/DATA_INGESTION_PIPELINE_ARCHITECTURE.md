@@ -105,9 +105,9 @@ Feature generation uses a separate checkpoint model in `data_platform/generate_f
 | Raw sync | `raw/<timestamp>/metadata.json` | `tasks`, `row_count`, `sync_status`, config snapshot |
 | Preprocessed | `preprocessed/<timestamp>/metadata.json` | `dataset_id`, `source_raw_runs`, `row_counts` |
 | Features | `features/metadata.json` | per-feature status, batch counts, source preprocessed runs |
-| Curated | `curated/<timestamp>/metadata.json` | filter results, `files.export`, `source_preprocessed_runs` |
+| Curated | `curated/<timestamp>/metadata.json` | filter results, `source_preprocessed_runs` |
 
-Curate writes export paths into metadata so `sample_data_to_mirror.py` can find the CSV without hardcoded timestamps.
+`sample_data_to_mirror.py` globs curated `metadata.json` files to find run directories, then loads the csv named from `mirrorview.yaml` (the stem plus `.csv`).
 
 ## Pipeline stages
 
@@ -155,7 +155,7 @@ Entrypoints:
 
 ### 5. Sample data to mirror
 
-`experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py` discovers curated exports by globbing `data_platform/data/*/*/curated/*/metadata.json`. It reads each metadata file and loads the export CSV. It normalizes rows, deduplicates, and samples by toxicity tier and platform. Output goes to `concatenated_records/<timestamp>/records.csv` under the experiment folder.
+`experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py` discovers curated exports by globbing `data_platform/data/*/*/curated/*/metadata.json`. It joins each run directory with the csv named from `mirrorview.yaml` (the stem plus `.csv`). It normalizes rows, deduplicates, and samples by toxicity tier and platform. Output goes to `concatenated_records/<timestamp>/records.csv` under the experiment folder.
 
 ## Platform differences
 

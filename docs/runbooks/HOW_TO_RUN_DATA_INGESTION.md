@@ -105,7 +105,7 @@ After curated `mirrorview.csv` exists for all three platforms:
 PYTHONPATH=. uv run python experiments/scaled_mirrors_generation_2026_06_02/sample_data_to_mirror.py
 ```
 
-`sample_data_to_mirror.py` reads metadata under `data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/metadata.json`, and it writes `concatenated_records/<timestamp>/records.csv` under the experiment folder.
+`sample_data_to_mirror.py` globs `metadata.json` under `data_platform/data/<platform>/<dataset_id>/curated/<timestamp>/` to find run directories, then loads the csv named from `mirrorview.yaml` (the stem plus `.csv`). It writes `concatenated_records/<timestamp>/records.csv` under the experiment folder.
 
 Then run flip generation and balancing in that experiment. Promote a job CSV, and follow the runbooks below.
 

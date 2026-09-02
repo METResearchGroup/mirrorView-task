@@ -29,7 +29,6 @@ class CuratePlatformSpec:
     platform: str
     storage_cls: StorageManagerFactory
     columns: PlatformSpecificColumns
-    record_noun: str
 
 
 def build_curate_metadata(
@@ -41,7 +40,6 @@ def build_curate_metadata(
     wide_df: pd.DataFrame,
     filtered_df: pd.DataFrame,
     rules_result: ApplyRulesResult,
-    export_filename: str,
 ) -> dict[str, Any]:
     return {
         "dataset_id": dataset_id,
@@ -61,7 +59,6 @@ def build_curate_metadata(
             }
             for step in rules_result.steps
         ],
-        "files": {"export": export_filename},
     }
 
 
@@ -117,13 +114,12 @@ def run_curation(
         wide_df=wide_df,
         filtered_df=filtered_df,
         rules_result=rules_result,
-        export_filename=rules.output.filename,
     )
     curated_storage.write_run_metadata(relative_run_dir, metadata)
 
     print(
         f"curate_{spec.platform}: kept {len(filtered_df)} of {len(wide_df)} "
-        f"{spec.record_noun} -> {relative_run_dir}"
+        f"records -> {relative_run_dir}"
     )
     return relative_file_path
 

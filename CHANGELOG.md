@@ -6,6 +6,7 @@
 2. Storage load and write take an explicit package-relative file path, so csv versus parquet comes from the suffix, not from the dataset manifest. [PR #97](https://github.com/METResearchGroup/mirrorView-task/pull/97)
 3. New preprocess metadata is only dataset id, the raw runs considered, and row counts. [PR #98](https://github.com/METResearchGroup/mirrorView-task/pull/98)
 4. New raw metadata omits the sync timestamp field, and resume stamps Twitter and Reddit rows from the run folder name. [PR #99](https://github.com/METResearchGroup/mirrorView-task/pull/99)
+5. New curated metadata omits the files map, and in-repo readers join the run directory with the yaml export filename. [PR #100](https://github.com/METResearchGroup/mirrorView-task/pull/100)
 
 ## 2026-09-01
 

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -29,8 +28,7 @@ def load_data_records() -> pd.DataFrame:
         if integration not in INTEGRATIONS:
             continue
 
-        metadata = json.loads(metadata_fp.read_text(encoding="utf-8"))
-        export_fp = metadata_fp.parent / metadata["files"]["export"]
+        export_fp = metadata_fp.parent / f"{Path('mirrorview.yaml').stem}.csv"
         if not export_fp.exists():
             raise RuntimeError(f"Missing export for `{metadata_fp}` (expected `{export_fp}`).")
 

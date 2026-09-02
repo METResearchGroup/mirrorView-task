@@ -60,19 +60,17 @@ def _write_curated_run(
     *,
     source_preprocessed_runs: list[str],
     rules_hash: str,
-    export_filename: str = "test.csv",
     write_output_file: bool = True,
 ) -> Path:
     run_dir = data_root / "bluesky" / dataset_id / "curated" / run_name
     run_dir.mkdir(parents=True)
     if write_output_file:
-        (run_dir / export_filename).write_text("uri\n", encoding="utf-8")
+        (run_dir / "test.csv").write_text("uri\n", encoding="utf-8")
     (run_dir / "metadata.json").write_text(
         json.dumps(
             {
                 "source_preprocessed_runs": source_preprocessed_runs,
                 "rules_hash": rules_hash,
-                "files": {"export": export_filename},
             }
         ),
         encoding="utf-8",
@@ -250,6 +248,39 @@ class TestCurateEarlyExit:
 
         fake_output = _make_fake_new_run(data_root, VALID_DATASET_ID)
         mock_run_curation = MagicMock(return_value=fake_output)
+        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+
+        curate(config_path, VALID_DATASET_ID)
+
+        mock_run_curation.assert_called_once()
+
+    def test_reruns_if_old_files_export_does_not_match_config_stem(
+        self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        config_path, rules_hash = _config_and_hash(tmp_path)
+        _write_features_meta(
+            data_root,
+            VALID_DATASET_ID,
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
+        )
+        _write_preprocessed_run(data_root, VALID_DATASET_ID, "2026_01_01-00:00:00")
+        run_dir = _write_curated_run(
+            data_root,
+            VALID_DATASET_ID,
+            "2026_06_01-00:00:00",
+            source_preprocessed_runs=[_package_preprocessed_run(VALID_DATASET_ID)],
+            rules_hash=rules_hash,
+            write_output_file=False,
+        )
+        (run_dir / "other.csv").write_text("uri\n", encoding="utf-8")
+        metadata_path = run_dir / "metadata.json"
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        metadata["files"] = {"export": "other.csv"}
+        metadata_path.write_text(json.dumps(metadata), encoding="utf-8")
+
+        mock_run_curation = MagicMock(
+            return_value=f"data/bluesky/{VALID_DATASET_ID}/curated/2026_06_26-00:00:00/test.csv"
+        )
         monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
 
         curate(config_path, VALID_DATASET_ID)

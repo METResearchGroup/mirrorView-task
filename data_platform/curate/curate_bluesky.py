@@ -32,7 +32,6 @@ BLUESKY_CURATE_SPEC = CuratePlatformSpec(
     platform="bluesky",
     storage_cls=BlueskyStorageManager,
     columns=BLUESKY_COLUMNS,
-    record_noun="posts",
 )
 
 
@@ -41,6 +40,7 @@ def _is_up_to_date(
     all_preprocessed_run_dirs: list[Path],
     rules_hash: str,
     features_meta: FeatureRunMetadata,
+    config_path: Path,
 ) -> Path | None:
     """Return the existing output path if curation inputs haven't changed, else None."""
     current_runs = [to_package_relative(d) for d in all_preprocessed_run_dirs]
@@ -56,10 +56,7 @@ def _is_up_to_date(
         return None
     if latest_meta.get("rules_hash") != rules_hash:
         return None
-    output_filename = latest_meta.get("files", {}).get("export")
-    if not output_filename:
-        return None
-    output_path = run_dirs[-1] / output_filename
+    output_path = run_dirs[-1] / f"{config_path.stem}.csv"
     if not output_path.exists():
         return None
     return output_path
@@ -90,6 +87,7 @@ def curate(config_path: Path, dataset_id: str) -> Path:
         all_preprocessed_run_dirs,
         rules_hash,
         features_meta,
+        config_path,
     )
     if existing is not None:
         print(f"curate_bluesky: already up to date, skipping ({existing})")

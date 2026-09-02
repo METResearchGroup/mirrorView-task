@@ -24,7 +24,6 @@ REDDIT_CURATE_SPEC = CuratePlatformSpec(
     platform="reddit",
     storage_cls=RedditStorageManager,
     columns=REDDIT_COLUMNS,
-    record_noun="comments",
 )
 
 ID_COLUMN = REDDIT_COLUMNS.records_id_column
