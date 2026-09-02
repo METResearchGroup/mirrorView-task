@@ -19,7 +19,7 @@ def _minimal_twitter_sync_config() -> dict[str, Any]:
         "name": "test",
         "description": "test",
         "date": "2026-05-31",
-        "record_types": ["twitter.tweet"],
+        "record_types": [sync_twitter.TWEETS_RECORD_TYPE],
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "keyword": ["alpha", "beta"],
@@ -424,6 +424,22 @@ class TestSyncRecords:
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         config = _minimal_twitter_sync_config()
+        init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
+
+        result = sync_twitter.sync_records(Path("test.yaml"))
+
+        expected_called = True
+        assert result is not None
+        assert init_client.called is expected_called
+        assert run_tasks.called is expected_called
+
+    def test_allows_extra_record_types_when_tweet_present(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        config = _minimal_twitter_sync_config()
+        config["record_types"] = [sync_twitter.TWEETS_RECORD_TYPE, "twitter.user"]
         init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
 
         result = sync_twitter.sync_records(Path("test.yaml"))
