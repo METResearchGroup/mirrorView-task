@@ -36,13 +36,13 @@ def test_init_sync_metadata_task_ledger() -> None:
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     assert metadata["sync_status"] == "in_progress"
     assert set(metadata["tasks"]) == {"alpha", "beta"}
     assert metadata["tasks"]["alpha"]["status"] == "pending"
     assert metadata["tasks"]["alpha"]["kind"] == "twitter"
+    assert "sync_timestamp" not in metadata
 
 
 def test_run_sync_tasks_appends_per_keyword(
@@ -57,7 +57,6 @@ def test_run_sync_tasks_appends_per_keyword(
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -90,7 +89,6 @@ def test_run_sync_tasks_appends_per_keyword(
         storage,
         metadata,
         sync_tasks,
-        sync_timestamp="2026_05_30-10:00:00",
         csv_filename=POSTS_FILENAME,
     )
 
@@ -121,7 +119,6 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -151,7 +148,6 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         storage,
         metadata,
         sync_tasks[:1],
-        sync_timestamp="2026_05_30-10:00:00",
         csv_filename=POSTS_FILENAME,
     )
 
@@ -182,7 +178,6 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -212,7 +207,6 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
         storage,
         metadata,
         sync_tasks[:1],
-        sync_timestamp="2026_05_30-10:00:00",
         csv_filename=POSTS_FILENAME,
     )
 
@@ -243,7 +237,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -273,7 +266,6 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         storage,
         metadata,
         sync_tasks[:1],
-        sync_timestamp="2026_05_30-10:00:00",
         csv_filename=POSTS_FILENAME,
     )
 
@@ -305,7 +297,6 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
 
@@ -332,7 +323,6 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         storage,
         metadata,
         sync_tasks[:1],
-        sync_timestamp="2026_05_30-10:00:00",
         csv_filename=POSTS_FILENAME,
     )
 
@@ -352,7 +342,6 @@ def test_resume_skips_completed_tasks(
     metadata = sync_twitter.init_sync_metadata(
         config,
         Path("test.yaml"),
-        "2026_05_30-10:00:00",
         sync_tasks,
     )
     metadata["tasks"]["alpha"]["status"] = "completed"
@@ -377,7 +366,13 @@ def test_resume_skips_completed_tasks(
     ):
         calls.append(keyword)
         return (
-            [mock_tweet_row("1000000000000000002", keyword=keyword)],
+            [
+                mock_tweet_row(
+                    "1000000000000000002",
+                    keyword=keyword,
+                    sync_timestamp=sync_timestamp,
+                )
+            ],
             {"pages_fetched": 1, "rows_collected": 1},
         )
 
@@ -391,10 +386,14 @@ def test_resume_skips_completed_tasks(
         storage,
         resumed_metadata,
         sync_tasks,
-        sync_timestamp="2026_05_30-10:00:00",
         csv_filename=POSTS_FILENAME,
     )
 
     assert calls == ["beta"]
     assert resumed_metadata["tasks"]["beta"]["status"] == "completed"
     assert resumed_metadata["row_count"] == 2
+    assert "sync_timestamp" not in resumed_metadata
+    folder_name = Path(run_dir).name
+    assert folder_name != run_dir
+    stored_rows = storage.load_records(f"{run_dir}/{POSTS_FILENAME}")
+    assert (stored_rows["sync_timestamp"] == folder_name).all()
