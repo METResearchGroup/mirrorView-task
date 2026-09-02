@@ -46,6 +46,7 @@ from data_platform.utils.deduplication import (
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 POSTS_CSV = "posts.csv"
+TWEETS_RECORD_TYPE = "twitter.tweet"
 
 
 @dataclass(frozen=True)
@@ -207,6 +208,8 @@ def sync_records(
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
+    record_types: list[str] = config["record_types"]
+    raise NotImplementedError
     client = init_twitter_client()
 
     output_dir, metadata = prepare_sync_run(
