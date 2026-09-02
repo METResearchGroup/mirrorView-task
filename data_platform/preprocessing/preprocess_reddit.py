@@ -68,6 +68,7 @@ REDDIT_SPEC = PreprocessPlatformSpec(
     text_validators=COMMENT_TEXT_VALIDATORS,
     row_validators=COMMENT_ROW_VALIDATORS,
     original_platform_text_column=REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN,
+    author_handle_source_column="author",
 )
 
 
@@ -98,6 +99,7 @@ def filter_comments(
         text_validators=tuple(text_validators),
         row_validators=tuple(row_validators),
         original_platform_text_column=REDDIT_SPEC.original_platform_text_column,
+        author_handle_source_column=REDDIT_SPEC.author_handle_source_column,
     )
     return filter_records(comments, spec)
 

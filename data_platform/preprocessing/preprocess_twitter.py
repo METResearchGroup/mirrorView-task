@@ -52,6 +52,7 @@ TWITTER_SPEC = PreprocessPlatformSpec(
     columns=TWITTER_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
     text_transform=strip_tco_links,
+    author_handle_source_column="username",
 )
 
 
@@ -72,6 +73,7 @@ def filter_posts(
         model_cls=TWITTER_SPEC.model_cls,
         columns=TWITTER_SPEC.columns,
         text_validators=tuple(validators),
+        author_handle_source_column=TWITTER_SPEC.author_handle_source_column,
     )
     return filter_records(posts, spec)
 

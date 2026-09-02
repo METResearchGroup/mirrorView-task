@@ -45,6 +45,7 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
     model_cls=SyncBlueskyPostModel,
     columns=BLUESKY_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
+    author_handle_source_column=None,
 )
 
 
@@ -58,6 +59,7 @@ def filter_posts(
         model_cls=BLUESKY_SPEC.model_cls,
         columns=BLUESKY_SPEC.columns,
         text_validators=tuple(validators),
+        author_handle_source_column=BLUESKY_SPEC.author_handle_source_column,
     )
     return filter_records(posts, spec)
 
