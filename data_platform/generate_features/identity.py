@@ -7,7 +7,7 @@ Run from the repo root:
 
 from __future__ import annotations
 
-from data_platform.generate_features.models import FeatureSpec
+from data_platform.generate_features.models import FeatureIdentity, FeatureSpec
 
 
 def prompt_hash(system_prompt: str | None) -> str | None:
@@ -20,6 +20,6 @@ def model_id_for_spec(spec: FeatureSpec) -> str:
     raise NotImplementedError
 
 
-def identity_for_spec(spec: FeatureSpec) -> tuple[str, str | None]:
-    """Return ``(model_id, prompt_hash)`` for ``spec``."""
+def identity_for_spec(spec: FeatureSpec) -> FeatureIdentity:
+    """Return model id and prompt hash for ``spec``."""
     raise NotImplementedError

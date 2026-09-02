@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, NamedTuple
 
 from pydantic import BaseModel
 
@@ -29,11 +29,20 @@ class FeatureRunConfig:
     max_label_retries: int = 3
 
 
+class FeatureIdentity(NamedTuple):
+    """Prompt and model identity recorded on a feature-generation run."""
+
+    model_id: str
+    prompt_hash: str | None
+
+
 @dataclass
 class FeatureStatus:
     status: Literal["pending", "in_progress", "completed"] = "pending"
     labeled: int = 0
     failed_batches: int = 0
+    model_id: str | None = None
+    prompt_hash: str | None = None
 
 
 @dataclass
@@ -58,6 +67,8 @@ class FeatureRunMetadata:
                     "status": status.status,
                     "labeled": status.labeled,
                     "failed_batches": status.failed_batches,
+                    "model_id": status.model_id,
+                    "prompt_hash": status.prompt_hash,
                 }
                 for name, status in self.features.items()
             },
@@ -91,6 +102,8 @@ class FeatureRunMetadata:
                 status=feat.get("status", "pending"),
                 labeled=feat.get("labeled", 0),
                 failed_batches=feat.get("failed_batches", 0),
+                model_id=feat.get("model_id"),
+                prompt_hash=feat.get("prompt_hash"),
             )
         legacy_single = data.get("source_preprocessed_run")
         source_preprocessed_runs = data.get(
