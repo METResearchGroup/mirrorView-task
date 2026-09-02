@@ -1,3 +1,5 @@
+"""Sync record models for every ingest platform."""
+
 from data_platform.models.sync import (
     SyncBlueskyPostModel,
     SyncRedditCommentModel,
