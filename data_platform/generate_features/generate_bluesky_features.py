@@ -48,6 +48,7 @@ def generate_bluesky_features(
     max_concurrency: int = 80,
     opik_enabled: bool = False,
     feature_subset: list[str] | None = None,
+    run_dir_name: str | None = None,
 ) -> dict[str, Path]:
     """Load Bluesky posts and generate the requested feature labels."""
     dataset_id = validate_dataset_id(dataset_id)
@@ -69,6 +70,7 @@ def generate_bluesky_features(
         dataset_id,
         run_config=run_config,
         features_subset=features_subset,
+        run_dir_name=run_dir_name,
     )
     return run_feature_generation(posts, config, empty_message=BLUESKY_SPEC.empty_message)
 
@@ -87,6 +89,11 @@ def main(
         "--features",
         help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
     ),
+    run_dir: str | None = typer.Option(
+        None,
+        "--run-dir",
+        help="Feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
+    ),
 ) -> None:
     """CLI entrypoint for resumable Bluesky feature generation."""
     generate_bluesky_features(
@@ -95,6 +102,7 @@ def main(
         max_concurrency=max_concurrency,
         opik_enabled=opik_enabled,
         feature_subset=features_from_cli(features),
+        run_dir_name=run_dir,
     )
 
 

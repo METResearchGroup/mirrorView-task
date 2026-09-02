@@ -13,7 +13,6 @@ from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
     generate_features,
 )
-from data_platform.generate_features.identity import identity_for_spec
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.generate_features.run_layout import resolve_features_run_dir
@@ -74,7 +73,7 @@ def build_feature_config(
     features_subset: tuple[str, ...] | None = None,
     run_dir_name: str | None = None,
 ) -> FeatureGenerationConfig:
-    """Build a FeatureGenerationConfig for flat feature CSV output."""
+    """Build a FeatureGenerationConfig for timestamped feature CSV output."""
     dataset_id = validate_dataset_id(dataset_id)
     registry = FEATURE_REGISTRY
     if features_subset:
@@ -88,13 +87,14 @@ def build_feature_config(
         dataset_id,
         records_filename="features",
     )
+    features_dir = resolve_features_run_dir(feature_label_storage, run_dir_name)
     return FeatureGenerationConfig(
         platform=spec.platform,
         id_column=columns.records_id_column,
         text_column=columns.text_column,
         feature_registry=registry,
         input_storage=spec.storage_cls(StorageStage.PREPROCESSED, dataset_id),
-        features_dir=feature_label_storage.root_dir,
+        features_dir=features_dir,
         feature_label_query=FeatureLabelQuery(
             feature_storage=feature_label_storage,
             id_column=columns.records_id_column,
@@ -153,5 +153,6 @@ def generate_platform_features(
         dataset_id,
         run_config=run_config,
         features_subset=features_subset,
+        run_dir_name=run_dir_name,
     )
     return run_feature_generation(records, config, empty_message=spec.empty_message)

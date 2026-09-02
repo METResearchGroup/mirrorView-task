@@ -51,6 +51,7 @@ def generate_reddit_features(
     max_concurrency: int = 80,
     opik_enabled: bool = False,
     feature_subset: list[str] | None = None,
+    run_dir_name: str | None = None,
 ) -> dict[str, Path]:
     """Load Reddit comments and generate the requested feature labels."""
     return generate_platform_features(
@@ -60,6 +61,7 @@ def generate_reddit_features(
         max_concurrency=max_concurrency,
         opik_enabled=opik_enabled,
         feature_subset=feature_subset,
+        run_dir_name=run_dir_name,
     )
 
 
@@ -77,6 +79,11 @@ def main(
         "--features",
         help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
     ),
+    run_dir: str | None = typer.Option(
+        None,
+        "--run-dir",
+        help="Feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
+    ),
 ) -> None:
     """CLI entrypoint for resumable Reddit feature generation."""
     generate_reddit_features(
@@ -85,6 +92,7 @@ def main(
         max_concurrency=max_concurrency,
         opik_enabled=opik_enabled,
         feature_subset=features_from_cli(features),
+        run_dir_name=run_dir,
     )
 
 
