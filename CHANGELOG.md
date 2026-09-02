@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Bluesky feature generation and curation now use the same shared platform CLIs as Reddit and Twitter. Bluesky-only completeness checks and skip-if-up-to-date stay as spec flags, and LangChain feature specs no longer register an unused per-row generate function. [PR #89](https://github.com/METResearchGroup/mirrorView-task/pull/89)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
