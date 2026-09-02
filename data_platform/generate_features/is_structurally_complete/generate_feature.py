@@ -77,7 +77,7 @@ class LlmIsStructurallyCompleteModel(BaseModel):
 
 
 class IsStructurallyCompleteModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     is_structurally_complete: bool
 
@@ -90,7 +90,7 @@ def generate_feature(uri: str, text: str) -> IsStructurallyCompleteModel:
         system_prompt=SYSTEM_PROMPT,
     )
     return IsStructurallyCompleteModel(
-        uri=uri,
+        source_record_id=uri,
         label_timestamp=get_current_timestamp(),
         is_structurally_complete=result.is_structurally_complete,
     )
