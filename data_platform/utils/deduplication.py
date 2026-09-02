@@ -62,7 +62,11 @@ class DedupeSession:
             self.seen_ids.add(row[self.config.id_column])
 
     def load_seen_ids(self, storage: StorageManager, run_dir: Path) -> None:  # noqa: F821
-        raise NotImplementedError
+        self.seen_ids |= storage.load_seen_ids_from_disk(
+            run_dir,
+            self.config.id_column,
+            filename=self.config.filename,
+        )
 
     def load_seen_ids_from_all_runs(self, storage: StorageManager) -> None:  # noqa: F821
         raise NotImplementedError
