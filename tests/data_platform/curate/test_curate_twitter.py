@@ -199,7 +199,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
     curated = pd.read_csv(output_path, keep_default_na=False)
 
     assert Path(relative_output).name == "mirrorview.csv"
-    assert metadata["files"]["export"] == "mirrorview.csv"
+    assert "files" not in metadata
     assert metadata["source_preprocessed_runs"] == [
         f"data/twitter/{dataset_id}/preprocessed/2026_06_01-00:00:00"
     ]
