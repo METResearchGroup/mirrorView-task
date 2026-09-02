@@ -1,3 +1,9 @@
+"""In-memory skip-set session for ingest identity dedupe.
+
+YAML policy tokens choose whether to load ids from earlier local runs.
+The canonical prior-run token is ``prior_runs_same_dataset``.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -15,9 +21,22 @@ PRIOR_RUN_POLICIES = frozenset({PRIOR_RUN_POLICY}) | PRIOR_RUN_POLICY_ALIASES
 def policy_includes_prior_runs(policy: Any) -> bool:
     """True when YAML policy asks to skip ids already stored in earlier local runs.
 
-    `prior_runs_all_datasets` used to mean Athena across datasets. Local-only
-    storage can only see run dirs for the current dataset_id, so both names
-    enable the same same-dataset scan.
+    The canonical token is ``prior_runs_same_dataset``. Local storage only sees
+    run directories for the current dataset_id, so that name matches the scan.
+
+    ``prior_runs_all_datasets`` is a leftover Athena name. Callers may still
+    pass it; it enables the same scan and should warn so configs can migrate.
+
+    Parameters
+    ----------
+    policy
+        YAML list of policy tokens, or any other value. Non-lists are treated
+        as "do not skip prior runs."
+
+    Returns
+    -------
+    bool
+        True when the list includes the canonical token or its documented alias.
     """
     if not isinstance(policy, list):
         return False
