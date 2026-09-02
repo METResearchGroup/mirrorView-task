@@ -89,7 +89,11 @@ def _require_non_null(series: pd.Series, col_name: str, *, integration: str) -> 
 
 
 def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.DataFrame:
-    """Normalize one raw curated export into the unified internal schema."""
+    """Normalize one raw curated export into the unified internal schema.
+
+    Every platform, including Reddit, must supply preprocess ``text``.
+    The function does not fall back to Reddit ``body``.
+    """
 
     if integration == "reddit":
         id_col = "post_reddit_id"
