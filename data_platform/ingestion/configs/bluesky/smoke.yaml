@@ -9,7 +9,7 @@ ingestion_params:
   dedupe_policy:
     - current_run
   limit_per_task: 25
-  max_rows: 100
+  max_posts: 100
   sort: latest
   keywords:
     - climate change

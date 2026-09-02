@@ -19,4 +19,4 @@ ingestion_params:
   limit_per_task: 5
   comments_per_post: 25
   min_comment_body_length: 30
-  max_rows: 100
+  max_comments: 100
