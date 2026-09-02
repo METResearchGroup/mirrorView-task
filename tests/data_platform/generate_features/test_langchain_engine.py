@@ -15,7 +15,7 @@ class _LlmOut(BaseModel):
 
 
 class _RowModel(BaseModel):
-    uri: str
+    source_record_id: str
     label_timestamp: str
     score: bool
 
@@ -43,7 +43,7 @@ def test_langchain_batch_engine_writes_rows(monkeypatch: pytest.MonkeyPatch) -> 
     ]
     labels = engine.batch_label_records(tasks)
     assert len(labels) == 2
-    assert labels[0]["uri"] == URI_POST_A
+    assert labels[0]["source_record_id"] == URI_POST_A
     assert "label_timestamp" in labels[0]
 
 

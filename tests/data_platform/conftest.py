@@ -79,12 +79,12 @@ def write_feature_csv(
 def make_political_feature_rows() -> list[dict[str, Any]]:
     return [
         {
-            "uri": URI_POST_A,
+            "source_record_id": URI_POST_A,
             "label_timestamp": LABEL_TIMESTAMP,
             "is_political": True,
         },
         {
-            "uri": URI_POST_B,
+            "source_record_id": URI_POST_B,
             "label_timestamp": LABEL_TIMESTAMP,
             "is_political": False,
         },

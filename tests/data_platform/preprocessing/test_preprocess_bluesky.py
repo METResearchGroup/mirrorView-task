@@ -91,4 +91,5 @@ class TestPreprocessRecordsCanonicalText:
         assert len(output) == 1
         assert output.iloc[0]["text"] == VALID_BLUESKY_POST_TEXT
         assert output.iloc[0]["author_handle"] == "a.bsky.social"
+        assert output.iloc[0]["source_record_id"] == output.iloc[0]["uri"]
         assert "author_id" not in output.columns

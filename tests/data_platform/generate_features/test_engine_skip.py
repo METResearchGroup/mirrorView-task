@@ -13,7 +13,7 @@ from tests.data_platform.constants import (
     URI_POST_B,
 )
 
-ID_COLUMN_URI = "uri"
+FEATURE_FILE_ID_COLUMN = "source_record_id"
 
 
 def _feature_storage(dataset_id: str = FEATURES_DATASET_ID) -> StorageManager:
@@ -36,7 +36,7 @@ class TestFilterSeenTasks:
             "is_political",
             [
                 {
-                    ID_COLUMN_URI: URI_POST_A,
+                    FEATURE_FILE_ID_COLUMN: URI_POST_A,
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_political": True,
                 }
@@ -47,7 +47,7 @@ class TestFilterSeenTasks:
             LabelTask(uri=URI_POST_B, text="two"),
         ]
 
-        result = filter_seen_tasks(tasks, feature_storage, ID_COLUMN_URI)
+        result = filter_seen_tasks(tasks, feature_storage, FEATURE_FILE_ID_COLUMN)
 
         assert [task.uri for task in result] == [URI_POST_B]
 
@@ -56,6 +56,6 @@ class TestFilterSeenTasks:
         feature_storage.root_dir.mkdir(parents=True, exist_ok=True)
         tasks = [LabelTask(uri=URI_POST_A, text="one")]
 
-        result = filter_seen_tasks(tasks, feature_storage, ID_COLUMN_URI)
+        result = filter_seen_tasks(tasks, feature_storage, FEATURE_FILE_ID_COLUMN)
 
         assert result == tasks

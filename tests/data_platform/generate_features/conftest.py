@@ -29,7 +29,7 @@ from tests.data_platform.constants import (
 class DummyModel:
     @staticmethod
     def model_fields() -> dict:
-        return {"uri": None, "label_timestamp": None, "x": None}
+        return {"source_record_id": None, "label_timestamp": None, "x": None}
 
     @staticmethod
     def model_validate(row: dict) -> DummyModel:

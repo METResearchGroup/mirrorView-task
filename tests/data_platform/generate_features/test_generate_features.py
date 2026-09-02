@@ -44,7 +44,7 @@ def test_skips_completed_features(
     metadata.features["feat_a"] = FeatureStatus(status="completed", labeled=1)
     flush_metadata(features_dir, metadata)
     pd.DataFrame(
-        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "x": 1}],
+        [{"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "x": 1}],
     ).to_csv(features_dir / "feat_a.csv", index=False)
 
     records = pd.DataFrame([{"uri": URI_POST_A, "text": "one"}])
@@ -73,7 +73,7 @@ def test_reopens_completed_feature_with_new_posts(
     metadata.features["feat_a"] = FeatureStatus(status="completed", labeled=1)
     flush_metadata(features_dir, metadata)
     pd.DataFrame(
-        [{"uri": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "x": 1}],
+        [{"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "x": 1}],
     ).to_csv(features_dir / "feat_a.csv", index=False)
 
     mock_build_engine.label_records.return_value = BatchRunStats(labeled=1, failed_batches=0)
