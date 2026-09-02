@@ -170,19 +170,21 @@ def stop_at_record_cap(
     return True
 
 
-def stop_at_max_rows(
-    metadata: dict[str, Any],
-    storage: StorageManager,
-    output_dir: Path,
-    max_rows_int: int | None,
-) -> bool:
-    return stop_at_record_cap(metadata, storage, output_dir, max_rows_int)
-
-
 LIMIT_PER_TASK_KEY = "limit_per_task"
 MAX_POSTS_KEY = "max_posts"
 MAX_COMMENTS_KEY = "max_comments"
 MAX_ROWS_ALIAS = "max_rows"
+
+
+def _parse_optional_int_cap(
+    ingestion_params: dict[str, Any],
+    primary_key: str,
+) -> int | None:
+    if primary_key in ingestion_params:
+        value = ingestion_params[primary_key]
+        return int(value) if value is not None else None
+    value = ingestion_params.get(MAX_ROWS_ALIAS)
+    return int(value) if value is not None else None
 
 
 def parse_max_posts(ingestion_params: dict[str, Any]) -> int | None:
@@ -200,7 +202,7 @@ def parse_max_posts(ingestion_params: dict[str, Any]) -> int | None:
     int | None
         Max posts for the run, or None when neither key is set.
     """
-    raise NotImplementedError
+    return _parse_optional_int_cap(ingestion_params, MAX_POSTS_KEY)
 
 
 def parse_max_comments(ingestion_params: dict[str, Any]) -> int | None:
@@ -218,11 +220,7 @@ def parse_max_comments(ingestion_params: dict[str, Any]) -> int | None:
     int | None
         Max comments for the run, or None when neither key is set.
     """
-    raise NotImplementedError
-
-
-def parse_max_rows(ingestion_params: dict[str, Any]) -> int | None:
-    return parse_max_posts(ingestion_params)
+    return _parse_optional_int_cap(ingestion_params, MAX_COMMENTS_KEY)
 
 
 def resolve_limit_per_task(ingestion_params: dict[str, Any]) -> int:
