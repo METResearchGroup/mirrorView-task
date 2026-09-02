@@ -162,9 +162,19 @@ def stop_at_max_rows(
     return True
 
 
+LIMIT_PER_TASK_KEY = "limit_per_task"
+
+
 def parse_max_rows(ingestion_params: dict[str, Any]) -> int | None:
     max_rows = ingestion_params.get("max_rows")
     return int(max_rows) if max_rows is not None else None
+
+
+def resolve_limit_per_task(
+    ingestion_params: dict[str, Any],
+    alias_key: str,
+) -> int:
+    raise NotImplementedError
 
 
 def build_base_sync_metadata(

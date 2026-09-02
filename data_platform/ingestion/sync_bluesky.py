@@ -34,6 +34,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_rows,
     prepare_sync_run,
     require_dataset_id,
+    resolve_limit_per_task,
     run_checkpointed_sync,
     run_sync_cli,
 )
@@ -50,6 +51,7 @@ if TYPE_CHECKING:
     from atproto import Client
 
 API_MAX_LIMIT = 100
+BLUESKY_LIMIT_ALIAS = "limit"
 
 POSTS_RECORD_TYPE = "app.bsky.feed.post"
 
@@ -161,7 +163,7 @@ def fetch_posts_for_keyword(
     tuple[list[dict[str, Any]], dict[str, Any]]
         Rows and per-task stats (pages fetched, hits_total from the first page, etc.).
     """
-    target = int(ingestion_params["limit"])
+    target = resolve_limit_per_task(ingestion_params, BLUESKY_LIMIT_ALIAS)
     if max_rows is not None:
         target = min(target, max_rows)
     if target <= 0:
