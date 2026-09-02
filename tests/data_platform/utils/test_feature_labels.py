@@ -45,3 +45,16 @@ def test_filter_unlabeled_excludes_labeled_uris(data_root) -> None:
     pending = query.filter_unlabeled(records, "is_political")
     assert len(pending) == 1
     assert pending.iloc[0]["uri"] == URI_POST_B
+
+
+def test_labeled_ids_unions_timestamped_run_dirs(data_root) -> None:
+    """Given labels in a timestamped run dir, when querying labeled ids, then those ids are returned."""
+    feature_storage = StorageManager(
+        "bluesky", "features", BaseModel, FEATURES_DATASET_ID, records_filename="features"
+    )
+    run_dir = feature_storage.root_dir / LABEL_TIMESTAMP
+    write_feature_csv(run_dir, "is_political", make_political_feature_rows())
+
+    query = FeatureLabelQuery(feature_storage=feature_storage)
+    labeled = query.labeled_ids("is_political")
+    assert labeled == {URI_POST_A, URI_POST_B}

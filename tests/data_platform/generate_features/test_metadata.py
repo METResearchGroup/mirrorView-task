@@ -17,6 +17,8 @@ from data_platform.generate_features.models import (
     FeatureStatus,
 )
 from tests.data_platform.constants import FEATURES_DATASET_ID, PREPROCESSED_RUN
+from data_platform.generate_features.registry import FEATURE_REGISTRY
+from lib.constants import DEFAULT_LLM_MODEL
 from tests.data_platform.generate_features.conftest import make_feature_generation_config
 
 
@@ -52,3 +54,35 @@ def test_flush_metadata_round_trip(features_dir) -> None:
     assert data["sync_status"] == "completed"
     assert data["features"]["is_political"]["labeled"] == 5
     assert data["features"]["is_political"]["failed_batches"] == 1
+
+
+def test_load_or_init_metadata_records_feature_identity(features_dir) -> None:
+    """Given a new feature run, when metadata is created, then prompt/model identity is stored."""
+    spec = FEATURE_REGISTRY["is_political"]
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"is_political": spec},
+    )
+
+    metadata = load_or_init_metadata(config, feature_names=("is_political",))
+
+    assert metadata.features["is_political"].model_id == DEFAULT_LLM_MODEL
+    assert metadata.features["is_political"].prompt_hash is not None
+
+
+def test_load_or_init_metadata_records_identity_change_on_resume(features_dir) -> None:
+    """Given existing metadata with a different prompt hash, when reloading, then the new hash is stored."""
+    spec = FEATURE_REGISTRY["is_political"]
+    config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"is_political": spec},
+    )
+    metadata = load_or_init_metadata(config, feature_names=("is_political",))
+    metadata.features["is_political"].prompt_hash = "old-hash"
+    metadata.features["is_political"].model_id = "old-model"
+    flush_metadata(features_dir, metadata)
+
+    reloaded = load_or_init_metadata(config, feature_names=("is_political",))
+
+    assert reloaded.features["is_political"].model_id == DEFAULT_LLM_MODEL
+    assert reloaded.features["is_political"].prompt_hash != "old-hash"

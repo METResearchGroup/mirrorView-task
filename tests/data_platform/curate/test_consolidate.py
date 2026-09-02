@@ -120,3 +120,43 @@ def test_build_wide_table_picks_latest_label_timestamp_for_duplicate_ids(tmp_pat
 
     assert len(wide) == 2
     assert wide.loc[wide["uri"] == URI_POST_A, "is_political"].iloc[0] in {True, "True"}
+
+
+def test_build_wide_table_picks_latest_label_across_timestamped_runs(tmp_path: Path) -> None:
+    """Given two feature runs, when consolidating, then the latest label_timestamp wins."""
+    posts_file = tmp_path / "posts.csv"
+    write_posts_file(posts_file)
+
+    features_root = tmp_path / "features"
+    write_feature_csv(
+        features_root / "2026_01_01-00:00:00",
+        "is_political",
+        [
+            {
+                "uri": URI_POST_A,
+                "label_timestamp": "2026_01_01-00:00:00",
+                "is_political": False,
+            }
+        ],
+    )
+    write_feature_csv(
+        features_root / "2026_02_01-00:00:00",
+        "is_political",
+        [
+            {
+                "uri": URI_POST_A,
+                "label_timestamp": "2026_02_01-00:00:00",
+                "is_political": True,
+            }
+        ],
+    )
+
+    wide = build_wide_table(
+        ConsolidateConfig(
+            posts_file=posts_file,
+            features_root=features_root,
+            feature_names=("is_political",),
+        )
+    )
+
+    assert wide.loc[wide["uri"] == URI_POST_A, "is_political"].iloc[0] in {True, "True"}
