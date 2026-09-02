@@ -123,7 +123,10 @@ def _resolve_search_author(ingestion_params: dict[str, Any]) -> str | None:
         The author string to pass to searchPosts, or None when both keys are
         missing or empty.
     """
-    raise NotImplementedError
+    author = ingestion_params.get("author_filter") or ingestion_params.get("handle")
+    if author:
+        return author
+    return None
 
 
 @retry_bluesky_request()
