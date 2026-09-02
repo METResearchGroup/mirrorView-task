@@ -61,14 +61,16 @@ class DedupeSession:
         for row in rows:
             self.seen_ids.add(row[self.config.id_column])
 
-    def load_seen_ids(self, storage, run_dir):
+    def load_seen_ids(self, storage: StorageManager, run_dir: Path) -> None:  # noqa: F821
         raise NotImplementedError
 
-    def load_seen_ids_from_all_runs(self, storage):
+    def load_seen_ids_from_all_runs(self, storage: StorageManager) -> None:  # noqa: F821
         raise NotImplementedError
 
-    def exclude_seen_ids(self, rows):
+    def exclude_seen_ids(
+        self, rows: list[dict[str, Any]]
+    ) -> tuple[list[dict[str, Any]], int]:
         raise NotImplementedError
 
-    def add_seen_ids(self, rows):
+    def add_seen_ids(self, rows: list[dict[str, Any]]) -> None:
         raise NotImplementedError
