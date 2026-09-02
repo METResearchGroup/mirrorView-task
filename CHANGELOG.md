@@ -2,7 +2,8 @@
 
 ## 2026-09-02
 
-1. Ingest now writes ISO `created_at` and the run `sync_timestamp` on Bluesky, Reddit, and Twitter rows, so later stages can read those two fields. Reddit still also writes `created_utc` as the same ISO string. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
+1. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
+2. Ingest now writes ISO `created_at` and the run `sync_timestamp` on Bluesky, Reddit, and Twitter rows, so later stages can read those two fields. Reddit still also writes `created_utc` as the same ISO string. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
 
 ## 2026-09-01
 
