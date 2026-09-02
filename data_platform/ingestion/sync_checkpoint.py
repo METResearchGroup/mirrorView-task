@@ -182,6 +182,24 @@ def resolve_dedupe_policy(
     ingestion_params: dict[str, Any],
     override_key: str | None = None,
 ) -> object:
+    """Return the YAML skip list, preferring override_key over dedupe_policy.
+
+    Parameters
+    ----------
+    ingestion_params
+        Ingest YAML params. ``dedupe_policy`` is the shared skip list.
+        ``override_key`` is an optional per-type key (Reddit
+        ``comments_dedupe_policy`` or ``posts_dedupe_policy``).
+    override_key
+        Type-specific YAML key to read when that key is present. When the
+        key is present, including as an empty list, do not fall back.
+
+    Returns
+    -------
+    object
+        The YAML list, or None when neither the override nor ``dedupe_policy``
+        is set.
+    """
     raise NotImplementedError
 
 
