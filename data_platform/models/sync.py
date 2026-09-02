@@ -70,3 +70,13 @@ class SyncRedditCommentModel(BaseModel):
     depth: int
     comment_rank: int
     sync_timestamp: str
+
+
+class PreprocessedRedditCommentModel(SyncRedditCommentModel):
+    """A Reddit comment after preprocess, with original body and shared text.
+
+    Raw ingest still uses ``SyncRedditCommentModel``. Feature generation reads
+    ``text`` from the preprocessed CSV described by this model.
+    """
+
+    text: str
