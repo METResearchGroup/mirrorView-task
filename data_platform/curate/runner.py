@@ -99,10 +99,9 @@ def run_curation(
     consolidate_kwargs: dict[str, Any] = {
         "posts_file": posts_glob,
         "features_root": features_root,
+        "id_column": spec.columns.records_id_column,
+        "feature_file_id_column": spec.columns.feature_file_id_column,
     }
-    if spec.columns.records_id_column != "uri":
-        consolidate_kwargs["id_column"] = spec.columns.records_id_column
-        consolidate_kwargs["feature_file_id_column"] = spec.columns.feature_file_id_column
 
     wide_df = build_wide_table(ConsolidateConfig(**consolidate_kwargs))
     rules_result = apply_rules(wide_df, rules)
