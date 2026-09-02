@@ -77,7 +77,9 @@ class DedupeSession:
     def exclude_seen_ids(
         self, rows: list[dict[str, Any]]
     ) -> tuple[list[dict[str, Any]], int]:
-        raise NotImplementedError
+        new_rows = [row for row in rows if row[self.config.id_column] not in self.seen_ids]
+        skipped = len(rows) - len(new_rows)
+        return new_rows, skipped
 
     def add_seen_ids(self, rows: list[dict[str, Any]]) -> None:
         raise NotImplementedError
