@@ -45,25 +45,26 @@ class BatchExecutionEngine(Protocol):
         feature_storage: StorageManager,
         batch_size: int,
         on_batch_complete: Callable[[int, int], None],
+        id_column: str,
         run_dir: Path | None = None,
     ) -> BatchRunStats: ...
-
-
-def load_seen_uris_from_features_dir(
-    feature_storage: StorageManager,
-    run_dir: Path | None = None,
-) -> set[str]:
-    """Return URIs already present in the feature file under the run directory."""
-    return feature_storage.load_seen_uris(run_dir or feature_storage.root_dir)
 
 
 def filter_seen_tasks(
     tasks: list[LabelTask],
     feature_storage: StorageManager,
+    id_column: str,
     run_dir: Path | None = None,
 ) -> list[LabelTask]:
-    """Drop tasks whose URI is already labeled in the on-disk feature file."""
-    seen = load_seen_uris_from_features_dir(feature_storage, run_dir)
+    """Drop tasks whose LabelTask.uri is already present in the feature file.
+
+    ``id_column`` selects the column to read from disk. Task matching still
+    uses ``LabelTask.uri``, which holds the record id from the input table.
+    """
+    seen = feature_storage.load_seen_ids_from_disk(
+        run_dir or feature_storage.root_dir,
+        id_column,
+    )
     if not seen:
         return tasks
     return [task for task in tasks if task.uri not in seen]
@@ -107,6 +108,7 @@ class BaseBatchExecutionEngine:
         feature_storage: StorageManager,
         batch_size: int,
         on_batch_complete: Callable[[int, int], None],
+        id_column: str,
         run_dir: Path | None = None,
     ) -> BatchRunStats:
         """Label records using feature classifier.
@@ -131,7 +133,7 @@ class BaseBatchExecutionEngine:
         )
         try:
             for batch_index, chunk in enumerate(batched(tasks, batch_size)):
-                pending = filter_seen_tasks(chunk, feature_storage, output_dir)
+                pending = filter_seen_tasks(chunk, feature_storage, id_column, output_dir)
                 if not pending:
                     continue
 

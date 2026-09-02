@@ -7,6 +7,8 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.preprocessing.preprocess_bluesky import preprocess_records
+from data_platform.utils.storage import BlueskyStorageManager, StorageStage
+from tests.data_platform.conftest import make_post_row
 from tests.data_platform.constants import VALID_DATASET_ID
 
 
@@ -56,3 +58,35 @@ class TestPreprocessRun:
 
         mock_run.assert_called_once()
         assert result == expected
+
+
+VALID_BLUESKY_POST_TEXT = (
+    "This is a valid English bluesky post for preprocessing tests without any "
+    "links and with enough words that length and language checks both pass here."
+)
+
+
+class TestPreprocessRecordsCanonicalText:
+    """Tests that Bluesky preprocess output includes canonical text."""
+
+    def test_preprocessed_rows_include_text(self, data_root: Path) -> None:
+        """Kept Bluesky posts still have their original platform text column."""
+        dataset_id = VALID_DATASET_ID
+        raw_storage = BlueskyStorageManager(StorageStage.RAW, dataset_id)
+        run_dir = raw_storage.create_new_run_dir("2026_05_31-10:00:00")
+        raw_storage.write_records(
+            [make_post_row(text=VALID_BLUESKY_POST_TEXT)],
+            run_dir,
+        )
+        raw_storage.write_run_metadata(
+            run_dir,
+            {"sync_status": "completed", "row_count": 1},
+        )
+
+        output_dir = preprocess_records(dataset_id)
+        output = BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id).load_records(
+            output_dir
+        )
+
+        assert len(output) == 1
+        assert output.iloc[0]["text"] == VALID_BLUESKY_POST_TEXT

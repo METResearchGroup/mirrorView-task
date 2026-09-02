@@ -7,13 +7,11 @@ import pandas as pd
 
 from data_platform.generate_features.generate_features import generate_features
 from data_platform.generate_features.generate_twitter_features import (
-    FEATURE_FILE_ID_COLUMN,
-    ID_COLUMN,
-    TEXT_COLUMN,
     generate_twitter_features,
     load_posts,
     twitter_feature_config,
 )
+from data_platform.utils.platform_specific_columns import TWITTER_COLUMNS
 from data_platform.generate_features.metadata import flush_metadata, load_or_init_metadata
 from data_platform.generate_features.models import (
     BatchRunStats,
@@ -63,10 +61,10 @@ def test_twitter_feature_config_columns(data_root) -> None:
         run_config=FeatureRunConfig(opik_enabled=False),
     )
     assert config.platform == "twitter"
-    assert config.id_column == ID_COLUMN
-    assert config.text_column == TEXT_COLUMN
-    assert config.feature_label_query.id_column == ID_COLUMN
-    assert config.feature_label_query.feature_file_id_column == FEATURE_FILE_ID_COLUMN
+    assert config.id_column == TWITTER_COLUMNS.records_id_column
+    assert config.text_column == TWITTER_COLUMNS.text_column
+    assert config.feature_label_query.id_column == TWITTER_COLUMNS.records_id_column
+    assert config.feature_label_query.feature_file_id_column == TWITTER_COLUMNS.feature_file_id_column
     assert config.input_storage.platform == "twitter"
 
 
@@ -76,8 +74,8 @@ def test_load_posts_reads_all_preprocessed_runs(data_root) -> None:
 
     posts = load_posts(VALID_TWITTER_DATASET_ID)
     assert len(posts) == 2
-    assert ID_COLUMN in posts.columns
-    assert TEXT_COLUMN in posts.columns
+    assert TWITTER_COLUMNS.records_id_column in posts.columns
+    assert TWITTER_COLUMNS.text_column in posts.columns
 
 
 def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> None:
@@ -95,7 +93,7 @@ def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> N
     pd.DataFrame(
         [
             {
-                FEATURE_FILE_ID_COLUMN: tweet_labeled,
+                TWITTER_COLUMNS.feature_file_id_column: tweet_labeled,
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": True,
             }
@@ -104,18 +102,18 @@ def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> N
 
     records = pd.DataFrame(
         [
-            {ID_COLUMN: tweet_labeled, TEXT_COLUMN: mock_tweet_row(tweet_labeled)["text"]},
-            {ID_COLUMN: tweet_keep, TEXT_COLUMN: mock_tweet_row(tweet_keep)["text"]},
+            {TWITTER_COLUMNS.records_id_column: tweet_labeled, TWITTER_COLUMNS.text_column: mock_tweet_row(tweet_labeled)["text"]},
+            {TWITTER_COLUMNS.records_id_column: tweet_keep, TWITTER_COLUMNS.text_column: mock_tweet_row(tweet_keep)["text"]},
         ]
     )
     query = FeatureLabelQuery(
         feature_storage=feature_storage,
-        id_column=ID_COLUMN,
-        feature_file_id_column=FEATURE_FILE_ID_COLUMN,
+        id_column=TWITTER_COLUMNS.records_id_column,
+        feature_file_id_column=TWITTER_COLUMNS.feature_file_id_column,
     )
     pending = query.filter_unlabeled(records, "is_political")
     assert len(pending) == 1
-    assert pending.iloc[0][ID_COLUMN] == tweet_keep
+    assert pending.iloc[0][TWITTER_COLUMNS.records_id_column] == tweet_keep
 
 
 def test_generate_twitter_features_skips_completed_feature(
@@ -138,7 +136,7 @@ def test_generate_twitter_features_skips_completed_feature(
     pd.DataFrame(
         [
             {
-                FEATURE_FILE_ID_COLUMN: records[0][ID_COLUMN],
+                TWITTER_COLUMNS.feature_file_id_column: records[0][TWITTER_COLUMNS.records_id_column],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": True,
             }
@@ -180,8 +178,16 @@ def test_generate_twitter_features_defaults_to_opik_disabled(monkeypatch) -> Non
     )
     monkeypatch.setattr(
         "data_platform.generate_features.platform_cli.load_preprocessed_records",
-        lambda spec, dataset_id: pd.DataFrame([{ID_COLUMN: "1", TEXT_COLUMN: "hello"}]),
+        lambda _spec, _dataset_id: pd.DataFrame([{TWITTER_COLUMNS.records_id_column: "1", TWITTER_COLUMNS.text_column: "hello"}]),
     )
 
     generate_twitter_features(VALID_TWITTER_DATASET_ID)
     assert captured["opik_enabled"] is False
+
+
+def test_twitter_feature_cli_does_not_reexport_column_aliases() -> None:
+    import data_platform.generate_features.generate_twitter_features as twitter_features
+
+    assert not hasattr(twitter_features, "ID_COLUMN")
+    assert not hasattr(twitter_features, "TEXT_COLUMN")
+    assert not hasattr(twitter_features, "FEATURE_FILE_ID_COLUMN")

@@ -31,10 +31,6 @@ TWITTER_SPEC = FeaturePlatformSpec(
     empty_message="generate_twitter_features: no preprocessed posts found",
 )
 
-ID_COLUMN = TWITTER_COLUMNS.records_id_column
-TEXT_COLUMN = TWITTER_COLUMNS.text_column
-FEATURE_FILE_ID_COLUMN = TWITTER_COLUMNS.feature_file_id_column
-
 
 def twitter_feature_config(*args, **kwargs):
     return build_feature_config(TWITTER_SPEC, *args, **kwargs)

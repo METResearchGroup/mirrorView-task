@@ -127,10 +127,18 @@ FeatureFn = Callable[[str, str], BaseModel]
 
 @dataclass(frozen=True)
 class FeatureSpec:
+    """One named feature in the feature registry.
+
+    A LangChain feature sets ``system_prompt`` and ``llm_output_schema``, and
+    it leaves ``generate_fn`` unset, because the LangChain engine labels a
+    batch of rows through that prompt and schema. A thread-pool feature must
+    set ``generate_fn``, because that engine calls the function on each row.
+    """
+
     name: str
     model: type[BaseModel]
     engine_type: EngineType
-    generate_fn: FeatureFn
+    generate_fn: FeatureFn | None = None
     system_prompt: str | None = None
     llm_output_schema: type[BaseModel] | None = None
 

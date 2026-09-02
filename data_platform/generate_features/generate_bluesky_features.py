@@ -12,20 +12,14 @@ from pathlib import Path
 
 import typer
 
-from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
-    build_feature_config,
     features_from_cli,
-    generate_feature_subset,
-    load_preprocessed_records,
-    run_feature_generation,
+    generate_platform_features,
 )
 from data_platform.models.sync import SyncBlueskyPostModel
-from data_platform.utils.dataset import validate_dataset_id
-from data_platform.utils.gate_checks import require_all_runs_complete
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
-from data_platform.utils.storage import BlueskyStorageManager, StorageStage
+from data_platform.utils.storage import BlueskyStorageManager
 
 BLUESKY_SPEC = FeaturePlatformSpec(
     platform="bluesky",
@@ -35,10 +29,6 @@ BLUESKY_SPEC = FeaturePlatformSpec(
     empty_message="generate_bluesky_features: no preprocessed posts found",
     require_all_runs_complete=True,
 )
-
-
-def load_all_posts(dataset_id: str):
-    return load_preprocessed_records(BLUESKY_SPEC, dataset_id)
 
 
 def generate_bluesky_features(
@@ -51,28 +41,15 @@ def generate_bluesky_features(
     run_dir_name: str | None = None,
 ) -> dict[str, Path]:
     """Load Bluesky posts and generate the requested feature labels."""
-    dataset_id = validate_dataset_id(dataset_id)
-
-    preprocessed_storage = BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    if preprocessed_storage.latest_run_dir() is None:
-        raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
-    require_all_runs_complete(preprocessed_storage, dataset_id)
-
-    features_subset = generate_feature_subset(feature_subset)
-    run_config = FeatureRunConfig(
+    return generate_platform_features(
+        BLUESKY_SPEC,
+        dataset_id,
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         opik_enabled=opik_enabled,
-    )
-    posts = load_all_posts(dataset_id)
-    config = build_feature_config(
-        BLUESKY_SPEC,
-        dataset_id,
-        run_config=run_config,
-        features_subset=features_subset,
+        feature_subset=feature_subset,
         run_dir_name=run_dir_name,
     )
-    return run_feature_generation(posts, config, empty_message=BLUESKY_SPEC.empty_message)
 
 
 def main(

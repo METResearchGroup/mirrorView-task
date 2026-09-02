@@ -7,6 +7,7 @@ from typing import Any
 
 import tweepy
 
+from data_platform.ingestion.query_terms import quote_query_term
 from data_platform.ingestion.retry import retry_twitter_request
 
 logger = logging.getLogger(__name__)
@@ -18,13 +19,6 @@ _EXCLUDE_CLAUSES: dict[str, str] = {
 }
 
 
-def _quote_query_term(keyword: str) -> str:
-    if any(ch.isspace() for ch in keyword) or any(ch in keyword for ch in ('"', ":", "(", ")")):
-        escaped = keyword.replace('"', '\\"')
-        return f'"{escaped}"'
-    return keyword
-
-
 def build_query(
     keyword: str,
     *,
@@ -32,7 +26,7 @@ def build_query(
     exclude: list[str] | None = None,
 ) -> str:
     """Build a recent-search query for original posts matching keyword."""
-    term = _quote_query_term(keyword)
+    term = quote_query_term(keyword)
     parts = [term, f"lang:{lang}"]
     exclude_items: tuple[str, ...] | list[str]
     if exclude is None:

@@ -192,4 +192,4 @@ def test_append_deduped_records_skips_seen_ids(data_root) -> None:
     result = storage.append_deduped_records(incoming, run_dir, dedupe_session=dedupe_session)
     assert result.skipped == 1
     assert result.kept == 1
-    assert storage.load_seen_tweet_ids(run_dir) == {"1", "2"}
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {"1", "2"}

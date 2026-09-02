@@ -96,7 +96,7 @@ def test_run_sync_tasks_appends_per_keyword(
     assert metadata["tasks"]["alpha"]["status"] == "completed"
     assert metadata["tasks"]["beta"]["status"] == "completed"
     assert metadata["row_count"] == 2
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000001",
         "1000000000000000002",
     }
@@ -154,7 +154,7 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -215,7 +215,7 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -276,7 +276,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -335,7 +335,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {"1000000000000000000"}
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {"1000000000000000000"}
     assert metadata.get("tweets_skipped_as_duplicates", 0) == 0
 
 

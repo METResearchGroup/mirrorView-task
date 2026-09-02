@@ -38,12 +38,12 @@ def test_append_records_writes_header_once(bluesky_storage) -> None:
     assert len(lines) == 3
 
 
-def test_load_seen_uris(bluesky_storage) -> None:
+def test_load_seen_ids_from_disk(bluesky_storage) -> None:
     run_dir = bluesky_storage.create_new_run_dir("2026_05_30-10:00:00")
     row = make_ingestion_row()
     bluesky_storage.append_records([row], run_dir)
 
-    assert bluesky_storage.load_seen_uris(run_dir) == {row["uri"]}
+    assert bluesky_storage.load_seen_ids_from_disk(run_dir, "uri") == {row["uri"]}
 
 
 def test_append_deduped_records_skips_current_run_duplicates(bluesky_storage) -> None:
@@ -65,7 +65,7 @@ def test_append_deduped_records_skips_current_run_duplicates(bluesky_storage) ->
 
     assert result.kept == 1
     assert result.skipped == 1
-    assert bluesky_storage.load_seen_uris(run_dir) == {
+    assert bluesky_storage.load_seen_ids_from_disk(run_dir, "uri") == {
         "at://did:plc:ex/app.bsky.feed.post/a1",
         "at://did:plc:ex/app.bsky.feed.post/a2",
     }
@@ -172,7 +172,7 @@ def test_append_deduped_records_returns_empty_when_all_duplicates(bluesky_storag
 
     assert result.kept == 0
     assert result.skipped == 1
-    assert len(bluesky_storage.load_seen_uris(run_dir)) == 1
+    assert len(bluesky_storage.load_seen_ids_from_disk(run_dir, "uri")) == 1
 
 
 def test_write_run_metadata_atomic(bluesky_storage) -> None:

@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from data_platform.curate.curate_bluesky import curate
+from data_platform.curate.curate_bluesky import BLUESKY_CURATE_SPEC, curate
 from data_platform.generate_features.models import FeatureRunMetadata
 from tests.data_platform.constants import VALID_DATASET_ID
 
@@ -134,12 +134,12 @@ class TestCurateEarlyExit:
         )
 
         mock_run_curation = MagicMock()
-        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+        monkeypatch.setattr("data_platform.curate.runner.run_curation", mock_run_curation)
 
         result = curate(config_path, VALID_DATASET_ID)
 
         mock_run_curation.assert_not_called()
-        assert result == existing_run
+        assert result == existing_run / "test.csv"
 
     def test_reruns_if_new_preprocessed_run(
         self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
@@ -162,7 +162,7 @@ class TestCurateEarlyExit:
 
         fake_output = _make_fake_new_run(data_root, VALID_DATASET_ID)
         mock_run_curation = MagicMock(return_value=fake_output)
-        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+        monkeypatch.setattr("data_platform.curate.runner.run_curation", mock_run_curation)
 
         curate(config_path, VALID_DATASET_ID)
 
@@ -188,7 +188,7 @@ class TestCurateEarlyExit:
 
         fake_output = _make_fake_new_run(data_root, VALID_DATASET_ID)
         mock_run_curation = MagicMock(return_value=fake_output)
-        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+        monkeypatch.setattr("data_platform.curate.runner.run_curation", mock_run_curation)
 
         curate(config_path, VALID_DATASET_ID)
 
@@ -217,7 +217,7 @@ class TestCurateEarlyExit:
 
         fake_output = _make_fake_new_run(data_root, VALID_DATASET_ID)
         mock_run_curation = MagicMock(return_value=fake_output)
-        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+        monkeypatch.setattr("data_platform.curate.runner.run_curation", mock_run_curation)
 
         curate(config_path, VALID_DATASET_ID)
 
@@ -244,8 +244,17 @@ class TestCurateEarlyExit:
 
         fake_output = _make_fake_new_run(data_root, VALID_DATASET_ID)
         mock_run_curation = MagicMock(return_value=fake_output)
-        monkeypatch.setattr("data_platform.curate.curate_bluesky.run_curation", mock_run_curation)
+        monkeypatch.setattr("data_platform.curate.runner.run_curation", mock_run_curation)
 
         curate(config_path, VALID_DATASET_ID)
 
         mock_run_curation.assert_called_once()
+
+
+class TestBlueskyCurateSpec:
+    """Tests for BLUESKY_CURATE_SPEC flags."""
+
+    def test_completeness_and_skip_flags_are_enabled(self) -> None:
+        assert BLUESKY_CURATE_SPEC.require_features_complete is True
+        assert BLUESKY_CURATE_SPEC.require_all_runs_complete is True
+        assert BLUESKY_CURATE_SPEC.skip_if_up_to_date is True

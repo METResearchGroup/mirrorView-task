@@ -5,11 +5,8 @@ from pathlib import Path
 import pandas as pd
 
 from data_platform.curate.consolidate import ConsolidateConfig, build_wide_table
-from data_platform.curate.curate_reddit import (
-    FEATURE_FILE_ID_COLUMN,
-    ID_COLUMN,
-    curate,
-)
+from data_platform.curate.curate_reddit import curate
+from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS
 from data_platform.utils.storage import RedditStorageManager
 from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_REDDIT_DATASET_ID
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
@@ -37,12 +34,12 @@ def test_build_wide_table_joins_reddit_comments_on_comment_fullname(tmp_path: Pa
         "is_political",
         [
             {
-                FEATURE_FILE_ID_COLUMN: comment_a["comment_fullname"],
+                REDDIT_COLUMNS.feature_file_id_column: comment_a["comment_fullname"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": True,
             },
             {
-                FEATURE_FILE_ID_COLUMN: comment_b["comment_fullname"],
+                REDDIT_COLUMNS.feature_file_id_column: comment_b["comment_fullname"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": False,
             },
@@ -53,12 +50,12 @@ def test_build_wide_table_joins_reddit_comments_on_comment_fullname(tmp_path: Pa
         "is_news_or_opinion",
         [
             {
-                FEATURE_FILE_ID_COLUMN: comment_a["comment_fullname"],
+                REDDIT_COLUMNS.feature_file_id_column: comment_a["comment_fullname"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "category": "opinion",
             },
             {
-                FEATURE_FILE_ID_COLUMN: comment_b["comment_fullname"],
+                REDDIT_COLUMNS.feature_file_id_column: comment_b["comment_fullname"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "category": "news",
             },
@@ -69,12 +66,12 @@ def test_build_wide_table_joins_reddit_comments_on_comment_fullname(tmp_path: Pa
         "is_likely_spam",
         [
             {
-                FEATURE_FILE_ID_COLUMN: comment_a["comment_fullname"],
+                REDDIT_COLUMNS.feature_file_id_column: comment_a["comment_fullname"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_likely_spam": False,
             },
             {
-                FEATURE_FILE_ID_COLUMN: comment_b["comment_fullname"],
+                REDDIT_COLUMNS.feature_file_id_column: comment_b["comment_fullname"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_likely_spam": True,
             },
@@ -86,15 +83,15 @@ def test_build_wide_table_joins_reddit_comments_on_comment_fullname(tmp_path: Pa
             posts_file=comments_csv,
             features_root=features_root,
             feature_names=("is_political", "is_news_or_opinion"),
-            id_column=ID_COLUMN,
-            feature_file_id_column=FEATURE_FILE_ID_COLUMN,
+            id_column=REDDIT_COLUMNS.records_id_column,
+            feature_file_id_column=REDDIT_COLUMNS.feature_file_id_column,
         )
     )
 
     assert len(wide) == 2
     assert "body" in wide.columns
     assert "news_or_opinion_category" in wide.columns
-    assert wide.loc[wide[ID_COLUMN] == comment_a["comment_fullname"], "is_political"].iloc[0] in {
+    assert wide.loc[wide[REDDIT_COLUMNS.records_id_column] == comment_a["comment_fullname"], "is_political"].iloc[0] in {
         True,
         "True",
     }
@@ -124,7 +121,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_political",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_political": political,
                 },
@@ -132,7 +129,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_news_or_opinion",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "category": category,
                 },
@@ -140,7 +137,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_likely_spam",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_likely_spam": comment is comment_drop,
                 },
@@ -148,7 +145,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_self_contained",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_self_contained": self_contained,
                 },
@@ -156,7 +153,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_structurally_complete",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_structurally_complete": structurally_complete,
                 },
@@ -164,7 +161,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_toxic_tiered",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "toxicity_prob": 0.1,
                     "toxicity_tier": "low",
@@ -173,7 +170,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "political_stance",
                 {
-                    FEATURE_FILE_ID_COLUMN: comment["comment_fullname"],
+                    REDDIT_COLUMNS.feature_file_id_column: comment["comment_fullname"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "political_stance": stance,
                 },
@@ -200,7 +197,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
 
     assert output_path.name == "mirrorview.csv"
     assert len(curated) == 1
-    assert curated.iloc[0][ID_COLUMN] == comment_keep["comment_fullname"]
+    assert curated.iloc[0][REDDIT_COLUMNS.records_id_column] == comment_keep["comment_fullname"]
     assert "body" in curated.columns
     assert metadata["row_counts"]["after_filters"] == 1
     assert len(metadata["filter_results"]) == 6
@@ -208,3 +205,10 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
         metadata["filter_results"][0]["records_before"]
         >= metadata["filter_results"][-1]["records_passing"]
     )
+
+
+def test_reddit_curate_cli_does_not_reexport_column_aliases() -> None:
+    import data_platform.curate.curate_reddit as reddit_curate
+
+    assert not hasattr(reddit_curate, "ID_COLUMN")
+    assert not hasattr(reddit_curate, "FEATURE_FILE_ID_COLUMN")

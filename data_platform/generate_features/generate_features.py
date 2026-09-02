@@ -86,6 +86,7 @@ def _run_feature_labeling(
         feature_storage=feature_storage,
         batch_size=config.run_config.batch_size,
         on_batch_complete=_make_on_batch_complete(metadata, feature_name, config.features_dir),
+        id_column=config.feature_label_query.feature_file_id_column,
         run_dir=config.features_dir,
     )
 

@@ -8,19 +8,13 @@ Run from the repo root:
 
 from __future__ import annotations
 
-import hashlib
-import json
 from pathlib import Path
 
 import typer
 
-from data_platform.curate.runner import CuratePlatformSpec, run_curation
-from data_platform.utils.config_paths import resolve_config_path
-from data_platform.generate_features.models import FeatureRunMetadata
-from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
-from data_platform.utils.gate_checks import require_all_runs_complete, require_features_complete
+from data_platform.curate.runner import CuratePlatformSpec, curate_with_spec, make_curate_cli
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
-from data_platform.utils.storage import BlueskyStorageManager, StorageStage, METADATA_FILENAME
+from data_platform.utils.storage import BlueskyStorageManager
 
 CONFIGS_DIR = Path(__file__).resolve().parent / "configs" / "bluesky"
 
@@ -31,99 +25,23 @@ BLUESKY_CURATE_SPEC = CuratePlatformSpec(
     storage_cls=BlueskyStorageManager,
     columns=BLUESKY_COLUMNS,
     record_noun="posts",
+    require_features_complete=True,
+    require_all_runs_complete=True,
+    skip_if_up_to_date=True,
 )
 
 
-def _is_up_to_date(
-    curated_storage: BlueskyStorageManager,
-    all_preprocessed_run_dirs: list[Path],
-    root: Path,
-    rules_hash: str,
-    features_meta: FeatureRunMetadata,
-) -> Path | None:
-    """Return the existing output path if curation inputs haven't changed, else None."""
-    current_runs = [relative_run_path(root, d) for d in all_preprocessed_run_dirs]
-    if features_meta.source_preprocessed_runs != current_runs:
-        return None
-    if not curated_storage.root_dir.exists():
-        return None
-    run_dirs = sorted(p for p in curated_storage.root_dir.iterdir() if p.is_dir())
-    if not run_dirs:
-        return None
-    latest_meta = curated_storage.load_run_metadata(run_dirs[-1])
-    if latest_meta.get("source_preprocessed_runs") != current_runs:
-        return None
-    if latest_meta.get("rules_hash") != rules_hash:
-        return None
-    output_filename = latest_meta.get("files", {}).get("export")
-    if not output_filename:
-        return None
-    output_path = run_dirs[-1] / output_filename
-    if not output_path.exists():
-        return None
-    return output_path
-
-
 def curate(config_path: Path, dataset_id: str) -> Path:
-    dataset_id = validate_dataset_id(dataset_id)
-
-    curated_storage = BlueskyStorageManager(StorageStage.CURATED, dataset_id)
-
-    features_storage = BlueskyStorageManager(
-        StorageStage.FEATURES,
-        dataset_id,
-        records_filename="features",
-    )
-    features_run_dir = features_storage.latest_run_dir()
-    if features_run_dir is None:
-        raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
-    features_meta_path = features_run_dir / METADATA_FILENAME
-    if not features_meta_path.exists():
-        raise FileNotFoundError(f"No features metadata found for dataset {dataset_id}")
-    with features_meta_path.open(encoding="utf-8") as f:
-        features_meta = FeatureRunMetadata.from_dict(json.load(f))
-    require_features_complete(features_meta, dataset_id)
-
-    preprocessed_storage = BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    require_all_runs_complete(preprocessed_storage, dataset_id)
-
-    root = dataset_root("bluesky", dataset_id)
-    all_preprocessed_run_dirs = sorted(
-        p for p in preprocessed_storage.root_dir.iterdir() if p.is_dir()
-    )
-    rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
-
-    existing = _is_up_to_date(
-        curated_storage,
-        all_preprocessed_run_dirs,
-        root,
-        rules_hash,
-        features_meta,
-    )
-    if existing is not None:
-        print(f"curate_bluesky: already up to date, skipping ({existing})")
-        return existing.parent
-
-    output_path = run_curation(config_path, dataset_id, BLUESKY_CURATE_SPEC, rules_hash=rules_hash)
-    return output_path.parent
+    return curate_with_spec(config_path, dataset_id, BLUESKY_CURATE_SPEC)
 
 
-@app.command()
-def main(
-    dataset_id: str = typer.Option(
-        ...,
-        "--dataset-id",
-        help="Dataset identifier from ingestion YAML (bluesky_<uuid>)",
-    ),
-    config: Path = typer.Option(
-        Path("mirrorview.yaml"),
-        "--config",
-        "-c",
-        help="Curate config under data_platform/curate/configs/bluesky/",
-    ),
-) -> None:
-    config_path = resolve_config_path(config, CONFIGS_DIR)
-    curate(config_path, dataset_id)
+main = make_curate_cli(
+    BLUESKY_CURATE_SPEC,
+    CONFIGS_DIR,
+    configs_help="Curate config under data_platform/curate/configs/bluesky/",
+)
+
+app.command()(main)
 
 
 if __name__ == "__main__":
