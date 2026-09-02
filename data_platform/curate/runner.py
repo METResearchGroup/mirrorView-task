@@ -28,6 +28,9 @@ class CuratePlatformSpec:
     storage_cls: StorageManagerFactory
     columns: PlatformSpecificColumns
     record_noun: str
+    require_features_complete: bool = False
+    require_all_runs_complete: bool = False
+    skip_if_up_to_date: bool = False
 
 
 def build_curate_metadata(
