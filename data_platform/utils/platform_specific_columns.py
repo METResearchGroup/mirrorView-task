@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+CANONICAL_TEXT_COLUMN = "text"
+REDDIT_NATIVE_TEXT_COLUMN = "body"
+
 
 @dataclass(frozen=True)
 class PlatformSpecificColumns:
@@ -28,7 +31,7 @@ class PlatformSpecificColumns:
 
 BLUESKY_COLUMNS = PlatformSpecificColumns(
     records_id_column="uri",
-    text_column="text",
+    text_column=CANONICAL_TEXT_COLUMN,
     feature_file_id_column="uri",
     records_file_key="posts",
 )
@@ -42,7 +45,7 @@ REDDIT_COLUMNS = PlatformSpecificColumns(
 
 TWITTER_COLUMNS = PlatformSpecificColumns(
     records_id_column="tweet_id",
-    text_column="text",
+    text_column=CANONICAL_TEXT_COLUMN,
     feature_file_id_column="uri",
     records_file_key="posts",
 )

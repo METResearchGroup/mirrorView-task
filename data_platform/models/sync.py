@@ -70,3 +70,9 @@ class SyncRedditCommentModel(BaseModel):
     depth: int
     comment_rank: int
     sync_timestamp: str
+
+
+class PreprocessedRedditCommentModel(SyncRedditCommentModel):
+    """Reddit comment after preprocess: native ``body`` plus canonical ``text``."""
+
+    text: str

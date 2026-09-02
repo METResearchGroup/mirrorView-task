@@ -13,7 +13,10 @@ from pydantic import BaseModel
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.gate_checks import require_all_runs_complete
-from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
+from data_platform.utils.platform_specific_columns import (
+    CANONICAL_TEXT_COLUMN,
+    PlatformSpecificColumns,
+)
 from data_platform.utils.storage import StorageManager, StorageStage
 
 TextValidator = Callable[[str], bool]
@@ -33,6 +36,7 @@ class PreprocessPlatformSpec:
     text_validators: tuple[TextValidator, ...]
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
+    native_text_column: str = CANONICAL_TEXT_COLUMN
 
 
 def add_canonical_text_column(
