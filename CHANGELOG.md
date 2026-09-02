@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
