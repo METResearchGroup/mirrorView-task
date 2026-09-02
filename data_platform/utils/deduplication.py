@@ -7,7 +7,9 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from data_platform.utils.storage import StorageManager
 
-PRIOR_RUN_POLICIES = frozenset({"prior_runs_same_dataset", "prior_runs_all_datasets"})
+PRIOR_RUN_POLICY = "prior_runs_same_dataset"
+PRIOR_RUN_POLICY_ALIASES = frozenset({"prior_runs_all_datasets"})
+PRIOR_RUN_POLICIES = frozenset({PRIOR_RUN_POLICY}) | PRIOR_RUN_POLICY_ALIASES
 
 
 def policy_includes_prior_runs(policy: Any) -> bool:
