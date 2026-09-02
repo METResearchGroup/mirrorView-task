@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers.
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
