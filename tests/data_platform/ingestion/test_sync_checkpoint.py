@@ -17,6 +17,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_rows,
     record_type_to_filename,
     require_dataset_id,
+    resolve_limit_per_task,
     stop_at_max_rows,
     sync_status_from_tasks,
     validate_tasks_for_resume,
@@ -301,3 +302,53 @@ class TestEnsureDatasetManifest:
         assert metadata["ingestion_config"] == expected
         assert manifest["ingestion_config"] == expected
         assert metadata["ingestion_config"] == manifest["ingestion_config"]
+
+
+class TestResolveLimitPerTask:
+    """Tests for resolve_limit_per_task()."""
+
+    def test_prefers_limit_per_task(self) -> None:
+        ingestion_params = {"limit_per_task": 7}
+        expected = 7
+
+        result = resolve_limit_per_task(ingestion_params, "limit")
+
+        assert result == expected
+
+    @pytest.mark.parametrize(
+        "alias_key,ingestion_params,expected",
+        [
+            ("limit", {"limit": 4}, 4),
+            ("limit_per_keyword", {"limit_per_keyword": 9}, 9),
+            ("limit_per_subreddit", {"limit_per_subreddit": 3}, 3),
+        ],
+    )
+    def test_falls_back_to_alias_when_primary_is_absent(
+        self,
+        alias_key: str,
+        ingestion_params: dict[str, Any],
+        expected: int,
+    ) -> None:
+        result = resolve_limit_per_task(ingestion_params, alias_key)
+
+        assert result == expected
+
+    def test_limit_per_task_wins_when_both_set(self) -> None:
+        ingestion_params = {"limit_per_task": 7, "limit": 4}
+        expected = 7
+
+        result = resolve_limit_per_task(ingestion_params, "limit")
+
+        assert result == expected
+
+    def test_accepts_zero_limit_per_task(self) -> None:
+        ingestion_params = {"limit_per_task": 0}
+        expected = 0
+
+        result = resolve_limit_per_task(ingestion_params, "limit")
+
+        assert result == expected
+
+    def test_missing_primary_and_alias_raises_key_error(self) -> None:
+        with pytest.raises(KeyError):
+            resolve_limit_per_task({}, "limit")
