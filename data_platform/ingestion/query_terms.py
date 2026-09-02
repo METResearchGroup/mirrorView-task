@@ -8,6 +8,10 @@ Run from the repo root:
 
 from __future__ import annotations
 
+SEARCH_SYNTAX_CHARS = frozenset({'"', ":", "(", ")"})
+QUOTE_WRAP = '"'
+ESCAPED_QUOTE = '\\"'
+
 
 def quote_query_term(keyword: str) -> str:
     """Return a search term, quoted when it needs search-syntax escaping.
@@ -23,4 +27,10 @@ def quote_query_term(keyword: str) -> str:
         The original keyword, or a double-quoted escaped form when the
         keyword contains whitespace or search operators.
     """
-    raise NotImplementedError
+    needs_quotes = any(ch.isspace() for ch in keyword) or any(
+        ch in keyword for ch in SEARCH_SYNTAX_CHARS
+    )
+    if not needs_quotes:
+        return keyword
+    escaped = keyword.replace(QUOTE_WRAP, ESCAPED_QUOTE)
+    return f"{QUOTE_WRAP}{escaped}{QUOTE_WRAP}"
