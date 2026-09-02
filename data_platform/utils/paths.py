@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from data_platform.constants import PACKAGE_ROOT
+
 
 def resolve_package_path(relative_path: str | Path) -> Path:
     """Return the resolved path of a location under the data-platform package.
@@ -32,7 +34,22 @@ def resolve_package_path(relative_path: str | Path) -> Path:
         If ``relative_path`` is empty, absolute, contains ``..``, or would
         resolve outside ``PACKAGE_ROOT``.
     """
-    raise NotImplementedError
+    if relative_path == "":
+        raise ValueError("Package-relative path must not be empty.")
+    candidate = Path(relative_path)
+    if candidate.is_absolute():
+        raise ValueError(f"Package-relative path must not be absolute: {relative_path}")
+    if ".." in candidate.parts:
+        raise ValueError(
+            f"Package-relative path must not contain parent segments: {relative_path}"
+        )
+    package_root = PACKAGE_ROOT.resolve()
+    resolved = (package_root / candidate).resolve()
+    if not resolved.is_relative_to(package_root):
+        raise ValueError(
+            f"Resolved path is outside the data-platform package: {relative_path}"
+        )
+    return resolved
 
 
 def to_package_relative(path: str | Path) -> str:
