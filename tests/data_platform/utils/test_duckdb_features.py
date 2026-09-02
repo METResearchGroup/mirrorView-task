@@ -15,7 +15,7 @@ class TestFormatFilename:
     """Tests for format_filename()."""
 
     @pytest.mark.parametrize(
-        "file_format,expected",
+        ("file_format", "expected"),
         [
             (ValidDataFormats.CSV, "is_political.csv"),
             (ValidDataFormats.PARQUET, "is_political.parquet"),

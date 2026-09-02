@@ -14,7 +14,7 @@ class TestQuoteQueryTerm:
     """Tests for quote_query_term()."""
 
     @pytest.mark.parametrize(
-        "keyword,expected",
+        ("keyword", "expected"),
         [
             (PLAIN_KEYWORD, PLAIN_KEYWORD),
             (PHRASE_KEYWORD, '"climate change"'),

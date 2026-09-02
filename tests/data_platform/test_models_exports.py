@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import data_platform.models as models
+from data_platform import models
 
 EXPECTED_SYNC_MODELS = (
     "SyncBlueskyPostModel",
