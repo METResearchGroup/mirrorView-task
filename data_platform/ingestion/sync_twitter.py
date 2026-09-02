@@ -26,6 +26,7 @@ from data_platform.ingestion.sync_checkpoint import (
     build_base_sync_metadata,
     ensure_dataset_manifest,
     finalize_local_disk_sync,
+    increment_duplicate_skip_counters,
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
@@ -48,6 +49,9 @@ from data_platform.utils.deduplication import (
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 TWEETS_RECORD_TYPE = "twitter.tweet"
+DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE = {
+    TWEETS_RECORD_TYPE: "tweets_skipped_as_duplicates",
+}
 
 
 @dataclass(frozen=True)
@@ -171,8 +175,11 @@ def run_sync_tasks(
             dedupe_session=dedupe_session,
             filename=filename,
         )
-        metadata["tweets_skipped_as_duplicates"] = (
-            int(metadata.get("tweets_skipped_as_duplicates", 0)) + result.skipped
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=TWEETS_RECORD_TYPE,
+            skipped=result.skipped,
+            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
         metadata["row_count"] = len(dedupe_session.seen_ids)
         mark_task_completed(
