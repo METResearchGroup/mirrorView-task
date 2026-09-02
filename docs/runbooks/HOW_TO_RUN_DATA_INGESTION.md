@@ -51,6 +51,8 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
+Feature labels write to `features/<timestamp>/`. Resume an interrupted run with `--run-dir <timestamp>`. Already labeled posts are skipped across all feature runs. Curate keeps the latest `label_timestamp`.
+
 The smoke config uses `dataset_id: bluesky_c0ffee00-0000-4000-8000-000000000100`. Curation is the last stage. Files stay under `data_platform/data/`.
 
 ### Twitter

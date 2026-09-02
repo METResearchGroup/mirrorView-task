@@ -1,4 +1,4 @@
-"""Load and flush features/metadata.json for resumable feature generation."""
+"""Load and flush features/{timestamp}/metadata.json for resumable feature generation."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from lib.timestamp_utils import get_current_timestamp
 
 
 def metadata_path(features_dir: Path) -> Path:
-    """Return the path to features/metadata.json for a dataset."""
+    """Return the path to metadata.json in a feature run directory."""
     return features_dir / METADATA_FILENAME
 
 
@@ -50,7 +50,22 @@ def apply_feature_identities(
     config: FeatureGenerationConfig,
     feature_names: tuple[str, ...],
 ) -> FeatureRunMetadata:
-    """Write current prompt hash and model id onto each feature status entry."""
+    """Write current prompt hash and model id onto each feature status entry.
+
+    Parameters
+    ----------
+    metadata
+        Feature-run metadata document to update in place.
+    config
+        Run config whose registry supplies prompts and engine types.
+    feature_names
+        Feature keys to stamp. Names missing from the registry are skipped.
+
+    Returns
+    -------
+    FeatureRunMetadata
+        The same metadata object after identity fields are updated.
+    """
     for name in feature_names:
         spec = config.feature_registry.get(name)
         if spec is None:

@@ -9,7 +9,7 @@ from data_platform.utils.storage import StorageManager
 
 @dataclass(frozen=True)
 class FeatureLabelQuery:
-    """Query labeled record ids from feature files at the features root."""
+    """Query labeled record ids from feature files across timestamped runs."""
 
     feature_storage: StorageManager
     id_column: str = "uri"
