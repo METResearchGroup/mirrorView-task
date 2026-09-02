@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+import warnings
 
 if TYPE_CHECKING:
     from data_platform.utils.storage import StorageManager
@@ -16,6 +17,22 @@ if TYPE_CHECKING:
 PRIOR_RUN_POLICY = "prior_runs_same_dataset"
 PRIOR_RUN_POLICY_ALIASES = frozenset({"prior_runs_all_datasets"})
 PRIOR_RUN_POLICIES = frozenset({PRIOR_RUN_POLICY}) | PRIOR_RUN_POLICY_ALIASES
+_DEPRECATION_STACKLEVEL = 3
+
+
+def _deprecated_prior_run_tokens(policy: list[Any]) -> frozenset[str]:
+    return frozenset(item for item in policy if item in PRIOR_RUN_POLICY_ALIASES)
+
+
+def _warn_deprecated_prior_run_tokens(tokens: frozenset[str]) -> None:
+    if not tokens:
+        return
+    alias_list = ", ".join(sorted(tokens))
+    warnings.warn(
+        f"{alias_list} is a deprecated alias of {PRIOR_RUN_POLICY}",
+        DeprecationWarning,
+        stacklevel=_DEPRECATION_STACKLEVEL,
+    )
 
 
 def policy_includes_prior_runs(policy: Any) -> bool:
@@ -40,6 +57,7 @@ def policy_includes_prior_runs(policy: Any) -> bool:
     """
     if not isinstance(policy, list):
         return False
+    _warn_deprecated_prior_run_tokens(_deprecated_prior_run_tokens(policy))
     return any(item in PRIOR_RUN_POLICIES for item in policy)
 
 
