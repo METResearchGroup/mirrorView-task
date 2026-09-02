@@ -72,6 +72,7 @@ def build_feature_config(
     *,
     run_config: FeatureRunConfig,
     features_subset: tuple[str, ...] | None = None,
+    run_dir_name: str | None = None,
 ) -> FeatureGenerationConfig:
     """Build a FeatureGenerationConfig for flat feature CSV output."""
     dataset_id = validate_dataset_id(dataset_id)
@@ -129,6 +130,7 @@ def generate_platform_features(
     max_concurrency: int = 80,
     opik_enabled: bool = False,
     feature_subset: list[str] | None = None,
+    run_dir_name: str | None = None,
 ) -> dict[str, Path]:
     """Load platform records and generate the requested feature labels."""
     dataset_id = validate_dataset_id(dataset_id)
