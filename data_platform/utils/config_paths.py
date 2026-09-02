@@ -23,6 +23,39 @@ def resolve_config_path(config: Path, base_dir: Path) -> Path:
     raise FileNotFoundError(f"Config not found: {config}")
 
 
+def to_repo_relative(path: str | Path, repo_root: Path) -> str:
+    """Return the POSIX path of an absolute location relative to the repo root.
+
+    The target file does not need to exist.
+
+    Parameters
+    ----------
+    path
+        Absolute path that must resolve inside ``repo_root``.
+    repo_root
+        Repository root used as the relative base.
+
+    Returns
+    -------
+    str
+        Forward-slash relative path with no leading slash. The repo root
+        itself is ``"."``.
+
+    Raises
+    ------
+    ValueError
+        If ``path`` is not absolute or does not resolve inside ``repo_root``.
+    """
+    candidate = Path(path)
+    if not candidate.is_absolute():
+        raise ValueError(f"Path must be absolute: {path}")
+    resolved = candidate.resolve()
+    root = repo_root.resolve()
+    if not resolved.is_relative_to(root):
+        raise ValueError(f"Path is outside the repository: {path}")
+    return resolved.relative_to(root).as_posix()
+
+
 def load_yaml_config(config_path: Path) -> dict[str, Any]:
     with config_path.open(encoding="utf-8") as f:
         raw = yaml.safe_load(f)

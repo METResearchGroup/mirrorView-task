@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import pytest
 
+from data_platform.utils.config_paths import to_repo_relative
 from data_platform.utils.dataset import (
     dataset_root,
     load_dataset_manifest,
     validate_dataset_id,
     write_dataset_manifest,
 )
+from lib.constants import REPO_ROOT
 from tests.data_platform.constants import VALID_DATASET_ID
 
 
@@ -61,6 +63,9 @@ def test_write_and_load_dataset_manifest(data_root) -> None:
     assert loaded["dataset_id"] == VALID_DATASET_ID
     assert loaded["name"] == "mirrorview"
     assert loaded["created_at"] == "2026-05-29T12:00:00+00:00"
+    assert loaded["ingestion_config"] == (
+        "data_platform/ingestion/configs/bluesky/mirrorview.yaml"
+    )
 
 
 def test_write_dataset_manifest_defaults_created_at(
@@ -81,3 +86,32 @@ def test_write_dataset_manifest_defaults_created_at(
 
     loaded = load_dataset_manifest("bluesky", VALID_DATASET_ID)
     assert loaded["created_at"] == expected
+
+
+class TestWriteDatasetManifestIngestionConfig:
+    """Tests for write_dataset_manifest() ingestion_config persistence."""
+
+    def test_stores_repo_relative_helper_output(self, data_root) -> None:
+        """Verifies the helper's POSIX repo-relative path is stored on the manifest."""
+        config_path = (
+            REPO_ROOT
+            / "data_platform"
+            / "ingestion"
+            / "configs"
+            / "bluesky"
+            / "mirrorview.yaml"
+        )
+        expected = "data_platform/ingestion/configs/bluesky/mirrorview.yaml"
+
+        relative = to_repo_relative(config_path, REPO_ROOT)
+        write_dataset_manifest(
+            "bluesky",
+            VALID_DATASET_ID,
+            name="mirrorview",
+            ingestion_config=relative,
+            created_at="2026-05-29T12:00:00+00:00",
+        )
+        result = load_dataset_manifest("bluesky", VALID_DATASET_ID)
+
+        assert relative == expected
+        assert result["ingestion_config"] == expected
