@@ -20,6 +20,6 @@ ingestion_params:
     - liberal
     - democrats
   listing: hot
-  limit_per_subreddit: 50
+  limit_per_task: 50
   comments_per_post: 200
   min_comment_body_length: 30
