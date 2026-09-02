@@ -2,9 +2,6 @@ from __future__ import annotations
 
 import pandas as pd
 
-from data_platform.generate_features.generate_bluesky_features import (
-    generate_bluesky_features,
-)
 from data_platform.generate_features.generate_features import generate_features
 from data_platform.generate_features.metadata import flush_metadata, load_or_init_metadata
 from data_platform.generate_features.models import (
@@ -14,7 +11,6 @@ from data_platform.generate_features.models import (
     FeatureStatus,
 )
 from tests.data_platform.constants import (
-    FEATURES_DATASET_ID,
     LABEL_TIMESTAMP,
     URI_POST_A,
     URI_POST_B,
@@ -116,7 +112,7 @@ def test_orchestrator_calls_label_records(
     config = make_feature_generation_config(
         features_dir,
         feature_registry={"feat_a": spec},
-        run_config=FeatureRunConfig(opik_enabled=False, batch_size=2),
+        run_config=FeatureRunConfig(batch_size=2),
     )
     generate_features(records, config)
     mock_build_engine.label_records.assert_called_once()
@@ -148,31 +144,3 @@ def test_does_not_mark_feature_completed_when_batches_fail(
     assert metadata.features["feat_a"].status == "in_progress"
     assert metadata.features["feat_a"].failed_batches == 1
     assert metadata.sync_status != "completed"
-
-
-def test_default_feature_run_config_disables_opik() -> None:
-    assert FeatureRunConfig().opik_enabled is False
-
-
-def test_generate_bluesky_features_defaults_to_opik_disabled(
-    monkeypatch,
-    data_root,
-) -> None:
-    captured = {}
-
-    def fake_run_feature_generation(records, config, *, empty_message):
-        captured["opik_enabled"] = config.run_config.opik_enabled
-        return {}
-
-    monkeypatch.setattr(
-        "data_platform.generate_features.platform_cli.run_feature_generation",
-        fake_run_feature_generation,
-    )
-    monkeypatch.setattr(
-        "data_platform.generate_features.platform_cli.load_preprocessed_records",
-        lambda _spec, _dataset_id: pd.DataFrame([{"uri": "1", "text": "hello"}]),
-    )
-    write_preprocessed_posts(data_root, sample_preprocessed_records(1))
-
-    generate_bluesky_features(FEATURES_DATASET_ID)
-    assert captured["opik_enabled"] is False

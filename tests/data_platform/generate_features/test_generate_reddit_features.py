@@ -58,7 +58,7 @@ def make_reddit_feature_generation_config(
 ):
     return reddit_feature_config(
         dataset_id,
-        run_config=run_config or FeatureRunConfig(opik_enabled=False),
+        run_config=run_config or FeatureRunConfig(),
         features_subset=tuple(feature_registry.keys()) if feature_registry else None,
     )
 
@@ -66,7 +66,7 @@ def make_reddit_feature_generation_config(
 def test_reddit_feature_config_columns(data_root) -> None:
     config = reddit_feature_config(
         VALID_REDDIT_DATASET_ID,
-        run_config=FeatureRunConfig(opik_enabled=False),
+        run_config=FeatureRunConfig(),
     )
     assert config.platform == "reddit"
     assert config.id_column == REDDIT_COLUMNS.records_id_column
@@ -134,26 +134,6 @@ def test_generate_reddit_features_labels_pending_comments(
     )
     assert "is_political" in written
     mock_build_engine.label_records.assert_called_once()
-
-
-def test_generate_reddit_features_defaults_to_opik_disabled(monkeypatch) -> None:
-    captured = {}
-
-    def fake_run_feature_generation(records, config, *, empty_message):
-        captured["opik_enabled"] = config.run_config.opik_enabled
-        return {}
-
-    monkeypatch.setattr(
-        "data_platform.generate_features.platform_cli.run_feature_generation",
-        fake_run_feature_generation,
-    )
-    monkeypatch.setattr(
-        "data_platform.generate_features.platform_cli.load_preprocessed_records",
-        lambda _spec, _dataset_id: pd.DataFrame([{REDDIT_COLUMNS.records_id_column: "1", REDDIT_COLUMNS.text_column: "hello"}]),
-    )
-
-    generate_reddit_features(VALID_REDDIT_DATASET_ID)
-    assert captured["opik_enabled"] is False
 
 
 def test_reddit_feature_cli_does_not_reexport_column_aliases() -> None:
