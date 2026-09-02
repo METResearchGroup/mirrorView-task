@@ -61,7 +61,7 @@ def make_feature_generation_config(
                 "bluesky", "features", BaseModel, dataset_id, records_filename="features"
             )
         ),
-        run_config=run_config or FeatureRunConfig(opik_enabled=False),
+        run_config=run_config or FeatureRunConfig(),
     )
 
 

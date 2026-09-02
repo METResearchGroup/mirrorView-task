@@ -23,7 +23,7 @@ from tests.data_platform.generate_features.conftest import make_feature_generati
 def test_load_or_init_metadata_creates_file(features_dir) -> None:
     config = make_feature_generation_config(
         features_dir,
-        run_config=FeatureRunConfig(batch_size=32, opik_enabled=False),
+        run_config=FeatureRunConfig(batch_size=32),
     )
     metadata = load_or_init_metadata(
         config,
@@ -52,3 +52,21 @@ def test_flush_metadata_round_trip(features_dir) -> None:
     assert data["sync_status"] == "completed"
     assert data["features"]["is_political"]["labeled"] == 5
     assert data["features"]["is_political"]["failed_batches"] == 1
+    assert "opik_enabled" not in data["config"]
+
+
+def test_from_dict_ignores_legacy_opik_enabled() -> None:
+    metadata = FeatureRunMetadata.from_dict(
+        {
+            "dataset_id": FEATURES_DATASET_ID,
+            "source_preprocessed_runs": [PREPROCESSED_RUN],
+            "config": {
+                "batch_size": 32,
+                "max_concurrency": 80,
+                "opik_enabled": True,
+                "max_label_retries": 3,
+            },
+        }
+    )
+    assert metadata.config.batch_size == 32
+    assert "opik_enabled" not in metadata.to_dict()["config"]

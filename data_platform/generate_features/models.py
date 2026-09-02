@@ -25,7 +25,6 @@ class LabelTask:
 class FeatureRunConfig:
     batch_size: int = 64
     max_concurrency: int = 80
-    opik_enabled: bool = False
     max_label_retries: int = 3
 
 
@@ -64,7 +63,6 @@ class FeatureRunMetadata:
             "config": {
                 "batch_size": self.config.batch_size,
                 "max_concurrency": self.config.max_concurrency,
-                "opik_enabled": self.config.opik_enabled,
                 "max_label_retries": self.config.max_label_retries,
             },
             **(
@@ -82,7 +80,6 @@ class FeatureRunMetadata:
         config = FeatureRunConfig(
             batch_size=config_raw.get("batch_size", 64),
             max_concurrency=config_raw.get("max_concurrency", 80),
-            opik_enabled=config_raw.get("opik_enabled", False),
             max_label_retries=config_raw.get("max_label_retries", 3),
         )
         features: dict[str, FeatureStatus] = {}

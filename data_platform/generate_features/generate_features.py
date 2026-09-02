@@ -25,7 +25,6 @@ from data_platform.generate_features.models import (
     LabelTask,
 )
 from data_platform.utils.storage import StorageManager, StorageStage
-from ml_tooling.llm import opik as opik_telemetry
 
 
 def tasks_from_dataframe(
@@ -189,25 +188,20 @@ def generate_features(
         feature_names=feature_names,
     )
 
-    opik_telemetry.set_opik_enabled(config.run_config.opik_enabled)
     written: dict[str, Path] = {}
 
-    with opik_telemetry.project_scope():
-        for feature_name, spec in config.feature_registry.items():
-            print(f"Generating features for {feature_name}")
-            written[feature_name] = _process_one_feature(
-                feature_name,
-                spec,
-                records,
-                config,
-                metadata,
-            )
-            print(f"Completed feature generation for {feature_name}")
+    for feature_name, spec in config.feature_registry.items():
+        print(f"Generating features for {feature_name}")
+        written[feature_name] = _process_one_feature(
+            feature_name,
+            spec,
+            records,
+            config,
+            metadata,
+        )
+        print(f"Completed feature generation for {feature_name}")
 
-        _mark_sync_completed(metadata, feature_names, config.features_dir)
-
-        if config.run_config.opik_enabled:
-            opik_telemetry.flush()
+    _mark_sync_completed(metadata, feature_names, config.features_dir)
 
     print(f"generate_features: finished {len(written)} features under {config.features_dir}")
     return written

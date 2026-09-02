@@ -59,7 +59,6 @@ class TestGenerateBlueskyFeatures:
             VALID_DATASET_ID,
             batch_size=8,
             max_concurrency=4,
-            opik_enabled=False,
             feature_subset=["is_political"],
         )
 
@@ -68,7 +67,6 @@ class TestGenerateBlueskyFeatures:
             VALID_DATASET_ID,
             batch_size=8,
             max_concurrency=4,
-            opik_enabled=False,
             feature_subset=["is_political"],
         )
 
