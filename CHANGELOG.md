@@ -4,7 +4,7 @@
 
 1. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)
 2. Bluesky, Twitter, and Reddit ingest pick one skip-set load from YAML policy, then drop known ids, persist remaining rows, and extend the skip set. Persist uses the explicit exclude and extend helpers, and ingest no longer passes the prior-runs flag. [PR #92](https://github.com/METResearchGroup/mirrorView-task/pull/92)
-3. Preprocess loads ids from every prior preprocessed run before creating the new run directory, drops known ids with pandas, then collapses remaining ids so the later row wins. The skip count names prior-run ids only.
+3. Preprocess loads ids from every prior preprocessed run before creating the new run directory, drops known ids with pandas, then collapses remaining ids so the later row wins. The skip count names prior-run ids only. [PR #94](https://github.com/METResearchGroup/mirrorView-task/pull/94)
 
 ## 2026-09-01
 
