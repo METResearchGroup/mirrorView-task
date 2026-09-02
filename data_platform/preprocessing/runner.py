@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from pydantic import BaseModel
@@ -151,44 +151,75 @@ def save_preprocessed(
     return output_dir
 
 
-def _drop_already_preprocessed(
-    records: pd.DataFrame, id_col: str, seen_ids: set[str]
-) -> tuple[pd.DataFrame, int]:
-    """Drop rows already preprocessed in a prior run, then dedupe by id within this batch.
+def collapse_candidates_by_id(
+    df: pd.DataFrame,
+    id_col: str,
+    keep: str = "last",
+) -> pd.DataFrame:
+    """Return one row per id, keeping the last duplicate when keep is "last".
 
-    Returns the surviving records and how many rows were dropped for being seen before.
+    Preprocess uses keep="last" so a later raw run wins when the same id appears
+    more than once in the current batch.
+
+    Parameters
+    ----------
+    df
+        Candidate records after prior-run ids have already been dropped.
+    id_col
+        Column that identifies a record.
+    keep
+        Which duplicate to keep. Preprocess callers pass ``"last"``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame with one row per id and a reset index.
     """
-    id_series = cast(pd.Series, records[id_col])
-    is_new = ~id_series.isin(list(seen_ids))
-    skipped = len(records) - int(is_new.sum())
-    deduped = (
-        records.loc[is_new].drop_duplicates(subset=[id_col], keep="last").reset_index(drop=True)
-    )
-    return deduped, skipped
+    return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 
 
 def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
 ) -> Path:
+    """Skip ids from prior preprocessed runs, collapse remaining ids, then filter and save.
+
+    The skip set is loaded from every existing preprocessed run before the new
+    run directory is created. The printed skip count is prior-run ids only, and
+    does not include rows removed when duplicate ids in the current batch collapse.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset whose raw runs are preprocessed.
+    spec
+        Platform storage, columns, validators, and optional text transform.
+
+    Returns
+    -------
+    Path
+        New preprocessed run directory.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the dataset has no raw runs.
+    """
     dataset_id = validate_dataset_id(dataset_id)
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
     if raw_storage.latest_run_dir() is None:
         raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
     require_all_runs_complete(raw_storage, dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-    dedupe_session = DedupeSession(
-        DedupeConfig(
-            id_column=spec.columns.records_id_column,
-            include_prior_runs=True,
-        )
-    )
-    dedupe_session.warm(preprocessed_storage, preprocessed_storage.root_dir)
+    session = DedupeSession(DedupeConfig(id_column=spec.columns.records_id_column))
+    session.load_seen_ids_from_all_runs(preprocessed_storage)
 
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
-    records, skipped = _drop_already_preprocessed(
-        records, spec.columns.records_id_column, dedupe_session.seen_ids
-    )
+    id_col = spec.columns.records_id_column
+    is_new = ~records[id_col].isin(list(session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    records = records.loc[is_new].reset_index(drop=True)
+    records = collapse_candidates_by_id(records, id_col, keep="last")
 
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
@@ -202,6 +233,6 @@ def preprocess_records(
     noun = spec.columns.records_file_key
     print(
         f"preprocess_records: kept {len(preprocessed)} of {len(records)} {noun}"
-        f" (skipped {skipped} already preprocessed) -> {output_dir}"
+        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
     )
     return output_dir
