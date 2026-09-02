@@ -12,8 +12,8 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.preprocessing.shared_columns import add_canonical_author_columns
 from data_platform.utils.platform_specific_columns import (
-    CANONICAL_AUTHOR_HANDLE_COLUMN,
     CANONICAL_TEXT_COLUMN,
     PlatformSpecificColumns,
 )
@@ -34,50 +34,10 @@ class PreprocessPlatformSpec:
     model_cls: type[BaseModel]
     columns: PlatformSpecificColumns
     text_validators: tuple[TextValidator, ...]
+    author_handle_source_column: str
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
     original_platform_text_column: str = CANONICAL_TEXT_COLUMN
-    author_handle_source_column: str | None = None
-
-
-def add_canonical_author_columns(
-    df: pd.DataFrame,
-    spec: PreprocessPlatformSpec,
-) -> pd.DataFrame:
-    """Copy the platform's original author handle onto the shared ``author_handle`` column.
-
-    You still have original fields such as Reddit ``author`` and Twitter
-    ``username`` on the returned frame. The function does not modify the input
-    frame. ``author_id`` is left as it is. Bluesky and Reddit frames do not get
-    an ``author_id`` column.
-
-    Parameters
-    ----------
-    spec
-        ``author_handle_source_column`` is the copy source. ``None`` means the
-        frame already has shared ``author_handle``. The destination is always
-        shared ``author_handle``.
-
-    Returns
-    -------
-    pd.DataFrame
-        A new frame that includes ``author_handle``.
-
-    Raises
-    ------
-    KeyError
-        When the source column, or ``author_handle`` on a passthrough
-        platform, is missing from the frame.
-    """
-    out = df.copy()
-    source_column = spec.author_handle_source_column
-    if source_column is None:
-        if CANONICAL_AUTHOR_HANDLE_COLUMN not in out.columns:
-            raise KeyError(CANONICAL_AUTHOR_HANDLE_COLUMN)
-        return out
-    original_handle = out[source_column]
-    out[CANONICAL_AUTHOR_HANDLE_COLUMN] = original_handle.map(lambda value: str(value))
-    return out
 
 
 def add_canonical_text_column(

@@ -45,7 +45,7 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
     model_cls=SyncBlueskyPostModel,
     columns=BLUESKY_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
-    author_handle_source_column=None,
+    author_handle_source_column="author_handle",
 )
 
 
