@@ -52,7 +52,7 @@ def format_filename(stem: str, file_format: ValidDataFormats) -> str:
     str
         ``stem`` plus the format suffix, for example ``is_political.csv``.
     """
-    raise NotImplementedError
+    return f"{stem}.{file_format.value}"
 
 
 def _write_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
@@ -306,7 +306,7 @@ class StorageManager:
 
     def filename_for(self, stem: str) -> str:
         """Return the format-correct filename for a given stem."""
-        return f"{stem}.{self.format.value}"
+        return format_filename(stem, self.format)
 
     def require_all_runs_complete(self, dataset_id: str) -> None:
         """Raise when this stage has no run directory or an incomplete run.
