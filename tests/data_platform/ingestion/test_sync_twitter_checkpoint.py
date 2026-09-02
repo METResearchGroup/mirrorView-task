@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -9,7 +8,7 @@ import pytest
 from data_platform.ingestion import sync_twitter
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
-from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
+from tests.data_platform.constants import TEST_INGEST_CONFIG_PATH, VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
 
@@ -35,7 +34,7 @@ def test_init_sync_metadata_task_ledger() -> None:
     sync_tasks = sync_twitter.build_sync_tasks(config["ingestion_params"])
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -56,7 +55,7 @@ def test_run_sync_tasks_appends_per_keyword(
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -120,7 +119,7 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
     )
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -181,7 +180,7 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -242,7 +241,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -304,7 +303,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -351,7 +350,7 @@ def test_resume_skips_completed_tasks(
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_twitter.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -426,7 +425,7 @@ class TestSyncRecords:
         config = _minimal_twitter_sync_config()
         init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
 
-        result = sync_twitter.sync_records(Path("test.yaml"))
+        result = sync_twitter.sync_records(TEST_INGEST_CONFIG_PATH)
 
         expected_called = True
         assert result is not None
@@ -442,7 +441,7 @@ class TestSyncRecords:
         config["record_types"] = [sync_twitter.TWEETS_RECORD_TYPE, "twitter.user"]
         init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
 
-        result = sync_twitter.sync_records(Path("test.yaml"))
+        result = sync_twitter.sync_records(TEST_INGEST_CONFIG_PATH)
 
         expected_called = True
         assert result is not None
@@ -471,7 +470,7 @@ class TestSyncRecords:
         with pytest.raises(
             ValueError, match="Unsupported record types for checkpoint sync"
         ):
-            sync_twitter.sync_records(Path("test.yaml"))
+            sync_twitter.sync_records(TEST_INGEST_CONFIG_PATH)
 
         init_client.assert_not_called()
         run_tasks.assert_not_called()
@@ -486,7 +485,7 @@ class TestSyncRecords:
         init_client, run_tasks = self._patch_load_and_fetch(monkeypatch, config)
 
         with pytest.raises(KeyError):
-            sync_twitter.sync_records(Path("test.yaml"))
+            sync_twitter.sync_records(TEST_INGEST_CONFIG_PATH)
 
         init_client.assert_not_called()
         run_tasks.assert_not_called()

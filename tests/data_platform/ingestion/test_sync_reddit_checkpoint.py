@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
@@ -9,7 +8,7 @@ import pytest
 from data_platform.ingestion import sync_reddit
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import RedditStorageManager, StorageStage
-from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
+from tests.data_platform.constants import TEST_INGEST_CONFIG_PATH, VALID_REDDIT_DATASET_ID
 from tests.data_platform.ingestion.reddit_conftest import (
     minimal_reddit_sync_config,
     mock_comment_row,
@@ -22,7 +21,7 @@ def test_init_sync_metadata_subreddit_task_ledger() -> None:
     sync_tasks = sync_reddit.build_sync_tasks(config["ingestion_params"])
     metadata = sync_reddit.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -44,7 +43,7 @@ def test_run_sync_tasks_appends_per_subreddit(
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -118,7 +117,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
     )
     metadata = sync_reddit.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -186,7 +185,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -255,7 +254,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
@@ -312,7 +311,7 @@ def test_resume_skips_completed_subreddits(
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
-        Path("test.yaml"),
+        TEST_INGEST_CONFIG_PATH,
         "2026_05_30-10:00:00",
         sync_tasks,
     )
