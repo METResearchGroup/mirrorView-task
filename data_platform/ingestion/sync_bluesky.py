@@ -138,7 +138,11 @@ def _search_posts_page(
     page_limit: int,
     cursor: str | None = None,
 ) -> Any:
-    """Fetch one page of searchPosts results, optionally scoped to a single author handle."""
+    """Fetch one page of searchPosts results, optionally scoped to one author.
+
+    Uses YAML ``author_filter``, then the older ``handle`` key. Does not read
+    env ``BLUESKY_HANDLE``.
+    """
     base_params = {
         "q": query,
         "limit": page_limit,
