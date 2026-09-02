@@ -10,6 +10,7 @@ from data_platform.curate.curate_reddit import (
     ID_COLUMN,
     curate,
 )
+from data_platform.utils.paths import resolve_package_path
 from data_platform.utils.storage import RedditStorageManager
 from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_REDDIT_DATASET_ID
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
@@ -189,14 +190,19 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
     config_path = (
         Path(__file__).resolve().parents[3] / "data_platform/curate/configs/reddit/mirrorview.yaml"
     )
-    output_path = curate(config_path, dataset_id)
+    relative_output = curate(config_path, dataset_id)
+    output_path = resolve_package_path(relative_output)
+    relative_run_dir = str(Path(relative_output).parent.as_posix())
 
     curated_storage = RedditStorageManager("curated", dataset_id)
-    run_dir = output_path.parent
-    metadata = curated_storage.load_run_metadata(run_dir)
+    metadata = curated_storage.load_run_metadata(relative_run_dir)
     curated = pd.read_csv(output_path, keep_default_na=False)
 
-    assert output_path.name == "mirrorview.csv"
+    assert Path(relative_output).name == "mirrorview.csv"
+    assert metadata["files"]["export"] == "mirrorview.csv"
+    assert metadata["source_preprocessed_runs"] == [
+        f"data/reddit/{dataset_id}/preprocessed/2026_06_01-00:00:00"
+    ]
     assert len(curated) == 1
     assert curated.iloc[0][ID_COLUMN] == comment_keep["comment_fullname"]
     assert "body" in curated.columns

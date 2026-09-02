@@ -94,6 +94,7 @@ def test_generate_reddit_features_skips_completed_feature(
 
     spec = FeatureSpec(
         name="is_political",
+        export_filename="is_political.csv",
         model=DummyModel,  # type: ignore[arg-type]
         engine_type="thread_pool",
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]

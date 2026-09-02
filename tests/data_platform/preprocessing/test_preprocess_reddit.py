@@ -5,6 +5,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from data_platform.constants import COMMENTS_FILENAME
 from data_platform.preprocessing import preprocess_reddit
 from data_platform.preprocessing.validators import reddit_validators
 from data_platform.utils.storage import RedditStorageManager, StorageStage
@@ -91,7 +92,7 @@ def test_preprocess_records_writes_output(data_root) -> None:
                 body="[deleted]",
             ),
         ],
-        run_dir,
+        f"{run_dir}/{COMMENTS_FILENAME}",
     )
     raw_storage.write_run_metadata(
         run_dir,
@@ -104,7 +105,7 @@ def test_preprocess_records_writes_output(data_root) -> None:
     output_dir = preprocess_reddit.preprocess_records(dataset_id)
 
     preprocessed_storage = RedditStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    output = preprocessed_storage.load_records(output_dir)
+    output = preprocessed_storage.load_records(f"{output_dir}/{COMMENTS_FILENAME}")
     metadata = preprocessed_storage.load_run_metadata(output_dir)
 
     assert len(output) == 1

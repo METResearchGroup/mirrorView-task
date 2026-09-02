@@ -118,6 +118,7 @@ class FeatureSpec:
     model: type[BaseModel]
     engine_type: EngineType
     generate_fn: FeatureFn
+    export_filename: str
     system_prompt: str | None = None
     llm_output_schema: type[BaseModel] | None = None
 

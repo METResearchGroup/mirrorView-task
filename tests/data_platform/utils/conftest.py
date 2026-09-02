@@ -5,8 +5,10 @@ from pathlib import Path
 
 import pytest
 
+from data_platform.constants import METADATA_FILENAME
 from data_platform.utils.dataset import dataset_root
-from data_platform.utils.storage import METADATA_FILENAME, BlueskyStorageManager, StorageStage
+from data_platform.utils.paths import resolve_package_path
+from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 from tests.data_platform.constants import VALID_DATASET_ID
 
 
@@ -16,16 +18,17 @@ def bluesky_storage(data_root) -> BlueskyStorageManager:
 
 
 def write_stage_metadata(
-    run_dir: Path,
+    run_dir: Path | str,
     *,
     sync_status: str | None = "completed",
 ) -> Path:
     """Write a metadata.json under run_dir for local completeness checks."""
-    run_dir.mkdir(parents=True, exist_ok=True)
+    path_dir = resolve_package_path(run_dir) if not isinstance(run_dir, Path) else run_dir
+    path_dir.mkdir(parents=True, exist_ok=True)
     payload: dict[str, object] = {}
     if sync_status is not None:
         payload["sync_status"] = sync_status
-    path = run_dir / METADATA_FILENAME
+    path = path_dir / METADATA_FILENAME
     path.write_text(json.dumps(payload), encoding="utf-8")
     return path
 

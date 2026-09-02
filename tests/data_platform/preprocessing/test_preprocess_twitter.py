@@ -5,6 +5,7 @@ from typing import Any
 import pandas as pd
 import pytest
 
+from data_platform.constants import POSTS_FILENAME
 from data_platform.preprocessing import preprocess_twitter
 from data_platform.preprocessing.validators import twitter_validators
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
@@ -113,7 +114,7 @@ def test_preprocess_records_writes_output(data_root) -> None:
             _tweet_row(tweet_id="1000000000000000001"),
             _tweet_row(tweet_id="1000000000000000002", text="x" * 10),
         ],
-        run_dir,
+        f"{run_dir}/{POSTS_FILENAME}",
     )
     raw_storage.write_run_metadata(
         run_dir,
@@ -126,7 +127,7 @@ def test_preprocess_records_writes_output(data_root) -> None:
     output_dir = preprocess_twitter.preprocess_records(dataset_id)
 
     preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    output = preprocessed_storage.load_records(output_dir)
+    output = preprocessed_storage.load_records(f"{output_dir}/{POSTS_FILENAME}")
     metadata = preprocessed_storage.load_run_metadata(output_dir)
 
     assert len(output) == 1
@@ -142,7 +143,7 @@ def test_preprocess_records_strips_tco_from_saved_text(data_root) -> None:
     run_dir = raw_storage.create_new_run_dir("2026_05_31-11:00:00")
     text_with_tco = _valid_text() + " https://t.co/abc123"
     row = _tweet_row(tweet_id="1000000000000000001", text=text_with_tco)
-    raw_storage.write_records([row], run_dir)
+    raw_storage.write_records([row], f"{run_dir}/{POSTS_FILENAME}")
     raw_storage.write_run_metadata(
         run_dir,
         {
@@ -154,7 +155,7 @@ def test_preprocess_records_strips_tco_from_saved_text(data_root) -> None:
     output_dir = preprocess_twitter.preprocess_records(dataset_id)
 
     preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    output = preprocessed_storage.load_records(output_dir)
+    output = preprocessed_storage.load_records(f"{output_dir}/{POSTS_FILENAME}")
 
     assert len(output) == 1
     assert not twitter_validators.has_tco_links(output.iloc[0]["text"])
@@ -176,7 +177,7 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
 
     raw_storage.write_records(
         [_tweet_row(tweet_id=shared_tweet_id, text=older_text)],
-        older_run,
+        f"{older_run}/{POSTS_FILENAME}",
     )
     raw_storage.write_run_metadata(
         older_run,
@@ -188,7 +189,7 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
 
     raw_storage.write_records(
         [_tweet_row(tweet_id=shared_tweet_id, text=newer_text)],
-        newer_run,
+        f"{newer_run}/{POSTS_FILENAME}",
     )
     raw_storage.write_run_metadata(
         newer_run,
@@ -200,7 +201,7 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
 
     output_dir = preprocess_twitter.preprocess_records(dataset_id)
     preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    output_df = preprocessed_storage.load_records(output_dir)
+    output_df = preprocessed_storage.load_records(f"{output_dir}/{POSTS_FILENAME}")
     metadata = preprocessed_storage.load_run_metadata(output_dir)
 
     assert len(output_df) == 1
@@ -211,6 +212,12 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
     assert "source_raw_runs" in metadata
     assert len(metadata["source_raw_runs"]) == 2
     assert metadata["source_raw_runs"][-1] == metadata["source_raw_run"]
+    assert metadata["source_raw_runs"][0] == (
+        f"data/twitter/{dataset_id}/raw/2026_05_31-11:00:00"
+    )
+    assert metadata["source_raw_runs"][1] == (
+        f"data/twitter/{dataset_id}/raw/2026_05_31-12:00:00"
+    )
 
 
 def test_second_preprocess_run_skips_already_preprocessed_ids(data_root) -> None:
@@ -218,7 +225,7 @@ def test_second_preprocess_run_skips_already_preprocessed_ids(data_root) -> None
     raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
     run_dir = raw_storage.create_new_run_dir("2026_05_31-13:00:00")
     tweet_id = "1000000000000000001"
-    raw_storage.write_records([_tweet_row(tweet_id=tweet_id)], run_dir)
+    raw_storage.write_records([_tweet_row(tweet_id=tweet_id)], f"{run_dir}/{POSTS_FILENAME}")
     raw_storage.write_run_metadata(
         run_dir,
         {
@@ -229,10 +236,10 @@ def test_second_preprocess_run_skips_already_preprocessed_ids(data_root) -> None
 
     first_output = preprocess_twitter.preprocess_records(dataset_id)
     preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
-    assert len(preprocessed_storage.load_records(first_output)) == 1
+    assert len(preprocessed_storage.load_records(f"{first_output}/{POSTS_FILENAME}")) == 1
 
     second_output = preprocess_twitter.preprocess_records(dataset_id)
     second_metadata = preprocessed_storage.load_run_metadata(second_output)
     assert second_metadata["row_counts"]["input"] == 0
     assert second_metadata["row_counts"]["output"] == 0
-    assert len(preprocessed_storage.load_records(second_output)) == 0
+    assert len(preprocessed_storage.load_records(f"{second_output}/{POSTS_FILENAME}")) == 0

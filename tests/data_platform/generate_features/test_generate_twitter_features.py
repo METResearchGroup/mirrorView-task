@@ -88,7 +88,7 @@ def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> N
     tweet_keep = "1000000000000000001"
     tweet_labeled = "1000000000000000002"
     feature_storage = StorageManager(
-        "twitter", "features", BaseModel, VALID_TWITTER_DATASET_ID, records_filename="features"
+        "twitter", "features", BaseModel, VALID_TWITTER_DATASET_ID
     )
     feature_storage.root_dir.mkdir(parents=True, exist_ok=True)
     pd.DataFrame(
@@ -112,7 +112,7 @@ def test_filter_unlabeled_matches_tweet_id_to_feature_uri_column(data_root) -> N
         id_column=ID_COLUMN,
         feature_file_id_column=FEATURE_FILE_ID_COLUMN,
     )
-    pending = query.filter_unlabeled(records, "is_political")
+    pending = query.filter_unlabeled(records, "is_political.csv")
     assert len(pending) == 1
     assert pending.iloc[0][ID_COLUMN] == tweet_keep
 
@@ -126,6 +126,7 @@ def test_generate_twitter_features_skips_completed_feature(
 
     spec = FeatureSpec(
         name="is_political",
+        export_filename="is_political.csv",
         model=DummyModel,  # type: ignore[arg-type]
         engine_type="thread_pool",
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]

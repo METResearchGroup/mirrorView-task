@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from data_platform.constants import POSTS_FILENAME
 from data_platform.ingestion import sync_twitter
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
@@ -90,13 +91,13 @@ def test_run_sync_tasks_appends_per_keyword(
         metadata,
         sync_tasks,
         sync_timestamp="2026_05_30-10:00:00",
-        csv_filename=sync_twitter.POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
 
     assert metadata["tasks"]["alpha"]["status"] == "completed"
     assert metadata["tasks"]["beta"]["status"] == "completed"
     assert metadata["row_count"] == 2
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_tweet_ids(f"{run_dir}/{POSTS_FILENAME}") == {
         "1000000000000000001",
         "1000000000000000002",
     }
@@ -115,7 +116,7 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     storage.append_records(
         [mock_tweet_row("1000000000000000000", keyword="alpha")],
-        run_dir,
+        f"{run_dir}/{POSTS_FILENAME}",
     )
     metadata = sync_twitter.init_sync_metadata(
         config,
@@ -151,10 +152,10 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         metadata,
         sync_tasks[:1],
         sync_timestamp="2026_05_30-10:00:00",
-        csv_filename=sync_twitter.POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_tweet_ids(f"{run_dir}/{POSTS_FILENAME}") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -174,7 +175,7 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
     prior_run = storage.create_new_run_dir("2026_05_29-10:00:00")
     storage.append_records(
         [mock_tweet_row("1000000000000000000", keyword="alpha")],
-        prior_run,
+        f"{prior_run}/{POSTS_FILENAME}",
     )
 
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
@@ -212,10 +213,10 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
         metadata,
         sync_tasks[:1],
         sync_timestamp="2026_05_30-10:00:00",
-        csv_filename=sync_twitter.POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_tweet_ids(f"{run_dir}/{POSTS_FILENAME}") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -234,7 +235,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     other_run = other_storage.create_new_run_dir("2026_05_29-10:00:00")
     other_storage.append_records(
         [mock_tweet_row("1000000000000000000", keyword="alpha")],
-        other_run,
+        f"{other_run}/{POSTS_FILENAME}",
     )
 
     storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
@@ -273,10 +274,10 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         metadata,
         sync_tasks[:1],
         sync_timestamp="2026_05_30-10:00:00",
-        csv_filename=sync_twitter.POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_tweet_ids(f"{run_dir}/{POSTS_FILENAME}") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -296,7 +297,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     other_run = other_storage.create_new_run_dir("2026_05_29-10:00:00")
     other_storage.append_records(
         [mock_tweet_row("1000000000000000000", keyword="alpha")],
-        other_run,
+        f"{other_run}/{POSTS_FILENAME}",
     )
 
     storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
@@ -332,10 +333,10 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         metadata,
         sync_tasks[:1],
         sync_timestamp="2026_05_30-10:00:00",
-        csv_filename=sync_twitter.POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {"1000000000000000000"}
+    assert storage.load_seen_tweet_ids(f"{run_dir}/{POSTS_FILENAME}") == {"1000000000000000000"}
     assert metadata.get("tweets_skipped_as_duplicates", 0) == 0
 
 
@@ -358,7 +359,7 @@ def test_resume_skips_completed_tasks(
     metadata["tasks"]["alpha"]["rows_collected"] = 1
     storage.append_records(
         [mock_tweet_row("1000000000000000001", keyword="alpha")],
-        run_dir,
+        f"{run_dir}/{POSTS_FILENAME}",
     )
     metadata["row_count"] = 1
     storage.write_run_metadata_atomic(run_dir, metadata)
@@ -391,7 +392,7 @@ def test_resume_skips_completed_tasks(
         resumed_metadata,
         sync_tasks,
         sync_timestamp="2026_05_30-10:00:00",
-        csv_filename=sync_twitter.POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
 
     assert calls == ["beta"]

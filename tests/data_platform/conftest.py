@@ -7,7 +7,9 @@ from typing import Any
 import pandas as pd
 import pytest
 
+import data_platform.constants as constants_mod
 import data_platform.utils.dataset as dataset_mod
+import data_platform.utils.paths as paths_mod
 import data_platform.utils.storage as storage_mod
 from tests.data_platform.constants import (
     LABEL_TIMESTAMP,
@@ -18,8 +20,10 @@ from tests.data_platform.constants import (
 
 @pytest.fixture
 def data_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    """Point storage and dataset modules at an isolated data directory."""
+    """Point storage, dataset, and path helpers at an isolated package root."""
     root = tmp_path / "data"
+    monkeypatch.setattr(constants_mod, "PACKAGE_ROOT", tmp_path)
+    monkeypatch.setattr(paths_mod, "PACKAGE_ROOT", tmp_path)
     monkeypatch.setattr(storage_mod, "DATA_ROOT", root)
     monkeypatch.setattr(dataset_mod, "_DATA_ROOT", root)
     return root

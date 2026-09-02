@@ -36,6 +36,7 @@ def test_skips_completed_features(
 
     spec = FeatureSpec(
         name="feat_a",
+        export_filename="feat_a.csv",
         model=DummyModel,  # type: ignore[arg-type]
         engine_type="thread_pool",
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
@@ -65,6 +66,7 @@ def test_reopens_completed_feature_with_new_posts(
 
     spec = FeatureSpec(
         name="feat_a",
+        export_filename="feat_a.csv",
         model=DummyModel,  # type: ignore[arg-type]
         engine_type="thread_pool",
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
@@ -101,6 +103,7 @@ def test_orchestrator_calls_label_records(
 
     spec = FeatureSpec(
         name="feat_a",
+        export_filename="feat_a.csv",
         model=DummyModel,  # type: ignore[arg-type]
         engine_type="thread_pool",
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
@@ -131,6 +134,7 @@ def test_does_not_mark_feature_completed_when_batches_fail(
 
     spec = FeatureSpec(
         name="feat_a",
+        export_filename="feat_a.csv",
         model=DummyModel,  # type: ignore[arg-type]
         engine_type="thread_pool",
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]

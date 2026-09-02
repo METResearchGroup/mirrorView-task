@@ -11,10 +11,12 @@ from typing import Any
 import pandas as pd
 import typer
 
+from data_platform.constants import COMMENTS_FILENAME, POSTS_FILENAME
 from data_platform.curate.apply_rules import ApplyRulesResult, apply_rules, load_rules_config
 from data_platform.curate.consolidate import ConsolidateConfig, build_wide_table
 from data_platform.utils.config_paths import resolve_config_path
-from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
+from data_platform.utils.dataset import dataset_root, validate_dataset_id
+from data_platform.utils.paths import to_package_relative
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
@@ -65,7 +67,14 @@ def build_curate_metadata(
 
 def run_curation(
     config_path: Path, dataset_id: str, spec: CuratePlatformSpec, *, rules_hash: str
-) -> Path:
+) -> str:
+    """Join labels, apply YAML filters, and write a curated export.
+
+    Returns
+    -------
+    str
+        Package-relative path of the curated csv, including the export file name.
+    """
     dataset_id = validate_dataset_id(dataset_id)
     root = dataset_root(spec.platform, dataset_id)
     preprocessed_storage = spec.storage_cls("preprocessed", dataset_id)
@@ -79,7 +88,10 @@ def run_curation(
     if not all_run_dirs:
         raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
 
-    posts_glob = preprocessed_storage.root_dir / "*" / preprocessed_storage.records_filename
+    records_filename = (
+        COMMENTS_FILENAME if spec.columns.records_file_key == "comments" else POSTS_FILENAME
+    )
+    posts_glob = preprocessed_storage.root_dir / "*" / records_filename
     consolidate_kwargs: dict[str, Any] = {
         "posts_file": posts_glob,
         "features_root": features_root,
@@ -92,11 +104,11 @@ def run_curation(
     rules_result = apply_rules(wide_df, rules)
     filtered_df = rules_result.dataframe
 
-    run_dir = curated_storage.create_new_run_dir(get_current_timestamp())
-    output_filename = curated_storage.filename_for(rules.output.stem)
-    output_path = curated_storage.write_dataframe(filtered_df, run_dir, filename=output_filename)
+    relative_run_dir = curated_storage.create_new_run_dir(get_current_timestamp())
+    relative_file_path = f"{relative_run_dir}/{rules.output.filename}"
+    curated_storage.write_dataframe(filtered_df, relative_file_path)
 
-    source_preprocessed_runs = [relative_run_path(root, d) for d in all_run_dirs]
+    source_preprocessed_runs = [to_package_relative(d) for d in all_run_dirs]
     metadata = build_curate_metadata(
         dataset_id=dataset_id,
         rules_name=rules.name,
@@ -105,18 +117,18 @@ def run_curation(
         wide_df=wide_df,
         filtered_df=filtered_df,
         rules_result=rules_result,
-        export_filename=output_filename,
+        export_filename=rules.output.filename,
     )
-    curated_storage.write_run_metadata(run_dir, metadata)
+    curated_storage.write_run_metadata(relative_run_dir, metadata)
 
     print(
         f"curate_{spec.platform}: kept {len(filtered_df)} of {len(wide_df)} "
-        f"{spec.record_noun} -> {run_dir}"
+        f"{spec.record_noun} -> {relative_run_dir}"
     )
-    return output_path
+    return relative_file_path
 
 
-def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpec) -> Path:
+def curate_with_spec(config_path: Path, dataset_id: str, spec: CuratePlatformSpec) -> str:
     """Run curation for a platform spec, hashing the rules config for metadata."""
     rules_hash = hashlib.sha256(config_path.read_bytes()).hexdigest()
     return run_curation(config_path, dataset_id, spec, rules_hash=rules_hash)

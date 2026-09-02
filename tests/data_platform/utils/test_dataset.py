@@ -60,3 +60,4 @@ def test_write_and_load_dataset_manifest(data_root) -> None:
     loaded = load_dataset_manifest("bluesky", VALID_DATASET_ID)
     assert loaded["dataset_id"] == VALID_DATASET_ID
     assert loaded["name"] == "mirrorview"
+    assert "format" not in loaded

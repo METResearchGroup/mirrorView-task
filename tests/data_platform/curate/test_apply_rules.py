@@ -5,6 +5,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from pydantic import ValidationError
+
 from data_platform.curate.apply_rules import (
     CurateRulesConfig,
     FilterRule,
@@ -80,7 +82,7 @@ def test_load_rules_config_from_yaml(tmp_path: Path) -> None:
         """
 name: mirrorview
 output:
-  stem: mirrorview
+  filename: mirrorview.csv
 filters:
   - column: news_or_opinion_category
     op: eq
@@ -90,8 +92,23 @@ filters:
     )
     rules = load_rules_config(config_path)
     assert rules.name == "mirrorview"
-    assert rules.output.stem == "mirrorview"
+    assert rules.output.filename == "mirrorview.csv"
     assert len(rules.filters) == 1
+
+
+def test_load_rules_config_rejects_output_stem(tmp_path: Path) -> None:
+    config_path = tmp_path / "stale.yaml"
+    config_path.write_text(
+        """
+name: mirrorview
+output:
+  stem: mirrorview
+filters: []
+""",
+        encoding="utf-8",
+    )
+    with pytest.raises(ValidationError):
+        load_rules_config(config_path)
 
 
 def test_apply_rules_political_stance_in_left_or_right() -> None:

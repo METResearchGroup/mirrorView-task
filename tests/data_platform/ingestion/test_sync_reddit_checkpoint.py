@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from data_platform.constants import COMMENTS_FILENAME, POSTS_FILENAME
 from data_platform.ingestion import sync_reddit
 from data_platform.utils.storage import RedditStorageManager, StorageStage
 from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
@@ -96,7 +97,7 @@ def test_run_sync_tasks_appends_per_subreddit(
     assert metadata["tasks"]["betasub"]["status"] == "completed"
     assert metadata["row_count"] == 2
     assert metadata["post_row_count"] == 2
-    assert len(comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")) == 2
+    assert len(comment_storage.load_seen_ids_from_disk(f"{run_dir}/{COMMENTS_FILENAME}", "comment_fullname")) == 2
 
 
 def test_run_sync_tasks_skips_prior_run_comments(
@@ -113,7 +114,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     comment_storage.append_records(
         [mock_comment_row("t1_comment_old", subreddit="alphasub")],
-        run_dir,
+        f"{run_dir}/{COMMENTS_FILENAME}",
     )
     metadata = sync_reddit.init_sync_metadata(
         config,
@@ -160,7 +161,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
         include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = comment_storage.load_seen_ids_from_disk(f"{run_dir}/{COMMENTS_FILENAME}", "comment_fullname")
     assert seen == {"t1_comment_old", "t1_comment_new"}
     assert metadata["comments_skipped_as_duplicates"] == 1
 
@@ -177,7 +178,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     other_run = other_storage.create_new_run_dir("2026_05_29-10:00:00")
     other_storage.append_records(
         [mock_comment_row("t1_comment_old", subreddit="alphasub")],
-        other_run,
+        f"{other_run}/{COMMENTS_FILENAME}",
     )
 
     comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
@@ -228,7 +229,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = comment_storage.load_seen_ids_from_disk(f"{run_dir}/{COMMENTS_FILENAME}", "comment_fullname")
     assert seen == {"t1_comment_old", "t1_comment_new"}
     assert metadata["comments_skipped_as_duplicates"] == 0
 
@@ -246,7 +247,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     other_run = other_storage.create_new_run_dir("2026_05_29-10:00:00")
     other_storage.append_records(
         [mock_comment_row("t1_comment_old", subreddit="alphasub")],
-        other_run,
+        f"{other_run}/{COMMENTS_FILENAME}",
     )
 
     comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
@@ -294,7 +295,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = comment_storage.load_seen_ids_from_disk(f"{run_dir}/{COMMENTS_FILENAME}", "comment_fullname")
     assert seen == {"t1_comment_old"}
     assert metadata.get("comments_skipped_as_duplicates", 0) == 0
 
@@ -319,7 +320,7 @@ def test_resume_skips_completed_subreddits(
     metadata["tasks"]["alphasub"]["comments_collected"] = 1
     comment_storage.append_records(
         [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
-        run_dir,
+        f"{run_dir}/{COMMENTS_FILENAME}",
     )
     metadata["row_count"] = 1
     comment_storage.write_run_metadata_atomic(run_dir, metadata)

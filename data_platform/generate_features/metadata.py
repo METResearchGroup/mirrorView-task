@@ -10,7 +10,7 @@ from data_platform.generate_features.models import (
     FeatureRunMetadata,
     FeatureStatus,
 )
-from data_platform.utils.dataset import dataset_root, relative_run_path
+from data_platform.utils.paths import to_package_relative
 from data_platform.utils.storage import METADATA_FILENAME
 from lib.timestamp_utils import get_current_timestamp
 
@@ -32,13 +32,12 @@ def flush_metadata(features_dir: Path, metadata: FeatureRunMetadata) -> None:
 
 
 def resolve_source_preprocessed_runs(config: FeatureGenerationConfig) -> list[str]:
-    """Return relative paths for all preprocessed run dirs for this dataset."""
-    root = dataset_root(config.platform, config.input_storage.dataset_id)
+    """Return package-relative paths for all preprocessed run dirs for this dataset."""
     preprocessed_root = config.input_storage.root_dir
     if not preprocessed_root.exists():
         return []
     return [
-        relative_run_path(root, run_dir)
+        to_package_relative(run_dir)
         for run_dir in sorted(preprocessed_root.iterdir())
         if run_dir.is_dir()
     ]
