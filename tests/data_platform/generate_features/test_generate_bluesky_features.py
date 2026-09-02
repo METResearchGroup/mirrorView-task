@@ -4,10 +4,12 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock
 
-import pandas as pd
 import pytest
 
-from data_platform.generate_features.generate_bluesky_features import generate_bluesky_features
+from data_platform.generate_features.generate_bluesky_features import (
+    BLUESKY_SPEC,
+    generate_bluesky_features,
+)
 from tests.data_platform.constants import VALID_DATASET_ID
 
 
@@ -27,7 +29,9 @@ def _write_preprocessed_run(
     return run_dir
 
 
-class TestFeatureGenGates:
+class TestGenerateBlueskyFeatures:
+    """Tests for generate_bluesky_features()."""
+
     def test_gate_fails_if_no_preprocessed_runs(self, data_root: Path) -> None:
         with pytest.raises(FileNotFoundError):
             generate_bluesky_features(VALID_DATASET_ID)
@@ -39,24 +43,34 @@ class TestFeatureGenGates:
         with pytest.raises(RuntimeError):
             generate_bluesky_features(VALID_DATASET_ID)
 
-
-class TestFeatureGeneration:
-    def test_generate_with_complete_preprocessed_runs(
+    def test_delegates_to_generate_platform_features(
         self, data_root: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         _write_preprocessed_run(
             data_root, VALID_DATASET_ID, "2026_01_01-00:00:00", sync_status="completed"
         )
+        mock_generate = MagicMock(return_value={})
         monkeypatch.setattr(
-            "data_platform.generate_features.generate_bluesky_features.load_all_posts",
-            lambda *_: pd.DataFrame(),
-        )
-        mock_run = MagicMock(return_value={})
-        monkeypatch.setattr(
-            "data_platform.generate_features.generate_bluesky_features.run_feature_generation",
-            mock_run,
+            "data_platform.generate_features.generate_bluesky_features.generate_platform_features",
+            mock_generate,
         )
 
-        generate_bluesky_features(VALID_DATASET_ID)
+        generate_bluesky_features(
+            VALID_DATASET_ID,
+            batch_size=8,
+            max_concurrency=4,
+            opik_enabled=False,
+            feature_subset=["is_political"],
+        )
 
-        mock_run.assert_called_once()
+        mock_generate.assert_called_once_with(
+            BLUESKY_SPEC,
+            VALID_DATASET_ID,
+            batch_size=8,
+            max_concurrency=4,
+            opik_enabled=False,
+            feature_subset=["is_political"],
+        )
+
+    def test_require_all_runs_complete_is_on_spec(self) -> None:
+        assert BLUESKY_SPEC.require_all_runs_complete is True

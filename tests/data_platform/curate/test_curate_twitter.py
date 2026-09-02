@@ -5,11 +5,8 @@ from pathlib import Path
 import pandas as pd
 
 from data_platform.curate.consolidate import ConsolidateConfig, build_wide_table
-from data_platform.curate.curate_twitter import (
-    FEATURE_FILE_ID_COLUMN,
-    ID_COLUMN,
-    curate,
-)
+from data_platform.curate.curate_twitter import curate
+from data_platform.utils.platform_specific_columns import TWITTER_COLUMNS
 from data_platform.utils.storage import TwitterStorageManager
 from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
@@ -36,12 +33,12 @@ def test_build_wide_table_joins_twitter_posts_on_tweet_id(tmp_path: Path) -> Non
         "is_political",
         [
             {
-                FEATURE_FILE_ID_COLUMN: post_a["tweet_id"],
+                TWITTER_COLUMNS.feature_file_id_column: post_a["tweet_id"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": True,
             },
             {
-                FEATURE_FILE_ID_COLUMN: post_b["tweet_id"],
+                TWITTER_COLUMNS.feature_file_id_column: post_b["tweet_id"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": False,
             },
@@ -52,12 +49,12 @@ def test_build_wide_table_joins_twitter_posts_on_tweet_id(tmp_path: Path) -> Non
         "is_news_or_opinion",
         [
             {
-                FEATURE_FILE_ID_COLUMN: post_a["tweet_id"],
+                TWITTER_COLUMNS.feature_file_id_column: post_a["tweet_id"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "category": "opinion",
             },
             {
-                FEATURE_FILE_ID_COLUMN: post_b["tweet_id"],
+                TWITTER_COLUMNS.feature_file_id_column: post_b["tweet_id"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "category": "news",
             },
@@ -68,12 +65,12 @@ def test_build_wide_table_joins_twitter_posts_on_tweet_id(tmp_path: Path) -> Non
         "is_likely_spam",
         [
             {
-                FEATURE_FILE_ID_COLUMN: post_a["tweet_id"],
+                TWITTER_COLUMNS.feature_file_id_column: post_a["tweet_id"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_likely_spam": False,
             },
             {
-                FEATURE_FILE_ID_COLUMN: post_b["tweet_id"],
+                TWITTER_COLUMNS.feature_file_id_column: post_b["tweet_id"],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_likely_spam": True,
             },
@@ -85,15 +82,15 @@ def test_build_wide_table_joins_twitter_posts_on_tweet_id(tmp_path: Path) -> Non
             posts_file=posts_file,
             features_root=features_root,
             feature_names=("is_political", "is_news_or_opinion"),
-            id_column=ID_COLUMN,
-            feature_file_id_column=FEATURE_FILE_ID_COLUMN,
+            id_column=TWITTER_COLUMNS.records_id_column,
+            feature_file_id_column=TWITTER_COLUMNS.feature_file_id_column,
         )
     )
 
     assert len(wide) == 2
     assert "text" in wide.columns
     assert "news_or_opinion_category" in wide.columns
-    assert wide.loc[wide[ID_COLUMN] == post_a["tweet_id"], "is_political"].iloc[0] in {
+    assert wide.loc[wide[TWITTER_COLUMNS.records_id_column] == post_a["tweet_id"], "is_political"].iloc[0] in {
         True,
         "True",
     }
@@ -123,7 +120,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_political",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_political": political,
                 },
@@ -131,7 +128,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_news_or_opinion",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "category": category,
                 },
@@ -139,7 +136,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_likely_spam",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_likely_spam": post is post_drop,
                 },
@@ -147,7 +144,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_self_contained",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_self_contained": self_contained,
                 },
@@ -155,7 +152,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_structurally_complete",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "is_structurally_complete": structurally_complete,
                 },
@@ -163,7 +160,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "is_toxic_tiered",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "toxicity_prob": 0.1,
                     "toxicity_tier": "low",
@@ -172,7 +169,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
             (
                 "political_stance",
                 {
-                    FEATURE_FILE_ID_COLUMN: post["tweet_id"],
+                    TWITTER_COLUMNS.feature_file_id_column: post["tweet_id"],
                     "label_timestamp": LABEL_TIMESTAMP,
                     "political_stance": stance,
                 },
@@ -198,7 +195,7 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
 
     assert output_path.name == "mirrorview.csv"
     assert len(curated) == 1
-    assert str(curated.iloc[0][ID_COLUMN]) == post_keep["tweet_id"]
+    assert str(curated.iloc[0][TWITTER_COLUMNS.records_id_column]) == post_keep["tweet_id"]
     assert "text" in curated.columns
     assert metadata["row_counts"]["after_filters"] == 1
     assert len(metadata["filter_results"]) == 6
@@ -211,3 +208,10 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
         metadata["filter_results"][0]["records_before"]
         >= metadata["filter_results"][-1]["records_passing"]
     )
+
+
+def test_twitter_curate_cli_does_not_reexport_column_aliases() -> None:
+    import data_platform.curate.curate_twitter as twitter_curate
+
+    assert not hasattr(twitter_curate, "ID_COLUMN")
+    assert not hasattr(twitter_curate, "FEATURE_FILE_ID_COLUMN")
