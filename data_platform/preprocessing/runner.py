@@ -44,6 +44,28 @@ def add_canonical_source_record_id(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
+    """Copy the platform's original record id onto the shared ``source_record_id`` column.
+
+    You still have original fields such as Bluesky ``uri``, Reddit
+    ``comment_fullname``, and Twitter ``tweet_id`` on the returned frame. The
+    function does not modify the input frame.
+
+    Parameters
+    ----------
+    spec
+        ``spec.columns.records_id_column`` is the copy source. The destination
+        is always shared ``source_record_id``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame that includes ``source_record_id``.
+
+    Raises
+    ------
+    KeyError
+        When the original record id column is missing from the frame.
+    """
     raise NotImplementedError
 
 
