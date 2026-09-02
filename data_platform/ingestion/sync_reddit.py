@@ -356,13 +356,11 @@ def _initial_task_progress(task: RedditTask) -> dict[str, Any]:
 def init_sync_metadata(
     config: dict[str, Any],
     config_path: Path,
-    sync_timestamp: str,
     sync_tasks: list[RedditTask],
 ) -> dict[str, Any]:
     return build_base_sync_metadata(
         config,
         config_path,
-        sync_timestamp,
         sync_tasks,
         task_progress_builder=_initial_task_progress,
         extra_fields={"post_row_count": 0},
@@ -589,7 +587,7 @@ def sync_records(
         comment_storage,
         sync_tasks,
         run_dir_name=run_dir_name,
-        init_metadata_fn=lambda ts: init_sync_metadata(config, config_path, ts, sync_tasks),
+        init_metadata_fn=lambda: init_sync_metadata(config, config_path, sync_tasks),
         entity_label="subreddits",
     )
 

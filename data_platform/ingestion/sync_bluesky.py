@@ -205,14 +205,12 @@ def _initial_task_progress(task: BlueskyTask) -> dict[str, Any]:
 def init_sync_metadata(
     config: dict[str, Any],
     config_path: Path,
-    sync_timestamp: str,
     sync_tasks: list[BlueskyTask],
 ) -> dict[str, Any]:
     """Build the initial metadata.json payload for a new raw run directory."""
     return build_base_sync_metadata(
         config,
         config_path,
-        sync_timestamp,
         sync_tasks,
         task_progress_builder=_initial_task_progress,
     )
@@ -339,7 +337,7 @@ def sync_records(
         storage,
         sync_tasks,
         run_dir_name=run_dir_name,
-        init_metadata_fn=lambda ts: init_sync_metadata(config, config_path, ts, sync_tasks),
+        init_metadata_fn=lambda: init_sync_metadata(config, config_path, sync_tasks),
         entity_label="keywords",
     )
 

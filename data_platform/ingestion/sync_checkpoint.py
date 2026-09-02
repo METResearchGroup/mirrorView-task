@@ -172,7 +172,6 @@ def parse_max_rows(ingestion_params: dict[str, Any]) -> int | None:
 def build_base_sync_metadata(
     config: dict[str, Any],
     config_path: Path,
-    sync_timestamp: str,
     sync_tasks: Sequence[TTask],
     *,
     task_progress_builder: Callable[[TTask], dict[str, Any]],
@@ -184,7 +183,6 @@ def build_base_sync_metadata(
         "name": config["name"],
         "description": config["description"],
         "date": config["date"],
-        "sync_timestamp": sync_timestamp,
         "ingestion_config": config_path.name,
         "record_types": config["record_types"],
         "ingestion_params": config["ingestion_params"],
@@ -290,7 +288,7 @@ def prepare_sync_run(
     sync_tasks: Sequence[HasTaskId],
     *,
     run_dir_name: str | None,
-    init_metadata_fn: Callable[[str], dict[str, Any]],
+    init_metadata_fn: Callable[[], dict[str, Any]],
     entity_label: str,
 ) -> tuple[str, dict[str, Any]]:
     resume_dir = find_resume_run_dir(storage, run_dir_name=run_dir_name)
@@ -305,7 +303,7 @@ def prepare_sync_run(
 
     sync_timestamp = get_current_timestamp()
     output_dir = storage.create_new_run_dir(sync_timestamp)
-    metadata = init_metadata_fn(sync_timestamp)
+    metadata = init_metadata_fn()
     flush_run_metadata(storage, output_dir, metadata)
     print(f"sync_records: started new run {output_dir}")
     return output_dir, metadata
