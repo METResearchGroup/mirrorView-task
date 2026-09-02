@@ -17,6 +17,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_rows,
     record_type_to_filename,
     require_dataset_id,
+    resolve_limit_per_task,
     stop_at_max_rows,
     sync_status_from_tasks,
     validate_tasks_for_resume,
@@ -301,3 +302,27 @@ class TestEnsureDatasetManifest:
         assert metadata["ingestion_config"] == expected
         assert manifest["ingestion_config"] == expected
         assert metadata["ingestion_config"] == manifest["ingestion_config"]
+
+
+class TestResolveLimitPerTask:
+    """Tests for resolve_limit_per_task()."""
+
+    def test_returns_limit_per_task_when_present(self) -> None:
+        ingestion_params = {"limit_per_task": 7}
+        expected = 7
+
+        result = resolve_limit_per_task(ingestion_params)
+
+        assert result == expected
+
+    def test_accepts_zero_limit_per_task(self) -> None:
+        ingestion_params = {"limit_per_task": 0}
+        expected = 0
+
+        result = resolve_limit_per_task(ingestion_params)
+
+        assert result == expected
+
+    def test_missing_limit_per_task_raises_key_error(self) -> None:
+        with pytest.raises(KeyError):
+            resolve_limit_per_task({})

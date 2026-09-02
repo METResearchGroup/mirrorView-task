@@ -16,7 +16,7 @@ ingestion_params:
   subreddits:
     - politics
   listing: hot
-  limit_per_subreddit: 5
+  limit_per_task: 5
   comments_per_post: 25
   min_comment_body_length: 30
   max_rows: 100

@@ -23,7 +23,7 @@ def _minimal_twitter_sync_config() -> dict[str, Any]:
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "keywords": ["alpha", "beta"],
-            "limit_per_keyword": 2,
+            "limit_per_task": 2,
             "lang": "en",
             "exclude": ["reply", "retweet", "quote"],
         },
@@ -616,3 +616,29 @@ class TestBuildSyncTasks:
     ) -> None:
         with pytest.raises(ValueError, match="keywords"):
             sync_twitter.build_sync_tasks(ingestion_params)
+
+
+class TestEffectiveLimitPerKeyword:
+    """Tests for _effective_limit_per_keyword()."""
+
+    def test_uses_limit_per_task(self) -> None:
+        ingestion_params = {"limit_per_task": 8}
+        expected = 8
+
+        result = sync_twitter._effective_limit_per_keyword(ingestion_params, None)
+
+        assert result == expected
+
+    def test_raises_key_error_when_limit_per_task_is_missing(self) -> None:
+        ingestion_params: dict[str, Any] = {}
+
+        with pytest.raises(KeyError):
+            sync_twitter._effective_limit_per_keyword(ingestion_params, None)
+
+    def test_clamps_limit_per_task_to_remaining_rows(self) -> None:
+        ingestion_params = {"limit_per_task": 10}
+        expected = 3
+
+        result = sync_twitter._effective_limit_per_keyword(ingestion_params, 3)
+
+        assert result == expected

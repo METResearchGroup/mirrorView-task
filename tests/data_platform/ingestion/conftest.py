@@ -37,7 +37,7 @@ def minimal_sync_config() -> dict[str, Any]:
         "record_types": [sync_bluesky.POSTS_RECORD_TYPE],
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
-            "limit": 2,
+            "limit_per_task": 2,
             "sort": "latest",
             "keywords": ["alpha", "beta"],
         },

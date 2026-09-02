@@ -15,7 +15,7 @@ ingestion_params:
     - democrats
   listing: top
   listing_time_filter: month
-  limit_per_subreddit: 300
+  limit_per_task: 300
   comments_per_post: 300
   min_comment_body_length: 30
   comments_dedupe_policy:

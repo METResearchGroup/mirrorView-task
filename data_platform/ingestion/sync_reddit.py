@@ -41,6 +41,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_rows,
     prepare_sync_run,
     require_dataset_id,
+    resolve_limit_per_task,
     run_checkpointed_sync,
     run_sync_cli,
 )
@@ -281,7 +282,7 @@ def fetch_records_for_subreddit(
     include_comments: bool,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
     """Fetch posts and/or comments for a single subreddit."""
-    limit = int(ingestion_params["limit_per_subreddit"])
+    limit = resolve_limit_per_task(ingestion_params)
     listing = str(ingestion_params.get("listing", DEFAULT_LISTING))
     listing_time_filter = _resolve_listing_time_filter(ingestion_params, listing)
     comments_per_post = int(ingestion_params.get("comments_per_post", 100))

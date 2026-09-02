@@ -32,6 +32,7 @@ from data_platform.ingestion.sync_checkpoint import (
     parse_max_rows,
     prepare_sync_run,
     require_dataset_id,
+    resolve_limit_per_task,
     run_checkpointed_sync,
     run_sync_cli,
 )
@@ -96,7 +97,7 @@ def init_sync_metadata(
 
 
 def _effective_limit_per_keyword(ingestion_params: dict[str, Any], remaining: int | None) -> int:
-    per_keyword = int(ingestion_params.get("limit_per_keyword", 25))
+    per_keyword = resolve_limit_per_task(ingestion_params)
     if remaining is None:
         return per_keyword
     return max(0, min(per_keyword, remaining))

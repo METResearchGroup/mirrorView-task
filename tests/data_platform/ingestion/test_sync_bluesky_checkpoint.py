@@ -410,7 +410,7 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
     config = minimal_sync_config()
     ingestion_params = dict(config["ingestion_params"])
     ingestion_params["max_rows"] = 2
-    ingestion_params["limit"] = 5
+    ingestion_params["limit_per_task"] = 5
     sync_tasks = sync_bluesky.build_sync_tasks(ingestion_params)
     storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
@@ -517,4 +517,43 @@ class TestSearchPostsPage:
         params = client.app.bsky.feed.search_posts.call_args.kwargs["params"]
         result = "author" in params
         expected = False
+        assert result == expected
+
+
+class TestFetchPostsForKeywordLimitPerTask:
+    """Tests that fetch_posts_for_keyword reads limit_per_task."""
+
+    def test_uses_limit_per_task(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ingestion_params = {"limit_per_task": 1, "sort": "latest"}
+        expected = 1
+
+        def fake_search(
+            client: Any,
+            fetch_cfg: dict[str, Any],
+            query: str,
+            *,
+            page_limit: int,
+            cursor: str | None = None,
+        ):
+            return mock_search_response(
+                [
+                    mock_post("at://did:plc:ex/app.bsky.feed.post/a1"),
+                    mock_post("at://did:plc:ex/app.bsky.feed.post/a2"),
+                ]
+            )
+
+        monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+
+        rows, _stats = sync_bluesky.fetch_posts_for_keyword(
+            MagicMock(),
+            ingestion_params,
+            "alpha",
+            task_id="alpha",
+            sync_timestamp="2026_05_30-10:00:00",
+        )
+        result = len(rows)
+
         assert result == expected

@@ -12,6 +12,6 @@ ingestion_params:
   author_filter: user.bsky.social
   keywords:
     - example
-  limit: 50
+  limit_per_task: 50
   max_rows: 200
   sort: latest
