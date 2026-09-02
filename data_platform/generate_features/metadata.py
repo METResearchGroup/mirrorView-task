@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from data_platform.generate_features.identity import identity_for_spec
 from data_platform.generate_features.models import (
     FeatureGenerationConfig,
     FeatureRunMetadata,
@@ -44,6 +45,23 @@ def resolve_source_preprocessed_runs(config: FeatureGenerationConfig) -> list[st
     ]
 
 
+def apply_feature_identities(
+    metadata: FeatureRunMetadata,
+    config: FeatureGenerationConfig,
+    feature_names: tuple[str, ...],
+) -> FeatureRunMetadata:
+    """Write current prompt hash and model id onto each feature status entry."""
+    for name in feature_names:
+        spec = config.feature_registry.get(name)
+        if spec is None:
+            continue
+        identity = identity_for_spec(spec)
+        status = metadata.features.setdefault(name, FeatureStatus())
+        status.model_id = identity.model_id
+        status.prompt_hash = identity.prompt_hash
+    return metadata
+
+
 def load_or_init_metadata(
     config: FeatureGenerationConfig,
     *,
@@ -56,6 +74,8 @@ def load_or_init_metadata(
         with path.open(encoding="utf-8") as f:
             metadata = FeatureRunMetadata.from_dict(json.load(f))
         metadata.source_preprocessed_runs = source_preprocessed_runs
+        apply_feature_identities(metadata, config, feature_names)
+        flush_metadata(config.features_dir, metadata)
         return metadata
 
     features = {name: FeatureStatus() for name in feature_names}
@@ -67,6 +87,7 @@ def load_or_init_metadata(
         config=config.run_config,
         updated_at=get_current_timestamp(),
     )
+    apply_feature_identities(metadata, config, feature_names)
     flush_metadata(config.features_dir, metadata)
     return metadata
 
