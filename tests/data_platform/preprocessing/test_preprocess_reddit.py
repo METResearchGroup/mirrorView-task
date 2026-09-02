@@ -122,6 +122,8 @@ def test_preprocess_records_writes_output(data_root) -> None:
     assert output.iloc[0]["comment_fullname"] == "t1_keep"
     assert output.iloc[0]["text"] == output.iloc[0]["body"]
     assert output.iloc[0]["body"] == _valid_body()
+    assert output.iloc[0]["author_handle"] == output.iloc[0]["author"]
+    assert "author_id" not in output.columns
     assert metadata["row_counts"]["input"] == 2
     assert metadata["row_counts"]["output"] == 1
     assert metadata["files"]["comments"] == "comments.csv"

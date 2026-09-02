@@ -131,6 +131,8 @@ def test_preprocess_records_writes_output(data_root) -> None:
 
     assert len(output) == 1
     assert output.iloc[0]["tweet_id"] == "1000000000000000001"
+    assert output.iloc[0]["author_handle"] == output.iloc[0]["username"]
+    assert output.iloc[0]["author_id"] == _tweet_row()["author_id"]
     assert metadata["row_counts"]["input"] == 2
     assert metadata["row_counts"]["output"] == 1
     assert metadata["files"]["posts"] == "posts.csv"
