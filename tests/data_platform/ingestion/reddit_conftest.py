@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from data_platform.ingestion import sync_reddit
+from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
 
 
@@ -14,8 +15,8 @@ def minimal_reddit_sync_config() -> dict[str, Any]:
         "date": "2026-05-31",
         "record_types": [sync_reddit.COMMENTS_RECORD_TYPE, sync_reddit.POSTS_RECORD_TYPE],
         "ingestion_params": {
-            "comments_dedupe_policy": ["current_run", "prior_runs_all_datasets"],
-            "posts_dedupe_policy": ["current_run", "prior_runs_all_datasets"],
+            "comments_dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
+            "posts_dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "subreddits": ["AlphaSub", "BetaSub"],
             "listing": "hot",
             "limit_per_subreddit": 2,
@@ -41,6 +42,7 @@ def mock_comment_row(
         "author": "user",
         "body": "comment text long enough",
         "score": 1,
+        "created_at": "2026-05-30T00:00:00+00:00",
         "created_utc": "2026-05-30T00:00:00+00:00",
         "permalink": f"/r/{subreddit}/comments/{post_reddit_id}/x/{comment_fullname}/",
         "depth": 0,
@@ -65,6 +67,7 @@ def mock_post_row(
         "score": 1,
         "upvote_ratio": 0.5,
         "num_comments": 1,
+        "created_at": "2026-05-30T00:00:00+00:00",
         "created_utc": "2026-05-30T00:00:00+00:00",
         "permalink": f"/r/{subreddit}/comments/{reddit_id}/title/",
         "url": f"https://reddit.com/r/{subreddit}/comments/{reddit_id}/title/",

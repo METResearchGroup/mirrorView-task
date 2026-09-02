@@ -11,7 +11,6 @@ from data_platform.generate_features.generate_reddit_features import (
     load_comments,
     reddit_feature_config,
 )
-from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS
 from data_platform.generate_features.metadata import flush_metadata, load_or_init_metadata
 from data_platform.generate_features.models import (
     BatchRunStats,
@@ -19,19 +18,23 @@ from data_platform.generate_features.models import (
     FeatureSpec,
     FeatureStatus,
 )
+from data_platform.utils.platform_specific_columns import CANONICAL_TEXT_COLUMN, REDDIT_COLUMNS
 from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_REDDIT_DATASET_ID
 from tests.data_platform.generate_features.conftest import DummyModel
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
 
 def _sample_preprocessed_comments(count: int = 1) -> list[dict[str, Any]]:
-    return [
+    rows = [
         mock_comment_row(
             f"t1_comment_{index}",
             subreddit="politics",
         )
         for index in range(count)
     ]
+    for row in rows:
+        row["text"] = row["body"]
+    return rows
 
 
 def write_preprocessed_comments(
@@ -68,6 +71,7 @@ def test_reddit_feature_config_columns(data_root) -> None:
     assert config.platform == "reddit"
     assert config.id_column == REDDIT_COLUMNS.records_id_column
     assert config.text_column == REDDIT_COLUMNS.text_column
+    assert REDDIT_COLUMNS.text_column == CANONICAL_TEXT_COLUMN
     assert config.feature_label_query.id_column == REDDIT_COLUMNS.records_id_column
     assert config.feature_label_query.feature_file_id_column == REDDIT_COLUMNS.feature_file_id_column
     assert config.input_storage.platform == "reddit"

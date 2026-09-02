@@ -12,8 +12,10 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.utils.gate_checks import require_all_runs_complete
-from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
+from data_platform.utils.platform_specific_columns import (
+    CANONICAL_TEXT_COLUMN,
+    PlatformSpecificColumns,
+)
 from data_platform.utils.storage import StorageManager, StorageStage
 
 TextValidator = Callable[[str], bool]
@@ -33,6 +35,38 @@ class PreprocessPlatformSpec:
     text_validators: tuple[TextValidator, ...]
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
+    original_platform_text_column: str = CANONICAL_TEXT_COLUMN
+
+
+def add_canonical_text_column(
+    df: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    """Copy the platform's original post or comment text onto the shared ``text`` column.
+
+    You still have original fields such as Reddit ``body`` on the returned frame.
+    The function does not modify the input frame.
+
+    Parameters
+    ----------
+    spec
+        ``original_platform_text_column`` is the copy source. The destination is
+        always shared ``text``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame that includes ``text``.
+
+    Raises
+    ------
+    KeyError
+        When ``spec.original_platform_text_column`` is missing from the frame.
+    """
+    out = df.copy()
+    original_platform_text = out[spec.original_platform_text_column]
+    out[CANONICAL_TEXT_COLUMN] = original_platform_text.map(lambda value: str(value))
+    return out
 
 
 def apply_text_transform(
@@ -67,17 +101,20 @@ def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFra
     if df.empty:
         return df.copy()
 
+    prepared = df
+    if spec.columns.text_column not in df.columns:
+        prepared = add_canonical_text_column(df, spec)
     text_col = spec.columns.text_column
-    text_mask = df[text_col].map(
+    text_mask = prepared[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
     )
     if not spec.row_validators:
-        return df.loc[text_mask].reset_index(drop=True)
+        return prepared.loc[text_mask].reset_index(drop=True)
 
-    author_mask = df[AUTHOR_COLUMN].map(
+    author_mask = prepared[AUTHOR_COLUMN].map(
         lambda value: passes_row_validators(str(value), spec.row_validators)
     )
-    return df.loc[text_mask & author_mask].reset_index(drop=True)
+    return prepared.loc[text_mask & author_mask].reset_index(drop=True)
 
 
 def _rows_to_validated_dicts(
@@ -175,7 +212,7 @@ def preprocess_records(
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
     if raw_storage.latest_run_dir() is None:
         raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
-    require_all_runs_complete(raw_storage, dataset_id)
+    raw_storage.require_all_runs_complete(dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     dedupe_session = DedupeSession(
         DedupeConfig(
@@ -190,6 +227,7 @@ def preprocess_records(
         records, spec.columns.records_id_column, dedupe_session.seen_ids
     )
 
+    records = add_canonical_text_column(records, spec)
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(

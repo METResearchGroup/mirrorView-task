@@ -60,3 +60,24 @@ def test_write_and_load_dataset_manifest(data_root) -> None:
     loaded = load_dataset_manifest("bluesky", VALID_DATASET_ID)
     assert loaded["dataset_id"] == VALID_DATASET_ID
     assert loaded["name"] == "mirrorview"
+    assert loaded["created_at"] == "2026-05-29T12:00:00+00:00"
+
+
+def test_write_dataset_manifest_defaults_created_at(
+    data_root, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    expected = "2026_06_01-08:00:00"
+    monkeypatch.setattr(
+        "data_platform.utils.dataset.get_current_timestamp",
+        lambda: expected,
+    )
+
+    write_dataset_manifest(
+        "bluesky",
+        VALID_DATASET_ID,
+        name="mirrorview",
+        ingestion_config="data_platform/ingestion/configs/bluesky/mirrorview.yaml",
+    )
+
+    loaded = load_dataset_manifest("bluesky", VALID_DATASET_ID)
+    assert loaded["created_at"] == expected

@@ -1,3 +1,10 @@
+"""This module keeps a set of record ids in memory so ingest can skip records it
+has already stored.
+
+YAML ``dedupe_policy`` lists (and Reddit comment/post policy lists) decide
+whether to load ids from earlier local runs. Use ``prior_runs_same_dataset``.
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -7,19 +14,28 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     from data_platform.utils.storage import StorageManager
 
-PRIOR_RUN_POLICIES = frozenset({"prior_runs_same_dataset", "prior_runs_all_datasets"})
+PRIOR_RUN_POLICY = "prior_runs_same_dataset"
 
 
-def policy_includes_prior_runs(policy: Any) -> bool:
-    """True when YAML policy asks to skip ids already stored in earlier local runs.
+def policy_includes_prior_runs(policy: object) -> bool:
+    """Return True when YAML policy skips ids already stored in earlier local runs.
 
-    `prior_runs_all_datasets` used to mean Athena across datasets. Local-only
-    storage can only see run dirs for the current dataset_id, so both names
-    enable the same same-dataset scan.
+    Use ``prior_runs_same_dataset`` in the policy list. Local storage only has
+    run directories for the current dataset_id, so that name matches the scan.
+
+    Parameters
+    ----------
+    policy
+        A YAML list of strings, or any other value. Non-lists return False.
+
+    Returns
+    -------
+    bool
+        True when the list contains ``prior_runs_same_dataset``.
     """
     if not isinstance(policy, list):
         return False
-    return any(item in PRIOR_RUN_POLICIES for item in policy)
+    return PRIOR_RUN_POLICY in policy
 
 
 @dataclass(frozen=True)

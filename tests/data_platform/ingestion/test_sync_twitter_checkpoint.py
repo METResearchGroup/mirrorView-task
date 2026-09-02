@@ -7,6 +7,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_twitter
+from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
@@ -20,7 +21,7 @@ def _minimal_twitter_sync_config() -> dict[str, Any]:
         "date": "2026-05-31",
         "record_types": ["twitter.tweet"],
         "ingestion_params": {
-            "dedupe_policy": ["current_run", "prior_runs_all_datasets"],
+            "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "keyword": ["alpha", "beta"],
             "limit_per_keyword": 2,
             "lang": "en",
@@ -96,7 +97,7 @@ def test_run_sync_tasks_appends_per_keyword(
     assert metadata["tasks"]["alpha"]["status"] == "completed"
     assert metadata["tasks"]["beta"]["status"] == "completed"
     assert metadata["row_count"] == 2
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000001",
         "1000000000000000002",
     }
@@ -108,7 +109,7 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
 ) -> None:
     config = _minimal_twitter_sync_config()
     ingestion_params = config["ingestion_params"]
-    ingestion_params["dedupe_policy"] = ["current_run", "prior_runs_same_dataset"]
+    ingestion_params["dedupe_policy"] = ["current_run", PRIOR_RUN_POLICY]
     sync_tasks = sync_twitter.build_sync_tasks(ingestion_params)
     storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
 
@@ -154,7 +155,7 @@ def test_run_sync_tasks_skips_prior_run_tweets_when_enabled(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -215,7 +216,7 @@ def test_run_sync_tasks_does_not_skip_prior_runs_when_disabled(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -276,7 +277,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {
         "1000000000000000000",
         "1000000000000000001",
     }
@@ -335,7 +336,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         csv_filename=sync_twitter.POSTS_CSV,
     )
 
-    assert storage.load_seen_tweet_ids(run_dir) == {"1000000000000000000"}
+    assert storage.load_seen_ids_from_disk(run_dir, "tweet_id") == {"1000000000000000000"}
     assert metadata.get("tweets_skipped_as_duplicates", 0) == 0
 
 
