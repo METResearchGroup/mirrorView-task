@@ -9,6 +9,7 @@ import pytest
 
 import data_platform.utils.dataset as dataset_mod
 import data_platform.utils.storage as storage_mod
+from lib.timestamp_utils import format_iso_created_at, format_run_timestamp, utc_datetime
 from tests.data_platform.constants import (
     LABEL_TIMESTAMP,
     SAMPLE_INGESTION_ROW,
@@ -31,7 +32,7 @@ def make_post_row(
     text: str = "post one",
     url: str | None = None,
     author_handle: str = "a.bsky.social",
-    created_at: str = "2026-01-01T00:00:00Z",
+    created_at: str = format_iso_created_at(utc_datetime(2026, 1, 1, 0, 0, 0)),
     like_count: int = 0,
 ) -> dict[str, Any]:
     handle = author_handle.removesuffix(".bsky.social")
@@ -45,7 +46,7 @@ def make_post_row(
         "repost_count": 0,
         "reply_count": 0,
         "quote_count": 0,
-        "sync_timestamp": "2026_05_30-10:00:00",
+        "sync_timestamp": format_run_timestamp(utc_datetime(2026, 5, 30, 10, 0, 0)),
     }
 
 
@@ -57,7 +58,7 @@ def write_posts_file(path: Path, rows: list[Mapping[str, Any]] | None = None) ->
                 uri=URI_POST_B,
                 text="post two",
                 author_handle="b.bsky.social",
-                created_at="2026-01-02T00:00:00Z",
+                created_at=format_iso_created_at(utc_datetime(2026, 1, 2, 0, 0, 0)),
                 like_count=1,
             ),
         ]

@@ -7,7 +7,6 @@ Run from the repo root:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -22,11 +21,20 @@ from data_platform.models.sync import (
     SyncRedditPostModel,
     SyncTwitterPostModel,
 )
+from lib.timestamp_utils import (
+    format_iso_created_at,
+    format_run_timestamp,
+    parse_iso_created_at,
+    unix_seconds,
+    utc_datetime,
+)
 from tests.data_platform.ingestion.conftest import mock_post, mock_search_response
 
-SYNC_TIMESTAMP = "2026_05_30-10:00:00"
-CREATED_AT_ISO = "2026-05-30T00:00:00+00:00"
-CREATED_AT_UNIX = datetime(2026, 5, 30, tzinfo=UTC).timestamp()
+CREATED_MOMENT = utc_datetime(2026, 5, 30, 0, 0, 0)
+SYNC_MOMENT = utc_datetime(2026, 5, 30, 10, 0, 0)
+SYNC_TIMESTAMP = format_run_timestamp(SYNC_MOMENT)
+CREATED_AT_ISO = format_iso_created_at(CREATED_MOMENT)
+CREATED_AT_UNIX = unix_seconds(CREATED_MOMENT)
 
 
 def _mock_submission() -> SimpleNamespace:
@@ -131,7 +139,7 @@ class TestTweetToRow:
             id="123",
             text="hello",
             author_id="99",
-            created_at=datetime(2026, 5, 30, tzinfo=UTC),
+            created_at=CREATED_MOMENT,
             public_metrics={
                 "like_count": 0,
                 "retweet_count": 0,
@@ -147,7 +155,7 @@ class TestTweetToRow:
             sync_timestamp=SYNC_TIMESTAMP,
         )
 
-        expected_created_at = datetime(2026, 5, 30, tzinfo=UTC)
-        assert datetime.fromisoformat(str(result["created_at"])) == expected_created_at
+        assert parse_iso_created_at(str(result["created_at"])) == CREATED_MOMENT
+        assert result["created_at"] == CREATED_AT_ISO
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
         SyncTwitterPostModel.model_validate(result)

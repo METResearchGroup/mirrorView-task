@@ -2,7 +2,7 @@
 
 ## 2026-09-02
 
-1. Ingest now writes ISO `created_at` and the run `sync_timestamp` on Bluesky, Reddit, and Twitter rows, so later stages can read those two fields. Reddit still also writes `created_utc` as the same ISO string. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
+1. Ingest now writes ISO `created_at` and the run `sync_timestamp` on Bluesky, Reddit, and Twitter rows, so later stages can read those two fields. Reddit still also writes `created_utc` as the same ISO string. Those formats come from `lib/timestamp_utils.py`. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
 2. Feature skip and run completeness in `data_platform` use one seen-id loader and one completeness raise. Bluesky and Twitter share `quote_query_term`, and `data_platform.models` exports every sync record model. [PR #90](https://github.com/METResearchGroup/mirrorView-task/pull/90)
 3. Data-platform code can resolve and validate file paths relative to the `data_platform/` package, using shared full names for posts, comments, and metadata files. [PR #95](https://github.com/METResearchGroup/mirrorView-task/pull/95)
 4. Skip-set sessions can load this-run or all-runs ids, drop already-seen ingest rows, and extend the skip set after append, while the old warmup path still works for existing callers. [PR #79](https://github.com/METResearchGroup/mirrorView-task/pull/79)

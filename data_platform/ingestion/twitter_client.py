@@ -9,6 +9,7 @@ import tweepy
 
 from data_platform.ingestion.query_terms import quote_query_term
 from data_platform.ingestion.retry import retry_twitter_request
+from lib.timestamp_utils import format_iso_created_at
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,7 @@ def tweet_to_row(
         "text": tweet.text or "",
         "author_id": str(tweet.author_id) if tweet.author_id else "",
         "username": username,
-        "created_at": str(tweet.created_at) if tweet.created_at else "",
+        "created_at": format_iso_created_at(tweet.created_at) if tweet.created_at else "",
         "like_count": metrics.get("like_count", 0),
         "retweet_count": metrics.get("retweet_count", 0),
         "reply_count": metrics.get("reply_count", 0),

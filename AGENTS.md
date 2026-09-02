@@ -4,6 +4,8 @@
 
 Follow the conventions defined in https://github.com/mark-torres10/ai_tools/blob/main/conventions/vocabulary.md.
 
+All timestamp generation, formatting, and parsing lives in `lib/timestamp_utils.py`. Import those helpers. Do not add timestamp format strings or conversion functions in other files.
+
 ## Cursor Cloud specific instructions
 
 The startup/update script is intentionally minimal: it only verifies that `uv` is available (`uv --version`) and does **not** install project dependencies. The app does not need to run in this environment. If you need Python deps, run `uv sync` yourself; if you need the web deps, run `npm install` from `webapp/`. `uv` is installed at `~/.local/bin` and is on `PATH` in interactive shells (Python 3.12).

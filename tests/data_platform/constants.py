@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from lib.timestamp_utils import format_run_timestamp, utc_datetime
+
 VALID_DATASET_ID = "bluesky_00000000-0000-4000-8000-000000000001"
 VALID_REDDIT_DATASET_ID = "reddit_00000000-0000-4000-8000-000000000001"
 VALID_TWITTER_DATASET_ID = "twitter_00000000-0000-4000-8000-000000000001"
@@ -8,9 +10,9 @@ FEATURES_DATASET_ID = "bluesky_f47ac10b-58cc-4372-a567-0e02b2c3d479"
 URI_POST_A = "at://a/post/1"
 URI_POST_B = "at://b/post/2"
 
-PREPROCESSED_RUN = "preprocessed/2026_01_01-00:00:00"
-PREPROCESSED_RUN_DIR = "2026_01_01-00:00:00"
-LABEL_TIMESTAMP = "2026_01_01-00:00:00"
+PREPROCESSED_RUN_DIR = format_run_timestamp(utc_datetime(2026, 1, 1, 0, 0, 0))
+PREPROCESSED_RUN = f"preprocessed/{PREPROCESSED_RUN_DIR}"
+LABEL_TIMESTAMP = format_run_timestamp(utc_datetime(2026, 1, 1, 0, 0, 0))
 
 SAMPLE_INGESTION_ROW = {
     "uri": "at://did:plc:example/app.bsky.feed.post/abc",
@@ -22,5 +24,5 @@ SAMPLE_INGESTION_ROW = {
     "repost_count": 0,
     "reply_count": 0,
     "quote_count": 0,
-    "sync_timestamp": "2026_05_30-10:00:00",
+    "sync_timestamp": format_run_timestamp(utc_datetime(2026, 5, 30, 10, 0, 0)),
 }
