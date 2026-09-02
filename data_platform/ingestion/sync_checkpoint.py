@@ -170,34 +170,9 @@ def parse_max_rows(ingestion_params: dict[str, Any]) -> int | None:
     return int(max_rows) if max_rows is not None else None
 
 
-def resolve_limit_per_task(
-    ingestion_params: dict[str, Any],
-    alias_key: str,
-) -> int:
-    """Return the per-task fetch cap, preferring limit_per_task over alias_key.
-
-    Parameters
-    ----------
-    ingestion_params
-        Ingest YAML params. ``limit_per_task`` is the shared cap. ``alias_key``
-        is a fallback for older configs (Bluesky ``limit``, Twitter
-        ``limit_per_keyword``, Reddit ``limit_per_subreddit``).
-    alias_key
-        Older platform YAML key to read when ``limit_per_task`` is absent.
-
-    Returns
-    -------
-    int
-        Max items to fetch for one checkpoint task.
-
-    Raises
-    ------
-    KeyError
-        When ``limit_per_task`` is absent and ``alias_key`` is also absent.
-    """
-    if LIMIT_PER_TASK_KEY in ingestion_params:
-        return int(ingestion_params[LIMIT_PER_TASK_KEY])
-    return int(ingestion_params[alias_key])
+def resolve_limit_per_task(ingestion_params: dict[str, Any]) -> int:
+    """Return the per-task fetch cap from ingestion_params."""
+    return int(ingestion_params[LIMIT_PER_TASK_KEY])
 
 
 def build_base_sync_metadata(

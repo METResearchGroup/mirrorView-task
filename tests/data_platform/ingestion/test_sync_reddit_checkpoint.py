@@ -73,7 +73,7 @@ def test_run_sync_tasks_appends_per_subreddit(
         stats = {
             "subreddit": subreddit,
             "listing": fetch_cfg.get("listing", "hot"),
-            "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+            "limit_per_subreddit": fetch_cfg["limit_per_task"],
             "posts_collected": len(post_rows),
             "comments_collected": len(comment_rows),
         }
@@ -145,7 +145,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "limit_per_subreddit": fetch_cfg["limit_per_task"],
                 "posts_collected": 1,
                 "comments_collected": 2,
             },
@@ -213,7 +213,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "limit_per_subreddit": fetch_cfg["limit_per_task"],
                 "posts_collected": 1,
                 "comments_collected": 2,
             },
@@ -279,7 +279,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "limit_per_subreddit": fetch_cfg["limit_per_task"],
                 "posts_collected": 1,
                 "comments_collected": 1,
             },
@@ -425,7 +425,7 @@ def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "limit_per_subreddit": fetch_cfg["limit_per_task"],
                 "posts_collected": 1,
                 "comments_collected": 1,
             },

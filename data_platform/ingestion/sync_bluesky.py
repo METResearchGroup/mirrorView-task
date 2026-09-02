@@ -51,7 +51,6 @@ if TYPE_CHECKING:
     from atproto import Client
 
 API_MAX_LIMIT = 100
-BLUESKY_LIMIT_ALIAS = "limit"
 
 POSTS_RECORD_TYPE = "app.bsky.feed.post"
 
@@ -163,7 +162,7 @@ def fetch_posts_for_keyword(
     tuple[list[dict[str, Any]], dict[str, Any]]
         Rows and per-task stats (pages fetched, hits_total from the first page, etc.).
     """
-    target = resolve_limit_per_task(ingestion_params, BLUESKY_LIMIT_ALIAS)
+    target = resolve_limit_per_task(ingestion_params)
     if max_rows is not None:
         target = min(target, max_rows)
     if target <= 0:

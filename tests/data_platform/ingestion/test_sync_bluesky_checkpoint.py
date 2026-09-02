@@ -410,7 +410,7 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
     config = minimal_sync_config()
     ingestion_params = dict(config["ingestion_params"])
     ingestion_params["max_rows"] = 2
-    ingestion_params["limit"] = 5
+    ingestion_params["limit_per_task"] = 5
     sync_tasks = sync_bluesky.build_sync_tasks(ingestion_params)
     storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
@@ -523,7 +523,7 @@ class TestSearchPostsPage:
 class TestFetchPostsForKeywordLimitPerTask:
     """Tests that fetch_posts_for_keyword reads limit_per_task."""
 
-    def test_uses_limit_per_task_when_limit_alias_is_absent(
+    def test_uses_limit_per_task(
         self,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
