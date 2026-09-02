@@ -9,6 +9,7 @@ from pathlib import Path
 import pandas as pd
 from pydantic import BaseModel
 
+from data_platform.constants import COMMENTS_FILENAME, POSTS_FILENAME
 from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
     generate_features,
@@ -18,6 +19,7 @@ from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.gate_checks import require_all_runs_complete
+from data_platform.utils.paths import resolve_package_path, to_package_relative
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager, StorageStage
 
@@ -83,7 +85,6 @@ def build_feature_config(
         StorageStage.FEATURES,
         BaseModel,
         dataset_id,
-        records_filename="features",
     )
     return FeatureGenerationConfig(
         platform=spec.platform,
@@ -107,10 +108,14 @@ def load_preprocessed_records(spec: FeaturePlatformSpec, dataset_id: str) -> pd.
     if not storage.root_dir.exists():
         return pd.DataFrame()
     all_rows = []
+    file_name = POSTS_FILENAME if spec.columns.records_file_key != "comments" else COMMENTS_FILENAME
     for run_dir in sorted(storage.root_dir.iterdir()):
         if not run_dir.is_dir():
             continue
-        records = storage.load_records(run_dir=run_dir)
+        relative_file_path = f"{to_package_relative(run_dir)}/{file_name}"
+        if not resolve_package_path(relative_file_path).exists():
+            continue
+        records = storage.load_records(relative_file_path)
         if records.empty:
             continue
         all_rows.extend(records.to_dict(orient="records"))

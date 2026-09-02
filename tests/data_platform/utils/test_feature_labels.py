@@ -16,18 +16,18 @@ from tests.data_platform.constants import (
 
 def test_labeled_ids_from_feature_csv(data_root) -> None:
     feature_storage = StorageManager(
-        "bluesky", "features", BaseModel, FEATURES_DATASET_ID, records_filename="features"
+        "bluesky", "features", BaseModel, FEATURES_DATASET_ID
     )
     write_feature_csv(feature_storage.root_dir, "is_political", make_political_feature_rows())
 
     query = FeatureLabelQuery(feature_storage=feature_storage)
-    labeled = query.labeled_ids("is_political")
+    labeled = query.labeled_ids("is_political.csv")
     assert labeled == {URI_POST_A, URI_POST_B}
 
 
 def test_filter_unlabeled_excludes_labeled_uris(data_root) -> None:
     feature_storage = StorageManager(
-        "bluesky", "features", BaseModel, FEATURES_DATASET_ID, records_filename="features"
+        "bluesky", "features", BaseModel, FEATURES_DATASET_ID
     )
     write_feature_csv(
         feature_storage.root_dir,
@@ -42,6 +42,6 @@ def test_filter_unlabeled_excludes_labeled_uris(data_root) -> None:
         ]
     )
     query = FeatureLabelQuery(feature_storage=feature_storage)
-    pending = query.filter_unlabeled(records, "is_political")
+    pending = query.filter_unlabeled(records, "is_political.csv")
     assert len(pending) == 1
     assert pending.iloc[0]["uri"] == URI_POST_B

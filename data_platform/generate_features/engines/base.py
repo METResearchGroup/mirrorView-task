@@ -16,6 +16,7 @@ from data_platform.generate_features.models import (
     FeatureSpec,
     LabelTask,
 )
+from data_platform.utils.paths import to_package_relative
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
 
@@ -46,17 +47,25 @@ class BatchExecutionEngine(Protocol):
     ) -> BatchRunStats: ...
 
 
-def load_seen_uris_from_features_dir(feature_storage: StorageManager) -> set[str]:
+def _feature_relative_file_path(feature_storage: StorageManager, spec: FeatureSpec) -> str:
+    return to_package_relative(feature_storage.root_dir / spec.export_filename)
+
+
+def load_seen_uris_from_features_dir(
+    feature_storage: StorageManager,
+    spec: FeatureSpec,
+) -> set[str]:
     """Return URIs already present in the feature file under the features dir."""
-    return feature_storage.load_seen_uris(feature_storage.root_dir)
+    return feature_storage.load_seen_uris(_feature_relative_file_path(feature_storage, spec))
 
 
 def filter_seen_tasks(
     tasks: list[LabelTask],
     feature_storage: StorageManager,
+    spec: FeatureSpec,
 ) -> list[LabelTask]:
     """Drop tasks whose URI is already labeled in the on-disk feature file."""
-    seen = load_seen_uris_from_features_dir(feature_storage)
+    seen = load_seen_uris_from_features_dir(feature_storage, spec)
     if not seen:
         return tasks
     return [task for task in tasks if task.uri not in seen]
@@ -89,7 +98,10 @@ class BaseBatchExecutionEngine:
         """Validate and append label rows via StorageManager."""
         if not labels:
             return
-        feature_storage.append_records(labels, feature_storage.root_dir)
+        feature_storage.append_records(
+            labels,
+            _feature_relative_file_path(feature_storage, self.spec),
+        )
 
     def label_records(
         self,
@@ -121,7 +133,7 @@ class BaseBatchExecutionEngine:
         )
         try:
             for batch_index, chunk in enumerate(batched(tasks, batch_size)):
-                pending = filter_seen_tasks(chunk, feature_storage)
+                pending = filter_seen_tasks(chunk, feature_storage, self.spec)
                 if not pending:
                     continue
 

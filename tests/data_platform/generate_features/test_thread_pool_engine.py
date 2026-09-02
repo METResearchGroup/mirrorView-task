@@ -19,6 +19,7 @@ def test_thread_pool_batch_engine_labels_tasks() -> None:
 
     spec = FeatureSpec(
         name="test_feature",
+        export_filename="test_feature.csv",
         model=_RowModel,
         engine_type="thread_pool",
         generate_fn=generate_fn,

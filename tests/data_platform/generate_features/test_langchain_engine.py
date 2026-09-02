@@ -31,6 +31,7 @@ def test_langchain_batch_engine_writes_rows(monkeypatch: pytest.MonkeyPatch) -> 
 
     spec = FeatureSpec(
         name="test_feature",
+        export_filename="test_feature.csv",
         model=_RowModel,
         engine_type="langchain",
         generate_fn=lambda uri, text: _RowModel(uri=uri, label_timestamp="t", score=True),

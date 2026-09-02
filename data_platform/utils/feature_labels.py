@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from data_platform.utils.paths import to_package_relative
 from data_platform.utils.storage import StorageManager
 
 
@@ -15,24 +16,26 @@ class FeatureLabelQuery:
     id_column: str = "uri"
     feature_file_id_column: str = "uri"
 
-    def labeled_ids(self, feature_name: str) -> set[str]:
-        """Return ids labeled for feature_name from local feature files."""
+    def labeled_ids(self, export_filename: str) -> set[str]:
+        """Return ids labeled in the package-relative feature export file."""
+        relative_file_path = to_package_relative(
+            self.feature_storage.root_dir / export_filename
+        )
         return self.feature_storage.load_seen_ids_from_disk(
-            self.feature_storage.root_dir,
+            relative_file_path,
             self.feature_file_id_column,
-            filename=self.feature_storage.filename_for(feature_name),
         )
 
     def filter_unlabeled(
         self,
         records: pd.DataFrame,
-        feature_name: str,
+        export_filename: str,
     ) -> pd.DataFrame:
-        """Return records whose id is not yet labeled for feature_name."""
+        """Return records whose id is not yet labeled in export_filename."""
         if records.empty:
             return records.copy()
 
-        labeled = self.labeled_ids(feature_name)
+        labeled = self.labeled_ids(export_filename)
         if not labeled:
             return records.copy()
 

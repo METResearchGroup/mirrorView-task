@@ -58,7 +58,7 @@ def make_feature_generation_config(
         features_dir=features_dir,
         feature_label_query=FeatureLabelQuery(
             feature_storage=StorageManager(
-                "bluesky", "features", BaseModel, dataset_id, records_filename="features"
+                "bluesky", "features", BaseModel, dataset_id
             )
         ),
         run_config=run_config or FeatureRunConfig(opik_enabled=False),

@@ -48,7 +48,10 @@ def filter_records_needing_features(
     config: FeatureGenerationConfig,
 ) -> pd.DataFrame:
     """Return records that still need labels for feature_name."""
-    return config.feature_label_query.filter_unlabeled(records, feature_name)
+    return config.feature_label_query.filter_unlabeled(
+        records,
+        config.feature_registry[feature_name].export_filename,
+    )
 
 
 def _make_on_batch_complete(
@@ -121,9 +124,8 @@ def _process_one_feature(
         StorageStage.FEATURES,
         spec.model,
         config.input_storage.dataset_id,
-        records_filename=feature_name,
     )
-    feature_path = feature_storage.root_dir / feature_storage.records_filename
+    feature_path = feature_storage.root_dir / spec.export_filename
 
     # Compare input posts against saved labels, to see which records need features.
     pending_df = filter_records_needing_features(records, feature_name, config)
