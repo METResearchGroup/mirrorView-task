@@ -27,9 +27,6 @@ TWITTER_CURATE_SPEC = CuratePlatformSpec(
     record_noun="posts",
 )
 
-ID_COLUMN = TWITTER_COLUMNS.records_id_column
-FEATURE_FILE_ID_COLUMN = TWITTER_COLUMNS.feature_file_id_column
-
 
 def curate(config_path: Path, dataset_id: str) -> Path:
     return curate_with_spec(config_path, dataset_id, TWITTER_CURATE_SPEC)

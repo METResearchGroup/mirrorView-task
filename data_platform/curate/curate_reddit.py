@@ -27,9 +27,6 @@ REDDIT_CURATE_SPEC = CuratePlatformSpec(
     record_noun="comments",
 )
 
-ID_COLUMN = REDDIT_COLUMNS.records_id_column
-FEATURE_FILE_ID_COLUMN = REDDIT_COLUMNS.feature_file_id_column
-
 
 def curate(config_path: Path, dataset_id: str) -> Path:
     return curate_with_spec(config_path, dataset_id, REDDIT_CURATE_SPEC)
