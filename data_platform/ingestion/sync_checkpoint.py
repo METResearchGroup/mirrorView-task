@@ -213,7 +213,23 @@ def bootstrap_duplicate_skip_counters(
         are present). When both canonical keys already exist, do nothing.
         Leftover names are not deleted or rewritten.
     """
-    raise NotImplementedError
+    if (
+        ROWS_SKIPPED_AS_DUPLICATES_KEY in metadata
+        and SKIPPED_BY_RECORD_TYPE_KEY in metadata
+    ):
+        return
+
+    existing_breakdown = metadata.get(SKIPPED_BY_RECORD_TYPE_KEY)
+    breakdown_keys = existing_breakdown if isinstance(existing_breakdown, dict) else {}
+    seed: dict[str, int] = {}
+    for record_type, legacy_key in legacy_by_record_type.items():
+        if legacy_key in metadata and record_type not in breakdown_keys:
+            seed[record_type] = int(metadata[legacy_key])
+
+    if ROWS_SKIPPED_AS_DUPLICATES_KEY not in metadata:
+        metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] = sum(seed.values())
+    if SKIPPED_BY_RECORD_TYPE_KEY not in metadata:
+        metadata[SKIPPED_BY_RECORD_TYPE_KEY] = dict(seed)
 
 
 def increment_duplicate_skip_counters(
