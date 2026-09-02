@@ -60,3 +60,15 @@ class DedupeSession:
     def note_appended(self, rows: list[dict[str, Any]]) -> None:
         for row in rows:
             self.seen_ids.add(row[self.config.id_column])
+
+    def load_seen_ids(self, storage, run_dir):
+        raise NotImplementedError
+
+    def load_seen_ids_from_all_runs(self, storage):
+        raise NotImplementedError
+
+    def exclude_seen_ids(self, rows):
+        raise NotImplementedError
+
+    def add_seen_ids(self, rows):
+        raise NotImplementedError
