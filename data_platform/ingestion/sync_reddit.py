@@ -62,10 +62,15 @@ VALID_LISTING_TIME_FILTERS = frozenset({"all", "day", "hour", "month", "week", "
 logger = logging.getLogger(__name__)
 
 
+def _iso_created_at(unix_seconds: float) -> str:
+    """Format a Reddit Unix created_utc value as an ISO-8601 UTC string."""
+    return datetime.fromtimestamp(unix_seconds, tz=UTC).isoformat()
+
+
 def submission_to_row(post: praw.models.Submission, sync_timestamp: str) -> dict[str, Any]:
     """Normalize a PRAW Submission to a flat dict matching the CSV schema."""
     author = "[deleted]" if post.author is None else str(post.author)
-    created_utc = datetime.fromtimestamp(post.created_utc, tz=UTC).isoformat()
+    created_at = _iso_created_at(post.created_utc)
     return {
         "reddit_id": post.id,
         "reddit_fullname": post.name,
@@ -76,7 +81,8 @@ def submission_to_row(post: praw.models.Submission, sync_timestamp: str) -> dict
         "score": post.score,
         "upvote_ratio": post.upvote_ratio,
         "num_comments": post.num_comments,
-        "created_utc": created_utc,
+        "created_at": created_at,
+        "created_utc": created_at,
         "permalink": post.permalink,
         "url": post.url,
         "is_self": post.is_self,
@@ -105,7 +111,7 @@ def comment_to_row(
 ) -> dict[str, Any]:
     """Normalize a PRAW Comment to a flat dict matching the comment CSV schema."""
     author = "[deleted]" if comment.author is None else str(comment.author)
-    created_utc = datetime.fromtimestamp(comment.created_utc, tz=UTC).isoformat()
+    created_at = _iso_created_at(comment.created_utc)
     return {
         "post_reddit_id": submission.id,
         "post_reddit_fullname": submission.name,
@@ -116,7 +122,8 @@ def comment_to_row(
         "author": author,
         "body": comment.body,
         "score": comment.score,
-        "created_utc": created_utc,
+        "created_at": created_at,
+        "created_utc": created_at,
         "permalink": comment.permalink,
         "depth": depth,
         "comment_rank": comment_rank,
