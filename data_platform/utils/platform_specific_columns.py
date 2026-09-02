@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 CANONICAL_TEXT_COLUMN = "text"
-REDDIT_NATIVE_TEXT_COLUMN = "body"
+REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN = "body"
 
 
 @dataclass(frozen=True)
@@ -17,7 +17,7 @@ class PlatformSpecificColumns:
     (``BLUESKY_COLUMNS``, ``REDDIT_COLUMNS``, ``TWITTER_COLUMNS``) so those
     runners can resolve:
 
-    - ``records_id_column``: native unique id on the record CSV (dedupe / joins)
+    - ``records_id_column``: original platform unique id on the record CSV (dedupe / joins)
     - ``text_column``: shared body text (``text``) to validate, transform, and embed
     - ``feature_file_id_column``: id column written in feature files (often ``uri``)
     - ``records_file_key``: metadata / log noun for the file (``posts`` vs ``comments``)

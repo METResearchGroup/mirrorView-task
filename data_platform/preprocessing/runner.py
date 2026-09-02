@@ -35,7 +35,7 @@ class PreprocessPlatformSpec:
     text_validators: tuple[TextValidator, ...]
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
-    native_text_column: str = CANONICAL_TEXT_COLUMN
+    original_platform_text_column: str = CANONICAL_TEXT_COLUMN
 
 
 def add_canonical_text_column(
@@ -50,8 +50,8 @@ def add_canonical_text_column(
     Parameters
     ----------
     spec
-        ``native_text_column`` is the copy source. The destination is always
-        shared ``text``.
+        ``original_platform_text_column`` is the copy source. The destination is
+        always shared ``text``.
 
     Returns
     -------
@@ -61,11 +61,11 @@ def add_canonical_text_column(
     Raises
     ------
     KeyError
-        When ``spec.native_text_column`` is missing from the frame.
+        When ``spec.original_platform_text_column`` is missing from the frame.
     """
     out = df.copy()
-    native_text = out[spec.native_text_column]
-    out[CANONICAL_TEXT_COLUMN] = native_text.map(lambda value: str(value))
+    original_platform_text = out[spec.original_platform_text_column]
+    out[CANONICAL_TEXT_COLUMN] = original_platform_text.map(lambda value: str(value))
     return out
 
 

@@ -44,7 +44,7 @@ from data_platform.preprocessing.validators.validators import (
 )
 from data_platform.utils.platform_specific_columns import (
     REDDIT_COLUMNS,
-    REDDIT_NATIVE_TEXT_COLUMN,
+    REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN,
 )
 from data_platform.utils.storage import RedditStorageManager
 
@@ -67,7 +67,7 @@ REDDIT_SPEC = PreprocessPlatformSpec(
     columns=REDDIT_COLUMNS,
     text_validators=COMMENT_TEXT_VALIDATORS,
     row_validators=COMMENT_ROW_VALIDATORS,
-    native_text_column=REDDIT_NATIVE_TEXT_COLUMN,
+    original_platform_text_column=REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN,
 )
 
 
@@ -97,7 +97,7 @@ def filter_comments(
         columns=REDDIT_SPEC.columns,
         text_validators=tuple(text_validators),
         row_validators=tuple(row_validators),
-        native_text_column=REDDIT_SPEC.native_text_column,
+        original_platform_text_column=REDDIT_SPEC.original_platform_text_column,
     )
     return filter_records(comments, spec)
 

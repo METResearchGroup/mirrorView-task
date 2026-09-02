@@ -15,7 +15,7 @@ class TestAddCanonicalTextColumn:
     """Tests for add_canonical_text_column()."""
 
     def test_copies_reddit_body_onto_text_and_keeps_body(self) -> None:
-        """Reddit comments get canonical text equal to native body."""
+        """Reddit comments get shared text equal to original body."""
         body = "This is a clear English comment about policy and governance."
         source = pd.DataFrame([mock_comment_row("t1_keep", subreddit="politics")])
         source.loc[0, "body"] = body
@@ -36,8 +36,8 @@ class TestAddCanonicalTextColumn:
 
         assert result.iloc[0][CANONICAL_TEXT_COLUMN] == text
 
-    def test_raises_when_native_text_column_is_missing(self) -> None:
-        """Missing native text is a caller error, not a silent empty column."""
+    def test_raises_when_original_platform_text_column_is_missing(self) -> None:
+        """Missing original platform text is a caller error, not a silent empty column."""
         source = pd.DataFrame([{"comment_fullname": "t1_missing"}])
 
         with pytest.raises(KeyError):

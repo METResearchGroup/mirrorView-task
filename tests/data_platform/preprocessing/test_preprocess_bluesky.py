@@ -70,7 +70,7 @@ class TestPreprocessRecordsCanonicalText:
     """Tests that Bluesky preprocess output includes canonical text."""
 
     def test_preprocessed_rows_include_text(self, data_root: Path) -> None:
-        """Kept Bluesky posts still have their native text column."""
+        """Kept Bluesky posts still have their original platform text column."""
         dataset_id = VALID_DATASET_ID
         raw_storage = BlueskyStorageManager(StorageStage.RAW, dataset_id)
         run_dir = raw_storage.create_new_run_dir("2026_05_31-10:00:00")
