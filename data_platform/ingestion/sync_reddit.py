@@ -32,6 +32,7 @@ from praw.models.comment_forest import CommentForest
 from data_platform.ingestion.retry import retry_reddit_request
 from data_platform.ingestion.sync_checkpoint import (
     COMMENTS_DEDUPE_POLICY_KEY,
+    DEDUPE_POLICY_KEY,
     POSTS_DEDUPE_POLICY_KEY,
     TaskStatus,
     build_base_sync_metadata,
@@ -373,6 +374,17 @@ def init_sync_metadata(
     )
 
 
+def _resolve_reddit_dedupe_policy(
+    ingestion_params: dict[str, Any],
+    type_key: str,
+) -> object:
+    if type_key in ingestion_params:
+        return resolve_dedupe_policy(
+            {**ingestion_params, DEDUPE_POLICY_KEY: ingestion_params[type_key]}
+        )
+    return resolve_dedupe_policy(ingestion_params)
+
+
 def _open_reddit_dedupe_sessions(
     comment_storage: RedditStorageManager,
     post_storage: RedditStorageManager,
@@ -392,7 +404,7 @@ def _open_reddit_dedupe_sessions(
                 id_column="comment_fullname",
                 filename=comments_filename,
                 include_prior_runs=policy_includes_prior_runs(
-                    resolve_dedupe_policy(
+                    _resolve_reddit_dedupe_policy(
                         ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
                     )
                 ),
@@ -405,7 +417,9 @@ def _open_reddit_dedupe_sessions(
                 id_column="reddit_fullname",
                 filename=posts_filename,
                 include_prior_runs=policy_includes_prior_runs(
-                    resolve_dedupe_policy(ingestion_params, POSTS_DEDUPE_POLICY_KEY)
+                    _resolve_reddit_dedupe_policy(
+                        ingestion_params, POSTS_DEDUPE_POLICY_KEY
+                    )
                 ),
             )
         )

@@ -426,7 +426,7 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "limit_per_subreddit": fetch_cfg["limit_per_task"],
                 "posts_collected": 1,
                 "comments_collected": 2,
             },
@@ -495,7 +495,7 @@ def test_run_sync_tasks_empty_posts_override_does_not_skip_prior_posts(
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "limit_per_subreddit": fetch_cfg["limit_per_task"],
                 "posts_collected": 2,
                 "comments_collected": 1,
             },
