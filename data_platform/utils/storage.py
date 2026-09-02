@@ -22,6 +22,12 @@ from lib.timestamp_utils import get_current_timestamp
 
 DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
 METADATA_FILENAME = "metadata.json"
+MISSING_STAGE_RUNS_MESSAGE = (
+    "No {stage} runs found for dataset {dataset_id} under {root}"
+)
+INCOMPLETE_STAGE_RUNS_MESSAGE = (
+    "Not all {stage} runs for dataset {dataset_id} are complete locally"
+)
 
 
 @dataclass(frozen=True)
@@ -321,7 +327,21 @@ class StorageManager:
         RuntimeError
             When the stage root is missing or a timestamped run is incomplete.
         """
-        raise NotImplementedError
+        if not self.root_dir.exists():
+            raise RuntimeError(
+                MISSING_STAGE_RUNS_MESSAGE.format(
+                    stage=self.stage,
+                    dataset_id=dataset_id,
+                    root=self.root_dir,
+                )
+            )
+        if not self.all_runs_complete():
+            raise RuntimeError(
+                INCOMPLETE_STAGE_RUNS_MESSAGE.format(
+                    stage=self.stage,
+                    dataset_id=dataset_id,
+                )
+            )
 
     def load_run_metadata(
         self,

@@ -129,7 +129,7 @@ Entrypoints:
 - `data_platform/preprocessing/preprocess_twitter.py`
 - `data_platform/preprocessing/preprocess_reddit.py`
 
-Shared logic is in `data_platform/preprocessing/runner.py`. Preprocessing reads the latest complete raw run, or all raw runs per platform rules. It validates and cleans text, then deduplicates. Output goes to `preprocessed/<timestamp>/posts.csv`, or platform-specific filenames. `require_all_runs_complete` in `gate_checks.py` blocks preprocessing while a raw sync is still in progress.
+Shared logic is in `data_platform/preprocessing/runner.py`. Preprocessing reads the latest complete raw run, or all raw runs per platform rules. It validates and cleans text, then deduplicates. Output goes to `preprocessed/<timestamp>/posts.csv`, or platform-specific filenames. `StorageManager.require_all_runs_complete` blocks preprocessing while a raw sync is still in progress.
 
 ### 3. Feature generation
 

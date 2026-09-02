@@ -5,14 +5,8 @@ from data_platform.utils.storage import StorageManager
 
 
 def require_all_runs_complete(storage: StorageManager, dataset_id: str) -> None:
-    if not storage.root_dir.exists():
-        raise RuntimeError(
-            f"No {storage.stage} runs found for dataset {dataset_id} under {storage.root_dir}"
-        )
-    if not storage.all_runs_complete():
-        raise RuntimeError(
-            f"Not all {storage.stage} runs for dataset {dataset_id} are complete locally"
-        )
+    """Raise when storage reports a missing or incomplete stage run."""
+    storage.require_all_runs_complete(dataset_id)
 
 
 def require_features_complete(meta: FeatureRunMetadata, dataset_id: str) -> None:
