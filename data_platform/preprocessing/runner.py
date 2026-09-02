@@ -204,18 +204,15 @@ def preprocess_records(
         raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
     require_all_runs_complete(raw_storage, dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-    dedupe_session = DedupeSession(
-        DedupeConfig(
-            id_column=spec.columns.records_id_column,
-            include_prior_runs=True,
-        )
-    )
-    dedupe_session.warm(preprocessed_storage, preprocessed_storage.root_dir)
+    session = DedupeSession(DedupeConfig(id_column=spec.columns.records_id_column))
+    session.load_seen_ids_from_all_runs(preprocessed_storage)
 
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
-    records, skipped = _drop_already_preprocessed(
-        records, spec.columns.records_id_column, dedupe_session.seen_ids
-    )
+    id_col = spec.columns.records_id_column
+    is_new = ~records[id_col].isin(list(session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    records = records.loc[is_new].reset_index(drop=True)
+    records = collapse_candidates_by_id(records, id_col, keep="last")
 
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
