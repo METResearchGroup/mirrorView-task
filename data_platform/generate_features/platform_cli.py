@@ -13,8 +13,10 @@ from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
     generate_features,
 )
+from data_platform.generate_features.identity import identity_for_spec
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.registry import FEATURE_REGISTRY
+from data_platform.generate_features.run_layout import resolve_features_run_dir
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.gate_checks import require_all_runs_complete
