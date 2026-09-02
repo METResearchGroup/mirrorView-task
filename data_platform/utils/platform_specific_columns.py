@@ -18,7 +18,7 @@ class PlatformSpecificColumns:
     runners can resolve:
 
     - ``records_id_column``: native unique id on the record CSV (dedupe / joins)
-    - ``text_column``: body text to validate, transform, and embed
+    - ``text_column``: canonical body text (``text``) to validate, transform, and embed
     - ``feature_file_id_column``: id column written in feature files (often ``uri``)
     - ``records_file_key``: metadata / log noun for the file (``posts`` vs ``comments``)
     """
@@ -38,7 +38,7 @@ BLUESKY_COLUMNS = PlatformSpecificColumns(
 
 REDDIT_COLUMNS = PlatformSpecificColumns(
     records_id_column="comment_fullname",
-    text_column="body",
+    text_column=CANONICAL_TEXT_COLUMN,
     feature_file_id_column="uri",
     records_file_key="comments",
 )

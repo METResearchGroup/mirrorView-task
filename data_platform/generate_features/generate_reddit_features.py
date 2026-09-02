@@ -19,14 +19,14 @@ from data_platform.generate_features.platform_cli import (
     generate_platform_features,
     load_preprocessed_records,
 )
-from data_platform.models.sync import SyncRedditCommentModel
+from data_platform.models.sync import PreprocessedRedditCommentModel
 from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS
 from data_platform.utils.storage import RedditStorageManager
 
 REDDIT_SPEC = FeaturePlatformSpec(
     platform="reddit",
     storage_cls=RedditStorageManager,
-    model_cls=SyncRedditCommentModel,
+    model_cls=PreprocessedRedditCommentModel,
     columns=REDDIT_COLUMNS,
     empty_message="generate_reddit_features: no preprocessed comments found",
 )

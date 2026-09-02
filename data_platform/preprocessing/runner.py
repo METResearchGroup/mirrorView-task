@@ -86,17 +86,18 @@ def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFra
     if df.empty:
         return df.copy()
 
+    prepared = add_canonical_text_column(df, spec)
     text_col = spec.columns.text_column
-    text_mask = df[text_col].map(
+    text_mask = prepared[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
     )
     if not spec.row_validators:
-        return df.loc[text_mask].reset_index(drop=True)
+        return prepared.loc[text_mask].reset_index(drop=True)
 
-    author_mask = df[AUTHOR_COLUMN].map(
+    author_mask = prepared[AUTHOR_COLUMN].map(
         lambda value: passes_row_validators(str(value), spec.row_validators)
     )
-    return df.loc[text_mask & author_mask].reset_index(drop=True)
+    return prepared.loc[text_mask & author_mask].reset_index(drop=True)
 
 
 def _rows_to_validated_dicts(

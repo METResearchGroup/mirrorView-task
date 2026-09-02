@@ -28,13 +28,16 @@ from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
 
 def _sample_preprocessed_comments(count: int = 1) -> list[dict[str, Any]]:
-    return [
+    rows = [
         mock_comment_row(
             f"t1_comment_{index}",
             subreddit="politics",
         )
         for index in range(count)
     ]
+    for row in rows:
+        row["text"] = row["body"]
+    return rows
 
 
 def write_preprocessed_comments(
