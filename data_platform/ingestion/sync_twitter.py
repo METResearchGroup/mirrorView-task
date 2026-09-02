@@ -49,9 +49,6 @@ from data_platform.utils.deduplication import (
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
 TWEETS_RECORD_TYPE = "twitter.tweet"
-DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE = {
-    TWEETS_RECORD_TYPE: "tweets_skipped_as_duplicates",
-}
 
 
 @dataclass(frozen=True)
@@ -179,7 +176,6 @@ def run_sync_tasks(
             metadata,
             record_type=TWEETS_RECORD_TYPE,
             skipped=result.skipped,
-            legacy_by_record_type=DUPLICATE_SKIP_LEGACY_BY_RECORD_TYPE,
         )
         metadata["row_count"] = len(dedupe_session.seen_ids)
         mark_task_completed(
