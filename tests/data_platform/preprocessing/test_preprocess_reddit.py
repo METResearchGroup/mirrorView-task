@@ -110,9 +110,10 @@ def test_preprocess_records_writes_output(data_root) -> None:
 
     assert len(output) == 1
     assert output.iloc[0]["comment_fullname"] == "t1_keep"
+    assert set(metadata.keys()) == {"dataset_id", "source_raw_runs", "row_counts"}
+    assert metadata["dataset_id"] == dataset_id
     assert metadata["row_counts"]["input"] == 2
     assert metadata["row_counts"]["output"] == 1
-    assert metadata["files"]["comments"] == "comments.csv"
 
 
 def test_individual_reddit_validator_functions() -> None:
