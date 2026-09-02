@@ -56,7 +56,7 @@ def test_build_feature_config_uses_timestamped_features_dir(data_root) -> None:
     config = build_feature_config(
         BLUESKY_SPEC,
         FEATURES_DATASET_ID,
-        run_config=FeatureRunConfig(opik_enabled=False),
+        run_config=FeatureRunConfig(),
     )
 
     assert config.features_dir.parent.name == "features"
@@ -69,7 +69,7 @@ def test_build_feature_config_resumes_named_run_dir(data_root) -> None:
     config = build_feature_config(
         BLUESKY_SPEC,
         FEATURES_DATASET_ID,
-        run_config=FeatureRunConfig(opik_enabled=False),
+        run_config=FeatureRunConfig(),
         run_dir_name=PREPROCESSED_RUN_DIR,
     )
 
@@ -91,7 +91,7 @@ def test_feature_run_dir_rejects_path_escape(data_root: Path) -> None:
 
 def test_empty_twitter_input_does_not_create_feature_run(data_root: Path) -> None:
     """Given no preprocessed posts, when generating features, then no features run dir is created."""
-    result = generate_twitter_features(VALID_TWITTER_DATASET_ID, opik_enabled=False)
+    result = generate_twitter_features(VALID_TWITTER_DATASET_ID)
 
     assert result == {}
     features_root = data_root / "twitter" / VALID_TWITTER_DATASET_ID / "features"
