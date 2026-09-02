@@ -98,7 +98,7 @@ def normalize_mirrorview_df(df_raw: pd.DataFrame, *, integration: str) -> pd.Dat
     if integration == "reddit":
         id_col = "post_reddit_id"
         comment_id_col = "comment_id"
-        text_col = "body"
+        text_col = "text"
     elif integration == "twitter":
         id_col = "tweet_id"
         text_col = "text"
