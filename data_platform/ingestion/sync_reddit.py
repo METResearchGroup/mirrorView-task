@@ -62,15 +62,10 @@ VALID_LISTING_TIME_FILTERS = frozenset({"all", "day", "hour", "month", "week", "
 logger = logging.getLogger(__name__)
 
 
-def _iso_created_at(unix_seconds: float) -> str:
-    """Format a Reddit Unix created_utc value as an ISO-8601 UTC string."""
-    return datetime.fromtimestamp(unix_seconds, tz=UTC).isoformat()
-
-
 def submission_to_row(post: praw.models.Submission, sync_timestamp: str) -> dict[str, Any]:
     """Normalize a PRAW Submission to a flat dict matching the CSV schema."""
     author = "[deleted]" if post.author is None else str(post.author)
-    created_at = _iso_created_at(post.created_utc)
+    created_at = datetime.fromtimestamp(post.created_utc, tz=UTC).isoformat()
     return {
         "reddit_id": post.id,
         "reddit_fullname": post.name,
@@ -111,7 +106,7 @@ def comment_to_row(
 ) -> dict[str, Any]:
     """Normalize a PRAW Comment to a flat dict matching the comment CSV schema."""
     author = "[deleted]" if comment.author is None else str(comment.author)
-    created_at = _iso_created_at(comment.created_utc)
+    created_at = datetime.fromtimestamp(comment.created_utc, tz=UTC).isoformat()
     return {
         "post_reddit_id": submission.id,
         "post_reddit_fullname": submission.name,
