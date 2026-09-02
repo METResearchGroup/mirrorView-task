@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-02
+
+1. Raw ingest rows on Bluesky, Reddit, and Twitter now share ISO `created_at` and run `sync_timestamp`, so later stages can read one time pair. Reddit still writes `created_utc` as the same ISO alias. [PR #88](https://github.com/METResearchGroup/mirrorView-task/pull/88)
+
 ## 2026-09-01
 
 1. Shared preprocessing, feature, and curation runners now take `PlatformSpecificColumns` on `spec.columns` instead of the overloaded `PlatformIdBinding` name, so per-platform CSV column maps read as what they are. [PR #65](https://github.com/METResearchGroup/mirrorView-task/pull/65)
