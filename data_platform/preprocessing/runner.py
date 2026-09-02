@@ -265,6 +265,7 @@ def preprocess_records(
 
     records = add_canonical_text_column(records, spec)
     records = add_canonical_author_columns(records, spec)
+    records = add_canonical_source_record_id(records, spec)
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(

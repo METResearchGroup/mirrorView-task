@@ -17,14 +17,14 @@ from data_platform.generate_features.platform_cli import (
     features_from_cli,
     generate_platform_features,
 )
-from data_platform.models.sync import SyncBlueskyPostModel
+from data_platform.models.sync import PreprocessedBlueskyPostModel
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager
 
 BLUESKY_SPEC = FeaturePlatformSpec(
     platform="bluesky",
     storage_cls=BlueskyStorageManager,
-    model_cls=SyncBlueskyPostModel,
+    model_cls=PreprocessedBlueskyPostModel,
     columns=BLUESKY_COLUMNS,
     empty_message="generate_bluesky_features: no preprocessed posts found",
     require_all_runs_complete=True,
