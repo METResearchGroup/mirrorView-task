@@ -1,4 +1,4 @@
-"""Sync Reddit comments from YAML config to raw CSV storage.
+"""Sync Reddit comments from YAML config to raw records storage.
 
 Run from the repo root:
 
@@ -40,7 +40,6 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_in_progress,
     parse_max_rows,
     prepare_sync_run,
-    record_type_to_filename,
     require_dataset_id,
     run_checkpointed_sync,
     run_sync_cli,
@@ -378,8 +377,8 @@ def _open_reddit_dedupe_sessions(
     *,
     include_comments: bool,
     include_posts: bool,
-    comments_csv: str,
-    posts_csv: str,
+    comments_filename: str,
+    posts_filename: str,
 ) -> tuple[DedupeSession | None, DedupeSession | None]:
     comment_dedupe_session: DedupeSession | None = None
     post_dedupe_session: DedupeSession | None = None
@@ -387,7 +386,7 @@ def _open_reddit_dedupe_sessions(
         comment_dedupe_session = DedupeSession(
             DedupeConfig(
                 id_column="comment_fullname",
-                filename=comments_csv,
+                filename=comments_filename,
                 include_prior_runs=policy_includes_prior_runs(
                     ingestion_params.get("comments_dedupe_policy")
                 ),
@@ -398,7 +397,7 @@ def _open_reddit_dedupe_sessions(
         post_dedupe_session = DedupeSession(
             DedupeConfig(
                 id_column="reddit_fullname",
-                filename=posts_csv,
+                filename=posts_filename,
                 include_prior_runs=policy_includes_prior_runs(
                     ingestion_params.get("posts_dedupe_policy")
                 ),
@@ -420,15 +419,15 @@ def _append_subreddit_deduped_rows(
     include_posts: bool,
     comment_dedupe_session: DedupeSession | None,
     post_dedupe_session: DedupeSession | None,
-    comments_csv: str,
-    posts_csv: str,
+    comments_filename: str,
+    posts_filename: str,
 ) -> tuple[int, int]:
     if include_posts and post_rows and post_dedupe_session is not None:
         post_result = post_storage.append_deduped_records(
             post_rows,
             output_dir,
             dedupe_session=post_dedupe_session,
-            filename=posts_csv,
+            filename=posts_filename,
         )
         metadata["posts_skipped_as_duplicates"] = (
             int(metadata.get("posts_skipped_as_duplicates", 0)) + post_result.skipped
@@ -439,7 +438,7 @@ def _append_subreddit_deduped_rows(
             comment_rows,
             output_dir,
             dedupe_session=comment_dedupe_session,
-            filename=comments_csv,
+            filename=comments_filename,
         )
         metadata["comments_skipped_as_duplicates"] = (
             int(metadata.get("comments_skipped_as_duplicates", 0)) + comment_result.skipped
@@ -472,10 +471,15 @@ def run_sync_tasks(
     include_comments: bool,
     include_posts: bool,
 ) -> None:
+    """Run the checkpointed subreddit loop and write comments and posts.
+
+    Filenames come from ``comment_storage.records_filename`` and
+    ``post_storage.records_filename`` so the suffix matches the dataset format.
+    """
     max_rows_int = parse_max_rows(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
-    comments_csv = record_type_to_filename(COMMENTS_RECORD_TYPE)
-    posts_csv = record_type_to_filename(POSTS_RECORD_TYPE)
+    comments_filename = comment_storage.records_filename
+    posts_filename = post_storage.records_filename
 
     comment_dedupe_session, post_dedupe_session = _open_reddit_dedupe_sessions(
         comment_storage,
@@ -484,8 +488,8 @@ def run_sync_tasks(
         ingestion_params,
         include_comments=include_comments,
         include_posts=include_posts,
-        comments_csv=comments_csv,
-        posts_csv=posts_csv,
+        comments_filename=comments_filename,
+        posts_filename=posts_filename,
     )
     if comment_dedupe_session or post_dedupe_session:
         prior_comment_count = len(comment_dedupe_session.seen_ids) if comment_dedupe_session else 0
@@ -522,8 +526,8 @@ def run_sync_tasks(
             include_posts=include_posts,
             comment_dedupe_session=comment_dedupe_session,
             post_dedupe_session=post_dedupe_session,
-            comments_csv=comments_csv,
-            posts_csv=posts_csv,
+            comments_filename=comments_filename,
+            posts_filename=posts_filename,
         )
         mark_task_completed(
             entry,
@@ -561,19 +565,21 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Reddit records per config and write raw CSV + metadata."""
+    """Fetch Reddit records per config and write raw records plus metadata.
+
+    Creates the dataset manifest first so storage can read the declared format.
+    """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="reddit")
-    comment_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
-    post_storage = comment_storage.post_storage()
-
     ensure_dataset_manifest(
-        comment_storage,
+        RedditStorageManager(StorageStage.RAW, dataset_id),
         "reddit",
         dataset_id,
         config,
         config_path,
     )
+    comment_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
+    post_storage = comment_storage.post_storage()
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)

@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_reddit
+from data_platform.utils.dataset import ValidDataFormats, write_dataset_manifest
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from data_platform.utils.storage import RedditStorageManager, StorageStage
 from tests.data_platform.constants import TEST_INGEST_CONFIG_PATH, VALID_REDDIT_DATASET_ID
@@ -96,6 +97,10 @@ def test_run_sync_tasks_appends_per_subreddit(
     assert metadata["tasks"]["betasub"]["status"] == "completed"
     assert metadata["row_count"] == 2
     assert metadata["post_row_count"] == 2
+    assert (run_dir / "comments.csv").exists()
+    assert (run_dir / "posts.csv").exists()
+    assert not (run_dir / "comments.parquet").exists()
+    assert not (run_dir / "posts.parquet").exists()
     assert len(comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")) == 2
 
 
@@ -378,3 +383,101 @@ def test_build_sync_tasks_strips_r_prefix() -> None:
 def test_build_sync_tasks_rejects_duplicate_normalized_subreddits() -> None:
     with pytest.raises(ValueError, match="Duplicate subreddit task_id"):
         sync_reddit.build_sync_tasks({"subreddits": ["r/politics", "politics"]})
+
+
+def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
+    data_root,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Verifies the Reddit write loop stores parquet names for a parquet dataset."""
+    write_dataset_manifest(
+        "reddit",
+        VALID_REDDIT_DATASET_ID,
+        name="test",
+        ingestion_config="data_platform/ingestion/configs/reddit/mirrorview.yaml",
+        data_format=ValidDataFormats.PARQUET,
+    )
+    config = minimal_reddit_sync_config()
+    ingestion_params = config["ingestion_params"]
+    sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
+    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    post_storage = comment_storage.post_storage()
+    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    metadata = sync_reddit.init_sync_metadata(
+        config,
+        TEST_INGEST_CONFIG_PATH,
+        "2026_05_30-10:00:00",
+        sync_tasks,
+    )
+
+    def fake_fetch(
+        reddit: Any,
+        fetch_cfg: dict[str, Any],
+        subreddit: str,
+        *,
+        sync_timestamp: str,
+        include_posts: bool,
+        include_comments: bool,
+    ):
+        return (
+            [mock_post_row("t3_post_a1", subreddit="alphasub")],
+            [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
+            {
+                "subreddit": subreddit,
+                "listing": fetch_cfg.get("listing", "hot"),
+                "limit_per_subreddit": fetch_cfg["limit_per_subreddit"],
+                "posts_collected": 1,
+                "comments_collected": 1,
+            },
+        )
+
+    monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
+
+    sync_reddit.run_sync_tasks(
+        MagicMock(),
+        ingestion_params,
+        run_dir,
+        comment_storage,
+        post_storage,
+        metadata,
+        sync_tasks[:1],
+        include_comments=True,
+        include_posts=True,
+    )
+
+    assert comment_storage.records_filename == "comments.parquet"
+    assert post_storage.records_filename == "posts.parquet"
+    assert (run_dir / "comments.parquet").exists()
+    assert (run_dir / "posts.parquet").exists()
+    assert not (run_dir / "comments.csv").exists()
+    assert not (run_dir / "posts.csv").exists()
+
+
+class TestSyncRecords:
+    """Tests for sync_records."""
+
+    def test_rebuilds_storage_after_parquet_manifest(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Verifies sync_records hands parquet storage into the write loop."""
+        config = minimal_reddit_sync_config()
+        config["output_format"] = "parquet"
+        monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
+        init_client = MagicMock(name="init_reddit_client")
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "init_reddit_client", init_client)
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
+        expected_comments = "comments.parquet"
+        expected_posts = "posts.parquet"
+
+        sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+        comment_storage = run_tasks.call_args.args[3]
+        post_storage = run_tasks.call_args.args[4]
+        result_comments = comment_storage.records_filename
+        result_posts = post_storage.records_filename
+
+        assert init_client.called is True
+        assert result_comments == expected_comments
+        assert result_posts == expected_posts

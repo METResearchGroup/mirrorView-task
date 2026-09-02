@@ -1,4 +1,4 @@
-"""Sync Twitter posts from YAML config to raw CSV storage.
+"""Sync Twitter posts from YAML config to raw records storage.
 
 Run from the repo root:
 
@@ -45,7 +45,6 @@ from data_platform.utils.deduplication import (
 )
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 
-POSTS_CSV = "posts.csv"
 TWEETS_RECORD_TYPE = "twitter.tweet"
 
 
@@ -112,15 +111,25 @@ def run_sync_tasks(
     sync_tasks: list[TwitterTask],
     *,
     sync_timestamp: str,
-    csv_filename: str,
+    filename: str,
 ) -> None:
+    """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
+
+    Skips completed tasks on resume, stops early when max_rows is reached, and records failures
+    without aborting the full run.
+
+    Parameters
+    ----------
+    filename
+        Records file name from ``storage.records_filename``, including the dataset format suffix.
+    """
     max_rows_int = parse_max_rows(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="tweet_id",
-            filename=csv_filename,
+            filename=filename,
             include_prior_runs=policy_includes_prior_runs(
                 ingestion_params.get("dedupe_policy")
             ),
@@ -152,7 +161,7 @@ def run_sync_tasks(
             rows,
             output_dir,
             dedupe_session=dedupe_session,
-            filename=csv_filename,
+            filename=filename,
         )
         metadata["tweets_skipped_as_duplicates"] = (
             int(metadata.get("tweets_skipped_as_duplicates", 0)) + result.skipped
@@ -193,8 +202,9 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Twitter records per config and write raw CSV + metadata.
+    """Fetch Twitter records per config and write raw records plus metadata.
 
+    Creates the dataset manifest first so storage can read the declared format.
     Stops before creating the Twitter client when ``record_types`` is missing
     or does not include ``TWEETS_RECORD_TYPE``.
 
@@ -208,15 +218,14 @@ def sync_records(
     """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="twitter")
-    storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
-
     ensure_dataset_manifest(
-        storage,
+        TwitterStorageManager(StorageStage.RAW, dataset_id),
         "twitter",
         dataset_id,
         config,
         config_path,
     )
+    storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
@@ -233,6 +242,7 @@ def sync_records(
         entity_label="keywords",
     )
     sync_timestamp = str(metadata["sync_timestamp"])
+    filename = storage.records_filename
 
     run_sync_tasks(
         client,
@@ -242,7 +252,7 @@ def sync_records(
         metadata,
         sync_tasks,
         sync_timestamp=sync_timestamp,
-        csv_filename=POSTS_CSV,
+        filename=filename,
     )
     finalize_local_disk_sync(storage, output_dir, metadata)
 
