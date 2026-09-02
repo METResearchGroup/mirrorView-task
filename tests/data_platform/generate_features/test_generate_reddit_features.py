@@ -7,9 +7,6 @@ import pandas as pd
 
 from data_platform.generate_features.generate_features import generate_features
 from data_platform.generate_features.generate_reddit_features import (
-    FEATURE_FILE_ID_COLUMN,
-    ID_COLUMN,
-    TEXT_COLUMN,
     generate_reddit_features,
     load_comments,
     reddit_feature_config,
@@ -21,19 +18,23 @@ from data_platform.generate_features.models import (
     FeatureSpec,
     FeatureStatus,
 )
+from data_platform.utils.platform_specific_columns import CANONICAL_TEXT_COLUMN, REDDIT_COLUMNS
 from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_REDDIT_DATASET_ID
 from tests.data_platform.generate_features.conftest import DummyModel
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
 
 def _sample_preprocessed_comments(count: int = 1) -> list[dict[str, Any]]:
-    return [
+    rows = [
         mock_comment_row(
             f"t1_comment_{index}",
             subreddit="politics",
         )
         for index in range(count)
     ]
+    for row in rows:
+        row["text"] = row["body"]
+    return rows
 
 
 def write_preprocessed_comments(
@@ -68,10 +69,11 @@ def test_reddit_feature_config_columns(data_root) -> None:
         run_config=FeatureRunConfig(opik_enabled=False),
     )
     assert config.platform == "reddit"
-    assert config.id_column == ID_COLUMN
-    assert config.text_column == TEXT_COLUMN
-    assert config.feature_label_query.id_column == ID_COLUMN
-    assert config.feature_label_query.feature_file_id_column == FEATURE_FILE_ID_COLUMN
+    assert config.id_column == REDDIT_COLUMNS.records_id_column
+    assert config.text_column == REDDIT_COLUMNS.text_column
+    assert REDDIT_COLUMNS.text_column == CANONICAL_TEXT_COLUMN
+    assert config.feature_label_query.id_column == REDDIT_COLUMNS.records_id_column
+    assert config.feature_label_query.feature_file_id_column == REDDIT_COLUMNS.feature_file_id_column
     assert config.input_storage.platform == "reddit"
 
 
@@ -81,8 +83,8 @@ def test_load_comments_reads_all_preprocessed_runs(data_root) -> None:
 
     comments = load_comments(VALID_REDDIT_DATASET_ID)
     assert len(comments) == 2
-    assert ID_COLUMN in comments.columns
-    assert TEXT_COLUMN in comments.columns
+    assert REDDIT_COLUMNS.records_id_column in comments.columns
+    assert REDDIT_COLUMNS.text_column in comments.columns
 
 
 def test_generate_reddit_features_skips_completed_feature(
@@ -105,7 +107,7 @@ def test_generate_reddit_features_skips_completed_feature(
     pd.DataFrame(
         [
             {
-                FEATURE_FILE_ID_COLUMN: records[0][ID_COLUMN],
+                REDDIT_COLUMNS.feature_file_id_column: records[0][REDDIT_COLUMNS.records_id_column],
                 "label_timestamp": LABEL_TIMESTAMP,
                 "is_political": True,
             }
@@ -147,8 +149,16 @@ def test_generate_reddit_features_defaults_to_opik_disabled(monkeypatch) -> None
     )
     monkeypatch.setattr(
         "data_platform.generate_features.platform_cli.load_preprocessed_records",
-        lambda spec, dataset_id: pd.DataFrame([{ID_COLUMN: "1", TEXT_COLUMN: "hello"}]),
+        lambda _spec, _dataset_id: pd.DataFrame([{REDDIT_COLUMNS.records_id_column: "1", REDDIT_COLUMNS.text_column: "hello"}]),
     )
 
     generate_reddit_features(VALID_REDDIT_DATASET_ID)
     assert captured["opik_enabled"] is False
+
+
+def test_reddit_feature_cli_does_not_reexport_column_aliases() -> None:
+    import data_platform.generate_features.generate_reddit_features as reddit_features
+
+    assert not hasattr(reddit_features, "ID_COLUMN")
+    assert not hasattr(reddit_features, "TEXT_COLUMN")
+    assert not hasattr(reddit_features, "FEATURE_FILE_ID_COLUMN")

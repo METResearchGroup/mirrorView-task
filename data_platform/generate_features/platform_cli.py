@@ -17,7 +17,6 @@ from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
-from data_platform.utils.gate_checks import require_all_runs_complete
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
 from data_platform.utils.storage import StorageManager, StorageStage
 
@@ -135,7 +134,7 @@ def generate_platform_features(
         preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
         if preprocessed_storage.latest_run_dir() is None:
             raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
-        require_all_runs_complete(preprocessed_storage, dataset_id)
+        preprocessed_storage.require_all_runs_complete(dataset_id)
 
     features_subset = generate_feature_subset(feature_subset)
     run_config = FeatureRunConfig(

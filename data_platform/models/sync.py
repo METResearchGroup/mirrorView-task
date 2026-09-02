@@ -15,6 +15,7 @@ class SyncBlueskyPostModel(BaseModel):
     repost_count: int
     reply_count: int
     quote_count: int
+    sync_timestamp: str
 
 
 class SyncRedditPostModel(BaseModel):
@@ -29,6 +30,7 @@ class SyncRedditPostModel(BaseModel):
     score: int
     upvote_ratio: float
     num_comments: int
+    created_at: str
     created_utc: str
     permalink: str
     url: str
@@ -65,8 +67,19 @@ class SyncRedditCommentModel(BaseModel):
     author: str
     body: str
     score: int
+    created_at: str
     created_utc: str
     permalink: str
     depth: int
     comment_rank: int
     sync_timestamp: str
+
+
+class PreprocessedRedditCommentModel(SyncRedditCommentModel):
+    """A Reddit comment after preprocess, with original body and shared text.
+
+    Raw ingest still uses ``SyncRedditCommentModel``. Feature generation reads
+    ``text`` from the preprocessed CSV described by this model.
+    """
+
+    text: str

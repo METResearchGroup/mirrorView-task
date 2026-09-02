@@ -93,7 +93,7 @@ def test_run_sync_tasks_appends_per_keyword(
     assert metadata["tasks"]["alpha"]["status"] == "completed"
     assert metadata["tasks"]["beta"]["status"] == "completed"
     assert metadata["row_count"] == 2
-    assert len(storage.load_seen_uris(run_dir)) == 2
+    assert len(storage.load_seen_ids_from_disk(run_dir, "uri")) == 2
 
 
 def test_run_sync_tasks_skips_ids_from_other_dataset(
@@ -154,7 +154,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         filename=storage.records_filename,
     )
 
-    assert storage.load_seen_uris(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "uri") == {
         "at://did:plc:ex/app.bsky.feed.post/old",
         "at://did:plc:ex/app.bsky.feed.post/new",
     }
@@ -215,7 +215,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         filename=storage.records_filename,
     )
 
-    assert storage.load_seen_uris(run_dir) == {"at://did:plc:ex/app.bsky.feed.post/old"}
+    assert storage.load_seen_ids_from_disk(run_dir, "uri") == {"at://did:plc:ex/app.bsky.feed.post/old"}
     assert metadata.get("posts_skipped_as_duplicates", 0) == 0
 
 
@@ -258,7 +258,7 @@ def test_run_sync_tasks_dedupes_within_run(
         filename=storage.records_filename,
     )
 
-    assert storage.load_seen_uris(run_dir) == {duplicate_uri}
+    assert storage.load_seen_ids_from_disk(run_dir, "uri") == {duplicate_uri}
     assert metadata["row_count"] == 1
 
 
@@ -385,7 +385,7 @@ def test_resume_dedupes_against_records_from_completed_tasks(
         filename=storage.records_filename,
     )
 
-    assert storage.load_seen_uris(run_dir) == {
+    assert storage.load_seen_ids_from_disk(run_dir, "uri") == {
         already_seen_uri,
         "at://did:plc:ex/app.bsky.feed.post/b1",
     }

@@ -45,6 +45,7 @@ def make_post_row(
         "repost_count": 0,
         "reply_count": 0,
         "quote_count": 0,
+        "sync_timestamp": "2026_05_30-10:00:00",
     }
 
 

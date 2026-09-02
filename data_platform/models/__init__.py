@@ -1,3 +1,15 @@
-from data_platform.models.sync import SyncBlueskyPostModel
+"""Export the sync record models for every ingest platform."""
 
-__all__ = ["SyncBlueskyPostModel"]
+from data_platform.models.sync import (
+    SyncBlueskyPostModel,
+    SyncRedditCommentModel,
+    SyncRedditPostModel,
+    SyncTwitterPostModel,
+)
+
+__all__ = [
+    "SyncBlueskyPostModel",
+    "SyncRedditCommentModel",
+    "SyncRedditPostModel",
+    "SyncTwitterPostModel",
+]

@@ -43,20 +43,24 @@ class BatchExecutionEngine(Protocol):
         feature_storage: StorageManager,
         batch_size: int,
         on_batch_complete: Callable[[int, int], None],
+        id_column: str,
     ) -> BatchRunStats: ...
-
-
-def load_seen_uris_from_features_dir(feature_storage: StorageManager) -> set[str]:
-    """Return URIs already present in the feature file under the features dir."""
-    return feature_storage.load_seen_uris(feature_storage.root_dir)
 
 
 def filter_seen_tasks(
     tasks: list[LabelTask],
     feature_storage: StorageManager,
+    id_column: str,
 ) -> list[LabelTask]:
-    """Drop tasks whose URI is already labeled in the on-disk feature file."""
-    seen = load_seen_uris_from_features_dir(feature_storage)
+    """Drop tasks whose LabelTask.uri is already present in the feature file.
+
+    ``id_column`` selects the column to read from disk. Task matching still
+    uses ``LabelTask.uri``, which holds the record id from the input table.
+    """
+    seen = feature_storage.load_seen_ids_from_disk(
+        feature_storage.root_dir,
+        id_column,
+    )
     if not seen:
         return tasks
     return [task for task in tasks if task.uri not in seen]
@@ -99,6 +103,7 @@ class BaseBatchExecutionEngine:
         feature_storage: StorageManager,
         batch_size: int,
         on_batch_complete: Callable[[int, int], None],
+        id_column: str,
     ) -> BatchRunStats:
         """Label records using feature classifier.
 
@@ -121,7 +126,7 @@ class BaseBatchExecutionEngine:
         )
         try:
             for batch_index, chunk in enumerate(batched(tasks, batch_size)):
-                pending = filter_seen_tasks(chunk, feature_storage)
+                pending = filter_seen_tasks(chunk, feature_storage, id_column)
                 if not pending:
                     continue
 

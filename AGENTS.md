@@ -1,5 +1,11 @@
 # AGENTS.md
 
+## Conventions
+
+Follow the conventions defined in https://github.com/mark-torres10/ai_tools/blob/main/conventions/vocabulary.md.
+
+All current timestamps come from `lib.timestamp_utils.get_current_timestamp`. That helper is UTC. Do not add more timestamp generators.
+
 ## Cursor Cloud specific instructions
 
 The startup/update script is intentionally minimal: it only verifies that `uv` is available (`uv --version`) and does **not** install project dependencies. The app does not need to run in this environment. If you need Python deps, run `uv sync` yourself; if you need the web deps, run `npm install` from `webapp/`. `uv` is installed at `~/.local/bin` and is on `PATH` in interactive shells (Python 3.12).
