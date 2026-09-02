@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from data_platform.constants import POSTS_FILENAME
 from data_platform.ingestion import sync_bluesky
 from data_platform.ingestion.sync_checkpoint import validate_tasks_for_resume
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
@@ -87,13 +88,13 @@ def test_run_sync_tasks_appends_per_keyword(
         storage,
         metadata,
         sync_tasks,
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
     assert metadata["tasks"]["alpha"]["status"] == "completed"
     assert metadata["tasks"]["beta"]["status"] == "completed"
     assert metadata["row_count"] == 2
-    assert len(storage.load_seen_uris(run_dir)) == 2
+    assert len(storage.load_seen_uris(f"{run_dir}/{POSTS_FILENAME}")) == 2
 
 
 def test_run_sync_tasks_skips_ids_from_other_dataset(
@@ -115,7 +116,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
                 text="old",
             )
         ],
-        other_run,
+        f"{other_run}/{POSTS_FILENAME}",
     )
 
     storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
@@ -151,10 +152,10 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         storage,
         metadata,
         sync_tasks[:1],
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_uris(run_dir) == {
+    assert storage.load_seen_uris(f"{run_dir}/{POSTS_FILENAME}") == {
         "at://did:plc:ex/app.bsky.feed.post/old",
         "at://did:plc:ex/app.bsky.feed.post/new",
     }
@@ -181,7 +182,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
                 text="old",
             )
         ],
-        other_run,
+        f"{other_run}/{POSTS_FILENAME}",
     )
 
     storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
@@ -212,10 +213,10 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         storage,
         metadata,
         sync_tasks[:1],
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_uris(run_dir) == {"at://did:plc:ex/app.bsky.feed.post/old"}
+    assert storage.load_seen_uris(f"{run_dir}/{POSTS_FILENAME}") == {"at://did:plc:ex/app.bsky.feed.post/old"}
     assert metadata.get("posts_skipped_as_duplicates", 0) == 0
 
 
@@ -255,10 +256,10 @@ def test_run_sync_tasks_dedupes_within_run(
         storage,
         metadata,
         sync_tasks,
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_uris(run_dir) == {duplicate_uri}
+    assert storage.load_seen_uris(f"{run_dir}/{POSTS_FILENAME}") == {duplicate_uri}
     assert metadata["row_count"] == 1
 
 
@@ -288,7 +289,7 @@ def test_resume_skips_completed_tasks(
                 text="x",
             )
         ],
-        run_dir,
+        f"{run_dir}/{POSTS_FILENAME}",
     )
     metadata["row_count"] = 1
     storage.write_run_metadata_atomic(run_dir, metadata)
@@ -316,7 +317,7 @@ def test_resume_skips_completed_tasks(
         storage,
         resumed_metadata,
         sync_tasks,
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
     assert calls == ["beta"]
@@ -352,7 +353,7 @@ def test_resume_dedupes_against_records_from_completed_tasks(
                 text="x",
             )
         ],
-        run_dir,
+        f"{run_dir}/{POSTS_FILENAME}",
     )
     metadata["row_count"] = 1
     storage.write_run_metadata_atomic(run_dir, metadata)
@@ -382,10 +383,10 @@ def test_resume_dedupes_against_records_from_completed_tasks(
         storage,
         resumed_metadata,
         sync_tasks,
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
-    assert storage.load_seen_uris(run_dir) == {
+    assert storage.load_seen_uris(f"{run_dir}/{POSTS_FILENAME}") == {
         already_seen_uri,
         "at://did:plc:ex/app.bsky.feed.post/b1",
     }
@@ -447,7 +448,7 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_rows(
         storage,
         metadata,
         sync_tasks,
-        filename=storage.records_filename,
+        filename=POSTS_FILENAME,
     )
 
     assert metadata["row_count"] == 2

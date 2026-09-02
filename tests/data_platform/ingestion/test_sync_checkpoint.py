@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from data_platform.constants import POSTS_FILENAME
 from data_platform.ingestion.sync_checkpoint import (
     SyncStatus,
     TaskStatus,
@@ -184,12 +185,12 @@ def test_append_deduped_records_skips_seen_ids(data_root) -> None:
     storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
     run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     existing = [mock_tweet_row("1")]
-    storage.append_records(existing, run_dir)
+    storage.append_records(existing, f"{run_dir}/{POSTS_FILENAME}")
     config = DedupeConfig(id_column="tweet_id")
     dedupe_session = DedupeSession(config)
-    dedupe_session.warm(storage, run_dir)
+    dedupe_session.warm(storage, f"{run_dir}/{POSTS_FILENAME}")
     incoming = [mock_tweet_row("1"), mock_tweet_row("2")]
-    result = storage.append_deduped_records(incoming, run_dir, dedupe_session=dedupe_session)
+    result = storage.append_deduped_records(incoming, f"{run_dir}/{POSTS_FILENAME}", dedupe_session=dedupe_session)
     assert result.skipped == 1
     assert result.kept == 1
-    assert storage.load_seen_tweet_ids(run_dir) == {"1", "2"}
+    assert storage.load_seen_tweet_ids(f"{run_dir}/{POSTS_FILENAME}") == {"1", "2"}

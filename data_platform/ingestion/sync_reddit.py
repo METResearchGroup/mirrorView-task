@@ -29,6 +29,7 @@ import praw.models
 import prawcore.exceptions
 from praw.models.comment_forest import CommentForest
 
+from data_platform.constants import COMMENTS_FILENAME, POSTS_FILENAME
 from data_platform.ingestion.retry import retry_reddit_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
@@ -40,7 +41,7 @@ from data_platform.ingestion.sync_checkpoint import (
     mark_task_in_progress,
     parse_max_rows,
     prepare_sync_run,
-    record_type_to_filename,
+    prepare_sync_run,
     require_dataset_id,
     run_checkpointed_sync,
     run_sync_cli,
@@ -371,7 +372,7 @@ def init_sync_metadata(
 def _open_reddit_dedupe_sessions(
     comment_storage: RedditStorageManager,
     post_storage: RedditStorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     ingestion_params: dict[str, Any],
     *,
     include_comments: bool,
@@ -391,7 +392,9 @@ def _open_reddit_dedupe_sessions(
                 ),
             )
         )
-        comment_dedupe_session.warm(comment_storage, output_dir)
+        comment_dedupe_session.warm(
+            comment_storage, f"{relative_run_dir}/{comments_csv}"
+        )
     if include_posts:
         post_dedupe_session = DedupeSession(
             DedupeConfig(
@@ -402,14 +405,14 @@ def _open_reddit_dedupe_sessions(
                 ),
             )
         )
-        post_dedupe_session.warm(post_storage, output_dir)
+        post_dedupe_session.warm(post_storage, f"{relative_run_dir}/{posts_csv}")
     return comment_dedupe_session, post_dedupe_session
 
 
 def _append_subreddit_deduped_rows(
     comment_storage: RedditStorageManager,
     post_storage: RedditStorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     metadata: dict[str, Any],
     post_rows: list[dict[str, Any]],
     comment_rows: list[dict[str, Any]],
@@ -424,9 +427,8 @@ def _append_subreddit_deduped_rows(
     if include_posts and post_rows and post_dedupe_session is not None:
         post_result = post_storage.append_deduped_records(
             post_rows,
-            output_dir,
+            f"{relative_run_dir}/{posts_csv}",
             dedupe_session=post_dedupe_session,
-            filename=posts_csv,
         )
         metadata["posts_skipped_as_duplicates"] = (
             int(metadata.get("posts_skipped_as_duplicates", 0)) + post_result.skipped
@@ -435,9 +437,8 @@ def _append_subreddit_deduped_rows(
     if include_comments and comment_rows and comment_dedupe_session is not None:
         comment_result = comment_storage.append_deduped_records(
             comment_rows,
-            output_dir,
+            f"{relative_run_dir}/{comments_csv}",
             dedupe_session=comment_dedupe_session,
-            filename=comments_csv,
         )
         metadata["comments_skipped_as_duplicates"] = (
             int(metadata.get("comments_skipped_as_duplicates", 0)) + comment_result.skipped
@@ -461,7 +462,7 @@ def _append_subreddit_deduped_rows(
 def run_sync_tasks(
     reddit: praw.Reddit,
     ingestion_params: dict[str, Any],
-    output_dir: Path,
+    relative_run_dir: str,
     comment_storage: RedditStorageManager,
     post_storage: RedditStorageManager,
     metadata: dict[str, Any],
@@ -472,13 +473,13 @@ def run_sync_tasks(
 ) -> None:
     max_rows_int = parse_max_rows(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
-    comments_csv = record_type_to_filename(COMMENTS_RECORD_TYPE)
-    posts_csv = record_type_to_filename(POSTS_RECORD_TYPE)
+    comments_csv = COMMENTS_FILENAME
+    posts_csv = POSTS_FILENAME
 
     comment_dedupe_session, post_dedupe_session = _open_reddit_dedupe_sessions(
         comment_storage,
         post_storage,
-        output_dir,
+        relative_run_dir,
         ingestion_params,
         include_comments=include_comments,
         include_posts=include_posts,
@@ -494,7 +495,7 @@ def run_sync_tasks(
         )
 
     def process_task(task: RedditTask, entry: dict[str, Any]) -> None:
-        mark_task_in_progress(entry, comment_storage, output_dir, metadata)
+        mark_task_in_progress(entry, comment_storage, relative_run_dir, metadata)
 
         try:
             post_rows, comment_rows, stats = fetch_records_for_subreddit(
@@ -506,13 +507,13 @@ def run_sync_tasks(
                 include_comments=include_comments,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
-            mark_task_failed(entry, exc, task.task_id, comment_storage, output_dir, metadata)
+            mark_task_failed(entry, exc, task.task_id, comment_storage, relative_run_dir, metadata)
             return
 
         comment_count, post_count = _append_subreddit_deduped_rows(
             comment_storage,
             post_storage,
-            output_dir,
+            relative_run_dir,
             metadata,
             post_rows,
             comment_rows,
@@ -526,7 +527,7 @@ def run_sync_tasks(
         mark_task_completed(
             entry,
             comment_storage,
-            output_dir,
+            relative_run_dir,
             metadata,
             entry_updates={
                 "posts_collected": stats["posts_collected"],
@@ -544,7 +545,7 @@ def run_sync_tasks(
         sync_tasks,
         metadata,
         comment_storage,
-        output_dir,
+        relative_run_dir,
         max_rows_int=max_rows_int,
         tqdm_desc="Syncing subreddits",
         process_task=process_task,
@@ -558,7 +559,7 @@ def sync_records(
     config_path: Path,
     *,
     run_dir_name: str | None = None,
-) -> Path:
+) -> str:
     """Fetch Reddit records per config and write raw CSV + metadata."""
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="reddit")

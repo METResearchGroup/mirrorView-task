@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import re
 from datetime import UTC, datetime
-from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
@@ -15,11 +14,6 @@ DATASET_ID_PATTERN = re.compile(
     r"^(bluesky|reddit|twitter)_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 )
 MANIFEST_FILENAME = "dataset.json"
-
-
-class ValidDataFormats(StrEnum):
-    CSV = "csv"
-    PARQUET = "parquet"
 
 
 def validate_dataset_id(dataset_id: str) -> str:

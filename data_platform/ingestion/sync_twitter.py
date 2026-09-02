@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from data_platform.constants import POSTS_FILENAME
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
@@ -44,8 +45,6 @@ from data_platform.utils.deduplication import (
     policy_includes_prior_runs,
 )
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
-
-POSTS_CSV = "posts.csv"
 
 
 @dataclass(frozen=True)
@@ -105,7 +104,7 @@ def _remaining_row_budget(metadata: dict[str, Any], max_rows_int: int | None) ->
 def run_sync_tasks(
     client: Any,
     ingestion_params: dict[str, Any],
-    output_dir: Path,
+    relative_run_dir: str,
     storage: TwitterStorageManager,
     metadata: dict[str, Any],
     sync_tasks: list[TwitterTask],
@@ -116,6 +115,7 @@ def run_sync_tasks(
     max_rows_int = parse_max_rows(ingestion_params)
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
+    relative_file_path = f"{relative_run_dir}/{csv_filename}"
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="tweet_id",
@@ -125,10 +125,10 @@ def run_sync_tasks(
             ),
         )
     )
-    dedupe_session.warm(storage, output_dir)
+    dedupe_session.warm(storage, relative_file_path)
 
     def process_task(task: TwitterTask, entry: dict[str, Any]) -> None:
-        mark_task_in_progress(entry, storage, output_dir, metadata)
+        mark_task_in_progress(entry, storage, relative_run_dir, metadata)
 
         limit = _effective_limit_per_keyword(
             ingestion_params,
@@ -144,14 +144,13 @@ def run_sync_tasks(
                 sync_timestamp=sync_timestamp,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
-            mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
+            mark_task_failed(entry, exc, task.task_id, storage, relative_run_dir, metadata)
             return
 
         result = storage.append_deduped_records(
             rows,
-            output_dir,
+            relative_file_path,
             dedupe_session=dedupe_session,
-            filename=csv_filename,
         )
         metadata["tweets_skipped_as_duplicates"] = (
             int(metadata.get("tweets_skipped_as_duplicates", 0)) + result.skipped
@@ -160,7 +159,7 @@ def run_sync_tasks(
         mark_task_completed(
             entry,
             storage,
-            output_dir,
+            relative_run_dir,
             metadata,
             entry_updates={
                 "pages_fetched": stats["pages_fetched"],
@@ -177,7 +176,7 @@ def run_sync_tasks(
         sync_tasks,
         metadata,
         storage,
-        output_dir,
+        relative_run_dir,
         max_rows_int=max_rows_int,
         tqdm_desc="Syncing keywords",
         process_task=process_task,
@@ -191,7 +190,7 @@ def sync_records(
     config_path: Path,
     *,
     run_dir_name: str | None = None,
-) -> Path:
+) -> str:
     """Fetch Twitter records per config and write raw CSV + metadata."""
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="twitter")
@@ -226,7 +225,7 @@ def sync_records(
         metadata,
         sync_tasks,
         sync_timestamp=sync_timestamp,
-        csv_filename=POSTS_CSV,
+        csv_filename=POSTS_FILENAME,
     )
     finalize_local_disk_sync(storage, output_dir, metadata)
 

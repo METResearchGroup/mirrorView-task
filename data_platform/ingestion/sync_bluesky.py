@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from data_platform.constants import POSTS_FILENAME
 from data_platform.ingestion.retry import retry_bluesky_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
@@ -220,7 +221,7 @@ def init_sync_metadata(
 def run_sync_tasks(
     client: Client,
     ingestion_params: dict[str, Any],
-    output_dir: Path,
+    relative_run_dir: str,
     storage: BlueskyStorageManager,
     metadata: dict[str, Any],
     sync_tasks: list[BlueskyTask],
@@ -233,6 +234,7 @@ def run_sync_tasks(
     without aborting the full run.
     """
     max_rows_int = parse_max_rows(ingestion_params)
+    relative_file_path = f"{relative_run_dir}/{filename}"
     dedupe_session = DedupeSession(
         DedupeConfig(
             id_column="uri",
@@ -242,11 +244,11 @@ def run_sync_tasks(
             ),
         )
     )
-    dedupe_session.warm(storage, output_dir)
+    dedupe_session.warm(storage, relative_file_path)
 
     def process_task(task: BlueskyTask, entry: dict[str, Any]) -> None:
         """Fetch one keyword, persist deduped rows, and update the task ledger entry."""
-        mark_task_in_progress(entry, storage, output_dir, metadata)
+        mark_task_in_progress(entry, storage, relative_run_dir, metadata)
 
         remaining: int | None = None
         if max_rows_int is not None:
@@ -263,14 +265,13 @@ def run_sync_tasks(
                 max_rows=remaining,
             )
         except Exception as exc:  # noqa: BLE001 — record and continue
-            mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
+            mark_task_failed(entry, exc, task.task_id, storage, relative_run_dir, metadata)
             return
 
         result = storage.append_deduped_records(
             rows,
-            output_dir,
+            relative_file_path,
             dedupe_session=dedupe_session,
-            filename=filename,
         )
         metadata["posts_skipped_as_duplicates"] = (
             int(metadata.get("posts_skipped_as_duplicates", 0)) + result.skipped
@@ -279,7 +280,7 @@ def run_sync_tasks(
         mark_task_completed(
             entry,
             storage,
-            output_dir,
+            relative_run_dir,
             metadata,
             entry_updates={
                 "pages_fetched": stats["pages_fetched"],
@@ -297,7 +298,7 @@ def run_sync_tasks(
         sync_tasks,
         metadata,
         storage,
-        output_dir,
+        relative_run_dir,
         max_rows_int=max_rows_int,
         tqdm_desc="Syncing keywords",
         process_task=process_task,
@@ -308,7 +309,7 @@ def sync_records(
     config_path: Path,
     *,
     run_dir_name: str | None = None,
-) -> Path:
+) -> str:
     """Load config, prepare or resume a raw run, and sync all keyword tasks to posts.csv.
 
     Creates the dataset manifest on first run and returns the output run directory path.
@@ -316,9 +317,6 @@ def sync_records(
     config = load_yaml_config(config_path)
     dataset_id = require_dataset_id(config, platform="bluesky")
 
-    # Create a temporary storage just to locate the dataset root for the manifest.
-    # The manifest must exist before we create the real storage so that format is
-    # read correctly (new datasets have no dataset.json yet).
     ensure_dataset_manifest(
         BlueskyStorageManager(StorageStage.RAW, dataset_id),
         "bluesky",
@@ -335,7 +333,6 @@ def sync_records(
     if POSTS_RECORD_TYPE not in record_types:
         raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
 
-    filename = storage.records_filename
     client = init_bluesky_client()
 
     output_dir, metadata = prepare_sync_run(
@@ -353,7 +350,7 @@ def sync_records(
         storage,
         metadata,
         sync_tasks,
-        filename=filename,
+        filename=POSTS_FILENAME,
     )
 
     finalize_local_disk_sync(storage, output_dir, metadata)

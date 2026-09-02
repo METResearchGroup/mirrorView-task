@@ -2,7 +2,6 @@ dataset_id: bluesky_9ea63f70-e9a2-4033-887d-97dcc43a0dc2
 name: mirrorview
 description: Mirrorview topic keyword collection across Bluesky
 date: "2026-05-29"
-output_format: parquet
 record_types:
   - app.bsky.feed.post
 ingestion_params:

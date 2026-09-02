@@ -11,20 +11,21 @@ from typing import Any, Protocol, TypeVar
 import typer
 from tqdm import tqdm
 
+from data_platform.constants import COMMENTS_FILENAME, POSTS_FILENAME
 from data_platform.utils.config_paths import resolve_config_path
 from data_platform.utils.dataset import (
-    ValidDataFormats,
     validate_dataset_id,
     write_dataset_manifest,
 )
+from data_platform.utils.paths import to_package_relative
 from data_platform.utils.storage import StorageManager
 from lib.constants import REPO_ROOT
 from lib.timestamp_utils import get_current_timestamp
 
 RECORD_TYPE_FILENAMES: dict[str, str] = {
-    "app.bsky.feed.post": "posts.csv",
-    "reddit.comment": "comments.csv",
-    "reddit.post": "posts.csv",
+    "app.bsky.feed.post": POSTS_FILENAME,
+    "reddit.comment": COMMENTS_FILENAME,
+    "reddit.post": POSTS_FILENAME,
 }
 
 
@@ -88,12 +89,12 @@ def sync_status_from_tasks(progress: dict[str, dict[str, Any]]) -> SyncStatus:
 
 def finalize_local_disk_sync(
     storage: StorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     metadata: dict[str, Any],
 ) -> None:
     """Set sync_status from tasks and flush metadata for a completed local sync run."""
     metadata["sync_status"] = sync_status_from_tasks(get_task_progress(metadata)).value
-    flush_run_metadata(storage, output_dir, metadata)
+    flush_run_metadata(storage, relative_run_dir, metadata)
 
 
 def require_dataset_id(config: dict[str, Any], *, platform: str | None = None) -> str:
@@ -112,36 +113,37 @@ def record_type_to_filename(record_type: str) -> str:
 
 def flush_run_metadata(
     storage: StorageManager,
-    run_dir: Path,
+    relative_run_dir: str,
     metadata: dict[str, Any],
 ) -> None:
-    storage.write_run_metadata_atomic(run_dir, metadata)
+    storage.write_run_metadata_atomic(relative_run_dir, metadata)
 
 
 def find_resume_run_dir(
     storage: StorageManager,
     *,
     run_dir_name: str | None,
-) -> Path | None:
+) -> str | None:
     if run_dir_name is not None:
         run_dir = storage.root_dir / run_dir_name
         if not run_dir.is_dir():
             raise FileNotFoundError(f"Run directory not found: {run_dir}")
-        return run_dir
+        return to_package_relative(run_dir)
 
     if not storage.root_dir.exists():
         return None
 
-    candidates: list[tuple[str, Path]] = []
+    candidates: list[tuple[str, str]] = []
     for path in storage.root_dir.iterdir():
         if not path.is_dir():
             continue
         metadata_path = path / "metadata.json"
         if not metadata_path.exists():
             continue
-        metadata = storage.load_run_metadata(path)
+        relative_run_dir = to_package_relative(path)
+        metadata = storage.load_run_metadata(relative_run_dir)
         if metadata.get("sync_status") != SyncStatus.COMPLETED.value:
-            candidates.append((path.name, path))
+            candidates.append((path.name, relative_run_dir))
 
     if not candidates:
         return None
@@ -151,14 +153,14 @@ def find_resume_run_dir(
 def stop_at_max_rows(
     metadata: dict[str, Any],
     storage: StorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     max_rows_int: int | None,
 ) -> bool:
     """Mark pending tasks skipped and flush when row cap is reached."""
     if max_rows_int is None or metadata["row_count"] < max_rows_int:
         return False
     mark_remaining_tasks_skipped(get_task_progress(metadata))
-    flush_run_metadata(storage, output_dir, metadata)
+    flush_run_metadata(storage, relative_run_dir, metadata)
     return True
 
 
@@ -197,12 +199,12 @@ def build_base_sync_metadata(
 def mark_task_in_progress(
     entry: dict[str, Any],
     storage: StorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     metadata: dict[str, Any],
 ) -> None:
     entry["status"] = TaskStatus.IN_PROGRESS.value
     entry["last_error"] = None
-    flush_run_metadata(storage, output_dir, metadata)
+    flush_run_metadata(storage, relative_run_dir, metadata)
 
 
 def mark_task_failed(
@@ -210,19 +212,19 @@ def mark_task_failed(
     exc: Exception,
     task_id: str,
     storage: StorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     metadata: dict[str, Any],
 ) -> None:
     entry["status"] = TaskStatus.FAILED.value
     entry["last_error"] = str(exc)
-    flush_run_metadata(storage, output_dir, metadata)
+    flush_run_metadata(storage, relative_run_dir, metadata)
     print(f"sync_records: {task_id} failed: {exc}")
 
 
 def mark_task_completed(
     entry: dict[str, Any],
     storage: StorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     metadata: dict[str, Any],
     *,
     entry_updates: dict[str, Any],
@@ -233,14 +235,14 @@ def mark_task_completed(
     entry.update(entry_updates)
     if metadata_updates:
         metadata.update(metadata_updates)
-    flush_run_metadata(storage, output_dir, metadata)
+    flush_run_metadata(storage, relative_run_dir, metadata)
 
 
 def run_checkpointed_sync(
     sync_tasks: Sequence[TTask],
     metadata: dict[str, Any],
     storage: StorageManager,
-    output_dir: Path,
+    relative_run_dir: str,
     *,
     max_rows_int: int | None,
     tqdm_desc: str,
@@ -257,12 +259,12 @@ def run_checkpointed_sync(
         if entry["status"] in (TaskStatus.COMPLETED.value, TaskStatus.SKIPPED.value):
             continue
 
-        if stop_at_max_rows(metadata, storage, output_dir, max_rows_int):
+        if stop_at_max_rows(metadata, storage, relative_run_dir, max_rows_int):
             break
 
         process_task(task, entry)
 
-        if stop_at_max_rows(metadata, storage, output_dir, max_rows_int):
+        if stop_at_max_rows(metadata, storage, relative_run_dir, max_rows_int):
             break
 
 
@@ -275,13 +277,11 @@ def ensure_dataset_manifest(
 ) -> None:
     manifest_path = storage.root_dir.parent / "dataset.json"
     if not manifest_path.exists():
-        output_format = ValidDataFormats(config.get("output_format", "csv"))
         write_dataset_manifest(
             platform,
             dataset_id,
             name=str(config["name"]),
             ingestion_config=str(config_path.relative_to(REPO_ROOT)),
-            data_format=output_format,
         )
 
 
@@ -292,7 +292,7 @@ def prepare_sync_run(
     run_dir_name: str | None,
     init_metadata_fn: Callable[[str], dict[str, Any]],
     entity_label: str,
-) -> tuple[Path, dict[str, Any]]:
+) -> tuple[str, dict[str, Any]]:
     resume_dir = find_resume_run_dir(storage, run_dir_name=run_dir_name)
     if resume_dir is not None:
         metadata = storage.load_run_metadata(resume_dir)
@@ -313,7 +313,7 @@ def prepare_sync_run(
 
 def run_sync_cli(
     *,
-    sync_records_fn: Callable[..., Path],
+    sync_records_fn: Callable[..., str],
     config_help: str,
 ) -> None:
     def main(
