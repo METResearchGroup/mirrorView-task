@@ -2,6 +2,11 @@ import re
 
 from langdetect import DetectorFactory, LangDetectException, detect  # pyright: ignore[reportMissingImports]
 
+from data_platform.preprocessing.content_filter_policy import (
+    BLUESKY_POST_MAX_LENGTH,
+    BLUESKY_POST_MIN_LENGTH,
+)
+
 DetectorFactory.seed = 0
 
 
@@ -11,11 +16,8 @@ def check_if_not_phone(text: str) -> bool:
 
 
 def check_if_valid_post_length(text: str) -> bool:
-    """For Bluesky/Twitter posts, check if the length is valid.
-
-    (Yes, arbitrary cutoff, but determined by consensus)
-    """
-    return len(text) >= 100 and len(text) <= 300
+    """Return True when Bluesky post text is within the preprocess length bounds."""
+    return BLUESKY_POST_MIN_LENGTH <= len(text) <= BLUESKY_POST_MAX_LENGTH
 
 
 def check_if_post_has_no_urls(text: str) -> bool:
