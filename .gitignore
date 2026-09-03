@@ -9,7 +9,11 @@ local_data/*.csv
 analysis/data/*.csv
 test_data/*.csv
 *.csv
-data_platform/data/
+data_platform/data/**
+!data_platform/data/
+!data_platform/data/reddit/
+!data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/
+!data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/**
 
 # LLM prompt-engineering frozen eval subset (otherwise blocked by *.csv).
 !experiments/llm_prompt_engineering_2026_08_05/subset_labels.csv

@@ -12,7 +12,6 @@ from data_platform.ingestion.data_dumps.reddit.promote_to_raw import (
     promote_dump_sources_to_raw,
 )
 from data_platform.utils.storage import RedditStorageManager, StorageStage
-from lib.constants import REPO_ROOT
 from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
 
 MAY_RUN = "2025_05_01-00:00:00"
