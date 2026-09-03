@@ -47,11 +47,17 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_<uuid> --batch-size 64
 
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  --dataset-id bluesky_<uuid> --batch-size 64 --checkpoint <timestamp>
+
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  --dataset-id bluesky_<uuid> --batch-size 64 --latest
+
 PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-Feature generation writes each run into a new folder named `features/<timestamp>/`. If a run stops partway through, pass `--run-dir <timestamp>` so the same folder is reused. Feature generation still skips a post that already has a label, including labels written in earlier feature folders. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
+Feature generation writes each run into a new folder named `features/<timestamp>/`. A default invocation starts a new folder and fails if an unfinished feature run already exists. If a run stops partway through, pass `--checkpoint <timestamp>` or `--latest` so the same folder is reused. A completed feature run cannot be reopened. Feature generation still skips a post that already has a label, including labels written in earlier feature folders. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
 
 If this dataset still has leftover files directly under `features/` from the old layout (`is_political.csv`, `metadata.json`, `deadletter.jsonl`), move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 
