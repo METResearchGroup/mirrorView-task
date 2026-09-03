@@ -298,8 +298,31 @@ def execute_bluesky_sync(
 
 
 def sync_records_new_run(config_path: Path) -> Path:
-    """Create a new raw run and sync keyword tasks into it."""
-    raise NotImplementedError
+    """Create a new raw run and sync keyword tasks into it.
+
+    Parameters
+    ----------
+    config_path
+        Ingestion YAML path.
+
+    Returns
+    -------
+    Path
+        New raw run directory.
+
+    Raises
+    ------
+    ValueError
+        When an unfinished raw run already exists for this dataset.
+    """
+    context = load_bluesky_sync_context(config_path)
+    output_dir, metadata = start_new_sync_run(
+        context.storage,
+        lambda ts: init_sync_metadata(
+            context.config, context.config_path, ts, context.sync_tasks
+        ),
+    )
+    return execute_bluesky_sync(context, output_dir, metadata)
 
 
 def sync_records_from_checkpoint(
