@@ -256,3 +256,24 @@ def preprocess_records(
         f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
     )
     return output_dir
+
+
+def add_standardized_columns(
+    records: pd.DataFrame,
+    spec: PreprocessPlatformSpec
+):
+    records = add_standardized_text_column(records, spec)
+    records = add_standardized_author_columns(records, spec)
+    records = add_standardized_source_record_id(records, spec)
+    return records
+
+def preprocess_records():
+    validate_dataset_id()
+    load_raw_records()
+    records: pd.DataFrame = add_standardized_columns(
+        records=records, spec=spec
+    )
+    filter_duplicate_records()
+    apply_integration_specific_filters()
+    apply_integration_specific_preprocessing()
+    export_preprocessed_records()
