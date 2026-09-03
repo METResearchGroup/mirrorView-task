@@ -256,11 +256,11 @@ class StorageManager:
         dedupe_session: DedupeSession,
         filename: str | None = None,
     ) -> AppendResult:
-        kept_rows, skipped = dedupe_session.filter_rows(rows)
+        kept_rows, skipped = dedupe_session.exclude_seen_ids(rows)
         resolved_filename = filename or dedupe_session.config.filename
         if kept_rows:
             self.append_records(kept_rows, run_dir, filename=resolved_filename)
-            dedupe_session.note_appended(kept_rows)
+            dedupe_session.add_seen_ids(kept_rows)
         return AppendResult(kept=len(kept_rows), skipped=skipped)
 
     def load_records(
