@@ -31,7 +31,7 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 FEATURE_RUN_COMPLETED_STATUS = "completed"
 FEATURE_CHECKPOINT_NAME_ERROR = "checkpoint must be a single feature run directory name"
-RESUME_FLAG_ERROR = "Pass --checkpoint or --latest, but not both"
+RESUME_FLAG_ERROR = "Pass exactly one of --checkpoint or --latest"
 CURRENT_DIR_NAME = "."
 PARENT_DIR_NAME = ".."
 DEFAULT_BATCH_SIZE = 64
@@ -47,12 +47,13 @@ LATEST_OPTION_HELP = "Resume the newest unfinished feature run for this dataset.
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
+    """Platform settings for one feature generation command."""
+
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
     columns: PlatformSpecificColumns
     empty_message: str
-    require_all_runs_complete: bool = False
 
 
 def generate_feature_subset(features: list[str] | None) -> tuple[str, ...] | None:
@@ -120,20 +121,25 @@ def _start_new_feature_run(feature_storage: StorageManager) -> Path:
     ------
     ValueError
         When an unfinished feature run already exists. The operator must pass
-        ``resume`` with that folder's timestamp to continue it.
+        ``resume --checkpoint`` with that feature run timestamp, or
+        ``resume --latest``, to continue it.
     """
     unfinished = _unfinished_feature_run_dirs(feature_storage)
     if unfinished:
         newest = max(unfinished, key=lambda path: path.name)
         raise ValueError(
-            f"An unfinished feature run exists at {newest}; "
-            f"resume it instead of starting a new run"
+            f"An unfinished feature run exists at {newest}. "
+            f"Use resume --checkpoint {newest.name} to continue that feature run"
         )
     return feature_storage.create_new_run_dir()
 
 
 def _unfinished_feature_run_dirs(feature_storage: StorageManager) -> list[Path]:
-    """Return feature run directories whose metadata is not completed."""
+    """Return feature run directories that are not marked completed.
+
+    A directory with no ``metadata.json`` counts as unfinished. That covers a
+    crash after ``create_new_run_dir()`` and before metadata is written.
+    """
     if not feature_storage.root_dir.exists():
         return []
     unfinished: list[Path] = []
@@ -142,6 +148,7 @@ def _unfinished_feature_run_dirs(feature_storage: StorageManager) -> list[Path]:
             continue
         metadata_path = path / METADATA_FILENAME
         if not metadata_path.exists():
+            unfinished.append(path)
             continue
         metadata = feature_storage.load_run_metadata(path)
         if metadata.get("sync_status") != FEATURE_RUN_COMPLETED_STATUS:
@@ -169,6 +176,9 @@ def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -
     run_dir = feature_storage.root_dir / run_name
     if not run_dir.is_dir():
         raise FileNotFoundError(f"Run directory not found: {run_dir}")
+    metadata_path = run_dir / METADATA_FILENAME
+    if not metadata_path.exists():
+        return run_dir
     metadata = feature_storage.load_run_metadata(run_dir)
     if metadata.get("sync_status") == FEATURE_RUN_COMPLETED_STATUS:
         raise ValueError(f"Run is already completed: {run_dir}")
@@ -279,8 +289,6 @@ def _feature_label_storage(spec: FeaturePlatformSpec, dataset_id: str) -> Storag
 
 
 def _require_complete_preprocessed_runs(spec: FeaturePlatformSpec, dataset_id: str) -> None:
-    if not spec.require_all_runs_complete:
-        return
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     if preprocessed_storage.latest_run_dir() is None:
         raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
@@ -305,6 +313,14 @@ def _run_platform_feature_generation(
     )
     records = load_preprocessed_records(spec, dataset_id)
     if records.empty:
+        if checkpoint is not None:
+            build_feature_config(
+                spec,
+                dataset_id,
+                run_config=run_config,
+                features_subset=features_subset,
+                checkpoint=checkpoint,
+            )
         print(spec.empty_message)
         return {}
     config = build_feature_config(
@@ -348,6 +364,11 @@ def generate_platform_features(
 
     Raises
     ------
+    FileNotFoundError
+        When the dataset has no preprocessed run directory.
+    RuntimeError
+        When a preprocessed run is missing ``metadata.json`` or is not
+        marked complete.
     ValueError
         When an unfinished feature run already exists for this dataset.
     """
@@ -451,14 +472,14 @@ def generate_platform_features_from_checkpoint(
     Returns
     -------
     dict[str, Path]
-        Feature name to the label file written in the resumed folder.
+        Feature name to the label file written in the resumed feature run folder.
 
     Raises
     ------
     ValueError
-        When the named run is already completed.
+        When the named feature run is already completed.
     FileNotFoundError
-        When the named folder is missing.
+        When the named feature run folder is missing.
     """
     return _run_platform_feature_generation(
         spec,
@@ -504,7 +525,7 @@ def build_feature_cli_app(
             help=FEATURES_OPTION_HELP,
         ),
     ) -> None:
-        """Start a new feature run. The command exits with an error if an unfinished run already exists."""
+        """Start a new feature run under features/{timestamp}/. If an unfinished feature run already exists, you get an error."""
         generate_platform_features(
             spec,
             dataset_id,
@@ -536,7 +557,7 @@ def build_feature_cli_app(
             help=LATEST_OPTION_HELP,
         ),
     ) -> None:
-        """Resume an unfinished feature run. Pass --checkpoint or --latest."""
+        """Resume an unfinished feature run. Pass exactly one of --checkpoint or --latest."""
         dataset_id = validate_dataset_id(dataset_id)
         run_name = resolve_resume_checkpoint(
             _feature_label_storage(spec, dataset_id),

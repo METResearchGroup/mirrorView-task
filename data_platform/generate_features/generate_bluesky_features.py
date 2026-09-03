@@ -32,7 +32,6 @@ BLUESKY_SPEC = FeaturePlatformSpec(
     model_cls=PreprocessedBlueskyPostModel,
     columns=BLUESKY_COLUMNS,
     empty_message="generate_bluesky_features: no preprocessed posts found",
-    require_all_runs_complete=True,
 )
 
 app = build_feature_cli_app(
