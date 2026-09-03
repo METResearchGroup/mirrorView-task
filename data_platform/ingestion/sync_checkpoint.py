@@ -406,7 +406,16 @@ def start_new_sync_run(
     ValueError
         When an unfinished raw run already exists for this dataset.
     """
-    raise NotImplementedError
+    unfinished_dir = find_resume_run_dir(storage, run_dir_name=None)
+    if unfinished_dir is not None:
+        raise ValueError(
+            f"An unfinished raw run exists at {unfinished_dir}; resume it instead of starting a new run"
+        )
+    sync_timestamp = get_current_timestamp()
+    output_dir = storage.create_new_run_dir(sync_timestamp)
+    metadata = init_metadata_fn(sync_timestamp)
+    flush_run_metadata(storage, output_dir, metadata)
+    return output_dir, metadata
 
 
 def load_checkpoint_run(
