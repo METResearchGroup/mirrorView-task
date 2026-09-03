@@ -69,6 +69,24 @@ class TestExtractStimuliIds:
         with pytest.raises(ValueError, match=STIMULI_ID_COLUMN):
             extract_stimuli_ids(frame, "TEST_STIMULI")
 
+    def test_adds_reddit_comment_fullname_ingest_form(self) -> None:
+        """Part 2 Reddit catalog keys also skip the ingest comment_fullname form."""
+        frame = _stimuli_frame("reddit_1tnobm9_onxadx3")
+        expected = {"reddit_1tnobm9_onxadx3", "reddit_t1_onxadx3"}
+
+        result = extract_stimuli_ids(frame, "TEST_STIMULI")
+
+        assert result == expected
+
+    def test_does_not_alias_hashed_reddit_keys(self) -> None:
+        """Older hashed Reddit catalog keys stay as written."""
+        frame = _stimuli_frame("reddit_881fdcb47017d064")
+        expected = {"reddit_881fdcb47017d064"}
+
+        result = extract_stimuli_ids(frame, "TEST_STIMULI")
+
+        assert result == expected
+
 
 class TestLoadPreviouslyUsedStimuliIds:
     """Tests for load_previously_used_stimuli_ids()."""
@@ -134,6 +152,20 @@ class TestFilterPreviouslyUsedStimuli:
         result, skipped = filter_previously_used_stimuli(records, stimuli_ids)
 
         assert result["record_id"].tolist() == expected_ids
+        assert skipped == expected_skipped
+
+    def test_drops_reddit_ingest_id_for_catalog_post_comment_key(self) -> None:
+        """A Reddit ingest record_id is dropped when the catalog uses post and comment ids."""
+        records = _records_frame("reddit_t1_onxadx3")
+        stimuli_ids = extract_stimuli_ids(
+            _stimuli_frame("reddit_1tnobm9_onxadx3"),
+            "TEST_STIMULI",
+        )
+        expected_skipped = 1
+
+        result, skipped = filter_previously_used_stimuli(records, stimuli_ids)
+
+        assert result.empty
         assert skipped == expected_skipped
 
     def test_keeps_all_rows_when_no_stimuli_match(self) -> None:
