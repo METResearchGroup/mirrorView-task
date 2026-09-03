@@ -170,6 +170,9 @@ experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/**
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/high_toxic_comments.parquet
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/metadata.json
 
+# Reddit dump copies next to the spec. Source zst files live in the experiment.
+data_platform/ingestion/data_dumps/reddit/*.zst
+
 __pycache__/
 **/__pycache__/
 *.pyc
