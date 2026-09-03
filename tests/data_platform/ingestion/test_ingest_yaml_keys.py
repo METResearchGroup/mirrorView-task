@@ -17,11 +17,9 @@ UNREAD_INGEST_YAML_KEYS = frozenset(
 )
 ALLOWED_DEDUPE_POLICY_TOKENS = frozenset({PRIOR_RUN_POLICY})
 DEDUPE_POLICY_KEYS = frozenset(
-    {"dedupe_policy", "comments_dedupe_policy", "posts_dedupe_policy"}
+    {"dedupe_policy", "comments_dedupe_policy"}
 )
-REDDIT_TYPE_DEDUPE_POLICY_KEYS = frozenset(
-    {"comments_dedupe_policy", "posts_dedupe_policy"}
-)
+REDDIT_TYPE_DEDUPE_POLICY_KEYS = frozenset({"comments_dedupe_policy"})
 
 
 def _ingest_yaml_paths() -> list[Path]:
@@ -366,7 +364,7 @@ class TestDedupePolicyYamlShape:
         expected: list[str] = []
         assert found == expected
 
-    def test_committed_reddit_scale_files_override_posts(self) -> None:
+    def test_committed_reddit_scale_files_use_shared_policy(self) -> None:
         found: list[str] = []
         for name in ("mirrorview_scale.yaml", "mirrorview_scale_run_2.yaml"):
             path = INGEST_CONFIGS_DIR / "reddit" / name
@@ -377,10 +375,21 @@ class TestDedupePolicyYamlShape:
                 continue
             if params.get("dedupe_policy") != [PRIOR_RUN_POLICY]:
                 found.append(f"{path}: dedupe_policy")
-            if params.get("posts_dedupe_policy") != []:
+            if "posts_dedupe_policy" in params:
                 found.append(f"{path}: posts_dedupe_policy")
             if "comments_dedupe_policy" in params:
                 found.append(f"{path}: comments_dedupe_policy")
+        expected: list[str] = []
+        assert found == expected
+
+    def test_committed_reddit_yaml_is_comments_only(self) -> None:
+        found: list[str] = []
+        reddit_dir = INGEST_CONFIGS_DIR / "reddit"
+        for path in sorted(reddit_dir.glob("*.yaml")):
+            loaded = _load_yaml_mapping(path)
+            record_types = loaded.get("record_types")
+            if record_types != ["reddit.comment"]:
+                found.append(f"{path}: {record_types}")
         expected: list[str] = []
         assert found == expected
 
