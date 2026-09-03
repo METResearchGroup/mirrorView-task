@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+
 from lib.constants import REPO_ROOT
 
 VALID_DATASET_ID = "bluesky_00000000-0000-4000-8000-000000000001"
@@ -16,8 +18,17 @@ PREPROCESSED_RUN = "preprocessed/2026_01_01-00:00:00"
 PREPROCESSED_RUN_DIR = "2026_01_01-00:00:00"
 LABEL_TIMESTAMP = "2026_01_01-00:00:00"
 
+_BLUESKY_SAMPLE_URI = "at://did:plc:example/app.bsky.feed.post/abc"
+
+
+def expected_bluesky_record_id(uri: str) -> str:
+  """Return the bluesky_{sha256(uri)} id used in study datasets."""
+  return "bluesky_" + hashlib.sha256(uri.encode("utf-8")).hexdigest()
+
+
 SAMPLE_INGESTION_ROW = {
-    "uri": "at://did:plc:example/app.bsky.feed.post/abc",
+    "uri": _BLUESKY_SAMPLE_URI,
+    "record_id": expected_bluesky_record_id(_BLUESKY_SAMPLE_URI),
     "url": "https://bsky.app/profile/handle/post/abc",
     "author_handle": "handle",
     "text": "hello",
