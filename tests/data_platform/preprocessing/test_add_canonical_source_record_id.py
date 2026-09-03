@@ -19,7 +19,7 @@ class TestAddCanonicalSourceRecordId:
     def test_copies_reddit_comment_fullname_and_keeps_original(self) -> None:
         """Reddit comments get shared source_record_id equal to comment_fullname."""
         comment_fullname = "t1_keep"
-        source = pd.DataFrame([mock_comment_row(comment_fullname, subreddit="politics")])
+        source = pd.DataFrame([mock_comment_row(comment_fullname)])
 
         result = add_canonical_source_record_id(source, REDDIT_SPEC)
 

@@ -50,14 +50,10 @@ def _mock_submission() -> SimpleNamespace:
 
 def _mock_comment() -> SimpleNamespace:
     return SimpleNamespace(
-        id="xyz789",
         name="t1_xyz789",
-        parent_id="t3_abc123",
         author="user",
         body="comment body",
-        score=2,
         created_utc=CREATED_AT_UNIX,
-        permalink="/r/politics/comments/abc123/title/xyz789/",
     )
 
 
@@ -123,17 +119,18 @@ class TestCommentToRow:
 
     def test_writes_iso_created_at_without_created_utc(self) -> None:
         """comment_to_row writes ISO created_at and omits created_utc."""
-        result = comment_to_row(
-            _mock_comment(),
-            _mock_submission(),
-            SYNC_TIMESTAMP,
-            depth=0,
-            comment_rank=1,
-        )
+        result = comment_to_row(_mock_comment(), SYNC_TIMESTAMP)
 
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
+        assert set(result) == {
+            "comment_fullname",
+            "author",
+            "body",
+            "created_at",
+            "sync_timestamp",
+        }
         SyncRedditCommentModel.model_validate(attach_record_id(result, "reddit"))
 
 

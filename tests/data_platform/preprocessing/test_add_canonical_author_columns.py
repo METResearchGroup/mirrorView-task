@@ -19,7 +19,7 @@ class TestAddCanonicalAuthorColumns:
     def test_copies_reddit_author_onto_author_handle_and_keeps_author(self) -> None:
         """Reddit comments get shared author_handle equal to original author."""
         author = "regular_user"
-        source = pd.DataFrame([mock_comment_row("t1_keep", subreddit="politics")])
+        source = pd.DataFrame([mock_comment_row("t1_keep")])
         source.loc[0, "author"] = author
 
         result = add_canonical_author_columns(source, REDDIT_SPEC)
@@ -58,7 +58,7 @@ class TestAddCanonicalAuthorColumns:
 
     def test_overwrites_existing_author_handle_from_source_column(self) -> None:
         """An existing author_handle value is replaced by the source column."""
-        source = pd.DataFrame([mock_comment_row("t1_overwrite", subreddit="politics")])
+        source = pd.DataFrame([mock_comment_row("t1_overwrite")])
         source.loc[0, "author"] = "from_author"
         source[CANONICAL_AUTHOR_HANDLE_COLUMN] = "stale_handle"
 

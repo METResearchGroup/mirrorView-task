@@ -17,7 +17,7 @@ class TestAddCanonicalTextColumn:
     def test_copies_reddit_body_onto_text_and_keeps_body(self) -> None:
         """Reddit comments get shared text equal to original body."""
         body = "This is a clear English comment about policy and governance."
-        source = pd.DataFrame([mock_comment_row("t1_keep", subreddit="politics")])
+        source = pd.DataFrame([mock_comment_row("t1_keep")])
         source.loc[0, "body"] = body
 
         result = add_canonical_text_column(source, REDDIT_SPEC)

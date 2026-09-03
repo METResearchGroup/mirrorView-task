@@ -26,10 +26,7 @@ from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
 def _sample_preprocessed_comments(count: int = 1) -> list[dict[str, Any]]:
     rows = [
-        mock_comment_row(
-            f"t1_comment_{index}",
-            subreddit="politics",
-        )
+        mock_comment_row(f"t1_comment_{index}")
         for index in range(count)
     ]
     for row in rows:
