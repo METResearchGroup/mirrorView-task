@@ -4,6 +4,9 @@ Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \\
         --dataset-id bluesky_<uuid>
+
+    PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \\
+        --config data_platform/preprocessing/configs/bluesky/jetstream_dump.yaml
 """
 
 from __future__ import annotations
@@ -53,6 +56,22 @@ def preprocess_records(
     sample_size: int | None = None,
     sample_seed: int | None = None,
 ) -> Path:
+    """Run Bluesky preprocess, optionally sampling kept rows before write.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset identifier from ingestion or dump YAML.
+    sample_size
+        Maximum kept rows to write. ``None`` writes every kept row.
+    sample_seed
+        Seed used when ``sample_size`` is set.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the new preprocessed run directory.
+    """
     return run_preprocess_records(
         dataset_id,
         BLUESKY_SPEC,
@@ -62,13 +81,28 @@ def preprocess_records(
 
 
 def main(
-    dataset_id: str = typer.Option(
-        ...,
+    dataset_id: str | None = typer.Option(
+        None,
         "--dataset-id",
         help="Dataset identifier from ingestion YAML (bluesky_<uuid>)",
     ),
+    config: Path | None = typer.Option(
+        None,
+        "--config",
+        help="Dump or preprocess YAML with dataset_id and sample settings",
+    ),
+    sample_size: int | None = typer.Option(
+        None,
+        "--sample-size",
+        help="Override YAML sample size; omit to write every kept row",
+    ),
+    sample_seed: int | None = typer.Option(
+        None,
+        "--sample-seed",
+        help="Override YAML sample seed; required when sampling",
+    ),
 ) -> None:
-    preprocess_records(dataset_id)
+    preprocess_records(dataset_id or "", sample_size, sample_seed)
 
 
 if __name__ == "__main__":

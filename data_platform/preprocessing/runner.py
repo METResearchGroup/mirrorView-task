@@ -346,14 +346,20 @@ def preprocess_records(
     The function loads all completed raw runs and adds standardized columns.
     It then drops rows seen in prior preprocessed runs, rows already used as
     study stimuli, and duplicate ids within the batch. After that, it applies
-    platform-specific text transforms and validators, and it writes a new
-    preprocessed run directory. It also prints a one-line keep and skip
-    summary to stdout.
+    platform-specific text transforms and validators, optionally samples the
+    kept rows, and it writes a new preprocessed run directory. It also prints a
+    one-line keep and skip summary to stdout.
 
     Parameters
     ----------
     dataset_id
         Dataset identifier in ``{platform}_{uuid}`` form.
+    spec
+        Platform-specific preprocess configuration.
+    sample_size
+        Maximum kept rows to write. ``None`` writes every kept row.
+    sample_seed
+        Seed used when ``sample_size`` is set.
 
     Returns
     -------
