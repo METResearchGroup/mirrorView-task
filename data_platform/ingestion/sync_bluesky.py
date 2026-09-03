@@ -1,28 +1,23 @@
-"""Sync Bluesky posts from YAML config to raw CSV storage.
+"""Sync Bluesky posts from YAML config to storage.
 
 Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \\
         --config data_platform/ingestion/configs/bluesky/mirrorview.yaml
 
-Automatically resumes the most recent in-progress run for the dataset, or starts a new one.
-Pin a specific run to resume with --run-dir:
-
-    PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \\
-        --config data_platform/ingestion/configs/bluesky/mirrorview_scale.yaml \\
-        --run-dir 2026_05_30-12:00:00
-
-Ingestion YAML must include `dataset_id` (e.g. bluesky_<uuid>).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
+from data_platform.ingestion.integrations.bluesky import (
+    POSTS_RECORD_TYPE,
+    BlueskyClient,
+)
 from data_platform.ingestion.query_terms import quote_query_term
-from data_platform.ingestion.retry import retry_bluesky_request
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
@@ -36,11 +31,9 @@ from data_platform.ingestion.sync_checkpoint import (
     prepare_sync_run,
     require_dataset_id,
     resolve_dedupe_policy,
-    resolve_limit_per_task,
     run_checkpointed_sync,
     run_sync_cli,
 )
-from data_platform.ingestion.sync_clients import init_bluesky_client
 from data_platform.utils.config_paths import load_yaml_config
 from data_platform.utils.deduplication import (
     DedupeConfig,
@@ -48,13 +41,6 @@ from data_platform.utils.deduplication import (
     policy_includes_prior_runs,
 )
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
-
-if TYPE_CHECKING:
-    from atproto import Client
-
-API_MAX_LIMIT = 100
-
-POSTS_RECORD_TYPE = "app.bsky.feed.post"
 
 
 @dataclass(frozen=True)
@@ -78,136 +64,6 @@ def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
         keyword = raw.strip()
         items.append(BlueskyTask(task_id=keyword, query=quote_query_term(keyword)))
     return items
-
-
-def _posts_to_rows(response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
-    """Map a searchPosts API response to flat dict rows for CSV storage.
-
-    Parameters
-    ----------
-    response
-        Bluesky searchPosts API response.
-    sync_timestamp
-        Run timestamp written onto each raw row.
-    """
-    rows: list[dict[str, Any]] = []
-    for post in response.posts:
-        rkey = post.uri.split("/")[-1]
-        rows.append(
-            {
-                "uri": post.uri,
-                "url": f"https://bsky.app/profile/{post.author.handle}/post/{rkey}",
-                "author_handle": post.author.handle,
-                "text": post.record.text,  # type: ignore[union-attr]
-                "created_at": post.record.created_at,  # type: ignore[union-attr]
-                "like_count": post.like_count,
-                "repost_count": post.repost_count,
-                "reply_count": post.reply_count,
-                "quote_count": post.quote_count,
-                "sync_timestamp": sync_timestamp,
-            }
-        )
-    return rows
-
-
-def _resolve_search_author(ingestion_params: dict[str, Any]) -> str | None:
-    """Return ingestion_params author_filter when non-empty, else None."""
-    author = ingestion_params.get("author_filter")
-    if author:
-        return author
-    return None
-
-
-@retry_bluesky_request()
-def _search_posts_page(
-    client: Client,
-    ingestion_params: dict[str, Any],
-    query: str,
-    *,
-    page_limit: int,
-    cursor: str | None = None,
-) -> Any:
-    """Fetch one page of searchPosts results, optionally scoped to one author."""
-    base_params = {
-        "q": query,
-        "limit": page_limit,
-        "sort": ingestion_params.get("sort", "latest"),
-    }
-    if cursor:
-        base_params["cursor"] = cursor
-    author = _resolve_search_author(ingestion_params)
-    if author:
-        return client.app.bsky.feed.search_posts(
-            params={**base_params, "author": author},  # type: ignore[arg-type]
-        )
-    return client.app.bsky.feed.search_posts(params=base_params)  # type: ignore[arg-type]
-
-
-def fetch_posts_for_keyword(
-    client: Client,
-    ingestion_params: dict[str, Any],
-    query: str,
-    *,
-    task_id: str,
-    sync_timestamp: str,
-    remaining_posts: int | None = None,
-) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    """Paginate searchPosts until limit rows are collected or results are exhausted.
-
-    Parameters
-    ----------
-    sync_timestamp
-        Run timestamp written onto each raw row.
-
-    Returns
-    -------
-    tuple[list[dict[str, Any]], dict[str, Any]]
-        Rows and per-task stats (pages fetched, hits_total from the first page, etc.).
-    """
-    target = resolve_limit_per_task(ingestion_params)
-    if remaining_posts is not None:
-        target = min(target, remaining_posts)
-    if target <= 0:
-        stats = {
-            "task_id": task_id,
-            "query_len": len(query),
-            "per_query_limit": target,
-            "pages_fetched": 0,
-            "rows_collected": 0,
-            "hits_total": None,
-        }
-        return [], stats
-    rows: list[dict[str, Any]] = []
-    cursor: str | None = None
-    pages_fetched = 0
-    hits_total: int | None = None
-
-    while len(rows) < target:
-        page_limit = min(target - len(rows), API_MAX_LIMIT)
-        response = _search_posts_page(
-            client, ingestion_params, query, page_limit=page_limit, cursor=cursor
-        )
-        if pages_fetched == 0:
-            hits_total = response.hits_total
-        page_rows = _posts_to_rows(response, sync_timestamp)
-        if not page_rows:
-            break
-        rows.extend(page_rows)
-        pages_fetched += 1
-        cursor = response.cursor
-        if not cursor:
-            break
-
-    rows = rows[:target]
-    stats = {
-        "task_id": task_id,
-        "query_len": len(query),
-        "per_query_limit": target,
-        "pages_fetched": pages_fetched,
-        "rows_collected": len(rows),
-        "hits_total": hits_total,
-    }
-    return rows, stats
 
 
 def _initial_task_progress(task: BlueskyTask) -> dict[str, Any]:
@@ -240,7 +96,7 @@ def init_sync_metadata(
 
 
 def run_sync_tasks(
-    client: Client,
+    client: BlueskyClient,
     ingestion_params: dict[str, Any],
     output_dir: Path,
     storage: BlueskyStorageManager,
@@ -277,8 +133,7 @@ def run_sync_tasks(
                 return
 
         try:
-            rows, stats = fetch_posts_for_keyword(
-                client,
+            result = client.fetch_posts_for_keyword(
                 ingestion_params,
                 task.query,
                 task_id=task.task_id,
@@ -289,8 +144,8 @@ def run_sync_tasks(
             mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
             return
 
-        result = storage.append_deduped_records(
-            rows,
+        storage_result = storage.append_deduped_records(
+            result.rows,
             output_dir,
             dedupe_session=dedupe_session,
             filename=filename,
@@ -298,7 +153,7 @@ def run_sync_tasks(
         increment_duplicate_skip_counters(
             metadata,
             record_type=POSTS_RECORD_TYPE,
-            skipped=result.skipped,
+            skipped=storage_result.skipped,
         )
         metadata["row_count"] = len(dedupe_session.seen_ids)
         mark_task_completed(
@@ -307,15 +162,15 @@ def run_sync_tasks(
             output_dir,
             metadata,
             entry_updates={
-                "pages_fetched": stats["pages_fetched"],
-                "rows_collected": stats["rows_collected"],
-                "hits_total": stats["hits_total"],
+                "pages_fetched": result.stats["pages_fetched"],
+                "rows_collected": result.stats["rows_collected"],
+                "hits_total": result.stats["hits_total"],
             },
         )
 
         print(
-            f"sync_records: {task.task_id} -> {stats['rows_collected']} rows "
-            f"(appended {result.kept}, pages={stats['pages_fetched']})"
+            f"sync_records: {task.task_id} -> {result.stats['rows_collected']} rows "
+            f"(appended {storage_result.kept}, pages={result.stats['pages_fetched']})"
         )
 
     run_checkpointed_sync(
@@ -361,7 +216,7 @@ def sync_records(
         raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
 
     filename = storage.records_filename
-    client = init_bluesky_client()
+    client = BlueskyClient()
 
     output_dir, metadata = prepare_sync_run(
         storage,
