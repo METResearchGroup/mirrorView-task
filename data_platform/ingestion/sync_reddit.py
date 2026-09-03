@@ -112,10 +112,12 @@ def comment_to_row(
     depth: int,
     comment_rank: int,
 ) -> dict[str, Any]:
-    """Normalize a PRAW Comment to a flat dict matching the comment CSV schema.
+    """Normalize a PRAW Comment to the slim comment CSV payload.
 
-    ``created_at`` is UTC ISO-8601 from the payload unix time. Output has no
-    ``created_utc`` column.
+    Output fields are ``comment_fullname``, ``author``, ``body``,
+    ``created_at``, and ``sync_timestamp``. ``created_at`` is UTC ISO-8601
+    from the payload unix time. Tree position and post geometry are not
+    written.
     """
     author = "[deleted]" if comment.author is None else str(comment.author)
     created_at = datetime.fromtimestamp(comment.created_utc, tz=timezone.utc).isoformat()
@@ -182,7 +184,11 @@ def fetch_post_comments(
     min_body_length: int,
     sync_timestamp: str,
 ) -> list[dict[str, Any]]:
-    """Collect up to max_comments eligible comments for a submission."""
+    """Collect up to max_comments eligible comments for a submission.
+
+    The comment-forest walk still applies stickied, distinguished, and
+    min-length filters. Tree depth and rank are not stored on the row.
+    """
     rows: list[dict[str, Any]] = []
     submission.comments.replace_more(limit=0)
 
