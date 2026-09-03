@@ -7,10 +7,12 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import re
+
 import boto3
 
-
 DEFAULT_REGION = "us-east-2"
+ALLOWED_FIRST_TOKENS = frozenset({"SELECT", "WITH"})
 
 
 class Athena:
@@ -43,6 +45,7 @@ class Athena:
         RuntimeError
             When Athena reports FAILED or CANCELLED.
         """
+        _validate_read_only_query(query)
         raise NotImplementedError
 
     def get_output_location(self, execution_id: str) -> str:
@@ -59,3 +62,30 @@ class Athena:
             S3 URI of the query result object.
         """
         raise NotImplementedError
+
+
+def _strip_leading_sql_comments(query: str) -> str:
+    remaining = query.lstrip()
+    while remaining.startswith("--"):
+        newline_index = remaining.find("\n")
+        if newline_index == -1:
+            return ""
+        remaining = remaining[newline_index + 1 :].lstrip()
+    return remaining
+
+
+def _first_sql_token(query: str) -> str:
+    remaining = _strip_leading_sql_comments(query)
+    match = re.match(r"(\w+)", remaining, flags=re.IGNORECASE)
+    if match is None:
+        return ""
+    return match.group(1).upper()
+
+
+def _validate_read_only_query(query: str) -> None:
+    first_token = _first_sql_token(query)
+    if first_token in ALLOWED_FIRST_TOKENS:
+        return
+    if not first_token:
+        raise ValueError("Query must start with SELECT or WITH")
+    raise ValueError(f"Only read-only SELECT queries are allowed, got {first_token}")
