@@ -22,8 +22,8 @@ flowchart TD
   step4a["(a) already preprocessed"]
   step4b["(b) duplicate records"]
   step4c["(c) already used as stimuli"]
-  step5["5. Filter out records based on integration-specific validators"]
-  step6["6. Do integration-specific preprocessing"]
+  step5["5. Do integration-specific preprocessing"]
+  step6["6. Filter out records based on integration-specific validators."]
 
   step1 --> step2 --> step3 --> step4
   step4 --> step4a
