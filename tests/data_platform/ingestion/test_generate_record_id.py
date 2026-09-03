@@ -13,7 +13,7 @@ from data_platform.ingestion.generate_record_id import (
     generate_record_id,
     generate_reddit_record_id,
 )
-from tests.data_platform.ingestion.reddit_conftest import mock_comment_row, mock_post_row
+from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
 
@@ -79,18 +79,9 @@ class TestGenerateRedditRecordId:
 
         assert result == expected
 
-    def test_prefixes_post_fullname(self) -> None:
-        """Post rows use reddit_{reddit_fullname}."""
-        source = mock_post_row("t3_abc123")
-        expected = f"{INTEGRATION_REDDIT}_t3_abc123"
-
-        result = generate_reddit_record_id(source)
-
-        assert result == expected
-
-    def test_raises_when_comment_and_post_fields_are_missing(self) -> None:
-        """Rows that are neither comments nor posts are caller errors."""
-        with pytest.raises(KeyError):
+    def test_raises_when_comment_fullname_is_missing(self) -> None:
+        """Rows without comment_fullname are caller errors."""
+        with pytest.raises(KeyError, match="comment_fullname"):
             generate_reddit_record_id({"subreddit": "politics"})
 
 

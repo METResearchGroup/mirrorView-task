@@ -15,12 +15,11 @@ import pytest
 
 from data_platform.ingestion.generate_record_id import attach_record_id
 from data_platform.ingestion.integrations.bluesky import BlueskyClient
-from data_platform.ingestion.sync_reddit import comment_to_row, submission_to_row
+from data_platform.ingestion.sync_reddit import comment_to_row
 from data_platform.ingestion.twitter_client import tweet_to_row
 from data_platform.models.sync import (
     SyncBlueskyPostModel,
     SyncRedditCommentModel,
-    SyncRedditPostModel,
     SyncTwitterPostModel,
 )
 from tests.data_platform.ingestion.conftest import mock_post, mock_search_response
@@ -28,24 +27,6 @@ from tests.data_platform.ingestion.conftest import mock_post, mock_search_respon
 SYNC_TIMESTAMP = "2026_05_30-10:00:00"
 CREATED_AT_ISO = "2026-05-30T00:00:00+00:00"
 CREATED_AT_UNIX = datetime(2026, 5, 30, tzinfo=timezone.utc).timestamp()
-
-
-def _mock_submission() -> SimpleNamespace:
-    return SimpleNamespace(
-        id="abc123",
-        name="t3_abc123",
-        subreddit=SimpleNamespace(display_name="politics"),
-        title="title",
-        selftext="body",
-        author="user",
-        score=1,
-        upvote_ratio=0.5,
-        num_comments=1,
-        created_utc=CREATED_AT_UNIX,
-        permalink="/r/politics/comments/abc123/title/",
-        url="https://reddit.com/r/politics/comments/abc123/title/",
-        is_self=True,
-    )
 
 
 def _mock_comment() -> SimpleNamespace:
@@ -99,19 +80,6 @@ class TestFetchPostsForKeyword:
         assert result.rows[0]["created_at"] == expected_created_at
         assert result.rows[0]["sync_timestamp"] == SYNC_TIMESTAMP
         SyncBlueskyPostModel.model_validate(attach_record_id(result.rows[0], "bluesky"))
-
-
-class TestSubmissionToRow:
-    """Tests for submission_to_row()."""
-
-    def test_writes_iso_created_at_without_created_utc(self) -> None:
-        """submission_to_row writes ISO created_at and omits created_utc."""
-        result = submission_to_row(_mock_submission(), SYNC_TIMESTAMP)
-
-        assert result["created_at"] == CREATED_AT_ISO
-        assert "created_utc" not in result
-        assert result["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncRedditPostModel.model_validate(attach_record_id(result, "reddit"))
 
 
 class TestCommentToRow:
