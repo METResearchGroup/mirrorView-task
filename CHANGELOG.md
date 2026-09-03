@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-03
+
+1. Bluesky ingest now delegates all API client work to `BlueskyClient` in `data_platform/ingestion/integrations/bluesky.py`, so `sync_bluesky.py` focuses on orchestration and the client can be tested independently. [PR #143](https://github.com/METResearchGroup/mirrorView-task/pull/143)
+
 ## 2026-09-02
 
 1. Preprocess now owns length and English gates for stimuli-ready text. Reddit comments also need at least 30 characters. Ingest fetch filters are unchanged. [PR #132](https://github.com/METResearchGroup/mirrorView-task/pull/132)
