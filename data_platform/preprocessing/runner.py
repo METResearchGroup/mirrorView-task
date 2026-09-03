@@ -338,6 +338,8 @@ def apply_integration_specific_preprocessing(
 def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
+    sample_size: int | None = None,
+    sample_seed: int | None = None,
 ) -> Path:
     """Run the full preprocessing pipeline for one dataset and persist the result.
 

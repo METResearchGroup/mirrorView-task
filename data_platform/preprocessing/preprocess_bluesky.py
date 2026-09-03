@@ -48,8 +48,17 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
 )
 
 
-def preprocess_records(dataset_id: str) -> Path:
-    return run_preprocess_records(dataset_id, BLUESKY_SPEC)
+def preprocess_records(
+    dataset_id: str,
+    sample_size: int | None = None,
+    sample_seed: int | None = None,
+) -> Path:
+    return run_preprocess_records(
+        dataset_id,
+        BLUESKY_SPEC,
+        sample_size,
+        sample_seed,
+    )
 
 
 def main(
