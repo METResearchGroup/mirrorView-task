@@ -171,7 +171,13 @@ def feature_run_dir(
         When the named checkpoint folder is missing, or when ``latest`` is set
         and no unfinished feature run exists.
     """
-    raise NotImplementedError
+    if checkpoint is not None and latest:
+        raise ValueError(FEATURE_CHECKPOINT_OR_LATEST_ERROR)
+    if latest:
+        return _latest_unfinished_feature_run_dir(feature_storage)
+    if checkpoint is not None:
+        return _load_feature_checkpoint(feature_storage, checkpoint)
+    return _start_new_feature_run(feature_storage)
 
 
 def build_feature_config(
