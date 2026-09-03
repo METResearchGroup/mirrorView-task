@@ -12,7 +12,7 @@ import time
 from typing import Any
 
 import boto3
-from botocore.exceptions import BotoCoreError
+from botocore.exceptions import BotoCoreError, ClientError
 
 DEFAULT_REGION = "us-east-2"
 ALLOWED_FIRST_TOKENS = frozenset({"SELECT", "WITH"})
@@ -170,5 +170,5 @@ def _raise_if_query_timed_out(
 def _cancel_query_execution(client: Any, execution_id: str) -> None:
     try:
         client.stop_query_execution(QueryExecutionId=execution_id)
-    except BotoCoreError:
+    except (BotoCoreError, ClientError):
         return
