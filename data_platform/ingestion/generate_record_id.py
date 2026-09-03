@@ -18,7 +18,6 @@ from data_platform.utils.platform_specific_columns import (
 )
 
 RECORD_ID_COLUMN = "record_id"
-REDDIT_POST_RECORDS_ID_COLUMN = "reddit_fullname"
 
 INTEGRATION_BLUESKY = "bluesky"
 INTEGRATION_REDDIT = "reddit"
@@ -46,7 +45,7 @@ def generate_record_id(integration: str, primary_key: str) -> str:
         Platform name: ``bluesky``, ``reddit``, or ``twitter``.
     primary_key
         Platform-native unique id for the row. Reddit comments use
-        ``comment_fullname``, and Reddit posts use ``reddit_fullname``.
+        ``comment_fullname``.
 
     Returns
     -------
@@ -74,16 +73,14 @@ def generate_record_id(integration: str, primary_key: str) -> str:
 
 
 def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
-    """Return ``record_id`` for a Reddit post or comment row.
+    """Return ``record_id`` for a Reddit comment row.
 
-    Comments use ``reddit_{comment_fullname}``, and posts use
-    ``reddit_{reddit_fullname}``.
+    Comments use ``reddit_{comment_fullname}``.
 
     Parameters
     ----------
     row
-        One Reddit ingest record. Comment rows must include
-        ``comment_fullname``, and post rows must include ``reddit_fullname``.
+        One Reddit ingest record. Must include ``comment_fullname``.
 
     Returns
     -------
@@ -93,24 +90,18 @@ def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
     Raises
     ------
     KeyError
-        When the row is neither a comment nor a post with the expected fields.
+        When ``comment_fullname`` is missing from the row.
     ValueError
-        When a required id value is empty.
+        When ``comment_fullname`` is empty.
     """
     comment_fullname_column = REDDIT_COLUMNS.records_id_column
-    if comment_fullname_column in row:
-        comment_fullname = str(row[comment_fullname_column]).strip()
-        if not comment_fullname:
-            raise ValueError("Reddit comments need comment_fullname.")
-        return generate_record_id(INTEGRATION_REDDIT, comment_fullname)
+    if comment_fullname_column not in row:
+        raise KeyError(comment_fullname_column)
 
-    if REDDIT_POST_RECORDS_ID_COLUMN not in row:
-        raise KeyError(REDDIT_POST_RECORDS_ID_COLUMN)
-
-    reddit_fullname = str(row[REDDIT_POST_RECORDS_ID_COLUMN]).strip()
-    if not reddit_fullname:
-        raise ValueError("Primary key must be a non-empty string.")
-    return generate_record_id(INTEGRATION_REDDIT, reddit_fullname)
+    comment_fullname = str(row[comment_fullname_column]).strip()
+    if not comment_fullname:
+        raise ValueError("Reddit comments need comment_fullname.")
+    return generate_record_id(INTEGRATION_REDDIT, comment_fullname)
 
 
 def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]:
