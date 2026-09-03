@@ -32,12 +32,7 @@ AUTHOR_COLUMN = "author"
 
 @dataclass(frozen=True)
 class PreprocessPlatformSpec:
-    """Platform-specific configuration for the shared preprocessing pipeline.
-
-    Bundles storage access, record models, column names, validators, and
-    optional text transforms so platform entrypoints can delegate to
-    :func:`preprocess_records` without reimplementing the flow.
-    """
+    """Platform-specific configuration for the shared preprocessing pipeline."""
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
@@ -131,8 +126,7 @@ def passes_row_validators(
     return all(validator(author) for validator in validators)
 
 
-def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFrame:
-    """Return only rows whose text (and optional author) pass every validator."""
+def apply_integration_specific_filters(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFrame:
     if df.empty:
         return df.copy()
 
@@ -201,7 +195,7 @@ def load_raw_records(
     return records, run_dirs
 
 
-def save_preprocessed(
+def export_preprocessed_records(
     records: pd.DataFrame,
     spec: PreprocessPlatformSpec,
     dataset_id: str,
@@ -291,12 +285,7 @@ def filter_duplicate_records(
     spec: PreprocessPlatformSpec,
     dataset_id: str,
 ) -> tuple[pd.DataFrame, int]:
-    """Drop rows whose id appears in prior preprocessed runs, then collapse duplicates.
-
-    Loads seen ids from every preprocessed run (4a), drops matching rows, and
-    counts those drops as ``skipped``. Collapses remaining duplicate ids within
-    the candidate batch, keeping the last row per id (4b). Stimuli-skip dedupe
-    (4c) is out of scope.
+    """Filters duplicate records. Check the README.md for how this works.
 
     Returns
     -------
@@ -314,64 +303,16 @@ def filter_duplicate_records(
     is_new = ~records[id_col].isin(list(dedupe_session.seen_ids))
     skipped = len(records) - int(is_new.sum())
     kept = records.loc[is_new].reset_index(drop=True)
-    surviving = collapse_candidates_by_id(kept, id_col, keep="last")
-    return surviving, skipped
+    output = collapse_candidates_by_id(kept, id_col, keep="last")
+    return output, skipped
 
 
 def apply_integration_specific_preprocessing(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
-    """Apply platform-specific text transforms before filtering.
-
-    Delegates to :func:`apply_text_transform`. When ``spec.text_transform`` is
-    set (Twitter sets ``strip_tco_links`` to remove ``t.co`` URLs), the
-    transform runs on ``spec.columns.text_column``. Empty frames and specs
-    without a transform are returned unchanged.
-    """
+    """Apply platform-specific text transforms before filtering."""
     return apply_text_transform(df, spec)
-
-
-def apply_integration_specific_filters(
-    df: pd.DataFrame,
-    spec: PreprocessPlatformSpec,
-) -> pd.DataFrame:
-    """Apply platform-specific row/text validators after preprocessing.
-
-    Delegates to :func:`filter_records`. Each row must pass every
-    ``spec.text_validators`` on ``spec.columns.text_column``. When
-    ``spec.row_validators`` is non-empty, the ``author`` column must pass
-    those validators as well. Empty frames are returned unchanged.
-    """
-    return filter_records(df, spec)
-
-
-def export_preprocessed_records(
-    records: pd.DataFrame,
-    spec: PreprocessPlatformSpec,
-    dataset_id: str,
-    input_count: int,
-    *,
-    source_raw_run_dirs: list[Path],
-) -> Path:
-    """Persist preprocessed records to a new timestamped run directory.
-
-    Creates a new preprocessed run, writes the records file, and saves run
-    metadata including ``dataset_id``, ``source_raw_runs``, and ``row_counts``
-    (``input`` from ``input_count``, ``output`` from surviving rows).
-
-    Returns
-    -------
-    Path
-        The new preprocessed run directory path.
-    """
-    return save_preprocessed(
-        records,
-        spec,
-        dataset_id,
-        input_count,
-        source_raw_run_dirs=source_raw_run_dirs,
-    )
 
 
 def preprocess_records(
@@ -406,10 +347,6 @@ def preprocess_records(
         When a raw run is incomplete.
     KeyError
         When a required source column is missing during standardization.
-
-    Notes
-    -----
-    Does not skip records already used as experiment stimuli (README step 4c).
     """
     dataset_id = validate_dataset_id(dataset_id)
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
