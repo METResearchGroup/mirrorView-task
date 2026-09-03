@@ -212,7 +212,7 @@ def collapse_candidates_by_id(
     pd.DataFrame
         One row per id, index reset.
     """
-    raise NotImplementedError
+    return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 
 
 def _drop_already_preprocessed(
