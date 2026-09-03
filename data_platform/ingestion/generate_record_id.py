@@ -13,13 +13,12 @@ from typing import Any, Mapping
 
 from data_platform.utils.platform_specific_columns import (
     BLUESKY_COLUMNS,
+    REDDIT_COLUMNS,
     TWITTER_COLUMNS,
 )
 
 RECORD_ID_COLUMN = "record_id"
 REDDIT_POST_RECORDS_ID_COLUMN = "reddit_fullname"
-REDDIT_COMMENT_POST_ID_COLUMN = "post_reddit_id"
-REDDIT_COMMENT_ID_COLUMN = "comment_id"
 
 INTEGRATION_BLUESKY = "bluesky"
 INTEGRATION_REDDIT = "reddit"
@@ -46,8 +45,8 @@ def generate_record_id(integration: str, primary_key: str) -> str:
     integration
         Platform name: ``bluesky``, ``reddit``, or ``twitter``.
     primary_key
-        Platform-native unique id for the row. For Reddit, pass the already
-        joined post-and-comment key or the post fullname.
+        Platform-native unique id for the row. Reddit comments use
+        ``comment_fullname``. Reddit posts use ``reddit_fullname``.
 
     Returns
     -------
@@ -77,14 +76,14 @@ def generate_record_id(integration: str, primary_key: str) -> str:
 def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
     """Return ``record_id`` for a Reddit post or comment row.
 
-    Comments use ``reddit_{post_reddit_id}_{comment_id}``. Posts use
+    Comments use ``reddit_{comment_fullname}``. Posts use
     ``reddit_{reddit_fullname}``.
 
     Parameters
     ----------
     row
-        One Reddit ingest record. Comment rows must include ``post_reddit_id``
-        and ``comment_id``. Post rows must include ``reddit_fullname``.
+        One Reddit ingest record. Comment rows must include
+        ``comment_fullname``. Post rows must include ``reddit_fullname``.
 
     Returns
     -------
@@ -98,12 +97,12 @@ def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
     ValueError
         When a required id value is empty.
     """
-    if REDDIT_COMMENT_POST_ID_COLUMN in row and REDDIT_COMMENT_ID_COLUMN in row:
-        post_id = str(row[REDDIT_COMMENT_POST_ID_COLUMN]).strip()
-        comment_id = str(row[REDDIT_COMMENT_ID_COLUMN]).strip()
-        if not post_id or not comment_id:
-            raise ValueError("Reddit comments need post_reddit_id and comment_id.")
-        return generate_record_id(INTEGRATION_REDDIT, f"{post_id}_{comment_id}")
+    comment_fullname_column = REDDIT_COLUMNS.records_id_column
+    if comment_fullname_column in row:
+        comment_fullname = str(row[comment_fullname_column]).strip()
+        if not comment_fullname:
+            raise ValueError("Reddit comments need comment_fullname.")
+        return generate_record_id(INTEGRATION_REDDIT, comment_fullname)
 
     if REDDIT_POST_RECORDS_ID_COLUMN not in row:
         raise KeyError(REDDIT_POST_RECORDS_ID_COLUMN)
