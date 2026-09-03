@@ -137,6 +137,18 @@ class TestPromoteDumpSourcesToRaw:
         storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
         assert storage.records_filename == COMMENTS_PARQUET_FILENAME
 
+    def test_rejects_csv_output_format(self, data_root: Path, tmp_path: Path) -> None:
+        may_source, june_source = _write_source_pair(tmp_path)
+        config_path = _write_dump_config(
+            tmp_path, may_source=may_source, june_source=june_source
+        )
+        payload = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+        payload["output_format"] = "csv"
+        config_path.write_text(yaml.safe_dump(payload), encoding="utf-8")
+
+        with pytest.raises(ValueError, match="parquet"):
+            promote_dump_sources_to_raw(config_path, data_root)
+
 
 def test_committed_dump_yaml_pins_dataset_and_sources() -> None:
     payload = yaml.safe_load(DUMP_DATASET_CONFIG.read_text(encoding="utf-8"))

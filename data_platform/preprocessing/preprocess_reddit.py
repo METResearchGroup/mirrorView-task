@@ -1,9 +1,13 @@
-"""Preprocess Reddit comments from raw CSV storage to filtered preprocessed output.
+"""Filter Reddit comments from a raw run and write the comments that pass.
 
-Run from the repo root:
+Run from the repo root. Pass ``--dataset-id`` to read a live dataset and write
+every comment that passes the filters.
 
     PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \\
         --dataset-id reddit_<uuid>
+
+Pass ``--config`` with the dump YAML to read parquet raw runs and keep at most
+200,000 comments that pass the filters per month file.
 
     PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \\
         --config data_platform/ingestion/data_dumps/reddit/pushshift_dump.yaml

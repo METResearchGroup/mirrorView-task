@@ -84,6 +84,19 @@ def _source_jobs(config: dict[str, Any]) -> list[tuple[Path, str]]:
     return jobs
 
 
+def _require_unique_raw_runs(jobs: list[tuple[Path, str]]) -> None:
+    raw_runs = [raw_run for _source_path, raw_run in jobs]
+    if len(raw_runs) != len(set(raw_runs)):
+        raise ValueError("dump config sources must use unique raw_run names")
+
+
+def _require_parquet_format(config: dict[str, Any]) -> ValidDataFormats:
+    raw_format = config.get(OUTPUT_FORMAT_KEY)
+    if raw_format != ValidDataFormats.PARQUET.value:
+        raise ValueError("dump config output_format must be parquet")
+    return ValidDataFormats.PARQUET
+
+
 def _require_sources_and_destinations(
     jobs: list[tuple[Path, str]],
     dataset_dir: Path,
@@ -178,9 +191,10 @@ def promote_dump_sources_to_raw(
     dataset_id = require_dataset_id(config, platform=PLATFORM_REDDIT)
     dataset_dir = _resolve_dataset_root(dataset_id, data_root)
     jobs = _source_jobs(config)
+    _require_unique_raw_runs(jobs)
     _require_sources_and_destinations(jobs, dataset_dir)
     ingestion_config = _stored_path(config_path)
-    output_format = ValidDataFormats(config.get(OUTPUT_FORMAT_KEY, "csv"))
+    output_format = _require_parquet_format(config)
     _write_dataset_manifest(
         dataset_dir,
         dataset_id,
