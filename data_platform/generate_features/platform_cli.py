@@ -346,7 +346,12 @@ def require_latest_unfinished_feature_run_dir(feature_storage: StorageManager) -
     FileNotFoundError
         When no unfinished feature run exists.
     """
-    raise NotImplementedError
+    unfinished = _unfinished_feature_run_dirs(feature_storage)
+    if not unfinished:
+        raise FileNotFoundError(
+            f"No unfinished feature run exists under {feature_storage.root_dir}"
+        )
+    return max(unfinished, key=lambda path: path.name)
 
 
 def resolve_resume_checkpoint(
