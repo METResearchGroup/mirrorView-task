@@ -168,6 +168,12 @@ class RedditTask:
 
 @dataclass(frozen=True)
 class SubredditFetchResult:
+    """Comments and listing stats from one subreddit fetch.
+
+    ``stats`` includes ``submissions_scanned`` (listing length) and
+    ``comments_collected``. Submissions are not stored.
+    """
+
     comment_rows: list[dict[str, Any]]
     stats: dict[str, Any]
 
@@ -252,7 +258,21 @@ def fetch_records_for_subreddit(
     *,
     sync_timestamp: str,
 ) -> SubredditFetchResult:
-    """Fetch comments for a single subreddit by walking listing submissions."""
+    """Fetch comments for a single subreddit by walking listing submissions.
+
+    ``limit_per_task`` is how many submissions to open. Eligible comments are
+    collected from each comment forest. Submissions are not returned as rows.
+
+    Returns
+    -------
+    SubredditFetchResult
+        Comment rows plus stats, including ``submissions_scanned``.
+
+    Raises
+    ------
+    ValueError
+        When listing settings in ``ingestion_params`` are invalid.
+    """
     limit = resolve_limit_per_task(ingestion_params)
     listing = str(ingestion_params.get("listing", DEFAULT_LISTING))
     listing_time_filter = _resolve_listing_time_filter(ingestion_params, listing)
@@ -402,7 +422,7 @@ def run_sync_tasks(
     """Run the checkpointed subreddit loop and write comments.
 
     Filenames come from ``storage.records_filename`` so the suffix matches the
-    dataset format.
+    dataset format. The run does not write a submissions file.
     """
     max_comments_int = parse_max_comments(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
@@ -476,9 +496,16 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Reddit records per config and write raw records plus metadata.
+    """Fetch Reddit comments per config and write a comments file plus metadata.
 
     Creates the dataset manifest first so storage can read the declared format.
+    PRAW listings are opened only so comments can be collected.
+
+    Raises
+    ------
+    ValueError
+        When ``record_types`` omits ``reddit.comment`` or includes
+        ``reddit.post``.
     """
     config = load_config(config_path)
     dataset_id = require_dataset_id(config, platform="reddit")
