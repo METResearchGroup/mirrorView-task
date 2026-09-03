@@ -12,7 +12,12 @@ import zstandard as zstd
 
 from data_platform.ingestion.data_dumps.reddit.filters import keep_dump_comment
 from data_platform.ingestion.data_dumps.reddit.models import DumpCommentRaw
-from data_platform.ingestion.data_dumps.reddit.process_dump import main, process_dump_file
+from data_platform.ingestion.data_dumps.reddit.process_dump import (
+    SOURCE_DUMP_DIR,
+    _input_paths,
+    main,
+    process_dump_file,
+)
 from data_platform.ingestion.data_dumps.reddit.reader import iter_dump_comments
 from data_platform.ingestion.data_dumps.reddit.sample import reservoir_sample
 from data_platform.ingestion.data_dumps.reddit.transform import dump_comment_to_sync_row
@@ -307,3 +312,18 @@ class TestMain:
         assert len(second_frame) == 1
         assert first_frame.iloc[0]["sync_timestamp"] == SYNC_TIMESTAMP
         assert second_frame.iloc[0]["sync_timestamp"] == SYNC_TIMESTAMP
+
+
+class TestInputPaths:
+    """Tests for _input_paths()."""
+
+    def test_defaults_to_experiment_month_files(self) -> None:
+        """With no --input-file, the May and June experiment dumps are used."""
+        expected = [
+            SOURCE_DUMP_DIR / "RC_2025-05.zst",
+            SOURCE_DUMP_DIR / "RC_2025-06.zst",
+        ]
+
+        result = _input_paths(None)
+
+        assert result == expected

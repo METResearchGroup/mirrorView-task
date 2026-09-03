@@ -4,10 +4,12 @@ Run this from the repo root.
 
     PYTHONPATH=. uv run python data_platform/ingestion/data_dumps/reddit/process_dump.py
 
-To process one file, pass `--input-file` like this.
+With no ``--input-file``, the command reads the May and June dump files in
+``experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/bolun/comments/``.
+To process one file, pass ``--input-file``.
 
     PYTHONPATH=. uv run python data_platform/ingestion/data_dumps/reddit/process_dump.py \\
-        --input-file data_platform/ingestion/data_dumps/reddit/RC_2025-05.zst
+        --input-file experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/bolun/comments/RC_2025-05.zst
 """
 
 from __future__ import annotations
@@ -31,6 +33,9 @@ from data_platform.ingestion.data_dumps.reddit.transform import dump_comment_to_
 from data_platform.models.sync import SyncRedditCommentModel
 from lib.timestamp_utils import get_current_timestamp
 
+SOURCE_DUMP_DIR = Path(
+    "experiments/fetch_reddit_pushshift_dump_2026_06_15/data/raw/bolun/comments"
+)
 DUMP_DIR = Path("data_platform/ingestion/data_dumps/reddit")
 FILTERED_DIR = DUMP_DIR / "filtered"
 DEFAULT_DUMP_STEMS = ("RC_2025-05", "RC_2025-06")
@@ -129,7 +134,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
 def _input_paths(input_files: Sequence[str] | None) -> list[Path]:
     if input_files:
         return [Path(path) for path in input_files]
-    return [DUMP_DIR / f"{stem}{ZST_SUFFIX}" for stem in DEFAULT_DUMP_STEMS]
+    return [SOURCE_DUMP_DIR / f"{stem}{ZST_SUFFIX}" for stem in DEFAULT_DUMP_STEMS]
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -143,6 +148,7 @@ def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     for input_path in _input_paths(args.input_files):
         output_path = args.output_dir / f"{input_path.stem}{PARQUET_SUFFIX}"
+        print(f"Processing {input_path} -> {output_path}", flush=True)
         process_dump_file(
             input_path,
             output_path,
@@ -150,6 +156,7 @@ def main(argv: list[str] | None = None) -> None:
             args.seed,
             get_current_timestamp(),
         )
+        print(f"Wrote {output_path}", flush=True)
 
 
 if __name__ == "__main__":
