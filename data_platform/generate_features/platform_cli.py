@@ -389,28 +389,10 @@ def generate_platform_features(
     )
 
 
-def build_feature_cli_app(
-    spec: FeaturePlatformSpec,
-    dataset_id_help: str,
-) -> typer.Typer:
-    """Return a Typer app whose optional ``--checkpoint`` continues an unfinished feature run.
+def build_feature_cli_main(spec: FeaturePlatformSpec, dataset_id_help: str):
+    """Return the Typer command for one platform feature-generation script."""
 
-    Parameters
-    ----------
-    spec
-        Platform storage, model, and column spec.
-    dataset_id_help
-        Help text for ``--dataset-id``.
-
-    Returns
-    -------
-    typer.Typer
-        CLI that starts a new feature run unless ``--checkpoint`` is passed.
-    """
-    app = typer.Typer(no_args_is_help=True)
-
-    @app.callback(invoke_without_command=True)
-    def run(
+    def main(
         dataset_id: str = typer.Option(..., "--dataset-id", help=dataset_id_help),
         batch_size: int = typer.Option(DEFAULT_BATCH_SIZE, "--batch-size"),
         max_concurrency: int = typer.Option(
@@ -437,4 +419,27 @@ def build_feature_cli_app(
             checkpoint=checkpoint,
         )
 
+    return main
+
+
+def build_feature_cli_app(
+    spec: FeaturePlatformSpec,
+    dataset_id_help: str,
+) -> typer.Typer:
+    """Return a Typer app whose optional ``--checkpoint`` continues an unfinished feature run.
+
+    Parameters
+    ----------
+    spec
+        Platform storage, model, and column spec.
+    dataset_id_help
+        Help text for ``--dataset-id``.
+
+    Returns
+    -------
+    typer.Typer
+        CLI that starts a new feature run unless ``--checkpoint`` is passed.
+    """
+    app = typer.Typer()
+    app.command()(build_feature_cli_main(spec, dataset_id_help))
     return app

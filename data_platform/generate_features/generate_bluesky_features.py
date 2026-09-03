@@ -13,9 +13,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import typer
+
 from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
     build_feature_cli_app,
+    build_feature_cli_main,
     generate_platform_features,
 )
 from data_platform.models.sync import PreprocessedBlueskyPostModel
@@ -30,10 +33,9 @@ BLUESKY_SPEC = FeaturePlatformSpec(
     empty_message="generate_bluesky_features: no preprocessed posts found",
 )
 
-app = build_feature_cli_app(
-    BLUESKY_SPEC,
-    "Dataset identifier from ingestion YAML (bluesky_<uuid>)",
-)
+_DATASET_ID_HELP = "Dataset identifier from ingestion YAML (bluesky_<uuid>)"
+app = build_feature_cli_app(BLUESKY_SPEC, _DATASET_ID_HELP)
+main = build_feature_cli_main(BLUESKY_SPEC, _DATASET_ID_HELP)
 
 
 def generate_bluesky_features(
@@ -75,10 +77,5 @@ def generate_bluesky_features(
     )
 
 
-def main() -> None:
-    """CLI entrypoint for Bluesky feature generation."""
-    app()
-
-
 if __name__ == "__main__":
-    main()
+    typer.run(main)

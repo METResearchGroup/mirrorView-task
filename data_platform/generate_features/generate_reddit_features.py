@@ -13,9 +13,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import typer
+
 from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
     build_feature_cli_app,
+    build_feature_cli_main,
     build_feature_config,
     generate_platform_features,
     load_preprocessed_records,
@@ -32,10 +35,9 @@ REDDIT_SPEC = FeaturePlatformSpec(
     empty_message="generate_reddit_features: no preprocessed comments found",
 )
 
-app = build_feature_cli_app(
-    REDDIT_SPEC,
-    "Dataset identifier from ingestion YAML (reddit_<uuid>)",
-)
+_DATASET_ID_HELP = "Dataset identifier from ingestion YAML (reddit_<uuid>)"
+app = build_feature_cli_app(REDDIT_SPEC, _DATASET_ID_HELP)
+main = build_feature_cli_main(REDDIT_SPEC, _DATASET_ID_HELP)
 
 
 def reddit_feature_config(*args, **kwargs):
@@ -85,10 +87,5 @@ def generate_reddit_features(
     )
 
 
-def main() -> None:
-    """CLI entrypoint for Reddit feature generation."""
-    app()
-
-
 if __name__ == "__main__":
-    main()
+    typer.run(main)

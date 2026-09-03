@@ -13,9 +13,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import typer
+
 from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
     build_feature_cli_app,
+    build_feature_cli_main,
     build_feature_config,
     generate_platform_features,
     load_preprocessed_records,
@@ -32,10 +35,9 @@ TWITTER_SPEC = FeaturePlatformSpec(
     empty_message="generate_twitter_features: no preprocessed posts found",
 )
 
-app = build_feature_cli_app(
-    TWITTER_SPEC,
-    "Dataset identifier from ingestion YAML (twitter_<uuid>)",
-)
+_DATASET_ID_HELP = "Dataset identifier from ingestion YAML (twitter_<uuid>)"
+app = build_feature_cli_app(TWITTER_SPEC, _DATASET_ID_HELP)
+main = build_feature_cli_main(TWITTER_SPEC, _DATASET_ID_HELP)
 
 
 def twitter_feature_config(*args, **kwargs):
@@ -85,10 +87,5 @@ def generate_twitter_features(
     )
 
 
-def main() -> None:
-    """CLI entrypoint for Twitter feature generation."""
-    app()
-
-
 if __name__ == "__main__":
-    main()
+    typer.run(main)
