@@ -14,6 +14,7 @@
 10. Preprocess now runs through README-aligned steps in the shared runner: add standardized columns, drop ids from prior preprocessed runs and in-batch duplicates (last row wins), then apply platform text transforms and validators. `preprocess_records` again returns the new preprocessed run path, and contract tests lock step order and dedupe behavior. [PR #154](https://github.com/METResearchGroup/mirrorView-task/pull/154)
 11. Feature generation now resumes with `--checkpoint` instead of `--run-dir`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. You cannot reopen a completed run. [PR #159](https://github.com/METResearchGroup/mirrorView-task/pull/159)
 12. Feature generation uses `--checkpoint` to continue an unfinished feature run. If you omit `--checkpoint`, you start a new `features/{timestamp}/` feature run folder. If a feature such as `is_political` is marked completed in the current feature run, new posts wait for a later run without `--checkpoint`. [PR #161](https://github.com/METResearchGroup/mirrorView-task/pull/161)
+13. The Bluesky Jetstream dump exports 2026-09-01 UTC posts from Athena into hourly zstd parquet stored in Git LFS, with uri, did, created_at, and text, and writes summary statistics to JSON. Raw CSV output is gitignored. [PR #135](https://github.com/METResearchGroup/mirrorView-task/pull/135)
 
 ## 2026-09-02
 
