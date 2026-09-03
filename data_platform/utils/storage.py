@@ -10,6 +10,10 @@ from typing import Any
 import pandas as pd
 from pydantic import BaseModel
 
+from data_platform.ingestion.generate_record_id import (
+    RECORD_ID_COLUMN,
+    attach_record_id,
+)
 from data_platform.models.sync import (
     PreprocessedBlueskyPostModel,
     PreprocessedRedditCommentModel,
@@ -149,6 +153,15 @@ class StorageManager:
             return resolved
         raise ValueError("Either run_dir must be provided or latest=True")
 
+    def _prepare_rows_for_write(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        prepared: list[dict[str, Any]] = []
+        for row in rows:
+            if row.get(RECORD_ID_COLUMN):
+                prepared.append(row)
+            else:
+                prepared.append(attach_record_id(row, self.platform))
+        return prepared
+
     def write_records(
         self,
         rows: list[dict[str, Any]],
@@ -156,7 +169,10 @@ class StorageManager:
         *,
         filename: str | None = None,
     ) -> Path:
-        validated = [self.model.model_validate(row).model_dump() for row in rows]
+        validated = [
+            self.model.model_validate(row).model_dump()
+            for row in self._prepare_rows_for_write(rows)
+        ]
         out_path = run_dir / (filename or self.records_filename)
         fieldnames = list(self.model.model_fields.keys())
         if self.format == "parquet":
@@ -172,7 +188,10 @@ class StorageManager:
         *,
         filename: str | None = None,
     ) -> Path:
-        validated = [self.model.model_validate(row).model_dump() for row in rows]
+        validated = [
+            self.model.model_validate(row).model_dump()
+            for row in self._prepare_rows_for_write(rows)
+        ]
         out_path = run_dir / (filename or self.records_filename)
         if self.format == "parquet":
             if out_path.exists():
@@ -237,11 +256,11 @@ class StorageManager:
         dedupe_session: DedupeSession,
         filename: str | None = None,
     ) -> AppendResult:
-        kept_rows, skipped = dedupe_session.filter_rows(rows)
+        kept_rows, skipped = dedupe_session.exclude_seen_ids(rows)
         resolved_filename = filename or dedupe_session.config.filename
         if kept_rows:
             self.append_records(kept_rows, run_dir, filename=resolved_filename)
-            dedupe_session.note_appended(kept_rows)
+            dedupe_session.add_seen_ids(kept_rows)
         return AppendResult(kept=len(kept_rows), skipped=skipped)
 
     def load_records(

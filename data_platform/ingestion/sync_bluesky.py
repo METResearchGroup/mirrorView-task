@@ -119,12 +119,12 @@ def run_sync_tasks(
         DedupeConfig(
             id_column="uri",
             filename=filename,
-            include_prior_runs=policy_includes_prior_runs(
-                resolve_dedupe_policy(ingestion_params)
-            ),
         )
     )
-    dedupe_session.warm(storage, output_dir)
+    if policy_includes_prior_runs(resolve_dedupe_policy(ingestion_params)):
+        dedupe_session.load_seen_ids_from_all_runs(storage)
+    else:
+        dedupe_session.load_seen_ids(storage, output_dir)
 
     def process_task(task: BlueskyTask, entry: dict[str, Any]) -> None:
         """Fetch rows for one keyword. Persist the deduped rows, and update the task ledger entry."""

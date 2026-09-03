@@ -4,13 +4,18 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.platform_specific_columns import CANONICAL_SOURCE_RECORD_ID_COLUMN
 from data_platform.utils.storage import StorageManager
 
 
 @dataclass(frozen=True)
 class FeatureLabelQuery:
-    """Query labeled record ids from feature files across timestamped runs."""
+    """Query labeled record ids from feature files across timestamped runs.
+
+    Feature generation skips unlabeled records with the same skip set session
+    type that ingest and preprocess use.
+    """
 
     feature_storage: StorageManager
     id_column: str = "uri"
@@ -18,11 +23,14 @@ class FeatureLabelQuery:
 
     def labeled_ids(self, feature_name: str) -> set[str]:
         """Return ids labeled for feature_name from timestamped feature run directories."""
-        filename = self.feature_storage.filename_for(feature_name)
-        return self.feature_storage.load_seen_ids_from_all_runs(
-            self.feature_file_id_column,
-            filename=filename,
+        skip_set = DedupeSession(
+            DedupeConfig(
+                id_column=self.feature_file_id_column,
+                filename=self.feature_storage.filename_for(feature_name),
+            )
         )
+        skip_set.load_seen_ids_from_all_runs(self.feature_storage)
+        return set(skip_set.seen_ids)
 
     def filter_unlabeled(
         self,

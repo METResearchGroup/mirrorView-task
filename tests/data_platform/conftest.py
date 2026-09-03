@@ -14,6 +14,7 @@ from tests.data_platform.constants import (
     SAMPLE_INGESTION_ROW,
     URI_POST_A,
     URI_POST_B,
+    expected_bluesky_record_id,
 )
 
 @pytest.fixture
@@ -37,6 +38,7 @@ def make_post_row(
     handle = author_handle.removesuffix(".bsky.social")
     return {
         "uri": uri,
+        "record_id": expected_bluesky_record_id(uri),
         "url": url or f"https://bsky.app/profile/{handle}/post/1",
         "author_handle": author_handle,
         "text": text,

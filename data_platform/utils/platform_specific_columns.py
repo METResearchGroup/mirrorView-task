@@ -7,6 +7,7 @@ from dataclasses import dataclass
 CANONICAL_TEXT_COLUMN = "text"
 CANONICAL_AUTHOR_HANDLE_COLUMN = "author_handle"
 CANONICAL_SOURCE_RECORD_ID_COLUMN = "source_record_id"
+CANONICAL_RECORD_ID_COLUMN = "record_id"
 REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN = "body"
 
 
