@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-import inspect
 import json
 from pathlib import Path
 
 import pytest
+from typer.testing import CliRunner
 
 from data_platform.generate_features.generate_bluesky_features import (
     BLUESKY_SPEC,
-    main as bluesky_main,
+    app as bluesky_app,
 )
-from data_platform.generate_features.generate_reddit_features import main as reddit_main
+from data_platform.generate_features.generate_reddit_features import app as reddit_app
 from data_platform.generate_features.generate_twitter_features import (
+    app as twitter_app,
     generate_twitter_features,
-    main as twitter_main,
 )
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
@@ -119,7 +119,9 @@ def test_empty_twitter_input_with_missing_checkpoint_fails(data_root: Path) -> N
     write_empty_twitter_preprocessed_run(data_root)
 
     with pytest.raises(FileNotFoundError, match=MISSING_FEATURE_RUN):
-        generate_twitter_features(VALID_TWITTER_DATASET_ID, checkpoint=MISSING_FEATURE_RUN)
+        generate_twitter_features(
+            VALID_TWITTER_DATASET_ID, checkpoint=MISSING_FEATURE_RUN
+        )
 
 
 def test_empty_twitter_input_with_completed_checkpoint_fails(data_root: Path) -> None:
@@ -140,7 +142,9 @@ def test_empty_twitter_input_with_completed_checkpoint_fails(data_root: Path) ->
     )
 
     with pytest.raises(ValueError, match="already completed"):
-        generate_twitter_features(VALID_TWITTER_DATASET_ID, checkpoint=OLDER_FEATURE_RUN)
+        generate_twitter_features(
+            VALID_TWITTER_DATASET_ID, checkpoint=OLDER_FEATURE_RUN
+        )
 
 
 class TestFeatureRunDir:
@@ -175,7 +179,7 @@ class TestFeatureRunDir:
             data_root, OLDER_FEATURE_RUN, sync_status="in_progress"
         )
 
-        with pytest.raises(ValueError, match="--checkpoint"):
+        with pytest.raises(ValueError, match="unfinished"):
             feature_run_dir(feature_storage, None)
 
         assert unfinished.is_dir()
@@ -268,13 +272,15 @@ class TestBuildFeatureConfig:
         assert config.features_dir.parent.name == "features"
 
 
-class TestFeatureGenerationCliFlags:
-    """Tests that platform feature CLIs expose --checkpoint and drop --run-dir."""
+class TestFeatureGenerationCli:
+    """Tests that platform feature CLIs use optional --checkpoint."""
 
-    @pytest.mark.parametrize("cli_main", [bluesky_main, twitter_main, reddit_main])
-    def test_cli_uses_checkpoint_instead_of_run_dir(self, cli_main) -> None:
-        parameters = inspect.signature(cli_main).parameters
+    @pytest.mark.parametrize("cli_app", [bluesky_app, twitter_app, reddit_app])
+    def test_help_lists_checkpoint_and_not_subcommands(self, cli_app) -> None:
+        result = CliRunner().invoke(cli_app, ["--help"])
 
-        assert "checkpoint" in parameters
-        assert "latest" not in parameters
-        assert "run_dir" not in parameters
+        assert result.exit_code == 0
+        assert "--checkpoint" in result.stdout
+        assert "--run-dir" not in result.stdout
+        assert "--latest" not in result.stdout
+        assert "new-run" not in result.stdout

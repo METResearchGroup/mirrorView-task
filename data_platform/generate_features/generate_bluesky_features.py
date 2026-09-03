@@ -4,6 +4,9 @@ Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
         --dataset-id bluesky_<uuid> --batch-size 64
+
+    PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
+        --dataset-id bluesky_<uuid> --checkpoint 2026_05_30-12:00:00
 """
 
 from __future__ import annotations
@@ -14,7 +17,8 @@ import typer
 
 from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
-    features_from_cli,
+    build_feature_cli_app,
+    build_feature_cli_main,
     generate_platform_features,
 )
 from data_platform.models.sync import PreprocessedBlueskyPostModel
@@ -29,6 +33,10 @@ BLUESKY_SPEC = FeaturePlatformSpec(
     empty_message="generate_bluesky_features: no preprocessed posts found",
 )
 
+_DATASET_ID_HELP = "Dataset identifier from ingestion YAML (bluesky_<uuid>)"
+app = build_feature_cli_app(BLUESKY_SPEC, _DATASET_ID_HELP)
+main = build_feature_cli_main(BLUESKY_SPEC, _DATASET_ID_HELP)
+
 
 def generate_bluesky_features(
     dataset_id: str,
@@ -38,13 +46,26 @@ def generate_bluesky_features(
     feature_subset: list[str] | None = None,
     checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Load Bluesky posts and generate the requested feature labels.
+    """Generate Bluesky feature labels in a new or unfinished feature run.
 
     Parameters
     ----------
+    dataset_id
+        Dataset identifier from ingestion YAML.
+    batch_size
+        Label batch size.
+    max_concurrency
+        Engine concurrency cap.
+    feature_subset
+        Optional registry subset. None runs every feature.
     checkpoint
-        Existing ``features/{timestamp}/`` folder to resume. Pass None when
-        you want a new run.
+        Named unfinished feature run timestamp. Pass None to start a new
+        feature run.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in the feature run folder.
     """
     return generate_platform_features(
         BLUESKY_SPEC,
@@ -52,35 +73,6 @@ def generate_bluesky_features(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
-        checkpoint=checkpoint,
-    )
-
-
-def main(
-    dataset_id: str = typer.Option(
-        ...,
-        "--dataset-id",
-        help="Dataset identifier from ingestion YAML (bluesky_<uuid>)",
-    ),
-    batch_size: int = typer.Option(64, "--batch-size"),
-    max_concurrency: int = typer.Option(80, "--max-concurrency"),
-    features: list[str] | None = typer.Option(
-        None,
-        "--features",
-        help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
-    ),
-    checkpoint: str | None = typer.Option(
-        None,
-        "--checkpoint",
-        help="Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
-    ),
-) -> None:
-    """CLI entrypoint for resumable Bluesky feature generation."""
-    generate_bluesky_features(
-        dataset_id,
-        batch_size=batch_size,
-        max_concurrency=max_concurrency,
-        feature_subset=features_from_cli(features),
         checkpoint=checkpoint,
     )
 

@@ -1,1 +1,2 @@
+data_platform/ingestion/data_dumps/bluesky/data/parquet/**/*.parquet filter=lfs diff=lfs merge=lfs -text
 data_platform/ingestion/data_dumps/reddit/filtered/*.parquet filter=lfs diff=lfs merge=lfs -text
