@@ -289,7 +289,6 @@ def _initial_task_progress(task: RedditTask) -> dict[str, Any]:
         "status": TaskStatus.PENDING.value,
         "kind": "reddit",
         "subreddit": task.subreddit,
-        "posts_collected": 0,
         "comments_collected": 0,
         "last_error": None,
     }
@@ -307,7 +306,6 @@ def init_sync_metadata(
         sync_timestamp,
         sync_tasks,
         task_progress_builder=_initial_task_progress,
-        extra_fields={"post_row_count": 0},
     )
 
 
