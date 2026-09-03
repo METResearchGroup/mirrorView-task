@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pytest
 
 from data_platform.generate_features.generate_features import generate_features
 from data_platform.generate_features.generate_twitter_features import (
@@ -20,7 +22,11 @@ from data_platform.generate_features.models import (
     FeatureStatus,
 )
 from data_platform.utils.feature_labels import FeatureLabelQuery
-from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_TWITTER_DATASET_ID
+from tests.data_platform.constants import (
+    LABEL_TIMESTAMP,
+    PREPROCESSED_RUN_DIR,
+    VALID_TWITTER_DATASET_ID,
+)
 from tests.data_platform.generate_features.conftest import DummyModel
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
@@ -43,7 +49,26 @@ def write_preprocessed_posts(
     preprocessed_dir = data_root / "twitter" / dataset_id / "preprocessed" / run_dir_name
     preprocessed_dir.mkdir(parents=True)
     pd.DataFrame(records).to_csv(preprocessed_dir / "posts.csv", index=False)
+    (preprocessed_dir / "metadata.json").write_text(
+        json.dumps({"sync_status": "completed"}), encoding="utf-8"
+    )
     return preprocessed_dir
+
+
+def _write_preprocessed_run(
+    data_root: Path,
+    dataset_id: str,
+    run_name: str,
+    *,
+    sync_status: str,
+) -> Path:
+    run_dir = data_root / "twitter" / dataset_id / "preprocessed" / run_name
+    run_dir.mkdir(parents=True)
+    (run_dir / "posts.csv").write_text("tweet_id,text\n", encoding="utf-8")
+    (run_dir / "metadata.json").write_text(
+        json.dumps({"sync_status": sync_status}), encoding="utf-8"
+    )
+    return run_dir
 
 
 def make_twitter_feature_generation_config(
@@ -175,3 +200,42 @@ def test_twitter_feature_cli_does_not_reexport_column_aliases() -> None:
     assert not hasattr(twitter_features, "ID_COLUMN")
     assert not hasattr(twitter_features, "TEXT_COLUMN")
     assert not hasattr(twitter_features, "FEATURE_FILE_ID_COLUMN")
+
+
+class TestGenerateTwitterFeatures:
+    """Tests for generate_twitter_features()."""
+
+    def test_gate_fails_if_no_preprocessed_runs(self, data_root: Path) -> None:
+        with pytest.raises(FileNotFoundError, match="No preprocessed runs found"):
+            generate_twitter_features(VALID_TWITTER_DATASET_ID)
+
+    def test_gate_fails_if_preprocessed_not_complete(self, data_root: Path) -> None:
+        _write_preprocessed_run(
+            data_root,
+            VALID_TWITTER_DATASET_ID,
+            PREPROCESSED_RUN_DIR,
+            sync_status="in_progress",
+        )
+        with pytest.raises(RuntimeError):
+            generate_twitter_features(VALID_TWITTER_DATASET_ID)
+
+    def test_gate_fails_if_preprocessed_metadata_missing(self, data_root: Path) -> None:
+        run_dir = _write_preprocessed_run(
+            data_root,
+            VALID_TWITTER_DATASET_ID,
+            PREPROCESSED_RUN_DIR,
+            sync_status="completed",
+        )
+        (run_dir / "metadata.json").unlink()
+        with pytest.raises(RuntimeError):
+            generate_twitter_features(VALID_TWITTER_DATASET_ID)
+
+    def test_gate_allows_completed_preprocessed_runs(self, data_root: Path) -> None:
+        _write_preprocessed_run(
+            data_root,
+            VALID_TWITTER_DATASET_ID,
+            PREPROCESSED_RUN_DIR,
+            sync_status="completed",
+        )
+        result = generate_twitter_features(VALID_TWITTER_DATASET_ID)
+        assert result == {}

@@ -91,8 +91,8 @@ def test_feature_run_dir_rejects_path_escape(data_root: Path) -> None:
 
 def test_empty_twitter_input_does_not_create_feature_run(data_root: Path) -> None:
     """Given no preprocessed posts, when generating features, then no features run dir is created."""
-    result = generate_twitter_features(VALID_TWITTER_DATASET_ID)
+    with pytest.raises(FileNotFoundError, match="No preprocessed runs found"):
+        generate_twitter_features(VALID_TWITTER_DATASET_ID)
 
-    assert result == {}
     features_root = data_root / "twitter" / VALID_TWITTER_DATASET_ID / "features"
     assert not features_root.exists()

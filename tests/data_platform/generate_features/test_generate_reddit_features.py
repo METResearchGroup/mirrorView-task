@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pytest
 
 from data_platform.generate_features.generate_features import generate_features
 from data_platform.generate_features.generate_reddit_features import (
@@ -19,7 +21,11 @@ from data_platform.generate_features.models import (
     FeatureStatus,
 )
 from data_platform.utils.platform_specific_columns import REDDIT_COLUMNS, STANDARDIZED_TEXT_COLUMN
-from tests.data_platform.constants import LABEL_TIMESTAMP, VALID_REDDIT_DATASET_ID
+from tests.data_platform.constants import (
+    LABEL_TIMESTAMP,
+    PREPROCESSED_RUN_DIR,
+    VALID_REDDIT_DATASET_ID,
+)
 from tests.data_platform.generate_features.conftest import DummyModel
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
@@ -46,7 +52,26 @@ def write_preprocessed_comments(
     preprocessed_dir = data_root / "reddit" / dataset_id / "preprocessed" / run_dir_name
     preprocessed_dir.mkdir(parents=True)
     pd.DataFrame(records).to_csv(preprocessed_dir / "comments.csv", index=False)
+    (preprocessed_dir / "metadata.json").write_text(
+        json.dumps({"sync_status": "completed"}), encoding="utf-8"
+    )
     return preprocessed_dir
+
+
+def _write_preprocessed_run(
+    data_root: Path,
+    dataset_id: str,
+    run_name: str,
+    *,
+    sync_status: str,
+) -> Path:
+    run_dir = data_root / "reddit" / dataset_id / "preprocessed" / run_name
+    run_dir.mkdir(parents=True)
+    (run_dir / "comments.csv").write_text("comment_fullname,body\n", encoding="utf-8")
+    (run_dir / "metadata.json").write_text(
+        json.dumps({"sync_status": sync_status}), encoding="utf-8"
+    )
+    return run_dir
 
 
 def make_reddit_feature_generation_config(
@@ -141,3 +166,42 @@ def test_reddit_feature_cli_does_not_reexport_column_aliases() -> None:
     assert not hasattr(reddit_features, "ID_COLUMN")
     assert not hasattr(reddit_features, "TEXT_COLUMN")
     assert not hasattr(reddit_features, "FEATURE_FILE_ID_COLUMN")
+
+
+class TestGenerateRedditFeatures:
+    """Tests for generate_reddit_features()."""
+
+    def test_gate_fails_if_no_preprocessed_runs(self, data_root: Path) -> None:
+        with pytest.raises(FileNotFoundError, match="No preprocessed runs found"):
+            generate_reddit_features(VALID_REDDIT_DATASET_ID)
+
+    def test_gate_fails_if_preprocessed_not_complete(self, data_root: Path) -> None:
+        _write_preprocessed_run(
+            data_root,
+            VALID_REDDIT_DATASET_ID,
+            PREPROCESSED_RUN_DIR,
+            sync_status="in_progress",
+        )
+        with pytest.raises(RuntimeError):
+            generate_reddit_features(VALID_REDDIT_DATASET_ID)
+
+    def test_gate_fails_if_preprocessed_metadata_missing(self, data_root: Path) -> None:
+        run_dir = _write_preprocessed_run(
+            data_root,
+            VALID_REDDIT_DATASET_ID,
+            PREPROCESSED_RUN_DIR,
+            sync_status="completed",
+        )
+        (run_dir / "metadata.json").unlink()
+        with pytest.raises(RuntimeError):
+            generate_reddit_features(VALID_REDDIT_DATASET_ID)
+
+    def test_gate_allows_completed_preprocessed_runs(self, data_root: Path) -> None:
+        _write_preprocessed_run(
+            data_root,
+            VALID_REDDIT_DATASET_ID,
+            PREPROCESSED_RUN_DIR,
+            sync_status="completed",
+        )
+        result = generate_reddit_features(VALID_REDDIT_DATASET_ID)
+        assert result == {}
