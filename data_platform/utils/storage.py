@@ -20,7 +20,6 @@ from data_platform.models.sync import (
     PreprocessedTwitterPostModel,
     SyncBlueskyPostModel,
     SyncRedditCommentModel,
-    SyncRedditPostModel,
     SyncTwitterPostModel,
 )
 from data_platform.utils.dataset import ValidDataFormats, load_dataset_format, validate_dataset_id
@@ -394,22 +393,6 @@ class RedditStorageManager(StorageManager):
             resolved_model,
             dataset_id,
             records_filename=records_filename,
-        )
-
-    def comment_storage(self) -> RedditStorageManager:
-        return RedditStorageManager(
-            self.stage,
-            self.dataset_id,
-            records_filename="comments.csv",
-            model=SyncRedditCommentModel,
-        )
-
-    def post_storage(self) -> RedditStorageManager:
-        return RedditStorageManager(
-            self.stage,
-            self.dataset_id,
-            records_filename="posts.csv",
-            model=SyncRedditPostModel,
         )
 
 

@@ -24,7 +24,7 @@ See the operator runbook at [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs
 | twitter | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/posts.csv` |
 | twitter | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | twitter | Curate | `data_platform/curate/` | `.../curated/{timestamp}/mirrorview.csv` |
-| reddit | Ingestion | `data_platform/ingestion/` | `data_platform/data/reddit/{dataset_id}/raw/{timestamp}/` |
+| reddit | Ingestion | `data_platform/ingestion/` | `data_platform/data/reddit/{dataset_id}/raw/{timestamp}/comments.csv` |
 | reddit | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/` |
 | reddit | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | reddit | Curate | `data_platform/curate/` | `.../curated/{timestamp}/mirrorview.csv` |
@@ -76,7 +76,14 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents). Feature generation writes each run into `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt.
+To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp.
+
+```bash
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  --dataset-id bluesky_<uuid> --batch-size 64 --checkpoint <timestamp>
+```
+
+Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Feature generation writes each run into `features/<timestamp>/`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. Pass `--checkpoint <timestamp>` to keep writing into an unfinished folder. You cannot reopen a completed feature run.
 
 If a dataset still has leftover files directly under `features/` from the old layout, move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 

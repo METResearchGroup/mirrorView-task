@@ -5,13 +5,17 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, NamedTuple
 
 import pandas as pd
 from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.preprocessing.previously_used_stimuli import (
+    filter_previously_used_stimuli,
+    load_previously_used_stimuli_ids,
+)
 from data_platform.preprocessing.shared_columns import (
     add_standardized_author_columns,
     add_standardized_source_record_id,
@@ -21,6 +25,7 @@ from data_platform.utils.platform_specific_columns import (
     PlatformSpecificColumns,
 )
 from data_platform.utils.storage import StorageManager, StorageStage
+from shared.data.registry import DATASETS
 
 TextValidator = Callable[[str], bool]
 RowValidator = Callable[[str], bool]
@@ -30,8 +35,23 @@ StorageManagerFactory = Callable[..., StorageManager]
 AUTHOR_COLUMN = "author"
 
 
+class DuplicateFilterResult(NamedTuple):
+    """The remaining preprocess rows, plus skip counts for ids that were already seen.
+
+    ``skipped_already_preprocessed`` counts rows dropped because they were
+    already written in a prior preprocessed run. ``skipped_previously_used_stimuli``
+    counts rows dropped because ``record_id`` matches a study stimuli key.
+    Drops from collapsing duplicate ids in the current batch are not counted.
+    """
+
+    records: pd.DataFrame
+    skipped_already_preprocessed: int
+    skipped_previously_used_stimuli: int
+
+
 @dataclass(frozen=True)
 class PreprocessPlatformSpec:
+    """Platform-specific configuration for the shared preprocessing pipeline."""
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
@@ -78,6 +98,22 @@ def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
+    """Apply the platform's optional text transform to each row's text column.
+
+    When ``spec.text_transform`` is unset or the frame is empty, the input
+    frame is returned unchanged.
+
+    Parameters
+    ----------
+    spec
+        ``text_transform`` is applied to values in ``spec.columns.text_column``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame with transformed text when a transform is configured;
+        otherwise the original frame.
+    """
     if spec.text_transform is None or df.empty:
         return df
     out = df.copy()
@@ -91,6 +127,10 @@ def passes_all_validators(
     text: str,
     validators: Sequence[TextValidator],
 ) -> bool:
+    """Return whether every text validator accepts the given string.
+
+    An empty ``validators`` sequence is treated as passing.
+    """
     return all(validator(text) for validator in validators)
 
 
@@ -98,28 +138,28 @@ def passes_row_validators(
     author: str,
     validators: Sequence[RowValidator],
 ) -> bool:
+    """Return whether every row validator accepts the given author value.
+
+    An empty ``validators`` sequence is treated as passing.
+    """
     return all(validator(author) for validator in validators)
 
 
-def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFrame:
-    """Return only rows whose text (and optional author) pass every validator."""
+def apply_integration_specific_filters(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFrame:
     if df.empty:
         return df.copy()
 
-    prepared = df
-    if spec.columns.text_column not in df.columns:
-        prepared = add_standardized_text_column(df, spec)
     text_col = spec.columns.text_column
-    text_mask = prepared[text_col].map(
+    text_mask = df[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
     )
     if not spec.row_validators:
-        return prepared.loc[text_mask].reset_index(drop=True)
+        return df.loc[text_mask].reset_index(drop=True)
 
-    author_mask = prepared[AUTHOR_COLUMN].map(
+    author_mask = df[AUTHOR_COLUMN].map(
         lambda value: passes_row_validators(str(value), spec.row_validators)
     )
-    return prepared.loc[text_mask & author_mask].reset_index(drop=True)
+    return df.loc[text_mask & author_mask].reset_index(drop=True)
 
 
 def _rows_to_validated_dicts(
@@ -135,9 +175,20 @@ def load_raw_records(
 ) -> tuple[pd.DataFrame, list[Path]]:
     """Load raw records from all run dirs for preprocessing.
 
-    Returns both the loaded/validated records and the raw run directories they came from.
+    Returns both the loaded/validated records and the raw run directories they
+    came from.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no raw run directories exist for the dataset.
+    RuntimeError
+        When a raw run is incomplete (via ``require_all_runs_complete``).
     """
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
+    if raw_storage.latest_run_dir() is None:
+        raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
+    raw_storage.require_all_runs_complete(dataset_id)
     raw_root = raw_storage.root_dir
     run_dirs = sorted([p for p in raw_root.iterdir() if p.is_dir()])
     validated_rows: list[dict[str, Any]] = []
@@ -160,7 +211,7 @@ def load_raw_records(
     return records, run_dirs
 
 
-def save_preprocessed(
+def export_preprocessed_records(
     records: pd.DataFrame,
     spec: PreprocessPlatformSpec,
     dataset_id: str,
@@ -215,44 +266,131 @@ def collapse_candidates_by_id(
     return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 
 
+def add_standardized_columns(
+    records: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    """Add shared ``text``, ``author_handle``, and ``source_record_id`` columns.
+
+    Values are copied from platform-specific source columns named on ``spec``.
+    Original platform columns are preserved. The input frame is not modified.
+
+    Parameters
+    ----------
+    spec
+        Names the source columns for text, author handle, and record id.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame with the three standardized columns added.
+
+    Raises
+    ------
+    KeyError
+        When a required source column is missing from the frame.
+    """
+    records = add_standardized_text_column(records, spec)
+    records = add_standardized_author_columns(records, spec)
+    records = add_standardized_source_record_id(records, spec)
+    return records
+
+
+def filter_duplicate_records(
+    records: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+    dataset_id: str,
+    stimuli_ids: set[str],
+) -> DuplicateFilterResult:
+    """Drop already-preprocessed ids, previously used stimuli, and in-batch duplicates.
+
+    Returns
+    -------
+    DuplicateFilterResult
+        Surviving records, the already-preprocessed skip count, and the
+        previously used stimuli skip count. Drops from collapsing duplicate
+        ids in the current batch are not counted.
+    """
+    if records.empty:
+        return DuplicateFilterResult(records.copy(), 0, 0)
+
+    id_col = spec.columns.records_id_column
+    dedupe_session = DedupeSession(DedupeConfig(id_column=id_col))
+    preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+    dedupe_session.load_seen_ids_from_all_runs(preprocessed_storage)
+
+    is_new = ~records[id_col].isin(list(dedupe_session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    kept = records.loc[is_new].reset_index(drop=True)
+    kept, skipped_stimuli = filter_previously_used_stimuli(kept, stimuli_ids)
+    output = collapse_candidates_by_id(kept, id_col, keep="last")
+    return DuplicateFilterResult(output, skipped, skipped_stimuli)
+
+
+def apply_integration_specific_preprocessing(
+    df: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    """Apply platform-specific text transforms before filtering."""
+    return apply_text_transform(df, spec)
+
+
 def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
 ) -> Path:
+    """Run the full preprocessing pipeline for one dataset and persist the result.
+
+    The function loads all completed raw runs and adds standardized columns.
+    It then drops rows seen in prior preprocessed runs, rows already used as
+    study stimuli, and duplicate ids within the batch. After that, it applies
+    platform-specific text transforms and validators, and it writes a new
+    preprocessed run directory. It also prints a one-line keep and skip
+    summary to stdout.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset identifier in ``{platform}_{uuid}`` form.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the new preprocessed run directory.
+
+    Raises
+    ------
+    ValueError
+        If ``dataset_id`` is malformed.
+    FileNotFoundError
+        When no raw runs exist for the dataset, or a registered stimuli CSV
+        is missing.
+    RuntimeError
+        When a raw run is incomplete.
+    KeyError
+        When a required source column is missing during standardization.
+    """
     dataset_id = validate_dataset_id(dataset_id)
-    raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
-    if raw_storage.latest_run_dir() is None:
-        raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
-    raw_storage.require_all_runs_complete(dataset_id)
-    preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-    dedupe_session = DedupeSession(
-        DedupeConfig(id_column=spec.columns.records_id_column)
-    )
-    dedupe_session.load_seen_ids_from_all_runs(preprocessed_storage)
-
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
-    id_col = spec.columns.records_id_column
-    id_series = cast(pd.Series, records[id_col])
-    is_new = ~id_series.isin(list(dedupe_session.seen_ids))
-    skipped = len(records) - int(is_new.sum())
-    records = records.loc[is_new].reset_index(drop=True)
-    records = collapse_candidates_by_id(records, id_col, keep="last")
-
-    records = add_standardized_text_column(records, spec)
-    records = add_standardized_author_columns(records, spec)
-    records = add_standardized_source_record_id(records, spec)
-    preprocessed = apply_text_transform(records, spec)
-    preprocessed = filter_records(preprocessed, spec)
-    output_dir = save_preprocessed(
-        preprocessed,
+    records = add_standardized_columns(records, spec)
+    stimuli_ids = load_previously_used_stimuli_ids(DATASETS)
+    filtered = filter_duplicate_records(records, spec, dataset_id, stimuli_ids)
+    records = filtered.records
+    skipped = filtered.skipped_already_preprocessed
+    skipped_stimuli = filtered.skipped_previously_used_stimuli
+    input_count = len(records)
+    records = apply_integration_specific_preprocessing(records, spec)
+    records = apply_integration_specific_filters(records, spec)
+    output_dir = export_preprocessed_records(
+        records,
         spec,
         dataset_id,
-        input_count=len(records),
+        input_count=input_count,
         source_raw_run_dirs=source_raw_run_dirs,
     )
-    noun = spec.columns.records_file_key
     print(
-        f"preprocess_records: kept {len(preprocessed)} of {len(records)} {noun}"
-        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
+        f"preprocess_records: kept {len(records)} of {input_count}"
+        f" (skipped {skipped} already in a prior preprocessed run,"
+        f" skipped {skipped_stimuli} already used as stimuli) -> {output_dir}"
     )
     return output_dir

@@ -11,7 +11,6 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 
-import pandas as pd
 import typer
 
 from data_platform.models.sync import SyncRedditCommentModel
@@ -19,7 +18,6 @@ from data_platform.preprocessing.runner import (
     PreprocessPlatformSpec,
     RowValidator,
     TextValidator,
-    filter_records,
 )
 from data_platform.preprocessing.runner import (
     passes_all_validators as _passes_all_validators,
@@ -86,24 +84,6 @@ def passes_row_validators(
     validators: Sequence[RowValidator] = COMMENT_ROW_VALIDATORS,
 ) -> bool:
     return _passes_row_validators(author, validators)
-
-
-def filter_comments(
-    comments: pd.DataFrame,
-    text_validators: Sequence[TextValidator] = COMMENT_TEXT_VALIDATORS,
-    row_validators: Sequence[RowValidator] = COMMENT_ROW_VALIDATORS,
-) -> pd.DataFrame:
-    spec = PreprocessPlatformSpec(
-        platform=REDDIT_SPEC.platform,
-        storage_cls=REDDIT_SPEC.storage_cls,
-        model_cls=REDDIT_SPEC.model_cls,
-        columns=REDDIT_SPEC.columns,
-        text_validators=tuple(text_validators),
-        row_validators=tuple(row_validators),
-        original_platform_text_column=REDDIT_SPEC.original_platform_text_column,
-        author_handle_source_column=REDDIT_SPEC.author_handle_source_column,
-    )
-    return filter_records(comments, spec)
 
 
 def preprocess_records(dataset_id: str) -> Path:

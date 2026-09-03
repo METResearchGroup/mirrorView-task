@@ -85,8 +85,10 @@ def test_load_or_init_metadata_rejects_prompt_hash_change_on_resume(features_dir
     metadata.features["is_political"].prompt_hash = "old-hash"
     flush_metadata(features_dir, metadata)
 
-    with pytest.raises(ValueError, match="identity changed"):
+    with pytest.raises(ValueError, match="identity changed") as exc:
         load_or_init_metadata(config, feature_names=("is_political",))
+    assert "cannot resume this folder" in str(exc.value)
+    assert "--run-dir" not in str(exc.value)
 
 
 def test_load_or_init_metadata_rejects_model_id_change_on_resume(features_dir) -> None:
@@ -100,8 +102,10 @@ def test_load_or_init_metadata_rejects_model_id_change_on_resume(features_dir) -
     metadata.features["is_political"].model_id = "old-model"
     flush_metadata(features_dir, metadata)
 
-    with pytest.raises(ValueError, match="identity changed"):
+    with pytest.raises(ValueError, match="identity changed") as exc:
         load_or_init_metadata(config, feature_names=("is_political",))
+    assert "cannot resume this folder" in str(exc.value)
+    assert "--run-dir" not in str(exc.value)
 
 
 def test_model_id_follows_engine_type() -> None:
