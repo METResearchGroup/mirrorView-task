@@ -88,7 +88,14 @@ def _require_single_feature_run_name(checkpoint: str) -> str:
     ValueError
         When ``checkpoint`` is not a single folder name.
     """
-    raise NotImplementedError
+    requested_path = Path(checkpoint)
+    if (
+        requested_path.is_absolute()
+        or len(requested_path.parts) != 1
+        or requested_path.name in {CURRENT_DIR_NAME, PARENT_DIR_NAME}
+    ):
+        raise ValueError(FEATURE_CHECKPOINT_NAME_ERROR)
+    return checkpoint
 
 
 def _start_new_feature_run(feature_storage: StorageManager) -> Path:
@@ -121,7 +128,14 @@ def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -
         When ``checkpoint`` is not a single folder name, or when the run is
         already completed.
     """
-    raise NotImplementedError
+    run_name = _require_single_feature_run_name(checkpoint)
+    run_dir = feature_storage.root_dir / run_name
+    if not run_dir.is_dir():
+        raise FileNotFoundError(f"Run directory not found: {run_dir}")
+    metadata = feature_storage.load_run_metadata(run_dir)
+    if metadata.get("sync_status") == FEATURE_RUN_COMPLETED_STATUS:
+        raise ValueError(f"Run is already completed: {run_dir}")
+    return run_dir
 
 
 def _latest_unfinished_feature_run_dir(feature_storage: StorageManager) -> Path:
