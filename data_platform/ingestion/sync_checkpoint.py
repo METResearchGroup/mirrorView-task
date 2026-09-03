@@ -441,7 +441,17 @@ def load_checkpoint_run(
         When the run is already completed, or when config tasks do not match
         the checkpoint ledger.
     """
-    raise NotImplementedError
+    run_dir = storage.root_dir / run_dir_name
+    if not run_dir.is_dir():
+        raise FileNotFoundError(f"Run directory not found: {run_dir}")
+    metadata = storage.load_run_metadata(run_dir)
+    if metadata.get("sync_status") == SyncStatus.COMPLETED.value:
+        raise ValueError(f"Run is already completed: {run_dir}")
+    validate_tasks_for_resume(sync_tasks, metadata, entity_label=entity_label)
+    if metadata.get("sync_status") != SyncStatus.IN_PROGRESS.value:
+        metadata["sync_status"] = SyncStatus.IN_PROGRESS.value
+        flush_run_metadata(storage, run_dir, metadata)
+    return run_dir, metadata
 
 
 def require_latest_in_progress_run_dir(storage: StorageManager) -> Path:
