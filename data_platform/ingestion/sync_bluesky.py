@@ -307,8 +307,47 @@ def sync_records_from_checkpoint(
     run_dir_name: str | None,
     latest: bool,
 ) -> Path:
-    """Resume an unfinished raw run by name or by latest unfinished timestamp."""
-    raise NotImplementedError
+    """Resume an unfinished raw run by name or by latest unfinished timestamp.
+
+    Parameters
+    ----------
+    config_path
+        Ingestion YAML path.
+    run_dir_name
+        Raw run timestamp directory name, or None when ``latest`` is True.
+    latest
+        When True, resume the newest unfinished raw run.
+
+    Returns
+    -------
+    Path
+        Resumed raw run directory.
+
+    Raises
+    ------
+    ValueError
+        When both ``run_dir_name`` and ``latest`` are set, when neither is set,
+        or when the named run is already completed.
+    FileNotFoundError
+        When the named run is missing, or when ``latest`` is True and no
+        unfinished run exists.
+    """
+    named = run_dir_name is not None
+    if latest == named:
+        raise ValueError(
+            "Resume requires exactly one of a named run directory or latest"
+        )
+    context = load_bluesky_sync_context(config_path)
+    resolved_run_dir_name = run_dir_name
+    if latest:
+        resolved_run_dir_name = require_latest_in_progress_run_dir(context.storage).name
+    output_dir, metadata = load_checkpoint_run(
+        context.storage,
+        context.sync_tasks,
+        resolved_run_dir_name,
+        "keywords",
+    )
+    return execute_bluesky_sync(context, output_dir, metadata)
 
 
 CONFIG_HELP = (
