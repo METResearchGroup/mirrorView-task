@@ -106,11 +106,7 @@ def is_eligible_comment(comment: praw.models.Comment, min_body_length: int) -> b
 
 def comment_to_row(
     comment: praw.models.Comment,
-    submission: praw.models.Submission,
     sync_timestamp: str,
-    *,
-    depth: int,
-    comment_rank: int,
 ) -> dict[str, Any]:
     """Normalize a PRAW Comment to the slim comment CSV payload.
 
@@ -122,19 +118,10 @@ def comment_to_row(
     author = "[deleted]" if comment.author is None else str(comment.author)
     created_at = datetime.fromtimestamp(comment.created_utc, tz=timezone.utc).isoformat()
     return {
-        "post_reddit_id": submission.id,
-        "post_reddit_fullname": submission.name,
-        "subreddit": submission.subreddit.display_name,
-        "comment_id": comment.id,
         "comment_fullname": comment.name,
-        "parent_id": comment.parent_id,
         "author": author,
         "body": comment.body,
-        "score": comment.score,
         "created_at": created_at,
-        "permalink": comment.permalink,
-        "depth": depth,
-        "comment_rank": comment_rank,
         "sync_timestamp": sync_timestamp,
     }
 
@@ -192,20 +179,12 @@ def fetch_post_comments(
     rows: list[dict[str, Any]] = []
     submission.comments.replace_more(limit=0)
 
-    for comment, depth in _walk_comments_in_order(submission.comments):
+    for comment, _depth in _walk_comments_in_order(submission.comments):
         if len(rows) >= max_comments:
             break
         if not is_eligible_comment(comment, min_body_length):
             continue
-        rows.append(
-            comment_to_row(
-                comment,
-                submission,
-                sync_timestamp,
-                depth=depth,
-                comment_rank=len(rows) + 1,
-            )
-        )
+        rows.append(comment_to_row(comment, sync_timestamp))
 
     return rows
 

@@ -123,13 +123,7 @@ class TestCommentToRow:
 
     def test_writes_iso_created_at_without_created_utc(self) -> None:
         """comment_to_row writes ISO created_at and omits created_utc."""
-        result = comment_to_row(
-            _mock_comment(),
-            _mock_submission(),
-            SYNC_TIMESTAMP,
-            depth=0,
-            comment_rank=1,
-        )
+        result = comment_to_row(_mock_comment(), SYNC_TIMESTAMP)
 
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
