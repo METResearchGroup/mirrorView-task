@@ -275,7 +275,31 @@ def generate_platform_features(
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
 ) -> dict[str, Path]:
-    """Start a new feature run and generate the requested feature labels."""
+    """Start a new feature run and generate the requested feature labels.
+
+    Parameters
+    ----------
+    spec
+        Platform storage, model, and column spec.
+    dataset_id
+        Dataset identifier from ingestion YAML.
+    batch_size
+        Label batch size.
+    max_concurrency
+        Engine concurrency cap.
+    feature_subset
+        Optional registry subset. None runs every feature.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in the new folder.
+
+    Raises
+    ------
+    ValueError
+        When an unfinished feature run already exists for this dataset.
+    """
     dataset_id = validate_dataset_id(dataset_id)
 
     if spec.require_all_runs_complete:
@@ -305,6 +329,23 @@ def generate_platform_features(
 
 
 def require_latest_unfinished_feature_run_dir(feature_storage: StorageManager) -> Path:
+    """Return the newest unfinished feature run directory for this dataset.
+
+    Parameters
+    ----------
+    feature_storage
+        Features-stage storage manager for the dataset.
+
+    Returns
+    -------
+    Path
+        Newest feature run directory whose ``sync_status`` is not completed.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no unfinished feature run exists.
+    """
     raise NotImplementedError
 
 
@@ -313,6 +354,29 @@ def resolve_resume_checkpoint(
     checkpoint: str | None,
     latest: bool,
 ) -> str:
+    """Return the feature run folder name to resume.
+
+    Parameters
+    ----------
+    feature_storage
+        Features-stage storage manager for the dataset.
+    checkpoint
+        Named unfinished feature run timestamp, or None when using ``latest``.
+    latest
+        When True, resume the newest unfinished feature run.
+
+    Returns
+    -------
+    str
+        Single folder name under ``features/``.
+
+    Raises
+    ------
+    ValueError
+        When both ``checkpoint`` and ``latest`` are set, or when neither is set.
+    FileNotFoundError
+        When ``latest`` is set and no unfinished feature run exists.
+    """
     raise NotImplementedError
 
 
@@ -325,6 +389,39 @@ def generate_platform_features_from_checkpoint(
     max_concurrency: int,
     feature_subset: list[str] | None,
 ) -> dict[str, Path]:
+    """Resume an unfinished feature run and generate the requested labels.
+
+    Parameters
+    ----------
+    spec
+        Platform storage, model, and column spec.
+    dataset_id
+        Dataset identifier from ingestion YAML.
+    checkpoint
+        Named unfinished ``features/{timestamp}/`` folder, or None with ``latest``.
+    latest
+        When True, resume the newest unfinished feature run.
+    batch_size
+        Label batch size.
+    max_concurrency
+        Engine concurrency cap.
+    feature_subset
+        Optional registry subset. None runs every feature.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in the resumed folder.
+
+    Raises
+    ------
+    ValueError
+        When both resume flags are set, neither is set, or the named run is
+        already completed.
+    FileNotFoundError
+        When the named folder is missing, or when ``latest`` finds no
+        unfinished run.
+    """
     raise NotImplementedError
 
 
@@ -332,6 +429,20 @@ def build_feature_cli_app(
     spec: FeaturePlatformSpec,
     dataset_id_help: str,
 ) -> typer.Typer:
+    """Return a Typer app with exclusive ``new-run`` and ``resume`` commands.
+
+    Parameters
+    ----------
+    spec
+        Platform storage, model, and column spec.
+    dataset_id_help
+        Help text for ``--dataset-id``.
+
+    Returns
+    -------
+    typer.Typer
+        CLI that requires ``new-run`` or ``resume``.
+    """
     app = typer.Typer(no_args_is_help=True)
 
     @app.command("new-run")

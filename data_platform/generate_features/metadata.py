@@ -91,6 +91,25 @@ def init_feature_run_metadata(
     config: FeatureGenerationConfig,
     feature_names: tuple[str, ...],
 ) -> FeatureRunMetadata:
+    """Create metadata.json for a new feature run.
+
+    Parameters
+    ----------
+    config
+        Feature generation config whose ``features_dir`` is the new run folder.
+    feature_names
+        Registry names to stamp as pending features.
+
+    Returns
+    -------
+    FeatureRunMetadata
+        In-progress metadata flushed to disk.
+
+    Raises
+    ------
+    ValueError
+        When ``metadata.json`` already exists in this folder.
+    """
     raise NotImplementedError
 
 
@@ -98,6 +117,28 @@ def load_feature_run_metadata(
     config: FeatureGenerationConfig,
     feature_names: tuple[str, ...],
 ) -> FeatureRunMetadata:
+    """Load metadata.json for an unfinished feature run.
+
+    Parameters
+    ----------
+    config
+        Feature generation config whose ``features_dir`` is the resume folder.
+    feature_names
+        Registry names whose model and prompt identity must still match.
+
+    Returns
+    -------
+    FeatureRunMetadata
+        Existing metadata, with identity stamps checked.
+
+    Raises
+    ------
+    FileNotFoundError
+        When ``metadata.json`` is missing.
+    ValueError
+        When the run is already completed, or when model or prompt identity
+        no longer matches this folder.
+    """
     raise NotImplementedError
 
 
@@ -105,6 +146,7 @@ def load_or_init_metadata(
     config: FeatureGenerationConfig,
     feature_names: tuple[str, ...],
 ) -> FeatureRunMetadata:
+    """Removed. Use init_feature_run_metadata or load_feature_run_metadata."""
     raise NotImplementedError(
         "Use init_feature_run_metadata or load_feature_run_metadata"
     )

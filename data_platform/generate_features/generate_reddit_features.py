@@ -74,7 +74,28 @@ def generate_reddit_features_from_checkpoint(
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
 ) -> dict[str, Path]:
-    """Resume an unfinished Reddit feature run."""
+    """Resume an unfinished Reddit feature run.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset identifier from ingestion YAML.
+    checkpoint
+        Named unfinished feature run timestamp, or None when using ``latest``.
+    latest
+        When True, resume the newest unfinished feature run.
+    batch_size
+        Label batch size.
+    max_concurrency
+        Engine concurrency cap.
+    feature_subset
+        Optional registry subset. None runs every feature.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in the resumed folder.
+    """
     return generate_platform_features_from_checkpoint(
         REDDIT_SPEC,
         dataset_id,

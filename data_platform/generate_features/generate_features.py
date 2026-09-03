@@ -179,7 +179,23 @@ def generate_features(
     config: FeatureGenerationConfig,
     resume: bool,
 ) -> dict[str, Path]:
-    """Generate configured features with resumable append to timestamped run files."""
+    """Generate configured features with resumable append to timestamped run files.
+
+    Parameters
+    ----------
+    records
+        Preprocessed rows to label.
+    config
+        Feature generation config, including the chosen ``features_dir``.
+    resume
+        True loads metadata for that unfinished folder. False inits metadata
+        for a new folder.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in this run folder.
+    """
     if records.empty:
         print("generate_features: no records to label")
         return {}
