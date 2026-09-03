@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-03
+
+1. Operators can dump 2026-09-01 UTC Bluesky Jetstream posts from Athena into local zstd hourly parquet with uri, did, created_at, and text, plus summary stats. Raw CSV output is gitignored. [PR #135](https://github.com/METResearchGroup/mirrorView-task/pull/135)
+
 ## 2026-09-02
 
 1. Preprocess now owns length and English gates for stimuli-ready text. Reddit comments also need at least 30 characters. Ingest fetch filters are unchanged. [PR #132](https://github.com/METResearchGroup/mirrorView-task/pull/132)
