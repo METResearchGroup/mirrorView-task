@@ -42,7 +42,6 @@ def policy_includes_prior_runs(policy: object) -> bool:
 class DedupeConfig:
     id_column: str
     filename: str | None = None
-    include_prior_runs: bool = False
 
 
 @dataclass
@@ -56,23 +55,6 @@ class DedupeSession:
 
     config: DedupeConfig
     seen_ids: set[str] = field(default_factory=set)
-
-    def warm(self, storage: StorageManager, output_dir: Path) -> None:  # noqa: F821
-        """Load this-run ids, then all-run ids when ``include_prior_runs`` is true.
-
-        Compatibility path for existing ingest and preprocess callers.
-        """
-        self.load_seen_ids(storage, output_dir)
-        if self.config.include_prior_runs:
-            self.load_seen_ids_from_all_runs(storage)
-
-    def filter_rows(self, rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
-        """Return unseen rows and a skipped count. Delegates to ``exclude_seen_ids``."""
-        return self.exclude_seen_ids(rows)
-
-    def note_appended(self, rows: list[dict[str, Any]]) -> None:
-        """Record persisted row ids. Delegates to ``add_seen_ids``."""
-        self.add_seen_ids(rows)
 
     def load_seen_ids(self, storage: StorageManager, run_dir: Path) -> None:  # noqa: F821
         """Add ids from one run directory to ``seen_ids`` without replacing existing ids.
