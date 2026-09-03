@@ -134,6 +134,13 @@ class TestCommentToRow:
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
+        assert set(result) == {
+            "comment_fullname",
+            "author",
+            "body",
+            "created_at",
+            "sync_timestamp",
+        }
         SyncRedditCommentModel.model_validate(attach_record_id(result, "reddit"))
 
 

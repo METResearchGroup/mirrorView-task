@@ -32,21 +32,13 @@ def mock_comment_row(
     post_reddit_id: str = "abc123",
     subreddit: str = "alphasub",
 ) -> dict[str, Any]:
+    del post_reddit_id, subreddit
     return {
-        "post_reddit_id": post_reddit_id,
-        "post_reddit_fullname": f"t3_{post_reddit_id}",
-        "subreddit": subreddit,
-        "comment_id": comment_fullname.removeprefix("t1_"),
         "comment_fullname": comment_fullname,
-        "record_id": f"reddit_{post_reddit_id}_{comment_fullname.removeprefix('t1_')}",
-        "parent_id": f"t3_{post_reddit_id}",
+        "record_id": f"reddit_{comment_fullname}",
         "author": "user",
         "body": "comment text long enough",
-        "score": 1,
         "created_at": "2026-05-30T00:00:00+00:00",
-        "permalink": f"/r/{subreddit}/comments/{post_reddit_id}/x/{comment_fullname}/",
-        "depth": 0,
-        "comment_rank": 1,
         "sync_timestamp": "2026_05_30-10:00:00",
     }
 

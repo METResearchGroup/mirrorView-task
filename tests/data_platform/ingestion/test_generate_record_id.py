@@ -23,8 +23,6 @@ def _expected_bluesky_record_id(uri: str) -> str:
 
 BLUESKY_URI = "at://did:plc:example/app.bsky.feed.post/abc"
 REDDIT_COMMENT_FULLNAME = "t1_keep"
-REDDIT_POST_ID = "abc123"
-REDDIT_COMMENT_ID = "keep"
 TWITTER_TWEET_ID = "1000000000000000001"
 
 
@@ -48,8 +46,8 @@ class TestGenerateRecordId:
         assert result == expected
 
     def test_prefixes_reddit_primary_key(self) -> None:
-        """Reddit ids prefix the already-joined primary key."""
-        primary_key = f"{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
+        """Reddit ids prefix the given primary key."""
+        primary_key = "t1_keep"
         expected = f"{INTEGRATION_REDDIT}_{primary_key}"
 
         result = generate_record_id(INTEGRATION_REDDIT, primary_key)
@@ -72,10 +70,10 @@ class TestGenerateRecordId:
 class TestGenerateRedditRecordId:
     """Tests for generate_reddit_record_id()."""
 
-    def test_joins_comment_post_and_comment_id(self) -> None:
-        """Comment rows use reddit_{post_reddit_id}_{comment_id}."""
+    def test_prefixes_comment_fullname(self) -> None:
+        """Comment rows use reddit_{comment_fullname}."""
         source = mock_comment_row(REDDIT_COMMENT_FULLNAME, subreddit="politics")
-        expected = f"{INTEGRATION_REDDIT}_{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
+        expected = f"{INTEGRATION_REDDIT}_{REDDIT_COMMENT_FULLNAME}"
 
         result = generate_reddit_record_id(source)
 
@@ -120,7 +118,7 @@ class TestAttachRecordId:
     def test_attaches_reddit_comment_record_id(self) -> None:
         """Reddit comment rows go through generate_reddit_record_id."""
         source = mock_comment_row(REDDIT_COMMENT_FULLNAME, subreddit="politics")
-        expected_record_id = f"{INTEGRATION_REDDIT}_{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
+        expected_record_id = f"{INTEGRATION_REDDIT}_{REDDIT_COMMENT_FULLNAME}"
 
         result = attach_record_id(source, INTEGRATION_REDDIT)
 
