@@ -72,5 +72,33 @@ class TestGenerateBlueskyFeatures:
             latest=False,
         )
 
+    def test_passes_checkpoint_and_latest(
+        self, data_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        _write_preprocessed_run(
+            data_root, VALID_DATASET_ID, "2026_01_01-00:00:00", sync_status="completed"
+        )
+        mock_generate = MagicMock(return_value={})
+        monkeypatch.setattr(
+            "data_platform.generate_features.generate_bluesky_features.generate_platform_features",
+            mock_generate,
+        )
+
+        generate_bluesky_features(
+            VALID_DATASET_ID,
+            checkpoint="2026_01_01-00:00:00",
+            latest=True,
+        )
+
+        mock_generate.assert_called_once_with(
+            BLUESKY_SPEC,
+            VALID_DATASET_ID,
+            batch_size=64,
+            max_concurrency=80,
+            feature_subset=None,
+            checkpoint="2026_01_01-00:00:00",
+            latest=True,
+        )
+
     def test_require_all_runs_complete_is_on_spec(self) -> None:
         assert BLUESKY_SPEC.require_all_runs_complete is True
