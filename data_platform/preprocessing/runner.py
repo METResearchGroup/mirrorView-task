@@ -215,22 +215,6 @@ def collapse_candidates_by_id(
     return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 
 
-def _drop_already_preprocessed(
-    records: pd.DataFrame, id_col: str, seen_ids: set[str]
-) -> tuple[pd.DataFrame, int]:
-    """Drop rows already preprocessed in a prior run, then dedupe by id within this batch.
-
-    Returns the surviving records and how many rows were dropped for being seen before.
-    """
-    id_series = cast(pd.Series, records[id_col])
-    is_new = ~id_series.isin(list(seen_ids))
-    skipped = len(records) - int(is_new.sum())
-    deduped = (
-        records.loc[is_new].drop_duplicates(subset=[id_col], keep="last").reset_index(drop=True)
-    )
-    return deduped, skipped
-
-
 def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
