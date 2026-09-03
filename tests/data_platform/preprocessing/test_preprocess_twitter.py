@@ -269,7 +269,7 @@ def test_prior_run_skip_count_excludes_collapse_duplicates() -> None:
         ]
     )
     session = DedupeSession(DedupeConfig(id_column="tweet_id"))
-    session.seen_ids = {"a"}
+    session.seen_ids = {"a"}  # public skip-set seed for this helper-path test
     id_col = "tweet_id"
     is_new = ~records[id_col].isin(list(session.seen_ids))
     skipped = len(records) - int(is_new.sum())
