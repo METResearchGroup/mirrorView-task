@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. Operators can dump 2026-09-01 UTC Bluesky Jetstream posts from Athena into local zstd hourly parquet with uri, did, created_at, and text, plus summary stats. Raw CSV output is gitignored. [PR #135](https://github.com/METResearchGroup/mirrorView-task/pull/135)
+1. The Bluesky Jetstream dump exports 2026-09-01 UTC posts from Athena into local hourly zstd parquet with uri, did, created_at, and text, and writes summary statistics to JSON. Raw CSV output is gitignored. [PR #135](https://github.com/METResearchGroup/mirrorView-task/pull/135)
 
 ## 2026-09-02
 
