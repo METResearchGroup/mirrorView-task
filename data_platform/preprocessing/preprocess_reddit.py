@@ -4,6 +4,9 @@ Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \\
         --dataset-id reddit_<uuid>
+
+    PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \\
+        --config data_platform/ingestion/data_dumps/reddit/pushshift_dump.yaml
 """
 
 from __future__ import annotations
@@ -41,11 +44,13 @@ from data_platform.preprocessing.validators.validators import (
     check_if_not_phone,
     check_if_text_english,
 )
+from data_platform.utils.config_paths import load_yaml_config, resolve_config_path
 from data_platform.utils.platform_specific_columns import (
     REDDIT_COLUMNS,
     REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN,
 )
 from data_platform.utils.storage import RedditStorageManager
+from lib.constants import REPO_ROOT
 
 COMMENT_TEXT_VALIDATORS: tuple[TextValidator, ...] = (
     check_if_body_not_removed,
@@ -71,6 +76,10 @@ REDDIT_SPEC = PreprocessPlatformSpec(
     author_handle_source_column="author",
 )
 
+PREPROCESS_KEY = "preprocess"
+SAMPLE_SIZE_KEY = "sample_size"
+SAMPLE_SEED_KEY = "sample_seed"
+
 
 def passes_all_validators(
     text: str,
@@ -86,17 +95,65 @@ def passes_row_validators(
     return _passes_row_validators(author, validators)
 
 
-def preprocess_records(dataset_id: str) -> Path:
-    return run_preprocess_records(dataset_id, REDDIT_SPEC)
+def load_dump_preprocess_settings(config_path: Path) -> tuple[str, int, int]:
+    """Read dataset id and sample settings from a dump preprocess YAML.
+
+    Parameters
+    ----------
+    config_path
+        Absolute path to the dump YAML.
+
+    Returns
+    -------
+    tuple[str, int, int]
+        ``dataset_id``, ``sample_size``, and ``sample_seed``.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the YAML file does not exist.
+    ValueError
+        When required keys are missing or ``sample_size`` is less than 1.
+    """
+    raise NotImplementedError
+
+
+def preprocess_records(
+    dataset_id: str,
+    sample_size: int | None = None,
+    sample_seed: int | None = None,
+) -> Path:
+    return run_preprocess_records(
+        dataset_id,
+        REDDIT_SPEC,
+        sample_size,
+        sample_seed,
+    )
 
 
 def main(
-    dataset_id: str = typer.Option(
-        ...,
+    dataset_id: str | None = typer.Option(
+        None,
         "--dataset-id",
         help="Dataset identifier from ingestion YAML (reddit_<uuid>)",
     ),
+    config: Path | None = typer.Option(
+        None,
+        "--config",
+        help="Dump dataset YAML with dataset_id and preprocess sample settings",
+    ),
 ) -> None:
+    if config is not None and dataset_id is not None:
+        raise typer.BadParameter("Pass only one of --config or --dataset-id")
+    if config is None and dataset_id is None:
+        raise typer.BadParameter("Pass --config or --dataset-id")
+    if config is not None:
+        config_path = resolve_config_path(config, REPO_ROOT)
+        resolved_dataset_id, sample_size, sample_seed = load_dump_preprocess_settings(
+            config_path
+        )
+        preprocess_records(resolved_dataset_id, sample_size, sample_seed)
+        return
     preprocess_records(dataset_id)
 
 

@@ -358,6 +358,11 @@ def preprocess_records(
     ----------
     dataset_id
         Dataset identifier in ``{platform}_{uuid}`` form.
+    sample_size
+        Optional maximum kept rows per source raw run. ``None`` writes every
+        filtered row.
+    sample_seed
+        Seed used when ``sample_size`` is set. Required in that case.
 
     Returns
     -------
