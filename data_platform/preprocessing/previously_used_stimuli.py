@@ -43,7 +43,10 @@ def extract_stimuli_ids(frame: pd.DataFrame, dataset_name: str) -> set[str]:
     ValueError
         When ``post_primary_key`` is missing from ``frame``.
     """
-    raise NotImplementedError
+    if STIMULI_ID_COLUMN not in frame.columns:
+        raise ValueError(f"{dataset_name}: missing {STIMULI_ID_COLUMN} column")
+    keys = frame[STIMULI_ID_COLUMN].dropna().map(lambda value: str(value).strip())
+    return {key for key in keys if key}
 
 
 def load_previously_used_stimuli_ids(
