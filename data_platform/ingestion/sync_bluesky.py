@@ -214,8 +214,48 @@ class BlueskySyncContext:
 
 
 def load_bluesky_sync_context(config_path: Path) -> BlueskySyncContext:
-    """Load config, storage, tasks, and the Bluesky client for one sync."""
-    raise NotImplementedError
+    """Load config, storage, tasks, and the Bluesky client for one sync.
+
+    Parameters
+    ----------
+    config_path
+        Ingestion YAML path. The dataset manifest is created on first use.
+
+    Returns
+    -------
+    BlueskySyncContext
+        Shared setup for new-run and resume.
+
+    Raises
+    ------
+    ValueError
+        When ``dataset_id`` is missing, or when ``record_types`` does not
+        include Bluesky posts.
+    """
+    config = load_yaml_config(config_path)
+    dataset_id = require_dataset_id(config, platform="bluesky")
+    ensure_dataset_manifest(
+        BlueskyStorageManager(StorageStage.RAW, dataset_id),
+        "bluesky",
+        dataset_id,
+        config,
+        config_path,
+    )
+    storage = BlueskyStorageManager(StorageStage.RAW, dataset_id)
+    ingestion_params = config["ingestion_params"]
+    sync_tasks = build_sync_tasks(ingestion_params)
+    record_types: list[str] = config["record_types"]
+    if POSTS_RECORD_TYPE not in record_types:
+        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
+    return BlueskySyncContext(
+        config=config,
+        config_path=config_path,
+        storage=storage,
+        ingestion_params=ingestion_params,
+        sync_tasks=sync_tasks,
+        client=BlueskyClient(),
+        filename=storage.records_filename,
+    )
 
 
 def execute_bluesky_sync(
@@ -223,8 +263,38 @@ def execute_bluesky_sync(
     output_dir: Path,
     metadata: dict[str, Any],
 ) -> Path:
-    """Run keyword tasks and finalize metadata for an opened raw run."""
-    raise NotImplementedError
+    """Run keyword tasks and finalize metadata for an opened raw run.
+
+    Parameters
+    ----------
+    context
+        Shared Bluesky ingest setup.
+    output_dir
+        Opened raw run directory.
+    metadata
+        Run metadata to update in place.
+
+    Returns
+    -------
+    Path
+        The same ``output_dir`` after tasks are synced and metadata is flushed.
+    """
+    run_sync_tasks(
+        context.client,
+        context.ingestion_params,
+        output_dir,
+        context.storage,
+        metadata,
+        context.sync_tasks,
+        filename=context.filename,
+    )
+    finalize_local_disk_sync(context.storage, output_dir, metadata)
+    total_rows = metadata["row_count"]
+    print(
+        f"sync_records: wrote {total_rows} rows to {output_dir} "
+        f"(status={metadata['sync_status']})"
+    )
+    return output_dir
 
 
 def sync_records_new_run(config_path: Path) -> Path:
