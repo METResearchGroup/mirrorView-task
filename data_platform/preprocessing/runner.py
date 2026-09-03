@@ -196,7 +196,7 @@ def save_preprocessed(
 def collapse_candidates_by_id(
     df: pd.DataFrame, id_col: str, keep: str = "last"
 ) -> pd.DataFrame:
-    """Keep one row per id. Later rows win when keep is last.
+    """Keep one row per id, and keep the later row when keep is last.
 
     Parameters
     ----------
@@ -210,7 +210,7 @@ def collapse_candidates_by_id(
     Returns
     -------
     pd.DataFrame
-        One row per id, index reset.
+        The frame has one row per id, and the index is reset.
     """
     return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 

@@ -3,7 +3,7 @@
 ## 2026-09-03
 
 1. Raw ingest now writes a stable `record_id` on every row using the same `{integration}_{id}` keys as study stimuli (`bluesky_{sha256(uri)}`, `twitter_{tweet_id}`, `reddit_{post_reddit_id}_{comment_id}`). [PR #138](https://github.com/METResearchGroup/mirrorView-task/pull/138)
-2. Ingest, preprocess, and feature unlabeled skip now share one skip-set session. Warmup names are gone, and known ids load as this-run or all-runs before drop, persist, or collapse. [PR #144](https://github.com/METResearchGroup/mirrorView-task/pull/144)
+2. Ingest, preprocess, and feature unlabeled skip now share one skip set session. The warmup names are gone. Callers load known ids for this run or for all runs before they drop, persist, or collapse. [PR #144](https://github.com/METResearchGroup/mirrorView-task/pull/144)
 
 ## 2026-09-02
 

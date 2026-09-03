@@ -71,9 +71,9 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \
   --dataset-id reddit_<uuid>
 ```
 
-### Extra details of note
+### Extra details
 
-Skip-set load is not a preprocess stage. You load all prior preprocessed IDs before creating the new run directory. You drop known IDs with pandas. You collapse remaining IDs last-wins.
+Loading the skip set is work you do before preprocess writes a new run directory, not a named preprocess stage. You load all prior preprocessed IDs first. You then drop known IDs with pandas, and you keep the last remaining row when an id appears more than once.
 
 ```mermaid
 flowchart LR

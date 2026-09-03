@@ -13,7 +13,8 @@ from data_platform.utils.storage import StorageManager
 class FeatureLabelQuery:
     """Query labeled record ids from feature files across timestamped runs.
 
-    Unlabeled skip uses the same skip-set session type as ingest and preprocess.
+    Feature generation skips unlabeled records with the same skip set session
+    type that ingest and preprocess use.
     """
 
     feature_storage: StorageManager
