@@ -51,17 +51,14 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp, or pass `--latest`. Do not pass both.
+To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_<uuid> --batch-size 64 --checkpoint <timestamp>
-
-PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  --dataset-id bluesky_<uuid> --batch-size 64 --latest
 ```
 
-Feature generation writes each run into a new folder named `features/<timestamp>/`. If you pass neither `--checkpoint` nor `--latest`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. If a run stops partway through, pass `--checkpoint <timestamp>` or `--latest` so the same folder is reused. You cannot reopen a completed feature run.
+Feature generation writes each run into a new folder named `features/<timestamp>/`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. If a run stops partway through, pass `--checkpoint <timestamp>` so the same folder is reused. You cannot reopen a completed feature run.
 
 Feature generation still skips a post that already has a label, including labels written in earlier feature folders. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
 

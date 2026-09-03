@@ -47,7 +47,6 @@ def generate_twitter_features(
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
     checkpoint: str | None = None,
-    latest: bool = False,
 ) -> dict[str, Path]:
     """Load Twitter posts and generate the requested feature labels.
 
@@ -55,10 +54,7 @@ def generate_twitter_features(
     ----------
     checkpoint
         Existing ``features/{timestamp}/`` folder to resume. Pass None when
-        you want a new run and ``latest`` is False.
-    latest
-        If True, resume the newest unfinished feature run. Do not pass
-        ``checkpoint`` at the same time.
+        you want a new run.
     """
     return generate_platform_features(
         TWITTER_SPEC,
@@ -67,7 +63,6 @@ def generate_twitter_features(
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
         checkpoint=checkpoint,
-        latest=latest,
     )
 
 
@@ -89,11 +84,6 @@ def main(
         "--checkpoint",
         help="Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
     ),
-    latest: bool = typer.Option(
-        False,
-        "--latest",
-        help="Resume the newest unfinished feature run for this dataset.",
-    ),
 ) -> None:
     """CLI entrypoint for resumable Twitter feature generation."""
     generate_twitter_features(
@@ -102,7 +92,6 @@ def main(
         max_concurrency=max_concurrency,
         feature_subset=features_from_cli(features),
         checkpoint=checkpoint,
-        latest=latest,
     )
 
 

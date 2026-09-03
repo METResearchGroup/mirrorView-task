@@ -69,10 +69,9 @@ class TestGenerateBlueskyFeatures:
             max_concurrency=4,
             feature_subset=["is_political"],
             checkpoint=None,
-            latest=False,
         )
 
-    def test_passes_checkpoint_and_latest(
+    def test_passes_checkpoint(
         self, data_root: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         _write_preprocessed_run(
@@ -87,7 +86,6 @@ class TestGenerateBlueskyFeatures:
         generate_bluesky_features(
             VALID_DATASET_ID,
             checkpoint="2026_01_01-00:00:00",
-            latest=True,
         )
 
         mock_generate.assert_called_once_with(
@@ -97,7 +95,6 @@ class TestGenerateBlueskyFeatures:
             max_concurrency=80,
             feature_subset=None,
             checkpoint="2026_01_01-00:00:00",
-            latest=True,
         )
 
     def test_require_all_runs_complete_is_on_spec(self) -> None:

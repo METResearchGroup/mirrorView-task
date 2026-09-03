@@ -76,17 +76,14 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp, or pass `--latest`. Do not pass both, and do not run these in addition to a new run.
+To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_<uuid> --batch-size 64 --checkpoint <timestamp>
-
-PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  --dataset-id bluesky_<uuid> --batch-size 64 --latest
 ```
 
-Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Feature generation writes each run into `features/<timestamp>/`. If you pass neither `--checkpoint` nor `--latest`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. Pass `--checkpoint <timestamp>` or `--latest` to keep writing into an unfinished folder. You cannot reopen a completed feature run.
+Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Feature generation writes each run into `features/<timestamp>/`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. Pass `--checkpoint <timestamp>` to keep writing into an unfinished folder. You cannot reopen a completed feature run.
 
 If a dataset still has leftover files directly under `features/` from the old layout, move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 

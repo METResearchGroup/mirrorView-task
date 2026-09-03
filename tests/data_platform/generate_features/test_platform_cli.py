@@ -17,7 +17,6 @@ from data_platform.generate_features.generate_twitter_features import (
 )
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
-    FEATURE_CHECKPOINT_OR_LATEST_ERROR,
     build_feature_config,
     feature_run_dir,
     features_from_cli,
@@ -31,7 +30,6 @@ from tests.data_platform.constants import (
 )
 
 OLDER_FEATURE_RUN = "2026_01_01-00:00:00"
-NEWER_FEATURE_RUN = "2026_02_01-00:00:00"
 MISSING_FEATURE_RUN = "2026_03_01-00:00:00"
 
 
@@ -111,7 +109,7 @@ class TestFeatureRunDir:
     def test_starts_new_timestamped_folder_when_no_checkpoint(
         self, feature_storage: StorageManager
     ) -> None:
-        result = feature_run_dir(feature_storage, None, False)
+        result = feature_run_dir(feature_storage, None)
 
         assert result.parent == feature_storage.root_dir
         assert result.name != "features"
@@ -124,35 +122,11 @@ class TestFeatureRunDir:
             data_root, OLDER_FEATURE_RUN, sync_status="in_progress"
         )
 
-        result = feature_run_dir(feature_storage, OLDER_FEATURE_RUN, False)
+        result = feature_run_dir(feature_storage, OLDER_FEATURE_RUN)
 
         assert result == expected
         feature_dirs = [path for path in feature_storage.root_dir.iterdir() if path.is_dir()]
         assert feature_dirs == [expected]
-
-    def test_latest_resumes_newest_unfinished_run(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="in_progress")
-        expected = write_feature_checkpoint(
-            data_root, NEWER_FEATURE_RUN, sync_status="in_progress"
-        )
-
-        result = feature_run_dir(feature_storage, None, True)
-
-        assert result == expected
-
-    def test_latest_skips_completed_runs(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        expected = write_feature_checkpoint(
-            data_root, OLDER_FEATURE_RUN, sync_status="in_progress"
-        )
-        write_feature_checkpoint(data_root, NEWER_FEATURE_RUN, sync_status="completed")
-
-        result = feature_run_dir(feature_storage, None, True)
-
-        assert result == expected
 
     def test_new_run_fails_when_unfinished_run_exists(
         self, data_root: Path, feature_storage: StorageManager
@@ -161,8 +135,8 @@ class TestFeatureRunDir:
             data_root, OLDER_FEATURE_RUN, sync_status="in_progress"
         )
 
-        with pytest.raises(ValueError, match="--checkpoint or --latest"):
-            feature_run_dir(feature_storage, None, False)
+        with pytest.raises(ValueError, match="--checkpoint"):
+            feature_run_dir(feature_storage, None)
 
         assert unfinished.is_dir()
 
@@ -171,7 +145,7 @@ class TestFeatureRunDir:
     ) -> None:
         write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="completed")
 
-        result = feature_run_dir(feature_storage, None, False)
+        result = feature_run_dir(feature_storage, None)
 
         assert result != feature_storage.root_dir / OLDER_FEATURE_RUN
         assert result.is_dir()
@@ -180,7 +154,7 @@ class TestFeatureRunDir:
         self, feature_storage: StorageManager
     ) -> None:
         with pytest.raises(FileNotFoundError, match=MISSING_FEATURE_RUN):
-            feature_run_dir(feature_storage, MISSING_FEATURE_RUN, False)
+            feature_run_dir(feature_storage, MISSING_FEATURE_RUN)
 
         assert not (feature_storage.root_dir / MISSING_FEATURE_RUN).exists()
 
@@ -192,29 +166,13 @@ class TestFeatureRunDir:
         )
 
         with pytest.raises(ValueError, match="already completed"):
-            feature_run_dir(feature_storage, OLDER_FEATURE_RUN, False)
+            feature_run_dir(feature_storage, OLDER_FEATURE_RUN)
 
         assert completed.is_dir()
 
-    def test_latest_fails_when_no_unfinished_run_exists(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="completed")
-
-        with pytest.raises(FileNotFoundError, match="unfinished feature run"):
-            feature_run_dir(feature_storage, None, True)
-
-    def test_checkpoint_and_latest_are_mutually_exclusive(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="in_progress")
-
-        with pytest.raises(ValueError, match=FEATURE_CHECKPOINT_OR_LATEST_ERROR):
-            feature_run_dir(feature_storage, OLDER_FEATURE_RUN, True)
-
     def test_rejects_path_escape(self, feature_storage: StorageManager) -> None:
         with pytest.raises(ValueError, match="single feature run directory name"):
-            feature_run_dir(feature_storage, "../other-dir", False)
+            feature_run_dir(feature_storage, "../other-dir")
 
 
 class TestBuildFeatureConfig:
@@ -248,12 +206,12 @@ class TestBuildFeatureConfig:
 
 
 class TestFeatureGenerationCliFlags:
-    """Tests that platform feature CLIs expose --checkpoint and --latest."""
+    """Tests that platform feature CLIs expose --checkpoint and drop --run-dir."""
 
     @pytest.mark.parametrize("cli_main", [bluesky_main, twitter_main, reddit_main])
-    def test_cli_uses_checkpoint_and_latest_instead_of_run_dir(self, cli_main) -> None:
+    def test_cli_uses_checkpoint_instead_of_run_dir(self, cli_main) -> None:
         parameters = inspect.signature(cli_main).parameters
 
         assert "checkpoint" in parameters
-        assert "latest" in parameters
+        assert "latest" not in parameters
         assert "run_dir" not in parameters
