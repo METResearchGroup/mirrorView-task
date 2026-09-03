@@ -30,12 +30,13 @@ PARENT_DIR_NAME = ".."
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
+    """Platform settings for one feature generation command."""
+
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
     columns: PlatformSpecificColumns
     empty_message: str
-    require_all_runs_complete: bool = False
 
 
 def generate_feature_subset(features: list[str] | None) -> tuple[str, ...] | None:
@@ -116,7 +117,11 @@ def _start_new_feature_run(feature_storage: StorageManager) -> Path:
 
 
 def _unfinished_feature_run_dirs(feature_storage: StorageManager) -> list[Path]:
-    """Return feature run directories whose metadata is not completed."""
+    """Return feature run directories that are not marked completed.
+
+    A directory with no ``metadata.json`` counts as unfinished. That covers a
+    crash after ``create_new_run_dir()`` and before metadata is written.
+    """
     if not feature_storage.root_dir.exists():
         return []
     unfinished: list[Path] = []
@@ -125,6 +130,7 @@ def _unfinished_feature_run_dirs(feature_storage: StorageManager) -> list[Path]:
             continue
         metadata_path = path / METADATA_FILENAME
         if not metadata_path.exists():
+            unfinished.append(path)
             continue
         metadata = feature_storage.load_run_metadata(path)
         if metadata.get("sync_status") != FEATURE_RUN_COMPLETED_STATUS:
@@ -152,6 +158,9 @@ def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -
     run_dir = feature_storage.root_dir / run_name
     if not run_dir.is_dir():
         raise FileNotFoundError(f"Run directory not found: {run_dir}")
+    metadata_path = run_dir / METADATA_FILENAME
+    if not metadata_path.exists():
+        return run_dir
     metadata = feature_storage.load_run_metadata(run_dir)
     if metadata.get("sync_status") == FEATURE_RUN_COMPLETED_STATUS:
         raise ValueError(f"Run is already completed: {run_dir}")
@@ -268,19 +277,34 @@ def generate_platform_features(
 ) -> dict[str, Path]:
     """Load platform records and generate the requested feature labels.
 
+    Every preprocessed run for the dataset must be complete before labels
+    are generated.
+
     Parameters
     ----------
     checkpoint
         Existing ``features/{timestamp}/`` folder to resume. Pass None when
         you want a new run.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the dataset has no preprocessed run directory, or when the named
+        checkpoint folder is missing.
+    RuntimeError
+        When a preprocessed run is missing ``metadata.json`` or is not
+        marked complete.
+    ValueError
+        When ``checkpoint`` is not a single folder name, when you start a new
+        run while an unfinished run exists, or when the named run is already
+        completed.
     """
     dataset_id = validate_dataset_id(dataset_id)
 
-    if spec.require_all_runs_complete:
-        preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-        if preprocessed_storage.latest_run_dir() is None:
-            raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
-        preprocessed_storage.require_all_runs_complete(dataset_id)
+    preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+    if preprocessed_storage.latest_run_dir() is None:
+        raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
+    preprocessed_storage.require_all_runs_complete(dataset_id)
 
     features_subset = generate_feature_subset(feature_subset)
     run_config = FeatureRunConfig(
@@ -289,6 +313,14 @@ def generate_platform_features(
     )
     records = load_preprocessed_records(spec, dataset_id)
     if records.empty:
+        if checkpoint is not None:
+            build_feature_config(
+                spec,
+                dataset_id,
+                run_config=run_config,
+                features_subset=features_subset,
+                checkpoint=checkpoint,
+            )
         print(spec.empty_message)
         return {}
     config = build_feature_config(

@@ -94,13 +94,53 @@ def test_features_from_cli_empty_strings_returns_none() -> None:
     assert features_from_cli([""]) is None
 
 
+def write_empty_twitter_preprocessed_run(data_root: Path) -> Path:
+    run_dir = (
+        data_root / "twitter" / VALID_TWITTER_DATASET_ID / "preprocessed" / PREPROCESSED_RUN_DIR
+    )
+    run_dir.mkdir(parents=True)
+    (run_dir / "posts.csv").write_text("tweet_id,text\n", encoding="utf-8")
+    (run_dir / "metadata.json").write_text(json.dumps({}), encoding="utf-8")
+    return run_dir
+
+
 def test_empty_twitter_input_does_not_create_feature_run(data_root: Path) -> None:
-    """Given no preprocessed posts, when generating features, then no features run dir is created."""
+    """Given an empty completed preprocessed run, when generating features, then no features run dir is created."""
+    write_empty_twitter_preprocessed_run(data_root)
+
     result = generate_twitter_features(VALID_TWITTER_DATASET_ID)
 
     assert result == {}
     features_root = data_root / "twitter" / VALID_TWITTER_DATASET_ID / "features"
     assert not features_root.exists()
+
+
+def test_empty_twitter_input_with_missing_checkpoint_fails(data_root: Path) -> None:
+    write_empty_twitter_preprocessed_run(data_root)
+
+    with pytest.raises(FileNotFoundError, match=MISSING_FEATURE_RUN):
+        generate_twitter_features(VALID_TWITTER_DATASET_ID, checkpoint=MISSING_FEATURE_RUN)
+
+
+def test_empty_twitter_input_with_completed_checkpoint_fails(data_root: Path) -> None:
+    write_empty_twitter_preprocessed_run(data_root)
+    completed = (
+        data_root / "twitter" / VALID_TWITTER_DATASET_ID / "features" / OLDER_FEATURE_RUN
+    )
+    completed.mkdir(parents=True)
+    (completed / "metadata.json").write_text(
+        json.dumps(
+            {
+                "dataset_id": VALID_TWITTER_DATASET_ID,
+                "sync_status": "completed",
+                "features": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match="already completed"):
+        generate_twitter_features(VALID_TWITTER_DATASET_ID, checkpoint=OLDER_FEATURE_RUN)
 
 
 class TestFeatureRunDir:
@@ -149,6 +189,29 @@ class TestFeatureRunDir:
 
         assert result != feature_storage.root_dir / OLDER_FEATURE_RUN
         assert result.is_dir()
+
+    def test_new_run_fails_when_folder_has_no_metadata(
+        self, feature_storage: StorageManager
+    ) -> None:
+        run_dir = feature_storage.root_dir / OLDER_FEATURE_RUN
+        run_dir.mkdir(parents=True)
+
+        with pytest.raises(ValueError, match="--checkpoint"):
+            feature_run_dir(feature_storage, None)
+
+        assert run_dir.is_dir()
+        assert not (run_dir / "metadata.json").exists()
+
+    def test_named_checkpoint_resumes_folder_without_metadata(
+        self, feature_storage: StorageManager
+    ) -> None:
+        run_dir = feature_storage.root_dir / OLDER_FEATURE_RUN
+        run_dir.mkdir(parents=True)
+
+        result = feature_run_dir(feature_storage, OLDER_FEATURE_RUN)
+
+        assert result == run_dir
+        assert not (run_dir / "metadata.json").exists()
 
     def test_named_checkpoint_fails_when_folder_is_missing(
         self, feature_storage: StorageManager
