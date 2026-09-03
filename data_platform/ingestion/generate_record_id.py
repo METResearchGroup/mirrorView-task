@@ -91,4 +91,17 @@ def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]
     ValueError
         When ``integration`` is unknown or the primary key value is empty.
     """
-    raise NotImplementedError
+    normalized_integration = integration.strip().lower()
+    primary_key_column = _INTEGRATION_PRIMARY_KEY_COLUMNS.get(normalized_integration)
+    if primary_key_column is None:
+        raise ValueError(f"Unknown integration `{integration}`.")
+
+    if primary_key_column not in row:
+        raise KeyError(primary_key_column)
+
+    out = dict(row)
+    out[RECORD_ID_COLUMN] = generate_record_id(
+        normalized_integration,
+        str(row[primary_key_column]),
+    )
+    return out

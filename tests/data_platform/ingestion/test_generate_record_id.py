@@ -71,12 +71,15 @@ class TestAttachRecordId:
     def test_adds_record_id_without_mutating_input(self) -> None:
         """attach_record_id copies the row and leaves the source dict unchanged."""
         source = mock_tweet_row(TWITTER_TWEET_ID)
+        source_without_record_id = {
+            key: value for key, value in source.items() if key != RECORD_ID_COLUMN
+        }
         expected_record_id = f"{INTEGRATION_TWITTER}_{TWITTER_TWEET_ID}"
 
-        result = attach_record_id(source, INTEGRATION_TWITTER)
+        result = attach_record_id(source_without_record_id, INTEGRATION_TWITTER)
 
         assert result[RECORD_ID_COLUMN] == expected_record_id
-        assert RECORD_ID_COLUMN not in source
+        assert RECORD_ID_COLUMN not in source_without_record_id
 
     def test_raises_when_primary_key_column_is_missing(self) -> None:
         """Missing platform primary key columns are caller errors."""
