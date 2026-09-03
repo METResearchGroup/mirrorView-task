@@ -18,8 +18,7 @@ def _valid_body() -> str:
 
 def _comment_row(**overrides: Any) -> dict[str, Any]:
     comment_fullname = overrides.pop("comment_fullname", "t1_valid_comment")
-    subreddit = overrides.pop("subreddit", "politics")
-    row = mock_comment_row(comment_fullname, subreddit=subreddit)
+    row = mock_comment_row(comment_fullname)
     row["body"] = _valid_body()
     row["author"] = "regular_user"
     row.update(overrides)

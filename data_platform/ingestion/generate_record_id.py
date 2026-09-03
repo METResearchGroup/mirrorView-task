@@ -46,7 +46,7 @@ def generate_record_id(integration: str, primary_key: str) -> str:
         Platform name: ``bluesky``, ``reddit``, or ``twitter``.
     primary_key
         Platform-native unique id for the row. Reddit comments use
-        ``comment_fullname``. Reddit posts use ``reddit_fullname``.
+        ``comment_fullname``, and Reddit posts use ``reddit_fullname``.
 
     Returns
     -------
@@ -76,14 +76,14 @@ def generate_record_id(integration: str, primary_key: str) -> str:
 def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
     """Return ``record_id`` for a Reddit post or comment row.
 
-    Comments use ``reddit_{comment_fullname}``. Posts use
+    Comments use ``reddit_{comment_fullname}``, and posts use
     ``reddit_{reddit_fullname}``.
 
     Parameters
     ----------
     row
         One Reddit ingest record. Comment rows must include
-        ``comment_fullname``. Post rows must include ``reddit_fullname``.
+        ``comment_fullname``, and post rows must include ``reddit_fullname``.
 
     Returns
     -------

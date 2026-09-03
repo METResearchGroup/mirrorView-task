@@ -72,7 +72,7 @@ class TestGenerateRedditRecordId:
 
     def test_prefixes_comment_fullname(self) -> None:
         """Comment rows use reddit_{comment_fullname}."""
-        source = mock_comment_row(REDDIT_COMMENT_FULLNAME, subreddit="politics")
+        source = mock_comment_row(REDDIT_COMMENT_FULLNAME)
         expected = f"{INTEGRATION_REDDIT}_{REDDIT_COMMENT_FULLNAME}"
 
         result = generate_reddit_record_id(source)
@@ -81,7 +81,7 @@ class TestGenerateRedditRecordId:
 
     def test_prefixes_post_fullname(self) -> None:
         """Post rows use reddit_{reddit_fullname}."""
-        source = mock_post_row("t3_abc123", subreddit="politics")
+        source = mock_post_row("t3_abc123")
         expected = f"{INTEGRATION_REDDIT}_t3_abc123"
 
         result = generate_reddit_record_id(source)
@@ -117,7 +117,7 @@ class TestAttachRecordId:
 
     def test_attaches_reddit_comment_record_id(self) -> None:
         """Reddit comment rows go through generate_reddit_record_id."""
-        source = mock_comment_row(REDDIT_COMMENT_FULLNAME, subreddit="politics")
+        source = mock_comment_row(REDDIT_COMMENT_FULLNAME)
         expected_record_id = f"{INTEGRATION_REDDIT}_{REDDIT_COMMENT_FULLNAME}"
 
         result = attach_record_id(source, INTEGRATION_REDDIT)

@@ -1,4 +1,4 @@
-"""Tests for slim Reddit comment ingest rows.
+"""Tests for Reddit comment ingest rows with fewer fields.
 
 Run from the repo root:
 
@@ -24,7 +24,7 @@ ELIGIBLE_BODY = "this comment body is long enough"
 
 
 class FakeCommentForest(list):
-    """List-backed stand-in for a PRAW CommentForest."""
+    """A list that stands in for a PRAW CommentForest."""
 
     def replace_more(self, limit: int = 0) -> list[object]:
         del limit
@@ -37,27 +37,24 @@ def _comment(
     body: str = ELIGIBLE_BODY,
     stickied: bool = False,
     distinguished: str | None = None,
+    replies: list[object] | None = None,
 ) -> SimpleNamespace:
     return SimpleNamespace(
-        id=name.removeprefix("t1_"),
         name=name,
-        parent_id="t3_abc123",
         author="user",
         body=body,
-        score=1,
         created_utc=CREATED_AT_UNIX,
-        permalink="/r/politics/comments/abc123/title/x/",
         stickied=stickied,
         distinguished=distinguished,
-        replies=[],
+        replies=FakeCommentForest(replies or []),
     )
 
 
 class TestSyncRedditCommentModel:
-    """Tests for SyncRedditCommentModel extra-field policy."""
+    """Tests that SyncRedditCommentModel rejects unexpected columns."""
 
-    def test_rejects_dropped_geometry_fields(self) -> None:
-        """Old comment-tree columns are invalid on the slim sync model."""
+    def test_rejects_columns_that_are_no_longer_on_a_comment_row(self) -> None:
+        """SyncRedditCommentModel rejects columns such as depth that are no longer on a comment row."""
         row = mock_comment_row("t1_keep")
         row["depth"] = 0
 
@@ -68,8 +65,8 @@ class TestSyncRedditCommentModel:
 class TestFetchPostComments:
     """Tests for fetch_post_comments()."""
 
-    def test_keeps_eligible_comments_without_tree_position(self) -> None:
-        """Eligible comments are kept and do not store depth or rank."""
+    def test_keeps_eligible_comments_without_depth_or_rank(self) -> None:
+        """fetch_post_comments keeps eligible comments, and the rows do not include depth or rank."""
         forest = FakeCommentForest(
             [
                 _comment("t1_sticky", stickied=True),
@@ -78,12 +75,7 @@ class TestFetchPostComments:
                 _comment("t1_short", body="too short"),
             ]
         )
-        submission = SimpleNamespace(
-            id="abc123",
-            name="t3_abc123",
-            subreddit=SimpleNamespace(display_name="politics"),
-            comments=forest,
-        )
+        submission = SimpleNamespace(comments=forest)
 
         result = fetch_post_comments(
             submission,
@@ -96,3 +88,18 @@ class TestFetchPostComments:
         assert "depth" not in result[0]
         assert "comment_rank" not in result[0]
         SyncRedditCommentModel.model_validate(attach_record_id(result[0], "reddit"))
+
+    def test_collects_nested_replies_in_display_order(self) -> None:
+        """Nested replies are still visited after depth tracking is removed."""
+        child = _comment("t1_child")
+        parent = _comment("t1_parent", replies=[child])
+        submission = SimpleNamespace(comments=FakeCommentForest([parent]))
+
+        result = fetch_post_comments(
+            submission,
+            max_comments=10,
+            min_body_length=10,
+            sync_timestamp=SYNC_TIMESTAMP,
+        )
+
+        assert [row["comment_fullname"] for row in result] == ["t1_parent", "t1_child"]

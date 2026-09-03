@@ -50,14 +50,10 @@ def _mock_submission() -> SimpleNamespace:
 
 def _mock_comment() -> SimpleNamespace:
     return SimpleNamespace(
-        id="xyz789",
         name="t1_xyz789",
-        parent_id="t3_abc123",
         author="user",
         body="comment body",
-        score=2,
         created_utc=CREATED_AT_UNIX,
-        permalink="/r/politics/comments/abc123/title/xyz789/",
     )
 
 

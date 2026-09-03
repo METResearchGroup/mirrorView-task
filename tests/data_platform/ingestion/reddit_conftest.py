@@ -26,13 +26,7 @@ def minimal_reddit_sync_config() -> dict[str, Any]:
     }
 
 
-def mock_comment_row(
-    comment_fullname: str,
-    *,
-    post_reddit_id: str = "abc123",
-    subreddit: str = "alphasub",
-) -> dict[str, Any]:
-    del post_reddit_id, subreddit
+def mock_comment_row(comment_fullname: str) -> dict[str, Any]:
     return {
         "comment_fullname": comment_fullname,
         "record_id": f"reddit_{comment_fullname}",
