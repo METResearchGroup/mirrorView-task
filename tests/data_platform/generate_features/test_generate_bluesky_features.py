@@ -9,7 +9,6 @@ import pytest
 from data_platform.generate_features.generate_bluesky_features import (
     BLUESKY_SPEC,
     generate_bluesky_features,
-    generate_bluesky_features_from_checkpoint,
 )
 from tests.data_platform.constants import PREPROCESSED_RUN_DIR, VALID_DATASET_ID
 
@@ -86,9 +85,10 @@ class TestGenerateBlueskyFeatures:
             batch_size=8,
             max_concurrency=4,
             feature_subset=["is_political"],
+            checkpoint=None,
         )
 
-    def test_from_checkpoint_delegates_named_checkpoint(
+    def test_delegates_named_checkpoint(
         self, data_root: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         _write_preprocessed_run(
@@ -96,11 +96,11 @@ class TestGenerateBlueskyFeatures:
         )
         mock_generate = MagicMock(return_value={})
         monkeypatch.setattr(
-            "data_platform.generate_features.generate_bluesky_features.generate_platform_features_from_checkpoint",
+            "data_platform.generate_features.generate_bluesky_features.generate_platform_features",
             mock_generate,
         )
 
-        generate_bluesky_features_from_checkpoint(
+        generate_bluesky_features(
             VALID_DATASET_ID,
             checkpoint="2026_01_01-00:00:00",
         )
@@ -108,9 +108,9 @@ class TestGenerateBlueskyFeatures:
         mock_generate.assert_called_once_with(
             BLUESKY_SPEC,
             VALID_DATASET_ID,
-            "2026_01_01-00:00:00",
             batch_size=64,
             max_concurrency=80,
             feature_subset=None,
+            checkpoint="2026_01_01-00:00:00",
         )
 

@@ -70,23 +70,20 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \
   --dataset-id bluesky_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  new-run --dataset-id bluesky_<uuid> --batch-size 64
+  --dataset-id bluesky_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, pass `resume --checkpoint` with the feature run timestamp. To continue the newest unfinished feature run, pass `resume --latest`. Pass exactly one of those flags.
+To continue an unfinished feature run, pass `--checkpoint` with the feature run timestamp.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  resume --dataset-id bluesky_<uuid> --checkpoint <timestamp>
-
-PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  resume --dataset-id bluesky_<uuid> --latest
+  --dataset-id bluesky_<uuid> --checkpoint <timestamp>
 ```
 
-Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Use `new-run` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. Use `resume` to keep writing into an unfinished feature run. You cannot resume a completed feature run. Posts that already have labels in any feature run folder are skipped. If a feature such as `is_political` is marked completed in the current feature run, new posts are not labeled for that feature in that feature run. Use a later `new-run` to label the new posts.
+Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Omit `--checkpoint` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. Pass `--checkpoint` to keep writing into that unfinished feature run. You cannot continue a completed feature run. Posts that already have labels in any feature run folder are skipped. If a feature such as `is_political` is marked completed in the current feature run, new posts are not labeled for that feature in that feature run. Start a later feature run without `--checkpoint` to label the new posts.
 
 If a dataset still has leftover files directly under `features/` from the old layout, move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 

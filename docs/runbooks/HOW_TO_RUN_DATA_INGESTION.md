@@ -45,25 +45,22 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \
   --dataset-id bluesky_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  new-run --dataset-id bluesky_<uuid> --batch-size 64
+  --dataset-id bluesky_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, pass `resume --checkpoint` with the feature run timestamp. To continue the newest unfinished feature run, pass `resume --latest`. Pass exactly one of those flags.
+To continue an unfinished feature run, pass `--checkpoint` with the feature run timestamp.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  resume --dataset-id bluesky_<uuid> --checkpoint <timestamp>
-
-PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  resume --dataset-id bluesky_<uuid> --latest
+  --dataset-id bluesky_<uuid> --checkpoint <timestamp>
 ```
 
-Use `new-run` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. If the feature run stops partway through, use `resume --checkpoint` with that feature run timestamp so labels keep going into the same feature run folder. Use `resume --latest` to continue the newest unfinished feature run. You cannot resume a completed feature run.
+Omit `--checkpoint` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. If the feature run stops partway through, pass `--checkpoint` with that feature run timestamp so labels keep going into the same feature run folder. You cannot continue a completed feature run.
 
-Feature generation still skips a post that already has a label, including labels written in earlier feature run folders. If a feature such as `is_political` is marked completed in the current feature run, that feature stays completed even if new posts appear. Use a later `new-run` to label the new posts. When the same post appears in more than one feature run folder, the curate step keeps the row with the latest `label_timestamp`.
+Feature generation still skips a post that already has a label, including labels written in earlier feature run folders. If a feature such as `is_political` is marked completed in the current feature run, that feature stays completed even if new posts appear. Start a later feature run without `--checkpoint` to label the new posts. When the same post appears in more than one feature run folder, the curate step keeps the row with the latest `label_timestamp`.
 
 If this dataset still has leftover files directly under `features/` from the old layout (`is_political.csv`, `metadata.json`, `deadletter.jsonl`), move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 
@@ -79,13 +76,13 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_twitter.py \
   --dataset-id twitter_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_twitter_features.py \
-  new-run --dataset-id twitter_<uuid> --batch-size 64
+  --dataset-id twitter_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_twitter.py \
   --dataset-id twitter_<uuid> --config mirrorview.yaml
 ```
 
-Twitter feature generation uses the same `resume --checkpoint` and `resume --latest` commands as Bluesky. Pass exactly one of those flags.
+Twitter feature generation uses the same `--checkpoint` flag as Bluesky. Omit it to start a new feature run.
 
 ### Reddit
 
@@ -97,13 +94,13 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \
   --dataset-id reddit_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \
-  new-run --dataset-id reddit_<uuid> --batch-size 64
+  --dataset-id reddit_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_reddit.py \
   --dataset-id reddit_<uuid> --config mirrorview.yaml
 ```
 
-Reddit feature generation uses the same `resume --checkpoint` and `resume --latest` commands as Bluesky. Pass exactly one of those flags.
+Reddit feature generation uses the same `--checkpoint` flag as Bluesky. Omit it to start a new feature run.
 
 Confirm outputs:
 

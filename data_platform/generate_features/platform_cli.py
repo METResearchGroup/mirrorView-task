@@ -3,7 +3,7 @@
 Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
-        new-run --dataset-id bluesky_<uuid> --batch-size 64
+        --dataset-id bluesky_<uuid> --batch-size 64
 """
 
 from __future__ import annotations
@@ -31,7 +31,6 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 FEATURE_RUN_COMPLETED_STATUS = "completed"
 FEATURE_CHECKPOINT_NAME_ERROR = "checkpoint must be a single feature run directory name"
-RESUME_FLAG_ERROR = "Pass exactly one of --checkpoint or --latest"
 CURRENT_DIR_NAME = "."
 PARENT_DIR_NAME = ".."
 DEFAULT_BATCH_SIZE = 64
@@ -40,9 +39,9 @@ FEATURES_OPTION_HELP = (
     "Feature names. Repeat the flag for each feature, e.g. --features is_political"
 )
 CHECKPOINT_OPTION_HELP = (
-    "Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)"
+    "Unfinished feature run timestamp to continue (e.g. 2026_05_30-12:00:00). "
+    "Omit this flag to start a new feature run."
 )
-LATEST_OPTION_HELP = "Resume the newest unfinished feature run for this dataset."
 
 
 @dataclass(frozen=True)
@@ -120,16 +119,15 @@ def _start_new_feature_run(feature_storage: StorageManager) -> Path:
     Raises
     ------
     ValueError
-        When an unfinished feature run already exists. The operator must pass
-        ``resume --checkpoint`` with that feature run timestamp, or
-        ``resume --latest``, to continue it.
+        When an unfinished feature run already exists. Pass ``--checkpoint``
+        with that feature run timestamp to continue it.
     """
     unfinished = _unfinished_feature_run_dirs(feature_storage)
     if unfinished:
         newest = max(unfinished, key=lambda path: path.name)
         raise ValueError(
             f"An unfinished feature run exists at {newest}. "
-            f"Use resume --checkpoint {newest.name} to continue that feature run"
+            f"Pass --checkpoint {newest.name} to continue that feature run"
         )
     return feature_storage.create_new_run_dir()
 
@@ -302,7 +300,6 @@ def _run_platform_feature_generation(
     max_concurrency: int,
     feature_subset: list[str] | None,
     checkpoint: str | None,
-    resume: bool,
 ) -> dict[str, Path]:
     dataset_id = validate_dataset_id(dataset_id)
     _require_complete_preprocessed_runs(spec, dataset_id)
@@ -331,18 +328,23 @@ def _run_platform_feature_generation(
         checkpoint=checkpoint,
     )
     return run_feature_generation(
-        records, config, spec.empty_message, resume
+        records, config, spec.empty_message, resume=checkpoint is not None
     )
 
 
 def generate_platform_features(
     spec: FeaturePlatformSpec,
     dataset_id: str,
+    *,
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
+    checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Start a new feature run and generate the requested feature labels.
+    """Generate the requested feature labels in a new or unfinished feature run.
+
+    Omit ``checkpoint`` to start a new feature run folder. Pass ``checkpoint``
+    to continue that unfinished feature run.
 
     Parameters
     ----------
@@ -356,130 +358,26 @@ def generate_platform_features(
         Engine concurrency cap.
     feature_subset
         Optional registry subset. None runs every feature.
+    checkpoint
+        Named unfinished ``features/{timestamp}/`` folder. Pass None to start
+        a new feature run.
 
     Returns
     -------
     dict[str, Path]
-        Feature name to the label file written in the new folder.
+        Feature name to the label file written in the feature run folder.
 
     Raises
     ------
     FileNotFoundError
-        When the dataset has no preprocessed run directory.
+        When the dataset has no preprocessed run directory, or when the named
+        feature run folder is missing.
     RuntimeError
         When a preprocessed run is missing ``metadata.json`` or is not
         marked complete.
     ValueError
-        When an unfinished feature run already exists for this dataset.
-    """
-    return _run_platform_feature_generation(
-        spec,
-        dataset_id,
-        batch_size,
-        max_concurrency,
-        feature_subset,
-        checkpoint=None,
-        resume=False,
-    )
-
-
-def require_latest_unfinished_feature_run_dir(feature_storage: StorageManager) -> Path:
-    """Return the newest unfinished feature run directory for this dataset.
-
-    Parameters
-    ----------
-    feature_storage
-        Features-stage storage manager for the dataset.
-
-    Returns
-    -------
-    Path
-        Newest feature run directory whose ``sync_status`` is not completed.
-
-    Raises
-    ------
-    FileNotFoundError
-        When no unfinished feature run exists.
-    """
-    unfinished = _unfinished_feature_run_dirs(feature_storage)
-    if not unfinished:
-        raise FileNotFoundError(
-            f"No unfinished feature run exists under {feature_storage.root_dir}"
-        )
-    return max(unfinished, key=lambda path: path.name)
-
-
-def resolve_resume_checkpoint(
-    feature_storage: StorageManager,
-    checkpoint: str | None,
-    latest: bool,
-) -> str:
-    """Return the feature run folder name to resume.
-
-    Parameters
-    ----------
-    feature_storage
-        Features-stage storage manager for the dataset.
-    checkpoint
-        Named unfinished feature run timestamp, or None when using ``latest``.
-    latest
-        When True, resume the newest unfinished feature run.
-
-    Returns
-    -------
-    str
-        Single folder name under ``features/``.
-
-    Raises
-    ------
-    ValueError
-        When both ``checkpoint`` and ``latest`` are set, or when neither is set.
-    FileNotFoundError
-        When ``latest`` is set and no unfinished feature run exists.
-    """
-    if (checkpoint is not None and latest) or (checkpoint is None and not latest):
-        raise ValueError(RESUME_FLAG_ERROR)
-    if checkpoint is not None:
-        return checkpoint
-    return require_latest_unfinished_feature_run_dir(feature_storage).name
-
-
-def generate_platform_features_from_checkpoint(
-    spec: FeaturePlatformSpec,
-    dataset_id: str,
-    checkpoint: str,
-    batch_size: int = 64,
-    max_concurrency: int = 80,
-    feature_subset: list[str] | None = None,
-) -> dict[str, Path]:
-    """Resume an unfinished feature run and generate the requested labels.
-
-    Parameters
-    ----------
-    spec
-        Platform storage, model, and column spec.
-    dataset_id
-        Dataset identifier from ingestion YAML.
-    checkpoint
-        Named unfinished ``features/{timestamp}/`` folder.
-    batch_size
-        Label batch size.
-    max_concurrency
-        Engine concurrency cap.
-    feature_subset
-        Optional registry subset. None runs every feature.
-
-    Returns
-    -------
-    dict[str, Path]
-        Feature name to the label file written in the resumed feature run folder.
-
-    Raises
-    ------
-    ValueError
-        When the named feature run is already completed.
-    FileNotFoundError
-        When the named feature run folder is missing.
+        When ``checkpoint`` is omitted and an unfinished feature run already
+        exists, or when the named feature run is already completed.
     """
     return _run_platform_feature_generation(
         spec,
@@ -488,7 +386,6 @@ def generate_platform_features_from_checkpoint(
         max_concurrency,
         feature_subset,
         checkpoint=checkpoint,
-        resume=True,
     )
 
 
@@ -496,7 +393,7 @@ def build_feature_cli_app(
     spec: FeaturePlatformSpec,
     dataset_id_help: str,
 ) -> typer.Typer:
-    """Return a Typer app with separate ``new-run`` and ``resume`` commands.
+    """Return a Typer app whose optional ``--checkpoint`` continues an unfinished feature run.
 
     Parameters
     ----------
@@ -508,34 +405,12 @@ def build_feature_cli_app(
     Returns
     -------
     typer.Typer
-        CLI that requires ``new-run`` or ``resume``.
+        CLI that starts a new feature run unless ``--checkpoint`` is passed.
     """
     app = typer.Typer(no_args_is_help=True)
 
-    @app.command("new-run")
-    def new_run_command(
-        dataset_id: str = typer.Option(..., "--dataset-id", help=dataset_id_help),
-        batch_size: int = typer.Option(DEFAULT_BATCH_SIZE, "--batch-size"),
-        max_concurrency: int = typer.Option(
-            DEFAULT_MAX_CONCURRENCY, "--max-concurrency"
-        ),
-        features: list[str] | None = typer.Option(
-            None,
-            "--features",
-            help=FEATURES_OPTION_HELP,
-        ),
-    ) -> None:
-        """Start a new feature run under features/{timestamp}/. If an unfinished feature run already exists, you get an error."""
-        generate_platform_features(
-            spec,
-            dataset_id,
-            batch_size=batch_size,
-            max_concurrency=max_concurrency,
-            feature_subset=features_from_cli(features),
-        )
-
-    @app.command("resume")
-    def resume_command(
+    @app.callback(invoke_without_command=True)
+    def run(
         dataset_id: str = typer.Option(..., "--dataset-id", help=dataset_id_help),
         batch_size: int = typer.Option(DEFAULT_BATCH_SIZE, "--batch-size"),
         max_concurrency: int = typer.Option(
@@ -551,26 +426,15 @@ def build_feature_cli_app(
             "--checkpoint",
             help=CHECKPOINT_OPTION_HELP,
         ),
-        latest: bool = typer.Option(
-            False,
-            "--latest",
-            help=LATEST_OPTION_HELP,
-        ),
     ) -> None:
-        """Resume an unfinished feature run. Pass exactly one of --checkpoint or --latest."""
-        dataset_id = validate_dataset_id(dataset_id)
-        run_name = resolve_resume_checkpoint(
-            _feature_label_storage(spec, dataset_id),
-            checkpoint,
-            latest,
-        )
-        generate_platform_features_from_checkpoint(
+        """Generate feature labels. Pass --checkpoint to continue an unfinished feature run."""
+        generate_platform_features(
             spec,
             dataset_id,
-            run_name,
             batch_size=batch_size,
             max_concurrency=max_concurrency,
             feature_subset=features_from_cli(features),
+            checkpoint=checkpoint,
         )
 
     return app

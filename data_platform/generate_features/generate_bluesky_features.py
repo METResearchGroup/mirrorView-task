@@ -3,13 +3,10 @@
 Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
-        new-run --dataset-id bluesky_<uuid> --batch-size 64
+        --dataset-id bluesky_<uuid> --batch-size 64
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
-        resume --dataset-id bluesky_<uuid> --checkpoint 2026_05_30-12:00:00
-
-    PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
-        resume --dataset-id bluesky_<uuid> --latest
+        --dataset-id bluesky_<uuid> --checkpoint 2026_05_30-12:00:00
 """
 
 from __future__ import annotations
@@ -20,7 +17,6 @@ from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
     build_feature_cli_app,
     generate_platform_features,
-    generate_platform_features_from_checkpoint,
 )
 from data_platform.models.sync import PreprocessedBlueskyPostModel
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
@@ -42,11 +38,13 @@ app = build_feature_cli_app(
 
 def generate_bluesky_features(
     dataset_id: str,
+    *,
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
+    checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Start a new Bluesky feature run and generate the requested labels.
+    """Generate Bluesky feature labels in a new or unfinished feature run.
 
     Parameters
     ----------
@@ -58,11 +56,14 @@ def generate_bluesky_features(
         Engine concurrency cap.
     feature_subset
         Optional registry subset. None runs every feature.
+    checkpoint
+        Named unfinished feature run timestamp. Pass None to start a new
+        feature run.
 
     Returns
     -------
     dict[str, Path]
-        Feature name to the label file written in the new folder.
+        Feature name to the label file written in the feature run folder.
     """
     return generate_platform_features(
         BLUESKY_SPEC,
@@ -70,48 +71,12 @@ def generate_bluesky_features(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
-    )
-
-
-def generate_bluesky_features_from_checkpoint(
-    dataset_id: str,
-    checkpoint: str,
-    batch_size: int = 64,
-    max_concurrency: int = 80,
-    feature_subset: list[str] | None = None,
-) -> dict[str, Path]:
-    """Resume an unfinished Bluesky feature run.
-
-    Parameters
-    ----------
-    dataset_id
-        Dataset identifier from ingestion YAML.
-    checkpoint
-        Named unfinished feature run timestamp.
-    batch_size
-        Label batch size.
-    max_concurrency
-        Engine concurrency cap.
-    feature_subset
-        Optional registry subset. None runs every feature.
-
-    Returns
-    -------
-    dict[str, Path]
-        Feature name to the label file written in the resumed folder.
-    """
-    return generate_platform_features_from_checkpoint(
-        BLUESKY_SPEC,
-        dataset_id,
-        checkpoint,
-        batch_size=batch_size,
-        max_concurrency=max_concurrency,
-        feature_subset=feature_subset,
+        checkpoint=checkpoint,
     )
 
 
 def main() -> None:
-    """CLI entrypoint. Requires new-run or resume."""
+    """CLI entrypoint for Bluesky feature generation."""
     app()
 
 

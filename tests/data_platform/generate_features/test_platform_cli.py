@@ -14,7 +14,6 @@ from data_platform.generate_features.generate_reddit_features import app as redd
 from data_platform.generate_features.generate_twitter_features import (
     app as twitter_app,
     generate_twitter_features,
-    generate_twitter_features_from_checkpoint,
 )
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
@@ -22,8 +21,6 @@ from data_platform.generate_features.platform_cli import (
     feature_run_dir,
     features_from_cli,
     generate_feature_subset,
-    require_latest_unfinished_feature_run_dir,
-    resolve_resume_checkpoint,
 )
 from data_platform.utils.storage import BlueskyStorageManager, StorageManager, StorageStage
 from tests.data_platform.constants import (
@@ -122,7 +119,7 @@ def test_empty_twitter_input_with_missing_checkpoint_fails(data_root: Path) -> N
     write_empty_twitter_preprocessed_run(data_root)
 
     with pytest.raises(FileNotFoundError, match=MISSING_FEATURE_RUN):
-        generate_twitter_features_from_checkpoint(
+        generate_twitter_features(
             VALID_TWITTER_DATASET_ID, checkpoint=MISSING_FEATURE_RUN
         )
 
@@ -145,7 +142,7 @@ def test_empty_twitter_input_with_completed_checkpoint_fails(data_root: Path) ->
     )
 
     with pytest.raises(ValueError, match="already completed"):
-        generate_twitter_features_from_checkpoint(
+        generate_twitter_features(
             VALID_TWITTER_DATASET_ID, checkpoint=OLDER_FEATURE_RUN
         )
 
@@ -275,86 +272,15 @@ class TestBuildFeatureConfig:
         assert config.features_dir.parent.name == "features"
 
 
-class TestRequireLatestUnfinishedFeatureRunDir:
-    """Tests for require_latest_unfinished_feature_run_dir()."""
-
-    def test_returns_newest_unfinished_run(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="completed")
-        newest = write_feature_checkpoint(
-            data_root, PREPROCESSED_RUN_DIR, sync_status="in_progress"
-        )
-
-        result = require_latest_unfinished_feature_run_dir(feature_storage)
-
-        assert result == newest
-
-    def test_fails_when_no_unfinished_run(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="completed")
-
-        with pytest.raises(FileNotFoundError, match="unfinished"):
-            require_latest_unfinished_feature_run_dir(feature_storage)
-
-
-class TestResolveResumeCheckpoint:
-    """Tests for resolve_resume_checkpoint()."""
-
-    def test_returns_named_checkpoint(
-        self, feature_storage: StorageManager
-    ) -> None:
-        result = resolve_resume_checkpoint(
-            feature_storage, OLDER_FEATURE_RUN, False
-        )
-
-        assert result == OLDER_FEATURE_RUN
-
-    def test_returns_latest_unfinished_name(
-        self, data_root: Path, feature_storage: StorageManager
-    ) -> None:
-        write_feature_checkpoint(
-            data_root, PREPROCESSED_RUN_DIR, sync_status="in_progress"
-        )
-
-        result = resolve_resume_checkpoint(feature_storage, None, True)
-
-        assert result == PREPROCESSED_RUN_DIR
-
-    @pytest.mark.parametrize(
-        "checkpoint, latest",
-        [
-            (OLDER_FEATURE_RUN, True),
-            (None, False),
-        ],
-    )
-    def test_requires_checkpoint_or_latest(
-        self,
-        feature_storage: StorageManager,
-        checkpoint: str | None,
-        latest: bool,
-    ) -> None:
-        with pytest.raises(ValueError, match="--checkpoint or --latest"):
-            resolve_resume_checkpoint(feature_storage, checkpoint, latest)
-
-
 class TestFeatureGenerationCli:
-    """Tests that platform feature CLIs require new-run or resume."""
+    """Tests that platform feature CLIs use optional --checkpoint."""
 
     @pytest.mark.parametrize("cli_app", [bluesky_app, twitter_app, reddit_app])
-    def test_help_lists_new_run_and_resume(self, cli_app) -> None:
+    def test_help_lists_checkpoint_and_not_subcommands(self, cli_app) -> None:
         result = CliRunner().invoke(cli_app, ["--help"])
 
         assert result.exit_code == 0
-        assert "new-run" in result.stdout
-        assert "resume" in result.stdout
-        assert "--run-dir" not in result.stdout
-
-    @pytest.mark.parametrize("cli_app", [bluesky_app, twitter_app, reddit_app])
-    def test_resume_help_lists_checkpoint_and_latest(self, cli_app) -> None:
-        result = CliRunner().invoke(cli_app, ["resume", "--help"])
-
-        assert result.exit_code == 0
         assert "--checkpoint" in result.stdout
-        assert "--latest" in result.stdout
+        assert "--run-dir" not in result.stdout
+        assert "--latest" not in result.stdout
+        assert "new-run" not in result.stdout

@@ -3,13 +3,10 @@
 Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \\
-        new-run --dataset-id reddit_<uuid> --batch-size 64
+        --dataset-id reddit_<uuid> --batch-size 64
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \\
-        resume --dataset-id reddit_<uuid> --checkpoint 2026_05_30-12:00:00
-
-    PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \\
-        resume --dataset-id reddit_<uuid> --latest
+        --dataset-id reddit_<uuid> --checkpoint 2026_05_30-12:00:00
 """
 
 from __future__ import annotations
@@ -21,7 +18,6 @@ from data_platform.generate_features.platform_cli import (
     build_feature_cli_app,
     build_feature_config,
     generate_platform_features,
-    generate_platform_features_from_checkpoint,
     load_preprocessed_records,
 )
 from data_platform.models.sync import PreprocessedRedditCommentModel
@@ -52,11 +48,13 @@ def load_comments(dataset_id: str):
 
 def generate_reddit_features(
     dataset_id: str,
+    *,
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
+    checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Start a new Reddit feature run and generate the requested labels.
+    """Generate Reddit feature labels in a new or unfinished feature run.
 
     Parameters
     ----------
@@ -68,11 +66,14 @@ def generate_reddit_features(
         Engine concurrency cap.
     feature_subset
         Optional registry subset. None runs every feature.
+    checkpoint
+        Named unfinished feature run timestamp. Pass None to start a new
+        feature run.
 
     Returns
     -------
     dict[str, Path]
-        Feature name to the label file written in the new folder.
+        Feature name to the label file written in the feature run folder.
     """
     return generate_platform_features(
         REDDIT_SPEC,
@@ -80,48 +81,12 @@ def generate_reddit_features(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
-    )
-
-
-def generate_reddit_features_from_checkpoint(
-    dataset_id: str,
-    checkpoint: str,
-    batch_size: int = 64,
-    max_concurrency: int = 80,
-    feature_subset: list[str] | None = None,
-) -> dict[str, Path]:
-    """Resume an unfinished Reddit feature run.
-
-    Parameters
-    ----------
-    dataset_id
-        Dataset identifier from ingestion YAML.
-    checkpoint
-        Named unfinished feature run timestamp.
-    batch_size
-        Label batch size.
-    max_concurrency
-        Engine concurrency cap.
-    feature_subset
-        Optional registry subset. None runs every feature.
-
-    Returns
-    -------
-    dict[str, Path]
-        Feature name to the label file written in the resumed folder.
-    """
-    return generate_platform_features_from_checkpoint(
-        REDDIT_SPEC,
-        dataset_id,
-        checkpoint,
-        batch_size=batch_size,
-        max_concurrency=max_concurrency,
-        feature_subset=feature_subset,
+        checkpoint=checkpoint,
     )
 
 
 def main() -> None:
-    """CLI entrypoint. Requires new-run or resume."""
+    """CLI entrypoint for Reddit feature generation."""
     app()
 
 
