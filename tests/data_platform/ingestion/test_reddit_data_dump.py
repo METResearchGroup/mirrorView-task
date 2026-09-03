@@ -127,38 +127,40 @@ class TestKeepDumpComment:
 class TestDumpCommentToSyncRow:
     """Tests for dump_comment_to_sync_row()."""
 
-    def test_maps_top_level_comment_onto_ingest_model(self) -> None:
-        """A top-level dump comment becomes a valid Reddit ingest row."""
+    def test_maps_dump_comment_onto_ingest_model(self) -> None:
+        """A dump comment becomes a valid Reddit ingest row."""
         comment = _dump_comment()
-        expected_record_id = f"{INTEGRATION_REDDIT}_1l09l1b_mvbyos2"
+        expected_record_id = f"{INTEGRATION_REDDIT}_t1_mvbyos2"
         expected_created_at = "2025-06-01T00:00:18+00:00"
 
         result = dump_comment_to_sync_row(comment, SYNC_TIMESTAMP)
         validated = SyncRedditCommentModel.model_validate(result)
 
-        assert validated.post_reddit_id == "1l09l1b"
-        assert validated.post_reddit_fullname == "t3_1l09l1b"
         assert validated.comment_fullname == "t1_mvbyos2"
         assert validated.record_id == expected_record_id
+        assert validated.author == "momamil"
+        assert validated.body == "Example comment body."
         assert validated.created_at == expected_created_at
-        assert "created_utc" not in result
-        assert validated.depth == 0
-        assert validated.comment_rank == 0
         assert validated.sync_timestamp == SYNC_TIMESTAMP
+        assert "created_utc" not in result
 
-    def test_nested_comment_has_depth_one(self) -> None:
-        """A reply to a comment has depth 1."""
-        comment = _dump_comment(parent_id="t1_mvbyhla")
-
-        result = dump_comment_to_sync_row(comment, SYNC_TIMESTAMP)
-
-        assert result["depth"] == 1
-
-    def test_synthesizes_permalink_when_missing(self) -> None:
-        """A missing permalink is built from subreddit, post id, and comment id."""
-        comment = _dump_comment(permalink=None)
-        expected = "/r/politics/comments/1l09l1b/_/mvbyos2/"
+    def test_nested_comment_uses_comment_fullname(self) -> None:
+        """A reply still maps onto comment_fullname and record_id."""
+        comment = _dump_comment(id="mvbyn04", parent_id="t1_mvbyhla")
+        expected_record_id = f"{INTEGRATION_REDDIT}_t1_mvbyn04"
 
         result = dump_comment_to_sync_row(comment, SYNC_TIMESTAMP)
 
-        assert result["permalink"] == expected
+        assert result["comment_fullname"] == "t1_mvbyn04"
+        assert result["record_id"] == expected_record_id
+
+    def test_omits_dump_only_fields(self) -> None:
+        """Dump-only keys such as subreddit are not copied onto the ingest row."""
+        comment = _dump_comment()
+
+        result = dump_comment_to_sync_row(comment, SYNC_TIMESTAMP)
+
+        assert "subreddit" not in result
+        assert "permalink" not in result
+        assert "score" not in result
+        assert "parent_id" not in result
