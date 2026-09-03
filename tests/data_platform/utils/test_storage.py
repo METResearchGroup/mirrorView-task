@@ -19,6 +19,7 @@ from tests.data_platform.constants import (
     VALID_TWITTER_DATASET_ID,
 )
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
+from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
 
 def test_bluesky_storage_root_includes_dataset_id(data_root, bluesky_storage) -> None:
@@ -202,6 +203,46 @@ def test_write_records_validates_rows(bluesky_storage) -> None:
             [{"uri": "at://missing-fields"}],
             run_dir,
         )
+
+
+class TestWriteRecordsAddsRecordId:
+    """Tests for record_id generation during storage writes."""
+
+    def test_bluesky_write_adds_record_id_from_uri(self, bluesky_storage) -> None:
+        """Raw Bluesky writes persist bluesky_{sha256(uri)} without caller-supplied record_id."""
+        run_dir = bluesky_storage.create_new_run_dir("2026_05_30-11:00:00")
+        row = make_ingestion_row()
+        row_without_record_id = {key: value for key, value in row.items() if key != "record_id"}
+        expected_record_id = row["record_id"]
+
+        bluesky_storage.write_records([row_without_record_id], run_dir)
+        saved = bluesky_storage.load_records(run_dir=run_dir)
+
+        assert saved.iloc[0]["record_id"] == expected_record_id
+
+    def test_twitter_write_adds_record_id_from_tweet_id(self, data_root) -> None:
+        """Raw Twitter writes persist twitter_{tweet_id}."""
+        storage = TwitterStorageManager(StorageStage.RAW, VALID_TWITTER_DATASET_ID)
+        run_dir = storage.create_new_run_dir("2026_05_30-11:00:00")
+        row = mock_tweet_row("1000000000000000001")
+        row_without_record_id = {key: value for key, value in row.items() if key != "record_id"}
+
+        storage.write_records([row_without_record_id], run_dir)
+        saved = storage.load_records(run_dir=run_dir)
+
+        assert saved.iloc[0]["record_id"] == "twitter_1000000000000000001"
+
+    def test_reddit_write_adds_record_id_from_comment_fullname(self, data_root) -> None:
+        """Raw Reddit comment writes persist reddit_{comment_fullname}."""
+        storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+        run_dir = storage.create_new_run_dir("2026_05_30-11:00:00")
+        row = mock_comment_row("t1_comment_a")
+        row_without_record_id = {key: value for key, value in row.items() if key != "record_id"}
+
+        storage.write_records([row_without_record_id], run_dir)
+        saved = storage.load_records(run_dir=run_dir)
+
+        assert saved.iloc[0]["record_id"] == "reddit_abc123_comment_a"
 
 
 class TestTwitterStorageManagerRecordsFilename:

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-03
+
+1. Raw ingest now writes a stable `record_id` on every row using the same `{integration}_{id}` keys as study stimuli (`bluesky_{sha256(uri)}`, `twitter_{tweet_id}`, `reddit_{post_reddit_id}_{comment_id}`). [PR #138](https://github.com/METResearchGroup/mirrorView-task/pull/138)
+
 ## 2026-09-02
 
 1. Preprocess now owns length and English gates for stimuli-ready text. Reddit comments also need at least 30 characters. Ingest fetch filters are unchanged. [PR #132](https://github.com/METResearchGroup/mirrorView-task/pull/132)
