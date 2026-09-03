@@ -60,20 +60,11 @@ class SyncTwitterPostModel(BaseModel):
 class SyncRedditCommentModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    post_reddit_id: str
-    post_reddit_fullname: str
-    subreddit: str
-    comment_id: str
     comment_fullname: str
     record_id: str
-    parent_id: str
     author: str
     body: str
-    score: int
     created_at: str
-    permalink: str
-    depth: int
-    comment_rank: int
     sync_timestamp: str
 
 
