@@ -1,4 +1,4 @@
-"""Map dump comments onto the Reddit comment ingest row shape."""
+"""Convert dump comments into the same fields used by Reddit comment ingest."""
 
 from __future__ import annotations
 

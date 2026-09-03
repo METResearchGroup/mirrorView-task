@@ -1,10 +1,10 @@
-"""Filter, sample, and write Reddit dump comments to parquet.
+"""Filter Reddit dump comments and write a sampled parquet file.
 
-Run from the repo root:
+Run this from the repo root.
 
     PYTHONPATH=. uv run python data_platform/ingestion/data_dumps/reddit/process_dump.py
 
-Process one file:
+To process one file, pass `--input-file` like this.
 
     PYTHONPATH=. uv run python data_platform/ingestion/data_dumps/reddit/process_dump.py \\
         --input-file data_platform/ingestion/data_dumps/reddit/RC_2025-05.zst
@@ -117,7 +117,7 @@ def process_dump_file(
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Filter and sample Reddit dump comments into parquet."
+        description="Filter Reddit dump comments, sample the comments that remain, and write them to parquet."
     )
     parser.add_argument("--input-file", action="append", dest="input_files")
     parser.add_argument("--output-dir", type=Path, default=FILTERED_DIR)
