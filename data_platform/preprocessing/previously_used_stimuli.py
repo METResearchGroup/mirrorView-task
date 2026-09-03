@@ -1,7 +1,9 @@
 """Skip preprocess candidates that were already used as study stimuli.
 
-Study catalogs store those keys as ``post_primary_key``. Ingest writes the same
-value on each raw row as ``record_id``. This module loads the catalog keys and
+Study catalogs store each stimulus id as ``post_primary_key``. Ingest writes
+the matching value on each raw row as ``record_id``. For Part 2 Reddit catalog
+keys of the form ``reddit_{post_id}_{comment_id}``, the skip set also includes
+the ingest form ``reddit_t1_{comment_id}``. The module loads those keys and
 drops matching preprocess candidates.
 
 Run this import from the repo root with
@@ -18,14 +20,35 @@ import pandas as pd
 
 from shared.data.dataloader import load_dataset
 from shared.data.registry import DatasetEntry, DatasetKind
+from data_platform.ingestion.generate_record_id import INTEGRATION_REDDIT
 from data_platform.utils.platform_specific_columns import STANDARDIZED_RECORD_ID_COLUMN
 
 STIMULI_ID_COLUMN = "post_primary_key"
 STIMULI_DATASET_KIND: DatasetKind = "stimuli"
+REDDIT_CATALOG_KEY_SEGMENT_COUNT = 3
+REDDIT_COMMENT_FULLNAME_KIND = "t1"
+
+
+def _reddit_ingest_aliases(stimuli_id: str) -> set[str]:
+    """Return ingest ``record_id`` forms for a Part 2 Reddit catalog key.
+
+    Catalog keys are ``reddit_{post_id}_{comment_id}``. Ingest writes
+    ``reddit_t1_{comment_id}`` from ``comment_fullname``.
+    """
+    segments = stimuli_id.split("_")
+    if len(segments) != REDDIT_CATALOG_KEY_SEGMENT_COUNT:
+        return set()
+    integration, _post_id, comment_id = segments
+    if integration != INTEGRATION_REDDIT or not comment_id:
+        return set()
+    return {f"{INTEGRATION_REDDIT}_{REDDIT_COMMENT_FULLNAME_KIND}_{comment_id}"}
 
 
 def extract_stimuli_ids(frame: pd.DataFrame, dataset_name: str) -> set[str]:
-    """Return non-empty ``post_primary_key`` values from one stimuli table.
+    """Return catalog ``post_primary_key`` values plus ingest-form aliases.
+
+    Blank and missing cells are omitted. Part 2 Reddit keys also add the
+    ``reddit_t1_{comment_id}`` ingest ``record_id``.
 
     Parameters
     ----------
@@ -37,7 +60,8 @@ def extract_stimuli_ids(frame: pd.DataFrame, dataset_name: str) -> set[str]:
     Returns
     -------
     set[str]
-        Distinct stimuli ids. Blank and missing cells are omitted.
+        Catalog keys plus Reddit ingest aliases. Blank and missing cells
+        are omitted.
 
     Raises
     ------
@@ -47,7 +71,11 @@ def extract_stimuli_ids(frame: pd.DataFrame, dataset_name: str) -> set[str]:
     if STIMULI_ID_COLUMN not in frame.columns:
         raise ValueError(f"{dataset_name}: missing {STIMULI_ID_COLUMN} column")
     keys = frame[STIMULI_ID_COLUMN].dropna().map(lambda value: str(value).strip())
-    return {key for key in keys if key}
+    catalog_ids = {key for key in keys if key}
+    ingest_ids = set(catalog_ids)
+    for stimuli_id in catalog_ids:
+        ingest_ids |= _reddit_ingest_aliases(stimuli_id)
+    return ingest_ids
 
 
 def load_previously_used_stimuli_ids(
