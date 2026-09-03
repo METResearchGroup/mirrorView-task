@@ -57,6 +57,7 @@ Copy the lab Athena wait-and-download client into the dump folder. Query only th
 5. Gitignore `data_platform/ingestion/data_dumps/bluesky/data/raw/`. Commit parquet plus a small stats file. Every committed parquet file uses zstd compression (not uncompressed, not snappy). Confirm codec in file metadata before `git add`.
 6. This dump is a sibling of keyword ingest. Do not write into `data_platform/data/bluesky/`, and do not change preprocess, features, or curate.
 7. No unit or integration test files. Do not add anything under `tests/`.
+8. Dump SELECT and parquet schema use four columns only: `uri`, `did`, `created_at`, `text`. Do not fetch or store `cid`, `rev`, `ingested_at`, `run_id`, `langs`, `reply_root_uri`, `reply_parent_uri`, or `embed_type`.
 
 ## Steps
 
