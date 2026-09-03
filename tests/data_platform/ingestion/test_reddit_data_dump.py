@@ -427,8 +427,33 @@ class TestMain:
         assert not (output_dir / "RC_2025-05.parquet").exists()
         assert later_output.read_text() == "already written"
 
+    def test_raises_before_write_when_two_inputs_share_an_output_stem(
+        self, tmp_path: Path
+    ) -> None:
+        """Two inputs with the same stem fail before any parquet is written."""
+        first_dir = tmp_path / "a"
+        second_dir = tmp_path / "b"
+        first_dir.mkdir()
+        second_dir.mkdir()
+        first_input = first_dir / "RC_2025-05.zst"
+        second_input = second_dir / "RC_2025-05.zst"
+        output_dir = tmp_path / "filtered"
+        _write_zst(first_input, [_dump_record("first")])
+        _write_zst(second_input, [_dump_record("second")])
 
-class TestInputPaths:
+        with pytest.raises(ValueError, match="duplicate output path"):
+            main(
+                [
+                    "--input-file",
+                    str(first_input),
+                    "--input-file",
+                    str(second_input),
+                    "--output-dir",
+                    str(output_dir),
+                ]
+            )
+
+        assert not output_dir.exists()
     """Tests for _input_paths()."""
 
     def test_defaults_to_experiment_month_files(self) -> None:

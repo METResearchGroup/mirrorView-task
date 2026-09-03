@@ -165,9 +165,18 @@ def _jobs_to_process(
     jobs = [
         (path, output_dir / f"{path.stem}{PARQUET_SUFFIX}") for path in selected
     ]
+    _require_unique_output_paths(jobs)
     for input_path, output_path in jobs:
         _require_processable_paths(input_path, output_path)
     return jobs
+
+
+def _require_unique_output_paths(jobs: list[tuple[Path, Path]]) -> None:
+    seen: set[Path] = set()
+    for _, output_path in jobs:
+        if output_path in seen:
+            raise ValueError(f"duplicate output path {output_path}")
+        seen.add(output_path)
 
 
 def main(argv: list[str] | None = None) -> None:
