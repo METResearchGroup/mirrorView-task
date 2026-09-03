@@ -24,7 +24,6 @@ from lib.timestamp_utils import get_current_timestamp
 RECORD_TYPE_FILENAMES: dict[str, str] = {
     "app.bsky.feed.post": "posts.csv",
     "reddit.comment": "comments.csv",
-    "reddit.post": "posts.csv",
 }
 
 
@@ -175,7 +174,6 @@ MAX_POSTS_KEY = "max_posts"
 MAX_COMMENTS_KEY = "max_comments"
 DEDUPE_POLICY_KEY = "dedupe_policy"
 COMMENTS_DEDUPE_POLICY_KEY = "comments_dedupe_policy"
-POSTS_DEDUPE_POLICY_KEY = "posts_dedupe_policy"
 ROWS_SKIPPED_AS_DUPLICATES_KEY = "rows_skipped_as_duplicates"
 SKIPPED_BY_RECORD_TYPE_KEY = "skipped_as_duplicates_by_record_type"
 

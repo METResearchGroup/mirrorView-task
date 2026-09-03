@@ -33,7 +33,6 @@ from data_platform.ingestion.retry import retry_reddit_request
 from data_platform.ingestion.sync_checkpoint import (
     COMMENTS_DEDUPE_POLICY_KEY,
     DEDUPE_POLICY_KEY,
-    POSTS_DEDUPE_POLICY_KEY,
     TaskStatus,
     build_base_sync_metadata,
     ensure_dataset_manifest,
