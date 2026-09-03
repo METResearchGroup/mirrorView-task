@@ -135,9 +135,20 @@ def load_raw_records(
 ) -> tuple[pd.DataFrame, list[Path]]:
     """Load raw records from all run dirs for preprocessing.
 
-    Returns both the loaded/validated records and the raw run directories they came from.
+    Returns both the loaded/validated records and the raw run directories they
+    came from.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no raw run directories exist for the dataset.
+    RuntimeError
+        When a raw run is incomplete (via ``require_all_runs_complete``).
     """
     raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
+    if raw_storage.latest_run_dir() is None:
+        raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
+    raw_storage.require_all_runs_complete(dataset_id)
     raw_root = raw_storage.root_dir
     run_dirs = sorted([p for p in raw_root.iterdir() if p.is_dir()])
     validated_rows: list[dict[str, Any]] = []
@@ -215,65 +226,123 @@ def collapse_candidates_by_id(
     return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 
 
-def preprocess_records(
-    dataset_id: str,
-    spec: PreprocessPlatformSpec,
-) -> Path:
-    dataset_id = validate_dataset_id(dataset_id)
-    raw_storage = spec.storage_cls(StorageStage.RAW, dataset_id)
-    if raw_storage.latest_run_dir() is None:
-        raise FileNotFoundError(f"No raw runs found for dataset {dataset_id}")
-    raw_storage.require_all_runs_complete(dataset_id)
-    preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-    dedupe_session = DedupeSession(
-        DedupeConfig(id_column=spec.columns.records_id_column)
-    )
-    dedupe_session.load_seen_ids_from_all_runs(preprocessed_storage)
-
-    records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
-    id_col = spec.columns.records_id_column
-    id_series = cast(pd.Series, records[id_col])
-    is_new = ~id_series.isin(list(dedupe_session.seen_ids))
-    skipped = len(records) - int(is_new.sum())
-    records = records.loc[is_new].reset_index(drop=True)
-    records = collapse_candidates_by_id(records, id_col, keep="last")
-
-    records = add_standardized_text_column(records, spec)
-    records = add_standardized_author_columns(records, spec)
-    records = add_standardized_source_record_id(records, spec)
-    preprocessed = apply_text_transform(records, spec)
-    preprocessed = filter_records(preprocessed, spec)
-    output_dir = save_preprocessed(
-        preprocessed,
-        spec,
-        dataset_id,
-        input_count=len(records),
-        source_raw_run_dirs=source_raw_run_dirs,
-    )
-    noun = spec.columns.records_file_key
-    print(
-        f"preprocess_records: kept {len(preprocessed)} of {len(records)} {noun}"
-        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
-    )
-    return output_dir
-
-
 def add_standardized_columns(
     records: pd.DataFrame,
-    spec: PreprocessPlatformSpec
-):
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
     records = add_standardized_text_column(records, spec)
     records = add_standardized_author_columns(records, spec)
     records = add_standardized_source_record_id(records, spec)
     return records
 
-def preprocess_records():
-    validate_dataset_id()
-    load_raw_records()
-    records: pd.DataFrame = add_standardized_columns(
-        records=records, spec=spec
+
+def filter_duplicate_records(
+    records: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+    dataset_id: str,
+) -> tuple[pd.DataFrame, int]:
+    """Drop rows whose id appears in prior preprocessed runs, then collapse duplicates.
+
+    Loads seen ids from every preprocessed run (4a), drops matching rows, and
+    counts those drops as ``skipped``. Collapses remaining duplicate ids within
+    the candidate batch, keeping the last row per id (4b). Stimuli-skip dedupe
+    (4c) is out of scope.
+
+    Returns
+    -------
+    tuple[pd.DataFrame, int]
+        Surviving records and the 4a-only skip count (collapse drops excluded).
+    """
+    if records.empty:
+        return records.copy(), 0
+
+    id_col = spec.columns.records_id_column
+    dedupe_session = DedupeSession(DedupeConfig(id_column=id_col))
+    preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+    dedupe_session.load_seen_ids_from_all_runs(preprocessed_storage)
+
+    is_new = ~records[id_col].isin(list(dedupe_session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    kept = records.loc[is_new].reset_index(drop=True)
+    surviving = collapse_candidates_by_id(kept, id_col, keep="last")
+    return surviving, skipped
+
+
+def apply_integration_specific_preprocessing(
+    df: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    """Apply platform-specific text transforms before filtering.
+
+    Delegates to :func:`apply_text_transform`. When ``spec.text_transform`` is
+    set (Twitter sets ``strip_tco_links`` to remove ``t.co`` URLs), the
+    transform runs on ``spec.columns.text_column``. Empty frames and specs
+    without a transform are returned unchanged.
+    """
+    return apply_text_transform(df, spec)
+
+
+def apply_integration_specific_filters(
+    df: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+) -> pd.DataFrame:
+    """Apply platform-specific row/text validators after preprocessing.
+
+    Delegates to :func:`filter_records`. Each row must pass every
+    ``spec.text_validators`` on ``spec.columns.text_column``. When
+    ``spec.row_validators`` is non-empty, the ``author`` column must pass
+    those validators as well. Empty frames are returned unchanged.
+    """
+    return filter_records(df, spec)
+
+
+def export_preprocessed_records(
+    records: pd.DataFrame,
+    spec: PreprocessPlatformSpec,
+    dataset_id: str,
+    input_count: int,
+    *,
+    source_raw_run_dirs: list[Path],
+) -> Path:
+    """Persist preprocessed records to a new timestamped run directory.
+
+    Creates a new preprocessed run, writes the records file, and saves run
+    metadata including ``dataset_id``, ``source_raw_runs``, and ``row_counts``
+    (``input`` from ``input_count``, ``output`` from surviving rows).
+
+    Returns
+    -------
+    Path
+        The new preprocessed run directory path.
+    """
+    return save_preprocessed(
+        records,
+        spec,
+        dataset_id,
+        input_count,
+        source_raw_run_dirs=source_raw_run_dirs,
     )
-    filter_duplicate_records()
-    apply_integration_specific_filters()
-    apply_integration_specific_preprocessing()
-    export_preprocessed_records()
+
+
+def preprocess_records(
+    dataset_id: str,
+    spec: PreprocessPlatformSpec,
+) -> None:
+    dataset_id = validate_dataset_id(dataset_id)
+    records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
+    records = add_standardized_columns(records, spec)
+    records, skipped = filter_duplicate_records(records, spec, dataset_id)
+    input_count = len(records)
+    records = apply_integration_specific_preprocessing(records, spec)
+    records = apply_integration_specific_filters(records, spec)
+    output_dir = export_preprocessed_records(
+        records,
+        spec,
+        dataset_id,
+        input_count=input_count,
+        source_raw_run_dirs=source_raw_run_dirs,
+    )
+    print(
+        f"preprocess_records: kept {len(records)} of {input_count}"
+        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
+    )
