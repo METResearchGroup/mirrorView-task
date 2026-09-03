@@ -65,9 +65,9 @@ data_platform/data/
 
 Raw, preprocessed, features, and curated stages use timestamped run directories. The timestamp format comes from `lib.timestamp_utils.get_current_timestamp` (for example `2026_08_16-14:30:00`).
 
-Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. Pass `--checkpoint <timestamp>` to keep writing into an unfinished folder after an interrupt. You cannot reopen a completed feature run.
+Omit `--checkpoint` when you run `generate_*_features.py` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. After an interrupt, pass `--checkpoint` with the feature run timestamp to keep writing into that unfinished feature run. You cannot continue a completed feature run.
 
-When the script chooses which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old layout, where feature files sat directly under `features/`, stay unused until you move them into a `features/<timestamp>/` folder and delete the leftover copies at the features root.
+When the script chooses which posts still need labels, it reads labels from every feature run folder. A post that already has a label is not labeled again. If a feature such as `is_political` is marked completed in the current feature run, that feature stays completed even if new posts appear. Start a later feature run without `--checkpoint` to label the new posts. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature run folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old layout, where feature files sat directly under `features/`, stay unused until you move them into a `features/<timestamp>/` folder and delete the leftover copies at the features root.
 
 Do not commit files under `data_platform/data/`.
 
@@ -99,7 +99,7 @@ On startup, `find_resume_run_dir` looks for the newest raw run whose `sync_statu
 
 When all tasks finish, `finalize_local_disk_sync` sets `sync_status` from task states and flushes metadata to disk. `finalize_local_disk_sync` is the durability helper for a finished local sync.
 
-Feature generation stores resume progress in `data_platform/generate_features/metadata.py`. Each feature name has a status in `features/<timestamp>/metadata.json`. Pass `--checkpoint <timestamp>` to continue an unfinished run. You cannot reopen a completed feature run.
+Feature generation stores resume progress in `data_platform/generate_features/metadata.py`. Each feature name, such as `is_political`, has a status in `features/<timestamp>/metadata.json`. Pass `--checkpoint` with a feature run timestamp to continue that unfinished feature run. You cannot continue a completed feature run. If a feature is marked completed in the current feature run, new posts are not labeled for that feature in that feature run. Start a later feature run without `--checkpoint` to label the new posts.
 
 ### metadata.json at each stage
 
@@ -214,7 +214,12 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   --dataset-id bluesky_c0ffee00-0000-4000-8000-000000000100 --batch-size 64
 ```
 
-To resume an unfinished feature run, pass `--checkpoint <timestamp>`.
+Continue an unfinished feature run with `--checkpoint`.
+
+```bash
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  --dataset-id bluesky_c0ffee00-0000-4000-8000-000000000100 --checkpoint <timestamp>
+```
 
 Files written under `features/<timestamp>/`:
 

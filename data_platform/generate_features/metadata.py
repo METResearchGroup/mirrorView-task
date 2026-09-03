@@ -1,4 +1,8 @@
-"""Load and flush features/{timestamp}/metadata.json for resumable feature generation."""
+"""Load and flush features/{timestamp}/metadata.json for resumable feature generation.
+
+Create a new run with ``init_feature_run_metadata``. Resume an unfinished run
+with ``load_feature_run_metadata``.
+"""
 
 from __future__ import annotations
 
@@ -87,22 +91,33 @@ def _stamp_or_check_identity(
             )
 
 
-def load_or_init_metadata(
+def init_feature_run_metadata(
     config: FeatureGenerationConfig,
-    *,
     feature_names: tuple[str, ...],
 ) -> FeatureRunMetadata:
-    """Load existing feature-run metadata or create a new in-progress document."""
-    path = metadata_path(config.features_dir)
-    source_preprocessed_runs = resolve_source_preprocessed_runs(config)
-    if path.exists():
-        with path.open(encoding="utf-8") as f:
-            metadata = FeatureRunMetadata.from_dict(json.load(f))
-        metadata.source_preprocessed_runs = source_preprocessed_runs
-        _stamp_or_check_identity(metadata, config, feature_names)
-        flush_metadata(config.features_dir, metadata)
-        return metadata
+    """Create metadata.json for a new feature run.
 
+    Parameters
+    ----------
+    config
+        Feature generation config whose ``features_dir`` is the new run folder.
+    feature_names
+        Registry names to stamp as pending features.
+
+    Returns
+    -------
+    FeatureRunMetadata
+        In-progress metadata flushed to disk.
+
+    Raises
+    ------
+    ValueError
+        When ``metadata.json`` already exists in this folder.
+    """
+    path = metadata_path(config.features_dir)
+    if path.exists():
+        raise ValueError(f"Feature run metadata already exists: {path}")
+    source_preprocessed_runs = resolve_source_preprocessed_runs(config)
     features = {name: FeatureStatus() for name in feature_names}
     metadata = FeatureRunMetadata(
         dataset_id=config.input_storage.dataset_id,
@@ -112,6 +127,45 @@ def load_or_init_metadata(
         config=config.run_config,
         updated_at=get_current_timestamp(),
     )
+    _stamp_or_check_identity(metadata, config, feature_names)
+    flush_metadata(config.features_dir, metadata)
+    return metadata
+
+
+def load_feature_run_metadata(
+    config: FeatureGenerationConfig,
+    feature_names: tuple[str, ...],
+) -> FeatureRunMetadata:
+    """Load metadata.json for an unfinished feature run.
+
+    Parameters
+    ----------
+    config
+        Feature generation config whose ``features_dir`` is the resume folder.
+    feature_names
+        Registry names whose model and prompt identity must still match.
+
+    Returns
+    -------
+    FeatureRunMetadata
+        Existing metadata, with identity stamps checked.
+
+    Raises
+    ------
+    FileNotFoundError
+        When ``metadata.json`` is missing.
+    ValueError
+        When the run is already completed, or when model or prompt identity
+        no longer matches this folder.
+    """
+    path = metadata_path(config.features_dir)
+    if not path.exists():
+        raise FileNotFoundError(path)
+    with path.open(encoding="utf-8") as handle:
+        metadata = FeatureRunMetadata.from_dict(json.load(handle))
+    if metadata.sync_status == "completed":
+        raise ValueError(f"Run is already completed: {config.features_dir}")
+    metadata.source_preprocessed_runs = resolve_source_preprocessed_runs(config)
     _stamp_or_check_identity(metadata, config, feature_names)
     flush_metadata(config.features_dir, metadata)
     return metadata

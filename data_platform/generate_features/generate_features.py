@@ -10,7 +10,8 @@ import pandas as pd
 from data_platform.generate_features.engines import build_engine
 from data_platform.generate_features.metadata import (
     flush_metadata,
-    load_or_init_metadata,
+    init_feature_run_metadata,
+    load_feature_run_metadata,
     mark_feature_completed,
     mark_feature_in_progress,
     set_sync_status_completed,
@@ -126,29 +127,21 @@ def _process_one_feature(
     )
     feature_path = config.features_dir / feature_storage.records_filename
 
+    if feature_status and feature_status.status == "completed":
+        print(f"generate_features: skipping completed feature {feature_name}")
+        return feature_path
+
     # Compare input posts against saved labels, to see which records need features.
     pending_df = filter_records_needing_features(records, feature_name, config)
     tasks = tasks_from_dataframe(pending_df, config.id_column, config.text_column)
 
     if len(tasks) == 0:
-        # Every input post is already labeled — nothing to do.
         prior_labeled = feature_status.labeled if feature_status else 0
         mark_feature_completed(metadata, feature_name, prior_labeled)
         flush_metadata(config.features_dir, metadata)
-        if feature_status and feature_status.status == "completed":
-            # Idempotent rerun: feature was done before and still has no new posts.
-            print(f"generate_features: skipping completed feature {feature_name}")
-        else:
-            # First run (or in-progress run) found no pending posts in this batch.
-            print(f"generate_features: {feature_name} — nothing to label")
+        print(f"generate_features: {feature_name} — nothing to label")
         return feature_path
 
-    # Resume with new posts: a past batch of posts may have been done and
-    # we marked the metadata as done, but we have new posts.
-    if feature_status and feature_status.status == "completed":
-        print(f"generate_features: {feature_name} was completed; labeling {len(tasks)} new posts")
-
-    # Pending posts remain — run batch labeling and append to the feature file.
     stats = _run_feature_labeling(feature_name, spec, tasks, config, metadata, feature_storage)
     print(
         f"generate_features: {feature_name} -> {stats.labeled} new labels "
@@ -176,17 +169,34 @@ def _mark_sync_completed(
 def generate_features(
     records: pd.DataFrame,
     config: FeatureGenerationConfig,
+    resume: bool,
 ) -> dict[str, Path]:
-    """Generate configured features with resumable append to timestamped run files."""
+    """Generate configured features with resumable append to timestamped run files.
+
+    Parameters
+    ----------
+    records
+        Preprocessed rows to label.
+    config
+        Feature generation config, including the chosen ``features_dir``.
+    resume
+        True loads metadata for that unfinished folder. False inits metadata
+        for a new folder.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in this run folder.
+    """
     if records.empty:
         print("generate_features: no records to label")
         return {}
 
     feature_names = tuple(config.feature_registry.keys())
-    metadata = load_or_init_metadata(
-        config,
-        feature_names=feature_names,
-    )
+    if resume:
+        metadata = load_feature_run_metadata(config, feature_names)
+    else:
+        metadata = init_feature_run_metadata(config, feature_names)
 
     written: dict[str, Path] = {}
 
