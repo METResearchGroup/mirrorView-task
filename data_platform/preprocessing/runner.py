@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 from pydantic import BaseModel
@@ -32,6 +32,12 @@ AUTHOR_COLUMN = "author"
 
 @dataclass(frozen=True)
 class PreprocessPlatformSpec:
+    """Platform-specific configuration for the shared preprocessing pipeline.
+
+    Bundles storage access, record models, column names, validators, and
+    optional text transforms so platform entrypoints can delegate to
+    :func:`preprocess_records` without reimplementing the flow.
+    """
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
@@ -78,6 +84,22 @@ def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
+    """Apply the platform's optional text transform to each row's text column.
+
+    When ``spec.text_transform`` is unset or the frame is empty, the input
+    frame is returned unchanged.
+
+    Parameters
+    ----------
+    spec
+        ``text_transform`` is applied to values in ``spec.columns.text_column``.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame with transformed text when a transform is configured;
+        otherwise the original frame.
+    """
     if spec.text_transform is None or df.empty:
         return df
     out = df.copy()
@@ -91,6 +113,10 @@ def passes_all_validators(
     text: str,
     validators: Sequence[TextValidator],
 ) -> bool:
+    """Return whether every text validator accepts the given string.
+
+    An empty ``validators`` sequence is treated as passing.
+    """
     return all(validator(text) for validator in validators)
 
 
@@ -98,6 +124,10 @@ def passes_row_validators(
     author: str,
     validators: Sequence[RowValidator],
 ) -> bool:
+    """Return whether every row validator accepts the given author value.
+
+    An empty ``validators`` sequence is treated as passing.
+    """
     return all(validator(author) for validator in validators)
 
 
@@ -230,6 +260,26 @@ def add_standardized_columns(
     records: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
+    """Add shared ``text``, ``author_handle``, and ``source_record_id`` columns.
+
+    Values are copied from platform-specific source columns named on ``spec``.
+    Original platform columns are preserved. The input frame is not modified.
+
+    Parameters
+    ----------
+    spec
+        Names the source columns for text, author handle, and record id.
+
+    Returns
+    -------
+    pd.DataFrame
+        A new frame with the three standardized columns added.
+
+    Raises
+    ------
+    KeyError
+        When a required source column is missing from the frame.
+    """
     records = add_standardized_text_column(records, spec)
     records = add_standardized_author_columns(records, spec)
     records = add_standardized_source_record_id(records, spec)
@@ -327,7 +377,40 @@ def export_preprocessed_records(
 def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
-) -> None:
+) -> Path:
+    """Run the full preprocessing pipeline for one dataset and persist the result.
+
+    Loads all completed raw runs, adds standardized columns, drops rows seen in
+    prior preprocessed runs and duplicate ids within the batch, applies
+    platform-specific text transforms and validators, then writes a new
+    preprocessed run directory. Also prints a one-line keep/skip summary to
+    stdout.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset identifier in ``{platform}_{uuid}`` form.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the new preprocessed run directory.
+
+    Raises
+    ------
+    ValueError
+        If ``dataset_id`` is malformed.
+    FileNotFoundError
+        When no raw runs exist for the dataset.
+    RuntimeError
+        When a raw run is incomplete.
+    KeyError
+        When a required source column is missing during standardization.
+
+    Notes
+    -----
+    Does not skip records already used as experiment stimuli (README step 4c).
+    """
     dataset_id = validate_dataset_id(dataset_id)
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
     records = add_standardized_columns(records, spec)
@@ -346,3 +429,4 @@ def preprocess_records(
         f"preprocess_records: kept {len(records)} of {input_count}"
         f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
     )
+    return output_dir
