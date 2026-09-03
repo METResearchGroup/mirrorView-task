@@ -228,7 +228,7 @@ def test_apply_integration_specific_preprocessing_empty_df_is_noop() -> None:
 
 def test_apply_integration_specific_filters_keeps_valid_rows_only() -> None:
     """Given one valid tweet and one too-short tweet, when filters run,
-    then only the valid row remains (same rule as filter_posts)."""
+    then only the valid row remains."""
     # given: valid tweet + too-short tweet
     df = pd.DataFrame(
         [

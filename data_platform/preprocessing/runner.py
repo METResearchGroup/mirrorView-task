@@ -130,20 +130,17 @@ def apply_integration_specific_filters(df: pd.DataFrame, spec: PreprocessPlatfor
     if df.empty:
         return df.copy()
 
-    prepared = df
-    if spec.columns.text_column not in df.columns:
-        prepared = add_standardized_text_column(df, spec)
     text_col = spec.columns.text_column
-    text_mask = prepared[text_col].map(
+    text_mask = df[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
     )
     if not spec.row_validators:
-        return prepared.loc[text_mask].reset_index(drop=True)
+        return df.loc[text_mask].reset_index(drop=True)
 
-    author_mask = prepared[AUTHOR_COLUMN].map(
+    author_mask = df[AUTHOR_COLUMN].map(
         lambda value: passes_row_validators(str(value), spec.row_validators)
     )
-    return prepared.loc[text_mask & author_mask].reset_index(drop=True)
+    return df.loc[text_mask & author_mask].reset_index(drop=True)
 
 
 def _rows_to_validated_dicts(
