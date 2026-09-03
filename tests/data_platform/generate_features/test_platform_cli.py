@@ -1,19 +1,19 @@
 from __future__ import annotations
 
-import inspect
 import json
 from pathlib import Path
 
 import pytest
+from typer.testing import CliRunner
 
 from data_platform.generate_features.generate_bluesky_features import (
     BLUESKY_SPEC,
-    main as bluesky_main,
+    app as bluesky_app,
 )
-from data_platform.generate_features.generate_reddit_features import main as reddit_main
+from data_platform.generate_features.generate_reddit_features import app as reddit_app
 from data_platform.generate_features.generate_twitter_features import (
+    app as twitter_app,
     generate_twitter_features,
-    main as twitter_main,
 )
 from data_platform.generate_features.models import FeatureRunConfig
 from data_platform.generate_features.platform_cli import (
@@ -21,6 +21,8 @@ from data_platform.generate_features.platform_cli import (
     feature_run_dir,
     features_from_cli,
     generate_feature_subset,
+    require_latest_unfinished_feature_run_dir,
+    resolve_resume_checkpoint,
 )
 from data_platform.utils.storage import BlueskyStorageManager, StorageManager, StorageStage
 from tests.data_platform.constants import (
@@ -135,7 +137,7 @@ class TestFeatureRunDir:
             data_root, OLDER_FEATURE_RUN, sync_status="in_progress"
         )
 
-        with pytest.raises(ValueError, match="--checkpoint"):
+        with pytest.raises(ValueError, match="unfinished"):
             feature_run_dir(feature_storage, None)
 
         assert unfinished.is_dir()
@@ -205,13 +207,86 @@ class TestBuildFeatureConfig:
         assert config.features_dir.parent.name == "features"
 
 
-class TestFeatureGenerationCliFlags:
-    """Tests that platform feature CLIs expose --checkpoint and drop --run-dir."""
+class TestRequireLatestUnfinishedFeatureRunDir:
+    """Tests for require_latest_unfinished_feature_run_dir()."""
 
-    @pytest.mark.parametrize("cli_main", [bluesky_main, twitter_main, reddit_main])
-    def test_cli_uses_checkpoint_instead_of_run_dir(self, cli_main) -> None:
-        parameters = inspect.signature(cli_main).parameters
+    def test_returns_newest_unfinished_run(
+        self, data_root: Path, feature_storage: StorageManager
+    ) -> None:
+        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="completed")
+        newest = write_feature_checkpoint(
+            data_root, PREPROCESSED_RUN_DIR, sync_status="in_progress"
+        )
 
-        assert "checkpoint" in parameters
-        assert "latest" not in parameters
-        assert "run_dir" not in parameters
+        result = require_latest_unfinished_feature_run_dir(feature_storage)
+
+        assert result == newest
+
+    def test_fails_when_no_unfinished_run(
+        self, data_root: Path, feature_storage: StorageManager
+    ) -> None:
+        write_feature_checkpoint(data_root, OLDER_FEATURE_RUN, sync_status="completed")
+
+        with pytest.raises(FileNotFoundError, match="unfinished"):
+            require_latest_unfinished_feature_run_dir(feature_storage)
+
+
+class TestResolveResumeCheckpoint:
+    """Tests for resolve_resume_checkpoint()."""
+
+    def test_returns_named_checkpoint(
+        self, feature_storage: StorageManager
+    ) -> None:
+        result = resolve_resume_checkpoint(
+            feature_storage, OLDER_FEATURE_RUN, False
+        )
+
+        assert result == OLDER_FEATURE_RUN
+
+    def test_returns_latest_unfinished_name(
+        self, data_root: Path, feature_storage: StorageManager
+    ) -> None:
+        write_feature_checkpoint(
+            data_root, PREPROCESSED_RUN_DIR, sync_status="in_progress"
+        )
+
+        result = resolve_resume_checkpoint(feature_storage, None, True)
+
+        assert result == PREPROCESSED_RUN_DIR
+
+    @pytest.mark.parametrize(
+        "checkpoint, latest",
+        [
+            (OLDER_FEATURE_RUN, True),
+            (None, False),
+        ],
+    )
+    def test_requires_checkpoint_or_latest(
+        self,
+        feature_storage: StorageManager,
+        checkpoint: str | None,
+        latest: bool,
+    ) -> None:
+        with pytest.raises(ValueError, match="--checkpoint or --latest"):
+            resolve_resume_checkpoint(feature_storage, checkpoint, latest)
+
+
+class TestFeatureGenerationCli:
+    """Tests that platform feature CLIs require new-run or resume."""
+
+    @pytest.mark.parametrize("cli_app", [bluesky_app, twitter_app, reddit_app])
+    def test_help_lists_new_run_and_resume(self, cli_app) -> None:
+        result = CliRunner().invoke(cli_app, ["--help"])
+
+        assert result.exit_code == 0
+        assert "new-run" in result.stdout
+        assert "resume" in result.stdout
+        assert "--run-dir" not in result.stdout
+
+    @pytest.mark.parametrize("cli_app", [bluesky_app, twitter_app, reddit_app])
+    def test_resume_help_lists_checkpoint_and_latest(self, cli_app) -> None:
+        result = CliRunner().invoke(cli_app, ["resume", "--help"])
+
+        assert result.exit_code == 0
+        assert "--checkpoint" in result.stdout
+        assert "--latest" in result.stdout

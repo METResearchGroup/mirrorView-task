@@ -11,7 +11,7 @@ from data_platform.generate_features.generate_reddit_features import (
     load_comments,
     reddit_feature_config,
 )
-from data_platform.generate_features.metadata import flush_metadata, load_or_init_metadata
+from data_platform.generate_features.metadata import flush_metadata, init_feature_run_metadata
 from data_platform.generate_features.models import (
     BatchRunStats,
     FeatureRunConfig,
@@ -100,7 +100,7 @@ def test_generate_reddit_features_skips_completed_feature(
         generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
     )
     config = make_reddit_feature_generation_config(feature_registry={"is_political": spec})
-    metadata = load_or_init_metadata(config, feature_names=("is_political",))
+    metadata = init_feature_run_metadata(config, ("is_political",))
     metadata.features["is_political"] = FeatureStatus(status="completed", labeled=1)
     flush_metadata(config.features_dir, metadata)
     pd.DataFrame(
@@ -114,7 +114,7 @@ def test_generate_reddit_features_skips_completed_feature(
     ).to_csv(config.features_dir / "is_political.csv", index=False)
 
     comments = pd.DataFrame(records)
-    generate_features(comments, config)
+    generate_features(comments, config, resume=True)
     mock_build_engine.label_records.assert_not_called()
 
 
