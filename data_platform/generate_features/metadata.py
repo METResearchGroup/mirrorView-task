@@ -1,7 +1,7 @@
 """Load and flush features/{timestamp}/metadata.json for resumable feature generation.
 
-Init a new run with ``init_feature_run_metadata``. Resume an unfinished run with
-``load_feature_run_metadata``.
+Create a new run with ``init_feature_run_metadata``. Resume an unfinished run
+with ``load_feature_run_metadata``.
 """
 
 from __future__ import annotations

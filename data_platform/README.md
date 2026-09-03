@@ -86,7 +86,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   resume --dataset-id bluesky_<uuid> --latest
 ```
 
-Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Feature generation writes each run into `features/<timestamp>/`. `new-run` creates a new folder, and it exits with an error if an unfinished feature run already exists. `resume` keeps writing into an unfinished folder. You cannot reopen a completed feature run. Posts that already have labels in any feature folder are skipped. New posts after a completed feature are labeled in a later `new-run`.
+Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. `new-run` creates a new `features/<timestamp>/` folder, and it exits with an error if an unfinished feature run already exists. `resume` keeps writing into an unfinished feature run folder. You cannot resume a completed feature run. Posts that already have labels in any feature folder are skipped. A completed feature stays closed for new posts, and those posts are labeled in a later `new-run`.
 
 If a dataset still has leftover files directly under `features/` from the old layout, move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 

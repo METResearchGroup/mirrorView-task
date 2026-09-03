@@ -61,9 +61,9 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   resume --dataset-id bluesky_<uuid> --latest
 ```
 
-Feature generation writes each run into a new folder named `features/<timestamp>/`. `new-run` creates that folder, and it exits with an error if an unfinished feature run already exists. If a run stops partway through, `resume --checkpoint <timestamp>` reuses the same folder. `resume --latest` reuses the newest unfinished folder. You cannot reopen a completed feature run.
+`new-run` writes a new folder named `features/<timestamp>/`, and it exits with an error if an unfinished feature run already exists. If a run stops partway through, `resume --checkpoint <timestamp>` continues writing into that same folder. `resume --latest` continues the newest unfinished folder. You cannot resume a completed feature run.
 
-Feature generation still skips a post that already has a label, including labels written in earlier feature folders. A feature marked completed in this folder stays completed even if new posts appear. Those posts are labeled in a later `new-run`. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
+Feature generation still skips a post that already has a label, including labels written in earlier feature folders. A feature marked completed in the current feature run folder stays completed even if new posts appear. Those posts are labeled in a later `new-run`. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
 
 If this dataset still has leftover files directly under `features/` from the old layout (`is_political.csv`, `metadata.json`, `deadletter.jsonl`), move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 
@@ -85,6 +85,8 @@ PYTHONPATH=. uv run python data_platform/curate/curate_twitter.py \
   --dataset-id twitter_<uuid> --config mirrorview.yaml
 ```
 
+Twitter feature generation uses the same `resume` flags as Bluesky (`--checkpoint` or `--latest`).
+
 ### Reddit
 
 ```bash
@@ -100,6 +102,8 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_featu
 PYTHONPATH=. uv run python data_platform/curate/curate_reddit.py \
   --dataset-id reddit_<uuid> --config mirrorview.yaml
 ```
+
+Reddit feature generation uses the same `resume` flags as Bluesky (`--checkpoint` or `--latest`).
 
 Confirm outputs:
 
