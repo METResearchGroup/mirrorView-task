@@ -139,12 +139,12 @@ def run_sync_tasks(
         DedupeConfig(
             id_column="tweet_id",
             filename=filename,
-            include_prior_runs=policy_includes_prior_runs(
-                resolve_dedupe_policy(ingestion_params)
-            ),
         )
     )
-    dedupe_session.warm(storage, output_dir)
+    if policy_includes_prior_runs(resolve_dedupe_policy(ingestion_params)):
+        dedupe_session.load_seen_ids_from_all_runs(storage)
+    else:
+        dedupe_session.load_seen_ids(storage, output_dir)
 
     def process_task(task: TwitterTask, entry: dict[str, Any]) -> None:
         mark_task_in_progress(entry, storage, output_dir, metadata)

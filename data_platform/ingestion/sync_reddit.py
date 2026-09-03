@@ -410,27 +410,31 @@ def _open_reddit_dedupe_sessions(
             DedupeConfig(
                 id_column="comment_fullname",
                 filename=comments_filename,
-                include_prior_runs=policy_includes_prior_runs(
-                    _resolve_reddit_dedupe_policy(
-                        ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
-                    )
-                ),
             )
         )
-        comment_dedupe_session.warm(comment_storage, output_dir)
+        if policy_includes_prior_runs(
+            _resolve_reddit_dedupe_policy(
+                ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
+            )
+        ):
+            comment_dedupe_session.load_seen_ids_from_all_runs(comment_storage)
+        else:
+            comment_dedupe_session.load_seen_ids(comment_storage, output_dir)
     if include_posts:
         post_dedupe_session = DedupeSession(
             DedupeConfig(
                 id_column="reddit_fullname",
                 filename=posts_filename,
-                include_prior_runs=policy_includes_prior_runs(
-                    _resolve_reddit_dedupe_policy(
-                        ingestion_params, POSTS_DEDUPE_POLICY_KEY
-                    )
-                ),
             )
         )
-        post_dedupe_session.warm(post_storage, output_dir)
+        if policy_includes_prior_runs(
+            _resolve_reddit_dedupe_policy(
+                ingestion_params, POSTS_DEDUPE_POLICY_KEY
+            )
+        ):
+            post_dedupe_session.load_seen_ids_from_all_runs(post_storage)
+        else:
+            post_dedupe_session.load_seen_ids(post_storage, output_dir)
     return comment_dedupe_session, post_dedupe_session
 
 
