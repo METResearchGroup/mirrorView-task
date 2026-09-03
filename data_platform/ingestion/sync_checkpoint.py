@@ -383,6 +383,88 @@ def ensure_dataset_manifest(
         )
 
 
+def start_new_sync_run(
+    storage: StorageManager,
+    init_metadata_fn: Callable[[str], dict[str, Any]],
+) -> tuple[Path, dict[str, Any]]:
+    """Create a new raw run directory and write initial metadata.
+
+    Parameters
+    ----------
+    storage
+        Raw-stage storage manager for the dataset.
+    init_metadata_fn
+        Builds the initial ``metadata.json`` payload from the new run timestamp.
+
+    Returns
+    -------
+    tuple[Path, dict[str, Any]]
+        New run directory and the flushed metadata payload.
+
+    Raises
+    ------
+    ValueError
+        When an unfinished raw run already exists for this dataset.
+    """
+    raise NotImplementedError
+
+
+def load_checkpoint_run(
+    storage: StorageManager,
+    sync_tasks: Sequence[HasTaskId],
+    run_dir_name: str,
+    entity_label: str,
+) -> tuple[Path, dict[str, Any]]:
+    """Load an unfinished named raw run and validate its task ledger.
+
+    Parameters
+    ----------
+    storage
+        Raw-stage storage manager for the dataset.
+    sync_tasks
+        Config tasks that must match the checkpoint ledger.
+    run_dir_name
+        Raw run timestamp directory name, for example ``2026_05_30-12:00:00``.
+    entity_label
+        Noun used in the task-mismatch error, for example ``keywords``.
+
+    Returns
+    -------
+    tuple[Path, dict[str, Any]]
+        Existing run directory and its metadata.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the named run directory does not exist.
+    ValueError
+        When the run is already completed, or when config tasks do not match
+        the checkpoint ledger.
+    """
+    raise NotImplementedError
+
+
+def require_latest_in_progress_run_dir(storage: StorageManager) -> Path:
+    """Return the newest unfinished raw run directory for this dataset.
+
+    Parameters
+    ----------
+    storage
+        Raw-stage storage manager for the dataset.
+
+    Returns
+    -------
+    Path
+        Newest raw run directory whose ``sync_status`` is not completed.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no unfinished raw run exists.
+    """
+    raise NotImplementedError
+
+
 def prepare_sync_run(
     storage: StorageManager,
     sync_tasks: Sequence[HasTaskId],
