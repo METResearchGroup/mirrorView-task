@@ -1,0 +1,13 @@
+dataset_id: bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73
+name: jetstream_utc_day_2026_09_01
+description: One UTC day of Bluesky Jetstream posts from the lab warehouse dump
+date: "2026-09-01"
+output_format: parquet
+record_types:
+  - app.bsky.feed.post
+dump:
+  parquet_root: data_platform/ingestion/data_dumps/bluesky/data/parquet
+  raw_run_timestamp: "2026_09_01-00:00:00"
+preprocessing_params:
+  sample_size: 200000
+  sample_seed: 20260901

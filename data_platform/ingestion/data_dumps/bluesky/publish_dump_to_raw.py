@@ -23,6 +23,31 @@ def publish_dump_to_raw(
     raw_run_timestamp: str,
     config_path: Path,
 ) -> Path:
+    """Copy dump parquet files into a completed pipeline raw run.
+
+    Parameters
+    ----------
+    parquet_root
+        Hive-partitioned dump parquet directory.
+    dataset_id
+        Bluesky dataset id for the destination tree.
+    raw_run_timestamp
+        Destination raw run folder name.
+    config_path
+        Preprocess YAML recorded on the dataset manifest.
+
+    Returns
+    -------
+    pathlib.Path
+        Destination raw run directory.
+
+    Raises
+    ------
+    FileNotFoundError
+        When ``parquet_root`` is missing or contains no parquet files.
+    FileExistsError
+        When the destination raw run directory already exists.
+    """
     raise NotImplementedError
 
 

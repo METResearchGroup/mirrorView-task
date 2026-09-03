@@ -9,7 +9,10 @@ local_data/*.csv
 analysis/data/*.csv
 test_data/*.csv
 *.csv
-data_platform/data/
+data_platform/data/**
+!data_platform/data/bluesky/
+!data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/
+!data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**
 
 # LLM prompt-engineering frozen eval subset (otherwise blocked by *.csv).
 !experiments/llm_prompt_engineering_2026_08_05/subset_labels.csv
