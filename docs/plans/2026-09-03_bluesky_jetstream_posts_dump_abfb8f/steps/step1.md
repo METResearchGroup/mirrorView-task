@@ -21,7 +21,7 @@ PYTHONPATH=. uv run python data_platform/ingestion/data_dumps/bluesky/run_query.
 | Path | Why |
 |------|-----|
 | `/tmp/lab_data_integrations_interface/data_platform/aws/athena.py` | Copy source: wait loop, `get_output_location`. Do not copy `register_partition`. |
-| `/tmp/lab_data_integrations_interface/bluesky_ingestion_jetstream/schemas/arrow_schemas.py` | Post columns: `uri`, `did`, `cid`, `rev`, `created_at`, `ingested_at`, `run_id`, `text`, `langs`, `reply_root_uri`, `reply_parent_uri`, `embed_type` |
+| `/tmp/lab_data_integrations_interface/bluesky_ingestion_jetstream/schemas/arrow_schemas.py` | Warehouse post schema has more columns; this dump selects only `uri`, `did`, `created_at`, `text`. |
 | `/workspace/lib/aws/s3.py` | Existing boto3 S3 client pattern. Use `download_file` for the GB CSV; do not `get_bytes` the whole object. |
 | `/workspace/.gitignore` | Already ignores `*.csv`. Still ignore the whole raw dump directory so Athena `.csv.metadata` cannot be committed. |
 | `/workspace/data_platform/ingestion/sync_bluesky.py` | Must stay unchanged. |
@@ -73,16 +73,8 @@ Return exactly this statement (no trailing semicolon required):
 SELECT
   uri,
   did,
-  cid,
-  rev,
   created_at,
-  ingested_at,
-  run_id,
-  text,
-  langs,
-  reply_root_uri,
-  reply_parent_uri,
-  embed_type
+  text
 FROM posts
 WHERE created_at >= TIMESTAMP '2026-09-01 00:00:00 UTC'
   AND created_at <  TIMESTAMP '2026-09-02 00:00:00 UTC'

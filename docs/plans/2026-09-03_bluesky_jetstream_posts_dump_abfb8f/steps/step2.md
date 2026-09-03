@@ -73,7 +73,16 @@ Do not call `pandas.DataFrame.to_parquet` without an explicit zstd codec. Do not
 
 After writing a candidate file, if `stat().st_size > MAX_FILE_BYTES`, split that hour's rows in half and write again until every file is `<= MAX_FILE_BYTES`. Then rename each file to `{sha256 of file bytes}.parquet`.
 
-Keep post columns from the CSV. Parse `created_at` and `ingested_at` as UTC timestamps. Keep `langs` as a list of strings if Athena serialized an array; if it arrives as a string, store that string rather than inventing a parser beyond one obvious Athena array form.
+Parquet schema (four columns only, matching the SELECT list):
+
+```text
+uri: string
+did: string
+created_at: timestamp (UTC)
+text: string
+```
+
+Parse `created_at` as a UTC timestamp. Do not add `cid`, `rev`, `ingested_at`, `run_id`, `langs`, `reply_root_uri`, `reply_parent_uri`, or `embed_type`.
 
 Raise `FileNotFoundError` if `RAW_CSV` is missing. Do not call Athena.
 

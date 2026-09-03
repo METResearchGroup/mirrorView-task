@@ -62,11 +62,11 @@ Copy the lab Athena wait-and-download client into the dump folder. Query only th
 
 ### Step 1: Land the dump package and SELECT-only download
 
-Add `data_platform/ingestion/data_dumps/bluesky/` with `queries.py`, the copied Athena client, and `run_query.py`. The query selects post columns from `bluesky_raw.posts` for UTC 2026-09-01. The runner submits SELECT, waits, and copies the workgroup CSV into `data_platform/ingestion/data_dumps/bluesky/data/raw/`. Gitignore that raw folder. See [steps/step1.md](steps/step1.md).
+Add `data_platform/ingestion/data_dumps/bluesky/` with `queries.py`, the copied Athena client, and `run_query.py`. The query selects `uri`, `did`, `created_at`, and `text` from `bluesky_raw.posts` for UTC 2026-09-01. The runner submits SELECT, waits, and copies the workgroup CSV into `data_platform/ingestion/data_dumps/bluesky/data/raw/`. Gitignore that raw folder. See [steps/step1.md](steps/step1.md).
 
 ### Step 2: Write UTC date and hour zstd parquet
 
-Add `transform_raw_data_to_parquet.py`. Read the downloaded CSV, partition by UTC date and hour of creation time, and write hashed zstd parquet under `data_platform/ingestion/data_dumps/bluesky/data/parquet/`. See [steps/step2.md](steps/step2.md).
+Add `transform_raw_data_to_parquet.py`. Read the downloaded CSV, partition by UTC date and hour of creation time, and write hashed zstd parquet with columns `uri`, `did`, `created_at`, and `text` under `data_platform/ingestion/data_dumps/bluesky/data/parquet/`. See [steps/step2.md](steps/step2.md).
 
 ### Step 3: Summary stats and the parquet PR payload
 
@@ -75,8 +75,8 @@ Add `summary_statistics.py` for total records, mean text length, mean records pe
 ## What "done" looks like
 
 1. `data_platform/ingestion/data_dumps/bluesky/` contains `queries.py`, `athena.py`, `run_query.py`, `transform_raw_data_to_parquet.py`, and `summary_statistics.py`.
-2. A live SELECT of `bluesky_raw.posts` for UTC 2026-09-01 downloads to `data_platform/ingestion/data_dumps/bluesky/data/raw/` and is not committed.
-3. Parquet exists at `data_platform/ingestion/data_dumps/bluesky/data/parquet/date=2026-09-01/hour=<00-23>/{hash}.parquet`. Each file is zstd-compressed, each file is under 50 MiB, and those files are on the PR.
+2. A live SELECT of `uri`, `did`, `created_at`, and `text` from `bluesky_raw.posts` for UTC 2026-09-01 downloads to `data_platform/ingestion/data_dumps/bluesky/data/raw/` and is not committed.
+3. Parquet exists at `data_platform/ingestion/data_dumps/bluesky/data/parquet/date=2026-09-01/hour=<00-23>/{hash}.parquet` with columns `uri`, `did`, `created_at`, and `text`. Each file is zstd-compressed, each file is under 50 MiB, and those files are on the PR.
 4. Stats file reports total records, mean text length, mean records per DID, and median records per DID. Live preview: 3,450,253 records, mean text length 98.4, mean 6.00 per DID, median 2 per DID.
 5. Non-SELECT statements fail in the dump Athena client. `ALTER TABLE`, UNLOAD, CREATE, DELETE, and UPDATE are not used.
 6. No files exist under `tests/data_platform/ingestion/data_dumps/` or any other new test path for this dump.

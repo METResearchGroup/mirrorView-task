@@ -12,7 +12,7 @@ Compute dump summary statistics from the zstd parquet, write a small stats file,
 PYTHONPATH=. uv run python data_platform/ingestion/data_dumps/bluesky/summary_statistics.py
 ```
 
-**Slice:** read all parquet under `data/parquet/` → compute four stats → write JSON → `git add` parquet and JSON only.
+**Slice:** read all four-column parquet (`uri`, `did`, `created_at`, `text`) under `data/parquet/` → compute four stats from `text` and `did` → write JSON → `git add` parquet and JSON only.
 
 **Out of scope:** Athena, keyword sync, tests, Git LFS, `CHANGELOG.md`.
 
@@ -61,7 +61,7 @@ average_records_per_did
 median_records_per_did
 ```
 
-Definitions:
+Definitions (read from the four-column parquet; stats use `text` and `did` only):
 
 - `total_records`: row count across all parquet files.
 - `average_text_length`: mean of `len(text)` treating missing text as empty string. Character length, not bytes.
