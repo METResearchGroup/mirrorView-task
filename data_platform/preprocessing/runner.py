@@ -12,6 +12,10 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.preprocessing.previously_used_stimuli import (
+    filter_previously_used_stimuli,
+    load_previously_used_stimuli_ids,
+)
 from data_platform.preprocessing.shared_columns import (
     add_standardized_author_columns,
     add_standardized_source_record_id,
@@ -281,6 +285,7 @@ def filter_duplicate_records(
     records: pd.DataFrame,
     spec: PreprocessPlatformSpec,
     dataset_id: str,
+    stimuli_ids,
 ) -> tuple[pd.DataFrame, int]:
     """Filters duplicate records. Check the README.md for how this works.
 
@@ -300,6 +305,7 @@ def filter_duplicate_records(
     is_new = ~records[id_col].isin(list(dedupe_session.seen_ids))
     skipped = len(records) - int(is_new.sum())
     kept = records.loc[is_new].reset_index(drop=True)
+    kept, _skipped_stimuli = filter_previously_used_stimuli(kept, stimuli_ids)
     output = collapse_candidates_by_id(kept, id_col, keep="last")
     return output, skipped
 
@@ -348,7 +354,8 @@ def preprocess_records(
     dataset_id = validate_dataset_id(dataset_id)
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
     records = add_standardized_columns(records, spec)
-    records, skipped = filter_duplicate_records(records, spec, dataset_id)
+    stimuli_ids = load_previously_used_stimuli_ids()
+    records, skipped = filter_duplicate_records(records, spec, dataset_id, stimuli_ids)
     input_count = len(records)
     records = apply_integration_specific_preprocessing(records, spec)
     records = apply_integration_specific_filters(records, spec)
