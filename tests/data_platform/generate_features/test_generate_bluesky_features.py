@@ -71,7 +71,7 @@ class TestGenerateBlueskyFeatures:
             feature_subset=["is_political"],
         )
 
-    def test_from_checkpoint_delegates_resume_flags(
+    def test_from_checkpoint_delegates_named_checkpoint(
         self, data_root: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         _write_preprocessed_run(
@@ -82,24 +82,19 @@ class TestGenerateBlueskyFeatures:
             "data_platform.generate_features.generate_bluesky_features.generate_platform_features_from_checkpoint",
             mock_generate,
         )
-        from data_platform.generate_features.generate_bluesky_features import (
-            generate_bluesky_features_from_checkpoint,
-        )
 
         generate_bluesky_features_from_checkpoint(
             VALID_DATASET_ID,
             checkpoint="2026_01_01-00:00:00",
-            latest=False,
         )
 
         mock_generate.assert_called_once_with(
             BLUESKY_SPEC,
             VALID_DATASET_ID,
             "2026_01_01-00:00:00",
-            False,
-            64,
-            80,
-            None,
+            batch_size=64,
+            max_concurrency=80,
+            feature_subset=None,
         )
 
     def test_require_all_runs_complete_is_on_spec(self) -> None:

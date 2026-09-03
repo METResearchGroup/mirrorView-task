@@ -95,7 +95,8 @@ class TestGenerateFeatures:
         generate_features(records, config, resume=True)
 
         mock_build_engine.label_records.assert_not_called()
-        reloaded = load_feature_run_metadata(config, ("feat_a",))
+        with metadata_path(features_dir).open(encoding="utf-8") as handle:
+            reloaded = FeatureRunMetadata.from_dict(json.load(handle))
         assert reloaded.features["feat_a"].status == "completed"
         assert reloaded.features["feat_a"].labeled == 1
 

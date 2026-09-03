@@ -56,7 +56,24 @@ def generate_twitter_features(
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
 ) -> dict[str, Path]:
-    """Start a new Twitter feature run and generate the requested labels."""
+    """Start a new Twitter feature run and generate the requested labels.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset identifier from ingestion YAML.
+    batch_size
+        Label batch size.
+    max_concurrency
+        Engine concurrency cap.
+    feature_subset
+        Optional registry subset. None runs every feature.
+
+    Returns
+    -------
+    dict[str, Path]
+        Feature name to the label file written in the new folder.
+    """
     return generate_platform_features(
         TWITTER_SPEC,
         dataset_id,
@@ -68,8 +85,7 @@ def generate_twitter_features(
 
 def generate_twitter_features_from_checkpoint(
     dataset_id: str,
-    checkpoint: str | None,
-    latest: bool,
+    checkpoint: str,
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
@@ -81,9 +97,7 @@ def generate_twitter_features_from_checkpoint(
     dataset_id
         Dataset identifier from ingestion YAML.
     checkpoint
-        Named unfinished feature run timestamp, or None when using ``latest``.
-    latest
-        When True, resume the newest unfinished feature run.
+        Named unfinished feature run timestamp.
     batch_size
         Label batch size.
     max_concurrency
@@ -100,10 +114,9 @@ def generate_twitter_features_from_checkpoint(
         TWITTER_SPEC,
         dataset_id,
         checkpoint,
-        latest,
-        batch_size,
-        max_concurrency,
-        feature_subset,
+        batch_size=batch_size,
+        max_concurrency=max_concurrency,
+        feature_subset=feature_subset,
     )
 
 
