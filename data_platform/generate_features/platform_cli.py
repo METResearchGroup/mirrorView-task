@@ -1,4 +1,10 @@
-"""Shared CLI helpers and orchestration for platform feature generation."""
+"""Shared CLI helpers and orchestration for platform feature generation.
+
+Run from the repo root:
+
+    PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
+        new-run --dataset-id bluesky_<uuid> --batch-size 64
+"""
 
 from __future__ import annotations
 
@@ -503,6 +509,7 @@ def build_feature_cli_app(
             help=FEATURES_OPTION_HELP,
         ),
     ) -> None:
+        """Start a new feature run. Fails if an unfinished run already exists."""
         generate_platform_features(
             spec,
             dataset_id,
@@ -534,6 +541,7 @@ def build_feature_cli_app(
             help=LATEST_OPTION_HELP,
         ),
     ) -> None:
+        """Resume an unfinished feature run. Requires --checkpoint or --latest."""
         generate_platform_features_from_checkpoint(
             spec,
             dataset_id,
