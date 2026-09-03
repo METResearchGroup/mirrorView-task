@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_twitter
+from data_platform.ingestion import runner as ingestion_runner
 from data_platform.ingestion.sync_checkpoint import parse_max_posts
 from data_platform.utils.dataset import ValidDataFormats, write_dataset_manifest
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
@@ -475,7 +476,7 @@ class TestSyncRecords:
     ) -> tuple[MagicMock, MagicMock]:
         monkeypatch.setattr(sync_twitter, "load_config", lambda path: config)
         monkeypatch.setattr(
-            sync_twitter, "ensure_dataset_manifest", lambda *args, **kwargs: None
+            ingestion_runner, "ensure_dataset_manifest", lambda *args, **kwargs: None
         )
         init_client = MagicMock(name="init_twitter_client")
         run_tasks = MagicMock(name="run_sync_tasks")
