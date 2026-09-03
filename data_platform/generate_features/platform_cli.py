@@ -114,14 +114,14 @@ def _start_new_feature_run(feature_storage: StorageManager) -> Path:
     ------
     ValueError
         When an unfinished feature run already exists. The operator must pass
-        ``--checkpoint`` with that folder's timestamp to resume it.
+        ``resume`` with that folder's timestamp to continue it.
     """
     unfinished = _unfinished_feature_run_dirs(feature_storage)
     if unfinished:
         newest = max(unfinished, key=lambda path: path.name)
         raise ValueError(
             f"An unfinished feature run exists at {newest}; "
-            f"pass --checkpoint {newest.name} to resume it"
+            f"resume it instead of starting a new run"
         )
     return feature_storage.create_new_run_dir()
 
@@ -431,7 +431,43 @@ def generate_platform_features_from_checkpoint(
         When the named folder is missing, or when ``latest`` finds no
         unfinished run.
     """
-    raise NotImplementedError
+    dataset_id = validate_dataset_id(dataset_id)
+    if spec.require_all_runs_complete:
+        preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+        if preprocessed_storage.latest_run_dir() is None:
+            raise FileNotFoundError(
+                f"No preprocessed runs found for dataset {dataset_id}"
+            )
+        preprocessed_storage.require_all_runs_complete(dataset_id)
+
+    feature_storage = StorageManager(
+        spec.platform,
+        StorageStage.FEATURES,
+        BaseModel,
+        dataset_id,
+        records_filename="features",
+    )
+    run_name = resolve_resume_checkpoint(feature_storage, checkpoint, latest)
+    feature_run_dir(feature_storage, run_name)
+    features_subset = generate_feature_subset(feature_subset)
+    run_config = FeatureRunConfig(
+        batch_size=batch_size,
+        max_concurrency=max_concurrency,
+    )
+    records = load_preprocessed_records(spec, dataset_id)
+    if records.empty:
+        print(spec.empty_message)
+        return {}
+    config = build_feature_config(
+        spec,
+        dataset_id,
+        run_config=run_config,
+        features_subset=features_subset,
+        checkpoint=run_name,
+    )
+    return run_feature_generation(
+        records, config, spec.empty_message, resume=True
+    )
 
 
 def build_feature_cli_app(
