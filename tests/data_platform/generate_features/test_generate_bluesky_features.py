@@ -88,7 +88,7 @@ class TestGenerateBlueskyFeatures:
             checkpoint=None,
         )
 
-    def test_passes_checkpoint(
+    def test_delegates_named_checkpoint(
         self, data_root: Path, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         _write_preprocessed_run(
