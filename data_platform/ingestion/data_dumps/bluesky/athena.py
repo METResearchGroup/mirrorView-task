@@ -8,11 +8,19 @@ Run from the repo root:
 from __future__ import annotations
 
 import re
+import time
+from typing import Any
 
 import boto3
 
 DEFAULT_REGION = "us-east-2"
 ALLOWED_FIRST_TOKENS = frozenset({"SELECT", "WITH"})
+QUERY_STATUS_SUCCEEDED = "SUCCEEDED"
+QUERY_STATUS_FAILED = "FAILED"
+QUERY_STATUS_CANCELLED = "CANCELLED"
+TERMINAL_FAILURE_STATES = frozenset({QUERY_STATUS_FAILED, QUERY_STATUS_CANCELLED})
+POLL_INTERVAL_SECONDS = 1
+UNKNOWN_STATE_CHANGE_REASON = "unknown"
 
 
 class Athena:
@@ -46,7 +54,13 @@ class Athena:
             When Athena reports FAILED or CANCELLED.
         """
         _validate_read_only_query(query)
-        raise NotImplementedError
+        response = self.client.start_query_execution(
+            QueryString=query,
+            QueryExecutionContext={"Database": database},
+            WorkGroup=workgroup,
+        )
+        execution_id = response["QueryExecutionId"]
+        return _wait_for_query_completion(self.client, execution_id)
 
     def get_output_location(self, execution_id: str) -> str:
         """Return the S3 URI of the result CSV for a completed query execution.
@@ -61,7 +75,8 @@ class Athena:
         str
             S3 URI of the query result object.
         """
-        raise NotImplementedError
+        response = self.client.get_query_execution(QueryExecutionId=execution_id)
+        return response["QueryExecution"]["ResultConfiguration"]["OutputLocation"]
 
 
 def _strip_leading_sql_comments(query: str) -> str:
@@ -89,3 +104,18 @@ def _validate_read_only_query(query: str) -> None:
     if not first_token:
         raise ValueError("Query must start with SELECT or WITH")
     raise ValueError(f"Only read-only SELECT queries are allowed, got {first_token}")
+
+
+def _wait_for_query_completion(client: Any, execution_id: str) -> str:
+    while True:
+        state = client.get_query_execution(QueryExecutionId=execution_id)
+        status = state["QueryExecution"]["Status"]["State"]
+        if status == QUERY_STATUS_SUCCEEDED:
+            return execution_id
+        if status in TERMINAL_FAILURE_STATES:
+            reason = state["QueryExecution"]["Status"].get(
+                "StateChangeReason",
+                UNKNOWN_STATE_CHANGE_REASON,
+            )
+            raise RuntimeError(f"Athena query {status}: {reason}")
+        time.sleep(POLL_INTERVAL_SECONDS)
