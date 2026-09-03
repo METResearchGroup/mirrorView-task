@@ -24,7 +24,7 @@ See the operator runbook at [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs
 | twitter | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/posts.csv` |
 | twitter | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | twitter | Curate | `data_platform/curate/` | `.../curated/{timestamp}/mirrorview.csv` |
-| reddit | Ingestion | `data_platform/ingestion/` | `data_platform/data/reddit/{dataset_id}/raw/{timestamp}/` |
+| reddit | Ingestion | `data_platform/ingestion/` | `data_platform/data/reddit/{dataset_id}/raw/{timestamp}/comments.csv` |
 | reddit | Preprocessing | `data_platform/preprocessing/` | `.../preprocessed/{timestamp}/` |
 | reddit | Features | `data_platform/generate_features/` | `.../features/{timestamp}/{feature}.csv`, `metadata.json` |
 | reddit | Curate | `data_platform/curate/` | `.../curated/{timestamp}/mirrorview.csv` |

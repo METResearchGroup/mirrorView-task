@@ -13,7 +13,6 @@ from tests.data_platform.constants import TEST_INGEST_CONFIG_PATH, VALID_REDDIT_
 from tests.data_platform.ingestion.reddit_conftest import (
     minimal_reddit_sync_config,
     mock_comment_row,
-    mock_post_row,
 )
 
 
@@ -30,6 +29,8 @@ def test_init_sync_metadata_subreddit_task_ledger() -> None:
     assert set(metadata["tasks"]) == {"alphasub", "betasub"}
     assert metadata["tasks"]["alphasub"]["status"] == "pending"
     assert metadata["tasks"]["alphasub"]["kind"] == "reddit"
+    assert "post_row_count" not in metadata
+    assert "posts_collected" not in metadata["tasks"]["alphasub"]
 
 
 def test_run_sync_tasks_appends_per_subreddit(
@@ -39,9 +40,8 @@ def test_run_sync_tasks_appends_per_subreddit(
     config = minimal_reddit_sync_config()
     ingestion_params = config["ingestion_params"]
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -50,14 +50,8 @@ def test_run_sync_tasks_appends_per_subreddit(
     )
 
     rows_by_subreddit = {
-        "AlphaSub": (
-            [mock_post_row("t3_post_a1")],
-            [mock_comment_row("t1_comment_a1")],
-        ),
-        "BetaSub": (
-            [mock_post_row("t3_post_b1")],
-            [mock_comment_row("t1_comment_b1")],
-        ),
+        "AlphaSub": [mock_comment_row("t1_comment_a1")],
+        "BetaSub": [mock_comment_row("t1_comment_b1")],
     }
 
     def fake_fetch(
@@ -66,18 +60,20 @@ def test_run_sync_tasks_appends_per_subreddit(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        post_rows, comment_rows = rows_by_subreddit[subreddit]
+    ) -> sync_reddit.SubredditFetchResult:
+        comment_rows = rows_by_subreddit[subreddit]
         stats = {
             "subreddit": subreddit,
             "listing": fetch_cfg.get("listing", "hot"),
+            "listing_time_filter": None,
             "limit_per_subreddit": fetch_cfg["limit_per_task"],
-            "posts_collected": len(post_rows),
+            "submissions_scanned": 1,
             "comments_collected": len(comment_rows),
         }
-        return post_rows, comment_rows, stats
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=comment_rows,
+            stats=stats,
+        )
 
     monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
 
@@ -85,23 +81,20 @@ def test_run_sync_tasks_appends_per_subreddit(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks,
-        include_comments=True,
-        include_posts=True,
     )
 
     assert metadata["tasks"]["alphasub"]["status"] == "completed"
     assert metadata["tasks"]["betasub"]["status"] == "completed"
     assert metadata["row_count"] == 2
-    assert metadata["post_row_count"] == 2
+    assert "post_row_count" not in metadata
     assert (run_dir / "comments.csv").exists()
-    assert (run_dir / "posts.csv").exists()
+    assert not (run_dir / "posts.csv").exists()
     assert not (run_dir / "comments.parquet").exists()
     assert not (run_dir / "posts.parquet").exists()
-    assert len(comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")) == 2
+    assert len(storage.load_seen_ids_from_disk(run_dir, "comment_fullname")) == 2
 
 
 def _run_two_subreddit_comment_sync(
@@ -110,9 +103,8 @@ def _run_two_subreddit_comment_sync(
     config: dict[str, Any],
 ) -> dict[str, Any]:
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -121,14 +113,8 @@ def _run_two_subreddit_comment_sync(
     )
 
     rows_by_subreddit = {
-        "AlphaSub": (
-            [mock_post_row("t3_post_a1")],
-            [mock_comment_row("t1_comment_a1")],
-        ),
-        "BetaSub": (
-            [mock_post_row("t3_post_b1")],
-            [mock_comment_row("t1_comment_b1")],
-        ),
+        "AlphaSub": [mock_comment_row("t1_comment_a1")],
+        "BetaSub": [mock_comment_row("t1_comment_b1")],
     }
 
     def fake_fetch(
@@ -137,18 +123,20 @@ def _run_two_subreddit_comment_sync(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        post_rows, comment_rows = rows_by_subreddit[subreddit]
+    ) -> sync_reddit.SubredditFetchResult:
+        comment_rows = rows_by_subreddit[subreddit]
         stats = {
             "subreddit": subreddit,
             "listing": fetch_cfg.get("listing", "hot"),
+            "listing_time_filter": None,
             "limit_per_subreddit": fetch_cfg["limit_per_task"],
-            "posts_collected": len(post_rows),
+            "submissions_scanned": 1,
             "comments_collected": len(comment_rows),
         }
-        return post_rows, comment_rows, stats
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=comment_rows,
+            stats=stats,
+        )
 
     monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
 
@@ -156,12 +144,9 @@ def _run_two_subreddit_comment_sync(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks,
-        include_comments=True,
-        include_posts=True,
     )
     return metadata
 
@@ -190,11 +175,10 @@ def test_run_sync_tasks_skips_prior_run_comments(
     ingestion_params = config["ingestion_params"]
     ingestion_params["comments_dedupe_policy"] = ["current_run", PRIOR_RUN_POLICY]
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
 
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
-    comment_storage.append_records(
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage.append_records(
         [mock_comment_row("t1_comment_old")],
         run_dir,
     )
@@ -211,20 +195,18 @@ def test_run_sync_tasks_skips_prior_run_comments(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        return (
-            [mock_post_row("t3_post_a1")],
-            [
+    ) -> sync_reddit.SubredditFetchResult:
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=[
                 mock_comment_row("t1_comment_old"),
                 mock_comment_row("t1_comment_new"),
             ],
-            {
+            stats={
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
+                "listing_time_filter": None,
                 "limit_per_subreddit": fetch_cfg["limit_per_task"],
-                "posts_collected": 1,
+                "submissions_scanned": 1,
                 "comments_collected": 2,
             },
         )
@@ -235,15 +217,12 @@ def test_run_sync_tasks_skips_prior_run_comments(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks[:1],
-        include_comments=True,
-        include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_old", "t1_comment_new"}
     assert metadata["rows_skipped_as_duplicates"] == 1
     assert metadata["skipped_as_duplicates_by_record_type"]["reddit.comment"] == 1
@@ -265,9 +244,8 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         other_run,
     )
 
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -281,20 +259,18 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        return (
-            [mock_post_row("t3_post_a1")],
-            [
+    ) -> sync_reddit.SubredditFetchResult:
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=[
                 mock_comment_row("t1_comment_old"),
                 mock_comment_row("t1_comment_new"),
             ],
-            {
+            stats={
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
+                "listing_time_filter": None,
                 "limit_per_subreddit": fetch_cfg["limit_per_task"],
-                "posts_collected": 1,
+                "submissions_scanned": 1,
                 "comments_collected": 2,
             },
         )
@@ -305,15 +281,12 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks[:1],
-        include_comments=True,
-        include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_old", "t1_comment_new"}
     assert metadata["rows_skipped_as_duplicates"] == 0
     assert metadata["skipped_as_duplicates_by_record_type"].get("reddit.comment", 0) == 0
@@ -336,9 +309,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         other_run,
     )
 
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -352,17 +324,15 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        return (
-            [mock_post_row("t3_post_a1")],
-            [mock_comment_row("t1_comment_old")],
-            {
+    ) -> sync_reddit.SubredditFetchResult:
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=[mock_comment_row("t1_comment_old")],
+            stats={
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
+                "listing_time_filter": None,
                 "limit_per_subreddit": fetch_cfg["limit_per_task"],
-                "posts_collected": 1,
+                "submissions_scanned": 1,
                 "comments_collected": 1,
             },
         )
@@ -373,15 +343,12 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks[:1],
-        include_comments=True,
-        include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_old"}
     assert metadata.get("rows_skipped_as_duplicates", 0) == 0
     assert "comments_skipped_as_duplicates" not in metadata
@@ -394,18 +361,16 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
     config = minimal_reddit_sync_config()
     ingestion_params = config["ingestion_params"]
     ingestion_params.pop("comments_dedupe_policy", None)
-    ingestion_params.pop("posts_dedupe_policy", None)
     ingestion_params["dedupe_policy"] = [PRIOR_RUN_POLICY]
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
 
-    prior_run = comment_storage.create_new_run_dir("2026_05_29-10:00:00")
-    comment_storage.append_records(
+    prior_run = storage.create_new_run_dir("2026_05_29-10:00:00")
+    storage.append_records(
         [mock_comment_row("t1_comment_old")],
         prior_run,
     )
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -419,20 +384,18 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        return (
-            [mock_post_row("t3_post_a1")],
-            [
+    ) -> sync_reddit.SubredditFetchResult:
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=[
                 mock_comment_row("t1_comment_old"),
                 mock_comment_row("t1_comment_new"),
             ],
-            {
+            stats={
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
+                "listing_time_filter": None,
                 "limit_per_subreddit": fetch_cfg["limit_per_task"],
-                "posts_collected": 1,
+                "submissions_scanned": 1,
                 "comments_collected": 2,
             },
         )
@@ -443,90 +406,16 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks[:1],
-        include_comments=True,
-        include_posts=True,
     )
 
-    seen = comment_storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
+    seen = storage.load_seen_ids_from_disk(run_dir, "comment_fullname")
     assert seen == {"t1_comment_new"}
     assert metadata["rows_skipped_as_duplicates"] == 1
     assert metadata["skipped_as_duplicates_by_record_type"]["reddit.comment"] == 1
     assert "comments_skipped_as_duplicates" not in metadata
-
-
-def test_run_sync_tasks_empty_posts_override_does_not_skip_prior_posts(
-    data_root,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    config = minimal_reddit_sync_config()
-    ingestion_params = config["ingestion_params"]
-    ingestion_params.pop("comments_dedupe_policy", None)
-    ingestion_params["dedupe_policy"] = [PRIOR_RUN_POLICY]
-    ingestion_params["posts_dedupe_policy"] = []
-    sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-
-    prior_run = comment_storage.create_new_run_dir("2026_05_29-10:00:00")
-    post_storage.append_records(
-        [mock_post_row("t3_post_old")],
-        prior_run,
-    )
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
-    metadata = sync_reddit.init_sync_metadata(
-        config,
-        TEST_INGEST_CONFIG_PATH,
-        "2026_05_30-10:00:00",
-        sync_tasks,
-    )
-
-    def fake_fetch(
-        reddit: Any,
-        fetch_cfg: dict[str, Any],
-        subreddit: str,
-        *,
-        sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        return (
-            [
-                mock_post_row("t3_post_old"),
-                mock_post_row("t3_post_new"),
-            ],
-            [mock_comment_row("t1_comment_new")],
-            {
-                "subreddit": subreddit,
-                "listing": fetch_cfg.get("listing", "hot"),
-                "limit_per_subreddit": fetch_cfg["limit_per_task"],
-                "posts_collected": 2,
-                "comments_collected": 1,
-            },
-        )
-
-    monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
-
-    sync_reddit.run_sync_tasks(
-        MagicMock(),
-        ingestion_params,
-        run_dir,
-        comment_storage,
-        post_storage,
-        metadata,
-        sync_tasks[:1],
-        include_comments=True,
-        include_posts=True,
-    )
-
-    seen = post_storage.load_seen_ids_from_disk(run_dir, "reddit_fullname")
-    assert seen == {"t3_post_old", "t3_post_new"}
-    assert metadata.get("rows_skipped_as_duplicates", 0) == 0
-    assert metadata.get("skipped_as_duplicates_by_record_type", {}).get("reddit.post", 0) == 0
-    assert "posts_skipped_as_duplicates" not in metadata
 
 
 def test_resume_skips_completed_subreddits(
@@ -536,9 +425,8 @@ def test_resume_skips_completed_subreddits(
     config = minimal_reddit_sync_config()
     ingestion_params = config["ingestion_params"]
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -547,12 +435,12 @@ def test_resume_skips_completed_subreddits(
     )
     metadata["tasks"]["alphasub"]["status"] = "completed"
     metadata["tasks"]["alphasub"]["comments_collected"] = 1
-    comment_storage.append_records(
+    storage.append_records(
         [mock_comment_row("t1_comment_a1")],
         run_dir,
     )
     metadata["row_count"] = 1
-    comment_storage.write_run_metadata_atomic(run_dir, metadata)
+    storage.write_run_metadata_atomic(run_dir, metadata)
 
     calls: list[str] = []
 
@@ -562,35 +450,30 @@ def test_resume_skips_completed_subreddits(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
+    ) -> sync_reddit.SubredditFetchResult:
         calls.append(subreddit)
-        return (
-            [mock_post_row("t3_post_b1")],
-            [mock_comment_row("t1_comment_b1")],
-            {
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=[mock_comment_row("t1_comment_b1")],
+            stats={
                 "subreddit": subreddit,
                 "listing": "hot",
+                "listing_time_filter": None,
                 "limit_per_subreddit": 2,
-                "posts_collected": 1,
+                "submissions_scanned": 1,
                 "comments_collected": 1,
             },
         )
 
     monkeypatch.setattr(sync_reddit, "fetch_records_for_subreddit", fake_fetch)
 
-    resumed_metadata = comment_storage.load_run_metadata(run_dir)
+    resumed_metadata = storage.load_run_metadata(run_dir)
     sync_reddit.run_sync_tasks(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         resumed_metadata,
         sync_tasks,
-        include_comments=True,
-        include_posts=True,
     )
 
     assert calls == ["BetaSub"]
@@ -625,9 +508,8 @@ def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
     config = minimal_reddit_sync_config()
     ingestion_params = config["ingestion_params"]
     sync_tasks = sync_reddit.build_sync_tasks(ingestion_params)
-    comment_storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
-    post_storage = comment_storage.post_storage()
-    run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
+    storage = RedditStorageManager(StorageStage.RAW, VALID_REDDIT_DATASET_ID)
+    run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
     metadata = sync_reddit.init_sync_metadata(
         config,
         TEST_INGEST_CONFIG_PATH,
@@ -641,17 +523,15 @@ def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
         subreddit: str,
         *,
         sync_timestamp: str,
-        include_posts: bool,
-        include_comments: bool,
-    ):
-        return (
-            [mock_post_row("t3_post_a1")],
-            [mock_comment_row("t1_comment_a1")],
-            {
+    ) -> sync_reddit.SubredditFetchResult:
+        return sync_reddit.SubredditFetchResult(
+            comment_rows=[mock_comment_row("t1_comment_a1")],
+            stats={
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
+                "listing_time_filter": None,
                 "limit_per_subreddit": fetch_cfg["limit_per_task"],
-                "posts_collected": 1,
+                "submissions_scanned": 1,
                 "comments_collected": 1,
             },
         )
@@ -662,18 +542,14 @@ def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
         MagicMock(),
         ingestion_params,
         run_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks[:1],
-        include_comments=True,
-        include_posts=True,
     )
 
-    assert comment_storage.records_filename == "comments.parquet"
-    assert post_storage.records_filename == "posts.parquet"
+    assert storage.records_filename == "comments.parquet"
     assert (run_dir / "comments.parquet").exists()
-    assert (run_dir / "posts.parquet").exists()
+    assert not (run_dir / "posts.parquet").exists()
     assert not (run_dir / "comments.csv").exists()
     assert not (run_dir / "posts.csv").exists()
 
@@ -695,17 +571,71 @@ class TestSyncRecords:
         monkeypatch.setattr(sync_reddit, "init_reddit_client", init_client)
         monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
         expected_comments = "comments.parquet"
-        expected_posts = "posts.parquet"
 
         sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
-        comment_storage = run_tasks.call_args.args[3]
-        post_storage = run_tasks.call_args.args[4]
-        result_comments = comment_storage.records_filename
-        result_posts = post_storage.records_filename
+        storage = run_tasks.call_args.args[3]
+        result_comments = storage.records_filename
 
         assert init_client.called is True
         assert result_comments == expected_comments
-        assert result_posts == expected_posts
+        assert len(run_tasks.call_args.args) == 6
+
+    def test_raises_when_reddit_post_record_type_is_present(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """sync_records rejects configs that still name reddit.post."""
+        config = minimal_reddit_sync_config()
+        config["record_types"] = [
+            sync_reddit.COMMENTS_RECORD_TYPE,
+            "reddit.post",
+        ]
+        monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
+        monkeypatch.setattr(sync_reddit, "init_reddit_client", MagicMock())
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
+
+        with pytest.raises(ValueError, match="record types"):
+            sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+
+        assert run_tasks.called is False
+
+    def test_raises_when_comment_record_type_is_missing(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """sync_records rejects configs that omit reddit.comment."""
+        config = minimal_reddit_sync_config()
+        config["record_types"] = []
+        monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
+        monkeypatch.setattr(sync_reddit, "init_reddit_client", MagicMock())
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
+
+        with pytest.raises(ValueError, match="record types"):
+            sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+
+        assert run_tasks.called is False
+
+    def test_raises_when_comment_record_type_is_missing(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """sync_records rejects configs that omit reddit.comment."""
+        config = minimal_reddit_sync_config()
+        config["record_types"] = []
+        monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
+        monkeypatch.setattr(sync_reddit, "init_reddit_client", MagicMock())
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
+
+        with pytest.raises(ValueError, match="record types"):
+            sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+
+        assert run_tasks.called is False
 
 
 class TestFetchRecordsForSubredditLimitPerTask:
@@ -737,8 +667,6 @@ class TestFetchRecordsForSubredditLimitPerTask:
             ingestion_params,
             "politics",
             sync_timestamp="2026_05_30-10:00:00",
-            include_posts=True,
-            include_comments=False,
         )
         result = captured["limit"]
 

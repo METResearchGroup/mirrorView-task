@@ -7,7 +7,6 @@ import pytest
 
 from data_platform.ingestion.sync_checkpoint import (
     COMMENTS_DEDUPE_POLICY_KEY,
-    POSTS_DEDUPE_POLICY_KEY,
     ROWS_SKIPPED_AS_DUPLICATES_KEY,
     SKIPPED_BY_RECORD_TYPE_KEY,
     SyncStatus,

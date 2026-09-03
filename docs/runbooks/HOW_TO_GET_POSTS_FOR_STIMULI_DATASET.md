@@ -31,7 +31,7 @@ Data is stored in the following folder format:
 ```markdown
 data_platform/data/{platform}/{dataset_id}/
   dataset.json
-  raw/{timestamp}/          posts.csv or comments.csv + metadata.json
+  raw/{timestamp}/          posts.csv (Bluesky, Twitter) or comments.csv (Reddit) + metadata.json
   preprocessed/{timestamp}/ same + metadata.json
   features/                 {feature}.csv + metadata.json [+ deadletter.jsonl]
   curated/{timestamp}/      mirrorview.csv + metadata.json
@@ -40,6 +40,8 @@ data_platform/data/{platform}/{dataset_id}/
 Each platform is an independent dataset under `data_platform/data/{platform}/{dataset_id}/`. `dataset_id` is `{bluesky|reddit|twitter}_{uuid}`.
 
 ## Stage 1: Ingestion
+
+Bluesky and Twitter ingest write `posts.csv` or `posts.parquet`. Reddit ingest writes `comments.csv` or `comments.parquet`. Reddit ingest still uses PRAW to open a subreddit's hot, top, or new page, and it then reads the comments under each post. Reddit only returns comments through the post they belong to, so those posts are opened during the fetch. The ingest script does not write the parent posts to `posts.csv` or `posts.parquet`. Older Reddit raw run folders may still contain leftover `posts.csv` files that later stages do not read.
 
 ## Stage 2: Preprocessing
 
