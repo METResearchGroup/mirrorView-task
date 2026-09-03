@@ -61,7 +61,7 @@ class TestGenerateRecordId:
     @pytest.mark.parametrize("primary_key", ["", "   "])
     def test_rejects_empty_primary_key(self, primary_key: str) -> None:
         """Empty platform ids are invalid."""
-        with pytest.raises(ValueError, match="primary key"):
+        with pytest.raises(ValueError, match="non-empty"):
             generate_record_id(INTEGRATION_TWITTER, primary_key)
 
 

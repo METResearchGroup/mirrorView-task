@@ -54,7 +54,19 @@ def generate_record_id(integration: str, primary_key: str) -> str:
     ValueError
         When ``integration`` is unknown or ``primary_key`` is empty.
     """
-    raise NotImplementedError
+    normalized_integration = integration.strip().lower()
+    if normalized_integration not in _INTEGRATION_PRIMARY_KEY_COLUMNS:
+        raise ValueError(f"Unknown integration `{integration}`.")
+
+    normalized_primary_key = str(primary_key).strip()
+    if not normalized_primary_key:
+        raise ValueError("Primary key must be a non-empty string.")
+
+    if normalized_integration == INTEGRATION_BLUESKY:
+        digest = hashlib.sha256(normalized_primary_key.encode("utf-8")).hexdigest()
+        return f"{INTEGRATION_BLUESKY}_{digest}"
+
+    return f"{normalized_integration}_{normalized_primary_key}"
 
 
 def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]:
