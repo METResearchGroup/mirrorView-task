@@ -204,13 +204,17 @@ def load_raw_records(
         if df.empty:
             continue
         validated_rows.extend(
-            _rows_to_validated_dicts(df.to_dict(orient="records"), spec.model_cls)
+            {**row, SOURCE_RAW_RUN_COLUMN: run_dir.name}
+            for row in _rows_to_validated_dicts(
+                df.to_dict(orient="records"), spec.model_cls
+            )
         )
 
+    empty_columns = list(spec.model_cls.model_fields.keys()) + [SOURCE_RAW_RUN_COLUMN]
     records = (
         pd.DataFrame(validated_rows)
         if validated_rows
-        else pd.DataFrame(columns=list(spec.model_cls.model_fields.keys()))
+        else pd.DataFrame(columns=empty_columns)
     )
     return records, run_dirs
 
