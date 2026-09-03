@@ -1,4 +1,4 @@
-"""Tests for Reddit comment ingest rows with fewer fields.
+"""Tests for Reddit comment ingest rows.
 
 Run from the repo root:
 
@@ -53,8 +53,8 @@ def _comment(
 class TestSyncRedditCommentModel:
     """Tests that SyncRedditCommentModel rejects unexpected columns."""
 
-    def test_rejects_columns_that_are_no_longer_on_a_comment_row(self) -> None:
-        """SyncRedditCommentModel rejects columns such as depth that are no longer on a comment row."""
+    def test_rejects_columns_that_are_not_on_a_comment_row(self) -> None:
+        """SyncRedditCommentModel rejects columns that are not on a comment row."""
         row = mock_comment_row("t1_keep")
         row["depth"] = 0
 
@@ -90,7 +90,7 @@ class TestFetchPostComments:
         SyncRedditCommentModel.model_validate(attach_record_id(result[0], "reddit"))
 
     def test_collects_nested_replies_in_display_order(self) -> None:
-        """Nested replies are still visited after depth tracking is removed."""
+        """Nested replies are visited in display order."""
         child = _comment("t1_child")
         parent = _comment("t1_parent", replies=[child])
         submission = SimpleNamespace(comments=FakeCommentForest([parent]))

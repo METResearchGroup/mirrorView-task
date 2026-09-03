@@ -108,12 +108,11 @@ def comment_to_row(
     comment: praw.models.Comment,
     sync_timestamp: str,
 ) -> dict[str, Any]:
-    """Normalize a PRAW Comment to a comment CSV row with fewer fields.
+    """Normalize a PRAW Comment to a flat dict matching the CSV schema.
 
-    The row includes ``comment_fullname``, ``author``, ``body``,
-    ``created_at``, and ``sync_timestamp``. ``created_at`` is UTC ISO-8601
-    from the comment unix time. The row does not include depth, rank, post
-    ids, subreddit, parent, score, or permalink.
+    The row has ``comment_fullname``, ``author``, ``body``, ``created_at``,
+    and ``sync_timestamp``. ``created_at`` is UTC ISO-8601 from the comment
+    unix time.
     """
     author = "[deleted]" if comment.author is None else str(comment.author)
     created_at = datetime.fromtimestamp(comment.created_utc, tz=timezone.utc).isoformat()
@@ -172,9 +171,9 @@ def fetch_post_comments(
 ) -> list[dict[str, Any]]:
     """Collect up to max_comments eligible comments for a submission.
 
-    The function still skips stickied comments, distinguished comments, and
-    comments shorter than min_body_length. The row does not store depth or
-    rank.
+    The function skips stickied comments, distinguished comments, and
+    comments shorter than min_body_length. Comment rows do not include depth
+    or rank.
     """
     rows: list[dict[str, Any]] = []
     submission.comments.replace_more(limit=0)
