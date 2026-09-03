@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
-from data_platform.ingestion.query_terms import quote_query_term
 from data_platform.ingestion.retry import retry_bluesky_request
 from lib.load_env_vars import EnvVarsContainer
 
@@ -152,11 +151,6 @@ class BlueskyClient:
             "hits_total": hits_total,
         }
         return BlueskyFetchResult(rows=rows, stats=stats)
-
-    @staticmethod
-    def quote_keyword(keyword: str) -> str:
-        """Return the quoted keyword for Bluesky search syntax."""
-        return quote_query_term(keyword)
 
 
 def _init_bluesky_client() -> Client:
