@@ -280,7 +280,60 @@ def fetch_records_for_subreddit(
     sync_timestamp: str,
 ) -> SubredditFetchResult:
     """Fetch comments for a single subreddit by walking listing submissions."""
-    raise NotImplementedError
+    limit = resolve_limit_per_task(ingestion_params)
+    listing = str(ingestion_params.get("listing", DEFAULT_LISTING))
+    listing_time_filter = _resolve_listing_time_filter(ingestion_params, listing)
+    comments_per_post = int(ingestion_params.get("comments_per_post", 100))
+    min_comment_body_length = int(ingestion_params.get("min_comment_body_length", 30))
+
+    try:
+        submissions = _fetch_subreddit_page(
+            reddit, subreddit, listing, limit, time_filter=listing_time_filter
+        )
+    except prawcore.exceptions.NotFound:
+        logger.warning("Subreddit not found: %s", subreddit)
+        return SubredditFetchResult(
+            comment_rows=[],
+            stats={
+                "subreddit": subreddit,
+                "listing": listing,
+                "listing_time_filter": listing_time_filter,
+                "limit_per_subreddit": limit,
+                "submissions_scanned": 0,
+                "comments_collected": 0,
+            },
+        )
+
+    comment_rows: list[dict[str, Any]] = []
+    for post in submissions:
+        try:
+            comment_rows.extend(
+                fetch_post_comments(
+                    post,
+                    max_comments=comments_per_post,
+                    min_body_length=min_comment_body_length,
+                    sync_timestamp=sync_timestamp,
+                )
+            )
+        except Exception:
+            logger.warning(
+                "Failed to fetch comments for post %s in r/%s",
+                post.id,
+                subreddit,
+                exc_info=True,
+            )
+
+    return SubredditFetchResult(
+        comment_rows=comment_rows,
+        stats={
+            "subreddit": subreddit,
+            "listing": listing,
+            "listing_time_filter": listing_time_filter,
+            "limit_per_subreddit": limit,
+            "submissions_scanned": len(submissions),
+            "comments_collected": len(comment_rows),
+        },
+    )
 
 
 def _initial_task_progress(task: RedditTask) -> dict[str, Any]:
