@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion import sync_bluesky
+from data_platform.ingestion.integrations.bluesky import BlueskyClient
 from data_platform.ingestion.sync_checkpoint import validate_tasks_for_resume
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 from tests.data_platform.conftest import make_ingestion_row
@@ -15,6 +16,11 @@ from tests.data_platform.ingestion.conftest import (
     mock_post,
     mock_search_response,
 )
+
+
+def make_bluesky_client() -> BlueskyClient:
+    """Return a BlueskyClient with a no-op internal atproto Client."""
+    return BlueskyClient(client=MagicMock())
 
 
 def test_build_sync_tasks_requires_keywords_list() -> None:
@@ -68,8 +74,8 @@ def test_run_sync_tasks_appends_per_keyword(
     }
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -77,10 +83,10 @@ def test_run_sync_tasks_appends_per_keyword(
     ):
         return mock_search_response(posts_by_query[query])
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -127,8 +133,8 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     )
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -141,10 +147,10 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
             ]
         )
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -195,8 +201,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     )
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -204,10 +210,10 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     ):
         return mock_search_response([mock_post("at://did:plc:ex/app.bsky.feed.post/old")])
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -239,8 +245,8 @@ def test_run_sync_tasks_dedupes_within_run(
     duplicate_uri = "at://did:plc:ex/app.bsky.feed.post/dup"
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -248,10 +254,10 @@ def test_run_sync_tasks_dedupes_within_run(
     ):
         return mock_search_response([mock_post(duplicate_uri)])
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -298,8 +304,8 @@ def test_resume_skips_completed_tasks(
     calls: list[str] = []
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -308,11 +314,11 @@ def test_resume_skips_completed_tasks(
         calls.append(query)
         return mock_search_response([mock_post("at://did:plc:ex/app.bsky.feed.post/b1")])
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     resumed_metadata = storage.load_run_metadata(run_dir)
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -360,8 +366,8 @@ def test_resume_dedupes_against_records_from_completed_tasks(
     storage.write_run_metadata_atomic(run_dir, metadata)
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -374,11 +380,11 @@ def test_resume_dedupes_against_records_from_completed_tasks(
             ]
         )
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     resumed_metadata = storage.load_run_metadata(run_dir)
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -427,8 +433,8 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_posts(
     )
 
     def fake_search(
-        client: Any,
-        fetch_cfg: dict[str, Any],
+        _self: Any,
+        _fetch_cfg: dict[str, Any],
         query: str,
         *,
         page_limit: int,
@@ -442,10 +448,10 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_posts(
             ]
         )
 
-    monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
     sync_bluesky.run_sync_tasks(
-        MagicMock(),
+        make_bluesky_client(),
         ingestion_params,
         run_dir,
         storage,
@@ -460,13 +466,13 @@ def test_run_sync_tasks_caps_fetch_by_remaining_max_posts(
 
 
 class TestResolveSearchAuthor:
-    """Tests for _resolve_search_author."""
+    """Tests for BlueskyClient._resolve_search_author."""
 
     def test_returns_author_filter(self) -> None:
         ingestion_params = {"author_filter": "alice.bsky.social"}
         expected = "alice.bsky.social"
 
-        result = sync_bluesky._resolve_search_author(ingestion_params)
+        result = BlueskyClient._resolve_search_author(ingestion_params)
 
         assert result == expected
 
@@ -482,18 +488,18 @@ class TestResolveSearchAuthor:
         self,
         ingestion_params: dict[str, Any],
     ) -> None:
-        result = sync_bluesky._resolve_search_author(ingestion_params)
+        result = BlueskyClient._resolve_search_author(ingestion_params)
 
         expected = None
         assert result == expected
 
 
 class TestSearchPostsPage:
-    """Tests for _search_posts_page."""
+    """Tests for BlueskyClient._search_posts_page."""
 
-    def _client_with_empty_search(self) -> MagicMock:
-        client = MagicMock()
-        client.app.bsky.feed.search_posts.return_value = mock_search_response([])
+    def _client_with_empty_search(self) -> BlueskyClient:
+        client = make_bluesky_client()
+        client._client.app.bsky.feed.search_posts.return_value = mock_search_response([])
         return client
 
     def test_passes_author_filter_as_search_author(self) -> None:
@@ -501,11 +507,11 @@ class TestSearchPostsPage:
         ingestion_params = {"sort": "latest", "author_filter": "alice.bsky.social"}
         expected_author = "alice.bsky.social"
 
-        sync_bluesky._search_posts_page(
-            client, ingestion_params, "alpha", page_limit=10
+        client._search_posts_page(
+            ingestion_params, "alpha", page_limit=10
         )
 
-        params = client.app.bsky.feed.search_posts.call_args.kwargs["params"]
+        params = client._client.app.bsky.feed.search_posts.call_args.kwargs["params"]
         result = params.get("author")
         assert result == expected_author
         assert params["q"] == "alpha"
@@ -515,18 +521,18 @@ class TestSearchPostsPage:
         client = self._client_with_empty_search()
         ingestion_params = {"sort": "latest"}
 
-        sync_bluesky._search_posts_page(
-            client, ingestion_params, "alpha", page_limit=10
+        client._search_posts_page(
+            ingestion_params, "alpha", page_limit=10
         )
 
-        params = client.app.bsky.feed.search_posts.call_args.kwargs["params"]
+        params = client._client.app.bsky.feed.search_posts.call_args.kwargs["params"]
         result = "author" in params
         expected = False
         assert result == expected
 
 
 class TestFetchPostsForKeywordLimitPerTask:
-    """Tests that fetch_posts_for_keyword reads limit_per_task."""
+    """Tests that BlueskyClient.fetch_posts_for_keyword reads limit_per_task."""
 
     def test_uses_limit_per_task(
         self,
@@ -536,8 +542,8 @@ class TestFetchPostsForKeywordLimitPerTask:
         expected = 1
 
         def fake_search(
-            client: Any,
-            fetch_cfg: dict[str, Any],
+            _self: Any,
+            _fetch_cfg: dict[str, Any],
             query: str,
             *,
             page_limit: int,
@@ -550,15 +556,13 @@ class TestFetchPostsForKeywordLimitPerTask:
                 ]
             )
 
-        monkeypatch.setattr(sync_bluesky, "_search_posts_page", fake_search)
+        monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
-        rows, _stats = sync_bluesky.fetch_posts_for_keyword(
-            MagicMock(),
+        result = make_bluesky_client().fetch_posts_for_keyword(
             ingestion_params,
             "alpha",
             task_id="alpha",
             sync_timestamp="2026_05_30-10:00:00",
         )
-        result = len(rows)
 
-        assert result == expected
+        assert len(result.rows) == expected

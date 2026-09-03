@@ -14,7 +14,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from data_platform.ingestion.generate_record_id import attach_record_id
-from data_platform.ingestion.sync_bluesky import fetch_posts_for_keyword
+from data_platform.ingestion.integrations.bluesky import BlueskyClient
 from data_platform.ingestion.sync_reddit import comment_to_row, submission_to_row
 from data_platform.ingestion.twitter_client import tweet_to_row
 from data_platform.models.sync import (
@@ -77,7 +77,7 @@ def _tweet(*, created_at: datetime | None) -> SimpleNamespace:
 
 
 class TestFetchPostsForKeyword:
-    """Tests for fetch_posts_for_keyword()."""
+    """Tests for BlueskyClient.fetch_posts_for_keyword()."""
 
     def test_writes_created_at_and_sync_timestamp(
         self, monkeypatch: pytest.MonkeyPatch
@@ -86,12 +86,13 @@ class TestFetchPostsForKeyword:
         ingestion_params = {"limit_per_task": 1, "sort": "latest"}
         response = mock_search_response([mock_post("at://did:plc:ex/app.bsky.feed.post/a1")])
         monkeypatch.setattr(
-            "data_platform.ingestion.sync_bluesky._search_posts_page",
+            BlueskyClient,
+            "_search_posts_page",
             lambda *_args, **_kwargs: response,
         )
 
-        rows, _stats = fetch_posts_for_keyword(
-            MagicMock(),
+        client = BlueskyClient(client=MagicMock())
+        result = client.fetch_posts_for_keyword(
             ingestion_params,
             "alpha",
             task_id="alpha",
@@ -99,9 +100,9 @@ class TestFetchPostsForKeyword:
         )
 
         expected_created_at = "2026-05-30T00:00:00.000Z"
-        assert rows[0]["created_at"] == expected_created_at
-        assert rows[0]["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncBlueskyPostModel.model_validate(attach_record_id(rows[0], "bluesky"))
+        assert result.rows[0]["created_at"] == expected_created_at
+        assert result.rows[0]["sync_timestamp"] == SYNC_TIMESTAMP
+        SyncBlueskyPostModel.model_validate(attach_record_id(result.rows[0], "bluesky"))
 
 
 class TestSubmissionToRow:
