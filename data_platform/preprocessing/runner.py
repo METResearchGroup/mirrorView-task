@@ -10,6 +10,8 @@ from typing import Any, NamedTuple
 import pandas as pd
 from pydantic import BaseModel
 
+from data_platform.ingestion.data_dumps.bluesky.load_raw import load_hive_dump_posts
+from data_platform.preprocessing.sample import sample_rows
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.preprocessing.previously_used_stimuli import (
@@ -169,6 +171,32 @@ def _rows_to_validated_dicts(
     return [model_cls.model_validate(row).model_dump() for row in rows]
 
 
+HIVE_DATE_PREFIX = "date="
+
+
+def _has_hive_dump_partitions(run_dir: Path) -> bool:
+    return any(
+        path.is_dir() and path.name.startswith(HIVE_DATE_PREFIX)
+        for path in run_dir.iterdir()
+    )
+
+
+def _validated_rows_from_run(
+    run_dir: Path,
+    spec: PreprocessPlatformSpec,
+    raw_storage: StorageManager,
+) -> list[dict[str, Any]]:
+    records_path = run_dir / raw_storage.records_filename
+    if records_path.exists():
+        df = raw_storage.load_records(run_dir=run_dir)
+        if df.empty:
+            return []
+        return _rows_to_validated_dicts(df.to_dict(orient="records"), spec.model_cls)
+    if _has_hive_dump_partitions(run_dir):
+        return load_hive_dump_posts(run_dir, run_dir.name)
+    return []
+
+
 def load_raw_records(
     spec: PreprocessPlatformSpec,
     dataset_id: str,
@@ -193,15 +221,7 @@ def load_raw_records(
     run_dirs = sorted([p for p in raw_root.iterdir() if p.is_dir()])
     validated_rows: list[dict[str, Any]] = []
     for run_dir in run_dirs:
-        records_path = run_dir / raw_storage.records_filename
-        if not records_path.exists():
-            continue
-        df = raw_storage.load_records(run_dir=run_dir)
-        if df.empty:
-            continue
-        validated_rows.extend(
-            _rows_to_validated_dicts(df.to_dict(orient="records"), spec.model_cls)
-        )
+        validated_rows.extend(_validated_rows_from_run(run_dir, spec, raw_storage))
 
     records = (
         pd.DataFrame(validated_rows)
