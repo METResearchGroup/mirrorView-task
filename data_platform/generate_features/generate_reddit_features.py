@@ -46,7 +46,8 @@ def generate_reddit_features(
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
-    run_dir_name: str | None = None,
+    checkpoint: str | None = None,
+    latest: bool = False,
 ) -> dict[str, Path]:
     """Load Reddit comments and generate the requested feature labels."""
     return generate_platform_features(
@@ -55,7 +56,8 @@ def generate_reddit_features(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
-        run_dir_name=run_dir_name,
+        checkpoint=checkpoint,
+        latest=latest,
     )
 
 
@@ -72,10 +74,15 @@ def main(
         "--features",
         help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
     ),
-    run_dir: str | None = typer.Option(
+    checkpoint: str | None = typer.Option(
         None,
-        "--run-dir",
-        help="Feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
+        "--checkpoint",
+        help="Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
+    ),
+    latest: bool = typer.Option(
+        False,
+        "--latest",
+        help="Resume the newest unfinished feature run for this dataset.",
     ),
 ) -> None:
     """CLI entrypoint for resumable Reddit feature generation."""
@@ -84,7 +91,8 @@ def main(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=features_from_cli(features),
-        run_dir_name=run_dir,
+        checkpoint=checkpoint,
+        latest=latest,
     )
 
 

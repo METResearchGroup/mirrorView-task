@@ -70,7 +70,7 @@ def test_build_feature_config_resumes_named_run_dir(data_root) -> None:
         BLUESKY_SPEC,
         FEATURES_DATASET_ID,
         run_config=FeatureRunConfig(),
-        run_dir_name=PREPROCESSED_RUN_DIR,
+        checkpoint=PREPROCESSED_RUN_DIR,
     )
 
     assert config.features_dir.name == PREPROCESSED_RUN_DIR
@@ -86,7 +86,7 @@ def test_feature_run_dir_rejects_path_escape(data_root: Path) -> None:
     )
 
     with pytest.raises(ValueError, match="single feature run directory name"):
-        feature_run_dir(storage, "../other-dir")
+        feature_run_dir(storage, "../other-dir", False)
 
 
 def test_empty_twitter_input_does_not_create_feature_run(data_root: Path) -> None:

@@ -68,7 +68,8 @@ class TestGenerateBlueskyFeatures:
             batch_size=8,
             max_concurrency=4,
             feature_subset=["is_political"],
-            run_dir_name=None,
+            checkpoint=None,
+            latest=False,
         )
 
     def test_require_all_runs_complete_is_on_spec(self) -> None:

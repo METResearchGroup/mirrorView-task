@@ -63,26 +63,36 @@ def run_feature_generation(
     return generate_features(records, config)
 
 
+FEATURE_RUN_COMPLETED_STATUS = "completed"
+FEATURE_CHECKPOINT_NAME_ERROR = "checkpoint must be a single feature run directory name"
+FEATURE_CHECKPOINT_OR_LATEST_ERROR = "Pass --checkpoint or --latest, but not both"
+CURRENT_DIR_NAME = "."
+PARENT_DIR_NAME = ".."
+
+
+def _require_single_feature_run_name(checkpoint: str) -> str:
+    raise NotImplementedError
+
+
+def _start_new_feature_run(feature_storage: StorageManager) -> Path:
+    raise NotImplementedError
+
+
+def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -> Path:
+    raise NotImplementedError
+
+
+def _latest_unfinished_feature_run_dir(feature_storage: StorageManager) -> Path:
+    raise NotImplementedError
+
+
 def feature_run_dir(
     feature_storage: StorageManager,
-    run_dir_name: str | None,
+    checkpoint: str | None,
+    latest: bool,
 ) -> Path:
-    """Return ``features/{timestamp}/``, creating the directory if needed.
-
-    ``run_dir_name`` must be a single folder name when set. Absolute paths,
-    ``.``, ``..``, and names with extra path parts are rejected here so a
-    CLI ``--run-dir`` cannot write outside the features stage.
-    """
-    if run_dir_name is None:
-        return feature_storage.create_new_run_dir()
-    requested_path = Path(run_dir_name)
-    if (
-        requested_path.is_absolute()
-        or len(requested_path.parts) != 1
-        or requested_path.name in {".", ".."}
-    ):
-        raise ValueError("run_dir_name must be a single feature run directory name")
-    return feature_storage.create_new_run_dir(run_dir_name)
+    """Return ``features/{timestamp}/`` for a new run or an unfinished checkpoint."""
+    raise NotImplementedError
 
 
 def build_feature_config(
@@ -91,7 +101,8 @@ def build_feature_config(
     *,
     run_config: FeatureRunConfig,
     features_subset: tuple[str, ...] | None = None,
-    run_dir_name: str | None = None,
+    checkpoint: str | None = None,
+    latest: bool = False,
 ) -> FeatureGenerationConfig:
     """Build a FeatureGenerationConfig for timestamped feature CSV output."""
     dataset_id = validate_dataset_id(dataset_id)
@@ -107,7 +118,7 @@ def build_feature_config(
         dataset_id,
         records_filename="features",
     )
-    features_dir = feature_run_dir(feature_label_storage, run_dir_name)
+    features_dir = feature_run_dir(feature_label_storage, checkpoint, latest)
     return FeatureGenerationConfig(
         platform=spec.platform,
         id_column=columns.records_id_column,
@@ -149,7 +160,8 @@ def generate_platform_features(
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
-    run_dir_name: str | None = None,
+    checkpoint: str | None = None,
+    latest: bool = False,
 ) -> dict[str, Path]:
     """Load platform records and generate the requested feature labels."""
     dataset_id = validate_dataset_id(dataset_id)
@@ -174,6 +186,7 @@ def generate_platform_features(
         dataset_id,
         run_config=run_config,
         features_subset=features_subset,
-        run_dir_name=run_dir_name,
+        checkpoint=checkpoint,
+        latest=latest,
     )
     return run_feature_generation(records, config, empty_message=spec.empty_message)
