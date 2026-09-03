@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 from data_platform.utils.deduplication import (
     DedupeConfig,
     DedupeSession,
@@ -48,6 +50,12 @@ def test_session_warm_unions_prior_runs_when_enabled() -> None:
 
     assert session.seen_ids == {"uri-a", "uri-b"}
     storage.load_seen_ids_from_all_runs.assert_not_called()
+
+
+def test_dedupe_config_rejects_include_prior_runs() -> None:
+    """Verifies DedupeConfig no longer accepts the prior-runs flag."""
+    with pytest.raises(TypeError):
+        DedupeConfig(id_column="uri", include_prior_runs=True)
 
 
 class TestPolicyIncludesPriorRuns:
