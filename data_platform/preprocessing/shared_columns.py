@@ -7,15 +7,15 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 from data_platform.utils.platform_specific_columns import (
-    CANONICAL_AUTHOR_HANDLE_COLUMN,
-    CANONICAL_SOURCE_RECORD_ID_COLUMN,
+    STANDARDIZED_AUTHOR_HANDLE_COLUMN,
+    STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
 )
 
 if TYPE_CHECKING:
     from data_platform.preprocessing.runner import PreprocessPlatformSpec
 
 
-def add_canonical_author_columns(
+def add_standardized_author_columns(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
@@ -49,11 +49,11 @@ def add_canonical_author_columns(
     out = df.copy()
     source_column = spec.author_handle_source_column
     original_handle = out[source_column]
-    out[CANONICAL_AUTHOR_HANDLE_COLUMN] = original_handle.map(lambda value: str(value))
+    out[STANDARDIZED_AUTHOR_HANDLE_COLUMN] = original_handle.map(lambda value: str(value))
     return out
 
 
-def add_canonical_source_record_id(
+def add_standardized_source_record_id(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
@@ -82,5 +82,5 @@ def add_canonical_source_record_id(
     out = df.copy()
     source_column = spec.columns.records_id_column
     original_id = out[source_column]
-    out[CANONICAL_SOURCE_RECORD_ID_COLUMN] = original_id.map(lambda value: str(value))
+    out[STANDARDIZED_SOURCE_RECORD_ID_COLUMN] = original_id.map(lambda value: str(value))
     return out

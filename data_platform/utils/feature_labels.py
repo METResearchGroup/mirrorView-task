@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.utils.platform_specific_columns import CANONICAL_SOURCE_RECORD_ID_COLUMN
+from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 from data_platform.utils.storage import StorageManager
 
 
@@ -19,7 +19,7 @@ class FeatureLabelQuery:
 
     feature_storage: StorageManager
     id_column: str = "uri"
-    feature_file_id_column: str = CANONICAL_SOURCE_RECORD_ID_COLUMN
+    feature_file_id_column: str = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 
     def labeled_ids(self, feature_name: str) -> set[str]:
         """Return ids labeled for feature_name from timestamped feature run directories."""
