@@ -16,6 +16,7 @@ from pathlib import Path
 
 import typer
 
+from data_platform.ingestion.sync_checkpoint import require_dataset_id
 from data_platform.models.sync import SyncRedditCommentModel
 from data_platform.preprocessing.runner import (
     PreprocessPlatformSpec,
@@ -31,6 +32,7 @@ from data_platform.preprocessing.runner import (
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
 )
+from data_platform.preprocessing.sample_records import MIN_SAMPLE_SIZE
 from data_platform.preprocessing.validators.reddit_validators import (
     check_if_body_not_removed,
     check_if_no_direct_urls,
@@ -115,7 +117,20 @@ def load_dump_preprocess_settings(config_path: Path) -> tuple[str, int, int]:
     ValueError
         When required keys are missing or ``sample_size`` is less than 1.
     """
-    raise NotImplementedError
+    if not config_path.is_file():
+        raise FileNotFoundError(config_path)
+    config = load_yaml_config(config_path)
+    dataset_id = require_dataset_id(config, platform="reddit")
+    preprocess = config.get(PREPROCESS_KEY)
+    if not isinstance(preprocess, dict):
+        raise ValueError("dump config must include preprocess")
+    sample_size = preprocess.get(SAMPLE_SIZE_KEY)
+    sample_seed = preprocess.get(SAMPLE_SEED_KEY)
+    if not isinstance(sample_size, int) or sample_size < MIN_SAMPLE_SIZE:
+        raise ValueError("sample_size must be at least 1")
+    if not isinstance(sample_seed, int):
+        raise ValueError("sample_seed must be an int")
+    return dataset_id, sample_size, sample_seed
 
 
 def preprocess_records(
