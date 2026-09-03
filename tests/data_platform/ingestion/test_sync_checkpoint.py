@@ -206,7 +206,7 @@ def test_append_deduped_records_skips_seen_ids(data_root) -> None:
     storage.append_records(existing, run_dir)
     config = DedupeConfig(id_column="tweet_id")
     dedupe_session = DedupeSession(config)
-    dedupe_session.warm(storage, run_dir)
+    dedupe_session.load_seen_ids(storage, run_dir)
     incoming = [mock_tweet_row("1"), mock_tweet_row("2")]
     result = storage.append_deduped_records(incoming, run_dir, dedupe_session=dedupe_session)
     assert result.skipped == 1
