@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. Reddit monthly comment dumps can be filtered, sampled to 500,000 comments per month, and written as parquet using the same comment fields as live Reddit ingest. [PR #153](https://github.com/METResearchGroup/mirrorView-task/pull/153)
+1. Reddit monthly comment dumps from the Pushshift experiment can be filtered, sampled to 500,000 comments per month, and stored as git LFS parquet using the same comment fields as live Reddit ingest. [PR #153](https://github.com/METResearchGroup/mirrorView-task/pull/153)
 2. `data_platform` now uses "standardized" instead of "canonical" for shared column helpers and constants (`add_standardized_text_column`, `STANDARDIZED_TEXT_COLUMN`, and related names). Column values are unchanged. [PR #150](https://github.com/METResearchGroup/mirrorView-task/pull/150)
 3. New Reddit comment rows keep `comment_fullname`, `author`, `body`, `created_at`, and `sync_timestamp`. The writer still adds `record_id` from `comment_fullname`. Older comment files that still have extra columns will not load until you ingest the comments again. [PR #148](https://github.com/METResearchGroup/mirrorView-task/pull/148)
 4. Bluesky ingest now requires an explicit `new-run` or `resume` command. `new-run` refuses to start when an unfinished raw run exists; `resume` accepts a named timestamp or `--latest` and fails fast when the run is missing or already completed. Twitter and Reddit keep the combined start-or-resume behavior. [PR #145](https://github.com/METResearchGroup/mirrorView-task/pull/145)
