@@ -110,7 +110,22 @@ def init_feature_run_metadata(
     ValueError
         When ``metadata.json`` already exists in this folder.
     """
-    raise NotImplementedError
+    path = metadata_path(config.features_dir)
+    if path.exists():
+        raise ValueError(f"Feature run metadata already exists: {path}")
+    source_preprocessed_runs = resolve_source_preprocessed_runs(config)
+    features = {name: FeatureStatus() for name in feature_names}
+    metadata = FeatureRunMetadata(
+        dataset_id=config.input_storage.dataset_id,
+        source_preprocessed_runs=source_preprocessed_runs,
+        sync_status="in_progress",
+        features=features,
+        config=config.run_config,
+        updated_at=get_current_timestamp(),
+    )
+    _stamp_or_check_identity(metadata, config, feature_names)
+    flush_metadata(config.features_dir, metadata)
+    return metadata
 
 
 def load_feature_run_metadata(
