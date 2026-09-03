@@ -22,6 +22,12 @@ from data_platform.utils.storage import StorageManager, StorageStage
 
 StorageManagerFactory = Callable[..., StorageManager]
 
+FEATURE_RUN_COMPLETED_STATUS = "completed"
+FEATURE_CHECKPOINT_NAME_ERROR = "checkpoint must be a single feature run directory name"
+FEATURE_CHECKPOINT_OR_LATEST_ERROR = "Pass --checkpoint or --latest, but not both"
+CURRENT_DIR_NAME = "."
+PARENT_DIR_NAME = ".."
+
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
@@ -63,26 +69,69 @@ def run_feature_generation(
     return generate_features(records, config)
 
 
-FEATURE_RUN_COMPLETED_STATUS = "completed"
-FEATURE_CHECKPOINT_NAME_ERROR = "checkpoint must be a single feature run directory name"
-FEATURE_CHECKPOINT_OR_LATEST_ERROR = "Pass --checkpoint or --latest, but not both"
-CURRENT_DIR_NAME = "."
-PARENT_DIR_NAME = ".."
-
-
 def _require_single_feature_run_name(checkpoint: str) -> str:
+    """Return a single folder name, or raise if the value could escape the features stage.
+
+    Parameters
+    ----------
+    checkpoint
+        Feature run timestamp, for example ``2026_05_30-12:00:00``. Absolute
+        paths, ``.``, ``..``, and names with extra path parts are rejected.
+
+    Returns
+    -------
+    str
+        The validated folder name.
+
+    Raises
+    ------
+    ValueError
+        When ``checkpoint`` is not a single folder name.
+    """
     raise NotImplementedError
 
 
 def _start_new_feature_run(feature_storage: StorageManager) -> Path:
+    """Create a new ``features/{timestamp}/`` folder for this dataset.
+
+    Raises
+    ------
+    ValueError
+        When an unfinished feature run already exists. The operator must pass
+        ``--checkpoint`` or ``--latest`` to resume it.
+    """
     raise NotImplementedError
 
 
 def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -> Path:
+    """Return an existing unfinished ``features/{timestamp}/`` folder.
+
+    Does not create a missing folder.
+
+    Parameters
+    ----------
+    checkpoint
+        Feature run timestamp directory name.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the named folder does not exist.
+    ValueError
+        When ``checkpoint`` is not a single folder name, or when the run is
+        already completed.
+    """
     raise NotImplementedError
 
 
 def _latest_unfinished_feature_run_dir(feature_storage: StorageManager) -> Path:
+    """Return the newest unfinished feature run directory for this dataset.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no unfinished feature run exists.
+    """
     raise NotImplementedError
 
 
@@ -91,7 +140,37 @@ def feature_run_dir(
     checkpoint: str | None,
     latest: bool,
 ) -> Path:
-    """Return ``features/{timestamp}/`` for a new run or an unfinished checkpoint."""
+    """Return ``features/{timestamp}/`` for a new run or an unfinished checkpoint.
+
+    Neither ``checkpoint`` nor ``latest`` starts a new timestamped folder.
+    ``checkpoint`` loads that folder. ``latest`` loads the newest unfinished
+    folder. Exactly one of ``checkpoint`` or ``latest`` is required to resume.
+    The two resume options cannot be combined.
+
+    Parameters
+    ----------
+    checkpoint
+        Existing feature run timestamp to resume, or None to start a new run
+        when ``latest`` is False.
+    latest
+        When True, resume the newest unfinished feature run.
+
+    Returns
+    -------
+    Path
+        The feature run directory. Resume paths return the existing folder
+        without creating a new one.
+
+    Raises
+    ------
+    ValueError
+        When both resume options are set, when ``checkpoint`` is not a single
+        folder name, when a new run is requested while an unfinished run
+        exists, or when the named run is already completed.
+    FileNotFoundError
+        When the named checkpoint folder is missing, or when ``latest`` is set
+        and no unfinished feature run exists.
+    """
     raise NotImplementedError
 
 
@@ -104,7 +183,16 @@ def build_feature_config(
     checkpoint: str | None = None,
     latest: bool = False,
 ) -> FeatureGenerationConfig:
-    """Build a FeatureGenerationConfig for timestamped feature CSV output."""
+    """Build a FeatureGenerationConfig for timestamped feature CSV output.
+
+    Parameters
+    ----------
+    checkpoint
+        Existing ``features/{timestamp}/`` folder to resume. None starts a new
+        run when ``latest`` is False.
+    latest
+        When True, resume the newest unfinished feature run.
+    """
     dataset_id = validate_dataset_id(dataset_id)
     registry = FEATURE_REGISTRY
     if features_subset:
@@ -163,7 +251,16 @@ def generate_platform_features(
     checkpoint: str | None = None,
     latest: bool = False,
 ) -> dict[str, Path]:
-    """Load platform records and generate the requested feature labels."""
+    """Load platform records and generate the requested feature labels.
+
+    Parameters
+    ----------
+    checkpoint
+        Existing ``features/{timestamp}/`` folder to resume. None starts a new
+        run when ``latest`` is False.
+    latest
+        When True, resume the newest unfinished feature run.
+    """
     dataset_id = validate_dataset_id(dataset_id)
 
     if spec.require_all_runs_complete:
