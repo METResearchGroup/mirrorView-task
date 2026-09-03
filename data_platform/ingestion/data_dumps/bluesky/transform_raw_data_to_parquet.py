@@ -8,6 +8,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import hashlib
+import shutil
 from collections import defaultdict
 from pathlib import Path
 
@@ -19,6 +20,7 @@ import pyarrow.parquet as pq
 
 RAW_CSV = Path(__file__).resolve().parent / "data" / "raw" / "posts.csv"
 PARQUET_ROOT = Path(__file__).resolve().parent / "data" / "parquet"
+PARQUET_STAGING_ROOT = PARQUET_ROOT.with_name("parquet.staging")
 MAX_FILE_BYTES = 50 * 1024 * 1024
 PARQUET_COMPRESSION = "zstd"
 PARQUET_COMPRESSION_LEVEL = 9
@@ -41,9 +43,11 @@ def main() -> int:
     """
     table = _read_csv_table(RAW_CSV)
     hour_groups = _group_table_by_utc_date_hour(table)
+    staging_root = _prepare_staging_root()
     for partition_key, hour_table in sorted(hour_groups.items()):
-        partition_dir = _partition_directory(partition_key)
+        partition_dir = _partition_directory(staging_root, partition_key)
         _write_hour_partition(hour_table, partition_dir)
+    _publish_parquet_root(staging_root)
     print(PARQUET_ROOT)
     return 0
 
@@ -120,9 +124,22 @@ def _row_indices_by_utc_partition(
     return row_indices
 
 
-def _partition_directory(partition_key: tuple[str, str]) -> Path:
+def _prepare_staging_root() -> Path:
+    if PARQUET_STAGING_ROOT.exists():
+        shutil.rmtree(PARQUET_STAGING_ROOT)
+    PARQUET_STAGING_ROOT.mkdir(parents=True)
+    return PARQUET_STAGING_ROOT
+
+
+def _publish_parquet_root(staging_root: Path) -> None:
+    if PARQUET_ROOT.exists():
+        shutil.rmtree(PARQUET_ROOT)
+    staging_root.rename(PARQUET_ROOT)
+
+
+def _partition_directory(root: Path, partition_key: tuple[str, str]) -> Path:
     date_label, hour_label = partition_key
-    return PARQUET_ROOT / f"date={date_label}" / f"hour={hour_label}"
+    return root / f"date={date_label}" / f"hour={hour_label}"
 
 
 def _write_hour_partition(table: pa.Table, partition_dir: Path) -> None:

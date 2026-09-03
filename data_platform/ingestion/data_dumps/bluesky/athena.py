@@ -12,6 +12,7 @@ import time
 from typing import Any
 
 import boto3
+from botocore.exceptions import ClientError
 
 DEFAULT_REGION = "us-east-2"
 ALLOWED_FIRST_TOKENS = frozenset({"SELECT", "WITH"})
@@ -20,6 +21,7 @@ QUERY_STATUS_FAILED = "FAILED"
 QUERY_STATUS_CANCELLED = "CANCELLED"
 TERMINAL_FAILURE_STATES = frozenset({QUERY_STATUS_FAILED, QUERY_STATUS_CANCELLED})
 POLL_INTERVAL_SECONDS = 1
+QUERY_TIMEOUT_SECONDS = 3600
 UNKNOWN_STATE_CHANGE_REASON = "unknown"
 
 
@@ -52,6 +54,8 @@ class Athena:
             When the statement is not a read-only SELECT or WITH query.
         RuntimeError
             When Athena reports FAILED or CANCELLED.
+        TimeoutError
+            When the query exceeds ``QUERY_TIMEOUT_SECONDS``.
         """
         return _submit_and_wait_for_query(
             self.client,
@@ -130,15 +134,41 @@ def _validate_read_only_query(query: str) -> None:
 
 
 def _wait_for_query_completion(client: Any, execution_id: str) -> str:
+    deadline = time.monotonic() + QUERY_TIMEOUT_SECONDS
     while True:
         state = client.get_query_execution(QueryExecutionId=execution_id)
         status = state["QueryExecution"]["Status"]["State"]
         if status == QUERY_STATUS_SUCCEEDED:
             return execution_id
         if status in TERMINAL_FAILURE_STATES:
-            reason = state["QueryExecution"]["Status"].get(
-                "StateChangeReason",
-                UNKNOWN_STATE_CHANGE_REASON,
-            )
-            raise RuntimeError(f"Athena query {status}: {reason}")
+            raise RuntimeError(_format_terminal_failure(state, status))
+        _raise_if_query_timed_out(client, execution_id, deadline)
         time.sleep(POLL_INTERVAL_SECONDS)
+
+
+def _format_terminal_failure(state: dict[str, Any], status: str) -> str:
+    reason = state["QueryExecution"]["Status"].get(
+        "StateChangeReason",
+        UNKNOWN_STATE_CHANGE_REASON,
+    )
+    return f"Athena query {status}: {reason}"
+
+
+def _raise_if_query_timed_out(
+    client: Any,
+    execution_id: str,
+    deadline: float,
+) -> None:
+    if time.monotonic() < deadline:
+        return
+    _cancel_query_execution(client, execution_id)
+    raise TimeoutError(
+        f"Athena query {execution_id} exceeded {QUERY_TIMEOUT_SECONDS} seconds"
+    )
+
+
+def _cancel_query_execution(client: Any, execution_id: str) -> None:
+    try:
+        client.stop_query_execution(QueryExecutionId=execution_id)
+    except ClientError:
+        return

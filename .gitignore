@@ -182,3 +182,4 @@ experiments/bertopic_modeling_2026_08_05/outputs/topics/original/*/model/
 
 # Bluesky Jetstream dump raw Athena CSV output (includes .csv.metadata)
 data_platform/ingestion/data_dumps/bluesky/data/raw/
+data_platform/ingestion/data_dumps/bluesky/data/parquet.staging/
