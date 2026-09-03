@@ -18,14 +18,17 @@ from data_platform.ingestion.sync_checkpoint import (
     flush_run_metadata,
     get_task_progress,
     increment_duplicate_skip_counters,
+    load_checkpoint_run,
     mark_remaining_tasks_skipped,
     mark_task_completed,
     parse_max_comments,
     parse_max_posts,
     record_type_to_filename,
     require_dataset_id,
+    require_latest_in_progress_run_dir,
     resolve_dedupe_policy,
     resolve_limit_per_task,
+    start_new_sync_run,
     stop_at_record_cap,
     sync_status_from_tasks,
     validate_tasks_for_resume,
@@ -159,6 +162,203 @@ def test_find_resume_run_dir_latest_in_progress(data_root) -> None:
     flush_run_metadata(storage, older, {"sync_status": SyncStatus.COMPLETED.value, "tasks": {}})
     flush_run_metadata(storage, newer, {"sync_status": SyncStatus.IN_PROGRESS.value, "tasks": {}})
     assert find_resume_run_dir(storage, run_dir_name=None) == newer
+
+
+PATCHED_SYNC_TIMESTAMP = "2026_05_30-11:00:00"
+
+
+def _new_run_metadata(sync_timestamp: str) -> dict[str, Any]:
+    return {
+        "sync_status": SyncStatus.IN_PROGRESS.value,
+        "sync_timestamp": sync_timestamp,
+        "tasks": {"alpha": {"status": TaskStatus.PENDING.value}},
+    }
+
+
+def _matching_stub_tasks() -> list[_StubTask]:
+    return [_StubTask("alpha")]
+
+
+class TestStartNewSyncRun:
+    """Tests for start_new_sync_run()."""
+
+    def test_creates_run_when_dataset_has_no_raw_runs(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        monkeypatch.setattr(
+            "data_platform.ingestion.sync_checkpoint.get_current_timestamp",
+            lambda: PATCHED_SYNC_TIMESTAMP,
+        )
+
+        result_dir, result_metadata = start_new_sync_run(storage, _new_run_metadata)
+
+        expected_dir = storage.root_dir / PATCHED_SYNC_TIMESTAMP
+        expected_metadata = _new_run_metadata(PATCHED_SYNC_TIMESTAMP)
+        assert result_dir == expected_dir
+        assert result_metadata == expected_metadata
+        assert storage.load_run_metadata(result_dir) == expected_metadata
+
+    def test_raises_when_unfinished_run_exists(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        existing = storage.create_new_run_dir("2026_05_30-10:00:00")
+        flush_run_metadata(
+            storage,
+            existing,
+            {"sync_status": SyncStatus.IN_PROGRESS.value, "tasks": {}},
+        )
+        before = {path.name for path in storage.root_dir.iterdir() if path.is_dir()}
+
+        with pytest.raises(ValueError, match="unfinished"):
+            start_new_sync_run(storage, _new_run_metadata)
+
+        after = {path.name for path in storage.root_dir.iterdir() if path.is_dir()}
+        assert after == before
+
+    def test_creates_run_when_only_completed_runs_exist(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        completed = storage.create_new_run_dir("2026_05_30-10:00:00")
+        flush_run_metadata(
+            storage,
+            completed,
+            {"sync_status": SyncStatus.COMPLETED.value, "tasks": {}},
+        )
+        monkeypatch.setattr(
+            "data_platform.ingestion.sync_checkpoint.get_current_timestamp",
+            lambda: PATCHED_SYNC_TIMESTAMP,
+        )
+
+        result_dir, result_metadata = start_new_sync_run(storage, _new_run_metadata)
+
+        expected_dir = storage.root_dir / PATCHED_SYNC_TIMESTAMP
+        assert result_dir == expected_dir
+        assert result_metadata["sync_timestamp"] == PATCHED_SYNC_TIMESTAMP
+        assert completed.is_dir()
+
+
+class TestLoadCheckpointRun:
+    """Tests for load_checkpoint_run()."""
+
+    def test_returns_unfinished_named_run(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+        metadata = {
+            "sync_status": SyncStatus.IN_PROGRESS.value,
+            "tasks": {"alpha": {"status": TaskStatus.PENDING.value}},
+        }
+        flush_run_metadata(storage, run_dir, metadata)
+
+        result_dir, result_metadata = load_checkpoint_run(
+            storage,
+            _matching_stub_tasks(),
+            "2026_05_30-10:00:00",
+            "keywords",
+        )
+
+        assert result_dir == run_dir
+        assert result_metadata["sync_status"] == SyncStatus.IN_PROGRESS.value
+        assert result_metadata["tasks"]["alpha"]["status"] == TaskStatus.PENDING.value
+
+    def test_raises_when_directory_is_missing(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+
+        with pytest.raises(FileNotFoundError):
+            load_checkpoint_run(
+                storage,
+                _matching_stub_tasks(),
+                "2026_05_30-10:00:00",
+                "keywords",
+            )
+
+    def test_raises_when_run_is_completed(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+        metadata = {
+            "sync_status": SyncStatus.COMPLETED.value,
+            "tasks": {"alpha": {"status": TaskStatus.COMPLETED.value}},
+        }
+        flush_run_metadata(storage, run_dir, metadata)
+
+        with pytest.raises(ValueError, match="completed"):
+            load_checkpoint_run(
+                storage,
+                _matching_stub_tasks(),
+                "2026_05_30-10:00:00",
+                "keywords",
+            )
+
+        assert storage.load_run_metadata(run_dir)["sync_status"] == SyncStatus.COMPLETED.value
+
+    def test_raises_when_tasks_do_not_match(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        run_dir = storage.create_new_run_dir("2026_05_30-10:00:00")
+        flush_run_metadata(
+            storage,
+            run_dir,
+            {
+                "sync_status": SyncStatus.IN_PROGRESS.value,
+                "tasks": {
+                    "alpha": {"status": TaskStatus.PENDING.value},
+                    "extra": {"status": TaskStatus.PENDING.value},
+                },
+            },
+        )
+
+        with pytest.raises(ValueError, match="missing in metadata"):
+            load_checkpoint_run(
+                storage,
+                _matching_stub_tasks(),
+                "2026_05_30-10:00:00",
+                "keywords",
+            )
+
+
+class TestRequireLatestInProgressRunDir:
+    """Tests for require_latest_in_progress_run_dir()."""
+
+    def test_returns_newest_unfinished_run(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        older = storage.create_new_run_dir("2026_05_30-09:00:00")
+        newer = storage.create_new_run_dir("2026_05_30-10:00:00")
+        flush_run_metadata(
+            storage,
+            older,
+            {"sync_status": SyncStatus.COMPLETED.value, "tasks": {}},
+        )
+        flush_run_metadata(
+            storage,
+            newer,
+            {"sync_status": SyncStatus.IN_PROGRESS.value, "tasks": {}},
+        )
+
+        result = require_latest_in_progress_run_dir(storage)
+
+        expected = newer
+        assert result == expected
+
+    def test_raises_when_only_completed_runs_exist(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+        completed = storage.create_new_run_dir("2026_05_30-10:00:00")
+        flush_run_metadata(
+            storage,
+            completed,
+            {"sync_status": SyncStatus.COMPLETED.value, "tasks": {}},
+        )
+
+        with pytest.raises(FileNotFoundError, match="unfinished"):
+            require_latest_in_progress_run_dir(storage)
+
+    def test_raises_when_no_runs_exist(self, data_root) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+
+        with pytest.raises(FileNotFoundError, match="unfinished"):
+            require_latest_in_progress_run_dir(storage)
 
 
 def test_mark_task_completed_updates_entry_and_metadata(data_root) -> None:
