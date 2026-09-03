@@ -72,7 +72,13 @@ def load_previously_used_stimuli_ids(
     ValueError
         When a stimuli table is missing ``post_primary_key``.
     """
-    raise NotImplementedError
+    ids: set[str] = set()
+    for entry in datasets.values():
+        if entry.kind != STIMULI_DATASET_KIND:
+            continue
+        frame = load_dataset(entry.name)
+        ids |= extract_stimuli_ids(frame, entry.name)
+    return ids
 
 
 def filter_previously_used_stimuli(
