@@ -18,6 +18,7 @@ from data_platform.utils.platform_specific_columns import (
 )
 
 RECORD_ID_COLUMN = "record_id"
+REDDIT_POST_RECORDS_ID_COLUMN = "reddit_fullname"
 
 INTEGRATION_BLUESKY = "bluesky"
 INTEGRATION_REDDIT = "reddit"
@@ -28,6 +29,38 @@ _INTEGRATION_PRIMARY_KEY_COLUMNS: dict[str, str] = {
     INTEGRATION_REDDIT: REDDIT_COLUMNS.records_id_column,
     INTEGRATION_TWITTER: TWITTER_COLUMNS.records_id_column,
 }
+
+
+def resolve_records_id_column(platform: str, records_file_stem: str) -> str:
+    """Return the platform primary-key column for one ingest records file.
+
+    Parameters
+    ----------
+    platform
+        Platform name: ``bluesky``, ``reddit``, or ``twitter``.
+    records_file_stem
+        Records filename stem, for example ``posts`` or ``comments``.
+
+    Returns
+    -------
+    str
+        Column name whose value feeds :func:`generate_record_id`.
+
+    Raises
+    ------
+    ValueError
+        When ``platform`` is unknown.
+    """
+    normalized_platform = platform.strip().lower()
+    if normalized_platform == INTEGRATION_BLUESKY:
+        return BLUESKY_COLUMNS.records_id_column
+    if normalized_platform == INTEGRATION_TWITTER:
+        return TWITTER_COLUMNS.records_id_column
+    if normalized_platform == INTEGRATION_REDDIT:
+        if records_file_stem == "posts":
+            return REDDIT_POST_RECORDS_ID_COLUMN
+        return REDDIT_COLUMNS.records_id_column
+    raise ValueError(f"Unknown platform `{platform}`.")
 
 
 def generate_record_id(integration: str, primary_key: str) -> str:
@@ -69,7 +102,12 @@ def generate_record_id(integration: str, primary_key: str) -> str:
     return f"{normalized_integration}_{normalized_primary_key}"
 
 
-def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]:
+def attach_record_id(
+    row: Mapping[str, Any],
+    integration: str,
+    *,
+    primary_key_column: str | None = None,
+) -> dict[str, Any]:
     """Return a copy of ``row`` with ``record_id`` set from the platform primary key.
 
     Parameters
@@ -78,6 +116,9 @@ def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]
         One ingest record dict. Must include the platform primary key column.
     integration
         Platform name passed to :func:`generate_record_id`.
+    primary_key_column
+        Optional override when one integration writes multiple record types.
+        Defaults to the platform's usual ingest id column.
 
     Returns
     -------
@@ -92,16 +133,18 @@ def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]
         When ``integration`` is unknown or the primary key value is empty.
     """
     normalized_integration = integration.strip().lower()
-    primary_key_column = _INTEGRATION_PRIMARY_KEY_COLUMNS.get(normalized_integration)
-    if primary_key_column is None:
+    resolved_column = primary_key_column or _INTEGRATION_PRIMARY_KEY_COLUMNS.get(
+        normalized_integration
+    )
+    if resolved_column is None:
         raise ValueError(f"Unknown integration `{integration}`.")
 
-    if primary_key_column not in row:
-        raise KeyError(primary_key_column)
+    if resolved_column not in row:
+        raise KeyError(resolved_column)
 
     out = dict(row)
     out[RECORD_ID_COLUMN] = generate_record_id(
         normalized_integration,
-        str(row[primary_key_column]),
+        str(row[resolved_column]),
     )
     return out

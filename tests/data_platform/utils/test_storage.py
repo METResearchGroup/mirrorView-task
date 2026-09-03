@@ -19,6 +19,7 @@ from tests.data_platform.constants import (
     VALID_TWITTER_DATASET_ID,
 )
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
+from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
 
 def test_bluesky_storage_root_includes_dataset_id(data_root, bluesky_storage) -> None:

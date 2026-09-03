@@ -13,6 +13,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from data_platform.ingestion.generate_record_id import (
+    REDDIT_POST_RECORDS_ID_COLUMN,
+    attach_record_id,
+)
 from data_platform.ingestion.sync_bluesky import fetch_posts_for_keyword
 from data_platform.ingestion.sync_reddit import comment_to_row, submission_to_row
 from data_platform.ingestion.twitter_client import tweet_to_row
@@ -100,7 +104,7 @@ class TestFetchPostsForKeyword:
         expected_created_at = "2026-05-30T00:00:00.000Z"
         assert rows[0]["created_at"] == expected_created_at
         assert rows[0]["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncBlueskyPostModel.model_validate(rows[0])
+        SyncBlueskyPostModel.model_validate(attach_record_id(rows[0], "bluesky"))
 
 
 class TestSubmissionToRow:
@@ -113,7 +117,13 @@ class TestSubmissionToRow:
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncRedditPostModel.model_validate(result)
+        SyncRedditPostModel.model_validate(
+            attach_record_id(
+                result,
+                "reddit",
+                primary_key_column=REDDIT_POST_RECORDS_ID_COLUMN,
+            )
+        )
 
 
 class TestCommentToRow:
@@ -132,7 +142,7 @@ class TestCommentToRow:
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncRedditCommentModel.model_validate(result)
+        SyncRedditCommentModel.model_validate(attach_record_id(result, "reddit"))
 
 
 class TestTweetToRow:
@@ -150,7 +160,7 @@ class TestTweetToRow:
 
         assert result["created_at"] == CREATED_AT_ISO
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncTwitterPostModel.model_validate(result)
+        SyncTwitterPostModel.model_validate(attach_record_id(result, "twitter"))
 
     def test_writes_empty_created_at_when_payload_time_is_missing(self) -> None:
         """tweet_to_row writes an empty created_at when the payload time is missing."""
