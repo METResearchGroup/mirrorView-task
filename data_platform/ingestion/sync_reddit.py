@@ -141,9 +141,8 @@ def _expand_more_comments(comments_forest: CommentForest) -> None:
 
 def _walk_comments_in_order(
     comments_forest: CommentForest,
-    depth: int = 0,
-) -> Iterator[tuple[praw.models.Comment, int]]:
-    """Yield (comment, depth) in Reddit default display order via depth-first walk."""
+) -> Iterator[praw.models.Comment]:
+    """Yield comments in Reddit default display order via depth-first walk."""
     comments_forest.replace_more(limit=0)
     _expand_more_comments(comments_forest)
 
@@ -160,9 +159,9 @@ def _walk_comments_in_order(
         if isinstance(comment, praw.models.MoreComments):
             continue
 
-        yield comment, depth
+        yield comment
         if comment.replies:
-            yield from _walk_comments_in_order(comment.replies, depth + 1)
+            yield from _walk_comments_in_order(comment.replies)
 
 
 def fetch_post_comments(
@@ -179,7 +178,7 @@ def fetch_post_comments(
     rows: list[dict[str, Any]] = []
     submission.comments.replace_more(limit=0)
 
-    for comment, _depth in _walk_comments_in_order(submission.comments):
+    for comment in _walk_comments_in_order(submission.comments):
         if len(rows) >= max_comments:
             break
         if not is_eligible_comment(comment, min_body_length):
