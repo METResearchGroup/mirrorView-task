@@ -13,11 +13,11 @@ from pydantic import BaseModel
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.preprocessing.shared_columns import (
-    add_canonical_author_columns,
-    add_canonical_source_record_id,
+    add_standardized_author_columns,
+    add_standardized_source_record_id,
 )
 from data_platform.utils.platform_specific_columns import (
-    CANONICAL_TEXT_COLUMN,
+    STANDARDIZED_TEXT_COLUMN,
     PlatformSpecificColumns,
 )
 from data_platform.utils.storage import StorageManager, StorageStage
@@ -40,10 +40,10 @@ class PreprocessPlatformSpec:
     author_handle_source_column: str
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
-    original_platform_text_column: str = CANONICAL_TEXT_COLUMN
+    original_platform_text_column: str = STANDARDIZED_TEXT_COLUMN
 
 
-def add_canonical_text_column(
+def add_standardized_text_column(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
@@ -70,7 +70,7 @@ def add_canonical_text_column(
     """
     out = df.copy()
     original_platform_text = out[spec.original_platform_text_column]
-    out[CANONICAL_TEXT_COLUMN] = original_platform_text.map(lambda value: str(value))
+    out[STANDARDIZED_TEXT_COLUMN] = original_platform_text.map(lambda value: str(value))
     return out
 
 
@@ -108,7 +108,7 @@ def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFra
 
     prepared = df
     if spec.columns.text_column not in df.columns:
-        prepared = add_canonical_text_column(df, spec)
+        prepared = add_standardized_text_column(df, spec)
     text_col = spec.columns.text_column
     text_mask = prepared[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
@@ -238,9 +238,9 @@ def preprocess_records(
     records = records.loc[is_new].reset_index(drop=True)
     records = collapse_candidates_by_id(records, id_col, keep="last")
 
-    records = add_canonical_text_column(records, spec)
-    records = add_canonical_author_columns(records, spec)
-    records = add_canonical_source_record_id(records, spec)
+    records = add_standardized_text_column(records, spec)
+    records = add_standardized_author_columns(records, spec)
+    records = add_standardized_source_record_id(records, spec)
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(

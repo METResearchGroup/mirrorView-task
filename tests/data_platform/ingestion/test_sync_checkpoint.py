@@ -644,7 +644,7 @@ BLUESKY_POST_RECORD_TYPE = "app.bsky.feed.post"
 class TestIncrementDuplicateSkipCounters:
     """Tests for increment_duplicate_skip_counters()."""
 
-    def test_writes_canonical_keys_on_empty_metadata(self) -> None:
+    def test_writes_standardized_keys_on_empty_metadata(self) -> None:
         metadata: dict[str, Any] = {}
         expected_total = 2
         expected_breakdown = {BLUESKY_POST_RECORD_TYPE: 2}
@@ -658,7 +658,7 @@ class TestIncrementDuplicateSkipCounters:
         assert metadata[ROWS_SKIPPED_AS_DUPLICATES_KEY] == expected_total
         assert metadata[SKIPPED_BY_RECORD_TYPE_KEY] == expected_breakdown
 
-    def test_adds_to_existing_canonical_keys(self) -> None:
+    def test_adds_to_existing_standardized_keys(self) -> None:
         metadata = {
             ROWS_SKIPPED_AS_DUPLICATES_KEY: 3,
             SKIPPED_BY_RECORD_TYPE_KEY: {BLUESKY_POST_RECORD_TYPE: 3},

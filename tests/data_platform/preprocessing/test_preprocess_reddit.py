@@ -79,7 +79,7 @@ def test_filter_comments_drops_invalid_rows() -> None:
 
 
 def test_filter_comments_does_not_replace_existing_text_from_body() -> None:
-    """Existing canonical text is what validators see, even if body would fail."""
+    """Existing standardized text is what validators see, even if body would fail."""
     comments = pd.DataFrame([_comment_row(comment_fullname="t1_keep")])
     comments["text"] = _valid_body()
     comments["body"] = "[removed]"
