@@ -16,6 +16,7 @@ from collections.abc import Mapping
 
 import pandas as pd
 
+from shared.data.dataloader import load_dataset
 from shared.data.registry import DatasetEntry, DatasetKind
 
 STIMULI_ID_COLUMN = "post_primary_key"
