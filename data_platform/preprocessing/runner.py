@@ -36,10 +36,12 @@ AUTHOR_COLUMN = "author"
 
 
 class DuplicateFilterResult(NamedTuple):
-    """Surviving preprocess rows plus skip counts for README step 4.
+    """Surviving preprocess rows plus skip counts for already-seen ids.
 
-    ``skipped_already_preprocessed`` is README 4a only. Collapse (4b) is not
-    counted. ``skipped_previously_used_stimuli`` is README 4c.
+    ``skipped_already_preprocessed`` counts rows dropped because they were
+    already written in a prior preprocessed run. ``skipped_previously_used_stimuli``
+    counts rows dropped because ``record_id`` matches a study stimuli key.
+    Collapse of duplicate ids in the current batch is not counted.
     """
 
     records: pd.DataFrame
@@ -300,13 +302,14 @@ def filter_duplicate_records(
     dataset_id: str,
     stimuli_ids: set[str],
 ) -> DuplicateFilterResult:
-    """Filters duplicate records. Check the README.md for how this works.
+    """Drop already-preprocessed ids, previously used stimuli, and in-batch duplicates.
 
     Returns
     -------
     DuplicateFilterResult
-        Surviving records, the 4a skip count, and the 4c skip count.
-        Collapse drops (4b) are not counted.
+        Surviving records, the already-preprocessed skip count, and the
+        previously used stimuli skip count. In-batch collapse drops are not
+        counted.
     """
     if records.empty:
         return DuplicateFilterResult(records.copy(), 0, 0)

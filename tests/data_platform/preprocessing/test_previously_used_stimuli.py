@@ -14,7 +14,7 @@ from data_platform.preprocessing.previously_used_stimuli import (
 )
 from data_platform.preprocessing.preprocess_twitter import TWITTER_SPEC
 from data_platform.preprocessing.runner import filter_duplicate_records
-from shared.data.registry import DatasetEntry
+from shared.data.registry import DatasetEntry, DatasetKind
 from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
@@ -32,11 +32,11 @@ def _records_frame(*record_ids: str) -> pd.DataFrame:
     )
 
 
-def _dataset_entry(name: str, kind: str) -> DatasetEntry:
+def _dataset_entry(name: str, kind: DatasetKind) -> DatasetEntry:
     return DatasetEntry(
         name=name,
         relative_path=Path(f"{name}.csv"),
-        kind=kind,  # type: ignore[arg-type]
+        kind=kind,
         study_phase="test",
     )
 
