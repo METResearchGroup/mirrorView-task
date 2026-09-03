@@ -6,7 +6,9 @@ import pandas as pd
 import pytest
 
 from data_platform.preprocessing import preprocess_twitter
+from data_platform.preprocessing.runner import collapse_candidates_by_id
 from data_platform.preprocessing.validators import twitter_validators
+from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
@@ -239,3 +241,71 @@ def test_second_preprocess_run_skips_already_preprocessed_ids(data_root) -> None
     assert second_metadata["row_counts"]["input"] == 0
     assert second_metadata["row_counts"]["output"] == 0
     assert len(preprocessed_storage.load_records(second_output)) == 0
+
+
+def test_collapse_candidates_by_id_keeps_last_row() -> None:
+    """Verifies last-wins collapse keeps one row per id."""
+    records = pd.DataFrame(
+        [
+            {"tweet_id": "a", "text": "first"},
+            {"tweet_id": "a", "text": "second"},
+        ]
+    )
+    expected_text = "second"
+
+    result = collapse_candidates_by_id(records, "tweet_id", keep="last")
+
+    assert len(result) == 1
+    assert result.iloc[0]["text"] == expected_text
+
+
+def test_prior_run_skip_count_excludes_collapse_duplicates() -> None:
+    """Verifies pandas drop counts prior-run ids only, then collapse keeps one new id."""
+    records = pd.DataFrame(
+        [
+            {"tweet_id": "a", "text": "seen"},
+            {"tweet_id": "b", "text": "first-new"},
+            {"tweet_id": "b", "text": "last-new"},
+        ]
+    )
+    session = DedupeSession(DedupeConfig(id_column="tweet_id"))
+    session.seen_ids = {"a"}
+    id_col = "tweet_id"
+    is_new = ~records[id_col].isin(list(session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    surviving = collapse_candidates_by_id(
+        records.loc[is_new].reset_index(drop=True), id_col, keep="last"
+    )
+    expected_skipped = 1
+    expected_ids = ["b"]
+    expected_text = "last-new"
+
+    assert skipped == expected_skipped
+    assert surviving["tweet_id"].tolist() == expected_ids
+    assert surviving.iloc[0]["text"] == expected_text
+
+
+def test_second_preprocess_run_print_names_prior_preprocessed_run(
+    data_root, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Verifies the skip print names prior preprocessed runs and counts one known id."""
+    dataset_id = VALID_TWITTER_DATASET_ID
+    raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-13:00:00")
+    tweet_id = "1000000000000000001"
+    raw_storage.write_records([_tweet_row(tweet_id=tweet_id)], run_dir)
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 1,
+        },
+    )
+    preprocess_twitter.preprocess_records(dataset_id)
+    capsys.readouterr()
+
+    preprocess_twitter.preprocess_records(dataset_id)
+    printed = capsys.readouterr().out
+
+    assert "already in a prior preprocessed run" in printed
+    assert "skipped 1 already in a prior preprocessed run" in printed
