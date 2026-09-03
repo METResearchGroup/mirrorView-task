@@ -22,8 +22,8 @@ _BLUESKY_SAMPLE_URI = "at://did:plc:example/app.bsky.feed.post/abc"
 
 
 def expected_bluesky_record_id(uri: str) -> str:
-  """Return the bluesky_{sha256(uri)} id used in study datasets."""
-  return "bluesky_" + hashlib.sha256(uri.encode("utf-8")).hexdigest()
+    """Return the bluesky_{sha256(uri)} id used in study datasets."""
+    return "bluesky_" + hashlib.sha256(uri.encode("utf-8")).hexdigest()
 
 
 SAMPLE_INGESTION_ROW = {

@@ -96,6 +96,7 @@ class StorageManager:
         self.format: ValidDataFormats = load_dataset_format(platform, dataset_id)
         stem = Path(records_filename).stem
         self.records_filename = f"{stem}.{self.format.value}"
+        self.records_file_stem = stem
         self.records_id_column = resolve_records_id_column(platform, stem)
 
     @property
@@ -165,6 +166,7 @@ class StorageManager:
                     attach_record_id(
                         row,
                         self.platform,
+                        records_file_stem=self.records_file_stem,
                         primary_key_column=self.records_id_column,
                     )
                 )

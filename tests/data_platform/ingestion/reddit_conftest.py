@@ -38,7 +38,7 @@ def mock_comment_row(
         "subreddit": subreddit,
         "comment_id": comment_fullname.removeprefix("t1_"),
         "comment_fullname": comment_fullname,
-        "record_id": f"reddit_{comment_fullname}",
+        "record_id": f"reddit_{post_reddit_id}_{comment_fullname.removeprefix('t1_')}",
         "parent_id": f"t3_{post_reddit_id}",
         "author": "user",
         "body": "comment text long enough",
