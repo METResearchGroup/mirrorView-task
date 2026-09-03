@@ -2,8 +2,16 @@
 
 Run from the repo root:
 
-    PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \\
+    PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py new-run \\
         --config data_platform/ingestion/configs/bluesky/mirrorview.yaml
+
+    PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \\
+        --config data_platform/ingestion/configs/bluesky/mirrorview.yaml \\
+        --run-dir 2026_05_30-12:00:00
+
+    PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \\
+        --config data_platform/ingestion/configs/bluesky/mirrorview.yaml \\
+        --latest
 
 """
 
@@ -12,6 +20,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+import typer
 
 from data_platform.ingestion.integrations.bluesky import (
     POSTS_RECORD_TYPE,
@@ -24,23 +34,25 @@ from data_platform.ingestion.sync_checkpoint import (
     ensure_dataset_manifest,
     finalize_local_disk_sync,
     increment_duplicate_skip_counters,
+    load_checkpoint_run,
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
     parse_max_posts,
-    prepare_sync_run,
     require_dataset_id,
+    require_latest_in_progress_run_dir,
     resolve_dedupe_policy,
     run_checkpointed_sync,
-    run_sync_cli,
+    start_new_sync_run,
 )
-from data_platform.utils.config_paths import load_yaml_config
+from data_platform.utils.config_paths import load_yaml_config, resolve_config_path
 from data_platform.utils.deduplication import (
     DedupeConfig,
     DedupeSession,
     policy_includes_prior_runs,
 )
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
+from lib.constants import REPO_ROOT
 
 
 @dataclass(frozen=True)
@@ -188,22 +200,38 @@ def run_sync_tasks(
     )
 
 
-def sync_records(
-    config_path: Path,
-    *,
-    run_dir_name: str | None = None,
-) -> Path:
-    """Load the config and prepare or resume a raw run.
+@dataclass(frozen=True)
+class BlueskyRuntime:
+    """Execution-time state shared by Bluesky new-run and resume."""
 
-    Then sync all keyword tasks to posts.csv. Creates the dataset manifest on first run
-    and returns the output run directory path.
+    storage: BlueskyStorageManager
+    ingestion_params: dict[str, Any]
+    sync_tasks: list[BlueskyTask]
+    client: BlueskyClient
+    filename: str
+
+
+def load_bluesky_runtime(config_path: Path) -> tuple[dict[str, Any], BlueskyRuntime]:
+    """Load config and return execution-time runtime for one sync.
+
+    Parameters
+    ----------
+    config_path
+        Ingestion YAML path. The dataset manifest is created on first use.
+
+    Returns
+    -------
+    tuple[dict[str, Any], BlueskyRuntime]
+        The loaded config and the shared runtime.
+
+    Raises
+    ------
+    ValueError
+        When ``dataset_id`` is missing, or when ``record_types`` does not
+        include Bluesky posts.
     """
     config = load_yaml_config(config_path)
     dataset_id = require_dataset_id(config, platform="bluesky")
-
-    # Create a temporary storage manager just to locate the dataset root for the manifest.
-    # The manifest must exist before we create the real storage manager.
-    # New datasets have no dataset.json yet, so the manager cannot read the format without it.
     ensure_dataset_manifest(
         BlueskyStorageManager(StorageStage.RAW, dataset_id),
         "bluesky",
@@ -212,53 +240,177 @@ def sync_records(
         config_path,
     )
     storage = BlueskyStorageManager(StorageStage.RAW, dataset_id)
-
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
     record_types: list[str] = config["record_types"]
-
     if POSTS_RECORD_TYPE not in record_types:
         raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
-
-    filename = storage.records_filename
-    client = BlueskyClient()
-
-    output_dir, metadata = prepare_sync_run(
-        storage,
-        sync_tasks,
-        run_dir_name=run_dir_name,
-        init_metadata_fn=lambda ts: init_sync_metadata(config, config_path, ts, sync_tasks),
-        entity_label="keywords",
+    return (
+        config,
+        BlueskyRuntime(
+            storage=storage,
+            ingestion_params=ingestion_params,
+            sync_tasks=sync_tasks,
+            client=BlueskyClient(),
+            filename=storage.records_filename,
+        ),
     )
 
+
+def execute_bluesky_sync(
+    runtime: BlueskyRuntime,
+    output_dir: Path,
+    metadata: dict[str, Any],
+) -> Path:
+    """Run keyword tasks and finalize metadata for an opened raw run.
+
+    Parameters
+    ----------
+    runtime
+        Shared execution-time state.
+    output_dir
+        Opened raw run directory.
+    metadata
+        Run metadata to update in place.
+
+    Returns
+    -------
+    Path
+        The same ``output_dir`` after tasks are synced and metadata is flushed.
+    """
     run_sync_tasks(
-        client,
-        ingestion_params,
+        runtime.client,
+        runtime.ingestion_params,
         output_dir,
-        storage,
+        runtime.storage,
         metadata,
-        sync_tasks,
-        filename=filename,
+        runtime.sync_tasks,
+        filename=runtime.filename,
     )
-
-    finalize_local_disk_sync(storage, output_dir, metadata)
-
+    finalize_local_disk_sync(runtime.storage, output_dir, metadata)
     total_rows = metadata["row_count"]
     print(
-        f"sync_records: wrote {total_rows} rows to {output_dir} (status={metadata['sync_status']})"
+        f"sync_records: wrote {total_rows} rows to {output_dir} "
+        f"(status={metadata['sync_status']})"
     )
     return output_dir
 
 
-def main() -> None:
-    """CLI entrypoint for sync_bluesky.py. Supports --config, --resume, and --run-dir."""
-    run_sync_cli(
-        sync_records_fn=sync_records,
-        config_help=(
-            "Ingestion YAML path relative to the repo root. "
-            "For example, data_platform/ingestion/configs/bluesky/mirrorview.yaml."
-        ),
+def sync_records_new_run(config_path: Path) -> Path:
+    """Create a new raw run and sync keyword tasks into it.
+
+    Parameters
+    ----------
+    config_path
+        Ingestion YAML path.
+
+    Returns
+    -------
+    Path
+        New raw run directory.
+
+    Raises
+    ------
+    ValueError
+        When an unfinished raw run already exists for this dataset.
+    """
+    config, runtime = load_bluesky_runtime(config_path)
+    output_dir, metadata = start_new_sync_run(
+        runtime.storage,
+        lambda ts: init_sync_metadata(config, config_path, ts, runtime.sync_tasks),
     )
+    return execute_bluesky_sync(runtime, output_dir, metadata)
+
+
+def sync_records_from_checkpoint(
+    config_path: Path,
+    run_dir_name: str,
+) -> Path:
+    """Resume an unfinished raw run by name.
+
+    Parameters
+    ----------
+    config_path
+        Ingestion YAML path.
+    run_dir_name
+        Raw run timestamp directory name.
+
+    Returns
+    -------
+    Path
+        Resumed raw run directory.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the named run is missing.
+    ValueError
+        When the run is already completed.
+    """
+    config, runtime = load_bluesky_runtime(config_path)
+    output_dir, metadata = load_checkpoint_run(
+        runtime.storage,
+        runtime.sync_tasks,
+        run_dir_name,
+        "keywords",
+    )
+    return execute_bluesky_sync(runtime, output_dir, metadata)
+
+
+CONFIG_HELP = (
+    "Ingestion YAML path relative to the repo root. "
+    "For example, data_platform/ingestion/configs/bluesky/mirrorview.yaml."
+)
+
+app = typer.Typer(no_args_is_help=True)
+
+
+@app.command("new-run")
+def new_run_command(
+    config: Path = typer.Option(..., "--config", help=CONFIG_HELP),
+) -> None:
+    """Start a new Bluesky raw run. Fails if an unfinished run already exists."""
+    config_path = resolve_config_path(config, REPO_ROOT)
+    sync_records_new_run(config_path)
+
+
+def _resolve_resume_run_dir(
+    storage: BlueskyStorageManager,
+    run_dir: str | None,
+    latest: bool,
+) -> str:
+    """Return the run directory name to resume, or raise for invalid options."""
+    if (run_dir is not None and latest) or (run_dir is None and not latest):
+        raise ValueError("Pass --run-dir or --latest, but not both")
+    if run_dir is not None:
+        return run_dir
+    return require_latest_in_progress_run_dir(storage).name
+
+
+@app.command("resume")
+def resume_command(
+    config: Path = typer.Option(..., "--config", help=CONFIG_HELP),
+    run_dir: str | None = typer.Option(
+        None,
+        "--run-dir",
+        help="Raw run timestamp directory name to resume (e.g. 2026_05_30-12:00:00)",
+    ),
+    latest: bool = typer.Option(
+        False,
+        "--latest",
+        help="Resume the newest unfinished raw run for this dataset.",
+    ),
+) -> None:
+    """Resume an unfinished Bluesky raw run. Requires --run-dir or --latest."""
+    config_path = resolve_config_path(config, REPO_ROOT)
+    config, runtime = load_bluesky_runtime(config_path)
+    resolved_run_dir = _resolve_resume_run_dir(runtime.storage, run_dir, latest)
+    sync_records_from_checkpoint(config_path, resolved_run_dir)
+
+
+def main() -> None:
+    """CLI entrypoint for sync_bluesky.py. Requires new-run or resume."""
+    app()
 
 
 if __name__ == "__main__":

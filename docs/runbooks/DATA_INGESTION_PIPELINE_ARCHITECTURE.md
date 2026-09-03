@@ -181,7 +181,7 @@ Run each stage from the repository root with `PYTHONPATH=.`.
 ### Step 1: Sync
 
 ```bash
-PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py new-run \
   --config data_platform/ingestion/configs/bluesky/smoke.yaml
 ```
 
@@ -249,9 +249,9 @@ sequenceDiagram
   participant SM as BlueskyStorageManager
   participant API as Bluesky API
 
-  Op->>CLI: --config smoke.yaml
-  CLI->>CP: require_dataset_id, prepare_sync_run
-  CP->>SM: create or resume raw/<timestamp>/
+  Op->>CLI: new-run --config smoke.yaml
+  CLI->>CP: require_dataset_id, start_new_sync_run
+  CP->>SM: create raw/<timestamp>/
   CP->>SM: ensure_dataset_manifest
   loop Each keyword task
     CLI->>API: searchPosts (via retry_bluesky_request)
@@ -267,11 +267,10 @@ sequenceDiagram
 
 ```mermaid
 flowchart TD
-  start([Operator runs sync CLI])
-  runDir{--run-dir provided?}
-  pin[Open raw/run-dir/]
-  find[find_resume_run_dir: newest incomplete raw run]
-  newRun[create_new_run_dir with new timestamp]
+  start([Operator runs Bluesky resume CLI])
+  mode{Named run or latest?}
+  pin[load_checkpoint_run raw/run-dir/]
+  find[require_latest_in_progress_run_dir]
   loadMeta[Load metadata.json tasks]
   loop{Next task}
   skipDone{Status completed or skipped?}
@@ -282,13 +281,11 @@ flowchart TD
   finalize[finalize_local_disk_sync]
   done([sync_status completed])
 
-  start --> runDir
-  runDir -->|yes| pin
-  runDir -->|no| find
-  find -->|found| pin
-  find -->|not found| newRun
+  start --> mode
+  mode -->|named| pin
+  mode -->|latest| find
   pin --> loadMeta
-  newRun --> loadMeta
+  find --> loadMeta
   loadMeta --> loop
   loop --> skipDone
   skipDone -->|yes| loop
@@ -303,15 +300,15 @@ flowchart TD
   finalize --> done
 ```
 
-To resume a large Bluesky sync after interrupt:
+To resume a large Bluesky sync after interrupt, name the run directory:
 
 ```bash
-PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \
   --config data_platform/ingestion/configs/bluesky/mirrorview.yaml \
   --run-dir <timestamp>
 ```
 
-The config keywords must match the tasks recorded in that run's metadata. `validate_tasks_for_resume` raises if they differ.
+Or resume the latest unfinished run with `--latest`. The config keywords must match the tasks recorded in that run's metadata. If the keywords differ, `validate_tasks_for_resume` raises an error. Completed runs are not reopened.
 
 ## Environment variables
 

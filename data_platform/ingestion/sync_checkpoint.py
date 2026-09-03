@@ -383,6 +383,112 @@ def ensure_dataset_manifest(
         )
 
 
+def start_new_sync_run(
+    storage: StorageManager,
+    init_metadata_fn: Callable[[str], dict[str, Any]],
+) -> tuple[Path, dict[str, Any]]:
+    """Create a new raw run directory and write initial metadata.
+
+    Parameters
+    ----------
+    storage
+        Raw-stage storage manager for the dataset.
+    init_metadata_fn
+        Builds the initial ``metadata.json`` payload from the new run timestamp.
+
+    Returns
+    -------
+    tuple[Path, dict[str, Any]]
+        New run directory and the flushed metadata payload.
+
+    Raises
+    ------
+    ValueError
+        When an unfinished raw run already exists for this dataset.
+    """
+    unfinished_dir = find_resume_run_dir(storage, run_dir_name=None)
+    if unfinished_dir is not None:
+        raise ValueError(
+            f"An unfinished raw run exists at {unfinished_dir}; resume it instead of starting a new run"
+        )
+    sync_timestamp = get_current_timestamp()
+    output_dir = storage.create_new_run_dir(sync_timestamp)
+    metadata = init_metadata_fn(sync_timestamp)
+    flush_run_metadata(storage, output_dir, metadata)
+    return output_dir, metadata
+
+
+def load_checkpoint_run(
+    storage: StorageManager,
+    sync_tasks: Sequence[HasTaskId],
+    run_dir_name: str,
+    entity_label: str,
+) -> tuple[Path, dict[str, Any]]:
+    """Load an unfinished named raw run and validate its task ledger.
+
+    Parameters
+    ----------
+    storage
+        Raw-stage storage manager for the dataset.
+    sync_tasks
+        Config tasks that must match the checkpoint ledger.
+    run_dir_name
+        Raw run timestamp directory name, for example ``2026_05_30-12:00:00``.
+    entity_label
+        Noun used in the task-mismatch error, for example ``keywords``.
+
+    Returns
+    -------
+    tuple[Path, dict[str, Any]]
+        Existing run directory and its metadata.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the named run directory does not exist.
+    ValueError
+        When the run is already completed, or when config tasks do not match
+        the checkpoint ledger.
+    """
+    run_dir = storage.root_dir / run_dir_name
+    if not run_dir.is_dir():
+        raise FileNotFoundError(f"Run directory not found: {run_dir}")
+    metadata = storage.load_run_metadata(run_dir)
+    if metadata.get("sync_status") == SyncStatus.COMPLETED.value:
+        raise ValueError(f"Run is already completed: {run_dir}")
+    validate_tasks_for_resume(sync_tasks, metadata, entity_label=entity_label)
+    if metadata.get("sync_status") != SyncStatus.IN_PROGRESS.value:
+        metadata["sync_status"] = SyncStatus.IN_PROGRESS.value
+        flush_run_metadata(storage, run_dir, metadata)
+    return run_dir, metadata
+
+
+def require_latest_in_progress_run_dir(storage: StorageManager) -> Path:
+    """Return the newest unfinished raw run directory for this dataset.
+
+    Parameters
+    ----------
+    storage
+        Raw-stage storage manager for the dataset.
+
+    Returns
+    -------
+    Path
+        Newest raw run directory whose ``sync_status`` is not completed.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no unfinished raw run exists.
+    """
+    resume_dir = find_resume_run_dir(storage, run_dir_name=None)
+    if resume_dir is None:
+        raise FileNotFoundError(
+            f"No unfinished raw run exists under {storage.root_dir}"
+        )
+    return resume_dir
+
+
 def prepare_sync_run(
     storage: StorageManager,
     sync_tasks: Sequence[HasTaskId],
