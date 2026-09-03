@@ -25,12 +25,13 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
+    """Platform settings for one feature generation command."""
+
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
     columns: PlatformSpecificColumns
     empty_message: str
-    require_all_runs_complete: bool = False
 
 
 def generate_feature_subset(features: list[str] | None) -> tuple[str, ...] | None:
@@ -151,14 +152,25 @@ def generate_platform_features(
     feature_subset: list[str] | None = None,
     run_dir_name: str | None = None,
 ) -> dict[str, Path]:
-    """Load platform records and generate the requested feature labels."""
+    """The command loads platform records and generates the requested feature labels.
+
+    Every preprocessed run for the dataset must be complete before labels
+    are generated.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the dataset has no preprocessed run directory.
+    RuntimeError
+        When a preprocessed run is missing ``metadata.json`` or is not
+        marked complete.
+    """
     dataset_id = validate_dataset_id(dataset_id)
 
-    if spec.require_all_runs_complete:
-        preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
-        if preprocessed_storage.latest_run_dir() is None:
-            raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
-        preprocessed_storage.require_all_runs_complete(dataset_id)
+    preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+    if preprocessed_storage.latest_run_dir() is None:
+        raise FileNotFoundError(f"No preprocessed runs found for dataset {dataset_id}")
+    preprocessed_storage.require_all_runs_complete(dataset_id)
 
     features_subset = generate_feature_subset(feature_subset)
     run_config = FeatureRunConfig(

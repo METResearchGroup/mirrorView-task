@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -76,9 +75,7 @@ def write_preprocessed_posts(
     preprocessed_dir = data_root / "bluesky" / dataset_id / "preprocessed" / run_dir_name
     preprocessed_dir.mkdir(parents=True)
     pd.DataFrame(list(records)).to_csv(preprocessed_dir / "posts.csv", index=False)
-    (preprocessed_dir / "metadata.json").write_text(
-        json.dumps({"sync_status": "completed"}), encoding="utf-8"
-    )
+    (preprocessed_dir / "metadata.json").write_text("{}", encoding="utf-8")
     return preprocessed_dir
 
 
