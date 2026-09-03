@@ -91,7 +91,7 @@ Common operations include:
 
 ### Checkpoint and resume during sync
 
-Ingestion scripts in `data_platform/ingestion/` share helpers from `sync_checkpoint.py`. A sync run stores per-task progress in `raw/<timestamp>/metadata.json`. Each task (keyword, subreddit, or similar) has a status: `pending`, `in_progress`, `completed`, `failed`, or `skipped`.
+Ingestion scripts in `data_platform/ingestion/` share orchestration in `runner.py` (`SyncPlatformSpec`, `sync_with_spec`) and checkpoint helpers from `sync_checkpoint.py`. A sync run stores per-task progress in `raw/<timestamp>/metadata.json`. Each task (keyword, subreddit, or similar) has a status: `pending`, `in_progress`, `completed`, `failed`, or `skipped`.
 
 On startup, `find_resume_run_dir` looks for the newest raw run whose `sync_status` is not `completed`. Pass `--run-dir <timestamp>` to pin a specific run. `run_checkpointed_sync` skips tasks already marked `completed` or `skipped`.
 
@@ -120,7 +120,7 @@ Entrypoints:
 - `data_platform/ingestion/sync_twitter.py`
 - `data_platform/ingestion/sync_reddit.py`
 
-Each script loads a YAML config from `data_platform/ingestion/configs/<platform>/`, validates `dataset_id`, and writes raw records under `raw/<timestamp>/`. Bluesky uses `init_bluesky_client` from `sync_clients.py`. Twitter and Reddit use their own clients and retry helpers.
+Each script loads a YAML config from `data_platform/ingestion/configs/<platform>/`, validates `dataset_id`, and writes raw records under `raw/<timestamp>/`. Bluesky and Twitter share the keyword task loop in `runner.py`; Reddit keeps its own dual-output loop. Bluesky uses `init_bluesky_client` from `sync_clients.py`. Twitter and Reddit use their own clients and retry helpers.
 
 ### 2. Preprocess
 
