@@ -2,9 +2,10 @@
 
 ## 2026-09-03
 
-1. Raw ingest now writes a stable `record_id` on every row using the same `{integration}_{id}` keys as study stimuli (`bluesky_{sha256(uri)}`, `twitter_{tweet_id}`, `reddit_{post_reddit_id}_{comment_id}`). [PR #138](https://github.com/METResearchGroup/mirrorView-task/pull/138)
-2. Ingest, preprocess, and feature unlabeled skip now share one skip set session. The warmup names are gone. Callers load known ids for this run or for all runs before they drop, persist, or collapse. [PR #144](https://github.com/METResearchGroup/mirrorView-task/pull/144)
-3. Bluesky ingestion now delegates all API client work to `BlueskyClient` in `data_platform/ingestion/integrations/bluesky.py`. `sync_bluesky.py` now handles sync logic only, and the client can be tested on its own. [PR #143](https://github.com/METResearchGroup/mirrorView-task/pull/143)
+1. Bluesky ingest now requires an explicit `new-run` or `resume` command. `new-run` refuses to start when an unfinished raw run exists; `resume` accepts a named timestamp or `--latest` and fails fast when the run is missing or already completed. Twitter and Reddit keep the combined start-or-resume behavior. [PR #145](https://github.com/METResearchGroup/mirrorView-task/pull/145)
+2. Raw ingest now writes a stable `record_id` on every row using the same `{integration}_{id}` keys as study stimuli (`bluesky_{sha256(uri)}`, `twitter_{tweet_id}`, `reddit_{post_reddit_id}_{comment_id}`). [PR #138](https://github.com/METResearchGroup/mirrorView-task/pull/138)
+3. Ingest, preprocess, and feature unlabeled skip now share one skip set session. The warmup names are gone. Callers load known ids for this run or for all runs before they drop, persist, or collapse. [PR #144](https://github.com/METResearchGroup/mirrorView-task/pull/144)
+4. Bluesky ingestion now delegates all API client work to `BlueskyClient` in `data_platform/ingestion/integrations/bluesky.py`. `sync_bluesky.py` now handles sync logic only, and the client can be tested on its own. [PR #143](https://github.com/METResearchGroup/mirrorView-task/pull/143)
 
 ## 2026-09-02
 
