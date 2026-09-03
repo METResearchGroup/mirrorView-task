@@ -154,17 +154,17 @@ def load_feature_run_metadata(
         When the run is already completed, or when model or prompt identity
         no longer matches this folder.
     """
-    raise NotImplementedError
-
-
-def load_or_init_metadata(
-    config: FeatureGenerationConfig,
-    feature_names: tuple[str, ...],
-) -> FeatureRunMetadata:
-    """Removed. Use init_feature_run_metadata or load_feature_run_metadata."""
-    raise NotImplementedError(
-        "Use init_feature_run_metadata or load_feature_run_metadata"
-    )
+    path = metadata_path(config.features_dir)
+    if not path.exists():
+        raise FileNotFoundError(path)
+    with path.open(encoding="utf-8") as handle:
+        metadata = FeatureRunMetadata.from_dict(json.load(handle))
+    if metadata.sync_status == "completed":
+        raise ValueError(f"Run is already completed: {config.features_dir}")
+    metadata.source_preprocessed_runs = resolve_source_preprocessed_runs(config)
+    _stamp_or_check_identity(metadata, config, feature_names)
+    flush_metadata(config.features_dir, metadata)
+    return metadata
 
 
 def mark_feature_in_progress(
