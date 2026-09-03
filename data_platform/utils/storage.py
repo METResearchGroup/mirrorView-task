@@ -20,7 +20,6 @@ from data_platform.models.sync import (
     PreprocessedTwitterPostModel,
     SyncBlueskyPostModel,
     SyncRedditCommentModel,
-    SyncRedditPostModel,
     SyncTwitterPostModel,
 )
 from data_platform.utils.dataset import ValidDataFormats, load_dataset_format, validate_dataset_id

@@ -19,26 +19,6 @@ class SyncBlueskyPostModel(BaseModel):
     sync_timestamp: str
 
 
-class SyncRedditPostModel(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    reddit_id: str
-    reddit_fullname: str
-    record_id: str
-    subreddit: str
-    title: str
-    selftext: str
-    author: str
-    score: int
-    upvote_ratio: float
-    num_comments: int
-    created_at: str
-    permalink: str
-    url: str
-    is_self: bool
-    sync_timestamp: str
-
-
 class SyncTwitterPostModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
