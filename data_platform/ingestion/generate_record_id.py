@@ -13,7 +13,6 @@ from typing import Any, Mapping
 
 from data_platform.utils.platform_specific_columns import (
     BLUESKY_COLUMNS,
-    REDDIT_COLUMNS,
     TWITTER_COLUMNS,
 )
 
@@ -21,55 +20,25 @@ RECORD_ID_COLUMN = "record_id"
 REDDIT_POST_RECORDS_ID_COLUMN = "reddit_fullname"
 REDDIT_COMMENT_POST_ID_COLUMN = "post_reddit_id"
 REDDIT_COMMENT_ID_COLUMN = "comment_id"
-REDDIT_COMMENTS_FILE_STEM = "comments"
 
 INTEGRATION_BLUESKY = "bluesky"
 INTEGRATION_REDDIT = "reddit"
 INTEGRATION_TWITTER = "twitter"
 
+KNOWN_INTEGRATIONS = frozenset(
+    {INTEGRATION_BLUESKY, INTEGRATION_REDDIT, INTEGRATION_TWITTER}
+)
+
 _INTEGRATION_PRIMARY_KEY_COLUMNS: dict[str, str] = {
     INTEGRATION_BLUESKY: BLUESKY_COLUMNS.records_id_column,
-    INTEGRATION_REDDIT: REDDIT_COLUMNS.records_id_column,
     INTEGRATION_TWITTER: TWITTER_COLUMNS.records_id_column,
 }
-
-
-def resolve_records_id_column(platform: str, records_file_stem: str) -> str:
-    """Return the platform primary-key column for one ingest records file.
-
-    Parameters
-    ----------
-    platform
-        Platform name: ``bluesky``, ``reddit``, or ``twitter``.
-    records_file_stem
-        Records filename stem, for example ``posts`` or ``comments``.
-
-    Returns
-    -------
-    str
-        Column name whose value feeds :func:`generate_record_id`.
-
-    Raises
-    ------
-    ValueError
-        When ``platform`` is unknown.
-    """
-    normalized_platform = platform.strip().lower()
-    if normalized_platform == INTEGRATION_BLUESKY:
-        return BLUESKY_COLUMNS.records_id_column
-    if normalized_platform == INTEGRATION_TWITTER:
-        return TWITTER_COLUMNS.records_id_column
-    if normalized_platform == INTEGRATION_REDDIT:
-        if records_file_stem == "posts":
-            return REDDIT_POST_RECORDS_ID_COLUMN
-        return REDDIT_COLUMNS.records_id_column
-    raise ValueError(f"Unknown platform `{platform}`.")
 
 
 def generate_record_id(integration: str, primary_key: str) -> str:
     """Return the stable ``{integration}_{id}`` key used across study datasets.
 
-    Bluesky hashes ``uri`` with SHA-256. Twitter and Reddit use the platform
+    Bluesky hashes ``uri`` with SHA-256. Twitter and Reddit prefix the given
     primary key string unchanged.
 
     Parameters
@@ -77,9 +46,8 @@ def generate_record_id(integration: str, primary_key: str) -> str:
     integration
         Platform name: ``bluesky``, ``reddit``, or ``twitter``.
     primary_key
-        Platform-native unique id for the row (for example Bluesky ``uri``,
-        Reddit ``{post_reddit_id}_{comment_id}`` for comments or
-        ``reddit_fullname`` for posts, or Twitter ``tweet_id``).
+        Platform-native unique id for the row. For Reddit, pass the already
+        joined post-and-comment key or the post fullname.
 
     Returns
     -------
@@ -92,7 +60,7 @@ def generate_record_id(integration: str, primary_key: str) -> str:
         When ``integration`` is unknown or ``primary_key`` is empty.
     """
     normalized_integration = integration.strip().lower()
-    if normalized_integration not in _INTEGRATION_PRIMARY_KEY_COLUMNS:
+    if normalized_integration not in KNOWN_INTEGRATIONS:
         raise ValueError(f"Unknown integration `{integration}`.")
 
     normalized_primary_key = str(primary_key).strip()
@@ -106,71 +74,51 @@ def generate_record_id(integration: str, primary_key: str) -> str:
     return f"{normalized_integration}_{normalized_primary_key}"
 
 
-def resolve_primary_key_value(
-    row: Mapping[str, Any],
-    integration: str,
-    *,
-    records_file_stem: str | None = None,
-    primary_key_column: str | None = None,
-) -> str:
-    """Return the string that feeds :func:`generate_record_id` for one ingest row.
+def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
+    """Return ``record_id`` for a Reddit post or comment row.
+
+    Comments use ``reddit_{post_reddit_id}_{comment_id}``. Posts use
+    ``reddit_{reddit_fullname}``.
 
     Parameters
     ----------
     row
-        One ingest record dict.
-    integration
-        Platform name: ``bluesky``, ``reddit``, or ``twitter``.
-    records_file_stem
-        Records filename stem, for example ``posts`` or ``comments``.
-    primary_key_column
-        Optional override for the source column on non-composite rows.
+        One Reddit ingest record. Comment rows must include ``post_reddit_id``
+        and ``comment_id``. Post rows must include ``reddit_fullname``.
 
     Returns
     -------
     str
-        Primary key value before the integration prefix is applied.
+        Stable Reddit record id.
 
     Raises
     ------
     KeyError
-        When a required source column is missing from ``row``.
+        When the row is neither a comment nor a post with the expected fields.
     ValueError
-        When ``integration`` is unknown or a required value is empty.
+        When a required id value is empty.
     """
-    normalized_integration = integration.strip().lower()
-    if (
-        normalized_integration == INTEGRATION_REDDIT
-        and records_file_stem == REDDIT_COMMENTS_FILE_STEM
-    ):
+    if REDDIT_COMMENT_POST_ID_COLUMN in row and REDDIT_COMMENT_ID_COLUMN in row:
         post_id = str(row[REDDIT_COMMENT_POST_ID_COLUMN]).strip()
         comment_id = str(row[REDDIT_COMMENT_ID_COLUMN]).strip()
         if not post_id or not comment_id:
             raise ValueError("Reddit comments need post_reddit_id and comment_id.")
-        return f"{post_id}_{comment_id}"
+        return generate_record_id(INTEGRATION_REDDIT, f"{post_id}_{comment_id}")
 
-    resolved_stem = records_file_stem or REDDIT_COMMENTS_FILE_STEM
-    resolved_column = primary_key_column or resolve_records_id_column(
-        integration,
-        resolved_stem,
-    )
-    if resolved_column not in row:
-        raise KeyError(resolved_column)
+    if REDDIT_POST_RECORDS_ID_COLUMN not in row:
+        raise KeyError(REDDIT_POST_RECORDS_ID_COLUMN)
 
-    primary_key = str(row[resolved_column]).strip()
-    if not primary_key:
+    reddit_fullname = str(row[REDDIT_POST_RECORDS_ID_COLUMN]).strip()
+    if not reddit_fullname:
         raise ValueError("Primary key must be a non-empty string.")
-    return primary_key
+    return generate_record_id(INTEGRATION_REDDIT, reddit_fullname)
 
 
-def attach_record_id(
-    row: Mapping[str, Any],
-    integration: str,
-    *,
-    records_file_stem: str | None = None,
-    primary_key_column: str | None = None,
-) -> dict[str, Any]:
+def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]:
     """Return a copy of ``row`` with ``record_id`` set from the platform primary key.
+
+    Reddit rows go through :func:`generate_reddit_record_id`. Bluesky and Twitter
+    rows use the usual platform id column.
 
     Parameters
     ----------
@@ -178,10 +126,6 @@ def attach_record_id(
         One ingest record dict. Must include the platform primary key column.
     integration
         Platform name passed to :func:`generate_record_id`.
-    records_file_stem
-        Records filename stem when one integration writes multiple record types.
-    primary_key_column
-        Optional override for the source column on non-composite rows.
 
     Returns
     -------
@@ -196,19 +140,20 @@ def attach_record_id(
         When ``integration`` is unknown or the primary key value is empty.
     """
     normalized_integration = integration.strip().lower()
-    if normalized_integration not in _INTEGRATION_PRIMARY_KEY_COLUMNS:
+    if normalized_integration not in KNOWN_INTEGRATIONS:
         raise ValueError(f"Unknown integration `{integration}`.")
 
-    primary_key_value = resolve_primary_key_value(
-        row,
-        integration,
-        records_file_stem=records_file_stem,
-        primary_key_column=primary_key_column,
-    )
+    if normalized_integration == INTEGRATION_REDDIT:
+        record_id = generate_reddit_record_id(row)
+    else:
+        primary_key_column = _INTEGRATION_PRIMARY_KEY_COLUMNS[normalized_integration]
+        if primary_key_column not in row:
+            raise KeyError(primary_key_column)
+        record_id = generate_record_id(
+            normalized_integration,
+            str(row[primary_key_column]),
+        )
 
     out = dict(row)
-    out[RECORD_ID_COLUMN] = generate_record_id(
-        normalized_integration,
-        primary_key_value,
-    )
+    out[RECORD_ID_COLUMN] = record_id
     return out

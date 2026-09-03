@@ -13,10 +13,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from data_platform.ingestion.generate_record_id import (
-    REDDIT_POST_RECORDS_ID_COLUMN,
-    attach_record_id,
-)
+from data_platform.ingestion.generate_record_id import attach_record_id
 from data_platform.ingestion.sync_bluesky import fetch_posts_for_keyword
 from data_platform.ingestion.sync_reddit import comment_to_row, submission_to_row
 from data_platform.ingestion.twitter_client import tweet_to_row
@@ -117,13 +114,7 @@ class TestSubmissionToRow:
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncRedditPostModel.model_validate(
-            attach_record_id(
-                result,
-                "reddit",
-                primary_key_column=REDDIT_POST_RECORDS_ID_COLUMN,
-            )
-        )
+        SyncRedditPostModel.model_validate(attach_record_id(result, "reddit"))
 
 
 class TestCommentToRow:
@@ -142,9 +133,7 @@ class TestCommentToRow:
         assert result["created_at"] == CREATED_AT_ISO
         assert "created_utc" not in result
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
-        SyncRedditCommentModel.model_validate(
-            attach_record_id(result, "reddit", records_file_stem="comments")
-        )
+        SyncRedditCommentModel.model_validate(attach_record_id(result, "reddit"))
 
 
 class TestTweetToRow:

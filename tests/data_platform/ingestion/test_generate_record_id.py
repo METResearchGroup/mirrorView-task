@@ -11,8 +11,9 @@ from data_platform.ingestion.generate_record_id import (
     RECORD_ID_COLUMN,
     attach_record_id,
     generate_record_id,
+    generate_reddit_record_id,
 )
-from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
+from tests.data_platform.ingestion.reddit_conftest import mock_comment_row, mock_post_row
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
 
@@ -46,14 +47,12 @@ class TestGenerateRecordId:
 
         assert result == expected
 
-    def test_prefixes_reddit_post_and_comment_id(self) -> None:
-        """Reddit comment ids join post_reddit_id and comment_id after the reddit_ prefix."""
-        expected = f"{INTEGRATION_REDDIT}_{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
+    def test_prefixes_reddit_primary_key(self) -> None:
+        """Reddit ids prefix the already-joined primary key."""
+        primary_key = f"{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
+        expected = f"{INTEGRATION_REDDIT}_{primary_key}"
 
-        result = generate_record_id(
-            INTEGRATION_REDDIT,
-            f"{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}",
-        )
+        result = generate_record_id(INTEGRATION_REDDIT, primary_key)
 
         assert result == expected
 
@@ -68,6 +67,33 @@ class TestGenerateRecordId:
         """Empty platform ids are invalid."""
         with pytest.raises(ValueError, match="non-empty"):
             generate_record_id(INTEGRATION_TWITTER, primary_key)
+
+
+class TestGenerateRedditRecordId:
+    """Tests for generate_reddit_record_id()."""
+
+    def test_joins_comment_post_and_comment_id(self) -> None:
+        """Comment rows use reddit_{post_reddit_id}_{comment_id}."""
+        source = mock_comment_row(REDDIT_COMMENT_FULLNAME, subreddit="politics")
+        expected = f"{INTEGRATION_REDDIT}_{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
+
+        result = generate_reddit_record_id(source)
+
+        assert result == expected
+
+    def test_prefixes_post_fullname(self) -> None:
+        """Post rows use reddit_{reddit_fullname}."""
+        source = mock_post_row("t3_abc123", subreddit="politics")
+        expected = f"{INTEGRATION_REDDIT}_t3_abc123"
+
+        result = generate_reddit_record_id(source)
+
+        assert result == expected
+
+    def test_raises_when_comment_and_post_fields_are_missing(self) -> None:
+        """Rows that are neither comments nor posts are caller errors."""
+        with pytest.raises(KeyError):
+            generate_reddit_record_id({"subreddit": "politics"})
 
 
 class TestAttachRecordId:
@@ -92,15 +118,11 @@ class TestAttachRecordId:
             attach_record_id({"text": "hello"}, INTEGRATION_TWITTER)
 
     def test_attaches_reddit_comment_record_id(self) -> None:
-        """Reddit rows use post_reddit_id and comment_id as the primary key source."""
+        """Reddit comment rows go through generate_reddit_record_id."""
         source = mock_comment_row(REDDIT_COMMENT_FULLNAME, subreddit="politics")
         expected_record_id = f"{INTEGRATION_REDDIT}_{REDDIT_POST_ID}_{REDDIT_COMMENT_ID}"
 
-        result = attach_record_id(
-            source,
-            INTEGRATION_REDDIT,
-            records_file_stem="comments",
-        )
+        result = attach_record_id(source, INTEGRATION_REDDIT)
 
         assert result[RECORD_ID_COLUMN] == expected_record_id
         assert result["comment_fullname"] == REDDIT_COMMENT_FULLNAME
