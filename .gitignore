@@ -170,6 +170,10 @@ experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/**
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/high_toxic_comments.parquet
 !experiments/fetch_reddit_pushshift_dump_2026_06_15/outputs/*/metadata.json
 
+# Reddit monthly dump artifacts (keep filtered/.gitkeep)
+data_platform/ingestion/data_dumps/reddit/*.zst
+data_platform/ingestion/data_dumps/reddit/filtered/*.parquet
+
 __pycache__/
 **/__pycache__/
 *.pyc

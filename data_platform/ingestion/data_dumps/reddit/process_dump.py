@@ -12,7 +12,8 @@ Process one file:
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+import argparse
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from random import Random
 
@@ -21,7 +22,11 @@ import pandas as pd
 from data_platform.ingestion.data_dumps.reddit.filters import keep_dump_comment
 from data_platform.ingestion.data_dumps.reddit.models import DumpCommentRaw
 from data_platform.ingestion.data_dumps.reddit.reader import iter_dump_comments
-from data_platform.ingestion.data_dumps.reddit.sample import reservoir_sample
+from data_platform.ingestion.data_dumps.reddit.sample import (
+    DEFAULT_SAMPLE_SEED,
+    DEFAULT_SAMPLE_SIZE,
+    reservoir_sample,
+)
 from data_platform.ingestion.data_dumps.reddit.transform import dump_comment_to_sync_row
 from data_platform.models.sync import SyncRedditCommentModel
 from lib.timestamp_utils import get_current_timestamp
@@ -30,6 +35,8 @@ DUMP_DIR = Path("data_platform/ingestion/data_dumps/reddit")
 FILTERED_DIR = DUMP_DIR / "filtered"
 DEFAULT_DUMP_STEMS = ("RC_2025-05", "RC_2025-06")
 PARQUET_INDEX = False
+ZST_SUFFIX = ".zst"
+PARQUET_SUFFIX = ".parquet"
 
 
 def _require_processable_paths(input_path: Path, output_path: Path) -> None:
@@ -108,6 +115,23 @@ def process_dump_file(
     return output_path
 
 
+def _parse_args(argv: list[str] | None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Filter and sample Reddit dump comments into parquet."
+    )
+    parser.add_argument("--input-file", action="append", dest="input_files")
+    parser.add_argument("--output-dir", type=Path, default=FILTERED_DIR)
+    parser.add_argument("--sample-size", type=int, default=DEFAULT_SAMPLE_SIZE)
+    parser.add_argument("--seed", type=int, default=DEFAULT_SAMPLE_SEED)
+    return parser.parse_args(argv)
+
+
+def _input_paths(input_files: Sequence[str] | None) -> list[Path]:
+    if input_files:
+        return [Path(path) for path in input_files]
+    return [DUMP_DIR / f"{stem}{ZST_SUFFIX}" for stem in DEFAULT_DUMP_STEMS]
+
+
 def main(argv: list[str] | None = None) -> None:
     """Process dump files from command-line arguments.
 
@@ -116,7 +140,16 @@ def main(argv: list[str] | None = None) -> None:
     argv
         Argument list without the program name. ``None`` reads ``sys.argv``.
     """
-    raise NotImplementedError
+    args = _parse_args(argv)
+    for input_path in _input_paths(args.input_files):
+        output_path = args.output_dir / f"{input_path.stem}{PARQUET_SUFFIX}"
+        process_dump_file(
+            input_path,
+            output_path,
+            args.sample_size,
+            args.seed,
+            get_current_timestamp(),
+        )
 
 
 if __name__ == "__main__":

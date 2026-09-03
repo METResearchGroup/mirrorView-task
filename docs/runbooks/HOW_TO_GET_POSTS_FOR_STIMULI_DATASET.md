@@ -22,7 +22,7 @@ We also get data dumps from 2 sources:
 1. Bluesky, from the lab data integrations interface project (see [this repo](https://github.com/METResearchGroup/lab_data_integrations_interface/tree/main/data_platform))
 2. Reddit, from the pushshift data dump.
 
-These data dumps live in `data_platform/ingestion/dumps`. They're intended to follow the same data models that the other ingestion models follow, for consistency.
+These data dumps live in `data_platform/ingestion/data_dumps`. They're intended to follow the same data models that the other ingestion models follow, for consistency.
 
 ## Where does data live?
 
