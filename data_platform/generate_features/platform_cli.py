@@ -70,13 +70,12 @@ def run_feature_generation(
 
 
 def _require_single_feature_run_name(checkpoint: str) -> str:
-    """Return a single folder name, or raise if the value could escape the features stage.
+    """Return a single folder name. Raise if the value is an absolute path, ``.``, ``..``, or a name with extra path parts.
 
     Parameters
     ----------
     checkpoint
-        Feature run timestamp, for example ``2026_05_30-12:00:00``. Absolute
-        paths, ``.``, ``..``, and names with extra path parts are rejected.
+        Feature run timestamp, for example ``2026_05_30-12:00:00``.
 
     Returns
     -------
@@ -135,9 +134,7 @@ def _unfinished_feature_run_dirs(feature_storage: StorageManager) -> list[Path]:
 
 
 def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -> Path:
-    """Return an existing unfinished ``features/{timestamp}/`` folder.
-
-    Does not create a missing folder.
+    """Return an existing unfinished ``features/{timestamp}/`` folder. If that folder is missing, raise instead of creating it.
 
     Parameters
     ----------
@@ -185,18 +182,20 @@ def feature_run_dir(
 ) -> Path:
     """Return ``features/{timestamp}/`` for a new run or an unfinished checkpoint.
 
-    Neither ``checkpoint`` nor ``latest`` starts a new timestamped folder.
-    ``checkpoint`` loads that folder. ``latest`` loads the newest unfinished
-    folder. Exactly one of ``checkpoint`` or ``latest`` is required to resume.
-    The two resume options cannot be combined.
+    If you pass neither ``checkpoint`` nor ``latest``, this starts a new
+    timestamped folder. If you pass ``checkpoint``, this returns that existing
+    unfinished folder. If you pass ``latest``, this returns the newest
+    unfinished folder. To resume, pass exactly one of those two options, and
+    do not pass both.
 
     Parameters
     ----------
     checkpoint
-        Existing feature run timestamp to resume, or None to start a new run
-        when ``latest`` is False.
+        Timestamp of an existing unfinished feature run to resume. Pass None
+        when you want a new run and ``latest`` is False.
     latest
-        When True, resume the newest unfinished feature run.
+        If True, resume the newest unfinished feature run. Do not pass
+        ``checkpoint`` at the same time.
 
     Returns
     -------
@@ -207,9 +206,9 @@ def feature_run_dir(
     Raises
     ------
     ValueError
-        When both resume options are set, when ``checkpoint`` is not a single
-        folder name, when a new run is requested while an unfinished run
-        exists, or when the named run is already completed.
+        If both resume options are set, or if ``checkpoint`` is not a single
+        folder name. Also raised if you start a new run while an unfinished
+        run exists, or if the named run is already completed.
     FileNotFoundError
         When the named checkpoint folder is missing, or when ``latest`` is set
         and no unfinished feature run exists.
@@ -237,10 +236,11 @@ def build_feature_config(
     Parameters
     ----------
     checkpoint
-        Existing ``features/{timestamp}/`` folder to resume. None starts a new
-        run when ``latest`` is False.
+        Existing ``features/{timestamp}/`` folder to resume. Pass None when
+        you want a new run and ``latest`` is False.
     latest
-        When True, resume the newest unfinished feature run.
+        If True, resume the newest unfinished feature run. Do not pass
+        ``checkpoint`` at the same time.
     """
     dataset_id = validate_dataset_id(dataset_id)
     registry = FEATURE_REGISTRY
@@ -305,10 +305,11 @@ def generate_platform_features(
     Parameters
     ----------
     checkpoint
-        Existing ``features/{timestamp}/`` folder to resume. None starts a new
-        run when ``latest`` is False.
+        Existing ``features/{timestamp}/`` folder to resume. Pass None when
+        you want a new run and ``latest`` is False.
     latest
-        When True, resume the newest unfinished feature run.
+        If True, resume the newest unfinished feature run. Do not pass
+        ``checkpoint`` at the same time.
     """
     dataset_id = validate_dataset_id(dataset_id)
 

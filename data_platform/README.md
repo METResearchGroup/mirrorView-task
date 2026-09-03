@@ -72,17 +72,21 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_<uuid> --batch-size 64
 
+PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
+  --dataset-id bluesky_<uuid> --config mirrorview.yaml
+```
+
+To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp, or pass `--latest`. Do not pass both, and do not run these in addition to a new run.
+
+```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_<uuid> --batch-size 64 --checkpoint <timestamp>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_<uuid> --batch-size 64 --latest
-
-PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
-  --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-Same pattern for Twitter and Reddit (`preprocess_twitter.py` / `generate_twitter_features.py` / `curate_twitter.py`, and the Reddit equivalents). Feature generation writes each run into `features/<timestamp>/`. A default invocation starts a new folder and fails if an unfinished feature run already exists. Resume with `--checkpoint <timestamp>` or `--latest`. A completed feature run cannot be reopened.
+Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Feature generation writes each run into `features/<timestamp>/`. If you pass neither `--checkpoint` nor `--latest`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. Pass `--checkpoint <timestamp>` or `--latest` to keep writing into an unfinished folder. You cannot reopen a completed feature run.
 
 If a dataset still has leftover files directly under `features/` from the old layout, move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 

@@ -54,10 +54,11 @@ def generate_twitter_features(
     Parameters
     ----------
     checkpoint
-        Existing ``features/{timestamp}/`` folder to resume. None starts a new
-        run when ``latest`` is False.
+        Existing ``features/{timestamp}/`` folder to resume. Pass None when
+        you want a new run and ``latest`` is False.
     latest
-        When True, resume the newest unfinished feature run.
+        If True, resume the newest unfinished feature run. Do not pass
+        ``checkpoint`` at the same time.
     """
     return generate_platform_features(
         TWITTER_SPEC,
