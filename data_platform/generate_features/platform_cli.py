@@ -25,12 +25,17 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
+    """Platform wiring for one feature-generation command.
+
+    Completeness of preprocessed runs is not a spec setting.
+    ``generate_platform_features`` always requires complete runs.
+    """
+
     platform: str
     storage_cls: StorageManagerFactory
     model_cls: type[BaseModel]
     columns: PlatformSpecificColumns
     empty_message: str
-    require_all_runs_complete: bool = False
 
 
 def generate_feature_subset(features: list[str] | None) -> tuple[str, ...] | None:
