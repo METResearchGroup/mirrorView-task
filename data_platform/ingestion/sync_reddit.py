@@ -59,37 +59,10 @@ from data_platform.utils.deduplication import (
 from data_platform.utils.storage import RedditStorageManager, StorageStage
 
 COMMENTS_RECORD_TYPE = "reddit.comment"
-POSTS_RECORD_TYPE = "reddit.post"
 DEFAULT_LISTING = "hot"
 VALID_LISTING_TIME_FILTERS = frozenset({"all", "day", "hour", "month", "week", "year"})
 
 logger = logging.getLogger(__name__)
-
-
-def submission_to_row(post: praw.models.Submission, sync_timestamp: str) -> dict[str, Any]:
-    """Normalize a PRAW Submission to a flat dict matching the CSV schema.
-
-    ``created_at`` is UTC ISO-8601 from the payload unix time. Output has no
-    ``created_utc`` column.
-    """
-    author = "[deleted]" if post.author is None else str(post.author)
-    created_at = datetime.fromtimestamp(post.created_utc, tz=timezone.utc).isoformat()
-    return {
-        "reddit_id": post.id,
-        "reddit_fullname": post.name,
-        "subreddit": post.subreddit.display_name,
-        "title": post.title,
-        "selftext": post.selftext,
-        "author": author,
-        "score": post.score,
-        "upvote_ratio": post.upvote_ratio,
-        "num_comments": post.num_comments,
-        "created_at": created_at,
-        "permalink": post.permalink,
-        "url": post.url,
-        "is_self": post.is_self,
-        "sync_timestamp": sync_timestamp,
-    }
 
 
 def is_eligible_comment(comment: praw.models.Comment, min_body_length: int) -> bool:
@@ -378,7 +351,19 @@ def _open_reddit_dedupe_sessions(
     ingestion_params: dict[str, Any],
     comments_filename: str,
 ) -> DedupeSession:
-    raise NotImplementedError
+    comment_dedupe_session = DedupeSession(
+        DedupeConfig(
+            id_column="comment_fullname",
+            filename=comments_filename,
+        )
+    )
+    if policy_includes_prior_runs(
+        _resolve_reddit_dedupe_policy(ingestion_params, COMMENTS_DEDUPE_POLICY_KEY)
+    ):
+        comment_dedupe_session.load_seen_ids_from_all_runs(storage)
+    else:
+        comment_dedupe_session.load_seen_ids(storage, output_dir)
+    return comment_dedupe_session
 
 
 def _append_subreddit_deduped_rows(
@@ -389,7 +374,21 @@ def _append_subreddit_deduped_rows(
     comment_dedupe_session: DedupeSession,
     comments_filename: str,
 ) -> int:
-    raise NotImplementedError
+    if comment_rows:
+        comment_result = storage.append_deduped_records(
+            comment_rows,
+            output_dir,
+            dedupe_session=comment_dedupe_session,
+            filename=comments_filename,
+        )
+        increment_duplicate_skip_counters(
+            metadata,
+            record_type=COMMENTS_RECORD_TYPE,
+            skipped=comment_result.skipped,
+        )
+    comment_count = len(comment_dedupe_session.seen_ids)
+    metadata["row_count"] = comment_count
+    return comment_count
 
 
 def run_sync_tasks(
@@ -405,7 +404,68 @@ def run_sync_tasks(
     Filenames come from ``storage.records_filename`` so the suffix matches the
     dataset format.
     """
-    raise NotImplementedError
+    max_comments_int = parse_max_comments(ingestion_params)
+    sync_timestamp = str(metadata["sync_timestamp"])
+    comments_filename = storage.records_filename
+
+    comment_dedupe_session = _open_reddit_dedupe_sessions(
+        storage,
+        output_dir,
+        ingestion_params,
+        comments_filename,
+    )
+    print(
+        "sync_records: loaded "
+        f"{len(comment_dedupe_session.seen_ids)} prior comment IDs for dedupe"
+    )
+
+    def process_task(task: RedditTask, entry: dict[str, Any]) -> None:
+        mark_task_in_progress(entry, storage, output_dir, metadata)
+
+        try:
+            fetch_result = fetch_records_for_subreddit(
+                reddit,
+                ingestion_params,
+                task.subreddit,
+                sync_timestamp=sync_timestamp,
+            )
+        except Exception as exc:  # noqa: BLE001 — record and continue
+            mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
+            return
+
+        comment_count = _append_subreddit_deduped_rows(
+            storage,
+            output_dir,
+            metadata,
+            fetch_result.comment_rows,
+            comment_dedupe_session,
+            comments_filename,
+        )
+        mark_task_completed(
+            entry,
+            storage,
+            output_dir,
+            metadata,
+            entry_updates={
+                "comments_collected": fetch_result.stats["comments_collected"],
+            },
+        )
+
+        print(
+            f"sync_records: {task.task_id} -> "
+            f"{fetch_result.stats['comments_collected']} comments "
+            f"(total comments={comment_count})"
+        )
+
+    run_checkpointed_sync(
+        sync_tasks,
+        metadata,
+        storage,
+        output_dir,
+        record_cap=max_comments_int,
+        tqdm_desc="Syncing subreddits",
+        process_task=process_task,
+    )
 
 
 load_config = load_yaml_config
@@ -434,8 +494,8 @@ def sync_records(
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
     record_types: list[str] = config["record_types"]
-    if COMMENTS_RECORD_TYPE not in record_types or POSTS_RECORD_TYPE in record_types:
-        raise NotImplementedError
+    if COMMENTS_RECORD_TYPE not in record_types or "reddit.post" in record_types:
+        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
 
     reddit = init_reddit_client()
 
