@@ -8,8 +8,8 @@ Once we get raw posts, we need to filter and preprocess them.
 2. Collect the raw runs for that `dataset_id`.
 3. Add standardized columns.
 4. Filter out duplicate (a) records that have been preprocessed already, (b) duplicate records, or (c) records which have been already been used as stimuli.
-5. Filter out records based on integration-specific validators.
-6. Do integration-specific preprocessing.
+5. Do integration-specific preprocessing.
+6. Filter out records based on integration-specific validators.
 
 The flow looks something like this:
 
