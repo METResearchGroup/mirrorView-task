@@ -82,7 +82,7 @@ def _stamp_or_check_identity(
         if status.model_id != model_id or status.prompt_hash != hashed_prompt:
             raise ValueError(
                 f"Feature {name} identity changed for this run directory. "
-                "Start a new generate_features run without --run-dir."
+                "Start a new generate_features run."
             )
 
 
