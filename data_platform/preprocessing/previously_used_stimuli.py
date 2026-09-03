@@ -18,6 +18,7 @@ import pandas as pd
 
 from shared.data.dataloader import load_dataset
 from shared.data.registry import DatasetEntry, DatasetKind
+from data_platform.utils.platform_specific_columns import STANDARDIZED_RECORD_ID_COLUMN
 
 STIMULI_ID_COLUMN = "post_primary_key"
 STIMULI_DATASET_KIND: DatasetKind = "stimuli"
@@ -106,4 +107,12 @@ def filter_previously_used_stimuli(
     KeyError
         When ``record_id`` is missing from ``records``.
     """
-    raise NotImplementedError
+    if STANDARDIZED_RECORD_ID_COLUMN not in records.columns:
+        raise KeyError(STANDARDIZED_RECORD_ID_COLUMN)
+    if records.empty:
+        return records.copy(), 0
+
+    is_new = ~records[STANDARDIZED_RECORD_ID_COLUMN].map(str).isin(list(stimuli_ids))
+    skipped = len(records) - int(is_new.sum())
+    kept = records.loc[is_new].reset_index(drop=True)
+    return kept, skipped
