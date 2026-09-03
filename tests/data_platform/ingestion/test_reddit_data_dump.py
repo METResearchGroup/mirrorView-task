@@ -81,6 +81,16 @@ class TestIterDumpComments:
         assert len(result) == 1
         assert result[0].id == "mvbyos2"
 
+    def test_skips_rows_that_fail_validation(self, tmp_path: Path) -> None:
+        """A line that is JSON but not a dump comment is skipped."""
+        fixture = tmp_path / "RC_test.zst"
+        _write_zst(fixture, [{"id": "missing-fields"}, VALID_DUMP_COMMENT])
+
+        result = list(iter_dump_comments(fixture))
+
+        assert len(result) == 1
+        assert result[0].id == "mvbyos2"
+
     def test_raises_when_path_is_not_a_file(self, tmp_path: Path) -> None:
         """A missing dump file raises FileNotFoundError."""
         missing = tmp_path / "missing.zst"
@@ -277,6 +287,20 @@ class TestProcessDumpFile:
         with pytest.raises(FileNotFoundError):
             process_dump_file(missing, output_path, 10, 1, SYNC_TIMESTAMP)
 
+    def test_writes_string_columns_when_no_keepers(self, tmp_path: Path) -> None:
+        """An empty sample still writes the ingest string columns."""
+        input_path = tmp_path / "RC_test.zst"
+        output_path = tmp_path / "RC_test.parquet"
+        _write_zst(input_path, [_dump_record("gone", author="[deleted]")])
+        expected_columns = list(SyncRedditCommentModel.model_fields.keys())
+
+        process_dump_file(input_path, output_path, 10, 1, SYNC_TIMESTAMP)
+        frame = pd.read_parquet(output_path)
+
+        assert list(frame.columns) == expected_columns
+        assert len(frame) == 0
+        assert all(pd.api.types.is_string_dtype(frame[column]) for column in frame.columns)
+
 
 class TestMain:
     """Tests for main()."""
@@ -312,6 +336,96 @@ class TestMain:
         assert len(second_frame) == 1
         assert first_frame.iloc[0]["sync_timestamp"] == SYNC_TIMESTAMP
         assert second_frame.iloc[0]["sync_timestamp"] == SYNC_TIMESTAMP
+
+    def test_skips_missing_default_month_files(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Default month files that are missing are skipped."""
+        may_input = tmp_path / "RC_2025-05.zst"
+        output_dir = tmp_path / "filtered"
+        _write_zst(may_input, [_dump_record("may1")])
+        monkeypatch.setattr(
+            "data_platform.ingestion.data_dumps.reddit.process_dump.SOURCE_DUMP_DIR",
+            tmp_path,
+        )
+        monkeypatch.setattr(
+            "data_platform.ingestion.data_dumps.reddit.process_dump.get_current_timestamp",
+            lambda: SYNC_TIMESTAMP,
+        )
+
+        main(["--output-dir", str(output_dir), "--sample-size", "10"])
+
+        assert (output_dir / "RC_2025-05.parquet").is_file()
+        assert not (output_dir / "RC_2025-06.parquet").exists()
+
+    def test_raises_when_no_default_month_files_exist(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """If every default month file is missing, the source dump dir is reported."""
+        output_dir = tmp_path / "filtered"
+        monkeypatch.setattr(
+            "data_platform.ingestion.data_dumps.reddit.process_dump.SOURCE_DUMP_DIR",
+            tmp_path,
+        )
+
+        with pytest.raises(FileNotFoundError) as raised:
+            main(["--output-dir", str(output_dir)])
+
+        assert raised.value.args[0] == tmp_path
+        assert not output_dir.exists()
+
+    def test_raises_when_explicit_input_file_is_missing(self, tmp_path: Path) -> None:
+        """An explicit --input-file that is missing fails before any write."""
+        existing = tmp_path / "RC_ok.zst"
+        missing = tmp_path / "RC_missing.zst"
+        output_dir = tmp_path / "filtered"
+        _write_zst(existing, [_dump_record("keep1")])
+
+        with pytest.raises(FileNotFoundError):
+            main(
+                [
+                    "--input-file",
+                    str(existing),
+                    "--input-file",
+                    str(missing),
+                    "--output-dir",
+                    str(output_dir),
+                ]
+            )
+
+        assert not output_dir.exists()
+
+    def test_raises_before_write_when_later_output_exists(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """An existing later parquet fails the run before the first write."""
+        first_input = tmp_path / "RC_2025-05.zst"
+        second_input = tmp_path / "RC_2025-06.zst"
+        output_dir = tmp_path / "filtered"
+        later_output = output_dir / "RC_2025-06.parquet"
+        _write_zst(first_input, [_dump_record("may1")])
+        _write_zst(second_input, [_dump_record("jun1")])
+        output_dir.mkdir()
+        later_output.write_text("already written")
+        monkeypatch.setattr(
+            "data_platform.ingestion.data_dumps.reddit.process_dump.get_current_timestamp",
+            lambda: SYNC_TIMESTAMP,
+        )
+
+        with pytest.raises(FileExistsError):
+            main(
+                [
+                    "--input-file",
+                    str(first_input),
+                    "--input-file",
+                    str(second_input),
+                    "--output-dir",
+                    str(output_dir),
+                ]
+            )
+
+        assert not (output_dir / "RC_2025-05.parquet").exists()
+        assert later_output.read_text() == "already written"
 
 
 class TestInputPaths:

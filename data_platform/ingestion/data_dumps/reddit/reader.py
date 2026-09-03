@@ -47,6 +47,7 @@ def iter_dump_comments(input_path: Path) -> Iterator[DumpCommentRaw]:
                     continue
                 try:
                     raw = json.loads(stripped)
-                    yield DumpCommentRaw.model_validate(raw)
-                except (json.JSONDecodeError, ValueError):
+                    comment = DumpCommentRaw.model_validate(raw)
+                except ValueError:
                     continue
+                yield comment

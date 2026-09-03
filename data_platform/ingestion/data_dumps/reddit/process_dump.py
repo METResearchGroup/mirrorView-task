@@ -71,7 +71,7 @@ def _rows_for_sampled_comments(
 def _write_comment_parquet(rows: list[dict[str, object]], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     fieldnames = list(SyncRedditCommentModel.model_fields.keys())
-    frame = pd.DataFrame(rows) if rows else pd.DataFrame(columns=fieldnames)
+    frame = pd.DataFrame(rows, columns=fieldnames, dtype="str")
     frame.to_parquet(output_path, index=PARQUET_INDEX)
 
 
@@ -116,6 +116,7 @@ def process_dump_file(
         Random(sample_seed),
     )
     rows = _rows_for_sampled_comments(sampled, sync_timestamp)
+    del sampled
     _write_comment_parquet(rows, output_path)
     return output_path
 
@@ -137,6 +138,38 @@ def _input_paths(input_files: Sequence[str] | None) -> list[Path]:
     return [SOURCE_DUMP_DIR / f"{stem}{ZST_SUFFIX}" for stem in DEFAULT_DUMP_STEMS]
 
 
+def _default_input_paths_that_exist(paths: list[Path]) -> list[Path]:
+    existing: list[Path] = []
+    for path in paths:
+        if path.is_file():
+            existing.append(path)
+            continue
+        print(f"Skipping missing dump file {path}", flush=True)
+    if not existing:
+        raise FileNotFoundError(SOURCE_DUMP_DIR)
+    return existing
+
+
+def _jobs_to_process(
+    input_files: Sequence[str] | None,
+    output_dir: Path,
+) -> list[tuple[Path, Path]]:
+    requested = _input_paths(input_files)
+    if input_files:
+        for path in requested:
+            if not path.is_file():
+                raise FileNotFoundError(path)
+        selected = requested
+    else:
+        selected = _default_input_paths_that_exist(requested)
+    jobs = [
+        (path, output_dir / f"{path.stem}{PARQUET_SUFFIX}") for path in selected
+    ]
+    for input_path, output_path in jobs:
+        _require_processable_paths(input_path, output_path)
+    return jobs
+
+
 def main(argv: list[str] | None = None) -> None:
     """Process dump files from command-line arguments.
 
@@ -146,8 +179,8 @@ def main(argv: list[str] | None = None) -> None:
         Argument list without the program name. ``None`` reads ``sys.argv``.
     """
     args = _parse_args(argv)
-    for input_path in _input_paths(args.input_files):
-        output_path = args.output_dir / f"{input_path.stem}{PARQUET_SUFFIX}"
+    jobs = _jobs_to_process(args.input_files, args.output_dir)
+    for input_path, output_path in jobs:
         print(f"Processing {input_path} -> {output_path}", flush=True)
         process_dump_file(
             input_path,
