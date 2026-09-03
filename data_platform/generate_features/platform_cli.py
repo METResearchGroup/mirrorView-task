@@ -382,7 +382,11 @@ def resolve_resume_checkpoint(
     FileNotFoundError
         When ``latest`` is set and no unfinished feature run exists.
     """
-    raise NotImplementedError
+    if (checkpoint is not None and latest) or (checkpoint is None and not latest):
+        raise ValueError(RESUME_FLAG_ERROR)
+    if checkpoint is not None:
+        return checkpoint
+    return require_latest_unfinished_feature_run_dir(feature_storage).name
 
 
 def generate_platform_features_from_checkpoint(
