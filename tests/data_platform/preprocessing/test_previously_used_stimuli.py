@@ -45,7 +45,7 @@ class TestExtractStimuliIds:
     """Tests for extract_stimuli_ids()."""
 
     def test_returns_post_primary_keys(self) -> None:
-        """Collects distinct stimuli keys from the catalog column."""
+        """The function returns distinct stimuli keys from the catalog column."""
         frame = _stimuli_frame("twitter_1", "bluesky_2")
         expected = {"twitter_1", "bluesky_2"}
 
@@ -54,7 +54,7 @@ class TestExtractStimuliIds:
         assert result == expected
 
     def test_omits_blank_and_duplicate_keys(self) -> None:
-        """Blank, whitespace, and missing cells are dropped; duplicates collapse."""
+        """Blank, whitespace, and missing cells are dropped, and duplicate keys appear only once."""
         frame = _stimuli_frame("twitter_1", "twitter_1", "", "   ", None)
         expected = {"twitter_1"}
 
@@ -94,7 +94,7 @@ class TestLoadPreviouslyUsedStimuliIds:
     def test_unions_ids_from_stimuli_datasets_only(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """Results tables are ignored; stimuli tables are unioned."""
+        """Results tables are ignored, and stimuli tables are combined into one set."""
         datasets = {
             "KEEP_STIMULI": _dataset_entry("KEEP_STIMULI", STIMULI_DATASET_KIND),
             "OTHER_STIMULI": _dataset_entry("OTHER_STIMULI", STIMULI_DATASET_KIND),
@@ -122,7 +122,7 @@ class TestLoadPreviouslyUsedStimuliIds:
     def test_raises_when_stimuli_file_is_missing(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
-        """A registered stimuli CSV that is not on disk fails fast."""
+        """A registered stimuli CSV that is not on disk raises FileNotFoundError."""
         datasets = {
             "MISSING_STIMULI": _dataset_entry("MISSING_STIMULI", STIMULI_DATASET_KIND),
         }
@@ -143,7 +143,7 @@ class TestFilterPreviouslyUsedStimuli:
     """Tests for filter_previously_used_stimuli()."""
 
     def test_drops_rows_whose_record_id_was_used_as_stimuli(self) -> None:
-        """Matching record_id values are removed; other rows stay."""
+        """Matching record_id values are removed, and the other rows stay."""
         records = _records_frame("twitter_1", "twitter_2")
         stimuli_ids = {"twitter_1"}
         expected_ids = ["twitter_2"]
@@ -169,7 +169,7 @@ class TestFilterPreviouslyUsedStimuli:
         assert skipped == expected_skipped
 
     def test_keeps_all_rows_when_no_stimuli_match(self) -> None:
-        """Unrelated stimuli ids do not drop candidates."""
+        """Rows stay when their record_id is not in the stimuli set."""
         records = _records_frame("twitter_1")
         stimuli_ids = {"twitter_other"}
         expected_skipped = 0
@@ -180,7 +180,7 @@ class TestFilterPreviouslyUsedStimuli:
         assert skipped == expected_skipped
 
     def test_empty_frame_returns_copy_and_zero_skipped(self) -> None:
-        """An empty candidate table is a no-op."""
+        """An empty candidate table returns an empty copy and a skipped count of 0."""
         records = pd.DataFrame(columns=["record_id"])
         expected_skipped = 0
 
@@ -207,12 +207,12 @@ class TestFilterPreviouslyUsedStimuli:
 
 
 class TestFilterDuplicateRecords:
-    """Tests for filter_duplicate_records() README 4c behavior."""
+    """Tests that filter_duplicate_records() drops previously used stimuli before it collapses duplicate ids."""
 
     def test_drops_previously_used_stimuli_before_collapse(
         self, data_root: Path
     ) -> None:
-        """A stimuli record_id is removed even when it is new to preprocess."""
+        """A record_id that is in the stimuli set is removed even when it is not in a prior preprocessed run."""
         used_id = "1000000000000000001"
         kept_id = "1000000000000000002"
         records = pd.DataFrame(

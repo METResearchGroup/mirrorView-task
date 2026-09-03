@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. Preprocess now drops records whose ingest `record_id` already appears as a study stimuli `post_primary_key`. The skip print reports that count next to the already-preprocessed skip count. [PR #158](https://github.com/METResearchGroup/mirrorView-task/pull/158)
+1. Preprocess now drops records whose ingest `record_id` matches a study stimuli `post_primary_key`, including the Reddit comment_fullname form of Part 2 catalog keys. The stdout line reports the stimuli skip count next to the already-preprocessed skip count. [PR #158](https://github.com/METResearchGroup/mirrorView-task/pull/158)
 2. New Reddit raw runs write comments only. Reddit ingest still uses PRAW to open a subreddit's hot, top, or new page, and it then reads the comments under each post. The ingest script no longer writes `posts.csv` or `posts.parquet`. [PR #151](https://github.com/METResearchGroup/mirrorView-task/pull/151)
 3. `data_platform` now uses "standardized" instead of "canonical" for shared column helpers and constants (`add_standardized_text_column`, `STANDARDIZED_TEXT_COLUMN`, and related names). Column values are unchanged. [PR #150](https://github.com/METResearchGroup/mirrorView-task/pull/150)
 4. New Reddit comment rows keep `comment_fullname`, `author`, `body`, `created_at`, and `sync_timestamp`. The writer still adds `record_id` from `comment_fullname`. Older comment files that still have extra columns will not load until you ingest the comments again. [PR #148](https://github.com/METResearchGroup/mirrorView-task/pull/148)

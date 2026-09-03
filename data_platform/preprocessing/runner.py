@@ -36,12 +36,12 @@ AUTHOR_COLUMN = "author"
 
 
 class DuplicateFilterResult(NamedTuple):
-    """Surviving preprocess rows plus skip counts for already-seen ids.
+    """The remaining preprocess rows, plus skip counts for ids that were already seen.
 
     ``skipped_already_preprocessed`` counts rows dropped because they were
     already written in a prior preprocessed run. ``skipped_previously_used_stimuli``
     counts rows dropped because ``record_id`` matches a study stimuli key.
-    Collapse of duplicate ids in the current batch is not counted.
+    Drops from collapsing duplicate ids in the current batch are not counted.
     """
 
     records: pd.DataFrame
@@ -308,8 +308,8 @@ def filter_duplicate_records(
     -------
     DuplicateFilterResult
         Surviving records, the already-preprocessed skip count, and the
-        previously used stimuli skip count. In-batch collapse drops are not
-        counted.
+        previously used stimuli skip count. Drops from collapsing duplicate
+        ids in the current batch are not counted.
     """
     if records.empty:
         return DuplicateFilterResult(records.copy(), 0, 0)
@@ -341,11 +341,12 @@ def preprocess_records(
 ) -> Path:
     """Run the full preprocessing pipeline for one dataset and persist the result.
 
-    Loads all completed raw runs, adds standardized columns, drops rows seen in
-    prior preprocessed runs, rows already used as study stimuli, and duplicate
-    ids within the batch, applies platform-specific text transforms and
-    validators, then writes a new preprocessed run directory. Also prints a
-    one-line keep/skip summary to stdout.
+    The function loads all completed raw runs and adds standardized columns.
+    It then drops rows seen in prior preprocessed runs, rows already used as
+    study stimuli, and duplicate ids within the batch. After that, it applies
+    platform-specific text transforms and validators, and it writes a new
+    preprocessed run directory. It also prints a one-line keep and skip
+    summary to stdout.
 
     Parameters
     ----------
@@ -362,7 +363,8 @@ def preprocess_records(
     ValueError
         If ``dataset_id`` is malformed.
     FileNotFoundError
-        When no raw runs exist for the dataset.
+        When no raw runs exist for the dataset, or a registered stimuli CSV
+        is missing.
     RuntimeError
         When a raw run is incomplete.
     KeyError
