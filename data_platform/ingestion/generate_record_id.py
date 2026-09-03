@@ -8,7 +8,14 @@ Run this import from the repo root with
 
 from __future__ import annotations
 
+import hashlib
 from typing import Any, Mapping
+
+from data_platform.utils.platform_specific_columns import (
+    BLUESKY_COLUMNS,
+    REDDIT_COLUMNS,
+    TWITTER_COLUMNS,
+)
 
 RECORD_ID_COLUMN = "record_id"
 
@@ -16,10 +23,60 @@ INTEGRATION_BLUESKY = "bluesky"
 INTEGRATION_REDDIT = "reddit"
 INTEGRATION_TWITTER = "twitter"
 
+_INTEGRATION_PRIMARY_KEY_COLUMNS: dict[str, str] = {
+    INTEGRATION_BLUESKY: BLUESKY_COLUMNS.records_id_column,
+    INTEGRATION_REDDIT: REDDIT_COLUMNS.records_id_column,
+    INTEGRATION_TWITTER: TWITTER_COLUMNS.records_id_column,
+}
+
 
 def generate_record_id(integration: str, primary_key: str) -> str:
+    """Return the stable ``{integration}_{id}`` key used across study datasets.
+
+    Bluesky hashes ``uri`` with SHA-256. Twitter and Reddit use the platform
+    primary key string unchanged.
+
+    Parameters
+    ----------
+    integration
+        Platform name: ``bluesky``, ``reddit``, or ``twitter``.
+    primary_key
+        Platform-native unique id for the row (for example Bluesky ``uri``,
+        Reddit ``comment_fullname``, or Twitter ``tweet_id``).
+
+    Returns
+    -------
+    str
+        Stable record id with the integration prefix.
+
+    Raises
+    ------
+    ValueError
+        When ``integration`` is unknown or ``primary_key`` is empty.
+    """
     raise NotImplementedError
 
 
 def attach_record_id(row: Mapping[str, Any], integration: str) -> dict[str, Any]:
+    """Return a copy of ``row`` with ``record_id`` set from the platform primary key.
+
+    Parameters
+    ----------
+    row
+        One ingest record dict. Must include the platform primary key column.
+    integration
+        Platform name passed to :func:`generate_record_id`.
+
+    Returns
+    -------
+    dict[str, Any]
+        A new dict equal to ``row`` plus ``record_id``.
+
+    Raises
+    ------
+    KeyError
+        When the platform primary key column is missing from ``row``.
+    ValueError
+        When ``integration`` is unknown or the primary key value is empty.
+    """
     raise NotImplementedError
