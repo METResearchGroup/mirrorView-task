@@ -90,22 +90,6 @@ def test_twitter_text_validators(text: str, expected: bool) -> None:
     assert preprocess_twitter.passes_all_validators(text) is expected
 
 
-def test_filter_posts_drops_invalid_rows() -> None:
-    posts = pd.DataFrame(
-        [
-            _tweet_row(tweet_id="1000000000000000001"),
-            _tweet_row(tweet_id="1000000000000000002", text="too short"),
-            _tweet_row(
-                tweet_id="1000000000000000003",
-                text=_valid_text() + " https://example.com/extra",
-            ),
-        ]
-    )
-    filtered = preprocess_twitter.filter_posts(posts)
-    assert len(filtered) == 1
-    assert filtered.iloc[0]["tweet_id"] == "1000000000000000001"
-
-
 def test_preprocess_records_writes_output(data_root) -> None:
     dataset_id = VALID_TWITTER_DATASET_ID
     raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
@@ -309,3 +293,39 @@ def test_second_preprocess_run_print_names_prior_preprocessed_run(
 
     assert "already in a prior preprocessed run" in printed
     assert "skipped 1 already in a prior preprocessed run" in printed
+
+
+def test_preprocess_drops_previously_used_stimuli(
+    data_root, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """A raw row whose record_id is a prior study stimulus is not written."""
+    dataset_id = VALID_TWITTER_DATASET_ID
+    tweet_id = "1000000000000000001"
+    stimuli_ids = {f"twitter_{tweet_id}"}
+    monkeypatch.setattr(
+        "data_platform.preprocessing.runner.load_previously_used_stimuli_ids",
+        lambda datasets: stimuli_ids,
+    )
+    raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-14:00:00")
+    raw_storage.write_records([_tweet_row(tweet_id=tweet_id)], run_dir)
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 1,
+        },
+    )
+
+    output_dir = preprocess_twitter.preprocess_records(dataset_id)
+
+    preprocessed_storage = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id)
+    output = preprocessed_storage.load_records(output_dir)
+    metadata = preprocessed_storage.load_run_metadata(output_dir)
+    printed = capsys.readouterr().out
+    expected_rows = 0
+
+    assert len(output) == expected_rows
+    assert metadata["row_counts"]["input"] == expected_rows
+    assert metadata["row_counts"]["output"] == expected_rows
+    assert "skipped 1 already used as stimuli" in printed

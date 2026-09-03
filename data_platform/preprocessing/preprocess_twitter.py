@@ -11,14 +11,12 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 
-import pandas as pd
 import typer
 
 from data_platform.models.sync import SyncTwitterPostModel
 from data_platform.preprocessing.runner import (
     PreprocessPlatformSpec,
     TextValidator,
-    filter_records,
 )
 from data_platform.preprocessing.runner import (
     passes_all_validators as _passes_all_validators,
@@ -61,21 +59,6 @@ def passes_all_validators(
     validators: Sequence[TextValidator] = POST_TEXT_VALIDATORS,
 ) -> bool:
     return _passes_all_validators(text, validators)
-
-
-def filter_posts(
-    posts: pd.DataFrame,
-    validators: Sequence[TextValidator] = POST_TEXT_VALIDATORS,
-) -> pd.DataFrame:
-    spec = PreprocessPlatformSpec(
-        platform=TWITTER_SPEC.platform,
-        storage_cls=TWITTER_SPEC.storage_cls,
-        model_cls=TWITTER_SPEC.model_cls,
-        columns=TWITTER_SPEC.columns,
-        text_validators=tuple(validators),
-        author_handle_source_column=TWITTER_SPEC.author_handle_source_column,
-    )
-    return filter_records(posts, spec)
 
 
 def preprocess_records(dataset_id: str) -> Path:

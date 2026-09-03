@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import pandas as pd
 import pytest
 
 from data_platform.preprocessing import preprocess_reddit
@@ -57,36 +56,6 @@ def test_reddit_text_validators(body: str, expected: bool) -> None:
 )
 def test_reddit_row_validators(author: str, expected: bool) -> None:
     assert preprocess_reddit.passes_row_validators(author) is expected
-
-
-def test_filter_comments_drops_invalid_rows() -> None:
-    comments = pd.DataFrame(
-        [
-            _comment_row(comment_fullname="t1_keep"),
-            _comment_row(
-                comment_fullname="t1_drop_removed",
-                body="[removed]",
-            ),
-            _comment_row(
-                comment_fullname="t1_drop_mod",
-                author="AutoModerator",
-            ),
-        ]
-    )
-    filtered = preprocess_reddit.filter_comments(comments)
-    assert len(filtered) == 1
-    assert filtered.iloc[0]["comment_fullname"] == "t1_keep"
-
-
-def test_filter_comments_does_not_replace_existing_text_from_body() -> None:
-    """Existing standardized text is what validators see, even if body would fail."""
-    comments = pd.DataFrame([_comment_row(comment_fullname="t1_keep")])
-    comments["text"] = _valid_body()
-    comments["body"] = "[removed]"
-    filtered = preprocess_reddit.filter_comments(comments)
-    assert len(filtered) == 1
-    assert filtered.iloc[0]["text"] == _valid_body()
-    assert filtered.iloc[0]["body"] == "[removed]"
 
 
 def test_preprocess_records_writes_output(data_root) -> None:
@@ -147,21 +116,6 @@ class TestRedditCommentMinLength:
         assert len(MIN_LENGTH_ENGLISH_BODY) == 30
         result = preprocess_reddit.passes_all_validators(MIN_LENGTH_ENGLISH_BODY)
         assert result is True
-
-    def test_filter_comments_drops_short_english_row(self) -> None:
-        """filter_comments keeps the valid row and drops the short English row."""
-        comments = pd.DataFrame(
-            [
-                _comment_row(comment_fullname="t1_keep"),
-                _comment_row(
-                    comment_fullname="t1_drop_short",
-                    body=SHORT_ENGLISH_BODY,
-                ),
-            ]
-        )
-        result = preprocess_reddit.filter_comments(comments)
-        expected_ids = ["t1_keep"]
-        assert result["comment_fullname"].tolist() == expected_ids
 
 
 def test_individual_reddit_validator_functions() -> None:

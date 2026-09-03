@@ -159,15 +159,14 @@ def _process_one_feature(
 
 def _mark_sync_completed(
     metadata: FeatureRunMetadata,
-    feature_names: tuple[str, ...],
     features_dir: Path,
 ) -> None:
-    """Set sync_status completed when every feature entry is marked completed."""
+    """Set sync_status completed when every stored feature entry is completed."""
+    if not metadata.features:
+        return
     all_done = all(
-        metadata.features.get(name)
-        and metadata.features[name].status == "completed"
-        and metadata.features[name].failed_batches == 0
-        for name in feature_names
+        status.status == "completed" and status.failed_batches == 0
+        for status in metadata.features.values()
     )
     if all_done:
         set_sync_status_completed(metadata)
@@ -202,7 +201,7 @@ def generate_features(
         )
         print(f"Completed feature generation for {feature_name}")
 
-    _mark_sync_completed(metadata, feature_names, config.features_dir)
+    _mark_sync_completed(metadata, config.features_dir)
 
     print(f"generate_features: finished {len(written)} features under {config.features_dir}")
     return written

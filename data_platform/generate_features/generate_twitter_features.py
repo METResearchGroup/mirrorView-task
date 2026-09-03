@@ -46,16 +46,23 @@ def generate_twitter_features(
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
-    run_dir_name: str | None = None,
+    checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Load Twitter posts and generate the requested feature labels."""
+    """Load Twitter posts and generate the requested feature labels.
+
+    Parameters
+    ----------
+    checkpoint
+        Existing ``features/{timestamp}/`` folder to resume. Pass None when
+        you want a new run.
+    """
     return generate_platform_features(
         TWITTER_SPEC,
         dataset_id,
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
-        run_dir_name=run_dir_name,
+        checkpoint=checkpoint,
     )
 
 
@@ -72,10 +79,10 @@ def main(
         "--features",
         help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
     ),
-    run_dir: str | None = typer.Option(
+    checkpoint: str | None = typer.Option(
         None,
-        "--run-dir",
-        help="Feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
+        "--checkpoint",
+        help="Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
     ),
 ) -> None:
     """CLI entrypoint for resumable Twitter feature generation."""
@@ -84,7 +91,7 @@ def main(
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=features_from_cli(features),
-        run_dir_name=run_dir,
+        checkpoint=checkpoint,
     )
 
 
