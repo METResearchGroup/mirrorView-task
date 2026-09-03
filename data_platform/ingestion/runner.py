@@ -51,7 +51,7 @@ SummarizeRunFn = Callable[[dict[str, Any], Path], None]
 
 @dataclass(frozen=True)
 class KeywordSyncParams:
-    """Dedupe and checkpoint settings for one keyword-platform sync loop."""
+    """Dedupe identity and progress labels for one Bluesky or Twitter keyword loop."""
 
     id_column: str
     record_type: str

@@ -21,32 +21,23 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from data_platform.ingestion.runner import (
+    KeywordSyncParams,
+    SyncPlatformSpec,
+    effective_limit_per_keyword,
+    make_sync_cli,
+    remaining_record_budget,
+    run_keyword_sync_tasks,
+    sync_with_spec,
+)
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
-    ensure_dataset_manifest,
-    finalize_local_disk_sync,
-    increment_duplicate_skip_counters,
-    mark_task_completed,
-    mark_task_failed,
-    mark_task_in_progress,
-    parse_max_posts,
-    prepare_sync_run,
-    require_dataset_id,
-    resolve_dedupe_policy,
-    resolve_limit_per_task,
-    run_checkpointed_sync,
-    run_sync_cli,
 )
 from data_platform.ingestion.sync_clients import init_twitter_client
 from data_platform.ingestion.twitter_client import fetch_posts_for_keyword
 from data_platform.utils.config_paths import load_yaml_config
-from data_platform.utils.deduplication import (
-    DedupeConfig,
-    DedupeSession,
-    policy_includes_prior_runs,
-)
-from data_platform.utils.storage import StorageStage, TwitterStorageManager
+from data_platform.utils.storage import TwitterStorageManager
 
 TWEETS_RECORD_TYPE = "twitter.tweet"
 
@@ -99,16 +90,17 @@ def init_sync_metadata(
 
 
 def _effective_limit_per_keyword(ingestion_params: dict[str, Any], remaining: int | None) -> int:
-    per_keyword = resolve_limit_per_task(ingestion_params)
-    if remaining is None:
-        return per_keyword
-    return max(0, min(per_keyword, remaining))
+    return effective_limit_per_keyword(ingestion_params, remaining)
 
 
 def _remaining_post_budget(metadata: dict[str, Any], max_posts_int: int | None) -> int | None:
-    if max_posts_int is None:
-        return None
-    return max_posts_int - metadata["row_count"]
+    return remaining_record_budget(metadata, max_posts_int)
+
+
+def _validate_twitter_config(config: dict[str, Any]) -> None:
+    record_types = config["record_types"]
+    if not isinstance(record_types, list) or TWEETS_RECORD_TYPE not in record_types:
+        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
 
 
 def run_sync_tasks(
@@ -122,87 +114,84 @@ def run_sync_tasks(
     sync_timestamp: str,
     filename: str,
 ) -> None:
-    """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
-
-    Skips completed tasks on resume, stops early when max_posts is reached, and records failures
-    without aborting the full run.
-
-    Parameters
-    ----------
-    filename
-        Records file name from ``storage.records_filename``, including the dataset format suffix.
-    """
-    max_posts_int = parse_max_posts(ingestion_params)
+    """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task."""
     lang = str(ingestion_params.get("lang", "en"))
     exclude = list(ingestion_params.get("exclude", ["reply", "retweet", "quote"]))
-    dedupe_session = DedupeSession(
-        DedupeConfig(
-            id_column="tweet_id",
-            filename=filename,
-            include_prior_runs=policy_includes_prior_runs(
-                resolve_dedupe_policy(ingestion_params)
-            ),
-        )
-    )
-    dedupe_session.warm(storage, output_dir)
 
-    def process_task(task: TwitterTask, entry: dict[str, Any]) -> None:
-        mark_task_in_progress(entry, storage, output_dir, metadata)
-
-        limit = _effective_limit_per_keyword(
-            ingestion_params,
-            _remaining_post_budget(metadata, max_posts_int),
-        )
-        try:
-            rows, stats = fetch_posts_for_keyword(
-                client,
-                task.keyword,
-                limit=limit,
-                lang=lang,
-                exclude=exclude,
-                sync_timestamp=sync_timestamp,
-            )
-        except Exception as exc:  # noqa: BLE001 — record and continue
-            mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
-            return
-
-        result = storage.append_deduped_records(
-            rows,
-            output_dir,
-            dedupe_session=dedupe_session,
-            filename=filename,
-        )
-        increment_duplicate_skip_counters(
-            metadata,
-            record_type=TWEETS_RECORD_TYPE,
-            skipped=result.skipped,
-        )
-        metadata["row_count"] = len(dedupe_session.seen_ids)
-        mark_task_completed(
-            entry,
-            storage,
-            output_dir,
-            metadata,
-            entry_updates={
-                "pages_fetched": stats["pages_fetched"],
-                "rows_collected": stats["rows_collected"],
-            },
+    def fetch_for_task(
+        fetch_client: Any,
+        task: TwitterTask,
+        _sync_timestamp: str,
+        remaining: int | None,
+    ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        limit = _effective_limit_per_keyword(ingestion_params, remaining)
+        return fetch_posts_for_keyword(
+            fetch_client,
+            task.keyword,
+            limit=limit,
+            lang=lang,
+            exclude=exclude,
+            sync_timestamp=sync_timestamp,
         )
 
-        print(
-            f"sync_records: {task.task_id} -> {stats['rows_collected']} rows "
-            f"(appended {result.kept}, pages={stats['pages_fetched']})"
-        )
-
-    run_checkpointed_sync(
-        sync_tasks,
-        metadata,
-        storage,
+    run_keyword_sync_tasks(
+        client,
+        ingestion_params,
         output_dir,
-        record_cap=max_posts_int,
-        tqdm_desc="Syncing keywords",
-        process_task=process_task,
+        storage,
+        metadata,
+        sync_tasks,
+        filename=filename,
+        params=KeywordSyncParams(
+            id_column="tweet_id",
+            record_type=TWEETS_RECORD_TYPE,
+        ),
+        fetch_for_task=fetch_for_task,
     )
+
+
+def _twitter_run_sync_tasks(
+    client: Any,
+    ingestion_params: dict[str, Any],
+    output_dir: Path,
+    storage: TwitterStorageManager,
+    metadata: dict[str, Any],
+    sync_tasks: list[TwitterTask],
+    *,
+    config: dict[str, Any],
+    config_path: Path,
+) -> None:
+    _ = config, config_path
+    run_sync_tasks(
+        client,
+        ingestion_params,
+        output_dir,
+        storage,
+        metadata,
+        sync_tasks,
+        sync_timestamp=str(metadata["sync_timestamp"]),
+        filename=storage.records_filename,
+    )
+
+
+def _summarize_twitter_run(metadata: dict[str, Any], output_dir: Path) -> None:
+    print(
+        f"sync_records: wrote {metadata['row_count']} rows to {output_dir} "
+        f"(status={metadata['sync_status']})"
+    )
+
+
+TWITTER_SYNC_SPEC = SyncPlatformSpec(
+    platform="twitter",
+    storage_cls=TwitterStorageManager,
+    entity_label="keywords",
+    init_client=lambda: init_twitter_client(),
+    build_sync_tasks=build_sync_tasks,
+    task_progress_builder=_initial_task_progress,
+    validate_config=_validate_twitter_config,
+    run_sync_tasks=_twitter_run_sync_tasks,
+    summarize_run=_summarize_twitter_run,
+)
 
 
 load_config = load_yaml_config
@@ -213,75 +202,23 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Twitter records per config and write raw records plus metadata.
-
-    Creates the dataset manifest first so storage can read the declared format.
-    Stops before creating the Twitter client when ``record_types`` is missing
-    or does not include ``TWEETS_RECORD_TYPE``.
-
-    Raises
-    ------
-    KeyError
-        When the config has no ``record_types`` key.
-    ValueError
-        When ``record_types`` is empty or does not include
-        ``TWEETS_RECORD_TYPE``.
-    """
-    config = load_config(config_path)
-    dataset_id = require_dataset_id(config, platform="twitter")
-    ensure_dataset_manifest(
-        TwitterStorageManager(StorageStage.RAW, dataset_id),
-        "twitter",
-        dataset_id,
-        config,
+    """Fetch Twitter records per config and write raw records plus metadata."""
+    return sync_with_spec(
         config_path,
-    )
-    storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
-
-    ingestion_params = config["ingestion_params"]
-    sync_tasks = build_sync_tasks(ingestion_params)
-    record_types = config["record_types"]
-    if not isinstance(record_types, list) or TWEETS_RECORD_TYPE not in record_types:
-        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
-    client = init_twitter_client()
-
-    output_dir, metadata = prepare_sync_run(
-        storage,
-        sync_tasks,
         run_dir_name=run_dir_name,
-        init_metadata_fn=lambda ts: init_sync_metadata(config, config_path, ts, sync_tasks),
-        entity_label="keywords",
+        spec=TWITTER_SYNC_SPEC,
+        config_loader=load_config,
     )
-    sync_timestamp = str(metadata["sync_timestamp"])
-    filename = storage.records_filename
-
-    run_sync_tasks(
-        client,
-        ingestion_params,
-        output_dir,
-        storage,
-        metadata,
-        sync_tasks,
-        sync_timestamp=sync_timestamp,
-        filename=filename,
-    )
-    finalize_local_disk_sync(storage, output_dir, metadata)
-
-    total_rows = metadata["row_count"]
-    print(
-        f"sync_records: wrote {total_rows} rows to {output_dir} (status={metadata['sync_status']})"
-    )
-    return output_dir
 
 
 def main() -> None:
-    run_sync_cli(
-        sync_records_fn=sync_records,
+    make_sync_cli(
+        TWITTER_SYNC_SPEC,
         config_help=(
             "Ingestion YAML path relative to the repo root "
             "(e.g. data_platform/ingestion/configs/twitter/mirrorview.yaml)"
         ),
-    )
+    )()
 
 
 if __name__ == "__main__":

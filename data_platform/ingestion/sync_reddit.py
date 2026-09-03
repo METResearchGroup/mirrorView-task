@@ -30,25 +30,21 @@ import prawcore.exceptions
 from praw.models.comment_forest import CommentForest
 
 from data_platform.ingestion.retry import retry_reddit_request
+from data_platform.ingestion.runner import SyncPlatformSpec, make_sync_cli, sync_with_spec
 from data_platform.ingestion.sync_checkpoint import (
     COMMENTS_DEDUPE_POLICY_KEY,
     DEDUPE_POLICY_KEY,
     POSTS_DEDUPE_POLICY_KEY,
     TaskStatus,
     build_base_sync_metadata,
-    ensure_dataset_manifest,
-    finalize_local_disk_sync,
     increment_duplicate_skip_counters,
     mark_task_completed,
     mark_task_failed,
     mark_task_in_progress,
     parse_max_comments,
-    prepare_sync_run,
-    require_dataset_id,
     resolve_dedupe_policy,
     resolve_limit_per_task,
     run_checkpointed_sync,
-    run_sync_cli,
 )
 from data_platform.ingestion.sync_clients import init_reddit_client
 from data_platform.utils.config_paths import load_yaml_config
@@ -57,7 +53,7 @@ from data_platform.utils.deduplication import (
     DedupeSession,
     policy_includes_prior_runs,
 )
-from data_platform.utils.storage import RedditStorageManager, StorageStage
+from data_platform.utils.storage import RedditStorageManager
 
 COMMENTS_RECORD_TYPE = "reddit.comment"
 POSTS_RECORD_TYPE = "reddit.post"
@@ -591,46 +587,30 @@ def run_sync_tasks(
 load_config = load_yaml_config
 
 
-def sync_records(
-    config_path: Path,
-    *,
-    run_dir_name: str | None = None,
-) -> Path:
-    """Fetch Reddit records per config and write raw records plus metadata.
-
-    Creates the dataset manifest first so storage can read the declared format.
-    """
-    config = load_config(config_path)
-    dataset_id = require_dataset_id(config, platform="reddit")
-    ensure_dataset_manifest(
-        RedditStorageManager(StorageStage.RAW, dataset_id),
-        "reddit",
-        dataset_id,
-        config,
-        config_path,
-    )
-    comment_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
-    post_storage = comment_storage.post_storage()
-
-    ingestion_params = config["ingestion_params"]
-    sync_tasks = build_sync_tasks(ingestion_params)
+def _validate_reddit_config(config: dict[str, Any]) -> None:
     record_types: list[str] = config["record_types"]
     include_comments = COMMENTS_RECORD_TYPE in record_types
     include_posts = POSTS_RECORD_TYPE in record_types
-
     if not include_comments and not include_posts:
         raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
 
-    reddit = init_reddit_client()
 
-    output_dir, metadata = prepare_sync_run(
-        comment_storage,
-        sync_tasks,
-        run_dir_name=run_dir_name,
-        init_metadata_fn=lambda ts: init_sync_metadata(config, config_path, ts, sync_tasks),
-        entity_label="subreddits",
-    )
-
+def _reddit_run_sync_tasks(
+    reddit: praw.Reddit,
+    ingestion_params: dict[str, Any],
+    output_dir: Path,
+    comment_storage: RedditStorageManager,
+    metadata: dict[str, Any],
+    sync_tasks: list[RedditTask],
+    *,
+    config: dict[str, Any],
+    config_path: Path,
+) -> None:
+    _ = config_path
+    post_storage = comment_storage.post_storage()
+    record_types: list[str] = config["record_types"]
+    include_comments = COMMENTS_RECORD_TYPE in record_types
+    include_posts = POSTS_RECORD_TYPE in record_types
     run_sync_tasks(
         reddit,
         ingestion_params,
@@ -642,24 +622,53 @@ def sync_records(
         include_comments=include_comments,
         include_posts=include_posts,
     )
-    finalize_local_disk_sync(comment_storage, output_dir, metadata)
 
+
+def _summarize_reddit_run(metadata: dict[str, Any], output_dir: Path) -> None:
     print(
         f"sync_records: wrote {metadata['row_count']} comments and "
         f"{metadata['post_row_count']} posts to {output_dir} "
         f"(status={metadata['sync_status']})"
     )
-    return output_dir
+
+
+REDDIT_SYNC_SPEC = SyncPlatformSpec(
+    platform="reddit",
+    storage_cls=RedditStorageManager,
+    entity_label="subreddits",
+    init_client=lambda: init_reddit_client(),
+    build_sync_tasks=build_sync_tasks,
+    task_progress_builder=_initial_task_progress,
+    validate_config=_validate_reddit_config,
+    run_sync_tasks=_reddit_run_sync_tasks,
+    summarize_run=_summarize_reddit_run,
+    parse_record_cap=parse_max_comments,
+    metadata_extra_fields={"post_row_count": 0},
+)
+
+
+def sync_records(
+    config_path: Path,
+    *,
+    run_dir_name: str | None = None,
+) -> Path:
+    """Fetch Reddit records per config and write raw records plus metadata."""
+    return sync_with_spec(
+        config_path,
+        run_dir_name=run_dir_name,
+        spec=REDDIT_SYNC_SPEC,
+        config_loader=load_config,
+    )
 
 
 def main() -> None:
-    run_sync_cli(
-        sync_records_fn=sync_records,
+    make_sync_cli(
+        REDDIT_SYNC_SPEC,
         config_help=(
             "Ingestion YAML path relative to the repo root "
             "(e.g. data_platform/ingestion/configs/reddit/mirrorview.yaml)"
         ),
-    )
+    )()
 
 
 if __name__ == "__main__":
