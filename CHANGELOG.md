@@ -12,6 +12,7 @@
 8. Ingest, preprocess, and feature unlabeled skip now share one skip set session. The warmup names are gone. Callers load known ids for this run or for all runs before they drop, persist, or collapse. [PR #144](https://github.com/METResearchGroup/mirrorView-task/pull/144)
 9. Bluesky ingestion now delegates all API client work to `BlueskyClient` in `data_platform/ingestion/integrations/bluesky.py`. `sync_bluesky.py` now handles sync logic only, and the client can be tested on its own. [PR #143](https://github.com/METResearchGroup/mirrorView-task/pull/143)
 10. Preprocess now runs through README-aligned steps in the shared runner: add standardized columns, drop ids from prior preprocessed runs and in-batch duplicates (last row wins), then apply platform text transforms and validators. `preprocess_records` again returns the new preprocessed run path, and contract tests lock step order and dedupe behavior. [PR #154](https://github.com/METResearchGroup/mirrorView-task/pull/154)
+11. Feature generation now resumes with `--checkpoint` instead of `--run-dir`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. You cannot reopen a completed run. [PR #159](https://github.com/METResearchGroup/mirrorView-task/pull/159)
 
 ## 2026-09-02
 

@@ -65,7 +65,9 @@ data_platform/data/
 
 Raw, preprocessed, features, and curated stages use timestamped run directories. The timestamp format comes from `lib.timestamp_utils.get_current_timestamp` (for example `2026_08_16-14:30:00`).
 
-Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. Pass `--run-dir <timestamp>` to keep writing into that folder after an interrupt. When the script decides which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old flat layout stay unused until you move them into a `features/<timestamp>/` folder and delete the leftovers at the features root.
+Each new run of `generate_*_features.py` writes a new folder named `features/<timestamp>/`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. Pass `--checkpoint <timestamp>` to keep writing into an unfinished folder after an interrupt. You cannot reopen a completed feature run.
+
+When the script chooses which posts still need labels, it reads labels from every feature folder, so a post that already has a label is not labeled again. For each feature, `metadata.json` records `model_id` and `prompt_hash`, so you can see when the model or the prompt changed. When the same post id appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`. Leftover files from the old layout, where feature files sat directly under `features/`, stay unused until you move them into a `features/<timestamp>/` folder and delete the leftover copies at the features root.
 
 Do not commit files under `data_platform/data/`.
 
@@ -97,7 +99,7 @@ On startup, `find_resume_run_dir` looks for the newest raw run whose `sync_statu
 
 When all tasks finish, `finalize_local_disk_sync` sets `sync_status` from task states and flushes metadata to disk. `finalize_local_disk_sync` is the durability helper for a finished local sync.
 
-Feature generation uses a separate checkpoint model in `data_platform/generate_features/metadata.py`. Progress is tracked per feature name in `features/<timestamp>/metadata.json`.
+Feature generation stores resume progress in `data_platform/generate_features/metadata.py`. Each feature name has a status in `features/<timestamp>/metadata.json`. Pass `--checkpoint <timestamp>` to continue an unfinished run. You cannot reopen a completed feature run.
 
 ### metadata.json at each stage
 
@@ -211,6 +213,8 @@ Files written:
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_c0ffee00-0000-4000-8000-000000000100 --batch-size 64
 ```
+
+To resume an unfinished feature run, pass `--checkpoint <timestamp>`.
 
 Files written under `features/<timestamp>/`:
 
