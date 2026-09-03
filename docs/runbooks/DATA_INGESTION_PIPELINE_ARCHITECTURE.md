@@ -164,7 +164,7 @@ Entrypoints:
 |-------|---------|-----------|--------|
 | Sync module | `sync_bluesky.py` | `sync_twitter.py` | `sync_reddit.py` |
 | Auth env vars | `BLUESKY_HANDLE`, `BLUESKY_PASSWORD` (optional; public API works without login) | `X_BEARER_TOKEN` (also `X_CONSUMER_KEY`, `X_SECRET_KEY` in some setups) | `REDDIT_CLIENT_ID`, `REDDIT_SECRET`, `REDDIT_USERNAME`, `REDDIT_PASSWORD` |
-| Raw output | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/` with `posts.csv` and `comments.csv` |
+| Raw output | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/comments.csv` (or parquet) |
 | Checkpoint unit | One task per keyword | One task per keyword | One task per subreddit |
 | Preprocess module | `preprocess_bluesky.py` | `preprocess_twitter.py` | `preprocess_reddit.py` |
 | Primary record id | `uri` | tweet id column per `platform_specific_columns` | composite reddit id |
