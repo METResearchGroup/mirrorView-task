@@ -11,6 +11,7 @@ def mock_tweet_row(tweet_id: str, **overrides: Any) -> dict[str, Any]:
     """Return a dict that satisfies SyncTwitterPostModel (preprocess-ready text)."""
     row: dict[str, Any] = {
         "tweet_id": tweet_id,
+        "record_id": f"twitter_{tweet_id}",
         "text": _DEFAULT_TWEET_TEXT,
         "author_id": "100",
         "username": "testuser",

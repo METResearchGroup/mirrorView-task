@@ -7,6 +7,7 @@ class SyncBlueskyPostModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     uri: str
+    record_id: str
     url: str
     author_handle: str
     text: str
@@ -23,6 +24,7 @@ class SyncRedditPostModel(BaseModel):
 
     reddit_id: str
     reddit_fullname: str
+    record_id: str
     subreddit: str
     title: str
     selftext: str
@@ -41,6 +43,7 @@ class SyncTwitterPostModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     tweet_id: str
+    record_id: str
     text: str
     author_id: str
     username: str
@@ -57,19 +60,11 @@ class SyncTwitterPostModel(BaseModel):
 class SyncRedditCommentModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    post_reddit_id: str
-    post_reddit_fullname: str
-    subreddit: str
-    comment_id: str
     comment_fullname: str
-    parent_id: str
+    record_id: str
     author: str
     body: str
-    score: int
     created_at: str
-    permalink: str
-    depth: int
-    comment_rank: int
     sync_timestamp: str
 
 

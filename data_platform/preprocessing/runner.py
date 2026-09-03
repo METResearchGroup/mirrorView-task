@@ -13,11 +13,11 @@ from pydantic import BaseModel
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.preprocessing.shared_columns import (
-    add_canonical_author_columns,
-    add_canonical_source_record_id,
+    add_standardized_author_columns,
+    add_standardized_source_record_id,
 )
 from data_platform.utils.platform_specific_columns import (
-    CANONICAL_TEXT_COLUMN,
+    STANDARDIZED_TEXT_COLUMN,
     PlatformSpecificColumns,
 )
 from data_platform.utils.storage import StorageManager, StorageStage
@@ -40,10 +40,10 @@ class PreprocessPlatformSpec:
     author_handle_source_column: str
     row_validators: tuple[RowValidator, ...] = ()
     text_transform: Callable[[str], str] | None = None
-    original_platform_text_column: str = CANONICAL_TEXT_COLUMN
+    original_platform_text_column: str = STANDARDIZED_TEXT_COLUMN
 
 
-def add_canonical_text_column(
+def add_standardized_text_column(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
@@ -70,7 +70,7 @@ def add_canonical_text_column(
     """
     out = df.copy()
     original_platform_text = out[spec.original_platform_text_column]
-    out[CANONICAL_TEXT_COLUMN] = original_platform_text.map(lambda value: str(value))
+    out[STANDARDIZED_TEXT_COLUMN] = original_platform_text.map(lambda value: str(value))
     return out
 
 
@@ -108,7 +108,7 @@ def filter_records(df: pd.DataFrame, spec: PreprocessPlatformSpec) -> pd.DataFra
 
     prepared = df
     if spec.columns.text_column not in df.columns:
-        prepared = add_canonical_text_column(df, spec)
+        prepared = add_standardized_text_column(df, spec)
     text_col = spec.columns.text_column
     text_mask = prepared[text_col].map(
         lambda value: passes_all_validators(str(value), spec.text_validators)
@@ -193,20 +193,26 @@ def save_preprocessed(
     return output_dir
 
 
-def _drop_already_preprocessed(
-    records: pd.DataFrame, id_col: str, seen_ids: set[str]
-) -> tuple[pd.DataFrame, int]:
-    """Drop rows already preprocessed in a prior run, then dedupe by id within this batch.
+def collapse_candidates_by_id(
+    df: pd.DataFrame, id_col: str, keep: str = "last"
+) -> pd.DataFrame:
+    """Keep one row per id, and keep the later row when keep is last.
 
-    Returns the surviving records and how many rows were dropped for being seen before.
+    Parameters
+    ----------
+    df
+        Candidate records after known ids have already been dropped.
+    id_col
+        Column that identifies a post or comment.
+    keep
+        Which duplicate to keep. ``last`` means the later raw row wins.
+
+    Returns
+    -------
+    pd.DataFrame
+        The frame has one row per id, and the index is reset.
     """
-    id_series = cast(pd.Series, records[id_col])
-    is_new = ~id_series.isin(list(seen_ids))
-    skipped = len(records) - int(is_new.sum())
-    deduped = (
-        records.loc[is_new].drop_duplicates(subset=[id_col], keep="last").reset_index(drop=True)
-    )
-    return deduped, skipped
+    return df.drop_duplicates(subset=[id_col], keep=keep).reset_index(drop=True)
 
 
 def preprocess_records(
@@ -220,21 +226,21 @@ def preprocess_records(
     raw_storage.require_all_runs_complete(dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     dedupe_session = DedupeSession(
-        DedupeConfig(
-            id_column=spec.columns.records_id_column,
-            include_prior_runs=True,
-        )
+        DedupeConfig(id_column=spec.columns.records_id_column)
     )
-    dedupe_session.warm(preprocessed_storage, preprocessed_storage.root_dir)
+    dedupe_session.load_seen_ids_from_all_runs(preprocessed_storage)
 
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
-    records, skipped = _drop_already_preprocessed(
-        records, spec.columns.records_id_column, dedupe_session.seen_ids
-    )
+    id_col = spec.columns.records_id_column
+    id_series = cast(pd.Series, records[id_col])
+    is_new = ~id_series.isin(list(dedupe_session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    records = records.loc[is_new].reset_index(drop=True)
+    records = collapse_candidates_by_id(records, id_col, keep="last")
 
-    records = add_canonical_text_column(records, spec)
-    records = add_canonical_author_columns(records, spec)
-    records = add_canonical_source_record_id(records, spec)
+    records = add_standardized_text_column(records, spec)
+    records = add_standardized_author_columns(records, spec)
+    records = add_standardized_source_record_id(records, spec)
     preprocessed = apply_text_transform(records, spec)
     preprocessed = filter_records(preprocessed, spec)
     output_dir = save_preprocessed(
@@ -247,6 +253,6 @@ def preprocess_records(
     noun = spec.columns.records_file_key
     print(
         f"preprocess_records: kept {len(preprocessed)} of {len(records)} {noun}"
-        f" (skipped {skipped} already preprocessed) -> {output_dir}"
+        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
     )
     return output_dir

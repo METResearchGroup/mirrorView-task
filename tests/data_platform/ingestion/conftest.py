@@ -3,7 +3,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 from typing import Any
 
-from data_platform.ingestion import sync_bluesky
+from data_platform.ingestion.integrations.bluesky import POSTS_RECORD_TYPE
 from data_platform.utils.deduplication import PRIOR_RUN_POLICY
 from tests.data_platform.constants import VALID_DATASET_ID
 
@@ -34,7 +34,7 @@ def minimal_sync_config() -> dict[str, Any]:
         "name": "test",
         "description": "test",
         "date": "2026-05-30",
-        "record_types": [sync_bluesky.POSTS_RECORD_TYPE],
+        "record_types": [POSTS_RECORD_TYPE],
         "ingestion_params": {
             "dedupe_policy": ["current_run", PRIOR_RUN_POLICY],
             "limit_per_task": 2,
