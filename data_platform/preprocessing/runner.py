@@ -5,13 +5,17 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 import pandas as pd
 from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.preprocessing.previously_used_stimuli import (
+    filter_previously_used_stimuli,
+    load_previously_used_stimuli_ids,
+)
 from data_platform.preprocessing.shared_columns import (
     add_standardized_author_columns,
     add_standardized_source_record_id,
@@ -21,6 +25,7 @@ from data_platform.utils.platform_specific_columns import (
     PlatformSpecificColumns,
 )
 from data_platform.utils.storage import StorageManager, StorageStage
+from shared.data.registry import DATASETS
 
 TextValidator = Callable[[str], bool]
 RowValidator = Callable[[str], bool]
@@ -28,6 +33,20 @@ RowValidator = Callable[[str], bool]
 StorageManagerFactory = Callable[..., StorageManager]
 
 AUTHOR_COLUMN = "author"
+
+
+class DuplicateFilterResult(NamedTuple):
+    """The remaining preprocess rows, plus skip counts for ids that were already seen.
+
+    ``skipped_already_preprocessed`` counts rows dropped because they were
+    already written in a prior preprocessed run. ``skipped_previously_used_stimuli``
+    counts rows dropped because ``record_id`` matches a study stimuli key.
+    Drops from collapsing duplicate ids in the current batch are not counted.
+    """
+
+    records: pd.DataFrame
+    skipped_already_preprocessed: int
+    skipped_previously_used_stimuli: int
 
 
 @dataclass(frozen=True)
@@ -281,16 +300,19 @@ def filter_duplicate_records(
     records: pd.DataFrame,
     spec: PreprocessPlatformSpec,
     dataset_id: str,
-) -> tuple[pd.DataFrame, int]:
-    """Filters duplicate records. Check the README.md for how this works.
+    stimuli_ids: set[str],
+) -> DuplicateFilterResult:
+    """Drop already-preprocessed ids, previously used stimuli, and in-batch duplicates.
 
     Returns
     -------
-    tuple[pd.DataFrame, int]
-        Surviving records and the 4a-only skip count (collapse drops excluded).
+    DuplicateFilterResult
+        Surviving records, the already-preprocessed skip count, and the
+        previously used stimuli skip count. Drops from collapsing duplicate
+        ids in the current batch are not counted.
     """
     if records.empty:
-        return records.copy(), 0
+        return DuplicateFilterResult(records.copy(), 0, 0)
 
     id_col = spec.columns.records_id_column
     dedupe_session = DedupeSession(DedupeConfig(id_column=id_col))
@@ -300,8 +322,9 @@ def filter_duplicate_records(
     is_new = ~records[id_col].isin(list(dedupe_session.seen_ids))
     skipped = len(records) - int(is_new.sum())
     kept = records.loc[is_new].reset_index(drop=True)
+    kept, skipped_stimuli = filter_previously_used_stimuli(kept, stimuli_ids)
     output = collapse_candidates_by_id(kept, id_col, keep="last")
-    return output, skipped
+    return DuplicateFilterResult(output, skipped, skipped_stimuli)
 
 
 def apply_integration_specific_preprocessing(
@@ -318,11 +341,12 @@ def preprocess_records(
 ) -> Path:
     """Run the full preprocessing pipeline for one dataset and persist the result.
 
-    Loads all completed raw runs, adds standardized columns, drops rows seen in
-    prior preprocessed runs and duplicate ids within the batch, applies
-    platform-specific text transforms and validators, then writes a new
-    preprocessed run directory. Also prints a one-line keep/skip summary to
-    stdout.
+    The function loads all completed raw runs and adds standardized columns.
+    It then drops rows seen in prior preprocessed runs, rows already used as
+    study stimuli, and duplicate ids within the batch. After that, it applies
+    platform-specific text transforms and validators, and it writes a new
+    preprocessed run directory. It also prints a one-line keep and skip
+    summary to stdout.
 
     Parameters
     ----------
@@ -339,7 +363,8 @@ def preprocess_records(
     ValueError
         If ``dataset_id`` is malformed.
     FileNotFoundError
-        When no raw runs exist for the dataset.
+        When no raw runs exist for the dataset, or a registered stimuli CSV
+        is missing.
     RuntimeError
         When a raw run is incomplete.
     KeyError
@@ -348,7 +373,11 @@ def preprocess_records(
     dataset_id = validate_dataset_id(dataset_id)
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
     records = add_standardized_columns(records, spec)
-    records, skipped = filter_duplicate_records(records, spec, dataset_id)
+    stimuli_ids = load_previously_used_stimuli_ids(DATASETS)
+    filtered = filter_duplicate_records(records, spec, dataset_id, stimuli_ids)
+    records = filtered.records
+    skipped = filtered.skipped_already_preprocessed
+    skipped_stimuli = filtered.skipped_previously_used_stimuli
     input_count = len(records)
     records = apply_integration_specific_preprocessing(records, spec)
     records = apply_integration_specific_filters(records, spec)
@@ -361,6 +390,7 @@ def preprocess_records(
     )
     print(
         f"preprocess_records: kept {len(records)} of {input_count}"
-        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
+        f" (skipped {skipped} already in a prior preprocessed run,"
+        f" skipped {skipped_stimuli} already used as stimuli) -> {output_dir}"
     )
     return output_dir
