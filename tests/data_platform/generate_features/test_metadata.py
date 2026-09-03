@@ -87,6 +87,7 @@ def test_load_or_init_metadata_rejects_prompt_hash_change_on_resume(features_dir
 
     with pytest.raises(ValueError, match="identity changed") as exc:
         load_or_init_metadata(config, feature_names=("is_political",))
+    assert "cannot resume this folder" in str(exc.value)
     assert "--run-dir" not in str(exc.value)
 
 
@@ -103,6 +104,7 @@ def test_load_or_init_metadata_rejects_model_id_change_on_resume(features_dir) -
 
     with pytest.raises(ValueError, match="identity changed") as exc:
         load_or_init_metadata(config, feature_names=("is_political",))
+    assert "cannot resume this folder" in str(exc.value)
     assert "--run-dir" not in str(exc.value)
 
 

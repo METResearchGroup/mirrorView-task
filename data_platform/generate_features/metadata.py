@@ -82,7 +82,8 @@ def _stamp_or_check_identity(
         if status.model_id != model_id or status.prompt_hash != hashed_prompt:
             raise ValueError(
                 f"Feature {name} identity changed for this run directory. "
-                "Start a new generate_features run."
+                "You cannot resume this folder. Remove or complete this unfinished "
+                "run before starting a new generate_features run."
             )
 
 

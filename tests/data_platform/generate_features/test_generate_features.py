@@ -144,3 +144,45 @@ def test_does_not_mark_feature_completed_when_batches_fail(
     assert metadata.features["feat_a"].status == "in_progress"
     assert metadata.features["feat_a"].failed_batches == 1
     assert metadata.sync_status != "completed"
+
+
+def test_subset_run_does_not_complete_when_other_features_are_pending(
+    data_root,
+    features_dir,
+    mock_build_engine,
+) -> None:
+    write_preprocessed_posts(data_root, sample_preprocessed_records(1))
+    spec_a = FeatureSpec(
+        name="feat_a",
+        model=DummyModel,  # type: ignore[arg-type]
+        engine_type="thread_pool",
+        generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
+    )
+    spec_b = FeatureSpec(
+        name="feat_b",
+        model=DummyModel,  # type: ignore[arg-type]
+        engine_type="thread_pool",
+        generate_fn=lambda _u, _t: None,  # type: ignore[arg-type]
+    )
+    full_config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"feat_a": spec_a, "feat_b": spec_b},
+    )
+    metadata = load_or_init_metadata(full_config, feature_names=("feat_a", "feat_b"))
+    metadata.features["feat_a"] = FeatureStatus(status="completed", labeled=1)
+    metadata.features["feat_b"] = FeatureStatus(status="pending", labeled=0)
+    flush_metadata(features_dir, metadata)
+    pd.DataFrame(
+        [{"source_record_id": URI_POST_A, "label_timestamp": LABEL_TIMESTAMP, "x": 1}],
+    ).to_csv(features_dir / "feat_a.csv", index=False)
+
+    subset_config = make_feature_generation_config(
+        features_dir,
+        feature_registry={"feat_a": spec_a},
+    )
+    records = pd.DataFrame([{"uri": URI_POST_A, "text": "one"}])
+    generate_features(records, subset_config)
+
+    reloaded = load_or_init_metadata(full_config, feature_names=("feat_a", "feat_b"))
+    assert reloaded.sync_status != "completed"
+    assert reloaded.features["feat_b"].status == "pending"
