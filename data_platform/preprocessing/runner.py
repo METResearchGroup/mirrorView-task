@@ -253,6 +253,6 @@ def preprocess_records(
     noun = spec.columns.records_file_key
     print(
         f"preprocess_records: kept {len(preprocessed)} of {len(records)} {noun}"
-        f" (skipped {skipped} already preprocessed) -> {output_dir}"
+        f" (skipped {skipped} already in a prior preprocessed run) -> {output_dir}"
     )
     return output_dir
