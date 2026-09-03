@@ -45,22 +45,25 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_bluesky.py \
   --dataset-id bluesky_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  --dataset-id bluesky_<uuid> --batch-size 64
+  new-run --dataset-id bluesky_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, pass `--checkpoint` with that folder's timestamp.
+To continue an unfinished feature run, use `resume` with that folder's timestamp, or with `--latest`.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
-  --dataset-id bluesky_<uuid> --batch-size 64 --checkpoint <timestamp>
+  resume --dataset-id bluesky_<uuid> --checkpoint <timestamp>
+
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  resume --dataset-id bluesky_<uuid> --latest
 ```
 
-Feature generation writes each run into a new folder named `features/<timestamp>/`. If you omit `--checkpoint`, you start a new folder, and the command exits with an error if an unfinished feature run already exists. If a run stops partway through, pass `--checkpoint <timestamp>` so the same folder is reused. You cannot reopen a completed feature run.
+Feature generation writes each run into a new folder named `features/<timestamp>/`. `new-run` creates that folder, and it exits with an error if an unfinished feature run already exists. If a run stops partway through, `resume --checkpoint <timestamp>` reuses the same folder. `resume --latest` reuses the newest unfinished folder. You cannot reopen a completed feature run.
 
-Feature generation still skips a post that already has a label, including labels written in earlier feature folders. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
+Feature generation still skips a post that already has a label, including labels written in earlier feature folders. A feature marked completed in this folder stays completed even if new posts appear. Those posts are labeled in a later `new-run`. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
 
 If this dataset still has leftover files directly under `features/` from the old layout (`is_political.csv`, `metadata.json`, `deadletter.jsonl`), move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 
@@ -76,7 +79,7 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_twitter.py \
   --dataset-id twitter_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_twitter_features.py \
-  --dataset-id twitter_<uuid> --batch-size 64
+  new-run --dataset-id twitter_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_twitter.py \
   --dataset-id twitter_<uuid> --config mirrorview.yaml
@@ -92,7 +95,7 @@ PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \
   --dataset-id reddit_<uuid>
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \
-  --dataset-id reddit_<uuid> --batch-size 64
+  new-run --dataset-id reddit_<uuid> --batch-size 64
 
 PYTHONPATH=. uv run python data_platform/curate/curate_reddit.py \
   --dataset-id reddit_<uuid> --config mirrorview.yaml
