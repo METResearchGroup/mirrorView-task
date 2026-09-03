@@ -242,7 +242,7 @@ class TestWriteRecordsAddsRecordId:
         storage.write_records([row_without_record_id], run_dir)
         saved = storage.load_records(run_dir=run_dir)
 
-        assert saved.iloc[0]["record_id"] == "reddit_abc123_comment_a"
+        assert saved.iloc[0]["record_id"] == "reddit_t1_comment_a"
 
 
 class TestTwitterStorageManagerRecordsFilename:

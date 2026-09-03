@@ -18,8 +18,7 @@ def _valid_body() -> str:
 
 def _comment_row(**overrides: Any) -> dict[str, Any]:
     comment_fullname = overrides.pop("comment_fullname", "t1_valid_comment")
-    subreddit = overrides.pop("subreddit", "politics")
-    row = mock_comment_row(comment_fullname, subreddit=subreddit)
+    row = mock_comment_row(comment_fullname)
     row["body"] = _valid_body()
     row["author"] = "regular_user"
     row.update(overrides)
@@ -80,7 +79,7 @@ def test_filter_comments_drops_invalid_rows() -> None:
 
 
 def test_filter_comments_does_not_replace_existing_text_from_body() -> None:
-    """Existing canonical text is what validators see, even if body would fail."""
+    """Existing standardized text is what validators see, even if body would fail."""
     comments = pd.DataFrame([_comment_row(comment_fullname="t1_keep")])
     comments["text"] = _valid_body()
     comments["body"] = "[removed]"
