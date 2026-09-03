@@ -242,17 +242,17 @@ def preprocess_records(
     raw_storage.require_all_runs_complete(dataset_id)
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
     dedupe_session = DedupeSession(
-        DedupeConfig(
-            id_column=spec.columns.records_id_column,
-            include_prior_runs=True,
-        )
+        DedupeConfig(id_column=spec.columns.records_id_column)
     )
-    dedupe_session.warm(preprocessed_storage, preprocessed_storage.root_dir)
+    dedupe_session.load_seen_ids_from_all_runs(preprocessed_storage)
 
     records, source_raw_run_dirs = load_raw_records(spec, dataset_id)
-    records, skipped = _drop_already_preprocessed(
-        records, spec.columns.records_id_column, dedupe_session.seen_ids
-    )
+    id_col = spec.columns.records_id_column
+    id_series = cast(pd.Series, records[id_col])
+    is_new = ~id_series.isin(list(dedupe_session.seen_ids))
+    skipped = len(records) - int(is_new.sum())
+    records = records.loc[is_new].reset_index(drop=True)
+    records = collapse_candidates_by_id(records, id_col, keep="last")
 
     records = add_canonical_text_column(records, spec)
     records = add_canonical_author_columns(records, spec)
