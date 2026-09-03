@@ -593,10 +593,13 @@ class TestSyncRecords:
         ]
         monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
         monkeypatch.setattr(sync_reddit, "init_reddit_client", MagicMock())
-        monkeypatch.setattr(sync_reddit, "run_sync_tasks", MagicMock())
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
 
         with pytest.raises(ValueError, match="record types"):
             sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+
+        assert run_tasks.called is False
 
     def test_raises_when_comment_record_type_is_missing(
         self,
@@ -608,10 +611,31 @@ class TestSyncRecords:
         config["record_types"] = []
         monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
         monkeypatch.setattr(sync_reddit, "init_reddit_client", MagicMock())
-        monkeypatch.setattr(sync_reddit, "run_sync_tasks", MagicMock())
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
 
         with pytest.raises(ValueError, match="record types"):
             sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+
+        assert run_tasks.called is False
+
+    def test_raises_when_comment_record_type_is_missing(
+        self,
+        data_root,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """sync_records rejects configs that omit reddit.comment."""
+        config = minimal_reddit_sync_config()
+        config["record_types"] = []
+        monkeypatch.setattr(sync_reddit, "load_config", lambda path: config)
+        monkeypatch.setattr(sync_reddit, "init_reddit_client", MagicMock())
+        run_tasks = MagicMock(name="run_sync_tasks")
+        monkeypatch.setattr(sync_reddit, "run_sync_tasks", run_tasks)
+
+        with pytest.raises(ValueError, match="record types"):
+            sync_reddit.sync_records(TEST_INGEST_CONFIG_PATH)
+
+        assert run_tasks.called is False
 
 
 class TestFetchRecordsForSubredditLimitPerTask:

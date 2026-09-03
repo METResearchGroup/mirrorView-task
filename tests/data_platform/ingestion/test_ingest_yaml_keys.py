@@ -390,6 +390,9 @@ class TestDedupePolicyYamlShape:
             record_types = loaded.get("record_types")
             if record_types != ["reddit.comment"]:
                 found.append(f"{path}: {record_types}")
+            params = loaded.get("ingestion_params")
+            if isinstance(params, dict) and "posts_dedupe_policy" in params:
+                found.append(f"{path}: posts_dedupe_policy")
         expected: list[str] = []
         assert found == expected
 

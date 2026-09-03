@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. New Reddit raw runs write comments only. PRAW still opens listings and walks comment forests to collect comments, and it no longer writes `posts.csv` or `posts.parquet`. [PR #151](https://github.com/METResearchGroup/mirrorView-task/pull/151)
+1. New Reddit raw runs write comments only. Reddit ingest still uses PRAW to open a subreddit's hot, top, or new page, and it then reads the comments under each post. The ingest script no longer writes `posts.csv` or `posts.parquet`. [PR #151](https://github.com/METResearchGroup/mirrorView-task/pull/151)
 2. New Reddit comment rows keep `comment_fullname`, `author`, `body`, `created_at`, and `sync_timestamp`. The writer still adds `record_id` from `comment_fullname`. Older comment files that still have extra columns will not load until you ingest the comments again. [PR #148](https://github.com/METResearchGroup/mirrorView-task/pull/148)
 3. Bluesky ingest now requires an explicit `new-run` or `resume` command. `new-run` refuses to start when an unfinished raw run exists; `resume` accepts a named timestamp or `--latest` and fails fast when the run is missing or already completed. Twitter and Reddit keep the combined start-or-resume behavior. [PR #145](https://github.com/METResearchGroup/mirrorView-task/pull/145)
 4. Raw ingest now writes a stable `record_id` on every row using the same `{integration}_{id}` keys as study stimuli (`bluesky_{sha256(uri)}`, `twitter_{tweet_id}`, `reddit_{post_reddit_id}_{comment_id}`). [PR #138](https://github.com/METResearchGroup/mirrorView-task/pull/138)

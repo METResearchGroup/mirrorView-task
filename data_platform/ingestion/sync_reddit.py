@@ -168,10 +168,11 @@ class RedditTask:
 
 @dataclass(frozen=True)
 class SubredditFetchResult:
-    """Comments and listing stats from one subreddit fetch.
+    """The comment rows and stats from fetching one subreddit.
 
-    ``stats`` includes ``submissions_scanned`` (listing length) and
-    ``comments_collected``. Submissions are not stored.
+    ``stats`` includes ``submissions_scanned``, which is how many posts were
+    opened from the subreddit page, and ``comments_collected``. The fetch does
+    not store the posts.
     """
 
     comment_rows: list[dict[str, Any]]
@@ -258,15 +259,16 @@ def fetch_records_for_subreddit(
     *,
     sync_timestamp: str,
 ) -> SubredditFetchResult:
-    """Fetch comments for a single subreddit by walking listing submissions.
+    """Fetch comments for one subreddit from the posts on a hot, top, or new page.
 
-    ``limit_per_task`` is how many submissions to open. Eligible comments are
-    collected from each comment forest. Submissions are not returned as rows.
+    ``limit_per_task`` is how many posts to open. The function collects comments
+    that pass the filters from under each post. It does not return the posts as
+    rows.
 
     Returns
     -------
     SubredditFetchResult
-        Comment rows plus stats, including ``submissions_scanned``.
+        Comment rows and stats. The stats include ``submissions_scanned``.
 
     Raises
     ------
@@ -419,10 +421,10 @@ def run_sync_tasks(
     metadata: dict[str, Any],
     sync_tasks: list[RedditTask],
 ) -> None:
-    """Run the checkpointed subreddit loop and write comments.
+    """Run the subreddit sync loop with checkpoints, and write comments.
 
-    Filenames come from ``storage.records_filename`` so the suffix matches the
-    dataset format. The run does not write a submissions file.
+    The comment filename comes from ``storage.records_filename``, so the suffix
+    matches the dataset format. The run does not write a posts file.
     """
     max_comments_int = parse_max_comments(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
@@ -496,10 +498,10 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Fetch Reddit comments per config and write a comments file plus metadata.
+    """Fetch Reddit comments from the YAML config, and write a comments file plus metadata.
 
-    Creates the dataset manifest first so storage can read the declared format.
-    PRAW listings are opened only so comments can be collected.
+    The function creates the dataset manifest first, so storage can read the
+    declared format. It opens PRAW listing pages only to collect comments.
 
     Raises
     ------

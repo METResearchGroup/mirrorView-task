@@ -41,7 +41,7 @@ Each platform is an independent dataset under `data_platform/data/{platform}/{da
 
 ## Stage 1: Ingestion
 
-Bluesky and Twitter ingest write `posts.csv` or `posts.parquet`. Reddit ingest writes `comments.csv` or `comments.parquet`. PRAW still opens subreddit listings (`hot`, `top`, or `new`) and walks each submission's comment forest, because comments only exist on a submission. Those submissions are fetch handles. New Reddit raw runs do not write `posts.csv` or `posts.parquet`. Older Reddit raw runs may still have unused leftover `posts.csv` files.
+Bluesky and Twitter ingest write `posts.csv` or `posts.parquet`. Reddit ingest writes `comments.csv` or `comments.parquet`. Reddit ingest still uses PRAW to open a subreddit's hot, top, or new page, and it then reads the comments under each post. Reddit only returns comments through the post they belong to, so those posts are opened during the fetch. The ingest script does not write the parent posts to `posts.csv` or `posts.parquet`. Older Reddit raw run folders may still contain leftover `posts.csv` files that later stages do not read.
 
 ## Stage 2: Preprocessing
 

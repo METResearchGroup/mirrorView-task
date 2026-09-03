@@ -75,12 +75,12 @@ def generate_record_id(integration: str, primary_key: str) -> str:
 def generate_reddit_record_id(row: Mapping[str, Any]) -> str:
     """Return ``record_id`` for a Reddit comment row.
 
-    Comments use ``reddit_{comment_fullname}``.
+    The id is ``reddit_`` followed by the row's ``comment_fullname``.
 
     Parameters
     ----------
     row
-        One Reddit ingest record. Must include ``comment_fullname``.
+        A Reddit ingest row. The row must include ``comment_fullname``.
 
     Returns
     -------
