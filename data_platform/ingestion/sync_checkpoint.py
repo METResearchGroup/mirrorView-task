@@ -197,7 +197,7 @@ def increment_duplicate_skip_counters(
     record_type: str,
     skipped: int,
 ) -> None:
-    """Add skipped rows to canonical skip counters after a dedupe append.
+    """Add skipped rows to standardized skip counters after a dedupe append.
 
     Parameters
     ----------
