@@ -1,4 +1,4 @@
-"""Sync Bluesky posts from YAML config to storage.
+"""Sync Bluesky posts from a YAML config to storage.
 
 Run from the repo root:
 
@@ -45,14 +45,17 @@ from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 
 @dataclass(frozen=True)
 class BlueskyTask:
-    """One checkpointed search unit: a stable task ID and the API query string."""
+    """One keyword search task tracked by the checkpoint system.
+
+    It stores a stable task ID and the API query string.
+    """
 
     task_id: str
     query: str
 
 
 def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
-    """Build one checkpoint task per entry in ingestion_params.keywords."""
+    """Build one sync task for each entry in ingestion_params.keywords."""
     keywords = ingestion_params.get("keywords")
     if not isinstance(keywords, list) or not keywords:
         raise ValueError("ingestion_params must include 'keywords' as a non-empty list of strings")
@@ -67,7 +70,7 @@ def build_sync_tasks(ingestion_params: dict[str, Any]) -> list[BlueskyTask]:
 
 
 def _initial_task_progress(task: BlueskyTask) -> dict[str, Any]:
-    """Return the pending task-ledger entry written into run metadata at sync start."""
+    """Return the pending entry for the task ledger that is written into run metadata at sync start."""
     return {
         "status": TaskStatus.PENDING.value,
         "kind": "bluesky",
@@ -85,7 +88,7 @@ def init_sync_metadata(
     sync_timestamp: str,
     sync_tasks: list[BlueskyTask],
 ) -> dict[str, Any]:
-    """Build the initial metadata.json payload for a new raw run directory."""
+    """Return the initial metadata.json payload for a new raw run directory."""
     return build_base_sync_metadata(
         config,
         config_path,
@@ -105,10 +108,11 @@ def run_sync_tasks(
     *,
     filename: str,
 ) -> None:
-    """Run the checkpointed keyword loop: fetch, dedupe-append, and flush metadata per task.
+    """Run the keyword loop for each checkpointed task.
 
-    Skips completed tasks on resume, stops early when max_posts is reached, and records failures
-    without aborting the full run.
+    For each task, fetch rows for the keyword. Append the deduped rows, and flush the metadata.
+    On resume, skip tasks that are already completed. Stop early when max_posts is reached.
+    Record failures for each task without aborting the whole run.
     """
     max_posts_int = parse_max_posts(ingestion_params)
     dedupe_session = DedupeSession(
@@ -123,7 +127,7 @@ def run_sync_tasks(
     dedupe_session.warm(storage, output_dir)
 
     def process_task(task: BlueskyTask, entry: dict[str, Any]) -> None:
-        """Fetch one keyword, persist deduped rows, and update the task ledger entry."""
+        """Fetch rows for one keyword. Persist the deduped rows, and update the task ledger entry."""
         mark_task_in_progress(entry, storage, output_dir, metadata)
 
         remaining: int | None = None
@@ -140,7 +144,7 @@ def run_sync_tasks(
                 sync_timestamp=str(metadata["sync_timestamp"]),
                 remaining_posts=remaining,
             )
-        except Exception as exc:  # noqa: BLE001 — record and continue
+        except Exception as exc:  # noqa: BLE001  # record and continue
             mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
             return
 
@@ -189,16 +193,17 @@ def sync_records(
     *,
     run_dir_name: str | None = None,
 ) -> Path:
-    """Load config, prepare or resume a raw run, and sync all keyword tasks to posts.csv.
+    """Load the config and prepare or resume a raw run.
 
-    Creates the dataset manifest on first run and returns the output run directory path.
+    Then sync all keyword tasks to posts.csv. Creates the dataset manifest on first run
+    and returns the output run directory path.
     """
     config = load_yaml_config(config_path)
     dataset_id = require_dataset_id(config, platform="bluesky")
 
-    # Create a temporary storage just to locate the dataset root for the manifest.
-    # The manifest must exist before we create the real storage so that format is
-    # read correctly (new datasets have no dataset.json yet).
+    # Create a temporary storage manager just to locate the dataset root for the manifest.
+    # The manifest must exist before we create the real storage manager.
+    # New datasets have no dataset.json yet, so the manager cannot read the format without it.
     ensure_dataset_manifest(
         BlueskyStorageManager(StorageStage.RAW, dataset_id),
         "bluesky",
@@ -246,12 +251,12 @@ def sync_records(
 
 
 def main() -> None:
-    """CLI entrypoint for sync_bluesky.py (--config, --resume, --run-dir)."""
+    """CLI entrypoint for sync_bluesky.py. Supports --config, --resume, and --run-dir."""
     run_sync_cli(
         sync_records_fn=sync_records,
         config_help=(
-            "Ingestion YAML path relative to the repo root "
-            "(e.g. data_platform/ingestion/configs/bluesky/mirrorview.yaml)"
+            "Ingestion YAML path relative to the repo root. "
+            "For example, data_platform/ingestion/configs/bluesky/mirrorview.yaml."
         ),
     )
 

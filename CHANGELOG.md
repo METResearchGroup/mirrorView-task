@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. Bluesky ingest now delegates all API client work to `BlueskyClient` in `data_platform/ingestion/integrations/bluesky.py`, so `sync_bluesky.py` focuses on orchestration and the client can be tested independently. [PR #143](https://github.com/METResearchGroup/mirrorView-task/pull/143)
+1. Bluesky ingestion now delegates all API client work to `BlueskyClient` in `data_platform/ingestion/integrations/bluesky.py`. `sync_bluesky.py` now handles sync logic only, and the client can be tested on its own. [PR #143](https://github.com/METResearchGroup/mirrorView-task/pull/143)
 
 ## 2026-09-02
 

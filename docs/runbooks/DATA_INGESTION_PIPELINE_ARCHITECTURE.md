@@ -120,7 +120,7 @@ Entrypoints:
 - `data_platform/ingestion/sync_twitter.py`
 - `data_platform/ingestion/sync_reddit.py`
 
-Each script loads a YAML config from `data_platform/ingestion/configs/<platform>/`, validates `dataset_id`, and writes raw records under `raw/<timestamp>/`. Bluesky uses `BlueskyClient` from `data_platform/ingestion/integrations/bluesky.py`. Twitter and Reddit use their own clients and retry helpers.
+Each script loads a YAML config from `data_platform/ingestion/configs/<platform>/`, validates `dataset_id`, and writes raw records under `raw/<timestamp>/`. Bluesky uses `BlueskyClient` from `data_platform/ingestion/integrations/bluesky.py`. Twitter and Reddit use their own client helpers in `data_platform/ingestion/sync_clients.py`.
 
 ### 2. Preprocess
 

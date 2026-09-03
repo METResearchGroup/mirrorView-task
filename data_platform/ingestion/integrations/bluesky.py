@@ -20,27 +20,27 @@ BLUESKY_PUBLIC_APPVIEW = "https://api.bsky.app"
 
 @dataclass(frozen=True)
 class BlueskyFetchResult:
-    """Rows collected for a keyword and the per-task stats produced by the fetch."""
+    """Holds the rows collected for a keyword and the per-task stats produced by the fetch."""
 
     rows: list[dict[str, Any]]
     stats: dict[str, Any]
 
 
 class BlueskyClient:
-    """Thin wrapper around atproto Client for Bluesky keyword search ingestion."""
+    """Wraps the atproto Client for Bluesky keyword search ingestion."""
 
     def __init__(self, client: Client | None = None) -> None:
         """Initialize from an optional existing Client, otherwise from environment vars.
 
-        When ``BLUESKY_HANDLE`` and ``BLUESKY_PASSWORD`` are both set, log in on the
-        default PDS. When both are unset, use the public AppView host, which serves
-        ``searchPosts`` without an account.
+        If ``BLUESKY_HANDLE`` and ``BLUESKY_PASSWORD`` are both set, log in to the
+        default personal data server (PDS). If both are unset, use the public AppView
+        host, which lets you call ``searchPosts`` without an account.
         """
         self._client = client if client is not None else _init_bluesky_client()
 
     @staticmethod
     def _resolve_search_author(ingestion_params: dict[str, Any]) -> str | None:
-        """Return ingestion_params author_filter when non-empty, else None."""
+        """Return the author_filter value from ingestion_params when it is non-empty, otherwise return None."""
         author = ingestion_params.get("author_filter")
         if author:
             return author
@@ -55,7 +55,7 @@ class BlueskyClient:
         page_limit: int,
         cursor: str | None = None,
     ) -> Any:
-        """Fetch one page of searchPosts results, optionally scoped to one author."""
+        """Fetch one page of searchPosts results, scoped to one author when author_filter is set."""
         base_params = {
             "q": query,
             "limit": page_limit,
@@ -71,7 +71,7 @@ class BlueskyClient:
         return self._client.app.bsky.feed.search_posts(params=base_params)  # type: ignore[arg-type]
 
     def _posts_to_rows(self, response: Any, sync_timestamp: str) -> list[dict[str, Any]]:
-        """Map a searchPosts API response to flat dict rows for CSV storage."""
+        """Convert a searchPosts API response to dictionary rows for CSV storage."""
         rows: list[dict[str, Any]] = []
         for post in response.posts:
             rkey = post.uri.split("/")[-1]
@@ -100,7 +100,7 @@ class BlueskyClient:
         sync_timestamp: str,
         remaining_posts: int | None = None,
     ) -> BlueskyFetchResult:
-        """Paginate searchPosts until limit rows are collected or results are exhausted."""
+        """Call searchPosts repeatedly until the configured row limit is reached or the results are exhausted."""
         from data_platform.ingestion.sync_checkpoint import resolve_limit_per_task
 
         target = resolve_limit_per_task(ingestion_params)
@@ -156,9 +156,9 @@ class BlueskyClient:
 def _init_bluesky_client() -> Client:
     """Return an atproto Client for Bluesky keyword search.
 
-    When ``BLUESKY_HANDLE`` and ``BLUESKY_PASSWORD`` are both set, log in on the
-    default PDS. When they are missing, use the public AppView host, which serves
-    ``searchPosts`` without an account.
+    When ``BLUESKY_HANDLE`` and ``BLUESKY_PASSWORD`` are both set, log in to the default
+    personal data server (PDS). If both are unset, use the public AppView host, which
+    lets you call ``searchPosts`` without an account.
     """
     from atproto import Client
 
