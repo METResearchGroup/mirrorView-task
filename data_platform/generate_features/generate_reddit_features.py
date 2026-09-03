@@ -49,7 +49,16 @@ def generate_reddit_features(
     checkpoint: str | None = None,
     latest: bool = False,
 ) -> dict[str, Path]:
-    """Load Reddit comments and generate the requested feature labels."""
+    """Load Reddit comments and generate the requested feature labels.
+
+    Parameters
+    ----------
+    checkpoint
+        Existing ``features/{timestamp}/`` folder to resume. None starts a new
+        run when ``latest`` is False.
+    latest
+        When True, resume the newest unfinished feature run.
+    """
     return generate_platform_features(
         REDDIT_SPEC,
         dataset_id,

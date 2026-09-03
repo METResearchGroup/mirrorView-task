@@ -40,7 +40,16 @@ def generate_bluesky_features(
     checkpoint: str | None = None,
     latest: bool = False,
 ) -> dict[str, Path]:
-    """Load Bluesky posts and generate the requested feature labels."""
+    """Load Bluesky posts and generate the requested feature labels.
+
+    Parameters
+    ----------
+    checkpoint
+        Existing ``features/{timestamp}/`` folder to resume. None starts a new
+        run when ``latest`` is False.
+    latest
+        When True, resume the newest unfinished feature run.
+    """
     return generate_platform_features(
         BLUESKY_SPEC,
         dataset_id,
