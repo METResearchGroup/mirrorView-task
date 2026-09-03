@@ -1,0 +1,83 @@
+# Pull one UTC day of Bluesky posts from the Jetstream warehouse into a local dump
+
+## Remember
+- Exact file paths always
+- Exact commands with expected output
+- DRY, YAGNI, TDD, frequent commits
+- Delegated tasks must be impossible to misread.
+
+## Overview
+
+The lab Jetstream pipeline already stores Bluesky creates in an Iceberg warehouse in AWS. This repository's Bluesky ingest still talks to the public search API. This plan adds a dump package that reads posts only from that warehouse for 2026-09-01 UTC, downloads the Athena CSV, writes hour-partitioned parquet, and reports size and per-user stats. Keyword sync, preprocess, features, and curate stay unchanged.
+
+Live warehouse check (2026-09-03, IAM user `mark_iam_credentials`, workgroup `bluesky_raw_maintenance`):
+
+- Glue database `bluesky_raw`, Iceberg table `posts`, on-disk day folders `created_at_day=YYYY-MM-DD` under `s3://lab-data-integrations-interface/bluesky/raw/posts/data/`.
+- Partitioning is UTC day of post creation time, not hour. Collection is table identity (`posts` vs likes/reposts/follows), not a partition.
+- Half-open UTC day filter on creation time prunes that day. `EXPLAIN` shows a table scan with a creation-time constraint of `[2026-09-01 00:00:00 UTC, 2026-09-02 00:00:00 UTC)`.
+- `EXPLAIN ANALYZE` of a count over that window: 3,450,253 rows, 0 bytes scanned (Iceberg metadata), 1.2s.
+- That day's data files: 122 parquet objects, 1.08 GiB.
+- A column-pruned scan of text and author DID: 243 MiB scanned (~$0.001 at $5/TB). A full-column dump is bounded by the 1.08 GiB partition (~$0.005).
+- Preview stats for that day: mean text length 98.4 characters, 574,545 distinct DIDs, mean 6.00 posts per DID, median 2 posts per DID.
+
+## Happy flow
+
+An operator runs the dump runner, then the parquet transform, then summary stats. Local raw CSV is gitignored. Hour parquet and a small stats file land in the dump folder and go on the PR.
+
+```mermaid
+flowchart LR
+  subgraph before [Before]
+    JS[Jetstream Iceberg posts]
+    API[Public Bluesky search sync]
+    JS -.->|unread by this repo| API
+  end
+  subgraph after [After]
+    JS2[Jetstream Iceberg posts]
+    Sel[SELECT posts for UTC 2026-09-01]
+    Csv[Athena CSV downloaded to dump raw]
+    Pq[date and hour parquet]
+    Stats[Summary stats file]
+    JS2 --> Sel
+    Sel --> Csv
+    Csv --> Pq
+    Pq --> Stats
+  end
+```
+
+## Approach
+
+Copy the lab Athena wait-and-download client into the dump folder. Query only the posts table with a half-open UTC day range on creation time. Enforce SELECT-only in that client so ALTER, CREATE, DELETE, UPDATE, and UNLOAD cannot run. Download the workgroup CSV rather than paging the Athena API. Rebuild parquet locally with UTC date and hour folders and hashed filenames small enough for GitHub. Do not UNLOAD in Athena. Do not hook this dump into `data_platform/ingestion/sync_bluesky.py`.
+
+## Decisions (please confirm or revise)
+
+1. Day means UTC 2026-09-01 on post creation time, matching the warehouse day folders. Ingest time is not the filter. Deletes and likes are not in this dump.
+2. SELECT only. Copy `data_platform/aws/athena.py` from the lab repo into `data_platform/ingestion/data_dumps/bluesky/athena.py`, keep wait, result paging, and output-location helpers, and drop the partition-registration method that issues `ALTER TABLE`. Reject any statement that is not SELECT.
+3. Use Glue database `bluesky_raw` and workgroup `bluesky_raw_maintenance`. Do not use the old lab ingest database or workgroup names that the copied client defaults to.
+4. Hour folders use UTC hour of creation time. Files are `date=<date>/hour=<hour>/{hash}.parquet`. Split so each parquet stays under 50 MiB (GitHub warns at 50 MiB and rejects at 100 MiB). Source day is 1.08 GiB, so expect on the order of 24 to 40 files.
+5. Gitignore `data_platform/ingestion/data_dumps/bluesky/data/raw/`. Commit parquet plus a small stats file. Do not add Git LFS unless you prefer that over ~1 GiB of binaries in git.
+6. This dump is a sibling of keyword ingest. Do not write into `data_platform/data/bluesky/`, and do not change preprocess, features, or curate.
+
+## Steps
+
+### Step 1: Land the dump package and SELECT-only download
+
+Add `data_platform/ingestion/data_dumps/bluesky/` with `queries.py`, the copied Athena client, and `run_query.py`. The query selects post columns from `bluesky_raw.posts` for UTC 2026-09-01. The runner submits SELECT, waits, and copies the workgroup CSV into `data_platform/ingestion/data_dumps/bluesky/data/raw/`. Unit tests prove SELECT-only rejection and the day bounds without live AWS.
+
+### Step 2: Write UTC date and hour parquet
+
+Add `transform_raw_data_to_parquet.py`. Read the downloaded CSV, partition by UTC date and hour of creation time, and write hashed parquet under `data_platform/ingestion/data_dumps/bluesky/data/parquet/`. Unit tests prove the folder shape and the 50 MiB split on a fixture.
+
+### Step 3: Summary stats, gitignore, and the parquet PR payload
+
+Add `summary_statistics.py` for total records, mean text length, mean records per DID, and median records per DID. Write a small stats file next to parquet. Gitignore raw CSV. After a live dump in implementation, commit parquet and stats, not raw. Keyword ingest tests stay green.
+
+## What "done" looks like
+
+1. `data_platform/ingestion/data_dumps/bluesky/` contains `queries.py`, `athena.py`, `run_query.py`, `transform_raw_data_to_parquet.py`, and `summary_statistics.py`.
+2. A live SELECT of `bluesky_raw.posts` for UTC 2026-09-01 downloads to `data_platform/ingestion/data_dumps/bluesky/data/raw/` and is not committed.
+3. Parquet exists at `data_platform/ingestion/data_dumps/bluesky/data/parquet/date=2026-09-01/hour=<00-23>/{hash}.parquet`, each file under 50 MiB, and those files are on the PR.
+4. Stats file reports total records, mean text length, mean records per DID, and median records per DID. Live preview: 3,450,253 records, mean text length 98.4, mean 6.00 per DID, median 2 per DID.
+5. Non-SELECT statements fail in the dump Athena client. `ALTER TABLE`, UNLOAD, CREATE, DELETE, and UPDATE are not used.
+6. `PYTHONPATH=. uv run pytest tests/data_platform/ingestion/data_dumps -q` exits 0.
+7. `PYTHONPATH=. uv run pytest tests/data_platform/ingestion -q` exits 0 with no new failures.
+8. `data_platform/ingestion/sync_bluesky.py` and the rest of the keyword pipeline are unchanged.
