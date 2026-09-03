@@ -181,7 +181,7 @@ Run each stage from the repository root with `PYTHONPATH=.`.
 ### Step 1: Sync
 
 ```bash
-PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py new-run \
   --config data_platform/ingestion/configs/bluesky/smoke.yaml
 ```
 

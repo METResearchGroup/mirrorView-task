@@ -34,7 +34,7 @@ See the operator runbook at [docs/runbooks/HOW_TO_RUN_DATA_INGESTION.md](../docs
 The ingestion CLI reads `dataset_id` from the ingestion config. Pass config paths relative to the repo root. The `smoke.yaml` config collects about 100 Bluesky posts for a local dry run.
 
 ```bash
-PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py new-run \
   --config data_platform/ingestion/configs/bluesky/smoke.yaml
 
 PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py new-run \
