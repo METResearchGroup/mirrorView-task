@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from random import Random
 
+import pandas as pd
 import pytest
 import zstandard as zstd
 
 from data_platform.ingestion.data_dumps.reddit.filters import keep_dump_comment
 from data_platform.ingestion.data_dumps.reddit.models import DumpCommentRaw
+from data_platform.ingestion.data_dumps.reddit.process_dump import main, process_dump_file
 from data_platform.ingestion.data_dumps.reddit.reader import iter_dump_comments
+from data_platform.ingestion.data_dumps.reddit.sample import reservoir_sample
 from data_platform.ingestion.data_dumps.reddit.transform import dump_comment_to_sync_row
 from data_platform.ingestion.generate_record_id import INTEGRATION_REDDIT
 from data_platform.models.sync import SyncRedditCommentModel
@@ -164,3 +168,142 @@ class TestDumpCommentToSyncRow:
         assert "permalink" not in result
         assert "score" not in result
         assert "parent_id" not in result
+
+
+def _dump_record(comment_id: str, **overrides: object) -> dict[str, object]:
+    payload: dict[str, object] = dict(VALID_DUMP_COMMENT)
+    payload["id"] = comment_id
+    payload.update(overrides)
+    return payload
+
+
+class TestReservoirSample:
+    """Tests for reservoir_sample()."""
+
+    def test_is_repeatable_for_the_same_seed(self) -> None:
+        """The same seed returns the same sample."""
+        items = ["a", "b", "c", "d", "e"]
+        sample_size = 3
+
+        first = reservoir_sample(iter(items), sample_size, Random(0))
+        second = reservoir_sample(iter(items), sample_size, Random(0))
+
+        assert len(first) == sample_size
+        assert first == second
+
+    def test_returns_all_items_when_stream_is_shorter(self) -> None:
+        """A short stream is returned in order."""
+        items = ["a", "b"]
+        expected = ["a", "b"]
+
+        result = reservoir_sample(iter(items), 5, Random(0))
+
+        assert result == expected
+
+    def test_rejects_sample_size_below_one(self) -> None:
+        """sample_size must be at least 1."""
+        with pytest.raises(ValueError, match="sample_size"):
+            reservoir_sample(iter(["a"]), 0, Random(0))
+
+
+class TestProcessDumpFile:
+    """Tests for process_dump_file()."""
+
+    def test_writes_sampled_parquet_without_deleted_comments(
+        self, tmp_path: Path
+    ) -> None:
+        """Deleted comments are dropped and the parquet has the sampled keepers."""
+        input_path = tmp_path / "RC_test.zst"
+        output_path = tmp_path / "filtered" / "RC_test.parquet"
+        records = [
+            _dump_record("keep1"),
+            _dump_record("keep2"),
+            _dump_record("keep3"),
+            _dump_record("keep4"),
+            _dump_record("gone", author="[deleted]"),
+        ]
+        _write_zst(input_path, records)
+        expected_rows = 2
+        deleted_tokens = {"[deleted]", "[removed]"}
+
+        result = process_dump_file(
+            input_path, output_path, expected_rows, 1, SYNC_TIMESTAMP
+        )
+        frame = pd.read_parquet(result)
+
+        assert result == output_path
+        assert len(frame) == expected_rows
+        for row in frame.to_dict(orient="records"):
+            SyncRedditCommentModel.model_validate(row)
+            assert row["author"] not in deleted_tokens
+            assert row["body"] not in deleted_tokens
+            assert row["sync_timestamp"] == SYNC_TIMESTAMP
+
+    def test_writes_all_keepers_when_below_sample_size(self, tmp_path: Path) -> None:
+        """A file with fewer keepers than the sample size writes every keeper."""
+        input_path = tmp_path / "RC_test.zst"
+        output_path = tmp_path / "RC_test.parquet"
+        _write_zst(input_path, [_dump_record("keep1"), _dump_record("keep2")])
+        expected_rows = 2
+
+        process_dump_file(input_path, output_path, 10, 1, SYNC_TIMESTAMP)
+        frame = pd.read_parquet(output_path)
+
+        assert len(frame) == expected_rows
+
+    def test_raises_when_output_exists(self, tmp_path: Path) -> None:
+        """An existing parquet is not overwritten."""
+        input_path = tmp_path / "RC_test.zst"
+        output_path = tmp_path / "RC_test.parquet"
+        _write_zst(input_path, [_dump_record("keep1")])
+        expected = "already written"
+        output_path.write_text(expected)
+
+        with pytest.raises(FileExistsError):
+            process_dump_file(input_path, output_path, 10, 1, SYNC_TIMESTAMP)
+
+        assert output_path.read_text() == expected
+
+    def test_raises_when_input_is_missing(self, tmp_path: Path) -> None:
+        """A missing dump file raises FileNotFoundError."""
+        missing = tmp_path / "missing.zst"
+        output_path = tmp_path / "out.parquet"
+
+        with pytest.raises(FileNotFoundError):
+            process_dump_file(missing, output_path, 10, 1, SYNC_TIMESTAMP)
+
+
+class TestMain:
+    """Tests for main()."""
+
+    def test_writes_parquet_for_each_input_file(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """CLI writes one parquet per --input-file under --output-dir."""
+        first_input = tmp_path / "RC_2025-05.zst"
+        second_input = tmp_path / "RC_2025-06.zst"
+        output_dir = tmp_path / "filtered"
+        _write_zst(first_input, [_dump_record("may1")])
+        _write_zst(second_input, [_dump_record("jun1")])
+        monkeypatch.setattr(
+            "data_platform.ingestion.data_dumps.reddit.process_dump.get_current_timestamp",
+            lambda: SYNC_TIMESTAMP,
+        )
+
+        main(
+            [
+                "--input-file",
+                str(first_input),
+                "--input-file",
+                str(second_input),
+                "--output-dir",
+                str(output_dir),
+            ]
+        )
+
+        first_frame = pd.read_parquet(output_dir / "RC_2025-05.parquet")
+        second_frame = pd.read_parquet(output_dir / "RC_2025-06.parquet")
+        assert len(first_frame) == 1
+        assert len(second_frame) == 1
+        assert first_frame.iloc[0]["sync_timestamp"] == SYNC_TIMESTAMP
+        assert second_frame.iloc[0]["sync_timestamp"] == SYNC_TIMESTAMP

@@ -14,6 +14,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from lib.timestamp_utils import get_current_timestamp
+
 DUMP_DIR = Path("data_platform/ingestion/data_dumps/reddit")
 FILTERED_DIR = DUMP_DIR / "filtered"
 DEFAULT_DUMP_STEMS = ("RC_2025-05", "RC_2025-06")
