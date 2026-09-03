@@ -18,7 +18,7 @@ from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.platform_specific_columns import PlatformSpecificColumns
-from data_platform.utils.storage import StorageManager, StorageStage
+from data_platform.utils.storage import METADATA_FILENAME, StorageManager, StorageStage
 
 StorageManagerFactory = Callable[..., StorageManager]
 
@@ -107,7 +107,31 @@ def _start_new_feature_run(feature_storage: StorageManager) -> Path:
         When an unfinished feature run already exists. The operator must pass
         ``--checkpoint`` or ``--latest`` to resume it.
     """
-    raise NotImplementedError
+    unfinished = _unfinished_feature_run_dirs(feature_storage)
+    if unfinished:
+        newest = max(unfinished, key=lambda path: path.name)
+        raise ValueError(
+            f"An unfinished feature run exists at {newest}; "
+            "pass --checkpoint or --latest to resume it"
+        )
+    return feature_storage.create_new_run_dir()
+
+
+def _unfinished_feature_run_dirs(feature_storage: StorageManager) -> list[Path]:
+    """Return feature run directories whose metadata is not completed."""
+    if not feature_storage.root_dir.exists():
+        return []
+    unfinished: list[Path] = []
+    for path in feature_storage.root_dir.iterdir():
+        if not path.is_dir():
+            continue
+        metadata_path = path / METADATA_FILENAME
+        if not metadata_path.exists():
+            continue
+        metadata = feature_storage.load_run_metadata(path)
+        if metadata.get("sync_status") != FEATURE_RUN_COMPLETED_STATUS:
+            unfinished.append(path)
+    return unfinished
 
 
 def _load_feature_checkpoint(feature_storage: StorageManager, checkpoint: str) -> Path:
