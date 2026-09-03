@@ -76,7 +76,7 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, use `resume` with that folder's timestamp, or with `--latest`.
+To continue an unfinished feature run, pass `resume --checkpoint` with the feature run timestamp. To continue the newest unfinished feature run, pass `resume --latest`. Pass exactly one of those flags.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
@@ -86,7 +86,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   resume --dataset-id bluesky_<uuid> --latest
 ```
 
-Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. `new-run` creates a new `features/<timestamp>/` folder, and it exits with an error if an unfinished feature run already exists. `resume` keeps writing into an unfinished feature run folder. You cannot resume a completed feature run. Posts that already have labels in any feature folder are skipped. A completed feature stays closed for new posts, and those posts are labeled in a later `new-run`.
+Twitter and Reddit use the same preprocess, feature, and curate scripts, with `twitter` or `reddit` in the script names. Use `new-run` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. Use `resume` to keep writing into an unfinished feature run. You cannot resume a completed feature run. Posts that already have labels in any feature run folder are skipped. If a feature such as `is_political` is marked completed in the current feature run, new posts are not labeled for that feature in that feature run. Use a later `new-run` to label the new posts.
 
 If a dataset still has leftover files directly under `features/` from the old layout, move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 

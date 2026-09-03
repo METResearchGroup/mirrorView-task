@@ -51,7 +51,7 @@ PYTHONPATH=. uv run python data_platform/curate/curate_bluesky.py \
   --dataset-id bluesky_<uuid> --config mirrorview.yaml
 ```
 
-To continue an unfinished feature run, use `resume` with that folder's timestamp, or with `--latest`.
+To continue an unfinished feature run, pass `resume --checkpoint` with the feature run timestamp. To continue the newest unfinished feature run, pass `resume --latest`. Pass exactly one of those flags.
 
 ```bash
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
@@ -61,9 +61,9 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   resume --dataset-id bluesky_<uuid> --latest
 ```
 
-`new-run` writes a new folder named `features/<timestamp>/`, and it exits with an error if an unfinished feature run already exists. If a run stops partway through, `resume --checkpoint <timestamp>` continues writing into that same folder. `resume --latest` continues the newest unfinished folder. You cannot resume a completed feature run.
+Use `new-run` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. If the feature run stops partway through, use `resume --checkpoint` with that feature run timestamp so labels keep going into the same feature run folder. Use `resume --latest` to continue the newest unfinished feature run. You cannot resume a completed feature run.
 
-Feature generation still skips a post that already has a label, including labels written in earlier feature folders. A feature marked completed in the current feature run folder stays completed even if new posts appear. Those posts are labeled in a later `new-run`. When the same post appears in more than one feature folder, the curate step keeps the row with the latest `label_timestamp`.
+Feature generation still skips a post that already has a label, including labels written in earlier feature run folders. If a feature such as `is_political` is marked completed in the current feature run, that feature stays completed even if new posts appear. Use a later `new-run` to label the new posts. When the same post appears in more than one feature run folder, the curate step keeps the row with the latest `label_timestamp`.
 
 If this dataset still has leftover files directly under `features/` from the old layout (`is_political.csv`, `metadata.json`, `deadletter.jsonl`), move them into a new `features/<timestamp>/` folder and delete the leftover files at the features root.
 
@@ -85,7 +85,7 @@ PYTHONPATH=. uv run python data_platform/curate/curate_twitter.py \
   --dataset-id twitter_<uuid> --config mirrorview.yaml
 ```
 
-Twitter feature generation uses the same `resume` flags as Bluesky (`--checkpoint` or `--latest`).
+Twitter feature generation uses the same `resume --checkpoint` and `resume --latest` commands as Bluesky. Pass exactly one of those flags.
 
 ### Reddit
 
@@ -103,7 +103,7 @@ PYTHONPATH=. uv run python data_platform/curate/curate_reddit.py \
   --dataset-id reddit_<uuid> --config mirrorview.yaml
 ```
 
-Reddit feature generation uses the same `resume` flags as Bluesky (`--checkpoint` or `--latest`).
+Reddit feature generation uses the same `resume --checkpoint` and `resume --latest` commands as Bluesky. Pass exactly one of those flags.
 
 Confirm outputs:
 
