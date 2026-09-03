@@ -25,11 +25,7 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
-    """FeaturePlatformSpec is the platform settings for one feature generation command.
-
-    Whether preprocessed runs are complete is not a field on this spec.
-    ``generate_platform_features`` always requires complete runs.
-    """
+    """Platform settings for one feature generation command."""
 
     platform: str
     storage_cls: StorageManagerFactory
