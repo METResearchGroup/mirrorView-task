@@ -5,7 +5,6 @@ description: Comments from a small set of subreddits
 date: "2026-05-31"
 record_types:
   - reddit.comment
-  - reddit.post
 ingestion_params:
   dedupe_policy:
     - prior_runs_same_dataset

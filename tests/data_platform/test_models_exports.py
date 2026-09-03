@@ -5,7 +5,6 @@ from data_platform import models
 EXPECTED_SYNC_MODELS = (
     "SyncBlueskyPostModel",
     "SyncRedditCommentModel",
-    "SyncRedditPostModel",
     "SyncTwitterPostModel",
 )
 
