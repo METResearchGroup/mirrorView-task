@@ -10,6 +10,8 @@ T = TypeVar("T")
 
 DEFAULT_SAMPLE_SIZE = 500_000
 DEFAULT_SAMPLE_SEED = 20260615
+MIN_SAMPLE_SIZE = 1
+ONE_BASED_OFFSET = 1
 
 
 def reservoir_sample(items: Iterator[T], sample_size: int, rng: Random) -> list[T]:
@@ -35,4 +37,15 @@ def reservoir_sample(items: Iterator[T], sample_size: int, rng: Random) -> list[
     ValueError
         When ``sample_size`` is less than 1.
     """
-    raise NotImplementedError
+    if sample_size < MIN_SAMPLE_SIZE:
+        raise ValueError("sample_size must be at least 1")
+
+    sample: list[T] = []
+    for item_number, item in enumerate(items, start=ONE_BASED_OFFSET):
+        if item_number <= sample_size:
+            sample.append(item)
+            continue
+        replacement_index = rng.randrange(item_number)
+        if replacement_index < sample_size:
+            sample[replacement_index] = item
+    return sample
