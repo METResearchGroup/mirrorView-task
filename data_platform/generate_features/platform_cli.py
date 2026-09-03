@@ -25,9 +25,9 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 @dataclass(frozen=True)
 class FeaturePlatformSpec:
-    """Platform wiring for one feature-generation command.
+    """FeaturePlatformSpec is the platform settings for one feature generation command.
 
-    Completeness of preprocessed runs is not a spec setting.
+    Whether preprocessed runs are complete is not a field on this spec.
     ``generate_platform_features`` always requires complete runs.
     """
 
@@ -156,7 +156,7 @@ def generate_platform_features(
     feature_subset: list[str] | None = None,
     run_dir_name: str | None = None,
 ) -> dict[str, Path]:
-    """Load platform records and generate the requested feature labels.
+    """The command loads platform records and generates the requested feature labels.
 
     Every preprocessed run for the dataset must be complete before labels
     are generated.
