@@ -308,7 +308,7 @@ PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \
   --run-dir <timestamp>
 ```
 
-Or resume the latest unfinished run with `--latest`. The config keywords must match the tasks recorded in that run's metadata. `validate_tasks_for_resume` raises if they differ. Completed runs are not reopened.
+Or resume the latest unfinished run with `--latest`. The config keywords must match the tasks recorded in that run's metadata. If the keywords differ, `validate_tasks_for_resume` raises an error. Completed runs are not reopened.
 
 ## Environment variables
 

@@ -381,9 +381,7 @@ def _resolve_resume_run_dir(
 ) -> str:
     """Return the run directory name to resume, or raise for invalid options."""
     if (run_dir is not None and latest) or (run_dir is None and not latest):
-        raise ValueError(
-            "Resume requires exactly one of --run-dir or --latest"
-        )
+        raise ValueError("Pass --run-dir or --latest, but not both")
     if run_dir is not None:
         return run_dir
     return require_latest_in_progress_run_dir(storage).name

@@ -47,7 +47,7 @@ PYTHONPATH=. uv run python data_platform/ingestion/sync_reddit.py \
   --config data_platform/ingestion/configs/reddit/mirrorview.yaml
 ```
 
-Large syncs checkpoint per keyword/subreddit in `raw/{timestamp}/metadata.json`. Resume a named Bluesky run after interrupt:
+Large syncs write a checkpoint per keyword or subreddit to `raw/{timestamp}/metadata.json`. Resume a named Bluesky run after interrupt:
 
 ```bash
 PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \

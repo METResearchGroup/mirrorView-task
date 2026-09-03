@@ -800,7 +800,7 @@ class TestSyncRecordsFromCheckpoint:
     ) -> None:
         storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
 
-        with pytest.raises(ValueError, match="exactly one"):
+        with pytest.raises(ValueError, match="--run-dir or --latest"):
             sync_bluesky._resolve_resume_run_dir(storage, run_dir, latest)
 
 
@@ -819,5 +819,5 @@ class TestBlueskySyncCli:
     ) -> None:
         storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
 
-        with pytest.raises(ValueError, match="exactly one"):
+        with pytest.raises(ValueError, match="--run-dir or --latest"):
             sync_bluesky._resolve_resume_run_dir(storage, None, False)
