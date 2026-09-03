@@ -395,22 +395,6 @@ class RedditStorageManager(StorageManager):
             records_filename=records_filename,
         )
 
-    def comment_storage(self) -> RedditStorageManager:
-        return RedditStorageManager(
-            self.stage,
-            self.dataset_id,
-            records_filename="comments.csv",
-            model=SyncRedditCommentModel,
-        )
-
-    def post_storage(self) -> RedditStorageManager:
-        return RedditStorageManager(
-            self.stage,
-            self.dataset_id,
-            records_filename="posts.csv",
-            model=SyncRedditPostModel,
-        )
-
 
 class TwitterStorageManager(StorageManager):
     def __init__(
