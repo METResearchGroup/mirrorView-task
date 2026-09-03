@@ -8,17 +8,14 @@ Run from the repo root:
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from pathlib import Path
 
-import pandas as pd
 import typer
 
 from data_platform.models.sync import SyncBlueskyPostModel
 from data_platform.preprocessing.runner import (
     PreprocessPlatformSpec,
     TextValidator,
-    filter_records,
 )
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
@@ -49,21 +46,6 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
     text_validators=POST_TEXT_VALIDATORS,
     author_handle_source_column="author_handle",
 )
-
-
-def filter_posts(
-    posts: pd.DataFrame,
-    validators: Sequence[TextValidator] = POST_TEXT_VALIDATORS,
-) -> pd.DataFrame:
-    spec = PreprocessPlatformSpec(
-        platform=BLUESKY_SPEC.platform,
-        storage_cls=BLUESKY_SPEC.storage_cls,
-        model_cls=BLUESKY_SPEC.model_cls,
-        columns=BLUESKY_SPEC.columns,
-        text_validators=tuple(validators),
-        author_handle_source_column=BLUESKY_SPEC.author_handle_source_column,
-    )
-    return filter_records(posts, spec)
 
 
 def preprocess_records(dataset_id: str) -> Path:

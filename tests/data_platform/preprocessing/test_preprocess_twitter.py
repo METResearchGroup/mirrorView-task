@@ -90,22 +90,6 @@ def test_twitter_text_validators(text: str, expected: bool) -> None:
     assert preprocess_twitter.passes_all_validators(text) is expected
 
 
-def test_filter_posts_drops_invalid_rows() -> None:
-    posts = pd.DataFrame(
-        [
-            _tweet_row(tweet_id="1000000000000000001"),
-            _tweet_row(tweet_id="1000000000000000002", text="too short"),
-            _tweet_row(
-                tweet_id="1000000000000000003",
-                text=_valid_text() + " https://example.com/extra",
-            ),
-        ]
-    )
-    filtered = preprocess_twitter.filter_posts(posts)
-    assert len(filtered) == 1
-    assert filtered.iloc[0]["tweet_id"] == "1000000000000000001"
-
-
 def test_preprocess_records_writes_output(data_root) -> None:
     dataset_id = VALID_TWITTER_DATASET_ID
     raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
