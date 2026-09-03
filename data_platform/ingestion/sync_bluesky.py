@@ -201,11 +201,9 @@ def run_sync_tasks(
 
 
 @dataclass(frozen=True)
-class BlueskySyncContext:
-    """Shared Bluesky ingest setup used by new-run and resume."""
+class BlueskyRuntime:
+    """Execution-time state shared by Bluesky new-run and resume."""
 
-    config: dict[str, Any]
-    config_path: Path
     storage: BlueskyStorageManager
     ingestion_params: dict[str, Any]
     sync_tasks: list[BlueskyTask]
@@ -213,8 +211,8 @@ class BlueskySyncContext:
     filename: str
 
 
-def load_bluesky_sync_context(config_path: Path) -> BlueskySyncContext:
-    """Load config, storage, tasks, and the Bluesky client for one sync.
+def load_bluesky_runtime(config_path: Path) -> tuple[dict[str, Any], BlueskyRuntime]:
+    """Load config and return execution-time runtime for one sync.
 
     Parameters
     ----------
@@ -223,8 +221,8 @@ def load_bluesky_sync_context(config_path: Path) -> BlueskySyncContext:
 
     Returns
     -------
-    BlueskySyncContext
-        Shared setup for new-run and resume.
+    tuple[dict[str, Any], BlueskyRuntime]
+        The loaded config and the shared runtime.
 
     Raises
     ------
@@ -247,19 +245,20 @@ def load_bluesky_sync_context(config_path: Path) -> BlueskySyncContext:
     record_types: list[str] = config["record_types"]
     if POSTS_RECORD_TYPE not in record_types:
         raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
-    return BlueskySyncContext(
-        config=config,
-        config_path=config_path,
-        storage=storage,
-        ingestion_params=ingestion_params,
-        sync_tasks=sync_tasks,
-        client=BlueskyClient(),
-        filename=storage.records_filename,
+    return (
+        config,
+        BlueskyRuntime(
+            storage=storage,
+            ingestion_params=ingestion_params,
+            sync_tasks=sync_tasks,
+            client=BlueskyClient(),
+            filename=storage.records_filename,
+        ),
     )
 
 
 def execute_bluesky_sync(
-    context: BlueskySyncContext,
+    runtime: BlueskyRuntime,
     output_dir: Path,
     metadata: dict[str, Any],
 ) -> Path:
@@ -267,8 +266,8 @@ def execute_bluesky_sync(
 
     Parameters
     ----------
-    context
-        Shared Bluesky ingest setup.
+    runtime
+        Shared execution-time state.
     output_dir
         Opened raw run directory.
     metadata
@@ -280,15 +279,15 @@ def execute_bluesky_sync(
         The same ``output_dir`` after tasks are synced and metadata is flushed.
     """
     run_sync_tasks(
-        context.client,
-        context.ingestion_params,
+        runtime.client,
+        runtime.ingestion_params,
         output_dir,
-        context.storage,
+        runtime.storage,
         metadata,
-        context.sync_tasks,
-        filename=context.filename,
+        runtime.sync_tasks,
+        filename=runtime.filename,
     )
-    finalize_local_disk_sync(context.storage, output_dir, metadata)
+    finalize_local_disk_sync(runtime.storage, output_dir, metadata)
     total_rows = metadata["row_count"]
     print(
         f"sync_records: wrote {total_rows} rows to {output_dir} "
@@ -315,31 +314,26 @@ def sync_records_new_run(config_path: Path) -> Path:
     ValueError
         When an unfinished raw run already exists for this dataset.
     """
-    context = load_bluesky_sync_context(config_path)
+    config, runtime = load_bluesky_runtime(config_path)
     output_dir, metadata = start_new_sync_run(
-        context.storage,
-        lambda ts: init_sync_metadata(
-            context.config, context.config_path, ts, context.sync_tasks
-        ),
+        runtime.storage,
+        lambda ts: init_sync_metadata(config, config_path, ts, runtime.sync_tasks),
     )
-    return execute_bluesky_sync(context, output_dir, metadata)
+    return execute_bluesky_sync(runtime, output_dir, metadata)
 
 
 def sync_records_from_checkpoint(
     config_path: Path,
-    run_dir_name: str | None,
-    latest: bool,
+    run_dir_name: str,
 ) -> Path:
-    """Resume an unfinished raw run by name or by latest unfinished timestamp.
+    """Resume an unfinished raw run by name.
 
     Parameters
     ----------
     config_path
         Ingestion YAML path.
     run_dir_name
-        Raw run timestamp directory name, or None when ``latest`` is True.
-    latest
-        When True, resume the newest unfinished raw run.
+        Raw run timestamp directory name.
 
     Returns
     -------
@@ -348,29 +342,19 @@ def sync_records_from_checkpoint(
 
     Raises
     ------
-    ValueError
-        When both ``run_dir_name`` and ``latest`` are set, when neither is set,
-        or when the named run is already completed.
     FileNotFoundError
-        When the named run is missing, or when ``latest`` is True and no
-        unfinished run exists.
+        When the named run is missing.
+    ValueError
+        When the run is already completed.
     """
-    named = run_dir_name is not None
-    if latest == named:
-        raise ValueError(
-            "Resume requires exactly one of a named run directory or latest"
-        )
-    context = load_bluesky_sync_context(config_path)
-    resolved_run_dir_name = run_dir_name
-    if latest:
-        resolved_run_dir_name = require_latest_in_progress_run_dir(context.storage).name
+    config, runtime = load_bluesky_runtime(config_path)
     output_dir, metadata = load_checkpoint_run(
-        context.storage,
-        context.sync_tasks,
-        resolved_run_dir_name,
+        runtime.storage,
+        runtime.sync_tasks,
+        run_dir_name,
         "keywords",
     )
-    return execute_bluesky_sync(context, output_dir, metadata)
+    return execute_bluesky_sync(runtime, output_dir, metadata)
 
 
 CONFIG_HELP = (
@@ -390,6 +374,21 @@ def new_run_command(
     sync_records_new_run(config_path)
 
 
+def _resolve_resume_run_dir(
+    storage: BlueskyStorageManager,
+    run_dir: str | None,
+    latest: bool,
+) -> str:
+    """Return the run directory name to resume, or raise for invalid options."""
+    if (run_dir is not None and latest) or (run_dir is None and not latest):
+        raise ValueError(
+            "Resume requires exactly one of --run-dir or --latest"
+        )
+    if run_dir is not None:
+        return run_dir
+    return require_latest_in_progress_run_dir(storage).name
+
+
 @app.command("resume")
 def resume_command(
     config: Path = typer.Option(..., "--config", help=CONFIG_HELP),
@@ -406,7 +405,9 @@ def resume_command(
 ) -> None:
     """Resume an unfinished Bluesky raw run. Requires --run-dir or --latest."""
     config_path = resolve_config_path(config, REPO_ROOT)
-    sync_records_from_checkpoint(config_path, run_dir, latest)
+    config, runtime = load_bluesky_runtime(config_path)
+    resolved_run_dir = _resolve_resume_run_dir(runtime.storage, run_dir, latest)
+    sync_records_from_checkpoint(config_path, resolved_run_dir)
 
 
 def main() -> None:

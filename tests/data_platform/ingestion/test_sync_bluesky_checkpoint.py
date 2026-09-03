@@ -576,7 +576,9 @@ class TestFetchPostsForKeywordLimitPerTask:
 PATCHED_SYNC_TIMESTAMP = "2026_05_30-11:00:00"
 
 
-def _patch_load_yaml_config(monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.fixture
+def patched_config(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Patch load_yaml_config so TEST_INGEST_CONFIG_PATH resolves to minimal config."""
     monkeypatch.setattr(
         sync_bluesky,
         "load_yaml_config",
@@ -584,11 +586,9 @@ def _patch_load_yaml_config(monkeypatch: pytest.MonkeyPatch) -> None:
     )
 
 
-def _patch_bluesky_client(
-    monkeypatch: pytest.MonkeyPatch,
-    fake_search,
-) -> None:
-    monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
+@pytest.fixture
+def bluesky_client(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Patch BlueskyClient to a no-op MagicMock-backed client."""
     monkeypatch.setattr(sync_bluesky, "BlueskyClient", lambda: make_bluesky_client())
 
 
@@ -612,15 +612,17 @@ class TestSyncRecordsNewRun:
     def test_creates_run_and_completes_keyword_tasks(
         self,
         data_root,
+        patched_config,
+        bluesky_client,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        _patch_load_yaml_config(monkeypatch)
         monkeypatch.setattr(
             "data_platform.ingestion.sync_checkpoint.get_current_timestamp",
             lambda: PATCHED_SYNC_TIMESTAMP,
         )
-        _patch_bluesky_client(
-            monkeypatch,
+        monkeypatch.setattr(
+            BlueskyClient,
+            "_search_posts_page",
             _posts_by_query_search(
                 {
                     "alpha": [mock_post("at://did:plc:ex/app.bsky.feed.post/a1")],
@@ -644,19 +646,15 @@ class TestSyncRecordsNewRun:
     def test_raises_when_unfinished_run_exists(
         self,
         data_root,
-        monkeypatch: pytest.MonkeyPatch,
+        patched_config,
+        bluesky_client,
     ) -> None:
-        _patch_load_yaml_config(monkeypatch)
         storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
         existing = storage.create_new_run_dir("2026_05_30-10:00:00")
         flush_run_metadata(
             storage,
             existing,
             {"sync_status": SyncStatus.IN_PROGRESS.value, "tasks": {}},
-        )
-        _patch_bluesky_client(
-            monkeypatch,
-            _posts_by_query_search({}),
         )
 
         with pytest.raises(ValueError, match="unfinished"):
@@ -697,9 +695,10 @@ class TestSyncRecordsFromCheckpoint:
     def test_resumes_named_unfinished_run(
         self,
         data_root,
+        patched_config,
+        bluesky_client,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        _patch_load_yaml_config(monkeypatch)
         storage, run_dir = self._seed_in_progress_run()
         calls: list[str] = []
 
@@ -716,12 +715,11 @@ class TestSyncRecordsFromCheckpoint:
                 [mock_post("at://did:plc:ex/app.bsky.feed.post/b1")]
             )
 
-        _patch_bluesky_client(monkeypatch, fake_search)
+        monkeypatch.setattr(BlueskyClient, "_search_posts_page", fake_search)
 
         result = sync_bluesky.sync_records_from_checkpoint(
             TEST_INGEST_CONFIG_PATH,
             "2026_05_30-10:00:00",
-            False,
         )
 
         assert result == run_dir
@@ -732,12 +730,14 @@ class TestSyncRecordsFromCheckpoint:
     def test_resumes_latest_unfinished_run(
         self,
         data_root,
+        patched_config,
+        bluesky_client,
         monkeypatch: pytest.MonkeyPatch,
     ) -> None:
-        _patch_load_yaml_config(monkeypatch)
         storage, run_dir = self._seed_in_progress_run()
-        _patch_bluesky_client(
-            monkeypatch,
+        monkeypatch.setattr(
+            BlueskyClient,
+            "_search_posts_page",
             _posts_by_query_search(
                 {
                     "beta": [mock_post("at://did:plc:ex/app.bsky.feed.post/b1")],
@@ -745,8 +745,11 @@ class TestSyncRecordsFromCheckpoint:
             ),
         )
 
+        resolved = sync_bluesky._resolve_resume_run_dir(
+            storage, None, True
+        )
         result = sync_bluesky.sync_records_from_checkpoint(
-            TEST_INGEST_CONFIG_PATH, None, True
+            TEST_INGEST_CONFIG_PATH, resolved
         )
 
         assert result == run_dir
@@ -756,49 +759,49 @@ class TestSyncRecordsFromCheckpoint:
     def test_latest_raises_when_no_unfinished_run(
         self,
         data_root,
-        monkeypatch: pytest.MonkeyPatch,
+        patched_config,
+        bluesky_client,
     ) -> None:
-        _patch_load_yaml_config(monkeypatch)
-        _patch_bluesky_client(monkeypatch, _posts_by_query_search({}))
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
 
         with pytest.raises(FileNotFoundError):
-            sync_bluesky.sync_records_from_checkpoint(
-                TEST_INGEST_CONFIG_PATH, None, True
-            )
+            sync_bluesky._resolve_resume_run_dir(storage, None, True)
 
     def test_raises_when_named_run_is_completed(
         self,
         data_root,
-        monkeypatch: pytest.MonkeyPatch,
+        patched_config,
+        bluesky_client,
     ) -> None:
-        _patch_load_yaml_config(monkeypatch)
         storage, run_dir = self._seed_in_progress_run()
         metadata = storage.load_run_metadata(run_dir)
         metadata["sync_status"] = SyncStatus.COMPLETED.value
         metadata["tasks"]["beta"]["status"] = "completed"
         storage.write_run_metadata_atomic(run_dir, metadata)
-        _patch_bluesky_client(monkeypatch, _posts_by_query_search({}))
 
         with pytest.raises(ValueError, match="completed"):
             sync_bluesky.sync_records_from_checkpoint(
                 TEST_INGEST_CONFIG_PATH,
                 "2026_05_30-10:00:00",
-                False,
             )
 
-    def test_raises_when_both_run_dir_and_latest_are_set(self) -> None:
-        with pytest.raises(ValueError, match="exactly one"):
-            sync_bluesky.sync_records_from_checkpoint(
-                TEST_INGEST_CONFIG_PATH,
-                "2026_05_30-10:00:00",
-                True,
-            )
+    @pytest.mark.parametrize(
+        "run_dir, latest",
+        [
+            ("2026_05_30-10:00:00", True),
+            (None, False),
+        ],
+    )
+    def test_resume_requires_run_dir_or_latest(
+        self,
+        data_root,
+        run_dir: str | None,
+        latest: bool,
+    ) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
 
-    def test_raises_when_neither_run_dir_nor_latest_is_set(self) -> None:
         with pytest.raises(ValueError, match="exactly one"):
-            sync_bluesky.sync_records_from_checkpoint(
-                TEST_INGEST_CONFIG_PATH, None, False
-            )
+            sync_bluesky._resolve_resume_run_dir(storage, run_dir, latest)
 
 
 class TestBlueskySyncCli:
@@ -810,3 +813,11 @@ class TestBlueskySyncCli:
         assert result.exit_code == 0
         assert "new-run" in result.stdout
         assert "resume" in result.stdout
+
+    def test_resume_without_run_dir_or_latest_exits_with_error(
+        self,
+    ) -> None:
+        storage = BlueskyStorageManager(StorageStage.RAW, VALID_DATASET_ID)
+
+        with pytest.raises(ValueError, match="exactly one"):
+            sync_bluesky._resolve_resume_run_dir(storage, None, False)
