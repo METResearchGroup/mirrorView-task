@@ -231,6 +231,32 @@ def load_raw_records(
     return records, run_dirs
 
 
+def _maybe_sample_records(
+    records: pd.DataFrame,
+    sample_size: int | None,
+    sample_seed: int | None,
+) -> pd.DataFrame:
+    if sample_size is None:
+        return records
+    if sample_seed is None:
+        raise ValueError("sample_seed is required when sample_size is set")
+    return sample_rows(records, sample_size, sample_seed)
+
+
+def _with_sample_metadata(
+    metadata: dict[str, Any],
+    records: pd.DataFrame,
+    sample_size: int | None,
+    sample_seed: int | None,
+) -> dict[str, Any]:
+    if sample_size is None:
+        return metadata
+    metadata["row_counts"]["sampled"] = len(records)
+    metadata["sample_size"] = sample_size
+    metadata["sample_seed"] = sample_seed
+    return metadata
+
+
 def export_preprocessed_records(
     records: pd.DataFrame,
     spec: PreprocessPlatformSpec,
@@ -238,6 +264,8 @@ def export_preprocessed_records(
     input_count: int,
     *,
     source_raw_run_dirs: list[Path],
+    sample_size: int | None = None,
+    sample_seed: int | None = None,
 ) -> Path:
     """Persist preprocessed records to a new timestamped run directory."""
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
@@ -260,6 +288,7 @@ def export_preprocessed_records(
             spec.columns.records_file_key: preprocessed_storage.records_filename,
         },
     }
+    metadata = _with_sample_metadata(metadata, records, sample_size, sample_seed)
     preprocessed_storage.write_run_metadata(output_dir, metadata)
     return output_dir
 
@@ -409,12 +438,15 @@ def preprocess_records(
     input_count = len(records)
     records = apply_integration_specific_preprocessing(records, spec)
     records = apply_integration_specific_filters(records, spec)
+    records = _maybe_sample_records(records, sample_size, sample_seed)
     output_dir = export_preprocessed_records(
         records,
         spec,
         dataset_id,
         input_count=input_count,
         source_raw_run_dirs=source_raw_run_dirs,
+        sample_size=sample_size,
+        sample_seed=sample_seed,
     )
     print(
         f"preprocess_records: kept {len(records)} of {input_count}"
