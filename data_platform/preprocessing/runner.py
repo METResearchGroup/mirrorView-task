@@ -12,6 +12,10 @@ from pydantic import BaseModel
 
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
+from data_platform.preprocessing.sample_records import (
+    SOURCE_RAW_RUN_COLUMN,
+    sample_records_per_source_run,
+)
 from data_platform.preprocessing.previously_used_stimuli import (
     filter_previously_used_stimuli,
     load_previously_used_stimuli_ids,
@@ -338,6 +342,8 @@ def apply_integration_specific_preprocessing(
 def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
+    sample_size: int | None = None,
+    sample_seed: int | None = None,
 ) -> Path:
     """Run the full preprocessing pipeline for one dataset and persist the result.
 
@@ -381,6 +387,17 @@ def preprocess_records(
     input_count = len(records)
     records = apply_integration_specific_preprocessing(records, spec)
     records = apply_integration_specific_filters(records, spec)
+    if sample_size is not None:
+        if sample_seed is None:
+            raise ValueError("sample_seed is required when sample_size is set")
+        records = sample_records_per_source_run(
+            records,
+            sample_size,
+            sample_seed,
+            SOURCE_RAW_RUN_COLUMN,
+        )
+    if SOURCE_RAW_RUN_COLUMN in records.columns:
+        records = records.drop(columns=[SOURCE_RAW_RUN_COLUMN])
     output_dir = export_preprocessed_records(
         records,
         spec,
