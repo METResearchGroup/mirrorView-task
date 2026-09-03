@@ -194,6 +194,12 @@ class RedditTask:
     subreddit: str
 
 
+@dataclass(frozen=True)
+class SubredditFetchResult:
+    comment_rows: list[dict[str, Any]]
+    stats: dict[str, Any]
+
+
 def _normalize_subreddit_key(subreddit: str) -> str:
     return subreddit.removeprefix("r/").lower()
 
@@ -273,69 +279,9 @@ def fetch_records_for_subreddit(
     subreddit: str,
     *,
     sync_timestamp: str,
-    include_posts: bool,
-    include_comments: bool,
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]], dict[str, Any]]:
-    """Fetch posts and/or comments for a single subreddit."""
-    limit = resolve_limit_per_task(ingestion_params)
-    listing = str(ingestion_params.get("listing", DEFAULT_LISTING))
-    listing_time_filter = _resolve_listing_time_filter(ingestion_params, listing)
-    comments_per_post = int(ingestion_params.get("comments_per_post", 100))
-    min_comment_body_length = int(ingestion_params.get("min_comment_body_length", 30))
-
-    try:
-        submissions = _fetch_subreddit_page(
-            reddit, subreddit, listing, limit, time_filter=listing_time_filter
-        )
-    except prawcore.exceptions.NotFound:
-        logger.warning("Subreddit not found: %s", subreddit)
-        return (
-            [],
-            [],
-            {
-                "subreddit": subreddit,
-                "listing": listing,
-                "listing_time_filter": listing_time_filter,
-                "limit_per_subreddit": limit,
-                "posts_collected": 0,
-                "comments_collected": 0,
-            },
-        )
-
-    post_rows: list[dict[str, Any]] = []
-    comment_rows: list[dict[str, Any]] = []
-
-    for post in submissions:
-        if include_posts:
-            post_rows.append(submission_to_row(post, sync_timestamp))
-
-        if include_comments:
-            try:
-                comment_rows.extend(
-                    fetch_post_comments(
-                        post,
-                        max_comments=comments_per_post,
-                        min_body_length=min_comment_body_length,
-                        sync_timestamp=sync_timestamp,
-                    )
-                )
-            except Exception:
-                logger.warning(
-                    "Failed to fetch comments for post %s in r/%s",
-                    post.id,
-                    subreddit,
-                    exc_info=True,
-                )
-
-    stats = {
-        "subreddit": subreddit,
-        "listing": listing,
-        "listing_time_filter": listing_time_filter,
-        "limit_per_subreddit": limit,
-        "posts_collected": len(post_rows),
-        "comments_collected": len(comment_rows),
-    }
-    return post_rows, comment_rows, stats
+) -> SubredditFetchResult:
+    """Fetch comments for a single subreddit by walking listing submissions."""
+    raise NotImplementedError
 
 
 def _initial_task_progress(task: RedditTask) -> dict[str, Any]:
@@ -377,203 +323,39 @@ def _resolve_reddit_dedupe_policy(
 
 
 def _open_reddit_dedupe_sessions(
-    comment_storage: RedditStorageManager,
-    post_storage: RedditStorageManager,
+    storage: RedditStorageManager,
     output_dir: Path,
     ingestion_params: dict[str, Any],
-    *,
-    include_comments: bool,
-    include_posts: bool,
     comments_filename: str,
-    posts_filename: str,
-) -> tuple[DedupeSession | None, DedupeSession | None]:
-    comment_dedupe_session: DedupeSession | None = None
-    post_dedupe_session: DedupeSession | None = None
-    if include_comments:
-        comment_dedupe_session = DedupeSession(
-            DedupeConfig(
-                id_column="comment_fullname",
-                filename=comments_filename,
-            )
-        )
-        if policy_includes_prior_runs(
-            _resolve_reddit_dedupe_policy(
-                ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
-            )
-        ):
-            comment_dedupe_session.load_seen_ids_from_all_runs(comment_storage)
-        else:
-            comment_dedupe_session.load_seen_ids(comment_storage, output_dir)
-    if include_posts:
-        post_dedupe_session = DedupeSession(
-            DedupeConfig(
-                id_column="reddit_fullname",
-                filename=posts_filename,
-            )
-        )
-        if policy_includes_prior_runs(
-            _resolve_reddit_dedupe_policy(
-                ingestion_params, POSTS_DEDUPE_POLICY_KEY
-            )
-        ):
-            post_dedupe_session.load_seen_ids_from_all_runs(post_storage)
-        else:
-            post_dedupe_session.load_seen_ids(post_storage, output_dir)
-    return comment_dedupe_session, post_dedupe_session
+) -> DedupeSession:
+    raise NotImplementedError
 
 
 def _append_subreddit_deduped_rows(
-    comment_storage: RedditStorageManager,
-    post_storage: RedditStorageManager,
+    storage: RedditStorageManager,
     output_dir: Path,
     metadata: dict[str, Any],
-    post_rows: list[dict[str, Any]],
     comment_rows: list[dict[str, Any]],
-    *,
-    include_comments: bool,
-    include_posts: bool,
-    comment_dedupe_session: DedupeSession | None,
-    post_dedupe_session: DedupeSession | None,
+    comment_dedupe_session: DedupeSession,
     comments_filename: str,
-    posts_filename: str,
-) -> tuple[int, int]:
-    if include_posts and post_rows and post_dedupe_session is not None:
-        post_result = post_storage.append_deduped_records(
-            post_rows,
-            output_dir,
-            dedupe_session=post_dedupe_session,
-            filename=posts_filename,
-        )
-        increment_duplicate_skip_counters(
-            metadata,
-            record_type=POSTS_RECORD_TYPE,
-            skipped=post_result.skipped,
-        )
-
-    if include_comments and comment_rows and comment_dedupe_session is not None:
-        comment_result = comment_storage.append_deduped_records(
-            comment_rows,
-            output_dir,
-            dedupe_session=comment_dedupe_session,
-            filename=comments_filename,
-        )
-        increment_duplicate_skip_counters(
-            metadata,
-            record_type=COMMENTS_RECORD_TYPE,
-            skipped=comment_result.skipped,
-        )
-
-    comment_count = (
-        len(comment_dedupe_session.seen_ids)
-        if include_comments and comment_dedupe_session is not None
-        else 0
-    )
-    post_count = (
-        len(post_dedupe_session.seen_ids)
-        if include_posts and post_dedupe_session is not None
-        else 0
-    )
-    metadata["row_count"] = comment_count
-    metadata["post_row_count"] = post_count
-    return comment_count, post_count
+) -> int:
+    raise NotImplementedError
 
 
 def run_sync_tasks(
     reddit: praw.Reddit,
     ingestion_params: dict[str, Any],
     output_dir: Path,
-    comment_storage: RedditStorageManager,
-    post_storage: RedditStorageManager,
+    storage: RedditStorageManager,
     metadata: dict[str, Any],
     sync_tasks: list[RedditTask],
-    *,
-    include_comments: bool,
-    include_posts: bool,
 ) -> None:
-    """Run the checkpointed subreddit loop and write comments and posts.
+    """Run the checkpointed subreddit loop and write comments.
 
-    Filenames come from ``comment_storage.records_filename`` and
-    ``post_storage.records_filename`` so the suffix matches the dataset format.
+    Filenames come from ``storage.records_filename`` so the suffix matches the
+    dataset format.
     """
-    max_comments_int = parse_max_comments(ingestion_params)
-    sync_timestamp = str(metadata["sync_timestamp"])
-    comments_filename = comment_storage.records_filename
-    posts_filename = post_storage.records_filename
-
-    comment_dedupe_session, post_dedupe_session = _open_reddit_dedupe_sessions(
-        comment_storage,
-        post_storage,
-        output_dir,
-        ingestion_params,
-        include_comments=include_comments,
-        include_posts=include_posts,
-        comments_filename=comments_filename,
-        posts_filename=posts_filename,
-    )
-    if comment_dedupe_session or post_dedupe_session:
-        prior_comment_count = len(comment_dedupe_session.seen_ids) if comment_dedupe_session else 0
-        prior_post_count = len(post_dedupe_session.seen_ids) if post_dedupe_session else 0
-        print(
-            f"sync_records: loaded {prior_comment_count} prior comment IDs, "
-            f"{prior_post_count} prior post IDs for dedupe"
-        )
-
-    def process_task(task: RedditTask, entry: dict[str, Any]) -> None:
-        mark_task_in_progress(entry, comment_storage, output_dir, metadata)
-
-        try:
-            post_rows, comment_rows, stats = fetch_records_for_subreddit(
-                reddit,
-                ingestion_params,
-                task.subreddit,
-                sync_timestamp=sync_timestamp,
-                include_posts=include_posts,
-                include_comments=include_comments,
-            )
-        except Exception as exc:  # noqa: BLE001 — record and continue
-            mark_task_failed(entry, exc, task.task_id, comment_storage, output_dir, metadata)
-            return
-
-        comment_count, post_count = _append_subreddit_deduped_rows(
-            comment_storage,
-            post_storage,
-            output_dir,
-            metadata,
-            post_rows,
-            comment_rows,
-            include_comments=include_comments,
-            include_posts=include_posts,
-            comment_dedupe_session=comment_dedupe_session,
-            post_dedupe_session=post_dedupe_session,
-            comments_filename=comments_filename,
-            posts_filename=posts_filename,
-        )
-        mark_task_completed(
-            entry,
-            comment_storage,
-            output_dir,
-            metadata,
-            entry_updates={
-                "posts_collected": stats["posts_collected"],
-                "comments_collected": stats["comments_collected"],
-            },
-        )
-
-        print(
-            f"sync_records: {task.task_id} -> "
-            f"{stats['comments_collected']} comments, {stats['posts_collected']} posts "
-            f"(total comments={comment_count}, total posts={post_count})"
-        )
-
-    run_checkpointed_sync(
-        sync_tasks,
-        metadata,
-        comment_storage,
-        output_dir,
-        record_cap=max_comments_int,
-        tqdm_desc="Syncing subreddits",
-        process_task=process_task,
-    )
+    raise NotImplementedError
 
 
 load_config = load_yaml_config
@@ -597,22 +379,18 @@ def sync_records(
         config,
         config_path,
     )
-    comment_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
-    post_storage = comment_storage.post_storage()
+    storage = RedditStorageManager(StorageStage.RAW, dataset_id)
 
     ingestion_params = config["ingestion_params"]
     sync_tasks = build_sync_tasks(ingestion_params)
     record_types: list[str] = config["record_types"]
-    include_comments = COMMENTS_RECORD_TYPE in record_types
-    include_posts = POSTS_RECORD_TYPE in record_types
-
-    if not include_comments and not include_posts:
-        raise ValueError(f"Unsupported record types for checkpoint sync: {record_types}")
+    if COMMENTS_RECORD_TYPE not in record_types or POSTS_RECORD_TYPE in record_types:
+        raise NotImplementedError
 
     reddit = init_reddit_client()
 
     output_dir, metadata = prepare_sync_run(
-        comment_storage,
+        storage,
         sync_tasks,
         run_dir_name=run_dir_name,
         init_metadata_fn=lambda ts: init_sync_metadata(config, config_path, ts, sync_tasks),
@@ -623,18 +401,14 @@ def sync_records(
         reddit,
         ingestion_params,
         output_dir,
-        comment_storage,
-        post_storage,
+        storage,
         metadata,
         sync_tasks,
-        include_comments=include_comments,
-        include_posts=include_posts,
     )
-    finalize_local_disk_sync(comment_storage, output_dir, metadata)
+    finalize_local_disk_sync(storage, output_dir, metadata)
 
     print(
-        f"sync_records: wrote {metadata['row_count']} comments and "
-        f"{metadata['post_row_count']} posts to {output_dir} "
+        f"sync_records: wrote {metadata['row_count']} comments to {output_dir} "
         f"(status={metadata['sync_status']})"
     )
     return output_dir
