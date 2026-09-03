@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-03
+
+1. Ingest scripts now share one start and finish path for a raw sync. Bluesky and Twitter also share the keyword task loop. Reddit still writes posts and comments in its own loop. Operator commands and YAML stay the same. [PR #140](https://github.com/METResearchGroup/mirrorView-task/pull/140)
+
 ## 2026-09-02
 
 1. Preprocess now owns length and English gates for stimuli-ready text. Reddit comments also need at least 30 characters. Ingest fetch filters are unchanged. [PR #132](https://github.com/METResearchGroup/mirrorView-task/pull/132)
