@@ -3,19 +3,24 @@
 Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
-        --dataset-id bluesky_<uuid> --batch-size 64
+        new-run --dataset-id bluesky_<uuid> --batch-size 64
+
+    PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
+        resume --dataset-id bluesky_<uuid> --checkpoint 2026_05_30-12:00:00
+
+    PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
+        resume --dataset-id bluesky_<uuid> --latest
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-import typer
-
 from data_platform.generate_features.platform_cli import (
     FeaturePlatformSpec,
-    features_from_cli,
+    build_feature_cli_app,
     generate_platform_features,
+    generate_platform_features_from_checkpoint,
 )
 from data_platform.models.sync import PreprocessedBlueskyPostModel
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
@@ -30,61 +35,52 @@ BLUESKY_SPEC = FeaturePlatformSpec(
     require_all_runs_complete=True,
 )
 
+app = build_feature_cli_app(
+    BLUESKY_SPEC,
+    "Dataset identifier from ingestion YAML (bluesky_<uuid>)",
+)
+
 
 def generate_bluesky_features(
     dataset_id: str,
-    *,
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
-    checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Load Bluesky posts and generate the requested feature labels.
-
-    Parameters
-    ----------
-    checkpoint
-        Existing ``features/{timestamp}/`` folder to resume. Pass None when
-        you want a new run.
-    """
+    """Start a new Bluesky feature run and generate the requested labels."""
     return generate_platform_features(
         BLUESKY_SPEC,
         dataset_id,
         batch_size=batch_size,
         max_concurrency=max_concurrency,
         feature_subset=feature_subset,
-        checkpoint=checkpoint,
     )
 
 
-def main(
-    dataset_id: str = typer.Option(
-        ...,
-        "--dataset-id",
-        help="Dataset identifier from ingestion YAML (bluesky_<uuid>)",
-    ),
-    batch_size: int = typer.Option(64, "--batch-size"),
-    max_concurrency: int = typer.Option(80, "--max-concurrency"),
-    features: list[str] | None = typer.Option(
-        None,
-        "--features",
-        help="Feature name(s); repeat the flag per feature, e.g. --features is_political",
-    ),
-    checkpoint: str | None = typer.Option(
-        None,
-        "--checkpoint",
-        help="Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)",
-    ),
-) -> None:
-    """CLI entrypoint for resumable Bluesky feature generation."""
-    generate_bluesky_features(
+def generate_bluesky_features_from_checkpoint(
+    dataset_id: str,
+    checkpoint: str | None,
+    latest: bool,
+    batch_size: int = 64,
+    max_concurrency: int = 80,
+    feature_subset: list[str] | None = None,
+) -> dict[str, Path]:
+    """Resume an unfinished Bluesky feature run."""
+    return generate_platform_features_from_checkpoint(
+        BLUESKY_SPEC,
         dataset_id,
-        batch_size=batch_size,
-        max_concurrency=max_concurrency,
-        feature_subset=features_from_cli(features),
-        checkpoint=checkpoint,
+        checkpoint,
+        latest,
+        batch_size,
+        max_concurrency,
+        feature_subset,
     )
+
+
+def main() -> None:
+    """CLI entrypoint. Requires new-run or resume."""
+    app()
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    main()

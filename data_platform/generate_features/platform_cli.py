@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import pandas as pd
+import typer
 from pydantic import BaseModel
 
 from data_platform.generate_features.generate_features import (
@@ -24,8 +25,18 @@ StorageManagerFactory = Callable[..., StorageManager]
 
 FEATURE_RUN_COMPLETED_STATUS = "completed"
 FEATURE_CHECKPOINT_NAME_ERROR = "checkpoint must be a single feature run directory name"
+RESUME_FLAG_ERROR = "Pass --checkpoint or --latest, but not both"
 CURRENT_DIR_NAME = "."
 PARENT_DIR_NAME = ".."
+DEFAULT_BATCH_SIZE = 64
+DEFAULT_MAX_CONCURRENCY = 80
+FEATURES_OPTION_HELP = (
+    "Feature name(s); repeat the flag per feature, e.g. --features is_political"
+)
+CHECKPOINT_OPTION_HELP = (
+    "Unfinished feature run timestamp to resume (e.g. 2026_05_30-12:00:00)"
+)
+LATEST_OPTION_HELP = "Resume the newest unfinished feature run for this dataset."
 
 
 @dataclass(frozen=True)
@@ -59,13 +70,13 @@ def features_from_cli(raw: list[str] | None) -> list[str] | None:
 def run_feature_generation(
     records: pd.DataFrame,
     config: FeatureGenerationConfig,
-    *,
     empty_message: str,
+    resume: bool,
 ) -> dict[str, Path]:
     if records.empty:
         print(empty_message)
         return {}
-    return generate_features(records, config)
+    return generate_features(records, config, resume)
 
 
 def _require_single_feature_run_name(checkpoint: str) -> str:
@@ -260,20 +271,11 @@ def load_preprocessed_records(spec: FeaturePlatformSpec, dataset_id: str) -> pd.
 def generate_platform_features(
     spec: FeaturePlatformSpec,
     dataset_id: str,
-    *,
     batch_size: int = 64,
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
-    checkpoint: str | None = None,
 ) -> dict[str, Path]:
-    """Load platform records and generate the requested feature labels.
-
-    Parameters
-    ----------
-    checkpoint
-        Existing ``features/{timestamp}/`` folder to resume. Pass None when
-        you want a new run.
-    """
+    """Start a new feature run and generate the requested feature labels."""
     dataset_id = validate_dataset_id(dataset_id)
 
     if spec.require_all_runs_complete:
@@ -296,6 +298,94 @@ def generate_platform_features(
         dataset_id,
         run_config=run_config,
         features_subset=features_subset,
-        checkpoint=checkpoint,
     )
-    return run_feature_generation(records, config, empty_message=spec.empty_message)
+    return run_feature_generation(
+        records, config, spec.empty_message, resume=False
+    )
+
+
+def require_latest_unfinished_feature_run_dir(feature_storage: StorageManager) -> Path:
+    raise NotImplementedError
+
+
+def resolve_resume_checkpoint(
+    feature_storage: StorageManager,
+    checkpoint: str | None,
+    latest: bool,
+) -> str:
+    raise NotImplementedError
+
+
+def generate_platform_features_from_checkpoint(
+    spec: FeaturePlatformSpec,
+    dataset_id: str,
+    checkpoint: str | None,
+    latest: bool,
+    batch_size: int,
+    max_concurrency: int,
+    feature_subset: list[str] | None,
+) -> dict[str, Path]:
+    raise NotImplementedError
+
+
+def build_feature_cli_app(
+    spec: FeaturePlatformSpec,
+    dataset_id_help: str,
+) -> typer.Typer:
+    app = typer.Typer(no_args_is_help=True)
+
+    @app.command("new-run")
+    def new_run_command(
+        dataset_id: str = typer.Option(..., "--dataset-id", help=dataset_id_help),
+        batch_size: int = typer.Option(DEFAULT_BATCH_SIZE, "--batch-size"),
+        max_concurrency: int = typer.Option(
+            DEFAULT_MAX_CONCURRENCY, "--max-concurrency"
+        ),
+        features: list[str] | None = typer.Option(
+            None,
+            "--features",
+            help=FEATURES_OPTION_HELP,
+        ),
+    ) -> None:
+        generate_platform_features(
+            spec,
+            dataset_id,
+            batch_size=batch_size,
+            max_concurrency=max_concurrency,
+            feature_subset=features_from_cli(features),
+        )
+
+    @app.command("resume")
+    def resume_command(
+        dataset_id: str = typer.Option(..., "--dataset-id", help=dataset_id_help),
+        batch_size: int = typer.Option(DEFAULT_BATCH_SIZE, "--batch-size"),
+        max_concurrency: int = typer.Option(
+            DEFAULT_MAX_CONCURRENCY, "--max-concurrency"
+        ),
+        features: list[str] | None = typer.Option(
+            None,
+            "--features",
+            help=FEATURES_OPTION_HELP,
+        ),
+        checkpoint: str | None = typer.Option(
+            None,
+            "--checkpoint",
+            help=CHECKPOINT_OPTION_HELP,
+        ),
+        latest: bool = typer.Option(
+            False,
+            "--latest",
+            help=LATEST_OPTION_HELP,
+        ),
+    ) -> None:
+        generate_platform_features_from_checkpoint(
+            spec,
+            dataset_id,
+            checkpoint,
+            latest,
+            batch_size,
+            max_concurrency,
+            features_from_cli(features),
+        )
+
+    return app

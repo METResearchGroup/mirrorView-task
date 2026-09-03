@@ -10,7 +10,8 @@ import pandas as pd
 from data_platform.generate_features.engines import build_engine
 from data_platform.generate_features.metadata import (
     flush_metadata,
-    load_or_init_metadata,
+    init_feature_run_metadata,
+    load_feature_run_metadata,
     mark_feature_completed,
     mark_feature_in_progress,
     set_sync_status_completed,
@@ -176,6 +177,7 @@ def _mark_sync_completed(
 def generate_features(
     records: pd.DataFrame,
     config: FeatureGenerationConfig,
+    resume: bool,
 ) -> dict[str, Path]:
     """Generate configured features with resumable append to timestamped run files."""
     if records.empty:
@@ -183,10 +185,10 @@ def generate_features(
         return {}
 
     feature_names = tuple(config.feature_registry.keys())
-    metadata = load_or_init_metadata(
-        config,
-        feature_names=feature_names,
-    )
+    if resume:
+        metadata = load_feature_run_metadata(config, feature_names)
+    else:
+        metadata = init_feature_run_metadata(config, feature_names)
 
     written: dict[str, Path] = {}
 

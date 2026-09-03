@@ -87,34 +87,27 @@ def _stamp_or_check_identity(
             )
 
 
-def load_or_init_metadata(
+def init_feature_run_metadata(
     config: FeatureGenerationConfig,
-    *,
     feature_names: tuple[str, ...],
 ) -> FeatureRunMetadata:
-    """Load existing feature-run metadata or create a new in-progress document."""
-    path = metadata_path(config.features_dir)
-    source_preprocessed_runs = resolve_source_preprocessed_runs(config)
-    if path.exists():
-        with path.open(encoding="utf-8") as f:
-            metadata = FeatureRunMetadata.from_dict(json.load(f))
-        metadata.source_preprocessed_runs = source_preprocessed_runs
-        _stamp_or_check_identity(metadata, config, feature_names)
-        flush_metadata(config.features_dir, metadata)
-        return metadata
+    raise NotImplementedError
 
-    features = {name: FeatureStatus() for name in feature_names}
-    metadata = FeatureRunMetadata(
-        dataset_id=config.input_storage.dataset_id,
-        source_preprocessed_runs=source_preprocessed_runs,
-        sync_status="in_progress",
-        features=features,
-        config=config.run_config,
-        updated_at=get_current_timestamp(),
+
+def load_feature_run_metadata(
+    config: FeatureGenerationConfig,
+    feature_names: tuple[str, ...],
+) -> FeatureRunMetadata:
+    raise NotImplementedError
+
+
+def load_or_init_metadata(
+    config: FeatureGenerationConfig,
+    feature_names: tuple[str, ...],
+) -> FeatureRunMetadata:
+    raise NotImplementedError(
+        "Use init_feature_run_metadata or load_feature_run_metadata"
     )
-    _stamp_or_check_identity(metadata, config, feature_names)
-    flush_metadata(config.features_dir, metadata)
-    return metadata
 
 
 def mark_feature_in_progress(
