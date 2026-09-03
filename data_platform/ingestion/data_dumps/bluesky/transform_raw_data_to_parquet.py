@@ -22,7 +22,6 @@ PARQUET_ROOT = Path(__file__).resolve().parent / "data" / "parquet"
 MAX_FILE_BYTES = 50 * 1024 * 1024
 PARQUET_COMPRESSION = "zstd"
 PARQUET_COMPRESSION_LEVEL = 9
-UTC_SUFFIX = " UTC"
 NULL_BYTE = b"\x00"
 CREATED_AT_TIMESTAMP_TYPE = pa.timestamp("us", tz="UTC")
 
@@ -56,16 +55,6 @@ def _read_csv_table(csv_path: Path) -> pa.Table:
     ----------
     csv_path
         Path to the step-1 Athena CSV export.
-
-    Returns
-    -------
-    pyarrow.Table
-        Four-column table with parsed UTC ``created_at`` timestamps.
-
-    Raises
-    ------
-    FileNotFoundError
-        When ``csv_path`` does not exist.
     """
     raw_bytes = _read_csv_bytes(csv_path)
     table = _parse_csv_bytes(raw_bytes)
@@ -108,30 +97,27 @@ def _parse_utc_timestamps(created_at_strings: pa.ChunkedArray) -> pa.ChunkedArra
 
 
 def _group_table_by_utc_date_hour(table: pa.Table) -> dict[tuple[str, str], pa.Table]:
-    """Partition rows by UTC calendar date and hour of ``created_at``.
-
-    Parameters
-    ----------
-    table
-        Posts table containing a UTC ``created_at`` column.
-
-    Returns
-    -------
-    dict[tuple[str, str], pyarrow.Table]
-        Tables keyed by ``(YYYY-MM-DD, HH)`` partition labels.
-    """
+    """Partition rows by UTC calendar date and hour of ``created_at``."""
     created_at = table.column("created_at")
     date_labels = pc.strftime(created_at, format="%Y-%m-%d")
     hour_labels = pc.strftime(created_at, format="%H")
+    row_indices = _row_indices_by_utc_partition(date_labels, hour_labels)
+    return {
+        partition_key: table.take(indices)
+        for partition_key, indices in row_indices.items()
+    }
+
+
+def _row_indices_by_utc_partition(
+    date_labels: pa.ChunkedArray,
+    hour_labels: pa.ChunkedArray,
+) -> dict[tuple[str, str], list[int]]:
     row_indices: dict[tuple[str, str], list[int]] = defaultdict(list)
     for row_index, (date_label, hour_label) in enumerate(
         zip(date_labels.to_pylist(), hour_labels.to_pylist(), strict=True),
     ):
         row_indices[(date_label, hour_label)].append(row_index)
-    return {
-        partition_key: table.take(indices)
-        for partition_key, indices in row_indices.items()
-    }
+    return row_indices
 
 
 def _partition_directory(partition_key: tuple[str, str]) -> Path:
@@ -158,6 +144,14 @@ def _split_table_until_small(
     candidate_path.unlink()
     if table.num_rows <= 1:
         raise ValueError("Single row exceeds max parquet file size")
+    return _recursive_split_table(table, partition_dir, prefix)
+
+
+def _recursive_split_table(
+    table: pa.Table,
+    partition_dir: Path,
+    prefix: str,
+) -> list[Path]:
     midpoint = table.num_rows // 2
     left_paths = _split_table_until_small(
         table.slice(0, midpoint),

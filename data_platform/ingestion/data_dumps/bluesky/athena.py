@@ -53,14 +53,12 @@ class Athena:
         RuntimeError
             When Athena reports FAILED or CANCELLED.
         """
-        _validate_read_only_query(query)
-        response = self.client.start_query_execution(
-            QueryString=query,
-            QueryExecutionContext={"Database": database},
-            WorkGroup=workgroup,
+        return _submit_and_wait_for_query(
+            self.client,
+            query,
+            database,
+            workgroup,
         )
-        execution_id = response["QueryExecutionId"]
-        return _wait_for_query_completion(self.client, execution_id)
 
     def get_output_location(self, execution_id: str) -> str:
         """Return the S3 URI of the result CSV for a completed query execution.
@@ -77,6 +75,31 @@ class Athena:
         """
         response = self.client.get_query_execution(QueryExecutionId=execution_id)
         return response["QueryExecution"]["ResultConfiguration"]["OutputLocation"]
+
+
+def _submit_and_wait_for_query(
+    client: Any,
+    query: str,
+    database: str,
+    workgroup: str,
+) -> str:
+    _validate_read_only_query(query)
+    execution_id = _start_query_execution(client, query, database, workgroup)
+    return _wait_for_query_completion(client, execution_id)
+
+
+def _start_query_execution(
+    client: Any,
+    query: str,
+    database: str,
+    workgroup: str,
+) -> str:
+    response = client.start_query_execution(
+        QueryString=query,
+        QueryExecutionContext={"Database": database},
+        WorkGroup=workgroup,
+    )
+    return response["QueryExecutionId"]
 
 
 def _strip_leading_sql_comments(query: str) -> str:
