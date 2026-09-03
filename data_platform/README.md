@@ -37,7 +37,7 @@ The ingestion CLI reads `dataset_id` from the ingestion config. Pass config path
 PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
   --config data_platform/ingestion/configs/bluesky/smoke.yaml
 
-PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py new-run \
   --config data_platform/ingestion/configs/bluesky/mirrorview.yaml
 
 PYTHONPATH=. uv run python data_platform/ingestion/sync_twitter.py \
@@ -47,12 +47,20 @@ PYTHONPATH=. uv run python data_platform/ingestion/sync_reddit.py \
   --config data_platform/ingestion/configs/reddit/mirrorview.yaml
 ```
 
-Large syncs checkpoint per keyword/subreddit in `raw/{timestamp}/metadata.json`. Resume after interrupt:
+Large syncs checkpoint per keyword/subreddit in `raw/{timestamp}/metadata.json`. Resume a named Bluesky run after interrupt:
 
 ```bash
-PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \
   --config data_platform/ingestion/configs/bluesky/mirrorview.yaml \
   --run-dir <timestamp>
+```
+
+Resume the latest unfinished Bluesky run instead:
+
+```bash
+PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py resume \
+  --config data_platform/ingestion/configs/bluesky/mirrorview.yaml \
+  --latest
 ```
 
 Preprocess, features, and curate require the same `--dataset-id` as in ingestion YAML:
