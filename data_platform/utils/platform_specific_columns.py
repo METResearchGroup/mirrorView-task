@@ -4,9 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-CANONICAL_TEXT_COLUMN = "text"
-CANONICAL_AUTHOR_HANDLE_COLUMN = "author_handle"
-CANONICAL_SOURCE_RECORD_ID_COLUMN = "source_record_id"
+STANDARDIZED_TEXT_COLUMN = "text"
+STANDARDIZED_AUTHOR_HANDLE_COLUMN = "author_handle"
+STANDARDIZED_SOURCE_RECORD_ID_COLUMN = "source_record_id"
+STANDARDIZED_RECORD_ID_COLUMN = "record_id"
 REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN = "body"
 
 
@@ -27,27 +28,27 @@ class PlatformSpecificColumns:
 
     records_id_column: str
     text_column: str
-    feature_file_id_column: str = CANONICAL_SOURCE_RECORD_ID_COLUMN
+    feature_file_id_column: str = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
     records_file_key: str = "posts"
 
 
 BLUESKY_COLUMNS = PlatformSpecificColumns(
     records_id_column="uri",
-    text_column=CANONICAL_TEXT_COLUMN,
-    feature_file_id_column=CANONICAL_SOURCE_RECORD_ID_COLUMN,
+    text_column=STANDARDIZED_TEXT_COLUMN,
+    feature_file_id_column=STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
     records_file_key="posts",
 )
 
 REDDIT_COLUMNS = PlatformSpecificColumns(
     records_id_column="comment_fullname",
-    text_column=CANONICAL_TEXT_COLUMN,
-    feature_file_id_column=CANONICAL_SOURCE_RECORD_ID_COLUMN,
+    text_column=STANDARDIZED_TEXT_COLUMN,
+    feature_file_id_column=STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
     records_file_key="comments",
 )
 
 TWITTER_COLUMNS = PlatformSpecificColumns(
     records_id_column="tweet_id",
-    text_column=CANONICAL_TEXT_COLUMN,
-    feature_file_id_column=CANONICAL_SOURCE_RECORD_ID_COLUMN,
+    text_column=STANDARDIZED_TEXT_COLUMN,
+    feature_file_id_column=STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
     records_file_key="posts",
 )

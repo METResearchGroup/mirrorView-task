@@ -106,33 +106,21 @@ def is_eligible_comment(comment: praw.models.Comment, min_body_length: int) -> b
 
 def comment_to_row(
     comment: praw.models.Comment,
-    submission: praw.models.Submission,
     sync_timestamp: str,
-    *,
-    depth: int,
-    comment_rank: int,
 ) -> dict[str, Any]:
-    """Normalize a PRAW Comment to a flat dict matching the comment CSV schema.
+    """Normalize a PRAW Comment to a flat dict matching the CSV schema.
 
-    ``created_at`` is UTC ISO-8601 from the payload unix time. Output has no
-    ``created_utc`` column.
+    The row has ``comment_fullname``, ``author``, ``body``, ``created_at``,
+    and ``sync_timestamp``. ``created_at`` is UTC ISO-8601 from the comment
+    unix time.
     """
     author = "[deleted]" if comment.author is None else str(comment.author)
     created_at = datetime.fromtimestamp(comment.created_utc, tz=timezone.utc).isoformat()
     return {
-        "post_reddit_id": submission.id,
-        "post_reddit_fullname": submission.name,
-        "subreddit": submission.subreddit.display_name,
-        "comment_id": comment.id,
         "comment_fullname": comment.name,
-        "parent_id": comment.parent_id,
         "author": author,
         "body": comment.body,
-        "score": comment.score,
         "created_at": created_at,
-        "permalink": comment.permalink,
-        "depth": depth,
-        "comment_rank": comment_rank,
         "sync_timestamp": sync_timestamp,
     }
 
@@ -152,9 +140,8 @@ def _expand_more_comments(comments_forest: CommentForest) -> None:
 
 def _walk_comments_in_order(
     comments_forest: CommentForest,
-    depth: int = 0,
-) -> Iterator[tuple[praw.models.Comment, int]]:
-    """Yield (comment, depth) in Reddit default display order via depth-first walk."""
+) -> Iterator[praw.models.Comment]:
+    """Yield comments in Reddit default display order via depth-first walk."""
     comments_forest.replace_more(limit=0)
     _expand_more_comments(comments_forest)
 
@@ -171,9 +158,9 @@ def _walk_comments_in_order(
         if isinstance(comment, praw.models.MoreComments):
             continue
 
-        yield comment, depth
+        yield comment
         if comment.replies:
-            yield from _walk_comments_in_order(comment.replies, depth + 1)
+            yield from _walk_comments_in_order(comment.replies)
 
 
 def fetch_post_comments(
@@ -182,24 +169,21 @@ def fetch_post_comments(
     min_body_length: int,
     sync_timestamp: str,
 ) -> list[dict[str, Any]]:
-    """Collect up to max_comments eligible comments for a submission."""
+    """Collect up to max_comments eligible comments for a submission.
+
+    The function skips stickied comments, distinguished comments, and
+    comments shorter than min_body_length. Comment rows do not include depth
+    or rank.
+    """
     rows: list[dict[str, Any]] = []
     submission.comments.replace_more(limit=0)
 
-    for comment, depth in _walk_comments_in_order(submission.comments):
+    for comment in _walk_comments_in_order(submission.comments):
         if len(rows) >= max_comments:
             break
         if not is_eligible_comment(comment, min_body_length):
             continue
-        rows.append(
-            comment_to_row(
-                comment,
-                submission,
-                sync_timestamp,
-                depth=depth,
-                comment_rank=len(rows) + 1,
-            )
-        )
+        rows.append(comment_to_row(comment, sync_timestamp))
 
     return rows
 
@@ -410,27 +394,31 @@ def _open_reddit_dedupe_sessions(
             DedupeConfig(
                 id_column="comment_fullname",
                 filename=comments_filename,
-                include_prior_runs=policy_includes_prior_runs(
-                    _resolve_reddit_dedupe_policy(
-                        ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
-                    )
-                ),
             )
         )
-        comment_dedupe_session.warm(comment_storage, output_dir)
+        if policy_includes_prior_runs(
+            _resolve_reddit_dedupe_policy(
+                ingestion_params, COMMENTS_DEDUPE_POLICY_KEY
+            )
+        ):
+            comment_dedupe_session.load_seen_ids_from_all_runs(comment_storage)
+        else:
+            comment_dedupe_session.load_seen_ids(comment_storage, output_dir)
     if include_posts:
         post_dedupe_session = DedupeSession(
             DedupeConfig(
                 id_column="reddit_fullname",
                 filename=posts_filename,
-                include_prior_runs=policy_includes_prior_runs(
-                    _resolve_reddit_dedupe_policy(
-                        ingestion_params, POSTS_DEDUPE_POLICY_KEY
-                    )
-                ),
             )
         )
-        post_dedupe_session.warm(post_storage, output_dir)
+        if policy_includes_prior_runs(
+            _resolve_reddit_dedupe_policy(
+                ingestion_params, POSTS_DEDUPE_POLICY_KEY
+            )
+        ):
+            post_dedupe_session.load_seen_ids_from_all_runs(post_storage)
+        else:
+            post_dedupe_session.load_seen_ids(post_storage, output_dir)
     return comment_dedupe_session, post_dedupe_session
 
 

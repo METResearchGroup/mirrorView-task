@@ -7,7 +7,7 @@ import duckdb
 import pandas as pd
 
 from data_platform.utils.duckdb_features import feature_glob
-from data_platform.utils.platform_specific_columns import CANONICAL_SOURCE_RECORD_ID_COLUMN
+from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 
 # Columns selected from each feature CSV (excluding the feature id column).
 # Keys match FEATURE_REGISTRY.
@@ -38,7 +38,7 @@ class ConsolidateConfig:
     features_root: Path
     feature_names: tuple[str, ...] = tuple(FEATURE_WIDE_COLUMNS.keys())
     id_column: str = "uri"
-    feature_file_id_column: str = CANONICAL_SOURCE_RECORD_ID_COLUMN
+    feature_file_id_column: str = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 
 
 def _feature_cte_sql(

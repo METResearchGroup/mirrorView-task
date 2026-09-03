@@ -9,7 +9,6 @@ from lib.load_env_vars import EnvVarsContainer
 if TYPE_CHECKING:
     import praw
     import tweepy
-    from atproto import Client
 
 
 def init_reddit_client() -> praw.Reddit:
@@ -28,33 +27,6 @@ def init_reddit_client() -> praw.Reddit:
         password=password,
         user_agent=user_agent,
     )
-
-
-BLUESKY_PUBLIC_APPVIEW = "https://api.bsky.app"
-
-
-def init_bluesky_client() -> Client:
-    """Return an atproto Client for Bluesky keyword search.
-
-    When BLUESKY_HANDLE and BLUESKY_PASSWORD are both set, log in on the
-    default PDS. When they are missing, use the public AppView host, which
-    serves searchPosts without an account.
-    """
-    from atproto import Client
-
-    handle = EnvVarsContainer.get_env_var("BLUESKY_HANDLE", required=False).strip()
-    password = EnvVarsContainer.get_env_var("BLUESKY_PASSWORD", required=False).strip()
-    if bool(handle) != bool(password):
-        raise ValueError(
-            "BLUESKY_HANDLE and BLUESKY_PASSWORD must both be set, or both be unset. "
-            "When both are unset, keyword search uses the public Bluesky API at "
-            f"{BLUESKY_PUBLIC_APPVIEW}."
-        )
-    if handle and password:
-        client = Client()
-        client.login(handle, password)
-        return client
-    return Client(BLUESKY_PUBLIC_APPVIEW)
 
 
 def init_twitter_client() -> tweepy.Client:

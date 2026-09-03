@@ -24,8 +24,8 @@ def _write_reddit_feature_csv(
 
 def test_build_wide_table_joins_reddit_comments_on_comment_fullname(tmp_path: Path) -> None:
     comments_csv = tmp_path / "comments.csv"
-    comment_a = mock_comment_row("t1_comment_a", subreddit="politics")
-    comment_b = mock_comment_row("t1_comment_b", subreddit="politics")
+    comment_a = mock_comment_row("t1_comment_a")
+    comment_b = mock_comment_row("t1_comment_b")
     pd.DataFrame([comment_a, comment_b]).to_csv(comments_csv, index=False)
 
     features_root = tmp_path / "features"
@@ -103,9 +103,9 @@ def test_curate_writes_export_and_metadata(data_root) -> None:
     preprocessed_dir = root / "preprocessed" / "2026_06_01-00:00:00"
     preprocessed_dir.mkdir(parents=True)
 
-    comment_keep = mock_comment_row("t1_keep", subreddit="politics")
-    comment_drop = mock_comment_row("t1_drop", subreddit="politics")
-    comment_neutral = mock_comment_row("t1_neutral", subreddit="politics")
+    comment_keep = mock_comment_row("t1_keep")
+    comment_drop = mock_comment_row("t1_drop")
+    comment_neutral = mock_comment_row("t1_neutral")
     pd.DataFrame([comment_keep, comment_drop, comment_neutral]).to_csv(
         preprocessed_dir / "comments.csv", index=False
     )

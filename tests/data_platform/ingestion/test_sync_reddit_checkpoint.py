@@ -51,12 +51,12 @@ def test_run_sync_tasks_appends_per_subreddit(
 
     rows_by_subreddit = {
         "AlphaSub": (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
-            [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
+            [mock_comment_row("t1_comment_a1")],
         ),
         "BetaSub": (
-            [mock_post_row("t3_post_b1", subreddit="betasub")],
-            [mock_comment_row("t1_comment_b1", subreddit="betasub")],
+            [mock_post_row("t3_post_b1")],
+            [mock_comment_row("t1_comment_b1")],
         ),
     }
 
@@ -122,12 +122,12 @@ def _run_two_subreddit_comment_sync(
 
     rows_by_subreddit = {
         "AlphaSub": (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
-            [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
+            [mock_comment_row("t1_comment_a1")],
         ),
         "BetaSub": (
-            [mock_post_row("t3_post_b1", subreddit="betasub")],
-            [mock_comment_row("t1_comment_b1", subreddit="betasub")],
+            [mock_post_row("t3_post_b1")],
+            [mock_comment_row("t1_comment_b1")],
         ),
     }
 
@@ -195,7 +195,7 @@ def test_run_sync_tasks_skips_prior_run_comments(
 
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
     comment_storage.append_records(
-        [mock_comment_row("t1_comment_old", subreddit="alphasub")],
+        [mock_comment_row("t1_comment_old")],
         run_dir,
     )
     metadata = sync_reddit.init_sync_metadata(
@@ -215,10 +215,10 @@ def test_run_sync_tasks_skips_prior_run_comments(
         include_comments: bool,
     ):
         return (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
             [
-                mock_comment_row("t1_comment_old", subreddit="alphasub"),
-                mock_comment_row("t1_comment_new", subreddit="alphasub"),
+                mock_comment_row("t1_comment_old"),
+                mock_comment_row("t1_comment_new"),
             ],
             {
                 "subreddit": subreddit,
@@ -261,7 +261,7 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
     other_storage = RedditStorageManager(StorageStage.RAW, other_dataset_id)
     other_run = other_storage.create_new_run_dir("2026_05_29-10:00:00")
     other_storage.append_records(
-        [mock_comment_row("t1_comment_old", subreddit="alphasub")],
+        [mock_comment_row("t1_comment_old")],
         other_run,
     )
 
@@ -285,10 +285,10 @@ def test_run_sync_tasks_skips_ids_from_other_dataset(
         include_comments: bool,
     ):
         return (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
             [
-                mock_comment_row("t1_comment_old", subreddit="alphasub"),
-                mock_comment_row("t1_comment_new", subreddit="alphasub"),
+                mock_comment_row("t1_comment_old"),
+                mock_comment_row("t1_comment_new"),
             ],
             {
                 "subreddit": subreddit,
@@ -332,7 +332,7 @@ def test_run_sync_tasks_respects_current_run_only_policy(
     other_storage = RedditStorageManager(StorageStage.RAW, other_dataset_id)
     other_run = other_storage.create_new_run_dir("2026_05_29-10:00:00")
     other_storage.append_records(
-        [mock_comment_row("t1_comment_old", subreddit="alphasub")],
+        [mock_comment_row("t1_comment_old")],
         other_run,
     )
 
@@ -356,8 +356,8 @@ def test_run_sync_tasks_respects_current_run_only_policy(
         include_comments: bool,
     ):
         return (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
-            [mock_comment_row("t1_comment_old", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
+            [mock_comment_row("t1_comment_old")],
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
@@ -402,7 +402,7 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
 
     prior_run = comment_storage.create_new_run_dir("2026_05_29-10:00:00")
     comment_storage.append_records(
-        [mock_comment_row("t1_comment_old", subreddit="alphasub")],
+        [mock_comment_row("t1_comment_old")],
         prior_run,
     )
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
@@ -423,10 +423,10 @@ def test_run_sync_tasks_uses_shared_dedupe_policy_for_comments(
         include_comments: bool,
     ):
         return (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
             [
-                mock_comment_row("t1_comment_old", subreddit="alphasub"),
-                mock_comment_row("t1_comment_new", subreddit="alphasub"),
+                mock_comment_row("t1_comment_old"),
+                mock_comment_row("t1_comment_new"),
             ],
             {
                 "subreddit": subreddit,
@@ -473,7 +473,7 @@ def test_run_sync_tasks_empty_posts_override_does_not_skip_prior_posts(
 
     prior_run = comment_storage.create_new_run_dir("2026_05_29-10:00:00")
     post_storage.append_records(
-        [mock_post_row("t3_post_old", subreddit="alphasub")],
+        [mock_post_row("t3_post_old")],
         prior_run,
     )
     run_dir = comment_storage.create_new_run_dir("2026_05_30-10:00:00")
@@ -495,10 +495,10 @@ def test_run_sync_tasks_empty_posts_override_does_not_skip_prior_posts(
     ):
         return (
             [
-                mock_post_row("t3_post_old", subreddit="alphasub"),
-                mock_post_row("t3_post_new", subreddit="alphasub"),
+                mock_post_row("t3_post_old"),
+                mock_post_row("t3_post_new"),
             ],
-            [mock_comment_row("t1_comment_new", subreddit="alphasub")],
+            [mock_comment_row("t1_comment_new")],
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),
@@ -548,7 +548,7 @@ def test_resume_skips_completed_subreddits(
     metadata["tasks"]["alphasub"]["status"] = "completed"
     metadata["tasks"]["alphasub"]["comments_collected"] = 1
     comment_storage.append_records(
-        [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
+        [mock_comment_row("t1_comment_a1")],
         run_dir,
     )
     metadata["row_count"] = 1
@@ -567,8 +567,8 @@ def test_resume_skips_completed_subreddits(
     ):
         calls.append(subreddit)
         return (
-            [mock_post_row("t3_post_b1", subreddit="betasub")],
-            [mock_comment_row("t1_comment_b1", subreddit="betasub")],
+            [mock_post_row("t3_post_b1")],
+            [mock_comment_row("t1_comment_b1")],
             {
                 "subreddit": subreddit,
                 "listing": "hot",
@@ -645,8 +645,8 @@ def test_run_sync_tasks_writes_parquet_when_storage_format_is_parquet(
         include_comments: bool,
     ):
         return (
-            [mock_post_row("t3_post_a1", subreddit="alphasub")],
-            [mock_comment_row("t1_comment_a1", subreddit="alphasub")],
+            [mock_post_row("t3_post_a1")],
+            [mock_comment_row("t1_comment_a1")],
             {
                 "subreddit": subreddit,
                 "listing": fetch_cfg.get("listing", "hot"),

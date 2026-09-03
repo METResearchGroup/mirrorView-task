@@ -66,8 +66,8 @@ VALID_BLUESKY_POST_TEXT = (
 )
 
 
-class TestPreprocessRecordsCanonicalText:
-    """Tests that Bluesky preprocess output includes canonical text."""
+class TestPreprocessRecordsStandardizedText:
+    """Tests that Bluesky preprocess output includes standardized text."""
 
     def test_preprocessed_rows_include_text(self, data_root: Path) -> None:
         """Kept Bluesky posts still have their original platform text column."""
