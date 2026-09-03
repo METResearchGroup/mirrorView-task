@@ -179,3 +179,6 @@ experiments/bertopic_modeling_2026_08_05/outputs/embeddings/.identity_disk_cache
 # BERTopic experiment large / scratch artifacts
 experiments/bertopic_modeling_2026_08_05/outputs/embeddings/.identity_disk_cache/
 experiments/bertopic_modeling_2026_08_05/outputs/topics/original/*/model/
+
+# Bluesky Jetstream dump raw Athena CSV output (includes .csv.metadata)
+data_platform/ingestion/data_dumps/bluesky/data/raw/
