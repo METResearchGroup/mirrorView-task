@@ -462,7 +462,12 @@ def require_latest_in_progress_run_dir(storage: StorageManager) -> Path:
     FileNotFoundError
         When no unfinished raw run exists.
     """
-    raise NotImplementedError
+    resume_dir = find_resume_run_dir(storage, run_dir_name=None)
+    if resume_dir is None:
+        raise FileNotFoundError(
+            f"No unfinished raw run exists under {storage.root_dir}"
+        )
+    return resume_dir
 
 
 def prepare_sync_run(
