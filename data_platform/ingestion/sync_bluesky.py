@@ -26,7 +26,6 @@ from data_platform.ingestion.retry import retry_bluesky_request
 from data_platform.ingestion.runner import (
     KeywordSyncParams,
     SyncPlatformSpec,
-    make_sync_cli,
     run_keyword_sync_tasks,
     sync_with_spec,
 )
@@ -34,6 +33,7 @@ from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
     resolve_limit_per_task,
+    run_sync_cli,
 )
 from data_platform.ingestion.sync_clients import init_bluesky_client
 from data_platform.utils.config_paths import load_yaml_config
@@ -338,13 +338,13 @@ def sync_records(
 
 def main() -> None:
     """CLI entrypoint for sync_bluesky.py (--config, --resume, --run-dir)."""
-    make_sync_cli(
-        BLUESKY_SYNC_SPEC,
+    run_sync_cli(
+        sync_records_fn=sync_records,
         config_help=(
             "Ingestion YAML path relative to the repo root "
             "(e.g. data_platform/ingestion/configs/bluesky/mirrorview.yaml)"
         ),
-    )()
+    )
 
 
 if __name__ == "__main__":

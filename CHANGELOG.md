@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. Ingest scripts now share one start and finish path for a raw sync. Bluesky and Twitter also share the keyword task loop. Reddit still writes posts and comments in its own loop. Operator commands and YAML stay the same. [PR #140](https://github.com/METResearchGroup/mirrorView-task/pull/140)
+1. Bluesky, Twitter, and Reddit ingest scripts now start and finish a raw sync through the same functions in `data_platform/ingestion/runner.py`. Bluesky and Twitter also share the keyword fetch loop. Reddit still writes posts and comments in `sync_reddit.py`. The same CLI commands and YAML configs still work. [PR #140](https://github.com/METResearchGroup/mirrorView-task/pull/140)
 
 ## 2026-09-02
 

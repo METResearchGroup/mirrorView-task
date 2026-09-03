@@ -30,7 +30,7 @@ import prawcore.exceptions
 from praw.models.comment_forest import CommentForest
 
 from data_platform.ingestion.retry import retry_reddit_request
-from data_platform.ingestion.runner import SyncPlatformSpec, make_sync_cli, sync_with_spec
+from data_platform.ingestion.runner import SyncPlatformSpec, sync_with_spec
 from data_platform.ingestion.sync_checkpoint import (
     COMMENTS_DEDUPE_POLICY_KEY,
     DEDUPE_POLICY_KEY,
@@ -45,6 +45,7 @@ from data_platform.ingestion.sync_checkpoint import (
     resolve_dedupe_policy,
     resolve_limit_per_task,
     run_checkpointed_sync,
+    run_sync_cli,
 )
 from data_platform.ingestion.sync_clients import init_reddit_client
 from data_platform.utils.config_paths import load_yaml_config
@@ -642,7 +643,6 @@ REDDIT_SYNC_SPEC = SyncPlatformSpec(
     validate_config=_validate_reddit_config,
     run_sync_tasks=_reddit_run_sync_tasks,
     summarize_run=_summarize_reddit_run,
-    parse_record_cap=parse_max_comments,
     metadata_extra_fields={"post_row_count": 0},
 )
 
@@ -662,13 +662,13 @@ def sync_records(
 
 
 def main() -> None:
-    make_sync_cli(
-        REDDIT_SYNC_SPEC,
+    run_sync_cli(
+        sync_records_fn=sync_records,
         config_help=(
             "Ingestion YAML path relative to the repo root "
             "(e.g. data_platform/ingestion/configs/reddit/mirrorview.yaml)"
         ),
-    )()
+    )
 
 
 if __name__ == "__main__":

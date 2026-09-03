@@ -1,6 +1,6 @@
-"""Shared orchestration for ingestion sync entrypoints.
+"""Shared start, finish, and keyword fetch helpers for platform sync scripts.
 
-Run from the repo root:
+Run a sync from the repo root. For example:
 
     PYTHONPATH=. uv run python data_platform/ingestion/sync_bluesky.py \\
         --config data_platform/ingestion/configs/bluesky/mirrorview.yaml
@@ -28,7 +28,6 @@ from data_platform.ingestion.sync_checkpoint import (
     resolve_dedupe_policy,
     resolve_limit_per_task,
     run_checkpointed_sync,
-    run_sync_cli,
 )
 from data_platform.utils.config_paths import load_yaml_config
 from data_platform.utils.deduplication import (
@@ -51,7 +50,7 @@ SummarizeRunFn = Callable[[dict[str, Any], Path], None]
 
 @dataclass(frozen=True)
 class KeywordSyncParams:
-    """Dedupe identity and progress labels for one Bluesky or Twitter keyword loop."""
+    """Id column, record type, and progress bar text for the Bluesky or Twitter keyword loop."""
 
     id_column: str
     record_type: str
@@ -60,11 +59,13 @@ class KeywordSyncParams:
 
 @dataclass(frozen=True)
 class SyncPlatformSpec:
-    """Platform settings for shared ingest orchestration.
+    """Settings that one platform sync script passes into ``sync_with_spec``.
 
-    Each sync script supplies fetch, validation, and task-building hooks. The
-    runner owns load-config, dataset manifest, run resume, and finalize. Reddit
-    keeps its own dual-output loop; Bluesky and Twitter share the keyword loop.
+    Each sync script supplies the functions that fetch records, validate YAML,
+    and build the task list. ``sync_with_spec`` loads the YAML, writes
+    ``dataset.json``, resumes an unfinished run when one exists, and writes the
+    finished run metadata. Bluesky and Twitter use the shared keyword loop in
+    this module. Reddit still writes posts and comments in ``sync_reddit.py``.
     """
 
     platform: str
@@ -76,13 +77,11 @@ class SyncPlatformSpec:
     validate_config: Callable[[dict[str, Any]], None]
     run_sync_tasks: SyncRunHook
     summarize_run: SummarizeRunFn
-    parse_record_cap: Callable[[dict[str, Any]], int | None] = parse_max_posts
     metadata_extra_fields: dict[str, Any] | None = None
-    config_loader: Callable[[Path], dict[str, Any]] = load_yaml_config
 
 
 def remaining_record_budget(metadata: dict[str, Any], record_cap: int | None) -> int | None:
-    """Return how many records can still be written before the run cap is reached."""
+    """Return how many records can still be written before ``max_posts`` is reached."""
     if record_cap is None:
         return None
     return record_cap - int(metadata["row_count"])
@@ -92,7 +91,7 @@ def effective_limit_per_keyword(
     ingestion_params: dict[str, Any],
     remaining: int | None,
 ) -> int:
-    """Return the per-keyword fetch cap after applying any run-wide post budget."""
+    """Return the per-keyword fetch limit, capped by remaining run-wide posts."""
     per_keyword = resolve_limit_per_task(ingestion_params)
     if remaining is None:
         return per_keyword
@@ -111,10 +110,11 @@ def run_keyword_sync_tasks(
     params: KeywordSyncParams,
     fetch_for_task: KeywordFetchFn,
 ) -> None:
-    """Run the checkpointed keyword loop shared by Bluesky and Twitter.
+    """Run the keyword loop that Bluesky and Twitter share.
 
-    Opens one dedupe session, fetches each task, appends deduped rows, and updates
-    run metadata. Skips completed tasks on resume and honors ``max_posts``.
+    Opens one skip-id session, fetches each remaining task, appends rows that
+    are not duplicates, and updates run metadata. Skips tasks that already
+    completed on resume, and stops when ``max_posts`` is reached.
     """
     max_posts_int = parse_max_posts(ingestion_params)
     sync_timestamp = str(metadata["sync_timestamp"])
@@ -135,7 +135,7 @@ def run_keyword_sync_tasks(
         remaining = remaining_record_budget(metadata, max_posts_int)
         try:
             fetch_result = fetch_for_task(client, task, sync_timestamp, remaining)
-        except Exception as exc:  # noqa: BLE001 — record and continue
+        except Exception as exc:  # noqa: BLE001. Record the failure and continue.
             mark_task_failed(entry, exc, task.task_id, storage, output_dir, metadata)
             return
 
@@ -190,17 +190,18 @@ def sync_with_spec(
     *,
     run_dir_name: str | None = None,
     spec: SyncPlatformSpec,
-    config_loader: Callable[[Path], dict[str, Any]] | None = None,
+    config_loader: Callable[[Path], dict[str, Any]] = load_yaml_config,
 ) -> Path:
-    """Load config, prepare or resume a raw run, and delegate to the platform hook.
+    """Load the YAML and prepare or resume a raw run directory.
+
+    Then call the platform function that fetches and writes records.
 
     Returns
     -------
     Path
         Output run directory for the sync.
     """
-    load_config = config_loader or spec.config_loader
-    config = load_config(config_path)
+    config = config_loader(config_path)
     dataset_id = require_dataset_id(config, platform=spec.platform)
 
     ensure_dataset_manifest(
@@ -250,19 +251,3 @@ def sync_with_spec(
     finalize_local_disk_sync(storage, output_dir, metadata)
     spec.summarize_run(metadata, output_dir)
     return output_dir
-
-
-def make_sync_cli(spec: SyncPlatformSpec, *, config_help: str) -> Callable[[], None]:
-    """Return a Typer ``main`` function for a platform sync script."""
-
-    def main() -> None:
-        run_sync_cli(
-            sync_records_fn=lambda config_path, *, run_dir_name=None: sync_with_spec(
-                config_path,
-                run_dir_name=run_dir_name,
-                spec=spec,
-            ),
-            config_help=config_help,
-        )
-
-    return main

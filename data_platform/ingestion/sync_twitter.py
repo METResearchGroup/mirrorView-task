@@ -25,7 +25,6 @@ from data_platform.ingestion.runner import (
     KeywordSyncParams,
     SyncPlatformSpec,
     effective_limit_per_keyword,
-    make_sync_cli,
     remaining_record_budget,
     run_keyword_sync_tasks,
     sync_with_spec,
@@ -33,6 +32,7 @@ from data_platform.ingestion.runner import (
 from data_platform.ingestion.sync_checkpoint import (
     TaskStatus,
     build_base_sync_metadata,
+    run_sync_cli,
 )
 from data_platform.ingestion.sync_clients import init_twitter_client
 from data_platform.ingestion.twitter_client import fetch_posts_for_keyword
@@ -212,13 +212,13 @@ def sync_records(
 
 
 def main() -> None:
-    make_sync_cli(
-        TWITTER_SYNC_SPEC,
+    run_sync_cli(
+        sync_records_fn=sync_records,
         config_help=(
             "Ingestion YAML path relative to the repo root "
             "(e.g. data_platform/ingestion/configs/twitter/mirrorview.yaml)"
         ),
-    )()
+    )
 
 
 if __name__ == "__main__":
