@@ -49,9 +49,7 @@ def write_preprocessed_posts(
     preprocessed_dir = data_root / "twitter" / dataset_id / "preprocessed" / run_dir_name
     preprocessed_dir.mkdir(parents=True)
     pd.DataFrame(records).to_csv(preprocessed_dir / "posts.csv", index=False)
-    (preprocessed_dir / "metadata.json").write_text(
-        json.dumps({"sync_status": "completed"}), encoding="utf-8"
-    )
+    (preprocessed_dir / "metadata.json").write_text("{}", encoding="utf-8")
     return preprocessed_dir
 
 
@@ -60,14 +58,15 @@ def _write_preprocessed_run(
     dataset_id: str,
     run_name: str,
     *,
-    sync_status: str,
+    sync_status: str | None = None,
 ) -> Path:
     run_dir = data_root / "twitter" / dataset_id / "preprocessed" / run_name
     run_dir.mkdir(parents=True)
     (run_dir / "posts.csv").write_text("tweet_id,text\n", encoding="utf-8")
-    (run_dir / "metadata.json").write_text(
-        json.dumps({"sync_status": sync_status}), encoding="utf-8"
-    )
+    payload: dict[str, str] = {}
+    if sync_status is not None:
+        payload["sync_status"] = sync_status
+    (run_dir / "metadata.json").write_text(json.dumps(payload), encoding="utf-8")
     return run_dir
 
 
@@ -216,7 +215,7 @@ class TestGenerateTwitterFeatures:
             PREPROCESSED_RUN_DIR,
             sync_status="in_progress",
         )
-        with pytest.raises(RuntimeError):
+        with pytest.raises(RuntimeError, match="complete locally"):
             generate_twitter_features(VALID_TWITTER_DATASET_ID)
 
     def test_gate_fails_if_preprocessed_metadata_missing(self, data_root: Path) -> None:
@@ -224,10 +223,9 @@ class TestGenerateTwitterFeatures:
             data_root,
             VALID_TWITTER_DATASET_ID,
             PREPROCESSED_RUN_DIR,
-            sync_status="completed",
         )
         (run_dir / "metadata.json").unlink()
-        with pytest.raises(RuntimeError):
+        with pytest.raises(RuntimeError, match="complete locally"):
             generate_twitter_features(VALID_TWITTER_DATASET_ID)
 
     def test_gate_allows_completed_preprocessed_runs(self, data_root: Path) -> None:
@@ -235,7 +233,6 @@ class TestGenerateTwitterFeatures:
             data_root,
             VALID_TWITTER_DATASET_ID,
             PREPROCESSED_RUN_DIR,
-            sync_status="completed",
         )
         result = generate_twitter_features(VALID_TWITTER_DATASET_ID)
         assert result == {}

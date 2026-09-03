@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -90,9 +91,16 @@ def test_feature_run_dir_rejects_path_escape(data_root: Path) -> None:
 
 
 def test_empty_twitter_input_does_not_create_feature_run(data_root: Path) -> None:
-    """Given no preprocessed posts, when generating features, then no features run dir is created."""
-    with pytest.raises(FileNotFoundError, match="No preprocessed runs found"):
-        generate_twitter_features(VALID_TWITTER_DATASET_ID)
+    """Given an empty completed preprocessed run, when generating features, then no features run dir is created."""
+    run_dir = (
+        data_root / "twitter" / VALID_TWITTER_DATASET_ID / "preprocessed" / PREPROCESSED_RUN_DIR
+    )
+    run_dir.mkdir(parents=True)
+    (run_dir / "posts.csv").write_text("tweet_id,text\n", encoding="utf-8")
+    (run_dir / "metadata.json").write_text(json.dumps({}), encoding="utf-8")
 
+    result = generate_twitter_features(VALID_TWITTER_DATASET_ID)
+
+    assert result == {}
     features_root = data_root / "twitter" / VALID_TWITTER_DATASET_ID / "features"
     assert not features_root.exists()
