@@ -199,8 +199,8 @@ def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_ro
     newer_run = raw_storage.create_new_run_dir("2026_05_31-12:00:00")
 
     shared_tweet_id = "1000000000000000001"
-    older_text = _valid_text() + " (older run)"
-    newer_text = _valid_text() + " (newer run)"
+    older_text = "This is a valid English tweet from the older run without external URLs."
+    newer_text = "This is a valid English tweet from the newer run without external URLs."
 
     raw_storage.write_records(
         [_tweet_row(tweet_id=shared_tweet_id, text=older_text)],

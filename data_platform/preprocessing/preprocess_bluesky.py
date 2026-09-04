@@ -20,6 +20,7 @@ from data_platform.preprocessing.runner import (
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
 )
+from data_platform.preprocessing.truncate_long_text import truncate_long_text
 from data_platform.preprocessing.validators.bluesky_validators import (
     check_if_valid_post_length,
 )
@@ -45,6 +46,7 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
     columns=BLUESKY_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
     author_handle_source_column="author_handle",
+    text_transforms=(truncate_long_text,),
 )
 
 
