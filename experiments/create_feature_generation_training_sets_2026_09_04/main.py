@@ -16,7 +16,15 @@ from experiments.create_feature_generation_training_sets_2026_09_04.src.constant
     DEFAULT_DATA_ROOT,
 )
 from experiments.create_feature_generation_training_sets_2026_09_04.src.paths import (
+    experiment_root,
     training_data_root,
+)
+from experiments.create_feature_generation_training_sets_2026_09_04.src.summary import (
+    collect_file_stats,
+    write_summary,
+)
+from experiments.create_feature_generation_training_sets_2026_09_04.src.upload import (
+    upload_training_parquets,
 )
 from experiments.create_feature_generation_training_sets_2026_09_04.src.walk import (
     build_training_sets,
@@ -61,6 +69,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Upload built parquets to S3 after the local build completes.",
     )
+    parser.add_argument(
+        "--summary-path",
+        type=Path,
+        default=experiment_root() / "SUMMARY.md",
+        help="Destination path for SUMMARY.md after upload.",
+    )
     return parser.parse_args(argv)
 
 
@@ -75,22 +89,18 @@ def main(argv: list[str] | None = None) -> int:
     Returns
     -------
     int
-        Process exit code; ``0`` when the build completes without upload.
-
-    Raises
-    ------
-    NotImplementedError
-        When join, walk, or upload behavior is not implemented yet.
+        Process exit code; ``0`` on success.
     """
     args = parse_args(argv)
-    build_training_sets(
+    paths = build_training_sets(
         args.data_root,
         timestamp=args.timestamp,
         output_root=args.output_root,
     )
     if args.upload:
-        # Step 4 will implement S3 upload.
-        raise NotImplementedError("S3 upload is not implemented yet.")
+        upload_training_parquets(paths, args.output_root)
+        stats = collect_file_stats(paths, args.output_root)
+        write_summary(stats, args.summary_path)
     return 0
 
 

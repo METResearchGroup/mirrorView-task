@@ -59,7 +59,9 @@ class TestMain:
         assert "timestamp" in call_kwargs
         assert "output_root" in call_kwargs
 
-    @patch("lib.aws.s3.S3")
+    @patch(
+        "experiments.create_feature_generation_training_sets_2026_09_04.src.upload.S3"
+    )
     def test_main_local_build_without_upload_succeeds(
         self,
         mock_s3,
@@ -88,28 +90,39 @@ class TestMain:
         )
         assert expected_parquet.exists()
 
-    @patch("lib.aws.s3.S3")
-    def test_main_upload_raises_not_implemented_after_build(
+    @patch(
+        "experiments.create_feature_generation_training_sets_2026_09_04.src.upload.S3"
+    )
+    def test_main_upload_writes_summary_and_calls_s3(
         self,
-        mock_s3,
+        mock_s3_class,
         tmp_path: Path,
     ):
-        """Verify --upload still raises NotImplementedError after the local build."""
+        """Verify --upload uploads parquets and writes SUMMARY via --summary-path."""
         data_root = tmp_path / "data"
         output_root = tmp_path / "training_data"
+        summary_path = tmp_path / "SUMMARY.md"
         _write_minimal_dataset(data_root)
+        mock_s3_instance = mock_s3_class.return_value
 
-        with pytest.raises(NotImplementedError, match="S3 upload"):
-            main(
-                [
-                    "--data-root",
-                    str(data_root),
-                    "--output-root",
-                    str(output_root),
-                    "--timestamp",
-                    RUN_TIMESTAMP,
-                    "--upload",
-                ]
-            )
+        result = main(
+            [
+                "--data-root",
+                str(data_root),
+                "--output-root",
+                str(output_root),
+                "--timestamp",
+                RUN_TIMESTAMP,
+                "--upload",
+                "--summary-path",
+                str(summary_path),
+            ]
+        )
 
-        mock_s3.assert_not_called()
+        assert result == 0
+        mock_s3_class.assert_called_once()
+        mock_s3_instance.upload_file.assert_called_once()
+        assert summary_path.exists()
+        summary_text = summary_path.read_text(encoding="utf-8")
+        assert "## is_political" in summary_text
+        assert "| category | n_rows |" in summary_text
