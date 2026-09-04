@@ -28,6 +28,7 @@ from data_platform.utils.storage import StorageManager, StorageStage
 from shared.data.registry import DATASETS
 
 TextValidator = Callable[[str], bool]
+TextTransform = Callable[[str], str]
 RowValidator = Callable[[str], bool]
 
 StorageManagerFactory = Callable[..., StorageManager]
@@ -59,7 +60,7 @@ class PreprocessPlatformSpec:
     text_validators: tuple[TextValidator, ...]
     author_handle_source_column: str
     row_validators: tuple[RowValidator, ...] = ()
-    text_transform: Callable[[str], str] | None = None
+    text_transforms: tuple[TextTransform, ...] = ()
     original_platform_text_column: str = STANDARDIZED_TEXT_COLUMN
 
 
@@ -98,28 +99,29 @@ def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
-    """Apply the platform's optional text transform to each row's text column.
+    """Apply the platform's text transform plugins to each row's text column.
 
-    When ``spec.text_transform`` is unset or the frame is empty, the input
-    frame is returned unchanged.
+    Plugins run in list order. When ``spec.text_transforms`` is empty or the
+    frame is empty, the input frame is returned unchanged.
 
     Parameters
     ----------
     spec
-        ``text_transform`` is applied to values in ``spec.columns.text_column``.
+        Each callable in ``text_transforms`` is applied to values in
+        ``spec.columns.text_column``.
 
     Returns
     -------
     pd.DataFrame
-        A new frame with transformed text when a transform is configured;
+        A new frame with transformed text when any transform is configured;
         otherwise the original frame.
     """
-    if spec.text_transform is None or df.empty:
+    if not spec.text_transforms or df.empty:
         return df
     out = df.copy()
     text_col = spec.columns.text_column
-    transform = spec.text_transform
-    out[text_col] = out[text_col].map(lambda v: transform(str(v)))
+    for transform in spec.text_transforms:
+        out[text_col] = out[text_col].map(lambda value, fn=transform: fn(str(value)))
     return out
 
 

@@ -49,7 +49,7 @@ TWITTER_SPEC = PreprocessPlatformSpec(
     model_cls=SyncTwitterPostModel,
     columns=TWITTER_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
-    text_transform=strip_tco_links,
+    text_transforms=(strip_tco_links,),
     author_handle_source_column="username",
 )
 
