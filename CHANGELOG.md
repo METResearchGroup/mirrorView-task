@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-04
+
+1. Preprocess now truncates standardized text to a complete sentence within a 300-character cap, using the same plugin seam as Twitter t.co stripping. Original platform columns stay unchanged. [PR #166](https://github.com/METResearchGroup/mirrorView-task/pull/166)
+
 ## 2026-09-03
 
 1. Reddit monthly comment dumps from the Pushshift experiment can be filtered, sampled to 500,000 comments per month, and stored as git LFS parquet using the same comment fields as live Reddit ingest. [PR #153](https://github.com/METResearchGroup/mirrorView-task/pull/153)
