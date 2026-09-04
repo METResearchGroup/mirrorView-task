@@ -12,6 +12,10 @@ from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
 from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
 from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
+from tests.data_platform.preprocessing.conftest import (
+    EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
+    LONG_ENGLISH_TEXT,
+)
 
 
 def _valid_text() -> str:
@@ -150,6 +154,41 @@ def test_preprocess_records_strips_tco_from_saved_text(data_root) -> None:
     assert "https://t.co/" not in output.iloc[0]["text"]
     assert output.iloc[0]["tweet_id"] == row["tweet_id"]
     assert output.iloc[0]["url"] == row["url"]
+
+
+def test_preprocess_records_truncates_long_text_after_stripping_tco(
+    data_root,
+) -> None:
+    """Long tweets are saved without t.co URLs and with truncated standardized text."""
+    dataset_id = VALID_TWITTER_DATASET_ID
+    raw_storage = TwitterStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-15:00:00")
+    raw_storage.write_records(
+        [
+            _tweet_row(
+                tweet_id="1000000000000000001",
+                text=LONG_ENGLISH_TEXT + " https://t.co/abc123",
+            )
+        ],
+        run_dir,
+    )
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 1,
+        },
+    )
+    expected = EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT
+
+    output_dir = preprocess_twitter.preprocess_records(dataset_id)
+    output = TwitterStorageManager(StorageStage.PREPROCESSED, dataset_id).load_records(
+        output_dir
+    )
+
+    assert len(output) == 1
+    assert output.iloc[0]["text"] == expected
+    assert "https://t.co/" not in output.iloc[0]["text"]
 
 
 def test_preprocess_records_merges_all_raw_runs_and_sets_source_raw_runs(data_root) -> None:

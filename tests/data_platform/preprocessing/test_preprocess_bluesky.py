@@ -10,6 +10,10 @@ from data_platform.preprocessing.preprocess_bluesky import preprocess_records
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 from tests.data_platform.conftest import make_post_row
 from tests.data_platform.constants import VALID_DATASET_ID
+from tests.data_platform.preprocessing.conftest import (
+    EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
+    LONG_ENGLISH_TEXT,
+)
 
 
 def _write_raw_run(
@@ -93,3 +97,27 @@ class TestPreprocessRecordsStandardizedText:
         assert output.iloc[0]["author_handle"] == "a.bsky.social"
         assert output.iloc[0]["source_record_id"] == output.iloc[0]["uri"]
         assert "author_id" not in output.columns
+
+
+    def test_preprocessed_rows_truncate_long_text(self, data_root: Path) -> None:
+        """Long Bluesky posts are kept after truncation to a complete-sentence window."""
+        dataset_id = VALID_DATASET_ID
+        raw_storage = BlueskyStorageManager(StorageStage.RAW, dataset_id)
+        run_dir = raw_storage.create_new_run_dir("2026_05_31-15:00:00")
+        raw_storage.write_records(
+            [make_post_row(text=LONG_ENGLISH_TEXT)],
+            run_dir,
+        )
+        raw_storage.write_run_metadata(
+            run_dir,
+            {"sync_status": "completed", "row_count": 1},
+        )
+        expected = EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT
+
+        output_dir = preprocess_records(dataset_id)
+        output = BlueskyStorageManager(StorageStage.PREPROCESSED, dataset_id).load_records(
+            output_dir
+        )
+
+        assert len(output) == 1
+        assert output.iloc[0]["text"] == expected
