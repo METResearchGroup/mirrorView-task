@@ -167,7 +167,7 @@ def test_preprocess_records_truncates_long_text_after_stripping_tco(
         [
             _tweet_row(
                 tweet_id="1000000000000000001",
-                text=LONG_ENGLISH_TEXT + " https://t.co/abc123",
+                text="https://t.co/abc123 " + LONG_ENGLISH_TEXT,
             )
         ],
         run_dir,

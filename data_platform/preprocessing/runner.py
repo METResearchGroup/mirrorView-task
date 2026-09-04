@@ -99,22 +99,23 @@ def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
-    """Apply the platform's text transform plugins to each row's text column.
+    """The function runs each text transform on the text column of every row.
 
-    Plugins run in list order. When ``spec.text_transforms`` is empty or the
-    frame is empty, the input frame is returned unchanged.
+    The functions run in list order. If ``spec.text_transforms`` is empty, or if
+    the frame is empty, the function returns the input frame unchanged.
 
     Parameters
     ----------
     spec
-        Each callable in ``text_transforms`` is applied to values in
+        Each function in ``text_transforms`` is applied to values in
         ``spec.columns.text_column``.
 
     Returns
     -------
     pd.DataFrame
-        A new frame with transformed text when any transform is configured;
-        otherwise the original frame.
+        A new frame whose text column has been rewritten when
+        ``text_transforms`` has at least one function. Otherwise the function
+        returns the original frame.
     """
     if not spec.text_transforms or df.empty:
         return df

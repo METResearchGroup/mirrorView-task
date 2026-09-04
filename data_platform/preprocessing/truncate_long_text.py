@@ -1,7 +1,7 @@
-"""Truncate long social-post text at a complete-sentence boundary.
+"""The module cuts long Bluesky, Twitter, and Reddit text at a complete sentence.
 
-Platform preprocess specs plug ``truncate_long_text`` into ``text_transforms``
-the same way Twitter plugs ``strip_tco_links``.
+Platform preprocess configs list ``truncate_long_text`` on ``text_transforms``.
+Twitter already lists ``strip_tco_links`` on that same list.
 
     from data_platform.preprocessing.truncate_long_text import truncate_long_text
 """
@@ -147,24 +147,27 @@ def _cut_at_word(text: str, max_chars: int) -> str:
 
 
 def truncate_long_text(text: str) -> str:
-    """Return text cut to the longest complete sentence within the soft char cap.
+    """The function returns the longest complete sentence that fits the character cap.
 
-    The cap is ``MAX_CHARS``, with ``SENTENCE_OVERFLOW`` extra characters allowed
-    so a sentence that overruns the cap slightly can still be kept whole.
-    Leading and trailing whitespace is stripped. Empty input stays empty.
-    Short text that already ends on a complete sentence is returned unchanged.
+    ``MAX_CHARS`` is 300. ``SENTENCE_OVERFLOW`` is 20 extra characters past the
+    cap. A sentence that ends in the extra range can still be kept whole. The
+    function strips leading and trailing whitespace, and empty input stays
+    empty. The function returns short text unchanged when the text already ends
+    on a complete sentence.
 
     Parameters
     ----------
     text
-        Standardized post or comment text.
+        The shared ``text`` value for a post or comment.
 
     Returns
     -------
     str
-        Truncated text. When no complete sentence or line boundary fits in the
-        window, the function falls back to a word cut at ``MAX_CHARS``, then to
-        a hard cut.
+        The cut text. If no complete sentence or line break fits in the first
+        ``MAX_CHARS + SENTENCE_OVERFLOW`` characters, the function cuts at a
+        word boundary at ``MAX_CHARS``. If that span has no space, the function
+        keeps the first ``MAX_CHARS`` characters even if the last word is
+        incomplete.
     """
     text = text.strip()
     if not text:

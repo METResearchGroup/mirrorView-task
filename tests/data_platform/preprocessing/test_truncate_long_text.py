@@ -1,20 +1,20 @@
-"""Tests for truncate_long_text and its preprocess plugin wiring.
+"""The file tests ``truncate_long_text``, including how preprocess lists it on ``text_transforms``.
 
 given empty or whitespace-only text
 when truncate_long_text runs
 then the result is an empty string
 
-given short complete-sentence text
+given short complete sentence text
 when truncate_long_text runs
 then the text is unchanged
 
-given long English text with sentence boundaries inside the 320-char window
+given long English text with sentence boundaries inside the first 320 characters
 when truncate_long_text runs
 then the result is the last complete sentence that fits
 
 given long text with no sentence or line boundary
 when truncate_long_text runs
-then the result is a word cut at MAX_CHARS, or a hard cut when there is no space
+then the result is a word cut at MAX_CHARS, or the first MAX_CHARS characters when there is no space
 
 given a preprocess spec that lists truncate_long_text
 when apply_text_transform runs
@@ -188,12 +188,12 @@ class TestApplyTextTransformWithTruncateLongText:
         assert records.iloc[0][STANDARDIZED_TEXT_COLUMN] == LONG_ENGLISH_TEXT
 
     def test_strips_tco_links_before_truncating_twitter_text(self) -> None:
-        """Twitter plugins run in order: t.co URLs are removed, then text is truncated."""
+        """Twitter removes t.co URLs first, so a URL in the kept prefix is gone after truncate."""
         spec = replace(
             TWITTER_SPEC,
             text_transforms=(strip_tco_links, truncate_long_text),
         )
-        text = LONG_ENGLISH_TEXT + " https://t.co/abc123"
+        text = "https://t.co/abc123 " + LONG_ENGLISH_TEXT
         records = pd.DataFrame([{STANDARDIZED_TEXT_COLUMN: text}])
         expected = EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT
 
@@ -214,3 +214,11 @@ class TestPreprocessSpecsIncludeTruncateLongText:
     def test_spec_lists_truncate_long_text(self, spec) -> None:
         """Every platform runs truncate_long_text during integration-specific preprocessing."""
         assert truncate_long_text in spec.text_transforms
+
+    def test_twitter_spec_strips_tco_links_before_truncate_long_text(self) -> None:
+        """Twitter lists strip_tco_links first, then truncate_long_text."""
+        expected = (strip_tco_links, truncate_long_text)
+
+        result = TWITTER_SPEC.text_transforms
+
+        assert result == expected
