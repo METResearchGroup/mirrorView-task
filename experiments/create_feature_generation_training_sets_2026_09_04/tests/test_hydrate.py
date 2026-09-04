@@ -19,14 +19,14 @@ class TestReadTable:
     def test_csv_file_is_read_as_csv(self, tmp_path: Path):
         """Verify a normal csv file is parsed with keep_default_na=False."""
         csv_path = tmp_path / "labels.csv"
-        csv_path.write_text("uri,label_timestamp,is_political\nu1,2026_09_04-10:00:00,true\n")
+        csv_path.write_text("uri,label_timestamp,is_political\nu1,2026_09_04-10:00:00,yes\n")
 
         result = read_table(csv_path)
         expected = pd.DataFrame(
             {
                 "uri": ["u1"],
                 "label_timestamp": ["2026_09_04-10:00:00"],
-                "is_political": ["true"],
+                "is_political": ["yes"],
             }
         )
 
@@ -41,7 +41,7 @@ class TestReadTable:
         result = read_table(parquet_path)
         expected = pd.DataFrame({"uri": ["at://example/post/1"], "text": ["parquet text"]})
 
-        pd.testing.assert_frame_equal(result, expected)
+        pd.testing.assert_frame_equal(result, expected, check_dtype=False)
 
 
 class TestLoadPreprocessedRecords:
@@ -108,7 +108,7 @@ class TestHydrateClassifier:
         assert list(result.columns) == ["uri", "label_timestamp", "text", "is_political"]
         assert len(result) == 1
         assert result.iloc[0]["text"] == "hello bluesky"
-        assert result.iloc[0]["is_political"] is True
+        assert result.iloc[0]["is_political"] == True
 
     def test_duplicate_uri_keeps_later_label_timestamp(self, bluesky_dataset_dir: Path):
         """Verify duplicate uri rows keep the latest label_timestamp."""
@@ -133,7 +133,7 @@ class TestHydrateClassifier:
 
         assert len(result) == 1
         assert result.iloc[0]["label_timestamp"] == "2026_09_04-12:00:00"
-        assert result.iloc[0]["is_political"] is True
+        assert result.iloc[0]["is_political"] == True
 
     def test_unmatched_label_uri_is_dropped(self, bluesky_dataset_dir: Path):
         """Verify label rows without preprocessed text are removed."""

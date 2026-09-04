@@ -10,29 +10,9 @@ from experiments.create_feature_generation_training_sets_2026_09_04.main import 
 from experiments.create_feature_generation_training_sets_2026_09_04.src.constants import (
     DEFAULT_DATA_ROOT,
 )
-from experiments.create_feature_generation_training_sets_2026_09_04.src.hydrate import (
-    hydrate_classifier,
-)
 from experiments.create_feature_generation_training_sets_2026_09_04.src.walk import (
     build_training_sets,
 )
-
-
-class TestHydrateClassifier:
-    """Tests for hydrate_classifier."""
-
-    def test_empty_frames_raise_not_implemented(self):
-        """Verify the join stub rejects empty label and record frames."""
-        labels = pd.DataFrame()
-        records = pd.DataFrame()
-
-        with pytest.raises(NotImplementedError):
-            hydrate_classifier(
-                labels,
-                records,
-                platform="bluesky",
-                classifier_name="is_political",
-            )
 
 
 class TestBuildTrainingSets:
