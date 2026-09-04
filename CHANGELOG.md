@@ -2,7 +2,7 @@
 
 ## 2026-09-03
 
-1. Bluesky dump posts from the Jetstream warehouse day now sit on the pipeline raw path with a preprocess YAML, and Bluesky preprocess writes a sampled 200,000-post parquet through Git LFS. [PR #164](https://github.com/METResearchGroup/mirrorView-task/pull/164)
+1. Bluesky dump posts from the Jetstream warehouse day are now on the pipeline raw path, and a preprocess YAML names that dataset. Bluesky preprocess writes a Git LFS parquet file of 200,000 sampled posts. [PR #164](https://github.com/METResearchGroup/mirrorView-task/pull/164)
 2. Reddit monthly comment dumps from the Pushshift experiment can be filtered, sampled to 500,000 comments per month, and stored as git LFS parquet using the same comment fields as live Reddit ingest. [PR #153](https://github.com/METResearchGroup/mirrorView-task/pull/153)
 3. Preprocess now drops records whose ingest `record_id` matches a study stimuli `post_primary_key`, including the Reddit comment_fullname form of Part 2 catalog keys. The stdout line reports the stimuli skip count next to the already-preprocessed skip count. [PR #158](https://github.com/METResearchGroup/mirrorView-task/pull/158)
 4. Feature generation now requires every preprocessed run to be complete on Bluesky, Twitter, and Reddit before it writes labels. Platforms can no longer skip that check. [PR #160](https://github.com/METResearchGroup/mirrorView-task/pull/160)

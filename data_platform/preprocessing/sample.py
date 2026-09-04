@@ -1,4 +1,4 @@
-"""Sample preprocessed rows before write.
+"""Sample preprocessed rows before they are written.
 
 Run from the repo root:
 
@@ -46,7 +46,7 @@ def sample_rows(
     sample_size
         Maximum number of rows to keep. Must be at least 1.
     sample_seed
-        Seed for Algorithm R.
+        Random seed so the same seed keeps the same rows.
 
     Returns
     -------

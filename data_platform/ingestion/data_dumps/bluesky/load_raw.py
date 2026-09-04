@@ -1,4 +1,4 @@
-"""Load hive-partitioned Bluesky dump parquet from a pipeline raw run.
+"""Load Bluesky dump parquet files from date= and hour= folders in a pipeline raw run.
 
 Run from the repo root:
 
@@ -54,7 +54,7 @@ def _mapped_rows_from_parquet(
 
 
 def load_hive_dump_posts(run_dir: Path, sync_timestamp: str) -> list[dict[str, object]]:
-    """Load hive-partitioned dump parquet and map rows onto ingest records.
+    """Load dump parquet files from date and hour folders, and map rows onto ingest records.
 
     Parameters
     ----------
