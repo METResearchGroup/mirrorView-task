@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-04
+
+1. Training data for seven classifiers now lives as parquet on S3, one file per classifier per dataset, joined from existing labels and preprocessed text. [PR #167](https://github.com/METResearchGroup/mirrorView-task/pull/167)
+
 ## 2026-09-03
 
 1. New Reddit raw runs write comments only. Reddit ingest still uses PRAW to open a subreddit's hot, top, or new page, and it then reads the comments under each post. The ingest script no longer writes `posts.csv` or `posts.parquet`. [PR #151](https://github.com/METResearchGroup/mirrorView-task/pull/151)
