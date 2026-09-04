@@ -9,10 +9,10 @@ import pytest
 from data_platform.preprocessing.preprocess_bluesky import preprocess_records
 from data_platform.utils.storage import BlueskyStorageManager, StorageStage
 from tests.data_platform.conftest import make_post_row
-from tests.data_platform.constants import VALID_DATASET_ID
-from tests.data_platform.preprocessing.conftest import (
+from tests.data_platform.constants import (
     EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
     LONG_ENGLISH_TEXT,
+    VALID_DATASET_ID,
 )
 
 

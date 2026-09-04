@@ -7,12 +7,12 @@ import pytest
 from data_platform.preprocessing import preprocess_reddit
 from data_platform.preprocessing.validators import reddit_validators
 from data_platform.utils.storage import RedditStorageManager, StorageStage
-from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
-from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
-from tests.data_platform.preprocessing.conftest import (
+from tests.data_platform.constants import (
     EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
     LONG_ENGLISH_TEXT,
+    VALID_REDDIT_DATASET_ID,
 )
+from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
 
 def _valid_body() -> str:

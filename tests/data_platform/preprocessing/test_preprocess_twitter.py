@@ -10,12 +10,12 @@ from data_platform.preprocessing.runner import collapse_candidates_by_id
 from data_platform.preprocessing.validators import twitter_validators
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.storage import StorageStage, TwitterStorageManager
-from tests.data_platform.constants import VALID_TWITTER_DATASET_ID
-from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
-from tests.data_platform.preprocessing.conftest import (
+from tests.data_platform.constants import (
     EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
     LONG_ENGLISH_TEXT,
+    VALID_TWITTER_DATASET_ID,
 )
+from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 
 
 def _valid_text() -> str:

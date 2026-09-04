@@ -19,6 +19,7 @@ _TERMINAL_PUNCTUATION = ".!?"
 _INCOMPLETE_TRAILING_MARKS = ",:;-"
 _ELLIPSIS = "..."
 _CLOSING_QUOTES = "\"')]}»"
+_LINE_SEPARATORS = ("\n\n", "\n")
 
 DANGLING_TAILS = frozenset(
     {
@@ -114,7 +115,7 @@ def _sentence_cut_positions(text: str) -> list[int]:
 
 def _line_cut_positions(text: str) -> list[int]:
     positions: list[int] = []
-    for sep in ("\n\n", "\n"):
+    for sep in _LINE_SEPARATORS:
         start = len(text)
         while start > 0:
             idx = text.rfind(sep, 0, start)

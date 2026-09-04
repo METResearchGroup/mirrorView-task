@@ -39,7 +39,7 @@ from data_platform.preprocessing.truncate_long_text import (
 )
 from data_platform.preprocessing.validators.twitter_validators import strip_tco_links
 from data_platform.utils.platform_specific_columns import STANDARDIZED_TEXT_COLUMN
-from tests.data_platform.preprocessing.conftest import (
+from tests.data_platform.constants import (
     EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
     LONG_ENGLISH_TEXT,
 )
