@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-04
+
+1. Training data for seven classifiers now lives as parquet on S3, one file per classifier per dataset, joined from existing labels and preprocessed text. [PR #167](https://github.com/METResearchGroup/mirrorView-task/pull/167)
+
 ## 2026-09-03
 
 1. Reddit monthly comment dumps from the Pushshift experiment can be filtered, sampled to 500,000 comments per month, and stored as git LFS parquet using the same comment fields as live Reddit ingest. [PR #153](https://github.com/METResearchGroup/mirrorView-task/pull/153)
