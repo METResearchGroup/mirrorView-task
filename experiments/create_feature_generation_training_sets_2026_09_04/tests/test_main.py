@@ -1,4 +1,4 @@
-"""Tests for the training-set experiment CLI and stubs."""
+"""Tests for the training-set experiment CLI."""
 
 from pathlib import Path
 from unittest.mock import patch
@@ -10,22 +10,28 @@ from experiments.create_feature_generation_training_sets_2026_09_04.main import 
 from experiments.create_feature_generation_training_sets_2026_09_04.src.constants import (
     DEFAULT_DATA_ROOT,
 )
-from experiments.create_feature_generation_training_sets_2026_09_04.src.walk import (
-    build_training_sets,
-)
+
+RUN_TIMESTAMP = "2026_09_04-12:00:00"
+SHARED_URI = "at://did:plc:abc/app.bsky.feed.post/1"
 
 
-class TestBuildTrainingSets:
-    """Tests for build_training_sets."""
-
-    def test_build_training_sets_raises_not_implemented(self, tmp_path: Path):
-        """Verify the walk stub is not implemented yet."""
-        with pytest.raises(NotImplementedError):
-            build_training_sets(
-                tmp_path,
-                timestamp="2026_09_04-12:00:00",
-                output_root=tmp_path / "training_data",
-            )
+def _write_minimal_dataset(data_root: Path) -> None:
+    dataset_dir = data_root / "bluesky" / "ds1"
+    run_dir = dataset_dir / "preprocessed" / "run1"
+    run_dir.mkdir(parents=True)
+    pd.DataFrame({"uri": [SHARED_URI], "text": ["hello bluesky"]}).to_csv(
+        run_dir / "posts.csv",
+        index=False,
+    )
+    features_dir = dataset_dir / "features"
+    features_dir.mkdir(parents=True)
+    pd.DataFrame(
+        {
+            "uri": [SHARED_URI],
+            "label_timestamp": ["2026_09_04-11:00:00"],
+            "is_political": [True],
+        }
+    ).to_csv(features_dir / "is_political.csv", index=False)
 
 
 class TestMain:
@@ -52,3 +58,58 @@ class TestMain:
         assert call_args[0] == DEFAULT_DATA_ROOT
         assert "timestamp" in call_kwargs
         assert "output_root" in call_kwargs
+
+    @patch("lib.aws.s3.S3")
+    def test_main_local_build_without_upload_succeeds(
+        self,
+        mock_s3,
+        tmp_path: Path,
+    ):
+        """Verify local build exits 0 and does not construct S3."""
+        data_root = tmp_path / "data"
+        output_root = tmp_path / "training_data"
+        _write_minimal_dataset(data_root)
+
+        result = main(
+            [
+                "--data-root",
+                str(data_root),
+                "--output-root",
+                str(output_root),
+                "--timestamp",
+                RUN_TIMESTAMP,
+            ]
+        )
+
+        assert result == 0
+        mock_s3.assert_not_called()
+        expected_parquet = (
+            output_root / "is_political" / f"ds1_{RUN_TIMESTAMP}.parquet"
+        )
+        assert expected_parquet.exists()
+
+    @patch("lib.aws.s3.S3")
+    def test_main_upload_raises_not_implemented_after_build(
+        self,
+        mock_s3,
+        tmp_path: Path,
+    ):
+        """Verify --upload still raises NotImplementedError after the local build."""
+        data_root = tmp_path / "data"
+        output_root = tmp_path / "training_data"
+        _write_minimal_dataset(data_root)
+
+        with pytest.raises(NotImplementedError, match="S3 upload"):
+            main(
+                [
+                    "--data-root",
+                    str(data_root),
+                    "--output-root",
+                    str(output_root),
+                    "--timestamp",
+                    RUN_TIMESTAMP,
+                    "--upload",
+                ]
+            )
+
+        mock_s3.assert_not_called()
