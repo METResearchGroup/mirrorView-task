@@ -22,13 +22,13 @@ def add_standardized_author_columns(
     """Copy the platform author-handle source column onto shared ``author_handle``.
 
     Each platform names the handle differently in raw storage: Reddit uses
-    ``author``, Twitter uses ``username``, and Bluesky already stores
+    ``author``, Twitter uses ``author_id``, and Bluesky already stores
     ``author_handle``. Downstream preprocessing, features, and curation read
     one column—``author_handle``—so this helper copies from the platform-specific
     source named on the spec and overwrites any existing ``author_handle`` value.
 
     Original platform columns (for example Reddit ``author`` or Twitter
-    ``username``) are left unchanged. ``author_id`` is not added or modified.
+    ``username``/``author_id``) are left unchanged. ``author_id`` is not added or modified.
 
     Parameters
     ----------

@@ -51,7 +51,7 @@ TWITTER_SPEC = PreprocessPlatformSpec(
     columns=TWITTER_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
     text_transforms=(strip_tco_links, truncate_long_text),
-    author_handle_source_column="username",
+    author_handle_source_column="author_id",
 )
 
 
