@@ -7,7 +7,11 @@ import pytest
 from data_platform.preprocessing import preprocess_reddit
 from data_platform.preprocessing.validators import reddit_validators
 from data_platform.utils.storage import RedditStorageManager, StorageStage
-from tests.data_platform.constants import VALID_REDDIT_DATASET_ID
+from tests.data_platform.constants import (
+    EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT,
+    LONG_ENGLISH_TEXT,
+    VALID_REDDIT_DATASET_ID,
+)
 from tests.data_platform.ingestion.reddit_conftest import mock_comment_row
 
 
@@ -116,6 +120,36 @@ class TestRedditCommentMinLength:
         assert len(MIN_LENGTH_ENGLISH_BODY) == 30
         result = preprocess_reddit.passes_all_validators(MIN_LENGTH_ENGLISH_BODY)
         assert result is True
+
+
+def test_preprocess_records_truncates_long_text_and_keeps_original_body(
+    data_root,
+) -> None:
+    """Long Reddit comments keep original body and write truncated standardized text."""
+    dataset_id = VALID_REDDIT_DATASET_ID
+    raw_storage = RedditStorageManager(StorageStage.RAW, dataset_id)
+    run_dir = raw_storage.create_new_run_dir("2026_05_31-15:00:00")
+    raw_storage.write_records(
+        [_comment_row(comment_fullname="t1_long", body=LONG_ENGLISH_TEXT)],
+        run_dir,
+    )
+    raw_storage.write_run_metadata(
+        run_dir,
+        {
+            "sync_status": "completed",
+            "row_count": 1,
+        },
+    )
+    expected_text = EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT
+
+    output_dir = preprocess_reddit.preprocess_records(dataset_id)
+    output = RedditStorageManager(StorageStage.PREPROCESSED, dataset_id).load_records(
+        output_dir
+    )
+
+    assert len(output) == 1
+    assert output.iloc[0]["text"] == expected_text
+    assert output.iloc[0]["body"] == LONG_ENGLISH_TEXT
 
 
 def test_individual_reddit_validator_functions() -> None:

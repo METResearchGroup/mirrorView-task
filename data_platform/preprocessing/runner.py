@@ -28,6 +28,7 @@ from data_platform.utils.storage import StorageManager, StorageStage
 from shared.data.registry import DATASETS
 
 TextValidator = Callable[[str], bool]
+TextTransform = Callable[[str], str]
 RowValidator = Callable[[str], bool]
 
 StorageManagerFactory = Callable[..., StorageManager]
@@ -59,7 +60,7 @@ class PreprocessPlatformSpec:
     text_validators: tuple[TextValidator, ...]
     author_handle_source_column: str
     row_validators: tuple[RowValidator, ...] = ()
-    text_transform: Callable[[str], str] | None = None
+    text_transforms: tuple[TextTransform, ...] = ()
     original_platform_text_column: str = STANDARDIZED_TEXT_COLUMN
 
 
@@ -98,28 +99,30 @@ def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
-    """Apply the platform's optional text transform to each row's text column.
+    """The function runs each text transform on the text column of every row.
 
-    When ``spec.text_transform`` is unset or the frame is empty, the input
-    frame is returned unchanged.
+    The functions run in list order. If ``spec.text_transforms`` is empty, or if
+    the frame is empty, the function returns the input frame unchanged.
 
     Parameters
     ----------
     spec
-        ``text_transform`` is applied to values in ``spec.columns.text_column``.
+        Each function in ``text_transforms`` is applied to values in
+        ``spec.columns.text_column``.
 
     Returns
     -------
     pd.DataFrame
-        A new frame with transformed text when a transform is configured;
-        otherwise the original frame.
+        A new frame whose text column has been rewritten when
+        ``text_transforms`` has at least one function. Otherwise the function
+        returns the original frame.
     """
-    if spec.text_transform is None or df.empty:
+    if not spec.text_transforms or df.empty:
         return df
     out = df.copy()
     text_col = spec.columns.text_column
-    transform = spec.text_transform
-    out[text_col] = out[text_col].map(lambda v: transform(str(v)))
+    for transform in spec.text_transforms:
+        out[text_col] = out[text_col].map(lambda value, fn=transform: fn(str(value)))
     return out
 
 

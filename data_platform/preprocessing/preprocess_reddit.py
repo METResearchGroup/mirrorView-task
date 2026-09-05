@@ -28,6 +28,7 @@ from data_platform.preprocessing.runner import (
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
 )
+from data_platform.preprocessing.truncate_long_text import truncate_long_text
 from data_platform.preprocessing.validators.reddit_validators import (
     check_if_body_not_removed,
     check_if_no_direct_urls,
@@ -69,6 +70,7 @@ REDDIT_SPEC = PreprocessPlatformSpec(
     row_validators=COMMENT_ROW_VALIDATORS,
     original_platform_text_column=REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN,
     author_handle_source_column="author",
+    text_transforms=(truncate_long_text,),
 )
 
 
