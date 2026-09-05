@@ -1,0 +1,8 @@
+{
+  "dataset_id": "bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73",
+  "sync_status": "completed",
+  "sync_timestamp": "2026_09_01-00:00:00",
+  "source": "jetstream_dump",
+  "source_parquet_root": "data_platform/ingestion/data_dumps/bluesky/data/parquet",
+  "row_count": 3450253
+}
