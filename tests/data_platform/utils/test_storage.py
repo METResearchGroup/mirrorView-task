@@ -4,16 +4,20 @@ import json
 
 import pytest
 
+from data_platform.generate_features.is_political.generate_feature import IsPoliticalModel
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.utils.dataset import ValidDataFormats, write_dataset_manifest
 from data_platform.utils.storage import (
     BlueskyStorageManager,
     RedditStorageManager,
+    StorageManager,
     StorageStage,
     TwitterStorageManager,
 )
-from tests.data_platform.conftest import make_ingestion_row
+from tests.data_platform.conftest import make_ingestion_row, make_political_feature_rows
 from tests.data_platform.constants import (
+    URI_POST_A,
+    URI_POST_B,
     VALID_DATASET_ID,
     VALID_REDDIT_DATASET_ID,
     VALID_TWITTER_DATASET_ID,
@@ -243,6 +247,40 @@ class TestWriteRecordsAddsRecordId:
         saved = storage.load_records(run_dir=run_dir)
 
         assert saved.iloc[0]["record_id"] == "reddit_t1_comment_a"
+
+
+class TestFeatureLabelWrites:
+    """Tests for writing feature label rows, which carry no platform primary key."""
+
+    def _feature_storage(self) -> StorageManager:
+        return StorageManager(
+            "bluesky",
+            StorageStage.FEATURES,
+            IsPoliticalModel,
+            VALID_DATASET_ID,
+            records_filename="is_political",
+        )
+
+    def test_append_writes_label_rows_keyed_by_source_record_id(self, data_root) -> None:
+        """Given label rows with no uri, when appending, then the rows are written."""
+        storage = self._feature_storage()
+        run_dir = storage.create_new_run_dir("2026_05_30-11:00:00")
+
+        storage.append_records(make_political_feature_rows(), run_dir)
+        saved = storage.load_records(run_dir=run_dir)
+
+        assert list(saved["source_record_id"]) == [URI_POST_A, URI_POST_B]
+        assert "record_id" not in saved.columns
+
+    def test_write_records_keeps_label_columns(self, data_root) -> None:
+        """Given label rows with no uri, when writing a new file, then columns stay the same."""
+        storage = self._feature_storage()
+        run_dir = storage.create_new_run_dir("2026_05_30-12:00:00")
+
+        storage.write_records(make_political_feature_rows(), run_dir)
+        saved = storage.load_records(run_dir=run_dir)
+
+        assert list(saved.columns) == ["source_record_id", "label_timestamp", "is_political"]
 
 
 class TestTwitterStorageManagerRecordsFilename:
