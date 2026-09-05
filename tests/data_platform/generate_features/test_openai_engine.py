@@ -132,6 +132,25 @@ class TestOpenAIBatchEngineBatchLabelRecords:
         with pytest.raises(ValueError, match="task-00000"):
             engine.batch_label_records(tasks)
 
+    def test_retries_output_download_without_creating_new_batch(self) -> None:
+        output_text = make_openai_batch_output_line("task-00000", "news")
+        client = make_completed_openai_client(output_text)
+        connection_error = APIConnectionError(
+            request=httpx.Request("GET", "https://api.openai.com/v1/files/file_output")
+        )
+        output_file = MagicMock(text=output_text)
+        client.files.content.side_effect = [connection_error, output_file]
+        sleeps: list[float] = []
+        engine = _make_engine(make_openai_news_spec(), client, sleeps.append)
+        tasks = [LabelTask(uri=URI_POST_A, text="Fed raised rates.")]
+
+        result = engine.batch_label_records(tasks)
+
+        assert result[0]["category"] == "news"
+        assert sleeps == [1.0]
+        client.batches.create.assert_called_once()
+        assert client.files.content.call_count == 2
+
 
 class TestWaitForCompletedBatch:
     """Tests for wait_for_completed_batch()."""

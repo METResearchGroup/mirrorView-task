@@ -44,8 +44,8 @@ OPENAI_BATCH_COMPLETION_WINDOW = "24h"
 OPENAI_BATCH_FILE_PURPOSE = "batch"
 OPENAI_BATCH_TEMPERATURE = 0.0
 POLL_INTERVAL_SECONDS = 5.0
-POLL_RETRY_INITIAL_SECONDS = 1.0
-POLL_RETRY_MAX_SECONDS = 60.0
+SDK_READ_RETRY_INITIAL_SECONDS = 1.0
+SDK_READ_RETRY_MAX_SECONDS = 60.0
 CUSTOM_ID_PREFIX = "task-"
 CUSTOM_ID_INDEX_WIDTH = 5
 BATCH_COMPLETED_STATUS = "completed"
@@ -119,8 +119,12 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
             tasks,
             self._sleep_fn,
         )
-        _raise_for_request_errors(self._client, completed_batch)
-        output_lines = _download_output_lines(self._client, completed_batch)
+        _raise_for_request_errors(self._client, completed_batch, self._sleep_fn)
+        output_lines = _download_output_lines(
+            self._client,
+            completed_batch,
+            self._sleep_fn,
+        )
         completions_by_id = _chat_completions_by_custom_id(output_lines)
         label_timestamp = get_current_timestamp()
         rows = [
@@ -232,25 +236,50 @@ def _upload_requests(
 def _download_output_lines(
     client: OpenAIBatchClient,
     batch: Batch,
+    sleep_fn: Callable[[float], None],
 ) -> list[str]:
     if batch.output_file_id is None:
         raise RuntimeError(f"OpenAI Batch {batch.id} completed without output_file_id")
-    return client.files.content(batch.output_file_id).text.splitlines()
+    return _download_file_text(
+        client,
+        batch.output_file_id,
+        sleep_fn,
+    ).splitlines()
 
 
 def _raise_for_request_errors(
     client: OpenAIBatchClient,
     batch: Batch,
+    sleep_fn: Callable[[float], None],
 ) -> None:
     if batch.error_file_id is None:
         return
-    error_text = client.files.content(batch.error_file_id).text
+    error_text = _download_file_text(client, batch.error_file_id, sleep_fn)
     errors = [json.loads(line) for line in error_text.splitlines() if line.strip()]
     summaries = [
         f"{error.get('custom_id', 'unknown')}: {error.get('error', {})}"
         for error in errors
     ]
     raise RuntimeError(f"OpenAI Batch request failures: {'; '.join(summaries)}")
+
+
+def _download_file_text(
+    client: OpenAIBatchClient,
+    file_id: str,
+    sleep_fn: Callable[[float], None],
+) -> str:
+    retry_delay = SDK_READ_RETRY_INITIAL_SECONDS
+    while True:
+        try:
+            return client.files.content(file_id).text
+        except TRANSIENT_POLL_ERRORS as error:
+            logger.warning(
+                "OpenAI Batch file download failed; retrying existing file",
+                extra={"file_id": file_id, "retry_delay_seconds": retry_delay},
+                exc_info=error,
+            )
+            sleep_fn(retry_delay)
+            retry_delay = min(retry_delay * 2, SDK_READ_RETRY_MAX_SECONDS)
 
 
 def _chat_completions_by_custom_id(
@@ -333,7 +362,7 @@ def _retrieve_batch(
     batch_id: str,
     sleep_fn: Callable[[float], None],
 ) -> Batch:
-    retry_delay = POLL_RETRY_INITIAL_SECONDS
+    retry_delay = SDK_READ_RETRY_INITIAL_SECONDS
     while True:
         try:
             return client.batches.retrieve(batch_id)
@@ -344,7 +373,7 @@ def _retrieve_batch(
                 exc_info=error,
             )
             sleep_fn(retry_delay)
-            retry_delay = min(retry_delay * 2, POLL_RETRY_MAX_SECONDS)
+            retry_delay = min(retry_delay * 2, SDK_READ_RETRY_MAX_SECONDS)
 
 
 def wait_for_completed_batch(
