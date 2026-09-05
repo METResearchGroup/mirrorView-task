@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import io
 from unittest.mock import MagicMock
 
 import pytest
@@ -97,6 +98,8 @@ class TestOpenAIBatchEngineBatchLabelRecords:
         assert engine.last_batch_usage.completion_tokens == 5
         assert engine.last_batch_usage.request_count == 2
         client.files.create.assert_called_once()
+        uploaded_file = client.files.create.call_args.kwargs["file"]
+        assert isinstance(uploaded_file, io.IOBase)
         client.batches.create.assert_called_once()
         client.files.content.assert_called_once_with("file_output")
 

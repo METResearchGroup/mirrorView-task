@@ -14,6 +14,7 @@ import tempfile
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Protocol
 
 from openai.lib._parsing._completions import (
@@ -226,11 +227,11 @@ def _upload_requests(
         for request in requests:
             batch_file.write(f"{json.dumps(request)}\n".encode())
         batch_file.flush()
-        batch_file.seek(0)
-        return client.files.create(
-            file=batch_file,
-            purpose=OPENAI_BATCH_FILE_PURPOSE,
-        ).id
+        with Path(batch_file.name).open("rb") as input_file:
+            return client.files.create(
+                file=input_file,
+                purpose=OPENAI_BATCH_FILE_PURPOSE,
+            ).id
 
 
 def _download_output_lines(
