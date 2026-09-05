@@ -82,12 +82,11 @@ def _search_recent_tweets_kwargs(
     max_results: int,
     next_token: str | None,
 ) -> dict[str, Any]:
+    """Construct search_recent_tweets parameters without user expansions."""
     kwargs: dict[str, Any] = {
         "query": query,
         "max_results": max_results,
         "tweet_fields": ["created_at", "public_metrics", "author_id"],
-        "expansions": ["author_id"],
-        "user_fields": ["username"],
     }
     if next_token is not None:
         kwargs["next_token"] = next_token
