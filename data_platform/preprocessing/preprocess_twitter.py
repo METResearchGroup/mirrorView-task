@@ -24,6 +24,7 @@ from data_platform.preprocessing.runner import (
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
 )
+from data_platform.preprocessing.truncate_long_text import truncate_long_text
 from data_platform.preprocessing.validators.twitter_validators import (
     check_if_twitter_text_has_no_external_urls,
     check_if_valid_twitter_post_length,
@@ -49,7 +50,7 @@ TWITTER_SPEC = PreprocessPlatformSpec(
     model_cls=SyncTwitterPostModel,
     columns=TWITTER_COLUMNS,
     text_validators=POST_TEXT_VALIDATORS,
-    text_transform=strip_tco_links,
+    text_transforms=(strip_tco_links, truncate_long_text),
     author_handle_source_column="username",
 )
 

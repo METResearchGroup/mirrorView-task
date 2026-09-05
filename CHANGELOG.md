@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-04
+
+1. Preprocess now cuts standardized text to a complete sentence within a 300-character cap, and a sentence may use 20 extra characters past the cap so the sentence can stay whole. The cut is listed on `text_transforms`, which is the same ordered list of text functions that already includes Twitter's t.co URL removal. Original platform columns stay unchanged. [PR #166](https://github.com/METResearchGroup/mirrorView-task/pull/166)
+
 ## 2026-09-03
 
 1. Bluesky dump posts from the Jetstream warehouse day are now on the pipeline raw path, and a preprocess YAML names that dataset. Bluesky preprocess writes a Git LFS parquet file of 200,000 sampled posts. [PR #164](https://github.com/METResearchGroup/mirrorView-task/pull/164)
