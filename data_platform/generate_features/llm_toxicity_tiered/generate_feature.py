@@ -14,7 +14,39 @@ from pydantic import BaseModel, Field
 from lib.timestamp_utils import get_current_timestamp
 from ml_tooling.llm.llm import structured_chat_completion
 
-SYSTEM_PROMPT = ""
+SYSTEM_PROMPT = """\
+You classify the toxicity of short social media text into exactly one category:
+
+- low: civil text with no insults, threats, slurs, or personal attacks. \
+Disagreement, jokes, and blunt opinions are low when they do not target a person \
+or group with abuse.
+- medium: rude, insulting, or hostile text, including mild targeted profanity or \
+name-calling, without threats, slurs, dehumanization, or wishes of harm.
+- high: severe abuse. Threats, slurs, dehumanization, or language that wishes \
+harm or violence.
+
+Use these examples:
+
+Text: "Thanks for explaining the bill. I still disagree, but I see your point."
+Toxicity: low
+
+Text: "City council meets Tuesday to discuss the zoning proposal."
+Toxicity: low
+
+Text: "That take is pretty stupid. Maybe read the article before posting."
+Toxicity: medium
+
+Text: "You're a joke and nobody takes you seriously."
+Toxicity: medium
+
+Text: "People like you should be wiped off the map."
+Toxicity: high
+
+Text: "Kill yourself, you worthless piece of garbage."
+Toxicity: high
+
+Classify the user's text. Return only the structured fields requested.
+"""
 
 ToxicityTier = Literal["low", "medium", "high"]
 
