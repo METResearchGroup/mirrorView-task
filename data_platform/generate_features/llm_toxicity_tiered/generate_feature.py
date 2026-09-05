@@ -78,7 +78,16 @@ def generate_feature(uri: str, text: str) -> LlmToxicityTieredModel:
     LlmToxicityTieredModel
         Row with the record id, timestamp, and toxicity tier.
     """
-    raise NotImplementedError
+    result = structured_chat_completion(
+        user_prompt=text,
+        output_schema=LlmToxicityTieredOutputModel,
+        system_prompt=SYSTEM_PROMPT,
+    )
+    return LlmToxicityTieredModel(
+        source_record_id=uri,
+        label_timestamp=get_current_timestamp(),
+        toxicity_tier=result.toxicity_tier,
+    )
 
 
 if __name__ == "__main__":
