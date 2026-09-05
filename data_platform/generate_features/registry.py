@@ -100,7 +100,7 @@ FEATURE_REGISTRY: dict[str, FeatureSpec] = {
     "llm_toxicity_tiered": FeatureSpec(
         name="llm_toxicity_tiered",
         model=LlmToxicityTieredModel,
-        engine_type="langchain",
+        engine_type="openai",
         system_prompt=LLM_TOXICITY_TIERED_SYSTEM_PROMPT,
         llm_output_schema=LlmToxicityTieredOutputModel,
     ),
