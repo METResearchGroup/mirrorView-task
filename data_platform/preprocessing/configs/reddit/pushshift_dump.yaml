@@ -1,0 +1,15 @@
+dataset_id: reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079
+name: reddit-pushshift-dump-2025-05-06
+description: Pushshift dump comments for May and June 2025
+date: "2025-05-01"
+output_format: parquet
+record_types:
+  - reddit.comment
+dump:
+  sources:
+    - parquet: data_platform/ingestion/data_dumps/reddit/filtered/RC_2025-05.parquet
+      raw_run: "2025_05_01-00:00:00"
+    - parquet: data_platform/ingestion/data_dumps/reddit/filtered/RC_2025-06.parquet
+      raw_run: "2025_06_01-00:00:00"
+preprocessing_params:
+  sample_size: 400000
