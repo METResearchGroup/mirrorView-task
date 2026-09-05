@@ -28,12 +28,17 @@ class S3:
         body: bytes,
         *,
         content_type: str | None = None,
+        metadata: dict[str, str] | None = None,
+        if_none_match: str | None = None,
     ) -> None:
         key = key.lstrip("/")
-        extra: dict[str, str] = {}
+        extra: dict[str, Any] = {}
         if content_type is not None:
             extra["ContentType"] = content_type
         self._client.put_object(Bucket=self._bucket, Key=key, Body=body, **extra)
+
+    def object_exists(self, key: str) -> bool:
+        raise NotImplementedError
 
     def upload_file(
         self,

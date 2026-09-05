@@ -78,6 +78,7 @@ class StorageManager:
     model: type[BaseModel]
     records_filename: str
     dataset_id: str
+    _store: ObjectStore
 
     def __init__(
         self,
@@ -103,6 +104,9 @@ class StorageManager:
     @property
     def root_dir(self) -> Path:
         return DATA_ROOT / self.platform / self.dataset_id / self.stage
+
+    def _key_for(self, path: Path) -> str:
+        raise NotImplementedError
 
     def create_new_run_dir(self, timestamp: str | None = None) -> Path:
         run_dir = self.root_dir / (timestamp or get_current_timestamp())
