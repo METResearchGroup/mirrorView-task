@@ -4,7 +4,7 @@ import csv
 import json
 from dataclasses import dataclass
 from enum import StrEnum
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Any
 
@@ -53,26 +53,28 @@ class StorageStage(StrEnum):
     CURATED = "curated"
 
 
-def _write_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
-    with output_path.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+def _csv_bytes(rows: list[dict[str, Any]], fieldnames: list[str], *, header: bool) -> bytes:
+    buffer = StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=fieldnames)
+    if header:
         writer.writeheader()
-        writer.writerows(rows)
+    writer.writerows(rows)
+    return buffer.getvalue().encode("utf-8")
 
 
-def _append_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
-    file_exists = output_path.exists()
-    mode = "a" if file_exists else "w"
-    with output_path.open(mode, newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        if not file_exists:
-            writer.writeheader()
-        writer.writerows(rows)
+def _parquet_bytes(df: pd.DataFrame) -> bytes:
+    buffer = BytesIO()
+    df.to_parquet(buffer, index=False)
+    return buffer.getvalue()
 
 
-def _write_parquet(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
+def _rows_to_parquet_bytes(rows: list[dict[str, Any]], fieldnames: list[str]) -> bytes:
     df = pd.DataFrame(rows) if rows else pd.DataFrame(columns=fieldnames)
-    df.to_parquet(output_path, index=False)
+    return _parquet_bytes(df)
+
+
+def _metadata_bytes(metadata: dict[str, Any]) -> bytes:
+    return json.dumps(metadata, indent=2).encode("utf-8")
 
 
 class StorageManager:
@@ -207,9 +209,10 @@ class StorageManager:
         out_path = run_dir / (filename or self.records_filename)
         fieldnames = list(self.model.model_fields.keys())
         if self.format == "parquet":
-            _write_parquet(validated, out_path, fieldnames)
+            body = _rows_to_parquet_bytes(validated, fieldnames)
         else:
-            _write_csv(validated, out_path, fieldnames)
+            body = _csv_bytes(validated, fieldnames, header=True)
+        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=False)
         return out_path
 
     def append_records(
@@ -224,9 +227,11 @@ class StorageManager:
             for row in self._prepare_rows_for_write(rows)
         ]
         out_path = run_dir / (filename or self.records_filename)
+        key = self._key_for(out_path)
+        file_exists = self._store.exists(key)
         if self.format == "parquet":
-            if out_path.exists():
-                existing = pd.read_parquet(out_path)
+            if file_exists:
+                existing = pd.read_parquet(BytesIO(self._store.get_bytes(key)))
                 new_df = pd.DataFrame(validated)
                 if set(existing.columns) != set(new_df.columns):
                     raise ValueError(
@@ -237,10 +242,12 @@ class StorageManager:
                 combined = pd.concat([existing, new_df], ignore_index=True)
             else:
                 combined = pd.DataFrame(validated)
-            combined.to_parquet(out_path, index=False)
+            body = _parquet_bytes(combined)
         else:
             fieldnames = list(self.model.model_fields.keys())
-            _append_csv(validated, out_path, fieldnames)
+            new_bytes = _csv_bytes(validated, fieldnames, header=not file_exists)
+            body = self._store.get_bytes(key) + new_bytes if file_exists else new_bytes
+        self._store.put_bytes(key, body, allow_overwrite=True)
         return out_path
 
     def load_seen_ids_from_disk(
@@ -317,24 +324,22 @@ class StorageManager:
     ) -> Path:
         out_path = run_dir / (filename or self.records_filename)
         if self.format == "parquet":
-            df.to_parquet(out_path, index=False)
+            body = _parquet_bytes(df)
         else:
-            df.to_csv(out_path, index=False)
+            body = df.to_csv(index=False).encode("utf-8")
+        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=False)
         return out_path
 
     def write_run_metadata(self, run_dir: Path, metadata: dict[str, Any]) -> Path:
         metadata_path = run_dir / METADATA_FILENAME
-        with metadata_path.open("w", encoding="utf-8") as f:
-            json.dump(metadata, f, indent=2)
+        self._store.put_bytes(
+            self._key_for(metadata_path), _metadata_bytes(metadata), allow_overwrite=True
+        )
         return metadata_path
 
     def write_run_metadata_atomic(self, run_dir: Path, metadata: dict[str, Any]) -> Path:
-        metadata_path = run_dir / METADATA_FILENAME
-        tmp_path = run_dir / f"{METADATA_FILENAME}.tmp"
-        with tmp_path.open("w", encoding="utf-8") as f:
-            json.dump(metadata, f, indent=2)
-        tmp_path.replace(metadata_path)
-        return metadata_path
+        """Replace ``metadata.json`` for a run. Both stores write the whole object at once, so a reader never sees a partial file."""
+        return self.write_run_metadata(run_dir, metadata)
 
     def filename_for(self, stem: str) -> str:
         """Return the format-correct filename for a given stem."""
