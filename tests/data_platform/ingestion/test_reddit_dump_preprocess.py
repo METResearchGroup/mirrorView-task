@@ -20,6 +20,7 @@ from data_platform.ingestion.data_dumps.reddit.publish_dump_to_raw import (
 )
 from data_platform.preprocessing.preprocess_reddit import (
     REDDIT_SPEC,
+    _resolve_preprocess_cli,
     _sample_size_from_yaml,
     preprocess_records,
 )
@@ -350,3 +351,19 @@ class TestSampleSizeFromYaml:
         """Rejects malformed, fractional, boolean, and non-positive sample sizes."""
         with pytest.raises(typer.BadParameter, match="positive integer"):
             _sample_size_from_yaml({"preprocessing_params": {"sample_size": sample_size}})
+
+
+class TestResolvePreprocessCli:
+    """Tests for _resolve_preprocess_cli()."""
+
+    @pytest.mark.parametrize("sample_size", [0, -1, True])
+    def test_rejects_invalid_sample_size_with_dataset_id(
+        self, sample_size: object
+    ) -> None:
+        """`--dataset-id` still rejects a non-positive sample-size override."""
+        with pytest.raises(typer.BadParameter, match="positive integer"):
+            _resolve_preprocess_cli(
+                VALID_REDDIT_DATASET_ID,
+                None,
+                sample_size,  # type: ignore[arg-type]
+            )

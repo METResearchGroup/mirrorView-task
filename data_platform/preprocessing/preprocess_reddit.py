@@ -126,22 +126,25 @@ def _require_dataset_id_or_config(dataset_id: str | None, config: Path | None) -
         raise typer.BadParameter("Provide --dataset-id or --config, not both")
 
 
-def _sample_size_from_yaml(config_values: dict) -> int:
-    params = config_values.get("preprocessing_params")
-    if not isinstance(params, dict) or params.get("sample_size") is None:
-        raise typer.BadParameter(
-            "Config preprocessing_params.sample_size is required"
-        )
-    sample_size = params["sample_size"]
+def _require_positive_sample_size(sample_size: object) -> int:
     if (
         isinstance(sample_size, bool)
         or not isinstance(sample_size, int)
         or sample_size < MIN_SAMPLE_SIZE
     ):
         raise typer.BadParameter(
-            "Config preprocessing_params.sample_size must be a positive integer"
+            "sample_size must be a positive integer"
         )
     return sample_size
+
+
+def _sample_size_from_yaml(config_values: dict) -> int:
+    params = config_values.get("preprocessing_params")
+    if not isinstance(params, dict) or params.get("sample_size") is None:
+        raise typer.BadParameter(
+            "Config preprocessing_params.sample_size is required"
+        )
+    return _require_positive_sample_size(params["sample_size"])
 
 
 def _resolve_preprocess_cli(
@@ -150,12 +153,16 @@ def _resolve_preprocess_cli(
     sample_size: int | None,
 ) -> tuple[str, int | None]:
     _require_dataset_id_or_config(dataset_id, config)
+    resolved_sample_size = (
+        None if sample_size is None else _require_positive_sample_size(sample_size)
+    )
     if config is None:
-        return str(dataset_id), sample_size
+        return str(dataset_id), resolved_sample_size
     config_path = resolve_config_path(config, REPO_ROOT)
     config_values = load_yaml_config(config_path)
     yaml_sample_size = _sample_size_from_yaml(config_values)
-    resolved_sample_size = yaml_sample_size if sample_size is None else sample_size
+    if resolved_sample_size is None:
+        resolved_sample_size = yaml_sample_size
     return str(config_values["dataset_id"]), resolved_sample_size
 
 
