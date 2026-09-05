@@ -20,7 +20,11 @@ from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
     generate_features,
 )
-from data_platform.generate_features.models import FeatureRunConfig
+from data_platform.generate_features.load_config import (
+    apply_engine_to_registry,
+    load_feature_generation_config,
+)
+from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
@@ -63,6 +67,21 @@ def generate_feature_subset(features: list[str] | None) -> tuple[str, ...] | Non
     if unknown:
         raise ValueError(f"Unknown features: {sorted(unknown)}")
     return tuple(features)
+
+
+def feature_registry_from_yaml(
+    features_subset: tuple[str, ...] | None = None,
+    config_path: Path | None = None,
+) -> dict[str, FeatureSpec]:
+    """Load YAML engine settings, then return the registry for this run.
+
+    Shape: load YAML → select registry subset → apply engine.
+    """
+    loaded = load_feature_generation_config(config_path)
+    registry = FEATURE_REGISTRY
+    if features_subset:
+        registry = {name: FEATURE_REGISTRY[name] for name in features_subset}
+    return apply_engine_to_registry(registry, loaded)
 
 
 def features_from_cli(raw: list[str] | None) -> list[str] | None:
