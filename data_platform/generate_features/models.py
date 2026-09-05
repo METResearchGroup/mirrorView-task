@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.storage import StorageManager
 
-EngineType = Literal["langchain", "thread_pool"]
+EngineType = Literal["langchain", "thread_pool", "openai"]
 
 
 @dataclass(frozen=True)
@@ -119,10 +119,11 @@ FeatureFn = Callable[[str, str], BaseModel]
 class FeatureSpec:
     """One named feature in the feature registry.
 
-    A LangChain feature sets ``system_prompt`` and ``llm_output_schema``, and
-    it leaves ``generate_fn`` unset, because the LangChain engine labels a
-    batch of rows through that prompt and schema. A thread-pool feature must
-    set ``generate_fn``, because that engine calls the function on each row.
+    A LangChain or OpenAI feature sets ``system_prompt`` and ``llm_output_schema``,
+    and it leaves ``generate_fn`` unset. The LangChain engine labels a batch of
+    rows through a structured-output chain. The OpenAI engine labels the same
+    rows through the OpenAI Batch API. A thread-pool feature must set
+    ``generate_fn``, because that engine calls the function on each row.
     """
 
     name: str
