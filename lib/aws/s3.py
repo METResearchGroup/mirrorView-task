@@ -33,6 +33,16 @@ class S3:
         metadata: dict[str, str] | None = None,
         if_none_match: str | None = None,
     ) -> None:
+        """Upload ``body`` to ``key``.
+
+        Parameters
+        ----------
+        metadata
+            User metadata stored with the object, e.g. ``{"sha256": digest}``.
+        if_none_match
+            Pass ``"*"`` to make S3 reject the put with ``PreconditionFailed``
+            when the key already exists.
+        """
         key = key.lstrip("/")
         extra: dict[str, Any] = {}
         if content_type is not None:
@@ -44,6 +54,7 @@ class S3:
         self._client.put_object(Bucket=self._bucket, Key=key, Body=body, **extra)
 
     def object_exists(self, key: str) -> bool:
+        """Return True when ``key`` exists in the bucket. Errors other than 404 propagate."""
         key = key.lstrip("/")
         try:
             self._client.head_object(Bucket=self._bucket, Key=key)

@@ -1,4 +1,9 @@
-"""Local disk and S3 object stores behind ``StorageManager``."""
+"""Local disk and S3 object stores behind ``StorageManager``.
+
+Keys are paths relative to ``data_platform/data``, so the same key names a
+file under the local data root and an object under the S3 prefix. The env var
+``DATA_PLATFORM_STORAGE_BACKEND`` picks the backend and defaults to local disk.
+"""
 
 from __future__ import annotations
 
@@ -78,6 +83,15 @@ def _verify_sha256(key: str, body: bytes, expected_sha256: str | None) -> None:
 
 
 class ObjectStore(Protocol):
+    """Byte-level read and write access to one object per key.
+
+    ``get_bytes`` raises ``FileNotFoundError`` for a missing key and
+    ``ValueError`` when ``expected_sha256`` is given and does not match.
+    ``put_bytes`` and ``put_file`` return the SHA-256 hex digest of the body
+    and raise ``FileExistsError`` when the key exists and ``allow_overwrite``
+    is False.
+    """
+
     def exists(self, key: str) -> bool: ...
 
     def get_bytes(self, key: str, *, expected_sha256: str | None = None) -> bytes: ...

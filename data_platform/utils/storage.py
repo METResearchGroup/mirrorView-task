@@ -78,6 +78,15 @@ def _metadata_bytes(metadata: dict[str, Any]) -> bytes:
 
 
 class StorageManager:
+    """Reads and writes one stage of one dataset through the selected object store.
+
+    Paths such as ``root_dir`` and run directories are always local ``Path``
+    objects under ``DATA_ROOT``. Record and metadata bytes go through the
+    object store chosen by ``DATA_PLATFORM_STORAGE_BACKEND`` (local disk by
+    default, or S3 at the same relative key). Run directory listing and
+    completion checks read the local filesystem.
+    """
+
     platform: str
     stage: StorageStage
     model: type[BaseModel]
@@ -338,7 +347,11 @@ class StorageManager:
         return metadata_path
 
     def write_run_metadata_atomic(self, run_dir: Path, metadata: dict[str, Any]) -> Path:
-        """Replace ``metadata.json`` for a run. Both stores write the whole object at once, so a reader never sees a partial file."""
+        """Replace ``metadata.json`` for a run.
+
+        Both object stores write the whole object in one step, so a reader
+        never sees a partial file. Kept as a separate name for existing callers.
+        """
         return self.write_run_metadata(run_dir, metadata)
 
     def filename_for(self, stem: str) -> str:
