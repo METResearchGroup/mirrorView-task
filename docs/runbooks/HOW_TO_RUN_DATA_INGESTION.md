@@ -58,6 +58,8 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
   --dataset-id bluesky_<uuid> --checkpoint <timestamp>
 ```
 
+LLM features are labeled through the OpenAI Batch API. Each `--batch-size` group of posts becomes one Batch job, and the command waits for that job before it starts the next one. Raising `--batch-size` sends more posts per job and finishes a large run sooner. `--max-concurrency` only affects the Perspective toxicity feature.
+
 Omit `--checkpoint` to create one `features/<timestamp>/` feature run folder. If an unfinished feature run already exists, you get an error. If the feature run stops partway through, pass `--checkpoint` with that feature run timestamp so labels keep going into the same feature run folder. You cannot continue a completed feature run.
 
 Feature generation still skips a post that already has a label, including labels written in earlier feature run folders. If a feature such as `is_political` is marked completed in the current feature run, that feature stays completed even if new posts appear. Start a later feature run without `--checkpoint` to label the new posts. When the same post appears in more than one feature run folder, the curate step keeps the row with the latest `label_timestamp`.

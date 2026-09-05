@@ -2,8 +2,9 @@
 
 ## 2026-09-05
 
-1. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
-2. Twitter sync requests now omit user expansions and user fields, so requests avoid User Read charges for each tweet. In preprocessing, the pipeline now populates the author handle directly from the author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
+1. Feature generation now labels every LLM feature with the OpenAI Batch engine instead of LangChain. `is_toxic_tiered` still calls the Perspective API on the thread-pool engine. One `--batch-size` group of posts is now one OpenAI Batch job. [Issue #175](https://github.com/METResearchGroup/mirrorView-task/issues/175)
+2. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
+3. Twitter sync requests now omit user expansions and user fields, so requests avoid User Read charges for each tweet. In preprocessing, the pipeline now populates the author handle directly from the author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
 
 ## 2026-09-04
 
