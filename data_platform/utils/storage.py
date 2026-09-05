@@ -212,7 +212,7 @@ class StorageManager:
             body = _rows_to_parquet_bytes(validated, fieldnames)
         else:
             body = _csv_bytes(validated, fieldnames, header=True)
-        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=False)
+        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=True)
         return out_path
 
     def append_records(
@@ -327,7 +327,7 @@ class StorageManager:
             body = _parquet_bytes(df)
         else:
             body = df.to_csv(index=False).encode("utf-8")
-        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=False)
+        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=True)
         return out_path
 
     def write_run_metadata(self, run_dir: Path, metadata: dict[str, Any]) -> Path:
