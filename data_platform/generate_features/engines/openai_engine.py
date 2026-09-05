@@ -71,6 +71,7 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         monotonic_fn: Callable[[], float],
     ) -> None:
         super().__init__(spec, run_config)
+        _require_llm_feature_spec(spec)
         self._client = client
         self._engine_config = engine_config
         self._sleep_fn = sleep_fn
@@ -79,6 +80,13 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
 
     def batch_label_records(self, tasks: list[LabelTask]) -> list[dict]:
         raise NotImplementedError
+
+
+def _require_llm_feature_spec(spec: FeatureSpec) -> None:
+    if spec.system_prompt is None or spec.llm_output_schema is None:
+        raise ValueError(
+            f"Feature {spec.name} requires system_prompt and llm_output_schema"
+        )
 
 
 def create_openai_client() -> OpenAIBatchClient:
