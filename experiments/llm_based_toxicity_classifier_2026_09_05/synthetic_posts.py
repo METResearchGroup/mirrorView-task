@@ -13,7 +13,12 @@ from pydantic import BaseModel
 
 
 class SyntheticPost(BaseModel):
-    pass
+    """One synthetic smoke-test post, including whether toxic language was injected."""
+
+    source_record_id: str
+    text: str
+    toxicity_was_injected: bool
+    injected_tier: Literal["medium", "high"] | None
 
 
 def build_synthetic_posts(
@@ -21,5 +26,25 @@ def build_synthetic_posts(
     injected_toxic_count: int,
     seed: int,
 ) -> list[SyntheticPost]:
-    """Build Faker posts and inject toxic language into a random subset."""
+    """Build Faker posts and inject toxic language into a random subset.
+
+    Parameters
+    ----------
+    post_count
+        Number of posts to build.
+    injected_toxic_count
+        How many of those posts receive injected toxic language.
+    seed
+        Seed for Faker and for choosing which posts are injected.
+
+    Returns
+    -------
+    list[SyntheticPost]
+        Posts with ids, text, and injection flags.
+
+    Raises
+    ------
+    ValueError
+        When ``injected_toxic_count`` is outside ``[0, post_count]``.
+    """
     raise NotImplementedError

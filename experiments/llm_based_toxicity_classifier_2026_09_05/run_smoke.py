@@ -13,6 +13,11 @@ Run from the repo root:
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
+from data_platform.generate_features.llm_toxicity_tiered.generate_feature import (
+    LlmToxicityTieredModel,
+)
 from data_platform.generate_features.models import FeatureSpec
 from experiments.llm_based_toxicity_classifier_2026_09_05.synthetic_posts import (
     SyntheticPost,
@@ -27,8 +32,27 @@ OUTPUT_PRICE_PER_MILLION_TOKENS_USD = 1.25
 TOKENS_PER_MILLION = 1_000_000
 
 
+@dataclass(frozen=True)
+class ToxicityLabelCounts:
+    """Counts of low, medium, and high toxicity labels from one smoke run."""
+
+    low: int
+    medium: int
+    high: int
+
+
+@dataclass(frozen=True)
 class SmokeRunResult:
-    pass
+    """Labels, token usage, and cost from one OpenAI Batch toxicity smoke run."""
+
+    labels: list[LlmToxicityTieredModel]
+    elapsed_seconds: float
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
+    estimated_cost_usd: float
+    label_counts: ToxicityLabelCounts
+    model: str
 
 
 def openai_toxicity_spec() -> FeatureSpec:
