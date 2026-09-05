@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-05
+
+1. Twitter ingestion drops user expansions and user fields to eliminate per-tweet User: Read resource charges, and Twitter preprocessing standardizes author handle directly from author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
+
 ## 2026-09-04
 
 1. Preprocess now cuts standardized text to a complete sentence within a 300-character cap, and a sentence may use 20 extra characters past the cap so the sentence can stay whole. The cut is listed on `text_transforms`, which is the same ordered list of text functions that already includes Twitter's t.co URL removal. Original platform columns stay unchanged. [PR #166](https://github.com/METResearchGroup/mirrorView-task/pull/166)
