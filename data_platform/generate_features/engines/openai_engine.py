@@ -10,6 +10,7 @@ Run the smoke test from the repo root:
 from __future__ import annotations
 
 import json
+import logging
 import tempfile
 import time
 from collections.abc import Callable
@@ -20,6 +21,7 @@ from openai.lib._parsing._completions import (
     parse_chat_completion,
     type_to_response_format_param,
 )
+from openai import APIConnectionError, InternalServerError, RateLimitError
 from openai.types import Batch
 from openai.types.chat import ChatCompletion
 from pydantic import BaseModel
@@ -42,6 +44,8 @@ OPENAI_BATCH_COMPLETION_WINDOW = "24h"
 OPENAI_BATCH_FILE_PURPOSE = "batch"
 OPENAI_BATCH_TEMPERATURE = 0.0
 POLL_INTERVAL_SECONDS = 5.0
+POLL_RETRY_INITIAL_SECONDS = 1.0
+POLL_RETRY_MAX_SECONDS = 60.0
 CUSTOM_ID_PREFIX = "task-"
 CUSTOM_ID_INDEX_WIDTH = 5
 BATCH_COMPLETED_STATUS = "completed"
@@ -50,9 +54,10 @@ BATCH_FAILED_STATUSES = frozenset(
         "failed",
         "expired",
         "cancelled",
-        "cancelling",
     }
 )
+TRANSIENT_POLL_ERRORS = (APIConnectionError, InternalServerError, RateLimitError)
+logger = logging.getLogger(__name__)
 
 
 class OpenAIBatchClient(Protocol):
@@ -323,6 +328,25 @@ def _require_batch_not_failed(batch_id: str, status: str) -> None:
         raise RuntimeError(f"OpenAI Batch {batch_id} ended with status {status}")
 
 
+def _retrieve_batch(
+    client: OpenAIBatchClient,
+    batch_id: str,
+    sleep_fn: Callable[[float], None],
+) -> Batch:
+    retry_delay = POLL_RETRY_INITIAL_SECONDS
+    while True:
+        try:
+            return client.batches.retrieve(batch_id)
+        except TRANSIENT_POLL_ERRORS as error:
+            logger.warning(
+                "OpenAI Batch status check failed; retrying existing batch",
+                extra={"batch_id": batch_id, "retry_delay_seconds": retry_delay},
+                exc_info=error,
+            )
+            sleep_fn(retry_delay)
+            retry_delay = min(retry_delay * 2, POLL_RETRY_MAX_SECONDS)
+
+
 def wait_for_completed_batch(
     client: OpenAIBatchClient,
     batch_id: str,
@@ -337,7 +361,7 @@ def wait_for_completed_batch(
         When the batch ends in a failed, expired, or cancelled status.
     """
     while True:
-        batch = client.batches.retrieve(batch_id)
+        batch = _retrieve_batch(client, batch_id, sleep_fn)
         status = batch.status
         if status == BATCH_COMPLETED_STATUS:
             return batch

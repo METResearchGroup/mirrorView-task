@@ -5,7 +5,9 @@ from __future__ import annotations
 import io
 from unittest.mock import MagicMock
 
+import httpx
 import pytest
+from openai import APIConnectionError
 
 from data_platform.generate_features.engines import ENGINE_BUILDERS, build_engine
 from data_platform.generate_features.engines.openai_engine import (
@@ -166,6 +168,43 @@ class TestWaitForCompletedBatch:
         )
 
         assert result is completed
+        assert sleeps == [5.0]
+
+    def test_retries_transient_retrieve_error_without_creating_new_batch(self) -> None:
+        client = MagicMock()
+        completed = MagicMock(status="completed")
+        connection_error = APIConnectionError(
+            request=httpx.Request("GET", "https://api.openai.com/v1/batches/batch_1")
+        )
+        client.batches.retrieve.side_effect = [connection_error, completed]
+        sleeps: list[float] = []
+
+        result = wait_for_completed_batch(
+            client,
+            "batch_1",
+            5.0,
+            sleeps.append,
+        )
+
+        assert result is completed
+        assert sleeps == [1.0]
+        client.batches.create.assert_not_called()
+
+    def test_waits_while_batch_is_cancelling(self) -> None:
+        client = MagicMock()
+        cancelling = MagicMock(status="cancelling")
+        cancelled = MagicMock(status="cancelled")
+        client.batches.retrieve.side_effect = [cancelling, cancelled]
+        sleeps: list[float] = []
+
+        with pytest.raises(RuntimeError, match="cancelled"):
+            wait_for_completed_batch(
+                client,
+                "batch_1",
+                5.0,
+                sleeps.append,
+            )
+
         assert sleeps == [5.0]
 
     def test_raises_when_batch_fails(self) -> None:
