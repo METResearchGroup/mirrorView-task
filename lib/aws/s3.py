@@ -6,8 +6,10 @@ from typing import Any
 
 import boto3
 import pandas as pd
+from botocore.exceptions import ClientError
 
 DEFAULT_REGION_NAME = "us-east-2"
+NOT_FOUND_ERROR_CODES = frozenset({"404", "NoSuchKey", "NotFound"})
 
 
 class S3:
@@ -35,10 +37,21 @@ class S3:
         extra: dict[str, Any] = {}
         if content_type is not None:
             extra["ContentType"] = content_type
+        if metadata is not None:
+            extra["Metadata"] = metadata
+        if if_none_match is not None:
+            extra["IfNoneMatch"] = if_none_match
         self._client.put_object(Bucket=self._bucket, Key=key, Body=body, **extra)
 
     def object_exists(self, key: str) -> bool:
-        raise NotImplementedError
+        key = key.lstrip("/")
+        try:
+            self._client.head_object(Bucket=self._bucket, Key=key)
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") in NOT_FOUND_ERROR_CODES:
+                return False
+            raise
+        return True
 
     def upload_file(
         self,
