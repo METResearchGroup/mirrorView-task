@@ -8,7 +8,7 @@ All current timestamps come from `lib.timestamp_utils.get_current_timestamp`. Th
 
 ## Cursor Cloud specific instructions
 
-The startup/update script is intentionally minimal: it only verifies that `uv` is available (`uv --version`) and does **not** install project dependencies. The app does not need to run in this environment. If you need Python deps, run `uv sync` yourself; if you need the web deps, run `npm install` from `webapp/`. `uv` is installed at `~/.local/bin` and is on `PATH` in interactive shells (Python 3.12).
+The install step verifies that `uv` is available (`uv --version`) and then provisions the Python environment with `uv sync --frozen`, so `.venv` is ready and `uv run pytest` works without extra setup. This installs the `dev` dependency group (torch/transformers/spacy) plus the private `research-tools` git dependency; re-running `uv sync` is a fast no-op. The web deps are **not** installed automatically; run `npm install` from `webapp/` when you need them. `uv` is installed at `~/.local/bin` and is on `PATH` in interactive shells (Python 3.12).
 
 ### Secrets / environment variables
 
