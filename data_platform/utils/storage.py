@@ -439,5 +439,10 @@ class TwitterStorageManager(StorageManager):
         return pd.read_csv(
             csv_path,
             keep_default_na=False,
-            dtype={"tweet_id": "string", "author_id": "string", "source_record_id": "string"},
+            dtype={
+                "tweet_id": "string",
+                "author_id": "string",
+                "author_handle": "string",
+                "source_record_id": "string",
+            },
         )

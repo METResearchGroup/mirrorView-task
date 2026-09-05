@@ -34,7 +34,7 @@ from tests.data_platform.ingestion.twitter_conftest import mock_tweet_row
 def _sample_preprocessed_posts(count: int = 1) -> list[dict[str, Any]]:
     rows = [mock_tweet_row(f"100000000000000000{index}") for index in range(count)]
     for row in rows:
-        row["author_handle"] = row["username"]
+        row["author_handle"] = row["author_id"]
         row["source_record_id"] = row["tweet_id"]
     return rows
 

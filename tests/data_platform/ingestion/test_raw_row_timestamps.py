@@ -110,23 +110,23 @@ class TestTweetToRow:
         created_at = datetime(2026, 5, 30, tzinfo=timezone.utc)
         result = tweet_to_row(
             _tweet(created_at=created_at),
-            username="user",
             keyword="alpha",
             sync_timestamp=SYNC_TIMESTAMP,
         )
 
         assert result["created_at"] == CREATED_AT_ISO
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
+        assert result["username"] == ""
         SyncTwitterPostModel.model_validate(attach_record_id(result, "twitter"))
 
     def test_writes_empty_created_at_when_payload_time_is_missing(self) -> None:
         """tweet_to_row writes an empty created_at when the payload time is missing."""
         result = tweet_to_row(
             _tweet(created_at=None),
-            username="user",
             keyword="alpha",
             sync_timestamp=SYNC_TIMESTAMP,
         )
 
         assert result["created_at"] == ""
         assert result["sync_timestamp"] == SYNC_TIMESTAMP
+        assert result["username"] == ""
