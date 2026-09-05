@@ -4,9 +4,9 @@
 
 1. The LLM toxicity feature test now expects the OpenAI Batch engine, matching the registry after LLM features moved off LangChain. [PR #177](https://github.com/METResearchGroup/mirrorView-task/pull/177)
 2. Label toxicity as low, medium, or high with an LLM during feature generation, using the same prompt and output schema as the other LLM features. A small live OpenAI Batch run of 50 made-up Faker posts writes elapsed time, estimated cost, and the counts of low, medium, and high labels. [PR #174](https://github.com/METResearchGroup/mirrorView-task/pull/174)
-2. Feature generation now labels every LLM feature with the OpenAI Batch engine instead of LangChain. `is_toxic_tiered` still calls the Perspective API on the thread-pool engine. One `--batch-size` group of posts is now one OpenAI Batch job. [Issue #175](https://github.com/METResearchGroup/mirrorView-task/issues/175)
-3. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
-4. Twitter sync requests now omit user expansions and user fields, so requests avoid User Read charges for each tweet. In preprocessing, the pipeline now populates the author handle directly from the author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
+3. Feature generation now labels every LLM feature with the OpenAI Batch engine instead of LangChain. `is_toxic_tiered` still calls the Perspective API on the thread-pool engine. One `--batch-size` group of posts is now one OpenAI Batch job. [Issue #175](https://github.com/METResearchGroup/mirrorView-task/issues/175)
+4. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
+5. Twitter sync requests now omit user expansions and user fields, so requests avoid User Read charges for each tweet. In preprocessing, the pipeline now populates the author handle directly from the author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
 
 ## 2026-09-04
 
