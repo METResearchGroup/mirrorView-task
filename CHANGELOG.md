@@ -1,8 +1,13 @@
 # CHANGELOG
 
+## 2026-09-05
+
+1. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
+
 ## 2026-09-04
 
 1. Preprocess now cuts standardized text to a complete sentence within a 300-character cap, and a sentence may use 20 extra characters past the cap so the sentence can stay whole. The cut is listed on `text_transforms`, which is the same ordered list of text functions that already includes Twitter's t.co URL removal. Original platform columns stay unchanged. [PR #166](https://github.com/METResearchGroup/mirrorView-task/pull/166)
+
 
 ## 2026-09-03
 

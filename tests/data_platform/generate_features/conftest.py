@@ -1,14 +1,20 @@
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 from unittest.mock import MagicMock
 
 import pandas as pd
 import pytest
 from pydantic import BaseModel
 
+from data_platform.generate_features.is_news_or_opinion.generate_feature import (
+    IsNewsOrOpinionModel,
+    LlmIsNewsOrOpinionModel,
+    SYSTEM_PROMPT as IS_NEWS_OR_OPINION_SYSTEM_PROMPT,
+)
 from data_platform.generate_features.models import (
     FeatureGenerationConfig,
     FeatureRunConfig,
@@ -24,6 +30,10 @@ from tests.data_platform.constants import (
     URI_POST_B,
 )
 
+HTTP_OK_STATUS_CODE = 200
+DEFAULT_PROMPT_TOKENS = 10
+DEFAULT_COMPLETION_TOKENS = 2
+
 
 class DummyModel:
     @staticmethod
@@ -33,6 +43,99 @@ class DummyModel:
     @staticmethod
     def model_validate(row: dict) -> DummyModel:
         return DummyModel()
+
+
+class TinyLlmOut(BaseModel):
+    score: bool
+
+
+class TinyRowModel(BaseModel):
+    source_record_id: str
+    label_timestamp: str
+    score: bool
+
+
+def make_openai_news_spec() -> FeatureSpec:
+    return FeatureSpec(
+        name="is_news_or_opinion",
+        model=IsNewsOrOpinionModel,
+        engine_type="openai",
+        system_prompt=IS_NEWS_OR_OPINION_SYSTEM_PROMPT,
+        llm_output_schema=LlmIsNewsOrOpinionModel,
+    )
+
+
+def make_openai_batch_output_line(
+    custom_id: str,
+    category: Literal["news", "opinion", "neither"],
+    prompt_tokens: int = DEFAULT_PROMPT_TOKENS,
+    completion_tokens: int = DEFAULT_COMPLETION_TOKENS,
+    status_code: int = HTTP_OK_STATUS_CODE,
+    error: str | None = None,
+) -> str:
+    content = json.dumps({"category": category})
+    return json.dumps(
+        {
+            "custom_id": custom_id,
+            "response": {
+                "status_code": status_code,
+                "body": {
+                    "id": f"chatcmpl-{custom_id}",
+                    "object": "chat.completion",
+                    "created": 1,
+                    "model": "gpt-5.4-nano",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "stop",
+                            "message": {
+                                "role": "assistant",
+                                "content": content,
+                                "refusal": None,
+                            },
+                        }
+                    ],
+                    "usage": {
+                        "prompt_tokens": prompt_tokens,
+                        "completion_tokens": completion_tokens,
+                        "total_tokens": prompt_tokens + completion_tokens,
+                    },
+                },
+            }
+            if error is None
+            else None,
+            "error": None if error is None else {"message": error},
+        }
+    )
+
+
+def make_completed_openai_client(
+    output_text: str,
+    error_text: str | None = None,
+) -> MagicMock:
+    client = MagicMock()
+    uploaded = MagicMock()
+    uploaded.id = "file_input"
+    created_batch = MagicMock()
+    created_batch.id = "batch_1"
+    created_batch.status = "validating"
+    created_batch.output_file_id = None
+    completed_batch = MagicMock()
+    completed_batch.id = "batch_1"
+    completed_batch.status = "completed"
+    completed_batch.output_file_id = "file_output"
+    completed_batch.error_file_id = "file_error" if error_text is not None else None
+    output_file = MagicMock()
+    output_file.text = output_text
+    error_file = MagicMock()
+    error_file.text = error_text
+    client.files.create.return_value = uploaded
+    client.files.content.side_effect = (
+        lambda file_id: error_file if file_id == "file_error" else output_file
+    )
+    client.batches.create.return_value = created_batch
+    client.batches.retrieve.return_value = completed_batch
+    return client
 
 
 @pytest.fixture
