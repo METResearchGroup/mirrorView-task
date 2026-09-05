@@ -15,7 +15,6 @@ from pathlib import Path
 import pandas as pd
 import typer
 
-from data_platform.generate_features.engines.openai_batch import OpenAIBatchTokenUsage
 from data_platform.generate_features.engines.openai_engine import (
     DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
     build_openai_engine,
@@ -27,7 +26,12 @@ from data_platform.generate_features.is_news_or_opinion.generate_feature import 
     IsNewsOrOpinionModel,
     LlmIsNewsOrOpinionModel,
 )
-from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
+from data_platform.generate_features.models import (
+    FeatureRunConfig,
+    FeatureSpec,
+    LabelTask,
+    OpenAIBatchTokenUsage,
+)
 from lib.constants import REPO_ROOT
 
 SMOKE_POST_COUNT = 100

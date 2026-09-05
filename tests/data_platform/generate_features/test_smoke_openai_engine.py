@@ -6,8 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from data_platform.generate_features.engines.openai_batch import OpenAIBatchTokenUsage
-from data_platform.generate_features.models import LabelTask
+from data_platform.generate_features.models import LabelTask, OpenAIBatchTokenUsage
 from data_platform.generate_features.smoke_openai_engine import (
     OpenAIEngineSmokeMetrics,
     compute_openai_engine_smoke_metrics,

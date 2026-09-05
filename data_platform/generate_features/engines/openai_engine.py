@@ -9,41 +9,43 @@ Run the smoke test from the repo root:
 
 from __future__ import annotations
 
-import io
+import json
+import tempfile
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from openai.lib._parsing._completions import (
+    parse_chat_completion,
+    type_to_response_format_param,
+)
+from openai.types import Batch
+from openai.types.chat import ChatCompletion
 from pydantic import BaseModel
 
 from data_platform.generate_features.engines.base import (
     BaseBatchExecutionEngine,
     row_with_label_timestamp,
 )
-from data_platform.generate_features.engines.openai_batch import (
-    OPENAI_BATCH_ENDPOINT,
-    OpenAIBatchOutputRecord,
+from data_platform.generate_features.models import (
+    FeatureRunConfig,
+    FeatureSpec,
+    LabelTask,
     OpenAIBatchTokenUsage,
-    build_batch_request_line,
-    custom_id_for_index,
-    encode_batch_jsonl,
-    llm_fields_from_output_record,
-    parse_batch_output_line,
-    structured_response_format,
-    token_usage_from_output_records,
 )
-from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
 from lib.constants import DEFAULT_LLM_MODEL
 from lib.load_env_vars import EnvVarsContainer
 from lib.timestamp_utils import get_current_timestamp
 
+OPENAI_BATCH_ENDPOINT = "/v1/chat/completions"
 OPENAI_BATCH_COMPLETION_WINDOW = "24h"
 OPENAI_BATCH_FILE_PURPOSE = "batch"
-OPENAI_BATCH_JSONL_FILENAME = "openai_feature_batch.jsonl"
 OPENAI_BATCH_TEMPERATURE = 0.0
 POLL_INTERVAL_SECONDS = 5.0
 POLL_TIMEOUT_SECONDS = 3600.0
+CUSTOM_ID_PREFIX = "task-"
+CUSTOM_ID_INDEX_WIDTH = 5
 BATCH_COMPLETED_STATUS = "completed"
 BATCH_FAILED_STATUSES = frozenset(
     {
@@ -111,7 +113,7 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         """Submit tasks as one OpenAI Batch and return validated label rows."""
         if not tasks:
             return []
-        output_text = _run_openai_batch(
+        completed_batch = _submit_and_wait_for_batch(
             self._client,
             self.spec,
             self._engine_config,
@@ -119,17 +121,19 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
             self._sleep_fn,
             self._monotonic_fn,
         )
-        records_by_id = _output_records_by_custom_id(output_text)
-        ordered_records = [
-            _record_for_custom_id(records_by_id, custom_id_for_index(index))
-            for index in range(len(tasks))
-        ]
+        output_lines = _download_output_lines(self._client, completed_batch)
+        completions_by_id = _chat_completions_by_custom_id(output_lines)
         label_timestamp = get_current_timestamp()
         rows = [
-            _label_row_for_task(task, record, self.spec, label_timestamp)
-            for task, record in zip(tasks, ordered_records, strict=True)
+            _label_row_for_task(
+                task,
+                _completion_for_index(completions_by_id, index),
+                self.spec,
+                label_timestamp,
+            )
+            for index, task in enumerate(tasks)
         ]
-        self.last_batch_usage = token_usage_from_output_records(ordered_records)
+        self.last_batch_usage = _token_usage(list(completions_by_id.values()))
         return rows
 
 
@@ -143,114 +147,161 @@ def _llm_prompt_and_schema(spec: FeatureSpec) -> tuple[str, type[BaseModel]]:
     return system_prompt, output_schema
 
 
+def _custom_id_for_index(index: int) -> str:
+    return f"{CUSTOM_ID_PREFIX}{index:0{CUSTOM_ID_INDEX_WIDTH}d}"
+
+
+def _request_for_task(
+    task: LabelTask,
+    index: int,
+    system_prompt: str,
+    response_format: dict[str, Any],
+    engine_config: OpenAIBatchEngineConfig,
+) -> dict[str, Any]:
+    return {
+        "custom_id": _custom_id_for_index(index),
+        "method": "POST",
+        "url": engine_config.endpoint,
+        "body": {
+            "model": engine_config.model,
+            "temperature": engine_config.temperature,
+            "response_format": response_format,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": task.text},
+            ],
+        },
+    }
+
+
 def _request_lines_for_tasks(
     tasks: list[LabelTask],
     spec: FeatureSpec,
     engine_config: OpenAIBatchEngineConfig,
 ) -> list[dict[str, Any]]:
     system_prompt, output_schema = _llm_prompt_and_schema(spec)
-    response_format = structured_response_format(output_schema)
+    response_format = type_to_response_format_param(output_schema)
     return [
-        build_batch_request_line(
-            custom_id_for_index(index),
-            task.text,
+        _request_for_task(
+            task,
+            index,
             system_prompt,
-            engine_config.model,
             response_format,
-            engine_config.temperature,
+            engine_config,
         )
         for index, task in enumerate(tasks)
     ]
 
 
-def _upload_batch_file(client: OpenAIBatchClient, jsonl_bytes: bytes) -> str:
-    uploaded = client.files.create(
-        file=(OPENAI_BATCH_JSONL_FILENAME, io.BytesIO(jsonl_bytes)),
-        purpose=OPENAI_BATCH_FILE_PURPOSE,
-    )
-    return uploaded.id
-
-
-def _create_batch(
-    client: OpenAIBatchClient,
-    input_file_id: str,
-    engine_config: OpenAIBatchEngineConfig,
-) -> Any:
-    return client.batches.create(
-        input_file_id=input_file_id,
-        endpoint=engine_config.endpoint,
-        completion_window=engine_config.completion_window,
-    )
-
-
-def _download_batch_output_text(client: OpenAIBatchClient, batch: Any) -> str:
-    output_file_id = batch.output_file_id
-    if not output_file_id:
-        raise RuntimeError(f"OpenAI Batch {batch.id} completed without output_file_id")
-    return client.files.content(output_file_id).text
-
-
-def _run_openai_batch(
+def _submit_and_wait_for_batch(
     client: OpenAIBatchClient,
     spec: FeatureSpec,
     engine_config: OpenAIBatchEngineConfig,
     tasks: list[LabelTask],
     sleep_fn: Callable[[float], None],
     monotonic_fn: Callable[[], float],
-) -> str:
-    jsonl_bytes = encode_batch_jsonl(
-        _request_lines_for_tasks(tasks, spec, engine_config)
+) -> Batch:
+    requests = _request_lines_for_tasks(tasks, spec, engine_config)
+    input_file_id = _upload_requests(client, requests)
+    batch = client.batches.create(
+        input_file_id=input_file_id,
+        endpoint=engine_config.endpoint,
+        completion_window=engine_config.completion_window,
     )
-    created = _create_batch(
+    return wait_for_completed_batch(
         client,
-        _upload_batch_file(client, jsonl_bytes),
-        engine_config,
-    )
-    completed = wait_for_completed_batch(
-        client,
-        created.id,
+        batch.id,
         engine_config.poll_interval_seconds,
         engine_config.poll_timeout_seconds,
         sleep_fn,
         monotonic_fn,
     )
-    return _download_batch_output_text(client, completed)
 
 
-def _output_records_by_custom_id(
-    output_text: str,
-) -> dict[str, OpenAIBatchOutputRecord]:
-    records = [
-        parse_batch_output_line(line)
-        for line in output_text.splitlines()
-        if line.strip()
-    ]
-    return {record.custom_id: record for record in records}
+def _upload_requests(
+    client: OpenAIBatchClient,
+    requests: list[dict[str, Any]],
+) -> str:
+    with tempfile.NamedTemporaryFile(mode="w+b", suffix=".jsonl") as batch_file:
+        for request in requests:
+            batch_file.write(f"{json.dumps(request)}\n".encode())
+        batch_file.flush()
+        batch_file.seek(0)
+        return client.files.create(
+            file=batch_file,
+            purpose=OPENAI_BATCH_FILE_PURPOSE,
+        ).id
 
 
-def _record_for_custom_id(
-    records_by_id: dict[str, OpenAIBatchOutputRecord],
-    custom_id: str,
-) -> OpenAIBatchOutputRecord:
-    record = records_by_id.get(custom_id)
-    if record is None:
+def _download_output_lines(
+    client: OpenAIBatchClient,
+    batch: Batch,
+) -> list[str]:
+    if batch.output_file_id is None:
+        raise RuntimeError(f"OpenAI Batch {batch.id} completed without output_file_id")
+    return client.files.content(batch.output_file_id).text.splitlines()
+
+
+def _chat_completions_by_custom_id(
+    output_lines: list[str],
+) -> dict[str, ChatCompletion]:
+    completions: dict[str, ChatCompletion] = {}
+    for line in output_lines:
+        payload = json.loads(line)
+        response = payload.get("response")
+        if response is None:
+            raise ValueError(f"OpenAI Batch request {payload['custom_id']} failed")
+        completions[payload["custom_id"]] = ChatCompletion.model_validate(
+            response["body"]
+        )
+    return completions
+
+
+def _completion_for_index(
+    completions_by_id: dict[str, ChatCompletion],
+    index: int,
+) -> ChatCompletion:
+    custom_id = _custom_id_for_index(index)
+    completion = completions_by_id.get(custom_id)
+    if completion is None:
         raise ValueError(f"OpenAI Batch output is missing {custom_id}")
-    return record
+    return completion
 
 
 def _label_row_for_task(
     task: LabelTask,
-    record: OpenAIBatchOutputRecord,
+    completion: ChatCompletion,
     spec: FeatureSpec,
     label_timestamp: str,
 ) -> dict:
     _, output_schema = _llm_prompt_and_schema(spec)
-    fields = llm_fields_from_output_record(record, output_schema)
+    parsed_completion = parse_chat_completion(
+        response_format=output_schema,
+        input_tools=[],
+        chat_completion=completion,
+    )
+    parsed = parsed_completion.choices[0].message.parsed
+    if parsed is None:
+        raise ValueError(f"OpenAI did not return structured output for {task.uri}")
     row = row_with_label_timestamp(
-        {"source_record_id": task.uri, **fields},
+        {"source_record_id": task.uri, **parsed.model_dump()},
         label_timestamp=label_timestamp,
     )
     return spec.model.model_validate(row).model_dump()
+
+
+def _token_usage(completions: list[ChatCompletion]) -> OpenAIBatchTokenUsage:
+    usages = [completion.usage for completion in completions]
+    prompt_tokens = sum(usage.prompt_tokens for usage in usages if usage is not None)
+    completion_tokens = sum(
+        usage.completion_tokens for usage in usages if usage is not None
+    )
+    return OpenAIBatchTokenUsage(
+        prompt_tokens=prompt_tokens,
+        completion_tokens=completion_tokens,
+        total_tokens=prompt_tokens + completion_tokens,
+        request_count=len(completions),
+    )
 
 
 def create_openai_client() -> OpenAIBatchClient:
@@ -288,7 +339,7 @@ def wait_for_completed_batch(
     poll_timeout_seconds: float,
     sleep_fn: Callable[[float], None],
     monotonic_fn: Callable[[], float],
-) -> Any:
+) -> Batch:
     """Poll an OpenAI Batch until it completes, fails, or the timeout expires.
 
     Raises

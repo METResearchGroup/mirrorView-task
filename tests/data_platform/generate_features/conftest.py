@@ -80,7 +80,21 @@ def make_openai_batch_output_line(
             "response": {
                 "status_code": status_code,
                 "body": {
-                    "choices": [{"message": {"content": content}}],
+                    "id": f"chatcmpl-{custom_id}",
+                    "object": "chat.completion",
+                    "created": 1,
+                    "model": "gpt-5.4-nano",
+                    "choices": [
+                        {
+                            "index": 0,
+                            "finish_reason": "stop",
+                            "message": {
+                                "role": "assistant",
+                                "content": content,
+                                "refusal": None,
+                            },
+                        }
+                    ],
                     "usage": {
                         "prompt_tokens": prompt_tokens,
                         "completion_tokens": completion_tokens,
