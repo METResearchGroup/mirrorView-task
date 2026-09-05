@@ -92,6 +92,11 @@ def build_openai_engine(
     raise NotImplementedError
 
 
+def _require_batch_not_failed(batch_id: str, status: str) -> None:
+    if status in BATCH_FAILED_STATUSES:
+        raise RuntimeError(f"OpenAI Batch {batch_id} ended with status {status}")
+
+
 def wait_for_completed_batch(
     client: OpenAIBatchClient,
     batch_id: str,
@@ -100,4 +105,17 @@ def wait_for_completed_batch(
     sleep_fn: Callable[[float], None],
     monotonic_fn: Callable[[], float],
 ) -> Any:
-    raise NotImplementedError
+    """Poll an OpenAI Batch until it completes, fails, or the timeout expires."""
+    deadline = monotonic_fn() + poll_timeout_seconds
+    while True:
+        batch = client.batches.retrieve(batch_id)
+        status = batch.status
+        if status == BATCH_COMPLETED_STATUS:
+            return batch
+        _require_batch_not_failed(batch_id, status)
+        if monotonic_fn() >= deadline:
+            raise TimeoutError(
+                f"OpenAI Batch {batch_id} did not complete before the poll timeout"
+            )
+        sleep_fn(poll_interval_seconds)
+
