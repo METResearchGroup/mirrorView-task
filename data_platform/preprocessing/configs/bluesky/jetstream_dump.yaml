@@ -10,4 +10,3 @@ dump:
   raw_run_timestamp: "2026_09_01-00:00:00"
 preprocessing_params:
   sample_size: 200000
-  sample_seed: 20260901

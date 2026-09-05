@@ -129,9 +129,13 @@ def publish_dump_to_raw(
     if run_dir.exists():
         raise FileExistsError(run_dir)
     run_dir.mkdir(parents=True)
-    _copy_parquet_files(parquet_files, resolved_root, run_dir)
-    _write_dump_manifest(dataset_id, config_path)
-    _write_dump_run_metadata(run_dir, dataset_id, raw_run_timestamp, resolved_root)
+    try:
+        _copy_parquet_files(parquet_files, resolved_root, run_dir)
+        _write_dump_manifest(dataset_id, config_path)
+        _write_dump_run_metadata(run_dir, dataset_id, raw_run_timestamp, resolved_root)
+    except Exception:
+        shutil.rmtree(run_dir)
+        raise
     return run_dir
 
 

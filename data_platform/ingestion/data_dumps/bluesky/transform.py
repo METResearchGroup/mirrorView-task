@@ -39,6 +39,8 @@ def _created_at_isoformat(created_at: object) -> str:
     if isinstance(created_at, datetime):
         if created_at.tzinfo is None:
             created_at = created_at.replace(tzinfo=timezone.utc)
+        else:
+            created_at = created_at.astimezone(timezone.utc)
         return created_at.isoformat()
     parsed = pd.to_datetime(created_at, utc=True)
     return parsed.isoformat()

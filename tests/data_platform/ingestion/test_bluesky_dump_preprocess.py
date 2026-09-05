@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -26,7 +26,7 @@ from data_platform.preprocessing.preprocess_bluesky import (
     preprocess_records,
 )
 from data_platform.preprocessing.runner import preprocess_records as run_preprocess_records
-from data_platform.preprocessing.sample import sample_rows
+from data_platform.preprocessing.sample import sample_records
 from data_platform.utils.dataset import MANIFEST_FILENAME, ValidDataFormats, write_dataset_manifest
 from data_platform.utils.storage import (
     METADATA_FILENAME,
@@ -53,7 +53,6 @@ HOUR_00 = Path("date=2026-09-01") / "hour=00" / "aaa.parquet"
 HOUR_01 = Path("date=2026-09-01") / "hour=01" / "bbb.parquet"
 EXPECTED_ROW_COUNT = 3450253
 EXPECTED_SAMPLE_SIZE = 200000
-EXPECTED_SAMPLE_SEED = 20260901
 
 
 def _write_hive_parquet(parquet_root: Path) -> tuple[Path, Path]:
@@ -165,8 +164,32 @@ class TestPublishDumpToRaw:
                 config_path,
             )
 
+    def test_removes_incomplete_run_when_copy_fails(
+        self, data_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Deletes the new raw run directory when publication fails after mkdir."""
+        parquet_root = tmp_path / "parquet"
+        _write_hive_parquet(parquet_root)
+        config_path = REPO_ROOT / DUMP_CONFIG_PATH
+        run_dir = data_root / "bluesky" / DUMP_DATASET_ID / "raw" / DUMP_RAW_RUN_TIMESTAMP
 
-class TestJetstreamDumpYaml:
+        def _fail_copy(*_args: object, **_kwargs: object) -> None:
+            raise OSError("copy failed")
+
+        monkeypatch.setattr(
+            "data_platform.ingestion.data_dumps.bluesky.publish_dump_to_raw._copy_parquet_files",
+            _fail_copy,
+        )
+
+        with pytest.raises(OSError, match="copy failed"):
+            publish_dump_to_raw(
+                parquet_root,
+                DUMP_DATASET_ID,
+                DUMP_RAW_RUN_TIMESTAMP,
+                config_path,
+            )
+
+        assert not run_dir.exists()
     """Tests for data_platform/preprocessing/configs/bluesky/jetstream_dump.yaml."""
 
     def test_committed_yaml_has_dump_dataset_and_sample_settings(self) -> None:
@@ -180,23 +203,21 @@ class TestJetstreamDumpYaml:
             "output_format": loaded["output_format"],
             "raw_run_timestamp": loaded["dump"]["raw_run_timestamp"],
             "sample_size": loaded["preprocessing_params"]["sample_size"],
-            "sample_seed": loaded["preprocessing_params"]["sample_seed"],
         }
         expected = {
             "dataset_id": DUMP_DATASET_ID,
             "output_format": "parquet",
             "raw_run_timestamp": DUMP_RAW_RUN_TIMESTAMP,
             "sample_size": EXPECTED_SAMPLE_SIZE,
-            "sample_seed": EXPECTED_SAMPLE_SEED,
         }
         assert result == expected
+        assert "sample_seed" not in loaded["preprocessing_params"]
 
 
 DUMP_DID = "did:plc:abc"
 DUMP_URI = f"at://{DUMP_DID}/app.bsky.feed.post/rkey1"
 DUMP_CREATED_AT = "2026-09-01T00:00:00+00:00"
 HIVE_RUN_TIMESTAMP = "2026_09_01-00:00:00"
-SAMPLE_SEED = 20260901
 
 
 def _dump_row(
@@ -268,10 +289,10 @@ class TestDumpPostToSyncRow:
         assert result["sync_timestamp"] == HIVE_RUN_TIMESTAMP
         assert "did" not in result
 
-    def test_maps_datetime_created_at_to_isoformat(self) -> None:
-        """Datetime created_at values become UTC ISO-8601 strings."""
+    def test_maps_offset_datetime_created_at_to_utc(self) -> None:
+        """Aware non-UTC created_at values are converted to UTC ISO-8601."""
         row = _dump_row()
-        row["created_at"] = datetime(2026, 9, 1, tzinfo=timezone.utc)
+        row["created_at"] = datetime(2026, 9, 1, 5, tzinfo=timezone(timedelta(hours=5)))
 
         result = dump_post_to_sync_row(row, HIVE_RUN_TIMESTAMP)
 
@@ -338,6 +359,25 @@ class TestLoadHiveDumpPosts:
         texts = [row["text"] for row in result]
         assert texts == expected
 
+    def test_drops_blank_created_at_rows(self, tmp_path: Path) -> None:
+        """Blank dump created_at is skipped and valid rows remain."""
+        run_dir = tmp_path / HIVE_RUN_TIMESTAMP
+        kept = _dump_row(text="kept")
+        blank = _dump_row(
+            uri=f"at://{DUMP_DID}/app.bsky.feed.post/blank-created",
+            created_at="   ",
+        )
+        _write_dump_parquet(
+            run_dir / "date=2026-09-01" / "hour=00" / "a.parquet",
+            [kept, blank],
+        )
+
+        result = load_hive_dump_posts(run_dir, HIVE_RUN_TIMESTAMP)
+
+        expected = ["kept"]
+        texts = [row["text"] for row in result]
+        assert texts == expected
+
     def test_raises_when_run_dir_has_no_parquet(self, tmp_path: Path) -> None:
         """Raises FileNotFoundError when the raw run has no parquet files."""
         run_dir = tmp_path / HIVE_RUN_TIMESTAMP
@@ -347,25 +387,24 @@ class TestLoadHiveDumpPosts:
             load_hive_dump_posts(run_dir, HIVE_RUN_TIMESTAMP)
 
 
-class TestSampleRows:
-    """Tests for sample_rows()."""
+class TestSampleRecords:
+    """Tests for sample_records()."""
 
-    def test_samples_repeatably_with_the_same_seed(self) -> None:
-        """The same seed returns the same uri set."""
+    def test_returns_requested_sample_size(self) -> None:
+        """A longer frame is cut down to sample_size rows."""
         records = pd.DataFrame({"uri": [f"u{index}" for index in range(5)]})
 
-        first = sample_rows(records, 3, SAMPLE_SEED)
-        second = sample_rows(records, 3, SAMPLE_SEED)
+        result = sample_records(records, 3)
 
         expected = 3
-        assert len(first) == expected
-        assert set(first["uri"]) == set(second["uri"])
+        assert len(result) == expected
+        assert set(result["uri"]).issubset(set(records["uri"]))
 
     def test_returns_all_rows_when_shorter_than_sample_size(self) -> None:
         """A frame shorter than sample_size is returned in full."""
         records = pd.DataFrame({"uri": ["a", "b"]})
 
-        result = sample_rows(records, 5, SAMPLE_SEED)
+        result = sample_records(records, 5)
 
         expected = ["a", "b"]
         assert list(result["uri"]) == expected
@@ -375,7 +414,7 @@ class TestSampleRows:
         records = pd.DataFrame({"uri": ["a"]})
 
         with pytest.raises(ValueError, match="sample_size"):
-            sample_rows(records, 0, SAMPLE_SEED)
+            sample_records(records, 0)
 
 
 class TestPreprocessRecordsSampling:
@@ -396,7 +435,6 @@ class TestPreprocessRecordsSampling:
             VALID_DATASET_ID,
             BLUESKY_SPEC,
             2,
-            SAMPLE_SEED,
         )
         output = BlueskyStorageManager(
             StorageStage.PREPROCESSED, VALID_DATASET_ID
@@ -407,7 +445,7 @@ class TestPreprocessRecordsSampling:
         assert len(output) == expected
         assert metadata["row_counts"]["sampled"] == expected
         assert metadata["sample_size"] == expected
-        assert metadata["sample_seed"] == SAMPLE_SEED
+        assert "sample_seed" not in metadata
         assert "did" not in output.columns
 
     def test_writes_every_kept_row_when_sample_size_is_none(

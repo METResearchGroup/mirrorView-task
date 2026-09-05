@@ -11,7 +11,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 from data_platform.ingestion.data_dumps.bluesky.load_raw import load_hive_dump_posts
-from data_platform.preprocessing.sample import sample_rows
+from data_platform.preprocessing.sample import sample_records
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
 from data_platform.preprocessing.previously_used_stimuli import (
@@ -234,29 +234,15 @@ def load_raw_records(
     return records, run_dirs
 
 
-def _maybe_sample_records(
-    records: pd.DataFrame,
-    sample_size: int | None,
-    sample_seed: int | None,
-) -> pd.DataFrame:
-    if sample_size is None:
-        return records
-    if sample_seed is None:
-        raise ValueError("sample_seed is required when sample_size is set")
-    return sample_rows(records, sample_size, sample_seed)
-
-
 def _with_sample_metadata(
     metadata: dict[str, Any],
     records: pd.DataFrame,
     sample_size: int | None,
-    sample_seed: int | None,
 ) -> dict[str, Any]:
     if sample_size is None:
         return metadata
     metadata["row_counts"]["sampled"] = len(records)
     metadata["sample_size"] = sample_size
-    metadata["sample_seed"] = sample_seed
     return metadata
 
 
@@ -268,7 +254,6 @@ def export_preprocessed_records(
     *,
     source_raw_run_dirs: list[Path],
     sample_size: int | None = None,
-    sample_seed: int | None = None,
 ) -> Path:
     """Persist preprocessed records to a new timestamped run directory."""
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
@@ -291,7 +276,7 @@ def export_preprocessed_records(
             spec.columns.records_file_key: preprocessed_storage.records_filename,
         },
     }
-    metadata = _with_sample_metadata(metadata, records, sample_size, sample_seed)
+    metadata = _with_sample_metadata(metadata, records, sample_size)
     preprocessed_storage.write_run_metadata(output_dir, metadata)
     return output_dir
 
@@ -391,7 +376,6 @@ def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
     sample_size: int | None = None,
-    sample_seed: int | None = None,
 ) -> Path:
     """Run the full preprocessing pipeline for one dataset and persist the result.
 
@@ -410,8 +394,6 @@ def preprocess_records(
         Platform-specific preprocess configuration.
     sample_size
         Maximum kept rows to write. ``None`` writes every kept row.
-    sample_seed
-        Seed used when ``sample_size`` is set.
 
     Returns
     -------
@@ -441,7 +423,8 @@ def preprocess_records(
     input_count = len(records)
     records = apply_integration_specific_preprocessing(records, spec)
     records = apply_integration_specific_filters(records, spec)
-    records = _maybe_sample_records(records, sample_size, sample_seed)
+    if sample_size is not None:
+        records = sample_records(records, sample_size)
     output_dir = export_preprocessed_records(
         records,
         spec,
@@ -449,7 +432,6 @@ def preprocess_records(
         input_count=input_count,
         source_raw_run_dirs=source_raw_run_dirs,
         sample_size=sample_size,
-        sample_seed=sample_seed,
     )
     print(
         f"preprocess_records: kept {len(records)} of {input_count}"

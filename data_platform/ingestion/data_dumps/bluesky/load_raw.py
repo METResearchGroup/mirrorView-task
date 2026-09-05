@@ -15,7 +15,7 @@ import pandas as pd
 from data_platform.ingestion.data_dumps.bluesky.transform import dump_post_to_sync_row
 
 PARQUET_GLOB = "*.parquet"
-REQUIRED_NONEMPTY_KEYS = ("uri", "did", "text")
+REQUIRED_NONEMPTY_KEYS = ("uri", "did", "created_at", "text")
 
 
 def _is_blank(value: object) -> bool:

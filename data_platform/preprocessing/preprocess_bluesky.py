@@ -58,7 +58,6 @@ BLUESKY_SPEC = PreprocessPlatformSpec(
 def preprocess_records(
     dataset_id: str,
     sample_size: int | None = None,
-    sample_seed: int | None = None,
 ) -> Path:
     """Run Bluesky preprocess, optionally sampling kept rows before write.
 
@@ -68,8 +67,6 @@ def preprocess_records(
         Dataset identifier from ingestion or dump YAML.
     sample_size
         Maximum kept rows to write. ``None`` writes every kept row.
-    sample_seed
-        Seed used when ``sample_size`` is set.
 
     Returns
     -------
@@ -80,7 +77,6 @@ def preprocess_records(
         dataset_id,
         BLUESKY_SPEC,
         sample_size,
-        sample_seed,
     )
 
 
@@ -91,35 +87,27 @@ def _require_dataset_id_or_config(dataset_id: str | None, config: Path | None) -
         raise typer.BadParameter("Provide --dataset-id or --config, not both")
 
 
-def _sample_settings_from_yaml(config_values: dict) -> tuple[int | None, int | None]:
+def _sample_size_from_yaml(config_values: dict) -> int | None:
     params = config_values.get("preprocessing_params")
     if not isinstance(params, dict):
-        return None, None
+        return None
     sample_size = params.get("sample_size")
-    sample_seed = params.get("sample_seed")
-    return (
-        int(sample_size) if sample_size is not None else None,
-        int(sample_seed) if sample_seed is not None else None,
-    )
+    return int(sample_size) if sample_size is not None else None
 
 
 def _resolve_preprocess_cli(
     dataset_id: str | None,
     config: Path | None,
     sample_size: int | None,
-    sample_seed: int | None,
-) -> tuple[str, int | None, int | None]:
+) -> tuple[str, int | None]:
     _require_dataset_id_or_config(dataset_id, config)
     if config is None:
-        if sample_size is not None and sample_seed is None:
-            raise typer.BadParameter("sample_seed is required when sample_size is set")
-        return str(dataset_id), sample_size, sample_seed
+        return str(dataset_id), sample_size
     config_path = resolve_config_path(config, REPO_ROOT)
     config_values = load_yaml_config(config_path)
-    yaml_sample_size, yaml_sample_seed = _sample_settings_from_yaml(config_values)
+    yaml_sample_size = _sample_size_from_yaml(config_values)
     resolved_sample_size = yaml_sample_size if sample_size is None else sample_size
-    resolved_sample_seed = yaml_sample_seed if sample_seed is None else sample_seed
-    return str(config_values["dataset_id"]), resolved_sample_size, resolved_sample_seed
+    return str(config_values["dataset_id"]), resolved_sample_size
 
 
 def main(
@@ -138,16 +126,11 @@ def main(
         "--sample-size",
         help="Override YAML sample size; omit to write every kept row",
     ),
-    sample_seed: int | None = typer.Option(
-        None,
-        "--sample-seed",
-        help="Override YAML sample seed; required when sampling",
-    ),
 ) -> None:
-    resolved_dataset_id, resolved_sample_size, resolved_sample_seed = (
-        _resolve_preprocess_cli(dataset_id, config, sample_size, sample_seed)
+    resolved_dataset_id, resolved_sample_size = _resolve_preprocess_cli(
+        dataset_id, config, sample_size
     )
-    preprocess_records(resolved_dataset_id, resolved_sample_size, resolved_sample_seed)
+    preprocess_records(resolved_dataset_id, resolved_sample_size)
 
 
 if __name__ == "__main__":
