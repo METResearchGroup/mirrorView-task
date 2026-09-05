@@ -1,4 +1,10 @@
-"""Tweepy client helpers for Twitter/X recent-search ingestion."""
+"""Tweepy client helpers for Twitter/X recent-search ingestion.
+
+Run sync from the repo root:
+
+    PYTHONPATH=. uv run python data_platform/ingestion/sync_twitter.py \\
+        --config data_platform/ingestion/configs/twitter/mirrorview.yaml
+"""
 
 from __future__ import annotations
 
@@ -99,6 +105,26 @@ def _append_tweets_from_response(
     keyword: str,
     sync_timestamp: str,
 ) -> str | None:
+    """Append tweets from a Tweepy response page to rows, up to the limit.
+
+    Parameters
+    ----------
+    response
+        Tweepy search response containing tweet data and pagination meta.
+    rows
+        Output list mutated by appending flattened tweet row dicts.
+    limit
+        Maximum total rows to collect.
+    keyword
+        Search keyword associated with this sync task.
+    sync_timestamp
+        Timestamp of the sync run.
+
+    Returns
+    -------
+    str | None
+        Next pagination token if available, or None if no further pages.
+    """
     if not response or not response.data:
         return None
 

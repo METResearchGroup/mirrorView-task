@@ -1,4 +1,9 @@
-"""Unit tests for twitter_client module functions."""
+"""Unit tests for twitter_client module functions.
+
+Run from the repo root:
+
+    PYTHONPATH=. uv run pytest tests/data_platform/ingestion/test_twitter_client.py
+"""
 
 from __future__ import annotations
 
