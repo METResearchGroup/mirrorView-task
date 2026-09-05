@@ -51,6 +51,9 @@ def verify_inventory(inventory: dict, s3: S3) -> list[str]:
 def main() -> None:
     inventory = json.loads(INVENTORY_PATH.read_text())
     objects = inventory["objects"]
+    if inventory["bucket"] != BUCKET or inventory["region"] != REGION:
+        print(f"FAIL: inventory targets {inventory['bucket']} in {inventory['region']}, expected {BUCKET} in {REGION}")
+        raise SystemExit(1)
     if inventory["object_count"] != EXPECTED_OBJECT_COUNT or len(objects) != EXPECTED_OBJECT_COUNT:
         print(
             f"FAIL: inventory lists {inventory['object_count']} objects with "

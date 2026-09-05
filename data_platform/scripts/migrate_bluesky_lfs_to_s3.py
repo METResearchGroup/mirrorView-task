@@ -12,8 +12,8 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 from lib.aws.s3 import S3
 from lib.constants import REPO_ROOT
