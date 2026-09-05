@@ -2,7 +2,8 @@
 
 ## 2026-09-05
 
-1. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
+1. Feature generation can label toxicity as low, medium, or high with an LLM, using the same prompt and structured-output shape as the other LLM features. A 50-post OpenAI Batch smoke run on Faker text reports elapsed time, estimated cost, and the label mix. [PR #174](https://github.com/METResearchGroup/mirrorView-task/pull/174)
+2. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
 
 ## 2026-09-04
 
