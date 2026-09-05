@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+import typer
 import yaml
 
 from data_platform.ingestion.data_dumps.bluesky.load_raw import load_hive_dump_posts
@@ -23,6 +24,7 @@ from data_platform.ingestion.generate_record_id import (
 from data_platform.models.sync import SyncBlueskyPostModel
 from data_platform.preprocessing.preprocess_bluesky import (
     BLUESKY_SPEC,
+    _sample_size_from_yaml,
     preprocess_records,
 )
 from data_platform.preprocessing.runner import preprocess_records as run_preprocess_records
@@ -471,3 +473,19 @@ class TestPreprocessRecordsSampling:
         assert len(output) == expected
         assert "sample_size" not in metadata
         assert "sampled" not in metadata["row_counts"]
+
+
+class TestSampleSizeFromYaml:
+    """Tests for _sample_size_from_yaml()."""
+
+    def test_reads_sample_size_from_preprocessing_params(self) -> None:
+        """Returns the integer sample_size from preprocessing_params."""
+        result = _sample_size_from_yaml({"preprocessing_params": {"sample_size": 200000}})
+
+        expected = 200000
+        assert result == expected
+
+    def test_raises_when_sample_size_is_missing(self) -> None:
+        """Rejects a config that omits preprocessing_params.sample_size."""
+        with pytest.raises(typer.BadParameter, match="sample_size"):
+            _sample_size_from_yaml({"preprocessing_params": {}})

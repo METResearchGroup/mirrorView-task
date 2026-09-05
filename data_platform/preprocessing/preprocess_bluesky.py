@@ -87,12 +87,13 @@ def _require_dataset_id_or_config(dataset_id: str | None, config: Path | None) -
         raise typer.BadParameter("Provide --dataset-id or --config, not both")
 
 
-def _sample_size_from_yaml(config_values: dict) -> int | None:
+def _sample_size_from_yaml(config_values: dict) -> int:
     params = config_values.get("preprocessing_params")
-    if not isinstance(params, dict):
-        return None
-    sample_size = params.get("sample_size")
-    return int(sample_size) if sample_size is not None else None
+    if not isinstance(params, dict) or params.get("sample_size") is None:
+        raise typer.BadParameter(
+            "Config preprocessing_params.sample_size is required"
+        )
+    return int(params["sample_size"])
 
 
 def _resolve_preprocess_cli(
@@ -124,7 +125,7 @@ def main(
     sample_size: int | None = typer.Option(
         None,
         "--sample-size",
-        help="Override YAML sample size; omit to write every kept row",
+        help="Override YAML sample size",
     ),
 ) -> None:
     resolved_dataset_id, resolved_sample_size = _resolve_preprocess_cli(
