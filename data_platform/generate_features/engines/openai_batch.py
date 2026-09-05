@@ -25,6 +25,7 @@ FIRST_CHOICE_INDEX = 0
 
 @dataclass(frozen=True)
 class OpenAIBatchTokenUsage:
+    """Prompt and completion token totals for one completed OpenAI Batch."""
     prompt_tokens: int
     completion_tokens: int
     total_tokens: int
@@ -142,7 +143,13 @@ def llm_fields_from_output_record(
     record: OpenAIBatchOutputRecord,
     output_schema: type[BaseModel],
 ) -> dict[str, Any]:
-    """Validate structured JSON content against the feature output schema."""
+    """Validate structured JSON content against the feature output schema.
+
+    Raises
+    ------
+    ValueError
+        When the Batch result has no JSON content for ``custom_id``.
+    """
     if record.content is None:
         raise ValueError(
             f"OpenAI Batch request {record.custom_id} has no structured content"

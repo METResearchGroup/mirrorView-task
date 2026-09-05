@@ -48,6 +48,7 @@ DEFAULT_SMOKE_POSTS_CSV = (
 
 @dataclass(frozen=True)
 class OpenAIEngineSmokeMetrics:
+    """Throughput and token estimates from one OpenAI engine smoke run."""
     post_count: int
     labeled_count: int
     elapsed_seconds: float
@@ -133,6 +134,7 @@ def run_openai_engine_smoke(
 ) -> OpenAIEngineSmokeMetrics:
     """Label posts with the OpenAI engine and return smoke-test metrics."""
     tasks = load_smoke_label_tasks(posts_csv, post_count, id_column, text_column)
+    print(f"Submitting {len(tasks)} posts to the OpenAI Batch API...", flush=True)
     engine = build_openai_engine(
         news_or_opinion_openai_spec(),
         FeatureRunConfig(batch_size=post_count, max_concurrency=SMOKE_MAX_CONCURRENCY),

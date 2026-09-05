@@ -1,4 +1,11 @@
-"""OpenAI Batch API engine for LLM feature labeling."""
+"""OpenAI Batch API engine for LLM feature labeling.
+
+Used by ``build_engine`` when a feature spec sets ``engine_type="openai"``.
+
+Run the smoke test from the repo root:
+
+    PYTHONPATH=. uv run python data_platform/generate_features/smoke_openai_engine.py
+"""
 
 from __future__ import annotations
 
@@ -7,6 +14,8 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
+
+from pydantic import BaseModel
 
 from data_platform.generate_features.engines.base import (
     BaseBatchExecutionEngine,
@@ -55,6 +64,8 @@ class OpenAIBatchClient(Protocol):
 
 @dataclass(frozen=True)
 class OpenAIBatchEngineConfig:
+    """Model, sampling, and poll settings for one OpenAI Batch labeling run."""
+
     model: str
     temperature: float
     poll_interval_seconds: float
@@ -74,7 +85,10 @@ DEFAULT_OPENAI_BATCH_ENGINE_CONFIG = OpenAIBatchEngineConfig(
 
 
 class OpenAIBatchEngine(BaseBatchExecutionEngine):
-    """Label tasks through the OpenAI Batch API with structured outputs."""
+    """Labels a batch of posts through OpenAI's Batch API with structured output.
+
+    ``last_batch_usage`` is set after a successful ``batch_label_records`` call.
+    """
 
     def __init__(
         self,
@@ -86,7 +100,7 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         monotonic_fn: Callable[[], float],
     ) -> None:
         super().__init__(spec, run_config)
-        _require_llm_feature_spec(spec)
+        _llm_prompt_and_schema(spec)
         self._client = client
         self._engine_config = engine_config
         self._sleep_fn = sleep_fn
@@ -119,11 +133,14 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         return rows
 
 
-def _require_llm_feature_spec(spec: FeatureSpec) -> None:
-    if spec.system_prompt is None or spec.llm_output_schema is None:
+def _llm_prompt_and_schema(spec: FeatureSpec) -> tuple[str, type[BaseModel]]:
+    system_prompt = spec.system_prompt
+    output_schema = spec.llm_output_schema
+    if system_prompt is None or output_schema is None:
         raise ValueError(
             f"Feature {spec.name} requires system_prompt and llm_output_schema"
         )
+    return system_prompt, output_schema
 
 
 def _request_lines_for_tasks(
@@ -131,9 +148,7 @@ def _request_lines_for_tasks(
     spec: FeatureSpec,
     engine_config: OpenAIBatchEngineConfig,
 ) -> list[dict[str, Any]]:
-    _require_llm_feature_spec(spec)
-    system_prompt = spec.system_prompt
-    output_schema = spec.llm_output_schema
+    system_prompt, output_schema = _llm_prompt_and_schema(spec)
     response_format = structured_response_format(output_schema)
     return [
         build_batch_request_line(
@@ -229,8 +244,8 @@ def _label_row_for_task(
     spec: FeatureSpec,
     label_timestamp: str,
 ) -> dict:
-    _require_llm_feature_spec(spec)
-    fields = llm_fields_from_output_record(record, spec.llm_output_schema)
+    _, output_schema = _llm_prompt_and_schema(spec)
+    fields = llm_fields_from_output_record(record, output_schema)
     row = row_with_label_timestamp(
         {"source_record_id": task.uri, **fields},
         label_timestamp=label_timestamp,
@@ -274,7 +289,15 @@ def wait_for_completed_batch(
     sleep_fn: Callable[[float], None],
     monotonic_fn: Callable[[], float],
 ) -> Any:
-    """Poll an OpenAI Batch until it completes, fails, or the timeout expires."""
+    """Poll an OpenAI Batch until it completes, fails, or the timeout expires.
+
+    Raises
+    ------
+    RuntimeError
+        When the batch ends in a failed, expired, or cancelled status.
+    TimeoutError
+        When the batch is still running after ``poll_timeout_seconds``.
+    """
     deadline = monotonic_fn() + poll_timeout_seconds
     while True:
         batch = client.batches.retrieve(batch_id)
