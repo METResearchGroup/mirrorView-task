@@ -2,4 +2,8 @@
 
 from __future__ import annotations
 
-from data_platform.generate_features import smoke_openai_engine
+from data_platform.generate_features.smoke_openai_engine import (
+    OpenAIEngineSmokeMetrics,
+    compute_openai_engine_smoke_metrics,
+    load_smoke_label_tasks,
+)

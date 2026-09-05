@@ -8,11 +8,11 @@ from data_platform.generate_features.engines.base import BatchExecutionEngine
 from data_platform.generate_features.engines.langchain_engine import LangChainBatchEngine
 from data_platform.generate_features.engines.openai_engine import build_openai_engine
 from data_platform.generate_features.engines.thread_pool_engine import ThreadPoolBatchEngine
-from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec
+from data_platform.generate_features.models import EngineType, FeatureRunConfig, FeatureSpec
 
 EngineBuilder = Callable[[FeatureSpec, FeatureRunConfig], BatchExecutionEngine]
 
-ENGINE_BUILDERS: dict[str, EngineBuilder] = {
+ENGINE_BUILDERS: dict[EngineType, EngineBuilder] = {
     "langchain": LangChainBatchEngine,
     "thread_pool": ThreadPoolBatchEngine,
     "openai": build_openai_engine,
