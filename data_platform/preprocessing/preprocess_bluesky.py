@@ -32,6 +32,7 @@ from data_platform.preprocessing.validators.validators import (
     check_if_post_has_no_urls,
     check_if_text_english,
 )
+from data_platform.preprocessing.sample import MIN_SAMPLE_SIZE
 from data_platform.utils.config_paths import load_yaml_config, resolve_config_path
 from data_platform.utils.platform_specific_columns import BLUESKY_COLUMNS
 from data_platform.utils.storage import BlueskyStorageManager
@@ -93,7 +94,16 @@ def _sample_size_from_yaml(config_values: dict) -> int:
         raise typer.BadParameter(
             "Config preprocessing_params.sample_size is required"
         )
-    return int(params["sample_size"])
+    sample_size = params["sample_size"]
+    if (
+        isinstance(sample_size, bool)
+        or not isinstance(sample_size, int)
+        or sample_size < MIN_SAMPLE_SIZE
+    ):
+        raise typer.BadParameter(
+            "Config preprocessing_params.sample_size must be a positive integer"
+        )
+    return sample_size
 
 
 def _resolve_preprocess_cli(

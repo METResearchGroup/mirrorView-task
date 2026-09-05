@@ -489,3 +489,11 @@ class TestSampleSizeFromYaml:
         """Rejects a config that omits preprocessing_params.sample_size."""
         with pytest.raises(typer.BadParameter, match="sample_size"):
             _sample_size_from_yaml({"preprocessing_params": {}})
+
+    @pytest.mark.parametrize("sample_size", ["abc", 1.9, True, 0, -1])
+    def test_raises_when_sample_size_is_not_a_positive_integer(
+        self, sample_size: object
+    ) -> None:
+        """Rejects malformed, fractional, boolean, and non-positive sample sizes."""
+        with pytest.raises(typer.BadParameter, match="positive integer"):
+            _sample_size_from_yaml({"preprocessing_params": {"sample_size": sample_size}})
