@@ -4,6 +4,7 @@ import csv
 import json
 from dataclasses import dataclass
 from enum import StrEnum
+from io import BytesIO
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +30,8 @@ from lib.timestamp_utils import get_current_timestamp
 
 DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
 METADATA_FILENAME = "metadata.json"
+RECORDS_NOT_FOUND_MESSAGE = "Records file not found"
+METADATA_NOT_FOUND_MESSAGE = "Metadata file not found"
 MISSING_STAGE_RUNS_MESSAGE = (
     "No {stage} runs found for dataset {dataset_id} under {root}"
 )
@@ -96,6 +99,7 @@ class StorageManager:
         self.format: ValidDataFormats = load_dataset_format(platform, dataset_id)
         stem = Path(records_filename).stem
         self.records_filename = f"{stem}.{self.format.value}"
+        self._store = resolve_object_store(local_root=DATA_ROOT)
 
     @property
     def platform_data_root(self) -> Path:
@@ -106,7 +110,23 @@ class StorageManager:
         return DATA_ROOT / self.platform / self.dataset_id / self.stage
 
     def _key_for(self, path: Path) -> str:
-        raise NotImplementedError
+        """Return the object store key for a path under ``DATA_ROOT``, e.g. ``bluesky/{dataset_id}/raw/{run}/posts.parquet``.
+
+        Raises
+        ------
+        ValueError
+            When ``path`` is not under ``DATA_ROOT``.
+        """
+        try:
+            return path.relative_to(DATA_ROOT).as_posix()
+        except ValueError as e:
+            raise ValueError(f"Path {path} is not under the data root {DATA_ROOT}") from e
+
+    def _read_object(self, path: Path, *, missing_message: str) -> bytes:
+        try:
+            return self._store.get_bytes(self._key_for(path))
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"{missing_message}: {path}") from e
 
     def create_new_run_dir(self, timestamp: str | None = None) -> Path:
         run_dir = self.root_dir / (timestamp or get_current_timestamp())
@@ -283,11 +303,10 @@ class StorageManager:
     ) -> pd.DataFrame:
         resolved_run_dir = self._resolve_run_dir(run_dir, latest=latest)
         out_path = resolved_run_dir / (filename or self.records_filename)
-        if not out_path.exists():
-            raise FileNotFoundError(f"Records file not found: {out_path}")
+        body = self._read_object(out_path, missing_message=RECORDS_NOT_FOUND_MESSAGE)
         if self.format == "parquet":
-            return pd.read_parquet(out_path)
-        return pd.read_csv(out_path, keep_default_na=False)
+            return pd.read_parquet(BytesIO(body))
+        return pd.read_csv(BytesIO(body), keep_default_na=False)
 
     def write_dataframe(
         self,
@@ -358,10 +377,8 @@ class StorageManager:
     ) -> dict[str, Any]:
         resolved_run_dir = self._resolve_run_dir(run_dir, latest=latest)
         metadata_path = resolved_run_dir / METADATA_FILENAME
-        if not metadata_path.exists():
-            raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
-        with metadata_path.open(encoding="utf-8") as f:
-            return json.load(f)
+        body = self._read_object(metadata_path, missing_message=METADATA_NOT_FOUND_MESSAGE)
+        return json.loads(body.decode("utf-8"))
 
 
 class BlueskyStorageManager(StorageManager):
@@ -438,11 +455,10 @@ class TwitterStorageManager(StorageManager):
     ) -> pd.DataFrame:
         resolved_run_dir = self._resolve_run_dir(run_dir, latest=latest)
         csv_path = resolved_run_dir / (filename or self.records_filename)
-        if not csv_path.exists():
-            raise FileNotFoundError(f"Records file not found: {csv_path}")
+        body = self._read_object(csv_path, missing_message=RECORDS_NOT_FOUND_MESSAGE)
 
         return pd.read_csv(
-            csv_path,
+            BytesIO(body),
             keep_default_na=False,
             dtype={
                 "tweet_id": "string",
