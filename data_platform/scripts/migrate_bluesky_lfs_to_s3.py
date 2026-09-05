@@ -9,6 +9,8 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import hashlib
+import subprocess
 from pathlib import Path
 from typing import Sequence
 
@@ -98,7 +100,12 @@ def run_git_lfs_pull(patterns: Sequence[str]) -> None:
     subprocess.CalledProcessError
         If any ``git lfs pull`` call exits non-zero.
     """
-    raise NotImplementedError
+    for pattern in patterns:
+        subprocess.run(
+            ["git", "lfs", "pull", "--include", pattern],
+            cwd=REPO_ROOT,
+            check=True,
+        )
 
 
 def read_scoped_bytes(repo_relative_path: str) -> bytes:
@@ -109,12 +116,15 @@ def read_scoped_bytes(repo_relative_path: str) -> bytes:
     ValueError
         If the file still starts with the Git LFS pointer header.
     """
-    raise NotImplementedError
+    data = (REPO_ROOT / repo_relative_path).read_bytes()
+    if data.startswith(LFS_POINTER_PREFIX):
+        raise ValueError(f"Git LFS pointer was not resolved to bytes: {repo_relative_path}")
+    return data
 
 
 def sha256_hex(data: bytes) -> str:
     """Return the lowercase hex SHA-256 digest of the bytes."""
-    raise NotImplementedError
+    return hashlib.sha256(data).hexdigest()
 
 
 def content_type_for(repo_relative_path: str) -> str:
