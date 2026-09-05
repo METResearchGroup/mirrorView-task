@@ -31,6 +31,11 @@ data_platform/data/**
 !experiments/data_ingestion_smoke_2026_08_28/**
 !experiments/data_ingestion_smoke_2026_08_28/**/*.csv
 
+# LLM toxicity classifier smoke artifacts (otherwise blocked by *.csv).
+!experiments/llm_based_toxicity_classifier_2026_09_05/outputs/
+!experiments/llm_based_toxicity_classifier_2026_09_05/outputs/**
+!experiments/llm_based_toxicity_classifier_2026_09_05/outputs/**/*.csv
+
 # OS generated files
 .DS_Store
 .DS_Store?

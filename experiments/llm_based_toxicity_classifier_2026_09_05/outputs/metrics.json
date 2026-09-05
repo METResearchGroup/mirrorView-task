@@ -1,0 +1,16 @@
+{
+  "model": "gpt-5.4-nano",
+  "post_count": 50,
+  "injected_toxic_count": 15,
+  "seed": 42,
+  "elapsed_seconds": 141.592861491,
+  "prompt_tokens": 17715,
+  "completion_tokens": 1100,
+  "total_tokens": 18815,
+  "estimated_cost_usd": 0.004918,
+  "label_counts": {
+    "low": 35,
+    "medium": 7,
+    "high": 8
+  }
+}
