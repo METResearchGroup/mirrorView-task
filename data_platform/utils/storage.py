@@ -24,6 +24,7 @@ from data_platform.models.sync import (
 )
 from data_platform.utils.dataset import ValidDataFormats, load_dataset_format, validate_dataset_id
 from data_platform.utils.deduplication import DedupeSession
+from data_platform.utils.object_store import ObjectStore, resolve_object_store
 from lib.timestamp_utils import get_current_timestamp
 
 DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
