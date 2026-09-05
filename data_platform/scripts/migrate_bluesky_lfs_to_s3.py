@@ -69,7 +69,25 @@ def scoped_repo_relative_paths() -> list[str]:
         If the list does not have exactly ``EXPECTED_OBJECT_COUNT`` entries
         or any path is missing on disk.
     """
-    raise NotImplementedError
+    raw_run_root = f"{DATASET_ROOT}/raw/{RAW_RUN}"
+    preprocessed_run_root = f"{DATASET_ROOT}/preprocessed/{PREPROCESSED_RUN}"
+    paths = [
+        f"{DATASET_ROOT}/dataset.json",
+        f"{raw_run_root}/metadata.json",
+        f"{preprocessed_run_root}/metadata.json",
+        f"{preprocessed_run_root}/posts.parquet",
+        f"{DUMP_ROOT}/summary_statistics.json",
+    ]
+    for segment in HOURLY_PARQUET_SEGMENTS:
+        paths.append(f"{raw_run_root}/date=2026-09-01/{segment}")
+        paths.append(f"{DUMP_ROOT}/parquet/date=2026-09-01/{segment}")
+    paths.sort()
+    if len(paths) != EXPECTED_OBJECT_COUNT:
+        raise RuntimeError(f"expected {EXPECTED_OBJECT_COUNT} scoped paths, built {len(paths)}")
+    missing = [path for path in paths if not (REPO_ROOT / path).is_file()]
+    if missing:
+        raise RuntimeError(f"scoped paths missing on disk: {missing}")
+    return paths
 
 
 def run_git_lfs_pull(patterns: Sequence[str]) -> None:
@@ -101,7 +119,9 @@ def sha256_hex(data: bytes) -> str:
 
 def content_type_for(repo_relative_path: str) -> str:
     """Return ``application/json`` for ``.json`` and ``application/octet-stream`` otherwise."""
-    raise NotImplementedError
+    if repo_relative_path.endswith(".json"):
+        return "application/json"
+    return "application/octet-stream"
 
 
 def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
