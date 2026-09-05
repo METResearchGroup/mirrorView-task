@@ -70,14 +70,6 @@ def tweet_to_row(
     }
 
 
-def _users_by_id(response: Any) -> dict[str, str]:
-    users: dict[str, str] = {}
-    includes = getattr(response, "includes", None) or {}
-    for user in includes.get("users", []) or []:
-        users[str(user.id)] = user.username or ""
-    return users
-
-
 def _search_recent_tweets_kwargs(
     query: str,
     max_results: int,
@@ -110,16 +102,12 @@ def _append_tweets_from_response(
     if not response or not response.data:
         return None
 
-    users = _users_by_id(response)
     for tweet in response.data:
         if len(rows) >= limit:
             break
-        author_id = str(tweet.author_id) if tweet.author_id else ""
-        username = users.get(author_id, "")
         rows.append(
             tweet_to_row(
                 tweet,
-                username=username,
                 keyword=keyword,
                 sync_timestamp=sync_timestamp,
             )
