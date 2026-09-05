@@ -1,6 +1,7 @@
 {
   "dataset_id": "reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079",
   "sync_status": "completed",
-  "ingestion_config": "data_platform/ingestion/data_dumps/reddit/pushshift_dump.yaml",
+  "sync_timestamp": "2025_06_01-00:00:00",
+  "source": "pushshift_dump",
   "source_dump_file": "data_platform/ingestion/data_dumps/reddit/filtered/RC_2025-06.parquet"
 }

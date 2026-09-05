@@ -1,16 +1,12 @@
 """Filter Reddit comments from a raw run and write the comments that pass.
 
-Run from the repo root. Pass ``--dataset-id`` to read a live dataset and write
-every comment that passes the filters.
+Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \\
         --dataset-id reddit_<uuid>
 
-Pass ``--config`` with the dump YAML to read parquet raw runs and keep at most
-200,000 comments that pass the filters per month file.
-
     PYTHONPATH=. uv run python data_platform/preprocessing/preprocess_reddit.py \\
-        --config data_platform/ingestion/data_dumps/reddit/pushshift_dump.yaml
+        --config data_platform/preprocessing/configs/reddit/pushshift_dump.yaml
 """
 
 from __future__ import annotations
@@ -20,7 +16,6 @@ from pathlib import Path
 
 import typer
 
-from data_platform.ingestion.sync_checkpoint import require_dataset_id
 from data_platform.models.sync import SyncRedditCommentModel
 from data_platform.preprocessing.runner import (
     PreprocessPlatformSpec,
@@ -36,7 +31,8 @@ from data_platform.preprocessing.runner import (
 from data_platform.preprocessing.runner import (
     preprocess_records as run_preprocess_records,
 )
-from data_platform.preprocessing.sample_records import MIN_SAMPLE_SIZE
+from data_platform.preprocessing.sample import MIN_SAMPLE_SIZE
+from data_platform.preprocessing.truncate_long_text import truncate_long_text
 from data_platform.preprocessing.validators.reddit_validators import (
     check_if_body_not_removed,
     check_if_no_direct_urls,
@@ -80,11 +76,8 @@ REDDIT_SPEC = PreprocessPlatformSpec(
     row_validators=COMMENT_ROW_VALIDATORS,
     original_platform_text_column=REDDIT_ORIGINAL_PLATFORM_TEXT_COLUMN,
     author_handle_source_column="author",
+    text_transforms=(truncate_long_text,),
 )
-
-PREPROCESS_KEY = "preprocess"
-SAMPLE_SIZE_KEY = "sample_size"
-SAMPLE_SEED_KEY = "sample_seed"
 
 
 def passes_all_validators(
@@ -101,53 +94,69 @@ def passes_row_validators(
     return _passes_row_validators(author, validators)
 
 
-def load_dump_preprocess_settings(config_path: Path) -> tuple[str, int, int]:
-    """Read dataset id and sample settings from a dump preprocess YAML.
-
-    Parameters
-    ----------
-    config_path
-        Absolute path to the dump YAML.
-
-    Returns
-    -------
-    tuple[str, int, int]
-        ``dataset_id``, ``sample_size``, and ``sample_seed``.
-
-    Raises
-    ------
-    FileNotFoundError
-        When the YAML file does not exist.
-    ValueError
-        When required keys are missing or ``sample_size`` is less than 1.
-    """
-    if not config_path.is_file():
-        raise FileNotFoundError(config_path)
-    config = load_yaml_config(config_path)
-    dataset_id = require_dataset_id(config, platform="reddit")
-    preprocess = config.get(PREPROCESS_KEY)
-    if not isinstance(preprocess, dict):
-        raise ValueError("dump config must include preprocess")
-    sample_size = preprocess.get(SAMPLE_SIZE_KEY)
-    sample_seed = preprocess.get(SAMPLE_SEED_KEY)
-    if not isinstance(sample_size, int) or sample_size < MIN_SAMPLE_SIZE:
-        raise ValueError("sample_size must be at least 1")
-    if not isinstance(sample_seed, int):
-        raise ValueError("sample_seed must be an int")
-    return dataset_id, sample_size, sample_seed
-
-
 def preprocess_records(
     dataset_id: str,
     sample_size: int | None = None,
-    sample_seed: int | None = None,
 ) -> Path:
+    """Run Reddit preprocess, optionally sampling kept rows before write.
+
+    Parameters
+    ----------
+    dataset_id
+        Dataset identifier from ingestion or dump YAML.
+    sample_size
+        Maximum kept rows to write. ``None`` writes every kept row.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the new preprocessed run directory.
+    """
     return run_preprocess_records(
         dataset_id,
         REDDIT_SPEC,
         sample_size,
-        sample_seed,
     )
+
+
+def _require_dataset_id_or_config(dataset_id: str | None, config: Path | None) -> None:
+    if dataset_id is None and config is None:
+        raise typer.BadParameter("Provide --dataset-id or --config")
+    if dataset_id is not None and config is not None:
+        raise typer.BadParameter("Provide --dataset-id or --config, not both")
+
+
+def _sample_size_from_yaml(config_values: dict) -> int:
+    params = config_values.get("preprocessing_params")
+    if not isinstance(params, dict) or params.get("sample_size") is None:
+        raise typer.BadParameter(
+            "Config preprocessing_params.sample_size is required"
+        )
+    sample_size = params["sample_size"]
+    if (
+        isinstance(sample_size, bool)
+        or not isinstance(sample_size, int)
+        or sample_size < MIN_SAMPLE_SIZE
+    ):
+        raise typer.BadParameter(
+            "Config preprocessing_params.sample_size must be a positive integer"
+        )
+    return sample_size
+
+
+def _resolve_preprocess_cli(
+    dataset_id: str | None,
+    config: Path | None,
+    sample_size: int | None,
+) -> tuple[str, int | None]:
+    _require_dataset_id_or_config(dataset_id, config)
+    if config is None:
+        return str(dataset_id), sample_size
+    config_path = resolve_config_path(config, REPO_ROOT)
+    config_values = load_yaml_config(config_path)
+    yaml_sample_size = _sample_size_from_yaml(config_values)
+    resolved_sample_size = yaml_sample_size if sample_size is None else sample_size
+    return str(config_values["dataset_id"]), resolved_sample_size
 
 
 def main(
@@ -159,21 +168,18 @@ def main(
     config: Path | None = typer.Option(
         None,
         "--config",
-        help="Dump dataset YAML with dataset_id and preprocess sample settings",
+        help="Dump or preprocess YAML with dataset_id and sample settings",
+    ),
+    sample_size: int | None = typer.Option(
+        None,
+        "--sample-size",
+        help="Override YAML sample size",
     ),
 ) -> None:
-    if config is not None and dataset_id is not None:
-        raise typer.BadParameter("Pass only one of --config or --dataset-id")
-    if config is None and dataset_id is None:
-        raise typer.BadParameter("Pass --config or --dataset-id")
-    if config is not None:
-        config_path = resolve_config_path(config, REPO_ROOT)
-        resolved_dataset_id, sample_size, sample_seed = load_dump_preprocess_settings(
-            config_path
-        )
-        preprocess_records(resolved_dataset_id, sample_size, sample_seed)
-        return
-    preprocess_records(dataset_id)
+    resolved_dataset_id, resolved_sample_size = _resolve_preprocess_cli(
+        dataset_id, config, sample_size
+    )
+    preprocess_records(resolved_dataset_id, resolved_sample_size)
 
 
 if __name__ == "__main__":

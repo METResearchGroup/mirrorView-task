@@ -3,6 +3,6 @@
   "platform": "reddit",
   "name": "reddit-pushshift-dump-2025-05-06",
   "created_at": "2026_09_03-23:18:21",
-  "ingestion_config": "data_platform/ingestion/data_dumps/reddit/pushshift_dump.yaml",
+  "ingestion_config": "data_platform/preprocessing/configs/reddit/pushshift_dump.yaml",
   "format": "parquet"
 }

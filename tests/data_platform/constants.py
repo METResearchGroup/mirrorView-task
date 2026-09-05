@@ -26,6 +26,16 @@ def expected_bluesky_record_id(uri: str) -> str:
     return "bluesky_" + hashlib.sha256(uri.encode("utf-8")).hexdigest()
 
 
+LONG_ENGLISH_TEXT = (
+    "This is a clear English comment about policy and governance without links or mentions. "
+    * 8
+)
+EXPECTED_TRUNCATED_LONG_ENGLISH_TEXT = (
+    "This is a clear English comment about policy and governance without links or mentions. "
+    "This is a clear English comment about policy and governance without links or mentions. "
+    "This is a clear English comment about policy and governance without links or mentions."
+)
+
 SAMPLE_INGESTION_ROW = {
     "uri": _BLUESKY_SAMPLE_URI,
     "record_id": expected_bluesky_record_id(_BLUESKY_SAMPLE_URI),

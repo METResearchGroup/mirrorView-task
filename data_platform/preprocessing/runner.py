@@ -10,12 +10,10 @@ from typing import Any, NamedTuple
 import pandas as pd
 from pydantic import BaseModel
 
+from data_platform.ingestion.data_dumps.bluesky.load_raw import load_hive_dump_posts
+from data_platform.preprocessing.sample import sample_records
 from data_platform.utils.dataset import dataset_root, relative_run_path, validate_dataset_id
 from data_platform.utils.deduplication import DedupeConfig, DedupeSession
-from data_platform.preprocessing.sample_records import (
-    SOURCE_RAW_RUN_COLUMN,
-    sample_records_per_source_run,
-)
 from data_platform.preprocessing.previously_used_stimuli import (
     filter_previously_used_stimuli,
     load_previously_used_stimuli_ids,
@@ -32,6 +30,7 @@ from data_platform.utils.storage import StorageManager, StorageStage
 from shared.data.registry import DATASETS
 
 TextValidator = Callable[[str], bool]
+TextTransform = Callable[[str], str]
 RowValidator = Callable[[str], bool]
 
 StorageManagerFactory = Callable[..., StorageManager]
@@ -63,7 +62,7 @@ class PreprocessPlatformSpec:
     text_validators: tuple[TextValidator, ...]
     author_handle_source_column: str
     row_validators: tuple[RowValidator, ...] = ()
-    text_transform: Callable[[str], str] | None = None
+    text_transforms: tuple[TextTransform, ...] = ()
     original_platform_text_column: str = STANDARDIZED_TEXT_COLUMN
 
 
@@ -102,28 +101,30 @@ def apply_text_transform(
     df: pd.DataFrame,
     spec: PreprocessPlatformSpec,
 ) -> pd.DataFrame:
-    """Apply the platform's optional text transform to each row's text column.
+    """The function runs each text transform on the text column of every row.
 
-    When ``spec.text_transform`` is unset or the frame is empty, the input
-    frame is returned unchanged.
+    The functions run in list order. If ``spec.text_transforms`` is empty, or if
+    the frame is empty, the function returns the input frame unchanged.
 
     Parameters
     ----------
     spec
-        ``text_transform`` is applied to values in ``spec.columns.text_column``.
+        Each function in ``text_transforms`` is applied to values in
+        ``spec.columns.text_column``.
 
     Returns
     -------
     pd.DataFrame
-        A new frame with transformed text when a transform is configured;
-        otherwise the original frame.
+        A new frame whose text column has been rewritten when
+        ``text_transforms`` has at least one function. Otherwise the function
+        returns the original frame.
     """
-    if spec.text_transform is None or df.empty:
+    if not spec.text_transforms or df.empty:
         return df
     out = df.copy()
     text_col = spec.columns.text_column
-    transform = spec.text_transform
-    out[text_col] = out[text_col].map(lambda v: transform(str(v)))
+    for transform in spec.text_transforms:
+        out[text_col] = out[text_col].map(lambda value, fn=transform: fn(str(value)))
     return out
 
 
@@ -173,6 +174,32 @@ def _rows_to_validated_dicts(
     return [model_cls.model_validate(row).model_dump() for row in rows]
 
 
+HIVE_DATE_PREFIX = "date="
+
+
+def _has_hive_dump_partitions(run_dir: Path) -> bool:
+    return any(
+        path.is_dir() and path.name.startswith(HIVE_DATE_PREFIX)
+        for path in run_dir.iterdir()
+    )
+
+
+def _validated_rows_from_run(
+    run_dir: Path,
+    spec: PreprocessPlatformSpec,
+    raw_storage: StorageManager,
+) -> list[dict[str, Any]]:
+    records_path = run_dir / raw_storage.records_filename
+    if records_path.exists():
+        df = raw_storage.load_records(run_dir=run_dir)
+        if df.empty:
+            return []
+        return _rows_to_validated_dicts(df.to_dict(orient="records"), spec.model_cls)
+    if _has_hive_dump_partitions(run_dir):
+        return load_hive_dump_posts(run_dir, run_dir.name)
+    return []
+
+
 def load_raw_records(
     spec: PreprocessPlatformSpec,
     dataset_id: str,
@@ -197,26 +224,26 @@ def load_raw_records(
     run_dirs = sorted([p for p in raw_root.iterdir() if p.is_dir()])
     validated_rows: list[dict[str, Any]] = []
     for run_dir in run_dirs:
-        records_path = run_dir / raw_storage.records_filename
-        if not records_path.exists():
-            continue
-        df = raw_storage.load_records(run_dir=run_dir)
-        if df.empty:
-            continue
-        validated_rows.extend(
-            {**row, SOURCE_RAW_RUN_COLUMN: run_dir.name}
-            for row in _rows_to_validated_dicts(
-                df.to_dict(orient="records"), spec.model_cls
-            )
-        )
+        validated_rows.extend(_validated_rows_from_run(run_dir, spec, raw_storage))
 
-    empty_columns = list(spec.model_cls.model_fields.keys()) + [SOURCE_RAW_RUN_COLUMN]
     records = (
         pd.DataFrame(validated_rows)
         if validated_rows
-        else pd.DataFrame(columns=empty_columns)
+        else pd.DataFrame(columns=list(spec.model_cls.model_fields.keys()))
     )
     return records, run_dirs
+
+
+def _with_sample_metadata(
+    metadata: dict[str, Any],
+    records: pd.DataFrame,
+    sample_size: int | None,
+) -> dict[str, Any]:
+    if sample_size is None:
+        return metadata
+    metadata["row_counts"]["sampled"] = len(records)
+    metadata["sample_size"] = sample_size
+    return metadata
 
 
 def export_preprocessed_records(
@@ -226,6 +253,7 @@ def export_preprocessed_records(
     input_count: int,
     *,
     source_raw_run_dirs: list[Path],
+    sample_size: int | None = None,
 ) -> Path:
     """Persist preprocessed records to a new timestamped run directory."""
     preprocessed_storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
@@ -248,6 +276,7 @@ def export_preprocessed_records(
             spec.columns.records_file_key: preprocessed_storage.records_filename,
         },
     }
+    metadata = _with_sample_metadata(metadata, records, sample_size)
     preprocessed_storage.write_run_metadata(output_dir, metadata)
     return output_dir
 
@@ -347,26 +376,24 @@ def preprocess_records(
     dataset_id: str,
     spec: PreprocessPlatformSpec,
     sample_size: int | None = None,
-    sample_seed: int | None = None,
 ) -> Path:
     """Run the full preprocessing pipeline for one dataset and persist the result.
 
     The function loads all completed raw runs and adds standardized columns.
     It then drops rows seen in prior preprocessed runs, rows already used as
     study stimuli, and duplicate ids within the batch. After that, it applies
-    platform-specific text transforms and validators, and it writes a new
-    preprocessed run directory. It also prints a one-line keep and skip
-    summary to stdout.
+    platform-specific text transforms and validators, optionally samples the
+    kept rows, and it writes a new preprocessed run directory. It also prints a
+    one-line keep and skip summary to stdout.
 
     Parameters
     ----------
     dataset_id
         Dataset identifier in ``{platform}_{uuid}`` form.
+    spec
+        Platform-specific preprocess configuration.
     sample_size
-        Optional maximum kept rows per source raw run. ``None`` writes every
-        filtered row.
-    sample_seed
-        Seed used when ``sample_size`` is set. Required in that case.
+        Maximum kept rows to write. ``None`` writes every kept row.
 
     Returns
     -------
@@ -397,22 +424,14 @@ def preprocess_records(
     records = apply_integration_specific_preprocessing(records, spec)
     records = apply_integration_specific_filters(records, spec)
     if sample_size is not None:
-        if sample_seed is None:
-            raise ValueError("sample_seed is required when sample_size is set")
-        records = sample_records_per_source_run(
-            records,
-            sample_size,
-            sample_seed,
-            SOURCE_RAW_RUN_COLUMN,
-        )
-    if SOURCE_RAW_RUN_COLUMN in records.columns:
-        records = records.drop(columns=[SOURCE_RAW_RUN_COLUMN])
+        records = sample_records(records, sample_size)
     output_dir = export_preprocessed_records(
         records,
         spec,
         dataset_id,
         input_count=input_count,
         source_raw_run_dirs=source_raw_run_dirs,
+        sample_size=sample_size,
     )
     print(
         f"preprocess_records: kept {len(records)} of {input_count}"
