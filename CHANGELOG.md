@@ -8,6 +8,7 @@
 4. The feature generation pipeline can use the OpenAI Batch API and structured output to label posts for LLM features. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
 5. Twitter sync requests now omit user expansions and user fields, so requests avoid User Read charges for each tweet. In preprocessing, the pipeline now populates the author handle directly from the author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
 6. The pinned Bluesky dataset (raw run, preprocessed 200,000-post sample, and the 2026-09-01 source dump) now exists in the `mirrorview-experimental-artifacts` S3 bucket at repo-relative keys, and a committed inventory records the SHA-256 of all 53 objects. Git LFS copies stay in the repository. [Issue #181](https://github.com/METResearchGroup/mirrorView-task/issues/181)
+7. Pipeline storage can now read and write records and run metadata in the `mirrorview-experimental-artifacts` S3 bucket when `DATA_PLATFORM_STORAGE_BACKEND=s3`, at the same relative paths as the local `data_platform/data/` layout. Local disk stays the default. S3 uploads record a SHA-256, reject Git LFS pointer text and unsafe keys, and refuse to overwrite an existing object unless asked. [Issue #182](https://github.com/METResearchGroup/mirrorView-task/issues/182)
 
 ## 2026-09-04
 
