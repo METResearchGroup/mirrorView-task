@@ -9,15 +9,33 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import json
+
+from data_platform.scripts.migrate_bluesky_lfs_to_s3 import (
+    BUCKET,
+    EXPECTED_OBJECT_COUNT,
+    INVENTORY_PATH,
+    REGION,
+    sha256_hex,
+)
 from lib.aws.s3 import S3
 
 
 def verify_inventory(inventory: dict, s3: S3) -> list[str]:
+    """Re-download every inventory object and report length or SHA-256 mismatches.
+
+    Returns
+    -------
+    list[str]
+        One message per missing or mismatched object. Empty when every object
+        matches.
+    """
     raise NotImplementedError
 
 
 def main() -> None:
-    problems = verify_inventory({}, S3(""))
+    inventory = json.loads(INVENTORY_PATH.read_text())
+    problems = verify_inventory(inventory, S3(BUCKET, region_name=REGION))
     raise SystemExit(1 if problems else 0)
 
 
