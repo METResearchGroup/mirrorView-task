@@ -43,13 +43,14 @@ def build_query(
 def tweet_to_row(
     tweet: Any,
     *,
-    username: str,
     keyword: str,
     sync_timestamp: str,
+    username: str = "",
 ) -> dict[str, object]:
     """Normalize a Tweepy Tweet to a flat dict matching the raw CSV schema.
 
     ``created_at`` is UTC ISO-8601 from the tweet payload, or ``""`` when missing.
+    ``username`` is empty since user expansions are omitted to cut per-tweet cost.
     """
     metrics = getattr(tweet, "public_metrics", None) or {}
     tweet_id = str(tweet.id)
