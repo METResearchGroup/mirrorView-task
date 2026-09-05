@@ -20,16 +20,16 @@ INJECTED_BASE_WORD_COUNT = 8
 SOURCE_RECORD_ID_PREFIX = "synthetic_"
 SOURCE_RECORD_ID_WIDTH = 5
 MEDIUM_TOXIC_PHRASES = (
-    "You're an idiot and this is a dumb take.",
-    "Shut up, nobody asked you.",
-    "That comment is pathetic and you sound clueless.",
-    "What a loser. Sit this one out.",
+    "Wow, you're such a moron. Try thinking for once.",
+    "Get lost, you annoying clown.",
+    "Your whole argument is trash and you look foolish.",
+    "Grow up, you pathetic troll.",
 )
 HIGH_TOXIC_PHRASES = (
-    "People like you should be wiped off the map.",
-    "Go kill yourself, you worthless garbage.",
-    "I hope you get hurt and never come back.",
-    "You're subhuman and don't deserve to exist.",
+    "I will find you and make you suffer.",
+    "Someone should put a bullet in people like you.",
+    "Die slowly, you filthy animal.",
+    "I'll burn your house down with you inside.",
 )
 InjectedTier = Literal["medium", "high"]
 PHRASES_BY_TIER: dict[InjectedTier, tuple[str, ...]] = {

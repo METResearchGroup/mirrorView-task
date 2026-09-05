@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from unittest.mock import MagicMock
+
 import pytest
 
 from data_platform.generate_features.llm_toxicity_tiered.generate_feature import (
+    SYSTEM_PROMPT,
     LlmToxicityTieredModel,
     LlmToxicityTieredOutputModel,
     generate_feature,
@@ -50,8 +53,7 @@ class TestGenerateFeature:
             def __init__(self, tier: str) -> None:
                 self.toxicity_tier = tier
 
-        def fake_structured_chat_completion(**kwargs):
-            return _Result(toxicity_tier)
+        fake_structured_chat_completion = MagicMock(return_value=_Result(toxicity_tier))
 
         monkeypatch.setattr(
             "data_platform.generate_features.llm_toxicity_tiered.generate_feature.structured_chat_completion",
@@ -70,3 +72,8 @@ class TestGenerateFeature:
         )
 
         assert result == expected
+        fake_structured_chat_completion.assert_called_once_with(
+            user_prompt="sample text",
+            output_schema=LlmToxicityTieredOutputModel,
+            system_prompt=SYSTEM_PROMPT,
+        )

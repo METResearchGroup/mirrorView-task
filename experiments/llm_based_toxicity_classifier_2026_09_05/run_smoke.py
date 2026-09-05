@@ -1,10 +1,10 @@
-"""Smoke-test the LLM toxicity classifier with one OpenAI Batch job.
+"""Run a small live test of the LLM toxicity classifier with one OpenAI Batch job.
 
 given OPENAI_API_KEY is set
-and faker can build 50 posts with 15 injected
+and Faker can build 50 posts, 15 of which have toxic language added
 when PYTHONPATH=. uv run python experiments/llm_based_toxicity_classifier_2026_09_05/run_smoke.py
-then one OpenAI Batch job labels 50 posts
-and RESULTS.md contains elapsed seconds, estimated USD, and low/medium/high counts that sum to 50
+then one OpenAI Batch job returns labels for 50 posts
+and RESULTS.md contains elapsed seconds, estimated USD, and low, medium, and high counts that sum to 50
 
 Run from the repo root:
 
@@ -65,7 +65,7 @@ SMOKE_COMMAND = (
 
 @dataclass(frozen=True)
 class ToxicityLabelCounts:
-    """Counts of low, medium, and high toxicity labels from one smoke run."""
+    """Counts of low, medium, and high toxicity labels from one live test run."""
 
     low: int
     medium: int
@@ -74,7 +74,7 @@ class ToxicityLabelCounts:
 
 @dataclass(frozen=True)
 class SmokeRunResult:
-    """Labels, token usage, and cost from one OpenAI Batch toxicity smoke run."""
+    """Holds the labels, token counts, and estimated cost from one OpenAI Batch toxicity test run."""
 
     labels: list[LlmToxicityTieredModel]
     elapsed_seconds: float
@@ -87,7 +87,7 @@ class SmokeRunResult:
 
 
 def openai_toxicity_spec() -> FeatureSpec:
-    """Return the LLM toxicity feature spec for the OpenAI Batch engine."""
+    """Return the FeatureSpec for the LLM toxicity classifier, configured for the OpenAI Batch engine."""
     return FeatureSpec(
         name="llm_toxicity_tiered",
         model=LlmToxicityTieredModel,
@@ -97,15 +97,21 @@ def openai_toxicity_spec() -> FeatureSpec:
     )
 
 
-def estimated_cost_usd(input_tokens: int, output_tokens: int) -> float:
-    """Estimate Batch cost from the published GPT-5.4 nano token rates."""
-    input_cost = input_tokens * INPUT_PRICE_PER_MILLION_TOKENS_USD
-    output_cost = output_tokens * OUTPUT_PRICE_PER_MILLION_TOKENS_USD
-    return (input_cost + output_cost) / TOKENS_PER_MILLION
+def estimated_cost_usd(
+    input_tokens: int,
+    output_tokens: int,
+    input_price_per_million: float,
+    output_price_per_million: float,
+    tokens_per_million: int,
+) -> float:
+    """Estimate the OpenAI Batch API cost from published token rates."""
+    input_cost = input_tokens * input_price_per_million
+    output_cost = output_tokens * output_price_per_million
+    return (input_cost + output_cost) / tokens_per_million
 
 
 def run_toxicity_smoke(posts: list[SyntheticPost]) -> SmokeRunResult:
-    """Label synthetic posts in one OpenAI Batch and return cost metrics."""
+    """Label the made-up posts in one OpenAI Batch job, and return elapsed time, token counts, and estimated cost."""
     engine = build_openai_engine(openai_toxicity_spec(), FeatureRunConfig())
     started_at = time.perf_counter()
     raw_labels = engine.batch_label_records(_label_tasks(posts))
@@ -145,31 +151,37 @@ def _smoke_run_result(
         prompt_tokens=usage.input_tokens,
         completion_tokens=usage.output_tokens,
         total_tokens=usage.total_tokens,
-        estimated_cost_usd=estimated_cost_usd(usage.input_tokens, usage.output_tokens),
+        estimated_cost_usd=estimated_cost_usd(
+            usage.input_tokens,
+            usage.output_tokens,
+            INPUT_PRICE_PER_MILLION_TOKENS_USD,
+            OUTPUT_PRICE_PER_MILLION_TOKENS_USD,
+            TOKENS_PER_MILLION,
+        ),
         label_counts=_label_counts(labels),
         model=DEFAULT_OPENAI_BATCH_ENGINE_CONFIG.model,
     )
 
 
 def main() -> None:
-    """Build 50 synthetic posts, label them in one batch, and write RESULTS.md."""
+    """Build 50 made-up posts and label them in one OpenAI Batch job. Write RESULTS.md."""
     posts = build_synthetic_posts(
         SMOKE_POST_COUNT,
         INJECTED_TOXIC_COUNT,
         RANDOM_SEED,
     )
-    print(f"Submitting {len(posts)} posts to the OpenAI Batch API...", flush=True)
-    result = run_toxicity_smoke(posts)
-    _write_smoke_artifacts(posts, result)
-    print(f"Wrote {RESULTS_MD}", flush=True)
-
-
-def _write_smoke_artifacts(posts: list[SyntheticPost], result: SmokeRunResult) -> None:
     OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
     pd.DataFrame([post.model_dump() for post in posts]).to_csv(
         SYNTHETIC_POSTS_CSV,
         index=False,
     )
+    print(f"Submitting {len(posts)} posts to the OpenAI Batch API...", flush=True)
+    result = run_toxicity_smoke(posts)
+    _write_label_artifacts(posts, result)
+    print(f"Wrote {RESULTS_MD}", flush=True)
+
+
+def _write_label_artifacts(posts: list[SyntheticPost], result: SmokeRunResult) -> None:
     _write_json(LABELS_JSON, [label.model_dump() for label in result.labels])
     _write_json(METRICS_JSON, _metrics_payload(result))
     RESULTS_MD.write_text(_results_markdown(posts, result), encoding="utf-8")
@@ -225,7 +237,7 @@ def _format_results_markdown(
     total: int,
     injected: ToxicityLabelCounts,
 ) -> str:
-    return f"""# LLM toxicity classifier smoke results
+    return f"""# LLM toxicity classifier live test results
 
 ## Command
 
@@ -237,7 +249,7 @@ def _format_results_markdown(
 
 - Model: `{result.model}`
 - Posts: {SMOKE_POST_COUNT}
-- Injected toxic posts: {INJECTED_TOXIC_COUNT}
+- Posts with added toxic language: {INJECTED_TOXIC_COUNT}
 - Seed: {RANDOM_SEED}
 
 ## Runtime cost
@@ -250,8 +262,8 @@ def _format_results_markdown(
 | Total tokens | {result.total_tokens} |
 | Estimated cost (USD) | {result.estimated_cost_usd:.{USD_DECIMALS}f} |
 
-Cost uses the published GPT-5.4 nano Batch API rates: \
-${INPUT_PRICE_PER_MILLION_TOKENS_USD:.2f} per million input tokens and \
+The estimated cost is computed from the published GPT-5.4 nano Batch API rates. \
+The rates are ${INPUT_PRICE_PER_MILLION_TOKENS_USD:.2f} per million input tokens and \
 ${OUTPUT_PRICE_PER_MILLION_TOKENS_USD:.2f} per million output tokens.
 
 ```text
@@ -259,7 +271,7 @@ ${OUTPUT_PRICE_PER_MILLION_TOKENS_USD:.2f} per million output tokens.
   + (output tokens × ${OUTPUT_PRICE_PER_MILLION_TOKENS_USD:.2f} / {TOKENS_PER_MILLION})
 ```
 
-## Label distribution
+## Counts of low, medium, and high labels
 
 | Tier | Count | Percent |
 | ---- | ----- | ------- |
@@ -268,11 +280,12 @@ ${OUTPUT_PRICE_PER_MILLION_TOKENS_USD:.2f} per million output tokens.
 | high | {counts.high} | {_percent(counts.high, total)} |
 | total | {total} | {_percent(total, total)} |
 
-## Injected posts
+## Posts with added toxic language
 
-This is not a gold-label accuracy score. Among the {INJECTED_TOXIC_COUNT} posts that \
-had toxic language inserted, the model labeled {injected.low} low, \
-{injected.medium} medium, and {injected.high} high.
+The {INJECTED_TOXIC_COUNT} posts that had toxic language added were labeled \
+{injected.low} low, {injected.medium} medium, and {injected.high} high. \
+The live test only checks that the classifier returned labels for those posts, \
+and it is not a measure of accuracy against human labels.
 
 ## Outputs
 

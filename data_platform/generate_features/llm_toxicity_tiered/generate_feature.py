@@ -1,4 +1,4 @@
-"""LLM feature: classify toxicity as low, medium, or high.
+"""Classify post text as low, medium, or high toxicity with an LLM.
 
 Run from the repo root:
 
@@ -53,7 +53,7 @@ ToxicityTier = Literal["low", "medium", "high"]
 
 class LlmToxicityTieredOutputModel(BaseModel):
     toxicity_tier: ToxicityTier = Field(
-        description="Toxicity of the text: low, medium, or high."
+        description="Toxicity of the text, as low, medium, or high."
     )
 
 
@@ -64,7 +64,7 @@ class LlmToxicityTieredModel(BaseModel):
 
 
 def generate_feature(uri: str, text: str) -> LlmToxicityTieredModel:
-    """Classify the toxicity tier of post text.
+    """Classify how toxic the post text is, as low, medium, or high.
 
     Parameters
     ----------
@@ -76,7 +76,7 @@ def generate_feature(uri: str, text: str) -> LlmToxicityTieredModel:
     Returns
     -------
     LlmToxicityTieredModel
-        Row with the record id, timestamp, and toxicity tier.
+        The labeled row, with the record id, timestamp, and toxicity level.
     """
     result = structured_chat_completion(
         user_prompt=text,

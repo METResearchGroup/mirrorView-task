@@ -1,8 +1,8 @@
-# LLM toxicity classifier smoke (2026-09-05)
+# LLM toxicity classifier live test (2026-09-05)
 
-Build 50 synthetic posts with Faker, inject toxic language into a random subset, and label them in one OpenAI Batch job.
+The experiment script builds 50 made-up posts with the Faker library, and it adds toxic language to some of those posts at random. It then sends all 50 posts to OpenAI in one Batch job. A Batch job is OpenAI's API for labeling many texts in one request. Each post is labeled as low, medium, or high toxicity.
 
-Results: [`RESULTS.md`](./RESULTS.md)
+The run's elapsed time, estimated cost, and counts of low, medium, and high labels are in [`RESULTS.md`](./RESULTS.md).
 
 ## Run
 
@@ -12,4 +12,4 @@ From the repository root:
 PYTHONPATH=. uv run python experiments/llm_based_toxicity_classifier_2026_09_05/run_smoke.py
 ```
 
-Requires `OPENAI_API_KEY` in the repo-root `.env`.
+The script needs `OPENAI_API_KEY` in the `.env` file at the repo root, or in the environment.
