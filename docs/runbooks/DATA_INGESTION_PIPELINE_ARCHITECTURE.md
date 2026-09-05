@@ -142,7 +142,7 @@ Entrypoints:
 - `data_platform/generate_features/generate_twitter_features.py`
 - `data_platform/generate_features/generate_reddit_features.py`
 
-Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, and `is_toxic_tiered`. Each feature writes `features/<timestamp>/{name}.csv`. Failed atomic batches may append to `features/<timestamp>/deadletter.jsonl`.
+Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, `is_toxic_tiered`, and `llm_toxicity_tiered`. Each feature writes `features/<timestamp>/{name}.csv`. Failed atomic batches may append to `features/<timestamp>/deadletter.jsonl`.
 
 Feature generation needs `OPENAI_API_KEY` and `GOOGLE_API_KEY` in the repo-root `.env`.
 
