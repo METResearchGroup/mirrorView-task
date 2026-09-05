@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-05
+
+1. Feature generation can label LLM features through the OpenAI Batch API with structured output. A smoke CLI labels 100 posts as news, opinion, or neither and reports throughput and estimated tokens per request. [PR #168](https://github.com/METResearchGroup/mirrorView-task/pull/168)
+
 ## 2026-09-03
 
 1. Reddit monthly comment dumps from the Pushshift experiment can be filtered, sampled to 500,000 comments per month, and stored as git LFS parquet using the same comment fields as live Reddit ingest. [PR #153](https://github.com/METResearchGroup/mirrorView-task/pull/153)
