@@ -109,7 +109,10 @@ def make_openai_batch_output_line(
     )
 
 
-def make_completed_openai_client(output_text: str) -> MagicMock:
+def make_completed_openai_client(
+    output_text: str,
+    error_text: str | None = None,
+) -> MagicMock:
     client = MagicMock()
     uploaded = MagicMock()
     uploaded.id = "file_input"
@@ -121,10 +124,15 @@ def make_completed_openai_client(output_text: str) -> MagicMock:
     completed_batch.id = "batch_1"
     completed_batch.status = "completed"
     completed_batch.output_file_id = "file_output"
+    completed_batch.error_file_id = "file_error" if error_text is not None else None
     output_file = MagicMock()
     output_file.text = output_text
+    error_file = MagicMock()
+    error_file.text = error_text
     client.files.create.return_value = uploaded
-    client.files.content.return_value = output_file
+    client.files.content.side_effect = (
+        lambda file_id: error_file if file_id == "file_error" else output_file
+    )
     client.batches.create.return_value = created_batch
     client.batches.retrieve.return_value = completed_batch
     return client

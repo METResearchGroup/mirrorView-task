@@ -44,7 +44,6 @@ OPENAI_BATCH_COMPLETION_WINDOW = "24h"
 OPENAI_BATCH_FILE_PURPOSE = "batch"
 OPENAI_BATCH_TEMPERATURE = 0.0
 POLL_INTERVAL_SECONDS = 5.0
-POLL_TIMEOUT_SECONDS = 3600.0
 CUSTOM_ID_PREFIX = "task-"
 CUSTOM_ID_INDEX_WIDTH = 5
 BATCH_COMPLETED_STATUS = "completed"
@@ -72,7 +71,6 @@ class OpenAIBatchEngineConfig:
     model: str
     temperature: float
     poll_interval_seconds: float
-    poll_timeout_seconds: float
     completion_window: str
     endpoint: str
 
@@ -81,7 +79,6 @@ DEFAULT_OPENAI_BATCH_ENGINE_CONFIG = OpenAIBatchEngineConfig(
     model=DEFAULT_LLM_MODEL,
     temperature=OPENAI_BATCH_TEMPERATURE,
     poll_interval_seconds=POLL_INTERVAL_SECONDS,
-    poll_timeout_seconds=POLL_TIMEOUT_SECONDS,
     completion_window=OPENAI_BATCH_COMPLETION_WINDOW,
     endpoint=OPENAI_BATCH_ENDPOINT,
 )
@@ -100,14 +97,12 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         client: OpenAIBatchClient,
         engine_config: OpenAIBatchEngineConfig,
         sleep_fn: Callable[[float], None],
-        monotonic_fn: Callable[[], float],
     ) -> None:
         super().__init__(spec, run_config)
         _llm_prompt_and_schema(spec)
         self._client = client
         self._engine_config = engine_config
         self._sleep_fn = sleep_fn
-        self._monotonic_fn = monotonic_fn
         self.last_batch_usage: OpenAIBatchTokenUsage | None = None
 
     def batch_label_records(self, tasks: list[LabelTask]) -> list[dict]:
@@ -120,8 +115,8 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
             self._engine_config,
             tasks,
             self._sleep_fn,
-            self._monotonic_fn,
         )
+        _raise_for_request_errors(self._client, completed_batch)
         output_lines = _download_output_lines(self._client, completed_batch)
         completions_by_id = _chat_completions_by_custom_id(output_lines)
         label_timestamp = get_current_timestamp()
@@ -200,7 +195,6 @@ def _submit_and_wait_for_batch(
     engine_config: OpenAIBatchEngineConfig,
     tasks: list[LabelTask],
     sleep_fn: Callable[[float], None],
-    monotonic_fn: Callable[[], float],
 ) -> Batch:
     requests = _request_lines_for_tasks(tasks, spec, engine_config)
     input_file_id = _upload_requests(client, requests)
@@ -213,9 +207,7 @@ def _submit_and_wait_for_batch(
         client,
         batch.id,
         engine_config.poll_interval_seconds,
-        engine_config.poll_timeout_seconds,
         sleep_fn,
-        monotonic_fn,
     )
 
 
@@ -241,6 +233,21 @@ def _download_output_lines(
     if batch.output_file_id is None:
         raise RuntimeError(f"OpenAI Batch {batch.id} completed without output_file_id")
     return client.files.content(batch.output_file_id).text.splitlines()
+
+
+def _raise_for_request_errors(
+    client: OpenAIBatchClient,
+    batch: Batch,
+) -> None:
+    if batch.error_file_id is None:
+        return
+    error_text = client.files.content(batch.error_file_id).text
+    errors = [json.loads(line) for line in error_text.splitlines() if line.strip()]
+    summaries = [
+        f"{error.get('custom_id', 'unknown')}: {error.get('error', {})}"
+        for error in errors
+    ]
+    raise RuntimeError(f"OpenAI Batch request failures: {'; '.join(summaries)}")
 
 
 def _chat_completions_by_custom_id(
@@ -324,7 +331,6 @@ def build_openai_engine(
         create_openai_client(),
         DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
         time.sleep,
-        time.monotonic,
     )
 
 
@@ -337,29 +343,20 @@ def wait_for_completed_batch(
     client: OpenAIBatchClient,
     batch_id: str,
     poll_interval_seconds: float,
-    poll_timeout_seconds: float,
     sleep_fn: Callable[[float], None],
-    monotonic_fn: Callable[[], float],
 ) -> Batch:
-    """Poll an OpenAI Batch until it completes, fails, or the timeout expires.
+    """Poll an OpenAI Batch until OpenAI reports a terminal status.
 
     Raises
     ------
     RuntimeError
         When the batch ends in a failed, expired, or cancelled status.
-    TimeoutError
-        When the batch is still running after ``poll_timeout_seconds``.
     """
-    deadline = monotonic_fn() + poll_timeout_seconds
     while True:
         batch = client.batches.retrieve(batch_id)
         status = batch.status
         if status == BATCH_COMPLETED_STATUS:
             return batch
         _require_batch_not_failed(batch_id, status)
-        if monotonic_fn() >= deadline:
-            raise TimeoutError(
-                f"OpenAI Batch {batch_id} did not complete before the poll timeout"
-            )
         sleep_fn(poll_interval_seconds)
 

@@ -29,7 +29,6 @@ def _make_engine(
     spec: FeatureSpec,
     client: MagicMock,
     sleep_fn=lambda _seconds: None,
-    monotonic_fn=lambda: 0.0,
 ) -> OpenAIBatchEngine:
     return OpenAIBatchEngine(
         spec,
@@ -37,7 +36,6 @@ def _make_engine(
         client,
         DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
         sleep_fn,
-        monotonic_fn,
     )
 
 
@@ -111,17 +109,19 @@ class TestOpenAIBatchEngineBatchLabelRecords:
         assert result == []
 
     def test_raises_when_an_output_request_fails(self) -> None:
-        output_text = make_openai_batch_output_line(
+        error_text = make_openai_batch_output_line(
             "task-00000",
             "news",
             error="invalid prompt",
         )
-        client = make_completed_openai_client(output_text)
+        client = make_completed_openai_client("", error_text)
         engine = _make_engine(make_openai_news_spec(), client)
         tasks = [LabelTask(uri=URI_POST_A, text="hello")]
 
-        with pytest.raises(ValueError, match="task-00000"):
+        with pytest.raises(RuntimeError, match="task-00000"):
             engine.batch_label_records(tasks)
+
+        client.files.content.assert_called_once_with("file_error")
 
     def test_raises_when_an_output_custom_id_is_missing(self) -> None:
         output_text = make_openai_batch_output_line("task-00001", "news")
@@ -147,13 +147,28 @@ class TestWaitForCompletedBatch:
             client,
             "batch_1",
             5.0,
-            60.0,
             sleeps.append,
-            lambda: 0.0,
         )
 
         assert result is completed
         assert sleeps == []
+
+    def test_keeps_polling_until_openai_reports_completion(self) -> None:
+        client = MagicMock()
+        pending = MagicMock(status="in_progress")
+        completed = MagicMock(status="completed")
+        client.batches.retrieve.side_effect = [pending, completed]
+        sleeps: list[float] = []
+
+        result = wait_for_completed_batch(
+            client,
+            "batch_1",
+            5.0,
+            sleeps.append,
+        )
+
+        assert result is completed
+        assert sleeps == [5.0]
 
     def test_raises_when_batch_fails(self) -> None:
         client = MagicMock()
@@ -167,26 +182,7 @@ class TestWaitForCompletedBatch:
                 client,
                 "batch_1",
                 5.0,
-                60.0,
                 lambda _seconds: None,
-                lambda: 0.0,
-            )
-
-    def test_raises_when_poll_timeout_expires(self) -> None:
-        client = MagicMock()
-        pending = MagicMock()
-        pending.status = "in_progress"
-        client.batches.retrieve.return_value = pending
-        monotonic_values = iter([0.0, 100.0])
-
-        with pytest.raises(TimeoutError, match="batch_1"):
-            wait_for_completed_batch(
-                client,
-                "batch_1",
-                5.0,
-                10.0,
-                lambda _seconds: None,
-                lambda: next(monotonic_values),
             )
 
 
