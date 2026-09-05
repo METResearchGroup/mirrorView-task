@@ -7,28 +7,42 @@ Run from the repo root:
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import pandas as pd
+import typer
 
 from data_platform.generate_features.engines.openai_batch import OpenAIBatchTokenUsage
-from data_platform.generate_features.models import LabelTask
+from data_platform.generate_features.engines.openai_engine import (
+    DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
+    build_openai_engine,
+)
+from data_platform.generate_features.is_news_or_opinion.generate_feature import (
+    SYSTEM_PROMPT as IS_NEWS_OR_OPINION_SYSTEM_PROMPT,
+)
+from data_platform.generate_features.is_news_or_opinion.generate_feature import (
+    IsNewsOrOpinionModel,
+    LlmIsNewsOrOpinionModel,
+)
+from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
 from lib.constants import REPO_ROOT
 
 SMOKE_POST_COUNT = 100
-SMOKE_ID_COLUMN = "uri"
-SMOKE_TEXT_COLUMN = "text"
+SMOKE_ID_COLUMN = "post_primary_key"
+SMOKE_TEXT_COLUMN = "original_text"
+SMOKE_MAX_CONCURRENCY = 1
+SMOKE_METRICS_JSON_INDENT = 2
 DEFAULT_SMOKE_POSTS_CSV = (
     REPO_ROOT
-    / "experiments"
-    / "data_ingestion_smoke_2026_08_28"
+    / "shared"
     / "data"
-    / "bluesky"
-    / "bluesky_c0ffee00-0000-4000-8000-000000000100"
-    / "preprocessed"
-    / "2026_08_28-16:45:56"
-    / "posts.csv"
+    / "raw"
+    / "study_phase_2_part_1"
+    / "stimuli"
+    / "claude_generated_mirrors.csv"
 )
 
 
@@ -100,9 +114,53 @@ def compute_openai_engine_smoke_metrics(
     )
 
 
-def main() -> None:
-    raise NotImplementedError
+def news_or_opinion_openai_spec() -> FeatureSpec:
+    """Return the news-or-opinion feature spec for the OpenAI Batch engine."""
+    return FeatureSpec(
+        name="is_news_or_opinion",
+        model=IsNewsOrOpinionModel,
+        engine_type="openai",
+        system_prompt=IS_NEWS_OR_OPINION_SYSTEM_PROMPT,
+        llm_output_schema=LlmIsNewsOrOpinionModel,
+    )
+
+
+def run_openai_engine_smoke(
+    posts_csv: Path,
+    post_count: int,
+    id_column: str,
+    text_column: str,
+) -> OpenAIEngineSmokeMetrics:
+    """Label posts with the OpenAI engine and return smoke-test metrics."""
+    tasks = load_smoke_label_tasks(posts_csv, post_count, id_column, text_column)
+    engine = build_openai_engine(
+        news_or_opinion_openai_spec(),
+        FeatureRunConfig(batch_size=post_count, max_concurrency=SMOKE_MAX_CONCURRENCY),
+    )
+    started_at = time.perf_counter()
+    labels = engine.batch_label_records(tasks)
+    elapsed_seconds = time.perf_counter() - started_at
+    usage = engine.last_batch_usage
+    if usage is None:
+        raise RuntimeError("OpenAI Batch engine did not record token usage")
+    return compute_openai_engine_smoke_metrics(
+        usage,
+        elapsed_seconds,
+        len(labels),
+        DEFAULT_OPENAI_BATCH_ENGINE_CONFIG.model,
+    )
+
+
+def main(
+    posts_csv: Path = typer.Option(DEFAULT_SMOKE_POSTS_CSV, "--posts-csv"),
+    post_count: int = typer.Option(SMOKE_POST_COUNT, "--post-count"),
+    id_column: str = typer.Option(SMOKE_ID_COLUMN, "--id-column"),
+    text_column: str = typer.Option(SMOKE_TEXT_COLUMN, "--text-column"),
+) -> None:
+    """Run the OpenAI Batch news-or-opinion smoke test and print metrics JSON."""
+    metrics = run_openai_engine_smoke(posts_csv, post_count, id_column, text_column)
+    print(json.dumps(asdict(metrics), indent=SMOKE_METRICS_JSON_INDENT))
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
