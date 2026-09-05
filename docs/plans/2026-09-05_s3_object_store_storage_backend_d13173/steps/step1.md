@@ -21,7 +21,7 @@ Happy path through the caller: resolve the run directory, join the records filen
 | `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step2.md` | Locked contracts, smoke commands, forbidden files |
 | `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | Bucket, prefix, and hash rules shared by later steps |
 | `data_platform/utils/dataset.py` | `_DATA_ROOT`, `dataset_root`, manifest loading |
-| `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json` | SHA-256 of the pinned `posts.parquet` for the hash-on-read smoke |
+| `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json` | SHA-256 of the pinned `posts.parquet` for the read hash check in the overwrite smoke |
 | `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/metadata.json` | Pinned run and row count |
 | `data_platform/generate_features/platform_cli.py` | How feature CLIs construct `StorageManager` and use `root_dir` as a local `Path` |
 | `data_platform/generate_features/engines/base.py` | `append_records` is called with `run_dir or feature_storage.root_dir` |
@@ -34,7 +34,7 @@ Happy path through the caller: resolve the run directory, join the records filen
 
 - `data_platform/utils/object_store.py` (new)
 - `data_platform/utils/storage.py`
-- `lib/aws/s3.py` (only the conditional put, metadata on upload, and a head lookup)
+- `lib/aws/s3.py` (only the conditional put, metadata on upload, and an existence check)
 
 `CHANGELOG.md` is edited only in a separate commit after the PR is open. No smoke artifacts are committed; smoke output goes into the PR description.
 
@@ -100,7 +100,7 @@ Never `git add` a Bluesky parquet file. `git status` lists the pulled parquet fi
 - `StorageManager.__init__` sets `self._store = resolve_object_store(local_root=DATA_ROOT)`.
 - `StorageManager._key_for(path: Path) -> str` returns `path.relative_to(DATA_ROOT).as_posix()` and raises `ValueError` when the path is not under `DATA_ROOT`.
 - `load_records`, `load_run_metadata`, and `TwitterStorageManager.load_records` read bytes through `self._store.get_bytes` and parse them with pandas or `json.loads`. A missing key raises `FileNotFoundError` with the same message text as today.
-- `write_records` and `write_dataframe` serialize to bytes and call `put_bytes(key, body, allow_overwrite=False)`. These two methods create a records file for a run, so a second write to the same path now raises `FileExistsError` on both backends. No caller in the repository or in the test suite writes the same records file twice with these methods.
+- `write_records` and `write_dataframe` serialize to bytes and call `put_bytes(key, body, allow_overwrite=False)`. Both methods create the records file for a run, so a second write to the same path now raises `FileExistsError` on both backends. No caller in the repository or in the test suite writes the same records file twice with these methods.
 - `append_records`, `write_run_metadata`, and `write_run_metadata_atomic` call `put_bytes(key, body, allow_overwrite=True)`, because replacing the object is their purpose.
 - `all_runs_complete`, `latest_run_dir`, `create_new_run_dir`, `load_seen_ids_from_disk`, `load_seen_ids_from_all_runs`, and `require_all_runs_complete` keep using the local filesystem. The "latest run" lookup therefore still needs the run directory to exist locally when the backend is `s3`. Step 3 of the epic owns the production backend flip and the S3-side run listing.
 
@@ -138,7 +138,7 @@ then ValueError is raised
 
 1. Scaffold `data_platform/utils/object_store.py` with the module constants, the protocol, both classes, and `resolve_object_store`, all with `NotImplementedError` bodies. Import it from `storage.py`. Commit.
 2. Fill in the signatures listed under Contracts. Commit.
-3. Implement `lib/aws/s3.py` `head_object` and the `metadata` and `if_none_match` arguments on `upload_bytes`. Commit.
+3. Implement `lib/aws/s3.py` `object_exists` and the `metadata` and `if_none_match` arguments on `upload_bytes`. Commit.
 4. Implement `validate_key`, `is_lfs_pointer`, `sha256_hex`, and `LocalObjectStore`. Commit.
 5. Implement `S3ObjectStore` and `resolve_object_store`. Commit.
 6. Route `load_records`, `load_run_metadata`, and `TwitterStorageManager.load_records` through the store. Commit.

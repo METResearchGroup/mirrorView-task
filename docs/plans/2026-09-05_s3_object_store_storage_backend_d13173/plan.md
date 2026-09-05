@@ -9,7 +9,7 @@
 
 ## Overview
 
-`data_platform/utils/storage.py` reads and writes pipeline files only on local disk under `data_platform/data/`. Epic #180 moves the pinned Bluesky dataset to the `mirrorview-experimental-artifacts` S3 bucket, so the storage layer needs a second backend that reads and writes the same paths as S3 keys. The plan adds `data_platform/utils/object_store.py` with a local store and an S3 store behind one small interface, and it routes the six read and write methods of `StorageManager` through whichever store an environment variable selects. Local disk stays the default when the variable is unset, so nothing changes for developers or for the existing test suite.
+`data_platform/utils/storage.py` reads and writes pipeline files only on local disk under `data_platform/data/`. Epic #180 moves the pinned Bluesky dataset to the `mirrorview-experimental-artifacts` S3 bucket, so the storage layer needs a second backend that reads and writes the same relative paths as S3 keys under the `data_platform/data/` prefix. The plan adds `data_platform/utils/object_store.py` with a local store and an S3 store behind one small interface, and it routes the six read and write methods of `StorageManager` through whichever store an environment variable selects. Local disk stays the default when the variable is unset, so nothing changes for developers or for the existing test suite.
 
 The S3 store refuses four kinds of bad writes and reads. It rejects Git LFS pointer text, keys that escape the `data_platform/data/` prefix, uploads without a recorded SHA-256, and overwrites of an existing object unless the caller asks for one.
 
