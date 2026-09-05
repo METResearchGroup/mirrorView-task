@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Protocol
@@ -25,6 +26,7 @@ from data_platform.generate_features.engines.openai_batch import (
 )
 from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
 from lib.constants import DEFAULT_LLM_MODEL
+from lib.load_env_vars import EnvVarsContainer
 from lib.timestamp_utils import get_current_timestamp
 
 OPENAI_BATCH_COMPLETION_WINDOW = "24h"
@@ -237,14 +239,26 @@ def _label_row_for_task(
 
 
 def create_openai_client() -> OpenAIBatchClient:
-    raise NotImplementedError
+    """Build an OpenAI SDK client using OPENAI_API_KEY."""
+    from openai import OpenAI
+
+    api_key = EnvVarsContainer.get_env_var("OPENAI_API_KEY", required=True)
+    return OpenAI(api_key=api_key)
 
 
 def build_openai_engine(
     spec: FeatureSpec,
     run_config: FeatureRunConfig,
 ) -> OpenAIBatchEngine:
-    raise NotImplementedError
+    """Construct the OpenAI Batch engine with the default SDK client and clock."""
+    return OpenAIBatchEngine(
+        spec,
+        run_config,
+        create_openai_client(),
+        DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
+        time.sleep,
+        time.monotonic,
+    )
 
 
 def _require_batch_not_failed(batch_id: str, status: str) -> None:
