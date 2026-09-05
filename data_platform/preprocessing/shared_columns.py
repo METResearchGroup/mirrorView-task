@@ -21,14 +21,15 @@ def add_standardized_author_columns(
 ) -> pd.DataFrame:
     """Copy the platform author-handle source column onto shared ``author_handle``.
 
-    Each platform names the handle differently in raw storage: Reddit uses
-    ``author``, Twitter uses ``author_id``, and Bluesky already stores
-    ``author_handle``. Downstream preprocessing, features, and curation read
-    one column—``author_handle``—so this helper copies from the platform-specific
-    source named on the spec and overwrites any existing ``author_handle`` value.
+    Each platform stores the handle in a different column in raw storage. Reddit
+    stores ``author``, Twitter stores ``author_id``, and Bluesky stores
+    ``author_handle``. Downstream preprocessing, feature extraction, and curation
+    pipelines read a single column named ``author_handle``. This helper copies the
+    value from the platform-specific source column named on the specification, and
+    it overwrites any existing ``author_handle`` value.
 
-    Original platform columns (for example Reddit ``author`` or Twitter
-    ``username``/``author_id``) are left unchanged. ``author_id`` is not added or modified.
+    Original platform columns, for example Reddit ``author`` or Twitter
+    ``username`` and ``author_id``, are left unchanged. ``author_id`` is not added or modified.
 
     Parameters
     ----------

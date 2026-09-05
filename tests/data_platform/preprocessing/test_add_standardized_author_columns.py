@@ -32,7 +32,7 @@ class TestAddStandardizedAuthorColumns:
     def test_copies_twitter_author_id_onto_author_handle_and_keeps_native_fields(
         self,
     ) -> None:
-        """Twitter rows copy author_id onto author_handle and keep username and author_id."""
+        """Verify that Twitter rows copy author_id to author_handle and preserve native columns."""
         username = ""
         author_id = "123"
         source = pd.DataFrame(

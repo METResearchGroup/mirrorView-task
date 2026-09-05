@@ -44,16 +44,13 @@ class TestSearchRecentTweetsKwargs:
     """Tests for _search_recent_tweets_kwargs()."""
 
     def test_omits_expansions_and_user_fields(self) -> None:
-        """Verifies expansions and user_fields are omitted to cut per-tweet cost."""
-        # Arrange
+        """Verify that search arguments omit expansions and user fields to lower the cost for each tweet."""
         query = "mirrorview lang:en"
         max_results = 25
         next_token = None
 
-        # Act
         result = _search_recent_tweets_kwargs(query, max_results, next_token)
 
-        # Assert
         assert result["query"] == query
         assert result["max_results"] == max_results
         assert result["tweet_fields"] == ["created_at", "public_metrics", "author_id"]
@@ -62,16 +59,13 @@ class TestSearchRecentTweetsKwargs:
         assert "next_token" not in result
 
     def test_includes_next_token_when_present(self) -> None:
-        """Verifies next_token is passed when not None."""
-        # Arrange
+        """Verify that next_token is passed when present."""
         query = "mirrorview lang:en"
         max_results = 50
         next_token = "b26v89c19zq"
 
-        # Act
         result = _search_recent_tweets_kwargs(query, max_results, next_token)
 
-        # Assert
         assert result["next_token"] == next_token
         assert "expansions" not in result
         assert "user_fields" not in result
@@ -81,20 +75,17 @@ class TestTweetToRow:
     """Tests for tweet_to_row()."""
 
     def test_populates_empty_username_and_validates_model(self) -> None:
-        """Verifies username is an empty string and row satisfies SyncTwitterPostModel."""
-        # Arrange
+        """Verify that username is an empty string and that the row matches SyncTwitterPostModel."""
         tweet = _make_mock_tweet(tweet_id="101", author_id="author_999")
         keyword = "ai"
         sync_timestamp = "2026_09_05-12:00:00"
 
-        # Act
         result = tweet_to_row(
             tweet,
             keyword=keyword,
             sync_timestamp=sync_timestamp,
         )
 
-        # Assert
         assert result["tweet_id"] == "101"
         assert result["author_id"] == "author_999"
         assert result["username"] == ""
@@ -111,8 +102,7 @@ class TestAppendTweetsFromResponse:
     """Tests for _append_tweets_from_response()."""
 
     def test_appends_rows_with_empty_username_and_returns_next_token(self) -> None:
-        """Verifies rows are appended without user expansions and next_token is returned."""
-        # Arrange
+        """Verify that rows are appended without user expansions and that next_token is returned."""
         tweet1 = _make_mock_tweet(tweet_id="1", author_id="auth_1")
         tweet2 = _make_mock_tweet(tweet_id="2", author_id="auth_2")
         response = SimpleNamespace(
@@ -121,7 +111,6 @@ class TestAppendTweetsFromResponse:
         )
         rows: list[dict[str, object]] = []
 
-        # Act
         result = _append_tweets_from_response(
             response,
             rows,
@@ -130,7 +119,6 @@ class TestAppendTweetsFromResponse:
             sync_timestamp="2026_09_05-12:00:00",
         )
 
-        # Assert
         assert result == "token_page_2"
         assert len(rows) == 2
         assert rows[0]["author_id"] == "auth_1"
@@ -139,12 +127,10 @@ class TestAppendTweetsFromResponse:
         assert rows[1]["username"] == ""
 
     def test_returns_none_when_response_is_empty(self) -> None:
-        """Verifies None is returned when response has no data."""
-        # Arrange
+        """Verify that the function returns None when the response has no data."""
         response = SimpleNamespace(data=None)
         rows: list[dict[str, object]] = []
 
-        # Act
         result = _append_tweets_from_response(
             response,
             rows,
@@ -153,7 +139,6 @@ class TestAppendTweetsFromResponse:
             sync_timestamp="2026_09_05-12:00:00",
         )
 
-        # Assert
         assert result is None
         assert len(rows) == 0
 
@@ -162,8 +147,7 @@ class TestFetchPostsForKeyword:
     """Tests for fetch_posts_for_keyword()."""
 
     def test_fetches_posts_without_user_expansion_kwargs(self) -> None:
-        """Verifies search_recent_tweets is called with no expansions or user_fields."""
-        # Arrange
+        """Verify that fetch_posts_for_keyword calls search_recent_tweets without expansions or user fields."""
         tweet = _make_mock_tweet(tweet_id="100", author_id="auth_100")
         response = SimpleNamespace(
             data=[tweet],
@@ -172,7 +156,6 @@ class TestFetchPostsForKeyword:
         mock_client = MagicMock()
         mock_client.search_recent_tweets.return_value = response
 
-        # Act
         rows, stats = fetch_posts_for_keyword(
             mock_client,
             "test_keyword",
@@ -182,7 +165,6 @@ class TestFetchPostsForKeyword:
             sync_timestamp="2026_09_05-12:00:00",
         )
 
-        # Assert
         assert len(rows) == 1
         assert rows[0]["username"] == ""
         assert rows[0]["author_id"] == "auth_100"

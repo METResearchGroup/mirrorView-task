@@ -2,7 +2,7 @@
 
 ## 2026-09-05
 
-1. Twitter ingestion drops user expansions and user fields to eliminate per-tweet User: Read resource charges, and Twitter preprocessing standardizes author handle directly from author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
+1. Twitter sync requests now omit user expansions and user fields, so requests avoid User Read charges for each tweet. In preprocessing, the pipeline now populates the author handle directly from the author ID. [PR #173](https://github.com/METResearchGroup/mirrorView-task/pull/173)
 
 ## 2026-09-04
 
