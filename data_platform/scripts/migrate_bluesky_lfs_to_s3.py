@@ -10,12 +10,14 @@ Run from the repo root:
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 from pathlib import Path
 from typing import Sequence
 
 from lib.aws.s3 import S3
 from lib.constants import REPO_ROOT
+from lib.timestamp_utils import get_current_timestamp
 
 BUCKET = "mirrorview-experimental-artifacts"
 REGION = "us-east-2"
@@ -151,19 +153,46 @@ def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
     RuntimeError
         If the re-downloaded object differs in length or SHA-256.
     """
-    raise NotImplementedError
+    key = repo_relative_path
+    local_sha256 = sha256_hex(data)
+    s3.upload_bytes(key, data, content_type=content_type_for(repo_relative_path))
+    remote = s3.get_bytes(key)
+    remote_sha256 = sha256_hex(remote)
+    if len(remote) != len(data) or remote_sha256 != local_sha256:
+        raise RuntimeError(
+            f"remote object differs for {key}: "
+            f"{len(remote)} bytes {remote_sha256} != {len(data)} bytes {local_sha256}"
+        )
+    return {
+        "repo_relative_path": repo_relative_path,
+        "s3_key": key,
+        "bytes": len(data),
+        "sha256": local_sha256,
+    }
 
 
 def write_inventory(rows: list[dict], path: Path) -> None:
     """Write the migration inventory JSON with rows sorted by repo-relative path."""
-    raise NotImplementedError
+    inventory = {
+        "bucket": BUCKET,
+        "region": REGION,
+        "dataset_id": DATASET_ID,
+        "uploaded_at": get_current_timestamp(),
+        "object_count": len(rows),
+        "objects": sorted(rows, key=lambda row: row["repo_relative_path"]),
+    }
+    path.write_text(json.dumps(inventory, indent=2) + "\n")
 
 
 def main() -> None:
     paths = scoped_repo_relative_paths()
     run_git_lfs_pull(LFS_INCLUDE_PATTERNS)
     s3 = S3(BUCKET, region_name=REGION)
-    rows = [upload_and_verify(s3, path, read_scoped_bytes(path)) for path in paths]
+    rows = []
+    for path in paths:
+        row = upload_and_verify(s3, path, read_scoped_bytes(path))
+        print(f"verified s3://{BUCKET}/{row['s3_key']} ({row['bytes']} bytes)")
+        rows.append(row)
     write_inventory(rows, INVENTORY_PATH)
     print(f"uploaded {len(rows)} objects to s3://{BUCKET}/")
 
