@@ -29,11 +29,11 @@ class TestAddStandardizedAuthorColumns:
         assert "author_id" not in result.columns
         assert STANDARDIZED_AUTHOR_HANDLE_COLUMN not in source.columns
 
-    def test_copies_twitter_username_onto_author_handle_and_keeps_native_fields(
+    def test_copies_twitter_author_id_onto_author_handle_and_keeps_native_fields(
         self,
     ) -> None:
-        """Twitter rows copy username onto author_handle and keep username and author_id."""
-        username = "handle"
+        """Twitter rows copy author_id onto author_handle and keep username and author_id."""
+        username = ""
         author_id = "123"
         source = pd.DataFrame(
             [mock_tweet_row("1000000000000000001", username=username, author_id=author_id)]
@@ -41,7 +41,7 @@ class TestAddStandardizedAuthorColumns:
 
         result = add_standardized_author_columns(source, TWITTER_SPEC)
 
-        assert result.iloc[0][STANDARDIZED_AUTHOR_HANDLE_COLUMN] == username
+        assert result.iloc[0][STANDARDIZED_AUTHOR_HANDLE_COLUMN] == author_id
         assert result.iloc[0]["username"] == username
         assert result.iloc[0]["author_id"] == author_id
 
