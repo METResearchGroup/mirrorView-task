@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pandas as pd
 import typer
+from openai.types import BatchUsage
 
 from data_platform.generate_features.engines.openai_engine import (
     DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
@@ -30,14 +31,12 @@ from data_platform.generate_features.models import (
     FeatureRunConfig,
     FeatureSpec,
     LabelTask,
-    OpenAIBatchTokenUsage,
 )
 from lib.constants import REPO_ROOT
 
 SMOKE_POST_COUNT = 100
 SMOKE_ID_COLUMN = "post_primary_key"
 SMOKE_TEXT_COLUMN = "original_text"
-SMOKE_MAX_CONCURRENCY = 1
 SMOKE_METRICS_JSON_INDENT = 2
 DEFAULT_SMOKE_POSTS_CSV = (
     REPO_ROOT
@@ -94,7 +93,8 @@ def load_smoke_label_tasks(
 
 
 def compute_openai_engine_smoke_metrics(
-    usage: OpenAIBatchTokenUsage,
+    usage: BatchUsage,
+    request_count: int,
     elapsed_seconds: float,
     labeled_count: int,
     model: str,
@@ -102,7 +102,7 @@ def compute_openai_engine_smoke_metrics(
     """Compute throughput and per-request token estimates for a smoke run."""
     if elapsed_seconds <= 0:
         raise ValueError("elapsed_seconds must be positive")
-    if usage.request_count <= 0:
+    if request_count <= 0:
         raise ValueError("request_count must be greater than 0")
     return OpenAIEngineSmokeMetrics(
         post_count=labeled_count,
@@ -110,10 +110,10 @@ def compute_openai_engine_smoke_metrics(
         elapsed_seconds=elapsed_seconds,
         posts_per_second=labeled_count / elapsed_seconds,
         tokens_per_second=usage.total_tokens / elapsed_seconds,
-        estimated_input_tokens_per_request=usage.prompt_tokens / usage.request_count,
-        estimated_output_tokens_per_request=usage.completion_tokens / usage.request_count,
-        prompt_tokens=usage.prompt_tokens,
-        completion_tokens=usage.completion_tokens,
+        estimated_input_tokens_per_request=usage.input_tokens / request_count,
+        estimated_output_tokens_per_request=usage.output_tokens / request_count,
+        prompt_tokens=usage.input_tokens,
+        completion_tokens=usage.output_tokens,
         total_tokens=usage.total_tokens,
         model=model,
     )
@@ -141,16 +141,17 @@ def run_openai_engine_smoke(
     print(f"Submitting {len(tasks)} posts to the OpenAI Batch API...", flush=True)
     engine = build_openai_engine(
         news_or_opinion_openai_spec(),
-        FeatureRunConfig(batch_size=post_count, max_concurrency=SMOKE_MAX_CONCURRENCY),
+        FeatureRunConfig(),
     )
     started_at = time.perf_counter()
     labels = engine.batch_label_records(tasks)
     elapsed_seconds = time.perf_counter() - started_at
-    usage = engine.last_batch_usage
-    if usage is None:
-        raise RuntimeError("OpenAI Batch engine did not record token usage")
+    batch = engine.last_batch
+    if batch is None or batch.usage is None:
+        raise RuntimeError("Completed OpenAI Batch did not report token usage")
     return compute_openai_engine_smoke_metrics(
-        usage,
+        batch.usage,
+        batch.request_counts.completed,
         elapsed_seconds,
         len(labels),
         DEFAULT_OPENAI_BATCH_ENGINE_CONFIG.model,

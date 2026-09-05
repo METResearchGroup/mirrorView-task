@@ -91,10 +91,8 @@ class TestOpenAIBatchEngineBatchLabelRecords:
         assert [row["source_record_id"] for row in result] == [URI_POST_A, URI_POST_B]
         assert [row["category"] for row in result] == ["news", "opinion"]
         assert result[0]["label_timestamp"] == LABEL_TIMESTAMP
-        assert engine.last_batch_usage is not None
-        assert engine.last_batch_usage.prompt_tokens == 22
-        assert engine.last_batch_usage.completion_tokens == 5
-        assert engine.last_batch_usage.request_count == 2
+        assert engine.last_batch is not None
+        assert engine.last_batch.id == "batch_1"
         client.files.create.assert_called_once()
         uploaded_file = client.files.create.call_args.kwargs["file"]
         assert isinstance(uploaded_file, io.IOBase)
@@ -229,4 +227,4 @@ class TestBuildOpenAIEngine:
         result = build_openai_engine(spec, FeatureRunConfig())
 
         assert isinstance(result, OpenAIBatchEngine)
-        assert result.last_batch_usage is None
+        assert result.last_batch is None

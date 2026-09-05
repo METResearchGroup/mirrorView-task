@@ -22,16 +22,6 @@ class LabelTask:
 
 
 @dataclass(frozen=True)
-class OpenAIBatchTokenUsage:
-    """Prompt and completion token totals for one completed OpenAI Batch."""
-
-    prompt_tokens: int
-    completion_tokens: int
-    total_tokens: int
-    request_count: int
-
-
-@dataclass(frozen=True)
 class FeatureRunConfig:
     batch_size: int = 64
     max_concurrency: int = 80

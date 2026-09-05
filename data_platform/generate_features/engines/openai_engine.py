@@ -14,7 +14,6 @@ import tempfile
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any, Protocol
 
 from openai.lib._parsing._completions import (
@@ -33,7 +32,6 @@ from data_platform.generate_features.models import (
     FeatureRunConfig,
     FeatureSpec,
     LabelTask,
-    OpenAIBatchTokenUsage,
 )
 from lib.constants import DEFAULT_LLM_MODEL
 from lib.load_env_vars import EnvVarsContainer
@@ -87,7 +85,7 @@ DEFAULT_OPENAI_BATCH_ENGINE_CONFIG = OpenAIBatchEngineConfig(
 class OpenAIBatchEngine(BaseBatchExecutionEngine):
     """Labels a batch of posts through OpenAI's Batch API with structured output.
 
-    ``last_batch_usage`` is set after a successful ``batch_label_records`` call.
+    ``last_batch`` is set after a successful ``batch_label_records`` call.
     """
 
     def __init__(
@@ -103,7 +101,7 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         self._client = client
         self._engine_config = engine_config
         self._sleep_fn = sleep_fn
-        self.last_batch_usage: OpenAIBatchTokenUsage | None = None
+        self.last_batch: Batch | None = None
 
     def batch_label_records(self, tasks: list[LabelTask]) -> list[dict]:
         """Submit tasks as one OpenAI Batch and return validated label rows."""
@@ -129,7 +127,7 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
             )
             for index, task in enumerate(tasks)
         ]
-        self.last_batch_usage = _token_usage(list(completions_by_id.values()))
+        self.last_batch = completed_batch
         return rows
 
 
@@ -219,11 +217,11 @@ def _upload_requests(
         for request in requests:
             batch_file.write(f"{json.dumps(request)}\n".encode())
         batch_file.flush()
-        with Path(batch_file.name).open("rb") as input_file:
-            return client.files.create(
-                file=input_file,
-                purpose=OPENAI_BATCH_FILE_PURPOSE,
-            ).id
+        batch_file.seek(0)
+        return client.files.create(
+            file=batch_file.file,
+            purpose=OPENAI_BATCH_FILE_PURPOSE,
+        ).id
 
 
 def _download_output_lines(
@@ -296,20 +294,6 @@ def _label_row_for_task(
         label_timestamp=label_timestamp,
     )
     return spec.model.model_validate(row).model_dump()
-
-
-def _token_usage(completions: list[ChatCompletion]) -> OpenAIBatchTokenUsage:
-    usages = [completion.usage for completion in completions]
-    prompt_tokens = sum(usage.prompt_tokens for usage in usages if usage is not None)
-    completion_tokens = sum(
-        usage.completion_tokens for usage in usages if usage is not None
-    )
-    return OpenAIBatchTokenUsage(
-        prompt_tokens=prompt_tokens,
-        completion_tokens=completion_tokens,
-        total_tokens=prompt_tokens + completion_tokens,
-        request_count=len(completions),
-    )
 
 
 def create_openai_client() -> OpenAIBatchClient:

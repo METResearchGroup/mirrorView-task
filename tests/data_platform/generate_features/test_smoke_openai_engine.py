@@ -5,14 +5,27 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from openai.types import BatchUsage
 
-from data_platform.generate_features.models import LabelTask, OpenAIBatchTokenUsage
+from data_platform.generate_features.models import LabelTask
 from data_platform.generate_features.smoke_openai_engine import (
     OpenAIEngineSmokeMetrics,
     compute_openai_engine_smoke_metrics,
     load_smoke_label_tasks,
 )
 from tests.data_platform.constants import URI_POST_A, URI_POST_B
+
+
+def _batch_usage(input_tokens: int, output_tokens: int) -> BatchUsage:
+    return BatchUsage.model_validate(
+        {
+            "input_tokens": input_tokens,
+            "input_tokens_details": {"cached_tokens": 0},
+            "output_tokens": output_tokens,
+            "output_tokens_details": {"reasoning_tokens": 0},
+            "total_tokens": input_tokens + output_tokens,
+        }
+    )
 
 
 class TestLoadSmokeLabelTasks:
@@ -65,15 +78,11 @@ class TestComputeOpenAIEngineSmokeMetrics:
     """Tests for compute_openai_engine_smoke_metrics()."""
 
     def test_reports_throughput_and_per_request_token_estimates(self) -> None:
-        usage = OpenAIBatchTokenUsage(
-            prompt_tokens=1000,
-            completion_tokens=50,
-            total_tokens=1050,
-            request_count=10,
-        )
+        usage = _batch_usage(1000, 50)
 
         result = compute_openai_engine_smoke_metrics(
             usage,
+            10,
             2.0,
             10,
             "gpt-5.4-nano",
@@ -95,23 +104,13 @@ class TestComputeOpenAIEngineSmokeMetrics:
         assert result == expected
 
     def test_raises_when_elapsed_time_is_not_positive(self) -> None:
-        usage = OpenAIBatchTokenUsage(
-            prompt_tokens=10,
-            completion_tokens=2,
-            total_tokens=12,
-            request_count=1,
-        )
+        usage = _batch_usage(10, 2)
 
         with pytest.raises(ValueError, match="elapsed"):
-            compute_openai_engine_smoke_metrics(usage, 0.0, 1, "gpt-5.4-nano")
+            compute_openai_engine_smoke_metrics(usage, 1, 0.0, 1, "gpt-5.4-nano")
 
     def test_raises_when_request_count_is_zero(self) -> None:
-        usage = OpenAIBatchTokenUsage(
-            prompt_tokens=0,
-            completion_tokens=0,
-            total_tokens=0,
-            request_count=0,
-        )
+        usage = _batch_usage(0, 0)
 
         with pytest.raises(ValueError, match="request_count"):
-            compute_openai_engine_smoke_metrics(usage, 1.0, 0, "gpt-5.4-nano")
+            compute_openai_engine_smoke_metrics(usage, 0, 1.0, 0, "gpt-5.4-nano")
