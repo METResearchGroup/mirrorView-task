@@ -1,306 +1,260 @@
-# Step 12: Generate `is_structurally_complete` for 200,000 Bluesky posts
+# Step 12: Generate is_structurally_complete for 200,000 Bluesky posts
 
 ## Goal
 
-Run the approved S3-backed LLM campaign flow for the boolean feature `is_structurally_complete` on the pinned 200,000-post Bluesky preprocessed dataset. Publish the final feature Parquet file, SHA-256 manifest, progress history, runtime validation results, and one permanent run report under campaign prefix `bluesky_2026_09_03_235130_llm_features_v1`.
+Run the approved ten-post smoke flow and the full 200,000-post OpenAI Batch generation for the `is_structurally_complete` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
 
-This step is one future pull request. It is a run-only PR: no product code changes.
-
-## Caller / unit of work
-
-**Main caller:** `data_platform/generate_features/run_bluesky_llm_campaign.py` (delivered by Steps 4–7).
-
-**Task:** label every pinned input row once with `is_structurally_complete`, using OpenAI Batch at batch size 2000, then verify completeness and publish audit artifacts.
-
-**Out of scope:** Changing feature prompts, registry entries, OpenAI engine code, S3 storage helpers, consolidation logic, curation, automated tests, or any file outside the allowed list below.
+This step is one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
 
 ## Dependencies
 
-Merge and verify these plan steps before opening this PR:
+Do not start until Steps 3, 6, and 7 have merged to `main`. Steps 2, 4, and 5 are required transitively through Step 6 and Step 7. See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md`.
 
 | Step | Requirement |
 |------|-------------|
-| Step 3 | S3 is the production pipeline backend; pinned preprocessed Parquet is readable from S3 |
-| Step 4 | OpenAI Batch jobs persist provider job IDs and resume without duplicate jobs |
-| Step 5 | Immutable 2,000-row Parquet shards, final feature Parquet, hash manifest, deterministic order |
-| Step 6 | Deterministic ten-post smoke sample, cost estimate artifact, deliberate interrupt/resume check, parent campaign approval gate |
-| Step 7 | Durable progress records and rolling GitHub issue comment updates every 10,000 durable rows |
+| Step 3 | S3 is the production backend |
+| Step 6 | `smoke_bluesky_campaign.py` and cost aggregation command (single invocation includes deliberate interruption and resume) |
+| Step 7 | `progress.jsonl`, `watcher.json`, and watcher CLI |
 
-Steps 8–11 are not blockers for starting this feature, but this step follows the same run contract as those steps.
+## Main caller and implementation slice
 
-## Pinned identities
+**Main caller (campaign mode; same command resumes automatically):**
 
-Lock every command and artifact to these values. A different dataset, preprocess run, or campaign ID requires a new campaign.
+```bash
+export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-| Field | Value |
-|-------|-------|
-| Dataset ID | `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` |
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
+  --preprocessed-run 2026_09_03-23:51:30 \
+  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
+  --features is_structurally_complete \
+  --batch-size 2000
+```
+
+**Smoke caller (Phase A only; available after Step 6):**
+
+```bash
+PYTHONPATH=. uv run python data_platform/generate_features/smoke_bluesky_campaign.py \
+  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
+  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
+  --preprocessed-run 2026_09_03-23:51:30 \
+  --feature is_structurally_complete \
+  --output-dir docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/is_structurally_complete
+```
+
+**Implementation slice for this PR:** documentation and run artifacts only. No product code changes.
+
+## Pinned identity contract
+
+| Field | Pinned value |
+|-------|----------------|
+| Dataset id | `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` |
 | Preprocessed run | `2026_09_03-23:51:30` |
-| Preprocessed input object | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/posts.parquet` |
-| Expected input row count | `200000` |
-| Campaign prefix | `bluesky_2026_09_03_235130_llm_features_v1` |
-| Feature name | `is_structurally_complete` (exactly one feature per command) |
+| Preprocessed row count | `200000` |
+| Campaign id | `bluesky_2026_09_03_235130_llm_features_v1` |
+| Feature name | `is_structurally_complete` |
+| Run id | `bluesky_2026_09_03_235130_llm_features_v1:is_structurally_complete` |
+| Feature S3 prefix | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/` |
+| Model id | `gpt-5.4-nano` |
 | Batch size | `2000` |
-| Model ID | `gpt-5.4-nano` (`DEFAULT_LLM_MODEL`) |
-| Prompt source | `data_platform/generate_features/is_structurally_complete/generate_feature.py` `SYSTEM_PROMPT` |
-| Join key in feature files | `source_record_id` |
-| Records id column in preprocessed input | `uri` |
-
-Feature S3 prefix (isolated from other features):
-
-`s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/`
-
-## Feature contract
-
-Read-only reference: `data_platform/generate_features/is_structurally_complete/generate_feature.py` and `FEATURE_REGISTRY["is_structurally_complete"]`.
-
-Output schema per labeled row:
-
-| Column | Type | Accepted values |
-|--------|------|-----------------|
-| `source_record_id` | string | Must match pinned preprocessed `uri` / `source_record_id` |
-| `label_timestamp` | string | UTC timestamp from `lib.timestamp_utils.get_current_timestamp` |
-| `is_structurally_complete` | boolean | `true` or `false` only |
-
-Final consolidated wide-table column name remains `is_structurally_complete`.
-
-Do not run `is_toxic_tiered` (Perspective API) in this step.
+| Label field | `is_structurally_complete` |
+| Pydantic model | `IsStructurallyCompleteModel` |
+| Accepted label values | boolean `true` or `false` |
+| Prompt source | `data_platform/generate_features/is_structurally_complete/generate_feature.py` → `SYSTEM_PROMPT` |
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md` | Epic scope and campaign rules |
-| `/workspace/data_platform/generate_features/run_bluesky_llm_campaign.py` | Campaign CLI from Steps 4–7 |
-| `/workspace/data_platform/generate_features/is_structurally_complete/generate_feature.py` | Prompt and output schema |
-| `/workspace/data_platform/generate_features/registry.py` | `FEATURE_REGISTRY["is_structurally_complete"]` |
-| `/workspace/data_platform/generate_features/metadata.py` | Pinned model and prompt hash behavior on resume |
-| `/workspace/data_platform/generate_features/engines/openai_engine.py` | OpenAI Batch resume semantics |
-| `/workspace/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/metadata.json` | Expected `row_counts.output == 200000` |
-| `/workspace/AGENTS.md` | `PYTHONPATH=.`, AWS credential export in Cloud Agent |
+| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | Canonical layout and smoke flow |
+| `/workspace/data_platform/generate_features/generate_bluesky_features.py` | Campaign CLI |
+| `/workspace/data_platform/generate_features/smoke_bluesky_campaign.py` | Ten-post smoke (Step 6) |
+| `/workspace/data_platform/generate_features/feature_progress_watcher.py` | Progress watcher (Step 7) |
+| `/workspace/data_platform/generate_features/is_structurally_complete/generate_feature.py` | Prompt and schema |
+| `/workspace/AGENTS.md` | `PYTHONPATH=.`, AWS credentials, no automated tests |
 
 ## Files allowed to change
 
-Run artifacts only:
+Documentation artifacts only.
 
-- `/workspace/docs/reports/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete_REPORT.md` (permanent; keep after merge)
-- `/workspace/docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/is_structurally_complete_*` (temporary smoke and resume evidence; commit for review, delete before merge)
-- S3 objects under the feature prefix above
+**Temporary smoke artifacts (Phase A; deleted before merge):**
 
-Do not edit the plan package during implementation.
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/is_structurally_complete/is_structurally_complete_cost_report.json`
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/is_structurally_complete/is_structurally_complete_resume_evidence.json`
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/is_structurally_complete/is_structurally_complete_s3_checks.txt`
+
+**Permanent run report (Phase B; kept after merge):**
+
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/is_structurally_complete_run_report.md`
 
 ## Files forbidden to change
 
+- Any file under `/workspace/data_platform/`, `/workspace/lib/`, `/workspace/ml_tooling/`, `/workspace/tests/`, `/workspace/pyproject.toml`, `/workspace/CHANGELOG.md`
 - `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md`
-- `/workspace/data_platform/generate_features/**` except reading
-- `/workspace/data_platform/utils/**`
-- `/workspace/data_platform/curate/**`
-- `/workspace/data_platform/models/**`
-- `/workspace/tests/**`
-- `/workspace/CHANGELOG.md`
-- Any other repository file
+- Any other step file under `steps/`
+- Any path under the S3 prefixes for the other six features:
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_political/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_likely_spam/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_self_contained/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/political_stance/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/`
+- Any committed Parquet, CSV, or JSON label files anywhere in the repository
 
-## Workflow
 
-### Phase A — Ten-post smoke, cost estimate, interrupt/resume proof
+Do not add or run automated tests.
 
-1. Export AWS credentials per `AGENTS.md`.
-2. Run smoke with exactly one feature flag.
-3. Commit temporary smoke artifacts listed below so reviewers can inspect cost and resume evidence.
-4. Post the smoke cost estimate to this feature’s GitHub issue.
-5. Perform the deliberate interruption and resume check required by Step 6 on the same campaign prefix.
-6. Wait for parent campaign approval on the aggregate cost estimate before Phase B.
+## Locked contracts
 
-### Phase B — Full 200,000-row generation
+See `campaign_contract.md`. S3 objects for this feature:
 
-1. Run the same command with full-run flags only after parent approval.
-2. Keep one blocking OpenAI Batch job active for this feature.
-3. After each durable 2,000-row shard lands in S3, ensure Step 7 progress records update.
-4. At every 10,000 durable labeled rows, update the rolling GitHub issue comment via the watcher subagent pattern from Step 7.
-5. On failure, resume the failed run with the same campaign prefix and `--resume`; do not start a parallel provider job.
+| Object | Path |
+|--------|------|
+| Smoke input | `.../is_structurally_complete/smoke/input.parquet` |
+| Smoke output | `.../is_structurally_complete/smoke/output.parquet` |
+| Smoke cost report | `.../is_structurally_complete/smoke/cost_report.json` |
+| Smoke resume evidence | `.../is_structurally_complete/smoke/resume_evidence.json` |
+| Batches | `.../is_structurally_complete/batches/part-NNNNN.parquet` |
+| Final | `.../is_structurally_complete/final.parquet` |
+| Manifest | `.../is_structurally_complete/manifest.json` |
+| Progress | `.../is_structurally_complete/progress.jsonl` |
+| Errors | `.../is_structurally_complete/errors.jsonl` (when needed) |
+| Watcher | `.../is_structurally_complete/watcher.json` |
 
-### Phase C — Validation, permanent report, PR cleanup
+Q44 columns in `final.parquet`: `source_record_id`, `run_id`, `batch_id`, `request_id`, `attempt_count`, `label_timestamp`, `is_structurally_complete`.
 
-1. Run runtime validation commands below.
-2. Write the permanent run report.
-3. Remove temporary smoke artifacts from the branch before merge.
-4. Leave S3 final Parquet, manifest, progress history, and permanent report in place.
+After parent approval, `part-00000.parquet` must contain ten unchanged smoke labels plus 1,990 new labels (2,000 rows total). The next 99 provider jobs each write `part-00001` through `part-00099` with 2,000 rows each. Total: exactly 100 canonical batch objects and 200,000 rows. Preserve original smoke `batch_id` and `request_id` in the ten rows in `part-00000`. `manifest.json` batch entry for `part_index=0` may list both the smoke provider `batch_id` and the first production provider `batch_id`.
 
-## Exact commands
+## Two-phase pull request flow
 
-From the repo root. Export AWS credentials first:
+### Phase A: smoke, estimate, and review artifacts
 
-```bash
-export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
-```
+1. Confirm Steps 3, 6, and 7 are on `main`.
+2. Run `smoke_bluesky_campaign.py` once for `is_structurally_complete` only. The smoke caller performs one deliberate interruption and resume and writes untagged S3 evidence under `is_structurally_complete/smoke/` including `resume_evidence.json`. Do not repeat the interruption procedure in this step.
+3. Commit temporary Git smoke artifacts under `reports/smoke/is_structurally_complete/` (include a local copy of `resume_evidence.json`).
+4. Post estimated full-run cost to this feature's GitHub issue through authenticated GitHub integration.
+5. Stop. Do not start the 200,000-post run until the parent campaign issue has one aggregate estimate and explicit human approval.
 
-Install deps if needed:
+### Phase B: full run after parent approval
 
-```bash
-uv sync
-```
+1. Confirm parent campaign issue has explicit approval.
+2. Run the campaign CLI command above (same command resumes automatically).
+3. Run the Step 7 watcher at every 10,000 durable rows; post rolling comment through authenticated GitHub integration.
+4. Validate S3 artifacts and row counts.
+5. Write `reports/is_structurally_complete_run_report.md`.
+6. Delete temporary smoke artifacts from Git. S3 smoke evidence remains.
+7. Commit and push only the permanent run report.
 
-### Smoke (ten posts, one feature only)
+## Ordered work
 
-```bash
-PYTHONPATH=. uv run python data_platform/generate_features/run_bluesky_llm_campaign.py \
-  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
-  --preprocessed-run 2026_09_03-23:51:30 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
-  --feature is_structurally_complete \
-  --batch-size 2000 \
-  --phase smoke
-```
+1. Phase A smoke and cost estimate.
+2. Pause for parent aggregate and human approval.
+3. Phase B full run with watcher.
+4. Runtime validation.
+5. Permanent report and Git cleanup.
 
-Expected:
+## Exact commands and expected output
 
-- Stdout reports exactly ten labeled rows.
-- Smoke cost JSON is written under `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/is_structurally_complete_cost.json`.
-- Smoke outputs land under `.../is_structurally_complete/smoke/` on S3.
-- Deliberate interrupt/resume evidence is captured in `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/is_structurally_complete_resume_evidence.md`.
-
-### Full run (after parent approval)
-
-```bash
-PYTHONPATH=. uv run python data_platform/generate_features/run_bluesky_llm_campaign.py \
-  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
-  --preprocessed-run 2026_09_03-23:51:30 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
-  --feature is_structurally_complete \
-  --batch-size 2000 \
-  --phase full
-```
-
-Expected:
-
-- One OpenAI Batch job chain completes with 100 durable shards of 2,000 rows each (last shard may be shorter only if input count changes; it must not for this campaign).
-- Progress records advance in steps of 2,000 until `labeled == 200000`.
-- Rolling issue comment updates occur at 10000, 20000, …, 200000 durable rows.
-
-### Failed-run resume (same command shape as Step 8–11)
-
-If the run stops after partial progress:
-
-```bash
-PYTHONPATH=. uv run python data_platform/generate_features/run_bluesky_llm_campaign.py \
-  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
-  --preprocessed-run 2026_09_03-23:51:30 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
-  --feature is_structurally_complete \
-  --batch-size 2000 \
-  --phase full \
-  --resume
-```
-
-Expected:
-
-- The CLI reloads the persisted OpenAI Batch job ID and existing shards.
-- No duplicate provider job is created for rows already durably written.
-- Model ID and prompt hash in campaign metadata remain unchanged.
-
-### Runtime validation (required; not automated tests)
+### List feature prefix
 
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-PYTHONPATH=. uv run python - <<'PY'
-import duckdb
-
-final = "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/final/is_structurally_complete.parquet"
-posts = "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/posts.parquet"
-
-con = duckdb.connect()
-row = con.execute(f"""
-WITH inp AS (
-  SELECT CAST(source_record_id AS VARCHAR) AS source_record_id
-  FROM read_parquet('{posts}')
-),
-feat AS (
-  SELECT CAST(source_record_id AS VARCHAR) AS source_record_id,
-         is_structurally_complete
-  FROM read_parquet('{final}')
-)
-SELECT
-  (SELECT COUNT(*) FROM inp) AS input_rows,
-  (SELECT COUNT(*) FROM feat) AS feature_rows,
-  (SELECT COUNT(DISTINCT source_record_id) FROM feat) AS unique_ids,
-  (SELECT COUNT(*) FROM feat WHERE is_structurally_complete IS NULL) AS null_labels,
-  (SELECT COUNT(*) FROM inp i LEFT JOIN feat f USING (source_record_id) WHERE f.source_record_id IS NULL) AS missing_labels,
-  (SELECT COUNT(*) FROM feat f LEFT JOIN inp i USING (source_record_id) WHERE i.source_record_id IS NULL) AS extra_labels
-""").fetchone()
-print(row)
-assert row == (200000, 200000, 200000, 0, 0, 0)
-PY
+aws s3 ls s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/ --recursive
 ```
 
-Boolean value check:
+### Download final parquet for validation
+
+```bash
+aws s3 cp \
+  s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/final.parquet \
+  /tmp/is_structurally_complete_final.parquet
+```
+
+### Validate row count, Q44 schema, and accepted values
 
 ```bash
 PYTHONPATH=. uv run python - <<'PY'
-import duckdb
-path = "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/final/is_structurally_complete.parquet"
-bad = duckdb.connect().execute(f"""
-SELECT COUNT(*) FROM read_parquet('{path}')
-WHERE is_structurally_complete NOT IN (TRUE, FALSE)
-""").fetchone()[0]
-print("invalid_boolean_rows", bad)
-assert bad == 0
+import pandas as pd
+
+Q44_COLS = [
+    "source_record_id", "run_id", "batch_id", "request_id",
+    "attempt_count", "label_timestamp", "is_structurally_complete",
+]
+
+df = pd.read_parquet("/tmp/is_structurally_complete_final.parquet")
+assert list(df.columns) == Q44_COLS, df.columns.tolist()
+assert len(df) == 200_000, len(df)
+assert df["source_record_id"].is_unique
+assert df["run_id"].nunique() == 1
+assert df["run_id"].iloc[0] == "bluesky_2026_09_03_235130_llm_features_v1:is_structurally_complete"
+assert df["is_structurally_complete"].notna().all()
+assert df["is_structurally_complete"].dtype == bool or set(df["is_structurally_complete"].unique()) <= {True, False}
+print("ok", df["is_structurally_complete"].value_counts().to_dict())
 PY
 ```
 
-Manifest check:
+Expected: `ok` plus value counts and exit code 0.
+
+### Verify manifest SHA-256
 
 ```bash
-aws s3 cp s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/final/manifest.sha256.json -
+aws s3 cp s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/manifest.json -
 ```
 
-Expected: JSON listing SHA-256 for final Parquet and every durable shard, with row counts summing to 200000.
+Expected: JSON with `final_parquet.sha256` matching downloaded bytes (SHA-256 only, not ETag).
 
-## Required outputs
+### Read progress for watcher
 
-### S3 (permanent)
+```bash
+aws s3 cp s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/progress.jsonl /tmp/is_structurally_complete_progress.jsonl
+```
 
-| Object | Purpose |
-|--------|---------|
-| `.../is_structurally_complete/shards/shard_*.parquet` | Durable 2,000-row intermediate shards (lifecycle-tagged in Step 16) |
-| `.../is_structurally_complete/final/is_structurally_complete.parquet` | Final deduped feature file |
-| `.../is_structurally_complete/final/manifest.sha256.json` | SHA-256 manifest |
-| `.../is_structurally_complete/progress/` | Structured progress history |
-| `.../is_structurally_complete/metadata.json` | Campaign metadata including OpenAI job ID, model ID, prompt hash, labeled count |
+Confirm watcher comment updates at 10,000, 20,000, …, 200,000 durable rows.
 
-### Repository
+## Acceptance criteria
 
-| Path | Lifetime |
-|------|----------|
-| `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete_REPORT.md` | Permanent |
-| `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/is_structurally_complete_cost.json` | Temporary; remove before merge |
-| `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/is_structurally_complete_resume_evidence.md` | Temporary; remove before merge |
+1. Exactly 200,000 unique `source_record_id` values with zero missing outputs.
+2. Q44 columns present with correct `run_id` and accepted `is_structurally_complete` values.
+3. `manifest.json`, `progress.jsonl`, and `final.parquet` present under the feature prefix.
+4. Permanent run report records smoke estimate, actual cost, throughput, retries, error rate, and label counts.
+5. Watcher updated the GitHub comment at every 10,000 durable rows.
+6. Resume reused the same `run_id` with no duplicate OpenAI Batch job.
+7. S3 smoke evidence under `is_structurally_complete/smoke/` includes `resume_evidence.json` from the single smoke invocation.
+8. Temporary Git smoke files removed before merge. S3 smoke evidence remains.
+9. Only `reports/is_structurally_complete_run_report.md` remains from this step in Git.
 
-Permanent report must record: S3 URIs, input preprocessed hash, manifest digest, model ID, prompt hash, smoke and actual token counts, estimated and actual cost, throughput, retry counts, validation command results, and true/false label counts.
+## Failure conditions
 
-## Acceptance and failure
+- Full 200k run starts before parent campaign issue approval.
+- Smoke run twice for the same feature or different ten-post ids than other features.
+- Smoke writes any object under `batches/` (smoke never writes canonical batch objects).
+- `part-00000.parquet` after full run does not contain ten unchanged smoke labels plus 1,990 new labels.
+- Missing Q44 columns or wrong `run_id`.
+- Any non-boolean `is_structurally_complete` value.
+- Using `--checkpoint`, `--resume`, `run_bluesky_llm_campaign.py`, or `APPROVED.txt`.
+- Objects under `campaigns/`, `shards/`, `final/` subdirectory, or per-run timestamp folders.
+- Label files committed to Git.
+- Temporary smoke artifacts left in Git after merge.
+- Any product code change in this PR.
+- Any automated test added or run.
 
-| Check | Pass | Fail |
-|-------|------|------|
-| Dependencies | Steps 3–7 merged | Campaign CLI or S3 backend missing |
-| Single feature command | Every run uses only `--feature is_structurally_complete` | Multiple `--feature` values or full registry run |
-| Batch size | `--batch-size 2000` on smoke and full runs | Any other batch size |
-| Parent approval | Full run starts only after parent issue approval | Full run before approval |
-| Smoke artifacts | Temporary smoke files committed for review, then removed before merge | Smoke artifacts left in repo or never committed for review |
-| Completeness | Exactly 200000 unique `source_record_id` values, zero null labels, zero missing/extra IDs | Any other row count or join mismatch |
-| Accepted values | `is_structurally_complete` is boolean only | String booleans or other types |
-| Resume | Failed run continues with `--resume` on same prefix without duplicate OpenAI job | New provider job for already-labeled rows |
-| Progress | Rolling issue comment updates every 10000 durable rows | Missing updates |
-| Tests | Runtime checks only | New or modified automated tests in this PR |
-| Product code | No Python product code edits | Any change under `data_platform/generate_features/**` or related libraries |
-| Perspective toxicity | `is_toxic_tiered` never invoked | Perspective feature run attempted |
+## PR artifact and commit rules
 
-## Done when
+- Phase A: commit temporary smoke artifacts for review.
+- Phase B: commit only permanent run report; delete temporary smoke files before merge.
+- Do not edit `plan.md` or other step specs.
 
-1. Smoke, interrupt/resume proof, and cost estimate are posted and parent campaign approval is recorded.
-2. Final S3 Parquet, manifest, and progress history exist for `is_structurally_complete`.
-3. Runtime validation passes with exactly 200000 unique, non-null boolean labels.
-4. Permanent run report is committed; temporary smoke artifacts are removed before merge.
-5. Rolling GitHub issue updates cover 10000-row milestones through 200000.
+## Permanent run report contents
+
+`reports/is_structurally_complete_run_report.md` must include:
+
+- Pinned identity table (dataset, preprocessed run, campaign id, run id, model, prompt path, prompt hash)
+- S3 URIs for `final.parquet`, `manifest.json`, and `progress.jsonl`
+- Smoke estimated full-run cost and assumptions
+- Actual cost, tokens, throughput, retry count, error rate
+- Label counts for `is_structurally_complete=true` and `is_structurally_complete=false`
+- Validation command pass/fail summary
+- OpenAI Batch job id(s) from manifest or progress lines

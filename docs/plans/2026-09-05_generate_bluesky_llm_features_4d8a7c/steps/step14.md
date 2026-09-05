@@ -1,328 +1,270 @@
-# Step 14: Generate `llm_toxicity_tiered` for 200,000 Bluesky posts
+# Step 14: Generate llm_toxicity_tiered for 200,000 Bluesky posts
 
 ## Goal
 
-Run the approved S3-backed LLM campaign flow for the LLM toxicity feature `llm_toxicity_tiered` on the pinned 200,000-post Bluesky preprocessed dataset. Keep this output distinct from the Perspective API feature `is_toxic_tiered`. Publish the final feature Parquet file, SHA-256 manifest, progress history, runtime validation results, and one permanent run report under campaign prefix `bluesky_2026_09_03_235130_llm_features_v1`.
+Run the approved ten-post smoke flow and the full 200,000-post OpenAI Batch generation for the `llm_toxicity_tiered` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Keep this output distinct from Perspective API feature `is_toxic_tiered`. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
 
-This step is one future pull request. It is a run-only PR: no product code changes.
-
-## Caller / unit of work
-
-**Main caller:** `data_platform/generate_features/run_bluesky_llm_campaign.py` (delivered by Steps 4–7).
-
-**Task:** label every pinned input row once with `toxicity_tier` through the `llm_toxicity_tiered` registry entry, using OpenAI Batch at batch size 2000, then verify completeness and publish audit artifacts.
-
-**Out of scope:** Changing feature prompts, registry entries, OpenAI engine code, S3 storage helpers, consolidation logic, curation, running Perspective `is_toxic_tiered`, automated tests, or any file outside the allowed list below.
+This step is one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
 
 ## Dependencies
 
-Merge and verify these plan steps before opening this PR:
+Do not start until Steps 3, 6, and 7 have merged to `main`. Steps 2, 4, and 5 are required transitively through Step 6 and Step 7. See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md`.
 
 | Step | Requirement |
 |------|-------------|
-| Step 3 | S3 is the production pipeline backend; pinned preprocessed Parquet is readable from S3 |
-| Step 4 | OpenAI Batch jobs persist provider job IDs and resume without duplicate jobs |
-| Step 5 | Immutable 2,000-row Parquet shards, final feature Parquet, hash manifest, deterministic order |
-| Step 6 | Deterministic ten-post smoke sample, cost estimate artifact, deliberate interrupt/resume check, parent campaign approval gate |
-| Step 7 | Durable progress records and rolling GitHub issue comment updates every 10,000 durable rows |
+| Step 3 | S3 is the production backend |
+| Step 6 | `smoke_bluesky_campaign.py` and cost aggregation command (single invocation includes deliberate interruption and resume) |
+| Step 7 | `progress.jsonl`, `watcher.json`, and watcher CLI |
 
-Steps 8–11 are not blockers for starting this feature, but this step follows the same run contract as those steps.
+## Main caller and implementation slice
 
-## Pinned identities
+**Main caller (campaign mode; same command resumes automatically):**
 
-Lock every command and artifact to these values. A different dataset, preprocess run, or campaign ID requires a new campaign.
+```bash
+export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-| Field | Value |
-|-------|-------|
-| Dataset ID | `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` |
+PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
+  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
+  --preprocessed-run 2026_09_03-23:51:30 \
+  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
+  --features llm_toxicity_tiered \
+  --batch-size 2000
+```
+
+**Smoke caller (Phase A only; available after Step 6):**
+
+```bash
+PYTHONPATH=. uv run python data_platform/generate_features/smoke_bluesky_campaign.py \
+  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
+  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
+  --preprocessed-run 2026_09_03-23:51:30 \
+  --feature llm_toxicity_tiered \
+  --output-dir docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/llm_toxicity_tiered
+```
+
+**Implementation slice for this PR:** documentation and run artifacts only. No product code changes.
+
+## Pinned identity contract
+
+| Field | Pinned value |
+|-------|----------------|
+| Dataset id | `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` |
 | Preprocessed run | `2026_09_03-23:51:30` |
-| Preprocessed input object | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/posts.parquet` |
-| Expected input row count | `200000` |
-| Campaign prefix | `bluesky_2026_09_03_235130_llm_features_v1` |
-| Feature name | `llm_toxicity_tiered` (exactly one feature per command) |
+| Preprocessed row count | `200000` |
+| Campaign id | `bluesky_2026_09_03_235130_llm_features_v1` |
+| Feature name | `llm_toxicity_tiered` |
+| Run id | `bluesky_2026_09_03_235130_llm_features_v1:llm_toxicity_tiered` |
+| Feature S3 prefix | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/` |
+| Model id | `gpt-5.4-nano` |
 | Batch size | `2000` |
-| Model ID | `gpt-5.4-nano` (`DEFAULT_LLM_MODEL`) |
-| Prompt source | `data_platform/generate_features/llm_toxicity_tiered/generate_feature.py` `SYSTEM_PROMPT` |
-| Join key in feature files | `source_record_id` |
-| Records id column in preprocessed input | `uri` |
-| Forbidden feature | `is_toxic_tiered` must never run in this campaign |
-
-Feature S3 prefix (isolated from other features):
-
-`s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/`
-
-There must be no S3 objects under `.../is_toxic_tiered/` for this campaign.
-
-## Feature contract
-
-Read-only reference: `data_platform/generate_features/llm_toxicity_tiered/generate_feature.py` and `FEATURE_REGISTRY["llm_toxicity_tiered"]`.
-
-Output schema per labeled row:
-
-| Column | Type | Accepted values |
-|--------|------|-----------------|
-| `source_record_id` | string | Must match pinned preprocessed `uri` / `source_record_id` |
-| `label_timestamp` | string | UTC timestamp from `lib.timestamp_utils.get_current_timestamp` |
-| `toxicity_tier` | string | Exactly one of `low`, `medium`, `high` |
-
-Wide-table rename for Step 15: export column `llm_toxicity_tier` sourced from raw `toxicity_tier`. Do not write `toxicity_prob`. Do not join Perspective columns.
+| Label field | `toxicity_tier` |
+| Pydantic model | `LlmToxicityTieredModel` |
+| Accepted label values | `low`, `medium`, `high` |
+| Prompt source | `data_platform/generate_features/llm_toxicity_tiered/generate_feature.py` → `SYSTEM_PROMPT` |
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md` | Epic scope; LLM toxicity must stay distinct from Perspective |
-| `/workspace/data_platform/generate_features/run_bluesky_llm_campaign.py` | Campaign CLI from Steps 4–7 |
-| `/workspace/data_platform/generate_features/llm_toxicity_tiered/generate_feature.py` | Prompt and output schema |
-| `/workspace/data_platform/generate_features/is_toxic_tiered/generate_feature.py` | Perspective feature to avoid |
-| `/workspace/data_platform/generate_features/registry.py` | `llm_toxicity_tiered` vs `is_toxic_tiered` |
-| `/workspace/data_platform/generate_features/metadata.py` | Pinned model and prompt hash behavior on resume |
-| `/workspace/data_platform/generate_features/engines/openai_engine.py` | OpenAI Batch resume semantics |
-| `/workspace/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/metadata.json` | Expected `row_counts.output == 200000` |
-| `/workspace/AGENTS.md` | `PYTHONPATH=.`, AWS credential export in Cloud Agent |
+| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | Canonical layout and smoke flow |
+| `/workspace/data_platform/generate_features/generate_bluesky_features.py` | Campaign CLI |
+| `/workspace/data_platform/generate_features/smoke_bluesky_campaign.py` | Ten-post smoke (Step 6) |
+| `/workspace/data_platform/generate_features/feature_progress_watcher.py` | Progress watcher (Step 7) |
+| `/workspace/data_platform/generate_features/llm_toxicity_tiered/generate_feature.py` | Prompt and schema |
+| `/workspace/AGENTS.md` | `PYTHONPATH=.`, AWS credentials, no automated tests |
 
 ## Files allowed to change
 
-Run artifacts only:
+Documentation artifacts only.
 
-- `/workspace/docs/reports/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered_REPORT.md` (permanent; keep after merge)
-- `/workspace/docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/llm_toxicity_tiered_*` (temporary smoke and resume evidence; commit for review, delete before merge)
-- S3 objects under the feature prefix above
+**Temporary smoke artifacts (Phase A; deleted before merge):**
 
-Do not edit the plan package during implementation.
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/llm_toxicity_tiered/llm_toxicity_tiered_cost_report.json`
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/llm_toxicity_tiered/llm_toxicity_tiered_resume_evidence.json`
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke/llm_toxicity_tiered/llm_toxicity_tiered_s3_checks.txt`
+
+**Permanent run report (Phase B; kept after merge):**
+
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/llm_toxicity_tiered_run_report.md`
 
 ## Files forbidden to change
 
+- Any file under `/workspace/data_platform/`, `/workspace/lib/`, `/workspace/ml_tooling/`, `/workspace/tests/`, `/workspace/pyproject.toml`, `/workspace/CHANGELOG.md`
 - `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md`
-- `/workspace/data_platform/generate_features/**` except reading
-- `/workspace/data_platform/utils/**`
-- `/workspace/data_platform/curate/**`
-- `/workspace/data_platform/models/**`
-- `/workspace/tests/**`
-- `/workspace/CHANGELOG.md`
-- Any other repository file
+- Any other step file under `steps/`
+- Any path under the S3 prefixes for the other six features:
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_political/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_likely_spam/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_self_contained/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/is_structurally_complete/`
+ - `.../bluesky_2026_09_03_235130_llm_features_v1/political_stance/`
+- Any committed Parquet, CSV, or JSON label files anywhere in the repository
+- Running `is_toxic_tiered` or creating objects under `.../is_toxic_tiered/`
 
-Explicit prohibition: never invoke `--feature is_toxic_tiered`, never write Perspective outputs, and never create `.../campaigns/bluesky_2026_09_03_235130_llm_features_v1/is_toxic_tiered/`.
+Do not add or run automated tests.
 
-## Workflow
+## Locked contracts
 
-### Phase A — Ten-post smoke, cost estimate, interrupt/resume proof
+See `campaign_contract.md`. S3 objects for this feature:
 
-1. Export AWS credentials per `AGENTS.md`.
-2. Run smoke with exactly one feature flag: `llm_toxicity_tiered`.
-3. Commit temporary smoke artifacts listed below so reviewers can inspect cost and resume evidence.
-4. Post the smoke cost estimate to this feature’s GitHub issue.
-5. Perform the deliberate interruption and resume check required by Step 6 on the same campaign prefix.
-6. Wait for parent campaign approval on the aggregate cost estimate before Phase B.
+| Object | Path |
+|--------|------|
+| Smoke input | `.../llm_toxicity_tiered/smoke/input.parquet` |
+| Smoke output | `.../llm_toxicity_tiered/smoke/output.parquet` |
+| Smoke cost report | `.../llm_toxicity_tiered/smoke/cost_report.json` |
+| Smoke resume evidence | `.../llm_toxicity_tiered/smoke/resume_evidence.json` |
+| Batches | `.../llm_toxicity_tiered/batches/part-NNNNN.parquet` |
+| Final | `.../llm_toxicity_tiered/final.parquet` |
+| Manifest | `.../llm_toxicity_tiered/manifest.json` |
+| Progress | `.../llm_toxicity_tiered/progress.jsonl` |
+| Errors | `.../llm_toxicity_tiered/errors.jsonl` (when needed) |
+| Watcher | `.../llm_toxicity_tiered/watcher.json` |
 
-### Phase B — Full 200,000-row generation
+Q44 columns in `final.parquet`: `source_record_id`, `run_id`, `batch_id`, `request_id`, `attempt_count`, `label_timestamp`, `toxicity_tier`.
 
-1. Run the same command with full-run flags only after parent approval.
-2. Keep one blocking OpenAI Batch job active for this feature.
-3. After each durable 2,000-row shard lands in S3, ensure Step 7 progress records update.
-4. At every 10,000 durable labeled rows, update the rolling GitHub issue comment via the watcher subagent pattern from Step 7.
-5. On failure, resume the failed run with the same campaign prefix and `--resume`; do not start a parallel provider job.
+After parent approval, `part-00000.parquet` must contain ten unchanged smoke labels plus 1,990 new labels (2,000 rows total). The next 99 provider jobs each write `part-00001` through `part-00099` with 2,000 rows each. Total: exactly 100 canonical batch objects and 200,000 rows. Preserve original smoke `batch_id` and `request_id` in the ten rows in `part-00000`. `manifest.json` batch entry for `part_index=0` may list both the smoke provider `batch_id` and the first production provider `batch_id`.
 
-### Phase C — Validation, permanent report, PR cleanup
+## Two-phase pull request flow
 
-1. Run runtime validation commands below.
-2. Confirm no Perspective artifacts exist for this campaign prefix.
-3. Write the permanent run report including label counts for `low`, `medium`, and `high`.
-4. Remove temporary smoke artifacts from the branch before merge.
-5. Leave S3 final Parquet, manifest, progress history, and permanent report in place.
+### Phase A: smoke, estimate, and review artifacts
 
-## Exact commands
+1. Confirm Steps 3, 6, and 7 are on `main`.
+2. Run `smoke_bluesky_campaign.py` once for `llm_toxicity_tiered` only. The smoke caller performs one deliberate interruption and resume and writes untagged S3 evidence under `llm_toxicity_tiered/smoke/` including `resume_evidence.json`. Do not repeat the interruption procedure in this step.
+3. Commit temporary Git smoke artifacts under `reports/smoke/llm_toxicity_tiered/` (include a local copy of `resume_evidence.json`).
+4. Post estimated full-run cost to this feature's GitHub issue through authenticated GitHub integration.
+5. Stop. Do not start the 200,000-post run until the parent campaign issue has one aggregate estimate and explicit human approval.
 
-From the repo root. Export AWS credentials first:
+### Phase B: full run after parent approval
 
-```bash
-export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
-```
+1. Confirm parent campaign issue has explicit approval.
+2. Run the campaign CLI command above (same command resumes automatically).
+3. Run the Step 7 watcher at every 10,000 durable rows; post rolling comment through authenticated GitHub integration.
+4. Validate S3 artifacts and row counts.
+5. Write `reports/llm_toxicity_tiered_run_report.md`.
+6. Delete temporary smoke artifacts from Git. S3 smoke evidence remains.
+7. Commit and push only the permanent run report.
 
-Install deps if needed:
+## Ordered work
 
-```bash
-uv sync
-```
+1. Phase A smoke and cost estimate.
+2. Pause for parent aggregate and human approval.
+3. Phase B full run with watcher.
+4. Runtime validation.
+5. Permanent report and Git cleanup.
 
-### Smoke (ten posts, one feature only)
+## Exact commands and expected output
 
-```bash
-PYTHONPATH=. uv run python data_platform/generate_features/run_bluesky_llm_campaign.py \
-  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
-  --preprocessed-run 2026_09_03-23:51:30 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
-  --feature llm_toxicity_tiered \
-  --batch-size 2000 \
-  --phase smoke
-```
-
-Expected:
-
-- Stdout reports exactly ten labeled rows with `toxicity_tier` values.
-- Smoke cost JSON is written under `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/llm_toxicity_tiered_cost.json`.
-- Smoke outputs land under `.../llm_toxicity_tiered/smoke/` on S3.
-- Deliberate interrupt/resume evidence is captured in `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/llm_toxicity_tiered_resume_evidence.md`.
-
-### Full run (after parent approval)
-
-```bash
-PYTHONPATH=. uv run python data_platform/generate_features/run_bluesky_llm_campaign.py \
-  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
-  --preprocessed-run 2026_09_03-23:51:30 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
-  --feature llm_toxicity_tiered \
-  --batch-size 2000 \
-  --phase full
-```
-
-Expected:
-
-- One OpenAI Batch job chain completes with 100 durable shards of 2,000 rows each.
-- Progress records advance in steps of 2,000 until `labeled == 200000`.
-- Rolling issue comment updates occur at 10000, 20000, …, 200000 durable rows.
-
-### Failed-run resume
-
-```bash
-PYTHONPATH=. uv run python data_platform/generate_features/run_bluesky_llm_campaign.py \
-  --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
-  --preprocessed-run 2026_09_03-23:51:30 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
-  --feature llm_toxicity_tiered \
-  --batch-size 2000 \
-  --phase full \
-  --resume
-```
-
-Expected:
-
-- The CLI reloads the persisted OpenAI Batch job ID and existing shards.
-- No duplicate provider job is created for rows already durably written.
-- Model ID and prompt hash in campaign metadata remain unchanged.
-
-### Runtime validation (required; not automated tests)
+### List feature prefix
 
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-PYTHONPATH=. uv run python - <<'PY'
-import duckdb
-
-final = "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/final/llm_toxicity_tiered.parquet"
-posts = "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/posts.parquet"
-
-con = duckdb.connect()
-row = con.execute(f"""
-WITH inp AS (
-  SELECT CAST(source_record_id AS VARCHAR) AS source_record_id
-  FROM read_parquet('{posts}')
-),
-feat AS (
-  SELECT CAST(source_record_id AS VARCHAR) AS source_record_id,
-         toxicity_tier
-  FROM read_parquet('{final}')
-)
-SELECT
-  (SELECT COUNT(*) FROM inp) AS input_rows,
-  (SELECT COUNT(*) FROM feat) AS feature_rows,
-  (SELECT COUNT(DISTINCT source_record_id) FROM feat) AS unique_ids,
-  (SELECT COUNT(*) FROM feat WHERE toxicity_tier IS NULL) AS null_labels,
-  (SELECT COUNT(*) FROM inp i LEFT JOIN feat f USING (source_record_id) WHERE f.source_record_id IS NULL) AS missing_labels,
-  (SELECT COUNT(*) FROM feat f LEFT JOIN inp i USING (source_record_id) WHERE i.source_record_id IS NULL) AS extra_labels
-""").fetchone()
-print(row)
-assert row == (200000, 200000, 200000, 0, 0, 0)
-PY
+aws s3 ls s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/ --recursive
 ```
 
-Accepted-value check:
+### Download final parquet for validation
+
+```bash
+aws s3 cp \
+  s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/final.parquet \
+  /tmp/llm_toxicity_tiered_final.parquet
+```
+
+### Validate row count, Q44 schema, and accepted values
 
 ```bash
 PYTHONPATH=. uv run python - <<'PY'
-import duckdb
-path = "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/final/llm_toxicity_tiered.parquet"
-allowed = ("low", "medium", "high")
-con = duckdb.connect()
-bad = con.execute(f"""
-SELECT COUNT(*) FROM read_parquet('{path}')
-WHERE toxicity_tier NOT IN {allowed}
-""").fetchone()[0]
-print("invalid_toxicity_rows", bad)
-assert bad == 0
-cols = [r[0] for r in con.execute(f"DESCRIBE SELECT * FROM read_parquet('{path}')").fetchall()]
-assert "toxicity_prob" not in cols
-counts = con.execute(f"""
-SELECT toxicity_tier, COUNT(*) AS n
-FROM read_parquet('{path}')
-GROUP BY 1 ORDER BY 1
-""").fetchdf()
-print(counts.to_string(index=False))
+import pandas as pd
+
+Q44_COLS = [
+    "source_record_id", "run_id", "batch_id", "request_id",
+    "attempt_count", "label_timestamp", "toxicity_tier",
+]
+
+df = pd.read_parquet("/tmp/llm_toxicity_tiered_final.parquet")
+assert list(df.columns) == Q44_COLS, df.columns.tolist()
+assert len(df) == 200_000, len(df)
+assert df["source_record_id"].is_unique
+assert df["run_id"].nunique() == 1
+assert df["run_id"].iloc[0] == "bluesky_2026_09_03_235130_llm_features_v1:llm_toxicity_tiered"
+assert df["toxicity_tier"].notna().all()
+ACCEPTED = {"low", "medium", "high"}
+assert not (set(df["toxicity_tier"].unique()) - ACCEPTED)
+assert "toxicity_prob" not in df.columns
+print("ok", df["toxicity_tier"].value_counts().to_dict())
 PY
 ```
 
-Perspective absence check:
+Expected: `ok` plus value counts and exit code 0.
+
+### Verify manifest SHA-256
 
 ```bash
-aws s3 ls s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/is_toxic_tiered/ 2>&1 || true
+aws s3 cp s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/manifest.json -
 ```
 
-Expected: `An error occurred (NoSuchKey)` or empty listing. Any objects under that prefix fail this step.
+Expected: JSON with `final_parquet.sha256` matching downloaded bytes (SHA-256 only, not ETag).
 
-Manifest check:
+### Perspective absence check
 
 ```bash
-aws s3 cp s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/campaigns/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/final/manifest.sha256.json -
+aws s3 ls s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_toxic_tiered/ 2>&1 || true
 ```
 
-Expected: JSON listing SHA-256 for final Parquet and every durable shard, with row counts summing to 200000.
+Expected: no objects under that prefix.
 
-## Required outputs
+### Read progress for watcher
 
-### S3 (permanent)
+```bash
+aws s3 cp s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered/progress.jsonl /tmp/llm_toxicity_tiered_progress.jsonl
+```
 
-| Object | Purpose |
-|--------|---------|
-| `.../llm_toxicity_tiered/shards/shard_*.parquet` | Durable 2,000-row intermediate shards |
-| `.../llm_toxicity_tiered/final/llm_toxicity_tiered.parquet` | Final deduped feature file with raw column `toxicity_tier` |
-| `.../llm_toxicity_tiered/final/manifest.sha256.json` | SHA-256 manifest |
-| `.../llm_toxicity_tiered/progress/` | Structured progress history |
-| `.../llm_toxicity_tiered/metadata.json` | Campaign metadata including OpenAI job ID, model ID, prompt hash, labeled count |
+Confirm watcher comment updates at 10,000, 20,000, …, 200,000 durable rows.
 
-### Repository
+## Acceptance criteria
 
-| Path | Lifetime |
-|------|----------|
-| `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/llm_toxicity_tiered_REPORT.md` | Permanent |
-| `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/llm_toxicity_tiered_cost.json` | Temporary; remove before merge |
-| `docs/reports/bluesky_2026_09_03_235130_llm_features_v1/smoke/llm_toxicity_tiered_resume_evidence.md` | Temporary; remove before merge |
+1. Exactly 200,000 unique `source_record_id` values with zero missing outputs.
+2. Q44 columns present with correct `run_id` and accepted `toxicity_tier` values.
+3. `manifest.json`, `progress.jsonl`, and `final.parquet` present under the feature prefix.
+4. Permanent run report records smoke estimate, actual cost, throughput, retries, error rate, and label counts.
+5. Watcher updated the GitHub comment at every 10,000 durable rows.
+6. Resume reused the same `run_id` with no duplicate OpenAI Batch job.
+7. S3 smoke evidence under `llm_toxicity_tiered/smoke/` includes `resume_evidence.json` from the single smoke invocation.
+8. Temporary Git smoke files removed before merge. S3 smoke evidence remains.
+9. Only `reports/llm_toxicity_tiered_run_report.md` remains from this step in Git.
 
-Permanent report must record: S3 URIs, input preprocessed hash, manifest digest, model ID, prompt hash, smoke and actual token counts, estimated and actual cost, throughput, retry counts, validation command results, counts for `low`, `medium`, and `high`, and an explicit statement that `is_toxic_tiered` was not run.
+## Failure conditions
 
-## Acceptance and failure
+- Full 200k run starts before parent campaign issue approval.
+- Smoke run twice for the same feature or different ten-post ids than other features.
+- Smoke writes any object under `batches/` (smoke never writes canonical batch objects).
+- `part-00000.parquet` after full run does not contain ten unchanged smoke labels plus 1,990 new labels.
+- Missing Q44 columns or wrong `run_id`.
+- Any `toxicity_tier` value outside `low`, `medium`, `high`, or any Perspective run.
+- Using `--checkpoint`, `--resume`, `run_bluesky_llm_campaign.py`, or `APPROVED.txt`.
+- Objects under `campaigns/`, `shards/`, `final/` subdirectory, or per-run timestamp folders.
+- Label files committed to Git.
+- Temporary smoke artifacts left in Git after merge.
+- Any product code change in this PR.
+- Any automated test added or run.
 
-| Check | Pass | Fail |
-|-------|------|------|
-| Dependencies | Steps 3–7 merged | Campaign CLI or S3 backend missing |
-| Single feature command | Every run uses only `--feature llm_toxicity_tiered` | Multiple `--feature` values, full registry run, or `--feature is_toxic_tiered` |
-| Batch size | `--batch-size 2000` on smoke and full runs | Any other batch size |
-| Parent approval | Full run starts only after parent issue approval | Full run before approval |
-| Smoke artifacts | Temporary smoke files committed for review, then removed before merge | Smoke artifacts left in repo or never committed for review |
-| Completeness | Exactly 200000 unique `source_record_id` values, zero null labels, zero missing/extra IDs | Any other row count or join mismatch |
-| Accepted values | `toxicity_tier` in `{low, medium, high}` only | Any other label string or `toxicity_prob` column |
-| Perspective isolation | No `is_toxic_tiered` run and no campaign-prefix objects under `is_toxic_tiered/` | Perspective outputs present |
-| Resume | Failed run continues with `--resume` on same prefix without duplicate OpenAI job | New provider job for already-labeled rows |
-| Progress | Rolling issue comment updates every 10000 durable rows | Missing updates |
-| Tests | Runtime checks only | New or modified automated tests in this PR |
-| Product code | No Python product code edits | Any change under `data_platform/generate_features/**` or related libraries |
+## PR artifact and commit rules
 
-## Done when
+- Phase A: commit temporary smoke artifacts for review.
+- Phase B: commit only permanent run report; delete temporary smoke files before merge.
+- Do not edit `plan.md` or other step specs.
 
-1. Smoke, interrupt/resume proof, and cost estimate are posted and parent campaign approval is recorded.
-2. Final S3 Parquet, manifest, and progress history exist for `llm_toxicity_tiered` with raw column `toxicity_tier`.
-3. Runtime validation passes with exactly 200000 unique, non-null toxicity tiers in `{low, medium, high}`.
-4. No Perspective campaign artifacts exist.
-5. Permanent run report is committed; temporary smoke artifacts are removed before merge.
-6. Rolling GitHub issue updates cover 10000-row milestones through 200000.
+## Permanent run report contents
+
+`reports/llm_toxicity_tiered_run_report.md` must include:
+
+- Pinned identity table (dataset, preprocessed run, campaign id, run id, model, prompt path, prompt hash)
+- S3 URIs for `final.parquet`, `manifest.json`, and `progress.jsonl`
+- Smoke estimated full-run cost and assumptions
+- Actual cost, tokens, throughput, retry count, error rate
+- Label counts for `low`, `medium`, and `high`, plus explicit statement that `is_toxic_tiered` was not run
+- Validation command pass/fail summary
+- OpenAI Batch job id(s) from manifest or progress lines

@@ -1,16 +1,15 @@
-# Step 16: Expire intermediate data platform S3 shards after 30 days
+# Step 16: Expire intermediate data platform S3 batches after 30 days
 
 ## Goal
 
-Add an S3 bucket lifecycle rule on `mirrorview-experimental-artifacts` that expires only intermediate batch shards: objects under the `data_platform/data/` prefix that carry the object tag `intermediate-artifact=true`. Final Parquet feature files, hash manifests, progress records, and permanent run reports must not match the rule and must remain until deleted by other processes.
+Add an S3 bucket lifecycle rule on `mirrorview-experimental-artifacts` that expires only intermediate batches: objects under the `data_platform/data/` prefix that carry the object tag `intermediate-artifact=true`. Final Parquet feature files, hash manifests, progress records, and permanent run reports must not match the rule and must remain until deleted by other processes.
 
 ## Dependencies
 
-- **Step 1 merged:** bucket and `data_platform/data/` prefix are in use.
-- **Step 2 and Step 3 merged:** production pipeline writes go to S3 under `data_platform/data/`.
-- **Step 5 merged (technical dependency):** feature shard writes apply `Tagging` `intermediate-artifact=true` on 2,000-row batch parquet objects only. Step 16 is intentionally last in the epic schedule, but the lifecycle rule is inert for correctly tagged shards until Step 5 lands.
+- **Step 5 merged (only technical prerequisite):** feature batch writes apply `Tagging` `intermediate-artifact=true` on `batches/part-*.parquet` objects only. The lifecycle rule is inert for correctly tagged batches until Step 5 lands.
+- See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` for tagging rules.
 
-No IAM policy changes and no bucket versioning changes in this step.
+Step 16 is listed last in the epic schedule. It does not depend on Steps 8 through 15. No IAM policy changes and no bucket versioning changes in this step.
 
 ## Main caller and implementation slice
 
@@ -43,7 +42,7 @@ Do not edit plan package files during implementation.
 - `/workspace/data_platform/utils/storage.py`
 - `/workspace/data_platform/utils/object_store.py`
 - `/workspace/data_platform/generate_features/**` (tagging is Step 5)
-- `/workspace/lib/aws/s3.py` unless a one-line helper is absolutely required — prefer boto3 calls inside the infra script
+- `/workspace/lib/aws/s3.py` unless a one-line helper is absolutely required; prefer boto3 calls inside the infra script
 - Any IAM policy, role, or Terraform file
 - Bucket versioning settings
 - `/workspace/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json`
@@ -63,7 +62,7 @@ Do not edit plan package files during implementation.
 | Filter composition | AWS lifecycle AND of prefix and tag (both required) |
 | Expiration | 30 days after object creation |
 | Non-expiring objects | Final feature parquet, hash manifests, progress JSON, permanent run reports, pinned preprocessed input, and any object without the tag |
-| Tag application | Only Step 5 shard writes set `intermediate-artifact=true`; this step does not retroactively tag objects |
+| Tag application | Only Step 5 batch writes under `batches/` set `intermediate-artifact=true`; this step does not retroactively tag objects |
 | IAM | No new policies or role changes |
 | Versioning | No enable/disable/versioning configuration changes |
 | Config file | `data_platform/infra/data_platform_s3_lifecycle.json` documents the rule verbatim for review |
@@ -102,7 +101,7 @@ Do not edit plan package files during implementation.
 2. Add `apply_data_platform_s3_lifecycle.py` that loads the JSON, merges or replaces the rule by `ID`, and calls `put_bucket_lifecycle_configuration`.
 3. Add `verify_data_platform_s3_lifecycle.py` that calls `get_bucket_lifecycle_configuration` and asserts the rule id, prefix, tag, and 30-day expiration.
 4. Export AWS credentials and apply the rule in the lab bucket.
-5. Upload one temporary tagged smoke object under `data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/tagged_shard.parquet` with `intermediate-artifact=true` and confirm lifecycle configuration lists the rule (do not wait 30 days).
+5. Upload one temporary tagged smoke object under `data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/tagged_batch.parquet` with `intermediate-artifact=true` and confirm lifecycle configuration lists the rule (do not wait 30 days).
 6. Upload one untagged smoke object beside it and confirm the rule filter would not target it (manual reasoning plus tag listing).
 7. Delete smoke S3 objects and any temporary manifest before merge.
 
@@ -152,14 +151,14 @@ Expected JSON array with one element whose `Filter.And.Prefix` is `data_platform
 echo 'smoke' > /tmp/lifecycle_smoke.parquet
 aws s3api put-object \
   --bucket mirrorview-experimental-artifacts \
-  --key data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/tagged_shard.parquet \
+  --key data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/tagged_batch.parquet \
   --body /tmp/lifecycle_smoke.parquet \
   --tagging "TagSet=[{Key=intermediate-artifact,Value=true}]" \
   --region us-east-2
 
 aws s3api get-object-tagging \
   --bucket mirrorview-experimental-artifacts \
-  --key data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/tagged_shard.parquet \
+  --key data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/tagged_batch.parquet \
   --region us-east-2
 ```
 
@@ -227,4 +226,4 @@ Expected: no `intermediate-artifact=true` tag (empty tag set is fine).
 - Temporary smoke paths under `data_platform/data/bluesky/_lifecycle_smoke_2026_09_05/` must be removed from S3 and not remain in git after merge.
 - Do not add pytest files or run pytest.
 - Do not edit `plan.md` or other step specs.
-- PR title suggestion: `Add 30-day S3 lifecycle for tagged data platform intermediate shards`.
+- PR title suggestion: `Add 30-day S3 lifecycle for tagged data platform intermediate batches`.

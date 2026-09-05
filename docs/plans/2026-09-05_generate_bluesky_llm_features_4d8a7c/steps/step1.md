@@ -1,4 +1,4 @@
-# Step 1: Copy current Bluesky pipeline LFS artifacts to S3
+# Step 1: Copy current pipeline LFS artifacts to S3
 
 ## Goal
 
@@ -6,7 +6,9 @@ Upload every pinned Bluesky pipeline artifact and every required Bluesky source 
 
 ## Dependencies
 
-This step has no code dependencies on later epic steps. It does require:
+See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` for pinned identities used by later steps.
+
+This step has no code dependencies on other epic steps. It may run in parallel with Steps 2 and 4. It does require:
 
 - Git LFS installed and able to smudge the pinned Bluesky paths.
 - AWS credentials with `s3:PutObject`, `s3:GetObject`, and `s3:HeadObject` on `mirrorview-experimental-artifacts`.
@@ -50,7 +52,7 @@ Do not edit files under `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_f
 ## Files forbidden to change
 
 - `/workspace/data_platform/utils/storage.py`
-- `/workspace/lib/aws/s3.py` (reuse as-is; extend only if the migration script cannot call it without modification — prefer wrapping in the new script)
+- `/workspace/lib/aws/s3.py` (reuse as-is; extend only if the migration script cannot call it without modification; prefer wrapping in the new script)
 - `/workspace/.gitattributes`
 - `/workspace/.gitignore`
 - `/workspace/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/dataset.json`
@@ -74,10 +76,10 @@ Do not edit files under `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_f
 | Pipeline S3 prefix | `data_platform/data/` (no duplicated `data_platform` segment in keys) |
 | Key rule | Repo-relative path with forward slashes. Example: local `data_platform/data/bluesky/.../posts.parquet` → key `data_platform/data/bluesky/.../posts.parquet` |
 | Dump key rule | Repo-relative path. Example: local `data_platform/ingestion/data_dumps/bluesky/data/parquet/date=2026-09-01/hour=00/{hash}.parquet` → same key under the bucket |
-| Upload scope — pipeline | `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/dataset.json`, `raw/2026_09_01-00:00:00/metadata.json`, all `raw/2026_09_01-00:00:00/date=2026-09-01/hour=*/**.parquet` (24 files), `preprocessed/2026_09_03-23:51:30/metadata.json`, `preprocessed/2026_09_03-23:51:30/posts.parquet` |
-| Upload scope — source dumps | `data_platform/ingestion/data_dumps/bluesky/data/parquet/date=2026-09-01/hour=*/**.parquet` (24 files) and `data_platform/ingestion/data_dumps/bluesky/data/summary_statistics.json` |
+| Upload scope . pipeline | `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/dataset.json`, `raw/2026_09_01-00:00:00/metadata.json`, all `raw/2026_09_01-00:00:00/date=2026-09-01/hour=*/**.parquet` (24 files), `preprocessed/2026_09_03-23:51:30/metadata.json`, `preprocessed/2026_09_03-23:51:30/posts.parquet` |
+| Upload scope . source dumps | `data_platform/ingestion/data_dumps/bluesky/data/parquet/date=2026-09-01/hour=*/**.parquet` (24 files) and `data_platform/ingestion/data_dumps/bluesky/data/summary_statistics.json` |
 | Expected object count | 53 (28 pipeline files + 25 dump files; raw and dump parquet share LFS oids but are separate S3 keys) |
-| Hash algorithm | SHA-256 lowercase hex of full object bytes |
+| Hash algorithm | SHA-256 lowercase hex of full object bytes. Never use S3 ETag as a content hash. |
 | LFS retention | Do not `git rm`, rewrite history, or replace parquet pointers in git |
 | Inventory path | `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json` |
 | Inventory JSON shape | `{"bucket":"mirrorview-experimental-artifacts","region":"us-east-2","dataset_id":"bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73","uploaded_at":"<UTC from lib.timestamp_utils.get_current_timestamp>","object_count":53,"objects":[{"repo_relative_path":"...","s3_key":"...","bytes":N,"sha256":"..."}]}` sorted by `repo_relative_path` |
@@ -90,7 +92,7 @@ Do not edit files under `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_f
 3. For each path, read bytes from disk, reject LFS pointer text, compute SHA-256, upload with `Content-Type` `application/json` for `.json` and `application/octet-stream` for `.parquet`.
 4. After each upload, `HeadObject` and optionally re-download to confirm the remote SHA-256 matches local.
 5. Write the inventory JSON under the pinned dataset directory.
-6. Add `verify_bluesky_s3_migration.py` that reads the inventory and checks every listed key exists with matching `ETag` or downloaded hash.
+6. Add `verify_bluesky_s3_migration.py` that reads the inventory and checks every listed key exists with matching SHA-256 (re-download and hash bytes; never accept ETag as a content hash).
 7. Run the live smoke commands below. Commit the scripts and permanent inventory. Delete any temporary smoke directory before merge.
 
 ## Live smoke and basic check commands
@@ -163,7 +165,7 @@ Expected: `25` (24 raw parquet + 1 preprocessed parquet under the pinned dataset
 Confirm inventory committed:
 
 ```bash
-python - <<'PY'
+PYTHONPATH=. uv run python - <<'PY'
 import json
 from pathlib import Path
 inv = json.loads(Path("data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json").read_text())
@@ -187,6 +189,7 @@ Expected: `inventory ok` plus timestamp and exit code 0.
 
 ## Failure conditions
 
+- Verification accepts ETag instead of SHA-256 for any object.
 - Any scoped file uploads as an LFS pointer (133-byte text file).
 - Object count is not exactly 53.
 - Any S3 key starts with `data_platform/data_platform/`.

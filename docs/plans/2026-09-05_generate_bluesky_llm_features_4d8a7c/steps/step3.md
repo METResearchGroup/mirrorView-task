@@ -1,4 +1,4 @@
-# Step 3: Make S3 the default pipeline backend and remove current Bluesky LFS artifacts
+# Step 3: Make S3 the default pipeline backend and remove current LFS artifacts
 
 ## Goal
 
@@ -8,6 +8,7 @@ After Step 1 objects and Step 2 S3 reads are verified, make S3 the production st
 
 - **Step 1 merged:** `s3_migration_inventory.json` exists and all 53 objects are in S3.
 - **Step 2 merged:** `StorageManager` can read and write through `S3ObjectStore` with env-driven backend selection.
+- See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` for bucket and prefix conventions.
 - AWS credentials for verification smokes.
 
 This step does not run feature generation, does not add lifecycle rules (Step 16), and does not touch Reddit LFS.
@@ -16,7 +17,7 @@ This step does not run feature generation, does not add lifecycle rules (Step 16
 
 **Main caller:** `data_platform/utils/object_store.py` `resolve_object_store`.
 
-**Implementation slice for this PR:** change the default backend from `local` to `s3` when `DATA_PLATFORM_STORAGE_BACKEND` is unset; update `.gitattributes` and `.gitignore` so only the pinned Bluesky JSON manifests stay tracked; `git rm --cached` the 25 Bluesky parquet blobs (24 raw + 1 preprocessed) while leaving historical commits untouched; add `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/.gitkeep` or equivalent documentation in `dataset.json` comments is not allowed — use a short `README` only if needed under the allowed list.
+**Implementation slice for this PR:** change the default backend from `local` to `s3` when `DATA_PLATFORM_STORAGE_BACKEND` is unset; update `.gitattributes` and `.gitignore` so only the pinned Bluesky JSON manifests stay tracked; `git rm --cached` the 25 Bluesky parquet blobs (24 raw + 1 preprocessed) while leaving historical commits untouched; add `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/.gitkeep` or equivalent. Do not add comments to `dataset.json`. Use a short `README` only if needed under the allowed list.
 
 ## Files to inspect (read-only)
 
@@ -28,7 +29,7 @@ This step does not run feature generation, does not add lifecycle rules (Step 16
 | `/workspace/.gitattributes` | Bluesky and Reddit LFS rules |
 | `/workspace/.gitignore` | Pinned dataset un-ignore exceptions |
 | `/workspace/data_platform/scripts/verify_bluesky_s3_migration.py` | Reuse for post-cutover check |
-| `/workspace/docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md` | Document that production reads S3 (optional one-line note only if this file is explicitly added to allowed list — otherwise skip) |
+| `/workspace/docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md` | Document that production reads S3 (optional one-line note only if this file is explicitly added to allowed list; otherwise skip) |
 
 ## Files allowed to change
 
@@ -36,13 +37,13 @@ This step does not run feature generation, does not add lifecycle rules (Step 16
 - `/workspace/.gitattributes` (remove Bluesky pinned-dataset parquet LFS rule only)
 - `/workspace/.gitignore` (stop un-ignoring Bluesky parquet paths; keep JSON manifest exceptions)
 - Git index only for:
-  - removal from tracking of `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/raw/**/*.parquet`
-  - removal from tracking of `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/**/*.parquet`
+ - removal from tracking of `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/raw/**/*.parquet`
+ - removal from tracking of `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/**/*.parquet`
 - Retain in git as normal files:
-  - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/dataset.json`
-  - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/raw/2026_09_01-00:00:00/metadata.json`
-  - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/metadata.json`
-  - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json`
+ - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/dataset.json`
+ - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/raw/2026_09_01-00:00:00/metadata.json`
+ - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/preprocessed/2026_09_03-23:51:30/metadata.json`
+ - `data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json`
 
 Temporary smoke evidence under `experiments/bluesky_s3_default_backend_smoke_2026_09_05/` may be committed for review and must be deleted before merge.
 
@@ -97,7 +98,7 @@ export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 ```
 
-**Default backend is S3** — unset env var:
+**Default backend is S3**: unset env var:
 
 ```bash
 unset DATA_PLATFORM_STORAGE_BACKEND

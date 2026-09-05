@@ -6,11 +6,12 @@ Introduce a configurable object-store backend for pipeline data so callers can r
 
 ## Dependencies
 
-- **Step 1 merged:** pinned Bluesky objects exist in `s3://mirrorview-experimental-artifacts/` and `s3_migration_inventory.json` lists their keys and SHA-256 values.
+- **None** on other epic steps. May run in parallel with Steps 1 and 4.
+- See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` for bucket and prefix conventions used by later steps.
 - AWS credentials available the same way as Step 1.
 - `uv sync` for boto3 and pandas.
 
-This step does not remove Git LFS, does not change the production default backend (that is Step 3), and does not tag intermediate shards (that is Step 5).
+Step 1 S3 objects are useful for end-to-end S3 read smoke in this step but are not a merge-order prerequisite. This step does not remove Git LFS, does not change the production default backend (that is Step 3), and does not tag intermediate batches (that is Step 5).
 
 ## Main caller and implementation slice
 
@@ -50,7 +51,7 @@ Do not edit plan package files during implementation.
 - `/workspace/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/s3_migration_inventory.json` (read for verification only)
 - `/workspace/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**/*.parquet` (git-tracked LFS)
 - `/workspace/data_platform/scripts/migrate_bluesky_lfs_to_s3.py`
-- `/workspace/data_platform/generate_features/**` (beyond what storage imports require — prefer zero feature changes)
+- `/workspace/data_platform/generate_features/**` (beyond what storage imports require . prefer zero feature changes)
 - `/workspace/data_platform/preprocessing/**`
 - `/workspace/data_platform/ingestion/**`
 - `/workspace/data_platform/data/reddit/**`
@@ -71,17 +72,17 @@ Do not edit plan package files during implementation.
 | Path safety | Reject `..`, absolute paths, backslashes, and keys outside `data_platform/data/` |
 | LFS pointer detection | First line exactly `version https://git-lfs.github.com/spec/v1` → raise `ValueError` with message containing `git-lfs pointer` |
 | S3 overwrite policy | `put_bytes` and `put_file` require `allow_overwrite=False` by default; existing object with same key raises `FileExistsError` |
-| S3 write metadata | Every S3 upload must include `sha256` in a sidecar field recorded in memory and returned to callers; use SHA-256 of body bytes |
+| S3 write metadata | Every S3 upload must record SHA-256 of body bytes. Never use ETag as a content hash. |
 | Hash on read | After S3 download, verify bytes against inventory or caller-supplied expected hash when provided |
-| Default backend | `local` when env var unset — production default flip happens in Step 3 |
+| Default backend | `local` when env var unset . production default flip happens in Step 3 |
 | Public API stability | `BlueskyStorageManager`, `StorageStage`, and existing method names remain; backend selection is internal or env-driven |
 | Pinned smoke dataset | `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` preprocessed run `2026_09_03-23:51:30` |
 
 `object_store.py` must expose at minimum:
 
-- `class LocalObjectStore` — filesystem operations under `DATA_ROOT`
-- `class S3ObjectStore` — wraps `lib.aws.s3.S3` with the locked policies above
-- `def resolve_object_store() -> ObjectStore` — reads env vars and returns the backend
+- `class LocalObjectStore` . filesystem operations under `DATA_ROOT`
+- `class S3ObjectStore` . wraps `lib.aws.s3.S3` with the locked policies above
+- `def resolve_object_store() -> ObjectStore` . reads env vars and returns the backend
 
 ## Ordered implementation work
 
@@ -103,7 +104,7 @@ export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 ```
 
-**S3 read smoke** — load pinned preprocessed posts from S3:
+**S3 read smoke**: load pinned preprocessed posts from S3:
 
 ```bash
 DATA_PLATFORM_STORAGE_BACKEND=s3 \
@@ -121,7 +122,7 @@ PY
 
 Expected stdout: `s3 load ok 200000` and exit code 0.
 
-**Local read smoke** — default backend still uses disk:
+**Local read smoke**: default backend still uses disk:
 
 ```bash
 PYTHONPATH=. uv run python - <<'PY'
@@ -134,7 +135,7 @@ PY
 
 Expected stdout: `local load ok 200000` when LFS blobs are present locally; if only pointers exist locally, the command may fail until `git lfs pull`, which is acceptable for local dev and does not block the S3 smoke above.
 
-**LFS pointer rejection smoke** — write attempt on pointer bytes must fail fast:
+**LFS pointer rejection smoke**: write attempt on pointer bytes must fail fast:
 
 ```bash
 PYTHONPATH=. uv run python - <<'PY'
@@ -155,7 +156,7 @@ PY
 
 Expected stdout: `pointer rejected ok`. Run only when the hour-00 file is still a pointer (before `git lfs pull` on that path).
 
-**Overwrite rejection smoke** — re-upload pinned preprocessed key without `allow_overwrite`:
+**Overwrite rejection smoke**: re-upload pinned preprocessed key without `allow_overwrite`:
 
 ```bash
 DATA_PLATFORM_STORAGE_BACKEND=s3 \

@@ -1,16 +1,18 @@
-# Step 5: Write resumable 2,000-row Parquet feature shards
+# Step 5: Write resumable 2,000-row Parquet feature batches
 
 ## Goal
 
-Write immutable S3-backed feature artifacts for the Bluesky LLM campaign: 2,000-row Parquet batch shards, one consolidated `final.parquet`, a SHA-256 `manifest.json`, append-only `progress.jsonl`, and error records. Preserve deterministic record order across resume and consolidation. Keep one blocking OpenAI Batch job per feature and reuse the hardened resume behavior from Step 4.
+Write immutable S3-backed feature artifacts for the Bluesky LLM campaign: 2,000-row Parquet batch objects, one consolidated `final.parquet`, a SHA-256 `manifest.json`, append-only `progress.jsonl`, and error records. Preserve deterministic record order across resume and consolidation. Keep one blocking OpenAI Batch job per feature and reuse the hardened resume behavior from Step 4.
 
-## Real dependencies
+## Dependencies
 
-- Step 4 merged: persisted `input_file_id` and `batch_id`, partial success retention, four-attempt transient retry, exact input id completeness.
-- Steps 1 through 3 merged: S3 production backend under `s3://mirrorview-experimental-artifacts/data_platform/data/`.
-- Pinned campaign constants from the parent plan.
+- **Step 2 merged:** S3 object store with conditional put support.
+- **Step 4 merged:** `active_openai_batch.json` state contract, partial success retention, four-attempt transient retry, exact input id completeness.
+- See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` for the full layout and Q44 schema.
 
-## Main caller and one implementation slice
+This step may start after Steps 2 and 4 merge. It does not require Steps 1 or 3.
+
+## Main caller and implementation slice
 
 **Main caller after this PR merges:**
 
@@ -21,147 +23,165 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
+  --preprocessed-run 2026_09_03-23:51:30 \
+  --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
   --features is_news_or_opinion \
-  --batch-size 2000 \
-  --campaign-id bluesky_2026_09_03_235130_llm_features_v1
+  --batch-size 2000
 ```
 
-**One implementation slice for this PR:** add an S3 shard writer that, after each completed OpenAI Batch of up to 2000 records, writes one immutable Parquet object under `batches/`, appends one `progress.jsonl` line, updates `manifest.json` with SHA-256 only, and never mutates an existing shard object.
+**One implementation slice for this PR:** add campaign mode flags (`--campaign-id`, `--preprocessed-run`) to `generate_bluesky_features.py`, persist `active_openai_batch.json` in S3, write immutable batch objects under `batches/part-NNNNN.parquet`, implement logical append for `progress.jsonl` and `errors.jsonl`, conditionally replace `manifest.json`, and never mutate an existing batch object.
 
-**Out of scope for this PR:** ten-post smoke cost gate, parent-issue cost aggregation, deliberate interrupt smoke beyond one shard write/resume proof, watcher GitHub comments, Step 16 lifecycle rule infrastructure, and joining seven features into one wide artifact.
+**Out of scope for this PR:** ten-post smoke cost tooling (Step 6), watcher GitHub comments (Step 7), Step 16 lifecycle rule infrastructure, and joining seven features into one wide artifact.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md` | Parent plan Step 5 scope |
+| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | Canonical S3 layout and Q44 schema |
 | `/workspace/data_platform/generate_features/engines/openai_engine.py` | Batch completion hook point after Step 4 |
-| `/workspace/data_platform/generate_features/engines/base.py` | Batch loop and write callback |
 | `/workspace/data_platform/generate_features/generate_features.py` | Orchestrator and completion checks |
-| `/workspace/data_platform/generate_features/metadata.py` | Existing local metadata; do not break resume |
-| `/workspace/data_platform/generate_features/models.py` | Label row models and run config |
+| `/workspace/data_platform/generate_features/generate_bluesky_features.py` | Bluesky CLI wrapper |
+| `/workspace/data_platform/generate_features/platform_cli.py` | CLI flags |
 | `/workspace/data_platform/generate_features/registry.py` | Seven LLM features |
-| `/workspace/data_platform/generate_features/platform_cli.py` | CLI flags for campaign id and batch size |
-| `/workspace/data_platform/utils/storage.py` | Post-Step-3 storage abstraction |
+| `/workspace/data_platform/utils/storage.py` | Post-Step-2 S3 storage abstraction; Step 3 default-backend flip is not required for this step |
 | `/workspace/lib/aws/s3.py` | Low-level S3 upload and list helpers |
-| `/workspace/data_platform/utils/platform_specific_columns.py` | `source_record_id` column contract |
 | `/workspace/data_platform/generate_features/is_news_or_opinion/generate_feature.py` | Example output schema |
 
 ## Files allowed to change
 
-- `/workspace/data_platform/generate_features/s3_feature_campaign.py` (new; campaign paths, manifest, progress, shard write)
-- `/workspace/data_platform/generate_features/s3_feature_shards.py` (new; immutable shard writer and final consolidation)
-- `/workspace/data_platform/generate_features/generate_features.py` (wire shard writer after each durable batch)
-- `/workspace/data_platform/generate_features/platform_cli.py` (add `--campaign-id`; enforce `--batch-size 2000` for campaign runs)
+- `/workspace/data_platform/generate_features/s3_feature_campaign.py` (new; campaign paths, manifest, progress, batch write)
+- `/workspace/data_platform/generate_features/s3_feature_batches.py` (new; immutable batch writer and final consolidation)
+- `/workspace/data_platform/generate_features/generate_features.py` (wire batch writer after each durable batch)
+- `/workspace/data_platform/generate_features/generate_bluesky_features.py` (pass through `--campaign-id` and `--preprocessed-run`)
+- `/workspace/data_platform/generate_features/platform_cli.py` (add `--campaign-id` and `--preprocessed-run`; enforce `--batch-size 2000` and exactly one `--features` value for campaign runs)
 - `/workspace/data_platform/generate_features/models.py` (campaign config fields if needed)
-- `/workspace/data_platform/generate_features/smoke_write_s3_shard.py` (new temporary smoke helper)
+- `/workspace/data_platform/generate_features/smoke_write_s3_batch.py` (new temporary smoke helper)
 - `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step5.md` (this file only if correcting the spec during implementation)
 
 ## Files forbidden to change
 
 - `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md`
-- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step4.md`
-- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step6.md`
-- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step7.md`
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step4.md`, `step6.md`, `step7.md`
 - `/workspace/tests/**`
-- Feature prompt modules under `/workspace/data_platform/generate_features/is_*`, `political_stance`, and `llm_toxicity_tiered`
+- Feature prompt modules
 - `/workspace/webapp/**`
 - `/workspace/experiments/**`
 - Any repository code that launches Cursor agents or other autonomous agent runners
 
 ## Locked contracts
 
-### Campaign constants
+See `campaign_contract.md`. Exact values for this step:
 
-- Campaign id: `bluesky_2026_09_03_235130_llm_features_v1`
-- Dataset id: `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73`
-- Preprocessed run: `2026_09_03-23:51:30`
-- Bucket: `mirrorview-experimental-artifacts`
-- Batch size: `2000`
-- Total expected rows per feature: `200000`
+### Feature root
 
-### S3 layout
+`s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/`
 
-For each feature `{feature}` in the seven-feature campaign:
+### Per-feature layout
+
+For `{feature}` = `is_news_or_opinion` (smoke example):
 
 ```text
-s3://mirrorview-experimental-artifacts/data_platform/data/features/bluesky_2026_09_03_235130_llm_features_v1/{feature}/
-  batches/shard_00000.parquet
-  batches/shard_00001.parquet
+s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/
+  active_openai_batch.json
+  batches/part-00000.parquet
+  batches/part-00001.parquet
   ...
+  batches/part-00099.parquet
   final.parquet
   manifest.json
   progress.jsonl
   errors.jsonl
 ```
 
-Shard object keys are immutable. Never overwrite an existing shard key. The next shard index is derived from existing keys and progress state, not from in-memory counters alone.
+Batch object keys are immutable. Never overwrite an existing `part-NNNNN.parquet` key. A full feature run writes exactly 100 batch objects totaling 200,000 rows.
 
-### Per-row provenance from Q44
+### Production batch schedule
 
-Every label row written to a shard or to `final.parquet` must include these columns in addition to the feature-specific label fields:
+| Canonical part | Provider job size | Row composition |
+|----------------|-------------------|-----------------|
+| `part-00000` | 1,990 new posts | Ten unchanged smoke output rows (original smoke `batch_id` and `request_id` preserved) plus 1,990 new labeled rows |
+| `part-00001` through `part-00099` | 2,000 new posts each | All new labeled rows |
+
+`manifest.json` batch entry for `part_index=0` may list both the smoke provider `batch_id` and the first production provider `batch_id`.
+
+### active_openai_batch.json in S3
+
+Persist Step 4 state at `{feature}/active_openai_batch.json`. Use conditional atomic whole-object replace with S3 `If-Match` ETag for concurrency control. Delete only after successful rows are in an immutable batch object and recorded in `manifest.json`.
+
+### Logical append for progress.jsonl and errors.jsonl
+
+One feature writer:
+
+1. Reads existing object bytes (empty if missing).
+2. Appends complete newline-terminated JSON records.
+3. Conditionally replaces the whole object using `If-Match` with the prior object ETag.
+
+On conditional put failure, retry from the latest object. Immutable batch objects plus `manifest.json` are the source of truth; resume may reconstruct missing observability events.
+
+`manifest.json` uses the same conditional atomic replace pattern. SHA-256 remains the content integrity check. Never use ETag as a content hash.
+
+### Deterministic run id
+
+Every row carries `run_id` = `bluesky_2026_09_03_235130_llm_features_v1:{feature}`.
+
+### Q44 row columns
+
+Every label row in `batches/part-*.parquet` and `final.parquet` must include:
 
 | Column | Value |
 |--------|-------|
-| `campaign_id` | `bluesky_2026_09_03_235130_llm_features_v1` |
-| `dataset_id` | `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` |
-| `source_preprocessed_run` | `2026_09_03-23:51:30` |
-| `input_content_hash` | SHA-256 hex digest of the pinned 200,000-post input set |
-| `model_id` | `gpt-5.4-nano` unless the feature spec overrides it |
-| `prompt_hash` | SHA-256 hex digest of the feature system prompt |
-| `label_timestamp` | UTC timestamp from `lib.timestamp_utils.get_current_timestamp` |
 | `source_record_id` | pinned input id |
-| `openai_batch_id` | provider batch id for the batch that produced the row |
-| `batch_shard_index` | zero-based durable shard index |
-| `batch_row_index` | zero-based row position inside the shard |
+| `run_id` | `bluesky_2026_09_03_235130_llm_features_v1:{feature}` |
+| `batch_id` | OpenAI Batch provider id |
+| `request_id` | provider request id for the row |
+| `attempt_count` | integer 1 through 4 |
+| `label_timestamp` | UTC from `lib.timestamp_utils.get_current_timestamp` |
+| `{label_field}` | feature-specific raw label column |
 
-### Shared immutable metadata in `manifest.json`
+Validate the Pydantic model on the label-field subset and provenance columns separately.
 
-`manifest.json` holds campaign-level immutable metadata only. It must include:
+### manifest.json
 
-- `campaign_id`, `dataset_id`, `source_preprocessed_run`, `input_content_hash`
-- `feature`, `model_id`, `prompt_hash`
-- `batch_size`, `expected_row_count`
-- `created_at`
-- `shards`: ordered list of `{shard_index, key, row_count, sha256}`
+`manifest.json` holds campaign-level immutable metadata only:
+
+- `campaign_id`, `dataset_id`, `preprocessed_run`, `feature`, `model_id`, `prompt_hash`
+- `batch_size`, `expected_row_count`, `run_id`, `created_at`
+- `batches`: ordered list of `{part_index, key, row_count, sha256, provider_batch_ids}` (part 0 may list two provider batch ids)
 - `final_parquet`: `{key, row_count, sha256}` once built
 
-Do not store mutable counters that belong in `progress.jsonl`.
+Hash fields are SHA-256 hex digests of file bytes. Never use ETag as a content hash.
 
-### SHA-256 manifests only
+### Lifecycle tag on batch objects only
 
-Hash fields in `manifest.json` are SHA-256 hex digests of file bytes. Do not use MD5, ETag alone, or size-only checks as acceptance gates.
-
-### Lifecycle tag on batch shards only
-
-When uploading a shard under `batches/`, set S3 object tag `intermediate-artifact=true`. Do not set that tag on `final.parquet`, `manifest.json`, `progress.jsonl`, or `errors.jsonl`.
+When uploading under `batches/`, set S3 object tag `intermediate-artifact=true`. Do not set that tag on `final.parquet`, `manifest.json`, `progress.jsonl`, or `errors.jsonl`.
 
 ### Deterministic order
 
-Input ids are processed in stable ascending `source_record_id` order from the pinned preprocessed run. Shard row order follows that global order within each 2000-row chunk. Resume must continue from the next unseen id, not reorder prior shards.
+Input ids are processed in stable ascending `source_record_id` order from preprocessed run `2026_09_03-23:51:30`. Batch row order follows that global order within each 2000-row chunk.
 
-### Final consolidation
+### Campaign mode resume
 
-When all 200,000 ids are present across shards, build `final.parquet` once by concatenating shards in `batch_shard_index` order, verify row count and uniqueness, write `final.parquet` with no `intermediate-artifact` tag, and record its SHA-256 in `manifest.json`.
+Re-running the same campaign command with the same `--campaign-id`, `--preprocessed-run`, and single `--features` value automatically resumes from canonical prefix state. Do not add `--resume` or `--checkpoint`.
 
-### Blocking engine and one active batch
+### Blocking engine
 
-Reuse Step 4 behavior. Shard writing happens only after a provider batch completes and rows pass schema validation.
+Reuse Step 4 behavior. Batch writing happens only after a provider batch completes and rows pass schema validation.
 
 ## Ordered implementation work
 
-1. Add campaign path helpers in `s3_feature_campaign.py` for prefix construction and input hash computation over the pinned preprocessed run.
-2. Implement immutable shard upload with SHA-256 digest, manifest shard list update, and `progress.jsonl` append in `s3_feature_shards.py`.
-3. Attach provenance columns from Q44 on every row before Parquet write.
-4. Wire the shard writer into the batch completion path in `generate_features.py`; refuse campaign runs unless `--batch-size 2000`.
-5. Implement `final.parquet` consolidation and manifest final block when row completeness check passes.
-6. Add `errors.jsonl` append for exhausted per-record failures without mutating successful shards.
-7. Add temporary smoke helper that writes one real shard for `is_news_or_opinion`, verifies S3 keys and hashes, then exits.
-8. Run live smoke commands. Commit temporary smoke evidence. Delete helper and evidence before merge.
+1. Add campaign path helpers in `s3_feature_campaign.py` for prefix construction.
+2. Implement `active_openai_batch.json` read, conditional write, and delete in S3.
+3. Implement immutable batch upload with SHA-256 digest, manifest batch list update, and logical `progress.jsonl` append in `s3_feature_batches.py`.
+4. Attach Q44 provenance columns on every row before Parquet write.
+5. Wire the batch writer into the batch completion path; refuse campaign runs unless `--batch-size 2000` and exactly one feature.
+6. Implement `final.parquet` consolidation and manifest final block when 100 batches and 200,000 rows are present.
+7. Add `errors.jsonl` logical append for exhausted per-record failures.
+8. Add temporary smoke helper that writes one disposable batch under the non-canonical prefix `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/` only. Never write under the pinned campaign feature `batches/` prefix during this step.
+9. Run live smoke commands. Commit temporary smoke evidence. Delete disposable S3 objects, verify the disposable prefix is empty, then delete helper and Git evidence before merge.
 
-## Exact live smoke/basic check commands with expected output
+## Exact live smoke and basic check commands with expected output
 
-### Offline path and hash helper check
+### Offline path helper check
 
 ```bash
 cd /workspace
@@ -169,94 +189,121 @@ export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
 PYTHONPATH=. uv run python -c "
-from data_platform.generate_features.s3_feature_campaign import campaign_prefix, input_content_hash
-p = campaign_prefix('bluesky_2026_09_03_235130_llm_features_v1', 'is_news_or_opinion')
+from data_platform.generate_features.s3_feature_campaign import feature_prefix, run_id_for_feature
+p = feature_prefix('bluesky_2026_09_03_235130_llm_features_v1', 'is_news_or_opinion')
 assert p.endswith('features/bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/')
-h = input_content_hash('bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73', '2026_09_03-23:51:30')
-assert len(h) == 64
-print('campaign_prefix OK')
-print('input_content_hash OK')
+rid = run_id_for_feature('bluesky_2026_09_03_235130_llm_features_v1', 'is_news_or_opinion')
+assert rid == 'bluesky_2026_09_03_235130_llm_features_v1:is_news_or_opinion'
+print('feature_prefix OK')
+print('run_id OK')
 "
 ```
 
 Expected stdout:
 
 ```text
-campaign_prefix OK
-input_content_hash OK
+feature_prefix OK
+run_id OK
 ```
 
-### Live one-shard write check (requires `OPENAI_API_KEY` and AWS credentials)
+### Live one-batch write check (requires `OPENAI_API_KEY` and AWS credentials; available after this step's implementation)
+
+Use the disposable smoke prefix only. Do not write under the pinned campaign feature `batches/` prefix; Step 6 tooling proof and Steps 8 through 14 canonical smoke must not find pre-existing canonical batch objects from this step.
 
 ```bash
 cd /workspace
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-PYTHONPATH=. uv run python data_platform/generate_features/smoke_write_s3_shard.py \
+DISPOSABLE_PREFIX=s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/
+
+PYTHONPATH=. uv run python data_platform/generate_features/smoke_write_s3_batch.py \
   --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \
   --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
   --preprocessed-run 2026_09_03-23:51:30 \
   --feature is_news_or_opinion \
+  --smoke-prefix "$DISPOSABLE_PREFIX" \
   --row-count 10
 ```
 
 Expected stdout:
 
 ```text
-shard_key=s3://mirrorview-experimental-artifacts/data_platform/data/features/bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/batches/shard_00000.parquet
-shard_sha256=<64-char-hex>
+smoke_prefix=s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/
+batch_key=s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/is_news_or_opinion/batches/part-00000.parquet
+batch_sha256=<64-char-hex>
 manifest_updated=true
 progress_appended=true
 intermediate_tag=true
+canonical_batches_prefix_touched=false
 ```
-
-Expected S3 objects after the command:
-
-- `.../batches/shard_00000.parquet` exists and is tagged `intermediate-artifact=true`
-- `.../manifest.json` lists shard 0 with matching SHA-256
-- `.../progress.jsonl` has one new line with `durable_rows=10`
 
 ### Resume-without-rewrite check
 
-Run the same command a second time without deleting S3 objects.
+Run the same command a second time without deleting disposable S3 objects.
 
 Expected stdout:
 
 ```text
-shard_rewrite_refused=true
-next_shard_index=1
+batch_rewrite_refused=true
+next_part_index=1
+canonical_batches_prefix_touched=false
 ```
 
-Expected behavior: existing `shard_00000.parquet` bytes and hash remain unchanged.
+### Disposable prefix cleanup (required before merge)
+
+```bash
+export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
+
+aws s3 rm s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/ --recursive
+aws s3 ls s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/ --recursive
+```
+
+Expected: `aws s3 rm` reports deleted objects (or no objects found). `aws s3 ls` prints no lines, confirming the disposable prefix is empty.
+
+Verify the canonical campaign feature `batches/` prefix was not touched during smoke:
+
+```bash
+aws s3 ls s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/batches/ 2>&1 || true
+```
+
+Expected: `An error occurred (NoSuchKey)` or empty listing. No `part-*.parquet` objects under the canonical feature `batches/` prefix.
 
 ## Acceptance criteria
 
-- Each completed batch writes at most one new immutable shard object under `batches/`.
-- Every row in shards and `final.parquet` carries the full Q44 provenance column set.
+- Each completed batch writes at most one new immutable object under `batches/`.
+- Every row carries the full Q44 column set.
 - `manifest.json` contains SHA-256 digests only and matches uploaded bytes.
-- `progress.jsonl` appends one line per durable shard write.
-- Batch shards carry `intermediate-artifact=true`; final and audit files do not.
-- Resume continues shard numbering and input order without rewriting prior shards.
-- `final.parquet` is written once with exactly 200,000 unique ids when the feature completes.
-- Temporary smoke helper and evidence are committed for review and removed before merge.
+- `progress.jsonl` appends one line per durable batch write.
+- Batch objects carry `intermediate-artifact=true`; final and audit files do not.
+- Resume continues batch numbering and input order without rewriting prior batches.
+- `final.parquet` is written once with exactly 200,000 unique ids across 100 batch objects when the feature completes.
+- `active_openai_batch.json` persists and clears per Step 4 contract.
+- Logical append and conditional replace work for `progress.jsonl`, `errors.jsonl`, and `manifest.json`.
+- Campaign mode automatically resumes on restart with the same `run_id`.
+- Live batch-writer smoke writes only under `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/` and never under the pinned campaign feature `batches/` prefix.
+- Disposable S3 prefix is empty after `aws s3 rm ... --recursive` before merge.
+- Temporary smoke helper and Git evidence are committed for review and removed before merge.
 - No automated tests were added or run.
 
 ## Failure conditions
 
-- Overwriting an existing shard key.
+- Overwriting an existing `part-NNNNN.parquet` key.
 - Missing Q44 provenance columns on any written row.
-- Using non-SHA-256 manifest hashes.
+- Using non-SHA-256 manifest hashes or accepting ETag as a content hash.
 - Applying `intermediate-artifact=true` to `final.parquet`, `manifest.json`, or `progress.jsonl`.
 - Multiple active OpenAI Batch jobs for one feature run.
+- Using `shards/`, `campaigns/`, `final/` subdirectory, or per-run timestamp subfolders.
+- Step 5 live smoke writes any object under the pinned campaign feature `batches/` prefix.
+- Disposable prefix `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/` is not empty before merge.
 - Any edit under `/workspace/tests/**`.
 - Any code path that launches Cursor agents or other autonomous agent runners.
 
-## PR artifact/commit rules
+## PR artifact and commit rules
 
-- Branch name: `cursor/s3-parquet-feature-shards-86b0`
-- Keep this PR focused on shard writing and consolidation; do not fold Step 6 smoke cost gate or Step 7 watcher comments into it.
-- Commit temporary `smoke_write_s3_shard.py` and `SHARD_SMOKE_EVIDENCE.md` during review.
-- Before merge, delete the temporary helper and evidence file.
-- PR title: `Write resumable 2,000-row Parquet feature shards to S3`
-- PR body must list the exact S3 prefix written during smoke and the shard SHA-256 observed.
+- Keep this PR focused on batch writing and consolidation; do not fold Step 6 smoke tooling or Step 7 watcher into it.
+- Commit temporary `smoke_write_s3_batch.py` and `BATCH_SMOKE_EVIDENCE.md` during review.
+- Before merge: run `aws s3 rm s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/ --recursive`, verify the disposable prefix is empty, then delete the temporary helper and Git evidence file.
+- PR title: `Write resumable 2,000-row Parquet feature batches to S3`
+- PR body must list the disposable smoke prefix, the batch SHA-256 observed, confirmation that the canonical campaign feature `batches/` prefix was not touched, and confirmation that the disposable prefix was emptied before merge.

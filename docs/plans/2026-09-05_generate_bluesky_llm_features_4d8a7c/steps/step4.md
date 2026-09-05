@@ -2,11 +2,14 @@
 
 ## Goal
 
-Make OpenAI Batch labeling resumable across process crashes without creating duplicate provider jobs or duplicate charges. Persist `input_file_id` and `batch_id` before polling begins, reattach to the same in-flight batch after interruption, keep successful rows from partly failed batches, retry only transient failures up to four attempts per record, and mark a feature complete only when every pinned input id has exactly one valid output row.
+Make OpenAI Batch labeling resumable across process crashes without creating duplicate provider jobs or duplicate charges. Persist `input_file_id` and `batch_id` before polling begins. Reattach to the same in-flight batch after interruption and keep successful rows from partly failed batches. Retry only transient failures up to four attempts per record. Mark a feature complete only when every pinned input id has exactly one valid output row.
 
-## Real dependencies
+## Dependencies
 
-Steps 1 through 3 from `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md` must be merged first. Production reads and writes must go through the S3-backed pipeline storage added in Step 2 and defaulted in Step 3. This step does not add S3 shard layout or Parquet shard writers; Step 5 owns durable shard files. This step only hardens the OpenAI Batch engine and the orchestrator hooks it needs for crash-safe provider job identity.
+- **None.** This step may run in parallel with Steps 1 and 2.
+- See `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` for pinned campaign constants and the `active_openai_batch.json` state contract.
+
+This step hardens the OpenAI Batch engine only. It defines provider state independent of storage backend. Step 5 persists campaign state in S3. This step does not add campaign S3 layout, smoke tooling, or watcher comments.
 
 Pinned campaign inputs used in smoke and later steps:
 
@@ -15,9 +18,9 @@ Pinned campaign inputs used in smoke and later steps:
 - Preprocessed run: `2026_09_03-23:51:30`
 - Expected unique input ids: `200000`
 
-## Main caller and one implementation slice
+## Main caller and implementation slice
 
-**Main caller after this PR merges:**
+**Main caller after this PR merges (legacy mode smoke; campaign flags arrive in Step 5):**
 
 ```bash
 cd /workspace
@@ -27,29 +30,29 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \
   --dataset-id bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 \
   --features is_news_or_opinion \
-  --batch-size 2000 \
-  --checkpoint <FEATURE_RUN_TIMESTAMP>
+  --batch-size 2000
 ```
 
-**One implementation slice for this PR:** split `_submit_and_wait_for_batch` in `data_platform/generate_features/engines/openai_engine.py` into explicit submit, durable state write, poll-or-resume, and partial-result parse paths. Add one small state module that atomically writes and reloads `{input_file_id, batch_id, task_uris, feature_name, campaign_id}` before the first poll call.
+**One implementation slice for this PR:** split `_submit_and_wait_for_batch` in `data_platform/generate_features/engines/openai_engine.py` into explicit submit, durable state write, poll-or-resume, and partial-result parse paths. Add one small state module that defines the `active_openai_batch.json` contract and writes or reloads state before the first poll call. Storage backend is pluggable; Step 5 maps this contract to S3.
 
-**Out of scope for this PR:** immutable 2000-row S3 Parquet shards, `manifest.json`, `progress.jsonl`, ten-post smoke cost reports, campaign approval gate, watcher comments, lifecycle tagging, and any change to feature prompt text or registry membership.
+**Out of scope for this PR:** campaign S3 prefix layout, `manifest.json`, `progress.jsonl`, Q44 provenance columns on rows, ten-post smoke cost reports, watcher comments, lifecycle tagging, `--campaign-id`, `--preprocessed-run`, and any change to feature prompt text or registry membership.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
+| `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | Locked campaign constants |
 | `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md` | Parent plan Step 4 scope |
-| `/workspace/data_platform/generate_features/engines/openai_engine.py` | Current submit-and-wait flow; no persisted provider ids |
-| `/workspace/data_platform/generate_features/engines/base.py` | Blocking batch loop, deadletter on whole-batch failure |
-| `/workspace/data_platform/generate_features/generate_features.py` | Feature completion gate and metadata flush |
+| `/workspace/data_platform/generate_features/engines/openai_engine.py` | Current submit-and-wait flow |
+| `/workspace/data_platform/generate_features/engines/base.py` | Blocking batch loop |
+| `/workspace/data_platform/generate_features/generate_features.py` | Feature completion gate |
 | `/workspace/data_platform/generate_features/metadata.py` | Run metadata shape |
-| `/workspace/data_platform/generate_features/models.py` | `FeatureRunConfig.max_label_retries` default |
-| `/workspace/data_platform/generate_features/llm_retry.py` | Current retry decorator retries all exceptions |
+| `/workspace/data_platform/generate_features/models.py` | `FeatureRunConfig.max_label_retries` |
+| `/workspace/data_platform/generate_features/llm_retry.py` | Current retry decorator |
 | `/workspace/data_platform/generate_features/deadletter.py` | Deadletter record shape |
-| `/workspace/data_platform/generate_features/platform_cli.py` | Checkpoint resume entry |
+| `/workspace/data_platform/generate_features/platform_cli.py` | CLI entry |
 | `/workspace/data_platform/generate_features/registry.py` | Seven OpenAI LLM features |
-| `/workspace/data_platform/utils/storage.py` | Append and resume reads after Step 3 S3 backend |
+| `/workspace/data_platform/utils/storage.py` | Append and resume reads |
 | `/workspace/lib/load_env_vars.py` | `OPENAI_API_KEY` loading |
 | `/workspace/lib/constants.py` | `DEFAULT_LLM_MODEL` (`gpt-5.4-nano`) |
 
@@ -58,51 +61,51 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
 - `/workspace/data_platform/generate_features/engines/openai_engine.py`
 - `/workspace/data_platform/generate_features/engines/base.py` (only hooks needed for partial batch success and per-record retry accounting)
 - `/workspace/data_platform/generate_features/openai_batch_state.py` (new)
-- `/workspace/data_platform/generate_features/generate_features.py` (completion rule: complete when every pinned id has a label, not when `failed_batches > 0` from an earlier transient streak)
-- `/workspace/data_platform/generate_features/metadata.py` (optional fields for active provider job identity; do not break existing local metadata readers)
-- `/workspace/data_platform/generate_features/models.py` (raise default `max_label_retries` to `4` for campaign runs only if needed; keep backward-compatible default for non-campaign CLI use)
-- `/workspace/data_platform/generate_features/smoke_resume_openai_batch.py` (new temporary smoke helper for this PR; see commands below)
+- `/workspace/data_platform/generate_features/generate_features.py` (completion rule: complete when every pinned id has a label)
+- `/workspace/data_platform/generate_features/metadata.py` (optional fields for active provider job identity)
+- `/workspace/data_platform/generate_features/models.py` (raise default `max_label_retries` to `4` for campaign runs if needed)
+- `/workspace/data_platform/generate_features/smoke_resume_openai_batch.py` (new temporary smoke helper)
 - `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step4.md` (this file only if correcting the spec during implementation)
 
 ## Files forbidden to change
 
 - `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/plan.md`
-- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step5.md`
-- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step6.md`
-- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step7.md`
-- `/workspace/tests/**` (do not add, edit, or run automated tests)
-- `/workspace/data_platform/generate_features/is_*/*.py` feature prompt modules
-- `/workspace/data_platform/generate_features/political_stance/generate_feature.py`
-- `/workspace/data_platform/generate_features/llm_toxicity_tiered/generate_feature.py`
+- `/workspace/docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step5.md` through `step7.md`
+- `/workspace/tests/**`
+- Feature prompt modules under `/workspace/data_platform/generate_features/is_*`, `political_stance`, and `llm_toxicity_tiered`
 - `/workspace/webapp/**`
 - `/workspace/experiments/**`
 - Any repository code that launches Cursor agents or other autonomous agent runners
 
 ## Locked contracts
 
+See `campaign_contract.md`. This step owns engine behavior only.
+
 ### Blocking engine and one active OpenAI Batch job
 
 Keep the blocking engine model. For one feature run at a time, at most one OpenAI Batch job may be in flight. Do not submit a second batch for the same feature until the current batch reaches a terminal provider status or is explicitly abandoned in deadletter after four failed attempts per remaining record.
 
-### Provider identity persistence
+### `active_openai_batch.json` state contract (storage agnostic)
 
-Before the first `batches.retrieve` poll call, atomically persist a JSON state file next to the active feature run with at least:
+Before the first `batches.retrieve` poll call, persist state with at least:
 
-```json
-{
-  "campaign_id": "bluesky_2026_09_03_235130_llm_features_v1",
-  "feature_name": "is_news_or_opinion",
-  "input_file_id": "file-...",
-  "batch_id": "batch_...",
-  "task_uris": ["at://...", "..."],
-  "submitted_at": "2026-09-05T18:30:00Z",
-  "status": "polling"
-}
-```
+| Field | Meaning |
+|-------|---------|
+| `input_file_id` | OpenAI files id for the submitted batch input |
+| `batch_id` | OpenAI Batch provider id |
+| `logical_batch_index` | Zero-based canonical part index this job will populate |
+| `pending_source_record_ids` | Ordered ids still expected from this provider job |
+| `attempt_count` | Per-job attempt counter |
+| `state` | `polling`, `writing`, or `terminal` |
+| `campaign_id` | `bluesky_2026_09_03_235130_llm_features_v1` when in campaign mode |
+| `feature_name` | Feature being labeled |
+| `submitted_at` | UTC timestamp |
 
-On resume, if this state file exists and provider status is non-terminal, reload it and continue polling the same `batch_id`. Never call `files.create` or `batches.create` again for that in-flight job.
+On resume, if state exists and provider status is non-terminal, reload it and continue polling the same `batch_id`. Never call `files.create` or `batches.create` again for that in-flight job.
 
-Clear the state file only after all successful rows from that batch are durably written and every still-missing id in the batch has either succeeded on retry or landed in deadletter with four attempts recorded.
+Clear state only after all successful rows from that provider job are durably written to an immutable batch object and recorded in `manifest.json`, and every still-missing id has either succeeded on retry or landed in deadletter with four attempts recorded.
+
+Step 5 stores this contract at `{feature}/active_openai_batch.json` in S3 with conditional atomic replace.
 
 ### Partial batch success
 
@@ -120,10 +123,6 @@ Per-record attempt budget: four attempts total, including the first try.
 
 Completion for a feature requires exactly one valid output row per pinned input id from the campaign input set. Duplicate outputs for the same `source_record_id` are forbidden. Missing ids keep the feature `in_progress`.
 
-### Retry count alignment
-
-Campaign runs use `max_label_retries=4`, which means four attempts per record under the locked contract above. Do not introduce a second retry counter with a different meaning.
-
 ## Ordered implementation work
 
 1. Add `openai_batch_state.py` with atomic write, load, and clear helpers keyed by feature run directory and feature name.
@@ -134,7 +133,7 @@ Campaign runs use `max_label_retries=4`, which means four attempts per record un
 6. Add `smoke_resume_openai_batch.py` that submits a tiny live batch, writes state, sleeps, exits, and documents the exact resume command.
 7. Run the live smoke commands in this spec. Commit temporary smoke evidence. Delete temporary smoke helper and evidence before merge.
 
-## Exact live smoke/basic check commands with expected output
+## Exact live smoke and basic check commands with expected output
 
 ### Offline wiring check (no OpenAI call)
 
@@ -151,9 +150,11 @@ state = {
     'feature_name': 'is_news_or_opinion',
     'input_file_id': 'file-test',
     'batch_id': 'batch_test',
-    'task_uris': ['at://example/1'],
+    'logical_batch_index': 0,
+    'pending_source_record_ids': ['at://example/1'],
+    'attempt_count': 1,
+    'state': 'polling',
     'submitted_at': '2026-09-05T18:30:00Z',
-    'status': 'polling',
 }
 s.write_active_batch_state(d, 'is_news_or_opinion', state)
 loaded = s.load_active_batch_state(d, 'is_news_or_opinion')
@@ -170,8 +171,6 @@ openai_batch_state wiring OK
 
 ### Live partial-success check (requires `OPENAI_API_KEY`)
 
-Use the temporary helper added in this PR with exactly three posts, one intentionally empty-text post that will fail validation, and two valid posts:
-
 ```bash
 cd /workspace
 
@@ -187,8 +186,6 @@ Expected stdout includes both of the following lines:
 partial_success_rows=2
 partial_failure_rows=1
 ```
-
-Expected filesystem effect: two valid label rows are written; one failed id is queued for retry rather than losing the successful rows.
 
 ### Live interrupt-and-resume check (requires `OPENAI_API_KEY`)
 
@@ -216,8 +213,6 @@ completed_without_resubmit=true
 labeled_count=5
 ```
 
-Expected provider behavior: exactly one `batches.create` call for the interrupted job across both commands.
-
 ## Acceptance criteria
 
 - A crash after submit and before poll resumes the same `batch_id` without a second `batches.create` for that job.
@@ -236,13 +231,12 @@ Expected provider behavior: exactly one `batches.create` call for the interrupte
 - Feature completion depends on stale `failed_batches` counters while unlabeled ids still exist.
 - Any edit under `/workspace/tests/**`.
 - Any code path that launches Cursor agents or other autonomous agent runners.
-- Changes to feature prompts, registry membership, S3 shard layout, smoke cost gate, or watcher comments.
+- Changes to feature prompts, registry membership, campaign S3 layout, smoke cost gate, or watcher comments in this PR.
 
-## PR artifact/commit rules
+## PR artifact and commit rules
 
-- Branch name: `cursor/harden-openai-batch-resume-86b0`
-- One focused commit series inside the PR; prefer separate commits for engine refactor, orchestrator completion rule, and temporary smoke helper.
+- One focused PR for engine hardening only.
 - Commit the temporary smoke helper and a short `RESUME_SMOKE_EVIDENCE.md` under `data_platform/generate_features/` during review.
-- Before merge, delete `smoke_resume_openai_batch.py` and `RESUME_SMOKE_EVIDENCE.md`, and squash or add a final cleanup commit that removes them.
+- Before merge, delete `smoke_resume_openai_batch.py` and `RESUME_SMOKE_EVIDENCE.md`.
 - PR title: `Harden OpenAI Batch feature generation and resume`
 - PR body must state: no pytest added, live smoke commands run, and temporary smoke files removed before merge.
