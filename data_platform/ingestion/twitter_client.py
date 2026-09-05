@@ -1,4 +1,10 @@
-"""Tweepy client helpers for Twitter/X recent-search ingestion."""
+"""Provide Tweepy client helpers for Twitter recent-search ingestion.
+
+Run the sync script from the repository root:
+
+    PYTHONPATH=. uv run python data_platform/ingestion/sync_twitter.py \\
+        --config data_platform/ingestion/configs/twitter/mirrorview.yaml
+"""
 
 from __future__ import annotations
 
@@ -43,13 +49,14 @@ def build_query(
 def tweet_to_row(
     tweet: Any,
     *,
-    username: str,
     keyword: str,
     sync_timestamp: str,
+    username: str = "",
 ) -> dict[str, object]:
-    """Normalize a Tweepy Tweet to a flat dict matching the raw CSV schema.
+    """Convert a Tweepy tweet into a flat dictionary matching the raw CSV schema.
 
     ``created_at`` is UTC ISO-8601 from the tweet payload, or ``""`` when missing.
+    ``username`` is empty because user expansions are omitted to reduce the cost for each tweet.
     """
     metrics = getattr(tweet, "public_metrics", None) or {}
     tweet_id = str(tweet.id)
@@ -69,25 +76,16 @@ def tweet_to_row(
     }
 
 
-def _users_by_id(response: Any) -> dict[str, str]:
-    users: dict[str, str] = {}
-    includes = getattr(response, "includes", None) or {}
-    for user in includes.get("users", []) or []:
-        users[str(user.id)] = user.username or ""
-    return users
-
-
 def _search_recent_tweets_kwargs(
     query: str,
     max_results: int,
     next_token: str | None,
 ) -> dict[str, Any]:
+    """Return keyword arguments for search_recent_tweets without user expansions."""
     kwargs: dict[str, Any] = {
         "query": query,
         "max_results": max_results,
         "tweet_fields": ["created_at", "public_metrics", "author_id"],
-        "expansions": ["author_id"],
-        "user_fields": ["username"],
     }
     if next_token is not None:
         kwargs["next_token"] = next_token
@@ -107,19 +105,35 @@ def _append_tweets_from_response(
     keyword: str,
     sync_timestamp: str,
 ) -> str | None:
+    """Append tweets from a Tweepy response page to rows, up to the limit.
+
+    Parameters
+    ----------
+    response
+        Tweepy search response containing tweet data and pagination metadata.
+    rows
+        List of rows that receives the flattened tweet records.
+    limit
+        Maximum total rows to collect.
+    keyword
+        Search keyword associated with this sync task.
+    sync_timestamp
+        Timestamp of the sync run.
+
+    Returns
+    -------
+    str | None
+        Next pagination token when available, or None when no further pages remain.
+    """
     if not response or not response.data:
         return None
 
-    users = _users_by_id(response)
     for tweet in response.data:
         if len(rows) >= limit:
             break
-        author_id = str(tweet.author_id) if tweet.author_id else ""
-        username = users.get(author_id, "")
         rows.append(
             tweet_to_row(
                 tweet,
-                username=username,
                 keyword=keyword,
                 sync_timestamp=sync_timestamp,
             )

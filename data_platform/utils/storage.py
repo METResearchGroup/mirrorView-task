@@ -153,6 +153,13 @@ class StorageManager:
         raise ValueError("Either run_dir must be provided or latest=True")
 
     def _prepare_rows_for_write(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Return rows with ``record_id`` filled in from the platform primary key.
+
+        Feature label rows are keyed by ``source_record_id`` and hold no
+        platform primary key, so the feature stage keeps its rows as they are.
+        """
+        if self.stage == StorageStage.FEATURES:
+            return rows
         prepared: list[dict[str, Any]] = []
         for row in rows:
             if row.get(RECORD_ID_COLUMN):
@@ -432,5 +439,10 @@ class TwitterStorageManager(StorageManager):
         return pd.read_csv(
             csv_path,
             keep_default_na=False,
-            dtype={"tweet_id": "string", "author_id": "string", "source_record_id": "string"},
+            dtype={
+                "tweet_id": "string",
+                "author_id": "string",
+                "author_handle": "string",
+                "source_record_id": "string",
+            },
         )

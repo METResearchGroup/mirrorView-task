@@ -144,6 +144,8 @@ Entrypoints:
 
 Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, `is_toxic_tiered`, and `llm_toxicity_tiered`. Each feature writes `features/<timestamp>/{name}.csv`. Failed atomic batches may append to `features/<timestamp>/deadletter.jsonl`.
 
+Every LLM feature runs on the OpenAI Batch engine, so one atomic batch is one OpenAI Batch job that the process submits and then polls until it finishes. `is_toxic_tiered` calls the Perspective API on the thread-pool engine, and `--max-concurrency` only changes that feature. The LangChain engine is still available in the engine factory, and no registry feature uses it.
+
 Feature generation needs `OPENAI_API_KEY` and `GOOGLE_API_KEY` in the repo-root `.env`.
 
 ### 4. Curate
@@ -169,6 +171,7 @@ Entrypoints:
 | Raw output | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/posts.csv` | `raw/<timestamp>/comments.csv` or `comments.parquet` |
 | Checkpoint unit | One task per keyword | One task per keyword | One task per subreddit |
 | Preprocess module | `preprocess_bluesky.py` | `preprocess_twitter.py` | `preprocess_reddit.py` |
+| Author handle source | `author_handle` (raw DID) | `author_id` (raw username is empty to avoid User Read billing) | `author` |
 | Primary record id | `uri` | tweet id column per `platform_specific_columns` | composite reddit id |
 | Feature CLI | `generate_bluesky_features.py` | `generate_twitter_features.py` | `generate_reddit_features.py` |
 | Curate CLI | `curate_bluesky.py` | `curate_twitter.py` | `curate_reddit.py` |
