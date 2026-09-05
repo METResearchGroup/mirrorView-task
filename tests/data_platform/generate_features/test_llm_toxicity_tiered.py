@@ -22,11 +22,11 @@ class TestFeatureRegistry:
         """The registry exposes the LLM toxicity feature."""
         assert "llm_toxicity_tiered" in FEATURE_REGISTRY
 
-    def test_uses_langchain_prompt_and_schema(self) -> None:
-        """The spec is a LangChain feature with prompt and structured output."""
+    def test_uses_openai_prompt_and_schema(self) -> None:
+        """The spec is an OpenAI Batch feature with prompt and structured output."""
         spec = FEATURE_REGISTRY["llm_toxicity_tiered"]
 
-        assert spec.engine_type == "langchain"
+        assert spec.engine_type == "openai"
         assert spec.generate_fn is None
         assert spec.system_prompt
         assert spec.llm_output_schema is LlmToxicityTieredOutputModel
