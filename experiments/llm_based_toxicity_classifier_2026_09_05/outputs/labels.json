@@ -1,0 +1,252 @@
+[
+  {
+    "source_record_id": "synthetic_00000",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00001",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00002",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00003",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00004",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00005",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00006",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00007",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00008",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00009",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00010",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00011",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00012",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00013",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00014",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00015",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00016",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00017",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00018",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00019",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00020",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00021",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00022",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00023",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00024",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00025",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00026",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00027",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00028",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00029",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00030",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00031",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00032",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00033",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00034",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00035",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00036",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00037",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00038",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00039",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00040",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "medium"
+  },
+  {
+    "source_record_id": "synthetic_00041",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00042",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00043",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00044",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00045",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00046",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00047",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  },
+  {
+    "source_record_id": "synthetic_00048",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "low"
+  },
+  {
+    "source_record_id": "synthetic_00049",
+    "label_timestamp": "2026_09_05-16:41:18",
+    "toxicity_tier": "high"
+  }
+]

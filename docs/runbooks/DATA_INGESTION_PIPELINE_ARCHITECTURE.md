@@ -142,7 +142,7 @@ Entrypoints:
 - `data_platform/generate_features/generate_twitter_features.py`
 - `data_platform/generate_features/generate_reddit_features.py`
 
-Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, and `is_toxic_tiered`. Each feature writes `features/<timestamp>/{name}.csv`. Failed atomic batches may append to `features/<timestamp>/deadletter.jsonl`.
+Orchestration lives in `generate_features.py` with batch engines under `generate_features/engines/`. The feature registry in `registry.py` lists labels such as `is_political`, `political_stance`, `is_likely_spam`, `is_news_or_opinion`, `is_self_contained`, `is_structurally_complete`, `is_toxic_tiered`, and `llm_toxicity_tiered`. Each feature writes `features/<timestamp>/{name}.csv`. Failed atomic batches may append to `features/<timestamp>/deadletter.jsonl`.
 
 Every LLM feature runs on the OpenAI Batch engine, so one atomic batch is one OpenAI Batch job that the process submits and then polls until it finishes. `is_toxic_tiered` calls the Perspective API on the thread-pool engine, and `--max-concurrency` only changes that feature. The LangChain engine is still available in the engine factory, and no registry feature uses it.
 

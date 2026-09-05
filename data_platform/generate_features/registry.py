@@ -39,6 +39,13 @@ from data_platform.generate_features.is_toxic_tiered.generate_feature import IsT
 from data_platform.generate_features.is_toxic_tiered.generate_feature import (
     generate_feature as generate_is_toxic_tiered,
 )
+from data_platform.generate_features.llm_toxicity_tiered.generate_feature import (
+    SYSTEM_PROMPT as LLM_TOXICITY_TIERED_SYSTEM_PROMPT,
+)
+from data_platform.generate_features.llm_toxicity_tiered.generate_feature import (
+    LlmToxicityTieredModel,
+    LlmToxicityTieredOutputModel,
+)
 from data_platform.generate_features.models import FeatureSpec
 from data_platform.generate_features.political_stance.generate_feature import (
     SYSTEM_PROMPT as POLITICAL_STANCE_SYSTEM_PROMPT,
@@ -89,6 +96,13 @@ FEATURE_REGISTRY: dict[str, FeatureSpec] = {
         model=IsToxicTieredModel,
         engine_type="thread_pool",
         generate_fn=generate_is_toxic_tiered,
+    ),
+    "llm_toxicity_tiered": FeatureSpec(
+        name="llm_toxicity_tiered",
+        model=LlmToxicityTieredModel,
+        engine_type="openai",
+        system_prompt=LLM_TOXICITY_TIERED_SYSTEM_PROMPT,
+        llm_output_schema=LlmToxicityTieredOutputModel,
     ),
     "political_stance": FeatureSpec(
         name="political_stance",
