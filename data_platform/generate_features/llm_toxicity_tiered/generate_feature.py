@@ -20,15 +20,32 @@ ToxicityTier = Literal["low", "medium", "high"]
 
 
 class LlmToxicityTieredOutputModel(BaseModel):
-    pass
+    toxicity_tier: ToxicityTier = Field(
+        description="Toxicity of the text: low, medium, or high."
+    )
 
 
 class LlmToxicityTieredModel(BaseModel):
-    pass
+    source_record_id: str
+    label_timestamp: str
+    toxicity_tier: ToxicityTier
 
 
 def generate_feature(uri: str, text: str) -> LlmToxicityTieredModel:
-    """Classify the toxicity tier of post text."""
+    """Classify the toxicity tier of post text.
+
+    Parameters
+    ----------
+    uri
+        Record id stored as ``source_record_id``.
+    text
+        Post text to classify.
+
+    Returns
+    -------
+    LlmToxicityTieredModel
+        Row with the record id, timestamp, and toxicity tier.
+    """
     raise NotImplementedError
 
 
