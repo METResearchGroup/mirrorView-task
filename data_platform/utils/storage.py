@@ -251,12 +251,12 @@ class StorageManager:
                 combined = pd.concat([existing, new_df], ignore_index=True)
             else:
                 combined = pd.DataFrame(validated)
-            body = _parquet_bytes(combined)
+            self._store.put_bytes(key, _parquet_bytes(combined), allow_overwrite=True)
         else:
             fieldnames = list(self.model.model_fields.keys())
-            new_bytes = _csv_bytes(validated, fieldnames, header=not file_exists)
-            body = self._store.get_bytes(key) + new_bytes if file_exists else new_bytes
-        self._store.put_bytes(key, body, allow_overwrite=True)
+            self._store.append_bytes(
+                key, _csv_bytes(validated, fieldnames, header=not file_exists)
+            )
         return out_path
 
     def load_seen_ids_from_disk(

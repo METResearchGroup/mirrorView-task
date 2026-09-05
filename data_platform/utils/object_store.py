@@ -89,7 +89,8 @@ class ObjectStore(Protocol):
     ``ValueError`` when ``expected_sha256`` is given and does not match.
     ``put_bytes`` and ``put_file`` return the SHA-256 hex digest of the body
     and raise ``FileExistsError`` when the key exists and ``allow_overwrite``
-    is False.
+    is False. ``append_bytes`` adds bytes to the end of an object, creating it
+    when missing.
     """
 
     def exists(self, key: str) -> bool: ...
@@ -97,6 +98,8 @@ class ObjectStore(Protocol):
     def get_bytes(self, key: str, *, expected_sha256: str | None = None) -> bytes: ...
 
     def put_bytes(self, key: str, body: bytes, *, allow_overwrite: bool = False) -> str: ...
+
+    def append_bytes(self, key: str, body: bytes) -> None: ...
 
     def put_file(
         self, local_path: str | Path, key: str, *, allow_overwrite: bool = False
@@ -137,6 +140,12 @@ class LocalObjectStore:
         tmp_path.write_bytes(body)
         os.replace(tmp_path, path)
         return sha256_hex(body)
+
+    def append_bytes(self, key: str, body: bytes) -> None:
+        path = self._path_for(key)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("ab") as f:
+            f.write(body)
 
     def put_file(
         self, local_path: str | Path, key: str, *, allow_overwrite: bool = False
@@ -214,6 +223,15 @@ class S3ObjectStore:
                 ) from e
             raise
         return digest
+
+    def append_bytes(self, key: str, body: bytes) -> None:
+        """Replace the object with its current bytes plus ``body``.
+
+        S3 has no append, so the object is downloaded, extended, and uploaded
+        with ``allow_overwrite=True``.
+        """
+        existing = self.get_bytes(key) if self.exists(key) else b""
+        self.put_bytes(key, existing + body, allow_overwrite=True)
 
     def put_file(
         self, local_path: str | Path, key: str, *, allow_overwrite: bool = False
