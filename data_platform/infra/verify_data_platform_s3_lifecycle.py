@@ -53,7 +53,20 @@ def main() -> None:
     client = boto3.client("s3", region_name=REGION)
     expected = load_rule()
     installed = find_rule(read_rules(client), RULE_ID)
-    raise NotImplementedError((BUCKET, expected, installed, rule_problems))
+    if installed is None:
+        print(f"FAIL: rule {RULE_ID} is not installed on {BUCKET}")
+        raise SystemExit(1)
+    problems = rule_problems(installed, expected)
+    if problems:
+        for problem in problems:
+            print(f"FAIL: rule {RULE_ID} {problem}")
+        raise SystemExit(1)
+    expected_and = expected["Filter"]["And"]
+    tag = expected_and["Tags"][0]
+    print(
+        f"OK: rule {RULE_ID} prefix={expected_and['Prefix']} "
+        f"tag={tag['Key']}={tag['Value']} expiration_days={expected['Expiration']['Days']}"
+    )
 
 
 if __name__ == "__main__":
