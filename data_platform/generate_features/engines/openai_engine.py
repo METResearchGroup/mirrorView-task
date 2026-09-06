@@ -220,7 +220,20 @@ def submit_active_batch(
     The returned dict is the saved state. It is on disk before this function
     returns, so a caller that polls afterwards can be resumed by a new process.
     """
-    raise NotImplementedError
+    submitted = _submit_batch(client, spec, engine_config, tasks)
+    state = {
+        "input_file_id": submitted.input_file_id,
+        "batch_id": submitted.batch_id,
+        "logical_batch_index": batch_index,
+        "pending_source_record_ids": [task.uri for task in tasks],
+        "attempt_count": attempt_count,
+        "state": ACTIVE_STATE_POLLING,
+        "campaign_id": None,
+        "feature_name": feature_name,
+        "submitted_at": get_current_timestamp(),
+    }
+    write_active_batch_state(run_dir, feature_name, state)
+    return state
 
 
 def _parse_completed_batch(
@@ -350,13 +363,20 @@ def _request_lines_for_tasks(
     ]
 
 
-def _submit_and_wait_for_batch(
+@dataclass(frozen=True)
+class SubmittedBatch:
+    """Provider ids returned by one upload and ``batches.create`` pair."""
+
+    input_file_id: str
+    batch_id: str
+
+
+def _submit_batch(
     client: OpenAIBatchClient,
     spec: FeatureSpec,
     engine_config: OpenAIBatchEngineConfig,
     tasks: list[LabelTask],
-    sleep_fn: Callable[[float], None],
-) -> Batch:
+) -> SubmittedBatch:
     requests = _request_lines_for_tasks(tasks, spec, engine_config)
     input_file_id = _upload_requests(client, requests)
     batch = client.batches.create(
@@ -364,9 +384,20 @@ def _submit_and_wait_for_batch(
         endpoint=engine_config.endpoint,
         completion_window=engine_config.completion_window,
     )
+    return SubmittedBatch(input_file_id=input_file_id, batch_id=batch.id)
+
+
+def _submit_and_wait_for_batch(
+    client: OpenAIBatchClient,
+    spec: FeatureSpec,
+    engine_config: OpenAIBatchEngineConfig,
+    tasks: list[LabelTask],
+    sleep_fn: Callable[[float], None],
+) -> Batch:
+    submitted = _submit_batch(client, spec, engine_config, tasks)
     return wait_for_completed_batch(
         client,
-        batch.id,
+        submitted.batch_id,
         engine_config.poll_interval_seconds,
         sleep_fn,
     )
@@ -509,7 +540,7 @@ def build_openai_engine(
 
 def _require_batch_not_failed(batch_id: str, status: str) -> None:
     if status in BATCH_FAILED_STATUSES:
-        raise RuntimeError(f"OpenAI Batch {batch_id} ended with status {status}")
+        raise OpenAIBatchJobError(f"OpenAI Batch {batch_id} ended with status {status}")
 
 
 def _retrieve_batch(
@@ -541,7 +572,7 @@ def wait_for_completed_batch(
 
     Raises
     ------
-    RuntimeError
+    OpenAIBatchJobError
         When the batch ends in a failed, expired, or cancelled status.
     """
     while True:
