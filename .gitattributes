@@ -2,3 +2,4 @@ data_platform/ingestion/data_dumps/bluesky/data/parquet/**/*.parquet filter=lfs 
 data_platform/ingestion/data_dumps/reddit/filtered/*.parquet filter=lfs diff=lfs merge=lfs -text
 data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**/*.parquet filter=lfs diff=lfs merge=lfs -text
 data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/**/*.parquet filter=lfs diff=lfs merge=lfs -text
+data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/**/*.csv filter=lfs diff=lfs merge=lfs -text
