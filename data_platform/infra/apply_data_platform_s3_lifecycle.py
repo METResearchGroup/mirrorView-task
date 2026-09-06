@@ -58,7 +58,10 @@ def merge_rule(existing: list[dict], rule: dict) -> list[dict]:
     the id, ``rule`` is appended. ``existing`` is not modified, so rerunning
     the apply never adds a duplicate.
     """
-    raise NotImplementedError
+    merged = [rule if current.get("ID") == rule["ID"] else current for current in existing]
+    if not any(current.get("ID") == rule["ID"] for current in existing):
+        merged.append(rule)
+    return merged
 
 
 def main() -> None:
