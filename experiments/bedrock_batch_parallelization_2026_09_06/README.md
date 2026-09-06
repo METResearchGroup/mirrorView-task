@@ -1,8 +1,6 @@
 # Bedrock Nova Micro throughput experiment
 
-Compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch GPT-5.4 nano
-runs. Native Bedrock batch jobs are not available in this account without a new
-IAM service role. See `FINDINGS.md`.
+This experiment compares Amazon Nova Micro on Bedrock Converse with the OpenAI Batch GPT-5.4 nano runs. Native Bedrock batch jobs are not available in this AWS account without a new IAM service role, and the details are in `FINDINGS.md`.
 
 ## Smoke (this PR)
 

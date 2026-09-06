@@ -22,6 +22,8 @@ import typer
 
 from data_platform.generate_features.smoke_bedrock_engine import (
     BedrockEngineSmokeMetrics,
+    ON_DEMAND_INPUT_USD_PER_MILLION,
+    ON_DEMAND_OUTPUT_USD_PER_MILLION,
     estimated_cost_usd,
     run_bedrock_engine_smoke,
 )
@@ -150,6 +152,10 @@ def write_results(
         "updated_at": get_current_timestamp(),
         "model": DEFAULT_BEDROCK_NOVA_MICRO,
         "source_posts_csv": str(posts_csv.relative_to(REPO_ROOT)),
+        "pricing_usd_per_million_tokens": {
+            "input": ON_DEMAND_INPUT_USD_PER_MILLION,
+            "output": ON_DEMAND_OUTPUT_USD_PER_MILLION,
+        },
         "ablations": ablations,
     }
     output_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")

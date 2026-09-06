@@ -148,6 +148,12 @@ def test_flush_metadata_round_trip(features_dir) -> None:
     assert data["features"]["is_political"]["failed_batches"] == 1
 
 
+def test_registry_llm_features_use_openai_engine() -> None:
+    for spec in FEATURE_REGISTRY.values():
+        if spec.llm_output_schema is not None:
+            assert spec.engine_type == "openai"
+
+
 def test_model_id_follows_engine_type() -> None:
     from dataclasses import replace
 

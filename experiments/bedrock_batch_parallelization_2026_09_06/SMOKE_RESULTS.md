@@ -1,6 +1,6 @@
 # Bedrock Nova Micro smoke results
 
-Model: `us.amazon.nova-micro-v1:0`
+The model is `us.amazon.nova-micro-v1:0`.
 
 | Posts | Elapsed seconds | Posts per second | Tokens per second | Mean input tokens | Mean output tokens | Input tokens | Output tokens | Total tokens | Estimated cost (USD) |
 | ----- | --------------- | ---------------- | ----------------- | ----------------- | ------------------ | ------------ | ------------- | ------------ | -------------------- |

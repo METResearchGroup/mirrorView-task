@@ -168,7 +168,7 @@ def _write_smoke_results(
     )
     results_md.write_text(
         "# Bedrock Nova Micro smoke results\n\n"
-        f"Model: `{metrics.model}`\n\n"
+        f"The model is `{metrics.model}`.\n\n"
         "| Posts | Elapsed seconds | Posts per second | Tokens per second "
         "| Mean input tokens | Mean output tokens | Input tokens "
         "| Output tokens | Total tokens | Estimated cost (USD) |\n"
