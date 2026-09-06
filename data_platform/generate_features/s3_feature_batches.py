@@ -352,7 +352,7 @@ def consolidate_final(
     result = store.put_new(paths.final_key, body)
     manifest["final_parquet"] = {
         "key": paths.final_key,
-        "row_count": int(len(combined)),
+        "row_count": len(combined),
         "sha256": result.sha256,
     }
     new_etag = save_manifest(store, paths, manifest, manifest_etag)
@@ -364,7 +364,7 @@ def consolidate_final(
             "event": PROGRESS_EVENT_FINAL,
             "run_id": run_id,
             "key": paths.final_key,
-            "row_count": int(len(combined)),
+            "row_count": len(combined),
             "sha256": result.sha256,
         },
     )

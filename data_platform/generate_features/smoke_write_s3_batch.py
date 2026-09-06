@@ -20,7 +20,9 @@ import typer
 
 from data_platform.generate_features.generate_bluesky_features import BLUESKY_SPEC
 from data_platform.generate_features.models import CampaignRunConfig
-from data_platform.generate_features.platform_cli import load_pinned_preprocessed_records
+from data_platform.generate_features.platform_cli import (
+    load_pinned_preprocessed_records,
+)
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.generate_features.s3_feature_batches import (
     attach_provenance,
