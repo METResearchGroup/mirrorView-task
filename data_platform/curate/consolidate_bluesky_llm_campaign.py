@@ -182,6 +182,15 @@ def _json_bytes(document: dict[str, Any]) -> bytes:
     return json.dumps(document, indent=2).encode("utf-8")
 
 
+def _repo_relative(path: Path) -> str:
+    repo_root = Path(__file__).resolve().parents[2]
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(repo_root).as_posix()
+    except ValueError:
+        return resolved.as_posix()
+
+
 def _s3_client() -> Any:
     return boto3.client("s3", region_name=DEFAULT_S3_REGION)
 
@@ -425,7 +434,7 @@ def _wide_manifest_document(
     }
     if curated is not None:
         document["curated"] = {
-            "rules_config": str(args.curate_config),
+            "rules_config": _repo_relative(args.curate_config),
             "rules_hash": curated.rules_hash,
             "row_count": curated.row_count,
             "parquet": {"key": curated.parquet_key, "sha256": curated.parquet_sha256},
