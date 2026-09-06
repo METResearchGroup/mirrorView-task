@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-06
+
+1. A dated Mirrorview Twitter ingest config and a recent-search run (6,901 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #213](https://github.com/METResearchGroup/mirrorView-task/pull/213)
+
 ## 2026-09-05
 
 1. The LLM toxicity feature test now expects the OpenAI Batch engine, matching the registry after LLM features moved off LangChain. [PR #177](https://github.com/METResearchGroup/mirrorView-task/pull/177)
