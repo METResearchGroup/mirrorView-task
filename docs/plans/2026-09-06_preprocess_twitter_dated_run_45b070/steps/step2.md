@@ -62,7 +62,7 @@ git check-ignore -v \
   "data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/preprocessed/${PREPROCESSED_RUN}/metadata.json"
 ```
 
-Expected: no output, exit 1. If either path is ignored, add the missing `.gitignore` exception before `git add`.
+Expected: each path prints a `.gitignore` line that starts with `!` for this dataset. That means the exception un-ignores the file. Then `git add` must succeed. If `git add` says the csv is ignored, add the missing `.gitignore` exception before continuing.
 
 ```bash
 git add \
