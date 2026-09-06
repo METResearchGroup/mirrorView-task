@@ -14,6 +14,7 @@ instead of the canonical campaign feature prefix.
 
 from __future__ import annotations
 
+import tempfile
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -29,18 +30,24 @@ from data_platform.generate_features.campaign_cost_report import (
     PRICING_SOURCE_URL,
     BatchPricing,
     RequestUsage,
+    build_feature_cost_report,
 )
 from data_platform.generate_features.deterministic_smoke_sample import (
     load_deterministic_ten_posts,
 )
 from data_platform.generate_features.engines.openai_engine import (
+    DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
     OpenAIBatchClient,
     OpenAIBatchEngine,
+    create_openai_client,
 )
+from data_platform.generate_features.generate_features import CAMPAIGN_ENGINE_TYPE
 from data_platform.generate_features.models import FeatureSpec
+from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
+    run_id_for_feature,
 )
 from lib.constants import REPO_ROOT
 
@@ -203,11 +210,125 @@ def run_campaign_smoke(
     pricing: BatchPricing,
     client_factory: Callable[[], OpenAIBatchClient] | None = None,
 ) -> SmokeResult:
-    raise NotImplementedError
+    """Label the ten smoke posts for ``feature`` with one deliberate interruption and resume.
+
+    Order of work: build the smoke paths and refuse a smoke prefix that
+    overlaps the canonical feature prefix, load the ten posts, submit one
+    provider job and save its ``polling`` state, discard that engine, let a
+    new engine reattach to the saved job and collect the rows, build the
+    cost report and the resume evidence, write the four untagged smoke
+    objects, run the S3 checks, and write the Git copies under ``output_dir``.
+
+    Raises
+    ------
+    ValueError
+        When ``feature`` is not an OpenAI feature or ``smoke_prefix`` overlaps
+        the canonical feature prefix.
+    RuntimeError
+        When the resumed job leaves any of the ten posts without a valid row.
+    """
+    spec = FEATURE_REGISTRY[feature]
+    if spec.engine_type != CAMPAIGN_ENGINE_TYPE:
+        raise ValueError(f"smoke requires an OpenAI feature, got {feature!r}")
+    smoke_paths = build_smoke_paths(campaign_id, dataset_id, feature, smoke_prefix)
+    store = CampaignObjectStore(smoke_paths.paths.bucket)
+    canonical_smoke_keys_before = store.list_keys(smoke_paths.canonical.smoke_prefix)
+    posts = load_deterministic_ten_posts(dataset_id, preprocessed_run)
+    run_id = run_id_for_feature(campaign_id, feature)
+    make_client = client_factory or create_openai_client
+    with tempfile.TemporaryDirectory(prefix="smoke_bluesky_campaign_") as run_dir_name:
+        run_dir = Path(run_dir_name)
+        interrupted = submit_and_interrupt(
+            CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir
+        )
+        resumed = resume_and_collect_rows(
+            CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir, run_id=run_id
+        )
+    last_batch = resumed.engine.last_batch
+    cost_report = build_feature_cost_report(
+        campaign_id=campaign_id,
+        dataset_id=dataset_id,
+        preprocessed_run=preprocessed_run,
+        feature=feature,
+        model=DEFAULT_OPENAI_BATCH_ENGINE_CONFIG.model,
+        smoke_uri=smoke_paths.paths.uri(smoke_paths.paths.smoke_prefix),
+        batch_id=interrupted.state["batch_id"],
+        batch_usage=last_batch.usage if last_batch is not None else None,
+        request_usages=resumed.request_usages,
+        pricing=pricing,
+    )
+    resume_evidence = build_resume_evidence(
+        feature=feature, run_id=run_id, interrupted=interrupted, resumed=resumed
+    )
+    write_smoke_objects(
+        store,
+        smoke_paths.paths,
+        posts=posts,
+        rows=resumed.rows,
+        spec=spec,
+        cost_report=cost_report,
+        resume_evidence=resume_evidence,
+    )
+    checks, check_lines = run_s3_checks(
+        store,
+        smoke_paths,
+        spec=spec,
+        canonical_smoke_keys_before=canonical_smoke_keys_before,
+    )
+    cost_report_path = write_git_copies(
+        output_dir,
+        feature,
+        cost_report=cost_report,
+        resume_evidence=resume_evidence,
+        check_lines=check_lines,
+    )
+    return SmokeResult(
+        smoke_prefix_uri=smoke_paths.smoke_prefix_uri,
+        cost_report=cost_report,
+        resume_evidence=resume_evidence,
+        checks=checks,
+        cost_report_path=cost_report_path,
+    )
+
+
+def _display_path(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return str(path)
 
 
 def summary_lines(result: SmokeResult) -> list[str]:
-    raise NotImplementedError
+    """Return the stdout lines of one smoke run, in the order the step spec fixes."""
+    report = result.cost_report
+    checks = result.checks
+    return [
+        f"smoke_prefix={result.smoke_prefix_uri}",
+        f"smoke_rows={result.resume_evidence['rows_written']}",
+        f"avg_input_tokens={report['avg_input_tokens_per_request']}",
+        f"max_input_tokens={report['max_input_tokens_per_request']}",
+        f"avg_output_tokens={report['avg_output_tokens_per_request']}",
+        f"max_output_tokens={report['max_output_tokens_per_request']}",
+        f"estimated_full_run_usd_avg={report['estimated_full_run_usd_avg']}",
+        f"estimated_full_run_usd_max={report['estimated_full_run_usd_max']}",
+        f"{CHECK_SMOKE_OUTPUT_OK}={str(checks[CHECK_SMOKE_OUTPUT_OK]).lower()}",
+        f"{CHECK_RESUME_EVIDENCE_OK}={str(checks[CHECK_RESUME_EVIDENCE_OK]).lower()}",
+        f"{CHECK_NO_BATCHES}={str(checks[CHECK_NO_BATCHES]).lower()}",
+        f"{CHECK_CANONICAL_TOUCHED}={str(checks[CHECK_CANONICAL_TOUCHED]).lower()}",
+        f"cost_report={_display_path(result.cost_report_path)}",
+    ]
+
+
+def checks_passed(checks: dict[str, bool]) -> bool:
+    """True when every smoke object check holds and no ``batches/`` object exists.
+
+    ``canonical_smoke_prefix_touched`` is reported but not judged here, because
+    a canonical run touches that prefix by design.
+    """
+    return all(
+        checks[name]
+        for name in (CHECK_SMOKE_OUTPUT_OK, CHECK_RESUME_EVIDENCE_OK, CHECK_NO_BATCHES)
+    )
 
 
 def main(
@@ -237,9 +358,11 @@ def main(
             output_usd_per_million_tokens=output_usd_per_million_tokens,
         ),
     )
+    """Run the ten-post smoke for one feature, print the summary lines, and exit 1 when an S3 check fails."""
     for line in summary_lines(result):
         print(line)
-    raise NotImplementedError
+    if not checks_passed(result.checks):
+        raise typer.Exit(code=1)
 
 
 if __name__ == "__main__":
