@@ -181,7 +181,57 @@ def aggregate_cost_reports(
     smoke_reports_dir: Path,
     features: tuple[str, ...] = CAMPAIGN_LLM_FEATURES,
 ) -> dict[str, Any]:
-    raise NotImplementedError
+    """Sum the per-feature smoke cost reports of ``features`` into one parent estimate.
+
+    Raises
+    ------
+    FileNotFoundError
+        Naming every missing report, when any feature has no report file.
+    ValueError
+        When a report describes a different campaign or feature than its path.
+    """
+    paths = {feature: cost_report_path(smoke_reports_dir, feature) for feature in features}
+    missing = [str(path) for path in paths.values() if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"missing {len(missing)} cost reports: {missing}")
+    entries: list[dict[str, Any]] = []
+    for feature, path in paths.items():
+        report = json.loads(path.read_text(encoding="utf-8"))
+        if report.get("campaign_id") != campaign_id or report.get("feature") != feature:
+            raise ValueError(
+                f"{path} describes campaign {report.get('campaign_id')!r} feature "
+                f"{report.get('feature')!r}, expected {campaign_id!r} {feature!r}"
+            )
+        entries.append(
+            {
+                "feature": feature,
+                "report_path": str(path),
+                "model": report["model"],
+                "request_count": report["request_count"],
+                "avg_input_tokens_per_request": report["avg_input_tokens_per_request"],
+                "avg_output_tokens_per_request": report["avg_output_tokens_per_request"],
+                "max_input_tokens_per_request": report["max_input_tokens_per_request"],
+                "max_output_tokens_per_request": report["max_output_tokens_per_request"],
+                "smoke_cost_usd": report["smoke_cost_usd"],
+                "estimated_full_run_usd_avg": report["estimated_full_run_usd_avg"],
+                "estimated_full_run_usd_max": report["estimated_full_run_usd_max"],
+            }
+        )
+    return {
+        "campaign_id": campaign_id,
+        "generated_at": get_current_timestamp(),
+        "features_included": len(entries),
+        "features": entries,
+        "total_smoke_cost_usd": round(
+            sum(entry["smoke_cost_usd"] for entry in entries), USD_DECIMALS
+        ),
+        "total_estimated_full_run_usd_avg": round(
+            sum(entry["estimated_full_run_usd_avg"] for entry in entries), USD_DECIMALS
+        ),
+        "total_estimated_full_run_usd_max": round(
+            sum(entry["estimated_full_run_usd_max"] for entry in entries), USD_DECIMALS
+        ),
+    }
 
 
 def main(
@@ -190,7 +240,16 @@ def main(
     smoke_reports_dir: Path = typer.Option(..., "--smoke-reports-dir"),
     output: Path = typer.Option(..., "--output"),
 ) -> None:
-    raise NotImplementedError
+    """Sum the seven per-feature smoke cost reports into ``output`` and print the totals."""
+    if not aggregate:
+        raise typer.BadParameter("pass --aggregate; it is the only mode of this command")
+    document = aggregate_cost_reports(campaign_id, smoke_reports_dir)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(f"{json.dumps(document, indent=JSON_INDENT)}\n", encoding="utf-8")
+    print(f"features_included={document['features_included']}")
+    print(f"total_estimated_full_run_usd_avg={document['total_estimated_full_run_usd_avg']}")
+    print(f"total_estimated_full_run_usd_max={document['total_estimated_full_run_usd_max']}")
+    print(f"{output.name} written")
 
 
 if __name__ == "__main__":
