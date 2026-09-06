@@ -152,7 +152,8 @@ DEFAULT_OPENAI_BATCH_ENGINE_CONFIG = OpenAIBatchEngineConfig(
 class OpenAIBatchEngine(BaseBatchExecutionEngine):
     """Labels a batch of posts through OpenAI's Batch API with structured output.
 
-    ``last_batch`` is set after a successful ``batch_label_records`` call.
+    ``last_batch`` is the most recent provider batch that reached a terminal
+    status with output, set by ``batch_label_records`` and ``label_chunk``.
     """
 
     def __init__(
@@ -212,11 +213,13 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
     ) -> list[RecordLabelFailure]:
         """Label one chunk through provider jobs that survive a process crash.
 
-        Reattaches to the job in the feature's state file when one is still
-        ``polling`` or ``writing`` for this ``batch_index``. Writes every
-        successful row as soon as its provider job completes, then submits one
-        retry job at a time for ids that failed transiently and still have
-        attempts left. Returns the records that ended without a valid row.
+        Reattaches to the job in the feature's state file when it is still
+        ``polling`` or ``writing`` and covers at least one id in ``tasks``.
+        Writes every successful row as soon as its provider job completes,
+        then submits one retry job at a time for ids that failed transiently
+        and still have attempts left. Returns the records that ended without a
+        valid row. Ids of a reattached job that are not in ``tasks`` are left
+        for the chunk that holds them.
         """
         attempt_budget = self.run_config.max_label_retries + 1
         remaining = {task.uri: task for task in tasks}
@@ -274,7 +277,6 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         state = _matching_active_state(
             load_active_batch_state(run_dir, feature_name),
             feature_name,
-            batch_index,
             remaining,
         )
         if state is None:
@@ -367,13 +369,17 @@ def submit_active_batch(
 def _matching_active_state(
     state: dict[str, Any] | None,
     feature_name: str,
-    batch_index: int,
     remaining: dict[str, LabelTask],
 ) -> dict[str, Any] | None:
-    """Return the saved state when it describes an unfinished job for this chunk."""
+    """Return the saved state when it describes an unfinished job for this chunk.
+
+    The chunk is identified by its ids, not by ``batch_index``. After a crash
+    the caller rebuilds chunks from the ids that are still unlabeled, so the
+    same provider job can appear under a different index in the new process.
+    """
     if state is None:
         return None
-    if state["feature_name"] != feature_name or state["logical_batch_index"] != batch_index:
+    if state["feature_name"] != feature_name:
         return None
     if state["state"] not in (ACTIVE_STATE_POLLING, ACTIVE_STATE_WRITING):
         return None

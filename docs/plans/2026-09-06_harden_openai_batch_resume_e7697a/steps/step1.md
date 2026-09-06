@@ -79,7 +79,7 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 | `campaign_id` in legacy mode | `null` |
 | `submitted_at` | `lib.timestamp_utils.get_current_timestamp()` |
 | Write order | State is on disk before the first `batches.retrieve` for that job |
-| Resume rule | A state file matches when `feature_name` and `logical_batch_index` equal the current chunk, `state` is `polling` or `writing`, and at least one of its `pending_source_record_ids` is still unlabeled. A match polls that `batch_id` and never calls `files.create` or `batches.create` for it |
+| Resume rule | A state file matches when `feature_name` equals the current feature, `state` is `polling` or `writing`, and at least one of its `pending_source_record_ids` is in the current chunk. `logical_batch_index` is recorded but not compared, because a new process rebuilds chunks from the ids that are still unlabeled and the same job can land under a different index. A match polls that `batch_id` and never calls `files.create` or `batches.create` for it. Pending ids outside the current chunk are left for the chunk that holds them |
 | `terminal` state | Written after the rows and failures of a job are recorded. A `terminal` state never matches on resume |
 | Clear rule | The state file is deleted only after every id in the chunk has a written row or a final failure |
 | Custom id mapping | `task-{index:05d}` where `index` is the position in `pending_source_record_ids` |
@@ -207,7 +207,7 @@ partial_success_rows=2
 partial_failure_rows=1
 ```
 
-The smoke forces the failure by rewriting the third request's `model` to a name that does not exist before the upload. The provider answers that request with an HTTP 404 error line, which is non transient, so no retry job is created.
+The smoke forces the failure by rewriting the third request's `temperature` to 5.0 before the upload. The provider answers that request with an HTTP 400 error line, which is non transient, so no retry job is created. A bad model name does not work here because OpenAI then fails the whole batch at file validation.
 
 ### Live interrupt-and-resume check (requires `OPENAI_API_KEY`)
 
