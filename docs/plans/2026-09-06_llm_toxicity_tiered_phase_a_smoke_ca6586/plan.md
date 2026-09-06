@@ -12,7 +12,7 @@ Issue #194 (Step 14 of epic #180) generates `llm_toxicity_tiered` for 200,000 Bl
 
 Phase A has no product code. The work is one run of the existing smoke caller, a set of read-only checks, three temporary Git artifacts for review, and one cost estimate comment on the issue.
 
-The authoritative step spec is `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step14.md`. The cross-step contract is `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md`. The sibling Phase A for `political_stance`, another categorical feature, is `docs/plans/2026-09-06_political_stance_phase_a_smoke_e151cd/plan.md`, and this plan follows the same procedure with the values for `llm_toxicity_tiered`. The label column for this feature is `toxicity_tier`, which differs from the feature name, and the feature is separate from the Perspective API feature `is_toxic_tiered`, which this plan never runs.
+The authoritative step spec is `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step14.md`. The cross-step contract is `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md`. The sibling Phase A for `political_stance`, another categorical feature, is `docs/plans/2026-09-06_political_stance_phase_a_smoke_e151cd/plan.md`, and this plan follows the same procedure with the values for `llm_toxicity_tiered`. The label column for this feature is `toxicity_tier`, which differs from the feature name. The feature is separate from the Perspective API feature `is_toxic_tiered`, and this plan never runs that feature.
 
 ## Happy flow
 

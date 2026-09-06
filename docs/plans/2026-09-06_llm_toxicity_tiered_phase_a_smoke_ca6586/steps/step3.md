@@ -44,7 +44,7 @@ Phase B starts only after the parent issue #180 has explicit sign-off. It follow
 
 - Run the campaign CLI command from `step14.md` with `--features llm_toxicity_tiered` and `--batch-size 2000`. The same command resumes automatically.
 - Run the Step 7 watcher at every 10,000 durable rows and post the rolling comment on issue #194.
-- Run the validation commands from `step14.md` against `final.parquet`, `manifest.json`, and `progress.jsonl`, including the check that every `toxicity_tier` value is `low`, `medium`, or `high`, that `toxicity_prob` is absent, and that nothing exists under `is_toxic_tiered/`.
+- Run the validation commands from `step14.md` against `final.parquet`, `manifest.json`, and `progress.jsonl`. Those commands check that every `toxicity_tier` value is `low`, `medium`, or `high`, and that no `toxicity_prob` column exists. They also confirm that nothing exists under `is_toxic_tiered/`.
 - Write `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/llm_toxicity_tiered_run_report.md`, including the explicit statement that `is_toxic_tiered` was not run.
 - Delete the three temporary smoke artifacts from Git and push. The S3 smoke evidence stays.
 
