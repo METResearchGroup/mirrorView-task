@@ -1,0 +1,14 @@
+{
+  "post_count": 100,
+  "labeled_count": 100,
+  "elapsed_seconds": 5.0124682990001475,
+  "posts_per_second": 19.95025086142636,
+  "tokens_per_second": 5882.3314664915615,
+  "estimated_input_tokens_per_request": 284.85,
+  "estimated_output_tokens_per_request": 10.0,
+  "prompt_tokens": 28485,
+  "completion_tokens": 1000,
+  "total_tokens": 29485,
+  "model": "us.amazon.nova-micro-v1:0",
+  "estimated_cost_usd": 0.0011369750000000001
+}
