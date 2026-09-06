@@ -349,6 +349,7 @@ def generate_campaign_feature(
         )
         if adopted is not None:
             manifest_etag = adopted.manifest_etag
+            delete_active_state(store, paths)
             continue
         manifest_etag = _label_campaign_chunk(
             engine,
