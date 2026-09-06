@@ -22,7 +22,7 @@ from data_platform.infra.apply_data_platform_s3_lifecycle import (
 
 def find_rule(rules: list[dict], rule_id: str) -> dict | None:
     """Return the rule whose ``ID`` is ``rule_id``, or ``None`` when absent."""
-    raise NotImplementedError
+    return next((rule for rule in rules if rule.get("ID") == rule_id), None)
 
 
 def rule_problems(installed: dict, expected: dict) -> list[str]:
