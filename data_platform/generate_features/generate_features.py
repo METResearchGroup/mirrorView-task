@@ -54,6 +54,7 @@ from data_platform.generate_features.s3_feature_campaign import (
     delete_active_state,
     load_manifest,
     new_manifest,
+    read_failed_ids,
     run_id_for_feature,
     save_manifest,
 )
@@ -303,6 +304,12 @@ def generate_campaign_feature(
     that already has a batch object is skipped. ``paths`` defaults to the
     canonical feature prefix for ``campaign``.
 
+    ``final.parquet`` is written once every id is either labeled or recorded in
+    ``errors.jsonl`` as failed for good, so permanent failures do not block the
+    final file. Once the manifest records a final file the call returns at once
+    without labeling, so a chunk whose rows all failed permanently is not
+    retried after that point.
+
     Raises
     ------
     ValueError
@@ -324,6 +331,12 @@ def generate_campaign_feature(
     manifest, manifest_etag = _load_or_create_manifest(
         store, paths, campaign, spec, expected_row_count=len(ordered_ids)
     )
+    if manifest.get("final_parquet"):
+        print(
+            f"generate_features: {spec.name} final.parquet already written -> "
+            f"{paths.uri(paths.final_key)}"
+        )
+        return paths
     prelabeled = _smoke_rows_by_id(store, paths, spec, run_id)
     run_dir = _campaign_local_run_dir(paths)
     mirror = ActiveStateMirror(
@@ -372,11 +385,16 @@ def generate_campaign_feature(
         manifest,
         manifest_etag,
         expected_ids=ordered_ids,
+        failed_ids=read_failed_ids(store, paths),
         spec=spec,
         run_id=run_id,
     )
     if final_etag is not None:
-        print(f"generate_features: {spec.name} -> {paths.uri(paths.final_key)}")
+        final = manifest["final_parquet"]
+        print(
+            f"generate_features: {spec.name} -> {paths.uri(paths.final_key)} "
+            f"({final['row_count']} rows, {final['failed_row_count']} permanently failed ids excluded)"
+        )
     return paths
 
 
