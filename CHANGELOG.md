@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-06
+
+1. Operators can compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch news-or-opinion runs. A 100-post smoke recorded throughput and dollars, and the matching size and process jobs stay blocked until cost approval. [PR #212](https://github.com/METResearchGroup/mirrorView-task/pull/212)
+
 ## 2026-09-05
 
 1. The LLM toxicity feature test now expects the OpenAI Batch engine, matching the registry after LLM features moved off LangChain. [PR #177](https://github.com/METResearchGroup/mirrorView-task/pull/177)
