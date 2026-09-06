@@ -52,5 +52,5 @@ Post the model, token averages, smoke cost, and estimated 200,000-post cost on i
 2. The ten `source_record_id` values in `smoke/output.parquet` equal `reports/smoke/deterministic_ten_post_ids.json`.
 3. `resume_evidence.json` shows the same provider batch id before and after the interruption and zero upload or batch creation calls after the resume.
 4. The three temporary artifacts under `reports/smoke/is_news_or_opinion/` are committed, and no Parquet or CSV file is committed.
-5. Issue #188 has a comment with the estimated full-run cost.
+5. Issue #188 has a comment with the estimated full-run cost, or the PR body carries the same estimate when the token cannot comment on the issue.
 6. The 200,000-post run has not started.

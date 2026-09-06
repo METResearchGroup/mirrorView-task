@@ -97,4 +97,4 @@ The caller makes one upload and one batch creation, saves the polling state, dis
 
 ## Must fail
 
-- Any second smoke run for this feature. The caller writes with `If-None-Match: *`, so a second run fails with `FileExistsError`.
+- Any second smoke run for this feature. The caller writes the four objects with `If-None-Match: *`, so a second run fails with `FileExistsError`, but only after it has already submitted and paid for another provider job. The empty listing before the run is the gate that prevents the second job. Do not rely on the write-time refusal.
