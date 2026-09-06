@@ -276,12 +276,34 @@ def adopt_unrecorded_batch(
 
 
 def read_batches(store: CampaignObjectStore, manifest: dict[str, Any]) -> list[pd.DataFrame]:
-    """Download every manifest batch in part order, verifying each SHA-256."""
-    raise NotImplementedError
+    """Download every manifest batch in part order, verifying each SHA-256.
+
+    Raises
+    ------
+    FileNotFoundError
+        When a manifest entry's object is missing.
+    ValueError
+        When an object's bytes do not hash to the manifest digest.
+    """
+    frames: list[pd.DataFrame] = []
+    for entry in sorted(manifest["batches"], key=lambda item: item["part_index"]):
+        stored = store.get(entry["key"])
+        if stored is None:
+            raise FileNotFoundError(f"manifest batch object is missing: {entry['key']}")
+        digest = sha256_hex(stored.body)
+        if digest != entry["sha256"]:
+            raise ValueError(
+                f"SHA-256 mismatch for {entry['key']}: manifest {entry['sha256']}, object {digest}"
+            )
+        frames.append(parquet_rows(stored.body))
+    return frames
 
 
 def labeled_ids(store: CampaignObjectStore, manifest: dict[str, Any]) -> set[str]:
-    raise NotImplementedError
+    ids: set[str] = set()
+    for frame in read_batches(store, manifest):
+        ids.update(frame["source_record_id"].astype(str))
+    return ids
 
 
 def consolidate_final(
@@ -294,5 +316,56 @@ def consolidate_final(
     spec: FeatureSpec,
     run_id: str,
 ) -> str | None:
-    """Write ``final.parquet`` once every expected id has exactly one row; return the new manifest ETag or None."""
-    raise NotImplementedError
+    """Write ``final.parquet`` once every expected id has exactly one row; return the new manifest ETag or None.
+
+    Returns None without writing when the manifest already records a final
+    file, or when the batch objects do not yet cover ``expected_ids`` exactly.
+    The final file is untagged, holds the batches in part order, and its
+    SHA-256 goes into the manifest ``final_parquet`` block.
+
+    Raises
+    ------
+    ValueError
+        When the batch objects hold an id outside ``expected_ids`` or the same
+        id twice.
+    """
+    if manifest.get("final_parquet"):
+        return None
+    frames = read_batches(store, manifest)
+    if not frames:
+        return None
+    combined = pd.concat(frames, ignore_index=True)
+    ids = combined["source_record_id"].astype(str)
+    if ids.duplicated().any():
+        raise ValueError("batch objects repeat a source_record_id; final.parquet not written")
+    expected = set(expected_ids)
+    unexpected = set(ids) - expected
+    if unexpected:
+        raise ValueError(
+            f"batch objects hold {len(unexpected)} ids outside the input; final.parquet not written"
+        )
+    if set(ids) != expected:
+        return None
+    columns = q44_columns(spec)
+    validate_q44_rows(combined[columns].to_dict(orient="records"), spec, run_id=run_id)
+    body = rows_to_parquet_bytes(combined[columns].to_dict(orient="records"), columns)
+    result = store.put_new(paths.final_key, body)
+    manifest["final_parquet"] = {
+        "key": paths.final_key,
+        "row_count": int(len(combined)),
+        "sha256": result.sha256,
+    }
+    new_etag = save_manifest(store, paths, manifest, manifest_etag)
+    append_progress(
+        store,
+        paths,
+        {
+            "ts": get_current_timestamp(),
+            "event": PROGRESS_EVENT_FINAL,
+            "run_id": run_id,
+            "key": paths.final_key,
+            "row_count": int(len(combined)),
+            "sha256": result.sha256,
+        },
+    )
+    return new_etag
