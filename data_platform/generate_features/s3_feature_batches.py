@@ -354,7 +354,7 @@ def consolidate_final(
             f"batch objects hold {len(unexpected)} ids outside the input; final.parquet not written"
         )
     missing = expected - set(ids)
-    if not missing <= set(failed_ids):
+    if not missing.issubset(failed_ids):
         return None
     columns = q44_columns(spec)
     validate_q44_rows(combined[columns].to_dict(orient="records"), spec, run_id=run_id)
