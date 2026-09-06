@@ -42,7 +42,10 @@ MODE_INTERRUPT = "interrupt"
 MODE_RESUME = "resume"
 SMOKE_TASKS_FILENAME = "smoke_tasks.json"
 SMOKE_BATCH_INDEX = 0
-BROKEN_MODEL_NAME = "gpt-model-that-does-not-exist"
+# Out of range for chat completions, so OpenAI rejects that one request with
+# an HTTP 400 line in the error file while the rest of the batch completes.
+# A bad model name would instead fail the whole batch at file validation.
+BROKEN_TEMPERATURE = 5.0
 SMOKE_TEXTS = (
     "The Senate passed the appropriations bill 61 to 38 on Tuesday evening.",
     "Honestly the new transit plan is a joke and everyone in charge should resign.",
@@ -71,7 +74,7 @@ class _CountingFiles:
         for raw in file.read().decode("utf-8").splitlines():
             request = json.loads(raw)
             if request["custom_id"] == self._break_custom_id:
-                request["body"]["model"] = BROKEN_MODEL_NAME
+                request["body"]["temperature"] = BROKEN_TEMPERATURE
             lines.append(json.dumps(request))
         rewritten = io.BytesIO(("\n".join(lines) + "\n").encode("utf-8"))
         rewritten.name = "smoke_requests.jsonl"

@@ -61,13 +61,21 @@ SDK_READ_RETRY_MAX_SECONDS = 60.0
 CUSTOM_ID_PREFIX = "task-"
 CUSTOM_ID_INDEX_WIDTH = 5
 BATCH_COMPLETED_STATUS = "completed"
+BATCH_FAILED_STATUS = "failed"
+BATCH_EXPIRED_STATUS = "expired"
+BATCH_CANCELLED_STATUS = "cancelled"
 BATCH_FAILED_STATUSES = frozenset(
     {
-        "failed",
-        "expired",
-        "cancelled",
+        BATCH_FAILED_STATUS,
+        BATCH_EXPIRED_STATUS,
+        BATCH_CANCELLED_STATUS,
     }
 )
+BATCH_TERMINAL_STATUSES = frozenset({BATCH_COMPLETED_STATUS, *BATCH_FAILED_STATUSES})
+# An expired batch still carries output for the requests that did finish.
+BATCH_STATUSES_WITH_OUTPUT = frozenset({BATCH_COMPLETED_STATUS, BATCH_EXPIRED_STATUS})
+# Batch level error codes that clear on their own, so the same requests may be resubmitted.
+TRANSIENT_BATCH_ERROR_CODES = frozenset({"token_limit_exceeded"})
 TRANSIENT_POLL_ERRORS = (APIConnectionError, InternalServerError, RateLimitError)
 HTTP_OK = 200
 HTTP_TOO_MANY_REQUESTS = 429
@@ -90,7 +98,16 @@ class OpenAIBatchClient(Protocol):
 
 
 class OpenAIBatchJobError(RuntimeError):
-    """The provider batch ended failed, expired, or cancelled."""
+    """The provider batch ended failed, expired, or cancelled.
+
+    ``transient`` is True when resubmitting the same requests can succeed,
+    which is the case for an expired batch and for a batch that failed only
+    on the enqueued token limit.
+    """
+
+    def __init__(self, message: str, *, transient: bool) -> None:
+        super().__init__(message)
+        self.transient = transient
 
 
 @dataclass(frozen=True)
@@ -283,12 +300,14 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
                     batch_index=batch_index,
                     attempt_count=attempt_count,
                 )
-            completed = wait_for_completed_batch(
+            terminal = wait_for_terminal_batch(
                 self._client,
                 state["batch_id"],
                 self._engine_config.poll_interval_seconds,
                 self._sleep_fn,
             )
+            if terminal.status not in BATCH_STATUSES_WITH_OUTPUT:
+                raise _batch_job_error(terminal)
         except Exception as error:
             logger.warning(
                 "OpenAI Batch job failed for every request in the job",
@@ -301,10 +320,10 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
             )
         state = {**state, "state": ACTIVE_STATE_WRITING}
         write_active_batch_state(run_dir, feature_name, state)
-        self.last_batch = completed
+        self.last_batch = terminal
         parsed = _parse_completed_batch(
             self._client,
-            completed,
+            terminal,
             state["pending_source_record_ids"],
             tasks_by_id,
             self.spec,
@@ -364,12 +383,20 @@ def _matching_active_state(
 
 
 def _job_failure(source_record_id: str, error: Exception) -> BatchRequestFailure:
-    """Describe a whole job failure for one record. Only transport, provider, and terminal batch errors are transient."""
+    """Describe a whole job failure for one record.
+
+    Transport errors, provider 5xx and 429 errors, and batch level errors
+    that clear on their own are transient. Everything else fails fast.
+    """
+    if isinstance(error, OpenAIBatchJobError):
+        transient = error.transient
+    else:
+        transient = isinstance(error, TRANSIENT_POLL_ERRORS)
     return BatchRequestFailure(
         source_record_id=source_record_id,
         custom_id="",
         error=f"{type(error).__name__}: {error}",
-        transient=isinstance(error, (*TRANSIENT_POLL_ERRORS, OpenAIBatchJobError)),
+        transient=transient,
         missing_output=False,
     )
 
@@ -683,9 +710,20 @@ def build_openai_engine(
     )
 
 
-def _require_batch_not_failed(batch_id: str, status: str) -> None:
-    if status in BATCH_FAILED_STATUSES:
-        raise OpenAIBatchJobError(f"OpenAI Batch {batch_id} ended with status {status}")
+def _batch_job_error(batch: Batch) -> OpenAIBatchJobError:
+    """Describe a batch that ended failed, expired, or cancelled."""
+    errors = list(getattr(batch.errors, "data", None) or [])
+    codes = [error.code for error in errors]
+    if batch.status == BATCH_FAILED_STATUS:
+        transient = all(code in TRANSIENT_BATCH_ERROR_CODES for code in codes)
+    else:
+        transient = batch.status == BATCH_EXPIRED_STATUS
+    detail = "; ".join(f"{error.code}: {error.message}" for error in errors)
+    suffix = f" ({detail})" if detail else ""
+    return OpenAIBatchJobError(
+        f"OpenAI Batch {batch.id} ended with status {batch.status}{suffix}",
+        transient=transient,
+    )
 
 
 def _retrieve_batch(
@@ -713,18 +751,29 @@ def wait_for_completed_batch(
     poll_interval_seconds: float,
     sleep_fn: Callable[[float], None],
 ) -> Batch:
-    """Poll an OpenAI Batch until OpenAI reports a terminal status.
+    """Poll an OpenAI Batch until it completes.
 
     Raises
     ------
     OpenAIBatchJobError
         When the batch ends in a failed, expired, or cancelled status.
     """
+    batch = wait_for_terminal_batch(client, batch_id, poll_interval_seconds, sleep_fn)
+    if batch.status != BATCH_COMPLETED_STATUS:
+        raise _batch_job_error(batch)
+    return batch
+
+
+def wait_for_terminal_batch(
+    client: OpenAIBatchClient,
+    batch_id: str,
+    poll_interval_seconds: float,
+    sleep_fn: Callable[[float], None],
+) -> Batch:
+    """Poll an OpenAI Batch until OpenAI reports any terminal status."""
     while True:
         batch = _retrieve_batch(client, batch_id, sleep_fn)
-        status = batch.status
-        if status == BATCH_COMPLETED_STATUS:
+        if batch.status in BATCH_TERMINAL_STATUSES:
             return batch
-        _require_batch_not_failed(batch_id, status)
         sleep_fn(poll_interval_seconds)
 
