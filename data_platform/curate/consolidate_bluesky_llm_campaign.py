@@ -1,5 +1,25 @@
 """Join pinned Bluesky posts with seven campaign LLM feature files into one wide Parquet object.
 
+Runtime validation (automated tests are forbidden by Step 15):
+
+given seven feature manifests whose final.parquet SHA-256 and row_count are 200000
+when the CLI joins pinned posts on source_record_id
+then stdout includes each accepted manifest digest, wide_rows=200000, wide_columns=19,
+     sort_key=source_record_id ASC, and the wide manifest URI
+
+given a missing or SHA-mismatched feature final.parquet
+when the CLI verifies inputs
+then it raises before writing wide/features.parquet
+
+given the uploaded wide parquet
+when DuckDB describes columns and counts distinct source_record_id
+then columns match the nineteen-name contract, n=uniq=200000, and no llm_toxicity_tier is null
+
+given the same wide table and data_platform/curate/configs/bluesky/mirrorview.yaml
+when apply_rules runs
+then curated row count and political_stance x llm_toxicity_tier counts are written
+     under wide/curated/
+
 Run from the repo root:
 
     PYTHONPATH=. python data_platform/curate/consolidate_bluesky_llm_campaign.py \\
