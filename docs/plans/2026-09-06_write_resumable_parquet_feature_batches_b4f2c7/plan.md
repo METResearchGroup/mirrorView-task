@@ -11,7 +11,7 @@
 
 Feature generation today writes every label row into one growing feature file under a timestamped local run folder, tracks progress in a `metadata.json` file, and keeps the in-flight OpenAI Batch state in a local JSON file next to the feature file. That layout works for small runs, and it does not give the 200,000-post Bluesky campaign what it needs. A campaign needs one fixed S3 prefix per feature that seven parallel agents can write without touching each other, batch objects that are never rewritten, a manifest with SHA-256 digests that later steps can verify, an append-only progress log that a watcher can read, and the in-flight provider job state in S3 so a run that moves to another machine still reattaches to the same provider job.
 
-The plan adds a campaign mode to the existing Bluesky feature CLI. The operator passes `--campaign-id` and `--preprocessed-run` with exactly one feature and `--batch-size 2000`. The command loads the pinned preprocessed run, sorts the posts by `source_record_id`, splits them into fixed 2,000-post chunks, and labels each chunk with the resumable OpenAI Batch engine from Step 4. After each provider job completes, the command adds the run id, provider batch id, request id, and attempt count to every row, writes the chunk as one new `batches/part-NNNNN.parquet` object tagged `intermediate-artifact=true`, records the SHA-256 of that object in `manifest.json`, and appends one line to `progress.jsonl`. When every post has a row, the command writes one `final.parquet`. Re-running the same command resumes from the manifest and never rewrites an existing batch object.
+The plan adds a campaign mode to the existing Bluesky feature CLI. The operator passes `--campaign-id` and `--preprocessed-run` with exactly one feature and `--batch-size 2000`. The command loads the pinned preprocessed run, sorts the posts by `source_record_id`, splits them into fixed 2,000-post chunks, and labels each chunk with the resumable OpenAI Batch engine from Step 4. After each provider job completes, the command adds the run id, provider batch id, request id, and attempt count to every row, writes the chunk as one new `batches/part-NNNNN.parquet` object tagged `intermediate-artifact=true`, records the SHA-256 of that object in `manifest.json`, and appends one line to `progress.jsonl`. When every post either has a row or is recorded in `errors.jsonl` as failed for good, the command writes one `final.parquet` that holds the labeled rows. Re-running the same command resumes from the manifest and never rewrites an existing batch object.
 
 The plan is one PR for child issue #185 of epic #180. The authoritative spec is `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step5.md`, and the shared layout and schema live in `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md`.
 
@@ -37,9 +37,9 @@ flowchart TD
     L --> M[Add SHA-256 entry to manifest.json with If-Match]
     M --> N[Append one line to progress.jsonl]
     N --> O[Delete active_openai_batch.json in S3]
-    O --> P{Every post has a row?}
+    O --> P{Every post has a row or a line in errors.jsonl?}
     P -->|no| F
-    P -->|yes| Q[Write final.parquet once and record it in the manifest]
+    P -->|yes| Q[Write final.parquet once with the labeled rows and record row_count and failed_row_count in the manifest]
 ```
 
 ## Approach
@@ -52,7 +52,7 @@ The OpenAI engine from Step 4 stays read-only in this step. It writes its state 
 
 - Chunk boundaries come from the global sorted id list, so `part-NNNNN` always holds the same 2,000 ids across restarts. A chunk that already has a batch object is skipped. Ids that exhaust their four attempts are written to `errors.jsonl` and the batch object holds the rows that succeeded.
 - The `request_id` column holds the request's `custom_id` inside the provider batch (`task-NNNNN`). The engine does not expose the provider's own per-request id, and the engine is read-only in this step. `batch_id` plus `request_id` still identifies the request in the provider's output file.
-- The `final.parquet` gate is that the set of ids across all batch objects equals the set of input ids. For the pinned run that is 200,000 ids across 100 batch objects.
+- The `final.parquet` gate is that every input id is either in exactly one batch object or in `errors.jsonl`. `final.parquet` holds only the labeled rows, and the manifest records `row_count` and `failed_row_count`, which add up to `expected_row_count`. This is a user decision, made during review of PR #201, that overrides the epic rule in `steps/step5.md` that every pinned input id has exactly one valid output row: ids that fail all four attempts are left out of `final.parquet` on purpose, and `errors.jsonl` is the record of them. Once the manifest records a final file, the command returns at once without labeling, so a chunk whose rows all failed is not retried after that point. For the pinned run that is up to 200,000 ids across 100 batch objects.
 - Rows in `{feature}/smoke/output.parquet`, when that object exists, count as labeled. Their ids are not sent to the provider, and their rows are merged into the batch object of the chunk that holds those ids, in global id order. Step 6 writes that object; this step only reads it.
 - The campaign writes S3 directly with boto3 through a small wrapper in the new module, because the shared object store from Step 2 has no `If-Match`, object tag, or delete support, and `lib/aws/s3.py` is outside the files this step may change.
 - The campaign mode is S3 only. It does not honor `DATA_PLATFORM_STORAGE_BACKEND=local`.
@@ -71,7 +71,8 @@ Add `data_platform/generate_features/s3_feature_campaign.py` and `data_platform/
 4. `manifest.json` holds the campaign identity and an ordered batch list with SHA-256 hex digests of the object bytes, and every replace uses `If-Match` with the prior ETag.
 5. `progress.jsonl` gains one line per durable batch, and `errors.jsonl` gains one line per record that exhausted its attempts, both through read, append, and conditional replace.
 6. `active_openai_batch.json` exists in S3 while a provider job is in flight and is deleted only after the batch object and manifest entry are written. A restart with the same flags reattaches to that job.
-7. Re-running the same campaign command resumes from the manifest, continues at the next unwritten part index, and never rewrites a prior batch object.
-8. The live smoke wrote only under `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/`, that prefix is empty before merge, and the canonical feature `batches/` prefix holds no objects.
-9. The existing `uv run pytest -q` suite still passes with 631 tests. No test file changes.
-10. `smoke_write_s3_batch.py` and `BATCH_SMOKE_EVIDENCE.md` are committed during review and deleted in a final commit before merge.
+7. Re-running the same campaign command resumes from the manifest, continues at the next unwritten part index, and never rewrites a prior batch object. Once `final.parquet` is recorded, re-running prints one line and labels nothing.
+8. `final.parquet` is written once every input id is labeled or in `errors.jsonl`, holds only the labeled rows, and the manifest `final_parquet` block holds `row_count`, `failed_row_count`, and `sha256` with `row_count + failed_row_count == expected_row_count`.
+9. The live smoke wrote only under `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/`, that prefix is empty before merge, and the canonical feature `batches/` prefix holds no objects.
+10. The existing `uv run pytest -q` suite still passes with 631 tests. No test file changes.
+11. `smoke_write_s3_batch.py` and `BATCH_SMOKE_EVIDENCE.md` are committed during review and deleted in a final commit before merge.
