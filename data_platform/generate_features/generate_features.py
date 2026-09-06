@@ -72,18 +72,31 @@ def _all_records_labeled_once(
     feature_storage: StorageManager,
 ) -> bool:
     """Return True when no input record is unlabeled and no label id repeats."""
-    raise NotImplementedError
+    if not filter_records_needing_features(records, feature_name, config).empty:
+        return False
+    try:
+        labels = feature_storage.load_records(run_dir=config.features_dir)
+    except FileNotFoundError:
+        return False
+    id_column = config.feature_label_query.feature_file_id_column
+    return not labels[id_column].astype(str).duplicated().any()
 
 
 def _run_feature_labeling(
     feature_name: str,
     spec: FeatureSpec,
+    records: pd.DataFrame,
     tasks: list[LabelTask],
     config: FeatureGenerationConfig,
     metadata: FeatureRunMetadata,
     feature_storage: StorageManager,
 ) -> BatchRunStats:
-    """Execute batch labeling for one feature and update metadata on completion."""
+    """Label the pending tasks for one feature and complete it on exact id coverage.
+
+    The feature becomes ``completed`` only when every record in ``records``
+    has exactly one label row. Earlier failed batches do not block completion
+    once a later retry has labeled their records.
+    """
     mark_feature_in_progress(metadata, feature_name)
     flush_metadata(config.features_dir, metadata)
 
@@ -109,12 +122,8 @@ def _run_feature_labeling(
             failed_batches_delta=stats.failed_batches - feature_status.failed_batches,
         )
 
-    if stats.failed_batches > 0 or feature_status.failed_batches > 0:
-        flush_metadata(config.features_dir, metadata)
-        return stats
-
-    total_labeled = feature_status.labeled
-    mark_feature_completed(metadata, feature_name, total_labeled)
+    if _all_records_labeled_once(records, feature_name, config, feature_storage):
+        mark_feature_completed(metadata, feature_name, feature_status.labeled)
     flush_metadata(config.features_dir, metadata)
     return stats
 
@@ -152,7 +161,9 @@ def _process_one_feature(
         print(f"generate_features: {feature_name} — nothing to label")
         return feature_path
 
-    stats = _run_feature_labeling(feature_name, spec, tasks, config, metadata, feature_storage)
+    stats = _run_feature_labeling(
+        feature_name, spec, records, tasks, config, metadata, feature_storage
+    )
     print(
         f"generate_features: {feature_name} -> {stats.labeled} new labels "
         f"({stats.failed_batches} failed batches) -> {feature_path}"
@@ -167,10 +178,7 @@ def _mark_sync_completed(
     """Set sync_status completed when every stored feature entry is completed."""
     if not metadata.features:
         return
-    all_done = all(
-        status.status == "completed" and status.failed_batches == 0
-        for status in metadata.features.values()
-    )
+    all_done = all(status.status == "completed" for status in metadata.features.values())
     if all_done:
         set_sync_status_completed(metadata)
         flush_metadata(features_dir, metadata)
