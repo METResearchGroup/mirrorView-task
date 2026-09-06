@@ -2,7 +2,7 @@
 
 Keys are paths relative to ``data_platform/data``, so the same key names a
 file under the local data root and an object under the S3 prefix. The env var
-``DATA_PLATFORM_STORAGE_BACKEND`` picks the backend and defaults to S3; set it
+``DATA_PLATFORM_STORAGE_BACKEND`` picks the backend and defaults to S3. Set it
 to ``local`` to work from local disk.
 """
 

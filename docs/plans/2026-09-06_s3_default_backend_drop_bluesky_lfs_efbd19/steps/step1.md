@@ -185,10 +185,10 @@ Expected stdout: `no bluesky pipeline lfs` and then `0`.
 
 ```bash
 git ls-files "data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/*.json" "data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**/metadata.json"
-git check-ignore -v --no-index data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/dataset.json data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/raw/2026_09_01-00:00:00/metadata.json || echo "json not ignored"
+for f in $(git ls-files data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73 | grep '\.json$'); do git check-ignore -q --no-index "$f" && echo "IGNORED $f" || echo "not ignored $f"; done
 ```
 
-Expected stdout: the four JSON paths (`dataset.json`, `s3_migration_inventory.json`, and both `metadata.json`), then `json not ignored`.
+Expected stdout: the four JSON paths (`dataset.json`, `s3_migration_inventory.json`, and both `metadata.json`) from the first command, then four `not ignored` lines and no `IGNORED` line. `check-ignore -q` exits 0 only when a path is ignored, so `--no-index` makes the rule check apply to tracked files too.
 
 **Parquet paths are ignored on disk**
 
