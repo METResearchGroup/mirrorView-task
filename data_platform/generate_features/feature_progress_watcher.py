@@ -14,21 +14,33 @@ repository posts the printed body.
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from typing import Any
 
 import typer
 
-from data_platform.generate_features.progress_record import ProgressRecord
+from data_platform.generate_features.progress_record import (
+    ProgressRecord,
+    latest_batch_record,
+    parse_batch_records,
+)
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
+    load_active_state,
+    load_watcher_state,
+    read_progress_lines,
+    save_watcher_state,
 )
+from lib.timestamp_utils import get_current_timestamp
 
 MILESTONE_ROWS = 10_000
 COMMENT_OPEN = "rolling_comment<<<"
 COMMENT_CLOSE = ">>>rolling_comment"
 IDLE = "idle"
+GITHUB_COMMENT_ID_FIELD = "github_comment_id"
+LAST_POSTED_MILESTONE_FIELD = "last_posted_milestone"
 
 
 @dataclass(frozen=True)
@@ -46,17 +58,37 @@ class WatcherOutcome:
 def resolve_feature_paths(
     campaign_id: str, feature: str, smoke_prefix: str | None
 ) -> FeaturePaths:
-    raise NotImplementedError
+    """Return the canonical feature paths, or the paths under ``smoke_prefix/{feature}/`` when given."""
+    if smoke_prefix is None:
+        return FeaturePaths.canonical(campaign_id, feature)
+    return FeaturePaths.from_root_uri(smoke_prefix, feature)
 
 
 def crossed_boundary(durable_row_total: int, last_posted_milestone: int) -> int | None:
-    raise NotImplementedError
+    """Return the highest 10,000-row multiple reached that is above the last posted one, or None."""
+    boundary = durable_row_total // MILESTONE_ROWS * MILESTONE_ROWS
+    if boundary > last_posted_milestone:
+        return boundary
+    return None
 
 
 def estimated_cost_to_date(
     cost_report: dict[str, Any] | None, durable_row_total: int
 ) -> float | None:
-    raise NotImplementedError
+    """Scale the smoke report's average full-run estimate to the rows labeled so far, or None without a report."""
+    if cost_report is None:
+        return None
+    per_row = float(cost_report["estimated_full_run_usd_avg"]) / int(
+        cost_report["full_run_post_count"]
+    )
+    return durable_row_total * per_row
+
+
+def _load_json_or_none(store: CampaignObjectStore, key: str) -> dict[str, Any] | None:
+    stored = store.get(key)
+    if stored is None:
+        return None
+    return json.loads(stored.body.decode("utf-8"))
 
 
 def render_rolling_comment(
@@ -88,7 +120,58 @@ def run_watcher_once(
     *,
     github_comment_id: int | None,
 ) -> WatcherOutcome:
-    raise NotImplementedError
+    """Read the feature's S3 progress state once and report whether a new 10,000-row boundary was reached.
+
+    ``watcher.json`` is replaced only when a new boundary is reached or when
+    ``github_comment_id`` differs from the stored one, so a rerun with no
+    change leaves the object untouched. The comment is rendered only for a new
+    boundary.
+
+    Raises
+    ------
+    ValueError
+        When a batch line of ``progress.jsonl`` fails validation.
+    ConditionalWriteConflict
+        When another watcher replaced ``watcher.json`` first.
+    """
+    latest = latest_batch_record(parse_batch_records(read_progress_lines(store, paths)))
+    stored_state, etag = load_watcher_state(store, paths)
+    state = {
+        GITHUB_COMMENT_ID_FIELD: None,
+        LAST_POSTED_MILESTONE_FIELD: 0,
+        **(stored_state or {}),
+    }
+    last_posted = int(state[LAST_POSTED_MILESTONE_FIELD])
+    durable_row_total = 0 if latest is None else latest.durable_row_total
+    boundary = crossed_boundary(durable_row_total, last_posted)
+    duplicate_suppressed = boundary is None and last_posted >= MILESTONE_ROWS
+    comment = None
+    if boundary is not None and latest is not None:
+        active_state, _ = load_active_state(store, paths)
+        comment = render_rolling_comment(
+            latest,
+            active_openai_batch_id=None if active_state is None else str(active_state["batch_id"]),
+            cost_to_date_usd=estimated_cost_to_date(
+                _load_json_or_none(store, paths.smoke_cost_report_key), latest.durable_row_total
+            ),
+            updated_at=get_current_timestamp(),
+        )
+        state[LAST_POSTED_MILESTONE_FIELD] = boundary
+    recorded_id = None
+    if github_comment_id is not None and state[GITHUB_COMMENT_ID_FIELD] != github_comment_id:
+        state[GITHUB_COMMENT_ID_FIELD] = github_comment_id
+        recorded_id = github_comment_id
+    watcher_updated = state != stored_state and (boundary is not None or recorded_id is not None)
+    if watcher_updated:
+        save_watcher_state(store, paths, state, etag)
+    return WatcherOutcome(
+        boundary=boundary,
+        duplicate_suppressed=duplicate_suppressed,
+        watcher_state=state,
+        watcher_updated=watcher_updated,
+        comment=comment,
+        github_comment_id_recorded=recorded_id,
+    )
 
 
 def output_lines(outcome: WatcherOutcome) -> list[str]:
