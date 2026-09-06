@@ -436,11 +436,34 @@ def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None
     store.delete(paths.active_state_key)
 
 
+def manifest_sha256(manifest: dict[str, Any]) -> str:
+    raise NotImplementedError
+
+
 def append_progress(
     store: CampaignObjectStore, paths: FeaturePaths, record: dict[str, Any]
 ) -> None:
     """Append one line to ``progress.jsonl``; raises ``ConditionalWriteConflict`` after repeated lost races."""
     store.append_jsonl(paths.progress_key, [record])
+
+
+def read_progress_lines(store: CampaignObjectStore, paths: FeaturePaths) -> list[str]:
+    raise NotImplementedError
+
+
+def load_watcher_state(
+    store: CampaignObjectStore, paths: FeaturePaths
+) -> tuple[dict[str, Any] | None, str | None]:
+    raise NotImplementedError
+
+
+def save_watcher_state(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    state: dict[str, Any],
+    etag: str | None,
+) -> str:
+    raise NotImplementedError
 
 
 def append_errors(
