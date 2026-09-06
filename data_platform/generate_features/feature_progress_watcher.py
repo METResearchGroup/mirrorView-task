@@ -22,6 +22,7 @@ import typer
 
 from data_platform.generate_features.progress_record import (
     ProgressRecord,
+    active_batch_id,
     latest_batch_record,
     parse_batch_records,
 )
@@ -49,7 +50,6 @@ class WatcherOutcome:
 
     boundary: int | None
     duplicate_suppressed: bool
-    watcher_state: dict[str, Any]
     watcher_updated: bool
     comment: str | None
     github_comment_id_recorded: int | None
@@ -150,7 +150,7 @@ def run_watcher_once(
         active_state, _ = load_active_state(store, paths)
         comment = render_rolling_comment(
             latest,
-            active_openai_batch_id=None if active_state is None else str(active_state["batch_id"]),
+            active_openai_batch_id=active_batch_id(active_state),
             cost_to_date_usd=estimated_cost_to_date(
                 _load_json_or_none(store, paths.smoke_cost_report_key), latest.durable_row_total
             ),
@@ -161,13 +161,12 @@ def run_watcher_once(
     if github_comment_id is not None and state[GITHUB_COMMENT_ID_FIELD] != github_comment_id:
         state[GITHUB_COMMENT_ID_FIELD] = github_comment_id
         recorded_id = github_comment_id
-    watcher_updated = state != stored_state and (boundary is not None or recorded_id is not None)
+    watcher_updated = boundary is not None or recorded_id is not None
     if watcher_updated:
         save_watcher_state(store, paths, state, etag)
     return WatcherOutcome(
         boundary=boundary,
         duplicate_suppressed=duplicate_suppressed,
-        watcher_state=state,
         watcher_updated=watcher_updated,
         comment=comment,
         github_comment_id_recorded=recorded_id,

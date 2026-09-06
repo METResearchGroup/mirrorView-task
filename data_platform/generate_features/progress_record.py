@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 from collections.abc import Iterable, Sequence
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
@@ -62,6 +63,13 @@ class ProgressRecord(BaseModel):
                 f"durable_row_total / expected_row_total = {expected_percent}"
             )
         return self
+
+
+def active_batch_id(active_state: dict[str, Any] | None) -> str | None:
+    """Return the provider ``batch_id`` of an ``active_openai_batch.json`` document, or None when idle."""
+    if not active_state or active_state.get("batch_id") is None:
+        return None
+    return str(active_state["batch_id"])
 
 
 def parse_batch_records(lines: Iterable[str]) -> list[ProgressRecord]:

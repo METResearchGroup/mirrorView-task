@@ -23,7 +23,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/feature_progress_watc
   --once
 ```
 
-That command reads the canonical feature prefix and is not run in this PR. The live proof in this file passes `--smoke-prefix` with the disposable prefix and `--dry-render`.
+The command above reads the canonical feature prefix and is not run in this PR. The live proof in this file passes `--smoke-prefix` with the disposable prefix and `--dry-render`.
 
 Happy path through the caller: resolve the feature paths, read every `progress.jsonl` line and keep the batch lines, validate them and take the one with the largest `durable_row_total`, read `watcher.json`, compute the boundary, and either print the comment body and replace `watcher.json` or print that no boundary was crossed.
 
@@ -138,11 +138,12 @@ Every batch line holds these fields. The first twelve come from `step7.md`. The 
 `data_platform/generate_features/feature_progress_watcher.py`:
 
 - `MILESTONE_ROWS = 10_000`, `COMMENT_OPEN = "rolling_comment<<<"`, `COMMENT_CLOSE = ">>>rolling_comment"`.
-- `resolve_feature_paths(campaign_id: str, feature: str, smoke_prefix: str | None) -> FeaturePaths` returns the canonical paths, or `FeaturePaths.from_root_uri(smoke_prefix, feature)`, and raises `ValueError` when a smoke prefix overlaps the canonical feature prefix.
+- `resolve_feature_paths(campaign_id: str, feature: str, smoke_prefix: str | None) -> FeaturePaths` returns the canonical paths, or `FeaturePaths.from_root_uri(smoke_prefix, feature)`. The watcher writes only `watcher.json`, which it also writes at the canonical prefix by design, so it has no overlap guard.
 - `crossed_boundary(durable_row_total: int, last_posted_milestone: int) -> int | None` returns the new boundary or None.
 - `estimated_cost_to_date(cost_report: dict | None, durable_row_total: int) -> float | None`.
 - `render_rolling_comment(record: ProgressRecord, *, active_openai_batch_id: str | None, cost_to_date_usd: float | None, updated_at: str) -> str` returns the markdown block with the five required sections.
-- `@dataclass(frozen=True) class WatcherOutcome` with `boundary`, `duplicate_suppressed`, `watcher_state`, `watcher_updated`, `comment`, `github_comment_id_recorded`.
+- `@dataclass(frozen=True) class WatcherOutcome` with `boundary`, `duplicate_suppressed`, `watcher_updated`, `comment`, `github_comment_id_recorded`.
+- `active_batch_id(active_state: dict | None) -> str | None` lives in `progress_record.py` and is shared by the writer and the watcher.
 - `run_watcher_once(store, paths, *, github_comment_id: int | None) -> WatcherOutcome`.
 - `output_lines(outcome: WatcherOutcome) -> list[str]`.
 - `main(campaign_id, feature, smoke_prefix, dry_render, once, github_comment_id)` Typer command. Without `--once` it raises a usage error, because the CLI has no other mode.
@@ -200,7 +201,7 @@ No pytest is added. These scenarios are the behavior the offline check and the l
 7. Given `durable_row_total` 9999 and `last_posted_milestone` 0, when the watcher runs, then it prints `boundary_crossed=false` and `duplicate_boundary_suppressed=false`.
 8. Given `durable_row_total` 35000 and `last_posted_milestone` 10000, when the watcher runs, then it prints `boundary=30000` once.
 9. Given no `smoke/cost_report.json`, when the comment renders, then the cost line reads `unavailable`. Given a report with `estimated_full_run_usd_avg` 8.4 and `full_run_post_count` 200000, and 10000 rows, then it reads `$0.42`.
-10. Given a `--smoke-prefix` that equals or contains the canonical feature prefix, when the watcher or the seed helper starts, then it raises `ValueError` before any S3 call.
+10. Given a seed `--smoke-prefix` whose key does not contain `/_smoke/`, when the seed helper starts, then it raises `ValueError` before any S3 call.
 
 ## Ordered implementation work
 
@@ -365,6 +366,5 @@ Expected: `631 passed`.
 ## Must fail
 
 - A `ProgressRecord` whose `run_id` is not `{campaign_id}:{feature}`, whose `durable_row_total` is below `batch_row_count`, or whose `percent_complete` does not match the two totals.
-- A watcher or seed `--smoke-prefix` that overlaps the canonical feature prefix.
 - A seed `--smoke-prefix` without `/_smoke/` in its key.
 - A watcher run without `--once`.

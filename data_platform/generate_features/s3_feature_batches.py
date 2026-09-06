@@ -21,6 +21,7 @@ from data_platform.generate_features.models import FeatureSpec, Q44ProvenanceMod
 from data_platform.generate_features.progress_record import (
     PROGRESS_EVENT_BATCH,
     ProgressRecord,
+    active_batch_id,
 )
 from data_platform.generate_features.s3_feature_campaign import (
     INTERMEDIATE_ARTIFACT_TAG,
@@ -199,7 +200,7 @@ def _record_batch(
         percent_complete=durable_row_total / expected_row_total,
         last_source_record_id=last_source_record_id,
         manifest_sha256=manifest_sha256(manifest),
-        active_openai_batch_id=None if active_state is None else str(active_state["batch_id"]),
+        active_openai_batch_id=active_batch_id(active_state),
         ts=recorded_at,
         event=PROGRESS_EVENT_BATCH,
         key=key,
