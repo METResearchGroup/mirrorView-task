@@ -28,6 +28,7 @@ from data_platform.generate_features.s3_feature_campaign import (
 MILESTONE_ROWS = 10_000
 COMMENT_OPEN = "rolling_comment<<<"
 COMMENT_CLOSE = ">>>rolling_comment"
+IDLE = "idle"
 
 
 @dataclass(frozen=True)
@@ -65,7 +66,20 @@ def render_rolling_comment(
     cost_to_date_usd: float | None,
     updated_at: str,
 ) -> str:
-    raise NotImplementedError
+    """Return the markdown block of the rolling feature-issue comment, without a trailing newline."""
+    cost = "unavailable" if cost_to_date_usd is None else f"${cost_to_date_usd:.2f}"
+    return "\n".join(
+        [
+            f"## Feature progress: {record.feature}",
+            f"Campaign: {record.campaign_id}",
+            f"Durable rows: {record.durable_row_total} / {record.expected_row_total} "
+            f"({record.percent_complete * 100:.1f}%)",
+            f"Latest part: {record.part_index} (manifest sha256: {record.manifest_sha256})",
+            f"Estimated cost to date: {cost}",
+            f"Active OpenAI batch: {active_openai_batch_id or IDLE}",
+            f"Updated: {updated_at}",
+        ]
+    )
 
 
 def run_watcher_once(
@@ -78,7 +92,20 @@ def run_watcher_once(
 
 
 def output_lines(outcome: WatcherOutcome) -> list[str]:
-    raise NotImplementedError
+    """Return the stdout lines of one run, in the order the step spec fixes."""
+    lines = [f"boundary_crossed={str(outcome.boundary is not None).lower()}"]
+    if outcome.boundary is not None:
+        lines.append(f"boundary={outcome.boundary}")
+    else:
+        lines.append(f"duplicate_boundary_suppressed={str(outcome.duplicate_suppressed).lower()}")
+    if outcome.watcher_updated:
+        lines.append("watcher_json_updated=true")
+    lines.append("github_write_skipped=true")
+    if outcome.github_comment_id_recorded is not None:
+        lines.append(f"github_comment_id_recorded={outcome.github_comment_id_recorded}")
+    if outcome.comment is not None:
+        lines.extend([COMMENT_OPEN, outcome.comment, COMMENT_CLOSE])
+    return lines
 
 
 def main(
