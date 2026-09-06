@@ -2,7 +2,7 @@
 
 ## 2026-09-06
 
-1. Operators can compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch runs that label posts as news, opinion, or neither. A smoke run of 100 posts recorded throughput and estimated cost, and the size jobs and process jobs that match the OpenAI Batch experiment stay blocked until cost approval. [PR #212](https://github.com/METResearchGroup/mirrorView-task/pull/212)
+1. Operators can compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch runs that label posts as news, opinion, or neither. A smoke run, the matching size jobs, and the matching process jobs now record throughput and estimated cost, and live feature generation still uses OpenAI. [PR #212](https://github.com/METResearchGroup/mirrorView-task/pull/212)
 
 ## 2026-09-05
 

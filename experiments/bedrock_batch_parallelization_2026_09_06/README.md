@@ -1,8 +1,8 @@
 # Bedrock Nova Micro throughput experiment
 
-This experiment compares Amazon Nova Micro on Bedrock Converse with the OpenAI Batch GPT-5.4 nano runs. Native Bedrock batch jobs are not available in this AWS account without a new IAM service role, and the details are in `FINDINGS.md`.
+This experiment compares Amazon Nova Micro on Bedrock Converse with the OpenAI Batch GPT-5.4 nano runs. Native Bedrock batch jobs are not available in this AWS account without a new IAM service role, and the details are in `FINDINGS.md`. Measured results are in `RESULTS.md`.
 
-## Smoke (this PR)
+## Smoke
 
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
@@ -20,7 +20,7 @@ Then:
 PYTHONPATH=. uv run python experiments/bedrock_batch_parallelization_2026_09_06/write_cost_estimate.py
 ```
 
-## Size and process jobs (blocked until cost approval)
+## Size and process jobs
 
 Without `--i-approve-the-cost-estimate` these commands exit 2 and do not call Bedrock:
 
@@ -29,4 +29,4 @@ PYTHONPATH=. uv run python experiments/bedrock_batch_parallelization_2026_09_06/
 PYTHONPATH=. uv run python experiments/bedrock_batch_parallelization_2026_09_06/run_process_experiment.py
 ```
 
-After you approve `COST_ESTIMATE.md`, pass `--i-approve-the-cost-estimate` on those same commands. Do not run the approved jobs from this PR.
+The approved runs for this experiment have already been executed. To repeat them, pass `--i-approve-the-cost-estimate` on those same commands.
