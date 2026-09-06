@@ -34,7 +34,19 @@ def rule_problems(installed: dict, expected: dict) -> list[str]:
         One message per field that differs. Empty when ``installed`` matches
         ``expected`` on every compared field.
     """
-    raise NotImplementedError
+    installed_and = installed.get("Filter", {}).get("And", {})
+    expected_and = expected["Filter"]["And"]
+    compared = [
+        ("status", installed.get("Status"), expected["Status"]),
+        ("prefix", installed_and.get("Prefix"), expected_and["Prefix"]),
+        ("tags", _tag_pairs(installed_and.get("Tags", [])), _tag_pairs(expected_and["Tags"])),
+        ("expiration_days", installed.get("Expiration", {}).get("Days"), expected["Expiration"]["Days"]),
+    ]
+    return [f"{name} is {found!r}, expected {wanted!r}" for name, found, wanted in compared if found != wanted]
+
+
+def _tag_pairs(tags: list[dict]) -> list[tuple[str, str]]:
+    return sorted((tag["Key"], tag["Value"]) for tag in tags)
 
 
 def main() -> None:
