@@ -12,7 +12,7 @@ The main caller is `data_platform/ingestion/sync_twitter.py` `main`, which calls
 
 The task is to call that CLI with the dated config and a working `X_BEARER_TOKEN`. Resume with `--run-dir` if the process stops before `sync_status` is `completed`.
 
-Leave these out of scope. Do not change `sync_twitter.py` or `twitter_client.py`. Do not run preprocess, features, or curate. Do not commit raw files. Do not add a usage helper to the repo. Do not add Git LFS exceptions or S3 upload.
+Leave these out of scope. Do not change `sync_twitter.py` or `twitter_client.py`. Do not run preprocess, features, or curate. Do not `git add` raw files in this step. Step 3 commits them. Do not add a usage helper to the repo. Do not upload to S3.
 
 ## Files to inspect (read-only)
 
@@ -30,7 +30,7 @@ Leave these out of scope. Do not change `sync_twitter.py` or `twitter_client.py`
 
 ## Files allowed to change
 
-The live sync may write these paths on local disk. Git ignores them. Do not `git add` them.
+The live sync may write these paths on local disk. Do not `git add` them until step 3. Step 1 already un-ignored the dataset and marked csv as Git LFS.
 
 - `/workspace/data_platform/data/twitter/{dataset_id}/dataset.json`
 - `/workspace/data_platform/data/twitter/{dataset_id}/raw/{timestamp}/posts.csv`
@@ -153,4 +153,4 @@ The step fails when any item in the list below is true.
 - ingest Python files changed
 - a new dataset id was created by mistake
 - `posts.csv` is missing
-- raw files were staged for git
+- `.gitignore` or `.gitattributes` from step 1 were reverted

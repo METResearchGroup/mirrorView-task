@@ -14,26 +14,26 @@ X is the company formerly called Twitter. Posts Read is the X API charge for fet
 
 ## Happy flow
 
-An operator adds the dated config and records X usage. The operator then runs Twitter sync and checks that the raw files have 8,000 rows, or a documented shortfall inside the 7-day search window. Usernames are empty, and the usage increase matches the row count at Posts Read only. Commit only the new config file. The post files stay on the machine that ran the sync.
+An operator adds the dated config, then adds git ignore exceptions and a Git LFS csv rule for the new dataset id. The operator records X usage and runs Twitter sync. The operator checks that the raw files have 8,000 rows, or a documented shortfall inside the 7-day search window. Usernames are empty, and the usage increase matches the row count at Posts Read only. Commit the dated config, the git ignore exceptions, the Git LFS rule, and the raw run files.
 
 ```mermaid
 flowchart LR
-  A[Copy Mirrorview Twitter ingest config] --> B[Record X project usage]
-  B --> C[Run Twitter recent search sync]
-  C --> D[Raw posts and metadata on local disk]
+  A[Copy Mirrorview Twitter ingest config] --> B[Add git ignore exceptions and LFS csv rule]
+  B --> C[Record X project usage]
+  C --> D[Run Twitter recent search sync]
   D --> E[Check row count, empty username, and usage increase]
-  E --> F[Commit the dated config only]
+  E --> F[Commit config, git ignore exceptions, LFS rule, and raw files]
 ```
 
 ## Approach
 
-Copy the existing Mirrorview keyword list. Change identity, date, the 8,000 post run cap, and the limit for each keyword so the run can reach 8,000 posts. Do not change ingest code, the undated Mirrorview config, preprocess, features, or curate. Keep this folder as the planning record. When you open the implementation pull request for issue 170, do not add more files under `docs/plans/`.
+Copy the existing Mirrorview keyword list. Change identity, date, the 8,000 post run cap, and the limit for each keyword so the run can reach 8,000 posts. Do not change ingest code, the undated Mirrorview config, preprocess, features, or curate. Keep this folder as the planning record. When you open the implementation pull request for issue 170, do not add more files under `docs/plans/`. Commit the raw run for this dataset the same way the repo already commits the Bluesky dump dataset `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` and the Reddit dump dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`. Un-ignore only this new Twitter dataset. Store `posts.csv` in Git LFS.
 
 ## Decisions
 
 The Cloud Agent environment can run the live collection. `X_BEARER_TOKEN` is present, and the usage endpoint succeeded.
 
-Raw post files stay on local disk, and git ignores them. Twitter sync writes `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv`, `metadata.json`, and `dataset.json`. Git ignores `data_platform/data/**` and `*.csv`. Git LFS tracks only the Bluesky dump dataset `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` and the Reddit dump dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`. The Twitter ingest scripts do not upload to S3. `docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md` says not to commit live API sync files. The implementation pull request commits the dated config only. The 8,000 posts are not committed, are not stored in Git LFS, and are not stored in S3. They live on the disk of the machine that ran the sync. The Cloud Agent disk is deleted when the virtual machine is destroyed, so copy the files elsewhere first if you need to keep them.
+Raw post files are committed for this dataset only. Twitter sync writes `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv`, `metadata.json`, and `dataset.json`. After the new dataset id exists, add git ignore exceptions for that path, matching the Bluesky and Reddit dump exceptions in `.gitignore`. The global `*.csv` rule also needs a matching `!**/*.csv` exception under that dataset, or git will still ignore `posts.csv`. Add a Git LFS rule in `.gitattributes` for `data_platform/data/twitter/{new_dataset_id}/**/*.csv`, matching the dump parquet LFS rules. Commit `dataset.json` and `metadata.json` as ordinary git files so the pull request can show `row_count`. The Twitter ingest scripts still do not upload to S3. The architecture runbook currently says not to commit live API sync files. Add one exception for this Twitter dataset, next to the dump-dataset exception.
 
 Empty `username` is the expected success check. Pull request 173 dropped user expansions so ingest does not bill User Read. User Read is the X API charge for fetching a user profile.
 
@@ -47,21 +47,21 @@ A shortfall inside the 7-day recent search window is still allowed after that ca
 
 ### Step 1: Add the dated Twitter ingest config
 
-Copy `data_platform/ingestion/configs/twitter/mirrorview.yaml` to `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml`. Assign a new `twitter_<uuid>` and set name `mirrorview_2026-09-05`. Set date `2026-09-05`. Set `max_posts` to 8000 and `limit_per_task` to 110. Leave keywords, language, excludes, and dedupe policy unchanged. See [steps/step1.md](steps/step1.md).
+Copy `data_platform/ingestion/configs/twitter/mirrorview.yaml` to `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml`. Assign a new `twitter_<uuid>` and set name `mirrorview_2026-09-05`. Set date `2026-09-05`. Set `max_posts` to 8000 and `limit_per_task` to 110. Leave keywords, language, excludes, and dedupe policy unchanged. Add git ignore exceptions and a Git LFS csv rule for that dataset id. See [steps/step1.md](steps/step1.md).
 
 ### Step 2: Record usage and run the sync for 8,000 posts
 
 Record `project_usage` from `GET https://api.x.com/2/usage/tweets`. Run `PYTHONPATH=. uv run python data_platform/ingestion/sync_twitter.py --config data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml`. Do not change `data_platform/ingestion/sync_twitter.py` or `data_platform/ingestion/twitter_client.py`. See [steps/step2.md](steps/step2.md).
 
-### Step 3: Verify the raw run and open a pull request that contains only the config
+### Step 3: Verify the raw run and commit the config plus raw files
 
-Confirm `metadata.json` `row_count` is 8,000, or document the 7-day shortfall. Confirm every `username` is empty. Confirm the usage increase matches the row count at Posts Read only. Commit and push only the dated config. Put run evidence in the pull request body. See [steps/step3.md](steps/step3.md).
+Confirm `metadata.json` `row_count` is 8,000, or document the 7-day shortfall. Confirm every `username` is empty. Confirm the usage increase matches the row count at Posts Read only. Commit the dated config, `.gitignore`, `.gitattributes`, `dataset.json`, `metadata.json`, and the Git LFS pointer for `posts.csv`. Put run evidence in the pull request body. See [steps/step3.md](steps/step3.md).
 
 ## What "done" looks like
 
 1. `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml` exists with a new `twitter_<uuid>`, name `mirrorview_2026-09-05`, date `2026-09-05`, `max_posts: 8000`, and `limit_per_task: 110`. Every other field matches `data_platform/ingestion/configs/twitter/mirrorview.yaml`.
-2. Twitter sync has completed, or it stopped cleanly at the 7-day window. Raw `row_count` is 8,000, or a documented shortfall. Files exist at `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv` plus `metadata.json` on the machine that ran the sync.
+2. Twitter sync has completed, or it stopped cleanly at the 7-day window. Raw `row_count` is 8,000, or a documented shortfall. Files exist at `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv` plus `metadata.json`, and those files are on the implementation branch.
 3. `username` is empty for every raw row.
 4. `GET https://api.x.com/2/usage/tweets` `project_usage` increased by about the row count, with no User Read billing.
-5. The implementation pull request contains the dated config. It does not contain raw posts, Git LFS pointer files, or extra `docs/plans/` edits.
+5. The implementation pull request contains the dated config, the git ignore exceptions, the Git LFS csv rule, `dataset.json`, `metadata.json`, and the Git LFS pointer for `posts.csv`. It does not contain extra `docs/plans/` edits. It does not un-ignore other Twitter datasets.
 6. `PYTHONPATH=. uv run pytest tests/data_platform/ingestion/test_ingest_yaml_keys.py -q` exits 0.

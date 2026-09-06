@@ -2,15 +2,15 @@
 
 ## Goal
 
-Add `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml` as a copy of `data_platform/ingestion/configs/twitter/mirrorview.yaml`. Give the copy a new dataset id, the date 2026-09-05, a run cap of 8,000 posts, and a limit of 110 posts for each keyword.
+Add `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml` as a copy of `data_platform/ingestion/configs/twitter/mirrorview.yaml`. Give the copy a new dataset id, the date 2026-09-05, a run cap of 8,000 posts, and a limit of 110 posts for each keyword. Un-ignore that dataset in `.gitignore`. Add a Git LFS rule for its csv files in `.gitattributes`.
 
 ## Caller / unit of work
 
 The main caller is `data_platform/ingestion/sync_twitter.py` `main`. It loads `--config` through `run_sync_cli` in `data_platform/ingestion/sync_checkpoint.py` and passes the path to `sync_records`.
 
-The task is to write the dated config so that caller can load it. Do not run the live sync in this step.
+The task is to write the dated config, the git ignore exceptions, and the Git LFS csv rule so later steps can commit the raw run. Do not run the live sync in this step.
 
-Leave these out of scope. Do not run `sync_twitter.py` against X. Do not change `sync_twitter.py` or `twitter_client.py`. Do not edit `mirrorview.yaml`. Do not run preprocess, features, or curate. Do not add Git LFS exceptions or S3 upload. Do not add extra files under `docs/plans/` during implementation.
+Leave these out of scope. Do not run `sync_twitter.py` against X. Do not change `sync_twitter.py` or `twitter_client.py`. Do not edit `mirrorview.yaml`. Do not run preprocess, features, or curate. Do not upload to S3. Do not add extra files under `docs/plans/` during implementation. Do not un-ignore any Twitter dataset other than the new id.
 
 ## Files to inspect (read-only)
 
@@ -24,11 +24,16 @@ Leave these out of scope. Do not run `sync_twitter.py` against X. Do not change 
 | `/workspace/data_platform/ingestion/configs/twitter/keyword_politics_econ_7000.yaml` | Existing dataset id `twitter_3b46b8f9-7e73-4e44-8f6a-3d0e67cfe921`. Do not reuse. |
 | `/workspace/data_platform/utils/dataset.py` | `validate_dataset_id` requires `twitter_` plus a lowercase UUID with hyphens. |
 | `/workspace/tests/data_platform/ingestion/test_ingest_yaml_keys.py` | Globs every `data_platform/ingestion/configs/**/*.yaml`. The new file must pass those tests. |
-| `/workspace/data_platform/ingestion/sync_twitter.py` | `_effective_limit_per_keyword` caps each keyword at `limit_per_task`. Read only. |
+| `/workspace/.gitignore` | `data_platform/data/**` and `*.csv`. Copy the Bluesky and Reddit dump exception shape for the new Twitter dataset. |
+| `/workspace/.gitattributes` | Dump parquet LFS rules to copy for csv under the new Twitter dataset. |
+| `/workspace/docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md` | Currently says not to commit live API sync files. Add one exception for this dataset. |
 
 ## Files allowed to change
 
 - `/workspace/data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml`
+- `/workspace/.gitignore`
+- `/workspace/.gitattributes`
+- `/workspace/docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md`
 
 Plan package files under `/workspace/docs/plans/2026-09-06_twitter_dated_sync_8k_75c92f/` may already be on the branch. Do not rewrite them during implementation.
 
@@ -42,8 +47,6 @@ Plan package files under `/workspace/docs/plans/2026-09-06_twitter_dated_sync_8k
 - `/workspace/data_platform/ingestion/sync_twitter.py`
 - `/workspace/data_platform/ingestion/twitter_client.py`
 - `/workspace/data_platform/ingestion/sync_checkpoint.py`
-- `/workspace/.gitignore`
-- `/workspace/.gitattributes`
 - `/workspace/data_platform/preprocessing/**`
 - `/workspace/data_platform/generate_features/**`
 - `/workspace/data_platform/curate/**`
@@ -52,9 +55,11 @@ Plan package files under `/workspace/docs/plans/2026-09-06_twitter_dated_sync_8k
 
 ## Decision (locked)
 
-Set `limit_per_task` to 110. `mirrorview.yaml` has 73 unique keywords. `sync_twitter.py` `_effective_limit_per_keyword` takes the minimum of `limit_per_task` and the remaining `max_posts` budget. A limit of 25 would cap the run at 1,825 posts. A limit of 110 allows 8,030 posts before the run-wide cap, so `max_posts: 8000` can stop the run at 8,000.
+Set `limit_per_task` to 110. `mirrorview.yaml` has 73 unique keywords. `sync_twitter.py` `_effective_limit_per_keyword` takes the minimum of `limit_per_task` and the remaining `max_posts` budget. A limit of 25 would cap the run at 1,825 posts. A limit of 110 allows 8,030 posts before the cap for the whole run, so `max_posts: 8000` can stop the run at 8,000.
 
 Do not add keywords. Do not change ingest code. Do not reuse the dataset id from `mirrorview.yaml`.
+
+Un-ignore only this new Twitter dataset. Store `posts.csv` in Git LFS. Keep `dataset.json` and `metadata.json` as ordinary git files, matching the Bluesky and Reddit dump datasets.
 
 ## Contracts to lock
 
@@ -96,6 +101,35 @@ Do not add `output_format`. The dataset stays CSV, so the later sync writes `pos
 
 Do not add unread keys that `tests/data_platform/ingestion/test_ingest_yaml_keys.py` forbids, including `query_batch_size`, top-level `fetch`, `current_run` in `dedupe_policy`, or a singular `keyword` key.
 
+After the dataset id exists, append these git ignore exceptions next to the Bluesky and Reddit dump exceptions in `/workspace/.gitignore`. Replace `{dataset_id}` with the new id.
+
+```text
+!data_platform/data/twitter/
+!data_platform/data/twitter/{dataset_id}/
+!data_platform/data/twitter/{dataset_id}/**
+!data_platform/data/twitter/{dataset_id}/**/*.csv
+```
+
+Do not remove the existing Bluesky or Reddit exceptions. Do not un-ignore other Twitter datasets.
+
+Append this Git LFS rule to `/workspace/.gitattributes`. Replace `{dataset_id}` with the same id.
+
+```text
+data_platform/data/twitter/{dataset_id}/**/*.csv filter=lfs diff=lfs merge=lfs -text
+```
+
+Do not change the existing parquet LFS lines.
+
+In `/workspace/docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md`, keep the rule that live API sync files are not committed by default. Add one sentence that this Twitter dataset is an exception, like the dump datasets, and that `posts.csv` is stored with Git LFS.
+
+Confirm git sees csv as LFS before the sync writes files.
+
+```bash
+git check-attr filter -- data_platform/data/twitter/{dataset_id}/raw/placeholder/posts.csv
+```
+
+The command prints `filter: lfs` even if that placeholder path does not exist yet. Git attributes match the path pattern, not the file on disk.
+
 ## Tests that must pass
 
 ```bash
@@ -129,9 +163,25 @@ The command prints `step1 config checks passed`.
 
 Do not add the new filename to the hardcoded list in `test_committed_run_wide_caps_use_primary_keys`. The list names existing files only, and the glob tests already cover the new file.
 
+```bash
+python - <<'PY'
+from pathlib import Path
+import yaml
+dataset_id = yaml.safe_load(Path("data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml").read_text())["dataset_id"]
+gitignore = Path(".gitignore").read_text()
+gitattributes = Path(".gitattributes").read_text()
+assert f"!data_platform/data/twitter/{dataset_id}/**" in gitignore
+assert f"!data_platform/data/twitter/{dataset_id}/**/*.csv" in gitignore
+assert f"data_platform/data/twitter/{dataset_id}/**/*.csv filter=lfs" in gitattributes
+print("step1 git tracking checks passed")
+PY
+```
+
+The command prints `step1 git tracking checks passed`.
+
 ## Pass / fail
 
-The step passes when the dated config exists, the changed fields match the contract, the 73 keywords match `mirrorview.yaml`, and `test_ingest_yaml_keys.py` exits 0.
+The step passes when the dated config exists, the changed fields match the contract, the 73 keywords match `mirrorview.yaml`, `test_ingest_yaml_keys.py` exits 0, `.gitignore` un-ignores this dataset including csv, and `.gitattributes` marks that csv path as Git LFS.
 
 The step fails when any item in the list below is true.
 
@@ -140,3 +190,5 @@ The step fails when any item in the list below is true.
 - `limit_per_task` stayed 25
 - keywords changed
 - ingest Python files changed
+- other Twitter datasets were un-ignored
+- `posts.csv` is not marked as Git LFS
