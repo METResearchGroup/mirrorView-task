@@ -107,6 +107,12 @@ class BaseBatchExecutionEngine:
         batch_index: int,
         write_rows: Callable[[list[dict]], None],
     ) -> list[RecordLabelFailure]:
+        """Label one chunk and return the records that ended without a row.
+
+        The default retries the whole chunk through ``batch_label_records``
+        and calls ``write_rows`` once. Engines that can label part of a chunk
+        override this to call ``write_rows`` more than once.
+        """
         raise NotImplementedError
 
     def batch_write_records(

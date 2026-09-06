@@ -71,6 +71,7 @@ def _all_records_labeled_once(
     config: FeatureGenerationConfig,
     feature_storage: StorageManager,
 ) -> bool:
+    """Return True when no input record is unlabeled and no label id repeats."""
     raise NotImplementedError
 
 

@@ -64,6 +64,15 @@ BATCH_FAILED_STATUSES = frozenset(
     }
 )
 TRANSIENT_POLL_ERRORS = (APIConnectionError, InternalServerError, RateLimitError)
+HTTP_TOO_MANY_REQUESTS = 429
+HTTP_SERVER_ERROR_MIN = 500
+HTTP_SERVER_ERROR_MAX = 599
+TRANSIENT_HTTP_STATUS_CODES = frozenset(
+    {HTTP_TOO_MANY_REQUESTS, *range(HTTP_SERVER_ERROR_MIN, HTTP_SERVER_ERROR_MAX + 1)}
+)
+ACTIVE_STATE_POLLING = "polling"
+ACTIVE_STATE_WRITING = "writing"
+ACTIVE_STATE_TERMINAL = "terminal"
 logger = logging.getLogger(__name__)
 
 
@@ -178,6 +187,14 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         batch_index: int,
         write_rows: Callable[[list[dict]], None],
     ) -> list[RecordLabelFailure]:
+        """Label one chunk through provider jobs that survive a process crash.
+
+        Reattaches to the job in the feature's state file when one is still
+        ``polling`` or ``writing`` for this ``batch_index``. Writes every
+        successful row as soon as its provider job completes, then submits one
+        retry job at a time for ids that failed transiently and still have
+        attempts left. Returns the records that ended without a valid row.
+        """
         raise NotImplementedError
 
 
@@ -192,6 +209,11 @@ def submit_active_batch(
     batch_index: int,
     attempt_count: int,
 ) -> dict[str, Any]:
+    """Upload requests, create the provider batch, and save ``polling`` state.
+
+    The returned dict is the saved state. It is on disk before this function
+    returns, so a caller that polls afterwards can be resumed by a new process.
+    """
     raise NotImplementedError
 
 
@@ -203,6 +225,11 @@ def _parse_completed_batch(
     spec: FeatureSpec,
     sleep_fn: Callable[[float], None],
 ) -> ParsedBatchOutput:
+    """Split a completed batch into validated rows and per request failures.
+
+    ``ordered_ids`` gives the id for each ``task-NNNNN`` custom id. Only ids
+    that are keys of ``tasks_by_id`` are classified; the rest are ignored.
+    """
     raise NotImplementedError
 
 
