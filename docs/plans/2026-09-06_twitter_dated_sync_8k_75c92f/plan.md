@@ -35,13 +35,17 @@ Reuse the existing Mirrorview Twitter keyword collection. Change only identity, 
 2. **Raw data is local and gitignored.** Sync writes `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv`, `metadata.json`, and `dataset.json`. `.gitignore` excludes `data_platform/data/**` and `*.csv`. Git LFS tracks only the Bluesky dump dataset `bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73` and the Reddit dump dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`. Twitter ingest does not upload to S3. `docs/runbooks/DATA_INGESTION_PIPELINE_ARCHITECTURE.md` says not to commit live API sync files. **The pull request commits the dated YAML only. The 8,000 posts are not committed, not Git LFS, and not S3.** They live on the disk of the machine that ran the sync. This Cloud Agent disk is ephemeral: if the VM is destroyed, those files are gone unless copied elsewhere first.
 3. **Empty `username` is success**, not a bug. [#173](https://github.com/METResearchGroup/mirrorView-task/pull/173) dropped user expansions so ingest does not bill User: Read.
 4. **Cost ceiling is about $40** at $0.005 per post for 8,000 posts. Credit on 2026-09-05 was $100. Current `project_usage` is 10 of 3,000,000.
-5. **A 7-day recent-search shortfall is allowed.** If the keyword set cannot fill 8,000 posts inside the window, stop cleanly and record the shortfall in the implementation pull request.
+5. **A 7-day recent-search shortfall is allowed** after the per-keyword cap is resolved. If the keyword set still cannot fill the chosen target inside the window, stop cleanly and record the shortfall in the implementation pull request.
+6. **Blocking: `max_posts: 8000` cannot be reached if `limit_per_task` stays 25.** `data_platform/ingestion/sync_twitter.py` caps each keyword at `limit_per_task`, then stops at `max_posts`. `mirrorview.yaml` has 73 keywords (the issue said ~90). Ceiling is `73 × 25 = 1,825` posts. Raising only `max_posts` does not collect 8,000 rows. Choose one:
+   - **A.** Raise `limit_per_task` to 110 (`73 × 110 = 8,030`) so the run can hit 8,000. This is the only change that can meet the 8,000-post goal without new keywords or ingest-code edits.
+   - **B.** Keep `limit_per_task: 25` exactly as the issue wrote, accept a ceiling of 1,825, and treat that as the documented shortfall.
+   - Adding keywords or changing `sync_twitter.py` is out of scope.
 
 ## Steps
 
 ### Step 1: Add the dated Twitter ingest config
 
-Copy `data_platform/ingestion/configs/twitter/mirrorview.yaml` to `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml`. Assign a new `twitter_<uuid>`, set name `mirrorview_2026-09-05`, date `2026-09-05`, and `max_posts: 8000`. Leave keywords, language, excludes, dedupe policy, and `limit_per_task` unchanged. Do not edit `mirrorview.yaml`. See [steps/step1.md](steps/step1.md) after approval.
+Copy `data_platform/ingestion/configs/twitter/mirrorview.yaml` to `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml`. Assign a new `twitter_<uuid>`, set name `mirrorview_2026-09-05`, date `2026-09-05`, and `max_posts: 8000`. Leave keywords, language, excludes, and dedupe policy unchanged. Set `limit_per_task` to 110 (option A) or keep 25 (option B) after the blocking decision above. Do not edit `mirrorview.yaml`. See [steps/step1.md](steps/step1.md) after approval.
 
 ### Step 2: Record usage and run the 8,000-post sync
 
@@ -53,8 +57,8 @@ Confirm `metadata.json` `row_count` is 8,000 or document the 7-day shortfall. Co
 
 ## What "done" looks like
 
-1. `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml` exists with a new `twitter_<uuid>`, name `mirrorview_2026-09-05`, date `2026-09-05`, `max_posts: 8000`, and every other field matching `data_platform/ingestion/configs/twitter/mirrorview.yaml`.
-2. Twitter sync has completed or stopped cleanly at the 7-day window. Raw files exist at `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv` plus `metadata.json` on the machine that ran the sync.
+1. `data_platform/ingestion/configs/twitter/mirrorview_2026-09-05.yaml` exists with a new `twitter_<uuid>`, name `mirrorview_2026-09-05`, date `2026-09-05`, `max_posts: 8000`, and `limit_per_task` matching the chosen option (110 or 25). Every other field matches `data_platform/ingestion/configs/twitter/mirrorview.yaml`.
+2. Twitter sync has completed or stopped cleanly at the 7-day window. Raw `row_count` is 8,000 under option A, or at most 1,825 under option B. Files exist at `data_platform/data/twitter/{new_dataset_id}/raw/{timestamp}/posts.csv` plus `metadata.json` on the machine that ran the sync.
 3. `username` is empty for every raw row.
 4. `GET https://api.x.com/2/usage/tweets` `project_usage` increased by about the row count, with no User: Read billing.
 5. The implementation pull request contains the dated YAML and does not contain raw posts, Git LFS pointer files, or extra `docs/plans/` edits.
