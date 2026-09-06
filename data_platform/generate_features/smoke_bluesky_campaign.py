@@ -26,8 +26,10 @@ from typing import Any
 
 import pandas as pd
 import typer
+from openai.types import Batch
 
 from data_platform.generate_features.campaign_cost_report import (
+    CAMPAIGN_LLM_FEATURES,
     COST_REPORT_SUFFIX,
     DEFAULT_BATCH_INPUT_USD_PER_MILLION_TOKENS,
     DEFAULT_BATCH_OUTPUT_USD_PER_MILLION_TOKENS,
@@ -145,7 +147,7 @@ class ResumedJob:
 
     rows: list[dict[str, Any]]
     request_usages: list[RequestUsage]
-    engine: OpenAIBatchEngine
+    last_batch: Batch
     resume_calls: dict[str, int]
     resumed_at: str
 
@@ -311,7 +313,7 @@ def resume_and_collect_rows(
         request_usages=request_usages_from_output_text(
             output_text, list(last_state["pending_source_record_ids"])
         ),
-        engine=engine,
+        last_batch=last_batch,
         resume_calls=_submit_calls(client),
         resumed_at=resumed_at,
     )
@@ -330,9 +332,7 @@ def build_resume_evidence(
     batch creation call, finished on the same provider batch id that was
     saved before the interruption, and wrote a row for every post.
     """
-    last_batch = resumed.engine.last_batch
-    resumed_batch_id = last_batch.id if last_batch is not None else None
-    same_batch = resumed_batch_id == interrupted.state["batch_id"]
+    same_batch = resumed.last_batch.id == interrupted.state["batch_id"]
     no_new_jobs = all(count == 0 for count in resumed.resume_calls.values())
     return {
         "feature": feature,
@@ -345,9 +345,9 @@ def build_resume_evidence(
         "resumed_at": resumed.resumed_at,
         "submit_calls_before_interrupt": interrupted.submit_calls,
         "submit_calls_after_resume": resumed.resume_calls,
-        "resumed_batch_id": resumed_batch_id,
+        "resumed_batch_id": resumed.last_batch.id,
         "reattached_same_batch_id": same_batch,
-        "resumed_batch_status": last_batch.status if last_batch is not None else None,
+        "resumed_batch_status": resumed.last_batch.status,
         "rows_written": len(resumed.rows),
         "provider_batch_ids_in_output": sorted({str(row["batch_id"]) for row in resumed.rows}),
         "resume_ok": no_new_jobs and same_batch and len(resumed.rows) == SMOKE_POST_COUNT,
@@ -498,9 +498,12 @@ def run_campaign_smoke(
     RuntimeError
         When the resumed job leaves any of the ten posts without a valid row.
     """
-    spec = FEATURE_REGISTRY[feature]
-    if spec.engine_type != CAMPAIGN_ENGINE_TYPE:
-        raise ValueError(f"smoke requires an OpenAI feature, got {feature!r}")
+    spec = FEATURE_REGISTRY.get(feature)
+    if spec is None or spec.engine_type != CAMPAIGN_ENGINE_TYPE:
+        raise ValueError(
+            f"smoke requires one of the OpenAI features {list(CAMPAIGN_LLM_FEATURES)}, "
+            f"got {feature!r}"
+        )
     smoke_paths = build_smoke_paths(campaign_id, dataset_id, feature, smoke_prefix)
     store = CampaignObjectStore(smoke_paths.paths.bucket)
     canonical_smoke_keys_before = store.list_keys(smoke_paths.canonical.smoke_prefix)
@@ -515,7 +518,6 @@ def run_campaign_smoke(
         resumed = resume_and_collect_rows(
             CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir, run_id=run_id
         )
-    last_batch = resumed.engine.last_batch
     cost_report = build_feature_cost_report(
         campaign_id=campaign_id,
         dataset_id=dataset_id,
@@ -524,7 +526,7 @@ def run_campaign_smoke(
         model=DEFAULT_OPENAI_BATCH_ENGINE_CONFIG.model,
         smoke_uri=smoke_paths.paths.uri(smoke_paths.paths.smoke_prefix),
         batch_id=interrupted.state["batch_id"],
-        batch_usage=last_batch.usage if last_batch is not None else None,
+        batch_usage=resumed.last_batch.usage,
         request_usages=resumed.request_usages,
         pricing=pricing,
     )

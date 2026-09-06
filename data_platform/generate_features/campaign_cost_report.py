@@ -86,8 +86,8 @@ def request_usages_from_output_text(text: str, ordered_ids: list[str]) -> list[R
     usages: list[RequestUsage] = []
     for index, source_record_id in enumerate(ordered_ids):
         custom_id = f"{CUSTOM_ID_PREFIX}{index:0{CUSTOM_ID_INDEX_WIDTH}d}"
-        payload = by_custom_id.get(custom_id)
-        usage = ((payload or {}).get("response") or {}).get("body", {}).get("usage")
+        response = (by_custom_id.get(custom_id) or {}).get("response") or {}
+        usage = (response.get("body") or {}).get("usage")
         if not usage:
             continue
         usages.append(
