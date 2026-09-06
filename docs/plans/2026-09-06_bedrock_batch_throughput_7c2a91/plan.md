@@ -10,22 +10,20 @@
 
 The OpenAI work labeled study posts as news, opinion, or neither. The labels came from OpenAI's Batch API, using GPT-5.4 nano. Throughput means how many posts and tokens finish per second. The OpenAI runs also recorded token counts and estimated dollars. GPT-5.4 nano is not available on Amazon Bedrock. Amazon Nova Micro is the closest cheap, small text model on Bedrock for this classification task.
 
-Bedrock has a batch inference API. Batch inference is Amazon's later-run job path. You upload a text file of prompts to S3, with one JSON object per line. Amazon runs the prompts, and you download the answers from S3. Batch token prices for Nova Micro are half of on-demand prices.
+Bedrock has a native batch inference API that reads prompts from S3 and writes answers to S3 at half the on-demand token price. Submitting that job requires an IAM service role that Bedrock can assume, plus `iam:PassRole`. This work must not create a new IAM service role. The lab IAM user cannot pass a role to Bedrock. The simple version that runs therefore calls Nova Micro through the Converse API, using the AWS credentials already in the environment.
 
-A one-request call to Nova Micro in `us-east-2` already succeeded, using the US Nova Micro profile. The call classified a sentence about a Federal Reserve rate increase as news. The lab IAM user can list Bedrock batch jobs. There is no IAM service role for Bedrock batch jobs yet. An IAM service role is a role that Bedrock assumes so it can read the input file and write the output file. In Step 1, we create the service role before any batch job can run.
+A one-request Converse call to Nova Micro in `us-east-2` already succeeded, using the US Nova Micro profile. The call classified a sentence about a Federal Reserve rate increase as news.
 
 Official AWS prices for Nova Micro in US East (Ohio), published 2026-09-01, are:
 
 - On-demand. $0.035 per million input tokens, and $0.14 per million output tokens.
 - Batch. $0.0175 per million input tokens, and $0.07 per million output tokens.
 
-GPT-5.4 nano Batch prices in `data_platform/generate_features/OPENAI_BATCH_SMOKE_RESULTS.md` were $0.20 per million input tokens and $1.25 per million output tokens.
-
-If each Bedrock request uses about the same tokens as each OpenAI request, about 332 input tokens and 18 output tokens, the matching Bedrock batch runs would cost about $0.35 in model tokens. A ceiling of twice $0.35, which is $0.70, covers extra prompt tokens from asking for JSON in the prompt. The 100-post smoke should cost about $0.001.
+This PR uses on-demand prices, because the live path is Converse. If each request uses about 332 input tokens and 18 output tokens, the matching OpenAI-sized runs would cost about $0.70. A ceiling of twice $0.70, which is $1.40, covers extra prompt tokens from asking for JSON in the prompt. The 100-post smoke should cost about $0.002.
 
 ## Happy flow
 
-An operator runs a 100-post Bedrock batch smoke on the news-or-opinion prompt and the `flips.csv` posts used for OpenAI. The smoke script writes posts per second, tokens per second, token totals, and estimated dollars. After the operator approves the cost of the larger runs, the operator repeats the OpenAI size runs and the OpenAI concurrent-process runs on Bedrock.
+An operator runs a 100-post Nova Micro Converse smoke on the news-or-opinion prompt and the `flips.csv` posts used for OpenAI. The smoke script writes posts per second, tokens per second, token totals, and estimated dollars. After the operator approves the cost of the larger runs, the operator repeats the OpenAI size runs and the OpenAI concurrent-process runs on Bedrock.
 
 ```mermaid
 flowchart LR
@@ -34,10 +32,10 @@ flowchart LR
     O --> M[Tokens, throughput, dollars]
   end
   subgraph after [After]
-    P2[Same posts and prompt] --> S[100-post Bedrock smoke]
+    P2[Same posts and prompt] --> S[100-post Nova Micro smoke]
     S --> A{Operator approves cost}
-    A --> B[Bedrock batch size runs]
-    A --> C[Bedrock concurrent process runs]
+    A --> B[Size runs]
+    A --> C[Concurrent process runs]
     B --> R[Same metrics as OpenAI]
     C --> R
   end
@@ -45,44 +43,57 @@ flowchart LR
 
 ## Approach
 
-Copy how the OpenAI engine submits a list of posts and waits for labels, and call Bedrock batch jobs instead of OpenAI files. Keep the OpenAI token, throughput, and dollar measures. Keep the live LLM feature classifiers on OpenAI. Stop after the 100-post smoke and wait for cost approval before any run of thousands of requests.
+Copy how the OpenAI engine submits a list of posts and waits for labels. Call Nova Micro through Converse with the environment AWS credentials. Keep the OpenAI token, throughput, and dollar measures. Keep the live LLM feature classifiers on OpenAI. Stop after the 100-post smoke and wait for cost approval before any run of thousands of requests.
 
-Bedrock batch jobs cannot return JSON that matches a schema the way OpenAI Batch can. We will ask the model for JSON in the prompt, then validate that JSON after the job finishes. Bedrock also has a batch endpoint that uses the OpenAI Batch API request format. Only OpenAI models hosted on Bedrock can use the OpenAI Batch API endpoint, and GPT-5.4 nano is not hosted on Bedrock. Jobs for Nova Micro go through Bedrock's native batch path.
+Bedrock Converse, like Bedrock batch jobs, will ask the model for JSON in the prompt, then validate that JSON after each response. Do not create IAM roles. Do not call `CreateModelInvocationJob` except as a recorded probe that is expected to fail with `iam:PassRole`.
+
+This PR implements Steps 1 to 3. Steps 4 and 5 add the experiment runners and stay unexecuted until the operator approves `COST_ESTIMATE.md`.
 
 ## Steps
 
-### Step 1: Confirm the Bedrock batch path in this account
+### Step 1: Confirm the Bedrock path in this account
 
-Record the model, region, prices, S3 prefix, and IAM service role in `experiments/bedrock_batch_parallelization_2026_09_06/FINDINGS.md`. Create a narrowly scoped Bedrock batch service role if none exists, with permission to read and write one prefix on `s3://mirrorview-experimental-artifacts`. Stop if the account cannot create that role, pass that role to Bedrock, or submit a batch job.
+→ [steps/step1.md](steps/step1.md)
 
-### Step 2: Add a Bedrock batch engine and a 100-post smoke
+Record the model, region, prices, credentials path, and the batch-job blocker in `experiments/bedrock_batch_parallelization_2026_09_06/FINDINGS.md`. Use the environment AWS credentials. Do not create an IAM service role.
 
-Add a Bedrock batch engine next to `data_platform/generate_features/engines/openai_engine.py`. Run the news-or-opinion smoke from `data_platform/generate_features/smoke_openai_engine.py` on the first 100 posts of `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv`. Cover the engine with mocked unit tests. Print the metrics that the OpenAI smoke script prints, plus estimated dollars at the Ohio batch rates.
+### Step 2: Add a Bedrock Converse engine and a 100-post smoke
+
+→ [steps/step2.md](steps/step2.md)
+
+Add a Bedrock engine next to `data_platform/generate_features/engines/openai_engine.py`. Run the news-or-opinion smoke on the first 100 posts of `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv`. Cover the engine with mocked unit tests. Print the metrics the OpenAI smoke prints, plus estimated dollars at the Ohio on-demand rates.
 
 ### Step 3: Write the cost estimate and wait for approval
 
-Use the 100-post smoke token counts to estimate the 9,500-post size run and the 40,000-post process-count run. Write the estimate into `experiments/bedrock_batch_parallelization_2026_09_06/COST_ESTIMATE.md`. Do not start those runs until the operator approves.
+→ [steps/step3.md](steps/step3.md)
 
-### Step 4: Repeat the OpenAI batch-size runs
+Use the 100-post smoke token counts to estimate the 9,500-post size run and the 40,000-post process-count run. Write the estimate into `experiments/bedrock_batch_parallelization_2026_09_06/COST_ESTIMATE.md`. Do not start those runs in this PR.
 
-After approval, submit one Bedrock batch job per size. The sizes are 100, 200, 300, 400, 500, 1,000, 2,000, and 5,000 posts, matching `data_platform/generate_features/OPENAI_BATCH_SMOKE_RESULTS.md`. Write the same table columns, including elapsed seconds, posts per second, tokens per second, mean input and output tokens per request, token totals, and estimated dollars.
+### Step 4: Add the batch-size runner, do not execute it
 
-### Step 5: Repeat the OpenAI process-count runs
+→ [steps/step4.md](steps/step4.md)
 
-After approval, run 2, 4, 6, and 8 concurrent Python processes. Each process submits a 2,000-post Bedrock batch job on the 2,000-post slice used in `experiments/openai_batch_parallelization_2026_09_05/run_experiment.py`. Write aggregate and per-process metrics with the same fields as `experiments/openai_batch_parallelization_2026_09_05/results.json`.
+Add a runner that can submit the OpenAI size list. Do not run 100 through 5,000 posts until the operator approves the cost estimate.
+
+### Step 5: Add the process-count runner, do not execute it
+
+→ [steps/step5.md](steps/step5.md)
+
+Add a runner that can spawn 2, 4, 6, and 8 processes of 2,000 posts each. Do not execute those jobs until the operator approves the cost estimate.
 
 ## What "done" looks like
 
-1. `experiments/bedrock_batch_parallelization_2026_09_06/FINDINGS.md` records the chosen model, region, batch prices, S3 prefix, and IAM role, and states that a live batch job can be submitted in this account.
-2. Feature generation has a Bedrock batch engine that labels a list of posts in one Bedrock batch job. Operators still run live LLM features on the OpenAI engine.
+1. `experiments/bedrock_batch_parallelization_2026_09_06/FINDINGS.md` records Nova Micro, `us-east-2`, on-demand and batch prices, and the `iam:PassRole` blocker. It states that no new IAM role was created.
+2. Feature generation has a Bedrock engine that labels a list of posts through Converse. Operators still run live LLM features on the OpenAI engine.
 3. `PYTHONPATH=. uv run pytest tests/data_platform/generate_features -q` exits 0.
 4. A 100-post smoke on `flips.csv` completes and prints tokens, throughput, and estimated dollars.
-5. `COST_ESTIMATE.md` is written, and the size and process-count runs do not start until the operator approves.
-6. After approval, the size runs and the process-count runs complete, and `experiments/bedrock_batch_parallelization_2026_09_06/RESULTS.md` reports the same metric columns as `data_platform/generate_features/OPENAI_BATCH_SMOKE_RESULTS.md`.
+5. `COST_ESTIMATE.md` is written. The size and process-count jobs are not started in this PR.
+6. Experiment runners for Steps 4 and 5 exist and refuse to start the large jobs unless an explicit approval flag is passed.
 
-## Open decisions
+## Decisions already made
 
-- Confirm Amazon Nova Micro as the model. The other small model already listed in this account is Ministral 3B. The Qwen models already used in this repo are 32B and 80B, which are much larger than GPT-5.4 nano.
-- Confirm that Step 1 may create a new IAM service role for Bedrock batch jobs.
-- Confirm that live LLM features stay on OpenAI. The Bedrock engine is for the smoke and the throughput runs only.
-- Confirm the spend ceiling of $0.70 for the matching OpenAI-sized runs, after the 100-post smoke revises the estimate.
+- Amazon Nova Micro is the model.
+- Do not create a new IAM service role.
+- Use the AWS credentials already in the environment.
+- Live LLM features stay on OpenAI.
+- Large matching runs wait for cost approval after the 100-post smoke.
