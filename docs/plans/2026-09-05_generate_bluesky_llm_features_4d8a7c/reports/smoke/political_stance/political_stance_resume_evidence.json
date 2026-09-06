@@ -1,0 +1,47 @@
+{
+  "feature": "political_stance",
+  "run_id": "bluesky_2026_09_03_235130_llm_features_v1:political_stance",
+  "batch_id": "batch_6a9cf33f930c81909fb1a0814dcb4979",
+  "input_file_id": "file-R54MuNE6fxVv6YNTeMASrd",
+  "submitted_at": "2026_09_06-04:59:43",
+  "interrupted_at": "2026_09_06-04:59:43",
+  "state_at_interrupt": {
+    "input_file_id": "file-R54MuNE6fxVv6YNTeMASrd",
+    "batch_id": "batch_6a9cf33f930c81909fb1a0814dcb4979",
+    "logical_batch_index": 0,
+    "pending_source_record_ids": [
+      "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3mug6s3w7xk2k",
+      "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3muiavvekuk2f",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug56hcque2b",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug5oga6dn2n",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbevjlrc2e",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbuofdw62w",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbwq3wp422",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mugaqwngf22d",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mui6yzxzxk2g",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3muia7bodfc2g"
+    ],
+    "attempt_count": 1,
+    "state": "polling",
+    "campaign_id": null,
+    "feature_name": "political_stance",
+    "submitted_at": "2026_09_06-04:59:43"
+  },
+  "resumed_at": "2026_09_06-04:59:43",
+  "submit_calls_before_interrupt": {
+    "files.create": 1,
+    "batches.create": 1
+  },
+  "submit_calls_after_resume": {
+    "files.create": 0,
+    "batches.create": 0
+  },
+  "resumed_batch_id": "batch_6a9cf33f930c81909fb1a0814dcb4979",
+  "reattached_same_batch_id": true,
+  "resumed_batch_status": "completed",
+  "rows_written": 10,
+  "provider_batch_ids_in_output": [
+    "batch_6a9cf33f930c81909fb1a0814dcb4979"
+  ],
+  "resume_ok": true
+}
