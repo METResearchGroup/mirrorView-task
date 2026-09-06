@@ -194,7 +194,10 @@ def build_smoke_paths(
 
 def _tasks(posts: pd.DataFrame) -> list[LabelTask]:
     return [
-        LabelTask(uri=str(row[STANDARDIZED_SOURCE_RECORD_ID_COLUMN]), text=str(row[STANDARDIZED_TEXT_COLUMN]))
+        LabelTask(
+            uri=str(row[STANDARDIZED_SOURCE_RECORD_ID_COLUMN]),
+            text=str(row[STANDARDIZED_TEXT_COLUMN]),
+        )
         for _, row in posts.iterrows()
     ]
 
