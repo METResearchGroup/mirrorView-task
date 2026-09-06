@@ -2,8 +2,9 @@
 
 ## 2026-09-06
 
-1. A dated Mirrorview Twitter ingest config and a recent-search run (6,901 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #213](https://github.com/METResearchGroup/mirrorView-task/pull/213)
-2. Twitter preprocess on that dated collection kept 6,374 of 6,901 posts. The preprocessed `posts.csv` is stored in Git LFS. [PR #215](https://github.com/METResearchGroup/mirrorView-task/pull/215)
+1. Operators can compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch runs that label posts as news, opinion, or neither. A smoke run, the matching size jobs, and the matching process jobs now record throughput and estimated cost, and live feature generation still uses OpenAI. [PR #212](https://github.com/METResearchGroup/mirrorView-task/pull/212)
+2. A dated Mirrorview Twitter ingest config and a recent-search run (6,901 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #213](https://github.com/METResearchGroup/mirrorView-task/pull/213)
+3. Twitter preprocess on that dated collection kept 6,374 of 6,901 posts. The preprocessed `posts.csv` is stored in Git LFS. [PR #215](https://github.com/METResearchGroup/mirrorView-task/pull/215)
 
 ## 2026-09-05
 

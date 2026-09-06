@@ -148,14 +148,24 @@ def test_flush_metadata_round_trip(features_dir) -> None:
     assert data["features"]["is_political"]["failed_batches"] == 1
 
 
+def test_registry_llm_features_use_openai_engine() -> None:
+    for spec in FEATURE_REGISTRY.values():
+        if spec.llm_output_schema is not None:
+            assert spec.engine_type == "openai"
+
+
 def test_model_id_follows_engine_type() -> None:
     from dataclasses import replace
+
+    from lib.constants import DEFAULT_BEDROCK_NOVA_MICRO
 
     assert model_id_for_spec(FEATURE_REGISTRY["is_political"]) == DEFAULT_LLM_MODEL
     assert model_id_for_spec(FEATURE_REGISTRY["is_toxic_tiered"]) == "perspective-api"
     promptless = replace(FEATURE_REGISTRY["is_political"], system_prompt=None)
     assert model_id_for_spec(promptless) == DEFAULT_LLM_MODEL
     assert prompt_hash(promptless.system_prompt) is None
+    bedrock_spec = replace(FEATURE_REGISTRY["is_political"], engine_type="bedrock")
+    assert model_id_for_spec(bedrock_spec) == DEFAULT_BEDROCK_NOVA_MICRO
 
 
 def test_prompt_hash_changes_when_prompt_changes() -> None:

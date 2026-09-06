@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from data_platform.generate_features.engines.base import BatchExecutionEngine
+from data_platform.generate_features.engines.bedrock_engine import build_bedrock_engine
 from data_platform.generate_features.engines.langchain_engine import LangChainBatchEngine
 from data_platform.generate_features.engines.openai_engine import build_openai_engine
 from data_platform.generate_features.engines.thread_pool_engine import ThreadPoolBatchEngine
@@ -16,6 +17,7 @@ ENGINE_BUILDERS: dict[EngineType, EngineBuilder] = {
     "langchain": LangChainBatchEngine,
     "thread_pool": ThreadPoolBatchEngine,
     "openai": build_openai_engine,
+    "bedrock": build_bedrock_engine,
 }
 
 
