@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -18,7 +19,12 @@ from urllib.parse import urlencode
 import boto3
 from botocore.exceptions import ClientError
 
+from data_platform.generate_features.metadata import model_id_for_spec, prompt_hash
 from data_platform.generate_features.models import CampaignRunConfig, FeatureSpec
+from data_platform.generate_features.openai_batch_state import (
+    load_active_batch_state,
+    write_active_batch_state,
+)
 from data_platform.utils.object_store import (
     DEFAULT_S3_BUCKET,
     DEFAULT_S3_REGION,
@@ -28,6 +34,7 @@ from data_platform.utils.object_store import (
     sha256_hex,
 )
 from lib.aws.s3 import NOT_FOUND_ERROR_CODES
+from lib.timestamp_utils import get_current_timestamp
 
 DEFAULT_CAMPAIGN_PLATFORM = "bluesky"
 DEFAULT_CAMPAIGN_DATASET_ID = "bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73"
@@ -312,19 +319,46 @@ class CampaignObjectStore:
         )
 
 
+def _json_bytes(document: dict[str, Any]) -> bytes:
+    return json.dumps(document, indent=2).encode("utf-8")
+
+
+def _load_json(
+    store: CampaignObjectStore, key: str
+) -> tuple[dict[str, Any] | None, str | None]:
+    stored = store.get(key)
+    if stored is None:
+        return None, None
+    return json.loads(stored.body.decode("utf-8")), stored.etag
+
+
 def new_manifest(
     *,
     campaign: CampaignRunConfig,
     spec: FeatureSpec,
     expected_row_count: int,
 ) -> dict[str, Any]:
-    raise NotImplementedError
+    """Return a manifest with the campaign identity, an empty batch list, and no final file."""
+    return {
+        "campaign_id": campaign.campaign_id,
+        "dataset_id": campaign.dataset_id,
+        "preprocessed_run": campaign.preprocessed_run,
+        "feature": spec.name,
+        "model_id": model_id_for_spec(spec),
+        "prompt_hash": prompt_hash(spec.system_prompt),
+        "batch_size": campaign.batch_size,
+        "expected_row_count": expected_row_count,
+        "run_id": run_id_for_feature(campaign.campaign_id, spec.name),
+        "created_at": get_current_timestamp(),
+        "batches": [],
+        "final_parquet": None,
+    }
 
 
 def load_manifest(
     store: CampaignObjectStore, paths: FeaturePaths
 ) -> tuple[dict[str, Any] | None, str | None]:
-    raise NotImplementedError
+    return _load_json(store, paths.manifest_key)
 
 
 def save_manifest(
@@ -333,14 +367,20 @@ def save_manifest(
     manifest: dict[str, Any],
     etag: str | None,
 ) -> str:
-    """Conditionally replace ``manifest.json`` and return its new ETag."""
-    raise NotImplementedError
+    """Conditionally replace ``manifest.json`` and return its new ETag.
+
+    Raises
+    ------
+    ConditionalWriteConflict
+        When the object no longer matches ``etag``, or exists while ``etag`` is None.
+    """
+    return store.replace(paths.manifest_key, _json_bytes(manifest), etag=etag).etag
 
 
 def load_active_state(
     store: CampaignObjectStore, paths: FeaturePaths
 ) -> tuple[dict[str, Any] | None, str | None]:
-    raise NotImplementedError
+    return _load_json(store, paths.active_state_key)
 
 
 def save_active_state(
@@ -349,23 +389,23 @@ def save_active_state(
     state: dict[str, Any],
     etag: str | None,
 ) -> str:
-    raise NotImplementedError
+    return store.replace(paths.active_state_key, _json_bytes(state), etag=etag).etag
 
 
 def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
-    raise NotImplementedError
+    store.delete(paths.active_state_key)
 
 
 def append_progress(
     store: CampaignObjectStore, paths: FeaturePaths, record: dict[str, Any]
 ) -> None:
-    raise NotImplementedError
+    store.append_jsonl(paths.progress_key, [record])
 
 
 def append_errors(
     store: CampaignObjectStore, paths: FeaturePaths, records: list[dict[str, Any]]
 ) -> None:
-    raise NotImplementedError
+    store.append_jsonl(paths.errors_key, records)
 
 
 class ActiveStateMirror:
@@ -386,16 +426,43 @@ class ActiveStateMirror:
         feature_name: str,
         campaign_id: str,
     ) -> None:
-        raise NotImplementedError
+        self._store = store
+        self._paths = paths
+        self._run_dir = run_dir
+        self._feature_name = feature_name
+        self._campaign_id = campaign_id
+        self._synced: dict[str, Any] | None = None
+        self._etag: str | None = None
 
     def seed_local(self) -> None:
-        """Write the S3 state to the local state path when the local file is missing."""
-        raise NotImplementedError
+        """Write the S3 state to the local state path when the local file is missing.
+
+        Also remembers the S3 copy, so the next ``sync`` replaces it with
+        ``If-Match`` instead of trying to create it.
+        """
+        remote, etag = load_active_state(self._store, self._paths)
+        self._synced, self._etag = remote, etag
+        if remote is None or load_active_batch_state(self._run_dir, self._feature_name) is not None:
+            return
+        write_active_batch_state(self._run_dir, self._feature_name, remote)
 
     def sync(self) -> None:
-        """Copy the local state file to S3 when its content changed since the last sync."""
-        raise NotImplementedError
+        """Copy the local state file to S3 when its content changed since the last sync.
+
+        The S3 copy carries the campaign id, which the engine leaves unset. A
+        missing local file is not an error, because the engine deletes it once
+        a chunk is done, and the campaign deletes the S3 copy separately.
+        """
+        local = load_active_batch_state(self._run_dir, self._feature_name)
+        if local is None:
+            return
+        state = {**local, "campaign_id": self._campaign_id}
+        if state == self._synced:
+            return
+        self._etag = save_active_state(self._store, self._paths, state, self._etag)
+        self._synced = state
 
     def sleep(self, seconds: float) -> None:
         """``sleep_fn`` for the engine: sync, then sleep."""
-        raise NotImplementedError
+        self.sync()
+        time.sleep(seconds)
