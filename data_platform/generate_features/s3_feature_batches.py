@@ -18,7 +18,10 @@ import pandas as pd
 from pydantic import ValidationError
 
 from data_platform.generate_features.models import FeatureSpec, Q44ProvenanceModel
-from data_platform.generate_features.progress_record import PROGRESS_EVENT_BATCH, ProgressRecord
+from data_platform.generate_features.progress_record import (
+    PROGRESS_EVENT_BATCH,
+    ProgressRecord,
+)
 from data_platform.generate_features.s3_feature_campaign import (
     INTERMEDIATE_ARTIFACT_TAG,
     CampaignObjectStore,
