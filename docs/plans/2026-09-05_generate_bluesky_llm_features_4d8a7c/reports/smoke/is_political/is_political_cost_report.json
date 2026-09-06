@@ -1,0 +1,104 @@
+{
+  "campaign_id": "bluesky_2026_09_03_235130_llm_features_v1",
+  "dataset_id": "bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73",
+  "preprocessed_run": "2026_09_03-23:51:30",
+  "feature": "is_political",
+  "run_id": "bluesky_2026_09_03_235130_llm_features_v1:is_political",
+  "model": "gpt-5.4-nano",
+  "smoke_uri": "s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/is_political/smoke/",
+  "generated_at": "2026_09_06-04:26:09",
+  "batch_id": "batch_6a9ceb46c5ec81909998eff109642a14",
+  "request_count": 10,
+  "pricing": {
+    "source_url": "https://developers.openai.com/api/docs/pricing",
+    "input_usd_per_million_tokens": 0.1,
+    "output_usd_per_million_tokens": 0.625
+  },
+  "batch_usage": {
+    "input_tokens": 3307,
+    "output_tokens": 170,
+    "total_tokens": 3477
+  },
+  "per_request": [
+    {
+      "source_record_id": "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3mug6s3w7xk2k",
+      "request_id": "task-00000",
+      "input_tokens": 371,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3muiavvekuk2f",
+      "request_id": "task-00001",
+      "input_tokens": 316,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug56hcque2b",
+      "request_id": "task-00002",
+      "input_tokens": 324,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug5oga6dn2n",
+      "request_id": "task-00003",
+      "input_tokens": 325,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbevjlrc2e",
+      "request_id": "task-00004",
+      "input_tokens": 336,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbuofdw62w",
+      "request_id": "task-00005",
+      "input_tokens": 333,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbwq3wp422",
+      "request_id": "task-00006",
+      "input_tokens": 333,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mugaqwngf22d",
+      "request_id": "task-00007",
+      "input_tokens": 330,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mui6yzxzxk2g",
+      "request_id": "task-00008",
+      "input_tokens": 328,
+      "output_tokens": 17
+    },
+    {
+      "source_record_id": "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3muia7bodfc2g",
+      "request_id": "task-00009",
+      "input_tokens": 311,
+      "output_tokens": 17
+    }
+  ],
+  "avg_input_tokens_per_request": 330.7,
+  "avg_output_tokens_per_request": 17.0,
+  "max_input_tokens_per_request": 371,
+  "max_output_tokens_per_request": 17,
+  "smoke_cost_usd": 0.000437,
+  "full_run_post_count": 200000,
+  "estimated_full_run_usd_avg": 8.739,
+  "estimated_full_run_usd_max": 9.545,
+  "source_record_ids": [
+    "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3mug6s3w7xk2k",
+    "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3muiavvekuk2f",
+    "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug56hcque2b",
+    "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug5oga6dn2n",
+    "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbevjlrc2e",
+    "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbuofdw62w",
+    "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbwq3wp422",
+    "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mugaqwngf22d",
+    "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mui6yzxzxk2g",
+    "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3muia7bodfc2g"
+  ]
+}
