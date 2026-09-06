@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-06
+
+1. Pipeline storage now reads and writes the `mirrorview-experimental-artifacts` S3 bucket by default, and `DATA_PLATFORM_STORAGE_BACKEND=local` switches a developer back to local disk. The 25 parquet files of the pinned Bluesky dataset are no longer tracked by git or Git LFS, while its JSON manifests stay in git, and every test is pinned to local disk and a fake bucket so the suite cannot touch production. [Issue #183](https://github.com/METResearchGroup/mirrorView-task/issues/183)
+
 ## 2026-09-05
 
 1. The LLM toxicity feature test now expects the OpenAI Batch engine, matching the registry after LLM features moved off LangChain. [PR #177](https://github.com/METResearchGroup/mirrorView-task/pull/177)
