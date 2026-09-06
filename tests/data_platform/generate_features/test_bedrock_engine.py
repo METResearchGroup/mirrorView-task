@@ -9,6 +9,7 @@ import pytest
 
 from data_platform.generate_features.engines import ENGINE_BUILDERS, build_engine
 from data_platform.generate_features.engines.bedrock_engine import (
+    CONVERSE_RETRY_ATTEMPTS,
     BedrockConverseEngine,
     BedrockUsage,
     build_bedrock_engine,
@@ -69,6 +70,11 @@ class TestParseJsonObject:
     def test_strips_markdown_fences(self) -> None:
         expected = {"category": "opinion"}
         result = parse_json_object('```json\n{"category": "opinion"}\n```')
+        assert result == expected
+
+    def test_accepts_a_bare_category_word(self) -> None:
+        expected = {"category": "neither"}
+        result = parse_json_object("neither")
         assert result == expected
 
     def test_raises_when_json_is_not_an_object(self) -> None:
@@ -183,7 +189,7 @@ class TestBedrockConverseEngineBatchLabelRecords:
 
         with pytest.raises(ValueError):
             engine.batch_label_records(tasks)
-        assert client.converse.call_count == 3
+        assert client.converse.call_count == CONVERSE_RETRY_ATTEMPTS
 
     def test_retries_empty_json_then_succeeds(
         self,

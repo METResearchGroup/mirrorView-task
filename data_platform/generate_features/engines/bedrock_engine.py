@@ -38,8 +38,9 @@ BEDROCK_JSON_INSTRUCTION = (
 JSON_FENCE = "```"
 JSON_FENCE_LANGUAGE = "json"
 MIN_THREAD_WORKERS = 1
-CONVERSE_RETRY_ATTEMPTS = 3
-CONVERSE_RETRY_SLEEP_SECONDS = 0.5
+CONVERSE_RETRY_ATTEMPTS = 8
+CONVERSE_RETRY_SLEEP_SECONDS = 1.0
+NEWS_OPINION_CATEGORIES = frozenset({"news", "opinion", "neither"})
 RETRYABLE_CONVERSE_ERRORS = (
     json.JSONDecodeError,
     ValueError,
@@ -113,14 +114,38 @@ def _llm_prompt_and_schema(spec: FeatureSpec) -> tuple[str, type[BaseModel]]:
 
 
 def parse_json_object(text: str) -> dict[str, Any]:
-    """Parse a JSON object from model text, ignoring optional markdown fences."""
+    """Parse a JSON object from model text, ignoring optional markdown fences.
+
+    A bare news, opinion, or neither word is accepted when JSON is missing.
+    """
     stripped = text.strip()
     if stripped.startswith(JSON_FENCE):
         stripped = _strip_markdown_fence(stripped)
-    payload = json.loads(stripped)
+    try:
+        payload = json.loads(stripped)
+    except json.JSONDecodeError as error:
+        payload = _payload_from_loose_text(stripped)
+        if payload is None:
+            raise ValueError(f"Bedrock response was not JSON: {stripped!r}") from error
     if not isinstance(payload, dict):
         raise ValueError("Bedrock response JSON must be an object")
     return payload
+
+
+def _payload_from_loose_text(text: str) -> dict[str, Any] | None:
+    lowered = text.strip().strip('"').lower()
+    if lowered in NEWS_OPINION_CATEGORIES:
+        return {"category": lowered}
+    start = text.find("{")
+    end = text.rfind("}")
+    if start >= 0 and end > start:
+        try:
+            payload = json.loads(text[start : end + 1])
+        except json.JSONDecodeError:
+            return None
+        if isinstance(payload, dict):
+            return payload
+    return None
 
 
 def _strip_markdown_fence(text: str) -> str:
@@ -151,6 +176,11 @@ def converse_label(
             )
         except RETRYABLE_CONVERSE_ERRORS as error:
             last_error = error
+            print(
+                f"Bedrock Converse retry {attempt + 1}/{CONVERSE_RETRY_ATTEMPTS}: "
+                f"{type(error).__name__}: {error}",
+                flush=True,
+            )
             if attempt + 1 >= CONVERSE_RETRY_ATTEMPTS:
                 break
             time.sleep(CONVERSE_RETRY_SLEEP_SECONDS)
@@ -186,7 +216,11 @@ def _first_text_block(response: dict[str, Any]) -> str:
         text = block.get("text")
         if text:
             return str(text)
-    raise ValueError("Bedrock Converse response had no text")
+    stop_reason = response.get("stopReason", "")
+    raise ValueError(
+        "Bedrock Converse response had no text "
+        f"(stopReason={stop_reason!r}, content={content!r})"
+    )
 
 
 def _usage_from_response(response: dict[str, Any]) -> BedrockUsage:
