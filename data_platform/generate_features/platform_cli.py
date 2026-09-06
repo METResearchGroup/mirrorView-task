@@ -18,9 +18,10 @@ from pydantic import BaseModel
 
 from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
+    generate_campaign_feature,
     generate_features,
 )
-from data_platform.generate_features.models import FeatureRunConfig
+from data_platform.generate_features.models import CampaignRunConfig, FeatureRunConfig
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
@@ -418,7 +419,47 @@ def load_pinned_preprocessed_records(
     FileNotFoundError
         When that run has no records file.
     """
-    raise NotImplementedError
+    if not _is_single_dir_name(preprocessed_run):
+        raise ValueError(PREPROCESSED_RUN_NAME_ERROR)
+    storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+    records = storage.load_records(run_dir=storage.root_dir / preprocessed_run)
+    if records.empty:
+        return pd.DataFrame()
+    return pd.DataFrame(
+        spec.model_cls.model_validate(row).model_dump()
+        for row in records.to_dict(orient="records")
+    )
+
+
+def _is_single_dir_name(value: str) -> bool:
+    path = Path(value)
+    return (
+        not path.is_absolute()
+        and len(path.parts) == 1
+        and path.name not in {CURRENT_DIR_NAME, PARENT_DIR_NAME}
+    )
+
+
+def _require_campaign_flags(
+    campaign_id: str | None,
+    preprocessed_run: str | None,
+    feature_subset: list[str] | None,
+    batch_size: int,
+    checkpoint: str | None,
+) -> tuple[str, str, str]:
+    """Return ``(campaign_id, preprocessed_run, feature_name)`` or raise ``ValueError`` naming the bad flag."""
+    if campaign_id is None or preprocessed_run is None:
+        raise ValueError(CAMPAIGN_FLAGS_TOGETHER_ERROR)
+    if checkpoint is not None:
+        raise ValueError(CAMPAIGN_CHECKPOINT_ERROR)
+    if batch_size != CAMPAIGN_BATCH_SIZE:
+        raise ValueError(CAMPAIGN_BATCH_SIZE_ERROR)
+    if not feature_subset or len(feature_subset) != 1:
+        raise ValueError(CAMPAIGN_SINGLE_FEATURE_ERROR)
+    (feature_name,) = generate_feature_subset(feature_subset) or ()
+    if FEATURE_REGISTRY[feature_name].engine_type != "openai":
+        raise ValueError(CAMPAIGN_ENGINE_ERROR)
+    return campaign_id, preprocessed_run, feature_name
 
 
 def generate_platform_campaign_feature(
@@ -433,14 +474,38 @@ def generate_platform_campaign_feature(
 ) -> str:
     """Run campaign mode for exactly one feature and return its S3 feature prefix URI.
 
+    Re-running with the same flags resumes from the manifest under that prefix.
+
     Raises
     ------
     ValueError
         When only one of ``campaign_id`` and ``preprocessed_run`` is given, when
         ``checkpoint`` is given, when ``batch_size`` is not 2000, or when
         ``feature_subset`` does not name exactly one OpenAI feature.
+    FileNotFoundError
+        When the named preprocessed run has no records file.
     """
-    raise NotImplementedError
+    campaign_id, preprocessed_run, feature_name = _require_campaign_flags(
+        campaign_id, preprocessed_run, feature_subset, batch_size, checkpoint
+    )
+    dataset_id = validate_dataset_id(dataset_id)
+    records = load_pinned_preprocessed_records(spec, dataset_id, preprocessed_run)
+    campaign = CampaignRunConfig(
+        campaign_id=campaign_id,
+        dataset_id=dataset_id,
+        preprocessed_run=preprocessed_run,
+        platform=spec.platform,
+        batch_size=batch_size,
+    )
+    paths = generate_campaign_feature(
+        records,
+        FEATURE_REGISTRY[feature_name],
+        campaign,
+        FeatureRunConfig(batch_size=batch_size),
+    )
+    prefix_uri = paths.uri(paths.prefix)
+    print(f"generate_features: campaign {campaign_id} {feature_name} -> {prefix_uri}")
+    return prefix_uri
 
 
 def build_feature_cli_main(spec: FeaturePlatformSpec, dataset_id_help: str):
