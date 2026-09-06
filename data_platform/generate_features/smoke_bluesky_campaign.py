@@ -14,6 +14,7 @@ instead of the canonical campaign feature prefix.
 
 from __future__ import annotations
 
+import json
 import logging
 import tempfile
 import time
@@ -27,6 +28,7 @@ import pandas as pd
 import typer
 
 from data_platform.generate_features.campaign_cost_report import (
+    COST_REPORT_SUFFIX,
     DEFAULT_BATCH_INPUT_USD_PER_MILLION_TOKENS,
     DEFAULT_BATCH_OUTPUT_USD_PER_MILLION_TOKENS,
     PRICING_SOURCE_URL,
@@ -52,7 +54,13 @@ from data_platform.generate_features.generate_features import CAMPAIGN_ENGINE_TY
 from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
 from data_platform.generate_features.openai_batch_state import load_active_batch_state
 from data_platform.generate_features.registry import FEATURE_REGISTRY
-from data_platform.generate_features.s3_feature_batches import attach_provenance
+from data_platform.generate_features.s3_feature_batches import (
+    attach_provenance,
+    parquet_rows,
+    q44_columns,
+    rows_to_parquet_bytes,
+    validate_q44_rows,
+)
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
@@ -74,9 +82,10 @@ FILES_CREATE_CALL = "files.create"
 BATCHES_CREATE_CALL = "batches.create"
 SMOKE_BATCH_INDEX = 0
 SMOKE_ATTEMPT_COUNT = 1
-COST_REPORT_SUFFIX = "_cost_report.json"
 RESUME_EVIDENCE_SUFFIX = "_resume_evidence.json"
 S3_CHECKS_SUFFIX = "_s3_checks.txt"
+JSON_INDENT = 2
+CHECK_SMOKE_OBJECTS_UNTAGGED = "smoke_objects_exist_untagged"
 CHECK_SMOKE_OUTPUT_OK = "s3_smoke_output_ok"
 CHECK_RESUME_EVIDENCE_OK = "s3_smoke_resume_evidence_ok"
 CHECK_NO_BATCHES = "no_batches_prefix_objects"
@@ -342,6 +351,10 @@ def build_resume_evidence(
     }
 
 
+def _json_bytes(document: dict[str, Any]) -> bytes:
+    return f"{json.dumps(document, indent=JSON_INDENT)}\n".encode("utf-8")
+
+
 def write_smoke_objects(
     store: CampaignObjectStore,
     paths: FeaturePaths,
@@ -349,10 +362,34 @@ def write_smoke_objects(
     posts: pd.DataFrame,
     rows: list[dict[str, Any]],
     spec: FeatureSpec,
+    run_id: str,
     cost_report: dict[str, Any],
     resume_evidence: dict[str, Any],
 ) -> None:
-    raise NotImplementedError
+    """Put the four untagged smoke objects under ``paths.smoke_prefix`` with ``If-None-Match: *``.
+
+    Raises
+    ------
+    FileExistsError
+        When any of the four objects already exists, because a feature's smoke
+        runs once.
+    ValueError
+        When ``rows`` fail the Q44 validation.
+    """
+    validate_q44_rows(rows, spec, run_id=run_id)
+    store.put_new(
+        paths.smoke_input_key,
+        rows_to_parquet_bytes(posts.to_dict(orient="records"), list(posts.columns)),
+    )
+    store.put_new(paths.smoke_output_key, rows_to_parquet_bytes(rows, q44_columns(spec)))
+    store.put_new(paths.smoke_cost_report_key, _json_bytes(cost_report))
+    store.put_new(paths.smoke_resume_evidence_key, _json_bytes(resume_evidence))
+
+
+def _exists_untagged(store: CampaignObjectStore, key: str) -> tuple[bool, bool]:
+    exists = store.get(key) is not None
+    untagged = exists and store.get_tags(key) == {}
+    return exists, untagged
 
 
 def run_s3_checks(
@@ -362,7 +399,53 @@ def run_s3_checks(
     spec: FeatureSpec,
     canonical_smoke_keys_before: list[str],
 ) -> tuple[dict[str, bool], list[str]]:
-    raise NotImplementedError
+    """Verify the smoke objects and return the named checks plus one text line per observation.
+
+    Checks: the four smoke objects exist without tags, ``output.parquet`` holds
+    exactly ten rows with the Q44 columns, ``resume_evidence.json`` records
+    ``resume_ok``, no object exists under the smoke paths' ``batches/``, and
+    whether the canonical ``smoke/`` prefix changed during this run.
+    """
+    paths = smoke_paths.paths
+    lines: list[str] = []
+    all_untagged = True
+    for key in (
+        paths.smoke_input_key,
+        paths.smoke_output_key,
+        paths.smoke_cost_report_key,
+        paths.smoke_resume_evidence_key,
+    ):
+        exists, untagged = _exists_untagged(store, key)
+        all_untagged = all_untagged and exists and untagged
+        lines.append(f"exists {paths.uri(key)}={str(exists).lower()}")
+        lines.append(f"untagged {paths.uri(key)}={str(untagged).lower()}")
+    output = store.get(paths.smoke_output_key)
+    output_ok = False
+    if output is not None:
+        frame = parquet_rows(output.body)
+        output_ok = len(frame) == SMOKE_POST_COUNT and list(frame.columns) == q44_columns(spec)
+        lines.append(f"output_rows={len(frame)}")
+        lines.append(f"output_columns={list(frame.columns)}")
+    evidence = store.get(paths.smoke_resume_evidence_key)
+    resume_ok = False
+    if evidence is not None:
+        resume_ok = bool(json.loads(evidence.body.decode("utf-8")).get("resume_ok"))
+    batch_keys = store.list_keys(paths.batches_prefix)
+    lines.append(f"batches_prefix={paths.uri(paths.batches_prefix)} objects={len(batch_keys)}")
+    canonical_after = store.list_keys(smoke_paths.canonical.smoke_prefix)
+    lines.append(
+        f"canonical_smoke_prefix={smoke_paths.canonical.uri(smoke_paths.canonical.smoke_prefix)} "
+        f"objects_before={len(canonical_smoke_keys_before)} objects_after={len(canonical_after)}"
+    )
+    checks = {
+        CHECK_SMOKE_OBJECTS_UNTAGGED: all_untagged,
+        CHECK_SMOKE_OUTPUT_OK: output_ok and all_untagged,
+        CHECK_RESUME_EVIDENCE_OK: resume_ok and all_untagged,
+        CHECK_NO_BATCHES: not batch_keys,
+        CHECK_CANONICAL_TOUCHED: canonical_after != canonical_smoke_keys_before,
+    }
+    lines.extend(f"{name}={str(value).lower()}" for name, value in checks.items())
+    return checks, lines
 
 
 def write_git_copies(
@@ -373,7 +456,15 @@ def write_git_copies(
     resume_evidence: dict[str, Any],
     check_lines: list[str],
 ) -> Path:
-    raise NotImplementedError
+    """Write the cost report, resume evidence, and S3 check lines under ``output_dir`` and return the cost report path."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    report_path = output_dir / f"{feature}{COST_REPORT_SUFFIX}"
+    report_path.write_bytes(_json_bytes(cost_report))
+    (output_dir / f"{feature}{RESUME_EVIDENCE_SUFFIX}").write_bytes(_json_bytes(resume_evidence))
+    (output_dir / f"{feature}{S3_CHECKS_SUFFIX}").write_text(
+        "".join(f"{line}\n" for line in check_lines), encoding="utf-8"
+    )
+    return report_path
 
 
 def run_campaign_smoke(
@@ -443,6 +534,7 @@ def run_campaign_smoke(
         posts=posts,
         rows=resumed.rows,
         spec=spec,
+        run_id=run_id,
         cost_report=cost_report,
         resume_evidence=resume_evidence,
     )
@@ -504,7 +596,12 @@ def checks_passed(checks: dict[str, bool]) -> bool:
     """
     return all(
         checks[name]
-        for name in (CHECK_SMOKE_OUTPUT_OK, CHECK_RESUME_EVIDENCE_OK, CHECK_NO_BATCHES)
+        for name in (
+            CHECK_SMOKE_OBJECTS_UNTAGGED,
+            CHECK_SMOKE_OUTPUT_OK,
+            CHECK_RESUME_EVIDENCE_OK,
+            CHECK_NO_BATCHES,
+        )
     )
 
 
