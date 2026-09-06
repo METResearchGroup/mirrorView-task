@@ -22,7 +22,12 @@ from openai.lib._parsing._completions import (
     parse_chat_completion,
     type_to_response_format_param,
 )
-from openai import APIConnectionError, InternalServerError, RateLimitError
+from openai import (
+    APIConnectionError,
+    InternalServerError,
+    OpenAIError,
+    RateLimitError,
+)
 from openai.types import Batch
 from openai.types.chat import ChatCompletion
 from pydantic import BaseModel
@@ -64,6 +69,7 @@ BATCH_FAILED_STATUSES = frozenset(
     }
 )
 TRANSIENT_POLL_ERRORS = (APIConnectionError, InternalServerError, RateLimitError)
+HTTP_OK = 200
 HTTP_TOO_MANY_REQUESTS = 429
 HTTP_SERVER_ERROR_MIN = 500
 HTTP_SERVER_ERROR_MAX = 599
@@ -158,25 +164,25 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
             tasks,
             self._sleep_fn,
         )
-        _raise_for_request_errors(self._client, completed_batch, self._sleep_fn)
-        output_lines = _download_output_lines(
-            self._client,
-            completed_batch,
-            self._sleep_fn,
+        ordered_ids = [task.uri for task in tasks]
+        tasks_by_id = {task.uri: task for task in tasks}
+        error_payloads = _download_payloads(
+            self._client, completed_batch.error_file_id, self._sleep_fn
         )
-        completions_by_id = _chat_completions_by_custom_id(output_lines)
-        label_timestamp = get_current_timestamp()
-        rows = [
-            _label_row_for_task(
-                task,
-                _completion_for_index(completions_by_id, index),
-                self.spec,
-                label_timestamp,
+        if error_payloads:
+            parsed_errors = _parse_batch_payloads(
+                error_payloads, ordered_ids, tasks_by_id, self.spec
             )
-            for index, task in enumerate(tasks)
-        ]
+            _raise_for_failures(
+                [failure for failure in parsed_errors.failures if not failure.missing_output]
+            )
+        output_payloads = _download_payloads(
+            self._client, completed_batch.output_file_id, self._sleep_fn
+        )
+        parsed = _parse_batch_payloads(output_payloads, ordered_ids, tasks_by_id, self.spec)
+        _raise_for_failures(parsed.failures)
         self.last_batch = completed_batch
-        return rows
+        return parsed.rows
 
     def label_chunk(
         self,
@@ -230,7 +236,62 @@ def _parse_completed_batch(
     ``ordered_ids`` gives the id for each ``task-NNNNN`` custom id. Only ids
     that are keys of ``tasks_by_id`` are classified; the rest are ignored.
     """
-    raise NotImplementedError
+    payloads = _download_payloads(client, batch.error_file_id, sleep_fn)
+    payloads.update(_download_payloads(client, batch.output_file_id, sleep_fn))
+    return _parse_batch_payloads(payloads, ordered_ids, tasks_by_id, spec)
+
+
+def _parse_batch_payloads(
+    payloads: dict[str, dict[str, Any]],
+    ordered_ids: list[str],
+    tasks_by_id: dict[str, LabelTask],
+    spec: FeatureSpec,
+) -> ParsedBatchOutput:
+    """Classify each wanted id as a validated row or a request failure.
+
+    An id with no payload is a transient ``missing_output`` failure. A payload
+    without an HTTP 200 body is a failure that is transient only for HTTP 429
+    and 5xx. A payload whose body does not parse into a valid row is a
+    non transient failure.
+    """
+    label_timestamp = get_current_timestamp()
+    rows: list[dict] = []
+    failures: list[BatchRequestFailure] = []
+    for index, source_record_id in enumerate(ordered_ids):
+        task = tasks_by_id.get(source_record_id)
+        if task is None:
+            continue
+        custom_id = _custom_id_for_index(index)
+        payload = payloads.get(custom_id)
+        if payload is None:
+            failures.append(
+                BatchRequestFailure(
+                    source_record_id=source_record_id,
+                    custom_id=custom_id,
+                    error="missing from the batch output and error files",
+                    transient=True,
+                    missing_output=True,
+                )
+            )
+            continue
+        failure = _failure_for_payload(payload, source_record_id, custom_id)
+        if failure is not None:
+            failures.append(failure)
+            continue
+        try:
+            completion = ChatCompletion.model_validate(payload["response"]["body"])
+            rows.append(_label_row_for_task(task, completion, spec, label_timestamp))
+        except (ValueError, OpenAIError) as error:
+            failures.append(
+                BatchRequestFailure(
+                    source_record_id=source_record_id,
+                    custom_id=custom_id,
+                    error=f"{type(error).__name__}: {error}",
+                    transient=False,
+                    missing_output=False,
+                )
+            )
+    return ParsedBatchOutput(rows=rows, failures=failures)
 
 
 def _llm_prompt_and_schema(spec: FeatureSpec) -> tuple[str, type[BaseModel]]:
@@ -326,34 +387,61 @@ def _upload_requests(
         ).id
 
 
-def _download_output_lines(
+def _download_payloads(
     client: OpenAIBatchClient,
-    batch: Batch,
+    file_id: str | None,
     sleep_fn: Callable[[float], None],
-) -> list[str]:
-    if batch.output_file_id is None:
-        raise RuntimeError(f"OpenAI Batch {batch.id} completed without output_file_id")
-    return _download_file_text(
-        client,
-        batch.output_file_id,
-        sleep_fn,
-    ).splitlines()
+) -> dict[str, dict[str, Any]]:
+    """Return the JSON lines of a batch output or error file keyed by custom id."""
+    if file_id is None:
+        return {}
+    text = _download_file_text(client, file_id, sleep_fn)
+    payloads: dict[str, dict[str, Any]] = {}
+    for line in text.splitlines():
+        if line.strip():
+            payload = json.loads(line)
+            payloads[payload["custom_id"]] = payload
+    return payloads
 
 
-def _raise_for_request_errors(
-    client: OpenAIBatchClient,
-    batch: Batch,
-    sleep_fn: Callable[[float], None],
-) -> None:
-    if batch.error_file_id is None:
+def _failure_for_payload(
+    payload: dict[str, Any],
+    source_record_id: str,
+    custom_id: str,
+) -> BatchRequestFailure | None:
+    """Return the request failure described by a batch line, or None for a success."""
+    response = payload.get("response") or {}
+    status_code = response.get("status_code")
+    if status_code == HTTP_OK and response.get("body"):
+        return None
+    error = payload.get("error") or (response.get("body") or {}).get("error") or {}
+    message = error.get("message", str(error)) if isinstance(error, dict) else str(error)
+    prefix = "" if status_code is None else f"HTTP {status_code}: "
+    return BatchRequestFailure(
+        source_record_id=source_record_id,
+        custom_id=custom_id,
+        error=f"{prefix}{message}",
+        transient=status_code in TRANSIENT_HTTP_STATUS_CODES,
+        missing_output=False,
+    )
+
+
+def _raise_for_failures(failures: list[BatchRequestFailure]) -> None:
+    """Keep the strict all-or-nothing contract of ``batch_label_records``.
+
+    Raises
+    ------
+    ValueError
+        When a request is missing from both the output and the error file.
+    RuntimeError
+        When a request failed or its output could not become a valid row.
+    """
+    if not failures:
         return
-    error_text = _download_file_text(client, batch.error_file_id, sleep_fn)
-    errors = [json.loads(line) for line in error_text.splitlines() if line.strip()]
-    summaries = [
-        f"{error.get('custom_id', 'unknown')}: {error.get('error', {})}"
-        for error in errors
-    ]
-    raise RuntimeError(f"OpenAI Batch request failures: {'; '.join(summaries)}")
+    summary = "; ".join(f"{failure.custom_id}: {failure.error}" for failure in failures)
+    if any(failure.missing_output for failure in failures):
+        raise ValueError(f"OpenAI Batch output is missing requests: {summary}")
+    raise RuntimeError(f"OpenAI Batch request failures: {summary}")
 
 
 def _download_file_text(
@@ -373,32 +461,6 @@ def _download_file_text(
             )
             sleep_fn(retry_delay)
             retry_delay = min(retry_delay * 2, SDK_READ_RETRY_MAX_SECONDS)
-
-
-def _chat_completions_by_custom_id(
-    output_lines: list[str],
-) -> dict[str, ChatCompletion]:
-    completions: dict[str, ChatCompletion] = {}
-    for line in output_lines:
-        payload = json.loads(line)
-        response = payload.get("response")
-        if response is None:
-            raise ValueError(f"OpenAI Batch request {payload['custom_id']} failed")
-        completions[payload["custom_id"]] = ChatCompletion.model_validate(
-            response["body"]
-        )
-    return completions
-
-
-def _completion_for_index(
-    completions_by_id: dict[str, ChatCompletion],
-    index: int,
-) -> ChatCompletion:
-    custom_id = _custom_id_for_index(index)
-    completion = completions_by_id.get(custom_id)
-    if completion is None:
-        raise ValueError(f"OpenAI Batch output is missing {custom_id}")
-    return completion
 
 
 def _label_row_for_task(
