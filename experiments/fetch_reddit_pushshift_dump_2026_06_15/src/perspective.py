@@ -1,4 +1,4 @@
-"""Batched Perspective API TOXICITY scorer."""
+"""Batch and retry Perspective API toxicity scoring requests."""
 
 from __future__ import annotations
 
@@ -10,17 +10,17 @@ from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 from tqdm import tqdm
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.api_budget import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.api_budget import (
     api_calls_remaining,
     budget_exhausted,
     record_api_calls,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import (
     PERSPECTIVE_BATCH_SIZE,
     PERSPECTIVE_DELAY_SECONDS,
     PERSPECTIVE_MAX_RETRIES,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.models import (
     CommentToScore,
     ToxicityScore,
 )
@@ -28,6 +28,8 @@ from lib.load_env_vars import EnvVarsContainer
 
 
 def get_google_client():
+    """Build the Perspective API client using the repo's configured API key."""
+
     return discovery.build(
         "commentanalyzer",
         "v1alpha1",
@@ -40,6 +42,8 @@ def get_google_client():
 
 
 def create_perspective_request(text: str) -> dict:
+    """Create the Perspective request body for one comment string."""
+
     return {
         "comment": {"text": text},
         "languages": ["en"],
@@ -60,6 +64,20 @@ def _extract_toxicity(response: dict | None) -> dict | None:
 
 
 async def process_perspective_batch(requests: list[dict]) -> list[dict | None]:
+    """Submit one batch of Perspective requests within the session budget.
+
+    Parameters
+    ----------
+    requests : list of dict
+        Perspective API request payloads.
+
+    Returns
+    -------
+    list of dict or None
+        One result per input request. Failed or skipped requests are returned as
+        ``None`` so callers can retry or record a failure reason.
+    """
+
     if not requests:
         return []
 
@@ -108,6 +126,20 @@ async def process_perspective_batch_with_retries(
     initial_delay: float = 1.0,
     retry_strategy: Literal["batch", "individual"] = "individual",
 ) -> list[dict | None]:
+    """Retry failed Perspective requests with exponential backoff.
+
+    Parameters
+    ----------
+    requests : list of dict
+        Perspective request payloads to submit.
+    max_retries : int, optional
+        Maximum number of attempts, including the initial try.
+    initial_delay : float, optional
+        Starting sleep duration in seconds before the first retry.
+    retry_strategy : {"batch", "individual"}, optional
+        Whether to retry the full batch together or only the failed requests.
+    """
+
     if retry_strategy not in ("batch", "individual"):
         raise ValueError(
             f"Invalid retry_strategy: {retry_strategy}. "
@@ -203,7 +235,12 @@ async def _run_batch_scoring_async(
 
 
 def run_batch_scoring(comments: list[CommentToScore]) -> list[ToxicityScore]:
-    """Score comments in batches with tqdm progress and individual retries."""
+    """Score comments in batches and preserve input order in the results.
+
+    Failed labels are returned as explicit ``ToxicityScore`` records rather
+    than raising, which lets the caller continue processing a file and report
+    partial progress.
+    """
 
     if not comments:
         return []
