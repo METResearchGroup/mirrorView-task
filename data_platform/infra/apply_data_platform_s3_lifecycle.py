@@ -21,14 +21,32 @@ LIFECYCLE_PATH = Path(__file__).with_name("data_platform_s3_lifecycle.json")
 
 
 def load_rule() -> dict:
+    """Return the single lifecycle rule committed in ``data_platform_s3_lifecycle.json``.
+
+    Raises
+    ------
+    ValueError
+        If the file does not hold exactly one rule whose ``ID`` is ``RULE_ID``.
+    """
     raise NotImplementedError
 
 
 def read_rules(client: Any) -> list[dict]:
+    """Return the bucket's current lifecycle rules, or ``[]`` when it has no configuration.
+
+    Only ``NoSuchLifecycleConfiguration`` is treated as "no rules"; any other
+    ``ClientError`` propagates.
+    """
     raise NotImplementedError
 
 
 def merge_rule(existing: list[dict], rule: dict) -> list[dict]:
+    """Return ``existing`` with ``rule`` replacing the rule that shares its ``ID``.
+
+    Rules with other ids are kept unchanged and in order. When no rule shares
+    the id, ``rule`` is appended. ``existing`` is not modified, so rerunning
+    the apply never adds a duplicate.
+    """
     raise NotImplementedError
 
 

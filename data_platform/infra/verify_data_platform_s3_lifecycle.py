@@ -21,10 +21,19 @@ from data_platform.infra.apply_data_platform_s3_lifecycle import (
 
 
 def find_rule(rules: list[dict], rule_id: str) -> dict | None:
+    """Return the rule whose ``ID`` is ``rule_id``, or ``None`` when absent."""
     raise NotImplementedError
 
 
 def rule_problems(installed: dict, expected: dict) -> list[str]:
+    """Compare status, AND prefix, AND tags, and expiration days of two lifecycle rules.
+
+    Returns
+    -------
+    list[str]
+        One message per field that differs. Empty when ``installed`` matches
+        ``expected`` on every compared field.
+    """
     raise NotImplementedError
 
 
