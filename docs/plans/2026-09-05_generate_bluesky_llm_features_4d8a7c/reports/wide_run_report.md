@@ -37,7 +37,7 @@ Each feature `final.parquet` SHA-256 matched its provenance manifest before the 
 | Object | URI | SHA-256 |
 |--------|-----|---------|
 | Wide parquet | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/wide/features.parquet` | `5d8f2ff41acf25387df49804373bd6b88049af752654544d335dd3d47ab9fc3d` |
-| Wide manifest | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/wide/manifest.json` | `ed87f2c09ea18579abac8538a039dbc1f0502a7abafcbdd4520fd24165864f74` |
+| Wide manifest | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/wide/manifest.json` | `5f0c13f40265f0d45eabcdb0d3640bbd3dfd0f929668cb86a2534544df67b5af` |
 
 Wide objects are untagged. The join is an inner join on `CAST(source_record_id AS VARCHAR)`. Duplicate feature rows keep the latest `label_timestamp`. Perspective columns are absent.
 
@@ -62,6 +62,8 @@ All checks passed on 2026-09-06 after download to `/tmp/phaseb/wide/`.
 
 ## MirrorView curated dataset
 
+The export uses the same dataset-stage layout as local `curate_bluesky.py` runs: `curated/<timestamp>/mirrorview.parquet` plus `metadata.json` under `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/`. It is not stored under the campaign `wide/` prefix.
+
 Rules file: `data_platform/curate/configs/bluesky/mirrorview.yaml` (SHA-256 `62a0ee4f4b8528b7e75382b0ddab3f21857b9f23101f5ebdc5d0926c99aa53ff`). Filters are AND, in YAML order. No extra toxicity filter.
 
 | Filter | Records before | Records passing |
@@ -77,8 +79,8 @@ Rules file: `data_platform/curate/configs/bluesky/mirrorview.yaml` (SHA-256 `62a
 
 | Object | URI | SHA-256 |
 |--------|-----|---------|
-| Curated parquet | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/wide/curated/mirrorview.parquet` | `35e3f05111a16c27b95538894cda18db6d7295c8aad6be4fb7cb83ecafb1b3bc` |
-| Curated metadata | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/features/bluesky_2026_09_03_235130_llm_features_v1/wide/curated/metadata.json` | `b8c3c57ea75673026dcf120b07375f64b40b7bb94261f60df6db91624aa1e3d1` |
+| Curated parquet | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/curated/2026_09_06-23:25:06/mirrorview.parquet` | `35e3f05111a16c27b95538894cda18db6d7295c8aad6be4fb7cb83ecafb1b3bc` |
+| Curated metadata | `s3://mirrorview-experimental-artifacts/data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/curated/2026_09_06-23:25:06/metadata.json` | `0cb100b8c0f1a5a865c9ceacfa410d57b5976f7af88372f46914e2f948d86751` |
 
 ### Row count by political stance × LLM toxicity tier
 
