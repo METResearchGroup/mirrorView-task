@@ -27,7 +27,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
 
 That command labels 200,000 posts and is not run in this PR. The live checks in this file use the temporary smoke helper with ten rows and fake provider ids under a disposable prefix.
 
-Happy path through the caller for one feature: validate the flags, load the pinned preprocessed run through `StorageManager`, sort by `source_record_id`, load or create `manifest.json`, read the ids already in batch objects and in `smoke/output.parquet`, and then for each 2,000-id chunk without a batch object: seed the local engine state from S3, call `OpenAIBatchEngine.label_chunk`, attach provenance to the rows that arrive, write one batch object, update the manifest, append a progress line, append error lines for exhausted ids, and delete the S3 state. When every id has a row, write `final.parquet` once.
+Happy path through the caller for one feature: validate the flags, load the pinned preprocessed run through `StorageManager`, sort by `source_record_id`, load or create `manifest.json`, read the ids already in batch objects and in `smoke/output.parquet`, and then for each 2,000-id chunk without a batch object: seed the local engine state from S3, call `OpenAIBatchEngine.label_chunk`, attach provenance to the rows that arrive, write one batch object, update the manifest, append a progress line, append error lines for exhausted ids, and delete the S3 state. When every id has a row or a line in `errors.jsonl`, write `final.parquet` once with the labeled rows. When the manifest already records a final file, print one line and stop before labeling.
 
 ## Files to inspect (read-only)
 
@@ -98,14 +98,15 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 | Validation | `spec.model` on `source_record_id`, `label_timestamp`, and the label field. `Q44ProvenanceModel` on the six provenance columns. A row with an extra or missing column fails |
 | Manifest fields | `campaign_id`, `dataset_id`, `preprocessed_run`, `feature`, `model_id`, `prompt_hash`, `batch_size`, `expected_row_count`, `run_id`, `created_at`, `batches`, `final_parquet` |
 | Manifest batch entry | `{part_index, key, row_count, sha256, provider_batch_ids}` where `key` is the bucket key and `sha256` is the lowercase hex digest of the object bytes |
-| Manifest final block | `{key, row_count, sha256}` once `final.parquet` exists, `null` before |
+| Manifest final block | `{key, row_count, failed_row_count, sha256}` once `final.parquet` exists, `null` before. `row_count + failed_row_count == expected_row_count` |
 | Manifest write | Create with `If-None-Match: *`. Replace with `If-Match: {prior ETag}`. On a 412 or 409 reload and retry up to 5 times. ETag is never used as a hash |
-| `progress.jsonl` line | `{"ts", "event": "batch", "run_id", "part_index", "key", "row_count", "sha256", "provider_batch_ids", "rows_total", "batches_total"}`. The final file adds one line with `"event": "final"`, `key`, `row_count`, `sha256` |
+| `progress.jsonl` line | `{"ts", "event": "batch", "run_id", "part_index", "key", "row_count", "sha256", "provider_batch_ids", "rows_total", "batches_total"}`. The final file adds one line with `"event": "final"`, `key`, `row_count`, `failed_row_count`, `sha256` |
 | `errors.jsonl` line | `{"ts", "run_id", "part_index", "source_record_id", "error", "attempts"}` per exhausted record |
 | Logical append | Read current bytes and ETag (empty and none when missing), append newline terminated JSON, replace with `If-Match` (or `If-None-Match: *` when missing), retry from the latest bytes on conflict |
 | `active_openai_batch.json` in S3 | The engine's local state file bytes with `campaign_id` set to the campaign id. Written by the mirror whenever the engine calls `sleep_fn` and whenever `write_rows` runs, using `If-Match` when the object exists. Seeded back to the local state path before each chunk when the local file is missing. Deleted only after the batch object and manifest entry are written |
 | Smoke rows | When `{feature}/smoke/output.parquet` exists, its ids are not sent to the provider and its rows are merged into the batch object of the chunk that holds those ids. That is how `part-00000` holds ten smoke rows plus 1,990 new rows after Step 6 |
-| Final gate | The union of ids across all batch objects equals the set of input ids, with no duplicate id. Then `final.parquet` is written once with `If-None-Match: *` and no tag, in part order, with the Q44 columns |
+| Final gate | Every input id is in exactly one batch object or in `errors.jsonl` (read across all runs), with no duplicate id and no id outside the input. Then `final.parquet` is written once with `If-None-Match: *` and no tag, in part order, with the Q44 columns and only the labeled rows. User override: the epic's `step5.md` asks for exactly one valid row per pinned id; the user chose during review of PR #201 to write `final.parquet` anyway and leave permanently failed ids out, with `errors.jsonl` as their record |
+| Final guard | When the manifest already records `final_parquet`, the campaign command prints one line and returns before creating the engine. A chunk whose rows all failed permanently has no batch object and is not retried after that point |
 | Orphan batch object | A batch object that exists but has no manifest entry is adopted on resume: its bytes are read, hashed, and recorded, and no provider job runs for that chunk |
 | Campaign guards | `--campaign-id` and `--preprocessed-run` must be passed together, `--checkpoint` is rejected with them, `--batch-size` must be 2000, and `--features` must name exactly one feature whose `engine_type` is `openai` |
 | Storage | Campaign mode always writes S3 with boto3. `DATA_PLATFORM_S3_BUCKET` overrides the bucket name. `DATA_PLATFORM_STORAGE_BACKEND` is not consulted |
@@ -176,7 +177,10 @@ No pytest is added. These scenarios are the behavior the live smoke, the offline
 4. Given a manifest whose ETag is stale, when `save_manifest` runs, then it raises `ConditionalWriteConflict`.
 5. Given `progress.jsonl` with one line, when `append_jsonl` runs with one record, then the object has two lines and the first is unchanged.
 6. Given a state dict, when `save_active_state`, `load_active_state`, and `delete_active_state` run in order, then the load returns the same dict and the delete leaves no object.
-7. Given every input id is in the manifest batches, when `consolidate_final` runs, then `final.parquet` exists untagged, has the Q44 columns, and the manifest `final_parquet` block holds its SHA-256. A second call returns `None` and writes nothing.
+7. Given every input id is in the manifest batches, when `consolidate_final` runs, then `final.parquet` exists untagged, has the Q44 columns, and the manifest `final_parquet` block holds its SHA-256 with `failed_row_count` 0. A second call returns `None` and writes nothing.
+7a. Given three of five ids in a batch object and the other two in `errors.jsonl`, when `consolidate_final` runs with the ids from `read_failed_ids`, then `final.parquet` holds three rows, the manifest and the `final` progress line hold `row_count` 3 and `failed_row_count` 2.
+7b. Given an id that is neither in a batch object nor in `errors.jsonl`, when `consolidate_final` runs, then it returns `None` and writes nothing.
+7c. Given a manifest that already records `final_parquet`, when `generate_campaign_feature` runs, then it prints one line and returns without creating an OpenAI client or engine.
 8. Given a row missing `request_id`, when `validate_q44_rows` runs, then it raises `ValueError`.
 9. Given `--campaign-id` without `--preprocessed-run`, or `--batch-size 64`, or two `--features` values, when the CLI runs, then it exits with a `ValueError` message and makes no S3 call.
 
@@ -310,6 +314,7 @@ Expected: `631 passed`.
 - The first live smoke prints the seven expected lines with a 64 character hex digest.
 - The second live smoke prints `batch_rewrite_refused=true`, `next_part_index=1`, and `canonical_batches_prefix_touched=false`.
 - The cleanup prints `remaining_under_disposable_prefix= 0` and `canonical_batches_key_count= 0`.
+- The offline fake-store checks for scenarios 7, 7a, 7b, 7c, and the duplicate-id case all print `ok`.
 - `uv run pytest -q` reports 631 passed with no test file changes.
 
 ## Must fail
