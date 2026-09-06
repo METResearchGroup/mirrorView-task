@@ -69,7 +69,10 @@ def main() -> None:
     rule = load_rule()
     existing = read_rules(client)
     merged = merge_rule(existing, rule)
-    raise NotImplementedError(merged)
+    existing_ids = ", ".join(current.get("ID", "<no id>") for current in existing) or "none"
+    print(f"existing rules: {existing_ids}")
+    client.put_bucket_lifecycle_configuration(Bucket=BUCKET, LifecycleConfiguration={"Rules": merged})
+    print(f"applied lifecycle rule {RULE_ID} on {BUCKET}")
 
 
 if __name__ == "__main__":
