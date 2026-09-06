@@ -43,6 +43,7 @@ ACTIVE_STATE_FILENAME = "active_openai_batch.json"
 MANIFEST_FILENAME = "manifest.json"
 PROGRESS_FILENAME = "progress.jsonl"
 ERRORS_FILENAME = "errors.jsonl"
+WATCHER_FILENAME = "watcher.json"
 FINAL_FILENAME = "final.parquet"
 BATCHES_DIRNAME = "batches"
 SMOKE_DIRNAME = "smoke"
@@ -159,6 +160,10 @@ class FeaturePaths:
     @property
     def errors_key(self) -> str:
         return f"{self.prefix}{ERRORS_FILENAME}"
+
+    @property
+    def watcher_key(self) -> str:
+        return f"{self.prefix}{WATCHER_FILENAME}"
 
     @property
     def final_key(self) -> str:
