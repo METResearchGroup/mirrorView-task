@@ -437,7 +437,8 @@ def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None
 
 
 def manifest_sha256(manifest: dict[str, Any]) -> str:
-    raise NotImplementedError
+    """Return the SHA-256 of the exact bytes ``save_manifest`` uploads for ``manifest``."""
+    return sha256_hex(_json_bytes(manifest))
 
 
 def append_progress(
@@ -448,13 +449,18 @@ def append_progress(
 
 
 def read_progress_lines(store: CampaignObjectStore, paths: FeaturePaths) -> list[str]:
-    raise NotImplementedError
+    """Return the lines of ``progress.jsonl``, or an empty list before the first append."""
+    stored = store.get(paths.progress_key)
+    if stored is None:
+        return []
+    return stored.body.decode("utf-8").splitlines()
 
 
 def load_watcher_state(
     store: CampaignObjectStore, paths: FeaturePaths
 ) -> tuple[dict[str, Any] | None, str | None]:
-    raise NotImplementedError
+    """Return ``(state, etag)`` of ``watcher.json``, or ``(None, None)`` before the first watcher run."""
+    return _load_json(store, paths.watcher_key)
 
 
 def save_watcher_state(
@@ -463,7 +469,8 @@ def save_watcher_state(
     state: dict[str, Any],
     etag: str | None,
 ) -> str:
-    raise NotImplementedError
+    """Conditionally replace ``watcher.json`` and return its new ETag; see ``save_manifest`` for the conflict rule."""
+    return store.replace(paths.watcher_key, _json_bytes(state), etag=etag).etag
 
 
 def append_errors(
