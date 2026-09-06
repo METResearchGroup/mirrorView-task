@@ -11,12 +11,14 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Any, Protocol
 
 import boto3
-from pydantic import BaseModel
+from botocore.exceptions import ClientError
+from pydantic import BaseModel, ValidationError
 
 from data_platform.generate_features.engines.base import (
     BaseBatchExecutionEngine,
@@ -36,6 +38,14 @@ BEDROCK_JSON_INSTRUCTION = (
 JSON_FENCE = "```"
 JSON_FENCE_LANGUAGE = "json"
 MIN_THREAD_WORKERS = 1
+CONVERSE_RETRY_ATTEMPTS = 3
+CONVERSE_RETRY_SLEEP_SECONDS = 0.5
+RETRYABLE_CONVERSE_ERRORS = (
+    json.JSONDecodeError,
+    ValueError,
+    ValidationError,
+    ClientError,
+)
 
 
 class BedrockRuntimeClient(Protocol):
@@ -129,7 +139,33 @@ def converse_label(
     output_schema: type[BaseModel],
     user_text: str,
 ) -> tuple[BaseModel, BedrockUsage]:
-    """Return structured output and token usage from one Converse call."""
+    """Return structured output and token usage from one Converse call.
+
+    Empty or invalid JSON is retried a small number of times.
+    """
+    last_error: Exception | None = None
+    for attempt in range(CONVERSE_RETRY_ATTEMPTS):
+        try:
+            return _converse_once(
+                client, model_id, system_prompt, output_schema, user_text
+            )
+        except RETRYABLE_CONVERSE_ERRORS as error:
+            last_error = error
+            if attempt + 1 >= CONVERSE_RETRY_ATTEMPTS:
+                break
+            time.sleep(CONVERSE_RETRY_SLEEP_SECONDS)
+    if last_error is None:
+        raise RuntimeError("Converse retry loop exited without a result")
+    raise last_error
+
+
+def _converse_once(
+    client: BedrockRuntimeClient,
+    model_id: str,
+    system_prompt: str,
+    output_schema: type[BaseModel],
+    user_text: str,
+) -> tuple[BaseModel, BedrockUsage]:
     response = client.converse(
         modelId=model_id,
         system=[{"text": f"{system_prompt}\n{BEDROCK_JSON_INSTRUCTION}"}],

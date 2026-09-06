@@ -165,7 +165,14 @@ class TestBedrockConverseEngineBatchLabelRecords:
         assert engine.last_usage == BedrockUsage(0, 0, 0)
         client.converse.assert_not_called()
 
-    def test_raises_when_response_is_not_json(self) -> None:
+    def test_raises_when_response_is_not_json(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setattr(
+            "data_platform.generate_features.engines.bedrock_engine.time.sleep",
+            lambda seconds: None,
+        )
         client = MagicMock()
         client.converse.return_value = _converse_response(
             "news",
@@ -176,6 +183,32 @@ class TestBedrockConverseEngineBatchLabelRecords:
 
         with pytest.raises(ValueError):
             engine.batch_label_records(tasks)
+        assert client.converse.call_count == 3
+
+    def test_retries_empty_json_then_succeeds(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        monkeypatch.setattr(
+            "data_platform.generate_features.engines.bedrock_engine.get_current_timestamp",
+            lambda: LABEL_TIMESTAMP,
+        )
+        monkeypatch.setattr(
+            "data_platform.generate_features.engines.bedrock_engine.time.sleep",
+            lambda seconds: None,
+        )
+        client = MagicMock()
+        client.converse.side_effect = [
+            _converse_response("news", text=""),
+            _converse_response("news"),
+        ]
+        engine = _make_engine(_news_spec(), client)
+        tasks = [LabelTask(uri=URI_POST_A, text="Fed raised rates.")]
+
+        result = engine.batch_label_records(tasks)
+
+        assert result[0]["category"] == "news"
+        assert client.converse.call_count == 2
 
 
 class TestBuildEngine:
