@@ -41,6 +41,8 @@ MIN_THREAD_WORKERS = 1
 CONVERSE_RETRY_ATTEMPTS = 8
 CONVERSE_RETRY_SLEEP_SECONDS = 1.0
 NEWS_OPINION_CATEGORIES = frozenset({"news", "opinion", "neither"})
+CONTENT_FILTER_MARKER = "blocked by our content filters"
+FILTERED_CATEGORY = "neither"
 RETRYABLE_CONVERSE_ERRORS = (
     json.JSONDecodeError,
     ValueError,
@@ -117,6 +119,7 @@ def parse_json_object(text: str) -> dict[str, Any]:
     """Parse a JSON object from model text, ignoring optional markdown fences.
 
     A bare news, opinion, or neither word is accepted when JSON is missing.
+    A Bedrock content-filter message is stored as neither.
     """
     stripped = text.strip()
     if stripped.startswith(JSON_FENCE):
@@ -136,6 +139,8 @@ def _payload_from_loose_text(text: str) -> dict[str, Any] | None:
     lowered = text.strip().strip('"').lower()
     if lowered in NEWS_OPINION_CATEGORIES:
         return {"category": lowered}
+    if CONTENT_FILTER_MARKER in lowered:
+        return {"category": FILTERED_CATEGORY}
     start = text.find("{")
     end = text.rfind("}")
     if start >= 0 and end > start:

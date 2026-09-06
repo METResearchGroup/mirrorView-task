@@ -77,6 +77,13 @@ class TestParseJsonObject:
         result = parse_json_object("neither")
         assert result == expected
 
+    def test_maps_content_filter_text_to_neither(self) -> None:
+        expected = {"category": "neither"}
+        result = parse_json_object(
+            "- The generated text has been blocked by our content filters."
+        )
+        assert result == expected
+
     def test_raises_when_json_is_not_an_object(self) -> None:
         with pytest.raises(ValueError, match="object"):
             parse_json_object("[1]")
