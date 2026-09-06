@@ -9,6 +9,7 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
@@ -28,7 +29,10 @@ def load_rule() -> dict:
     ValueError
         If the file does not hold exactly one rule whose ``ID`` is ``RULE_ID``.
     """
-    raise NotImplementedError
+    rules = json.loads(LIFECYCLE_PATH.read_text())["Rules"]
+    if len(rules) != 1 or rules[0].get("ID") != RULE_ID:
+        raise ValueError(f"{LIFECYCLE_PATH} must hold exactly one rule with ID {RULE_ID!r}")
+    return rules[0]
 
 
 def read_rules(client: Any) -> list[dict]:
@@ -37,7 +41,13 @@ def read_rules(client: Any) -> list[dict]:
     Only ``NoSuchLifecycleConfiguration`` is treated as "no rules"; any other
     ``ClientError`` propagates.
     """
-    raise NotImplementedError
+    try:
+        response = client.get_bucket_lifecycle_configuration(Bucket=BUCKET)
+    except ClientError as exc:
+        if exc.response["Error"]["Code"] == "NoSuchLifecycleConfiguration":
+            return []
+        raise
+    return list(response.get("Rules", []))
 
 
 def merge_rule(existing: list[dict], rule: dict) -> list[dict]:
