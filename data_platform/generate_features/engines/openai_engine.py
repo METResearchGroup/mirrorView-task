@@ -201,7 +201,116 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         retry job at a time for ids that failed transiently and still have
         attempts left. Returns the records that ended without a valid row.
         """
-        raise NotImplementedError
+        attempt_budget = self.run_config.max_label_retries + 1
+        remaining = {task.uri: task for task in tasks}
+        attempts = {task.uri: 0 for task in tasks}
+        failures: list[RecordLabelFailure] = []
+        job_count = 0
+        while remaining:
+            job_count += 1
+            if job_count > 1:
+                self._sleep_fn(_retry_job_delay_seconds(job_count))
+            state, parsed = self._run_one_job(
+                remaining,
+                feature_name=feature_name,
+                run_dir=run_dir,
+                batch_index=batch_index,
+                attempt_count=job_count,
+            )
+            write_rows(parsed.rows)
+            for row in parsed.rows:
+                remaining.pop(row["source_record_id"], None)
+            for failure in parsed.failures:
+                attempts[failure.source_record_id] += 1
+                if failure.transient and attempts[failure.source_record_id] < attempt_budget:
+                    continue
+                failures.append(
+                    RecordLabelFailure(
+                        source_record_id=failure.source_record_id,
+                        error=failure.error,
+                        attempts=attempts[failure.source_record_id],
+                    )
+                )
+                remaining.pop(failure.source_record_id)
+            if state is not None:
+                write_active_batch_state(
+                    run_dir, feature_name, {**state, "state": ACTIVE_STATE_TERMINAL}
+                )
+        clear_active_batch_state(run_dir, feature_name)
+        return failures
+
+    def _run_one_job(
+        self,
+        remaining: dict[str, LabelTask],
+        *,
+        feature_name: str,
+        run_dir: Path,
+        batch_index: int,
+        attempt_count: int,
+    ) -> tuple[dict[str, Any] | None, ParsedBatchOutput]:
+        """Reattach to or submit one provider job and parse its results.
+
+        Any exception from submit or poll becomes one failure per task in the
+        job, so the caller applies the same per record attempt accounting to
+        whole job failures and to per request failures.
+        """
+        state = _matching_active_state(
+            load_active_batch_state(run_dir, feature_name),
+            feature_name,
+            batch_index,
+            remaining,
+        )
+        if state is None:
+            job_tasks = list(remaining.values())
+        else:
+            logger.info(
+                "Reattaching to in-flight OpenAI Batch",
+                extra={"batch_id": state["batch_id"], "feature_name": feature_name},
+            )
+            job_tasks = [
+                remaining[uri] for uri in state["pending_source_record_ids"] if uri in remaining
+            ]
+        tasks_by_id = {task.uri: task for task in job_tasks}
+        try:
+            if state is None:
+                state = submit_active_batch(
+                    self._client,
+                    self.spec,
+                    self._engine_config,
+                    job_tasks,
+                    run_dir=run_dir,
+                    feature_name=feature_name,
+                    batch_index=batch_index,
+                    attempt_count=attempt_count,
+                )
+            completed = wait_for_completed_batch(
+                self._client,
+                state["batch_id"],
+                self._engine_config.poll_interval_seconds,
+                self._sleep_fn,
+            )
+        except Exception as error:
+            logger.warning(
+                "OpenAI Batch job failed for every request in the job",
+                extra={"feature_name": feature_name, "batch_index": batch_index},
+                exc_info=error,
+            )
+            return state, ParsedBatchOutput(
+                rows=[],
+                failures=[_job_failure(uri, error) for uri in tasks_by_id],
+            )
+        state = {**state, "state": ACTIVE_STATE_WRITING}
+        write_active_batch_state(run_dir, feature_name, state)
+        self.last_batch = completed
+        parsed = _parse_completed_batch(
+            self._client,
+            completed,
+            state["pending_source_record_ids"],
+            tasks_by_id,
+            self.spec,
+            self._sleep_fn,
+        )
+        return state, parsed
 
 
 def submit_active_batch(
@@ -234,6 +343,42 @@ def submit_active_batch(
     }
     write_active_batch_state(run_dir, feature_name, state)
     return state
+
+
+def _matching_active_state(
+    state: dict[str, Any] | None,
+    feature_name: str,
+    batch_index: int,
+    remaining: dict[str, LabelTask],
+) -> dict[str, Any] | None:
+    """Return the saved state when it describes an unfinished job for this chunk."""
+    if state is None:
+        return None
+    if state["feature_name"] != feature_name or state["logical_batch_index"] != batch_index:
+        return None
+    if state["state"] not in (ACTIVE_STATE_POLLING, ACTIVE_STATE_WRITING):
+        return None
+    if not any(uri in remaining for uri in state["pending_source_record_ids"]):
+        return None
+    return state
+
+
+def _job_failure(source_record_id: str, error: Exception) -> BatchRequestFailure:
+    """Describe a whole job failure for one record. Only transport, provider, and terminal batch errors are transient."""
+    return BatchRequestFailure(
+        source_record_id=source_record_id,
+        custom_id="",
+        error=f"{type(error).__name__}: {error}",
+        transient=isinstance(error, (*TRANSIENT_POLL_ERRORS, OpenAIBatchJobError)),
+        missing_output=False,
+    )
+
+
+def _retry_job_delay_seconds(job_count: int) -> float:
+    return min(
+        SDK_READ_RETRY_INITIAL_SECONDS * 2 ** (job_count - 2),
+        SDK_READ_RETRY_MAX_SECONDS,
+    )
 
 
 def _parse_completed_batch(
