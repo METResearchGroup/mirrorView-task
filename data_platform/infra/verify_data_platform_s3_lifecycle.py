@@ -5,6 +5,9 @@ Run from the repo root:
     export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
     export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
     PYTHONPATH=. uv run python data_platform/infra/verify_data_platform_s3_lifecycle.py
+
+S3 can take a few seconds to show a newly applied lifecycle configuration, so a
+``FAIL`` printed immediately after the apply script may clear on a rerun.
 """
 
 from __future__ import annotations
@@ -42,7 +45,9 @@ def rule_problems(installed: dict, expected: dict) -> list[str]:
         ("tags", _tag_pairs(installed_and.get("Tags", [])), _tag_pairs(expected_and["Tags"])),
         ("expiration_days", installed.get("Expiration", {}).get("Days"), expected["Expiration"]["Days"]),
     ]
-    return [f"{name} is {found!r}, expected {wanted!r}" for name, found, wanted in compared if found != wanted]
+    return [
+        f"{name} is {found!r}, expected {wanted!r}" for name, found, wanted in compared if found != wanted
+    ]
 
 
 def _tag_pairs(tags: list[dict]) -> list[tuple[str, str]]:

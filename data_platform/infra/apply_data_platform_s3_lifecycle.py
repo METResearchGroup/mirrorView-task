@@ -39,7 +39,7 @@ def load_rule() -> dict:
 def read_rules(client: Any) -> list[dict]:
     """Return the bucket's current lifecycle rules, or ``[]`` when it has no configuration.
 
-    Only ``NoSuchLifecycleConfiguration`` is treated as "no rules"; any other
+    Only ``NoSuchLifecycleConfiguration`` is treated as "no rules". Any other
     ``ClientError`` propagates.
     """
     try:
