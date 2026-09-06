@@ -445,6 +445,18 @@ def append_errors(
     store.append_jsonl(paths.errors_key, records)
 
 
+def read_failed_ids(store: CampaignObjectStore, paths: FeaturePaths) -> set[str]:
+    """Return every ``source_record_id`` in ``errors.jsonl``, across all runs; empty when the object is absent."""
+    stored = store.get(paths.errors_key)
+    if stored is None:
+        return set()
+    return {
+        str(json.loads(line)["source_record_id"])
+        for line in stored.body.decode("utf-8").splitlines()
+        if line
+    }
+
+
 class ActiveStateMirror:
     """Keeps the engine's local ``active_openai_batch.json`` and its S3 copy in step.
 

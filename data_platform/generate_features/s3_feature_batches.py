@@ -9,7 +9,7 @@ input id has a row.
 from __future__ import annotations
 
 import logging
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass
 from io import BytesIO
 from typing import Any
@@ -318,15 +318,19 @@ def consolidate_final(
     manifest_etag: str,
     *,
     expected_ids: Sequence[str],
+    failed_ids: Collection[str],
     spec: FeatureSpec,
     run_id: str,
 ) -> str | None:
-    """Write ``final.parquet`` once every expected id has exactly one row; return the new manifest ETag or None.
+    """Write ``final.parquet`` once every expected id is labeled once or has failed for good; return the new manifest ETag or None.
 
     Returns None without writing when the manifest already records a final
-    file, or when the batch objects do not yet cover ``expected_ids`` exactly.
-    The final file is untagged, holds the batches in part order, and its
-    SHA-256 goes into the manifest ``final_parquet`` block.
+    file, when no batch object exists yet, or when some expected id is neither
+    in a batch object nor in ``failed_ids``. The final file is untagged, holds
+    only the labeled rows in part order, and its SHA-256 goes into the manifest
+    ``final_parquet`` block together with ``row_count`` and
+    ``failed_row_count``, the number of expected ids left out because they
+    failed. Those two counts add up to the manifest ``expected_row_count``.
 
     Raises
     ------
@@ -349,17 +353,20 @@ def consolidate_final(
         raise ValueError(
             f"batch objects hold {len(unexpected)} ids outside the input; final.parquet not written"
         )
-    if set(ids) != expected:
+    missing = expected - set(ids)
+    if not missing.issubset(failed_ids):
         return None
     columns = q44_columns(spec)
     validate_q44_rows(combined[columns].to_dict(orient="records"), spec, run_id=run_id)
     body = rows_to_parquet_bytes(combined[columns].to_dict(orient="records"), columns)
     result = store.put_new(paths.final_key, body)
-    manifest["final_parquet"] = {
+    final_record = {
         "key": paths.final_key,
         "row_count": len(combined),
+        "failed_row_count": len(missing),
         "sha256": result.sha256,
     }
+    manifest["final_parquet"] = final_record
     new_etag = save_manifest(store, paths, manifest, manifest_etag)
     append_progress(
         store,
@@ -368,9 +375,7 @@ def consolidate_final(
             "ts": get_current_timestamp(),
             "event": PROGRESS_EVENT_FINAL,
             "run_id": run_id,
-            "key": paths.final_key,
-            "row_count": len(combined),
-            "sha256": result.sha256,
+            **final_record,
         },
     )
     return new_etag
