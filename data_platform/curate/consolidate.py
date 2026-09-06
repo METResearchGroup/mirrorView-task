@@ -185,6 +185,55 @@ def llm_campaign_wide_columns() -> tuple[str, ...]:
     return PREPROCESSED_WIDE_COLUMNS + label_columns
 
 
+def _sql_path(path: Path) -> str:
+    return path.resolve().as_posix().replace("'", "''")
+
+
+def _campaign_posts_cte_sql(posts_file: Path) -> str:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    selected = ", ".join(
+        f"CAST({column} AS VARCHAR) AS {column}" if column == id_column else column
+        for column in PREPROCESSED_WIDE_COLUMNS
+    )
+    return f"posts AS (SELECT {selected} FROM read_parquet('{_sql_path(posts_file)}'))"
+
+
+def _campaign_feature_ctes(feature_files: dict[str, Path]) -> list[str]:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    return [
+        _feature_cte_sql(
+            feature_name,
+            _sql_path(feature_files[feature_name]),
+            id_column=id_column,
+            feature_file_id_column=id_column,
+            use_parquet=True,
+        )
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    ]
+
+
+def _campaign_join_sql(posts_file: Path, feature_files: dict[str, Path]) -> str:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    join_clauses = [
+        f"INNER JOIN feat_{feature_name} USING ({id_column})"
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    ]
+    label_cols = [
+        f"feat_{feature_name}.{alias}"
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+        for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
+    ]
+    posts_cols = [f"posts.{column}" for column in PREPROCESSED_WIDE_COLUMNS]
+    ctes = ",\n".join([_campaign_posts_cte_sql(posts_file), *_campaign_feature_ctes(feature_files)])
+    return f"""
+WITH {ctes}
+SELECT {", ".join(posts_cols + label_cols)}
+FROM posts
+{" ".join(join_clauses)}
+ORDER BY posts.{id_column} ASC
+"""
+
+
 def build_llm_campaign_wide_table(
     posts_file: Path,
     feature_files: dict[str, Path],
@@ -199,4 +248,12 @@ def build_llm_campaign_wide_table(
     KeyError
         When a campaign feature path is missing from ``feature_files``.
     """
-    raise NotImplementedError("campaign wide join is not implemented")
+    missing = [name for name in LLM_CAMPAIGN_FEATURE_NAMES if name not in feature_files]
+    if missing:
+        raise KeyError(f"missing campaign feature parquet paths: {missing}")
+    sql = _campaign_join_sql(posts_file, feature_files)
+    conn = duckdb.connect()
+    try:
+        return conn.execute(sql).fetchdf()
+    finally:
+        conn.close()
