@@ -18,7 +18,7 @@ then columns match the nineteen-name contract, n=uniq=200000, and no llm_toxicit
 given the same wide table and data_platform/curate/configs/bluesky/mirrorview.yaml
 when apply_rules runs
 then curated row count and political_stance x llm_toxicity_tier counts are written
-     under wide/curated/
+     under the dataset curated/ stage, in a timestamped run directory
 
 Run from the repo root:
 
@@ -61,14 +61,15 @@ from data_platform.generate_features.s3_feature_campaign import (
     parse_s3_uri,
     s3_uri,
 )
+from data_platform.utils.dataset import dataset_root, relative_run_path
 from data_platform.utils.object_store import DEFAULT_S3_REGION, sha256_hex
 from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+from data_platform.utils.storage import DATA_ROOT, BlueskyStorageManager
+from lib.timestamp_utils import get_current_timestamp
 
 MIRRORVIEW_RULES_PATH = (
     Path(__file__).resolve().parent / "configs" / "bluesky" / "mirrorview.yaml"
 )
-CURATED_RELATIVE_KEY = "curated/mirrorview.parquet"
-CURATED_METADATA_RELATIVE_KEY = "curated/metadata.json"
 WIDE_MANIFEST_FILENAME = "manifest.json"
 WIDE_PARQUET_FILENAME = "features.parquet"
 SHA256_READ_CHUNK_BYTES = 1024 * 1024
@@ -351,40 +352,54 @@ def _stance_by_toxicity(filtered: pd.DataFrame) -> dict[str, dict[str, int]]:
     return counts
 
 
+def _full_data_key(path: Path) -> str:
+    return f"{S3_KEY_PREFIX}/{path.relative_to(DATA_ROOT).as_posix()}"
+
+
+def _object_sha256(store: CampaignObjectStore, key: str) -> str:
+    stored = store.get(key)
+    if stored is None:
+        raise FileNotFoundError(f"missing object after write: {s3_uri(store.bucket, key)}")
+    return sha256_hex(stored.body)
+
+
 def curate_mirrorview_dataset(
     store: CampaignObjectStore,
     wide: pd.DataFrame,
     args: CampaignConsolidateArgs,
-    wide_parquet_key: str,
 ) -> CuratedDatasetRecord:
-    """Apply existing MirrorView YAML filters and upload the curated Parquet."""
+    """Apply existing MirrorView YAML filters and upload to the dataset ``curated/`` stage."""
     rules = load_rules_config(args.curate_config)
     rules_hash = hashlib.sha256(args.curate_config.read_bytes()).hexdigest()
     applied = apply_rules(wide, rules)
     filtered = applied.dataframe
-    prefix = _wide_prefix(wide_parquet_key)
-    parquet_key = f"{prefix}{CURATED_RELATIVE_KEY}"
-    metadata_key = f"{prefix}{CURATED_METADATA_RELATIVE_KEY}"
-    parquet_sha = _upload_bytes(store, parquet_key, filtered.to_parquet(index=False))
+    curated_storage = BlueskyStorageManager("curated", args.dataset_id)
+    run_dir = curated_storage.create_new_run_dir(get_current_timestamp())
+    export_filename = curated_storage.filename_for(rules.output.stem)
+    output_path = curated_storage.write_dataframe(filtered, run_dir, filename=export_filename)
     stance_by_toxicity = _stance_by_toxicity(filtered)
+    dataset = dataset_root(DEFAULT_CAMPAIGN_PLATFORM, args.dataset_id)
+    preprocessed_dir = dataset / "preprocessed" / args.preprocessed_run
     metadata = build_curate_metadata(
         dataset_id=args.dataset_id,
         rules_name=rules.name,
         rules_hash=rules_hash,
-        source_preprocessed_runs=[args.preprocessed_run],
+        source_preprocessed_runs=[relative_run_path(dataset, preprocessed_dir)],
         wide_df=wide,
         filtered_df=filtered,
         rules_result=applied,
-        export_filename="mirrorview.parquet",
+        export_filename=export_filename,
     )
     metadata["crosstab_political_stance_by_llm_toxicity_tier"] = stance_by_toxicity
-    metadata_sha = _upload_bytes(store, metadata_key, _json_bytes(metadata))
+    metadata_path = curated_storage.write_run_metadata(run_dir, metadata)
+    parquet_key = _full_data_key(output_path)
+    metadata_key = _full_data_key(metadata_path)
     return CuratedDatasetRecord(
         row_count=len(filtered),
         parquet_key=parquet_key,
-        parquet_sha256=parquet_sha,
+        parquet_sha256=_object_sha256(store, parquet_key),
         metadata_key=metadata_key,
-        metadata_sha256=metadata_sha,
+        metadata_sha256=_object_sha256(store, metadata_key),
         rules_hash=rules_hash,
         filter_steps=[_filter_step_record(step) for step in applied.steps],
         stance_by_toxicity=stance_by_toxicity,
@@ -478,8 +493,7 @@ def run_campaign_consolidation(args: CampaignConsolidateArgs) -> WideConsolidate
             {record.feature_name: record.local_parquet for record in features},
         )
         validate_wide_table(wide)
-        _, wide_key = parse_s3_uri(args.output_s3_uri)
-        curated = curate_mirrorview_dataset(store, wide, args, wide_key)
+        curated = curate_mirrorview_dataset(store, wide, args)
         wide_sha, parquet_uri, manifest_uri = upload_wide_artifacts(
             store, wide, args, preprocessed, features, curated
         )
@@ -504,7 +518,9 @@ def print_result(result: WideConsolidateResult) -> None:
     print(f"sort_key={result.sort_key}")
     if result.curated is None:
         return
+    bucket, _ = parse_s3_uri(result.wide_parquet_uri)
     print(f"curated_rows={result.curated.row_count}")
+    print(f"curated={s3_uri(bucket, result.curated.parquet_key)}")
     print("curated_crosstab_political_stance_by_llm_toxicity_tier=")
     print(json.dumps(result.curated.stance_by_toxicity, indent=2))
 
