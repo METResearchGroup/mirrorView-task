@@ -2,7 +2,7 @@
 
 ## Goal
 
-Give the Bluesky feature CLI a campaign mode that labels the pinned 200,000-post run in fixed 2,000-post chunks, writes each completed chunk as one immutable Parquet object in S3 with the Q44 columns, records SHA-256 digests in `manifest.json`, appends to `progress.jsonl` and `errors.jsonl`, keeps the in-flight OpenAI Batch state in S3, and resumes from that S3 state without rewriting any batch object.
+Give the Bluesky feature CLI a campaign mode that labels the pinned 200,000-post run in fixed 2,000-post chunks, writes each completed chunk as one immutable Parquet object in S3 with the campaign row columns, records SHA-256 digests in `manifest.json`, appends to `progress.jsonl` and `errors.jsonl`, keeps the in-flight OpenAI Batch state in S3, and resumes from that S3 state without rewriting any batch object.
 
 ## Source of truth
 
@@ -27,14 +27,14 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_feat
 
 That command labels 200,000 posts and is not run in this PR. The live checks in this file use the temporary smoke helper with ten rows and fake provider ids under a disposable prefix.
 
-Happy path through the caller for one feature: validate the flags, load the pinned preprocessed run through `StorageManager`, sort by `source_record_id`, load or create `manifest.json`, read the ids already in batch objects and in `smoke/output.parquet`, and then for each 2,000-id chunk without a batch object: seed the local engine state from S3, call `OpenAIBatchEngine.label_chunk`, attach provenance to the rows that arrive, write one batch object, update the manifest, append a progress line, append error lines for exhausted ids, and delete the S3 state. When every id has a row or a line in `errors.jsonl`, write `final.parquet` once with the labeled rows. When the manifest already records a final file, print one line and stop before labeling.
+Happy path through the caller for one feature: validate the flags, load the pinned preprocessed run through `StorageManager`, sort by `source_record_id`, load or create `manifest.json`, read the ids already in batch objects and in `smoke/output.parquet`, and then for each 2,000-id chunk without a batch object: seed the local engine state from S3, call `OpenAIBatchEngine.label_chunk`, attach identity and audit columns to the rows that arrive, write one batch object, update the manifest, append a progress line, append error lines for exhausted ids, and delete the S3 state. When every id has a row or a line in `errors.jsonl`, write `final.parquet` once with the labeled rows. When the manifest already records a final file, print one line and stop before labeling.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
 | `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/steps/step5.md` | Locked contracts, smoke commands, allowed and forbidden files |
-| `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | S3 layout, Q44 schema, manifest fields, append semantics |
+| `docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/campaign_contract.md` | S3 layout, campaign row schema, manifest fields, append semantics |
 | `data_platform/generate_features/engines/openai_engine.py` | `OpenAIBatchEngine.__init__` takes `sleep_fn`; `label_chunk` writes local state before polling and calls `write_rows` per provider job; `create_openai_client`, `DEFAULT_OPENAI_BATCH_ENGINE_CONFIG` |
 | `data_platform/generate_features/openai_batch_state.py` | `active_batch_state_path`, `load_active_batch_state`, `write_active_batch_state` used by the S3 mirror |
 | `data_platform/generate_features/engines/base.py` | `RecordLabelFailure` shape returned by `label_chunk` |
@@ -54,7 +54,7 @@ Happy path through the caller for one feature: validate the flags, load the pinn
 - `data_platform/generate_features/generate_features.py` (campaign entry point only)
 - `data_platform/generate_features/generate_bluesky_features.py` (pass through the two flags)
 - `data_platform/generate_features/platform_cli.py` (two flags, campaign guards, pinned run loader, campaign runner)
-- `data_platform/generate_features/models.py` (campaign config and provenance model)
+- `data_platform/generate_features/models.py` (campaign config and row metadata model)
 - `data_platform/generate_features/smoke_write_s3_batch.py` (new, temporary, deleted before merge)
 - `data_platform/generate_features/BATCH_SMOKE_EVIDENCE.md` (new, temporary, deleted before merge)
 
@@ -90,12 +90,12 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 | Batch object tag | `intermediate-artifact=true` on `batches/` objects only |
 | Untagged objects | `active_openai_batch.json`, `final.parquet`, `manifest.json`, `progress.jsonl`, `errors.jsonl` |
 | Chunking | Sort input rows by ascending `source_record_id`. Chunk `k` is rows `[2000k, 2000k + 2000)`. Chunk `k` writes `part-{k:05d}`. Row order inside a batch object follows that global order |
-| Q44 columns | Exactly `source_record_id`, `run_id`, `batch_id`, `request_id`, `attempt_count`, `label_timestamp`, and the feature's label field, e.g. `category` |
+| Campaign row columns | Exactly `source_record_id`, `run_id`, `batch_id`, `request_id`, `attempt_count`, `label_timestamp`, and the feature's label field, e.g. `category` |
 | `batch_id` | The OpenAI Batch id of the provider job that produced the row, read from the engine's local state file when `write_rows` runs |
 | `request_id` | The request's `custom_id` inside that provider job, `task-{index:05d}` where `index` is the row id's position in the state's `pending_source_record_ids` |
 | `attempt_count` | The `attempt_count` of that provider job, an integer 1 through 4 |
 | `label_timestamp` | Kept from the engine row, which uses `lib.timestamp_utils.get_current_timestamp` |
-| Validation | `spec.model` on `source_record_id`, `label_timestamp`, and the label field. `Q44ProvenanceModel` on the six provenance columns. A row with an extra or missing column fails |
+| Validation | `spec.model` on `source_record_id`, `label_timestamp`, and the label field. `LabelRowMetadataModel` on the six identity and audit columns. A row with an extra or missing column fails |
 | Manifest fields | `campaign_id`, `dataset_id`, `preprocessed_run`, `feature`, `model_id`, `prompt_hash`, `batch_size`, `expected_row_count`, `run_id`, `created_at`, `batches`, `final_parquet` |
 | Manifest batch entry | `{part_index, key, row_count, sha256, provider_batch_ids}` where `key` is the bucket key and `sha256` is the lowercase hex digest of the object bytes |
 | Manifest final block | `{key, row_count, failed_row_count, sha256}` once `final.parquet` exists, `null` before. `row_count + failed_row_count == expected_row_count` |
@@ -105,7 +105,7 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 | Logical append | Read current bytes and ETag (empty and none when missing), append newline terminated JSON, replace with `If-Match` (or `If-None-Match: *` when missing), retry from the latest bytes on conflict |
 | `active_openai_batch.json` in S3 | The engine's local state file bytes with `campaign_id` set to the campaign id. Written by the mirror whenever the engine calls `sleep_fn` and whenever `write_rows` runs, using `If-Match` when the object exists. Seeded back to the local state path before each chunk when the local file is missing. Deleted only after the batch object and manifest entry are written |
 | Smoke rows | When `{feature}/smoke/output.parquet` exists, its ids are not sent to the provider and its rows are merged into the batch object of the chunk that holds those ids. That is how `part-00000` holds ten smoke rows plus 1,990 new rows after Step 6 |
-| Final gate | Every input id is in exactly one batch object or in `errors.jsonl` (read across all runs), with no duplicate id and no id outside the input. Then `final.parquet` is written once with `If-None-Match: *` and no tag, in part order, with the Q44 columns and only the labeled rows. User override: the epic's `step5.md` asks for exactly one valid row per pinned id; the user chose during review of PR #201 to write `final.parquet` anyway and leave permanently failed ids out, with `errors.jsonl` as their record |
+| Final gate | Every input id is in exactly one batch object or in `errors.jsonl` (read across all runs), with no duplicate id and no id outside the input. Then `final.parquet` is written once with `If-None-Match: *` and no tag, in part order, with the campaign row columns and only the labeled rows. User override: the epic's `step5.md` asks for exactly one valid row per pinned id; the user chose during review of PR #201 to write `final.parquet` anyway and leave permanently failed ids out, with `errors.jsonl` as their record |
 | Final guard | When the manifest already records `final_parquet`, the campaign command prints one line and returns before creating the engine. A chunk whose rows all failed permanently has no batch object and is not retried after that point |
 | Orphan batch object | A batch object that exists but has no manifest entry is adopted on resume: its bytes are read, hashed, and recorded, and no provider job runs for that chunk |
 | Campaign guards | `--campaign-id` and `--preprocessed-run` must be passed together, `--checkpoint` is rejected with them, `--batch-size` must be 2000, and `--features` must name exactly one feature whose `engine_type` is `openai` |
@@ -118,7 +118,7 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 `data_platform/generate_features/models.py`:
 
 - `@dataclass(frozen=True) class CampaignRunConfig: campaign_id: str; dataset_id: str; preprocessed_run: str; platform: str; batch_size: int`
-- `class Q44ProvenanceModel(BaseModel)`: `source_record_id: str`, `run_id: str`, `batch_id: str`, `request_id: str`, `attempt_count: int` with `ge=1, le=4`, `label_timestamp: str`. Every string field has `min_length=1`. `extra="forbid"`.
+- `class LabelRowMetadataModel(BaseModel)`: `source_record_id: str`, `run_id: str`, `batch_id: str`, `request_id: str`, `attempt_count: int` with `ge=1, le=4`, `label_timestamp: str`. Every string field has `min_length=1`. `extra="forbid"`.
 
 `data_platform/generate_features/s3_feature_campaign.py`:
 
@@ -126,7 +126,7 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 - `run_id_for_feature(campaign_id: str, feature: str) -> str`
 - `feature_prefix(campaign_id: str, feature: str, *, platform: str = DEFAULT_CAMPAIGN_PLATFORM, dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID) -> str` returns the bucket key ending in `/`.
 - `s3_uri(bucket: str, key: str) -> str` and `parse_s3_uri(uri: str) -> tuple[str, str]`.
-- `@dataclass(frozen=True) class FeaturePaths: bucket: str; prefix: str` with `classmethod canonical(campaign_id, feature, *, bucket=None, platform=..., dataset_id=...)` (bucket `None` reads `DATA_PLATFORM_S3_BUCKET` or the default), `classmethod from_root_uri(root_uri: str, feature: str)`, properties `active_state_key`, `manifest_key`, `progress_key`, `errors_key`, `final_key`, `smoke_output_key`, `batches_prefix`, method `batch_key(part_index: int) -> str`, method `uri(key: str) -> str`.
+- `@dataclass(frozen=True) class FeaturePaths: bucket: str; prefix: str` with `classmethod for_campaign(campaign_id, feature, *, bucket=None, platform=..., dataset_id=...)` (bucket `None` reads `DATA_PLATFORM_S3_BUCKET` or the default), `classmethod from_root_uri(root_uri: str, feature: str)`, properties `active_state_key`, `manifest_key`, `progress_key`, `errors_key`, `final_key`, `smoke_output_key`, `batches_prefix`, method `batch_key(part_index: int) -> str`, method `uri(key: str) -> str`.
 - `@dataclass(frozen=True) class StoredObject: body: bytes; etag: str`
 - `@dataclass(frozen=True) class WriteResult: sha256: str; etag: str`
 - `class ConditionalWriteConflict(RuntimeError)`
@@ -140,10 +140,10 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 
 `data_platform/generate_features/s3_feature_batches.py`:
 
-- `PROVENANCE_COLUMNS = ("source_record_id", "run_id", "batch_id", "request_id", "attempt_count", "label_timestamp")`
-- `label_fields(spec) -> list[str]` and `q44_columns(spec) -> list[str]`
-- `attach_provenance(rows, *, run_id, batch_id, request_ids: Mapping[str, str], attempt_count) -> list[dict]`
-- `validate_q44_rows(rows, spec, *, run_id) -> None` raises `ValueError`.
+- `ROW_METADATA_COLUMNS = ("source_record_id", "run_id", "batch_id", "request_id", "attempt_count", "label_timestamp")`
+- `label_fields(spec) -> list[str]` and `campaign_row_columns(spec) -> list[str]`
+- `attach_row_metadata(rows, *, run_id, batch_id, request_ids: Mapping[str, str], attempt_count) -> list[dict]`
+- `validate_campaign_rows(rows, spec, *, run_id) -> None` raises `ValueError`.
 - `rows_to_parquet_bytes(rows, columns) -> bytes` and `parquet_rows(body) -> pd.DataFrame`
 - `@dataclass(frozen=True) class BatchWriteResult: key: str; sha256: str; row_count: int; manifest_etag: str`
 - `write_batch(store, paths, manifest, manifest_etag, *, part_index, rows, spec, run_id) -> BatchWriteResult` raises `FileExistsError` when the part is in the manifest or the key exists. Appends the manifest entry in place.
@@ -172,16 +172,16 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. `git s
 No pytest is added. These scenarios are the behavior the live smoke, the offline check, and the ad hoc disposable-prefix checks prove.
 
 1. Given the campaign id and feature from the contract, when `feature_prefix` and `run_id_for_feature` run, then the prefix ends with `features/bluesky_2026_09_03_235130_llm_features_v1/is_news_or_opinion/` and the run id is `bluesky_2026_09_03_235130_llm_features_v1:is_news_or_opinion`.
-2. Given an empty disposable prefix and ten rows with provenance, when `write_batch(part_index=0)` runs, then `batches/part-00000.parquet` exists with tag `intermediate-artifact=true`, its SHA-256 equals the manifest entry, and `progress.jsonl` has one line with that SHA-256.
+2. Given an empty disposable prefix and ten rows with identity and audit columns, when `write_batch(part_index=0)` runs, then `batches/part-00000.parquet` exists with tag `intermediate-artifact=true`, its SHA-256 equals the manifest entry, and `progress.jsonl` has one line with that SHA-256.
 3. Given part 0 already in the manifest, when `write_batch(part_index=0)` runs again, then it raises `FileExistsError` and no object changes.
 4. Given a manifest whose ETag is stale, when `save_manifest` runs, then it raises `ConditionalWriteConflict`.
 5. Given `progress.jsonl` with one line, when `append_jsonl` runs with one record, then the object has two lines and the first is unchanged.
 6. Given a state dict, when `save_active_state`, `load_active_state`, and `delete_active_state` run in order, then the load returns the same dict and the delete leaves no object.
-7. Given every input id is in the manifest batches, when `consolidate_final` runs, then `final.parquet` exists untagged, has the Q44 columns, and the manifest `final_parquet` block holds its SHA-256 with `failed_row_count` 0. A second call returns `None` and writes nothing.
+7. Given every input id is in the manifest batches, when `consolidate_final` runs, then `final.parquet` exists untagged, has the campaign row columns, and the manifest `final_parquet` block holds its SHA-256 with `failed_row_count` 0. A second call returns `None` and writes nothing.
 7a. Given three of five ids in a batch object and the other two in `errors.jsonl`, when `consolidate_final` runs with the ids from `read_failed_ids`, then `final.parquet` holds three rows, the manifest and the `final` progress line hold `row_count` 3 and `failed_row_count` 2.
 7b. Given an id that is neither in a batch object nor in `errors.jsonl`, when `consolidate_final` runs, then it returns `None` and writes nothing.
 7c. Given a manifest that already records `final_parquet`, when `generate_campaign_feature` runs, then it prints one line and returns without creating an OpenAI client or engine.
-8. Given a row missing `request_id`, when `validate_q44_rows` runs, then it raises `ValueError`.
+8. Given a row missing `request_id`, when `validate_campaign_rows` runs, then it raises `ValueError`.
 9. Given `--campaign-id` without `--preprocessed-run`, or `--batch-size 64`, or two `--features` values, when the CLI runs, then it exits with a `ValueError` message and makes no S3 call.
 
 ## Ordered implementation work
@@ -191,12 +191,12 @@ No pytest is added. These scenarios are the behavior the live smoke, the offline
 3. Record the scenarios above in this file and the smoke helper's expected output lines. Commit.
 4. Implement `FeaturePaths`, `run_id_for_feature`, `feature_prefix`, and `CampaignObjectStore`. Run the offline path check. Commit.
 5. Implement the manifest, active state, progress, and errors helpers and `ActiveStateMirror`. Commit.
-6. Implement provenance, validation, Parquet bytes, `write_batch`, and `adopt_unrecorded_batch`. Commit.
+6. Implement row metadata, validation, Parquet bytes, `write_batch`, and `adopt_unrecorded_batch`. Commit.
 7. Implement `read_batches`, `labeled_ids`, and `consolidate_final`. Commit.
 8. Implement `generate_campaign_feature`. Commit.
 9. Implement the CLI guards, pinned run loader, and campaign runner, and the Bluesky pass-through. Commit.
 10. Implement `smoke_write_s3_batch.py`. Run the live smoke twice. Commit the helper and `BATCH_SMOKE_EVIDENCE.md`.
-11. Delete every object under the disposable prefix with boto3, list it to show it is empty, and list the canonical feature `batches/` prefix to show it is empty. Record both in the evidence file. Commit.
+11. Delete every object under the disposable prefix with boto3, list it to show it is empty, and list the primary feature `batches/` prefix to show it is empty. Record both in the evidence file. Commit.
 12. Run `uv run pytest -q`. Expect 631 passed.
 13. Delete the two temporary files in a final commit before merge.
 
@@ -320,8 +320,8 @@ Expected: `631 passed`.
 ## Must fail
 
 - Any write to an existing `part-NNNNN.parquet` key.
-- Any row without the full Q44 column set.
+- Any row without the full campaign row column set.
 - Any manifest hash that is not a SHA-256 hex digest, or any use of ETag as a content hash.
 - The `intermediate-artifact=true` tag on `final.parquet`, `manifest.json`, `progress.jsonl`, `errors.jsonl`, or `active_openai_batch.json`.
 - A second provider job for ids covered by a `polling` or `writing` state.
-- Any smoke write under the canonical campaign feature prefix.
+- Any smoke write under the primary campaign feature prefix.

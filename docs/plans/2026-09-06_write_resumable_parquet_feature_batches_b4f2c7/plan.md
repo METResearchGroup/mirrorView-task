@@ -44,7 +44,7 @@ flowchart TD
 
 ## Approach
 
-Add two modules next to the existing feature generator. The first owns the S3 layout and the small mutable files. It builds the per-feature prefix, wraps the few S3 calls the campaign needs (conditional put, conditional replace, get with ETag, delete, list), and provides the read, append, and conditional replace pattern for `manifest.json`, `progress.jsonl`, `errors.jsonl`, and `active_openai_batch.json`. The second owns the immutable outputs. It adds the provenance columns to label rows, validates the label subset and the provenance columns separately, writes one batch object, and consolidates the final file. The orchestrator gains one campaign entry point that drives the Step 4 engine chunk by chunk and calls the batch writer after each durable provider job. The shared CLI gains the two flags and the campaign guards, and the Bluesky script passes them through. Legacy mode does not change.
+Add two modules next to the existing feature generator. The first owns the S3 layout and the small mutable files. It builds the per-feature prefix, wraps the few S3 calls the campaign needs (conditional put, conditional replace, get with ETag, delete, list), and provides the read, append, and conditional replace pattern for `manifest.json`, `progress.jsonl`, `errors.jsonl`, and `active_openai_batch.json`. The second owns the immutable outputs. It adds the identity and audit columns to label rows, validates the label subset and those columns separately, writes one batch object, and consolidates the final file. The orchestrator gains one campaign entry point that drives the Step 4 engine chunk by chunk and calls the batch writer after each durable provider job. The shared CLI gains the two flags and the campaign guards, and the Bluesky script passes them through. Legacy mode does not change.
 
 The OpenAI engine from Step 4 stays read-only in this step. It writes its state file to a local run directory. The campaign entry point mirrors that local file to S3 whenever the engine waits between polls and again when rows arrive, seeds the local file from S3 before each chunk, and deletes the S3 copy only after the batch object and manifest entry are durable. The engine's `sleep_fn` constructor argument is the only hook the campaign uses, so the engine needs no code change.
 
@@ -61,7 +61,7 @@ The OpenAI engine from Step 4 stays read-only in this step. It writes its state 
 
 ### Step 1: Add campaign mode with immutable S3 batch objects, manifest, progress log, and S3 provider state
 
-Add `data_platform/generate_features/s3_feature_campaign.py` and `data_platform/generate_features/s3_feature_batches.py`, add the campaign entry point to `generate_features.py`, add the flags and guards to `platform_cli.py` and the pass-through to `generate_bluesky_features.py`, add the provenance model and campaign config to `models.py`, and add the temporary `smoke_write_s3_batch.py` helper. Verify with the offline path check and the two live smoke commands in `steps/step1.md`, clean the disposable S3 prefix, and remove the temporary smoke files before merge.
+Add `data_platform/generate_features/s3_feature_campaign.py` and `data_platform/generate_features/s3_feature_batches.py`, add the campaign entry point to `generate_features.py`, add the flags and guards to `platform_cli.py` and the pass-through to `generate_bluesky_features.py`, add the row metadata model and campaign config to `models.py`, and add the temporary `smoke_write_s3_batch.py` helper. Verify with the offline path check and the two live smoke commands in `steps/step1.md`, clean the disposable S3 prefix, and remove the temporary smoke files before merge.
 
 ## What "done" looks like
 
@@ -73,6 +73,6 @@ Add `data_platform/generate_features/s3_feature_campaign.py` and `data_platform/
 6. `active_openai_batch.json` exists in S3 while a provider job is in flight and is deleted only after the batch object and manifest entry are written. A restart with the same flags reattaches to that job.
 7. Re-running the same campaign command resumes from the manifest, continues at the next unwritten part index, and never rewrites a prior batch object. Once `final.parquet` is recorded, re-running prints one line and labels nothing.
 8. `final.parquet` is written once every input id is labeled or in `errors.jsonl`, holds only the labeled rows, and the manifest `final_parquet` block holds `row_count`, `failed_row_count`, and `sha256` with `row_count + failed_row_count == expected_row_count`.
-9. The live smoke wrote only under `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/`, that prefix is empty before merge, and the canonical feature `batches/` prefix holds no objects.
+9. The live smoke wrote only under `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/step5_batch_writer/`, that prefix is empty before merge, and the primary feature `batches/` prefix holds no objects.
 10. The existing `uv run pytest -q` suite still passes with 631 tests. No test file changes.
 11. `smoke_write_s3_batch.py` and `BATCH_SMOKE_EVIDENCE.md` are committed during review and deleted in a final commit before merge.

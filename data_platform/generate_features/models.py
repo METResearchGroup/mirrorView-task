@@ -163,8 +163,8 @@ class CampaignRunConfig:
     batch_size: int
 
 
-class Q44ProvenanceModel(BaseModel):
-    """The six provenance columns every campaign label row carries."""
+class LabelRowMetadataModel(BaseModel):
+    """The six identity and audit columns every campaign label row carries."""
 
     model_config = ConfigDict(extra="forbid")
 

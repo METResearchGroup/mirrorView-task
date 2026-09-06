@@ -1,9 +1,8 @@
-"""Immutable Parquet batch objects and the final consolidated file of a campaign feature.
+"""Immutable Parquet batch objects and the final file of a campaign feature.
 
-Adds the Q44 provenance columns to label rows, validates the label subset and
-the provenance columns separately, writes one ``batches/part-NNNNN.parquet``
-object per completed chunk, and consolidates ``final.parquet`` once every
-input id has a row.
+Writes each completed chunk as one ``batches/part-NNNNN.parquet`` object and
+writes ``final.parquet`` once every input id is labeled or recorded as failed
+for good.
 """
 
 from __future__ import annotations
@@ -17,7 +16,7 @@ from typing import Any
 import pandas as pd
 from pydantic import ValidationError
 
-from data_platform.generate_features.models import FeatureSpec, Q44ProvenanceModel
+from data_platform.generate_features.models import FeatureSpec, LabelRowMetadataModel
 from data_platform.generate_features.s3_feature_campaign import (
     INTERMEDIATE_ARTIFACT_TAG,
     CampaignObjectStore,
@@ -28,7 +27,7 @@ from data_platform.generate_features.s3_feature_campaign import (
 from data_platform.utils.object_store import sha256_hex
 from lib.timestamp_utils import get_current_timestamp
 
-PROVENANCE_COLUMNS = (
+ROW_METADATA_COLUMNS = (
     "source_record_id",
     "run_id",
     "batch_id",
@@ -50,12 +49,12 @@ def label_fields(spec: FeatureSpec) -> list[str]:
     ]
 
 
-def q44_columns(spec: FeatureSpec) -> list[str]:
+def campaign_row_columns(spec: FeatureSpec) -> list[str]:
     """Return the exact ordered column set of a batch object for ``spec``."""
-    return [*PROVENANCE_COLUMNS, *label_fields(spec)]
+    return [*ROW_METADATA_COLUMNS, *label_fields(spec)]
 
 
-def attach_provenance(
+def attach_row_metadata(
     rows: list[dict[str, Any]],
     *,
     run_id: str,
@@ -82,8 +81,8 @@ def attach_provenance(
     ]
 
 
-def validate_q44_rows(rows: list[dict[str, Any]], spec: FeatureSpec, *, run_id: str) -> None:
-    """Validate the label subset with ``spec.model`` and the provenance columns with ``Q44ProvenanceModel``.
+def validate_campaign_rows(rows: list[dict[str, Any]], spec: FeatureSpec, *, run_id: str) -> None:
+    """Validate the label subset with ``spec.model`` and the identity columns with ``LabelRowMetadataModel``.
 
     Raises
     ------
@@ -91,31 +90,31 @@ def validate_q44_rows(rows: list[dict[str, Any]], spec: FeatureSpec, *, run_id: 
         When a row has extra or missing columns, fails either model, carries a
         different ``run_id``, or repeats a ``source_record_id``.
     """
-    expected = set(q44_columns(spec))
+    expected = set(campaign_row_columns(spec))
     fields = label_fields(spec)
     seen: set[str] = set()
     for row in rows:
         columns = set(row)
         if columns != expected:
             raise ValueError(
-                f"row columns {sorted(columns)} do not match the Q44 set {sorted(expected)}"
+                f"row columns {sorted(columns)} do not match the campaign column set {sorted(expected)}"
             )
         try:
             spec.model.model_validate(
                 {name: row[name] for name in (*MODEL_IDENTITY_COLUMNS, *fields)}
             )
-            provenance = Q44ProvenanceModel.model_validate(
-                {name: row[name] for name in PROVENANCE_COLUMNS}
+            metadata = LabelRowMetadataModel.model_validate(
+                {name: row[name] for name in ROW_METADATA_COLUMNS}
             )
         except ValidationError as error:
-            raise ValueError(f"invalid Q44 row for {row.get('source_record_id')!r}: {error}") from error
-        if provenance.run_id != run_id:
+            raise ValueError(f"invalid campaign row for {row.get('source_record_id')!r}: {error}") from error
+        if metadata.run_id != run_id:
             raise ValueError(
-                f"row run_id {provenance.run_id!r} does not match the campaign run_id {run_id!r}"
+                f"row run_id {metadata.run_id!r} does not match the campaign run_id {run_id!r}"
             )
-        if provenance.source_record_id in seen:
-            raise ValueError(f"duplicate source_record_id {provenance.source_record_id!r}")
-        seen.add(provenance.source_record_id)
+        if metadata.source_record_id in seen:
+            raise ValueError(f"duplicate source_record_id {metadata.source_record_id!r}")
+        seen.add(metadata.source_record_id)
 
 
 def rows_to_parquet_bytes(rows: list[dict[str, Any]], columns: Sequence[str]) -> bytes:
@@ -214,15 +213,15 @@ def write_batch(
     FileExistsError
         When ``part_index`` is already in the manifest or its key already exists.
     ValueError
-        When ``rows`` is empty or fails ``validate_q44_rows``.
+        When ``rows`` is empty or fails ``validate_campaign_rows``.
     """
     if not rows:
         raise ValueError(f"refusing to write an empty batch object for part {part_index}")
     key = paths.batch_key(part_index)
     if part_index in _manifest_part_indexes(manifest):
         raise FileExistsError(f"batch part {part_index} is already recorded in the manifest")
-    validate_q44_rows(rows, spec, run_id=run_id)
-    body = rows_to_parquet_bytes(rows, q44_columns(spec))
+    validate_campaign_rows(rows, spec, run_id=run_id)
+    body = rows_to_parquet_bytes(rows, campaign_row_columns(spec))
     result = store.put_new(key, body, tags=INTERMEDIATE_ARTIFACT_TAG)
     provider_batch_ids = list(dict.fromkeys(str(row["batch_id"]) for row in rows))
     return _record_batch(
@@ -356,8 +355,8 @@ def consolidate_final(
     missing = expected - set(ids)
     if not missing.issubset(failed_ids):
         return None
-    columns = q44_columns(spec)
-    validate_q44_rows(combined[columns].to_dict(orient="records"), spec, run_id=run_id)
+    columns = campaign_row_columns(spec)
+    validate_campaign_rows(combined[columns].to_dict(orient="records"), spec, run_id=run_id)
     body = rows_to_parquet_bytes(combined[columns].to_dict(orient="records"), columns)
     result = store.put_new(paths.final_key, body)
     final_record = {

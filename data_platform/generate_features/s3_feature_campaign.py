@@ -1,9 +1,8 @@
 """S3 layout and small mutable files of one feature in an LLM labeling campaign.
 
-Owns the per-feature prefix, the boto3 calls the campaign needs (conditional
-put, conditional replace, get with ETag, delete, list, tags), and the read,
-append, and conditional replace pattern behind ``manifest.json``,
-``progress.jsonl``, ``errors.jsonl``, and ``active_openai_batch.json``.
+Owns the per-feature prefix, the conditional S3 writes the campaign uses, and
+the helpers for ``manifest.json``, ``progress.jsonl``, ``errors.jsonl``, and
+``active_openai_batch.json``.
 """
 
 from __future__ import annotations
@@ -117,7 +116,7 @@ class FeaturePaths:
             raise ValueError(f"feature prefix must end with '/', got {self.prefix!r}")
 
     @classmethod
-    def canonical(
+    def for_campaign(
         cls,
         campaign_id: str,
         feature: str,
@@ -126,7 +125,7 @@ class FeaturePaths:
         platform: str = DEFAULT_CAMPAIGN_PLATFORM,
         dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
     ) -> FeaturePaths:
-        """Paths under the pinned campaign feature prefix, in the bucket named by the environment by default."""
+        """Paths under the primary campaign feature prefix, in the bucket named by the environment by default."""
         return cls(
             bucket=bucket or _campaign_bucket(),
             prefix=feature_prefix(campaign_id, feature, platform=platform, dataset_id=dataset_id),

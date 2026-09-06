@@ -39,11 +39,11 @@ from data_platform.generate_features.models import (
 from data_platform.generate_features.openai_batch_state import load_active_batch_state
 from data_platform.generate_features.s3_feature_batches import (
     adopt_unrecorded_batch,
-    attach_provenance,
+    attach_row_metadata,
+    campaign_row_columns,
     consolidate_final,
     parquet_rows,
-    q44_columns,
-    validate_q44_rows,
+    validate_campaign_rows,
     write_batch,
 )
 from data_platform.generate_features.s3_feature_campaign import (
@@ -302,7 +302,7 @@ def generate_campaign_feature(
     Rows are sorted by ``source_record_id`` and split into ``campaign.batch_size``
     chunks. Chunk ``k`` writes ``batches/part-{k:05d}.parquet`` once, and a chunk
     that already has a batch object is skipped. ``paths`` defaults to the
-    canonical feature prefix for ``campaign``.
+    primary feature prefix for ``campaign``.
 
     ``final.parquet`` is written once every id is either labeled or recorded in
     ``errors.jsonl`` as failed for good, so permanent failures do not block the
@@ -319,7 +319,7 @@ def generate_campaign_feature(
     """
     if spec.engine_type != CAMPAIGN_ENGINE_TYPE:
         raise ValueError(f"campaign mode requires engine_type {CAMPAIGN_ENGINE_TYPE!r}")
-    paths = paths or FeaturePaths.canonical(
+    paths = paths or FeaturePaths.for_campaign(
         campaign.campaign_id,
         spec.name,
         platform=campaign.platform,
@@ -448,12 +448,12 @@ def _smoke_rows_by_id(
     spec: FeatureSpec,
     run_id: str,
 ) -> dict[str, dict]:
-    """Return the Q44 rows of ``smoke/output.parquet`` keyed by id, or an empty dict when absent."""
+    """Return the campaign rows of ``smoke/output.parquet`` keyed by id, or an empty dict when absent."""
     stored = store.get(paths.smoke_output_key)
     if stored is None:
         return {}
-    rows = parquet_rows(stored.body)[q44_columns(spec)].to_dict(orient="records")
-    validate_q44_rows(rows, spec, run_id=run_id)
+    rows = parquet_rows(stored.body)[campaign_row_columns(spec)].to_dict(orient="records")
+    validate_campaign_rows(rows, spec, run_id=run_id)
     return {str(row["source_record_id"]): row for row in rows}
 
 
@@ -514,15 +514,15 @@ def _label_campaign_chunk(
                 uri: f"{CUSTOM_ID_PREFIX}{index:0{CUSTOM_ID_INDEX_WIDTH}d}"
                 for index, uri in enumerate(state["pending_source_record_ids"])
             }
-            with_provenance = attach_provenance(
+            with_metadata = attach_row_metadata(
                 rows,
                 run_id=run_id,
                 batch_id=state["batch_id"],
                 request_ids=request_ids,
                 attempt_count=int(state["attempt_count"]),
             )
-            _append_spilled_rows(spill_path, with_provenance)
-            rows_by_id.update({row["source_record_id"]: row for row in with_provenance})
+            _append_spilled_rows(spill_path, with_metadata)
+            rows_by_id.update({row["source_record_id"]: row for row in with_metadata})
             mirror.sync()
 
         failures = engine.label_chunk(
