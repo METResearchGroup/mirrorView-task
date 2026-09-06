@@ -65,6 +65,15 @@ def _make_on_batch_complete(
     return on_batch_complete
 
 
+def _all_records_labeled_once(
+    records: pd.DataFrame,
+    feature_name: str,
+    config: FeatureGenerationConfig,
+    feature_storage: StorageManager,
+) -> bool:
+    raise NotImplementedError
+
+
 def _run_feature_labeling(
     feature_name: str,
     spec: FeatureSpec,

@@ -15,6 +15,7 @@ import tempfile
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any, Protocol
 
 from openai.lib._parsing._completions import (
@@ -28,12 +29,18 @@ from pydantic import BaseModel
 
 from data_platform.generate_features.engines.base import (
     BaseBatchExecutionEngine,
+    RecordLabelFailure,
     row_with_label_timestamp,
 )
 from data_platform.generate_features.models import (
     FeatureRunConfig,
     FeatureSpec,
     LabelTask,
+)
+from data_platform.generate_features.openai_batch_state import (
+    clear_active_batch_state,
+    load_active_batch_state,
+    write_active_batch_state,
 )
 from lib.constants import DEFAULT_LLM_MODEL
 from lib.load_env_vars import EnvVarsContainer
@@ -65,6 +72,29 @@ class OpenAIBatchClient(Protocol):
 
     files: Any
     batches: Any
+
+
+class OpenAIBatchJobError(RuntimeError):
+    """The provider batch ended failed, expired, or cancelled."""
+
+
+@dataclass(frozen=True)
+class BatchRequestFailure:
+    """One request in a provider batch that produced no valid label row."""
+
+    source_record_id: str
+    custom_id: str
+    error: str
+    transient: bool
+    missing_output: bool
+
+
+@dataclass(frozen=True)
+class ParsedBatchOutput:
+    """Rows and failures parsed from one completed provider batch."""
+
+    rows: list[dict]
+    failures: list[BatchRequestFailure]
 
 
 @dataclass(frozen=True)
@@ -138,6 +168,42 @@ class OpenAIBatchEngine(BaseBatchExecutionEngine):
         ]
         self.last_batch = completed_batch
         return rows
+
+    def label_chunk(
+        self,
+        tasks: list[LabelTask],
+        *,
+        feature_name: str,
+        run_dir: Path,
+        batch_index: int,
+        write_rows: Callable[[list[dict]], None],
+    ) -> list[RecordLabelFailure]:
+        raise NotImplementedError
+
+
+def submit_active_batch(
+    client: OpenAIBatchClient,
+    spec: FeatureSpec,
+    engine_config: OpenAIBatchEngineConfig,
+    tasks: list[LabelTask],
+    *,
+    run_dir: Path,
+    feature_name: str,
+    batch_index: int,
+    attempt_count: int,
+) -> dict[str, Any]:
+    raise NotImplementedError
+
+
+def _parse_completed_batch(
+    client: OpenAIBatchClient,
+    batch: Batch,
+    ordered_ids: list[str],
+    tasks_by_id: dict[str, LabelTask],
+    spec: FeatureSpec,
+    sleep_fn: Callable[[float], None],
+) -> ParsedBatchOutput:
+    raise NotImplementedError
 
 
 def _llm_prompt_and_schema(spec: FeatureSpec) -> tuple[str, type[BaseModel]]:

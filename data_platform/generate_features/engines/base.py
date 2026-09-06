@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable, Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
@@ -19,6 +20,15 @@ from data_platform.generate_features.models import (
 )
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
+
+
+@dataclass(frozen=True)
+class RecordLabelFailure:
+    """One record that a chunk could not label after its attempt budget."""
+
+    source_record_id: str
+    error: str
+    attempts: int
 
 
 class BatchExecutionEngine(Protocol):
@@ -86,6 +96,17 @@ class BaseBatchExecutionEngine:
         self.run_config = run_config
 
     def batch_label_records(self, tasks: list[LabelTask]) -> list[dict]:
+        raise NotImplementedError
+
+    def label_chunk(
+        self,
+        tasks: list[LabelTask],
+        *,
+        feature_name: str,
+        run_dir: Path,
+        batch_index: int,
+        write_rows: Callable[[list[dict]], None],
+    ) -> list[RecordLabelFailure]:
         raise NotImplementedError
 
     def batch_write_records(
