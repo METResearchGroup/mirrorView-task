@@ -15,9 +15,11 @@ PERCENT_TOLERANCE = 1e-9
 class ProgressRecord(BaseModel):
     """One validated batch progress line.
 
-    The first twelve fields are the watcher-ready counters. The remaining
-    fields are the ones the Step 5 writer already appended and are kept so
-    the line stays a superset of the earlier shape.
+    The first twelve fields are the watcher-ready counters, and the optional
+    fields keep the earlier batch line shape, so a line stays a superset of
+    what older readers expect. ``run_id`` must be ``{campaign_id}:{feature}``,
+    ``durable_row_total`` must cover ``batch_row_count``, and
+    ``percent_complete`` must equal ``durable_row_total / expected_row_total``.
     """
 
     model_config = ConfigDict(extra="forbid")

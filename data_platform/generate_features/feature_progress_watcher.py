@@ -100,12 +100,12 @@ def render_rolling_comment(
 ) -> str:
     """Return the markdown block of the rolling feature-issue comment, without a trailing newline."""
     cost = "unavailable" if cost_to_date_usd is None else f"${cost_to_date_usd:.2f}"
+    rows = f"{record.durable_row_total} / {record.expected_row_total}"
     return "\n".join(
         [
             f"## Feature progress: {record.feature}",
             f"Campaign: {record.campaign_id}",
-            f"Durable rows: {record.durable_row_total} / {record.expected_row_total} "
-            f"({record.percent_complete * 100:.1f}%)",
+            f"Durable rows: {rows} ({record.percent_complete * 100:.1f}%)",
             f"Latest part: {record.part_index} (manifest sha256: {record.manifest_sha256})",
             f"Estimated cost to date: {cost}",
             f"Active OpenAI batch: {active_openai_batch_id or IDLE}",
@@ -199,6 +199,11 @@ def main(
     once: bool = typer.Option(False, "--once"),
     github_comment_id: int | None = typer.Option(None, "--github-comment-id"),
 ) -> None:
+    """Run the watcher once and print its outcome lines.
+
+    ``--dry-render`` is accepted so the step spec's command lines run as
+    written. The command never writes to GitHub in any mode.
+    """
     if not once:
         raise typer.BadParameter("pass --once; it is the only mode of this command")
     paths = resolve_feature_paths(campaign_id, feature, smoke_prefix)

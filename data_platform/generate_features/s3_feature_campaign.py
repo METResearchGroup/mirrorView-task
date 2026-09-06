@@ -3,7 +3,8 @@
 Owns the per-feature prefix, the boto3 calls the campaign needs (conditional
 put, conditional replace, get with ETag, delete, list, tags), and the read,
 append, and conditional replace pattern behind ``manifest.json``,
-``progress.jsonl``, ``errors.jsonl``, and ``active_openai_batch.json``.
+``progress.jsonl``, ``errors.jsonl``, ``watcher.json``, and
+``active_openai_batch.json``.
 """
 
 from __future__ import annotations
