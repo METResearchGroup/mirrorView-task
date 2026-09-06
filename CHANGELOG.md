@@ -3,6 +3,7 @@
 ## 2026-09-06
 
 1. Pipeline storage now reads and writes the `mirrorview-experimental-artifacts` S3 bucket by default, and `DATA_PLATFORM_STORAGE_BACKEND=local` switches a developer back to local disk. The 25 parquet files of the pinned Bluesky dataset are no longer tracked by git or Git LFS, while its JSON manifests stay in git, and every test is pinned to local disk and a fake bucket so the suite cannot touch production. [Issue #183](https://github.com/METResearchGroup/mirrorView-task/issues/183)
+2. OpenAI Batch feature labeling now survives a process crash: the engine saves `input_file_id` and `batch_id` to `{feature}.active_openai_batch.json` before its first status poll, and a restarted run polls the same provider batch instead of creating a second one. A provider batch with some failed requests keeps its successful rows, only transient failures (HTTP 429, 5xx, transport errors, expired batches) are retried, up to four attempts per record, and a feature is marked completed only when every input id has exactly one label row. [Issue #184](https://github.com/METResearchGroup/mirrorView-task/issues/184)
 
 ## 2026-09-05
 
