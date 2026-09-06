@@ -19,12 +19,15 @@ from data_platform.generate_features.metadata import (
 )
 from data_platform.generate_features.models import (
     BatchRunStats,
+    CampaignRunConfig,
     FeatureGenerationConfig,
+    FeatureRunConfig,
     FeatureRunMetadata,
     FeatureSpec,
     FeatureStatus,
     LabelTask,
 )
+from data_platform.generate_features.s3_feature_campaign import FeaturePaths
 from data_platform.utils.storage import StorageManager, StorageStage
 
 
@@ -235,6 +238,20 @@ def generate_features(
     return written
 
 
-def generate_campaign_feature():
-    """Label one feature of a campaign into immutable S3 batch objects and resume from S3 state."""
+def generate_campaign_feature(
+    records: pd.DataFrame,
+    spec: FeatureSpec,
+    campaign: CampaignRunConfig,
+    run_config: FeatureRunConfig,
+    *,
+    paths: FeaturePaths | None = None,
+) -> FeaturePaths:
+    """Label one feature of a campaign into immutable S3 batch objects and resume from S3 state.
+
+    ``records`` must hold a ``source_record_id`` column and a ``text`` column.
+    Rows are sorted by ``source_record_id`` and split into ``campaign.batch_size``
+    chunks. Chunk ``k`` writes ``batches/part-{k:05d}.parquet`` once, and a chunk
+    that already has a batch object is skipped. ``paths`` defaults to the
+    canonical feature prefix for ``campaign``.
+    """
     raise NotImplementedError

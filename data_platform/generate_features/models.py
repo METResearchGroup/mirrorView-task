@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from data_platform.utils.feature_labels import FeatureLabelQuery
 from data_platform.utils.storage import StorageManager
@@ -156,6 +156,21 @@ class BatchRunStats:
 class CampaignRunConfig:
     """Identity of one S3 backed labeling campaign run for one platform dataset."""
 
+    campaign_id: str
+    dataset_id: str
+    preprocessed_run: str
+    platform: str
+    batch_size: int
+
 
 class Q44ProvenanceModel(BaseModel):
     """The six provenance columns every campaign label row carries."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source_record_id: str = Field(min_length=1)
+    run_id: str = Field(min_length=1)
+    batch_id: str = Field(min_length=1)
+    request_id: str = Field(min_length=1)
+    attempt_count: int = Field(ge=1, le=4)
+    label_timestamp: str = Field(min_length=1)

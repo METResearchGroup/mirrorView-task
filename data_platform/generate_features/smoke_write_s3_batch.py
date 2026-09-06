@@ -16,7 +16,22 @@ from __future__ import annotations
 import typer
 
 
-def main() -> None:
+def main(
+    campaign_id: str = typer.Option(..., "--campaign-id"),
+    dataset_id: str = typer.Option(..., "--dataset-id"),
+    preprocessed_run: str = typer.Option(..., "--preprocessed-run"),
+    feature: str = typer.Option(..., "--feature"),
+    smoke_prefix: str = typer.Option(..., "--smoke-prefix"),
+    row_count: int = typer.Option(10, "--row-count"),
+) -> None:
+    """Write one disposable batch with fake provider ids, or prove that a rewrite is refused.
+
+    The first run under an empty smoke prefix writes ``part-00000`` and prints
+    its key, SHA-256, and the manifest, progress, and tag checks. A second run
+    finds the manifest, tries to write ``part-00000`` again, and prints that
+    the rewrite was refused and the next part index. Both runs print whether
+    the canonical campaign feature ``batches/`` prefix gained any object.
+    """
     raise NotImplementedError
 
 
