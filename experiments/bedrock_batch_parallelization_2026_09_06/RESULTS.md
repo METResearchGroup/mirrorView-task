@@ -2,7 +2,7 @@
 
 These runs used Amazon Nova Micro (`us.amazon.nova-micro-v1:0`) through on-demand Converse in `us-east-2`. The posts and the news or opinion prompt match the OpenAI Batch experiment. Native Bedrock batch jobs were not used.
 
-A Bedrock content-filter reply is stored as `neither`, so every submitted post still produces a valid label row. Mean output tokens drop slightly below 10 on the 2,000 and 5,000 post sizes because of those shorter filter messages.
+A Bedrock content-filter reply is stored as `neither`, so every submitted post still produces a valid label row. Mean output tokens drop slightly below 10 on the 2,000 and 5,000 post sizes because of those shorter filter messages. In production, we track posts that Nova Micro fails for content-filter reasons, and we can retry those posts with the OpenAI engine instead.
 
 On-demand Ohio rates are $0.035 per million input tokens, and $0.14 per million output tokens.
 
