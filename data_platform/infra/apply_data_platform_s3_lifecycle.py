@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 import boto3
+from botocore.exceptions import ClientError
 
 BUCKET = "mirrorview-experimental-artifacts"
 REGION = "us-east-2"
