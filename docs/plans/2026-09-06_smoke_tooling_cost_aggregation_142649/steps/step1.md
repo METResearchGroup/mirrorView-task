@@ -117,7 +117,7 @@ Stage files by explicit path only. Never run `git add -A` or `git add .`. Never 
 - `@dataclass(frozen=True) class RequestUsage: source_record_id: str; request_id: str; input_tokens: int; output_tokens: int`
 - `request_usages_from_output_text(text: str, ordered_ids: list[str]) -> list[RequestUsage]` reads the `usage` block of each batch output line and maps `custom_id` back to `ordered_ids`.
 - `build_feature_cost_report(*, campaign_id, dataset_id, preprocessed_run, feature, model, smoke_uri, batch_id, batch_usage: BatchUsage | None, request_usages, pricing, full_run_post_count=FULL_RUN_POST_COUNT) -> dict` returns the per feature report, and raises `ValueError` when `request_usages` is empty.
-- `cost_report_filename(feature: str) -> str` and `cost_report_path(smoke_reports_dir: Path, feature: str) -> Path`.
+- `cost_report_path(smoke_reports_dir: Path, feature: str) -> Path` returns `{smoke_reports_dir}/{feature}/{feature}_cost_report.json`.
 - `aggregate_cost_reports(campaign_id: str, smoke_reports_dir: Path, features=CAMPAIGN_LLM_FEATURES) -> dict` raises `FileNotFoundError` naming every missing report and `ValueError` when a report's `campaign_id` differs.
 - `main(aggregate, campaign_id, smoke_reports_dir, output)` Typer command. Without `--aggregate` it raises a usage error.
 
