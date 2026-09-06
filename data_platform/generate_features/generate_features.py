@@ -233,3 +233,8 @@ def generate_features(
 
     print(f"generate_features: finished {len(written)} features under {config.features_dir}")
     return written
+
+
+def generate_campaign_feature():
+    """Label one feature of a campaign into immutable S3 batch objects and resume from S3 state."""
+    raise NotImplementedError

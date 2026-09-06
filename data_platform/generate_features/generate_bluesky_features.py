@@ -7,6 +7,14 @@ Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
         --dataset-id bluesky_<uuid> --checkpoint 2026_05_30-12:00:00
+
+Campaign mode writes immutable 2,000-row batch objects to S3 and resumes from
+that prefix on restart:
+
+    PYTHONPATH=. uv run python data_platform/generate_features/generate_bluesky_features.py \\
+        --dataset-id bluesky_<uuid> --preprocessed-run 2026_09_03-23:51:30 \\
+        --campaign-id bluesky_2026_09_03_235130_llm_features_v1 \\
+        --features is_news_or_opinion --batch-size 2000
 """
 
 from __future__ import annotations

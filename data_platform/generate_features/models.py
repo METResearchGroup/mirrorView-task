@@ -150,3 +150,12 @@ class FeatureGenerationConfig:
 class BatchRunStats:
     labeled: int = 0
     failed_batches: int = 0
+
+
+@dataclass(frozen=True)
+class CampaignRunConfig:
+    """Identity of one S3 backed labeling campaign run for one platform dataset."""
+
+
+class Q44ProvenanceModel(BaseModel):
+    """The six provenance columns every campaign label row carries."""

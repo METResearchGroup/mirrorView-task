@@ -389,6 +389,14 @@ def generate_platform_features(
     )
 
 
+def load_pinned_preprocessed_records():
+    raise NotImplementedError
+
+
+def generate_platform_campaign_feature():
+    raise NotImplementedError
+
+
 def build_feature_cli_main(spec: FeaturePlatformSpec, dataset_id_help: str):
     """Return the Typer command for one platform feature-generation script."""
 
@@ -408,8 +416,13 @@ def build_feature_cli_main(spec: FeaturePlatformSpec, dataset_id_help: str):
             "--checkpoint",
             help=CHECKPOINT_OPTION_HELP,
         ),
+        campaign_id: str | None = typer.Option(None, "--campaign-id"),
+        preprocessed_run: str | None = typer.Option(None, "--preprocessed-run"),
     ) -> None:
         """Generate feature labels. Pass --checkpoint to continue an unfinished feature run."""
+        if campaign_id is not None or preprocessed_run is not None:
+            generate_platform_campaign_feature()
+            return
         generate_platform_features(
             spec,
             dataset_id,
