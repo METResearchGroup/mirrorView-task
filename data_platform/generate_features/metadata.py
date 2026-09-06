@@ -18,7 +18,7 @@ from data_platform.generate_features.models import (
 )
 from data_platform.utils.dataset import dataset_root, relative_run_path
 from data_platform.utils.storage import METADATA_FILENAME
-from lib.constants import DEFAULT_LLM_MODEL
+from lib.constants import DEFAULT_BEDROCK_NOVA_MICRO, DEFAULT_LLM_MODEL
 from lib.timestamp_utils import get_current_timestamp
 
 PERSPECTIVE_MODEL_ID = "perspective-api"
@@ -64,6 +64,8 @@ def model_id_for_spec(spec: FeatureSpec) -> str:
     """Return the default LLM model id, or Perspective for thread-pool features."""
     if spec.engine_type == "thread_pool":
         return PERSPECTIVE_MODEL_ID
+    if spec.engine_type == "bedrock":
+        return DEFAULT_BEDROCK_NOVA_MICRO
     return DEFAULT_LLM_MODEL
 
 

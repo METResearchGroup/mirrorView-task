@@ -51,7 +51,7 @@ def test_langchain_registry_specs_omit_generate_fn() -> None:
     from data_platform.generate_features.registry import FEATURE_REGISTRY
 
     for spec in FEATURE_REGISTRY.values():
-        if spec.engine_type in {"langchain", "openai"}:
+        if spec.engine_type in {"langchain", "openai", "bedrock"}:
             assert spec.generate_fn is None
         else:
             assert spec.generate_fn is not None
