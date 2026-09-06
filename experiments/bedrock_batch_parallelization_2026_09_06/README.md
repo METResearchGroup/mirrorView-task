@@ -30,3 +30,5 @@ Without `--i-approve-the-cost-estimate` these commands exit 2 and do not call Be
 PYTHONPATH=. uv run python experiments/bedrock_batch_parallelization_2026_09_06/run_size_experiment.py
 PYTHONPATH=. uv run python experiments/bedrock_batch_parallelization_2026_09_06/run_process_experiment.py
 ```
+
+After you approve `COST_ESTIMATE.md`, pass `--i-approve-the-cost-estimate` on those same commands. Do not run the approved jobs from this PR.
