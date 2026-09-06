@@ -119,6 +119,7 @@ def validate_q44_rows(rows: list[dict[str, Any]], spec: FeatureSpec, *, run_id: 
 
 
 def rows_to_parquet_bytes(rows: list[dict[str, Any]], columns: Sequence[str]) -> bytes:
+    """Serialize ``rows`` to Parquet with exactly ``columns`` in that order and no index."""
     frame = pd.DataFrame(rows, columns=list(columns))
     buffer = BytesIO()
     frame.to_parquet(buffer, index=False)
@@ -126,11 +127,14 @@ def rows_to_parquet_bytes(rows: list[dict[str, Any]], columns: Sequence[str]) ->
 
 
 def parquet_rows(body: bytes) -> pd.DataFrame:
+    """Read a Parquet object body back into a data frame."""
     return pd.read_parquet(BytesIO(body))
 
 
 @dataclass(frozen=True)
 class BatchWriteResult:
+    """Where one batch object landed, its digest and row count, and the manifest ETag after recording it."""
+
     key: str
     sha256: str
     row_count: int
@@ -300,6 +304,7 @@ def read_batches(store: CampaignObjectStore, manifest: dict[str, Any]) -> list[p
 
 
 def labeled_ids(store: CampaignObjectStore, manifest: dict[str, Any]) -> set[str]:
+    """Return every ``source_record_id`` held by the manifest's batch objects, verifying each digest."""
     ids: set[str] = set()
     for frame in read_batches(store, manifest):
         ids.update(frame["source_record_id"].astype(str))

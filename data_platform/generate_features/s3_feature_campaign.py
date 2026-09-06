@@ -81,6 +81,7 @@ def feature_prefix(
 
 
 def s3_uri(bucket: str, key: str) -> str:
+    """Return the ``s3://bucket/key`` form of one object key."""
     return f"{S3_URI_SCHEME}{bucket}/{key}"
 
 
@@ -125,6 +126,7 @@ class FeaturePaths:
         platform: str = DEFAULT_CAMPAIGN_PLATFORM,
         dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
     ) -> FeaturePaths:
+        """Paths under the pinned campaign feature prefix, in the bucket named by the environment by default."""
         return cls(
             bucket=bucket or _campaign_bucket(),
             prefix=feature_prefix(campaign_id, feature, platform=platform, dataset_id=dataset_id),
@@ -167,6 +169,7 @@ class FeaturePaths:
         return f"{self.prefix}{BATCHES_DIRNAME}/"
 
     def batch_key(self, part_index: int) -> str:
+        """Return the immutable object key of chunk ``part_index``; raises ``ValueError`` when negative."""
         if part_index < 0:
             raise ValueError(f"part_index must be zero or positive, got {part_index}")
         return f"{self.batches_prefix}part-{part_index:05d}.parquet"
@@ -177,12 +180,16 @@ class FeaturePaths:
 
 @dataclass(frozen=True)
 class StoredObject:
+    """Bytes of one S3 object with the ETag to pass back as ``If-Match`` on a later replace."""
+
     body: bytes
     etag: str
 
 
 @dataclass(frozen=True)
 class WriteResult:
+    """SHA-256 of the bytes just written and the ETag S3 assigned to them."""
+
     sha256: str
     etag: str
 
@@ -216,6 +223,7 @@ class CampaignObjectStore:
         return self._bucket
 
     def get(self, key: str) -> StoredObject | None:
+        """Return the object at ``key``, or None when it does not exist."""
         try:
             response = self._client.get_object(Bucket=self._bucket, Key=key)
         except ClientError as error:
@@ -279,9 +287,11 @@ class CampaignObjectStore:
             raise
 
     def delete(self, key: str) -> None:
+        """Delete ``key``; deleting a missing key is not an error."""
         self._client.delete_object(Bucket=self._bucket, Key=key)
 
     def list_keys(self, prefix: str) -> list[str]:
+        """Return every key under ``prefix`` in sorted order, following pagination."""
         paginator = self._client.get_paginator("list_objects_v2")
         keys = [
             item["Key"]
@@ -291,6 +301,7 @@ class CampaignObjectStore:
         return sorted(keys)
 
     def get_tags(self, key: str) -> dict[str, str]:
+        """Return the object tags of ``key`` as a plain mapping."""
         response = self._client.get_object_tagging(Bucket=self._bucket, Key=key)
         return {tag["Key"]: tag["Value"] for tag in response.get("TagSet", [])}
 
@@ -358,6 +369,7 @@ def new_manifest(
 def load_manifest(
     store: CampaignObjectStore, paths: FeaturePaths
 ) -> tuple[dict[str, Any] | None, str | None]:
+    """Return ``(manifest, etag)``, or ``(None, None)`` before the first run creates it."""
     return _load_json(store, paths.manifest_key)
 
 
@@ -380,6 +392,7 @@ def save_manifest(
 def load_active_state(
     store: CampaignObjectStore, paths: FeaturePaths
 ) -> tuple[dict[str, Any] | None, str | None]:
+    """Return ``(state, etag)`` of the S3 ``active_openai_batch.json``, or ``(None, None)`` when no job is open."""
     return _load_json(store, paths.active_state_key)
 
 
@@ -389,22 +402,26 @@ def save_active_state(
     state: dict[str, Any],
     etag: str | None,
 ) -> str:
+    """Conditionally replace the S3 active state and return its new ETag; see ``save_manifest`` for the conflict rule."""
     return store.replace(paths.active_state_key, _json_bytes(state), etag=etag).etag
 
 
 def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
+    """Remove the S3 active state once its chunk has a durable batch object."""
     store.delete(paths.active_state_key)
 
 
 def append_progress(
     store: CampaignObjectStore, paths: FeaturePaths, record: dict[str, Any]
 ) -> None:
+    """Append one line to ``progress.jsonl``; raises ``ConditionalWriteConflict`` after repeated lost races."""
     store.append_jsonl(paths.progress_key, [record])
 
 
 def append_errors(
     store: CampaignObjectStore, paths: FeaturePaths, records: list[dict[str, Any]]
 ) -> None:
+    """Append one line per record to ``errors.jsonl``; a no-op for an empty list."""
     store.append_jsonl(paths.errors_key, records)
 
 
