@@ -9,11 +9,11 @@
 
 ## Overview
 
-The data platform can already read and write the `mirrorview-experimental-artifacts` S3 bucket when `DATA_PLATFORM_STORAGE_BACKEND=s3`, and every object of the pinned Bluesky dataset is in that bucket with a verified SHA-256. Local disk is still the default backend, and the 25 parquet files of the pinned Bluesky dataset are still tracked by Git LFS. This plan flips the default backend to S3, keeps `DATA_PLATFORM_STORAGE_BACKEND=local` as the developer override, and removes the 25 parquet files from git and Git LFS tracking without rewriting history. The four JSON manifests of the dataset stay in git as ordinary text files.
+The data platform can already read and write the `mirrorview-experimental-artifacts` S3 bucket when `DATA_PLATFORM_STORAGE_BACKEND=s3`, and every object of the pinned Bluesky dataset is in that bucket with a verified SHA-256. Local disk is still the default backend, and the 25 parquet files of the pinned Bluesky dataset are still tracked by Git LFS. The plan flips the default backend to S3, keeps `DATA_PLATFORM_STORAGE_BACKEND=local` as the developer override, and removes the 25 parquet files from git and Git LFS tracking without rewriting history. The four JSON manifests of the dataset stay in git as ordinary text files.
 
-The test suite never sets the backend variable today, so the flip alone would send 106 existing tests to S3. On a machine with AWS credentials, those tests would write fixture data into the production bucket. The plan therefore pins every test under `tests/data_platform/` to local disk and to a fake bucket name before the default changes. No test outside `tests/data_platform/` builds a storage manager or resolves an object store.
+The test suite never sets the backend variable today, so the flip alone would send 106 existing tests to S3. On a machine with AWS credentials, those tests would write fixture data into the production bucket. The plan therefore pins every test under `tests/data_platform/` to local disk and to a fake bucket name before the default changes. No test outside `tests/data_platform/` builds a storage manager or resolves an object store, so one fixture in that directory covers the whole suite.
 
-The plan is one PR for child issue #183 of epic #180. It depends on the merged work of issues #181 and #182, which sit below it in the same branch stack.
+The plan is one PR for child issue #183 of epic #180. It builds on the work of issues #181 and #182, which are the two branches beneath this one.
 
 ## Happy flow
 
@@ -31,7 +31,7 @@ flowchart LR
 
 ## Approach
 
-Change one default value, add one test fixture, and edit two git config files. The default flip lives in `resolve_object_store` alone, so the S3 store, the local store, and `StorageManager` do not change. The fixture lands before the flip, so no commit on the branch leaves the suite pointed at the production bucket. The parquet files leave the git index with `git rm --cached`, the Bluesky pipeline LFS rule leaves `.gitattributes`, and `.gitignore` stops un-ignoring the parquet paths while it keeps the JSON manifests tracked. The working tree copies stay on disk so the local override keeps working for anyone who already pulled the LFS blobs. Reddit and Bluesky dump LFS rules are untouched, and history is not rewritten.
+Change one default value, add one test fixture, and edit two git config files. The default flip lives in `resolve_object_store` alone, so the S3 store, the local store, and `StorageManager` do not change. The fixture lands before the flip, so no commit on the branch leaves the suite pointed at the production bucket. The parquet files leave the git index with `git rm --cached`, the Bluesky pipeline LFS rule leaves `.gitattributes`, and `.gitignore` ignores the parquet paths again while it keeps the JSON manifests tracked. The working tree copies stay on disk, so the local override keeps working for anyone who already pulled the LFS blobs. The tracked JSON files already keep every needed directory in git, so no placeholder file is added. Reddit and Bluesky dump LFS rules are untouched, and history is not rewritten.
 
 ## Steps
 
