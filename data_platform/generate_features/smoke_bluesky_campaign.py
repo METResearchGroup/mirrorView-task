@@ -14,7 +14,9 @@ instead of the canonical campaign feature prefix.
 
 from __future__ import annotations
 
+import logging
 import tempfile
+import time
 from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -31,25 +33,39 @@ from data_platform.generate_features.campaign_cost_report import (
     BatchPricing,
     RequestUsage,
     build_feature_cost_report,
+    request_usages_from_output_text,
 )
 from data_platform.generate_features.deterministic_smoke_sample import (
+    SMOKE_POST_COUNT,
     load_deterministic_ten_posts,
 )
 from data_platform.generate_features.engines.openai_engine import (
+    CUSTOM_ID_INDEX_WIDTH,
+    CUSTOM_ID_PREFIX,
     DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
     OpenAIBatchClient,
     OpenAIBatchEngine,
     create_openai_client,
+    submit_active_batch,
 )
 from data_platform.generate_features.generate_features import CAMPAIGN_ENGINE_TYPE
-from data_platform.generate_features.models import FeatureSpec
+from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
+from data_platform.generate_features.openai_batch_state import load_active_batch_state
 from data_platform.generate_features.registry import FEATURE_REGISTRY
+from data_platform.generate_features.s3_feature_batches import attach_provenance
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
     run_id_for_feature,
 )
+from data_platform.utils.platform_specific_columns import (
+    STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
+    STANDARDIZED_TEXT_COLUMN,
+)
 from lib.constants import REPO_ROOT
+from lib.timestamp_utils import get_current_timestamp
+
+logger = logging.getLogger(__name__)
 
 DEFAULT_SMOKE_REPORTS_DIR = (
     REPO_ROOT / "docs/plans/2026-09-05_generate_bluesky_llm_features_4d8a7c/reports/smoke"
@@ -76,7 +92,15 @@ class _CountingNamespace:
         self._call_name = call_name
 
     def __getattr__(self, name: str) -> Any:
-        raise NotImplementedError
+        attribute = getattr(self._target, name)
+        if name != "create":
+            return attribute
+
+        def counted_create(*args: Any, **kwargs: Any) -> Any:
+            self._calls[self._call_name] += 1
+            return attribute(*args, **kwargs)
+
+        return counted_create
 
 
 class CountingOpenAIClient:
@@ -131,7 +155,43 @@ class SmokeResult:
 def build_smoke_paths(
     campaign_id: str, dataset_id: str, feature: str, smoke_prefix: str | None
 ) -> SmokePaths:
-    raise NotImplementedError
+    """Return the canonical feature paths, or paths under ``smoke_prefix`` when it is given.
+
+    Raises
+    ------
+    ValueError
+        When ``smoke_prefix`` is not an ``s3://`` URI, or when it lands on or
+        inside the canonical feature prefix, or contains it.
+    """
+    canonical = FeaturePaths.canonical(campaign_id, feature, dataset_id=dataset_id)
+    if smoke_prefix is None:
+        return SmokePaths(
+            paths=canonical,
+            canonical=canonical,
+            smoke_prefix_uri=canonical.uri(canonical.smoke_prefix),
+        )
+    paths = FeaturePaths.from_root_uri(smoke_prefix, feature)
+    same_bucket = paths.bucket == canonical.bucket
+    overlaps = paths.prefix.startswith(canonical.prefix) or canonical.prefix.startswith(
+        paths.prefix
+    )
+    if same_bucket and overlaps:
+        raise ValueError(
+            f"smoke prefix {smoke_prefix!r} overlaps the canonical feature prefix "
+            f"{canonical.uri(canonical.prefix)}"
+        )
+    return SmokePaths(paths=paths, canonical=canonical, smoke_prefix_uri=smoke_prefix)
+
+
+def _tasks(posts: pd.DataFrame) -> list[LabelTask]:
+    return [
+        LabelTask(uri=str(row[STANDARDIZED_SOURCE_RECORD_ID_COLUMN]), text=str(row[STANDARDIZED_TEXT_COLUMN]))
+        for _, row in posts.iterrows()
+    ]
+
+
+def _submit_calls(client: CountingOpenAIClient) -> dict[str, int]:
+    return {name: client.calls[name] for name in (FILES_CREATE_CALL, BATCHES_CREATE_CALL)}
 
 
 def submit_and_interrupt(
@@ -141,7 +201,30 @@ def submit_and_interrupt(
     *,
     run_dir: Path,
 ) -> InterruptedJob:
-    raise NotImplementedError
+    """Upload the ten requests, create one provider batch, save its ``polling`` state, and stop.
+
+    Stopping here, with the state file on disk and no poll made, is the
+    deliberate interruption. The caller discards ``client`` afterwards.
+    """
+    state = submit_active_batch(
+        client,
+        spec,
+        DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
+        _tasks(posts),
+        run_dir=run_dir,
+        feature_name=spec.name,
+        batch_index=SMOKE_BATCH_INDEX,
+        attempt_count=SMOKE_ATTEMPT_COUNT,
+    )
+    logger.info(
+        "Deliberate smoke interruption after provider submit",
+        extra={"batch_id": state["batch_id"], "feature_name": spec.name},
+    )
+    return InterruptedJob(
+        state=state,
+        submit_calls=_submit_calls(client),
+        interrupted_at=get_current_timestamp(),
+    )
 
 
 def resume_and_collect_rows(
@@ -152,7 +235,74 @@ def resume_and_collect_rows(
     run_dir: Path,
     run_id: str,
 ) -> ResumedJob:
-    raise NotImplementedError
+    """Let a fresh engine reattach to the saved job and return its Q44 rows and per-request usage.
+
+    Rows get ``run_id``, the provider ``batch_id``, the ``task-NNNNN``
+    request id, and the attempt count from the state the engine saved.
+
+    Raises
+    ------
+    RuntimeError
+        When any post ends without a valid row, or the engine reports no
+        completed batch.
+    """
+    tasks = _tasks(posts)
+    engine = OpenAIBatchEngine(
+        spec,
+        FeatureRunConfig(batch_size=len(tasks)),
+        client,
+        DEFAULT_OPENAI_BATCH_ENGINE_CONFIG,
+        time.sleep,
+    )
+    rows_by_id: dict[str, dict[str, Any]] = {}
+    last_state: dict[str, Any] = {}
+
+    def write_rows(rows: list[dict[str, Any]]) -> None:
+        state = load_active_batch_state(run_dir, spec.name)
+        if state is None:
+            raise RuntimeError("engine delivered rows without an active batch state")
+        last_state.clear()
+        last_state.update(state)
+        request_ids = {
+            uri: f"{CUSTOM_ID_PREFIX}{index:0{CUSTOM_ID_INDEX_WIDTH}d}"
+            for index, uri in enumerate(state["pending_source_record_ids"])
+        }
+        with_provenance = attach_provenance(
+            rows,
+            run_id=run_id,
+            batch_id=state["batch_id"],
+            request_ids=request_ids,
+            attempt_count=int(state["attempt_count"]),
+        )
+        rows_by_id.update({row["source_record_id"]: row for row in with_provenance})
+
+    resumed_at = get_current_timestamp()
+    failures = engine.label_chunk(
+        tasks,
+        feature_name=spec.name,
+        run_dir=run_dir,
+        batch_index=SMOKE_BATCH_INDEX,
+        write_rows=write_rows,
+    )
+    if failures:
+        detail = "; ".join(f"{failure.source_record_id}: {failure.error}" for failure in failures)
+        raise RuntimeError(f"smoke left {len(failures)} posts unlabeled: {detail}")
+    missing = [task.uri for task in tasks if task.uri not in rows_by_id]
+    if missing:
+        raise RuntimeError(f"smoke produced no row for {missing}")
+    last_batch = engine.last_batch
+    if last_batch is None or last_batch.output_file_id is None:
+        raise RuntimeError("resumed engine reported no completed batch with output")
+    output_text = client.files.content(last_batch.output_file_id).text
+    return ResumedJob(
+        rows=[rows_by_id[task.uri] for task in tasks],
+        request_usages=request_usages_from_output_text(
+            output_text, list(last_state["pending_source_record_ids"])
+        ),
+        engine=engine,
+        resume_calls=_submit_calls(client),
+        resumed_at=resumed_at,
+    )
 
 
 def build_resume_evidence(
@@ -162,7 +312,34 @@ def build_resume_evidence(
     interrupted: InterruptedJob,
     resumed: ResumedJob,
 ) -> dict[str, Any]:
-    raise NotImplementedError
+    """Return the interrupt-and-resume proof for ``resume_evidence.json``.
+
+    ``resume_ok`` is true only when the resumed engine made no upload and no
+    batch creation call, finished on the same provider batch id that was
+    saved before the interruption, and wrote a row for every post.
+    """
+    last_batch = resumed.engine.last_batch
+    resumed_batch_id = last_batch.id if last_batch is not None else None
+    same_batch = resumed_batch_id == interrupted.state["batch_id"]
+    no_new_jobs = all(count == 0 for count in resumed.resume_calls.values())
+    return {
+        "feature": feature,
+        "run_id": run_id,
+        "batch_id": interrupted.state["batch_id"],
+        "input_file_id": interrupted.state["input_file_id"],
+        "submitted_at": interrupted.state["submitted_at"],
+        "interrupted_at": interrupted.interrupted_at,
+        "state_at_interrupt": interrupted.state,
+        "resumed_at": resumed.resumed_at,
+        "submit_calls_before_interrupt": interrupted.submit_calls,
+        "submit_calls_after_resume": resumed.resume_calls,
+        "resumed_batch_id": resumed_batch_id,
+        "reattached_same_batch_id": same_batch,
+        "resumed_batch_status": last_batch.status if last_batch is not None else None,
+        "rows_written": len(resumed.rows),
+        "provider_batch_ids_in_output": sorted({str(row["batch_id"]) for row in resumed.rows}),
+        "resume_ok": no_new_jobs and same_batch and len(resumed.rows) == SMOKE_POST_COUNT,
+    }
 
 
 def write_smoke_objects(
