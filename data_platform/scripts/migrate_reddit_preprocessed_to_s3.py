@@ -38,7 +38,10 @@ def scoped_repo_relative_path() -> str:
     RuntimeError
         If the path is missing on disk.
     """
-    raise NotImplementedError
+    path = COMMENTS_PARQUET_RELATIVE_PATH
+    if not (REPO_ROOT / path).is_file():
+        raise RuntimeError(f"scoped path missing on disk: {path}")
+    return path
 
 
 def run_git_lfs_pull(pattern: str) -> None:
