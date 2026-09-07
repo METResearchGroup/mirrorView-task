@@ -1,0 +1,22 @@
+{
+  "Rules": [
+    {
+      "ID": "expire-data-platform-intermediate-artifacts",
+      "Status": "Enabled",
+      "Filter": {
+        "And": {
+          "Prefix": "data_platform/data/",
+          "Tags": [
+            {
+              "Key": "intermediate-artifact",
+              "Value": "true"
+            }
+          ]
+        }
+      },
+      "Expiration": {
+        "Days": 30
+      }
+    }
+  ]
+}
