@@ -40,6 +40,7 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any
 
 import boto3
@@ -62,6 +63,7 @@ from data_platform.curate.runner import build_curate_metadata
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
+    parse_s3_uri,
     s3_uri,
 )
 from data_platform.utils.dataset import dataset_root, relative_run_path
@@ -619,6 +621,86 @@ def curate_mirrorview_dataset(
     )
 
 
+def _json_bytes(document: dict[str, Any]) -> bytes:
+    return json.dumps(document, indent=2).encode("utf-8")
+
+
+def _repo_relative(path: Path) -> str:
+    repo_root = Path(__file__).resolve().parents[2]
+    resolved = path.resolve()
+    try:
+        return resolved.relative_to(repo_root).as_posix()
+    except ValueError:
+        return resolved.as_posix()
+
+
+def _wide_prefix(output_key: str) -> str:
+    if not output_key.endswith(WIDE_PARQUET_FILENAME):
+        raise ValueError(
+            f"output-s3-uri must end with {WIDE_PARQUET_FILENAME}, got {output_key!r}"
+        )
+    return output_key[: -len(WIDE_PARQUET_FILENAME)]
+
+
+def _feature_manifest_block(
+    store: CampaignObjectStore, record: FeatureInputRecord
+) -> dict[str, Any]:
+    return {
+        "manifest_uri": s3_uri(store.bucket, record.manifest_key),
+        "manifest_sha256": record.manifest_sha256,
+        "final_parquet": {
+            "key": record.final_key,
+            "sha256": record.final_sha256,
+            "row_count": record.final_row_count,
+        },
+    }
+
+
+def _curated_manifest_block(
+    args: CampaignConsolidateArgs, curated: CuratedDatasetRecord
+) -> dict[str, Any]:
+    return {
+        "rules_config": _repo_relative(args.curate_config),
+        "rules_hash": curated.rules_hash,
+        "row_count": curated.row_count,
+        "parquet": {"key": curated.parquet_key, "sha256": curated.parquet_sha256},
+        "metadata": {"key": curated.metadata_key, "sha256": curated.metadata_sha256},
+        "crosstab_political_stance_by_llm_toxicity_tier": curated.stance_by_toxicity,
+    }
+
+
+def _wide_manifest_document(
+    store: CampaignObjectStore,
+    args: CampaignConsolidateArgs,
+    wide_key: str,
+    wide_sha: str,
+    preprocessed: PreprocessedInputRecord,
+    feature_inputs: tuple[FeatureInputRecord, ...],
+    curated: CuratedDatasetRecord | None,
+) -> dict[str, Any]:
+    document: dict[str, Any] = {
+        "dataset_id": args.dataset_id,
+        "preprocessed_run": args.preprocessed_run,
+        "campaign_id": args.campaign_id,
+        "row_count": TWITTER_EXPECTED_WIDE_ROW_COUNT,
+        "columns": list(twitter_llm_campaign_wide_columns()),
+        "sort_key": WIDE_SORT_KEY,
+        "wide_parquet": {
+            "key": wide_key,
+            "sha256": wide_sha,
+            "row_count": TWITTER_EXPECTED_WIDE_ROW_COUNT,
+        },
+        "preprocessed": {"key": preprocessed.key, "sha256": preprocessed.sha256},
+        "features": {
+            record.feature_name: _feature_manifest_block(store, record)
+            for record in feature_inputs
+        },
+    }
+    if curated is not None:
+        document["curated"] = _curated_manifest_block(args, curated)
+    return document
+
+
 def upload_wide_artifacts(
     store: CampaignObjectStore,
     wide: pd.DataFrame,
@@ -628,17 +710,69 @@ def upload_wide_artifacts(
     curated: CuratedDatasetRecord | None,
 ) -> tuple[str, str, str]:
     """Upload ``features.parquet`` and ``manifest.json``."""
-    raise NotImplementedError
+    bucket, wide_key = parse_s3_uri(args.output_s3_uri)
+    if bucket != store.bucket:
+        raise ValueError(f"output bucket {bucket} does not match campaign bucket {store.bucket}")
+    wide_sha = _upload_bytes(store, wide_key, wide.to_parquet(index=False))
+    manifest_key = f"{_wide_prefix(wide_key)}{WIDE_MANIFEST_FILENAME}"
+    manifest = _wide_manifest_document(
+        store, args, wide_key, wide_sha, preprocessed, feature_inputs, curated
+    )
+    _upload_bytes(store, manifest_key, _json_bytes(manifest))
+    return wide_sha, s3_uri(store.bucket, wide_key), s3_uri(store.bucket, manifest_key)
+
+
+def _campaign_store(args: CampaignConsolidateArgs) -> CampaignObjectStore:
+    paths = _twitter_feature_paths(
+        args.campaign_id, LLM_CAMPAIGN_FEATURE_NAMES[0], args.dataset_id
+    )
+    return CampaignObjectStore(paths.bucket)
 
 
 def run_campaign_consolidation(args: CampaignConsolidateArgs) -> WideConsolidateResult:
     """Download inputs, join, validate, upload wide artifacts, and curate."""
-    raise NotImplementedError
+    store = _campaign_store(args)
+    with TemporaryDirectory() as tmp:
+        preprocessed, features = download_campaign_inputs(store, args, Path(tmp))
+        wide = build_twitter_llm_campaign_wide_table(
+            preprocessed.local_csv,
+            {record.feature_name: record.local_parquet for record in features},
+        )
+        validate_wide_table(wide)
+        curated = curate_mirrorview_dataset(store, wide, args)
+        wide_sha, parquet_uri, manifest_uri = upload_wide_artifacts(
+            store, wide, args, preprocessed, features, curated
+        )
+    return WideConsolidateResult(
+        wide_rows=len(wide),
+        wide_columns=tuple(wide.columns),
+        wide_parquet_uri=parquet_uri,
+        wide_parquet_sha256=wide_sha,
+        manifest_uri=manifest_uri,
+        sort_key=WIDE_SORT_KEY,
+        feature_inputs=features,
+        preprocessed=preprocessed,
+        curated=curated,
+    )
+
+
+def _print_curated(result: WideConsolidateResult) -> None:
+    if result.curated is None:
+        return
+    bucket, _ = parse_s3_uri(result.wide_parquet_uri)
+    print(f"curated_rows={result.curated.row_count}")
+    print(f"curated={s3_uri(bucket, result.curated.parquet_key)}")
+    print("curated_crosstab_political_stance_by_llm_toxicity_tier=")
+    print(json.dumps(result.curated.stance_by_toxicity, indent=2))
 
 
 def print_result(result: WideConsolidateResult) -> None:
     """Print the stdout contract plus curated row count and crosstab."""
-    raise NotImplementedError
+    print(f"wide_rows={result.wide_rows}")
+    print(f"wide_columns={len(result.wide_columns)}")
+    print(f"manifest={result.manifest_uri}")
+    print(f"sort_key={result.sort_key}")
+    _print_curated(result)
 
 
 def main(argv: list[str] | None = None) -> int:
