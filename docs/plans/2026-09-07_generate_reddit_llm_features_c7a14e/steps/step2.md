@@ -40,7 +40,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_featu
   --dataset-id reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079 \
   --preprocessed-run 2026_09_03-23:39:28 \
   --campaign-id reddit_2026_09_03_233928_llm_features_v1 \
-  --features is_political \
+  --features is_likely_spam \
   --batch-size 2000
 ```
 
@@ -51,7 +51,7 @@ PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_featu
   --dataset-id reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079 \
   --preprocessed-run 2026_09_03-23:39:28 \
   --campaign-id reddit_2026_09_03_233928_llm_features_v1 \
-  --features political_stance \
+  --features is_political \
   --batch-size 2000
 ```
 
@@ -116,13 +116,13 @@ Add a map keyed by campaign id, used only when `campaign_id == reddit_2026_09_03
 
 | Feature | Campaign engine |
 |---------|-----------------|
-| `is_news_or_opinion` | `bedrock` |
-| `is_political` | `bedrock` |
+| `is_news_or_opinion` | `openai` |
+| `is_political` | `openai` |
+| `political_stance` | `openai` |
+| `llm_toxicity_tiered` | `openai` |
 | `is_likely_spam` | `bedrock` |
 | `is_self_contained` | `bedrock` |
 | `is_structurally_complete` | `bedrock` |
-| `political_stance` | `openai` |
-| `llm_toxicity_tiered` | `openai` |
 
 `generate_campaign_feature` resolves the campaign engine from this map. `platform_cli` campaign mode accepts a feature when the map entry is `openai` or `bedrock`. Do not run `is_toxic_tiered` (thread_pool) in this campaign.
 
@@ -265,7 +265,9 @@ cd /workspace
 
 PYTHONPATH=. uv run python -c "
 from data_platform.generate_features.campaign_engine_map import campaign_engine_type
-assert campaign_engine_type('reddit_2026_09_03_233928_llm_features_v1', 'is_political') == 'bedrock'
+assert campaign_engine_type('reddit_2026_09_03_233928_llm_features_v1', 'is_news_or_opinion') == 'openai'
+assert campaign_engine_type('reddit_2026_09_03_233928_llm_features_v1', 'is_political') == 'openai'
+assert campaign_engine_type('reddit_2026_09_03_233928_llm_features_v1', 'is_likely_spam') == 'bedrock'
 assert campaign_engine_type('reddit_2026_09_03_233928_llm_features_v1', 'political_stance') == 'openai'
 assert campaign_engine_type('bluesky_2026_09_03_235130_llm_features_v1', 'is_political') == 'openai'
 print('campaign_engine_map OK')
@@ -389,7 +391,7 @@ Expected: `aws s3 rm` reports deleted objects or no objects found. `aws s3 ls` p
 
 ## GitHub issue body
 
-Add mixed-engine campaign mode for Reddit LLM features on campaign `reddit_2026_09_03_233928_llm_features_v1`. Five features label through Bedrock Converse with S3 batch resume via `active_bedrock_job.json`. Two features label through OpenAI Batch. Bedrock content-filter failures record `bedrock_content_filter` in `errors.jsonl` and retry through OpenAI Batch. Wire `generate_reddit_features.py` campaign flags and fix `FeaturePaths` callers for Reddit platform and dataset id.
+Add mixed-engine campaign mode for Reddit LLM features on campaign `reddit_2026_09_03_233928_llm_features_v1`. Four features label through OpenAI Batch. Three features label through Bedrock Converse with S3 batch resume via `active_bedrock_job.json`. Bedrock content-filter failures record `bedrock_content_filter` in `errors.jsonl` and retry through OpenAI Batch. Wire `generate_reddit_features.py` campaign flags and fix `FeaturePaths` callers for Reddit platform and dataset id.
 
 Plan step: `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/steps/step2.md`
 
@@ -410,13 +412,13 @@ Part of #<parent>
 
 ## Summary
 
-Adds mixed-engine S3 campaign mode for Reddit LLM features on campaign `reddit_2026_09_03_233928_llm_features_v1`. Five features label through Bedrock Converse with serial `2000` row parts and `active_bedrock_job.json` resume. Two features label through OpenAI Batch with the existing resume path. Bedrock content-filter failures record `bedrock_content_filter` in `errors.jsonl` and retry through OpenAI Batch before final consolidation.
+Adds mixed-engine S3 campaign mode for Reddit LLM features on campaign `reddit_2026_09_03_233928_llm_features_v1`. Four features label through OpenAI Batch with the existing resume path. Three features label through Bedrock Converse with serial `2000` row parts and `active_bedrock_job.json` resume. Bedrock content-filter failures record `bedrock_content_filter` in `errors.jsonl` and retry through OpenAI Batch before final consolidation.
 
 `generate_reddit_features.py` accepts `--campaign-id` and `--preprocessed-run` like the Bluesky entry point. `manifest.json` and local `metadata.json` record `engine_type`. Parquet rows keep the six `LabelRowMetadataModel` fields without an `engine_type` column.
 
 ## Purpose
 
-Reddit has `400000` comments to label across seven LLM features. Bedrock on-demand pricing is lower for most boolean and category features, while OpenAI Batch stays on the two features that already use it in the registry defaults. The campaign engine map applies only to this Reddit campaign so Bluesky behavior stays on OpenAI. Full production labeling and smoke tooling are out of scope for this PR.
+Reddit has `400000` comments to label across seven LLM features. OpenAI Batch labels the four category, political, and toxicity features. Bedrock Converse labels the three boolean structure features at lower on-demand cost. The campaign engine map applies only to this Reddit campaign so Bluesky behavior stays on OpenAI. Full production labeling and smoke tooling are out of scope for this PR.
 
 ## Architecture
 
@@ -463,13 +465,13 @@ Campaign id `reddit_2026_09_03_233928_llm_features_v1`:
 
 | Feature | Engine |
 |---------|--------|
-| `is_news_or_opinion` | `bedrock` |
-| `is_political` | `bedrock` |
+| `is_news_or_opinion` | `openai` |
+| `is_political` | `openai` |
+| `political_stance` | `openai` |
+| `llm_toxicity_tiered` | `openai` |
 | `is_likely_spam` | `bedrock` |
 | `is_self_contained` | `bedrock` |
 | `is_structurally_complete` | `bedrock` |
-| `political_stance` | `openai` |
-| `llm_toxicity_tiered` | `openai` |
 
 ### manifest.json additions
 
@@ -512,6 +514,6 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 PYTHONPATH=. uv run python -c "from data_platform.generate_features.campaign_engine_map import campaign_engine_type; print(campaign_engine_type('reddit_2026_09_03_233928_llm_features_v1', 'is_political'))"
 ```
 
-Expected: prints `bedrock`.
+Expected: prints `openai`.
 
 Run offline `FeaturePaths` and engine map checks from the step file. Optional live proof uses only `s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/reddit_step2_bedrock/`. Do not run the full `400000` comment campaign in this PR.

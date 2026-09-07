@@ -123,13 +123,13 @@ Write the selected ids to `docs/plans/2026-09-07_generate_reddit_llm_features_c7
 
 Use the engine from the Step 2 campaign map per feature.
 
-OpenAI Batch features (`political_stance`, `llm_toxicity_tiered`):
+OpenAI Batch features (`is_news_or_opinion`, `is_political`, `political_stance`, `llm_toxicity_tiered`):
 
 - input USD per million tokens: `0.10`
 - output USD per million tokens: `0.625`
 - record pricing source URL from existing `campaign_cost_report.py`
 
-Bedrock on-demand features (the other five LLM features):
+Bedrock on-demand features (`is_likely_spam`, `is_self_contained`, `is_structurally_complete`):
 
 - input USD per million tokens: `0.035`
 - output USD per million tokens: `0.14`
@@ -284,7 +284,7 @@ Expected stdout:
 
 ```text
 smoke_prefix=s3://mirrorview-experimental-artifacts/data_platform/data/_smoke/reddit_step3_campaign_smoke/
-engine_type=bedrock
+engine_type=openai
 smoke_rows=10
 avg_input_tokens=<number>
 max_input_tokens=<number>
@@ -360,8 +360,8 @@ Expected stdout:
 
 ```text
 features_included=7
-openai_features=2
-bedrock_features=5
+openai_features=4
+bedrock_features=3
 total_estimated_full_run_usd_avg=<number>
 total_estimated_full_run_usd_max=<number>
 full_run_row_count=400000
