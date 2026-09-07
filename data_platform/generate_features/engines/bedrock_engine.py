@@ -22,6 +22,7 @@ from pydantic import BaseModel, ValidationError
 
 from data_platform.generate_features.engines.base import (
     BaseBatchExecutionEngine,
+    RecordLabelFailure,
     row_with_label_timestamp,
 )
 from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
@@ -30,11 +31,7 @@ from lib.timestamp_utils import get_current_timestamp
 
 BEDROCK_MAX_TOKENS = 32
 BEDROCK_TEMPERATURE = 0.0
-BEDROCK_JSON_INSTRUCTION = (
-    "Reply with a single JSON object only. "
-    "The object must have one string field named category "
-    "whose value is news, opinion, or neither."
-)
+JSON_INSTRUCTION_PREFIX = "Reply with a single JSON object only. The object must have these fields: "
 JSON_FENCE = "```"
 JSON_FENCE_LANGUAGE = "json"
 MIN_THREAD_WORKERS = 1
@@ -42,7 +39,7 @@ CONVERSE_RETRY_ATTEMPTS = 8
 CONVERSE_RETRY_SLEEP_SECONDS = 1.0
 NEWS_OPINION_CATEGORIES = frozenset({"news", "opinion", "neither"})
 CONTENT_FILTER_MARKER = "blocked by our content filters"
-FILTERED_CATEGORY = "neither"
+CONTENT_FILTER_STOP_REASONS = frozenset({"content_filtered", "guardrail_intervened"})
 RETRYABLE_CONVERSE_ERRORS = (
     json.JSONDecodeError,
     ValueError,
@@ -55,6 +52,14 @@ class BedrockRuntimeClient(Protocol):
     """Subset of the Bedrock Runtime client used by the Converse engine."""
 
     def converse(self, **kwargs: Any) -> dict[str, Any]: ...
+
+
+class BedrockContentFilterError(Exception):
+    """Bedrock refused the prompt under its content filters."""
+
+    def __init__(self, detail: str) -> None:
+        super().__init__(detail)
+        self.detail = detail
 
 
 @dataclass(frozen=True)
@@ -115,13 +120,33 @@ def _llm_prompt_and_schema(spec: FeatureSpec) -> tuple[str, type[BaseModel]]:
     return system_prompt, output_schema
 
 
+def json_instruction_for_schema(output_schema: type[BaseModel]) -> str:
+    """Return a JSON-only instruction derived from ``output_schema`` field names and types."""
+    schema = output_schema.model_json_schema()
+    properties = schema.get("properties") or {}
+    required = schema.get("required") or list(properties)
+    phrases = [_schema_field_phrase(name, properties.get(name) or {}) for name in required]
+    return f"{JSON_INSTRUCTION_PREFIX}{'; '.join(phrases)}."
+
+
+def _schema_field_phrase(name: str, field: dict[str, Any]) -> str:
+    type_name = str(field.get("type", "value"))
+    enum_values = field.get("enum")
+    if not enum_values:
+        return f"{name} ({type_name})"
+    allowed = ", ".join(str(value) for value in enum_values)
+    return f"{name} ({type_name}: {allowed})"
+
+
 def parse_json_object(text: str) -> dict[str, Any]:
     """Parse a JSON object from model text, ignoring optional markdown fences.
 
     A bare news, opinion, or neither word is accepted when JSON is missing.
-    A Bedrock content-filter message is stored as neither.
+    A Bedrock content-filter message raises ``BedrockContentFilterError``.
     """
     stripped = text.strip()
+    if _is_content_filter_text(stripped):
+        raise BedrockContentFilterError(stripped)
     if stripped.startswith(JSON_FENCE):
         stripped = _strip_markdown_fence(stripped)
     try:
@@ -135,12 +160,14 @@ def parse_json_object(text: str) -> dict[str, Any]:
     return payload
 
 
+def _is_content_filter_text(text: str) -> bool:
+    return CONTENT_FILTER_MARKER in text.lower()
+
+
 def _payload_from_loose_text(text: str) -> dict[str, Any] | None:
     lowered = text.strip().strip('"').lower()
     if lowered in NEWS_OPINION_CATEGORIES:
         return {"category": lowered}
-    if CONTENT_FILTER_MARKER in lowered:
-        return {"category": FILTERED_CATEGORY}
     start = text.find("{")
     end = text.rfind("}")
     if start >= 0 and end > start:
@@ -203,7 +230,7 @@ def _converse_once(
 ) -> tuple[BaseModel, BedrockUsage]:
     response = client.converse(
         modelId=model_id,
-        system=[{"text": f"{system_prompt}\n{BEDROCK_JSON_INSTRUCTION}"}],
+        system=[{"text": f"{system_prompt}\n{json_instruction_for_schema(output_schema)}"}],
         messages=[{"role": "user", "content": [{"text": user_text}]}],
         inferenceConfig={
             "maxTokens": BEDROCK_MAX_TOKENS,
@@ -217,15 +244,23 @@ def _converse_once(
 
 def _first_text_block(response: dict[str, Any]) -> str:
     content = response["output"]["message"]["content"]
+    stop_reason = str(response.get("stopReason", ""))
     for block in content:
         text = block.get("text")
         if text:
-            return str(text)
-    stop_reason = response.get("stopReason", "")
+            return _text_or_content_filter(str(text), stop_reason)
+    if stop_reason in CONTENT_FILTER_STOP_REASONS:
+        raise BedrockContentFilterError(f"stopReason={stop_reason!r}")
     raise ValueError(
         "Bedrock Converse response had no text "
         f"(stopReason={stop_reason!r}, content={content!r})"
     )
+
+
+def _text_or_content_filter(text: str, stop_reason: str) -> str:
+    if stop_reason in CONTENT_FILTER_STOP_REASONS or _is_content_filter_text(text):
+        raise BedrockContentFilterError(text)
+    return text
 
 
 def _usage_from_response(response: dict[str, Any]) -> BedrockUsage:
@@ -296,6 +331,114 @@ def _label_row_for_task(
         label_timestamp=label_timestamp,
     )
     return spec.model.model_validate(row).model_dump()
+
+
+@dataclass(frozen=True)
+class BedrockTaskOutcome:
+    """Successful label rows plus per-record failures from one Bedrock part."""
+
+    rows: list[dict]
+    content_filter_failures: list[RecordLabelFailure]
+    other_failures: list[RecordLabelFailure]
+
+
+def label_tasks_collecting_failures(
+    client: BedrockRuntimeClient,
+    model_id: str,
+    spec: FeatureSpec,
+    tasks: list[LabelTask],
+    max_concurrency: int,
+    label_timestamp: str,
+) -> BedrockTaskOutcome:
+    """Label tasks and split content-filter failures from other failures."""
+    if not tasks:
+        return BedrockTaskOutcome([], [], [])
+    system_prompt, output_schema = _llm_prompt_and_schema(spec)
+    worker_count = max(MIN_THREAD_WORKERS, min(max_concurrency, len(tasks)))
+    outcomes = _run_label_pool(
+        client,
+        model_id,
+        spec,
+        system_prompt,
+        output_schema,
+        tasks,
+        worker_count,
+        label_timestamp,
+    )
+    return _split_task_outcomes(outcomes)
+
+
+def _run_label_pool(
+    client: BedrockRuntimeClient,
+    model_id: str,
+    spec: FeatureSpec,
+    system_prompt: str,
+    output_schema: type[BaseModel],
+    tasks: list[LabelTask],
+    worker_count: int,
+    label_timestamp: str,
+) -> list[tuple[str, dict | RecordLabelFailure] | None]:
+    outcomes: list[tuple[str, dict | RecordLabelFailure] | None] = [None] * len(tasks)
+    with ThreadPoolExecutor(max_workers=worker_count) as pool:
+        futures = {
+            pool.submit(
+                _label_task_or_failure,
+                client,
+                model_id,
+                spec,
+                system_prompt,
+                output_schema,
+                task,
+                label_timestamp,
+            ): index
+            for index, task in enumerate(tasks)
+        }
+        for future in as_completed(futures):
+            outcomes[futures[future]] = future.result()
+    return outcomes
+
+
+def _label_task_or_failure(
+    client: BedrockRuntimeClient,
+    model_id: str,
+    spec: FeatureSpec,
+    system_prompt: str,
+    output_schema: type[BaseModel],
+    task: LabelTask,
+    label_timestamp: str,
+) -> tuple[str, dict | RecordLabelFailure]:
+    try:
+        parsed, _usage = converse_label(
+            client, model_id, system_prompt, output_schema, task.text
+        )
+        return ("row", _label_row_for_task(task, parsed, spec, label_timestamp))
+    except BedrockContentFilterError as error:
+        return ("content_filter", _failure_for_task(task, str(error)))
+    except Exception as error:
+        return ("other", _failure_for_task(task, str(error)))
+
+
+def _failure_for_task(task: LabelTask, error: str) -> RecordLabelFailure:
+    return RecordLabelFailure(source_record_id=task.uri, error=error, attempts=1)
+
+
+def _split_task_outcomes(
+    outcomes: list[tuple[str, dict | RecordLabelFailure] | None],
+) -> BedrockTaskOutcome:
+    rows: list[dict] = []
+    content_filter_failures: list[RecordLabelFailure] = []
+    other_failures: list[RecordLabelFailure] = []
+    for outcome in outcomes:
+        if outcome is None:
+            raise RuntimeError("Bedrock Converse did not return a result for every task")
+        kind, payload = outcome
+        if kind == "row":
+            rows.append(payload)  # type: ignore[arg-type]
+        elif kind == "content_filter":
+            content_filter_failures.append(payload)  # type: ignore[arg-type]
+        else:
+            other_failures.append(payload)  # type: ignore[arg-type]
+    return BedrockTaskOutcome(rows, content_filter_failures, other_failures)
 
 
 def create_bedrock_runtime_client() -> BedrockRuntimeClient:
