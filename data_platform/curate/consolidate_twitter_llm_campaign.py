@@ -43,6 +43,7 @@ from pathlib import Path
 from typing import Any
 
 import boto3
+import duckdb
 import pandas as pd
 
 from data_platform.curate.consolidate import (
@@ -350,12 +351,87 @@ def download_campaign_inputs(
     return preprocessed, features
 
 
+def _sql_path(path: Path) -> str:
+    return path.resolve().as_posix().replace("'", "''")
+
+
+def _posts_cte_sql(posts_file: Path) -> str:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    selected = ", ".join(
+        f"CAST({column} AS VARCHAR) AS {column}" if column == id_column else column
+        for column in TWITTER_PREPROCESSED_WIDE_COLUMNS
+    )
+    csv_path = _sql_path(posts_file)
+    return f"posts AS (SELECT {selected} FROM read_csv('{csv_path}', union_by_name = true))"
+
+
+def _feature_cte_sql(feature_name: str, parquet_path: Path) -> str:
+    column_pairs = FEATURE_WIDE_COLUMNS[feature_name]
+    inner_cols = ", ".join(
+        f"{source} AS {alias}" if source != alias else source for source, alias in column_pairs
+    )
+    outer_cols = ", ".join(alias for _, alias in column_pairs)
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    parquet = _sql_path(parquet_path)
+    return f"""
+feat_{feature_name} AS (
+    SELECT {id_column}, {outer_cols}
+    FROM (
+        SELECT CAST({id_column} AS VARCHAR) AS {id_column}, {inner_cols},
+            ROW_NUMBER() OVER (
+                PARTITION BY CAST({id_column} AS VARCHAR)
+                ORDER BY label_timestamp DESC NULLS LAST, CAST({id_column} AS VARCHAR)
+            ) AS rn
+        FROM read_parquet('{parquet}')
+    )
+    WHERE rn = 1
+)"""
+
+
+def _twitter_join_sql(posts_file: Path, feature_files: dict[str, Path]) -> str:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    join_clauses = [
+        f"INNER JOIN feat_{feature_name} USING ({id_column})"
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    ]
+    label_cols = [
+        f"feat_{feature_name}.{alias}"
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+        for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
+    ]
+    posts_cols = [f"posts.{column}" for column in TWITTER_PREPROCESSED_WIDE_COLUMNS]
+    feature_ctes = [
+        _feature_cte_sql(feature_name, feature_files[feature_name])
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    ]
+    ctes = ",\n".join([_posts_cte_sql(posts_file), *feature_ctes])
+    return f"""
+WITH {ctes}
+SELECT {", ".join(posts_cols + label_cols)}
+FROM posts
+{" ".join(join_clauses)}
+ORDER BY posts.{id_column} ASC
+"""
+
+
+def _missing_feature_names(feature_files: dict[str, Path]) -> list[str]:
+    return [name for name in LLM_CAMPAIGN_FEATURE_NAMES if name not in feature_files]
+
+
 def build_twitter_llm_campaign_wide_table(
     posts_file: Path,
     feature_files: dict[str, Path],
 ) -> pd.DataFrame:
     """Inner-join pinned csv posts to seven campaign ``final.parquet`` files."""
-    raise NotImplementedError
+    missing = _missing_feature_names(feature_files)
+    if missing:
+        raise KeyError(f"missing campaign feature parquet paths: {missing}")
+    sql = _twitter_join_sql(posts_file, feature_files)
+    conn = duckdb.connect()
+    try:
+        return conn.execute(sql).fetchdf()
+    finally:
+        conn.close()
 
 
 def validate_wide_table(wide: pd.DataFrame) -> None:
