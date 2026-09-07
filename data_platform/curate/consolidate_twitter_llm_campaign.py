@@ -35,11 +35,14 @@ Run from the repo root:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import boto3
 import pandas as pd
 
 from data_platform.curate.consolidate import (
@@ -47,7 +50,12 @@ from data_platform.curate.consolidate import (
     LLM_CAMPAIGN_FEATURE_NAMES,
     WIDE_SORT_KEY,
 )
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.generate_features.s3_feature_campaign import (
+    CampaignObjectStore,
+    FeaturePaths,
+    s3_uri,
+)
+from data_platform.utils.object_store import DEFAULT_S3_REGION, S3_KEY_PREFIX, sha256_hex
 from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 from data_platform.utils.storage import TwitterStorageManager
 
@@ -186,6 +194,73 @@ def parse_args(argv: list[str] | None = None) -> CampaignConsolidateArgs:
     )
 
 
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(SHA256_READ_CHUNK_BYTES), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _s3_client() -> Any:
+    return boto3.client("s3", region_name=DEFAULT_S3_REGION)
+
+
+def _twitter_feature_paths(campaign_id: str, feature_name: str, dataset_id: str) -> FeaturePaths:
+    return FeaturePaths.for_campaign(
+        campaign_id,
+        feature_name,
+        platform=TWITTER_PLATFORM,
+        dataset_id=dataset_id,
+    )
+
+
+def _preprocessed_posts_key(dataset_id: str, preprocessed_run: str) -> str:
+    return (
+        f"{S3_KEY_PREFIX}/{TWITTER_PLATFORM}/{dataset_id}/"
+        f"preprocessed/{preprocessed_run}/posts.csv"
+    )
+
+
+def _inventory_path(dataset_id: str) -> Path:
+    return (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / TWITTER_PLATFORM
+        / dataset_id
+        / INVENTORY_FILENAME
+    )
+
+
+def _expected_posts_sha256(dataset_id: str, posts_key: str) -> str:
+    inventory = json.loads(_inventory_path(dataset_id).read_text(encoding="utf-8"))
+    for obj in inventory["objects"]:
+        if obj.get("s3_key") == posts_key:
+            return str(obj["sha256"]).lower()
+    raise ValueError(f"inventory has no object for {posts_key}")
+
+
+def _require_sha256(label: str, actual: str, expected: str) -> None:
+    if actual != expected:
+        raise ValueError(f"{label} SHA-256 mismatch: expected {expected}, object {actual}")
+
+
+def _download_key(client: Any, bucket: str, key: str, dest: Path) -> str:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    client.download_file(bucket, key, str(dest))
+    return _sha256_file(dest)
+
+
+def _require_final_row_count(feature_name: str, manifest: dict[str, Any]) -> dict[str, Any]:
+    final = manifest.get("final_parquet") or {}
+    if final.get("row_count") != TWITTER_EXPECTED_WIDE_ROW_COUNT:
+        raise ValueError(
+            f"{feature_name} final.parquet row_count is {final.get('row_count')}, "
+            f"expected {TWITTER_EXPECTED_WIDE_ROW_COUNT}"
+        )
+    return final
+
+
 def verify_feature_manifest(
     store: CampaignObjectStore,
     feature_name: str,
@@ -193,7 +268,71 @@ def verify_feature_manifest(
     dataset_id: str,
 ) -> tuple[str, dict[str, Any]]:
     """Return manifest SHA-256 and parsed JSON after checking row count 6374."""
-    raise NotImplementedError
+    paths = _twitter_feature_paths(campaign_id, feature_name, dataset_id)
+    stored = store.get(paths.manifest_key)
+    if stored is None:
+        raise FileNotFoundError(f"missing feature manifest: {paths.uri(paths.manifest_key)}")
+    manifest = json.loads(stored.body)
+    _require_final_row_count(feature_name, manifest)
+    digest = sha256_hex(stored.body)
+    print(f"accepted {feature_name} manifest sha256={digest}")
+    return digest, manifest
+
+
+def _feature_record(
+    paths: FeaturePaths,
+    feature_name: str,
+    manifest_sha: str,
+    final: dict[str, Any],
+    digest: str,
+    local_path: Path,
+) -> FeatureInputRecord:
+    return FeatureInputRecord(
+        feature_name=feature_name,
+        final_key=paths.final_key,
+        final_sha256=digest,
+        final_row_count=int(final["row_count"]),
+        manifest_key=paths.manifest_key,
+        manifest_sha256=manifest_sha,
+        local_parquet=local_path,
+    )
+
+
+def _download_feature_final(
+    store: CampaignObjectStore,
+    client: Any,
+    args: CampaignConsolidateArgs,
+    work_dir: Path,
+    feature_name: str,
+) -> FeatureInputRecord:
+    paths = _twitter_feature_paths(args.campaign_id, feature_name, args.dataset_id)
+    manifest_sha, manifest = verify_feature_manifest(
+        store, feature_name, args.campaign_id, args.dataset_id
+    )
+    local_path = work_dir / feature_name / "final.parquet"
+    digest = _download_key(client, store.bucket, paths.final_key, local_path)
+    _require_sha256(
+        f"{feature_name} final.parquet",
+        digest,
+        str(manifest["final_parquet"]["sha256"]).lower(),
+    )
+    return _feature_record(
+        paths, feature_name, manifest_sha, manifest["final_parquet"], digest, local_path
+    )
+
+
+def _download_posts_csv(
+    client: Any,
+    store: CampaignObjectStore,
+    args: CampaignConsolidateArgs,
+    work_dir: Path,
+) -> PreprocessedInputRecord:
+    posts_key = _preprocessed_posts_key(args.dataset_id, args.preprocessed_run)
+    expected = _expected_posts_sha256(args.dataset_id, posts_key)
+    posts_path = work_dir / "posts.csv"
+    posts_sha = _download_key(client, store.bucket, posts_key, posts_path)
+    _require_sha256("posts.csv", posts_sha, expected)
+    return PreprocessedInputRecord(key=posts_key, sha256=posts_sha, local_csv=posts_path)
 
 
 def download_campaign_inputs(
@@ -202,7 +341,13 @@ def download_campaign_inputs(
     work_dir: Path,
 ) -> tuple[PreprocessedInputRecord, tuple[FeatureInputRecord, ...]]:
     """Download pinned posts.csv and seven verified ``final.parquet`` files."""
-    raise NotImplementedError
+    client = _s3_client()
+    preprocessed = _download_posts_csv(client, store, args, work_dir)
+    features = tuple(
+        _download_feature_final(store, client, args, work_dir, feature_name)
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    )
+    return preprocessed, features
 
 
 def build_twitter_llm_campaign_wide_table(
