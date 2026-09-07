@@ -1,0 +1,47 @@
+{
+  "feature": "is_news_or_opinion",
+  "run_id": "twitter_2026_09_06_192847_llm_features_v1:is_news_or_opinion",
+  "batch_id": "batch_6a9e31241ed48190beafb0e5fb58e91d",
+  "input_file_id": "file-Bzhn9z574rhxX6mVTNkieU",
+  "submitted_at": "2026_09_07-03:36:04",
+  "interrupted_at": "2026_09_07-03:36:04",
+  "state_at_interrupt": {
+    "input_file_id": "file-Bzhn9z574rhxX6mVTNkieU",
+    "batch_id": "batch_6a9e31241ed48190beafb0e5fb58e91d",
+    "logical_batch_index": 0,
+    "pending_source_record_ids": [
+      "2094144147921723727",
+      "2094147325039882457",
+      "2094152606687838595",
+      "2094154433072435544",
+      "2094156207191650459",
+      "2094160626126078252",
+      "2094161241140810057",
+      "2094182542265958901",
+      "2094183985198870567",
+      "2094187259746549764"
+    ],
+    "attempt_count": 1,
+    "state": "polling",
+    "campaign_id": null,
+    "feature_name": "is_news_or_opinion",
+    "submitted_at": "2026_09_07-03:36:04"
+  },
+  "resumed_at": "2026_09_07-03:36:04",
+  "submit_calls_before_interrupt": {
+    "files.create": 1,
+    "batches.create": 1
+  },
+  "submit_calls_after_resume": {
+    "files.create": 0,
+    "batches.create": 0
+  },
+  "resumed_batch_id": "batch_6a9e31241ed48190beafb0e5fb58e91d",
+  "reattached_same_batch_id": true,
+  "resumed_batch_status": "completed",
+  "rows_written": 10,
+  "provider_batch_ids_in_output": [
+    "batch_6a9e31241ed48190beafb0e5fb58e91d"
+  ],
+  "resume_ok": true
+}
