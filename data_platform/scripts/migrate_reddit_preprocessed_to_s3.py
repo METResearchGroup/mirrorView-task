@@ -154,6 +154,7 @@ def main() -> None:
     run_git_lfs_pull(LFS_INCLUDE_PATTERN)
     s3 = S3(BUCKET, region_name=REGION)
     row = upload_and_verify(s3, path, read_scoped_bytes(path))
+    print(f"verified s3://{BUCKET}/{row['s3_key']} ({row['bytes']} bytes)")
     write_inventory([row], INVENTORY_PATH)
     print(f"uploaded {EXPECTED_OBJECT_COUNT} object to s3://{BUCKET}/")
 
