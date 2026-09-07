@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
+from data_platform.utils.config_paths import load_yaml_config
 from lib.constants import REPO_ROOT
 
 ACCEPTED_CAMPAIGN_ID = "twitter_2026_09_06_192847_llm_features_v1"
@@ -23,4 +23,6 @@ def load_twitter_campaign_config(campaign_id: str) -> dict[str, Any]:
         If ``campaign_id`` is not the accepted Twitter campaign id. The
         message names the rejected id.
     """
-    raise NotImplementedError
+    if campaign_id != ACCEPTED_CAMPAIGN_ID:
+        raise ValueError(f"unsupported twitter campaign id: {campaign_id}")
+    return load_yaml_config(CAMPAIGN_YAML_PATH)
