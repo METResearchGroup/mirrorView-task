@@ -9,6 +9,7 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import subprocess
 from pathlib import Path
 
 from lib.aws.s3 import S3
@@ -52,7 +53,11 @@ def run_git_lfs_pull(pattern: str) -> None:
     subprocess.CalledProcessError
         If ``git lfs pull`` exits non-zero.
     """
-    raise NotImplementedError
+    subprocess.run(
+        ["git", "lfs", "pull", "--include", pattern],
+        cwd=REPO_ROOT,
+        check=True,
+    )
 
 
 def read_scoped_bytes(repo_relative_path: str) -> bytes:
