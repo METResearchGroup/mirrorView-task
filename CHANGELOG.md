@@ -5,6 +5,7 @@
 1. Operators now have a Twitter table of 6,374 labeled posts with 21 columns, plus a MirrorView curated export that records political stance by toxicity tier. [PR #249](https://github.com/METResearchGroup/mirrorView-task/pull/249)
 2. Operators now have seven OpenAI Batch labels for all 6,374 pinned Twitter posts, with four batch objects and a run report per feature. [PR #240](https://github.com/METResearchGroup/mirrorView-task/pull/240)
 3. The pinned Twitter preprocessed `posts.csv` is on `mirrorview-experimental-artifacts` with a SHA-256 inventory, and Git LFS still holds the local copy. Operators can load campaign `twitter_2026_09_06_192847_llm_features_v1`, run a ten-post disposable smoke, scale cost math to 6,374 rows, and print watcher status without writing to GitHub. [PR #238](https://github.com/METResearchGroup/mirrorView-task/pull/238)
+4. The pinned Reddit preprocessed comments parquet (400,000 comments, run `2026_09_03-23:39:28`) now exists in the `mirrorview-experimental-artifacts` S3 bucket at the repo-relative key, and a committed inventory records the SHA-256 of the single object. Git LFS still holds the local copy. [PR #230](https://github.com/METResearchGroup/mirrorView-task/pull/230)
 
 ## 2026-09-06
 
