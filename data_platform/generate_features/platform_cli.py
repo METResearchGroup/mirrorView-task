@@ -56,7 +56,10 @@ CAMPAIGN_FLAGS_TOGETHER_ERROR = "--campaign-id and --preprocessed-run must be pa
 CAMPAIGN_CHECKPOINT_ERROR = "--checkpoint cannot be combined with --campaign-id"
 CAMPAIGN_BATCH_SIZE_ERROR = f"campaign mode requires --batch-size {CAMPAIGN_BATCH_SIZE}"
 CAMPAIGN_SINGLE_FEATURE_ERROR = "campaign mode requires exactly one --features value"
-CAMPAIGN_ENGINE_ERROR = "campaign mode requires a feature with engine_type 'openai'"
+CAMPAIGN_ENGINE_ERROR = (
+    "campaign mode requires a feature with engine_type 'openai' or 'bedrock'"
+)
+CAMPAIGN_ENGINE_TYPES = frozenset({"openai", "bedrock"})
 PREPROCESSED_RUN_NAME_ERROR = "preprocessed-run must be a single run directory name"
 
 

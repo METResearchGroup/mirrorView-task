@@ -39,6 +39,7 @@ DEFAULT_CAMPAIGN_PLATFORM = "bluesky"
 DEFAULT_CAMPAIGN_DATASET_ID = "bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73"
 INTERMEDIATE_ARTIFACT_TAG = {"intermediate-artifact": "true"}
 ACTIVE_STATE_FILENAME = "active_openai_batch.json"
+ACTIVE_BEDROCK_STATE_FILENAME = "active_bedrock_job.json"
 MANIFEST_FILENAME = "manifest.json"
 PROGRESS_FILENAME = "progress.jsonl"
 ERRORS_FILENAME = "errors.jsonl"
@@ -137,6 +138,19 @@ class FeaturePaths:
         )
 
     @classmethod
+    def canonical(
+        cls,
+        campaign_id: str,
+        feature: str,
+        *,
+        bucket: str | None = None,
+        platform: str = DEFAULT_CAMPAIGN_PLATFORM,
+        dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
+    ) -> FeaturePaths:
+        """Alias of ``for_campaign``. Restores the older caller name."""
+        raise NotImplementedError
+
+    @classmethod
     def from_root_uri(cls, root_uri: str, feature: str) -> FeaturePaths:
         """Paths under an arbitrary ``s3://bucket/prefix/`` root, used by the smoke helper."""
         bucket, root_key = parse_s3_uri(root_uri)
@@ -147,6 +161,11 @@ class FeaturePaths:
     @property
     def active_state_key(self) -> str:
         return f"{self.prefix}{ACTIVE_STATE_FILENAME}"
+
+    @property
+    def active_bedrock_state_key(self) -> str:
+        """Object key of ``active_bedrock_job.json`` under this feature prefix."""
+        raise NotImplementedError
 
     @property
     def manifest_key(self) -> str:

@@ -67,6 +67,7 @@ from data_platform.utils.storage import DATA_ROOT, StorageManager, StorageStage
 from lib.timestamp_utils import get_current_timestamp
 
 CAMPAIGN_ENGINE_TYPE = "openai"
+CAMPAIGN_ENGINE_TYPES = frozenset({"openai", "bedrock"})
 # Manifest fields that must match between a resumed run and the command line.
 MANIFEST_IDENTITY_FIELDS = (
     "campaign_id",
@@ -286,6 +287,11 @@ def generate_features(
 
     print(f"generate_features: finished {len(written)} features under {config.features_dir}")
     return written
+
+
+def _resolve_campaign_engine(campaign_id: str, feature_name: str) -> str:
+    """Return the campaign engine for ``feature_name``, or raise ``ValueError``."""
+    raise NotImplementedError
 
 
 def generate_campaign_feature(

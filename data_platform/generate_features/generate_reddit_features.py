@@ -20,6 +20,7 @@ from data_platform.generate_features.platform_cli import (
     build_feature_cli_app,
     build_feature_cli_main,
     build_feature_config,
+    generate_platform_campaign_feature,
     generate_platform_features,
     load_preprocessed_records,
 )
@@ -55,36 +56,39 @@ def generate_reddit_features(
     max_concurrency: int = 80,
     feature_subset: list[str] | None = None,
     checkpoint: str | None = None,
-) -> dict[str, Path]:
-    """Generate Reddit feature labels in a new or unfinished feature run.
+    campaign_id: str | None = None,
+    preprocessed_run: str | None = None,
+) -> dict[str, Path | str]:
+    """Generate Reddit feature labels in a new or unfinished feature run, or in S3 campaign mode.
 
     Parameters
     ----------
     dataset_id
         Dataset identifier from ingestion YAML.
     batch_size
-        Label batch size.
+        Label batch size. Campaign mode requires 2000.
     max_concurrency
         Engine concurrency cap.
     feature_subset
-        Optional registry subset. None runs every feature.
+        Optional registry subset. None runs every feature. Campaign mode
+        requires exactly one feature.
     checkpoint
         Named unfinished feature run timestamp. Pass None to start a new
-        feature run.
+        feature run. Not allowed in campaign mode.
+    campaign_id
+        S3 campaign id. Pass together with ``preprocessed_run`` to write
+        immutable batch objects under the campaign feature prefix and resume
+        from that prefix.
+    preprocessed_run
+        Preprocessed run timestamp that campaign mode labels.
 
     Returns
     -------
-    dict[str, Path]
-        Feature name to the label file written in the feature run folder.
+    dict[str, Path | str]
+        Feature name to the label file written in the feature run folder, or
+        to the S3 feature prefix URI in campaign mode.
     """
-    return generate_platform_features(
-        REDDIT_SPEC,
-        dataset_id,
-        batch_size=batch_size,
-        max_concurrency=max_concurrency,
-        feature_subset=feature_subset,
-        checkpoint=checkpoint,
-    )
+    raise NotImplementedError
 
 
 if __name__ == "__main__":
