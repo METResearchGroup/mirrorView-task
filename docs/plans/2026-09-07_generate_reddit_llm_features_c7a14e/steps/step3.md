@@ -2,7 +2,7 @@
 
 ## Goal
 
-Add reusable smoke tooling for the deterministic ten-comment sample shared by all seven Reddit LLM features. Record mixed-engine pricing and token usage, scale cost estimates to `400000` comments, and aggregate all seven features into `parent_cost_aggregate.json`. Extend the progress watcher with `--platform` and `--dataset-id` so Reddit campaign paths resolve correctly. Perform one deliberate interrupt-and-resume proof inside the smoke caller. This step delivers tooling only and does not run full `400000` labeling per feature.
+Add reusable smoke tooling for the deterministic ten-comment sample shared by all seven Reddit LLM features. Record mixed-engine pricing and token usage, scale cost estimates to `400000` comments, and aggregate all seven features into `parent_cost_aggregate.json`. Extend the progress watcher with `--platform` and `--dataset-id` so Reddit campaign paths resolve correctly. Perform one deliberate interrupt-and-resume proof inside the smoke caller. The step delivers tooling only and does not run full `400000` labeling per feature.
 
 ## Dependencies
 
@@ -432,7 +432,7 @@ The smoke caller performs one deliberate interrupt-and-resume proof, writes unta
 
 ## Purpose
 
-Operators need cost and resume evidence before approving full Reddit labeling across seven features and two engine types. This PR delivers tooling only. It reuses Bluesky smoke patterns while scaling cost math to `400000` rows and recording Bedrock on-demand pricing from `smoke_bedrock_engine.py`. Full production runs and GitHub posting stay out of scope.
+Operators need cost and resume evidence before approving full Reddit labeling across seven features and two engine types. The pull request delivers tooling only. It reuses Bluesky smoke patterns while scaling cost math to `400000` rows and recording Bedrock on-demand pricing from `smoke_bedrock_engine.py`. Full production runs and GitHub posting stay out of scope.
 
 ## Architecture
 

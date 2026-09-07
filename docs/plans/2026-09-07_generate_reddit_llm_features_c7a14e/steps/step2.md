@@ -4,7 +4,7 @@
 
 Add campaign mode for the pinned Reddit LLM feature campaign with a per-feature engine map that selects OpenAI Batch or Bedrock Converse per feature without changing `FEATURE_REGISTRY` defaults. Bedrock features write the same S3 batch layout as OpenAI features, resume through a separate `active_bedrock_job.json` cursor, and retry Bedrock content-filter failures through OpenAI Batch. Record `engine_type` on `manifest.json` identity fields and local `metadata.json`. Wire `generate_reddit_features.py` with `campaign_id` and `preprocessed_run` like the Bluesky entry point. Fix `FeaturePaths` callers so Reddit campaign paths do not default to Bluesky.
 
-This PR ships product code and is independently mergeable. Do not run the full `400000` comment production job in this PR.
+The pull request ships product code and is independently mergeable. Do not run the full `400000` comment production job in the pull request.
 
 ## Dependencies
 

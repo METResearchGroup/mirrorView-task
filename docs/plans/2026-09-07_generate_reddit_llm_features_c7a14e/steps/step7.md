@@ -4,7 +4,7 @@
 
 Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `is_self_contained` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
 
-This step is one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
 
 ## Dependencies
 
@@ -343,25 +343,17 @@ Confirm watcher comment updates at 10,000, 20,000, …, 400,000 durable rows.
 
 ## GitHub issue body
 
-Fixes #<child>
+Generate `is_self_contained` labels for 400,000 pinned Reddit comments through Bedrock Converse with model `us.amazon.nova-micro-v1:0`. Bedrock content-filter failures record `bedrock_content_filter` in `errors.jsonl` and retry through OpenAI Batch inside the same feature command. Run Phase A smoke once with `smoke_reddit_campaign.py`, post the full-run cost estimate to the issue, and wait for parent issue owner sign-off before Phase B. Phase B writes 200 immutable batch objects, `final.parquet`, and the permanent run report on S3. The pull request carries documentation and run artifacts only and does not change product code.
 
-Part of #<parent>
+Plan step: `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/steps/step7.md`
 
-### Problem
+Done when:
 
-The Reddit LLM campaign needs `is_self_contained` labels for all 400,000 pinned comments. Bedrock Nova Micro is the primary engine, with OpenAI Batch retry for content-filter blocks.
-
-### Solution
-
-Run Phase A smoke with `smoke_reddit_campaign.py`, post the cost estimate, wait for parent issue approval, then run the 400,000-comment campaign for `is_self_contained` and publish the permanent run report under `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/reports/is_self_contained_run_report.md`.
-
-### Purpose
-
-This issue tracks one feature end to end. It records spend approval inputs for the parent campaign issue and leaves immutable S3 outputs for later wide joins.
-
-### How to run
-
-Follow Phase A and Phase B in this step file. Use the pinned `generate_reddit_features.py` command for production and `smoke_reddit_campaign.py` for smoke only.
+- Smoke cost estimate is posted to the issue.
+- Parent issue has explicit owner sign-off before the 400,000-comment run starts.
+- S3 holds 200 batch objects and validated `final.parquet` with 400000 unique `source_record_id` values and boolean `is_self_contained` labels.
+- `manifest.json` records `engine_type=bedrock` and any `openai_content_filter_retry` metadata.
+- `reports/is_self_contained_run_report.md` is committed and temporary Git smoke copies are removed before merge.
 
 ## Pull request description
 
@@ -369,19 +361,19 @@ Fixes #<child>
 
 Part of #<parent>
 
-### Problem
+## Problem
 
-The Reddit LLM campaign needs `is_self_contained` labels for all 400,000 pinned comments. Bedrock Nova Micro is the primary engine, with OpenAI Batch retry for content-filter blocks. This pull request carries the run report and temporary smoke evidence only.
+The Reddit LLM campaign needs `is_self_contained` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Bedrock Nova Micro is the primary engine, with OpenAI Batch retry for content-filter blocks. Operators also need a reviewed paper trail without label Parquet in Git.
 
-### Solution
+## Solution
 
 Phase A commits smoke cost and resume evidence under `reports/smoke/is_self_contained/`. Phase B commits only `reports/is_self_contained_run_report.md` after the full run validates on S3.
 
-### Purpose
+## Purpose
 
-Operators need a reviewed paper trail without label Parquet in Git. Product code changes belong in Steps 1 through 3, not here.
+Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, Bedrock settings, content-filter retries, and validation results for one feature end to end.
 
-### How to run
+## How to run
 
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"

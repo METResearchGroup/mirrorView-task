@@ -4,7 +4,7 @@
 
 Join the seven verified S3-backed LLM feature outputs to all nine pinned preprocessed comment columns by `source_record_id`. Write one deterministic wide Parquet file with exactly 400,000 unique rows and no missing feature values, plus a SHA-256 manifest. Apply the existing MirrorView YAML filters to that wide table and write a curated Parquet export plus metadata under the dataset `curated/` stage. Commit one permanent consolidation report that records wide validation, curated row count, and a `political_stance` by `llm_toxicity_tier` crosstab. Exclude all Perspective API columns.
 
-This step is one future pull request. Unlike Steps 4 through 10, this PR may change consolidation and curation helper code. It does not run LLM labeling and does not add temporary smoke artifacts.
+The work maps to one future pull request. Unlike Steps 4 through 10, the pull request may change consolidation and curation helper code. It does not run LLM labeling and does not add temporary smoke artifacts.
 
 ## Dependencies
 
@@ -290,16 +290,24 @@ Expected: JSON with wide parquet SHA-256, row count 400000, sixteen-column list,
 
 ## GitHub issue body
 
-Join seven verified Reddit LLM feature `final.parquet` files to pinned preprocessed `comments.parquet` on `source_record_id`, write untagged `wide/features.parquet` and `wide/manifest.json` for campaign `reddit_2026_09_03_233928_llm_features_v1` (400000 rows, sixteen columns), then apply `data_platform/curate/configs/reddit/mirrorview.yaml` and write `curated/<timestamp>/mirrorview.parquet` plus `metadata.json` through `RedditStorageManager("curated", dataset_id)`.
+Join seven verified Reddit LLM feature `final.parquet` files to pinned preprocessed `comments.parquet` on `source_record_id`. Write untagged `wide/features.parquet` and `wide/manifest.json` for campaign `reddit_2026_09_03_233928_llm_features_v1` with 400000 rows and sixteen columns. Apply `data_platform/curate/configs/reddit/mirrorview.yaml` and write `curated/<timestamp>/mirrorview.parquet` plus `metadata.json` through `RedditStorageManager("curated", dataset_id)`. The work depends on Steps 4 through 10 merged with verified `final.parquet` at 400000 rows each.
 
-Depends on Steps 4 through 10 merged with verified `final.parquet` at 400000 rows each. May extend `consolidate.py` and add `consolidate_reddit_llm_campaign.py`. Do not relabel features, change YAML filters, or add pytest. Commit `reports/wide_run_report.md` with curated row count and `political_stance` by `llm_toxicity_tier` crosstab.
+Plan step: `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/steps/step11.md`
 
-Fixes #<child>
-Part of #<parent>
+Done when:
+
+- `wide/features.parquet` has exactly 400000 rows, sixteen columns, and no missing feature values.
+- `wide/manifest.json` links all seven feature manifests and the preprocessed input hash.
+- MirrorView curation writes `curated/<timestamp>/mirrorview.parquet` and `metadata.json`.
+- `reports/wide_run_report.md` is committed with curated row count and `political_stance` by `llm_toxicity_tier` crosstab.
 
 ## Pull request description
 
 # Consolidate seven Reddit LLM features and write the MirrorView curated export
+
+Fixes #<child>
+
+Part of #<parent>
 
 ## Summary
 
@@ -309,7 +317,7 @@ The caller verifies each feature manifest, inner-joins on `source_record_id`, so
 
 ## Purpose
 
-After Steps 4 through 10 finish, analysts need one wide table with all seven labels on every comment, and a MirrorView-filtered export ready for downstream study work. This step produces both artifacts in one deterministic run without re-labeling or changing filter rules.
+After Steps 4 through 10 finish, analysts need one wide table with all seven labels on every comment, and a MirrorView-filtered export ready for downstream study work. The consolidation step produces both artifacts in one deterministic run without re-labeling or changing filter rules.
 
 Out of scope: re-running features, editing YAML semantics, Perspective columns, smoke artifacts, and automated tests.
 
@@ -317,11 +325,11 @@ Out of scope: re-running features, editing YAML semantics, Perspective columns, 
 
 Components:
 
-- `consolidate_reddit_llm_campaign.py` — CLI entry point; verifies inputs, orchestrates join, curation, and uploads.
-- `consolidate.py` — DuckDB wide join helpers and Reddit sixteen-column contract.
-- `apply_rules.py` — loads `mirrorview.yaml` and returns filtered dataframe plus per-step counts.
-- `RedditStorageManager` — writes curated parquet and metadata under `curated/<timestamp>/`.
-- `CampaignObjectStore` — reads feature inputs and writes wide objects under the campaign prefix.
+- `consolidate_reddit_llm_campaign.py`: CLI entry point. Verifies inputs, orchestrates join, curation, and uploads.
+- `consolidate.py`: DuckDB wide join helpers and Reddit sixteen-column contract.
+- `apply_rules.py`: loads `mirrorview.yaml` and returns filtered dataframe plus per-step counts.
+- `RedditStorageManager`: writes curated parquet and metadata under `curated/<timestamp>/`.
+- `CampaignObjectStore`: reads feature inputs and writes wide objects under the campaign prefix.
 
 Existing flow (seven separate feature outputs):
 
@@ -357,11 +365,11 @@ flowchart LR
 
 Flags:
 
-- `--dataset-id` — `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`
-- `--preprocessed-run` — `2026_09_03-23:39:28`
-- `--campaign-id` — `reddit_2026_09_03_233928_llm_features_v1`
-- `--output-s3-uri` — full URI ending in `wide/features.parquet`
-- `--curate-config` — optional; defaults to `data_platform/curate/configs/reddit/mirrorview.yaml`
+- `--dataset-id`: `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`
+- `--preprocessed-run`: `2026_09_03-23:39:28`
+- `--campaign-id`: `reddit_2026_09_03_233928_llm_features_v1`
+- `--output-s3-uri`: full URI ending in `wide/features.parquet`
+- `--curate-config`: optional. Defaults to `data_platform/curate/configs/reddit/mirrorview.yaml`
 
 ### Data / schema contracts
 
@@ -376,8 +384,8 @@ Flags:
 
 ### Configuration
 
-- `data_platform/curate/configs/reddit/mirrorview.yaml` — locked AND filters; not edited in this PR
-- `LAB_AWS_ACCESS_KEY_ID` / `LAB_AWS_ACCESS_KEY_SECRET` — export as standard AWS variables before S3 access
+- `data_platform/curate/configs/reddit/mirrorview.yaml`: locked AND filters. Not edited in the pull request.
+- `LAB_AWS_ACCESS_KEY_ID` / `LAB_AWS_ACCESS_KEY_SECRET`: export as standard AWS variables before S3 access.
 
 ## How to run
 
@@ -396,6 +404,3 @@ PYTHONPATH=. uv run python data_platform/curate/consolidate_reddit_llm_campaign.
 ```
 
 Expected: stdout shows seven accepted manifest digests, `wide_rows=400000`, `wide_columns=16`, manifest URI, `curated_rows=<n>`, curated URI, and JSON crosstab. DuckDB validation script in the step spec prints `wide validation ok`.
-
-Fixes #<child>
-Part of #<parent>

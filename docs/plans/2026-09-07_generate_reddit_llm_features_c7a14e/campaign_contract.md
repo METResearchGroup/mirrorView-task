@@ -52,7 +52,7 @@ Per feature `{feature}` under that root:
 | Object | Path | Notes |
 |--------|------|-------|
 | Smoke input | `{feature}/smoke/input.parquet` | Ten-comment deterministic sample input. Untagged. |
-| Smoke output | `{feature}/smoke/output.parquet` | Ten labeled rows with audit columns. Untagged. |
+| Smoke output | `{feature}/smoke/output.parquet` | Ten labeled rows with label metadata columns. Untagged. |
 | Smoke cost report | `{feature}/smoke/cost_report.json` | Token and pricing estimates. Untagged. |
 | Smoke resume evidence | `{feature}/smoke/resume_evidence.json` | Interrupt and resume proof. Untagged. |
 | Active OpenAI state | `{feature}/active_openai_batch.json` | OpenAI features only. Mutable. Untagged. Conditional atomic replace. |
@@ -231,9 +231,9 @@ Every row in `smoke/output.parquet`, `batches/part-*.parquet`, and `final.parque
 | `request_id` | Provider request id for the row |
 | `attempt_count` | Integer attempt count for this row (1 through 4) |
 | `label_timestamp` | UTC timestamp from `lib.timestamp_utils.get_current_timestamp` |
-| `{label_field}` | That feature's raw label column from the table above |
+| `{label_field}` | The feature's raw label column from the table above |
 
-Validation applies the feature Pydantic model to the label-field subset and separately validates audit columns. Do not add `engine_type` to Parquet rows.
+Validation applies the feature Pydantic model to the label-field subset and separately validates label metadata columns. Do not add `engine_type` to Parquet rows.
 
 ## Campaign CLI
 
@@ -383,24 +383,15 @@ Child issue bodies live in each step file under `docs/plans/2026-09-07_generate_
 
 ### Parent issue body
 
-Generate seven mixed-engine S3-backed LLM features for 400,000 Reddit comments from PR #162. Upload the pinned preprocessed `comments.parquet` to the `mirrorview-experimental-artifacts` S3 bucket while keeping Git LFS for local development. Reuse the Bluesky epic S3 backend, OpenAI Batch resume, 2,000-row Parquet campaign writer, progress watcher, and 30-day lifecycle rule.
+The campaign labels 400,000 pinned Reddit comments from PR #162 with seven mixed-engine LLM features. Operators upload the preprocessed `comments.parquet` to `mirrorview-experimental-artifacts` while Git LFS keeps the local copy. The work reuses the Bluesky epic S3 backend, OpenAI Batch resume, 2,000-row Parquet campaign writer, progress watcher, and 30-day lifecycle rule for tagged batch objects.
 
-Four features run on OpenAI Batch with `gpt-5.4-nano`. Three features run on Amazon Bedrock Converse with `us.amazon.nova-micro-v1:0`. Each feature run writes 200 immutable 2,000-row Parquet batch objects, a final feature Parquet file, a hash manifest, progress records, and a permanent run report. A final step joins the seven outputs with the complete preprocessed comment records and runs the MirrorView curation export.
+Four features run on OpenAI Batch with `gpt-5.4-nano`. Three features run on Amazon Bedrock Converse with `us.amazon.nova-micro-v1:0`. Each feature run writes 200 immutable 2,000-row Parquet batch objects, a final feature Parquet file, a hash manifest, progress records, and a permanent run report. Step 11 joins the seven outputs with all nine preprocessed comment columns and runs the MirrorView curation export.
 
-Use the fixed dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and preprocessed run `2026_09_03-23:39:28`. Store campaign artifacts under `s3://mirrorview-experimental-artifacts/data_platform/data/`. Use campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature. OpenAI features persist provider job IDs in `active_openai_batch.json` before polling and resume the existing provider job after an interruption. Bedrock features use `active_bedrock_job.json` with one process and eight threads per part. At most three Bedrock feature agents may run in parallel.
+The dataset id is `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and the preprocessed run is `2026_09_03-23:39:28`. Campaign artifacts live under `s3://mirrorview-experimental-artifacts/data_platform/data/` with campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature. OpenAI features persist provider job IDs in `active_openai_batch.json` before polling and resume the existing provider job after an interruption. Bedrock features use `active_bedrock_job.json` with one process and eight threads per part. At most three Bedrock feature agents may run in parallel.
 
-Each feature issue is one future pull request. Human approval for production runs is recorded on this parent issue only.
+Each child issue maps to one future pull request. Owner sign-off for production runs is recorded on the parent issue only. Do not start any 400,000-comment feature run until Steps 1 through 3 have merged, all seven smoke runs and per-feature cost estimates are posted, the mixed-engine aggregate estimate is posted here, and the repository owner signs off in a comment on the prerequisite pull request, smoke results, and aggregate cost.
 
-## Required repository owner sign-off before production runs
-
-Do not start any 400,000-comment feature run in the seven feature generation child issues until all of the following are true:
-
-- The prerequisite implementation PR for Steps 1 through 3 (S3 copy, campaign engine map and Bedrock path, Reddit smoke with mixed-engine cost aggregate and watcher platform flags) has been reviewed and approved.
-- All seven ten-comment smoke runs and per-feature cost estimates have been posted.
-- The mixed-engine aggregate campaign cost estimate has been posted to this parent issue.
-- The repository owner has explicitly signed off in a comment on this parent issue on the prerequisite PR, all seven smoke results, and the aggregate cost estimate.
-
-A merged PR or a passing smoke run alone is not permission to start a production run. The explicit owner sign-off comment on this parent issue is mandatory.
+Plan step: `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/plan.md`
 
 Done when:
 
@@ -409,7 +400,7 @@ Done when:
 3. OpenAI features resume without duplicate provider jobs or duplicate charges. Bedrock features resume from `active_bedrock_job.json` without exceeding three parallel agents or six Bedrock processes.
 4. Each issue reports progress every 10,000 durable records and records estimated and actual cost.
 5. One wide Parquet artifact contains the nine pinned comment columns and all seven LLM feature outputs, and the MirrorView curation export is written from `data_platform/curate/configs/reddit/mirrorview.yaml`.
-6. Intermediate batches expire after 30 days under the existing lifecycle rule, while final artifacts and audit records remain in S3.
+6. Intermediate batches expire after 30 days under the existing lifecycle rule, while final artifacts and run metadata remain in S3.
 
 ## Children
 

@@ -47,7 +47,7 @@ Use the fixed dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and preproce
 
 Store campaign artifacts under `s3://mirrorview-experimental-artifacts/data_platform/data/`. Use campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature so parallel agents cannot change the same metadata. Keep one blocking provider job per OpenAI feature agent, persist provider job IDs in `active_openai_batch.json` before polling, and resume the existing provider job after an interruption. Bedrock features use `active_bedrock_job.json` as the resume cursor with one process and eight threads per part.
 
-Smoke writes untagged evidence under `{feature}/smoke/` and never writes production `batches/part-*.parquet`. After parent approval, the first production job labels 1,990 new comments for OpenAI features, or processes one 2,000-comment part for Bedrock features. Those rows are combined with the ten unchanged smoke output rows into `part-00000.parquet` where the schedule requires it. The remaining parts each label 2,000 comments.
+Smoke writes untagged evidence under `{feature}/smoke/` and never writes production `batches/part-*.parquet`. After parent approval, the first production job labels 1,990 new comments for OpenAI features, or processes one 2,000-comment part for Bedrock features. The new labeled rows are combined with the ten unchanged smoke output rows into `part-00000.parquet` where the schedule requires it. The remaining parts each label 2,000 comments.
 
 Bedrock content-filter failures are recorded in `errors.jsonl` with reason `bedrock_content_filter`, then retried through OpenAI Batch inside the same feature command. The manifest keeps `engine_type=bedrock` and adds an `openai_content_filter_retry` block. Other Bedrock failures stay failed.
 
@@ -118,4 +118,4 @@ Join the seven verified feature outputs to all nine preprocessed comment columns
 3. OpenAI features resume without duplicate provider jobs or duplicate charges. Bedrock features resume from `active_bedrock_job.json` without exceeding three parallel agents or six Bedrock processes.
 4. Each issue reports progress every 10,000 durable records and records estimated and actual cost.
 5. One wide Parquet artifact contains the nine pinned comment columns and all seven LLM feature outputs, and the MirrorView curation export is written from `reddit/mirrorview.yaml`.
-6. Intermediate batches expire after 30 days under the existing lifecycle rule, while final artifacts and audit records remain in S3.
+6. Intermediate batches expire after 30 days under the existing lifecycle rule, while final artifacts and run metadata remain in S3.

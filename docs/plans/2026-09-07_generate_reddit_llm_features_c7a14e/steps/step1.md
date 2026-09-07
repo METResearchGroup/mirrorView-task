@@ -15,7 +15,7 @@ Pinned identities for later steps:
 | Preprocessed row count | `400000` |
 | Campaign id (later steps) | `reddit_2026_09_03_233928_llm_features_v1` |
 
-This step has no code dependencies on other epic steps. It may run in parallel with Step 2. It does require:
+Step 1 has no code dependencies on other epic steps. It may run in parallel with Step 2. It does require:
 
 - Git LFS installed and able to smudge the pinned preprocessed parquet path.
 - AWS credentials with `s3:PutObject`, `s3:GetObject`, and `s3:HeadObject` on `mirrorview-experimental-artifacts`.
@@ -246,7 +246,7 @@ Add `migrate_reddit_preprocessed_to_s3.py` to upload the single pinned `comments
 
 ## Purpose
 
-Step 2 and Step 3 depend on S3-hosted preprocessed input. This PR limits upload scope to one parquet file so the migration stays small and reviewable. Changing `StorageManager`, uploading raw dumps, or touching Bluesky data is out of scope.
+Step 2 and Step 3 depend on S3-hosted preprocessed input. The pull request limits upload scope to one parquet file so the migration stays small and reviewable. Changing `StorageManager`, uploading raw dumps, or touching Bluesky data is out of scope.
 
 ## How to run
 
