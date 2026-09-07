@@ -67,11 +67,16 @@ def resolve_feature_paths(
 ) -> FeaturePaths:
     """Return campaign feature paths, or the paths under ``smoke_prefix/{feature}/`` when given.
 
-    Omitted ``platform`` and ``dataset_id`` keep today's Bluesky defaults.
+    Callers that serve Reddit must pass ``platform`` and ``dataset_id``.
+    Omitting them keeps the historical Bluesky defaults.
     """
     if smoke_prefix is None:
         return FeaturePaths.for_campaign(
-            campaign_id, feature, platform=platform, dataset_id=dataset_id
+            campaign_id,
+            feature,
+            platform=platform,
+            dataset_id=dataset_id,
+        )
         )
     return FeaturePaths.from_root_uri(smoke_prefix, feature)
 
@@ -206,6 +211,8 @@ def main(
     campaign_id: str = typer.Option(..., "--campaign-id"),
     feature: str = typer.Option(..., "--feature"),
     smoke_prefix: str | None = typer.Option(None, "--smoke-prefix"),
+    platform: str = typer.Option(DEFAULT_CAMPAIGN_PLATFORM, "--platform"),
+    dataset_id: str = typer.Option(DEFAULT_CAMPAIGN_DATASET_ID, "--dataset-id"),
     dry_render: bool = typer.Option(False, "--dry-render"),
     once: bool = typer.Option(False, "--once"),
     github_comment_id: int | None = typer.Option(None, "--github-comment-id"),
