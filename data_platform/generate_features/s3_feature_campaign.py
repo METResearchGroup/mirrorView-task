@@ -44,7 +44,11 @@ PROGRESS_FILENAME = "progress.jsonl"
 ERRORS_FILENAME = "errors.jsonl"
 FINAL_FILENAME = "final.parquet"
 BATCHES_DIRNAME = "batches"
-SMOKE_OUTPUT_KEY_SUFFIX = "smoke/output.parquet"
+SMOKE_DIRNAME = "smoke"
+SMOKE_INPUT_KEY_SUFFIX = f"{SMOKE_DIRNAME}/input.parquet"
+SMOKE_OUTPUT_KEY_SUFFIX = f"{SMOKE_DIRNAME}/output.parquet"
+SMOKE_COST_REPORT_KEY_SUFFIX = f"{SMOKE_DIRNAME}/cost_report.json"
+SMOKE_RESUME_EVIDENCE_KEY_SUFFIX = f"{SMOKE_DIRNAME}/resume_evidence.json"
 FEATURES_STAGE_DIRNAME = "features"
 MAX_CONDITIONAL_WRITE_ATTEMPTS = 5
 S3_URI_SCHEME = "s3://"
@@ -160,8 +164,24 @@ class FeaturePaths:
         return f"{self.prefix}{FINAL_FILENAME}"
 
     @property
+    def smoke_prefix(self) -> str:
+        return f"{self.prefix}{SMOKE_DIRNAME}/"
+
+    @property
+    def smoke_input_key(self) -> str:
+        return f"{self.prefix}{SMOKE_INPUT_KEY_SUFFIX}"
+
+    @property
     def smoke_output_key(self) -> str:
         return f"{self.prefix}{SMOKE_OUTPUT_KEY_SUFFIX}"
+
+    @property
+    def smoke_cost_report_key(self) -> str:
+        return f"{self.prefix}{SMOKE_COST_REPORT_KEY_SUFFIX}"
+
+    @property
+    def smoke_resume_evidence_key(self) -> str:
+        return f"{self.prefix}{SMOKE_RESUME_EVIDENCE_KEY_SUFFIX}"
 
     @property
     def batches_prefix(self) -> str:
