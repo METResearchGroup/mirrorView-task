@@ -12,6 +12,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 
+from lib.aws.s3 import S3
 from lib.constants import REPO_ROOT
 
 BUCKET = "mirrorview-experimental-artifacts"
@@ -30,39 +31,57 @@ LFS_INCLUDE_PATTERNS: tuple[str, ...] = (POSTS_CSV_PATH,)
 
 
 def scoped_repo_relative_paths() -> list[str]:
+    """Return the locked upload paths. Must have length EXPECTED_OBJECT_COUNT."""
     raise NotImplementedError
 
 
 def run_git_lfs_pull(patterns: Sequence[str]) -> None:
+    """Fetch and check out Git LFS blobs for each include pattern."""
     raise NotImplementedError
 
 
 def read_scoped_bytes(repo_relative_path: str) -> bytes:
+    """Read a scoped file and refuse Git LFS pointer text.
+
+    Raises
+    ------
+    ValueError
+        If the file still starts with the Git LFS pointer header.
+    """
     raise NotImplementedError
 
 
 def sha256_hex(data: bytes) -> str:
+    """Return the lowercase hex SHA-256 digest of the bytes."""
     raise NotImplementedError
 
 
 def content_type_for(repo_relative_path: str) -> str:
+    """Return application/json for .json and application/octet-stream otherwise."""
     raise NotImplementedError
 
 
-def upload_and_verify(s3, repo_relative_path: str, data: bytes) -> dict:
+def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
+    """Upload bytes to the key equal to the path and confirm the remote SHA-256.
+
+    The S3 ETag is never used as a content hash.
+
+    Returns
+    -------
+    dict
+        Inventory row with repo_relative_path, s3_key, bytes, and sha256.
+    """
     raise NotImplementedError
 
 
 def write_inventory(rows: list[dict], path: Path) -> None:
+    """Write inventory JSON including bucket, region, dataset_id, and preprocessed_run."""
     raise NotImplementedError
 
 
 def main() -> None:
-    paths = scoped_repo_relative_paths()
-    run_git_lfs_pull(LFS_INCLUDE_PATTERNS)
-    rows = [upload_and_verify(None, path, read_scoped_bytes(path)) for path in paths]
-    write_inventory(rows, INVENTORY_PATH)
-    print(f"uploaded {len(rows)} object")
+    """Pull LFS, upload the scoped csv, write inventory, and print the object count."""
+    raise NotImplementedError
 
 
 if __name__ == "__main__":
