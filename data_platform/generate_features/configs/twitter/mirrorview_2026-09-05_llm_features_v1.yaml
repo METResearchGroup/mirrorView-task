@@ -1,0 +1,16 @@
+campaign_id: twitter_2026_09_06_192847_llm_features_v1
+platform: twitter
+dataset_id: twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547
+preprocessed_run: "2026_09_06-19:28:47"
+row_count: 6374
+batch_size: 2000
+engine_type: openai
+model_id: gpt-5.4-nano
+features:
+  - is_news_or_opinion
+  - is_political
+  - is_likely_spam
+  - is_self_contained
+  - is_structurally_complete
+  - political_stance
+  - llm_toxicity_tiered
