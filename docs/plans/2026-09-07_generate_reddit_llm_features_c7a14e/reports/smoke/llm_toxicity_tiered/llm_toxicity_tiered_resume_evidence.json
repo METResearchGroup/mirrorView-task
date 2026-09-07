@@ -1,0 +1,47 @@
+{
+  "feature": "llm_toxicity_tiered",
+  "run_id": "reddit_2026_09_03_233928_llm_features_v1:llm_toxicity_tiered",
+  "batch_id": "batch_6a9e3390707c8190a812975e7f9fd48d",
+  "input_file_id": "file-PMmrHH72G2hSiMT8cZExYo",
+  "submitted_at": "2026_09_07-03:46:24",
+  "interrupted_at": "2026_09_07-03:46:24",
+  "state_at_interrupt": {
+    "input_file_id": "file-PMmrHH72G2hSiMT8cZExYo",
+    "batch_id": "batch_6a9e3390707c8190a812975e7f9fd48d",
+    "logical_batch_index": 0,
+    "pending_source_record_ids": [
+      "t1_mpxmfe6",
+      "t1_mpxmfoa",
+      "t1_mpxmfr2",
+      "t1_mpxmgbj",
+      "t1_mpxmgxp",
+      "t1_mpxmho3",
+      "t1_mpxmjkx",
+      "t1_mpxmk1u",
+      "t1_mpxmkdo",
+      "t1_mpxmlk4"
+    ],
+    "attempt_count": 1,
+    "state": "polling",
+    "campaign_id": null,
+    "feature_name": "llm_toxicity_tiered",
+    "submitted_at": "2026_09_07-03:46:24"
+  },
+  "resumed_at": "2026_09_07-03:46:24",
+  "submit_calls_before_interrupt": {
+    "files.create": 1,
+    "batches.create": 1
+  },
+  "submit_calls_after_resume": {
+    "files.create": 0,
+    "batches.create": 0
+  },
+  "resumed_batch_id": "batch_6a9e3390707c8190a812975e7f9fd48d",
+  "reattached_same_batch_id": true,
+  "resumed_batch_status": "completed",
+  "rows_written": 10,
+  "provider_batch_ids_in_output": [
+    "batch_6a9e3390707c8190a812975e7f9fd48d"
+  ],
+  "resume_ok": true
+}
