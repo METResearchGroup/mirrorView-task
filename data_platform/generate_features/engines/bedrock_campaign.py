@@ -143,13 +143,15 @@ def _label_bedrock_parts(
     written_parts = {int(entry["part_index"]) for entry in manifest["batches"]}
     for part_index, chunk_ids in enumerate(_chunks(ordered_ids, campaign.batch_size)):
         if part_index in written_parts:
+            _delete_active_bedrock_job_if_part_in(store, paths, written_parts)
             continue
         adopted = adopt_unrecorded_batch(
             store, paths, manifest, manifest_etag, part_index=part_index, run_id=run_id
         )
         if adopted is not None:
             manifest_etag = adopted.manifest_etag
-            delete_active_bedrock_state(store, paths)
+            written_parts.add(part_index)
+            _delete_active_bedrock_job_if_part_in(store, paths, {part_index})
             continue
         manifest_etag = _label_bedrock_part(
             store, paths, manifest, manifest_etag, spec, campaign, part_index, chunk_ids, texts, run_id
@@ -185,6 +187,33 @@ def _label_bedrock_part(
     return _finish_bedrock_part(
         store, paths, manifest, manifest_etag, spec, run_id, part_index, chunk_ids, rows_by_id, spill_path
     )
+
+
+def _delete_active_bedrock_job_if_part_in(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    recorded_parts: set[int],
+) -> None:
+    """Delete ``active_bedrock_job.json`` when its part is already durable.
+
+    Loads the active Bedrock cursor and deletes it only if
+    ``logical_batch_index`` is in ``recorded_parts``. A cursor for a later
+    unrecorded part is left in place so resume of that part can keep the job.
+
+    Parameters
+    ----------
+    store
+        Campaign object store for this feature prefix.
+    paths
+        Feature prefix that holds ``active_bedrock_job.json``.
+    recorded_parts
+        Part indexes already in the manifest, or the single part just adopted.
+    """
+    remote, _etag = load_active_bedrock_state(store, paths)
+    if remote is None:
+        return
+    if int(remote["logical_batch_index"]) in recorded_parts:
+        delete_active_bedrock_state(store, paths)
 
 
 def _label_pending_bedrock_tasks(
@@ -298,7 +327,7 @@ def _finish_bedrock_part(
         manifest_etag = _write_labeled_part(
             store, paths, manifest, manifest_etag, spec, run_id, part_index, rows
         )
-    delete_active_bedrock_state(store, paths)
+    _delete_active_bedrock_job_if_part_in(store, paths, {part_index})
     spill_path.unlink(missing_ok=True)
     return manifest_etag
 
