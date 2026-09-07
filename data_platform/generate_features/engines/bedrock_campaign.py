@@ -156,6 +156,7 @@ def _label_bedrock_parts(
         manifest_etag = _label_bedrock_part(
             store, paths, manifest, manifest_etag, spec, campaign, part_index, chunk_ids, texts, run_id
         )
+        written_parts.add(part_index)
     return manifest_etag
 
 
@@ -327,9 +328,67 @@ def _finish_bedrock_part(
         manifest_etag = _write_labeled_part(
             store, paths, manifest, manifest_etag, spec, run_id, part_index, rows
         )
-    _delete_active_bedrock_job_if_part_in(store, paths, {part_index})
+    else:
+        manifest_etag = _record_empty_bedrock_part(
+            store, paths, manifest, manifest_etag, spec, part_index
+        )
+    recorded_parts = {int(entry["part_index"]) for entry in manifest["batches"]}
+    _delete_active_bedrock_job_if_part_in(store, paths, recorded_parts)
     spill_path.unlink(missing_ok=True)
     return manifest_etag
+
+
+def _record_empty_bedrock_part(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+    spec: FeatureSpec,
+    part_index: int,
+) -> str:
+    """Record a zero-row part in the manifest without writing parquet.
+
+    ``write_batch`` refuses empty rows, so an all-failure part has no object.
+    The manifest entry is the durable skip marker: ``_label_bedrock_parts``
+    treats ``part_index`` as already recorded. Call this before deleting
+    ``active_bedrock_job.json``.
+
+    Parameters
+    ----------
+    store
+        Campaign object store for this feature prefix.
+    paths
+        Feature prefix that holds ``manifest.json``.
+    manifest
+        In-memory manifest mutated in place.
+    manifest_etag
+        ETag of the current ``manifest.json`` object.
+    spec
+        Feature being labeled, used only in the stdout line.
+    part_index
+        Chunk index that produced no labeled rows.
+
+    Returns
+    -------
+    str
+        The new manifest ETag.
+    """
+    if part_index in {int(entry["part_index"]) for entry in manifest["batches"]}:
+        return manifest_etag
+    manifest["batches"].append(
+        {
+            "part_index": part_index,
+            "row_count": 0,
+            "provider_batch_ids": [],
+        }
+    )
+    manifest["batches"].sort(key=lambda entry: entry["part_index"])
+    new_etag = save_manifest(store, paths, manifest, manifest_etag)
+    print(
+        f"generate_features: {spec.name} part {part_index:05d} -> "
+        "0 rows (all records failed; no parquet)"
+    )
+    return new_etag
 
 
 def _write_labeled_part(

@@ -306,7 +306,10 @@ def adopt_unrecorded_batch(
 
 
 def read_batches(store: CampaignObjectStore, manifest: dict[str, Any]) -> list[pd.DataFrame]:
-    """Download every manifest batch in part order, verifying each SHA-256.
+    """Download every labeled manifest batch in part order, verifying each SHA-256.
+
+    Entries with ``row_count`` 0 are completion markers for parts that produced
+    no labeled rows. They have no parquet object and are skipped.
 
     Raises
     ------
@@ -317,6 +320,8 @@ def read_batches(store: CampaignObjectStore, manifest: dict[str, Any]) -> list[p
     """
     frames: list[pd.DataFrame] = []
     for entry in sorted(manifest["batches"], key=lambda item: item["part_index"]):
+        if int(entry["row_count"]) == 0:
+            continue
         stored = store.get(entry["key"])
         if stored is None:
             raise FileNotFoundError(f"manifest batch object is missing: {entry['key']}")
