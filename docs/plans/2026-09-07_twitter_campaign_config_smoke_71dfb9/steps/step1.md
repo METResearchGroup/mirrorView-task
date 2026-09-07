@@ -79,7 +79,7 @@ Inventory JSON shape:
 
 ## Work
 
-Copy the Bluesky migrate and verify scripts. Change them to one path.
+Start from the Bluesky migrate and verify scripts, then keep only one path.
 
 1. `run_git_lfs_pull` with include pattern `data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/preprocessed/2026_09_06-19:28:47/posts.csv`.
 2. `read_scoped_bytes` aborts with `ValueError` if the file begins with `version https://git-lfs.github.com/spec/v1`.

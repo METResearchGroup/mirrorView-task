@@ -65,7 +65,7 @@ no_batches_prefix_objects=true
 primary_smoke_prefix_touched=false
 ```
 
-Use `primary_smoke_prefix_touched` rather than the Bluesky name `canonical_smoke_prefix_touched`.
+Print `primary_smoke_prefix_touched`. Do not print the Bluesky name `canonical_smoke_prefix_touched`.
 
 Required flags: `--campaign-id`, `--dataset-id`, `--preprocessed-run`, `--feature`, `--smoke-prefix`, `--output-dir`.
 
@@ -77,7 +77,7 @@ Disposable prefix (only prefix allowed for this PR's live smoke):
 
 Add `--full-run-row-count` to `campaign_cost_report.py` aggregate mode. Default remains `200000` (`FULL_RUN_POST_COUNT`). Include `full_run_row_count` in the aggregate JSON. Print `full_run_row_count=<n>`. Do not change the Bluesky default.
 
-This PR does not run the seven-feature aggregate. Step 2 of the parent epic will pass `--full-run-row-count 6374`.
+The seven-feature aggregate is not part of this pull request. Step 2 of the parent epic will pass `--full-run-row-count 6374`.
 
 ### Watcher
 

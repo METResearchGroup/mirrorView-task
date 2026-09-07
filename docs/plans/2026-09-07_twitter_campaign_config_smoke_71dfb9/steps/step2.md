@@ -59,7 +59,7 @@ Feature order is the serial run order. Do not add Perspective or Bedrock feature
 4. On the accepted id, read the YAML and return a dict with at least `row_count`, `engine_type`, and `features` so the check command prints `6374 openai 7`.
 5. Do not call `FEATURE_REGISTRY` to rewrite defaults.
 
-The Twitter feature generator does not load this YAML. Bluesky campaign mode also takes campaign id from the command line. The loader is the identity check for this campaign.
+The Twitter feature generator does not load this YAML. Bluesky campaign mode also takes campaign id from the command line, so the loader is only the identity check for this campaign.
 
 ## Contracts (implement-from-spec Phase 3)
 

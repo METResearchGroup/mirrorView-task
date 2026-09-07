@@ -26,7 +26,7 @@
 
 ## Work
 
-Copy the campaign branch from `generate_bluesky_features()`.
+Match the campaign branch in `generate_bluesky_features()`.
 
 1. Add optional `campaign_id: str | None = None` and `preprocessed_run: str | None = None` to `generate_twitter_features()`.
 2. When either is not `None`, call `generate_platform_campaign_feature` with `TWITTER_SPEC` and return `{feature_name: prefix_uri}`.
@@ -46,7 +46,7 @@ Do not run that production command in this pull request.
 
 Return type becomes `dict[str, Path | str]` to match Bluesky.
 
-Do not call `load_twitter_campaign_config` from this function. Campaign mode takes ids from the caller, as Bluesky does.
+Do not call `load_twitter_campaign_config` from this function. Campaign mode takes ids from the caller, matching Bluesky.
 
 ## Contracts (implement-from-spec Phase 3)
 
