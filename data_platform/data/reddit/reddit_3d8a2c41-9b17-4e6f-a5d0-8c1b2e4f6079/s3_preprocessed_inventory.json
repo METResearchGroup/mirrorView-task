@@ -1,0 +1,16 @@
+{
+  "bucket": "mirrorview-experimental-artifacts",
+  "region": "us-east-2",
+  "dataset_id": "reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079",
+  "preprocessed_run": "2026_09_03-23:39:28",
+  "uploaded_at": "2026_09_07-02:18:17",
+  "object_count": 1,
+  "objects": [
+    {
+      "repo_relative_path": "data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/preprocessed/2026_09_03-23:39:28/comments.parquet",
+      "s3_key": "data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/preprocessed/2026_09_03-23:39:28/comments.parquet",
+      "bytes": 129853683,
+      "sha256": "c81ff327c2bc5a612b0f38b9d799e618f9d03ea3d3c4aff2d0f2a5f52a06ea31"
+    }
+  ]
+}
