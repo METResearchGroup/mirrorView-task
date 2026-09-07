@@ -80,6 +80,23 @@ def sha256_hex(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def _require_matching_remote(key: str, data: bytes, remote: bytes) -> None:
+    """Raise if re-downloaded bytes differ in length or SHA-256.
+
+    Raises
+    ------
+    RuntimeError
+        If length or SHA-256 does not match the local bytes.
+    """
+    local_sha256 = sha256_hex(data)
+    remote_sha256 = sha256_hex(remote)
+    if len(remote) != len(data) or remote_sha256 != local_sha256:
+        raise RuntimeError(
+            f"remote object differs for {key}: "
+            f"{len(remote)} bytes {remote_sha256} != {len(data)} bytes {local_sha256}"
+        )
+
+
 def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
     """Upload bytes to the key equal to the path and confirm the remote SHA-256.
 
@@ -97,7 +114,15 @@ def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
     RuntimeError
         If the re-downloaded object differs in length or SHA-256.
     """
-    raise NotImplementedError
+    key = repo_relative_path
+    s3.upload_bytes(key, data, content_type=PARQUET_CONTENT_TYPE)
+    _require_matching_remote(key, data, s3.get_bytes(key))
+    return {
+        "repo_relative_path": repo_relative_path,
+        "s3_key": key,
+        "bytes": len(data),
+        "sha256": sha256_hex(data),
+    }
 
 
 def write_inventory(rows: list[dict], path: Path) -> None:
