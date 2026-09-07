@@ -141,6 +141,7 @@ def _label_bedrock_parts(
     run_id: str,
 ) -> str:
     written_parts = {int(entry["part_index"]) for entry in manifest["batches"]}
+    prelabeled = _smoke_rows_by_id(store, paths, spec, run_id)
     for part_index, chunk_ids in enumerate(_chunks(ordered_ids, campaign.batch_size)):
         if part_index in written_parts:
             _delete_active_bedrock_job_if_part_in(store, paths, written_parts)
@@ -154,7 +155,17 @@ def _label_bedrock_parts(
             _delete_active_bedrock_job_if_part_in(store, paths, {part_index})
             continue
         manifest_etag = _label_bedrock_part(
-            store, paths, manifest, manifest_etag, spec, campaign, part_index, chunk_ids, texts, run_id
+            store,
+            paths,
+            manifest,
+            manifest_etag,
+            spec,
+            campaign,
+            part_index,
+            chunk_ids,
+            texts,
+            run_id,
+            prelabeled,
         )
         written_parts.add(part_index)
     return manifest_etag
@@ -171,10 +182,12 @@ def _label_bedrock_part(
     chunk_ids: list[str],
     texts: dict[str, str],
     run_id: str,
+    prelabeled: dict[str, dict],
 ) -> str:
     run_dir = _campaign_local_run_dir(paths)
     spill_path = _spill_path(run_dir, spec.name, part_index)
     rows_by_id = _load_spilled_rows(spill_path)
+    rows_by_id.update({uri: prelabeled[uri] for uri in chunk_ids if uri in prelabeled})
     job, job_etag = _load_or_start_bedrock_job(
         store, paths, part_index, chunk_ids, campaign.campaign_id, spec.name, rows_by_id
     )
