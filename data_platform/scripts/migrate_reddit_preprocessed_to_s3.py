@@ -100,16 +100,9 @@ def _require_matching_remote(key: str, data: bytes, remote: bytes) -> None:
 
 
 def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
-    """Upload bytes to the key equal to the path and confirm the remote SHA-256.
+    """Upload bytes, re-download them, and return the inventory row.
 
-    The object is re-downloaded after the upload. The S3 ETag is never used as
-    a content hash.
-
-    Returns
-    -------
-    dict
-        Inventory row with ``repo_relative_path``, ``s3_key``, ``bytes``, and
-        ``sha256``.
+    SHA-256 is computed from full bytes. The S3 ETag is never the content hash.
 
     Raises
     ------
@@ -150,6 +143,7 @@ def write_inventory(rows: list[dict], path: Path) -> None:
 
 
 def main() -> None:
+    """Pull LFS, upload the pinned comments parquet, and write the inventory."""
     path = scoped_repo_relative_path()
     run_git_lfs_pull(LFS_INCLUDE_PATTERN)
     s3 = S3(BUCKET, region_name=REGION)

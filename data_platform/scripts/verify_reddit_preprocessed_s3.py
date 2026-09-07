@@ -83,6 +83,7 @@ def _fail_if_wrong_run_or_count(inventory: dict) -> None:
 
 
 def main() -> None:
+    """Read the inventory and confirm every listed object matches SHA-256."""
     inventory = json.loads(INVENTORY_PATH.read_text())
     _fail_if_wrong_bucket(inventory)
     _fail_if_wrong_run_or_count(inventory)
