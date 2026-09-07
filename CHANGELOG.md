@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-07
+
+1. The pinned Twitter preprocessed `posts.csv` is on `mirrorview-experimental-artifacts` with a SHA-256 inventory, and Git LFS still holds the local copy. Operators can load campaign `twitter_2026_09_06_192847_llm_features_v1`, run a ten-post disposable smoke, scale cost math to 6,374 rows, and print watcher status without writing to GitHub. [PR #238](https://github.com/METResearchGroup/mirrorView-task/pull/238)
+
 ## 2026-09-06
 
 1. Operators can compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch runs that label posts as news, opinion, or neither. A smoke run, the matching size jobs, and the matching process jobs now record throughput and estimated cost, and live feature generation still uses OpenAI. [PR #212](https://github.com/METResearchGroup/mirrorView-task/pull/212)
