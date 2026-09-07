@@ -61,7 +61,9 @@ PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = (
     STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
 )
 
+REDDIT_PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = ()
 EXPECTED_WIDE_ROW_COUNT = 200000
+REDDIT_EXPECTED_WIDE_ROW_COUNT = 400000
 WIDE_SORT_KEY = f"{STANDARDIZED_SOURCE_RECORD_ID_COLUMN} ASC"
 
 
@@ -257,3 +259,14 @@ def build_llm_campaign_wide_table(
         return conn.execute(sql).fetchdf()
     finally:
         conn.close()
+
+
+def reddit_llm_campaign_wide_columns() -> tuple[str, ...]:
+    raise NotImplementedError
+
+
+def build_reddit_llm_campaign_wide_table(
+    comments_file: Path,
+    feature_files: dict[str, Path],
+) -> pd.DataFrame:
+    raise NotImplementedError
