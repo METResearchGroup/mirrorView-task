@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import sys
 from collections.abc import Callable, Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 
@@ -19,6 +20,15 @@ from data_platform.generate_features.models import (
 )
 from data_platform.utils.storage import StorageManager
 from lib.timestamp_utils import get_current_timestamp
+
+
+@dataclass(frozen=True)
+class RecordLabelFailure:
+    """One record that a chunk could not label after its attempt budget."""
+
+    source_record_id: str
+    error: str
+    attempts: int
 
 
 class BatchExecutionEngine(Protocol):
@@ -88,6 +98,42 @@ class BaseBatchExecutionEngine:
     def batch_label_records(self, tasks: list[LabelTask]) -> list[dict]:
         raise NotImplementedError
 
+    def label_chunk(
+        self,
+        tasks: list[LabelTask],
+        *,
+        feature_name: str,
+        run_dir: Path,
+        batch_index: int,
+        write_rows: Callable[[list[dict]], None],
+    ) -> list[RecordLabelFailure]:
+        """Label one chunk and return the records that ended without a row.
+
+        The default retries the whole chunk through ``batch_label_records``
+        and calls ``write_rows`` once. Engines that can label part of a chunk
+        override this to call ``write_rows`` more than once.
+        """
+        max_retries = self.run_config.max_label_retries
+
+        @retry_llm_completion(max_retries=max_retries)
+        def _batch_with_retry(chunk: list[LabelTask]) -> list[dict]:
+            return self.batch_label_records(chunk)
+
+        try:
+            labels = _batch_with_retry(tasks)
+        except Exception as exc:
+            error = f"{type(exc).__name__}: {exc}"
+            return [
+                RecordLabelFailure(
+                    source_record_id=task.uri,
+                    error=error,
+                    attempts=max_retries + 1,
+                )
+                for task in tasks
+            ]
+        write_rows(labels)
+        return []
+
     def batch_write_records(
         self,
         labels: list[dict],
@@ -111,19 +157,16 @@ class BaseBatchExecutionEngine:
         id_column: str,
         run_dir: Path | None = None,
     ) -> BatchRunStats:
-        """Label records using feature classifier.
+        """Label records chunk by chunk, appending rows as each chunk yields them.
 
-        Steps:
-        1. Batch inference (with retries). On failures here, add to deadletter.
-        2. Write the labeled records to output.
+        Each chunk goes through ``label_chunk``. Rows reach the feature file
+        through ``write_rows`` as soon as the engine has them, and records the
+        engine gives up on are appended to ``deadletter.jsonl`` with their
+        attempt counts. ``on_batch_complete`` runs once per chunk with the rows
+        written in that chunk and 1 when the chunk left any record unlabeled.
         """
         stats = BatchRunStats()
-        max_retries = self.run_config.max_label_retries
         output_dir = run_dir or feature_storage.root_dir
-
-        @retry_llm_completion(max_retries=max_retries)
-        def _batch_with_retry(chunk: list[LabelTask]) -> list[dict]:
-            return self.batch_label_records(chunk)
 
         pbar = tqdm(
             total=len(tasks),
@@ -131,45 +174,66 @@ class BaseBatchExecutionEngine:
             unit="post",
             disable=not sys.stderr.isatty(),
         )
+
+        def write_rows(labels: list[dict]) -> None:
+            self.batch_write_records(
+                labels, feature_storage=feature_storage, run_dir=output_dir
+            )
+            stats.labeled += len(labels)
+            pbar.update(len(labels))
+
         try:
             for batch_index, chunk in enumerate(batched(tasks, batch_size)):
                 pending = filter_seen_tasks(chunk, feature_storage, id_column, output_dir)
                 if not pending:
                     continue
-
-                # Step 1: Run batch inference logic (with retry). If failed,
-                # add to deadletter.
-                uris = [task.uri for task in pending]
-                try:
-                    labels = _batch_with_retry(pending)
-                except Exception as exc:
-                    append_deadletter_batch(
-                        output_dir,
-                        feature=feature_name,
-                        uris=uris,
-                        error=f"{type(exc).__name__}: {exc}",
-                        attempts=max_retries + 1,
-                        batch_index=batch_index,
-                    )
-                    stats.failed_batches += 1
-                    on_batch_complete(0, 1)
-                    tqdm.write(
-                        f"{feature_name}: batch {batch_index} failed "
-                        f"({len(uris)} posts → deadletter)"
-                    )
-                    continue
-
-                # Step 2: Write labeled records.
-                self.batch_write_records(
-                    labels, feature_storage=feature_storage, run_dir=output_dir
+                labeled_before = stats.labeled
+                failures = self.label_chunk(
+                    pending,
+                    feature_name=feature_name,
+                    run_dir=output_dir,
+                    batch_index=batch_index,
+                    write_rows=write_rows,
                 )
-                stats.labeled += len(labels)
-                pbar.update(len(labels))
-                on_batch_complete(len(labels), 0)
+                _append_deadletter_failures(
+                    output_dir, feature_name, failures, batch_index=batch_index
+                )
+                failed = 1 if failures else 0
+                stats.failed_batches += failed
+                on_batch_complete(stats.labeled - labeled_before, failed)
+                if failures:
+                    tqdm.write(
+                        f"{feature_name}: batch {batch_index} left "
+                        f"{len(failures)} posts unlabeled → deadletter"
+                    )
         finally:
             pbar.close()
 
         return stats
+
+
+def _append_deadletter_failures(
+    features_dir: Path,
+    feature_name: str,
+    failures: list[RecordLabelFailure],
+    *,
+    batch_index: int,
+) -> None:
+    """Append one deadletter line per distinct error and attempt count."""
+    grouped: dict[tuple[str, int], list[str]] = {}
+    for failure in failures:
+        grouped.setdefault((failure.error, failure.attempts), []).append(
+            failure.source_record_id
+        )
+    for (error, attempts), uris in grouped.items():
+        append_deadletter_batch(
+            features_dir,
+            feature=feature_name,
+            uris=uris,
+            error=error,
+            attempts=attempts,
+            batch_index=batch_index,
+        )
 
 
 def row_with_label_timestamp(row: dict, *, label_timestamp: str | None = None) -> dict:
