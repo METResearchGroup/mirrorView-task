@@ -464,25 +464,68 @@ def _write_openai_retry_parts(
     retry_ids: list[str],
     prelabeled: dict[str, dict],
 ) -> str:
-    part_index = _next_part_index(manifest)
-    for chunk_ids in _chunks(retry_ids, campaign.batch_size):
-        manifest_etag = _label_campaign_chunk(
+    remaining = list(retry_ids)
+    while remaining:
+        part_index = _next_part_index(manifest)
+        adopted = adopt_unrecorded_batch(
+            store, paths, manifest, manifest_etag, part_index=part_index, run_id=run_id
+        )
+        if adopted is not None:
+            manifest_etag = adopted.manifest_etag
+            labeled = labeled_ids(store, manifest)
+            remaining = [uri for uri in remaining if uri not in labeled]
+            continue
+        chunk_ids = remaining[: campaign.batch_size]
+        remaining = remaining[campaign.batch_size :]
+        manifest_etag = _label_one_openai_retry_chunk(
             engine,
             mirror,
             store,
             paths,
             manifest,
             manifest_etag,
-            spec=spec,
-            run_id=run_id,
-            run_dir=run_dir,
-            part_index=part_index,
-            chunk_ids=chunk_ids,
-            texts=texts,
-            prelabeled=prelabeled,
+            spec,
+            texts,
+            run_id,
+            run_dir,
+            part_index,
+            chunk_ids,
+            prelabeled,
         )
-        delete_active_state(store, paths)
-        part_index = _next_part_index(manifest)
+    return manifest_etag
+
+
+def _label_one_openai_retry_chunk(
+    engine: OpenAIBatchEngine,
+    mirror: ActiveStateMirror,
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+    spec: FeatureSpec,
+    texts: dict[str, str],
+    run_id: str,
+    run_dir: Path,
+    part_index: int,
+    chunk_ids: list[str],
+    prelabeled: dict[str, dict],
+) -> str:
+    manifest_etag = _label_campaign_chunk(
+        engine,
+        mirror,
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        spec=spec,
+        run_id=run_id,
+        run_dir=run_dir,
+        part_index=part_index,
+        chunk_ids=chunk_ids,
+        texts=texts,
+        prelabeled=prelabeled,
+    )
+    delete_active_state(store, paths)
     return manifest_etag
 
 
