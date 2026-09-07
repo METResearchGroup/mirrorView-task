@@ -4,6 +4,7 @@ import csv
 import json
 from dataclasses import dataclass
 from enum import StrEnum
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Any
 
@@ -24,10 +25,13 @@ from data_platform.models.sync import (
 )
 from data_platform.utils.dataset import ValidDataFormats, load_dataset_format, validate_dataset_id
 from data_platform.utils.deduplication import DedupeSession
+from data_platform.utils.object_store import ObjectStore, resolve_object_store
 from lib.timestamp_utils import get_current_timestamp
 
 DATA_ROOT = Path(__file__).resolve().parents[1] / "data"
 METADATA_FILENAME = "metadata.json"
+RECORDS_NOT_FOUND_MESSAGE = "Records file not found"
+METADATA_NOT_FOUND_MESSAGE = "Metadata file not found"
 MISSING_STAGE_RUNS_MESSAGE = (
     "No {stage} runs found for dataset {dataset_id} under {root}"
 )
@@ -49,34 +53,46 @@ class StorageStage(StrEnum):
     CURATED = "curated"
 
 
-def _write_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
-    with output_path.open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+def _csv_bytes(rows: list[dict[str, Any]], fieldnames: list[str], *, header: bool) -> bytes:
+    buffer = StringIO(newline="")
+    writer = csv.DictWriter(buffer, fieldnames=fieldnames)
+    if header:
         writer.writeheader()
-        writer.writerows(rows)
+    writer.writerows(rows)
+    return buffer.getvalue().encode("utf-8")
 
 
-def _append_csv(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
-    file_exists = output_path.exists()
-    mode = "a" if file_exists else "w"
-    with output_path.open(mode, newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        if not file_exists:
-            writer.writeheader()
-        writer.writerows(rows)
+def _parquet_bytes(df: pd.DataFrame) -> bytes:
+    buffer = BytesIO()
+    df.to_parquet(buffer, index=False)
+    return buffer.getvalue()
 
 
-def _write_parquet(rows: list[dict[str, Any]], output_path: Path, fieldnames: list[str]) -> None:
+def _rows_to_parquet_bytes(rows: list[dict[str, Any]], fieldnames: list[str]) -> bytes:
     df = pd.DataFrame(rows) if rows else pd.DataFrame(columns=fieldnames)
-    df.to_parquet(output_path, index=False)
+    return _parquet_bytes(df)
+
+
+def _metadata_bytes(metadata: dict[str, Any]) -> bytes:
+    return json.dumps(metadata, indent=2).encode("utf-8")
 
 
 class StorageManager:
+    """Reads and writes one stage of one dataset through the selected object store.
+
+    Paths such as ``root_dir`` and run directories are always local ``Path``
+    objects under ``DATA_ROOT``. Record and metadata bytes go through the
+    object store chosen by ``DATA_PLATFORM_STORAGE_BACKEND`` (local disk by
+    default, or S3 at the same relative key). Run directory listing and
+    completion checks read the local filesystem.
+    """
+
     platform: str
     stage: StorageStage
     model: type[BaseModel]
     records_filename: str
     dataset_id: str
+    _store: ObjectStore
 
     def __init__(
         self,
@@ -94,6 +110,7 @@ class StorageManager:
         self.format: ValidDataFormats = load_dataset_format(platform, dataset_id)
         stem = Path(records_filename).stem
         self.records_filename = f"{stem}.{self.format.value}"
+        self._store = resolve_object_store(local_root=DATA_ROOT)
 
     @property
     def platform_data_root(self) -> Path:
@@ -102,6 +119,25 @@ class StorageManager:
     @property
     def root_dir(self) -> Path:
         return DATA_ROOT / self.platform / self.dataset_id / self.stage
+
+    def _key_for(self, path: Path) -> str:
+        """Return the object store key for a path under ``DATA_ROOT``, e.g. ``bluesky/{dataset_id}/raw/{run}/posts.parquet``.
+
+        Raises
+        ------
+        ValueError
+            When ``path`` is not under ``DATA_ROOT``.
+        """
+        try:
+            return path.relative_to(DATA_ROOT).as_posix()
+        except ValueError as e:
+            raise ValueError(f"Path {path} is not under the data root {DATA_ROOT}") from e
+
+    def _read_object(self, path: Path, *, missing_message: str) -> bytes:
+        try:
+            return self._store.get_bytes(self._key_for(path))
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"{missing_message}: {path}") from e
 
     def create_new_run_dir(self, timestamp: str | None = None) -> Path:
         run_dir = self.root_dir / (timestamp or get_current_timestamp())
@@ -182,9 +218,10 @@ class StorageManager:
         out_path = run_dir / (filename or self.records_filename)
         fieldnames = list(self.model.model_fields.keys())
         if self.format == "parquet":
-            _write_parquet(validated, out_path, fieldnames)
+            body = _rows_to_parquet_bytes(validated, fieldnames)
         else:
-            _write_csv(validated, out_path, fieldnames)
+            body = _csv_bytes(validated, fieldnames, header=True)
+        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=True)
         return out_path
 
     def append_records(
@@ -199,9 +236,11 @@ class StorageManager:
             for row in self._prepare_rows_for_write(rows)
         ]
         out_path = run_dir / (filename or self.records_filename)
+        key = self._key_for(out_path)
+        file_exists = self._store.exists(key)
         if self.format == "parquet":
-            if out_path.exists():
-                existing = pd.read_parquet(out_path)
+            if file_exists:
+                existing = pd.read_parquet(BytesIO(self._store.get_bytes(key)))
                 new_df = pd.DataFrame(validated)
                 if set(existing.columns) != set(new_df.columns):
                     raise ValueError(
@@ -212,10 +251,12 @@ class StorageManager:
                 combined = pd.concat([existing, new_df], ignore_index=True)
             else:
                 combined = pd.DataFrame(validated)
-            combined.to_parquet(out_path, index=False)
+            self._store.put_bytes(key, _parquet_bytes(combined), allow_overwrite=True)
         else:
             fieldnames = list(self.model.model_fields.keys())
-            _append_csv(validated, out_path, fieldnames)
+            self._store.append_bytes(
+                key, _csv_bytes(validated, fieldnames, header=not file_exists)
+            )
         return out_path
 
     def load_seen_ids_from_disk(
@@ -278,11 +319,10 @@ class StorageManager:
     ) -> pd.DataFrame:
         resolved_run_dir = self._resolve_run_dir(run_dir, latest=latest)
         out_path = resolved_run_dir / (filename or self.records_filename)
-        if not out_path.exists():
-            raise FileNotFoundError(f"Records file not found: {out_path}")
+        body = self._read_object(out_path, missing_message=RECORDS_NOT_FOUND_MESSAGE)
         if self.format == "parquet":
-            return pd.read_parquet(out_path)
-        return pd.read_csv(out_path, keep_default_na=False)
+            return pd.read_parquet(BytesIO(body))
+        return pd.read_csv(BytesIO(body), keep_default_na=False)
 
     def write_dataframe(
         self,
@@ -293,24 +333,26 @@ class StorageManager:
     ) -> Path:
         out_path = run_dir / (filename or self.records_filename)
         if self.format == "parquet":
-            df.to_parquet(out_path, index=False)
+            body = _parquet_bytes(df)
         else:
-            df.to_csv(out_path, index=False)
+            body = df.to_csv(index=False).encode("utf-8")
+        self._store.put_bytes(self._key_for(out_path), body, allow_overwrite=True)
         return out_path
 
     def write_run_metadata(self, run_dir: Path, metadata: dict[str, Any]) -> Path:
         metadata_path = run_dir / METADATA_FILENAME
-        with metadata_path.open("w", encoding="utf-8") as f:
-            json.dump(metadata, f, indent=2)
+        self._store.put_bytes(
+            self._key_for(metadata_path), _metadata_bytes(metadata), allow_overwrite=True
+        )
         return metadata_path
 
     def write_run_metadata_atomic(self, run_dir: Path, metadata: dict[str, Any]) -> Path:
-        metadata_path = run_dir / METADATA_FILENAME
-        tmp_path = run_dir / f"{METADATA_FILENAME}.tmp"
-        with tmp_path.open("w", encoding="utf-8") as f:
-            json.dump(metadata, f, indent=2)
-        tmp_path.replace(metadata_path)
-        return metadata_path
+        """Replace ``metadata.json`` for a run.
+
+        Both object stores write the whole object in one step, so a reader
+        never sees a partial file. Kept as a separate name for existing callers.
+        """
+        return self.write_run_metadata(run_dir, metadata)
 
     def filename_for(self, stem: str) -> str:
         """Return the format-correct filename for a given stem."""
@@ -353,10 +395,8 @@ class StorageManager:
     ) -> dict[str, Any]:
         resolved_run_dir = self._resolve_run_dir(run_dir, latest=latest)
         metadata_path = resolved_run_dir / METADATA_FILENAME
-        if not metadata_path.exists():
-            raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
-        with metadata_path.open(encoding="utf-8") as f:
-            return json.load(f)
+        body = self._read_object(metadata_path, missing_message=METADATA_NOT_FOUND_MESSAGE)
+        return json.loads(body.decode("utf-8"))
 
 
 class BlueskyStorageManager(StorageManager):
@@ -433,11 +473,10 @@ class TwitterStorageManager(StorageManager):
     ) -> pd.DataFrame:
         resolved_run_dir = self._resolve_run_dir(run_dir, latest=latest)
         csv_path = resolved_run_dir / (filename or self.records_filename)
-        if not csv_path.exists():
-            raise FileNotFoundError(f"Records file not found: {csv_path}")
+        body = self._read_object(csv_path, missing_message=RECORDS_NOT_FOUND_MESSAGE)
 
         return pd.read_csv(
-            csv_path,
+            BytesIO(body),
             keep_default_na=False,
             dtype={
                 "tweet_id": "string",
