@@ -61,7 +61,17 @@ PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = (
     STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
 )
 
-REDDIT_PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = ()
+REDDIT_PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = (
+    "comment_fullname",
+    "record_id",
+    "author",
+    "body",
+    "created_at",
+    "sync_timestamp",
+    "text",
+    "author_handle",
+    STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
+)
 EXPECTED_WIDE_ROW_COUNT = 200000
 REDDIT_EXPECTED_WIDE_ROW_COUNT = 400000
 WIDE_SORT_KEY = f"{STANDARDIZED_SOURCE_RECORD_ID_COLUMN} ASC"
@@ -262,11 +272,27 @@ def build_llm_campaign_wide_table(
 
 
 def reddit_llm_campaign_wide_columns() -> tuple[str, ...]:
-    raise NotImplementedError
+    """Return the sixteen wide columns in Reddit campaign order."""
+    label_columns = tuple(
+        alias
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+        for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
+    )
+    return REDDIT_PREPROCESSED_WIDE_COLUMNS + label_columns
 
 
 def build_reddit_llm_campaign_wide_table(
     comments_file: Path,
     feature_files: dict[str, Path],
 ) -> pd.DataFrame:
+    """Inner-join pinned comments to seven campaign ``final.parquet`` files on ``source_record_id``.
+
+    Rows are sorted by ``source_record_id`` ascending. Duplicate feature ids keep
+    the latest ``label_timestamp``.
+
+    Raises
+    ------
+    KeyError
+        When a campaign feature path is missing from ``feature_files``.
+    """
     raise NotImplementedError
