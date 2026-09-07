@@ -16,6 +16,7 @@ import pandas as pd
 import typer
 from pydantic import BaseModel
 
+from data_platform.generate_features.campaign_engine_map import campaign_engine_type
 from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
     generate_campaign_feature,
@@ -460,9 +461,17 @@ def _require_campaign_flags(
     if not feature_subset or len(feature_subset) != 1:
         raise ValueError(CAMPAIGN_SINGLE_FEATURE_ERROR)
     (feature_name,) = generate_feature_subset(feature_subset) or ()
-    if FEATURE_REGISTRY[feature_name].engine_type != "openai":
-        raise ValueError(CAMPAIGN_ENGINE_ERROR)
+    _require_campaign_engine(campaign_id, feature_name)
     return campaign_id, preprocessed_run, feature_name
+
+
+def _require_campaign_engine(campaign_id: str, feature_name: str) -> None:
+    """Raise ``ValueError`` when the campaign feature is not OpenAI or Bedrock."""
+    if FEATURE_REGISTRY[feature_name].engine_type == "thread_pool":
+        raise ValueError(CAMPAIGN_ENGINE_ERROR)
+    engine_type = campaign_engine_type(campaign_id, feature_name)
+    if engine_type not in CAMPAIGN_ENGINE_TYPES:
+        raise ValueError(CAMPAIGN_ENGINE_ERROR)
 
 
 def generate_platform_campaign_feature(
@@ -484,7 +493,8 @@ def generate_platform_campaign_feature(
     ValueError
         When only one of ``campaign_id`` and ``preprocessed_run`` is given, when
         ``checkpoint`` is given, when ``batch_size`` is not 2000, or when
-        ``feature_subset`` does not name exactly one OpenAI feature.
+        ``feature_subset`` does not name exactly one OpenAI or Bedrock campaign
+        feature.
     FileNotFoundError
         When the named preprocessed run has no records file.
     """

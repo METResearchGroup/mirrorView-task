@@ -7,6 +7,15 @@ Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \\
         --dataset-id reddit_<uuid> --checkpoint 2026_05_30-12:00:00
+
+Campaign mode writes immutable 2,000-row batch objects to S3 and resumes from
+that prefix on restart:
+
+    PYTHONPATH=. uv run python data_platform/generate_features/generate_reddit_features.py \\
+        --dataset-id reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079 \\
+        --preprocessed-run 2026_09_03-23:39:28 \\
+        --campaign-id reddit_2026_09_03_233928_llm_features_v1 \\
+        --features is_political --batch-size 2000
 """
 
 from __future__ import annotations
@@ -88,7 +97,26 @@ def generate_reddit_features(
         Feature name to the label file written in the feature run folder, or
         to the S3 feature prefix URI in campaign mode.
     """
-    raise NotImplementedError
+    if campaign_id is not None or preprocessed_run is not None:
+        feature_names = feature_subset or []
+        prefix_uri = generate_platform_campaign_feature(
+            REDDIT_SPEC,
+            dataset_id,
+            campaign_id=campaign_id,
+            preprocessed_run=preprocessed_run,
+            feature_subset=feature_subset,
+            batch_size=batch_size,
+            checkpoint=checkpoint,
+        )
+        return {feature_names[0]: prefix_uri}
+    return generate_platform_features(
+        REDDIT_SPEC,
+        dataset_id,
+        batch_size=batch_size,
+        max_concurrency=max_concurrency,
+        feature_subset=feature_subset,
+        checkpoint=checkpoint,
+    )
 
 
 if __name__ == "__main__":
