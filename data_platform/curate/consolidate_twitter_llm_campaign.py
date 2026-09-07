@@ -46,19 +46,29 @@ import boto3
 import duckdb
 import pandas as pd
 
+from data_platform.curate.apply_rules import (
+    ApplyRulesResult,
+    CurateRulesConfig,
+    FilterStepResult,
+    apply_rules,
+    load_rules_config,
+)
 from data_platform.curate.consolidate import (
     FEATURE_WIDE_COLUMNS,
     LLM_CAMPAIGN_FEATURE_NAMES,
     WIDE_SORT_KEY,
 )
+from data_platform.curate.runner import build_curate_metadata
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
     s3_uri,
 )
+from data_platform.utils.dataset import dataset_root, relative_run_path
 from data_platform.utils.object_store import DEFAULT_S3_REGION, S3_KEY_PREFIX, sha256_hex
 from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
-from data_platform.utils.storage import TwitterStorageManager
+from data_platform.utils.storage import DATA_ROOT, TwitterStorageManager
+from lib.timestamp_utils import get_current_timestamp
 
 MIRRORVIEW_RULES_PATH = (
     Path(__file__).resolve().parent / "configs" / "twitter" / "mirrorview.yaml"
@@ -471,13 +481,142 @@ def validate_wide_table(wide: pd.DataFrame) -> None:
     _validate_wide_labels(wide, expected)
 
 
+def _upload_bytes(store: CampaignObjectStore, key: str, body: bytes) -> str:
+    stored = store.get(key)
+    if stored is None:
+        return store.put_new(key, body).sha256
+    return store.replace(key, body, etag=stored.etag).sha256
+
+
+def _full_data_key(path: Path) -> str:
+    return f"{S3_KEY_PREFIX}/{path.relative_to(DATA_ROOT).as_posix()}"
+
+
+def _curated_export_filename(stem: str) -> str:
+    return f"{stem}.{CURATED_EXPORT_SUFFIX}"
+
+
+def _filter_step_record(step: FilterStepResult) -> dict[str, Any]:
+    return {
+        **step.rule.model_dump(),
+        "records_before": step.records_before,
+        "records_passing": step.records_passing,
+    }
+
+
+def _stance_by_toxicity(filtered: pd.DataFrame) -> dict[str, dict[str, int]]:
+    counts: dict[str, dict[str, int]] = {
+        stance: {tier: 0 for tier in TOXICITY_CROSSTAB_COLUMNS} for stance in STANCE_CROSSTAB_ROWS
+    }
+    grouped = filtered.groupby(["political_stance", "llm_toxicity_tier"], dropna=False).size()
+    for (stance, tier), row_count in grouped.items():
+        stance_key = str(stance)
+        tier_key = str(tier)
+        counts.setdefault(stance_key, {})
+        counts[stance_key][tier_key] = int(row_count)
+    return counts
+
+
+def _write_curated_parquet(
+    store: CampaignObjectStore,
+    filtered: pd.DataFrame,
+    output_path: Path,
+) -> tuple[str, str]:
+    parquet_key = _full_data_key(output_path)
+    digest = _upload_bytes(store, parquet_key, filtered.to_parquet(index=False))
+    return parquet_key, digest
+
+
+def _curate_metadata_document(
+    args: CampaignConsolidateArgs,
+    rules: CurateRulesConfig,
+    rules_hash: str,
+    wide: pd.DataFrame,
+    filtered: pd.DataFrame,
+    applied: ApplyRulesResult,
+    export_filename: str,
+    stance_by_toxicity: dict[str, dict[str, int]],
+) -> dict[str, Any]:
+    dataset = dataset_root(TWITTER_PLATFORM, args.dataset_id)
+    preprocessed_dir = dataset / "preprocessed" / args.preprocessed_run
+    metadata = build_curate_metadata(
+        dataset_id=args.dataset_id,
+        rules_name=rules.name,
+        rules_hash=rules_hash,
+        source_preprocessed_runs=[relative_run_path(dataset, preprocessed_dir)],
+        wide_df=wide,
+        filtered_df=filtered,
+        rules_result=applied,
+        export_filename=export_filename,
+    )
+    metadata["crosstab_political_stance_by_llm_toxicity_tier"] = stance_by_toxicity
+    return metadata
+
+
+def _curated_record(
+    filtered: pd.DataFrame,
+    parquet_key: str,
+    parquet_sha: str,
+    metadata_key: str,
+    metadata_sha: str,
+    rules_hash: str,
+    applied: ApplyRulesResult,
+    stance_by_toxicity: dict[str, dict[str, int]],
+) -> CuratedDatasetRecord:
+    return CuratedDatasetRecord(
+        row_count=len(filtered),
+        parquet_key=parquet_key,
+        parquet_sha256=parquet_sha,
+        metadata_key=metadata_key,
+        metadata_sha256=metadata_sha,
+        rules_hash=rules_hash,
+        filter_steps=[_filter_step_record(step) for step in applied.steps],
+        stance_by_toxicity=stance_by_toxicity,
+    )
+
+
+def _object_sha256(store: CampaignObjectStore, key: str) -> str:
+    stored = store.get(key)
+    if stored is None:
+        raise FileNotFoundError(f"missing object after write: {s3_uri(store.bucket, key)}")
+    return sha256_hex(stored.body)
+
+
+def _apply_mirrorview_rules(
+    args: CampaignConsolidateArgs, wide: pd.DataFrame
+) -> tuple[CurateRulesConfig, str, ApplyRulesResult]:
+    rules = load_rules_config(args.curate_config)
+    rules_hash = hashlib.sha256(args.curate_config.read_bytes()).hexdigest()
+    return rules, rules_hash, apply_rules(wide, rules)
+
+
 def curate_mirrorview_dataset(
     store: CampaignObjectStore,
     wide: pd.DataFrame,
     args: CampaignConsolidateArgs,
 ) -> CuratedDatasetRecord:
     """Apply Twitter MirrorView YAML filters and upload ``mirrorview.parquet``."""
-    raise NotImplementedError
+    rules, rules_hash, applied = _apply_mirrorview_rules(args, wide)
+    filtered = applied.dataframe
+    curated_storage = TwitterStorageManager("curated", args.dataset_id)
+    run_dir = curated_storage.create_new_run_dir(get_current_timestamp())
+    export_filename = _curated_export_filename(rules.output.stem)
+    parquet_key, parquet_sha = _write_curated_parquet(store, filtered, run_dir / export_filename)
+    stance_by_toxicity = _stance_by_toxicity(filtered)
+    metadata = _curate_metadata_document(
+        args, rules, rules_hash, wide, filtered, applied, export_filename, stance_by_toxicity
+    )
+    metadata_key = _full_data_key(curated_storage.write_run_metadata(run_dir, metadata))
+    return _curated_record(
+        filtered,
+        parquet_key,
+        parquet_sha,
+        metadata_key,
+        _object_sha256(store, metadata_key),
+        rules_hash,
+        applied,
+        stance_by_toxicity,
+    )
 
 
 def upload_wide_artifacts(
