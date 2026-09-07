@@ -52,7 +52,7 @@ Call `load_deterministic_ten_posts(..., spec=TWITTER_SPEC)`.
 
 Call `build_feature_cost_report` with `full_run_post_count` equal to YAML `row_count` `6374`, not `FULL_RUN_POST_COUNT`.
 
-Interrupt and resume only the OpenAI Batch job for the requested feature. Default live proof uses `is_news_or_opinion`.
+Interrupt and resume only for `is_news_or_opinion`. The other six features submit one OpenAI Batch job, wait, and do not write `resume_evidence.json`. Default live proof uses `is_news_or_opinion`.
 
 Write untagged smoke objects under the disposable prefix. Never write `batches/part-*.parquet`.
 

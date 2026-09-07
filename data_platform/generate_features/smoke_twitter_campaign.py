@@ -1,8 +1,12 @@
-"""Ten-post smoke for one feature of the Twitter LLM campaign, with interrupt-and-resume.
+"""Ten-post smoke for one feature of the Twitter LLM campaign.
+
+Interrupt-and-resume, including ``resume_evidence.json``, runs only for
+``is_news_or_opinion``. The other six features submit one OpenAI Batch job
+and wait. They write input, output, and cost objects only.
 
 The Bluesky smoke module cannot be imported in this tree because it still
-names helpers that were renamed. This file keeps the same interrupt, resume,
-and S3-check flow using ``attach_row_metadata`` and ``campaign_row_columns``.
+names helpers that were renamed. This file keeps the same labeling flow
+using ``attach_row_metadata`` and ``campaign_row_columns``.
 
 Run from the repo root:
 
@@ -97,8 +101,10 @@ JSON_INDENT = 2
 CHECK_SMOKE_OBJECTS_UNTAGGED = "smoke_objects_exist_untagged"
 CHECK_SMOKE_OUTPUT_OK = "s3_smoke_output_ok"
 CHECK_RESUME_EVIDENCE_OK = "s3_smoke_resume_evidence_ok"
+CHECK_RESUME_EVIDENCE_ABSENT = "resume_evidence_absent"
 CHECK_NO_BATCHES = "no_batches_prefix_objects"
 CHECK_PRIMARY_TOUCHED = "primary_smoke_prefix_touched"
+INTERRUPT_AND_RESUME_FEATURE = "is_news_or_opinion"
 SMOKE_RUN_DIR_PREFIX = "smoke_twitter_campaign_"
 
 
@@ -166,9 +172,11 @@ class SmokeResult:
 
     smoke_prefix_uri: str
     cost_report: dict[str, Any]
-    resume_evidence: dict[str, Any]
+    resume_evidence: dict[str, Any] | None
     checks: dict[str, bool]
     cost_report_path: Path
+    rows_written: int
+    require_resume_evidence: bool
 
 
 def build_twitter_smoke_paths(
@@ -219,6 +227,11 @@ def _tasks(posts: pd.DataFrame) -> list[LabelTask]:
 
 def _submit_calls(client: CountingOpenAIClient) -> dict[str, int]:
     return {name: client.calls[name] for name in (FILES_CREATE_CALL, BATCHES_CREATE_CALL)}
+
+
+def interrupt_and_resume_enabled(feature: str) -> bool:
+    """True only for ``is_news_or_opinion``, the one feature that writes resume evidence."""
+    return feature == INTERRUPT_AND_RESUME_FEATURE
 
 
 def submit_and_interrupt(
@@ -368,14 +381,16 @@ def write_smoke_objects(
     spec: FeatureSpec,
     run_id: str,
     cost_report: dict[str, Any],
-    resume_evidence: dict[str, Any],
+    resume_evidence: dict[str, Any] | None,
 ) -> None:
-    """Put the four untagged smoke objects under ``paths.smoke_prefix`` with If-None-Match *.
+    """Put untagged smoke objects under ``paths.smoke_prefix`` with If-None-Match *.
+
+    Writes ``resume_evidence.json`` only when ``resume_evidence`` is not None.
 
     Raises
     ------
     FileExistsError
-        When any of the four objects already exists.
+        When any of the objects already exists.
     ValueError
         When ``rows`` fail campaign row validation.
     """
@@ -386,7 +401,8 @@ def write_smoke_objects(
     )
     store.put_new(paths.smoke_output_key, rows_to_parquet_bytes(rows, campaign_row_columns(spec)))
     store.put_new(paths.smoke_cost_report_key, _json_bytes(cost_report))
-    store.put_new(paths.smoke_resume_evidence_key, _json_bytes(resume_evidence))
+    if resume_evidence is not None:
+        store.put_new(paths.smoke_resume_evidence_key, _json_bytes(resume_evidence))
 
 
 def _exists_untagged(store: CampaignObjectStore, key: str) -> tuple[bool, bool]:
@@ -401,17 +417,20 @@ def run_s3_checks(
     *,
     spec: FeatureSpec,
     primary_smoke_keys_before: list[str],
+    require_resume_evidence: bool,
 ) -> tuple[dict[str, bool], list[str]]:
     """Verify the smoke objects and return named checks plus one text line per observation."""
     paths = smoke_paths.paths
     lines: list[str] = []
-    all_untagged = True
-    for key in (
+    required_keys = [
         paths.smoke_input_key,
         paths.smoke_output_key,
         paths.smoke_cost_report_key,
-        paths.smoke_resume_evidence_key,
-    ):
+    ]
+    if require_resume_evidence:
+        required_keys.append(paths.smoke_resume_evidence_key)
+    all_untagged = True
+    for key in required_keys:
         exists, untagged = _exists_untagged(store, key)
         all_untagged = all_untagged and exists and untagged
         lines.append(f"exists {paths.uri(key)}={str(exists).lower()}")
@@ -426,8 +445,13 @@ def run_s3_checks(
         lines.append(f"output_rows={len(frame)}")
         lines.append(f"output_columns={list(frame.columns)}")
     evidence = store.get(paths.smoke_resume_evidence_key)
+    resume_present = evidence is not None
+    if not require_resume_evidence:
+        lines.append(
+            f"exists {paths.uri(paths.smoke_resume_evidence_key)}={str(resume_present).lower()}"
+        )
     resume_ok = False
-    if evidence is not None:
+    if require_resume_evidence and evidence is not None:
         resume_ok = bool(json.loads(evidence.body.decode("utf-8")).get("resume_ok"))
     batch_keys = store.list_keys(paths.batches_prefix)
     lines.append(f"batches_prefix={paths.uri(paths.batches_prefix)} objects={len(batch_keys)}")
@@ -439,10 +463,13 @@ def run_s3_checks(
     checks = {
         CHECK_SMOKE_OBJECTS_UNTAGGED: all_untagged,
         CHECK_SMOKE_OUTPUT_OK: output_ok and all_untagged,
-        CHECK_RESUME_EVIDENCE_OK: resume_ok and all_untagged,
         CHECK_NO_BATCHES: not batch_keys,
         CHECK_PRIMARY_TOUCHED: primary_after != primary_smoke_keys_before,
     }
+    if require_resume_evidence:
+        checks[CHECK_RESUME_EVIDENCE_OK] = resume_ok and all_untagged
+    else:
+        checks[CHECK_RESUME_EVIDENCE_ABSENT] = not resume_present
     lines.extend(f"{name}={str(value).lower()}" for name, value in checks.items())
     return checks, lines
 
@@ -452,14 +479,15 @@ def write_git_copies(
     feature: str,
     *,
     cost_report: dict[str, Any],
-    resume_evidence: dict[str, Any],
+    resume_evidence: dict[str, Any] | None,
     check_lines: list[str],
 ) -> Path:
-    """Write the cost report, resume evidence, and S3 check lines under ``output_dir``."""
+    """Write the cost report, optional resume evidence, and S3 check lines under ``output_dir``."""
     output_dir.mkdir(parents=True, exist_ok=True)
     report_path = output_dir / f"{feature}{COST_REPORT_SUFFIX}"
     report_path.write_bytes(_json_bytes(cost_report))
-    (output_dir / f"{feature}{RESUME_EVIDENCE_SUFFIX}").write_bytes(_json_bytes(resume_evidence))
+    if resume_evidence is not None:
+        (output_dir / f"{feature}{RESUME_EVIDENCE_SUFFIX}").write_bytes(_json_bytes(resume_evidence))
     (output_dir / f"{feature}{S3_CHECKS_SUFFIX}").write_text(
         "".join(f"{line}\n" for line in check_lines), encoding="utf-8"
     )
@@ -477,7 +505,11 @@ def run_twitter_campaign_smoke(
     pricing: BatchPricing,
     client_factory: Callable[[], OpenAIBatchClient] | None = None,
 ) -> SmokeResult:
-    """Label the ten smoke posts for ``feature`` with one deliberate interruption and resume."""
+    """Label the ten smoke posts for ``feature``.
+
+    ``is_news_or_opinion`` submits, interrupts, and resumes on a second client.
+    Every other OpenAI feature submits one job and waits on the same client.
+    """
     spec = FEATURE_REGISTRY.get(feature)
     if spec is None or spec.engine_type != CAMPAIGN_ENGINE_TYPE:
         raise ValueError(
@@ -491,14 +523,26 @@ def run_twitter_campaign_smoke(
     posts = load_deterministic_ten_posts(dataset_id, preprocessed_run, spec=TWITTER_SPEC)
     run_id = run_id_for_feature(campaign_id, feature)
     make_client = client_factory or create_openai_client
+    require_resume_evidence = interrupt_and_resume_enabled(feature)
     with tempfile.TemporaryDirectory(prefix=SMOKE_RUN_DIR_PREFIX) as run_dir_name:
         run_dir = Path(run_dir_name)
-        interrupted = submit_and_interrupt(
-            CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir
-        )
-        resumed = resume_and_collect_rows(
-            CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir, run_id=run_id
-        )
+        if require_resume_evidence:
+            interrupted = submit_and_interrupt(
+                CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir
+            )
+            collected = resume_and_collect_rows(
+                CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir, run_id=run_id
+            )
+            resume_evidence = build_resume_evidence(
+                feature=feature, run_id=run_id, interrupted=interrupted, resumed=collected
+            )
+            batch_id = interrupted.state["batch_id"]
+        else:
+            collected = resume_and_collect_rows(
+                CountingOpenAIClient(make_client()), spec, posts, run_dir=run_dir, run_id=run_id
+            )
+            resume_evidence = None
+            batch_id = collected.last_batch.id
     cost_report = build_feature_cost_report(
         campaign_id=campaign_id,
         dataset_id=dataset_id,
@@ -506,20 +550,17 @@ def run_twitter_campaign_smoke(
         feature=feature,
         model=DEFAULT_OPENAI_BATCH_ENGINE_CONFIG.model,
         smoke_uri=smoke_paths.paths.uri(smoke_paths.paths.smoke_prefix),
-        batch_id=interrupted.state["batch_id"],
-        batch_usage=resumed.last_batch.usage,
-        request_usages=resumed.request_usages,
+        batch_id=batch_id,
+        batch_usage=collected.last_batch.usage,
+        request_usages=collected.request_usages,
         pricing=pricing,
         full_run_post_count=int(campaign["row_count"]),
-    )
-    resume_evidence = build_resume_evidence(
-        feature=feature, run_id=run_id, interrupted=interrupted, resumed=resumed
     )
     write_smoke_objects(
         store,
         smoke_paths.paths,
         posts=posts,
-        rows=resumed.rows,
+        rows=collected.rows,
         spec=spec,
         run_id=run_id,
         cost_report=cost_report,
@@ -530,6 +571,7 @@ def run_twitter_campaign_smoke(
         smoke_paths,
         spec=spec,
         primary_smoke_keys_before=primary_smoke_keys_before,
+        require_resume_evidence=require_resume_evidence,
     )
     cost_report_path = write_git_copies(
         output_dir,
@@ -544,6 +586,8 @@ def run_twitter_campaign_smoke(
         resume_evidence=resume_evidence,
         checks=checks,
         cost_report_path=cost_report_path,
+        rows_written=len(collected.rows),
+        require_resume_evidence=require_resume_evidence,
     )
 
 
@@ -558,9 +602,9 @@ def summary_lines(result: SmokeResult) -> list[str]:
     """Return the stdout lines of one Twitter smoke run."""
     report = result.cost_report
     checks = result.checks
-    return [
+    lines = [
         f"smoke_prefix={result.smoke_prefix_uri}",
-        f"smoke_rows={result.resume_evidence['rows_written']}",
+        f"smoke_rows={result.rows_written}",
         f"full_run_row_count={report['full_run_post_count']}",
         f"avg_input_tokens={report['avg_input_tokens_per_request']}",
         f"max_input_tokens={report['max_input_tokens_per_request']}",
@@ -569,24 +613,41 @@ def summary_lines(result: SmokeResult) -> list[str]:
         f"estimated_full_run_usd_avg={report['estimated_full_run_usd_avg']}",
         f"estimated_full_run_usd_max={report['estimated_full_run_usd_max']}",
         f"{CHECK_SMOKE_OUTPUT_OK}={str(checks[CHECK_SMOKE_OUTPUT_OK]).lower()}",
-        f"{CHECK_RESUME_EVIDENCE_OK}={str(checks[CHECK_RESUME_EVIDENCE_OK]).lower()}",
-        f"{CHECK_NO_BATCHES}={str(checks[CHECK_NO_BATCHES]).lower()}",
-        f"{CHECK_PRIMARY_TOUCHED}={str(checks[CHECK_PRIMARY_TOUCHED]).lower()}",
-        f"cost_report={_display_path(result.cost_report_path)}",
     ]
-
-
-def checks_passed(checks: dict[str, bool]) -> bool:
-    """True when every smoke object check holds and no batches object exists."""
-    return all(
-        checks[name]
-        for name in (
-            CHECK_SMOKE_OBJECTS_UNTAGGED,
-            CHECK_SMOKE_OUTPUT_OK,
-            CHECK_RESUME_EVIDENCE_OK,
-            CHECK_NO_BATCHES,
+    if result.require_resume_evidence:
+        lines.append(
+            f"{CHECK_RESUME_EVIDENCE_OK}={str(checks[CHECK_RESUME_EVIDENCE_OK]).lower()}"
         )
+    else:
+        lines.append(
+            f"{CHECK_RESUME_EVIDENCE_ABSENT}={str(checks[CHECK_RESUME_EVIDENCE_ABSENT]).lower()}"
+        )
+    lines.extend(
+        [
+            f"{CHECK_NO_BATCHES}={str(checks[CHECK_NO_BATCHES]).lower()}",
+            f"{CHECK_PRIMARY_TOUCHED}={str(checks[CHECK_PRIMARY_TOUCHED]).lower()}",
+            f"cost_report={_display_path(result.cost_report_path)}",
+        ]
     )
+    return lines
+
+
+def checks_passed(checks: dict[str, bool], *, require_resume_evidence: bool) -> bool:
+    """True when the required smoke objects exist and no batches object exists.
+
+    Resume evidence is required only for ``is_news_or_opinion``. Other features
+    must not have ``resume_evidence.json``.
+    """
+    names = [
+        CHECK_SMOKE_OBJECTS_UNTAGGED,
+        CHECK_SMOKE_OUTPUT_OK,
+        CHECK_NO_BATCHES,
+    ]
+    if require_resume_evidence:
+        names.append(CHECK_RESUME_EVIDENCE_OK)
+    else:
+        names.append(CHECK_RESUME_EVIDENCE_ABSENT)
+    return all(checks[name] for name in names)
 
 
 def main(
@@ -619,7 +680,9 @@ def main(
     )
     for line in summary_lines(result):
         print(line)
-    if not checks_passed(result.checks):
+    if not checks_passed(
+        result.checks, require_resume_evidence=result.require_resume_evidence
+    ):
         raise typer.Exit(code=1)
 
 
