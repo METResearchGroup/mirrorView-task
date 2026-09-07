@@ -18,9 +18,10 @@ from pydantic import BaseModel
 
 from data_platform.generate_features.generate_features import (
     FeatureGenerationConfig,
+    generate_campaign_feature,
     generate_features,
 )
-from data_platform.generate_features.models import FeatureRunConfig
+from data_platform.generate_features.models import CampaignRunConfig, FeatureRunConfig
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.utils.dataset import validate_dataset_id
 from data_platform.utils.feature_labels import FeatureLabelQuery
@@ -42,6 +43,21 @@ CHECKPOINT_OPTION_HELP = (
     "Unfinished feature run timestamp to continue (e.g. 2026_05_30-12:00:00). "
     "Omit this flag to start a new feature run."
 )
+CAMPAIGN_BATCH_SIZE = 2000
+CAMPAIGN_ID_OPTION_HELP = (
+    "S3 campaign id (e.g. bluesky_2026_09_03_235130_llm_features_v1). Requires "
+    "--preprocessed-run, exactly one --features value, and --batch-size 2000. "
+    "Re-running the same command resumes from the campaign prefix in S3."
+)
+PREPROCESSED_RUN_OPTION_HELP = (
+    "Preprocessed run timestamp to label in campaign mode (e.g. 2026_09_03-23:51:30)."
+)
+CAMPAIGN_FLAGS_TOGETHER_ERROR = "--campaign-id and --preprocessed-run must be passed together"
+CAMPAIGN_CHECKPOINT_ERROR = "--checkpoint cannot be combined with --campaign-id"
+CAMPAIGN_BATCH_SIZE_ERROR = f"campaign mode requires --batch-size {CAMPAIGN_BATCH_SIZE}"
+CAMPAIGN_SINGLE_FEATURE_ERROR = "campaign mode requires exactly one --features value"
+CAMPAIGN_ENGINE_ERROR = "campaign mode requires a feature with engine_type 'openai'"
+PREPROCESSED_RUN_NAME_ERROR = "preprocessed-run must be a single run directory name"
 
 
 @dataclass(frozen=True)
@@ -389,6 +405,109 @@ def generate_platform_features(
     )
 
 
+def load_pinned_preprocessed_records(
+    spec: FeaturePlatformSpec,
+    dataset_id: str,
+    preprocessed_run: str,
+) -> pd.DataFrame:
+    """Load and validate the rows of one named preprocessed run.
+
+    Raises
+    ------
+    ValueError
+        When ``preprocessed_run`` is not a single folder name.
+    FileNotFoundError
+        When that run has no records file.
+    """
+    if not _is_single_dir_name(preprocessed_run):
+        raise ValueError(PREPROCESSED_RUN_NAME_ERROR)
+    storage = spec.storage_cls(StorageStage.PREPROCESSED, dataset_id)
+    records = storage.load_records(run_dir=storage.root_dir / preprocessed_run)
+    if records.empty:
+        return pd.DataFrame()
+    return pd.DataFrame(
+        spec.model_cls.model_validate(row).model_dump()
+        for row in records.to_dict(orient="records")
+    )
+
+
+def _is_single_dir_name(value: str) -> bool:
+    path = Path(value)
+    return (
+        not path.is_absolute()
+        and len(path.parts) == 1
+        and path.name not in {CURRENT_DIR_NAME, PARENT_DIR_NAME}
+    )
+
+
+def _require_campaign_flags(
+    campaign_id: str | None,
+    preprocessed_run: str | None,
+    feature_subset: list[str] | None,
+    batch_size: int,
+    checkpoint: str | None,
+) -> tuple[str, str, str]:
+    """Return ``(campaign_id, preprocessed_run, feature_name)`` or raise ``ValueError`` naming the bad flag."""
+    if campaign_id is None or preprocessed_run is None:
+        raise ValueError(CAMPAIGN_FLAGS_TOGETHER_ERROR)
+    if checkpoint is not None:
+        raise ValueError(CAMPAIGN_CHECKPOINT_ERROR)
+    if batch_size != CAMPAIGN_BATCH_SIZE:
+        raise ValueError(CAMPAIGN_BATCH_SIZE_ERROR)
+    if not feature_subset or len(feature_subset) != 1:
+        raise ValueError(CAMPAIGN_SINGLE_FEATURE_ERROR)
+    (feature_name,) = generate_feature_subset(feature_subset) or ()
+    if FEATURE_REGISTRY[feature_name].engine_type != "openai":
+        raise ValueError(CAMPAIGN_ENGINE_ERROR)
+    return campaign_id, preprocessed_run, feature_name
+
+
+def generate_platform_campaign_feature(
+    spec: FeaturePlatformSpec,
+    dataset_id: str,
+    *,
+    campaign_id: str | None,
+    preprocessed_run: str | None,
+    feature_subset: list[str] | None,
+    batch_size: int,
+    checkpoint: str | None = None,
+) -> str:
+    """Run campaign mode for exactly one feature and return its S3 feature prefix URI.
+
+    Re-running with the same flags resumes from the manifest under that prefix.
+
+    Raises
+    ------
+    ValueError
+        When only one of ``campaign_id`` and ``preprocessed_run`` is given, when
+        ``checkpoint`` is given, when ``batch_size`` is not 2000, or when
+        ``feature_subset`` does not name exactly one OpenAI feature.
+    FileNotFoundError
+        When the named preprocessed run has no records file.
+    """
+    campaign_id, preprocessed_run, feature_name = _require_campaign_flags(
+        campaign_id, preprocessed_run, feature_subset, batch_size, checkpoint
+    )
+    dataset_id = validate_dataset_id(dataset_id)
+    records = load_pinned_preprocessed_records(spec, dataset_id, preprocessed_run)
+    campaign = CampaignRunConfig(
+        campaign_id=campaign_id,
+        dataset_id=dataset_id,
+        preprocessed_run=preprocessed_run,
+        platform=spec.platform,
+        batch_size=batch_size,
+    )
+    paths = generate_campaign_feature(
+        records,
+        FEATURE_REGISTRY[feature_name],
+        campaign,
+        FeatureRunConfig(batch_size=batch_size),
+    )
+    prefix_uri = paths.uri(paths.prefix)
+    print(f"generate_features: campaign {campaign_id} {feature_name} -> {prefix_uri}")
+    return prefix_uri
+
+
 def build_feature_cli_main(spec: FeaturePlatformSpec, dataset_id_help: str):
     """Return the Typer command for one platform feature-generation script."""
 
@@ -408,8 +527,25 @@ def build_feature_cli_main(spec: FeaturePlatformSpec, dataset_id_help: str):
             "--checkpoint",
             help=CHECKPOINT_OPTION_HELP,
         ),
+        campaign_id: str | None = typer.Option(
+            None, "--campaign-id", help=CAMPAIGN_ID_OPTION_HELP
+        ),
+        preprocessed_run: str | None = typer.Option(
+            None, "--preprocessed-run", help=PREPROCESSED_RUN_OPTION_HELP
+        ),
     ) -> None:
-        """Generate feature labels. Pass --checkpoint to continue an unfinished feature run."""
+        """Generate feature labels. Pass --checkpoint to continue an unfinished feature run, or --campaign-id with --preprocessed-run for S3 campaign mode."""
+        if campaign_id is not None or preprocessed_run is not None:
+            generate_platform_campaign_feature(
+                spec,
+                dataset_id,
+                campaign_id=campaign_id,
+                preprocessed_run=preprocessed_run,
+                feature_subset=features_from_cli(features),
+                batch_size=batch_size,
+                checkpoint=checkpoint,
+            )
+            return
         generate_platform_features(
             spec,
             dataset_id,
