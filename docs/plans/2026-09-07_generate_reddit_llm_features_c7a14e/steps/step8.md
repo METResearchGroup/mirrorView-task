@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `is_structurally_complete` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+Structural completeness is the third Bedrock boolean feature and shares the same throttle ceiling as spam and self-containedness, so the operator never runs more than three Bedrock agents at eight threads and records any OpenAI content-filter retries before Step 11 joins labels. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -363,7 +361,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs `is_structurally_complete` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Bedrock Nova Micro is the primary engine, with OpenAI Batch retry for content-filter blocks. Operators also need a reviewed paper trail without label Parquet in Git.
+Structural completeness is the last Bedrock boolean feature, and running more than three Bedrock agents at eight threads risks throttling that slows all three features.
 
 ## Solution
 
@@ -371,7 +369,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/is_structura
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, Bedrock settings, content-filter retries, and validation results for one feature end to end.
+Steps 1 through 3 landed Bedrock campaign mode, so the run-report pull request records throttle-safe settings and validation for structural completeness only.
 
 ## How to run
 

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Upload the single pinned Reddit preprocessed comments parquet to `s3://mirrorview-experimental-artifacts/` using the exact repo-relative object key. Resolve the Git LFS pointer to real bytes before upload. Record a SHA-256 hash for the uploaded object in a committed inventory file. Leave the Git LFS pointer and tracked parquet file in the repository unchanged. Do not upload raw runs, dumps, or `dataset.json`.
+Campaign workers read preprocessed input from S3, so the implementer uploads the single pinned `comments.parquet` to `mirrorview-experimental-artifacts`, verifies SHA-256 against local bytes, and commits `s3_preprocessed_inventory.json` without removing the Git LFS pointer or uploading `dataset.json`, raw runs, or dumps.
 
 ## Dependencies
 
@@ -246,7 +246,7 @@ Add `migrate_reddit_preprocessed_to_s3.py` to upload the single pinned `comments
 
 ## Purpose
 
-Step 2 and Step 3 depend on S3-hosted preprocessed input. The pull request limits upload scope to one parquet file so the migration stays small and reviewable. Changing `StorageManager`, uploading raw dumps, or touching Bluesky data is out of scope.
+Step 2 and Step 3 depend on S3-hosted preprocessed input, and the pull request limits upload scope to one parquet file so the migration stays small and reviewable. Changing `StorageManager`, uploading raw dumps, or touching Bluesky data is out of scope.
 
 ## How to run
 

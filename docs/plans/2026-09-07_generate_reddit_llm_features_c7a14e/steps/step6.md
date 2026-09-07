@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `is_likely_spam` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+Bedrock Nova Micro labels spam cheaper than OpenAI would, but content-filter blocks force an OpenAI retry that adds cost the smoke estimate may miss, so the operator runs at most three parallel Bedrock agents with eight threads each, records `bedrock_content_filter` in `errors.jsonl`, and waits for parent sign-off before labeling 400,000 boolean rows. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -363,7 +361,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs `is_likely_spam` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Bedrock Nova Micro is the primary engine, with OpenAI Batch retry for content-filter blocks. Operators also need a reviewed paper trail without label Parquet in Git.
+Bedrock Nova Micro is the primary engine for spam labels, but content-filter blocks add OpenAI Batch cost on retry, and Step 11 cannot proceed until all 400,000 boolean labels validate on S3.
 
 ## Solution
 
@@ -371,7 +369,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/is_likely_sp
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, Bedrock settings, content-filter retries, and validation results for one feature end to end.
+Steps 1 through 3 landed Bedrock campaign mode and content-filter retry, so the run-report pull request records Bedrock thread settings, filter retry counts, and actual mixed-engine cost for spam detection only.
 
 ## How to run
 

@@ -1,5 +1,7 @@
 # Generate seven mixed-engine S3-backed LLM features for 400,000 Reddit comments
 
+No feature agent should touch production batches until the repository owner signs off on the mixed-engine cost in the parent GitHub issue, because a mistaken full run on 400,000 comments is expensive to unwind.
+
 ## Remember
 - Exact file paths always
 - Exact commands with expected output
@@ -10,13 +12,11 @@
 
 ## Overview
 
-Generate seven LLM features for the pinned 400,000-comment Reddit dataset from PR #162. Upload only the preprocessed `comments.parquet` to the `mirrorview-experimental-artifacts` S3 bucket while keeping Git LFS for local development. Reuse the Bluesky epic S3 default backend, OpenAI Batch resume, 2,000-row Parquet campaign writer, progress watcher, and 30-day lifecycle rule for tagged batch objects.
-
-Four features run on OpenAI Batch with `gpt-5.4-nano`. Three features run on Amazon Bedrock Converse with `us.amazon.nova-micro-v1:0`. Each feature run writes 200 immutable 2,000-row Parquet batch objects, a final feature Parquet file, a hash manifest, progress records, and a permanent run report. A final step joins the seven outputs with the complete preprocessed comment records and runs the MirrorView curation export.
+The campaign labels PR #162's pinned 400,000 Reddit comments with seven LLM features, reusing the Bluesky epic's S3 backend, OpenAI Batch resume, 2,000-row Parquet writer, progress watcher, and 30-day lifecycle rule for tagged batch objects. Reddit differs in two ways: operators upload only preprocessed `comments.parquet` to `mirrorview-experimental-artifacts` while Git LFS keeps the local copy, and four features run on OpenAI Batch (`gpt-5.4-nano`) while three run on Bedrock Converse (`us.amazon.nova-micro-v1:0`). Each feature writes 200 immutable batch objects, `final.parquet`, a SHA-256 manifest, progress records, and a permanent run report. Step 11 joins all seven outputs to the nine preprocessed comment columns and runs the MirrorView curation export.
 
 ## Happy flow
 
-An operator merges Steps 1 through 3, then runs seven feature agents after explicit sign-off on the parent GitHub issue. Each agent runs the same ten-comment smoke sample once through `smoke_reddit_campaign.py` and posts its cost estimate to its feature issue. The parent issue records the mixed-engine aggregate estimate and waits for one owner approval before the agents process the remaining comments.
+The operator merges Steps 1 through 3, then each of seven feature agents runs the same ten-comment smoke once through `smoke_reddit_campaign.py` and posts a per-feature cost estimate. The parent issue holds the mixed-engine aggregate until the repository owner approves production labeling, and only then may agents process the remaining 399,990 comments per feature.
 
 ```mermaid
 flowchart TD
@@ -43,27 +43,27 @@ flowchart TD
 
 ## Approach
 
-Use the fixed dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and preprocessed run `2026_09_03-23:39:28`. Record the input hash so a later dataset requires a separate campaign.
+Pin dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and preprocessed run `2026_09_03-23:39:28`, and record the input hash so a different dataset forces a new campaign id.
 
-Store campaign artifacts under `s3://mirrorview-experimental-artifacts/data_platform/data/`. Use campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature so parallel agents cannot change the same metadata. Keep one blocking provider job per OpenAI feature agent, persist provider job IDs in `active_openai_batch.json` before polling, and resume the existing provider job after an interruption. Bedrock features use `active_bedrock_job.json` as the resume cursor with one process and eight threads per part.
+Campaign artifacts live under `s3://mirrorview-experimental-artifacts/data_platform/data/` with campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature, so parallel agents never overwrite each other's metadata. OpenAI features keep one blocking Batch job per agent, persist provider job IDs in `active_openai_batch.json` before polling, and resume the same job after interruption. Bedrock features resume through `active_bedrock_job.json` with one process and eight threads per 2,000-row part, and at most three Bedrock agents may run at once because throughput experiments showed throttling above four eight-thread processes.
 
-Smoke writes untagged evidence under `{feature}/smoke/` and never writes production `batches/part-*.parquet`. After parent approval, the first production job labels 1,990 new comments for OpenAI features, or processes one 2,000-comment part for Bedrock features. The new labeled rows are combined with the ten unchanged smoke output rows into `part-00000.parquet` where the schedule requires it. The remaining parts each label 2,000 comments.
+Smoke writes untagged evidence under `{feature}/smoke/` and never writes production `batches/part-*.parquet`. After parent approval, `part-00000` folds ten unchanged smoke rows with 1,990 new labels (OpenAI) or one full Bedrock part, and parts `part-00001` through `part-00199` each add 2,000 new labels.
 
-Bedrock content-filter failures are recorded in `errors.jsonl` with reason `bedrock_content_filter`, then retried through OpenAI Batch inside the same feature command. The manifest keeps `engine_type=bedrock` and adds an `openai_content_filter_retry` block. Other Bedrock failures stay failed.
+When Bedrock blocks a comment on content filter, the operator records `bedrock_content_filter` in `errors.jsonl` and retries that id through OpenAI Batch inside the same feature command, which adds OpenAI cost that smoke estimates may undercount. The manifest keeps `engine_type=bedrock` and adds an `openai_content_filter_retry` block; other Bedrock failures stay failed.
 
-Each feature issue is one future pull request. Temporary Git smoke inputs, outputs, cost records, and resume evidence are committed for review and removed before merge. S3 smoke evidence under `{feature}/smoke/` remains. The permanent run report records the S3 locations, hashes, model and prompt identity, costs, throughput, retries, validation checks, and label counts.
+Each feature issue maps to one pull request. Temporary Git smoke artifacts are committed for review and deleted before merge, while S3 smoke evidence under `{feature}/smoke/` remains. The permanent run report records S3 locations, hashes, model and prompt identity, costs, throughput, retries, validation checks, and label counts.
 
-See `campaign_contract.md` for the full dependency graph, S3 layout, engine map, and schemas.
+See `campaign_contract.md` for the dependency graph, S3 layout, engine map, and schemas.
 
 ## Decisions
 
 - Pinned identities, S3 layout, engine map, schemas, and the dependency graph live in `campaign_contract.md`.
-- Each feature pull request runs one shared ten-comment smoke, then waits for aggregate parent-issue cost approval before the full 400,000-comment run.
-- Human approval is recorded on the parent GitHub issue only. No repository approval file.
-- Do not add or run automated tests. Use only the approved smoke and basic runtime checks defined in the step specs.
-- Do not change global feature registry defaults. The campaign engine map overrides engines per feature for this campaign only.
-- Do not add a new lifecycle issue. The existing 30-day rule already covers objects tagged `intermediate-artifact=true` under `data_platform/data/`.
-- The watcher CLI never posts to GitHub. An external agent posts prepared markdown.
+- Each feature pull request runs one shared ten-comment smoke, then waits for parent-issue cost approval before the 400,000-comment run.
+- The repository owner records approval on the parent GitHub issue only; there is no `APPROVED.txt` or other repository gate.
+- Steps 4 through 10 use live smoke and basic runtime checks only; do not add automated tests.
+- The campaign engine map overrides engines per feature for `reddit_2026_09_03_233928_llm_features_v1` only; do not change global `FEATURE_REGISTRY` defaults.
+- The existing 30-day lifecycle rule already expires objects tagged `intermediate-artifact=true` under `data_platform/data/`; do not open a new lifecycle issue.
+- The watcher CLI prints prepared markdown and never posts to GitHub; an external agent posts feature-issue comments.
 
 ## Steps
 

@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `llm_toxicity_tiered` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+`llm_toxicity_tiered` is the LLM toxicity tier feature for MirrorView and must stay separate from Perspective `is_toxic_tiered`, so the operator labels `low`, `medium`, and `high` tiers through OpenAI Batch across 400,000 comments after parent sign-off. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -347,7 +345,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs LLM tiered toxicity labels for all 400,000 pinned comments before the wide join in Step 11 can run. The feature is separate from Perspective `is_toxic_tiered`. Operators also need a reviewed paper trail without label Parquet in Git.
+MirrorView needs `llm_toxicity_tier` and must not mix in Perspective `is_toxic_tiered`, so Step 11 waits until OpenAI Batch labels all 400,000 comments with `low`, `medium`, or `high`.
 
 ## Solution
 
@@ -355,7 +353,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/llm_toxicity
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, throughput, and validation results for one feature end to end.
+Steps 1 through 3 landed the campaign CLI, so the run-report pull request records OpenAI Batch cost and tier counts for `llm_toxicity_tiered` only, with no Perspective columns.
 
 ## How to run
 

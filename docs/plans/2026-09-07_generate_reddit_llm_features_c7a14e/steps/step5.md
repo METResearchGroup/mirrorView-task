@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `is_political` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+Political detection on OpenAI Batch blocks the wide join until `is_political` labels exist for all 400,000 comments, so the operator runs smoke, posts the cost estimate, waits for parent sign-off, then writes 200 immutable batch objects and `final.parquet` on S3. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -342,7 +340,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs `is_political` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Operators also need a reviewed paper trail without label Parquet in Git.
+Step 11 needs a boolean `is_political` column on every comment before the wide join, and operators need cost evidence on the feature issue before the repository owner approves production labeling.
 
 ## Solution
 
@@ -350,7 +348,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/is_political
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, throughput, and validation results for one feature end to end.
+Steps 1 through 3 landed the campaign CLI, so the run-report pull request records OpenAI Batch throughput and boolean label counts for political detection only.
 
 ## How to run
 

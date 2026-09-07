@@ -2,9 +2,7 @@
 
 ## Goal
 
-Add campaign mode for the pinned Reddit LLM feature campaign with a per-feature engine map that selects OpenAI Batch or Bedrock Converse per feature without changing `FEATURE_REGISTRY` defaults. Bedrock features write the same S3 batch layout as OpenAI features, resume through a separate `active_bedrock_job.json` cursor, and retry Bedrock content-filter failures through OpenAI Batch. Record `engine_type` on `manifest.json` identity fields and local `metadata.json`. Wire `generate_reddit_features.py` with `campaign_id` and `preprocessed_run` like the Bluesky entry point. Fix `FeaturePaths` callers so Reddit campaign paths do not default to Bluesky.
-
-The pull request ships product code and is independently mergeable. Do not run the full `400000` comment production job in the pull request.
+Reddit needs three Bedrock features without changing Bluesky defaults, so the implementer adds a campaign-only engine map, a Bedrock resume cursor at `active_bedrock_job.json`, and OpenAI Batch retry for Bedrock content-filter blocks, then wires `generate_reddit_features.py` with `campaign_id` and `preprocessed_run`. The pull request ships product code and does not run the full 400,000-comment job.
 
 ## Dependencies
 
@@ -418,7 +416,7 @@ Adds mixed-engine S3 campaign mode for Reddit LLM features on campaign `reddit_2
 
 ## Purpose
 
-Reddit has `400000` comments to label across seven LLM features. OpenAI Batch labels the four category, political, and toxicity features. Bedrock Converse labels the three boolean structure features at lower on-demand cost. The campaign engine map applies only to this Reddit campaign so Bluesky behavior stays on OpenAI. Full production labeling and smoke tooling are out of scope for this PR.
+Reddit has `400000` comments to label across seven LLM features, and OpenAI Batch handles four while Bedrock Converse handles three boolean structure features at lower on-demand cost. The campaign engine map applies only to `reddit_2026_09_03_233928_llm_features_v1`, so Bluesky stays on OpenAI. Full production labeling and smoke tooling are out of scope for the pull request.
 
 ## Architecture
 

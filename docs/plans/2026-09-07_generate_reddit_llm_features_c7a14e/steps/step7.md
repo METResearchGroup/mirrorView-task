@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `is_self_contained` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+Self-containedness is a Bedrock boolean feature with the same content-filter retry path as spam detection, so the operator caps Bedrock concurrency at three agents, records filter retries in `manifest.json`, and waits for parent sign-off before serial 2,000-row parts finish all 400,000 comments. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -363,7 +361,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs `is_self_contained` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Bedrock Nova Micro is the primary engine, with OpenAI Batch retry for content-filter blocks. Operators also need a reviewed paper trail without label Parquet in Git.
+Self-containedness is a Bedrock boolean feature that shares throttle limits with the other two Bedrock agents, and Step 11 needs all 400,000 labels before the wide join.
 
 ## Solution
 
@@ -371,7 +369,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/is_self_cont
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, Bedrock settings, content-filter retries, and validation results for one feature end to end.
+Steps 1 through 3 landed Bedrock campaign mode, so the run-report pull request records concurrency settings and any OpenAI content-filter retries for self-containedness only.
 
 ## How to run
 

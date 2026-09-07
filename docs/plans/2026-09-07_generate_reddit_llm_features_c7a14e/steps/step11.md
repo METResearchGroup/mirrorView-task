@@ -2,13 +2,11 @@
 
 ## Goal
 
-Join the seven verified S3-backed LLM feature outputs to all nine pinned preprocessed comment columns by `source_record_id`. Write one deterministic wide Parquet file with exactly 400,000 unique rows and no missing feature values, plus a SHA-256 manifest. Apply the existing MirrorView YAML filters to that wide table and write a curated Parquet export plus metadata under the dataset `curated/` stage. Commit one permanent consolidation report that records wide validation, curated row count, and a `political_stance` by `llm_toxicity_tier` crosstab. Exclude all Perspective API columns.
-
-The work maps to one future pull request. Unlike Steps 4 through 10, the pull request may change consolidation and curation helper code. It does not run LLM labeling and does not add temporary smoke artifacts.
+MirrorView curation needs one wide table with all seven LLM columns and no missing rows, so the implementer joins seven verified `final.parquet` files to nine preprocessed comment columns on `source_record_id`, validates exactly 400,000 unique rows, uploads `wide/features.parquet`, and runs `data_platform/curate/configs/reddit/mirrorview.yaml`. Unlike Steps 4 through 10, the pull request may change consolidation code and commits `reports/wide_run_report.md` with a `political_stance` by `llm_toxicity_tier` crosstab.
 
 ## Dependencies
 
-Do not start until all of the following are merged. See `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/campaign_contract.md` when it exists on the branch.
+Do not start until all seven feature run reports are merged and each lists the final S3 URI and manifest digest used as input here. See `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/campaign_contract.md`.
 
 | Dependency | Requirement |
 |------------|-------------|
@@ -311,13 +309,13 @@ Part of #<parent>
 
 ## Summary
 
-Adds one CLI that joins seven Reddit LLM campaign feature files to pinned preprocessed comments and uploads a wide Parquet artifact plus a MirrorView curated export for dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`.
+Adds `consolidate_reddit_llm_campaign.py` to join seven verified `final.parquet` files to pinned preprocessed comments, upload `wide/features.parquet` with a SHA-256 manifest, and write a MirrorView curated export for dataset `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079`.
 
 The caller verifies each feature manifest, inner-joins on `source_record_id`, sorts ascending, writes untagged `wide/features.parquet` and `wide/manifest.json`, applies existing MirrorView AND filters, and writes `curated/<timestamp>/mirrorview.parquet` with `metadata.json` under the dataset curated stage.
 
 ## Purpose
 
-After Steps 4 through 10 finish, analysts need one wide table with all seven labels on every comment, and a MirrorView-filtered export ready for downstream study work. The consolidation step produces both artifacts in one deterministic run without re-labeling or changing filter rules.
+Analysts need one sixteen-column wide table with no missing labels before MirrorView filters run, so the implementer validates 400,000 unique `source_record_id` rows, applies `reddit/mirrorview.yaml` without changing filter semantics, and commits `reports/wide_run_report.md` with a stance-by-toxicity crosstab.
 
 Out of scope: re-running features, editing YAML semantics, Perspective columns, smoke artifacts, and automated tests.
 

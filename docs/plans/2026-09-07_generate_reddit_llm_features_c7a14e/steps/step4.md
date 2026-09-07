@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `is_news_or_opinion` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+OpenAI Batch must classify every pinned comment as `news`, `opinion`, or `neither` before Step 11 can join labels, so the operator runs the ten-comment smoke, posts the cost estimate to the feature issue, waits for parent issue sign-off, then labels 400,000 rows across 200 batch objects and commits only the permanent run report. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -344,7 +342,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs `is_news_or_opinion` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Operators also need a reviewed paper trail without label Parquet in Git.
+Step 11 cannot join `news_or_opinion_category` until OpenAI Batch finishes `is_news_or_opinion` for all 400,000 pinned comments, and operators need a reviewed paper trail without label Parquet in Git.
 
 ## Solution
 
@@ -352,7 +350,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/is_news_or_o
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, throughput, and validation results for one feature end to end.
+Steps 1 through 3 landed the campaign CLI and smoke tooling, so the run-report pull request records smoke estimate, actual OpenAI Batch cost, and validation for the news or opinion classifier only.
 
 ## How to run
 

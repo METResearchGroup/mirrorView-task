@@ -2,9 +2,7 @@
 
 ## Goal
 
-Run the approved ten-comment smoke flow and the full 400,000-comment production run for the `political_stance` feature only. Publish immutable S3 batches, `final.parquet`, `manifest.json`, `progress.jsonl`, validation results, and one permanent run report. Do not change product code in this pull request. Do not commit label Parquet or CSV files to Git.
-
-The work maps to one future pull request and one GitHub feature issue. The issue stays open until the feature run is complete and validated.
+Political stance labels (`left`, `right`, `neutral`, `unclear`) run on OpenAI Batch like the other category features, so the operator follows the two-phase flow: smoke and cost post first, then 200 batch objects only after the repository owner approves on the parent issue. The pull request carries documentation and run artifacts only and does not change product code or commit label Parquet to Git.
 
 ## Dependencies
 
@@ -344,7 +342,7 @@ Part of #<parent>
 
 ## Problem
 
-The Reddit LLM campaign needs `political_stance` labels for all 400,000 pinned comments before the wide join in Step 11 can run. Operators also need a reviewed paper trail without label Parquet in Git.
+MirrorView filters on `political_stance`, so Step 11 cannot run until OpenAI Batch labels all 400,000 comments with `left`, `right`, `neutral`, or `unclear`.
 
 ## Solution
 
@@ -352,7 +350,7 @@ Phase A commits smoke cost and resume evidence under `reports/smoke/political_st
 
 ## Purpose
 
-Product code for campaign mode landed in Steps 1 through 3. The run-report pull request records smoke estimates, actual cost, throughput, and validation results for one feature end to end.
+Steps 1 through 3 landed the campaign CLI, so the run-report pull request records OpenAI Batch cost and stance label distribution for political stance only.
 
 ## How to run
 

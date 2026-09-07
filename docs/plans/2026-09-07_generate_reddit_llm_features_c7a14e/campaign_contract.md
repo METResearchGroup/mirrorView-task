@@ -1,6 +1,6 @@
 # Reddit LLM features campaign contract
 
-The file is the single cross-step contract for epic `2026-09-07_generate_reddit_llm_features_c7a14e`. Every implementation and run step that touches this campaign must match these values. Each step file also repeats the values its delegated task needs so the task cannot be misread.
+A wrong bucket path or engine assignment forces a 400,000-row rerun, so every step file repeats only the values its pull request needs and `campaign_contract.md` holds the rest.
 
 ## Pinned identities
 
@@ -25,7 +25,7 @@ Copy to S3 policy: upload only `comments.parquet`. Keep Git LFS for local copies
 
 ## Campaign engine map
 
-The campaign engine map overrides engines per feature for this campaign only. Do not change global feature registry defaults.
+The campaign engine map overrides engines per feature for `reddit_2026_09_03_233928_llm_features_v1` only, so implementers do not change global `FEATURE_REGISTRY` defaults.
 
 | Feature | Engine | Model id |
 |---------|--------|----------|
@@ -127,7 +127,7 @@ Bedrock concurrency limits:
 
 - One process and eight threads per Bedrock part.
 - At most three Bedrock feature agents may run in parallel (24 in-flight requests).
-- Never run six or more Bedrock processes at once. Throughput experiments found four processes at eight threads peaked at 32 in-flight requests, and six or eight processes were throttled.
+- Never run six or more Bedrock processes at once, because throughput experiments found four processes at eight threads peaked at 32 in-flight requests and six or eight processes were throttled.
 
 Do not relabel the ten smoke comments. Do not run smoke twice.
 
@@ -167,7 +167,7 @@ On restart, reload `active_bedrock_job.json` and resume the current part from th
 
 ## Bedrock content-filter retry
 
-When Bedrock returns a content-filter failure for a comment:
+When Bedrock returns a content-filter failure for a comment, the operator pays twice if OpenAI Batch succeeds on retry, so the manifest records retry ids even though `engine_type` stays `bedrock`.
 
 1. Append one line to `errors.jsonl` with reason `bedrock_content_filter` and the `source_record_id`.
 2. Retry that comment through OpenAI Batch inside the same feature command run.
@@ -282,7 +282,7 @@ Steps 4 through 10 (each in its own feature PR):
 3. Post the estimated full-run cost to that feature's GitHub issue.
 4. Pause until all seven feature issues have estimates and the parent campaign issue has one mixed-engine aggregate estimate plus explicit human approval.
 
-Human approval is recorded on the parent GitHub issue only. No `APPROVED.txt` or other repository approval file.
+Human approval is recorded on the parent GitHub issue only, because a merged pull request or passing smoke alone does not authorize production labeling. No `APPROVED.txt` or other repository approval file exists.
 
 ## Cost pricing
 
@@ -368,12 +368,12 @@ Steps 4 through 10 require Step 3 smoke tooling, Step 2 engine map, Step 1 S3 in
 
 Do not start any 400,000-comment feature run in Steps 4 through 10 until all of the following are true:
 
-- The prerequisite implementation PR for Steps 1 through 3 has been reviewed and approved.
+- The prerequisite implementation pull request for Steps 1 through 3 has been reviewed and approved.
 - All seven ten-comment smoke runs and per-feature cost estimates have been posted.
 - The mixed-engine aggregate campaign cost estimate has been posted to the parent issue.
-- The repository owner has explicitly signed off in the parent issue on the prerequisite PR, smoke results, and aggregate cost estimate.
+- The repository owner has explicitly signed off in the parent issue on the prerequisite pull request, smoke results, and aggregate cost estimate.
 
-A merged PR or a passing smoke run alone is not permission to start a production run. The explicit owner sign-off in the parent issue is mandatory.
+A merged pull request or a passing smoke run alone is not permission to start production labeling, because the explicit owner sign-off in the parent issue is mandatory.
 
 ---
 
@@ -383,13 +383,13 @@ Child issue bodies live in each step file under `docs/plans/2026-09-07_generate_
 
 ### Parent issue body
 
-The campaign labels 400,000 pinned Reddit comments from PR #162 with seven mixed-engine LLM features. Operators upload the preprocessed `comments.parquet` to `mirrorview-experimental-artifacts` while Git LFS keeps the local copy. The work reuses the Bluesky epic S3 backend, OpenAI Batch resume, 2,000-row Parquet campaign writer, progress watcher, and 30-day lifecycle rule for tagged batch objects.
+The campaign labels 400,000 pinned Reddit comments from PR #162 with seven mixed-engine LLM features. Operators upload preprocessed `comments.parquet` to `mirrorview-experimental-artifacts` while Git LFS keeps the local copy, reusing the Bluesky epic S3 backend, OpenAI Batch resume, 2,000-row Parquet writer, progress watcher, and 30-day lifecycle rule for tagged batch objects.
 
 Four features run on OpenAI Batch with `gpt-5.4-nano`. Three features run on Amazon Bedrock Converse with `us.amazon.nova-micro-v1:0`. Each feature run writes 200 immutable 2,000-row Parquet batch objects, a final feature Parquet file, a hash manifest, progress records, and a permanent run report. Step 11 joins the seven outputs with all nine preprocessed comment columns and runs the MirrorView curation export.
 
-The dataset id is `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and the preprocessed run is `2026_09_03-23:39:28`. Campaign artifacts live under `s3://mirrorview-experimental-artifacts/data_platform/data/` with campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature. OpenAI features persist provider job IDs in `active_openai_batch.json` before polling and resume the existing provider job after an interruption. Bedrock features use `active_bedrock_job.json` with one process and eight threads per part. At most three Bedrock feature agents may run in parallel.
+Dataset id is `reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079` and preprocessed run is `2026_09_03-23:39:28`. Campaign artifacts live under `s3://mirrorview-experimental-artifacts/data_platform/data/` with campaign id `reddit_2026_09_03_233928_llm_features_v1` and one isolated prefix per feature. OpenAI features persist provider job IDs in `active_openai_batch.json` before polling and resume the existing provider job after interruption. Bedrock features use `active_bedrock_job.json` with one process and eight threads per part, and at most three Bedrock feature agents may run in parallel.
 
-Each child issue maps to one future pull request. Owner sign-off for production runs is recorded on the parent issue only. Do not start any 400,000-comment feature run until Steps 1 through 3 have merged, all seven smoke runs and per-feature cost estimates are posted, the mixed-engine aggregate estimate is posted here, and the repository owner signs off in a comment on the prerequisite pull request, smoke results, and aggregate cost.
+Each child issue maps to one future pull request. The repository owner records production approval on the parent issue only. Do not start any 400,000-comment feature run until Steps 1 through 3 have merged, all seven smoke runs and per-feature cost estimates are posted, the mixed-engine aggregate estimate is posted here, and the repository owner signs off in a comment on the prerequisite pull request, smoke results, and aggregate cost.
 
 Plan step: `docs/plans/2026-09-07_generate_reddit_llm_features_c7a14e/plan.md`
 
