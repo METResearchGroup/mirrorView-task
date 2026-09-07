@@ -9,6 +9,7 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import hashlib
 import subprocess
 from pathlib import Path
 
@@ -76,7 +77,7 @@ def read_scoped_bytes(repo_relative_path: str) -> bytes:
 
 def sha256_hex(data: bytes) -> str:
     """Return the lowercase hex SHA-256 digest of the bytes."""
-    raise NotImplementedError
+    return hashlib.sha256(data).hexdigest()
 
 
 def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
