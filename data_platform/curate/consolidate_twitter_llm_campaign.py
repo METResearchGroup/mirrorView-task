@@ -434,9 +434,41 @@ def build_twitter_llm_campaign_wide_table(
         conn.close()
 
 
+def _validate_wide_rows(wide: pd.DataFrame) -> None:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    if len(wide) != TWITTER_EXPECTED_WIDE_ROW_COUNT:
+        raise ValueError(f"wide_rows={len(wide)}, expected {TWITTER_EXPECTED_WIDE_ROW_COUNT}")
+    unique_ids = wide[id_column].astype(str).nunique()
+    if unique_ids != TWITTER_EXPECTED_WIDE_ROW_COUNT:
+        raise ValueError(
+            f"distinct source_record_id={unique_ids}, expected {TWITTER_EXPECTED_WIDE_ROW_COUNT}"
+        )
+    if not wide[id_column].astype(str).is_monotonic_increasing:
+        raise ValueError("wide rows are not sorted by source_record_id ASC")
+
+
+def _validate_wide_labels(wide: pd.DataFrame, expected_columns: tuple[str, ...]) -> None:
+    label_columns = expected_columns[len(TWITTER_PREPROCESSED_WIDE_COLUMNS) :]
+    null_counts = {
+        column: int(wide[column].isna().sum())
+        for column in label_columns
+        if int(wide[column].isna().sum()) > 0
+    }
+    if null_counts:
+        raise ValueError(f"null feature values: {null_counts}")
+
+
 def validate_wide_table(wide: pd.DataFrame) -> None:
     """Raise ValueError when the wide table misses the Twitter campaign contract."""
-    raise NotImplementedError
+    expected = twitter_llm_campaign_wide_columns()
+    actual = tuple(wide.columns)
+    if actual != expected:
+        raise ValueError(f"wide columns {actual} do not match {expected}")
+    _validate_wide_rows(wide)
+    forbidden = FORBIDDEN_WIDE_COLUMNS.intersection(actual)
+    if forbidden:
+        raise ValueError(f"wide table contains forbidden columns: {sorted(forbidden)}")
+    _validate_wide_labels(wide, expected)
 
 
 def curate_mirrorview_dataset(
