@@ -18,7 +18,11 @@ from urllib.parse import urlencode
 import boto3
 from botocore.exceptions import ClientError
 
-from data_platform.generate_features.metadata import model_id_for_spec, prompt_hash
+from data_platform.generate_features.campaign_engine_map import OPENAI_ENGINE_TYPE
+from data_platform.generate_features.metadata import (
+    model_id_for_campaign_engine,
+    prompt_hash,
+)
 from data_platform.generate_features.models import CampaignRunConfig, FeatureSpec
 from data_platform.generate_features.openai_batch_state import (
     load_active_batch_state,
@@ -397,7 +401,7 @@ def new_manifest(
     campaign: CampaignRunConfig,
     spec: FeatureSpec,
     expected_row_count: int,
-    engine_type: str = "openai",
+    engine_type: str = OPENAI_ENGINE_TYPE,
 ) -> dict[str, Any]:
     """Return a manifest with the campaign identity, an empty batch list, and no final file."""
     return {
@@ -405,11 +409,12 @@ def new_manifest(
         "dataset_id": campaign.dataset_id,
         "preprocessed_run": campaign.preprocessed_run,
         "feature": spec.name,
-        "model_id": model_id_for_spec(spec),
+        "model_id": model_id_for_campaign_engine(spec, engine_type),
         "prompt_hash": prompt_hash(spec.system_prompt),
         "batch_size": campaign.batch_size,
         "expected_row_count": expected_row_count,
         "run_id": run_id_for_feature(campaign.campaign_id, spec.name),
+        "engine_type": engine_type,
         "created_at": get_current_timestamp(),
         "batches": [],
         "final_parquet": None,
