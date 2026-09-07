@@ -10,9 +10,11 @@ analysis/data/*.csv
 test_data/*.csv
 *.csv
 data_platform/data/**
+# Pinned Bluesky dataset. Only the JSON manifests stay in git, and the parquet files live in S3.
 !data_platform/data/bluesky/
 !data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/
-!data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**
+!data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**/
+!data_platform/data/bluesky/bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73/**/*.json
 !data_platform/data/reddit/
 !data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/
 !data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/**

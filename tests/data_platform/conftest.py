@@ -9,6 +9,11 @@ import pytest
 
 import data_platform.utils.dataset as dataset_mod
 import data_platform.utils.storage as storage_mod
+from data_platform.utils.object_store import (
+    LOCAL_BACKEND,
+    S3_BUCKET_ENV_VAR,
+    STORAGE_BACKEND_ENV_VAR,
+)
 from tests.data_platform.constants import (
     LABEL_TIMESTAMP,
     SAMPLE_INGESTION_ROW,
@@ -16,6 +21,23 @@ from tests.data_platform.constants import (
     URI_POST_B,
     expected_bluesky_record_id,
 )
+
+FAKE_TEST_S3_BUCKET = "mirrorview-tests-must-not-touch-s3"
+
+
+@pytest.fixture(autouse=True)
+def local_storage_backend(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Keep every test on local disk storage and away from the production bucket.
+
+    The data platform defaults to the S3 backend when
+    ``DATA_PLATFORM_STORAGE_BACKEND`` is unset, so an unpinned test would read
+    and write ``mirrorview-experimental-artifacts`` whenever AWS credentials are
+    present. The fake bucket name means a test that sets the backend to ``s3``
+    on purpose still cannot reach the production bucket.
+    """
+    monkeypatch.setenv(STORAGE_BACKEND_ENV_VAR, LOCAL_BACKEND)
+    monkeypatch.setenv(S3_BUCKET_ENV_VAR, FAKE_TEST_S3_BUCKET)
+
 
 @pytest.fixture
 def data_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:

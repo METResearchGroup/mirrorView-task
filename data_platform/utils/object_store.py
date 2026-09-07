@@ -2,7 +2,8 @@
 
 Keys are paths relative to ``data_platform/data``, so the same key names a
 file under the local data root and an object under the S3 prefix. The env var
-``DATA_PLATFORM_STORAGE_BACKEND`` picks the backend and defaults to local disk.
+``DATA_PLATFORM_STORAGE_BACKEND`` picks the backend and defaults to S3. Set it
+to ``local`` to work from local disk.
 """
 
 from __future__ import annotations
@@ -246,16 +247,16 @@ def _content_type_for(key: str) -> str:
 def resolve_object_store(*, local_root: Path) -> ObjectStore:
     """Return the store selected by ``DATA_PLATFORM_STORAGE_BACKEND``.
 
-    Unset or ``local`` returns a ``LocalObjectStore`` over ``local_root``.
-    ``s3`` returns an ``S3ObjectStore`` over ``DATA_PLATFORM_S3_BUCKET``
-    (default ``mirrorview-experimental-artifacts``).
+    Unset or ``s3`` returns an ``S3ObjectStore`` over ``DATA_PLATFORM_S3_BUCKET``
+    (default ``mirrorview-experimental-artifacts``). ``local`` returns a
+    ``LocalObjectStore`` over ``local_root``.
 
     Raises
     ------
     ValueError
         When the backend value is not ``local`` or ``s3``.
     """
-    backend = os.environ.get(STORAGE_BACKEND_ENV_VAR, LOCAL_BACKEND).strip().lower()
+    backend = os.environ.get(STORAGE_BACKEND_ENV_VAR, S3_BACKEND).strip().lower()
     if backend == LOCAL_BACKEND:
         return LocalObjectStore(local_root)
     if backend == S3_BACKEND:
