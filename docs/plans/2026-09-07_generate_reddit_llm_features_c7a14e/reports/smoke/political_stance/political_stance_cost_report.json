@@ -1,0 +1,106 @@
+{
+  "campaign_id": "reddit_2026_09_03_233928_llm_features_v1",
+  "dataset_id": "reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079",
+  "preprocessed_run": "2026_09_03-23:39:28",
+  "feature": "political_stance",
+  "run_id": "reddit_2026_09_03_233928_llm_features_v1:political_stance",
+  "model": "gpt-5.4-nano",
+  "engine_type": "openai",
+  "smoke_uri": "s3://mirrorview-experimental-artifacts/data_platform/data/reddit/reddit_3d8a2c41-9b17-4e6f-a5d0-8c1b2e4f6079/features/reddit_2026_09_03_233928_llm_features_v1/political_stance/smoke/",
+  "generated_at": "2026_09_07-03:48:27",
+  "batch_id": "batch_6a9e338ff0b0819090d07979043bdabc",
+  "request_count": 10,
+  "pricing": {
+    "source_url": "https://developers.openai.com/api/docs/pricing",
+    "input_usd_per_million_tokens": 0.1,
+    "output_usd_per_million_tokens": 0.625
+  },
+  "batch_usage": {
+    "input_tokens": 4711,
+    "output_tokens": 196,
+    "total_tokens": 4907
+  },
+  "per_request": [
+    {
+      "source_record_id": "t1_mpxmfe6",
+      "request_id": "task-00000",
+      "input_tokens": 474,
+      "output_tokens": 19
+    },
+    {
+      "source_record_id": "t1_mpxmfoa",
+      "request_id": "task-00001",
+      "input_tokens": 462,
+      "output_tokens": 20
+    },
+    {
+      "source_record_id": "t1_mpxmfr2",
+      "request_id": "task-00002",
+      "input_tokens": 435,
+      "output_tokens": 19
+    },
+    {
+      "source_record_id": "t1_mpxmgbj",
+      "request_id": "task-00003",
+      "input_tokens": 483,
+      "output_tokens": 20
+    },
+    {
+      "source_record_id": "t1_mpxmgxp",
+      "request_id": "task-00004",
+      "input_tokens": 474,
+      "output_tokens": 20
+    },
+    {
+      "source_record_id": "t1_mpxmho3",
+      "request_id": "task-00005",
+      "input_tokens": 432,
+      "output_tokens": 20
+    },
+    {
+      "source_record_id": "t1_mpxmjkx",
+      "request_id": "task-00006",
+      "input_tokens": 626,
+      "output_tokens": 19
+    },
+    {
+      "source_record_id": "t1_mpxmk1u",
+      "request_id": "task-00007",
+      "input_tokens": 436,
+      "output_tokens": 20
+    },
+    {
+      "source_record_id": "t1_mpxmkdo",
+      "request_id": "task-00008",
+      "input_tokens": 447,
+      "output_tokens": 20
+    },
+    {
+      "source_record_id": "t1_mpxmlk4",
+      "request_id": "task-00009",
+      "input_tokens": 442,
+      "output_tokens": 19
+    }
+  ],
+  "avg_input_tokens_per_request": 471.1,
+  "avg_output_tokens_per_request": 19.6,
+  "max_input_tokens_per_request": 626,
+  "max_output_tokens_per_request": 20,
+  "smoke_cost_usd": 0.000594,
+  "full_run_post_count": 400000,
+  "full_run_row_count": 400000,
+  "estimated_full_run_usd_avg": 23.744,
+  "estimated_full_run_usd_max": 30.04,
+  "source_record_ids": [
+    "t1_mpxmfe6",
+    "t1_mpxmfoa",
+    "t1_mpxmfr2",
+    "t1_mpxmgbj",
+    "t1_mpxmgxp",
+    "t1_mpxmho3",
+    "t1_mpxmjkx",
+    "t1_mpxmk1u",
+    "t1_mpxmkdo",
+    "t1_mpxmlk4"
+  ]
+}
