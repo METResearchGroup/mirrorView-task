@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-07
+
+1. The pinned Reddit preprocessed comments parquet (400,000 comments, run `2026_09_03-23:39:28`) now exists in the `mirrorview-experimental-artifacts` S3 bucket at the repo-relative key, and a committed inventory records the SHA-256 of the single object. Git LFS still holds the local copy. [PR #230](https://github.com/METResearchGroup/mirrorView-task/pull/230)
+
 ## 2026-09-06
 
 1. Operators can compare Amazon Nova Micro on Bedrock Converse with the OpenAI Batch runs that label posts as news, opinion, or neither. A smoke run, the matching size jobs, and the matching process jobs now record throughput and estimated cost, and live feature generation still uses OpenAI. [PR #212](https://github.com/METResearchGroup/mirrorView-task/pull/212)
