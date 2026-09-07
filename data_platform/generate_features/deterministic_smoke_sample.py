@@ -61,7 +61,18 @@ def select_deterministic_sample(
 def load_deterministic_ten_posts_for_spec(
     spec: FeaturePlatformSpec, dataset_id: str, preprocessed_run: str
 ) -> pd.DataFrame:
-    """Load one pinned preprocessed run through ``spec`` and return its ten smoke rows."""
+    """Load one pinned preprocessed run through ``spec`` and return its ten smoke rows.
+
+    Parameters
+    ----------
+    spec
+        Platform storage and column settings. Bluesky callers pass ``BLUESKY_SPEC``.
+        Reddit callers pass ``REDDIT_SPEC``.
+    dataset_id
+        Dataset folder name under the platform's preprocessed tree.
+    preprocessed_run
+        Single preprocessed run directory name.
+    """
     records = load_pinned_preprocessed_records(spec, dataset_id, preprocessed_run)
     return select_deterministic_sample(records)
 
