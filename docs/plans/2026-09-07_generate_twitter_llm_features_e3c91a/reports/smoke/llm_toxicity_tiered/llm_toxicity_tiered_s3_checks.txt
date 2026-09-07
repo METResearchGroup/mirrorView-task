@@ -1,0 +1,16 @@
+exists s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/input.parquet=true
+untagged s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/input.parquet=true
+exists s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/output.parquet=true
+untagged s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/output.parquet=true
+exists s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/cost_report.json=true
+untagged s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/cost_report.json=true
+output_rows=10
+output_columns=['source_record_id', 'run_id', 'batch_id', 'request_id', 'attempt_count', 'label_timestamp', 'toxicity_tier']
+exists s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/resume_evidence.json=false
+batches_prefix=s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/batches/ objects=0
+primary_smoke_prefix=s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/llm_toxicity_tiered/smoke/ objects_before=0 objects_after=3
+smoke_objects_exist_untagged=true
+s3_smoke_output_ok=true
+no_batches_prefix_objects=true
+primary_smoke_prefix_touched=true
+resume_evidence_absent=true
