@@ -2,7 +2,8 @@
 
 ## 2026-09-07
 
-1. The pinned Twitter preprocessed `posts.csv` is on `mirrorview-experimental-artifacts` with a SHA-256 inventory, and Git LFS still holds the local copy. Operators can load campaign `twitter_2026_09_06_192847_llm_features_v1`, run a ten-post disposable smoke, scale cost math to 6,374 rows, and print watcher status without writing to GitHub. [PR #238](https://github.com/METResearchGroup/mirrorView-task/pull/238)
+1. Ten-post OpenAI Batch smokes for seven Twitter LLM features are on the primary campaign prefix, with cost estimates scaled to 6,374 rows. [PR #240](https://github.com/METResearchGroup/mirrorView-task/pull/240)
+2. The pinned Twitter preprocessed `posts.csv` is on `mirrorview-experimental-artifacts` with a SHA-256 inventory, and Git LFS still holds the local copy. Operators can load campaign `twitter_2026_09_06_192847_llm_features_v1`, run a ten-post disposable smoke, scale cost math to 6,374 rows, and print watcher status without writing to GitHub. [PR #238](https://github.com/METResearchGroup/mirrorView-task/pull/238)
 
 ## 2026-09-06
 
