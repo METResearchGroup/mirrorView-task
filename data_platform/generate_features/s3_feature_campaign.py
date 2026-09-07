@@ -391,6 +391,7 @@ def new_manifest(
     campaign: CampaignRunConfig,
     spec: FeatureSpec,
     expected_row_count: int,
+    engine_type: str = "openai",
 ) -> dict[str, Any]:
     """Return a manifest with the campaign identity, an empty batch list, and no final file."""
     return {
@@ -452,6 +453,28 @@ def save_active_state(
 def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
     """Remove the S3 active state once its chunk has a durable batch object."""
     store.delete(paths.active_state_key)
+
+
+def load_active_bedrock_state(
+    store: CampaignObjectStore, paths: FeaturePaths
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Return ``(state, etag)`` of ``active_bedrock_job.json``, or ``(None, None)`` when no job is open."""
+    raise NotImplementedError
+
+
+def save_active_bedrock_state(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    state: dict[str, Any],
+    etag: str | None,
+) -> str:
+    """Conditionally replace ``active_bedrock_job.json`` and return its new ETag."""
+    raise NotImplementedError
+
+
+def delete_active_bedrock_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
+    """Remove ``active_bedrock_job.json`` once its part has a durable batch object."""
+    raise NotImplementedError
 
 
 def manifest_sha256(manifest: dict[str, Any]) -> str:
