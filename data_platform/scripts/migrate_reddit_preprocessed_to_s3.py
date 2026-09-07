@@ -68,7 +68,10 @@ def read_scoped_bytes(repo_relative_path: str) -> bytes:
     ValueError
         If the file still starts with the Git LFS pointer header.
     """
-    raise NotImplementedError
+    data = (REPO_ROOT / repo_relative_path).read_bytes()
+    if data.startswith(LFS_POINTER_PREFIX):
+        raise ValueError(f"Git LFS pointer was not resolved to bytes: {repo_relative_path}")
+    return data
 
 
 def sha256_hex(data: bytes) -> str:
