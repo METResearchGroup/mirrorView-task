@@ -387,8 +387,14 @@ def _generate_bedrock_campaign_feature(
     paths: FeaturePaths,
     engine_type: str,
 ) -> FeaturePaths:
-    """Label a Bedrock-mapped campaign feature. Implemented in the Bedrock campaign writer."""
-    raise NotImplementedError
+    """Label a Bedrock-mapped campaign feature into immutable S3 batch objects."""
+    from data_platform.generate_features.engines.bedrock_campaign import (
+        run_bedrock_campaign_feature,
+    )
+
+    return run_bedrock_campaign_feature(
+        records, spec, campaign, run_config, paths, engine_type
+    )
 
 
 def _generate_openai_campaign_feature(
