@@ -180,8 +180,12 @@ def aggregate_cost_reports(
     campaign_id: str,
     smoke_reports_dir: Path,
     features: tuple[str, ...] = CAMPAIGN_LLM_FEATURES,
+    full_run_row_count: int = FULL_RUN_POST_COUNT,
 ) -> dict[str, Any]:
     """Sum the per-feature smoke cost reports of ``features`` into one parent estimate.
+
+    ``full_run_row_count`` is recorded on the aggregate. It defaults to
+    ``FULL_RUN_POST_COUNT`` (200000). Twitter passes 6374.
 
     Raises
     ------
@@ -220,6 +224,7 @@ def aggregate_cost_reports(
     return {
         "campaign_id": campaign_id,
         "generated_at": get_current_timestamp(),
+        "full_run_row_count": full_run_row_count,
         "features_included": len(entries),
         "features": entries,
         "total_smoke_cost_usd": round(
@@ -239,14 +244,18 @@ def main(
     campaign_id: str = typer.Option(..., "--campaign-id"),
     smoke_reports_dir: Path = typer.Option(..., "--smoke-reports-dir"),
     output: Path = typer.Option(..., "--output"),
+    full_run_row_count: int = typer.Option(FULL_RUN_POST_COUNT, "--full-run-row-count"),
 ) -> None:
     """Sum the seven per-feature smoke cost reports into ``output`` and print the totals."""
     if not aggregate:
         raise typer.BadParameter("pass --aggregate; it is the only mode of this command")
-    document = aggregate_cost_reports(campaign_id, smoke_reports_dir)
+    document = aggregate_cost_reports(
+        campaign_id, smoke_reports_dir, full_run_row_count=full_run_row_count
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(f"{json.dumps(document, indent=JSON_INDENT)}\n", encoding="utf-8")
     print(f"features_included={document['features_included']}")
+    print(f"full_run_row_count={document['full_run_row_count']}")
     print(f"total_estimated_full_run_usd_avg={document['total_estimated_full_run_usd_avg']}")
     print(f"total_estimated_full_run_usd_max={document['total_estimated_full_run_usd_max']}")
     print(f"{output.name} written")

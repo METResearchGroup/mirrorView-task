@@ -17,7 +17,7 @@ import pandas as pd
 import typer
 
 from data_platform.generate_features.generate_bluesky_features import BLUESKY_SPEC
-from data_platform.generate_features.platform_cli import load_pinned_preprocessed_records
+from data_platform.generate_features.platform_cli import FeaturePlatformSpec, load_pinned_preprocessed_records
 from data_platform.utils.platform_specific_columns import (
     STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
     STANDARDIZED_TEXT_COLUMN,
@@ -51,9 +51,19 @@ def select_deterministic_sample(
     return ordered.head(count).reset_index(drop=True)
 
 
-def load_deterministic_ten_posts(dataset_id: str, preprocessed_run: str) -> pd.DataFrame:
-    """Load the pinned preprocessed run and return its ten smoke rows with every column."""
-    records = load_pinned_preprocessed_records(BLUESKY_SPEC, dataset_id, preprocessed_run)
+def load_deterministic_ten_posts(
+    dataset_id: str,
+    preprocessed_run: str,
+    spec: FeaturePlatformSpec | None = None,
+) -> pd.DataFrame:
+    """Load the pinned preprocessed run and return its ten smoke rows with every column.
+
+    ``spec`` selects the platform storage and model. None keeps today's Bluesky
+    spec so existing Bluesky callers stay valid.
+    """
+    records = load_pinned_preprocessed_records(
+        spec or BLUESKY_SPEC, dataset_id, preprocessed_run
+    )
     return select_deterministic_sample(records)
 
 

@@ -27,6 +27,8 @@ from data_platform.generate_features.progress_record import (
     parse_batch_records,
 )
 from data_platform.generate_features.s3_feature_campaign import (
+    DEFAULT_CAMPAIGN_DATASET_ID,
+    DEFAULT_CAMPAIGN_PLATFORM,
     CampaignObjectStore,
     FeaturePaths,
     load_active_state,
@@ -56,11 +58,21 @@ class WatcherOutcome:
 
 
 def resolve_feature_paths(
-    campaign_id: str, feature: str, smoke_prefix: str | None
+    campaign_id: str,
+    feature: str,
+    smoke_prefix: str | None,
+    *,
+    platform: str = DEFAULT_CAMPAIGN_PLATFORM,
+    dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
 ) -> FeaturePaths:
-    """Return the canonical feature paths, or the paths under ``smoke_prefix/{feature}/`` when given."""
+    """Return campaign feature paths, or the paths under ``smoke_prefix/{feature}/`` when given.
+
+    Omitted ``platform`` and ``dataset_id`` keep today's Bluesky defaults.
+    """
     if smoke_prefix is None:
-        return FeaturePaths.canonical(campaign_id, feature)
+        return FeaturePaths.for_campaign(
+            campaign_id, feature, platform=platform, dataset_id=dataset_id
+        )
     return FeaturePaths.from_root_uri(smoke_prefix, feature)
 
 
@@ -197,15 +209,24 @@ def main(
     dry_render: bool = typer.Option(False, "--dry-render"),
     once: bool = typer.Option(False, "--once"),
     github_comment_id: int | None = typer.Option(None, "--github-comment-id"),
+    platform: str = typer.Option(DEFAULT_CAMPAIGN_PLATFORM, "--platform"),
+    dataset_id: str = typer.Option(DEFAULT_CAMPAIGN_DATASET_ID, "--dataset-id"),
 ) -> None:
     """Run the watcher once and print its outcome lines.
 
     ``--dry-render`` is accepted so the step spec's command lines run as
-    written. The command never writes to GitHub in any mode.
+    written. The command never writes to GitHub in any mode. Omitted
+    ``--platform`` and ``--dataset-id`` keep today's Bluesky defaults.
     """
     if not once:
         raise typer.BadParameter("pass --once; it is the only mode of this command")
-    paths = resolve_feature_paths(campaign_id, feature, smoke_prefix)
+    paths = resolve_feature_paths(
+        campaign_id,
+        feature,
+        smoke_prefix,
+        platform=platform,
+        dataset_id=dataset_id,
+    )
     store = CampaignObjectStore(paths.bucket)
     outcome = run_watcher_once(store, paths, github_comment_id=github_comment_id)
     for line in output_lines(outcome):
