@@ -14,6 +14,7 @@
 10. Operators can review the ten-comment `is_self_contained` smoke for the pinned Reddit campaign, including an estimated 400000-row Bedrock Converse cost of 6.4414 USD on average and 8.638 USD at the token maximum. [PR #245](https://github.com/METResearchGroup/mirrorView-task/pull/245)
 11. Operators can review the ten-comment `is_structurally_complete` smoke for the pinned Reddit campaign, including an estimated 400000-row Bedrock Converse cost of 7.1974 USD on average and 9.394 USD at the token maximum. [PR #246](https://github.com/METResearchGroup/mirrorView-task/pull/246)
 12. Operators can review the ten-comment `political_stance` smoke for the pinned Reddit campaign, including an estimated 400000-row OpenAI Batch cost of 23.744 USD on average and 30.04 USD at the token maximum. [PR #247](https://github.com/METResearchGroup/mirrorView-task/pull/247)
+13. Operators can review the ten-comment `llm_toxicity_tiered` smoke for the pinned Reddit campaign, including an estimated 400000-row OpenAI Batch cost of 21.144 USD on average and 27.34 USD at the token maximum. The same pull request records the mixed-engine parent cost aggregate across all seven campaign features. [PR #248](https://github.com/METResearchGroup/mirrorView-task/pull/248)
 
 ## 2026-09-06
 
