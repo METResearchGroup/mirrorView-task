@@ -10,11 +10,13 @@ Run from the repo root:
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 from pathlib import Path
 
 from lib.aws.s3 import S3
 from lib.constants import REPO_ROOT
+from lib.timestamp_utils import get_current_timestamp
 
 BUCKET = "mirrorview-experimental-artifacts"
 REGION = "us-east-2"
@@ -133,7 +135,18 @@ def write_inventory(rows: list[dict], path: Path) -> None:
     RuntimeError
         If ``rows`` is not exactly ``EXPECTED_OBJECT_COUNT`` long.
     """
-    raise NotImplementedError
+    if len(rows) != EXPECTED_OBJECT_COUNT:
+        raise RuntimeError(f"expected {EXPECTED_OBJECT_COUNT} inventory rows, got {len(rows)}")
+    inventory = {
+        "bucket": BUCKET,
+        "region": REGION,
+        "dataset_id": DATASET_ID,
+        "preprocessed_run": PREPROCESSED_RUN,
+        "uploaded_at": get_current_timestamp(),
+        "object_count": EXPECTED_OBJECT_COUNT,
+        "objects": rows,
+    }
+    path.write_text(json.dumps(inventory, indent=2) + "\n")
 
 
 def main() -> None:
