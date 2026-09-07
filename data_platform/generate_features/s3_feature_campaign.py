@@ -151,7 +151,11 @@ class FeaturePaths:
         platform: str = DEFAULT_CAMPAIGN_PLATFORM,
         dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
     ) -> FeaturePaths:
-        """Alias of ``for_campaign``. Restores the older caller name."""
+        """Alias of ``for_campaign``. Restores the older caller name.
+
+        Callers that serve Reddit must pass ``platform`` and ``dataset_id``.
+        Omitting them keeps the historical Bluesky defaults.
+        """
         return cls.for_campaign(
             campaign_id,
             feature,

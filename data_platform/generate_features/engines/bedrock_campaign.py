@@ -85,6 +85,26 @@ def run_bedrock_campaign_feature(
 
     Content-filter ids are recorded, then retried through OpenAI Batch in this
     same call. Other Bedrock failures stay failed.
+
+    Parameters
+    ----------
+    records
+        Preprocessed rows with ``source_record_id`` and ``text``.
+    spec
+        Feature spec whose prompt and schema Bedrock uses.
+    campaign
+        Campaign identity, including batch size.
+    run_config
+        OpenAI retry settings. Bedrock parts always use eight threads.
+    paths
+        S3 prefix for this feature. Must not default a Reddit run to Bluesky.
+    engine_type
+        Must be ``bedrock`` and is stored on the manifest.
+
+    Returns
+    -------
+    FeaturePaths
+        The same prefix, after parts, retries, and optional final file.
     """
     store = CampaignObjectStore(paths.bucket)
     run_id = run_id_for_feature(campaign.campaign_id, spec.name)
