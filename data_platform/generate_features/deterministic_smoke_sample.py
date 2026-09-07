@@ -17,11 +17,17 @@ import pandas as pd
 import typer
 
 from data_platform.generate_features.generate_bluesky_features import BLUESKY_SPEC
-from data_platform.generate_features.platform_cli import FeaturePlatformSpec, load_pinned_preprocessed_records
+from data_platform.generate_features.platform_cli import (
+    FeaturePlatformSpec,
+    load_pinned_preprocessed_records,
+)
 from data_platform.utils.platform_specific_columns import (
     STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
     STANDARDIZED_TEXT_COLUMN,
 )
+
+PLATFORM_BLUESKY = "bluesky"
+PLATFORM_REDDIT = "reddit"
 
 SMOKE_POST_COUNT = 10
 SELECTION_RULE = (
@@ -51,51 +57,54 @@ def select_deterministic_sample(
     return ordered.head(count).reset_index(drop=True)
 
 
-def load_deterministic_ten_posts(
-    dataset_id: str,
-    preprocessed_run: str,
-    spec: FeaturePlatformSpec | None = None,
+def load_deterministic_ten_posts_for_spec(
+    spec: FeaturePlatformSpec, dataset_id: str, preprocessed_run: str
 ) -> pd.DataFrame:
-    """Load the pinned preprocessed run and return its ten smoke rows with every column.
+    """Load one pinned preprocessed run through ``spec`` and return its ten smoke rows."""
+    raise NotImplementedError
 
-    ``spec`` selects the platform storage and model. None keeps today's Bluesky
-    spec so existing Bluesky callers stay valid.
-    """
-    records = load_pinned_preprocessed_records(
-        spec or BLUESKY_SPEC, dataset_id, preprocessed_run
-    )
-    return select_deterministic_sample(records)
+
+def load_deterministic_ten_post_ids_for_spec(
+    spec: FeaturePlatformSpec, dataset_id: str, preprocessed_run: str
+) -> list[str]:
+    """Return the ten smoke ``source_record_id`` values for ``spec`` in ascending order."""
+    raise NotImplementedError
+
+
+def write_deterministic_ten_post_ids_for_spec(
+    spec: FeaturePlatformSpec, dataset_id: str, preprocessed_run: str, output: Path
+) -> Path:
+    """Write the ten ids for ``spec`` with the dataset, run, and selection rule as JSON."""
+    raise NotImplementedError
+
+
+def load_deterministic_ten_posts(dataset_id: str, preprocessed_run: str) -> pd.DataFrame:
+    """Load the pinned Bluesky preprocessed run and return its ten smoke rows with every column."""
+    return load_deterministic_ten_posts_for_spec(BLUESKY_SPEC, dataset_id, preprocessed_run)
 
 
 def load_deterministic_ten_post_ids(dataset_id: str, preprocessed_run: str) -> list[str]:
-    """Return the ten smoke ``source_record_id`` values in ascending order."""
-    posts = load_deterministic_ten_posts(dataset_id, preprocessed_run)
-    return posts[STANDARDIZED_SOURCE_RECORD_ID_COLUMN].astype(str).tolist()
+    """Return the ten Bluesky smoke ``source_record_id`` values in ascending order."""
+    return load_deterministic_ten_post_ids_for_spec(BLUESKY_SPEC, dataset_id, preprocessed_run)
 
 
 def write_deterministic_ten_post_ids(
     dataset_id: str, preprocessed_run: str, output: Path
 ) -> Path:
-    """Write the ten ids with the dataset, run, and selection rule as JSON and return ``output``."""
-    document = {
-        "dataset_id": dataset_id,
-        "preprocessed_run": preprocessed_run,
-        "selection_rule": SELECTION_RULE,
-        "source_record_ids": load_deterministic_ten_post_ids(dataset_id, preprocessed_run),
-    }
-    output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(f"{json.dumps(document, indent=JSON_INDENT)}\n", encoding="utf-8")
-    return output
+    """Write the ten Bluesky ids with the dataset, run, and selection rule as JSON and return ``output``."""
+    return write_deterministic_ten_post_ids_for_spec(
+        BLUESKY_SPEC, dataset_id, preprocessed_run, output
+    )
 
 
 def main(
     dataset_id: str = typer.Option(..., "--dataset-id"),
     preprocessed_run: str = typer.Option(..., "--preprocessed-run"),
     output: Path = typer.Option(..., "--output"),
+    platform: str = typer.Option(PLATFORM_BLUESKY, "--platform"),
 ) -> None:
-    """Write the deterministic ten-post ids of one preprocessed run to a JSON file."""
-    written = write_deterministic_ten_post_ids(dataset_id, preprocessed_run, output)
-    print(f"deterministic_ten_post_ids={written}")
+    """Write the deterministic ten-row ids of one preprocessed run to a JSON file."""
+    raise NotImplementedError(platform)
 
 
 if __name__ == "__main__":

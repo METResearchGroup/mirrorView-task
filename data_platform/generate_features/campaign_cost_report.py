@@ -19,6 +19,13 @@ from typing import Any
 import typer
 from openai.types import BatchUsage
 
+from data_platform.generate_features.campaign_engine_map import (
+    BEDROCK_ENGINE_TYPE,
+    OPENAI_ENGINE_TYPE,
+    REDDIT_CAMPAIGN_ENGINE_BY_FEATURE,
+    REDDIT_LLM_FEATURES_CAMPAIGN_ID,
+    campaign_engine_type,
+)
 from data_platform.generate_features.engines.openai_engine import (
     CUSTOM_ID_INDEX_WIDTH,
     CUSTOM_ID_PREFIX,
@@ -28,8 +35,11 @@ from data_platform.generate_features.s3_feature_campaign import run_id_for_featu
 from lib.timestamp_utils import get_current_timestamp
 
 PRICING_SOURCE_URL = "https://developers.openai.com/api/docs/pricing"
+BEDROCK_PRICING_SOURCE_URL = "https://aws.amazon.com/bedrock/pricing/"
 DEFAULT_BATCH_INPUT_USD_PER_MILLION_TOKENS = 0.10
 DEFAULT_BATCH_OUTPUT_USD_PER_MILLION_TOKENS = 0.625
+DEFAULT_BEDROCK_INPUT_USD_PER_MILLION_TOKENS = 0.035
+DEFAULT_BEDROCK_OUTPUT_USD_PER_MILLION_TOKENS = 0.14
 FULL_RUN_POST_COUNT = 200_000
 CAMPAIGN_LLM_FEATURES = tuple(
     name for name, spec in FEATURE_REGISTRY.items() if spec.engine_type == "openai"
@@ -114,6 +124,8 @@ def build_feature_cost_report(
     request_usages: list[RequestUsage],
     pricing: BatchPricing,
     full_run_post_count: int = FULL_RUN_POST_COUNT,
+    full_run_row_count: int | None = None,
+    engine_type: str = OPENAI_ENGINE_TYPE,
 ) -> dict[str, Any]:
     """Return the per-feature smoke cost report.
 
@@ -176,10 +188,15 @@ def cost_report_path(smoke_reports_dir: Path, feature: str) -> Path:
     return smoke_reports_dir / feature / f"{feature}{COST_REPORT_SUFFIX}"
 
 
+def features_for_campaign_aggregate(campaign_id: str) -> tuple[str, ...]:
+    """Return the feature names the parent aggregate must read for ``campaign_id``."""
+    raise NotImplementedError
+
+
 def aggregate_cost_reports(
     campaign_id: str,
     smoke_reports_dir: Path,
-    features: tuple[str, ...] = CAMPAIGN_LLM_FEATURES,
+    features: tuple[str, ...] | None = None,
     full_run_row_count: int = FULL_RUN_POST_COUNT,
 ) -> dict[str, Any]:
     """Sum the per-feature smoke cost reports of ``features`` into one parent estimate.
@@ -194,7 +211,11 @@ def aggregate_cost_reports(
     ValueError
         When a report describes a different campaign or feature than its path.
     """
-    paths = {feature: cost_report_path(smoke_reports_dir, feature) for feature in features}
+    resolved_features = features or CAMPAIGN_LLM_FEATURES
+    del full_run_row_count
+    paths = {
+        feature: cost_report_path(smoke_reports_dir, feature) for feature in resolved_features
+    }
     missing = [str(path) for path in paths.values() if not path.exists()]
     if missing:
         raise FileNotFoundError(f"missing {len(missing)} cost reports: {missing}")
