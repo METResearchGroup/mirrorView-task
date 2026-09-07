@@ -17,11 +17,18 @@ import pandas as pd
 from pydantic import ValidationError
 
 from data_platform.generate_features.models import FeatureSpec, LabelRowMetadataModel
+from data_platform.generate_features.progress_record import (
+    PROGRESS_EVENT_BATCH,
+    ProgressRecord,
+    active_batch_id,
+)
 from data_platform.generate_features.s3_feature_campaign import (
     INTERMEDIATE_ARTIFACT_TAG,
     CampaignObjectStore,
     FeaturePaths,
     append_progress,
+    load_active_state,
+    manifest_sha256,
     save_manifest,
 )
 from data_platform.utils.object_store import sha256_hex
@@ -37,7 +44,6 @@ ROW_METADATA_COLUMNS = (
 )
 # Columns the feature Pydantic model already carries besides its label fields.
 MODEL_IDENTITY_COLUMNS = ("source_record_id", "label_timestamp")
-PROGRESS_EVENT_BATCH = "batch"
 PROGRESS_EVENT_FINAL = "final"
 logger = logging.getLogger(__name__)
 
@@ -156,8 +162,16 @@ def _record_batch(
     row_count: int,
     provider_batch_ids: list[str],
     run_id: str,
+    last_source_record_id: str,
 ) -> BatchWriteResult:
-    """Append the manifest entry for an uploaded object, save the manifest, and log progress."""
+    """Append the manifest entry for an uploaded object, save the manifest, and append one progress record.
+
+    The progress line's cumulative total is the sum of ``row_count`` over the
+    manifest batch entries just saved, and its ``manifest_sha256`` is the digest
+    of the bytes just uploaded, so both come from durable state rather than
+    from the running process. ``active_openai_batch_id`` is the ``batch_id`` of
+    the S3 ``active_openai_batch.json`` at this moment, or None when absent.
+    """
     manifest["batches"].append(
         {
             "part_index": part_index,
@@ -169,22 +183,33 @@ def _record_batch(
     )
     manifest["batches"].sort(key=lambda entry: entry["part_index"])
     new_etag = save_manifest(store, paths, manifest, manifest_etag)
-    append_progress(
-        store,
-        paths,
-        {
-            "ts": get_current_timestamp(),
-            "event": PROGRESS_EVENT_BATCH,
-            "run_id": run_id,
-            "part_index": part_index,
-            "key": key,
-            "row_count": row_count,
-            "sha256": sha256,
-            "provider_batch_ids": provider_batch_ids,
-            "rows_total": sum(int(entry["row_count"]) for entry in manifest["batches"]),
-            "batches_total": len(manifest["batches"]),
-        },
+    active_state, _ = load_active_state(store, paths)
+    recorded_at = get_current_timestamp()
+    durable_row_total = sum(int(entry["row_count"]) for entry in manifest["batches"])
+    expected_row_total = int(manifest["expected_row_count"])
+    record = ProgressRecord(
+        campaign_id=manifest["campaign_id"],
+        feature=manifest["feature"],
+        run_id=run_id,
+        recorded_at=recorded_at,
+        part_index=part_index,
+        batch_row_count=row_count,
+        durable_row_total=durable_row_total,
+        expected_row_total=expected_row_total,
+        percent_complete=durable_row_total / expected_row_total,
+        last_source_record_id=last_source_record_id,
+        manifest_sha256=manifest_sha256(manifest),
+        active_openai_batch_id=active_batch_id(active_state),
+        ts=recorded_at,
+        event=PROGRESS_EVENT_BATCH,
+        key=key,
+        row_count=row_count,
+        sha256=sha256,
+        provider_batch_ids=provider_batch_ids,
+        rows_total=durable_row_total,
+        batches_total=len(manifest["batches"]),
     )
+    append_progress(store, paths, record.model_dump())
     return BatchWriteResult(
         key=key, sha256=sha256, row_count=row_count, manifest_etag=new_etag
     )
@@ -235,6 +260,7 @@ def write_batch(
         row_count=len(rows),
         provider_batch_ids=provider_batch_ids,
         run_id=run_id,
+        last_source_record_id=str(rows[-1]["source_record_id"]),
     )
 
 
@@ -275,6 +301,7 @@ def adopt_unrecorded_batch(
         row_count=len(frame),
         provider_batch_ids=list(dict.fromkeys(frame["batch_id"].astype(str))),
         run_id=run_id,
+        last_source_record_id=str(frame["source_record_id"].iloc[-1]),
     )
 
 

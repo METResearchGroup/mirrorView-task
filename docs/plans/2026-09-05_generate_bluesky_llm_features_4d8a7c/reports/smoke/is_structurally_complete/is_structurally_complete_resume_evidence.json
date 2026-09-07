@@ -1,0 +1,47 @@
+{
+  "feature": "is_structurally_complete",
+  "run_id": "bluesky_2026_09_03_235130_llm_features_v1:is_structurally_complete",
+  "batch_id": "batch_6a9cf128dba0819083d792b58ffab0a8",
+  "input_file_id": "file-UAWBJSVceS4B5Up9TL3Y3J",
+  "submitted_at": "2026_09_06-04:50:48",
+  "interrupted_at": "2026_09_06-04:50:48",
+  "state_at_interrupt": {
+    "input_file_id": "file-UAWBJSVceS4B5Up9TL3Y3J",
+    "batch_id": "batch_6a9cf128dba0819083d792b58ffab0a8",
+    "logical_batch_index": 0,
+    "pending_source_record_ids": [
+      "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3mug6s3w7xk2k",
+      "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3muiavvekuk2f",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug56hcque2b",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug5oga6dn2n",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbevjlrc2e",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbuofdw62w",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbwq3wp422",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mugaqwngf22d",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mui6yzxzxk2g",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3muia7bodfc2g"
+    ],
+    "attempt_count": 1,
+    "state": "polling",
+    "campaign_id": null,
+    "feature_name": "is_structurally_complete",
+    "submitted_at": "2026_09_06-04:50:48"
+  },
+  "resumed_at": "2026_09_06-04:50:48",
+  "submit_calls_before_interrupt": {
+    "files.create": 1,
+    "batches.create": 1
+  },
+  "submit_calls_after_resume": {
+    "files.create": 0,
+    "batches.create": 0
+  },
+  "resumed_batch_id": "batch_6a9cf128dba0819083d792b58ffab0a8",
+  "reattached_same_batch_id": true,
+  "resumed_batch_status": "completed",
+  "rows_written": 10,
+  "provider_batch_ids_in_output": [
+    "batch_6a9cf128dba0819083d792b58ffab0a8"
+  ],
+  "resume_ok": true
+}

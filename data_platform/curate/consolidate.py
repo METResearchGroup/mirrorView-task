@@ -10,7 +10,8 @@ from data_platform.utils.duckdb_features import feature_glob
 from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 
 # Columns selected from each feature CSV (excluding the feature id column).
-# Keys match FEATURE_REGISTRY.
+# Keys match FEATURE_REGISTRY. ``llm_toxicity_tiered`` is campaign-only; the
+# default wide join still uses Perspective ``is_toxic_tiered``.
 FEATURE_WIDE_COLUMNS: dict[str, list[tuple[str, str]]] = {
     "is_news_or_opinion": [("category", "news_or_opinion_category")],
     "is_political": [("is_political", "is_political")],
@@ -22,7 +23,46 @@ FEATURE_WIDE_COLUMNS: dict[str, list[tuple[str, str]]] = {
         ("toxicity_tier", "toxicity_tier"),
     ],
     "political_stance": [("political_stance", "political_stance")],
+    "llm_toxicity_tiered": [("toxicity_tier", "llm_toxicity_tier")],
 }
+
+DEFAULT_WIDE_FEATURE_NAMES: tuple[str, ...] = (
+    "is_news_or_opinion",
+    "is_political",
+    "is_likely_spam",
+    "is_self_contained",
+    "is_structurally_complete",
+    "is_toxic_tiered",
+    "political_stance",
+)
+
+LLM_CAMPAIGN_FEATURE_NAMES: tuple[str, ...] = (
+    "is_news_or_opinion",
+    "is_political",
+    "is_likely_spam",
+    "is_self_contained",
+    "is_structurally_complete",
+    "political_stance",
+    "llm_toxicity_tiered",
+)
+
+PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = (
+    "uri",
+    "record_id",
+    "url",
+    "author_handle",
+    "text",
+    "created_at",
+    "like_count",
+    "repost_count",
+    "reply_count",
+    "quote_count",
+    "sync_timestamp",
+    STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
+)
+
+EXPECTED_WIDE_ROW_COUNT = 200000
+WIDE_SORT_KEY = f"{STANDARDIZED_SOURCE_RECORD_ID_COLUMN} ASC"
 
 
 @dataclass(frozen=True)
@@ -36,7 +76,7 @@ class ConsolidateConfig:
 
     posts_file: Path
     features_root: Path
-    feature_names: tuple[str, ...] = tuple(FEATURE_WIDE_COLUMNS.keys())
+    feature_names: tuple[str, ...] = DEFAULT_WIDE_FEATURE_NAMES
     id_column: str = "uri"
     feature_file_id_column: str = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
 
@@ -128,6 +168,90 @@ FROM posts
 def build_wide_table(config: ConsolidateConfig) -> pd.DataFrame:
     """Join preprocessed records with deduped feature label CSVs on ``id_column``."""
     sql = _build_consolidate_sql(config)
+    conn = duckdb.connect()
+    try:
+        return conn.execute(sql).fetchdf()
+    finally:
+        conn.close()
+
+
+def llm_campaign_wide_columns() -> tuple[str, ...]:
+    """Return the nineteen wide columns in campaign order."""
+    label_columns = tuple(
+        alias
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+        for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
+    )
+    return PREPROCESSED_WIDE_COLUMNS + label_columns
+
+
+def _sql_path(path: Path) -> str:
+    return path.resolve().as_posix().replace("'", "''")
+
+
+def _campaign_posts_cte_sql(posts_file: Path) -> str:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    selected = ", ".join(
+        f"CAST({column} AS VARCHAR) AS {column}" if column == id_column else column
+        for column in PREPROCESSED_WIDE_COLUMNS
+    )
+    return f"posts AS (SELECT {selected} FROM read_parquet('{_sql_path(posts_file)}'))"
+
+
+def _campaign_feature_ctes(feature_files: dict[str, Path]) -> list[str]:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    return [
+        _feature_cte_sql(
+            feature_name,
+            _sql_path(feature_files[feature_name]),
+            id_column=id_column,
+            feature_file_id_column=id_column,
+            use_parquet=True,
+        )
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    ]
+
+
+def _campaign_join_sql(posts_file: Path, feature_files: dict[str, Path]) -> str:
+    id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
+    join_clauses = [
+        f"INNER JOIN feat_{feature_name} USING ({id_column})"
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+    ]
+    label_cols = [
+        f"feat_{feature_name}.{alias}"
+        for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
+        for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
+    ]
+    posts_cols = [f"posts.{column}" for column in PREPROCESSED_WIDE_COLUMNS]
+    ctes = ",\n".join([_campaign_posts_cte_sql(posts_file), *_campaign_feature_ctes(feature_files)])
+    return f"""
+WITH {ctes}
+SELECT {", ".join(posts_cols + label_cols)}
+FROM posts
+{" ".join(join_clauses)}
+ORDER BY posts.{id_column} ASC
+"""
+
+
+def build_llm_campaign_wide_table(
+    posts_file: Path,
+    feature_files: dict[str, Path],
+) -> pd.DataFrame:
+    """Inner-join pinned posts to seven campaign ``final.parquet`` files on ``source_record_id``.
+
+    Rows are sorted by ``source_record_id`` ascending. Duplicate feature ids keep
+    the latest ``label_timestamp``.
+
+    Raises
+    ------
+    KeyError
+        When a campaign feature path is missing from ``feature_files``.
+    """
+    missing = [name for name in LLM_CAMPAIGN_FEATURE_NAMES if name not in feature_files]
+    if missing:
+        raise KeyError(f"missing campaign feature parquet paths: {missing}")
+    sql = _campaign_join_sql(posts_file, feature_files)
     conn = duckdb.connect()
     try:
         return conn.execute(sql).fetchdf()

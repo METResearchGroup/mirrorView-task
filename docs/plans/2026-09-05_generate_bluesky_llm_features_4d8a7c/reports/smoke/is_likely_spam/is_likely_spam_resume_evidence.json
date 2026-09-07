@@ -1,0 +1,47 @@
+{
+  "feature": "is_likely_spam",
+  "run_id": "bluesky_2026_09_03_235130_llm_features_v1:is_likely_spam",
+  "batch_id": "batch_6a9ced3222ec8190b7bbd87c5a2d0d48",
+  "input_file_id": "file-CbfZanKGuM13t4N8oAGArJ",
+  "submitted_at": "2026_09_06-04:33:54",
+  "interrupted_at": "2026_09_06-04:33:54",
+  "state_at_interrupt": {
+    "input_file_id": "file-CbfZanKGuM13t4N8oAGArJ",
+    "batch_id": "batch_6a9ced3222ec8190b7bbd87c5a2d0d48",
+    "logical_batch_index": 0,
+    "pending_source_record_ids": [
+      "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3mug6s3w7xk2k",
+      "at://did:plc:222gnnbi5wqbs7y2tt3dbowe/app.bsky.feed.post/3muiavvekuk2f",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug56hcque2b",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mug5oga6dn2n",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbevjlrc2e",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbuofdw62w",
+      "at://did:plc:222hbnselvqjr5ok6qw3sxfp/app.bsky.feed.post/3mugbwq3wp422",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mugaqwngf22d",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3mui6yzxzxk2g",
+      "at://did:plc:222mh6vodb3fith46v5sencv/app.bsky.feed.post/3muia7bodfc2g"
+    ],
+    "attempt_count": 1,
+    "state": "polling",
+    "campaign_id": null,
+    "feature_name": "is_likely_spam",
+    "submitted_at": "2026_09_06-04:33:54"
+  },
+  "resumed_at": "2026_09_06-04:33:54",
+  "submit_calls_before_interrupt": {
+    "files.create": 1,
+    "batches.create": 1
+  },
+  "submit_calls_after_resume": {
+    "files.create": 0,
+    "batches.create": 0
+  },
+  "resumed_batch_id": "batch_6a9ced3222ec8190b7bbd87c5a2d0d48",
+  "reattached_same_batch_id": true,
+  "resumed_batch_status": "completed",
+  "rows_written": 10,
+  "provider_batch_ids_in_output": [
+    "batch_6a9ced3222ec8190b7bbd87c5a2d0d48"
+  ],
+  "resume_ok": true
+}

@@ -1,8 +1,8 @@
 """S3 layout and small mutable files of one feature in an LLM labeling campaign.
 
 Owns the per-feature prefix, the conditional S3 writes the campaign uses, and
-the helpers for ``manifest.json``, ``progress.jsonl``, ``errors.jsonl``, and
-``active_openai_batch.json``.
+the helpers for ``manifest.json``, ``progress.jsonl``, ``errors.jsonl``,
+``watcher.json``, and ``active_openai_batch.json``.
 """
 
 from __future__ import annotations
@@ -42,6 +42,7 @@ ACTIVE_STATE_FILENAME = "active_openai_batch.json"
 MANIFEST_FILENAME = "manifest.json"
 PROGRESS_FILENAME = "progress.jsonl"
 ERRORS_FILENAME = "errors.jsonl"
+WATCHER_FILENAME = "watcher.json"
 FINAL_FILENAME = "final.parquet"
 BATCHES_DIRNAME = "batches"
 SMOKE_DIRNAME = "smoke"
@@ -158,6 +159,10 @@ class FeaturePaths:
     @property
     def errors_key(self) -> str:
         return f"{self.prefix}{ERRORS_FILENAME}"
+
+    @property
+    def watcher_key(self) -> str:
+        return f"{self.prefix}{WATCHER_FILENAME}"
 
     @property
     def final_key(self) -> str:
@@ -430,11 +435,41 @@ def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None
     store.delete(paths.active_state_key)
 
 
+def manifest_sha256(manifest: dict[str, Any]) -> str:
+    """Return the SHA-256 of the exact bytes ``save_manifest`` uploads for ``manifest``."""
+    return sha256_hex(_json_bytes(manifest))
+
+
 def append_progress(
     store: CampaignObjectStore, paths: FeaturePaths, record: dict[str, Any]
 ) -> None:
     """Append one line to ``progress.jsonl``; raises ``ConditionalWriteConflict`` after repeated lost races."""
     store.append_jsonl(paths.progress_key, [record])
+
+
+def read_progress_lines(store: CampaignObjectStore, paths: FeaturePaths) -> list[str]:
+    """Return the lines of ``progress.jsonl``, or an empty list before the first append."""
+    stored = store.get(paths.progress_key)
+    if stored is None:
+        return []
+    return stored.body.decode("utf-8").splitlines()
+
+
+def load_watcher_state(
+    store: CampaignObjectStore, paths: FeaturePaths
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Return ``(state, etag)`` of ``watcher.json``, or ``(None, None)`` before the first watcher run."""
+    return _load_json(store, paths.watcher_key)
+
+
+def save_watcher_state(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    state: dict[str, Any],
+    etag: str | None,
+) -> str:
+    """Conditionally replace ``watcher.json`` and return its new ETag; see ``save_manifest`` for the conflict rule."""
+    return store.replace(paths.watcher_key, _json_bytes(state), etag=etag).etag
 
 
 def append_errors(
