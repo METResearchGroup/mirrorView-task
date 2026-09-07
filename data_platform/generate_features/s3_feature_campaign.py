@@ -148,7 +148,13 @@ class FeaturePaths:
         dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
     ) -> FeaturePaths:
         """Alias of ``for_campaign``. Restores the older caller name."""
-        raise NotImplementedError
+        return cls.for_campaign(
+            campaign_id,
+            feature,
+            bucket=bucket,
+            platform=platform,
+            dataset_id=dataset_id,
+        )
 
     @classmethod
     def from_root_uri(cls, root_uri: str, feature: str) -> FeaturePaths:
@@ -165,7 +171,7 @@ class FeaturePaths:
     @property
     def active_bedrock_state_key(self) -> str:
         """Object key of ``active_bedrock_job.json`` under this feature prefix."""
-        raise NotImplementedError
+        return f"{self.prefix}{ACTIVE_BEDROCK_STATE_FILENAME}"
 
     @property
     def manifest_key(self) -> str:
@@ -459,7 +465,7 @@ def load_active_bedrock_state(
     store: CampaignObjectStore, paths: FeaturePaths
 ) -> tuple[dict[str, Any] | None, str | None]:
     """Return ``(state, etag)`` of ``active_bedrock_job.json``, or ``(None, None)`` when no job is open."""
-    raise NotImplementedError
+    return _load_json(store, paths.active_bedrock_state_key)
 
 
 def save_active_bedrock_state(
@@ -469,12 +475,12 @@ def save_active_bedrock_state(
     etag: str | None,
 ) -> str:
     """Conditionally replace ``active_bedrock_job.json`` and return its new ETag."""
-    raise NotImplementedError
+    return store.replace(paths.active_bedrock_state_key, _json_bytes(state), etag=etag).etag
 
 
 def delete_active_bedrock_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
     """Remove ``active_bedrock_job.json`` once its part has a durable batch object."""
-    raise NotImplementedError
+    store.delete(paths.active_bedrock_state_key)
 
 
 def manifest_sha256(manifest: dict[str, Any]) -> str:
