@@ -185,6 +185,13 @@ def twitter_llm_campaign_wide_columns() -> tuple[str, ...]:
 
 
 def parse_args(argv: list[str] | None = None) -> CampaignConsolidateArgs:
+    """Parse dataset id, preprocessed run, campaign id, and output S3 URI.
+
+    Returns
+    -------
+    CampaignConsolidateArgs
+        Frozen CLI inputs, with curate YAML defaulting to Twitter MirrorView.
+    """
     parser = argparse.ArgumentParser(
         description="Join seven Twitter LLM campaign features into one wide Parquet object."
     )
@@ -280,7 +287,15 @@ def verify_feature_manifest(
     campaign_id: str,
     dataset_id: str,
 ) -> tuple[str, dict[str, Any]]:
-    """Return manifest SHA-256 and parsed JSON after checking row count 6374."""
+    """Return manifest SHA-256 and parsed JSON after checking row count 6374.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the feature manifest object is missing.
+    ValueError
+        When ``final_parquet.row_count`` is not 6374.
+    """
     paths = _twitter_feature_paths(campaign_id, feature_name, dataset_id)
     stored = store.get(paths.manifest_key)
     if stored is None:
@@ -353,7 +368,14 @@ def download_campaign_inputs(
     args: CampaignConsolidateArgs,
     work_dir: Path,
 ) -> tuple[PreprocessedInputRecord, tuple[FeatureInputRecord, ...]]:
-    """Download pinned posts.csv and seven verified ``final.parquet`` files."""
+    """Download pinned posts.csv and seven verified ``final.parquet`` files.
+
+    Raises
+    ------
+    ValueError
+        When posts.csv does not match the inventory SHA-256, or a feature
+        ``final.parquet`` SHA-256 does not match its manifest.
+    """
     client = _s3_client()
     preprocessed = _download_posts_csv(client, store, args, work_dir)
     features = tuple(
@@ -434,7 +456,16 @@ def build_twitter_llm_campaign_wide_table(
     posts_file: Path,
     feature_files: dict[str, Path],
 ) -> pd.DataFrame:
-    """Inner-join pinned csv posts to seven campaign ``final.parquet`` files."""
+    """Inner-join pinned csv posts to seven campaign ``final.parquet`` files.
+
+    Rows are sorted by ``source_record_id`` ascending. Duplicate feature ids keep
+    the latest ``label_timestamp``. The left table is read with DuckDB ``read_csv``.
+
+    Raises
+    ------
+    KeyError
+        When a campaign feature path is missing from ``feature_files``.
+    """
     missing = _missing_feature_names(feature_files)
     if missing:
         raise KeyError(f"missing campaign feature parquet paths: {missing}")
@@ -709,7 +740,13 @@ def upload_wide_artifacts(
     feature_inputs: tuple[FeatureInputRecord, ...],
     curated: CuratedDatasetRecord | None,
 ) -> tuple[str, str, str]:
-    """Upload ``features.parquet`` and ``manifest.json``."""
+    """Upload untagged ``features.parquet`` and ``manifest.json``.
+
+    Returns
+    -------
+    tuple[str, str, str]
+        Wide parquet SHA-256, wide parquet URI, and wide manifest URI.
+    """
     bucket, wide_key = parse_s3_uri(args.output_s3_uri)
     if bucket != store.bucket:
         raise ValueError(f"output bucket {bucket} does not match campaign bucket {store.bucket}")
