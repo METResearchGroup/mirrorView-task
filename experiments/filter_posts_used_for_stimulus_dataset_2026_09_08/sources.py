@@ -35,7 +35,9 @@ RECORD_ID_COLUMN = "record_id"
 TEXT_COLUMN = "text"
 STANCE_COLUMN = "political_stance"
 TOXICITY_COLUMN = "llm_toxicity_tier"
+LEFT_STANCE = "left"
 RIGHT_STANCE = "right"
+MEDIUM_TOXICITY = "medium"
 HIGH_TOXICITY = "high"
 
 
@@ -69,6 +71,7 @@ class FilterRunResult:
     sampled_rows: int
     right_high_available: int
     right_high_shortfall: int
+    right_medium_upsampled: int
     local_path: str
     s3_uri: str
     dataset_sha256: str

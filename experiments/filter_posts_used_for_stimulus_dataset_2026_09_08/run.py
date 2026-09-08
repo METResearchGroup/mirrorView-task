@@ -5,13 +5,14 @@ and the pinned combined parquet exists at SHA-256 f24ad1fd8c3709ffbbba9fb5dc953d
 when PYTHONPATH=. uv run python experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/run.py
 then candidate_rows=55573
 and cleaned_rows=54472
-and sampled_rows=9562
+and sampled_rows=10200
 and local dataset.parquet exists
 and S3 object experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet exists
 and its SHA-256 matches the local file
 and RESULTS.md contains the cleaned stance by toxicity table
 and RESULTS.md contains the sampled stance by toxicity table
 and the sampled cell for right stance and high toxicity has 1062 rows
+and the sampled cell for right stance and medium toxicity has 2338 rows
 and stdout prints both tables
 
 given the S3 dataset.parquet key already exists

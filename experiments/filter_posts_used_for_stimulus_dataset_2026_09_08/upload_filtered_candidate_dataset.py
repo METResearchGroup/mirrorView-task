@@ -26,6 +26,7 @@ from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources impor
     DATASET_FILENAME,
     FilterRunResult,
     HIGH_TOXICITY,
+    MEDIUM_TOXICITY,
     OUTPUT_S3_BUCKET,
     OUTPUT_S3_KEY,
     RESULTS_FILENAME,
@@ -141,6 +142,7 @@ def print_run_summary(result: FilterRunResult) -> None:
     print(f"sampled_rows={result.sampled_rows}")
     print(f"right_high_available={result.right_high_available}")
     print(f"right_high_shortfall={result.right_high_shortfall}")
+    print(f"right_medium_upsampled={result.right_medium_upsampled}")
     print(f"local_path={result.local_path}")
     print(f"s3_uri={result.s3_uri}")
     print(f"dataset_sha256={result.dataset_sha256}")
@@ -165,12 +167,14 @@ def _filter_run_result(
     digest: str,
 ) -> FilterRunResult:
     right_high_available = _right_high_count(cleaned)
+    sampled_right_medium = _right_medium_count(sampled)
     return FilterRunResult(
         candidate_rows=summary.candidate_rows,
         cleaned_rows=summary.cleaned_rows,
         sampled_rows=len(sampled),
         right_high_available=right_high_available,
         right_high_shortfall=max(0, TARGET_PER_CELL - right_high_available),
+        right_medium_upsampled=max(0, sampled_right_medium - TARGET_PER_CELL),
         local_path=str(local_path.relative_to(REPO_ROOT)),
         s3_uri=s3_uri(OUTPUT_S3_BUCKET, OUTPUT_S3_KEY),
         dataset_sha256=digest,
@@ -201,6 +205,8 @@ def _results_markdown(result: FilterRunResult) -> str:
             _stance_table_markdown(result.sampled_crosstab),
             "",
             _right_high_sentence(result),
+            "",
+            _upsample_sentence(result),
             "",
         ]
     )
@@ -313,11 +319,27 @@ def _labeled_tier_row(label: str, cells: list[int]) -> str:
     return f"| {label} | {cells[0]} | {cells[1]} | {cells[2]} | {total} |"
 
 
+def _right_medium_count(frame: pd.DataFrame) -> int:
+    mask = (frame[STANCE_COLUMN] == RIGHT_STANCE) & (
+        frame[TOXICITY_COLUMN] == MEDIUM_TOXICITY
+    )
+    return int(mask.sum())
+
+
 def _right_high_sentence(result: FilterRunResult) -> str:
     return (
         "Operators kept every cleaned post in the cell for right stance and "
         f"high toxicity, because the cell had {result.right_high_available} posts. "
         f"{result.right_high_available} is fewer than {TARGET_PER_CELL}."
+    )
+
+
+def _upsample_sentence(result: FilterRunResult) -> str:
+    return (
+        "Operators sampled "
+        f"{result.right_medium_upsampled} extra posts from the cell for right "
+        "stance and medium toxicity so that left and right both have the same "
+        f"number of posts, and the sample has {TARGET_TOTAL} posts."
     )
 
 
