@@ -32,7 +32,11 @@ from experiments.combine_data_into_stimulus_set_2026_09_08.load import load_cura
 from experiments.combine_data_into_stimulus_set_2026_09_08.normalize import (
     normalize_curated_frame,
 )
-from experiments.combine_data_into_stimulus_set_2026_09_08.sources import pinned_sources
+from experiments.combine_data_into_stimulus_set_2026_09_08.sources import (
+    COMBINED_ROW_COUNT,
+    SORT_COLUMNS,
+    pinned_sources,
+)
 from experiments.combine_data_into_stimulus_set_2026_09_08.write import (
     print_run_summary,
     write_combined_dataset,
@@ -52,8 +56,20 @@ def concatenate_curated_frames(frames: list[pd.DataFrame]) -> pd.DataFrame:
     -------
     pd.DataFrame
         Combined table sorted by integration, dataset id, and source record id.
+
+    Raises
+    ------
+    ValueError
+        When the combined row count is not 55573.
     """
-    raise NotImplementedError
+    combined = pd.concat(frames, ignore_index=True)
+    sorted_combined = combined.sort_values(
+        list(SORT_COLUMNS),
+        kind="mergesort",
+    ).reset_index(drop=True)
+    if len(sorted_combined) != COMBINED_ROW_COUNT:
+        raise ValueError(f"combined_rows={len(sorted_combined)}")
+    return sorted_combined
 
 
 def main() -> int:
