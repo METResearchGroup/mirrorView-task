@@ -29,7 +29,7 @@ flowchart TD
 
 Treat the task as a one-off experiment under `experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/`. Reuse the combine experiment's S3 download and upload helpers. Reuse the existing previously used stimuli helper so posts from the Part 1 and Part 2 catalogs are excluded by id and by original text. Do not change product curate scripts. Do not add pytest. Do not edit `experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md`, because that file is marked read-only.
 
-The cell for right stance and high toxicity has fewer than 1,700 unique posts after cleanup. Take every cleaned post in that cell, and take 1,700 in every other cell. Do not move posts from other cells to make up the difference.
+The cell for right stance and high toxicity has fewer than 1,700 unique posts after cleanup. Take every cleaned post in that cell, take 1,700 in every other cell, and then take extra posts from the cell for right stance and medium toxicity until left and right have the same number of posts and the sample has 10,200 posts.
 
 ## Decisions
 
@@ -59,6 +59,6 @@ Run the command with AWS credentials. Confirm the local file and the S3 object, 
 2. `experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md` is unchanged from the pull request 267 draft.
 3. The filtered parquet exists locally under that folder and at `s3://mirrorview-experimental-artifacts/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet`.
 4. `RESULTS.md` records cleanup drop counts, cleaned cell counts, and sampled cell counts.
-5. Five cells have 1,700 sampled posts. The cell for right stance and high toxicity has every cleaned post in that cell.
+5. The sample has 10,200 posts. Left and right each have 5,100 posts. The cell for right stance and high toxicity has every cleaned post in that cell. Extra posts come from the cell for right stance and medium toxicity.
 6. Product curate scripts and the combined source parquet are unchanged.
 7. No pytest file was added or run.
