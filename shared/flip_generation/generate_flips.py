@@ -39,12 +39,40 @@ TARGET_GROUP_BY_STANCE = {
 
 
 def _validate_posts(posts: pd.DataFrame) -> pd.DataFrame:
-    """Validate required columns and stances, then sort by record id."""
+    """Validate required columns and stances, then sort by record id.
+
+    Parameters
+    ----------
+    posts
+        Input table with record id, text, stance, and toxicity tier.
+
+    Returns
+    -------
+    pd.DataFrame
+        Copy of ``posts`` sorted by ``RECORD_ID_COLUMN``.
+
+    Raises
+    ------
+    ValueError
+        When a required column is missing, ``record_id`` is duplicated, or
+        ``political_stance`` is not ``left`` or ``right``.
+    """
     raise NotImplementedError
 
 
 def _build_label_tasks(posts: pd.DataFrame) -> list[LabelTask]:
-    """Build LabelTask rows from validated posts."""
+    """Build LabelTask rows from validated posts.
+
+    Parameters
+    ----------
+    posts
+        Validated posts sorted by record id.
+
+    Returns
+    -------
+    list[LabelTask]
+        One task per row with opposite-stance target group in the user message.
+    """
     raise NotImplementedError
 
 
@@ -59,7 +87,38 @@ def _label_and_write_parts(
     max_tokens: int,
     model_id: str,
 ) -> None:
-    """Label pending batches and write parquet parts plus errors."""
+    """Label pending batches and write parquet parts plus errors.
+
+    Parameters
+    ----------
+    posts
+        Validated input table.
+    tasks
+        Label tasks in record-id order.
+    store
+        Campaign object store for the run prefix.
+    run_prefix
+        S3 key prefix ending in ``/``.
+    client
+        Bedrock runtime client.
+    batch_size
+        Rows per immutable part.
+    max_concurrency
+        Thread pool size for Bedrock calls.
+    max_tokens
+        Converse ``maxTokens`` for each flip.
+    model_id
+        Bedrock model id.
+    """
+    raise NotImplementedError
+
+
+def _build_flip_run_result(
+    posts: pd.DataFrame,
+    store: CampaignObjectStore,
+    run_prefix: str,
+) -> FlipRunResult:
+    """Collect part and error counts and finalize ``flips.parquet`` when complete."""
     raise NotImplementedError
 
 
@@ -73,7 +132,33 @@ def generate_flips(
     max_tokens: int,
     model_id: str,
 ) -> FlipRunResult:
-    """Generate mirrored posts and write resumable S3 artifacts."""
+    """Generate mirrored posts and write resumable S3 artifacts.
+
+    Parameters
+    ----------
+    posts
+        Input table with ``record_id``, ``text``, ``political_stance``, and
+        ``llm_toxicity_tier``.
+    store
+        Campaign object store for the run prefix.
+    run_prefix
+        S3 key prefix ending in ``/``.
+    client
+        Bedrock runtime client.
+    batch_size
+        Rows per immutable part.
+    max_concurrency
+        Thread pool size for Bedrock calls.
+    max_tokens
+        Converse ``maxTokens`` for each flip.
+    model_id
+        Bedrock model id.
+
+    Returns
+    -------
+    FlipRunResult
+        Run summary with part counts and whether ``flips.parquet`` exists.
+    """
     validated_posts = _validate_posts(posts)
     tasks = _build_label_tasks(validated_posts)
     _label_and_write_parts(
@@ -87,4 +172,4 @@ def generate_flips(
         max_tokens,
         model_id,
     )
-    raise NotImplementedError
+    return _build_flip_run_result(validated_posts, store, run_prefix)
