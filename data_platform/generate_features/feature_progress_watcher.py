@@ -77,7 +77,6 @@ def resolve_feature_paths(
             platform=platform,
             dataset_id=dataset_id,
         )
-        )
     return FeaturePaths.from_root_uri(smoke_prefix, feature)
 
 
