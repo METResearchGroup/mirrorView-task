@@ -28,13 +28,38 @@ from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.wri
 
 def main() -> int:
     """Load both batches, compute remaining labels, write, and print."""
+    source = pinned_new_sample()
     old_catalog = load_old_catalog()
     old_results = load_old_results()
-    new_sample = load_new_sample(pinned_new_sample())
-    counts = calculate_required_label_counts(old_catalog, old_results, new_sample)
-    result = write_required_label_counts(counts)
+    new_sample = load_new_sample(source, _store(), _cache_dir())
+    counts = calculate_required_label_counts(
+        old_catalog, old_results, new_sample, _required_labels_per_post()
+    )
+    result = write_required_label_counts(
+        counts, source, _experiment_dir(), _store(), _old_catalog_id_count(old_catalog)
+    )
     print_run_summary(result)
     return 0
+
+
+def _store():
+    raise NotImplementedError
+
+
+def _cache_dir():
+    raise NotImplementedError
+
+
+def _experiment_dir():
+    raise NotImplementedError
+
+
+def _required_labels_per_post() -> int:
+    raise NotImplementedError
+
+
+def _old_catalog_id_count(old_catalog) -> int:
+    raise NotImplementedError
 
 
 if __name__ == "__main__":
