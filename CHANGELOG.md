@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-08
+
+1. Operators now have a second curated Reddit parquet that promotes 3000 medium comments to high using Perspective toxicity probability, while the original MirrorView export stays at its pinned hash. [PR #260](https://github.com/METResearchGroup/mirrorView-task/pull/260)
+
 ## 2026-09-07
 
 1. Operators now have a Twitter table of 6,374 labeled posts with 21 columns, plus a MirrorView curated export that records political stance by toxicity tier. [PR #249](https://github.com/METResearchGroup/mirrorView-task/pull/249)
