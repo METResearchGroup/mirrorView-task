@@ -4,6 +4,7 @@ Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/reddit_curated_perspective_v2_2026_09_08/run.py --load-only
     PYTHONPATH=. uv run python experiments/reddit_curated_perspective_v2_2026_09_08/run.py --score
+    PYTHONPATH=. uv run python experiments/reddit_curated_perspective_v2_2026_09_08/run.py --write-v2
 """
 
 from __future__ import annotations
@@ -14,6 +15,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.reddit_curated_perspective_v2_2026_09_08.load_curated import (
     PINNED_CURATED_SHA256,
     load_pinned_curated,
@@ -69,7 +71,7 @@ def _run_write_v2() -> int:
     return 0
 
 
-def _v2_store():
+def _v2_store() -> CampaignObjectStore:
     raise NotImplementedError
 
 
