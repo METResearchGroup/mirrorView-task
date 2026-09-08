@@ -1,5 +1,27 @@
 """Count remaining labels per stimulus post for the old catalog and the new sample.
 
+given AWS credentials from LAB_AWS_ACCESS_KEY_ID and LAB_AWS_ACCESS_KEY_SECRET
+and the pinned new sample parquet exists at SHA-256 9788331f898aa27352dcdf32a962b5722aecc1da61a4638b7bbd77a404415ab9
+when PYTHONPATH=. uv run python experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/run.py
+then old_posts=8899
+and old_labels=27557
+and new_posts=10200
+and new_labels=51000
+and total_posts=19099
+and total_labels=78557
+and local required_label_count_per_stimulus_post.csv exists
+and S3 object experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/required_label_count_per_stimulus_post.csv exists
+and its SHA-256 matches the local file
+and every number_of_times_to_label value is greater than 0
+and RESULTS.md contains total remaining labels 78557
+and RESULTS.md contains old remaining labels 27557
+and RESULTS.md contains new remaining labels 51000
+and stdout prints those counts
+
+given the S3 CSV key already exists
+when the command is run again
+then the process raises FileExistsError and does not change the new sample parquet
+
 Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/run.py
