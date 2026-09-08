@@ -13,10 +13,15 @@ import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.constants import (
+    CSV_INDEX,
+    DATASET_FILENAME,
     LabelCountRunResult,
     LocalCsvWrite,
     NewSampleSource,
+    OUTPUT_COLUMNS,
 )
+
+CSV_ENCODING = "utf-8"
 
 
 def write_local_csv(counts: pd.DataFrame, experiment_dir: Path) -> LocalCsvWrite:
@@ -34,7 +39,10 @@ def write_local_csv(counts: pd.DataFrame, experiment_dir: Path) -> LocalCsvWrite
     LocalCsvWrite
         Local path and CSV bytes.
     """
-    raise NotImplementedError
+    body = _csv_bytes(counts)
+    path = experiment_dir / DATASET_FILENAME
+    path.write_bytes(body)
+    return LocalCsvWrite(path=path, body=body)
 
 
 def upload_csv(body: bytes, store: CampaignObjectStore) -> str:
@@ -116,3 +124,8 @@ def write_required_label_counts(
 def print_run_summary(result: LabelCountRunResult) -> None:
     """Print remaining label totals and the S3 URI."""
     raise NotImplementedError
+
+
+def _csv_bytes(counts: pd.DataFrame) -> bytes:
+    ordered = counts.loc[:, list(OUTPUT_COLUMNS)]
+    return ordered.to_csv(index=CSV_INDEX).encode(CSV_ENCODING)
