@@ -31,6 +31,7 @@ from experiments.generate_flips_2026_09_08.load_filtered_dataset import (
     load_filtered_dataset,
 )
 from experiments.generate_flips_2026_09_08.sources import (
+    INPUT_S3_BUCKET,
     OUTPUT_S3_BUCKET,
     POST_COLUMNS,
     RUN_KEY_PREFIX,
@@ -72,8 +73,9 @@ def main(
     run_prefix = f"{RUN_KEY_PREFIX}{resolved_run_id}/"
 
     source = pinned_filtered_source()
-    store = CampaignObjectStore(bucket)
-    dataset = load_filtered_dataset(source, store, DEFAULT_CACHE_DIR)
+    input_store = CampaignObjectStore(INPUT_S3_BUCKET)
+    output_store = CampaignObjectStore(bucket)
+    dataset = load_filtered_dataset(source, input_store, DEFAULT_CACHE_DIR)
     posts = dataset.loc[:, list(POST_COLUMNS)]
     if max_posts is not None:
         posts = posts.head(max_posts)
@@ -81,7 +83,7 @@ def main(
     client = create_bedrock_runtime_client()
     result = generate_flips(
         posts,
-        store,
+        output_store,
         run_prefix,
         client,
         BATCH_SIZE,
