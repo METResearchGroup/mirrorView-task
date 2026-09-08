@@ -2,7 +2,7 @@
 
 ## 2026-09-08
 
-1. Operators now have a second curated Reddit parquet that promotes 3000 medium comments to high using Perspective toxicity probability, while the original MirrorView export stays at its pinned hash. [PR #260](https://github.com/METResearchGroup/mirrorView-task/pull/260)
+1. Operators now have a second curated Reddit Parquet file, and in that file 3,000 comments that the large language model labeled medium toxicity are labeled high instead, ranked by Perspective toxicity probability. The original MirrorView export still matches its recorded SHA-256. [PR #260](https://github.com/METResearchGroup/mirrorView-task/pull/260)
 
 ## 2026-09-07
 
