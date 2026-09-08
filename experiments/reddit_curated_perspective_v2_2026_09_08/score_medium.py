@@ -49,7 +49,14 @@ def tasks_for_medium_rows(medium: pd.DataFrame) -> list[LabelTask]:
     list[LabelTask]
         One task per row. ``uri`` is the record id and ``text`` is the comment.
     """
-    raise NotImplementedError
+    return [
+        LabelTask(uri=str(record_id), text=str(text))
+        for record_id, text in zip(
+            medium[SOURCE_RECORD_ID_COLUMN],
+            medium[TEXT_COLUMN],
+            strict=True,
+        )
+    ]
 
 
 def score_medium_comments(
