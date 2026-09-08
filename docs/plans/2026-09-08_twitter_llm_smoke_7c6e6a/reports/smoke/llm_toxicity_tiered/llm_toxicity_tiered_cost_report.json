@@ -1,0 +1,104 @@
+{
+  "campaign_id": "twitter_2026_09_08_014808_llm_features_v1",
+  "dataset_id": "twitter_5901767a-e609-46fc-9a17-742516b548f2",
+  "preprocessed_run": "2026_09_08-01:48:08",
+  "feature": "llm_toxicity_tiered",
+  "run_id": "twitter_2026_09_08_014808_llm_features_v1:llm_toxicity_tiered",
+  "model": "gpt-5.4-nano",
+  "smoke_uri": "s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/features/twitter_2026_09_08_014808_llm_features_v1/llm_toxicity_tiered/smoke/",
+  "generated_at": "2026_09_08-02:22:56",
+  "batch_id": "batch_6a9f7160c9888190997f6bb8b5b2d826",
+  "request_count": 10,
+  "pricing": {
+    "source_url": "https://developers.openai.com/api/docs/pricing",
+    "input_usd_per_million_tokens": 0.1,
+    "output_usd_per_million_tokens": 0.625
+  },
+  "batch_usage": {
+    "input_tokens": 3834,
+    "output_tokens": 220,
+    "total_tokens": 4054
+  },
+  "per_request": [
+    {
+      "source_record_id": "2094600608741212448",
+      "request_id": "task-00000",
+      "input_tokens": 405,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094606162566001003",
+      "request_id": "task-00001",
+      "input_tokens": 398,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094606170329600052",
+      "request_id": "task-00002",
+      "input_tokens": 391,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094606301892362702",
+      "request_id": "task-00003",
+      "input_tokens": 368,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094609219047633404",
+      "request_id": "task-00004",
+      "input_tokens": 364,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094609544492077056",
+      "request_id": "task-00005",
+      "input_tokens": 373,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094610482879660051",
+      "request_id": "task-00006",
+      "input_tokens": 372,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094617576043393356",
+      "request_id": "task-00007",
+      "input_tokens": 384,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094618407484240230",
+      "request_id": "task-00008",
+      "input_tokens": 385,
+      "output_tokens": 22
+    },
+    {
+      "source_record_id": "2094621310991167862",
+      "request_id": "task-00009",
+      "input_tokens": 394,
+      "output_tokens": 22
+    }
+  ],
+  "avg_input_tokens_per_request": 383.4,
+  "avg_output_tokens_per_request": 22.0,
+  "max_input_tokens_per_request": 405,
+  "max_output_tokens_per_request": 22,
+  "smoke_cost_usd": 0.000521,
+  "full_run_post_count": 6408,
+  "estimated_full_run_usd_avg": 0.333793,
+  "estimated_full_run_usd_max": 0.347634,
+  "source_record_ids": [
+    "2094600608741212448",
+    "2094606162566001003",
+    "2094606170329600052",
+    "2094606301892362702",
+    "2094609219047633404",
+    "2094609544492077056",
+    "2094610482879660051",
+    "2094617576043393356",
+    "2094618407484240230",
+    "2094621310991167862"
+  ]
+}
