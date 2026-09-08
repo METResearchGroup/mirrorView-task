@@ -195,6 +195,7 @@ def converse_label(
     system_prompt: str,
     output_schema: type[BaseModel],
     user_text: str,
+    max_tokens: int = BEDROCK_MAX_TOKENS,
 ) -> tuple[BaseModel, BedrockUsage]:
     """Return structured output and token usage from one Converse call.
 
@@ -204,7 +205,12 @@ def converse_label(
     for attempt in range(CONVERSE_RETRY_ATTEMPTS):
         try:
             return _converse_once(
-                client, model_id, system_prompt, output_schema, user_text
+                client,
+                model_id,
+                system_prompt,
+                output_schema,
+                user_text,
+                max_tokens,
             )
         except RETRYABLE_CONVERSE_ERRORS as error:
             last_error = error
@@ -227,13 +233,14 @@ def _converse_once(
     system_prompt: str,
     output_schema: type[BaseModel],
     user_text: str,
+    max_tokens: int = BEDROCK_MAX_TOKENS,
 ) -> tuple[BaseModel, BedrockUsage]:
     response = client.converse(
         modelId=model_id,
         system=[{"text": f"{system_prompt}\n{json_instruction_for_schema(output_schema)}"}],
         messages=[{"role": "user", "content": [{"text": user_text}]}],
         inferenceConfig={
-            "maxTokens": BEDROCK_MAX_TOKENS,
+            "maxTokens": max_tokens,
             "temperature": BEDROCK_TEMPERATURE,
         },
     )
@@ -290,6 +297,7 @@ def _label_tasks_in_order(
     spec: FeatureSpec,
     tasks: list[LabelTask],
     max_concurrency: int,
+    max_tokens: int = BEDROCK_MAX_TOKENS,
 ) -> tuple[list[BaseModel], list[BedrockUsage]]:
     system_prompt, output_schema = _llm_prompt_and_schema(spec)
     worker_count = max(MIN_THREAD_WORKERS, min(max_concurrency, len(tasks)))
@@ -304,6 +312,7 @@ def _label_tasks_in_order(
                 system_prompt,
                 output_schema,
                 task.text,
+                max_tokens,
             ): index
             for index, task in enumerate(tasks)
         }
@@ -349,6 +358,7 @@ def label_tasks_collecting_failures(
     tasks: list[LabelTask],
     max_concurrency: int,
     label_timestamp: str,
+    max_tokens: int = BEDROCK_MAX_TOKENS,
 ) -> BedrockTaskOutcome:
     """Label tasks and split content-filter failures from other failures."""
     if not tasks:
@@ -364,6 +374,7 @@ def label_tasks_collecting_failures(
         tasks,
         worker_count,
         label_timestamp,
+        max_tokens,
     )
     return _split_task_outcomes(outcomes)
 
@@ -377,6 +388,7 @@ def _run_label_pool(
     tasks: list[LabelTask],
     worker_count: int,
     label_timestamp: str,
+    max_tokens: int = BEDROCK_MAX_TOKENS,
 ) -> list[tuple[str, dict | RecordLabelFailure] | None]:
     outcomes: list[tuple[str, dict | RecordLabelFailure] | None] = [None] * len(tasks)
     with ThreadPoolExecutor(max_workers=worker_count) as pool:
@@ -390,6 +402,7 @@ def _run_label_pool(
                 output_schema,
                 task,
                 label_timestamp,
+                max_tokens,
             ): index
             for index, task in enumerate(tasks)
         }
@@ -406,10 +419,16 @@ def _label_task_or_failure(
     output_schema: type[BaseModel],
     task: LabelTask,
     label_timestamp: str,
+    max_tokens: int = BEDROCK_MAX_TOKENS,
 ) -> tuple[str, dict | RecordLabelFailure]:
     try:
         parsed, _usage = converse_label(
-            client, model_id, system_prompt, output_schema, task.text
+            client,
+            model_id,
+            system_prompt,
+            output_schema,
+            task.text,
+            max_tokens,
         )
         return ("row", _label_row_for_task(task, parsed, spec, label_timestamp))
     except BedrockContentFilterError as error:
