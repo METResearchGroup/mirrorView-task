@@ -60,6 +60,9 @@ experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet
 # Flip generation cache lives in S3. Keep the local copy out of git.
 experiments/generate_flips_2026_09_08/cache/
 
+# Remaining-label CSV lives in S3. Keep the local cache out of git.
+experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/cache/
+
 # OS generated files
 .DS_Store
 .DS_Store?
