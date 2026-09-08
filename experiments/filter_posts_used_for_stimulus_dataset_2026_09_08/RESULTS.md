@@ -48,4 +48,4 @@ Sampled row count is 9562. Aimed total is 10200.
 | right | 1700 | 1700 | 1062 | 4462 |
 | total | 3400 | 3400 | 2762 | 9562 |
 
-The cell for right stance and high toxicity kept every cleaned post because it had 1062 posts, which is fewer than 1700.
+Operators kept every cleaned post in the cell for right stance and high toxicity, because the cell had 1062 posts. 1062 is fewer than 1700.

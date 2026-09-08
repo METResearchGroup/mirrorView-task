@@ -11,7 +11,7 @@ and S3 object experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/data
 and its SHA-256 matches the local file
 and RESULTS.md contains the cleaned stance by toxicity table
 and RESULTS.md contains the sampled stance by toxicity table
-and the sampled right-high cell has 1062 rows
+and the sampled cell for right stance and high toxicity has 1062 rows
 and stdout prints both tables
 
 given the S3 dataset.parquet key already exists

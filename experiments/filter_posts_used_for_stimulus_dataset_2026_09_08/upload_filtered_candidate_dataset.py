@@ -315,9 +315,9 @@ def _labeled_tier_row(label: str, cells: list[int]) -> str:
 
 def _right_high_sentence(result: FilterRunResult) -> str:
     return (
-        "The cell for right stance and high toxicity kept every cleaned post "
-        f"because it had {result.right_high_available} posts, which is fewer than "
-        f"{TARGET_PER_CELL}."
+        "Operators kept every cleaned post in the cell for right stance and "
+        f"high toxicity, because the cell had {result.right_high_available} posts. "
+        f"{result.right_high_available} is fewer than {TARGET_PER_CELL}."
     )
 
 
