@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-08
+
+1. A dated Mirrorview Twitter ingest config and a recent-search run (6,900 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #259](https://github.com/METResearchGroup/mirrorView-task/pull/259)
+
 ## 2026-09-07
 
 1. Operators now have a Twitter table of 6,374 labeled posts with 21 columns, plus a MirrorView curated export that records political stance by toxicity tier. [PR #249](https://github.com/METResearchGroup/mirrorView-task/pull/249)
