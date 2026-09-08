@@ -53,7 +53,7 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 @app.command()
 def main(
-    run_id: str | None = typer.Option(None, "--run-id"),
+    run_id: str = typer.Option("", "--run-id"),
     max_posts: int | None = typer.Option(None, "--max-posts"),
     bucket: str = typer.Option(OUTPUT_S3_BUCKET, "--bucket"),
 ) -> None:
@@ -68,7 +68,7 @@ def main(
     bucket
         S3 bucket for flip output artifacts.
     """
-    resolved_run_id = run_id if run_id is not None else get_current_timestamp()
+    resolved_run_id = run_id if run_id else get_current_timestamp()
     run_prefix = f"{RUN_KEY_PREFIX}{resolved_run_id}/"
 
     source = pinned_filtered_source()
