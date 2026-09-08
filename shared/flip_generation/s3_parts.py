@@ -36,7 +36,8 @@ def part_key(run_prefix: str, part_index: int) -> str:
     _validate_run_prefix(run_prefix)
     if part_index < 0:
         raise ValueError(f"part_index must be non-negative: {part_index}")
-    raise NotImplementedError
+    part_filename = PART_FILENAME_TEMPLATE.format(part_index=part_index)
+    return f"{run_prefix}{BATCHES_DIRNAME}/{part_filename}"
 
 
 def errors_key(run_prefix: str) -> str:
@@ -48,7 +49,7 @@ def errors_key(run_prefix: str) -> str:
         When ``run_prefix`` does not end with ``/``.
     """
     _validate_run_prefix(run_prefix)
-    raise NotImplementedError
+    return f"{run_prefix}{ERRORS_FILENAME}"
 
 
 def final_key(run_prefix: str) -> str:
@@ -60,4 +61,4 @@ def final_key(run_prefix: str) -> str:
         When ``run_prefix`` does not end with ``/``.
     """
     _validate_run_prefix(run_prefix)
-    raise NotImplementedError
+    return f"{run_prefix}{FINAL_FILENAME}"
