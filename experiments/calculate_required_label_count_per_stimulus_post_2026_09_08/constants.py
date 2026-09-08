@@ -11,6 +11,47 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
+from shared.data.registry import (
+    STUDY_PHASE_2_PART_2_RESULTS_FULL,
+    STUDY_PHASE_2_PART_2_STIMULI,
+)
+
+REQUIRED_LABELS_PER_POST = 5
+OLD_STIMULI_DATASET = STUDY_PHASE_2_PART_2_STIMULI
+OLD_RESULTS_DATASET = STUDY_PHASE_2_PART_2_RESULTS_FULL
+EXPECTED_OLD_CATALOG_IDS = 10000
+OLD_ID_COLUMN = "post_primary_key"
+RESULTS_ID_COLUMN = "post_id"
+RATER_COLUMN = "prolific_id"
+NEW_ID_COLUMN = "record_id"
+OUTPUT_ID_COLUMN = "id"
+OUTPUT_COUNT_COLUMN = "number_of_times_to_label"
+OUTPUT_BATCH_COLUMN = "batch"
+OUTPUT_COLUMNS = (OUTPUT_ID_COLUMN, OUTPUT_COUNT_COLUMN, OUTPUT_BATCH_COLUMN)
+EMPTY_CELL = ""
+NAN_CELL = "nan"
+SORT_KIND = "mergesort"
+CSV_INDEX = False
+
+NEW_SAMPLE_S3_BUCKET = "mirrorview-experimental-artifacts"
+NEW_SAMPLE_S3_KEY = (
+    "experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet"
+)
+NEW_SAMPLE_S3_URI = f"s3://{NEW_SAMPLE_S3_BUCKET}/{NEW_SAMPLE_S3_KEY}"
+NEW_SAMPLE_SHA256 = "9788331f898aa27352dcdf32a962b5722aecc1da61a4638b7bbd77a404415ab9"
+NEW_SAMPLE_ROW_COUNT = 10200
+
+OUTPUT_S3_BUCKET = "mirrorview-experimental-artifacts"
+OUTPUT_S3_KEY = (
+    "experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/"
+    "required_label_count_per_stimulus_post.csv"
+)
+OUTPUT_S3_URI = f"s3://{OUTPUT_S3_BUCKET}/{OUTPUT_S3_KEY}"
+DATASET_FILENAME = "required_label_count_per_stimulus_post.csv"
+RESULTS_FILENAME = "RESULTS.md"
+CACHE_DIRNAME = "cache"
+EXPERIMENT_DIRNAME = "calculate_required_label_count_per_stimulus_post_2026_09_08"
+
 
 class Batch(str, Enum):
     """Which stimulus batch a remaining-label row belongs to."""
@@ -55,6 +96,13 @@ class LocalCsvWrite:
     body: bytes
 
 
+PINNED_NEW_SAMPLE = NewSampleSource(
+    s3_uri=NEW_SAMPLE_S3_URI,
+    sha256=NEW_SAMPLE_SHA256,
+    expected_row_count=NEW_SAMPLE_ROW_COUNT,
+)
+
+
 def pinned_new_sample() -> NewSampleSource:
     """Return the pinned new sample identity."""
-    raise NotImplementedError
+    return PINNED_NEW_SAMPLE
