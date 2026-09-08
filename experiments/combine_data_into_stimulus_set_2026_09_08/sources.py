@@ -155,4 +155,4 @@ PINNED_SOURCES = (
 
 def pinned_sources() -> tuple[CuratedSource, ...]:
     """Return the four pinned curated sources in combine order."""
-    raise NotImplementedError
+    return PINNED_SOURCES
