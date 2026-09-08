@@ -57,11 +57,11 @@ from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec
 from data_platform.generate_features.openai_batch_state import load_active_batch_state
 from data_platform.generate_features.registry import FEATURE_REGISTRY
 from data_platform.generate_features.s3_feature_batches import (
-    attach_provenance,
+    attach_row_metadata as attach_provenance,
+    campaign_row_columns as q44_columns,
     parquet_rows,
-    q44_columns,
     rows_to_parquet_bytes,
-    validate_q44_rows,
+    validate_campaign_rows as validate_q44_rows,
 )
 from data_platform.generate_features.s3_feature_campaign import (
     DEFAULT_CAMPAIGN_PLATFORM,

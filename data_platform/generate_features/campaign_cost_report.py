@@ -19,6 +19,13 @@ from typing import Any
 import typer
 from openai.types import BatchUsage
 
+from data_platform.generate_features.campaign_engine_map import (
+    BEDROCK_ENGINE_TYPE,
+    OPENAI_ENGINE_TYPE,
+    REDDIT_CAMPAIGN_ENGINE_BY_FEATURE,
+    REDDIT_LLM_FEATURES_CAMPAIGN_ID,
+    campaign_engine_type,
+)
 from data_platform.generate_features.engines.openai_engine import (
     CUSTOM_ID_INDEX_WIDTH,
     CUSTOM_ID_PREFIX,
@@ -28,8 +35,11 @@ from data_platform.generate_features.s3_feature_campaign import run_id_for_featu
 from lib.timestamp_utils import get_current_timestamp
 
 PRICING_SOURCE_URL = "https://developers.openai.com/api/docs/pricing"
+BEDROCK_PRICING_SOURCE_URL = "https://aws.amazon.com/bedrock/pricing/"
 DEFAULT_BATCH_INPUT_USD_PER_MILLION_TOKENS = 0.10
 DEFAULT_BATCH_OUTPUT_USD_PER_MILLION_TOKENS = 0.625
+DEFAULT_BEDROCK_INPUT_USD_PER_MILLION_TOKENS = 0.035
+DEFAULT_BEDROCK_OUTPUT_USD_PER_MILLION_TOKENS = 0.14
 FULL_RUN_POST_COUNT = 200_000
 CAMPAIGN_LLM_FEATURES = tuple(
     name for name, spec in FEATURE_REGISTRY.items() if spec.engine_type == "openai"
@@ -114,12 +124,18 @@ def build_feature_cost_report(
     request_usages: list[RequestUsage],
     pricing: BatchPricing,
     full_run_post_count: int = FULL_RUN_POST_COUNT,
+    full_run_row_count: int | None = None,
+    engine_type: str = OPENAI_ENGINE_TYPE,
 ) -> dict[str, Any]:
     """Return the per-feature smoke cost report.
 
     Averages divide the per-request totals by the request count, maximums are
     the largest single request, and the two full-run estimates multiply
-    ``full_run_post_count`` by the per-post cost under each assumption.
+    ``full_run_row_count`` by the per-row cost under each assumption.
+
+    ``full_run_row_count`` defaults to ``full_run_post_count``. Both fields are
+    written with that integer so existing watchers can still read
+    ``full_run_post_count``.
 
     Raises
     ------
@@ -128,6 +144,7 @@ def build_feature_cost_report(
     """
     if not request_usages:
         raise ValueError("cannot build a cost report without per-request usage")
+    row_count = full_run_post_count if full_run_row_count is None else full_run_row_count
     request_count = len(request_usages)
     input_total = sum(usage.input_tokens for usage in request_usages)
     output_total = sum(usage.output_tokens for usage in request_usages)
@@ -142,6 +159,7 @@ def build_feature_cost_report(
         "feature": feature,
         "run_id": run_id_for_feature(campaign_id, feature),
         "model": model,
+        "engine_type": engine_type,
         "smoke_uri": smoke_uri,
         "generated_at": get_current_timestamp(),
         "batch_id": batch_id,
@@ -160,12 +178,13 @@ def build_feature_cost_report(
         "max_input_tokens_per_request": max_input,
         "max_output_tokens_per_request": max_output,
         "smoke_cost_usd": round(pricing.cost_usd(input_total, output_total), USD_DECIMALS),
-        "full_run_post_count": full_run_post_count,
+        "full_run_post_count": row_count,
+        "full_run_row_count": row_count,
         "estimated_full_run_usd_avg": round(
-            full_run_post_count * pricing.cost_usd(avg_input, avg_output), USD_DECIMALS
+            row_count * pricing.cost_usd(avg_input, avg_output), USD_DECIMALS
         ),
         "estimated_full_run_usd_max": round(
-            full_run_post_count * pricing.cost_usd(max_input, max_output), USD_DECIMALS
+            row_count * pricing.cost_usd(max_input, max_output), USD_DECIMALS
         ),
         "source_record_ids": [usage.source_record_id for usage in request_usages],
     }
@@ -176,16 +195,82 @@ def cost_report_path(smoke_reports_dir: Path, feature: str) -> Path:
     return smoke_reports_dir / feature / f"{feature}{COST_REPORT_SUFFIX}"
 
 
+def features_for_campaign_aggregate(campaign_id: str) -> tuple[str, ...]:
+    """Return the feature names the parent aggregate must read for ``campaign_id``.
+
+    The pinned Reddit campaign uses the campaign engine map. Every other
+    campaign id keeps the OpenAI registry list so Bluesky aggregate stays
+    unchanged.
+    """
+    if campaign_id == REDDIT_LLM_FEATURES_CAMPAIGN_ID:
+        return tuple(REDDIT_CAMPAIGN_ENGINE_BY_FEATURE)
+    return CAMPAIGN_LLM_FEATURES
+
+
+def pricing_for_engine_type(engine_type: str) -> BatchPricing:
+    """Return OpenAI Batch or Bedrock on-demand prices for ``engine_type``.
+
+    Raises
+    ------
+    ValueError
+        When ``engine_type`` is not ``openai`` or ``bedrock``.
+    """
+    if engine_type == BEDROCK_ENGINE_TYPE:
+        return BatchPricing(
+            source_url=BEDROCK_PRICING_SOURCE_URL,
+            input_usd_per_million_tokens=DEFAULT_BEDROCK_INPUT_USD_PER_MILLION_TOKENS,
+            output_usd_per_million_tokens=DEFAULT_BEDROCK_OUTPUT_USD_PER_MILLION_TOKENS,
+        )
+    if engine_type == OPENAI_ENGINE_TYPE:
+        return BatchPricing(
+            source_url=PRICING_SOURCE_URL,
+            input_usd_per_million_tokens=DEFAULT_BATCH_INPUT_USD_PER_MILLION_TOKENS,
+            output_usd_per_million_tokens=DEFAULT_BATCH_OUTPUT_USD_PER_MILLION_TOKENS,
+        )
+    raise ValueError(f"unsupported engine_type {engine_type!r}")
+
+
+def _sum_usd(entries: list[dict[str, Any]], field: str, engine_type: str | None = None) -> float:
+    selected = (
+        entries
+        if engine_type is None
+        else [entry for entry in entries if entry["engine_type"] == engine_type]
+    )
+    return round(sum(entry[field] for entry in selected), USD_DECIMALS)
+
+
+def _feature_aggregate_entry(
+    campaign_id: str, feature: str, path: Path, report: dict[str, Any]
+) -> dict[str, Any]:
+    return {
+        "feature": feature,
+        "report_path": str(path),
+        "model": report["model"],
+        "engine_type": campaign_engine_type(campaign_id, feature),
+        "request_count": report["request_count"],
+        "avg_input_tokens_per_request": report["avg_input_tokens_per_request"],
+        "avg_output_tokens_per_request": report["avg_output_tokens_per_request"],
+        "max_input_tokens_per_request": report["max_input_tokens_per_request"],
+        "max_output_tokens_per_request": report["max_output_tokens_per_request"],
+        "smoke_cost_usd": report["smoke_cost_usd"],
+        "estimated_full_run_usd_avg": report["estimated_full_run_usd_avg"],
+        "estimated_full_run_usd_max": report["estimated_full_run_usd_max"],
+    }
+
+
 def aggregate_cost_reports(
     campaign_id: str,
     smoke_reports_dir: Path,
-    features: tuple[str, ...] = CAMPAIGN_LLM_FEATURES,
+    features: tuple[str, ...] | None = None,
     full_run_row_count: int = FULL_RUN_POST_COUNT,
 ) -> dict[str, Any]:
     """Sum the per-feature smoke cost reports of ``features`` into one parent estimate.
 
     ``full_run_row_count`` is recorded on the aggregate. It defaults to
     ``FULL_RUN_POST_COUNT`` (200000). Twitter passes 6374.
+
+    Engine subtotals use ``campaign_engine_type`` for ``campaign_id``, not
+    registry default ``engine_type`` values.
 
     Raises
     ------
@@ -194,7 +279,10 @@ def aggregate_cost_reports(
     ValueError
         When a report describes a different campaign or feature than its path.
     """
-    paths = {feature: cost_report_path(smoke_reports_dir, feature) for feature in features}
+    resolved_features = features or features_for_campaign_aggregate(campaign_id)
+    paths = {
+        feature: cost_report_path(smoke_reports_dir, feature) for feature in resolved_features
+    }
     missing = [str(path) for path in paths.values() if not path.exists()]
     if missing:
         raise FileNotFoundError(f"missing {len(missing)} cost reports: {missing}")
@@ -206,35 +294,32 @@ def aggregate_cost_reports(
                 f"{path} describes campaign {report.get('campaign_id')!r} feature "
                 f"{report.get('feature')!r}, expected {campaign_id!r} {feature!r}"
             )
-        entries.append(
-            {
-                "feature": feature,
-                "report_path": str(path),
-                "model": report["model"],
-                "request_count": report["request_count"],
-                "avg_input_tokens_per_request": report["avg_input_tokens_per_request"],
-                "avg_output_tokens_per_request": report["avg_output_tokens_per_request"],
-                "max_input_tokens_per_request": report["max_input_tokens_per_request"],
-                "max_output_tokens_per_request": report["max_output_tokens_per_request"],
-                "smoke_cost_usd": report["smoke_cost_usd"],
-                "estimated_full_run_usd_avg": report["estimated_full_run_usd_avg"],
-                "estimated_full_run_usd_max": report["estimated_full_run_usd_max"],
-            }
-        )
+        entries.append(_feature_aggregate_entry(campaign_id, feature, path, report))
+    openai_count = sum(entry["engine_type"] == OPENAI_ENGINE_TYPE for entry in entries)
+    bedrock_count = sum(entry["engine_type"] == BEDROCK_ENGINE_TYPE for entry in entries)
     return {
         "campaign_id": campaign_id,
         "generated_at": get_current_timestamp(),
         "full_run_row_count": full_run_row_count,
         "features_included": len(entries),
+        "openai_features": openai_count,
+        "bedrock_features": bedrock_count,
+        "full_run_row_count": full_run_row_count,
         "features": entries,
-        "total_smoke_cost_usd": round(
-            sum(entry["smoke_cost_usd"] for entry in entries), USD_DECIMALS
+        "total_smoke_cost_usd": _sum_usd(entries, "smoke_cost_usd"),
+        "total_estimated_full_run_usd_avg": _sum_usd(entries, "estimated_full_run_usd_avg"),
+        "total_estimated_full_run_usd_max": _sum_usd(entries, "estimated_full_run_usd_max"),
+        "openai_estimated_full_run_usd_avg": _sum_usd(
+            entries, "estimated_full_run_usd_avg", OPENAI_ENGINE_TYPE
         ),
-        "total_estimated_full_run_usd_avg": round(
-            sum(entry["estimated_full_run_usd_avg"] for entry in entries), USD_DECIMALS
+        "openai_estimated_full_run_usd_max": _sum_usd(
+            entries, "estimated_full_run_usd_max", OPENAI_ENGINE_TYPE
         ),
-        "total_estimated_full_run_usd_max": round(
-            sum(entry["estimated_full_run_usd_max"] for entry in entries), USD_DECIMALS
+        "bedrock_estimated_full_run_usd_avg": _sum_usd(
+            entries, "estimated_full_run_usd_avg", BEDROCK_ENGINE_TYPE
+        ),
+        "bedrock_estimated_full_run_usd_max": _sum_usd(
+            entries, "estimated_full_run_usd_max", BEDROCK_ENGINE_TYPE
         ),
     }
 
@@ -255,9 +340,11 @@ def main(
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(f"{json.dumps(document, indent=JSON_INDENT)}\n", encoding="utf-8")
     print(f"features_included={document['features_included']}")
-    print(f"full_run_row_count={document['full_run_row_count']}")
+    print(f"openai_features={document['openai_features']}")
+    print(f"bedrock_features={document['bedrock_features']}")
     print(f"total_estimated_full_run_usd_avg={document['total_estimated_full_run_usd_avg']}")
     print(f"total_estimated_full_run_usd_max={document['total_estimated_full_run_usd_max']}")
+    print(f"full_run_row_count={document['full_run_row_count']}")
     print(f"{output.name} written")
 
 
