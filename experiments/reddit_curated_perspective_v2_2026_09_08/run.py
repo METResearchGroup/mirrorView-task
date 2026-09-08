@@ -39,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.score:
         curated = load_pinned_curated()
         medium = medium_rows(curated)
-        scores = score_medium_comments(medium, DEFAULT_SCORES_PATH)
+        scores = score_medium_comments(medium, scores_path=DEFAULT_SCORES_PATH)
         print(f"medium_rows={len(medium)}")
         print(f"already_scored={len(scores)}")
         print(f"newly_scored=0")
