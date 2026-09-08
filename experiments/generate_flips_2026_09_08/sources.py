@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 OUTPUT_S3_BUCKET = "mirrorview-experimental-artifacts"
+RUN_KEY_PREFIX = "experiments/generate_flips_2026_09_08/"
 
 
 @dataclass(frozen=True)

@@ -15,5 +15,29 @@ def load_filtered_dataset(
     store: CampaignObjectStore,
     cache_dir: Path,
 ) -> pd.DataFrame:
-    """Return the filtered table after checking SHA-256, row count, and columns."""
+    """Return the filtered table after checking SHA-256, row count, and columns.
+
+    A matching local cache copy is reused when its SHA-256 matches the pin.
+
+    Parameters
+    ----------
+    source
+        Pinned filtered parquet identity.
+    store
+        Object store for the source bucket.
+    cache_dir
+        Directory for a local copy of the source bytes.
+
+    Returns
+    -------
+    pd.DataFrame
+        The filtered candidate table with combined stimulus columns.
+
+    Raises
+    ------
+    FileNotFoundError
+        When the source object is missing.
+    ValueError
+        When the SHA-256, row count, or columns do not match the pin.
+    """
     raise NotImplementedError

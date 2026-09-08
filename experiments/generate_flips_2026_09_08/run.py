@@ -1,5 +1,17 @@
 """Run flip generation on the pinned filtered stimulus sample.
 
+given AWS credentials from LAB_AWS_ACCESS_KEY_ID and LAB_AWS_ACCESS_KEY_SECRET
+and the pinned filtered parquet exists at SHA-256 9788331f898aa27352dcdf32a962b5722aecc1da61a4638b7bbd77a404415ab9
+when PYTHONPATH=. uv run python experiments/generate_flips_2026_09_08/run.py --run-id smoke --max-posts 10
+then part_count=1
+and row_count + failed_count = 10
+and S3 object experiments/generate_flips_2026_09_08/smoke/batches/part-00000.parquet exists
+and stdout prints run_prefix=experiments/generate_flips_2026_09_08/smoke/
+
+given the same command is run again
+then Bedrock is not called for those 10 ids
+and part-00000 is not rewritten
+
 Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/generate_flips_2026_09_08/run.py --help
