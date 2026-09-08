@@ -22,15 +22,26 @@ Smoke (manual, not pytest):
 
 from __future__ import annotations
 
+import json
+
 import pandas as pd
 
-from data_platform.generate_features.engines.bedrock_engine import BedrockRuntimeClient
+from data_platform.generate_features.engines.base import RecordLabelFailure, batched
+from data_platform.generate_features.engines.bedrock_engine import (
+    BedrockRuntimeClient,
+    label_tasks_collecting_failures,
+)
 from data_platform.generate_features.models import LabelTask
+from data_platform.generate_features.s3_feature_batches import parquet_rows, rows_to_parquet_bytes
+from data_platform.generate_features.s3_feature_campaign import (
+    CampaignObjectStore,
+    INTERMEDIATE_ARTIFACT_TAG,
+)
+from lib.timestamp_utils import get_current_timestamp
 
-from shared.flip_generation.prompts import USER_MESSAGE_TEMPLATE
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
-
-from shared.flip_generation.models import FlipRunResult
+from shared.flip_generation.models import FLIP_PARQUET_COLUMNS, FlipRow, FlipRunResult
+from shared.flip_generation.prompts import USER_MESSAGE_TEMPLATE, flip_feature_spec
+from shared.flip_generation.s3_parts import BATCHES_DIRNAME, errors_key, final_key, part_key
 
 BATCH_SIZE = 25
 MAX_CONCURRENCY = 10
@@ -118,6 +129,85 @@ def _build_label_tasks(posts: pd.DataFrame) -> list[LabelTask]:
             )
         )
     return label_tasks
+
+
+def _batches_prefix(run_prefix: str) -> str:
+    return f"{run_prefix}{BATCHES_DIRNAME}/"
+
+
+def _load_seen_ids(store: CampaignObjectStore, run_prefix: str) -> set[str]:
+    """Return record ids already present in batch parts or the errors log."""
+    seen_ids: set[str] = set()
+    for object_key in store.list_keys(_batches_prefix(run_prefix)):
+        if not object_key.endswith(".parquet"):
+            continue
+        stored_part = store.get(object_key)
+        if stored_part is None:
+            continue
+        part_frame = parquet_rows(stored_part.body)
+        seen_ids.update(part_frame[RECORD_ID_COLUMN].astype(str).tolist())
+    stored_errors = store.get(errors_key(run_prefix))
+    if stored_errors is not None:
+        for line in stored_errors.body.decode("utf-8").splitlines():
+            if not line.strip():
+                continue
+            error_record = json.loads(line)
+            seen_ids.add(str(error_record["source_record_id"]))
+    return seen_ids
+
+
+def _join_flip_rows(posts: pd.DataFrame, engine_rows: list[dict]) -> list[FlipRow]:
+    """Join Bedrock engine rows to the input table and validate as FlipRow."""
+    posts_by_id = posts.set_index(RECORD_ID_COLUMN, drop=False)
+    flip_rows: list[FlipRow] = []
+    for engine_row in engine_rows:
+        record_id = str(engine_row["source_record_id"])
+        post_row = posts_by_id.loc[record_id]
+        if isinstance(post_row, pd.DataFrame):
+            post_row = post_row.iloc[0]
+        flip_rows.append(
+            FlipRow(
+                record_id=record_id,
+                original_text=str(post_row[TEXT_COLUMN]),
+                llm_toxicity_tier=str(post_row[TOXICITY_COLUMN]),
+                political_stance=str(post_row[STANCE_COLUMN]),
+                mirrored_text=engine_row["flipped_text"],
+                explanation=engine_row["explanation"],
+                label_timestamp=engine_row["label_timestamp"],
+            )
+        )
+    return flip_rows
+
+
+def _write_flip_part(
+    store: CampaignObjectStore,
+    object_key: str,
+    flip_rows: list[FlipRow],
+) -> None:
+    """Write one immutable parquet part with the intermediate artifact tag."""
+    row_dicts = [flip_row.model_dump() for flip_row in flip_rows]
+    parquet_bytes = rows_to_parquet_bytes(row_dicts, FLIP_PARQUET_COLUMNS)
+    store.put_new(object_key, parquet_bytes, tags=INTERMEDIATE_ARTIFACT_TAG)
+
+
+def _failure_records(
+    failures: list[RecordLabelFailure],
+    part_index: int,
+) -> list[dict[str, object]]:
+    """Build JSONL error records for one batch."""
+    return [
+        {
+            "source_record_id": failure.source_record_id,
+            "error": failure.error,
+            "attempts": failure.attempts,
+            "part_index": part_index,
+        }
+        for failure in failures
+    ]
+
+
+def _part_object_exists(store: CampaignObjectStore, object_key: str) -> bool:
+    return store.get(object_key) is not None
 
 
 def _label_and_write_parts(
