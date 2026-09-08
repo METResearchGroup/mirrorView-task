@@ -12,10 +12,18 @@ import argparse
 import sys
 from pathlib import Path
 
+import pandas as pd
+
 from experiments.reddit_curated_perspective_v2_2026_09_08.load_curated import (
     PINNED_CURATED_SHA256,
     load_pinned_curated,
     medium_rows,
+)
+from experiments.reddit_curated_perspective_v2_2026_09_08.promote_v2 import (
+    V2_OBJECT_KEY,
+    apply_promotions,
+    select_promotions,
+    write_curated_v2,
 )
 from experiments.reddit_curated_perspective_v2_2026_09_08.score_medium import (
     count_already_scored,
@@ -48,16 +56,36 @@ def _run_score() -> int:
     return 0
 
 
+def _run_write_v2() -> int:
+    curated = load_pinned_curated()
+    scores = pd.read_parquet(DEFAULT_SCORES_PATH)
+    promotion_ids = select_promotions(scores)
+    curated_v2 = apply_promotions(curated, promotion_ids)
+    v2_sha256 = write_curated_v2(curated_v2, store=_v2_store(), key=V2_OBJECT_KEY)
+    print(f"promotions={len(promotion_ids)}")
+    print(f"v2_rows={len(curated_v2)}")
+    print(f"v2_sha256={v2_sha256}")
+    print(f"original_sha256={PINNED_CURATED_SHA256}")
+    return 0
+
+
+def _v2_store():
+    raise NotImplementedError
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--load-only", action="store_true")
     parser.add_argument("--score", action="store_true")
+    parser.add_argument("--write-v2", action="store_true")
     args = parser.parse_args(argv)
     if args.load_only:
         return _run_load_only()
     if args.score:
         return _run_score()
-    raise SystemExit("pass --load-only or --score")
+    if args.write_v2:
+        return _run_write_v2()
+    raise SystemExit("pass --load-only, --score, or --write-v2")
 
 
 if __name__ == "__main__":
