@@ -1,18 +1,23 @@
-"""Copy the pinned Twitter preprocessed posts csv from Git LFS to S3.
+"""Copy a Twitter preprocessed posts csv from Git LFS to S3.
 
 Run from the repo root:
 
     export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
     export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
-    PYTHONPATH=. uv run python data_platform/scripts/migrate_twitter_preprocessed_to_s3.py
+    PYTHONPATH=. uv run python data_platform/scripts/migrate_twitter_preprocessed_to_s3.py \\
+        --dataset-id twitter_5901767a-e609-46fc-9a17-742516b548f2 \\
+        --preprocessed-run 2026_09_08-01:48:08
 """
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import subprocess
+import sys
 from collections.abc import Sequence
+from dataclasses import dataclass
 from pathlib import Path
 
 from lib.aws.s3 import S3
@@ -21,19 +26,62 @@ from lib.timestamp_utils import get_current_timestamp
 
 BUCKET = "mirrorview-experimental-artifacts"
 REGION = "us-east-2"
-DATASET_ID = "twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547"
-PREPROCESSED_RUN = "2026_09_06-19:28:47"
 EXPECTED_OBJECT_COUNT = 1
 LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/v1"
 DUPLICATE_PREFIX = "data_platform/data_platform/"
+TWITTER_DATA_PREFIX = "data_platform/data/twitter"
+PREPROCESSED_DIRNAME = "preprocessed"
+POSTS_CSV_NAME = "posts.csv"
+INVENTORY_FILENAME = "s3_preprocessed_inventory.json"
 
-DATASET_ROOT = f"data_platform/data/twitter/{DATASET_ID}"
-POSTS_CSV_PATH = f"{DATASET_ROOT}/preprocessed/{PREPROCESSED_RUN}/posts.csv"
-INVENTORY_PATH = REPO_ROOT / DATASET_ROOT / "s3_preprocessed_inventory.json"
-LFS_INCLUDE_PATTERNS: tuple[str, ...] = (POSTS_CSV_PATH,)
+
+@dataclass(frozen=True)
+class TwitterPreprocessedS3Args:
+    """Required dataset id and preprocessed run for migrate and verify."""
+
+    dataset_id: str
+    preprocessed_run: str
 
 
-def scoped_repo_relative_paths() -> list[str]:
+def parse_args(argv: Sequence[str]) -> TwitterPreprocessedS3Args:
+    """Parse required ``--dataset-id`` and ``--preprocessed-run``.
+
+    Raises
+    ------
+    SystemExit
+        If either flag is missing. Exit code is non-zero.
+    """
+    parser = argparse.ArgumentParser(
+        description="Copy one Twitter preprocessed posts.csv from Git LFS to S3."
+    )
+    parser.add_argument("--dataset-id", required=True)
+    parser.add_argument("--preprocessed-run", required=True)
+    parsed = parser.parse_args(argv)
+    return TwitterPreprocessedS3Args(
+        dataset_id=parsed.dataset_id,
+        preprocessed_run=parsed.preprocessed_run,
+    )
+
+
+def dataset_root_relative(dataset_id: str) -> str:
+    """Return the repo-relative Twitter dataset root for ``dataset_id``."""
+    return f"{TWITTER_DATA_PREFIX}/{dataset_id}"
+
+
+def posts_csv_relative_path(dataset_id: str, preprocessed_run: str) -> str:
+    """Return the repo-relative preprocessed ``posts.csv`` path."""
+    return (
+        f"{dataset_root_relative(dataset_id)}/"
+        f"{PREPROCESSED_DIRNAME}/{preprocessed_run}/{POSTS_CSV_NAME}"
+    )
+
+
+def inventory_path_for(dataset_id: str) -> Path:
+    """Return the inventory JSON path under the Twitter dataset root."""
+    return REPO_ROOT / dataset_root_relative(dataset_id) / INVENTORY_FILENAME
+
+
+def scoped_repo_relative_paths(dataset_id: str, preprocessed_run: str) -> list[str]:
     """Return the locked upload paths. Must have length EXPECTED_OBJECT_COUNT.
 
     Raises
@@ -42,7 +90,7 @@ def scoped_repo_relative_paths() -> list[str]:
         If the list does not have exactly ``EXPECTED_OBJECT_COUNT`` entries
         or the path is missing on disk.
     """
-    paths = [POSTS_CSV_PATH]
+    paths = [posts_csv_relative_path(dataset_id, preprocessed_run)]
     if len(paths) != EXPECTED_OBJECT_COUNT:
         raise RuntimeError(f"expected {EXPECTED_OBJECT_COUNT} scoped paths, built {len(paths)}")
     missing = [path for path in paths if not (REPO_ROOT / path).is_file()]
@@ -132,13 +180,18 @@ def upload_and_verify(s3: S3, repo_relative_path: str, data: bytes) -> dict:
     }
 
 
-def write_inventory(rows: list[dict], path: Path) -> None:
+def write_inventory(
+    rows: list[dict],
+    path: Path,
+    dataset_id: str,
+    preprocessed_run: str,
+) -> None:
     """Write inventory JSON including bucket, region, dataset_id, and preprocessed_run."""
     inventory = {
         "bucket": BUCKET,
         "region": REGION,
-        "dataset_id": DATASET_ID,
-        "preprocessed_run": PREPROCESSED_RUN,
+        "dataset_id": dataset_id,
+        "preprocessed_run": preprocessed_run,
         "uploaded_at": get_current_timestamp(),
         "object_count": len(rows),
         "objects": sorted(rows, key=lambda row: row["repo_relative_path"]),
@@ -146,19 +199,30 @@ def write_inventory(rows: list[dict], path: Path) -> None:
     path.write_text(json.dumps(inventory, indent=2) + "\n")
 
 
-def main() -> None:
-    """Pull LFS, upload the scoped csv, write inventory, and print the object count."""
-    paths = scoped_repo_relative_paths()
-    run_git_lfs_pull(LFS_INCLUDE_PATTERNS)
-    s3 = S3(BUCKET, region_name=REGION)
+def upload_scoped_paths(s3: S3, paths: Sequence[str]) -> list[dict]:
+    """Upload each scoped path and print the verified S3 URI."""
     rows = []
     for path in paths:
         row = upload_and_verify(s3, path, read_scoped_bytes(path))
         print(f"verified s3://{BUCKET}/{row['s3_key']} ({row['bytes']} bytes)")
         rows.append(row)
-    write_inventory(rows, INVENTORY_PATH)
+    return rows
+
+
+def main(argv: Sequence[str]) -> None:
+    """Pull LFS, upload the scoped csv, write inventory, and print the object count."""
+    args = parse_args(argv)
+    paths = scoped_repo_relative_paths(args.dataset_id, args.preprocessed_run)
+    run_git_lfs_pull(paths)
+    rows = upload_scoped_paths(S3(BUCKET, region_name=REGION), paths)
+    write_inventory(
+        rows,
+        inventory_path_for(args.dataset_id),
+        args.dataset_id,
+        args.preprocessed_run,
+    )
     print(f"uploaded {len(rows)} object")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
