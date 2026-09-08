@@ -20,6 +20,12 @@ from experiments.reddit_curated_perspective_v2_2026_09_08.load_curated import (
     load_pinned_curated,
     medium_rows,
 )
+from experiments.reddit_curated_perspective_v2_2026_09_08.promote_v2 import (
+    V2_OBJECT_KEY,
+    apply_promotions,
+    select_promotions,
+    write_curated_v2,
+)
 from experiments.reddit_curated_perspective_v2_2026_09_08.score_medium import (
     TOXICITY_PROB_COLUMN,
     default_score_engine,
@@ -35,19 +41,32 @@ class FakeStoredObject:
 
 
 class FakeStore:
-    """Public test double for CampaignObjectStore.get and put_new."""
+    """Public test double for CampaignObjectStore.get, put_new, and replace."""
 
-    def __init__(self, body: bytes) -> None:
+    def __init__(
+        self, body: bytes, *, put_new_error: BaseException | None = None
+    ) -> None:
         self.body = body
         self.put_new_calls: list[str] = []
+        self.replace_calls: list[str] = []
+        self.put_new_bodies: list[bytes] = []
+        self.put_new_error = put_new_error
 
     def get(self, key: str) -> FakeStoredObject:
         del key
         return FakeStoredObject(body=self.body)
 
     def put_new(self, key: str, body: bytes, tags: dict[str, str] | None = None) -> None:
-        del body, tags
+        del tags
+        if self.put_new_error is not None:
+            raise self.put_new_error
         self.put_new_calls.append(key)
+        self.put_new_bodies.append(body)
+        self.body = body
+
+    def replace(self, key: str, body: bytes, *, etag: str | None = None) -> None:
+        del body, etag
+        self.replace_calls.append(key)
 
 
 def _parquet_bytes(frame: pd.DataFrame) -> bytes:
@@ -337,3 +356,118 @@ class TestMainScoreFlag:
         assert "already_scored=1" in stdout
         assert "newly_scored=2" in stdout
         assert f"scores_path={scores_path}" in stdout
+
+
+ORIGINAL_OBJECT_KEY = V2_OBJECT_KEY.replace("mirrorview_v2.parquet", "mirrorview.parquet")
+POLITICAL_STANCE_COLUMN = "political_stance"
+
+
+def _scores_with_ids(rows: list[tuple[str, float]]) -> pd.DataFrame:
+    return _scores_frame(rows)
+
+
+class TestSelectPromotions:
+    """Tests for select_promotions()."""
+
+    def test_breaks_probability_ties_by_source_record_id(self) -> None:
+        """Keep the smaller source_record_id when toxicity_prob ties."""
+        scores = _scores_with_ids([("b", 0.9), ("a", 0.9), ("c", 0.1)])
+
+        result = select_promotions(scores, count=2)
+
+        expected = ["a", "b"]
+        assert result == expected
+
+    def test_raises_when_fewer_rows_than_count(self) -> None:
+        """Reject a scores table that cannot fill the promotion count."""
+        scores = _scores_with_ids([("a", 0.9)])
+
+        with pytest.raises(ValueError):
+            select_promotions(scores, count=2)
+
+
+class TestApplyPromotions:
+    """Tests for apply_promotions()."""
+
+    def test_sets_medium_promotion_rows_to_high_and_keeps_other_cells(self) -> None:
+        """Change only the promoted medium tiers; keep order and other values."""
+        curated = pd.DataFrame(
+            [
+                {
+                    SOURCE_RECORD_ID_COLUMN: "keep-low",
+                    TEXT_COLUMN: "civil",
+                    LLM_TOXICITY_TIER_COLUMN: "low",
+                    POLITICAL_STANCE_COLUMN: "left",
+                },
+                {
+                    SOURCE_RECORD_ID_COLUMN: "promote-a",
+                    TEXT_COLUMN: "rude a",
+                    LLM_TOXICITY_TIER_COLUMN: "medium",
+                    POLITICAL_STANCE_COLUMN: "right",
+                },
+                {
+                    SOURCE_RECORD_ID_COLUMN: "keep-high",
+                    TEXT_COLUMN: "threat",
+                    LLM_TOXICITY_TIER_COLUMN: "high",
+                    POLITICAL_STANCE_COLUMN: "left",
+                },
+                {
+                    SOURCE_RECORD_ID_COLUMN: "promote-b",
+                    TEXT_COLUMN: "rude b",
+                    LLM_TOXICITY_TIER_COLUMN: "medium",
+                    POLITICAL_STANCE_COLUMN: "left",
+                },
+            ]
+        )
+        original = curated.copy()
+
+        result = apply_promotions(curated, ["promote-a", "promote-b"])
+
+        expected_tiers = ["low", "high", "high", "high"]
+        assert result[LLM_TOXICITY_TIER_COLUMN].tolist() == expected_tiers
+        assert list(result.columns) == list(original.columns)
+        assert len(result) == len(original)
+        assert result[SOURCE_RECORD_ID_COLUMN].tolist() == original[SOURCE_RECORD_ID_COLUMN].tolist()
+        unchanged = result.drop(columns=[LLM_TOXICITY_TIER_COLUMN])
+        expected_unchanged = original.drop(columns=[LLM_TOXICITY_TIER_COLUMN])
+        pd.testing.assert_frame_equal(unchanged.reset_index(drop=True), expected_unchanged)
+        pd.testing.assert_frame_equal(curated, original)
+
+    def test_raises_when_promotion_id_is_not_medium(self) -> None:
+        """Reject a promotion id whose current LLM toxicity tier is low."""
+        curated = _curated_frame(
+            [
+                ("id-low", "civil text", "low"),
+                ("id-medium", "rude text", "medium"),
+            ]
+        )
+
+        with pytest.raises(ValueError):
+            apply_promotions(curated, ["id-low"])
+
+
+class TestWriteCuratedV2:
+    """Tests for write_curated_v2()."""
+
+    def test_uploads_with_put_new_and_never_touches_the_original_key(self) -> None:
+        """Call put_new on the v2 key and do not call replace or the original key."""
+        curated_v2 = _curated_frame([("id-medium", "rude text", "high")])
+        store = FakeStore(b"")
+
+        result = write_curated_v2(curated_v2, store=store, key=V2_OBJECT_KEY)
+
+        expected_key = V2_OBJECT_KEY
+        assert store.put_new_calls == [expected_key]
+        assert store.replace_calls == []
+        assert ORIGINAL_OBJECT_KEY not in store.put_new_calls
+        assert result == sha256_hex(store.put_new_bodies[0])
+
+    def test_propagates_file_exists_error_from_put_new(self) -> None:
+        """Surface FileExistsError when the v2 object already exists."""
+        curated_v2 = _curated_frame([("id-medium", "rude text", "high")])
+        store = FakeStore(b"", put_new_error=FileExistsError("exists"))
+
+        with pytest.raises(FileExistsError):
+            write_curated_v2(curated_v2, store=store, key=V2_OBJECT_KEY)
+
+        assert store.replace_calls == []
