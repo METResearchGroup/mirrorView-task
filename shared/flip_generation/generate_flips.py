@@ -3,6 +3,21 @@
 Run from the repo root:
 
     PYTHONPATH=. uv run python -c "from shared.flip_generation.generate_flips import BATCH_SIZE, generate_flips; print(BATCH_SIZE)"
+
+Smoke (manual, not pytest):
+
+    given a two-row posts frame with required columns and a fake Converse client
+    and an in-memory store
+    when generate_flips is called with BATCH_SIZE, MAX_CONCURRENCY, MAX_TOKENS, and DEFAULT_BEDROCK_SONNET_MODEL
+    then one part object exists
+    and flips.parquet exists
+    and FlipRunResult.row_count is 2
+    and FlipRunResult.wrote_final is true
+
+    given the same store and run_prefix
+    when generate_flips is called again
+    then the fake client is not called
+    and FlipRunResult.row_count is 2
 """
 
 from __future__ import annotations
