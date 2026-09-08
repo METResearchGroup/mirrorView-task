@@ -82,8 +82,9 @@ def _validate_posts(posts: pd.DataFrame) -> pd.DataFrame:
     Raises
     ------
     ValueError
-        When a required column is missing, ``record_id`` is duplicated, or
-        ``political_stance`` is not ``left`` or ``right``.
+        When a required column is missing, ``record_id`` is duplicated,
+        ``political_stance`` is not ``left`` or ``right``, or
+        ``llm_toxicity_tier`` is missing or empty.
     """
     missing_columns = [
         column_name
@@ -99,6 +100,13 @@ def _validate_posts(posts: pd.DataFrame) -> pd.DataFrame:
         stance_text = str(stance_value)
         if stance_text not in (LEFT_STANCE, RIGHT_STANCE):
             raise ValueError(f"invalid political_stance: {stance_text!r}")
+    for row_index, toxicity_value in validated_posts[TOXICITY_COLUMN].items():
+        if pd.isna(toxicity_value):
+            raise ValueError(f"missing llm_toxicity_tier for record_id={validated_posts.at[row_index, RECORD_ID_COLUMN]!r}")
+        toxicity_text = str(toxicity_value)
+        if not toxicity_text:
+            raise ValueError(f"missing llm_toxicity_tier for record_id={validated_posts.at[row_index, RECORD_ID_COLUMN]!r}")
+        validated_posts.at[row_index, TOXICITY_COLUMN] = toxicity_text
     return validated_posts.sort_values(RECORD_ID_COLUMN, kind=SORT_KIND)
 
 
