@@ -61,7 +61,19 @@ PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = (
     STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
 )
 
+REDDIT_PREPROCESSED_WIDE_COLUMNS: tuple[str, ...] = (
+    "comment_fullname",
+    "record_id",
+    "author",
+    "body",
+    "created_at",
+    "sync_timestamp",
+    "text",
+    "author_handle",
+    STANDARDIZED_SOURCE_RECORD_ID_COLUMN,
+)
 EXPECTED_WIDE_ROW_COUNT = 200000
+REDDIT_EXPECTED_WIDE_ROW_COUNT = 400000
 WIDE_SORT_KEY = f"{STANDARDIZED_SOURCE_RECORD_ID_COLUMN} ASC"
 
 
@@ -175,25 +187,31 @@ def build_wide_table(config: ConsolidateConfig) -> pd.DataFrame:
         conn.close()
 
 
-def llm_campaign_wide_columns() -> tuple[str, ...]:
-    """Return the nineteen wide columns in campaign order."""
-    label_columns = tuple(
+def _llm_campaign_label_columns() -> tuple[str, ...]:
+    return tuple(
         alias
         for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
         for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
     )
-    return PREPROCESSED_WIDE_COLUMNS + label_columns
+
+
+def llm_campaign_wide_columns() -> tuple[str, ...]:
+    """Return the nineteen wide columns in campaign order."""
+    return PREPROCESSED_WIDE_COLUMNS + _llm_campaign_label_columns()
 
 
 def _sql_path(path: Path) -> str:
     return path.resolve().as_posix().replace("'", "''")
 
 
-def _campaign_posts_cte_sql(posts_file: Path) -> str:
+def _campaign_posts_cte_sql(
+    posts_file: Path,
+    columns: tuple[str, ...] = PREPROCESSED_WIDE_COLUMNS,
+) -> str:
     id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
     selected = ", ".join(
         f"CAST({column} AS VARCHAR) AS {column}" if column == id_column else column
-        for column in PREPROCESSED_WIDE_COLUMNS
+        for column in columns
     )
     return f"posts AS (SELECT {selected} FROM read_parquet('{_sql_path(posts_file)}'))"
 
@@ -212,7 +230,11 @@ def _campaign_feature_ctes(feature_files: dict[str, Path]) -> list[str]:
     ]
 
 
-def _campaign_join_sql(posts_file: Path, feature_files: dict[str, Path]) -> str:
+def _campaign_join_sql(
+    posts_file: Path,
+    feature_files: dict[str, Path],
+    columns: tuple[str, ...] = PREPROCESSED_WIDE_COLUMNS,
+) -> str:
     id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
     join_clauses = [
         f"INNER JOIN feat_{feature_name} USING ({id_column})"
@@ -223,8 +245,10 @@ def _campaign_join_sql(posts_file: Path, feature_files: dict[str, Path]) -> str:
         for feature_name in LLM_CAMPAIGN_FEATURE_NAMES
         for _, alias in FEATURE_WIDE_COLUMNS[feature_name]
     ]
-    posts_cols = [f"posts.{column}" for column in PREPROCESSED_WIDE_COLUMNS]
-    ctes = ",\n".join([_campaign_posts_cte_sql(posts_file), *_campaign_feature_ctes(feature_files)])
+    posts_cols = [f"posts.{column}" for column in columns]
+    ctes = ",\n".join(
+        [_campaign_posts_cte_sql(posts_file, columns), *_campaign_feature_ctes(feature_files)]
+    )
     return f"""
 WITH {ctes}
 SELECT {", ".join(posts_cols + label_cols)}
@@ -252,6 +276,38 @@ def build_llm_campaign_wide_table(
     if missing:
         raise KeyError(f"missing campaign feature parquet paths: {missing}")
     sql = _campaign_join_sql(posts_file, feature_files)
+    conn = duckdb.connect()
+    try:
+        return conn.execute(sql).fetchdf()
+    finally:
+        conn.close()
+
+
+def reddit_llm_campaign_wide_columns() -> tuple[str, ...]:
+    """Return the sixteen wide columns in Reddit campaign order."""
+    return REDDIT_PREPROCESSED_WIDE_COLUMNS + _llm_campaign_label_columns()
+
+
+def build_reddit_llm_campaign_wide_table(
+    comments_file: Path,
+    feature_files: dict[str, Path],
+) -> pd.DataFrame:
+    """Inner-join pinned comments to seven campaign ``final.parquet`` files on ``source_record_id``.
+
+    Rows are sorted by ``source_record_id`` ascending. Duplicate feature ids keep
+    the latest ``label_timestamp``.
+
+    Raises
+    ------
+    KeyError
+        When a campaign feature path is missing from ``feature_files``.
+    """
+    missing = [name for name in LLM_CAMPAIGN_FEATURE_NAMES if name not in feature_files]
+    if missing:
+        raise KeyError(f"missing campaign feature parquet paths: {missing}")
+    sql = _campaign_join_sql(
+        comments_file, feature_files, columns=REDDIT_PREPROCESSED_WIDE_COLUMNS
+    )
     conn = duckdb.connect()
     try:
         return conn.execute(sql).fetchdf()
