@@ -46,7 +46,6 @@ OUTPUT_S3_KEY = (
     "experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/"
     "required_label_count_per_stimulus_post.csv"
 )
-OUTPUT_S3_URI = f"s3://{OUTPUT_S3_BUCKET}/{OUTPUT_S3_KEY}"
 DATASET_FILENAME = "required_label_count_per_stimulus_post.csv"
 RESULTS_FILENAME = "RESULTS.md"
 CACHE_DIRNAME = "cache"
