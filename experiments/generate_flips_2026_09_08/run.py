@@ -23,16 +23,27 @@ import sys
 
 import typer
 
+from data_platform.generate_features.engines.bedrock_engine import (
+    create_bedrock_runtime_client,
+)
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.generate_flips_2026_09_08.load_filtered_dataset import (
     load_filtered_dataset,
 )
 from experiments.generate_flips_2026_09_08.sources import (
     OUTPUT_S3_BUCKET,
+    POST_COLUMNS,
     RUN_KEY_PREFIX,
     pinned_filtered_source,
 )
-from lib.constants import REPO_ROOT
+from lib.constants import DEFAULT_BEDROCK_SONNET_MODEL, REPO_ROOT
+from lib.timestamp_utils import get_current_timestamp
+from shared.flip_generation.generate_flips import (
+    BATCH_SIZE,
+    MAX_CONCURRENCY,
+    MAX_TOKENS,
+    generate_flips,
+)
 
 EXPERIMENT_DIR = REPO_ROOT / "experiments" / "generate_flips_2026_09_08"
 DEFAULT_CACHE_DIR = EXPERIMENT_DIR / "cache"
@@ -57,13 +68,34 @@ def main(
     bucket
         S3 bucket for flip output artifacts.
     """
+    resolved_run_id = run_id if run_id is not None else get_current_timestamp()
+    run_prefix = f"{RUN_KEY_PREFIX}{resolved_run_id}/"
+
     source = pinned_filtered_source()
     store = CampaignObjectStore(bucket)
     dataset = load_filtered_dataset(source, store, DEFAULT_CACHE_DIR)
-    _ = dataset
-    run_prefix = f"{RUN_KEY_PREFIX}{run_id}/"
-    _ = run_prefix
-    raise NotImplementedError
+    posts = dataset.loc[:, list(POST_COLUMNS)]
+    if max_posts is not None:
+        posts = posts.head(max_posts)
+
+    client = create_bedrock_runtime_client()
+    result = generate_flips(
+        posts,
+        store,
+        run_prefix,
+        client,
+        BATCH_SIZE,
+        MAX_CONCURRENCY,
+        MAX_TOKENS,
+        DEFAULT_BEDROCK_SONNET_MODEL,
+    )
+
+    print(f"run_prefix={result.run_prefix}")
+    print(f"part_count={result.part_count}")
+    print(f"row_count={result.row_count}")
+    print(f"failed_count={result.failed_count}")
+    print(f"final_key={result.final_key}")
+    print(f"wrote_final={result.wrote_final}")
 
 
 if __name__ == "__main__":
