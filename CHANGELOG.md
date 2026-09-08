@@ -3,6 +3,11 @@
 ## 2026-09-08
 
 1. Operators now have a second curated Reddit Parquet file, and in that file 3,000 comments that the large language model labeled medium toxicity are labeled high instead, ranked by Perspective toxicity probability. The original MirrorView export still matches its recorded SHA-256. [PR #260](https://github.com/METResearchGroup/mirrorView-task/pull/260)
+2. Operators now have a Twitter table of 6,408 labeled posts with 21 columns, plus a MirrorView curated export that records political stance by toxicity tier. [PR #265](https://github.com/METResearchGroup/mirrorView-task/pull/265)
+3. Operators now have seven OpenAI Batch labels for all 6,408 Twitter posts from the 2026-09-07 collection, with four batch objects and a run report per feature. [PR #264](https://github.com/METResearchGroup/mirrorView-task/pull/264)
+4. The 2026-09-07 Twitter preprocessed `posts.csv` is on `mirrorview-experimental-artifacts` with a SHA-256 inventory, and Git LFS still holds the local copy. Operators can load campaign `twitter_2026_09_08_014808_llm_features_v1` for 6,408 posts, and the 2026-09-05 campaign still loads. [PR #263](https://github.com/METResearchGroup/mirrorView-task/pull/263)
+5. Twitter preprocess on the 2026-09-07 collection kept 6,408 of 6,900 posts. The preprocessed `posts.csv` is stored in Git LFS. [PR #261](https://github.com/METResearchGroup/mirrorView-task/pull/261)
+6. A dated Mirrorview Twitter ingest config and a recent-search run (6,900 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #259](https://github.com/METResearchGroup/mirrorView-task/pull/259)
 
 ## 2026-09-07
 

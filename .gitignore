@@ -22,6 +22,9 @@ data_platform/data/**
 !data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/
 !data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/**
 !data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/**/*.csv
+!data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/
+!data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/**
+!data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/**/*.csv
 
 # LLM prompt-engineering frozen eval subset (otherwise blocked by *.csv).
 !experiments/llm_prompt_engineering_2026_08_05/subset_labels.csv
