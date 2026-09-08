@@ -16,13 +16,18 @@ from experiments.reddit_curated_perspective_v2_2026_09_08.load_curated import (
     load_pinned_curated,
     medium_rows,
 )
+from experiments.reddit_curated_perspective_v2_2026_09_08.score_medium import (
+    score_medium_comments,
+)
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
+DEFAULT_SCORES_PATH = EXPERIMENT_DIR / "outputs" / "medium_perspective_scores.parquet"
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--load-only", action="store_true")
+    parser.add_argument("--score", action="store_true")
     args = parser.parse_args(argv)
     if args.load_only:
         curated = load_pinned_curated()
@@ -30,6 +35,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"curated_rows={len(curated)}")
         print(f"medium_rows={len(medium)}")
         print(f"source_sha256={PINNED_CURATED_SHA256}")
+        return 0
+    if args.score:
+        curated = load_pinned_curated()
+        medium = medium_rows(curated)
+        scores = score_medium_comments(medium, DEFAULT_SCORES_PATH)
+        print(f"medium_rows={len(medium)}")
+        print(f"already_scored={len(scores)}")
+        print(f"newly_scored=0")
+        print(f"scores_path={DEFAULT_SCORES_PATH}")
         return 0
     raise SystemExit("pass --load-only")
 
