@@ -10,13 +10,19 @@ Run from the repo root:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
 import pandas as pd
 
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.generate_features.s3_feature_campaign import (
+    CampaignObjectStore,
+    parse_s3_uri,
+)
+from data_platform.utils.object_store import sha256_hex
 from experiments.reddit_curated_perspective_v2_2026_09_08.load_curated import (
+    PINNED_CURATED_S3_URI,
     PINNED_CURATED_SHA256,
     load_pinned_curated,
     medium_rows,
@@ -34,6 +40,8 @@ from experiments.reddit_curated_perspective_v2_2026_09_08.score_medium import (
 
 EXPERIMENT_DIR = Path(__file__).resolve().parent
 DEFAULT_SCORES_PATH = EXPERIMENT_DIR / "outputs" / "medium_perspective_scores.parquet"
+DEFAULT_PROMOTION_IDS_PATH = EXPERIMENT_DIR / "outputs" / "promotion_source_record_ids.json"
+JSON_INDENT = 2
 
 
 def _run_load_only() -> int:
@@ -63,7 +71,11 @@ def _run_write_v2() -> int:
     scores = pd.read_parquet(DEFAULT_SCORES_PATH)
     promotion_ids = select_promotions(scores)
     curated_v2 = apply_promotions(curated, promotion_ids)
-    v2_sha256 = write_curated_v2(curated_v2, store=_v2_store(), key=V2_OBJECT_KEY)
+    store = _v2_store()
+    v2_sha256 = write_curated_v2(curated_v2, store=store, key=V2_OBJECT_KEY)
+    _write_promotion_ids(promotion_ids)
+    _require_key_sha256(store, V2_OBJECT_KEY, v2_sha256)
+    _require_key_sha256(store, _original_object_key(), PINNED_CURATED_SHA256)
     print(f"promotions={len(promotion_ids)}")
     print(f"v2_rows={len(curated_v2)}")
     print(f"v2_sha256={v2_sha256}")
@@ -72,7 +84,27 @@ def _run_write_v2() -> int:
 
 
 def _v2_store() -> CampaignObjectStore:
-    raise NotImplementedError
+    bucket, _key = parse_s3_uri(PINNED_CURATED_S3_URI)
+    return CampaignObjectStore(bucket)
+
+
+def _original_object_key() -> str:
+    _bucket, key = parse_s3_uri(PINNED_CURATED_S3_URI)
+    return key
+
+
+def _write_promotion_ids(promotion_ids: list[str]) -> None:
+    DEFAULT_PROMOTION_IDS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(promotion_ids, indent=JSON_INDENT) + "\n"
+    DEFAULT_PROMOTION_IDS_PATH.write_text(payload)
+
+
+def _require_key_sha256(store: CampaignObjectStore, key: str, expected: str) -> None:
+    stored = store.get(key)
+    if stored is None:
+        raise FileNotFoundError(key)
+    if sha256_hex(stored.body) != expected:
+        raise ValueError(f"sha256 mismatch for {key}")
 
 
 def main(argv: list[str] | None = None) -> int:

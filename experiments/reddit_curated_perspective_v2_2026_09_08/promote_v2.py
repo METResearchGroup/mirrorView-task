@@ -7,14 +7,18 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import io
+
 import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.utils.object_store import sha256_hex
 
 PROMOTION_COUNT = 3000
 V2_FILENAME = "mirrorview_v2.parquet"
 HIGH_TIER = "high"
 MEDIUM_TIER = "medium"
+PROMOTION_ID_SAMPLE_SIZE = 5
 SOURCE_RECORD_ID_COLUMN = "source_record_id"
 TOXICITY_PROB_COLUMN = "toxicity_prob"
 LLM_TOXICITY_TIER_COLUMN = "llm_toxicity_tier"
@@ -89,7 +93,24 @@ def apply_promotions(
     ValueError
         When a promotion id is missing or is not medium.
     """
-    raise NotImplementedError
+    _require_promotions_are_medium(curated, promotion_ids)
+    promoted = curated.copy()
+    is_promoted = promoted[SOURCE_RECORD_ID_COLUMN].astype(str).isin(promotion_ids)
+    promoted.loc[is_promoted, LLM_TOXICITY_TIER_COLUMN] = HIGH_TIER
+    return promoted
+
+
+def _require_promotions_are_medium(
+    curated: pd.DataFrame, promotion_ids: list[str]
+) -> None:
+    record_ids = curated[SOURCE_RECORD_ID_COLUMN].astype(str)
+    present_ids = set(record_ids)
+    missing_ids = [record_id for record_id in promotion_ids if record_id not in present_ids]
+    if missing_ids:
+        raise ValueError(f"missing promotion ids sample={missing_ids[:PROMOTION_ID_SAMPLE_SIZE]}")
+    promoted_tiers = curated.loc[record_ids.isin(promotion_ids), LLM_TOXICITY_TIER_COLUMN]
+    if not (promoted_tiers.astype(str) == MEDIUM_TIER).all():
+        raise ValueError("promotion ids must currently be medium")
 
 
 def write_curated_v2(
@@ -119,4 +140,12 @@ def write_curated_v2(
     FileExistsError
         When the destination key already exists.
     """
-    raise NotImplementedError
+    body = _parquet_bytes(curated_v2)
+    store.put_new(key, body)
+    return sha256_hex(body)
+
+
+def _parquet_bytes(frame: pd.DataFrame) -> bytes:
+    buffer = io.BytesIO()
+    frame.to_parquet(buffer, index=False)
+    return buffer.getvalue()
