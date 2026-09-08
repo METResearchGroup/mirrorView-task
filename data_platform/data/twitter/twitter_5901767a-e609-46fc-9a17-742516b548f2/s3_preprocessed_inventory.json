@@ -1,0 +1,16 @@
+{
+  "bucket": "mirrorview-experimental-artifacts",
+  "region": "us-east-2",
+  "dataset_id": "twitter_5901767a-e609-46fc-9a17-742516b548f2",
+  "preprocessed_run": "2026_09_08-01:48:08",
+  "uploaded_at": "2026_09_08-01:59:38",
+  "object_count": 1,
+  "objects": [
+    {
+      "repo_relative_path": "data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/preprocessed/2026_09_08-01:48:08/posts.csv",
+      "s3_key": "data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/preprocessed/2026_09_08-01:48:08/posts.csv",
+      "bytes": 2604868,
+      "sha256": "0461a0dc7ac5ecf1c5699fa893013dc7165af482a5347067e413bf4315ffdbd2"
+    }
+  ]
+}
