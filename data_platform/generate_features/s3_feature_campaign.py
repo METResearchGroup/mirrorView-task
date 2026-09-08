@@ -18,7 +18,11 @@ from urllib.parse import urlencode
 import boto3
 from botocore.exceptions import ClientError
 
-from data_platform.generate_features.metadata import model_id_for_spec, prompt_hash
+from data_platform.generate_features.campaign_engine_map import OPENAI_ENGINE_TYPE
+from data_platform.generate_features.metadata import (
+    model_id_for_campaign_engine,
+    prompt_hash,
+)
 from data_platform.generate_features.models import CampaignRunConfig, FeatureSpec
 from data_platform.generate_features.openai_batch_state import (
     load_active_batch_state,
@@ -39,6 +43,7 @@ DEFAULT_CAMPAIGN_PLATFORM = "bluesky"
 DEFAULT_CAMPAIGN_DATASET_ID = "bluesky_7e2c4a91-3b5f-4d8e-a6c1-0f9b8d2e5a73"
 INTERMEDIATE_ARTIFACT_TAG = {"intermediate-artifact": "true"}
 ACTIVE_STATE_FILENAME = "active_openai_batch.json"
+ACTIVE_BEDROCK_STATE_FILENAME = "active_bedrock_job.json"
 MANIFEST_FILENAME = "manifest.json"
 PROGRESS_FILENAME = "progress.jsonl"
 ERRORS_FILENAME = "errors.jsonl"
@@ -137,6 +142,29 @@ class FeaturePaths:
         )
 
     @classmethod
+    def canonical(
+        cls,
+        campaign_id: str,
+        feature: str,
+        *,
+        bucket: str | None = None,
+        platform: str = DEFAULT_CAMPAIGN_PLATFORM,
+        dataset_id: str = DEFAULT_CAMPAIGN_DATASET_ID,
+    ) -> FeaturePaths:
+        """Alias of ``for_campaign``. Restores the older caller name.
+
+        Callers that serve Reddit must pass ``platform`` and ``dataset_id``.
+        Omitting them keeps the historical Bluesky defaults.
+        """
+        return cls.for_campaign(
+            campaign_id,
+            feature,
+            bucket=bucket,
+            platform=platform,
+            dataset_id=dataset_id,
+        )
+
+    @classmethod
     def from_root_uri(cls, root_uri: str, feature: str) -> FeaturePaths:
         """Paths under an arbitrary ``s3://bucket/prefix/`` root, used by the smoke helper."""
         bucket, root_key = parse_s3_uri(root_uri)
@@ -147,6 +175,11 @@ class FeaturePaths:
     @property
     def active_state_key(self) -> str:
         return f"{self.prefix}{ACTIVE_STATE_FILENAME}"
+
+    @property
+    def active_bedrock_state_key(self) -> str:
+        """Object key of ``active_bedrock_job.json`` under this feature prefix."""
+        return f"{self.prefix}{ACTIVE_BEDROCK_STATE_FILENAME}"
 
     @property
     def manifest_key(self) -> str:
@@ -372,6 +405,7 @@ def new_manifest(
     campaign: CampaignRunConfig,
     spec: FeatureSpec,
     expected_row_count: int,
+    engine_type: str = OPENAI_ENGINE_TYPE,
 ) -> dict[str, Any]:
     """Return a manifest with the campaign identity, an empty batch list, and no final file."""
     return {
@@ -379,11 +413,12 @@ def new_manifest(
         "dataset_id": campaign.dataset_id,
         "preprocessed_run": campaign.preprocessed_run,
         "feature": spec.name,
-        "model_id": model_id_for_spec(spec),
+        "model_id": model_id_for_campaign_engine(spec, engine_type),
         "prompt_hash": prompt_hash(spec.system_prompt),
         "batch_size": campaign.batch_size,
         "expected_row_count": expected_row_count,
         "run_id": run_id_for_feature(campaign.campaign_id, spec.name),
+        "engine_type": engine_type,
         "created_at": get_current_timestamp(),
         "batches": [],
         "final_parquet": None,
@@ -433,6 +468,28 @@ def save_active_state(
 def delete_active_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
     """Remove the S3 active state once its chunk has a durable batch object."""
     store.delete(paths.active_state_key)
+
+
+def load_active_bedrock_state(
+    store: CampaignObjectStore, paths: FeaturePaths
+) -> tuple[dict[str, Any] | None, str | None]:
+    """Return ``(state, etag)`` of ``active_bedrock_job.json``, or ``(None, None)`` when no job is open."""
+    return _load_json(store, paths.active_bedrock_state_key)
+
+
+def save_active_bedrock_state(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    state: dict[str, Any],
+    etag: str | None,
+) -> str:
+    """Conditionally replace ``active_bedrock_job.json`` and return its new ETag."""
+    return store.replace(paths.active_bedrock_state_key, _json_bytes(state), etag=etag).etag
+
+
+def delete_active_bedrock_state(store: CampaignObjectStore, paths: FeaturePaths) -> None:
+    """Remove ``active_bedrock_job.json`` once its part has a durable batch object."""
+    store.delete(paths.active_bedrock_state_key)
 
 
 def manifest_sha256(manifest: dict[str, Any]) -> str:

@@ -8,6 +8,11 @@ from pathlib import Path
 
 import pandas as pd
 
+from data_platform.generate_features.campaign_engine_map import (
+    BEDROCK_ENGINE_TYPE,
+    OPENAI_ENGINE_TYPE,
+    campaign_engine_type,
+)
 from data_platform.generate_features.engines import build_engine
 from data_platform.generate_features.engines.base import RecordLabelFailure
 from data_platform.generate_features.engines.openai_engine import (
@@ -23,8 +28,11 @@ from data_platform.generate_features.metadata import (
     load_feature_run_metadata,
     mark_feature_completed,
     mark_feature_in_progress,
+    model_id_for_campaign_engine,
+    prompt_hash,
     set_sync_status_completed,
     update_batch_counts,
+    write_campaign_local_metadata,
 )
 from data_platform.generate_features.models import (
     BatchRunStats,
@@ -67,6 +75,7 @@ from data_platform.utils.storage import DATA_ROOT, StorageManager, StorageStage
 from lib.timestamp_utils import get_current_timestamp
 
 CAMPAIGN_ENGINE_TYPE = "openai"
+CAMPAIGN_ENGINE_TYPES = frozenset({"openai", "bedrock"})
 # Manifest fields that must match between a resumed run and the command line.
 MANIFEST_IDENTITY_FIELDS = (
     "campaign_id",
@@ -78,7 +87,9 @@ MANIFEST_IDENTITY_FIELDS = (
     "batch_size",
     "expected_row_count",
     "run_id",
+    "engine_type",
 )
+ENGINE_TYPE_FIELD = "engine_type"
 
 
 def tasks_from_dataframe(
@@ -288,6 +299,45 @@ def generate_features(
     return written
 
 
+def _resolve_campaign_engine(campaign_id: str, feature_name: str) -> str:
+    """Return the campaign engine for ``feature_name``, or raise ``ValueError``."""
+    engine_type = campaign_engine_type(campaign_id, feature_name)
+    if engine_type not in CAMPAIGN_ENGINE_TYPES:
+        raise ValueError(f"campaign mode requires engine_type in {sorted(CAMPAIGN_ENGINE_TYPES)}")
+    return engine_type
+
+
+def _campaign_feature_paths(
+    campaign: CampaignRunConfig,
+    spec: FeatureSpec,
+    paths: FeaturePaths | None,
+) -> FeaturePaths:
+    if paths is not None:
+        return paths
+    return FeaturePaths.for_campaign(
+        campaign.campaign_id,
+        spec.name,
+        platform=campaign.platform,
+        dataset_id=campaign.dataset_id,
+    )
+
+
+def _stamp_campaign_local_metadata(
+    paths: FeaturePaths,
+    campaign: CampaignRunConfig,
+    spec: FeatureSpec,
+    engine_type: str,
+) -> None:
+    write_campaign_local_metadata(
+        _campaign_local_run_dir(paths),
+        campaign.dataset_id,
+        spec.name,
+        engine_type,
+        model_id_for_campaign_engine(spec, engine_type),
+        prompt_hash(spec.system_prompt),
+    )
+
+
 def generate_campaign_feature(
     records: pd.DataFrame,
     spec: FeatureSpec,
@@ -313,23 +363,59 @@ def generate_campaign_feature(
     Raises
     ------
     ValueError
-        When ``spec`` is not an OpenAI feature, when ``records`` repeats an id,
-        or when an existing manifest describes a different campaign, dataset,
-        preprocessed run, model, prompt, batch size, or row count.
+        When the campaign engine is not OpenAI or Bedrock, when ``records``
+        repeats an id, or when an existing manifest describes a different
+        campaign identity.
     """
-    if spec.engine_type != CAMPAIGN_ENGINE_TYPE:
-        raise ValueError(f"campaign mode requires engine_type {CAMPAIGN_ENGINE_TYPE!r}")
-    paths = paths or FeaturePaths.for_campaign(
-        campaign.campaign_id,
-        spec.name,
-        platform=campaign.platform,
-        dataset_id=campaign.dataset_id,
+    engine_type = _resolve_campaign_engine(campaign.campaign_id, spec.name)
+    paths = _campaign_feature_paths(campaign, spec, paths)
+    _stamp_campaign_local_metadata(paths, campaign, spec, engine_type)
+    if engine_type == BEDROCK_ENGINE_TYPE:
+        return _generate_bedrock_campaign_feature(
+            records, spec, campaign, run_config, paths, engine_type
+        )
+    return _generate_openai_campaign_feature(
+        records, spec, campaign, run_config, paths, engine_type
     )
+
+
+def _generate_bedrock_campaign_feature(
+    records: pd.DataFrame,
+    spec: FeatureSpec,
+    campaign: CampaignRunConfig,
+    run_config: FeatureRunConfig,
+    paths: FeaturePaths,
+    engine_type: str,
+) -> FeaturePaths:
+    """Label a Bedrock-mapped campaign feature into immutable S3 batch objects."""
+    from data_platform.generate_features.engines.bedrock_campaign import (
+        run_bedrock_campaign_feature,
+    )
+
+    return run_bedrock_campaign_feature(
+        records, spec, campaign, run_config, paths, engine_type
+    )
+
+
+def _generate_openai_campaign_feature(
+    records: pd.DataFrame,
+    spec: FeatureSpec,
+    campaign: CampaignRunConfig,
+    run_config: FeatureRunConfig,
+    paths: FeaturePaths,
+    engine_type: str,
+) -> FeaturePaths:
+    """Label an OpenAI-mapped campaign feature into immutable S3 batch objects."""
     store = CampaignObjectStore(paths.bucket)
     run_id = run_id_for_feature(campaign.campaign_id, spec.name)
     ordered_ids, texts = _ordered_campaign_input(records)
     manifest, manifest_etag = _load_or_create_manifest(
-        store, paths, campaign, spec, expected_row_count=len(ordered_ids)
+        store,
+        paths,
+        campaign,
+        spec,
+        expected_row_count=len(ordered_ids),
+        engine_type=engine_type,
     )
     if manifest.get("final_parquet"):
         print(
@@ -426,20 +512,36 @@ def _load_or_create_manifest(
     spec: FeatureSpec,
     *,
     expected_row_count: int,
+    engine_type: str,
 ) -> tuple[dict, str]:
     """Return the manifest and its ETag, creating it on the first run and checking identity on resume."""
-    fresh = new_manifest(campaign=campaign, spec=spec, expected_row_count=expected_row_count)
+    fresh = new_manifest(
+        campaign=campaign,
+        spec=spec,
+        expected_row_count=expected_row_count,
+        engine_type=engine_type,
+    )
     manifest, etag = load_manifest(store, paths)
     if manifest is None or etag is None:
         return fresh, save_manifest(store, paths, fresh, None)
-    mismatched = [
-        field for field in MANIFEST_IDENTITY_FIELDS if manifest.get(field) != fresh[field]
-    ]
+    mismatched = _manifest_identity_mismatches(manifest, fresh)
     if mismatched:
         raise ValueError(
             f"manifest at {paths.uri(paths.manifest_key)} does not match this run on {mismatched}"
         )
     return manifest, etag
+
+
+def _manifest_identity_mismatches(manifest: dict, fresh: dict) -> list[str]:
+    """Return identity fields that differ, treating a missing engine_type as openai."""
+    mismatched: list[str] = []
+    for field in MANIFEST_IDENTITY_FIELDS:
+        existing = manifest.get(field)
+        if field == ENGINE_TYPE_FIELD and existing is None:
+            existing = OPENAI_ENGINE_TYPE
+        if existing != fresh[field]:
+            mismatched.append(field)
+    return mismatched
 
 
 def _smoke_rows_by_id(

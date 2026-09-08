@@ -64,6 +64,7 @@ from data_platform.generate_features.s3_feature_batches import (
     validate_q44_rows,
 )
 from data_platform.generate_features.s3_feature_campaign import (
+    DEFAULT_CAMPAIGN_PLATFORM,
     CampaignObjectStore,
     FeaturePaths,
     run_id_for_feature,
@@ -174,7 +175,12 @@ def build_smoke_paths(
         When ``smoke_prefix`` is not an ``s3://`` URI, or when it lands on or
         inside the canonical feature prefix, or contains it.
     """
-    canonical = FeaturePaths.canonical(campaign_id, feature, dataset_id=dataset_id)
+    canonical = FeaturePaths.for_campaign(
+        campaign_id,
+        feature,
+        platform=DEFAULT_CAMPAIGN_PLATFORM,
+        dataset_id=dataset_id,
+    )
     if smoke_prefix is None:
         return SmokePaths(
             paths=canonical,

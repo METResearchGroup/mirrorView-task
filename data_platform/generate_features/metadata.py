@@ -69,6 +69,82 @@ def model_id_for_spec(spec: FeatureSpec) -> str:
     return DEFAULT_LLM_MODEL
 
 
+def model_id_for_campaign_engine(spec: FeatureSpec, engine_type: str) -> str:
+    """Return the provider model id for a campaign engine override.
+
+    Parameters
+    ----------
+    spec
+        Registry feature spec. Prompt identity still comes from this spec.
+    engine_type
+        Campaign engine, ``openai`` or ``bedrock``.
+
+    Returns
+    -------
+    str
+        Nova Micro when the campaign engine is Bedrock, otherwise the spec model.
+    """
+    if engine_type == "bedrock":
+        return DEFAULT_BEDROCK_NOVA_MICRO
+    return model_id_for_spec(spec)
+
+
+def _campaign_metadata_document(
+    dataset_id: str,
+    feature_name: str,
+    engine_type: str,
+    model_id: str,
+    hashed_prompt: str | None,
+) -> dict:
+    return {
+        "dataset_id": dataset_id,
+        "features": {
+            feature_name: {
+                "engine_type": engine_type,
+                "model_id": model_id,
+                "prompt_hash": hashed_prompt,
+            }
+        },
+        "updated_at": get_current_timestamp(),
+    }
+
+
+def write_campaign_local_metadata(
+    run_dir: Path,
+    dataset_id: str,
+    feature_name: str,
+    engine_type: str,
+    model_id: str,
+    hashed_prompt: str | None,
+) -> None:
+    """Write ``metadata.json`` for one campaign feature, including ``engine_type``.
+
+    Parameters
+    ----------
+    run_dir
+        Local directory that mirrors the S3 feature prefix.
+    dataset_id
+        Dataset id recorded on the document.
+    feature_name
+        Registry feature name.
+    engine_type
+        Campaign engine recorded on the feature entry.
+    model_id
+        Provider model id recorded on the feature entry.
+    hashed_prompt
+        SHA-256 of the system prompt, or None when the spec has no prompt.
+    """
+    run_dir.mkdir(parents=True, exist_ok=True)
+    path = metadata_path(run_dir)
+    tmp_path = run_dir / f"{METADATA_FILENAME}.tmp"
+    document = _campaign_metadata_document(
+        dataset_id, feature_name, engine_type, model_id, hashed_prompt
+    )
+    with tmp_path.open("w", encoding="utf-8") as handle:
+        json.dump(document, handle, indent=2)
+    tmp_path.replace(path)
+
+
 def _stamp_or_check_identity(
     metadata: FeatureRunMetadata,
     config: FeatureGenerationConfig,

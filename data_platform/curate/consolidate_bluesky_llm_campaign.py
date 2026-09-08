@@ -231,7 +231,12 @@ def verify_feature_manifest(
     dataset_id: str,
 ) -> tuple[str, dict[str, Any]]:
     """Return manifest SHA-256 and parsed JSON after checking row count 200000."""
-    paths = FeaturePaths.canonical(campaign_id, feature_name, dataset_id=dataset_id)
+    paths = FeaturePaths.for_campaign(
+        campaign_id,
+        feature_name,
+        platform=DEFAULT_CAMPAIGN_PLATFORM,
+        dataset_id=dataset_id,
+    )
     stored = store.get(paths.manifest_key)
     if stored is None:
         raise FileNotFoundError(f"missing feature manifest: {paths.uri(paths.manifest_key)}")
@@ -272,7 +277,12 @@ def _download_feature_final(
     work_dir: Path,
     feature_name: str,
 ) -> FeatureInputRecord:
-    paths = FeaturePaths.canonical(args.campaign_id, feature_name, dataset_id=args.dataset_id)
+    paths = FeaturePaths.for_campaign(
+        args.campaign_id,
+        feature_name,
+        platform=DEFAULT_CAMPAIGN_PLATFORM,
+        dataset_id=args.dataset_id,
+    )
     manifest_sha, manifest = verify_feature_manifest(
         store, feature_name, args.campaign_id, args.dataset_id
     )
@@ -482,8 +492,11 @@ def upload_wide_artifacts(
 
 def run_campaign_consolidation(args: CampaignConsolidateArgs) -> WideConsolidateResult:
     """Download inputs, join, validate, upload wide artifacts, and curate."""
-    paths = FeaturePaths.canonical(
-        args.campaign_id, LLM_CAMPAIGN_FEATURE_NAMES[0], dataset_id=args.dataset_id
+    paths = FeaturePaths.for_campaign(
+        args.campaign_id,
+        LLM_CAMPAIGN_FEATURE_NAMES[0],
+        platform=DEFAULT_CAMPAIGN_PLATFORM,
+        dataset_id=args.dataset_id,
     )
     store = CampaignObjectStore(paths.bucket)
     with TemporaryDirectory() as tmp:
