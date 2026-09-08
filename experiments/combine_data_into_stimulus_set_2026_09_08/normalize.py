@@ -24,6 +24,7 @@ PASSTHROUGH_COLUMNS = (
     "political_stance",
     "llm_toxicity_tier",
 )
+STRING_ID_COLUMNS = ("record_id", "source_record_id")
 INTEGRATION_COLUMN = "integration"
 SOURCE_DATASET_ID_COLUMN = "source_dataset_id"
 SOURCE_CURATED_RUN_COLUMN = "source_curated_run"
@@ -52,7 +53,7 @@ def normalize_curated_frame(frame: pd.DataFrame, source: CuratedSource) -> pd.Da
     """
     _require_source_columns(frame, source)
     identity = _source_identity_frame(frame, source)
-    passthrough = frame.loc[:, list(PASSTHROUGH_COLUMNS)]
+    passthrough = _string_id_passthrough(frame)
     normalized = pd.concat([identity, passthrough], axis=1)
     return normalized.loc[:, list(COMBINED_COLUMNS)]
 
@@ -64,13 +65,20 @@ def _require_source_columns(frame: pd.DataFrame, source: CuratedSource) -> None:
         raise ValueError(f"missing columns {missing} uri={source.s3_uri}")
 
 
+def _string_id_passthrough(frame: pd.DataFrame) -> pd.DataFrame:
+    passthrough = frame.loc[:, list(PASSTHROUGH_COLUMNS)].copy()
+    for column in STRING_ID_COLUMNS:
+        passthrough[column] = passthrough[column].astype(str)
+    return passthrough
+
+
 def _source_identity_frame(frame: pd.DataFrame, source: CuratedSource) -> pd.DataFrame:
     return pd.DataFrame(
         {
             INTEGRATION_COLUMN: source.integration.value,
             SOURCE_DATASET_ID_COLUMN: source.dataset_id,
             SOURCE_CURATED_RUN_COLUMN: source.curated_run,
-            PLATFORM_ID_COLUMN: frame[source.platform_id_column].to_numpy(),
+            PLATFORM_ID_COLUMN: frame[source.platform_id_column].astype(str).to_numpy(),
         },
         index=frame.index,
     )
