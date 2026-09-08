@@ -30,11 +30,18 @@ Run from the repo root:
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.calculate import (
     calculate_required_label_counts,
 )
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.constants import (
+    CACHE_DIRNAME,
+    EXPERIMENT_DIRNAME,
+    LabelCountRunResult,
+    OUTPUT_S3_BUCKET,
+    REQUIRED_LABELS_PER_POST,
     pinned_new_sample,
 )
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.load import (
@@ -46,42 +53,36 @@ from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.wri
     print_run_summary,
     write_required_label_counts,
 )
+from lib.constants import REPO_ROOT
 
 
 def main() -> int:
     """Load both batches, compute remaining labels, write, and print."""
-    source = pinned_new_sample()
-    old_catalog = load_old_catalog()
-    old_results = load_old_results()
-    new_sample = load_new_sample(source, _store(), _cache_dir())
-    counts = calculate_required_label_counts(
-        old_catalog, old_results, new_sample, _required_labels_per_post()
-    )
-    result = write_required_label_counts(
-        counts, source, _experiment_dir(), _store(), _old_catalog_id_count(old_catalog)
-    )
-    print_run_summary(result)
+    print_run_summary(_run_pipeline())
     return 0
 
 
-def _store():
-    raise NotImplementedError
+def _run_pipeline() -> LabelCountRunResult:
+    source = pinned_new_sample()
+    experiment_dir = _experiment_dir()
+    store = _store()
+    old_catalog = load_old_catalog()
+    old_results = load_old_results()
+    new_sample = load_new_sample(source, store, experiment_dir / CACHE_DIRNAME)
+    counts = calculate_required_label_counts(
+        old_catalog, old_results, new_sample, REQUIRED_LABELS_PER_POST
+    )
+    return write_required_label_counts(
+        counts, source, experiment_dir, store, len(old_catalog)
+    )
 
 
-def _cache_dir():
-    raise NotImplementedError
+def _store() -> CampaignObjectStore:
+    return CampaignObjectStore(OUTPUT_S3_BUCKET)
 
 
-def _experiment_dir():
-    raise NotImplementedError
-
-
-def _required_labels_per_post() -> int:
-    raise NotImplementedError
-
-
-def _old_catalog_id_count(old_catalog) -> int:
-    raise NotImplementedError
+def _experiment_dir() -> Path:
+    return REPO_ROOT / "experiments" / EXPERIMENT_DIRNAME
 
 
 if __name__ == "__main__":
