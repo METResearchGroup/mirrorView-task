@@ -26,6 +26,8 @@ import pandas as pd
 
 from data_platform.generate_features.engines.bedrock_engine import BedrockRuntimeClient
 from data_platform.generate_features.models import LabelTask
+
+from shared.flip_generation.prompts import USER_MESSAGE_TEMPLATE
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 
 from shared.flip_generation.models import FlipRunResult
@@ -72,7 +74,21 @@ def _validate_posts(posts: pd.DataFrame) -> pd.DataFrame:
         When a required column is missing, ``record_id`` is duplicated, or
         ``political_stance`` is not ``left`` or ``right``.
     """
-    raise NotImplementedError
+    missing_columns = [
+        column_name
+        for column_name in REQUIRED_COLUMNS
+        if column_name not in posts.columns
+    ]
+    if missing_columns:
+        raise ValueError(f"posts is missing required columns: {missing_columns}")
+    if posts[RECORD_ID_COLUMN].duplicated().any():
+        raise ValueError("duplicate record_id values")
+    validated_posts = posts.copy()
+    for row_index, stance_value in validated_posts[STANCE_COLUMN].items():
+        stance_text = str(stance_value)
+        if stance_text not in (LEFT_STANCE, RIGHT_STANCE):
+            raise ValueError(f"invalid political_stance: {stance_text!r}")
+    return validated_posts.sort_values(RECORD_ID_COLUMN, kind=SORT_KIND)
 
 
 def _build_label_tasks(posts: pd.DataFrame) -> list[LabelTask]:
@@ -88,7 +104,20 @@ def _build_label_tasks(posts: pd.DataFrame) -> list[LabelTask]:
     list[LabelTask]
         One task per row with opposite-stance target group in the user message.
     """
-    raise NotImplementedError
+    label_tasks: list[LabelTask] = []
+    for _, post_row in posts.iterrows():
+        stance_text = str(post_row[STANCE_COLUMN])
+        target_group = TARGET_GROUP_BY_STANCE[stance_text]
+        label_tasks.append(
+            LabelTask(
+                uri=str(post_row[RECORD_ID_COLUMN]),
+                text=USER_MESSAGE_TEMPLATE.format(
+                    target_group=target_group,
+                    original_text=str(post_row[TEXT_COLUMN]),
+                ),
+            )
+        )
+    return label_tasks
 
 
 def _label_and_write_parts(
