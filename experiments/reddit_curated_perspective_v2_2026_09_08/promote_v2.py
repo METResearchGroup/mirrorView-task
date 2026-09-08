@@ -50,7 +50,19 @@ def select_promotions(
     ValueError
         When ``scores`` has fewer rows than ``count``.
     """
-    raise NotImplementedError
+    _require_enough_scores(scores, count)
+    ranked = scores.sort_values(
+        by=[TOXICITY_PROB_COLUMN, SOURCE_RECORD_ID_COLUMN],
+        ascending=[False, True],
+        kind="mergesort",
+    )
+    record_ids = ranked[SOURCE_RECORD_ID_COLUMN].astype(str).tolist()
+    return record_ids[:count]
+
+
+def _require_enough_scores(scores: pd.DataFrame, count: int) -> None:
+    if len(scores) < count:
+        raise ValueError(f"scored_rows={len(scores)} promotion_count={count}")
 
 
 def apply_promotions(
