@@ -109,19 +109,22 @@ def _require_key_sha256(store: CampaignObjectStore, key: str, expected: str) -> 
         raise ValueError(f"sha256 mismatch for {key}")
 
 
-def main(argv: list[str] | None = None) -> int:
+def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--load-only", action="store_true")
-    parser.add_argument("--score", action="store_true")
-    parser.add_argument("--write-v2", action="store_true")
-    args = parser.parse_args(argv)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--load-only", action="store_true")
+    group.add_argument("--score", action="store_true")
+    group.add_argument("--write-v2", action="store_true")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
     if args.load_only:
         return _run_load_only()
     if args.score:
         return _run_score()
-    if args.write_v2:
-        return _run_write_v2()
-    raise SystemExit("pass --load-only, --score, or --write-v2")
+    return _run_write_v2()
 
 
 if __name__ == "__main__":

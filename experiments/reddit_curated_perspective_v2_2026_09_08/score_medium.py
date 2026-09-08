@@ -8,6 +8,7 @@ Run from the repo root:
 from __future__ import annotations
 
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 import pandas as pd
 
@@ -117,7 +118,18 @@ def _merge_score_frames(existing: pd.DataFrame, new_rows: pd.DataFrame) -> pd.Da
 
 def _write_scores_parquet(scores: pd.DataFrame, scores_path: Path) -> None:
     scores_path.parent.mkdir(parents=True, exist_ok=True)
-    scores.to_parquet(scores_path, index=False)
+    with NamedTemporaryFile(
+        dir=scores_path.parent,
+        suffix=".parquet",
+        delete=False,
+    ) as temporary_file:
+        temporary_path = Path(temporary_file.name)
+    try:
+        scores.to_parquet(temporary_path, index=False)
+        temporary_path.replace(scores_path)
+    except Exception:
+        temporary_path.unlink(missing_ok=True)
+        raise
 
 
 def _score_pending_batches(
