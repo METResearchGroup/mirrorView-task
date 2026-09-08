@@ -11,11 +11,13 @@ from pathlib import Path
 
 import pandas as pd
 
+from data_platform.generate_features.engines import build_engine
 from data_platform.generate_features.engines.base import (
     BatchExecutionEngine,
     batched,
 )
-from data_platform.generate_features.models import LabelTask
+from data_platform.generate_features.models import FeatureRunConfig, LabelTask
+from data_platform.generate_features.registry import FEATURE_REGISTRY
 
 SCORE_FEATURE_NAME = "is_toxic_tiered"
 SCORE_BATCH_SIZE = 64
@@ -36,7 +38,12 @@ def default_score_engine() -> BatchExecutionEngine:
     BatchExecutionEngine
         Engine built from ``FEATURE_REGISTRY["is_toxic_tiered"]``.
     """
-    raise NotImplementedError
+    spec = FEATURE_REGISTRY[SCORE_FEATURE_NAME]
+    run_config = FeatureRunConfig(
+        max_concurrency=SCORE_MAX_CONCURRENCY,
+        batch_size=SCORE_BATCH_SIZE,
+    )
+    return build_engine(spec, run_config)
 
 
 def tasks_for_medium_rows(medium: pd.DataFrame) -> list[LabelTask]:
@@ -151,6 +158,27 @@ def _ordered_scores_for_medium(medium: pd.DataFrame, scores: pd.DataFrame) -> pd
     order = medium[SOURCE_RECORD_ID_COLUMN].astype(str)
     indexed = scores.set_index(SOURCE_RECORD_ID_COLUMN, drop=False)
     return indexed.loc[order].reset_index(drop=True)
+
+
+def count_already_scored(medium: pd.DataFrame, scores_path: Path) -> int:
+    """Count medium ids that already have a finite toxicity probability on disk.
+
+    Parameters
+    ----------
+    medium
+        Medium-tier curated rows.
+    scores_path
+        Persisted scores parquet.
+
+    Returns
+    -------
+    int
+        Number of medium ids with a finite ``toxicity_prob`` in ``[0, 1]``.
+    """
+    existing = _valid_existing_scores(_load_existing_scores(scores_path))
+    scored_ids = set(existing[SOURCE_RECORD_ID_COLUMN].astype(str))
+    medium_ids = medium[SOURCE_RECORD_ID_COLUMN].astype(str)
+    return int(medium_ids.isin(scored_ids).sum())
 
 
 def score_medium_comments(
