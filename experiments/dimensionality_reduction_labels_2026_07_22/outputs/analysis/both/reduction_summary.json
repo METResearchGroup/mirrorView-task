@@ -1,0 +1,49 @@
+{
+  "feature_set": "original_and_mirrored_stacked",
+  "fit_regime": "full_data_exploratory",
+  "n_posts": 8791,
+  "n_rows": 17582,
+  "stack_order": "block_[X_original; X_mirrored]",
+  "embedding_dim": 256,
+  "pca": {
+    "n_components": 2,
+    "explained_variance_ratio": [
+      0.029037948282792877,
+      0.020974697945728222
+    ],
+    "explained_variance_ratio_cumsum": [
+      0.029037948282792877,
+      0.0500126462285211
+    ]
+  },
+  "lda": {
+    "n_components": 1,
+    "classes": [
+      0,
+      1
+    ],
+    "note": "Binary label LDA; text_role is plot-only (darker/lighter), not an LDA class",
+    "orthogonal_pc1_explained_variance_ratio": 0.027506538602794228,
+    "ld1_separability_full_data": {
+      "n_keep": 11956,
+      "n_remove": 5626,
+      "mean_ld1_keep": -0.2938664607031163,
+      "mean_ld1_remove": 0.6245054042243975,
+      "cohen_d_remove_minus_keep": 0.9183718649265955
+    }
+  },
+  "pca_2d_logistic_overlay": {
+    "pca_2d_logistic_accuracy": 0.6101126151746104,
+    "pca_2d_logistic_coef": [
+      -0.1750119941959395,
+      0.05468195465089087
+    ],
+    "pca_2d_logistic_intercept": -0.03906750633808347,
+    "boundary_note": "dashed contour = P(remove)=0.5 from 2D logistic on PC1/PC2 (full-data fit)"
+  },
+  "artifacts": {
+    "pca_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/dimensionality_reduction_labels_2026_07_22/outputs/analysis/both/pca_remove_vs_keep.png",
+    "lda_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/dimensionality_reduction_labels_2026_07_22/outputs/analysis/both/lda_remove_vs_keep.png",
+    "embeddings_2d_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/dimensionality_reduction_labels_2026_07_22/outputs/analysis/both/embeddings_2d.csv"
+  }
+}

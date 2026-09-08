@@ -1,0 +1,46 @@
+{
+  "feature_set": "only_original",
+  "fit_regime": "full_data_exploratory",
+  "n_rows": 8791,
+  "embedding_dim": 256,
+  "pca": {
+    "n_components": 2,
+    "explained_variance_ratio": [
+      0.028780857375785743,
+      0.021387930947743345
+    ],
+    "explained_variance_ratio_cumsum": [
+      0.028780857375785743,
+      0.050168788323529084
+    ]
+  },
+  "lda": {
+    "n_components": 1,
+    "classes": [
+      0,
+      1
+    ],
+    "orthogonal_pc1_explained_variance_ratio": 0.02744142919290412,
+    "ld1_separability_full_data": {
+      "n_keep": 5978,
+      "n_remove": 2813,
+      "mean_ld1_keep": -0.30859303294322865,
+      "mean_ld1_remove": 0.6558013334285888,
+      "cohen_d_remove_minus_keep": 0.9643943663708526
+    }
+  },
+  "pca_2d_logistic_overlay": {
+    "pca_2d_logistic_accuracy": 0.6515754749175293,
+    "pca_2d_logistic_coef": [
+      0.17813557557678394,
+      -0.10207184319982669
+    ],
+    "pca_2d_logistic_intercept": -0.04018379838991488,
+    "boundary_note": "dashed contour = P(remove)=0.5 from 2D logistic on PC1/PC2 (full-data fit)"
+  },
+  "artifacts": {
+    "pca_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/dimensionality_reduction_labels_2026_07_22/outputs/analysis/original/pca_remove_vs_keep.png",
+    "lda_png": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/dimensionality_reduction_labels_2026_07_22/outputs/analysis/original/lda_remove_vs_keep.png",
+    "embeddings_2d_csv": "/Users/mark/.cursor/worktrees/mirrorView-task/47kw/experiments/dimensionality_reduction_labels_2026_07_22/outputs/analysis/original/embeddings_2d.csv"
+  }
+}
