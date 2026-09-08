@@ -154,7 +154,7 @@ def _combine_run_result(
 ) -> CombineRunResult:
     return CombineRunResult(
         combined_rows=len(combined),
-        local_path=str(local_path),
+        local_path=str(local_path.relative_to(REPO_ROOT)),
         s3_uri=s3_uri(OUTPUT_S3_BUCKET, OUTPUT_S3_KEY),
         dataset_sha256=digest,
         overall_crosstab=overall_crosstab,
