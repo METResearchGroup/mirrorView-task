@@ -16,6 +16,7 @@ from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.con
     EMPTY_CELL,
     EXPECTED_OLD_CATALOG_IDS,
     NAN_CELL,
+    NEW_ID_COLUMN,
     NewSampleSource,
     OLD_ID_COLUMN,
     OLD_RESULTS_DATASET,
@@ -23,6 +24,10 @@ from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.con
     RATER_COLUMN,
     RESULTS_ID_COLUMN,
 )
+from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.load_raw_candidate_dataset import (
+    load_raw_candidate_dataset,
+)
+from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources import CandidateSource
 from shared.data.dataloader import load_dataset
 
 
@@ -93,7 +98,21 @@ def load_new_sample(
     ValueError
         When the SHA-256, row count, or ``record_id`` uniqueness does not match.
     """
-    raise NotImplementedError
+    frame = load_raw_candidate_dataset(
+        _as_candidate_source(source), store, cache_dir
+    )
+    _require_column(frame, NEW_ID_COLUMN)
+    ids = _stripped_nonempty(frame[NEW_ID_COLUMN])
+    _require_unique_id_count(ids, source.expected_row_count, NEW_ID_COLUMN)
+    return frame
+
+
+def _as_candidate_source(source: NewSampleSource) -> CandidateSource:
+    return CandidateSource(
+        s3_uri=source.s3_uri,
+        sha256=source.sha256,
+        expected_row_count=source.expected_row_count,
+    )
 
 
 def _require_column(frame: pd.DataFrame, column_name: str) -> None:
