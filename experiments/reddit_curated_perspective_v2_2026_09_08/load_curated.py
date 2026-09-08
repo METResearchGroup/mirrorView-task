@@ -31,8 +31,44 @@ def load_pinned_curated(
     store: CampaignObjectStore | None = None,
     cache_path: Path | None = None,
 ) -> pd.DataFrame:
+    """Return the pinned curated Reddit table after checking its hash and row counts.
+
+    Parameters
+    ----------
+    store
+        Object store used to download the pinned parquet. None builds a store
+        for the pinned bucket.
+    cache_path
+        Local parquet path. Missing or stale cache is replaced from S3.
+
+    Returns
+    -------
+    pd.DataFrame
+        The pinned curated comments.
+
+    Raises
+    ------
+    ValueError
+        When the downloaded bytes do not match the pinned SHA-256, the row
+        count is wrong, the medium count is wrong, or a medium row has empty
+        text.
+    FileNotFoundError
+        When the pinned S3 object is missing.
+    """
     raise NotImplementedError
 
 
 def medium_rows(curated: pd.DataFrame) -> pd.DataFrame:
+    """Return curated rows whose LLM toxicity tier is medium.
+
+    Parameters
+    ----------
+    curated
+        Full curated table with ``llm_toxicity_tier``.
+
+    Returns
+    -------
+    pd.DataFrame
+        Medium-tier subset.
+    """
     raise NotImplementedError
