@@ -35,6 +35,8 @@ class FlipLlmOutput(BaseModel):
 class FlipEngineRow(BaseModel):
     """One labeled row returned by the Bedrock engine."""
 
+    model_config = ConfigDict(extra="forbid")
+
     source_record_id: str
     label_timestamp: str
     flipped_text: str
