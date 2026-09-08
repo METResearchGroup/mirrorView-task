@@ -12,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.utils.object_store import sha256_hex
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.constants import (
     CSV_INDEX,
     DATASET_FILENAME,
@@ -19,6 +20,7 @@ from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.con
     LocalCsvWrite,
     NewSampleSource,
     OUTPUT_COLUMNS,
+    OUTPUT_S3_KEY,
 )
 
 CSV_ENCODING = "utf-8"
@@ -65,7 +67,8 @@ def upload_csv(body: bytes, store: CampaignObjectStore) -> str:
     FileExistsError
         When the destination S3 key already exists.
     """
-    raise NotImplementedError
+    store.put_new(OUTPUT_S3_KEY, body)
+    return sha256_hex(body)
 
 
 def write_results_md(result: LabelCountRunResult, experiment_dir: Path) -> Path:
