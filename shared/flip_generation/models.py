@@ -1,4 +1,9 @@
-"""Pydantic models and result types for flip generation."""
+"""Pydantic models and result types for flip generation.
+
+Run from the repo root:
+
+    PYTHONPATH=. uv run python -c "from shared.flip_generation.models import FLIP_PARQUET_COLUMNS; print(FLIP_PARQUET_COLUMNS)"
+"""
 
 from __future__ import annotations
 
