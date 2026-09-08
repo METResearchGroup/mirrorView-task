@@ -1,6 +1,6 @@
 # Combine curated data into a stimulus set
 
-Download the four pinned MirrorView curated parquet files (Bluesky, two Twitter collections, and Reddit v2). Concatenate them into one table. Write `dataset.parquet` locally and to S3. Print counts of posts by political stance and toxicity, overall and by platform.
+Download the four pinned MirrorView curated parquet files (Bluesky, two Twitter collections, and Reddit v2), and concatenate them into one table. Write `dataset.parquet` locally and to S3, and print counts of posts by political stance and toxicity, both overall and by platform.
 
 ## Run
 
@@ -10,4 +10,4 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 PYTHONPATH=. uv run python experiments/combine_data_into_stimulus_set_2026_09_08/run.py
 ```
 
-Expected stdout includes `combined_rows=55573` and the S3 URI for `dataset.parquet`. The write fails if that S3 object already exists.
+Expected stdout includes `combined_rows=55573` and the S3 URI for `dataset.parquet`. The S3 upload fails if that object already exists.

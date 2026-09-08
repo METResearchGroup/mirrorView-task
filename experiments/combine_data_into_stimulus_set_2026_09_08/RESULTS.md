@@ -49,3 +49,10 @@ Combined row count is 55573. Expected row count is 55573.
 | twitter | right | 734 | 524 | 142 | 1400 |
 | twitter | total | 1809 | 784 | 163 | 2756 |
 | total | total | 27322 | 23445 | 4806 | 55573 |
+
+## Twitter posts that appear in both collections
+
+574 Twitter posts appear in both curated collections, so they contribute 1,148 of the 2,756 Twitter rows. Unique Twitter posts are 2,182. The combine keeps both rows, and it does not drop or merge them.
+
+25 of those 574 posts have different labels across the two collections: 12 differ on political stance, 16 differ on LLM toxicity tier, and 3 differ on both. A later stimulus catalog that keys rows by `record_id` or tweet id alone would treat those posts as duplicates.
+

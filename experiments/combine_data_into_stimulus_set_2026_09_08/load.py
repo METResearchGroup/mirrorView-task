@@ -33,8 +33,7 @@ def load_curated_source(
     source
         Pinned curated parquet identity.
     store
-        Object store used to download the source. None builds a store for the
-        source bucket.
+        If you omit store, the function builds a store for the source bucket.
     cache_dir
         Directory for a local copy of the source bytes.
 
