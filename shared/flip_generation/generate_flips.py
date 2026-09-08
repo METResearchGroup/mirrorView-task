@@ -264,9 +264,6 @@ def _label_and_write_parts(
             max_tokens=max_tokens,
         )
         flip_rows = _join_flip_rows(posts, outcome.rows)
-        if flip_rows:
-            _write_flip_part(store, part_object_key, flip_rows)
-            seen_ids.update(flip_row.record_id for flip_row in flip_rows)
         batch_failures = outcome.content_filter_failures + outcome.other_failures
         if batch_failures:
             store.append_jsonl(
@@ -274,6 +271,9 @@ def _label_and_write_parts(
                 _failure_records(batch_failures, part_index),
             )
             seen_ids.update(failure.source_record_id for failure in batch_failures)
+        if flip_rows:
+            _write_flip_part(store, part_object_key, flip_rows)
+            seen_ids.update(flip_row.record_id for flip_row in flip_rows)
 
 
 def _list_part_keys(store: CampaignObjectStore, run_prefix: str) -> list[str]:
