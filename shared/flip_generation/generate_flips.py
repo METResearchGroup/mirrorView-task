@@ -244,7 +244,88 @@ def _label_and_write_parts(
     model_id
         Bedrock model id.
     """
-    raise NotImplementedError
+    feature_spec = flip_feature_spec()
+    seen_ids = _load_seen_ids(store, run_prefix)
+    for part_index, task_chunk in enumerate(batched(tasks, batch_size)):
+        pending_tasks = [task for task in task_chunk if task.uri not in seen_ids]
+        if not pending_tasks:
+            continue
+        part_object_key = part_key(run_prefix, part_index)
+        if _part_object_exists(store, part_object_key):
+            continue
+        label_timestamp = get_current_timestamp()
+        outcome = label_tasks_collecting_failures(
+            client,
+            model_id,
+            feature_spec,
+            pending_tasks,
+            max_concurrency,
+            label_timestamp,
+            max_tokens=max_tokens,
+        )
+        flip_rows = _join_flip_rows(posts, outcome.rows)
+        if flip_rows:
+            _write_flip_part(store, part_object_key, flip_rows)
+            seen_ids.update(flip_row.record_id for flip_row in flip_rows)
+        batch_failures = outcome.content_filter_failures + outcome.other_failures
+        if batch_failures:
+            store.append_jsonl(
+                errors_key(run_prefix),
+                _failure_records(batch_failures, part_index),
+            )
+            seen_ids.update(failure.source_record_id for failure in batch_failures)
+
+
+def _list_part_keys(store: CampaignObjectStore, run_prefix: str) -> list[str]:
+    return [
+        object_key
+        for object_key in store.list_keys(_batches_prefix(run_prefix))
+        if object_key.endswith(".parquet")
+    ]
+
+
+def _count_failed_ids(store: CampaignObjectStore, run_prefix: str) -> int:
+    stored_errors = store.get(errors_key(run_prefix))
+    if stored_errors is None:
+        return 0
+    failed_ids: set[str] = set()
+    for line in stored_errors.body.decode("utf-8").splitlines():
+        if not line.strip():
+            continue
+        error_record = json.loads(line)
+        failed_ids.add(str(error_record["source_record_id"]))
+    return len(failed_ids)
+
+
+def _maybe_write_final_parquet(
+    posts: pd.DataFrame,
+    store: CampaignObjectStore,
+    run_prefix: str,
+    part_keys: list[str],
+) -> bool:
+    """Concatenate parts into ``flips.parquet`` when every input id is accounted for."""
+    final_object_key = final_key(run_prefix)
+    if store.get(final_object_key) is not None:
+        return True
+    all_input_ids = set(posts[RECORD_ID_COLUMN].astype(str))
+    seen_ids = _load_seen_ids(store, run_prefix)
+    if not all_input_ids <= seen_ids:
+        return False
+    part_frames: list[pd.DataFrame] = []
+    for object_key in sorted(part_keys):
+        stored_part = store.get(object_key)
+        if stored_part is None:
+            continue
+        part_frames.append(parquet_rows(stored_part.body))
+    if not part_frames:
+        return False
+    final_frame = pd.concat(part_frames, ignore_index=True)
+    final_bytes = rows_to_parquet_bytes(
+        final_frame.to_dict(orient="records"),
+        FLIP_PARQUET_COLUMNS,
+    )
+    store.put_new(final_object_key, final_bytes)
+    return True
 
 
 def _build_flip_run_result(
@@ -253,7 +334,25 @@ def _build_flip_run_result(
     run_prefix: str,
 ) -> FlipRunResult:
     """Collect part and error counts and finalize ``flips.parquet`` when complete."""
-    raise NotImplementedError
+    part_keys = _list_part_keys(store, run_prefix)
+    row_count = 0
+    for object_key in part_keys:
+        stored_part = store.get(object_key)
+        if stored_part is None:
+            continue
+        row_count += len(parquet_rows(stored_part.body))
+    wrote_final = _maybe_write_final_parquet(posts, store, run_prefix, part_keys)
+    final_object_key = final_key(run_prefix)
+    if store.get(final_object_key) is not None:
+        wrote_final = True
+    return FlipRunResult(
+        run_prefix=run_prefix,
+        part_count=len(part_keys),
+        row_count=row_count,
+        failed_count=_count_failed_ids(store, run_prefix),
+        final_key=final_object_key,
+        wrote_final=wrote_final,
+    )
 
 
 def generate_flips(
@@ -294,6 +393,7 @@ def generate_flips(
         Run summary with part counts and whether ``flips.parquet`` exists.
     """
     validated_posts = _validate_posts(posts)
+    errors_key(run_prefix)
     tasks = _build_label_tasks(validated_posts)
     _label_and_write_parts(
         validated_posts,
