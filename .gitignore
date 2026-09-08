@@ -45,6 +45,10 @@ data_platform/data/**
 !experiments/llm_based_toxicity_classifier_2026_09_05/outputs/**
 !experiments/llm_based_toxicity_classifier_2026_09_05/outputs/**/*.csv
 
+# Reddit curated Perspective v2 labels and promotion ids.
+!experiments/reddit_curated_perspective_v2_2026_09_08/outputs/
+!experiments/reddit_curated_perspective_v2_2026_09_08/outputs/**
+
 # OS generated files
 .DS_Store
 .DS_Store?
