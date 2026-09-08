@@ -2,7 +2,8 @@
 
 ## 2026-09-08
 
-1. Operators now have one 55,573-row stimulus parquet of curated Bluesky, Reddit, and Twitter posts. The experiment report has counts of political stance by toxicity, and a copy of the parquet is on S3. [PR #266](https://github.com/METResearchGroup/mirrorView-task/pull/266)
+1. Operators now have a filtered stimulus parquet of 9,562 posts sampled toward even political stance by toxicity cells. Duplicate ids, duplicate text, and previously used catalog posts are dropped, and a copy is on S3. [PR #267](https://github.com/METResearchGroup/mirrorView-task/pull/267)
+2. Operators now have one 55,573-row stimulus parquet of curated Bluesky, Reddit, and Twitter posts. The experiment report has counts of political stance by toxicity, and a copy of the parquet is on S3. [PR #266](https://github.com/METResearchGroup/mirrorView-task/pull/266)
 2. Operators now have a second curated Reddit Parquet file, and in that file 3,000 comments that the large language model labeled medium toxicity are labeled high instead, ranked by Perspective toxicity probability. The original MirrorView export still matches its recorded SHA-256. [PR #260](https://github.com/METResearchGroup/mirrorView-task/pull/260)
 3. Operators now have a Twitter table of 6,408 labeled posts with 21 columns, plus a MirrorView curated export that records political stance by toxicity tier. [PR #265](https://github.com/METResearchGroup/mirrorView-task/pull/265)
 4. Operators now have seven OpenAI Batch labels for all 6,408 Twitter posts from the 2026-09-07 collection, with four batch objects and a run report per feature. [PR #264](https://github.com/METResearchGroup/mirrorView-task/pull/264)
