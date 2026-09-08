@@ -35,6 +35,7 @@ from experiments.reddit_curated_perspective_v2_2026_09_08.promote_v2 import (
 )
 from experiments.reddit_curated_perspective_v2_2026_09_08.score_medium import (
     count_already_scored,
+    require_all_medium_scored,
     score_medium_comments,
 )
 
@@ -68,6 +69,7 @@ def _run_score() -> int:
 
 def _run_write_v2() -> int:
     curated = load_pinned_curated()
+    require_all_medium_scored(medium_rows(curated), DEFAULT_SCORES_PATH)
     scores = pd.read_parquet(DEFAULT_SCORES_PATH)
     promotion_ids = select_promotions(scores)
     curated_v2 = apply_promotions(curated, promotion_ids)

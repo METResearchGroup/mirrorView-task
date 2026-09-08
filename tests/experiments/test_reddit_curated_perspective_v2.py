@@ -29,6 +29,7 @@ from experiments.reddit_curated_perspective_v2_2026_09_08.promote_v2 import (
 from experiments.reddit_curated_perspective_v2_2026_09_08.score_medium import (
     TOXICITY_PROB_COLUMN,
     default_score_engine,
+    require_all_medium_scored,
     score_medium_comments,
     tasks_for_medium_rows,
 )
@@ -304,6 +305,24 @@ class TestScoreMediumComments:
             score_medium_comments(medium, scores_path=scores_path, engine=engine)
 
 
+class TestRequireAllMediumScored:
+    """Tests for require_all_medium_scored()."""
+
+    def test_raises_when_a_medium_id_has_no_score(self, tmp_path: Path) -> None:
+        """Reject a scores file that does not cover every medium id."""
+        medium = _curated_frame(
+            [
+                ("id-a", "text a", "medium"),
+                ("id-b", "text b", "medium"),
+            ]
+        )
+        scores_path = tmp_path / "medium_perspective_scores.parquet"
+        _write_scores(scores_path, [("id-a", 0.2)])
+
+        with pytest.raises(ValueError):
+            require_all_medium_scored(medium, scores_path)
+
+
 class TestDefaultScoreEngine:
     """Tests for default_score_engine()."""
 
@@ -376,6 +395,28 @@ class TestSelectPromotions:
         result = select_promotions(scores, count=2)
 
         expected = ["a", "b"]
+        assert result == expected
+
+    def test_ranks_by_probability_not_perspective_tier(self) -> None:
+        """Ignore Perspective toxicity_tier when choosing the top id."""
+        scores = pd.DataFrame(
+            [
+                {
+                    SOURCE_RECORD_ID_COLUMN: "a",
+                    TOXICITY_PROB_COLUMN: 0.1,
+                    "toxicity_tier": "high",
+                },
+                {
+                    SOURCE_RECORD_ID_COLUMN: "b",
+                    TOXICITY_PROB_COLUMN: 0.9,
+                    "toxicity_tier": "low",
+                },
+            ]
+        )
+
+        result = select_promotions(scores, count=1)
+
+        expected = ["b"]
         assert result == expected
 
     def test_raises_when_fewer_rows_than_count(self) -> None:

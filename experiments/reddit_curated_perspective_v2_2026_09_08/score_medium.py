@@ -181,6 +181,26 @@ def count_already_scored(medium: pd.DataFrame, scores_path: Path) -> int:
     return int(medium_ids.isin(scored_ids).sum())
 
 
+def require_all_medium_scored(medium: pd.DataFrame, scores_path: Path) -> None:
+    """Raise if any medium id still lacks a finite toxicity probability.
+
+    Parameters
+    ----------
+    medium
+        Medium-tier curated rows.
+    scores_path
+        Persisted scores parquet.
+
+    Raises
+    ------
+    ValueError
+        When the number of valid scores does not equal the medium row count.
+    """
+    scored = count_already_scored(medium, scores_path)
+    if scored != len(medium):
+        raise ValueError(f"scored={scored} medium_rows={len(medium)}")
+
+
 def score_medium_comments(
     medium: pd.DataFrame,
     *,
