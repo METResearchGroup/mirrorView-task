@@ -15,11 +15,14 @@ Cleanup steps:
 
 - Drop posts that have the same ID
 - Drop posts that have the same text.
-- ... (I need to think of what cleanup will look like, and how to get the highest-quality dataset for training).
 
-Once done with cleanup, we can sample:
-
-- Sample all the right-leaning high-toxicity posts.
-- Then backfill so we have ~even distributions across all toxicity classes and political parties (ideally each cell would be equivalent).
+Once done with cleanup, we can sample so we have ~even distributions across all toxicity classes and political parties (ideally each cell would be equivalent).
 
 We need to do this in conjunction with our previous stimuli dataset, as we eventually want a full 20,000 post x 5 labels per post = 100,000 total labels. So, we need 10,000 total labels. Let's aim for 10,200 so as to have an even ~1,700 labels per cell in the political party x toxicity split.
+
+We need the following files:
+
+- load_raw_candidate_dataset.py: to load the candidate ~55,000 post dataset.
+- cleanup_raw_candidate_dataset.py
+- sample_raw_candidate_dataset.py
+- upload_filtered_candidate_dataset.py: uploads the candidate dataset to S3, using the `mirrorview-experimental-artifacts` bucket and `experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/` S3 prefix.
