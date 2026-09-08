@@ -87,4 +87,4 @@ PINNED_CANDIDATE = CandidateSource(
 
 def pinned_candidate_source() -> CandidateSource:
     """Return the pinned combined parquet identity."""
-    raise NotImplementedError
+    return PINNED_CANDIDATE
