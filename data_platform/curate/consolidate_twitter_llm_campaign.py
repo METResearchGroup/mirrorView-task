@@ -1,12 +1,23 @@
 """Join pinned Twitter posts with seven campaign LLM feature files into one wide Parquet object.
 
-Runtime validation (automated tests are forbidden by issue 235):
+Expected wide row count comes from the campaign YAML for ``--campaign-id``.
+CLI ``--dataset-id`` and ``--preprocessed-run`` must match that YAML.
 
-given seven feature manifests whose final.parquet SHA-256 and row_count are 6374,
-     and posts.csv whose SHA-256 matches the inventory
-when the CLI joins pinned posts on source_record_id
-then stdout includes each accepted manifest digest, wide_rows=6374, wide_columns=21,
+Runtime validation (automated tests are forbidden by issue 256):
+
+given campaign YAML row_count 6408, seven feature manifests whose final.parquet
+     SHA-256 and row_count are 6408, and posts.csv whose SHA-256 matches the inventory
+when the CLI joins pinned posts on source_record_id with matching dataset id and run
+then stdout includes each accepted manifest digest, wide_rows=6408, wide_columns=21,
      sort_key=source_record_id ASC, and the wide manifest URI
+
+given CLI --dataset-id or --preprocessed-run that disagrees with the campaign YAML
+when parse_args runs
+then it raises ValueError before writing wide/features.parquet
+
+given campaign id twitter_2026_09_06_192847_llm_features_v1
+when load_twitter_campaign_config returns that YAML
+then expected wide row count is 6374
 
 given a missing or SHA-mismatched feature final.parquet, or a posts.csv SHA-256
      that does not match the inventory
@@ -15,7 +26,7 @@ then it raises before writing wide/features.parquet
 
 given the uploaded wide parquet
 when the columns and row count are checked
-then column names match the 21-name contract, n=6374, and no llm_toxicity_tier is null
+then column names match the 21-name contract, n=6408, and no llm_toxicity_tier is null
 
 given the same wide table and data_platform/curate/configs/twitter/mirrorview.yaml
 when apply_rules runs
@@ -26,10 +37,10 @@ then curated row count and political_stance x llm_toxicity_tier counts are writt
 Run from the repo root:
 
     PYTHONPATH=. uv run python data_platform/curate/consolidate_twitter_llm_campaign.py \\
-        --dataset-id twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547 \\
-        --preprocessed-run 2026_09_06-19:28:47 \\
-        --campaign-id twitter_2026_09_06_192847_llm_features_v1 \\
-        --output-s3-uri s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_fba4ddb2-fcf7-4a13-a7cc-0d98db44b547/features/twitter_2026_09_06_192847_llm_features_v1/wide/features.parquet
+        --dataset-id twitter_5901767a-e609-46fc-9a17-742516b548f2 \\
+        --preprocessed-run 2026_09_08-01:48:08 \\
+        --campaign-id twitter_2026_09_08_014808_llm_features_v1 \\
+        --output-s3-uri s3://mirrorview-experimental-artifacts/data_platform/data/twitter/twitter_5901767a-e609-46fc-9a17-742516b548f2/features/twitter_2026_09_08_014808_llm_features_v1/wide/features.parquet
 """
 
 from __future__ import annotations
@@ -66,6 +77,9 @@ from data_platform.generate_features.s3_feature_campaign import (
     parse_s3_uri,
     s3_uri,
 )
+from data_platform.generate_features.twitter_campaign_config import (
+    load_twitter_campaign_config,
+)
 from data_platform.utils.dataset import dataset_root, relative_run_path
 from data_platform.utils.object_store import DEFAULT_S3_REGION, S3_KEY_PREFIX, sha256_hex
 from data_platform.utils.platform_specific_columns import STANDARDIZED_SOURCE_RECORD_ID_COLUMN
@@ -76,7 +90,6 @@ MIRRORVIEW_RULES_PATH = (
     Path(__file__).resolve().parent / "configs" / "twitter" / "mirrorview.yaml"
 )
 TWITTER_PLATFORM = "twitter"
-TWITTER_EXPECTED_WIDE_ROW_COUNT = 6374
 WIDE_MANIFEST_FILENAME = "manifest.json"
 WIDE_PARQUET_FILENAME = "features.parquet"
 CURATED_EXPORT_SUFFIX = "parquet"
@@ -121,6 +134,7 @@ class CampaignConsolidateArgs:
     campaign_id: str
     output_s3_uri: str
     curate_config: Path
+    expected_row_count: int
 
 
 @dataclass(frozen=True)
@@ -184,13 +198,54 @@ def twitter_llm_campaign_wide_columns() -> tuple[str, ...]:
     return TWITTER_PREPROCESSED_WIDE_COLUMNS + label_columns
 
 
+def _require_cli_matches_campaign(
+    dataset_id: str,
+    preprocessed_run: str,
+    campaign: dict[str, Any],
+) -> None:
+    yaml_dataset_id = str(campaign["dataset_id"])
+    yaml_preprocessed_run = str(campaign["preprocessed_run"])
+    if dataset_id != yaml_dataset_id:
+        raise ValueError(
+            f"--dataset-id {dataset_id} does not match campaign YAML {yaml_dataset_id}"
+        )
+    if preprocessed_run != yaml_preprocessed_run:
+        raise ValueError(
+            f"--preprocessed-run {preprocessed_run} does not match campaign YAML "
+            f"{yaml_preprocessed_run}"
+        )
+
+
+def expected_wide_row_count(
+    campaign_id: str,
+    dataset_id: str,
+    preprocessed_run: str,
+) -> int:
+    """Return campaign YAML row_count after CLI identities match that YAML.
+
+    Raises
+    ------
+    ValueError
+        When ``--dataset-id`` or ``--preprocessed-run`` disagrees with the YAML.
+    """
+    campaign = load_twitter_campaign_config(campaign_id)
+    _require_cli_matches_campaign(dataset_id, preprocessed_run, campaign)
+    return int(campaign["row_count"])
+
+
 def parse_args(argv: list[str] | None = None) -> CampaignConsolidateArgs:
     """Parse dataset id, preprocessed run, campaign id, and output S3 URI.
 
     Returns
     -------
     CampaignConsolidateArgs
-        Frozen CLI inputs, with curate YAML defaulting to Twitter MirrorView.
+        Frozen CLI inputs, with curate YAML defaulting to Twitter MirrorView
+        and ``expected_row_count`` taken from the campaign YAML.
+
+    Raises
+    ------
+    ValueError
+        When ``--dataset-id`` or ``--preprocessed-run`` disagrees with the YAML.
     """
     parser = argparse.ArgumentParser(
         description="Join seven Twitter LLM campaign features into one wide Parquet object."
@@ -211,6 +266,11 @@ def parse_args(argv: list[str] | None = None) -> CampaignConsolidateArgs:
         campaign_id=parsed.campaign_id,
         output_s3_uri=parsed.output_s3_uri,
         curate_config=Path(parsed.curate_config),
+        expected_row_count=expected_wide_row_count(
+            parsed.campaign_id,
+            parsed.dataset_id,
+            parsed.preprocessed_run,
+        ),
     )
 
 
@@ -271,12 +331,14 @@ def _download_key(client: Any, bucket: str, key: str, dest: Path) -> str:
     return _sha256_file(dest)
 
 
-def _require_final_row_count(feature_name: str, manifest: dict[str, Any]) -> dict[str, Any]:
+def _require_final_row_count(
+    feature_name: str, manifest: dict[str, Any], expected_row_count: int
+) -> dict[str, Any]:
     final = manifest.get("final_parquet") or {}
-    if final.get("row_count") != TWITTER_EXPECTED_WIDE_ROW_COUNT:
+    if final.get("row_count") != expected_row_count:
         raise ValueError(
             f"{feature_name} final.parquet row_count is {final.get('row_count')}, "
-            f"expected {TWITTER_EXPECTED_WIDE_ROW_COUNT}"
+            f"expected {expected_row_count}"
         )
     return final
 
@@ -284,24 +346,23 @@ def _require_final_row_count(feature_name: str, manifest: dict[str, Any]) -> dic
 def verify_feature_manifest(
     store: CampaignObjectStore,
     feature_name: str,
-    campaign_id: str,
-    dataset_id: str,
+    args: CampaignConsolidateArgs,
 ) -> tuple[str, dict[str, Any]]:
-    """Return manifest SHA-256 and parsed JSON after checking row count 6374.
+    """Return manifest SHA-256 and parsed JSON after checking YAML row count.
 
     Raises
     ------
     FileNotFoundError
         When the feature manifest object is missing.
     ValueError
-        When ``final_parquet.row_count`` is not 6374.
+        When ``final_parquet.row_count`` is not the campaign YAML row count.
     """
-    paths = _twitter_feature_paths(campaign_id, feature_name, dataset_id)
+    paths = _twitter_feature_paths(args.campaign_id, feature_name, args.dataset_id)
     stored = store.get(paths.manifest_key)
     if stored is None:
         raise FileNotFoundError(f"missing feature manifest: {paths.uri(paths.manifest_key)}")
     manifest = json.loads(stored.body)
-    _require_final_row_count(feature_name, manifest)
+    _require_final_row_count(feature_name, manifest, args.expected_row_count)
     digest = sha256_hex(stored.body)
     print(f"accepted {feature_name} manifest sha256={digest}")
     return digest, manifest
@@ -334,9 +395,7 @@ def _download_feature_final(
     feature_name: str,
 ) -> FeatureInputRecord:
     paths = _twitter_feature_paths(args.campaign_id, feature_name, args.dataset_id)
-    manifest_sha, manifest = verify_feature_manifest(
-        store, feature_name, args.campaign_id, args.dataset_id
-    )
+    manifest_sha, manifest = verify_feature_manifest(store, feature_name, args)
     local_path = work_dir / feature_name / "final.parquet"
     digest = _download_key(client, store.bucket, paths.final_key, local_path)
     _require_sha256(
@@ -477,14 +536,14 @@ def build_twitter_llm_campaign_wide_table(
         conn.close()
 
 
-def _validate_wide_rows(wide: pd.DataFrame) -> None:
+def _validate_wide_rows(wide: pd.DataFrame, expected_row_count: int) -> None:
     id_column = STANDARDIZED_SOURCE_RECORD_ID_COLUMN
-    if len(wide) != TWITTER_EXPECTED_WIDE_ROW_COUNT:
-        raise ValueError(f"wide_rows={len(wide)}, expected {TWITTER_EXPECTED_WIDE_ROW_COUNT}")
+    if len(wide) != expected_row_count:
+        raise ValueError(f"wide_rows={len(wide)}, expected {expected_row_count}")
     unique_ids = wide[id_column].astype(str).nunique()
-    if unique_ids != TWITTER_EXPECTED_WIDE_ROW_COUNT:
+    if unique_ids != expected_row_count:
         raise ValueError(
-            f"distinct source_record_id={unique_ids}, expected {TWITTER_EXPECTED_WIDE_ROW_COUNT}"
+            f"distinct source_record_id={unique_ids}, expected {expected_row_count}"
         )
     if not wide[id_column].astype(str).is_monotonic_increasing:
         raise ValueError("wide rows are not sorted by source_record_id ASC")
@@ -501,13 +560,13 @@ def _validate_wide_labels(wide: pd.DataFrame, expected_columns: tuple[str, ...])
         raise ValueError(f"null feature values: {null_counts}")
 
 
-def validate_wide_table(wide: pd.DataFrame) -> None:
+def validate_wide_table(wide: pd.DataFrame, expected_row_count: int) -> None:
     """Raise ValueError when the wide table misses the Twitter campaign contract."""
     expected = twitter_llm_campaign_wide_columns()
     actual = tuple(wide.columns)
     if actual != expected:
         raise ValueError(f"wide columns {actual} do not match {expected}")
-    _validate_wide_rows(wide)
+    _validate_wide_rows(wide, expected_row_count)
     forbidden = FORBIDDEN_WIDE_COLUMNS.intersection(actual)
     if forbidden:
         raise ValueError(f"wide table contains forbidden columns: {sorted(forbidden)}")
@@ -713,13 +772,13 @@ def _wide_manifest_document(
         "dataset_id": args.dataset_id,
         "preprocessed_run": args.preprocessed_run,
         "campaign_id": args.campaign_id,
-        "row_count": TWITTER_EXPECTED_WIDE_ROW_COUNT,
+        "row_count": args.expected_row_count,
         "columns": list(twitter_llm_campaign_wide_columns()),
         "sort_key": WIDE_SORT_KEY,
         "wide_parquet": {
             "key": wide_key,
             "sha256": wide_sha,
-            "row_count": TWITTER_EXPECTED_WIDE_ROW_COUNT,
+            "row_count": args.expected_row_count,
         },
         "preprocessed": {"key": preprocessed.key, "sha256": preprocessed.sha256},
         "features": {
@@ -775,7 +834,7 @@ def run_campaign_consolidation(args: CampaignConsolidateArgs) -> WideConsolidate
             preprocessed.local_csv,
             {record.feature_name: record.local_parquet for record in features},
         )
-        validate_wide_table(wide)
+        validate_wide_table(wide, args.expected_row_count)
         curated = curate_mirrorview_dataset(store, wide, args)
         wide_sha, parquet_uri, manifest_uri = upload_wide_artifacts(
             store, wide, args, preprocessed, features, curated
