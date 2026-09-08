@@ -1,0 +1,20 @@
+{
+  "feature": "is_likely_spam",
+  "run_id": "reddit_2026_09_03_233928_llm_features_v1:is_likely_spam",
+  "batch_id": "bedrock-smoke",
+  "input_file_id": null,
+  "interrupted_at": "2026_09_07-03:47:57",
+  "resumed_at": "2026_09_07-03:47:57",
+  "submit_calls_before_interrupt": {
+    "converse": 10
+  },
+  "submit_calls_after_resume": {
+    "converse": 0
+  },
+  "reattached_same_batch_id": true,
+  "rows_written": 10,
+  "provider_batch_ids_in_output": [
+    "bedrock-smoke"
+  ],
+  "resume_ok": true
+}

@@ -10,6 +10,7 @@
 6. Operators can smoke-label the same ten Reddit comments for a campaign feature, estimate mixed OpenAI Batch and Bedrock on-demand cost at 400,000 rows, and point the progress watcher at Reddit S3 prefixes with `--platform` and `--dataset-id`. [PR #239](https://github.com/METResearchGroup/mirrorView-task/pull/239)
 7. Operators can review the ten-comment `is_news_or_opinion` smoke for the pinned Reddit campaign, including an estimated 400000-row OpenAI Batch cost of 18.224 USD on average and 24.42 USD at the token maximum. [PR #242](https://github.com/METResearchGroup/mirrorView-task/pull/242)
 8. Operators can review the ten-comment `is_political` smoke for the pinned Reddit campaign, including an estimated 400000-row OpenAI Batch cost of 17.534 USD on average and 23.73 USD at the token maximum. [PR #243](https://github.com/METResearchGroup/mirrorView-task/pull/243)
+9. Operators can review the ten-comment `is_likely_spam` smoke for the pinned Reddit campaign, including an estimated 400000-row Bedrock Converse cost of 4.7334 USD on average and 6.804 USD at the token maximum. [PR #244](https://github.com/METResearchGroup/mirrorView-task/pull/244)
 
 ## 2026-09-06
 
