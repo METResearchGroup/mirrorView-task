@@ -2,7 +2,8 @@
 
 ## 2026-09-08
 
-1. A dated Mirrorview Twitter ingest config and a recent-search run (6,900 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #259](https://github.com/METResearchGroup/mirrorView-task/pull/259)
+1. Twitter preprocess on the 2026-09-07 collection kept 6,408 of 6,900 posts. The preprocessed `posts.csv` is stored in Git LFS. [PR #261](https://github.com/METResearchGroup/mirrorView-task/pull/261)
+2. A dated Mirrorview Twitter ingest config and a recent-search run (6,900 unique posts inside the 7-day window) are now in the repo. `posts.csv` is stored in Git LFS. [PR #259](https://github.com/METResearchGroup/mirrorView-task/pull/259)
 
 ## 2026-09-07
 
