@@ -37,10 +37,22 @@ from experiments.combine_data_into_stimulus_set_2026_09_08.write import (
     print_run_summary,
     write_combined_dataset,
 )
+import pandas as pd
 
 
-def concatenate_curated_frames(frames: list) -> object:
-    """Concatenate normalized source tables and sort them."""
+def concatenate_curated_frames(frames: list[pd.DataFrame]) -> pd.DataFrame:
+    """Concatenate normalized source tables and sort them.
+
+    Parameters
+    ----------
+    frames
+        Normalized tables in pinned-source order.
+
+    Returns
+    -------
+    pd.DataFrame
+        Combined table sorted by integration, dataset id, and source record id.
+    """
     raise NotImplementedError
 
 
