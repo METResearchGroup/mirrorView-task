@@ -102,9 +102,19 @@ def write_deterministic_ten_post_ids_for_spec(
     return output
 
 
-def load_deterministic_ten_posts(dataset_id: str, preprocessed_run: str) -> pd.DataFrame:
-    """Load the pinned Bluesky preprocessed run and return its ten smoke rows with every column."""
-    return load_deterministic_ten_posts_for_spec(BLUESKY_SPEC, dataset_id, preprocessed_run)
+def load_deterministic_ten_posts(
+    dataset_id: str,
+    preprocessed_run: str,
+    spec: FeaturePlatformSpec | None = None,
+) -> pd.DataFrame:
+    """Load the pinned preprocessed run and return its ten smoke rows with every column.
+
+    ``spec`` selects the platform storage. None keeps the Bluesky spec so
+    existing Bluesky callers stay valid. Twitter passes ``TWITTER_SPEC``.
+    """
+    return load_deterministic_ten_posts_for_spec(
+        spec or BLUESKY_SPEC, dataset_id, preprocessed_run
+    )
 
 
 def load_deterministic_ten_post_ids(dataset_id: str, preprocessed_run: str) -> list[str]:
