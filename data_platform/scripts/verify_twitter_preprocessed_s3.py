@@ -27,6 +27,8 @@ from data_platform.scripts.migrate_twitter_preprocessed_to_s3 import (
 )
 from lib.aws.s3 import S3
 
+VERIFY_DESCRIPTION = "Check a Twitter preprocessed S3 inventory against the bucket."
+
 
 def verify_inventory(inventory: dict, s3: S3) -> list[str]:
     """Re-download every inventory object and report length or SHA-256 mismatches.
@@ -78,7 +80,7 @@ def fail_if_inventory_header_invalid(inventory: dict, preprocessed_run: str) -> 
 
 def main(argv: Sequence[str]) -> None:
     """Load the inventory, confirm bucket and count, and print OK or FAIL."""
-    args = parse_args(argv)
+    args = parse_args(argv, VERIFY_DESCRIPTION)
     inventory = json.loads(inventory_path_for(args.dataset_id).read_text())
     fail_if_inventory_header_invalid(inventory, args.preprocessed_run)
     objects = inventory["objects"]

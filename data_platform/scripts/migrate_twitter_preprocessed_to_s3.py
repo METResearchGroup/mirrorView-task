@@ -43,17 +43,22 @@ class TwitterPreprocessedS3Args:
     preprocessed_run: str
 
 
-def parse_args(argv: Sequence[str]) -> TwitterPreprocessedS3Args:
+def parse_args(argv: Sequence[str], description: str) -> TwitterPreprocessedS3Args:
     """Parse required ``--dataset-id`` and ``--preprocessed-run``.
+
+    Parameters
+    ----------
+    argv
+        Command-line tokens after the program name.
+    description
+        Argparse program description for this entry point.
 
     Raises
     ------
     SystemExit
         If either flag is missing. Exit code is non-zero.
     """
-    parser = argparse.ArgumentParser(
-        description="Copy one Twitter preprocessed posts.csv from Git LFS to S3."
-    )
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--dataset-id", required=True)
     parser.add_argument("--preprocessed-run", required=True)
     parsed = parser.parse_args(argv)
@@ -209,9 +214,12 @@ def upload_scoped_paths(s3: S3, paths: Sequence[str]) -> list[dict]:
     return rows
 
 
+MIGRATE_DESCRIPTION = "Copy one Twitter preprocessed posts.csv from Git LFS to S3."
+
+
 def main(argv: Sequence[str]) -> None:
     """Pull LFS, upload the scoped csv, write inventory, and print the object count."""
-    args = parse_args(argv)
+    args = parse_args(argv, MIGRATE_DESCRIPTION)
     paths = scoped_repo_relative_paths(args.dataset_id, args.preprocessed_run)
     run_git_lfs_pull(paths)
     rows = upload_scoped_paths(S3(BUCKET, region_name=REGION), paths)
