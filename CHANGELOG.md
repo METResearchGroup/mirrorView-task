@@ -8,6 +8,7 @@
 4. The pinned Reddit preprocessed comments parquet (400,000 comments, run `2026_09_03-23:39:28`) now exists in the `mirrorview-experimental-artifacts` S3 bucket at the repo-relative key, and a committed inventory records the SHA-256 of the single object. Git LFS still holds the local copy. [PR #230](https://github.com/METResearchGroup/mirrorView-task/pull/230)
 5. Reddit campaign `reddit_2026_09_03_233928_llm_features_v1` can label four LLM features through OpenAI Batch and three through Bedrock Converse, with Bedrock content-filter failures retried through OpenAI Batch, while Bluesky campaigns stay on OpenAI. Bedrock part 0 keeps the ten smoke labels unchanged and labels the rest of that chunk. [PR #236](https://github.com/METResearchGroup/mirrorView-task/pull/236)
 6. Operators can smoke-label the same ten Reddit comments for a campaign feature, estimate mixed OpenAI Batch and Bedrock on-demand cost at 400,000 rows, and point the progress watcher at Reddit S3 prefixes with `--platform` and `--dataset-id`. [PR #239](https://github.com/METResearchGroup/mirrorView-task/pull/239)
+7. Operators can review the ten-comment `is_news_or_opinion` smoke for the pinned Reddit campaign, including an estimated 400000-row OpenAI Batch cost of 18.224 USD on average and 24.42 USD at the token maximum. [PR #242](https://github.com/METResearchGroup/mirrorView-task/pull/242)
 
 ## 2026-09-06
 
