@@ -14,7 +14,8 @@
 #   mkdir -p logs
 #   sbatch experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/run_quest.slurm
 #
-# See HOW_TO_RUN_ACTUAL_DATA.md for full Quest instructions.
+# See experiments/fetch_reddit_pushshift_dump_2026_06_15/runbooks/HOW_TO_RUN_ACTUAL_DATA.md
+# for full Quest instructions.
 
 set -euo pipefail
 

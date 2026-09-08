@@ -17,7 +17,8 @@
 #   sbatch --export=ALL,INPUT_STEM=RC_2025-03 \
 #     experiments/fetch_reddit_pushshift_dump_2026_06_15/scripts/run_quest_one_month.slurm
 #
-# See HOW_TO_RUN_ACTUAL_DATA.md for full Quest instructions.
+# See experiments/fetch_reddit_pushshift_dump_2026_06_15/runbooks/HOW_TO_RUN_ACTUAL_DATA.md
+# for full Quest instructions.
 
 set -euo pipefail
 

@@ -1,4 +1,4 @@
-"""Process a single Pushshift comment .zst file end-to-end."""
+"""Process one staged Pushshift comment archive end to end."""
 
 from __future__ import annotations
 
@@ -8,19 +8,19 @@ from zoneinfo import ZoneInfo
 
 import typer
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import (
     TOXICITY_THRESHOLD,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.filters import passes_filters
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.filters import passes_filters
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.models import (
     CommentToScore,
     HighToxicCommentRow,
     PushshiftCommentRaw,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.perspective import run_batch_scoring
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.reader import iter_pushshift_comments
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.transform import build_mirrorview_rows
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.writer import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.perspective import run_batch_scoring
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.reader import iter_pushshift_comments
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.transform import build_mirrorview_rows
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.writer import (
     build_file_metadata,
     merge_file_into_total_metadata,
     metadata_exists,
@@ -37,7 +37,18 @@ def _sync_timestamp() -> str:
 
 
 def process_input_file(input_file: Path) -> int:
-    """Process one .zst file; return count of high-toxic comments written."""
+    """Score one staged input archive and persist its retained toxic comments.
+
+    Parameters
+    ----------
+    input_file : pathlib.Path
+        Compressed Pushshift comment file to score.
+
+    Returns
+    -------
+    int
+        Number of high-toxicity rows written to the parquet output.
+    """
 
     stem = input_file.stem
     if metadata_exists(stem):
@@ -96,6 +107,8 @@ def process_input_file(input_file: Path) -> int:
 def main(
     input_file: Path = typer.Option(..., "--input-file", exists=True, dir_okay=False),
 ) -> None:
+    """Run the single-file scorer from the command line."""
+
     process_input_file(input_file.resolve())
 
 

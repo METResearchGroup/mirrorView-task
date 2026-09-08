@@ -1,13 +1,13 @@
-"""Filter Pushshift comments to the smoke-test target set."""
+"""Apply the experiment's subreddit and text-quality filters."""
 
 from __future__ import annotations
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import (
     DELETED_TOKENS,
     MAX_BODY_LEN,
     MIN_BODY_LEN,
 )
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.models import (
     PushshiftCommentRaw,
     TARGET_SUBREDDITS,
 )
@@ -16,7 +16,12 @@ AUTOMODERATOR = "AutoModerator"
 
 
 def passes_filters(comment: PushshiftCommentRaw) -> bool:
-    """Return True when the comment meets all smoke-test filter criteria."""
+    """Return whether a comment should be sent to Perspective for scoring.
+
+    The filter keeps only target-subreddit comments with usable author and body
+    text, and drops records whose body length falls outside the experiment's
+    scoring window.
+    """
 
     if not comment.id or not comment.link_id or not comment.body:
         return False

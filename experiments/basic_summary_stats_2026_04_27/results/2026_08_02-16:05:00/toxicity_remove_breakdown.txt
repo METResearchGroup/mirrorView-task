@@ -1,0 +1,54 @@
+
+--- Pipeline / code finding ---
+No reviewed step removes or excludes posts solely because 'sample_middle_toxicity' was sampled:
+  - scripts/export_study_results.py — filters prolific_id / manual-test only.
+  - experiments/mirrors_content_analysis_2026_04_24/dataloader.py — moderation-trial, phase > 0; no toxicity filter.
+  - experiments/predict_keep_remove_2026_05_07/dataloader.py — adds evaluation_mode == 'linked_fate' and keep/remove; still no toxicity filter.
+
+Loaded dataset: STUDY_PHASE_2_PART_1_RESULTS_FULL
+
+--- Empirical (moderation trials, phases 1–2, party/condition filters aligned with summary_stats phase tables) ---
+Rows in slice: 40,160
+
+sample_toxicity_type value counts (trial rows):
+sample_toxicity_type
+sample_high_toxicity      10040
+sample_low_toxicity       10040
+sample_middle_toxicity    20080
+Name: count, dtype: int64
+
+Decision x sample_toxicity_type (rows = toxicity label, all parties):
+decision                 keep  remove    All
+sample_toxicity_type                        
+sample_high_toxicity     4652    5388  10040
+sample_low_toxicity      8318    1722  10040
+sample_middle_toxicity  14208    5872  20080
+All                     27178   12982  40160
+
+--- Removal by political party x sampled toxicity ---
+
+democrat
+  sample_toxicity_type  n_trials  n_remove  prop_remove
+   sample_low_toxicity      5120       844       0.1648
+sample_middle_toxicity     10240      2893       0.2825
+  sample_high_toxicity      5120      2672       0.5219
+
+republican
+  sample_toxicity_type  n_trials  n_remove  prop_remove
+   sample_low_toxicity      4920       878       0.1785
+sample_middle_toxicity      9840      2979       0.3027
+  sample_high_toxicity      4920      2716       0.5520
+
+prop_remove (wide — compare parties side by side):
+party_group             democrat  republican
+sample_toxicity_type                        
+sample_low_toxicity       0.1648      0.1785
+sample_middle_toxicity    0.2825      0.3027
+sample_high_toxicity      0.5219      0.5520
+
+n_trials (wide):
+party_group             democrat  republican
+sample_toxicity_type                        
+sample_low_toxicity         5120        4920
+sample_middle_toxicity     10240        9840
+sample_high_toxicity        5120        4920

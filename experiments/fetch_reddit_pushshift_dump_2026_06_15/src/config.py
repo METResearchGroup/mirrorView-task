@@ -1,8 +1,14 @@
-"""Constants for the Academic Torrents Reddit toxicity smoke pipeline."""
+"""Configuration for the Reddit Pushshift toxicity experiment.
+
+This module centralizes thresholds, API pacing knobs, and filesystem roots used
+by the extraction and scoring pipeline.
+"""
 
 from pathlib import Path
 
-EXPERIMENT_ROOT = Path(__file__).resolve().parent
+# Modules live under ``src/``, but data, outputs, scripts, and runbooks live at
+# the experiment root one level above it.
+EXPERIMENT_ROOT = Path(__file__).resolve().parent.parent
 
 MIN_BODY_LEN = 20
 MAX_BODY_LEN = 300
