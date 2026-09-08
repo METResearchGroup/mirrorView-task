@@ -71,4 +71,5 @@ def medium_rows(curated: pd.DataFrame) -> pd.DataFrame:
     pd.DataFrame
         Medium-tier subset.
     """
-    raise NotImplementedError
+    is_medium = curated[LLM_TOXICITY_TIER_COLUMN] == MEDIUM_TIER
+    return curated.loc[is_medium].reset_index(drop=True)
