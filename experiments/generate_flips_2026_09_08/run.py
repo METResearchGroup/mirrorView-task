@@ -17,6 +17,7 @@ from experiments.generate_flips_2026_09_08.load_filtered_dataset import (
 )
 from experiments.generate_flips_2026_09_08.sources import (
     OUTPUT_S3_BUCKET,
+    RUN_KEY_PREFIX,
     pinned_filtered_source,
 )
 from lib.constants import REPO_ROOT
@@ -33,10 +34,23 @@ def main(
     max_posts: int | None = typer.Option(None, "--max-posts"),
     bucket: str = typer.Option(OUTPUT_S3_BUCKET, "--bucket"),
 ) -> None:
-    """Load the pinned filtered parquet and generate mirrored posts."""
+    """Load the pinned filtered parquet and generate mirrored posts.
+
+    Parameters
+    ----------
+    run_id
+        S3 run folder name. Defaults to the current timestamp when omitted.
+    max_posts
+        When set, only the first N loaded rows are flipped.
+    bucket
+        S3 bucket for flip output artifacts.
+    """
     source = pinned_filtered_source()
     store = CampaignObjectStore(bucket)
-    load_filtered_dataset(source, store, DEFAULT_CACHE_DIR)
+    dataset = load_filtered_dataset(source, store, DEFAULT_CACHE_DIR)
+    _ = dataset
+    run_prefix = f"{RUN_KEY_PREFIX}{run_id}/"
+    _ = run_prefix
     raise NotImplementedError
 
 
