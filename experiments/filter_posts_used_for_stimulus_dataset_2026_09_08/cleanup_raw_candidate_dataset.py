@@ -106,11 +106,17 @@ def _drop_matching(
 
 
 def _drop_duplicate_record_ids(frame: pd.DataFrame) -> tuple[pd.DataFrame, int]:
-    raise NotImplementedError
+    return _drop_duplicates(frame, RECORD_ID_COLUMN)
 
 
 def _drop_duplicate_text(frame: pd.DataFrame) -> tuple[pd.DataFrame, int]:
-    raise NotImplementedError
+    return _drop_duplicates(frame, TEXT_COLUMN)
+
+
+def _drop_duplicates(frame: pd.DataFrame, column: str) -> tuple[pd.DataFrame, int]:
+    unique = frame.drop_duplicates(subset=[column], keep="first")
+    dropped = len(frame) - len(unique)
+    return unique.reset_index(drop=True), dropped
 
 
 def _cleanup_summary(
