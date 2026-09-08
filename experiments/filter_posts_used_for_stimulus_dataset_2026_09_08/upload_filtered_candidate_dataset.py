@@ -8,10 +8,12 @@ from pathlib import Path
 import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.utils.object_store import sha256_hex
 from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources import (
     CleanupSummary,
     DATASET_FILENAME,
     FilterRunResult,
+    OUTPUT_S3_KEY,
 )
 from lib.constants import REPO_ROOT
 
@@ -39,6 +41,30 @@ def write_local_parquet(sampled: pd.DataFrame, experiment_dir: Path) -> tuple[Pa
     path = experiment_dir / DATASET_FILENAME
     path.write_bytes(body)
     return path, body
+
+
+def upload_dataset(body: bytes, store: CampaignObjectStore) -> str:
+    """Upload parquet bytes with put_new and return the SHA-256.
+
+    Parameters
+    ----------
+    body
+        Parquet bytes already written locally.
+    store
+        Object store used only with ``put_new``.
+
+    Returns
+    -------
+    str
+        SHA-256 of the uploaded bytes.
+
+    Raises
+    ------
+    FileExistsError
+        When the destination S3 key already exists.
+    """
+    store.put_new(OUTPUT_S3_KEY, body)
+    return sha256_hex(body)
 
 
 def write_filtered_dataset(
