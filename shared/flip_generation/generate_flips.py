@@ -401,7 +401,6 @@ def generate_flips(
         Run summary with part counts and whether ``flips.parquet`` exists.
     """
     validated_posts = _validate_posts(posts)
-    errors_key(run_prefix)
     tasks = _build_label_tasks(validated_posts)
     _label_and_write_parts(
         validated_posts,

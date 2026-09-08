@@ -35,6 +35,8 @@ from experiments.generate_flips_2026_09_08.sources import (
     OUTPUT_S3_BUCKET,
     POST_COLUMNS,
     RUN_KEY_PREFIX,
+    SMOKE_MAX_POSTS,
+    SMOKE_RUN_ID,
     pinned_filtered_source,
 )
 from lib.constants import DEFAULT_BEDROCK_SONNET_MODEL, REPO_ROOT
@@ -54,8 +56,16 @@ app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 @app.command()
 def main(
-    run_id: str = typer.Option("", "--run-id"),
-    max_posts: int | None = typer.Option(None, "--max-posts"),
+    run_id: str = typer.Option(
+        "",
+        "--run-id",
+        help=f"S3 run folder name. The 10-post test uses {SMOKE_RUN_ID}.",
+    ),
+    max_posts: int | None = typer.Option(
+        None,
+        "--max-posts",
+        help=f"Limit rows after load. The 10-post test uses {SMOKE_MAX_POSTS}.",
+    ),
     bucket: str = typer.Option(OUTPUT_S3_BUCKET, "--bucket"),
 ) -> None:
     """Load the pinned filtered parquet and generate mirrored posts.
