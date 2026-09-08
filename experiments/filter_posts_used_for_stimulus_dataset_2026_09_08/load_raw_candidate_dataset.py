@@ -32,6 +32,8 @@ def load_raw_candidate_dataset(
 ) -> pd.DataFrame:
     """Return the candidate table after checking SHA-256 and row count.
 
+    A matching local cache copy is reused when its SHA-256 matches the pin.
+
     Parameters
     ----------
     source

@@ -18,6 +18,9 @@ from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources impor
 def sample_raw_candidate_dataset(cleaned: pd.DataFrame) -> pd.DataFrame:
     """Return the sampled table with up to TARGET_PER_CELL rows per cell.
 
+    Cells with fewer than ``TARGET_PER_CELL`` cleaned posts keep every row.
+    Sampling uses ``SAMPLE_SEED`` without replacement.
+
     Parameters
     ----------
     cleaned

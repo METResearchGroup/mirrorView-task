@@ -28,6 +28,10 @@ def cleanup_raw_candidate_dataset(
 ) -> tuple[pd.DataFrame, CleanupSummary]:
     """Return the cleaned table and drop-count summary.
 
+    Drops happen in this order: previously used record ids, previously used
+    original text, duplicate record ids, then duplicate text. Duplicate drops
+    keep the first row after a stable sort.
+
     Parameters
     ----------
     frame
