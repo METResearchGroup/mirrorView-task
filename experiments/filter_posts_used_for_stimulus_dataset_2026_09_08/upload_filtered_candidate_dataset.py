@@ -32,6 +32,7 @@ from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources impor
     RIGHT_STANCE,
     STANCE_COLUMN,
     TARGET_PER_CELL,
+    TARGET_TOTAL,
     TOXICITY_COLUMN,
 )
 from lib.constants import REPO_ROOT
@@ -230,7 +231,7 @@ def _results_preamble(result: FilterRunResult) -> list[str]:
         "",
         _parquet_table_markdown(result),
         "",
-        f"Sampled row count is {result.sampled_rows}.",
+        f"Sampled row count is {result.sampled_rows}. Aimed total is {TARGET_TOTAL}.",
         "",
     ]
 
