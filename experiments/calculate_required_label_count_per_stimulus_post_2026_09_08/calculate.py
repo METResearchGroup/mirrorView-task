@@ -13,13 +13,24 @@ from experiments.calculate_required_label_count_per_stimulus_post_2026_09_08.con
     Batch,
     EMPTY_CELL,
     NAN_CELL,
+    NEW_ID_COLUMN,
     OLD_ID_COLUMN,
     OUTPUT_BATCH_COLUMN,
     OUTPUT_COUNT_COLUMN,
     OUTPUT_ID_COLUMN,
     RATER_COLUMN,
     RESULTS_ID_COLUMN,
+    SORT_KIND,
 )
+
+OLD_BATCH_SORT_RANK = 0
+NEW_BATCH_SORT_RANK = 1
+BATCH_SORT_RANK = {
+    Batch.OLD.value: OLD_BATCH_SORT_RANK,
+    Batch.NEW.value: NEW_BATCH_SORT_RANK,
+}
+KEEP_REMAINING_ABOVE = 0
+BATCH_RANK_COLUMN = "_batch_rank"
 
 
 def count_unique_raters_per_post(old_results: pd.DataFrame) -> pd.Series:
@@ -92,7 +103,14 @@ def remaining_labels_for_new_posts(
     pd.DataFrame
         Columns ``id``, ``number_of_times_to_label``, and ``batch``.
     """
-    raise NotImplementedError
+    ids = new_sample[NEW_ID_COLUMN].astype(str).str.strip()
+    return pd.DataFrame(
+        {
+            OUTPUT_ID_COLUMN: ids.to_numpy(),
+            OUTPUT_COUNT_COLUMN: required_labels_per_post,
+            OUTPUT_BATCH_COLUMN: Batch.NEW.value,
+        }
+    )
 
 
 def combine_and_filter_batches(
@@ -118,7 +136,10 @@ def combine_and_filter_batches(
     ValueError
         When the same id appears in both batches.
     """
-    raise NotImplementedError
+    _require_no_id_overlap(old_counts[OUTPUT_ID_COLUMN], new_counts[OUTPUT_ID_COLUMN])
+    combined = pd.concat([old_counts, new_counts], ignore_index=True)
+    remaining = combined[combined[OUTPUT_COUNT_COLUMN] > KEEP_REMAINING_ABOVE].copy()
+    return _sort_remaining_rows(remaining)
 
 
 def calculate_required_label_counts(
@@ -145,7 +166,12 @@ def calculate_required_label_counts(
     pd.DataFrame
         Remaining-label table sorted by batch then id.
     """
-    raise NotImplementedError
+    rater_counts = count_unique_raters_per_post(old_results)
+    old_counts = remaining_labels_for_old_posts(
+        old_catalog, rater_counts, required_labels_per_post
+    )
+    new_counts = remaining_labels_for_new_posts(new_sample, required_labels_per_post)
+    return combine_and_filter_batches(old_counts, new_counts)
 
 
 def _usable_rater_rows(old_results: pd.DataFrame) -> pd.DataFrame:
@@ -163,3 +189,16 @@ def _stripped_values(values: pd.Series) -> pd.Series:
 
 def _is_nonempty(values: pd.Series) -> pd.Series:
     return (values != EMPTY_CELL) & (values.str.lower() != NAN_CELL)
+
+
+def _require_no_id_overlap(old_ids: pd.Series, new_ids: pd.Series) -> None:
+    overlap = set(old_ids) & set(new_ids)
+    if overlap:
+        raise ValueError(f"overlapping id {sorted(overlap)[0]}")
+
+
+def _sort_remaining_rows(remaining: pd.DataFrame) -> pd.DataFrame:
+    ranked = remaining.copy()
+    ranked[BATCH_RANK_COLUMN] = ranked[OUTPUT_BATCH_COLUMN].map(BATCH_SORT_RANK)
+    ordered = ranked.sort_values([BATCH_RANK_COLUMN, OUTPUT_ID_COLUMN], kind=SORT_KIND)
+    return ordered.drop(columns=[BATCH_RANK_COLUMN]).reset_index(drop=True)
