@@ -215,8 +215,6 @@ def main(
     dry_render: bool = typer.Option(False, "--dry-render"),
     once: bool = typer.Option(False, "--once"),
     github_comment_id: int | None = typer.Option(None, "--github-comment-id"),
-    platform: str = typer.Option(DEFAULT_CAMPAIGN_PLATFORM, "--platform"),
-    dataset_id: str = typer.Option(DEFAULT_CAMPAIGN_DATASET_ID, "--dataset-id"),
 ) -> None:
     """Run the watcher once and print its outcome lines.
 
