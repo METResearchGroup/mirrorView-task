@@ -4,7 +4,67 @@ from __future__ import annotations
 
 import pandas as pd
 
+from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources import (
+    CANDIDATE_SORT_COLUMNS,
+    CANDIDATE_STANCE_ROWS,
+    CANDIDATE_TOXICITY_COLUMNS,
+    SAMPLE_SEED,
+    STANCE_COLUMN,
+    TARGET_PER_CELL,
+    TOXICITY_COLUMN,
+)
+
 
 def sample_raw_candidate_dataset(cleaned: pd.DataFrame) -> pd.DataFrame:
-    """Return the sampled table with up to TARGET_PER_CELL rows per cell."""
-    raise NotImplementedError
+    """Return the sampled table with up to TARGET_PER_CELL rows per cell.
+
+    Parameters
+    ----------
+    cleaned
+        Candidate rows after previously used and duplicate drops.
+
+    Returns
+    -------
+    pd.DataFrame
+        Sampled table sorted by integration, dataset id, and source record id.
+
+    Raises
+    ------
+    ValueError
+        When a stance by toxicity cell is empty.
+    """
+    parts = [_sample_one_cell(cleaned, stance, tier) for stance, tier in _cells()]
+    sampled = pd.concat(parts, ignore_index=True)
+    return _sort_sampled(sampled)
+
+
+def _cells() -> tuple[tuple[str, str], ...]:
+    return tuple(
+        (stance, tier)
+        for stance in CANDIDATE_STANCE_ROWS
+        for tier in CANDIDATE_TOXICITY_COLUMNS
+    )
+
+
+def _sample_one_cell(
+    cleaned: pd.DataFrame,
+    stance: str,
+    tier: str,
+) -> pd.DataFrame:
+    cell = cleaned.loc[_cell_mask(cleaned, stance, tier)]
+    if cell.empty:
+        raise ValueError(f"empty cell stance={stance} tier={tier}")
+    if len(cell) <= TARGET_PER_CELL:
+        return cell.reset_index(drop=True)
+    return cell.sample(n=TARGET_PER_CELL, random_state=SAMPLE_SEED, replace=False)
+
+
+def _cell_mask(cleaned: pd.DataFrame, stance: str, tier: str) -> pd.Series:
+    return (cleaned[STANCE_COLUMN] == stance) & (cleaned[TOXICITY_COLUMN] == tier)
+
+
+def _sort_sampled(sampled: pd.DataFrame) -> pd.DataFrame:
+    return sampled.sort_values(
+        list(CANDIDATE_SORT_COLUMNS),
+        kind="mergesort",
+    ).reset_index(drop=True)
