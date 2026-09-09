@@ -18,6 +18,9 @@ from data_platform.generate_features.s3_feature_campaign import (
     s3_uri,
 )
 from data_platform.utils.object_store import sha256_hex
+from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
+    pinned_new_catalog,
+)
 from experiments.generate_study_user_assignments_2026_09_08.constants import (
     ASSIGNED_POST_IDS_COLUMN,
     ASSIGNMENT_COLUMNS,
@@ -32,6 +35,8 @@ from experiments.generate_study_user_assignments_2026_09_08.constants import (
     LocalCsvWrite,
     OUTPUT_S3_BUCKET,
     OUTPUT_S3_KEY,
+    PINNED_REMAINING_LABELS_S3_URI,
+    PINNED_REMAINING_LABELS_SHA256,
     POLITICAL_PARTY_COLUMN,
     RESULTS_FILENAME,
     TRAINING_ASSISTED_CONDITION,
@@ -167,6 +172,8 @@ def _results_markdown(result: AssignmentRunResult) -> str:
             "",
             "| File | Path | SHA-256 |",
             "| ---- | ---- | ------- |",
+            f"| Remaining labels | `{PINNED_REMAINING_LABELS_S3_URI}` | `{PINNED_REMAINING_LABELS_SHA256}` |",
+            f"| New catalog | `{pinned_new_catalog().s3_uri}` | `{pinned_new_catalog().sha256}` |",
             f"| Local CSV | `{result.local_path}` | `{result.csv_sha256}` |",
             f"| S3 CSV | `{result.s3_uri}` | `{result.csv_sha256}` |",
             "",
