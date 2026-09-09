@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>September 2026 study assignment verification</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a222c;
+      --panel-2: #222c38;
+      --line: #314155;
+      --text: #e8eef5;
+      --muted: #9aabc0;
+      --ok: #3dd68c;
+      --bad: #ff6b7a;
+      --accent: #7ab8ff;
+      --left: #6ea8ff;
+      --right: #ff9b6b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    header, main { max-width: 1200px; margin: 0 auto; padding: 1.25rem; }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.45rem; }
+    header p { margin: 0; color: var(--muted); }
+    .grid { display: grid; gap: 0.75rem; }
+    .cards { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+    }
+    .card .label { color: var(--muted); font-size: 0.8rem; }
+    .card .value { font-size: 1.35rem; font-weight: 650; margin-top: 0.2rem; }
+    .check { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.45rem 0; border-bottom: 1px solid var(--line); }
+    .check:last-child { border-bottom: 0; }
+    .pill { font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 999px; }
+    .ok { background: #1a3b2c; color: var(--ok); }
+    .bad { background: #3b1a22; color: var(--bad); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.45rem 0.4rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 600; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    input, select, button {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      font: inherit;
+    }
+    button { cursor: pointer; }
+    .two-col { grid-template-columns: 1.2fr 0.8fr; }
+    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+    .feed-row { cursor: pointer; }
+    .feed-row:hover, .feed-row.selected { background: var(--panel-2); }
+    .post { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
+    .muted { color: var(--muted); }
+    .cell-left { color: var(--left); }
+    .cell-right { color: var(--right); }
+    .status { margin: 0.75rem 0; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>September 2026 study assignment verification</h1>
+    <p>
+      Conversion of the pull request 278 CSV into Democrat and Republican
+      assignment files for <code>jspsych-mirror-view-2026-09-09</code>.
+    </p>
+  </header>
+  <main>
+    <p id="load-status" class="status">Loading verification_dataset.json.</p>
+    <section id="summary-cards" class="grid cards"></section>
+    <div class="grid two-col" style="margin-top: 0.75rem;">
+      <section class="panel">
+        <h2>Conversion checks</h2>
+        <div id="checks"></div>
+      </section>
+      <section class="panel">
+        <h2>Expected versus actual</h2>
+        <div id="counts"></div>
+      </section>
+    </div>
+    <section class="panel" style="margin-top: 0.75rem;">
+      <h2>Browse feeds</h2>
+      <div class="controls">
+        <select id="party-filter">
+          <option value="all">All parties</option>
+          <option value="democrat">Democrat</option>
+          <option value="republican">Republican</option>
+        </select>
+        <select id="kind-filter">
+          <option value="all">All feed kinds</option>
+          <option value="ten_ten">10 left / 10 right</option>
+          <option value="left_only">20 left / 0 right</option>
+        </select>
+        <input id="id-search" type="search" placeholder="democrat-training_assisted-0001" />
+      </div>
+      <div id="feed-table"></div>
+    </section>
+    <section class="panel" style="margin-top: 0.75rem;">
+      <h2>Selected feed</h2>
+      <div id="feed-detail" class="muted">Select a feed row.</div>
+    </section>
+  </main>
+  <script>
+    const EXPECTED = {
+      democratRows: 1940,
+      republicanRows: 1939,
+      democratTenTen: 1601,
+      republicanTenTen: 1601,
+      democratLeftOnly: 339,
+      republicanLeftOnly: 338,
+      firstDemocrat: "democrat-training_assisted-0001",
+      lastDemocrat: "democrat-training_assisted-1940",
+      firstRepublican: "republican-training_assisted-0001",
+      lastRepublican: "republican-training_assisted-1939",
+    };
+    const PAGE_SIZE = 25;
+    let state = { meta: {}, posts: [], feeds: [], checks: [], page: 0, selected: null, filtered: [] };
+
+    function datasetFromJson(payload) {
+      return {
+        meta: payload.meta,
+        posts: payload.posts.map(([id, stance]) => ({ id, stance })),
+        feeds: payload.feeds.map(([id, party, kind, indexes]) => ({ id, party, kind, indexes })),
+        checks: payload.checks,
+      };
+    }
+
+    function card(label, value) {
+      return `<article class="card"><div class="label">${label}</div><div class="value">${value}</div></article>`;
+    }
+
+    function renderSummary() {
+      const meta = state.meta;
+      document.getElementById("summary-cards").innerHTML = [
+        card("Democrat rows", meta.democrat_rows),
+        card("Republican rows", meta.republican_rows),
+        card("Democrat leftover-left", meta.democrat_left_only),
+        card("Republican leftover-left", meta.republican_left_only),
+        card("Catalog posts", meta.catalog_rows),
+        card("Assigned post ids", meta.assigned_post_ids),
+      ].join("");
+    }
+
+    function renderChecks() {
+      document.getElementById("checks").innerHTML = state.checks.map((check) => {
+        const pill = check.ok ? "ok" : "bad";
+        return `<div class="check"><span class="pill ${pill}">${check.ok ? "OK" : "FAIL"}</span><div><strong>${check.id}</strong><div class="muted">${check.detail}</div></div></div>`;
+      }).join("");
+    }
+
+    function countRow(label, actual, expected) {
+      const ok = Number(actual) === Number(expected);
+      return `<tr><td>${label}</td><td class="num">${actual}</td><td class="num">${expected}</td><td><span class="pill ${ok ? "ok" : "bad"}">${ok ? "OK" : "FAIL"}</span></td></tr>`;
+    }
+
+    function renderCounts() {
+      const meta = state.meta;
+      document.getElementById("counts").innerHTML = `
+        <table>
+          <thead><tr><th>Count</th><th class="num">Actual</th><th class="num">Expected</th><th></th></tr></thead>
+          <tbody>
+            ${countRow("Democrat rows", meta.democrat_rows, EXPECTED.democratRows)}
+            ${countRow("Republican rows", meta.republican_rows, EXPECTED.republicanRows)}
+            ${countRow("Democrat 10:10", meta.democrat_ten_ten, EXPECTED.democratTenTen)}
+            ${countRow("Republican 10:10", meta.republican_ten_ten, EXPECTED.republicanTenTen)}
+            ${countRow("Democrat leftover-left", meta.democrat_left_only, EXPECTED.democratLeftOnly)}
+            ${countRow("Republican leftover-left", meta.republican_left_only, EXPECTED.republicanLeftOnly)}
+          </tbody>
+        </table>
+        <p class="muted">First / last Democrat: ${meta.first_democrat_id} / ${meta.last_democrat_id}</p>
+        <p class="muted">First / last Republican: ${meta.first_republican_id} / ${meta.last_republican_id}</p>
+      `;
+    }
+
+    function mixForFeed(feed) {
+      let left = 0;
+      let right = 0;
+      feed.indexes.forEach((idx) => {
+        const stance = state.posts[idx].stance;
+        if (stance === "left") left += 1;
+        if (stance === "right") right += 1;
+      });
+      return { left, right };
+    }
+
+    function applyFilter() {
+      const party = document.getElementById("party-filter").value;
+      const kind = document.getElementById("kind-filter").value;
+      const query = document.getElementById("id-search").value.trim().toLowerCase();
+      state.filtered = state.feeds.filter((feed) => {
+        const partyOk = party === "all" || feed.party === party;
+        const kindOk = kind === "all" || feed.kind === kind;
+        const idOk = !query || feed.id.toLowerCase().includes(query);
+        return partyOk && kindOk && idOk;
+      });
+      state.page = 0;
+      renderFeeds();
+    }
+
+    function renderFeeds() {
+      const start = state.page * PAGE_SIZE;
+      const pageRows = state.filtered.slice(start, start + PAGE_SIZE);
+      const body = pageRows.map((feed) => {
+        const mix = mixForFeed(feed);
+        const selected = state.selected === feed.id ? " selected" : "";
+        const kindLabel = feed.kind === "ten_ten" ? "10:10" : feed.kind === "left_only" ? "left-only" : feed.kind;
+        return `<tr class="feed-row${selected}" data-id="${feed.id}">
+          <td class="post">${feed.id}</td>
+          <td>${feed.party}</td>
+          <td>${kindLabel}</td>
+          <td class="num cell-left">${mix.left}</td>
+          <td class="num cell-right">${mix.right}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("feed-table").innerHTML = `
+        <table>
+          <thead><tr><th>Id</th><th>Party</th><th>Kind</th><th class="num">Left</th><th class="num">Right</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+        <p class="muted">Showing ${start + 1}-${Math.min(start + PAGE_SIZE, state.filtered.length)} of ${state.filtered.length}</p>
+      `;
+      document.querySelectorAll(".feed-row").forEach((row) => {
+        row.addEventListener("click", () => showFeed(row.dataset.id));
+      });
+    }
+
+    function showFeed(feedId) {
+      state.selected = feedId;
+      const feed = state.feeds.find((item) => item.id === feedId);
+      const mix = mixForFeed(feed);
+      const rows = feed.indexes.map((idx, order) => {
+        const post = state.posts[idx];
+        return `<tr>
+          <td class="num">${order + 1}</td>
+          <td class="post">${post.id}</td>
+          <td class="cell-${post.stance}">${post.stance}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("feed-detail").innerHTML = `
+        <p><strong>${feed.id}</strong>, ${mix.left} left / ${mix.right} right</p>
+        <table>
+          <thead><tr><th>#</th><th>Post</th><th>Stance</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      renderFeeds();
+    }
+
+    function setDataset(dataset) {
+      state = { ...state, ...dataset, page: 0, selected: null, filtered: dataset.feeds };
+      document.getElementById("load-status").textContent =
+        `Loaded ${dataset.feeds.length} feeds and ${dataset.posts.length} catalog posts.`;
+      renderSummary();
+      renderChecks();
+      renderCounts();
+      applyFilter();
+    }
+
+    async function loadBundled() {
+      const relative = "./verification_dataset.json";
+      const githubRaw = "https://raw.githubusercontent.com/METResearchGroup/mirrorView-task/init-study-assignments-2026-09-09/experiments/load_study_assignments_2026_09_09/verification_dataset.json";
+      const response = await fetch(relative).catch(() => null);
+      if (response && response.ok) {
+        setDataset(datasetFromJson(await response.json()));
+        return;
+      }
+      const fallback = await fetch(githubRaw);
+      if (!fallback.ok) {
+        throw new Error(`Could not load verification_dataset.json (${response ? response.status : "network error"}, GitHub fallback ${fallback.status})`);
+      }
+      setDataset(datasetFromJson(await fallback.json()));
+    }
+
+    document.getElementById("party-filter").addEventListener("change", applyFilter);
+    document.getElementById("kind-filter").addEventListener("change", applyFilter);
+    document.getElementById("id-search").addEventListener("input", applyFilter);
+    loadBundled().catch((error) => {
+      document.getElementById("load-status").textContent = error.message;
+    });
+  </script>
+</body>
+</html>

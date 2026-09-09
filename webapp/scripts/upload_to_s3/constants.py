@@ -3,7 +3,7 @@
 from pathlib import Path
 
 AWS_REGION = "us-east-2"
-TARGET_BUCKET = "jspsych-mirror-view-4"
+TARGET_BUCKET = "jspsych-mirror-view-2026-09-09"
 API_NAME = "jspsych-scroll-api"
 API_STAGE = "prod"
 API_REQUIRED_TAGS = {
@@ -30,7 +30,7 @@ CRITICAL_S3_KEYS = (
     "plugins/plugin-mirror-preference.js",
     "plugins/plugin-mirror-practice.js",
     "plugins/plugin-moderation-trial.js",
-    "img/flips_scaled_2026_06_18.csv",
+    "img/flips_2026_09_09.csv",
 )
 
 ALLOWED_UPLOAD_KEYS = (
@@ -50,7 +50,7 @@ ALLOWED_UPLOAD_KEYS = (
     "plugins/plugin-mirror-preference.js",
     "plugins/plugin-mirror-practice.js",
     "plugins/plugin-moderation-trial.js",
-    "img/flips_scaled_2026_06_18.csv",
+    "img/flips_2026_09_09.csv",
 )
 
 SKIP_STAGING_NAMES = {".DS_Store", ".gitkeep"}
