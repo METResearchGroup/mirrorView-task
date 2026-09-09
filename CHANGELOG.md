@@ -2,10 +2,12 @@
 
 ## 2026-09-09
 
-1. Operators now have a 10,000 post study catalog sampled from the 10,200 post set plus 2,000 unused medium posts and 300 leftover right-medium posts relabeled as high using Perspective scores. Remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
-2. Operators can re-run the unused-post catalog experiments without calling Perspective or Bedrock when the output S3 keys already exist, and a smoke flip run cannot reuse `--run-id smoke` except with `--max-posts 10`. [PR #277](https://github.com/METResearchGroup/mirrorView-task/pull/277)
-3. Operators now have remaining label counts for the old catalog and the 10,000-post catalog from pull request 273. Remaining labels total 77,557, with 27,557 on old posts counted by unique Prolific raters and 50,000 on new posts. [PR #279](https://github.com/METResearchGroup/mirrorView-task/pull/279)
-4. Operators now have OpenAI and Bedrock separability scores for original vs mirror posts on the 10,000-row catalog from pull request 273. [PR #281](https://github.com/METResearchGroup/mirrorView-task/pull/281)
+1. Operators now have 3,879 study feeds, 3,202 with 10 left and 10 right and 677 left-only. Those feeds use the 77,557 remaining labels and add 23 extra labels. [PR #278](https://github.com/METResearchGroup/mirrorView-task/pull/278)
+2. Operators now have a 10,000 post study catalog sampled from the 10,200 post set plus 2,000 unused medium posts and 300 leftover right-medium posts relabeled as high using Perspective scores. Remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
+3. Operators can re-run the unused-post catalog experiments without calling Perspective or Bedrock when the output S3 keys already exist, and a smoke flip run cannot reuse `--run-id smoke` except with `--max-posts 10`. [PR #277](https://github.com/METResearchGroup/mirrorView-task/pull/277)
+4. Operators now have remaining label counts for the old catalog and the 10,000-post catalog from pull request 273. Remaining labels total 77,557, with 27,557 on old posts counted by unique Prolific raters and 50,000 on new posts. [PR #279](https://github.com/METResearchGroup/mirrorView-task/pull/279)
+5. Operators can QA the latest 10,182-post flip set in a notebook: load the pinned S3 parquet after a SHA-256 check, then inspect original text, mirrored text, political lean, and toxicity tier. [PR #282](https://github.com/METResearchGroup/mirrorView-task/pull/282)
+6. Operators now have OpenAI and Bedrock separability scores for original vs mirror posts on the 10,000-row catalog from pull request 273. [PR #281](https://github.com/METResearchGroup/mirrorView-task/pull/281)
 
 ## 2026-09-08
 
