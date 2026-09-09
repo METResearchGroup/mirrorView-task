@@ -8,23 +8,45 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import io
 from pathlib import Path
 
 import pandas as pd
 
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.generate_features.s3_feature_campaign import (
+    CampaignObjectStore,
+    parse_s3_uri,
+)
+from data_platform.utils.object_store import sha256_hex
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
     NewCatalogSource,
 )
+from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.load import (
+    load_new_catalog,
+)
 from experiments.generate_study_user_assignments_2026_09_08.constants import (
+    CACHE_FILENAME,
+    CATALOG_COLUMNS,
+    CATALOG_SHUFFLE_SEED,
     CELL_BY_STANCE_TOXICITY,
     CELL_COLUMN,
+    CSV_INDEX,
+    OLD_STIMULI_DATASET,
+    PINNED_REMAINING_LABEL_COUNT,
+    PINNED_REMAINING_LABELS_S3_URI,
+    PINNED_REMAINING_LABELS_SHA256,
+    PINNED_REMAINING_POST_COUNT,
     POST_ID_COLUMN,
+    REMAINING_COLUMNS,
     REMAINING_COUNT_COLUMN,
     REMAINING_ID_COLUMN,
+    S3_URI_PREFIX,
+    SHUFFLED_COLUMNS,
+    SHUFFLED_FILENAME,
     STANCE_COLUMN,
     TOXICITY_COLUMN,
 )
+from shared.data.dataloader import load_dataset
 
 
 def load_remaining_labels(
@@ -53,7 +75,11 @@ def load_remaining_labels(
     ValueError
         When columns, uniqueness, remaining counts, or the pinned hash do not match.
     """
-    raise NotImplementedError
+    frame = _read_remaining_frame(path, store, cache_dir)
+    _validate_remaining(frame)
+    if path == PINNED_REMAINING_LABELS_S3_URI:
+        _require_pinned_totals(frame)
+    return frame
 
 
 def load_old_catalog_with_cells() -> pd.DataFrame:
@@ -70,7 +96,9 @@ def load_old_catalog_with_cells() -> pd.DataFrame:
     ValueError
         When a required column is missing.
     """
-    raise NotImplementedError
+    catalog = load_dataset(OLD_STIMULI_DATASET)
+    _require_columns(catalog, CATALOG_COLUMNS)
+    return catalog.loc[:, list(CATALOG_COLUMNS)]
 
 
 def load_new_catalog_with_cells(
@@ -100,7 +128,9 @@ def load_new_catalog_with_cells(
     ValueError
         When the SHA-256, row count, or required columns do not match.
     """
-    raise NotImplementedError
+    catalog = load_new_catalog(source, store, cache_dir)
+    _require_columns(catalog, CATALOG_COLUMNS)
+    return catalog.loc[:, list(CATALOG_COLUMNS)]
 
 
 def join_remaining_to_catalogs(
@@ -178,6 +208,64 @@ def _exclusive_catalog_row(
     return new_by_id[remaining_id]
 
 
+def _read_remaining_frame(
+    path: str, store: CampaignObjectStore, cache_dir: Path
+) -> pd.DataFrame:
+    if path.startswith(S3_URI_PREFIX):
+        return pd.read_csv(io.BytesIO(_remaining_bytes(path, store, cache_dir)))
+    return pd.read_csv(path)
+
+
+def _remaining_bytes(path: str, store: CampaignObjectStore, cache_dir: Path) -> bytes:
+    cache_path = cache_dir / CACHE_FILENAME
+    if cache_path.is_file() and path == PINNED_REMAINING_LABELS_S3_URI:
+        cached = cache_path.read_bytes()
+        if sha256_hex(cached) == PINNED_REMAINING_LABELS_SHA256:
+            return cached
+    body = _download_remaining_bytes(path, store)
+    if path == PINNED_REMAINING_LABELS_S3_URI:
+        _require_remaining_hash(path, body)
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        cache_path.write_bytes(body)
+    return body
+
+
+def _download_remaining_bytes(path: str, store: CampaignObjectStore) -> bytes:
+    _bucket, key = parse_s3_uri(path)
+    stored = store.get(key)
+    if stored is None:
+        raise FileNotFoundError(path)
+    return stored.body
+
+
+def _require_remaining_hash(path: str, body: bytes) -> None:
+    if sha256_hex(body) != PINNED_REMAINING_LABELS_SHA256:
+        raise ValueError(f"SHA-256 mismatch for {path}")
+
+
+def _validate_remaining(frame: pd.DataFrame) -> None:
+    _require_columns(frame, REMAINING_COLUMNS)
+    ids = frame[REMAINING_ID_COLUMN].astype(str)
+    if int(ids.nunique()) != len(ids):
+        raise ValueError("duplicate remaining id")
+    if int((frame[REMAINING_COUNT_COLUMN].astype(int) < 1).sum()) > 0:
+        raise ValueError("remaining count is less than 1")
+
+
+def _require_pinned_totals(frame: pd.DataFrame) -> None:
+    label_count = int(frame[REMAINING_COUNT_COLUMN].sum())
+    if len(frame) != PINNED_REMAINING_POST_COUNT:
+        raise ValueError("pinned remaining post count mismatch")
+    if label_count != PINNED_REMAINING_LABEL_COUNT:
+        raise ValueError("pinned remaining label count mismatch")
+
+
+def _require_columns(frame: pd.DataFrame, column_names: tuple[str, ...]) -> None:
+    missing = [name for name in column_names if name not in frame.columns]
+    if missing:
+        raise ValueError(f"missing column {missing[0]}")
+
+
 def write_shuffled_stimuli(joined: pd.DataFrame, experiment_dir: Path) -> Path:
     """Write the seed-0 shuffled joined table locally.
 
@@ -193,4 +281,9 @@ def write_shuffled_stimuli(joined: pd.DataFrame, experiment_dir: Path) -> Path:
     Path
         Path of the written file.
     """
-    raise NotImplementedError
+    shuffled = joined.sample(frac=1, random_state=CATALOG_SHUFFLE_SEED).reset_index(
+        drop=True
+    )
+    path = experiment_dir / SHUFFLED_FILENAME
+    shuffled.loc[:, list(SHUFFLED_COLUMNS)].to_csv(path, index=CSV_INDEX)
+    return path
