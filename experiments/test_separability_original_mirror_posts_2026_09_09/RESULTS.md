@@ -22,15 +22,15 @@ PYTHONPATH=. uv run python experiments/test_separability_original_mirror_posts_2
 
 ## Catalog
 
-Object `s3://mirrorview-experimental-artifacts/experiments/curate_study_2_phase_3_stimuli/flips.csv` SHA-256 `c90fdcf86e89e393f0de4cc34e1dc4e4bb2bd876405926ad654ff679f3ab4139`.
+The input catalog is `s3://mirrorview-experimental-artifacts/experiments/curate_study_2_phase_3_stimuli/flips.csv` with SHA-256 `c90fdcf86e89e393f0de4cc34e1dc4e4bb2bd876405926ad654ff679f3ab4139`.
 
 ## Presentation
 
-Object `s3://mirrorview-experimental-artifacts/experiments/test_separability_original_mirror_posts_2026_09_09/outputs/presentations.parquet` SHA-256 `561611741b60157b7551ed2c5bf25395b488f17cdd61088979903405d5502fdc`.
+The shared presentation table is `s3://mirrorview-experimental-artifacts/experiments/test_separability_original_mirror_posts_2026_09_09/outputs/presentations.parquet` with SHA-256 `561611741b60157b7551ed2c5bf25395b488f17cdd61088979903405d5502fdc`.
 
 ## Models
 
-OpenAI model `gpt-5.4-nano`. Bedrock model `us.amazon.nova-micro-v1:0`.
+Scoring used OpenAI model `gpt-5.4-nano` and Bedrock model `us.amazon.nova-micro-v1:0`.
 
 ## Overall
 
