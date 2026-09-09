@@ -74,3 +74,5 @@ Guidelines for experiments:
 if the user provides the README, keep it read-only.
 - SETUP.md: should discuss what data is required. out of scope is environment related setup
 - RESULTS.md: report results here. err towards tables and easy to understand messaging.
+
+For storage, err on the side of using S3 for larger files and derived assets.
