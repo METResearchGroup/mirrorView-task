@@ -50,15 +50,15 @@ def main() -> int:
     return 0
 
 
-def _load_cleaned_combined():
+def _load_cleaned_combined() -> pd.DataFrame:
     raise NotImplementedError
 
 
-def _load_sample():
+def _load_sample() -> pd.DataFrame:
     raise NotImplementedError
 
 
-def _load_medium_upsample():
+def _load_medium_upsample() -> pd.DataFrame:
     raise NotImplementedError
 
 
