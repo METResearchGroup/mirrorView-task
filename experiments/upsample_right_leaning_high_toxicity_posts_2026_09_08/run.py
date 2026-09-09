@@ -39,6 +39,7 @@ from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.load_raw_cand
 )
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.candidates import (
     build_perspective_candidates,
+    load_pr260_source_record_ids,
 )
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.promote import (
     promote_top_candidates,
@@ -47,9 +48,13 @@ from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.score imp
     score_candidates,
 )
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.sources import (
+    combined_cache_dir,
+    medium_upsample_cache_dir,
     pinned_combined_source,
     pinned_medium_upsample_source,
     pinned_sample_source,
+    sample_cache_dir,
+    scores_path,
 )
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.write import (
     print_run_summary,
@@ -65,7 +70,7 @@ def main() -> int:
     candidates = build_perspective_candidates(
         cleaned, sample, medium_upsample, _pr260_ids()
     )
-    scores = score_candidates(candidates.rows)
+    scores = score_candidates(candidates.rows, scores_path=scores_path())
     promotion = promote_top_candidates(candidates.rows, scores, medium_upsample)
     result = write_unified_upsample(candidates, promotion)
     print_run_summary(result)
@@ -73,19 +78,27 @@ def main() -> int:
 
 
 def _load_cleaned_combined() -> pd.DataFrame:
-    raise NotImplementedError
+    candidate = load_raw_candidate_dataset(
+        pinned_combined_source(), cache_dir=combined_cache_dir()
+    )
+    cleaned, _summary = cleanup_raw_candidate_dataset(candidate)
+    return cleaned
 
 
 def _load_sample() -> pd.DataFrame:
-    raise NotImplementedError
+    return load_raw_candidate_dataset(
+        pinned_sample_source(), cache_dir=sample_cache_dir()
+    )
 
 
 def _load_medium_upsample() -> pd.DataFrame:
-    raise NotImplementedError
+    return load_raw_candidate_dataset(
+        pinned_medium_upsample_source(), cache_dir=medium_upsample_cache_dir()
+    )
 
 
 def _pr260_ids() -> set[str]:
-    raise NotImplementedError
+    return load_pr260_source_record_ids()
 
 
 if __name__ == "__main__":
