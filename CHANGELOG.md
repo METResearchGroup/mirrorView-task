@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-09
+
+1. Operators now have a 10,000 post study catalog from unused medium posts plus 300 leftover right-medium posts reclassified as high by Perspective, and remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
+
 ## 2026-09-08
 
 1. Operators can generate politically mirrored posts as immutable S3 parquet parts, and this experiment produced the 10,200-post flip set (10,182 successes, 18 failures). [PR #269](https://github.com/METResearchGroup/mirrorView-task/pull/269)
