@@ -189,6 +189,8 @@ class AssignmentRunResult:
     extra_left: int
     extra_right: int
     unused_remaining: int
+    remaining_by_cell: tuple[int, int, int, int, int, int]
+    assigned_by_cell: tuple[int, int, int, int, int, int]
     local_path: str
     s3_uri: str
     csv_sha256: str
