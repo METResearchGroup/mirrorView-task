@@ -57,6 +57,10 @@ experiments/combine_data_into_stimulus_set_2026_09_08/dataset.parquet
 experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/cache/
 experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet
 
+# Unused medium upsample parquet lives in S3. Keep the local copy and cache out of git.
+experiments/upsample_medium_toxicity_posts_2026_09_08/cache/
+experiments/upsample_medium_toxicity_posts_2026_09_08/upsample_2000_medium_toxicity_posts.parquet
+
 # Flip generation cache lives in S3. Keep the local copy out of git.
 experiments/generate_flips_2026_09_08/cache/
 
