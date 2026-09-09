@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import math
 
+import numpy as np
 import pandas as pd
 
 from experiments.generate_study_user_assignments_2026_09_08.constants import (
@@ -17,8 +18,20 @@ from experiments.generate_study_user_assignments_2026_09_08.constants import (
     FeedKindCounts,
     LEFT_POSTS_IN_LEFT_ONLY,
     LEFT_POSTS_IN_TEN_TEN,
+    ODD_REMAINDER,
+    RECIPE_LEFT_ONLY_EVEN,
+    RECIPE_LEFT_ONLY_ODD,
+    RECIPE_TEN_TEN_EVEN,
+    RECIPE_TEN_TEN_ODD,
     UserAssignment,
 )
+
+PREFERRED_COUNTS = {
+    (FeedKind.TEN_TEN, True): RECIPE_TEN_TEN_ODD,
+    (FeedKind.TEN_TEN, False): RECIPE_TEN_TEN_EVEN,
+    (FeedKind.LEFT_ONLY, True): RECIPE_LEFT_ONLY_ODD,
+    (FeedKind.LEFT_ONLY, False): RECIPE_LEFT_ONLY_EVEN,
+}
 
 
 def count_feed_kinds(left_remaining: int, right_remaining: int) -> FeedKindCounts:
@@ -77,7 +90,8 @@ def preferred_cell_counts(
     tuple[int, int, int, int, int, int]
         Preferred counts for cells 1 through 6.
     """
-    raise NotImplementedError
+    is_odd = index_within_kind % 2 == ODD_REMAINDER
+    return PREFERRED_COUNTS[(feed_kind, is_odd)]
 
 
 def assign_feeds(joined: pd.DataFrame) -> list[UserAssignment]:
@@ -116,4 +130,6 @@ def shuffle_feed(post_ids: list[str], user_id: int) -> list[str]:
     list[str]
         The same ids in shuffled order.
     """
-    raise NotImplementedError
+    rng = np.random.Generator(np.random.PCG64(user_id))
+    order = rng.permutation(len(post_ids))
+    return [post_ids[index] for index in order]
