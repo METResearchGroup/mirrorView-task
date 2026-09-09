@@ -81,16 +81,16 @@
   <header>
     <h1>Study user assignment verification</h1>
     <p>
-      Live assignment CSV for
+      Assignment CSV for
       <code>experiments/generate_study_user_assignments_2026_09_08</code>.
       Checks run in the browser from the committed dataset, or from CSVs you load.
     </p>
   </header>
   <main>
-    <p id="load-status" class="status">Loading verification_dataset.json…</p>
+    <p id="load-status" class="status">Loading verification_dataset.json.</p>
     <section class="panel">
       <strong>Load your own CSVs</strong>
-      <p class="muted">Optional. Use the assignment CSV and shuffled stimuli CSV to recompute every check locally.</p>
+      <p class="muted">You can load the assignment CSV and the shuffled stimuli CSV to recompute every check in the browser.</p>
       <div class="file-row">
         <label>Assignments <input id="assign-file" type="file" accept=".csv" /></label>
         <label>Shuffled stimuli <input id="stimuli-file" type="file" accept=".csv" /></label>
@@ -100,7 +100,7 @@
     <section id="summary-cards" class="grid cards"></section>
     <div class="grid two-col" style="margin-top: 0.75rem;">
       <section class="panel">
-        <h2>Invariant checks</h2>
+        <h2>Assignment checks</h2>
         <div id="checks" class="grid checks"></div>
       </section>
       <section class="panel">
@@ -252,6 +252,9 @@
         const userId = Number(String(row.id).replace("user-", ""));
         const postIds = JSON.parse(row.assigned_post_ids);
         const indexes = postIds.map((postId) => indexById[postId]);
+        if (indexes.some((idx) => idx === undefined)) {
+          throw new Error(`assignment ${row.id} has a post id missing from shuffled stimuli`);
+        }
         indexes.forEach((idx) => {
           assigned[idx] += 1;
         });
@@ -287,7 +290,11 @@
       let right = 0;
       const cells = [0, 0, 0, 0, 0, 0];
       feed.indexes.forEach((idx) => {
-        const cell = state.posts[idx].cell;
+        const post = state.posts[idx];
+        if (!post) {
+          throw new Error("a feed lists a post that is missing from the stimuli table");
+        }
+        const cell = post.cell;
         cells[cell - 1] += 1;
         if (cellStance(cell) === "left") left += 1;
         else right += 1;
@@ -331,14 +338,14 @@
         { ok: tenTen === EXPECTED.tenTen, label: `10:10 feeds equal ${EXPECTED.tenTen}`, detail: String(tenTen) },
         { ok: leftOnly === EXPECTED.leftOnly, label: `Left-only feeds equal ${EXPECTED.leftOnly}`, detail: String(leftOnly) },
         { ok: other === 0, label: "No 11:9 or 12:8 feeds", detail: `${other} other mixes` },
-        { ok: ordered, label: "All 10:10 feeds come before left-only feeds", detail: ordered ? "order holds" : "order broken" },
+        { ok: ordered, label: "All 10:10 feeds come before left-only feeds", detail: ordered ? "10:10 feeds come first" : "a left-only feed appears before a 10:10 feed" },
         { ok: lengths && uniqueFeeds, label: "Every feed has 20 unique posts", detail: lengths && uniqueFeeds ? "ok" : "duplicate or short feed" },
         { ok: extraCounts.extra === EXPECTED.extra, label: `Extra labels equal ${EXPECTED.extra}`, detail: String(extraCounts.extra) },
-        { ok: extraCounts.extraLeft === EXPECTED.extraLeft && extraCounts.extraRight === EXPECTED.extraRight, label: "Extra split is 18 left and 5 right", detail: `${extraCounts.extraLeft} left, ${extraCounts.extraRight} right` },
+        { ok: extraCounts.extraLeft === EXPECTED.extraLeft && extraCounts.extraRight === EXPECTED.extraRight, label: "Extra labels are 18 left and 5 right", detail: `${extraCounts.extraLeft} left, ${extraCounts.extraRight} right` },
         { ok: extraCounts.unused === EXPECTED.unused, label: "Unused remaining labels equal 0", detail: String(extraCounts.unused) },
         { ok: state.meta.assigned_left === EXPECTED.assignedLeft, label: `Assigned left slots equal ${EXPECTED.assignedLeft}`, detail: String(state.meta.assigned_left) },
         { ok: state.meta.assigned_right === EXPECTED.assignedRight, label: `Assigned right slots equal ${EXPECTED.assignedRight}`, detail: String(state.meta.assigned_right) },
-        { ok: remainingMatch, label: "Remaining labels by cell match the pull request 279 join", detail: state.meta.remaining_by_cell.join(", ") },
+        { ok: remainingMatch, label: "Remaining labels by cell match the recorded counts", detail: state.meta.remaining_by_cell.join(", ") },
       ];
     }
 
@@ -416,7 +423,7 @@
         const selected = state.selectedUser === feed.userId ? " selected" : "";
         return `<tr class="feed-row${selected}" data-user="${feed.userId}">
           <td>${formatUser(feed.userId)}</td>
-          <td>${feedKind(feed) === "ten_ten" ? "10:10" : "left-only"}</td>
+          <td>${feedKind(feed) === "ten_ten" ? "10:10" : feedKind(feed) === "left_only" ? "left-only" : "other"}</td>
           <td class="num">${mix.left}</td>
           <td class="num">${mix.right}</td>
           <td class="num post">${mix.cells.join(" / ")}</td>
@@ -424,7 +431,7 @@
       }).join("");
       document.getElementById("feed-table").innerHTML = `
         <table>
-          <thead><tr><th>User</th><th>Kind</th><th class="num">Left</th><th class="num">Right</th><th>Cells 1-6</th></tr></thead>
+          <thead><tr><th>User</th><th>Kind</th><th class="num">Left</th><th class="num">Right</th><th>Cells 1 to 6</th></tr></thead>
           <tbody>${body}</tbody>
         </table>
       `;
@@ -482,16 +489,20 @@
     }
 
     function setDataset(dataset) {
-      state = { ...state, ...dataset, page: 0, selectedUser: null, selectedPost: null, filtered: dataset.feeds };
-      const tenTen = state.feeds.filter((feed) => feedKind(feed) === "ten_ten").length;
-      const leftOnly = state.feeds.filter((feed) => feedKind(feed) === "left_only").length;
-      state.meta.ten_ten_count = tenTen;
-      state.meta.left_only_count = leftOnly;
-      document.getElementById("load-status").textContent = `Loaded ${dataset.feeds.length} feeds and ${dataset.posts.length} posts.`;
-      renderSummary();
-      renderChecks();
-      renderCells();
-      applyFilter();
+      try {
+        state = { ...state, ...dataset, page: 0, selectedUser: null, selectedPost: null, filtered: dataset.feeds };
+        const tenTen = state.feeds.filter((feed) => feedKind(feed) === "ten_ten").length;
+        const leftOnly = state.feeds.filter((feed) => feedKind(feed) === "left_only").length;
+        state.meta.ten_ten_count = tenTen;
+        state.meta.left_only_count = leftOnly;
+        document.getElementById("load-status").textContent = `Loaded ${dataset.feeds.length} feeds and ${dataset.posts.length} posts.`;
+        renderSummary();
+        renderChecks();
+        renderCells();
+        applyFilter();
+      } catch (error) {
+        document.getElementById("load-status").textContent = error.message;
+      }
     }
 
     async function loadBundled() {
@@ -504,7 +515,7 @@
       }
       const fallback = await fetch(githubRaw);
       if (!fallback.ok) {
-        throw new Error(`Could not load verification_dataset.json (${response ? response.status : "network error"}; GitHub fallback ${fallback.status})`);
+        throw new Error(`Could not load verification_dataset.json (${response ? response.status : "network error"}, GitHub fallback ${fallback.status})`);
       }
       setDataset(datasetFromJson(await fallback.json()));
     }
