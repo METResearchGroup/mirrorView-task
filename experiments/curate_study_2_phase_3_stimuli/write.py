@@ -183,8 +183,11 @@ def _catalog_status_sentence(result: CatalogRunResult) -> str:
     if not result.catalog_written:
         return "The catalog was not written, because at least one cell is short of its target."
     return (
-        f"Catalog `{result.local_path}` SHA-256 `{result.csv_sha256}` has "
-        f"{result.catalog_rows} rows. S3 object `{result.s3_uri}`."
+        f"The catalog file `{result.local_path}` has {result.catalog_rows} rows, "
+        f"and its SHA-256 is `{result.csv_sha256}`. The same bytes are on S3 at "
+        f"`{result.s3_uri}`. The catalog has {result.left} left posts and "
+        f"{result.right} right posts, and it has {result.low} low, "
+        f"{result.medium} medium, and {result.high} high posts."
     )
 
 

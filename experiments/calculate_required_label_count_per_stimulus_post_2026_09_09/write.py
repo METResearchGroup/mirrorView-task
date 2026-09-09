@@ -11,7 +11,7 @@ from data_platform.generate_features.s3_feature_campaign import (
     s3_uri,
 )
 from data_platform.utils.object_store import sha256_hex
-from experiments.calculate_v2_required_label_count_per_stimulus_post_2026_09_08.constants import (
+from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
     Batch,
     CSV_INDEX,
     DATASET_FILENAME,
@@ -33,7 +33,21 @@ OLD_CATALOG_DISPLAY_PATH = "shared/data/raw/study_phase_2_part_2/stimuli/flips.c
 RUN_COMMAND = """export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-PYTHONPATH=. uv run python experiments/calculate_v2_required_label_count_per_stimulus_post_2026_09_08/run.py"""
+PYTHONPATH=. uv run python experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/run.py"""
+
+
+def require_output_key_absent(store: CampaignObjectStore) -> None:
+    """Raise FileExistsError if the remaining-label S3 key already exists.
+
+    Raises
+    ------
+    FileExistsError
+        When the destination S3 key already exists.
+    """
+    if store.get(OUTPUT_S3_KEY) is not None:
+        raise FileExistsError(
+            f"Object already exists: {s3_uri(OUTPUT_S3_BUCKET, OUTPUT_S3_KEY)}"
+        )
 
 
 def write_local_csv(counts: pd.DataFrame, experiment_dir: Path) -> LocalCsvWrite:
@@ -138,7 +152,7 @@ def _results_markdown(result: LabelCountRunResult) -> str:
 
 def _results_preamble(result: LabelCountRunResult) -> list[str]:
     return [
-        "# Calculate v2 required label count per stimulus post, results",
+        "# Calculate required label count per stimulus post, results",
         "",
         "## Command",
         "",
@@ -171,16 +185,16 @@ def _results_totals(result: LabelCountRunResult) -> list[str]:
 def _new_catalog_sentence(result: LabelCountRunResult) -> str:
     return (
         f"Object `{result.new_catalog_uri}` SHA-256 `{result.new_catalog_sha256}` "
-        f"has {result.new_catalog_rows} rows."
+        f"has {result.new_catalog_rows:,} rows."
     )
 
 
 def _old_catalog_sentence(result: LabelCountRunResult) -> str:
     return (
-        f"Catalog `{OLD_CATALOG_DISPLAY_PATH}` has {result.old_catalog_ids} unique ids. "
+        f"Catalog `{OLD_CATALOG_DISPLAY_PATH}` has {result.old_catalog_ids:,} unique ids. "
         f"Remaining labels equal {REQUIRED_LABELS_PER_POST} minus the number of unique "
         "`prolific_id` raters per `post_id`. Posts with 0 remaining labels are dropped, "
-        f"so the old batch has {result.old_posts} posts."
+        f"so the old batch has {result.old_posts:,} posts."
     )
 
 

@@ -12,7 +12,7 @@ from data_platform.generate_features.s3_feature_campaign import (
     parse_s3_uri,
 )
 from data_platform.utils.object_store import sha256_hex
-from experiments.calculate_v2_required_label_count_per_stimulus_post_2026_09_08.constants import (
+from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
     CACHE_FILENAME,
     EMPTY_CELL,
     EXPECTED_OLD_CATALOG_IDS,

@@ -41,6 +41,18 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 PYTHONPATH=. uv run python experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/run.py"""
 
 
+def require_output_keys_absent(store: CampaignObjectStore) -> None:
+    """Raise FileExistsError if the 300-row or unified S3 key already exists.
+
+    Raises
+    ------
+    FileExistsError
+        When either destination S3 key already exists.
+    """
+    _require_key_absent(store, PROMOTED_S3_KEY)
+    _require_key_absent(store, UNIFIED_S3_KEY)
+
+
 def write_unified_upsample(
     candidates: CandidateBuildResult,
     promotion: PromotionResult,
@@ -72,6 +84,7 @@ def write_unified_upsample(
     """
     resolved_dir = experiment_dir if experiment_dir is not None else EXPERIMENT_DIR
     resolved_store = store if store is not None else _default_store()
+    require_output_keys_absent(resolved_store)
     promoted_path, promoted_body = _write_local_parquet(
         promotion.promoted, resolved_dir / PROMOTED_FILENAME
     )
@@ -108,6 +121,11 @@ def print_run_summary(result: UnifiedUpsampleRunResult) -> None:
     print(f"promoted_sha256={result.promoted_sha256}")
     print(f"unified_s3_uri={result.unified_s3_uri}")
     print(f"unified_sha256={result.unified_sha256}")
+
+
+def _require_key_absent(store: CampaignObjectStore, key: str) -> None:
+    if store.get(key) is not None:
+        raise FileExistsError(f"Object already exists: {s3_uri(OUTPUT_S3_BUCKET, key)}")
 
 
 def _write_local_parquet(frame: pd.DataFrame, path: Path) -> tuple[Path, bytes]:
@@ -181,8 +199,9 @@ def _results_markdown(result: UnifiedUpsampleRunResult) -> str:
             "## Unified political stance by toxicity",
             "",
             (
-                f"Left {result.unified_left}, right {result.unified_right}, "
-                f"medium {result.unified_medium}, high {result.unified_high}."
+                f"The unified table has {result.unified_left} left posts and "
+                f"{result.unified_right} right posts. It has {result.unified_medium} "
+                f"medium posts and {result.unified_high} high posts."
             ),
             "",
         ]
