@@ -5,6 +5,8 @@ from __future__ import annotations
 import pandas as pd
 
 from experiments.upsample_medium_toxicity_posts_2026_09_08.sources import (
+    EXPECTED_LEFTOVER_LEFT_MEDIUM,
+    EXPECTED_LEFTOVER_RIGHT_MEDIUM,
     LEFT_STANCE,
     LeftoverMediumSample,
     MEDIUM_TOXICITY,
@@ -41,11 +43,13 @@ def sample_leftover_medium(
     Raises
     ------
     ValueError
-        When either leftover medium cell has fewer than 1,000 rows.
+        When leftover medium counts do not match the pinned leftovers, or
+        either cell has fewer than 1,000 rows.
     """
     leftover_medium = _leftover_medium_rows(cleaned, sample)
     leftover_left = _stance_rows(leftover_medium, LEFT_STANCE)
     leftover_right = _stance_rows(leftover_medium, RIGHT_STANCE)
+    _require_leftover_counts(leftover_left, leftover_right)
     sampled = _concat_sorted(
         [
             _sample_cell(leftover_left, LEFT_STANCE),
@@ -69,6 +73,19 @@ def _leftover_medium_rows(cleaned: pd.DataFrame, sample: pd.DataFrame) -> pd.Dat
 
 def _stance_rows(frame: pd.DataFrame, stance: str) -> pd.DataFrame:
     return frame.loc[frame[STANCE_COLUMN] == stance]
+
+
+def _require_leftover_counts(leftover_left: pd.DataFrame, leftover_right: pd.DataFrame) -> None:
+    if len(leftover_left) != EXPECTED_LEFTOVER_LEFT_MEDIUM:
+        raise ValueError(
+            f"leftover_left_medium={len(leftover_left)} "
+            f"expected={EXPECTED_LEFTOVER_LEFT_MEDIUM}"
+        )
+    if len(leftover_right) != EXPECTED_LEFTOVER_RIGHT_MEDIUM:
+        raise ValueError(
+            f"leftover_right_medium={len(leftover_right)} "
+            f"expected={EXPECTED_LEFTOVER_RIGHT_MEDIUM}"
+        )
 
 
 def _sample_cell(cell: pd.DataFrame, stance: str) -> pd.DataFrame:

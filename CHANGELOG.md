@@ -2,7 +2,8 @@
 
 ## 2026-09-09
 
-1. Operators now have a 10,000 post study catalog from unused medium posts plus 300 leftover right-medium posts reclassified as high by Perspective, and remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
+1. Operators now have a 10,000 post study catalog sampled from the 10,200 post set plus 2,000 unused medium posts and 300 leftover right-medium posts relabeled as high using Perspective scores. Remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
+2. Operators can re-run the unused-post catalog experiments without calling Perspective or Bedrock when the output S3 keys already exist, and a smoke flip run cannot reuse `--run-id smoke` except with `--max-posts 10`. [PR #277](https://github.com/METResearchGroup/mirrorView-task/pull/277)
 
 ## 2026-09-08
 

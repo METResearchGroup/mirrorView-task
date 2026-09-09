@@ -15,7 +15,7 @@ Object `s3://mirrorview-experimental-artifacts/experiments/curate_study_2_phase_
 
 ## Old catalog
 
-Catalog `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv` has 10000 unique ids. Remaining labels equal 5 minus the number of unique `prolific_id` raters per `post_id`.
+Catalog `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv` has 10,000 unique ids. Remaining labels equal 5 minus the number of unique `prolific_id` raters per `post_id`. Posts with 0 remaining labels are dropped, so the old batch has 8,899 posts.
 
 ## Remaining labels
 
