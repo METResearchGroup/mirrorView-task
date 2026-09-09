@@ -57,14 +57,42 @@ experiments/combine_data_into_stimulus_set_2026_09_08/dataset.parquet
 experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/cache/
 experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet
 
+# Unused medium upsample parquet lives in S3. Keep the local copy and cache out of git.
+experiments/upsample_medium_toxicity_posts_2026_09_08/cache/
+experiments/upsample_medium_toxicity_posts_2026_09_08/upsample_2000_medium_toxicity_posts.parquet
+
+# Right-high upsample parquet and Perspective scores live in S3 or local scratch.
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/cache/
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/upsample_300_right_high_toxicity_posts.parquet
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/unified_upsampled_posts.parquet
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/outputs/perspective_scores.parquet
+
 # Flip generation cache lives in S3. Keep the local copy out of git.
 experiments/generate_flips_2026_09_08/cache/
+
+# Unified upsample flip cache lives in S3. Keep the local copy out of git.
+experiments/generate_flips_for_upsampled_posts_2026_09_08/cache/
+
+# Study 2 phase 3 catalog CSV lives in S3. Keep the local copy and cache out of git.
+experiments/curate_study_2_phase_3_stimuli/cache/
+experiments/curate_study_2_phase_3_stimuli/flips.csv
+
+# Remaining-label v2 CSV lives in S3. Keep the local cache out of git.
+experiments/calculate_v2_required_label_count_per_stimulus_post_2026_09_08/cache/
+experiments/calculate_v2_required_label_count_per_stimulus_post_2026_09_08/required_label_count_per_stimulus_post.csv
 
 # Remaining-label CSV lives in S3. Keep the local cache out of git.
 experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/cache/
 
 # Latest-dataset QA cache lives in S3. Keep the local copy out of git.
 experiments/qa_latest_dataset_2026_09_09/cache/
+
+# Remaining-label CSV for the pull request 273 catalog lives in S3.
+experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/cache/
+experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/required_label_count_per_stimulus_post.csv
+
+# Study user assignment cache lives in S3. Keep the local copy out of git.
+experiments/generate_study_user_assignments_2026_09_08/cache/
 
 # OS generated files
 .DS_Store

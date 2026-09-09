@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Study user assignment verification</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #1a222c;
+      --panel-2: #222c38;
+      --line: #314155;
+      --text: #e8eef5;
+      --muted: #9aabc0;
+      --ok: #3dd68c;
+      --bad: #ff6b7a;
+      --accent: #7ab8ff;
+      --left: #6ea8ff;
+      --right: #ff9b6b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+    header, main { max-width: 1200px; margin: 0 auto; padding: 1.25rem; }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.45rem; }
+    header p { margin: 0; color: var(--muted); }
+    .grid { display: grid; gap: 0.75rem; }
+    .cards { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+    }
+    .card .label { color: var(--muted); font-size: 0.8rem; }
+    .card .value { font-size: 1.35rem; font-weight: 650; margin-top: 0.2rem; }
+    .checks { grid-template-columns: 1fr; }
+    .check { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.45rem 0; border-bottom: 1px solid var(--line); }
+    .check:last-child { border-bottom: 0; }
+    .pill { font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 999px; }
+    .ok { background: #1a3b2c; color: var(--ok); }
+    .bad { background: #3b1a22; color: var(--bad); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 0.45rem 0.4rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 600; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .bar { height: 10px; background: var(--panel-2); border-radius: 99px; overflow: hidden; display: flex; }
+    .bar span { display: block; height: 100%; }
+    .bar .rem { background: #4d6280; }
+    .bar .asg { background: var(--accent); }
+    .controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.75rem 0; }
+    input, select, button {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0.45rem 0.65rem;
+      font: inherit;
+    }
+    button { cursor: pointer; }
+    button.primary { background: #2a4d7a; border-color: #3d6aa0; }
+    .two-col { grid-template-columns: 1.2fr 0.8fr; }
+    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+    .feed-row { cursor: pointer; }
+    .feed-row:hover, .feed-row.selected { background: var(--panel-2); }
+    .post { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8rem; }
+    .muted { color: var(--muted); }
+    .cell-1, .cell-2, .cell-3 { color: var(--left); }
+    .cell-4, .cell-5, .cell-6 { color: var(--right); }
+    .pager { display: flex; gap: 0.5rem; align-items: center; }
+    .status { margin: 0.75rem 0; color: var(--muted); }
+    .file-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Study user assignment verification</h1>
+    <p>
+      Assignment CSV for
+      <code>experiments/generate_study_user_assignments_2026_09_08</code>.
+      Checks run in the browser from the committed dataset, or from CSVs you load.
+    </p>
+  </header>
+  <main>
+    <p id="load-status" class="status">Loading verification_dataset.json.</p>
+    <section class="panel">
+      <strong>Load your own CSVs</strong>
+      <p class="muted">You can load the assignment CSV and the shuffled stimuli CSV to recompute every check in the browser.</p>
+      <div class="file-row">
+        <label>Assignments <input id="assign-file" type="file" accept=".csv" /></label>
+        <label>Shuffled stimuli <input id="stimuli-file" type="file" accept=".csv" /></label>
+        <button id="load-files" class="primary" type="button">Verify loaded files</button>
+      </div>
+    </section>
+    <section id="summary-cards" class="grid cards"></section>
+    <div class="grid two-col" style="margin-top: 0.75rem;">
+      <section class="panel">
+        <h2>Assignment checks</h2>
+        <div id="checks" class="grid checks"></div>
+      </section>
+      <section class="panel">
+        <h2>Remaining versus assigned by cell</h2>
+        <div id="cell-table"></div>
+      </section>
+    </div>
+    <section class="panel" style="margin-top: 0.75rem;">
+      <h2>Browse feeds</h2>
+      <div class="controls">
+        <select id="kind-filter">
+          <option value="all">All feed kinds</option>
+          <option value="ten_ten">10 left / 10 right</option>
+          <option value="left_only">20 left / 0 right</option>
+        </select>
+        <input id="user-search" type="search" placeholder="user-0001 or 3203" />
+        <input id="post-search" type="search" placeholder="post id" />
+        <div class="pager">
+          <button id="prev-page" type="button">Previous</button>
+          <span id="page-label" class="muted"></span>
+          <button id="next-page" type="button">Next</button>
+        </div>
+      </div>
+      <div id="feed-table"></div>
+    </section>
+    <div class="grid two-col" style="margin-top: 0.75rem;">
+      <section class="panel">
+        <h2>Selected feed</h2>
+        <div id="feed-detail" class="muted">Select a user row.</div>
+      </section>
+      <section class="panel">
+        <h2>Selected post</h2>
+        <div id="post-detail" class="muted">Search a post id or click a post in a feed.</div>
+      </section>
+    </div>
+  </main>
+  <script>
+    const CELL_LABELS = [
+      "1 left low",
+      "2 left middle",
+      "3 left high",
+      "4 right low",
+      "5 right middle",
+      "6 right high",
+    ];
+    const PAGE_SIZE = 25;
+    const EXPECTED = {
+      tenTen: 3202,
+      leftOnly: 677,
+      users: 3879,
+      slots: 77580,
+      extra: 23,
+      extraLeft: 18,
+      extraRight: 5,
+      unused: 0,
+      assignedLeft: 45560,
+      assignedRight: 32020,
+      remaining: [10445, 22001, 13096, 8791, 16594, 6630],
+    };
+
+    let state = {
+      posts: [],
+      assigned: [],
+      feeds: [],
+      meta: {},
+      page: 0,
+      selectedUser: null,
+      selectedPost: null,
+      filtered: [],
+    };
+
+    function cellStance(cell) {
+      return cell <= 3 ? "left" : "right";
+    }
+
+    function feedKind(feed) {
+      const mix = mixForFeed(feed);
+      if (mix.left === 10 && mix.right === 10) return "ten_ten";
+      if (mix.left === 20 && mix.right === 0) return "left_only";
+      return "other";
+    }
+
+    function formatUser(userId) {
+      return `user-${String(userId).padStart(4, "0")}`;
+    }
+
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        if (inQuotes) {
+          if (ch === '"' && text[i + 1] === '"') {
+            cell += '"';
+            i += 1;
+          } else if (ch === '"') {
+            inQuotes = false;
+          } else {
+            cell += ch;
+          }
+        } else if (ch === '"') {
+          inQuotes = true;
+        } else if (ch === ",") {
+          row.push(cell);
+          cell = "";
+        } else if (ch === "\n") {
+          row.push(cell.replace(/\r$/, ""));
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += ch;
+        }
+      }
+      if (cell.length || row.length) {
+        row.push(cell.replace(/\r$/, ""));
+        rows.push(row);
+      }
+      const header = rows[0];
+      return rows.slice(1).filter((r) => r.length && r.some((v) => v !== "")).map((values) => {
+        const obj = {};
+        header.forEach((name, idx) => {
+          obj[name] = values[idx];
+        });
+        return obj;
+      });
+    }
+
+    function datasetFromJson(payload) {
+      return {
+        meta: payload.meta,
+        posts: payload.posts.map(([id, cell, remaining]) => ({ id, cell, remaining })),
+        assigned: payload.assigned,
+        feeds: payload.feeds.map(([userId, indexes]) => ({ userId, indexes })),
+      };
+    }
+
+    function datasetFromCsv(assignmentRows, stimuliRows) {
+      const posts = stimuliRows.map((row) => ({
+        id: String(row.post_primary_key),
+        cell: Number(row.cell),
+        remaining: Number(row.number_of_times_to_label),
+      }));
+      const indexById = Object.fromEntries(posts.map((post, idx) => [post.id, idx]));
+      const assigned = Array(posts.length).fill(0);
+      const feeds = assignmentRows.map((row) => {
+        const userId = Number(String(row.id).replace("user-", ""));
+        const postIds = JSON.parse(row.assigned_post_ids);
+        const indexes = postIds.map((postId) => indexById[postId]);
+        if (indexes.some((idx) => idx === undefined)) {
+          throw new Error(`assignment ${row.id} has a post id missing from shuffled stimuli`);
+        }
+        indexes.forEach((idx) => {
+          assigned[idx] += 1;
+        });
+        return { userId, indexes };
+      });
+      const remainingByCell = [0, 0, 0, 0, 0, 0];
+      const assignedByCell = [0, 0, 0, 0, 0, 0];
+      posts.forEach((post, idx) => {
+        remainingByCell[post.cell - 1] += post.remaining;
+        assignedByCell[post.cell - 1] += assigned[idx];
+      });
+      return {
+        meta: {
+          ten_ten_count: 0,
+          left_only_count: 0,
+          user_count: feeds.length,
+          assignment_slots: feeds.length * 20,
+          remaining_by_cell: remainingByCell,
+          assigned_by_cell: assignedByCell,
+          assigned_left: assignedByCell.slice(0, 3).reduce((a, b) => a + b, 0),
+          assigned_right: assignedByCell.slice(3).reduce((a, b) => a + b, 0),
+          csv_sha256: "(local files)",
+          s3_uri: "(local files)",
+        },
+        posts,
+        assigned,
+        feeds,
+      };
+    }
+
+    function mixForFeed(feed) {
+      let left = 0;
+      let right = 0;
+      const cells = [0, 0, 0, 0, 0, 0];
+      feed.indexes.forEach((idx) => {
+        const post = state.posts[idx];
+        if (!post) {
+          throw new Error("a feed lists a post that is missing from the stimuli table");
+        }
+        const cell = post.cell;
+        cells[cell - 1] += 1;
+        if (cellStance(cell) === "left") left += 1;
+        else right += 1;
+      });
+      return { left, right, cells };
+    }
+
+    function extras() {
+      let extraLeft = 0;
+      let extraRight = 0;
+      let unused = 0;
+      state.posts.forEach((post, idx) => {
+        const used = state.assigned[idx];
+        const extra = Math.max(0, used - post.remaining);
+        unused += Math.max(0, post.remaining - used);
+        if (cellStance(post.cell) === "left") extraLeft += extra;
+        else extraRight += extra;
+      });
+      return { extraLeft, extraRight, extra: extraLeft + extraRight, unused };
+    }
+
+    function runChecks() {
+      const mixes = state.feeds.map(mixForFeed);
+      const tenTen = mixes.filter((m) => m.left === 10 && m.right === 10).length;
+      const leftOnly = mixes.filter((m) => m.left === 20 && m.right === 0).length;
+      const other = mixes.length - tenTen - leftOnly;
+      const ordered = state.feeds.every((feed, idx) => {
+        if (idx === 0) return true;
+        const prev = feedKind(state.feeds[idx - 1]);
+        const kind = feedKind(feed);
+        return !(prev === "left_only" && kind === "ten_ten");
+      });
+      const uniqueFeeds = state.feeds.every((feed) => new Set(feed.indexes).size === 20);
+      const lengths = state.feeds.every((feed) => feed.indexes.length === 20);
+      const extraCounts = extras();
+      const remainingMatch = CELL_LABELS.every((_, idx) => (
+        state.meta.remaining_by_cell[idx] === EXPECTED.remaining[idx]
+      ));
+      return [
+        { ok: state.feeds.length === EXPECTED.users, label: `User count is ${EXPECTED.users}`, detail: String(state.feeds.length) },
+        { ok: tenTen === EXPECTED.tenTen, label: `10:10 feeds equal ${EXPECTED.tenTen}`, detail: String(tenTen) },
+        { ok: leftOnly === EXPECTED.leftOnly, label: `Left-only feeds equal ${EXPECTED.leftOnly}`, detail: String(leftOnly) },
+        { ok: other === 0, label: "No 11:9 or 12:8 feeds", detail: `${other} other mixes` },
+        { ok: ordered, label: "All 10:10 feeds come before left-only feeds", detail: ordered ? "10:10 feeds come first" : "a left-only feed appears before a 10:10 feed" },
+        { ok: lengths && uniqueFeeds, label: "Every feed has 20 unique posts", detail: lengths && uniqueFeeds ? "ok" : "duplicate or short feed" },
+        { ok: extraCounts.extra === EXPECTED.extra, label: `Extra labels equal ${EXPECTED.extra}`, detail: String(extraCounts.extra) },
+        { ok: extraCounts.extraLeft === EXPECTED.extraLeft && extraCounts.extraRight === EXPECTED.extraRight, label: "Extra labels are 18 left and 5 right", detail: `${extraCounts.extraLeft} left, ${extraCounts.extraRight} right` },
+        { ok: extraCounts.unused === EXPECTED.unused, label: "Unused remaining labels equal 0", detail: String(extraCounts.unused) },
+        { ok: state.meta.assigned_left === EXPECTED.assignedLeft, label: `Assigned left slots equal ${EXPECTED.assignedLeft}`, detail: String(state.meta.assigned_left) },
+        { ok: state.meta.assigned_right === EXPECTED.assignedRight, label: `Assigned right slots equal ${EXPECTED.assignedRight}`, detail: String(state.meta.assigned_right) },
+        { ok: remainingMatch, label: "Remaining labels by cell match the recorded counts", detail: state.meta.remaining_by_cell.join(", ") },
+      ];
+    }
+
+    function renderSummary() {
+      const extraCounts = extras();
+      const cards = [
+        ["Users", state.feeds.length],
+        ["10:10 feeds", state.meta.ten_ten_count],
+        ["Left-only feeds", state.meta.left_only_count],
+        ["Slots", state.feeds.length * 20],
+        ["Extra labels", extraCounts.extra],
+        ["Unused remaining", extraCounts.unused],
+        ["Assigned left", state.meta.assigned_left],
+        ["Assigned right", state.meta.assigned_right],
+      ];
+      document.getElementById("summary-cards").innerHTML = cards.map(([label, value]) => (
+        `<article class="card"><div class="label">${label}</div><div class="value">${value.toLocaleString()}</div></article>`
+      )).join("");
+    }
+
+    function renderChecks() {
+      const checks = runChecks();
+      document.getElementById("checks").innerHTML = checks.map((check) => (
+        `<div class="check"><span class="pill ${check.ok ? "ok" : "bad"}">${check.ok ? "PASS" : "FAIL"}</span><div><div>${check.label}</div><div class="muted">${check.detail}</div></div></div>`
+      )).join("");
+    }
+
+    function renderCells() {
+      const max = Math.max(...state.meta.assigned_by_cell, ...state.meta.remaining_by_cell);
+      const rows = CELL_LABELS.map((label, idx) => {
+        const remaining = state.meta.remaining_by_cell[idx];
+        const assigned = state.meta.assigned_by_cell[idx];
+        return `<tr>
+          <td class="cell-${idx + 1}">${label}</td>
+          <td class="num">${remaining.toLocaleString()}</td>
+          <td class="num">${assigned.toLocaleString()}</td>
+          <td class="num">${(assigned - remaining).toLocaleString()}</td>
+          <td><div class="bar"><span class="rem" style="width:${(remaining / max) * 100}%"></span></div></td>
+        </tr>`;
+      }).join("");
+      document.getElementById("cell-table").innerHTML = `
+        <table>
+          <thead><tr><th>Cell</th><th class="num">Remaining</th><th class="num">Assigned</th><th class="num">Extra</th><th>Scale</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <p class="muted">SHA-256 ${state.meta.csv_sha256 || ""}</p>
+      `;
+    }
+
+    function applyFilter() {
+      const kind = document.getElementById("kind-filter").value;
+      const userQuery = document.getElementById("user-search").value.trim().toLowerCase();
+      const postQuery = document.getElementById("post-search").value.trim();
+      let postIndex = null;
+      if (postQuery) {
+        postIndex = state.posts.findIndex((post) => post.id === postQuery);
+      }
+      state.filtered = state.feeds.filter((feed) => {
+        const kindOk = kind === "all" || feedKind(feed) === kind;
+        const label = formatUser(feed.userId);
+        const userOk = !userQuery || label.includes(userQuery) || String(feed.userId) === userQuery;
+        const postOk = postIndex === null || postIndex < 0 || feed.indexes.includes(postIndex);
+        return kindOk && userOk && postOk;
+      });
+      state.page = 0;
+      renderFeeds();
+      if (postIndex !== null && postIndex >= 0) showPost(postIndex);
+    }
+
+    function renderFeeds() {
+      const start = state.page * PAGE_SIZE;
+      const pageRows = state.filtered.slice(start, start + PAGE_SIZE);
+      const body = pageRows.map((feed) => {
+        const mix = mixForFeed(feed);
+        const selected = state.selectedUser === feed.userId ? " selected" : "";
+        return `<tr class="feed-row${selected}" data-user="${feed.userId}">
+          <td>${formatUser(feed.userId)}</td>
+          <td>${feedKind(feed) === "ten_ten" ? "10:10" : feedKind(feed) === "left_only" ? "left-only" : "other"}</td>
+          <td class="num">${mix.left}</td>
+          <td class="num">${mix.right}</td>
+          <td class="num post">${mix.cells.join(" / ")}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("feed-table").innerHTML = `
+        <table>
+          <thead><tr><th>User</th><th>Kind</th><th class="num">Left</th><th class="num">Right</th><th>Cells 1 to 6</th></tr></thead>
+          <tbody>${body}</tbody>
+        </table>
+      `;
+      document.querySelectorAll(".feed-row").forEach((row) => {
+        row.addEventListener("click", () => showFeed(Number(row.dataset.user)));
+      });
+      const pages = Math.max(1, Math.ceil(state.filtered.length / PAGE_SIZE));
+      document.getElementById("page-label").textContent = `Page ${state.page + 1} of ${pages} (${state.filtered.length} feeds)`;
+    }
+
+    function showFeed(userId) {
+      state.selectedUser = userId;
+      const feed = state.feeds.find((item) => item.userId === userId);
+      const mix = mixForFeed(feed);
+      const rows = feed.indexes.map((idx, order) => {
+        const post = state.posts[idx];
+        const used = state.assigned[idx];
+        const extra = Math.max(0, used - post.remaining);
+        return `<tr>
+          <td class="num">${order + 1}</td>
+          <td class="post"><a href="#" data-post="${idx}">${post.id}</a></td>
+          <td class="cell-${post.cell}">${CELL_LABELS[post.cell - 1]}</td>
+          <td class="num">${post.remaining}</td>
+          <td class="num">${used}</td>
+          <td class="num">${extra}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("feed-detail").innerHTML = `
+        <p><strong>${formatUser(userId)}</strong>, ${feedKind(feed) === "ten_ten" ? "10 left / 10 right" : feedKind(feed) === "left_only" ? "20 left / 0 right" : `${mix.left} left / ${mix.right} right`}, cells ${mix.cells.join("/")}</p>
+        <table>
+          <thead><tr><th>#</th><th>Post</th><th>Cell</th><th class="num">Remaining</th><th class="num">Assigned</th><th class="num">Extra</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      document.querySelectorAll("#feed-detail a[data-post]").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          showPost(Number(link.dataset.post));
+        });
+      });
+      renderFeeds();
+    }
+
+    function showPost(idx) {
+      state.selectedPost = idx;
+      const post = state.posts[idx];
+      const used = state.assigned[idx];
+      const owners = state.feeds.filter((feed) => feed.indexes.includes(idx)).map((feed) => formatUser(feed.userId));
+      document.getElementById("post-detail").innerHTML = `
+        <p class="post">${post.id}</p>
+        <p class="cell-${post.cell}">${CELL_LABELS[post.cell - 1]}, remaining ${post.remaining}, assigned ${used}, extra ${Math.max(0, used - post.remaining)}</p>
+        <p class="muted">${owners.length} feed${owners.length === 1 ? "" : "s"}</p>
+        <p class="post">${owners.join(", ")}</p>
+      `;
+    }
+
+    function setDataset(dataset) {
+      try {
+        state = { ...state, ...dataset, page: 0, selectedUser: null, selectedPost: null, filtered: dataset.feeds };
+        const tenTen = state.feeds.filter((feed) => feedKind(feed) === "ten_ten").length;
+        const leftOnly = state.feeds.filter((feed) => feedKind(feed) === "left_only").length;
+        state.meta.ten_ten_count = tenTen;
+        state.meta.left_only_count = leftOnly;
+        document.getElementById("load-status").textContent = `Loaded ${dataset.feeds.length} feeds and ${dataset.posts.length} posts.`;
+        renderSummary();
+        renderChecks();
+        renderCells();
+        applyFilter();
+      } catch (error) {
+        document.getElementById("load-status").textContent = error.message;
+      }
+    }
+
+    async function loadBundled() {
+      const relative = "./verification_dataset.json";
+      const githubRaw = "https://raw.githubusercontent.com/METResearchGroup/mirrorView-task/cursor%2Fstudy-user-assignments-plan-b08b/experiments/generate_study_user_assignments_2026_09_08/verification_dataset.json";
+      const response = await fetch(relative).catch(() => null);
+      if (response && response.ok) {
+        setDataset(datasetFromJson(await response.json()));
+        return;
+      }
+      const fallback = await fetch(githubRaw);
+      if (!fallback.ok) {
+        throw new Error(`Could not load verification_dataset.json (${response ? response.status : "network error"}, GitHub fallback ${fallback.status})`);
+      }
+      setDataset(datasetFromJson(await fallback.json()));
+    }
+
+    document.getElementById("kind-filter").addEventListener("change", applyFilter);
+    document.getElementById("user-search").addEventListener("input", applyFilter);
+    document.getElementById("post-search").addEventListener("change", applyFilter);
+    document.getElementById("prev-page").addEventListener("click", () => {
+      state.page = Math.max(0, state.page - 1);
+      renderFeeds();
+    });
+    document.getElementById("next-page").addEventListener("click", () => {
+      const pages = Math.max(1, Math.ceil(state.filtered.length / PAGE_SIZE));
+      state.page = Math.min(pages - 1, state.page + 1);
+      renderFeeds();
+    });
+    document.getElementById("load-files").addEventListener("click", async () => {
+      const assignFile = document.getElementById("assign-file").files[0];
+      const stimuliFile = document.getElementById("stimuli-file").files[0];
+      if (!assignFile || !stimuliFile) {
+        document.getElementById("load-status").textContent = "Choose both CSVs first.";
+        return;
+      }
+      const [assignText, stimuliText] = await Promise.all([assignFile.text(), stimuliFile.text()]);
+      setDataset(datasetFromCsv(parseCsv(assignText), parseCsv(stimuliText)));
+    });
+
+    loadBundled().catch((error) => {
+      document.getElementById("load-status").textContent = error.message;
+    });
+  </script>
+</body>
+</html>
