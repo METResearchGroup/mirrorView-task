@@ -33,7 +33,7 @@ flowchart TD
 
 ## Approach
 
-Maximize 10:10 feeds first. Put leftover left remaining into left-only feeds. Do not write 11:9 or 12:8 feeds. Cover every remaining label, so some cells get extra labels. Treat the work as one experiment under `experiments/generate_study_user_assignments_2026_09_08/`. Reuse the catalog download and S3 upload from `experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/`. Do not change the catalogs, the remaining labels CSV, product scripts, or the assignment Lambda. Do not add pytest.
+Maximize 10:10 feeds first. Put leftover left remaining into left-only feeds. Do not write 11:9 or 12:8 feeds. Cover every remaining label, so some cells get extra labels. Prove those party-mix rules with pytest on in-memory remaining tables before the live S3 run. Treat the work as one experiment under `experiments/generate_study_user_assignments_2026_09_08/`. Reuse the catalog download and S3 upload from `experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/`. Do not change the catalogs, the remaining labels CSV, product scripts, or the assignment Lambda.
 
 ## Decisions
 
@@ -72,28 +72,29 @@ PYTHONPATH=. uv run python experiments/generate_study_user_assignments_2026_09_0
 
 Expected stdout includes 10:10 count, left-only count, user count, assignment row count, assignment slot count, extra label count, unused remaining labels, the S3 URI, and the CSV SHA-256. A run with no remaining labels path exits non-zero and names the pull request 279 S3 URI.
 
-- Write `experiments/generate_study_user_assignments_2026_09_08/README.md` in Step 1 with the algorithm, cell map, two feed kinds, preferred recipes, steal-within-party rule, wrap rule, extra label rule, in-feed shuffle, and stop rule. After the live run, add the final assignment row count, the 10:10 count, and the left-only count to that README.
-- Do not edit `webapp/lambdas/lambda-get-post-assignments.mjs`, `shared/data/raw/study_phase_2_part_2/`, `experiments/curate_study_2_phase_3_stimuli/`, `experiments/calculate_v2_required_label_count_per_stimulus_post_2026_09_08/`, or `experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/`. Do not add files under `tests/`.
+- Write `experiments/generate_study_user_assignments_2026_09_08/README.md` in Step 1 with the algorithm, cell map, two feed kinds, preferred recipes, steal-within-party rule, wrap rule, extra label rule, in-feed shuffle, stop rule, and the pytest command. After the live run, add the final assignment row count, the 10:10 count, and the left-only count to that README.
+- Put pytest files under `experiments/generate_study_user_assignments_2026_09_08/tests/`. Do not add files under the repo-root `tests/` folder. Tests use in-memory remaining tables and do not download S3. Tests must fail if a feed is not 10 left and 10 right, or 20 left and 0 right. Tests must fail if a 10:10 feed is written after a left-only feed. Tests must fail if a left-only feed contains a right post. Tests must fail if a post repeats inside one feed. Tests must fail if steal takes a post from the other party. On remaining totals 45,542 left and 32,015 right, the feed-kind count must be 3,202 feeds at 10:10 and 677 left-only feeds. Run `PYTHONPATH=. uv run pytest experiments/generate_study_user_assignments_2026_09_08/tests -q`.
+- Do not edit `webapp/lambdas/lambda-get-post-assignments.mjs`, `shared/data/raw/study_phase_2_part_2/`, `experiments/curate_study_2_phase_3_stimuli/`, `experiments/calculate_v2_required_label_count_per_stimulus_post_2026_09_08/`, or `experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/`.
 - Keep local CSV and cache files out of git. Commit `README.md` and `RESULTS.md` after the live run. Add a `CHANGELOG.md` line with the live user count, the 10:10 count, the left-only count, and the extra label count.
 - `RESULTS.md` records 10:10 count, left-only count, user count, assignment row count, assignment slots, extra label count, unused remaining labels by cell, SHA-256, and the S3 URI. On the pull request 279 file, unused remaining labels should be 0. Extra labels should be 23. Print a cell table of remaining labels versus assigned slots.
 
 ## Steps
 
-### Step 1: Add the load, shuffle, assign, and upload command
+### Step 1: Add the load, shuffle, assign, upload command, and invariant tests
 
-Add the experiment README, modules, and a `run.py` caller. The command requires the remaining labels path, fills 10:10 feeds, then fills left-only feeds. It shuffles each feed and writes one row per user. It then uploads that file.
+Add the experiment README, modules, pytest files, and a `run.py` caller. The command requires the remaining labels path, fills 10:10 feeds, then fills left-only feeds. Tests prove the party-mix rules on in-memory remaining tables before any S3 upload. See [steps/step1.md](steps/step1.md).
 
 ### Step 2: Run the command and write RESULTS.md
 
-Run the live command in this plan with AWS credentials. Confirm the local file and the S3 object, then commit `RESULTS.md` with 10:10 count, left-only count, extra labels, unused remaining labels, and SHA-256. Add the assignment row count to the README and a `CHANGELOG.md` line.
+Run the pytest command from Step 1, then run the live command in this plan with AWS credentials. Confirm the local file and the S3 object, then commit `RESULTS.md` with 10:10 count, left-only count, extra labels, unused remaining labels, and SHA-256. Add the assignment row count to the README and a `CHANGELOG.md` line. See [steps/step2.md](steps/step2.md).
 
 ## What "done" looks like
 
-1. `experiments/generate_study_user_assignments_2026_09_08/` has `README.md`, a runnable `run.py`, and the load, assign, and write modules.
+1. `experiments/generate_study_user_assignments_2026_09_08/` has `README.md`, a runnable `run.py`, the load, assign, and write modules, and pytest files under `tests/`.
 2. Running the command without a remaining labels path exits non-zero and names the pull request 279 S3 URI.
 3. `experiments/generate_study_user_assignments_2026_09_08/shuffled_stimuli.csv` exists locally after a successful run and is gitignored.
 4. `experiments/generate_study_user_assignments_2026_09_08/study_user_assignments.csv` exists locally and at `s3://mirrorview-experimental-artifacts/experiments/generate_study_user_assignments_2026_09_08/study_user_assignments.csv`.
 5. The CSV has 3,879 rows, one per user. Each `assigned_post_ids` value is a JSON list of 20 post ids. Users 1 through 3,202 have 10 left posts and 10 right posts. Users 3,203 through 3,879 have 20 left posts and 0 right posts. No post appears twice in the same user's 20 posts.
 6. Assignment slots total 77,580. Extra labels total 23. Unused remaining labels total 0. `RESULTS.md` records the 10:10 count, the left-only count, extra labels, and assigned slots by cell.
 7. `README.md` describes the algorithm and records the final assignment row count, the 10:10 count, and the left-only count. `RESULTS.md` records user count, row count, extra labels, SHA-256, and the S3 URI.
-8. The old catalog, the pull request 273 catalog, the pull request 279 remaining labels CSV, product scripts, and the assignment Lambda are unchanged. No pytest file was added or run.
+8. `PYTHONPATH=. uv run pytest experiments/generate_study_user_assignments_2026_09_08/tests -q` exits 0. The old catalog, the pull request 273 catalog, the pull request 279 remaining labels CSV, product scripts, and the assignment Lambda are unchanged. No files were added under the repo-root `tests/` folder.
