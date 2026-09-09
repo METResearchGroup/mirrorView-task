@@ -17,4 +17,4 @@ PYTHONPATH=. uv run python experiments/curate_study_2_phase_3_stimuli/run.py
 | right | 1696 | 3334 | 1354 | 6384 |
 | total | 3396 | 6029 | 3052 | 12477 |
 
-Catalog `experiments/curate_study_2_phase_3_stimuli/flips.csv` SHA-256 `c90fdcf86e89e393f0de4cc34e1dc4e4bb2bd876405926ad654ff679f3ab4139` has 10000 rows. S3 object `s3://mirrorview-experimental-artifacts/experiments/curate_study_2_phase_3_stimuli/flips.csv`.
+The catalog file `experiments/curate_study_2_phase_3_stimuli/flips.csv` has 10,000 rows, and its SHA-256 is `c90fdcf86e89e393f0de4cc34e1dc4e4bb2bd876405926ad654ff679f3ab4139`. The same bytes are on S3 at `s3://mirrorview-experimental-artifacts/experiments/curate_study_2_phase_3_stimuli/flips.csv`. The catalog has 5,000 left posts and 5,000 right posts, and it has 2,500 low, 5,000 medium, and 2,500 high posts.

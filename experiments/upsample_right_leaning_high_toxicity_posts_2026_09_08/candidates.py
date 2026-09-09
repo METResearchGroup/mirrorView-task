@@ -9,6 +9,7 @@ import pandas as pd
 
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.sources import (
     CandidateBuildResult,
+    EXPECTED_LEFTOVER_RIGHT_MEDIUM_AFTER_UPSAMPLE,
     MEDIUM_TOXICITY,
     MIN_CANDIDATES,
     PR260_PROMOTION_IDS_PATH,
@@ -70,6 +71,7 @@ def build_perspective_candidates(
     """
     leftover_medium = _leftover_medium(cleaned, sample, medium_upsample)
     leftover_right = leftover_medium.loc[leftover_medium[STANCE_COLUMN] == RIGHT_STANCE]
+    _require_leftover_right_count(leftover_right)
     candidates, dropped = _drop_pr260_ids(leftover_right, pr260_source_record_ids)
     _require_enough_candidates(candidates)
     return CandidateBuildResult(
@@ -77,6 +79,14 @@ def build_perspective_candidates(
         leftover_right_medium_after_upsample=len(leftover_right),
         pr260_ids_dropped=dropped,
     )
+
+
+def _require_leftover_right_count(leftover_right: pd.DataFrame) -> None:
+    if len(leftover_right) != EXPECTED_LEFTOVER_RIGHT_MEDIUM_AFTER_UPSAMPLE:
+        raise ValueError(
+            f"leftover_right_medium_after_upsample={len(leftover_right)} "
+            f"expected={EXPECTED_LEFTOVER_RIGHT_MEDIUM_AFTER_UPSAMPLE}"
+        )
 
 
 def _leftover_medium(

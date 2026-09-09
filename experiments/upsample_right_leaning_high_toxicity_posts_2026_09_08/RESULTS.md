@@ -32,4 +32,4 @@ PYTHONPATH=. uv run python experiments/upsample_right_leaning_high_toxicity_post
 
 ## Unified political stance by toxicity
 
-Left 1000, right 1300, medium 2000, high 300.
+The unified table has 1,000 left posts and 1,300 right posts. It has 2,000 medium posts and 300 high posts.
