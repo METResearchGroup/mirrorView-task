@@ -121,6 +121,11 @@ class CatalogRunResult:
     available: dict[str, dict[str, int]]
     catalog_written: bool
     catalog_rows: int
+    left: int
+    right: int
+    low: int
+    medium: int
+    high: int
     local_path: str
     s3_uri: str
     csv_sha256: str

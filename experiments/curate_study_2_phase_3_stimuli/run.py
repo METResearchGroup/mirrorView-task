@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import sys
 
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.curate_study_2_phase_3_stimuli.join_flips import (
     available_cell_counts,
     cells_meet_targets,
@@ -27,10 +28,16 @@ from experiments.curate_study_2_phase_3_stimuli.join_flips import (
 from experiments.curate_study_2_phase_3_stimuli.load import load_flips, load_posts
 from experiments.curate_study_2_phase_3_stimuli.sample_catalog import sample_catalog
 from experiments.curate_study_2_phase_3_stimuli.sources import (
+    JoinedFlipPool,
+    OUTPUT_S3_BUCKET,
     pinned_sample_flips,
     pinned_sample_source,
     pinned_unified_flips,
     pinned_unified_source,
+    sample_flips_cache_dir,
+    sample_posts_cache_dir,
+    unified_flips_cache_dir,
+    unified_posts_cache_dir,
 )
 from experiments.curate_study_2_phase_3_stimuli.write import (
     print_run_summary,
@@ -38,10 +45,32 @@ from experiments.curate_study_2_phase_3_stimuli.write import (
     write_pause_results,
 )
 
+PAUSE_EXIT_CODE = 1
+
 
 def main() -> int:
     """Load, join, count, then sample and write or pause."""
-    raise NotImplementedError
+    pool = _load_joined_pool()
+    available = available_cell_counts(pool.rows)
+    if not cells_meet_targets(available):
+        print_run_summary(write_pause_results(available))
+        return PAUSE_EXIT_CODE
+    result = write_catalog(sample_catalog(pool.rows), available)
+    print_run_summary(result)
+    return 0
+
+
+def _load_joined_pool() -> JoinedFlipPool:
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    sample_posts = load_posts(pinned_sample_source(), store, sample_posts_cache_dir())
+    unified_posts = load_posts(
+        pinned_unified_source(), store, unified_posts_cache_dir()
+    )
+    sample_flips = load_flips(pinned_sample_flips(), store, sample_flips_cache_dir())
+    unified_flips = load_flips(
+        pinned_unified_flips(), store, unified_flips_cache_dir()
+    )
+    return join_posts_to_flips(sample_posts, sample_flips, unified_posts, unified_flips)
 
 
 if __name__ == "__main__":
