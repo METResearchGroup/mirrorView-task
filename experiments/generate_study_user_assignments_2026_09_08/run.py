@@ -155,6 +155,20 @@ def _extra_counts(assignments: list[UserAssignment], joined: pd.DataFrame) -> _E
         post_id for assignment in assignments for post_id in assignment.post_ids
     )
     stance_by_id = dict(zip(joined[POST_ID_COLUMN].astype(str), joined[STANCE_COLUMN]))
+    extra_left, extra_right, unused = _wrap_totals(assigned, joined, stance_by_id)
+    return _ExtraCounts(
+        extra_labels=extra_left + extra_right,
+        extra_left=extra_left,
+        extra_right=extra_right,
+        unused_remaining=unused,
+    )
+
+
+def _wrap_totals(
+    assigned: Counter,
+    joined: pd.DataFrame,
+    stance_by_id: dict[str, str],
+) -> tuple[int, int, int]:
     extra_left = 0
     extra_right = 0
     unused = 0
@@ -168,12 +182,7 @@ def _extra_counts(assignments: list[UserAssignment], joined: pd.DataFrame) -> _E
             extra_left += extra
         else:
             extra_right += extra
-    return _ExtraCounts(
-        extra_labels=extra_left + extra_right,
-        extra_left=extra_left,
-        extra_right=extra_right,
-        unused_remaining=unused,
-    )
+    return extra_left, extra_right, unused
 
 
 def _by_cell_remaining(joined: pd.DataFrame) -> tuple[int, int, int, int, int, int]:
