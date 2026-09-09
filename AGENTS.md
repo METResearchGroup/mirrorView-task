@@ -63,3 +63,14 @@ Use the AlphaXiv MCP server for paper search, PDF questions, researcher lookup, 
 - Endpoint: `https://api.alphaxiv.org/mcp/v1`
 - Transport: Streamable HTTP
 - Auth: send `Authorization: Bearer ${env:ALPHAXIV_API_KEY}`
+
+## Experiments
+
+Experiments should live in the experiments/ folder. Typical naming convention is experiments/{identifiable name}_{YYYY_MM_DD}/
+
+Guidelines for experiments:
+
+- README: if not directly provided by the user, should be 1-2 lines with the title and then a redirect to SETUP.md and RESULTS.md.
+if the user provides the README, keep it read-only.
+- SETUP.md: should discuss what data is required. out of scope is environment related setup
+- RESULTS.md: report results here. err towards tables and easy to understand messaging.
