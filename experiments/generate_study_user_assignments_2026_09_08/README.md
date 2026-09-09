@@ -40,6 +40,11 @@ Required files:
 PYTHONPATH=. uv run pytest experiments/generate_study_user_assignments_2026_09_08/tests -q
 ```
 
+## Live run
+
+The live remaining-labels file produced 3,202 feeds at 10 left and 10 right, 677 left-only feeds, and 3,879 assignment rows.
+
+
 ## Run
 
 ```bash
