@@ -16,7 +16,6 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
     FeaturePaths,
-    read_failed_ids,
 )
 from experiments.test_separability_original_mirror_posts_2026_09_09.constants import (
     BINARY_NEGATIVE,
@@ -28,6 +27,7 @@ from experiments.test_separability_original_mirror_posts_2026_09_09.constants im
     CELL_TOXICITY_ORDER,
     FAILED_SUMMARY_FORMAT,
     GOLD_HUMAN_SLOT_COLUMN,
+    GoldHumanSlot,
     HUMAN_SLOT_COLUMN,
     ID_COLUMN,
     LABELS_ROOT_URI,
@@ -120,9 +120,9 @@ def _load_engine_labels(
         right_on=ID_COLUMN,
         how="inner",
     )
-    valid = joined[joined[HUMAN_SLOT_COLUMN].isin(["first", "second"])]
-    failed = len(read_failed_ids(store, paths))
-    return valid, len(valid), failed
+    valid = joined[joined[HUMAN_SLOT_COLUMN].isin(_valid_human_slots())]
+    n_scored = len(valid)
+    return valid, n_scored, len(presentations) - n_scored
 
 
 def _overall_row(
@@ -212,14 +212,24 @@ def _command_section_lines() -> list[str]:
 
 
 def _catalog_section_lines() -> list[str]:
-    return ["## Catalog", "", f"Object `{CATALOG_S3_URI}` SHA-256 `{CATALOG_SHA256}`."]
+    return [
+        "## Catalog",
+        "",
+        (
+            f"The input catalog is `{CATALOG_S3_URI}` with SHA-256 "
+            f"`{CATALOG_SHA256}`."
+        ),
+    ]
 
 
 def _presentation_section_lines() -> list[str]:
     return [
         "## Presentation",
         "",
-        f"Object `{PRESENTATION_S3_URI}` SHA-256 `{PRESENTATION_SHA256}`.",
+        (
+            f"The shared presentation table is `{PRESENTATION_S3_URI}` with "
+            f"SHA-256 `{PRESENTATION_SHA256}`."
+        ),
     ]
 
 
@@ -227,8 +237,15 @@ def _models_section_lines() -> list[str]:
     return [
         "## Models",
         "",
-        f"OpenAI model `{DEFAULT_LLM_MODEL}`. Bedrock model `{DEFAULT_BEDROCK_NOVA_MICRO}`.",
+        (
+            f"Scoring used OpenAI model `{DEFAULT_LLM_MODEL}` and Bedrock "
+            f"model `{DEFAULT_BEDROCK_NOVA_MICRO}`."
+        ),
     ]
+
+
+def _valid_human_slots() -> frozenset[str]:
+    return frozenset(item.value for item in GoldHumanSlot)
 
 
 def _engine_command_block(flag: str) -> list[str]:
