@@ -31,16 +31,26 @@ import typer
 from data_platform.generate_features.engines.bedrock_engine import (
     create_bedrock_runtime_client,
 )
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.generate_features.s3_feature_campaign import (
+    CampaignObjectStore,
+    s3_uri,
+)
+from data_platform.utils.object_store import sha256_hex
 from experiments.generate_flips_for_upsampled_posts_2026_09_08.load_unified_dataset import (
     load_unified_dataset,
 )
 from experiments.generate_flips_for_upsampled_posts_2026_09_08.sources import (
     DEFAULT_CACHE_DIR,
+    EXPERIMENT_DIR,
+    INPUT_ROW_COUNT,
     INPUT_S3_BUCKET,
+    INPUT_S3_URI,
+    INPUT_SHA256,
+    NAMED_SIBLING_S3_KEY,
     NamedFlipCopyResult,
     OUTPUT_S3_BUCKET,
     POST_COLUMNS,
+    RESULTS_FILENAME,
     RUN_KEY_PREFIX,
     SMOKE_MAX_POSTS,
     SMOKE_RUN_ID,
@@ -55,7 +65,6 @@ from shared.flip_generation.generate_flips import (
     generate_flips,
 )
 from shared.flip_generation.models import FlipRunResult
-import pandas as pd
 
 
 app = typer.Typer(add_completion=False, no_args_is_help=True)
@@ -66,12 +75,12 @@ def main(
     run_id: str = typer.Option(
         "",
         "--run-id",
-        help="S3 run folder name. The 10-post test uses smoke.",
+        help=f"S3 run folder name. The 10-post test uses {SMOKE_RUN_ID}.",
     ),
     max_posts: int | None = typer.Option(
         None,
         "--max-posts",
-        help="Limit rows after load. The 10-post test uses 10.",
+        help=f"Limit rows after load. The 10-post test uses {SMOKE_MAX_POSTS}.",
     ),
     bucket: str = typer.Option(OUTPUT_S3_BUCKET, "--bucket"),
 ) -> None:
@@ -90,6 +99,7 @@ def main(
     _require_smoke_is_not_full_run(resolved_run_id, max_posts)
     result = _generate_for_run(resolved_run_id, max_posts, bucket)
     _print_run_summary(result)
+    _maybe_copy_named_sibling(result, max_posts, bucket)
 
 
 def _require_smoke_is_not_full_run(run_id: str, max_posts: int | None) -> None:
@@ -156,8 +166,111 @@ def copy_named_sibling_flips(
     ------
     FileExistsError
         When the named sibling key already exists.
+    FileNotFoundError
+        When the concatenated flips object is missing.
     """
-    raise NotImplementedError
+    stored = store.get(result.final_key)
+    if stored is None:
+        raise FileNotFoundError(result.final_key)
+    store.put_new(NAMED_SIBLING_S3_KEY, stored.body)
+    return NamedFlipCopyResult(
+        s3_uri=s3_uri(OUTPUT_S3_BUCKET, NAMED_SIBLING_S3_KEY),
+        sha256=sha256_hex(stored.body),
+    )
+
+
+def _maybe_copy_named_sibling(
+    result: FlipRunResult, max_posts: int | None, bucket: str
+) -> None:
+    if max_posts is not None or not result.wrote_final:
+        return
+    named = copy_named_sibling_flips(result, CampaignObjectStore(bucket))
+    print(f"named_s3_uri={named.s3_uri}")
+    print(f"named_sha256={named.sha256}")
+    _write_results_md(result, named)
+
+
+def _write_results_md(result: FlipRunResult, named: NamedFlipCopyResult) -> None:
+    path = EXPERIMENT_DIR / RESULTS_FILENAME
+    path.write_text(_results_markdown(result, named))
+
+
+def _results_markdown(result: FlipRunResult, named: NamedFlipCopyResult) -> str:
+    return "\n".join(
+        [
+            *_results_commands(result),
+            *_results_counts(result),
+            *_results_outputs(result, named),
+        ]
+    )
+
+
+def _results_commands(result: FlipRunResult) -> list[str]:
+    return [
+        "# Generate flips for upsampled posts, results",
+        "",
+        "## Smoke",
+        "",
+        "```bash",
+        _smoke_command(),
+        "```",
+        "",
+        "## Full run",
+        "",
+        "```bash",
+        _full_run_command(result),
+        "```",
+        "",
+        "## Pinned input",
+        "",
+        (
+            f"Object `{INPUT_S3_URI}` SHA-256 `{INPUT_SHA256}` "
+            f"has {INPUT_ROW_COUNT} rows."
+        ),
+        "",
+    ]
+
+
+def _results_counts(result: FlipRunResult) -> list[str]:
+    return [
+        "## Counts",
+        "",
+        "| Field | Value |",
+        "| ----- | ----: |",
+        f"| `part_count` | {result.part_count} |",
+        f"| `row_count` | {result.row_count} |",
+        f"| `failed_count` | {result.failed_count} |",
+        "",
+        f"`row_count` plus `failed_count` is {result.row_count + result.failed_count}.",
+        "",
+    ]
+
+
+def _results_outputs(result: FlipRunResult, named: NamedFlipCopyResult) -> list[str]:
+    return [
+        "## Output",
+        "",
+        "| File | URI | SHA-256 |",
+        "| ---- | --- | ------- |",
+        f"| Run-prefix flips | `s3://{OUTPUT_S3_BUCKET}/{result.final_key}` | |",
+        f"| Named sibling | `{named.s3_uri}` | `{named.sha256}` |",
+        "",
+    ]
+
+
+def _smoke_command() -> str:
+    return """export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
+
+PYTHONPATH=. uv run python experiments/generate_flips_for_upsampled_posts_2026_09_08/run.py --run-id smoke --max-posts 10"""
+
+
+def _full_run_command(result: FlipRunResult) -> str:
+    run_id = result.run_prefix.rstrip("/").split("/")[-1]
+    return f"""export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
+
+PYTHONPATH=. uv run python experiments/generate_flips_for_upsampled_posts_2026_09_08/run.py --run-id {run_id}"""
 
 
 if __name__ == "__main__":
