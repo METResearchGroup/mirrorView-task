@@ -13,7 +13,15 @@ import sys
 from pathlib import Path
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
+    pinned_new_catalog,
+)
 from experiments.generate_study_user_assignments_2026_09_08.assign import assign_feeds
+from experiments.generate_study_user_assignments_2026_09_08.constants import (
+    CACHE_DIRNAME,
+    EXPERIMENT_DIRNAME,
+    OUTPUT_S3_BUCKET,
+)
 from experiments.generate_study_user_assignments_2026_09_08.load import (
     join_remaining_to_catalogs,
     load_new_catalog_with_cells,
@@ -27,26 +35,44 @@ from experiments.generate_study_user_assignments_2026_09_08.write import (
     write_assignment_csv,
     write_results_md,
 )
+from lib.constants import REPO_ROOT
+from lib.timestamp_utils import get_current_timestamp
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    """Parse ``--remaining-labels``. Exit non-zero when the path is omitted.
+
+    Parameters
+    ----------
+    argv
+        Argument list. ``None`` reads ``sys.argv``.
+
+    Returns
+    -------
+    argparse.Namespace
+        Namespace with ``remaining_labels``.
+
+    Raises
+    ------
+    SystemExit
+        When ``--remaining-labels`` is missing.
+    """
     raise NotImplementedError
 
 
 def main(argv: list[str] | None = None) -> int:
     """Load remaining labels, assign feeds, write the CSV, and upload it."""
     args = parse_args(argv)
-    experiment_dir = Path("experiments/generate_study_user_assignments_2026_09_08")
-    store = CampaignObjectStore("mirrorview-experimental-artifacts")
-    remaining = load_remaining_labels(
-        args.remaining_labels, store, experiment_dir / "cache"
-    )
+    experiment_dir = REPO_ROOT / "experiments" / EXPERIMENT_DIRNAME
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    cache_dir = experiment_dir / CACHE_DIRNAME
+    remaining = load_remaining_labels(args.remaining_labels, store, cache_dir)
     old_catalog = load_old_catalog_with_cells()
-    new_catalog = load_new_catalog_with_cells(None, store, experiment_dir / "cache")
+    new_catalog = load_new_catalog_with_cells(pinned_new_catalog(), store, cache_dir)
     joined = join_remaining_to_catalogs(remaining, old_catalog, new_catalog)
     write_shuffled_stimuli(joined, experiment_dir)
     assignments = assign_feeds(joined)
-    local = write_assignment_csv(assignments, experiment_dir)
+    local = write_assignment_csv(assignments, experiment_dir, get_current_timestamp())
     digest = upload_csv(local.body, store)
     result = write_results_md(digest, experiment_dir)
     print_run_summary(result)
