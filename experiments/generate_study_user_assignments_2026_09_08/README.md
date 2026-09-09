@@ -48,6 +48,8 @@ The live remaining-labels file produced 3,202 feeds at 10 left and 10 right, 677
 
 `verification.html` in this folder runs the party-mix and extra-label checks in the browser. It loads `verification_dataset.json` by default, and it can recompute the same checks from local CSVs.
 
+Preview (Vercel, this branch): [experiments/generate_study_user_assignments_2026_09_08/verification.html](https://mirrorview-task-git-cursor-study-13766b-marktorres10s-projects.vercel.app/experiments/generate_study_user_assignments_2026_09_08/verification.html)
+
 
 ## Run
 

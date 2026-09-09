@@ -453,7 +453,7 @@
         </tr>`;
       }).join("");
       document.getElementById("feed-detail").innerHTML = `
-        <p><strong>${formatUser(userId)}</strong> · ${feedKind(feed) === "ten_ten" ? "10 left / 10 right" : feedKind(feed) === "left_only" ? "20 left / 0 right" : `${mix.left} left / ${mix.right} right`} · cells ${mix.cells.join("/")}</p>
+        <p><strong>${formatUser(userId)}</strong>, ${feedKind(feed) === "ten_ten" ? "10 left / 10 right" : feedKind(feed) === "left_only" ? "20 left / 0 right" : `${mix.left} left / ${mix.right} right`}, cells ${mix.cells.join("/")}</p>
         <table>
           <thead><tr><th>#</th><th>Post</th><th>Cell</th><th class="num">Remaining</th><th class="num">Assigned</th><th class="num">Extra</th></tr></thead>
           <tbody>${rows}</tbody>
@@ -475,7 +475,7 @@
       const owners = state.feeds.filter((feed) => feed.indexes.includes(idx)).map((feed) => formatUser(feed.userId));
       document.getElementById("post-detail").innerHTML = `
         <p class="post">${post.id}</p>
-        <p class="cell-${post.cell}">${CELL_LABELS[post.cell - 1]} · remaining ${post.remaining} · assigned ${used} · extra ${Math.max(0, used - post.remaining)}</p>
+        <p class="cell-${post.cell}">${CELL_LABELS[post.cell - 1]}, remaining ${post.remaining}, assigned ${used}, extra ${Math.max(0, used - post.remaining)}</p>
         <p class="muted">${owners.length} feed${owners.length === 1 ? "" : "s"}</p>
         <p class="post">${owners.join(", ")}</p>
       `;
