@@ -175,44 +175,70 @@ def _binary_labels(values: pd.Series) -> list[int]:
 def _results_markdown(
     overall_rows: list[dict[str, object]], cell_sections: list[dict[str, object]]
 ) -> str:
-    lines = [
+    """Assemble RESULTS.md from overall and cell tables."""
+    lines = [*_results_preamble_lines(), "", "## Overall", "", _overall_table(overall_rows)]
+    for section in cell_sections:
+        lines.extend(["", f"## Cells {section['engine']}", "", _cell_table(section)])
+    return "\n".join(lines) + "\n"
+
+
+def _results_preamble_lines() -> list[str]:
+    """Return the RESULTS.md commands, catalog, presentation, and model lines."""
+    return [
         "# Separability results",
         "",
+        *_command_section_lines(),
+        "",
+        *_catalog_section_lines(),
+        "",
+        *_presentation_section_lines(),
+        "",
+        *_models_section_lines(),
+    ]
+
+
+def _command_section_lines() -> list[str]:
+    return [
         "## Commands",
         "",
         _command_block("--write-presentation"),
         "",
-        "```bash",
-        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine openai --smoke",
-        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine bedrock --smoke",
-        "```",
+        *_engine_command_block("--smoke"),
         "",
-        "```bash",
-        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine openai",
-        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine bedrock",
-        "```",
+        *_engine_command_block(""),
         "",
         _command_block("--score"),
-        "",
-        "## Catalog",
-        "",
-        f"Object `{CATALOG_S3_URI}` SHA-256 `{CATALOG_SHA256}`.",
-        "",
+    ]
+
+
+def _catalog_section_lines() -> list[str]:
+    return ["## Catalog", "", f"Object `{CATALOG_S3_URI}` SHA-256 `{CATALOG_SHA256}`."]
+
+
+def _presentation_section_lines() -> list[str]:
+    return [
         "## Presentation",
         "",
         f"Object `{PRESENTATION_S3_URI}` SHA-256 `{PRESENTATION_SHA256}`.",
-        "",
+    ]
+
+
+def _models_section_lines() -> list[str]:
+    return [
         "## Models",
         "",
         f"OpenAI model `{DEFAULT_LLM_MODEL}`. Bedrock model `{DEFAULT_BEDROCK_NOVA_MICRO}`.",
-        "",
-        "## Overall",
-        "",
-        _overall_table(overall_rows),
     ]
-    for section in cell_sections:
-        lines.extend(["", f"## Cells {section['engine']}", "", _cell_table(section)])
-    return "\n".join(lines) + "\n"
+
+
+def _engine_command_block(flag: str) -> list[str]:
+    suffix = f" {flag}" if flag else ""
+    return [
+        "```bash",
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine openai{suffix}",
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine bedrock{suffix}",
+        "```",
+    ]
 
 
 def _command_block(flag: str) -> str:
