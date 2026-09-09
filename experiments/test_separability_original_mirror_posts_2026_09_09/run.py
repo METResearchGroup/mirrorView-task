@@ -1,5 +1,19 @@
 """Run the separability original vs mirror experiment.
 
+given AWS credentials from LAB_AWS_ACCESS_KEY_ID and LAB_AWS_ACCESS_KEY_SECRET
+and pull request 273 wrote the 10000 row catalog
+when PYTHONPATH=. uv run python experiments/test_separability_original_mirror_posts_2026_09_09/run.py --write-presentation
+then wrote 10000 presentations
+and S3 object experiments/test_separability_original_mirror_posts_2026_09_09/outputs/presentations.parquet exists
+and gold_human_slot is first or second on every row
+and first_text plus second_text are the original and the mirror in some order
+and no OpenAI or Bedrock call is made
+
+given the presentation key already exists
+when the command is run again
+then the process raises FileExistsError
+and the catalog S3 object is unchanged
+
 Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/test_separability_original_mirror_posts_2026_09_09/run.py --help
