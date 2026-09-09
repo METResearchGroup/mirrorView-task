@@ -8,14 +8,13 @@ import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.upsample_medium_toxicity_posts_2026_09_08.sources import (
+    LeftoverMediumSample,
     UpsampleRunResult,
 )
 
 
 def write_upsampled_dataset(
-    sampled: pd.DataFrame,
-    leftover_left_medium: int,
-    leftover_right_medium: int,
+    leftover: LeftoverMediumSample,
     experiment_dir: Path | None = None,
     store: CampaignObjectStore | None = None,
 ) -> UpsampleRunResult:
@@ -23,12 +22,8 @@ def write_upsampled_dataset(
 
     Parameters
     ----------
-    sampled
-        Sampled unused medium table.
-    leftover_left_medium
-        Leftover left-medium count before sampling.
-    leftover_right_medium
-        Leftover right-medium count before sampling.
+    leftover
+        Sampled unused medium table plus leftover cell counts.
     experiment_dir
         Folder that receives the parquet and RESULTS.md.
     store

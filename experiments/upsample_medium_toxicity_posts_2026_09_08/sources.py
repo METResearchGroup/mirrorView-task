@@ -10,8 +10,26 @@ from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources impor
 
 
 @dataclass(frozen=True)
+class LeftoverMediumSample:
+    """Sampled leftover medium rows plus leftover cell counts before sampling."""
+
+    sampled: object
+    leftover_left_medium: int
+    leftover_right_medium: int
+
+
+@dataclass(frozen=True)
 class UpsampleRunResult:
     """Counts and paths from one unused medium upsample run."""
+
+    sampled_rows: int
+    left_medium: int
+    right_medium: int
+    leftover_left_medium: int
+    leftover_right_medium: int
+    local_path: str
+    s3_uri: str
+    dataset_sha256: str
 
 
 def pinned_combined_source() -> CandidateSource:

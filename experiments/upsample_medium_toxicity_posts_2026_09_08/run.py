@@ -35,12 +35,8 @@ def main() -> int:
     candidate = load_raw_candidate_dataset(combined_source)
     cleaned, _summary = cleanup_raw_candidate_dataset(candidate)
     sample = load_raw_candidate_dataset(sample_source)
-    sampled, leftover_left_medium, leftover_right_medium = sample_leftover_medium(
-        cleaned, sample
-    )
-    result = write_upsampled_dataset(
-        sampled, leftover_left_medium, leftover_right_medium
-    )
+    leftover = sample_leftover_medium(cleaned, sample)
+    result = write_upsampled_dataset(leftover)
     print_run_summary(result)
     return 0
 

@@ -4,10 +4,15 @@ from __future__ import annotations
 
 import pandas as pd
 
+from experiments.upsample_medium_toxicity_posts_2026_09_08.sources import (
+    LeftoverMediumSample,
+)
+
+
 def sample_leftover_medium(
     cleaned: pd.DataFrame,
     sample: pd.DataFrame,
-) -> tuple[pd.DataFrame, int, int]:
+) -> LeftoverMediumSample:
     """Return 1,000 leftover left-medium and 1,000 leftover right-medium posts.
 
     Parameters
@@ -19,8 +24,8 @@ def sample_leftover_medium(
 
     Returns
     -------
-    tuple[pd.DataFrame, int, int]
-        Sampled rows, leftover left-medium count, leftover right-medium count.
+    LeftoverMediumSample
+        Sampled rows plus leftover medium counts before sampling.
 
     Raises
     ------
