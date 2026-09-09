@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import pandas as pd
+
 from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources import (
     CandidateSource,
 )
@@ -13,7 +15,7 @@ from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.sources impor
 class LeftoverMediumSample:
     """Sampled leftover medium rows plus leftover cell counts before sampling."""
 
-    sampled: object
+    sampled: pd.DataFrame
     leftover_left_medium: int
     leftover_right_medium: int
 
