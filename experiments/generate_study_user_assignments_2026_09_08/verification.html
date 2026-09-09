@@ -495,9 +495,18 @@
     }
 
     async function loadBundled() {
-      const response = await fetch("./verification_dataset.json");
-      if (!response.ok) throw new Error(`Could not load verification_dataset.json (${response.status})`);
-      setDataset(datasetFromJson(await response.json()));
+      const relative = "./verification_dataset.json";
+      const githubRaw = "https://raw.githubusercontent.com/METResearchGroup/mirrorView-task/cursor/study-user-assignments-plan-b08b/experiments/generate_study_user_assignments_2026_09_08/verification_dataset.json";
+      const response = await fetch(relative).catch(() => null);
+      if (response && response.ok) {
+        setDataset(datasetFromJson(await response.json()));
+        return;
+      }
+      const fallback = await fetch(githubRaw);
+      if (!fallback.ok) {
+        throw new Error(`Could not load verification_dataset.json (${response ? response.status : "network error"}; GitHub fallback ${fallback.status})`);
+      }
+      setDataset(datasetFromJson(await fallback.json()));
     }
 
     document.getElementById("kind-filter").addEventListener("change", applyFilter);
