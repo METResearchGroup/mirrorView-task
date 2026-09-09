@@ -49,7 +49,7 @@ Err on the side of storing artifacts and objects in S3.
 
 Use the following setup:
 
-- S3 bucket: `mind-technology-lab-experiments`
+- S3 bucket: `mirrorview-experimental-artifacts`
 - S3 prefix: use the same folder and prefix that exists locally. For example, if the folder is `experiments/paper-name/`, the S3 prefix is `experiments/paper-name/`.
 
 ## Setting up MCP servers
