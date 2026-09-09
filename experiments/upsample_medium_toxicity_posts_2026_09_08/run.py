@@ -50,11 +50,9 @@ from experiments.upsample_medium_toxicity_posts_2026_09_08.write import (
     write_upsampled_dataset,
 )
 
-import pandas as pd
-
 
 def main() -> int:
-    """Load, clean, sample leftover medium, write, and print."""
+    """Sample unused medium posts, write the parquet, and print counts."""
     leftover = sample_leftover_medium(_load_cleaned_combined(), _load_sample())
     result = write_upsampled_dataset(leftover)
     print_run_summary(result)

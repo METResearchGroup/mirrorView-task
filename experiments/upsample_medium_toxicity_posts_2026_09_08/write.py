@@ -70,7 +70,7 @@ def write_upsampled_dataset(
 def write_local_parquet(
     sampled: pd.DataFrame, experiment_dir: Path
 ) -> tuple[Path, bytes]:
-    """Write the upsample parquet under the experiment folder.
+    """Write the unused medium parquet under the experiment folder.
 
     Parameters
     ----------

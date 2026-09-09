@@ -49,7 +49,7 @@ PAUSE_EXIT_CODE = 1
 
 
 def main() -> int:
-    """Load, join, count, then sample and write or pause."""
+    """Write the 10,000 post catalog, or pause when a cell is short."""
     pool = _load_joined_pool()
     available = available_cell_counts(pool.rows)
     if not cells_meet_targets(available):

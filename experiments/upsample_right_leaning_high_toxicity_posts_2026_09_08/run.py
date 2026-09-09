@@ -63,7 +63,7 @@ from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.write imp
 
 
 def main() -> int:
-    """Load, build candidates, score, promote, write, and print."""
+    """Promote 300 right-high posts, write the unified upsample, and print counts."""
     cleaned = _load_cleaned_combined()
     sample = _load_sample()
     medium_upsample = _load_medium_upsample()

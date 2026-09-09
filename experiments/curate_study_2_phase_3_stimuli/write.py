@@ -49,7 +49,13 @@ def write_catalog(
     experiment_dir: Path | None = None,
     store: CampaignObjectStore | None = None,
 ) -> CatalogRunResult:
-    """Write local CSV, upload with put_new, and write RESULTS.md."""
+    """Write the catalog CSV locally, upload it once, and write RESULTS.md.
+
+    Raises
+    ------
+    FileExistsError
+        When the destination S3 key already exists.
+    """
     resolved_dir = experiment_dir if experiment_dir is not None else EXPERIMENT_DIR
     resolved_store = store if store is not None else _default_store()
     local_path, body = _write_local_csv(catalog, resolved_dir)

@@ -7,6 +7,7 @@ import pandas as pd
 from experiments.curate_study_2_phase_3_stimuli.sources import (
     CATALOG_COLUMNS,
     CELL_TARGET,
+    EMPTY_CELL,
     MIRRORED_TEXT_COLUMN,
     ORIGINAL_TEXT_COLUMN,
     POST_PRIMARY_KEY_COLUMN,
@@ -26,6 +27,17 @@ from experiments.curate_study_2_phase_3_stimuli.sources import (
 
 def sample_catalog(pool: pd.DataFrame) -> pd.DataFrame:
     """Sample each stance by toxicity cell and map rows to catalog columns.
+
+    Parameters
+    ----------
+    pool
+        Posts that already have a successful flip.
+
+    Returns
+    -------
+    pd.DataFrame
+        Catalog rows in old-catalog column order, sorted by
+        ``post_primary_key``.
 
     Raises
     ------
@@ -78,3 +90,6 @@ def _require_mapped_text(sampled: pd.DataFrame, mapped: pd.DataFrame) -> None:
         raise ValueError("original_text does not match post text")
     if mapped[SAMPLE_TOXICITY_TYPE_COLUMN].isna().any():
         raise ValueError("unmapped llm_toxicity_tier")
+    mirrored = mapped[MIRRORED_TEXT_COLUMN].astype(str).str.strip()
+    if (mirrored == EMPTY_CELL).any():
+        raise ValueError("empty mirrored_text")

@@ -29,7 +29,14 @@ BATCH_RANK_COLUMN = "_batch_rank"
 
 
 def count_unique_raters_per_post(old_results: pd.DataFrame) -> pd.Series:
-    """Count unique ``prolific_id`` raters for each ``post_id``."""
+    """Count unique ``prolific_id`` raters for each ``post_id``.
+
+    Returns
+    -------
+    pandas.Series
+        Rater counts indexed by ``post_id``. Empty post ids and rater ids
+        are ignored.
+    """
     rows = _usable_rater_rows(old_results)
     counts = rows.groupby(RESULTS_ID_COLUMN, sort=False)[RATER_COLUMN].nunique()
     counts.name = RATER_COLUMN
@@ -41,7 +48,11 @@ def remaining_labels_for_old_posts(
     rater_counts: pd.Series,
     required_labels_per_post: int,
 ) -> pd.DataFrame:
-    """Return remaining labels for each old catalog post."""
+    """Return remaining labels for each old catalog post.
+
+    Remaining labels equal ``required_labels_per_post`` minus unique raters.
+    Posts with no raters receive the full required count.
+    """
     ids = old_catalog[OLD_ID_COLUMN]
     unique_raters = ids.map(rater_counts).fillna(0).astype(int)
     remaining = required_labels_per_post - unique_raters
@@ -58,7 +69,10 @@ def remaining_labels_for_new_posts(
     new_catalog: pd.DataFrame,
     required_labels_per_post: int,
 ) -> pd.DataFrame:
-    """Return remaining labels for each new catalog post."""
+    """Assign every new catalog post the full required label count.
+
+    New posts are not looked up in the old results file.
+    """
     ids = new_catalog[NEW_ID_COLUMN].astype(str).str.strip()
     return pd.DataFrame(
         {

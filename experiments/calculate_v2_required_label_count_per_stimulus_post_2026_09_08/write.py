@@ -45,7 +45,13 @@ def write_local_csv(counts: pd.DataFrame, experiment_dir: Path) -> LocalCsvWrite
 
 
 def upload_csv(body: bytes, store: CampaignObjectStore) -> str:
-    """Upload CSV bytes only if the S3 key does not already exist."""
+    """Upload CSV bytes with put_new and return the SHA-256.
+
+    Raises
+    ------
+    FileExistsError
+        When the destination S3 key already exists.
+    """
     store.put_new(OUTPUT_S3_KEY, body)
     return sha256_hex(body)
 
@@ -64,7 +70,13 @@ def write_required_label_counts(
     store: CampaignObjectStore,
     old_catalog_ids: int,
 ) -> LabelCountRunResult:
-    """Write the local CSV, upload it, and write RESULTS.md."""
+    """Write the local CSV, upload it once, and write RESULTS.md.
+
+    Raises
+    ------
+    FileExistsError
+        When the destination S3 key already exists.
+    """
     local = write_local_csv(counts, experiment_dir)
     digest = upload_csv(local.body, store)
     result = _label_count_run_result(counts, source, local.path, digest, old_catalog_ids)

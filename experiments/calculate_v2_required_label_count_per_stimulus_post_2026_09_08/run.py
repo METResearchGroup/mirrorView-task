@@ -53,7 +53,7 @@ from lib.constants import REPO_ROOT
 
 
 def main() -> int:
-    """Load both batches, compute remaining labels, write, and print."""
+    """Count remaining labels for the old catalog and the new catalog."""
     print_run_summary(_run_pipeline())
     return 0
 

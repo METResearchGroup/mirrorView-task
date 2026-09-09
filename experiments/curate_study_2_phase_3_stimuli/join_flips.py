@@ -32,11 +32,27 @@ def join_posts_to_flips(
     Toxicity comes from the original post table. The 300 promoted posts count
     as high.
 
+    Parameters
+    ----------
+    sample_posts
+        The 10,200 post sample.
+    sample_flips
+        Successful flips for that sample.
+    unified_posts
+        The unified 2,300 post upsample.
+    unified_flips
+        Successful flips for that upsample.
+
+    Returns
+    -------
+    JoinedFlipPool
+        Concatenated posts that have a flip.
+
     Raises
     ------
     ValueError
-        When the same ``record_id`` appears in both joined pieces, or when
-        original text does not match post text.
+        When the same ``record_id`` appears in both joined pieces, original
+        text does not match post text, or ``mirrored_text`` is empty.
     """
     sample_joined = _inner_join(sample_posts, sample_flips)
     unified_joined = _inner_join(unified_posts, unified_flips)
