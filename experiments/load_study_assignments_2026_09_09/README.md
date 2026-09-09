@@ -40,3 +40,7 @@ PYTHONPATH=. uv run python experiments/load_study_assignments_2026_09_09/run.py
 ## Verification page
 
 `verification.html` in this folder checks the party split, leftover-left counts, rewritten ids, and catalog coverage. It loads `verification_dataset.json` by default.
+
+Public dashboard: [experiments/load_study_assignments_2026_09_09/verification.html](http://jspsych-mirror-view-2026-09-09.s3-website.us-east-2.amazonaws.com/experiments/load_study_assignments_2026_09_09/verification.html)
+
+Preview (Vercel, this branch): [experiments/load_study_assignments_2026_09_09/verification.html](https://mirrorview-task-git-init-study-as-6776f2-marktorres10s-projects.vercel.app/experiments/load_study_assignments_2026_09_09/verification.html)

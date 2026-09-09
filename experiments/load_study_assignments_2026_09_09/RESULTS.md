@@ -49,3 +49,11 @@ DynamoDB `user_assignments` in `us-east-2`:
 - `iteration_user_key` `mirrorview_2026_09_09#manual-test-2026-09-09-r`
 
 CLI smoke with `dev-mirrorview_2026_09_09` and `manual-cli-2026-09-09-d` returned 20 `assigned_post_ids` and `condition` `training_assisted`. A second invoke returned the same ids.
+
+## Dashboard
+
+Public: [verification.html](http://jspsych-mirror-view-2026-09-09.s3-website.us-east-2.amazonaws.com/experiments/load_study_assignments_2026_09_09/verification.html)
+
+Vercel preview: [verification.html](https://mirrorview-task-git-init-study-as-6776f2-marktorres10s-projects.vercel.app/experiments/load_study_assignments_2026_09_09/verification.html)
+
+The dashboard loaded 3,879 feeds and 18,899 catalog posts. Conversion checks passed. First Democrat id is `democrat-training_assisted-0001` (10 left / 10 right).
