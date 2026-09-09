@@ -1,5 +1,15 @@
 """Curate the 10,000 post catalog, or stop if a cell is short.
 
+given AWS credentials from LAB_AWS_ACCESS_KEY_ID and LAB_AWS_ACCESS_KEY_SECRET
+and the 10200 sample flips and the unified flips exist
+when PYTHONPATH=. uv run python experiments/curate_study_2_phase_3_stimuli/run.py
+then stdout prints the available stance by toxicity table
+and if every cell meets its target then catalog_rows=10000
+and the CSV has the five old-catalog columns
+and S3 object experiments/curate_study_2_phase_3_stimuli/flips.csv exists
+and if any cell is short then exit code is 1
+and flips.csv is not uploaded
+
 Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/curate_study_2_phase_3_stimuli/run.py
