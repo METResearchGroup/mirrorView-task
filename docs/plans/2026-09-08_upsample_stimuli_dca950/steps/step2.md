@@ -14,8 +14,8 @@ Step 1 has uploaded `upsample_2000_medium_toxicity_posts.parquet` and committed 
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-08_upsample_medium_toxicity_stimuli_dca950/plan.md` | Candidate rule, 300 promotions, unified 2300 |
-| `/workspace/docs/plans/2026-09-08_upsample_medium_toxicity_stimuli_dca950/steps/step1.md` | Cleanup and leftover medium contract |
+| `/workspace/docs/plans/2026-09-08_upsample_stimuli_dca950/plan.md` | Candidate rule, 300 promotions, unified 2300 |
+| `/workspace/docs/plans/2026-09-08_upsample_stimuli_dca950/steps/step1.md` | Cleanup and leftover medium contract |
 | `/workspace/experiments/reddit_curated_perspective_v2_2026_09_08/score_medium.py` | Perspective engine, batch 64, concurrency 80, resume scores |
 | `/workspace/experiments/reddit_curated_perspective_v2_2026_09_08/promote_v2.py` | Rank by `toxicity_prob` descending, id ascending, take top N |
 | `/workspace/experiments/reddit_curated_perspective_v2_2026_09_08/outputs/promotion_source_record_ids.json` | 3000 pull request 260 ids |

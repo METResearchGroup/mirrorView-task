@@ -1,4 +1,4 @@
-# Upsample medium posts, promote 300 leftover right-medium posts to high, and curate a 10,000 post catalog
+# Upsample unused posts and curate a 10,000 post stimulus catalog
 
 ## Remember
 - Exact file paths always
@@ -46,7 +46,7 @@ Take the 2,000 medium upsample first, then build the Perspective candidate set f
   - `experiments/generate_flips_for_upsampled_posts_2026_09_08/`
   - `experiments/curate_study_2_phase_3_stimuli/`
   - `experiments/calculate_v2_required_label_count_per_stimulus_post_2026_09_08/`
-- The flips folder is `experiments/generate_flips_for_upsampled_posts_2026_09_08/`, not `experiments/generate_flips_for_upsampled_medium_toxicity_posts_2026_09_08/`. One folder generates flips for the 2,000 medium posts and the 300 promoted right-high posts.
+- The flips folder is `experiments/generate_flips_for_upsampled_posts_2026_09_08/`. One folder generates flips for the 2,000 medium posts and the 300 promoted right-high posts.
 - Combined source is `s3://mirrorview-experimental-artifacts/experiments/combine_data_into_stimulus_set_2026_09_08/dataset.parquet`, SHA-256 `f24ad1fd8c3709ffbbba9fb5dc953dcaee2f11ad8916ae21612b7f25cb5ca3f0`, 55,573 rows. The Reddit slice in that parquet already uses `mirrorview_v2.parquet` from pull request 260.
 - Existing sample is `s3://mirrorview-experimental-artifacts/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet`, SHA-256 `9788331f898aa27352dcdf32a962b5722aecc1da61a4638b7bbd77a404415ab9`, 10,200 rows.
 - Existing flips are `s3://mirrorview-experimental-artifacts/experiments/generate_flips_2026_09_08/2026_09_08-20:31:31/flips.parquet`, SHA-256 `f3b791f226f8f69d3ddaf0737aab0a3aaf20ebb36d45a6d9b42dec8d1e148702`, 10,182 rows. Eighteen posts in the sample have no flip.

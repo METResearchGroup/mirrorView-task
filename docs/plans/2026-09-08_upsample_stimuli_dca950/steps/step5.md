@@ -14,7 +14,7 @@ Step 4 has written `s3://mirrorview-experimental-artifacts/experiments/curate_st
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-08_upsample_medium_toxicity_stimuli_dca950/plan.md` | Expected totals 27557 old, 50000 new |
+| `/workspace/docs/plans/2026-09-08_upsample_stimuli_dca950/plan.md` | Expected totals 27557 old, 50000 new |
 | `/workspace/experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/run.py` | Caller shape |
 | `/workspace/experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/calculate.py` | Unique rater math, overlap check, drop remaining 0 or less |
 | `/workspace/experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/load.py` | Old catalog and results loaders |

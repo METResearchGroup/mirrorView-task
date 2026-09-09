@@ -14,7 +14,7 @@ Step 3 `RESULTS.md` has the named unified flips URI and SHA-256. Pin that digest
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-08_upsample_medium_toxicity_stimuli_dca950/plan.md` | Cell targets, column mapping, pause rule |
+| `/workspace/docs/plans/2026-09-08_upsample_stimuli_dca950/plan.md` | Cell targets, column mapping, pause rule |
 | `/workspace/shared/data/raw/study_phase_2_part_2/stimuli/flips.csv` | Columns `post_primary_key`, `original_text`, `sample_toxicity_type`, `sampled_stance`, `mirrored_text` |
 | `/workspace/shared/flip_generation/models.py` | Flip parquet columns |
 | `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/load_raw_candidate_dataset.py` | Download and hash pattern |

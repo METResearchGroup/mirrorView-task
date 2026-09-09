@@ -10,7 +10,7 @@
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-08_upsample_medium_toxicity_stimuli_dca950/plan.md` | Confirmed decisions |
+| `/workspace/docs/plans/2026-09-08_upsample_stimuli_dca950/plan.md` | Confirmed decisions |
 | `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/run.py` | Load, cleanup, sample, write caller |
 | `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/load_raw_candidate_dataset.py` | Download, hash check, cache, `CandidateSource` |
 | `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/cleanup_raw_candidate_dataset.py` | Previously used ids, original text, duplicate id, duplicate text |

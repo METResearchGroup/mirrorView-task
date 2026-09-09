@@ -14,7 +14,7 @@ Step 2 has uploaded `unified_upsampled_posts.parquet` and committed its SHA-256 
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-08_upsample_medium_toxicity_stimuli_dca950/plan.md` | Unified input, S3 prefix, named output |
+| `/workspace/docs/plans/2026-09-08_upsample_stimuli_dca950/plan.md` | Unified input, S3 prefix, named output |
 | `/workspace/experiments/generate_flips_2026_09_08/run.py` | Typer flags, `generate_flips` wiring, print lines |
 | `/workspace/experiments/generate_flips_2026_09_08/load_filtered_dataset.py` | Download, hash, cache pattern |
 | `/workspace/shared/flip_generation/generate_flips.py` | `BATCH_SIZE`, `MAX_CONCURRENCY`, `MAX_TOKENS`, `generate_flips` |
