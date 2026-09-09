@@ -16,6 +16,15 @@ from data_platform.generate_features.s3_feature_campaign import CampaignObjectSt
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
     NewCatalogSource,
 )
+from experiments.generate_study_user_assignments_2026_09_08.constants import (
+    CELL_BY_STANCE_TOXICITY,
+    CELL_COLUMN,
+    POST_ID_COLUMN,
+    REMAINING_COUNT_COLUMN,
+    REMAINING_ID_COLUMN,
+    STANCE_COLUMN,
+    TOXICITY_COLUMN,
+)
 
 
 def load_remaining_labels(
@@ -118,7 +127,55 @@ def join_remaining_to_catalogs(
     ValueError
         When an id is in neither catalog or in both catalogs.
     """
-    raise NotImplementedError
+    old_by_id = _catalog_rows_by_id(old_catalog)
+    new_by_id = _catalog_rows_by_id(new_catalog)
+    rows = [
+        _joined_row(remaining_id, remaining_count, old_by_id, new_by_id)
+        for remaining_id, remaining_count in zip(
+            remaining[REMAINING_ID_COLUMN].astype(str),
+            remaining[REMAINING_COUNT_COLUMN].astype(int),
+        )
+    ]
+    return pd.DataFrame(rows)
+
+
+def _catalog_rows_by_id(catalog: pd.DataFrame) -> dict[str, pd.Series]:
+    return {
+        str(row[POST_ID_COLUMN]): row
+        for _, row in catalog.iterrows()
+    }
+
+
+def _joined_row(
+    remaining_id: str,
+    remaining_count: int,
+    old_by_id: dict[str, pd.Series],
+    new_by_id: dict[str, pd.Series],
+) -> dict[str, object]:
+    catalog_row = _exclusive_catalog_row(remaining_id, old_by_id, new_by_id)
+    stance = str(catalog_row[STANCE_COLUMN])
+    toxicity = str(catalog_row[TOXICITY_COLUMN])
+    return {
+        POST_ID_COLUMN: remaining_id,
+        STANCE_COLUMN: stance,
+        TOXICITY_COLUMN: toxicity,
+        REMAINING_COUNT_COLUMN: remaining_count,
+        CELL_COLUMN: CELL_BY_STANCE_TOXICITY[(stance, toxicity)],
+    }
+
+
+def _exclusive_catalog_row(
+    remaining_id: str,
+    old_by_id: dict[str, pd.Series],
+    new_by_id: dict[str, pd.Series],
+) -> pd.Series:
+    in_old = remaining_id in old_by_id
+    in_new = remaining_id in new_by_id
+    if in_old == in_new:
+        raise ValueError(f"remaining id {remaining_id} must be in exactly one catalog")
+    if in_old:
+        return old_by_id[remaining_id]
+    return new_by_id[remaining_id]
 
 
 def write_shuffled_stimuli(joined: pd.DataFrame, experiment_dir: Path) -> Path:
