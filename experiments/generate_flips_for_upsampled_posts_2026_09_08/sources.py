@@ -14,6 +14,14 @@ class UnifiedSource:
     expected_row_count: int
 
 
+@dataclass(frozen=True)
+class NamedFlipCopyResult:
+    """Named sibling copy of the concatenated flips parquet."""
+
+    s3_uri: str
+    sha256: str
+
+
 def pinned_unified_source() -> UnifiedSource:
     """Return the pinned unified 2,300 post parquet identity."""
     raise NotImplementedError
