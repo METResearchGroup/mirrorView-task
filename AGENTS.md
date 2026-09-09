@@ -27,3 +27,39 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
 - Always prefix commands with `PYTHONPATH=.` — scripts import repo-root packages (`lib/`, etc.). Example: `PYTHONPATH=. uv run python scripts/export_study_results.py --help`.
 - `uv sync` installs the `dev` dependency group by default (torch/transformers/spacy — large).
+
+
+## Model training
+
+Use HuggingFace for model access and compute. Use the `HF_TOKEN` API key.
+
+### Default open-source LLM
+
+For any experiments, let's default to Qwen3.5 4B. Use [this HuggingFace link](https://huggingface.co/collections/Qwen/qwen35) for more information, and [this link](https://huggingface.co/Qwen/Qwen3.5-4B) for the model weights.
+
+### GPU compute
+
+For GPU compute, use Hugging Face Jobs. See [this guide](https://huggingface.co/docs/huggingface_hub/en/guides/jobs) for more details.
+
+### Storage
+
+By default, use S3 for storage. Use the AWS access key and secret login, via `LAB_AWS_ACCESS_KEY_ID` and `LAB_AWS_ACCESS_KEY_SECRET`, renaming it as needed.
+
+Err on the side of storing artifacts and objects in S3.
+
+Use the following setup:
+
+- S3 bucket: `mind-technology-lab-experiments`
+- S3 prefix: use the same folder and prefix that exists locally. For example, if the folder is `experiments/paper-name/`, the S3 prefix is `experiments/paper-name/`.
+
+## Setting up MCP servers
+
+Project MCP servers live in `.cursor/mcp.json`. Do not put secrets in that file. The API key, ALPHAXIV_API_KEY, lives in the environment.
+
+### AlphaXiv
+
+Use the AlphaXiv MCP server for paper search, PDF questions, researcher lookup, and library tools. Docs: [https://www.alphaxiv.org/docs/mcp](https://www.alphaxiv.org/docs/mcp).
+
+- Endpoint: `https://api.alphaxiv.org/mcp/v1`
+- Transport: Streamable HTTP
+- Auth: send `Authorization: Bearer ${env:ALPHAXIV_API_KEY}`
