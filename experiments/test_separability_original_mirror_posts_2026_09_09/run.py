@@ -22,6 +22,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
 import typer
 
@@ -32,6 +33,7 @@ from experiments.test_separability_original_mirror_posts_2026_09_09.constants im
     CAMPAIGN_ID,
     CAMPAIGN_PLATFORM,
     DATASET_ID,
+    EngineName,
     EXPERIMENT_DIRNAME,
     OUTPUT_S3_BUCKET,
     PREPROCESSED_RUN,
@@ -80,8 +82,27 @@ def _validate_cli_flags(
     smoke: bool,
     score: bool,
 ) -> None:
-    """Ensure mutually exclusive CLI modes are not combined."""
-    raise NotImplementedError
+    """Ensure mutually exclusive CLI modes are not combined.
+
+    Raises
+    ------
+    ValueError
+        When flags are missing, combined, or invalid.
+    """
+    if smoke and engine is None:
+        raise ValueError("--smoke requires --engine")
+    selected = [write_presentation, engine is not None, score]
+    if sum(selected) != 1:
+        raise ValueError("choose exactly one of --write-presentation, --engine, or --score")
+    if engine is not None:
+        _parse_engine_name(engine)
+
+
+def _parse_engine_name(engine: str) -> EngineName:
+    try:
+        return EngineName(engine)
+    except ValueError as error:
+        raise ValueError(f"unsupported engine: {engine}") from error
 
 
 def _write_presentation() -> None:
@@ -96,7 +117,7 @@ def _write_presentation() -> None:
     print_presentation_summary(result)
 
 
-def _experiment_dir():
+def _experiment_dir() -> Path:
     return REPO_ROOT / "experiments" / EXPERIMENT_DIRNAME
 
 
