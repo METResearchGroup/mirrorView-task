@@ -56,15 +56,15 @@ Shuffle each pair once and store the gold presentation. Give both engines the sa
 
 ### Step 1: Add the experiment modules and write the shared presentation
 
-Add the experiment README and modules. Download the pinned catalog, shuffle each original and mirror pair once, and upload the presentation parquet. Fail if that S3 key already exists.
+Add the experiment README and modules. Download the pinned catalog, shuffle each original and mirror pair once, and upload the presentation parquet. Fail if that S3 key already exists. See [steps/step1.md](steps/step1.md).
 
 ### Step 2: Smoke ten pairs, then label all 10,000 pairs on both engines
 
-Run a ten-pair smoke for OpenAI and for Bedrock. If each smoke writes 10 labels, label all 10,000 pairs on each engine into five parquet parts and a final parquet.
+Run a ten-pair smoke for OpenAI and for Bedrock. If each smoke writes 10 labels, label all 10,000 pairs on each engine into five parquet parts and a final parquet. See [steps/step2.md](steps/step2.md).
 
 ### Step 3: Score labels and write RESULTS.md
 
-Join each engine's final parquet to the shared presentation. Write the overall table and the two cell tables into `experiments/test_separability_original_mirror_posts_2026_09_09/RESULTS.md`.
+Join each engine's final parquet to the shared presentation. Write the overall table and the two cell tables into `experiments/test_separability_original_mirror_posts_2026_09_09/RESULTS.md`. See [steps/step3.md](steps/step3.md).
 
 ## What "done" looks like
 
