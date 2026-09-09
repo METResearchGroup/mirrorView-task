@@ -98,6 +98,10 @@ def load_new_catalog(
     body = _bytes_matching_pinned_hash(source, store, cache_dir)
     frame = pd.read_csv(io.BytesIO(body))
     _require_column(frame, NEW_ID_COLUMN)
+    if len(frame) != source.expected_row_count:
+        raise ValueError(
+            f"row_count={len(frame)} expected={source.expected_row_count}"
+        )
     ids = _stripped_nonempty(frame[NEW_ID_COLUMN])
     _require_unique_id_count(ids, source.expected_row_count, NEW_ID_COLUMN)
     return frame

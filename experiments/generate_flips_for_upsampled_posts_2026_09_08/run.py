@@ -97,14 +97,29 @@ def main(
     """
     resolved_run_id = run_id if run_id else get_current_timestamp()
     _require_smoke_is_not_full_run(resolved_run_id, max_posts)
+    _require_named_sibling_absent_for_full_run(max_posts, bucket)
     result = _generate_for_run(resolved_run_id, max_posts, bucket)
     _print_run_summary(result)
     _maybe_copy_named_sibling(result, max_posts, bucket)
 
 
 def _require_smoke_is_not_full_run(run_id: str, max_posts: int | None) -> None:
-    if run_id == SMOKE_RUN_ID and max_posts is None:
+    if run_id != SMOKE_RUN_ID:
+        return
+    if max_posts != SMOKE_MAX_POSTS:
         raise ValueError("do not reuse --run-id smoke for the full 2300 post job")
+
+
+def _require_named_sibling_absent_for_full_run(
+    max_posts: int | None, bucket: str
+) -> None:
+    if max_posts is not None:
+        return
+    store = CampaignObjectStore(bucket)
+    if store.get(NAMED_SIBLING_S3_KEY) is not None:
+        raise FileExistsError(
+            f"Object already exists: {s3_uri(bucket, NAMED_SIBLING_S3_KEY)}"
+        )
 
 
 def _generate_for_run(

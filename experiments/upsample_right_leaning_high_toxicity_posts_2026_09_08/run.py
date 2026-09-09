@@ -31,6 +31,7 @@ import sys
 
 import pandas as pd
 
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.filter_posts_used_for_stimulus_dataset_2026_09_08.cleanup_raw_candidate_dataset import (
     cleanup_raw_candidate_dataset,
 )
@@ -48,6 +49,7 @@ from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.score imp
     score_candidates,
 )
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.sources import (
+    OUTPUT_S3_BUCKET,
     combined_cache_dir,
     medium_upsample_cache_dir,
     pinned_combined_source,
@@ -58,12 +60,14 @@ from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.sources i
 )
 from experiments.upsample_right_leaning_high_toxicity_posts_2026_09_08.write import (
     print_run_summary,
+    require_output_keys_absent,
     write_unified_upsample,
 )
 
 
 def main() -> int:
     """Promote 300 right-high posts, write the unified upsample, and print counts."""
+    require_output_keys_absent(CampaignObjectStore(OUTPUT_S3_BUCKET))
     cleaned = _load_cleaned_combined()
     sample = _load_sample()
     medium_upsample = _load_medium_upsample()

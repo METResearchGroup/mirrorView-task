@@ -179,7 +179,8 @@ def _old_catalog_sentence(result: LabelCountRunResult) -> str:
     return (
         f"Catalog `{OLD_CATALOG_DISPLAY_PATH}` has {result.old_catalog_ids} unique ids. "
         f"Remaining labels equal {REQUIRED_LABELS_PER_POST} minus the number of unique "
-        "`prolific_id` raters per `post_id`."
+        "`prolific_id` raters per `post_id`. Posts with 0 remaining labels are dropped, "
+        f"so the old batch has {result.old_posts} posts."
     )
 
 

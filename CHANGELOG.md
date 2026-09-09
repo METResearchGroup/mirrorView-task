@@ -2,7 +2,7 @@
 
 ## 2026-09-09
 
-1. Operators now have a 10,000 post study catalog from unused medium posts plus 300 leftover right-medium posts reclassified as high by Perspective, and remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
+1. Operators now have a 10,000 post study catalog sampled from the 10,200 post set plus 2,000 unused medium posts and 300 leftover right-medium posts relabeled as high using Perspective scores. Remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
 
 ## 2026-09-08
 

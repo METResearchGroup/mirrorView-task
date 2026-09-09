@@ -51,8 +51,9 @@ def join_posts_to_flips(
     Raises
     ------
     ValueError
-        When the same ``record_id`` appears in both joined pieces, original
-        text does not match post text, or ``mirrored_text`` is empty.
+        When a ``record_id`` is duplicated, the same ``record_id`` appears in
+        both joined pieces, original text does not match post text, or
+        ``mirrored_text`` is empty.
     """
     sample_joined = _inner_join(sample_posts, sample_flips)
     unified_joined = _inner_join(unified_posts, unified_flips)
@@ -81,10 +82,18 @@ def cells_meet_targets(available: dict[str, dict[str, int]]) -> bool:
 
 def _inner_join(posts: pd.DataFrame, flips: pd.DataFrame) -> pd.DataFrame:
     flip_rows = flips.loc[:, list(FLIP_KEEP_COLUMNS)]
+    _require_unique_record_ids(posts)
+    _require_unique_record_ids(flip_rows)
     joined = posts.merge(flip_rows, on=RECORD_ID_COLUMN, how="inner")
     _require_text_match(joined)
     _require_mirrored_text(joined)
     return joined
+
+
+def _require_unique_record_ids(frame: pd.DataFrame) -> None:
+    ids = frame[RECORD_ID_COLUMN].map(str)
+    if ids.nunique() != len(frame):
+        raise ValueError("duplicate record_id")
 
 
 def _require_text_match(joined: pd.DataFrame) -> None:
