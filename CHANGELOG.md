@@ -6,6 +6,7 @@
 2. Operators now have a 10,000 post study catalog sampled from the 10,200 post set plus 2,000 unused medium posts and 300 leftover right-medium posts relabeled as high using Perspective scores. Remaining labels for that catalog plus the old catalog total 77,557. [PR #273](https://github.com/METResearchGroup/mirrorView-task/pull/273)
 3. Operators can re-run the unused-post catalog experiments without calling Perspective or Bedrock when the output S3 keys already exist, and a smoke flip run cannot reuse `--run-id smoke` except with `--max-posts 10`. [PR #277](https://github.com/METResearchGroup/mirrorView-task/pull/277)
 4. Operators now have remaining label counts for the old catalog and the 10,000-post catalog from pull request 273. Remaining labels total 77,557, with 27,557 on old posts counted by unique Prolific raters and 50,000 on new posts. [PR #279](https://github.com/METResearchGroup/mirrorView-task/pull/279)
+5. Operators can QA the latest 10,182-post flip set in a notebook: load the pinned S3 parquet after a SHA-256 check, then inspect original text, mirrored text, political lean, and toxicity tier. [PR #282](https://github.com/METResearchGroup/mirrorView-task/pull/282)
 
 ## 2026-09-08
 
