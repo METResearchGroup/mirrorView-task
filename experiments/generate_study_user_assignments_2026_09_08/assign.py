@@ -8,11 +8,15 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import math
+
 import pandas as pd
 
 from experiments.generate_study_user_assignments_2026_09_08.constants import (
     FeedKind,
     FeedKindCounts,
+    LEFT_POSTS_IN_LEFT_ONLY,
+    LEFT_POSTS_IN_TEN_TEN,
     UserAssignment,
 )
 
@@ -37,7 +41,23 @@ def count_feed_kinds(left_remaining: int, right_remaining: int) -> FeedKindCount
     ValueError
         When leftover left remaining would be less than 0.
     """
-    raise NotImplementedError
+    ten_ten_count = math.ceil(right_remaining / LEFT_POSTS_IN_TEN_TEN)
+    leftover_left_remaining = left_remaining - LEFT_POSTS_IN_TEN_TEN * ten_ten_count
+    if leftover_left_remaining < 0:
+        raise ValueError("leftover left remaining is less than 0")
+    left_only_count = _left_only_count(leftover_left_remaining)
+    return FeedKindCounts(
+        ten_ten_count=ten_ten_count,
+        left_only_count=left_only_count,
+        leftover_left_remaining=leftover_left_remaining,
+        user_count=ten_ten_count + left_only_count,
+    )
+
+
+def _left_only_count(leftover_left_remaining: int) -> int:
+    if leftover_left_remaining == 0:
+        return 0
+    return math.ceil(leftover_left_remaining / LEFT_POSTS_IN_LEFT_ONLY)
 
 
 def preferred_cell_counts(
