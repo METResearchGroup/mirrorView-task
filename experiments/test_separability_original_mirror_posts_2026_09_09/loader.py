@@ -8,6 +8,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import io
+import random
 from pathlib import Path
 
 import pandas as pd
@@ -22,17 +23,27 @@ from experiments.test_separability_original_mirror_posts_2026_09_09.constants im
     CATALOG_REQUIRED_COLUMNS,
     CatalogSource,
     EMPTY_CELL,
+    FIRST_TEXT_COLUMN,
+    GOLD_HUMAN_SLOT_COLUMN,
+    GoldHumanSlot,
     ID_COLUMN,
     MIRRORED_TEXT_COLUMN,
     NAN_CELL,
     ORIGINAL_TEXT_COLUMN,
+    PRESENTATION_COLUMNS,
     PRESENTATION_S3_KEY,
+    PROMPT_TEXT_COLUMN,
     SAMPLED_STANCE_COLUMN,
     SAMPLE_TOXICITY_TYPE_COLUMN,
+    SECOND_TEXT_COLUMN,
+    SHUFFLE_SEED,
     SMOKE_ROW_COUNT,
     SORT_KIND,
     VALID_SAMPLED_STANCES,
     VALID_SAMPLE_TOXICITY_TYPES,
+)
+from experiments.test_separability_original_mirror_posts_2026_09_09.prompts import (
+    format_user_prompt,
 )
 
 
@@ -71,8 +82,44 @@ def load_catalog(
 
 
 def build_presentation_table(catalog: pd.DataFrame) -> pd.DataFrame:
-    """Shuffle each original and mirror pair once and build presentation rows."""
-    raise NotImplementedError
+    """Shuffle each original and mirror pair once and build presentation rows.
+
+    Parameters
+    ----------
+    catalog
+        Validated catalog rows.
+
+    Returns
+    -------
+    pd.DataFrame
+        Presentation rows with gold order and prompt text.
+    """
+    rng = random.Random(SHUFFLE_SEED)
+    ordered = catalog.sort_values(ID_COLUMN, kind=SORT_KIND)
+    rows = [_presentation_row(rng, row) for _, row in ordered.iterrows()]
+    return pd.DataFrame(rows, columns=list(PRESENTATION_COLUMNS))
+
+
+def _presentation_row(rng: random.Random, row: pd.Series) -> dict[str, str]:
+    original = str(row[ORIGINAL_TEXT_COLUMN]).strip()
+    mirror = str(row[MIRRORED_TEXT_COLUMN]).strip()
+    if rng.getrandbits(1) == 0:
+        first_text = original
+        second_text = mirror
+        gold_slot = GoldHumanSlot.FIRST.value
+    else:
+        first_text = mirror
+        second_text = original
+        gold_slot = GoldHumanSlot.SECOND.value
+    return {
+        ID_COLUMN: str(row[ID_COLUMN]).strip(),
+        FIRST_TEXT_COLUMN: first_text,
+        SECOND_TEXT_COLUMN: second_text,
+        GOLD_HUMAN_SLOT_COLUMN: gold_slot,
+        SAMPLED_STANCE_COLUMN: str(row[SAMPLED_STANCE_COLUMN]).strip(),
+        SAMPLE_TOXICITY_TYPE_COLUMN: str(row[SAMPLE_TOXICITY_TYPE_COLUMN]).strip(),
+        PROMPT_TEXT_COLUMN: format_user_prompt(first_text, second_text),
+    }
 
 
 def load_presentations(store: CampaignObjectStore) -> pd.DataFrame:
