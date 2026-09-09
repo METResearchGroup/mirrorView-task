@@ -108,7 +108,9 @@ def preferred_cell_counts(
 
 
 def assign_feeds(joined: pd.DataFrame) -> list[UserAssignment]:
-    """Fill 10:10 feeds first, then left-only feeds, stealing only inside a party.
+    """Assign 10 left and 10 right feeds first, then left-only feeds.
+
+    When a cell is short, posts come only from other cells of the same party.
 
     Parameters
     ----------
@@ -259,12 +261,12 @@ def _take_posts(
 
 
 def shuffle_feed(post_ids: list[str], user_id: int) -> list[str]:
-    """Shuffle 20 post ids with a numpy generator seeded by the user id.
+    """Shuffle 20 post ids with the user id as the seed.
 
     Parameters
     ----------
     post_ids
-        Twenty post ids in recipe order.
+        Twenty post ids for one feed.
     user_id
         1-based user id used as the generator seed.
 

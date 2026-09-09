@@ -4,7 +4,7 @@
 
 Each user sees 20 posts.
 
-The command fills as many 10 left and 10 right feeds as remaining right labels allow, then fills leftover left remaining into 20 left and 0 right feeds. The command does not write 11:9 or 12:8 feeds.
+The run writes as many feeds with 10 left posts and 10 right posts as the remaining right labels can fill. It then writes the leftover left remaining labels into feeds with 20 left posts and 0 right posts. It does not write an 11 and 9 feed or a 12 and 8 feed.
 
 Cells, from `sampled_stance` and `sample_toxicity_type`:
 
@@ -15,11 +15,11 @@ Cells, from `sampled_stance` and `sample_toxicity_type`:
 - cell 5: right, `sample_middle_toxicity`
 - cell 6: right, `sample_high_toxicity`
 
-Recipe 1 preferred counts, in cell order 1 through 6, are 2, 5, 3, 2, 5, 3. Recipe 2 preferred counts are 3, 5, 2, 3, 5, 2. Odd 10:10 users inside the 10:10 block use recipe 1. Even 10:10 users use recipe 2. Odd left-only users inside the left-only block prefer 4, 10, 6 from cells 1, 2, 3. Even left-only users prefer 6, 10, 4.
+Recipe 1 preferred counts, in cell order 1 through 6, are 2, 5, 3, 2, 5, 3. Recipe 2 preferred counts are 3, 5, 2, 3, 5, 2. Odd 10:10 users inside the 10:10 block use recipe 1. Even 10:10 users use recipe 2. Odd left-only users inside the left-only block prefer 4, 10, 6 from cells 1, 2, 3. Even left-only users prefer 6, 10, 4 from cells 1, 2, 3.
 
-Steal stays inside left cells 1 to 3, or inside right cells 4 to 6. Party mix does not slip. Toxicity may slip. Remaining count may go below 0, and those assignments are extra labels.
+If a cell does not have enough remaining labels, the assignment takes posts from another cell of the same party. Left posts come only from cells 1 to 3, and right posts come only from cells 4 to 6. A 10 left and 10 right feed stays 10 and 10, and a left-only feed stays 20 left and 0 right. The toxicity mix can differ from the preferred counts. A post can be assigned more times than its remaining count, and those extra assignments are extra labels.
 
-Catalog shuffle uses seed 0. Each feed is shuffled with a numpy generator seeded by the user id.
+Catalog shuffle uses seed 0. Each feed is shuffled with a seed equal to the user id.
 
 Output columns are `id`, `assigned_post_ids`, `political_party`, `condition`, `created_at`.
 

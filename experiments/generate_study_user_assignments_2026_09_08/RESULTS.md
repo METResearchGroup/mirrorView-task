@@ -48,3 +48,6 @@ Users 1 through 3202 have 10 left and 10 right. Users 3203 through 3879 have 20 
 | 4 right low | 8791 | 8796 |
 | 5 right middle | 16594 | 16594 |
 | 6 right high | 6630 | 6630 |
+
+Wrap extras filled cell 1 (18 extra left) and cell 4 (5 extra right). Cells 2, 3, 5, and 6 have assigned slots equal to remaining labels.
+

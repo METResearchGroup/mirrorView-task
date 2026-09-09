@@ -104,7 +104,7 @@ def load_old_catalog_with_cells() -> pd.DataFrame:
 def load_new_catalog_with_cells(
     source: NewCatalogSource, store: CampaignObjectStore, cache_dir: Path
 ) -> pd.DataFrame:
-    """Download the pinned new catalog and keep cell columns.
+    """Download the pinned new catalog and return the stance and toxicity columns.
 
     Parameters
     ----------
@@ -267,12 +267,12 @@ def _require_columns(frame: pd.DataFrame, column_names: tuple[str, ...]) -> None
 
 
 def write_shuffled_stimuli(joined: pd.DataFrame, experiment_dir: Path) -> Path:
-    """Write the seed-0 shuffled joined table locally.
+    """Shuffle the joined remaining-label rows with seed 0 and write them locally.
 
     Parameters
     ----------
     joined
-        Joined remaining-label rows already shuffled.
+        Joined remaining-label rows, not yet shuffled.
     experiment_dir
         Folder that receives ``shuffled_stimuli.csv``.
 

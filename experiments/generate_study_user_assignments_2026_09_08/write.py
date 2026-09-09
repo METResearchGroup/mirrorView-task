@@ -15,7 +15,6 @@ import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import (
     CampaignObjectStore,
-    s3_uri,
 )
 from data_platform.utils.object_store import sha256_hex
 from experiments.calculate_required_label_count_per_stimulus_post_2026_09_09.constants import (
@@ -33,7 +32,6 @@ from experiments.generate_study_user_assignments_2026_09_08.constants import (
     DATASET_FILENAME,
     EMPTY_POLITICAL_PARTY,
     LocalCsvWrite,
-    OUTPUT_S3_BUCKET,
     OUTPUT_S3_KEY,
     PINNED_REMAINING_LABELS_S3_URI,
     PINNED_REMAINING_LABELS_SHA256,
@@ -199,6 +197,8 @@ def _results_markdown(result: AssignmentRunResult) -> str:
             "| Cell | Remaining | Assigned slots |",
             "| ---- | --------: | -------------: |",
             *_cell_rows(result),
+            "",
+            "Wrap extras are assigned slots minus remaining labels in each cell.",
             "",
         ]
     )
