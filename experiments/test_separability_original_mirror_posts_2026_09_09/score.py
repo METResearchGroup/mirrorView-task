@@ -21,6 +21,8 @@ from data_platform.generate_features.s3_feature_campaign import (
 from experiments.test_separability_original_mirror_posts_2026_09_09.constants import (
     BINARY_NEGATIVE,
     BINARY_POSITIVE,
+    CATALOG_SHA256,
+    CATALOG_S3_URI,
     CELL_KEY_SEPARATOR,
     CELL_STANCE_ORDER,
     CELL_TOXICITY_ORDER,
@@ -30,8 +32,10 @@ from experiments.test_separability_original_mirror_posts_2026_09_09.constants im
     ID_COLUMN,
     LABELS_ROOT_URI,
     METRIC_ROW_ORDER,
+    OUTPUT_S3_BUCKET,
     OVERALL_ENGINE_ORDER,
     POSITIVE_HUMAN_SLOT,
+    PRESENTATION_S3_KEY,
     PRINT_METRIC_ACCURACY,
     PRINT_METRIC_F1,
     PRINT_METRIC_PRECISION,
@@ -42,6 +46,15 @@ from experiments.test_separability_original_mirror_posts_2026_09_09.constants im
     SOURCE_RECORD_ID_COLUMN,
     TOXICITY_LABEL_BY_SAMPLE_TYPE,
     ZERO_METRICS,
+)
+from lib.constants import DEFAULT_BEDROCK_NOVA_MICRO, DEFAULT_LLM_MODEL
+
+PRESENTATION_S3_URI = f"s3://{OUTPUT_S3_BUCKET}/{PRESENTATION_S3_KEY}"
+PRESENTATION_SHA256 = (
+    "561611741b60157b7551ed2c5bf25395b488f17cdd61088979903405d5502fdc"
+)
+EXPERIMENT_COMMAND = (
+    "experiments/test_separability_original_mirror_posts_2026_09_09/run.py"
 )
 
 
@@ -162,10 +175,52 @@ def _binary_labels(values: pd.Series) -> list[int]:
 def _results_markdown(
     overall_rows: list[dict[str, object]], cell_sections: list[dict[str, object]]
 ) -> str:
-    lines = ["# Separability results", "", "## Overall", "", _overall_table(overall_rows)]
+    lines = [
+        "# Separability results",
+        "",
+        "## Commands",
+        "",
+        _command_block("--write-presentation"),
+        "",
+        "```bash",
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine openai --smoke",
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine bedrock --smoke",
+        "```",
+        "",
+        "```bash",
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine openai",
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} --engine bedrock",
+        "```",
+        "",
+        _command_block("--score"),
+        "",
+        "## Catalog",
+        "",
+        f"Object `{CATALOG_S3_URI}` SHA-256 `{CATALOG_SHA256}`.",
+        "",
+        "## Presentation",
+        "",
+        f"Object `{PRESENTATION_S3_URI}` SHA-256 `{PRESENTATION_SHA256}`.",
+        "",
+        "## Models",
+        "",
+        f"OpenAI model `{DEFAULT_LLM_MODEL}`. Bedrock model `{DEFAULT_BEDROCK_NOVA_MICRO}`.",
+        "",
+        "## Overall",
+        "",
+        _overall_table(overall_rows),
+    ]
     for section in cell_sections:
         lines.extend(["", f"## Cells {section['engine']}", "", _cell_table(section)])
     return "\n".join(lines) + "\n"
+
+
+def _command_block(flag: str) -> str:
+    return (
+        "```bash\n"
+        f"PYTHONPATH=. uv run python {EXPERIMENT_COMMAND} {flag}\n"
+        "```"
+    )
 
 
 def _overall_table(rows: list[dict[str, object]]) -> str:
