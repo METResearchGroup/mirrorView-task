@@ -7,11 +7,6 @@ Run from the repo root:
 
 from __future__ import annotations
 
-from experiments.test_separability_original_mirror_posts_2026_09_09.constants import (
-    FIRST_TEXT_COLUMN,
-    SECOND_TEXT_COLUMN,
-)
-
 USER_PROMPT_TEMPLATE = """Post first:
 {first_text}
 
@@ -23,10 +18,32 @@ SYSTEM_PROMPT = """You will receive two social media posts. Exactly one post was
 
 
 def separability_system_prompt() -> str:
-    """Return the system prompt for separability labeling."""
+    """Return the system prompt for separability labeling.
+
+    Returns
+    -------
+    str
+        Fixed system prompt for both engines.
+    """
     return SYSTEM_PROMPT
 
 
 def format_user_prompt(first_text: str, second_text: str) -> str:
-    """Interpolate the user message for one presentation pair."""
-    raise NotImplementedError
+    """Interpolate the user message for one presentation pair.
+
+    Parameters
+    ----------
+    first_text
+        Text shown as the first post.
+    second_text
+        Text shown as the second post.
+
+    Returns
+    -------
+    str
+        User message sent to the model.
+    """
+    return USER_PROMPT_TEMPLATE.format(
+        first_text=first_text,
+        second_text=second_text,
+    )

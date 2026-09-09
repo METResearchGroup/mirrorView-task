@@ -41,5 +41,22 @@ class SeparabilityRow(BaseModel):
 
 
 def separability_spec(engine_type: Literal["openai", "bedrock"]) -> FeatureSpec:
-    """Return the FeatureSpec for one labeling engine."""
-    raise NotImplementedError
+    """Return the FeatureSpec for one labeling engine.
+
+    Parameters
+    ----------
+    engine_type
+        ``openai`` or ``bedrock``.
+
+    Returns
+    -------
+    FeatureSpec
+        Separability feature definition for the chosen engine.
+    """
+    return FeatureSpec(
+        name=FEATURE_NAME,
+        model=SeparabilityRow,
+        engine_type=engine_type,
+        system_prompt=separability_system_prompt(),
+        llm_output_schema=LlmSeparabilityModel,
+    )
