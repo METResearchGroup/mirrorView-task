@@ -61,6 +61,12 @@ experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/dataset.parquet
 experiments/upsample_medium_toxicity_posts_2026_09_08/cache/
 experiments/upsample_medium_toxicity_posts_2026_09_08/upsample_2000_medium_toxicity_posts.parquet
 
+# Right-high upsample parquet and Perspective scores live in S3 or local scratch.
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/cache/
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/upsample_300_right_high_toxicity_posts.parquet
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/unified_upsampled_posts.parquet
+experiments/upsample_right_leaning_high_toxicity_posts_2026_09_08/outputs/perspective_scores.parquet
+
 # Flip generation cache lives in S3. Keep the local copy out of git.
 experiments/generate_flips_2026_09_08/cache/
 
