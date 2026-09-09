@@ -11,6 +11,30 @@ import sys
 
 import typer
 
+from data_platform.generate_features.models import CampaignRunConfig
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from experiments.test_separability_original_mirror_posts_2026_09_09.constants import (
+    CACHE_DIRNAME,
+    CAMPAIGN_ID,
+    CAMPAIGN_PLATFORM,
+    DATASET_ID,
+    EXPERIMENT_DIRNAME,
+    OUTPUT_S3_BUCKET,
+    PREPROCESSED_RUN,
+    campaign_batch_size,
+    pinned_catalog,
+)
+from experiments.test_separability_original_mirror_posts_2026_09_09.loader import (
+    build_presentation_table,
+    load_catalog,
+)
+from experiments.test_separability_original_mirror_posts_2026_09_09.write import (
+    print_presentation_summary,
+    require_presentation_key_absent,
+    upload_presentation,
+)
+from lib.constants import REPO_ROOT
+
 app = typer.Typer(add_completion=False, no_args_is_help=True)
 
 
@@ -26,7 +50,50 @@ def main(
     score: bool = typer.Option(False, "--score", help="Score labels and write RESULTS.md."),
 ) -> None:
     """Write presentations, label pairs, or score results."""
+    _validate_cli_flags(write_presentation, engine, smoke, score)
+    if write_presentation:
+        _write_presentation()
+        return
+    if score:
+        raise NotImplementedError
+    if engine is not None:
+        raise NotImplementedError
+
+
+def _validate_cli_flags(
+    write_presentation: bool,
+    engine: str | None,
+    smoke: bool,
+    score: bool,
+) -> None:
+    """Ensure mutually exclusive CLI modes are not combined."""
     raise NotImplementedError
+
+
+def _write_presentation() -> None:
+    """Download the catalog, shuffle pairs, and upload presentations.parquet."""
+    source = pinned_catalog()
+    experiment_dir = _experiment_dir()
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    require_presentation_key_absent(store)
+    catalog = load_catalog(source, store, experiment_dir / CACHE_DIRNAME)
+    presentations = build_presentation_table(catalog)
+    result = upload_presentation(presentations, experiment_dir, store)
+    print_presentation_summary(result)
+
+
+def _experiment_dir():
+    return REPO_ROOT / "experiments" / EXPERIMENT_DIRNAME
+
+
+def _campaign_config() -> CampaignRunConfig:
+    return CampaignRunConfig(
+        campaign_id=CAMPAIGN_ID,
+        dataset_id=DATASET_ID,
+        preprocessed_run=PREPROCESSED_RUN,
+        platform=CAMPAIGN_PLATFORM,
+        batch_size=campaign_batch_size(),
+    )
 
 
 if __name__ == "__main__":
