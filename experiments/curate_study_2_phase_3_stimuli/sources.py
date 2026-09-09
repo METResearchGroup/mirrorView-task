@@ -22,7 +22,7 @@ class FlipSource:
 class JoinedFlipPool:
     """Posts that have a successful flip, from the sample and the upsample."""
 
-    rows: object
+    rows: pd.DataFrame
     sample_joined_rows: int
     upsample_joined_rows: int
 
