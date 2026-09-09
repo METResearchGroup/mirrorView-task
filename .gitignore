@@ -88,6 +88,10 @@ experiments/calculate_required_label_count_per_stimulus_post_2026_09_08/cache/
 experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/cache/
 experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/required_label_count_per_stimulus_post.csv
 
+# Separability experiment outputs live in S3. Keep local cache and outputs out of git.
+experiments/test_separability_original_mirror_posts_2026_09_09/cache/
+experiments/test_separability_original_mirror_posts_2026_09_09/outputs/
+
 # OS generated files
 .DS_Store
 .DS_Store?
