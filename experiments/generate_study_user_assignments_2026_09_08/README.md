@@ -44,6 +44,10 @@ PYTHONPATH=. uv run pytest experiments/generate_study_user_assignments_2026_09_0
 
 The live remaining-labels file produced 3,202 feeds at 10 left and 10 right, 677 left-only feeds, and 3,879 assignment rows.
 
+## Verification page
+
+`verification.html` in this folder runs the party-mix and extra-label checks in the browser. It loads `verification_dataset.json` by default, and it can recompute the same checks from local CSVs.
+
 
 ## Run
 
