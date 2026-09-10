@@ -21,7 +21,7 @@ from tqdm import tqdm
 from lib.timestamp_utils import get_current_timestamp
 
 
-BUCKET_NAME = "jspsych-mirror-view-4"
+BUCKET_NAME = "jspsych-mirror-view-2026-09-09"
 S3_PREFIX = "data/prolific/"
 EXPECTED_FILE_COUNT = 190
 DATA_CSV_FILENAME_PATTERN = re.compile(

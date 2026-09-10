@@ -19,10 +19,11 @@ let isTestParticipant = false;
  * - webapp/lambdas/lambda-save-jspsych-data.mjs — does not read this object; persisted condition comes from jsPsych CSV columns.
  * - study_participant_assignment_interface/lambdas/get_study_assignment/handler.py — DEFAULT_STUDY_CONDITIONS and
  *   precomputed CSV rows (assignedPostIds per row) must match conditions + postsPerParticipant + post ID semantics.
+ * Source of truth: jobs/config/mirrorview_2026_09_09.yaml
  */
 const STUDY_SPEC = Object.freeze({
     /** Written to jsPsych data as experiment_version. Used only in this file (assignParticipantId). */
-    experimentVersion: 'mirrorview_scaled_2026_06_18',
+    experimentVersion: 'mirrorview_2026_09_09',
 
     /** Prolific participant ID query key. Used only in this file (setupExperiment URL parsing). */
     prolificUrlQueryParam: 'PROLIFIC_PID',
@@ -61,7 +62,7 @@ const STUDY_SPEC = Object.freeze({
     postsPerParticipant: 20,
 
     /** Path relative to static site / S3 root (local file under webapp/public/). */
-    postCatalogPath: 'img/flips_scaled_2026_06_18.csv',
+    postCatalogPath: 'img/flips_2026_09_09.csv',
     /** CSV column used as canonical post id. */
     postIdField: 'post_primary_key',
     /** CSV column for display numeric id (optional; flips.csv has no post_number). */

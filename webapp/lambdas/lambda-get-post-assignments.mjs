@@ -13,7 +13,10 @@ const lambdaClient = new LambdaClient({ region: AWS_REGION });
 const ASSIGNMENT_LAMBDA_NAME = process.env.ASSIGNMENT_LAMBDA_NAME;
 const TEST_ITERATION_PREFIX = process.env.TEST_ITERATION_PREFIX || "dev-";
 
-// Source of truth: jobs/config/mirrorview_scaled_2026_06_18.yaml (assignment.batch_uri)
+// Source of truth: jobs/config/mirrorview_2026_09_09.yaml (assignment.batch_uri)
+const SEPTEMBER_ITERATION_PREFIX = "mirrorview_2026_09_09";
+const SEPTEMBER_BATCH_URI =
+    "s3://jspsych-mirror-view-2026-09-09/precomputed_assignments/2026_09_09-23:06:02";
 const SCALED_ITERATION_PREFIX = "mirrorview_scaled_2026_06_18";
 const SCALED_BATCH_URI =
     "s3://jspsych-mirror-view-4/precomputed_assignments/2026_06_18-15:48:34";
@@ -27,6 +30,9 @@ const STUDY_SPEC = Object.freeze({
 
 function resolveAssignmentBatchUri(studyIterationId) {
     const base = studyIterationId.replace(/^dev-/, "");
+    if (base === SEPTEMBER_ITERATION_PREFIX || base.startsWith(SEPTEMBER_ITERATION_PREFIX)) {
+        return SEPTEMBER_BATCH_URI;
+    }
     if (base === SCALED_ITERATION_PREFIX || base.startsWith(SCALED_ITERATION_PREFIX)) {
         return SCALED_BATCH_URI;
     }

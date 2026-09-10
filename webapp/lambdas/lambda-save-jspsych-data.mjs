@@ -2,7 +2,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { randomUUID } from "node:crypto";
 
 const AWS_REGION = process.env.AWS_REGION || "us-east-2";
-const BUCKET_NAME = process.env.BUCKET_NAME || "jspsych-mirror-view-4";
+const BUCKET_NAME = process.env.BUCKET_NAME || "jspsych-mirror-view-2026-09-09";
 const DATA_PREFIX_PROLIFIC = process.env.DATA_PREFIX_PROLIFIC || "data/prolific/";
 const DATA_PREFIX_TEST = process.env.DATA_PREFIX_TEST || "data/test/";
 

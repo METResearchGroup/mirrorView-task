@@ -20,6 +20,7 @@ Reference configs:
 |-----|-------------|----------------|
 | Pilot Phase 2 (baseline) | `jobs/config/mirrorview_default_2026_04_24.yaml` | *(none; uses `webapp/infra/main.tf` defaults)* |
 | Scaled run (June 2026) | `jobs/config/mirrorview_scaled_2026_06_18.yaml` | `jobs/terraform/mirrorview_scaled_2026_06_18.tfvars` |
+| September 2026 run | `jobs/config/mirrorview_2026_09_09.yaml` | *(none; one-off script creates `jspsych-mirror-view-2026-09-09`)* |
 
 ---
 
