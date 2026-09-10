@@ -136,8 +136,8 @@ const politicalExpressionAttentionCheck = {
             <h1 style="margin: 0 0 16px; font-size: 28px; color: #3d1c63; font-weight: 700;">Political Expression</h1>
             <div style="background: #f3f4f6; border-left: 5px solid #5b2d8e; padding: 14px 16px; margin-bottom: 22px; color: #4b5563; line-height: 1.5; font-size: 15px;">
                 The next section is about expressing political views on social media.
-                By political expression, we mean any sort of public display of your political opinions —
-                this includes posts, reposts, and comments.
+                By political expression, we mean any sort of public display of your political opinions.
+                This includes posts, reposts, and comments.
             </div>
             <p style="font-size: 16px; line-height: 1.55; margin: 0 0 18px; color: #1f2937;">
                 To make sure we are on the same page, select the messages expressing a political view.
