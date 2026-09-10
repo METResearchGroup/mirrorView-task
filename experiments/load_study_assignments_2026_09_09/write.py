@@ -35,6 +35,8 @@ from experiments.load_study_assignments_2026_09_09.constants import (
     FIRST_ASSIGNMENT_INDEX,
     LoadRunResult,
     LocalFileWrite,
+    MIRROR_TEXT_COLUMN,
+    ORIGINAL_TEXT_COLUMN,
     PARTY_DEMOCRAT,
     PARTY_REPUBLICAN,
     POST_ID_COLUMN,
@@ -159,7 +161,7 @@ def _verification_payload(
     catalog: pd.DataFrame,
 ) -> dict[str, object]:
     posts = _verification_posts(catalog)
-    index_by_id = {post_id: index for index, (post_id, _stance) in enumerate(posts)}
+    index_by_id = {post[0]: index for index, post in enumerate(posts)}
     stance_lookup = stance_by_id(catalog)
     feeds = _verification_feeds(democrat + republican, index_by_id, stance_lookup)
     return {
@@ -173,7 +175,14 @@ def _verification_payload(
 def _verification_posts(catalog: pd.DataFrame) -> list[list[str]]:
     ids = catalog[POST_ID_COLUMN].astype(str).tolist()
     stances = catalog[STANCE_COLUMN].astype(str).tolist()
-    return [[post_id, stance] for post_id, stance in zip(ids, stances)]
+    originals = catalog[ORIGINAL_TEXT_COLUMN].astype(str).tolist()
+    mirrors = catalog[MIRROR_TEXT_COLUMN].astype(str).tolist()
+    return [
+        [post_id, stance, original, mirror]
+        for post_id, stance, original, mirror in zip(
+            ids, stances, originals, mirrors
+        )
+    ]
 
 
 def _verification_feeds(

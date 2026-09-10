@@ -68,6 +68,13 @@
     .cell-right { color: var(--right); }
     .status { margin: 0.75rem 0; color: var(--muted); }
     .table-scroll { max-height: 36rem; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
+    #feed-detail { max-height: 40rem; overflow: auto; }
+    .post-block { border-bottom: 1px solid var(--line); padding: 0.75rem 0; }
+    .post-block:last-child { border-bottom: 0; }
+    .text-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.45rem; }
+    .text-pair .label { color: var(--muted); font-size: 0.8rem; }
+    .text-pair p { margin: 0.25rem 0 0; white-space: pre-wrap; }
+    @media (max-width: 900px) { .text-pair { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -131,7 +138,12 @@
     function datasetFromJson(payload) {
       return {
         meta: payload.meta,
-        posts: payload.posts.map(([id, stance]) => ({ id, stance })),
+        posts: payload.posts.map(([id, stance, original, mirror]) => ({
+          id,
+          stance,
+          original: original || "",
+          mirror: mirror || "",
+        })),
         feeds: payload.feeds.map(([id, party, kind, indexes]) => ({ id, party, kind, indexes })),
         checks: payload.checks,
       };
@@ -235,24 +247,42 @@
       });
     }
 
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function postBlock(order, post) {
+      return `<article class="post-block">
+        <p>
+          <span class="num">${order + 1}.</span>
+          <span class="post">${escapeHtml(post.id)}</span>
+          <span class="cell-${post.stance}"> ${escapeHtml(post.stance)}</span>
+        </p>
+        <div class="text-pair">
+          <div>
+            <div class="label">Original</div>
+            <p>${escapeHtml(post.original)}</p>
+          </div>
+          <div>
+            <div class="label">Mirrored</div>
+            <p>${escapeHtml(post.mirror)}</p>
+          </div>
+        </div>
+      </article>`;
+    }
+
     function showFeed(feedId) {
       state.selected = feedId;
       const feed = state.feeds.find((item) => item.id === feedId);
       const mix = mixForFeed(feed);
-      const rows = feed.indexes.map((idx, order) => {
-        const post = state.posts[idx];
-        return `<tr>
-          <td class="num">${order + 1}</td>
-          <td class="post">${post.id}</td>
-          <td class="cell-${post.stance}">${post.stance}</td>
-        </tr>`;
-      }).join("");
+      const blocks = feed.indexes.map((idx, order) => postBlock(order, state.posts[idx])).join("");
       document.getElementById("feed-detail").innerHTML = `
-        <p><strong>${feed.id}</strong>, ${mix.left} left / ${mix.right} right</p>
-        <table>
-          <thead><tr><th>#</th><th>Post</th><th>Stance</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <p><strong>${escapeHtml(feed.id)}</strong>, ${mix.left} left / ${mix.right} right</p>
+        ${blocks}
       `;
       document.querySelectorAll(".feed-row").forEach((row) => {
         row.classList.toggle("selected", row.dataset.id === feedId);
@@ -270,9 +300,9 @@
     }
 
     async function loadBundled() {
-      const relative = "./verification_dataset.json";
+      const relative = "./verification_dataset.json?v=texts";
       const githubRaw = "https://raw.githubusercontent.com/METResearchGroup/mirrorView-task/init-study-assignments-2026-09-09/experiments/load_study_assignments_2026_09_09/verification_dataset.json";
-      const response = await fetch(relative).catch(() => null);
+      const response = await fetch(relative, { cache: "no-store" }).catch(() => null);
       if (response && response.ok) {
         setDataset(datasetFromJson(await response.json()));
         return;
