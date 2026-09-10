@@ -67,6 +67,7 @@
     .cell-left { color: var(--left); }
     .cell-right { color: var(--right); }
     .status { margin: 0.75rem 0; color: var(--muted); }
+    .table-scroll { max-height: 36rem; overflow: auto; border: 1px solid var(--line); border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -103,7 +104,7 @@
           <option value="ten_ten">10 left / 10 right</option>
           <option value="left_only">20 left / 0 right</option>
         </select>
-        <input id="id-search" type="search" placeholder="democrat-training_assisted-0001" />
+        <input id="id-search" name="feed-id-query" type="search" placeholder="Search by id" autocomplete="off" />
       </div>
       <div id="feed-table"></div>
     </section>
@@ -125,8 +126,7 @@
       firstRepublican: "republican-training_assisted-0001",
       lastRepublican: "republican-training_assisted-1939",
     };
-    const PAGE_SIZE = 25;
-    let state = { meta: {}, posts: [], feeds: [], checks: [], page: 0, selected: null, filtered: [] };
+    let state = { meta: {}, posts: [], feeds: [], checks: [], selected: null, filtered: [] };
 
     function datasetFromJson(payload) {
       return {
@@ -205,14 +205,11 @@
         const idOk = !query || feed.id.toLowerCase().includes(query);
         return partyOk && kindOk && idOk;
       });
-      state.page = 0;
       renderFeeds();
     }
 
     function renderFeeds() {
-      const start = state.page * PAGE_SIZE;
-      const pageRows = state.filtered.slice(start, start + PAGE_SIZE);
-      const body = pageRows.map((feed) => {
+      const body = state.filtered.map((feed) => {
         const mix = mixForFeed(feed);
         const selected = state.selected === feed.id ? " selected" : "";
         const kindLabel = feed.kind === "ten_ten" ? "10:10" : feed.kind === "left_only" ? "left-only" : feed.kind;
@@ -225,11 +222,13 @@
         </tr>`;
       }).join("");
       document.getElementById("feed-table").innerHTML = `
-        <table>
-          <thead><tr><th>Id</th><th>Party</th><th>Kind</th><th class="num">Left</th><th class="num">Right</th></tr></thead>
-          <tbody>${body}</tbody>
-        </table>
-        <p class="muted">Showing ${start + 1}-${Math.min(start + PAGE_SIZE, state.filtered.length)} of ${state.filtered.length}</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Id</th><th>Party</th><th>Kind</th><th class="num">Left</th><th class="num">Right</th></tr></thead>
+            <tbody>${body}</tbody>
+          </table>
+        </div>
+        <p class="muted">Showing ${state.filtered.length} of ${state.feeds.length} feeds</p>
       `;
       document.querySelectorAll(".feed-row").forEach((row) => {
         row.addEventListener("click", () => showFeed(row.dataset.id));
@@ -255,11 +254,13 @@
           <tbody>${rows}</tbody>
         </table>
       `;
-      renderFeeds();
+      document.querySelectorAll(".feed-row").forEach((row) => {
+        row.classList.toggle("selected", row.dataset.id === feedId);
+      });
     }
 
     function setDataset(dataset) {
-      state = { ...state, ...dataset, page: 0, selected: null, filtered: dataset.feeds };
+      state = { ...state, ...dataset, selected: null, filtered: dataset.feeds };
       document.getElementById("load-status").textContent =
         `Loaded ${dataset.feeds.length} feeds and ${dataset.posts.length} catalog posts.`;
       renderSummary();
@@ -286,6 +287,7 @@
     document.getElementById("party-filter").addEventListener("change", applyFilter);
     document.getElementById("kind-filter").addEventListener("change", applyFilter);
     document.getElementById("id-search").addEventListener("input", applyFilter);
+    document.getElementById("id-search").value = "";
     loadBundled().catch((error) => {
       document.getElementById("load-status").textContent = error.message;
     });
