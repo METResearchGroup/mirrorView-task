@@ -8,3 +8,4 @@
 - Follow the logic of the survey.
 - After political affiliation, complete the **Political Expression** attention check (select all that apply). Participants always continue even if they fail; filter later on `attention_check_passed` in the saved CSV (`1` = pass, `0` = fail).
 - Review S3 + DynamoDB for records.
+- [Here's an example PR](https://github.com/METResearchGroup/mirrorView-task/pull/16).
