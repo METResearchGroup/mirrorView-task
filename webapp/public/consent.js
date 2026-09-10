@@ -48,7 +48,7 @@ const consent = {
             <p>We cannot promise any benefits to you or others from your taking part in this research. However, possible benefits include the inherent interest value you may find in responding to the surveys and the value in contributing to society's understanding of the human mind.</p>
 
             <h2>Is there any way being in this study could be bad for me?</h2>
-            <p>We do not foresee any risk in participating in this study. If you choose to participate, the effects should be comparable to those you would experience from completing a task and answering questions for few minutes using a mouse and keyboard (or using your smartphone). It is possible that you might be uncomfortable answering certain questions; if that happens, you may simply leave them blank. A possible risk for any research is that confidentiality could be compromised—that people outside the study might get hold of confidential study information. We will do everything we can to minimize this risk, as described in more detail later in this form.</p>
+            <p>We do not foresee any risk in participating in this study. If you choose to participate, the effects should be comparable to those you would experience from completing a task and answering questions for few minutes using a mouse and keyboard (or using your smartphone). It is possible that you might be uncomfortable answering certain questions; if that happens, you may simply leave them blank. A possible risk for any research is that confidentiality could be compromised, and that people outside the study might get hold of confidential study information. We will do everything we can to minimize this risk, as described in more detail later in this form.</p>
 
             <h2>What happens if I do not want to be in this research, or I change my mind later?</h2>
             <p>Participation in this research is voluntary. You may decide to participate or not to participate. If you do not want to be in this study or withdraw from the study at any point, your decision will not affect your compensation or relationship with Northwestern University in any way. You can leave the research at any time and it will not be held against you.</p>
@@ -71,7 +71,7 @@ const consent = {
 
             <h2>Who can I talk to?</h2>
             <p>If you have questions, concerns, or complaints, you can contact the Principal Investigator, William Brady, at william.brady@kellogg.northwestern.edu (or, if email doesn't work for you, via phone at 704-904-6420.</p>
-            <p>This research has been reviewed and approved by an Institutional Review Board ("IRB") – an IRB is a committee that protects the rights of people who participate in research studies. You may contact the IRB by phone at (312) 503-9338 or by email at irb@northwestern.edu if:</p>
+            <p>This research has been reviewed and approved by an Institutional Review Board ("IRB"). An IRB is a committee that protects the rights of people who participate in research studies. You may contact the IRB by phone at (312) 503-9338 or by email at irb@northwestern.edu if:</p>
             <ul>
                 <li>Your questions, concerns, or complaints are not being answered by the research team.</li>
                 <li>You cannot reach the research team.</li>
