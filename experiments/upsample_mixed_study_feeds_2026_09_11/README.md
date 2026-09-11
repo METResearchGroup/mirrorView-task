@@ -20,6 +20,8 @@ Local file and experimental S3 object: `study_user_assignments_overprovisioned.c
 
 S3 URI: `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`
 
+Live party row counts: 2440 Democrat, 2439 Republican.
+
 Required files: `constants.py`, `upsample.py`, `split_batch.py`, `write.py`, `run.py`, and the pytest files under `tests/`.
 
 ## Tests

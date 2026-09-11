@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-11
+
+1. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
+
 ## 2026-09-09
 
 1. Operators can start the September 2026 MirrorView run from Democrat and Republican assignment files in `jspsych-mirror-view-2026-09-09`. Participants get rewritten ids such as `democrat-training_assisted-0001`, and saved CSVs land in that bucket. [PR #283](https://github.com/METResearchGroup/mirrorView-task/pull/283)
