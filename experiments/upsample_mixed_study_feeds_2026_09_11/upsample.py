@@ -7,11 +7,17 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import numpy as np
+
 from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
 from experiments.load_study_assignments_2026_09_09.split import (
     FeedKind,
     feed_kind,
     parse_post_ids,
+)
+from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
+    MINIMUM_CLONE_COUNT,
+    SAMPLE_WITH_REPLACEMENT,
 )
 
 
@@ -46,7 +52,17 @@ def sample_mixed_feeds(
     ValueError
         When ``count`` is less than 1 or greater than ``len(mixed_rows)``.
     """
-    raise NotImplementedError
+    _require_sample_count(count, len(mixed_rows))
+    rng = np.random.Generator(np.random.PCG64(seed))
+    indexes = rng.choice(
+        len(mixed_rows), size=count, replace=SAMPLE_WITH_REPLACEMENT
+    )
+    return [mixed_rows[index] for index in indexes]
+
+
+def _require_sample_count(count: int, pool_size: int) -> None:
+    if count < MINIMUM_CLONE_COUNT or count > pool_size:
+        raise ValueError(f"count={count} pool={pool_size}")
 
 
 def clone_mixed_feeds(
