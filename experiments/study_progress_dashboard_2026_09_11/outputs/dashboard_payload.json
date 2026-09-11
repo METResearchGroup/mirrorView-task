@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026_09_11-02:50:36",
+  "generated_at": "2026_09_11-12:26:10",
   "study": {
     "id": "mirrorview",
     "iteration_id": "mirrorview_2026_09_09",
@@ -14,50 +14,50 @@
     "evaluation_mode": "linked_fate"
   },
   "export": {
-    "path": "export_jspsych-mirror-view-2026-09-09_2026_09_11-02:49:19.csv",
-    "timestamp": "2026_09_11-02:49:19",
-    "files": 1033,
-    "unique_completers": 1031,
-    "rows": 34089
+    "path": "export_jspsych-mirror-view-2026-09-09_2026_09_11-12:26:09.csv",
+    "timestamp": "2026_09_11-12:26:09",
+    "files": 1074,
+    "unique_completers": 1072,
+    "rows": 35442
   },
   "progress": {
-    "assigned_valid": 1085,
-    "completers": 1031,
-    "missing_from_export": 54,
-    "assignments_in_grace_window": 3,
-    "eligible_assigned": 1082,
-    "missing_after_grace": 51,
-    "attrition_rate_raw": 0.0498,
-    "attrition_rate_after_grace": 0.0471,
+    "assigned_valid": 1128,
+    "completers": 1072,
+    "missing_from_export": 56,
+    "assignments_in_grace_window": 4,
+    "eligible_assigned": 1124,
+    "missing_after_grace": 53,
+    "attrition_rate_raw": 0.0496,
+    "attrition_rate_after_grace": 0.0472,
     "grace_minutes": 20,
-    "labels": 20660,
-    "user_progress": 0.2658,
-    "assignment_progress": 0.2797,
-    "label_progress": 0.2663
+    "labels": 21480,
+    "user_progress": 0.2764,
+    "assignment_progress": 0.2908,
+    "label_progress": 0.2769
   },
   "all": {
-    "n_completers": 1031,
-    "n_files": 1033,
+    "n_completers": 1072,
+    "n_files": 1074,
     "n_repeat_submitters": 2,
-    "attention_passed": 811,
-    "attention_failed": 220,
-    "attention_pass_rate": 0.7866,
+    "attention_passed": 842,
+    "attention_failed": 230,
+    "attention_pass_rate": 0.7854,
     "affiliation": {
-      "democrat": 438,
-      "republican": 305,
-      "other": 288
+      "democrat": 453,
+      "republican": 326,
+      "other": 293
     },
     "trial_decisions": {
-      "n_trials": 20660,
-      "n_keep": 14317,
-      "n_remove": 6343,
-      "keep_share": 0.693,
-      "remove_share": 0.307
+      "n_trials": 21480,
+      "n_keep": 14877,
+      "n_remove": 6603,
+      "keep_share": 0.6926,
+      "remove_share": 0.3074
     },
     "user_keep_rate": {
-      "n": 1031,
-      "mean": 0.6931,
-      "std": 0.2183,
+      "n": 1072,
+      "mean": 0.6927,
+      "std": 0.2184,
       "min": 0.0,
       "p05": 0.3,
       "p25": 0.55,
@@ -67,9 +67,9 @@
       "max": 1.0
     },
     "user_remove_rate": {
-      "n": 1031,
-      "mean": 0.3069,
-      "std": 0.2183,
+      "n": 1072,
+      "mean": 0.3073,
+      "std": 0.2184,
       "min": 0.0,
       "p05": 0.0,
       "p25": 0.15,
@@ -78,13 +78,13 @@
       "p95": 0.7,
       "max": 1.0
     },
-    "always_keep": 106,
+    "always_keep": 110,
     "always_remove": 7,
-    "always_keep_passed": 90,
+    "always_keep_passed": 94,
     "always_keep_failed": 16,
     "passed_user_remove_rate": {
-      "n": 811,
-      "mean": 0.2947,
+      "n": 842,
+      "mean": 0.2943,
       "std": 0.2208,
       "min": 0.0,
       "p05": 0.0,
@@ -95,9 +95,9 @@
       "max": 1.0
     },
     "failed_user_remove_rate": {
-      "n": 220,
-      "mean": 0.352,
-      "std": 0.2032,
+      "n": 230,
+      "mean": 0.355,
+      "std": 0.2029,
       "min": 0.0,
       "p05": 0.0,
       "p25": 0.2,
@@ -110,110 +110,110 @@
       {
         "bin": "0 to 10%",
         "count": 18,
-        "share": 0.0175
+        "share": 0.0168
       },
       {
         "bin": "10 to 20%",
         "count": 14,
-        "share": 0.0136
+        "share": 0.0131
       },
       {
         "bin": "20 to 30%",
-        "count": 32,
-        "share": 0.031
+        "count": 34,
+        "share": 0.0317
       },
       {
         "bin": "30 to 40%",
-        "count": 50,
-        "share": 0.0485
+        "count": 54,
+        "share": 0.0504
       },
       {
         "bin": "40 to 50%",
-        "count": 104,
-        "share": 0.1009
+        "count": 110,
+        "share": 0.1026
       },
       {
         "bin": "50 to 60%",
-        "count": 148,
-        "share": 0.1435
+        "count": 153,
+        "share": 0.1427
       },
       {
         "bin": "60 to 70%",
-        "count": 183,
-        "share": 0.1775
+        "count": 190,
+        "share": 0.1772
       },
       {
         "bin": "70 to 80%",
-        "count": 156,
-        "share": 0.1513
+        "count": 160,
+        "share": 0.1493
       },
       {
         "bin": "80 to 90%",
-        "count": 150,
-        "share": 0.1455
+        "count": 154,
+        "share": 0.1437
       },
       {
         "bin": "90 to 100%",
-        "count": 176,
-        "share": 0.1707
+        "count": 185,
+        "share": 0.1726
       }
     ],
     "remove_rate_histogram": [
       {
         "bin": "0 to 10%",
-        "count": 239,
-        "share": 0.2318
+        "count": 250,
+        "share": 0.2332
       },
       {
         "bin": "10 to 20%",
-        "count": 163,
-        "share": 0.1581
+        "count": 168,
+        "share": 0.1567
       },
       {
         "bin": "20 to 30%",
-        "count": 178,
-        "share": 0.1726
+        "count": 183,
+        "share": 0.1707
       },
       {
         "bin": "30 to 40%",
-        "count": 171,
-        "share": 0.1659
+        "count": 178,
+        "share": 0.166
       },
       {
         "bin": "40 to 50%",
-        "count": 113,
-        "share": 0.1096
+        "count": 118,
+        "share": 0.1101
       },
       {
         "bin": "50 to 60%",
-        "count": 83,
-        "share": 0.0805
+        "count": 86,
+        "share": 0.0802
       },
       {
         "bin": "60 to 70%",
-        "count": 44,
-        "share": 0.0427
+        "count": 48,
+        "share": 0.0448
       },
       {
         "bin": "70 to 80%",
-        "count": 20,
-        "share": 0.0194
+        "count": 21,
+        "share": 0.0196
       },
       {
         "bin": "80 to 90%",
         "count": 7,
-        "share": 0.0068
+        "share": 0.0065
       },
       {
         "bin": "90 to 100%",
         "count": 13,
-        "share": 0.0126
+        "share": 0.0121
       }
     ],
     "influence": {
-      "n": 1031,
-      "mean": 4.6246,
-      "std": 1.8663,
+      "n": 1072,
+      "mean": 4.6101,
+      "std": 1.8599,
       "min": 1.0,
       "p05": 1.0,
       "p25": 4.0,
@@ -223,45 +223,45 @@
       "max": 7.0
     },
     "session_minutes": {
-      "n": 1031,
-      "mean": 11.8603,
-      "std": 5.9457,
+      "n": 1072,
+      "mean": 11.9262,
+      "std": 5.9331,
       "min": 2.081,
-      "p05": 4.8827,
-      "p25": 8.0617,
-      "p50": 10.6111,
-      "p75": 14.2382,
-      "p95": 22.6025,
+      "p05": 4.9296,
+      "p25": 8.1048,
+      "p50": 10.6511,
+      "p75": 14.3387,
+      "p95": 22.9276,
       "max": 59.1029
     },
     "median_rt_ms": {
-      "n": 1031,
-      "mean": 13942.7228,
-      "std": 7703.808,
+      "n": 1072,
+      "mean": 14053.2397,
+      "std": 7733.768,
       "min": 488.8,
-      "p05": 3972.175,
-      "p25": 8402.0,
-      "p50": 12785.0,
-      "p75": 18107.0,
-      "p95": 27972.275,
+      "p05": 3983.0225,
+      "p25": 8497.8375,
+      "p50": 12891.575,
+      "p75": 18200.55,
+      "p95": 28166.2275,
       "max": 57159.0
     },
     "age": {
-      "n": 1031,
-      "mean": 44.0339,
-      "std": 15.6365,
+      "n": 1072,
+      "mean": 44.3507,
+      "std": 15.7278,
       "min": 18.0,
       "p05": 21.0,
-      "p25": 30.0,
+      "p25": 31.0,
       "p50": 43.0,
       "p75": 57.0,
       "p95": 69.0,
-      "max": 82.0
+      "max": 85.0
     },
     "ideology": {
-      "n": 1031,
-      "mean": 3.6421,
-      "std": 1.7284,
+      "n": 1072,
+      "mean": 3.6549,
+      "std": 1.7319,
       "min": 1.0,
       "p05": 1.0,
       "p25": 2.0,
@@ -271,46 +271,47 @@
       "max": 7.0
     },
     "gender": {
-      "female": 528,
-      "male": 491,
+      "female": 546,
+      "male": 513,
       "non-binary": 10,
-      "prefer_not": 2
+      "prefer_not": 2,
+      "other": 1
     },
     "education": {
-      "bachelors": 408,
-      "some_college": 312,
-      "masters": 146,
-      "high_school": 127,
-      "doctorate": 34,
-      "other": 4
+      "bachelors": 425,
+      "some_college": 323,
+      "masters": 154,
+      "high_school": 128,
+      "doctorate": 36,
+      "other": 6
     },
-    "assigned": 1085,
+    "assigned": 1128,
     "target_slots": 3879
   },
   "by_party": {
     "democrat": {
-      "n_completers": 611,
-      "n_files": 611,
+      "n_completers": 630,
+      "n_files": 630,
       "n_repeat_submitters": 0,
-      "attention_passed": 504,
-      "attention_failed": 107,
-      "attention_pass_rate": 0.8249,
+      "attention_passed": 518,
+      "attention_failed": 112,
+      "attention_pass_rate": 0.8222,
       "affiliation": {
-        "democrat": 438,
+        "democrat": 453,
         "republican": 0,
-        "other": 173
+        "other": 177
       },
       "trial_decisions": {
-        "n_trials": 12220,
-        "n_keep": 8330,
-        "n_remove": 3890,
-        "keep_share": 0.6817,
-        "remove_share": 0.3183
+        "n_trials": 12600,
+        "n_keep": 8581,
+        "n_remove": 4019,
+        "keep_share": 0.681,
+        "remove_share": 0.319
       },
       "user_keep_rate": {
-        "n": 611,
-        "mean": 0.6817,
-        "std": 0.2178,
+        "n": 630,
+        "mean": 0.681,
+        "std": 0.2189,
         "min": 0.0,
         "p05": 0.3,
         "p25": 0.55,
@@ -320,9 +321,9 @@
         "max": 1.0
       },
       "user_remove_rate": {
-        "n": 611,
-        "mean": 0.3183,
-        "std": 0.2178,
+        "n": 630,
+        "mean": 0.319,
+        "std": 0.2189,
         "min": 0.0,
         "p05": 0.0,
         "p25": 0.15,
@@ -331,14 +332,14 @@
         "p95": 0.7,
         "max": 1.0
       },
-      "always_keep": 51,
+      "always_keep": 53,
       "always_remove": 3,
-      "always_keep_passed": 45,
+      "always_keep_passed": 47,
       "always_keep_failed": 6,
       "passed_user_remove_rate": {
-        "n": 504,
-        "mean": 0.3057,
-        "std": 0.2186,
+        "n": 518,
+        "mean": 0.305,
+        "std": 0.2192,
         "min": 0.0,
         "p05": 0.0,
         "p25": 0.15,
@@ -348,125 +349,125 @@
         "max": 1.0
       },
       "failed_user_remove_rate": {
-        "n": 107,
-        "mean": 0.378,
-        "std": 0.205,
+        "n": 112,
+        "mean": 0.3835,
+        "std": 0.2064,
         "min": 0.0,
-        "p05": 0.015,
+        "p05": 0.0275,
         "p25": 0.25,
         "p50": 0.4,
         "p75": 0.5,
-        "p95": 0.7,
+        "p95": 0.7225,
         "max": 0.8
       },
       "keep_rate_histogram": [
         {
           "bin": "0 to 10%",
           "count": 8,
-          "share": 0.0131
+          "share": 0.0127
         },
         {
           "bin": "10 to 20%",
           "count": 10,
-          "share": 0.0164
+          "share": 0.0159
         },
         {
           "bin": "20 to 30%",
-          "count": 22,
-          "share": 0.036
+          "count": 24,
+          "share": 0.0381
         },
         {
           "bin": "30 to 40%",
-          "count": 32,
-          "share": 0.0524
+          "count": 35,
+          "share": 0.0556
         },
         {
           "bin": "40 to 50%",
-          "count": 70,
-          "share": 0.1146
+          "count": 72,
+          "share": 0.1143
         },
         {
           "bin": "50 to 60%",
           "count": 93,
-          "share": 0.1522
+          "share": 0.1476
         },
         {
           "bin": "60 to 70%",
-          "count": 103,
-          "share": 0.1686
+          "count": 107,
+          "share": 0.1698
         },
         {
           "bin": "70 to 80%",
-          "count": 87,
-          "share": 0.1424
+          "count": 90,
+          "share": 0.1429
         },
         {
           "bin": "80 to 90%",
           "count": 92,
-          "share": 0.1506
+          "share": 0.146
         },
         {
           "bin": "90 to 100%",
-          "count": 94,
-          "share": 0.1538
+          "count": 99,
+          "share": 0.1571
         }
       ],
       "remove_rate_histogram": [
         {
           "bin": "0 to 10%",
-          "count": 133,
-          "share": 0.2177
+          "count": 138,
+          "share": 0.219
         },
         {
           "bin": "10 to 20%",
-          "count": 97,
-          "share": 0.1588
+          "count": 100,
+          "share": 0.1587
         },
         {
           "bin": "20 to 30%",
-          "count": 100,
-          "share": 0.1637
+          "count": 102,
+          "share": 0.1619
         },
         {
           "bin": "30 to 40%",
-          "count": 100,
-          "share": 0.1637
+          "count": 102,
+          "share": 0.1619
         },
         {
           "bin": "40 to 50%",
-          "count": 69,
-          "share": 0.1129
+          "count": 70,
+          "share": 0.1111
         },
         {
           "bin": "50 to 60%",
-          "count": 53,
-          "share": 0.0867
+          "count": 55,
+          "share": 0.0873
         },
         {
           "bin": "60 to 70%",
-          "count": 35,
-          "share": 0.0573
+          "count": 38,
+          "share": 0.0603
         },
         {
           "bin": "70 to 80%",
-          "count": 15,
-          "share": 0.0245
+          "count": 16,
+          "share": 0.0254
         },
         {
           "bin": "80 to 90%",
           "count": 2,
-          "share": 0.0033
+          "share": 0.0032
         },
         {
           "bin": "90 to 100%",
           "count": 7,
-          "share": 0.0115
+          "share": 0.0111
         }
       ],
       "influence": {
-        "n": 611,
-        "mean": 4.6236,
-        "std": 1.8596,
+        "n": 630,
+        "mean": 4.6159,
+        "std": 1.8518,
         "min": 1.0,
         "p05": 1.0,
         "p25": 4.0,
@@ -476,45 +477,45 @@
         "max": 7.0
       },
       "session_minutes": {
-        "n": 611,
-        "mean": 11.4965,
-        "std": 5.5836,
+        "n": 630,
+        "mean": 11.5417,
+        "std": 5.5896,
         "min": 2.145,
-        "p05": 4.9144,
-        "p25": 7.8994,
-        "p50": 10.2389,
-        "p75": 13.671,
-        "p95": 21.013,
+        "p05": 4.9417,
+        "p25": 8.0145,
+        "p50": 10.2619,
+        "p75": 13.6797,
+        "p95": 21.3034,
         "max": 41.6455
       },
       "median_rt_ms": {
-        "n": 611,
-        "mean": 13807.7252,
-        "std": 7512.6461,
+        "n": 630,
+        "mean": 13888.929,
+        "std": 7571.5196,
         "min": 691.55,
-        "p05": 4417.375,
-        "p25": 8494.725,
-        "p50": 12545.3,
-        "p75": 17503.9,
-        "p95": 27332.525,
+        "p05": 4416.4375,
+        "p25": 8537.7375,
+        "p50": 12609.25,
+        "p75": 17536.7,
+        "p95": 27403.335,
         "max": 57159.0
       },
       "age": {
-        "n": 611,
-        "mean": 43.2995,
-        "std": 15.8398,
+        "n": 630,
+        "mean": 43.6143,
+        "std": 16.0186,
         "min": 18.0,
         "p05": 21.0,
         "p25": 30.0,
         "p50": 41.0,
         "p75": 57.0,
         "p95": 70.0,
-        "max": 79.0
+        "max": 85.0
       },
       "ideology": {
-        "n": 611,
-        "mean": 2.5516,
-        "std": 1.1936,
+        "n": 630,
+        "mean": 2.5492,
+        "std": 1.1841,
         "min": 1.0,
         "p05": 1.0,
         "p25": 2.0,
@@ -524,45 +525,46 @@
         "max": 7.0
       },
       "gender": {
-        "female": 320,
-        "male": 280,
+        "female": 325,
+        "male": 293,
         "non-binary": 9,
-        "prefer_not": 2
+        "prefer_not": 2,
+        "other": 1
       },
       "education": {
-        "bachelors": 248,
-        "some_college": 174,
-        "masters": 89,
+        "bachelors": 254,
+        "some_college": 178,
+        "masters": 96,
         "high_school": 74,
-        "doctorate": 23,
-        "other": 3
+        "doctorate": 24,
+        "other": 4
       },
-      "assigned": 639,
+      "assigned": 659,
       "target_slots": 1940
     },
     "republican": {
-      "n_completers": 420,
-      "n_files": 422,
+      "n_completers": 442,
+      "n_files": 444,
       "n_repeat_submitters": 2,
-      "attention_passed": 307,
-      "attention_failed": 113,
-      "attention_pass_rate": 0.731,
+      "attention_passed": 324,
+      "attention_failed": 118,
+      "attention_pass_rate": 0.733,
       "affiliation": {
         "democrat": 0,
-        "republican": 305,
-        "other": 115
+        "republican": 326,
+        "other": 116
       },
       "trial_decisions": {
-        "n_trials": 8440,
-        "n_keep": 5987,
-        "n_remove": 2453,
-        "keep_share": 0.7094,
-        "remove_share": 0.2906
+        "n_trials": 8880,
+        "n_keep": 6296,
+        "n_remove": 2584,
+        "keep_share": 0.709,
+        "remove_share": 0.291
       },
       "user_keep_rate": {
-        "n": 420,
-        "mean": 0.7096,
-        "std": 0.2183,
+        "n": 442,
+        "mean": 0.7093,
+        "std": 0.217,
         "min": 0.0,
         "p05": 0.3,
         "p25": 0.6,
@@ -572,9 +574,9 @@
         "max": 1.0
       },
       "user_remove_rate": {
-        "n": 420,
-        "mean": 0.2904,
-        "std": 0.2183,
+        "n": 442,
+        "mean": 0.2907,
+        "std": 0.217,
         "min": 0.0,
         "p05": 0.0,
         "p25": 0.1,
@@ -583,26 +585,26 @@
         "p95": 0.7,
         "max": 1.0
       },
-      "always_keep": 55,
+      "always_keep": 57,
       "always_remove": 4,
-      "always_keep_passed": 45,
+      "always_keep_passed": 47,
       "always_keep_failed": 10,
       "passed_user_remove_rate": {
-        "n": 307,
-        "mean": 0.2767,
-        "std": 0.2236,
+        "n": 324,
+        "mean": 0.2772,
+        "std": 0.2226,
         "min": 0.0,
         "p05": 0.0,
         "p25": 0.1,
         "p50": 0.25,
         "p75": 0.4,
-        "p95": 0.7,
+        "p95": 0.6925,
         "max": 1.0
       },
       "failed_user_remove_rate": {
-        "n": 113,
-        "mean": 0.3274,
-        "std": 0.1993,
+        "n": 118,
+        "mean": 0.328,
+        "std": 0.1967,
         "min": 0.0,
         "p05": 0.0,
         "p25": 0.2,
@@ -615,110 +617,110 @@
         {
           "bin": "0 to 10%",
           "count": 10,
-          "share": 0.0238
+          "share": 0.0226
         },
         {
           "bin": "10 to 20%",
           "count": 4,
-          "share": 0.0095
+          "share": 0.009
         },
         {
           "bin": "20 to 30%",
           "count": 10,
-          "share": 0.0238
+          "share": 0.0226
         },
         {
           "bin": "30 to 40%",
-          "count": 18,
-          "share": 0.0429
+          "count": 19,
+          "share": 0.043
         },
         {
           "bin": "40 to 50%",
-          "count": 34,
-          "share": 0.081
+          "count": 38,
+          "share": 0.086
         },
         {
           "bin": "50 to 60%",
-          "count": 55,
-          "share": 0.131
+          "count": 60,
+          "share": 0.1357
         },
         {
           "bin": "60 to 70%",
-          "count": 80,
-          "share": 0.1905
+          "count": 83,
+          "share": 0.1878
         },
         {
           "bin": "70 to 80%",
-          "count": 69,
-          "share": 0.1643
+          "count": 70,
+          "share": 0.1584
         },
         {
           "bin": "80 to 90%",
-          "count": 58,
-          "share": 0.1381
+          "count": 62,
+          "share": 0.1403
         },
         {
           "bin": "90 to 100%",
-          "count": 82,
-          "share": 0.1952
+          "count": 86,
+          "share": 0.1946
         }
       ],
       "remove_rate_histogram": [
         {
           "bin": "0 to 10%",
-          "count": 106,
-          "share": 0.2524
+          "count": 112,
+          "share": 0.2534
         },
         {
           "bin": "10 to 20%",
-          "count": 66,
-          "share": 0.1571
+          "count": 68,
+          "share": 0.1538
         },
         {
           "bin": "20 to 30%",
-          "count": 78,
-          "share": 0.1857
+          "count": 81,
+          "share": 0.1833
         },
         {
           "bin": "30 to 40%",
-          "count": 71,
-          "share": 0.169
+          "count": 76,
+          "share": 0.1719
         },
         {
           "bin": "40 to 50%",
-          "count": 44,
-          "share": 0.1048
+          "count": 48,
+          "share": 0.1086
         },
         {
           "bin": "50 to 60%",
-          "count": 30,
-          "share": 0.0714
+          "count": 31,
+          "share": 0.0701
         },
         {
           "bin": "60 to 70%",
-          "count": 9,
-          "share": 0.0214
+          "count": 10,
+          "share": 0.0226
         },
         {
           "bin": "70 to 80%",
           "count": 5,
-          "share": 0.0119
+          "share": 0.0113
         },
         {
           "bin": "80 to 90%",
           "count": 5,
-          "share": 0.0119
+          "share": 0.0113
         },
         {
           "bin": "90 to 100%",
           "count": 6,
-          "share": 0.0143
+          "share": 0.0136
         }
       ],
       "influence": {
-        "n": 420,
-        "mean": 4.6262,
-        "std": 1.8783,
+        "n": 442,
+        "mean": 4.6018,
+        "std": 1.8735,
         "min": 1.0,
         "p05": 1.0,
         "p25": 4.0,
@@ -728,45 +730,45 @@
         "max": 7.0
       },
       "session_minutes": {
-        "n": 420,
-        "mean": 12.3896,
-        "std": 6.4062,
+        "n": 442,
+        "mean": 12.4744,
+        "std": 6.3573,
         "min": 2.081,
-        "p05": 4.874,
-        "p25": 8.3687,
-        "p50": 11.3746,
-        "p75": 14.519,
-        "p95": 24.5345,
+        "p05": 4.9276,
+        "p25": 8.4231,
+        "p50": 11.4062,
+        "p75": 14.7884,
+        "p95": 24.6881,
         "max": 59.1029
       },
       "median_rt_ms": {
-        "n": 420,
-        "mean": 14139.1121,
-        "std": 7978.7119,
+        "n": 442,
+        "mean": 14287.4382,
+        "std": 7962.106,
         "min": 488.8,
-        "p05": 3431.38,
-        "p25": 8289.9375,
-        "p50": 13385.25,
-        "p75": 18480.4375,
-        "p95": 29171.795,
+        "p05": 3442.7375,
+        "p25": 8347.4875,
+        "p50": 13565.9,
+        "p75": 18626.0,
+        "p95": 29153.27,
         "max": 51093.8
       },
       "age": {
-        "n": 420,
-        "mean": 45.1024,
-        "std": 15.2916,
+        "n": 442,
+        "mean": 45.4005,
+        "std": 15.2603,
         "min": 18.0,
-        "p05": 21.0,
+        "p05": 22.0,
         "p25": 31.0,
-        "p50": 45.5,
+        "p50": 46.0,
         "p75": 58.0,
-        "p95": 68.05,
+        "p95": 68.0,
         "max": 82.0
       },
       "ideology": {
-        "n": 420,
-        "mean": 5.2286,
-        "std": 1.006,
+        "n": 442,
+        "mean": 5.2308,
+        "std": 1.024,
         "min": 2.0,
         "p05": 4.0,
         "p25": 5.0,
@@ -776,19 +778,19 @@
         "max": 7.0
       },
       "gender": {
-        "male": 211,
-        "female": 208,
+        "female": 221,
+        "male": 220,
         "non-binary": 1
       },
       "education": {
-        "bachelors": 160,
-        "some_college": 138,
-        "masters": 57,
-        "high_school": 53,
-        "doctorate": 11,
-        "other": 1
+        "bachelors": 171,
+        "some_college": 145,
+        "masters": 58,
+        "high_school": 54,
+        "doctorate": 12,
+        "other": 2
       },
-      "assigned": 446,
+      "assigned": 469,
       "target_slots": 1939
     }
   },
@@ -796,94 +798,94 @@
     {
       "party": "democrat",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 2444,
-      "n_keep": 2087,
-      "n_remove": 357,
-      "keep_share": 0.8539,
-      "remove_share": 0.1461
+      "n_trials": 2520,
+      "n_keep": 2148,
+      "n_remove": 372,
+      "keep_share": 0.8524,
+      "remove_share": 0.1476
     },
     {
       "party": "democrat",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 6110,
-      "n_keep": 4406,
-      "n_remove": 1704,
-      "keep_share": 0.7211,
-      "remove_share": 0.2789
+      "n_trials": 6300,
+      "n_keep": 4534,
+      "n_remove": 1766,
+      "keep_share": 0.7197,
+      "remove_share": 0.2803
     },
     {
       "party": "democrat",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 3666,
-      "n_keep": 1837,
-      "n_remove": 1829,
-      "keep_share": 0.5011,
-      "remove_share": 0.4989
+      "n_trials": 3780,
+      "n_keep": 1899,
+      "n_remove": 1881,
+      "keep_share": 0.5024,
+      "remove_share": 0.4976
     },
     {
       "party": "republican",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 2532,
-      "n_keep": 2099,
-      "n_remove": 433,
-      "keep_share": 0.829,
-      "remove_share": 0.171
+      "n_trials": 2664,
+      "n_keep": 2213,
+      "n_remove": 451,
+      "keep_share": 0.8307,
+      "remove_share": 0.1693
     },
     {
       "party": "republican",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 4220,
-      "n_keep": 3045,
-      "n_remove": 1175,
-      "keep_share": 0.7216,
-      "remove_share": 0.2784
+      "n_trials": 4440,
+      "n_keep": 3200,
+      "n_remove": 1240,
+      "keep_share": 0.7207,
+      "remove_share": 0.2793
     },
     {
       "party": "republican",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 1688,
-      "n_keep": 843,
-      "n_remove": 845,
-      "keep_share": 0.4994,
-      "remove_share": 0.5006
+      "n_trials": 1776,
+      "n_keep": 883,
+      "n_remove": 893,
+      "keep_share": 0.4972,
+      "remove_share": 0.5028
     }
   ],
   "remove_rate_by_stance": [
     {
       "party": "democrat",
       "sampled_stance": "left",
-      "n_trials": 6110,
-      "n_keep": 4137,
-      "n_remove": 1973,
-      "keep_share": 0.6771,
-      "remove_share": 0.3229
+      "n_trials": 6300,
+      "n_keep": 4259,
+      "n_remove": 2041,
+      "keep_share": 0.676,
+      "remove_share": 0.324
     },
     {
       "party": "democrat",
       "sampled_stance": "right",
-      "n_trials": 6110,
-      "n_keep": 4193,
-      "n_remove": 1917,
-      "keep_share": 0.6863,
-      "remove_share": 0.3137
+      "n_trials": 6300,
+      "n_keep": 4322,
+      "n_remove": 1978,
+      "keep_share": 0.686,
+      "remove_share": 0.314
     },
     {
       "party": "republican",
       "sampled_stance": "left",
-      "n_trials": 4220,
-      "n_keep": 2988,
-      "n_remove": 1232,
-      "keep_share": 0.7081,
-      "remove_share": 0.2919
+      "n_trials": 4440,
+      "n_keep": 3142,
+      "n_remove": 1298,
+      "keep_share": 0.7077,
+      "remove_share": 0.2923
     },
     {
       "party": "republican",
       "sampled_stance": "right",
-      "n_trials": 4220,
-      "n_keep": 2999,
-      "n_remove": 1221,
-      "keep_share": 0.7107,
-      "remove_share": 0.2893
+      "n_trials": 4440,
+      "n_keep": 3154,
+      "n_remove": 1286,
+      "keep_share": 0.7104,
+      "remove_share": 0.2896
     }
   ],
   "remove_rate_by_party_stance_toxicity": [
@@ -891,216 +893,216 @@
       "party": "democrat",
       "sampled_stance": "left",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 1222,
-      "n_keep": 1047,
-      "n_remove": 175,
-      "keep_share": 0.8568,
-      "remove_share": 0.1432
+      "n_trials": 1260,
+      "n_keep": 1076,
+      "n_remove": 184,
+      "keep_share": 0.854,
+      "remove_share": 0.146
     },
     {
       "party": "democrat",
       "sampled_stance": "left",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 3055,
-      "n_keep": 2212,
-      "n_remove": 843,
-      "keep_share": 0.7241,
-      "remove_share": 0.2759
+      "n_trials": 3150,
+      "n_keep": 2272,
+      "n_remove": 878,
+      "keep_share": 0.7213,
+      "remove_share": 0.2787
     },
     {
       "party": "democrat",
       "sampled_stance": "left",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 1833,
-      "n_keep": 878,
-      "n_remove": 955,
-      "keep_share": 0.479,
-      "remove_share": 0.521
+      "n_trials": 1890,
+      "n_keep": 911,
+      "n_remove": 979,
+      "keep_share": 0.482,
+      "remove_share": 0.518
     },
     {
       "party": "democrat",
       "sampled_stance": "right",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 1222,
-      "n_keep": 1040,
-      "n_remove": 182,
-      "keep_share": 0.8511,
-      "remove_share": 0.1489
+      "n_trials": 1260,
+      "n_keep": 1072,
+      "n_remove": 188,
+      "keep_share": 0.8508,
+      "remove_share": 0.1492
     },
     {
       "party": "democrat",
       "sampled_stance": "right",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 3055,
-      "n_keep": 2194,
-      "n_remove": 861,
-      "keep_share": 0.7182,
-      "remove_share": 0.2818
+      "n_trials": 3150,
+      "n_keep": 2262,
+      "n_remove": 888,
+      "keep_share": 0.7181,
+      "remove_share": 0.2819
     },
     {
       "party": "democrat",
       "sampled_stance": "right",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 1833,
-      "n_keep": 959,
-      "n_remove": 874,
-      "keep_share": 0.5232,
-      "remove_share": 0.4768
+      "n_trials": 1890,
+      "n_keep": 988,
+      "n_remove": 902,
+      "keep_share": 0.5228,
+      "remove_share": 0.4772
     },
     {
       "party": "republican",
       "sampled_stance": "left",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 1266,
-      "n_keep": 1053,
-      "n_remove": 213,
-      "keep_share": 0.8318,
-      "remove_share": 0.1682
-    },
-    {
-      "party": "republican",
-      "sampled_stance": "left",
-      "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 2110,
-      "n_keep": 1530,
-      "n_remove": 580,
-      "keep_share": 0.7251,
-      "remove_share": 0.2749
-    },
-    {
-      "party": "republican",
-      "sampled_stance": "left",
-      "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 844,
-      "n_keep": 405,
-      "n_remove": 439,
-      "keep_share": 0.4799,
-      "remove_share": 0.5201
-    },
-    {
-      "party": "republican",
-      "sampled_stance": "right",
-      "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 1266,
-      "n_keep": 1046,
+      "n_trials": 1332,
+      "n_keep": 1112,
       "n_remove": 220,
-      "keep_share": 0.8262,
-      "remove_share": 0.1738
+      "keep_share": 0.8348,
+      "remove_share": 0.1652
+    },
+    {
+      "party": "republican",
+      "sampled_stance": "left",
+      "sample_toxicity_type": "sample_middle_toxicity",
+      "n_trials": 2220,
+      "n_keep": 1605,
+      "n_remove": 615,
+      "keep_share": 0.723,
+      "remove_share": 0.277
+    },
+    {
+      "party": "republican",
+      "sampled_stance": "left",
+      "sample_toxicity_type": "sample_high_toxicity",
+      "n_trials": 888,
+      "n_keep": 425,
+      "n_remove": 463,
+      "keep_share": 0.4786,
+      "remove_share": 0.5214
+    },
+    {
+      "party": "republican",
+      "sampled_stance": "right",
+      "sample_toxicity_type": "sample_low_toxicity",
+      "n_trials": 1332,
+      "n_keep": 1101,
+      "n_remove": 231,
+      "keep_share": 0.8266,
+      "remove_share": 0.1734
     },
     {
       "party": "republican",
       "sampled_stance": "right",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 2110,
-      "n_keep": 1515,
-      "n_remove": 595,
-      "keep_share": 0.718,
-      "remove_share": 0.282
+      "n_trials": 2220,
+      "n_keep": 1595,
+      "n_remove": 625,
+      "keep_share": 0.7185,
+      "remove_share": 0.2815
     },
     {
       "party": "republican",
       "sampled_stance": "right",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 844,
-      "n_keep": 438,
-      "n_remove": 406,
-      "keep_share": 0.519,
-      "remove_share": 0.481
+      "n_trials": 888,
+      "n_keep": 458,
+      "n_remove": 430,
+      "keep_share": 0.5158,
+      "remove_share": 0.4842
     }
   ],
   "cell_coverage": [
     {
       "cell": 1,
-      "n_labels": 2488,
+      "n_labels": 2592,
       "target_slots": 10463,
-      "progress": 0.2378
+      "progress": 0.2477
     },
     {
       "cell": 2,
-      "n_labels": 5165,
+      "n_labels": 5370,
       "target_slots": 22001,
-      "progress": 0.2348
+      "progress": 0.2441
     },
     {
       "cell": 3,
-      "n_labels": 2677,
+      "n_labels": 2778,
       "target_slots": 13096,
-      "progress": 0.2044
+      "progress": 0.2121
     },
     {
       "cell": 4,
-      "n_labels": 2488,
+      "n_labels": 2592,
       "target_slots": 8796,
-      "progress": 0.2829
+      "progress": 0.2947
     },
     {
       "cell": 5,
-      "n_labels": 5165,
+      "n_labels": 5370,
       "target_slots": 16594,
-      "progress": 0.3113
+      "progress": 0.3236
     },
     {
       "cell": 6,
-      "n_labels": 2677,
+      "n_labels": 2778,
       "target_slots": 6630,
-      "progress": 0.4038
+      "progress": 0.419
     }
   ],
   "post_coverage": {
-    "unique_posts_labeled": 17215,
+    "unique_posts_labeled": 17457,
     "target_posts": 18899,
     "labels_per_post": {
-      "n": 17215,
-      "mean": 1.2001,
-      "std": 0.426,
+      "n": 17457,
+      "mean": 1.2305,
+      "std": 0.4524,
       "min": 1.0,
       "p05": 1.0,
       "p25": 1.0,
       "p50": 1.0,
       "p75": 1.0,
       "p95": 2.0,
-      "max": 3.0
+      "max": 4.0
     },
-    "posts_with_1_label": 13954,
-    "posts_with_2_labels": 3077,
-    "posts_with_3_or_more": 184,
-    "posts_unlabeled_this_wave": 1684
+    "posts_with_1_label": 13671,
+    "posts_with_2_labels": 3550,
+    "posts_with_3_or_more": 236,
+    "posts_unlabeled_this_wave": 1442
   },
   "toxicity_mix": [
     {
       "party": "democrat",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 2444,
+      "n_trials": 2520,
       "share": 0.2
     },
     {
       "party": "democrat",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 6110,
+      "n_trials": 6300,
       "share": 0.5
     },
     {
       "party": "democrat",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 3666,
+      "n_trials": 3780,
       "share": 0.3
     },
     {
       "party": "republican",
       "sample_toxicity_type": "sample_low_toxicity",
-      "n_trials": 2532,
+      "n_trials": 2664,
       "share": 0.3
     },
     {
       "party": "republican",
       "sample_toxicity_type": "sample_middle_toxicity",
-      "n_trials": 4220,
+      "n_trials": 4440,
       "share": 0.5
     },
     {
       "party": "republican",
       "sample_toxicity_type": "sample_high_toxicity",
-      "n_trials": 1688,
+      "n_trials": 1776,
       "share": 0.2
     }
   ],
@@ -1162,29 +1164,74 @@
     },
     {
       "hour": "2026-09-11 02:00 UTC",
-      "democrat": 1,
+      "democrat": 2,
       "republican": 6
+    },
+    {
+      "hour": "2026-09-11 03:00 UTC",
+      "democrat": 6,
+      "republican": 3
+    },
+    {
+      "hour": "2026-09-11 04:00 UTC",
+      "democrat": 1,
+      "republican": 4
+    },
+    {
+      "hour": "2026-09-11 06:00 UTC",
+      "democrat": 4,
+      "republican": 2
+    },
+    {
+      "hour": "2026-09-11 07:00 UTC",
+      "democrat": 0,
+      "republican": 1
+    },
+    {
+      "hour": "2026-09-11 08:00 UTC",
+      "democrat": 0,
+      "republican": 2
+    },
+    {
+      "hour": "2026-09-11 09:00 UTC",
+      "democrat": 1,
+      "republican": 3
+    },
+    {
+      "hour": "2026-09-11 10:00 UTC",
+      "democrat": 3,
+      "republican": 2
+    },
+    {
+      "hour": "2026-09-11 11:00 UTC",
+      "democrat": 3,
+      "republican": 2
+    },
+    {
+      "hour": "2026-09-11 12:00 UTC",
+      "democrat": 1,
+      "republican": 4
     }
   ],
   "assignment_pace": {
     "busiest_hour": "2026-09-10 18:00 UTC",
     "busiest_n": 388,
-    "top3_share": 0.8276
+    "top3_share": 0.7961
   },
   "attention_remove_share": {
     "passed": {
-      "n_trials": 16240,
-      "n_keep": 11455,
-      "n_remove": 4785,
-      "keep_share": 0.7054,
-      "remove_share": 0.2946
+      "n_trials": 16860,
+      "n_keep": 11899,
+      "n_remove": 4961,
+      "keep_share": 0.7058,
+      "remove_share": 0.2942
     },
     "failed": {
-      "n_trials": 4420,
-      "n_keep": 2862,
-      "n_remove": 1558,
-      "keep_share": 0.6475,
-      "remove_share": 0.3525
+      "n_trials": 4620,
+      "n_keep": 2978,
+      "n_remove": 1642,
+      "keep_share": 0.6446,
+      "remove_share": 0.3554
     }
   }
 }

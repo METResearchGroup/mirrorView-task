@@ -31,4 +31,4 @@ PYTHONPATH=. uv run pytest experiments/study_progress_dashboard_2026_09_11/tests
 
 ## View
 
-The dashboard is a static file, `index.html`. On a Vercel preview for this branch it is also at `/study-progress`.
+The dashboard is a static file, `index.html`. On a Vercel preview for this branch it is also at `/study-progress`. `.vercelignore` keeps almost the whole repo out of the preview, so `index.html` has to stay on the allowlist or that path 404s.
