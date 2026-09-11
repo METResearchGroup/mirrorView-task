@@ -8,6 +8,11 @@ Run from the repo root:
 from __future__ import annotations
 
 from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
+from experiments.load_study_assignments_2026_09_09.split import (
+    FeedKind,
+    feed_kind,
+    parse_post_ids,
+)
 
 
 def select_mixed_rows(
@@ -20,7 +25,15 @@ def select_mixed_rows(
     ValueError
         When a row is neither mixed nor leftover-left.
     """
-    raise NotImplementedError
+    return [
+        row
+        for row in rows
+        if _row_kind(row, stance_by_post) is FeedKind.TEN_TEN
+    ]
+
+
+def _row_kind(row: AssignmentRow, stance_by_post: dict[str, str]) -> FeedKind:
+    return feed_kind(parse_post_ids(row.assigned_post_ids), stance_by_post)
 
 
 def sample_mixed_feeds(
