@@ -1,9 +1,9 @@
-# Step 1: Add the command that clones 1000 mixed feeds
+# Step 1: Add the command that writes 1000 extra mixed assignment rows
 
 ## Scope
 
 - **Caller:** `experiments/upsample_mixed_study_feeds_2026_09_11/run.py` `main`
-- **Task:** Load the pinned pull request 278 assignment CSV, copy the original 3879 rows unchanged, sample 1000 mixed 10 left and 10 right feeds without replacement, append clones with user ids 3880 through 4879, split odd original user ids to Democrats and even ids to Republicans, rewrite party ids, write a local batch tree, and add pytest files that prove mixed-only sampling and original-row identity on in-memory tables.
+- **Task:** Load the pinned pull request 278 assignment CSV, copy the original 3879 rows unchanged, sample 1000 mixed 10 left and 10 right feeds without replacement, append those clones as extra assignment ids 3880 through 4879 so recruiting about 4000 starters does not exhaust the original 3879 rows, split odd original user ids to Democrats and even ids to Republicans, rewrite party ids, write a local batch tree, and add pytest files that prove mixed-only sampling and original-row identity on in-memory tables.
 - **Out of scope:** The live S3 run (Step 2), uploading to `jspsych-mirror-view-2026-09-09`, editing the lookup Lambda, editing stimulus catalogs, remaining-label replay, resetting DynamoDB, adding files under the repo-root `tests/` folder.
 
 ## Files to inspect (read-only)
@@ -64,7 +64,7 @@ Write `/workspace/experiments/upsample_mixed_study_feeds_2026_09_11/README.md` f
 The README must:
 
 1. Start with the same agent read-only banner used in `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md`.
-2. Say the command grows the assignment catalog by cloning 1000 mixed feeds. Say it does not add posts to the stimulus catalog.
+2. Say a feed is assigned when a participant starts, so dropouts still consume a row. Say the command adds 1000 extra mixed assignment rows so recruiting about 4000 people does not exhaust the 3879 original rows. Say it does not add posts to the stimulus catalog.
 3. Say mixed feeds are 10 left and 10 right. Say leftover-left feeds are not cloned.
 4. Say sampling is 1000 mixed feeds without replacement, seed 0.
 5. Say the original 3879 rows are copied unchanged. Extra user ids are 3880 through 4879. Odd original ids go to `democrat`. Even original ids go to `republican`. Extra Democrat count is 500. Extra Republican count is 500.

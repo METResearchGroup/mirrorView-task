@@ -1,4 +1,4 @@
-# Upsample 1000 mixed study feeds into a larger assignment catalog
+# Overprovision mixed study feeds so dropouts do not stop recruitment
 
 ## Remember
 - Exact file paths always
@@ -8,11 +8,11 @@
 
 ## Overview
 
-[Issue 287](https://github.com/METResearchGroup/mirrorView-task/issues/287) needs more assignment rows, because a participant who starts or claims the study still consumes a counter even if they never finish. The stimulus post catalog stays as it is. This work grows the assignment catalog by cloning 1000 of the 3202 mixed 10 left and 10 right feeds from pull request 278. Pull request 283 loaded 3879 feeds as 1940 Democrat rows and 1939 Republican rows at `s3://jspsych-mirror-view-2026-09-09/precomputed_assignments/2026_09_09-23:06:02`. After the upsample there are 4879 feeds, 2440 Democrat and 2439 Republican.
+The September run assigns a feed when a participant starts, not when they finish. Pull request 283 loaded 3879 feeds, which is about the number of people you want to finish. If you recruit 3879 people and some never finish, you run out of feeds before you have about 3800 completions. [Issue 287](https://github.com/METResearchGroup/mirrorView-task/issues/287) is that gap. This work adds 1000 extra mixed 10 left and 10 right feeds so you can recruit about 4000 starters, and still have spare rows if more people start and drop. After the change there are 4879 feeds, 2440 Democrat and 2439 Republican, at a new S3 prefix. The live prefix and DynamoDB counters stay as they are.
 
 ## Happy flow
 
-An operator runs one command that downloads the pinned pull request 278 assignment file, copies the original 3879 rows unchanged, samples 1000 mixed feeds without replacement, and appends those clones with new user ids. The command splits extras with the same odd and even party rule, uploads a new timestamped prefix, and points the lookup Lambda at that prefix. The live prefix stays in place. DynamoDB counters are not reset. Returning participants still read the old prefix. New participants receive the next unused index from the new files.
+A new participant still claims the next unused party index. Dropouts still consume an index. With 4879 rows on disk, recruiting about 4000 people does not hit the end of the party file. An operator produces those extra rows by cloning 1000 existing mixed feeds, appending them to the party files, uploading a new timestamped prefix, and pointing the lookup Lambda at that prefix. Returning participants still read the old prefix from DynamoDB.
 
 ```mermaid
 flowchart TD
@@ -28,10 +28,11 @@ flowchart TD
 
 ## Approach
 
-Clone existing mixed feeds. Do not replay remaining-label fills, and do not add posts to the stimulus catalog. Keep the original 3879 rows identical, and append 1000 mixed clones at the end of each party file, so extras are consumed only after the original party rows are claimed. Do not overwrite the live prefix. Do not reset DynamoDB counters. Do not change the study iteration id.
+Overprovision by adding unused assignment rows, because the assignment service spends one row at claim time. Clone 1000 existing mixed feeds rather than building new posts or replaying remaining-label fills. Append those clones after the original 3879 rows so extras are used only after the original party rows are claimed. Do not overwrite the live prefix. Do not reset DynamoDB counters. Do not change the study iteration id.
 
 ## Decisions
 
+- The unit that must grow is the assignment CSV row count, not the stimulus post catalog. One CSV row is one starter. Completions can be lower than that count. Live rows today are 3879. Recruiting about 4000 starters requires at least 4000 rows. This plan adds 1000 extra mixed rows, for 4879 total, so 4000 recruits still leave spare rows.
 - Create `experiments/upsample_mixed_study_feeds_2026_09_11/`. Do not edit `experiments/generate_study_user_assignments_2026_09_08/` or `experiments/load_study_assignments_2026_09_09/`. Those README files are agent read-only. Import from them.
 - Do not change the 10,000 row stimulus catalog, the old June catalog, or `img/flips_2026_09_09.csv`. Cloned feeds reuse posts that are already in the assigned catalog from pull request 283.
 - Source file is `s3://mirrorview-experimental-artifacts/experiments/generate_study_user_assignments_2026_09_08/study_user_assignments.csv`, SHA-256 `e42f4dffbe55bed2c9d2c4dae6829de7508ffefef6564d095b3458d9599752ce`. Load it with `load_source_assignments` from `experiments/load_study_assignments_2026_09_09/load.py`. Copy all 3879 source rows unchanged. Do not rewrite their `assigned_post_ids` or `created_at`.
@@ -62,9 +63,9 @@ Expected stdout includes `base_users=3879`, `mixed_source=3202`, `cloned_feeds=1
 
 ## Steps
 
-### Step 1: Add the command that clones 1000 mixed feeds
+### Step 1: Add the command that writes 1000 extra mixed assignment rows
 
-Add the experiment README, modules, pytest files, and a `run.py` caller. The command copies the original 3879 rows, samples 1000 mixed feeds, appends clones, splits by party, and writes a local batch tree. Tests prove mixed-only sampling and original-row identity on in-memory tables before any S3 upload. See [steps/step1.md](steps/step1.md).
+Add the experiment README, modules, pytest files, and a `run.py` caller. The command copies the original 3879 rows, clones 1000 mixed feeds, appends them as new assignment ids, splits by party, and writes a local batch tree. Tests prove mixed-only sampling and original-row identity on in-memory tables before any S3 upload. See [steps/step1.md](steps/step1.md).
 
 ### Step 2: Upload the new assignment prefix and point the lookup Lambda at it
 
@@ -73,7 +74,7 @@ Run the pytest command from Step 1, then run the live command. Confirm the first
 ## What "done" looks like
 
 1. `experiments/upsample_mixed_study_feeds_2026_09_11/` has `README.md`, a runnable `run.py`, the upsample, split, write, and upload modules, and pytest files under `tests/`.
-2. The expanded source CSV has 4879 rows. Users 1 through 3879 match pull request 278. Users 3880 through 4879 are clones of mixed 10 left and 10 right feeds, with unique source user ids.
+2. The expanded source CSV has 4879 assignment rows, which is enough to recruit about 4000 starters without running out. Users 1 through 3879 match pull request 278. Users 3880 through 4879 are extra mixed 10 left and 10 right feeds cloned from unique source user ids.
 3. Democrat assignment rows are 2440. Republican assignment rows are 2439. Leftover-left counts stay 339 and 338. Extra mixed rows are 500 per party, at the end of each file.
 4. The stimulus post catalog is unchanged. `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments.csv` exists. The live prefix `2026_09_09-23:06:02` still exists and is unchanged.
 5. A new `s3://jspsych-mirror-view-2026-09-09/precomputed_assignments/<timestamp>/` prefix holds `config.yaml` and the two party files. `jobs/config/mirrorview_2026_09_09.yaml` and `webapp/lambdas/lambda-get-post-assignments.mjs` point at that prefix. The lookup Lambda code is updated.

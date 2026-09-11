@@ -3,7 +3,7 @@
 ## Scope
 
 - **Caller:** the same `run.py` `main` from Step 1, then `experiments/upsample_mixed_study_feeds_2026_09_11/upload.py` `main`
-- **Task:** Re-run the Step 1 pytest command, export AWS credentials, run the live upsample command, prove the first 3879 source rows match pull request 278, upload a new timestamped prefix under `jspsych-mirror-view-2026-09-09`, point the job YAML and lookup Lambda at that prefix, prove a returning participant still receives the same 20 posts, and commit `RESULTS.md`.
+- **Task:** Re-run the Step 1 pytest command, export AWS credentials, run the live upsample command, prove the first 3879 source rows match pull request 278, upload a new timestamped prefix under `jspsych-mirror-view-2026-09-09` with 4879 party rows, point the job YAML and lookup Lambda at that prefix, prove a returning participant still receives the same 20 posts, and commit `RESULTS.md`. The production DynamoDB counters must not be reset. The old prefix must still exist.
 - **Out of scope:** Rewriting Step 1 modules except docstring fixes, adding files under the repo-root `tests/` folder, changing stimulus catalogs, overwriting `2026_09_09-23:06:02`, running `terraform apply`, resetting DynamoDB, editing the assignment-service repo.
 
 ## Files to inspect (read-only)
