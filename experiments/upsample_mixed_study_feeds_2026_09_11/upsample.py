@@ -7,9 +7,19 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import json
+
 import numpy as np
 
-from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
+from experiments.generate_study_user_assignments_2026_09_08.assign import (
+    shuffle_feed,
+)
+from experiments.load_study_assignments_2026_09_09.constants import (
+    AssignmentRow,
+    CONDITION,
+    EMPTY_POLITICAL_PARTY,
+    USER_ID_PREFIX,
+)
 from experiments.load_study_assignments_2026_09_09.split import (
     FeedKind,
     feed_kind,
@@ -18,6 +28,7 @@ from experiments.load_study_assignments_2026_09_09.split import (
 from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
     MINIMUM_CLONE_COUNT,
     SAMPLE_WITH_REPLACEMENT,
+    USER_ID_DIGIT_WIDTH,
 )
 
 
@@ -77,11 +88,31 @@ def clone_mixed_feeds(
     ValueError
         When a source row does not parse as 20 post ids.
     """
-    raise NotImplementedError
+    return [
+        _clone_row(row, first_user_id + offset, created_at)
+        for offset, row in enumerate(sampled_rows)
+    ]
+
+
+def _clone_row(
+    source: AssignmentRow, user_id: int, created_at: str
+) -> AssignmentRow:
+    shuffled = shuffle_feed(parse_post_ids(source.assigned_post_ids), user_id)
+    return AssignmentRow(
+        id=_format_user_id(user_id),
+        assigned_post_ids=json.dumps(shuffled),
+        political_party=EMPTY_POLITICAL_PARTY,
+        condition=CONDITION,
+        created_at=created_at,
+    )
+
+
+def _format_user_id(user_id: int) -> str:
+    return f"{USER_ID_PREFIX}{user_id:0{USER_ID_DIGIT_WIDTH}d}"
 
 
 def concat_source_rows(
     base_rows: list[AssignmentRow], extra_rows: list[AssignmentRow]
 ) -> list[AssignmentRow]:
     """Return base rows followed by extra rows without mutating ``base_rows``."""
-    raise NotImplementedError
+    return [*base_rows, *extra_rows]
