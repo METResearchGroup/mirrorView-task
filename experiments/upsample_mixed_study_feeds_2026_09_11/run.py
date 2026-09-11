@@ -8,9 +8,33 @@ Run from the repo root:
 from __future__ import annotations
 
 import sys
+from pathlib import Path
 
+import pandas as pd
+
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from experiments.load_study_assignments_2026_09_09.catalog import (
+    build_assigned_catalog,
+    load_new_catalog_rows,
+    load_old_catalog_rows,
+    stance_by_id,
+)
+from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
+from experiments.load_study_assignments_2026_09_09.load import load_source_assignments
 from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
+    BASE_USER_COUNT,
+    CACHE_DIRNAME,
+    CLONE_COUNT,
+    DEMOCRAT_ROW_COUNT,
+    EXPERIMENTAL_S3_BUCKET,
+    EXTRA_FIRST_USER_ID,
+    MIXED_SOURCE_COUNT,
+    OVERPROVISIONED_FILENAME,
+    REPUBLICAN_ROW_COUNT,
+    SAMPLE_SEED,
+    TOTAL_USER_COUNT,
     UpsampleRunResult,
+    experiment_dir,
 )
 from experiments.upsample_mixed_study_feeds_2026_09_11.split_batch import (
     require_original_party_prefix,
@@ -23,24 +47,83 @@ from experiments.upsample_mixed_study_feeds_2026_09_11.upsample import (
     select_mixed_rows,
 )
 from experiments.upsample_mixed_study_feeds_2026_09_11.write import (
+    print_run_summary,
     upload_overprovisioned_csv,
     write_overprovisioned_batch,
+    write_results_md,
 )
+from lib.constants import REPO_ROOT
+from lib.timestamp_utils import get_current_timestamp
 
 
 def main() -> int:
     """Load, clone mixed feeds, write the overprovisioned CSV, and print counts."""
-    _print_run_summary(_run_pipeline())
+    result = _run_pipeline()
+    print_run_summary(result)
+    write_results_md(result, experiment_dir(REPO_ROOT))
     return 0
 
 
 def _run_pipeline() -> UpsampleRunResult:
     """Load, select mixed, sample, clone, concat, split, write, upload."""
-    raise NotImplementedError
+    output_dir = experiment_dir(REPO_ROOT)
+    store = CampaignObjectStore(EXPERIMENTAL_S3_BUCKET)
+    source_rows, catalog = _load_source_and_catalog(store, output_dir)
+    combined = _clone_and_concat(source_rows, catalog)
+    democrat, republican = _split_and_check(source_rows, combined)
+    result = write_overprovisioned_batch(
+        combined, democrat, republican, catalog, output_dir
+    )
+    upload_overprovisioned_csv(
+        store, (output_dir / OVERPROVISIONED_FILENAME).read_bytes()
+    )
+    return result
 
 
-def _print_run_summary(result: UpsampleRunResult) -> None:
-    raise NotImplementedError
+def _load_source_and_catalog(
+    store: CampaignObjectStore, experiment_path: Path
+) -> tuple[list[AssignmentRow], pd.DataFrame]:
+    cache_dir = experiment_path / CACHE_DIRNAME
+    source_rows = load_source_assignments(store, cache_dir)
+    catalog = build_assigned_catalog(
+        load_old_catalog_rows(),
+        load_new_catalog_rows(store, cache_dir),
+        source_rows,
+    )
+    return source_rows, catalog
+
+
+def _clone_and_concat(
+    source_rows: list[AssignmentRow], catalog: pd.DataFrame
+) -> list[AssignmentRow]:
+    mixed = select_mixed_rows(source_rows, stance_by_id(catalog))
+    _require_count(len(mixed), MIXED_SOURCE_COUNT, "mixed_source")
+    sampled = sample_mixed_feeds(mixed, CLONE_COUNT, SAMPLE_SEED)
+    extras = clone_mixed_feeds(
+        sampled, EXTRA_FIRST_USER_ID, get_current_timestamp()
+    )
+    combined = concat_source_rows(source_rows, extras)
+    _require_count(len(combined), TOTAL_USER_COUNT, "user_count")
+    _require_count(len(source_rows), BASE_USER_COUNT, "base_users")
+    return combined
+
+
+def _split_and_check(
+    source_rows: list[AssignmentRow], combined: list[AssignmentRow]
+) -> tuple[list[AssignmentRow], list[AssignmentRow]]:
+    original_democrat, original_republican = split_rewritten(source_rows)
+    democrat, republican = split_rewritten(combined)
+    require_original_party_prefix(
+        democrat, republican, original_democrat, original_republican
+    )
+    _require_count(len(democrat), DEMOCRAT_ROW_COUNT, "democrat_rows")
+    _require_count(len(republican), REPUBLICAN_ROW_COUNT, "republican_rows")
+    return democrat, republican
+
+
+def _require_count(actual: int, expected: int, label: str) -> None:
+    if actual != expected:
+        raise ValueError(f"{label}={actual} expected={expected}")
 
 
 if __name__ == "__main__":
