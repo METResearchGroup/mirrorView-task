@@ -3,5 +3,11 @@
   "framework": null,
   "buildCommand": null,
   "installCommand": null,
-  "cleanUrls": false
+  "cleanUrls": false,
+  "rewrites": [
+    {
+      "source": "/study-progress",
+      "destination": "/experiments/study_progress_dashboard_2026_09_11/index.html"
+    }
+  ]
 }
