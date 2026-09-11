@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-11
+
+1. Operators can view keep and remove rates, party tables, and coverage for the September 2026 run on a static dashboard at `/study-progress`. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
+
 ## 2026-09-09
 
 1. Operators can start the September 2026 MirrorView run from Democrat and Republican assignment files in `jspsych-mirror-view-2026-09-09`. Participants get rewritten ids such as `democrat-training_assisted-0001`, and saved CSVs land in that bucket. [PR #283](https://github.com/METResearchGroup/mirrorView-task/pull/283)
