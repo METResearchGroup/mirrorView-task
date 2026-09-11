@@ -41,10 +41,18 @@ def write_payload(payload: dict[str, Any], outputs_dir: Path) -> Path:
     return path
 
 
-def write_dashboard(payload: dict[str, Any], experiment_dir: Path) -> Path:
-    """Write ``index.html`` next to the experiment files."""
+def write_dashboard(
+    payload: dict[str, Any],
+    experiment_dir: Path,
+    vercel_paths: list[Path] | None = None,
+) -> Path:
+    """Write ``index.html`` and any Vercel copies of the same HTML."""
+    html = render_html(payload)
     path = experiment_dir / DASHBOARD_FILENAME
-    path.write_text(render_html(payload), encoding="utf-8")
+    path.write_text(html, encoding="utf-8")
+    for vercel_path in vercel_paths or []:
+        vercel_path.parent.mkdir(parents=True, exist_ok=True)
+        vercel_path.write_text(html, encoding="utf-8")
     return path
 
 
@@ -236,5 +244,6 @@ Influence mean {fmt_num(all_m['influence']['mean'])} on a 1 to 7 scale. Median s
 ## Outputs
 
 * `index.html`
+* `public/study-progress.html`
 * `outputs/dashboard_payload.json`
 """

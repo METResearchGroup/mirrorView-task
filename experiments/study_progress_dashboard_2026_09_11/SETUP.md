@@ -31,4 +31,4 @@ PYTHONPATH=. uv run pytest experiments/study_progress_dashboard_2026_09_11/tests
 
 ## View
 
-The dashboard is a static file, `index.html`. On a Vercel preview for this branch it is also at `/study-progress`. `.vercelignore` keeps almost the whole repo out of the preview, so `index.html` has to stay on the allowlist or that path 404s.
+The dashboard is a static file, `index.html`. A refresh also writes `public/index.html` and `public/study-progress.html`. The Vercel preview serves those `public/` files, so `/study-progress` and `/study-progress.html` open the same report. `.vercelignore` allowlists the `public/` copies. Use the copy under `experiments/` for local viewing.

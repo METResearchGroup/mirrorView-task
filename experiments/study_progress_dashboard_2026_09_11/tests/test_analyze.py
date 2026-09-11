@@ -22,6 +22,7 @@ from experiments.study_progress_dashboard_2026_09_11.constants import (
     TOXICITY_MIDDLE,
 )
 from experiments.study_progress_dashboard_2026_09_11.render import fmt_pct, render_html
+from experiments.study_progress_dashboard_2026_09_11.write import write_dashboard
 
 
 def _trial(
@@ -192,3 +193,33 @@ def test_payload_and_html_have_party_tables() -> None:
     assert "—" not in html
     assert "–" not in html
     assert "/workspace" not in html
+
+
+def test_write_dashboard_copies_to_vercel(tmp_path) -> None:
+    rows = _person_trials("d1", PARTY_DEMOCRAT, n_keep=18, n_remove=2)
+    export_df = pd.DataFrame(rows)
+    assignments = pd.DataFrame(
+        [
+            {
+                "user_id": "d1",
+                "party": PARTY_DEMOCRAT,
+                "created_at": datetime(2026, 9, 10, 18, 0, 0),
+            }
+        ]
+    )
+    payload = build_payload(
+        export_df,
+        assignments,
+        generated_at="2026_09_11-03:00:00",
+        export_path="export.csv",
+        export_files=1,
+        export_timestamp="2026_09_11-02:27:54",
+        grace_minutes=20,
+        cutoff=datetime(2026, 9, 11, 2, 7, 54),
+    )
+    vercel_path = tmp_path / "public" / "study-progress.html"
+    html_path = write_dashboard(payload, tmp_path, vercel_paths=[vercel_path])
+    assert html_path.read_text(encoding="utf-8") == vercel_path.read_text(encoding="utf-8")
+    assert "MirrorView September 2026 study progress" in vercel_path.read_text(
+        encoding="utf-8"
+    )

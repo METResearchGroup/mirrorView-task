@@ -1,5 +1,8 @@
 *
 !vercel.json
+!public/
+!public/index.html
+!public/study-progress.html
 !experiments/
 !experiments/generate_study_user_assignments_2026_09_08/
 !experiments/generate_study_user_assignments_2026_09_08/verification.html

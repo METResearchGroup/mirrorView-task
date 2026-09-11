@@ -16,6 +16,7 @@ CACHE_DIRNAME = "cache"
 OUTPUTS_DIRNAME = "outputs"
 PAYLOAD_FILENAME = "dashboard_payload.json"
 DASHBOARD_FILENAME = "index.html"
+VERCEL_DASHBOARD_FILENAME = "study-progress.html"
 RESULTS_FILENAME = "RESULTS.md"
 
 STUDY_ID = "mirrorview"

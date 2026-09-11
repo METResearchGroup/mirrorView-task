@@ -19,7 +19,9 @@ from experiments.study_progress_dashboard_2026_09_11.constants import (
     EXPERIMENT_DIRNAME,
     GRACE_MINUTES,
     OUTPUTS_DIRNAME,
+    REPO_ROOT,
     TIMESTAMP_FORMAT,
+    VERCEL_DASHBOARD_FILENAME,
     experiment_dir,
 )
 from experiments.study_progress_dashboard_2026_09_11.load import (
@@ -99,7 +101,14 @@ def main() -> int:
     )
 
     payload_path = write_payload(payload, outputs_dir)
-    html_path = write_dashboard(payload, root)
+    html_path = write_dashboard(
+        payload,
+        root,
+        vercel_paths=[
+            REPO_ROOT / "public" / "index.html",
+            REPO_ROOT / "public" / VERCEL_DASHBOARD_FILENAME,
+        ],
+    )
     results_path = write_results_md(payload, root)
 
     print(f"Export: {export_path}")
