@@ -3,20 +3,20 @@
 ## Scope
 
 - **Caller:** `experiments/upsample_mixed_study_feeds_2026_09_11/run.py` `main`
-- **Task:** Load the pinned pull request 278 assignment CSV, copy the original 3879 rows unchanged, sample 1000 mixed 10 left and 10 right feeds without replacement, append those clones as extra assignment ids 3880 through 4879 so recruiting about 4000 starters does not exhaust the original 3879 rows, split odd original user ids to Democrats and even ids to Republicans, rewrite party ids, write a local batch tree, and add pytest files that prove mixed-only sampling and original-row identity on in-memory tables.
-- **Out of scope:** The live S3 run (Step 2), uploading to `jspsych-mirror-view-2026-09-09`, editing the lookup Lambda, editing stimulus catalogs, remaining-label replay, resetting DynamoDB, adding files under the repo-root `tests/` folder.
+- **Task:** Load the pinned pull request 278 assignment CSV and copy the original 3879 rows unchanged. Sample 1000 mixed 10 left and 10 right feeds without replacement, and append the clones as extra assignment ids 3880 through 4879 so recruiting about 4000 starters does not exhaust the original 3879 rows. Split odd original user ids to Democrats and even ids to Republicans, rewrite party ids, write a local overprovisioned CSV, and add pytest files that prove mixed-only sampling and original-row identity on in-memory tables.
+- **Out of scope:** The live S3 upload (Step 2), uploading to `jspsych-mirror-view-2026-09-09`, editing the lookup Lambda, editing the job YAML, editing stimulus catalogs, remaining-label replay, resetting DynamoDB, adding files under the repo-root `tests/` folder.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-11_expand_study_user_assignments_f4e3d7/plan.md` | Confirmed clone count, mixed-only rule, append rule, party counts |
+| `/workspace/docs/plans/2026-09-11_expand_study_user_assignments_f4e3d7/plan.md` | Confirmed clone count, mixed-only rule, append rule, party counts, overprovisioned filename |
 | `/workspace/experiments/load_study_assignments_2026_09_09/load.py` | `load_source_assignments` |
 | `/workspace/experiments/load_study_assignments_2026_09_09/split.py` | `split_by_party`, `rewrite_ids`, `parse_original_user_id`, `party_for_user_id`, `feed_kind`, `parse_post_ids` |
 | `/workspace/experiments/load_study_assignments_2026_09_09/constants.py` | `AssignmentRow`, `format_assignment_id`, `EXPECTED_TEN_TEN`, leftover user ids |
 | `/workspace/experiments/load_study_assignments_2026_09_09/catalog.py` | `load_old_catalog_rows`, `load_new_catalog_rows`, `build_assigned_catalog`, `stance_by_id` |
 | `/workspace/experiments/load_study_assignments_2026_09_09/write.py` | Party CSV columns and `config.yaml` shape |
-| `/workspace/experiments/load_study_assignments_2026_09_09/upload.py` | Three relative keys under a timestamped prefix |
+| `/workspace/experiments/load_study_assignments_2026_09_09/upload.py` | How `put_new` is used in the load experiment |
 | `/workspace/experiments/generate_study_user_assignments_2026_09_08/assign.py` | `shuffle_feed` |
 | `/workspace/experiments/generate_study_user_assignments_2026_09_08/RESULTS.md` | Users 1 through 3202 are mixed, users 3203 through 3879 are leftover-left |
 | `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md` | Agent read-only banner |
@@ -44,15 +44,15 @@
 
 - `/workspace/experiments/generate_study_user_assignments_2026_09_08/**`
 - `/workspace/experiments/load_study_assignments_2026_09_09/**`
-- `/workspace/webapp/lambdas/lambda-get-post-assignments.mjs` until Step 2 has a new prefix
-- `/workspace/jobs/config/mirrorview_2026_09_09.yaml` until Step 2 has a new prefix
+- `/workspace/webapp/lambdas/lambda-get-post-assignments.mjs`
+- `/workspace/jobs/config/mirrorview_2026_09_09.yaml`
 - `/workspace/webapp/infra/main.tf`
 - `/workspace/webapp/public/img/flips_2026_09_09.csv`
 - `/workspace/shared/data/raw/study_phase_2_part_2/**`
 - `/workspace/experiments/curate_study_2_phase_3_stimuli/**`
 - `/workspace/experiments/calculate_required_label_count_per_stimulus_post_2026_09_09/**`
 - `/workspace/tests/**`
-- `/workspace/CHANGELOG.md` until Step 2 has a live prefix and `RESULTS.md`
+- `/workspace/CHANGELOG.md` until Step 2 has the overprovisioned S3 object and `RESULTS.md`
 - The pull request 278 source CSV on S3
 - The live prefix `s3://jspsych-mirror-view-2026-09-09/precomputed_assignments/2026_09_09-23:06:02/`
 - DynamoDB tables `user_assignments` and `study_assignment_counter`
@@ -64,18 +64,18 @@ Write `/workspace/experiments/upsample_mixed_study_feeds_2026_09_11/README.md` f
 The README must:
 
 1. Start with the same agent read-only banner used in `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md`.
-2. Say a feed is assigned when a participant starts, so dropouts still consume a row. Say the command adds 1000 extra mixed assignment rows so recruiting about 4000 people does not exhaust the 3879 original rows. Say it does not add posts to the stimulus catalog.
+2. Say a feed is assigned when a participant starts, so dropouts still consume a row. Say the command adds 1000 extra mixed assignment rows so recruiting about 4000 people does not exhaust the 3879 original rows. Say it does not add posts to the stimulus catalog. Say the total is 4879 rows, and that 4879 is the agreed total.
 3. Say mixed feeds are 10 left and 10 right. Say leftover-left feeds are not cloned.
 4. Say sampling is 1000 mixed feeds without replacement, seed 0.
 5. Say the original 3879 rows are copied unchanged. Extra user ids are 3880 through 4879. Odd original ids go to `democrat`. Even original ids go to `republican`. Extra Democrat count is 500. Extra Republican count is 500.
 6. Say extras are appended at the end of each party file, so Democrat ids `democrat-training_assisted-0001` through `democrat-training_assisted-1940` keep the original posts.
-7. Say the live prefix `2026_09_09-23:06:02` is left in place, because returning users still read that prefix from DynamoDB. Say DynamoDB counters are not reset.
+7. Say the live prefix `2026_09_09-23:06:02` is left in place, because returning users still read that prefix from DynamoDB. Say DynamoDB counters are not reset. Say the lookup Lambda and job YAML are not changed.
 8. Name output columns `id`, `assigned_post_ids`, `political_party`, `condition`, `created_at`.
-9. Name the experimental S3 object `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments.csv`.
+9. Name the local file and the experimental S3 object `study_user_assignments_overprovisioned.csv`. The S3 URI is `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`.
 10. List required files: `constants.py`, `upsample.py`, `split_batch.py`, `write.py`, `run.py`, and the pytest files under `tests/`.
 11. Include the pytest command and the live run command from the Main caller section below.
 
-After this README is committed, Step 2 may add only the live `batch_uri` and the party row counts. Do not rewrite the algorithm.
+After this README is committed, Step 2 may add only the experimental S3 URI and the party row counts. Do not rewrite the algorithm. Do not add a production `batch_uri`.
 
 ## Public contracts
 
@@ -83,7 +83,9 @@ Keep functions under 20 lines. Use frozen dataclasses. Reuse `CampaignObjectStor
 
 ### `constants.py`
 
-Pinned values: clone count 1000, sample seed 0, base user count 3879, mixed source count 3202, leftover-left count 677, extra first user id 3880, total user count 4879, Democrat row count 2440, Republican row count 2439, Democrat leftover-left count 339, Republican leftover-left count 338, Democrat mixed count 2101, Republican mixed count 2101, pinned source assignment URI and SHA-256, study bucket `jspsych-mirror-view-2026-09-09`, assignment prefix `precomputed_assignments`, four-digit user id width.
+Pinned values: clone count 1000, sample seed 0, base user count 3879, mixed source count 3202, leftover-left count 677, extra first user id 3880, total user count 4879, Democrat row count 2440, Republican row count 2439, Democrat leftover-left count 339, Republican leftover-left count 338, Democrat mixed count 2101, Republican mixed count 2101, pinned source assignment URI and SHA-256, overprovisioned filename `study_user_assignments_overprovisioned.csv`, experimental bucket `mirrorview-experimental-artifacts`, four-digit user id width.
+
+Do not pin a new study-bucket timestamp. Do not pin `SEPTEMBER_BATCH_URI`.
 
 Frozen dataclasses at least:
 
@@ -108,10 +110,10 @@ Frozen dataclasses at least:
 Write local files with `index=False`:
 
 ```text
-experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments.csv
+experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv
 experiments/upsample_mixed_study_feeds_2026_09_11/batch/config.yaml
-experiments/upsample_mixed_study_feeds_2026_09_11/batch/democrat/training_assisted/assignments.csv
-experiments/upsample_mixed_study_feeds_2026_09_11/batch/republican/training_assisted/assignments.csv
+experiments/upsample_mixed_study_feeds_2026_09_11/batch/democrat/training_assisted/assignments_overprovisioned.csv
+experiments/upsample_mixed_study_feeds_2026_09_11/batch/republican/training_assisted/assignments_overprovisioned.csv
 experiments/upsample_mixed_study_feeds_2026_09_11/batch/catalog.csv
 ```
 
@@ -135,11 +137,11 @@ cells:
 
 Source CSV `id` is `user-0001` through `user-4879` with four digits. Rows 1 through 3879 are copied from the pinned file. `assigned_post_ids` is a JSON list of 20 post ids. Sort the source CSV by `id`.
 
-Upload of the experimental source CSV uses `CampaignObjectStore.put_new`. Write `RESULTS.md` in Step 2. Step 1 may include a `write_results_md` function that Step 2's live run calls.
+Upload of the experimental source CSV uses `CampaignObjectStore.put_new` on `study_user_assignments_overprovisioned.csv`. Write `RESULTS.md` in Step 2. Step 1 may include a `write_results_md` function that Step 2's live run calls.
 
 ### `run.py`
 
-`main` loads the pinned assignment CSV, loads catalog stance, selects mixed rows, samples 1000, clones them, concatenates, splits, writes, uploads the experimental source CSV, and prints:
+`main` loads the pinned assignment CSV, loads catalog stance, selects mixed rows, samples 1000, clones them, concatenates, splits, writes, uploads the overprovisioned source CSV, and prints:
 
 ```text
 base_users=
@@ -250,11 +252,11 @@ PYTHONPATH=. uv run python experiments/upsample_mixed_study_feeds_2026_09_11/run
 ## Must pass
 
 - Imports from `run.py` resolve.
-- `README.md` names 1000 cloned mixed feeds, the no-replacement rule, the append rule, and the pytest command.
+- `README.md` names 1000 cloned mixed feeds, the no-replacement rule, the append rule, the overprovisioned filename, and the pytest command.
 - `PYTHONPATH=. uv run pytest experiments/upsample_mixed_study_feeds_2026_09_11/tests -q` exits 0.
 - Sampling 2 from 4 mixed rows is deterministic under seed 0 and never includes leftover-left rows.
 - `concat_source_rows` keeps the original prefix unchanged.
-- Product scripts, catalogs, the original generator, the load experiment, and the lookup Lambda are unchanged.
+- Product scripts, catalogs, the original generator, the load experiment, the lookup Lambda, and the job YAML are unchanged.
 - No file was added under `/workspace/tests/`.
 
 ## Must fail
@@ -267,7 +269,8 @@ PYTHONPATH=. uv run python experiments/upsample_mixed_study_feeds_2026_09_11/run
 - Original 3879 rows that differ from the pinned source after concat.
 - Rewritten original party prefix that differs from the original split of the first 3879 rows.
 - Hash mismatch on the pinned source assignment URI during a live load.
-- Second upload to the experimental S3 key (live proof is Step 2).
+- Second upload to the experimental overprovisioned S3 key (live proof is Step 2).
+- Upload to `jspsych-mirror-view-2026-09-09`.
 
 ## Implement-from-spec notes
 
@@ -289,7 +292,7 @@ Phase 5 implements in this order, one commit per unit of work:
 4. `clone_mixed_feeds` and `concat_source_rows` until `test_clone_mixed_feeds.py` is green
 5. `split_by_party` and `rewrite_ids` wiring until clones are last in each party list
 6. `require_original_party_prefix` until the mismatch case is green
-7. local source CSV and batch writers
+7. local overprovisioned source CSV and batch writers
 8. experimental `put_new` helper and `main` wiring
 
 Phase 6 is complete when the pytest command exits 0, `run.py` imports resolve, `README.md` is present, and Step 2 can run the live command.
