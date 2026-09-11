@@ -46,4 +46,24 @@ def require_original_party_prefix(
     ValueError
         On the first mismatched field.
     """
-    raise NotImplementedError
+    _require_prefix_match(democrat, original_democrat)
+    _require_prefix_match(republican, original_republican)
+
+
+def _require_prefix_match(
+    rows: list[AssignmentRow], original: list[AssignmentRow]
+) -> None:
+    prefix = rows[: len(original)]
+    if len(prefix) != len(original):
+        raise ValueError(f"prefix_len={len(prefix)} original={len(original)}")
+    for row, expected in zip(prefix, original):
+        _require_row_match(row, expected)
+
+
+def _require_row_match(row: AssignmentRow, expected: AssignmentRow) -> None:
+    if _party_identity(row) != _party_identity(expected):
+        raise ValueError(f"party prefix mismatch {row.id}")
+
+
+def _party_identity(row: AssignmentRow) -> tuple[str, str, str, str]:
+    return (row.id, row.assigned_post_ids, row.political_party, row.condition)
