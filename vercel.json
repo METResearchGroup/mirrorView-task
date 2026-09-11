@@ -3,5 +3,16 @@
   "framework": null,
   "buildCommand": null,
   "installCommand": null,
-  "cleanUrls": false
+  "outputDirectory": "public",
+  "cleanUrls": false,
+  "rewrites": [
+    {
+      "source": "/study-progress",
+      "destination": "/study-progress.html"
+    },
+    {
+      "source": "/study-progress/",
+      "destination": "/study-progress.html"
+    }
+  ]
 }

@@ -98,6 +98,9 @@ experiments/test_separability_original_mirror_posts_2026_09_09/outputs/
 # Study user assignment cache lives in S3. Keep the local copy out of git.
 experiments/generate_study_user_assignments_2026_09_08/cache/
 
+# Study progress dashboard: local export copies. Aggregated JSON and HTML stay in git.
+experiments/study_progress_dashboard_2026_09_11/cache/
+
 # OS generated files
 .DS_Store
 .DS_Store?
