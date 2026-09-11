@@ -25,10 +25,27 @@ def write_overprovisioned_batch(
     catalog: pd.DataFrame,
     experiment_dir: Path,
 ) -> UpsampleRunResult:
+    """Write the overprovisioned source CSV, party files, catalog, and config.
+
+    Raises
+    ------
+    ValueError
+        When party counts do not match the pinned totals.
+    """
     raise NotImplementedError
 
 
-def upload_overprovisioned_csv(
-    store: CampaignObjectStore, body: bytes
-) -> None:
+def upload_overprovisioned_csv(store: CampaignObjectStore, body: bytes) -> None:
+    """Upload the overprovisioned CSV with ``put_new``.
+
+    Raises
+    ------
+    FileExistsError
+        When the experimental key already exists.
+    """
+    raise NotImplementedError
+
+
+def write_results_md(result: UpsampleRunResult, experiment_dir: Path) -> Path:
+    """Write ``RESULTS.md`` for one live run."""
     raise NotImplementedError
