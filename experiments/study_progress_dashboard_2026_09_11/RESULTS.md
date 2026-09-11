@@ -1,6 +1,6 @@
 # Study progress, September 2026 run
 
-Snapshot 2026_09_11-16:09:57 UTC. Export 2026_09_11-16:09:56.
+Snapshot 2026_09_11-20:21:31 UTC. Export 2026_09_11-20:21:30.
 
 See `SETUP.md` for how to refresh. The HTML dashboard is `index.html`.
 
@@ -8,106 +8,106 @@ See `SETUP.md` for how to refresh. The HTML dashboard is `index.html`.
 
 | Metric | Value |
 | ------ | ----: |
-| Assigned (valid) | 1,151 |
-| Finished | 1,094 |
-| Saved files | 1,096 |
-| Labels | 21,920 |
+| Assigned (valid) | 1,957 |
+| Finished | 1,874 |
+| Saved files | 1,881 |
+| Labels | 37,620 |
 | Target feeds | 3,879 |
 | Target labels | 77,580 |
-| User progress | 28.2% |
-| Label progress | 28.2% |
-| Missing from export | 57 |
-| Missing after 20-minute grace | 54 |
-| Attrition after grace | 4.7% |
+| User progress | 48.3% |
+| Label progress | 48.5% |
+| Missing from export | 83 |
+| Missing after 20-minute grace | 76 |
+| Attrition after grace | 3.9% |
 
-Prolific has finished 1,094 of 3,879 feeds (28.2%). Prolific has assigned a larger share of Democrat slots (34.7% assigned vs 24.7% Republican). The busiest assignment hour is 2026-09-10 18:00 UTC, and assignments in the three busiest hours are 78.0% of assigned people.
+Prolific has finished 1,874 of 3,879 feeds (48.3%). Prolific has assigned a larger share of Democrat slots (60.7% assigned vs 40.2% Republican). The busiest assignment hour is 2026-09-11 16:00 UTC, and assignments in the three busiest hours are 56.4% of assigned people.
 
 ## Party
 
 | Party | Assigned | Finished | Target feeds | Assigned / target | Finished / assigned |
 | ----- | -------: | -------: | -----------: | ----------------: | ------------------: |
-| Democrat | 673 | 641 | 1,940 | 34.7% | 95.2% |
-| Republican | 478 | 453 | 1,939 | 24.7% | 94.8% |
+| Democrat | 1,178 | 1,136 | 1,940 | 60.7% | 96.4% |
+| Republican | 779 | 738 | 1,939 | 40.2% | 94.7% |
 
 ## Keep and remove
 
 | Party | Keep | Remove | Trials | Trial keep | Trial remove | User mean keep | User mean remove | Always keep | Always remove |
 | ----- | ---: | -----: | -----: | ---------: | -----------: | -------------: | ---------------: | ----------: | ------------: |
-| Democrat | 8,755 | 4,065 | 12,820 | 68.3% | 31.7% | 68.3% | 31.7% | 55 | 3 |
-| Republican | 6,440 | 2,660 | 9,100 | 70.8% | 29.2% | 70.8% | 29.2% | 58 | 4 |
-| All | 15,195 | 6,725 | 21,920 | 69.3% | 30.7% | 69.3% | 30.7% | 113 | 7 |
+| Democrat | 15,664 | 7,096 | 22,760 | 68.8% | 31.2% | 68.8% | 31.2% | 100 | 6 |
+| Republican | 10,536 | 4,324 | 14,860 | 70.9% | 29.1% | 70.9% | 29.1% | 101 | 6 |
+| All | 26,200 | 11,420 | 37,620 | 69.6% | 30.4% | 69.6% | 30.4% | 201 | 12 |
 
-Per-user keep rate (all finished): mean 69.3%, median 70.0%, SD 21.9%.
+Per-user keep rate (all finished): mean 69.6%, median 70.0%, SD 21.5%.
 
-Per-user remove rate (all finished): mean 30.7%, median 30.0%, SD 21.9%.
+Per-user remove rate (all finished): mean 30.4%, median 30.0%, SD 21.5%.
 
-113 people kept every scored post. 7 people removed every scored post.
+201 people kept every scored post. 12 people removed every scored post.
 
 ## Toxicity
 
 | Party | Toxicity | Trials | Remove share |
 | ----- | -------- | -----: | -----------: |
-| Democrat | Low | 2,564 | 14.6% |
-| Democrat | Middle | 6,410 | 27.8% |
-| Democrat | High | 3,846 | 49.7% |
-| Republican | Low | 2,730 | 17.1% |
-| Republican | Middle | 4,550 | 28.0% |
-| Republican | High | 1,820 | 50.5% |
+| Democrat | Low | 4,554 | 14.4% |
+| Democrat | Middle | 11,380 | 26.9% |
+| Democrat | High | 6,826 | 49.5% |
+| Republican | Low | 4,458 | 16.5% |
+| Republican | Middle | 7,430 | 28.4% |
+| Republican | High | 2,972 | 49.7% |
 
-Pooled Democrat remove is 31.7% vs Republican 29.2%. Within a toxicity band the rates sit close together. Democrat feeds have a larger high-toxicity share.
+Pooled Democrat remove is 31.2% vs Republican 29.1%. Within a toxicity band the rates sit close together. Democrat feeds have a larger high-toxicity share.
 
 | Party | Toxicity | Trials | Share of party trials |
 | ----- | -------- | -----: | --------------------: |
-| Democrat | Low | 2,564 | 20.0% |
-| Democrat | Middle | 6,410 | 50.0% |
-| Democrat | High | 3,846 | 30.0% |
-| Republican | Low | 2,730 | 30.0% |
-| Republican | Middle | 4,550 | 50.0% |
-| Republican | High | 1,820 | 20.0% |
+| Democrat | Low | 4,554 | 20.0% |
+| Democrat | Middle | 11,380 | 50.0% |
+| Democrat | High | 6,826 | 30.0% |
+| Republican | Low | 4,458 | 30.0% |
+| Republican | Middle | 7,430 | 50.0% |
+| Republican | High | 2,972 | 20.0% |
 
 ## Stance
 
 | Party | Original stance | Trials | Remove share |
 | ----- | --------------- | -----: | -----------: |
-| Democrat | Left | 6,410 | 32.2% |
-| Democrat | Right | 6,410 | 31.2% |
-| Republican | Left | 4,550 | 29.4% |
-| Republican | Right | 4,550 | 29.1% |
+| Democrat | Left | 11,380 | 31.7% |
+| Democrat | Right | 11,380 | 30.6% |
+| Republican | Left | 7,430 | 29.5% |
+| Republican | Right | 7,430 | 28.7% |
 
 ## Attention
 
-Pass rate 78.7% (861 passed, 233 failed).
+Pass rate 78.3% (1,467 passed, 407 failed).
 
-Remove share among people who passed: 29.4%. Among people who failed: 35.4%.
+Remove share among people who passed: 28.9%. Among people who failed: 35.6%.
 
-97 of 113 always-keep finishers passed the attention check.
+172 of 201 always-keep finishers passed the attention check.
 
-User-mean remove among people who passed: 29.4%. Democrat passers 30.3%. Republican passers 28.0%.
+User-mean remove among people who passed: 28.9%. Democrat passers 29.8%. Republican passers 27.4%.
 
 ## Post coverage
 
 | Metric | Value |
 | ------ | ----: |
-| Unique posts labeled | 17,578 |
+| Unique posts labeled | 18,733 |
 | Catalog posts | 18,899 |
-| Posts with 1 label | 13,507 |
-| Posts with 2 labels | 3,801 |
-| Posts with 3 or more | 270 |
+| Posts with 1 label | 5,094 |
+| Posts with 2 labels | 9,433 |
+| Posts with 3 or more | 4,206 |
 
 | Cell | Mix | Labels now | Assignment slots | Progress |
 | ---- | --- | ---------: | ---------------: | -------: |
-| 1 | Left, low toxicity | 2,647 | 10,463 | 25.3% |
-| 2 | Left, middle toxicity | 5,480 | 22,001 | 24.9% |
-| 3 | Left, high toxicity | 2,833 | 13,096 | 21.6% |
-| 4 | Right, low toxicity | 2,647 | 8,796 | 30.1% |
-| 5 | Right, middle toxicity | 5,480 | 16,594 | 33.0% |
-| 6 | Right, high toxicity | 2,833 | 6,630 | 42.7% |
+| 1 | Left, low toxicity | 4,506 | 10,463 | 43.1% |
+| 2 | Left, middle toxicity | 9,405 | 22,001 | 42.8% |
+| 3 | Left, high toxicity | 4,899 | 13,096 | 37.4% |
+| 4 | Right, low toxicity | 4,506 | 8,796 | 51.2% |
+| 5 | Right, middle toxicity | 9,405 | 16,594 | 56.7% |
+| 6 | Right, high toxicity | 4,899 | 6,630 | 73.9% |
 
 Every current finisher is on a 10 left / 10 right feed. Left-only feeds start at original user 3203 and have not been handed out yet.
 
 ## Influence and time
 
-Influence mean 4.6 on a 1 to 7 scale. Median session 10.7 minutes.
+Influence mean 4.6 on a 1 to 7 scale. Median session 10.5 minutes.
 
 ## Outputs
 
