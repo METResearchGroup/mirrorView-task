@@ -7,14 +7,26 @@ Run from the repo root:
 
 from __future__ import annotations
 
-from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
+from experiments.load_study_assignments_2026_09_09.constants import (
+    AssignmentRow,
+    PARTY_DEMOCRAT,
+    PARTY_REPUBLICAN,
+)
+from experiments.load_study_assignments_2026_09_09.split import (
+    rewrite_ids,
+    split_by_party,
+)
 
 
 def split_rewritten(
     rows: list[AssignmentRow],
 ) -> tuple[list[AssignmentRow], list[AssignmentRow]]:
     """Partition rows by original user id and rewrite party assignment ids."""
-    raise NotImplementedError
+    democrat, republican = split_by_party(rows)
+    return (
+        rewrite_ids(democrat, PARTY_DEMOCRAT),
+        rewrite_ids(republican, PARTY_REPUBLICAN),
+    )
 
 
 def require_original_party_prefix(
