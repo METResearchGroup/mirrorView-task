@@ -21,15 +21,23 @@ from experiments.load_study_assignments_2026_09_09.catalog import (
 )
 from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
 from experiments.load_study_assignments_2026_09_09.load import load_source_assignments
+from experiments.load_study_assignments_2026_09_09.split import (
+    FeedKind,
+    count_kind,
+)
 from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
     BASE_USER_COUNT,
     CACHE_DIRNAME,
     CLONE_COUNT,
+    DEMOCRAT_LEFTOVER_LEFT_COUNT,
+    DEMOCRAT_MIXED_COUNT,
     DEMOCRAT_ROW_COUNT,
     EXPERIMENTAL_S3_BUCKET,
     EXTRA_FIRST_USER_ID,
     MIXED_SOURCE_COUNT,
     OVERPROVISIONED_FILENAME,
+    REPUBLICAN_LEFTOVER_LEFT_COUNT,
+    REPUBLICAN_MIXED_COUNT,
     REPUBLICAN_ROW_COUNT,
     SAMPLE_SEED,
     TOTAL_USER_COUNT,
@@ -70,7 +78,7 @@ def _run_pipeline() -> UpsampleRunResult:
     store = CampaignObjectStore(EXPERIMENTAL_S3_BUCKET)
     source_rows, catalog = _load_source_and_catalog(store, output_dir)
     combined = _clone_and_concat(source_rows, catalog)
-    democrat, republican = _split_and_check(source_rows, combined)
+    democrat, republican = _split_and_check(source_rows, combined, catalog)
     result = write_overprovisioned_batch(
         combined, democrat, republican, catalog, output_dir
     )
@@ -109,16 +117,52 @@ def _clone_and_concat(
 
 
 def _split_and_check(
-    source_rows: list[AssignmentRow], combined: list[AssignmentRow]
+    source_rows: list[AssignmentRow],
+    combined: list[AssignmentRow],
+    catalog: pd.DataFrame,
 ) -> tuple[list[AssignmentRow], list[AssignmentRow]]:
     original_democrat, original_republican = split_rewritten(source_rows)
     democrat, republican = split_rewritten(combined)
     require_original_party_prefix(
         democrat, republican, original_democrat, original_republican
     )
+    _require_party_totals(democrat, republican)
+    _require_kind_counts(democrat, republican, stance_by_id(catalog))
+    return democrat, republican
+
+
+def _require_party_totals(
+    democrat: list[AssignmentRow], republican: list[AssignmentRow]
+) -> None:
     _require_count(len(democrat), DEMOCRAT_ROW_COUNT, "democrat_rows")
     _require_count(len(republican), REPUBLICAN_ROW_COUNT, "republican_rows")
-    return democrat, republican
+
+
+def _require_kind_counts(
+    democrat: list[AssignmentRow],
+    republican: list[AssignmentRow],
+    stance: dict[str, str],
+) -> None:
+    _require_count(
+        count_kind(democrat, stance, FeedKind.LEFT_ONLY),
+        DEMOCRAT_LEFTOVER_LEFT_COUNT,
+        "democrat_left_only",
+    )
+    _require_count(
+        count_kind(republican, stance, FeedKind.LEFT_ONLY),
+        REPUBLICAN_LEFTOVER_LEFT_COUNT,
+        "republican_left_only",
+    )
+    _require_count(
+        count_kind(democrat, stance, FeedKind.TEN_TEN),
+        DEMOCRAT_MIXED_COUNT,
+        "democrat_ten_ten",
+    )
+    _require_count(
+        count_kind(republican, stance, FeedKind.TEN_TEN),
+        REPUBLICAN_MIXED_COUNT,
+        "republican_ten_ten",
+    )
 
 
 def _require_count(actual: int, expected: int, label: str) -> None:

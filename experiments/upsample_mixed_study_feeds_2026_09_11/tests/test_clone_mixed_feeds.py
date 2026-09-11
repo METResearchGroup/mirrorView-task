@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 
-from experiments.load_study_assignments_2026_09_09.constants import AssignmentRow
 from experiments.load_study_assignments_2026_09_09.split import (
     FeedKind,
     feed_kind,
@@ -12,7 +11,7 @@ from experiments.load_study_assignments_2026_09_09.split import (
 )
 from experiments.upsample_mixed_study_feeds_2026_09_11.tests.conftest import (
     CREATED_AT,
-    MIXED_POST_IDS,
+    mixed_post_ids,
     source_row,
 )
 from experiments.upsample_mixed_study_feeds_2026_09_11.upsample import (
@@ -29,8 +28,8 @@ class TestCloneMixedFeeds:
     ) -> None:
         """Verifies clones reuse post ids and concat keeps the original rows first."""
         sampled_rows = [
-            source_row(1, MIXED_POST_IDS),
-            source_row(2, MIXED_POST_IDS),
+            source_row(1, mixed_post_ids(1)),
+            source_row(2, mixed_post_ids(2)),
         ]
         expected_ids = ["user-0003", "user-0004"]
 

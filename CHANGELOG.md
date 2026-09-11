@@ -2,7 +2,7 @@
 
 ## 2026-09-11
 
-1. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
+1. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
 
 ## 2026-09-09
 

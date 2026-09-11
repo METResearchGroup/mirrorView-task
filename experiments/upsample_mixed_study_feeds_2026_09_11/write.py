@@ -36,6 +36,7 @@ from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
     DEMOCRAT_LEFTOVER_LEFT_COUNT,
     DEMOCRAT_ROW_COUNT,
     EXPERIMENT_DIRNAME,
+    EXPERIMENTAL_S3_BUCKET,
     EXTRA_DEMOCRAT_COUNT,
     EXTRA_REPUBLICAN_COUNT,
     MIXED_SOURCE_COUNT,
@@ -102,6 +103,8 @@ def upload_overprovisioned_csv(store: CampaignObjectStore, body: bytes) -> None:
     FileExistsError
         When the experimental key already exists.
     """
+    if store.bucket != EXPERIMENTAL_S3_BUCKET:
+        raise ValueError(f"bucket={store.bucket}")
     store.put_new(OVERPROVISIONED_S3_KEY, body)
 
 
