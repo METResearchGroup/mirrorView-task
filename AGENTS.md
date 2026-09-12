@@ -4,6 +4,8 @@
 
 Follow the conventions defined in https://github.com/mark-torres10/ai_tools/blob/main/conventions/vocabulary.md.
 
+For prose (issues, pull requests, runbooks, and plans), also follow [docs/conventions/](docs/conventions/README.md): plain-writing and Clarity review criteria plus GitHub-specific self-contained text rules.
+
 ## Cursor Cloud specific instructions
 
 The install step verifies that `uv` is available (`uv --version`) and then provisions the Python environment with `uv sync --frozen`, so `.venv` is ready and `uv run pytest` works without extra setup
