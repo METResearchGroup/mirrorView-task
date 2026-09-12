@@ -93,8 +93,11 @@ from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import
     run_error_analysis,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.score import (
+    print_experiment6_score_tables,
     print_score_tables,
     score_experiment,
+    score_experiment6,
+    write_experiment6_results_md,
     write_results_md,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.write import (
@@ -1177,8 +1180,11 @@ def analyze_errors_command() -> None:
 
 
 def score_command(experiment_number: int) -> None:
-    """Score all four models for one experiment and write RESULTS.md."""
+    """Score labeled models for one experiment and write RESULTS.md."""
     store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    if experiment_number == 6:
+        score_experiment6_command(store)
+        return
     for model_folder in MODEL_ORDER:
         paths = full_feature_paths(experiment_number, model_folder)
         if store.get(paths.final_key) is None:
@@ -1188,6 +1194,20 @@ def score_command(experiment_number: int) -> None:
     result = score_experiment(experiment_number, all_users, trials_by_user, store)
     print_score_tables(result)
     results_s3_uri = write_results_md(result, store)
+    print(f"results_s3_uri={results_s3_uri}")
+
+
+def score_experiment6_command(store: CampaignObjectStore) -> None:
+    """Score experiment 6 three-model finals and write RESULTS.md."""
+    for model_folder in EXPERIMENT6_MODEL_ORDER:
+        paths = full_feature_paths(6, model_folder)
+        if store.get(paths.final_key) is None:
+            raise SystemExit(paths.uri(paths.final_key))
+    all_users = load_cohort_users()
+    trials_by_user = load_cohort_trials_by_user()
+    result = score_experiment6(all_users, trials_by_user, store)
+    print_experiment6_score_tables(result)
+    results_s3_uri = write_experiment6_results_md(result, store)
     print(f"results_s3_uri={results_s3_uri}")
 
 
@@ -1251,7 +1271,8 @@ def main(argv: list[str] | None = None) -> None:
         if args.experiment is None:
             raise SystemExit("--score requires --experiment")
         if args.experiment == 6:
-            raise SystemExit("--score for experiment 6 is Step 4")
+            score_command(6)
+            return
         if args.experiment not in (1, 2, 3, 4):
             raise SystemExit("--score supports experiments 1 through 4 only")
         score_command(args.experiment)

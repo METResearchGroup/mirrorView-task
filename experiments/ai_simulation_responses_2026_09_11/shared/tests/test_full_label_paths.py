@@ -240,6 +240,22 @@ class TestExperiment6SmokeDispatch:
         parent_cost.assert_not_called()
 
 
+class TestExperiment6ScoreDispatch:
+    """Tests for experiment 6 --score dispatch."""
+
+    def test_score_calls_score_command_with_experiment_six(self):
+        """--experiment 6 --score does not wait on a Step 4 stub."""
+        # Arrange
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.score_command"
+        ) as mock_score:
+            # Act
+            main(["--experiment", "6", "--score"])
+
+        # Assert
+        mock_score.assert_called_once_with(6)
+
+
 class TestLoadCohortFromS3:
     """Tests for loading cohort parquet from S3 when local files are absent."""
 
