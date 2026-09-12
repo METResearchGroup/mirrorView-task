@@ -13,6 +13,7 @@ import pytest
 from data_platform.generate_features.s3_feature_campaign import StoredObject
 from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     COHORT_USERS_KEY,
+    EXPERIMENT6_MODEL_ORDER,
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_OPENAI,
     OUTPUT_S3_BUCKET,
@@ -22,11 +23,14 @@ from experiments.ai_simulation_responses_2026_09_11.shared.run import (
     APPROVAL_PATH,
     COST_ESTIMATE_RELATIVE_PATH,
     EXPERIMENT2_SETUP_PATH,
+    EXPERIMENT6_MODEL_CONFIGS,
+    experiment6_smoke_feature_paths,
     full_feature_paths,
     load_cohort_users,
     main,
     ordered_full_input,
     require_model_approval,
+    unique_pair_trials,
 )
 
 
@@ -140,6 +144,96 @@ class TestOrderedFullInputExperiment6:
         assert all("Post pair" not in text for text in texts.values())
         assert ids[0] == f"{sample_user.prolific_id}:1"
         assert ids[-1] == f"{sample_user.prolific_id}:20"
+
+
+class TestExperiment6SmokeFeaturePaths:
+    """Tests for experiment6_smoke_feature_paths function."""
+
+    def test_prefix_is_experiment6_model_smoke(self):
+        """Smoke paths land under experiment6/outputs/{model}/smoke/."""
+        # Arrange
+        expected_segment = "experiment6/outputs/openai/smoke/"
+
+        # Act
+        result = experiment6_smoke_feature_paths(MODEL_FOLDER_OPENAI)
+
+        # Assert
+        assert result.bucket == OUTPUT_S3_BUCKET
+        assert expected_segment in result.prefix
+        assert result.final_key.endswith("openai/smoke/final.parquet")
+        assert "/smoke/" not in full_feature_paths(6, MODEL_FOLDER_OPENAI).final_key
+        assert "bedrock_claude" not in result.prefix
+        assert "experiment1/" not in result.prefix
+
+
+class TestExperiment6ModelConfigs:
+    """Tests for the experiment 6 three-model loop."""
+
+    def test_excludes_claude(self):
+        """Experiment 6 smoke configs are the three non-Claude models."""
+        # Arrange
+        folders = [config[0] for config in EXPERIMENT6_MODEL_CONFIGS]
+
+        # Act / Assert
+        assert tuple(folders) == EXPERIMENT6_MODEL_ORDER
+        assert MODEL_FOLDER_BEDROCK_CLAUDE not in folders
+
+
+class TestUniquePairTrials:
+    """Tests for unique_pair_trials function."""
+
+    def test_keeps_earliest_trial_for_duplicate_pair_index(self, sample_trials):
+        """Duplicate pair_index rows keep the earliest trial_index."""
+        # Arrange
+        first = sample_trials[0]
+        later = type(first)(
+            **{**first.__dict__, "trial_index": 99, "original_text": "later-copy"}
+        )
+
+        # Act
+        result = unique_pair_trials([later, first])
+
+        # Assert
+        assert len(result) == 1
+        assert result[0].original_text == first.original_text
+        assert result[0].trial_index == first.trial_index
+
+
+class TestExperiment6SmokeDispatch:
+    """Tests for experiment 6 --smoke and --estimate-cost dispatch."""
+
+    def test_smoke_calls_experiment6_path_not_experiment1(self):
+        """experiment6/run.py --smoke does not invoke the experiment 1 smoke loop."""
+        # Arrange
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "experiment6_smoke_command"
+        ) as experiment6_smoke, patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.smoke_command"
+        ) as experiment1_smoke:
+            # Act
+            main(["--experiment", "6", "--smoke"])
+
+        # Assert
+        experiment6_smoke.assert_called_once()
+        experiment1_smoke.assert_not_called()
+
+    def test_estimate_cost_calls_experiment6_path_not_parent(self):
+        """experiment6 --estimate-cost does not write the parent cost file."""
+        # Arrange
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "experiment6_estimate_cost_command"
+        ) as experiment6_cost, patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "estimate_cost_command"
+        ) as parent_cost:
+            # Act
+            main(["--experiment", "6", "--estimate-cost"])
+
+        # Assert
+        experiment6_cost.assert_called_once()
+        parent_cost.assert_not_called()
 
 
 class TestLoadCohortFromS3:

@@ -45,21 +45,27 @@ from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     COHORT_USERS_KEY,
     CohortTrial,
     CohortUser,
+    EXPERIMENT6_MODEL_ORDER,
     EXPERIMENT_S3_PREFIX,
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_BEDROCK_MICRO_NOVA,
     MODEL_FOLDER_BEDROCK_QWEN,
     MODEL_FOLDER_OPENAI,
     OUTPUT_S3_BUCKET,
+    POSTS_PER_USER,
     SMOKE_USER_COUNT,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
     COST_ESTIMATE_RELATIVE_PATH,
+    EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH,
     MODEL_ORDER,
     TokenUsageRecord,
     build_cost_estimate_markdown,
+    build_experiment6_cost_markdown,
+    build_experiment6_cost_rows,
     build_experiment_sections,
     load_medians_by_model,
+    load_medians_for_models,
     load_token_usage,
     median_tokens,
     save_token_usage,
@@ -67,15 +73,18 @@ from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
     token_usage_records_from_bedrock,
     token_usage_records_from_openai,
     upload_cost_estimate,
+    upload_experiment6_cost_estimate,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.prompts import (
     STUDY_SYSTEM_PROMPT,
+    STUDY_SYSTEM_PROMPT_SINGLE_PAIR,
     render_single_pair,
     render_user_prompt,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
     FEATURE_NAME,
     pair_record_id,
+    pair_yes_no_spec,
     remove_indexes_spec,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import (
@@ -113,9 +122,15 @@ EXPERIMENT2_SETUP_PATH = (
 EXPERIMENT1_SETUP_PATH = (
     REPO_ROOT / "experiments/ai_simulation_responses_2026_09_11/experiment1/SETUP.md"
 )
+EXPERIMENT6_SETUP_PATH = (
+    REPO_ROOT / "experiments/ai_simulation_responses_2026_09_11/experiment6/SETUP.md"
+)
 APPROVAL_RELATIVE_PATH = "experiments/ai_simulation_responses_2026_09_11/APPROVAL.md"
 APPROVAL_PATH = REPO_ROOT / APPROVAL_RELATIVE_PATH
 FILLED_EXAMPLE_HEADER = "## Filled example (first cohort user)"
+EXPERIMENT6_FILLED_EXAMPLE_HEADER = (
+    "## Filled example (first smoke user, pair_index 1)"
+)
 FINAL_EXISTS_MESSAGE = "final exists"
 FULL_MODEL_ENGINE_TYPES = {
     MODEL_FOLDER_OPENAI: OPENAI_ENGINE_TYPE,
@@ -137,6 +152,9 @@ MODEL_CONFIGS = (
         BEDROCK_ENGINE_TYPE,
         bedrock_runner.label_tasks_with_usage,
     ),
+)
+EXPERIMENT6_MODEL_CONFIGS = tuple(
+    config for config in MODEL_CONFIGS if config[0] in EXPERIMENT6_MODEL_ORDER
 )
 MODEL_IDS = {
     MODEL_FOLDER_OPENAI: "gpt-5.4-nano",
@@ -219,6 +237,174 @@ def estimate_cost_command() -> None:
     cost_uri = upload_cost_estimate(store, markdown)
     print(markdown)
     print(f"cost_s3_uri={cost_uri}")
+
+
+def experiment6_smoke_command() -> None:
+    """Label 10 users times 20 pairs on the three experiment 6 models."""
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    users = select_smoke_users(select_all_users(load_cohort_users()))
+    trials_by_user = load_cohort_trials_by_user()
+    for model_folder, engine_type, label_fn in EXPERIMENT6_MODEL_CONFIGS:
+        summary = run_experiment6_smoke_model(
+            store,
+            model_folder,
+            engine_type,
+            label_fn,
+            users,
+            trials_by_user,
+        )
+        print_experiment6_smoke_summary(model_folder, summary)
+    append_experiment6_filled_example(users[0], trials_by_user[users[0].prolific_id])
+
+
+def experiment6_estimate_cost_command() -> None:
+    """Build experiment6/COST_ESTIMATE.md from pair-level smoke tokens."""
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    if store.get(EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH) is not None:
+        raise FileExistsError(
+            "Object already exists: "
+            f"s3://{OUTPUT_S3_BUCKET}/{EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH}"
+        )
+    unique_users = select_all_users(load_cohort_users())
+    pair_call_count = len(unique_users) * POSTS_PER_USER
+    medians = load_medians_for_models(
+        store,
+        experiment6_smoke_paths_by_model(),
+        EXPERIMENT6_MODEL_ORDER,
+    )
+    rows = build_experiment6_cost_rows(medians, pair_call_count)
+    markdown = build_experiment6_cost_markdown(rows)
+    cost_uri = upload_experiment6_cost_estimate(store, markdown)
+    print(markdown)
+    print(f"cost_s3_uri={cost_uri}")
+
+
+def run_experiment6_smoke_model(
+    store: CampaignObjectStore,
+    model_folder: str,
+    engine_type: str,
+    label_fn: object,
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> dict[str, int]:
+    """Label one model's experiment 6 smoke pairs and persist token usage."""
+    paths = experiment6_smoke_feature_paths(model_folder)
+    spec = pair_yes_no_spec(engine_type)  # type: ignore[arg-type]
+    ordered_ids, texts = ordered_pair_input(users, trials_by_user)
+    campaign = campaign_config_for_experiment(6)
+    run_id = run_id_for_feature(campaign.campaign_id, spec.name)
+    manifest, manifest_etag = load_or_create_manifest(
+        store,
+        paths,
+        campaign,
+        spec,
+        expected_row_count=len(ordered_ids),
+        engine_type=engine_type,
+    )
+    if manifest.get("final_parquet"):
+        return smoke_summary_from_store(store, paths, len(ordered_ids))
+    return _finish_experiment6_smoke(
+        store,
+        paths,
+        spec,
+        model_folder,
+        engine_type,
+        label_fn,
+        ordered_ids,
+        texts,
+        run_id,
+        manifest,
+        manifest_etag,
+    )
+
+
+def _finish_experiment6_smoke(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    spec: FeatureSpec,
+    model_folder: str,
+    engine_type: str,
+    label_fn: object,
+    ordered_ids: list[str],
+    texts: dict[str, str],
+    run_id: str,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+) -> dict[str, int]:
+    """Label the experiment 6 smoke part and consolidate the smoke prefix."""
+    manifest_etag = label_smoke_part(
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        spec,
+        campaign_config_for_experiment(6),
+        model_folder,
+        engine_type,
+        label_fn,
+        ordered_ids,
+        texts,
+        run_id,
+    )
+    consolidate_final(
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        expected_ids=ordered_ids,
+        failed_ids=read_failed_ids(store, paths),
+        spec=spec,
+        run_id=run_id,
+    )
+    return smoke_summary_from_store(store, paths, len(ordered_ids))
+
+
+def print_experiment6_smoke_summary(model_folder: str, summary: dict[str, int]) -> None:
+    """Print per-model experiment 6 smoke stdout lines."""
+    print(f"model={model_folder}")
+    print(f"labeled_pairs={summary['labeled']}")
+    print(f"failed_pairs={summary['failed']}")
+    print(f"input_tokens={summary['input_tokens']}")
+    print(f"output_tokens={summary['output_tokens']}")
+
+
+def experiment6_smoke_feature_paths(model_folder: str) -> FeaturePaths:
+    """Return FeaturePaths for one experiment 6 model's smoke prefix."""
+    root_uri = (
+        f"s3://{OUTPUT_S3_BUCKET}/{EXPERIMENT_S3_PREFIX}"
+        f"experiment6/outputs/{model_folder}"
+    )
+    return FeaturePaths.from_root_uri(root_uri, SMOKE_FEATURE_NAME)
+
+
+def experiment6_smoke_paths_by_model() -> dict[str, FeaturePaths]:
+    """Return experiment 6 smoke FeaturePaths for the three models."""
+    return {
+        model_folder: experiment6_smoke_feature_paths(model_folder)
+        for model_folder in EXPERIMENT6_MODEL_ORDER
+    }
+
+
+def append_experiment6_filled_example(
+    user: CohortUser,
+    trials: list[CohortTrial],
+) -> None:
+    """Append one filled one-pair prompt to experiment 6 SETUP.md."""
+    setup_text = EXPERIMENT6_SETUP_PATH.read_text(encoding="utf-8")
+    if EXPERIMENT6_FILLED_EXAMPLE_HEADER in setup_text:
+        return
+    trial = _trial_at_pair_index(trials, 1)
+    filled = f"{STUDY_SYSTEM_PROMPT_SINGLE_PAIR}\n\n{render_single_pair(trial)}"
+    block = f"\n{EXPERIMENT6_FILLED_EXAMPLE_HEADER}\n\n```text\n{filled}\n```\n"
+    EXPERIMENT6_SETUP_PATH.write_text(setup_text.rstrip() + block, encoding="utf-8")
+
+
+def _trial_at_pair_index(trials: list[CohortTrial], pair_index: int) -> CohortTrial:
+    """Return the trial with the given study pair index."""
+    for trial in unique_pair_trials(trials):
+        if trial.pair_index == pair_index:
+            return trial
+    raise ValueError(f"missing pair_index {pair_index}")
 
 
 def print_experiment_2_prompt_command() -> None:
@@ -862,14 +1048,20 @@ def ordered_pair_input(
     ids: list[str] = []
     texts: dict[str, str] = {}
     for user in users:
-        for trial in sorted(
-            trials_by_user[user.prolific_id],
-            key=lambda item: item.pair_index,
-        ):
+        for trial in unique_pair_trials(trials_by_user[user.prolific_id]):
             record_id = pair_record_id(user.prolific_id, trial.pair_index)
             ids.append(record_id)
             texts[record_id] = render_single_pair(trial)
     return ids, texts
+
+
+def unique_pair_trials(trials: list[CohortTrial]) -> list[CohortTrial]:
+    """Return pair_index 1 to 20, keeping the earliest trial for duplicates."""
+    by_index: dict[int, CohortTrial] = {}
+    for trial in sorted(trials, key=lambda item: item.trial_index):
+        if trial.pair_index not in by_index:
+            by_index[trial.pair_index] = trial
+    return [by_index[index] for index in sorted(by_index)[:POSTS_PER_USER]]
 
 
 def full_labels_root_uri(experiment_number: int) -> str:
@@ -955,14 +1147,16 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.smoke:
         if args.experiment == 6:
-            raise SystemExit("experiment 6 --smoke is Step 2")
+            experiment6_smoke_command()
+            return
         smoke_command()
         users = load_cohort_users()
         update_experiment1_setup(len(select_smoke_users(users)))
         return
     if args.estimate_cost:
         if args.experiment == 6:
-            raise SystemExit("experiment 6 --estimate-cost is Step 2")
+            experiment6_estimate_cost_command()
+            return
         estimate_cost_command()
         return
     if args.print_experiment_2_prompt:
