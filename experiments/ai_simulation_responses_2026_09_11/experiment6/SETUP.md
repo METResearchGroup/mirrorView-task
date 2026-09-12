@@ -43,3 +43,15 @@ I fucking hope they try. Red states take in more federal dollars than they ever 
 Post 2:
 I fucking hope they try. NYC contributes more in federal taxes than it receives back in federal spending. We are actually a donor city. Meaning if we kept 100% of what we contribute not only would we be fine we would be actually better off, at the detriment to the US budget and cities and states that are recipient states that rely on federal funding. Let's light this candle.
 ```
+
+## Full-cohort labeling
+
+Live `run_id`: `ai_simulation_responses_2026_09_11_experiment6:pair_yes_no`
+
+| model | labeled_pairs | failed_pairs | scored_users | failed_users | final_uri |
+| --- | ---: | ---: | ---: | ---: | --- |
+| openai | 19960 | 0 | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment6/outputs/openai/final.parquet` |
+| bedrock_micro_nova | 19907 | 53 | 947 | 51 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment6/outputs/bedrock_micro_nova/final.parquet` |
+| bedrock_qwen | 19960 | 0 | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment6/outputs/bedrock_qwen/final.parquet` |
+
+Nova Micro failed 53 pairs to content filters (51 users). Those users are omitted from scoring. Claude was not called.
