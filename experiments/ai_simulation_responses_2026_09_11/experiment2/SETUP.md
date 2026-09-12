@@ -327,3 +327,19 @@ Let’s also remember Trump is captain bone spurs and called those who sacrifice
 Post 2:
 Let's also remember Biden hid in his basement and called working-class Americans "chumps" while his son cashed in on his name. Go fuck yourself Joe.
 ```
+
+## Full-cohort labeling
+
+Live `run_id`: `ai_simulation_responses_2026_09_11_experiment2:remove_indexes`
+
+OpenAI Batch id: `batch_6aa4db2841448190bd77be4dee686fc8`
+
+The cohort parquet has 1,000 rows and 998 unique `prolific_id` values. Labels use `prolific_id` as `source_record_id`, so each model labels 998 users.
+
+| model | labeled | failed | final_uri |
+| --- | --- | --- | --- |
+| openai | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment2/outputs/openai/final.parquet` |
+| bedrock_micro_nova | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment2/outputs/bedrock_micro_nova/final.parquet` |
+| bedrock_qwen | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment2/outputs/bedrock_qwen/final.parquet` |
+| bedrock_claude | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment2/outputs/bedrock_claude/final.parquet` |
+
