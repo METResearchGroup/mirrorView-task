@@ -70,10 +70,12 @@ from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.prompts import (
     STUDY_SYSTEM_PROMPT,
+    render_single_pair,
     render_user_prompt,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
     FEATURE_NAME,
+    pair_record_id,
     remove_indexes_spec,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import (
@@ -153,7 +155,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--estimate-cost", action="store_true")
     parser.add_argument("--print-experiment-2-prompt", action="store_true")
-    parser.add_argument("--experiment", type=int, choices=[1, 2, 3, 4, 5])
+    parser.add_argument("--experiment", type=int, choices=[1, 2, 3, 4, 5, 6])
     parser.add_argument(
         "--model",
         choices=list(MODEL_ORDER),
@@ -826,12 +828,20 @@ def select_all_users(users: tuple[CohortUser, ...]) -> tuple[CohortUser, ...]:
     return tuple(unique)
 
 
+def reject_experiment6_claude(experiment_number: int, model_folder: str) -> None:
+    """Exit when experiment 6 is asked to label with Claude."""
+    if experiment_number == 6 and model_folder == MODEL_FOLDER_BEDROCK_CLAUDE:
+        raise SystemExit("Claude is excluded from experiment 6")
+
+
 def ordered_full_input(
     experiment_number: int,
     users: tuple[CohortUser, ...],
     trials_by_user: dict[str, list[CohortTrial]],
 ) -> tuple[list[str], dict[str, str]]:
     """Return full-cohort ids and rendered prompts for one experiment."""
+    if experiment_number == 6:
+        return ordered_pair_input(users, trials_by_user)
     ids = [user.prolific_id for user in users]
     texts = {
         user.prolific_id: render_user_prompt(
@@ -841,6 +851,24 @@ def ordered_full_input(
         )
         for user in users
     }
+    return ids, texts
+
+
+def ordered_pair_input(
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> tuple[list[str], dict[str, str]]:
+    """Return one record id and one-pair prompt per user-pair."""
+    ids: list[str] = []
+    texts: dict[str, str] = {}
+    for user in users:
+        for trial in sorted(
+            trials_by_user[user.prolific_id],
+            key=lambda item: item.pair_index,
+        ):
+            record_id = pair_record_id(user.prolific_id, trial.pair_index)
+            ids.append(record_id)
+            texts[record_id] = render_single_pair(trial)
     return ids, texts
 
 
@@ -926,11 +954,15 @@ def main(argv: list[str] | None = None) -> None:
         write_cohort_command()
         return
     if args.smoke:
+        if args.experiment == 6:
+            raise SystemExit("experiment 6 --smoke is Step 2")
         smoke_command()
         users = load_cohort_users()
         update_experiment1_setup(len(select_smoke_users(users)))
         return
     if args.estimate_cost:
+        if args.experiment == 6:
+            raise SystemExit("experiment 6 --estimate-cost is Step 2")
         estimate_cost_command()
         return
     if args.print_experiment_2_prompt:
@@ -939,6 +971,9 @@ def main(argv: list[str] | None = None) -> None:
     if args.model:
         if args.experiment is None:
             raise SystemExit("--model requires --experiment")
+        reject_experiment6_claude(args.experiment, args.model)
+        if args.experiment == 6:
+            raise SystemExit("--model for experiment 6 is Step 3")
         if args.experiment not in (1, 2, 3, 4):
             raise SystemExit("--model supports experiments 1 through 4 only")
         model_command(args.experiment, args.model)
@@ -946,6 +981,8 @@ def main(argv: list[str] | None = None) -> None:
     if args.score:
         if args.experiment is None:
             raise SystemExit("--score requires --experiment")
+        if args.experiment == 6:
+            raise SystemExit("--score for experiment 6 is Step 4")
         if args.experiment not in (1, 2, 3, 4):
             raise SystemExit("--score supports experiments 1 through 4 only")
         score_command(args.experiment)
@@ -953,8 +990,12 @@ def main(argv: list[str] | None = None) -> None:
     if args.analyze_errors:
         analyze_errors_command()
         return
-    if args.experiment is not None:
+    if args.experiment == 5:
         raise SystemExit("experiment5 supports --analyze-errors only")
+    if args.experiment == 6:
+        raise SystemExit(
+            "experiment 6 requires --smoke, --estimate-cost, --model, or --score"
+        )
     raise SystemExit("No command selected")
 
 

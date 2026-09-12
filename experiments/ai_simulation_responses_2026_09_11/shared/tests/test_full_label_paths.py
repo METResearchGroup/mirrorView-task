@@ -24,6 +24,8 @@ from experiments.ai_simulation_responses_2026_09_11.shared.run import (
     EXPERIMENT2_SETUP_PATH,
     full_feature_paths,
     load_cohort_users,
+    main,
+    ordered_full_input,
     require_model_approval,
 )
 
@@ -38,6 +40,7 @@ class TestFullFeaturePaths:
             (2, MODEL_FOLDER_BEDROCK_CLAUDE),
             (3, MODEL_FOLDER_OPENAI),
             (4, MODEL_FOLDER_BEDROCK_CLAUDE),
+            (6, MODEL_FOLDER_OPENAI),
         ],
     )
     def test_prefix_is_experiment_outputs_model_without_smoke(
@@ -54,6 +57,8 @@ class TestFullFeaturePaths:
         assert result.bucket == OUTPUT_S3_BUCKET
         assert expected_segment in result.prefix
         assert "/smoke/" not in result.prefix
+        if experiment_number == 6:
+            assert "bedrock_claude" not in result.prefix
 
 
 class TestRequireModelApproval:
@@ -90,6 +95,51 @@ class TestRequireModelApproval:
             approval_file,
         ):
             require_model_approval()
+
+
+class TestRejectExperiment6Claude:
+    """Tests for experiment 6 Claude rejection."""
+
+    def test_main_exits_when_experiment_six_requests_claude(self):
+        """--experiment 6 --model bedrock_claude exits nonzero and names Claude."""
+        # Arrange / Act
+        with pytest.raises(SystemExit) as exc_info:
+            main(["--experiment", "6", "--model", "bedrock_claude"])
+
+        # Assert
+        assert exc_info.value.code != 0
+        assert "Claude" in str(exc_info.value)
+
+
+class TestOrderedFullInputExperiment6:
+    """Tests for ordered_full_input experiment 6 pair grain."""
+
+    def test_emits_twenty_unnumbered_pair_prompts(self, sample_user, sample_trials):
+        """Experiment 6 emits 20 pair ids and omits Post pair headings."""
+        # Arrange
+        trials = []
+        base = sample_trials[0]
+        for pair_index in range(1, 21):
+            trials.append(
+                type(base)(
+                    **{
+                        **base.__dict__,
+                        "pair_index": pair_index,
+                        "post_id": f"post-{pair_index}",
+                        "trial_index": pair_index - 1,
+                    }
+                )
+            )
+
+        # Act
+        ids, texts = ordered_full_input(6, (sample_user,), {sample_user.prolific_id: trials})
+
+        # Assert
+        assert len(ids) == 20
+        assert len(texts) == 20
+        assert all("Post pair" not in text for text in texts.values())
+        assert ids[0] == f"{sample_user.prolific_id}:1"
+        assert ids[-1] == f"{sample_user.prolific_id}:20"
 
 
 class TestLoadCohortFromS3:
