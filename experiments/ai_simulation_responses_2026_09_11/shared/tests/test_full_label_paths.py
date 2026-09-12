@@ -17,6 +17,7 @@ from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_OPENAI,
     OUTPUT_S3_BUCKET,
+    PAIR_YES_NO_FEATURE_NAME,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.prompts import render_user_prompt
 from experiments.ai_simulation_responses_2026_09_11.shared.run import (
@@ -26,10 +27,13 @@ from experiments.ai_simulation_responses_2026_09_11.shared.run import (
     EXPERIMENT6_MODEL_CONFIGS,
     experiment6_smoke_feature_paths,
     full_feature_paths,
+    labeling_spec,
     load_cohort_users,
     main,
     ordered_full_input,
+    require_experiment6_model_approval,
     require_model_approval,
+    scored_and_failed_users,
     unique_pair_trials,
 )
 
@@ -291,3 +295,121 @@ class TestFullLabelPromptRendering:
 
         # Assert
         assert "## Participant information" in result
+
+
+class TestRequireExperiment6ModelApproval:
+    """Tests for the experiment 6 approval gate."""
+
+    def test_missing_approval_names_experiment6_cost_and_approval(self, tmp_path: Path):
+        """Missing experiment6/APPROVAL.md names the experiment 6 cost file."""
+        # Arrange
+        missing_approval = tmp_path / "missing-experiment6-approval.md"
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "EXPERIMENT6_APPROVAL_PATH",
+            missing_approval,
+        ):
+            with pytest.raises(SystemExit) as exc_info:
+                require_experiment6_model_approval()
+
+        # Assert
+        assert exc_info.value.code != 0
+        message = str(exc_info.value)
+        assert "experiment6/COST_ESTIMATE.md" in message
+        assert "experiment6/APPROVAL.md" in message
+
+    def test_parent_approval_is_not_enough(self, tmp_path: Path):
+        """Parent APPROVAL.md does not open experiment 6 labeling."""
+        # Arrange
+        parent_approval = tmp_path / "parent-approval.md"
+        parent_approval.write_text("approved", encoding="utf-8")
+        missing_experiment6 = tmp_path / "missing-experiment6-approval.md"
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.APPROVAL_PATH",
+            parent_approval,
+        ), patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "EXPERIMENT6_APPROVAL_PATH",
+            missing_experiment6,
+        ):
+            with pytest.raises(SystemExit) as exc_info:
+                main(["--experiment", "6", "--model", "openai"])
+
+        # Assert
+        assert exc_info.value.code != 0
+        assert "experiment6/APPROVAL.md" in str(exc_info.value)
+
+    def test_existing_experiment6_approval_dispatches_model_command(
+        self, tmp_path: Path
+    ):
+        """experiment6/APPROVAL.md lets --model openai reach model_command."""
+        # Arrange
+        approval_file = tmp_path / "APPROVAL.md"
+        approval_file.write_text("approved", encoding="utf-8")
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "EXPERIMENT6_APPROVAL_PATH",
+            approval_file,
+        ), patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.model_command"
+        ) as mock_model:
+            main(["--experiment", "6", "--model", "openai"])
+
+        # Assert
+        mock_model.assert_called_once_with(6, MODEL_FOLDER_OPENAI)
+
+
+class TestLabelingSpec:
+    """Tests for labeling_spec function."""
+
+    def test_experiment_six_uses_pair_yes_no(self):
+        """Experiment 6 labels with the pair_yes_no feature spec."""
+        # Act
+        result = labeling_spec(6, "openai")
+
+        # Assert
+        assert result.name == PAIR_YES_NO_FEATURE_NAME
+
+    def test_experiment_one_uses_remove_indexes(self):
+        """Experiment 1 still labels with remove_indexes."""
+        # Act
+        result = labeling_spec(1, "openai")
+
+        # Assert
+        assert result.name == "remove_indexes"
+
+
+class TestScoredAndFailedUsers:
+    """Tests for scored_and_failed_users function."""
+
+    def test_one_failed_pair_fails_the_user(self):
+        """A user with 19 successes and 1 failure is a failed user."""
+        # Arrange
+        ordered_ids = [f"user-a:{index}" for index in range(1, 21)]
+        ordered_ids.extend(f"user-b:{index}" for index in range(1, 21))
+        failed_ids = ["user-b:3"]
+
+        # Act
+        scored_users, failed_users = scored_and_failed_users(ordered_ids, failed_ids)
+
+        # Assert
+        assert scored_users == 1
+        assert failed_users == 1
+
+    def test_nineteen_pairs_fails_the_user(self):
+        """A user with fewer than 20 pair ids is a failed user."""
+        # Arrange
+        ordered_ids = [f"user-a:{index}" for index in range(1, 20)]
+
+        # Act
+        scored_users, failed_users = scored_and_failed_users(ordered_ids, [])
+
+        # Assert
+        assert scored_users == 0
+        assert failed_users == 1

@@ -85,6 +85,7 @@ from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
     FEATURE_NAME,
     pair_record_id,
     pair_yes_no_spec,
+    parse_pair_record_id,
     remove_indexes_spec,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import (
@@ -127,6 +128,10 @@ EXPERIMENT6_SETUP_PATH = (
 )
 APPROVAL_RELATIVE_PATH = "experiments/ai_simulation_responses_2026_09_11/APPROVAL.md"
 APPROVAL_PATH = REPO_ROOT / APPROVAL_RELATIVE_PATH
+EXPERIMENT6_APPROVAL_RELATIVE_PATH = (
+    "experiments/ai_simulation_responses_2026_09_11/experiment6/APPROVAL.md"
+)
+EXPERIMENT6_APPROVAL_PATH = REPO_ROOT / EXPERIMENT6_APPROVAL_RELATIVE_PATH
 FILLED_EXAMPLE_HEADER = "## Filled example (first cohort user)"
 EXPERIMENT6_FILLED_EXAMPLE_HEADER = (
     "## Filled example (first smoke user, pair_index 1)"
@@ -770,9 +775,51 @@ def require_model_approval() -> None:
     )
 
 
+def require_experiment6_model_approval() -> None:
+    """Exit when experiment 6 cost approval is missing."""
+    if EXPERIMENT6_APPROVAL_PATH.is_file():
+        return
+    raise SystemExit(
+        "Experiment 6 full-cohort labeling requires written approval of "
+        f"{EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH}. "
+        f"Create {EXPERIMENT6_APPROVAL_RELATIVE_PATH} after approval."
+    )
+
+
+def labeling_spec(experiment_number: int, engine_type: str) -> FeatureSpec:
+    """Return the feature spec for one experiment's labeling grain."""
+    if experiment_number == 6:
+        return pair_yes_no_spec(engine_type)  # type: ignore[arg-type]
+    return remove_indexes_spec(engine_type)  # type: ignore[arg-type]
+
+
+def scored_and_failed_users(
+    ordered_ids: list[str],
+    failed_ids: list[str] | set[str],
+) -> tuple[int, int]:
+    """Return scored and failed user counts from pair ids."""
+    expected_by_user: dict[str, set[int]] = defaultdict(set)
+    for record_id in ordered_ids:
+        prolific_id, pair_index = parse_pair_record_id(record_id)
+        expected_by_user[prolific_id].add(pair_index)
+    failed_by_user: dict[str, set[int]] = defaultdict(set)
+    for record_id in failed_ids:
+        prolific_id, pair_index = parse_pair_record_id(record_id)
+        failed_by_user[prolific_id].add(pair_index)
+    expected_indexes = set(range(1, POSTS_PER_USER + 1))
+    scored_users = 0
+    for prolific_id, indexes in expected_by_user.items():
+        if indexes == expected_indexes and not failed_by_user[prolific_id]:
+            scored_users += 1
+    return scored_users, len(expected_by_user) - scored_users
+
+
 def model_command(experiment_number: int, model_folder: str) -> None:
     """Label the full cohort for one experiment and model."""
-    require_model_approval()
+    if experiment_number == 6:
+        require_experiment6_model_approval()
+    else:
+        require_model_approval()
     store = CampaignObjectStore(OUTPUT_S3_BUCKET)
     users = select_all_users(load_cohort_users())
     trials_by_user = load_cohort_trials_by_user()
@@ -799,8 +846,8 @@ def run_model_labeling(
     )
     if setup["manifest"].get("final_parquet"):
         print(FINAL_EXISTS_MESSAGE)
-        return label_summary_from_store(store, setup["paths"], len(setup["ordered_ids"]))
-    return _label_and_consolidate_full_cohort(store, setup, model_folder)
+        return complete_label_summary(store, setup, experiment_number)
+    return _label_and_consolidate_full_cohort(store, setup, model_folder, experiment_number)
 
 
 def _full_label_setup(
@@ -813,10 +860,10 @@ def _full_label_setup(
     """Load manifest and inputs for one full-cohort labeling run."""
     paths = full_feature_paths(experiment_number, model_folder)
     engine_type = FULL_MODEL_ENGINE_TYPES[model_folder]
-    spec = remove_indexes_spec(engine_type)  # type: ignore[arg-type]
+    spec = labeling_spec(experiment_number, engine_type)
     campaign = campaign_config_for_experiment(experiment_number)
     ordered_ids, texts = ordered_full_input(experiment_number, users, trials_by_user)
-    run_id = run_id_for_feature(campaign.campaign_id, FEATURE_NAME)
+    run_id = run_id_for_feature(campaign.campaign_id, spec.name)
     manifest, manifest_etag = load_or_create_manifest(
         store,
         paths,
@@ -840,6 +887,7 @@ def _label_and_consolidate_full_cohort(
     store: CampaignObjectStore,
     setup: dict[str, Any],
     model_folder: str,
+    experiment_number: int,
 ) -> dict[str, Any]:
     """Label missing parts and consolidate one full-cohort prefix."""
     manifest_etag = label_full_parts(
@@ -863,7 +911,7 @@ def _label_and_consolidate_full_cohort(
         spec=setup["spec"],
         run_id=setup["run_id"],
     )
-    return label_summary_from_store(store, setup["paths"], len(setup["ordered_ids"]))
+    return complete_label_summary(store, setup, experiment_number)
 
 
 def label_full_parts(
@@ -974,6 +1022,26 @@ def call_full_label_fn(
     return bedrock_runner.label_tasks(spec, tasks, MODEL_IDS[model_folder])
 
 
+def complete_label_summary(
+    store: CampaignObjectStore,
+    setup: dict[str, Any],
+    experiment_number: int,
+) -> dict[str, Any]:
+    """Summarize labeled rows and, for experiment 6, scored users."""
+    summary = label_summary_from_store(
+        store, setup["paths"], len(setup["ordered_ids"])
+    )
+    if experiment_number != 6:
+        return summary
+    failed_ids = read_failed_ids(store, setup["paths"])
+    scored_users, failed_users = scored_and_failed_users(
+        setup["ordered_ids"], failed_ids
+    )
+    summary["scored_users"] = scored_users
+    summary["failed_users"] = failed_users
+    return summary
+
+
 def label_summary_from_store(
     store: CampaignObjectStore,
     paths: FeaturePaths,
@@ -996,8 +1064,14 @@ def print_model_summary(
     """Print per-model full-cohort stdout lines."""
     print(f"experiment={experiment_number}")
     print(f"model={model_folder}")
-    print(f"labeled={summary['labeled']}")
-    print(f"failed={summary['failed']}")
+    if experiment_number == 6:
+        print(f"labeled_pairs={summary['labeled']}")
+        print(f"failed_pairs={summary['failed']}")
+        print(f"scored_users={summary['scored_users']}")
+        print(f"failed_users={summary['failed_users']}")
+    else:
+        print(f"labeled={summary['labeled']}")
+        print(f"failed={summary['failed']}")
     print(f"final_uri={summary['final_uri']}")
 
 
@@ -1167,7 +1241,8 @@ def main(argv: list[str] | None = None) -> None:
             raise SystemExit("--model requires --experiment")
         reject_experiment6_claude(args.experiment, args.model)
         if args.experiment == 6:
-            raise SystemExit("--model for experiment 6 is Step 3")
+            model_command(args.experiment, args.model)
+            return
         if args.experiment not in (1, 2, 3, 4):
             raise SystemExit("--model supports experiments 1 through 4 only")
         model_command(args.experiment, args.model)
