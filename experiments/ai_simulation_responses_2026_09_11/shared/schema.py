@@ -34,7 +34,13 @@ class RemoveIndexesRow(BaseModel):
 
 def remove_indexes_spec(engine_type: Literal["openai", "bedrock"]) -> FeatureSpec:
     """Return the FeatureSpec for one labeling engine."""
-    raise NotImplementedError
+    return FeatureSpec(
+        name=FEATURE_NAME,
+        model=RemoveIndexesRow,
+        engine_type=engine_type,
+        system_prompt=STUDY_SYSTEM_PROMPT,
+        llm_output_schema=LlmRemoveIndexesModel,
+    )
 
 
 def expand_remove_indexes(remove_pair_indexes: list[int]) -> list[int]:
