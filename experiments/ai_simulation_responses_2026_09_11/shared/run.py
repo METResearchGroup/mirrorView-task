@@ -395,7 +395,7 @@ def append_experiment6_filled_example(
         return
     trial = _trial_at_pair_index(trials, 1)
     filled = f"{STUDY_SYSTEM_PROMPT_SINGLE_PAIR}\n\n{render_single_pair(trial)}"
-    block = f"\n{EXPERIMENT6_FILLED_EXAMPLE_HEADER}\n\n```text\n{filled}\n```\n"
+    block = f"\n\n{EXPERIMENT6_FILLED_EXAMPLE_HEADER}\n\n```text\n{filled}\n```\n"
     EXPERIMENT6_SETUP_PATH.write_text(setup_text.rstrip() + block, encoding="utf-8")
 
 
