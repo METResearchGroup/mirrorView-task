@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-12
+
+1. Live `assignments.csv` on prefix `2026_09_09-23:06:02` in `jspsych-mirror-view-2026-09-09` was replaced with the 2,440-row Democrat and 2,439-row Republican overprovisioned files after copying `_original` siblings (`assignments_original.csv`, `config_original.yaml`). DynamoDB counters were not reset and the lookup Lambda was not changed.
+
 ## 2026-09-11
 
 1. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
