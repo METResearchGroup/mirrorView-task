@@ -805,9 +805,16 @@ def print_model_summary(
 
 
 def select_all_users(users: tuple[CohortUser, ...]) -> tuple[CohortUser, ...]:
-    """Return every cohort user in cohort order."""
+    """Return unique cohort users in cohort order, keeping the earliest session."""
     ordered = sorted(users, key=lambda user: (user.source_file_epoch_ms, user.prolific_id))
-    return tuple(ordered)
+    seen: set[str] = set()
+    unique: list[CohortUser] = []
+    for user in ordered:
+        if user.prolific_id in seen:
+            continue
+        seen.add(user.prolific_id)
+        unique.append(user)
+    return tuple(unique)
 
 
 def ordered_full_input(
