@@ -60,6 +60,7 @@ from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
     load_token_usage,
     median_tokens,
     save_token_usage,
+    token_usage_key,
     token_usage_records_from_bedrock,
     token_usage_records_from_openai,
     upload_cost_estimate,
@@ -68,7 +69,10 @@ from experiments.ai_simulation_responses_2026_09_11.shared.prompts import (
     STUDY_SYSTEM_PROMPT,
     render_user_prompt,
 )
-from experiments.ai_simulation_responses_2026_09_11.shared.schema import remove_indexes_spec
+from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
+    FEATURE_NAME,
+    remove_indexes_spec,
+)
 from experiments.ai_simulation_responses_2026_09_11.shared.write import (
     require_cohort_keys_absent,
     upload_cohort,
@@ -221,7 +225,7 @@ def run_smoke_model(
     spec = remove_indexes_spec(engine_type)  # type: ignore[arg-type]
     ordered_ids, texts = ordered_smoke_input(users, trials_by_user)
     campaign = campaign_config()
-    run_id = run_id_for_feature(campaign.campaign_id, SMOKE_FEATURE_NAME)
+    run_id = run_id_for_feature(campaign.campaign_id, FEATURE_NAME)
     manifest, manifest_etag = load_or_create_manifest(
         store,
         paths,
@@ -275,7 +279,7 @@ def label_smoke_part(
 ) -> str:
     """Label the smoke chunk when it is not already in the manifest."""
     part_index = 0
-    if any(int(entry["part_index"]) == part_index for entry in manifest["batches"]):
+    if _smoke_part_complete(store, paths, manifest, part_index):
         return manifest_etag
     adopted = adopt_unrecorded_batch(
         store, paths, manifest, manifest_etag, part_index=part_index, run_id=run_id
@@ -300,6 +304,18 @@ def label_smoke_part(
         append_errors(store, paths, error_records(failures, run_id, part_index))
     save_token_usage(store, paths, usages)
     return manifest_etag
+
+
+def _smoke_part_complete(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    manifest: dict[str, Any],
+    part_index: int,
+) -> bool:
+    """Return whether the smoke batch and token usage both exist."""
+    has_batch = any(int(entry["part_index"]) == part_index for entry in manifest["batches"])
+    has_tokens = store.get(token_usage_key(paths)) is not None
+    return has_batch and has_tokens
 
 
 def call_label_fn(
