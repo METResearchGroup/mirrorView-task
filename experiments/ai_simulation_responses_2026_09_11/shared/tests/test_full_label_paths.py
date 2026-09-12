@@ -13,18 +13,28 @@ import pytest
 from data_platform.generate_features.s3_feature_campaign import StoredObject
 from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     COHORT_USERS_KEY,
+    EXPERIMENT6_MODEL_ORDER,
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_OPENAI,
     OUTPUT_S3_BUCKET,
+    PAIR_YES_NO_FEATURE_NAME,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.prompts import render_user_prompt
 from experiments.ai_simulation_responses_2026_09_11.shared.run import (
     APPROVAL_PATH,
     COST_ESTIMATE_RELATIVE_PATH,
     EXPERIMENT2_SETUP_PATH,
+    EXPERIMENT6_MODEL_CONFIGS,
+    experiment6_smoke_feature_paths,
     full_feature_paths,
+    labeling_spec,
     load_cohort_users,
+    main,
+    ordered_full_input,
+    require_experiment6_model_approval,
     require_model_approval,
+    scored_and_failed_users,
+    unique_pair_trials,
 )
 
 
@@ -38,6 +48,7 @@ class TestFullFeaturePaths:
             (2, MODEL_FOLDER_BEDROCK_CLAUDE),
             (3, MODEL_FOLDER_OPENAI),
             (4, MODEL_FOLDER_BEDROCK_CLAUDE),
+            (6, MODEL_FOLDER_OPENAI),
         ],
     )
     def test_prefix_is_experiment_outputs_model_without_smoke(
@@ -54,6 +65,8 @@ class TestFullFeaturePaths:
         assert result.bucket == OUTPUT_S3_BUCKET
         assert expected_segment in result.prefix
         assert "/smoke/" not in result.prefix
+        if experiment_number == 6:
+            assert "bedrock_claude" not in result.prefix
 
 
 class TestRequireModelApproval:
@@ -90,6 +103,157 @@ class TestRequireModelApproval:
             approval_file,
         ):
             require_model_approval()
+
+
+class TestRejectExperiment6Claude:
+    """Tests for experiment 6 Claude rejection."""
+
+    def test_main_exits_when_experiment_six_requests_claude(self):
+        """--experiment 6 --model bedrock_claude exits nonzero and names Claude."""
+        # Arrange / Act
+        with pytest.raises(SystemExit) as exc_info:
+            main(["--experiment", "6", "--model", "bedrock_claude"])
+
+        # Assert
+        assert exc_info.value.code != 0
+        assert "Claude" in str(exc_info.value)
+
+
+class TestOrderedFullInputExperiment6:
+    """Tests for ordered_full_input experiment 6 pair grain."""
+
+    def test_emits_twenty_unnumbered_pair_prompts(self, sample_user, sample_trials):
+        """Experiment 6 emits 20 pair ids and omits Post pair headings."""
+        # Arrange
+        trials = []
+        base = sample_trials[0]
+        for pair_index in range(1, 21):
+            trials.append(
+                type(base)(
+                    **{
+                        **base.__dict__,
+                        "pair_index": pair_index,
+                        "post_id": f"post-{pair_index}",
+                        "trial_index": pair_index - 1,
+                    }
+                )
+            )
+
+        # Act
+        ids, texts = ordered_full_input(6, (sample_user,), {sample_user.prolific_id: trials})
+
+        # Assert
+        assert len(ids) == 20
+        assert len(texts) == 20
+        assert all("Post pair" not in text for text in texts.values())
+        assert ids[0] == f"{sample_user.prolific_id}:1"
+        assert ids[-1] == f"{sample_user.prolific_id}:20"
+
+
+class TestExperiment6SmokeFeaturePaths:
+    """Tests for experiment6_smoke_feature_paths function."""
+
+    def test_prefix_is_experiment6_model_smoke(self):
+        """Smoke paths land under experiment6/outputs/{model}/smoke/."""
+        # Arrange
+        expected_segment = "experiment6/outputs/openai/smoke/"
+
+        # Act
+        result = experiment6_smoke_feature_paths(MODEL_FOLDER_OPENAI)
+
+        # Assert
+        assert result.bucket == OUTPUT_S3_BUCKET
+        assert expected_segment in result.prefix
+        assert result.final_key.endswith("openai/smoke/final.parquet")
+        assert "/smoke/" not in full_feature_paths(6, MODEL_FOLDER_OPENAI).final_key
+        assert "bedrock_claude" not in result.prefix
+        assert "experiment1/" not in result.prefix
+
+
+class TestExperiment6ModelConfigs:
+    """Tests for the experiment 6 three-model loop."""
+
+    def test_excludes_claude(self):
+        """Experiment 6 smoke configs are the three non-Claude models."""
+        # Arrange
+        folders = [config[0] for config in EXPERIMENT6_MODEL_CONFIGS]
+
+        # Act / Assert
+        assert tuple(folders) == EXPERIMENT6_MODEL_ORDER
+        assert MODEL_FOLDER_BEDROCK_CLAUDE not in folders
+
+
+class TestUniquePairTrials:
+    """Tests for unique_pair_trials function."""
+
+    def test_keeps_earliest_trial_for_duplicate_pair_index(self, sample_trials):
+        """Duplicate pair_index rows keep the earliest trial_index."""
+        # Arrange
+        first = sample_trials[0]
+        later = type(first)(
+            **{**first.__dict__, "trial_index": 99, "original_text": "later-copy"}
+        )
+
+        # Act
+        result = unique_pair_trials([later, first])
+
+        # Assert
+        assert len(result) == 1
+        assert result[0].original_text == first.original_text
+        assert result[0].trial_index == first.trial_index
+
+
+class TestExperiment6SmokeDispatch:
+    """Tests for experiment 6 --smoke and --estimate-cost dispatch."""
+
+    def test_smoke_calls_experiment6_path_not_experiment1(self):
+        """experiment6/run.py --smoke does not invoke the experiment 1 smoke loop."""
+        # Arrange
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "experiment6_smoke_command"
+        ) as experiment6_smoke, patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.smoke_command"
+        ) as experiment1_smoke:
+            # Act
+            main(["--experiment", "6", "--smoke"])
+
+        # Assert
+        experiment6_smoke.assert_called_once()
+        experiment1_smoke.assert_not_called()
+
+    def test_estimate_cost_calls_experiment6_path_not_parent(self):
+        """experiment6 --estimate-cost does not write the parent cost file."""
+        # Arrange
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "experiment6_estimate_cost_command"
+        ) as experiment6_cost, patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "estimate_cost_command"
+        ) as parent_cost:
+            # Act
+            main(["--experiment", "6", "--estimate-cost"])
+
+        # Assert
+        experiment6_cost.assert_called_once()
+        parent_cost.assert_not_called()
+
+
+class TestExperiment6ScoreDispatch:
+    """Tests for experiment 6 --score dispatch."""
+
+    def test_score_calls_score_command_with_experiment_six(self):
+        """--experiment 6 --score does not wait on a Step 4 stub."""
+        # Arrange
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.score_command"
+        ) as mock_score:
+            # Act
+            main(["--experiment", "6", "--score"])
+
+        # Assert
+        mock_score.assert_called_once_with(6)
 
 
 class TestLoadCohortFromS3:
@@ -147,3 +311,121 @@ class TestFullLabelPromptRendering:
 
         # Assert
         assert "## Participant information" in result
+
+
+class TestRequireExperiment6ModelApproval:
+    """Tests for the experiment 6 approval gate."""
+
+    def test_missing_approval_names_experiment6_cost_and_approval(self, tmp_path: Path):
+        """Missing experiment6/APPROVAL.md names the experiment 6 cost file."""
+        # Arrange
+        missing_approval = tmp_path / "missing-experiment6-approval.md"
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "EXPERIMENT6_APPROVAL_PATH",
+            missing_approval,
+        ):
+            with pytest.raises(SystemExit) as exc_info:
+                require_experiment6_model_approval()
+
+        # Assert
+        assert exc_info.value.code != 0
+        message = str(exc_info.value)
+        assert "experiment6/COST_ESTIMATE.md" in message
+        assert "experiment6/APPROVAL.md" in message
+
+    def test_parent_approval_is_not_enough(self, tmp_path: Path):
+        """Parent APPROVAL.md does not open experiment 6 labeling."""
+        # Arrange
+        parent_approval = tmp_path / "parent-approval.md"
+        parent_approval.write_text("approved", encoding="utf-8")
+        missing_experiment6 = tmp_path / "missing-experiment6-approval.md"
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.APPROVAL_PATH",
+            parent_approval,
+        ), patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "EXPERIMENT6_APPROVAL_PATH",
+            missing_experiment6,
+        ):
+            with pytest.raises(SystemExit) as exc_info:
+                main(["--experiment", "6", "--model", "openai"])
+
+        # Assert
+        assert exc_info.value.code != 0
+        assert "experiment6/APPROVAL.md" in str(exc_info.value)
+
+    def test_existing_experiment6_approval_dispatches_model_command(
+        self, tmp_path: Path
+    ):
+        """experiment6/APPROVAL.md lets --model openai reach model_command."""
+        # Arrange
+        approval_file = tmp_path / "APPROVAL.md"
+        approval_file.write_text("approved", encoding="utf-8")
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run."
+            "EXPERIMENT6_APPROVAL_PATH",
+            approval_file,
+        ), patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.model_command"
+        ) as mock_model:
+            main(["--experiment", "6", "--model", "openai"])
+
+        # Assert
+        mock_model.assert_called_once_with(6, MODEL_FOLDER_OPENAI)
+
+
+class TestLabelingSpec:
+    """Tests for labeling_spec function."""
+
+    def test_experiment_six_uses_pair_yes_no(self):
+        """Experiment 6 labels with the pair_yes_no feature spec."""
+        # Act
+        result = labeling_spec(6, "openai")
+
+        # Assert
+        assert result.name == PAIR_YES_NO_FEATURE_NAME
+
+    def test_experiment_one_uses_remove_indexes(self):
+        """Experiment 1 still labels with remove_indexes."""
+        # Act
+        result = labeling_spec(1, "openai")
+
+        # Assert
+        assert result.name == "remove_indexes"
+
+
+class TestScoredAndFailedUsers:
+    """Tests for scored_and_failed_users function."""
+
+    def test_one_failed_pair_fails_the_user(self):
+        """A user with 19 successes and 1 failure is a failed user."""
+        # Arrange
+        ordered_ids = [f"user-a:{index}" for index in range(1, 21)]
+        ordered_ids.extend(f"user-b:{index}" for index in range(1, 21))
+        failed_ids = ["user-b:3"]
+
+        # Act
+        scored_users, failed_users = scored_and_failed_users(ordered_ids, failed_ids)
+
+        # Assert
+        assert scored_users == 1
+        assert failed_users == 1
+
+    def test_nineteen_pairs_fails_the_user(self):
+        """A user with fewer than 20 pair ids is a failed user."""
+        # Arrange
+        ordered_ids = [f"user-a:{index}" for index in range(1, 20)]
+
+        # Act
+        scored_users, failed_users = scored_and_failed_users(ordered_ids, [])
+
+        # Assert
+        assert scored_users == 0
+        assert failed_users == 1

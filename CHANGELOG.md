@@ -3,6 +3,7 @@
 ## 2026-09-12
 
 1. Operators now have experiment 5 error analysis for GitHub issue 290 on the September 2026 MirrorView cohort: 75 false-negative posts, 75 false-positive posts, 100 lowest-F1 users, and variance summaries from 998 complete participants. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
+2. Operators now have experiment 6 one-pair yes/no labels for that same cohort on OpenAI, Nova Micro, and Qwen, scored against the experiment 1 20-pair labels. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
 
 ## 2026-09-09
 

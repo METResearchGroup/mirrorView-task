@@ -21,6 +21,7 @@ from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     CostRow,
     CohortTrial,
     CohortUser,
+    EXPERIMENT6_MODEL_ORDER,
     EXPERIMENT_S3_PREFIX,
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_BEDROCK_MICRO_NOVA,
@@ -33,6 +34,9 @@ from experiments.ai_simulation_responses_2026_09_11.shared.write import put_new_
 
 TOKEN_USAGE_FILENAME = "token_usage.json"
 COST_ESTIMATE_RELATIVE_PATH = f"{EXPERIMENT_S3_PREFIX}COST_ESTIMATE.md"
+EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH = (
+    f"{EXPERIMENT_S3_PREFIX}experiment6/COST_ESTIMATE.md"
+)
 LOW_COST_MULTIPLIER = 0.5
 HIGH_COST_MULTIPLIER = 2.0
 USD_DECIMALS = 2
@@ -302,17 +306,82 @@ def build_cost_estimate_markdown(
     return "\n".join(lines)
 
 
-def load_medians_by_model(
+def load_medians_for_models(
     store: CampaignObjectStore,
     smoke_paths_by_model: dict[str, FeaturePaths],
+    model_folders: tuple[str, ...],
 ) -> dict[str, MedianTokens]:
-    """Load median smoke tokens for every model or raise when smoke is missing."""
+    """Load median smoke tokens for the given models or raise when smoke is missing."""
     medians: dict[str, MedianTokens] = {}
-    for model_folder in MODEL_ORDER:
+    for model_folder in model_folders:
         paths = smoke_paths_by_model[model_folder]
         usages = load_token_usage(store, paths)
         medians[model_folder] = median_tokens(usages)
     return medians
+
+
+def load_medians_by_model(
+    store: CampaignObjectStore,
+    smoke_paths_by_model: dict[str, FeaturePaths],
+) -> dict[str, MedianTokens]:
+    """Load median smoke tokens for every experiment 1 model."""
+    return load_medians_for_models(store, smoke_paths_by_model, MODEL_ORDER)
+
+
+def build_experiment6_cost_rows(
+    medians_by_model: dict[str, MedianTokens],
+    pair_call_count: int,
+) -> tuple[CostRow, ...]:
+    """Scale per-pair smoke medians to the full experiment 6 call count."""
+    return tuple(
+        cost_row_for_model(
+            model_folder,
+            scale_input_tokens(
+                medians_by_model[model_folder].input_tokens,
+                pair_call_count,
+                1.0,
+            ),
+            scale_output_tokens(
+                medians_by_model[model_folder].output_tokens,
+                pair_call_count,
+            ),
+        )
+        for model_folder in EXPERIMENT6_MODEL_ORDER
+    )
+
+
+def build_experiment6_cost_markdown(rows: tuple[CostRow, ...]) -> str:
+    """Render the experiment 6 cost file body."""
+    return "\n".join(_experiment6_cost_header() + [format_cost_table(rows), ""])
+
+
+def _experiment6_cost_header() -> list[str]:
+    return [
+        "# Experiment 6 cost estimate",
+        "",
+        "## Pricing sources",
+        "",
+        f"- OpenAI Batch: {PRICING_SOURCE_URL} (input $0.10/M, output $0.625/M)",
+        f"- Bedrock on-demand: {BEDROCK_PRICING_SOURCE_URL}",
+        "  - Nova Micro: input $0.035/M, output $0.14/M",
+        "  - Qwen3 32B: input $0.15/M, output $0.60/M",
+        "",
+        "Claude Sonnet 4.6 is excluded from experiment 6.",
+        "",
+        "Low/high bounds are 0.5× and 2× the median estimate.",
+        "",
+        "## Experiment 6",
+        "",
+        "Estimated cost:",
+        "",
+    ]
+
+
+def upload_experiment6_cost_estimate(store: CampaignObjectStore, markdown: str) -> str:
+    """Write experiment6/COST_ESTIMATE.md locally and upload with put_new."""
+    body = markdown.encode("utf-8")
+    put_new_mirrored(store, EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH, body)
+    return s3_uri(OUTPUT_S3_BUCKET, EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH)
 
 
 def upload_cost_estimate(store: CampaignObjectStore, markdown: str) -> str:

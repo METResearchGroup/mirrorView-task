@@ -45,21 +45,27 @@ from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     COHORT_USERS_KEY,
     CohortTrial,
     CohortUser,
+    EXPERIMENT6_MODEL_ORDER,
     EXPERIMENT_S3_PREFIX,
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_BEDROCK_MICRO_NOVA,
     MODEL_FOLDER_BEDROCK_QWEN,
     MODEL_FOLDER_OPENAI,
     OUTPUT_S3_BUCKET,
+    POSTS_PER_USER,
     SMOKE_USER_COUNT,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
     COST_ESTIMATE_RELATIVE_PATH,
+    EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH,
     MODEL_ORDER,
     TokenUsageRecord,
     build_cost_estimate_markdown,
+    build_experiment6_cost_markdown,
+    build_experiment6_cost_rows,
     build_experiment_sections,
     load_medians_by_model,
+    load_medians_for_models,
     load_token_usage,
     median_tokens,
     save_token_usage,
@@ -67,13 +73,19 @@ from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
     token_usage_records_from_bedrock,
     token_usage_records_from_openai,
     upload_cost_estimate,
+    upload_experiment6_cost_estimate,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.prompts import (
     STUDY_SYSTEM_PROMPT,
+    STUDY_SYSTEM_PROMPT_SINGLE_PAIR,
+    render_single_pair,
     render_user_prompt,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
     FEATURE_NAME,
+    pair_record_id,
+    pair_yes_no_spec,
+    parse_pair_record_id,
     remove_indexes_spec,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import (
@@ -81,8 +93,11 @@ from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import
     run_error_analysis,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.score import (
+    print_experiment6_score_tables,
     print_score_tables,
     score_experiment,
+    score_experiment6,
+    write_experiment6_results_md,
     write_results_md,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.write import (
@@ -111,9 +126,19 @@ EXPERIMENT2_SETUP_PATH = (
 EXPERIMENT1_SETUP_PATH = (
     REPO_ROOT / "experiments/ai_simulation_responses_2026_09_11/experiment1/SETUP.md"
 )
+EXPERIMENT6_SETUP_PATH = (
+    REPO_ROOT / "experiments/ai_simulation_responses_2026_09_11/experiment6/SETUP.md"
+)
 APPROVAL_RELATIVE_PATH = "experiments/ai_simulation_responses_2026_09_11/APPROVAL.md"
 APPROVAL_PATH = REPO_ROOT / APPROVAL_RELATIVE_PATH
+EXPERIMENT6_APPROVAL_RELATIVE_PATH = (
+    "experiments/ai_simulation_responses_2026_09_11/experiment6/APPROVAL.md"
+)
+EXPERIMENT6_APPROVAL_PATH = REPO_ROOT / EXPERIMENT6_APPROVAL_RELATIVE_PATH
 FILLED_EXAMPLE_HEADER = "## Filled example (first cohort user)"
+EXPERIMENT6_FILLED_EXAMPLE_HEADER = (
+    "## Filled example (first smoke user, pair_index 1)"
+)
 FINAL_EXISTS_MESSAGE = "final exists"
 FULL_MODEL_ENGINE_TYPES = {
     MODEL_FOLDER_OPENAI: OPENAI_ENGINE_TYPE,
@@ -136,6 +161,9 @@ MODEL_CONFIGS = (
         bedrock_runner.label_tasks_with_usage,
     ),
 )
+EXPERIMENT6_MODEL_CONFIGS = tuple(
+    config for config in MODEL_CONFIGS if config[0] in EXPERIMENT6_MODEL_ORDER
+)
 MODEL_IDS = {
     MODEL_FOLDER_OPENAI: "gpt-5.4-nano",
     MODEL_FOLDER_BEDROCK_MICRO_NOVA: "us.amazon.nova-micro-v1:0",
@@ -153,7 +181,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--estimate-cost", action="store_true")
     parser.add_argument("--print-experiment-2-prompt", action="store_true")
-    parser.add_argument("--experiment", type=int, choices=[1, 2, 3, 4, 5])
+    parser.add_argument("--experiment", type=int, choices=[1, 2, 3, 4, 5, 6])
     parser.add_argument(
         "--model",
         choices=list(MODEL_ORDER),
@@ -217,6 +245,174 @@ def estimate_cost_command() -> None:
     cost_uri = upload_cost_estimate(store, markdown)
     print(markdown)
     print(f"cost_s3_uri={cost_uri}")
+
+
+def experiment6_smoke_command() -> None:
+    """Label 10 users times 20 pairs on the three experiment 6 models."""
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    users = select_smoke_users(select_all_users(load_cohort_users()))
+    trials_by_user = load_cohort_trials_by_user()
+    for model_folder, engine_type, label_fn in EXPERIMENT6_MODEL_CONFIGS:
+        summary = run_experiment6_smoke_model(
+            store,
+            model_folder,
+            engine_type,
+            label_fn,
+            users,
+            trials_by_user,
+        )
+        print_experiment6_smoke_summary(model_folder, summary)
+    append_experiment6_filled_example(users[0], trials_by_user[users[0].prolific_id])
+
+
+def experiment6_estimate_cost_command() -> None:
+    """Build experiment6/COST_ESTIMATE.md from pair-level smoke tokens."""
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    if store.get(EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH) is not None:
+        raise FileExistsError(
+            "Object already exists: "
+            f"s3://{OUTPUT_S3_BUCKET}/{EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH}"
+        )
+    unique_users = select_all_users(load_cohort_users())
+    pair_call_count = len(unique_users) * POSTS_PER_USER
+    medians = load_medians_for_models(
+        store,
+        experiment6_smoke_paths_by_model(),
+        EXPERIMENT6_MODEL_ORDER,
+    )
+    rows = build_experiment6_cost_rows(medians, pair_call_count)
+    markdown = build_experiment6_cost_markdown(rows)
+    cost_uri = upload_experiment6_cost_estimate(store, markdown)
+    print(markdown)
+    print(f"cost_s3_uri={cost_uri}")
+
+
+def run_experiment6_smoke_model(
+    store: CampaignObjectStore,
+    model_folder: str,
+    engine_type: str,
+    label_fn: object,
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> dict[str, int]:
+    """Label one model's experiment 6 smoke pairs and persist token usage."""
+    paths = experiment6_smoke_feature_paths(model_folder)
+    spec = pair_yes_no_spec(engine_type)  # type: ignore[arg-type]
+    ordered_ids, texts = ordered_pair_input(users, trials_by_user)
+    campaign = campaign_config_for_experiment(6)
+    run_id = run_id_for_feature(campaign.campaign_id, spec.name)
+    manifest, manifest_etag = load_or_create_manifest(
+        store,
+        paths,
+        campaign,
+        spec,
+        expected_row_count=len(ordered_ids),
+        engine_type=engine_type,
+    )
+    if manifest.get("final_parquet"):
+        return smoke_summary_from_store(store, paths, len(ordered_ids))
+    return _finish_experiment6_smoke(
+        store,
+        paths,
+        spec,
+        model_folder,
+        engine_type,
+        label_fn,
+        ordered_ids,
+        texts,
+        run_id,
+        manifest,
+        manifest_etag,
+    )
+
+
+def _finish_experiment6_smoke(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    spec: FeatureSpec,
+    model_folder: str,
+    engine_type: str,
+    label_fn: object,
+    ordered_ids: list[str],
+    texts: dict[str, str],
+    run_id: str,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+) -> dict[str, int]:
+    """Label the experiment 6 smoke part and consolidate the smoke prefix."""
+    manifest_etag = label_smoke_part(
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        spec,
+        campaign_config_for_experiment(6),
+        model_folder,
+        engine_type,
+        label_fn,
+        ordered_ids,
+        texts,
+        run_id,
+    )
+    consolidate_final(
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        expected_ids=ordered_ids,
+        failed_ids=read_failed_ids(store, paths),
+        spec=spec,
+        run_id=run_id,
+    )
+    return smoke_summary_from_store(store, paths, len(ordered_ids))
+
+
+def print_experiment6_smoke_summary(model_folder: str, summary: dict[str, int]) -> None:
+    """Print per-model experiment 6 smoke stdout lines."""
+    print(f"model={model_folder}")
+    print(f"labeled_pairs={summary['labeled']}")
+    print(f"failed_pairs={summary['failed']}")
+    print(f"input_tokens={summary['input_tokens']}")
+    print(f"output_tokens={summary['output_tokens']}")
+
+
+def experiment6_smoke_feature_paths(model_folder: str) -> FeaturePaths:
+    """Return FeaturePaths for one experiment 6 model's smoke prefix."""
+    root_uri = (
+        f"s3://{OUTPUT_S3_BUCKET}/{EXPERIMENT_S3_PREFIX}"
+        f"experiment6/outputs/{model_folder}"
+    )
+    return FeaturePaths.from_root_uri(root_uri, SMOKE_FEATURE_NAME)
+
+
+def experiment6_smoke_paths_by_model() -> dict[str, FeaturePaths]:
+    """Return experiment 6 smoke FeaturePaths for the three models."""
+    return {
+        model_folder: experiment6_smoke_feature_paths(model_folder)
+        for model_folder in EXPERIMENT6_MODEL_ORDER
+    }
+
+
+def append_experiment6_filled_example(
+    user: CohortUser,
+    trials: list[CohortTrial],
+) -> None:
+    """Append one filled one-pair prompt to experiment 6 SETUP.md."""
+    setup_text = EXPERIMENT6_SETUP_PATH.read_text(encoding="utf-8")
+    if EXPERIMENT6_FILLED_EXAMPLE_HEADER in setup_text:
+        return
+    trial = _trial_at_pair_index(trials, 1)
+    filled = f"{STUDY_SYSTEM_PROMPT_SINGLE_PAIR}\n\n{render_single_pair(trial)}"
+    block = f"\n\n{EXPERIMENT6_FILLED_EXAMPLE_HEADER}\n\n```text\n{filled}\n```\n"
+    EXPERIMENT6_SETUP_PATH.write_text(setup_text.rstrip() + block, encoding="utf-8")
+
+
+def _trial_at_pair_index(trials: list[CohortTrial], pair_index: int) -> CohortTrial:
+    """Return the trial with the given study pair index."""
+    for trial in unique_pair_trials(trials):
+        if trial.pair_index == pair_index:
+            return trial
+    raise ValueError(f"missing pair_index {pair_index}")
 
 
 def print_experiment_2_prompt_command() -> None:
@@ -582,9 +778,51 @@ def require_model_approval() -> None:
     )
 
 
+def require_experiment6_model_approval() -> None:
+    """Exit when experiment 6 cost approval is missing."""
+    if EXPERIMENT6_APPROVAL_PATH.is_file():
+        return
+    raise SystemExit(
+        "Experiment 6 full-cohort labeling requires written approval of "
+        f"{EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH}. "
+        f"Create {EXPERIMENT6_APPROVAL_RELATIVE_PATH} after approval."
+    )
+
+
+def labeling_spec(experiment_number: int, engine_type: str) -> FeatureSpec:
+    """Return the feature spec for one experiment's labeling grain."""
+    if experiment_number == 6:
+        return pair_yes_no_spec(engine_type)  # type: ignore[arg-type]
+    return remove_indexes_spec(engine_type)  # type: ignore[arg-type]
+
+
+def scored_and_failed_users(
+    ordered_ids: list[str],
+    failed_ids: list[str] | set[str],
+) -> tuple[int, int]:
+    """Return scored and failed user counts from pair ids."""
+    expected_by_user: dict[str, set[int]] = defaultdict(set)
+    for record_id in ordered_ids:
+        prolific_id, pair_index = parse_pair_record_id(record_id)
+        expected_by_user[prolific_id].add(pair_index)
+    failed_by_user: dict[str, set[int]] = defaultdict(set)
+    for record_id in failed_ids:
+        prolific_id, pair_index = parse_pair_record_id(record_id)
+        failed_by_user[prolific_id].add(pair_index)
+    expected_indexes = set(range(1, POSTS_PER_USER + 1))
+    scored_users = 0
+    for prolific_id, indexes in expected_by_user.items():
+        if indexes == expected_indexes and not failed_by_user[prolific_id]:
+            scored_users += 1
+    return scored_users, len(expected_by_user) - scored_users
+
+
 def model_command(experiment_number: int, model_folder: str) -> None:
     """Label the full cohort for one experiment and model."""
-    require_model_approval()
+    if experiment_number == 6:
+        require_experiment6_model_approval()
+    else:
+        require_model_approval()
     store = CampaignObjectStore(OUTPUT_S3_BUCKET)
     users = select_all_users(load_cohort_users())
     trials_by_user = load_cohort_trials_by_user()
@@ -611,8 +849,8 @@ def run_model_labeling(
     )
     if setup["manifest"].get("final_parquet"):
         print(FINAL_EXISTS_MESSAGE)
-        return label_summary_from_store(store, setup["paths"], len(setup["ordered_ids"]))
-    return _label_and_consolidate_full_cohort(store, setup, model_folder)
+        return complete_label_summary(store, setup, experiment_number)
+    return _label_and_consolidate_full_cohort(store, setup, model_folder, experiment_number)
 
 
 def _full_label_setup(
@@ -625,10 +863,10 @@ def _full_label_setup(
     """Load manifest and inputs for one full-cohort labeling run."""
     paths = full_feature_paths(experiment_number, model_folder)
     engine_type = FULL_MODEL_ENGINE_TYPES[model_folder]
-    spec = remove_indexes_spec(engine_type)  # type: ignore[arg-type]
+    spec = labeling_spec(experiment_number, engine_type)
     campaign = campaign_config_for_experiment(experiment_number)
     ordered_ids, texts = ordered_full_input(experiment_number, users, trials_by_user)
-    run_id = run_id_for_feature(campaign.campaign_id, FEATURE_NAME)
+    run_id = run_id_for_feature(campaign.campaign_id, spec.name)
     manifest, manifest_etag = load_or_create_manifest(
         store,
         paths,
@@ -652,6 +890,7 @@ def _label_and_consolidate_full_cohort(
     store: CampaignObjectStore,
     setup: dict[str, Any],
     model_folder: str,
+    experiment_number: int,
 ) -> dict[str, Any]:
     """Label missing parts and consolidate one full-cohort prefix."""
     manifest_etag = label_full_parts(
@@ -675,7 +914,7 @@ def _label_and_consolidate_full_cohort(
         spec=setup["spec"],
         run_id=setup["run_id"],
     )
-    return label_summary_from_store(store, setup["paths"], len(setup["ordered_ids"]))
+    return complete_label_summary(store, setup, experiment_number)
 
 
 def label_full_parts(
@@ -786,6 +1025,26 @@ def call_full_label_fn(
     return bedrock_runner.label_tasks(spec, tasks, MODEL_IDS[model_folder])
 
 
+def complete_label_summary(
+    store: CampaignObjectStore,
+    setup: dict[str, Any],
+    experiment_number: int,
+) -> dict[str, Any]:
+    """Summarize labeled rows and, for experiment 6, scored users."""
+    summary = label_summary_from_store(
+        store, setup["paths"], len(setup["ordered_ids"])
+    )
+    if experiment_number != 6:
+        return summary
+    failed_ids = read_failed_ids(store, setup["paths"])
+    scored_users, failed_users = scored_and_failed_users(
+        setup["ordered_ids"], failed_ids
+    )
+    summary["scored_users"] = scored_users
+    summary["failed_users"] = failed_users
+    return summary
+
+
 def label_summary_from_store(
     store: CampaignObjectStore,
     paths: FeaturePaths,
@@ -808,8 +1067,14 @@ def print_model_summary(
     """Print per-model full-cohort stdout lines."""
     print(f"experiment={experiment_number}")
     print(f"model={model_folder}")
-    print(f"labeled={summary['labeled']}")
-    print(f"failed={summary['failed']}")
+    if experiment_number == 6:
+        print(f"labeled_pairs={summary['labeled']}")
+        print(f"failed_pairs={summary['failed']}")
+        print(f"scored_users={summary['scored_users']}")
+        print(f"failed_users={summary['failed_users']}")
+    else:
+        print(f"labeled={summary['labeled']}")
+        print(f"failed={summary['failed']}")
     print(f"final_uri={summary['final_uri']}")
 
 
@@ -826,12 +1091,20 @@ def select_all_users(users: tuple[CohortUser, ...]) -> tuple[CohortUser, ...]:
     return tuple(unique)
 
 
+def reject_experiment6_claude(experiment_number: int, model_folder: str) -> None:
+    """Exit when experiment 6 is asked to label with Claude."""
+    if experiment_number == 6 and model_folder == MODEL_FOLDER_BEDROCK_CLAUDE:
+        raise SystemExit("Claude is excluded from experiment 6")
+
+
 def ordered_full_input(
     experiment_number: int,
     users: tuple[CohortUser, ...],
     trials_by_user: dict[str, list[CohortTrial]],
 ) -> tuple[list[str], dict[str, str]]:
     """Return full-cohort ids and rendered prompts for one experiment."""
+    if experiment_number == 6:
+        return ordered_pair_input(users, trials_by_user)
     ids = [user.prolific_id for user in users]
     texts = {
         user.prolific_id: render_user_prompt(
@@ -842,6 +1115,30 @@ def ordered_full_input(
         for user in users
     }
     return ids, texts
+
+
+def ordered_pair_input(
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> tuple[list[str], dict[str, str]]:
+    """Return one record id and one-pair prompt per user-pair."""
+    ids: list[str] = []
+    texts: dict[str, str] = {}
+    for user in users:
+        for trial in unique_pair_trials(trials_by_user[user.prolific_id]):
+            record_id = pair_record_id(user.prolific_id, trial.pair_index)
+            ids.append(record_id)
+            texts[record_id] = render_single_pair(trial)
+    return ids, texts
+
+
+def unique_pair_trials(trials: list[CohortTrial]) -> list[CohortTrial]:
+    """Return pair_index 1 to 20, keeping the earliest trial for duplicates."""
+    by_index: dict[int, CohortTrial] = {}
+    for trial in sorted(trials, key=lambda item: item.trial_index):
+        if trial.pair_index not in by_index:
+            by_index[trial.pair_index] = trial
+    return [by_index[index] for index in sorted(by_index)[:POSTS_PER_USER]]
 
 
 def full_labels_root_uri(experiment_number: int) -> str:
@@ -883,8 +1180,11 @@ def analyze_errors_command() -> None:
 
 
 def score_command(experiment_number: int) -> None:
-    """Score all four models for one experiment and write RESULTS.md."""
+    """Score labeled models for one experiment and write RESULTS.md."""
     store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    if experiment_number == 6:
+        score_experiment6_command(store)
+        return
     for model_folder in MODEL_ORDER:
         paths = full_feature_paths(experiment_number, model_folder)
         if store.get(paths.final_key) is None:
@@ -894,6 +1194,20 @@ def score_command(experiment_number: int) -> None:
     result = score_experiment(experiment_number, all_users, trials_by_user, store)
     print_score_tables(result)
     results_s3_uri = write_results_md(result, store)
+    print(f"results_s3_uri={results_s3_uri}")
+
+
+def score_experiment6_command(store: CampaignObjectStore) -> None:
+    """Score experiment 6 three-model finals and write RESULTS.md."""
+    for model_folder in EXPERIMENT6_MODEL_ORDER:
+        paths = full_feature_paths(6, model_folder)
+        if store.get(paths.final_key) is None:
+            raise SystemExit(paths.uri(paths.final_key))
+    all_users = load_cohort_users()
+    trials_by_user = load_cohort_trials_by_user()
+    result = score_experiment6(all_users, trials_by_user, store)
+    print_experiment6_score_tables(result)
+    results_s3_uri = write_experiment6_results_md(result, store)
     print(f"results_s3_uri={results_s3_uri}")
 
 
@@ -926,11 +1240,17 @@ def main(argv: list[str] | None = None) -> None:
         write_cohort_command()
         return
     if args.smoke:
+        if args.experiment == 6:
+            experiment6_smoke_command()
+            return
         smoke_command()
         users = load_cohort_users()
         update_experiment1_setup(len(select_smoke_users(users)))
         return
     if args.estimate_cost:
+        if args.experiment == 6:
+            experiment6_estimate_cost_command()
+            return
         estimate_cost_command()
         return
     if args.print_experiment_2_prompt:
@@ -939,6 +1259,10 @@ def main(argv: list[str] | None = None) -> None:
     if args.model:
         if args.experiment is None:
             raise SystemExit("--model requires --experiment")
+        reject_experiment6_claude(args.experiment, args.model)
+        if args.experiment == 6:
+            model_command(args.experiment, args.model)
+            return
         if args.experiment not in (1, 2, 3, 4):
             raise SystemExit("--model supports experiments 1 through 4 only")
         model_command(args.experiment, args.model)
@@ -946,6 +1270,9 @@ def main(argv: list[str] | None = None) -> None:
     if args.score:
         if args.experiment is None:
             raise SystemExit("--score requires --experiment")
+        if args.experiment == 6:
+            score_command(6)
+            return
         if args.experiment not in (1, 2, 3, 4):
             raise SystemExit("--score supports experiments 1 through 4 only")
         score_command(args.experiment)
@@ -953,8 +1280,12 @@ def main(argv: list[str] | None = None) -> None:
     if args.analyze_errors:
         analyze_errors_command()
         return
-    if args.experiment is not None:
+    if args.experiment == 5:
         raise SystemExit("experiment5 supports --analyze-errors only")
+    if args.experiment == 6:
+        raise SystemExit(
+            "experiment 6 requires --smoke, --estimate-cost, --model, or --score"
+        )
     raise SystemExit("No command selected")
 
 
