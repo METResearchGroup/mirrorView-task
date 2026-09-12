@@ -263,6 +263,16 @@ class TestCutoverHelpers:
         assert counts[(PARTY_REPUBLICAN, CONDITION)] == REPUBLICAN_ROW_COUNT
         assert LIVE_BATCH_TIMESTAMP in document["s3"]["prefix"]
 
+    def test_patch_config_counts_adds_timestamp_when_prefix_is_unqualified(self) -> None:
+        """Verifies the live prefix is qualified when the source config omits the timestamp."""
+        document = yaml.safe_load(_live_config_bytes())
+        document["s3"]["prefix"] = "precomputed_assignments"
+        patched = patch_config_counts(
+            yaml.safe_dump(document, sort_keys=False).encode("utf-8")
+        )
+        result = yaml.safe_load(patched)
+        assert LIVE_BATCH_TIMESTAMP in result["s3"]["prefix"]
+
     def test_verify_cutover_fails_when_live_sha_differs(self) -> None:
         """Verifies post-cutover verification fails on SHA mismatch."""
         store = FakeStore()

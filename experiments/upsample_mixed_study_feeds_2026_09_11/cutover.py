@@ -41,6 +41,7 @@ from experiments.load_study_assignments_2026_09_09.constants import (
     PARTY_REPUBLICAN,
     POLITICAL_PARTY_COLUMN,
 )
+from experiments.load_study_assignments_2026_09_09.constants import ASSIGNMENT_PREFIX
 from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
     ASSIGNMENTS_ORIGINAL_FILENAME,
     ASSIGNMENTS_OVERPROVISIONED_FILENAME,
@@ -54,8 +55,6 @@ from experiments.upsample_mixed_study_feeds_2026_09_11.constants import (
     DEMOCRAT_MANUAL_TEST_ITERATION_USER_KEY,
     DEMOCRAT_ROW_COUNT,
     DYNAMODB_REGION,
-    FIRST_EXTRA_DEMOCRAT_INDEX,
-    FIRST_EXTRA_REPUBLICAN_INDEX,
     LIVE_BATCH_TIMESTAMP,
     LIVE_S3_PREFIX,
     ORIGINAL_DEMOCRAT_COUNT,
@@ -128,16 +127,21 @@ def main() -> int:
     store = CampaignObjectStore(STUDY_S3_BUCKET, region_name=DYNAMODB_REGION)
     snapshot = snapshot_pre_cutover(store, _dynamodb_client())
     overprovisioned = _load_local_overprovisioned_bytes(REPO_ROOT)
+    identity_democrat, identity_republican = _identity_reference_bodies(store, snapshot)
     require_prefix_identity(
         overprovisioned[PARTY_DEMOCRAT],
         overprovisioned[PARTY_REPUBLICAN],
-        snapshot.democrat_csv.body,
-        snapshot.republican_csv.body,
+        identity_democrat,
+        identity_republican,
     )
-    backup_live_objects(store, snapshot)
-    replace_live_objects(store, snapshot, overprovisioned)
+    if not _originals_present(store):
+        backup_live_objects(store, snapshot)
+    else:
+        _require_original_backups(store, snapshot)
+    if not _live_csv_matches_overprovisioned(store, overprovisioned):
+        replace_live_objects(store, snapshot, overprovisioned)
     patched_config = patch_config_counts(snapshot.config.body)
-    store.replace(live_config_key(), patched_config, etag=snapshot.config.etag)
+    _replace_live_config(store, patched_config, snapshot.config.etag)
     verify_cutover(
         store,
         snapshot,
@@ -195,13 +199,16 @@ def local_overprovisioned_path(repo_root: Path, party: str) -> Path:
 
 
 def patch_config_counts(config_body: bytes) -> bytes:
-    """Return live config bytes with only Democrat and Republican counts updated."""
+    """Return live config bytes with updated counts and a timestamped ``s3.prefix``."""
     document = yaml.safe_load(config_body)
     if not isinstance(document, dict):
         raise ValueError("config.yaml must be a mapping")
-    prefix = str(document.get("s3", {}).get("prefix", ""))
+    s3_section = document.get("s3")
+    if not isinstance(s3_section, dict):
+        raise ValueError("config.yaml s3 must be a mapping")
+    prefix = str(s3_section.get("prefix", ""))
     if LIVE_BATCH_TIMESTAMP not in prefix:
-        raise ValueError(f"s3.prefix missing timestamp: {prefix}")
+        s3_section["prefix"] = f"{ASSIGNMENT_PREFIX}/{LIVE_BATCH_TIMESTAMP}"
     cells = document.get("cells")
     if not isinstance(cells, list):
         raise ValueError("config.yaml cells must be a list")
@@ -249,7 +256,7 @@ def require_prefix_identity(
 def snapshot_pre_cutover(
     store: ObjectStore, dynamodb: Any
 ) -> PreCutoverSnapshot:
-    """Read live objects and DynamoDB counters without writing."""
+    """Read live or ``_original`` objects and DynamoDB counters without writing."""
     democrat_counter = _read_assignment_counter(
         dynamodb, DEMOCRAT_ITERATION_ASSIGNMENT_KEY
     )
@@ -264,11 +271,20 @@ def snapshot_pre_cutover(
         raise ValueError(
             f"republican_counter={republican_counter} exceeds {ORIGINAL_REPUBLICAN_COUNT}"
         )
-    democrat_csv = _snapshot_live_object(store, live_assignments_key(PARTY_DEMOCRAT))
-    republican_csv = _snapshot_live_object(
-        store, live_assignments_key(PARTY_REPUBLICAN)
-    )
-    config = _snapshot_live_object(store, live_config_key())
+    if _originals_present(store):
+        democrat_csv = _snapshot_live_object(
+            store, original_assignments_key(PARTY_DEMOCRAT)
+        )
+        republican_csv = _snapshot_live_object(
+            store, original_assignments_key(PARTY_REPUBLICAN)
+        )
+        config = _snapshot_live_object(store, original_config_key())
+    else:
+        democrat_csv = _snapshot_live_object(store, live_assignments_key(PARTY_DEMOCRAT))
+        republican_csv = _snapshot_live_object(
+            store, live_assignments_key(PARTY_REPUBLICAN)
+        )
+        config = _snapshot_live_object(store, live_config_key())
     return PreCutoverSnapshot(
         democrat_csv=democrat_csv,
         republican_csv=republican_csv,
@@ -404,6 +420,64 @@ def verify_extra_rows(store: ObjectStore) -> tuple[str, ...]:
         f"extra_rows democrat={sorted(required_d)}",
         f"extra_rows republican={sorted(required_r)}",
     )
+
+
+def _originals_present(store: ObjectStore) -> bool:
+    return all(
+        store.get(key) is not None
+        for key in (
+            original_assignments_key(PARTY_DEMOCRAT),
+            original_assignments_key(PARTY_REPUBLICAN),
+            original_config_key(),
+        )
+    )
+
+
+def _require_original_backups(
+    store: ObjectStore, snapshot: PreCutoverSnapshot
+) -> None:
+    for key, expected in (
+        (original_assignments_key(PARTY_DEMOCRAT), snapshot.democrat_csv.body),
+        (original_assignments_key(PARTY_REPUBLICAN), snapshot.republican_csv.body),
+        (original_config_key(), snapshot.config.body),
+    ):
+        stored = _require_object(store, key)
+        _require_sha(stored.body, expected, key)
+
+
+def _identity_reference_bodies(
+    store: ObjectStore, snapshot: PreCutoverSnapshot
+) -> tuple[bytes, bytes]:
+    if _originals_present(store):
+        democrat = _require_object(store, original_assignments_key(PARTY_DEMOCRAT)).body
+        republican = _require_object(
+            store, original_assignments_key(PARTY_REPUBLICAN)
+        ).body
+        return democrat, republican
+    return snapshot.democrat_csv.body, snapshot.republican_csv.body
+
+
+def _live_csv_matches_overprovisioned(
+    store: ObjectStore, overprovisioned: dict[str, bytes]
+) -> bool:
+    live_d = store.get(live_assignments_key(PARTY_DEMOCRAT))
+    live_r = store.get(live_assignments_key(PARTY_REPUBLICAN))
+    if live_d is None or live_r is None:
+        return False
+    return (
+        sha256_hex(live_d.body) == sha256_hex(overprovisioned[PARTY_DEMOCRAT])
+        and sha256_hex(live_r.body) == sha256_hex(overprovisioned[PARTY_REPUBLICAN])
+    )
+
+
+def _replace_live_config(
+    store: ObjectStore, patched_config: bytes, fallback_etag: str
+) -> None:
+    current = store.get(live_config_key())
+    if current is not None and sha256_hex(current.body) == sha256_hex(patched_config):
+        return
+    etag = current.etag if current is not None else fallback_etag
+    store.replace(live_config_key(), patched_config, etag=etag)
 
 
 def _load_local_overprovisioned_bytes(repo_root: Path) -> dict[str, bytes]:
