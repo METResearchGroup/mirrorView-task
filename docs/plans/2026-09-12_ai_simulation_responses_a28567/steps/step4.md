@@ -3,7 +3,7 @@
 ## Scope
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/experiment{1,2,3,4}/run.py --score`
-- **Task:** Join each model's `final.parquet` to `cohort_trials.parquet`. Expand `remove_pair_indexes` into 20 binary predictions. Write user-level, post-level, party, toxicity, and stance tables into that experiment's `RESULTS.md`.
+- **Task:** Join each model's `final.parquet` to `cohort_trials.parquet`. Expand `remove_pair_indexes` into 20 binary predictions. Write user-level, post-level, party, toxicity, and stance tables into that experiment's `RESULTS.md`, then upload the same bytes with `put_new_mirrored`.
 - **Out of scope:** experiment 5, new model calls, changing gold labels, editing product engines
 
 ## Files to inspect (read-only)
@@ -19,10 +19,11 @@
 
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/score.py`
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/run.py`
-- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment1/RESULTS.md` (new)
-- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment2/RESULTS.md` (new)
-- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment3/RESULTS.md` (new)
-- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment4/RESULTS.md` (new)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/write.py` (reuse `put_new_mirrored` for each RESULTS file)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment1/RESULTS.md` (new, local and S3)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment2/RESULTS.md` (new, local and S3)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment3/RESULTS.md` (new, local and S3)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment4/RESULTS.md` (new, local and S3)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/tests/test_score_predictions.py` (add table-shape cases if missing)
 
 ## Files forbidden to change
@@ -66,11 +67,13 @@ Two blocks: `sampled_stance=left` and `sampled_stance=right`. Same columns as th
 
 Each table states `scored_users` or `scored_pairs` and `failed_users`. Do not add p-values.
 
-`--score` also prints the user-level table and the post-level table to stdout.
+`--score` also prints the user-level table and the post-level table to stdout, plus `results_s3_uri=` for that experiment.
+
+Each `RESULTS.md` is uploaded with `put_new_mirrored` so the S3 key equals `experiments/ai_simulation_responses_2026_09_11/experiment{N}/RESULTS.md`. A second `--score` for the same experiment raises `FileExistsError` if that key exists.
 
 ## Must pass
 
-- Four `RESULTS.md` files exist, one per experiment 1 to 4.
+- Four `RESULTS.md` files exist, one per experiment 1 to 4, locally and at `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment{N}/RESULTS.md`.
 - User-level mean accuracy is the mean of per-user accuracies, not the pooled accuracy relabeled as user-level.
 - Baseline remove rate appears in every post-level table.
 - Pytest still exits 0.
@@ -80,6 +83,7 @@ Each table states `scored_users` or `scored_pairs` and `failed_users`. Do not ad
 - `--score` when a model `final.parquet` is missing
 - Treating user-level F1 as pooled F1
 - Counting `errors.jsonl` users as correct
+- `--score` writing `RESULTS.md` only locally and skipping S3
 
 ## Implement-from-spec notes
 

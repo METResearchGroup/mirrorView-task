@@ -8,27 +8,29 @@ The reviews below were applied to the draft. The plan in this folder already inc
 
 `acceptable`
 
-Issue 290 already asks for four prompt variants, four models, a cost gate, and an error analysis. The plan keeps that shape and refuses extra machinery. Shared code is one runner. Experiment folders are thin wrappers plus reports.
+Issue 290 already asks for four prompt variants, four models, a cost gate, and an error analysis. The plan keeps that shape and refuses extra machinery. Shared code is one runner. Experiment folders are thin wrappers plus reports. Derived files use the same S3 bucket and path-equals-local-key rule as the other September 2026 experiments.
 
 ### What seems solid
 
 - One cohort, one schema, one scorer.
 - Cost smoke and the experiment 2 prompt are hard gates.
 - Campaign parquet layout is copied from the separability experiment, not redesigned.
-- Experiment 5 uses counts on existing fields.
+- S3 keys copy the local tree under `experiments/ai_simulation_responses_2026_09_11/`. One helper, `put_new_mirrored`, writes both places. No second object store.
+- Experiment 5 uses counts on existing fields. The split is 75 false-negative posts and 75 false-positive posts.
 
 ### What seems unproven or overbuilt
 
 - Sixteen full labeling jobs are expensive, but the issue named those jobs. The plan does not add a fifteenth model or a per-pair call pattern that would multiply cost by 20.
 - Pytest under an experiment folder is an exception to `UNIT_TESTING_STANDARDS.md`. It is there because a 0-based index bug would invalidate every score, not because a test framework was wanted for its own sake.
+- Uploading `COST_ESTIMATE.md` and `RESULTS.md` with `put_new` makes a second write fail. The same immutability already applies to cohort parquet and to presentation parquet in the separability experiment. A later score fix needs a deleted S3 key, which the plan does not add a command for.
 
 ### Simpler version I would ship
 
-Keep the shared-runner design in `plan.md`. Do not add a prompt-strategy interface, a plugin registry, a second schema, or significance tests. Do not spawn 16 implementation subagents for scaffolding. Parallel Cursor Grok High subagents start only in Step 3, after approval, and only one per experiment.
+Keep the shared-runner design in `plan.md`. Do not add a prompt-strategy interface, a plugin registry, a second schema, or significance tests. Do not spawn 16 implementation subagents for scaffolding. Parallel Cursor Grok High subagents start only in Step 3, after approval, and only one per experiment. Do not upload Python, tests, README, or SETUP to S3.
 
 ### Follow-up questions
 
-None that block the plan. The issue's "1,000 rows" is pinned as 1,000 participants. If that was meant as 1,000 trial rows, the cost and the user-level tables change, and the user should say so on this pull request.
+None that block the plan. The cohort target is 1,000 complete participants. Experiment 5 takes 75 false negatives and 75 false positives.
 
 ## Persona used
 
@@ -52,7 +54,7 @@ Recommended fix: keep one call per user, because 20 calls per user times four ex
 
 Impact: early Prolific completers can differ from later ones. External claims should stay inside this cohort.
 
-Recommended fix: record `source_file_epoch_ms` range and drop counts in `SETUP.md`. Do not reweight.
+Recommended fix: record `source_file_epoch_ms` range and drop counts in `SETUP.md`. Do not reweight. The target remains 1,000 complete participants. If fewer complete users exist, take all of them and record the count.
 
 ### Issue: user-level means and pooled post-level scores can disagree
 
@@ -66,23 +68,22 @@ Impact: a higher F1 in experiment 4 does not prove that demographics caused bett
 
 Recommended fix: describe them as prompt ablations. Do not add causal language to `RESULTS.md`.
 
-### Issue: the issue's experiment 5 wording lists false negatives twice
+### Issue: experiment 5 complementary errors
 
 Impact: 150 posts of one error type would duplicate the first list.
 
-Recommended fix: 75 false negatives and 75 false positives, called out in `plan.md` so the user can correct it.
+Recommended fix: 75 false-negative posts and 75 false-positive posts. Confirmed.
 
 ## Open questions / assumptions
 
 - Language, employment, and social-media survey items are not in `columnsToKeep`, so experiment 2 cannot include them.
-- `scripts/export_study_results.py` expects 190 files. The live complete-user count may be under 1,000.
+- `scripts/export_study_results.py` expects 190 files. The live complete-participant count may be under 1,000.
 - Qwen and Claude token prices are pinned from the Bedrock list and Marketplace page. Smoke token counts still drive the dollar table.
 
 ## Suggested next actions
 
-1. Approve or correct the 1,000-participant reading and the 75 / 75 error split on this pull request.
-2. Approve the experiment 2 template in `steps/step1.md` early, so Step 2 is only a filled example plus cost.
-3. After merge, implement Step 1, then stop at the Step 2 gate.
+1. Approve the experiment 2 template in `steps/step1.md` early, so Step 2 is only a filled example plus cost.
+2. After merge, implement Step 1, then stop at the Step 2 gate.
 
 ## Writing cleanup
 

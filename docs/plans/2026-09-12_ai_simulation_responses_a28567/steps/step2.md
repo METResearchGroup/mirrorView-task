@@ -3,7 +3,7 @@
 ## Scope
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/shared/run.py` `main` with `--smoke`, `--estimate-cost`, and `--print-experiment-2-prompt`
-- **Task:** Label the first 10 cohort users (or the full cohort if smaller) on all four models using the experiment 1 prompt. Write smoke objects under each model's `smoke/` prefix. Scale token estimates to experiments 2 to 4. Write `COST_ESTIMATE.md`. Print the experiment 2 template plus one filled example. Stop. Do not write `final.parquet`. Do not start full labeling.
+- **Task:** Label the first 10 cohort users (or the full cohort if smaller) on all four models using the experiment 1 prompt. Write smoke objects under each model's `smoke/` prefix on S3, with a gitignored local cache at the same relative path. Scale token estimates to experiments 2 to 4. Write `COST_ESTIMATE.md` locally and upload it with `put_new_mirrored`. Print the experiment 2 template plus one filled example. Stop. Do not write `final.parquet`. Do not start full labeling.
 - **Out of scope:** experiments 2 to 4 full runs, experiment 5, `RESULTS.md`, `CHANGELOG.md`, editing product engines
 
 ## Files to inspect (read-only)
@@ -23,7 +23,8 @@
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/openai_runner.py`
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/bedrock_runner.py`
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/cost.py` (new)
-- `/workspace/experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md` (new, live numbers)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/write.py` (reuse `put_new_mirrored` for the cost file)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md` (new, live numbers, local and S3)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment2/SETUP.md` (add one filled example after the template)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment1/SETUP.md` (record smoke user count and smoke URIs)
 
@@ -51,9 +52,11 @@ Prompt is experiment 1 only. All four models must run:
 
 Bedrock `max_tokens` is 256. Do not send content-filter failures to OpenAI. Record those ids in the smoke `errors.jsonl`.
 
-Smoke root URI pattern:
+Smoke root URI pattern, which equals the local relative path:
 
 `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment1/outputs/{model}/smoke/`
+
+Call `FeaturePaths.from_root_uri` with root `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment1/outputs/{model}/` and feature `smoke`, so smoke objects land under `experiments/ai_simulation_responses_2026_09_11/experiment1/outputs/{model}/smoke/`.
 
 `--smoke` prints, per model:
 
@@ -69,7 +72,7 @@ output_tokens=
 
 `cost.py` loads smoke token counts per request. Median input and output tokens are the medians across the 10 (or fewer) successful smoke requests for that model. Experiments 2 to 4 estimated input tokens equal that median times `user_count` times (`mean_chars(experiment_n) / mean_chars(experiment_1)`), using rendered prompts on the full cohort with no extra model call. Estimated output tokens equal smoke-median output tokens times `user_count`. Median USD uses the pinned rates in the plan. Low is 0.5 times median. High is 2 times median. Experiment 5 is 0 tokens and 0 USD.
 
-Write `experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md` with this shape:
+Write `experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md` locally, then upload the same bytes with `put_new_mirrored` so the S3 key is `experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md`. Print `cost_s3_uri=s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md`. A second `--estimate-cost` against that existing key raises `FileExistsError`. The markdown body has this shape:
 
 ```markdown
 ## Experiment 1
@@ -108,7 +111,7 @@ Estimated cost: 0 (analysis only)
 
 - Four smoke prefixes each have 10 labels, or `user_count` labels if smaller, unless a content filter removed some rows. Print labeled and failed counts.
 - No `final.parquet` exists under any experiment prefix.
-- `COST_ESTIMATE.md` has the column set from the issue and a total section.
+- `COST_ESTIMATE.md` has the column set from the issue and a total section, locally and at `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md`.
 - Experiment 2 filled prompt is visible in stdout and in `experiment2/SETUP.md`.
 - Pytest from Step 1 still exits 0.
 
@@ -118,6 +121,8 @@ Estimated cost: 0 (analysis only)
 - `--estimate-cost` before all four smokes exist
 - `--smoke` calling `build_bedrock_engine` for Qwen or Claude
 - Full-cohort labeling flags running inside `--smoke`
+- `--estimate-cost` writing `COST_ESTIMATE.md` only locally and skipping S3
+- A second `--estimate-cost` overwriting the existing S3 cost object
 
 ## Gate
 

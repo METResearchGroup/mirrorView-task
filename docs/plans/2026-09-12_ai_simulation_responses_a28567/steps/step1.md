@@ -3,7 +3,7 @@
 ## Scope
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/shared/run.py` `main` with `--write-cohort`
-- **Task:** Add the experiment folders, download September Prolific CSVs, and confirm up to 1,000 complete users. Upload cohort parquet. Implement prompts, schema, four model runners, scoring helpers, and pytest. Do not call OpenAI or Bedrock.
+- **Task:** Add the experiment folders, download September Prolific CSVs, and confirm up to 1,000 complete participants. Upload cohort parquet locally and to S3 at the matching path. Implement the mirrored-path helper, prompts, schema, four model runners, scoring helpers, and pytest. Do not call OpenAI or Bedrock.
 - **Out of scope:** smoke, cost estimate, full labeling, `RESULTS.md`, `CHANGELOG.md`, editing product engines, editing the website, editing `scripts/export_study_results.py`
 
 ## Files to inspect (read-only)
@@ -25,6 +25,8 @@
 | `/workspace/data_platform/generate_features/engines/bedrock_engine.py` | `label_tasks_collecting_failures`, `create_bedrock_runtime_client`, `BEDROCK_MAX_TOKENS` is 32 |
 | `/workspace/data_platform/generate_features/engines/bedrock_campaign.py` | `BEDROCK_CAMPAIGN_MAX_CONCURRENCY` is 8 |
 | `/workspace/data_platform/generate_features/s3_feature_campaign.py` | `CampaignObjectStore`, `parse_s3_uri`, `FeaturePaths.from_root_uri`, `put_new` |
+| `/workspace/experiments/generate_study_user_assignments_2026_09_08/constants.py` | `OUTPUT_S3_BUCKET` and `OUTPUT_S3_KEY` equal to the local experiment path |
+| `/workspace/experiments/test_separability_original_mirror_posts_2026_09_09/constants.py` | `OUTPUT_S3_BUCKET` and `PRESENTATION_S3_KEY` equal to the local experiment path |
 | `/workspace/data_platform/generate_features/s3_feature_batches.py` | `write_batch`, `consolidate_final`, `attach_row_metadata` |
 | `/workspace/data_platform/generate_features/campaign_cost_report.py` | OpenAI Batch and Nova Micro rates |
 | `/workspace/lib/constants.py` | `DEFAULT_LLM_MODEL`, `DEFAULT_BEDROCK_NOVA_MICRO`, `DEFAULT_BEDROCK_SONNET_MODEL`, `BEDROCK_REGION` |
@@ -53,6 +55,7 @@
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/tests/test_render_prompt.py` (new)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/tests/test_expand_remove_indexes.py` (new)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/tests/test_score_predictions.py` (new)
+- `/workspace/experiments/ai_simulation_responses_2026_09_11/shared/tests/test_mirrored_s3_key.py` (new)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment1/README.md` (new)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment1/SETUP.md` (new)
 - `/workspace/experiments/ai_simulation_responses_2026_09_11/experiment1/run.py` (new)
@@ -108,7 +111,7 @@ Keep functions under 20 lines. Use frozen dataclasses. Do not pass unstructured 
 
 ### `constants.py`
 
-Pinned values: posts per user 20, cohort cap 1000, smoke user count 10, Bedrock max tokens 256, bucket `jspsych-mirror-view-2026-09-09`, prefix `data/prolific/`, since date 2026-09-09, output bucket `mirrorview-experimental-artifacts`, output prefix `experiments/ai_simulation_responses_2026_09_11/`, model ids from the plan, experiment numbers 1 to 4, model folder names `openai`, `bedrock_micro_nova`, `bedrock_qwen`, `bedrock_claude`.
+Pinned values: posts per user 20, cohort cap 1000 complete participants, smoke user count 10, Bedrock max tokens 256, study bucket `jspsych-mirror-view-2026-09-09`, prefix `data/prolific/`, since date 2026-09-09, output bucket `mirrorview-experimental-artifacts`, output prefix `experiments/ai_simulation_responses_2026_09_11/` (the S3 key equals this local prefix plus the rest of the relative path), model ids from the plan, experiment numbers 1 to 4, model folder names `openai`, `bedrock_micro_nova`, `bedrock_qwen`, `bedrock_claude`. Do not use the older finetune prefix `mirrorview-finetune_qwen_model_2026_08_08/`.
 
 Frozen dataclasses at least:
 
@@ -120,7 +123,7 @@ Frozen dataclasses at least:
 ### `cohort.py`
 
 - `list_september_csv_keys(store_or_s3_client)` lists keys using `list_csv_keys` with since date 2026-09-09.
-- `build_cohort(csv_paths)` returns users and trials. Drop `manual-test` / `pid` / `dev` prolific ids using the export script's filters. Require 20 linked-fate keep/remove trials, stored `pair_order`, reflection text, and influence rating. Sort by `source_file_epoch_ms` ascending, then `prolific_id` for ties, and take at most 1,000 users.
+- `build_cohort(csv_paths)` returns users and trials. Drop `manual-test` / `pid` / `dev` prolific ids using the export script's filters. Require 20 linked-fate keep/remove trials, stored `pair_order`, reflection text, and influence rating. Sort by `source_file_epoch_ms` ascending, then `prolific_id` for ties, and take at most 1,000 complete participants. If fewer complete users exist, return all of them.
 - `pair_index` is 1-indexed in `trial_index` order.
 
 ### `prompts.py`
@@ -153,8 +156,18 @@ Bodies may stay as `raise NotImplementedError` until Step 2, but signatures must
 
 ### `write.py`
 
-- `upload_cohort(users, trials, store)` writes both parquet files locally and with `put_new`
+- `mirrored_s3_key(relative_path)` returns the S3 key, which equals the repo-relative path. The path must start with `experiments/ai_simulation_responses_2026_09_11/`. Raise `ValueError` if it does not, or if it has a leading slash, or if it uses the older finetune prefix.
+- `put_new_mirrored(store, relative_path, body)` writes `REPO_ROOT / relative_path`, then `store.put_new(relative_path, body)`. The store bucket is `mirrorview-experimental-artifacts`, matching `experiments/generate_study_user_assignments_2026_09_08/constants.py` `OUTPUT_S3_BUCKET` and `experiments/test_separability_original_mirror_posts_2026_09_09/constants.py` `OUTPUT_S3_BUCKET`.
+- `upload_cohort(users, trials, store)` writes both parquet files through `put_new_mirrored`
 - `require_cohort_keys_absent(store)` raises `FileExistsError` if either key exists
+- Later steps reuse `put_new_mirrored` for `COST_ESTIMATE.md`, `RESULTS.md`, and experiment 5 CSVs. Step 1 does not write those files.
+
+Cohort keys:
+
+```text
+experiments/ai_simulation_responses_2026_09_11/shared/cohort_users.parquet
+experiments/ai_simulation_responses_2026_09_11/shared/cohort_trials.parquet
+```
 
 ### `run.py`
 
@@ -306,6 +319,35 @@ when expand_remove_indexes
 then raise ValueError
 ```
 
+### `tests/test_mirrored_s3_key.py`
+
+Class `TestMirroredS3Key`.
+
+```text
+given experiments/ai_simulation_responses_2026_09_11/shared/cohort_users.parquet
+when mirrored_s3_key
+then the key equals that path
+and the key does not add another prefix
+
+given experiments/ai_simulation_responses_2026_09_11/experiment5/outputs/false_negative_posts.csv
+when mirrored_s3_key
+then the key equals that path
+
+given shared/cohort_users.parquet
+when mirrored_s3_key
+then raise ValueError
+
+given /experiments/ai_simulation_responses_2026_09_11/shared/cohort_users.parquet
+when mirrored_s3_key
+then raise ValueError
+
+given mirrorview-finetune_qwen_model_2026_08_08/data/x.parquet
+when mirrored_s3_key
+then raise ValueError
+```
+
+Tests must not call S3. `put_new_mirrored` may be tested by patching `CampaignObjectStore.put_new` and a temp directory, or left to the live `--write-cohort` command.
+
 ### `tests/test_score_predictions.py`
 
 Class `TestUserMetrics` and `TestPooledMetrics`.
@@ -349,7 +391,8 @@ Expected: prints the `user_count=` block from above. A second run exits non-zero
 - Imports from `shared/run.py` resolve.
 - Parent README and five experiment READMEs exist and carry the banner.
 - `PYTHONPATH=. uv run pytest experiments/ai_simulation_responses_2026_09_11/shared/tests -q` exits 0.
-- `--write-cohort` uploads both parquet objects with `put_new`.
+- `--write-cohort` writes both parquet files locally and uploads them with `put_new` at keys that equal those relative paths.
+- Printed `users_s3_uri=` and `trials_s3_uri=` start with `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/shared/`.
 - Product engines, website files, and `scripts/export_study_results.py` are unchanged.
 
 ## Must fail
@@ -358,6 +401,7 @@ Expected: prints the `user_count=` block from above. A second run exits non-zero
 - Cohort builder keeping a user with 19 trials, missing `pair_order`, or empty reflection.
 - `expand_remove_indexes` accepting 0 or 21.
 - Experiment 1 prompt containing the demographics heading.
+- `mirrored_s3_key` accepting a path outside `experiments/ai_simulation_responses_2026_09_11/` or the older finetune prefix.
 
 ## Implement-from-spec notes
 
@@ -378,8 +422,9 @@ Phase 5 implements in this order, one commit per unit of work:
 3. `render_pairs` / `render_user_prompt` until `test_render_prompt.py` is green
 4. `build_cohort` until `test_build_cohort.py` is green
 5. `user_metrics` / `pooled_metrics` / `slice_tables` until `test_score_predictions.py` is green
-6. local parquet writer
-7. `--write-cohort` wiring, S3 `put_new`, missing-key error
-8. runner signatures and thin experiment `run.py` files
+6. `mirrored_s3_key` until `test_mirrored_s3_key.py` is green
+7. local parquet writer plus `put_new_mirrored`
+8. `--write-cohort` wiring, S3 `put_new`, missing-key error
+9. runner signatures and thin experiment `run.py` files
 
 Phase 6 is complete when the pytest command exits 0, `--write-cohort` can run, and Step 2 can smoke without inventing schema or prompt code.
