@@ -117,12 +117,12 @@ def save_token_usage(
 
 def load_token_usage(store: CampaignObjectStore, paths: FeaturePaths) -> list[TokenUsageRecord]:
     """Load per-request smoke token counts."""
-    payload = store.get(token_usage_key(paths))
-    if payload is None:
+    stored = store.get(token_usage_key(paths))
+    if stored is None:
         raise FileNotFoundError(
             f"Missing smoke token usage: {paths.uri(token_usage_key(paths))}"
         )
-    records = json.loads(payload.decode("utf-8"))
+    records = json.loads(stored.body.decode("utf-8"))
     return [TokenUsageRecord(**record) for record in records]
 
 
