@@ -45,4 +45,13 @@ def remove_indexes_spec(engine_type: Literal["openai", "bedrock"]) -> FeatureSpe
 
 def expand_remove_indexes(remove_pair_indexes: list[int]) -> list[int]:
     """Expand 1-indexed pair numbers into length-20 binary predictions."""
-    raise NotImplementedError
+    predictions = [0] * 20
+    seen: set[int] = set()
+    for index in remove_pair_indexes:
+        if index < 1 or index > 20:
+            raise ValueError(f"pair index out of range: {index}")
+        if index in seen:
+            raise ValueError(f"duplicate pair index: {index}")
+        seen.add(index)
+        predictions[index - 1] = 1
+    return predictions
