@@ -21,6 +21,7 @@ from data_platform.generate_features.engines.bedrock_engine import (
     BedrockUsage,
     converse_label,
     create_bedrock_runtime_client,
+    label_tasks_collecting_failures,
 )
 from data_platform.generate_features.models import FeatureSpec, LabelTask
 from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
@@ -56,8 +57,19 @@ def label_tasks(
     model_id: str,
 ) -> tuple[list[dict], list[RecordLabelFailure]]:
     """Label tasks through Bedrock Converse without OpenAI fallback."""
-    result = label_tasks_with_usage(spec, tasks, model_id)
-    return result.rows, result.failures
+    if not tasks:
+        return [], []
+    outcome = label_tasks_collecting_failures(
+        create_bedrock_runtime_client(),
+        model_id,
+        spec,
+        tasks,
+        BEDROCK_CAMPAIGN_MAX_CONCURRENCY,
+        get_current_timestamp(),
+        max_tokens=BEDROCK_MAX_TOKENS,
+    )
+    failures = [*outcome.content_filter_failures, *outcome.other_failures]
+    return outcome.rows, failures
 
 
 def label_tasks_with_usage(
@@ -65,7 +77,12 @@ def label_tasks_with_usage(
     tasks: list[LabelTask],
     model_id: str,
 ) -> BedrockLabelResult:
-    """Label tasks and capture per-request token usage."""
+    """Label tasks and capture per-request token usage for smoke runs only.
+
+    ``label_tasks_collecting_failures`` discards token usage, so smoke labeling
+    uses this path to record usage via ``converse_label`` (the same primitive
+    the helper uses). Full labeling should call ``label_tasks`` instead.
+    """
     if not tasks:
         return BedrockLabelResult([], [], [])
     client = create_bedrock_runtime_client()
