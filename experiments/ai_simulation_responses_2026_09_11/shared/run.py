@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
+from collections.abc import Iterator
 from typing import Any
 
 import boto3
@@ -99,7 +100,16 @@ EXPERIMENT2_SETUP_PATH = (
 EXPERIMENT1_SETUP_PATH = (
     REPO_ROOT / "experiments/ai_simulation_responses_2026_09_11/experiment1/SETUP.md"
 )
+APPROVAL_RELATIVE_PATH = "experiments/ai_simulation_responses_2026_09_11/APPROVAL.md"
+APPROVAL_PATH = REPO_ROOT / APPROVAL_RELATIVE_PATH
 FILLED_EXAMPLE_HEADER = "## Filled example (first cohort user)"
+FINAL_EXISTS_MESSAGE = "final exists"
+FULL_MODEL_ENGINE_TYPES = {
+    MODEL_FOLDER_OPENAI: OPENAI_ENGINE_TYPE,
+    MODEL_FOLDER_BEDROCK_MICRO_NOVA: BEDROCK_ENGINE_TYPE,
+    MODEL_FOLDER_BEDROCK_QWEN: BEDROCK_ENGINE_TYPE,
+    MODEL_FOLDER_BEDROCK_CLAUDE: BEDROCK_ENGINE_TYPE,
+}
 
 MODEL_CONFIGS = (
     (MODEL_FOLDER_OPENAI, OPENAI_ENGINE_TYPE, openai_runner.label_tasks_with_usage),
@@ -526,6 +536,302 @@ def append_filled_example_to_setup(filled_prompt: str) -> None:
     EXPERIMENT2_SETUP_PATH.write_text(setup_text.rstrip() + block, encoding="utf-8")
 
 
+def require_model_approval() -> None:
+    """Exit when Step 3 approval is missing."""
+    if APPROVAL_PATH.is_file():
+        return
+    raise SystemExit(
+        "Full-cohort labeling requires written approval of "
+        f"{COST_ESTIMATE_RELATIVE_PATH} and "
+        "experiments/ai_simulation_responses_2026_09_11/experiment2/SETUP.md. "
+        f"Create {APPROVAL_RELATIVE_PATH} after approval."
+    )
+
+
+def model_command(experiment_number: int, model_folder: str) -> None:
+    """Label the full cohort for one experiment and model."""
+    require_model_approval()
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    users = select_all_users(load_cohort_users())
+    trials_by_user = load_cohort_trials_by_user()
+    summary = run_model_labeling(
+        store,
+        experiment_number,
+        model_folder,
+        users,
+        trials_by_user,
+    )
+    print_model_summary(experiment_number, model_folder, summary)
+
+
+def run_model_labeling(
+    store: CampaignObjectStore,
+    experiment_number: int,
+    model_folder: str,
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> dict[str, Any]:
+    """Label every cohort user for one experiment and model."""
+    setup = _full_label_setup(
+        store, experiment_number, model_folder, users, trials_by_user
+    )
+    if setup["manifest"].get("final_parquet"):
+        print(FINAL_EXISTS_MESSAGE)
+        return label_summary_from_store(store, setup["paths"], len(setup["ordered_ids"]))
+    return _label_and_consolidate_full_cohort(store, setup, model_folder)
+
+
+def _full_label_setup(
+    store: CampaignObjectStore,
+    experiment_number: int,
+    model_folder: str,
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> dict[str, Any]:
+    """Load manifest and inputs for one full-cohort labeling run."""
+    paths = full_feature_paths(experiment_number, model_folder)
+    engine_type = FULL_MODEL_ENGINE_TYPES[model_folder]
+    spec = remove_indexes_spec(engine_type)  # type: ignore[arg-type]
+    campaign = campaign_config_for_experiment(experiment_number)
+    ordered_ids, texts = ordered_full_input(experiment_number, users, trials_by_user)
+    run_id = run_id_for_feature(campaign.campaign_id, FEATURE_NAME)
+    manifest, manifest_etag = load_or_create_manifest(
+        store,
+        paths,
+        campaign,
+        spec,
+        expected_row_count=len(ordered_ids),
+        engine_type=engine_type,
+    )
+    return {
+        "paths": paths,
+        "spec": spec,
+        "ordered_ids": ordered_ids,
+        "texts": texts,
+        "run_id": run_id,
+        "manifest": manifest,
+        "manifest_etag": manifest_etag,
+    }
+
+
+def _label_and_consolidate_full_cohort(
+    store: CampaignObjectStore,
+    setup: dict[str, Any],
+    model_folder: str,
+) -> dict[str, Any]:
+    """Label missing parts and consolidate one full-cohort prefix."""
+    manifest_etag = label_full_parts(
+        store,
+        setup["paths"],
+        setup["manifest"],
+        setup["manifest_etag"],
+        setup["spec"],
+        model_folder,
+        setup["ordered_ids"],
+        setup["texts"],
+        setup["run_id"],
+    )
+    consolidate_final(
+        store,
+        setup["paths"],
+        setup["manifest"],
+        manifest_etag,
+        expected_ids=setup["ordered_ids"],
+        failed_ids=read_failed_ids(store, setup["paths"]),
+        spec=setup["spec"],
+        run_id=setup["run_id"],
+    )
+    return label_summary_from_store(store, setup["paths"], len(setup["ordered_ids"]))
+
+
+def label_full_parts(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+    spec: FeatureSpec,
+    model_folder: str,
+    ordered_ids: list[str],
+    texts: dict[str, str],
+    run_id: str,
+) -> str:
+    """Label every part that is not already in the manifest."""
+    written_parts = {int(entry["part_index"]) for entry in manifest["batches"]}
+    for part_index, chunk_ids in enumerate(_chunks(ordered_ids, CAMPAIGN_BATCH_SIZE)):
+        if part_index in written_parts:
+            continue
+        manifest_etag = label_full_part(
+            store,
+            paths,
+            manifest,
+            manifest_etag,
+            spec,
+            model_folder,
+            part_index,
+            chunk_ids,
+            texts,
+            run_id,
+        )
+    return manifest_etag
+
+
+def label_full_part(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+    spec: FeatureSpec,
+    model_folder: str,
+    part_index: int,
+    chunk_ids: list[str],
+    texts: dict[str, str],
+    run_id: str,
+) -> str:
+    """Label one full-cohort part when it is not already recorded."""
+    adopted = adopt_unrecorded_batch(
+        store, paths, manifest, manifest_etag, part_index=part_index, run_id=run_id
+    )
+    if adopted is not None:
+        return adopted.manifest_etag
+    tasks = [LabelTask(uri=record_id, text=texts[record_id]) for record_id in chunk_ids]
+    rows, failures = call_full_label_fn(model_folder, spec, tasks)
+    return _persist_full_part_rows(
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        spec,
+        model_folder,
+        part_index,
+        chunk_ids,
+        rows,
+        failures,
+        run_id,
+    )
+
+
+def _persist_full_part_rows(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    manifest: dict[str, Any],
+    manifest_etag: str,
+    spec: FeatureSpec,
+    model_folder: str,
+    part_index: int,
+    chunk_ids: list[str],
+    rows: list[dict],
+    failures: list[RecordLabelFailure],
+    run_id: str,
+) -> str:
+    """Write one full-cohort batch and append any label failures."""
+    manifest_etag = write_smoke_rows(
+        store,
+        paths,
+        manifest,
+        manifest_etag,
+        spec,
+        part_index,
+        chunk_ids,
+        rows,
+        run_id,
+        model_folder,
+    )
+    if failures:
+        append_errors(store, paths, error_records(failures, run_id, part_index))
+    return manifest_etag
+
+
+def call_full_label_fn(
+    model_folder: str,
+    spec: FeatureSpec,
+    tasks: list[LabelTask],
+) -> tuple[list[dict], list[RecordLabelFailure]]:
+    """Dispatch to the OpenAI or Bedrock full-cohort label function."""
+    if model_folder == MODEL_FOLDER_OPENAI:
+        return openai_runner.label_tasks(spec, tasks)
+    return bedrock_runner.label_tasks(spec, tasks, MODEL_IDS[model_folder])
+
+
+def label_summary_from_store(
+    store: CampaignObjectStore,
+    paths: FeaturePaths,
+    expected: int,
+) -> dict[str, Any]:
+    """Summarize labeled and failed counts for one full-cohort prefix."""
+    failed_ids = read_failed_ids(store, paths)
+    return {
+        "labeled": expected - len(failed_ids),
+        "failed": len(failed_ids),
+        "final_uri": paths.uri(paths.final_key),
+    }
+
+
+def print_model_summary(
+    experiment_number: int,
+    model_folder: str,
+    summary: dict[str, Any],
+) -> None:
+    """Print per-model full-cohort stdout lines."""
+    print(f"experiment={experiment_number}")
+    print(f"model={model_folder}")
+    print(f"labeled={summary['labeled']}")
+    print(f"failed={summary['failed']}")
+    print(f"final_uri={summary['final_uri']}")
+
+
+def select_all_users(users: tuple[CohortUser, ...]) -> tuple[CohortUser, ...]:
+    """Return every cohort user in cohort order."""
+    ordered = sorted(users, key=lambda user: (user.source_file_epoch_ms, user.prolific_id))
+    return tuple(ordered)
+
+
+def ordered_full_input(
+    experiment_number: int,
+    users: tuple[CohortUser, ...],
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> tuple[list[str], dict[str, str]]:
+    """Return full-cohort ids and rendered prompts for one experiment."""
+    ids = [user.prolific_id for user in users]
+    texts = {
+        user.prolific_id: render_user_prompt(
+            experiment_number,
+            user,
+            trials_by_user[user.prolific_id],
+        )
+        for user in users
+    }
+    return ids, texts
+
+
+def full_labels_root_uri(experiment_number: int) -> str:
+    """Return the S3 root for one experiment's model outputs."""
+    return (
+        f"s3://{OUTPUT_S3_BUCKET}/{EXPERIMENT_S3_PREFIX}"
+        f"experiment{experiment_number}/outputs/"
+    )
+
+
+def full_feature_paths(experiment_number: int, model_folder: str) -> FeaturePaths:
+    """Return FeaturePaths for one experiment and model full-cohort prefix."""
+    return FeaturePaths.from_root_uri(full_labels_root_uri(experiment_number), model_folder)
+
+
+def campaign_config_for_experiment(experiment_number: int) -> CampaignRunConfig:
+    """Return the campaign config for one experiment's full-cohort labeling."""
+    return CampaignRunConfig(
+        campaign_id=f"{CAMPAIGN_ID}_experiment{experiment_number}",
+        dataset_id=DATASET_ID,
+        preprocessed_run=PREPROCESSED_RUN,
+        platform=CAMPAIGN_PLATFORM,
+        batch_size=CAMPAIGN_BATCH_SIZE,
+    )
+
+
+def _chunks(ids: list[str], size: int) -> Iterator[list[str]]:
+    for start in range(0, len(ids), size):
+        yield ids[start : start + size]
+
+
 def update_experiment1_setup(smoke_user_count: int) -> None:
     """Record smoke user count and smoke URIs in experiment1 SETUP.md."""
     lines = [
@@ -564,6 +870,13 @@ def main(argv: list[str] | None = None) -> None:
         return
     if args.print_experiment_2_prompt:
         print_experiment_2_prompt_command()
+        return
+    if args.model:
+        if args.experiment is None:
+            raise SystemExit("--model requires --experiment")
+        if args.experiment not in (1, 2, 3, 4):
+            raise SystemExit("--model supports experiments 1 through 4 only")
+        model_command(args.experiment, args.model)
         return
     if args.score or args.analyze_errors or args.experiment is not None:
         raise NotImplementedError
