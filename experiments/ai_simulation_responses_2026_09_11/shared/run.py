@@ -76,6 +76,11 @@ from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
     FEATURE_NAME,
     remove_indexes_spec,
 )
+from experiments.ai_simulation_responses_2026_09_11.shared.score import (
+    print_score_tables,
+    score_experiment,
+    write_results_md,
+)
 from experiments.ai_simulation_responses_2026_09_11.shared.write import (
     require_cohort_keys_absent,
     upload_cohort,
@@ -864,6 +869,21 @@ def _chunks(ids: list[str], size: int) -> Iterator[list[str]]:
         yield ids[start : start + size]
 
 
+def score_command(experiment_number: int) -> None:
+    """Score all four models for one experiment and write RESULTS.md."""
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    for model_folder in MODEL_ORDER:
+        paths = full_feature_paths(experiment_number, model_folder)
+        if store.get(paths.final_key) is None:
+            raise SystemExit(paths.uri(paths.final_key))
+    all_users = load_cohort_users()
+    trials_by_user = load_cohort_trials_by_user()
+    result = score_experiment(experiment_number, all_users, trials_by_user, store)
+    print_score_tables(result)
+    results_s3_uri = write_results_md(result, store)
+    print(f"results_s3_uri={results_s3_uri}")
+
+
 def update_experiment1_setup(smoke_user_count: int) -> None:
     """Record smoke user count and smoke URIs in experiment1 SETUP.md."""
     lines = [
@@ -910,7 +930,14 @@ def main(argv: list[str] | None = None) -> None:
             raise SystemExit("--model supports experiments 1 through 4 only")
         model_command(args.experiment, args.model)
         return
-    if args.score or args.analyze_errors or args.experiment is not None:
+    if args.score:
+        if args.experiment is None:
+            raise SystemExit("--score requires --experiment")
+        if args.experiment not in (1, 2, 3, 4):
+            raise SystemExit("--score supports experiments 1 through 4 only")
+        score_command(args.experiment)
+        return
+    if args.analyze_errors or args.experiment is not None:
         raise NotImplementedError
     raise SystemExit("No command selected")
 
