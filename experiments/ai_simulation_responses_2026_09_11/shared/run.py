@@ -76,6 +76,10 @@ from experiments.ai_simulation_responses_2026_09_11.shared.schema import (
     FEATURE_NAME,
     remove_indexes_spec,
 )
+from experiments.ai_simulation_responses_2026_09_11.shared.error_analysis import (
+    print_error_analysis_summary,
+    run_error_analysis,
+)
 from experiments.ai_simulation_responses_2026_09_11.shared.score import (
     print_score_tables,
     score_experiment,
@@ -869,6 +873,15 @@ def _chunks(ids: list[str], size: int) -> Iterator[list[str]]:
         yield ids[start : start + size]
 
 
+def analyze_errors_command() -> None:
+    """Rank false negatives, false positives, and lowest-F1 users."""
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    all_users = load_cohort_users()
+    trials_by_user = load_cohort_trials_by_user()
+    result = run_error_analysis(store, all_users, trials_by_user)
+    print_error_analysis_summary(result)
+
+
 def score_command(experiment_number: int) -> None:
     """Score all four models for one experiment and write RESULTS.md."""
     store = CampaignObjectStore(OUTPUT_S3_BUCKET)
@@ -937,8 +950,11 @@ def main(argv: list[str] | None = None) -> None:
             raise SystemExit("--score supports experiments 1 through 4 only")
         score_command(args.experiment)
         return
-    if args.analyze_errors or args.experiment is not None:
-        raise NotImplementedError
+    if args.analyze_errors:
+        analyze_errors_command()
+        return
+    if args.experiment is not None:
+        raise SystemExit("experiment5 supports --analyze-errors only")
     raise SystemExit("No command selected")
 
 
