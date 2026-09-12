@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-12
+
+1. Operators now have experiment 5 error analysis for GitHub issue 290 on the September 2026 MirrorView cohort: 75 false-negative posts, 75 false-positive posts, 100 lowest-F1 users, and variance summaries from 998 complete participants. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
+
 ## 2026-09-09
 
 1. Operators can start the September 2026 MirrorView run from Democrat and Republican assignment files in `jspsych-mirror-view-2026-09-09`. Participants get rewritten ids such as `democrat-training_assisted-0001`, and saved CSVs land in that bucket. [PR #283](https://github.com/METResearchGroup/mirrorView-task/pull/283)
