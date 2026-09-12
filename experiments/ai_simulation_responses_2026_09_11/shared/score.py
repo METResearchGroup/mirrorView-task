@@ -25,6 +25,7 @@ from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     CohortUser,
     EXPERIMENT_S3_PREFIX,
     OUTPUT_S3_BUCKET,
+    POSTS_PER_USER,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.cost import MODEL_ORDER
 from experiments.ai_simulation_responses_2026_09_11.shared.schema import expand_remove_indexes
@@ -156,13 +157,11 @@ def score_experiment(
 ) -> ExperimentScoreResult:
     """Score all four models for one experiment."""
     users = _deduplicate_users(all_users)
-    gold_by_user = _gold_by_user(trials_by_user)
     model_results = tuple(
         _score_model(
             experiment_number,
             model_folder,
             users,
-            gold_by_user,
             trials_by_user,
             store,
         )
@@ -201,7 +200,6 @@ def _score_model(
     experiment_number: int,
     model_folder: str,
     users: tuple[CohortUser, ...],
-    gold_by_user: dict[str, list[int]],
     trials_by_user: dict[str, list[CohortTrial]],
     store: CampaignObjectStore,
 ) -> ModelScoreResult:
@@ -225,7 +223,8 @@ def _score_model(
         except ValueError:
             failed_users += 1
             continue
-        gold = tuple(gold_by_user[prolific_id])
+        user_trials = _trials_for_user(user, trials_by_user)
+        gold = tuple(trial.gold_remove for trial in user_trials)
         user_rows.append(
             UserScoreRow(
                 prolific_id=prolific_id,
@@ -234,9 +233,7 @@ def _score_model(
                 pred=pred,
             )
         )
-        trial_rows.extend(
-            _trial_score_rows(user.prolific_id, trials_by_user[prolific_id], pred)
-        )
+        trial_rows.extend(_trial_score_rows(user.prolific_id, user_trials, pred))
     slices = slice_tables(user_rows, trial_rows)
     pooled_gold = [value for row in user_rows for value in row.gold]
     pooled_pred = [value for row in user_rows for value in row.pred]
@@ -263,12 +260,14 @@ def _score_model(
     )
 
 
-def _gold_by_user(trials_by_user: dict[str, list[CohortTrial]]) -> dict[str, list[int]]:
-    gold_by_user: dict[str, list[int]] = {}
-    for prolific_id, trials in trials_by_user.items():
-        ordered = sorted(trials, key=lambda trial: trial.trial_index)
-        gold_by_user[prolific_id] = [trial.gold_remove for trial in ordered]
-    return gold_by_user
+def _trials_for_user(
+    user: CohortUser,
+    trials_by_user: dict[str, list[CohortTrial]],
+) -> list[CohortTrial]:
+    trials = list(trials_by_user[user.prolific_id])
+    if len(trials) > POSTS_PER_USER:
+        trials = trials[:POSTS_PER_USER]
+    return sorted(trials, key=lambda trial: trial.trial_index)
 
 
 def _trial_score_rows(
@@ -276,7 +275,7 @@ def _trial_score_rows(
     trials: list[CohortTrial],
     pred: tuple[int, ...],
 ) -> list[TrialScoreRow]:
-    ordered = sorted(trials, key=lambda trial: trial.trial_index)
+    ordered = trials
     rows: list[TrialScoreRow] = []
     for trial in ordered:
         pair_index = trial.pair_index - 1
