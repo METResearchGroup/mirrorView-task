@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+import io
+from dataclasses import asdict
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
+import pandas as pd
 import pytest
 
+from data_platform.generate_features.s3_feature_campaign import StoredObject
 from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
+    COHORT_USERS_KEY,
     MODEL_FOLDER_BEDROCK_CLAUDE,
     MODEL_FOLDER_OPENAI,
     OUTPUT_S3_BUCKET,
@@ -18,6 +23,7 @@ from experiments.ai_simulation_responses_2026_09_11.shared.run import (
     COST_ESTIMATE_RELATIVE_PATH,
     EXPERIMENT2_SETUP_PATH,
     full_feature_paths,
+    load_cohort_users,
     require_model_approval,
 )
 
@@ -84,6 +90,39 @@ class TestRequireModelApproval:
             approval_file,
         ):
             require_model_approval()
+
+
+class TestLoadCohortFromS3:
+    """Tests for loading cohort parquet from S3 when local files are absent."""
+
+    def test_load_cohort_users_from_s3_when_local_missing(
+        self, sample_user, tmp_path: Path
+    ):
+        """Users load from store.get bytes when local parquet is missing."""
+        # Arrange
+        frame = pd.DataFrame([asdict(sample_user)])
+        buffer = io.BytesIO()
+        frame.to_parquet(buffer, index=False)
+        parquet_bytes = buffer.getvalue()
+        mock_store = MagicMock()
+        mock_store.get.return_value = StoredObject(body=parquet_bytes, etag="etag")
+        local_path = tmp_path / COHORT_USERS_KEY
+
+        # Act
+        with patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.REPO_ROOT",
+            tmp_path,
+        ), patch(
+            "experiments.ai_simulation_responses_2026_09_11.shared.run.CampaignObjectStore",
+            return_value=mock_store,
+        ):
+            users = load_cohort_users()
+
+        # Assert
+        assert len(users) == 1
+        assert users[0].prolific_id == sample_user.prolific_id
+        mock_store.get.assert_called_once_with(COHORT_USERS_KEY)
+        assert local_path.is_file()
 
 
 class TestFullLabelPromptRendering:

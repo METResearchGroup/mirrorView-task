@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import io
 from collections import defaultdict
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Any
 
 import boto3
@@ -476,21 +478,44 @@ def load_or_create_manifest(
     return manifest, etag
 
 
+def _cohort_local_path(key: str) -> Path:
+    """Return the repo-local path for one cohort parquet key."""
+    return REPO_ROOT / key
+
+
+def _default_cohort_store() -> CampaignObjectStore:
+    """Return the object store for cohort parquet reads."""
+    return CampaignObjectStore(OUTPUT_S3_BUCKET)
+
+
+def _cache_cohort_parquet(path: Path, body: bytes) -> None:
+    """Write downloaded cohort parquet bytes to a local cache."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(body)
+
+
+def _load_cohort_parquet_bytes(key: str) -> bytes:
+    """Load cohort parquet bytes from local disk or S3."""
+    path = _cohort_local_path(key)
+    if path.is_file():
+        return path.read_bytes()
+    store = _default_cohort_store()
+    stored = store.get(key)
+    if stored is None:
+        raise FileNotFoundError(f"Missing cohort parquet: {path}")
+    _cache_cohort_parquet(path, stored.body)
+    return stored.body
+
+
 def load_cohort_users() -> tuple[CohortUser, ...]:
-    """Load cohort users from local parquet."""
-    path = REPO_ROOT / COHORT_USERS_KEY
-    if not path.exists():
-        raise FileNotFoundError(f"Missing cohort users parquet: {path}")
-    frame = pd.read_parquet(path)
+    """Load cohort users from local parquet or S3."""
+    frame = pd.read_parquet(io.BytesIO(_load_cohort_parquet_bytes(COHORT_USERS_KEY)))
     return tuple(CohortUser(**row) for row in frame.to_dict(orient="records"))
 
 
 def load_cohort_trials_by_user() -> dict[str, list[CohortTrial]]:
-    """Load cohort trials grouped by prolific id."""
-    path = REPO_ROOT / COHORT_TRIALS_KEY
-    if not path.exists():
-        raise FileNotFoundError(f"Missing cohort trials parquet: {path}")
-    frame = pd.read_parquet(path)
+    """Load cohort trials grouped by prolific id from local parquet or S3."""
+    frame = pd.read_parquet(io.BytesIO(_load_cohort_parquet_bytes(COHORT_TRIALS_KEY)))
     grouped: dict[str, list[CohortTrial]] = defaultdict(list)
     for row in frame.to_dict(orient="records"):
         pair_order = tuple(row["pair_order"])
