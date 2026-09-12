@@ -13,3 +13,18 @@ Experiment 3 prepends the reflection question from the live study, the written a
 ## Models
 
 Four models label the full cohort: OpenAI `gpt-5.4-nano`, Bedrock Nova Micro, Bedrock Qwen3 32B, and Bedrock Claude Sonnet 4.6.
+
+## Full-cohort labeling
+
+Live `run_id`: `ai_simulation_responses_2026_09_11_experiment3:remove_indexes`
+
+OpenAI Batch id: `batch_6aa4d8405f5481909db6e30b209aa906`
+
+The cohort parquet has 1,000 rows and 998 unique `prolific_id` values. Labels use `prolific_id` as `source_record_id`, so each model labels 998 users.
+
+| model | labeled | failed | final_uri |
+| --- | --- | --- | --- |
+| openai | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment3/outputs/openai/final.parquet` |
+| bedrock_micro_nova | 997 | 1 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment3/outputs/bedrock_micro_nova/final.parquet` |
+| bedrock_qwen | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment3/outputs/bedrock_qwen/final.parquet` |
+| bedrock_claude | 998 | 0 | `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/experiment3/outputs/bedrock_claude/final.parquet` |
