@@ -90,12 +90,13 @@ def require_cohort_keys_absent(store: CampaignObjectStore) -> None:
 
 def _users_parquet_bytes(users: tuple[CohortUser, ...]) -> bytes:
     rows = [asdict(user) for user in users]
-    return _parquet_bytes(pd.DataFrame(rows))
+    frame = pd.DataFrame(rows, columns=list(CohortUser.__dataclass_fields__))
+    return _parquet_bytes(frame)
 
 
 def _trials_parquet_bytes(trials: tuple[CohortTrial, ...]) -> bytes:
     rows = [asdict(trial) for trial in trials]
-    frame = pd.DataFrame(rows)
+    frame = pd.DataFrame(rows, columns=list(CohortTrial.__dataclass_fields__))
     frame["pair_order"] = frame["pair_order"].map(list)
     return _parquet_bytes(frame)
 

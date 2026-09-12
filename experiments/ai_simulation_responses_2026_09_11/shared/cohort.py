@@ -106,7 +106,7 @@ def _parse_candidate(
     trials = _build_trials(prolific_id, trial_frame, drops)
     if trials is None:
         return None
-    user = _build_user(prolific_id, epoch_ms, frame.iloc[0])
+    user = _build_user(prolific_id, epoch_ms, frame)
     return _CandidateUser(user=user, trials=trials)
 
 
@@ -119,8 +119,8 @@ def _valid_prolific_file(frame: pd.DataFrame) -> bool:
 
 
 def _valid_reflection(frame: pd.DataFrame, drops: dict[str, int]) -> bool:
-    text = _cell(frame.iloc[0], "phase1_pair_reflection_text")
-    rating = _parse_influence_rating(frame["phase1_pair_influence_rating"].iloc[0])
+    text = _first_non_empty(frame, "phase1_pair_reflection_text")
+    rating = _first_influence_rating(frame)
     if not text or rating is None:
         drops["reflection"] += 1
         return False
@@ -130,6 +130,7 @@ def _valid_reflection(frame: pd.DataFrame, drops: dict[str, int]) -> bool:
 def _linked_fate_frame(frame: pd.DataFrame) -> pd.DataFrame:
     mask = frame["evaluation_mode"].astype(str).eq(LINKED_FATE_MODE)
     mask &= frame["decision"].astype(str).str.lower().isin(VALID_DECISIONS)
+    mask &= frame["phase"].map(_is_phase_one)
     return frame.loc[mask].sort_values("trial_index")
 
 
@@ -162,30 +163,46 @@ def _build_trials(
     return tuple(trials)
 
 
-def _build_user(prolific_id: str, epoch_ms: int, row: pd.Series) -> CohortUser:
-    rating = _parse_influence_rating(row["phase1_pair_influence_rating"])
+def _build_user(prolific_id: str, epoch_ms: int, frame: pd.DataFrame) -> CohortUser:
+    row = frame.iloc[0]
+    rating = _first_influence_rating(frame)
     assert rating is not None
     return CohortUser(
         prolific_id=prolific_id,
         participant_id=str(row["participant_id"]),
         source_file_epoch_ms=epoch_ms,
-        party_group=_cell(row, "party_group"),
-        age=_cell(row, "age"),
-        gender=_cell(row, "gender"),
-        education=_cell(row, "education"),
-        political_affiliation=_cell(row, "political_affiliation"),
-        party_lean=_cell(row, "party_lean"),
-        political_ideology=_cell(row, "political_ideology"),
-        political_follow=_cell(row, "political_follow"),
-        rep_id=_cell(row, "rep_id"),
-        dem_id=_cell(row, "dem_id"),
-        attitude_reduce_abortion=_cell(row, "attitude_reduce_abortion"),
-        attitude_citizenship_undocumented=_cell(row, "attitude_citizenship_undocumented"),
-        attitude_restrict_guns=_cell(row, "attitude_restrict_guns"),
-        attitude_regulate_environment=_cell(row, "attitude_regulate_environment"),
-        attitude_raise_wealth_taxes=_cell(row, "attitude_raise_wealth_taxes"),
-        attitude_expand_medicaid=_cell(row, "attitude_expand_medicaid"),
-        phase1_pair_reflection_text=_cell(row, "phase1_pair_reflection_text"),
+        party_group=_first_non_empty(frame, "party_group") or _cell(row, "party_group"),
+        age=_first_non_empty(frame, "age") or _cell(row, "age"),
+        gender=_first_non_empty(frame, "gender") or _cell(row, "gender"),
+        education=_first_non_empty(frame, "education") or _cell(row, "education"),
+        political_affiliation=_first_non_empty(frame, "political_affiliation")
+        or _cell(row, "political_affiliation"),
+        party_lean=_first_non_empty(frame, "party_lean") or _cell(row, "party_lean"),
+        political_ideology=_first_non_empty(frame, "political_ideology")
+        or _cell(row, "political_ideology"),
+        political_follow=_first_non_empty(frame, "political_follow")
+        or _cell(row, "political_follow"),
+        rep_id=_first_non_empty(frame, "rep_id") or _cell(row, "rep_id"),
+        dem_id=_first_non_empty(frame, "dem_id") or _cell(row, "dem_id"),
+        attitude_reduce_abortion=_first_non_empty(frame, "attitude_reduce_abortion")
+        or _cell(row, "attitude_reduce_abortion"),
+        attitude_citizenship_undocumented=_first_non_empty(
+            frame, "attitude_citizenship_undocumented"
+        )
+        or _cell(row, "attitude_citizenship_undocumented"),
+        attitude_restrict_guns=_first_non_empty(frame, "attitude_restrict_guns")
+        or _cell(row, "attitude_restrict_guns"),
+        attitude_regulate_environment=_first_non_empty(
+            frame, "attitude_regulate_environment"
+        )
+        or _cell(row, "attitude_regulate_environment"),
+        attitude_raise_wealth_taxes=_first_non_empty(frame, "attitude_raise_wealth_taxes")
+        or _cell(row, "attitude_raise_wealth_taxes"),
+        attitude_expand_medicaid=_first_non_empty(frame, "attitude_expand_medicaid")
+        or _cell(row, "attitude_expand_medicaid"),
+        phase1_pair_reflection_text=_first_non_empty(
+            frame, "phase1_pair_reflection_text"
+        ),
         phase1_pair_influence_rating=rating,
     )
 
@@ -216,6 +233,32 @@ def _parse_influence_rating(raw_value: object) -> int | None:
     if rating < 1 or rating > 7:
         return None
     return rating
+
+
+def _first_non_empty(frame: pd.DataFrame, column: str) -> str:
+    if column not in frame.columns:
+        return ""
+    values = frame[column].dropna().astype(str).str.strip()
+    values = values[values != ""]
+    if values.empty:
+        return ""
+    return values.iloc[0]
+
+
+def _first_influence_rating(frame: pd.DataFrame) -> int | None:
+    if "phase1_pair_influence_rating" not in frame.columns:
+        return None
+    for raw_value in frame["phase1_pair_influence_rating"].dropna():
+        rating = _parse_influence_rating(raw_value)
+        if rating is not None:
+            return rating
+    return None
+
+
+def _is_phase_one(raw_value: object) -> bool:
+    if pd.isna(raw_value):
+        return False
+    return int(float(raw_value)) == 1
 
 
 def _cell(row: pd.Series, column: str) -> str:

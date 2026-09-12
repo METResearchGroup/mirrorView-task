@@ -38,6 +38,7 @@ def _trial_row(
         "trial_index": trial_index,
         "evaluation_mode": "linked_fate",
         "decision": decision,
+        "phase": 1,
         "pair_order": json.dumps(pair_order),
         "original_text": f"original-{trial_index}",
         "mirror_text": f"mirror-{trial_index}",
