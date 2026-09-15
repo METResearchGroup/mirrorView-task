@@ -13,26 +13,32 @@ from pathlib import Path
 
 import pandas as pd
 
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.summarize import (
     summarize_tokens,
+)
+from experiments.reasoning_during_moderation_2026_09_15.shared.artifacts import (
+    download_if_missing,
+    upload_under_prefix,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
     COHORT_FILENAME,
     COHORT_OUTPUT_DIR,
+    COHORT_S3_KEY,
     DEEPSEEK_MODEL_ID,
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     FULL_MAX_NEW_TOKENS,
-    OUTPUT_S3_BUCKET,
     PROMPT_ARM_STUDY,
     QWEN_MODEL_ID,
     SMOKE_LIMIT,
     SMOKE_MAX_NEW_TOKENS,
+    STATUS_INFRASTRUCTURE,
     STATUS_VALID,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
+    TraceRecord,
     complete_post,
+    generation_seed,
     trace_to_dict,
 )
 from lib.constants import REPO_ROOT
@@ -80,8 +86,7 @@ def _selected_models(choice: str) -> tuple[str, ...]:
 
 def _load_posts(limit: int | None) -> list[dict[str, object]]:
     path = COHORT_OUTPUT_DIR / COHORT_FILENAME
-    if not path.is_file():
-        raise FileNotFoundError(path)
+    download_if_missing(path, COHORT_S3_KEY)
     frame = pd.read_parquet(path)
     if limit is not None:
         frame = frame.head(limit)
@@ -95,11 +100,15 @@ def _run_model(
     max_new_tokens: int,
 ) -> None:
     sink = _trace_path(model_id, smoke)
+    if not smoke:
+        _strip_infrastructure(sink)
     remaining = _remaining_posts(posts, sink, smoke)
-    if remaining:
-        _generate_remaining(remaining, sink, model_id, smoke, max_new_tokens)
-    if not smoke and sink.is_file():
-        _upload_output(sink)
+    try:
+        if remaining:
+            _generate_remaining(remaining, sink, model_id, smoke, max_new_tokens)
+    finally:
+        if not smoke and sink.is_file():
+            _upload_output(sink)
 
 
 def _generate_remaining(
@@ -139,6 +148,8 @@ def _load_both_model_traces() -> pd.DataFrame:
 
 
 def _require_trace_file(path: Path) -> None:
+    if not path.is_file():
+        download_if_missing(path, str(path.relative_to(REPO_ROOT)))
     if not path.is_file() or path.stat().st_size == 0:
         raise FileNotFoundError(f"missing traces; run both models first: {path}")
 
@@ -152,20 +163,7 @@ def _require_both_models(frame: pd.DataFrame) -> None:
 
 def _upload_output(path: Path) -> None:
     """Upload under the experiment 1 prefix. put_new when absent, else replace."""
-    key = str(path.relative_to(REPO_ROOT))
-    _require_experiment1_key(key)
-    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
-    existing = store.get(key)
-    body = path.read_bytes()
-    if existing is None:
-        store.put_new(key, body)
-        return
-    store.replace(key, body, etag=existing.etag)
-
-
-def _require_experiment1_key(key: str) -> None:
-    if not key.startswith(EXPERIMENT1_S3_PREFIX):
-        raise ValueError(f"refusing S3 key outside {EXPERIMENT1_S3_PREFIX}: {key}")
+    upload_under_prefix(path, EXPERIMENT1_S3_PREFIX)
 
 
 def _remaining_posts(
@@ -193,6 +191,17 @@ def _read_jsonl(path: Path) -> list[dict[str, object]]:
     return rows
 
 
+def _strip_infrastructure(sink: Path) -> None:
+    if not sink.is_file():
+        return
+    rows = [
+        row for row in _read_jsonl(sink) if str(row["status"]) != STATUS_INFRASTRUCTURE
+    ]
+    with sink.open(WRITE_MODE, encoding=UTF8) as handle:
+        for row in rows:
+            handle.write(json.dumps(row) + "\n")
+
+
 def _write_one_trace(
     handle: object,
     post: dict[str, object],
@@ -202,10 +211,44 @@ def _write_one_trace(
     tokenizer: object,
     model: object,
 ) -> None:
-    record = complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+    record = _complete_or_infrastructure(
+        post, model_id, max_new_tokens, tokenizer, model
+    )
     handle.write(json.dumps(trace_to_dict(record)) + "\n")
     _require_valid_smoke(record, smoke)
     print(f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}")
+
+
+def _complete_or_infrastructure(
+    post: dict[str, object],
+    model_id: str,
+    max_new_tokens: int,
+    tokenizer: object,
+    model: object,
+) -> TraceRecord:
+    try:
+        return complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+    except Exception:
+        return _infrastructure_record(post, model_id, max_new_tokens)
+
+
+def _infrastructure_record(
+    post: dict[str, object], model_id: str, max_new_tokens: int
+) -> TraceRecord:
+    return TraceRecord(
+        str(post["post_id"]),
+        str(post["group"]),
+        model_id,
+        PROMPT_ARM_STUDY,
+        str(post["post_1_role"]),
+        str(post["post_2_role"]),
+        generation_seed(str(post["post_id"])),
+        STATUS_INFRASTRUCTURE,
+        0,
+        "",
+        "",
+        max_new_tokens,
+    )
 
 
 def _require_valid_smoke(record: object, smoke: bool) -> None:

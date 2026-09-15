@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     _read_jsonl,
 )
@@ -20,13 +19,17 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment4.summarize im
     marker_rates,
     paired_arm_comparison,
 )
+from experiments.reasoning_during_moderation_2026_09_15.shared.artifacts import (
+    download_if_missing,
+    upload_under_prefix,
+)
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
     COHORT_OUTPUT_DIR,
     DEEPSEEK_MODEL_ID,
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     METADATA_FILENAME,
-    OUTPUT_S3_BUCKET,
+    METADATA_S3_KEY,
     QWEN_MODEL_ID,
 )
 from lib.constants import REPO_ROOT
@@ -39,6 +42,12 @@ RESULTS_FILENAME = "RESULTS.md"
 EXPERIMENT4_OUTPUT_DIR = EXPERIMENT_DIR / "experiment4" / "outputs"
 EXPERIMENT4_S3_PREFIX = f"{EXPERIMENT_S3_PREFIX}/experiment4/"
 MISSING_TABLE_NOTE = "_No rows. GPU traces were not present in this environment._"
+HUMAN_TIME_NOTE = "Values are milliseconds."
+EMPTY_GPU_CLOSER = (
+    "Human `response_time_ms` is in the experiment 3 table. Thinking-token counts "
+    "and marker rates were not measured, because this environment had no GPU traces. "
+    "F1 and accuracy are out of scope."
+)
 ZERO_DIFF = 0.0
 
 
@@ -67,9 +76,19 @@ def _load_experiment_traces(output_dir: Path) -> pd.DataFrame:
     for model_id in (QWEN_MODEL_ID, DEEPSEEK_MODEL_ID):
         name = "qwen" if model_id == QWEN_MODEL_ID else "deepseek"
         path = output_dir / f"traces_{name}.jsonl"
+        _download_optional(path)
         if path.is_file():
             rows.extend(_read_jsonl(path))
     return pd.DataFrame(rows)
+
+
+def _download_optional(path: Path) -> None:
+    if path.is_file():
+        return
+    try:
+        download_if_missing(path, str(path.relative_to(REPO_ROOT)))
+    except FileNotFoundError:
+        return
 
 
 def _write_csv(frame: pd.DataFrame, filename: str) -> Path:
@@ -96,12 +115,23 @@ def _write_results(rates: pd.DataFrame, comparison: pd.DataFrame) -> None:
 
 def _load_metadata() -> dict[str, object]:
     path = COHORT_OUTPUT_DIR / METADATA_FILENAME
+    _download_optional_key(path, METADATA_S3_KEY)
     if not path.is_file():
         return {}
     return json.loads(path.read_text())
 
 
+def _download_optional_key(path: Path, key: str) -> None:
+    if path.is_file():
+        return
+    try:
+        download_if_missing(path, key)
+    except FileNotFoundError:
+        return
+
+
 def _read_csv_or_empty(path: Path) -> pd.DataFrame:
+    _download_optional(path)
     if not path.is_file():
         return pd.DataFrame()
     return pd.read_csv(path)
@@ -122,12 +152,10 @@ def _results_markdown(
         "",
         *_section("Experiment 1", exp1),
         *_section("Experiment 2", exp2),
-        *_section("Experiment 3", exp3),
+        *_section("Experiment 3", exp3, HUMAN_TIME_NOTE),
         "## Experiment 4",
         "",
-        _markdown_table(rates),
-        "",
-        _markdown_table(comparison),
+        *_experiment4_body(rates, comparison),
         "",
         _paired_paragraph(comparison),
         "",
@@ -135,8 +163,15 @@ def _results_markdown(
     return "\n".join(parts)
 
 
-def _section(title: str, frame: pd.DataFrame) -> list[str]:
-    return [f"## {title}", "", _markdown_table(frame), ""]
+def _section(title: str, frame: pd.DataFrame, note: str = "") -> list[str]:
+    extra = [note, ""] if note else []
+    return [f"## {title}", "", *extra, _markdown_table(frame), ""]
+
+
+def _experiment4_body(rates: pd.DataFrame, comparison: pd.DataFrame) -> list[str]:
+    if rates.empty and comparison.empty:
+        return [MISSING_TABLE_NOTE]
+    return [_markdown_table(rates), "", _markdown_table(comparison)]
 
 
 def _metadata_block(metadata: dict[str, object]) -> str:
@@ -174,11 +209,7 @@ def _format_cell(value: object) -> str:
 
 def _paired_paragraph(comparison: pd.DataFrame) -> str:
     if comparison.empty:
-        return (
-            "GPU traces for experiments 1 and 2 were not present, so the paired "
-            "thinking-token comparison is not yet measured. F1 and accuracy were "
-            "not measured."
-        )
+        return EMPTY_GPU_CLOSER
     statements = [_diff_sentence(row) for _, row in comparison.iterrows()]
     return " ".join(statements) + " F1 and accuracy were not measured."
 
@@ -194,20 +225,7 @@ def _diff_sentence(row: pd.Series) -> str:
 
 def _upload_output(path: Path) -> None:
     """Upload under the experiment 4 prefix. put_new when absent, else replace."""
-    key = str(path.relative_to(REPO_ROOT))
-    _require_experiment4_key(key)
-    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
-    existing = store.get(key)
-    body = path.read_bytes()
-    if existing is None:
-        store.put_new(key, body)
-        return
-    store.replace(key, body, etag=existing.etag)
-
-
-def _require_experiment4_key(key: str) -> None:
-    if not key.startswith(EXPERIMENT4_S3_PREFIX):
-        raise ValueError(f"refusing S3 key outside {EXPERIMENT4_S3_PREFIX}: {key}")
+    upload_under_prefix(path, EXPERIMENT4_S3_PREFIX)
 
 
 if __name__ == "__main__":

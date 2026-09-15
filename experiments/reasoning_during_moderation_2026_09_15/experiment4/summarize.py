@@ -17,6 +17,15 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
 )
 
 RATE_KEYS = ("prompt_arm", "model_id", "group")
+RATE_COLUMNS = (
+    "prompt_arm",
+    "model_id",
+    "group",
+    "n_valid",
+    "uncertainty_rate",
+    "revision_rate",
+    "tension_rate",
+)
 PAIR_KEYS = ("post_id", "model_id")
 E1_SUFFIX = "_e1"
 E2_SUFFIX = "_e2"
@@ -30,17 +39,7 @@ def marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
     """
     scored = _valid_scored(traces)
     if scored.empty:
-        return pd.DataFrame(
-            columns=[
-                "prompt_arm",
-                "model_id",
-                "group",
-                "n_valid",
-                "uncertainty_rate",
-                "revision_rate",
-                "tension_rate",
-            ]
-        )
+        return pd.DataFrame(columns=list(RATE_COLUMNS))
     rows = [
         _rate_row(arm, model_id, group, subset)
         for (arm, model_id, group), subset in scored.groupby(list(RATE_KEYS), sort=False)

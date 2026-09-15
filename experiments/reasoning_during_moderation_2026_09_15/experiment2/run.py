@@ -15,7 +15,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     APPEND_MODE,
     UTF8,
@@ -26,21 +25,26 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     _require_both_models,
     _require_trace_file,
     _selected_models,
+    _strip_infrastructure,
 )
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.summarize import (
     summarize_tokens,
+)
+from experiments.reasoning_during_moderation_2026_09_15.shared.artifacts import (
+    download_if_missing,
+    upload_under_prefix,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
     DEEPSEEK_MODEL_ID,
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     FULL_MAX_NEW_TOKENS,
-    OUTPUT_S3_BUCKET,
     PROMPT_ARM_CRITERIA,
     QWEN_MODEL_ID,
-    SMOKE_LIMIT,
+    STATUS_INFRASTRUCTURE,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
+    TraceRecord,
     complete_post,
     generation_seed,
     trace_to_dict,
@@ -124,7 +128,6 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", choices=("qwen", "deepseek", "both"), default="both")
     parser.add_argument("--summarize", action="store_true")
-    parser.add_argument("--limit", type=int, default=SMOKE_LIMIT)
     return parser.parse_args()
 
 
@@ -142,11 +145,14 @@ def _run_model(
     max_new_tokens: int,
 ) -> None:
     sink = _trace_path(model_id)
+    _strip_infrastructure(sink)
     remaining = _remaining_posts(posts, sink, False)
-    if remaining:
-        _generate_remaining(remaining, sink, model_id, max_new_tokens)
-    if sink.is_file():
-        _upload_output(sink)
+    try:
+        if remaining:
+            _generate_remaining(remaining, sink, model_id, max_new_tokens)
+    finally:
+        if sink.is_file():
+            _upload_output(sink)
 
 
 def _generate_remaining(
@@ -168,7 +174,10 @@ def _generate_remaining(
 def _exp1_trace_index(model_id: str) -> dict[str, dict[str, object]]:
     path = EXPERIMENT1_OUTPUT_DIR / _trace_filename(model_id)
     if not path.is_file():
-        return {}
+        try:
+            download_if_missing(path, str(path.relative_to(REPO_ROOT)))
+        except FileNotFoundError:
+            return {}
     rows = _read_jsonl(path)
     return {str(row["post_id"]): row for row in rows if str(row["model_id"]) == model_id}
 
@@ -186,7 +195,9 @@ def _write_one_trace(
         {**post, "model_id": model_id}, exp1_by_post.get(str(post["post_id"]))
     )
     aligned = {**post, "post_1_role": planned.post_1_role, "post_2_role": planned.post_2_role}
-    record = complete_post(aligned, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+    record = _complete_or_infrastructure(
+        aligned, model_id, max_new_tokens, tokenizer, model
+    )
     handle.write(json.dumps(trace_to_dict(record)) + "\n")
     print(f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}")
 
@@ -221,22 +232,41 @@ def _trace_filename(model_id: str) -> str:
     return f"traces_{name}.jsonl"
 
 
+def _complete_or_infrastructure(
+    post: dict[str, object],
+    model_id: str,
+    max_new_tokens: int,
+    tokenizer: object,
+    model: object,
+) -> TraceRecord:
+    try:
+        return complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+    except Exception:
+        return _infrastructure_record(post, model_id, max_new_tokens)
+
+
+def _infrastructure_record(
+    post: dict[str, object], model_id: str, max_new_tokens: int
+) -> TraceRecord:
+    return TraceRecord(
+        str(post["post_id"]),
+        str(post["group"]),
+        model_id,
+        PROMPT_ARM_CRITERIA,
+        str(post["post_1_role"]),
+        str(post["post_2_role"]),
+        generation_seed(str(post["post_id"])),
+        STATUS_INFRASTRUCTURE,
+        0,
+        "",
+        "",
+        max_new_tokens,
+    )
+
+
 def _upload_output(path: Path) -> None:
     """Upload under the experiment 2 prefix. put_new when absent, else replace."""
-    key = str(path.relative_to(REPO_ROOT))
-    _require_experiment2_key(key)
-    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
-    existing = store.get(key)
-    body = path.read_bytes()
-    if existing is None:
-        store.put_new(key, body)
-        return
-    store.replace(key, body, etag=existing.etag)
-
-
-def _require_experiment2_key(key: str) -> None:
-    if not key.startswith(EXPERIMENT2_S3_PREFIX):
-        raise ValueError(f"refusing S3 key outside {EXPERIMENT2_S3_PREFIX}: {key}")
+    upload_under_prefix(path, EXPERIMENT2_S3_PREFIX)
 
 
 if __name__ == "__main__":

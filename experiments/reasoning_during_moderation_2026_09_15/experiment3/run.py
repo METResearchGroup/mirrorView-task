@@ -18,12 +18,16 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment3.summarize im
     post_mean_summary,
     trial_level_summary,
 )
+from experiments.reasoning_during_moderation_2026_09_15.shared.artifacts import (
+    download_if_missing,
+)
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
     COHORT_OUTPUT_DIR,
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     OUTPUT_S3_BUCKET,
     SLIM_TRIALS_FILENAME,
+    SLIM_TRIALS_S3_KEY,
 )
 
 RESPONSE_TIME_SUMMARY_FILENAME = "response_time_summary.csv"
@@ -43,8 +47,7 @@ def main() -> None:
 
 def _load_slim() -> pd.DataFrame:
     path = COHORT_OUTPUT_DIR / SLIM_TRIALS_FILENAME
-    if not path.is_file():
-        raise FileNotFoundError(path)
+    download_if_missing(path, SLIM_TRIALS_S3_KEY)
     return pd.read_parquet(path)
 
 
@@ -71,10 +74,14 @@ def _write_csv(summary: pd.DataFrame) -> Path:
 
 def _print_summary(summary: pd.DataFrame) -> None:
     print(f"rows={len(summary)}")
-    for _, row in summary.iterrows():
-        print(f"level={row['level']} group={row['group']} n={row['n']}")
     trial = summary[summary["level"] == LEVEL_TRIAL]
     post_mean = summary[summary["level"] == LEVEL_POST_MEAN]
+    for _, row in trial.iterrows():
+        print(
+            f"level={LEVEL_TRIAL} group={row['group']} n={row['n']} median={row['median']}"
+        )
+    for _, row in post_mean.iterrows():
+        print(f"level={LEVEL_POST_MEAN} group={row['group']} n={row['n']}")
     print(f"level={LEVEL_TRIAL} groups={len(trial)}")
     print(f"level={LEVEL_POST_MEAN} groups={len(post_mean)}")
 

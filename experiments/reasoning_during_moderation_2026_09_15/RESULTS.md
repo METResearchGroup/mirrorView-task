@@ -12,6 +12,8 @@ _No rows. GPU traces were not present in this environment._
 
 ## Experiment 3
 
+Values are milliseconds.
+
 | level | group | n | mean | median | p25 | p75 | max |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | trial | split | 9882 | 18208.9115 | 12628.3000 | 7478.8000 | 21907.2250 | 511827.0000 |
@@ -25,6 +27,4 @@ _No rows. GPU traces were not present in this environment._
 
 _No rows. GPU traces were not present in this environment._
 
-_No rows. GPU traces were not present in this environment._
-
-GPU traces for experiments 1 and 2 were not present, so the paired thinking-token comparison is not yet measured. F1 and accuracy were not measured.
+Human `response_time_ms` is in the experiment 3 table. Thinking-token counts and marker rates were not measured, because this environment had no GPU traces. F1 and accuracy are out of scope.

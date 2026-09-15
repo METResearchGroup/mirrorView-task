@@ -14,11 +14,12 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     HF_JOB_TIMEOUT,
 )
 
-HF_JOB_IMAGE = "ghcr.io/astral-sh/uv:python3.12-bookworm-slim"
+HF_JOB_IMAGE = "pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel"
 REPO_CLONE_URL = (
     "https://x-access-token:${METRESEARCHGROUP_GITHUB_PAT_TOKEN}"
     "@github.com/METResearchGroup/mirrorView-task.git"
 )
+UV_INSTALL_SCRIPT = "https://astral.sh/uv/install.sh"
 
 
 def hf_job_command(script: str, extra_args: list[str]) -> list[str]:
@@ -57,6 +58,9 @@ def _secret_flags() -> list[str]:
 def _remote_shell(commit: str, script: str, extra_args: list[str]) -> str:
     joined_args = " ".join(extra_args)
     return (
-        f"git clone {REPO_CLONE_URL} repo && cd repo && git checkout {commit} "
-        f"&& uv sync --frozen && PYTHONPATH=. uv run python {script} {joined_args}"
+        "apt-get update && apt-get install -y --no-install-recommends git curl "
+        f"&& curl -LsSf {UV_INSTALL_SCRIPT} | sh && export PATH=\"$HOME/.local/bin:$PATH\" "
+        f"&& git clone {REPO_CLONE_URL} repo && cd repo && git checkout {commit} "
+        "&& uv sync --frozen --no-install-package torch "
+        f"&& PYTHONPATH=. uv run --no-sync python {script} {joined_args}"
     )
