@@ -26,16 +26,19 @@ class TestHfJobCommand:
         assert "git checkout abc123" in shell
         assert "--smoke --limit 3 --model qwen" in shell
 
-    def test_command_includes_detach_and_name(self) -> None:
-        """Verifies detach and name flags land before the remote shell."""
+    def test_command_includes_detach_and_label(self) -> None:
+        """Verifies detach and label flags land before the remote shell."""
         command = hf_job_command(
             SCRIPT,
             ["--model", "qwen"],
-            name="exp1-qwen-smoke",
+            label="exp1-qwen-smoke",
             detach=True,
         )
         assert command[0] == "hf"
         assert "--detach" in command
-        name_index = command.index("--name")
-        assert command[name_index + 1] == "exp1-qwen-smoke"
-        assert command.index("--detach") < command.index("--")
+        label_index = command.index("--label")
+        assert command[label_index + 1] == "exp1-qwen-smoke"
+        image_index = command.index("pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel")
+        assert command.index("--detach") < image_index
+        assert command[image_index + 1] == "bash"
+        assert "--name" not in command

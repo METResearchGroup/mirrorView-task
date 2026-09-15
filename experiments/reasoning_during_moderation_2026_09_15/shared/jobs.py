@@ -27,7 +27,7 @@ def hf_job_command(
     script: str,
     extra_args: list[str],
     *,
-    name: str | None = None,
+    label: str | None = None,
     detach: bool = True,
 ) -> list[str]:
     """Return an ``hf jobs run`` command that clones this commit and runs ``script``."""
@@ -39,7 +39,6 @@ def hf_job_command(
         "hf",
         "jobs",
         "run",
-        HF_JOB_IMAGE,
         "--flavor",
         HF_JOB_FLAVOR,
         "--timeout",
@@ -47,11 +46,11 @@ def hf_job_command(
     ]
     if detach:
         command.append("--detach")
-    if name is not None:
-        command.extend(["--name", name])
+    if label is not None:
+        command.extend(["--label", label])
     command.extend(_secret_flags())
     command.extend(
-        ["--", "bash", "-lc", _remote_shell(commit, branch, script, extra_args)]
+        [HF_JOB_IMAGE, "bash", "-lc", _remote_shell(commit, branch, script, extra_args)]
     )
     return command
 
