@@ -50,7 +50,7 @@ def hf_job_command(
         command.extend(["--label", label])
     command.extend(_secret_flags())
     command.extend(
-        [HF_JOB_IMAGE, "bash", "-lc", _remote_shell(commit, branch, script, extra_args)]
+        [HF_JOB_IMAGE, "bash", "-c", _remote_shell(commit, branch, script, extra_args)]
     )
     return command
 

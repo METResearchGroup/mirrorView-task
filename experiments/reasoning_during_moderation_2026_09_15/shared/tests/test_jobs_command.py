@@ -40,5 +40,6 @@ class TestHfJobCommand:
         assert command[label_index + 1] == "exp1-qwen-smoke"
         image_index = command.index("pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel")
         assert command.index("--detach") < image_index
-        assert command[image_index + 1] == "bash"
+        assert command[image_index + 1 : image_index + 3] == ["bash", "-c"]
+        assert "-lc" not in command
         assert "--name" not in command
