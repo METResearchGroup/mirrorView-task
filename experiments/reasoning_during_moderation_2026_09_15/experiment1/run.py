@@ -13,12 +13,19 @@ from pathlib import Path
 
 import pandas as pd
 
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from experiments.reasoning_during_moderation_2026_09_15.experiment1.summarize import (
+    summarize_tokens,
+)
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
     COHORT_FILENAME,
     COHORT_OUTPUT_DIR,
     DEEPSEEK_MODEL_ID,
     EXPERIMENT_DIR,
+    EXPERIMENT_S3_PREFIX,
     FULL_MAX_NEW_TOKENS,
+    OUTPUT_S3_BUCKET,
+    PROMPT_ARM_STUDY,
     QWEN_MODEL_ID,
     SMOKE_LIMIT,
     SMOKE_MAX_NEW_TOKENS,
@@ -28,6 +35,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
     complete_post,
     trace_to_dict,
 )
+from lib.constants import REPO_ROOT
 
 MODEL_CHOICES = {
     "qwen": QWEN_MODEL_ID,
@@ -37,10 +45,16 @@ ADD_CRITERIA = False
 UTF8 = "utf-8"
 WRITE_MODE = "w"
 APPEND_MODE = "a"
+TOKEN_SUMMARY_FILENAME = "token_summary.csv"
+EXPERIMENT1_S3_PREFIX = f"{EXPERIMENT_S3_PREFIX}/experiment1/"
+EXPERIMENT1_OUTPUT_DIR = EXPERIMENT_DIR / "experiment1" / "outputs"
 
 
 def main() -> None:
     args = _parse_args()
+    if args.summarize:
+        _summarize()
+        return
     posts = _load_posts(args.limit if args.smoke else None)
     models = _selected_models(args.model)
     max_new_tokens = SMOKE_MAX_NEW_TOKENS if args.smoke else FULL_MAX_NEW_TOKENS
@@ -82,14 +96,76 @@ def _run_model(
 ) -> None:
     sink = _trace_path(model_id, smoke)
     remaining = _remaining_posts(posts, sink, smoke)
-    if not remaining:
-        return
+    if remaining:
+        _generate_remaining(remaining, sink, model_id, smoke, max_new_tokens)
+    if not smoke and sink.is_file():
+        _upload_output(sink)
+
+
+def _generate_remaining(
+    remaining: list[dict[str, object]],
+    sink: Path,
+    model_id: str,
+    smoke: bool,
+    max_new_tokens: int,
+) -> None:
     tokenizer, model = _load_model(model_id)
     sink.parent.mkdir(parents=True, exist_ok=True)
     mode = WRITE_MODE if smoke else APPEND_MODE
     with sink.open(mode, encoding=UTF8) as handle:
         for post in remaining:
             _write_one_trace(handle, post, model_id, smoke, max_new_tokens, tokenizer, model)
+
+
+def _summarize() -> None:
+    traces = _load_both_model_traces()
+    summary = summarize_tokens(traces)
+    path = EXPERIMENT1_OUTPUT_DIR / TOKEN_SUMMARY_FILENAME
+    path.parent.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(path, index=False)
+    print(f"rows={len(summary)} prompt_arm={PROMPT_ARM_STUDY}")
+    _upload_output(path)
+
+
+def _load_both_model_traces() -> pd.DataFrame:
+    qwen_path = _trace_path(QWEN_MODEL_ID, False)
+    deepseek_path = _trace_path(DEEPSEEK_MODEL_ID, False)
+    _require_trace_file(qwen_path)
+    _require_trace_file(deepseek_path)
+    rows = _read_jsonl(qwen_path) + _read_jsonl(deepseek_path)
+    frame = pd.DataFrame(rows)
+    _require_both_models(frame)
+    return frame
+
+
+def _require_trace_file(path: Path) -> None:
+    if not path.is_file() or path.stat().st_size == 0:
+        raise FileNotFoundError(f"missing traces; run both models first: {path}")
+
+
+def _require_both_models(frame: pd.DataFrame) -> None:
+    present = set(frame["model_id"].tolist())
+    missing = {QWEN_MODEL_ID, DEEPSEEK_MODEL_ID} - present
+    if missing:
+        raise ValueError(f"summary requires both models, missing {missing}")
+
+
+def _upload_output(path: Path) -> None:
+    """Upload under the experiment 1 prefix. put_new when absent, else replace."""
+    key = str(path.relative_to(REPO_ROOT))
+    _require_experiment1_key(key)
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    existing = store.get(key)
+    body = path.read_bytes()
+    if existing is None:
+        store.put_new(key, body)
+        return
+    store.replace(key, body, etag=existing.etag)
+
+
+def _require_experiment1_key(key: str) -> None:
+    if not key.startswith(EXPERIMENT1_S3_PREFIX):
+        raise ValueError(f"refusing S3 key outside {EXPERIMENT1_S3_PREFIX}: {key}")
 
 
 def _remaining_posts(

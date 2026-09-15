@@ -38,3 +38,11 @@ PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/ex
 ```
 
 On a machine without a GPU, run the same flags through `hf_job_command` in `shared/jobs.py`.
+
+Experiment 1 full run, one Hugging Face Job per model. `--summarize` can run locally after both jsonl files exist.
+
+```bash
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py --model qwen
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py --model deepseek
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py --summarize
+```
