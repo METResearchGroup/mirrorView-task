@@ -33,7 +33,7 @@ PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/sh
 PYTHONPATH=. uv run pytest experiments/reasoning_during_moderation_2026_09_15/shared/tests -q
 ```
 
-After `HF_TOKEN` is set, run a thinking-mode smoke. Qwen thinking uses temperature 1.0, top_p 0.95, top_k 20, and presence_penalty 1.5. DeepSeek-R1-Distill uses temperature 0.6 and top_p 0.95. Smoke `max_new_tokens` is 2048. Full runs use 8192.
+After `HF_TOKEN` is set, run a thinking-mode smoke. Qwen thinking uses temperature 1.0, top_p 0.95, top_k 20, and presence_penalty 1.5. DeepSeek-R1-Distill uses temperature 0.6 and top_p 0.95. Smoke `max_new_tokens` is 2048. If a smoke post is truncated at 2048, rerun with `--max-new-tokens 8192`. Full runs use 8192.
 
 ```bash
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py --smoke --limit 3

@@ -65,7 +65,8 @@ def main() -> None:
         return
     posts = _load_posts(args.limit if args.smoke else None)
     models = _selected_models(args.model)
-    max_new_tokens = SMOKE_MAX_NEW_TOKENS if args.smoke else FULL_MAX_NEW_TOKENS
+    default_cap = SMOKE_MAX_NEW_TOKENS if args.smoke else FULL_MAX_NEW_TOKENS
+    max_new_tokens = args.max_new_tokens if args.max_new_tokens is not None else default_cap
     for model_id in models:
         print(f"thinking_enabled=true model_id={model_id}")
         _run_model(posts, model_id, args.smoke, max_new_tokens)
@@ -75,6 +76,7 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--limit", type=int, default=SMOKE_LIMIT)
+    parser.add_argument("--max-new-tokens", type=int, default=None)
     parser.add_argument("--model", choices=("qwen", "deepseek", "both"), default="both")
     parser.add_argument("--summarize", action="store_true")
     return parser.parse_args()

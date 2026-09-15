@@ -85,6 +85,7 @@ def _remote_shell(
         "&& uv sync --python 3.12 --frozen --no-dev --no-install-package torch "
         "&& uv pip install --python .venv/bin/python boto3 transformers accelerate "
         f"torch=={TORCH_CUDA_VERSION} --extra-index-url {TORCH_CUDA_INDEX} "
+        "&& uv pip install --python .venv/bin/python causal-conv1d flash-linear-attention || true "
         "&& PYTHONPATH=. uv run --no-sync python -c "
         "'import torch; print(\"cuda\", torch.cuda.is_available(), torch.__version__)' "
         f"&& PYTHONPATH=. uv run --no-sync python {script} {joined_args}"
