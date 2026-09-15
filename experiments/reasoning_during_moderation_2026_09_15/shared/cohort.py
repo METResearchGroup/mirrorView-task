@@ -17,8 +17,15 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     DECISION_REMOVE,
     EMPTY_POST_SENTINEL,
     EVALUATION_MODE_LINKED_FATE,
+    GROUP_SPLIT,
+    GROUP_UNANIMOUS_KEEP,
+    GROUP_UNANIMOUS_REMOVE,
+    MIN_RATERS,
+    PAIR_ORDER_MIRROR_FIRST,
+    PAIR_ORDER_ORIGINAL_FIRST,
     PAIR_ORDER_SEED,
     REQUIRED_SLIM_COLUMNS,
+    SPLIT_VOTE_PATTERNS,
     TRIAL_TYPE_MODERATION,
 )
 
@@ -98,7 +105,14 @@ def dedupe_worker_post(trials: pd.DataFrame) -> pd.DataFrame:
 
 def assign_group(keep_count: int, remove_count: int) -> str | None:
     """Return split, unanimous_keep, unanimous_remove, or None."""
-    raise NotImplementedError
+    votes = (keep_count, remove_count)
+    if votes in SPLIT_VOTE_PATTERNS:
+        return GROUP_SPLIT
+    if remove_count == 0 and keep_count >= MIN_RATERS:
+        return GROUP_UNANIMOUS_KEEP
+    if keep_count == 0 and remove_count >= MIN_RATERS:
+        return GROUP_UNANIMOUS_REMOVE
+    return None
 
 
 def pair_order_for_post(post_id: str, seed: int = PAIR_ORDER_SEED) -> tuple[str, str]:
