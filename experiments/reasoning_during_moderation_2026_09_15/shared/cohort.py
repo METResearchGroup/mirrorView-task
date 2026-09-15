@@ -19,6 +19,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     DECISION_REMOVE,
     EMPTY_POST_SENTINEL,
     EVALUATION_MODE_LINKED_FATE,
+    COHORT_COLUMNS,
     GROUP_SPLIT,
     GROUP_UNANIMOUS_KEEP,
     GROUP_UNANIMOUS_REMOVE,
@@ -132,7 +133,50 @@ def pair_order_for_post(post_id: str, seed: int = PAIR_ORDER_SEED) -> tuple[str,
 
 def build_cohort(trials: pd.DataFrame) -> pd.DataFrame:
     """Aggregate eligible posts into the three analysis groups."""
-    raise NotImplementedError
+    assert_stable_pair_text(trials)
+    counts = _count_votes(trials)
+    eligible = counts[counts["n_raters"] >= MIN_RATERS].copy()
+    eligible["group"] = [
+        assign_group(int(row.keep_count), int(row.remove_count))
+        for row in eligible.itertuples()
+    ]
+    grouped = eligible[eligible["group"].notna()].copy()
+    with_text = grouped.join(_stable_texts(trials))
+    return _attach_pair_order(with_text).reset_index()[list(COHORT_COLUMNS)]
+
+
+def _count_votes(trials: pd.DataFrame) -> pd.DataFrame:
+    tagged = trials.assign(
+        _keep=trials["decision"].eq(DECISION_KEEP),
+        _remove=trials["decision"].eq(DECISION_REMOVE),
+    )
+    counts = tagged.groupby("post_id").agg(
+        n_raters=("decision", "size"),
+        keep_count=("_keep", "sum"),
+        remove_count=("_remove", "sum"),
+    )
+    counts["keep_count"] = counts["keep_count"].astype(int)
+    counts["remove_count"] = counts["remove_count"].astype(int)
+    if not (counts["n_raters"] == counts["keep_count"] + counts["remove_count"]).all():
+        raise ValueError("n_raters must equal keep_count plus remove_count")
+    return counts
+
+
+def _stable_texts(trials: pd.DataFrame) -> pd.DataFrame:
+    return (
+        trials.drop_duplicates("post_id")
+        .set_index("post_id")[["original_text", "mirror_text"]]
+    )
+
+
+def _attach_pair_order(frame: pd.DataFrame) -> pd.DataFrame:
+    ordered = frame.copy()
+    orders = [
+        pair_order_for_post(str(post_id), PAIR_ORDER_SEED) for post_id in ordered.index
+    ]
+    ordered["post_1_role"] = [order[0] for order in orders]
+    ordered["post_2_role"] = [order[1] for order in orders]
+    return ordered
 
 
 def write_cohort(
