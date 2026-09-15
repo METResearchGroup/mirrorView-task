@@ -21,6 +21,8 @@ REPO_CLONE_URL = (
     "@github.com/METResearchGroup/mirrorView-task.git"
 )
 UV_INSTALL_SCRIPT = "https://astral.sh/uv/install.sh"
+TORCH_CUDA_VERSION = "2.6.0+cu124"
+TORCH_CUDA_INDEX = "https://download.pytorch.org/whl/cu124"
 
 
 def hf_job_command(
@@ -79,9 +81,11 @@ def _remote_shell(
         f"&& curl -LsSf {UV_INSTALL_SCRIPT} | sh && export PATH=\"$HOME/.local/bin:$PATH\" "
         f"&& git clone --branch {quoted_branch} --single-branch {REPO_CLONE_URL} repo "
         f"&& cd repo && git checkout {quoted_commit} "
-        "&& uv venv --python \"$(command -v python)\" --system-site-packages "
-        "&& uv sync --frozen --no-install-package torch "
-        "&& sed -i 's/include-system-site-packages = false/include-system-site-packages = true/' .venv/pyvenv.cfg "
-        "&& PYTHONPATH=. uv run --no-sync python -c 'import torch; print(\"cuda\", torch.cuda.is_available(), torch.__version__)' "
+        "&& uv python install 3.12 "
+        "&& uv sync --python 3.12 --frozen --no-dev --no-install-package torch "
+        "&& uv pip install --python .venv/bin/python boto3 transformers accelerate "
+        f"torch=={TORCH_CUDA_VERSION} --extra-index-url {TORCH_CUDA_INDEX} "
+        "&& PYTHONPATH=. uv run --no-sync python -c "
+        "'import torch; print(\"cuda\", torch.cuda.is_available(), torch.__version__)' "
         f"&& PYTHONPATH=. uv run --no-sync python {script} {joined_args}"
     )
