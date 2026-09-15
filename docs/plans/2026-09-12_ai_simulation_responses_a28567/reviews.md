@@ -1,6 +1,6 @@
 # Reviews for the issue 290 plan
 
-The reviews below were applied to the draft. The plan in this folder already includes the accepted cuts.
+The reviews below were applied to the draft. The plan in the folder already includes the accepted cuts.
 
 ## Simplicity
 
@@ -8,29 +8,29 @@ The reviews below were applied to the draft. The plan in this folder already inc
 
 `acceptable`
 
-Issue 290 already asks for four prompt variants, four models, a cost gate, and an error analysis. The plan keeps that shape and adds one later process-match run: experiment 6, which repeats experiment 1 with one unnumbered pair per call. Shared code is one runner. Experiment folders are thin wrappers plus reports. Derived files use the same S3 bucket and path-equals-local-key rule as the other September 2026 experiments. Experiment 6 has its own cost file and approval gate, so it does not reopen the parent `COST_ESTIMATE.md`.
+Issue 290 already asks for four prompt variants, four models, a cost gate, and an error analysis. The packet keeps the issue's shape and adds one later process-match run. Experiment 6 repeats experiment 1 with one unnumbered pair per call. Shared code is one runner. Experiment folders are thin wrappers plus reports. Derived files use the same S3 bucket and path-equals-local-key rule as the other September 2026 experiments. Experiment 6 has its own cost file and approval gate, so it does not reopen the parent `COST_ESTIMATE.md`.
 
 ### What seems solid
 
-- One cohort, one schema, one scorer.
+- One cohort, the 20-pair schema plus a yes/no schema for experiment 6, and one scorer.
 - Cost smoke and the experiment 2 prompt are hard gates.
-- Campaign parquet layout is copied from the separability experiment, not redesigned.
+- Campaign parquet layout is copied from the separability experiment.
 - S3 keys copy the local tree under `experiments/ai_simulation_responses_2026_09_11/`. One helper, `put_new_mirrored`, writes both places. No second object store.
 - Experiment 5 uses counts on existing fields. The split is 75 false-negative posts and 75 false-positive posts.
 
 ### What seems unproven or overbuilt
 
-- The sixteen full labeling jobs are expensive, but the issue named those jobs. Experiment 6 adds 19,960 pair calls per remaining model, against experiment 1 only, and it has its own cost file. The plan still refuses a fifteenth model and still refuses per-pair calls on experiments 2 through 4.
-- Pytest under an experiment folder is an exception to `UNIT_TESTING_STANDARDS.md`. It is there because a 0-based index bug would invalidate every score, not because a test framework was wanted for its own sake.
+- Full labeling for experiments 1 to 4 is sixteen jobs. The jobs are expensive, and the issue named them. Experiment 6 adds 19,960 pair calls per remaining model, against experiment 1 only. The experiment 6 cost file is separate. The packet still omits a fifteenth model and still omits per-pair calls on experiments 2 through 4.
+- Pytest under an experiment folder is an exception to `UNIT_TESTING_STANDARDS.md`. It is there because a 0-based index bug would invalidate every score.
 - Uploading `COST_ESTIMATE.md` and `RESULTS.md` with `put_new` makes a second write fail. The same immutability already applies to cohort parquet and to presentation parquet in the separability experiment. A later score fix needs a deleted S3 key, which the plan does not add a command for.
 
 ### Simpler version I would ship
 
-Keep the shared-runner design in `plan.md`. Do not add a prompt-strategy interface, a plugin registry, or significance tests. Experiment 6 needs a yes/no schema next to the existing remove-index schema, then stitches back to the experiment 1 row shape. Do not spawn 16 implementation subagents for scaffolding. Parallel Cursor Grok High subagents start only in Step 3, after approval, and only one per experiment. Experiment 6 labeling is a later three-subagent split after `experiment6/APPROVAL.md`. Do not upload Python, tests, README, or SETUP to S3.
+Keep the shared-runner design in `plan.md`. Do not add a prompt-strategy interface, a plugin registry, or significance tests. Experiment 6 needs a yes/no schema next to the existing remove-index schema. The runner stitches 20 answers back to the experiment 1 row shape. Do not spawn 16 implementation subagents for scaffolding. Parallel Cursor Grok High subagents start only in Step 3, after approval, and only one per experiment. Experiment 6 labeling is a later three-subagent split after `experiment6/APPROVAL.md`. Do not upload Python, tests, README, or SETUP to S3.
 
 ### Follow-up questions
 
-None that block the plan. The cohort target is 1,000 complete participants. Experiment 5 takes 75 false negatives and 75 false positives.
+No follow-up questions block the plan. The cohort target is 1,000 complete participants. Experiment 5 takes 75 false negatives and 75 false positives.
 
 ## Persona used
 
@@ -40,19 +40,19 @@ Selected because issue 290 is a prompt ablation against human keep/remove labels
 
 ### `agents/personas/ai_engineering/task_specific/model_performance_analysis_expert.md`
 
-Selected as the second persona because the work is an evaluation: precision, recall, F1, slices, and error analysis.
+Selected as the second persona because the work is an evaluation of precision, recall, F1, score tables, and error analysis.
 
 ## Findings (highest severity first)
 
 ### Issue: humans judged one pair at a time, the model sees 20 pairs in one prompt
 
-Impact: a model that looks consistent across the 20 pairs is not doing the same task the participant did. Comparing F1 still answers "can this prompt match the labels," but it is not a process match.
+Impact: a model that looks consistent across the 20 pairs is not doing the same task the participant did. Comparing F1 still answers whether the prompt can match the labels. The comparison is not a process match.
 
-Recommended fix: experiments 1 through 4 stay one call per user. State that mismatch in those `SETUP.md` files. Experiment 6 is the bounded process-match run: one unnumbered pair per call, yes/no JSON, experiment 1 prompt content, three models, no Claude. Compare experiment 6 to experiment 1 on the intersection of scored users. Do not add per-pair calls to experiments 2 through 4.
+Recommended fix: experiments 1 through 4 stay one call per user. State the mismatch in the experiment 1 through 4 `SETUP.md` files. Experiment 6 is the process-match run against experiment 1. Each call shows one unnumbered pair. The answer is JSON yes or no. Prompt content matches experiment 1. The models are OpenAI, Nova Micro, and Qwen. Claude is out. Compare experiment 6 to experiment 1 on the intersection of scored users. Do not add per-pair calls to experiments 2 through 4.
 
 ### Issue: first 1,000 completers are not a random sample
 
-Impact: early Prolific completers can differ from later ones. External claims should stay inside this cohort.
+Impact: early Prolific completers can differ from later ones. External claims should stay inside the cohort.
 
 Recommended fix: record `source_file_epoch_ms` range and drop counts in `SETUP.md`. Do not reweight. The target remains 1,000 complete participants. If fewer complete users exist, take all of them and record the count.
 
@@ -87,10 +87,10 @@ Recommended fix: 75 false-negative posts and 75 false-positive posts. Confirmed.
 
 ## Writing cleanup
 
-Passes run on `plan.md` and `steps/`:
+Passes run on `plan.md`, `steps/`, and the pull request description:
 
-1. Plain writing: everyday words, no dashes, no sentence-initial "This/That", no three-clause sentences.
-2. Anti-slop: removed importance language and parallel "not X but Y" setup.
-3. Humanizer: kept claims, cut staged openers.
-4. Osmani: named actors (operator, subagent, scorer), kept the cost gate as the takeaway.
-5. Vocabulary: "confirm" instead of "freeze", "run" instead of "invoke", "authoritative" instead of "canonical".
+1. Plain writing: everyday words, no dashes, no sentence-initial "This/That", no three-clause sentences, colon only for lists.
+2. Anti-slop: removed importance language and parallel "not X but Y" setup. Split the experiment 6 pins so each paragraph names one contract.
+3. Humanizer: kept claims, cut staged openers and clipped negative tails.
+4. Osmani: named actors (operator, subagent, scorer), kept the two cost gates as the takeaway.
+5. Vocabulary: "confirm" instead of "freeze", "run" instead of "invoke", "authoritative" instead of "canonical", "tables" instead of "slices".

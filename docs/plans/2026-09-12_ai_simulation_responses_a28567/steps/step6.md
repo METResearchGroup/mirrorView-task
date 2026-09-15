@@ -54,17 +54,17 @@ Do not write parent `COST_ESTIMATE.md` or experiment 1 through 5 `RESULTS.md` in
 
 `experiment6/SETUP.md` must state:
 
-- Humans judged one pair at a time on the website. Experiment 1 showed all 20 pairs in one prompt. Experiment 6 matches the human process: one unnumbered pair per call, and a yes/no answer on whether to remove both posts.
+- Humans judged one pair at a time on the website. Experiment 1 showed all 20 pairs in one prompt. Experiment 6 matches the human process. Each call shows one unnumbered pair. The answer is yes or no on whether to remove both posts.
 - Shared cohort parquet at `../shared/cohort_users.parquet` and `../shared/cohort_trials.parquet` (also on S3 under the same relative path in `mirrorview-experimental-artifacts`). Use the existing unique `prolific_id` values (998 in the live write). Do not rebuild the cohort.
 - The user message is only `Post 1:` and `Post 2:` for that trial, following stored `pair_order`. It does not include a pair number or the other 19 pairs. System prompt is `STUDY_SYSTEM_PROMPT_SINGLE_PAIR` in `../shared/prompts.py`. Model output is JSON `{"remove": "yes"}` or `{"remove": "no"}`.
-- Three models label the full unique cohort: OpenAI `gpt-5.4-nano`, Bedrock Nova Micro, and Bedrock Qwen3 32B. Claude Sonnet 4.6 is excluded.
+- Three models label the unique cohort. They are OpenAI `gpt-5.4-nano`, Bedrock Nova Micro, and Bedrock Qwen3 32B. Claude Sonnet 4.6 is excluded.
 - After smoke, print one filled one-pair prompt into `SETUP.md`.
 
 `experiment6/README.md` must start with the agent read-only banner, state in one or two sentences that this run repeats experiment 1 with one unnumbered pair per yes/no call and without Claude, then redirect to `SETUP.md` and `RESULTS.md`.
 
 ## Prompt and schema contract
 
-Add `STUDY_SYSTEM_PROMPT_SINGLE_PAIR`. Copy the website instruction paragraph and the political-mirror example from `STUDY_SYSTEM_PROMPT`. Do not copy the sentence that says the model will see all 20 pairs. Close with: the user message contains one pair; return JSON `{"remove": "yes"}` or `{"remove": "no"}`; `yes` means remove both posts; `no` means keep both.
+Add `STUDY_SYSTEM_PROMPT_SINGLE_PAIR`. Copy the website instruction paragraph and the political-mirror example from `STUDY_SYSTEM_PROMPT`. Do not copy the sentence that says the model will see all 20 pairs. Close with the one-pair instruction. The model must return JSON `{"remove": "yes"}` or `{"remove": "no"}`. `yes` means remove both posts. `no` means keep both.
 
 `render_single_pair(trial)` returns `Post 1:\n{first}\n\nPost 2:\n{second}` using stored `pair_order`. No `## Post pair`. No integer pair index. No "of 20". Do not route experiment 6 through `render_user_prompt`.
 
@@ -98,9 +98,9 @@ Scoring starts only when all three `experiment6/outputs/{model}/final.parquet` o
 
 ## Score and compare contract
 
-Scoring reuses the experiment 1 metric definitions: scikit-learn `zero_division=0`, positive class remove, user-level means of per-user accuracy / precision / recall / F1, post-level pooled scores plus baseline remove rate, then party / toxicity / stance tables. Add predicted remove rate (share of scored pairs the model removed). Do not add significance tests.
+Scoring reuses the experiment 1 metric definitions. Use scikit-learn `zero_division=0`. The positive class is remove. User-level means are per-user accuracy, precision, recall, and F1. Post-level scores are pooled, plus baseline remove rate, then party, toxicity, and stance tables. Add predicted remove rate (share of scored pairs the model removed). Do not add significance tests.
 
-For each of the three models, restrict the comparison to users scored in both experiment 1 and experiment 6. Required compare rows: user-level F1, post-level F1, accuracy, precision, recall, predicted remove rate, and the human gold remove rate on that intersection. Also report the share of user-pairs where experiment 1 and experiment 6 agree, and within-user variance of per-pair correctness for both experiments.
+For each of the three models, restrict the comparison to users scored in both experiment 1 and experiment 6. Required compare rows are user-level F1, post-level F1, accuracy, precision, recall, predicted remove rate, and the human gold remove rate on that intersection. Also report the share of user-pairs where experiment 1 and experiment 6 agree, and within-user variance of per-pair correctness for both experiments.
 
 Write `experiment6/RESULTS.md` locally and on S3. Do not rewrite experiment 1 `RESULTS.md`. Do not fold experiment 6 into experiment 5 error ranks. Do not compare Claude.
 

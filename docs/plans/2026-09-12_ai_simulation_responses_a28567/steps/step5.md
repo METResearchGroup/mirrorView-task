@@ -54,13 +54,13 @@ experiments/ai_simulation_responses_2026_09_11/experiment5/outputs/lowest_f1_use
 experiments/ai_simulation_responses_2026_09_11/experiment5/RESULTS.md
 ```
 
-Print those four S3 URIs. A second `--analyze-errors` against existing keys raises `FileExistsError`. Experiment 5 has no model `final.parquet` folders. The ranked CSVs live under `experiment5/outputs/` as analysis files, not as campaign labels.
+Print the four S3 URIs. A second `--analyze-errors` against existing keys raises `FileExistsError`. Experiment 5 has no model `final.parquet` folders. The ranked CSVs live under `experiment5/outputs/` as analysis files, not as campaign labels.
 
 User rank: mean of user-level F1 across the 16 model-experiment cells that scored that user. Lowest mean F1 first. Take 100. Describe `party_group`, `political_ideology`, `age`, `education`, and that user's gold remove rate. No extra classifier.
 
-Within-user variance: for experiment 1 only, for each model, per user compute the variance of the 20 per-pair correctness indicators (1 if prediction equals gold). Then report mean, median, 25th percentile, and 75th percentile of those user variances, one row per model.
+Within-user variance: for experiment 1 only, for each model, per user compute the variance of the 20 per-pair correctness indicators (1 if prediction equals gold). Then report mean, median, 25th percentile, and 75th percentile of the user variances, one row per model.
 
-Across-model variance: for experiment 1 only, for each user-pair, compute the standard deviation of the four models' remove predictions. Then report mean, median, 25th percentile, and 75th percentile of those standard deviations.
+Across-model variance: for experiment 1 only, for each user-pair, compute the standard deviation of the four models' remove predictions. Then report mean, median, 25th percentile, and 75th percentile of the standard deviations.
 
 ## Pytest
 

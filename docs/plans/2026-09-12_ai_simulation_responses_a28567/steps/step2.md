@@ -50,7 +50,7 @@ Prompt is experiment 1 only. All four models must run:
 3. `bedrock_qwen` through `label_tasks_collecting_failures` with `qwen.qwen3-32b-v1:0`
 4. `bedrock_claude` through `label_tasks_collecting_failures` with `us.anthropic.claude-sonnet-4-6`
 
-Bedrock `max_tokens` is 256. Do not send content-filter failures to OpenAI. Record those ids in the smoke `errors.jsonl`.
+Bedrock `max_tokens` is 256. Do not send content-filter failures to OpenAI. Record the ids in the smoke `errors.jsonl`.
 
 Smoke root URI pattern, which equals the local relative path:
 

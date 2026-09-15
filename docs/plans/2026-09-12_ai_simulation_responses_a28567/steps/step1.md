@@ -94,7 +94,7 @@ Write the parent README and the experiment 1 through 5 READMEs first, then imple
 Parent README must:
 
 1. Start with the agent read-only banner.
-2. Say this folder runs issue 290 on the September 2026 study.
+2. Say the folder runs issue 290 on the September 2026 study.
 3. Point at `shared/`, `experiment1` through `experiment5`, `SETUP.md`, and `RESULTS.md`. After Step 1 the parent README is agent read-only, so Step 6 must not edit it.
 
 Each of experiments 1 to 4 README must:
