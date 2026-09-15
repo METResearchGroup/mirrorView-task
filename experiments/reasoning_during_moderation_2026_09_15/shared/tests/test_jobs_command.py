@@ -29,6 +29,7 @@ class TestHfJobCommand:
         assert "torch==2.6.0+cu124" in shell
         assert "boto3 transformers accelerate" in shell
         assert "causal-conv1d flash-linear-attention" in shell
+        assert "--no-build-isolation" in shell
 
     def test_command_includes_detach_and_label(self) -> None:
         """Verifies detach and label flags land before the remote shell."""
