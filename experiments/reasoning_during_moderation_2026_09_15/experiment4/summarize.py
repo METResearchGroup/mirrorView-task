@@ -25,6 +25,18 @@ E2_SUFFIX = "_e2"
 def marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
     """Write family-flag rates for each prompt_arm, model_id, and group."""
     scored = _valid_scored(traces)
+    if scored.empty:
+        return pd.DataFrame(
+            columns=[
+                "prompt_arm",
+                "model_id",
+                "group",
+                "n_valid",
+                "uncertainty_rate",
+                "revision_rate",
+                "tension_rate",
+            ]
+        )
     rows = [
         _rate_row(arm, model_id, group, subset)
         for (arm, model_id, group), subset in scored.groupby(list(RATE_KEYS), sort=False)
@@ -48,6 +60,8 @@ def _paired_valid(exp1: pd.DataFrame, exp2: pd.DataFrame) -> pd.DataFrame:
     """Inner-join scored valid rows on post_id and model_id and attach diffs."""
     left = _valid_scored(exp1)
     right = _valid_scored(exp2)
+    if left.empty or right.empty:
+        return pd.DataFrame()
     merged = left.merge(right, on=list(PAIR_KEYS), suffixes=(E1_SUFFIX, E2_SUFFIX))
     return _add_diffs(merged)
 
@@ -83,7 +97,11 @@ def _comparison_row(
 
 def _valid_scored(traces: pd.DataFrame) -> pd.DataFrame:
     """Score valid thinking spans and attach family flags."""
+    if traces.empty or "status" not in traces.columns:
+        return pd.DataFrame()
     valid = traces[traces["status"] == STATUS_VALID]
+    if valid.empty:
+        return pd.DataFrame()
     rows = [_row_with_flags(row) for row in valid.to_dict(orient="records")]
     return pd.DataFrame(rows)
 

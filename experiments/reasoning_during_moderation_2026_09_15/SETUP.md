@@ -60,3 +60,9 @@ Experiment 3 summarizes `response_time_ms` on the slim trials. It does not use `
 ```bash
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment3/run.py
 ```
+
+Experiment 4 scores stored thinking traces with the confirmed marker lists and writes `RESULTS.md`.
+
+```bash
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment4/run.py
+```
