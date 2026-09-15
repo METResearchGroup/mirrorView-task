@@ -7,32 +7,55 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import argparse
 import hashlib
+import json
 from pathlib import Path
 
+import boto3
 import numpy as np
 import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from data_platform.utils.object_store import sha256_hex
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
+    COHORT_COLUMNS,
+    COHORT_FILENAME,
+    COHORT_S3_KEY,
     DECISION_KEEP,
     DECISION_REMOVE,
     EMPTY_POST_SENTINEL,
     EVALUATION_MODE_LINKED_FATE,
-    COHORT_COLUMNS,
+    EXPERIMENT_DIR,
     GROUP_SPLIT,
     GROUP_UNANIMOUS_KEEP,
     GROUP_UNANIMOUS_REMOVE,
+    METADATA_FILENAME,
+    METADATA_S3_KEY,
+    MIN_CSV_FILES,
     MIN_RATERS,
     ORIGINAL_FIRST_DRAW,
+    OUTPUT_S3_BUCKET,
     PAIR_ORDER_BIN_COUNT,
     PAIR_ORDER_HASH_BYTES,
     PAIR_ORDER_MIRROR_FIRST,
     PAIR_ORDER_ORIGINAL_FIRST,
     PAIR_ORDER_SEED,
     REQUIRED_SLIM_COLUMNS,
+    SINCE_DATE,
+    SLIM_TRIAL_COLUMNS,
+    SLIM_TRIALS_FILENAME,
+    SLIM_TRIALS_S3_KEY,
     SPLIT_VOTE_PATTERNS,
     TRIAL_TYPE_MODERATION,
+)
+from lib.timestamp_utils import get_current_timestamp
+from scripts.export_study_results import (
+    download_csvs,
+    filter_manual_test_rows,
+    list_csv_keys,
+    load_downloaded_csvs,
+    utc_midnight_ms,
 )
 
 
@@ -186,30 +209,111 @@ def write_cohort(
     experiment_dir: Path,
 ) -> tuple[Path, Path, Path]:
     """Write cohort parquet, slim trials, and export metadata locally."""
-    raise NotImplementedError
+    output_dir = experiment_dir / "outputs" / "cohort"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    cohort_path = output_dir / COHORT_FILENAME
+    slim_path = output_dir / SLIM_TRIALS_FILENAME
+    metadata_path = output_dir / METADATA_FILENAME
+    cohort.to_parquet(cohort_path, index=False)
+    slim.to_parquet(slim_path, index=False)
+    metadata_path.write_text(json.dumps(metadata, indent=2, default=str) + "\n")
+    return cohort_path, slim_path, metadata_path
 
 
 def upload_cohort(body: bytes, key: str, store: CampaignObjectStore) -> None:
     """Upload bytes with put_new and refuse an existing key."""
-    raise NotImplementedError
+    store.put_new(key, body)
 
 
 def main() -> None:
-    export = _download_export()
+    _require_write_counts_flag()
+    csv_files, export = _download_export()
+    _require_csv_file_count(csv_files)
     trials = slim_trials(export)
     trials = drop_conflicting_worker_posts(trials)
     trials = dedupe_worker_post(trials)
     assert_stable_pair_text(trials)
     cohort = build_cohort(trials)
-    _write_and_upload(cohort, trials)
+    counts = _counts_from_cohort(cohort, csv_files)
+    _require_nonempty_groups(counts)
+    slim = _slim_for_cohort(trials, cohort)
+    metadata = _export_metadata(counts)
+    paths = write_cohort(cohort, slim, metadata, EXPERIMENT_DIR)
+    _upload_outputs(paths)
+    _print_counts(counts)
 
 
-def _download_export() -> pd.DataFrame:
-    raise NotImplementedError
+def _require_write_counts_flag() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--write-counts", action="store_true")
+    args = parser.parse_args()
+    if not args.write_counts:
+        parser.error("pass --write-counts")
 
 
-def _write_and_upload(cohort: pd.DataFrame, trials: pd.DataFrame) -> None:
-    raise NotImplementedError
+def _download_export() -> tuple[int, pd.DataFrame]:
+    client = boto3.client("s3")
+    keys = list_csv_keys(client, min_file_epoch_ms=utc_midnight_ms(SINCE_DATE))
+    paths = download_csvs(client, keys)
+    combined = load_downloaded_csvs(paths)
+    return len(keys), filter_manual_test_rows(combined)
+
+
+def _require_csv_file_count(csv_files: int) -> None:
+    if csv_files < MIN_CSV_FILES:
+        raise ValueError(f"csv_files={csv_files} is less than {MIN_CSV_FILES}")
+
+
+def _counts_from_cohort(cohort: pd.DataFrame, csv_files: int) -> dict[str, int]:
+    group_counts = cohort["group"].value_counts()
+    split = int(group_counts.get(GROUP_SPLIT, 0))
+    keep = int(group_counts.get(GROUP_UNANIMOUS_KEEP, 0))
+    remove = int(group_counts.get(GROUP_UNANIMOUS_REMOVE, 0))
+    return {
+        "csv_files": csv_files,
+        "split": split,
+        "unanimous_keep": keep,
+        "unanimous_remove": remove,
+        "eligible_posts": split + keep + remove,
+    }
+
+
+def _require_nonempty_groups(counts: dict[str, int]) -> None:
+    empty = [
+        name
+        for name in (GROUP_SPLIT, GROUP_UNANIMOUS_KEEP, GROUP_UNANIMOUS_REMOVE)
+        if counts[name] == 0
+    ]
+    if empty:
+        raise ValueError(f"empty analysis groups: {empty}")
+
+
+def _slim_for_cohort(trials: pd.DataFrame, cohort: pd.DataFrame) -> pd.DataFrame:
+    merged = trials.merge(cohort[["post_id", "group"]], on="post_id", how="inner")
+    return merged[list(SLIM_TRIAL_COLUMNS)]
+
+
+def _export_metadata(counts: dict[str, int]) -> dict[str, object]:
+    return {
+        "since_date": SINCE_DATE.isoformat(),
+        "built_at": get_current_timestamp(),
+        **counts,
+    }
+
+
+def _upload_outputs(paths: tuple[Path, Path, Path]) -> None:
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    cohort_path, slim_path, metadata_path = paths
+    cohort_body = cohort_path.read_bytes()
+    upload_cohort(cohort_body, COHORT_S3_KEY, store)
+    upload_cohort(slim_path.read_bytes(), SLIM_TRIALS_S3_KEY, store)
+    upload_cohort(metadata_path.read_bytes(), METADATA_S3_KEY, store)
+    print(f"sha256={sha256_hex(cohort_body)}")
+
+
+def _print_counts(counts: dict[str, int]) -> None:
+    for name, value in counts.items():
+        print(f"{name}={value}")
 
 
 if __name__ == "__main__":
