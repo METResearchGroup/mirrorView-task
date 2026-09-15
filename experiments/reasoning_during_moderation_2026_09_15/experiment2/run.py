@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import traceback
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -246,6 +247,7 @@ def _complete_or_infrastructure(
     try:
         return complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
     except Exception:
+        traceback.print_exc()
         return _infrastructure_record(post, model_id, max_new_tokens)
 
 

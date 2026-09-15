@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import traceback
 from pathlib import Path
 
 import pandas as pd
@@ -216,7 +217,7 @@ def _write_one_trace(
     model: object,
 ) -> None:
     record = _complete_or_infrastructure(
-        post, model_id, max_new_tokens, tokenizer, model
+        post, model_id, smoke, max_new_tokens, tokenizer, model
     )
     handle.write(json.dumps(trace_to_dict(record)) + "\n")
     _require_valid_smoke(record, smoke)
@@ -226,6 +227,7 @@ def _write_one_trace(
 def _complete_or_infrastructure(
     post: dict[str, object],
     model_id: str,
+    smoke: bool,
     max_new_tokens: int,
     tokenizer: object,
     model: object,
@@ -233,6 +235,9 @@ def _complete_or_infrastructure(
     try:
         return complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
     except Exception:
+        traceback.print_exc()
+        if smoke:
+            raise
         return _infrastructure_record(post, model_id, max_new_tokens)
 
 

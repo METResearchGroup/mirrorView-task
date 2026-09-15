@@ -139,11 +139,16 @@ def _generate_ids(
     import torch
 
     inputs = _prompt_inputs(tokenizer, prompt, model_id, model)
+    sampling = _sampling_kwargs(SAMPLING_BY_MODEL[model_id], model.generation_config)
+    pad_token_id = tokenizer.eos_token_id
     with torch.random.fork_rng():
         torch.manual_seed(seed)
         output = model.generate(
-            **inputs, max_new_tokens=max_new_tokens, do_sample=True,
-            **_sampling_kwargs(SAMPLING_BY_MODEL[model_id]),
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=True,
+            pad_token_id=pad_token_id,
+            **sampling,
         )
     return output[0][inputs["input_ids"].shape[-1]:].tolist()
 
@@ -178,7 +183,9 @@ def _force_deepseek_think(text: str) -> str:
     return text + THINK_OPEN_SUFFIX
 
 
-def _sampling_kwargs(sampling: SamplingConfig) -> dict[str, float | int]:
+def _sampling_kwargs(
+    sampling: SamplingConfig, generation_config: object
+) -> dict[str, float | int]:
     kwargs: dict[str, float | int] = {
         "temperature": sampling.temperature,
         "top_p": sampling.top_p,
@@ -191,7 +198,11 @@ def _sampling_kwargs(sampling: SamplingConfig) -> dict[str, float | int]:
         kwargs["presence_penalty"] = sampling.presence_penalty
     if sampling.repetition_penalty is not None:
         kwargs["repetition_penalty"] = sampling.repetition_penalty
-    return kwargs
+    return {
+        key: value
+        for key, value in kwargs.items()
+        if hasattr(generation_config, key)
+    }
 
 
 def _thinking_text(decoded: str) -> str:
