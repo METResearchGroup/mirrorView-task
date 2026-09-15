@@ -8,7 +8,7 @@ The reviews below were applied to the draft. The plan in this folder already inc
 
 `acceptable`
 
-Issue 290 already asks for four prompt variants, four models, a cost gate, and an error analysis. The plan keeps that shape and refuses extra machinery. Shared code is one runner. Experiment folders are thin wrappers plus reports. Derived files use the same S3 bucket and path-equals-local-key rule as the other September 2026 experiments.
+Issue 290 already asks for four prompt variants, four models, a cost gate, and an error analysis. The plan keeps that shape and adds one later process-match run: experiment 6, which repeats experiment 1 with one unnumbered pair per call. Shared code is one runner. Experiment folders are thin wrappers plus reports. Derived files use the same S3 bucket and path-equals-local-key rule as the other September 2026 experiments. Experiment 6 has its own cost file and approval gate, so it does not reopen the parent `COST_ESTIMATE.md`.
 
 ### What seems solid
 
@@ -20,13 +20,13 @@ Issue 290 already asks for four prompt variants, four models, a cost gate, and a
 
 ### What seems unproven or overbuilt
 
-- Sixteen full labeling jobs are expensive, but the issue named those jobs. The plan does not add a fifteenth model or a per-pair call pattern that would multiply cost by 20.
+- The sixteen full labeling jobs are expensive, but the issue named those jobs. Experiment 6 adds 19,960 pair calls per remaining model, against experiment 1 only, and it has its own cost file. The plan still refuses a fifteenth model and still refuses per-pair calls on experiments 2 through 4.
 - Pytest under an experiment folder is an exception to `UNIT_TESTING_STANDARDS.md`. It is there because a 0-based index bug would invalidate every score, not because a test framework was wanted for its own sake.
 - Uploading `COST_ESTIMATE.md` and `RESULTS.md` with `put_new` makes a second write fail. The same immutability already applies to cohort parquet and to presentation parquet in the separability experiment. A later score fix needs a deleted S3 key, which the plan does not add a command for.
 
 ### Simpler version I would ship
 
-Keep the shared-runner design in `plan.md`. Do not add a prompt-strategy interface, a plugin registry, a second schema, or significance tests. Do not spawn 16 implementation subagents for scaffolding. Parallel Cursor Grok High subagents start only in Step 3, after approval, and only one per experiment. Do not upload Python, tests, README, or SETUP to S3.
+Keep the shared-runner design in `plan.md`. Do not add a prompt-strategy interface, a plugin registry, or significance tests. Experiment 6 needs a yes/no schema next to the existing remove-index schema, then stitches back to the experiment 1 row shape. Do not spawn 16 implementation subagents for scaffolding. Parallel Cursor Grok High subagents start only in Step 3, after approval, and only one per experiment. Experiment 6 labeling is a later three-subagent split after `experiment6/APPROVAL.md`. Do not upload Python, tests, README, or SETUP to S3.
 
 ### Follow-up questions
 
@@ -48,7 +48,7 @@ Selected as the second persona because the work is an evaluation: precision, rec
 
 Impact: a model that looks consistent across the 20 pairs is not doing the same task the participant did. Comparing F1 still answers "can this prompt match the labels," but it is not a process match.
 
-Recommended fix: keep one call per user, because 20 calls per user times four experiments times four models would multiply the API bill by 20. State the mismatch in every `SETUP.md`. `plan.md` already records that limit.
+Recommended fix: experiments 1 through 4 stay one call per user. State that mismatch in those `SETUP.md` files. Experiment 6 is the bounded process-match run: one unnumbered pair per call, yes/no JSON, experiment 1 prompt content, three models, no Claude. Compare experiment 6 to experiment 1 on the intersection of scored users. Do not add per-pair calls to experiments 2 through 4.
 
 ### Issue: first 1,000 completers are not a random sample
 
@@ -77,8 +77,8 @@ Recommended fix: 75 false-negative posts and 75 false-positive posts. Confirmed.
 ## Open questions / assumptions
 
 - Language, employment, and social-media survey items are not in `columnsToKeep`, so experiment 2 cannot include them.
-- `scripts/export_study_results.py` expects 190 files. The live complete-participant count may be under 1,000.
-- Qwen and Claude token prices are pinned from the Bedrock list and Marketplace page. Smoke token counts still drive the dollar table.
+- `scripts/export_study_results.py` expects 190 files. The live complete-participant count may be under 1,000. Experiment 6 reuses unique `prolific_id` values from that cohort (998 in the live write) and does not rebuild it.
+- Qwen and Claude token prices are pinned from the Bedrock list and Marketplace page. Smoke token counts still drive the dollar table. Experiment 6 uses the same rates for the three remaining models.
 
 ## Suggested next actions
 

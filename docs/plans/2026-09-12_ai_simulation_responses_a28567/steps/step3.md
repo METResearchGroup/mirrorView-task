@@ -4,7 +4,7 @@
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/experiment{1,2,3,4}/run.py` with `--model {openai,bedrock_micro_nova,bedrock_qwen,bedrock_claude}`
 - **Task:** After written approval of `COST_ESTIMATE.md` and the experiment 2 prompt, label every cohort user for experiments 1 to 4 on all four models. Write campaign parquet parts and `final.parquet` to S3 at keys that equal `experiments/ai_simulation_responses_2026_09_11/experiment{N}/outputs/{model}/`. Four Cursor Grok High subagents run in parallel, one experiment per subagent.
-- **Out of scope:** scoring tables (`RESULTS.md` is Step 4), experiment 5, overwriting smoke objects, overwriting the cohort, editing product engines
+- **Out of scope:** scoring tables (`RESULTS.md` is Step 4), experiment 5, experiment 6, overwriting smoke objects, overwriting the cohort, editing product engines
 
 ## Files to inspect (read-only)
 

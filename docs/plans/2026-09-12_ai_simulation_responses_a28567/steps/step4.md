@@ -4,7 +4,7 @@
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/experiment{1,2,3,4}/run.py --score`
 - **Task:** Join each model's `final.parquet` to `cohort_trials.parquet`. Expand `remove_pair_indexes` into 20 binary predictions. Write user-level, post-level, party, toxicity, and stance tables into that experiment's `RESULTS.md`, then upload the same bytes with `put_new_mirrored`.
-- **Out of scope:** experiment 5, new model calls, changing gold labels, editing product engines
+- **Out of scope:** experiment 5, experiment 6, new model calls, changing gold labels, editing product engines. Do not rewrite experiment 1 `RESULTS.md` later when experiment 6 compares against it.
 
 ## Files to inspect (read-only)
 

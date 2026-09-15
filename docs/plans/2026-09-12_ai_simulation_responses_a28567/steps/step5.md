@@ -4,7 +4,7 @@
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/experiment5/run.py --analyze-errors`
 - **Task:** Read the 16 `final.parquet` files from experiments 1 to 4. Write the 75 false-negative posts, the 75 false-positive posts, the 100 lowest-F1 users, within-user variance, and across-model variance into `experiment5/RESULTS.md`. Upload that report and the three ranked CSVs with `put_new_mirrored`. Do not call a model. Do not train a classifier.
-- **Out of scope:** new prompts, new labels, editing experiments 1 to 4 `RESULTS.md`, editing product engines
+- **Out of scope:** new prompts, new labels, experiment 6 labels, editing experiments 1 to 4 `RESULTS.md`, editing product engines. Do not fold experiment 6 into the 16-cell error ranks.
 
 ## Files to inspect (read-only)
 
