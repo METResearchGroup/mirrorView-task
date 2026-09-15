@@ -13,9 +13,15 @@ from dataclasses import dataclass
 
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
     DEEPSEEK_MODEL_ID,
+    PROMPT_ARM_CRITERIA,
     QWEN_MODEL_ID,
     SMOKE_LIMIT,
 )
+from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
+    generation_seed,
+)
+
+ADD_CRITERIA = True
 
 
 @dataclass(frozen=True)
@@ -36,7 +42,36 @@ def planned_completion_fields(
     exp1_trace: Mapping[str, object] | None,
 ) -> PlannedCompletion:
     """Return pair order and seed matched to experiment 1 when a trace exists."""
-    raise NotImplementedError
+    if exp1_trace is not None:
+        return _from_exp1_trace(exp1_trace)
+    return _from_cohort_row(cohort_row)
+
+
+def _from_exp1_trace(exp1_trace: Mapping[str, object]) -> PlannedCompletion:
+    """Copy identity, pair order, and seed from an experiment 1 trace row."""
+    return PlannedCompletion(
+        str(exp1_trace["post_id"]),
+        str(exp1_trace["model_id"]),
+        str(exp1_trace["post_1_role"]),
+        str(exp1_trace["post_2_role"]),
+        int(exp1_trace["generation_seed"]),
+        ADD_CRITERIA,
+        PROMPT_ARM_CRITERIA,
+    )
+
+
+def _from_cohort_row(cohort_row: Mapping[str, object]) -> PlannedCompletion:
+    """Fall back to the cohort pair order and generation_seed(post_id)."""
+    post_id = str(cohort_row["post_id"])
+    return PlannedCompletion(
+        post_id,
+        str(cohort_row["model_id"]),
+        str(cohort_row["post_1_role"]),
+        str(cohort_row["post_2_role"]),
+        generation_seed(post_id),
+        ADD_CRITERIA,
+        PROMPT_ARM_CRITERIA,
+    )
 
 
 def main() -> None:
