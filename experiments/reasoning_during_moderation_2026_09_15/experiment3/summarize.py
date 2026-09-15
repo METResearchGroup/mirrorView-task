@@ -10,8 +10,17 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from experiments.reasoning_during_moderation_2026_09_15.experiment1.summarize import (
+    GROUP_ORDER,
+    PERCENTILE_P25,
+    PERCENTILE_P75,
+    _percentile_or_nan,
+    _stat_or_nan,
+)
+
 RESPONSE_TIME_COLUMN = "response_time_ms"
 ZERO_MS = 0.0
+LEVEL_TRIAL = "trial"
 
 
 def usable_times(slim: pd.DataFrame) -> pd.DataFrame:
@@ -24,9 +33,29 @@ def usable_times(slim: pd.DataFrame) -> pd.DataFrame:
 
 def trial_level_summary(slim: pd.DataFrame) -> pd.DataFrame:
     """Write n, mean, median, p25, p75, and max of usable trial times by group."""
-    raise NotImplementedError
+    usable = usable_times(slim)
+    return pd.DataFrame(
+        [_level_row(usable, group, LEVEL_TRIAL) for group in GROUP_ORDER]
+    )
 
 
 def post_mean_summary(slim: pd.DataFrame) -> pd.DataFrame:
     """Average usable times per post, then write the same stats by group."""
     raise NotImplementedError
+
+
+def _level_row(frame: pd.DataFrame, group: str, level: str) -> dict[str, object]:
+    """Build one summary row for a group at trial or post-mean level."""
+    subset = frame[frame["group"] == group]
+    values = subset[RESPONSE_TIME_COLUMN].to_numpy(dtype=float)
+    return {
+        "level": level,
+        "group": group,
+        "n": int(len(subset)),
+        "mean": _stat_or_nan(values, np.mean),
+        "median": _stat_or_nan(values, np.median),
+        "p25": _percentile_or_nan(values, PERCENTILE_P25),
+        "p75": _percentile_or_nan(values, PERCENTILE_P75),
+        "max": _stat_or_nan(values, np.max),
+    }
+
