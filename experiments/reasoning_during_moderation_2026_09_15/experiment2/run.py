@@ -8,20 +8,41 @@ Run from the repo root:
 from __future__ import annotations
 
 import argparse
+import json
 from collections.abc import Mapping
 from dataclasses import dataclass
+from pathlib import Path
 
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
+    APPEND_MODE,
+    UTF8,
+    _load_model,
+    _load_posts,
+    _read_jsonl,
+    _remaining_posts,
+    _selected_models,
+)
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
-    DEEPSEEK_MODEL_ID,
+    EXPERIMENT_DIR,
+    EXPERIMENT_S3_PREFIX,
+    FULL_MAX_NEW_TOKENS,
+    OUTPUT_S3_BUCKET,
     PROMPT_ARM_CRITERIA,
     QWEN_MODEL_ID,
     SMOKE_LIMIT,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
+    complete_post,
     generation_seed,
+    trace_to_dict,
 )
+from lib.constants import REPO_ROOT
 
 ADD_CRITERIA = True
+EXPERIMENT2_S3_PREFIX = f"{EXPERIMENT_S3_PREFIX}/experiment2/"
+EXPERIMENT2_OUTPUT_DIR = EXPERIMENT_DIR / "experiment2" / "outputs"
+EXPERIMENT1_OUTPUT_DIR = EXPERIMENT_DIR / "experiment1" / "outputs"
 
 
 @dataclass(frozen=True)
@@ -91,17 +112,97 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _run_full(args: argparse.Namespace) -> None:
-    raise NotImplementedError
+    posts = _load_posts(None)
+    max_new_tokens = FULL_MAX_NEW_TOKENS
+    for model_id in _selected_models(args.model):
+        print(f"thinking_enabled=true model_id={model_id}")
+        _run_model(posts, model_id, max_new_tokens)
+
+
+def _run_model(
+    posts: list[dict[str, object]],
+    model_id: str,
+    max_new_tokens: int,
+) -> None:
+    sink = _trace_path(model_id)
+    remaining = _remaining_posts(posts, sink, False)
+    if remaining:
+        _generate_remaining(remaining, sink, model_id, max_new_tokens)
+    if sink.is_file():
+        _upload_output(sink)
+
+
+def _generate_remaining(
+    remaining: list[dict[str, object]],
+    sink: Path,
+    model_id: str,
+    max_new_tokens: int,
+) -> None:
+    tokenizer, model = _load_model(model_id)
+    exp1_by_post = _exp1_trace_index(model_id)
+    sink.parent.mkdir(parents=True, exist_ok=True)
+    with sink.open(APPEND_MODE, encoding=UTF8) as handle:
+        for post in remaining:
+            _write_one_trace(
+                handle, post, model_id, max_new_tokens, tokenizer, model, exp1_by_post
+            )
+
+
+def _exp1_trace_index(model_id: str) -> dict[str, dict[str, object]]:
+    path = EXPERIMENT1_OUTPUT_DIR / _trace_filename(model_id)
+    if not path.is_file():
+        return {}
+    rows = _read_jsonl(path)
+    return {str(row["post_id"]): row for row in rows if str(row["model_id"]) == model_id}
+
+
+def _write_one_trace(
+    handle: object,
+    post: dict[str, object],
+    model_id: str,
+    max_new_tokens: int,
+    tokenizer: object,
+    model: object,
+    exp1_by_post: dict[str, dict[str, object]],
+) -> None:
+    planned = planned_completion_fields(
+        {**post, "model_id": model_id}, exp1_by_post.get(str(post["post_id"]))
+    )
+    aligned = {**post, "post_1_role": planned.post_1_role, "post_2_role": planned.post_2_role}
+    record = complete_post(aligned, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+    handle.write(json.dumps(trace_to_dict(record)) + "\n")
+    print(f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}")
 
 
 def _summarize() -> None:
     raise NotImplementedError
 
 
-def _selected_models(choice: str) -> tuple[str, ...]:
-    if choice == "both":
-        return (QWEN_MODEL_ID, DEEPSEEK_MODEL_ID)
-    return ({"qwen": QWEN_MODEL_ID, "deepseek": DEEPSEEK_MODEL_ID}[choice],)
+def _trace_path(model_id: str) -> Path:
+    return EXPERIMENT2_OUTPUT_DIR / _trace_filename(model_id)
+
+
+def _trace_filename(model_id: str) -> str:
+    name = "qwen" if model_id == QWEN_MODEL_ID else "deepseek"
+    return f"traces_{name}.jsonl"
+
+
+def _upload_output(path: Path) -> None:
+    """Upload under the experiment 2 prefix. put_new when absent, else replace."""
+    key = str(path.relative_to(REPO_ROOT))
+    _require_experiment2_key(key)
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    existing = store.get(key)
+    body = path.read_bytes()
+    if existing is None:
+        store.put_new(key, body)
+        return
+    store.replace(key, body, etag=existing.etag)
+
+
+def _require_experiment2_key(key: str) -> None:
+    if not key.startswith(EXPERIMENT2_S3_PREFIX):
+        raise ValueError(f"refusing S3 key outside {EXPERIMENT2_S3_PREFIX}: {key}")
 
 
 if __name__ == "__main__":
