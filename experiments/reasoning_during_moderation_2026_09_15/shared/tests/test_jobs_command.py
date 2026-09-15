@@ -25,6 +25,8 @@ class TestHfJobCommand:
         assert "--single-branch" in shell
         assert "git checkout abc123" in shell
         assert "--smoke --limit 3 --model qwen" in shell
+        assert "--system-site-packages" in shell
+        assert "include-system-site-packages = true" in shell
 
     def test_command_includes_detach_and_label(self) -> None:
         """Verifies detach and label flags land before the remote shell."""
