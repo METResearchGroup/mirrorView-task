@@ -10,9 +10,13 @@ from experiments.ai_simulation_responses_2026_09_11.shared.constants import (
     CostRow,
 )
 from experiments.ai_simulation_responses_2026_09_11.shared.cost import (
+    COST_ESTIMATE_RELATIVE_PATH,
+    EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH,
     ExperimentCostSection,
     MedianTokens,
     TokenUsageRecord,
+    build_experiment6_cost_markdown,
+    build_experiment6_cost_rows,
     build_experiment_sections,
     cost_row_for_model,
     format_cost_table,
@@ -137,3 +141,72 @@ class TestTotalRows:
         result = total_rows(sections)
         assert result[0].estimated_tokens_in == 40
         assert result[0].median_cost_usd == 4.0
+
+
+class TestBuildExperiment6CostRows:
+    """Tests for build_experiment6_cost_rows."""
+
+    def test_scales_median_tokens_by_pair_call_count(self):
+        """Experiment 6 tokens equal per-pair medians times 19960 calls."""
+        # Arrange
+        medians = {
+            MODEL_FOLDER_OPENAI: MedianTokens(input_tokens=100.0, output_tokens=10.0),
+            MODEL_FOLDER_BEDROCK_MICRO_NOVA: MedianTokens(50.0, 5.0),
+            MODEL_FOLDER_BEDROCK_QWEN: MedianTokens(80.0, 8.0),
+        }
+        pair_call_count = 19960
+
+        # Act
+        result = build_experiment6_cost_rows(medians, pair_call_count)
+
+        # Assert
+        assert [row.model for row in result] == [
+            MODEL_FOLDER_OPENAI,
+            MODEL_FOLDER_BEDROCK_MICRO_NOVA,
+            MODEL_FOLDER_BEDROCK_QWEN,
+        ]
+        assert MODEL_FOLDER_BEDROCK_CLAUDE not in [row.model for row in result]
+        assert result[0].estimated_tokens_in == 1996000
+        assert result[0].estimated_tokens_out == 199600
+
+
+class TestBuildExperiment6CostMarkdown:
+    """Tests for build_experiment6_cost_markdown."""
+
+    def test_omits_claude_and_parent_experiment_sections(self):
+        """The experiment 6 cost file has three models and excludes Claude."""
+        # Arrange
+        rows = build_experiment6_cost_rows(
+            {
+                MODEL_FOLDER_OPENAI: MedianTokens(100.0, 10.0),
+                MODEL_FOLDER_BEDROCK_MICRO_NOVA: MedianTokens(50.0, 5.0),
+                MODEL_FOLDER_BEDROCK_QWEN: MedianTokens(80.0, 8.0),
+            },
+            19960,
+        )
+
+        # Act
+        result = build_experiment6_cost_markdown(rows)
+
+        # Assert
+        assert result.startswith("# Experiment 6 cost estimate")
+        assert "Claude Sonnet 4.6 is excluded from experiment 6." in result
+        assert "bedrock_claude" not in result
+        assert "## Experiment 1" not in result
+        assert MODEL_FOLDER_OPENAI in result
+        assert MODEL_FOLDER_BEDROCK_QWEN in result
+
+
+class TestExperiment6CostPath:
+    """Tests for the experiment 6 cost object key."""
+
+    def test_is_not_the_parent_cost_file(self):
+        """Experiment 6 writes its own COST_ESTIMATE.md under experiment6/."""
+        # Arrange / Act / Assert
+        assert COST_ESTIMATE_RELATIVE_PATH.endswith(
+            "experiments/ai_simulation_responses_2026_09_11/COST_ESTIMATE.md"
+        )
+        assert EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH.endswith(
+            "experiments/ai_simulation_responses_2026_09_11/experiment6/COST_ESTIMATE.md"
+        )
+        assert EXPERIMENT6_COST_ESTIMATE_RELATIVE_PATH != COST_ESTIMATE_RELATIVE_PATH

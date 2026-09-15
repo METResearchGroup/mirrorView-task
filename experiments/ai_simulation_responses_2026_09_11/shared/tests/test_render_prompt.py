@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from experiments.ai_simulation_responses_2026_09_11.shared.constants import CohortUser
 from experiments.ai_simulation_responses_2026_09_11.shared.prompts import (
+    STUDY_SYSTEM_PROMPT,
+    STUDY_SYSTEM_PROMPT_SINGLE_PAIR,
     render_pairs,
+    render_single_pair,
     render_user_prompt,
 )
 
@@ -66,3 +69,49 @@ class TestRenderUserPrompt:
         assert sample_user.phase1_pair_reflection_text in result
         assert "1 = Not at all, 7 = Very much" in result
         assert str(sample_user.phase1_pair_influence_rating) in result
+
+
+class TestRenderSinglePair:
+    """Tests for render_single_pair function."""
+
+    def test_follows_pair_order_without_pair_number(self, sample_trials):
+        """Post 1 and Post 2 follow pair_order and omit pair numbers."""
+        # Arrange
+        expected = "Post 1:\nmirror-0\n\nPost 2:\noriginal-0"
+
+        # Act
+        result = render_single_pair(sample_trials[0])
+
+        # Assert
+        assert result == expected
+        assert "Post pair" not in result
+        assert "of 20" not in result
+        assert "pair_index" not in result
+
+
+class TestStudySystemPromptSinglePair:
+    """Tests for STUDY_SYSTEM_PROMPT_SINGLE_PAIR."""
+
+    def test_asks_for_yes_no_on_one_pair(self):
+        """The one-pair prompt keeps the website copy and drops the 20-pair schema."""
+        # Arrange / Act
+        result = STUDY_SYSTEM_PROMPT_SINGLE_PAIR
+
+        # Assert
+        assert result.startswith("We are developing a new social media platform")
+        assert "20 post pairs" not in result
+        assert "remove_pair_indexes" not in result
+        assert '"yes"' in result or "yes" in result
+
+
+class TestStudySystemPrompt:
+    """Tests that the 20-pair system prompt stays frozen."""
+
+    def test_still_mentions_twenty_pairs(self):
+        """The experiment 1 through 4 system prompt still describes 20 pairs."""
+        # Arrange / Act
+        result = STUDY_SYSTEM_PROMPT
+
+        # Assert
+        assert "You will see all 20 post pairs" in result
+

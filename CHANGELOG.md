@@ -2,8 +2,9 @@
 
 ## 2026-09-12
 
-1. Operators now have experiment 5 error analysis for GitHub issue 290 on the September 2026 MirrorView cohort: 75 false-negative posts, 75 false-positive posts, 100 lowest-F1 users, and variance summaries from 998 complete participants. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
-2. Live `assignments.csv` on prefix `2026_09_09-23:06:02` in `jspsych-mirror-view-2026-09-09` was replaced with the 2,440-row Democrat and 2,439-row Republican overprovisioned files after copying `_original` siblings (`assignments_original.csv`, `config_original.yaml`). DynamoDB counters were not reset and the lookup Lambda was not changed.
+1. Operators now have experiment 6 one-pair yes/no labels for that same cohort on OpenAI, Nova Micro, and Qwen, scored against the experiment 1 20-pair labels. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
+2. Operators now have experiment 5 error analysis for GitHub issue 290 on the September 2026 MirrorView cohort: 75 false-negative posts, 75 false-positive posts, 100 lowest-F1 users, and variance summaries from 998 complete participants. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
+3. Live `assignments.csv` on prefix `2026_09_09-23:06:02` in `jspsych-mirror-view-2026-09-09` was replaced with the 2,440-row Democrat and 2,439-row Republican overprovisioned files after copying `_original` siblings (`assignments_original.csv`, `config_original.yaml`). DynamoDB counters were not reset and the lookup Lambda was not changed.
 
 ## 2026-09-11
 

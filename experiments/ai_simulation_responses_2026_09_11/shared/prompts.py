@@ -36,6 +36,26 @@ There are no right or wrong answers - we are interested in what you personally t
 
 You will see all 20 post pairs at once in the user message. Return a JSON object with remove_pair_indexes: a list of 1-indexed pair numbers to remove. An empty list means keep all pairs."""
 
+STUDY_SYSTEM_PROMPT_SINGLE_PAIR = """We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
+
+The pairs are political mirrors of each other. This means that the mirror text recreates the original message from the opposite political stance. For example:
+
+Original Text:
+I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!
+
+Mirror Text:
+I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!
+
+Notice that the mirror text changes the core message to match that of the opposite political stance. In other words, the mirror text is not a response to the original text - it replicates the original message as if written from the opposite political stance.
+
+Your job is to decide whether both posts in the pair should be allowed or removed from the platform.
+
+When making your decisions, consider generally whether a post contributes to a healthy environment for political discussion, or whether it would be unhealthy for political discussion. Your goal is to evaluate the messages, using your own judgment.
+
+There are no right or wrong answers - we are interested in what you personally think.
+
+You will see one post pair in the user message. Return a JSON object with a single field remove. Set remove to yes if both posts in the pair should be removed from the platform. Set remove to no if both posts should be kept."""
+
 DEMOGRAPHIC_FIELDS: tuple[tuple[str, str], ...] = (
     ("age", "Age"),
     ("gender", "Gender"),
@@ -84,6 +104,12 @@ DEMOGRAPHIC_FIELDS: tuple[tuple[str, str], ...] = (
         "Expanding Medicaid to cover all currently uninsured Americans (0 to 100)",
     ),
 )
+
+
+def render_single_pair(trial: CohortTrial) -> str:
+    """Render one unnumbered post pair for experiment 6."""
+    first_text, second_text = _texts_for_pair_order(trial)
+    return f"Post 1:\n{first_text}\n\nPost 2:\n{second_text}"
 
 
 def render_pairs(trials: list[CohortTrial]) -> str:
