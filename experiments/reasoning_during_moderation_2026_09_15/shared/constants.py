@@ -80,6 +80,38 @@ REQUIRED_SLIM_COLUMNS = (
 EXPERIMENT_DIR = REPO_ROOT / "experiments" / EXPERIMENT_DIRNAME
 COHORT_OUTPUT_DIR = EXPERIMENT_DIR / "outputs" / "cohort"
 
+QWEN_MODEL_ID = "Qwen/Qwen3.5-4B"
+DEEPSEEK_MODEL_ID = "deepseek-ai/DeepSeek-R1-Distill-Qwen-7B"
+PROMPT_ARM_STUDY = "study"
+PROMPT_ARM_CRITERIA = "study_plus_criteria"
+STATUS_VALID = "valid"
+STATUS_EMPTY_THINKING = "empty_thinking"
+STATUS_MISSING_CLOSE_TAG = "missing_close_tag"
+STATUS_TRUNCATED = "truncated"
+STATUS_INFRASTRUCTURE = "infrastructure"
+THINK_OPEN_TAG = "<think>"
+THINK_CLOSE_TAG = "</think>"
+THINK_OPEN_SUFFIX = "<think>\n"
+SMOKE_MAX_NEW_TOKENS = 2048
+FULL_MAX_NEW_TOKENS = 8192
+SMOKE_LIMIT = 3
+GENERATION_SEED_BYTES = 4
+UINT32_MODULUS = 2**32
+QWEN_TEMPERATURE = 1.0
+QWEN_TOP_P = 0.95
+QWEN_TOP_K = 20
+QWEN_MIN_P = 0.0
+QWEN_PRESENCE_PENALTY = 1.5
+QWEN_REPETITION_PENALTY = 1.0
+DEEPSEEK_TEMPERATURE = 0.6
+DEEPSEEK_TOP_P = 0.95
+HF_JOB_FLAVOR = "l4x1"
+HF_JOB_TIMEOUT = "24h"
+HF_JOB_PYTHON = "3.12"
+CLOSING_LINE = "Allow or Remove?"
+POST_1_LABEL = "Post 1:"
+POST_2_LABEL = "Post 2:"
+
 
 class GroupName(str, Enum):
     """Analysis group for an eligible post."""
@@ -125,3 +157,24 @@ class CohortRunResult:
     local_metadata_path: Path
     cohort_s3_uri: str
     sha256: str
+
+
+@dataclass(frozen=True)
+class ThinkingCount:
+    """Token-id count for one generated thinking span."""
+
+    status: str
+    thinking_token_count: int
+    close_tag_index: int | None
+
+
+@dataclass(frozen=True)
+class SamplingConfig:
+    """Generation sampling values for one model."""
+
+    temperature: float
+    top_p: float
+    top_k: int | None
+    min_p: float | None
+    presence_penalty: float | None
+    repetition_penalty: float | None
