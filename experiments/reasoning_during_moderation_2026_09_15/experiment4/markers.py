@@ -72,7 +72,12 @@ class MarkerScore:
 
 
 def score_trace(thinking_text: str) -> MarkerScore:
-    """Return family flags from phrases and bag-of-words tokens on thinking text."""
+    """Return family flags from phrases and bag-of-words tokens on thinking text.
+
+    Phrases match as substrings of the lowercased span. Tokens use
+    ``tokenize_feature_value``. A family flag is true when any phrase or token
+    in that family matches. Does not score completion text.
+    """
     lowered = thinking_text.lower()
     tokens = tokenize_feature_value(thinking_text)
     return MarkerScore(

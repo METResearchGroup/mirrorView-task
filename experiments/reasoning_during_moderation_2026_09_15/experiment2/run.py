@@ -71,7 +71,15 @@ def planned_completion_fields(
     cohort_row: Mapping[str, object],
     exp1_trace: Mapping[str, object] | None,
 ) -> PlannedCompletion:
-    """Return pair order and seed matched to experiment 1 when a trace exists."""
+    """Return pair order and seed matched to experiment 1 when a trace exists.
+
+    Parameters
+    ----------
+    cohort_row
+        Cohort fields plus ``model_id``. Used when ``exp1_trace`` is None.
+    exp1_trace
+        Experiment 1 jsonl row for the same post and model, if present.
+    """
     if exp1_trace is not None:
         return _from_exp1_trace(exp1_trace)
     return _from_cohort_row(cohort_row)

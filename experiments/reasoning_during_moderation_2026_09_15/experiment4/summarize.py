@@ -23,7 +23,11 @@ E2_SUFFIX = "_e2"
 
 
 def marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
-    """Write family-flag rates for each prompt_arm, model_id, and group."""
+    """Write family-flag rates for each prompt_arm, model_id, and group.
+
+    Only ``status=valid`` rows are scored. Rates are the share of those rows
+    with each family flag.
+    """
     scored = _valid_scored(traces)
     if scored.empty:
         return pd.DataFrame(
@@ -45,7 +49,11 @@ def marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
 
 
 def paired_arm_comparison(exp1: pd.DataFrame, exp2: pd.DataFrame) -> pd.DataFrame:
-    """Inner-join valid traces and write experiment 2 minus experiment 1 means."""
+    """Inner-join valid traces and write experiment 2 minus experiment 1 means.
+
+    Rows match on ``post_id`` and ``model_id``. Differences are experiment 2
+    minus experiment 1 for thinking-token counts and family flags.
+    """
     merged = _paired_valid(exp1, exp2)
     if merged.empty:
         return pd.DataFrame()

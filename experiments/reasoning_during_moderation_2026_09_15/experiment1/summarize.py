@@ -26,7 +26,17 @@ EMPTY_RATE = 0.0
 
 
 def summarize_tokens(traces: pd.DataFrame) -> pd.DataFrame:
-    """Return one token-stat row per model and analysis group. No accuracy columns."""
+    """Return one token-stat row per model and analysis group.
+
+    Mean, median, percentiles, and max use ``status=valid`` rows only. Empty
+    valid sets write NaN for those columns. The frame has no accuracy columns.
+
+    Parameters
+    ----------
+    traces
+        Completion rows with ``model_id``, ``group``, ``status``, and
+        ``thinking_token_count``.
+    """
     frame = pd.DataFrame(traces)
     model_ids = list(dict.fromkeys(frame["model_id"].tolist()))
     rows = [
