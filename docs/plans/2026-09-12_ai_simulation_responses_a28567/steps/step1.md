@@ -89,13 +89,13 @@ Do not write `RESULTS.md` or `COST_ESTIMATE.md` in this step. `experiment2/SETUP
 
 ## README contract
 
-Write the parent README and the five experiment READMEs first, then implement modules to match them.
+Write the parent README and the experiment 1 through 5 READMEs first, then implement modules to match them. The experiment 6 README and one-pair prompt arrive in Step 6. Do not add them here.
 
 Parent README must:
 
 1. Start with the agent read-only banner.
-2. Say this folder runs issue 290 on the September 2026 study.
-3. Point at `shared/`, `experiment1` through `experiment5`, `SETUP.md`, and `RESULTS.md`.
+2. Say the folder runs issue 290 on the September 2026 study.
+3. Point at `shared/`, `experiment1` through `experiment5`, `SETUP.md`, and `RESULTS.md`. After Step 1 the parent README is agent read-only, so Step 6 must not edit it.
 
 Each of experiments 1 to 4 README must:
 
@@ -389,7 +389,7 @@ Expected: prints the `user_count=` block from above. A second run exits non-zero
 ## Must pass
 
 - Imports from `shared/run.py` resolve.
-- Parent README and five experiment READMEs exist and carry the banner.
+- Parent README and experiment 1 through 5 READMEs exist and carry the banner. Experiment 6 is absent until Step 6.
 - `PYTHONPATH=. uv run pytest experiments/ai_simulation_responses_2026_09_11/shared/tests -q` exits 0.
 - `--write-cohort` writes both parquet files locally and uploads them with `put_new` at keys that equal those relative paths.
 - Printed `users_s3_uri=` and `trials_s3_uri=` start with `s3://mirrorview-experimental-artifacts/experiments/ai_simulation_responses_2026_09_11/shared/`.

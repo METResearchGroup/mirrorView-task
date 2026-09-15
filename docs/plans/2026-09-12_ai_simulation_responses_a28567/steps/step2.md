@@ -4,7 +4,7 @@
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/shared/run.py` `main` with `--smoke`, `--estimate-cost`, and `--print-experiment-2-prompt`
 - **Task:** Label the first 10 cohort users (or the full cohort if smaller) on all four models using the experiment 1 prompt. Write smoke objects under each model's `smoke/` prefix on S3, with a gitignored local cache at the same relative path. Scale token estimates to experiments 2 to 4. Write `COST_ESTIMATE.md` locally and upload it with `put_new_mirrored`. Print the experiment 2 template plus one filled example. Stop. Do not write `final.parquet`. Do not start full labeling.
-- **Out of scope:** experiments 2 to 4 full runs, experiment 5, `RESULTS.md`, `CHANGELOG.md`, editing product engines
+- **Out of scope:** experiments 2 to 4 full runs, experiment 5, experiment 6, `RESULTS.md`, `CHANGELOG.md`, editing product engines. Parent `COST_ESTIMATE.md` covers experiments 1 to 5 only. Experiment 6 has a later cost file under `experiment6/`.
 
 ## Files to inspect (read-only)
 
@@ -50,7 +50,7 @@ Prompt is experiment 1 only. All four models must run:
 3. `bedrock_qwen` through `label_tasks_collecting_failures` with `qwen.qwen3-32b-v1:0`
 4. `bedrock_claude` through `label_tasks_collecting_failures` with `us.anthropic.claude-sonnet-4-6`
 
-Bedrock `max_tokens` is 256. Do not send content-filter failures to OpenAI. Record those ids in the smoke `errors.jsonl`.
+Bedrock `max_tokens` is 256. Do not send content-filter failures to OpenAI. Record the ids in the smoke `errors.jsonl`.
 
 Smoke root URI pattern, which equals the local relative path:
 

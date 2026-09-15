@@ -4,7 +4,7 @@
 
 - **Caller:** `experiments/ai_simulation_responses_2026_09_11/experiment{1,2,3,4}/run.py --score`
 - **Task:** Join each model's `final.parquet` to `cohort_trials.parquet`. Expand `remove_pair_indexes` into 20 binary predictions. Write user-level, post-level, party, toxicity, and stance tables into that experiment's `RESULTS.md`, then upload the same bytes with `put_new_mirrored`.
-- **Out of scope:** experiment 5, new model calls, changing gold labels, editing product engines
+- **Out of scope:** experiment 5, experiment 6, new model calls, changing gold labels, editing product engines. Do not rewrite experiment 1 `RESULTS.md` later when experiment 6 compares against it.
 
 ## Files to inspect (read-only)
 
@@ -91,8 +91,8 @@ Follow `/implement-from-spec`. Full auto.
 
 Phase 1 names `experiment1/run.py --score` as the caller.
 
-Phase 4 adds any missing pytest cases for party, toxicity, and stance slices on in-memory frames.
+Phase 4 adds any missing pytest cases for party, toxicity, and stance tables on in-memory frames.
 
 Phase 5 implements `write_results_md` then wires `--score`. One commit per unit of work.
 
-Phase 6 is complete when all four `RESULTS.md` files exist and stdout printed both overall tables for experiment 1.
+Phase 6 is complete when all four `RESULTS.md` files exist and stdout printed the user-level table and the post-level table for experiment 1.
