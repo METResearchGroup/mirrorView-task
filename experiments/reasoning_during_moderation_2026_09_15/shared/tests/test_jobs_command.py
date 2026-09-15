@@ -25,11 +25,11 @@ class TestHfJobCommand:
         assert "--single-branch" in shell
         assert "git checkout abc123" in shell
         assert "--smoke --limit 3 --model qwen" in shell
-        assert "uv python install 3.12" in shell
-        assert "torch==2.6.0+cu124" in shell
-        assert "boto3 transformers accelerate" in shell
-        assert "causal-conv1d flash-linear-attention" in shell
-        assert "--no-build-isolation" in shell
+        assert "python3 -m pip install --quiet boto3 pandas pyarrow" in shell
+        assert "import torch, vllm" in shell
+        assert "torch==2.6.0+cu124" not in shell
+        assert "causal-conv1d" not in shell
+        assert "uv python install" not in shell
 
     def test_command_includes_detach_and_label(self) -> None:
         """Verifies detach and label flags land before the remote shell."""
@@ -38,12 +38,14 @@ class TestHfJobCommand:
             ["--model", "qwen"],
             label="exp1-qwen-smoke",
             detach=True,
+            timeout="2h",
         )
         assert command[0] == "hf"
         assert "--detach" in command
+        assert command[command.index("--timeout") + 1] == "2h"
         label_index = command.index("--label")
         assert command[label_index + 1] == "exp1-qwen-smoke"
-        image_index = command.index("pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel")
+        image_index = command.index("vllm/vllm-openai:v0.17.0")
         assert command.index("--detach") < image_index
         assert command[image_index + 1 : image_index + 3] == ["bash", "-c"]
         assert "-lc" not in command

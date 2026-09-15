@@ -8,6 +8,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
@@ -15,6 +16,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     DEEPSEEK_TEMPERATURE,
     DEEPSEEK_TOP_P,
     GENERATION_SEED_BYTES,
+    INFERENCE_ENGINE,
     PROMPT_ARM_CRITERIA,
     PROMPT_ARM_STUDY,
     QWEN_MIN_P,
@@ -29,7 +31,11 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     THINK_OPEN_SUFFIX,
     THINK_OPEN_TAG,
     UINT32_MODULUS,
+    VLLM_GPU_MEMORY_UTILIZATION,
+    VLLM_MAX_MODEL_LEN,
+    VLLM_MAX_NUM_SEQS,
 )
+
 from experiments.reasoning_during_moderation_2026_09_15.shared.prompt import (
     render_prompt,
 )
@@ -73,6 +79,7 @@ class TraceRecord:
     thinking_text: str
     completion_text: str
     max_new_tokens: int
+    inference_engine: str = INFERENCE_ENGINE
 
 
 def generation_seed(post_id: str) -> int:
@@ -81,26 +88,90 @@ def generation_seed(post_id: str) -> int:
     return int.from_bytes(digest[:GENERATION_SEED_BYTES], "big") % UINT32_MODULUS
 
 
+def chunk_posts(
+    posts: Sequence[dict[str, object]], chunk_size: int
+) -> list[list[dict[str, object]]]:
+    """Split posts into contiguous chunks of ``chunk_size``."""
+    if chunk_size <= 0:
+        raise ValueError(f"chunk_size must be positive, got {chunk_size}")
+    return [list(posts[start : start + chunk_size]) for start in range(0, len(posts), chunk_size)]
+
+
+def sampling_kwargs_for_vllm(sampling: SamplingConfig) -> dict[str, float | int]:
+    """Return SamplingParams kwargs, including presence_penalty when set."""
+    kwargs: dict[str, float | int] = {
+        "temperature": sampling.temperature,
+        "top_p": sampling.top_p,
+        "presence_penalty": sampling.presence_penalty if sampling.presence_penalty is not None else 0.0,
+        "repetition_penalty": sampling.repetition_penalty if sampling.repetition_penalty is not None else 1.0,
+    }
+    if sampling.top_k is not None:
+        kwargs["top_k"] = sampling.top_k
+    if sampling.min_p is not None:
+        kwargs["min_p"] = sampling.min_p
+    return kwargs
+
+
 def complete_post(
     post: dict[str, object],
     model_id: str,
     add_criteria: bool,
     max_new_tokens: int,
     tokenizer: object,
-    model: object,
+    llm: object,
 ) -> TraceRecord:
     """Generate one thinking-mode completion and count thinking tokens."""
-    prompt = render_prompt(
-        str(post["original_text"]),
-        str(post["mirror_text"]),
-        str(post["post_1_role"]),
-        add_criteria,
+    return complete_posts(
+        [post], model_id, add_criteria, max_new_tokens, tokenizer, llm
+    )[0]
+
+
+def complete_posts(
+    posts: Sequence[dict[str, object]],
+    model_id: str,
+    add_criteria: bool,
+    max_new_tokens: int,
+    tokenizer: object,
+    llm: object,
+) -> list[TraceRecord]:
+    """Generate thinking-mode completions for one vLLM batch."""
+    sampling = SAMPLING_BY_MODEL[model_id]
+    prompts: list[str] = []
+    params: list[object] = []
+    seeds: list[int] = []
+    for post in posts:
+        prompt = render_prompt(
+            str(post["original_text"]),
+            str(post["mirror_text"]),
+            str(post["post_1_role"]),
+            add_criteria,
+        )
+        seed = generation_seed(str(post["post_id"]))
+        prompts.append(_chat_prompt(tokenizer, prompt, model_id))
+        params.append(_sampling_params(sampling, seed, max_new_tokens))
+        seeds.append(seed)
+    outputs = llm.generate(prompts, params)
+    records: list[TraceRecord] = []
+    for post, seed, output in zip(posts, seeds, outputs, strict=True):
+        generated_ids = list(output.outputs[0].token_ids)
+        records.append(
+            _trace_from_generation(
+                post, model_id, add_criteria, seed, generated_ids, tokenizer, max_new_tokens
+            )
+        )
+    return records
+
+
+def _sampling_params(
+    sampling: SamplingConfig, seed: int, max_new_tokens: int
+) -> object:
+    from vllm import SamplingParams
+
+    return SamplingParams(
+        max_tokens=max_new_tokens,
+        seed=seed,
+        **sampling_kwargs_for_vllm(sampling),
     )
-    seed = generation_seed(str(post["post_id"]))
-    generated_ids = _generate_ids(
-        prompt, model_id, tokenizer, model, seed, max_new_tokens
-    )
-    return _trace_from_generation(post, model_id, add_criteria, seed, generated_ids, tokenizer, max_new_tokens)
 
 
 def _trace_from_generation(
@@ -128,37 +199,30 @@ def trace_to_dict(record: TraceRecord) -> dict[str, object]:
     return asdict(record)
 
 
-def _generate_ids(
-    prompt: str,
-    model_id: str,
-    tokenizer: object,
-    model: object,
-    seed: int,
-    max_new_tokens: int,
-) -> list[int]:
+def load_engine(model_id: str) -> tuple[object, object]:
+    """Load a vLLM engine and its tokenizer on GPU."""
     import torch
+    from vllm import LLM
 
-    inputs = _prompt_inputs(tokenizer, prompt, model_id, model)
-    sampling = _sampling_kwargs(SAMPLING_BY_MODEL[model_id], model.generation_config)
-    pad_token_id = tokenizer.eos_token_id
-    with torch.random.fork_rng():
-        torch.manual_seed(seed)
-        output = model.generate(
-            **inputs,
-            max_new_tokens=max_new_tokens,
-            do_sample=True,
-            pad_token_id=pad_token_id,
-            **sampling,
-        )
-    return output[0][inputs["input_ids"].shape[-1]:].tolist()
-
-
-def _prompt_inputs(
-    tokenizer: object, prompt: str, model_id: str, model: object
-) -> dict[str, object]:
-    chat = _chat_prompt(tokenizer, prompt, model_id)
-    inputs = tokenizer(chat, return_tensors="pt")
-    return {key: value.to(model.device) for key, value in inputs.items()}
+    if not torch.cuda.is_available():
+        raise RuntimeError("GPU required; use hf_job_command from jobs.py")
+    kwargs: dict[str, object] = {
+        "model": model_id,
+        "dtype": "bfloat16",
+        "max_model_len": VLLM_MAX_MODEL_LEN,
+        "gpu_memory_utilization": VLLM_GPU_MEMORY_UTILIZATION,
+        "enable_prefix_caching": True,
+        "max_num_seqs": VLLM_MAX_NUM_SEQS,
+        "trust_remote_code": True,
+    }
+    if model_id == QWEN_MODEL_ID:
+        kwargs["language_model_only"] = True
+    try:
+        llm = LLM(**kwargs)
+    except TypeError:
+        kwargs.pop("language_model_only", None)
+        llm = LLM(**kwargs)
+    return llm.get_tokenizer(), llm
 
 
 def _chat_prompt(tokenizer: object, prompt: str, model_id: str) -> str:
@@ -181,28 +245,6 @@ def _force_deepseek_think(text: str) -> str:
     if text.endswith(THINK_OPEN_TAG) or text.endswith(THINK_OPEN_SUFFIX):
         return text
     return text + THINK_OPEN_SUFFIX
-
-
-def _sampling_kwargs(
-    sampling: SamplingConfig, generation_config: object
-) -> dict[str, float | int]:
-    kwargs: dict[str, float | int] = {
-        "temperature": sampling.temperature,
-        "top_p": sampling.top_p,
-    }
-    if sampling.top_k is not None:
-        kwargs["top_k"] = sampling.top_k
-    if sampling.min_p is not None:
-        kwargs["min_p"] = sampling.min_p
-    if sampling.presence_penalty is not None:
-        kwargs["presence_penalty"] = sampling.presence_penalty
-    if sampling.repetition_penalty is not None:
-        kwargs["repetition_penalty"] = sampling.repetition_penalty
-    return {
-        key: value
-        for key, value in kwargs.items()
-        if hasattr(generation_config, key)
-    }
 
 
 def _thinking_text(decoded: str) -> str:

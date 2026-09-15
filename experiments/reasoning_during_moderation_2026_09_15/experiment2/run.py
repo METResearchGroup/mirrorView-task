@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 import traceback
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -19,7 +20,6 @@ import pandas as pd
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     APPEND_MODE,
     UTF8,
-    _load_model,
     _load_posts,
     _read_jsonl,
     _remaining_posts,
@@ -40,15 +40,19 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     FULL_MAX_NEW_TOKENS,
+    INFERENCE_ENGINE,
     PROMPT_ARM_CRITERIA,
     QWEN_MODEL_ID,
     STATUS_INFRASTRUCTURE,
-    TRACE_UPLOAD_EVERY,
+    VLLM_CHUNK_SIZE,
+    VLLM_OUTPUT_DIRNAME,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
     TraceRecord,
-    complete_post,
+    chunk_posts,
+    complete_posts,
     generation_seed,
+    load_engine,
     trace_to_dict,
 )
 from lib.constants import REPO_ROOT
@@ -129,6 +133,7 @@ def main() -> None:
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", choices=("qwen", "deepseek", "both"), default="both")
+    parser.add_argument("--chunk-size", type=int, default=VLLM_CHUNK_SIZE)
     parser.add_argument("--summarize", action="store_true")
     return parser.parse_args()
 
@@ -137,21 +142,25 @@ def _run_full(args: argparse.Namespace) -> None:
     posts = _load_posts(None)
     max_new_tokens = FULL_MAX_NEW_TOKENS
     for model_id in _selected_models(args.model):
-        print(f"thinking_enabled=true model_id={model_id}")
-        _run_model(posts, model_id, max_new_tokens)
+        print(
+            f"thinking_enabled=true inference_engine={INFERENCE_ENGINE} "
+            f"model_id={model_id} chunk_size={args.chunk_size}"
+        )
+        _run_model(posts, model_id, max_new_tokens, args.chunk_size)
 
 
 def _run_model(
     posts: list[dict[str, object]],
     model_id: str,
     max_new_tokens: int,
+    chunk_size: int,
 ) -> None:
     sink = _trace_path(model_id)
     _strip_infrastructure(sink)
     remaining = _remaining_posts(posts, sink, False)
     try:
         if remaining:
-            _generate_remaining(remaining, sink, model_id, max_new_tokens)
+            _generate_remaining(remaining, sink, model_id, max_new_tokens, chunk_size)
     finally:
         if sink.is_file():
             _upload_output(sink)
@@ -162,22 +171,47 @@ def _generate_remaining(
     sink: Path,
     model_id: str,
     max_new_tokens: int,
+    chunk_size: int,
 ) -> None:
-    tokenizer, model = _load_model(model_id)
+    tokenizer, llm = load_engine(model_id)
     exp1_by_post = _exp1_trace_index(model_id)
     sink.parent.mkdir(parents=True, exist_ok=True)
     with sink.open(APPEND_MODE, encoding=UTF8) as handle:
-        for index, post in enumerate(remaining, start=1):
-            _write_one_trace(
-                handle, post, model_id, max_new_tokens, tokenizer, model, exp1_by_post
+        for chunk_index, chunk in enumerate(chunk_posts(remaining, chunk_size)):
+            aligned = [_aligned_post(post, model_id, exp1_by_post) for post in chunk]
+            started = time.perf_counter()
+            records = _complete_chunk_or_infrastructure(
+                aligned, model_id, max_new_tokens, tokenizer, llm
             )
+            elapsed = time.perf_counter() - started
+            think_tokens = sum(record.thinking_token_count for record in records)
+            tok_s = think_tokens / elapsed if elapsed > 0 else 0.0
+            print(
+                f"chunk={chunk_index} n={len(chunk)} elapsed_s={elapsed:.1f} "
+                f"think_tokens={think_tokens} think_tok_s={tok_s:.1f}"
+            )
+            for record in records:
+                handle.write(json.dumps(trace_to_dict(record)) + "\n")
+                print(
+                    f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}"
+                )
             handle.flush()
-            if index % TRACE_UPLOAD_EVERY == 0:
-                _upload_output(sink)
+            _upload_output(sink)
+
+
+def _aligned_post(
+    post: dict[str, object],
+    model_id: str,
+    exp1_by_post: dict[str, dict[str, object]],
+) -> dict[str, object]:
+    planned = planned_completion_fields(
+        {**post, "model_id": model_id}, exp1_by_post.get(str(post["post_id"]))
+    )
+    return {**post, "post_1_role": planned.post_1_role, "post_2_role": planned.post_2_role}
 
 
 def _exp1_trace_index(model_id: str) -> dict[str, dict[str, object]]:
-    path = EXPERIMENT1_OUTPUT_DIR / _trace_filename(model_id)
+    path = EXPERIMENT1_OUTPUT_DIR / VLLM_OUTPUT_DIRNAME / _trace_filename(model_id)
     if not path.is_file():
         try:
             download_if_missing(path, str(path.relative_to(REPO_ROOT)))
@@ -185,26 +219,6 @@ def _exp1_trace_index(model_id: str) -> dict[str, dict[str, object]]:
             return {}
     rows = _read_jsonl(path)
     return {str(row["post_id"]): row for row in rows if str(row["model_id"]) == model_id}
-
-
-def _write_one_trace(
-    handle: object,
-    post: dict[str, object],
-    model_id: str,
-    max_new_tokens: int,
-    tokenizer: object,
-    model: object,
-    exp1_by_post: dict[str, dict[str, object]],
-) -> None:
-    planned = planned_completion_fields(
-        {**post, "model_id": model_id}, exp1_by_post.get(str(post["post_id"]))
-    )
-    aligned = {**post, "post_1_role": planned.post_1_role, "post_2_role": planned.post_2_role}
-    record = _complete_or_infrastructure(
-        aligned, model_id, max_new_tokens, tokenizer, model
-    )
-    handle.write(json.dumps(trace_to_dict(record)) + "\n")
-    print(f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}")
 
 
 def _summarize() -> None:
@@ -229,7 +243,7 @@ def _load_both_model_traces() -> pd.DataFrame:
 
 
 def _trace_path(model_id: str) -> Path:
-    return EXPERIMENT2_OUTPUT_DIR / _trace_filename(model_id)
+    return EXPERIMENT2_OUTPUT_DIR / VLLM_OUTPUT_DIRNAME / _trace_filename(model_id)
 
 
 def _trace_filename(model_id: str) -> str:
@@ -237,18 +251,20 @@ def _trace_filename(model_id: str) -> str:
     return f"traces_{name}.jsonl"
 
 
-def _complete_or_infrastructure(
-    post: dict[str, object],
+def _complete_chunk_or_infrastructure(
+    posts: list[dict[str, object]],
     model_id: str,
     max_new_tokens: int,
     tokenizer: object,
-    model: object,
-) -> TraceRecord:
+    llm: object,
+) -> list[TraceRecord]:
     try:
-        return complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+        return complete_posts(
+            posts, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, llm
+        )
     except Exception:
         traceback.print_exc()
-        return _infrastructure_record(post, model_id, max_new_tokens)
+        return [_infrastructure_record(post, model_id, max_new_tokens) for post in posts]
 
 
 def _infrastructure_record(

@@ -15,14 +15,11 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     HF_JOB_TIMEOUT,
 )
 
-HF_JOB_IMAGE = "pytorch/pytorch:2.6.0-cuda12.4-cudnn9-devel"
+HF_JOB_IMAGE = "vllm/vllm-openai:v0.17.0"
 REPO_CLONE_URL = (
     "https://x-access-token:${METRESEARCHGROUP_GITHUB_PAT_TOKEN}"
     "@github.com/METResearchGroup/mirrorView-task.git"
 )
-UV_INSTALL_SCRIPT = "https://astral.sh/uv/install.sh"
-TORCH_CUDA_VERSION = "2.6.0+cu124"
-TORCH_CUDA_INDEX = "https://download.pytorch.org/whl/cu124"
 
 
 def hf_job_command(
@@ -31,6 +28,7 @@ def hf_job_command(
     *,
     label: str | None = None,
     detach: bool = True,
+    timeout: str | None = None,
 ) -> list[str]:
     """Return an ``hf jobs run`` command that clones this commit and runs ``script``."""
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
@@ -44,7 +42,7 @@ def hf_job_command(
         "--flavor",
         HF_JOB_FLAVOR,
         "--timeout",
-        HF_JOB_TIMEOUT,
+        timeout if timeout is not None else HF_JOB_TIMEOUT,
     ]
     if detach:
         command.append("--detach")
@@ -78,16 +76,9 @@ def _remote_shell(
     quoted_commit = shlex.quote(commit)
     return (
         "apt-get update && apt-get install -y --no-install-recommends git curl "
-        f"&& curl -LsSf {UV_INSTALL_SCRIPT} | sh && export PATH=\"$HOME/.local/bin:$PATH\" "
         f"&& git clone --branch {quoted_branch} --single-branch {REPO_CLONE_URL} repo "
         f"&& cd repo && git checkout {quoted_commit} "
-        "&& uv python install 3.12 "
-        "&& uv sync --python 3.12 --frozen --no-dev --no-install-package torch "
-        "&& uv pip install --python .venv/bin/python boto3 transformers accelerate "
-        f"torch=={TORCH_CUDA_VERSION} --extra-index-url {TORCH_CUDA_INDEX} "
-        "&& uv pip install --python .venv/bin/python ninja packaging "
-        "&& uv pip install --python .venv/bin/python --no-build-isolation causal-conv1d flash-linear-attention || true "
-        "&& PYTHONPATH=. uv run --no-sync python -c "
-        "'import torch; print(\"cuda\", torch.cuda.is_available(), torch.__version__)' "
-        f"&& PYTHONPATH=. uv run --no-sync python {script} {joined_args}"
+        "&& python3 -m pip install --quiet boto3 pandas pyarrow "
+        "&& python3 -c 'import torch, vllm; print(torch.cuda.is_available(), vllm.__version__)' "
+        f"&& PYTHONPATH=. python3 {script} {joined_args}"
     )

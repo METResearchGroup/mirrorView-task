@@ -4,6 +4,7 @@
 
 1. Operators can build a three-group September 2026 linked-fate cohort from the Prolific export on or after 2026-09-09, and they can summarize human `response_time_ms` on it. Thinking-token counts and uncertainty, revision, and tension marker rates wait on Hugging Face Job traces. Keep/remove accuracy is out of scope. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
 2. Hugging Face Jobs clone the feature branch at the pinned commit, and GPU runners checkpoint traces to S3 every 25 posts, including smoke files.
+3. Experiment 1 and 2 GPU completions run through batched vLLM (`vllm/vllm-openai:v0.17.0`) instead of per-post Transformers `generate`. Full-run traces write under `outputs/vllm/`.
 
 ## 2026-09-12
 

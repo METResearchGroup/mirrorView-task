@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import time
 import traceback
 from pathlib import Path
 
@@ -29,18 +30,22 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     FULL_MAX_NEW_TOKENS,
+    INFERENCE_ENGINE,
     PROMPT_ARM_STUDY,
     QWEN_MODEL_ID,
     SMOKE_LIMIT,
     SMOKE_MAX_NEW_TOKENS,
     STATUS_INFRASTRUCTURE,
     STATUS_VALID,
-    TRACE_UPLOAD_EVERY,
+    VLLM_CHUNK_SIZE,
+    VLLM_OUTPUT_DIRNAME,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
     TraceRecord,
-    complete_post,
+    chunk_posts,
+    complete_posts,
     generation_seed,
+    load_engine,
     trace_to_dict,
 )
 from lib.constants import REPO_ROOT
@@ -68,8 +73,11 @@ def main() -> None:
     default_cap = SMOKE_MAX_NEW_TOKENS if args.smoke else FULL_MAX_NEW_TOKENS
     max_new_tokens = args.max_new_tokens if args.max_new_tokens is not None else default_cap
     for model_id in models:
-        print(f"thinking_enabled=true model_id={model_id}")
-        _run_model(posts, model_id, args.smoke, max_new_tokens)
+        print(
+            f"thinking_enabled=true inference_engine={INFERENCE_ENGINE} "
+            f"model_id={model_id} chunk_size={args.chunk_size}"
+        )
+        _run_model(posts, model_id, args.smoke, max_new_tokens, args.chunk_size)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -77,6 +85,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--limit", type=int, default=SMOKE_LIMIT)
     parser.add_argument("--max-new-tokens", type=int, default=None)
+    parser.add_argument("--chunk-size", type=int, default=VLLM_CHUNK_SIZE)
     parser.add_argument("--model", choices=("qwen", "deepseek", "both"), default="both")
     parser.add_argument("--summarize", action="store_true")
     return parser.parse_args()
@@ -102,6 +111,7 @@ def _run_model(
     model_id: str,
     smoke: bool,
     max_new_tokens: int,
+    chunk_size: int,
 ) -> None:
     sink = _trace_path(model_id, smoke)
     if not smoke:
@@ -109,7 +119,9 @@ def _run_model(
     remaining = _remaining_posts(posts, sink, smoke)
     try:
         if remaining:
-            _generate_remaining(remaining, sink, model_id, smoke, max_new_tokens)
+            _generate_remaining(
+                remaining, sink, model_id, smoke, max_new_tokens, chunk_size
+            )
     finally:
         if sink.is_file():
             _upload_output(sink)
@@ -121,16 +133,32 @@ def _generate_remaining(
     model_id: str,
     smoke: bool,
     max_new_tokens: int,
+    chunk_size: int,
 ) -> None:
-    tokenizer, model = _load_model(model_id)
+    tokenizer, llm = load_engine(model_id)
     sink.parent.mkdir(parents=True, exist_ok=True)
     mode = WRITE_MODE if smoke else APPEND_MODE
     with sink.open(mode, encoding=UTF8) as handle:
-        for index, post in enumerate(remaining, start=1):
-            _write_one_trace(handle, post, model_id, smoke, max_new_tokens, tokenizer, model)
+        for chunk_index, chunk in enumerate(chunk_posts(remaining, chunk_size)):
+            started = time.perf_counter()
+            records = _complete_chunk_or_infrastructure(
+                chunk, model_id, smoke, max_new_tokens, tokenizer, llm
+            )
+            elapsed = time.perf_counter() - started
+            think_tokens = sum(record.thinking_token_count for record in records)
+            tok_s = think_tokens / elapsed if elapsed > 0 else 0.0
+            print(
+                f"chunk={chunk_index} n={len(chunk)} elapsed_s={elapsed:.1f} "
+                f"think_tokens={think_tokens} think_tok_s={tok_s:.1f}"
+            )
+            for record in records:
+                handle.write(json.dumps(trace_to_dict(record)) + "\n")
+                _require_valid_smoke(record, smoke)
+                print(
+                    f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}"
+                )
             handle.flush()
-            if index % TRACE_UPLOAD_EVERY == 0:
-                _upload_output(sink)
+            _upload_output(sink)
 
 
 def _summarize() -> None:
@@ -209,38 +237,23 @@ def _strip_infrastructure(sink: Path) -> None:
             handle.write(json.dumps(row) + "\n")
 
 
-def _write_one_trace(
-    handle: object,
-    post: dict[str, object],
+def _complete_chunk_or_infrastructure(
+    posts: list[dict[str, object]],
     model_id: str,
     smoke: bool,
     max_new_tokens: int,
     tokenizer: object,
-    model: object,
-) -> None:
-    record = _complete_or_infrastructure(
-        post, model_id, smoke, max_new_tokens, tokenizer, model
-    )
-    handle.write(json.dumps(trace_to_dict(record)) + "\n")
-    _require_valid_smoke(record, smoke)
-    print(f"post_id={record.post_id} thinking_token_count={record.thinking_token_count}")
-
-
-def _complete_or_infrastructure(
-    post: dict[str, object],
-    model_id: str,
-    smoke: bool,
-    max_new_tokens: int,
-    tokenizer: object,
-    model: object,
-) -> TraceRecord:
+    llm: object,
+) -> list[TraceRecord]:
     try:
-        return complete_post(post, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, model)
+        return complete_posts(
+            posts, model_id, ADD_CRITERIA, max_new_tokens, tokenizer, llm
+        )
     except Exception:
         traceback.print_exc()
         if smoke:
             raise
-        return _infrastructure_record(post, model_id, max_new_tokens)
+        return [_infrastructure_record(post, model_id, max_new_tokens) for post in posts]
 
 
 def _infrastructure_record(
@@ -273,21 +286,15 @@ def _require_valid_smoke(record: object, smoke: bool) -> None:
 
 def _trace_path(model_id: str, smoke: bool) -> Path:
     name = "qwen" if model_id == QWEN_MODEL_ID else "deepseek"
-    folder = "smoke" if smoke else "outputs"
-    return EXPERIMENT_DIR / "experiment1" / folder / f"traces_{name}.jsonl"
-
-
-def _load_model(model_id: str) -> tuple[object, object]:
-    import torch
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-
-    if not torch.cuda.is_available():
-        raise RuntimeError("GPU required; use hf_job_command from jobs.py")
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_id, torch_dtype=torch.bfloat16, device_map="auto"
+    if smoke:
+        return EXPERIMENT_DIR / "experiment1" / "smoke" / f"traces_{name}.jsonl"
+    return (
+        EXPERIMENT_DIR
+        / "experiment1"
+        / "outputs"
+        / VLLM_OUTPUT_DIRNAME
+        / f"traces_{name}.jsonl"
     )
-    return tokenizer, model
 
 
 if __name__ == "__main__":
