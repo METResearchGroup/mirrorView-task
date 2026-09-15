@@ -21,6 +21,7 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment1.summarize im
 RESPONSE_TIME_COLUMN = "response_time_ms"
 ZERO_MS = 0.0
 LEVEL_TRIAL = "trial"
+LEVEL_POST_MEAN = "post_mean"
 
 
 def usable_times(slim: pd.DataFrame) -> pd.DataFrame:
@@ -41,7 +42,13 @@ def trial_level_summary(slim: pd.DataFrame) -> pd.DataFrame:
 
 def post_mean_summary(slim: pd.DataFrame) -> pd.DataFrame:
     """Average usable times per post, then write the same stats by group."""
-    raise NotImplementedError
+    usable = usable_times(slim)
+    post_means = usable.groupby(["post_id", "group"], as_index=False)[
+        RESPONSE_TIME_COLUMN
+    ].mean()
+    return pd.DataFrame(
+        [_level_row(post_means, group, LEVEL_POST_MEAN) for group in GROUP_ORDER]
+    )
 
 
 def _level_row(frame: pd.DataFrame, group: str, level: str) -> dict[str, object]:
