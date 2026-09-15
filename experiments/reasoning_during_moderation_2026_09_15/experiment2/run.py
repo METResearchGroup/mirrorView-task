@@ -42,6 +42,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     PROMPT_ARM_CRITERIA,
     QWEN_MODEL_ID,
     STATUS_INFRASTRUCTURE,
+    TRACE_UPLOAD_EVERY,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
     TraceRecord,
@@ -165,10 +166,13 @@ def _generate_remaining(
     exp1_by_post = _exp1_trace_index(model_id)
     sink.parent.mkdir(parents=True, exist_ok=True)
     with sink.open(APPEND_MODE, encoding=UTF8) as handle:
-        for post in remaining:
+        for index, post in enumerate(remaining, start=1):
             _write_one_trace(
                 handle, post, model_id, max_new_tokens, tokenizer, model, exp1_by_post
             )
+            handle.flush()
+            if index % TRACE_UPLOAD_EVERY == 0:
+                _upload_output(sink)
 
 
 def _exp1_trace_index(model_id: str) -> dict[str, dict[str, object]]:

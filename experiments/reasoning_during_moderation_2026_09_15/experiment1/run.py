@@ -34,6 +34,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     SMOKE_MAX_NEW_TOKENS,
     STATUS_INFRASTRUCTURE,
     STATUS_VALID,
+    TRACE_UPLOAD_EVERY,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
     TraceRecord,
@@ -107,7 +108,7 @@ def _run_model(
         if remaining:
             _generate_remaining(remaining, sink, model_id, smoke, max_new_tokens)
     finally:
-        if not smoke and sink.is_file():
+        if sink.is_file():
             _upload_output(sink)
 
 
@@ -122,8 +123,11 @@ def _generate_remaining(
     sink.parent.mkdir(parents=True, exist_ok=True)
     mode = WRITE_MODE if smoke else APPEND_MODE
     with sink.open(mode, encoding=UTF8) as handle:
-        for post in remaining:
+        for index, post in enumerate(remaining, start=1):
             _write_one_trace(handle, post, model_id, smoke, max_new_tokens, tokenizer, model)
+            handle.flush()
+            if index % TRACE_UPLOAD_EVERY == 0:
+                _upload_output(sink)
 
 
 def _summarize() -> None:

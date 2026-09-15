@@ -1,0 +1,41 @@
+"""Tests for Hugging Face Jobs command construction."""
+
+from __future__ import annotations
+
+from experiments.reasoning_during_moderation_2026_09_15.shared.jobs import (
+    hf_job_command,
+    _remote_shell,
+)
+
+SCRIPT = "experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py"
+
+
+class TestHfJobCommand:
+    """Tests for hf_job_command and the remote shell."""
+
+    def test_remote_shell_clones_branch_and_checks_out_commit(self) -> None:
+        """Verifies the remote shell checks out the pinned commit on the branch."""
+        shell = _remote_shell(
+            "abc123",
+            "cursor/implement-reasoning-moderation-fae5",
+            SCRIPT,
+            ["--smoke", "--limit", "3", "--model", "qwen"],
+        )
+        assert "--branch cursor/implement-reasoning-moderation-fae5" in shell
+        assert "--single-branch" in shell
+        assert "git checkout abc123" in shell
+        assert "--smoke --limit 3 --model qwen" in shell
+
+    def test_command_includes_detach_and_name(self) -> None:
+        """Verifies detach and name flags land before the remote shell."""
+        command = hf_job_command(
+            SCRIPT,
+            ["--model", "qwen"],
+            name="exp1-qwen-smoke",
+            detach=True,
+        )
+        assert command[0] == "hf"
+        assert "--detach" in command
+        name_index = command.index("--name")
+        assert command[name_index + 1] == "exp1-qwen-smoke"
+        assert command.index("--detach") < command.index("--")

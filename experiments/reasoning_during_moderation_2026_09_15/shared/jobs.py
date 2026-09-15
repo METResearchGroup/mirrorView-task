@@ -7,6 +7,7 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import shlex
 import subprocess
 
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
@@ -22,10 +23,19 @@ REPO_CLONE_URL = (
 UV_INSTALL_SCRIPT = "https://astral.sh/uv/install.sh"
 
 
-def hf_job_command(script: str, extra_args: list[str]) -> list[str]:
+def hf_job_command(
+    script: str,
+    extra_args: list[str],
+    *,
+    name: str | None = None,
+    detach: bool = True,
+) -> list[str]:
     """Return an ``hf jobs run`` command that clones this commit and runs ``script``."""
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
-    return [
+    branch = subprocess.check_output(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"], text=True
+    ).strip()
+    command = [
         "hf",
         "jobs",
         "run",
@@ -34,12 +44,16 @@ def hf_job_command(script: str, extra_args: list[str]) -> list[str]:
         HF_JOB_FLAVOR,
         "--timeout",
         HF_JOB_TIMEOUT,
-        *_secret_flags(),
-        "--",
-        "bash",
-        "-lc",
-        _remote_shell(commit, script, extra_args),
     ]
+    if detach:
+        command.append("--detach")
+    if name is not None:
+        command.extend(["--name", name])
+    command.extend(_secret_flags())
+    command.extend(
+        ["--", "bash", "-lc", _remote_shell(commit, branch, script, extra_args)]
+    )
+    return command
 
 
 def _secret_flags() -> list[str]:
@@ -55,12 +69,17 @@ def _secret_flags() -> list[str]:
     return flags
 
 
-def _remote_shell(commit: str, script: str, extra_args: list[str]) -> str:
-    joined_args = " ".join(extra_args)
+def _remote_shell(
+    commit: str, branch: str, script: str, extra_args: list[str]
+) -> str:
+    joined_args = " ".join(shlex.quote(argument) for argument in extra_args)
+    quoted_branch = shlex.quote(branch)
+    quoted_commit = shlex.quote(commit)
     return (
         "apt-get update && apt-get install -y --no-install-recommends git curl "
         f"&& curl -LsSf {UV_INSTALL_SCRIPT} | sh && export PATH=\"$HOME/.local/bin:$PATH\" "
-        f"&& git clone {REPO_CLONE_URL} repo && cd repo && git checkout {commit} "
+        f"&& git clone --branch {quoted_branch} --single-branch {REPO_CLONE_URL} repo "
+        f"&& cd repo && git checkout {quoted_commit} "
         "&& uv sync --frozen --no-install-package torch "
         f"&& PYTHONPATH=. uv run --no-sync python {script} {joined_args}"
     )
