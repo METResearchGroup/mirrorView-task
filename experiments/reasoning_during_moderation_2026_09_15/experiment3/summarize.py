@@ -7,12 +7,19 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
+
+RESPONSE_TIME_COLUMN = "response_time_ms"
+ZERO_MS = 0.0
 
 
 def usable_times(slim: pd.DataFrame) -> pd.DataFrame:
     """Keep finite response_time_ms values greater than zero. Do not read `rt`."""
-    raise NotImplementedError
+    times = pd.to_numeric(slim[RESPONSE_TIME_COLUMN], errors="coerce")
+    values = times.to_numpy(dtype=float)
+    keep = np.isfinite(values) & (values > ZERO_MS)
+    return slim.loc[keep].copy()
 
 
 def trial_level_summary(slim: pd.DataFrame) -> pd.DataFrame:
