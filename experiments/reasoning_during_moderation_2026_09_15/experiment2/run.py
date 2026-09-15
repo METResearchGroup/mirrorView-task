@@ -20,6 +20,7 @@ import pandas as pd
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     APPEND_MODE,
     UTF8,
+    _hydrate_sink,
     _load_posts,
     _read_jsonl,
     _remaining_posts,
@@ -156,8 +157,10 @@ def _run_model(
     chunk_size: int,
 ) -> None:
     sink = _trace_path(model_id)
+    _hydrate_sink(sink)
     _strip_infrastructure(sink)
     remaining = _remaining_posts(posts, sink, False)
+    print(f"posts={len(posts)} remaining={len(remaining)} sink={sink}")
     try:
         if remaining:
             _generate_remaining(remaining, sink, model_id, max_new_tokens, chunk_size)

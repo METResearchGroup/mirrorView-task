@@ -115,8 +115,10 @@ def _run_model(
 ) -> None:
     sink = _trace_path(model_id, smoke)
     if not smoke:
+        _hydrate_sink(sink)
         _strip_infrastructure(sink)
     remaining = _remaining_posts(posts, sink, smoke)
+    print(f"posts={len(posts)} remaining={len(remaining)} sink={sink}")
     try:
         if remaining:
             _generate_remaining(
@@ -194,6 +196,14 @@ def _require_both_models(frame: pd.DataFrame) -> None:
     missing = {QWEN_MODEL_ID, DEEPSEEK_MODEL_ID} - present
     if missing:
         raise ValueError(f"summary requires both models, missing {missing}")
+
+
+def _hydrate_sink(sink: Path) -> None:
+    """Download an existing jsonl from S3 when the local file is missing."""
+    try:
+        download_if_missing(sink, str(sink.relative_to(REPO_ROOT)))
+    except FileNotFoundError:
+        return
 
 
 def _upload_output(path: Path) -> None:
