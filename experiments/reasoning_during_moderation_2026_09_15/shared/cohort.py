@@ -7,8 +7,10 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
@@ -21,6 +23,9 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     GROUP_UNANIMOUS_KEEP,
     GROUP_UNANIMOUS_REMOVE,
     MIN_RATERS,
+    ORIGINAL_FIRST_DRAW,
+    PAIR_ORDER_BIN_COUNT,
+    PAIR_ORDER_HASH_BYTES,
     PAIR_ORDER_MIRROR_FIRST,
     PAIR_ORDER_ORIGINAL_FIRST,
     PAIR_ORDER_SEED,
@@ -117,7 +122,12 @@ def assign_group(keep_count: int, remove_count: int) -> str | None:
 
 def pair_order_for_post(post_id: str, seed: int = PAIR_ORDER_SEED) -> tuple[str, str]:
     """Return a deterministic Post 1 and Post 2 role pair."""
-    raise NotImplementedError
+    digest = hashlib.sha256(f"{seed}:{post_id}".encode()).digest()
+    rng_seed = int.from_bytes(digest[:PAIR_ORDER_HASH_BYTES], "big")
+    rng = np.random.Generator(np.random.PCG64(rng_seed))
+    if int(rng.integers(0, PAIR_ORDER_BIN_COUNT)) == ORIGINAL_FIRST_DRAW:
+        return PAIR_ORDER_ORIGINAL_FIRST
+    return PAIR_ORDER_MIRROR_FIRST
 
 
 def build_cohort(trials: pd.DataFrame) -> pd.DataFrame:
