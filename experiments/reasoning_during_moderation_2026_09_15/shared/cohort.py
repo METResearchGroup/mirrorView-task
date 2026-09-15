@@ -82,12 +82,18 @@ def _require_single_nonempty_text(values: object) -> None:
 
 def drop_conflicting_worker_posts(trials: pd.DataFrame) -> pd.DataFrame:
     """Drop worker-post pairs that contain both keep and remove."""
-    raise NotImplementedError
+    worker_post = ["post_id", "prolific_id"]
+    distinct_decisions = trials.groupby(worker_post)["decision"].transform("nunique")
+    return trials.loc[distinct_decisions == 1].copy()
 
 
 def dedupe_worker_post(trials: pd.DataFrame) -> pd.DataFrame:
     """Keep the earliest row per worker and post."""
-    raise NotImplementedError
+    ordered = trials.sort_values(
+        ["post_id", "prolific_id", "time_elapsed", "trial_index"],
+        kind="mergesort",
+    )
+    return ordered.drop_duplicates(["post_id", "prolific_id"], keep="first")
 
 
 def assign_group(keep_count: int, remove_count: int) -> str | None:
