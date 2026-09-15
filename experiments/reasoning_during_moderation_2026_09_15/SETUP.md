@@ -54,3 +54,9 @@ PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/ex
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment2/run.py --model deepseek
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment2/run.py --summarize
 ```
+
+Experiment 3 summarizes `response_time_ms` on the slim trials. It does not use `rt`.
+
+```bash
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment3/run.py
+```
