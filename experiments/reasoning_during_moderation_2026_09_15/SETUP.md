@@ -46,3 +46,11 @@ PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/ex
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py --model deepseek
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment1/run.py --summarize
 ```
+
+Experiment 2 repeats experiment 1 with the keep/remove criteria addendum. Pair order and generation seeds match experiment 1 traces when those files exist.
+
+```bash
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment2/run.py --model qwen
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment2/run.py --model deepseek
+PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment2/run.py --summarize
+```

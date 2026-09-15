@@ -13,6 +13,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
+import pandas as pd
+
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     APPEND_MODE,
@@ -21,9 +23,15 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     _load_posts,
     _read_jsonl,
     _remaining_posts,
+    _require_both_models,
+    _require_trace_file,
     _selected_models,
 )
+from experiments.reasoning_during_moderation_2026_09_15.experiment1.summarize import (
+    summarize_tokens,
+)
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
+    DEEPSEEK_MODEL_ID,
     EXPERIMENT_DIR,
     EXPERIMENT_S3_PREFIX,
     FULL_MAX_NEW_TOKENS,
@@ -40,6 +48,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.runner import (
 from lib.constants import REPO_ROOT
 
 ADD_CRITERIA = True
+TOKEN_SUMMARY_FILENAME = "token_summary.csv"
 EXPERIMENT2_S3_PREFIX = f"{EXPERIMENT_S3_PREFIX}/experiment2/"
 EXPERIMENT2_OUTPUT_DIR = EXPERIMENT_DIR / "experiment2" / "outputs"
 EXPERIMENT1_OUTPUT_DIR = EXPERIMENT_DIR / "experiment1" / "outputs"
@@ -175,7 +184,24 @@ def _write_one_trace(
 
 
 def _summarize() -> None:
-    raise NotImplementedError
+    traces = _load_both_model_traces()
+    summary = summarize_tokens(traces)
+    path = EXPERIMENT2_OUTPUT_DIR / TOKEN_SUMMARY_FILENAME
+    path.parent.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(path, index=False)
+    print(f"rows={len(summary)} prompt_arm={PROMPT_ARM_CRITERIA}")
+    _upload_output(path)
+
+
+def _load_both_model_traces() -> pd.DataFrame:
+    qwen_path = _trace_path(QWEN_MODEL_ID)
+    deepseek_path = _trace_path(DEEPSEEK_MODEL_ID)
+    _require_trace_file(qwen_path)
+    _require_trace_file(deepseek_path)
+    rows = _read_jsonl(qwen_path) + _read_jsonl(deepseek_path)
+    frame = pd.DataFrame(rows)
+    _require_both_models(frame)
+    return frame
 
 
 def _trace_path(model_id: str) -> Path:
