@@ -53,7 +53,7 @@ flowchart TD
 
 ## Approach
 
-Each eligible post gets one completion per model per prompt arm. Run every eligible post. Do not downsample after the count confirmation. The study instruction text comes from the linked-fate pages in `webapp/public/main.js`, and it includes the line that there are no right or wrong answers. The trial closing line is `Allow or Remove?`. Participants saw one pair at a time, so the prompt is that website text plus one pair. Do not copy the twenty-pair JSON prompt from pull request 292. Pair order on the website was shuffled per person. The model run uses a fixed order, original as Post 1 and mirror as Post 2.
+Each eligible post gets one completion per model per prompt arm. Run every eligible post. Do not downsample after the count confirmation. The study instruction text comes from the linked-fate pages in `webapp/public/main.js`, and it includes the line that there are no right or wrong answers. The trial closing line is `Allow or Remove?`. Participants saw one pair at a time, so the prompt is that website text plus one pair. Do not copy the twenty-pair JSON prompt from pull request 292. Shuffle Post 1 and Post 2 per post with a deterministic seed, and store that order on the cohort. Reuse the same order for both models and both prompt arms.
 
 Qwen 3.5 4B is in thinking mode by default. DeepSeek-R1-Distill-Qwen-7B needs thinking forced on, and its model card says to put all instructions in the user message. Token counts are the generated token ids inside the thinking span. Do not decode the thinking text and tokenize it again. Store the full traces for experiment 4.
 
@@ -67,11 +67,11 @@ GPU inference runs on Hugging Face Jobs. Local pytest covers cohort rules, promp
 
 ### Step 1: Pin the September three-group cohort
 
-Export the latest Prolific CSVs, drop invalid workers, keep one rating per worker and post, require four or more raters, and assign the three groups. Print counts before any model run. Write the cohort under the experiment folder and upload it to the matching S3 prefix.
+Export the latest Prolific CSVs, drop invalid workers, keep one rating per worker and post, require four or more raters, and assign the three groups. Shuffle Post 1 and Post 2 per post with a deterministic seed and store that order on the cohort. Print counts before any model run. Write the cohort under the experiment folder and upload it to the matching S3 prefix.
 
 ### Step 2: Lock the study prompt and smoke thinking mode
 
-Add a shared prompt file that matches the website instruction text, with an optional criteria addendum imported from `experiments/llm_prompt_engineering_2026_08_05/prompt.py`. Add a Hugging Face runner that enables thinking on both models and counts thinking-block tokens from generated token ids. Smoke a few posts and fail if the thinking span is missing or the count is zero.
+Add a shared prompt file that matches the website instruction text, renders one pair using the stored Post 1 / Post 2 order, and optionally inserts the criteria addendum imported from `experiments/llm_prompt_engineering_2026_08_05/prompt.py`. Add a Hugging Face runner that enables thinking on both models and counts thinking-block tokens from generated token ids. Smoke a few posts and fail if the thinking span is missing or the count is zero.
 
 ### Step 3: Run experiment 1
 
@@ -79,7 +79,7 @@ For each group and each model, generate one completion with the study prompt. St
 
 ### Step 4: Run experiment 2
 
-Repeat experiment 1 with the criteria list inserted into the same prompt. Keep post ids, models, and seeds matched to experiment 1 so the two arms can be compared.
+Repeat experiment 1 with the criteria list inserted into the same prompt. Keep post ids, models, seeds, and Post 1 / Post 2 order matched to experiment 1 so the two arms can be compared.
 
 ### Step 5: Report human response times
 
@@ -93,7 +93,7 @@ Score stored traces from experiments 1 and 2 with the confirmed marker lists. Co
 
 1. `experiments/reasoning_during_moderation_2026_09_15/` has `README.md`, `SETUP.md`, `RESULTS.md`, shared cohort and runner code, and folders `experiment1/` through `experiment4/`.
 2. The pinned cohort uses the September 2026 Prolific export, at least four unique raters, and only the three groups named in the issue. On the 2026-09-15 snapshot that is 2,200 split, 2,256 unanimous keep, and 208 unanimous remove.
-3. The model prompt matches the linked-fate website instructions, including the line that there are no right or wrong answers, and experiment 2 adds the criteria addendum without rewriting the rest of the prompt.
+3. The model prompt matches the linked-fate website instructions, including the line that there are no right or wrong answers. Post 1 and Post 2 are shuffled per post and reused across models and prompt arms. Experiment 2 adds the criteria addendum without rewriting the rest of the prompt.
 4. Smoke tests on `Qwen/Qwen3.5-4B` and `deepseek-ai/DeepSeek-R1-Distill-Qwen-7B` show a non-empty thinking span and a thinking-token count greater than zero.
 5. Experiments 1 and 2 each have a six-row token table, stored traces, and matching S3 objects. No F1 or accuracy table is written.
 6. Experiment 3 has a human time table for the three groups. Experiment 4 has bag-of-words marker rates for both prompt arms and a comparison of thinking length with the criteria list and without it.
