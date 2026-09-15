@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-15
+
+1. Operators can pin a three-group September 2026 moderation cohort and count model thinking tokens on split versus unanimous posts, plus human response times and bag-of-words markers, without scoring keep/remove accuracy. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+
 ## 2026-09-12
 
 1. Operators now have experiment 6 one-pair yes/no labels for that same cohort on OpenAI, Nova Micro, and Qwen, scored against the experiment 1 20-pair labels. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
