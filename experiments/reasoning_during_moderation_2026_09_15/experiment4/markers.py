@@ -72,9 +72,15 @@ GENERIC_DISCOURSE_TOKENS = frozenset(
         "instead",
     }
 )
+GENERIC_DISCOURSE_PHRASES = frozenset({"on the other hand"})
 PROMPT_ECHO_PHRASES = frozenset({"both posts"})
 PROMPT_ECHO_TOKENS = frozenset({"opposite"})
 STRICT_UNCERTAINTY_TOKENS = UNCERTAINTY_TOKENS - GENERIC_DISCOURSE_TOKENS
+STRICT_UNCERTAINTY_PHRASES = tuple(
+    phrase
+    for phrase in UNCERTAINTY_PHRASES
+    if phrase not in GENERIC_DISCOURSE_PHRASES
+)
 STRICT_REVISION_TOKENS = REVISION_TOKENS - GENERIC_DISCOURSE_TOKENS
 STRICT_TENSION_PHRASES = tuple(
     phrase for phrase in TENSION_PHRASES if phrase not in PROMPT_ECHO_PHRASES
@@ -139,7 +145,10 @@ def score_trace_detail(thinking_text: str) -> MarkerDetail:
         ),
         MarkerScore(
             _family_flag(
-                lowered, tokens, UNCERTAINTY_PHRASES, STRICT_UNCERTAINTY_TOKENS
+                lowered,
+                tokens,
+                STRICT_UNCERTAINTY_PHRASES,
+                STRICT_UNCERTAINTY_TOKENS,
             ),
             _family_flag(lowered, tokens, REVISION_PHRASES, STRICT_REVISION_TOKENS),
             _family_flag(
@@ -151,7 +160,9 @@ def score_trace_detail(thinking_text: str) -> MarkerDetail:
             _family_flag(lowered, empty, REVISION_PHRASES, EMPTY_TOKENS),
             _family_flag(lowered, empty, TENSION_PHRASES, EMPTY_TOKENS),
         ),
-        _family_hits(lowered, tokens, UNCERTAINTY_PHRASES, STRICT_UNCERTAINTY_TOKENS),
+        _family_hits(
+            lowered, tokens, STRICT_UNCERTAINTY_PHRASES, STRICT_UNCERTAINTY_TOKENS
+        ),
         _family_hits(lowered, tokens, REVISION_PHRASES, STRICT_REVISION_TOKENS),
         _family_hits(lowered, tokens, STRICT_TENSION_PHRASES, STRICT_TENSION_TOKENS),
         _item_hit_map(lowered, tokens),

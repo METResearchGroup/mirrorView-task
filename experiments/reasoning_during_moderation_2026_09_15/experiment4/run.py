@@ -20,6 +20,7 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment3.run import (
 )
 from experiments.reasoning_during_moderation_2026_09_15.experiment4.summarize import (
     group_contrasts,
+    item_group_contrasts,
     marker_item_rates,
     marker_rates,
     paired_arm_comparison,
@@ -50,6 +51,7 @@ STRICT_MARKER_RATES_FILENAME = "strict_marker_rates.csv"
 PHRASE_MARKER_RATES_FILENAME = "phrase_marker_rates.csv"
 ITEM_RATES_FILENAME = "marker_item_rates.csv"
 GROUP_CONTRASTS_FILENAME = "group_contrasts.csv"
+ITEM_CONTRASTS_FILENAME = "item_contrasts.csv"
 ARM_COMPARISON_FILENAME = "arm_comparison.csv"
 TOKEN_SUMMARY_FILENAME = "token_summary.csv"
 RESPONSE_TIME_SUMMARY_FILENAME = "response_time_summary.csv"
@@ -66,9 +68,9 @@ BROAD_MARKER_NOTE = (
 )
 STRICT_MARKER_NOTE = (
     "Strict rates drop generic chain-of-thought tokens (`however`, `maybe`, `wait`, "
-    "`actually`, `instead`, `perhaps`, `probably`, `possibly`) and prompt-echo items "
-    "(`both posts`, `opposite`). Density is the number of distinct strict items per "
-    "1,000 thinking tokens."
+    "`actually`, `instead`, `perhaps`, `probably`, `possibly`), the discourse phrase "
+    "`on the other hand`, and prompt-echo items (`both posts`, `opposite`). Density "
+    "is the number of distinct strict items per 1,000 thinking tokens."
 )
 PHRASE_MARKER_NOTE = (
     "Phrase-only rates ignore bag-of-words tokens. Tension phrase rates stay high "
@@ -78,6 +80,10 @@ CONTRAST_NOTE = (
     "Split minus keep and split minus remove on the strict rates and densities. "
     "Rate is the share of valid traces. Density is distinct strict item hits per "
     "1,000 thinking tokens."
+)
+ITEM_CONTRAST_NOTE = (
+    "Items whose split rate differs from the keep rate by at least 0.03. "
+    "Positive split minus keep means the item is more common on split posts."
 )
 ITEM_RATE_NOTE = (
     "Item rates are the share of valid traces containing that phrase or token. "
@@ -151,19 +157,24 @@ def _write_outputs() -> tuple[Path, Path]:
     phrases = phrase_marker_rates(traces)
     items = marker_item_rates(traces)
     contrasts = group_contrasts(strict)
+    item_contrasts = item_group_contrasts(items)
     comparison = paired_arm_comparison(exp1, exp2)
     rates_path = _write_csv(rates, MARKER_RATES_FILENAME)
     strict_path = _write_csv(strict, STRICT_MARKER_RATES_FILENAME)
     phrase_path = _write_csv(phrases, PHRASE_MARKER_RATES_FILENAME)
     items_path = _write_csv(items, ITEM_RATES_FILENAME)
     contrast_path = _write_csv(contrasts, GROUP_CONTRASTS_FILENAME)
+    item_contrast_path = _write_csv(item_contrasts, ITEM_CONTRASTS_FILENAME)
     comparison_path = _write_csv(comparison, ARM_COMPARISON_FILENAME)
-    _write_results(rates, strict, phrases, items, contrasts, comparison)
+    _write_results(
+        rates, strict, phrases, items, contrasts, item_contrasts, comparison
+    )
     _upload_output(rates_path)
     _upload_output(strict_path)
     _upload_output(phrase_path)
     _upload_output(items_path)
     _upload_output(contrast_path)
+    _upload_output(item_contrast_path)
     _upload_output(comparison_path)
     return rates_path, comparison_path
 
@@ -200,6 +211,7 @@ def _write_results(
     phrases: pd.DataFrame,
     items: pd.DataFrame,
     contrasts: pd.DataFrame,
+    item_contrasts: pd.DataFrame,
     comparison: pd.DataFrame,
 ) -> None:
     metadata = _load_metadata()
@@ -220,6 +232,7 @@ def _write_results(
         phrases,
         items,
         contrasts,
+        item_contrasts,
         comparison,
     )
     (EXPERIMENT_DIR / RESULTS_FILENAME).write_text(text)
@@ -259,6 +272,7 @@ def _results_markdown(
     phrases: pd.DataFrame,
     items: pd.DataFrame,
     contrasts: pd.DataFrame,
+    item_contrasts: pd.DataFrame,
     comparison: pd.DataFrame,
 ) -> str:
     parts = [
@@ -273,7 +287,9 @@ def _results_markdown(
         *_section("Experiment 3", exp3, HUMAN_TIME_NOTE),
         "## Experiment 4",
         "",
-        *_experiment4_body(rates, strict, phrases, items, contrasts, comparison),
+        *_experiment4_body(
+            rates, strict, phrases, items, contrasts, item_contrasts, comparison
+        ),
         "",
         _strict_finding(strict),
         "",
@@ -296,6 +312,7 @@ def _experiment4_body(
     phrases: pd.DataFrame,
     items: pd.DataFrame,
     contrasts: pd.DataFrame,
+    item_contrasts: pd.DataFrame,
     comparison: pd.DataFrame,
 ) -> list[str]:
     if rates.empty and strict.empty and comparison.empty:
@@ -326,6 +343,12 @@ def _experiment4_body(
         CONTRAST_NOTE,
         "",
         _markdown_table(contrasts),
+        "",
+        "Item group contrasts:",
+        "",
+        ITEM_CONTRAST_NOTE,
+        "",
+        _markdown_table(item_contrasts),
         "",
         "High-frequency marker items:",
         "",
@@ -408,8 +431,8 @@ def _token_finding(exp1: pd.DataFrame) -> str:
             "Split posts do not have a higher mean thinking-token count than "
             "unanimous keep posts on these traces."
         )
-        return " ".join([opener, *model_sentences])
-    return " ".join(model_sentences)
+        return "\n\n".join([opener, *model_sentences])
+    return "\n\n".join(model_sentences)
 
 
 def _token_model_sentence(model_id: str, subset: pd.DataFrame) -> tuple[str, bool]:
@@ -447,7 +470,7 @@ def _strict_finding(strict: pd.DataFrame) -> str:
         "Broad family rates sit near 1.0 on Qwen, so they do not distinguish groups. "
         "Those rates fire because `wait`, `however`, and `both posts` appear in "
         "almost every long thinking span. The statements below use the strict rates, "
-        "which drop those generic tokens and the prompt-echo items."
+        "which drop those generic tokens, `on the other hand`, and the prompt-echo items."
     ]
     for model_id, subset in strict.groupby("model_id", sort=False):
         sentence = _strict_model_sentence(str(model_id), subset)
@@ -458,7 +481,7 @@ def _strict_finding(strict: pd.DataFrame) -> str:
         "larger share of traces contain at least one strict item, not more "
         "uncertainty language per token."
     )
-    return " ".join(parts)
+    return "\n\n".join(parts)
 
 
 def _strict_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
@@ -480,10 +503,17 @@ def _strict_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
     d_split = float(split["uncertainty_density"])
     d_keep = float(keep["uncertainty_density"])
     d_remove = float(remove["uncertainty_density"])
+    diff = u_split - u_keep
+    se = _proportion_diff_se(
+        u_split, int(split["n_valid"]), u_keep, int(keep["n_valid"])
+    )
+    noise = (
+        "larger than sampling noise" if abs(diff) > 2 * se else "inside sampling noise"
+    )
     return (
         f"{model_id}: strict uncertainty rates are {u_split:.3f} on split, "
-        f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove "
-        f"(split minus keep {u_split - u_keep:+.3f}). "
+        f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove. "
+        f"Split minus keep is {diff:+.3f} (SE {se:.3f}), which is {noise}. "
         f"Strict revision rates are {r_split:.3f}, {r_keep:.3f}, and {r_remove:.3f}. "
         f"Strict tension rates are {t_split:.3f}, {t_keep:.3f}, and {t_remove:.3f}. "
         f"Uncertainty density is {d_split:.3f}, {d_keep:.3f}, and {d_remove:.3f} "
@@ -503,7 +533,7 @@ def _phrase_finding(phrases: pd.DataFrame) -> str:
         sentence = _phrase_model_sentence(str(model_id), subset)
         if sentence:
             parts.append(sentence)
-    return " ".join(parts)
+    return "\n\n".join(parts)
 
 
 def _phrase_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
@@ -519,10 +549,17 @@ def _phrase_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
     t_split = float(split["tension_rate"])
     t_keep = float(keep["tension_rate"])
     t_remove = float(remove["tension_rate"])
+    if u_keep > u_split:
+        direction = "keep is higher than split"
+    elif u_split > u_keep:
+        direction = "split is higher than keep"
+    else:
+        direction = "split and keep are the same"
     return (
         f"{model_id}: phrase-only uncertainty is {u_split:.3f} on split, "
-        f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove. "
-        f"Phrase-only tension is {t_split:.3f}, {t_keep:.3f}, and {t_remove:.3f}."
+        f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove, so {direction}. "
+        f"Phrase-only tension is {t_split:.3f}, {t_keep:.3f}, and {t_remove:.3f}, "
+        f"and that family is still mostly `both posts`."
     )
 
 
@@ -557,6 +594,13 @@ def _pooled_high_items(items: pd.DataFrame) -> pd.DataFrame:
 
 def _group_float_map(subset: pd.DataFrame, column: str) -> dict[str, float]:
     return {str(row["group"]): float(row[column]) for _, row in subset.iterrows()}
+
+
+def _proportion_diff_se(p1: float, n1: int, p2: float, n2: int) -> float:
+    """Return the unpooled standard error of a difference of proportions."""
+    if n1 <= 0 or n2 <= 0:
+        return float("nan")
+    return (p1 * (1.0 - p1) / n1 + p2 * (1.0 - p2) / n2) ** 0.5
 
 
 def _upload_output(path: Path) -> None:

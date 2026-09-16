@@ -63,7 +63,7 @@ Experiment 3 summarizes finite `response_time_ms` values greater than zero on th
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment3/run.py
 ```
 
-Experiment 4 flags uncertainty, revision, and tension phrases and tokens on stored thinking text, then writes `RESULTS.md`. It writes broad family rates, strict family rates with density, phrase-only rates, per-item rates, and split-minus-keep contrasts. Partial experiment 2 traces are ignored until both models have a full post set.
+Experiment 4 flags uncertainty, revision, and tension phrases and tokens on stored thinking text, then writes `RESULTS.md`. It writes broad family rates, strict family rates with density, phrase-only rates, per-item rates, split-minus-keep family contrasts, and item contrasts. Partial experiment 2 traces are ignored until both models have a full post set.
 
 ```bash
 PYTHONPATH=. uv run python experiments/reasoning_during_moderation_2026_09_15/experiment4/run.py

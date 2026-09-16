@@ -26,6 +26,7 @@ from experiments.reasoning_during_moderation_2026_09_15.experiment4.run import (
 )
 from experiments.reasoning_during_moderation_2026_09_15.experiment4.summarize import (
     group_contrasts,
+    item_group_contrasts,
     marker_item_rates,
     marker_rates,
     paired_arm_comparison,
@@ -124,6 +125,17 @@ class TestScoreTraceStrict:
         assert broad.revision is True
         assert strict.revision is False
 
+    def test_on_the_other_hand_is_broad_not_strict(self) -> None:
+        """Verifies on the other hand flags phrase uncertainty and not strict."""
+        text = "on the other hand the rules differ"
+        broad = score_trace(text)
+        phrase = score_trace_phrase(text)
+        strict = score_trace_strict(text)
+
+        assert broad.uncertainty is True
+        assert phrase.uncertainty is True
+        assert strict.uncertainty is False
+
     def test_borderline_stays_strict_uncertainty(self) -> None:
         """Verifies borderline remains uncertainty on the strict list."""
         broad = score_trace(BORDERLINE_TEXT)
@@ -131,9 +143,6 @@ class TestScoreTraceStrict:
 
         assert broad.uncertainty is True
         assert strict.uncertainty is True
-
-
-class TestScoreTracePhrase:
     """Tests for phrase-only family flags."""
 
     def test_however_is_not_phrase_uncertainty(self) -> None:
@@ -276,6 +285,30 @@ class TestGroupContrasts:
         assert float(row["keep"]) == 0.0
 
 
+class TestItemGroupContrasts:
+    """Tests for item_group_contrasts."""
+
+    def test_keeps_large_split_keep_gaps(self) -> None:
+        """Verifies a 0.10 gap is kept and a 0.01 gap is dropped."""
+        items = pd.DataFrame(
+            [
+                _item_row("borderline", GROUP_SPLIT, 0.46),
+                _item_row("borderline", GROUP_UNANIMOUS_KEEP, 0.36),
+                _item_row("borderline", GROUP_UNANIMOUS_REMOVE, 0.45),
+                _item_row("ambiguous", GROUP_SPLIT, 0.10),
+                _item_row("ambiguous", GROUP_UNANIMOUS_KEEP, 0.09),
+                _item_row("ambiguous", GROUP_UNANIMOUS_REMOVE, 0.06),
+            ]
+        )
+
+        result = item_group_contrasts(items)
+        names = result["item"].tolist()
+
+        assert "borderline" in names
+        assert "ambiguous" not in names
+        assert abs(float(result.iloc[0]["split_minus_keep"]) - 0.10) < 1e-9
+
+
 class TestTraceJsonlPath:
     """Tests for vLLM trace path resolution."""
 
@@ -393,16 +426,17 @@ class TestFindings:
         """Verifies the strict finding quotes the split minus keep uncertainty gap."""
         strict = pd.DataFrame(
             [
-                _strict_summary_row(GROUP_SPLIT, 0.536),
-                _strict_summary_row(GROUP_UNANIMOUS_KEEP, 0.472),
-                _strict_summary_row(GROUP_UNANIMOUS_REMOVE, 0.486),
+                _strict_summary_row(GROUP_SPLIT, 0.536, N_SPLIT),
+                _strict_summary_row(GROUP_UNANIMOUS_KEEP, 0.472, N_KEEP),
+                _strict_summary_row(GROUP_UNANIMOUS_REMOVE, 0.486, N_REMOVE),
             ]
         )
 
         result = _strict_finding(strict)
 
         assert "0.536 on split" in result
-        assert "split minus keep +0.064" in result
+        assert "Split minus keep is +0.064" in result
+        assert "larger than sampling noise" in result
 
     def test_phrase_finding_includes_phrase_only_uncertainty(self) -> None:
         """Verifies the phrase finding reports phrase-only uncertainty rates."""
@@ -418,6 +452,7 @@ class TestFindings:
 
         assert "phrase-only uncertainty is 0.070 on split" in result
         assert "0.094 on keep" in result
+        assert "keep is higher than split" in result
 
 
 class TestPooledHighItems:
@@ -466,12 +501,14 @@ def _trace_row(
     )
 
 
-def _strict_summary_row(group: str, uncertainty_rate: float) -> dict[str, object]:
+def _strict_summary_row(
+    group: str, uncertainty_rate: float, n_valid: int
+) -> dict[str, object]:
     return {
         "prompt_arm": PROMPT_ARM_STUDY,
         "model_id": QWEN_MODEL_ID,
         "group": group,
-        "n_valid": 1,
+        "n_valid": n_valid,
         "uncertainty_rate": uncertainty_rate,
         "revision_rate": 0.0,
         "tension_rate": 0.0,

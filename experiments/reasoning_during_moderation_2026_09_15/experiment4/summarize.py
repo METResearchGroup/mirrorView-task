@@ -63,9 +63,21 @@ CONTRAST_COLUMNS = (
     "split_minus_keep",
     "split_minus_remove",
 )
+ITEM_CONTRAST_COLUMNS = (
+    "prompt_arm",
+    "model_id",
+    "family",
+    "kind",
+    "item",
+    "split",
+    "keep",
+    "remove",
+    "split_minus_keep",
+)
 FAMILIES = ("uncertainty", "revision", "tension")
 CONTRAST_METRICS = ("rate", "density")
 CONTRAST_GROUPS = (GROUP_SPLIT, GROUP_UNANIMOUS_KEEP, GROUP_UNANIMOUS_REMOVE)
+MIN_ITEM_CONTRAST = 0.03
 PAIR_KEYS = ("post_id", "model_id")
 E1_SUFFIX = "_e1"
 E2_SUFFIX = "_e2"
@@ -138,6 +150,24 @@ def group_contrasts(strict: pd.DataFrame) -> pd.DataFrame:
     for (arm, model_id), subset in strict.groupby(["prompt_arm", "model_id"], sort=False):
         rows.extend(_contrast_rows(str(arm), str(model_id), subset))
     return pd.DataFrame(rows)
+
+
+def item_group_contrasts(items: pd.DataFrame) -> pd.DataFrame:
+    """Write items whose split rate differs from keep by at least MIN_ITEM_CONTRAST."""
+    if items.empty:
+        return pd.DataFrame(columns=list(ITEM_CONTRAST_COLUMNS))
+    keys = ["prompt_arm", "model_id", "family", "kind", "item"]
+    rows: list[dict[str, object]] = []
+    for key, subset in items.groupby(keys, sort=False):
+        row = _item_contrast_row(key, subset)
+        if row is not None:
+            rows.append(row)
+    if not rows:
+        return pd.DataFrame(columns=list(ITEM_CONTRAST_COLUMNS))
+    frame = pd.DataFrame(rows)
+    return frame.sort_values(
+        ["model_id", "split_minus_keep"], ascending=[True, False]
+    ).reset_index(drop=True)
 
 
 def paired_arm_comparison(exp1: pd.DataFrame, exp2: pd.DataFrame) -> pd.DataFrame:
@@ -324,6 +354,32 @@ def _contrast_rows(
                 }
             )
     return rows
+
+
+def _item_contrast_row(
+    key: tuple[object, ...], subset: pd.DataFrame
+) -> dict[str, object] | None:
+    by_group = {str(row["group"]): float(row["rate"]) for _, row in subset.iterrows()}
+    if any(group not in by_group for group in CONTRAST_GROUPS):
+        return None
+    split_value = by_group[GROUP_SPLIT]
+    keep_value = by_group[GROUP_UNANIMOUS_KEEP]
+    remove_value = by_group[GROUP_UNANIMOUS_REMOVE]
+    diff = split_value - keep_value
+    if abs(diff) < MIN_ITEM_CONTRAST:
+        return None
+    arm, model_id, family, kind, item = key
+    return {
+        "prompt_arm": arm,
+        "model_id": model_id,
+        "family": family,
+        "kind": kind,
+        "item": item,
+        "split": split_value,
+        "keep": keep_value,
+        "remove": remove_value,
+        "split_minus_keep": diff,
+    }
 
 
 def _mean_or_nan(subset: pd.DataFrame, column: str) -> float:
