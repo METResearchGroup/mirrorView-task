@@ -10,9 +10,13 @@ from __future__ import annotations
 import pandas as pd
 
 from experiments.reasoning_during_moderation_2026_09_15.experiment4.markers import (
-    score_trace,
+    density_per_thousand,
+    score_trace_detail,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
+    GROUP_SPLIT,
+    GROUP_UNANIMOUS_KEEP,
+    GROUP_UNANIMOUS_REMOVE,
     STATUS_VALID,
 )
 
@@ -26,13 +30,49 @@ RATE_COLUMNS = (
     "revision_rate",
     "tension_rate",
 )
+STRICT_RATE_COLUMNS = (
+    "prompt_arm",
+    "model_id",
+    "group",
+    "n_valid",
+    "uncertainty_rate",
+    "revision_rate",
+    "tension_rate",
+    "uncertainty_density",
+    "revision_density",
+    "tension_density",
+)
+ITEM_RATE_COLUMNS = (
+    "prompt_arm",
+    "model_id",
+    "group",
+    "family",
+    "kind",
+    "item",
+    "n_valid",
+    "rate",
+)
+CONTRAST_COLUMNS = (
+    "prompt_arm",
+    "model_id",
+    "family",
+    "metric",
+    "split",
+    "keep",
+    "remove",
+    "split_minus_keep",
+    "split_minus_remove",
+)
+FAMILIES = ("uncertainty", "revision", "tension")
+CONTRAST_METRICS = ("rate", "density")
+CONTRAST_GROUPS = (GROUP_SPLIT, GROUP_UNANIMOUS_KEEP, GROUP_UNANIMOUS_REMOVE)
 PAIR_KEYS = ("post_id", "model_id")
 E1_SUFFIX = "_e1"
 E2_SUFFIX = "_e2"
 
 
 def marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
-    """Write family-flag rates for each prompt_arm, model_id, and group.
+    """Write broad family-flag rates for each prompt_arm, model_id, and group.
 
     Only ``status=valid`` rows are scored. Rates are the share of those rows
     with each family flag.
@@ -41,9 +81,62 @@ def marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
     if scored.empty:
         return pd.DataFrame(columns=list(RATE_COLUMNS))
     rows = [
-        _rate_row(arm, model_id, group, subset)
+        _rate_row(arm, model_id, group, subset, "uncertainty", "revision", "tension")
         for (arm, model_id, group), subset in scored.groupby(list(RATE_KEYS), sort=False)
     ]
+    return pd.DataFrame(rows)
+
+
+def strict_marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
+    """Write strict family rates and distinct item hits per 1,000 thinking tokens."""
+    scored = _valid_scored(traces)
+    if scored.empty:
+        return pd.DataFrame(columns=list(STRICT_RATE_COLUMNS))
+    rows = [
+        _strict_rate_row(arm, model_id, group, subset)
+        for (arm, model_id, group), subset in scored.groupby(list(RATE_KEYS), sort=False)
+    ]
+    return pd.DataFrame(rows)
+
+
+def phrase_marker_rates(traces: pd.DataFrame) -> pd.DataFrame:
+    """Write phrase-only family-flag rates, ignoring bag-of-words tokens."""
+    scored = _valid_scored(traces)
+    if scored.empty:
+        return pd.DataFrame(columns=list(RATE_COLUMNS))
+    rows = [
+        _rate_row(
+            arm,
+            model_id,
+            group,
+            subset,
+            "phrase_uncertainty",
+            "phrase_revision",
+            "phrase_tension",
+        )
+        for (arm, model_id, group), subset in scored.groupby(list(RATE_KEYS), sort=False)
+    ]
+    return pd.DataFrame(rows)
+
+
+def marker_item_rates(traces: pd.DataFrame) -> pd.DataFrame:
+    """Write per-item presence rates for each prompt_arm, model_id, and group."""
+    scored = _valid_scored(traces)
+    if scored.empty:
+        return pd.DataFrame(columns=list(ITEM_RATE_COLUMNS))
+    rows: list[dict[str, object]] = []
+    for (arm, model_id, group), subset in scored.groupby(list(RATE_KEYS), sort=False):
+        rows.extend(_item_rate_rows(arm, model_id, group, subset))
+    return pd.DataFrame(rows)
+
+
+def group_contrasts(strict: pd.DataFrame) -> pd.DataFrame:
+    """Write split minus keep and split minus remove on strict rates and density."""
+    if strict.empty:
+        return pd.DataFrame(columns=list(CONTRAST_COLUMNS))
+    rows: list[dict[str, object]] = []
+    for (arm, model_id), subset in strict.groupby(["prompt_arm", "model_id"], sort=False):
+        rows.extend(_contrast_rows(str(arm), str(model_id), subset))
     return pd.DataFrame(rows)
 
 
@@ -103,7 +196,7 @@ def _comparison_row(
 
 
 def _valid_scored(traces: pd.DataFrame) -> pd.DataFrame:
-    """Score valid thinking spans and attach family flags."""
+    """Score valid thinking spans and attach family flags and strict counts."""
     if traces.empty or "status" not in traces.columns:
         return pd.DataFrame()
     valid = traces[traces["status"] == STATUS_VALID]
@@ -114,24 +207,126 @@ def _valid_scored(traces: pd.DataFrame) -> pd.DataFrame:
 
 
 def _row_with_flags(row: dict[str, object]) -> dict[str, object]:
-    score = score_trace(str(row["thinking_text"]))
+    text = str(row["thinking_text"])
+    detail = score_trace_detail(text)
     return {
         **row,
-        "uncertainty": score.uncertainty,
-        "revision": score.revision,
-        "tension": score.tension,
+        "uncertainty": detail.broad.uncertainty,
+        "revision": detail.broad.revision,
+        "tension": detail.broad.tension,
+        "strict_uncertainty": detail.strict.uncertainty,
+        "strict_revision": detail.strict.revision,
+        "strict_tension": detail.strict.tension,
+        "phrase_uncertainty": detail.phrase.uncertainty,
+        "phrase_revision": detail.phrase.revision,
+        "phrase_tension": detail.phrase.tension,
+        "uncertainty_hits": detail.uncertainty_hits,
+        "revision_hits": detail.revision_hits,
+        "tension_hits": detail.tension_hits,
+        "item_hits": detail.item_hits,
     }
 
 
 def _rate_row(
-    arm: str, model_id: str, group: str, subset: pd.DataFrame
+    arm: str,
+    model_id: str,
+    group: str,
+    subset: pd.DataFrame,
+    uncertainty_col: str,
+    revision_col: str,
+    tension_col: str,
 ) -> dict[str, object]:
     return {
         "prompt_arm": arm,
         "model_id": model_id,
         "group": group,
         "n_valid": int(len(subset)),
-        "uncertainty_rate": float(subset["uncertainty"].mean()) if len(subset) else float("nan"),
-        "revision_rate": float(subset["revision"].mean()) if len(subset) else float("nan"),
-        "tension_rate": float(subset["tension"].mean()) if len(subset) else float("nan"),
+        "uncertainty_rate": _mean_or_nan(subset, uncertainty_col),
+        "revision_rate": _mean_or_nan(subset, revision_col),
+        "tension_rate": _mean_or_nan(subset, tension_col),
     }
+
+
+def _strict_rate_row(
+    arm: str, model_id: str, group: str, subset: pd.DataFrame
+) -> dict[str, object]:
+    think = subset["thinking_token_count"].astype(float).sum()
+    return {
+        "prompt_arm": arm,
+        "model_id": model_id,
+        "group": group,
+        "n_valid": int(len(subset)),
+        "uncertainty_rate": _mean_or_nan(subset, "strict_uncertainty"),
+        "revision_rate": _mean_or_nan(subset, "strict_revision"),
+        "tension_rate": _mean_or_nan(subset, "strict_tension"),
+        "uncertainty_density": density_per_thousand(
+            int(subset["uncertainty_hits"].sum()), int(think)
+        ),
+        "revision_density": density_per_thousand(
+            int(subset["revision_hits"].sum()), int(think)
+        ),
+        "tension_density": density_per_thousand(
+            int(subset["tension_hits"].sum()), int(think)
+        ),
+    }
+
+
+def _item_rate_rows(
+    arm: str, model_id: str, group: str, subset: pd.DataFrame
+) -> list[dict[str, object]]:
+    n_valid = int(len(subset))
+    first_hits = subset["item_hits"].iloc[0]
+    keys = sorted(first_hits)
+    counts = {key: 0 for key in keys}
+    for hits in subset["item_hits"].tolist():
+        for key, present in hits.items():
+            if present:
+                counts[key] = counts.get(key, 0) + 1
+    return [
+        {
+            "prompt_arm": arm,
+            "model_id": model_id,
+            "group": group,
+            "family": family,
+            "kind": kind,
+            "item": item,
+            "n_valid": n_valid,
+            "rate": counts.get((family, kind, item), 0) / n_valid if n_valid else float("nan"),
+        }
+        for family, kind, item in keys
+    ]
+
+
+def _contrast_rows(
+    arm: str, model_id: str, subset: pd.DataFrame
+) -> list[dict[str, object]]:
+    by_group = {str(row["group"]): row for _, row in subset.iterrows()}
+    if any(group not in by_group for group in CONTRAST_GROUPS):
+        return []
+    rows: list[dict[str, object]] = []
+    for family in FAMILIES:
+        for metric in CONTRAST_METRICS:
+            column = f"{family}_{metric}"
+            split_value = float(by_group[GROUP_SPLIT][column])
+            keep_value = float(by_group[GROUP_UNANIMOUS_KEEP][column])
+            remove_value = float(by_group[GROUP_UNANIMOUS_REMOVE][column])
+            rows.append(
+                {
+                    "prompt_arm": arm,
+                    "model_id": model_id,
+                    "family": family,
+                    "metric": metric,
+                    "split": split_value,
+                    "keep": keep_value,
+                    "remove": remove_value,
+                    "split_minus_keep": split_value - keep_value,
+                    "split_minus_remove": split_value - remove_value,
+                }
+            )
+    return rows
+
+
+def _mean_or_nan(subset: pd.DataFrame, column: str) -> float:
+    if subset.empty:
+        return float("nan")
+    return float(subset[column].mean())
