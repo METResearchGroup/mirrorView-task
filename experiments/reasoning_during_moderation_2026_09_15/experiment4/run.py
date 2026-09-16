@@ -15,6 +15,9 @@ import pandas as pd
 from experiments.reasoning_during_moderation_2026_09_15.experiment1.run import (
     _read_jsonl,
 )
+from experiments.reasoning_during_moderation_2026_09_15.experiment3.run import (
+    EXPERIMENT3_S3_KEY,
+)
 from experiments.reasoning_during_moderation_2026_09_15.experiment4.summarize import (
     marker_rates,
     paired_arm_comparison,
@@ -31,6 +34,7 @@ from experiments.reasoning_during_moderation_2026_09_15.shared.constants import 
     METADATA_FILENAME,
     METADATA_S3_KEY,
     QWEN_MODEL_ID,
+    VLLM_OUTPUT_DIRNAME,
 )
 from lib.constants import REPO_ROOT
 
@@ -48,7 +52,28 @@ EMPTY_GPU_CLOSER = (
     "and marker rates were not measured, because this environment had no GPU traces. "
     "F1 and accuracy are out of scope."
 )
+PENDING_EXP2_CLOSER = (
+    "Experiment 4 marker rates use experiment 1 traces. "
+    "The paired experiment 1 versus experiment 2 comparison waits on experiment 2 traces. "
+    "F1 and accuracy were not measured."
+)
 ZERO_DIFF = 0.0
+
+
+def trace_jsonl_path(output_dir: Path, model_id: str) -> Path:
+    """Return the vLLM jsonl path for one model under an experiment output dir."""
+    name = "qwen" if model_id == QWEN_MODEL_ID else "deepseek"
+    return output_dir / VLLM_OUTPUT_DIRNAME / f"traces_{name}.jsonl"
+
+
+def results_closer(rates: pd.DataFrame, comparison: pd.DataFrame) -> str:
+    """Return the RESULTS.md closing paragraph for the current trace set."""
+    if not comparison.empty:
+        statements = [_diff_sentence(row) for _, row in comparison.iterrows()]
+        return " ".join(statements) + " F1 and accuracy were not measured."
+    if not rates.empty:
+        return PENDING_EXP2_CLOSER
+    return EMPTY_GPU_CLOSER
 
 
 def main() -> None:
@@ -74,8 +99,7 @@ def _write_outputs() -> tuple[Path, Path]:
 def _load_experiment_traces(output_dir: Path) -> pd.DataFrame:
     rows: list[dict[str, object]] = []
     for model_id in (QWEN_MODEL_ID, DEEPSEEK_MODEL_ID):
-        name = "qwen" if model_id == QWEN_MODEL_ID else "deepseek"
-        path = output_dir / f"traces_{name}.jsonl"
+        path = trace_jsonl_path(output_dir, model_id)
         _download_optional(path)
         if path.is_file():
             rows.extend(_read_jsonl(path))
@@ -106,9 +130,7 @@ def _write_results(rates: pd.DataFrame, comparison: pd.DataFrame) -> None:
     exp2 = _read_csv_or_empty(
         EXPERIMENT_DIR / "experiment2" / "outputs" / TOKEN_SUMMARY_FILENAME
     )
-    exp3 = _read_csv_or_empty(
-        EXPERIMENT_DIR / "experiment3" / "outputs" / RESPONSE_TIME_SUMMARY_FILENAME
-    )
+    exp3 = _read_experiment3_summary()
     text = _results_markdown(metadata, exp1, exp2, exp3, rates, comparison)
     (EXPERIMENT_DIR / RESULTS_FILENAME).write_text(text)
 
@@ -157,7 +179,7 @@ def _results_markdown(
         "",
         *_experiment4_body(rates, comparison),
         "",
-        _paired_paragraph(comparison),
+        results_closer(rates, comparison),
         "",
     ]
     return "\n".join(parts)
@@ -207,11 +229,12 @@ def _format_cell(value: object) -> str:
     return str(value)
 
 
-def _paired_paragraph(comparison: pd.DataFrame) -> str:
-    if comparison.empty:
-        return EMPTY_GPU_CLOSER
-    statements = [_diff_sentence(row) for _, row in comparison.iterrows()]
-    return " ".join(statements) + " F1 and accuracy were not measured."
+def _read_experiment3_summary() -> pd.DataFrame:
+    path = EXPERIMENT_DIR / "experiment3" / "outputs" / RESPONSE_TIME_SUMMARY_FILENAME
+    _download_optional_key(path, EXPERIMENT3_S3_KEY)
+    if not path.is_file():
+        return pd.DataFrame()
+    return pd.read_csv(path)
 
 
 def _diff_sentence(row: pd.Series) -> str:

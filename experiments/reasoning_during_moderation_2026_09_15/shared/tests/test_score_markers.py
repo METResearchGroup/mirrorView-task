@@ -4,18 +4,28 @@ from __future__ import annotations
 
 import pandas as pd
 
+from pathlib import Path
+
 from experiments.reasoning_during_moderation_2026_09_15.experiment4.markers import (
     score_trace,
+)
+from experiments.reasoning_during_moderation_2026_09_15.experiment4.run import (
+    EMPTY_GPU_CLOSER,
+    PENDING_EXP2_CLOSER,
+    results_closer,
+    trace_jsonl_path,
 )
 from experiments.reasoning_during_moderation_2026_09_15.experiment4.summarize import (
     paired_arm_comparison,
 )
 from experiments.reasoning_during_moderation_2026_09_15.shared.constants import (
+    DEEPSEEK_MODEL_ID,
     GROUP_SPLIT,
     PROMPT_ARM_CRITERIA,
     PROMPT_ARM_STUDY,
     QWEN_MODEL_ID,
     STATUS_VALID,
+    VLLM_OUTPUT_DIRNAME,
 )
 
 MARKED_TEXT = "I am not sure. wait, the posts conflict."
@@ -65,6 +75,39 @@ class TestPairedArmComparison:
         row = result.iloc[0]
 
         assert float(row["mean_thinking_token_diff"]) == EXPECTED_TOKEN_DIFF
+
+
+class TestTraceJsonlPath:
+    """Tests for vLLM trace path resolution."""
+
+    def test_qwen_path_uses_vllm_subdir(self) -> None:
+        """Verifies Qwen traces resolve under outputs/vllm, not Transformers leftovers."""
+        output_dir = Path("experiment1") / "outputs"
+        path = trace_jsonl_path(output_dir, QWEN_MODEL_ID)
+
+        assert path == output_dir / VLLM_OUTPUT_DIRNAME / "traces_qwen.jsonl"
+
+    def test_deepseek_path_uses_vllm_subdir(self) -> None:
+        """Verifies DeepSeek traces resolve under outputs/vllm."""
+        output_dir = Path("experiment2") / "outputs"
+        path = trace_jsonl_path(output_dir, DEEPSEEK_MODEL_ID)
+
+        assert path == output_dir / VLLM_OUTPUT_DIRNAME / "traces_deepseek.jsonl"
+
+
+class TestResultsCloser:
+    """Tests for the RESULTS.md closing paragraph."""
+
+    def test_pending_exp2_when_rates_exist(self) -> None:
+        """Verifies experiment 1 marker rates do not claim traces were missing."""
+        rates = pd.DataFrame([{"n_valid": 1}])
+        comparison = pd.DataFrame()
+
+        assert results_closer(rates, comparison) == PENDING_EXP2_CLOSER
+
+    def test_empty_gpu_when_no_rates(self) -> None:
+        """Verifies the no-trace closer when both tables are empty."""
+        assert results_closer(pd.DataFrame(), pd.DataFrame()) == EMPTY_GPU_CLOSER
 
 
 def _trace_row(prompt_arm: str, count: int) -> pd.DataFrame:
