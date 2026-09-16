@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-16
+
+1. Experiment 4 reads vLLM traces under `outputs/vllm/` and writes experiment 1 thinking-token counts plus study-arm uncertainty, revision, and tension rates in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #298](https://github.com/METResearchGroup/mirrorView-task/pull/298)
+
 ## 2026-09-15
 
 1. Operators can build a three-group September 2026 linked-fate cohort from the Prolific export on or after 2026-09-09, and they can summarize human `response_time_ms` on it. Thinking-token counts and uncertainty, revision, and tension marker rates wait on Hugging Face Job traces. Keep/remove accuracy is out of scope. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)

@@ -4,7 +4,14 @@ Export `since_date=2026-09-09`, `csv_files=3081`, `split=2201`, `unanimous_keep=
 
 ## Experiment 1
 
-_No rows. GPU traces were not present in this environment._
+| model_id | group | n_posts | n_valid | mean | median | p25 | p75 | max | truncated_rate | empty_thinking_rate |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Qwen/Qwen3.5-4B | split | 2201 | 2201 | 3081.0863 | 2975.0000 | 2253.0000 | 3826.0000 | 8004.0000 | 0.0000 | 0.0000 |
+| Qwen/Qwen3.5-4B | unanimous_keep | 2260 | 2260 | 3093.3699 | 2999.5000 | 2228.5000 | 3838.7500 | 7091.0000 | 0.0000 | 0.0000 |
+| Qwen/Qwen3.5-4B | unanimous_remove | 214 | 214 | 2676.4673 | 2552.5000 | 1890.0000 | 3196.0000 | 5795.0000 | 0.0000 | 0.0000 |
+| deepseek-ai/DeepSeek-R1-Distill-Qwen-7B | split | 2201 | 2200 | 622.3177 | 605.0000 | 494.0000 | 722.0000 | 1626.0000 | 0.0005 | 0.0000 |
+| deepseek-ai/DeepSeek-R1-Distill-Qwen-7B | unanimous_keep | 2260 | 2260 | 669.0757 | 635.5000 | 526.0000 | 777.2500 | 2659.0000 | 0.0000 | 0.0000 |
+| deepseek-ai/DeepSeek-R1-Distill-Qwen-7B | unanimous_remove | 214 | 214 | 577.0654 | 554.0000 | 449.2500 | 663.5000 | 1374.0000 | 0.0000 | 0.0000 |
 
 ## Experiment 2
 
@@ -25,6 +32,15 @@ Values are milliseconds.
 
 ## Experiment 4
 
+| prompt_arm | model_id | group | n_valid | uncertainty_rate | revision_rate | tension_rate |
+| --- | --- | --- | --- | --- | --- | --- |
+| study | Qwen/Qwen3.5-4B | split | 2201 | 0.9932 | 0.9973 | 0.9973 |
+| study | Qwen/Qwen3.5-4B | unanimous_keep | 2260 | 0.9872 | 0.9987 | 0.9987 |
+| study | Qwen/Qwen3.5-4B | unanimous_remove | 214 | 0.9860 | 0.9953 | 1.0000 |
+| study | deepseek-ai/DeepSeek-R1-Distill-Qwen-7B | split | 2200 | 0.9009 | 0.4982 | 0.9759 |
+| study | deepseek-ai/DeepSeek-R1-Distill-Qwen-7B | unanimous_keep | 2260 | 0.9345 | 0.5460 | 0.9717 |
+| study | deepseek-ai/DeepSeek-R1-Distill-Qwen-7B | unanimous_remove | 214 | 0.7991 | 0.5327 | 0.9813 |
+
 _No rows. GPU traces were not present in this environment._
 
-Human `response_time_ms` is in the experiment 3 table. Thinking-token counts and marker rates were not measured, because this environment had no GPU traces. F1 and accuracy are out of scope.
+Experiment 4 marker rates use experiment 1 traces. The paired experiment 1 versus experiment 2 comparison waits on experiment 2 traces. F1 and accuracy were not measured.
