@@ -442,9 +442,9 @@ class TestFindings:
         """Verifies the phrase finding reports phrase-only uncertainty rates."""
         phrases = pd.DataFrame(
             [
-                _phrase_summary_row(GROUP_SPLIT, 0.070),
-                _phrase_summary_row(GROUP_UNANIMOUS_KEEP, 0.094),
-                _phrase_summary_row(GROUP_UNANIMOUS_REMOVE, 0.019),
+                _phrase_summary_row(GROUP_SPLIT, 0.070, N_SPLIT),
+                _phrase_summary_row(GROUP_UNANIMOUS_KEEP, 0.094, N_KEEP),
+                _phrase_summary_row(GROUP_UNANIMOUS_REMOVE, 0.019, N_REMOVE),
             ]
         )
 
@@ -518,12 +518,14 @@ def _strict_summary_row(
     }
 
 
-def _phrase_summary_row(group: str, uncertainty_rate: float) -> dict[str, object]:
+def _phrase_summary_row(
+    group: str, uncertainty_rate: float, n_valid: int
+) -> dict[str, object]:
     return {
         "prompt_arm": PROMPT_ARM_STUDY,
         "model_id": QWEN_MODEL_ID,
         "group": group,
-        "n_valid": 1,
+        "n_valid": n_valid,
         "uncertainty_rate": uncertainty_rate,
         "revision_rate": 0.0,
         "tension_rate": 0.9,

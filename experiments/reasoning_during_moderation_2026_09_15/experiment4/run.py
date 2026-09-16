@@ -527,7 +527,10 @@ def _phrase_finding(phrases: pd.DataFrame) -> str:
         return ""
     parts = [
         "Phrase-only uncertainty ignores bag-of-words tokens, so it is the "
-        "narrower reading of explicit hedging language."
+        "narrower reading of explicit hedging language. The phrase list still "
+        "includes `on the other hand` and `both posts`, so DeepSeek phrase-only "
+        "uncertainty and both models' phrase-only tension can stay high even "
+        "when strict rates do not."
     ]
     for model_id, subset in phrases.groupby("model_id", sort=False):
         sentence = _phrase_model_sentence(str(model_id), subset)
@@ -549,12 +552,16 @@ def _phrase_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
     t_split = float(split["tension_rate"])
     t_keep = float(keep["tension_rate"])
     t_remove = float(remove["tension_rate"])
-    if u_keep > u_split:
+    diff = u_split - u_keep
+    se = _proportion_diff_se(
+        u_split, int(split["n_valid"]), u_keep, int(keep["n_valid"])
+    )
+    if abs(diff) <= 2 * se:
+        direction = "split and keep are within sampling noise"
+    elif u_keep > u_split:
         direction = "keep is higher than split"
-    elif u_split > u_keep:
-        direction = "split is higher than keep"
     else:
-        direction = "split and keep are the same"
+        direction = "split is higher than keep"
     return (
         f"{model_id}: phrase-only uncertainty is {u_split:.3f} on split, "
         f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove, so {direction}. "

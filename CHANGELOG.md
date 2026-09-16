@@ -2,7 +2,7 @@
 
 ## 2026-09-16
 
-1. Experiment 4 reads vLLM traces under `outputs/vllm/` and writes experiment 1 thinking-token counts plus study-arm uncertainty, revision, and tension rates in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #298](https://github.com/METResearchGroup/mirrorView-task/pull/298)
+1. Experiment 4 scores experiment 1 vLLM traces with broad, strict, and phrase-only marker rates, plus density and item contrasts, and writes the reviewable group findings in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #298](https://github.com/METResearchGroup/mirrorView-task/pull/298)
 
 ## 2026-09-15
 
