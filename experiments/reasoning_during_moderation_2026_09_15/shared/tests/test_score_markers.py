@@ -434,9 +434,36 @@ class TestFindings:
 
         result = _strict_finding(strict)
 
-        assert "0.536 on split" in result
+        assert "study Qwen/Qwen3.5-4B: strict uncertainty rates are 0.536 on split" in result
         assert "Split minus keep is +0.064" in result
         assert "larger than sampling noise" in result
+
+    def test_strict_finding_keeps_both_prompt_arms(self) -> None:
+        """Verifies study and criteria rates are not collapsed into one sentence."""
+        strict = pd.DataFrame(
+            [
+                _strict_summary_row(GROUP_SPLIT, 0.536, N_SPLIT),
+                _strict_summary_row(GROUP_UNANIMOUS_KEEP, 0.472, N_KEEP),
+                _strict_summary_row(GROUP_UNANIMOUS_REMOVE, 0.486, N_REMOVE),
+                _strict_summary_row(
+                    GROUP_SPLIT, 0.400, N_SPLIT, prompt_arm=PROMPT_ARM_CRITERIA
+                ),
+                _strict_summary_row(
+                    GROUP_UNANIMOUS_KEEP, 0.300, N_KEEP, prompt_arm=PROMPT_ARM_CRITERIA
+                ),
+                _strict_summary_row(
+                    GROUP_UNANIMOUS_REMOVE, 0.200, N_REMOVE, prompt_arm=PROMPT_ARM_CRITERIA
+                ),
+            ]
+        )
+
+        result = _strict_finding(strict)
+
+        assert "study Qwen/Qwen3.5-4B: strict uncertainty rates are 0.536 on split" in result
+        assert (
+            "study_plus_criteria Qwen/Qwen3.5-4B: strict uncertainty rates are "
+            "0.400 on split"
+        ) in result
 
     def test_phrase_finding_includes_phrase_only_uncertainty(self) -> None:
         """Verifies the phrase finding reports phrase-only uncertainty rates."""
@@ -450,7 +477,9 @@ class TestFindings:
 
         result = _phrase_finding(phrases)
 
-        assert "phrase-only uncertainty is 0.070 on split" in result
+        assert (
+            "study Qwen/Qwen3.5-4B: phrase-only uncertainty is 0.070 on split" in result
+        )
         assert "0.094 on keep" in result
         assert "keep is higher than split" in result
 
@@ -502,10 +531,13 @@ def _trace_row(
 
 
 def _strict_summary_row(
-    group: str, uncertainty_rate: float, n_valid: int
+    group: str,
+    uncertainty_rate: float,
+    n_valid: int,
+    prompt_arm: str = PROMPT_ARM_STUDY,
 ) -> dict[str, object]:
     return {
-        "prompt_arm": PROMPT_ARM_STUDY,
+        "prompt_arm": prompt_arm,
         "model_id": QWEN_MODEL_ID,
         "group": group,
         "n_valid": n_valid,

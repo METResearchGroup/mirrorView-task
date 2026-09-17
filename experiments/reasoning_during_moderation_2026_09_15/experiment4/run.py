@@ -472,8 +472,10 @@ def _strict_finding(strict: pd.DataFrame) -> str:
         "almost every long thinking span. The statements below use the strict rates, "
         "which drop those generic tokens, `on the other hand`, and the prompt-echo items."
     ]
-    for model_id, subset in strict.groupby("model_id", sort=False):
-        sentence = _strict_model_sentence(str(model_id), subset)
+    for (arm, model_id), subset in strict.groupby(
+        ["prompt_arm", "model_id"], sort=False
+    ):
+        sentence = _strict_model_sentence(str(arm), str(model_id), subset)
         if sentence:
             parts.append(sentence)
     parts.append(
@@ -484,7 +486,7 @@ def _strict_finding(strict: pd.DataFrame) -> str:
     return "\n\n".join(parts)
 
 
-def _strict_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
+def _strict_model_sentence(prompt_arm: str, model_id: str, subset: pd.DataFrame) -> str:
     by_group = {str(row["group"]): row for _, row in subset.iterrows()}
     if any(group not in by_group for group in TOKEN_GROUPS):
         return ""
@@ -511,7 +513,7 @@ def _strict_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
         "larger than sampling noise" if abs(diff) > 2 * se else "inside sampling noise"
     )
     return (
-        f"{model_id}: strict uncertainty rates are {u_split:.3f} on split, "
+        f"{prompt_arm} {model_id}: strict uncertainty rates are {u_split:.3f} on split, "
         f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove. "
         f"Split minus keep is {diff:+.3f} (SE {se:.3f}), which is {noise}. "
         f"Strict revision rates are {r_split:.3f}, {r_keep:.3f}, and {r_remove:.3f}. "
@@ -532,14 +534,16 @@ def _phrase_finding(phrases: pd.DataFrame) -> str:
         "uncertainty and both models' phrase-only tension can stay high even "
         "when strict rates do not."
     ]
-    for model_id, subset in phrases.groupby("model_id", sort=False):
-        sentence = _phrase_model_sentence(str(model_id), subset)
+    for (arm, model_id), subset in phrases.groupby(
+        ["prompt_arm", "model_id"], sort=False
+    ):
+        sentence = _phrase_model_sentence(str(arm), str(model_id), subset)
         if sentence:
             parts.append(sentence)
     return "\n\n".join(parts)
 
 
-def _phrase_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
+def _phrase_model_sentence(prompt_arm: str, model_id: str, subset: pd.DataFrame) -> str:
     by_group = {str(row["group"]): row for _, row in subset.iterrows()}
     if any(group not in by_group for group in TOKEN_GROUPS):
         return ""
@@ -563,7 +567,7 @@ def _phrase_model_sentence(model_id: str, subset: pd.DataFrame) -> str:
     else:
         direction = "split is higher than keep"
     return (
-        f"{model_id}: phrase-only uncertainty is {u_split:.3f} on split, "
+        f"{prompt_arm} {model_id}: phrase-only uncertainty is {u_split:.3f} on split, "
         f"{u_keep:.3f} on keep, and {u_remove:.3f} on remove, so {direction}. "
         f"Phrase-only tension is {t_split:.3f}, {t_keep:.3f}, and {t_remove:.3f}, "
         f"and that family is still mostly `both posts`."
@@ -594,9 +598,9 @@ def _pooled_high_items(items: pd.DataFrame) -> pd.DataFrame:
         ]
     ]
     high = pooled.loc[pooled["rate"] >= HIGH_ITEM_RATE]
-    return high.sort_values(["model_id", "rate"], ascending=[True, False]).reset_index(
-        drop=True
-    )
+    return high.sort_values(
+        ["prompt_arm", "model_id", "rate"], ascending=[True, True, False]
+    ).reset_index(drop=True)
 
 
 def _group_float_map(subset: pd.DataFrame, column: str) -> dict[str, float]:
