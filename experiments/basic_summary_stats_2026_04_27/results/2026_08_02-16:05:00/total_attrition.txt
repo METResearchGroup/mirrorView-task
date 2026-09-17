@@ -1,0 +1,17 @@
+Dataset: STUDY_PHASE_2_PART_1_RESULTS_FULL
+Results CSV: /Users/mark/src/work/mirrorView-task/shared/data/raw/study_phase_2_part_1/results/full.csv
+Export timestamp (file mtime): 2026_08_01-08:30:11
+Eligibility cutoff: assigned before 2026_08_01-08:10:11 (20 minute grace period)
+Exported valid unique prolific_id(s): 2003
+Eligible assigned user(s): 2276
+Eligible assigned user(s) found in export: 2003
+Eligible assigned user(s) missing from export: 273
+
+Attrition by political party x condition
+                              assigned_eligible  found_in_export  missing_from_export  attrition_rate
+democrat   control                          387              347                   40          0.1034
+           training                         387              339                   48          0.1240
+           training-assisted                388              335                   53          0.1366
+republican control                          372              335                   37          0.0995
+           training                         372              321                   51          0.1371
+           training-assisted                370              326                   44          0.1189

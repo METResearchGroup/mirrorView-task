@@ -1,0 +1,26 @@
+Loaded STUDY_PHASE_2_PART_1_RESULTS_FULL: 65,581 rows, 2003 distinct prolific_id(s)
+
+Table 1 - Users by political party x condition
+condition    control  training  training-assisted  total
+party_group                                             
+democrat         347       339                335   1021
+republican       335       321                326    982
+total            682       660                661   2003
+
+Table 2 - Phase 1 keep/remove (counts + proportion of each within party x condition)
+decision                      keep  remove  total  prop_keep  prop_remove
+democrat   control            2317    1153   3470     0.6677       0.3323
+           training           2275    1125   3400     0.6691       0.3309
+           training-assisted  2311    1059   3370     0.6858       0.3142
+republican control            2159    1201   3360     0.6426       0.3574
+           training           2127    1093   3220     0.6606       0.3394
+           training-assisted  2053    1207   3260     0.6298       0.3702
+
+Table 3 - Phase 2 keep/remove (counts + proportion of each within party x condition)
+decision                      keep  remove  total  prop_keep  prop_remove
+democrat   control            2481     989   3470     0.7150       0.2850
+           training           2351    1049   3400     0.6915       0.3085
+           training-assisted  2336    1034   3370     0.6932       0.3068
+republican control            2308    1052   3360     0.6869       0.3131
+           training           2243     977   3220     0.6966       0.3034
+           training-assisted  2217    1043   3260     0.6801       0.3199

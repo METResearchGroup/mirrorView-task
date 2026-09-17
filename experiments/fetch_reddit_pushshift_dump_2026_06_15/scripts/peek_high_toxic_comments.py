@@ -1,4 +1,4 @@
-"""Print shape, schema, and sample rows from a high_toxic_comments.parquet file."""
+"""Inspect a retained high-toxicity parquet output from the command line."""
 
 from __future__ import annotations
 
@@ -19,6 +19,8 @@ def main(
         readable=True,
     ),
 ) -> None:
+    """Print basic shape, schema, and sample rows for one parquet output."""
+
     df = pd.read_parquet(parquet_path)
 
     print(f"file: {parquet_path.resolve()}")

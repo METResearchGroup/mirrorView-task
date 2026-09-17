@@ -1,4 +1,4 @@
-"""Pydantic schemas for the Reddit Pushshift toxicity smoke pipeline."""
+"""Schema objects shared across Reddit toxicity pipeline stages."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ TARGET_SUBREDDITS = frozenset(
 
 
 class PushshiftCommentRaw(BaseModel):
-    """Minimal Pushshift comment object parsed from one JSONL line."""
+    """Raw Pushshift comment fields required by the pipeline."""
 
     id: str
     author: str
@@ -31,13 +31,15 @@ class PushshiftCommentRaw(BaseModel):
 
 
 class CommentToScore(BaseModel):
-    """Input to Perspective batch scorer."""
+    """Scoring payload passed to the Perspective batching layer."""
 
     comment_id: str
     text: str
 
 
 class ToxicityScore(BaseModel):
+    """Perspective label outcome for one candidate comment."""
+
     comment_id: str
     prob_toxic: float | None = None
     was_successfully_labeled: bool
@@ -45,7 +47,7 @@ class ToxicityScore(BaseModel):
 
 
 class MirrorviewCommentRow(BaseModel):
-    """Output row shape (mirrorview columns only)."""
+    """Mirrorview-compatible comment row emitted before toxicity filtering."""
 
     post_reddit_id: str
     post_reddit_fullname: str
@@ -64,10 +66,14 @@ class MirrorviewCommentRow(BaseModel):
 
 
 class HighToxicCommentRow(MirrorviewCommentRow):
+    """Mirrorview row extended with the retained toxicity score."""
+
     prob_toxic: float
 
 
 class FileRunMetadata(BaseModel):
+    """Per-input-file processing counts and completion metadata."""
+
     source_file: str
     rows_read: int
     rows_after_filter: int
@@ -79,6 +85,8 @@ class FileRunMetadata(BaseModel):
 
 
 class TotalRunMetadata(BaseModel):
+    """Aggregated run state across all processed input files."""
+
     files_processed: list[str] = Field(default_factory=list)
     high_toxic_by_file: dict[str, int] = Field(default_factory=dict)
     total_high_toxic: int = 0
