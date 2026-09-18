@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 2026-09-17
+
+1. Experiment 2 vLLM traces are complete for both models on the 4,675-post cohort. Experiment 4 writes experiment 2 token counts, marker rates for both prompt arms, and the paired experiment 1 versus experiment 2 comparison. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+
+## 2026-09-16
+
+1. Experiment 4 scores experiment 1 vLLM traces with broad, strict, and phrase-only marker rates, plus density and item contrasts, and writes the reviewable group findings in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+
+## 2026-09-15
+
+1. Operators can build a three-group September 2026 linked-fate cohort from the Prolific export on or after 2026-09-09, and they can summarize human `response_time_ms` on it. Thinking-token counts and uncertainty, revision, and tension marker rates wait on Hugging Face Job traces. Keep/remove accuracy is out of scope. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+2. Hugging Face Jobs clone the feature branch at the pinned commit, and GPU runners checkpoint traces to S3 every 25 posts, including smoke files.
+3. Experiment 1 and 2 GPU completions run through batched vLLM (`vllm/vllm-openai:v0.17.0`) instead of per-post Transformers `generate`. Full-run traces write under `outputs/vllm/`.
+4. Full GPU jobs download existing `outputs/vllm` jsonl from S3 before generating, so a timed-out job can skip completed post ids.
+
 ## 2026-09-12
 
 1. Operators now have experiment 6 one-pair yes/no labels for that same cohort on OpenAI, Nova Micro, and Qwen, scored against the experiment 1 20-pair labels. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
