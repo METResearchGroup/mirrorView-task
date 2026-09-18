@@ -2,11 +2,11 @@
 
 ## 2026-09-17
 
-1. Experiment 2 vLLM traces are complete for both models on the 4,675-post cohort. Experiment 4 writes experiment 2 token counts, marker rates for both prompt arms, and the paired experiment 1 versus experiment 2 comparison. [PR #298](https://github.com/METResearchGroup/mirrorView-task/pull/298)
+1. Experiment 2 vLLM traces are complete for both models on the 4,675-post cohort. Experiment 4 writes experiment 2 token counts, marker rates for both prompt arms, and the paired experiment 1 versus experiment 2 comparison. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
 
 ## 2026-09-16
 
-1. Experiment 4 scores experiment 1 vLLM traces with broad, strict, and phrase-only marker rates, plus density and item contrasts, and writes the reviewable group findings in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #298](https://github.com/METResearchGroup/mirrorView-task/pull/298)
+1. Experiment 4 scores experiment 1 vLLM traces with broad, strict, and phrase-only marker rates, plus density and item contrasts, and writes the reviewable group findings in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
 
 ## 2026-09-15
 
