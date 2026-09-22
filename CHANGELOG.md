@@ -1,8 +1,34 @@
 # CHANGELOG
 
+## 2026-09-22
+
+1. The September 2026 run has 3,875 finishers and 79,500 labels. A 2026-09-22 S3 rescan found no new session files after 2026-09-21, so collection is treated as complete. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
+
+## 2026-09-17
+
+1. Experiment 2 vLLM traces are complete for both models on the 4,675-post cohort. Experiment 4 writes experiment 2 token counts, marker rates for both prompt arms, and the paired experiment 1 versus experiment 2 comparison. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+
+## 2026-09-16
+
+1. Experiment 4 scores experiment 1 vLLM traces with broad, strict, and phrase-only marker rates, plus density and item contrasts, and writes the reviewable group findings in `RESULTS.md`. The paired experiment 1 versus experiment 2 comparison waits on the experiment 2 GPU jobs. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+
+## 2026-09-15
+
+1. Operators can build a three-group September 2026 linked-fate cohort from the Prolific export on or after 2026-09-09, and they can summarize human `response_time_ms` on it. Thinking-token counts and uncertainty, revision, and tension marker rates wait on Hugging Face Job traces. Keep/remove accuracy is out of scope. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
+2. Hugging Face Jobs clone the feature branch at the pinned commit, and GPU runners checkpoint traces to S3 every 25 posts, including smoke files.
+3. Experiment 1 and 2 GPU completions run through batched vLLM (`vllm/vllm-openai:v0.17.0`) instead of per-post Transformers `generate`. Full-run traces write under `outputs/vllm/`.
+4. Full GPU jobs download existing `outputs/vllm` jsonl from S3 before generating, so a timed-out job can skip completed post ids.
+
+## 2026-09-12
+
+1. Operators now have experiment 6 one-pair yes/no labels for that same cohort on OpenAI, Nova Micro, and Qwen, scored against the experiment 1 20-pair labels. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
+2. Operators now have experiment 5 error analysis for GitHub issue 290 on the September 2026 MirrorView cohort: 75 false-negative posts, 75 false-positive posts, 100 lowest-F1 users, and variance summaries from 998 complete participants. [Issue #290](https://github.com/METResearchGroup/mirrorView-task/issues/290)
+3. Live `assignments.csv` on prefix `2026_09_09-23:06:02` in `jspsych-mirror-view-2026-09-09` was replaced with the 2,440-row Democrat and 2,439-row Republican overprovisioned files after copying `_original` siblings (`assignments_original.csv`, `config_original.yaml`). DynamoDB counters were not reset and the lookup Lambda was not changed.
+
 ## 2026-09-11
 
 1. Operators can view keep and remove rates, party tables, and coverage for the September 2026 run on a static dashboard at `/study-progress`. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
+2. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
 
 ## 2026-09-09
 

@@ -101,6 +101,19 @@ experiments/generate_study_user_assignments_2026_09_08/cache/
 # Study progress dashboard: local export copies. Aggregated JSON and HTML stay in git.
 experiments/study_progress_dashboard_2026_09_11/cache/
 
+# Overprovisioned mixed-feed assignment cache lives in S3. Keep the local copy out of git.
+experiments/upsample_mixed_study_feeds_2026_09_11/cache/
+
+# Reasoning-during-moderation local cache and outputs live in S3.
+experiments/reasoning_during_moderation_2026_09_15/cache/
+experiments/reasoning_during_moderation_2026_09_15/outputs/
+experiments/reasoning_during_moderation_2026_09_15/experiment1/smoke/
+experiments/reasoning_during_moderation_2026_09_15/experiment1/outputs/
+experiments/reasoning_during_moderation_2026_09_15/experiment2/smoke/
+experiments/reasoning_during_moderation_2026_09_15/experiment2/outputs/
+experiments/reasoning_during_moderation_2026_09_15/experiment3/outputs/
+experiments/reasoning_during_moderation_2026_09_15/experiment4/outputs/
+
 # OS generated files
 .DS_Store
 .DS_Store?
@@ -262,3 +275,9 @@ experiments/bertopic_modeling_2026_08_05/outputs/topics/original/*/model/
 # Bluesky Jetstream dump raw Athena CSV output (includes .csv.metadata)
 data_platform/ingestion/data_dumps/bluesky/data/raw/
 data_platform/ingestion/data_dumps/bluesky/data/parquet.staging/
+
+# AI simulation responses experiment local artifacts
+experiments/ai_simulation_responses_2026_09_11/**/cache/
+experiments/ai_simulation_responses_2026_09_11/**/outputs/
+experiments/ai_simulation_responses_2026_09_11/shared/cohort_users.parquet
+experiments/ai_simulation_responses_2026_09_11/shared/cohort_trials.parquet
