@@ -22,6 +22,8 @@ STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3 = (
 STUDY_PHASE_2_PART_2_USER_REFLECTION_FEEDBACK = (
     "STUDY_PHASE_2_PART_2_USER_REFLECTION_FEEDBACK"
 )
+STUDY_PHASE_2_PART_3_RESULTS_FULL = "STUDY_PHASE_2_PART_3_RESULTS_FULL"
+STUDY_PHASE_2_PART_3_STIMULI = "STUDY_PHASE_2_PART_3_STIMULI"
 
 
 @dataclass(frozen=True)
@@ -95,6 +97,18 @@ DATASETS: dict[str, DatasetEntry] = {
         ),
         kind="transformed",
         study_phase="study_phase_2_part_2",
+    ),
+    STUDY_PHASE_2_PART_3_RESULTS_FULL: DatasetEntry(
+        name=STUDY_PHASE_2_PART_3_RESULTS_FULL,
+        relative_path=Path("shared/data/raw/study_phase_2_part_3/results/full.csv"),
+        kind="results",
+        study_phase="study_phase_2_part_3",
+    ),
+    STUDY_PHASE_2_PART_3_STIMULI: DatasetEntry(
+        name=STUDY_PHASE_2_PART_3_STIMULI,
+        relative_path=Path("shared/data/raw/study_phase_2_part_3/stimuli/flips.csv"),
+        kind="stimuli",
+        study_phase="study_phase_2_part_3",
     ),
 }
 

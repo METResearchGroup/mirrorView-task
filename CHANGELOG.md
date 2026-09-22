@@ -3,6 +3,7 @@
 ## 2026-09-22
 
 1. The September 2026 run has 3,875 finishers and 79,500 labels. A 2026-09-22 S3 rescan found no new session files after 2026-09-21, so collection is treated as complete. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
+2. Callers can load the September 2026 session export and the 18,899-post stimulus catalog through the shared study loader. The study history records that collection, including the 3,875 finishers and 79,500 scored labels from the 2026-09-22 snapshot. [PR #303](https://github.com/METResearchGroup/mirrorView-task/pull/303)
 
 ## 2026-09-17
 

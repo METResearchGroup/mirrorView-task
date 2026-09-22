@@ -201,7 +201,19 @@ We then update the web app, in `webapp/`, to reflect the new study design. Also,
 
 The data for this phase is in [this folder](shared/data/raw/study_phase_2_part_2). The flips shown to users are in [this path](shared/data/raw/study_phase_2_part_2/flips.csv) and the subsequent user data is in [this path](shared/data/raw/study_phase_2_part_2/mirrorview_data_jspsych-mirror-view-4_2026_06_23-12:27:41.csv)
 
+### Study Phase 2, Part 3: September 2026 collection
+
+The June catalog still needed more labels, so this run added a new 10,000-post catalog for the same linked-fate task. The stimulus file is both catalogs together, 18,899 posts. The live run is `mirrorview_2026_09_09`. Each person classifies 20 posts. Saved sessions land in `s3://jspsych-mirror-view-2026-09-09/data/prolific/`.
+
+[Pull request 286](https://github.com/METResearchGroup/mirrorView-task/pull/286) records the 2026-09-22 snapshot. Prolific finished 3,875 of 3,879 feeds (99.9%). A listing that day found 3,975 session files, the same count as 2026-09-21, so no new finishes had landed in about 30 hours. Collection is treated as complete. The export has 3,875 Prolific accounts. Scored labels are 79,500, which is 102.5% of the 77,580 slot target. User-mean keep rate is 69.6%. Democrat and Republican remove rates sit close together inside each toxicity band.
+
+The data for this phase is in [this folder](../../shared/data/raw/study_phase_2_part_3). The flips shown to users are in [this path](../../shared/data/raw/study_phase_2_part_3/stimuli/flips.csv). The session export is in [this path](../../shared/data/raw/study_phase_2_part_3/results/full.csv) (131,175 rows, including instructions and surveys). Of the moderation rows, 79,500 have phase 1. Each of the 3,975 session files also has one practice moderation row. That row has an empty phase and no post id, so it is not in the 79,500 scored labels. Load the tables with `load_dataset` as `STUDY_PHASE_2_PART_3_STIMULI` and `STUDY_PHASE_2_PART_3_RESULTS_FULL`.
+
+Progress tables for this run are in the [study progress dashboard](../../experiments/study_progress_dashboard_2026_09_11/RESULTS.md).
+
 ## Latest work
+
+(2026-09-22) The September 2026 collection is in the shared data loader. See Study Phase 2, Part 3 above. The study progress dashboard is at `/study-progress`.
 
 (2026-07-31) Our latest work is now trying to find trends in what people choose to remove.
 
