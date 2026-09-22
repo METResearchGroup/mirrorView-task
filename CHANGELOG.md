@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-22
+
+1. The September 2026 run has 3,875 finishers and 79,500 labels. A 2026-09-22 S3 rescan found no new session files after 2026-09-21, so collection is treated as complete. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
+
 ## 2026-09-17
 
 1. Experiment 2 vLLM traces are complete for both models on the 4,675-post cohort. Experiment 4 writes experiment 2 token counts, marker rates for both prompt arms, and the paired experiment 1 versus experiment 2 comparison. [PR #297](https://github.com/METResearchGroup/mirrorView-task/pull/297)
@@ -23,7 +27,8 @@
 
 ## 2026-09-11
 
-1. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
+1. Operators can view keep and remove rates, party tables, and coverage for the September 2026 run on a static dashboard at `/study-progress`. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
+2. Operators now have a 4,879-row overprovisioned assignment CSV (2,440 Democrat, 2,439 Republican) with 1,000 cloned mixed feeds at `s3://mirrorview-experimental-artifacts/experiments/upsample_mixed_study_feeds_2026_09_11/study_user_assignments_overprovisioned.csv`. The live prefix `2026_09_09-23:06:02` was not replaced. [PR #288](https://github.com/METResearchGroup/mirrorView-task/pull/288)
 
 ## 2026-09-09
 
