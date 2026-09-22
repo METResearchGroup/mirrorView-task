@@ -24,23 +24,6 @@ STUDY_PHASE_2_PART_2_USER_REFLECTION_FEEDBACK = (
 )
 STUDY_PHASE_2_PART_3_RESULTS_FULL = "STUDY_PHASE_2_PART_3_RESULTS_FULL"
 STUDY_PHASE_2_PART_3_STIMULI = "STUDY_PHASE_2_PART_3_STIMULI"
-STUDY_PHASE_2_PART_3 = "study_phase_2_part_3"
-STUDY_PHASE_2_PART_3_RESULTS_RELATIVE_PATH = Path(
-    "shared/data/raw/study_phase_2_part_3/results/full.csv"
-)
-STUDY_PHASE_2_PART_3_STIMULI_RELATIVE_PATH = Path(
-    "shared/data/raw/study_phase_2_part_3/stimuli/flips.csv"
-)
-STUDY_PHASE_2_PART_3_STIMULI_COLUMNS = (
-    "post_primary_key",
-    "original_text",
-    "sample_toxicity_type",
-    "sampled_stance",
-    "mirrored_text",
-)
-STUDY_PHASE_2_PART_3_STIMULI_ROW_COUNT = 18899
-STUDY_PHASE_2_PART_3_RESULTS_ROW_COUNT = 131175
-STUDY_PHASE_2_PART_3_RESULTS_USER_COUNT = 3875
 
 
 @dataclass(frozen=True)
@@ -117,15 +100,15 @@ DATASETS: dict[str, DatasetEntry] = {
     ),
     STUDY_PHASE_2_PART_3_RESULTS_FULL: DatasetEntry(
         name=STUDY_PHASE_2_PART_3_RESULTS_FULL,
-        relative_path=STUDY_PHASE_2_PART_3_RESULTS_RELATIVE_PATH,
+        relative_path=Path("shared/data/raw/study_phase_2_part_3/results/full.csv"),
         kind="results",
-        study_phase=STUDY_PHASE_2_PART_3,
+        study_phase="study_phase_2_part_3",
     ),
     STUDY_PHASE_2_PART_3_STIMULI: DatasetEntry(
         name=STUDY_PHASE_2_PART_3_STIMULI,
-        relative_path=STUDY_PHASE_2_PART_3_STIMULI_RELATIVE_PATH,
+        relative_path=Path("shared/data/raw/study_phase_2_part_3/stimuli/flips.csv"),
         kind="stimuli",
-        study_phase=STUDY_PHASE_2_PART_3,
+        study_phase="study_phase_2_part_3",
     ),
 }
 
