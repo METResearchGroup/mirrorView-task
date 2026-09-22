@@ -12,7 +12,7 @@ then the frame has 18899 rows and the five catalog columns
 
 given the registered results CSV
 when load_dataset is called for STUDY_PHASE_2_PART_3_RESULTS_FULL
-then the frame includes prolific_id, trial_type, and decision
+then the frame has 131175 rows, 3875 prolific accounts, and trial columns
 
 when get_dataset is called with an unknown name
 then KeyError is raised
@@ -29,6 +29,8 @@ from shared.data.registry import (
     STUDY_PHASE_2_PART_3_RESULTS_FULL,
     STUDY_PHASE_2_PART_3_RESULTS_RELATIVE_PATH,
     STUDY_PHASE_2_PART_3_STIMULI,
+    STUDY_PHASE_2_PART_3_RESULTS_ROW_COUNT,
+    STUDY_PHASE_2_PART_3_RESULTS_USER_COUNT,
     STUDY_PHASE_2_PART_3_STIMULI_COLUMNS,
     STUDY_PHASE_2_PART_3_STIMULI_RELATIVE_PATH,
     STUDY_PHASE_2_PART_3_STIMULI_ROW_COUNT,
@@ -81,4 +83,5 @@ class TestLoadDataset:
 
         assert isinstance(result, pd.DataFrame)
         assert {"prolific_id", "trial_type", "decision"}.issubset(result.columns)
-        assert len(result) > 0
+        assert len(result) == STUDY_PHASE_2_PART_3_RESULTS_ROW_COUNT
+        assert result["prolific_id"].nunique() == STUDY_PHASE_2_PART_3_RESULTS_USER_COUNT
