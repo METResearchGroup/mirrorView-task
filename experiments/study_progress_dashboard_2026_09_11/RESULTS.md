@@ -1,6 +1,6 @@
 # Study progress, September 2026 run
 
-Snapshot 2026_09_21-15:42:44 UTC. Export 2026_09_21-15:42:42.
+Snapshot 2026_09_22-21:28:05 UTC. Export 2026_09_22-21:28:02.
 
 See `SETUP.md` for how to refresh. The HTML dashboard is `index.html`.
 

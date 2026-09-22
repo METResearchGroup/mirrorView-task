@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026_09_21-15:42:44",
+  "generated_at": "2026_09_22-21:28:05",
   "study": {
     "id": "mirrorview",
     "iteration_id": "mirrorview_2026_09_09",
@@ -14,8 +14,8 @@
     "evaluation_mode": "linked_fate"
   },
   "export": {
-    "path": "export_jspsych-mirror-view-2026-09-09_2026_09_21-15:42:42.csv",
-    "timestamp": "2026_09_21-15:42:42",
+    "path": "export_jspsych-mirror-view-2026-09-09_2026_09_22-21:28:02.csv",
+    "timestamp": "2026_09_22-21:28:02",
     "files": 3975,
     "unique_completers": 3875,
     "rows": 131175
