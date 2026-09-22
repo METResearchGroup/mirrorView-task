@@ -24,6 +24,21 @@ STUDY_PHASE_2_PART_2_USER_REFLECTION_FEEDBACK = (
 )
 STUDY_PHASE_2_PART_3_RESULTS_FULL = "STUDY_PHASE_2_PART_3_RESULTS_FULL"
 STUDY_PHASE_2_PART_3_STIMULI = "STUDY_PHASE_2_PART_3_STIMULI"
+STUDY_PHASE_2_PART_3 = "study_phase_2_part_3"
+STUDY_PHASE_2_PART_3_RESULTS_RELATIVE_PATH = Path(
+    "shared/data/raw/study_phase_2_part_3/results/full.csv"
+)
+STUDY_PHASE_2_PART_3_STIMULI_RELATIVE_PATH = Path(
+    "shared/data/raw/study_phase_2_part_3/stimuli/flips.csv"
+)
+STUDY_PHASE_2_PART_3_STIMULI_COLUMNS = (
+    "post_primary_key",
+    "original_text",
+    "sample_toxicity_type",
+    "sampled_stance",
+    "mirrored_text",
+)
+STUDY_PHASE_2_PART_3_STIMULI_ROW_COUNT = 18899
 
 
 @dataclass(frozen=True)
