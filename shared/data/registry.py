@@ -113,6 +113,18 @@ DATASETS: dict[str, DatasetEntry] = {
         kind="transformed",
         study_phase="study_phase_2_part_2",
     ),
+    STUDY_PHASE_2_PART_3_RESULTS_FULL: DatasetEntry(
+        name=STUDY_PHASE_2_PART_3_RESULTS_FULL,
+        relative_path=STUDY_PHASE_2_PART_3_RESULTS_RELATIVE_PATH,
+        kind="results",
+        study_phase=STUDY_PHASE_2_PART_3,
+    ),
+    STUDY_PHASE_2_PART_3_STIMULI: DatasetEntry(
+        name=STUDY_PHASE_2_PART_3_STIMULI,
+        relative_path=STUDY_PHASE_2_PART_3_STIMULI_RELATIVE_PATH,
+        kind="stimuli",
+        study_phase=STUDY_PHASE_2_PART_3,
+    ),
 }
 
 
