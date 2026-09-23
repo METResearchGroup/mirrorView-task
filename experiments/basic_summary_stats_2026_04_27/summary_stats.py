@@ -1,10 +1,10 @@
-"""Compute basic mirror-view summary tables from the shared Part 1 pilot results.
+"""Party x condition counts and Phase 1/2 keep-remove rates for Part 1 full results.
 
-This script loads ``STUDY_PHASE_2_PART_1_RESULTS_PILOT`` via the shared registry
-and prints three tables:
-- User counts by political party x condition
-- Phase 1 keep/remove counts (and proportions within each party x condition) by cell
-- Phase 2 keep/remove counts (and proportions within each party x condition) by cell
+Loads ``STUDY_PHASE_2_PART_1_RESULTS_FULL`` and prints three crosstabs to stdout.
+
+Run from the repo root:
+
+    PYTHONPATH=. uv run python experiments/basic_summary_stats_2026_04_27/summary_stats.py
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_PILOT
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_FULL
 
 CONDITION_DISPLAY_MAP = {
     "control": "control",
@@ -25,7 +25,10 @@ DECISION_ORDER = ["keep", "remove"]
 
 
 def first_non_empty(series: pd.Series) -> str | None:
-    """Return first non-empty string value, if present."""
+    """Return the first non-empty string in ``series``, lowercased, or ``None``.
+
+    Empty after strip and NA values are skipped.
+    """
     for value in series:
         if pd.isna(value):
             continue
@@ -36,7 +39,15 @@ def first_non_empty(series: pd.Series) -> str | None:
 
 
 def get_user_level_frame(data_df: pd.DataFrame) -> pd.DataFrame:
-    """Build one row per participant with party and condition labels using prolific_id."""
+    """Collapse trial rows to one participant row with party and display condition.
+
+    Participants missing party or a mapped condition are dropped.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Columns ``prolific_id``, ``party_group``, ``condition``.
+    """
     user_df = (
         data_df.groupby("prolific_id", as_index=False)
         .agg(
@@ -52,7 +63,13 @@ def get_user_level_frame(data_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def format_user_table(user_df: pd.DataFrame) -> pd.DataFrame:
-    """Create user count table indexed by party and condition."""
+    """Count participants by party × condition, with row and column totals.
+
+    Parameters
+    ----------
+    user_df : pandas.DataFrame
+        Output of :func:`get_user_level_frame`.
+    """
     table = (
         user_df.groupby(["party_group", "condition"], dropna=False)
         .size()
@@ -65,7 +82,16 @@ def format_user_table(user_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def format_phase_table(data_df: pd.DataFrame, phase_number: int) -> pd.DataFrame:
-    """Create keep/remove count table for a single phase."""
+    """Keep/remove counts and within-cell proportions for one moderation phase.
+
+    Only keep/remove decisions in known party × condition cells are included.
+    Proportions are NA when a cell has zero trials.
+
+    Parameters
+    ----------
+    phase_number : int
+        Study phase to filter on (typically 1 or 2).
+    """
     decisions = data_df.copy()
     decisions["phase_num"] = pd.to_numeric(decisions["phase"], errors="coerce")
     decisions["decision"] = decisions["decision"].astype(str).str.strip().str.lower()
@@ -98,14 +124,16 @@ def format_phase_table(data_df: pd.DataFrame, phase_number: int) -> pd.DataFrame
 
 
 def print_table(title: str, table: pd.DataFrame) -> None:
+    """Write ``title`` and ``table`` to stdout."""
     print(f"\n{title}")
     print(table.to_string())
 
 
 def main() -> None:
-    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_PILOT)
+    """Load the full Part 1 results and print the three summary tables."""
+    df = load_dataset(STUDY_PHASE_2_PART_1_RESULTS_FULL)
     print(
-        f"Loaded {STUDY_PHASE_2_PART_1_RESULTS_PILOT}: "
+        f"Loaded {STUDY_PHASE_2_PART_1_RESULTS_FULL}: "
         f"{len(df):,} rows, {df['prolific_id'].nunique()} distinct prolific_id(s)"
     )
 

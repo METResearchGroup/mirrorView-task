@@ -1,6 +1,6 @@
 # How to Run on Quest HPC (Production Data)
 
-Use this guide when running the Reddit toxicity pipeline on **Northwestern Quest** with Bolun's pre-filtered package. **Production scoring targets 2025 comment months only** (`RC_2025-01` through `RC_2025-06`). For local smoke tests, see [README.md](README.md).
+Use this guide when running the Reddit toxicity pipeline on **Northwestern Quest** with Bolun's pre-filtered package. **Production scoring targets 2025 comment months only** (`RC_2025-01` through `RC_2025-06`). For local smoke tests, see [README.md](../README.md).
 
 ## Overview
 

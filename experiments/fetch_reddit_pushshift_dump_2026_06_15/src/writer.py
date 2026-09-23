@@ -1,4 +1,4 @@
-"""Write per-file parquet deliverables and metadata."""
+"""Persist scored outputs and run metadata for the experiment."""
 
 from __future__ import annotations
 
@@ -9,8 +9,8 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.config import OUTPUTS_DIR
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import (
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.config import OUTPUTS_DIR
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.models import (
     FileRunMetadata,
     HighToxicCommentRow,
     TotalRunMetadata,
@@ -24,26 +24,38 @@ def _now_iso() -> str:
 
 
 def file_output_dir(stem: str) -> Path:
+    """Return the output directory for one input file stem."""
+
     return OUTPUTS_DIR / stem
 
 
 def metadata_path(stem: str) -> Path:
+    """Return the metadata file path for one processed input file."""
+
     return file_output_dir(stem) / "metadata.json"
 
 
 def parquet_path(stem: str) -> Path:
+    """Return the parquet output path for one processed input file."""
+
     return file_output_dir(stem) / "high_toxic_comments.parquet"
 
 
 def total_metadata_path() -> Path:
+    """Return the cumulative metadata path shared across all file runs."""
+
     return OUTPUTS_DIR / "total_metadata.json"
 
 
 def metadata_exists(stem: str) -> bool:
+    """Return whether a file stem has already been processed successfully."""
+
     return metadata_path(stem).is_file()
 
 
 def write_high_toxic_parquet(stem: str, rows: list[HighToxicCommentRow]) -> None:
+    """Write retained high-toxicity rows for one input file to parquet."""
+
     out_dir = file_output_dir(stem)
     out_dir.mkdir(parents=True, exist_ok=True)
     if rows:
@@ -54,12 +66,16 @@ def write_high_toxic_parquet(stem: str, rows: list[HighToxicCommentRow]) -> None
 
 
 def write_file_metadata(stem: str, metadata: FileRunMetadata) -> None:
+    """Write per-file processing metadata after a run completes."""
+
     out_dir = file_output_dir(stem)
     out_dir.mkdir(parents=True, exist_ok=True)
     metadata_path(stem).write_text(metadata.model_dump_json(indent=2) + "\n")
 
 
 def load_total_metadata() -> TotalRunMetadata:
+    """Load cumulative run metadata, creating an empty view when absent."""
+
     path = total_metadata_path()
     if not path.is_file():
         return TotalRunMetadata()
@@ -72,6 +88,8 @@ def merge_file_into_total_metadata(
     *,
     stopped_reason: str | None = None,
 ) -> TotalRunMetadata:
+    """Merge one file's retained-row count into the cumulative run summary."""
+
     total = load_total_metadata()
     if stem not in total.files_processed:
         total.files_processed.append(stem)
@@ -94,6 +112,8 @@ def build_file_metadata(
     toxicity_threshold: float,
     skipped_scoring: bool = False,
 ) -> FileRunMetadata:
+    """Create the metadata record written alongside one processed input file."""
+
     return FileRunMetadata(
         source_file=source_file,
         rows_read=rows_read,

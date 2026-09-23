@@ -1,12 +1,11 @@
-"""Estimate assignment-to-export attrition by political party x condition.
+"""Assignment-to-completion attrition by party × condition for Part 1 full results.
 
-This script compares users in the DynamoDB ``user_assignments`` table against
-the latest ``scripts/mirrorview_pilot_data_*.csv`` export. A user is considered
-eligible for attrition accounting only if they were assigned before the export
-timestamp minus a grace period, so recently assigned users still have time to
-finish and upload data.
+Compares DynamoDB ``user_assignments`` for the Part 1 study iteration against
+prolific IDs in ``STUDY_PHASE_2_PART_1_RESULTS_FULL``. Assignments newer than the
+results-file mtime minus a grace window are excluded so in-flight participants
+are not counted as attrition.
 
-To run:
+Run from the repo root:
 
     PYTHONPATH=. uv run python experiments/basic_summary_stats_2026_04_27/total_attrition.py
 """
@@ -17,27 +16,22 @@ import argparse
 from datetime import datetime, timedelta
 import json
 from pathlib import Path
-import re
 from typing import Any
 
 import boto3
 import pandas as pd
 
+from shared.data import registry
+from shared.data.registry import STUDY_PHASE_2_PART_1_RESULTS_FULL
+
 
 AWS_REGION = "us-east-2"
 USER_ASSIGNMENTS_TABLE = "user_assignments"
 STUDY_ID = "mirrorview"
-STUDY_ITERATION_ID = "mirrorview_scaled_2026_06_18"
+STUDY_ITERATION_ID = "pilot-phase2-v3"
 DEFAULT_GRACE_MINUTES = 20
 
-EXPORT_FILENAME_PATTERN = re.compile(
-    r"^mirrorview_pilot_data_(\d{4}_\d{2}_\d{2}-\d{2}:\d{2}:\d{2})\.csv$"
-)
 TIMESTAMP_FORMAT = "%Y_%m_%d-%H:%M:%S"
-
-SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent.parent
-SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 
 CONDITION_DISPLAY_MAP = {
     "control": "control",
@@ -48,30 +42,37 @@ CONDITION_ORDER = ["control", "training", "training-assisted"]
 PARTY_ORDER = ["democrat", "republican"]
 
 
-def find_latest_export_csv() -> tuple[Path, datetime]:
-    """Return the newest export CSV and its timestamp parsed from the filename."""
-    candidates: list[tuple[datetime, Path]] = []
-    for path in SCRIPTS_DIR.glob("mirrorview_pilot_data_*.csv"):
-        match = EXPORT_FILENAME_PATTERN.match(path.name)
-        if not match:
-            continue
-        candidates.append((datetime.strptime(match.group(1), TIMESTAMP_FORMAT), path))
+def resolve_results_csv() -> tuple[Path, datetime]:
+    """Resolve the registered full-results CSV and treat its mtime as export time.
 
-    if not candidates:
-        raise FileNotFoundError(f"No timestamped mirrorview_pilot_data_*.csv under {SCRIPTS_DIR}")
+    Returns
+    -------
+    path, export_timestamp
+        Absolute path and local-time mtime used for the grace-period cutoff.
 
-    export_timestamp, latest_path = max(candidates, key=lambda item: item[0])
-    return latest_path, export_timestamp
+    Raises
+    ------
+    FileNotFoundError
+        If the registered CSV is missing on disk.
+    """
+    path = registry.resolve_path(STUDY_PHASE_2_PART_1_RESULTS_FULL)
+    if not path.is_file():
+        raise FileNotFoundError(f"Dataset file not found: {path}")
+    export_timestamp = datetime.fromtimestamp(path.stat().st_mtime)
+    return path, export_timestamp
 
 
 def is_valid_user_id(user_id: object) -> bool:
-    """Exclude manual/test placeholder Prolific IDs from attrition accounting."""
+    """Return whether ``user_id`` looks like a real Prolific ID (not a test stub)."""
     text = str(user_id or "").strip().lower()
     return bool(text) and "pid" not in text and not text.startswith("manual-test-")
 
 
 def parse_payload(item: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Parse the assignment payload and nested metadata JSON fields."""
+    """Decode an assignment item's ``payload`` and nested ``metadata`` JSON.
+
+    Accepts values that are already dicts or JSON strings.
+    """
     raw_payload = item.get("payload") or "{}"
     payload = json.loads(raw_payload) if isinstance(raw_payload, str) else raw_payload
 
@@ -81,7 +82,7 @@ def parse_payload(item: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]
 
 
 def scan_user_assignments() -> list[dict[str, Any]]:
-    """Return every item from the user assignment table."""
+    """Scan all items from the configured DynamoDB assignments table."""
     table = boto3.resource("dynamodb", region_name=AWS_REGION).Table(USER_ASSIGNMENTS_TABLE)
     items: list[dict[str, Any]] = []
     kwargs: dict[str, Any] = {}
@@ -96,7 +97,7 @@ def scan_user_assignments() -> list[dict[str, Any]]:
 
 
 def parse_created_at(value: object) -> datetime | None:
-    """Parse assignment ``created_at`` timestamps, returning None for malformed rows."""
+    """Parse an assignment ``created_at`` string, or return ``None`` if malformed."""
     try:
         return datetime.strptime(str(value), TIMESTAMP_FORMAT)
     except ValueError:
@@ -104,7 +105,7 @@ def parse_created_at(value: object) -> datetime | None:
 
 
 def load_exported_user_ids(export_path: Path) -> set[str]:
-    """Return valid unique Prolific IDs present in the export CSV."""
+    """Return the set of valid unique ``prolific_id`` values in ``export_path``."""
     dataframe = pd.read_csv(export_path, usecols=["prolific_id"])
     return {
         str(user_id).strip()
@@ -114,7 +115,22 @@ def load_exported_user_ids(export_path: Path) -> set[str]:
 
 
 def build_assignment_frame(items: list[dict[str, Any]], *, cutoff: datetime) -> pd.DataFrame:
-    """Build one row per eligible assigned user with party and condition labels."""
+    """Filter assignments to the Part 1 iteration and eligibility cutoff.
+
+    Keeps only non-test users with known party and condition who were assigned
+    strictly before ``cutoff``.
+
+    Parameters
+    ----------
+    cutoff : datetime
+        Exclusive upper bound on ``created_at`` (export time minus grace).
+
+    Returns
+    -------
+    pandas.DataFrame
+        One row per eligible user: ``user_id``, ``created_at``, ``party_group``,
+        ``condition``, ``assignment_id``. Empty if none qualify.
+    """
     rows: list[dict[str, Any]] = []
 
     for item in items:
@@ -151,7 +167,20 @@ def build_assignment_frame(items: list[dict[str, Any]], *, cutoff: datetime) -> 
 
 
 def format_attrition_table(assignments: pd.DataFrame) -> pd.DataFrame:
-    """Create attrition counts and rates by party x condition."""
+    """Summarize attrition rates by party × condition.
+
+    Parameters
+    ----------
+    assignments : pandas.DataFrame
+        Must include ``user_id``, ``party_group``, ``condition``, and boolean
+        ``found_in_export``.
+
+    Returns
+    -------
+    pandas.DataFrame
+        Columns ``assigned_eligible``, ``found_in_export``, ``missing_from_export``,
+        and ``attrition_rate`` (NA when a cell has zero eligible assignments).
+    """
     if assignments.empty:
         index = pd.MultiIndex.from_product([PARTY_ORDER, CONDITION_ORDER])
         return pd.DataFrame(
@@ -170,12 +199,15 @@ def format_attrition_table(assignments: pd.DataFrame) -> pd.DataFrame:
     )
     table["missing_from_export"] = table["assigned_eligible"] - table["found_in_export"]
     table["attrition_rate"] = (
-        table["missing_from_export"] / table["assigned_eligible"].replace(0, pd.NA)
-    ).round(4)
+        (table["missing_from_export"] / table["assigned_eligible"])
+        .where(table["assigned_eligible"] > 0)
+        .round(4)
+    )
     return table
 
 
 def main() -> None:
+    """Print attrition totals and the party × condition attrition table."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--grace-minutes",
@@ -185,7 +217,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    export_path, export_timestamp = find_latest_export_csv()
+    export_path, export_timestamp = resolve_results_csv()
     cutoff = export_timestamp - timedelta(minutes=args.grace_minutes)
     exported_user_ids = load_exported_user_ids(export_path)
 
@@ -195,8 +227,9 @@ def main() -> None:
 
     table = format_attrition_table(assignments)
 
-    print(f"Latest export: {export_path}")
-    print(f"Export timestamp: {export_timestamp.strftime(TIMESTAMP_FORMAT)}")
+    print(f"Dataset: {STUDY_PHASE_2_PART_1_RESULTS_FULL}")
+    print(f"Results CSV: {export_path}")
+    print(f"Export timestamp (file mtime): {export_timestamp.strftime(TIMESTAMP_FORMAT)}")
     print(
         f"Eligibility cutoff: assigned before {cutoff.strftime(TIMESTAMP_FORMAT)} "
         f"({args.grace_minutes} minute grace period)"

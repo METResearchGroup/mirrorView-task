@@ -1,4 +1,4 @@
-"""Stream JSONL comment records from Pushshift .zst files."""
+"""Stream validated Pushshift comments from compressed JSONL inputs."""
 
 from __future__ import annotations
 
@@ -9,11 +9,15 @@ from pathlib import Path
 
 import zstandard as zstd
 
-from experiments.fetch_reddit_pushshift_dump_2026_06_15.models import PushshiftCommentRaw
+from experiments.fetch_reddit_pushshift_dump_2026_06_15.src.models import PushshiftCommentRaw
 
 
 def iter_pushshift_comments(input_path: Path) -> Iterator[PushshiftCommentRaw]:
-    """Yield parsed Pushshift comments from a compressed JSONL file."""
+    """Yield valid comment records from a compressed Pushshift JSONL file.
+
+    Invalid JSON lines and records that fail schema validation are skipped so a
+    single malformed row does not abort the file-level run.
+    """
 
     dctx = zstd.ZstdDecompressor(max_window_size=2**31)
     with input_path.open("rb") as fh:
