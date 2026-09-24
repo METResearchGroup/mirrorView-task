@@ -108,6 +108,6 @@ class TestRunOptimizeWiring:
         assert isinstance(captured["acceptance_criterion"], GuardedHardLabelAcceptance)
         assert isinstance(captured["val_evaluation_policy"], ValSubsampleOnAcceptPolicy)
         assert isinstance(captured["batch_sampler"], ErrorFocusedBatchSampler)
-        assert captured["reflection_minibatch_size"] == REFLECTION_MINIBATCH_SIZE
+        assert captured["batch_sampler"].minibatch_size == REFLECTION_MINIBATCH_SIZE
         assert captured["use_merge"] is False
         assert "module_selector" not in captured

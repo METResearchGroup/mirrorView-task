@@ -408,7 +408,7 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
     GEPAResult
         GEPA optimization result (post budget in ``total_metric_calls``).
     """
-    build_or_load_dev_ab_split(seed=config.seed, write=True)
+    build_or_load_dev_ab_split(seed=config.seed, write=False)
     trainset, valset = load_gepa_union_splits()
     val_inst_by_post_id = {instance.post_id: instance for instance in valset}
     dev_a = load_dev_instances(split="dev_a")
@@ -473,7 +473,6 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
         "reflection_lm": reflection_lm,
         "max_metric_calls": config.max_metric_calls,
         "max_reflection_cost": config.max_reflection_cost,
-        "reflection_minibatch_size": REFLECTION_MINIBATCH_SIZE,
         "batch_sampler": batch_sampler,
         "val_evaluation_policy": val_evaluation_policy,
         "acceptance_criterion": acceptance_criterion,
