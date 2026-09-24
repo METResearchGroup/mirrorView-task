@@ -86,10 +86,7 @@ class TestInvalidRate:
     def test_invalid_rows_counted_as_wrong_not_correct_remove(self):
         """Invalid generations count as wrong, not as correct remove."""
         frame = pd.DataFrame(
-            [
-                _pred_row("m1", 1, "remove", 1),
-                _pred_row("m2", 1, INVALID_DECISION, pd.NA),
-            ]
+            [_pred_row("m1", 1, INVALID_DECISION, pd.NA)],
         )
         y_true = [int(v) for v in frame["keep_remove_label"].tolist()]
         y_pred = effective_pred_labels(
@@ -99,7 +96,9 @@ class TestInvalidRate:
         )
         metrics = compute_metrics(y_true, y_pred)
 
-        assert metrics["f1"] == 1.0
+        assert y_pred == [0]
+        assert metrics["recall"] == 0.0
+        assert metrics["f1"] == 0.0
 
     def test_invalid_rate_counts_invalid_and_missing_labels(self):
         """Invalid rate is the fraction of invalid or missing-label rows."""

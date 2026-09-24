@@ -113,8 +113,30 @@ def bootstrap_f1_ci(
 
 
 def invalid_rate(frame: pd.DataFrame) -> float:
-    """Return the fraction of invalid prediction rows."""
-    raise NotImplementedError
+    """Return the fraction of invalid prediction rows.
+
+    Parameters
+    ----------
+    frame
+        Prediction CSV loaded as a DataFrame.
+
+    Returns
+    -------
+    float
+        Fraction of rows with ``__invalid__`` decision or missing label.
+    """
+    if frame.empty:
+        return 0.0
+    invalid_decision = (
+        frame["predicted_decision"].astype(str).str.strip().str.lower()
+        == INVALID_DECISION
+    )
+    predicted_label = frame["predicted_label"]
+    missing_label = predicted_label.isna() | (
+        predicted_label.astype(str).str.strip() == ""
+    )
+    invalid_rows = invalid_decision | missing_label
+    return float(invalid_rows.sum()) / len(frame)
 
 
 def score_arm_test_set(pred_path: Path, arm: str, test_set: str) -> dict[str, float | int | str]:
