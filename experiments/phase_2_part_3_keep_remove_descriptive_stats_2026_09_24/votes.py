@@ -37,6 +37,27 @@ _OUTPUT_COLUMNS = [
 ]
 
 
+def _assert_stable_texts(trials: pd.DataFrame) -> None:
+    text_nunique = (
+        trials.groupby("post_id", dropna=False)
+        .agg(
+            original_text_nunique=("original_text", lambda s: s.fillna("").nunique()),
+            mirror_text_nunique=("mirror_text", lambda s: s.fillna("").nunique()),
+        )
+        .reset_index()
+    )
+    bad = text_nunique[
+        (text_nunique["original_text_nunique"] != 1)
+        | (text_nunique["mirror_text_nunique"] != 1)
+    ]
+    if len(bad):
+        example_post = str(bad.iloc[0]["post_id"])
+        raise ValueError(
+            "Expected stable original/mirror text per post_id, but found conflicts. "
+            f"Example problematic post_id={example_post}."
+        )
+
+
 def _require_columns(raw: pd.DataFrame, columns: frozenset[str]) -> None:
     missing = columns - set(raw.columns)
     if missing:
@@ -133,7 +154,29 @@ def aggregate_votes_per_post(trials: pd.DataFrame) -> pd.DataFrame:
     ValueError
         When a post has conflicting original or mirror text.
     """
-    raise NotImplementedError
+    _assert_stable_texts(trials)
+    grouped = (
+        trials.groupby("post_id", dropna=False)
+        .agg(
+            n_raters=("decision", "size"),
+            n_unique_decisions=("decision", "nunique"),
+            keep_count=("decision", lambda s: int((s == "keep").sum())),
+            remove_count=("decision", lambda s: int((s == "remove").sum())),
+            original_text=("original_text", "first"),
+            mirror_text=("mirror_text", "first"),
+        )
+        .reset_index()
+    )
+    grouped["is_unanimous"] = grouped["n_unique_decisions"] == 1
+    grouped["post_id"] = grouped["post_id"].astype(str)
+    grouped["n_raters"] = grouped["n_raters"].astype(int)
+    grouped["keep_count"] = grouped["keep_count"].astype(int)
+    grouped["remove_count"] = grouped["remove_count"].astype(int)
+    grouped["n_unique_decisions"] = grouped["n_unique_decisions"].astype(int)
+    grouped["is_unanimous"] = grouped["is_unanimous"].astype(bool)
+    grouped["original_text"] = grouped["original_text"].astype(str)
+    grouped["mirror_text"] = grouped["mirror_text"].astype(str)
+    return grouped[_OUTPUT_COLUMNS].reset_index(drop=True)
 
 
 def build_per_post_votes(raw: pd.DataFrame | None = None) -> pd.DataFrame:
