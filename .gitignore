@@ -105,6 +105,10 @@ experiments/study_progress_dashboard_2026_09_11/cache/
 # Overprovisioned mixed-feed assignment cache lives in S3. Keep the local copy out of git.
 experiments/upsample_mixed_study_feeds_2026_09_11/cache/
 
+# Predict keep/remove Jev and GEPA local outputs live in S3.
+experiments/predict_keep_remove_jev_gepa_2026_09_23/outputs/
+experiments/predict_keep_remove_jev_gepa_2026_09_23/**/__pycache__/
+
 # Reasoning-during-moderation local cache and outputs live in S3.
 experiments/reasoning_during_moderation_2026_09_15/cache/
 experiments/reasoning_during_moderation_2026_09_15/outputs/
