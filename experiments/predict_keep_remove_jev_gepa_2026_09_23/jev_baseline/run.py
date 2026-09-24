@@ -364,18 +364,58 @@ def _metrics_match_reference(
     return True
 
 
+def _load_prediction_map(predictions_path: Path) -> dict[str, float]:
+    mapping: dict[str, float] = {}
+    if not predictions_path.is_file():
+        return mapping
+    with predictions_path.open(encoding="utf-8") as handle:
+        for line in handle:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            payload = json.loads(stripped)
+            mapping[str(payload["post_id"])] = float(payload["probability_remove"])
+    return mapping
+
+
+def _shared_test_post_ids(labels: pd.DataFrame, part3_cohort: pd.DataFrame) -> set[str]:
+    union_test = labels.loc[labels["split"].eq("test"), "post_id"].astype(str)
+    part3_test = part3_cohort.loc[part3_cohort["split"].eq("test"), "post_id"].astype(str)
+    return set(union_test) & set(part3_test)
+
+
+def _metrics_from_part3_predictions(
+    part3_cohort: pd.DataFrame,
+    *,
+    shared_post_ids: set[str],
+    part3_predictions_path: Path,
+) -> dict[str, float | int]:
+    part3_test = part3_cohort.loc[
+        part3_cohort["split"].eq("test") & part3_cohort["post_id"].astype(str).isin(shared_post_ids)
+    ]
+    prediction_map = _load_prediction_map(part3_predictions_path)
+    scores = [prediction_map[str(post_id)] for post_id in part3_test["post_id"]]
+    metrics = probability_metrics(
+        part3_test["label"].astype(int).tolist(),
+        scores,
+        threshold=DEFAULT_THRESHOLD,
+    )
+    return _classification_metrics_to_plain(metrics)
+
+
 def _build_shared_test_comparison(
     labels: pd.DataFrame,
     *,
     part3_cohort: pd.DataFrame,
     part3_reference_results: dict[str, Any] | None,
+    part3_predictions_path: Path,
     tolerance: float,
 ) -> dict[str, Any]:
+    shared_ids = _shared_test_post_ids(labels, part3_cohort)
     union_test = labels.loc[labels["split"].eq("test")].copy()
+    shared_union = union_test.loc[union_test["post_id"].astype(str).isin(shared_ids)]
     part3_test = part3_cohort.loc[part3_cohort["split"].eq("test")][["post_id", "label"]].copy()
     part3_test["post_id"] = part3_test["post_id"].astype(str)
-    shared_ids = set(union_test["post_id"].astype(str)) & set(part3_test["post_id"])
-    shared_union = union_test.loc[union_test["post_id"].astype(str).isin(shared_ids)]
     shared_part3 = part3_test.loc[part3_test["post_id"].isin(shared_ids)].merge(
         shared_union[["post_id", "p_remove"]],
         on="post_id",
@@ -392,22 +432,28 @@ def _build_shared_test_comparison(
         shared_part3["p_remove"].astype(float).tolist(),
         threshold=DEFAULT_THRESHOLD,
     )
-    reference_test = (
+    metrics_part3_plain = _classification_metrics_to_plain(metrics_part3_labels)
+    recomputed_part3_reference = _metrics_from_part3_predictions(
+        part3_cohort,
+        shared_post_ids=shared_ids,
+        part3_predictions_path=part3_predictions_path,
+    )
+    matches_reference = _metrics_match_reference(
+        metrics_part3_plain,
+        recomputed_part3_reference,
+        tolerance=tolerance,
+    )
+    full_part3_test_reference = (
         part3_reference_results.get("metrics_at_0_5", {}).get("test", {})
         if part3_reference_results
         else {}
     )
-    matches_reference = False
-    if reference_test:
-        matches_reference = _metrics_match_reference(
-            _classification_metrics_to_plain(metrics_part3_labels),
-            reference_test,
-            tolerance=tolerance,
-        )
     return {
         "n_shared_test_posts": len(shared_ids),
         "metrics_union_labels": _classification_metrics_to_plain(metrics_union_labels),
-        "metrics_part3_labels": _classification_metrics_to_plain(metrics_part3_labels),
+        "metrics_part3_labels": metrics_part3_plain,
+        "metrics_part3_shared_recomputed": recomputed_part3_reference,
+        "metrics_part3_full_test_reference": full_part3_test_reference,
         "matches_part3_reference": matches_reference,
     }
 
@@ -418,6 +464,7 @@ def finalize_union_ablation(
     *,
     part3_cohort: pd.DataFrame,
     part3_reference_results: dict[str, Any] | None,
+    part3_predictions_path: Path,
     scoring_counts: ScoringCounts,
     tolerance: float = SHARED_TEST_METRIC_TOLERANCE,
 ) -> dict[str, Any]:
@@ -505,6 +552,7 @@ def finalize_union_ablation(
         labels,
         part3_cohort=part3_cohort,
         part3_reference_results=part3_reference_results,
+        part3_predictions_path=part3_predictions_path,
         tolerance=tolerance,
     )
     return payload
@@ -631,6 +679,7 @@ def score_ablation(
                 cohort,
                 part3_cohort=part3_cohort,
                 part3_reference_results=part3_reference,
+                part3_predictions_path=config.part3_output_dir / jev_scorer.PREDICTIONS_FILENAME,
                 scoring_counts=scoring_counts,
             )
         else:

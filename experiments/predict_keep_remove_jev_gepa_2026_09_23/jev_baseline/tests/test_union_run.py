@@ -93,7 +93,7 @@ class TestSeedReusedPredictions:
 class TestSharedTestComparison:
     """Tests for _build_shared_test_comparison."""
 
-    def test_part3_labels_match_reference_metrics(self) -> None:
+    def test_part3_labels_match_reference_metrics(self, tmp_path: Path) -> None:
         labels = pd.DataFrame(
             {
                 "post_id": ["shared-test"],
@@ -108,6 +108,11 @@ class TestSharedTestComparison:
                 "split": ["test"],
                 "label": [1],
             }
+        )
+        part3_predictions = tmp_path / "predictions.jsonl"
+        part3_predictions.write_text(
+            json.dumps({"post_id": "shared-test", "probability_remove": 0.9}) + "\n",
+            encoding="utf-8",
         )
         reference = {
             "metrics_at_0_5": {
@@ -124,6 +129,7 @@ class TestSharedTestComparison:
             labels,
             part3_cohort=part3_cohort,
             part3_reference_results=reference,
+            part3_predictions_path=part3_predictions,
             tolerance=1e-4,
         )
 
@@ -158,6 +164,9 @@ class TestFinalizeUnionAblation:
             cohort,
             part3_cohort=part3_cohort,
             part3_reference_results=None,
+            part3_predictions_path=Path(
+                "experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_baseline/outputs/A1_pair_study_prompt/predictions.jsonl"
+            ),
             scoring_counts=ScoringCounts(posts_reused=10, posts_new_scored=5, requests_new=0),
         )
 
