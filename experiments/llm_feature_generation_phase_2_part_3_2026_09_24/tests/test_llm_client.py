@@ -10,7 +10,10 @@ import pytest
 from pydantic import BaseModel
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
+from litellm.exceptions import Timeout
+
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client import (
+    REQUEST_TIMEOUT_SECONDS,
     SpendCapExceeded,
     append_cost_log,
     complete_structured,
@@ -111,6 +114,47 @@ def test_reasoning_effort_none_passed(tmp_path: Path) -> None:
     kwargs = mock_completion.call_args.kwargs
     assert kwargs["model"] == constants.LLM_LITELLM_MODEL_ID
     assert kwargs["reasoning_effort"] == constants.LLM_REASONING_EFFORT
+
+
+def test_timeout_passthrough(tmp_path: Path) -> None:
+    """complete_structured passes a 180 second timeout to litellm.completion."""
+    payload = {"ok": True}
+    with patch(
+        "litellm.completion",
+        return_value=_mock_response(json.dumps(payload), input_tokens=10, output_tokens=5),
+    ) as mock_completion:
+        complete_structured(
+            [{"role": "user", "content": "hi"}],
+            _ProbeModel,
+            stage="discovery",
+            arm="original_only",
+            call_index=1,
+            output_dir=tmp_path,
+            run_metadata={"model": constants.LLM_MODEL_ID},
+        )
+    assert mock_completion.call_args.kwargs["timeout"] == REQUEST_TIMEOUT_SECONDS
+
+
+def test_transient_error_retries_once(tmp_path: Path) -> None:
+    """complete_structured retries once after a transient LiteLLM timeout."""
+    payload = {"ok": True}
+    with patch(
+        "litellm.completion",
+        side_effect=[
+            Timeout("request timed out", model=constants.LLM_LITELLM_MODEL_ID, llm_provider="openai"),
+            _mock_response(json.dumps(payload), input_tokens=10, output_tokens=5),
+        ],
+    ) as mock_completion:
+        complete_structured(
+            [{"role": "user", "content": "hi"}],
+            _ProbeModel,
+            stage="discovery",
+            arm="original_only",
+            call_index=1,
+            output_dir=tmp_path,
+            run_metadata={"model": constants.LLM_MODEL_ID},
+        )
+    assert mock_completion.call_count == 2
 
 
 def test_metadata_reasoning_tokens_zero(tmp_path: Path) -> None:

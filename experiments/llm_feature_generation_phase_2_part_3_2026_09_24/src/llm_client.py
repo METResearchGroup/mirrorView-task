@@ -15,12 +15,30 @@ from pathlib import Path
 from typing import Any
 
 import litellm
+from litellm.exceptions import (
+    APIConnectionError,
+    BadGatewayError,
+    InternalServerError,
+    RateLimitError,
+    ServiceUnavailableError,
+    Timeout,
+)
 from pydantic import BaseModel, Field
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 
 TOKENS_PER_MILLION = 1_000_000
 METADATA_FILENAME = "metadata.json"
+REQUEST_TIMEOUT_SECONDS = 180
+MAX_COMPLETION_ATTEMPTS = 2
+TRANSIENT_LITELLM_ERRORS = (
+    Timeout,
+    APIConnectionError,
+    RateLimitError,
+    ServiceUnavailableError,
+    InternalServerError,
+    BadGatewayError,
+)
 
 
 class SpendCapExceeded(Exception):
@@ -113,12 +131,31 @@ ALLOWED_OPENAI_PARAMS = ("reasoning_effort",)
 
 
 def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel]) -> tuple[str, Any]:
+    last_error: Exception | None = None
+    for attempt in range(MAX_COMPLETION_ATTEMPTS):
+        _ensure_under_spend_cap()
+        try:
+            return _litellm_completion(messages, response_model)
+        except TRANSIENT_LITELLM_ERRORS as exc:
+            last_error = exc
+            if attempt + 1 >= MAX_COMPLETION_ATTEMPTS:
+                raise
+    if last_error is not None:
+        raise last_error
+    raise RuntimeError("litellm completion failed without an error")
+
+
+def _litellm_completion(
+    messages: list[dict[str, str]],
+    response_model: type[BaseModel],
+) -> tuple[str, Any]:
     response = litellm.completion(
         model=constants.LLM_LITELLM_MODEL_ID,
         messages=messages,
         response_format=response_model,
         reasoning_effort=constants.LLM_REASONING_EFFORT,
         allowed_openai_params=list(ALLOWED_OPENAI_PARAMS),
+        timeout=REQUEST_TIMEOUT_SECONDS,
     )
     raw_text = response.choices[0].message.content or ""
     return raw_text, response
