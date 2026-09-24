@@ -85,3 +85,7 @@ def main() -> None:
     results_path = write_results(markdown, csv_bundle, EXPERIMENT_DIR)
     print(markdown, end="")
     print(f"\nWrote {results_path}")
+
+
+if __name__ == "__main__":
+    main()
