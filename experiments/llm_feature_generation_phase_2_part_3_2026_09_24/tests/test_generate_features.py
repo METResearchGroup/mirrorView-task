@@ -121,22 +121,25 @@ def test_smoke_runs_one_batch(tmp_path: Path, capsys: pytest.CaptureFixture[str]
     assert "batch_design=mixed" in output
 
 
-def test_production_requires_approval() -> None:
+def test_production_requires_approval(tmp_path: Path) -> None:
     """Production exits when the approval marker is missing."""
-    if APPROVAL_PATH.is_file():
-        APPROVAL_PATH.unlink()
-    with pytest.raises(SystemExit) as exc_info:
-        main(
-            [
-                "--arm",
-                "original_only",
-                "--batch-design",
-                "mixed",
-                "--production",
-                "--seed",
-                "42",
-            ]
-        )
+    missing_approval = tmp_path / "outputs" / "shared" / "approval_step3_production.json"
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.APPROVAL_PATH",
+        missing_approval,
+    ):
+        with pytest.raises(SystemExit) as exc_info:
+            main(
+                [
+                    "--arm",
+                    "original_only",
+                    "--batch-design",
+                    "mixed",
+                    "--production",
+                    "--seed",
+                    "42",
+                ]
+            )
     assert exc_info.value.code != 0
     assert "approval_step3_production.json" in str(exc_info.value)
 

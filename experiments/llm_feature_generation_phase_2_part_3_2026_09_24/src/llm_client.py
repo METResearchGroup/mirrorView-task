@@ -155,7 +155,7 @@ def _litellm_completion(
         response_format=response_model,
         reasoning_effort=constants.LLM_REASONING_EFFORT,
         allowed_openai_params=list(ALLOWED_OPENAI_PARAMS),
-        timeout=REQUEST_TIMEOUT_SECONDS,
+        timeout=float(REQUEST_TIMEOUT_SECONDS),
     )
     raw_text = response.choices[0].message.content or ""
     return raw_text, response

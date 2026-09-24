@@ -132,7 +132,7 @@ def test_timeout_passthrough(tmp_path: Path) -> None:
             output_dir=tmp_path,
             run_metadata={"model": constants.LLM_MODEL_ID},
         )
-    assert mock_completion.call_args.kwargs["timeout"] == REQUEST_TIMEOUT_SECONDS
+    assert mock_completion.call_args.kwargs["timeout"] == float(REQUEST_TIMEOUT_SECONDS)
 
 
 def test_transient_error_retries_once(tmp_path: Path) -> None:

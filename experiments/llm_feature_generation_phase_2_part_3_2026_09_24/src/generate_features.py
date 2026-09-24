@@ -129,26 +129,41 @@ def _run_batches(
     output_dir = _resolve_output_dir(args)
     run_metadata = _build_run_metadata(args)
     for call_index, batch in enumerate(batches):
-        if _batch_artifact_exists(output_dir, call_index):
-            continue
-        batch["arm"] = args.arm
-        batch["batch_design"] = args.batch_design
-        messages = build_feature_generation_messages(batch, args.arm)
-        result = complete_structured(
-            messages,
-            response_model,
-            stage="discovery",
-            arm=args.arm,
-            call_index=call_index,
-            output_dir=output_dir,
-            run_metadata=run_metadata,
+        print(f"batch_index={call_index} arm={args.arm}")
+        _run_one_batch(
+            args, batch, call_index, output_dir, run_metadata, response_model, row_builder
         )
-        artifact_paths = sorted(output_dir.glob(f"{call_index:05d}_*.json"))
-        if artifact_paths:
-            artifact_path = artifact_paths[-1]
-            merge_discovery_row(artifact_path, row_builder(batch, result))
-            write_run_metadata(output_dir, run_metadata, artifact_path)
     return output_dir
+
+
+def _run_one_batch(
+    args: argparse.Namespace,
+    batch: dict[str, Any],
+    call_index: int,
+    output_dir: Path,
+    run_metadata: dict[str, Any],
+    response_model: type[BaseModel],
+    row_builder: Any,
+) -> None:
+    if _batch_artifact_exists(output_dir, call_index):
+        return
+    batch["arm"] = args.arm
+    batch["batch_design"] = args.batch_design
+    messages = build_feature_generation_messages(batch, args.arm)
+    result = complete_structured(
+        messages,
+        response_model,
+        stage="discovery",
+        arm=args.arm,
+        call_index=call_index,
+        output_dir=output_dir,
+        run_metadata=run_metadata,
+    )
+    artifact_paths = sorted(output_dir.glob(f"{call_index:05d}_*.json"))
+    if artifact_paths:
+        artifact_path = artifact_paths[-1]
+        merge_discovery_row(artifact_path, row_builder(batch, result))
+        write_run_metadata(output_dir, run_metadata, artifact_path)
 
 
 def _resolve_output_dir(args: argparse.Namespace) -> Path:
