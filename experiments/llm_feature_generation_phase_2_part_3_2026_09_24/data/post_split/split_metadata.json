@@ -1,0 +1,13 @@
+{
+  "split_seed": 42,
+  "n_discovery": 9449,
+  "n_test": 9450,
+  "stratify_columns": [
+    "modal_decision",
+    "sampled_stance",
+    "sample_toxicity_type",
+    "in_part2_catalog"
+  ],
+  "participant_filter": "all",
+  "built_at": "2026-09-24T05:30:08.463711+00:00"
+}
