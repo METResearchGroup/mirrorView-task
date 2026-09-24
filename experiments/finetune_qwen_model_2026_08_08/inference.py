@@ -50,7 +50,23 @@ class InferMode(str, Enum):
 
 
 def _parse_chat_template_kwargs_json(raw: str | None) -> dict[str, Any] | None:
-    """Parse optional JSON chat-template kwargs from CLI."""
+    """Parse optional JSON chat-template kwargs from CLI.
+
+    Parameters
+    ----------
+    raw
+        JSON object string, or empty/``None`` to skip template kwargs.
+
+    Returns
+    -------
+    dict or None
+        Parsed kwargs for ``tokenizer.apply_chat_template``, or ``None``.
+
+    Raises
+    ------
+    SystemExit
+        If ``raw`` is not a JSON object.
+    """
     if raw is None or not raw.strip():
         return None
     parsed = json.loads(raw)
@@ -106,7 +122,28 @@ def run_inference(
     model_id: str,
     chat_template_kwargs: dict[str, Any] | None,
 ) -> None:
-    """Generate predictions and write the prediction CSV."""
+    """Generate predictions and write the prediction CSV.
+
+    Parameters
+    ----------
+    chat_jsonl
+        Input chat records with gold assistant turns.
+    output_csv
+        Destination prediction CSV path.
+    mode
+        Baseline base model or adapter-augmented inference.
+    adapter_dir
+        LoRA adapter directory when ``mode`` is ``ADAPTER``.
+    limit
+        Optional row cap for smoke runs.
+    upload_preds
+        Upload ``output_csv`` parent to ``PREDS_S3_URI`` when set.
+    model_id
+        Hugging Face model id for tokenizer and base weights.
+    chat_template_kwargs
+        Optional kwargs forwarded to ``apply_chat_template`` when rendering
+        prompts (for example ``enable_thinking=False``).
+    """
     hf_token = _require_hf_token()
     if mode is InferMode.ADAPTER and adapter_dir is None:
         raise SystemExit("--adapter-dir is required for --mode adapter")
@@ -215,7 +252,26 @@ def run_both_splits(
     model_id: str,
     chat_template_kwargs: dict[str, Any] | None,
 ) -> None:
-    """Write train_labels.csv and test_labels.csv for one arm."""
+    """Write train and test prediction CSVs for one inference arm.
+
+    Parameters
+    ----------
+    data_dir
+        Directory containing ``chat_train.jsonl`` and ``chat_test.jsonl``.
+    output_dir
+        Directory for ``train_labels.csv`` and ``test_labels.csv``.
+    mode
+        Baseline or adapter inference arm.
+    adapter_dir
+        LoRA adapter directory when ``mode`` is ``ADAPTER``.
+    limit
+        Optional per-split row cap for smoke runs.
+    model_id
+        Hugging Face model id for tokenizer and base weights.
+    chat_template_kwargs
+        Optional kwargs forwarded to ``apply_chat_template`` when rendering
+        prompts.
+    """
     for split_name, jsonl_name in (
         ("train", "chat_train.jsonl"),
         ("test", "chat_test.jsonl"),

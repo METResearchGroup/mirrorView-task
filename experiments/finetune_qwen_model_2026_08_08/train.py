@@ -64,7 +64,23 @@ def _set_seeds(seed: int) -> None:
 
 
 def _parse_chat_template_kwargs_json(raw: str | None) -> dict[str, Any] | None:
-    """Parse optional JSON chat-template kwargs from CLI."""
+    """Parse optional JSON chat-template kwargs from CLI.
+
+    Parameters
+    ----------
+    raw
+        JSON object string, or empty/``None`` to skip template kwargs.
+
+    Returns
+    -------
+    dict or None
+        Parsed kwargs for ``tokenizer.apply_chat_template``, or ``None``.
+
+    Raises
+    ------
+    SystemExit
+        If ``raw`` is not a JSON object.
+    """
     if raw is None or not raw.strip():
         return None
     parsed = json.loads(raw)
@@ -79,12 +95,26 @@ def _bind_chat_template_kwargs(
     tokenizer: Any,
     chat_template_kwargs: dict[str, Any] | None,
 ) -> Any:
-    """Wrap tokenizer.apply_chat_template when kwargs are provided."""
+    """Wrap ``apply_chat_template`` so default kwargs apply to every call.
+
+    Parameters
+    ----------
+    tokenizer
+        Hugging Face tokenizer to patch in place.
+    chat_template_kwargs
+        Default kwargs merged into each ``apply_chat_template`` call.
+
+    Returns
+    -------
+    Any
+        The same tokenizer (unchanged when ``chat_template_kwargs`` is empty).
+    """
     if not chat_template_kwargs:
         return tokenizer
     original_apply = tokenizer.apply_chat_template
 
     def apply_chat_template(messages, *args, **kwargs):
+        """Apply the chat template with merged default kwargs."""
         merged = dict(chat_template_kwargs)
         extra = kwargs.pop("chat_template_kwargs", None) or {}
         merged.update(extra)
@@ -164,7 +194,22 @@ def run_training(
     max_steps: int | None,
     chat_template_kwargs: dict[str, Any] | None,
 ) -> None:
-    """Execute LoRA SFT on chat_train only."""
+    """Execute LoRA SFT on chat_train only.
+
+    Parameters
+    ----------
+    train_jsonl
+        Chat JSONL with ``messages`` records for SFT.
+    output_dir
+        Directory for adapter checkpoints and trainer artifacts.
+    hyperparams
+        Frozen training hyperparameters.
+    max_steps
+        Optional smoke cap on trainer steps.
+    chat_template_kwargs
+        Optional kwargs forwarded to ``apply_chat_template`` during
+        tokenization (for example ``enable_thinking=False``).
+    """
     hf_token = _require_hf_token()
     wandb_key = _require_wandb_api_key()
     os.environ["WANDB_API_KEY"] = wandb_key

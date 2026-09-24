@@ -155,6 +155,20 @@ def balance_split_posts(
 
 
 def _validate_split_frame(frame: pd.DataFrame, name: str) -> None:
+    """Require required columns, unique ``message_id``, and balanced keep/remove.
+
+    Parameters
+    ----------
+    frame
+        Split frame to validate.
+    name
+        Label used in ``ValueError`` messages.
+
+    Raises
+    ------
+    ValueError
+        If columns are missing, ids repeat, or keep/remove counts differ.
+    """
     missing = [col for col in REQUIRED_COLUMNS if col not in frame.columns]
     if missing:
         raise ValueError(f"{name} missing columns: {missing}")

@@ -226,6 +226,7 @@ def write_cross_eval_csv(path: Path, rows: list[dict[str, float | int | str]]) -
 
 
 def _label_counts(frame: pd.DataFrame) -> tuple[int, int, int]:
+    """Return total rows, remove count, and keep count for a label frame."""
     row_count = len(frame)
     remove_count = int((frame["keep_remove_label"] == 1).sum())
     keep_count = row_count - remove_count
@@ -273,10 +274,12 @@ def load_split_counts(part3_root: Path) -> dict[str, int]:
 def _row_lookup(
     rows: list[dict[str, float | int | str]],
 ) -> dict[tuple[str, str], dict[str, float | int | str]]:
+    """Index cross-eval rows by ``(arm, test_set)``."""
     return {(str(row["arm"]), str(row["test_set"])): row for row in rows}
 
 
 def _format_f1_with_ci(row: dict[str, float | int | str]) -> str:
+    """Format remove-F1 with bootstrap CI as ``f1 [low, high]``."""
     return (
         f"{format_metric(float(row['f1']))} "
         f"[{format_metric(float(row['f1_ci_low']))}, "
@@ -285,6 +288,7 @@ def _format_f1_with_ci(row: dict[str, float | int | str]) -> str:
 
 
 def _summary_paragraph(rows: list[dict[str, float | int | str]]) -> str:
+    """Write a short summary naming the best arm and any invalid generations."""
     best_row = max(rows, key=lambda row: float(row["f1"]))
     best_arm = MATRIX_ARM_LABELS[str(best_row["arm"])]
     best_test = TEST_SET_LABELS[str(best_row["test_set"])]
