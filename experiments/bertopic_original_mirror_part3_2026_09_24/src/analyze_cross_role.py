@@ -19,10 +19,16 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from scipy.stats import binomtest
+from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics import adjusted_rand_score, normalized_mutual_info_score
 from statsmodels.stats.multitest import multipletests
 
+from experiments.bertopic_original_mirror_part3_2026_09_24.src import data as data_mod
 from experiments.bertopic_original_mirror_part3_2026_09_24.src import paths
+from experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings import (
+    EMBEDDINGS_FILENAME,
+    INDEX_FILENAME,
+)
 
 NOISE_TOPIC_ID = -1
 ROLE_SHARE_LOW = 0.35
@@ -34,6 +40,8 @@ DEFAULT_BOOTSTRAP_N = 1000
 DEFAULT_SEED = 42
 CI_LOW_PERCENTILE = 2.5
 CI_HIGH_PERCENTILE = 97.5
+VECTORIZER_MIN_DF = 2
+Q4_COLUMNS = ["topic", "term", "role", "rank", "log_odds", "count_original", "count_mirror"]
 
 
 def apply_bh_fdr(pvalues: list[float]) -> np.ndarray:
@@ -190,6 +198,8 @@ def top_contrast_terms(
 ) -> pd.DataFrame:
     """Keep the top terms favoring each role inside one topic."""
     terms = sorted(set(original_counts) | set(mirror_counts))
+    if not terms:
+        return pd.DataFrame(columns=["topic", "term", "role", "rank", "log_odds", "count_original", "count_mirror"])
     n_o = sum(original_counts.values())
     n_m = sum(mirror_counts.values())
     rows = []
@@ -242,6 +252,99 @@ def q2_agreement_table(pairs: pd.DataFrame, bootstrap_n: int, seed: int) -> pd.D
     return pd.DataFrame(rows)
 
 
+def keyword_count_map(texts: list[str]) -> dict[str, int]:
+    """Token counts for one role inside one topic, with English stopwords.
+
+    Terms must appear in at least two documents. Fewer than two documents
+    yields an empty map.
+    """
+    usable = [text for text in texts if isinstance(text, str) and text.strip()]
+    if len(usable) < VECTORIZER_MIN_DF:
+        return {}
+    vectorizer = CountVectorizer(stop_words="english", min_df=VECTORIZER_MIN_DF)
+    try:
+        matrix = vectorizer.fit_transform(usable)
+    except ValueError:
+        return {}
+    totals = np.asarray(matrix.sum(axis=0)).ravel()
+    return {
+        term: int(count)
+        for term, count in zip(vectorizer.get_feature_names_out(), totals)
+        if int(count) > 0
+    }
+
+
+def compute_q4_keyword_contrast(joint_assignments: pd.DataFrame, corpus: pd.DataFrame) -> pd.DataFrame:
+    """Log-odds keyword contrast for each non-noise joint topic."""
+    joined = joint_assignments.merge(
+        corpus[["post_id", "text_role", "text"]],
+        on=["post_id", "text_role"],
+        how="inner",
+    )
+    frames = []
+    for topic, group in joined.groupby("topic"):
+        if int(topic) == NOISE_TOPIC_ID:
+            continue
+        original_texts = group.loc[group["text_role"] == "original", "text"].astype(str).tolist()
+        mirror_texts = group.loc[group["text_role"] == "mirror", "text"].astype(str).tolist()
+        contrast = top_contrast_terms(
+            int(topic),
+            keyword_count_map(original_texts),
+            keyword_count_map(mirror_texts),
+        )
+        if not contrast.empty:
+            frames.append(contrast)
+    if not frames:
+        return pd.DataFrame(columns=Q4_COLUMNS)
+    return pd.concat(frames, ignore_index=True)[Q4_COLUMNS]
+
+
+def _vectors_by_post_id(role: str) -> dict[str, np.ndarray]:
+    """Titan vectors for one text role, keyed by post id."""
+    cache = paths.embeddings_dir(role)
+    matrix = np.load(cache / EMBEDDINGS_FILENAME)
+    index = pd.read_parquet(cache / INDEX_FILENAME)
+    return {str(row.post_id): matrix[int(row.row_id)] for row in index.itertuples(index=False)}
+
+
+def centroids_for_assignments(
+    assignments: pd.DataFrame,
+    vectors: dict[str, np.ndarray],
+) -> tuple[list[int], np.ndarray]:
+    """L2-normalized mean embedding per non-noise topic."""
+    sums: dict[int, np.ndarray] = {}
+    counts: dict[int, int] = {}
+    width = next(iter(vectors.values())).shape[0] if vectors else 0
+    for row in assignments.itertuples(index=False):
+        topic = int(row.topic)
+        if topic == NOISE_TOPIC_ID:
+            continue
+        vector = vectors.get(str(row.post_id))
+        if vector is None:
+            continue
+        if topic not in sums:
+            sums[topic] = np.zeros(width, dtype=np.float64)
+            counts[topic] = 0
+        sums[topic] = sums[topic] + np.asarray(vector, dtype=np.float64)
+        counts[topic] += 1
+    topic_ids = sorted(sums)
+    rows = []
+    for topic in topic_ids:
+        mean = sums[topic] / counts[topic]
+        norm = float(np.linalg.norm(mean))
+        rows.append(mean / norm if norm else mean)
+    if not rows:
+        return [], np.zeros((0, width))
+    return topic_ids, np.vstack(rows)
+
+
+def _single_role_assignments(assignments: pd.DataFrame, role: str) -> pd.DataFrame:
+    """Keep one text role when a run stores both."""
+    if "text_role" not in assignments.columns:
+        return assignments
+    return assignments.loc[assignments["text_role"] == role].copy()
+
+
 def run_cross_role_analysis(
     original_topics_run_dir: Path,
     mirror_topics_run_dir: Path,
@@ -253,22 +356,23 @@ def run_cross_role_analysis(
 ) -> Path:
     """Write Q2 to Q4 tables for one set of production runs.
 
-    Centroid ARI uses topic ids on paired posts after Hungarian matching of
-    the similarity matrix stored by the caller when centroids are unavailable
-    in this entrypoint's unit tests. Live runs build centroids from the
-    embedding caches and assignments.
+    Separate-model ARI remaps mirror topic ids with Hungarian matching on
+    topic-centroid cosine similarity. Pair agreement still uses the original
+    model's ``transform`` assignments.
     """
     pairs = pd.read_parquet(mirror_assignments_run_dir / "pair_assignments.parquet")
     joint = pd.read_parquet(joint_topics_run_dir / "assignments.parquet")
     agreement = q2_agreement_table(pairs, bootstrap_n, seed)
     shares = role_share_table(joint)
     coassignment = pair_coassignment_rate(joint)
+    contrast = compute_q4_keyword_contrast(joint, data_mod.load_fit_corpus("joint"))
     run_dir = output_dir or (paths.analyses_dir() / "cross_role" / paths.new_run_timestamp())
     run_dir.mkdir(parents=True, exist_ok=True)
     agreement.to_parquet(run_dir / "q2_pair_agreement.parquet", index=False)
     shares.to_parquet(run_dir / "q3_role_shares.parquet", index=False)
+    contrast.to_parquet(run_dir / "q4_keyword_contrast.parquet", index=False)
     (run_dir / "q3_coassignment.json").write_text(json.dumps(coassignment, indent=2) + "\n", encoding="utf-8")
-    ari_payload = _ari_from_saved_assignments(original_topics_run_dir, mirror_topics_run_dir, pairs)
+    ari_payload = _ari_from_saved_assignments(original_topics_run_dir, mirror_topics_run_dir)
     (run_dir / "q2_ari_nmi.json").write_text(json.dumps(ari_payload, indent=2) + "\n", encoding="utf-8")
     summary = {
         "q2": {
@@ -296,41 +400,74 @@ def run_cross_role_analysis(
     return run_dir
 
 
+def _remap_mirror_topic(topic: int, mirror_to_original: dict[int, int]) -> int:
+    """Map a mirror topic onto the original id space without id collisions."""
+    if topic in mirror_to_original:
+        return mirror_to_original[topic]
+    if topic == NOISE_TOPIC_ID:
+        return NOISE_TOPIC_ID
+    return -(topic + 2)
+
+
 def _ari_from_saved_assignments(
     original_topics_run_dir: Path,
     mirror_topics_run_dir: Path,
-    pairs: pd.DataFrame,
 ) -> dict:
-    """ARI/NMI on paired topic ids. Identity mapping when topic sets match.
+    """ARI/NMI after Hungarian matching of topic centroids.
 
-    Full centroid Hungarian matching runs when both embedding caches exist.
-    This fallback still reports ARI on the raw topic ids so the artifact exists
-    even before centroids are joined.
+    Centroids are mean Titan embeddings of non-noise documents. Unmatched
+    mirror topics keep a private id so they cannot collide with an original topic.
     """
-    original = pd.read_parquet(original_topics_run_dir / "assignments.parquet")
-    mirror = pd.read_parquet(mirror_topics_run_dir / "assignments.parquet")
-    original_ids = sorted(int(topic) for topic in original["topic"].unique() if int(topic) != NOISE_TOPIC_ID)
-    mirror_ids = sorted(int(topic) for topic in mirror["topic"].unique() if int(topic) != NOISE_TOPIC_ID)
-    mapping = {topic: topic for topic in original_ids if topic in set(mirror_ids)}
-    labeled = pairs.loc[
-        (pairs["original_topic"] != NOISE_TOPIC_ID) & (pairs["mirror_topic"] != NOISE_TOPIC_ID)
+    original = _single_role_assignments(
+        pd.read_parquet(original_topics_run_dir / "assignments.parquet"),
+        "original",
+    )
+    mirror = _single_role_assignments(
+        pd.read_parquet(mirror_topics_run_dir / "assignments.parquet"),
+        "mirror",
+    )
+    paired = original[["post_id", "topic"]].merge(
+        mirror[["post_id", "topic"]],
+        on="post_id",
+        suffixes=("_original", "_mirror"),
+    )
+    original_ids, original_centroids = centroids_for_assignments(original, _vectors_by_post_id("original"))
+    mirror_ids, mirror_centroids = centroids_for_assignments(mirror, _vectors_by_post_id("mirror"))
+    if not original_ids or not mirror_ids or paired.empty:
+        return {
+            "n_pairs": int(len(paired)),
+            "n_original_topics_matched": 0,
+            "n_mirror_topics_matched": 0,
+            "ari": 0.0,
+            "nmi": 0.0,
+            "matching": "hungarian_centroid",
+            "topic_mapping": [],
+        }
+    similarity = original_centroids @ mirror_centroids.T
+    forward = match_topics_hungarian(similarity, original_ids, mirror_ids)
+    mirror_to_original = {mirror_topic: original_topic for original_topic, mirror_topic in forward.items()}
+    remapped = [
+        _remap_mirror_topic(int(topic), mirror_to_original) for topic in paired["topic_mirror"].tolist()
     ]
-    if labeled.empty or not mapping:
-        ari = 0.0
-        nmi = 0.0
-    else:
-        ari = ari_after_mapping(labeled["original_topic"].tolist(), labeled["mirror_topic"].tolist(), mapping)
-        nmi = nmi_after_mapping(labeled["original_topic"].tolist(), labeled["mirror_topic"].tolist(), mapping)
+    original_labels = [int(topic) for topic in paired["topic_original"].tolist()]
+    original_index = {topic: index for index, topic in enumerate(original_ids)}
+    mirror_index = {topic: index for index, topic in enumerate(mirror_ids)}
+    topic_mapping = [
+        {
+            "original_topic": int(original_topic),
+            "mirror_topic": int(mirror_topic),
+            "cosine_sim": float(similarity[original_index[original_topic], mirror_index[mirror_topic]]),
+        }
+        for original_topic, mirror_topic in forward.items()
+    ]
     return {
-        "n_pairs": int(len(labeled)),
-        "n_original_topics_matched": len(mapping),
-        "n_mirror_topics_matched": len(mapping),
-        "ari": ari,
-        "nmi": nmi,
-        "topic_mapping": [
-            {"original_topic": original_topic, "mirror_topic": mirror_topic, "cosine_sim": None}
-            for original_topic, mirror_topic in mapping.items()
-        ],
+        "n_pairs": int(len(paired)),
+        "n_original_topics_matched": len(forward),
+        "n_mirror_topics_matched": len(forward),
+        "ari": float(adjusted_rand_score(original_labels, remapped)),
+        "nmi": float(normalized_mutual_info_score(original_labels, remapped)),
+        "matching": "hungarian_centroid",
+        "topic_mapping": topic_mapping,
     }
 
 
