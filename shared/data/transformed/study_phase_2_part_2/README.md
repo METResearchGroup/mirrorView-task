@@ -5,7 +5,9 @@ Materialized CSVs derived from the raw Part 2 results.
 ## Source
 
 - Registry: `STUDY_PHASE_2_PART_2_RESULTS_FULL`
-- Path: `shared/data/raw/study_phase_2_part_2/results/full.csv`
+- S3 key: `shared/data/raw/study_phase_2_part_2/results/full.csv` in `mirrorview-experimental-artifacts`
+
+`load_dataset` reads that object. A regenerated local CSV is not visible until it is uploaded to the same key.
 
 ## Scripts
 

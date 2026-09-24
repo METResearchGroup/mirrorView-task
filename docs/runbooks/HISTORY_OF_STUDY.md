@@ -207,11 +207,15 @@ The June catalog still needed more labels, so this run added a new 10,000-post c
 
 [Pull request 286](https://github.com/METResearchGroup/mirrorView-task/pull/286) records the 2026-09-22 snapshot. Prolific finished 3,875 of 3,879 feeds (99.9%). A listing that day found 3,975 session files, the same count as 2026-09-21, so no new finishes had landed in about 30 hours. Collection is treated as complete. The export has 3,875 Prolific accounts. Scored labels are 79,500, which is 102.5% of the 77,580 slot target. User-mean keep rate is 69.6%. Democrat and Republican remove rates sit close together inside each toxicity band.
 
-The data for this phase is in [this folder](../../shared/data/raw/study_phase_2_part_3). The flips shown to users are in [this path](../../shared/data/raw/study_phase_2_part_3/stimuli/flips.csv). The session export is in [this path](../../shared/data/raw/study_phase_2_part_3/results/full.csv) (131,175 rows, including instructions and surveys). Of the moderation rows, 79,500 have phase 1. Each of the 3,975 session files also has one practice moderation row. That row has an empty phase and no post id, so it is not in the 79,500 scored labels. Load the tables with `load_dataset` as `STUDY_PHASE_2_PART_3_STIMULI` and `STUDY_PHASE_2_PART_3_RESULTS_FULL`.
+The data for this phase is in `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_3/`. The flips shown to users are `stimuli/flips.csv`. The session export is `results/full.csv` (131,175 rows, including instructions and surveys). Of the moderation rows, 79,500 have phase 1. Each of the 3,975 session files also has one practice moderation row. That row has an empty phase and no post id, so it is not in the 79,500 scored labels. Load the tables with `load_dataset` as `STUDY_PHASE_2_PART_3_STIMULI` and `STUDY_PHASE_2_PART_3_RESULTS_FULL`.
+
+The full linked-fate dataset is both collections together, in `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The session table is `results/full.csv`: 168,871 rows and 5,051 Prolific accounts. The stimulus catalog is `stimuli/flips.csv`: 20,000 unique posts, the 10,000 June posts plus the 10,000 September posts. The 8,899 overlapping catalog keys match, and the combined file keeps the June row. Load them with `load_dataset` as `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_2_AND_3_STIMULI`. Every registered study CSV uses the same bucket, with the repo-relative path as the object key.
 
 Progress tables for this run are in the [study progress dashboard](../../experiments/study_progress_dashboard_2026_09_11/RESULTS.md).
 
 ## Latest work
+
+(2026-09-24) The June and September collections load as one combined study dataset. Study CSVs under `shared/data/` are in `s3://mirrorview-experimental-artifacts/` at those same paths. See Study Phase 2, Part 3 above.
 
 (2026-09-22) The September 2026 collection is in the shared data loader. See Study Phase 2, Part 3 above. The study progress dashboard is at `/study-progress`.
 
