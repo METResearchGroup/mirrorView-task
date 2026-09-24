@@ -96,6 +96,11 @@ def write_cross_eval_csv(path: Path, rows: list[dict[str, float | int | str]]) -
     raise NotImplementedError
 
 
+def load_split_counts(part3_root: Path) -> dict[str, int]:
+    """Load split and balanced row counts from manifest and CSVs."""
+    raise NotImplementedError
+
+
 def render_results_markdown(
     rows: list[dict[str, float | int | str]],
     split_counts: dict[str, int],
@@ -133,7 +138,7 @@ def main(argv: list[str] | None = None) -> None:
     rows = score_all_arms()
     write_cross_eval_csv(Path(args.cross_eval_csv), rows)
     results_path = Path(args.write_results)
-    split_counts = {}
+    split_counts = load_split_counts(PART3_ROOT)
     markdown = render_results_markdown(rows, split_counts)
     results_path.parent.mkdir(parents=True, exist_ok=True)
     results_path.write_text(markdown, encoding="utf-8")
