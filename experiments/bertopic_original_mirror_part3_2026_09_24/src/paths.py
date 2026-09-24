@@ -91,6 +91,11 @@ def ablations_dir() -> Path:
     return EXPERIMENT_ROOT / "outputs" / "ablations"
 
 
+def assignments_dir() -> Path:
+    """Return the mirror-via-original assignment directory."""
+    return EXPERIMENT_ROOT / "outputs" / "assignments" / "mirror_via_original"
+
+
 def dedupe_report_path() -> Path:
     """Return the path of the dedupe report JSON."""
     return EXPERIMENT_ROOT / "outputs" / "dedupe_report.json"

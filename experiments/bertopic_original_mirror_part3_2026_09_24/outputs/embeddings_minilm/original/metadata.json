@@ -1,0 +1,11 @@
+{
+  "text_role": "original",
+  "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+  "dimensions": 384,
+  "normalize": true,
+  "n_rows": 18899,
+  "n_expected": 18899,
+  "source": "local_compute",
+  "corpus": "study_phase_2_part_3_stimuli_full",
+  "dedupe_applied": false
+}
