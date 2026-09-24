@@ -315,7 +315,10 @@ def write_keep_remove_labels(path: Path = OUTPUT_CSV) -> pd.DataFrame:
     pandas.DataFrame
         The frame written to disk.
     """
-    raise NotImplementedError
+    labels = build_keep_remove_labels()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    labels.to_csv(path, index=False)
+    return labels
 
 
 if __name__ == "__main__":
