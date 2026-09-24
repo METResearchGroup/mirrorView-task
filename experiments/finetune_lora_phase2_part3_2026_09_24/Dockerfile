@@ -21,7 +21,7 @@ RUN pip install --upgrade pip && \
       "datasets>=3.0.0" \
       "accelerate>=1.0.0" \
       "peft>=0.14.0" \
-      "trl>=0.15.0" \
+      "trl>=0.15.0,<1.10" \
       "scikit-learn>=1.5.0" \
       "wandb>=0.18.0" \
       "pyyaml>=6.0" \
