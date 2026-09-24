@@ -58,8 +58,32 @@ def format_counts_table(
 def format_proportions_table(
     table: pd.DataFrame, decision_rows: tuple[str, ...], decimals: int
 ) -> str:
-    """Format a proportion crosstab as a markdown pipe table."""
-    raise NotImplementedError
+    """Format a proportion crosstab as a markdown pipe table.
+
+    Parameters
+    ----------
+    table
+        Float proportion crosstab indexed by decision rows.
+    decision_rows
+        Row order for the markdown table.
+    decimals
+        Fixed decimal places for each proportion cell.
+
+    Returns
+    -------
+    str
+        Markdown pipe table with fixed-decimal proportion cells.
+    """
+    columns = list(table.columns)
+    header = "| decision | " + " | ".join(columns) + " |"
+    separator = "|---|" + "|".join(["---:"] * len(columns)) + "|"
+    lines = [header, separator]
+    for decision in decision_rows:
+        cells = " | ".join(
+            f"{float(table.loc[decision, col]):.{decimals}f}" for col in columns
+        )
+        lines.append(f"| {decision} | {cells} |")
+    return "\n".join(lines)
 
 
 def format_four_cell_table(
