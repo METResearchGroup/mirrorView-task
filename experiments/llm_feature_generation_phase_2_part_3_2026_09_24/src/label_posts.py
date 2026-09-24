@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -341,10 +342,11 @@ def _summarize_smoke_run(run_dir: Path, features: list[dict[str, Any]]) -> dict[
 def _resolve_production_run_dir() -> Path:
     parent = paths.shared_label_dir()
     parent.mkdir(parents=True, exist_ok=True)
+    run_dir_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}T")
     existing = sorted(
         child
         for child in parent.iterdir()
-        if child.is_dir() and not child.name.startswith("INVALID_") and not child.name.startswith("smoke_")
+        if child.is_dir() and run_dir_pattern.match(child.name)
     )
     if existing:
         return existing[-1]
