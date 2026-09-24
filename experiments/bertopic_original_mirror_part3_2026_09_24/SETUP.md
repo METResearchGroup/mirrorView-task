@@ -12,7 +12,18 @@ Install the topic-model extra:
 uv sync --extra bertopic
 ```
 
-Embedding backfill (Step 3) needs AWS credentials:
+Stage 1 caches Titan and MiniLM vectors for all 18,899 stimulus posts, before dedupe:
+
+```bash
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_original_mirror_part3_2026_09_24/src/load_embeddings.py \
+  --text-role original --refresh-from-identity-cache --backfill
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_original_mirror_part3_2026_09_24/src/load_embeddings_minilm.py \
+  --text-role original
+```
+
+Repeat both commands with `--text-role mirror`. Embedding backfill needs AWS credentials:
 
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
