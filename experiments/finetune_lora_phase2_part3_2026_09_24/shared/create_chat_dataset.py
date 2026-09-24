@@ -10,46 +10,21 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import pandas as pd
+from experiments.finetune_qwen_model_2026_08_08.src.create_chat_dataset import (
+    row_to_chat_record,
+    write_chat_jsonl,
+)
 
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = EXPERIMENT_ROOT / "data"
 
-
-def row_to_chat_record(row: pd.Series) -> dict:
-    """Build one chat JSONL record from a split CSV row.
-
-    Parameters
-    ----------
-    row
-        Row with ``message_id``, ``original_text``, ``mirror_text``, ``decision``.
-
-    Returns
-    -------
-    dict
-        Chat record with ``message_id`` and three-role ``messages``.
-    """
-    raise NotImplementedError
-
-
-def write_chat_jsonl(csv_path: Path, jsonl_path: Path, force: bool) -> int:
-    """Convert a split CSV to chat JSONL.
-
-    Parameters
-    ----------
-    csv_path
-        Source train or test CSV.
-    jsonl_path
-        Destination JSONL path.
-    force
-        Overwrite when True.
-
-    Returns
-    -------
-    int
-        Number of rows written.
-    """
-    raise NotImplementedError
+CHAT_OUTPUTS = (
+    (EXPERIMENT_ROOT / "experiment1_unanimous/data/train.csv", EXPERIMENT_ROOT / "experiment1_unanimous/data/chat_train.jsonl"),
+    (EXPERIMENT_ROOT / "experiment2_modal/data/train.csv", EXPERIMENT_ROOT / "experiment2_modal/data/chat_train.jsonl"),
+    (EXPERIMENT_ROOT / "experiment3_modal_size_matched/data/train.csv", EXPERIMENT_ROOT / "experiment3_modal_size_matched/data/chat_train.jsonl"),
+    (DATA_DIR / "test_unanimous.csv", DATA_DIR / "chat_test_unanimous.jsonl"),
+    (DATA_DIR / "test_modal.csv", DATA_DIR / "chat_test_modal.jsonl"),
+)
 
 
 def create_chat_datasets(force: bool) -> None:
@@ -60,7 +35,11 @@ def create_chat_datasets(force: bool) -> None:
     force
         Overwrite existing JSONL outputs when True.
     """
-    raise NotImplementedError
+    for csv_path, jsonl_path in CHAT_OUTPUTS:
+        if not csv_path.is_file():
+            raise FileNotFoundError(csv_path)
+        row_count = write_chat_jsonl(csv_path, jsonl_path, force=force)
+        print(f"Wrote {jsonl_path} ({row_count} rows)")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
