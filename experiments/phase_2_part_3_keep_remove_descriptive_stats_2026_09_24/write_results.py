@@ -11,6 +11,10 @@ from pathlib import Path
 
 import pandas as pd
 
+from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.platform_rates import (
+    PROPORTION_DECIMALS,
+)
+
 OUTPUT_CSV_NAMES = (
     "platform_counts.csv",
     "platform_proportions.csv",
@@ -89,13 +93,45 @@ def format_proportions_table(
 def format_four_cell_table(
     cell_counts: pd.DataFrame, cell_shares: pd.DataFrame
 ) -> str:
-    """Format the four-cell count and share table."""
-    raise NotImplementedError
+    """Format the four-cell count and share table.
+
+    Parameters
+    ----------
+    cell_counts
+        Frame with ``cell`` and ``count`` columns.
+    cell_shares
+        Frame with ``cell`` and ``share`` columns.
+
+    Returns
+    -------
+    str
+        Markdown table with header ``| cell | count | share |``.
+    """
+    merged = cell_counts.merge(cell_shares[["cell", "share"]], on="cell")
+    lines = ["| cell | count | share |", "|---|---:|---:|"]
+    for _, row in merged.iterrows():
+        share_text = f"{float(row['share']):.{PROPORTION_DECIMALS}f}"
+        lines.append(f"| {row['cell']} | {int(row['count'])} | {share_text} |")
+    return "\n".join(lines)
 
 
 def format_funnel_table(funnel: pd.DataFrame) -> str:
-    """Format the vote funnel metric table."""
-    raise NotImplementedError
+    """Format the vote funnel metric table.
+
+    Parameters
+    ----------
+    funnel
+        Frame with ``metric`` and ``count`` columns.
+
+    Returns
+    -------
+    str
+        Markdown table with header ``| metric | count |``.
+    """
+    lines = ["| metric | count |", "|---|---:|"]
+    for _, row in funnel.iterrows():
+        lines.append(f"| {row['metric']} | {int(row['count'])} |")
+    return "\n".join(lines)
 
 
 def format_results_markdown(
