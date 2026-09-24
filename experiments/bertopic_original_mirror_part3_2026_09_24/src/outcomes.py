@@ -46,18 +46,17 @@ def cluster_bootstrap_keep_rate_by_topic(
     unique_topics = sorted(int(topic) for topic in pd.unique(topics))
     rng = np.random.default_rng(seed)
     draws = rng.integers(0, len(frame), size=(n_bootstrap, len(frame)))
+    drawn_topics = topics[draws]
+    drawn_rates = rates[draws]
     rows = []
     for topic in unique_topics:
         member = topics == topic
         point = float(rates[member].mean())
-        boot_rates = []
-        for draw in draws:
-            drawn_topics = topics[draw]
-            drawn_rates = rates[draw]
-            selected = drawn_rates[drawn_topics == topic]
-            boot_rates.append(float(selected.mean()) if len(selected) else np.nan)
-        finite = np.asarray(boot_rates, dtype=np.float64)
-        finite = finite[np.isfinite(finite)]
+        selected = drawn_topics == topic
+        counts = selected.sum(axis=1)
+        sums = (drawn_rates * selected).sum(axis=1)
+        boot_rates = np.divide(sums, counts, out=np.full(n_bootstrap, np.nan), where=counts > 0)
+        finite = boot_rates[np.isfinite(boot_rates)]
         rows.append(
             {
                 "topic": topic,

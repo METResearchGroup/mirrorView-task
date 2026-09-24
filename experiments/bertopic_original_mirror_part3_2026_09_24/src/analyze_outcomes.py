@@ -119,10 +119,29 @@ def run_analyze_outcomes(
         "overall_keep_rate": overall,
     }
     (run_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-    _write_bar(by_topic, "topic", "keep_rate", figures / "keep_rate_by_topic_original")
-    _write_bar(by_topic_joint, "topic", "keep_rate", figures / "keep_rate_by_topic_joint")
+    facet_table = pd.concat(facet_frames, ignore_index=True)
+    _write_outcome_figures(figures, by_topic, by_topic_joint, party, facet_table)
     print(f"outcomes_run_dir={run_dir}")
     return run_dir
+
+
+def _write_outcome_figures(
+    figures: Path,
+    by_topic: pd.DataFrame,
+    by_topic_joint: pd.DataFrame,
+    party: pd.DataFrame,
+    facet_table: pd.DataFrame,
+) -> None:
+    """Topic, party, and facet keep-rate charts."""
+    _write_bar(by_topic, "topic", "keep_rate", figures / "keep_rate_by_topic_original")
+    _write_bar(by_topic_joint, "topic", "keep_rate", figures / "keep_rate_by_topic_joint")
+    for party_name, subset in party.groupby("party_group"):
+        _write_bar(subset, "topic", "keep_rate", figures / f"keep_rate_by_topic_party_{party_name}")
+    for facet in FACETS:
+        subset = facet_table.loc[facet_table["facet"] == facet]
+        if subset.empty:
+            continue
+        _write_bar(subset, "topic", "keep_rate", figures / f"keep_rate_facet_{facet}", color="facet_value")
 
 
 def _linked_fate_ratings() -> pd.DataFrame:
