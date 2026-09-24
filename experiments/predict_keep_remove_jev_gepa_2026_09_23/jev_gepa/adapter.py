@@ -23,6 +23,12 @@ ViewName = Literal["pair", "original", "mirror"]
 DEFAULT_THRESHOLD = 0.5
 DEFAULT_BATCH_SIZE = 10
 REMOVE_LABEL = 1
+ASYMMETRIC_REWARDS = {
+    "tp": 1.0,
+    "fn": -3.0,
+    "fp": -1.0,
+    "tn": 0.5,
+}
 
 
 @dataclass(frozen=True)
@@ -123,6 +129,17 @@ class JevGepaAdapter:
             return p_remove
         return 1.0 - p_remove
 
+    def _asymmetric_score(self, label: int, p_remove: float) -> float:
+        predicted_remove = p_remove >= self._threshold
+        gold_remove = label == REMOVE_LABEL
+        if gold_remove and predicted_remove:
+            return ASYMMETRIC_REWARDS["tp"]
+        if gold_remove and not predicted_remove:
+            return ASYMMETRIC_REWARDS["fn"]
+        if not gold_remove and predicted_remove:
+            return ASYMMETRIC_REWARDS["fp"]
+        return ASYMMETRIC_REWARDS["tn"]
+
     def _score_example(
         self,
         instance: JevDataInst,
@@ -130,7 +147,7 @@ class JevGepaAdapter:
     ) -> float:
         if self._score_mode == "probability":
             return self._probability_score(instance.label, p_remove)
-        raise NotImplementedError("asymmetric score mode not implemented")
+        return self._asymmetric_score(instance.label, p_remove)
 
     def _build_trajectory(
         self,
