@@ -1,13 +1,15 @@
 {
-  "split_seed": 42,
-  "n_discovery": 9449,
-  "n_test": 9450,
+  "dataset": "phase_2_part_2_and_3",
+  "seed": 42,
+  "n_discovery": 9999,
+  "n_test": 10001,
+  "n_new_posts_assigned": 1101,
+  "n_existing_preserved": 18899,
   "stratify_columns": [
     "modal_decision",
     "sampled_stance",
     "sample_toxicity_type",
     "in_part2_catalog"
   ],
-  "participant_filter": "all",
-  "built_at": "2026-09-24T05:30:08.463711+00:00"
+  "built_at": "2026-09-24T13:22:58.640296+00:00"
 }
