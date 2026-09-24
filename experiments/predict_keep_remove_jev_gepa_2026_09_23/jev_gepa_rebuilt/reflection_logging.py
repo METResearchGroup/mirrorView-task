@@ -8,7 +8,6 @@ Run from the repo root:
 from __future__ import annotations
 
 import json
-import signal
 from pathlib import Path
 from typing import Any
 
@@ -17,9 +16,10 @@ from gepa.lm import LM
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.constants import (
     REFLECTION_USD_PER_MILLION,
 )
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.deadlines import run_with_alarm
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.pricing import estimate_reflection_cost_usd
 
 REFLECTION_TIMEOUT_SECONDS = 180
-from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.pricing import estimate_reflection_cost_usd
 
 
 class UsageLoggingLM(LM):
@@ -77,23 +77,12 @@ class UsageLoggingLM(LM):
         return response
 
     def _call_with_deadline(self, prompt: str | list[dict[str, Any]]) -> str:
-        """Interrupt a stalled LiteLLM socket with SIGALRM.
-
-        ``Thread.join(timeout)`` did not return while the worker blocked in SSL read.
-        """
-
-        def _on_alarm(signum: int, frame: object) -> None:
-            raise TimeoutError(
-                f"reflection call exceeded {REFLECTION_TIMEOUT_SECONDS}s for {self.model}"
-            )
-
-        previous = signal.signal(signal.SIGALRM, _on_alarm)
-        signal.setitimer(signal.ITIMER_REAL, REFLECTION_TIMEOUT_SECONDS)
-        try:
-            return LM.__call__(self, prompt)
-        finally:
-            signal.setitimer(signal.ITIMER_REAL, 0)
-            signal.signal(signal.SIGALRM, previous)
+        """Interrupt a stalled LiteLLM socket. ``Thread.join(timeout)`` did not."""
+        return run_with_alarm(
+            REFLECTION_TIMEOUT_SECONDS,
+            lambda: LM.__call__(self, prompt),
+            label=f"reflection call for {self.model}",
+        )
 
 
 def make_reflection_lm_with_usage_log(

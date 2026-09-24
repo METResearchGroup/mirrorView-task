@@ -299,7 +299,15 @@ def score_batch_with_study_instruction(
 
     @latency.timed
     def _call() -> Any:
-        return client.system_one(state=state, questions=questions, model=JEV_MODEL_ID)
+        from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.deadlines import (
+            run_with_alarm,
+        )
+
+        return run_with_alarm(
+            180.0,
+            lambda: client.system_one(state=state, questions=questions, model=JEV_MODEL_ID),
+            label="jev system_one",
+        )
 
     response, latency_ms = _call()
     probabilities: list[float] = []
