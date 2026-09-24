@@ -2,7 +2,7 @@
 
 ## Goal
 
-Add `shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv` by reusing Part 2 modal-aggregation logic. Ties become `remove`. Join scored linked-fate Part 3 results to Part 3 stimuli for stable text and metadata. Register `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` in `shared/data/registry.py`. Expose per-post rater counts and keep rate. Do **not** apply the min-3-rater filter (analysis-time only per the Decisions table). Add unit tests.
+Add `shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv` by reusing Part 2 modal-aggregation logic. Ties become `remove`. Join scored linked-fate Part 3 results to Part 3 stimuli for stable text and metadata. Register `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` in `shared/data/registry.py`. Expose per-post rater counts, keep rate, and `is_unanimous`. Do **not** apply the min-3-rater filter (analysis-time only per the Decisions table). Add unit tests.
 
 ## Caller / unit of work
 
@@ -32,6 +32,7 @@ print('rows', len(df), 'cols', list(df.columns))
 | Path | Why |
 |------|-----|
 | `/workspace/shared/data/transformed/study_phase_2_part_2/transform.py` | `_load_slim_trial_frame`, `_aggregate_modal_labels` patterns to port |
+| `/workspace/experiments/bertopic_modeling_2026_08_05/src/data.py` | `_build_unanimous_frame` reference for `is_unanimous` |
 | `/workspace/shared/data/transformed/study_phase_2_part_2/README.md` | Modal label contract and column names |
 | `/workspace/shared/data/registry.py` | Existing Part 3 raw entries; add transformed entry |
 | `/workspace/shared/data/dataloader.py` | `load_dataset` |
@@ -81,17 +82,24 @@ Port and extend Part 2 logic. Public functions:
    - `keep_remove_label = 1` for `remove`, `0` for `keep`
    - Raise `ValueError` if any `post_id` has conflicting `original_text` or `mirror_text` across trials (use results columns for the stability check)
 
-6. `_join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFrame`  
+6. `_build_unanimous_flags(trials: pd.DataFrame) -> pd.DataFrame`  
+   Mirror `experiments/bertopic_modeling_2026_08_05/src/data.py` `_build_unanimous_frame` on the slim linked-fate trial frame (before modal aggregation):
+   - Per `post_id`: `n_unique_decisions = decision.nunique()`
+   - When `n_raters >= 2`: `is_unanimous = (n_unique_decisions == 1)` (bool)
+   - When `n_raters < 2`: `is_unanimous = null` (pandas `NA`; not `false`)
+   - Return `post_id`, `is_unanimous`, `n_raters` (unanimous frame raters count matches modal `n_raters`)
+
+7. `_join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFrame`  
    - Left join `modal` to stimuli on `modal.post_id == stimuli.post_primary_key.astype(str).str.strip()`
    - Raise `ValueError` if any modal `post_id` lacks a stimuli row (expected 0 missing)
    - Take `original_text` and `mirror_text` from **stimuli** (`mirrored_text` renamed to `mirror_text`)
    - Take `sampled_stance`, `sample_toxicity_type` from stimuli
    - `platform = post_id.str.split("_", n=1).str[0]` (verified values: `reddit`, `bluesky`, `twitter`)
 
-7. `build_keep_remove_labels(raw: pd.DataFrame | None = None, stimuli: pd.DataFrame | None = None) -> pd.DataFrame`  
-   Loads `STUDY_PHASE_2_PART_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_3_STIMULI` when omitted.
+8. `build_keep_remove_labels(raw: pd.DataFrame | None = None, stimuli: pd.DataFrame | None = None) -> pd.DataFrame`  
+   Loads `STUDY_PHASE_2_PART_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_3_STIMULI` when omitted. Left-join unanimous flags onto modal labels on `post_id`.
 
-8. `write_keep_remove_labels(path: Path = OUTPUT_CSV) -> pd.DataFrame`
+9. `write_keep_remove_labels(path: Path = OUTPUT_CSV) -> pd.DataFrame`
 
 ### Output schema (`keep_remove_labels.csv`)
 
@@ -106,6 +114,7 @@ Port and extend Part 2 logic. Public functions:
 | `keep_rate` | float | `n_keep / n_raters` |
 | `n_keep` | int | keep votes |
 | `n_remove` | int | remove votes |
+| `is_unanimous` | bool or null | `true`/`false` when `n_raters >= 2` (all raters same decision); `null` when `n_raters < 2` (single-rater posts) |
 | `sampled_stance` | str | stimuli |
 | `sample_toxicity_type` | str | stimuli |
 | `platform` | str | first `_`-delimited token of `post_id` |
@@ -144,6 +153,9 @@ Write these tests **before** implementation. Use small synthetic frames (no full
 | `test_load_slim_trial_frame_filters_linked_fate_keep_remove` | Raw frame with linked_fate keep/remove, other modes, empty post_id | Only valid linked-fate rows remain |
 | `test_modal_tie_becomes_remove` | One post_id with 2 keep + 2 remove votes | `decision == "remove"`, `keep_remove_label == 1` |
 | `test_modal_keep_majority` | One post_id with 3 keep + 1 remove | `decision == "keep"`, `keep_rate == 0.75`, `n_raters == 4` |
+| `test_unanimous_true_when_all_raters_agree` | One post_id with 4 keep votes (`n_raters=4`) | `is_unanimous is True` |
+| `test_unanimous_false_when_raters_split` | One post_id with 2 keep + 2 remove | `is_unanimous is False` |
+| `test_unanimous_null_when_single_rater` | One post_id with 1 keep vote (`n_raters=1`) | `is_unanimous` is null/NA (not `False`) |
 | `test_join_stimuli_adds_platform_and_mirror_text` | Modal row + stimuli with `post_primary_key`, `mirrored_text` | `mirror_text` populated; `platform == "reddit"` for `reddit_abc` |
 | `test_build_raises_when_stimuli_missing_post` | Modal post_id absent from stimuli | `ValueError` |
 | `test_output_columns_exact_order` | Full `build_keep_remove_labels` on synthetic end-to-end mini fixture | Columns match schema list exactly |
@@ -172,7 +184,7 @@ Expected transform stdout (approximate):
 Wrote shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv
 rows=18866
 decision={'keep': 13604, 'remove': 5262}
-columns=['post_id', 'original_text', 'mirror_text', 'decision', 'keep_remove_label', 'n_raters', 'keep_rate', 'n_keep', 'n_remove', 'sampled_stance', 'sample_toxicity_type', 'platform']
+columns=['post_id', 'original_text', 'mirror_text', 'decision', 'keep_remove_label', 'n_raters', 'keep_rate', 'n_keep', 'n_remove', 'is_unanimous', 'sampled_stance', 'sample_toxicity_type', 'platform']
 ```
 
 ```bash
@@ -213,6 +225,6 @@ PYTHONPATH=. uv run pytest tests/shared/data/transformed/study_phase_2_part_3/te
 Add Part 3 keep/remove label transform and registry entry
 
 Build modal labels from linked-fate results joined to stimuli on
-post_id == post_primary_key. Expose n_raters and keep_rate without
-min-rater filtering. Add unit tests.
+post_id == post_primary_key. Expose n_raters, keep_rate, and is_unanimous
+without min-rater filtering. Add unit tests.
 ```

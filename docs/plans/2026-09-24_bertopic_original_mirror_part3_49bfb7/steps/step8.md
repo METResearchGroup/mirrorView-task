@@ -48,7 +48,7 @@ Create `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/RESULTS
 
 1. **Header:** date, status `Complete`, one-line corpus description (18,899 stimulus posts, original + mirror, deduped before fit).
 
-2. **Setup table:** embedding model (`amazon.titan-embed-text-v2:0`, 256-d, L2-normalized), UMAP/HDBSCAN/vectorizer params (match production metadata), dedupe counts (173 duplicate originals, 35 identical pairs removed), LLM label model `gpt-5.4-nano`, fit corpus = all deduplicated stimuli, outcome analysis = rated posts with `n_raters >= 3`.
+2. **Setup table:** embedding model (`amazon.titan-embed-text-v2:0`, 256-d, L2-normalized), UMAP/HDBSCAN/vectorizer params (match production metadata), dedupe counts (173 duplicate originals removed, then 28 identical original-mirror pairs [35 before duplicate removal], 18,698 posts fit), LLM label model `gpt-5.4-nano`, fit corpus = all deduplicated stimuli, outcome analysis = rated posts with `n_raters >= 3`.
 
 3. **Production counts table:**
 
@@ -60,7 +60,7 @@ Create `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/RESULTS
 
 4. **Topic labels table:** top 20 topics by size for original and joint (columns: `topic_id`, `n_docs`, `llm_label`); pointer to full `topic_labels.parquet` paths.
 
-5. **Q1 Part 2 comparison:** carryover `n` (~8899), ARI, NMI, link to `outputs/analyses/part2_comparison/<TS>/`, note `part2_model_source` (local/refit/s3). Short interpretation: whether Part 3 shifts topic shares vs Part 2 on overlap.
+5. **Q1 Part 2 comparison:** carryover total 8,899; primary subset 7,689 directly joined to Part 2 `assignments.parquet`; 1,210 centroid-assigned. Report ARI/NMI on primary subset. Link to `outputs/analyses/part2_comparison/<TS>/`. Short interpretation: whether Part 3 shifts topic shares vs Part 2 on overlap.
 
 6. **Q2 Mirror agreement:** pair topic agreement rate (original model assigns mirrors), link to cross-role run.
 
@@ -116,13 +116,7 @@ Committed parquet/json summaries and figure PNGs stay in git. Large embedding ar
 - Skip files already on S3 with matching size (optional etag) unless `--force`.
 - Write `outputs/upload_manifest.json`: `uploaded_at`, `bucket`, `prefix`, `n_files`, `total_bytes`, `keys` (sorted list).
 
-Also upload Part 2 production model if local and not yet on S3 (enables Q1 on fresh clones):
-
-`experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model/`  
-to  
-`s3://mirrorview-experimental-artifacts/experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model/`
-
-Do not modify Part 2 git-tracked files; only upload ignored model weights.
+Do not upload or depend on the Part 2 saved `model/` directory (not in git; Q1 uses committed assignments and embeddings only).
 
 ## TDD tests first
 
@@ -165,7 +159,7 @@ cd /workspace
 git diff --stat -- experiments/bertopic_modeling_2026_08_05/
 ```
 
-Expected: no output (empty diff). New refit run dirs under Part 2 `outputs/` are acceptable if only timestamp folders were added by Step 6 refit; **no changes to Part 2 `src/`**.
+Expected: no output (empty diff). **No changes to Part 2 `src/`**.
 
 ### 3. Upload outputs to S3
 
@@ -179,16 +173,6 @@ PYTHONPATH=. uv run python \
   --outputs-dir experiments/bertopic_original_mirror_part3_2026_09_24/outputs \
   --bucket mirrorview-experimental-artifacts \
   --prefix experiments/bertopic_original_mirror_part3_2026_09_24/
-```
-
-Optional Part 2 model upload:
-
-```bash
-PYTHONPATH=. uv run python \
-  experiments/bertopic_original_mirror_part3_2026_09_24/src/upload_outputs.py \
-  --outputs-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model \
-  --bucket mirrorview-experimental-artifacts \
-  --prefix experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model/
 ```
 
 Expected stdout (example):
@@ -257,4 +241,4 @@ grep -E 'Q1|Q5|ablation|s3://mirrorview|n_raters >= 3|descriptive' \
 1. `test(part3-bertopic): add S3 upload manifest unit tests`
 2. `feat(part3-bertopic): add outputs upload script for mirrorview S3 bucket`
 3. `docs(part3-bertopic): write RESULTS.md with Q1-Q5 and ablation summary`
-4. `chore(part3-bertopic): upload outputs and Part 2 model artifacts to S3`
+4. `chore(part3-bertopic): upload Part 3 outputs to S3`

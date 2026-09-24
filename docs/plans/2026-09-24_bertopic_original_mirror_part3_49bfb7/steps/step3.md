@@ -36,7 +36,7 @@ PYTHONPATH=. uv run --extra bertopic python \
   experiments/bertopic_original_mirror_part3_2026_09_24/src/load_embeddings_minilm.py --text-role mirror
 ```
 
-**In scope:** `load_embeddings.py`, `load_embeddings_minilm.py`, `data.py` helpers if needed, experiment `.gitignore` rules, README/SETUP CLI notes, S3 upload of large embedding caches after build, optional `pyproject.toml` bertopic extra pin for `sentence-transformers`.
+**In scope:** `load_embeddings.py`, `load_embeddings_minilm.py`, `data.py` helpers if needed, experiment `.gitignore` rules, README/SETUP CLI notes, S3 upload of large embedding caches after build, `pyproject.toml` bertopic optional-extra dependency pins, `uv lock` regeneration.
 
 **Out of scope:** BERTopic fit, dedupe at embed time, LLM labeling, visualization, bulk upload of topics/models (Step 8).
 
@@ -61,7 +61,8 @@ PYTHONPATH=. uv run --extra bertopic python \
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/data.py` (only if a thin `load_stimuli_for_embedding()` helper is needed)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/README.md` (Stage 1 CLI flags)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/SETUP.md` (embedding cache section)
-- `/workspace/pyproject.toml` (only `[project.optional-dependencies].bertopic`: add `sentence-transformers>=3.0.0` if import fails)
+- `/workspace/pyproject.toml` (only `[project.optional-dependencies].bertopic`: add missing packages below)
+- `/workspace/uv.lock` (regenerate after `pyproject.toml` edit)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/.gitignore` (extend Step 2 patterns if needed)
 - Runtime artifacts under `experiments/bertopic_original_mirror_part3_2026_09_24/outputs/embeddings/` and `outputs/embeddings_minilm/` (`index.parquet` and `metadata.json` committed; `embeddings.npy` S3-primary)
 
@@ -75,6 +76,39 @@ PYTHONPATH=. uv run --extra bertopic python \
 - Any other file
 
 ## Implementation details
+
+### Bertopic optional-extra dependencies (do first)
+
+Add to `[project.optional-dependencies].bertopic` in `/workspace/pyproject.toml` if not already present:
+
+```toml
+"scipy>=1.11.0",
+"statsmodels>=0.14.0",
+"sentence-transformers>=3.0.0",
+```
+
+Verified baseline (2026-09-24): `bertopic` extra had only `bertopic`, `openai`, `plotly`, `kaleido`. `scipy` and `sentence-transformers` exist in `uv.lock` via other extras but were not declared under `bertopic`. `statsmodels` was absent from `uv.lock`.
+
+Regenerate lock:
+
+```bash
+cd /workspace
+uv lock
+```
+
+Expected stdout (approximate):
+
+```text
+Resolved ... packages in ...
+```
+
+Then sync:
+
+```bash
+uv sync --extra bertopic
+```
+
+Steps 5 and 6 require `scipy` (Hungarian matching, binomial tests) and `statsmodels` (`multipletests` for Benjamini-Hochberg FDR). Step 3 MiniLM loader requires `sentence-transformers`.
 
 ### Corpus for embedding (critical)
 
@@ -342,6 +376,7 @@ PYTHONPATH=. uv run --extra bertopic python \
 | Identity reuse | DynamoDB table `jspsych-mirror-view-embedding-cache` | Bedrock-only default |
 | AWS | Export `LAB_*` to `AWS_*` before live backfill | Unset credentials |
 | S3 upload | All four `embeddings.npy` files on S3 after build | Large arrays committed to git only |
+| Bertopic deps | `scipy`, `statsmodels`, `sentence-transformers` in bertopic extra; `uv.lock` regenerated | Missing `statsmodels` at Step 5/6 |
 | Part 2 isolation | No diff under `experiments/bertopic_modeling_2026_08_05/` | Any change |
 | Tests | Mocked unit tests green | AWS required for pytest |
 

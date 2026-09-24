@@ -8,7 +8,7 @@ Apply dedupe before every BERTopic fit. Run a fixed 50-pair smoke pipeline (seed
 
 Assume Steps 1 to 3 are complete:
 
-1. **Step 1:** `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` is registered. Modal labels expose `post_id`, `decision`, `keep_rate`, `n_raters`, `sampled_stance`, `sample_toxicity_type`, `platform`, `original_text`, `mirror_text`. Minimum 3 raters is **not** baked into the label table; apply it only in outcome analyses (Step 6).
+1. **Step 1:** `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` is registered. Modal labels expose `post_id`, `decision`, `keep_rate`, `n_raters`, `is_unanimous`, `sampled_stance`, `sample_toxicity_type`, `platform`, `original_text`, `mirror_text`. Minimum 3 raters is **not** baked into the label table; apply it only in outcome analyses (Step 6).
 2. **Step 2:** `experiments/bertopic_original_mirror_part3_2026_09_24/src/` exists with ported Part 2 stages (`paths.py`, `data.py`, `dedupe.py`, `load_embeddings.py`, `fit_bertopic.py`, `label_topics_llm.py`, `visualize_clusters.py`) parameterized by `--text-role {original,mirror,joint}`, plus `dedupe_stimuli()` and `build_joint_frame()` (joint rows include `pair_post_id`, which equals `post_id` because Part 3 has one post per pair).
 3. **Step 3:** Titan caches exist at `outputs/embeddings/{original,mirror}/` (`embeddings.npy`, `index.parquet`, `metadata.json`) covering all **18,899** stimulus posts. MiniLM ablation caches exist at `outputs/embeddings_minilm/{original,mirror}/` (unused in this step). If `embeddings.npy` is missing locally, pull from S3 per Step 3 before fit (see Step 3 pull commands).
 
@@ -199,7 +199,9 @@ Run `visualize_clusters.py --topics-run-dir <run> --labels-run-dir <labels_run> 
 
 `outputs/figures/<role>/<UTC_TS>/`: six files (`clusters_by_topic`, `clusters_by_keep_remove`, `clusters_by_unanimous`, each `.html` + `.png`) plus `metadata.json`.
 
-For `joint` role: overlay keep/remove joins on `post_id` from labels (both joint rows for a post share the same pair-level decision).
+**`clusters_by_unanimous` overlay:** join `load_keep_remove_posts()` on `post_id`. Map `is_unanimous` to three display categories: `unanimous` (`is_unanimous == True`), `split` (`is_unanimous == False`), `single rater` (`is_unanimous` is null, i.e. `n_raters < 2`). Do not coerce null to `false`.
+
+For `joint` role: overlay keep/remove and unanimous joins on `post_id` from labels (both joint rows for a post share the same pair-level decision and unanimous flag).
 
 ### Approval gate (mandatory)
 

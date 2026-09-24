@@ -8,6 +8,7 @@ Implement `analyze_cross_role.py` to compute Q2 pair topic agreement, ARI/NMI wi
 
 Assume Steps 1 to 4 are complete (production runs exist; user approved smoke):
 
+0. **Step 3 dependencies:** `uv sync --extra bertopic` includes `scipy` and `statsmodels` (declared in bertopic extra per Step 3).
 1. **Step 1:** Part 3 keep/remove labels registered with `post_id`, `decision`, `original_text`, `mirror_text`, plus metadata columns from Step 1 schema.
 2. **Step 4 production outputs:**
    - `outputs/topics/original/<PROD_TS>/` (saved model + assignments)
@@ -77,7 +78,8 @@ PYTHONPATH=. uv run --extra bertopic python \
 | `compute_q2_pair_agreement(pair_df, bootstrap_n, seed)` | Agreement rates + CIs |
 | `match_topics_hungarian(orig_model, mirror_model, paired_topics)` | Centroid cosine similarity matrix; `scipy.optimize.linear_sum_assignment` on cost `1 - cosine_sim` |
 | `compute_ari_nmi(orig_topics, mirror_topics, mapping)` | On paired posts after mapping |
-| `compute_q3_role_shares(joint_assignments)` | Per-topic original share; binomial test vs 0.5; BH FDR |
+| `apply_bh_fdr(p_values)` | `statsmodels.stats.multitest.multipletests(p_values, method="fdr_bh")`; shared with Step 6 Q5 |
+| `compute_q3_role_shares(joint_assignments)` | Per-topic original share; binomial test vs 0.5; BH FDR via `apply_bh_fdr` |
 | `compute_q3_coassignment(joint_assignments)` | Pair same-topic rate under joint model |
 | `compute_q4_keyword_contrast(docs_by_role, joint_topics)` | Per-topic log-odds with Dirichlet prior |
 
@@ -143,7 +145,7 @@ For each `topic` (exclude -1 optional; include but flag in metadata):
 | `n_mirror` | int |
 | `original_share` | float (`n_original / n_docs`) |
 | `binomial_pvalue` | float (two-sided `scipy.stats.binomtest` vs p=0.5) |
-| `q_value_bh` | float (Benjamini-Hochberg across topics) |
+| `q_value_bh` | float (`apply_bh_fdr` / `multipletests(..., method="fdr_bh")` across topics) |
 | `role_dominated_flag` | bool (`original_share` outside [0.35, 0.65] AND `q_value_bh < 0.05) |
 
 **Pair co-assignment rate:** fraction of pairs where joint model assigns the same `topic` to original and mirror rows.
@@ -352,7 +354,7 @@ done
 | Bootstrap | `bootstrap_n=1000`, `seed=42`; CIs in output | No CI or wrong seed |
 | Hungarian | `linear_sum_assignment` on `1 - cosine_sim` | Greedy or label matching without centroids |
 | ARI/NMI | computed on paired posts after mapping | Raw unmapped topic ids compared |
-| Q3 FDR | BH correction across topics | Uncorrected p-values only |
+| Q3 FDR | `statsmodels.stats.multitest.multipletests(..., method="fdr_bh")` via shared `apply_bh_fdr` | Uncorrected p-values only |
 | Q3 flag | `[0.35, 0.65]` band AND `q < 0.05` | Either condition alone |
 | Q4 contrast | log-odds with Dirichlet `alpha=0.01`; 15 terms per role per topic | Raw count diff only |
 | summary.json | lists all artifact paths and source runs | Missing source run metadata |

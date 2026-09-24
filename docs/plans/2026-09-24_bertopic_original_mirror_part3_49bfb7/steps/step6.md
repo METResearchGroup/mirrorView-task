@@ -6,11 +6,16 @@ Implement `experiments/bertopic_original_mirror_part3_2026_09_24/src/analyze_out
 
 ## Prerequisites
 
+- Step 3 dependencies: `uv sync --extra bertopic` includes `scipy` and `statsmodels` (declared in bertopic extra per Step 3).
 - Step 1 complete: `shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv` registered as `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` with columns `post_id`, `decision`, `keep_remove_label`, `n_raters`, `keep_rate`, `n_keep`, `n_remove`, `sampled_stance`, `sample_toxicity_type`, `platform`, `original_text`, `mirror_text`.
 - Step 2 complete: experiment `src/` scaffold with `data.py`, `paths.py`, pure helpers.
 - Step 4 complete: production runs exist under `outputs/topics/original/<UTC_TS>/`, `outputs/topics/joint/<UTC_TS>/`, `outputs/labels/original/<UTC_TS>/`, `outputs/labels/joint/<UTC_TS>/`.
 - Step 5 optional: reuse `cross_role_metrics.py` Hungarian helpers if already extracted (not required for Q5 or Q1).
 - Raw ratings available at `shared/data/raw/study_phase_2_part_3/results/full.csv` with `party_group` in `{democrat, republican}` for linked-fate scored rows.
+- Part 2 committed artifacts (no saved `model/` dir; do not download or refit):
+  - `experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/assignments.parquet` (8,790 rows; columns `message_id`, `topic`, `probability`)
+  - `experiments/bertopic_modeling_2026_08_05/outputs/embeddings/original/embeddings.npy` (shape `(8790, 256)`)
+  - `experiments/bertopic_modeling_2026_08_05/outputs/embeddings/original/index.parquet` (columns `row_id`, `message_id`)
 
 ## Files to inspect (read-only)
 
@@ -18,11 +23,10 @@ Implement `experiments/bertopic_original_mirror_part3_2026_09_24/src/analyze_out
 |------|-----|
 | `/workspace/docs/plans/2026-09-24_bertopic_original_mirror_part3_49bfb7/plan.md` | Q1/Q5 definitions; min 3 raters at analysis time; fit vs analysis corpus |
 | `/workspace/experiments/bertopic_modeling_2026_08_05/RESULTS.md` | Part 2 production run id `20260805T135853Z`; 53 topics; 34% noise |
-| `/workspace/experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/metadata.json` | Part 2 fit hyperparameters for deterministic refit |
-| `/workspace/experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/assignments.parquet` | Part 2 topic ids (column `message_id`; map to Part 3 `post_id` via carryover join) |
-| `/workspace/shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv` | Part 2 column `message_id` (alias of results `post_id`); reference only |
+| `/workspace/experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/assignments.parquet` | Part 2 topic ids (column `message_id`; join to Part 3 `post_id` on carryover) |
+| `/workspace/experiments/bertopic_modeling_2026_08_05/outputs/embeddings/original/embeddings.npy` | Part 2 Titan vectors for centroid computation |
+| `/workspace/experiments/bertopic_modeling_2026_08_05/outputs/embeddings/original/index.parquet` | Row alignment for Part 2 embeddings |
 | `/workspace/shared/data/raw/study_phase_2_part_2/stimuli/flips.csv` | Part 2 catalog `post_primary_key` for carryover join to Part 3 stimuli |
-| `/workspace/experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py` | Model save path `{run_dir}/model/`; `BERTopic.load` contract |
 | `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/.gitignore` | S3-primary patterns for `model/`, `umap_2d.npy`, `embeddings.npy` |
 | `/workspace/shared/data/raw/study_phase_2_part_3/results/full.csv` | Rating-level `party_group`, `post_id`, `decision` |
 | Step 5 outputs under `outputs/analyses/cross_role/<UTC_TS>/` | Hungarian matching helpers if already extracted |
@@ -32,8 +36,8 @@ Implement `experiments/bertopic_original_mirror_part3_2026_09_24/src/analyze_out
 
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/analyze_outcomes.py` (new)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/compare_part2.py` (new)
-- `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/outcomes.py` (new; pure helpers: bootstrap, BH FDR, facet filters)
-- `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/part2_model.py` (new; load or refit Part 2 model)
+- `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/outcomes.py` (new; pure helpers: bootstrap, `apply_bh_fdr`, facet filters)
+- `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/src/part2_topics.py` (new; load Part 2 assignments/embeddings; centroid assignment for carryover gaps)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/tests/test_analyze_outcomes.py` (new)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/tests/test_compare_part2.py` (new)
 - `/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/tests/test_outcomes.py` (new)
@@ -69,7 +73,7 @@ Implement `experiments/bertopic_original_mirror_part3_2026_09_24/src/analyze_out
 - For each topic `t`, `keep_rate_t = mean(keep_rate)` over posts assigned to `t` (use post-level `keep_rate` from labels table, equivalent to `n_keep / n_raters`).
 - Overall keep rate: mean over all posts in the filtered corpus.
 - **Cluster bootstrap by post:** resample posts with replacement `n_bootstrap=2000`, `seed=42`. For each resample, recompute per-topic keep rate. Report 2.5th and 97.5th percentiles as CI endpoints.
-- **BH FDR test vs overall:** for each non-noise topic, two-sided binomial test using post-level successes `n_keep` and trials `n_raters` pooled per topic vs corpus-wide keep rate; apply `statsmodels.stats.multitest.multipletests(..., method="fdr_bh")` at `q < 0.05`. Store `p_value`, `q_value`, `significant_bh`.
+- **BH FDR test vs overall:** for each non-noise topic, two-sided binomial test using post-level successes `n_keep` and trials `n_raters` pooled per topic vs corpus-wide keep rate; apply `apply_bh_fdr` (`statsmodels.stats.multitest.multipletests(..., method="fdr_bh")`, same helper as Step 5 Q3) at `q < 0.05`. Store `p_value`, `q_value`, `significant_bh`.
 
 **Rating-level rater-party cuts:**
 
@@ -109,47 +113,38 @@ figures/
 
 ### Q1: `compare_part2.py`
 
+Do **not** load, download, refit, or upload the Part 2 saved `model/` directory. Use committed Part 2 assignments and embeddings only.
+
 **Carryover set (catalog overlap):** inner join Part 2 and Part 3 stimulus catalogs on stripped string equality:
 
 ```python
-p2_stim = load_dataset(STUDY_PHASE_2_PART_2_STIMULI)  # or read shared/data/raw/study_phase_2_part_2/stimuli/flips.csv
-p3_stim = load_stimuli_posts()  # post_id renamed from post_primary_key
+p2_stim = load_dataset(STUDY_PHASE_2_PART_2_STIMULI)
+p3_stim = load_stimuli_posts()
 carryover_post_ids = set(p2_stim["post_primary_key"].astype(str).str.strip()) & set(p3_stim["post_id"].astype(str).str.strip())
 ```
 
-**Expected match count:** `len(carryover_post_ids) == 8899` (assert in metadata; do not hard-fail if off by a few).
+**Expected carryover count:** `len(carryover_post_ids) == 8899` (assert in metadata).
 
-**ID mapping:** Part 2 transformed labels (`shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv`) expose the same ids as Part 3 `post_id`, but under the column name `message_id`. For Q1 topic assignment, use the **stimulus catalog join above**, not `message_id` intersect alone (that yields 7690 rated overlap and drops 1209 unrated catalog carryover posts).
+**Part 2 topic assignment for carryover posts** (`part2_assignments.parquet` output columns include `post_id`, `part2_topic`, `part2_topic_source`):
+
+1. **Direct join (`part2_topic_source = "assigned"`):** inner join carryover `post_id` to Part 2 `assignments.parquet` on `post_id == message_id` (stripped strings). Verified count: **7,689** carryover posts (of 8,899) have a Part 2 assignment row.
+2. **Centroid assignment (`part2_topic_source = "centroid"`):** for the remaining **1,210** carryover posts without a Part 2 assignment:
+   - Load Part 3 Titan embedding for the post from `outputs/embeddings/original/` (download `embeddings.npy` from S3 if missing locally).
+   - For each Part 2 topic `t` (exclude noise topic `-1`), compute centroid = mean of L2-normalized Titan vectors of Part 2 non-noise members assigned topic `t`, using `experiments/bertopic_modeling_2026_08_05/outputs/embeddings/original/{embeddings.npy,index.parquet}` aligned via `message_id`.
+   - L2-normalize each centroid; assign `t` with highest cosine similarity to the Part 3 post embedding.
 
 **Part 3 side:** topic ids from Part 3 production original run assignments for carryover `post_id`s (after the same dedupe subset used at fit time).
 
-**Part 2 side:** assign carryover posts to the **saved Part 2 BERTopic model** via `topic_model.transform(docs, embeddings)`:
+**Primary vs supplemental reporting:**
 
-1. **Preferred path:** load model from  
-   `experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model/`  
-   (safetensors serialization; `embedding_model=None` on load).
-2. **If `model/` missing locally** (gitignored; common on fresh clones):
-   - **Option A (deterministic refit):** run Part 2 fit without modifying Part 2 sources:
+- **Primary Q1 metrics** (topic shares, crosstab, ARI, NMI, facet figures): carryover posts with `part2_topic_source == "assigned"` only (~7,689).
+- **Supplemental:** repeat on all 8,899 carryover posts including centroid-assigned rows; label clearly in metadata.
 
-     ```bash
-     cd /workspace
-     PYTHONPATH=. uv run --extra bertopic python \
-       experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py --seed 42
-     ```
-
-     Use the new run only if `metadata.json` hyperparameters match production (`min_cluster_size=15`, UMAP/HDBSCAN blocks identical). Record `part2_model_source: refit` in metadata.
-   - **Option B (S3):** if the Part 2 model was uploaded to  
-     `s3://mirrorview-experimental-artifacts/experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model/`  
-     (Step 8 upload; optional on fresh clones), download with `lib.aws.s3.S3` before transform. Record `part2_model_source: s3`.
-   - Fail with actionable error if neither local model, refit, nor S3 object exists.
-
-**Embeddings for transform:** load Titan vectors for carryover `post_id`s from Part 3 `outputs/embeddings/original/` aligned to Part 2 `original_text` for those ids. If `embeddings.npy` is missing locally, download from `s3://mirrorview-experimental-artifacts/experiments/bertopic_original_mirror_part3_2026_09_24/outputs/embeddings/original/embeddings.npy` (Step 3 upload). Keep `index.parquet` from git for row alignment.
-
-**Analyses:**
+**Analyses (primary subset):**
 
 - Cross-tab: `crosstab_part2_part3_topics.csv` (rows Part 2 topic, cols Part 3 topic, counts).
-- Topic share tables: `topic_shares_part2.csv`, `topic_shares_part3.csv`, `topic_share_delta.csv` (Part 3 minus Part 2 share on overlap).
-- **ARI and NMI** on paired topic label vectors for carryover posts (`sklearn.metrics.adjusted_rand_score`, `normalized_mutual_info_score`).
+- Topic share tables: `topic_shares_part2.csv`, `topic_shares_part3.csv`, `topic_share_delta.csv` (Part 3 minus Part 2 share on primary subset).
+- **ARI and NMI** on paired topic label vectors for primary-subset carryover posts.
 - Facet figures: repeat share comparison faceted by `sampled_stance`, `sample_toxicity_type`, `platform` (same 30-post cell rule for facet-specific share bars).
 
 **Outputs:** `outputs/analyses/part2_comparison/<UTC_TS>/`
@@ -157,13 +152,13 @@ carryover_post_ids = set(p2_stim["post_primary_key"].astype(str).str.strip()) & 
 ```text
 metadata.json
 carryover_post_ids.parquet
-part2_assignments.parquet
+part2_assignments.parquet          # includes part2_topic_source column
 part3_assignments.parquet
 crosstab_part2_part3_topics.csv
 topic_shares_part2.csv
 topic_shares_part3.csv
 topic_share_delta.csv
-agreement_metrics.json          # ari, nmi, n_carryover
+agreement_metrics.json          # ari, nmi, n_carryover_primary, n_carryover_centroid, n_carryover_total
 figures/
   crosstab_heatmap.{html,png}
   topic_share_comparison.{html,png}
@@ -226,7 +221,7 @@ Use synthetic parquet fixtures in `tests/fixtures/outcomes/` (create minimal CSV
 
 ### `experiments/bertopic_original_mirror_part3_2026_09_24/tests/test_compare_part2.py`
 
-Mock `BERTopic.load` and `transform` with a fake class; no real model files.
+Synthetic embeddings only; no BERTopic model files.
 
 ```python
 # test_carryover_intersection_ids
@@ -234,15 +229,25 @@ Mock `BERTopic.load` and `transform` with a fake class; no real model files.
 # When: find_carryover_post_ids(...)
 # Then: {b,c}; live catalog join expects 8899
 
+# test_direct_join_marks_assigned_source
+# Given: carryover post in Part 2 assignments parquet
+# When: assign_part2_topics(...)
+# Then: part2_topic_source == "assigned"
+
+# test_centroid_assign_picks_highest_cosine_topic
+# Given: 2 topic centroids; post embedding closer to topic 1
+# When: centroid_assign_part2_topic(...)
+# Then: part2_topic == 1; part2_topic_source == "centroid"
+
+# test_agreement_metrics_primary_subset_excludes_centroid
+# Given: mixed assigned and centroid rows
+# When: compute_topic_agreement(primary_only=True)
+# Then: only assigned-source rows in ARI/NMI denominator
+
 # test_agreement_metrics_perfect_match
 # Given: part2_topics=[0,1,0]; part3_topics=[0,1,0]
 # When: compute_topic_agreement(...)
 # Then: ari==1.0 and nmi==1.0
-
-# test_part2_model_loader_falls_back_to_refit_flag
-# Given: model dir missing; monkeypatch refit to write sentinel path
-# When: resolve_part2_model(...)
-# Then: returns path; metadata part2_model_source == "refit"
 ```
 
 Run tests:
@@ -299,22 +304,13 @@ n_topics_reported=... (includes noise topic -1)
 
 ```bash
 cd /workspace
-PART2_MODEL_DIR=experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/model
-if [ ! -d "$PART2_MODEL_DIR" ]; then
-  echo "Part 2 model missing; running deterministic refit"
-  PYTHONPATH=. uv run --extra bertopic python \
-    experiments/bertopic_modeling_2026_08_05/src/fit_bertopic.py --seed 42
-  PART2_RUN=$(ls -1 experiments/bertopic_modeling_2026_08_05/outputs/topics/original | tail -1)
-  PART2_MODEL_DIR="experiments/bertopic_modeling_2026_08_05/outputs/topics/original/${PART2_RUN}/model"
-fi
-
 ORIG_TOPICS=$(ls -1 experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/original | tail -1)
 
 PYTHONPATH=. uv run --extra bertopic python \
   experiments/bertopic_original_mirror_part3_2026_09_24/src/compare_part2.py \
   --part3-topics-run-dir "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/original/${ORIG_TOPICS}" \
-  --part2-model-dir "$PART2_MODEL_DIR" \
-  --part2-topics-run-dir experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z \
+  --part2-assignments-path experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z/assignments.parquet \
+  --part2-embeddings-dir experiments/bertopic_modeling_2026_08_05/outputs/embeddings/original \
   --facet-min-posts 30
 ```
 
@@ -322,8 +318,7 @@ Expected stdout (example):
 
 ```text
 part2_comparison_run_dir=experiments/bertopic_original_mirror_part3_2026_09_24/outputs/analyses/part2_comparison/20260924T150500Z
-n_carryover=8899 ari=... nmi=...
-part2_model_source=local|refit|s3
+n_carryover_total=8899 n_carryover_primary=7689 n_carryover_centroid=1210 ari_primary=... nmi_primary=...
 ```
 
 ### 4. Verification
@@ -346,12 +341,12 @@ test -f "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/analyses/
 |-------|------|------|
 | Min raters filter | Only `n_raters >= 3` posts in Q5 tables | All rated posts included |
 | Bootstrap | 2000 resamples, seed 42, cluster by post | Rating-level bootstrap or wrong seed |
-| BH FDR | `q_value` column; `significant_bh` at q<0.05 | Uncorrected p-values only |
+| BH FDR | `apply_bh_fdr` / `multipletests(..., method="fdr_bh")`; `q_value` and `significant_bh` at q<0.05 | Uncorrected p-values only |
 | Party cuts | Rating-level aggregation; bootstrap by post | Post-level modal only |
 | Facet threshold | Cells with `<30` posts omitted | All cells reported |
 | Noise topic | Topic `-1` in separate rows/figures | Noise dropped silently |
-| Q1 carryover | Cross-tab + ARI/NMI on overlap | Part 3-only comparison |
-| Part 2 model | Load, refit, or S3 documented in metadata | Hard crash without recovery path |
+| Q1 carryover | Cross-tab + ARI/NMI on primary assigned subset (~7,689); centroid fill for remaining ~1,210 | Part 2 model transform or refit |
+| Part 2 inputs | Committed assignments + embeddings only | Download/refit Part 2 `model/` |
 | Tests | All three test modules pass offline | Network or real model in unit tests |
 | Part 2 folder | `git diff -- experiments/bertopic_modeling_2026_08_05/src/` empty | Part 2 sources edited |
 

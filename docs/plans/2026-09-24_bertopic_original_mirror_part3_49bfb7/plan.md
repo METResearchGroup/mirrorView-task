@@ -43,13 +43,13 @@ flowchart TD
 
 Because topic models should reflect text structure, you fit topics on post text and embeddings only. Keep/remove labels, rater party, toxicity stratum, platform, and stance join after clustering as overlays, matching Part 2.
 
-You run three production topic models on the same fixed hyperparameters: original-only, mirror-only, and joint pooled original+mirror. You use the original model to assign mirror texts when you measure pair agreement in Q2. For Q1, you compare Part 3 original topics to Part 2 by assigning overlapping Part 3 posts to the saved Part 2 model. Ablations write to separate output subfolders, and they never replace production artifacts.
+You run three production topic models on the same fixed hyperparameters: original-only, mirror-only, and joint pooled original+mirror. You use the original model to assign mirror texts when you measure pair agreement in Q2. For Q1, you compare Part 3 original topics to Part 2 on the 8,899 catalog carryover posts: take Part 2 topic ids directly from committed `assignments.parquet` where available (~7,689 posts); assign the remaining carryover posts (~1,210) via nearest Part 2 topic centroid from the Part 2 Titan embeddings cache. Report primary Q1 metrics on the directly joined subset only. Do not load or refit the Part 2 saved `model/` dir (not in git or S3). Ablations write to separate output subfolders, and they never replace production artifacts.
 
 ## Key questions
 
 | Question | Analysis | What answers it |
 | --- | --- | --- |
-| Q1: What topics appear in Part 3 originals, and how do they compare to Part 2? | Fit on Part 3 originals; assign overlapping posts to the Part 2 original model; compare topic share tables | Whether Part 3 adds topics, shifts topic shares, or keeps Part 2 topics stable |
+| Q1: What topics appear in Part 3 originals, and how do they compare to Part 2? | Fit on Part 3 originals; join carryover posts to Part 2 `assignments.parquet` where present; centroid-assign the rest from Part 2 Titan embeddings; compare topic share tables (primary metrics on directly joined subset) | Whether Part 3 adds topics, shifts topic shares, or keeps Part 2 topics stable |
 | Q2: Do mirrors stay on the same topic as their original? | Assign mirrors with the original model's transform; pair topic agreement rate is the primary metric; for separately fit original and mirror models, match topics one-to-one with Hungarian matching on topic centroid similarity on paired posts, then report adjusted Rand index (ARI) and normalized mutual information (NMI) | Whether mirror generation preserves topical framing or rewrites into different themes |
 | Q3: Does the mirror generator leave a detectable signature? | Joint model on pooled texts; per-topic role share; flag stance- or style-dominated topics; pair co-assignment rate under the joint model. `experiments/test_separability_original_mirror_posts_2026_09_09/` found original and mirror texts near chance to tell apart (about 48%), so a role-dominated topic would be a notable finding | Whether clusters separate by role rather than substance |
 | Q4: What vocabulary does the mirror change within a topic? | Within-topic class-based TF-IDF (c-TF-IDF) keyword contrast original vs mirror per topic | Which stance and style words shift when the generator flips position |
@@ -80,7 +80,7 @@ Exact commands, expected output, tests, and allowed/forbidden files for each ste
 
 ### Step 1: Build Part 3 keep/remove label table
 
-Add `shared/data/transformed/study_phase_2_part_3/` reusing Part 2 modal-aggregation logic (ties go to remove). Register the dataset in `shared/data/registry.py`. Store rater count per post and keep rate per post. Do not bake in the minimum-rater filter from the Decisions table; apply it at analysis time. Add unit tests.
+Add `shared/data/transformed/study_phase_2_part_3/` reusing Part 2 modal-aggregation logic (ties go to remove). Register the dataset in `shared/data/registry.py`. Store rater count per post, keep rate per post, and `is_unanimous` (mirror `_build_unanimous_frame` in `experiments/bertopic_modeling_2026_08_05/src/data.py`: all scored linked-fate raters made the same decision when `n_raters >= 2`; `null` when `n_raters < 2`). Do not bake in the minimum-rater filter from the Decisions table; apply it at analysis time. Add unit tests.
 
 ### Step 2: Scaffold experiment and port Part 2 pipeline
 
@@ -112,7 +112,7 @@ Summarize production counts, topic labels, Q1 to Q5 tables, and ablation sensiti
 
 ## What "done" looks like
 
-1. `shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv` exists, is registered, tested, and exposes rater count and keep rate per post.
+1. `shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv` exists, is registered, tested, and exposes rater count, keep rate, and `is_unanimous` per post.
 2. `experiments/bertopic_original_mirror_part3_2026_09_24/` contains README, SETUP.md, RESULTS.md, and ported `src/` stages with dataset and role inputs.
 3. Titan embedding caches for original and mirror each cover all 18,899 stimulus posts.
 4. Production timestamped runs exist for original, mirror, and joint fits plus mirror assignments from the original model.
@@ -126,7 +126,7 @@ Summarize production counts, topic labels, Q1 to Q5 tables, and ablation sensiti
 
 | Topic | Decision |
 | --- | --- |
-| Dedupe 173 duplicate originals and 35 identical original-mirror pairs before fitting | Dedupe before fit |
+| Dedupe: remove 173 duplicate originals, then 28 identical original-mirror pairs (35 before duplicate removal), yielding 18,698 posts to fit | Dedupe before fit |
 | Minimum raters per post for Q5 outcome tables | 3 raters, applied at analysis time |
 | Include local all-MiniLM-L6-v2 embedding ablation (A3) | Yes |
 | Fit corpus vs outcome analysis corpus | Fit on all deduplicated stimuli; analyze keep/remove outcomes on rated posts only |

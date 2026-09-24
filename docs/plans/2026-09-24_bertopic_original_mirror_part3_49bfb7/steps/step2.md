@@ -135,7 +135,7 @@ Raise `ValueError` for roles outside `ALLOWED_TEXT_ROLES`.
 |----------|----------|
 | `POST_ID_COLUMN = "post_id"` | Standard id column name in experiment frames |
 | `load_stimuli_posts() -> pd.DataFrame` | Load `STUDY_PHASE_2_PART_3_STIMULI`; rename `post_primary_key` to `post_id` (stripped str); rename `mirrored_text` to `mirror_text`; derive `platform` |
-| `load_keep_remove_posts() -> pd.DataFrame` | Load `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS`; validate required columns |
+| `load_keep_remove_posts() -> pd.DataFrame` | Load `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS`; validate required columns including `is_unanimous` (nullable bool) |
 | `select_text_column(role: str) -> str` | `"original"` -> `"original_text"`; `"mirror"` -> `"mirror_text"`; `"joint"` -> raise `ValueError` (joint handled separately) |
 | `texts_for_role(frame: pd.DataFrame, role: str) -> list[str]` | Return text list for `original` or `mirror` |
 | `build_joint_frame(deduped: pd.DataFrame) -> pd.DataFrame` | Two rows per post: columns `post_id`, `text`, `text_role` (`original` or `mirror`), `pair_post_id` (= `post_id`) |
