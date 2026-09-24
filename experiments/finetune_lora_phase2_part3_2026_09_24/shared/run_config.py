@@ -13,6 +13,9 @@ import re
 from dataclasses import replace
 from typing import Any
 
+from experiments.finetune_qwen_model_2026_08_08.inference import (
+    messages_for_generation,
+)
 from experiments.finetune_qwen_model_2026_08_08.src.train_config import (
     TrainHyperparams,
     default_hyperparams as prior_default_hyperparams,
@@ -52,7 +55,16 @@ def default_hyperparams(experiment: str) -> TrainHyperparams:
     TrainHyperparams
         Frozen hyperparameter bundle with Part 3 model, seed, W&B, and epochs.
     """
-    raise NotImplementedError
+    epochs = EXPERIMENT_EPOCHS.get(experiment)
+    prior = prior_default_hyperparams()
+    replacements: dict[str, object] = {
+        "model_id": MODEL_ID,
+        "seed": RANDOM_SEED,
+        "wandb_project": WANDB_PROJECT,
+    }
+    if epochs is not None:
+        replacements["num_train_epochs"] = epochs
+    return replace(prior, **replacements)
 
 
 def chat_template_kwargs_json() -> str:
@@ -63,7 +75,7 @@ def chat_template_kwargs_json() -> str:
     str
         JSON object string, e.g. ``{"enable_thinking": false}``.
     """
-    raise NotImplementedError
+    return json.dumps(CHAT_TEMPLATE_KWARGS or {})
 
 
 def render_infer_prompt(
@@ -88,7 +100,16 @@ def render_infer_prompt(
     str
         Prompt text with generation prompt appended.
     """
-    raise NotImplementedError
+    prompt_messages = messages_for_generation(messages)
+    template_kwargs: dict[str, Any] = {}
+    if chat_template_kwargs:
+        template_kwargs["chat_template_kwargs"] = chat_template_kwargs
+    return tokenizer.apply_chat_template(
+        prompt_messages,
+        tokenize=False,
+        add_generation_prompt=True,
+        **template_kwargs,
+    )
 
 
 def assert_no_thinking_body(prompt: str) -> None:
@@ -104,4 +125,4 @@ def assert_no_thinking_body(prompt: str) -> None:
     AssertionError
         When a ``<think>`` block contains visible thinking text.
     """
-    raise NotImplementedError
+    assert _THINKING_BODY_PATTERN.search(prompt) is None
