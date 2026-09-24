@@ -418,7 +418,11 @@ def render_results_markdown(
 
 def score_all_arms() -> list[dict[str, float | int | str]]:
     """Score every arm and test-set combination."""
-    raise NotImplementedError
+    rows: list[dict[str, float | int | str]] = []
+    for arm, test_paths in ARM_PRED_PATHS.items():
+        for test_set, pred_path in test_paths.items():
+            rows.append(score_arm_test_set(pred_path, arm, test_set))
+    return rows
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
