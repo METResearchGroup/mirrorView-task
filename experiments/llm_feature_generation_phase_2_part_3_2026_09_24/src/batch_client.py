@@ -22,7 +22,11 @@ from typing import Any, Callable, Protocol
 from pydantic import BaseModel, Field, create_model
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, llm_client, paths
-from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import build_labeling_prompt
+from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import (
+    POST_LABEL_USER_TEMPLATE,
+    build_labeling_prompt,
+    labeling_system_prompt,
+)
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.schemas import PostLabelResult
 
 BYTES_PER_MIB = 1024 * 1024
@@ -390,13 +394,34 @@ def _collect_request_lines(
     skip_custom_ids: set[str],
 ) -> list[dict[str, Any]]:
     lines: list[dict[str, Any]] = []
+    system_content = labeling_system_prompt(codebook)
+    response_format = post_label_response_format(codebook)
+    body_base = {
+        "model": constants.LLM_MODEL_ID,
+        "reasoning_effort": constants.LLM_REASONING_EFFORT,
+        "response_format": response_format,
+    }
     for post in posts:
         for surface in text_surfaces:
             custom_id = make_custom_id(post["post_id"], surface)
             if custom_id in skip_custom_ids:
                 continue
             text = _surface_text(post, surface)
-            lines.append(build_batch_request_line(codebook, post["post_id"], text, surface))
+            user_content = POST_LABEL_USER_TEMPLATE.format(text_surface=surface, text=text)
+            lines.append(
+                {
+                    "custom_id": custom_id,
+                    "method": "POST",
+                    "url": BATCH_ENDPOINT,
+                    "body": {
+                        **body_base,
+                        "messages": [
+                            {"role": "system", "content": system_content},
+                            {"role": "user", "content": user_content},
+                        ],
+                    },
+                }
+            )
     return lines
 
 

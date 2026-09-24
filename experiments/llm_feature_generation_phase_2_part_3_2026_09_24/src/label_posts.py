@@ -277,11 +277,22 @@ def _project_full_batch_cost(
 ) -> batch_client.BatchCostEstimate:
     import tempfile
 
+    sample_posts = posts[: min(len(posts), 200)]
     with tempfile.TemporaryDirectory() as tmp:
         paths_list = batch_client.build_batch_jsonl(
-            posts, features, DEFAULT_TEXT_SURFACES, Path(tmp)
+            sample_posts, features, DEFAULT_TEXT_SURFACES, Path(tmp)
         )
         estimate = batch_client.estimate_batch_cost(paths_list, len(features))
+        total_requests = len(posts) * len(DEFAULT_TEXT_SURFACES)
+        scale = total_requests / max(estimate.n_requests, 1)
+        estimate = batch_client.BatchCostEstimate(
+            n_requests=total_requests,
+            input_tokens=int(estimate.input_tokens * scale),
+            output_tokens=int(estimate.output_tokens * scale),
+            projected_batch_usd=estimate.projected_batch_usd * scale,
+            cumulative_usd=estimate.cumulative_usd,
+            projected_total_usd=estimate.cumulative_usd + estimate.projected_batch_usd * scale,
+        )
     avg_user_chars = sum(len(post["original_text"]) + len(post["mirror_text"]) for post in posts) / (
         2 * max(len(posts), 1)
     )
