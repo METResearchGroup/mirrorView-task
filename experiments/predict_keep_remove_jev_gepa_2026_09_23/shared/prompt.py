@@ -137,9 +137,30 @@ def render_state_text(
 
 def build_noul_instruction(index: int, view: str) -> str:
     """Return per-question instruction referencing POSTS_STATE_KEY[index]."""
-    raise NotImplementedError
+    slot = f"{POSTS_STATE_KEY}[{index}]"
+    if view == VIEW_PAIR:
+        return (
+            f"Consider `{slot}`. "
+            "You are evaluating a pair of political social media posts shown together, "
+            "including the study instructions and both post texts. "
+            "Should this pair of posts be removed from the platform? "
+            "Answer yes if both posts should be removed; answer no if both should be allowed."
+        )
+    if view in {VIEW_ORIGINAL, VIEW_MIRROR}:
+        return (
+            f"Consider `{slot}`. "
+            "You are evaluating one political social media post. "
+            "Should this post be removed from the platform? "
+            "Answer yes if it should be removed; answer no if it should be allowed."
+        )
+    raise ValueError(f"unknown view: {view}")
 
 
 def build_questions(n_posts: int, view: str) -> dict[str, Noul]:
     """Return {post_i: Noul(instructions=build_noul_instruction(i, view))} for i in 0..n_posts-1."""
-    raise NotImplementedError
+    return {
+        f"{QUESTION_ID_PREFIX}{index}": Noul(
+            instructions=build_noul_instruction(index, view)
+        )
+        for index in range(n_posts)
+    }
