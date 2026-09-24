@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+from typing import Any
+
 import pandas as pd
 import pytest
+from typesafe_sdk import Noul
 
 
 def trial_row(
@@ -77,3 +81,51 @@ def mixed_trials() -> pd.DataFrame:
         trial_row(post_id="", prolific_id="W10", decision="keep"),
     ]
     return pd.DataFrame(rows)
+
+
+@dataclass
+class FakeUsage:
+    input_tokens: int = 0
+    output_tokens: int = 0
+
+
+@dataclass
+class FakeAnswer:
+    noul: float
+
+
+@dataclass
+class FakeSystemOneResponse:
+    answers: dict[str, FakeAnswer]
+    usage: FakeUsage
+    model: str = "jev-1.13.0"
+
+
+@dataclass
+class FakeTypeSafeClient:
+    """Records system_one calls and returns configurable answers without network."""
+
+    answers: dict[int, float] = field(default_factory=dict)
+    usage: FakeUsage = field(default_factory=lambda: FakeUsage(input_tokens=100, output_tokens=10))
+    calls: list[dict[str, Any]] = field(default_factory=list)
+    fail_times: int = 0
+    fail_with: Exception | None = None
+    call_count: int = 0
+
+    def system_one(
+        self,
+        state: dict[str, list[str]],
+        questions: dict[str, Noul],
+        *,
+        model: str | None = None,
+        **kwargs: Any,
+    ) -> FakeSystemOneResponse:
+        self.calls.append({"state": state, "questions": questions, "model": model, **kwargs})
+        self.call_count += 1
+        if self.fail_with is not None and self.call_count <= self.fail_times:
+            raise self.fail_with
+        built_answers = {}
+        for question_id in sorted(questions):
+            index = int(question_id.split("_", maxsplit=1)[1])
+            built_answers[question_id] = FakeAnswer(noul=self.answers.get(index, 0.5))
+        return FakeSystemOneResponse(answers=built_answers, usage=self.usage, model=model or "jev-1.13.0")
