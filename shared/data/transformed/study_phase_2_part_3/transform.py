@@ -80,6 +80,9 @@ def write_keep_remove_labels(path: Path = OUTPUT_CSV) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
+    raw = load_dataset(STUDY_PHASE_2_PART_3_RESULTS_FULL, low_memory=False)
+    trials = filter_keep_remove_trials(raw, dedupe_worker_post=True)
+    print(f"trial_rows_after_dedupe={len(trials)}")
     labels = write_keep_remove_labels()
     print(f"Wrote {OUTPUT_CSV}")
     print(f"rows={len(labels)}")
