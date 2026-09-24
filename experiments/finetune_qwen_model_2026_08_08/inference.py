@@ -120,7 +120,7 @@ def run_inference(
     limit: int | None,
     upload_preds: bool,
     model_id: str,
-    chat_template_kwargs: dict[str, Any] | None,
+    chat_template_kwargs: dict[str, Any] | None = None,
 ) -> None:
     """Generate predictions and write the prediction CSV.
 
@@ -250,7 +250,7 @@ def run_both_splits(
     adapter_dir: Path | None,
     limit: int | None,
     model_id: str,
-    chat_template_kwargs: dict[str, Any] | None,
+    chat_template_kwargs: dict[str, Any] | None = None,
 ) -> None:
     """Write train and test prediction CSVs for one inference arm.
 

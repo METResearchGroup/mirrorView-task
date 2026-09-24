@@ -192,7 +192,7 @@ def run_training(
     output_dir: Path,
     hyperparams: TrainHyperparams,
     max_steps: int | None,
-    chat_template_kwargs: dict[str, Any] | None,
+    chat_template_kwargs: dict[str, Any] | None = None,
 ) -> None:
     """Execute LoRA SFT on chat_train only.
 

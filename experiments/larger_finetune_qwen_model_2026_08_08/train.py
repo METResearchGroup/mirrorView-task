@@ -50,6 +50,7 @@ def main(argv: list[str] | None = None) -> None:
         output_dir=output_dir,
         hyperparams=hyperparams,
         max_steps=args.max_steps,
+        chat_template_kwargs=None,
     )
 
 
