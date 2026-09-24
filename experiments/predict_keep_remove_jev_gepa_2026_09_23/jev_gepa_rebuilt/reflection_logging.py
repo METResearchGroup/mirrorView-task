@@ -13,6 +13,9 @@ from typing import Any
 
 from gepa.lm import LM
 
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.constants import (
+    REFLECTION_USD_PER_MILLION,
+)
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.pricing import estimate_reflection_cost_usd
 
 
@@ -36,12 +39,16 @@ class UsageLoggingLM(LM):
         self._cumulative_usd = 0.0
 
     def __call__(self, prompt: str | list[dict[str, Any]]) -> str:
+        cost_before = self.total_cost
         response = super().__call__(prompt)
         delta_in = self.total_tokens_in - self._last_tokens_in
         delta_out = self.total_tokens_out - self._last_tokens_out
         self._last_tokens_in = self.total_tokens_in
         self._last_tokens_out = self.total_tokens_out
         call_usd = estimate_reflection_cost_usd(self.model, delta_in, delta_out)
+        if self.model in REFLECTION_USD_PER_MILLION:
+            with self._cost_lock:
+                self._total_cost = cost_before + call_usd
         self._cumulative_usd += call_usd
         record = {
             "call_idx": self._call_idx,
