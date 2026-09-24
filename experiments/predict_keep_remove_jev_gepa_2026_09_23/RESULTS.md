@@ -1,6 +1,6 @@
 # Results
 
-Stage A and Stage B tables will be written here.
+Stage A and Stage B tables are below.
 
 ## Stage A: Jev baselines (cohort A, n=14,955)
 
@@ -82,7 +82,7 @@ B1-T improves both dev and test F1 vs B1 under the same pair-view training setup
 | Stage B Jev (test + transfer evals, measured) | 1.60 | <0.10 transfer only |
 | Luna reflection (4 runs) | unknown (not persisted; source: Wandb runs `qokt6v87`, `os2oqhoe`, `35wvbgyf`, `5ooo492e` — no token/cost summary keys) | ~1.80 to ~3.00 (cap 20 total) |
 | Terra reflection (B1-T) | unknown (not persisted; source: Wandb run `45w4lanf` — no token/cost summary keys) | ~10 to ~17 (cap 20) |
-| **Project total (measured Jev + logged reflection)** | **~7.40 (Jev only)** | **~17 to ~26 (hard ceiling ~46)** |
+| **Project total (measured Jev only; reflection cost unknown)** | **~7.40 (Jev only)** | **~17 to ~26 (hard ceiling ~46)** |
 
 Measured Jev: Stage A $1.45 + GEPA-phase estimate $4.35 (from metric-call volume) + test eval $0.77 + transfer eval $0.83 = **~$7.40**. Reflection calls succeeded (29 accepted proposals per Wandb `proposals` table; no token/cost keys in Wandb summary or history, and no token-count files under `gepa_run/`), so reflection dollars are unknown and the logged $0.00 is not a real cost.
 ## Analysis
@@ -119,4 +119,4 @@ See Stage B transfer table: B1 pair prompt collapses on original (**0.3131**) an
 A1 per-request p50 **369.8** ms, p90 **687.5** ms, p99 **1547.4** ms; per-post p50 **37.0** ms (Stage A latency table).
 
 ### Error clustering summary
-K-means (k=5,10) baseline then BERTopic on seeded MiniLM embeddings for A1 and B1 test FN/FP; original and mirror clustered separately (805 error records per A1 arm, 583 per B1 arm). BERTopic assigned 8–13 topics per arm plus outliers. Outputs: `analysis/outputs/cluster_errors/` (`cluster_assignments.parquet`, `topic_summary.json`, `spot_checks.csv`).
+K-means (k=5,10) baseline then BERTopic on seeded MiniLM embeddings for A1 and B1 test FN/FP; original and mirror clustered separately (805 error records per A1 arm, 583 per B1 arm). BERTopic assigned 9–15 topics per arm plus outliers. Outputs: `analysis/outputs/cluster_errors/` (`cluster_assignments.parquet`, `topic_summary.json`, `spot_checks.csv`).
