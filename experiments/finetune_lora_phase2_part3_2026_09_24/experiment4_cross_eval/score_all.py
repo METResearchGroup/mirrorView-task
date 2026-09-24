@@ -13,6 +13,7 @@ import argparse
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from experiments.finetune_qwen_model_2026_08_08.evaluate import (
@@ -77,8 +78,38 @@ def bootstrap_f1_ci(
     n_resamples: int = BOOTSTRAP_N_RESAMPLES,
     seed: int = BOOTSTRAP_SEED,
 ) -> tuple[float, float, float]:
-    """Bootstrap remove-F1 confidence interval over test posts."""
-    raise NotImplementedError
+    """Bootstrap remove-F1 confidence interval over test posts.
+
+    Parameters
+    ----------
+    y_true
+        Gold labels (0 keep / 1 remove).
+    y_pred
+        Effective predicted labels for scoring.
+    n_resamples
+        Number of bootstrap resamples.
+    seed
+        Random seed for resampling.
+
+    Returns
+    -------
+    tuple[float, float, float]
+        Point remove-F1, 2.5th percentile, and 97.5th percentile.
+    """
+    point_f1 = compute_metrics(y_true, y_pred)["f1"]
+    if not y_true:
+        return point_f1, point_f1, point_f1
+    rng = np.random.default_rng(seed)
+    sample_count = len(y_true)
+    f1_samples: list[float] = []
+    for _ in range(n_resamples):
+        indices = rng.integers(0, sample_count, size=sample_count)
+        resampled_true = [y_true[index] for index in indices]
+        resampled_pred = [y_pred[index] for index in indices]
+        f1_samples.append(compute_metrics(resampled_true, resampled_pred)["f1"])
+    f1_ci_low = float(np.percentile(f1_samples, CI_LOW_PERCENTILE))
+    f1_ci_high = float(np.percentile(f1_samples, CI_HIGH_PERCENTILE))
+    return point_f1, f1_ci_low, f1_ci_high
 
 
 def invalid_rate(frame: pd.DataFrame) -> float:
