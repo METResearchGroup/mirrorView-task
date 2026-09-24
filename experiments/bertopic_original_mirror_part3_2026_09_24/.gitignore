@@ -6,3 +6,8 @@ outputs/embeddings/**/embeddings.npy
 outputs/embeddings_minilm/**/embeddings.npy
 outputs/topics/**/model/
 outputs/topics/**/umap_2d.npy
+outputs/topics/**/probabilities.npy
+outputs/**/*.html
+outputs/ablations/**
+!outputs/ablations/summary.csv
+outputs/ablations/**/model/
