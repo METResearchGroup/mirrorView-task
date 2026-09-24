@@ -16,6 +16,9 @@ REBUILT_S3_SUBPREFIX = "jev_gepa_rebuilt"
 DEFAULT_MAX_METRIC_CALLS = 30_000
 HALF_BUDGET_MAX_METRIC_CALLS = 15_000
 GEPA_SEED = 20260924
+SMOKE_JEV_POSTS = 100
+SMOKE_METRIC_CALLS = 120
+SMOKE_VAL_SUBSAMPLE_SIZE = 20
 REFLECTION_MINIBATCH_SIZE = 25
 VAL_SUBSAMPLE_SIZE = 100
 ACCEPTANCE_MARGIN_CORRECT = 2
@@ -46,3 +49,16 @@ MAX_REFLECTION_COST_USD = {
 HALF_BUDGET_MAX_REFLECTION_COST_USD = 2.50
 REFLECTION_USAGE_JSONL = "reflection_usage.jsonl"
 STOP_REASON_FILENAME = "stop_reason.json"
+COMPONENT_UPDATE_LOG_FILENAME = "component_update_log.jsonl"
+R4_ROUND_ROBIN_COMPONENT_KEYS = (
+    STUDY_COMPONENT_KEY,
+    "remove_criteria",
+    "keep_criteria",
+    "mirror_note",
+)
+R4_SEED_REMOVE_CRITERIA = "- Personal attacks or slurs.\n- Calls for violence."
+R4_SEED_KEEP_CRITERIA = "- Good-faith policy argument.\n- News reporting with context."
+R4_SEED_MIRROR_NOTE = "Mirror post is opposite stance."
+SMOKE_OUTPUT_DIR = OUTPUT_ROOT / "_smoke"
+R1_SMOKE_REPORT_FILENAME = "r1_smoke_report.json"
+R4_SMOKE_PASSED_FILENAME = "r4_smoke_passed.json"

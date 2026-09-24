@@ -11,6 +11,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from dataclasses import dataclass
@@ -39,18 +40,31 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.artifa
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.constants import (
     ACCEPTANCE_LOG_FILENAME,
     CANDIDATE_DEV_SCORES_FILENAME,
+    COMPONENT_UPDATE_LOG_FILENAME,
     DEFAULT_MAX_METRIC_CALLS,
     DEV_SELECTION_FILENAME,
     GEPA_RESULT_FILENAME,
     GEPA_SEED,
     HALF_BUDGET_MAX_METRIC_CALLS,
     OUTPUT_ROOT,
+    R4_ROUND_ROBIN_COMPONENT_KEYS,
+    R4_SEED_KEEP_CRITERIA,
+    R4_SEED_MIRROR_NOTE,
+    R4_SEED_REMOVE_CRITERIA,
     REFLECTION_MINIBATCH_SIZE,
     REFLECTION_USAGE_JSONL,
+    SMOKE_METRIC_CALLS,
+    SMOKE_OUTPUT_DIR,
+    SMOKE_VAL_SUBSAMPLE_SIZE,
     STOP_REASON_FILENAME,
     TOP_ACCEPTED_CANDIDATES,
     VAL_SUBSAMPLE_SIZE,
     WANDB_GROUP,
+)
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.smoke_checks import (
+    assert_r1_smoke_pass,
+    write_r1_smoke_report,
+    write_r4_smoke_passed,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.dev_ab import build_or_load_dev_ab_split
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.guards import check_candidate_guards
@@ -83,8 +97,6 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.splits
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.wandb_tracking import WandbRunSpec, init_run
 
-SMOKE_VAL_SUBSAMPLE_SIZE = 20
-SMOKE_DEFAULT_MAX_METRIC_CALLS = 120
 DEFAULT_RATE_CAP_PER_MIN = 200
 GEPA_RUN_DIRNAME = "gepa_run"
 
@@ -160,6 +172,61 @@ class OptimizeConfig:
     run_dir: Path
     val_subsample_size: int
     rate_cap_per_min: int = DEFAULT_RATE_CAP_PER_MIN
+
+
+def seed_candidate_for_ablation(ablation_id: str, view: ViewName) -> dict[str, str]:
+    """Return GEPA seed candidate; R4 uses four round-robin component keys."""
+    if ablation_id == "R4_gepa_multi_component":
+        return {
+            R4_ROUND_ROBIN_COMPONENT_KEYS[0]: default_seed_candidate(view)[
+                R4_ROUND_ROBIN_COMPONENT_KEYS[0]
+            ],
+            "remove_criteria": R4_SEED_REMOVE_CRITERIA,
+            "keep_criteria": R4_SEED_KEEP_CRITERIA,
+            "mirror_note": R4_SEED_MIRROR_NOTE,
+        }
+    return default_seed_candidate(view)
+
+
+class R4ComponentUpdateLogCallback:
+    """Append round-robin module selection and key snapshot hashes for R4 smoke."""
+
+    def __init__(self, log_path: Path) -> None:
+        self._log_path = log_path
+        self._log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def _snapshot_hash(candidate: dict[str, str], module_selected: str) -> str:
+        text = candidate.get(module_selected, "")
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+    def on_proposal_start(self, event: dict[str, object]) -> None:
+        iteration = int(event["iteration"])
+        components = event.get("components") or []
+        if not components:
+            return
+        module_selected = str(components[0])
+        parent_candidate = event.get("parent_candidate") or {}
+        if not isinstance(parent_candidate, dict):
+            return
+        record = {
+            "iteration": iteration,
+            "module_selected": module_selected,
+            "keys_snapshot_hash": self._snapshot_hash(parent_candidate, module_selected),
+        }
+        with self._log_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record) + "\n")
+
+
+def _finalize_smoke_artifacts(config: OptimizeConfig, result: GEPAResult) -> None:
+    """Write Step 5 smoke reports under outputs/_smoke after a smoke run."""
+    ablation_dir = config.run_dir.parent
+    if config.ablation_id == "R1_gepa_pair":
+        report = assert_r1_smoke_pass(ablation_dir)
+        report["num_iterations"] = getattr(result, "num_iterations", None)
+        write_r1_smoke_report(ablation_dir, SMOKE_OUTPUT_DIR, report)
+    if config.ablation_id == "R4_gepa_multi_component":
+        write_r4_smoke_passed(ablation_dir, SMOKE_OUTPUT_DIR)
 
 
 def resolve_ablation_config(ablation_id: str, *, smoke: bool = False) -> OptimizeConfig:
@@ -347,7 +414,7 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
     dev_a = load_dev_instances(split="dev_a")
     dev_b = load_dev_instances(split="dev_b")
     train_post_texts = load_train_post_texts()
-    seed_candidate = default_seed_candidate(config.view)
+    seed_candidate = seed_candidate_for_ablation(config.ablation_id, config.view)
     rate_limiter = RequestStartLimiter(config.rate_cap_per_min)
     adapter = JevGepaRebuiltAdapter(
         view=config.view,
@@ -417,9 +484,15 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
         "use_wandb": True,
         "wandb_attach_existing": True,
     }
-    # Round-robin module_selector is R4 only (Step 5/6); single-component runs omit it.
+    callbacks: list[Any] = []
     if config.ablation_id == "R4_gepa_multi_component":
         optimize_kwargs["module_selector"] = "round_robin"
+        log_path = config.run_dir / COMPONENT_UPDATE_LOG_FILENAME
+        if log_path.is_file():
+            log_path.unlink()
+        callbacks.append(R4ComponentUpdateLogCallback(log_path))
+    if callbacks:
+        optimize_kwargs["callbacks"] = callbacks
 
     try:
         result = gepa.optimize(**optimize_kwargs)
@@ -467,6 +540,8 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
                 "reflection/total_usd": float(reflection_lm.total_cost),
             }
         )
+        if smoke:
+            _finalize_smoke_artifacts(config, result)
         print(
             f"ablation_id={config.ablation_id} "
             f"total_metric_calls={result.total_metric_calls} "
@@ -511,7 +586,7 @@ def main(argv: list[str] | None = None) -> None:
             score_mode=config.score_mode,
             reflection_lm=config.reflection_lm,
             max_reflection_cost=config.max_reflection_cost,
-            max_metric_calls=SMOKE_DEFAULT_MAX_METRIC_CALLS,
+            max_metric_calls=SMOKE_METRIC_CALLS,
             seed=config.seed,
             run_dir=config.run_dir,
             val_subsample_size=config.val_subsample_size,
