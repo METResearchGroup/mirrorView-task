@@ -182,6 +182,8 @@ def build_batch_jsonl(
 ) -> list[Path]:
     """Write Batch request JSONL file(s) and return their paths."""
     output_dir.mkdir(parents=True, exist_ok=True)
+    for stale in output_dir.glob("*.jsonl"):
+        stale.unlink()
     lines = _collect_request_lines(posts, codebook, text_surfaces, skip_custom_ids or set())
     return _write_jsonl_chunks(lines, output_dir)
 
@@ -407,13 +409,20 @@ def _surface_text(post: dict[str, str], text_surface: str) -> str:
 def _write_jsonl_chunks(lines: list[dict[str, Any]], output_dir: Path) -> list[Path]:
     paths: list[Path] = []
     chunk: list[dict[str, Any]] = []
+    chunk_bytes = 0
     chunk_index = 0
     for line in lines:
-        chunk.append(line)
-        if len(chunk) >= BATCH_MAX_REQUESTS_PER_FILE:
+        encoded_len = len((json.dumps(line) + "\n").encode("utf-8"))
+        if chunk and (
+            len(chunk) >= BATCH_MAX_REQUESTS_PER_FILE
+            or chunk_bytes + encoded_len > BATCH_MAX_FILE_BYTES
+        ):
             paths.append(_flush_chunk(chunk, output_dir, chunk_index))
             chunk_index += 1
             chunk = []
+            chunk_bytes = 0
+        chunk.append(line)
+        chunk_bytes += encoded_len
     if chunk:
         paths.append(_flush_chunk(chunk, output_dir, chunk_index))
     return paths

@@ -217,7 +217,7 @@ def main(argv: list[str] | None = None) -> None:
         run_smoke(codebook_path, surfaces, args.limit, args.seed)
         return
     if args.production:
-        run_production(codebook_path, surfaces)
+        run_production(codebook_path, surfaces, poll_timeout_seconds=args.poll_timeout_seconds)
         return
     if args.assemble_matrix:
         features, _ = load_codebook(codebook_path)
@@ -240,6 +240,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--assemble-matrix", action="store_true")
     parser.add_argument("--limit", type=int, default=20)
     parser.add_argument("--seed", type=int, default=constants.DEFAULT_SEED)
+    parser.add_argument("--poll-timeout-seconds", type=float, default=1200.0)
     return parser.parse_args(argv)
 
 
@@ -329,8 +330,12 @@ def _summarize_smoke_run(run_dir: Path, features: list[dict[str, Any]]) -> dict[
 def _resolve_production_run_dir() -> Path:
     parent = paths.shared_label_dir()
     parent.mkdir(parents=True, exist_ok=True)
-    existing = sorted(child for child in parent.iterdir() if child.is_dir())
-    if existing and (existing[-1] / LABELS_FILENAME).exists():
+    existing = sorted(
+        child
+        for child in parent.iterdir()
+        if child.is_dir() and not child.name.startswith("INVALID_") and not child.name.startswith("smoke_")
+    )
+    if existing:
         return existing[-1]
     run_dir = parent / paths.make_run_timestamp()
     run_dir.mkdir(parents=True, exist_ok=True)
