@@ -99,4 +99,9 @@ def latest_timestamp_subdir(parent: Path) -> Path:
     FileNotFoundError
         When parent is missing or has no child directories.
     """
-    raise NotImplementedError
+    if not parent.is_dir():
+        raise FileNotFoundError(f"Directory not found: {parent}")
+    children = [path for path in parent.iterdir() if path.is_dir()]
+    if not children:
+        raise FileNotFoundError(f"No timestamp subdirectories under {parent}")
+    return sorted(children, key=lambda path: path.name)[-1]
