@@ -33,6 +33,17 @@ class TestCollectOutputFiles:
 
         assert len(collect_output_files(tmp_path)) == 2
 
+    def test_collect_files_skips_identity_cache(self, tmp_path) -> None:
+        """Identity-cache scratch files are not experiment outputs."""
+        cache = tmp_path / ".identity_disk_cache" / "embeddings"
+        cache.mkdir(parents=True)
+        (cache / "vector.npy").write_bytes(b"x")
+        (tmp_path / "keep.txt").write_text("keep", encoding="utf-8")
+
+        collected = collect_output_files(tmp_path)
+
+        assert [path.name for path in collected] == ["keep.txt"]
+
 
 class RecordingClient:
     """Records put_object calls."""

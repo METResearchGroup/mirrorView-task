@@ -27,8 +27,18 @@ def build_s3_key(local_path: str) -> str:
 
 
 def collect_output_files(output_root: Path) -> list[Path]:
-    """Every file under ``output_root``, in sorted order."""
-    return sorted(path for path in output_root.rglob("*") if path.is_file())
+    """Every file under ``output_root``, in sorted order.
+
+    The identity-cache download scratch stays local. It is not an experiment output.
+    """
+    files = []
+    for path in output_root.rglob("*"):
+        if not path.is_file():
+            continue
+        if ".identity_disk_cache" in path.parts:
+            continue
+        files.append(path)
+    return sorted(files)
 
 
 def upload_outputs(
