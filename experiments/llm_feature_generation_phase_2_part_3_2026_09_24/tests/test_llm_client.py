@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -13,10 +12,11 @@ from pydantic import BaseModel
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 from litellm.exceptions import Timeout
 
+import litellm
+
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client import (
     REQUEST_TIMEOUT_SECONDS,
     SpendCapExceeded,
-    _litellm_completion,
     append_cost_log,
     complete_structured,
     read_cumulative_cost_usd,
@@ -118,8 +118,8 @@ def test_reasoning_effort_none_passed(tmp_path: Path) -> None:
     assert kwargs["reasoning_effort"] == constants.LLM_REASONING_EFFORT
 
 
-def test_timeout_passthrough(tmp_path: Path) -> None:
-    """complete_structured passes a 180 second timeout to litellm.completion."""
+def test_timeout_and_retry_settings(tmp_path: Path) -> None:
+    """complete_structured configures LiteLLM and passes timeout and max_retries."""
     payload = {"ok": True}
     with patch(
         "litellm.completion",
@@ -134,25 +134,15 @@ def test_timeout_passthrough(tmp_path: Path) -> None:
             output_dir=tmp_path,
             run_metadata={"model": constants.LLM_MODEL_ID},
         )
-    assert mock_completion.call_args.kwargs["timeout"] == float(REQUEST_TIMEOUT_SECONDS)
-
-
-def test_hard_timeout_via_daemon_thread() -> None:
-    """The daemon-thread join surfaces TimeoutError when the call does not finish."""
-
-    def hang(*args, **kwargs):
-        while True:
-            time.sleep(0.05)
-
-    module = "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client"
-    with patch("litellm.completion", side_effect=hang):
-        with patch(f"{module}.REQUEST_TIMEOUT_SECONDS", 0.05):
-            with pytest.raises(TimeoutError):
-                _litellm_completion([{"role": "user", "content": "hi"}], _ProbeModel)
+    kwargs = mock_completion.call_args.kwargs
+    assert kwargs["timeout"] == float(REQUEST_TIMEOUT_SECONDS)
+    assert kwargs["max_retries"] == 0
+    assert litellm.num_retries == 0
+    assert litellm.request_timeout == REQUEST_TIMEOUT_SECONDS
 
 
 def test_builtin_timeout_error_retries_once(tmp_path: Path) -> None:
-    """complete_structured retries once after a thread-timeout TimeoutError."""
+    """complete_structured retries once after a builtin TimeoutError."""
     payload = {"ok": True}
     with patch(
         "litellm.completion",

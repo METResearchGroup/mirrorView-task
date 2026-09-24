@@ -10,10 +10,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import threading
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, TypeVar
+from typing import Any
 
 import litellm
 from litellm.exceptions import (
@@ -41,8 +40,6 @@ TRANSIENT_LITELLM_ERRORS = (
     InternalServerError,
     BadGatewayError,
 )
-
-_T = TypeVar("_T")
 
 
 class SpendCapExceeded(Exception):
@@ -149,30 +146,16 @@ def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel
     raise RuntimeError("litellm completion failed without an error")
 
 
-def _with_thread_timeout(seconds: int, fn: Callable[[], _T]) -> _T:
-    result: list[_T | None] = [None]
-    error: list[BaseException | None] = [None]
-
-    def target() -> None:
-        try:
-            result[0] = fn()
-        except BaseException as exc:
-            error[0] = exc
-
-    thread = threading.Thread(target=target, daemon=True)
-    thread.start()
-    thread.join(timeout=seconds)
-    if thread.is_alive():
-        raise TimeoutError(f"litellm completion exceeded {seconds}s")
-    if error[0] is not None:
-        raise error[0]
-    return result[0]  # type: ignore[return-value]
+def _configure_litellm_request() -> None:
+    litellm.num_retries = 0
+    litellm.request_timeout = REQUEST_TIMEOUT_SECONDS
 
 
-def _invoke_litellm_completion(
+def _litellm_completion(
     messages: list[dict[str, str]],
     response_model: type[BaseModel],
 ) -> tuple[str, Any]:
+    _configure_litellm_request()
     response = litellm.completion(
         model=constants.LLM_LITELLM_MODEL_ID,
         messages=messages,
@@ -180,19 +163,10 @@ def _invoke_litellm_completion(
         reasoning_effort=constants.LLM_REASONING_EFFORT,
         allowed_openai_params=list(ALLOWED_OPENAI_PARAMS),
         timeout=float(REQUEST_TIMEOUT_SECONDS),
+        max_retries=0,
     )
     raw_text = response.choices[0].message.content or ""
     return raw_text, response
-
-
-def _litellm_completion(
-    messages: list[dict[str, str]],
-    response_model: type[BaseModel],
-) -> tuple[str, Any]:
-    return _with_thread_timeout(
-        REQUEST_TIMEOUT_SECONDS,
-        lambda: _invoke_litellm_completion(messages, response_model),
-    )
 
 
 def _record_call_cost(stage: str, arm: str | None, usage: dict[str, int]) -> None:
