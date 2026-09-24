@@ -89,19 +89,33 @@ def render_pair_prompt(
     )
 
 
+def _render_single_post_prompt(post_text: str) -> str:
+    return (
+        f"{STUDY_INSTRUCTION_SINGLE}\n\n"
+        f"{POST_1_LABEL} {post_text}\n\n"
+        f"{CLOSING_LINE}"
+    )
+
+
 def render_original_prompt(original_text: str) -> str:
     """Return Jev state text for original-only view (A2). One post body, no Post 2 block."""
-    raise NotImplementedError
+    return _render_single_post_prompt(original_text)
 
 
 def render_mirror_prompt(mirror_text: str) -> str:
     """Return Jev state text for mirror-only view (A3). One post body, no Post 2 block."""
-    raise NotImplementedError
+    return _render_single_post_prompt(mirror_text)
 
 
 _VIEW_RENDERERS = {
     VIEW_PAIR: lambda original_text, mirror_text, post_1_role, add_criteria: render_pair_prompt(
         original_text, mirror_text, post_1_role, add_criteria
+    ),
+    VIEW_ORIGINAL: lambda original_text, mirror_text, post_1_role, add_criteria: render_original_prompt(
+        original_text
+    ),
+    VIEW_MIRROR: lambda original_text, mirror_text, post_1_role, add_criteria: render_mirror_prompt(
+        mirror_text
     ),
 }
 
