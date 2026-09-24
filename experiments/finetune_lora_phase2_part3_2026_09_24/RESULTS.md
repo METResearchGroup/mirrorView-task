@@ -11,6 +11,6 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   --write-results experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md
 ```
 
-That command writes `experiment4_cross_eval/scores/cross_eval.csv` and replaces this
-file with the full remove-F1 matrix, metrics table, split counts, and Part 2
-reference block.
+Running score_all.py writes `experiment4_cross_eval/scores/cross_eval.csv` and
+replaces this file with the full remove-F1 matrix, metrics table, split counts,
+and Part 2 reference block.

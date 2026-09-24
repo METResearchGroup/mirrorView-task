@@ -1,11 +1,11 @@
-# Part 3 LoRA fine-tune — setup
+# Part 3 LoRA fine-tune setup
 
 ## Prerequisites
 
 Step 1 label CSVs and registry keys:
 
-- `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` — modal labels (18,862 posts: 13,629 keep / 5,233 remove; includes `n_raters`)
-- `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3` — unanimous min-3 labels (4,988 posts: 4,497 keep / 491 remove)
+- `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS`: modal labels (18,862 posts: 13,629 keep / 5,233 remove, includes `n_raters`)
+- `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3`: unanimous min-3 labels (4,988 posts: 4,497 keep / 491 remove)
 
 ## Post-level split and balance rules
 
@@ -13,7 +13,7 @@ Step 1 label CSVs and registry keys:
 2. Write `data/split_manifest.csv` with columns `post_id`, `split`, `modal_label`, `in_unanimous`.
 3. Unanimous train/test are subsets of modal train/test post ids (same unanimous-min3 label rows, filtered by manifest split).
 4. Balance each split with all removes plus equal sampled keeps (seed 1), reusing `balance_keep_remove` from `experiments/finetune_qwen_model_2026_08_08`.
-5. Experiment 1 train uses unanimous train posts; Experiment 2 train uses modal train posts.
+5. Experiment 1 train uses unanimous train posts. Experiment 2 train uses modal train posts.
 6. Experiment 3 samples from Experiment 2 balanced modal train to match Experiment 1 row and remove counts (seed 1, 1:1 balance).
 7. Shared test CSVs: `data/test_unanimous.csv` (unanimous test posts), `data/test_modal.csv` (modal test posts).
 

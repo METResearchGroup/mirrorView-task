@@ -2,7 +2,7 @@
 
 ## 2026-09-24
 
-1. Operators now have LoRA fine-tune scaffolding for Study Phase 2 Part 3 keep/remove labels (unanimous and modal): shared aggregation with optional worker-post dedupe, post-level splits and balanced chat datasets, a SageMaker launcher, and a cross-eval scorer. SageMaker training has not run because the execution role lacks the new S3 prefix (Terraform not applied; the IAM user cannot update the role). [PR #310](https://github.com/METResearchGroup/mirrorView-task/pull/310)
+1. Operators now have LoRA fine-tune scaffolding for Study Phase 2 Part 3 keep/remove labels (unanimous and modal): shared aggregation with optional worker-post dedupe, post-level splits and balanced chat datasets, a SageMaker launcher, and a cross-eval scorer. SageMaker training has not run because the execution role lacks the new S3 prefix (Terraform not applied. The IAM user cannot update the role). [PR #310](https://github.com/METResearchGroup/mirrorView-task/pull/310)
 
 ## 2026-09-22
 
