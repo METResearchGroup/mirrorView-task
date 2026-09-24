@@ -218,9 +218,27 @@ def _ensure_openai_api_key() -> None:
         os.environ["OPENAI_API_KEY"] = get_openai_api_key()
 
 
+def _to_jsonable(value: object) -> object:
+    if dataclasses.is_dataclass(value):
+        return {
+            field.name: _to_jsonable(getattr(value, field.name))
+            for field in dataclasses.fields(value)
+        }
+    if isinstance(value, dict):
+        return {str(key): _to_jsonable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_to_jsonable(item) for item in value]
+    if isinstance(value, tuple):
+        return [_to_jsonable(item) for item in value]
+    return value
+
+
 def _write_json(path: Path, payload: dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(_to_jsonable(payload), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
 
 
 def _reflection_cost_usd(run: object) -> float:
