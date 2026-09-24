@@ -127,4 +127,24 @@ def build_vote_funnel(per_post: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Columns ``metric`` and ``count`` with rows in ``_FUNNEL_METRICS``.
     """
-    raise NotImplementedError
+    posts_after_vote_clean = len(per_post)
+    dropped_lt_3 = int((per_post["n_raters"] < _MIN_RATERS).sum())
+    dropped_ties = int(
+        (
+            (per_post["n_raters"] >= _MIN_RATERS)
+            & (per_post["keep_count"] == per_post["remove_count"])
+        ).sum()
+    )
+    posts_remaining = posts_after_vote_clean - dropped_lt_3 - dropped_ties
+    counts = {
+        "posts_after_vote_clean": posts_after_vote_clean,
+        "posts_dropped_lt_3_raters": dropped_lt_3,
+        "posts_dropped_ties": dropped_ties,
+        "posts_remaining": posts_remaining,
+    }
+    return pd.DataFrame(
+        {
+            "metric": list(_FUNNEL_METRICS),
+            "count": [counts[metric] for metric in _FUNNEL_METRICS],
+        }
+    )
