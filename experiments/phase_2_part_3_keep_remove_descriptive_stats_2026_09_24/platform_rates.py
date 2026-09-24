@@ -195,7 +195,19 @@ def build_labeled_posts(
     ValueError
         When stimuli join validation fails.
     """
-    raise NotImplementedError
+    merged = join_stimuli_for_platform(per_post, stimuli)
+    frame = merged.copy()
+    frame["post_id"] = frame["post_id"].astype(str)
+    frame["decision"] = [
+        modal_decision(int(keep_count), int(remove_count))
+        for keep_count, remove_count in zip(
+            frame["keep_count"], frame["remove_count"], strict=True
+        )
+    ]
+    frame["platform"] = frame["post_id"].map(derive_platform)
+    frame["toxicity"] = frame["sample_toxicity_type"].map(derive_toxicity_label)
+    frame["platform_toxicity"] = frame["platform"] + " " + frame["toxicity"]
+    return frame[_LABELED_POST_COLUMNS].reset_index(drop=True)
 
 
 def build_platform_crosstab(labeled_posts: pd.DataFrame) -> pd.DataFrame:
