@@ -213,6 +213,32 @@ def _build_unanimous_flags(trials: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def _stimuli_lookup(stimuli: pd.DataFrame) -> pd.DataFrame:
+    """Rename stimulus columns onto the modal ``post_id`` key."""
+    required = {
+        STIMULI_JOIN_KEY,
+        "original_text",
+        "mirrored_text",
+        "sampled_stance",
+        "sample_toxicity_type",
+    }
+    _require_columns(stimuli, required)
+    lookup = stimuli.copy()
+    lookup["post_id"] = lookup[STIMULI_JOIN_KEY].astype(str).str.strip()
+    renamed = lookup.rename(columns={"mirrored_text": "mirror_text"})
+    return renamed[
+        ["post_id", "original_text", "mirror_text", "sampled_stance", "sample_toxicity_type"]
+    ]
+
+
+def _assert_every_post_has_stimulus(joined: pd.DataFrame) -> None:
+    """Raise when the left join did not match a stimulus row."""
+    missing = joined["_merge"] != "both"
+    if missing.any():
+        example_post = str(joined.loc[missing, "post_id"].iloc[0])
+        raise ValueError(f"Rated post_id missing from stimuli: {example_post}")
+
+
 def _join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFrame:
     """Attach stimulus text and metadata to modal labels.
 
@@ -233,7 +259,11 @@ def _join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.Dat
     ValueError
         If a modal ``post_id`` has no stimulus row.
     """
-    raise NotImplementedError
+    joined = modal.merge(_stimuli_lookup(stimuli), on="post_id", how="left", indicator=True)
+    _assert_every_post_has_stimulus(joined)
+    matched = joined.drop(columns="_merge")
+    matched["platform"] = matched["post_id"].astype(str).str.split(PLATFORM_SEPARATOR, n=1).str[0]
+    return matched[OUTPUT_COLUMNS].reset_index(drop=True)
 
 
 def build_keep_remove_labels(
