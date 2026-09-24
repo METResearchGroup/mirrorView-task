@@ -188,8 +188,7 @@ def build_batch_jsonl(
     output_dir.mkdir(parents=True, exist_ok=True)
     for stale in output_dir.glob("*.jsonl"):
         stale.unlink()
-    lines = _collect_request_lines(posts, codebook, text_surfaces, skip_custom_ids or set())
-    return _write_jsonl_chunks(lines, output_dir)
+    return _stream_batch_jsonl(posts, codebook, text_surfaces, skip_custom_ids or set(), output_dir)
 
 
 def estimate_batch_cost(jsonl_paths: list[Path], feature_count: int) -> BatchCostEstimate:
@@ -429,6 +428,59 @@ def _surface_text(post: dict[str, str], text_surface: str) -> str:
     if text_surface == "mirror":
         return post["mirror_text"]
     return post["original_text"]
+
+
+def _stream_batch_jsonl(
+    posts: list[dict[str, str]],
+    codebook: list[dict[str, Any]],
+    text_surfaces: tuple[str, ...],
+    skip_custom_ids: set[str],
+    output_dir: Path,
+) -> list[Path]:
+    paths: list[Path] = []
+    chunk: list[dict[str, Any]] = []
+    chunk_bytes = 0
+    chunk_index = 0
+    system_content = labeling_system_prompt(codebook)
+    response_format = post_label_response_format(codebook)
+    body_base = {
+        "model": constants.LLM_MODEL_ID,
+        "reasoning_effort": constants.LLM_REASONING_EFFORT,
+        "response_format": response_format,
+    }
+    for post in posts:
+        for surface in text_surfaces:
+            custom_id = make_custom_id(post["post_id"], surface)
+            if custom_id in skip_custom_ids:
+                continue
+            text = _surface_text(post, surface)
+            user_content = POST_LABEL_USER_TEMPLATE.format(text_surface=surface, text=text)
+            line = {
+                "custom_id": custom_id,
+                "method": "POST",
+                "url": BATCH_ENDPOINT,
+                "body": {
+                    **body_base,
+                    "messages": [
+                        {"role": "system", "content": system_content},
+                        {"role": "user", "content": user_content},
+                    ],
+                },
+            }
+            encoded_len = len((json.dumps(line) + "\n").encode("utf-8"))
+            if chunk and (
+                len(chunk) >= BATCH_MAX_REQUESTS_PER_FILE
+                or chunk_bytes + encoded_len > BATCH_MAX_FILE_BYTES
+            ):
+                paths.append(_flush_chunk(chunk, output_dir, chunk_index))
+                chunk_index += 1
+                chunk = []
+                chunk_bytes = 0
+            chunk.append(line)
+            chunk_bytes += encoded_len
+    if chunk:
+        paths.append(_flush_chunk(chunk, output_dir, chunk_index))
+    return paths
 
 
 def _write_jsonl_chunks(lines: list[dict[str, Any]], output_dir: Path) -> list[Path]:
