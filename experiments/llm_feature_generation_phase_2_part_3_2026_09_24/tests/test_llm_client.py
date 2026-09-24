@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import signal
+import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -15,6 +17,7 @@ from litellm.exceptions import Timeout
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client import (
     REQUEST_TIMEOUT_SECONDS,
     SpendCapExceeded,
+    _litellm_completion,
     append_cost_log,
     complete_structured,
     read_cumulative_cost_usd,
@@ -133,6 +136,46 @@ def test_timeout_passthrough(tmp_path: Path) -> None:
             run_metadata={"model": constants.LLM_MODEL_ID},
         )
     assert mock_completion.call_args.kwargs["timeout"] == float(REQUEST_TIMEOUT_SECONDS)
+
+
+def test_hard_timeout_via_mock_alarm() -> None:
+    """The alarm wrapper surfaces TimeoutError when SIGALRM fires during the call."""
+
+    def hang(*args, **kwargs):
+        while True:
+            time.sleep(0.05)
+
+    def fire_alarm_immediately(seconds: int) -> int:
+        if seconds:
+            signal.raise_signal(signal.SIGALRM)
+        return 0
+
+    with patch("litellm.completion", side_effect=hang):
+        with patch("signal.alarm", side_effect=fire_alarm_immediately):
+            with pytest.raises(TimeoutError):
+                _litellm_completion([{"role": "user", "content": "hi"}], _ProbeModel)
+
+
+def test_builtin_timeout_error_retries_once(tmp_path: Path) -> None:
+    """complete_structured retries once after a SIGALRM TimeoutError."""
+    payload = {"ok": True}
+    with patch(
+        "litellm.completion",
+        side_effect=[
+            TimeoutError("litellm completion exceeded 180s"),
+            _mock_response(json.dumps(payload), input_tokens=10, output_tokens=5),
+        ],
+    ) as mock_completion:
+        complete_structured(
+            [{"role": "user", "content": "hi"}],
+            _ProbeModel,
+            stage="discovery",
+            arm="original_only",
+            call_index=1,
+            output_dir=tmp_path,
+            run_metadata={"model": constants.LLM_MODEL_ID},
+        )
+    assert mock_completion.call_count == 2
 
 
 def test_transient_error_retries_once(tmp_path: Path) -> None:

@@ -129,7 +129,6 @@ def _run_batches(
     output_dir = _resolve_output_dir(args)
     run_metadata = _build_run_metadata(args)
     for call_index, batch in enumerate(batches):
-        print(f"batch_index={call_index} arm={args.arm}")
         _run_one_batch(
             args, batch, call_index, output_dir, run_metadata, response_model, row_builder
         )
@@ -147,6 +146,7 @@ def _run_one_batch(
 ) -> None:
     if _batch_artifact_exists(output_dir, call_index):
         return
+    print(f"batch_index={call_index} arm={args.arm}")
     batch["arm"] = args.arm
     batch["batch_design"] = args.batch_design
     messages = build_feature_generation_messages(batch, args.arm)

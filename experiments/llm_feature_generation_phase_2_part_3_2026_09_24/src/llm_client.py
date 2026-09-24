@@ -10,9 +10,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import signal
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable, TypeVar
 
 import litellm
 from litellm.exceptions import (
@@ -33,12 +35,15 @@ REQUEST_TIMEOUT_SECONDS = 180
 MAX_COMPLETION_ATTEMPTS = 2
 TRANSIENT_LITELLM_ERRORS = (
     Timeout,
+    TimeoutError,
     APIConnectionError,
     RateLimitError,
     ServiceUnavailableError,
     InternalServerError,
     BadGatewayError,
 )
+
+_T = TypeVar("_T")
 
 
 class SpendCapExceeded(Exception):
@@ -145,7 +150,27 @@ def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel
     raise RuntimeError("litellm completion failed without an error")
 
 
-def _litellm_completion(
+def _on_sigalrm(signum: int, frame: Any) -> None:
+    raise TimeoutError(f"litellm completion exceeded {REQUEST_TIMEOUT_SECONDS}s")
+
+
+def _cancel_hard_timeout(previous_handler: Any) -> None:
+    signal.alarm(0)
+    signal.signal(signal.SIGALRM, previous_handler)
+
+
+def _with_hard_timeout(seconds: int, fn: Callable[[], _T]) -> _T:
+    if threading.current_thread() is not threading.main_thread():
+        return fn()
+    previous_handler = signal.signal(signal.SIGALRM, _on_sigalrm)
+    signal.alarm(seconds)
+    try:
+        return fn()
+    finally:
+        _cancel_hard_timeout(previous_handler)
+
+
+def _invoke_litellm_completion(
     messages: list[dict[str, str]],
     response_model: type[BaseModel],
 ) -> tuple[str, Any]:
@@ -159,6 +184,16 @@ def _litellm_completion(
     )
     raw_text = response.choices[0].message.content or ""
     return raw_text, response
+
+
+def _litellm_completion(
+    messages: list[dict[str, str]],
+    response_model: type[BaseModel],
+) -> tuple[str, Any]:
+    return _with_hard_timeout(
+        REQUEST_TIMEOUT_SECONDS,
+        lambda: _invoke_litellm_completion(messages, response_model),
+    )
 
 
 def _record_call_cost(stage: str, arm: str | None, usage: dict[str, int]) -> None:
