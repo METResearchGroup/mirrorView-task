@@ -1,5 +1,21 @@
 """Shared helpers for the predict keep/remove Jev and GEPA experiment."""
 
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.metrics import (
+    ClassificationMetrics,
+    ConfusionCounts,
+    CostSummary,
+    LatencyPercentiles,
+    SubgroupMetrics,
+    TrivialBaselineMetrics,
+    build_results_payload,
+    hard_label_metrics,
+    latency_summary,
+    probability_metrics,
+    spearman_remove_share,
+    subgroup_metrics,
+    trivial_baselines,
+    tune_threshold_for_f1,
+)
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.cohort import (
     MIN_RATERS,
     aggregate_post_labels,
@@ -26,6 +42,12 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
 )
 
 __all__ = [
+    "ClassificationMetrics",
+    "ConfusionCounts",
+    "CostSummary",
+    "LatencyPercentiles",
+    "SubgroupMetrics",
+    "TrivialBaselineMetrics",
     "MIN_RATERS",
     "CLOSING_LINE",
     "POSTS_STATE_KEY",
@@ -37,11 +59,19 @@ __all__ = [
     "aggregate_post_labels",
     "attach_pair_order",
     "build_cohort_a",
+    "build_results_payload",
     "build_noul_instruction",
     "build_questions",
     "dedupe_participant_post",
     "filter_scored_trials",
+    "hard_label_metrics",
+    "latency_summary",
     "pair_order_for_post",
+    "probability_metrics",
+    "spearman_remove_share",
+    "subgroup_metrics",
+    "trivial_baselines",
+    "tune_threshold_for_f1",
     "render_mirror_prompt",
     "render_original_prompt",
     "render_pair_prompt",
