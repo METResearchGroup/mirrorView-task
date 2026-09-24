@@ -7,6 +7,7 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import math
 from dataclasses import asdict, dataclass
 from typing import Any, Literal
 
@@ -191,13 +192,67 @@ def trivial_baselines(
     )
 
 
+def _metrics_for_frame(
+    frame: pd.DataFrame,
+    *,
+    threshold: float,
+) -> ClassificationMetrics:
+    return probability_metrics(
+        frame["keep_remove_label"].astype(int).tolist(),
+        frame["p_remove"].astype(float).tolist(),
+        threshold=threshold,
+    )
+
+
+def _append_subgroup_rows(
+    rows: list[SubgroupMetrics],
+    frame: pd.DataFrame,
+    subgroup_name: str,
+    column: str,
+    *,
+    threshold: float,
+) -> None:
+    for value in sorted(frame[column].dropna().unique()):
+        subset = frame.loc[frame[column] == value]
+        if subset.empty:
+            continue
+        rows.append(
+            SubgroupMetrics(
+                subgroup_name=subgroup_name,
+                subgroup_value=str(value),
+                metrics=_metrics_for_frame(subset, threshold=threshold),
+            )
+        )
+
+
 def subgroup_metrics(
     frame: pd.DataFrame,
     *,
     threshold: float = DEFAULT_THRESHOLD,
 ) -> list[SubgroupMetrics]:
     """Emit metrics for stance, toxicity, unanimous, and remove_share quartiles."""
-    raise NotImplementedError
+    rows: list[SubgroupMetrics] = []
+    working = frame.copy()
+    _append_subgroup_rows(rows, working, "stance", "sampled_stance", threshold=threshold)
+    _append_subgroup_rows(rows, working, "toxicity", "sample_toxicity_type", threshold=threshold)
+    working["unanimous_label"] = working["is_unanimous"].map(
+        {True: "unanimous", False: "non_unanimous"}
+    )
+    _append_subgroup_rows(rows, working, "unanimous", "unanimous_label", threshold=threshold)
+    quartile_labels = pd.qcut(
+        working["remove_share"].astype(float),
+        q=4,
+        duplicates="drop",
+    )
+    working = working.assign(remove_share_quartile=quartile_labels.astype(str))
+    _append_subgroup_rows(
+        rows,
+        working,
+        "remove_share_quartile",
+        "remove_share_quartile",
+        threshold=threshold,
+    )
+    return rows
 
 
 def spearman_remove_share(
@@ -205,7 +260,15 @@ def spearman_remove_share(
     p_remove: list[float],
 ) -> float:
     """Spearman correlation between human remove vote share and P(remove)."""
-    raise NotImplementedError
+    if len(remove_share) < 2 or len(p_remove) < 2:
+        return float("nan")
+    if len(set(remove_share)) < 2 or len(set(p_remove)) < 2:
+        return float("nan")
+    result = spearmanr(remove_share, p_remove)
+    correlation = result.correlation
+    if correlation is None or math.isnan(correlation):
+        return float("nan")
+    return float(correlation)
 
 
 def latency_summary(
@@ -213,7 +276,18 @@ def latency_summary(
     post_latencies_ms: list[float],
 ) -> dict[str, LatencyPercentiles]:
     """Keys: request, post."""
-    raise NotImplementedError
+    return {
+        "request": LatencyPercentiles(
+            p50_ms=latency.percentile_ms(request_latencies_ms, 0.5),
+            p90_ms=latency.percentile_ms(request_latencies_ms, 0.9),
+            p99_ms=latency.percentile_ms(request_latencies_ms, 0.99),
+        ),
+        "post": LatencyPercentiles(
+            p50_ms=latency.percentile_ms(post_latencies_ms, 0.5),
+            p90_ms=latency.percentile_ms(post_latencies_ms, 0.9),
+            p99_ms=latency.percentile_ms(post_latencies_ms, 0.99),
+        ),
+    }
 
 
 def build_results_payload(
