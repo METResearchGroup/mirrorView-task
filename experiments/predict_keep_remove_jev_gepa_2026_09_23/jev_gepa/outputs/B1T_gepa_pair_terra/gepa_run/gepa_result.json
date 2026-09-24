@@ -1,0 +1,364 @@
+{
+  "_str_candidate_key": null,
+  "best_idx": 1,
+  "best_outputs_valset": {
+    "0": [
+      [
+        1,
+        {
+          "p_remove": 0.36,
+          "post_id": "reddit_t1_mw6wias"
+        }
+      ]
+    ],
+    "1": [
+      [
+        1,
+        {
+          "p_remove": 0.38,
+          "post_id": "reddit_t1_mysn0hn"
+        }
+      ]
+    ],
+    "10": [
+      [
+        1,
+        {
+          "p_remove": 0.57,
+          "post_id": "reddit_t1_mrhfsag"
+        }
+      ]
+    ],
+    "11": [
+      [
+        1,
+        {
+          "p_remove": 0.24,
+          "post_id": "reddit_t1_mz2szbd"
+        }
+      ]
+    ],
+    "12": [
+      [
+        1,
+        {
+          "p_remove": 0.27,
+          "post_id": "reddit_t1_mq7z5h6"
+        }
+      ]
+    ],
+    "13": [
+      [
+        2,
+        {
+          "p_remove": 0.66,
+          "post_id": "reddit_t1_mro6o66"
+        }
+      ]
+    ],
+    "14": [
+      [
+        0,
+        {
+          "p_remove": 0.35,
+          "post_id": "bluesky_14d8029e10df6416eedf3fd293b61206a16607b5954b4b19078227935d5b5e09"
+        }
+      ]
+    ],
+    "15": [
+      [
+        1,
+        {
+          "p_remove": 0.21,
+          "post_id": "reddit_t1_myqeh4a"
+        }
+      ]
+    ],
+    "16": [
+      [
+        0,
+        {
+          "p_remove": 0.16,
+          "post_id": "reddit_t1_mtvodnx"
+        }
+      ]
+    ],
+    "17": [
+      [
+        1,
+        {
+          "p_remove": 0.3,
+          "post_id": "bluesky_5f43781e116783c6349bfce5ef792426074143e2df90ce432bf995c9d9d72a3f"
+        }
+      ]
+    ],
+    "18": [
+      [
+        2,
+        {
+          "p_remove": 0.93,
+          "post_id": "bluesky_6f990d7f67d1d9622d527dfd3094202e3a97f232491a9ee093372b673c3abb3c"
+        }
+      ]
+    ],
+    "19": [
+      [
+        0,
+        {
+          "p_remove": 0.27,
+          "post_id": "reddit_t1_muytchr"
+        }
+      ]
+    ],
+    "2": [
+      [
+        2,
+        {
+          "p_remove": 0.79,
+          "post_id": "bluesky_762530441c44235caf1c7e47dd4e7771a5c9fa86406a49fff6f2cce31a0db59b"
+        }
+      ]
+    ],
+    "3": [
+      [
+        0,
+        {
+          "p_remove": 0.73,
+          "post_id": "reddit_1l3pmp0_mw373ex"
+        }
+      ]
+    ],
+    "4": [
+      [
+        0,
+        {
+          "p_remove": 0.36,
+          "post_id": "twitter_2061591120392683925"
+        }
+      ],
+      [
+        2,
+        {
+          "p_remove": 0.36,
+          "post_id": "twitter_2061591120392683925"
+        }
+      ]
+    ],
+    "5": [
+      [
+        1,
+        {
+          "p_remove": 0.48,
+          "post_id": "bluesky_47729da25b220fe209e80581e8d627c5ec0c8671ecf2ba15df39472265cbea58"
+        }
+      ]
+    ],
+    "6": [
+      [
+        1,
+        {
+          "p_remove": 0.28,
+          "post_id": "bluesky_2b71ae67511d55784cb338ad1068638d9c4f38d12eca660a72f90faaec5cbdf7"
+        }
+      ]
+    ],
+    "7": [
+      [
+        1,
+        {
+          "p_remove": 0.33,
+          "post_id": "reddit_1tpf0kw_ooa4h3o"
+        }
+      ]
+    ],
+    "8": [
+      [
+        2,
+        {
+          "p_remove": 0.94,
+          "post_id": "bluesky_9e1b89ead67f41254caa0e8e05ba528c86c145c70292a82891a12503dfd83db3"
+        }
+      ]
+    ],
+    "9": [
+      [
+        1,
+        {
+          "p_remove": 0.32,
+          "post_id": "reddit_t1_msw3953"
+        }
+      ]
+    ]
+  },
+  "candidates": [
+    {
+      "instruction": "You are evaluating a pair of political social media posts shown together, including the study instructions and both post texts. Should this pair of posts be removed from the platform? Answer yes if both posts should be removed; answer no if both should be allowed."
+    },
+    {
+      "instruction": "You are evaluating a paired political-post moderation task. You will be given:\n\n- `original_text`: one political social-media post\n- `mirror_text`: a politically mirrored/counterpart version of that post\n\nDecide whether the pair should be removed. Reply with exactly one lowercase word:\n\n- `yes` \u2014 both posts should be removed\n- `no` \u2014 both posts should be allowed\n\nDo not explain your answer, do not mention probabilities, and do not add formatting.\n\nEvaluate the actual wording and tone, not whether you agree with the political position. Apply the same standard to left- and right-leaning content; do not remove content merely because it criticizes Trump, Biden, Democrats, Republicans, MAGA supporters, progressives, Israel/Palestine, government, wealthy people, etc.\n\nThe annotation standard is relatively permissive toward ordinary political disagreement, rhetoric, and criticism, but removes sufficiently toxic political abuse. Use the following calibration:\n\nALLOW (`no`) for:\n- Normal political opinions, policy arguments, criticism of institutions, governments, parties, politicians, wealthy people, or ideology.\n- Predictions or warnings about political consequences, even dramatic ones, when they do not threaten or direct violence.\n- General claims about authoritarianism, government overreach, citizenship, constitutional rights, social hierarchy, taxation, or electoral systems.\n- Political mockery or ideological labels that remain mainly rhetorical rather than severely abusive.\n- Comparisons such as calling political opponents \u201cMarxists,\u201d \u201cNazis,\u201d \u201cfar left,\u201d \u201cfar right,\u201d \u201cRussian propaganda,\u201d \u201ccult-like,\u201d etc., when presented as political commentary rather than extreme targeted abuse.\n- Mere profanity when it is not part of a strongly dehumanizing or abusive attack.\n\nREMOVE (`yes`) when both paired posts contain a comparable level of content such as:\n- Strong degrading insults aimed at political opponents or groups: e.g., calling them \u201cfucking idiots,\u201d \u201ctotally illiterate,\u201d \u201cdumber than a rock,\u201d \u201ccultist maniacs,\u201d or similarly contemptuous language.\n- Dehumanizing, highly derogatory, or humiliating attacks that go beyond ordinary political criticism.\n- Explicitly baseless election-integrity accusations framed as factual claims, such as alleging that a party \u201cstole elections\u201d through corrupt or rigged voting systems, especially when paired with inflammatory group-directed rhetoric.\n- Severe harassment, threats, incitement, or advocacy of violence. These should be removed even if phrased politically.\n\nImportant boundary calibration from prior human judgments:\n- \u201cTalk about a third grade education. Totally illiterate and dumber than a rock. Perfect for [politician]\u2019s garbage/clown-show Cabinet\u201d is removal-level abuse.\n- Calling supporters \u201cirrational delusions,\u201d \u201ccultist maniacs,\u201d \u201cwoke fanatics,\u201d or equivalent can be removal-level when the post is primarily a hostile, demeaning attack.\n- \u201cThese fucking idiots are eating up [side\u2019s] propaganda\u201d was judged removal-level due to the strong abusive phrasing.\n- By contrast, \u201cthese MAGAs/libs are so indoctrinated into their cult\u201d was allowed in the observed data despite being insulting; do not over-remove lower-to-medium-level political snark.\n- Accusing someone of aligning with Nazis or radical Marxists, alongside criticism of their motives, was allowed in a close human judgment; do not automatically remove analogy-based political rhetoric.\n- A post criticizing \u201cthe ultra wealthy,\u201d \u201cbig government,\u201d bureaucrats, citizenship-based rights restrictions, or government social control is allowed absent direct abuse or threats.\n- Neutral policy prompts about carbon taxes, wealth taxes, income taxes, or abolishing taxes are allowed.\n- Claims that Democrats \u201csteal elections\u201d through mail-in-ballot chaos, corrupt machines, or a \u201crigged\u201d system were removal-level in the observed data.\n\nBecause the posts are mirrors, check that the conclusion is politically viewpoint-neutral: if the original is removable for abuse or misinformation, its mirror should ordinarily be treated the same way. Do not favor one side. If the pair is only borderline, ordinary political hyperbole, or lacks clear removal-level toxicity, choose `no`."
+    },
+    {
+      "instruction": "You are moderating a paired set of political social-media posts. The input contains two parallel posts, typically labeled `original_text` and `mirror_text`, which express opposing political viewpoints. Assess each post under the same standard, without favoring either political side.\n\nReturn exactly one lowercase word:\n\n- `yes` \u2014 only if BOTH posts should be removed.\n- `no` \u2014 if BOTH posts should be allowed, or if only one post clearly warrants removal.\n\nRemoval standard:\nRemove posts that use severe, targeted, or broadly demeaning hostile language toward political parties, political movements, voters, or ideological groups; use identity-like slurs for political opponents; wish, endorse, imply, or normalize harm or \u201cconsequences\u201d against political opponents or their families; or make sweeping, inflammatory claims that a political party/group supports killing, mass death, or comparable atrocities.\n\nExamples of removable patterns include:\n- Calling political opponents \u201cbrain dead,\u201d \u201cMAGAts,\u201d \u201clib-tards,\u201d \u201cchuckle fucks,\u201d etc.\n- Saying a political group would let families be killed, should face \u201cactual consequences,\u201d should starve, or expressing similar collective hostility or harm.\n- Blanket accusations such as \u201cthe Democrat/Republican Party supports killers,\u201d \u201cmass death,\u201d or \u201cdestruction,\u201d when used as a hostile attack on the group rather than substantive policy criticism.\n\nAllow ordinary political disagreement, criticism of politicians, parties, agencies, corporations, policies, ideologies, or election claims, even when sarcastic or rude. Terms such as \u201cwoke,\u201d \u201ccorporate shills,\u201d \u201cclowns,\u201d \u201cbloated agencies,\u201d or criticism that a policy is reckless, harmful, corrupt, or wrong are not by themselves enough for removal. Do not remove merely for profanity, partisan framing, controversial claims, factual inaccuracies, or criticism of institutions.\n\nFocus on the actual language and target, not the truth of the political claim, the sampled stance, or whether you agree with the viewpoint. Apply the standard symmetrically to the original and mirrored post."
+    }
+  ],
+  "discovery_eval_counts": [
+    0,
+    22,
+    44
+  ],
+  "num_full_val_evals": 3,
+  "objective_pareto_front": null,
+  "parents": [
+    [
+      null
+    ],
+    [
+      0
+    ],
+    [
+      0
+    ]
+  ],
+  "per_objective_best_candidates": null,
+  "per_val_instance_best_candidates": {
+    "0": [
+      1
+    ],
+    "1": [
+      1
+    ],
+    "10": [
+      1
+    ],
+    "11": [
+      1
+    ],
+    "12": [
+      1
+    ],
+    "13": [
+      2
+    ],
+    "14": [
+      0
+    ],
+    "15": [
+      1
+    ],
+    "16": [
+      0
+    ],
+    "17": [
+      1
+    ],
+    "18": [
+      2
+    ],
+    "19": [
+      0
+    ],
+    "2": [
+      2
+    ],
+    "3": [
+      0
+    ],
+    "4": [
+      0,
+      2
+    ],
+    "5": [
+      1
+    ],
+    "6": [
+      1
+    ],
+    "7": [
+      1
+    ],
+    "8": [
+      2
+    ],
+    "9": [
+      1
+    ]
+  },
+  "run_dir": "/workspace/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa/outputs/B1T_gepa_pair_terra/gepa_run",
+  "seed": 20260924,
+  "total_metric_calls": 64,
+  "val_aggregate_scores": [
+    0.5525,
+    0.6025,
+    0.5549999999999999
+  ],
+  "val_aggregate_subscores": null,
+  "val_subscores": [
+    {
+      "0": 0.38,
+      "1": 0.33999999999999997,
+      "10": 0.56,
+      "11": 0.5700000000000001,
+      "12": 0.65,
+      "13": 0.28,
+      "14": 0.35,
+      "15": 0.78,
+      "16": 0.84,
+      "17": 0.63,
+      "18": 0.87,
+      "19": 0.27,
+      "2": 0.77,
+      "3": 0.73,
+      "4": 0.36,
+      "5": 0.25,
+      "6": 0.61,
+      "7": 0.44999999999999996,
+      "8": 0.87,
+      "9": 0.49
+    },
+    {
+      "0": 0.64,
+      "1": 0.62,
+      "10": 0.57,
+      "11": 0.76,
+      "12": 0.73,
+      "13": 0.27,
+      "14": 0.28,
+      "15": 0.79,
+      "16": 0.79,
+      "17": 0.7,
+      "18": 0.87,
+      "19": 0.21,
+      "2": 0.6,
+      "3": 0.52,
+      "4": 0.24,
+      "5": 0.52,
+      "6": 0.72,
+      "7": 0.6699999999999999,
+      "8": 0.87,
+      "9": 0.6799999999999999
+    },
+    {
+      "0": 0.5700000000000001,
+      "1": 0.29000000000000004,
+      "10": 0.51,
+      "11": 0.6799999999999999,
+      "12": 0.65,
+      "13": 0.33999999999999997,
+      "14": 0.32,
+      "15": 0.63,
+      "16": 0.6599999999999999,
+      "17": 0.56,
+      "18": 0.93,
+      "19": 0.26,
+      "2": 0.79,
+      "3": 0.65,
+      "4": 0.36,
+      "5": 0.19999999999999996,
+      "6": 0.64,
+      "7": 0.54,
+      "8": 0.94,
+      "9": 0.5800000000000001
+    }
+  ],
+  "validation_schema_version": 2
+}
