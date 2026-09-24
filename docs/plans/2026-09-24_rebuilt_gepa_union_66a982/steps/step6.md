@@ -184,7 +184,7 @@ Expected stdout contains `test_results.json`; test F1 fields present.
 Parallel launch (operator, four terminals or `run_ablations.py`):
 
 ```bash
-PYTHONPATH=. uv run python experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/run_ablations.py --wave parallel_r1_r2_r3 --enable-r7
+PYTHONPATH=. uv run python experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/run_ablations.py --wave parallel_r1_r2_r3_r7
 ```
 
 Expected: subprocess PIDs for each ablation; combined rate under 1000 req/min documented in launcher log.
