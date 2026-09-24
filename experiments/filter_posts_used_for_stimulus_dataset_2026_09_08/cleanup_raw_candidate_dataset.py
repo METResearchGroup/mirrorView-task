@@ -92,7 +92,7 @@ def _previously_used_original_text(
 ) -> set[str]:
     texts: set[str] = set()
     for entry in datasets.values():
-        if entry.kind != STIMULI_DATASET_KIND or entry.is_union:
+        if entry.kind != STIMULI_DATASET_KIND:
             continue
         frame = load_dataset(entry.name)
         texts |= set(frame[ORIGINAL_TEXT_COLUMN].dropna().map(str))

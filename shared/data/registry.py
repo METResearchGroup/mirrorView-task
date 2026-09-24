@@ -1,4 +1,4 @@
-"""Named catalog of study datasets under ``shared/data/``."""
+"""Named catalog of canonical study datasets under ``shared/data/``."""
 
 from __future__ import annotations
 
@@ -24,39 +24,20 @@ STUDY_PHASE_2_PART_2_USER_REFLECTION_FEEDBACK = (
 )
 STUDY_PHASE_2_PART_3_RESULTS_FULL = "STUDY_PHASE_2_PART_3_RESULTS_FULL"
 STUDY_PHASE_2_PART_3_STIMULI = "STUDY_PHASE_2_PART_3_STIMULI"
-STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL = "STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL"
-STUDY_PHASE_2_PART_2_AND_3_STIMULI = "STUDY_PHASE_2_PART_2_AND_3_STIMULI"
 
 
 @dataclass(frozen=True)
 class DatasetEntry:
-    """Immutable catalog record for one registered study table.
+    """Immutable catalog record for one registered study CSV.
 
-    File-backed entries set ``relative_path``. Union entries set
-    ``source_names`` instead; ``load_dataset`` stacks those sources.
-
-    ``kind`` is ``results`` or ``stimuli`` for study tables, or
+    ``kind`` is ``results`` or ``stimuli`` for raw inputs, or
     ``transformed`` for derived artifacts under ``shared/data/transformed/``.
     """
 
     name: str
-    relative_path: Path | None
+    relative_path: Path
     kind: DatasetKind
     study_phase: str
-    source_names: tuple[str, ...] = ()
-
-    def __post_init__(self) -> None:
-        has_path = self.relative_path is not None
-        has_sources = bool(self.source_names)
-        if has_path == has_sources:
-            raise ValueError(
-                f"{self.name}: set exactly one of relative_path or source_names"
-            )
-
-    @property
-    def is_union(self) -> bool:
-        """True when this entry is a stacked view of other datasets."""
-        return bool(self.source_names)
 
 
 DATASETS: dict[str, DatasetEntry] = {
@@ -129,26 +110,6 @@ DATASETS: dict[str, DatasetEntry] = {
         kind="stimuli",
         study_phase="study_phase_2_part_3",
     ),
-    STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL: DatasetEntry(
-        name=STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL,
-        relative_path=None,
-        kind="results",
-        study_phase="study_phase_2_part_2_and_3",
-        source_names=(
-            STUDY_PHASE_2_PART_2_RESULTS_FULL,
-            STUDY_PHASE_2_PART_3_RESULTS_FULL,
-        ),
-    ),
-    STUDY_PHASE_2_PART_2_AND_3_STIMULI: DatasetEntry(
-        name=STUDY_PHASE_2_PART_2_AND_3_STIMULI,
-        relative_path=None,
-        kind="stimuli",
-        study_phase="study_phase_2_part_2_and_3",
-        source_names=(
-            STUDY_PHASE_2_PART_2_STIMULI,
-            STUDY_PHASE_2_PART_3_STIMULI,
-        ),
-    ),
 }
 
 
@@ -168,17 +129,6 @@ def get_dataset(name: str) -> DatasetEntry:
 
 
 def resolve_path(name: str) -> Path:
-    """Absolute path for a file-backed ``name``. Does not check that the file exists.
-
-    Raises:
-        KeyError: If ``name`` is not in the catalog.
-        ValueError: If ``name`` is a union dataset with no single file.
-    """
+    """Absolute path for ``name``. Does not check that the file exists."""
     entry = get_dataset(name)
-    if entry.relative_path is None:
-        sources = ", ".join(entry.source_names)
-        raise ValueError(
-            f"Dataset {name!r} is a union of {sources} and has no single file. "
-            "Load it with shared.data.dataloader.load_dataset."
-        )
     return REPO_ROOT / entry.relative_path

@@ -86,9 +86,8 @@ def load_previously_used_stimuli_ids(
     Parameters
     ----------
     datasets
-        The study dataset catalog. Only file-backed entries whose kind is
-        ``stimuli`` are read. Union catalogs are skipped because they
-        repeat those same tables.
+        The study dataset catalog. Only entries whose kind is ``stimuli``
+        are read.
 
     Returns
     -------
@@ -104,7 +103,7 @@ def load_previously_used_stimuli_ids(
     """
     ids: set[str] = set()
     for entry in datasets.values():
-        if entry.kind != STIMULI_DATASET_KIND or entry.is_union:
+        if entry.kind != STIMULI_DATASET_KIND:
             continue
         frame = load_dataset(entry.name)
         ids |= extract_stimuli_ids(frame, entry.name)
