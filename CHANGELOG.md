@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-24
+
+1. Phase 2 Part 3 original posts, mirrored posts, and both together now have BERTopic fits, with keep/remove joined afterwards. Mirror text assigned by the original model matches the original topic 22.8% of the time, and posts with at least 3 raters show topic-level keep rates around a 69.4% corpus rate. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
+
 ## 2026-09-22
 
 1. The September 2026 run has 3,875 finishers and 79,500 labels. A 2026-09-22 S3 rescan found no new session files after 2026-09-21, so collection is treated as complete. [PR #286](https://github.com/METResearchGroup/mirrorView-task/pull/286)
