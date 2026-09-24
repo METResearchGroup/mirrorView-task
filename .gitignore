@@ -9,8 +9,6 @@ local_data/*.csv
 analysis/data/*.csv
 test_data/*.csv
 *.csv
-!shared/data/raw/study_phase_2_part_3/**/*.csv
-!shared/data/raw/study_phase_2_part_2_and_3/**/*.csv
 data_platform/data/**
 # Pinned Bluesky dataset. Only the JSON manifests stay in git, and the parquet files live in S3.
 !data_platform/data/bluesky/
