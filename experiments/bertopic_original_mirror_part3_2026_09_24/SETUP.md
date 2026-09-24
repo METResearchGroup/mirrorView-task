@@ -31,3 +31,11 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 ```
 
 Large artifacts (`embeddings.npy`, BERTopic `model/` directories, `umap_2d.npy`) are gitignored. They live in S3 at `s3://mirrorview-experimental-artifacts/experiments/bertopic_original_mirror_part3_2026_09_24/` with the same relative paths. Small artifacts stay in git: `index.parquet`, `metadata.json`, the dedupe report, assignments, topic info, labels, analysis tables, and figure PNGs.
+
+Ablations and the topic-review export:
+
+```bash
+PYTHONPATH=. uv run --extra bertopic python \
+  experiments/bertopic_original_mirror_part3_2026_09_24/src/run_ablations.py \
+  --ablation all --seed 42
+```

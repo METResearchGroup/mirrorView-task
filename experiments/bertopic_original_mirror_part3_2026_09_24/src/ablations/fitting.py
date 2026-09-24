@@ -19,7 +19,8 @@ NOISE_TOPIC_ID = -1
 
 def original_corpus() -> FitCorpus:
     """Deduped original-role documents and Titan embeddings."""
-    return load_fit_corpus("original")
+    corpus, _report = load_fit_corpus("original")
+    return corpus
 
 
 def fit_topics(
