@@ -1,0 +1,67 @@
+Iteration 0: Base program full valset score: 0.5589999999999999 over 20 / 20 examples
+Iteration 1: Selected program 0 score: 0.5589999999999999
+Iteration 1: Proposed new text for instruction: You will receive study instructions and a pair of political social media posts, usually labeled `original_text` and `mirror_text`. The posts may express opposing political viewpoints or be matched, mirrored versions of similar rhetoric.
+
+Decide whether **both posts** should be removed under the applicable platform rules and study instructions:
+- Answer **yes** only if both posts should be removed.
+- Answer **no** if either post should be allowed, including when one should be removed and the other allowed.
+
+Assess each post on its own, then make the pair-level decision. Apply the same standards regardless of which political side or public figure a post supports or criticizes. Do not treat disagreement, partisan viewpoint, policy criticism, or political hyperbole as grounds for removal by themselves. Consider the wording, target, severity, and context of abusive or inflammatory language. The examples show that insults and charged political rhetoric can receive mixed judgments: some posts with heated rhetoric are allowed, while more abusive or inflammatory examples are marked for removal. Do not remove a post solely because it uses profanity or criticizes a politician; judge the overall content under the supplied rules.
+
+Use any study-specific instructions in the input as the primary standard. Treat accompanying feedback details such as human votes, stance, or toxicity labels as calibration context if they are provided, not as a substitute for evaluating the posts.
+
+Output only **yes** or **no**.
+Iteration 1: New subsample score 5.94 is not better than old score 6.04, skipping
+Iteration 2: Selected program 0 score: 0.5589999999999999
+Iteration 2: Proposed new text for instruction: You are evaluating a pair of political social media posts, presented together with any study instructions. The input contains two post texts (often labeled `original_text` and `mirror_text`); they may express opposite political viewpoints or be mirrored versions of the same argument.
+
+Decide whether BOTH posts should be removed from the platform. Assess each post separately, applying the supplied study instructions consistently and without favoring or penalizing a political side.
+
+Answer “yes” only if both posts independently warrant removal. Answer “no” if either post should be allowed, including when neither should be removed. Return only “yes” or “no.”
+
+In making the decision, distinguish political opinion, criticism, allegations, and heated but non-abusive rhetoric from content that crosses the study’s removal standard. Political claims or criticism of elected officials, parties, policies, agencies, ideologies, or public figures are not by themselves grounds for removal. Posts criticizing elections, government programs, or political positions can generally remain when they do not cross that standard.
+
+Pay particular attention to abusive or highly hostile language directed at political opponents or their supporters. Examples in this task include partisan slurs and demeaning insults (such as “brain dead” or “lib-tards”), vulgar contemptuous insults, claims portraying a party as supporting mass death, and extreme hyperbole about harming families or destroying cities. Such attacks can warrant removal when they are sufficiently toxic or hostile, even if framed as political commentary. Consider the wording and target of each post rather than its political stance.
+
+Do not infer that one post must receive the same decision as the other just because the pair is politically balanced or uses similar arguments. The final answer is about whether both should be removed, not whether either one should be removed.
+Iteration 2: Accepted candidate (subsample score 6.97 -> 8.18); running full eval.
+Iteration 2: Found a better program on the valset with score 0.632.
+Iteration 2: Valset score for new program: 0.632 (coverage 20 / 20)
+Iteration 2: Val aggregate for new program: 0.632
+Iteration 2: Individual valset scores for new program: {0: 0.64, 1: 0.55, 2: 0.65, 3: 0.58, 4: 0.18, 5: 0.33999999999999997, 6: 0.78, 7: 0.69, 8: 0.88, 9: 0.78, 10: 0.55, 11: 0.85, 12: 0.83, 13: 0.49, 14: 0.18, 15: 0.92, 16: 0.9299999999999999, 17: 0.79, 18: 0.87, 19: 0.16}
+Iteration 2: New valset pareto front scores: {0: 0.64, 1: 0.55, 2: 0.78, 3: 0.72, 4: 0.38, 5: 0.33999999999999997, 6: 0.78, 7: 0.69, 8: 0.88, 9: 0.78, 10: 0.56, 11: 0.85, 12: 0.83, 13: 0.49, 14: 0.35, 15: 0.92, 16: 0.9299999999999999, 17: 0.79, 18: 0.88, 19: 0.25}
+Iteration 2: Valset pareto front aggregate score: 0.6695
+Iteration 2: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {0}, 3: {0}, 4: {0}, 5: {1}, 6: {1}, 7: {1}, 8: {1}, 9: {1}, 10: {0}, 11: {1}, 12: {1}, 13: {1}, 14: {0}, 15: {1}, 16: {1}, 17: {1}, 18: {0}, 19: {0}}
+Iteration 2: Best valset aggregate score so far: 0.632
+Iteration 2: Best program as per aggregate score on valset: 1
+Iteration 2: Best score on valset: 0.632
+Iteration 2: Linear pareto front program index: 1
+Iteration 2: New program candidate index: 1
+Iteration 3: No merge candidates found
+Iteration 3: Selected program 1 score: 0.632
+Iteration 3: Proposed new text for instruction: You are evaluating a pair of political social-media posts, usually labeled `original_text` and `mirror_text`. They may take opposite political positions while using similar arguments. Apply the same standard to each post, without favoring either political side.
+
+Decide whether BOTH posts independently warrant removal under the study’s standard. Answer “yes” only if both should be removed. Answer “no” if either should be allowed, including when neither should be removed. Return only “yes” or “no,” with no explanation.
+
+Assess the wording, target, and context of each post. Political opinions, policy arguments, criticism of elected officials, parties, agencies, ideologies, and public figures, and allegations of misconduct or bias are not by themselves grounds for removal. Do not remove a post merely because it is partisan, factually disputed, accusatory, or uses profanity. Do not infer that the posts must receive the same decision because they are politically balanced or mirror each other.
+
+Calibration from the study examples:
+- Allow criticism and allegations about political hypocrisy, corruption, business dealings, government agencies, special interests, or political opponents’ motives when expressed as political argument. Broad rhetoric such as saying politicians are selling people out or “destroying the country” for donors can remain. Criticism of political rhetoric, including quoted references to “fight” or calls to harass officials, can remain when the post is discussing or condemning it rather than endorsing harm.
+- Profanity alone is not decisive. Casual or contextual descriptions such as calling a politician an “asshole” while discussing their record may remain. However, direct, contemptuous personal insults aimed at a named politician—especially vulgar attacks on their intelligence or competence, such as saying they could not design a popsicle stick or find their way out of a paper bag—warrant removal in this study’s calibration. Calling a politician an “idiot” in a hostile political statement is also a removal-level signal.
+- Remove highly hostile or demeaning attacks on political opponents or their supporters, including partisan slurs, insults such as “brain dead” or “lib-tards,” vulgar contempt, and claims portraying a party or its supporters as backing mass death.
+- Remove extreme coercive or violent hyperbole aimed at political groups, such as calling to bring back the guillotine, send people to camps, or “find” a camp or bunker. “Deport them all” in an extreme, hostile formulation is also a removal signal in the study examples. Do not treat every heated metaphor as equivalent: ordinary political claims that opponents are harming or “destroying” the country are not, by themselves, a threat.
+- The study’s calibration labels a paired exchange containing dismissive mockery of the other person’s judgment (“your spider sense is calling bullshit” / “the experts said so, case closed”) alongside inflammatory allegations about Russia, the “deep state,” the FBI, and the DOJ as removal. Political allegations alone generally do not justify removal, but do not automatically allow an exchange when the framing becomes highly hostile and contemptuous.
+
+Apply the removal standard separately to both posts, then return the required pair-level answer.
+Iteration 3: Accepted candidate (subsample score 6.35 -> 8.36); running full eval.
+Iteration 3: Valset score for new program: 0.6014999999999999 (coverage 20 / 20)
+Iteration 3: Val aggregate for new program: 0.6014999999999999
+Iteration 3: Individual valset scores for new program: {0: 0.53, 1: 0.33999999999999997, 2: 0.73, 3: 0.61, 4: 0.17, 5: 0.44999999999999996, 6: 0.77, 7: 0.72, 8: 0.88, 9: 0.73, 10: 0.36, 11: 0.8200000000000001, 12: 0.76, 13: 0.48, 14: 0.15, 15: 0.89, 16: 0.9299999999999999, 17: 0.73, 18: 0.84, 19: 0.14}
+Iteration 3: New valset pareto front scores: {0: 0.64, 1: 0.55, 2: 0.78, 3: 0.72, 4: 0.38, 5: 0.44999999999999996, 6: 0.78, 7: 0.72, 8: 0.88, 9: 0.78, 10: 0.56, 11: 0.85, 12: 0.83, 13: 0.49, 14: 0.35, 15: 0.92, 16: 0.9299999999999999, 17: 0.79, 18: 0.88, 19: 0.25}
+Iteration 3: Valset pareto front aggregate score: 0.6765
+Iteration 3: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {0}, 3: {0}, 4: {0}, 5: {2}, 6: {1}, 7: {2}, 8: {1, 2}, 9: {1}, 10: {0}, 11: {1}, 12: {1}, 13: {1}, 14: {0}, 15: {1}, 16: {1, 2}, 17: {1}, 18: {0}, 19: {0}}
+Iteration 3: Best valset aggregate score so far: 0.632
+Iteration 3: Best program as per aggregate score on valset: 1
+Iteration 3: Best score on valset: 0.632
+Iteration 3: Linear pareto front program index: 1
+Iteration 3: New program candidate index: 2
