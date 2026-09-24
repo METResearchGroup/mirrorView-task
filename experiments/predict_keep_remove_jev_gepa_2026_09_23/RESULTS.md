@@ -85,3 +85,38 @@ B1-T improves both dev and test F1 vs B1 under the same pair-view training setup
 | **Project total (measured Jev + logged reflection)** | **~7.40 (Jev only)** | **~17 to ~26 (hard ceiling ~46)** |
 
 Measured Jev: Stage A $1.45 + GEPA-phase estimate $4.35 (from metric-call volume) + test eval $0.77 + transfer eval $0.83 = **~$7.40**. Reflection calls succeeded (29 accepted proposals per Wandb `proposals` table; no token/cost keys in Wandb summary or history, and no token-count files under `gepa_run/`), so reflection dollars are unknown and the logged $0.00 is not a real cost.
+## Analysis
+
+### Q1. Jev baseline vs trivial baselines
+A1 test F1 **0.5267** beats keep-all (**0.0000**), remove-all (**0.3512**), and prevalence-random (**0.2116**, std **0.0143**). See Stage A table.
+
+### Q2. GEPA improvement and cost
+B1 test F1 **0.5484** vs A1 **0.5267** (delta **+0.0217**). B1-T test F1 **0.5635** at reflection cost **unknown** vs B1 **unknown**. See Stage B and spend table.
+
+### Q3. Which text carries signal (pair vs original vs mirror)
+| Arm | Test F1 |
+| --- | --- |
+| A1 pair | 0.5267 |
+| A2 original | 0.4987 |
+| A3 mirror | 0.5201 |
+| B2 original-trained | 0.5372 |
+| B3 mirror-trained | 0.5536 |
+Transfer: B1 on original **0.3131**, B1 on mirror **0.2000**.
+
+### Q4. Errors by stance and toxicity
+Stage A subgroup tables show higher A1 test F1 on left stance (**0.5466**) than right (**0.4899**), and on high-toxicity posts (**0.6860**) vs low-toxicity (**0.1515**). Cluster summaries: A1 original errors **805** (label **616**, grouping **189**); A1 mirror **805**; B1 original **583**; B1 mirror **583**. See `analysis/outputs/cluster_errors/**/topic_summary.json`.
+
+### Q5. P(remove) vs human disagreement
+Spearman rho on full cohort: A1 **0.4927** (see Stage A).
+
+### Q6. GEPA prompt transfer across views
+See Stage B transfer table: B1 pair prompt collapses on original (**0.3131**) and mirror (**0.2000**); B2→mirror **0.5444** and B3→original **0.5523** stay near in-domain scores.
+
+### Q7. GEPA criteria vs human-mined criteria
+`analysis/outputs/criteria/comparison_summary.csv`: **87** GEPA atomic criteria across five ablations, **0** matched to `KEEP_REMOVE_FEATURES_ADDENDUM` by conservative synonym rules, **87** novel. B1 alone: **25** criteria, **0** matched, **25** novel. Held-out spot-check rows in `analysis/outputs/criteria/*_spot_check.csv`.
+
+### Q8. Latency percentiles (batch 10)
+A1 per-request p50 **369.8** ms, p90 **687.5** ms, p99 **1547.4** ms; per-post p50 **37.0** ms (Stage A latency table).
+
+### Error clustering summary
+K-means (k=5,10) baseline then BERTopic on seeded MiniLM embeddings for A1 and B1 test FN/FP; original and mirror clustered separately (805 error records per A1 arm, 583 per B1 arm). BERTopic assigned 8–13 topics per arm plus outliers. Outputs: `analysis/outputs/cluster_errors/` (`cluster_assignments.parquet`, `topic_summary.json`, `spot_checks.csv`).
