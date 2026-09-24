@@ -1,0 +1,62 @@
+"""Frozen run constants for Part 3 LoRA SageMaker jobs.
+
+Run from root::
+
+    PYTHONPATH=. uv run python -c \\
+      "from experiments.finetune_lora_phase2_part3_2026_09_24.shared.run_config import MODEL_ID; print(MODEL_ID)"
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from dataclasses import replace
+from typing import Any
+
+from experiments.finetune_qwen_model_2026_08_08.src.train_config import (
+    TrainHyperparams,
+    default_hyperparams as prior_default_hyperparams,
+)
+
+MODEL_ID = "Qwen/Qwen3.5-4B"
+CHAT_TEMPLATE_KWARGS: dict[str, bool] = {"enable_thinking": False}
+S3_BUCKET = "mirrorview-experimental-artifacts"
+S3_PREFIX = "experiments/finetune_lora_phase2_part3_2026_09_24"
+ECR_REPO_NAME = "mirrorview-finetune-lora-phase2-part3"
+WANDB_PROJECT = "mirrorview-finetune-lora-phase2-part3"
+EXPERIMENT_EPOCHS: dict[str, int] = {
+    "experiment1_unanimous": 3,
+    "experiment2_modal": 1,
+    "experiment3_modal_size_matched": 3,
+}
+RANDOM_SEED = 1
+AWS_REGION = "us-east-2"
+INSTANCE_TYPE = "ml.g5.xlarge"
+
+EXPERIMENT_NAMES = tuple(EXPERIMENT_EPOCHS.keys()) + ("experiment4_cross_eval",)
+
+_THINKING_BODY_PATTERN = re.compile(r"<think>\s*\S")
+
+
+def default_hyperparams(experiment: str) -> TrainHyperparams:
+    """Return Part 3 hyperparams derived from the August defaults."""
+    raise NotImplementedError
+
+
+def chat_template_kwargs_json() -> str:
+    """Serialize chat-template kwargs for SageMaker environment."""
+    raise NotImplementedError
+
+
+def render_infer_prompt(
+    tokenizer: Any,
+    messages: list[dict[str, Any]],
+    chat_template_kwargs: dict[str, Any] | None,
+) -> str:
+    """Render the inference prompt the same way ``inference.py`` does."""
+    raise NotImplementedError
+
+
+def assert_no_thinking_body(prompt: str) -> None:
+    """Reject prompts whose thinking block contains non-whitespace content."""
+    raise NotImplementedError
