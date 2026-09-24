@@ -13,6 +13,7 @@ Run from the repo root::
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.constants import (
@@ -20,6 +21,27 @@ from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.constants 
     DECISION_REMOVE,
     MAX_KEEP_FEATURES_PER_BATCH,
     MAX_REMOVE_FEATURES_PER_BATCH,
+    OUTCOME_LEAKAGE_TERMS,
+)
+LABEL_EXAMPLE_MAX_CHARS = 250
+LABEL_SYSTEM_PROMPT_MAX_CHARS = 20_000
+LABEL_CHARS_PER_TOKEN_ESTIMATE = 4
+LABEL_OUTPUT_TOKENS_PER_REQUEST_ESTIMATE = 192
+LABEL_PROJECTION_EXTRA_SYSTEM_TERMS = ("cluster",)
+_LABELING_LEAKAGE_RE = re.compile(
+    "|".join(
+        rf"\b{re.escape(term)}" for term in OUTCOME_LEAKAGE_TERMS + LABEL_PROJECTION_EXTRA_SYSTEM_TERMS
+    ),
+    re.IGNORECASE,
+)
+_LABELING_ENTRY_KEYS = frozenset(
+    {
+        "feature_id",
+        "name",
+        "definition",
+        "positive_example",
+        "negative_example",
+    }
 )
 
 FEATURE_EXTRACTION_CATEGORY_SECTION = """
@@ -200,7 +222,7 @@ sampled_features:
 """.strip()
 
 POST_LABEL_SYSTEM_PREFIX = """
-You are labeling one social-media post against an approved moderation codebook.
+You are labeling one social-media post against an approved feature codebook.
 
 For each codebook feature, return present=true when the feature clearly applies to the
 post text, otherwise present=false. Use only the provided codebook definitions.
@@ -298,15 +320,90 @@ def build_codebook_rewrite_messages(features: list[dict[str, Any]]) -> list[dict
     ]
 
 
+def truncate_label_example_text(text: str) -> str:
+    """Truncate one example string at a word boundary with an ellipsis."""
+    stripped = text.strip()
+    if len(stripped) <= LABEL_EXAMPLE_MAX_CHARS:
+        return stripped
+    snippet = stripped[:LABEL_EXAMPLE_MAX_CHARS]
+    last_space = snippet.rfind(" ")
+    if last_space > 0:
+        snippet = snippet[:last_space]
+    return f"{snippet}..."
+
+
+def _example_text_from_list(examples: list[Any]) -> str:
+    if not examples:
+        return ""
+    for item in examples:
+        if isinstance(item, dict):
+            candidate = truncate_label_example_text(str(item.get("text", "")))
+        else:
+            candidate = truncate_label_example_text(str(item))
+        if candidate and not _LABELING_LEAKAGE_RE.search(candidate):
+            return candidate
+    return ""
+
+
+def project_codebook_entry_for_labeling(entry: dict[str, Any]) -> dict[str, str]:
+    """Project one codebook row to the minimal labeling payload."""
+    return {
+        "feature_id": str(entry["feature_id"]),
+        "name": str(entry["name"]),
+        "definition": str(entry["definition"]),
+        "positive_example": _example_text_from_list(entry.get("positive_examples", [])),
+        "negative_example": _example_text_from_list(entry.get("negative_examples", [])),
+    }
+
+
+def project_codebook_for_labeling(codebook: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Return codebook entries sorted by ``feature_id`` for labeling prompts."""
+    projected = [project_codebook_entry_for_labeling(entry) for entry in codebook]
+    return sorted(projected, key=lambda row: row["feature_id"])
+
+
+def serialize_labeling_codebook_json(codebook: list[dict[str, Any]]) -> str:
+    """Serialize the projected codebook with a stable, cache-friendly encoding."""
+    projected = project_codebook_for_labeling(codebook)
+    return json.dumps(projected, separators=(",", ":"), ensure_ascii=False)
+
+
+def labeling_system_prompt(codebook: list[dict[str, Any]]) -> str:
+    """Return the fixed system prompt prefix for one codebook version."""
+    return POST_LABEL_SYSTEM_PREFIX.format(codebook_json=serialize_labeling_codebook_json(codebook))
+
+
+def assert_labeling_system_prompt_clean(
+    codebook: list[dict[str, Any]],
+    system_prompt: str,
+) -> None:
+    """Raise when the labeling system prompt leaks outcomes or forbidden terms."""
+    from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.build_codebook import (
+        validate_outcome_leakage,
+    )
+
+    codebook_json = serialize_labeling_codebook_json(codebook)
+    if _LABELING_LEAKAGE_RE.search(codebook_json):
+        raise ValueError("labeling codebook JSON contains forbidden outcome or cluster terms")
+    for entry in project_codebook_for_labeling(codebook):
+        validate_outcome_leakage(entry["name"], entry["definition"])
+
+
+def estimate_labeling_prompt_tokens(codebook: list[dict[str, Any]], user_text: str) -> tuple[int, int]:
+    """Estimate system-prefix and user-message token counts for one labeling call."""
+    messages = build_labeling_prompt(codebook, user_text, "original")
+    prefix = len(messages[0]["content"]) // LABEL_CHARS_PER_TOKEN_ESTIMATE
+    user = len(messages[1]["content"]) // LABEL_CHARS_PER_TOKEN_ESTIMATE
+    return prefix, user
+
+
 def build_labeling_prompt(
     codebook: list[dict[str, Any]],
     text: str,
     text_surface: str,
 ) -> list[dict[str, str]]:
     """Build chat messages with a fixed codebook prefix and one post text."""
-    system_content = POST_LABEL_SYSTEM_PREFIX.format(
-        codebook_json=json.dumps(codebook, indent=2),
-    )
+    system_content = labeling_system_prompt(codebook)
     user_content = POST_LABEL_USER_TEMPLATE.format(text_surface=text_surface, text=text)
     return [
         {"role": "system", "content": system_content},

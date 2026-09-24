@@ -23,7 +23,11 @@ from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import (
     llm_client,
     paths,
 )
-from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import build_labeling_prompt
+from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import (
+    LABEL_OUTPUT_TOKENS_PER_REQUEST_ESTIMATE,
+    build_labeling_prompt,
+    estimate_labeling_prompt_tokens,
+)
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.schemas import PostLabelResult
 
 TEXT_SURFACE_ORIGINAL = "original"
@@ -139,16 +143,22 @@ def run_smoke(
     run_dir.mkdir(parents=True, exist_ok=True)
     call_count = _smoke_label_cohort(cohort, features, text_surfaces, run_dir)
     projection = _project_full_batch_cost(features, cohort_posts_frame(load_union_cohort()))
+    smoke_stats = _summarize_smoke_run(run_dir, features)
     print(f"approval={approval}")
     print(
         f"smoke_posts={limit} surfaces={','.join(text_surfaces)} "
         f"direct_llm_calls={call_count}"
     )
     print(
-        f"projected_batch_total_usd={projection.projected_total_usd:.2f} "
+        f"smoke_input_tokens_mean={smoke_stats['input_tokens_mean']:.0f} "
+        f"per_feature_positive_rate={smoke_stats['positive_rates']}"
+    )
+    print(
+        f"projected_batch_total_usd_no_cache={projection.projected_total_usd:.2f} "
+        f"projected_batch_total_usd_cached={projection.cached_total_usd:.2f} "
         f"cap_usd={constants.SPEND_CAP_USD:.2f}"
     )
-    return {"direct_llm_calls": call_count, "projection": projection}
+    return {"direct_llm_calls": call_count, "projection": projection, "smoke_stats": smoke_stats}
 
 
 def run_production(
@@ -270,7 +280,50 @@ def _project_full_batch_cost(
         paths_list = batch_client.build_batch_jsonl(
             posts, features, DEFAULT_TEXT_SURFACES, Path(tmp)
         )
-        return batch_client.estimate_batch_cost(paths_list, len(features))
+        estimate = batch_client.estimate_batch_cost(paths_list, len(features))
+    avg_user_chars = sum(len(post["original_text"]) + len(post["mirror_text"]) for post in posts) / (
+        2 * max(len(posts), 1)
+    )
+    prefix_tokens, user_tokens = estimate_labeling_prompt_tokens(features, "x" * int(avg_user_chars))
+    cached_batch = batch_client.compute_cached_batch_cost_usd(
+        estimate.n_requests,
+        prefix_tokens,
+        user_tokens,
+        LABEL_OUTPUT_TOKENS_PER_REQUEST_ESTIMATE,
+    )
+    cumulative = llm_client.read_cumulative_cost_usd()
+    return batch_client.BatchCostEstimate(
+        n_requests=estimate.n_requests,
+        input_tokens=estimate.input_tokens,
+        output_tokens=estimate.output_tokens,
+        projected_batch_usd=estimate.projected_batch_usd,
+        cumulative_usd=estimate.cumulative_usd,
+        projected_total_usd=estimate.projected_total_usd,
+        cached_total_usd=cumulative + cached_batch,
+    )
+
+
+def _summarize_smoke_run(run_dir: Path, features: list[dict[str, Any]]) -> dict[str, Any]:
+    calls_dir = run_dir / "smoke_calls"
+    usage_totals: list[int] = []
+    positive_counts = {str(feature["feature_id"]): 0 for feature in features}
+    n_labels = 0
+    for artifact in sorted(calls_dir.glob("*.json")):
+        payload = json.loads(artifact.read_text(encoding="utf-8"))
+        usage_totals.append(int(payload.get("usage", {}).get("input_tokens", 0)))
+        labels = payload.get("response", {}).get("parsed", {}).get("labels", {})
+        if not labels:
+            continue
+        n_labels += 1
+        for feature_id, present in labels.items():
+            if present:
+                positive_counts[str(feature_id)] = positive_counts.get(str(feature_id), 0) + 1
+    rates = {
+        feature_id: (positive_counts[feature_id] / n_labels if n_labels else 0.0)
+        for feature_id in sorted(positive_counts)
+    }
+    mean_input = sum(usage_totals) / len(usage_totals) if usage_totals else 0.0
+    return {"input_tokens_mean": mean_input, "positive_rates": rates, "n_label_rows": n_labels}
 
 
 def _resolve_production_run_dir() -> Path:

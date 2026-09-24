@@ -60,6 +60,7 @@ class BatchCostEstimate:
     projected_batch_usd: float
     cumulative_usd: float
     projected_total_usd: float
+    cached_total_usd: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -220,6 +221,23 @@ def compute_batch_cost_usd(
     """Return USD at Batch rates (50% of standard)."""
     standard = llm_client.compute_cost_usd(input_tokens, output_tokens, cached_input_tokens)
     return standard * BATCH_PRICE_FRACTION
+
+
+def compute_cached_batch_cost_usd(
+    n_requests: int,
+    prefix_tokens: int,
+    user_tokens_per_request: int,
+    output_tokens_per_request: int,
+) -> float:
+    """Estimate Batch USD when the system prefix is cached after the first request."""
+    if n_requests <= 0:
+        return 0.0
+    first_non_cached = prefix_tokens + user_tokens_per_request
+    rest = max(n_requests - 1, 0)
+    non_cached_input = first_non_cached + rest * user_tokens_per_request
+    cached_input = rest * prefix_tokens
+    output_tokens = n_requests * output_tokens_per_request
+    return compute_batch_cost_usd(non_cached_input, output_tokens, cached_input)
 
 
 def append_batch_cost_log(
