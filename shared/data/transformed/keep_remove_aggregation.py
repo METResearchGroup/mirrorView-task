@@ -232,4 +232,39 @@ def aggregate_unanimous_labels(
     ValueError
         If a post has conflicting ``original_text`` or ``mirror_text``.
     """
-    raise NotImplementedError
+    required = {"post_id", "original_text", "mirror_text", "decision"}
+    missing = required - set(trials.columns)
+    if missing:
+        raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
+
+    _assert_stable_texts(trials)
+
+    grouped = (
+        trials.groupby("post_id", dropna=False)
+        .agg(
+            n_raters=("decision", "size"),
+            n_unique_decisions=("decision", "nunique"),
+            keep_count=("decision", lambda s: int((s == "keep").sum())),
+            remove_count=("decision", lambda s: int((s == "remove").sum())),
+        )
+        .reset_index()
+    )
+    kept = grouped[
+        (grouped["n_raters"] >= min_raters) & (grouped["n_unique_decisions"] == 1)
+    ].copy()
+
+    if kept.empty:
+        return pd.DataFrame(columns=_UNANIMOUS_OUTPUT_COLUMNS)
+
+    kept["decision"] = kept.apply(
+        lambda row: "keep" if int(row["keep_count"]) == int(row["n_raters"]) else "remove",
+        axis=1,
+    )
+    kept["keep_remove_label"] = (kept["decision"] == "remove").astype(int)
+
+    texts = trials.drop_duplicates(subset=["post_id"])[
+        ["post_id", "original_text", "mirror_text"]
+    ]
+    out = kept.merge(texts, on="post_id", how="left")
+    out = out.rename(columns={"post_id": "message_id"})
+    return out[_UNANIMOUS_OUTPUT_COLUMNS].reset_index(drop=True)
