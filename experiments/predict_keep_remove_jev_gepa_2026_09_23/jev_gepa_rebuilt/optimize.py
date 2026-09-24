@@ -393,6 +393,7 @@ def _persist_post_run_artifacts(
     dev_b_f1: float,
     top10_indices: list[int],
     candidate_rows: list[dict],
+    smoke: bool = False,
 ) -> None:
     config.run_dir.mkdir(parents=True, exist_ok=True)
     _write_gepa_result_json(config.run_dir / GEPA_RESULT_FILENAME, result)
@@ -426,8 +427,9 @@ def _persist_post_run_artifacts(
     with scores_path.open("w", encoding="utf-8") as handle:
         for row in candidate_rows:
             handle.write(json.dumps(row) + "\n")
-    upload_rebuilt(output_dir)
-    upload_rebuilt(config.run_dir)
+    if not smoke:
+        upload_rebuilt(output_dir)
+        upload_rebuilt(config.run_dir)
 
 
 def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
