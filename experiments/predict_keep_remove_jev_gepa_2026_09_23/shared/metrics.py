@@ -304,7 +304,28 @@ def build_results_payload(
     wall_time_s: float,
 ) -> dict[str, Any]:
     """JSON-serializable dict written to results.json."""
-    raise NotImplementedError
+    return {
+        "ablation_id": ablation_id,
+        "headline_split": "test",
+        "secondary_split": "full",
+        "metrics_at_0_5": {
+            split_name: _classification_metrics_to_dict(metrics)
+            for split_name, metrics in split_metrics.items()
+            if split_name in {"test", "full"}
+        },
+        "split_metrics": {
+            split_name: _classification_metrics_to_dict(metrics)
+            for split_name, metrics in split_metrics.items()
+        },
+        "dev_tuned_threshold": dev_tuned_threshold,
+        "dev_tuned_test_metrics": _classification_metrics_to_dict(dev_tuned_test_metrics),
+        "trivial_baselines": _trivial_baselines_to_dict(trivial),
+        "subgroups": _subgroup_metrics_to_dict(subgroups),
+        "spearman_remove_share": spearman,
+        "latency": _latency_to_dict(latency),
+        "cost": _cost_to_dict(cost),
+        "wall_time_s": wall_time_s,
+    }
 
 
 def _classification_metrics_to_dict(metrics: ClassificationMetrics) -> dict[str, Any]:
