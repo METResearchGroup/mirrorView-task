@@ -10,20 +10,20 @@ On discovery-split posts only, compute document-frequency unigrams and bigrams s
 
 ## Files to inspect (read-only)
 
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/cohort.py` — cohort parquet schema and text columns (from Step 1).
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/paths.py` — `baselines_dir`, `make_run_timestamp`, `post_split_dir`.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/constants.py` — `TEXT_ARMS`, `CLUSTER_SEEDS`, `DEFAULT_SEED`, Bedrock constants, `S3_*`.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/discovery_post_ids.csv` — discovery post IDs from Step 1.
-- `shared/embeddings/bedrock.py` — `create_embedding(text, normalize=True)`; 256-d L2-normalized vectors.
-- `/tmp/research/mine_features.md` — lemmatize, remove stopwords and domain noisy words; avoid TF-IDF; unigrams and bigrams.
-- `experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py` — `select_k_silhouette` and `k_selection.json` shape (adapt for post-level K-Means baseline).
-- `experiments/create_llm_features_2026_08_05/src/generate_embeddings.py` — `_make_run_timestamp()` pattern (`%Y-%m-%dT%H-%M-%S`).
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/cohort.py`: cohort parquet schema and text columns (from Step 1).
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/paths.py`: `baselines_dir`, `make_run_timestamp`, `post_split_dir`.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/constants.py`: `TEXT_ARMS`, `CLUSTER_SEEDS`, `DEFAULT_SEED`, `EMBEDDING_MODEL_ID`, `EMBEDDING_DIM`, `S3_*`.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/discovery_post_ids.csv`: discovery post IDs from Step 1.
+- `shared/embeddings/bedrock.py`: `create_embedding(text, normalize=True)`; 256-d L2-normalized vectors.
+- [HOW_TO_MINE_TEXT_FOR_FEATURES.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md): lemmatize with spaCy `en_core_web_sm`, remove stopwords, document frequency (not TF-IDF), experiment-specific noisy word stoplist.
+- `experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py`: `select_k_silhouette` and `k_selection.json` shape (adapt for post-level K-Means baseline).
+- `experiments/create_llm_features_2026_08_05/src/generate_embeddings.py`: `_make_run_timestamp()` pattern (`%Y-%m-%dT%H-%M-%S`).
 
 ## Files allowed to change
 
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/baselines.py` — baseline CLI and logic.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/baselines.py`: baseline CLI and logic.
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_baselines.py`
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/outputs/<arm>/baselines/<run_timestamp>/` — gitignored outputs.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/outputs/<arm>/baselines/<run_timestamp>/`: gitignored outputs.
 
 ## Files forbidden to change
 
@@ -33,18 +33,18 @@ On discovery-split posts only, compute document-frequency unigrams and bigrams s
 - `docs/plans/2026-09-24_llm_feature_generation_phase_2_part_3_2f71ad/plan.md` and sibling step files except this file
 - Any Step 3 through 7 modules
 
-## Implementation phases (TDD — mandatory order)
+## Implementation phases (TDD: mandatory order)
 
 | Phase | Goal | Gate |
 |-------|------|------|
-| 1 — Scope | Name caller, inputs, outputs | CLI flags and output tree listed |
-| 2 — Scaffold | Create `baselines.py` with stubs | Import resolves; `raise NotImplementedError` |
-| 3 — Contracts | Function signatures and output schemas | Matches Artifact contract below; stubs only |
-| 4 — Test design | Failing tests with mocks for Bedrock | Tests fail for the right reason |
-| 5 — Implement | One unit per commit until green | Targeted tests pass |
-| 6 — Done | CLI smoke per arm plus pytest | Pass/fail criteria met |
+| 1: Scope | Name caller, inputs, outputs | CLI flags and output tree listed |
+| 2: Scaffold | Create `baselines.py` with stubs | Import resolves; `raise NotImplementedError` |
+| 3: Contracts | Function signatures and output schemas | Matches Artifact contract below; stubs only |
+| 4: Test design | Failing tests with mocks for Bedrock | Tests fail for the right reason |
+| 5: Implement | One unit per commit until green | Targeted tests pass |
+| 6: Done | CLI smoke per arm plus pytest | Pass/fail criteria met |
 
-### Phase 4 — Named test cases
+### Phase 4: Named test cases
 
 **`test_baselines.py`**
 
@@ -73,7 +73,7 @@ Use pytest fixtures with small synthetic cohorts for unit tests; mark optional f
 
 - For each arm in `TEXT_ARMS`, CLI with `--split discovery` writes a timestamped output directory under `outputs/<arm>/baselines/<run_timestamp>/`.
 - Document-frequency outputs list unigrams and bigrams separately for keep-labeled versus remove-labeled discovery posts (by `modal_decision`).
-- Post embeddings use `shared.embeddings.bedrock.create_embedding` with `BEDROCK_MODEL_ID`, `EMBEDDING_DIMENSIONS=256`, `EMBEDDING_NORMALIZE=True` from constants.
+- Post embeddings use `shared.embeddings.bedrock.create_embedding` with `EMBEDDING_MODEL_ID`, `EMBEDDING_DIM=256`, `EMBEDDING_NORMALIZE=True` from constants.
 - K-Means runs for k=2..10 (nine k values) for each seed in `CLUSTER_SEEDS` (42, 43, 44).
 - `s3_sync.py --paths outputs/original_only/baselines outputs/mirror_only/baselines outputs/paired/baselines` uploads baseline trees.
 - `PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_baselines.py -q` exits 0.
@@ -155,11 +155,11 @@ Sorted list of objects (descending by `doc_count`):
 | `doc_count` | int | Number of discovery posts in the class containing the term at least once |
 | `n_docs` | int | Total discovery posts in the class (keep or remove) |
 
-**Preprocessing rules (from `/tmp/research/mine_features.md`):**
+**Preprocessing rules (from [HOW_TO_MINE_TEXT_FOR_FEATURES.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md)):**
 
 1. Lowercase; strip punctuation to spaces.
 2. Tokenize; lemmatize with spaCy `en_core_web_sm` (add to experiment SETUP.md if model download required).
-3. Remove NLTK English stopwords plus experiment-specific stopwords: `thinking`, `keeping`, `deciding`, `response`, `post`, `content`, `comment` (extend if needed; keep list in `baselines.py`).
+3. Remove NLTK English stopwords plus experiment-specific noisy word stoplist: `thinking`, `keeping`, `deciding`, `response`, `post`, `content`, `comment` (extend if needed; keep list in `baselines.py`).
 4. Drop unigrams with length `< 2`.
 5. Build bigrams from adjacent lemmatized tokens after stopword removal.
 6. Score by document frequency only (count posts where term appears); do not use TF-IDF.
@@ -171,7 +171,7 @@ Sorted list of objects (descending by `doc_count`):
 | `post_ids.json` | `list[str]` length `n_posts` |
 | `post_embeddings.npy` | `float32` array shape `(n_posts, 256)`; row order matches `post_ids.json` |
 
-Embed the arm-specific text surface (see contract Section 9 in `/tmp/step_contract.md`):
+Embed the arm-specific text surface:
 
 | Arm | Text embedded |
 |-----|----------------|

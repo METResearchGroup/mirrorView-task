@@ -10,40 +10,40 @@ Create the experiment scaffold at `experiments/llm_feature_generation_phase_2_pa
 
 ## Files to inspect (read-only)
 
-- `shared/data/dataloader.py` — `load_dataset(name)` for registry CSVs.
-- `shared/data/registry.py` — dataset keys (`STUDY_PHASE_2_PART_3_RESULTS_FULL`, `STUDY_PHASE_2_PART_3_STIMULI`, `STUDY_PHASE_2_PART_2_STIMULI`, `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS`).
-- `shared/data/raw/study_phase_2_part_3/results/full.csv` — moderation trials; columns include `phase`, `trial_type`, `evaluation_mode`, `decision`, `post_id`, `prolific_id`, `attention_check_passed`.
-- `shared/data/raw/study_phase_2_part_3/stimuli/flips.csv` — 18,899-post catalog; join key `post_primary_key`; columns `sampled_stance`, `sample_toxicity_type`, `original_text`, `mirrored_text`.
-- `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv` — Part 2 June catalog (10,000 posts); use `post_primary_key` to detect the 8,899-post overlap with Part 3.
-- `shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv` — Part 2 labeled subset (`message_id`); secondary overlap reference only.
-- `experiments/reasoning_during_moderation_2026_09_15/shared/cohort.py` — copy (do not import) three-group logic: `drop_conflicting_worker_posts`, `dedupe_worker_post`, `assign_group`, vote counting.
-- `experiments/reasoning_during_moderation_2026_09_15/shared/constants.py` — copy constants: `MIN_RATERS=4`, `SPLIT_VOTE_PATTERNS={(2,2),(3,2),(2,3)}`, group string values.
-- `experiments/create_llm_features_2026_08_05/src/paths.py` — pattern for `EXPERIMENT_ROOT`, `latest_timestamp_subdir`.
-- `lib/aws/s3.py` — `S3` class (`upload_file`, `upload_bytes`, `object_exists`).
-- `docs/runbooks/HISTORY_OF_STUDY.md` — Part 3 collection context.
-- `/tmp/research/mine_features.md` — baseline preprocessing notes (referenced by Step 2; no import).
+- `shared/data/dataloader.py`: `load_dataset(name)` for registry CSVs.
+- `shared/data/registry.py`: dataset keys (`STUDY_PHASE_2_PART_3_RESULTS_FULL`, `STUDY_PHASE_2_PART_3_STIMULI`, `STUDY_PHASE_2_PART_2_STIMULI`, `STUDY_PHASE_2_PART_2_KEEP_REMOVE_LABELS`).
+- `shared/data/raw/study_phase_2_part_3/results/full.csv`: moderation trials; columns include `phase`, `trial_type`, `evaluation_mode`, `decision`, `post_id`, `prolific_id`, `attention_check_passed`.
+- `shared/data/raw/study_phase_2_part_3/stimuli/flips.csv`: 18,899-post catalog; join key `post_primary_key`; columns `sampled_stance`, `sample_toxicity_type`, `original_text`, `mirrored_text`.
+- `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv`: Part 2 June catalog (10,000 posts); use `post_primary_key` to detect the 8,899-post overlap with Part 3.
+- `shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv`: Part 2 labeled subset (`message_id`); secondary overlap reference only.
+- `experiments/reasoning_during_moderation_2026_09_15/shared/cohort.py`: copy (do not import) three-group logic: `drop_conflicting_worker_posts`, `dedupe_worker_post`, `assign_group`, vote counting.
+- `experiments/reasoning_during_moderation_2026_09_15/shared/constants.py`: copy constants: `MIN_RATERS=4`, `SPLIT_VOTE_PATTERNS={(2,2),(3,2),(2,3)}`, group string values.
+- `experiments/create_llm_features_2026_08_05/src/paths.py`: pattern for `EXPERIMENT_ROOT`, `latest_timestamp_subdir`.
+- `lib/aws/s3.py`: `S3` class (`upload_file`, `upload_bytes`, `object_exists`).
+- `docs/runbooks/HISTORY_OF_STUDY.md`: Part 3 collection context.
+- [HOW_TO_MINE_TEXT_FOR_FEATURES.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md): baseline preprocessing notes (referenced by Step 2; no import).
 
 ## Files allowed to change
 
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/README.md` — 1 to 2 lines plus redirect to SETUP.md and RESULTS.md per `AGENTS.md`.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/SETUP.md` — data required (registry CSVs, AWS for S3 upload, expected counts); out of scope: environment setup.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/__init__.py` — empty.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/__init__.py` — empty.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/paths.py` — `EXPERIMENT_ROOT`, arm/stage path helpers, `latest_timestamp_subdir`.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/constants.py` — all Section 3 constants from `/tmp/step_contract.md` plus cohort-specific literals listed below.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/cohort.py` — cohort builder CLI.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/split.py` — stratified split CLI.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/s3_sync.py` — S3 upload wrapper.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/__init__.py` — empty.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/README.md`: 1 to 2 lines plus redirect to SETUP.md and RESULTS.md per `AGENTS.md`.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/SETUP.md`: data required (registry CSVs, AWS for S3 upload, expected counts); out of scope: environment setup.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/__init__.py`: empty.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/__init__.py`: empty.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/paths.py`: `EXPERIMENT_ROOT`, arm/stage path helpers, `latest_timestamp_subdir`.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/constants.py`: all standard constants listed below plus cohort-specific literals.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/cohort.py`: cohort builder CLI.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/split.py`: stratified split CLI.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/s3_sync.py`: S3 upload wrapper.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/__init__.py`: empty.
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_paths.py`
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_constants.py`
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_cohort.py`
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_split.py`
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_s3_sync.py`
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/discovery_post_ids.csv` — written by split CLI; commit to git.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/test_post_ids.csv` — written by split CLI; commit to git.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/split_metadata.json` — written by split CLI; commit to git.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/outputs/<arm>/cohort/<run_timestamp>/` — gitignored run outputs.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/discovery_post_ids.csv`: written by split CLI; commit to git.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/test_post_ids.csv`: written by split CLI; commit to git.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/split_metadata.json`: written by split CLI; commit to git.
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/outputs/<arm>/cohort/<run_timestamp>/`: gitignored run outputs.
 
 ## Files forbidden to change
 
@@ -53,20 +53,20 @@ Create the experiment scaffold at `experiments/llm_feature_generation_phase_2_pa
 - `lib/` (read only)
 - Any module assigned to Steps 2 through 7 in the contract
 
-## Implementation phases (TDD — mandatory order)
+## Implementation phases (TDD: mandatory order)
 
 Complete phases in order; one git commit per phase (or per unit of work in Phase 5). Do not skip.
 
 | Phase | Goal | Gate |
 |-------|------|------|
-| 1 — Scope | Name callers, file tree, out-of-scope | Three CLIs plus tree listed |
-| 2 — Scaffold | Create modules and imports; stub bodies only | Imports resolve; `raise NotImplementedError` |
-| 3 — Contracts | Types, signatures, schemas; no business logic | Matches this step and contract Section 6.1 to 6.2; stubs only |
-| 4 — Test design | Pseudocode to failing tests (happy plus key failures) | Tests fail for the right reason |
-| 5 — Implement | One function or path per commit until green | Targeted tests pass |
-| 6 — Done | Full Step 1 pytest plus CLI smoke | All pass/fail criteria met |
+| 1: Scope | Name callers, file tree, out-of-scope | Three CLIs plus tree listed |
+| 2: Scaffold | Create modules and imports; stub bodies only | Imports resolve; `raise NotImplementedError` |
+| 3: Contracts | Types, signatures, schemas; no business logic | Matches cohort and split artifact contracts below; stubs only |
+| 4: Test design | Pseudocode to failing tests (happy plus key failures) | Tests fail for the right reason |
+| 5: Implement | One function or path per commit until green | Targeted tests pass |
+| 6: Done | Full Step 1 pytest plus CLI smoke | All pass/fail criteria met |
 
-### Phase 4 — Named test cases (write before implementation)
+### Phase 4: Named test cases (write before implementation)
 
 **`test_paths.py`**
 
@@ -146,7 +146,7 @@ Complete phases in order; one git commit per phase (or per unit of work in Phase
 ```bash
 cd /workspace
 
-# Build cohort (all participants — primary)
+# Build cohort (all participants, primary)
 PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.cohort \
   --participant-filter all \
   --write
@@ -276,22 +276,40 @@ Also write `outputs/<arm>/cohort/<ts>/metadata.json`:
 - Use `sklearn.model_selection.train_test_split` with `test_size=0.5`, `random_state=SPLIT_SEED` (42), `stratify` on concatenated stratify key built from the four columns; represent null `modal_decision` as the string `"unlabeled"` for stratification only.
 - Write ID lists and set `split` column on cohort parquet in place (or rewrite parquet under a new cohort timestamp; pick one approach and document in SETUP.md).
 
-### `src/constants.py` (Step 1 subset)
+### `src/constants.py` (define in Step 1; import everywhere)
 
-Define at minimum:
-
-| Name | Value |
-|------|-------|
+| Constant | Value |
+|----------|-------|
+| `LLM_MODEL_ID` | `gpt-6-luna` |
+| `LLM_LITELLM_MODEL_ID` | `openai/gpt-6-luna` |
+| `LLM_REASONING_EFFORT` | `none` |
+| `SPLIT_SEED` | `42` |
+| `CLUSTER_SEEDS` | `(42, 43, 44)` |
+| `DEFAULT_SEED` | `42` |
+| `TEXT_ARMS` | `("original_only", "mirror_only", "paired")` |
+| `BATCH_DESIGN_MIXED` | `mixed` |
+| `BATCH_DESIGN_SINGLE_CLASS` | `single_class` |
+| `MAX_KEEP_FEATURES_PER_BATCH` | `8` |
+| `MAX_REMOVE_FEATURES_PER_BATCH` | `8` |
+| `EMBEDDING_MODEL_ID` | `amazon.titan-embed-text-v2:0` |
+| `EMBEDDING_DIM` | `256` |
+| `EMBEDDING_NORMALIZE` | `True` |
+| `SPEND_CAP_USD` | `25.00` |
+| `LLM_INPUT_PRICE_PER_1M` | `0.10` |
+| `LLM_CACHED_INPUT_PRICE_PER_1M` | `0.01` |
+| `LLM_OUTPUT_PRICE_PER_1M` | `0.50` |
+| `SELF_CONSISTENCY_SAMPLE` | `200` |
+| `SELF_CONSISTENCY_THRESHOLD` | `0.90` |
+| `S3_BUCKET` | `mirrorview-experimental-artifacts` |
+| `S3_PREFIX` | `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/` |
+| `RUN_TIMESTAMP_FORMAT` | `%Y-%m-%dT%H-%M-%S` |
+| `COST_LOG_PATH` | `outputs/shared/cost_log.jsonl` |
+| `PART2_STAGE2_OUTPUT_DIR` | `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/` |
 | `MIN_RATERS` | `4` |
 | `SPLIT_VOTE_PATTERNS` | `frozenset({(2, 2), (3, 2), (2, 3)})` |
 | `GROUP_SPLIT` | `"split"` |
 | `GROUP_UNANIMOUS_KEEP` | `"unanimous_keep"` |
 | `GROUP_UNANIMOUS_REMOVE` | `"unanimous_remove"` |
-| `SPLIT_SEED` | `42` |
-| `TEXT_ARMS` | `("original_only", "mirror_only", "paired")` |
-| `S3_BUCKET` | `"mirrorview-experimental-artifacts"` |
-| `S3_PREFIX` | `"experiments/llm_feature_generation_phase_2_part_3_2026_09_24/"` |
-| Plus remaining Section 3 constants from contract (for downstream steps; may stub unused ones) |
 
 ### `src/paths.py` helpers
 
@@ -299,9 +317,16 @@ Define at minimum:
 |----------|---------|
 | `EXPERIMENT_ROOT` | Path to experiment folder |
 | `cohort_dir(arm: str)` | `outputs/<arm>/cohort` |
-| `baselines_dir(arm: str)` | `outputs/<arm>/baselines` (used by Step 2) |
+| `baselines_dir(arm: str)` | `outputs/<arm>/baselines` (Step 2) |
+| `discovery_run_dir(arm: str)` | `outputs/<arm>/discovery/outputs` |
+| `normalize_run_dir(arm: str)` | `outputs/<arm>/normalize` |
+| `operationalize_dir(arm: str)` | `outputs/<arm>/operationalize` (Step 5 exports) |
+| `shared_label_dir()` | `outputs/shared/label` |
+| `codebook_dir()` | `outputs/shared/codebook` |
+| `self_consistency_dir()` | `outputs/shared/self_consistency` |
+| `cost_log_path()` | `outputs/shared/cost_log.jsonl` |
 | `post_split_dir()` | `data/post_split` |
-| `make_run_timestamp()` | `%Y-%m-%dT%H-%M-%S` string |
+| `make_run_timestamp()` | `RUN_TIMESTAMP_FORMAT` string |
 | `latest_timestamp_subdir(parent: Path)` | Newest child directory by name sort |
 
 ### `src/s3_sync.py`

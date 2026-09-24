@@ -1,6 +1,6 @@
 # Step 7: Analyze held-out test set and write RESULTS.md
 
-Answer research questions Q1 through Q7 from `plan.md` using held-out test posts only (`split == test`). Use discovery-half labels only for feature description and Part 2 overlap description on the 8,899 shared posts. Map each Phase 2, Part 3 codebook feature to the closest Part 2 theme (132 themes from stage-2 synthesis) via Titan embedding similarity on name plus definition; output a candidate mapping table for human confirmation (analysis uses nearest-neighbor mapping provisionally). Fit held-out logistic regression models for Q4 and Q7 (AUC and log loss). Run prevalence tests with Benjamini-Hochberg correction for Q1, Q2, Q5, and Q6. Document ablations across text arm, batch design, label definition, participant filter, clustering method, and seeds. State Part 2 model-change caveat (`gpt-5.4-nano` vs `gpt-6-luna`) and provisional-label caveat in `RESULTS.md`. Upload all artifacts to S3.
+Answer research questions Q1 through Q7 from `plan.md` using held-out test posts only (`split == test`). Use discovery-half labels only for feature description and Part 2 overlap description on the 8,899 shared posts. Map each Phase 2, Part 3 codebook feature to the rank-1 nearest Part 2 theme (132 themes from stage-2 synthesis at `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/`) via Titan cosine similarity on name plus definition; report the similarity score for each match (no human confirmation step). `RESULTS.md` states the mapping is provisional and lists the score for each match. Fit held-out logistic regression models for Q4 and Q7 (AUC and log loss). Run prevalence tests with Benjamini-Hochberg correction for Q1, Q2, Q5, and Q6. Document ablations across text arm, batch design, label definition, participant filter, clustering method, and seeds. State Part 2 model-change caveat (`gpt-5.4-nano` vs `gpt-6-luna`) and provisional-label caveat in `RESULTS.md`. Upload all artifacts to S3.
 
 ## Scope
 
@@ -11,7 +11,6 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 ## Files to inspect (read-only)
 
 - `docs/plans/2026-09-24_llm_feature_generation_phase_2_part_3_2f71ad/plan.md`: Q1 to Q7 table, ablation axes, "What is not answerable", Part 2 replication notes.
-- `/tmp/step_contract.md`: Section 6.11, Step 7 commands, `PART2_STAGE2_OUTPUT_GLOB`.
 - `experiments/llm_based_feature_generation_2026_07_31/RESULTS.md`: 132 themes; model `gpt-5.4-nano`; rhetorical vs topic findings.
 - `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/*.json`: stage-2 theme synthesis shards (verified path).
 - `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/00000_2026_08_01-14:08:48.079120.json`: JSON shape: `result.themes[]` with `id`, `label`, `defining_features`, `example_message_ids`, `keep_count`, `remove_count`, `interpretation`.
@@ -19,7 +18,7 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 - `shared/embeddings/bedrock.py`: Titan embeddings for theme mapping.
 - `experiments/reasoning_during_moderation_2026_09_15/shared/cohort.py`: three-group label logic reference.
 - `shared/data/raw/study_phase_2_part_3/results/full.csv`: trial-level rows for Q6 (moderator party).
-- `outputs/shared/label_matrix.parquet`: Step 6 output.
+- `outputs/shared/label_matrix.parquet`: Step 6 output (sole label input for Step 7 analysis).
 - `outputs/shared/codebook/approved_<run_timestamp>/codebook.json`: Step 5 output.
 - `outputs/shared/self_consistency/<run_timestamp>/scores.json`: Step 6 output.
 - `data/post_split/test_post_ids.csv`: enforce test-only analyses.
@@ -61,7 +60,7 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 |-----------|-------|------|--------|
 | `test_load_part2_themes_reads_132_themes` | Glob on stage-2 JSON dir | `load_part2_themes()` | `len(themes) == 132`; each has `id`, `label` |
 | `test_map_part2_embeds_name_plus_definition` | Mock Titan embed | `embed_feature_text(name, definition)` | Input string equals `"{name}. {definition}"` |
-| `test_map_part2_writes_candidate_table` | 3 codebook features, 132 themes | `map_part2_themes --write` | CSV columns: `feature_id`, `part2_theme_id`, `part2_theme_label`, `cosine_similarity`, `rank` |
+| `test_map_part2_writes_rank1_table` | 3 codebook features, 132 themes | `map_part2_themes --write` | CSV columns: `feature_id`, `part2_theme_id`, `part2_theme_label`, `cosine_similarity`, `rank` (rank 1 only; no human confirmation) |
 | `test_analyze_filters_test_split_only` | Matrix with discovery and test rows | `load_test_labels()` | All rows `split == "test"`; count matches `test_post_ids.csv` |
 | `test_q1_prevalence_bh_correction` | Test labels fixture | `run_q1()` | Output includes raw p-values and BH-adjusted q-values; only test posts |
 | `test_q2_stance_concordance` | Original+mirror labels per post | `run_q2()` | Per-feature concordance rate on test posts |
@@ -77,7 +76,7 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 ### Phase 5: Implementation units (dependency order)
 
 1. `load_part2_themes()`: parse all shards under `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/*.json`; dedupe by theme `id`.
-2. `map_part2_themes`: Titan embed codebook features and Part 2 themes; cosine similarity; write `candidate_map.csv` and `candidate_map.md` for human confirmation; set provisional `part2_theme_id` on codebook copy in map output (do not mutate approved codebook file).
+2. `map_part2_themes`: Titan embed codebook features and Part 2 themes; cosine similarity; write `theme_map.csv` with rank-1 nearest theme and `cosine_similarity` per feature; set provisional `part2_theme_id` on codebook copy in map output (do not mutate approved codebook file).
 3. `analyze.run_all`: primary run using primary ablation settings (mixed batches, HDBSCAN seed 42, modal labels, attention_pass filter, paired arm for Part 2 replication comparisons).
 4. `analyze.run_ablations`: loop ablation axes (see below).
 5. `write_results`: merge `summary_tables.md`, self-consistency flags, caveats, Q1 to Q7 tables into `RESULTS.md`.
@@ -92,7 +91,7 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 - Every Q1 to Q7 JSON under `outputs/<arm>/analysis/<run_timestamp>/` computed with `split == test` only.
 - `RESULTS.md` answers Q1 to Q7 with tables and documents all ablation axes from plan.md.
 - `RESULTS.md` states: (1) Part 2 used `gpt-5.4-nano`, Part 3 used `gpt-6-luna`; replication mixes model and data change. (2) Labels are provisional LLM labels without human validation.
-- `outputs/shared/part2_theme_map/<run_timestamp>/candidate_map.csv` exists (132 themes mapped).
+- `outputs/shared/part2_theme_map/<run_timestamp>/theme_map.csv` exists (rank-1 mapping per feature with similarity scores).
 - S3 upload completes for experiment prefix.
 
 ### Must fail (until implemented)
@@ -121,7 +120,7 @@ PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_
   --split test \
   --codebook "$CODEBOOK" \
   --label-matrix "$LABEL_MATRIX" \
-  --part2-map outputs/shared/part2_theme_map/<run_timestamp>/candidate_map.csv \
+  --part2-map outputs/shared/part2_theme_map/<run_timestamp>/theme_map.csv \
   --write
 
 # Ablations (same --split test)
@@ -171,7 +170,7 @@ PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_
 PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.write_results \
   --analysis-dir outputs/paired/analysis/<run_timestamp> \
   --self-consistency "$SELF_CONSISTENCY" \
-  --part2-map outputs/shared/part2_theme_map/<run_timestamp>/candidate_map.csv
+  --part2-map outputs/shared/part2_theme_map/<run_timestamp>/theme_map.csv
 
 # Upload everything
 PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.s3_sync \
@@ -189,7 +188,7 @@ PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_202
 
 ```
 part2_themes_loaded=132
-Wrote outputs/shared/part2_theme_map/2026-09-24T16-00-00/candidate_map.csv
+Wrote outputs/shared/part2_theme_map/2026-09-24T16-00-00/theme_map.csv
 analyze split=test n_posts=9450
 Wrote outputs/paired/analysis/2026-09-24T16-05-00/q1_replication.json
 ...
@@ -203,9 +202,11 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 
 | File | Content |
 |------|---------|
-| `candidate_map.csv` | `feature_id`, `feature_name`, `part2_theme_id`, `part2_theme_label`, `cosine_similarity`, `rank` (1 = nearest) |
-| `candidate_map.md` | Human-readable table for confirmation |
+| `theme_map.csv` | `feature_id`, `feature_name`, `part2_theme_id`, `part2_theme_label`, `cosine_similarity`, `rank` (1 = nearest; used provisionally in analysis) |
+| `theme_map.md` | Human-readable table with similarity scores |
 | `metadata.json` | `part2_themes_dir`, `n_themes`, `bedrock_model_id`, `built_at` |
+
+**Part 2 stage-2 theme source:** `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/*.json` (132 themes per Part 2 `RESULTS.md`).
 
 **Part 2 theme JSON parser:** Read each `*.json` in the themes dir; extract `result.themes[]`; build `theme_id`, `label`, `definition_text` = join `defining_features` with `; `.
 
@@ -227,7 +228,7 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 
 | Question | Method | Primary table in RESULTS.md |
 |----------|--------|----------------------------|
-| **Q1** | Feature prevalence by `modal_decision` on test posts; two-proportion or chi-square per feature; Benjamini-Hochberg across features. Map features to Part 2 themes via `candidate_map.csv`; on 8,899 `in_part2_catalog` test posts, report which Part 2 themes replicate (directionally consistent association), which Part 3 features are new, which Part 2 themes disappear. Discovery-half labels used only in a separate descriptive appendix table (not hypothesis tests). | `q1_feature_prevalence.csv`, `q1_part2_replication.csv` |
+| **Q1** | Feature prevalence by `modal_decision` on test posts; two-proportion or chi-square per feature; Benjamini-Hochberg across features. Map features to Part 2 themes via rank-1 `theme_map.csv` (cosine similarity reported; mapping provisional); on 8,899 `in_part2_catalog` test posts, report which Part 2 themes replicate (directionally consistent association), which Part 3 features are new, which Part 2 themes disappear. Discovery-half labels used only in a separate descriptive appendix table (not hypothesis tests). | `q1_feature_prevalence.csv`, `q1_part2_replication.csv` |
 | **Q2** | Per feature, concordance rate = share of test posts where original and mirror labels agree; classify stance-invariant (high concordance) vs stance-specific (low). BH correction across features. | `q2_stance_invariance.csv` |
 | **Q3** | Per feature on test posts: `P(orig present AND mirror absent)` and reverse; report mismatch rates. | `q3_flip_fidelity.csv` |
 | **Q4** | Logistic regression: `modal_decision` ~ feature vector per arm (original columns, mirror columns, paired, combined/diff). Report AUC and log loss on test split. | `q4_prediction_auc.csv` |
@@ -253,12 +254,12 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 3. Self-consistency: features below 90% flagged, not dropped.
 4. Q1 to Q7 tables (test set only).
 5. Ablation summary.
-6. Part 2 overlap (8,899 posts): replication / new / disappeared themes (descriptive + test-set prevalence).
+6. Part 2 overlap (8,899 posts): replication / new / disappeared themes (descriptive + test-set prevalence); provisional rank-1 theme mapping with cosine similarity scores.
 7. What is not answerable (from plan.md).
 
 ## Human gates (if any)
 
-None. Part 2 mapping outputs `candidate_map.csv` for human confirmation; orchestrator defers human validation, so Step 7 analysis uses rank-1 embedding match provisionally and documents uncertainty in `RESULTS.md`.
+None. Part 2 mapping uses automatic rank-1 nearest theme by Titan cosine similarity; `RESULTS.md` states the mapping is provisional and lists the similarity score for each match.
 
 ## Commit message template
 

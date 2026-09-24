@@ -25,7 +25,7 @@ flowchart LR
   B --> D[LLM feature discovery per arm]
   D --> E[Embed and cluster features]
   E --> F[Merge into shared codebook]
-  F --> G[Human approves codebook]
+  F --> G[User approves draft codebook]
   G --> H[Label all posts]
   H --> I[Self-consistency check on 200 texts]
   I --> J[Analyze held-out test set and write RESULTS.md]
@@ -34,7 +34,7 @@ flowchart LR
 
 ## Approach
 
-Run naive baselines first: document-frequency unigrams and bigrams by keep versus remove, and K-Means on Titan post embeddings with a k sweep. Then run the LLM batch feature generation pipeline with mixed-contrast batches as primary and single-class batches as ablation. Embed generated features with Titan (`shared/embeddings/bedrock.py`), cluster with HDBSCAN as primary and K-Means as comparison, and name clusters with an LLM. Run three random seeds and report cluster stability within and across text arms. Merge per-arm clusters into one shared codebook: default is not to merge; merge two features only after side-by-side review of example posts and a human confirms; record confirmed merges in a committed synonym list file under the experiment folder. Present the draft codebook for human review before labeling. Use `gpt-6-luna` (API model id `gpt-6-luna`) for every LLM step: feature generation, cluster naming, codebook merge support, Part 2 theme mapping support, and labeling. Set reasoning effort to none on every call (GPT-6 Luna defaults to medium, so the setting must be explicit and recorded in run metadata). Part 2 used `gpt-5.4-nano`, so Part 2 versus Part 3 theme differences mix a model change with a data change; the Q1 replication result must state this. Smoke test one batch per text arm before any production run; smoke must confirm the repo LLM client (research_tools via LiteLLM) accepts the `gpt-6-luna` model id and the no-reasoning setting, and that run metadata shows zero reasoning tokens. Production requires explicit user approval. No model ablation is run; the model is fixed.
+Run naive baselines first: document-frequency unigrams and bigrams by keep versus remove, and K-Means on Titan post embeddings with a k sweep. Then run the LLM batch feature generation pipeline with mixed-contrast batches as primary and single-class batches as ablation. Embed generated features with Titan (`shared/embeddings/bedrock.py`), cluster with HDBSCAN as primary and K-Means as comparison, and name clusters with an LLM. Run three random seeds and report cluster stability within and across text arms. Merge per-arm clusters into one shared codebook: default is not to merge; merge two features only after side-by-side review of example posts and a human confirms; record confirmed merges in a committed synonym list file under the experiment folder. Present the draft codebook for human review before labeling. Use `gpt-6-luna` (API model id `gpt-6-luna`) for every LLM step: feature generation, cluster naming, codebook merge support, Part 2 theme mapping support, and labeling. Set reasoning effort to none on every call (GPT-6 Luna defaults to medium, so the setting must be explicit and recorded in run metadata). Part 2 used `gpt-5.4-nano`, so Part 2 versus Part 3 theme differences mix a model change with a data change; the Q1 replication result must state this. Smoke test one batch per text arm before any production run; smoke must confirm LiteLLM directly (model `openai/gpt-6-luna`) accepts the model id and the no-reasoning setting, and that run metadata shows zero reasoning tokens. Production requires explicit user approval. No model ablation is run; the model is fixed.
 
 ## Steps
 
@@ -64,13 +64,13 @@ Use the approved codebook to have `gpt-6-luna` (reasoning effort none) code ever
 
 ### Step 7: Analyze and report
 
-On held-out test-set posts only, answer the seven research questions below. To compare Phase 2, Part 3 features to Part 2 themes (`experiments/llm_based_feature_generation_2026_07_31/RESULTS.md`), map each Phase 2, Part 3 codebook feature to the closest Part 2 theme from the two-stage theme synthesis in `experiments/llm_based_feature_generation_2026_07_31/` using embedding similarity on name plus definition, then have a human confirm matches (with `gpt-6-luna`, reasoning effort none, as merge support). Report which Part 2 themes replicate on the 8,899 overlapping posts, which Phase 2, Part 3 features are new, and which Part 2 themes disappear. State in the Q1 replication result that Part 2 used `gpt-5.4-nano` while Part 3 used `gpt-6-luna`, so theme differences mix a model change with a data change. Write `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/RESULTS.md` with summary tables. Upload all artifacts to `s3://mirrorview-experimental-artifacts/experiments/llm_feature_generation_phase_2_part_3_2026_09_24/`.
+On held-out test-set posts only, answer the seven research questions below. To compare Phase 2, Part 3 features to Part 2 themes (`experiments/llm_based_feature_generation_2026_07_31/RESULTS.md`), map each Phase 2, Part 3 codebook feature to the rank-1 nearest Part 2 theme from the two-stage theme synthesis in `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/` using Titan cosine similarity on name plus definition (similarity score reported for each match; no human confirmation step). Report which Part 2 themes replicate on the 8,899 overlapping posts, which Phase 2, Part 3 features are new, and which Part 2 themes disappear. `RESULTS.md` states the mapping is provisional and lists the similarity score for each match. State in the Q1 replication result that Part 2 used `gpt-5.4-nano` while Part 3 used `gpt-6-luna`, so theme differences mix a model change with a data change. Write `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/RESULTS.md` with summary tables. Upload all artifacts to `s3://mirrorview-experimental-artifacts/experiments/llm_feature_generation_phase_2_part_3_2026_09_24/`.
 
 ## Key research questions
 
 | Question | How answered | Text arms used |
 | --- | --- | --- |
-| Q1: What features separate keep versus remove in Phase 2, Part 3, and do Part 2 themes replicate (including on the 8,899 posts shared with Part 2)? | Build the codebook on the discovery half. Compute feature prevalence and keep-versus-remove tests on the test set only. Map each Phase 2, Part 3 codebook feature to the closest Part 2 theme (embedding similarity on name plus definition, human confirmation) and measure overlap on the shared post subset. State that Part 2 used `gpt-5.4-nano` and Part 3 used `gpt-6-luna`, so replication findings mix model and data changes | All three arms; paired arm for direct Part 2 replication |
+| Q1: What features separate keep versus remove in Phase 2, Part 3, and do Part 2 themes replicate (including on the 8,899 posts shared with Part 2)? | Build the codebook on the discovery half. Compute feature prevalence and keep-versus-remove tests on the test set only. Map each Phase 2, Part 3 codebook feature to the rank-1 nearest Part 2 theme (Titan cosine similarity on name plus definition; score reported; mapping provisional, no human confirmation) and measure overlap on the shared post subset. State that Part 2 used `gpt-5.4-nano` and Part 3 used `gpt-6-luna`, so replication findings mix model and data changes | All three arms; paired arm for direct Part 2 replication |
 | Q2: Which features are stance-invariant (present in both original and mirror) versus stance-specific (appear in only one side)? | Cross-tabulate per-post original versus mirror present/absent labels on test-set posts; classify features by concordance rate | Original only and mirror only (compare labeling outputs per post) |
 | Q3: Does the mirror preserve the original's features (flip fidelity)? Report per-feature mismatch rates | Per feature, compute rate where original is present and mirror is absent (and vice versa) on test-set posts | Original only plus mirror only (paired comparison per post) |
 | Q4: Which text's features best predict the linked-fate decision: original-only, mirror-only, or both (plus the difference)? | Fit logistic regression models on feature vectors on the test set; compare AUC and log loss across arms and a combined model | Original only, mirror only, paired (and derived difference features) |
@@ -119,7 +119,6 @@ experiments/llm_feature_generation_phase_2_part_3_2026_09_24/
       discovery/
       normalize/
       operationalize/
-      label/
       analysis/
     mirror_only/
       (same stage folders)
@@ -127,6 +126,7 @@ experiments/llm_feature_generation_phase_2_part_3_2026_09_24/
       (same stage folders)
     shared/
       codebook/                 # human-approved merged codebook
+      label/                    # label shards (labels.jsonl) and label_matrix.parquet
       self_consistency/         # 200-text re-label and per-feature scores
   smoke_tests/
 ```
@@ -135,10 +135,11 @@ S3 mirror: `s3://mirrorview-experimental-artifacts/experiments/llm_feature_gener
 
 ## Decisions
 
-1. **Model.** Use `gpt-6-luna` for every LLM step (feature generation, cluster naming, codebook merge support, Part 2 theme mapping support, labeling). Set reasoning effort to none on every call; record the setting in run metadata. Part 2 used `gpt-5.4-nano`, so Part 2 versus Part 3 theme differences mix a model change with a data change; the Q1 replication result must state this. Smoke test must confirm the repo LLM client (research_tools via LiteLLM) accepts the `gpt-6-luna` model id and the no-reasoning setting, and that run metadata shows zero reasoning tokens.
-2. **No human coding for now.** Replace human agreement checks with a self-consistency check: re-label 200 random texts a second time and flag features below 90% self-consistency in `RESULTS.md`.
-3. **Label all posts.** Label all 18,899 posts (original and mirrored text separately). Discovery-half labels are for description, Part 2 overlap description, and downstream reuse only; every hypothesis test and model comparison for Q1 through Q7 runs on the held-out half only.
-4. **Spend cap.** $25 maximum; stop and report if exceeded.
+1. **Model.** Use `gpt-6-luna` for every LLM step (feature generation, cluster naming, codebook merge support, Part 2 theme mapping support, labeling). Set reasoning effort to none on every call; record the setting in run metadata. Part 2 used `gpt-5.4-nano`, so Part 2 versus Part 3 theme differences mix a model change with a data change; the Q1 replication result must state this. Smoke test must confirm LiteLLM directly (model `openai/gpt-6-luna`) accepts the model id and the no-reasoning setting, and that run metadata shows zero reasoning tokens.
+2. **Run timestamps.** All run folders use timestamp format `%Y-%m-%dT%H-%M-%S` (local time).
+3. **No human coding for now.** Replace human agreement checks with a self-consistency check: re-label 200 random texts a second time and flag features below 90% self-consistency in `RESULTS.md`.
+4. **Label all posts.** Label all 18,899 posts (original and mirrored text separately). Label shards live under `outputs/shared/label/<run_timestamp>/labels.jsonl`; the assembled matrix is `outputs/shared/label_matrix.parquet`. Discovery-half labels are for description, Part 2 overlap description, and downstream reuse only; every hypothesis test and model comparison for Q1 through Q7 runs on the held-out half only.
+5. **Spend cap.** $25 maximum; stop and report if exceeded.
 
 ## Cost estimate
 
@@ -159,6 +160,6 @@ GPT-6 Luna pricing: $0.10 input / $0.01 cached input / $0.50 output per 1M token
 - Discovery and test post-ID lists are committed under `data/post_split/` and uploaded to S3.
 - Smoke artifacts exist for one batch per text arm and were reviewed before production. Smoke confirms `gpt-6-luna`, reasoning effort none, and zero reasoning tokens in run metadata.
 - Naive baselines, LLM discovery outputs, cluster stability reports (3 seeds), and the human-approved shared codebook are on S3 under the experiment prefix.
-- All 18,899 posts are labeled (original and mirror separately). Self-consistency scores are in `outputs/shared/self_consistency/`; features below 90% are flagged in `RESULTS.md`.
+- All 18,899 posts are labeled (original and mirror separately). Label shards are in `outputs/shared/label/`; `outputs/shared/label_matrix.parquet` is assembled. Self-consistency scores are in `outputs/shared/self_consistency/`; features below 90% are flagged in `RESULTS.md`.
 - `RESULTS.md` answers Q1 through Q7 on the held-out test set with tables, documents ablation results, states what is not answerable (including provisional LLM labels), and notes Part 2 replication findings on the 8,899 shared posts (including which Part 2 themes replicate, which Phase 2, Part 3 features are new, which Part 2 themes disappear, and that Part 2 used `gpt-5.4-nano` while Part 3 used `gpt-6-luna`).
 - `uv run pytest` passes for any new tests added under the experiment.

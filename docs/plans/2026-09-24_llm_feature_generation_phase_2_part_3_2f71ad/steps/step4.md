@@ -8,7 +8,7 @@ Embed all discovered feature texts with Amazon Titan, cluster embeddings with HD
 - **In scope:**
   - `generate_embeddings.py`: flatten Step 3 mixed-discovery JSON into `features.jsonl`, embed `text_embedded` with `shared.embeddings.bedrock.create_embedding` (256-d, L2 normalized).
   - `cluster_embeddings.py`: HDBSCAN (primary) + K-Means k-sweep (k=2..10) per arm; run seeds 42, 43, 44; write stability metrics (adjusted Rand index within arm across seed pairs).
-  - `label_clusters.py`: for each HDBSCAN cluster (skip noise id `-1`), sample member features, call `llm_client.complete_structured` with `ClusterLabelResult` schema.
+  - `label_clusters.py`: for each HDBSCAN cluster (skip noise id `-1`), sample member features, call `llm_client.complete_structured` with `ClusterLabelResult` from Step 3 `schemas.py` and `build_cluster_label_messages` from Step 3 `prompts.py`.
   - Cross-arm stability summary comparing per-arm seed stability and cluster counts.
   - Unit tests: mock Bedrock embeddings and mock `llm_client` (no network in pytest).
 - **Out of scope:**
@@ -21,15 +21,14 @@ Embed all discovered feature texts with Amazon Titan, cluster embeddings with HD
 
 - `experiments/create_llm_features_2026_08_05/src/generate_embeddings.py` - feature flattening, `build_feature_embed_text`, Titan calls, `embeddings.npy` layout.
 - `experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py` - HDBSCAN params, K-Means sweep, assignment JSON files, PCA PNG optional.
-- `experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py` - cluster sampling, `build_cluster_label_messages`, runner row shape.
-- `experiments/create_llm_features_2026_08_05/src/prompts.py` - `build_cluster_label_messages`, cluster labeling system prompt.
-- `experiments/create_llm_features_2026_08_05/src/schemas.py` - `ClusterLabelResult`.
+- `experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py`: cluster sampling and runner row shape (copy ideas only).
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/prompts.py`: `build_cluster_label_messages` (Step 3 owner; import only).
+- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/schemas.py`: `ClusterLabelResult` (Step 3 owner; import only).
 - `shared/embeddings/bedrock.py` - `create_embedding`, `BEDROCK_MODEL_ID`, `EMBEDDING_DIMENSIONS`.
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/llm_client.py` - `complete_structured`, cost log (from Step 3).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/paths.py` - `normalize_run_dir`, `discovery_run_dir`, `latest_timestamp_subdir` (from Step 1).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/constants.py` - `CLUSTER_SEEDS`, `BEDROCK_MODEL_ID`, `EMBEDDING_DIMENSIONS`, `EMBEDDING_NORMALIZE` (from Step 1).
 - `experiments/model_errors_analysis_2026_07_15/analyze/cluster.py` - `adjusted_rand_score` usage pattern (read-only reference).
-- `/tmp/step_contract.md` - Sections 3, 5 (Step 4), 6.4, 6.5, 6.6.
 
 ## Files allowed to change
 
@@ -46,7 +45,7 @@ Embed all discovered feature texts with Amazon Titan, cluster embeddings with HD
 - `shared/` (read-only; call `create_embedding` only).
 - Other `experiments/*` (no cross-experiment imports).
 - `docs/plans/2026-09-24_llm_feature_generation_phase_2_part_3_2f71ad/plan.md` and sibling step files.
-- Step 3 modules (read-only): `batching.py`, `prompts.py`, `schemas.py`, `generate_features.py` (extend `schemas.py` only if `ClusterLabelResult` was not added in Step 3 - prefer adding `ClusterLabelResult` to Step 3 `schemas.py` in the same commit as Step 3 Phase 3; if missing, Step 4 may add only `ClusterLabelResult` to `schemas.py`).
+- Step 3 modules (read-only): `batching.py`, `prompts.py`, `schemas.py`, `generate_features.py`, `llm_client.py`. **Do not edit `prompts.py` or `schemas.py`.** At import time, fail fast with a clear error if `ClusterLabelResult` or `build_cluster_label_messages` is missing from Step 3 modules.
 - Step 1/2 modules (read-only).
 - `lib/` (read-only).
 
@@ -106,6 +105,7 @@ def make_run_timestamp() -> str: ...  # "%Y-%m-%dT%H-%M-%S"
 def resolve_discovery_run_dir(arm: str, discovery_run_dir: str | None) -> Path: ...
 
 def load_discovery_feature_rows(discovery_run_dir: Path) -> list[dict[str, Any]]: ...
+# Reads per-call JSON; extracts batch fields from top-level key `discovery_row` (required).
 
 def build_feature_embed_text(feature: dict[str, Any]) -> str: ...
 # Returns "{feature_name}: {feature_value}. {rationale}"; raises ValueError if empty.
@@ -217,7 +217,7 @@ def label_clusters_for_run(
 
 CLI: `--arm`, `--clusters-run-dir` (path to `clusters_seed_<seed>/`), `--seed`, `--sample-per-cluster` (default 8).
 
-Cluster label row (per cluster JSON, under `discovery_row` or top-level `cluster_label_row`):
+Cluster label row (per cluster JSON, top-level key `cluster_label_row` only):
 
 | Field | Type |
 |-------|------|
@@ -276,16 +276,9 @@ Cluster label row (per cluster JSON, under `discovery_row` or top-level `cluster
 
 1. `generate_embeddings.py` (flatten + mockable embed).
 2. `cluster_embeddings.py` (HDBSCAN + K-Means + ARI).
-3. `label_clusters.py` (uses `llm_client` + cluster prompts copied into experiment `prompts.py` or local helper in `label_clusters.py`).
+3. `label_clusters.py` (imports `build_cluster_label_messages` from Step 3 `prompts.py` and `ClusterLabelResult` from Step 3 `schemas.py`; uses `llm_client.complete_structured`).
 4. Cross-arm stability aggregator (small function in `cluster_embeddings.py` or `label_clusters.py` `if __name__` helper).
 5. Green all tests.
-
-Copy `build_cluster_label_messages` from `experiments/create_llm_features_2026_08_05/src/prompts.py` into experiment `prompts.py` only if not already present from Step 3 (Step 3 may defer cluster prompts; Step 4 adds `build_cluster_label_messages` to `prompts.py` if missing - list `prompts.py` as allowed edit **only for cluster labeling section**).
-
-Add to allowed files if needed:
-
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/prompts.py` - append cluster labeling templates only.
-- `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/schemas.py` - add `ClusterLabelResult` only if Step 3 did not.
 
 ## Pass / fail criteria
 
@@ -436,8 +429,9 @@ Examples: `step4: flatten discovery features and Titan embeddings`, `step4: HDBS
 
 **Step 5 reads:**
 
-- HDBSCAN cluster assignments and cluster labels from seed 42 (default) unless `--seed` flag on `build_codebook`.
-- `features.jsonl` for example posts per feature.
+- `outputs/<arm>/normalize/<embed_timestamp>/features.jsonl`
+- `outputs/<arm>/normalize/<embed_timestamp>/clusters_seed_<seed>/assignments_hdbscan.json` (default seed `42`)
+- Cluster labels at `outputs/<arm>/normalize/<embed_timestamp>/clusters_seed_<seed>/labels/<label_timestamp>/`
 - Primary path: mixed-discovery + normalize outputs for all three arms.
 
 **Convention for Step 5:** use seed `42` cluster labels as the default primary input; document in Step 5 if multi-seed merge is required.
