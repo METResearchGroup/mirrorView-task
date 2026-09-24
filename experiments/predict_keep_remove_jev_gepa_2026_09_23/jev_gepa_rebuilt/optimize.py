@@ -195,21 +195,41 @@ def seed_candidate_for_ablation(ablation_id: str, view: ViewName) -> dict[str, s
 class R4ComponentUpdateLogCallback:
     """Append round-robin module selection and key snapshot hashes for R4 smoke."""
 
-    def __init__(self, log_path: Path) -> None:
+    def __init__(self, log_path: Path, seed_candidate: dict[str, str]) -> None:
         self._log_path = log_path
+        self._seed_candidate = seed_candidate
         self._log_path.parent.mkdir(parents=True, exist_ok=True)
+        self._write_seed_baseline()
+
+    def _write_seed_baseline(self) -> None:
+        for index, module_selected in enumerate(R4_ROUND_ROBIN_COMPONENT_KEYS):
+            self._append(
+                iteration=0,
+                module_selected=module_selected,
+                candidate=self._seed_candidate,
+                order_index=index,
+            )
 
     @staticmethod
     def _snapshot_hash(candidate: dict[str, str], module_selected: str) -> str:
         text = candidate.get(module_selected, "")
         return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
-    def _append(self, iteration: int, module_selected: str, candidate: dict[str, str]) -> None:
+    def _append(
+        self,
+        iteration: int,
+        module_selected: str,
+        candidate: dict[str, str],
+        *,
+        order_index: int | None = None,
+    ) -> None:
         record = {
             "iteration": iteration,
             "module_selected": module_selected,
             "keys_snapshot_hash": self._snapshot_hash(candidate, module_selected),
         }
+        if order_index is not None:
+            record["order_index"] = order_index
         with self._log_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record) + "\n")
 
@@ -223,7 +243,7 @@ class R4ComponentUpdateLogCallback:
 
 def _finalize_smoke_artifacts(config: OptimizeConfig, result: GEPAResult) -> None:
     """Write Step 5 smoke reports under outputs/_smoke after a smoke run."""
-    ablation_dir = config.run_dir.parent
+    ablation_dir = OUTPUT_ROOT / config.ablation_id
     if config.ablation_id == "R1_gepa_pair":
         report = assert_r1_smoke_pass(ablation_dir)
         report["num_iterations"] = getattr(result, "num_iterations", None)
@@ -530,7 +550,7 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
         log_path = config.run_dir / COMPONENT_UPDATE_LOG_FILENAME
         if log_path.is_file():
             log_path.unlink()
-        callbacks.append(R4ComponentUpdateLogCallback(log_path))
+        callbacks.append(R4ComponentUpdateLogCallback(log_path, seed_candidate))
     if callbacks:
         optimize_kwargs["callbacks"] = callbacks
 

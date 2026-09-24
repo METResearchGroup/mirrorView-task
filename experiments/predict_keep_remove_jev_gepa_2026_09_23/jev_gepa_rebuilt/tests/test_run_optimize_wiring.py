@@ -100,10 +100,13 @@ class TestRunOptimizeWiring:
                                             "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.upload_rebuilt",
                                         ):
                                             with patch(
-                                                "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.select_on_dev_ab",
-                                                return_value=(0, 0.5, 0.0, 0.0, []),
+                                                "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize._finalize_smoke_artifacts",
                                             ):
-                                                run_optimize(config, smoke=True)
+                                                with patch(
+                                                    "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.select_on_dev_ab",
+                                                    return_value=(0, 0.5, 0.0, 0.0, []),
+                                                ):
+                                                    run_optimize(config, smoke=True)
 
         assert isinstance(captured["acceptance_criterion"], GuardedHardLabelAcceptance)
         assert isinstance(captured["val_evaluation_policy"], ValSubsampleOnAcceptPolicy)

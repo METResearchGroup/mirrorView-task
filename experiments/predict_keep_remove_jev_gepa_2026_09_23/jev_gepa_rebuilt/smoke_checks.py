@@ -134,22 +134,28 @@ def evaluate_r4_round_robin_smoke(
     if not rows:
         return {"passed": False, "reason": "missing component_update_log"}
 
-    window = rows[: min(MAX_R4_ITERATIONS_TO_CHECK, len(rows))]
+    iteration_rows = [row for row in rows if int(row.get("iteration", -1)) >= 1]
+    if not iteration_rows:
+        return {"passed": False, "reason": "missing iteration rows"}
+
+    seed_rows = [row for row in rows if int(row.get("iteration", -1)) == 0]
+    seed_hash_by_key = {
+        str(row["module_selected"]): str(row["keys_snapshot_hash"]) for row in seed_rows
+    }
+
+    window = iteration_rows[: min(MAX_R4_ITERATIONS_TO_CHECK, len(iteration_rows))]
     order = R4_ROUND_ROBIN_COMPONENT_KEYS
     cycling_ok = all(
         row.get("module_selected") == order[index % len(order)]
         for index, row in enumerate(window)
     )
 
-    baseline_hash_by_key: dict[str, str] = {}
     mutated_keys: set[str] = set()
     for row in window:
         module = str(row.get("module_selected", ""))
         snapshot_hash = str(row.get("keys_snapshot_hash", ""))
-        if module not in baseline_hash_by_key:
-            baseline_hash_by_key[module] = snapshot_hash
-            continue
-        if snapshot_hash != baseline_hash_by_key[module]:
+        seed_hash = seed_hash_by_key.get(module)
+        if seed_hash is not None and snapshot_hash != seed_hash:
             mutated_keys.add(module)
 
     passed = cycling_ok and len(mutated_keys) >= MIN_R4_MUTATED_KEYS
