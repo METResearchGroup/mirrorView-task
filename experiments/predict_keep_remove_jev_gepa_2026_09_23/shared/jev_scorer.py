@@ -41,6 +41,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
     build_noul_instruction,
     build_questions,
     render_state_text,
+    task_instruction_for_view,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.retries import AUTH_ERROR_TYPES, run_with_retries
@@ -202,6 +203,23 @@ def _build_questions_with_instruction(
     }
 
 
+def _build_questions_with_study_instruction(
+    n_posts: int,
+    view: str,
+    study_instruction: str,
+    task_instruction: str,
+) -> dict[str, Noul]:
+    return {
+        f"{QUESTION_ID_PREFIX}{index}": Noul(
+            instructions=(
+                f"Consider `{POSTS_STATE_KEY}[{index}]`. {task_instruction}\n\n"
+                f"{study_instruction}"
+            )
+        )
+        for index in range(n_posts)
+    }
+
+
 def _effective_instruction_text(instruction: str | None, view: str) -> str:
     if instruction is not None:
         return instruction
@@ -227,6 +245,57 @@ def score_batch(
         questions = build_questions(len(state_texts), view)
     else:
         questions = _build_questions_with_instruction(len(state_texts), view, instruction)
+
+    @latency.timed
+    def _call() -> Any:
+        return client.system_one(state=state, questions=questions, model=JEV_MODEL_ID)
+
+    response, latency_ms = _call()
+    probabilities: list[float] = []
+    for index in range(len(state_texts)):
+        question_id = f"{QUESTION_ID_PREFIX}{index}"
+        answer = response.answers.get(question_id)
+        if answer is None:
+            raise KeyError(f"missing answer for {question_id}")
+        probabilities.append(float(answer.noul))
+
+    input_tokens = int(response.usage.input_tokens or 0)
+    output_tokens = int(response.usage.output_tokens or 0)
+    model_version = str(getattr(response, "model", JEV_MODEL_ID) or JEV_MODEL_ID)
+    return BatchResult(
+        probabilities=probabilities,
+        latency_ms=latency_ms,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        model_version=model_version,
+    )
+
+
+def score_batch_with_study_instruction(
+    client: TypeSafeClient,
+    state_texts: list[str],
+    view: str,
+    *,
+    study_instruction: str,
+    task_instruction: str | None = None,
+) -> BatchResult:
+    """Score post-only state texts with a shared study instruction.
+
+    Noul instructions use ``Consider posts[i].`` plus the fixed per-view task text,
+    then the shared study instruction (same wire position as legacy optimized text).
+    """
+    state = {POSTS_STATE_KEY: list(state_texts)}
+    task_text = (
+        task_instruction
+        if task_instruction is not None
+        else task_instruction_for_view(view)
+    )
+    questions = _build_questions_with_study_instruction(
+        len(state_texts),
+        view,
+        study_instruction,
+        task_text,
+    )
 
     @latency.timed
     def _call() -> Any:

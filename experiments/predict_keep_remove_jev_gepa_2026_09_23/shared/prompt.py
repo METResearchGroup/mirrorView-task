@@ -49,6 +49,18 @@ When making your decisions, consider generally whether a post contributes to a h
 
 There are no right or wrong answers - we are interested in what you personally think."""
 
+PAIR_TASK_INSTRUCTION = (
+    "You are evaluating a pair of political social media posts shown together, "
+    "including the study instructions and both post texts. "
+    "Should this pair of posts be removed from the platform? "
+    "Answer yes if both posts should be removed; answer no if both should be allowed."
+)
+SINGLE_TASK_INSTRUCTION = (
+    "You are evaluating one political social media post. "
+    "Should this post be removed from the platform? "
+    "Answer yes if it should be removed; answer no if it should be allowed."
+)
+
 STUDY_INSTRUCTION_SINGLE = """We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of real political social media posts, and decide whether each post should be allowed or removed from the platform.
 
 Your job is to decide whether the post should be allowed or removed from the platform.
@@ -120,6 +132,45 @@ _VIEW_RENDERERS = {
 }
 
 
+def task_instruction_for_view(view: str) -> str:
+    """Return PAIR_TASK_INSTRUCTION or SINGLE_TASK_INSTRUCTION."""
+    if view == VIEW_PAIR:
+        return PAIR_TASK_INSTRUCTION
+    if view in {VIEW_ORIGINAL, VIEW_MIRROR}:
+        return SINGLE_TASK_INSTRUCTION
+    raise ValueError(f"unknown view: {view}")
+
+
+def default_study_instruction_seed(view: str) -> str:
+    """Return STUDY_INSTRUCTION for pair; STUDY_INSTRUCTION_SINGLE for original|mirror."""
+    if view == VIEW_PAIR:
+        return STUDY_INSTRUCTION
+    if view in {VIEW_ORIGINAL, VIEW_MIRROR}:
+        return STUDY_INSTRUCTION_SINGLE
+    raise ValueError(f"unknown view: {view}")
+
+
+def render_posts_only_state(
+    view: str,
+    original_text: str,
+    mirror_text: str,
+    post_1_role: str,
+) -> str:
+    """Return Jev state text with Post 1 / Post 2 blocks and CLOSING_LINE only."""
+    if view == VIEW_PAIR:
+        post_1_text, post_2_text = _ordered_texts(original_text, mirror_text, post_1_role)
+        return (
+            f"{POST_1_LABEL} {post_1_text}\n\n"
+            f"{POST_2_LABEL} {post_2_text}\n\n"
+            f"{CLOSING_LINE}"
+        )
+    if view == VIEW_ORIGINAL:
+        return f"{POST_1_LABEL} {original_text}\n\n{CLOSING_LINE}"
+    if view == VIEW_MIRROR:
+        return f"{POST_1_LABEL} {mirror_text}\n\n{CLOSING_LINE}"
+    raise ValueError(f"unknown view: {view}")
+
+
 def render_state_text(
     view: str,
     original_text: str,
@@ -138,22 +189,7 @@ def render_state_text(
 def build_noul_instruction(index: int, view: str) -> str:
     """Return per-question instruction referencing POSTS_STATE_KEY[index]."""
     slot = f"{POSTS_STATE_KEY}[{index}]"
-    if view == VIEW_PAIR:
-        return (
-            f"Consider `{slot}`. "
-            "You are evaluating a pair of political social media posts shown together, "
-            "including the study instructions and both post texts. "
-            "Should this pair of posts be removed from the platform? "
-            "Answer yes if both posts should be removed; answer no if both should be allowed."
-        )
-    if view in {VIEW_ORIGINAL, VIEW_MIRROR}:
-        return (
-            f"Consider `{slot}`. "
-            "You are evaluating one political social media post. "
-            "Should this post be removed from the platform? "
-            "Answer yes if it should be removed; answer no if it should be allowed."
-        )
-    raise ValueError(f"unknown view: {view}")
+    return f"Consider `{slot}`. {task_instruction_for_view(view)}"
 
 
 def build_questions(n_posts: int, view: str) -> dict[str, Noul]:
