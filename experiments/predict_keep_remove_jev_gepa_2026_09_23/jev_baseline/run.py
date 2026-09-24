@@ -633,13 +633,15 @@ def score_ablation(
                 part3_reference_results=part3_reference,
                 scoring_counts=scoring_counts,
             )
-            s3_prefix = _upload_union_ablation_artifacts(output_dir, ablation_id)
-            results["s3_prefix"] = s3_prefix
         else:
             results = finalize_ablation(output_dir, cohort)
         results["wall_time_s"] = time.perf_counter() - wall_start
         results_path = output_dir / "results.json"
         results_path.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+        if cohort_source == COHORT_SOURCE_UNION:
+            s3_prefix = _upload_union_ablation_artifacts(output_dir, ablation_id)
+            results["s3_prefix"] = s3_prefix
+            results_path.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
 
         labels_path = output_dir / "labels.parquet"
         requests_parquet_path = output_dir / "requests.parquet"
