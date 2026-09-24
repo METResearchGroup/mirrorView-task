@@ -58,6 +58,13 @@ When making your decisions, consider generally whether a post contributes to a h
 There are no right or wrong answers - we are interested in what you personally think."""
 
 
+def _ordered_texts(
+    original_text: str, mirror_text: str, post_1_role: str
+) -> tuple[str, str]:
+    """Map stored post_1_role to Post 1 and Post 2 text without reshuffling."""
+    raise NotImplementedError
+
+
 def render_pair_prompt(
     original_text: str,
     mirror_text: str,
