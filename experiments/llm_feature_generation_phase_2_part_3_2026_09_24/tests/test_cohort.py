@@ -8,6 +8,7 @@ import pytest
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.cohort import (
     assign_group,
+    attach_collection,
     build_cohort_frame,
     dedupe_worker_post,
     drop_conflicting_worker_posts,
@@ -18,8 +19,8 @@ from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.cohort imp
 )
 from shared.data.dataloader import load_dataset
 from shared.data.registry import (
+    STUDY_PHASE_2_PART_2_AND_3_STIMULI,
     STUDY_PHASE_2_PART_2_STIMULI,
-    STUDY_PHASE_2_PART_3_STIMULI,
 )
 
 
@@ -137,16 +138,16 @@ class TestInPart2Catalog:
     def test_in_part2_catalog_uses_part2_stimuli(self) -> None:
         """Part 2 overlap is True only for shared post IDs."""
         part2_ids = set(load_dataset(STUDY_PHASE_2_PART_2_STIMULI)["post_primary_key"])
-        part3 = load_dataset(STUDY_PHASE_2_PART_3_STIMULI)
-        overlap_id = part3.loc[
-            part3["post_primary_key"].isin(part2_ids), "post_primary_key"
+        union = load_dataset(STUDY_PHASE_2_PART_2_AND_3_STIMULI)
+        overlap_id = union.loc[
+            union["post_primary_key"].isin(part2_ids), "post_primary_key"
         ].iloc[0]
-        only_part3_id = part3.loc[
-            ~part3["post_primary_key"].isin(part2_ids), "post_primary_key"
+        only_union_id = union.loc[
+            ~union["post_primary_key"].isin(part2_ids), "post_primary_key"
         ].iloc[0]
         cohort = build_cohort_frame("all")
         overlap_row = cohort.loc[cohort["post_id"] == overlap_id].iloc[0]
-        only_row = cohort.loc[cohort["post_id"] == only_part3_id].iloc[0]
+        only_row = cohort.loc[cohort["post_id"] == only_union_id].iloc[0]
         assert bool(overlap_row["in_part2_catalog"]) is True
         assert bool(only_row["in_part2_catalog"]) is False
 
@@ -166,8 +167,29 @@ class TestAttentionPassFilter:
                 ),
             ]
         )
+        frame = attach_collection(frame, part2_prolific_ids=set())
         result = filter_by_participant(frame, "attention_pass")
         assert set(result["prolific_id"]) == {"pass_worker"}
+
+    def test_attention_pass_keeps_part2_without_attention_column(self) -> None:
+        """Part 2 rows without attention_check_passed remain under attention_pass."""
+        frame = pd.DataFrame(
+            [
+                _moderation_row(
+                    prolific_id="part2_worker",
+                    attention_check_passed=pd.NA,
+                    post_id="post_p2",
+                ),
+                _moderation_row(
+                    prolific_id="fail_worker",
+                    post_id="post_b",
+                    attention_check_passed=0,
+                ),
+            ]
+        )
+        frame = attach_collection(frame, part2_prolific_ids={"part2_worker"})
+        result = filter_by_participant(frame, "attention_pass")
+        assert set(result["prolific_id"]) == {"part2_worker"}
 
 
 @pytest.mark.integration
@@ -175,7 +197,7 @@ class TestBuildCohortIntegration:
     """Integration tests on real registry data."""
 
     def test_build_cohort_row_count(self) -> None:
-        """The cohort has exactly 18,899 rows on real data."""
+        """The cohort has exactly 20,000 rows on real data."""
         cohort = build_cohort_frame("all")
         assert len(cohort) == constants.EXPECTED_POST_COUNT
 
@@ -191,7 +213,35 @@ class TestBuildCohortIntegration:
         assert three_plus == constants.EXPECTED_LABEL_COUNT_THREE_PLUS
 
     def test_in_part2_catalog_count(self) -> None:
-        """Exactly 8,899 rows overlap the Part 2 catalog."""
+        """Exactly 10,000 rows overlap the Part 2 catalog."""
         cohort = build_cohort_frame("all")
         overlap_count = int(cohort["in_part2_catalog"].sum())
         assert overlap_count == constants.EXPECTED_PART2_OVERLAP
+
+    def test_part3_only_matches_legacy_part3_post_count(self) -> None:
+        """part3_only filter retains the prior Part 3 stimulus row count."""
+        cohort = build_cohort_frame("part3_only")
+        assert len(cohort) == constants.LEGACY_PART3_POST_COUNT
+
+    def test_three_group_eligible_counts(self) -> None:
+        """Three-group eligible posts match the union contract."""
+        cohort = build_cohort_frame("all")
+        eligible = cohort.dropna(subset=["three_group_label"])
+        assert len(eligible) == constants.EXPECTED_THREE_GROUP_ELIGIBLE
+        counts = eligible["three_group_label"].value_counts()
+        assert int(counts[constants.GROUP_SPLIT]) == constants.EXPECTED_THREE_GROUP_SPLIT
+        assert (
+            int(counts[constants.GROUP_UNANIMOUS_KEEP])
+            == constants.EXPECTED_THREE_GROUP_UNANIMOUS_KEEP
+        )
+        assert (
+            int(counts[constants.GROUP_UNANIMOUS_REMOVE])
+            == constants.EXPECTED_THREE_GROUP_UNANIMOUS_REMOVE
+        )
+
+    def test_modal_keep_rate(self) -> None:
+        """Modal keep rate matches the union contract on three-group eligible posts."""
+        cohort = build_cohort_frame("all")
+        labeled = cohort[cohort["n_raters"] > 0]
+        keep_rate = (labeled["modal_decision"] == constants.DECISION_KEEP).mean()
+        assert abs(keep_rate - constants.EXPECTED_MODAL_KEEP_RATE) < 0.0001

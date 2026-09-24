@@ -31,11 +31,9 @@ class TestS3KeyForLocal:
 class TestUploadPaths:
     """Tests for upload_paths."""
 
-    def test_upload_paths_calls_s3_upload_file(
-        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-    ) -> None:
+    def test_upload_paths_calls_s3_upload_file(self, tmp_path: Path) -> None:
         """Each file under the given directories is uploaded."""
-        upload_dir = paths.EXPERIMENT_ROOT / "data" / "post_split"
+        upload_dir = paths.EXPERIMENT_ROOT / "data" / f"_pytest_upload_{tmp_path.name}"
         upload_dir.mkdir(parents=True, exist_ok=True)
         sample_file = upload_dir / "sample.txt"
         sample_file.write_text("demo", encoding="utf-8")
@@ -43,6 +41,8 @@ class TestUploadPaths:
         keys = upload_paths([upload_dir], mock_s3)
         assert mock_s3.upload_file.called
         assert len(keys) >= 1
+        sample_file.unlink()
+        upload_dir.rmdir()
 
 
 class TestUploadSkipsMissingPaths:
