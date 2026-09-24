@@ -12,6 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.platform_rates import (
+    DECISION_ROWS,
     PROPORTION_DECIMALS,
 )
 
@@ -142,8 +143,57 @@ def format_results_markdown(
     four_cell_shares: pd.DataFrame,
     funnel: pd.DataFrame,
 ) -> str:
-    """Render the full RESULTS.md body with section headings."""
-    raise NotImplementedError
+    """Render the full RESULTS.md body with section headings.
+
+    Parameters
+    ----------
+    platform_counts
+        Keep/remove by platform integer crosstab.
+    platform_proportions
+        Keep/remove by platform proportion crosstab.
+    platform_toxicity_proportions
+        Keep/remove by platform-toxicity proportion crosstab.
+    four_cell_counts
+        Four-cell integer counts.
+    four_cell_shares
+        Four-cell shares of the filtered universe.
+    funnel
+        Vote funnel metric counts.
+
+    Returns
+    -------
+    str
+        Markdown body with the five required table sections.
+    """
+    sections = [
+        (
+            RESULTS_SECTIONS[0],
+            format_counts_table(platform_counts, DECISION_ROWS),
+        ),
+        (
+            RESULTS_SECTIONS[1],
+            format_proportions_table(
+                platform_proportions, DECISION_ROWS, PROPORTION_DECIMALS
+            ),
+        ),
+        (
+            RESULTS_SECTIONS[2],
+            format_proportions_table(
+                platform_toxicity_proportions,
+                DECISION_ROWS,
+                PROPORTION_DECIMALS,
+            ),
+        ),
+        (
+            RESULTS_SECTIONS[3],
+            format_four_cell_table(four_cell_counts, four_cell_shares),
+        ),
+        (
+            RESULTS_SECTIONS[4],
+            format_funnel_table(funnel),
+        ),
+    ]
+    return "\n\n".join(f"## {title}\n\n{table}" for title, table in sections)
 
 
 def write_results(
@@ -151,5 +201,28 @@ def write_results(
     csv_bundle: dict[str, pd.DataFrame],
     experiment_dir: Path,
 ) -> Path:
-    """Write RESULTS.md and CSV files under ``experiment_dir / outputs``."""
-    raise NotImplementedError
+    """Write RESULTS.md and CSV files under ``experiment_dir / outputs``.
+
+    Parameters
+    ----------
+    markdown
+        Full RESULTS.md body.
+    csv_bundle
+        Mapping from output filename to frame; keys must match
+        ``OUTPUT_CSV_NAMES``.
+    experiment_dir
+        Experiment root directory.
+
+    Returns
+    -------
+    pathlib.Path
+        Path to the written ``RESULTS.md`` file.
+    """
+    results_path = experiment_dir / "RESULTS.md"
+    outputs_dir = experiment_dir / "outputs"
+    outputs_dir.mkdir(parents=True, exist_ok=True)
+    results_path.write_text(markdown, encoding="utf-8")
+    for filename in OUTPUT_CSV_NAMES:
+        frame = csv_bundle[filename]
+        frame.to_csv(outputs_dir / filename, index=False)
+    return results_path
