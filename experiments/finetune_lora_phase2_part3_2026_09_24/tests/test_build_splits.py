@@ -42,6 +42,8 @@ def _tiny_unanimous_frame() -> pd.DataFrame:
     rows = [
         _modal_row("modal-0", "keep"),
         _modal_row("modal-1", "keep"),
+        _modal_row("modal-3", "keep"),
+        _modal_row("modal-5", "keep"),
         _modal_row("modal-6", "remove"),
         _modal_row("modal-7", "remove"),
     ]
