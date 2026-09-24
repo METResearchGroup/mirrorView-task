@@ -1,4 +1,4 @@
-"""Build the post-level cohort for Phase 2 Part 3.
+"""Build the post-level cohort for Phase 2 Part 2 and Part 3 union.
 
 Run from the repo root::
 
@@ -20,12 +20,14 @@ import pandas as pd
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 from shared.data.dataloader import load_dataset
 from shared.data.registry import (
+    STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL,
+    STUDY_PHASE_2_PART_2_AND_3_STIMULI,
+    STUDY_PHASE_2_PART_2_RESULTS_FULL,
     STUDY_PHASE_2_PART_2_STIMULI,
-    STUDY_PHASE_2_PART_3_RESULTS_FULL,
     STUDY_PHASE_2_PART_3_STIMULI,
 )
 
-ParticipantFilter = Literal["all", "attention_pass"]
+ParticipantFilter = Literal["all", "attention_pass", "part3_only"]
 
 
 @dataclass(frozen=True)
@@ -61,15 +63,28 @@ def slim_trials(frame: pd.DataFrame) -> pd.DataFrame:
     return _filter_slim_rows(trials)
 
 
+def attach_collection(trials: pd.DataFrame, part2_prolific_ids: set[str]) -> pd.DataFrame:
+    """Tag each label row as part2 or part3 from standalone results membership."""
+    tagged = trials.copy()
+    in_part2 = tagged["prolific_id"].isin(part2_prolific_ids)
+    tagged["collection"] = in_part2.map(
+        lambda is_part2: constants.COLLECTION_PART2
+        if is_part2
+        else constants.COLLECTION_PART3
+    )
+    return tagged
+
+
 def filter_by_participant(
     trials: pd.DataFrame,
     participant_filter: ParticipantFilter,
 ) -> pd.DataFrame:
-    """Apply the all or attention_pass participant filter."""
+    """Apply all, attention_pass, or part3_only participant filters."""
     if participant_filter == constants.PARTICIPANT_FILTER_ALL:
         return trials.copy()
-    passing_ids = _attention_passing_prolific_ids(trials)
-    return trials.loc[trials["prolific_id"].isin(passing_ids)].copy()
+    if participant_filter == constants.PARTICIPANT_FILTER_PART3_ONLY:
+        return trials.loc[trials["collection"] == constants.COLLECTION_PART3].copy()
+    return _filter_attention_pass(trials)
 
 
 def drop_conflicting_worker_posts(trials: pd.DataFrame) -> pd.DataFrame:
@@ -131,7 +146,7 @@ def map_toxicity_type(raw_value: str) -> str:
 
 def build_cohort_frame(participant_filter: ParticipantFilter) -> pd.DataFrame:
     """Build the full post-level cohort table."""
-    stimuli = _load_stimuli_frame()
+    stimuli = _load_stimuli_frame(participant_filter)
     part2_ids = _load_part2_post_ids()
     trials = _prepare_trials(participant_filter)
     vote_counts = _aggregate_vote_counts(trials)
@@ -199,6 +214,7 @@ def _parse_args() -> argparse.Namespace:
         choices=(
             constants.PARTICIPANT_FILTER_ALL,
             constants.PARTICIPANT_FILTER_ATTENTION_PASS,
+            constants.PARTICIPANT_FILTER_PART3_ONLY,
         ),
         required=True,
     )
@@ -244,6 +260,13 @@ def _filter_slim_rows(trials: pd.DataFrame) -> pd.DataFrame:
     return trials.loc[keep].copy()
 
 
+def _filter_attention_pass(trials: pd.DataFrame) -> pd.DataFrame:
+    part2_rows = trials["collection"] == constants.COLLECTION_PART2
+    passing_ids = _attention_passing_prolific_ids(trials)
+    part3_pass = trials["prolific_id"].isin(passing_ids)
+    return trials.loc[part2_rows | part3_pass].copy()
+
+
 def _attention_passing_prolific_ids(trials: pd.DataFrame) -> set[str]:
     attention = trials[["prolific_id", "attention_check_passed"]].dropna(
         subset=["attention_check_passed"]
@@ -253,15 +276,18 @@ def _attention_passing_prolific_ids(trials: pd.DataFrame) -> set[str]:
     return set(passing.index.astype(str))
 
 
-def _load_stimuli_frame() -> pd.DataFrame:
-    frame = load_dataset(STUDY_PHASE_2_PART_3_STIMULI)
+def _load_stimuli_frame(participant_filter: ParticipantFilter) -> pd.DataFrame:
+    registry_key = STUDY_PHASE_2_PART_2_AND_3_STIMULI
+    if participant_filter == constants.PARTICIPANT_FILTER_PART3_ONLY:
+        registry_key = STUDY_PHASE_2_PART_3_STIMULI
+    frame = load_dataset(registry_key)
     stimuli = frame.rename(columns={"post_primary_key": "post_id"}).copy()
     stimuli["sample_toxicity_type"] = stimuli["sample_toxicity_type"].map(
         map_toxicity_type
     )
-    return stimuli[["post_id", "original_text", "mirrored_text", "sampled_stance", "sample_toxicity_type"]].rename(
-        columns={"mirrored_text": "mirror_text"}
-    )
+    return stimuli[
+        ["post_id", "original_text", "mirrored_text", "sampled_stance", "sample_toxicity_type"]
+    ].rename(columns={"mirrored_text": "mirror_text"})
 
 
 def _load_part2_post_ids() -> set[str]:
@@ -269,9 +295,15 @@ def _load_part2_post_ids() -> set[str]:
     return set(part2["post_primary_key"].astype(str))
 
 
+def _load_part2_prolific_ids() -> set[str]:
+    part2 = load_dataset(STUDY_PHASE_2_PART_2_RESULTS_FULL, low_memory=False)
+    return set(part2["prolific_id"].dropna().astype(str).str.strip())
+
+
 def _prepare_trials(participant_filter: ParticipantFilter) -> pd.DataFrame:
-    results = load_dataset(STUDY_PHASE_2_PART_3_RESULTS_FULL, low_memory=False)
+    results = load_dataset(STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL, low_memory=False)
     trials = slim_trials(results)
+    trials = attach_collection(trials, _load_part2_prolific_ids())
     return filter_by_participant(trials, participant_filter)
 
 
@@ -323,6 +355,7 @@ def _build_metadata(
     run_timestamp: str,
 ) -> dict[str, object]:
     return {
+        "dataset": constants.DATASET_PHASE_2_PART_2_AND_3,
         "participant_filter": participant_filter,
         "built_at": datetime.now(timezone.utc).isoformat(),
         "n_posts": stats.n_posts,
