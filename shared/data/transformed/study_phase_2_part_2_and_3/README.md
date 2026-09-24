@@ -12,5 +12,8 @@ PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2_and_3/tr
 Logic is shared with `study_phase_2_part_3/transform.py`; this module loads
 `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_2_AND_3_STIMULI`.
 
+Do **not** upload output from `study_phase_2_part_2/transform.py` (Part 2’s
+`message_id` schema without vote metadata) to this registry key.
+
 Upload the regenerated CSV to S3 at the registry key before callers use
 `load_dataset`.

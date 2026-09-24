@@ -89,17 +89,10 @@ def load_keep_remove_posts() -> pd.DataFrame:
     labels = load_dataset(STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS, low_memory=False)
     if "message_id" in labels.columns and POST_ID_COLUMN not in labels.columns:
         labels = labels.rename(columns={"message_id": POST_ID_COLUMN})
+    labels[POST_ID_COLUMN] = labels[POST_ID_COLUMN].astype(str).str.strip()
     missing = set(KEEP_REMOVE_COLUMNS) - set(labels.columns)
     if missing:
-        from shared.data.transformed.study_phase_2_part_2_and_3.transform import (
-            build_keep_remove_labels,
-        )
-
-        labels = build_keep_remove_labels()
-    labels[POST_ID_COLUMN] = labels[POST_ID_COLUMN].astype(str).str.strip()
-    still_missing = set(KEEP_REMOVE_COLUMNS) - set(labels.columns)
-    if still_missing:
-        raise KeyError(f"Keep/remove labels missing columns: {sorted(still_missing)}")
+        raise KeyError(f"Keep/remove labels missing columns: {sorted(missing)}")
     labels["is_unanimous"] = labels["is_unanimous"].astype("boolean")
     return labels.reset_index(drop=True)
 

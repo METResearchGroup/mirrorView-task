@@ -45,3 +45,24 @@ class TestUnionRegistryNames:
             STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS,
             low_memory=False,
         )
+
+    @patch("experiments.bertopic_original_mirror_part3_2026_09_24.src.data.load_dataset")
+    def test_load_keep_remove_posts_raises_when_columns_missing(self, mock_load) -> None:
+        """Slim or incomplete registry rows raise KeyError instead of rebuilding."""
+        mock_load.return_value = pd.DataFrame(
+            {
+                "message_id": ["a"],
+                "original_text": ["o"],
+                "mirror_text": ["m"],
+                "decision": ["keep"],
+                "keep_remove_label": [0],
+                "n_raters": [3],
+            }
+        )
+
+        try:
+            data_mod.load_keep_remove_posts()
+        except KeyError as exc:
+            assert "missing columns" in str(exc).lower()
+        else:
+            raise AssertionError("expected KeyError for slim keep/remove labels")
