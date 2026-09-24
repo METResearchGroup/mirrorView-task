@@ -42,15 +42,15 @@ Stage A union pair baseline is not re-run; cite existing RESULTS.md tables.
 
 ## Estimates
 
-Token and price assumptions: pair view about **494 input tokens per post** at the seed layout (study instruction now lives in the per-post instruction, so seed cost is unchanged; re-measure after prompt flip); about **800 tokens per post** average with a **4,000 character** instruction cap (up to about 1,170 at the cap); Jev **$0.042 / 1M** input; Luna **$0.10 / $0.50** per 1M in/out; Terra **$2 / $12** per 1M in/out; batch 10; **1,000** Jev request starts per minute shared across parallel jobs (**200** per GEPA job).
+Token and price assumptions: pair view **491.4 measured input tokens per post** at the seed layout (100-post union smoke, 2026-09-24); about **800 tokens per post** planning average with a **4,000 character** instruction cap (up to about 1,170 at the cap); Jev **$0.042 / 1M** input; Luna **$0.10 / $0.50** per 1M in/out; Terra **$2 / $12** per 1M in/out; batch 10; **1,000** Jev request starts per minute shared across parallel jobs (**200** per GEPA job).
 
-Per iteration (accepted child): score parent and child on a **25-post** reflection minibatch (**50 posts**), then score **100 posts** on validation only if the child passes acceptance. At **20% to 30%** acceptance that averages about **70 to 80 posts** per iteration.
+Per iteration (accepted child): score parent and child on a **25-post** reflection minibatch (**50 posts**), then score **100 posts** on validation only if the child passes acceptance. R1 smoke at 120 posts observed **~60 posts per iteration** (two iterations before budget stop); at **20% to 30%** acceptance the prior model averaged about **70 to 80 posts** per iteration.
 
 | Item | R1 (primary) | R2 / R7 (if run) | R3 Terra | R5/R6 (half budget) | Notes |
 |------|--------------|------------------|----------|------------------------|-------|
 | Jev post budget | 30,000 | 30,000 each | 30,000 | 15,000 each | Adapter reports **posts scored**, not 10-post API requests |
-| Expected reflection iterations | **375 to 430** | same as R1 | 375 to 430 | about half of R1 | 30k / 70 to 80 posts per iteration |
-| Jev optimize USD | ~$1.00 | ~$1.00 | ~$1.00 | ~$0.50 | ~24M input tokens at ~800 tok/post |
+| Expected reflection iterations | **~500 (measured-scaled)** | same as R1 | ~500 | ~250 | Measured from R1 smoke: 120 posts / 2 iter → ~60 posts/iter → 30k/60 |
+| Jev optimize USD | **~$0.62 (measured)** | **~$0.62** | **~$0.62** | **~$0.31** | Measured 30k × 491.4 tok/post ≈ 14.7M input tokens |
 | Dev top-10 selection USD | ~$0.65 | same | same | ~$0.35 | Top 10 accepted by val; tune threshold dev-A, confirm dev-B only |
 | Test scoring USD | ~$0.15 | same | same | ~$0.08 | Single test read per ablation |
 | Reflection USD | ~$1.10 (cap **$5**) | same Luna cap | ~$24 (cap **$40**) | ~$0.55 (cap $2.50) | ~400 Luna calls at ~12k in + 3k out (~$0.003/call); Terra ~$0.06/call |

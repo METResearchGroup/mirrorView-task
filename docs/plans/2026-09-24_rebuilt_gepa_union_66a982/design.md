@@ -146,11 +146,11 @@ Also mirror existing `gepa_run/gepa_result.json` per ablation; test eval writes 
 
 **Budget unit:** one metric call = one post scored by Jev (adapter reports post count).
 
-Assumptions (re-measure with 100-post smoke after prompt flip):
+Assumptions (100-post union smoke measured 2026-09-24):
 
 | Quantity | Value |
 |----------|-------|
-| Input tokens per post at seed | ~494 (study instruction now in per-post instruction; seed total unchanged) |
+| Input tokens per post at seed | **491.4 measured** (p50 488.3, p90 521.6) |
 | Input tokens per post at 4,000 char cap | up to ~1,170 |
 | Planning average | ~800 input tokens per post |
 | Jev input price | $0.042 / 1M tokens |
@@ -167,9 +167,9 @@ Assumptions (re-measure with 100-post smoke after prompt flip):
 
 | Quantity | Calculation | Result |
 |----------|-------------|--------|
-| Iterations | 30,000 / 70 to 80 | **375 to 430** |
-| Jev optimize tokens | 30,000 × 800 | **~24M** |
-| Jev optimize USD | 24e6 / 1e6 × 0.042 | **~$1.00** |
+| Iterations | 30,000 / **~60 measured** (R1 smoke) | **~500** |
+| Jev optimize tokens | 30,000 × **491.4 measured** | **~14.7M** |
+| Jev optimize USD | 14.7e6 / 1e6 × 0.042 | **~$0.62 measured** |
 | Dev top-10 selection | ~10 × 1,927 posts × ~800 tok | **~15M tok, ~$0.65** |
 | Test scoring | 3,841 posts × ~800 tok | **~$0.15** |
 | Reflection (Luna) | ~400 calls × (~12k in + ~3k out) | **~$0.003/call, ~$1.10 total** (cap **$5**) |
