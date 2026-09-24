@@ -8,7 +8,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import json
-import threading
+import signal
 from pathlib import Path
 from typing import Any
 
@@ -77,25 +77,23 @@ class UsageLoggingLM(LM):
         return response
 
     def _call_with_deadline(self, prompt: str | list[dict[str, Any]]) -> str:
-        """Run the LiteLLM call on a daemon thread so a stalled socket cannot block GEPA."""
-        outcome: dict[str, Any] = {}
+        """Interrupt a stalled LiteLLM socket with SIGALRM.
 
-        def _run() -> None:
-            try:
-                outcome["response"] = LM.__call__(self, prompt)
-            except Exception as exc:  # noqa: BLE001 - re-raised on the caller thread
-                outcome["error"] = exc
+        ``Thread.join(timeout)`` did not return while the worker blocked in SSL read.
+        """
 
-        worker = threading.Thread(target=_run, daemon=True)
-        worker.start()
-        worker.join(REFLECTION_TIMEOUT_SECONDS)
-        if worker.is_alive():
+        def _on_alarm(signum: int, frame: object) -> None:
             raise TimeoutError(
                 f"reflection call exceeded {REFLECTION_TIMEOUT_SECONDS}s for {self.model}"
             )
-        if "error" in outcome:
-            raise outcome["error"]
-        return outcome["response"]
+
+        previous = signal.signal(signal.SIGALRM, _on_alarm)
+        signal.setitimer(signal.ITIMER_REAL, REFLECTION_TIMEOUT_SECONDS)
+        try:
+            return LM.__call__(self, prompt)
+        finally:
+            signal.setitimer(signal.ITIMER_REAL, 0)
+            signal.signal(signal.SIGALRM, previous)
 
 
 def make_reflection_lm_with_usage_log(

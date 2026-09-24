@@ -102,7 +102,7 @@ class TestReflectionLmWrapper:
             return "late"
 
         with (
-            patch.object(reflection_logging, "REFLECTION_TIMEOUT_SECONDS", 0.05),
+            patch.object(reflection_logging, "REFLECTION_TIMEOUT_SECONDS", 0.2),
             patch(
                 "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.reflection_logging.LM.__call__",
                 _never_returns,
