@@ -11,12 +11,15 @@ Run from the repo root:
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import hashlib
 import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
+import numpy as np
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _SCRIPT_DIR = str(Path(__file__).resolve().parent)
@@ -98,6 +101,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter imp
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.wandb_tracking import WandbRunSpec, init_run
 
 DEFAULT_RATE_CAP_PER_MIN = 200
+SMOKE_VALSET_SUBSET_SIZE = 20
 GEPA_RUN_DIRNAME = "gepa_run"
 
 ABLATION_IDS = (
@@ -308,6 +312,39 @@ def _write_json(path: Path, payload: dict[str, object]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def _to_jsonable(value: object) -> object:
+    if dataclasses.is_dataclass(value):
+        return {
+            field.name: _to_jsonable(getattr(value, field.name))
+            for field in dataclasses.fields(value)
+        }
+    if isinstance(value, dict):
+        return {str(key): _to_jsonable(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_to_jsonable(item) for item in value]
+    if isinstance(value, tuple):
+        return [_to_jsonable(item) for item in value]
+    if isinstance(value, set):
+        return sorted(_to_jsonable(item) for item in value)
+    return value
+
+
+def _write_gepa_result_json(path: Path, result: GEPAResult) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(_to_jsonable(result.to_dict()), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _subset_valset_for_smoke(valset: list, seed: int) -> list:
+    if len(valset) <= SMOKE_VALSET_SUBSET_SIZE:
+        return list(valset)
+    rng = np.random.default_rng(seed)
+    chosen_indices = rng.choice(len(valset), size=SMOKE_VALSET_SUBSET_SIZE, replace=False)
+    return [valset[int(index)] for index in sorted(chosen_indices.tolist())]
+
+
 def _read_acceptance_log(path: Path) -> list[dict]:
     if not path.is_file():
         return []
@@ -358,7 +395,7 @@ def _persist_post_run_artifacts(
     candidate_rows: list[dict],
 ) -> None:
     config.run_dir.mkdir(parents=True, exist_ok=True)
-    _write_json(config.run_dir / GEPA_RESULT_FILENAME, result.to_dict())
+    _write_gepa_result_json(config.run_dir / GEPA_RESULT_FILENAME, result)
     stop_reason = _detect_stop_reason(config, result, reflection_lm)
     reflection_cost = float(getattr(reflection_lm, "total_cost", 0.0) or 0.0)
     _write_json(
@@ -410,6 +447,8 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
     """
     build_or_load_dev_ab_split(seed=config.seed, write=False)
     trainset, valset = load_gepa_union_splits()
+    if smoke:
+        valset = _subset_valset_for_smoke(valset, config.seed)
     val_inst_by_post_id = {instance.post_id: instance for instance in valset}
     dev_a = load_dev_instances(split="dev_a")
     dev_b = load_dev_instances(split="dev_b")
@@ -482,6 +521,7 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
         "run_dir": str(config.run_dir),
         "use_wandb": True,
         "wandb_attach_existing": True,
+        "track_best_outputs": not smoke,
     }
     callbacks: list[Any] = []
     if config.ablation_id == "R4_gepa_multi_component":
