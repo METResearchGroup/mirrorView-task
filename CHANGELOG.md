@@ -2,7 +2,7 @@
 
 ## 2026-09-24
 
-1. Operators now have Jev baseline and Jev+GEPA keep/remove predictions for Study Phase 2 Part 3 on a 14,955-post cohort; Stage A and Stage B completed with results in `experiments/predict_keep_remove_jev_gepa_2026_09_23/RESULTS.md` (pytest 79 passed). [PR #309](https://github.com/METResearchGroup/mirrorView-task/pull/309)
+1. Operators now have Jev baseline and Jev+GEPA keep/remove predictions for Study Phase 2 Part 3 on a 14,955-post cohort; Stage A and Stage B completed with results in `experiments/predict_keep_remove_jev_gepa_2026_09_23/RESULTS.md` (pytest 88 passed). [PR #309](https://github.com/METResearchGroup/mirrorView-task/pull/309)
 
 ## 2026-09-22
 
