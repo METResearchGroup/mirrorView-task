@@ -11,6 +11,12 @@ from pathlib import Path
 
 import pandas as pd
 
+from experiments.finetune_qwen_model_2026_08_08.src.build_splits import (
+    RANDOM_SEED as P_RANDOM_SEED,
+    TRAIN_FRACTION as P_TRAIN_FRACTION,
+    balance_keep_remove,
+)
+
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = EXPERIMENT_ROOT / "data"
 RANDOM_SEED = 1
@@ -62,7 +68,39 @@ def post_level_split(
     pd.DataFrame
         Manifest with ``post_id``, ``split``, ``modal_label``, ``in_unanimous``.
     """
-    raise NotImplementedError
+    decisions = modal_df["decision"].astype(str).str.lower().str.strip()
+    train_parts: list[pd.DataFrame] = []
+    test_parts: list[pd.DataFrame] = []
+    for label in ("keep", "remove"):
+        class_df = modal_df.loc[decisions == label].sample(
+            frac=1.0,
+            random_state=seed,
+        )
+        n_class = len(class_df)
+        n_train = int(train_fraction * n_class)
+        train_parts.append(class_df.iloc[:n_train])
+        test_parts.append(class_df.iloc[n_train:])
+    assigned = pd.concat(
+        [
+            pd.concat(train_parts, ignore_index=True).assign(split="train"),
+            pd.concat(test_parts, ignore_index=True).assign(split="test"),
+        ],
+        ignore_index=True,
+    )
+    manifest = pd.DataFrame(
+        {
+            "post_id": assigned["message_id"].astype(str),
+            "split": assigned["split"],
+            "modal_label": assigned["decision"]
+            .astype(str)
+            .str.lower()
+            .str.strip(),
+            "in_unanimous": assigned["message_id"]
+            .astype(str)
+            .isin(unanimous_post_ids),
+        }
+    )
+    return manifest.reset_index(drop=True)
 
 
 def write_split_manifest(manifest_df: pd.DataFrame, output_path: Path, force: bool) -> None:
@@ -77,7 +115,12 @@ def write_split_manifest(manifest_df: pd.DataFrame, output_path: Path, force: bo
     force
         Overwrite when True.
     """
-    raise NotImplementedError
+    if output_path.exists() and not force:
+        raise FileExistsError(
+            f"Refusing to overwrite {output_path}; pass --force."
+        )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_df.to_csv(output_path, index=False)
 
 
 def balance_split_posts(
