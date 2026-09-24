@@ -191,7 +191,16 @@ def bigrams_from_tokens(tokens: list[str]) -> list[str]:
 
 def compute_docfreq(terms_per_doc: list[set[str]]) -> list[DocfreqEntry]:
     """Score terms by document frequency across posts."""
-    raise NotImplementedError
+    n_docs = len(terms_per_doc)
+    counts: dict[str, int] = {}
+    for term_set in terms_per_doc:
+        for term in term_set:
+            counts[term] = counts.get(term, 0) + 1
+    rows = [
+        DocfreqEntry(term=term, doc_count=doc_count, n_docs=n_docs)
+        for term, doc_count in counts.items()
+    ]
+    return sorted(rows, key=lambda row: (-row["doc_count"], row["term"]))
 
 
 def terms_for_post(text: str) -> tuple[set[str], set[str]]:
@@ -202,13 +211,28 @@ def terms_for_post(text: str) -> tuple[set[str], set[str]]:
     return unigrams, bigrams
 
 
+def _labeled_posts(posts: pd.DataFrame, decision: str) -> pd.DataFrame:
+    return posts.loc[posts["modal_decision"].eq(decision)].copy()
+
+
+def _terms_by_post(posts: pd.DataFrame, arm: str) -> list[tuple[set[str], set[str]]]:
+    return [
+        terms_for_post(extract_arm_text(row, arm))
+        for _, row in posts.iterrows()
+    ]
+
+
 def compute_docfreq_for_class(
     posts: pd.DataFrame,
     arm: str,
     decision: str,
 ) -> tuple[list[DocfreqEntry], list[DocfreqEntry]]:
     """Return unigram and bigram doc-frequency lists for one decision class."""
-    raise NotImplementedError
+    labeled = _labeled_posts(posts, decision)
+    term_pairs = _terms_by_post(labeled, arm)
+    unigram_sets = [pair[0] for pair in term_pairs]
+    bigram_sets = [pair[1] for pair in term_pairs]
+    return compute_docfreq(unigram_sets), compute_docfreq(bigram_sets)
 
 
 def build_docfreq_outputs(
@@ -216,7 +240,18 @@ def build_docfreq_outputs(
     arm: str,
 ) -> dict[str, list[DocfreqEntry]]:
     """Build keep and remove unigram and bigram doc-frequency outputs."""
-    raise NotImplementedError
+    keep_uni, keep_bi = compute_docfreq_for_class(
+        posts, arm, constants.DECISION_KEEP
+    )
+    remove_uni, remove_bi = compute_docfreq_for_class(
+        posts, arm, constants.DECISION_REMOVE
+    )
+    return {
+        "docfreq_keep_unigrams": keep_uni,
+        "docfreq_remove_unigrams": remove_uni,
+        "docfreq_keep_bigrams": keep_bi,
+        "docfreq_remove_bigrams": remove_bi,
+    }
 
 
 def embed_posts(
