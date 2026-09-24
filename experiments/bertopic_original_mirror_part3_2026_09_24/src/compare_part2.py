@@ -1,10 +1,10 @@
-"""Compare Part 3 original topics with committed Part 2 assignments.
+"""Compare union-fit original topics with committed Part 2 assignments.
 
 Run from repo root::
 
     PYTHONPATH=. uv run --extra bertopic python \\
       experiments/bertopic_original_mirror_part3_2026_09_24/src/compare_part2.py \\
-      --topics-run-dir <part3 original topics run>
+      --topics-run-dir <union original topics run>
 """
 
 from __future__ import annotations
@@ -28,25 +28,42 @@ from experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings i
 from shared.data.dataloader import load_dataset
 from shared.data.registry import STUDY_PHASE_2_PART_2_STIMULI
 
+PART2_RUN_ID = "20260805T135853Z"
 PART2_SOURCE_ASSIGNED = "assigned"
 PART2_SOURCE_CENTROID = "centroid"
 NOISE_TOPIC_ID = -1
 FACET_MIN_POSTS = 30
 SHARE_FACETS = ("sampled_stance", "sample_toxicity_type", "platform")
+Q1_FRAMING = "union_fit_vs_part2_run"
 
 
-def find_carryover_post_ids(part2_stimuli: pd.DataFrame, part3_posts: pd.DataFrame) -> set[str]:
-    """Intersect Part 2 stimulus keys with Part 3 post ids."""
-    part2_ids = set(part2_stimuli["post_primary_key"].astype(str).str.strip())
+def part2_catalog_post_ids(part2_stimuli: pd.DataFrame) -> set[str]:
+    """All post ids in the Part 2 stimulus catalog."""
+    return set(part2_stimuli["post_primary_key"].astype(str).str.strip())
+
+
+def catalog_overlap_post_ids(part2_stimuli: pd.DataFrame, part3_posts: pd.DataFrame) -> set[str]:
+    """Posts that appear in both the Part 2 and Part 3 stimulus catalogs."""
+    part2_ids = part2_catalog_post_ids(part2_stimuli)
     part3_ids = set(part3_posts["post_id"].astype(str).str.strip())
     return part2_ids & part3_ids
 
 
-def assign_part2_topics(carryover_ids: set[str], part2_assignments: pd.DataFrame) -> pd.DataFrame:
-    """Mark carryover posts that already have a Part 2 topic as assigned."""
+def part3_only_post_ids(union_post_ids: set[str], part2_catalog_ids: set[str]) -> set[str]:
+    """Union-fit posts that are not in the Part 2 catalog."""
+    return union_post_ids - part2_catalog_ids
+
+
+def part2_run_post_ids(part2_assignments: pd.DataFrame) -> set[str]:
+    """Post ids with a direct topic in the committed Part 2 run."""
+    return set(part2_assignments["message_id"].astype(str).str.strip())
+
+
+def assign_part2_topics(post_ids: set[str], part2_assignments: pd.DataFrame) -> pd.DataFrame:
+    """Part 2 topic ids for posts that have a direct assignment row."""
     assignments = part2_assignments.copy()
     assignments["post_id"] = assignments["message_id"].astype(str).str.strip()
-    matched = assignments.loc[assignments["post_id"].isin(carryover_ids), ["post_id", "topic"]].copy()
+    matched = assignments.loc[assignments["post_id"].isin(post_ids), ["post_id", "topic"]].copy()
     matched["part2_topic"] = matched["topic"].astype(int)
     matched["part2_topic_source"] = PART2_SOURCE_ASSIGNED
     return matched[["post_id", "part2_topic", "part2_topic_source"]].reset_index(drop=True)
@@ -72,7 +89,7 @@ def compute_topic_agreement(
     paired: pd.DataFrame,
     primary_only: bool,
 ) -> dict:
-    """ARI and NMI between Part 2 and Part 3 topics.
+    """ARI and NMI between Part 2 and union-fit topics.
 
     Parameters
     ----------
@@ -100,12 +117,19 @@ def compute_topic_agreement(
     }
 
 
+def _outlier_rate(topic_ids: pd.Series) -> float:
+    """Share of rows assigned to the noise topic."""
+    if topic_ids.empty:
+        return float("nan")
+    return float((topic_ids.astype(int) == NOISE_TOPIC_ID).mean())
+
+
 def _part2_centroids() -> dict[int, np.ndarray]:
     """Mean L2-normalized Titan vector per non-noise Part 2 topic."""
     cache = part2_paths.embeddings_dir("original")
     embeddings = np.load(cache / EMBEDDINGS_FILENAME)
     index = pd.read_parquet(cache / INDEX_FILENAME)
-    run = part2_paths.topics_dir("original") / "20260805T135853Z"
+    run = part2_paths.topics_dir("original") / PART2_RUN_ID
     assignments = pd.read_parquet(run / "assignments.parquet")
     by_id = {
         str(row.message_id): embeddings[int(row.row_id)]
@@ -124,8 +148,8 @@ def _part2_centroids() -> dict[int, np.ndarray]:
     return {topic: np.mean(vectors, axis=0) for topic, vectors in grouped.items()}
 
 
-def _part3_original_vectors() -> dict[str, np.ndarray]:
-    """Part 3 original Titan vectors keyed by post id."""
+def _union_original_vectors() -> dict[str, np.ndarray]:
+    """Union-fit original Titan vectors keyed by post id."""
     cache = paths.embeddings_dir("original")
     embeddings = np.load(cache / EMBEDDINGS_FILENAME)
     index = pd.read_parquet(cache / INDEX_FILENAME)
@@ -136,7 +160,7 @@ def _part3_original_vectors() -> dict[str, np.ndarray]:
 
 
 def run_compare_part2(topics_run_dir: Path, output_dir: Path | None = None) -> Path:
-    """Write the Part 2 versus Part 3 topic comparison.
+    """Write the Part 2 versus union-fit topic comparison.
 
     Returns
     -------
@@ -145,14 +169,28 @@ def run_compare_part2(topics_run_dir: Path, output_dir: Path | None = None) -> P
     """
     part2_stimuli = load_dataset(STUDY_PHASE_2_PART_2_STIMULI, low_memory=False)
     part3_posts = data_mod.load_stimuli_posts()
-    carryover = find_carryover_post_ids(part2_stimuli, part3_posts)
-    part2_run = part2_paths.topics_dir("original") / "20260805T135853Z"
-    assigned = assign_part2_topics(carryover, pd.read_parquet(part2_run / "assignments.parquet"))
-    missing = sorted(carryover - set(assigned["post_id"]))
+    part2_catalog = part2_catalog_post_ids(part2_stimuli)
+    catalog_overlap = catalog_overlap_post_ids(part2_stimuli, part3_posts)
+    part2_run = part2_paths.topics_dir("original") / PART2_RUN_ID
+    part2_assignments = pd.read_parquet(part2_run / "assignments.parquet")
+    part2_run_ids = part2_run_post_ids(part2_assignments)
+
+    union_assignments = pd.read_parquet(topics_run_dir / "assignments.parquet")
+    union_assignments = union_assignments.loc[
+        union_assignments["text_role"] == "original", ["post_id", "topic"]
+    ].rename(columns={"topic": "part3_topic"})
+    union_assignments["post_id"] = union_assignments["post_id"].astype(str).str.strip()
+    union_post_ids = set(union_assignments["post_id"])
+    part3_only = part3_only_post_ids(union_post_ids, part2_catalog)
+    part2_catalog_in_union = union_post_ids & part2_catalog
+
+    direct_scope = union_post_ids & part2_run_ids
+    assigned = assign_part2_topics(direct_scope, part2_assignments)
+    centroid_scope = sorted(part2_catalog_in_union - set(assigned["post_id"]))
     centroids = _part2_centroids()
-    vectors = _part3_original_vectors()
+    vectors = _union_original_vectors()
     centroid_rows = []
-    for post_id in missing:
+    for post_id in centroid_scope:
         assigned_topic = centroid_assign_part2_topic(vectors[post_id], centroids)
         centroid_rows.append(
             {
@@ -162,37 +200,54 @@ def run_compare_part2(topics_run_dir: Path, output_dir: Path | None = None) -> P
             }
         )
     part2_topics = pd.concat([assigned, pd.DataFrame(centroid_rows)], ignore_index=True)
-    part3_assignments = pd.read_parquet(topics_run_dir / "assignments.parquet")
-    part3_assignments = part3_assignments.loc[
-        part3_assignments["text_role"] == "original", ["post_id", "topic"]
-    ].rename(columns={"topic": "part3_topic"})
-    paired = part2_topics.merge(part3_assignments, on="post_id", how="inner")
+    paired = part2_topics.merge(union_assignments, on="post_id", how="inner")
     primary = compute_topic_agreement(paired, primary_only=True)
     all_rows = compute_topic_agreement(paired, primary_only=False)
     run_dir = output_dir or (paths.analyses_dir() / "part2_comparison" / paths.new_run_timestamp())
     run_dir.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame({"post_id": sorted(carryover)}).to_parquet(run_dir / "carryover_post_ids.parquet", index=False)
+    pd.DataFrame({"post_id": sorted(catalog_overlap)}).to_parquet(run_dir / "carryover_post_ids.parquet", index=False)
+    pd.DataFrame({"post_id": sorted(part3_only)}).to_parquet(run_dir / "part3_only_post_ids.parquet", index=False)
     part2_topics.to_parquet(run_dir / "part2_assignments.parquet", index=False)
-    part3_assignments.to_parquet(run_dir / "part3_assignments.parquet", index=False)
+    union_assignments.to_parquet(run_dir / "part3_assignments.parquet", index=False)
     primary_rows = paired.loc[paired["part2_topic_source"] == PART2_SOURCE_ASSIGNED]
     crosstab = pd.crosstab(primary_rows["part2_topic"], primary_rows["part3_topic"])
     crosstab.to_csv(run_dir / "crosstab_part2_part3_topics.csv")
+    part2_catalog_rows = union_assignments.loc[union_assignments["post_id"].isin(part2_catalog_in_union)]
+    part3_only_rows = union_assignments.loc[union_assignments["post_id"].isin(part3_only)]
     metrics = {
+        "framing": Q1_FRAMING,
         "ari": primary["ari"],
         "nmi": primary["nmi"],
         "ari_including_centroid": all_rows["ari"],
         "nmi_including_centroid": all_rows["nmi"],
-        "n_carryover_primary": int((part2_topics.part2_topic_source == PART2_SOURCE_ASSIGNED).sum()),
-        "n_carryover_centroid": int((part2_topics.part2_topic_source == PART2_SOURCE_CENTROID).sum()),
-        "n_carryover_total": int(len(carryover)),
-        "n_paired_with_part3": int(len(paired)),
+        "n_part2_run_assignments": int(len(part2_run_ids)),
+        "n_union_fit_posts": int(len(union_post_ids)),
+        "n_part2_catalog_in_union": int(len(part2_catalog_in_union)),
+        "n_part3_only_posts": int(len(part3_only)),
+        "n_catalog_overlap": int(len(catalog_overlap)),
+        "n_part2_direct_in_union": int((part2_topics.part2_topic_source == PART2_SOURCE_ASSIGNED).sum()),
+        "n_part2_centroid_in_union": int((part2_topics.part2_topic_source == PART2_SOURCE_CENTROID).sum()),
+        "n_paired_with_union_fit": int(len(paired)),
+        "n_paired_direct_primary": int(len(primary_rows)),
+        "outlier_rate_part2_catalog_in_union": _outlier_rate(part2_catalog_rows["part3_topic"]),
+        "outlier_rate_part3_only": _outlier_rate(part3_only_rows["part3_topic"]),
     }
     (run_dir / "agreement_metrics.json").write_text(json.dumps(metrics, indent=2) + "\n", encoding="utf-8")
     (run_dir / "metadata.json").write_text(
-        json.dumps({"source_topics_run": str(topics_run_dir), "part2_run": str(part2_run), **metrics}, indent=2) + "\n",
+        json.dumps(
+            {
+                "source_topics_run": str(topics_run_dir),
+                "part2_run": str(part2_run),
+                "part2_run_id": PART2_RUN_ID,
+                **metrics,
+            },
+            indent=2,
+        )
+        + "\n",
         encoding="utf-8",
     )
     _write_share_tables(primary_rows, run_dir)
+    _write_subset_share_tables(part2_catalog_rows, part3_only_rows, run_dir)
     _write_comparison_figures(primary_rows, crosstab, run_dir)
     print(f"part2_comparison_run_dir={run_dir}")
     print(json.dumps(metrics))
@@ -208,7 +263,7 @@ def _share_table(topics: pd.Series) -> pd.DataFrame:
 
 
 def _write_share_tables(primary_rows: pd.DataFrame, run_dir: Path) -> None:
-    """Write Part 2 shares, Part 3 shares, and their difference on shared ids."""
+    """Write Part 2 shares, union-fit shares, and their difference on shared ids."""
     part2 = _share_table(primary_rows["part2_topic"])
     part3 = _share_table(primary_rows["part3_topic"])
     part2.to_csv(run_dir / "topic_shares_part2.csv", index=False)
@@ -216,6 +271,24 @@ def _write_share_tables(primary_rows: pd.DataFrame, run_dir: Path) -> None:
     merged = part2.merge(part3, on="topic", how="outer", suffixes=("_part2", "_part3")).fillna(0.0)
     merged["delta"] = merged["share_part3"] - merged["share_part2"]
     merged.to_csv(run_dir / "topic_share_delta.csv", index=False)
+
+
+def _write_subset_share_tables(
+    part2_catalog_rows: pd.DataFrame,
+    part3_only_rows: pd.DataFrame,
+    run_dir: Path,
+) -> None:
+    """Topic shares within Part 2 catalog vs Part-3-only union subsets."""
+    if not part2_catalog_rows.empty:
+        _share_table(part2_catalog_rows["part3_topic"]).to_csv(
+            run_dir / "topic_shares_part2_catalog_in_union.csv",
+            index=False,
+        )
+    if not part3_only_rows.empty:
+        _share_table(part3_only_rows["part3_topic"]).to_csv(
+            run_dir / "topic_shares_part3_only.csv",
+            index=False,
+        )
 
 
 def _write_bar(frame: pd.DataFrame, path_stem: Path, color: str | None = None) -> None:
@@ -275,7 +348,9 @@ def _write_comparison_figures(primary_rows: pd.DataFrame, crosstab: pd.DataFrame
 
 def main() -> None:
     """CLI entry for the Part 2 comparison."""
-    parser = argparse.ArgumentParser(description="Compare Part 3 topics with Part 2 assignments.")
+    parser = argparse.ArgumentParser(
+        description="Compare union-fit original topics with Part 2 assignments.",
+    )
     parser.add_argument("--topics-run-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, default=None)
     args = parser.parse_args()
