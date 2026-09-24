@@ -9,3 +9,7 @@
 !experiments/generate_study_user_assignments_2026_09_08/verification_dataset.json
 !experiments/study_progress_dashboard_2026_09_11/
 !experiments/study_progress_dashboard_2026_09_11/index.html
+!apps/
+!apps/bertopic-findings/
+!apps/bertopic-findings/index.html
+!apps/bertopic-findings/styles.css
