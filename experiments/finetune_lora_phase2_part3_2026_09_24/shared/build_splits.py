@@ -19,8 +19,8 @@ from experiments.finetune_qwen_model_2026_08_08.src.build_splits import (
 
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = EXPERIMENT_ROOT / "data"
-RANDOM_SEED = 1
-TRAIN_FRACTION = 0.8
+RANDOM_SEED = P_RANDOM_SEED
+TRAIN_FRACTION = P_TRAIN_FRACTION
 REQUIRED_COLUMNS = (
     "message_id",
     "original_text",
@@ -144,7 +144,24 @@ def balance_split_posts(
     pd.DataFrame
         Balanced frame with required output columns.
     """
-    raise NotImplementedError
+    split_df = label_df.loc[label_df["message_id"].astype(str).isin(post_ids)].copy()
+    balanced = balance_keep_remove(split_df, seed=seed)
+    return balanced[list(REQUIRED_COLUMNS)].reset_index(drop=True)
+
+
+def _validate_split_frame(frame: pd.DataFrame, name: str) -> None:
+    missing = [col for col in REQUIRED_COLUMNS if col not in frame.columns]
+    if missing:
+        raise ValueError(f"{name} missing columns: {missing}")
+    if not frame["message_id"].is_unique:
+        raise ValueError(f"{name} has duplicate message_id values")
+    decisions = frame["decision"].astype(str).str.lower().str.strip()
+    n_keep = int((decisions == "keep").sum())
+    n_remove = int((decisions == "remove").sum())
+    if n_keep != n_remove:
+        raise ValueError(
+            f"{name} is not balanced: keep={n_keep} remove={n_remove}"
+        )
 
 
 def sample_experiment_three_train(
@@ -168,7 +185,24 @@ def sample_experiment_three_train(
     pd.DataFrame
         Size-matched balanced modal train frame.
     """
-    raise NotImplementedError
+    exp1_decisions = exp1_train_df["decision"].astype(str).str.lower().str.strip()
+    n_remove = int((exp1_decisions == "remove").sum())
+    n_keep = int((exp1_decisions == "keep").sum())
+    exp2_decisions = exp2_train_df["decision"].astype(str).str.lower().str.strip()
+    remove_pool = exp2_train_df.loc[exp2_decisions == "remove"]
+    keep_pool = exp2_train_df.loc[exp2_decisions == "keep"]
+    if len(remove_pool) < n_remove:
+        raise ValueError(
+            f"Need {n_remove} remove rows but only found {len(remove_pool)}."
+        )
+    if len(keep_pool) < n_keep:
+        raise ValueError(
+            f"Need {n_keep} keep rows but only found {len(keep_pool)}."
+        )
+    remove_sample = remove_pool.sample(n=n_remove, random_state=seed, replace=False)
+    keep_sample = keep_pool.sample(n=n_keep, random_state=seed, replace=False)
+    sampled = pd.concat([remove_sample, keep_sample], ignore_index=True)
+    return sampled[list(REQUIRED_COLUMNS)].reset_index(drop=True)
 
 
 def write_split_csv(
@@ -187,7 +221,13 @@ def write_split_csv(
     force
         Overwrite when True.
     """
-    raise NotImplementedError
+    if output_path.exists() and not force:
+        raise FileExistsError(
+            f"Refusing to overwrite {output_path}; pass --force."
+        )
+    _validate_split_frame(frame, output_path.name)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    frame[list(REQUIRED_COLUMNS)].to_csv(output_path, index=False)
 
 
 def build_and_write_splits(force: bool, seed: int) -> SplitCounts:
