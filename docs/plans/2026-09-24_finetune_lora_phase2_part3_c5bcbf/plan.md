@@ -1,4 +1,4 @@
-# LoRA fine-tune Qwen3.5 4B on Phase 2 Part 3 keep/remove labels (unanimous and modal)
+# LoRA fine-tune Qwen3.5 4B on Phase 2 Part 2 and Part 3 union keep/remove labels (unanimous and modal)
 
 ## Remember
 - Exact file paths always
@@ -7,24 +7,25 @@
 - Delegated tasks must be impossible to misread.
 
 ## Overview
-LoRA fine-tune `Qwen/Qwen3.5-4B` on Study Phase 2 Part 3 keep/remove labels: unanimous-only posts (at least three raters, all agree) and modal posts (majority vote; ties become remove). Reuse the August 2026 Qwen fine-tune stack and the thin-wrapper pattern from `experiments/larger_finetune_qwen_model_2026_08_08/`. Part 2 baselines are reference only because the base model differs. Input is `shared/data/raw/study_phase_2_part_3/results/full.csv`. No Part 3 label builders or registry entries exist yet. New work goes under `experiments/finetune_lora_phase2_part3_2026_09_24/` with post-level leakage-safe splits, SageMaker training and inference (same pattern as the August 2026 experiment), and S3 prefix `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`.
+LoRA fine-tune `Qwen/Qwen3.5-4B` on Study Phase 2 Part 2 and Part 3 union keep/remove labels: unanimous-only posts (at least three raters, all agree) and modal posts (majority vote; ties become remove). Reuse the August 2026 Qwen fine-tune stack and the thin-wrapper pattern from `experiments/larger_finetune_qwen_model_2026_08_08/`. Part 2 baselines are reference only because the base model differs. Input is the union raw table at `shared/data/raw/study_phase_2_part_2_and_3/results/full.csv` (168,871 rows; loaded from S3 by the shared dataloader). Label builders live under `shared/data/transformed/study_phase_2_part_2_and_3/`; transformed label CSVs are stored in S3 at their repo-relative keys and are not in git. New work goes under `experiments/finetune_lora_phase2_part3_2026_09_24/` with post-level leakage-safe splits, SageMaker training and inference (same pattern as the August 2026 experiment), and S3 prefix `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`.
 
-Verified Part 3 label pools (pre-balance, pre-split; worker-post dedupe on, conflicts dropped, earliest row per pair by original CSV row order):
+Verified union label pools (pre-balance, pre-split; worker-post dedupe on, conflicts dropped, earliest row per pair by original CSV row order). Union trial rows after dedupe: 100,606 (414 conflicting worker-post pairs, 2,454 rows dropped). Seven thousand six hundred fifty-three posts were rated in both parts; overlapping posts have identical text; no worker is in both parts.
+
 | Pool | Posts | Keep | Remove |
 | --- | ---: | ---: | ---: |
-| Modal | 18,862 | 13,629 | 5,233 |
-| Unanimous min-3 | 4,988 | 4,497 | 491 |
+| Modal | 20,000 | 15,196 | 4,804 |
+| Unanimous min-3 | 5,715 | 5,280 | 435 |
 
-After Step 2, expected balanced training sizes are approximate (exact counts print when split scripts run): unanimous train about 808 rows (404 remove + 404 keep); modal train about 8,372 rows; Experiment 3 matches Experiment 1. Balanced test sets: unanimous about 174 rows; modal about 2,094 rows. Risk: unanimous remove count is small (491 total), so unanimous test has roughly 87 removes before keep sampling; report 95% confidence intervals for F1 (bootstrap over test posts, 1000 resamples, seed 1).
+After Step 2, expected balanced training sizes are approximate (exact counts print when split scripts run): unanimous train about 702 rows (351 remove + 351 keep); modal train about 7,686 rows; Experiment 3 matches Experiment 1. Balanced test sets: unanimous about 168 rows; modal about 1,922 rows. Remove counts per balanced set are half of those row totals. Risk: unanimous remove count is small (435 total), so unanimous test has roughly 84 removes before keep sampling; report 95% confidence intervals for F1 (bootstrap over test posts, 1000 resamples, seed 1).
 
 **Out of scope:** QLoRA; hyperparameter sweeps; prompt ablations; editing Part 2 confirmed data or results; changing Part 2 label outputs (Step 1 moves shared logic but keeps Part 2 CSVs byte-identical).
 
 ## Happy flow
-An operator builds Part 3 modal and unanimous label CSVs in the shared data layer, confirms post-level splits and chat JSONL for three training sets and two balanced test sets, builds and pushes a SageMaker Docker image, smoke-tests train and infer on `Qwen/Qwen3.5-4B` with thinking disabled, trains three adapters (unanimous, full modal, size-matched modal), runs the zero-shot baseline and all adapters on both test sets, and writes a cross-evaluation matrix to `RESULTS.md`.
+An operator builds union modal and unanimous label CSVs in the shared data layer, confirms post-level splits and chat JSONL for three training sets and two balanced test sets, builds and pushes a SageMaker Docker image, smoke-tests train and infer on `Qwen/Qwen3.5-4B` with thinking disabled, trains three adapters (unanimous, full modal, size-matched modal), runs the zero-shot baseline and all adapters on both test sets, and writes a cross-evaluation matrix to `RESULTS.md`.
 
 ```mermaid
 flowchart TD
-  raw[Part 3 full.csv]
+  raw[Union full.csv]
   modal[Modal label builder]
   uni[Unanimous min-3 builder]
   posts[Post-level 80/20 split seed 1 on modal pool]
@@ -59,7 +60,7 @@ flowchart TD
 ```
 
 ## Approach
-Import from `experiments/finetune_qwen_model_2026_08_08/` (prompt, split builders, chat dataset, train, inference, evaluate) instead of copying bodies. Add Part 3 label builders, post-level split logic, and a SageMaker wrapper that mirrors `experiments/larger_finetune_qwen_model_2026_08_08/`. In Step 1, extract shared aggregation into `shared/data/transformed/keep_remove_aggregation.py` so Part 2 CSVs stay byte-identical with dedupe off and Part 3 builders enable worker-post dedupe. Assign train and test once at post level on the modal pool (stratified by modal label, seed 1, 80/20); unanimous sets are subsets of those post ids. Balance train and test with all removes plus equal sampled keeps (seed 1). Experiment 3 subsamples Experiment 2 modal training posts to match Experiment 1 row counts (seed 1). Store adapters on S3 only, not in git.
+Import from `experiments/finetune_qwen_model_2026_08_08/` (prompt, split builders, chat dataset, train, inference, evaluate) instead of copying bodies. Add union label builders, post-level split logic, and a SageMaker wrapper that mirrors `experiments/larger_finetune_qwen_model_2026_08_08/`. In Step 1, extract shared aggregation into `shared/data/transformed/keep_remove_aggregation.py` so Part 2 CSVs stay byte-identical with dedupe off and union builders enable worker-post dedupe. Assign train and test once at post level on the modal pool (stratified by modal label, seed 1, 80/20); unanimous sets are subsets of those post ids. Balance train and test with all removes plus equal sampled keeps (seed 1). Experiment 3 subsamples Experiment 2 modal training posts to match Experiment 1 row counts (seed 1). Store adapters on S3 only, not in git.
 
 ## Proposed file structure
 ```text
@@ -105,12 +106,10 @@ shared/data/transformed/study_phase_2_part_2/
   transform.py
   transform_keep_remove_labels_unanimous_min3.py
 
-shared/data/transformed/study_phase_2_part_3/
+shared/data/transformed/study_phase_2_part_2_and_3/
   __init__.py
   transform.py
   transform_keep_remove_labels_unanimous_min3.py
-  keep_remove_labels.csv
-  keep_remove_labels_unanimous_min3.csv
   tests/
     __init__.py
     conftest.py
@@ -125,14 +124,14 @@ experiments/finetune_qwen_model_2026_08_08/
   infra/main.tf
 ```
 
-S3 mirrors local paths under the experiment prefix; `adapters/<run_id>/` stays on S3 only.
+S3 mirrors local paths under the experiment prefix; union label CSVs and `adapters/<run_id>/` stay on S3 only, not in git.
 
 ## Proposed experiment setup
 | Arm | Training labels | Training rows (after balance) | Epochs | Inference targets |
 | --- | --- | --- | --- | --- |
-| Experiment 1 | Unanimous min-3 (Part 3) | All Part 3 removes in unanimous train split plus equal sampled keeps | 3 | Balanced unanimous test and balanced modal test |
-| Experiment 2 | Modal (Part 3) | All Part 3 removes in modal train split plus equal sampled keeps | 1 | Balanced unanimous test and balanced modal test |
-| Experiment 3 | Modal (Part 3), size-matched | Drawn from Experiment 2 modal training posts; 1:1 balance; same remove and keep counts as Experiment 1 (about 808 rows) | 3 (same as Experiment 1, so only the label rule differs) | Balanced unanimous test and balanced modal test |
+| Experiment 1 | Unanimous min-3 (Part 2 and Part 3 union) | All union removes in unanimous train split plus equal sampled keeps | 3 | Balanced unanimous test and balanced modal test |
+| Experiment 2 | Modal (Part 2 and Part 3 union) | All union removes in modal train split plus equal sampled keeps | 1 | Balanced unanimous test and balanced modal test |
+| Experiment 3 | Modal (Part 2 and Part 3 union), size-matched | Drawn from Experiment 2 modal training posts; 1:1 balance; same remove and keep counts as Experiment 1 (about 702 rows) | 3 (same as Experiment 1, so only the label rule differs) | Balanced unanimous test and balanced modal test |
 | Experiment 4 | None (scoring only) | Zero-shot base model plus all three adapters | n/a | Cross matrix on both test sets |
 
 | Held constant | Value |
@@ -150,8 +149,8 @@ S3 mirrors local paths under the experiment prefix; `adapters/<run_id>/` stays o
 
 ## Steps
 
-### Step 1: Build Part 3 modal and unanimous label sets in the shared data layer
-Extract `keep_remove_aggregation.py`, update Part 2 imports for byte-identical outputs, add Part 3 builders, registry entries, and tests.
+### Step 1: Build union modal and unanimous label sets in the shared data layer
+Extract `keep_remove_aggregation.py`, update Part 2 imports for byte-identical outputs, add union builders, registry entries, and tests. Write label CSVs to S3 (not git).
 
 ### Step 2: Confirm post-level splits and chat datasets for all training and test sets
 Add split and chat builders under `shared/`, write README and SETUP, sync confirmed data to S3.
@@ -172,7 +171,7 @@ Subsample to Experiment 1 counts, train 3 epochs (`part3_modal_sm_001`); infer b
 Zero-shot infer (`part3_zeroshot_001`), score all preds with bootstrap F1 CI, write cross-eval matrix to `RESULTS.md`.
 
 ## Step files
-- `steps/step1.md`: Build Part 3 label sets (shared data layer)
+- `steps/step1.md`: Build union label sets (shared data layer)
 - `steps/step2.md`: Confirm splits and chat datasets; write README.md, SETUP.md; sync data to S3
 - `steps/step3.md`: SageMaker wrapper (run_config, launch_sagemaker, Dockerfile, entrypoint, infra, prior-code kwarg), build+push image, smoke job
 - `steps/step4.md`: Experiment 1: train unanimous adapter, infer both test sets
@@ -181,7 +180,7 @@ Zero-shot infer (`part3_zeroshot_001`), score all preds with bootstrap F1 CI, wr
 - `steps/step7.md`: Experiment 4: zero-shot baseline infer, score_all, write RESULTS.md
 
 ## What "done" looks like
-1. Part 3 label CSVs, builders, tests, and registry entries exist; Part 2 transforms byte-identical.
+1. Union label CSVs on S3, builders, tests, and registry entries exist; Part 2 transforms byte-identical.
 2. SageMaker wrapper, Dockerfile, entrypoint, four experiment arms, and passing tests in the experiment folder.
 3. One post-level `split_manifest.csv` (seed 1), and no test post id appears in any training chat file.
 4. Three adapters plus zero-shot baseline scored on both balanced test sets; artifacts on S3.
@@ -189,19 +188,19 @@ Zero-shot infer (`part3_zeroshot_001`), score all preds with bootstrap F1 CI, wr
 6. Combined pytest exits 0; Part 2 experiment results stay untouched.
 
 ## Decisions
-- **Scope:** Part 3 only; keep attention-check failures; modal ties become remove; unanimous requires at least three raters who all agree.
+- **Scope:** Part 2 and Part 3 union; keep attention-check failures; modal ties become remove; unanimous requires at least three raters who all agree.
 - **Base model:** `Qwen/Qwen3.5-4B` with thinking disabled in the chat template for both training and inference.
 - **Compute:** SageMaker (region us-east-2, ml.g5.xlarge, ECR image, entrypoint modes train | infer_baseline | infer_adapter), same pattern as the August 2026 experiment.
 - **Experiment 3:** Keep the size-matched ablation (same row counts and 3 epochs as Experiment 1, so only the label rule differs).
 
 ## Commands
-Part 3 label builders (after Step 1):
+Union label builders (after Step 1):
 ```bash
-PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transform.py
-PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transform_keep_remove_labels_unanimous_min3.py
+PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2_and_3/transform.py
+PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_2_and_3/transform_keep_remove_labels_unanimous_min3.py
 ```
 
-Expected: modal 18,862 posts; unanimous min-3 4,988 posts (counts match table above).
+Expected: modal 20,000 posts; unanimous min-3 5,715 posts (counts match table above).
 
 Confirm splits (after Step 2):
 ```bash
@@ -209,7 +208,7 @@ PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/sha
 PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/shared/create_chat_dataset.py --force
 ```
 
-Expected: unanimous train about 808, modal about 8,372.
+Expected: unanimous train about 702, modal about 7,686.
 
 Upload data to S3 (Step 2; export AWS creds per AGENTS.md):
 ```bash
@@ -253,7 +252,7 @@ Expected: dry-run prints job config; live smoke train completes 2 steps; live sm
 
 Unit tests:
 ```bash
-PYTHONPATH=. uv run pytest shared/data/transformed/study_phase_2_part_3/tests \
+PYTHONPATH=. uv run pytest shared/data/transformed/study_phase_2_part_2_and_3/tests \
   experiments/finetune_lora_phase2_part3_2026_09_24/tests -q
 PYTHONPATH=. uv run pytest experiments/finetune_qwen_model_2026_08_08/tests -q
 ```

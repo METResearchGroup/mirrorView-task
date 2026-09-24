@@ -10,7 +10,7 @@
 
 ## Dependencies
 
-- Step 2 finished: data synced to S3, including `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment2_modal/data/chat_train.jsonl` (~8,372 balanced rows).
+- Step 2 finished: data synced to S3, including `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment2_modal/data/chat_train.jsonl` (~7,686 balanced rows).
 - Step 3 finished: smoke job `part3_smoke_001` completed with parseable `keep`/`remove` outputs.
 - Step 4 may run before, after, or in parallel with this step; Experiment 2 does not use Experiment 1 outputs.
 - Env vars before launch: `SAGEMAKER_ROLE_ARN`, `HF_TOKEN`, `WANDB_API_KEY` (train only).
@@ -96,7 +96,7 @@ Train and infer launcher stdout ends with `Completed`. Row check prints `match=T
 - Adapter S3: `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/experiment2_modal/adapters/part3_modal_001/`
 - Preds local: `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment2_modal/preds/test_unanimous.csv` and `test_modal.csv`
 - W&B: project `mirrorview-finetune-lora-phase2-part3`, run name contains `part3_modal_001`
-- Train wall time: prior `experiments/larger_finetune_qwen_model_2026_08_08` used 5,626 rows x 1 epoch in ~85 min; Part 3 Experiment 2 has ~8,372 rows x 1 epoch, so expect ~127 min train and ~15 min infer on `ml.g5.xlarge`.
+- Train wall time: prior `experiments/larger_finetune_qwen_model_2026_08_08` used 5,626 rows x 1 epoch in ~85 min; union Experiment 2 has ~7,686 rows x 1 epoch, so expect ~117 min train and ~15 min infer on `ml.g5.xlarge`.
 
 ## Must pass
 

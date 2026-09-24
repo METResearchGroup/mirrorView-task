@@ -5,7 +5,7 @@ Notation: `P` = `/workspace/experiments/finetune_qwen_model_2026_08_08/`.
 ## Scope
 
 - **Caller:** `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/score_all.py` `main`
-- **Task:** Run zero-shot baseline inference on both balanced Part 3 test sets (`part3_zeroshot_001`). Score predictions from Experiments 1 to 3 (Steps 4 to 6) and the zero-shot baseline. Add remove-F1 95% bootstrap CIs over test posts. Write `cross_eval.csv` and `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md`.
+- **Task:** Run zero-shot baseline inference on both balanced union test sets (`part3_zeroshot_001`). Score predictions from Experiments 1 to 3 (Steps 4 to 6) and the zero-shot baseline. Add remove-F1 95% bootstrap CIs over test posts. Write `cross_eval.csv` and `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md`.
 - **Out of scope:** Retraining adapters, changing label builders or splits, editing Part 2 `RESULTS.md`, adding new experiments, changing `P/evaluate.py`.
 
 ## Dependencies
@@ -103,8 +103,8 @@ The file must include:
 2. **4 by 2 remove-F1 matrix with 95% CIs.** Rows: zero-shot, Experiment 1, Experiment 2, Experiment 3. Columns: unanimous test, modal test. Cell format: `0.XXXX [0.XXXX, 0.XXXX]` (four decimals, same as Part 2 tables).
 3. **Full metrics table** copied from `cross_eval.csv` (all columns above).
 4. **Split counts table** from `data/split_manifest.csv`: modal pool posts, unanimous-min3 posts, balanced train rows per experiment, balanced test rows per test set (`n`, `n_remove`, `n_keep`).
-5. **One plain paragraph** on what the Part 3 numbers show (best F1 cell; invalid rates if nonzero). No causal claims or head-to-head claims against Part 2.
-6. **Part 2 reference block** labeled `Part 2 reference (different base model: Qwen/Qwen3-4B-Instruct-2507)`. Copy test remove-F1 only from `P/RESULTS.md` (unanimous 0.7407 baseline, 0.9688 fine-tuned) and `larger_finetune` `RESULTS.md` (modal 0.7210 baseline, 0.6962 fine-tuned). Note they are not comparable to Part 3.
+5. **One plain paragraph** on what the union experiment numbers show (best F1 cell; invalid rates if nonzero). No causal claims or head-to-head claims against Part 2-only baselines.
+6. **Part 2 reference block** labeled `Part 2 reference (different base model: Qwen/Qwen3-4B-Instruct-2507)`. Copy test remove-F1 only from `P/RESULTS.md` (unanimous 0.7407 baseline, 0.9688 fine-tuned) and `larger_finetune` `RESULTS.md` (modal 0.7210 baseline, 0.6962 fine-tuned). Note they are not comparable to this union experiment.
 
 ## Pytest files
 
@@ -174,7 +174,7 @@ Expected: SageMaker job completes; both baseline pred CSVs exist locally; `cross
 
 - Reimplementing metric math instead of importing `P/evaluate.py`.
 - Editing fine-tuned prediction CSVs from Steps 4 to 6.
-- Claiming Part 3 beats Part 2 (different base model).
+- Claiming this union experiment beats Part 2-only baselines (different base model and data).
 - Writing F1 without CIs on the 4 by 2 matrix.
 - Silent skip when a pred file is missing.
 

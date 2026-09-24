@@ -4,7 +4,7 @@
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
-3. Operators now have LoRA fine-tune scaffolding for Study Phase 2 Part 3 keep/remove labels (unanimous and modal): shared aggregation with optional worker-post dedupe, post-level splits and balanced chat datasets, a SageMaker launcher, and a cross-eval scorer. SageMaker training has not run because the execution role lacks the new S3 prefix (Terraform not applied. The IAM user cannot update the role). [PR #310](https://github.com/METResearchGroup/mirrorView-task/pull/310)
+3. Operators now have LoRA fine-tune scaffolding for Study Phase 2 Part 2 and Part 3 union keep/remove labels (unanimous and modal): shared aggregation with optional worker-post dedupe, union label builders (transformed CSVs on S3, not in git), post-level splits and balanced chat datasets, a SageMaker launcher, and a cross-eval scorer. SageMaker execution role includes the experiment S3 prefix and ECR repo (updated via IAM put-role-policy). [PR #310](https://github.com/METResearchGroup/mirrorView-task/pull/310)
 
 ## 2026-09-22
 

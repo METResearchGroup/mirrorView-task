@@ -5,17 +5,16 @@ Notation: `E` = `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/`,
 ## Scope
 
 - **Caller:** `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py` `main` with `--force`, then `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/create_chat_dataset.py` `main` with `--force`
-- **Task:** Assign train and test once at post level on the Part 3 modal label pool (stratified by modal label, 80/20, seed 1). Derive unanimous train and test as subsets of those post ids. Balance each train and test set with all removes plus equal sampled keeps (seed 1). Build Experiment 3 train by sampling modal train-split posts to match Experiment 1 balanced row counts. Write split CSVs, three experiment train CSVs, chat JSONL for all train sets and both shared test sets, print counts, write `README.md` and `SETUP.md`, and sync data to S3.
-- **Out of scope:** SageMaker launcher, Dockerfile, `run_config.py`, `launch_sagemaker.py`, `entrypoint.sh`, training, inference, `RESULTS.md` scoring, editing prior package P or wrapper W, editing shared Part 3 label builders from Step 1, infra Terraform, adapter or prediction outputs.
+- **Task:** Assign train and test once at post level on the Part 2 and Part 3 union modal label pool (stratified by modal label, 80/20, seed 1). Derive unanimous train and test as subsets of those post ids. Balance each train and test set with all removes plus equal sampled keeps (seed 1). Build Experiment 3 train by sampling modal train-split posts to match Experiment 1 balanced row counts. Write split CSVs, three experiment train CSVs, chat JSONL for all train sets and both shared test sets, print counts, write `README.md` and `SETUP.md`, and sync data to S3.
+- **Out of scope:** SageMaker launcher, Dockerfile, `run_config.py`, `launch_sagemaker.py`, `entrypoint.sh`, training, inference, `RESULTS.md` scoring, editing prior package P or wrapper W, editing shared union label builders from Step 1, infra Terraform, adapter or prediction outputs.
 
 ## Dependencies
 
 Step 1 must be complete:
 
-- `/workspace/shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv` (modal, 18,862 posts: 13,629 keep / 5,233 remove; includes `n_raters`)
-- `/workspace/shared/data/transformed/study_phase_2_part_3/keep_remove_labels_unanimous_min3.csv` (unanimous min-3, 4,988 posts: 4,497 keep / 491 remove)
-- Registry entries `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` and `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3` in `/workspace/shared/data/registry.py`
-- Step 1 pytest green: `PYTHONPATH=. uv run pytest shared/data/transformed/study_phase_2_part_3/tests -q`
+- Union label CSVs on S3 at `shared/data/transformed/study_phase_2_part_2_and_3/keep_remove_labels.csv` (modal, 20,000 posts: 15,196 keep / 4,804 remove; includes `n_raters`) and `keep_remove_labels_unanimous_min3.csv` (unanimous min-3, 5,715 posts: 5,280 keep / 435 remove)
+- Registry entries `STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS` and `STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3` in `/workspace/shared/data/registry.py`
+- Step 1 pytest green: `PYTHONPATH=. uv run pytest shared/data/transformed/study_phase_2_part_2_and_3/tests -q`
 
 ## Files to inspect (read-only)
 
@@ -52,7 +51,7 @@ Step 1 must be complete:
 
 ## Public contracts
 
-Load modal labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` and unanimous labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3`. Treat `message_id` as post id.
+Load modal labels via `STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS` and unanimous labels via `STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3`. Treat `message_id` as post id.
 
 **Post-level split (once, seed 1):** On the modal pool, stratify by modal `decision`, assign 80% of each class to train using `n_train = int(0.8 * n_class)` (same cut as P `stratified_balanced_split`). Write `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/data/split_manifest.csv` with columns `post_id`, `split` (`train` or `test`), `modal_label`, `in_unanimous` (post in unanimous-min3 CSV).
 
@@ -60,7 +59,7 @@ Load modal labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` and unanimous la
 
 **Balancing (seed 1):** Reuse P `balance_keep_remove` on each split. Train: all removes in that split plus equal sampled keeps. Test: all test removes plus equal sampled test keeps. Exp2 train uses modal train posts; `test_modal.csv` uses modal test posts. Exp1 train uses unanimous train posts; `test_unanimous.csv` uses unanimous test posts.
 
-**Experiment 3 size match:** Sample from modal train-split posts eligible for Exp2 balanced train. Match Exp1 remove count and keep count (about 404 each, 808 total), seed 1, 1:1 balance.
+**Experiment 3 size match:** Sample from modal train-split posts eligible for Exp2 balanced train. Match Exp1 remove count and keep count (about 351 each, 702 total), seed 1, 1:1 balance.
 
 **Train and test CSV columns:** `message_id`, `original_text`, `mirror_text`, `decision`, `keep_remove_label`, `n_raters` (same order as P `train.csv`). Copy `n_raters` from the label CSVs (modal and unanimous both include it after Step 1).
 
@@ -68,13 +67,13 @@ Load modal labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` and unanimous la
 
 ### README and SETUP
 
-`README.md`: agent read-only banner from `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md`, then one or two lines naming the Part 3 LoRA experiment and redirecting to `SETUP.md` and `RESULTS.md`.
+`README.md`: agent read-only banner from `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md`, then one or two lines naming the Part 2 and Part 3 union LoRA experiment and redirecting to `SETUP.md` and `RESULTS.md`.
 
-`SETUP.md`: Step 1 label CSVs and registry keys as prerequisites; post-level split and balance rules; approximate counts (modal 18,862; unanimous 4,988; exp1 and exp3 train about 808; exp2 train about 8,372; unanimous test about 87 removes before keep sampling, about 174 balanced rows; modal test about 2,094 balanced rows); S3 bucket `mirrorview-experimental-artifacts`, prefix `experiments/finetune_lora_phase2_part3_2026_09_24`; and Main caller commands below.
+`SETUP.md`: Step 1 union label CSVs on S3 and registry keys as prerequisites; post-level split and balance rules; approximate counts (modal 20,000; unanimous 5,715; exp1 and exp3 train about 702; exp2 train about 7,686; unanimous test about 84 removes before keep sampling, about 168 balanced rows; modal test about 1,922 balanced rows); S3 bucket `mirrorview-experimental-artifacts`, prefix `experiments/finetune_lora_phase2_part3_2026_09_24`; and Main caller commands below.
 
 ## Pytest files
 
-Under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/tests/`. Use tiny in-memory frames; patch `load_dataset` when needed. Do not load full Part 3 CSVs.
+Under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/tests/`. Use tiny in-memory frames; patch `load_dataset` when needed. Do not load full union label CSVs.
 
 ### `tests/test_build_splits.py`
 
@@ -135,7 +134,7 @@ Build splits:
 PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py --force
 ```
 
-Expected stdout includes: `modal_posts=18862`, `unanimous_posts=4988`, `exp1_train_rows=808`, `exp2_train_rows=8372`, `exp3_train_rows=808`, `test_unanimous_rows=174`, `test_modal_rows=2094`. Pytest asserts relationships; the script prints exact integers.
+Expected stdout includes: `modal_posts=20000`, `unanimous_posts=5715`, `exp1_train_rows=702`, `exp2_train_rows=7686`, `exp3_train_rows=702`, `test_unanimous_rows=168`, `test_modal_rows=1922`. Pytest asserts relationships; the script prints exact integers.
 
 Build chat datasets:
 

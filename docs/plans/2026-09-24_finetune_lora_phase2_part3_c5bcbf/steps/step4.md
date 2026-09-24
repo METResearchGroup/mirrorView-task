@@ -98,7 +98,7 @@ Train and infer launcher stdout ends with `Completed`. Row check prints `match=T
 - Preds S3: `.../experiment1_unanimous/preds/test_unanimous.csv` and `test_modal.csv`
 - Preds local: `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment1_unanimous/preds/test_unanimous.csv` and `test_modal.csv`
 - W&B: project `mirrorview-finetune-lora-phase2-part3`, run name contains `part3_uni_001`
-- Train wall time: prior `experiments/finetune_qwen_model_2026_08_08` used 308 rows x 3 epochs in ~18 min; Part 3 Experiment 1 has ~808 rows x 3 epochs, so expect ~47 min train and ~15 min infer on `ml.g5.xlarge`.
+- Train wall time: prior `experiments/finetune_qwen_model_2026_08_08` used 308 rows x 3 epochs in ~18 min; union Experiment 1 has ~702 rows x 3 epochs, so expect ~41 min train and ~15 min infer on `ml.g5.xlarge`.
 
 ## Must pass
 

@@ -3,7 +3,7 @@
 ## Scope
 
 - **Caller:** operator running `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py`
-- **Task:** Train the Experiment 3 size-matched modal LoRA adapter for 3 epochs on `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/data/chat_train.jsonl`, then run `infer_adapter` on both balanced test sets in one SageMaker job. This isolates the label rule: train row count and epoch count match Experiment 1 (~808 rows, 3 epochs), but labels are modal (drawn from Experiment 2 modal train posts, balanced to Experiment 1 remove and keep counts, seed 1). Sync prediction CSVs locally and print invalid-rate and row-count checks.
+- **Task:** Train the Experiment 3 size-matched modal LoRA adapter for 3 epochs on `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/data/chat_train.jsonl`, then run `infer_adapter` on both balanced test sets in one SageMaker job. This isolates the label rule: train row count and epoch count match Experiment 1 (~702 rows, 3 epochs), but labels are modal (drawn from Experiment 2 modal train posts, balanced to Experiment 1 remove and keep counts, seed 1). Sync prediction CSVs locally and print invalid-rate and row-count checks.
 - **Run id:** `part3_modal_sm_001`
 - **Differences from Step 4 only:** `--experiment experiment3_modal_size_matched`, train file under `experiment3_modal_size_matched/data/`, run id `part3_modal_sm_001`, preds under `experiment3_modal_size_matched/preds/`. Epoch count is 3 (same as Experiment 1, not 1).
 - **Out of scope:** Code edits; rescaling train size; cross-eval scoring; training on test chat files.
@@ -87,14 +87,14 @@ for name, (pred_path, chat_path) in checks.items():
 PY
 ```
 
-Preflight: `wc -l` on Experiment 1 and Experiment 3 `chat_train.jsonl` must match (~808 lines each). Train and infer launcher stdout ends with `Completed`. Row check prints `match=True` for both test sets and invalid counts.
+Preflight: `wc -l` on Experiment 1 and Experiment 3 `chat_train.jsonl` must match (~702 lines each). Train and infer launcher stdout ends with `Completed`. Row check prints `match=True` for both test sets and invalid counts.
 
 ### Expected outputs
 
 - Adapter S3: `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/adapters/part3_modal_sm_001/`
 - Preds local: `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/preds/test_unanimous.csv` and `test_modal.csv`
 - W&B: project `mirrorview-finetune-lora-phase2-part3`, run name contains `part3_modal_sm_001`
-- Train wall time: same as Experiment 1 (~808 rows x 3 epochs, ~47 min train, ~15 min infer). Prior row-scale reference: 308 rows x 3 epochs = ~18 min.
+- Train wall time: same as Experiment 1 (~702 rows x 3 epochs, ~41 min train, ~15 min infer). Prior row-scale reference: 308 rows x 3 epochs = ~18 min.
 
 ## Must pass
 
