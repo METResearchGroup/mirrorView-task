@@ -9,20 +9,13 @@ Run from the repo root::
 from __future__ import annotations
 
 import argparse
+import importlib
 import json
+import multiprocessing
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import litellm
-from litellm.exceptions import (
-    APIConnectionError,
-    BadGatewayError,
-    InternalServerError,
-    RateLimitError,
-    ServiceUnavailableError,
-    Timeout,
-)
 from pydantic import BaseModel, Field
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
@@ -31,15 +24,7 @@ TOKENS_PER_MILLION = 1_000_000
 METADATA_FILENAME = "metadata.json"
 REQUEST_TIMEOUT_SECONDS = 180
 MAX_COMPLETION_ATTEMPTS = 2
-TRANSIENT_LITELLM_ERRORS = (
-    Timeout,
-    TimeoutError,
-    APIConnectionError,
-    RateLimitError,
-    ServiceUnavailableError,
-    InternalServerError,
-    BadGatewayError,
-)
+ALLOWED_OPENAI_PARAMS = ("reasoning_effort",)
 
 
 class SpendCapExceeded(Exception):
@@ -115,9 +100,8 @@ def complete_structured(
     """Run one structured LiteLLM completion and write per-call artifacts."""
     _ensure_under_spend_cap()
     output_dir.mkdir(parents=True, exist_ok=True)
-    raw_text, response = _call_litellm(messages, response_model)
+    raw_text, usage = _call_litellm(messages, response_model)
     parsed = response_model.model_validate_json(raw_text)
-    usage = _extract_usage(response)
     artifact_path = _write_call_artifact(output_dir, call_index, messages, raw_text, parsed, usage)
     _record_call_cost(stage, arm, usage)
     return parsed
@@ -128,16 +112,16 @@ def _ensure_under_spend_cap() -> None:
         raise SpendCapExceeded(f"cumulative spend reached {constants.SPEND_CAP_USD}")
 
 
-ALLOWED_OPENAI_PARAMS = ("reasoning_effort",)
-
-
-def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel]) -> tuple[str, Any]:
+def _call_litellm(
+    messages: list[dict[str, str]],
+    response_model: type[BaseModel],
+) -> tuple[str, dict[str, int]]:
     last_error: Exception | None = None
     for attempt in range(MAX_COMPLETION_ATTEMPTS):
         _ensure_under_spend_cap()
         try:
             return _litellm_completion(messages, response_model)
-        except TRANSIENT_LITELLM_ERRORS as exc:
+        except TimeoutError as exc:
             last_error = exc
             if attempt + 1 >= MAX_COMPLETION_ATTEMPTS:
                 raise
@@ -146,27 +130,100 @@ def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel
     raise RuntimeError("litellm completion failed without an error")
 
 
-def _configure_litellm_request() -> None:
-    litellm.num_retries = 0
-    litellm.request_timeout = REQUEST_TIMEOUT_SECONDS
-
-
 def _litellm_completion(
     messages: list[dict[str, str]],
     response_model: type[BaseModel],
-) -> tuple[str, Any]:
-    _configure_litellm_request()
+) -> tuple[str, dict[str, int]]:
+    return _completion_via_spawn(
+        messages,
+        constants.LLM_LITELLM_MODEL_ID,
+        constants.LLM_REASONING_EFFORT,
+        float(REQUEST_TIMEOUT_SECONDS),
+        response_model.__module__,
+        response_model.__name__,
+    )
+
+
+def _completion_via_spawn(
+    messages: list[dict[str, str]],
+    model_id: str,
+    reasoning_effort: str,
+    timeout: float,
+    model_module: str,
+    model_class: str,
+) -> tuple[str, dict[str, int]]:
+    ctx = multiprocessing.get_context("spawn")
+    parent_conn, child_conn = ctx.Pipe(duplex=False)
+    proc = ctx.Process(
+        target=_child_litellm_worker,
+        args=(child_conn, messages, model_id, reasoning_effort, timeout, model_module, model_class),
+    )
+    proc.start()
+    child_conn.close()
+    proc.join(timeout)
+    if proc.is_alive():
+        proc.terminate()
+        proc.join()
+        parent_conn.close()
+        raise TimeoutError(f"litellm completion exceeded {int(timeout)}s")
+    return _read_child_completion(parent_conn)
+
+
+def _read_child_completion(parent_conn: Any) -> tuple[str, dict[str, int]]:
+    if not parent_conn.poll():
+        parent_conn.close()
+        raise RuntimeError("litellm child exited without a result")
+    status, payload, usage = parent_conn.recv()
+    parent_conn.close()
+    if status == "err":
+        raise RuntimeError(str(payload))
+    return str(payload), dict(usage or {})
+
+
+def _child_litellm_worker(
+    conn: Any,
+    messages: list[dict[str, str]],
+    model_id: str,
+    reasoning_effort: str,
+    timeout: float,
+    model_module: str,
+    model_class: str,
+) -> None:
+    try:
+        raw, usage = _child_run_litellm(
+            messages, model_id, reasoning_effort, timeout, model_module, model_class
+        )
+        conn.send(("ok", raw, usage))
+    except Exception as exc:
+        conn.send(("err", repr(exc), {}))
+    finally:
+        conn.close()
+
+
+def _child_run_litellm(
+    messages: list[dict[str, str]],
+    model_id: str,
+    reasoning_effort: str,
+    timeout: float,
+    model_module: str,
+    model_class: str,
+) -> tuple[str, dict[str, int]]:
+    import litellm
+
+    model_type = getattr(importlib.import_module(model_module), model_class)
+    litellm.num_retries = 0
+    litellm.request_timeout = int(timeout)
     response = litellm.completion(
-        model=constants.LLM_LITELLM_MODEL_ID,
+        model=model_id,
         messages=messages,
-        response_format=response_model,
-        reasoning_effort=constants.LLM_REASONING_EFFORT,
+        response_format=model_type,
+        reasoning_effort=reasoning_effort,
         allowed_openai_params=list(ALLOWED_OPENAI_PARAMS),
-        timeout=float(REQUEST_TIMEOUT_SECONDS),
+        timeout=timeout,
         max_retries=0,
     )
     raw_text = response.choices[0].message.content or ""
-    return raw_text, response
+    return raw_text, _extract_usage(response)
 
 
 def _record_call_cost(stage: str, arm: str | None, usage: dict[str, int]) -> None:

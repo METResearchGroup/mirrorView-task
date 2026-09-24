@@ -4,15 +4,12 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from pydantic import BaseModel
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
-from litellm.exceptions import Timeout
-
-import litellm
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client import (
     REQUEST_TIMEOUT_SECONDS,
@@ -27,21 +24,22 @@ class _ProbeModel(BaseModel):
     ok: bool
 
 
-def _mock_response(raw_json: str, *, input_tokens: int, output_tokens: int, reasoning_tokens: int = 0):
-    response = MagicMock()
-    response.choices = [MagicMock(message=MagicMock(content=raw_json))]
-    response.usage = MagicMock(
-        prompt_tokens=input_tokens,
-        completion_tokens=output_tokens,
-        reasoning_tokens=reasoning_tokens,
-    )
-    return response
+def _fake_completion(raw_json: str, *, input_tokens: int, output_tokens: int, reasoning_tokens: int = 0):
+    usage = {
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "reasoning_tokens": reasoning_tokens,
+    }
+    return raw_json, usage
 
 
 def test_complete_structured_writes_per_call_json(tmp_path: Path) -> None:
     """complete_structured writes one JSON artifact with request, response, and usage."""
     payload = {"ok": True}
-    with patch("litellm.completion", return_value=_mock_response(json.dumps(payload), input_tokens=10, output_tokens=5)):
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+        return_value=_fake_completion(json.dumps(payload), input_tokens=10, output_tokens=5),
+    ):
         complete_structured(
             [{"role": "user", "content": "hi"}],
             _ProbeModel,
@@ -62,7 +60,10 @@ def test_complete_structured_appends_cost_log(tmp_path: Path, monkeypatch: pytes
     cost_log = tmp_path / "cost_log.jsonl"
     monkeypatch.setattr(paths, "cost_log_path", lambda: cost_log)
     payload = {"ok": True}
-    with patch("litellm.completion", return_value=_mock_response(json.dumps(payload), input_tokens=1000, output_tokens=200)):
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+        return_value=_fake_completion(json.dumps(payload), input_tokens=1000, output_tokens=200),
+    ):
         complete_structured(
             [{"role": "user", "content": "hi"}],
             _ProbeModel,
@@ -86,7 +87,9 @@ def test_spend_cap_blocks_call(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) 
         encoding="utf-8",
     )
     monkeypatch.setattr(paths, "cost_log_path", lambda: cost_log)
-    with patch("litellm.completion") as mock_completion:
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+    ) as mock_spawn:
         with pytest.raises(SpendCapExceeded):
             complete_structured(
                 [{"role": "user", "content": "hi"}],
@@ -97,13 +100,16 @@ def test_spend_cap_blocks_call(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) 
                 output_dir=tmp_path,
                 run_metadata={"model": constants.LLM_MODEL_ID},
             )
-    mock_completion.assert_not_called()
+    mock_spawn.assert_not_called()
 
 
 def test_reasoning_effort_none_passed(tmp_path: Path) -> None:
-    """complete_structured passes reasoning_effort none and the LiteLLM model id."""
+    """complete_structured passes reasoning_effort none and the LiteLLM model id to spawn."""
     payload = {"ok": True}
-    with patch("litellm.completion", return_value=_mock_response(json.dumps(payload), input_tokens=10, output_tokens=5)) as mock_completion:
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+        return_value=_fake_completion(json.dumps(payload), input_tokens=10, output_tokens=5),
+    ) as mock_spawn:
         complete_structured(
             [{"role": "user", "content": "hi"}],
             _ProbeModel,
@@ -113,18 +119,18 @@ def test_reasoning_effort_none_passed(tmp_path: Path) -> None:
             output_dir=tmp_path,
             run_metadata={"model": constants.LLM_MODEL_ID},
         )
-    kwargs = mock_completion.call_args.kwargs
-    assert kwargs["model"] == constants.LLM_LITELLM_MODEL_ID
-    assert kwargs["reasoning_effort"] == constants.LLM_REASONING_EFFORT
+    args = mock_spawn.call_args[0]
+    assert args[1] == constants.LLM_LITELLM_MODEL_ID
+    assert args[2] == constants.LLM_REASONING_EFFORT
 
 
 def test_timeout_and_retry_settings(tmp_path: Path) -> None:
-    """complete_structured configures LiteLLM and passes timeout and max_retries."""
+    """complete_structured passes timeout and response model path into spawn."""
     payload = {"ok": True}
     with patch(
-        "litellm.completion",
-        return_value=_mock_response(json.dumps(payload), input_tokens=10, output_tokens=5),
-    ) as mock_completion:
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+        return_value=_fake_completion(json.dumps(payload), input_tokens=10, output_tokens=5),
+    ) as mock_spawn:
         complete_structured(
             [{"role": "user", "content": "hi"}],
             _ProbeModel,
@@ -134,23 +140,22 @@ def test_timeout_and_retry_settings(tmp_path: Path) -> None:
             output_dir=tmp_path,
             run_metadata={"model": constants.LLM_MODEL_ID},
         )
-    kwargs = mock_completion.call_args.kwargs
-    assert kwargs["timeout"] == float(REQUEST_TIMEOUT_SECONDS)
-    assert kwargs["max_retries"] == 0
-    assert litellm.num_retries == 0
-    assert litellm.request_timeout == REQUEST_TIMEOUT_SECONDS
+    args = mock_spawn.call_args[0]
+    assert args[3] == float(REQUEST_TIMEOUT_SECONDS)
+    assert args[4] == _ProbeModel.__module__
+    assert args[5] == _ProbeModel.__name__
 
 
 def test_builtin_timeout_error_retries_once(tmp_path: Path) -> None:
-    """complete_structured retries once after a builtin TimeoutError."""
+    """complete_structured retries once after a spawn TimeoutError."""
     payload = {"ok": True}
     with patch(
-        "litellm.completion",
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
         side_effect=[
             TimeoutError("litellm completion exceeded 180s"),
-            _mock_response(json.dumps(payload), input_tokens=10, output_tokens=5),
+            _fake_completion(json.dumps(payload), input_tokens=10, output_tokens=5),
         ],
-    ) as mock_completion:
+    ) as mock_spawn:
         complete_structured(
             [{"role": "user", "content": "hi"}],
             _ProbeModel,
@@ -160,35 +165,35 @@ def test_builtin_timeout_error_retries_once(tmp_path: Path) -> None:
             output_dir=tmp_path,
             run_metadata={"model": constants.LLM_MODEL_ID},
         )
-    assert mock_completion.call_count == 2
+    assert mock_spawn.call_count == 2
 
 
-def test_transient_error_retries_once(tmp_path: Path) -> None:
-    """complete_structured retries once after a transient LiteLLM timeout."""
-    payload = {"ok": True}
+def test_transient_error_does_not_retry(tmp_path: Path) -> None:
+    """complete_structured does not retry after a non-timeout child failure."""
     with patch(
-        "litellm.completion",
-        side_effect=[
-            Timeout("request timed out", model=constants.LLM_LITELLM_MODEL_ID, llm_provider="openai"),
-            _mock_response(json.dumps(payload), input_tokens=10, output_tokens=5),
-        ],
-    ) as mock_completion:
-        complete_structured(
-            [{"role": "user", "content": "hi"}],
-            _ProbeModel,
-            stage="discovery",
-            arm="original_only",
-            call_index=1,
-            output_dir=tmp_path,
-            run_metadata={"model": constants.LLM_MODEL_ID},
-        )
-    assert mock_completion.call_count == 2
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+        side_effect=RuntimeError("request timed out"),
+    ) as mock_spawn:
+        with pytest.raises(RuntimeError):
+            complete_structured(
+                [{"role": "user", "content": "hi"}],
+                _ProbeModel,
+                stage="discovery",
+                arm="original_only",
+                call_index=1,
+                output_dir=tmp_path,
+                run_metadata={"model": constants.LLM_MODEL_ID},
+            )
+    assert mock_spawn.call_count == 1
 
 
 def test_metadata_reasoning_tokens_zero(tmp_path: Path) -> None:
     """Per-call usage records zero reasoning tokens from the mock response."""
     payload = {"ok": True}
-    with patch("litellm.completion", return_value=_mock_response(json.dumps(payload), input_tokens=10, output_tokens=5, reasoning_tokens=0)):
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client._completion_via_spawn",
+        return_value=_fake_completion(json.dumps(payload), input_tokens=10, output_tokens=5, reasoning_tokens=0),
+    ):
         complete_structured(
             [{"role": "user", "content": "hi"}],
             _ProbeModel,
