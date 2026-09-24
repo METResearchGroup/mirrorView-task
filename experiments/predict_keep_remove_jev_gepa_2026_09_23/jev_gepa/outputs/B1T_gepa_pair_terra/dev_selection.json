@@ -1,8 +1,8 @@
 {
-  "gepa_best_idx": 1,
+  "gepa_best_idx": 14,
   "reflection_cost_usd": 0.0,
   "reflection_lm": "openai/gpt-5.6-terra",
-  "selected_candidate_idx": 0,
-  "selected_dev_f1": 0.5286549707602339,
-  "total_metric_calls": 64
+  "selected_candidate_idx": 5,
+  "selected_dev_f1": 0.5591715976331361,
+  "total_metric_calls": 9058
 }
