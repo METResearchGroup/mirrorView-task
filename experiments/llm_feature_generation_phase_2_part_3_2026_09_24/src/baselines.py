@@ -12,14 +12,22 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
+import string
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 from typing import Any, Callable, TypedDict
 
 import numpy as np
 import pandas as pd
+import spacy
+from spacy.lang.en.stop_words import STOP_WORDS
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
+from shared.embeddings.bedrock import create_embedding
 
 K_MIN: int = 2
 K_MAX: int = 10
@@ -130,19 +138,55 @@ def extract_arm_text(row: pd.Series, arm: str) -> str:
     return str(row[mapping])
 
 
+@lru_cache(maxsize=1)
+def _english_stopwords() -> frozenset[str]:
+    return frozenset(STOP_WORDS) | NOISY_WORDS
+
+
+@lru_cache(maxsize=1)
+def _spacy_nlp() -> spacy.language.Language:
+    return spacy.load("en_core_web_sm")
+
+
+def _normalize_surface(text: str) -> str:
+    lowered = text.lower()
+    table = str.maketrans(string.punctuation, " " * len(string.punctuation))
+    return re.sub(r"\s+", " ", lowered.translate(table)).strip()
+
+
+def _lemma_for_token(token: spacy.tokens.Token, nlp_model: spacy.language.Language) -> str:
+    lemma = token.lemma_.lower()
+    surface = token.text.lower()
+    if lemma != surface or not surface.endswith("ing"):
+        return lemma
+    probe = nlp_model(f"they are {surface}")
+    for probe_token in probe:
+        if probe_token.text.lower() == surface:
+            return probe_token.lemma_.lower()
+    return lemma
+
+
 def tokenize_text(text: str) -> list[str]:
     """Lemmatize text and drop stopwords plus noisy terms."""
-    raise NotImplementedError
+    surface = _normalize_surface(text)
+    if not surface:
+        return []
+    nlp_model = _spacy_nlp()
+    doc = nlp_model(surface)
+    blocked = _english_stopwords()
+    lemmas = [_lemma_for_token(token, nlp_model) for token in doc]
+    return [lemma for lemma in lemmas if lemma not in blocked and lemma.strip()]
 
 
 def unigrams_from_tokens(tokens: list[str]) -> list[str]:
     """Return unigrams with length at least two characters."""
-    raise NotImplementedError
+    return [token for token in tokens if len(token) >= MIN_TOKEN_LENGTH]
 
 
 def bigrams_from_tokens(tokens: list[str]) -> list[str]:
     """Return adjacent token bigrams joined with a space."""
-    raise NotImplementedError
+    pairs = zip(tokens, tokens[1:])
+    return [f"{left} {right}" for left, right in pairs]
 
 
 def compute_docfreq(terms_per_doc: list[set[str]]) -> list[DocfreqEntry]:
@@ -152,7 +196,10 @@ def compute_docfreq(terms_per_doc: list[set[str]]) -> list[DocfreqEntry]:
 
 def terms_for_post(text: str) -> tuple[set[str], set[str]]:
     """Return unigram and bigram term sets for one post after preprocessing."""
-    raise NotImplementedError
+    tokens = tokenize_text(text)
+    unigrams = set(unigrams_from_tokens(tokens))
+    bigrams = set(bigrams_from_tokens(tokens))
+    return unigrams, bigrams
 
 
 def compute_docfreq_for_class(
