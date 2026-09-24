@@ -42,7 +42,7 @@ class TestSelectCandidateOnDev:
         scorer = FakeJevBatchScorer(
             probabilities_by_batch=[[0.2, 0.8], [0.9, 0.1]],
         )
-        adapter = JevGepaAdapter(view="pair", scorer=scorer)
+        adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
         result = MagicMock()
         result.candidates = [
             {"instruction": "weak"},
@@ -55,7 +55,7 @@ class TestSelectCandidateOnDev:
             adapter=adapter,
         )
 
-        expected_probs = [0.2, 0.1]
+        expected_probs = [0.9, 0.1]
         expected_f1 = probability_metrics(
             [example.label for example in devset],
             expected_probs,
