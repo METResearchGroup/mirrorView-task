@@ -14,7 +14,12 @@ from gepa.core.adapter import EvaluationBatch, GEPAAdapter
 from typesafe_sdk import TypeSafeClient
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared import jev_scorer, secrets
-from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import render_state_text
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
+    VIEW_MIRROR,
+    VIEW_ORIGINAL,
+    VIEW_PAIR,
+    render_state_text,
+)
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
 
 ScoreMode = Literal["probability", "asymmetric"]
@@ -51,6 +56,8 @@ class JevTrajectory:
     post_id: str
     view: ViewName
     instruction: str
+    original_text: str
+    mirror_text: str
     p_remove: float
     label: int
     n_keep: int
@@ -162,6 +169,8 @@ class JevGepaAdapter:
             post_id=instance.post_id,
             view=self._view,
             instruction=instruction,
+            original_text=instance.original_text,
+            mirror_text=instance.mirror_text,
             p_remove=p_remove,
             label=instance.label,
             n_keep=instance.n_keep,
@@ -245,13 +254,53 @@ class JevGepaAdapter:
             num_metric_calls=num_metric_calls,
         )
 
+    def _build_reflective_inputs(self, trajectory: JevTrajectory) -> dict[str, str]:
+        if self._view == VIEW_PAIR:
+            return {
+                "original_text": trajectory.original_text,
+                "mirror_text": trajectory.mirror_text,
+            }
+        if self._view == VIEW_ORIGINAL:
+            return {"post_text": trajectory.original_text}
+        if self._view == VIEW_MIRROR:
+            return {"post_text": trajectory.mirror_text}
+        raise ValueError(f"unknown view: {self._view}")
+
+    def _build_feedback(self, trajectory: JevTrajectory) -> str:
+        predicted_label = REMOVE_LABEL if trajectory.p_remove >= self._threshold else 0
+        return (
+            f"Gold label={trajectory.label} ({'remove' if trajectory.label == REMOVE_LABEL else 'keep'}). "
+            f"Human votes: keep={trajectory.n_keep}, remove={trajectory.n_remove}. "
+            f"Sampled stance={trajectory.sampled_stance}. "
+            f"Toxicity={trajectory.sample_toxicity_type}. "
+            f"P(remove)={trajectory.p_remove:.3f}; predicted_label={predicted_label}. "
+            f"Threshold crossed={trajectory.threshold_crossed} at threshold={self._threshold}."
+        )
+
     def make_reflective_dataset(
         self,
         candidate: dict[str, str],
         eval_batch: EvaluationBatch[JevTrajectory, JevRolloutOutput],
         components_to_update: list[str],
     ) -> dict[str, list[dict[str, Any]]]:
-        raise NotImplementedError
+        if eval_batch.trajectories is None:
+            raise ValueError("eval_batch.trajectories is required for reflection")
+        records: list[dict[str, Any]] = []
+        for trajectory in eval_batch.trajectories:
+            predicted_label = (
+                REMOVE_LABEL if trajectory.p_remove >= self._threshold else 0
+            )
+            records.append(
+                {
+                    "Inputs": self._build_reflective_inputs(trajectory),
+                    "Generated Outputs": {
+                        "p_remove": f"{trajectory.p_remove:.3f}",
+                        "predicted_label": str(predicted_label),
+                    },
+                    "Feedback": self._build_feedback(trajectory),
+                }
+            )
+        return {"instruction": records} if "instruction" in components_to_update else {}
 
 
 def _implements_gepa_adapter(adapter: JevGepaAdapter) -> GEPAAdapter[JevDataInst, JevTrajectory, JevRolloutOutput]:
