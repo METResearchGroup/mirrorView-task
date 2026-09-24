@@ -1,9 +1,9 @@
 {
-  "uploaded_at": "2026-09-24T14:14:14Z",
+  "uploaded_at": "2026-09-24T19:02:58Z",
   "bucket": "mirrorview-experimental-artifacts",
   "prefix": "experiments/bertopic_original_mirror_part3_2026_09_24",
   "n_files": 476,
-  "total_bytes": 710666913,
+  "total_bytes": 713349064,
   "keys": [
     "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/ablations/a0_naive/20260924T055615Z/doc_freq_groups.csv",
     "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/ablations/a0_naive/20260924T055615Z/kmeans_assignments_k5.parquet",
