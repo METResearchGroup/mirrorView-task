@@ -37,6 +37,12 @@ _OUTPUT_COLUMNS = [
 ]
 
 
+def _require_columns(raw: pd.DataFrame, columns: frozenset[str]) -> None:
+    missing = columns - set(raw.columns)
+    if missing:
+        raise KeyError(f"Results missing required columns: {sorted(missing)}")
+
+
 def load_results_full() -> pd.DataFrame:
     """Load Phase 2 Part 3 results full from the dataset registry.
 
@@ -66,7 +72,19 @@ def filter_linked_fate_trials(raw: pd.DataFrame) -> pd.DataFrame:
     KeyError
         When a required column is missing.
     """
-    raise NotImplementedError
+    _require_columns(raw, _REQUIRED_TRIAL_COLUMNS)
+    trials = raw.copy()
+    trials["evaluation_mode"] = (
+        trials["evaluation_mode"].astype(str).str.lower().str.strip()
+    )
+    trials["decision"] = trials["decision"].astype(str).str.lower().str.strip()
+    trials = trials[trials["evaluation_mode"] == "linked_fate"].copy()
+    trials = trials[trials["decision"].isin(_KEEP_REMOVE)].copy()
+    trials = trials[trials["post_id"].notna()].copy()
+    trials["post_id"] = trials["post_id"].astype(str).str.strip()
+    trials = trials[trials["post_id"] != ""].copy()
+    trials = trials[trials["post_id"].str.lower() != "nan"].copy()
+    return trials.reset_index(drop=True)
 
 
 def dedupe_worker_votes(trials: pd.DataFrame) -> pd.DataFrame:
