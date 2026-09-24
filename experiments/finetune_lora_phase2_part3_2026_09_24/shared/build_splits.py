@@ -16,6 +16,11 @@ from experiments.finetune_qwen_model_2026_08_08.src.build_splits import (
     TRAIN_FRACTION as P_TRAIN_FRACTION,
     balance_keep_remove,
 )
+from shared.data.dataloader import load_dataset
+from shared.data.registry import (
+    STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS,
+    STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3,
+)
 
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = EXPERIMENT_ROOT / "data"
@@ -245,7 +250,50 @@ def build_and_write_splits(force: bool, seed: int) -> SplitCounts:
     SplitCounts
         Row counts for each written output.
     """
-    raise NotImplementedError
+    modal_df = load_dataset(STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS, low_memory=False)
+    unanimous_df = load_dataset(
+        STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3,
+        low_memory=False,
+    )
+    unanimous_post_ids = set(unanimous_df["message_id"].astype(str))
+    manifest = post_level_split(
+        modal_df,
+        unanimous_post_ids,
+        train_fraction=TRAIN_FRACTION,
+        seed=seed,
+    )
+    manifest_path = DATA_DIR / "split_manifest.csv"
+    write_split_manifest(manifest, manifest_path, force=force)
+
+    train_ids = set(manifest.loc[manifest["split"] == "train", "post_id"])
+    test_ids = set(manifest.loc[manifest["split"] == "test", "post_id"])
+
+    exp1_train = balance_split_posts(unanimous_df, train_ids, seed=seed)
+    exp2_train = balance_split_posts(modal_df, train_ids, seed=seed)
+    test_unanimous = balance_split_posts(unanimous_df, test_ids, seed=seed)
+    test_modal = balance_split_posts(modal_df, test_ids, seed=seed)
+    exp3_train = sample_experiment_three_train(exp2_train, exp1_train, seed=seed)
+
+    outputs = {
+        DATA_DIR / "test_unanimous.csv": test_unanimous,
+        DATA_DIR / "test_modal.csv": test_modal,
+        EXPERIMENT_ROOT / "experiment1_unanimous/data/train.csv": exp1_train,
+        EXPERIMENT_ROOT / "experiment2_modal/data/train.csv": exp2_train,
+        EXPERIMENT_ROOT
+        / "experiment3_modal_size_matched/data/train.csv": exp3_train,
+    }
+    for output_path, frame in outputs.items():
+        write_split_csv(frame, output_path, force=force)
+
+    return SplitCounts(
+        modal_posts=len(modal_df),
+        unanimous_posts=len(unanimous_df),
+        exp1_train_rows=len(exp1_train),
+        exp2_train_rows=len(exp2_train),
+        exp3_train_rows=len(exp3_train),
+        test_unanimous_rows=len(test_unanimous),
+        test_modal_rows=len(test_modal),
+    )
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
