@@ -19,7 +19,9 @@ import json
 import os
 import random
 import sys
+from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 from experiments.finetune_qwen_model_2026_08_08.src.train_config import (
     TrainHyperparams,
@@ -59,6 +61,42 @@ def _set_seeds(seed: int) -> None:
             torch.cuda.manual_seed_all(seed)
     except ImportError:
         pass
+
+
+def _parse_chat_template_kwargs_json(raw: str | None) -> dict[str, Any] | None:
+    """Parse optional JSON chat-template kwargs from CLI."""
+    if raw is None or not raw.strip():
+        return None
+    parsed = json.loads(raw)
+    if parsed is None:
+        return None
+    if not isinstance(parsed, dict):
+        raise SystemExit("--chat-template-kwargs-json must be a JSON object")
+    return parsed
+
+
+def _bind_chat_template_kwargs(
+    tokenizer: Any,
+    chat_template_kwargs: dict[str, Any] | None,
+) -> Any:
+    """Wrap tokenizer.apply_chat_template when kwargs are provided."""
+    if not chat_template_kwargs:
+        return tokenizer
+    original_apply = tokenizer.apply_chat_template
+
+    def apply_chat_template(messages, *args, **kwargs):
+        merged = dict(chat_template_kwargs)
+        extra = kwargs.pop("chat_template_kwargs", None) or {}
+        merged.update(extra)
+        return original_apply(
+            messages,
+            *args,
+            chat_template_kwargs=merged,
+            **kwargs,
+        )
+
+    tokenizer.apply_chat_template = apply_chat_template
+    return tokenizer
 
 
 def _count_jsonl_rows(path: Path) -> int:
@@ -124,6 +162,7 @@ def run_training(
     output_dir: Path,
     hyperparams: TrainHyperparams,
     max_steps: int | None,
+    chat_template_kwargs: dict[str, Any] | None,
 ) -> None:
     """Execute LoRA SFT on chat_train only."""
     hf_token = _require_hf_token()
@@ -144,6 +183,7 @@ def run_training(
         token=hf_token,
         trust_remote_code=True,
     )
+    tokenizer = _bind_chat_template_kwargs(tokenizer, chat_template_kwargs)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
 
@@ -238,6 +278,22 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Optional smoke override for trainer max_steps.",
     )
+    parser.add_argument(
+        "--model-id",
+        default=None,
+        help="Optional model id override (default: August train_config).",
+    )
+    parser.add_argument(
+        "--num-train-epochs",
+        type=int,
+        default=None,
+        help="Optional epoch override (default: August train_config).",
+    )
+    parser.add_argument(
+        "--chat-template-kwargs-json",
+        default=None,
+        help="Optional JSON object for tokenizer.apply_chat_template kwargs.",
+    )
     return parser.parse_args(argv)
 
 
@@ -252,6 +308,13 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit("Refusing to train on chat_test.jsonl.")
 
     hyperparams = default_hyperparams()
+    if args.model_id:
+        hyperparams = replace(hyperparams, model_id=args.model_id)
+    if args.num_train_epochs is not None:
+        hyperparams = replace(hyperparams, num_train_epochs=args.num_train_epochs)
+    chat_template_kwargs = _parse_chat_template_kwargs_json(
+        args.chat_template_kwargs_json
+    )
     if not hyperparams.assistant_only_loss:
         raise SystemExit("assistant_only_loss must be True.")
 
@@ -264,6 +327,7 @@ def main(argv: list[str] | None = None) -> None:
         output_dir=output_dir,
         hyperparams=hyperparams,
         max_steps=args.max_steps,
+        chat_template_kwargs=chat_template_kwargs,
     )
 
 

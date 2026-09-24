@@ -21,6 +21,7 @@ import os
 import sys
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -46,6 +47,18 @@ class InferMode(str, Enum):
 
     BASELINE = "baseline"
     ADAPTER = "adapter"
+
+
+def _parse_chat_template_kwargs_json(raw: str | None) -> dict[str, Any] | None:
+    """Parse optional JSON chat-template kwargs from CLI."""
+    if raw is None or not raw.strip():
+        return None
+    parsed = json.loads(raw)
+    if parsed is None:
+        return None
+    if not isinstance(parsed, dict):
+        raise SystemExit("--chat-template-kwargs-json must be a JSON object")
+    return parsed
 
 
 def _require_hf_token() -> str:
@@ -90,6 +103,8 @@ def run_inference(
     adapter_dir: Path | None,
     limit: int | None,
     upload_preds: bool,
+    model_id: str,
+    chat_template_kwargs: dict[str, Any] | None,
 ) -> None:
     """Generate predictions and write the prediction CSV."""
     hf_token = _require_hf_token()
@@ -107,7 +122,7 @@ def run_inference(
         records = records[: int(limit)]
 
     tokenizer = AutoTokenizer.from_pretrained(
-        MODEL_ID,
+        model_id,
         token=hf_token,
         trust_remote_code=True,
     )
@@ -115,7 +130,7 @@ def run_inference(
         tokenizer.pad_token = tokenizer.eos_token
 
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL_ID,
+        model_id,
         token=hf_token,
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
@@ -133,10 +148,14 @@ def run_inference(
         gold_decision = gold_decision_from_messages(messages)
         gold_label = gold_label_from_decision(gold_decision)
         prompt_messages = messages_for_generation(messages)
+        template_kwargs: dict[str, Any] = {}
+        if chat_template_kwargs:
+            template_kwargs["chat_template_kwargs"] = chat_template_kwargs
         prompt_text = tokenizer.apply_chat_template(
             prompt_messages,
             tokenize=False,
             add_generation_prompt=True,
+            **template_kwargs,
         )
         inputs = tokenizer(prompt_text, return_tensors="pt")
         inputs = {k: v.to(model.device) for k, v in inputs.items()}
@@ -193,6 +212,8 @@ def run_both_splits(
     mode: InferMode,
     adapter_dir: Path | None,
     limit: int | None,
+    model_id: str,
+    chat_template_kwargs: dict[str, Any] | None,
 ) -> None:
     """Write train_labels.csv and test_labels.csv for one arm."""
     for split_name, jsonl_name in (
@@ -206,6 +227,8 @@ def run_both_splits(
             adapter_dir=adapter_dir,
             limit=limit,
             upload_preds=False,
+            model_id=model_id,
+            chat_template_kwargs=chat_template_kwargs,
         )
     _maybe_upload_preds(output_dir)
 
@@ -257,6 +280,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Optional row cap for smoke runs.",
     )
+    parser.add_argument(
+        "--model-id",
+        default=None,
+        help="Optional model id override (default: August train_config).",
+    )
+    parser.add_argument(
+        "--chat-template-kwargs-json",
+        default=None,
+        help="Optional JSON object for tokenizer.apply_chat_template kwargs.",
+    )
     return parser.parse_args(argv)
 
 
@@ -265,6 +298,10 @@ def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     mode = InferMode(args.mode)
     adapter_dir = Path(args.adapter_dir) if args.adapter_dir else None
+    model_id = args.model_id or MODEL_ID
+    chat_template_kwargs = _parse_chat_template_kwargs_json(
+        args.chat_template_kwargs_json
+    )
 
     if args.both_splits:
         if not args.data_dir or not args.output_dir:
@@ -277,6 +314,8 @@ def main(argv: list[str] | None = None) -> None:
             mode=mode,
             adapter_dir=adapter_dir,
             limit=args.limit,
+            model_id=model_id,
+            chat_template_kwargs=chat_template_kwargs,
         )
         return
 
@@ -291,6 +330,8 @@ def main(argv: list[str] | None = None) -> None:
         adapter_dir=adapter_dir,
         limit=args.limit,
         upload_preds=True,
+        model_id=model_id,
+        chat_template_kwargs=chat_template_kwargs,
     )
 
 
