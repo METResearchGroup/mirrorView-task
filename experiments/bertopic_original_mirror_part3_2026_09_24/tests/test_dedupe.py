@@ -64,12 +64,12 @@ class TestLiveDedupe:
     """Tests for dedupe on the live stimulus catalog."""
 
     def test_live_stimuli_counts(self) -> None:
-        """Live stimuli shrink from 18899 to 18698."""
+        """Live stimuli shrink from 20000 to 19763."""
         stimuli = load_stimuli_posts()
 
         _deduped, report = dedupe_stimuli(stimuli)
 
-        assert len(stimuli) == 18899
-        assert report["n_removed_duplicate_original"] == 173
-        assert report["n_removed_identical_pair"] == 28
-        assert report["n_after_dedupe"] == 18698
+        assert len(stimuli) == 20000
+        assert report["n_removed_duplicate_original"] == 205
+        assert report["n_removed_identical_pair"] == 32
+        assert report["n_after_dedupe"] == 19763

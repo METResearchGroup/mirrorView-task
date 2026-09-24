@@ -1,4 +1,4 @@
-"""Dedupe Part 3 stimuli before topic fitting.
+"""Dedupe Phase 2 Part 2+3 union stimuli before topic fitting.
 
 Run from repo root::
 

@@ -26,7 +26,7 @@ from experiments.bertopic_original_mirror_part3_2026_09_24.src.outcomes import (
     load_outcome_corpus,
 )
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_3_RESULTS_FULL
+from shared.data.registry import STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL
 
 MIN_RATERS = 3
 N_BOOTSTRAP = 2000
@@ -80,7 +80,9 @@ def run_analyze_outcomes(
     pathlib.Path
         Outcomes run directory.
     """
-    labels = load_outcome_corpus(data_mod.load_keep_remove_posts(), min_raters)
+    raw_labels = data_mod.load_keep_remove_posts()
+    labels = load_outcome_corpus(raw_labels, min_raters)
+    n_posts_dropped_min_raters = int(len(raw_labels) - len(labels))
     original = pd.read_parquet(topics_run_dir / "assignments.parquet")
     original = original.loc[original["text_role"] == "original", ["post_id", "topic"]]
     joined = labels.merge(original, on="post_id", how="inner")
@@ -111,6 +113,7 @@ def run_analyze_outcomes(
         "source_topics_run": str(topics_run_dir),
         "source_joint_topics_run": str(joint_topics_run_dir),
         "min_raters": min_raters,
+        "n_posts_dropped_min_raters": n_posts_dropped_min_raters,
         "n_bootstrap": n_bootstrap,
         "bootstrap_seed": seed,
         "fdr_alpha": FDR_ALPHA,
@@ -146,7 +149,7 @@ def _write_outcome_figures(
 
 def _linked_fate_ratings() -> pd.DataFrame:
     """Return scored linked-fate ratings with a party group."""
-    raw = load_dataset(STUDY_PHASE_2_PART_3_RESULTS_FULL, low_memory=False)
+    raw = load_dataset(STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL, low_memory=False)
     mode = raw["evaluation_mode"].astype(str).str.lower().str.strip()
     decision = raw["decision"].astype(str).str.lower().str.strip()
     party = raw["party_group"].astype(str).str.lower().str.strip()

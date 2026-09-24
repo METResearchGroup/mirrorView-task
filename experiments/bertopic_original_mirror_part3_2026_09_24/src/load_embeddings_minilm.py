@@ -1,4 +1,4 @@
-"""Cache all-MiniLM-L6-v2 embeddings for every Part 3 stimulus post.
+"""Cache all-MiniLM-L6-v2 embeddings for every Part 2+3 union stimulus post.
 
 Run from repo root::
 
@@ -29,7 +29,7 @@ from experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings i
 MINILM_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 MINILM_DIMENSIONS = 384
 SOURCE_LOCAL_COMPUTE = "local_compute"
-CORPUS_NAME = "study_phase_2_part_3_stimuli_full"
+CORPUS_NAME = "study_phase_2_part_2_and_3_stimuli_full"
 ENCODE_BATCH_SIZE = 64
 
 

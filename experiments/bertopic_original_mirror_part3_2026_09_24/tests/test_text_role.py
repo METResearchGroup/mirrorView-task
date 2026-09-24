@@ -56,5 +56,5 @@ class TestLoadFitCorpus:
         """The original fit corpus is the deduped stimulus catalog."""
         result = load_fit_corpus("original")
 
-        assert len(result) == 18698
+        assert len(result) == 19763
         assert "text" in result.columns

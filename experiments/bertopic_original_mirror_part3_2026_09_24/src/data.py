@@ -1,4 +1,4 @@
-"""Load Part 3 stimuli and keep/remove labels for BERTopic.
+"""Load Phase 2 Part 2+3 union stimuli and keep/remove labels for BERTopic.
 
 Run from repo root::
 
@@ -12,9 +12,11 @@ import pandas as pd
 
 from shared.data.dataloader import load_dataset
 from shared.data.registry import (
-    STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS,
-    STUDY_PHASE_2_PART_3_STIMULI,
+    STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS,
+    STUDY_PHASE_2_PART_2_AND_3_STIMULI,
 )
+
+N_STIMULI_EXPECTED = 20_000
 
 from experiments.bertopic_original_mirror_part3_2026_09_24.src.dedupe import dedupe_stimuli
 from experiments.bertopic_original_mirror_part3_2026_09_24.src.paths import TextRole, require_text_role
@@ -54,7 +56,7 @@ def _platform_from_post_id(post_id: pd.Series) -> pd.Series:
 
 
 def load_stimuli_posts() -> pd.DataFrame:
-    """Load Part 3 stimuli with experiment column names.
+    """Load Part 2+3 union stimuli with experiment column names.
 
     Returns
     -------
@@ -62,7 +64,7 @@ def load_stimuli_posts() -> pd.DataFrame:
         One row per stimulus post with ``post_id``, ``original_text``,
         ``mirror_text``, stance, toxicity, and ``platform``.
     """
-    stimuli = load_dataset(STUDY_PHASE_2_PART_3_STIMULI, low_memory=False)
+    stimuli = load_dataset(STUDY_PHASE_2_PART_2_AND_3_STIMULI, low_memory=False)
     renamed = stimuli.rename(
         columns={STIMULUS_ID_COLUMN: POST_ID_COLUMN, MIRRORED_TEXT_COLUMN: MIRROR_TEXT_COLUMN}
     )
@@ -72,7 +74,7 @@ def load_stimuli_posts() -> pd.DataFrame:
 
 
 def load_keep_remove_posts() -> pd.DataFrame:
-    """Load Part 3 modal keep/remove labels.
+    """Load Part 2+3 union modal keep/remove labels.
 
     Returns
     -------
@@ -84,10 +86,20 @@ def load_keep_remove_posts() -> pd.DataFrame:
     KeyError
         If a required label column is missing.
     """
-    labels = load_dataset(STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS, low_memory=False)
+    labels = load_dataset(STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS, low_memory=False)
+    if "message_id" in labels.columns and POST_ID_COLUMN not in labels.columns:
+        labels = labels.rename(columns={"message_id": POST_ID_COLUMN})
     missing = set(KEEP_REMOVE_COLUMNS) - set(labels.columns)
     if missing:
-        raise KeyError(f"Keep/remove labels missing columns: {sorted(missing)}")
+        from shared.data.transformed.study_phase_2_part_2_and_3.transform import (
+            build_keep_remove_labels,
+        )
+
+        labels = build_keep_remove_labels()
+    labels[POST_ID_COLUMN] = labels[POST_ID_COLUMN].astype(str).str.strip()
+    still_missing = set(KEEP_REMOVE_COLUMNS) - set(labels.columns)
+    if still_missing:
+        raise KeyError(f"Keep/remove labels missing columns: {sorted(still_missing)}")
     labels["is_unanimous"] = labels["is_unanimous"].astype("boolean")
     return labels.reset_index(drop=True)
 

@@ -1,4 +1,4 @@
-"""Cache Titan embeddings for every Part 3 stimulus post.
+"""Cache Titan embeddings for every Part 2+3 union stimulus post.
 
 Run from repo root::
 
@@ -23,7 +23,10 @@ from tqdm import tqdm
 
 from experiments.bertopic_original_mirror_part3_2026_09_24.src import data as data_mod
 from experiments.bertopic_original_mirror_part3_2026_09_24.src import paths
-from experiments.bertopic_original_mirror_part3_2026_09_24.src.data import select_text_column
+from experiments.bertopic_original_mirror_part3_2026_09_24.src.data import (
+    N_STIMULI_EXPECTED,
+    select_text_column,
+)
 from experiments.simplified_predict_remove_2026_05_13.experiment_bedrock_embeddings import (
     AWS_REGION as BEDROCK_AWS_REGION,
 )
@@ -36,8 +39,8 @@ from lib.aws.embedding_identity import embedding_identity_sha256
 from lib.aws.s3 import S3
 from shared.embeddings.bedrock import BEDROCK_MODEL_ID, EMBEDDING_DIMENSIONS, create_embedding
 
-N_EXPECTED = 18899
-CORPUS_NAME = "study_phase_2_part_3_stimuli_full"
+N_EXPECTED = N_STIMULI_EXPECTED
+CORPUS_NAME = "study_phase_2_part_2_and_3_stimuli_full"
 EMBED_ROLES = frozenset({"original", "mirror"})
 DISK_CACHE_DIRNAME = ".identity_disk_cache"
 EMBEDDINGS_FILENAME = "embeddings.npy"
@@ -408,7 +411,7 @@ def _resolve_and_write(
 
 def main() -> None:
     """CLI entry for the Titan cache."""
-    parser = argparse.ArgumentParser(description="Cache Titan embeddings for Part 3 stimuli.")
+    parser = argparse.ArgumentParser(description="Cache Titan embeddings for Part 2+3 union stimuli.")
     parser.add_argument("--text-role", choices=sorted(EMBED_ROLES), required=True)
     parser.add_argument("--refresh-from-identity-cache", action="store_true")
     parser.add_argument("--backfill", action="store_true")
