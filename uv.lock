@@ -2022,6 +2022,7 @@ bertopic = [
     { name = "kaleido" },
     { name = "openai" },
     { name = "plotly" },
+    { name = "sentence-transformers" },
 ]
 finetune-qwen-2026-08-08 = [
     { name = "accelerate" },
@@ -2110,6 +2111,7 @@ requires-dist = [
     { name = "sagemaker", marker = "extra == 'modernbert-training'", specifier = ">=2.240.0,<3" },
     { name = "scikit-learn", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=1.8.0" },
     { name = "scikit-learn", marker = "extra == 'modernbert-training'", specifier = ">=1.8.0" },
+    { name = "sentence-transformers", marker = "extra == 'bertopic'", specifier = ">=3.0.0" },
     { name = "tabulate", specifier = ">=0.10.0" },
     { name = "tenacity", specifier = ">=9.0.0" },
     { name = "torch", marker = "extra == 'finetune-qwen-2026-08-08'", specifier = ">=2.12.0" },
