@@ -217,6 +217,29 @@ post_text:
 {text}
 """.strip()
 
+CODEBOOK_REWRITE_SYSTEM_PROMPT = """
+You rewrite moderation codebook features for a later labeling step.
+
+The labeler will only judge whether each feature is PRESENT in post text.
+Do NOT mention keep/remove decisions, human ratings, clusters, or moderation outcomes.
+
+For each input feature:
+1. name: 2 to 6 words, lowercase, complete phrase (never truncate mid-thought).
+2. definition: exactly one sentence starting with "The post" describing observable text/content.
+3. is_topic_only: true when the feature is only policy topic, party/ideological target, or issue
+   stance without rhetorical form (insults, sarcasm, calls to action, syntax, etc.).
+4. topic_only_reason: short reason when is_topic_only is true, else "".
+
+Return structured JSON matching CodebookRewriteBatch.
+""".strip()
+
+CODEBOOK_REWRITE_USER_TEMPLATE = """
+Rewrite these codebook features (neutral, outcome-free definitions).
+
+features_json:
+{features_json}
+""".strip()
+
 _ARM_PAYLOAD_BUILDERS = {
     "original_only": lambda post: {
         "message_id": post["message_id"],
@@ -260,6 +283,17 @@ def build_cluster_label_messages(item: dict[str, Any]) -> list[dict[str, str]]:
     )
     return [
         {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_content},
+    ]
+
+
+def build_codebook_rewrite_messages(features: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Build chat messages for one batch of codebook feature rewrites."""
+    user_content = CODEBOOK_REWRITE_USER_TEMPLATE.format(
+        features_json=json.dumps(features, indent=2),
+    )
+    return [
+        {"role": "system", "content": CODEBOOK_REWRITE_SYSTEM_PROMPT},
         {"role": "user", "content": user_content},
     ]
 

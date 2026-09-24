@@ -14,8 +14,7 @@ import csv
 import json
 import re
 from collections import defaultdict
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -24,7 +23,13 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
+from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, llm_client, paths
+from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import build_codebook_rewrite_messages
+from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.schemas import (
+    ClusterLabelResult,
+    CodebookRewriteBatch,
+)
+from shared.embeddings.bedrock import create_embedding
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.baselines import (
     extract_arm_text,
     load_discovery_post_ids,
@@ -36,8 +41,6 @@ from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths impo
     latest_timestamp_subdir,
     make_run_timestamp,
 )
-from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.schemas import ClusterLabelResult
-
 DISCOVERY_IDS_PATH = paths.post_split_dir() / "discovery_post_ids.csv"
 SYNONYMS_PATH = paths.EXPERIMENT_ROOT / "data" / constants.FEATURE_SYNONYMS_FILENAME
 DROP_REASON_TOPIC_ONLY = "topic_only"
@@ -49,6 +52,32 @@ _TOPIC_POLICY_RE = re.compile(
 _PURE_TOPIC_DEF_RE = re.compile(
     r"^(?:post|posts|content|cluster|features?)\s+(?:is|are|about|discuss(?:es|ing)?|on|regarding)\b",
     re.IGNORECASE,
+)
+_OUTCOME_LEAKAGE_RE = re.compile(
+    r"\b(?:" + "|".join(constants.OUTCOME_LEAKAGE_TERMS) + r")\b",
+    re.IGNORECASE,
+)
+_TOPIC_STANCE_RE = re.compile(
+    r"\b(democrats?|republicans?|the left|the right|\bgop\b|\bdnc\b)\b",
+    re.IGNORECASE,
+)
+_TOPIC_POLICY_PHRASE_RES: tuple[re.Pattern[str], ...] = (
+    re.compile(r"\bgun policy\b", re.IGNORECASE),
+    re.compile(r"\bsecond amendment\b", re.IGNORECASE),
+    re.compile(r"\belection integrity\b", re.IGNORECASE),
+    re.compile(r"\bfraud claims?\b", re.IGNORECASE),
+    re.compile(r"\benergy policy\b", re.IGNORECASE),
+    re.compile(r"\beconomic policy\b", re.IGNORECASE),
+    re.compile(r"\beconomic costs?\b", re.IGNORECASE),
+)
+_RHETORIC_MEMBER_CATEGORIES: frozenset[str] = frozenset(
+    {
+        "surface_lexical",
+        "pragmatics_intent",
+        "compositional_syntax",
+        "semantic_content",
+        "target_directionality",
+    }
 )
 
 
@@ -76,6 +105,9 @@ class CodebookFeature:
     source_cluster_ids: dict[str, list[int]]
     member_feature_ids: tuple[str, ...]
     cluster_size: int
+    source_cluster_label: str
+    source_definition: str
+    member_records: tuple[dict[str, Any], ...] = ()
     part2_theme_id: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
@@ -83,6 +115,8 @@ class CodebookFeature:
             "feature_id": self.feature_id,
             "name": self.name,
             "definition": self.definition,
+            "source_cluster_label": self.source_cluster_label,
+            "source_definition": self.source_definition,
             "positive_examples": [ex.to_dict() for ex in self.positive_examples],
             "negative_examples": [ex.to_dict() for ex in self.negative_examples],
             "discovery_arm": self.discovery_arm,
@@ -295,7 +329,12 @@ def compute_noise_share(assignments: dict[str, int]) -> float:
 
 
 def normalize_feature_name(label: str) -> str:
-    """Normalize a cluster label to a 2–5 word lowercase feature name."""
+    """Normalize a cluster label to a 2–6 word lowercase interim name."""
+    return interim_cluster_name(label)
+
+
+def interim_cluster_name(label: str) -> str:
+    """Build a provisional name from the cluster label without mid-phrase cuts."""
     words = label.strip().split()
     if not words:
         raise ValueError("cluster label is empty")
@@ -308,17 +347,53 @@ def normalize_feature_name(label: str) -> str:
     return " ".join(words).lower()
 
 
+def validate_outcome_leakage(name: str, definition: str) -> None:
+    """Raise when name or definition leaks moderation outcomes."""
+    for field_name, text in (("name", name), ("definition", definition)):
+        if _OUTCOME_LEAKAGE_RE.search(text):
+            raise ValueError(f"Outcome leakage in {field_name}: {text!r}")
+    if not definition.strip().lower().startswith(constants.DEFINITION_REQUIRED_PREFIX.lower()):
+        raise ValueError(f"Definition must start with '{constants.DEFINITION_REQUIRED_PREFIX}'")
+
+
 def is_topic_only_feature(
     definition: str,
     members: tuple[dict[str, Any], ...],
+    name: str = "",
+    cluster_label: str = "",
 ) -> bool:
     """Return True when a cluster is pure topic/subject with no rhetoric."""
+    return topic_only_reason(definition, members, name, cluster_label) is not None
+
+
+def topic_only_reason(
+    definition: str,
+    members: tuple[dict[str, Any], ...],
+    name: str,
+    cluster_label: str,
+) -> str | None:
+    """Return a drop reason when the feature is topic-only, else None."""
+    combined = f"{name} {definition} {cluster_label}".lower()
     if members:
         categories = {str(record.get("category", "")) for record in members}
         non_topic = [cat for cat in categories if cat and cat != constants.TOPIC_ONLY_CATEGORY]
         if not non_topic and constants.TOPIC_ONLY_CATEGORY in categories:
-            return True
-    return _definition_is_pure_topic(definition)
+            return "all_members_topic_subject"
+    if _definition_is_pure_topic(definition):
+        return "policy_domain_definition"
+    if _TOPIC_STANCE_RE.search(combined) and not _members_have_rhetoric(members):
+        return "party_or_ideological_target"
+    for pattern in _TOPIC_POLICY_PHRASE_RES:
+        if pattern.search(combined) and not _members_have_rhetoric(members):
+            return f"policy_phrase:{pattern.pattern}"
+    return None
+
+
+def _members_have_rhetoric(members: tuple[dict[str, Any], ...]) -> bool:
+    if not members:
+        return False
+    categories = {str(record.get("category", "")) for record in members}
+    return bool(categories & _RHETORIC_MEMBER_CATEGORIES)
 
 
 def _definition_is_pure_topic(definition: str) -> bool:
@@ -473,16 +548,20 @@ def build_codebook_entry(
     positives, negatives = select_example_posts(cluster, cohort, discovery_ids, cluster.arm, rng)
     source_ids = {arm: list(ids) for arm, ids in EMPTY_ARMS_TEMPLATE.items()}
     source_ids[cluster.arm] = [cluster.cluster_id]
+    source_definition = cluster.definition.strip()
     return CodebookFeature(
         feature_id=feature_id,
-        name=normalize_feature_name(cluster.cluster_label),
-        definition=cluster.definition.strip(),
+        name=interim_cluster_name(cluster.cluster_label),
+        definition=source_definition,
         positive_examples=positives,
         negative_examples=negatives,
         discovery_arm=cluster.arm,
         source_cluster_ids=source_ids,
         member_feature_ids=tuple(record["feature_id"] for record in cluster.members),
         cluster_size=cluster.n_members,
+        source_cluster_label=cluster.cluster_label,
+        source_definition=source_definition,
+        member_records=cluster.members,
         part2_theme_id=None,
     )
 
@@ -492,21 +571,257 @@ def assign_feature_ids(features: list[CodebookFeature]) -> list[CodebookFeature]
     reassigned: list[CodebookFeature] = []
     for index, feature in enumerate(features, start=1):
         feature_id = f"{constants.CODEBOOK_FEATURE_ID_PREFIX}{index:03d}"
-        reassigned.append(
+        reassigned.append(_with_feature_id(feature, feature_id))
+    return reassigned
+
+
+def _with_feature_id(feature: CodebookFeature, feature_id: str) -> CodebookFeature:
+    return CodebookFeature(
+        feature_id=feature_id,
+        name=feature.name,
+        definition=feature.definition,
+        positive_examples=feature.positive_examples,
+        negative_examples=feature.negative_examples,
+        discovery_arm=feature.discovery_arm,
+        source_cluster_ids=feature.source_cluster_ids,
+        member_feature_ids=feature.member_feature_ids,
+        cluster_size=feature.cluster_size,
+        source_cluster_label=feature.source_cluster_label,
+        source_definition=feature.source_definition,
+        member_records=feature.member_records,
+        part2_theme_id=feature.part2_theme_id,
+    )
+
+
+def rewrite_codebook_features_with_llm(
+    features: list[CodebookFeature],
+    output_dir: Path,
+) -> dict[str, CodebookRewriteBatch]:
+    """Rewrite names/definitions in batches via llm_client."""
+    output_dir.mkdir(parents=True, exist_ok=True)
+    run_metadata = {
+        "model": constants.LLM_MODEL_ID,
+        "reasoning_effort": constants.LLM_REASONING_EFFORT,
+        "stage": constants.STAGE_CODEBOOK_REWRITE,
+        "litellm_model": constants.LLM_LITELLM_MODEL_ID,
+    }
+    batches: dict[str, CodebookRewriteBatch] = {}
+    batch_size = constants.CODEBOOK_REWRITE_BATCH_SIZE
+    for batch_index, start in enumerate(range(0, len(features), batch_size)):
+        chunk = features[start : start + batch_size]
+        payload = [
+            {
+                "feature_id": feature.feature_id,
+                "source_cluster_label": feature.source_cluster_label,
+                "source_definition": feature.source_definition,
+                "interim_name": feature.name,
+            }
+            for feature in chunk
+        ]
+        messages = build_codebook_rewrite_messages(payload)
+        parsed = llm_client.complete_structured(
+            messages,
+            CodebookRewriteBatch,
+            stage=constants.STAGE_CODEBOOK_REWRITE,
+            arm=None,
+            call_index=batch_index,
+            output_dir=output_dir,
+            run_metadata=run_metadata,
+        )
+        batches[f"batch_{batch_index}"] = parsed
+    return batches
+
+
+def apply_codebook_rewrites(
+    features: list[CodebookFeature],
+    rewrite_batches: dict[str, CodebookRewriteBatch],
+) -> tuple[list[CodebookFeature], list[DroppedFeature]]:
+    """Apply LLM rewrites and drop topic-only features flagged by LLM or rules."""
+    rewrite_by_id = _flatten_rewrite_items(rewrite_batches)
+    kept: list[CodebookFeature] = []
+    dropped: list[DroppedFeature] = []
+    for feature in features:
+        rewrite = rewrite_by_id.get(feature.feature_id)
+        if rewrite is None:
+            raise KeyError(f"Missing rewrite for {feature.feature_id}")
+        members = _members_for_feature(feature)
+        drop_reason = _rewrite_drop_reason(rewrite, feature, members)
+        if drop_reason:
+            dropped.append(_dropped_from_feature(feature, drop_reason))
+            continue
+        validate_outcome_leakage(rewrite.name.strip().lower(), rewrite.definition.strip())
+        updated = _with_feature_id(
             CodebookFeature(
-                feature_id=feature_id,
-                name=feature.name,
-                definition=feature.definition,
+                feature_id=feature.feature_id,
+                name=rewrite.name.strip().lower(),
+                definition=rewrite.definition.strip(),
                 positive_examples=feature.positive_examples,
                 negative_examples=feature.negative_examples,
                 discovery_arm=feature.discovery_arm,
                 source_cluster_ids=feature.source_cluster_ids,
                 member_feature_ids=feature.member_feature_ids,
                 cluster_size=feature.cluster_size,
+                source_cluster_label=feature.source_cluster_label,
+                source_definition=feature.source_definition,
+                member_records=feature.member_records,
                 part2_theme_id=feature.part2_theme_id,
+            ),
+            feature.feature_id,
+        )
+        kept.append(updated)
+    return kept, dropped
+
+
+def _flatten_rewrite_items(
+    rewrite_batches: dict[str, CodebookRewriteBatch],
+) -> dict[str, Any]:
+    by_id: dict[str, Any] = {}
+    for batch in rewrite_batches.values():
+        for item in batch.items:
+            by_id[item.feature_id] = item
+    return by_id
+
+
+def _members_for_feature(feature: CodebookFeature) -> tuple[dict[str, Any], ...]:
+    return feature.member_records
+
+
+def _rewrite_drop_reason(rewrite: Any, feature: CodebookFeature, members: tuple) -> str | None:
+    if rewrite.is_topic_only:
+        return f"topic_only_llm:{rewrite.topic_only_reason or 'flagged'}"
+    heuristic = topic_only_reason(
+        rewrite.definition,
+        members,
+        rewrite.name,
+        feature.source_cluster_label,
+    )
+    if heuristic:
+        return f"topic_only_heuristic:{heuristic}"
+    return None
+
+
+def _dropped_from_feature(feature: CodebookFeature, reason: str) -> DroppedFeature:
+    cluster_id = feature.source_cluster_ids[feature.discovery_arm][0]
+    return DroppedFeature(
+        cluster_id=cluster_id,
+        arm=feature.discovery_arm,
+        reason=reason,
+        cluster_label=feature.source_cluster_label,
+        member_feature_ids=feature.member_feature_ids,
+    )
+
+
+def embed_codebook_texts(features: tuple[CodebookFeature, ...]) -> np.ndarray:
+    """Embed name+definition strings with Titan (256-d, L2-normalized)."""
+    vectors: list[list[float]] = []
+    for feature in features:
+        text = f"{feature.name}. {feature.definition}"
+        response = create_embedding(text, normalize=constants.EMBEDDING_NORMALIZE)
+        vectors.append(response["embedding"])
+    return np.asarray(vectors, dtype=np.float32)
+
+
+@dataclass(frozen=True)
+class MergeCandidateGroup:
+    """One proposed merge group at or above the strong cosine threshold."""
+
+    group_id: int
+    feature_ids: tuple[str, ...]
+    names: tuple[str, ...]
+    arms: tuple[str, ...]
+    min_cosine: float
+
+
+def compute_merge_candidates(
+    features: tuple[CodebookFeature, ...],
+    matrix: np.ndarray,
+) -> tuple[tuple[MergeCandidateGroup, ...], list[tuple[str, str, float]]]:
+    """Return strong merge groups and borderline feature pairs."""
+    ids = [feature.feature_id for feature in features]
+    if len(ids) < 2:
+        return (), []
+    scores = cosine_similarity(matrix)
+    strong_edges = _edges_above(scores, ids, constants.CODEBOOK_MERGE_SIMILARITY_THRESHOLD)
+    groups = _connected_components(features, strong_edges)
+    borderline = _borderline_pairs(scores, ids)
+    return groups, borderline
+
+
+def _edges_above(
+    scores: np.ndarray,
+    ids: list[str],
+    threshold: float,
+) -> list[tuple[str, str, float]]:
+    edges: list[tuple[str, str, float]] = []
+    for i in range(len(ids)):
+        for j in range(i + 1, len(ids)):
+            score = float(scores[i, j])
+            if score >= threshold:
+                edges.append((ids[i], ids[j], score))
+    return edges
+
+
+def _connected_components(
+    features: tuple[CodebookFeature, ...],
+    edges: list[tuple[str, str, float]],
+) -> tuple[MergeCandidateGroup, ...]:
+    ids = [feature.feature_id for feature in features]
+    by_id = {feature.feature_id: feature for feature in features}
+    parent = {feature_id: feature_id for feature_id in ids}
+
+    def find(node: str) -> str:
+        while parent[node] != node:
+            parent[node] = parent[parent[node]]
+            node = parent[node]
+        return node
+
+    def union(left: str, right: str) -> None:
+        root_left = find(left)
+        root_right = find(right)
+        if root_left != root_right:
+            parent[root_right] = root_left
+
+    for left, right, _score in edges:
+        union(left, right)
+    components: dict[str, list[str]] = defaultdict(list)
+    for feature_id in ids:
+        components[find(feature_id)].append(feature_id)
+    groups: list[MergeCandidateGroup] = []
+    group_index = 1
+    for members in sorted(components.values(), key=lambda group: group[0]):
+        if len(members) < 2:
+            continue
+        edge_scores = [
+            score
+            for left, right, score in edges
+            if left in members and right in members
+        ]
+        groups.append(
+            MergeCandidateGroup(
+                group_id=group_index,
+                feature_ids=tuple(sorted(members)),
+                names=tuple(by_id[mid].name for mid in sorted(members)),
+                arms=tuple(by_id[mid].discovery_arm for mid in sorted(members)),
+                min_cosine=min(edge_scores) if edge_scores else 1.0,
             )
         )
-    return reassigned
+        group_index += 1
+    return tuple(groups)
+
+
+def _borderline_pairs(
+    scores: np.ndarray,
+    ids: list[str],
+) -> list[tuple[str, str, float]]:
+    pairs: list[tuple[str, str, float]] = []
+    low = constants.MERGE_BORDERLINE_MIN_COSINE
+    high = constants.CODEBOOK_MERGE_SIMILARITY_THRESHOLD
+    for i in range(len(ids)):
+        for j in range(i + 1, len(ids)):
+            score = float(scores[i, j])
+            if low <= score < high:
+                pairs.append((ids[i], ids[j], score))
+    return pairs
 
 
 def merge_codebook_entries(
@@ -569,6 +884,9 @@ def apply_synonym_merges(
             source_cluster_ids=merged_sources,
             member_feature_ids=merged_members,
             cluster_size=survivor.cluster_size,
+            source_cluster_label=survivor.source_cluster_label,
+            source_definition=survivor.source_definition,
+            member_records=survivor.member_records,
             part2_theme_id=survivor.part2_theme_id,
         )
         for other_id in other_ids:
@@ -641,7 +959,11 @@ def write_operationalize_export(
     )
 
 
-def write_codebook_markdown(draft: CodebookDraft, output_path: Path) -> None:
+def write_codebook_markdown(
+    draft: CodebookDraft,
+    output_path: Path,
+    merge_groups: tuple[MergeCandidateGroup, ...],
+) -> None:
     """Write a human-readable markdown summary of the draft codebook."""
     lines = [f"# Codebook draft {draft.version}", ""]
     for feature in draft.features:
@@ -651,7 +973,58 @@ def write_codebook_markdown(draft: CodebookDraft, output_path: Path) -> None:
         lines.append(f"- Arm: {feature.discovery_arm}")
         lines.append(f"- Cluster size: {feature.cluster_size}")
         lines.append("")
+    lines.append("## Proposed merges")
+    lines.append("")
+    if not merge_groups:
+        lines.append("_No strong merge groups (cosine >= 0.85)._")
+    else:
+        for group in merge_groups:
+            names = ", ".join(group.names)
+            lines.append(f"- Group {group.group_id}: {names}")
+    lines.append("")
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_merge_candidates_csv(
+    run_dir: Path,
+    groups: tuple[MergeCandidateGroup, ...],
+    borderline: list[tuple[str, str, float]],
+    features: tuple[CodebookFeature, ...],
+) -> None:
+    """Write merge_candidates.csv with strong groups and borderline pairs."""
+    by_id = {feature.feature_id: feature for feature in features}
+    path = run_dir / constants.MERGE_CANDIDATES_FILENAME
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(
+            ["tier", "group_id", "feature_ids", "names", "arms", "cosine"],
+        )
+        for group in groups:
+            writer.writerow(
+                [
+                    "strong_group",
+                    group.group_id,
+                    ";".join(group.feature_ids),
+                    ";".join(group.names),
+                    ";".join(group.arms),
+                    f"{group.min_cosine:.4f}",
+                ]
+            )
+        for left, right, score in borderline:
+            names = f"{by_id[left].name};{by_id[right].name}"
+            arms = f"{by_id[left].discovery_arm};{by_id[right].discovery_arm}"
+            writer.writerow(
+                ["borderline_pair", "", f"{left};{right}", names, arms, f"{score:.4f}"],
+            )
+
+
+def count_features_after_strong_merges(
+    n_features: int,
+    groups: tuple[MergeCandidateGroup, ...],
+) -> int:
+    """Return feature count if every strong merge group were collapsed."""
+    removed = sum(len(group.feature_ids) - 1 for group in groups)
+    return n_features - removed
 
 
 def write_draft_codebook(
@@ -659,6 +1032,8 @@ def write_draft_codebook(
     dropped: tuple[DroppedFeature, ...],
     metadata: dict[str, Any],
     output_root: Path,
+    merge_groups: tuple[MergeCandidateGroup, ...],
+    borderline_pairs: list[tuple[str, str, float]],
 ) -> Path:
     """Write draft codebook artifacts under outputs/shared/codebook/."""
     run_dir = output_root / f"{constants.CODEBOOK_DRAFT_DIR_PREFIX}{draft.version}"
@@ -674,7 +1049,8 @@ def write_draft_codebook(
         json.dumps(metadata, indent=2) + "\n",
         encoding="utf-8",
     )
-    write_codebook_markdown(draft, run_dir / constants.CODEBOOK_MD_FILENAME)
+    write_merge_candidates_csv(run_dir, merge_groups, borderline_pairs, draft.features)
+    write_codebook_markdown(draft, run_dir / constants.CODEBOOK_MD_FILENAME, merge_groups)
     return run_dir
 
 
@@ -722,7 +1098,13 @@ def suggest_merge_pairs(draft: CodebookDraft) -> list[tuple[str, str, float]]:
 def build_draft_from_arms(
     seeds: tuple[int, ...],
     normalize_dirs: dict[str, Path] | None,
-) -> tuple[CodebookDraft, tuple[DroppedFeature, ...], dict[str, Any]]:
+) -> tuple[
+    CodebookDraft,
+    tuple[DroppedFeature, ...],
+    dict[str, Any],
+    tuple[MergeCandidateGroup, ...],
+    list[tuple[str, str, float]],
+]:
     """Build draft codebook features from all text arms."""
     discovery_ids = load_discovery_post_ids(DISCOVERY_IDS_PATH)
     built_at = make_run_timestamp()
@@ -741,12 +1123,19 @@ def build_draft_from_arms(
         write_operationalize_export(arm, normalize_dir, label_dir, clusters, op_dir, built_at)
         noise_by_arm[arm] = _noise_shares_for_seeds(normalize_dir, seeds)
         for cluster in clusters:
-            if is_topic_only_feature(cluster.definition, cluster.members):
+            interim_name = interim_cluster_name(cluster.cluster_label)
+            drop_reason = topic_only_reason(
+                cluster.definition,
+                cluster.members,
+                interim_name,
+                cluster.cluster_label,
+            )
+            if drop_reason:
                 dropped.append(
                     DroppedFeature(
                         cluster_id=cluster.cluster_id,
                         arm=arm,
-                        reason=DROP_REASON_TOPIC_ONLY,
+                        reason=f"{DROP_REASON_TOPIC_ONLY}:{drop_reason}",
                         cluster_label=cluster.cluster_label,
                         member_feature_ids=tuple(r["feature_id"] for r in cluster.members),
                     )
@@ -760,18 +1149,32 @@ def build_draft_from_arms(
             f"arm={arm} seed={constants.DEFAULT_SEED} clusters={len(clusters)}"
         )
     features = assign_feature_ids(features)
+    rewrite_dir = paths.codebook_dir() / f"rewrite_{built_at}"
+    rewrite_batches = rewrite_codebook_features_with_llm(features, rewrite_dir)
+    features, rewrite_drops = apply_codebook_rewrites(features, rewrite_batches)
+    dropped.extend(rewrite_drops)
+    features = assign_feature_ids(features)
+    for feature in features:
+        validate_outcome_leakage(feature.name, feature.definition)
     synonyms = load_synonym_rows(SYNONYMS_PATH)
     draft = CodebookDraft(version=built_at, features=tuple(features))
     draft = merge_codebook_entries(draft, synonyms)
+    matrix = embed_codebook_texts(draft.features)
+    merge_groups, borderline = compute_merge_candidates(draft.features, matrix)
     metadata = {
         "built_at": built_at,
         "seeds": list(seeds),
         "hdbscan_noise_share_by_arm": noise_by_arm,
+        "merge_strong_groups": len(merge_groups),
+        "features_if_strong_merges": count_features_after_strong_merges(
+            len(draft.features),
+            merge_groups,
+        ),
     }
     print(f"topic_only_dropped={len(dropped)}")
     print(f"draft_features={len(draft.features)}")
     print(f"arms_merged={len(constants.TEXT_ARMS)}")
-    return draft, tuple(dropped), metadata
+    return draft, tuple(dropped), metadata, merge_groups, borderline
 
 
 def _noise_shares_for_seeds(normalize_dir: Path, seeds: tuple[int, ...]) -> dict[str, float]:
@@ -810,12 +1213,19 @@ def main(argv: list[str] | None = None) -> None:
         return
     if not args.write_draft and not args.suggest_merges:
         raise SystemExit("Specify --write-draft, --suggest-merges, or --approve")
-    draft, dropped, metadata = build_draft_from_arms(seeds, None)
+    draft, dropped, metadata, merge_groups, borderline = build_draft_from_arms(seeds, None)
     if args.suggest_merges:
         for left, right, score in suggest_merge_pairs(draft):
             print(f"merge_candidate {left} {right} score={score:.3f}")
         return
-    run_dir = write_draft_codebook(draft, dropped, metadata, paths.codebook_dir())
+    run_dir = write_draft_codebook(
+        draft,
+        dropped,
+        metadata,
+        paths.codebook_dir(),
+        merge_groups,
+        borderline,
+    )
     print(f"Wrote {run_dir / constants.CODEBOOK_JSON_FILENAME}")
     print(f"Wrote {run_dir / constants.DROPPED_FEATURES_FILENAME}")
 

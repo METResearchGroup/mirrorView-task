@@ -99,3 +99,25 @@ class PostLabelResult(BaseModel):
     labels: dict[str, bool] = Field(
         description="Present (true) or absent (false) per codebook feature_id (cb_*)."
     )
+
+
+class CodebookRewriteItem(BaseModel):
+    """One rewritten codebook feature for neutral Step 6 labeling."""
+
+    feature_id: str = Field(description="Stable cb_NNN id from the draft build.")
+    name: str = Field(description="Short feature name, 2 to 6 words, outcome-free.")
+    definition: str = Field(
+        description="One sentence starting with 'The post', describing presence only."
+    )
+    is_topic_only: bool = Field(
+        description="True when the feature is pure policy topic or stance without rhetoric."
+    )
+    topic_only_reason: str = Field(
+        description="Brief reason when is_topic_only is true; else empty string."
+    )
+
+
+class CodebookRewriteBatch(BaseModel):
+    """Structured LLM response rewriting a batch of codebook features."""
+
+    items: list[CodebookRewriteItem]

@@ -192,7 +192,14 @@ class TestWriteDraftCodebook:
 
     def test_write_draft_emits_timestamped_dir(self, tmp_path: Path) -> None:
         draft = bc.CodebookDraft(version="2026-01-01T00-00-00", features=())
-        run_dir = bc.write_draft_codebook(draft, (), {"built_at": "2026-01-01T00-00-00"}, tmp_path)
+        run_dir = bc.write_draft_codebook(
+            draft,
+            (),
+            {"built_at": "2026-01-01T00-00-00"},
+            tmp_path,
+            (),
+            [],
+        )
         expected = tmp_path / "draft_2026-01-01T00-00-00" / constants.CODEBOOK_JSON_FILENAME
         assert run_dir == expected.parent
         assert expected.is_file()
@@ -240,6 +247,23 @@ class TestNormalizeFeatureName:
         assert len(result.split()) <= constants.CODEBOOK_NAME_MAX_WORDS
 
 
+class TestValidateOutcomeLeakage:
+    """Tests for validate_outcome_leakage."""
+
+    def test_rejects_keep_remove_moderation_leakage(self) -> None:
+        with pytest.raises(ValueError):
+            bc.validate_outcome_leakage(
+                "neutral name",
+                "Keep posts that use profanity.",
+            )
+
+    def test_accepts_neutral_definition(self) -> None:
+        bc.validate_outcome_leakage(
+            "informal slang",
+            "The post uses informal slang or colloquial phrasing.",
+        )
+
+
 def _sample_feature(
     feature_id: str,
     arm: str,
@@ -258,4 +282,7 @@ def _sample_feature(
         source_cluster_ids=source_ids,
         member_feature_ids=("m1",),
         cluster_size=3,
+        source_cluster_label="Sample Label",
+        source_definition="The post shows sample behavior.",
+        member_records=({"feature_id": "m1", "category": "semantic_content"},),
     )

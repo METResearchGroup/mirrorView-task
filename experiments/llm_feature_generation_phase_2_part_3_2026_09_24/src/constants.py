@@ -134,7 +134,11 @@ COHORT_COLUMNS: Final = (
 )
 CODEBOOK_EXAMPLES_PER_POLARITY: Final = 2
 CODEBOOK_NAME_MIN_WORDS: Final = 2
-CODEBOOK_NAME_MAX_WORDS: Final = 5
+CODEBOOK_NAME_MAX_WORDS: Final = 6
+CODEBOOK_REWRITE_BATCH_SIZE: Final = 15
+STAGE_CODEBOOK_REWRITE: Final = "codebook_rewrite"
+MERGE_CANDIDATES_FILENAME: Final = "merge_candidates.csv"
+MERGE_BORDERLINE_MIN_COSINE: Final = 0.80
 CODEBOOK_FEATURE_ID_PREFIX: Final = "cb_"
 CODEBOOK_DRAFT_DIR_PREFIX: Final = "draft_"
 CODEBOOK_APPROVED_DIR_PREFIX: Final = "approved_"
@@ -157,3 +161,5 @@ TOPIC_ONLY_POLICY_TERMS: Final = (
     "climate",
     "election",
 )
+OUTCOME_LEAKAGE_TERMS: Final = ("keep", "remove", "moderat", "rated", "cluster")
+DEFINITION_REQUIRED_PREFIX: Final = "The post"
