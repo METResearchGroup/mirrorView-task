@@ -100,7 +100,19 @@ def dedupe_worker_votes(trials: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Rows after conflict drop and earliest-row dedupe.
     """
-    raise NotImplementedError
+    frame = trials.copy()
+    frame = frame[frame["prolific_id"].notna()].copy()
+    frame["prolific_id"] = frame["prolific_id"].astype(str).str.strip()
+    frame = frame[frame["prolific_id"] != ""].copy()
+    frame = frame[frame["prolific_id"].str.lower() != "nan"].copy()
+    worker_post = ["post_id", "prolific_id"]
+    distinct_decisions = frame.groupby(worker_post)["decision"].transform("nunique")
+    frame = frame.loc[distinct_decisions == 1].copy()
+    ordered = frame.sort_values(
+        ["post_id", "prolific_id", "trial_index", "time_elapsed"],
+        kind="mergesort",
+    )
+    return ordered.drop_duplicates(worker_post, keep="first").reset_index(drop=True)
 
 
 def aggregate_votes_per_post(trials: pd.DataFrame) -> pd.DataFrame:
