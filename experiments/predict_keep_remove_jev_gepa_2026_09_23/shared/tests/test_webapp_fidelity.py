@@ -28,6 +28,7 @@ WEBAPP_LINKED_FATE_HTML_SNIPPETS = (
 
 def _strip_html(text: str) -> str:
     without_tags = re.sub(r"<[^>]+>", " ", text)
+    without_tags = re.sub(r"\s+([.!?,;:])", r"\1", without_tags)
     return re.sub(r"\s+", " ", without_tags).strip()
 
 
