@@ -43,7 +43,27 @@ def assign_agreement_cell(row: pd.Series) -> str:
     ValueError
         When the row is an exact tie or otherwise invalid for assignment.
     """
-    raise NotImplementedError
+    is_unanimous = bool(row["is_unanimous"])
+    n_raters = int(row["n_raters"])
+    keep_count = int(row["keep_count"])
+    remove_count = int(row["remove_count"])
+    if keep_count == remove_count:
+        raise ValueError(
+            f"Cannot assign cell for exact tie: keep={keep_count} "
+            f"remove={remove_count} n_raters={n_raters}"
+        )
+    if is_unanimous and keep_count == n_raters:
+        return "unanimous_keep"
+    if is_unanimous and remove_count == n_raters:
+        return "unanimous_remove"
+    if (not is_unanimous) and keep_count > remove_count:
+        return "majority_keep"
+    if (not is_unanimous) and remove_count > keep_count:
+        return "majority_remove"
+    raise ValueError(
+        f"Cannot assign cell: keep={keep_count} remove={remove_count} "
+        f"n_raters={n_raters} is_unanimous={is_unanimous}"
+    )
 
 
 def build_four_cell_counts(per_post: pd.DataFrame) -> pd.DataFrame:
@@ -59,7 +79,17 @@ def build_four_cell_counts(per_post: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Two columns ``cell`` and ``count`` in ``_CELL_ORDER``.
     """
-    raise NotImplementedError
+    eligible = per_post[per_post["n_raters"] >= _MIN_RATERS].copy()
+    eligible = eligible[eligible["keep_count"] != eligible["remove_count"]].copy()
+    if eligible.empty:
+        counts = {cell: 0 for cell in _CELL_ORDER}
+    else:
+        labels = eligible.apply(assign_agreement_cell, axis=1)
+        value_counts = labels.value_counts()
+        counts = {cell: int(value_counts.get(cell, 0)) for cell in _CELL_ORDER}
+    return pd.DataFrame(
+        {"cell": list(_CELL_ORDER), "count": [counts[cell] for cell in _CELL_ORDER]}
+    )
 
 
 def build_four_cell_shares(cell_counts: pd.DataFrame) -> pd.DataFrame:
