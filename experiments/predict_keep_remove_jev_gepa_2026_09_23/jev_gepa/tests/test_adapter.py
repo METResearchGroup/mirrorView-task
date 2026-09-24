@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from unittest.mock import MagicMock
+
 import pytest
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa.adapter import (
@@ -41,7 +43,7 @@ class TestJevGepaAdapterEvaluate:
         scorer = FakeJevBatchScorer(
             probabilities_by_batch=[[0.5] * 10, [0.5] * 2],
         )
-        adapter = JevGepaAdapter(view="pair", scorer=scorer)
+        adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
         candidate = {"instruction": "CAND"}
 
         result = adapter.evaluate(batch, candidate, capture_traces=False)
@@ -55,7 +57,7 @@ class TestJevGepaAdapterEvaluate:
         scorer = FakeJevBatchScorer(
             probabilities_by_batch=[[0.9, 0.1]],
         )
-        adapter = JevGepaAdapter(view="pair", scorer=scorer)
+        adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
         batch = [
             _make_inst("remove-post", label=1),
             _make_inst("keep-post", label=0),
@@ -68,7 +70,7 @@ class TestJevGepaAdapterEvaluate:
 
     def test_scorer_failure_returns_zero_score_without_raising(self) -> None:
         scorer = FakeJevBatchScorer(raise_on_post_index=1)
-        adapter = JevGepaAdapter(view="pair", scorer=scorer)
+        adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
         batch = [_make_inst("ok-post"), _make_inst("bad-post")]
 
         result = adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=True)
@@ -83,7 +85,7 @@ class TestJevGepaAdapterReflectiveDataset:
 
     def test_feedback_includes_gold_vote_stance_toxicity_threshold(self) -> None:
         scorer = FakeJevBatchScorer(probabilities_by_batch=[[0.9]])
-        adapter = JevGepaAdapter(view="pair", scorer=scorer)
+        adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
         batch = [_make_inst("post-1", label=1)]
         eval_batch = adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=True)
 
@@ -107,7 +109,12 @@ class TestAsymmetricReward:
 
     def test_false_negative_scores_minus_three(self) -> None:
         scorer = FakeJevBatchScorer(probabilities_by_batch=[[0.4]])
-        adapter = JevGepaAdapter(view="pair", score_mode="asymmetric", scorer=scorer)
+        adapter = JevGepaAdapter(
+            view="pair",
+            score_mode="asymmetric",
+            scorer=scorer,
+            client=MagicMock(),
+        )
         batch = [_make_inst("post-1", label=1)]
 
         result = adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=False)
@@ -116,7 +123,12 @@ class TestAsymmetricReward:
 
     def test_true_negative_scores_plus_half(self) -> None:
         scorer = FakeJevBatchScorer(probabilities_by_batch=[[0.1]])
-        adapter = JevGepaAdapter(view="pair", score_mode="asymmetric", scorer=scorer)
+        adapter = JevGepaAdapter(
+            view="pair",
+            score_mode="asymmetric",
+            scorer=scorer,
+            client=MagicMock(),
+        )
         batch = [_make_inst("post-1", label=0)]
 
         result = adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=False)
