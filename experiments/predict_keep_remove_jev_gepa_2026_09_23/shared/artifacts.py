@@ -32,7 +32,14 @@ def download_if_missing(path: Path, key: str) -> None:
     FileNotFoundError
         When the object is missing on S3.
     """
-    raise NotImplementedError
+    if path.is_file():
+        return
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    stored = store.get(key)
+    if stored is None:
+        raise FileNotFoundError(key)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(stored.body)
 
 
 def upload_under_prefix(path: Path, allowed_prefix: str = EXPERIMENT_S3_PREFIX) -> None:
@@ -50,4 +57,13 @@ def upload_under_prefix(path: Path, allowed_prefix: str = EXPERIMENT_S3_PREFIX) 
     ValueError
         When the derived S3 key is outside ``allowed_prefix``.
     """
-    raise NotImplementedError
+    key = str(path.relative_to(REPO_ROOT))
+    if not key.startswith(allowed_prefix):
+        raise ValueError(f"refusing S3 key outside {allowed_prefix}: {key}")
+    store = CampaignObjectStore(OUTPUT_S3_BUCKET)
+    body = path.read_bytes()
+    existing = store.get(key)
+    if existing is None:
+        store.put_new(key, body)
+        return
+    store.replace(key, body, etag=existing.etag)
