@@ -39,6 +39,8 @@ LABELS_PATHS: dict[str, Path] = {
 
 @dataclass(frozen=True)
 class ErrorRecord:
+    """One false positive or false negative row for clustering by post and text role."""
+
     post_id: str
     model_id: str
     error_type: str

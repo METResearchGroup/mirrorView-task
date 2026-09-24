@@ -37,6 +37,8 @@ PREVALENCE_RANDOM_DRAWS = 100
 
 @dataclass(frozen=True)
 class ConfusionCounts:
+    """Confusion matrix cell counts for binary keep/remove classification."""
+
     tn: int
     fp: int
     fn: int
@@ -45,6 +47,8 @@ class ConfusionCounts:
 
 @dataclass(frozen=True)
 class ClassificationMetrics:
+    """Classification summary with threshold, confusion counts, and sample size."""
+
     accuracy: float
     precision: float
     recall: float
@@ -59,6 +63,8 @@ class ClassificationMetrics:
 
 @dataclass(frozen=True)
 class TrivialBaselineMetrics:
+    """F1 scores for keep-all, remove-all, and prevalence-random baselines."""
+
     keep_all_f1: float
     remove_all_f1: float
     prevalence_random_f1_mean: float
@@ -67,6 +73,8 @@ class TrivialBaselineMetrics:
 
 @dataclass(frozen=True)
 class SubgroupMetrics:
+    """Classification metrics for one named subgroup slice."""
+
     subgroup_name: str
     subgroup_value: str
     metrics: ClassificationMetrics
@@ -74,6 +82,8 @@ class SubgroupMetrics:
 
 @dataclass(frozen=True)
 class LatencyPercentiles:
+    """Request or per-post latency percentiles in milliseconds."""
+
     p50_ms: float
     p90_ms: float
     p99_ms: float
@@ -81,6 +91,8 @@ class LatencyPercentiles:
 
 @dataclass(frozen=True)
 class CostSummary:
+    """Aggregated token usage and estimated USD cost."""
+
     input_tokens: int
     output_tokens: int
     cost_usd: float

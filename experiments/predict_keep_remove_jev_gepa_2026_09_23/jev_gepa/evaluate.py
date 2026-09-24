@@ -78,6 +78,8 @@ B1T_ABLATION_ID = "B1T_gepa_pair_terra"
 
 @dataclass(frozen=True)
 class EvalConfig:
+    """Resolved GEPA evaluation run for a primary ablation or transfer."""
+
     ablation_id: str | None
     transfer_id: str | None
     instruction: str

@@ -38,6 +38,8 @@ ASYMMETRIC_REWARDS = {
 
 @dataclass(frozen=True)
 class JevDataInst:
+    """One GEPA evaluation instance with paired post texts and gold keep/remove label."""
+
     post_id: str
     original_text: str
     mirror_text: str
@@ -53,6 +55,8 @@ class JevDataInst:
 
 @dataclass(frozen=True)
 class JevTrajectory:
+    """Scored rollout trace for one instance, including threshold-crossing state."""
+
     post_id: str
     view: ViewName
     instruction: str
@@ -70,6 +74,8 @@ class JevTrajectory:
 
 @dataclass(frozen=True)
 class JevRolloutOutput:
+    """GEPA rollout output carrying the predicted P(remove) for one post."""
+
     post_id: str
     p_remove: float
 
@@ -243,6 +249,7 @@ class JevGepaAdapter:
         candidate: dict[str, str],
         capture_traces: bool = False,
     ) -> EvaluationBatch[JevTrajectory, JevRolloutOutput]:
+        """Score a candidate instruction on a batch and return GEPA evaluation results."""
         instruction = candidate["instruction"]
         outputs, scores, trajectories, num_metric_calls = self._score_instances(
             batch,
@@ -285,6 +292,7 @@ class JevGepaAdapter:
         eval_batch: EvaluationBatch[JevTrajectory, JevRolloutOutput],
         components_to_update: list[str],
     ) -> dict[str, list[dict[str, Any]]]:
+        """Build reflective-dataset records from scored trajectories for instruction updates."""
         if eval_batch.trajectories is None:
             raise ValueError("eval_batch.trajectories is required for reflection")
         records: list[dict[str, Any]] = []

@@ -86,6 +86,8 @@ ABLATION_REGISTRY: dict[str, dict[str, Any]] = {
 
 @dataclass(frozen=True)
 class AblationConfig:
+    """Resolved Stage A ablation with view, prompt arm, output path, and Wandb name."""
+
     ablation_id: str
     view: str
     add_criteria: bool

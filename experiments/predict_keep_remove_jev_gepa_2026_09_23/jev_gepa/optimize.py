@@ -94,6 +94,8 @@ ABLATION_REGISTRY: dict[str, dict[str, object]] = {
 
 @dataclass(frozen=True)
 class OptimizeConfig:
+    """Resolved GEPA optimization run for one ablation."""
+
     ablation_id: str
     view: ViewName
     score_mode: ScoreMode

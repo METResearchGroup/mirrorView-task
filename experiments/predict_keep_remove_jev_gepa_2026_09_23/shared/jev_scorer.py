@@ -69,12 +69,16 @@ VALID_VIEWS = (VIEW_PAIR, VIEW_ORIGINAL, VIEW_MIRROR)
 
 
 class PostTask(BaseModel):
+    """One post queued for Jev scoring with rendered state text and gold label."""
+
     post_id: str
     state_text: str
     gold_label: int
 
 
 class BatchResult(BaseModel):
+    """Per-batch Jev response with remove probabilities and token usage."""
+
     probabilities: list[float]
     latency_ms: float
     input_tokens: int
@@ -83,6 +87,8 @@ class BatchResult(BaseModel):
 
 
 class PostPrediction(BaseModel):
+    """Serialized per-post prediction with latency, cost, and token attribution."""
+
     post_id: str
     view: str
     gold_label: int
@@ -103,6 +109,8 @@ class PostPrediction(BaseModel):
 
 
 class SmokeSummary(BaseModel):
+    """Aggregate smoke-run stats for latency, cost, and token usage."""
+
     view: str
     add_criteria: bool
     n_posts: int
@@ -120,6 +128,8 @@ class SmokeSummary(BaseModel):
 
 @dataclass(frozen=True)
 class RequestRecord:
+    """Audit record for one Jev API request during a scoring pass."""
+
     request_id: str
     ablation_id: str
     batch_index: int
@@ -138,6 +148,7 @@ class RequestRecord:
     instruction_sha256: str
 
     def to_dict(self) -> dict[str, Any]:
+        """Return a JSON-serializable mapping of request audit fields."""
         return {
             "request_id": self.request_id,
             "ablation_id": self.ablation_id,
@@ -160,6 +171,8 @@ class RequestRecord:
 
 @dataclass(frozen=True)
 class BatchWorkResult:
+    """Predictions and request audit record produced from one scored batch."""
+
     batch_index: int
     predictions: list[PostPrediction]
     request_record: RequestRecord
@@ -195,6 +208,7 @@ def _effective_instruction_text(instruction: str | None, view: str) -> str:
 
 
 def instruction_sha256(instruction: str | None, view: str) -> str:
+    """Return SHA-256 hex digest of the effective instruction text for a view."""
     text = _effective_instruction_text(instruction, view)
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -239,6 +253,7 @@ def score_batch(
 
 
 def make_batches(tasks: list[PostTask], batch_size: int = BATCH_SIZE) -> list[list[PostTask]]:
+    """Partition post tasks into fixed-size batches for Jev scoring."""
     return [tasks[index : index + batch_size] for index in range(0, len(tasks), batch_size)]
 
 
