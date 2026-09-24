@@ -177,6 +177,14 @@ def _aggregate_modal_labels_with_counts(trials: pd.DataFrame) -> pd.DataFrame:
     return _vote_count_frame(trials).reset_index(drop=True)
 
 
+def _unanimous_or_null(n_raters: pd.Series, n_unique_decisions: pd.Series) -> pd.Series:
+    """True when all raters agree, null when fewer than two raters voted."""
+    agreed = n_unique_decisions == 1
+    enough_raters = n_raters >= MIN_RATERS_FOR_UNANIMOUS
+    flags = agreed.where(enough_raters, pd.NA)
+    return flags.astype("boolean")
+
+
 def _build_unanimous_flags(trials: pd.DataFrame) -> pd.DataFrame:
     """Mark posts where every rater made the same decision.
 
@@ -191,7 +199,18 @@ def _build_unanimous_flags(trials: pd.DataFrame) -> pd.DataFrame:
         ``post_id``, ``is_unanimous``, and ``n_raters``. ``is_unanimous`` is
         null when ``n_raters`` is below ``MIN_RATERS_FOR_UNANIMOUS``.
     """
-    raise NotImplementedError
+    grouped = (
+        trials.groupby("post_id", dropna=False)
+        .agg(n_raters=("decision", "size"), n_unique_decisions=("decision", "nunique"))
+        .reset_index()
+    )
+    return pd.DataFrame(
+        {
+            "post_id": grouped["post_id"],
+            "is_unanimous": _unanimous_or_null(grouped["n_raters"], grouped["n_unique_decisions"]),
+            "n_raters": grouped["n_raters"],
+        }
+    )
 
 
 def _join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFrame:
