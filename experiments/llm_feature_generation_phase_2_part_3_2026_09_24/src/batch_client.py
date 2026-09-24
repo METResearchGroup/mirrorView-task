@@ -11,6 +11,7 @@ Run from the repo root::
 from __future__ import annotations
 
 import json
+import sys
 import tempfile
 import time
 from dataclasses import dataclass
@@ -18,7 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Protocol
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, create_model
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, llm_client, paths
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import build_labeling_prompt
@@ -78,6 +79,25 @@ class LabelTask:
     post_id: str
     text_surface: str
     text: str
+
+
+_DYNAMIC_LABEL_MODEL: type[BaseModel] | None = None
+_DYNAMIC_LABEL_MODEL_NAME = "PostLabelResultDynamic"
+
+
+def post_label_model_for_codebook(codebook: list[dict[str, Any]]) -> type[BaseModel]:
+    """Build a strict OpenAI-compatible labeling model registered on this module."""
+    global _DYNAMIC_LABEL_MODEL
+    label_fields = {str(feature["feature_id"]): (bool, Field()) for feature in codebook}
+    labels_model = create_model("PostLabelLabels", **label_fields)
+    labels_model.__module__ = __name__
+    model = create_model(_DYNAMIC_LABEL_MODEL_NAME, labels=(labels_model, Field(...)))
+    model.__module__ = __name__
+    module = sys.modules[__name__]
+    setattr(module, labels_model.__name__, labels_model)
+    setattr(module, model.__name__, model)
+    _DYNAMIC_LABEL_MODEL = model
+    return model
 
 
 def make_custom_id(post_id: str, text_surface: str) -> str:
@@ -321,6 +341,26 @@ def get_openai_client() -> OpenAIBatchClient:
     from openai import OpenAI
 
     return OpenAI()
+
+
+def _latest_approved_codebook_features() -> list[dict[str, Any]]:
+    parent = paths.codebook_dir()
+    if not parent.is_dir():
+        return []
+    candidates = sorted(parent.glob(f"{constants.CODEBOOK_APPROVED_DIR_PREFIX}*/{constants.CODEBOOK_JSON_FILENAME}"))
+    if not candidates:
+        return []
+    payload = json.loads(candidates[-1].read_text(encoding="utf-8"))
+    return list(payload.get("features", []))
+
+
+def _register_latest_label_model() -> None:
+    features = _latest_approved_codebook_features()
+    if features:
+        post_label_model_for_codebook(features)
+
+
+_register_latest_label_model()
 
 
 def _collect_request_lines(
