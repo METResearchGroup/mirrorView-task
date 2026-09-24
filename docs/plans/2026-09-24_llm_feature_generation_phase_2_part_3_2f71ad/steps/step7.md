@@ -1,12 +1,12 @@
 # Step 7: Analyze held-out test set and write RESULTS.md
 
-Answer research questions Q1 through Q7 from `plan.md` using held-out test posts only (`split == test`). Use discovery-half labels only for feature description and Part 2 overlap description on the 8,899 shared posts. Map each Phase 2, Part 3 codebook feature to the rank-1 nearest Part 2 theme (132 themes from stage-2 synthesis at `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/`) via Titan cosine similarity on name plus definition; report the similarity score for each match (no human confirmation step). `RESULTS.md` states the mapping is provisional and lists the score for each match. Fit held-out logistic regression models for Q4 and Q7 (AUC and log loss). Run prevalence tests with Benjamini-Hochberg correction for Q1, Q2, Q5, and Q6. Document ablations across text arm, batch design, label definition, participant filter, clustering method, and seeds. State Part 2 model-change caveat (`gpt-5.4-nano` vs `gpt-6-luna`) and provisional-label caveat in `RESULTS.md`. Upload all artifacts to S3.
+Step 7 answers research questions Q1 through Q7 from `plan.md` on held-out test posts only (`split == test`). Discovery-half labels feed descriptive tables for feature description and Part 2 overlap on the 8,899 shared posts, while Q1 to Q7 hypothesis tests stay on the test split. Each Phase 2 Part 3 codebook feature maps to the rank-1 nearest Part 2 theme (132 themes from stage-2 synthesis at `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/`) through Titan cosine similarity on name plus definition, with no human confirmation step. `RESULTS.md` states that the mapping is provisional and lists the similarity score for each match. The step fits held-out logistic regression models for Q4 and Q7 (AUC and log loss), runs prevalence tests with Benjamini-Hochberg correction for Q1, Q2, Q5, and Q6, and documents ablations across text arm, batch design, label definition, participant filter, clustering method, and seeds. `RESULTS.md` records the Part 2 model-change caveat (`gpt-5.4-nano` vs `gpt-6-luna`) and the provisional-label caveat, and the step uploads all artifacts to S3.
 
 ## Scope
 
 - **Caller / entrypoint:** `map_part2_themes`, `analyze`, `write_results`, and `s3_sync` CLIs.
-- **In scope:** Part 2 theme load and embedding map; Q1 to Q7 computations on test split only; ablation runners; `RESULTS.md` assembly; final S3 upload of experiment tree; tests with mocked data and S3.
-- **Out of scope:** Re-labeling or codebook edits; human validation set or kappa; discovery-half hypothesis tests; editing earlier step modules except Step 7 owners.
+- **In scope:** Load Part 2 themes and map them with Titan embeddings. Compute Q1 to Q7 on the test split only. Run ablation runners. Assemble `RESULTS.md`. Upload the final experiment tree to S3. Write tests with mocked data and S3.
+- **Out of scope:** Re-labeling or codebook edits, human validation set or kappa, discovery-half hypothesis tests, and editing earlier step modules except Step 7 owners.
 
 ## Files to inspect (read-only)
 
@@ -75,8 +75,8 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 
 ### Phase 5: Implementation units (dependency order)
 
-1. `load_part2_themes()`: parse all shards under `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/*.json`; dedupe by theme `id`.
-2. `map_part2_themes`: Titan embed codebook features and Part 2 themes; cosine similarity; write `theme_map.csv` with rank-1 nearest theme and `cosine_similarity` per feature; set provisional `part2_theme_id` on codebook copy in map output (do not mutate approved codebook file).
+1. `load_part2_themes()`: parse all shards under `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/*.json`, then dedupe by theme `id`.
+2. `map_part2_themes`: Titan embed codebook features and Part 2 themes, compute cosine similarity, and write `theme_map.csv` with rank-1 nearest theme and `cosine_similarity` per feature. Set provisional `part2_theme_id` on the codebook copy in map output, and do not mutate the approved codebook file.
 3. `analyze.run_all`: primary run using primary ablation settings (mixed batches, HDBSCAN seed 42, modal labels, attention_pass filter, paired arm for Part 2 replication comparisons).
 4. `analyze.run_ablations`: loop ablation axes (see below).
 5. `write_results`: merge `summary_tables.md`, self-consistency flags, caveats, Q1 to Q7 tables into `RESULTS.md`.
@@ -90,7 +90,7 @@ Answer research questions Q1 through Q7 from `plan.md` using held-out test posts
 - Full suite: `PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests -q` exits 0.
 - Every Q1 to Q7 JSON under `outputs/<arm>/analysis/<run_timestamp>/` computed with `split == test` only.
 - `RESULTS.md` answers Q1 to Q7 with tables and documents all ablation axes from plan.md.
-- `RESULTS.md` states: (1) Part 2 used `gpt-5.4-nano`, Part 3 used `gpt-6-luna`; replication mixes model and data change. (2) Labels are provisional LLM labels without human validation.
+- `RESULTS.md` states: (1) Part 2 used `gpt-5.4-nano`, Part 3 used `gpt-6-luna`, and replication mixes model and data change. (2) Labels are provisional LLM labels without human validation.
 - `outputs/shared/part2_theme_map/<run_timestamp>/theme_map.csv` exists (rank-1 mapping per feature with similarity scores).
 - S3 upload completes for experiment prefix.
 
@@ -203,12 +203,12 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 | File | Content |
 |------|---------|
 | `theme_map.csv` | `feature_id`, `feature_name`, `part2_theme_id`, `part2_theme_label`, `cosine_similarity`, `rank` (1 = nearest; used provisionally in analysis) |
-| `theme_map.md` | Human-readable table with similarity scores |
+| `theme_map.md` | Human-readable table listing similarity scores |
 | `metadata.json` | `part2_themes_dir`, `n_themes`, `bedrock_model_id`, `built_at` |
 
 **Part 2 stage-2 theme source:** `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/*.json` (132 themes per Part 2 `RESULTS.md`).
 
-**Part 2 theme JSON parser:** Read each `*.json` in the themes dir; extract `result.themes[]`; build `theme_id`, `label`, `definition_text` = join `defining_features` with `; `.
+**Part 2 theme JSON parser:** Read each `*.json` in the themes dir, extract `result.themes[]`, and build `theme_id`, `label`, and `definition_text` by joining `defining_features` with `; `.
 
 ### Analysis outputs (`outputs/<arm>/analysis/<run_timestamp>/`)
 
@@ -259,7 +259,7 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 
 ## Human gates (if any)
 
-None. Part 2 mapping uses automatic rank-1 nearest theme by Titan cosine similarity; `RESULTS.md` states the mapping is provisional and lists the similarity score for each match.
+This step has no human gates. Part 2 mapping picks the automatic rank-1 nearest theme by Titan cosine similarity. `RESULTS.md` states that the mapping is provisional and lists the similarity score for each match.
 
 ## Commit message template
 

@@ -1,6 +1,6 @@
 # Step 1: Build post-level cohort and discovery and held-out split
 
-Create the experiment scaffold at `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/`, build one post-level cohort row per stimuli catalog post (18,899), compute modal keep/remove and three-group labels, run a stratified 50/50 discovery versus test split, commit post-ID lists, and upload cohort plus split artifacts to S3.
+Step 1 creates the experiment scaffold at `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/`, builds one post-level cohort row per stimuli catalog post (18,899), computes modal keep/remove and three-group labels, runs a stratified 50/50 discovery versus test split, commits the post-ID lists, and uploads cohort and split artifacts to S3.
 
 ## Scope
 
@@ -16,7 +16,7 @@ Create the experiment scaffold at `experiments/llm_feature_generation_phase_2_pa
 - `shared/data/raw/study_phase_2_part_3/stimuli/flips.csv`: 18,899-post catalog; join key `post_primary_key`; columns `sampled_stance`, `sample_toxicity_type`, `original_text`, `mirrored_text`.
 - `shared/data/raw/study_phase_2_part_2/stimuli/flips.csv`: Part 2 June catalog (10,000 posts); use `post_primary_key` to detect the 8,899-post overlap with Part 3.
 - `shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv`: Part 2 labeled subset (`message_id`); secondary overlap reference only.
-- `experiments/reasoning_during_moderation_2026_09_15/shared/cohort.py`: copy (do not import) three-group logic: `drop_conflicting_worker_posts`, `dedupe_worker_post`, `assign_group`, vote counting.
+- `experiments/reasoning_during_moderation_2026_09_15/shared/cohort.py`: copy the three-group logic into this experiment (do not import across experiments): `drop_conflicting_worker_posts`, `dedupe_worker_post`, `assign_group`, vote counting.
 - `experiments/reasoning_during_moderation_2026_09_15/shared/constants.py`: copy constants: `MIN_RATERS=4`, `SPLIT_VOTE_PATTERNS={(2,2),(3,2),(2,3)}`, group string values.
 - `experiments/create_llm_features_2026_08_05/src/paths.py`: pattern for `EXPERIMENT_ROOT`, `latest_timestamp_subdir`.
 - `lib/aws/s3.py`: `S3` class (`upload_file`, `upload_bytes`, `object_exists`).
@@ -55,7 +55,7 @@ Create the experiment scaffold at `experiments/llm_feature_generation_phase_2_pa
 
 ## Implementation phases (TDD: mandatory order)
 
-Complete phases in order; one git commit per phase (or per unit of work in Phase 5). Do not skip.
+Complete phases in order. Make one git commit per phase (or per unit of work in Phase 5), and do not skip phases.
 
 | Phase | Goal | Gate |
 |-------|------|------|
@@ -129,8 +129,8 @@ Complete phases in order; one git commit per phase (or per unit of work in Phase
 
 - Experiment folder exists with README, SETUP, `src/`, `tests/`, `data/post_split/`.
 - `cohort.py --participant-filter all --write` writes identical 18,899-row parquet copies under `outputs/original_only/cohort/<ts>/`, `outputs/mirror_only/cohort/<ts>/`, and `outputs/paired/cohort/<ts>/`.
-- `cohort.py --participant-filter attention_pass --write` writes sensitivity cohorts with fewer moderation trials (participants who failed the attention check removed).
-- `split.py --seed 42 --write` writes committed CSVs and metadata; fills `split` column in cohort parquet (`discovery` or `test`).
+- `cohort.py --participant-filter attention_pass --write` writes sensitivity cohorts with fewer moderation trials, because participants who failed the attention check are removed.
+- `split.py --seed 42 --write` writes committed CSVs and metadata, and fills the `split` column in cohort parquet (`discovery` or `test`).
 - `s3_sync.py --paths data/post_split outputs/original_only/cohort outputs/mirror_only/cohort outputs/paired/cohort` uploads to `s3://mirrorview-experimental-artifacts/experiments/llm_feature_generation_phase_2_part_3_2026_09_24/`.
 - Label-count and overlap sanity checks match plan numbers (see Artifact contract).
 - `PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_paths.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_constants.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_cohort.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_split.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_s3_sync.py -q` exits 0.
@@ -274,7 +274,7 @@ Also write `outputs/<arm>/cohort/<ts>/metadata.json`:
 - Input: latest cohort parquet built with `--participant-filter all`.
 - Split all 18,899 posts (including 33 with null `modal_decision`).
 - Use `sklearn.model_selection.train_test_split` with `test_size=0.5`, `random_state=SPLIT_SEED` (42), `stratify` on concatenated stratify key built from the four columns; represent null `modal_decision` as the string `"unlabeled"` for stratification only.
-- Write ID lists and set `split` column on cohort parquet in place (or rewrite parquet under a new cohort timestamp; pick one approach and document in SETUP.md).
+- Write ID lists and set the `split` column on cohort parquet in place, or rewrite parquet under a new cohort timestamp. Pick one approach and document it in SETUP.md.
 
 ### `src/constants.py` (define in Step 1; import everywhere)
 
@@ -354,9 +354,9 @@ Suggested commits (Phase 5 granularity):
 
 ## Handoff to Step 2
 
-Step 2 (`baselines.py`) depends on:
+Step 2 (`baselines.py`) depends on the following:
 
 - `data/post_split/discovery_post_ids.csv` committed with 9,449 IDs.
-- Cohort parquet with `split=="discovery"`, `modal_decision`, text columns, and metadata fields above.
+- Cohort parquet with `split=="discovery"`, `modal_decision`, text columns, and the metadata fields above.
 - `paths.baselines_dir(arm)` and `constants.TEXT_ARMS` ready.
-- Do not edit `s3_sync.py` after Step 1; Step 2 only calls it.
+- Do not edit `s3_sync.py` after Step 1. Step 2 only calls it.

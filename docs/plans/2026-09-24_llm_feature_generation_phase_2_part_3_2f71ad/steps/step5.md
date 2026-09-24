@@ -1,17 +1,17 @@
 # Step 5: Operationalize into a shared codebook
 
-Merge per-arm cluster outputs from Step 4 (`outputs/<arm>/normalize/<embed_timestamp>/`) into one shared codebook at `outputs/shared/codebook/`. Each entry gets a short name (2 to 5 words), a one-sentence definition, two positive and two negative examples (as `{post_id, text}` objects; text is stored in the codebook intentionally so Step 6 does not re-join cohort text for examples), the arm(s) where it was discovered, and source cluster ids. Default is no merge across arms or clusters. Record confirmed merges in `data/feature_synonyms.csv`. Drop pure topic-only features (for example, "post is about guns") and record drops. Labeling is blocked until the user approves the draft codebook via `build_codebook --approve`.
+Step 5 merges per-arm cluster outputs from Step 4 (`outputs/<arm>/normalize/<embed_timestamp>/`) into one shared codebook at `outputs/shared/codebook/`. Each codebook entry gets a short name (2 to 5 words), a one-sentence definition, two positive and two negative examples as `{post_id, text}` objects, the arm or arms where it was discovered, and source cluster ids. Because example text is stored in the codebook, Step 6 does not need to re-join cohort text for examples. The default policy is no merge across arms or clusters, and you record any confirmed merges in `data/feature_synonyms.csv`. You drop pure topic-only features (for example, "post is about guns") and write each drop to the audit output. Labeling stays blocked until the user approves the draft codebook with `build_codebook --approve`.
 
 ## Scope
 
 - **Caller / entrypoint:** `build_codebook` CLI (`if __name__ == "__main__"`).
-- **In scope:** Load Step 4 outputs at `outputs/<arm>/normalize/<embed_timestamp>/features.jsonl`, `.../clusters_seed_<seed>/assignments_hdbscan.json` (default seed `42`), and cluster labels at `.../clusters_seed_<seed>/labels/<label_timestamp>/` for all three arms and three cluster seeds (`42`, `43`, `44`); pick primary HDBSCAN cluster labels per seed; dedupe within arm by `cluster_id`; export per-arm snapshots under `outputs/<arm>/operationalize/`; build draft shared codebook under `outputs/shared/codebook/`; codebook data models (`CodebookFeature`, `CodebookDraft`, `DroppedFeature`) live in `build_codebook.py`; topic-only drop rules; optional merge support via committed `data/feature_synonyms.csv`; human approval gate (Gate B); unit tests with mocked LLM and S3.
-- **Out of scope:** Part 2 theme mapping (`map_part2_themes.py`, Step 7); post labeling (Step 6); editing `llm_client.py` or discovery/normalize modules; automatic LLM merge at runtime (merges are human-confirmed and recorded in CSV only).
+- **In scope:** Load Step 4 outputs from `outputs/<arm>/normalize/<embed_timestamp>/features.jsonl`, `.../clusters_seed_<seed>/assignments_hdbscan.json` (default seed `42`), and cluster labels at `.../clusters_seed_<seed>/labels/<label_timestamp>/` for all three arms and cluster seeds `42`, `43`, and `44`. Pick primary HDBSCAN cluster labels per seed, dedupe within each arm by `cluster_id`, and export per-arm snapshots under `outputs/<arm>/operationalize/`. Build a draft shared codebook under `outputs/shared/codebook/`. Define codebook data models (`CodebookFeature`, `CodebookDraft`, `DroppedFeature`) in `build_codebook.py`. Apply topic-only drop rules. Support optional merges through committed `data/feature_synonyms.csv`. Add a human approval gate (Gate B). Write unit tests with mocked LLM and S3.
+- **Out of scope:** Part 2 theme mapping (`map_part2_themes.py`, Step 7), post labeling (Step 6), editing `llm_client.py` or discovery/normalize modules, and automatic LLM merge at runtime. Merges are human-confirmed and recorded in CSV only.
 
 ## Files to inspect (read-only)
 
 - `docs/plans/2026-09-24_llm_feature_generation_phase_2_part_3_2f71ad/plan.md`: Step 5 description, Q1 context, ablation axes.
-- [HOW_TO_MINE_TEXT_FOR_FEATURES.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md): conservative merge guidance; operationalize checklist (name, definition, examples).
+- [HOW_TO_MINE_TEXT_FOR_FEATURES.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md): conservative merge guidance and operationalize checklist (name, definition, examples).
 - `experiments/llm_based_feature_generation_2026_07_31/RESULTS.md`: Part 2 lesson that policy-topic clusters (Themes 6, 11, 43, 130) predicted remove weakly compared to rhetorical form.
 - `experiments/create_llm_features_2026_08_05/src/schemas.py`: `ClusterLabelResult`, `FeatureCategory` (use `topic_subject` for topic-only drop rule).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/paths.py`: arm/stage helpers (from Step 1).
@@ -39,7 +39,7 @@ Merge per-arm cluster outputs from Step 4 (`outputs/<arm>/normalize/<embed_times
 
 ## Implementation phases (TDD: mandatory order)
 
-Complete phases in order; one git commit per phase (or per unit of work in Phase 5). Do not skip.
+Complete phases in order, with one git commit per phase (or per unit of work in Phase 5). Do not skip phases.
 
 | Phase | Goal | Gate |
 |-------|------|------|
@@ -52,7 +52,7 @@ Complete phases in order; one git commit per phase (or per unit of work in Phase
 
 ### Phase 4: Named tests and assertions
 
-Write these in `tests/test_build_codebook.py`. Mock `llm_client.complete_structured` and `s3_sync` (no live AWS or LLM).
+Write these in `tests/test_build_codebook.py`. Mock `llm_client.complete_structured` and `s3_sync` so tests do not call live AWS or an LLM.
 
 | Test name | Given | When | Assert |
 |-----------|-------|------|--------|
@@ -70,12 +70,12 @@ Write these in `tests/test_build_codebook.py`. Mock `llm_client.complete_structu
 ### Phase 5: Implementation units (dependency order)
 
 1. `load_arm_cluster_labels(arm, normalize_embed_dir, seed=42)`, `load_cluster_members` (join cluster labels under `clusters_seed_<seed>/labels/<label_timestamp>/` to `features.jsonl` via `assignments_hdbscan.json`).
-2. `is_topic_only_feature` and `select_example_posts` (discovery half only; positive = member post with feature evidence; negative = discovery post without cluster membership).
+2. `is_topic_only_feature` and `select_example_posts` (discovery half only; positive examples come from member posts with feature evidence; negative examples come from discovery posts without cluster membership).
 3. `build_codebook_entry` (assign `feature_id` `cb_NNN`, `name`, `definition`, examples, `discovery_arm`, `source_cluster_ids`, `member_feature_ids`).
 4. `apply_synonym_merges` (read `data/feature_synonyms.csv`; no LLM merge at runtime).
 5. `write_draft_codebook` and CLI `--write-draft`.
 6. `approve_codebook` and CLI `--approve`.
-7. Optional: `suggest_merge_pairs` helper that prints candidate pairs for human side-by-side review (embedding similarity above 0.85 on name+definition); does not merge without CSV row.
+7. Optional: `suggest_merge_pairs` helper that prints candidate pairs for human side-by-side review when embedding similarity is above 0.85 on name+definition. It does not merge without a CSV row.
 
 ## Pass / fail criteria
 
@@ -184,9 +184,9 @@ Wrote outputs/shared/codebook/approved_2026-09-24T12-40-00/approval.json
 }
 ```
 
-**Example shape:** `positive_examples` and `negative_examples` are lists of `{post_id, text}` objects (intentional). Text is embedded at codebook build time so Step 6 does not need to re-join cohort text for examples.
+**Example shape:** `positive_examples` and `negative_examples` are lists of `{post_id, text}` objects by design. The build step writes example text into the codebook so Step 6 does not need to re-join cohort text for examples.
 
-**Topic-only drop rule:** Drop when (a) all member features have `category == "topic_subject"` and no member has a non-topic category, or (b) the cluster `definition` matches regex for pure policy-domain description with no rhetorical/moderation cue (seed list in code: `guns`, `immigration`, `abortion`, `climate`, `election` as sole subject without tone/argument framing). Log each drop in `dropped_features.json`:
+**Topic-only drop rule:** Drop a feature when (a) all member features have `category == "topic_subject"` and no member has a non-topic category, or (b) the cluster `definition` matches a regex for pure policy-domain description with no rhetorical or moderation cue. The seed list in code includes `guns`, `immigration`, `abortion`, `climate`, and `election` as sole subject without tone or argument framing. Log each drop in `dropped_features.json`:
 
 ```json
 {
@@ -228,8 +228,8 @@ Wrote outputs/shared/codebook/approved_2026-09-24T12-40-00/approval.json
 **Gate B (required before Step 6):**
 
 1. Present `outputs/shared/codebook/draft_<run_timestamp>/codebook.json` and `dropped_features.json` for review.
-2. For any proposed merge: show side-by-side positive/negative example texts for both features; human confirms; add row to `data/feature_synonyms.csv`; rebuild draft.
-3. User runs `build_codebook --approve <draft_path>` which writes `approved_<run_timestamp>/approval.json`.
+2. For any proposed merge, show side-by-side positive and negative example texts for both features. After a human confirms the merge, add a row to `data/feature_synonyms.csv` and rebuild the draft.
+3. The user runs `build_codebook --approve <draft_path>`, which writes `approved_<run_timestamp>/approval.json`.
 4. `label_posts` (Step 6) MUST error if no `outputs/shared/codebook/approved_*/approval.json` exists.
 
 ## Commit message template
@@ -241,4 +241,4 @@ Wrote outputs/shared/codebook/approved_2026-09-24T12-40-00/approval.json
 - Approved codebook path: `outputs/shared/codebook/approved_<run_timestamp>/codebook.json`
 - Approval marker: `outputs/shared/codebook/approved_<run_timestamp>/approval.json`
 - `data/feature_synonyms.csv` committed (header plus any merge rows)
-- Step 6 reads approved codebook only; uses `llm_client` for all labeling calls
+- Step 6 reads the approved codebook only and routes all labeling calls through `llm_client`.

@@ -1,14 +1,14 @@
 # Step 3: LLM batch feature generation (discovery half only)
 
-Run mixed-contrast and single-class LLM feature discovery on the discovery split only, separately for each text arm (`original_only`, `mirror_only`, `paired`). Copy and adapt reference code from `experiments/create_llm_features_2026_08_05/src/` and `experiments/llm_based_feature_generation_2026_07_31/` into the new experiment `src/`. Use a custom `llm_client.py` that calls LiteLLM directly (not `research_tools.llm.runner`).
+Run mixed-contrast and single-class LLM feature discovery on the discovery split only. Run it separately for each text arm (`original_only`, `mirror_only`, `paired`). Copy reference code from `experiments/create_llm_features_2026_08_05/src/` and `experiments/llm_based_feature_generation_2026_07_31/`, and adapt it into the new experiment `src/`. Write a custom `llm_client.py` that calls LiteLLM directly. Do not use `research_tools.llm.runner`.
 
 ## Scope
 
 - **Caller / entrypoint:** `generate_features` CLI (`if __name__ == "__main__"`).
 - **In scope:**
   - `batching.py`: form mixed batches (10 keep + 10 remove) and single-class batches (10 posts per batch, 500 keep + 500 remove sampled per arm) from discovery-split cohort rows.
-  - `prompts.py`: **all** LLM prompt templates for this experiment: discovery (feature generation per arm and batch design), cluster labeling (`build_cluster_label_messages`), and post labeling (codebook as fixed prefix via a prompt builder that takes the codebook as a fixed prefix).
-  - `schemas.py`: **all** LLM response schemas: discovery (`ExtractedFeature`, `BatchFeatureGeneration`, `SingleClassBatchFeatureGeneration`), cluster labeling (`ClusterLabelResult`), and post labeling (per-text present/absent schema).
+  - `prompts.py`: **all** LLM prompt templates for this experiment, including discovery prompts per arm and batch design, cluster labeling (`build_cluster_label_messages`), and post labeling through a prompt builder that prepends the codebook as a fixed prefix.
+  - `schemas.py`: **all** LLM response schemas for this experiment, including discovery models (`ExtractedFeature`, `BatchFeatureGeneration`, `SingleClassBatchFeatureGeneration`), cluster labeling (`ClusterLabelResult`), and post labeling (per-text present/absent schema).
   - `llm_client.py`: LiteLLM structured completion, per-call JSON artifacts, `metadata.json`, spend logging, spend cap enforcement.
   - `generate_features.py`: smoke (Phase 0 LiteLLM probe + 1 mixed batch per arm), production mixed (all discovery posts), production single-class ablation.
   - `smoke_tests/run_smoke_discovery.py`: packaged smoke runner.
@@ -17,9 +17,11 @@ Run mixed-contrast and single-class LLM feature discovery on the discovery split
   - Embeddings, clustering, codebook, labeling, analysis (Steps 4-7).
   - Held-out test split posts (never send to the LLM in this step).
   - Editing `shared/`, other `experiments/*`, or Step 1/2 modules except reading them.
-  - Human approval file creation (user writes `outputs/shared/approval_step3_production.json` after reviewing smoke).
+  - Human approval file creation (the user writes `outputs/shared/approval_step3_production.json` after reviewing smoke).
 
 ## Files to inspect (read-only)
+
+Read the reference implementations below before writing new modules. They define batch shapes, prompt patterns, and artifact fields this step must match.
 
 - `experiments/create_llm_features_2026_08_05/src/llm_generate_features.py` - single-class batch CLI, `form_single_class_batches`, writer row shape.
 - `experiments/create_llm_features_2026_08_05/src/prompts.py` - category checklist, single-class system prompts.
@@ -60,6 +62,8 @@ Run mixed-contrast and single-class LLM feature discovery on the discovery split
 
 ## Dependency check (run before Phase 2)
 
+Add LiteLLM before any implementation work. Confirm the lockfile pin, install the package, and verify the import.
+
 ```bash
 # Verify pinned version in uv.lock
 rg -n -A2 '^name = "litellm"' /workspace/uv.lock
@@ -70,17 +74,19 @@ uv add 'litellm==1.84.0'
 PYTHONPATH=. uv run python -c "import litellm; print('litellm_ok')"
 ```
 
-Step 3 **must** run `uv add 'litellm==1.84.0'` and update `pyproject.toml` and `uv.lock` (not conditional on import success).
+Step 3 **must** run `uv add 'litellm==1.84.0'` and update `pyproject.toml` and `uv.lock`. Do this even if a local import check already succeeds.
 
 ## Contract overrides (orchestrator)
 
+The orchestrator contract differs from the older `research_tools` runner in three ways:
+
 1. **Timestamp format:** use `%Y-%m-%dT%H-%M-%S` local time for every output folder and per-call JSON filename (not `research_tools` runner `%Y_%m_%d-%H:%M:%S`).
 2. **`llm_client.py`:** call `litellm.completion` directly with `model="openai/gpt-6-luna"` and `reasoning_effort="none"` on every call. Do not import `research_tools.llm.runner`.
-3. **Per-call artifacts:** `llm_client` writes its own JSON files (request, response, usage including `reasoning_tokens`) plus run-level `metadata.json`. Do not use `research_tools` runner output layout beyond matching row field names in Section 6.3.
+3. **Per-call artifacts:** `llm_client` writes its own JSON files (request, response, usage including `reasoning_tokens`) plus run-level `metadata.json`. Match row field names from Section 6.3, but do not copy the `research_tools` runner output layout.
 
 ## Implementation phases (TDD - mandatory order)
 
-Complete phases in order; one git commit per phase (or per unit of work in Phase 5). Do not skip.
+Complete phases in order. Make one git commit per phase, or one commit per unit of work in Phase 5. Do not skip a phase.
 
 | Phase | Goal | Gate |
 |-------|------|------|
@@ -149,7 +155,7 @@ def form_single_class_batches(
 ) -> list[dict[str, Any]]: ...
 ```
 
-Each batch dict must include: `batch_id`, `arm`, `batch_design`, `message_ids` (list of `post_id` strings), and post lists keyed for prompts (`keep_posts` / `remove_posts` for mixed; `posts` + `label_class` for single_class). Post dicts use `post_id` as `message_id` in prompt payloads to match Part 2 JSON field names.
+Each batch dict must include `batch_id`, `arm`, `batch_design`, `message_ids` (list of `post_id` strings), and post lists keyed for prompts (`keep_posts` / `remove_posts` for mixed; `posts` + `label_class` for single_class). Post dicts use `post_id` as `message_id` in prompt payloads so they match Part 2 JSON field names.
 
 **`llm_client.py`**
 
@@ -272,13 +278,13 @@ APPROVAL_PATH = EXPERIMENT_ROOT / "outputs/shared/approval_step3_production.json
 ### Must pass
 
 - Discovery-only: no `post_id` from `data/post_split/test_post_ids.csv` appears in any discovery output `message_ids`.
-- Mixed production: about 287 batches per arm (assert `280 <= n_batches <= 295` after Step 1 cohort is built).
+- Mixed production: about 287 batches per arm (assert `280 <= n_batches <= 295` after the Step 1 cohort is built).
 - Single-class ablation: exactly 100 batches per arm (50 keep + 50 remove).
 - Every LLM call uses `model="openai/gpt-6-luna"` and `reasoning_effort="none"`.
-- `metadata.json` in each run has `run_metadata.reasoning_effort == "none"`.
-- Smoke Phase 0 (live network, manual): LiteLLM accepts `openai/gpt-6-luna` with `reasoning_effort="none"`; usage shows `reasoning_tokens` is 0 or absent.
-- Smoke Phase 1: 1 mixed batch per arm completes; artifacts under `outputs/<arm>/discovery/outputs/<run_timestamp>/`.
-- `outputs/shared/cost_log.jsonl` exists after first LLM call with valid JSON lines per Section 6.10.
+- Each run's `metadata.json` has `run_metadata.reasoning_effort == "none"`.
+- Smoke Phase 0 (live network, manual): LiteLLM accepts `openai/gpt-6-luna` with `reasoning_effort="none"`, and usage shows `reasoning_tokens` is 0 or absent.
+- Smoke Phase 1: 1 mixed batch per arm completes, with artifacts under `outputs/<arm>/discovery/outputs/<run_timestamp>/`.
+- `outputs/shared/cost_log.jsonl` exists after the first LLM call with valid JSON lines per Section 6.10.
 - `PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_batching.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_prompts.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_schemas.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_llm_client.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_generate_features.py -q` - exit 0.
 
 ### Must fail (until implemented)
@@ -339,7 +345,7 @@ for ARM in original_only mirror_only paired; do
 done
 ```
 
-Add `llm_client.py` CLI stub for `--probe` in Phase 5: send a minimal structured completion, print `model`, `reasoning_effort`, and `reasoning_tokens`, exit 0.
+Add `llm_client.py` CLI stub for `--probe` in Phase 5. The stub sends a minimal structured completion, prints `model`, `reasoning_effort`, and `reasoning_tokens`, and exits 0.
 
 ### Expected output (representative lines)
 
@@ -384,7 +390,7 @@ Per-call file (from `llm_client`):
 | `response` | object with `raw` str and `parsed` object |
 | `usage` | object: `input_tokens`, `output_tokens`, `reasoning_tokens`, optional `cached_input_tokens` |
 
-Discovery result row (from `generate_features` writer): writer fields merged into the per-call file under top-level key `discovery_row` (required):
+Discovery result row (from `generate_features` writer): the writer merges its fields into the per-call file under top-level key `discovery_row` (required):
 
 | Field | Type |
 |-------|------|
@@ -418,8 +424,8 @@ Discovery result row (from `generate_features` writer): writer fields merged int
 ### Gate A - after smoke, before production
 
 1. Run smoke commands (Phase 0 probe + 1 mixed batch per arm).
-2. Verify in smoke `metadata.json`: `model` is `gpt-6-luna` or `openai/gpt-6-luna`, `reasoning_effort` is `none`, `reasoning_tokens` is 0 in usage.
-3. User approves in chat and commits (or places):
+2. Check smoke `metadata.json`. Confirm `model` is `gpt-6-luna` or `openai/gpt-6-luna`, `reasoning_effort` is `none`, and usage shows `reasoning_tokens` is 0.
+3. The user approves in chat and writes (or commits):
 
    `outputs/shared/approval_step3_production.json`
 
@@ -427,7 +433,7 @@ Discovery result row (from `generate_features` writer): writer fields merged int
    { "approved": true, "approved_at": "<ISO8601>", "note": "smoke reviewed" }
    ```
 
-4. `generate_features --production` must error if this file is missing.
+4. `generate_features --production` must exit with an error if this file is missing.
 
 ## Commit message template
 
@@ -437,17 +443,17 @@ Examples: `step3: scaffold batching and schemas`, `step3: add LiteLLM client wit
 
 ## Handoff to Step 4
 
+Step 3 stops at discovery JSON and the shared cost log. Step 4 should not start production embedding until mixed-design runs finish for all three arms.
+
 **Deliverables:**
 
-- Mixed discovery outputs per arm under `outputs/<arm>/discovery/outputs/<run_timestamp>/` (primary input for normalize).
-- Optional ablation under same tree with `batch_design=single_class` in metadata.
+- Mixed discovery outputs per arm under `outputs/<arm>/discovery/outputs/<run_timestamp>/`. Step 4 uses these as the main input for normalize.
+- Optional ablation under the same tree with `batch_design=single_class` in metadata.
 - `outputs/shared/cost_log.jsonl` with cumulative spend below $25.00.
 
 **Step 4 reads:**
 
-- Latest mixed-design discovery run per arm (or explicit `--discovery-run-dir`).
-- `metadata.json` from each run to confirm `batch_design=mixed` for primary normalize path.
+- The latest mixed-design discovery run per arm, or an explicit `--discovery-run-dir`.
+- `metadata.json` from each run to confirm `batch_design=mixed` for the main normalize path.
 
-**Do not start Step 4 production embedding until Step 3 mixed production runs are complete for all three arms.**
-
-Steps 4 through 7 import `prompts.py` and `schemas.py` from Step 3; they must not edit those files.
+Steps 4 through 7 import `prompts.py` and `schemas.py` from Step 3. They must not edit those files.

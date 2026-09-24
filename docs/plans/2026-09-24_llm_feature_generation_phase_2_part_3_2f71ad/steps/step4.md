@@ -1,27 +1,31 @@
 # Step 4: Normalize features (embed, cluster, name)
 
-Embed all discovered feature texts with Amazon Titan, cluster embeddings with HDBSCAN (primary) and K-Means (comparison), name HDBSCAN clusters with `gpt-6-luna` via `llm_client.py`, and report cluster stability across three random seeds and across text arms. All outputs live under `outputs/<arm>/normalize/`.
+Embed all discovered feature texts with Amazon Titan. Cluster the embeddings with HDBSCAN as the main method and K-Means as a comparison. Name HDBSCAN clusters with `gpt-6-luna` through `llm_client.py`. Report cluster stability across three random seeds and across text arms. Write all outputs under `outputs/<arm>/normalize/`.
 
 ## Scope
+
+Step 4 turns Step 3 mixed-discovery JSON into embeddings, cluster assignments, and LLM cluster names. It depends on Step 3 `llm_client.py`, `prompts.py`, and `schemas.py` without editing the last two.
 
 - **Callers / entrypoints:** `generate_embeddings`, `cluster_embeddings`, and `label_clusters` CLIs (`if __name__ == "__main__"` each).
 - **In scope:**
   - `generate_embeddings.py`: flatten Step 3 mixed-discovery JSON into `features.jsonl`, embed `text_embedded` with `shared.embeddings.bedrock.create_embedding` (256-d, L2 normalized).
-  - `cluster_embeddings.py`: HDBSCAN (primary) + K-Means k-sweep (k=2..10) per arm; run seeds 42, 43, 44; write stability metrics (adjusted Rand index within arm across seed pairs).
-  - `label_clusters.py`: for each HDBSCAN cluster (skip noise id `-1`), sample member features, call `llm_client.complete_structured` with `ClusterLabelResult` from Step 3 `schemas.py` and `build_cluster_label_messages` from Step 3 `prompts.py`.
-  - Cross-arm stability summary comparing per-arm seed stability and cluster counts.
+  - `cluster_embeddings.py`: HDBSCAN (main) plus K-Means k-sweep (k=2..10) per arm; run seeds 42, 43, 44; write stability metrics (adjusted Rand index within arm across seed pairs).
+  - `label_clusters.py`: for each HDBSCAN cluster (skip noise id `-1`), sample member features and call `llm_client.complete_structured` with `ClusterLabelResult` from Step 3 `schemas.py` and `build_cluster_label_messages` from Step 3 `prompts.py`.
+  - Cross-arm stability summary that rolls up per-arm seed stability and HDBSCAN cluster counts into `stability_across_arms.json`.
   - Unit tests: mock Bedrock embeddings and mock `llm_client` (no network in pytest).
 - **Out of scope:**
   - Shared codebook merge (Step 5).
   - Post labeling (Step 6).
   - Editing Step 3 modules except reading `llm_client.py`.
-  - Single-class ablation discovery runs (optional secondary input; primary path uses mixed discovery).
+  - Single-class ablation discovery runs (optional secondary input; the main path uses mixed discovery).
 
 ## Files to inspect (read-only)
 
+Read these modules before implementing the three CLIs. Step 4 reuses Step 3 LLM contracts and shared Bedrock embeddings.
+
 - `experiments/create_llm_features_2026_08_05/src/generate_embeddings.py` - feature flattening, `build_feature_embed_text`, Titan calls, `embeddings.npy` layout.
 - `experiments/create_llm_features_2026_08_05/src/cluster_embeddings.py` - HDBSCAN params, K-Means sweep, assignment JSON files, PCA PNG optional.
-- `experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py`: cluster sampling and runner row shape (copy ideas only).
+- `experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py`: cluster sampling and runner row shape (copy ideas only; do not import across experiments).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/prompts.py`: `build_cluster_label_messages` (Step 3 owner; import only).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/schemas.py`: `ClusterLabelResult` (Step 3 owner; import only).
 - `shared/embeddings/bedrock.py` - `create_embedding`, `BEDROCK_MODEL_ID`, `EMBEDDING_DIMENSIONS`.
@@ -45,15 +49,17 @@ Embed all discovered feature texts with Amazon Titan, cluster embeddings with HD
 - `shared/` (read-only; call `create_embedding` only).
 - Other `experiments/*` (no cross-experiment imports).
 - `docs/plans/2026-09-24_llm_feature_generation_phase_2_part_3_2f71ad/plan.md` and sibling step files.
-- Step 3 modules (read-only): `batching.py`, `prompts.py`, `schemas.py`, `generate_features.py`, `llm_client.py`. **Do not edit `prompts.py` or `schemas.py`.** At import time, fail fast with a clear error if `ClusterLabelResult` or `build_cluster_label_messages` is missing from Step 3 modules.
+- Step 3 modules (read-only): `batching.py`, `prompts.py`, `schemas.py`, `generate_features.py`, `llm_client.py`. **Do not edit `prompts.py` or `schemas.py`.** At import time, raise a clear error if `ClusterLabelResult` or `build_cluster_label_messages` is missing from Step 3 modules.
 - Step 1/2 modules (read-only).
 - `lib/` (read-only).
 
 ## Contract overrides (orchestrator wins)
 
+These three overrides take precedence over contract Sections 6.4 to 6.5:
+
 1. **Timestamp format:** `%Y-%m-%dT%H-%M-%S` local time for all normalize output folders (embed, cluster per seed, labels).
 2. **Cluster label outputs:** store under `outputs/<arm>/normalize/<embed_timestamp>/clusters_seed_<seed>/labels/<label_timestamp>/` (not `outputs/<arm>/operationalize/` from contract Section 6.6).
-3. **LLM cluster naming:** use Step 3 `llm_client.complete_structured` with `model="openai/gpt-6-luna"` and `reasoning_effort="none"` (not `research_tools` runner).
+3. **LLM cluster naming:** use Step 3 `llm_client.complete_structured` with `model="openai/gpt-6-luna"` and `reasoning_effort="none"`. Do not use the `research_tools` runner.
 
 ## Implementation phases (TDD - mandatory order)
 
@@ -93,7 +99,7 @@ outputs/<arm>/normalize/
   stability_across_arms.json            # written once after all arms complete
 ```
 
-Primary input: latest **mixed** discovery run at `outputs/<arm>/discovery/outputs/<discovery_timestamp>/` unless `--discovery-run-dir` is set.
+Primary input: the latest **mixed** discovery run at `outputs/<arm>/discovery/outputs/<discovery_timestamp>/`, unless the caller sets `--discovery-run-dir`.
 
 ### Phase 3 - Contract signatures
 
@@ -287,10 +293,10 @@ Cluster label row (per cluster JSON, top-level key `cluster_label_row` only):
 - Embeddings: `embeddings.npy` shape `(n_features, 256)`; `metadata.json` has `bedrock_model_id=amazon.titan-embed-text-v2:0`, `dimensions=256`, `normalize=true`.
 - HDBSCAN assignments written to `assignments_hdbscan.json`; K-Means to `assignments_kmeans.json`.
 - Three seeds (42, 43, 44) per arm produce three `clusters_seed_<seed>/` directories.
-- `stability_within_arm.json` exists per arm with pairwise ARI for all three seed pairs.
-- `stability_across_arms.json` exists after all arms processed.
+- Each arm has `stability_within_arm.json` with pairwise ARI for all three seed pairs.
+- `stability_across_arms.json` exists after all arms are processed.
 - Cluster labeling skips noise (`cluster_id == -1`).
-- Every cluster label LLM call uses `reasoning_effort="none"` via `llm_client`.
+- Every cluster label LLM call uses `reasoning_effort="none"` through `llm_client`.
 - `PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_generate_embeddings.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_cluster_embeddings.py experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_label_clusters.py -q` - exit 0.
 
 ### Must fail (until implemented)
@@ -301,7 +307,7 @@ Cluster label row (per cluster JSON, top-level key `cluster_label_row` only):
 
 ## Commands (exact)
 
-Export AWS before Bedrock calls:
+Export AWS credentials before Bedrock embedding calls:
 
 ```bash
 cd /workspace
@@ -346,7 +352,7 @@ PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_202
   experiments/llm_feature_generation_phase_2_part_3_2026_09_24/tests/test_label_clusters.py -q
 ```
 
-Implement `--write-cross-arm-stability` as a `cluster_embeddings.py` subcommand or flag that reads each arm's `stability_within_arm.json` and writes `outputs/shared/normalize/stability_across_arms.json`.
+Implement `--write-cross-arm-stability` as a `cluster_embeddings.py` subcommand or flag. It reads each arm's `stability_within_arm.json` and writes `outputs/shared/normalize/stability_across_arms.json`.
 
 ### Expected output (representative lines)
 
@@ -403,7 +409,7 @@ Wrote outputs/original_only/normalize/2026-09-24T15-20-01/clusters_seed_42/label
 
 ### Cluster labels (`.../clusters_seed_<seed>/labels/<label_timestamp>/`)
 
-Per-cluster JSON via `llm_client` plus row fields listed in Phase 3. `metadata.json` includes `model`, `reasoning_effort`, `arm`, `seed`, `stage=cluster_label`.
+Per-cluster JSON from `llm_client` plus row fields listed in Phase 3. `metadata.json` includes `model`, `reasoning_effort`, `arm`, `seed`, `stage=cluster_label`.
 
 ### Shared stability (`outputs/shared/normalize/stability_across_arms.json`)
 
@@ -411,7 +417,7 @@ Schema in Phase 3 cross-arm section.
 
 ## Human gates
 
-None for Step 4. Step 3 Gate A must be satisfied before Step 3 production discovery that feeds this step.
+None for Step 4. Step 3 Gate A must pass before Step 3 production discovery runs that feed this step.
 
 ## Commit message template
 
@@ -421,9 +427,11 @@ Examples: `step4: flatten discovery features and Titan embeddings`, `step4: HDBS
 
 ## Handoff to Step 5
 
+Step 4 delivers per-arm normalize trees and shared stability summaries. Step 5 should default to seed `42` HDBSCAN labels unless a later step documents a multi-seed merge.
+
 **Deliverables:**
 
-- Per arm: `outputs/<arm>/normalize/<embed_timestamp>/` with embeddings, three `clusters_seed_*` dirs, labeled clusters under each seed's `labels/` folder.
+- Per arm: `outputs/<arm>/normalize/<embed_timestamp>/` with embeddings, three `clusters_seed_*` dirs, and labeled clusters under each seed's `labels/` folder.
 - `outputs/<arm>/normalize/<embed_timestamp>/stability_within_arm.json`.
 - `outputs/shared/normalize/stability_across_arms.json`.
 
@@ -432,6 +440,6 @@ Examples: `step4: flatten discovery features and Titan embeddings`, `step4: HDBS
 - `outputs/<arm>/normalize/<embed_timestamp>/features.jsonl`
 - `outputs/<arm>/normalize/<embed_timestamp>/clusters_seed_<seed>/assignments_hdbscan.json` (default seed `42`)
 - Cluster labels at `outputs/<arm>/normalize/<embed_timestamp>/clusters_seed_<seed>/labels/<label_timestamp>/`
-- Primary path: mixed-discovery + normalize outputs for all three arms.
+- Default inputs: mixed-discovery plus normalize outputs for all three arms.
 
-**Convention for Step 5:** use seed `42` cluster labels as the default primary input; document in Step 5 if multi-seed merge is required.
+Document in Step 5 if a multi-seed merge is required instead of seed `42` labels alone.

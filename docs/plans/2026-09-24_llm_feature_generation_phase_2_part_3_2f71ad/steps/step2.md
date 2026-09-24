@@ -1,12 +1,12 @@
 # Step 2: Naive baselines per text arm on discovery posts
 
-On discovery-split posts only, compute document-frequency unigrams and bigrams separately for keep versus remove (not TF-IDF), embed posts with Titan, and run K-Means with k=2 through 10 for each of three random seeds (42, 43, 44). Run once per text arm (`original_only`, `mirror_only`, `paired`) and upload outputs to S3.
+Step 2 runs on discovery-split posts only. Compute document-frequency unigrams and bigrams separately for keep versus remove (not TF-IDF), embed posts with Titan, and run K-Means with k=2 through 10 for each of three random seeds (42, 43, 44). Run once per text arm (`original_only`, `mirror_only`, `paired`), and upload outputs to S3.
 
 ## Scope
 
 - **Caller / entrypoint:** `experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.baselines` CLI (`if __name__ == "__main__"`).
 - **In scope:** `baselines.py`, `tests/test_baselines.py`, baseline outputs under `outputs/<arm>/baselines/<run_timestamp>/`, S3 upload via existing `s3_sync.py`.
-- **Out of scope:** LLM feature generation, embedding of generated features (Step 4), edits to `cohort.py`, `split.py`, `s3_sync.py`, or any Step 3 plus modules.
+- **Out of scope:** LLM feature generation, embedding generated features (Step 4), edits to `cohort.py`, `split.py`, `s3_sync.py`, or any Step 3 plus modules.
 
 ## Files to inspect (read-only)
 
@@ -71,8 +71,8 @@ Use pytest fixtures with small synthetic cohorts for unit tests; mark optional f
 
 ### Must pass
 
-- For each arm in `TEXT_ARMS`, CLI with `--split discovery` writes a timestamped output directory under `outputs/<arm>/baselines/<run_timestamp>/`.
-- Document-frequency outputs list unigrams and bigrams separately for keep-labeled versus remove-labeled discovery posts (by `modal_decision`).
+- For each arm in `TEXT_ARMS`, the CLI with `--split discovery` writes a timestamped output directory under `outputs/<arm>/baselines/<run_timestamp>/`.
+- Document-frequency outputs list unigrams and bigrams separately for keep-labeled versus remove-labeled discovery posts, filtered by `modal_decision`.
 - Post embeddings use `shared.embeddings.bedrock.create_embedding` with `EMBEDDING_MODEL_ID`, `EMBEDDING_DIM=256`, `EMBEDDING_NORMALIZE=True` from constants.
 - K-Means runs for k=2..10 (nine k values) for each seed in `CLUSTER_SEEDS` (42, 43, 44).
 - `s3_sync.py --paths outputs/original_only/baselines outputs/mirror_only/baselines outputs/paired/baselines` uploads baseline trees.
@@ -181,7 +181,7 @@ Embed the arm-specific text surface:
 
 ### K-Means baseline (`kmeans/seed_<seed>/`)
 
-Run on `post_embeddings.npy` (no additional scaling required because vectors are L2-normalized; optionally StandardScaler for parity with feature clustering reference).
+Run K-Means on `post_embeddings.npy`. No additional scaling is required because the vectors are L2-normalized. You may add StandardScaler for parity with the feature clustering reference.
 
 **`k_selection.json`**
 
@@ -212,7 +212,7 @@ Nine rows for k=2..10. `selected_k` is the k with maximum silhouette (tie-break 
 
 Cluster ids are integers `0 .. selected_k-1`.
 
-Repeat for each seed in `CLUSTER_SEEDS` (`42`, `43`, `44`). CLI flag `--seed` sets the random state for silhouette subsampling and any shuffling; still write all three seed subfolders each run.
+Repeat for each seed in `CLUSTER_SEEDS` (`42`, `43`, `44`). The CLI flag `--seed` sets the random state for silhouette subsampling and any shuffling. Still write all three seed subfolders on each run.
 
 ### `metadata.json`
 
@@ -255,7 +255,7 @@ PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_
 | `--cohort-run-dir` | no | Default: latest `outputs/<arm>/cohort/<ts>/` via `latest_timestamp_subdir` |
 | `--max-posts` | no | Test hook only; omit in production runs |
 
-Load discovery posts by intersecting cohort parquet rows with IDs from `data/post_split/discovery_post_ids.csv`. Skip posts with null `modal_decision` for doc-frequency class counts but still embed all discovery IDs unless `--max-posts` set.
+Load discovery posts by intersecting cohort parquet rows with IDs from `data/post_split/discovery_post_ids.csv`. Skip posts with null `modal_decision` for doc-frequency class counts, but still embed all discovery IDs unless you set `--max-posts`.
 
 ## Human gates (if any)
 
@@ -274,9 +274,9 @@ Suggested commits:
 
 ## Handoff to Step 3
 
-Step 3 (LLM discovery) depends on:
+Step 3 (LLM discovery) depends on the following:
 
-- Committed discovery post IDs (9,449) and cohort with `split`, `modal_decision`, text columns.
+- Committed discovery post IDs (9,449) and cohort with `split`, `modal_decision`, and text columns.
 - Baseline outputs on S3 for comparison in later analysis (optional read; not blocking).
-- Do not reuse baseline embeddings for LLM batches; batching reads cohort directly.
-- `llm_client.py` (Step 3) will call LiteLLM directly per orchestrator override; Step 2 does not touch LLM code.
+- Do not reuse baseline embeddings for LLM batches. Batching reads cohort directly.
+- `llm_client.py` (Step 3) will call LiteLLM directly per orchestrator override. Step 2 does not touch LLM code.

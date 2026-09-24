@@ -1,12 +1,12 @@
 # Step 6: Label all posts and run self-consistency check
 
-Use the approved shared codebook to label all 18,899 posts: original text and mirrored text separately (37,798 LLM calls). Each call assigns present or absent for every codebook feature. The codebook is a fixed, cacheable prompt prefix (built via Step 3 `prompts.py`). Labeling is resumable (skip `post_id` + `text_surface` pairs already written). Write all label shards to `outputs/shared/label/<run_timestamp>/labels.jsonl` (keyed by `post_id` and `text_surface`) and assemble `outputs/shared/label_matrix.parquet` (one row per `post_id` x `text_surface`; one column per codebook `feature_id`, e.g. `cb_001`, not `cb_cb_001`). Run a 20-text cost smoke before full labeling; stop if projected total cost exceeds $25. After labeling, re-label 200 random texts (seed 42) and report per-feature agreement; flag features below 90% in `outputs/shared/self_consistency/` without dropping them from the codebook.
+Step 6 labels all 18,899 posts with the approved shared codebook. Each post gets two labels, one for original text and one for mirrored text, so the run makes 37,798 LLM calls. Each call marks every codebook feature present or absent. Step 3 `prompts.py` turns the codebook into a fixed, cacheable prompt prefix. Because labeling is resumable, the runner skips `post_id` + `text_surface` pairs already written. The step writes label shards to `outputs/shared/label/<run_timestamp>/labels.jsonl` (keyed by `post_id` and `text_surface`) and assembles `outputs/shared/label_matrix.parquet` (one row per `post_id` x `text_surface`; one column per codebook `feature_id`, e.g. `cb_001`, not `cb_cb_001`). Before full labeling, run a 20-text cost smoke and stop if the projected total cost exceeds $25. After labeling, re-label 200 random texts at seed 42, report per-feature agreement, and flag features below 90% in `outputs/shared/self_consistency/` without removing them from the codebook.
 
 ## Scope
 
 - **Caller / entrypoint:** `label_posts` CLI and `self_consistency` CLI (`if __name__ == "__main__"`).
-- **In scope:** Approval-gate check; smoke labeling (20 texts); full labeling with resume; cost cap enforcement via `llm_client`; shared label shards under `outputs/shared/label/`; shared wide label matrix; self-consistency relabel and scores JSON; tests with mocked LLM and S3.
-- **Out of scope:** Human validation or kappa (deferred); held-out analysis (Step 7); codebook edits after approval; Part 2 theme mapping (Step 7).
+- **In scope:** Check the approval gate. Run smoke labeling on 20 texts. Run full labeling with resume support. Enforce the cost cap through `llm_client`. Write shared label shards under `outputs/shared/label/`. Assemble the shared wide label matrix. Run self-consistency relabeling and write scores JSON. Write tests with mocked LLM and S3.
+- **Out of scope:** Human validation or kappa (deferred), held-out analysis (Step 7), codebook edits after approval, and Part 2 theme mapping (Step 7).
 
 ## Files to inspect (read-only)
 
@@ -14,7 +14,7 @@ Use the approved shared codebook to label all 18,899 posts: original text and mi
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/llm_client.py`: `complete_structured`, cost log, `SpendCapExceeded` (Step 3 owner; call only).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/schemas.py`: `PostLabelResult` and per-text present/absent schema (Step 3 owner; import only).
 - `experiments/llm_feature_generation_phase_2_part_3_2026_09_24/src/prompts.py`: `build_labeling_prompt(codebook, text, text_surface)` (Step 3 owner; import only).
-- `experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py`: reference batch labeling structure (copy ideas, do not import).
+- `experiments/create_llm_features_2026_08_05/src/generate_labels_for_embeddings.py`: reference batch labeling structure (copy ideas only, do not import).
 - `outputs/shared/codebook/approved_<run_timestamp>/codebook.json`: input codebook (Step 5).
 - `outputs/shared/codebook/approved_<run_timestamp>/approval.json`: required gate file.
 - `outputs/<arm>/cohort/<run_timestamp>/cohort.parquet`: post texts, `split`, `modal_decision`.
@@ -70,7 +70,7 @@ Use the approved shared codebook to label all 18,899 posts: original text and mi
 ### Phase 5: Implementation units (dependency order)
 
 1. `require_approved_codebook(codebook_path)`: glob `outputs/shared/codebook/approved_*/approval.json`.
-2. Import `build_labeling_prompt` from Step 3 `prompts.py`: fixed codebook prefix (name + definition per feature); user block = one post text + `text_surface`.
+2. Import `build_labeling_prompt` from Step 3 `prompts.py`. The codebook prefix is fixed (name and definition per feature), and the user block is one post text plus `text_surface`.
 3. `label_single_post` via `llm_client.complete_structured`: model `openai/gpt-6-luna`, `reasoning_effort="none"`, `stage="label"`.
 4. `iter_posts_to_label`: all 18,899 posts; surfaces `original` and `mirror`; map to cohort text columns.
 5. `write_label_shard` under `outputs/shared/label/<run_timestamp>/labels.jsonl` (one JSON object per line: `post_id`, `text_surface`, `labels` map) and resume index `labeled_ids.json`.
@@ -192,7 +192,7 @@ Wrote outputs/shared/self_consistency/2026-09-24T15-00-00/scores.json
 }
 ```
 
-Also write `relabeled.jsonl` with both passes for audit.
+Also write `relabeled.jsonl` with both labeling passes for audit.
 
 ### Cost log (`outputs/shared/cost_log.jsonl`)
 
@@ -200,9 +200,9 @@ Each line: `timestamp`, `stage` (`label` or `self_consistency`), `arm`, `model`,
 
 ## Human gates (if any)
 
-None in this step. Step 5 Gate B must be satisfied before `label_posts` runs.
+This step has no human gates, but Step 5 Gate B must be satisfied before `label_posts` runs.
 
-**Spend gate (automated):** `llm_client` stops at `$25.00` cumulative; smoke must project under cap before `--production`.
+**Spend gate (automated):** `llm_client` stops at `$25.00` cumulative, and the smoke run must project under the cap before you use `--production`.
 
 ## Commit message template
 
@@ -213,5 +213,5 @@ None in this step. Step 5 Gate B must be satisfied before `label_posts` runs.
 - `outputs/shared/label_matrix.parquet` (37,798 rows; Step 7 reads this file only, not shard JSONL)
 - `outputs/shared/codebook/approved_<run_timestamp>/codebook.json`
 - `outputs/shared/self_consistency/<run_timestamp>/scores.json`
-- Discovery-half rows in matrix: for description and Part 2 overlap description only
-- Test-half rows (`split == test`): sole input for Q1 to Q7 hypothesis tests in Step 7
+- Discovery-half matrix rows: descriptive tables for feature description and Part 2 overlap only
+- Test-half matrix rows (`split == test`): sole input for Q1 to Q7 hypothesis tests in Step 7
