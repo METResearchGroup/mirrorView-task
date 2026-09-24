@@ -7,15 +7,23 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+_SCRIPT_DIR = str(Path(__file__).resolve().parent)
+if sys.path and sys.path[0] == _SCRIPT_DIR:
+    sys.path.pop(0)
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
 import argparse
 import hashlib
 import json
-import sys
 import threading
 from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -37,7 +45,6 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.retries import AUTH_ERROR_TYPES, run_with_retries
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.secrets import get_jev_api_key
-from lib.constants import REPO_ROOT
 
 JEV_MODEL_ID = "jev-1.13.0"
 BATCH_SIZE = 10
@@ -55,7 +62,7 @@ DEADLETTER_FILENAME = "deadletter.jsonl"
 SMOKE_SUMMARY_FILENAME = "smoke_summary.json"
 
 COHORT_PARQUET = (
-    REPO_ROOT
+    _REPO_ROOT
     / "experiments/predict_keep_remove_jev_gepa_2026_09_23/data/cohort_a_splits.parquet"
 )
 VALID_VIEWS = (VIEW_PAIR, VIEW_ORIGINAL, VIEW_MIRROR)
@@ -659,4 +666,4 @@ def main(argv: list[str] | None = None) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main(sys.argv[1:])  # pragma: no cover

@@ -1,33 +1,34 @@
 # Estimates: predict keep or remove with Jev and GEPA
 
-Probe measured 2026-09-24 (seed 20260924, batch 10, model `jev-1.13.0`).
+100-post smoke measured 2026-09-24 (seed 20260924, batch 10, model `jev-1.13.0`).
 
 ## Per-view probe (batch 10)
 
-| View | Input tokens / request | Input tokens / post | Output tokens / request | Output tokens / post | Latency ms / request | Cost / 1k posts |
-|------|------------------------|---------------------|-------------------------|----------------------|----------------------|-----------------|
-| Pair | 4,904 | 490 | 184 | 18 | 186 to 365 | $0.021 |
-| Original | 1,268 | 127 | 184 | 18 | 139 to 190 | $0.0053 |
-| Mirror | 1,244 | 124 | 184 | 18 | 167 to 189 | $0.0052 |
+| View | Input tok / post (smoke) | Latency p50 ms / request | Cost / 1k posts |
+|------|--------------------------|--------------------------|-----------------|
+| pair | 494 | 533 | $0.021 |
+| original | 280 | 467 | $0.012 |
+| mirror | 282 | 490 | $0.012 |
+| pair + addendum | 1,253 | 642 | $0.053 |
 
 Pricing: $0.042 per 1M input tokens, $0 output.
 
-Run 100-post smoke per view in Step 4 before full Stage A. The A4 addendum assumes ~250 extra input tokens per post; measure that in smoke.
+Step 4 smoke: A4 addendum adds ~759 input tokens/post vs pair (not ~250); Stage A A4 row below uses measured 1,253 tok/post.
 
 ## Stage A (Jev baseline, cohort A = 14,941 posts)
 
 | Ablation | View | Requests (batch 10) | Input tokens (M) | Notes |
 |----------|------|---------------------|------------------|-------|
-| A1 | Pair | 1,495 | 7.32 | |
-| A2 | Original | 1,495 | 1.90 | |
-| A3 | Mirror | 1,495 | 1.86 | |
-| A4 | Pair + addendum | 1,495 | ~11.1 | ~250 extra tokens/post assumed |
-| **Total** | | **5,980** | **~22.2** | ~1.1M output |
+| A1 | Pair | 1,496 | 7.39 | smoke 494 tok/post |
+| A2 | Original | 1,496 | 4.19 | smoke 280 tok/post |
+| A3 | Mirror | 1,496 | 4.22 | smoke 282 tok/post |
+| A4 | Pair + addendum | 1,496 | ~18.7 | ~759 extra tokens/post vs pair (smoke) |
+| **Total** | | **5,984** | **~34.5** | ~1.1M output |
 
 | Stage A summary | Value |
 |-----------------|-------|
-| Total input + output tokens | ~23.3M |
-| Jev cost | ~$0.93 |
+| Total input + output tokens | ~35.6M |
+| Jev cost | ~$1.45 |
 | API time at 1,000 req/min | ~6 min |
 | Wall time (finalize + upload) | under 20 min |
 
@@ -88,8 +89,8 @@ Paper reference (arXiv 2507.19457): 2,270 to 6,926 rollouts per task.
 
 | Stage | Jev | Reflection | Wall |
 |-------|-----|------------|------|
-| A | ~$0.93 | $0 | ~20 min |
+| A | ~$1.45 | $0 | ~20 min |
 | B | ~$4.35 | ~$12 to ~$20 | ~2 to 3 h |
 | **Total** | **~$5.3** | **~$12 to ~$20** | **~3 h** |
 
-**Project total: ~$17 to ~$26. Hard ceiling: ~$46** (Stage A ~$0.93 + Stage B cap ~$44.4).
+**Project total: ~$18 to ~$27. Hard ceiling: ~$47** (Stage A ~$1.45 + Stage B cap ~$44.4).
