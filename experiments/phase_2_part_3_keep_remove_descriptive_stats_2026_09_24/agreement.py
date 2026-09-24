@@ -105,7 +105,13 @@ def build_four_cell_shares(cell_counts: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Input frame with ``share`` equal to ``count / count.sum()``.
     """
-    raise NotImplementedError
+    frame = cell_counts.copy()
+    total = int(frame["count"].sum())
+    if total == 0:
+        frame["share"] = 0.0
+    else:
+        frame["share"] = frame["count"] / total
+    return frame
 
 
 def build_vote_funnel(per_post: pd.DataFrame) -> pd.DataFrame:
