@@ -21,6 +21,42 @@ import pandas as pd
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 
+K_MIN: int = 2
+K_MAX: int = 10
+KMEANS_N_INIT: int = 10
+KMEANS_MAX_ITER: int = 300
+SILHOUETTE_SAMPLE_SIZE_CAP: int = 4000
+MIN_TOKEN_LENGTH: int = 2
+PAIRED_TEXT_SEPARATOR: str = "\n\n"
+NOISY_WORDS: frozenset[str] = frozenset(
+    {
+        "thinking",
+        "keeping",
+        "deciding",
+        "response",
+        "post",
+        "content",
+        "comment",
+    }
+)
+DISCOVERY_IDS_FILENAME: str = "discovery_post_ids.csv"
+DOCFREQ_KEEP_UNIGRAMS_FILENAME: str = "docfreq_keep_unigrams.json"
+DOCFREQ_REMOVE_UNIGRAMS_FILENAME: str = "docfreq_remove_unigrams.json"
+DOCFREQ_KEEP_BIGRAMS_FILENAME: str = "docfreq_keep_bigrams.json"
+DOCFREQ_REMOVE_BIGRAMS_FILENAME: str = "docfreq_remove_bigrams.json"
+POST_IDS_FILENAME: str = "post_ids.json"
+POST_EMBEDDINGS_FILENAME: str = "post_embeddings.npy"
+KMEANS_DIRNAME: str = "kmeans"
+K_SELECTION_FILENAME: str = "k_selection.json"
+ASSIGNMENTS_KMEANS_FILENAME: str = "assignments_kmeans.json"
+SELECTION_METHOD: str = "silhouette_max"
+
+ARM_TEXT_COLUMNS: dict[str, str | tuple[str, str]] = {
+    "original_only": "original_text",
+    "mirror_only": "mirror_text",
+    "paired": ("original_text", "mirror_text"),
+}
+
 
 class DocfreqEntry(TypedDict):
     """One document-frequency row for a unigram or bigram."""
@@ -50,6 +86,16 @@ class BaselineRunSummary:
     n_posts: int
     docfreq_terms: int
     run_dir: Path
+
+
+def resolve_cohort_run_dir(arm: str, cohort_run_dir: Path | None) -> Path:
+    """Return the cohort run directory from an explicit path or the latest run."""
+    raise NotImplementedError
+
+
+def load_cohort_frame(cohort_run_dir: Path) -> pd.DataFrame:
+    """Load cohort.parquet from one cohort run directory."""
+    raise NotImplementedError
 
 
 def load_discovery_post_ids(discovery_ids_path: Path) -> set[str]:
@@ -91,12 +137,25 @@ def compute_docfreq(terms_per_doc: list[set[str]]) -> list[DocfreqEntry]:
     raise NotImplementedError
 
 
+def terms_for_post(text: str) -> tuple[set[str], set[str]]:
+    """Return unigram and bigram term sets for one post after preprocessing."""
+    raise NotImplementedError
+
+
 def compute_docfreq_for_class(
     posts: pd.DataFrame,
     arm: str,
     decision: str,
 ) -> tuple[list[DocfreqEntry], list[DocfreqEntry]]:
     """Return unigram and bigram doc-frequency lists for one decision class."""
+    raise NotImplementedError
+
+
+def build_docfreq_outputs(
+    posts: pd.DataFrame,
+    arm: str,
+) -> dict[str, list[DocfreqEntry]]:
+    """Build keep and remove unigram and bigram doc-frequency outputs."""
     raise NotImplementedError
 
 
