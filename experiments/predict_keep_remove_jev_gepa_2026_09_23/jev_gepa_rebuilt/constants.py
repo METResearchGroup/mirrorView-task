@@ -27,3 +27,22 @@ GEPA_RUN_DIRNAME = "gepa_run"
 GEPA_RESULT_FILENAME = "gepa_result.json"
 DEV_SELECTION_FILENAME = "dev_selection.json"
 CANDIDATE_DEV_SCORES_FILENAME = "candidate_dev_scores.jsonl"
+EXPERIMENT_ROOT = Path("experiments/predict_keep_remove_jev_gepa_2026_09_23")
+DEV_AB_SPLIT_RELATIVE = Path("data/dev_ab_split.json")
+TOP_ACCEPTED_CANDIDATES = 10
+MAX_OPTIMIZED_COMPONENT_CHARS = 4000
+TRAIN_QUOTE_MIN_SUBSTRING_LEN = 40
+VAL_DEV_GAP_MAX = 0.15
+DEV_B_CONFIRM_MAX_F1_DROP = 0.02
+ACCEPTANCE_LOG_FILENAME = "acceptance_log.jsonl"
+REFLECTION_USD_PER_MILLION = {
+    "openai/gpt-6-luna": (0.10, 0.50),
+    "openai/gpt-5.6-terra": (2.0, 12.0),
+}
+MAX_REFLECTION_COST_USD = {
+    "openai/gpt-6-luna": 5.0,
+    "openai/gpt-5.6-terra": 40.0,
+}
+HALF_BUDGET_MAX_REFLECTION_COST_USD = 2.50
+REFLECTION_USAGE_JSONL = "reflection_usage.jsonl"
+STOP_REASON_FILENAME = "stop_reason.json"

@@ -11,6 +11,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.consta
     REFLECTION_MINIBATCH_SIZE,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize import (
+    GuardedHardLabelAcceptance,
     OptimizeConfig,
     run_optimize,
 )
@@ -60,6 +61,10 @@ class TestRunOptimizeWiring:
             return _minimal_gepa_result()
 
         wandb_run = MagicMock()
+        reflection_lm = MagicMock()
+        reflection_lm.total_cost = 0.0
+        reflection_lm.total_tokens_in = 0
+        reflection_lm.total_tokens_out = 0
         with patch(
             "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.gepa.optimize",
             side_effect=fake_optimize,
@@ -69,15 +74,38 @@ class TestRunOptimizeWiring:
                 return_value=([], []),
             ):
                 with patch(
-                    "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.init_run",
-                    return_value=wandb_run,
+                    "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.build_or_load_dev_ab_split",
+                    return_value={"dev_a_ids": [], "dev_b_ids": []},
                 ):
                     with patch(
-                        "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.JevGepaRebuiltAdapter",
+                        "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.load_dev_instances",
+                        return_value=[],
                     ):
-                        run_optimize(config, smoke=True)
+                        with patch(
+                            "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.load_train_post_texts",
+                            return_value=[],
+                        ):
+                            with patch(
+                                "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.make_reflection_lm_with_usage_log",
+                                return_value=reflection_lm,
+                            ):
+                                with patch(
+                                    "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.init_run",
+                                    return_value=wandb_run,
+                                ):
+                                    with patch(
+                                        "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.JevGepaRebuiltAdapter",
+                                    ):
+                                        with patch(
+                                            "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.upload_rebuilt",
+                                        ):
+                                            with patch(
+                                                "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.optimize.select_on_dev_ab",
+                                                return_value=(0, 0.5, 0.0, 0.0, []),
+                                            ):
+                                                run_optimize(config, smoke=True)
 
-        assert isinstance(captured["acceptance_criterion"], HardLabelMarginAcceptance)
+        assert isinstance(captured["acceptance_criterion"], GuardedHardLabelAcceptance)
         assert isinstance(captured["val_evaluation_policy"], ValSubsampleOnAcceptPolicy)
         assert isinstance(captured["batch_sampler"], ErrorFocusedBatchSampler)
         assert captured["reflection_minibatch_size"] == REFLECTION_MINIBATCH_SIZE
