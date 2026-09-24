@@ -1,0 +1,9 @@
+Evaluate the single political social media post provided and decide whether it should be removed under the moderation pattern illustrated here.
+
+Answer “yes” if the post should be removed; answer “no” if it should be allowed. Output only “yes” or “no.”
+
+Use the post’s content and tone, not the political viewpoint it supports. In these examples, removal is most associated with highly toxic, insulting, or inflammatory language directed at political leaders, parties, or voters—especially demeaning labels, profanity used as an insult, or rhetoric that portrays political opponents as dangerous or deserving consequences. For example, posts calling MAGA voters “brain dead,” using a vulgar slur for a president, calling opponents “chuckle fucks,” or describing a party as supporting “killers” were labeled for removal. A post saying political supporters would remain loyal even if a leader “could kill their families,” then urging consequences toward those voters, was also labeled for removal.
+
+Do not remove a post merely because it is partisan, sharply critical, controversial, or makes a disputed political or historical claim. Policy opinions, criticism of a president or government actions, discussion of election-fraud claims, and neutral commentary were generally allowed when they lacked targeted abuse or similarly toxic rhetoric. Examples include opposing SNAP subsidies, arguing about election evidence, criticizing agency cuts, criticizing an administration’s land-use priorities, and discussing open-carry history.
+
+When deciding, focus on whether the post crosses from political criticism into abusive or threatening rhetoric. Do not treat the examples as a requirement that every insult or harsh political statement must be removed; judge the overall language and context.
