@@ -76,7 +76,7 @@ Each ablation writes to its own timestamped run under `experiments/bertopic_orig
 
 ## Steps
 
-Exact commands, expected output, and allowed/forbidden files per step go into `steps/` files written after approval.
+Exact commands, expected output, tests, and allowed/forbidden files for each step live in [`steps/`](./steps/) (`step1.md` to `step8.md`). Large arrays and saved models are S3-primary and gitignored; small tables and figures stay in git.
 
 ### Step 1: Build Part 3 keep/remove label table
 
