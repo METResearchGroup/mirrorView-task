@@ -1,4 +1,4 @@
-"""Shared fixtures for Part 3 keep/remove aggregation tests."""
+"""Shared fixtures for Part 2 and Part 3 union keep/remove aggregation tests."""
 
 from __future__ import annotations
 

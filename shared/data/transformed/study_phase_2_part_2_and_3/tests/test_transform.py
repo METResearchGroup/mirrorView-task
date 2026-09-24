@@ -51,7 +51,7 @@ class TestFilterKeepRemoveTrials:
     def test_no_dedupe_keeps_both_non_conflicting_duplicates(
         self, dedupe_duplicate_frame: pd.DataFrame
     ) -> None:
-        """Part 2 path keeps both rows for non-conflicting duplicates."""
+        """Without dedupe, non-conflicting duplicate worker-post rows are kept."""
         result = filter_keep_remove_trials(
             dedupe_duplicate_frame, dedupe_worker_post=False
         )
