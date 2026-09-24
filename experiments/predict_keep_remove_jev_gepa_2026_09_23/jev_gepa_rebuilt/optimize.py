@@ -572,6 +572,7 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
             dev_b_f1=dev_b_f1,
             top10_indices=top10,
             candidate_rows=candidate_rows,
+            smoke=smoke,
         )
         wandb_run.log(
             {
