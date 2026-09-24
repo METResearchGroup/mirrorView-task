@@ -1,0 +1,15 @@
+ablation_id,run_ts,setting_changed,setting_value,n_topics,n_noise,noise_share,ari_vs_production,nmi_vs_production,spearman_q5_keep_rate,q2_pair_agreement,q3_role_dominated_topics,notes
+a0_naive,20260924T055615Z,kmeans_k,5,,,,,,,,,"Highest silhouette among k in {5, 10, 15, 20, 25, 30}. A human can replace k_chosen after reading the sample files."
+a1_umap_seeds,20260924T055615Z,umap_random_state,42,92.0,7386.0,0.3950155096801797,1.0,,,,,pairwise_mean_ari=0.5706559043841508
+a1_umap_seeds,20260924T055615Z,umap_random_state,43,87.0,7232.0,0.3867793346882019,,,,,,pairwise_mean_ari=0.5706559043841508
+a1_umap_seeds,20260924T055615Z,umap_random_state,44,86.0,7301.0,0.3904695689378543,,,,,,pairwise_mean_ari=0.5706559043841508
+a1_umap_seeds,20260924T055615Z,umap_random_state,45,99.0,8012.0,0.4284950262060113,,,,,,pairwise_mean_ari=0.5706559043841508
+a1_umap_seeds,20260924T055615Z,umap_random_state,46,94.0,7539.0,0.4031982030163654,,,,,,pairwise_mean_ari=0.5706559043841508
+a2_min_cluster,20260924T055615Z,min_cluster_size,15,92.0,7386.0,0.3950155096801797,,,,,,
+a2_min_cluster,20260924T055615Z,min_cluster_size,30,42.0,6645.0,0.3553856027382607,,,,,,
+a2_min_cluster,20260924T055615Z,min_cluster_size,50,30.0,7215.0,0.3858701465397369,,,,,,
+a3_minilm,20260924T055615Z,embedding_model,all-MiniLM-L6-v2,128.0,6518.0,0.3485934324526687,,,0.7638518564184764,,,
+a4_design,20260924T055615Z,fit_design,separate,,,,,,,0.2239276928013691,9.0,
+a4_design,20260924T055615Z,fit_design,joint,,,,,,,0.4971654722430206,70.0,
+a4_design,20260924T055615Z,fit_design,original_assign_mirror,,,,,,,0.2284736335436945,44.0,
+a5_outliers,20260924T055615Z,reduce_outliers,embeddings,92.0,0.0,0.0,,,0.9257740856618836,,,noise_off=7386 noise_on=0

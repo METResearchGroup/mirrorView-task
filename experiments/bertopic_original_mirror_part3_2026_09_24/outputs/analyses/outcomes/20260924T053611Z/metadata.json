@@ -1,0 +1,11 @@
+{
+  "source_topics_run": "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/original/20260924T053045Z",
+  "source_joint_topics_run": "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/joint/20260924T053302Z",
+  "min_raters": 3,
+  "n_bootstrap": 2000,
+  "bootstrap_seed": 42,
+  "fdr_alpha": 0.05,
+  "facet_min_posts": 30,
+  "n_posts_analyzed": 15846,
+  "overall_keep_rate": 0.6935290614626093
+}
