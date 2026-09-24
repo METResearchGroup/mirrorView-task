@@ -44,13 +44,40 @@ def post_level_split(
     train_fraction: float,
     seed: int,
 ) -> pd.DataFrame:
-    """Assign each modal post to train or test (stratified by modal label)."""
-    ...
+    """Assign each modal post to train or test (stratified by modal label).
+
+    Parameters
+    ----------
+    modal_df
+        Modal keep/remove label frame.
+    unanimous_post_ids
+        Post ids present in the unanimous-min3 label CSV.
+    train_fraction
+        Fraction of each class assigned to train (integer cut).
+    seed
+        Shuffle seed within each class.
+
+    Returns
+    -------
+    pd.DataFrame
+        Manifest with ``post_id``, ``split``, ``modal_label``, ``in_unanimous``.
+    """
+    raise NotImplementedError
 
 
 def write_split_manifest(manifest_df: pd.DataFrame, output_path: Path, force: bool) -> None:
-    """Write ``split_manifest.csv``."""
-    ...
+    """Write ``split_manifest.csv``.
+
+    Parameters
+    ----------
+    manifest_df
+        Post-level split manifest.
+    output_path
+        Destination CSV path.
+    force
+        Overwrite when True.
+    """
+    raise NotImplementedError
 
 
 def balance_split_posts(
@@ -58,8 +85,23 @@ def balance_split_posts(
     post_ids: set[str],
     seed: int,
 ) -> pd.DataFrame:
-    """Balance rows for posts in ``post_ids`` using all removes plus sampled keeps."""
-    ...
+    """Balance rows for posts in ``post_ids`` using all removes plus sampled keeps.
+
+    Parameters
+    ----------
+    label_df
+        Label frame with ``message_id`` and ``decision``.
+    post_ids
+        Posts to include in this split.
+    seed
+        Sampling seed.
+
+    Returns
+    -------
+    pd.DataFrame
+        Balanced frame with required output columns.
+    """
+    raise NotImplementedError
 
 
 def sample_experiment_three_train(
@@ -67,8 +109,23 @@ def sample_experiment_three_train(
     exp1_train_df: pd.DataFrame,
     seed: int,
 ) -> pd.DataFrame:
-    """Sample modal train rows to match Experiment 1 balanced counts."""
-    ...
+    """Sample modal train rows to match Experiment 1 balanced counts.
+
+    Parameters
+    ----------
+    exp2_train_df
+        Balanced modal train frame.
+    exp1_train_df
+        Balanced unanimous train frame (target counts).
+    seed
+        Sampling seed.
+
+    Returns
+    -------
+    pd.DataFrame
+        Size-matched balanced modal train frame.
+    """
+    raise NotImplementedError
 
 
 def write_split_csv(
@@ -76,13 +133,36 @@ def write_split_csv(
     output_path: Path,
     force: bool,
 ) -> None:
-    """Validate and write one train or test CSV."""
-    ...
+    """Validate and write one train or test CSV.
+
+    Parameters
+    ----------
+    frame
+        Balanced split frame.
+    output_path
+        Destination CSV path.
+    force
+        Overwrite when True.
+    """
+    raise NotImplementedError
 
 
 def build_and_write_splits(force: bool, seed: int) -> SplitCounts:
-    """Load labels, split posts, balance, and write all CSV outputs."""
-    ...
+    """Load labels, split posts, balance, and write all CSV outputs.
+
+    Parameters
+    ----------
+    force
+        Overwrite existing outputs when True.
+    seed
+        Random seed for splitting, balancing, and sampling.
+
+    Returns
+    -------
+    SplitCounts
+        Row counts for each written output.
+    """
+    raise NotImplementedError
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

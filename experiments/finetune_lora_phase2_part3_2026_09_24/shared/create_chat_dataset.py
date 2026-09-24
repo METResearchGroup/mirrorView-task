@@ -15,8 +15,14 @@ DATA_DIR = EXPERIMENT_ROOT / "data"
 
 
 def create_chat_datasets(force: bool) -> None:
-    """Write chat JSONL for all train and shared test CSVs."""
-    ...
+    """Write chat JSONL for all train and shared test CSVs.
+
+    Parameters
+    ----------
+    force
+        Overwrite existing JSONL outputs when True.
+    """
+    raise NotImplementedError
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
