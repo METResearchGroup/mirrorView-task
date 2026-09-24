@@ -8,6 +8,7 @@ Run from the repo root:
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -42,7 +43,7 @@ class UsageLoggingLM(LM):
 
     def __call__(self, prompt: str | list[dict[str, Any]]) -> str:
         cost_before = self.total_cost
-        response = super().__call__(prompt)
+        response = self._call_with_deadline(prompt)
         delta_in = self.total_tokens_in - self._last_tokens_in
         delta_out = self.total_tokens_out - self._last_tokens_out
         self._last_tokens_in = self.total_tokens_in
@@ -74,6 +75,27 @@ class UsageLoggingLM(LM):
             )
         self._call_idx += 1
         return response
+
+    def _call_with_deadline(self, prompt: str | list[dict[str, Any]]) -> str:
+        """Run the LiteLLM call on a daemon thread so a stalled socket cannot block GEPA."""
+        outcome: dict[str, Any] = {}
+
+        def _run() -> None:
+            try:
+                outcome["response"] = LM.__call__(self, prompt)
+            except Exception as exc:  # noqa: BLE001 - re-raised on the caller thread
+                outcome["error"] = exc
+
+        worker = threading.Thread(target=_run, daemon=True)
+        worker.start()
+        worker.join(REFLECTION_TIMEOUT_SECONDS)
+        if worker.is_alive():
+            raise TimeoutError(
+                f"reflection call exceeded {REFLECTION_TIMEOUT_SECONDS}s for {self.model}"
+            )
+        if "error" in outcome:
+            raise outcome["error"]
+        return outcome["response"]
 
 
 def make_reflection_lm_with_usage_log(

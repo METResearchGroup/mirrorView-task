@@ -84,3 +84,32 @@ class TestReflectionLmWrapper:
         )
         assert lm.completion_kwargs["timeout"] == REFLECTION_TIMEOUT_SECONDS
         assert REFLECTION_TIMEOUT_SECONDS == 180
+
+    def test_stalled_reflection_call_raises_after_deadline(self, tmp_path: Path) -> None:
+        """A call that never returns raises TimeoutError instead of blocking."""
+        import experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.reflection_logging as reflection_logging
+
+        lm = make_reflection_lm_with_usage_log(
+            "openai/gpt-6-luna",
+            usage_jsonl_path=tmp_path / "reflection_usage.jsonl",
+            wandb_run=None,
+        )
+
+        def _never_returns(self, prompt):  # noqa: ANN001
+            import time
+
+            time.sleep(5)
+            return "late"
+
+        with (
+            patch.object(reflection_logging, "REFLECTION_TIMEOUT_SECONDS", 0.05),
+            patch(
+                "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.reflection_logging.LM.__call__",
+                _never_returns,
+            ),
+        ):
+            try:
+                lm._call_with_deadline("prompt")
+            except TimeoutError:
+                return
+            raise AssertionError("expected TimeoutError")
