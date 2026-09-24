@@ -62,7 +62,9 @@ def modal_decision(keep_count: int, remove_count: int) -> str:
     str
         ``"keep"`` when ``keep_count > remove_count``; otherwise ``"remove"``.
     """
-    raise NotImplementedError
+    if keep_count > remove_count:
+        return "keep"
+    return "remove"
 
 
 def derive_platform(post_id: str) -> str:
@@ -83,7 +85,13 @@ def derive_platform(post_id: str) -> str:
     ValueError
         When the prefix is not recognized.
     """
-    raise NotImplementedError
+    prefix = str(post_id).split("_", 1)[0]
+    try:
+        return PLATFORM_BY_PREFIX[prefix]
+    except KeyError as exc:
+        raise ValueError(
+            f"Unknown platform prefix {prefix!r} in post_id={post_id!r}"
+        ) from exc
 
 
 def derive_toxicity_label(sample_toxicity_type: str) -> str:
@@ -104,7 +112,13 @@ def derive_toxicity_label(sample_toxicity_type: str) -> str:
     ValueError
         When the sample type is not recognized.
     """
-    raise NotImplementedError
+    key = str(sample_toxicity_type).strip()
+    try:
+        return TOXICITY_BY_SAMPLE_TYPE[key]
+    except KeyError as exc:
+        raise ValueError(
+            f"Unknown sample_toxicity_type {sample_toxicity_type!r}"
+        ) from exc
 
 
 def join_stimuli_for_platform(
