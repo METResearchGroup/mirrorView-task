@@ -90,17 +90,23 @@ class BaselineRunSummary:
 
 def resolve_cohort_run_dir(arm: str, cohort_run_dir: Path | None) -> Path:
     """Return the cohort run directory from an explicit path or the latest run."""
-    raise NotImplementedError
+    if cohort_run_dir is not None:
+        return cohort_run_dir
+    return paths.latest_timestamp_subdir(paths.cohort_dir(arm))
 
 
 def load_cohort_frame(cohort_run_dir: Path) -> pd.DataFrame:
     """Load cohort.parquet from one cohort run directory."""
-    raise NotImplementedError
+    cohort_path = cohort_run_dir / constants.COHORT_FILENAME
+    if not cohort_path.is_file():
+        raise FileNotFoundError(f"Missing cohort parquet: {cohort_path}")
+    return pd.read_parquet(cohort_path)
 
 
 def load_discovery_post_ids(discovery_ids_path: Path) -> set[str]:
     """Load discovery post IDs from the committed CSV."""
-    raise NotImplementedError
+    frame = pd.read_csv(discovery_ids_path)
+    return set(frame["post_id"].astype(str))
 
 
 def load_discovery_posts(
@@ -109,12 +115,19 @@ def load_discovery_posts(
     split: str,
 ) -> pd.DataFrame:
     """Return discovery-split posts intersected with the ID list."""
-    raise NotImplementedError
+    post_ids = cohort["post_id"].astype(str)
+    mask = post_ids.isin(discovery_ids) & cohort["split"].eq(split)
+    return cohort.loc[mask].copy()
 
 
 def extract_arm_text(row: pd.Series, arm: str) -> str:
     """Return the text surface embedded for one text arm."""
-    raise NotImplementedError
+    mapping = ARM_TEXT_COLUMNS[arm]
+    if isinstance(mapping, tuple):
+        original = str(row[mapping[0]])
+        mirror = str(row[mapping[1]])
+        return f"{original}{PAIRED_TEXT_SEPARATOR}{mirror}"
+    return str(row[mapping])
 
 
 def tokenize_text(text: str) -> list[str]:
