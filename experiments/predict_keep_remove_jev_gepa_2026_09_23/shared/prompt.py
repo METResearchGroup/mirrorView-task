@@ -62,7 +62,10 @@ def _ordered_texts(
     original_text: str, mirror_text: str, post_1_role: str
 ) -> tuple[str, str]:
     """Map stored post_1_role to Post 1 and Post 2 text without reshuffling."""
-    raise NotImplementedError
+    role_text = {ROLE_ORIGINAL: original_text, ROLE_MIRROR: mirror_text}
+    post_1_text = role_text[post_1_role]
+    post_2_role = ROLE_MIRROR if post_1_role == ROLE_ORIGINAL else ROLE_ORIGINAL
+    return post_1_text, role_text[post_2_role]
 
 
 def render_pair_prompt(
@@ -76,7 +79,14 @@ def render_pair_prompt(
     Insert KEEP_REMOVE_FEATURES_ADDENDUM after the judgment paragraph and before Post 1
     when add_criteria. Closing line is exactly CLOSING_LINE.
     """
-    raise NotImplementedError
+    post_1_text, post_2_text = _ordered_texts(original_text, mirror_text, post_1_role)
+    addendum = KEEP_REMOVE_FEATURES_ADDENDUM if add_criteria else ""
+    return (
+        f"{STUDY_INSTRUCTION}{addendum}\n\n"
+        f"{POST_1_LABEL} {post_1_text}\n\n"
+        f"{POST_2_LABEL} {post_2_text}\n\n"
+        f"{CLOSING_LINE}"
+    )
 
 
 def render_original_prompt(original_text: str) -> str:
@@ -89,6 +99,13 @@ def render_mirror_prompt(mirror_text: str) -> str:
     raise NotImplementedError
 
 
+_VIEW_RENDERERS = {
+    VIEW_PAIR: lambda original_text, mirror_text, post_1_role, add_criteria: render_pair_prompt(
+        original_text, mirror_text, post_1_role, add_criteria
+    ),
+}
+
+
 def render_state_text(
     view: str,
     original_text: str,
@@ -97,7 +114,11 @@ def render_state_text(
     add_criteria: bool = False,
 ) -> str:
     """Dispatch pair|original|mirror. Raise ValueError on unknown view."""
-    raise NotImplementedError
+    try:
+        renderer = _VIEW_RENDERERS[view]
+    except KeyError:
+        raise ValueError(f"unknown view: {view}") from None
+    return renderer(original_text, mirror_text, post_1_role, add_criteria)
 
 
 def build_noul_instruction(index: int, view: str) -> str:
