@@ -1,0 +1,372 @@
+{
+  "_str_candidate_key": null,
+  "best_idx": 1,
+  "best_outputs_valset": {
+    "0": [
+      [
+        1,
+        {
+          "p_remove": 0.36,
+          "post_id": "reddit_t1_mw6wias"
+        }
+      ]
+    ],
+    "1": [
+      [
+        1,
+        {
+          "p_remove": 0.45,
+          "post_id": "reddit_t1_mysn0hn"
+        }
+      ]
+    ],
+    "10": [
+      [
+        0,
+        {
+          "p_remove": 0.56,
+          "post_id": "reddit_t1_mrhfsag"
+        }
+      ]
+    ],
+    "11": [
+      [
+        1,
+        {
+          "p_remove": 0.15,
+          "post_id": "reddit_t1_mz2szbd"
+        }
+      ]
+    ],
+    "12": [
+      [
+        1,
+        {
+          "p_remove": 0.17,
+          "post_id": "reddit_t1_mq7z5h6"
+        }
+      ]
+    ],
+    "13": [
+      [
+        1,
+        {
+          "p_remove": 0.51,
+          "post_id": "reddit_t1_mro6o66"
+        }
+      ]
+    ],
+    "14": [
+      [
+        0,
+        {
+          "p_remove": 0.35,
+          "post_id": "bluesky_14d8029e10df6416eedf3fd293b61206a16607b5954b4b19078227935d5b5e09"
+        }
+      ]
+    ],
+    "15": [
+      [
+        1,
+        {
+          "p_remove": 0.08,
+          "post_id": "reddit_t1_myqeh4a"
+        }
+      ]
+    ],
+    "16": [
+      [
+        1,
+        {
+          "p_remove": 0.07,
+          "post_id": "reddit_t1_mtvodnx"
+        }
+      ],
+      [
+        2,
+        {
+          "p_remove": 0.07,
+          "post_id": "reddit_t1_mtvodnx"
+        }
+      ]
+    ],
+    "17": [
+      [
+        1,
+        {
+          "p_remove": 0.21,
+          "post_id": "bluesky_5f43781e116783c6349bfce5ef792426074143e2df90ce432bf995c9d9d72a3f"
+        }
+      ]
+    ],
+    "18": [
+      [
+        0,
+        {
+          "p_remove": 0.88,
+          "post_id": "bluesky_6f990d7f67d1d9622d527dfd3094202e3a97f232491a9ee093372b673c3abb3c"
+        }
+      ]
+    ],
+    "19": [
+      [
+        0,
+        {
+          "p_remove": 0.25,
+          "post_id": "reddit_t1_muytchr"
+        }
+      ]
+    ],
+    "2": [
+      [
+        0,
+        {
+          "p_remove": 0.78,
+          "post_id": "bluesky_762530441c44235caf1c7e47dd4e7771a5c9fa86406a49fff6f2cce31a0db59b"
+        }
+      ]
+    ],
+    "3": [
+      [
+        0,
+        {
+          "p_remove": 0.72,
+          "post_id": "reddit_1l3pmp0_mw373ex"
+        }
+      ]
+    ],
+    "4": [
+      [
+        0,
+        {
+          "p_remove": 0.38,
+          "post_id": "twitter_2061591120392683925"
+        }
+      ]
+    ],
+    "5": [
+      [
+        2,
+        {
+          "p_remove": 0.55,
+          "post_id": "bluesky_47729da25b220fe209e80581e8d627c5ec0c8671ecf2ba15df39472265cbea58"
+        }
+      ]
+    ],
+    "6": [
+      [
+        1,
+        {
+          "p_remove": 0.22,
+          "post_id": "bluesky_2b71ae67511d55784cb338ad1068638d9c4f38d12eca660a72f90faaec5cbdf7"
+        }
+      ]
+    ],
+    "7": [
+      [
+        2,
+        {
+          "p_remove": 0.28,
+          "post_id": "reddit_1tpf0kw_ooa4h3o"
+        }
+      ]
+    ],
+    "8": [
+      [
+        1,
+        {
+          "p_remove": 0.88,
+          "post_id": "bluesky_9e1b89ead67f41254caa0e8e05ba528c86c145c70292a82891a12503dfd83db3"
+        }
+      ],
+      [
+        2,
+        {
+          "p_remove": 0.88,
+          "post_id": "bluesky_9e1b89ead67f41254caa0e8e05ba528c86c145c70292a82891a12503dfd83db3"
+        }
+      ]
+    ],
+    "9": [
+      [
+        1,
+        {
+          "p_remove": 0.22,
+          "post_id": "reddit_t1_msw3953"
+        }
+      ]
+    ]
+  },
+  "candidates": [
+    {
+      "instruction": "You are evaluating a pair of political social media posts shown together, including the study instructions and both post texts. Should this pair of posts be removed from the platform? Answer yes if both posts should be removed; answer no if both should be allowed."
+    },
+    {
+      "instruction": "You are evaluating a pair of political social media posts, presented together with any study instructions. The input contains two post texts (often labeled `original_text` and `mirror_text`); they may express opposite political viewpoints or be mirrored versions of the same argument.\n\nDecide whether BOTH posts should be removed from the platform. Assess each post separately, applying the supplied study instructions consistently and without favoring or penalizing a political side.\n\nAnswer \u201cyes\u201d only if both posts independently warrant removal. Answer \u201cno\u201d if either post should be allowed, including when neither should be removed. Return only \u201cyes\u201d or \u201cno.\u201d\n\nIn making the decision, distinguish political opinion, criticism, allegations, and heated but non-abusive rhetoric from content that crosses the study\u2019s removal standard. Political claims or criticism of elected officials, parties, policies, agencies, ideologies, or public figures are not by themselves grounds for removal. Posts criticizing elections, government programs, or political positions can generally remain when they do not cross that standard.\n\nPay particular attention to abusive or highly hostile language directed at political opponents or their supporters. Examples in this task include partisan slurs and demeaning insults (such as \u201cbrain dead\u201d or \u201clib-tards\u201d), vulgar contemptuous insults, claims portraying a party as supporting mass death, and extreme hyperbole about harming families or destroying cities. Such attacks can warrant removal when they are sufficiently toxic or hostile, even if framed as political commentary. Consider the wording and target of each post rather than its political stance.\n\nDo not infer that one post must receive the same decision as the other just because the pair is politically balanced or uses similar arguments. The final answer is about whether both should be removed, not whether either one should be removed."
+    },
+    {
+      "instruction": "You are evaluating a pair of political social-media posts, usually labeled `original_text` and `mirror_text`. They may take opposite political positions while using similar arguments. Apply the same standard to each post, without favoring either political side.\n\nDecide whether BOTH posts independently warrant removal under the study\u2019s standard. Answer \u201cyes\u201d only if both should be removed. Answer \u201cno\u201d if either should be allowed, including when neither should be removed. Return only \u201cyes\u201d or \u201cno,\u201d with no explanation.\n\nAssess the wording, target, and context of each post. Political opinions, policy arguments, criticism of elected officials, parties, agencies, ideologies, and public figures, and allegations of misconduct or bias are not by themselves grounds for removal. Do not remove a post merely because it is partisan, factually disputed, accusatory, or uses profanity. Do not infer that the posts must receive the same decision because they are politically balanced or mirror each other.\n\nCalibration from the study examples:\n- Allow criticism and allegations about political hypocrisy, corruption, business dealings, government agencies, special interests, or political opponents\u2019 motives when expressed as political argument. Broad rhetoric such as saying politicians are selling people out or \u201cdestroying the country\u201d for donors can remain. Criticism of political rhetoric, including quoted references to \u201cfight\u201d or calls to harass officials, can remain when the post is discussing or condemning it rather than endorsing harm.\n- Profanity alone is not decisive. Casual or contextual descriptions such as calling a politician an \u201casshole\u201d while discussing their record may remain. However, direct, contemptuous personal insults aimed at a named politician\u2014especially vulgar attacks on their intelligence or competence, such as saying they could not design a popsicle stick or find their way out of a paper bag\u2014warrant removal in this study\u2019s calibration. Calling a politician an \u201cidiot\u201d in a hostile political statement is also a removal-level signal.\n- Remove highly hostile or demeaning attacks on political opponents or their supporters, including partisan slurs, insults such as \u201cbrain dead\u201d or \u201clib-tards,\u201d vulgar contempt, and claims portraying a party or its supporters as backing mass death.\n- Remove extreme coercive or violent hyperbole aimed at political groups, such as calling to bring back the guillotine, send people to camps, or \u201cfind\u201d a camp or bunker. \u201cDeport them all\u201d in an extreme, hostile formulation is also a removal signal in the study examples. Do not treat every heated metaphor as equivalent: ordinary political claims that opponents are harming or \u201cdestroying\u201d the country are not, by themselves, a threat.\n- The study\u2019s calibration labels a paired exchange containing dismissive mockery of the other person\u2019s judgment (\u201cyour spider sense is calling bullshit\u201d / \u201cthe experts said so, case closed\u201d) alongside inflammatory allegations about Russia, the \u201cdeep state,\u201d the FBI, and the DOJ as removal. Political allegations alone generally do not justify removal, but do not automatically allow an exchange when the framing becomes highly hostile and contemptuous.\n\nApply the removal standard separately to both posts, then return the required pair-level answer."
+    }
+  ],
+  "discovery_eval_counts": [
+    0,
+    24,
+    46
+  ],
+  "num_full_val_evals": 3,
+  "objective_pareto_front": null,
+  "parents": [
+    [
+      null
+    ],
+    [
+      0
+    ],
+    [
+      1
+    ]
+  ],
+  "per_objective_best_candidates": null,
+  "per_val_instance_best_candidates": {
+    "0": [
+      1
+    ],
+    "1": [
+      1
+    ],
+    "10": [
+      0
+    ],
+    "11": [
+      1
+    ],
+    "12": [
+      1
+    ],
+    "13": [
+      1
+    ],
+    "14": [
+      0
+    ],
+    "15": [
+      1
+    ],
+    "16": [
+      1,
+      2
+    ],
+    "17": [
+      1
+    ],
+    "18": [
+      0
+    ],
+    "19": [
+      0
+    ],
+    "2": [
+      0
+    ],
+    "3": [
+      0
+    ],
+    "4": [
+      0
+    ],
+    "5": [
+      2
+    ],
+    "6": [
+      1
+    ],
+    "7": [
+      2
+    ],
+    "8": [
+      1,
+      2
+    ],
+    "9": [
+      1
+    ]
+  },
+  "run_dir": "/workspace/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa/outputs/B1_gepa_pair/gepa_run",
+  "seed": 20260924,
+  "total_metric_calls": 66,
+  "val_aggregate_scores": [
+    0.5589999999999999,
+    0.632,
+    0.6014999999999999
+  ],
+  "val_aggregate_subscores": null,
+  "val_subscores": [
+    {
+      "0": 0.38,
+      "1": 0.38,
+      "10": 0.56,
+      "11": 0.5900000000000001,
+      "12": 0.6599999999999999,
+      "13": 0.29000000000000004,
+      "14": 0.35,
+      "15": 0.78,
+      "16": 0.84,
+      "17": 0.64,
+      "18": 0.88,
+      "19": 0.25,
+      "2": 0.78,
+      "3": 0.72,
+      "4": 0.38,
+      "5": 0.24,
+      "6": 0.5900000000000001,
+      "7": 0.48,
+      "8": 0.87,
+      "9": 0.52
+    },
+    {
+      "0": 0.64,
+      "1": 0.55,
+      "10": 0.55,
+      "11": 0.85,
+      "12": 0.83,
+      "13": 0.49,
+      "14": 0.18,
+      "15": 0.92,
+      "16": 0.9299999999999999,
+      "17": 0.79,
+      "18": 0.87,
+      "19": 0.16,
+      "2": 0.65,
+      "3": 0.58,
+      "4": 0.18,
+      "5": 0.33999999999999997,
+      "6": 0.78,
+      "7": 0.69,
+      "8": 0.88,
+      "9": 0.78
+    },
+    {
+      "0": 0.53,
+      "1": 0.33999999999999997,
+      "10": 0.36,
+      "11": 0.8200000000000001,
+      "12": 0.76,
+      "13": 0.48,
+      "14": 0.15,
+      "15": 0.89,
+      "16": 0.9299999999999999,
+      "17": 0.73,
+      "18": 0.84,
+      "19": 0.14,
+      "2": 0.73,
+      "3": 0.61,
+      "4": 0.17,
+      "5": 0.44999999999999996,
+      "6": 0.77,
+      "7": 0.72,
+      "8": 0.88,
+      "9": 0.73
+    }
+  ],
+  "validation_schema_version": 2
+}
