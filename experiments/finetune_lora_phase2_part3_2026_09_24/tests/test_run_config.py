@@ -24,6 +24,25 @@ EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 CHAT_FIXTURE = EXPERIMENT_ROOT / "data" / "chat_test_unanimous.jsonl"
 
 
+@pytest.fixture(scope="module")
+def tokenizer():
+    """Load tokenizer only (no model weights)."""
+    from transformers import AutoTokenizer
+
+    return AutoTokenizer.from_pretrained(
+        MODEL_ID,
+        trust_remote_code=True,
+    )
+
+
+@pytest.fixture(scope="module")
+def sample_messages() -> list[dict]:
+    """Load one rubric chat record from the Part 3 fixture."""
+    line = CHAT_FIXTURE.read_text(encoding="utf-8").splitlines()[0]
+    payload = json.loads(line)
+    return payload["messages"]
+
+
 class TestRunConfig:
     """Tests for default_hyperparams()."""
 
@@ -56,23 +75,6 @@ class TestRunConfig:
 
 class TestTemplateParity:
     """Tests for inference prompt rendering with thinking disabled."""
-
-    @pytest.fixture(scope="class")
-    def tokenizer(self):
-        """Load tokenizer only (no model weights)."""
-        from transformers import AutoTokenizer
-
-        return AutoTokenizer.from_pretrained(
-            MODEL_ID,
-            trust_remote_code=True,
-        )
-
-    @pytest.fixture(scope="class")
-    def sample_messages(self) -> list[dict]:
-        """Load one rubric chat record from the Part 3 fixture."""
-        line = CHAT_FIXTURE.read_text(encoding="utf-8").splitlines()[0]
-        payload = json.loads(line)
-        return payload["messages"]
 
     def test_infer_prompt_has_no_thinking_body(
         self,

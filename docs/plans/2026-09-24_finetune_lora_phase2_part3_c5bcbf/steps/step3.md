@@ -13,7 +13,7 @@ Notation: `E` = `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/`,
 | Topic | Finding |
 |-------|---------|
 | Model class | `Qwen/Qwen3.5-4B` loads with `AutoModelForCausalLM.from_pretrained(..., trust_remote_code=True)` (same as `P/train.py`). Text-only SageMaker jobs do not need `AutoModelForImageTextToText`. |
-| Transformers | `pyproject.toml` group `finetune-qwen-2026-08-08` requires `transformers>=5.8.1`; `uv.lock` resolves `5.12.1`. Older Dockerfiles pin `>=4.49.0`. `E/Dockerfile` must pin `>=5.8.1`. |
+| Transformers | `pyproject.toml` group `finetune-qwen-2026-08-08` requires `transformers>=5.8.1,<5.13` and `trl>=0.15.0,<1.10`; `uv.lock` resolves `transformers` `5.12.1` and `trl` `1.9.2`. Older Dockerfiles pin `>=4.49.0`. `E/Dockerfile` must pin `transformers>=5.8.1,<5.13` and `trl>=0.15.0,<1.10` because newer `trl` and `transformers` dropped `warmup_ratio` from the config August `P/train.py` builds. |
 | Disable thinking | Pass `enable_thinking=False` to `tokenizer.apply_chat_template` (same as `chat_template_kwargs={"enable_thinking": False}` on the model card). An empty `<think></think>` block from the template is allowed; generated text must not include thinking content. |
 
 ## Dependencies
@@ -87,7 +87,7 @@ Train and infer must render the same prompt with thinking disabled. `TestTemplat
 
 ### `E/Dockerfile` and `P/infra/main.tf`
 
-`E/Dockerfile`: copy `shared/`, `lib/`, `P/`, `E/`; pin `transformers>=5.8.1`; entrypoint `E/entrypoint.sh`. `main.tf`: append `experiments/finetune_lora_phase2_part3_2026_09_24` to `local.s3_prefixes` and `mirrorview-finetune-lora-phase2-part3` to `local.ecr_repos`.
+`E/Dockerfile`: copy `shared/`, `lib/`, `P/`, `E/`; pin `transformers>=5.8.1,<5.13` and `trl>=0.15.0,<1.10` (newer `trl` and `transformers` dropped `warmup_ratio` from the config August `P/train.py` builds); entrypoint `E/entrypoint.sh`. `main.tf`: append `experiments/finetune_lora_phase2_part3_2026_09_24` to `local.s3_prefixes` and `mirrorview-finetune-lora-phase2-part3` to `local.ecr_repos`.
 
 ## Pytest files
 
@@ -186,7 +186,7 @@ Smoke result: train finishes 2 steps; infer writes 5 rows each to `test_unanimou
 
 - `E/tests` exit 0; `P/tests` print `20 passed`.
 - Terraform adds prefix and ECR repo; `SAGEMAKER_ROLE_ARN` resolves.
-- `E/Dockerfile` pins `transformers>=5.8.1`.
+- `E/Dockerfile` pins `transformers>=5.8.1,<5.13` and `trl>=0.15.0,<1.10` so SageMaker matches the capped stack August `P/train.py` expects (`warmup_ratio` on the training config).
 - Dry-run prints experiment-scoped URIs and `enable_thinking` false.
 - Smoke: 2 train steps, 5+5 valid predictions, template parity test green.
 
