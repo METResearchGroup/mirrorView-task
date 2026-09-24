@@ -29,3 +29,12 @@ class TestResolveAblation:
         """Unknown ablation ids raise ValueError."""
         with pytest.raises(ValueError):
             resolve_ablation("A9_unknown")
+
+    def test_union_source_uses_outputs_union_and_wandb_suffix(self):
+        """Union cohort runs write under outputs_union with _union Wandb name."""
+        config = resolve_ablation("A1_pair_study_prompt", cohort_source="union")
+
+        assert config.output_dir.name == "A1_pair_study_prompt"
+        assert config.output_dir.parent.name == "outputs_union"
+        assert config.wandb_name == "A1_pair_study_prompt_union"
+        assert config.wandb_group == "jev_baseline_union"

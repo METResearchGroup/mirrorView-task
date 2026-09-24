@@ -267,6 +267,47 @@ def subgroup_metrics(
     return rows
 
 
+def union_cohort_subgroups(
+    frame: pd.DataFrame,
+    *,
+    threshold: float = DEFAULT_THRESHOLD,
+) -> list[SubgroupMetrics]:
+    """Emit union-only subgroup slices for study-part coverage and Part 3 overlap."""
+    rows: list[SubgroupMetrics] = []
+    working = frame.copy()
+    if "study_part_coverage" in working.columns:
+        _append_subgroup_rows(
+            rows,
+            working,
+            "study_part_coverage",
+            "study_part_coverage",
+            threshold=threshold,
+        )
+    if "in_part3_cohort_a" in working.columns:
+        working["in_part3_cohort_a_label"] = working["in_part3_cohort_a"].map(
+            {True: "true", False: "false"}
+        )
+        _append_subgroup_rows(
+            rows,
+            working,
+            "in_part3_cohort_a",
+            "in_part3_cohort_a_label",
+            threshold=threshold,
+        )
+    if "label_changed_vs_part3" in working.columns:
+        working["label_changed_vs_part3_label"] = working["label_changed_vs_part3"].map(
+            {True: "true", False: "false"}
+        )
+        _append_subgroup_rows(
+            rows,
+            working,
+            "label_changed_vs_part3",
+            "label_changed_vs_part3_label",
+            threshold=threshold,
+        )
+    return rows
+
+
 def spearman_remove_share(
     remove_share: list[float],
     p_remove: list[float],
