@@ -7,7 +7,37 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import json
+import os
+
+import boto3
+
+from lib.load_env_vars import EnvVarsContainer
+
 AWS_SECRETS_REGION = "us-east-2"
+_JEV_SECRET_ID = "jev-typesafe-api-key"
+_WANDB_SECRET_ID = "wandb-api-key"
+_OPENAI_SECRET_ID = "openai-api-key"
+_JEV_ENV_VAR = "TYPESAFE_API_KEY"
+
+
+def _parse_secret_string(raw: str) -> str:
+    stripped = raw.strip()
+    if not stripped:
+        return ""
+    try:
+        data = json.loads(stripped)
+    except json.JSONDecodeError:
+        return stripped
+    if not isinstance(data, dict):
+        return stripped
+    for key in ("api_key", "TYPESAFE_API_KEY", "key"):
+        value = data.get(key)
+        if value is not None and str(value).strip():
+            return str(value)
+    if not data:
+        return ""
+    return str(next(iter(data.values())))
 
 
 def get_secret_value(secret_id: str, *, env_var: str | None = None) -> str:
@@ -30,7 +60,17 @@ def get_secret_value(secret_id: str, *, env_var: str | None = None) -> str:
     ValueError
         When both the environment variable and Secrets Manager value are empty.
     """
-    raise NotImplementedError
+    if env_var is not None:
+        env_value = os.environ.get(env_var, "").strip()
+        if env_value:
+            return env_value
+
+    client = boto3.client("secretsmanager", region_name=AWS_SECRETS_REGION)
+    raw = client.get_secret_value(SecretId=secret_id)["SecretString"]
+    parsed = _parse_secret_string(raw)
+    if not parsed:
+        raise ValueError(f"secret {secret_id} is empty or missing")
+    return parsed
 
 
 def get_jev_api_key() -> str:
@@ -46,7 +86,7 @@ def get_jev_api_key() -> str:
     ValueError
         When the key cannot be resolved.
     """
-    raise NotImplementedError
+    return get_secret_value(_JEV_SECRET_ID, env_var=_JEV_ENV_VAR)
 
 
 def get_wandb_api_key() -> str:
@@ -62,7 +102,10 @@ def get_wandb_api_key() -> str:
     ValueError
         When the key cannot be resolved.
     """
-    raise NotImplementedError
+    env_value = EnvVarsContainer.get_env_var("WANDB_API_KEY", required=False).strip()
+    if env_value:
+        return env_value
+    return get_secret_value(_WANDB_SECRET_ID)
 
 
 def get_openai_api_key() -> str:
@@ -78,4 +121,7 @@ def get_openai_api_key() -> str:
     ValueError
         When the key cannot be resolved.
     """
-    raise NotImplementedError
+    env_value = EnvVarsContainer.get_env_var("OPENAI_API_KEY", required=False).strip()
+    if env_value:
+        return env_value
+    return get_secret_value(_OPENAI_SECRET_ID)
