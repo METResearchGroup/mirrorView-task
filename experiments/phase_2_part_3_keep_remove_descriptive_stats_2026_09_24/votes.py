@@ -192,4 +192,7 @@ def build_per_post_votes(raw: pd.DataFrame | None = None) -> pd.DataFrame:
     pandas.DataFrame
         Per-post vote counts with stable pair text.
     """
-    raise NotImplementedError
+    raw_frame = raw if raw is not None else load_results_full()
+    trials = filter_linked_fate_trials(raw_frame)
+    trials = dedupe_worker_votes(trials)
+    return aggregate_votes_per_post(trials)
