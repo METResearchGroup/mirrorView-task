@@ -77,6 +77,8 @@ class JevRolloutOutput:
 class JevGepaAdapter:
     """Score Jev batches for GEPA with optional asymmetric reward mode."""
 
+    propose_new_texts = None
+
     def __init__(
         self,
         *,
