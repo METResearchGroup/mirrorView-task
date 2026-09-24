@@ -2,7 +2,11 @@
 
 This contains the September 2026 collection for `mirrorview_2026_09_09` (see [History of Study](../../../../docs/runbooks/HISTORY_OF_STUDY.md)).
 
-- `results/full.csv`: combined jsPsych export. 131,175 rows and 3,875 Prolific accounts from 3,975 session files.
-- `stimuli/flips.csv`: the 18,899-post catalog shown to participants.
+The CSVs are in `s3://mirrorview-experimental-artifacts/` at these keys:
+
+- `shared/data/raw/study_phase_2_part_3/results/full.csv`: combined jsPsych export. 131,175 rows and 3,875 Prolific accounts from 3,975 session files.
+- `shared/data/raw/study_phase_2_part_3/stimuli/flips.csv`: the 18,899-post catalog shown to participants.
 
 Load either table with `shared.data.dataloader.load_dataset`. The names are `STUDY_PHASE_2_PART_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_3_STIMULI`.
+
+The combined Part 2 and Part 3 tables are in [study_phase_2_part_2_and_3](../study_phase_2_part_2_and_3).
