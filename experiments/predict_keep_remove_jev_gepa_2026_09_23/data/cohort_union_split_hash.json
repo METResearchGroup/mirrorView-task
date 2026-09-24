@@ -1,0 +1,40 @@
+{
+  "split_seed": 20260924,
+  "pair_order_seed": 0,
+  "split_hash": "0ce2f8efb0006a4fec1ca95be24b597c89298764c941c1cc75de5f015ff80861",
+  "cohort_counts": {
+    "n_posts": 19219,
+    "n_keep": 15210,
+    "n_remove": 4009,
+    "n_unanimous": 5652
+  },
+  "split_counts": {
+    "test": 3841,
+    "dev": 1927,
+    "gepa_pool": 13451,
+    "gepa_val": 300,
+    "gepa_train": 2000
+  },
+  "gepa_subset_counts": {
+    "none": 16919,
+    "train": 2000,
+    "val": 300
+  },
+  "built_at": "2026_09_24-13:12:10",
+  "cohort_source": "union",
+  "study_part_derivation": "Part 3 rows have non-empty attention_check_passed; Part 2 rows leave it empty.",
+  "union_report": {
+    "n_excluded_strata": 0,
+    "excluded_keep": 0,
+    "excluded_remove": 0,
+    "n_stance_disagreements": 0,
+    "n_toxicity_disagreements": 0,
+    "n_overlap_part3": 14842,
+    "n_label_changed": 174,
+    "n_dropped_from_part3": 113,
+    "n_new_posts": 4377,
+    "n_shared_test_posts": 2965,
+    "val_members_changed": 20,
+    "train_members_changed": 120
+  }
+}
