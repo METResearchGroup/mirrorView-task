@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How topics in the posts relate to keep or remove decisions</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>How topics in the posts relate to keep or remove decisions</h1>
+      <p class="lede">This page reports a BERTopic analysis of posts from the MirrorView study. BERTopic groups posts that use similar language into topics, which are simply those groups.</p>
+      <p class="date-line">Analysis run 24 September 2026</p>
+    </header>
+
+    <main>
+      <section id="study-and-data">
+        <h2>The study and the data</h2>
+        <p>In the MirrorView study, human raters saw pairs of social media posts. Each pair had an original post and a mirror, which is a rewrite of the post that takes the opposite stance. Raters voted to keep or remove each pair. The team recorded one decision per pair, and several raters judged each post.</p>
+        <p>The data set is the union of two collection rounds. It has 20,000 posts in total. Round 1 had 10,000 posts and round 2 had 18,899 posts, and 8,899 posts appear in both rounds. Raters submitted 103,060 ratings from 5,051 people. The majority vote is keep for 15,140 posts and remove for 4,860 posts. Clustering used 19,763 posts after removing 205 posts whose text duplicated another post and 32 posts whose mirror text was identical to the original.</p>
+        <ul class="stats" aria-label="Key numbers">
+          <li class="stat">
+            <span class="stat-value">20,000</span>
+            <span class="stat-label">Posts in the union of both rounds</span>
+          </li>
+          <li class="stat">
+            <span class="stat-value">103,060</span>
+            <span class="stat-label">Ratings from raters</span>
+          </li>
+          <li class="stat">
+            <span class="stat-value">19,763</span>
+            <span class="stat-label">Posts used in clustering</span>
+          </li>
+          <li class="stat">
+            <span class="stat-value">69.8%</span>
+            <span class="stat-label">Keep rate among clustered posts</span>
+          </li>
+        </ul>
+      </section>
+
+      <section id="what-analysis-did">
+        <h2>What the analysis did</h2>
+        <p>The analysis turned each post into a 256 number vector with Amazon Titan Text Embeddings V2, then grouped the vectors with BERTopic. The pipeline used UMAP with 15 neighbors and 5 components, cosine distance, and random seed 42, then HDBSCAN with minimum group size 15. The team fit three separate models on the original text alone, the mirror text alone, and both texts together for 39,526 documents. A language model named gpt-5.4-nano wrote short names for the groups, and no person has reviewed those names.</p>
+      </section>
+
+      <section id="main-findings">
+        <h2>Main findings</h2>
+
+        <h3>Most posts fall into groups, and many do not</h3>
+        <p>The three fits found many topics but also left a large share of posts unclustered, meaning posts the method could not place in a group.</p>
+        <table>
+          <caption>Groups and unclustered share by fit type</caption>
+          <thead>
+            <tr>
+              <th scope="col">Fit</th>
+              <th scope="col">Groups</th>
+              <th scope="col">Share unclustered</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Original text</td>
+              <td>100</td>
+              <td>42.3% (8,369 posts)</td>
+            </tr>
+            <tr>
+              <td>Mirror text</td>
+              <td>97</td>
+              <td>44.8%</td>
+            </tr>
+            <tr>
+              <td>Original and mirror together</td>
+              <td>154</td>
+              <td>54.1%</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>Unclustered posts are not errors. They are posts whose language did not match any group strongly enough for HDBSCAN to assign them.</p>
+
+        <h3>A mirror usually lands in a different group than its original</h3>
+        <p>When the model fit on original text reads mirror text, it places the mirror in the same topic as the original 19.5% of the time, which is 3,846 of 19,763 pairs. When neither side is unclustered, that rate is 30.5%, or 3,334 of 10,916 pairs. Compared with a model fit on mirror text directly, agreement between the two groupings is ARI 0.094 and NMI 0.30. ARI is a score from 0 to 1 for how much two groupings agree, where 1 means identical and 0 means no better than chance.</p>
+        <figure>
+          <svg role="img" aria-labelledby="chart-same-group-title chart-same-group-desc" viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
+            <title id="chart-same-group-title">Share of pairs where original and mirror share a topic</title>
+            <desc id="chart-same-group-desc">Three vertical bars for 19.5 percent, 30.5 percent, and 59.0 percent.</desc>
+            <text x="260" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Same topic for original and mirror</text>
+            <line x1="48" y1="260" x2="480" y2="260" stroke="#ccc" stroke-width="1"/>
+            <line x1="48" y1="40" x2="48" y2="260" stroke="#ccc" stroke-width="1"/>
+            <text x="40" y="264" text-anchor="end" font-size="11" fill="#555">0%</text>
+            <text x="40" y="214" text-anchor="end" font-size="11" fill="#555">20%</text>
+            <text x="40" y="164" text-anchor="end" font-size="11" fill="#555">40%</text>
+            <text x="40" y="114" text-anchor="end" font-size="11" fill="#555">60%</text>
+            <rect x="88" y="217.1" width="72" height="42.9" fill="#2563eb"/>
+            <text x="124" y="208" text-anchor="middle" font-size="12" fill="#1a1a1a">19.5%</text>
+            <text x="124" y="278" text-anchor="middle" font-size="10" fill="#444">Original model,</text>
+            <text x="124" y="290" text-anchor="middle" font-size="10" fill="#444">all pairs</text>
+            <rect x="224" y="192.9" width="72" height="67.1" fill="#2563eb"/>
+            <text x="260" y="184" text-anchor="middle" font-size="12" fill="#1a1a1a">30.5%</text>
+            <text x="260" y="278" text-anchor="middle" font-size="10" fill="#444">Original model,</text>
+            <text x="260" y="290" text-anchor="middle" font-size="10" fill="#444">both clustered</text>
+            <rect x="360" y="130.2" width="72" height="129.8" fill="#64748b"/>
+            <text x="396" y="122" text-anchor="middle" font-size="12" fill="#1a1a1a">59.0%</text>
+            <text x="396" y="278" text-anchor="middle" font-size="10" fill="#444">Joint fit,</text>
+            <text x="396" y="290" text-anchor="middle" font-size="10" fill="#444">all pairs</text>
+            <rect x="400" y="48" width="12" height="12" fill="#2563eb"/>
+            <text x="418" y="58" font-size="11" fill="#444">Original text model</text>
+            <rect x="400" y="66" width="12" height="12" fill="#64748b"/>
+            <text x="418" y="76" font-size="11" fill="#444">Joint fit</text>
+          </svg>
+          <figcaption>The joint model that sees both texts assigns original and mirror to the same topic 59.0% of the time, much more often than the original only model does when it reads mirror text.</figcaption>
+        </figure>
+
+        <h3>The groups line up only partly with the earlier round 1 analysis</h3>
+        <p>An earlier BERTopic run grouped only round 1 posts. On the 8,579 posts that both analyses grouped, agreement is ARI 0.259 and NMI 0.56. The overlap is moderate, not a one to one match.</p>
+
+        <h3>Keep rates differ by group</h3>
+        <p>Keep rate is the share of posts raters voted to keep. Among the 19,763 clustered posts the overall keep rate is 69.8%, and a filter requiring at least 3 raters removed 0 posts. After a Benjamini Hochberg correction at 5%, which is a correction that limits false alarms when many groups are tested at once, 50 of the 100 original text groups have a keep rate that differs from the overall rate. Model written labels for the lowest keep rates include posts about anti Trump harassment at 31.7% with 144 posts, posts calling Trump a fascist at 45.0% with 19 posts, and posts accusing Trump of crimes at 46.9% with 56 posts. Among the highest keep rates are gun violence awareness and community safety at 90.7% with 23 posts, climate action for rainforests, wetlands, and reefs at 88.9% with 27 posts, and Florida property tax debate at 87.7% with 15 posts. Those names were written by a model and were not checked by a person. By rater party the keep rate is 69.4% for Democratic raters over 52,864 ratings and 70.0% for Republican raters over 48,970 ratings.</p>
+        <figure>
+          <svg role="img" aria-labelledby="chart-keep-title chart-keep-desc" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
+            <title id="chart-keep-title">Keep rates for six groups compared with the overall rate</title>
+            <desc id="chart-keep-desc">Horizontal bars for three low and three high keep rate groups with a vertical line at 69.8 percent overall.</desc>
+            <text x="260" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Keep rate by group (original text fit)</text>
+            <line x1="120" y1="48" x2="120" y2="330" stroke="#ccc" stroke-width="1"/>
+            <line x1="120" y1="330" x2="500" y2="330" stroke="#ccc" stroke-width="1"/>
+            <line x1="385.2" y1="48" x2="385.2" y2="330" stroke="#2563eb" stroke-width="2" stroke-dasharray="4 3"/>
+            <text x="385.2" y="42" text-anchor="middle" font-size="10" fill="#2563eb">Overall 69.8%</text>
+            <text x="115" y="334" text-anchor="end" font-size="10" fill="#555">0%</text>
+            <text x="310" y="334" text-anchor="middle" font-size="10" fill="#555">50%</text>
+            <text x="500" y="334" text-anchor="end" font-size="10" fill="#555">100%</text>
+            <text x="70" y="78" text-anchor="end" font-size="10" fill="#444">Anti Trump harassment</text>
+            <text x="70" y="90" text-anchor="end" font-size="9" fill="#777">144 posts</text>
+            <rect x="120" y="68" width="120.5" height="18" fill="#64748b"/>
+            <text x="248" y="81" font-size="11" fill="#1a1a1a">31.7%</text>
+            <text x="70" y="118" text-anchor="end" font-size="10" fill="#444">Calling Trump fascist</text>
+            <text x="70" y="130" text-anchor="end" font-size="9" fill="#777">19 posts</text>
+            <rect x="120" y="108" width="171" height="18" fill="#64748b"/>
+            <text x="299" y="121" font-size="11" fill="#1a1a1a">45.0%</text>
+            <text x="70" y="158" text-anchor="end" font-size="10" fill="#444">Trump crime accusations</text>
+            <text x="70" y="170" text-anchor="end" font-size="9" fill="#777">56 posts</text>
+            <rect x="120" y="148" width="178.2" height="18" fill="#64748b"/>
+            <text x="306" y="161" font-size="11" fill="#1a1a1a">46.9%</text>
+            <text x="70" y="218" text-anchor="end" font-size="10" fill="#444">Gun violence awareness</text>
+            <text x="70" y="230" text-anchor="end" font-size="9" fill="#777">23 posts</text>
+            <rect x="120" y="208" width="344.7" height="18" fill="#2563eb"/>
+            <text x="472" y="221" font-size="11" fill="#1a1a1a">90.7%</text>
+            <text x="70" y="258" text-anchor="end" font-size="10" fill="#444">Climate and habitats</text>
+            <text x="70" y="270" text-anchor="end" font-size="9" fill="#777">27 posts</text>
+            <rect x="120" y="248" width="337.8" height="18" fill="#2563eb"/>
+            <text x="465" y="261" font-size="11" fill="#1a1a1a">88.9%</text>
+            <text x="70" y="298" text-anchor="end" font-size="10" fill="#444">Florida property tax</text>
+            <text x="70" y="310" text-anchor="end" font-size="9" fill="#777">15 posts</text>
+            <rect x="120" y="288" width="333.3" height="18" fill="#2563eb"/>
+            <text x="461" y="301" font-size="11" fill="#1a1a1a">87.7%</text>
+            <rect x="125" y="348" width="12" height="12" fill="#64748b"/>
+            <text x="143" y="358" font-size="11" fill="#444">Lower keep rate groups</text>
+            <rect x="280" y="348" width="12" height="12" fill="#2563eb"/>
+            <text x="298" y="358" font-size="11" fill="#444">Higher keep rate groups</text>
+          </svg>
+          <figcaption>Several groups with extreme keep rates are small, with 15 to 144 posts, so their percentages can shift easily if a few votes change.</figcaption>
+        </figure>
+      </section>
+
+      <section id="takeaways">
+        <h2>What to take from this</h2>
+        <p>Mirror rewrites usually change the topic group. The original text model places mirror and original in the same topic only 19.5% of the time across all pairs, and 30.5% when both sides are clustered.</p>
+        <p>Agreement with the earlier round 1 grouping is moderate. On 8,579 shared posts the ARI is 0.259, so the two runs describe similar themes but not the same partition.</p>
+        <p>Keep rate depends on the topic group. The overall rate is 69.8%, and 50 groups differ from that rate after multiple testing correction, with keep rates from 31.7% to 90.7% among the clearest examples.</p>
+        <p>Party of the rater barely moves the overall keep rate. Democratic raters kept 69.4% of ratings and Republican raters kept 70.0%, nearly the same as the 69.8% post level rate.</p>
+      </section>
+
+      <section id="limits">
+        <h2>Limits of these findings</h2>
+        <p>Topics describe language patterns in the posts. They do not explain why a rater chose keep or remove.</p>
+        <p>Each pair received one aggregated decision even though many raters voted, so the keep rate is a majority summary, not a full vote breakdown.</p>
+        <p>Groupings move when the random seed changes. Refits with different seeds agree at ARI 0.56 on average.</p>
+        <p>A different embedding model changes the groups. MiniLM found 132 groups, and its keep rate ranking correlates 0.75 with the main ranking. Forcing every post into a group with no unclustered posts keeps a 0.95 correlation in the keep rate ranking.</p>
+        <p>Group names from gpt-5.4-nano were not checked by a person, and a person has not yet reviewed sample posts from each group to judge whether the names fit.</p>
+        <p>The rule that each post needs at least 3 raters removed no posts in this analysis, so the sample size did not shrink for that reason.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>MirrorView study, MET Research Group</p>
+    </footer>
+  </div>
+</body>
+</html>
