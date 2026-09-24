@@ -204,22 +204,21 @@ class R4ComponentUpdateLogCallback:
         text = candidate.get(module_selected, "")
         return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
-    def on_proposal_start(self, event: dict[str, object]) -> None:
-        iteration = int(event["iteration"])
-        components = event.get("components") or []
-        if not components:
-            return
-        module_selected = str(components[0])
-        parent_candidate = event.get("parent_candidate") or {}
-        if not isinstance(parent_candidate, dict):
-            return
+    def _append(self, iteration: int, module_selected: str, candidate: dict[str, str]) -> None:
         record = {
             "iteration": iteration,
             "module_selected": module_selected,
-            "keys_snapshot_hash": self._snapshot_hash(parent_candidate, module_selected),
+            "keys_snapshot_hash": self._snapshot_hash(candidate, module_selected),
         }
         with self._log_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(record) + "\n")
+
+    def on_iteration_end(self, event: dict[str, object]) -> None:
+        iteration = int(event["iteration"])
+        state = event["state"]
+        module_selected = R4_ROUND_ROBIN_COMPONENT_KEYS[(iteration - 1) % len(R4_ROUND_ROBIN_COMPONENT_KEYS)]
+        candidate = state.program_candidates[-1]
+        self._append(iteration, module_selected, candidate)
 
 
 def _finalize_smoke_artifacts(config: OptimizeConfig, result: GEPAResult) -> None:

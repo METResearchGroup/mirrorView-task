@@ -14,6 +14,7 @@ from gepa.core.adapter import EvaluationBatch, GEPAAdapter
 from typesafe_sdk import TypeSafeClient
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.constants import (
+    R4_ROUND_ROBIN_COMPONENT_KEYS,
     STUDY_COMPONENT_KEY,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared import jev_scorer, secrets
@@ -275,13 +276,10 @@ class JevGepaRebuiltAdapter:
             f"Threshold crossed={trajectory.threshold_crossed} at threshold={self._threshold}."
         )
 
-    def make_reflective_dataset(
+    def _study_instruction_records(
         self,
-        candidate: dict[str, str],
         eval_batch: EvaluationBatch[JevTrajectory, JevRolloutOutput],
-        components_to_update: list[str],
-    ) -> dict[str, list[dict[str, Any]]]:
-        """Build reflective-dataset records from scored trajectories for study updates."""
+    ) -> list[dict[str, Any]]:
         if eval_batch.trajectories is None:
             raise ValueError("eval_batch.trajectories is required for reflection")
         records: list[dict[str, Any]] = []
@@ -299,9 +297,56 @@ class JevGepaRebuiltAdapter:
                     "Feedback": self._build_feedback(trajectory),
                 }
             )
-        if STUDY_COMPONENT_KEY not in components_to_update:
-            return {}
-        return {STUDY_COMPONENT_KEY: records}
+        return records
+
+    def _reflective_records_for_component(
+        self,
+        component_key: str,
+        candidate: dict[str, str],
+        eval_batch: EvaluationBatch[JevTrajectory, JevRolloutOutput],
+    ) -> list[dict[str, Any]]:
+        if eval_batch.trajectories is None:
+            raise ValueError("eval_batch.trajectories is required for reflection")
+        records: list[dict[str, Any]] = []
+        for trajectory in eval_batch.trajectories:
+            predicted_label = (
+                REMOVE_LABEL if trajectory.p_remove >= self._threshold else 0
+            )
+            records.append(
+                {
+                    "Inputs": {
+                        "study_instruction": candidate.get(STUDY_COMPONENT_KEY, ""),
+                        "component_key": component_key,
+                        "component_text": candidate.get(component_key, ""),
+                        **self._build_reflective_inputs(trajectory),
+                    },
+                    "Generated Outputs": {
+                        "p_remove": f"{trajectory.p_remove:.3f}",
+                        "predicted_label": str(predicted_label),
+                    },
+                    "Feedback": self._build_feedback(trajectory),
+                }
+            )
+        return records
+
+    def make_reflective_dataset(
+        self,
+        candidate: dict[str, str],
+        eval_batch: EvaluationBatch[JevTrajectory, JevRolloutOutput],
+        components_to_update: list[str],
+    ) -> dict[str, list[dict[str, Any]]]:
+        """Build reflective-dataset records for study and R4 text components."""
+        dataset: dict[str, list[dict[str, Any]]] = {}
+        for component_key in components_to_update:
+            if component_key == STUDY_COMPONENT_KEY:
+                dataset[STUDY_COMPONENT_KEY] = self._study_instruction_records(eval_batch)
+            elif component_key in R4_ROUND_ROBIN_COMPONENT_KEYS[1:]:
+                dataset[component_key] = self._reflective_records_for_component(
+                    component_key,
+                    candidate,
+                    eval_batch,
+                )
+        return dataset
 
 
 def _implements_gepa_adapter(
