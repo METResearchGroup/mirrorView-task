@@ -281,4 +281,4 @@ def load_stimuli() -> pd.DataFrame:
     pandas.DataFrame
         Stimuli frame for toxicity lookup.
     """
-    raise NotImplementedError
+    return load_dataset(STUDY_PHASE_2_PART_3_STIMULI, low_memory=False)
