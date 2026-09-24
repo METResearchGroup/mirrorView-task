@@ -10,7 +10,7 @@
 
 The first GEPA stage optimized the wrong text. It tuned the short per-post question while the full study stimulus stayed inside scorer state for Jev scoring, so prompts memorized training phrases, validation picks disagreed with dev picks, and a 9,000 post-scoring budget bought only about 29 iterations with 100% minibatch acceptance on summed soft scores. Test F1 gains over the Jev seed were small (best B1-T 0.564 vs A1 0.527 on the old cohort A).
 
-This rebuild uses `experiments/predict_keep_remove_jev_gepa_2026_09_23/data/cohort_union_splits.parquet` (19,219 posts; test 3,841; dev 1,927; GEPA pool 13,451; balanced GEPA val 300 and train 2,000). It optimizes the study instruction as the GEPA component, keeps a fixed per-post question, and aligns optimization with dev-tuned F1 at natural prevalence. Dev-A is the first half of a stratified 50/50 dev split (seed 20260924) used to choose the classification threshold that maximizes F1. Dev-B is the second half used only to confirm that threshold on the same shortlisted candidates. The run spends budget on reflection, the GEPA step where a reflection language model reads minibatch mistakes and proposes a revised study instruction, using sampled validation scoring and larger minibatches. It enforces strict acceptance, meaning the child candidate must beat the parent on hard remove/keep labels by a fixed margin on the reflection minibatch, plus length and quoting guards, and it logs reflection cost and per-candidate dev scores. Production runs **R1, R2, R3, and R7 (if approved)** in parallel (200 Jev request starts/min per job); each job performs its own dev selection and one test read; **R4** follows R4 smoke; **R5/R6** are cost-gated. Artifacts go to `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/` with Wandb group `jev_gepa_rebuilt`. Beat **Stage A union** baselines on test F1: A1 pair **0.538** (test n=3,841), A3 mirror **0.528**, A2 original **0.514** (see `experiments/predict_keep_remove_jev_gepa_2026_09_23/RESULTS.md`).
+This rebuild uses `experiments/predict_keep_remove_jev_gepa_2026_09_23/data/cohort_union_splits.parquet` (19,219 posts; test 3,841; dev 1,927; GEPA pool 13,451; balanced GEPA val 300 and train 2,000). It optimizes the study instruction as the GEPA component, keeps a fixed per-post question, and aligns optimization with dev-tuned F1 at natural prevalence. Dev-A is the first half of a stratified 50/50 dev split (seed 20260924) used to choose the classification threshold that maximizes F1. Dev-B is the second half used only to confirm that threshold on the same shortlisted candidates. The run spends budget on reflection, the GEPA step where a reflection language model reads minibatch mistakes and proposes a revised study instruction, using sampled validation scoring and larger minibatches. It enforces strict acceptance, meaning the child candidate must beat the parent on hard remove/keep labels by a fixed margin on the reflection minibatch, plus length and quoting guards, and it logs reflection cost and per-candidate dev scores. Production runs **R1, R2, R3, and R7** in parallel (200 Jev request starts/min per job); each job performs its own dev selection and one test read; **R4** follows R4 smoke; **R5/R6** are cost-gated. Artifacts go to `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/` with Wandb group `jev_gepa_rebuilt`. Beat **Stage A union** baselines on test F1: A1 pair **0.538** (test n=3,841), A3 mirror **0.528**, A2 original **0.514** (see `experiments/predict_keep_remove_jev_gepa_2026_09_23/RESULTS.md`).
 
 Technical detail: [design.md](./design.md).
 
@@ -18,7 +18,7 @@ Technical detail: [design.md](./design.md).
 
 1. Does optimizing the participant study instruction beat Stage A union A1 pair test F1 (0.538) when the threshold is tuned on dev-A and confirmed on dev-B?
 2. How many reflection iterations does a **30,000 post** GEPA budget yield under 25-post reflection minibatches, 100-post validation subsampling on accept only, and strict hard-label acceptance (child beats parent on label accuracy at threshold 0.5 by at least two posts on the 25-post minibatch) at about 20% to 30% accept rate?
-3. Does label-certainty scoring (vote-share aware, R1) generalize better than majority-label probability with one-vote margins down-weighted (R2), and than the unweighted majority-label probability (R7, if approved)?
+3. Does label-certainty scoring (vote-share aware, R1) generalize better than majority-label probability with one-vote margins down-weighted (R2), and than the unweighted majority-label probability (R7)?
 4. Does GPT-5.6 Terra reflection buy enough test F1 over GPT-6 Luna to justify cost (R3)?
 5. Does a multi-component instruction (remove criteria, keep criteria, mirror note) outperform a single study block (R4)?
 6. Do cheap single-text GEPA runs (R5/R6) match pair-view R1 on test?
@@ -34,7 +34,7 @@ Technical detail: [design.md](./design.md).
 | R4 | Pair | Study instruction + remove + keep + mirror note (round-robin) | Primary scoring; Luna | Only if multi-key GEPA smoke passes |
 | R5 | Original only | Study instruction single-post variant | Luna; half post budget (15,000) | Run only if R1 measured optimize cost allows |
 | R6 | Mirror only | Study instruction single-post variant | Luna; half post budget (15,000) | Run only if R1 measured optimize cost allows |
-| R7 | Pair | Study instruction only | Plain majority-label probability (Stage B objective); Luna | **Pending approval**; control for R1 vs R2; run in parallel with R1 to R3 if approved |
+| R7 | Pair | Study instruction only | Plain majority-label probability (Stage B objective); Luna | Approved control for R1 vs R2; runs in parallel with R1 to R3 |
 
 Stage A union pair baseline is not re-run; cite existing RESULTS.md tables.
 
@@ -54,16 +54,16 @@ Per iteration (accepted child): score parent and child on a **25-post** reflecti
 | Dev top-10 selection USD | ~$0.65 | same | same | ~$0.35 | Top 10 accepted by val; tune threshold dev-A, confirm dev-B only |
 | Test scoring USD | ~$0.15 | same | same | ~$0.08 | Single test read per ablation |
 | Reflection USD | ~$1.10 (cap **$5**) | same Luna cap | ~$24 (cap **$40**) | ~$0.55 (cap $2.50) | ~400 Luna calls at ~12k in + 3k out (~$0.003/call); Terra ~$0.06/call |
-| **Total per run** | **~$3** | **~$3** | **~$26** | **~$1.50** | R4 same Jev/reflection shape as R1; R7 **pending approval** |
+| **Total per run** | **~$3** | **~$3** | **~$26** | **~$1.50** | R4 same Jev/reflection shape as R1; R7 approved |
 | Wall time (one run) | **2 to 4.5 h** | same as R1 | similar Jev; reflection may bound | similar at half budget | Parallel runs share 1,000 req/min |
 
-**Project spend (R1 to R6 if all run):** about **$40** typical; hard ceiling about **$60**. Add **~$3** for R7 if approved.
+**Project spend (R1 to R7 if all run):** about **$43** typical; hard ceiling about **$60**.
 
 Full formulas and guard constants: [design.md](./design.md). Re-check after 100-post smoke on union parquet.
 
 ## Happy flow
 
-The operator approves this plan, adds rebuilt package code and tests under `experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/`, wires union parquet and the dev-A/dev-B split, runs 100-post smoke and R4 multi-component smoke, then launches **R1, R2, R3, and R7 (if approved)** in parallel at **200** Jev request starts per minute per job (up to **1,000**/min shared). Each ablation job runs GEPA optimize, then its own dev-A/dev-B top-10 selection, then **one** test read. **R4** starts only after R4 smoke passes. **R5** and **R6** run at half post budget only if Step 5 measures R1 Jev optimize cost under about **$12**. The operator updates `RESULTS.md` and mirrors artifacts to S3.
+The operator approves this plan, adds rebuilt package code and tests under `experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/`, wires union parquet and the dev-A/dev-B split, runs 100-post smoke and R4 multi-component smoke, then launches **R1, R2, R3, and R7** in parallel at **200** Jev request starts per minute per job (up to **1,000**/min shared). Each ablation job runs GEPA optimize, then its own dev-A/dev-B top-10 selection, then **one** test read. **R4** starts only after R4 smoke passes. **R5** and **R6** run at half post budget only if R1's confirmed dev-B F1 beats Stage A union A1 (0.538). The operator updates `RESULTS.md` and mirrors artifacts to S3.
 
 ```mermaid
 flowchart TD
@@ -71,7 +71,7 @@ flowchart TD
   scaffold[Add jev_gepa_rebuilt and policies]
   splits[Wire union parquet dev-A dev-B]
   smoke[100-post smoke and R4 smoke]
-  wave1[Parallel R1 R2 R3 R7 if approved]
+  wave1[Parallel R1 R2 R3 R7]
   perJob[Per job optimize select test once]
   r4[R4 after R4 smoke pass]
   r56[R5 R6 if R1 Jev cost under 12 USD]
@@ -118,7 +118,7 @@ Run 100-post Jev smoke on union pair layout; update tokens per post and iteratio
 
 ### Step 6: Production runs and test evaluation
 
-After Step 5 smokes pass, run **R1, R2, R3, and R7 (if approved)** in parallel at **200** Jev request starts/min per job; each run uses **30,000 post** budget, then dev selection and **one** test read. Run **R4** only after R4 round-robin smoke passes. Run **R5** and **R6** at **15,000 posts** only if Step 5 measured R1 Jev optimize cost under about **$12**.
+After Step 5 smokes pass, run **R1, R2, R3, and R7** in parallel at **200** Jev request starts/min per job; each run uses **30,000 post** budget, then dev selection and **one** test read. Run **R4** only after R4 round-robin smoke passes. Run **R5** and **R6** at **15,000 posts** only if R1's confirmed dev-B F1 beats Stage A union A1 (0.538).
 
 ### Step 7: Update RESULTS.md and analysis hooks
 
@@ -137,13 +137,9 @@ Add union GEPA tables (dev-A/B, test, reflection USD, iteration count, stop reas
 
 1. **R1 per-post score (primary):** label-certainty score from remove probability and vote-share remove fraction on each training instance (see design.md).
 2. **R2 per-post score:** majority-label probability with half weight on one-vote margins (see design.md).
-3. **Post budget:** **30,000** scored posts per full run (R1, R2, R3, R4, R7 if approved); about **375 to 430** reflection iterations; about **2 to 4.5 h** wall time; about **$3** per run at current token assumptions. R5 and R6 use **15,000** posts each.
+3. **Post budget:** **30,000** scored posts per full run (R1, R2, R3, R4, R7); about **375 to 430** reflection iterations; about **2 to 4.5 h** wall time; about **$3** per run at current token assumptions. R5 and R6 use **15,000** posts each.
 4. **Acceptance:** custom hard-label criterion on the **25-post** reflection minibatch; child must get at least **+2** correct labels vs parent at threshold **0.5** (parent and child scored on the same minibatch, **50 posts** total).
 5. **R4 multi-component:** run only if Step 5 R4 smoke shows round-robin updates across all four instruction keys.
-6. **R5/R6:** run only if Step 5 measures R1 Jev optimize cost under about **$12** (not the full ~$3 run total).
-7. **Run order:** R1, R2, R3, and R7 (if approved) in parallel after smokes; R4 after R4 smoke; R5/R6 gated on R1 Jev optimize cost; each ablation performs its own dev selection and a single test read.
-
-## Decisions for you
-
-1. **R7 control ablation:** add **R7** using the first GEPA run's plain objective (probability of the majority label, **no** vote-margin weighting) with every other rebuilt setting (study-instruction optimization, policies, guards, selection). About **$3** and the same wall time as R1; run **in parallel** with R1 to R3 if approved. Without R7, R1 vs R2 cannot separate objective effects from other rebuild changes given widespread one-vote margins (see ablations note above).
-2. **R5/R6 gate:** the $12 cost gate was set when R1 was estimated at $11 to $14 of Jev spend. At the current estimate of about $1, the gate always passes. Options: keep it as a cost overrun guard, or replace it with a signal gate that runs R5 and R6 only if R1 beats Stage A union A1 on dev-B.
+6. **R5/R6:** run only if R1's selected prompt beats Stage A union A1 (test F1 0.538) on dev-B F1. The earlier $12 Jev-cost gate is retired because the current estimate is about $1 per run.
+7. **Run order:** R1, R2, R3, and R7 in parallel after smokes; R4 after R4 smoke; R5/R6 gated on R1's dev-B F1; each ablation performs its own dev selection and a single test read.
+8. **R7:** approved. It uses the first GEPA run's plain objective (probability of the majority label, no vote-margin weighting) with every other rebuilt setting. About $3, same wall time as R1, run in parallel with R1 to R3.

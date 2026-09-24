@@ -48,7 +48,7 @@ Jev API shape unchanged: batch 10, `jev-1.13.0`, shared instruction string passe
 1. **GEPA train/val scoring (adapter per-example score):**
    - **R1 (primary):** `1 - |P(remove) - remove_share|` (requires `remove_share` on `JevDataInst`).
    - **R2:** majority-label probability times example weight: `weight = 0.5` when `abs(n_keep - n_remove) == 1`, else `1.0`.
-   - **R7 (pending approval):** majority-label probability with weight `1.0` always (Stage B `probability` mode on union cohort, all other rebuild settings unchanged).
+   - **R7 (approved):** majority-label probability with weight `1.0` always (Stage B `probability` mode on union cohort, all other rebuild settings unchanged).
 2. **Candidate ranking during optimization:** same per-example scores aggregated on val subsample (see eval policy below).
 3. **Final selection:** split dev 50/50 into dev-A and dev-B (stratified by label, seed `20260924`). Dev-A tunes the F1 threshold at natural prevalence; dev-B confirms the same threshold on the shortlisted candidates only. Preselect the **top 10 accepted candidates** by validation subsample score, then drop any with val-dev balanced-accuracy gap above **VAL_DEV_GAP_MAX** (0.15; see Guards). Tune threshold on dev-A for F1 at natural prevalence for survivors; confirm ranking on dev-B F1 at the same threshold. Scoring every accepted candidate on the full 1,927-post dev set would cost about **190,000** post scorings (~10x the R1 optimize budget). **Test read once** per ablation after selection.
 
@@ -121,9 +121,9 @@ GEPA 0.1.4 supports multiple string components in `seed_candidate` (e.g. `study_
 
 | Phase | Runs | Rate limit | Notes |
 |-------|------|------------|-------|
-| Wave 1 (parallel) | R1, R2, R3, R7 if approved | **200** Jev request starts/min per job; **≤1,000**/min total | **30,000** post budget each; each job runs optimize, dev-A/dev-B top-10 selection, **one** test read |
+| Wave 1 (parallel) | R1, R2, R3, R7 | **200** Jev request starts/min per job; **≤1,000**/min total | **30,000** post budget each; each job runs optimize, dev-A/dev-B top-10 selection, **one** test read |
 | Wave 2 | R4 | same | Only after Step 5 R4 round-robin smoke passes |
-| Wave 3 (optional) | R5, R6 | same | **15,000** posts each; only if Step 5 R1 Jev optimize USD **< ~$12** |
+| Wave 3 (optional) | R5, R6 | same | **15,000** posts each; only if R1 confirmed dev-B F1 is strictly greater than Stage A union A1 test F1 **0.538** |
 
 ## Logging and artifacts
 
@@ -182,13 +182,13 @@ Assumptions (re-measure with 100-post smoke after prompt flip):
 |-----|-------------|--------------|------------|--------------|
 | R3 Terra | 30,000 | ~$1.00 | ~400 × ~$0.06 ≈ **$24** (cap **$40**) | ~$26 |
 | R5, R6 | 15,000 each | ~$0.50 | ~half Luna (~$0.55, cap ~$2.50) | **~$1.50** each |
-| R2, R4, R7 (if approved) | 30,000 | same as R1 | same Luna cap as R1 | ~$3 each |
+| R2, R4, R7 | 30,000 | same as R1 | same Luna cap as R1 | ~$3 each |
 | **R1 to R6** | | | | **~$40** typical; **~$60** hard ceiling |
-| **+ R7** | 30,000 | same as R1 | same Luna cap as R1 | **~$3** (pending approval) |
+| **R7 included above** | 30,000 | same as R1 | same Luna cap as R1 | **~$3** (approved) |
 
 **Locked post budget:** 30,000 posts for full runs (not 60,000). Re-measure input tokens per post after prompt flip with a 100-post smoke before production runs.
 
-**R5/R6 gate:** run half-budget jobs only when Step 5 measures R1 Jev optimize spend under about **$12**.
+**R5/R6 gate:** run half-budget jobs only when R1's confirmed dev-B F1 is strictly greater than Stage A union A1 test F1 **0.538**.
 
 ## Folder layout (new)
 

@@ -3,7 +3,7 @@
 ## Scope
 
 - **Caller:** `jev_gepa_rebuilt/optimize.py` production config, `jev_gepa_rebuilt/evaluate.py` `main`
-- **Task:** Launch ablations per the plan table with shared Jev rate limit **200 request starts/min per job** (max **1,000**/min across parallel jobs). After Step 5 smokes pass, run **R1**, **R2**, **R3**, and **R7** (only if the user approved R7) in parallel. Run **R4** only after the R4 round-robin smoke passes. Run **R5** and **R6** at `HALF_BUDGET_MAX_METRIC_CALLS` (15,000 posts) only if Step 5 measured R1 Jev optimize cost under about **$12**. After each optimize run finishes, run **one** test evaluation via `evaluate.py`. On Jev API failure after retries, stop the job and report. Do not retry in a loop. Upload outputs and log Wandb group `jev_gepa_rebuilt`.
+- **Task:** Launch ablations per the plan table with shared Jev rate limit **200 request starts/min per job** (max **1,000**/min across parallel jobs). After Step 5 smokes pass, run **R1**, **R2**, **R3**, and **R7** in parallel. Run **R4** only after the R4 round-robin smoke passes. Run **R5** and **R6** at `HALF_BUDGET_MAX_METRIC_CALLS` (15,000 posts) only if R1's confirmed dev-B F1 is strictly greater than **0.538**. After each optimize run finishes, run **one** test evaluation via `evaluate.py`. On Jev API failure after retries, stop the job and report. Do not retry in a loop. Upload outputs and log Wandb group `jev_gepa_rebuilt`.
 - **Out of scope:** RESULTS.md prose (Step 7), error clustering (Step 7 optional), editing plan.md/design.md.
 
 ## Dependencies
@@ -48,7 +48,7 @@ Steps 1 to 5: policies, selection, guards, reflection logging, smokes green, dev
 | `R6_gepa_mirror` | mirror | `label_certainty` | `openai/gpt-6-luna` | 15000 | 2.50 |
 | `R7_plain_majority` | pair | `plain_majority` | `openai/gpt-6-luna` | 30000 | 5.0 |
 
-R7 entry disabled in CLI until env `JEV_GEPA_REBUILT_APPROVE_R7=1` or `--enable-r7` flag (document in README).
+R7 is approved. Enable it in the registry with no extra flag.
 
 R4: multi-key `seed_candidate` per Step 5; `module_selector="round_robin"`. All other ablations: single `study_instruction` key; **omit** `module_selector` (GEPA default).
 
@@ -60,11 +60,11 @@ Each optimize process:
 RequestStartLimiter(200)  # DEFAULT_RATE_CAP_PER_MIN per job
 ```
 
-Parallel jobs: run at most **5** full-budget jobs at once so combined traffic stays at or under **1,000** req/min (5 x 200). Suggested wave 1: R1, R2, R3, R7 (if approved). Wave 2: R4. Wave 3: R5 and R6 if the cost gate passes.
+Parallel jobs: run at most **5** full-budget jobs at once so combined traffic stays at or under **1,000** req/min (5 x 200). Wave 1: R1, R2, R3, R7. Wave 2: R4. Wave 3: R5 and R6 if the dev-B gate passes.
 
 ### R5/R6 gate
 
-Read `outputs/_smoke/token_measurement.json` or R1 smoke `jev_optimize_usd_per_30k_posts` from Step 5. If `>= 12.0`, skip R5/R6 and write `outputs/_smoke/r5_r6_skipped.json` with reason.
+After R1 finishes dev selection, read `outputs/R1_gepa_pair/dev_selection.json`. Run R5 and R6 only if R1's confirmed dev-B F1 is strictly greater than Stage A union A1 test F1 **0.538**. If not, skip R5/R6 and write `outputs/_smoke/r5_r6_skipped.json` with the measured dev-B F1 and the 0.538 bar. The earlier $12 Jev-cost gate is retired.
 
 ### Jev API failure
 
@@ -120,8 +120,8 @@ then score_mode == label_certainty and max_metric_calls == 30000
 when resolving R5_gepa_original
 then max_metric_calls == 15000 and max_reflection_cost == 2.5
 
-when resolving R7 without approve flag
-then main raises SystemExit or ValueError disabled
+when resolving R7_plain_majority
+then score_mode == plain_majority and max_metric_calls == 30000 and the ablation is enabled
 ```
 
 ### `tests/test_evaluate_rebuilt.py`
@@ -199,7 +199,7 @@ Expected: subprocess PIDs for each ablation; combined rate under 1000 req/min do
 ## Must fail
 
 - Starting R4 before R4 smoke pass file is true.
-- Starting R5/R6 when R1 Jev optimize estimate >= $12.
+- Starting R5/R6 when R1 confirmed dev-B F1 is not strictly greater than 0.538.
 - Running test evaluate twice without `--force` counting as new Jev spend (second call should no-op).
 
 ## Commit message

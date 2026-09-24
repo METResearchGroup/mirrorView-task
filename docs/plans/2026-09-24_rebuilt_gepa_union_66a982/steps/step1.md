@@ -90,7 +90,7 @@ def upload_rebuilt(path: Path) -> None:
 
 - Same repo-root `sys.path` bootstrap as `jev_gepa/optimize.py`.
 - `argparse` with `--ablation-id`, `--smoke`, `--max-metric-calls`.
-- `ABLATION_IDS` tuple listing `R1_gepa_pair`, `R2_majority_weighted`, `R3_gepa_pair_terra`, `R4_gepa_multi_component`, `R5_gepa_original`, `R6_gepa_mirror`, `R7_plain_majority` (R7 may be marked disabled until user approves).
+- `ABLATION_IDS` tuple listing `R1_gepa_pair`, `R2_majority_weighted`, `R3_gepa_pair_terra`, `R4_gepa_multi_component`, `R5_gepa_original`, `R6_gepa_mirror`, `R7_plain_majority`. R7 is approved and enabled.
 - `main` prints `jev_gepa_rebuilt optimize stub` and exits 0 until Step 3 wires GEPA.
 
 ### `evaluate.py` (stub)
