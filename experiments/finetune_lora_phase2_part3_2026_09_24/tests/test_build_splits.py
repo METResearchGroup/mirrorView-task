@@ -4,18 +4,20 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import patch
 
 import pandas as pd
-import pytest
 
 from experiments.finetune_lora_phase2_part3_2026_09_24.shared.build_splits import (
     RANDOM_SEED,
     TRAIN_FRACTION,
     balance_split_posts,
-    build_and_write_splits,
     post_level_split,
     sample_experiment_three_train,
+    write_split_csv,
+    write_split_manifest,
+)
+from experiments.finetune_lora_phase2_part3_2026_09_24.shared.create_chat_dataset import (
+    write_chat_jsonl,
 )
 
 
@@ -148,29 +150,51 @@ class TestLeakage:
 
     def test_no_test_post_in_chat_train_jsonl(self, tmp_path: Path):
         """No test post id appears in any chat_train.jsonl."""
-        with patch(
-            "experiments.finetune_lora_phase2_part3_2026_09_24.shared.build_splits.load_dataset"
-        ) as mock_load:
-            mock_load.side_effect = [_tiny_modal_frame(), _tiny_unanimous_frame()]
-            build_and_write_splits(force=True, seed=RANDOM_SEED)
-
-        from experiments.finetune_lora_phase2_part3_2026_09_24.shared.create_chat_dataset import (
-            create_chat_datasets,
+        modal_df = _tiny_modal_frame()
+        unanimous_df = _tiny_unanimous_frame()
+        unanimous_ids = set(unanimous_df["message_id"])
+        manifest = post_level_split(
+            modal_df,
+            unanimous_ids,
+            train_fraction=TRAIN_FRACTION,
+            seed=RANDOM_SEED,
         )
-
-        create_chat_datasets(force=True)
-
-        experiment_root = Path(
-            "experiments/finetune_lora_phase2_part3_2026_09_24"
-        )
-        manifest = pd.read_csv(experiment_root / "data" / "split_manifest.csv")
+        train_ids = set(manifest.loc[manifest["split"] == "train", "post_id"])
         test_ids = set(manifest.loc[manifest["split"] == "test", "post_id"])
 
+        data_dir = tmp_path / "data"
+        exp1_dir = tmp_path / "experiment1_unanimous" / "data"
+        exp2_dir = tmp_path / "experiment2_modal" / "data"
+        exp3_dir = tmp_path / "experiment3_modal_size_matched" / "data"
+        for directory in (data_dir, exp1_dir, exp2_dir, exp3_dir):
+            directory.mkdir(parents=True, exist_ok=True)
+
+        write_split_manifest(manifest, data_dir / "split_manifest.csv", force=True)
+
+        exp1_train = balance_split_posts(unanimous_df, train_ids, seed=RANDOM_SEED)
+        exp2_train = balance_split_posts(modal_df, train_ids, seed=RANDOM_SEED)
+        exp3_train = sample_experiment_three_train(
+            exp2_train,
+            exp1_train,
+            seed=RANDOM_SEED,
+        )
+        write_split_csv(exp1_train, exp1_dir / "train.csv", force=True)
+        write_split_csv(exp2_train, exp2_dir / "train.csv", force=True)
+        write_split_csv(exp3_train, exp3_dir / "train.csv", force=True)
+
         chat_paths = [
-            experiment_root / "experiment1_unanimous/data/chat_train.jsonl",
-            experiment_root / "experiment2_modal/data/chat_train.jsonl",
-            experiment_root / "experiment3_modal_size_matched/data/chat_train.jsonl",
+            exp1_dir / "chat_train.jsonl",
+            exp2_dir / "chat_train.jsonl",
+            exp3_dir / "chat_train.jsonl",
         ]
+        train_csvs = [
+            exp1_dir / "train.csv",
+            exp2_dir / "train.csv",
+            exp3_dir / "train.csv",
+        ]
+        for csv_path, chat_path in zip(train_csvs, chat_paths):
+            write_chat_jsonl(csv_path, chat_path, force=True)
+
         for chat_path in chat_paths:
             with chat_path.open(encoding="utf-8") as handle:
                 for line in handle:
