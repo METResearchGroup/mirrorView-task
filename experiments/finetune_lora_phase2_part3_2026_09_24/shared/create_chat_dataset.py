@@ -15,6 +15,8 @@ from experiments.finetune_qwen_model_2026_08_08.src.create_chat_dataset import (
     write_chat_jsonl,
 )
 
+__all__ = ["create_chat_datasets", "row_to_chat_record", "write_chat_jsonl"]
+
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = EXPERIMENT_ROOT / "data"
 
