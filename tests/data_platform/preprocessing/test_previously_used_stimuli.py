@@ -119,6 +119,34 @@ class TestLoadPreviouslyUsedStimuliIds:
 
         assert result == expected
 
+    def test_skips_union_stimuli_datasets(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Combined catalogs are derived views and are not loaded again."""
+        datasets = {
+            "KEEP_STIMULI": _dataset_entry("KEEP_STIMULI", STIMULI_DATASET_KIND),
+            "UNION_STIMULI": DatasetEntry(
+                name="UNION_STIMULI",
+                relative_path=None,
+                kind=STIMULI_DATASET_KIND,
+                study_phase="test",
+                source_names=("KEEP_STIMULI",),
+            ),
+        }
+        frames = {"KEEP_STIMULI": _stimuli_frame("twitter_1")}
+
+        def fake_load_dataset(name: str, *, low_memory: bool = False) -> pd.DataFrame:
+            return frames[name]
+
+        monkeypatch.setattr(
+            "data_platform.preprocessing.previously_used_stimuli.load_dataset",
+            fake_load_dataset,
+        )
+
+        result = load_previously_used_stimuli_ids(datasets)
+
+        assert result == {"twitter_1"}
+
     def test_raises_when_stimuli_file_is_missing(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:
