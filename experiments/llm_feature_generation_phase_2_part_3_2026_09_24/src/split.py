@@ -142,16 +142,42 @@ def _update_cohort_split_columns(
     discovery_set = set(discovery_ids)
     test_set = set(test_ids)
     for arm in constants.TEXT_ARMS:
-        cohort_dir = paths.cohort_dir(arm)
-        if not cohort_dir.is_dir():
-            continue
-        run_dir = paths.latest_timestamp_subdir(cohort_dir)
+        run_dir = _latest_all_participant_cohort_run(arm)
         cohort_path = run_dir / constants.COHORT_FILENAME
         frame = pd.read_parquet(cohort_path)
         frame["split"] = frame["post_id"].map(
             lambda post_id: _split_label(post_id, discovery_set, test_set)
         )
         frame.to_parquet(cohort_path, index=False)
+
+
+def _latest_all_participant_cohort_run(arm: str) -> Path:
+    cohort_root = paths.cohort_dir(arm)
+    if not cohort_root.is_dir():
+        raise FileNotFoundError(f"Missing cohort directory: {cohort_root}")
+    candidates = sorted(
+        (
+            path
+            for path in cohort_root.iterdir()
+            if path.is_dir()
+            and _metadata_participant_filter(path) == constants.PARTICIPANT_FILTER_ALL
+        ),
+        key=lambda path: path.name,
+    )
+    if not candidates:
+        raise FileNotFoundError(
+            f"No cohort run with participant_filter=all under {cohort_root}"
+        )
+    return candidates[-1]
+
+
+def _metadata_participant_filter(run_dir: Path) -> str | None:
+    metadata_path = run_dir / constants.METADATA_FILENAME
+    if not metadata_path.is_file():
+        return None
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    value = metadata.get("participant_filter")
+    return str(value) if value is not None else None
 
 
 def _split_label(
