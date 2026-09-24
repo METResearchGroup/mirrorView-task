@@ -11,6 +11,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import wandb
+
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.secrets import get_wandb_api_key
+
 WANDB_PROJECT = "predict_keep_remove_jev_gepa_2026_09_23"
 WANDB_ENTITY = "mind_technology_lab"
 
@@ -38,7 +42,15 @@ def init_run(spec: WandbRunSpec) -> Any:
     Any
         Active Wandb run handle.
     """
-    raise NotImplementedError
+    wandb.login(key=get_wandb_api_key())
+    return wandb.init(
+        project=WANDB_PROJECT,
+        entity=WANDB_ENTITY,
+        group=spec.group,
+        name=spec.name,
+        job_type=spec.job_type,
+        config=spec.config,
+    )
 
 
 def log_artifact(run: Any, path: Path, name: str, artifact_type: str) -> None:
@@ -55,4 +67,6 @@ def log_artifact(run: Any, path: Path, name: str, artifact_type: str) -> None:
     artifact_type
         Wandb artifact type label.
     """
-    raise NotImplementedError
+    artifact = wandb.Artifact(name=name, type=artifact_type)
+    artifact.add_file(str(path))
+    run.log_artifact(artifact)
