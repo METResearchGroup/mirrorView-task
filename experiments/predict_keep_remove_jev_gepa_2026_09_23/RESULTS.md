@@ -42,6 +42,40 @@ Latency at batch size 10 (A1, full cohort):
 
 Stage A Jev cost (from results.json): **$1.45** total (estimates.md expected ~$0.93).
 
+## Stage A on Part 2 + Part 3 union
+
+Union cohort **`cohort_union_splits.parquet`**: **19,219** posts (Part 2 + Part 3 nested splits). **14,842** posts overlap the frozen Part 3 cohort A and reuse Stage A predictions without new Jev calls; **4,377** posts are new (**438** batched requests per ablation at batch size 10). Outputs: `jev_baseline/outputs_union/<ablation>/`.
+
+Headline metrics: **union test split** (n=**3,841**), threshold **0.5**, positive class **remove**, compared to the original Part 3-only Stage A test column above (n=**2,991**).
+
+| Ablation | Union Acc | Union Prec | Union Rec | Union F1 | Part 3 F1 (ref) |
+| --- | --- | --- | --- | --- | --- |
+| A1_pair_study_prompt | 0.7433 | 0.4314 | 0.7161 | 0.5384 | 0.5267 |
+| A2_original_only | 0.7527 | 0.4363 | 0.6264 | 0.5143 | 0.4987 |
+| A3_mirror_only | 0.7831 | 0.4844 | 0.5791 | 0.5275 | 0.5201 |
+| A4_pair_features_addendum | 0.5449 | 0.3055 | 0.9240 | 0.4592 | 0.4516 |
+
+Test subgroup F1 (`study_part_coverage`, A1 union test):
+
+| Coverage | n (test) | F1 |
+| --- | --- | --- |
+| part2_only | 215 | 0.6423 |
+| part3_only | 2,112 | 0.5017 |
+| both (rated in Part 2 and Part 3) | 1,514 | 0.5750 |
+
+Shared test sanity check (**2,965** posts in both union and Part 3 test splits): Part 3 labels + reused predictions match recomputed Part 3 predictions on the shared set for all four ablations (`matches_part3_reference=true`). Example (A1): shared-set F1 **0.5293** under Part 3 labels vs **0.5384** under union labels on the full union test split.
+
+New-request latency (batch 10, A1 union incremental scoring only):
+
+| Level | p50 ms | p90 ms | p99 ms |
+| --- | --- | --- | --- |
+| per request | 312.3 | 379.9 | 466.8 |
+| per post | 31.3 | 38.0 | 46.7 |
+
+Union incremental Jev spend (new posts only, all four ablations): **$0.42** (`cost_usd` summed from union `results.json`). S3 artifacts: `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_baseline_union/<ablation>/` (`labels.parquet`, `requests.parquet`, `results.json`).
+
+Wandb group **`jev_baseline_union`**, job_type **`score`**: [A1](https://wandb.ai/mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23/runs/m5biedmq), [A2](https://wandb.ai/mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23/runs/wazqcx9q), [A3](https://wandb.ai/mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23/runs/flhw1wx5), [A4](https://wandb.ai/mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23/runs/kbyoflq3).
+
 ## Stage B: Jev + GEPA (test split, threshold 0.5, positive class remove)
 
 | Ablation | View | Dev F1 (selected) | Test F1 | Test ROC-AUC | Reflection LM | Reflection cost USD |
