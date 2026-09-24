@@ -109,12 +109,16 @@ def _ensure_under_spend_cap() -> None:
         raise SpendCapExceeded(f"cumulative spend reached {constants.SPEND_CAP_USD}")
 
 
+ALLOWED_OPENAI_PARAMS = ("reasoning_effort",)
+
+
 def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel]) -> tuple[str, Any]:
     response = litellm.completion(
         model=constants.LLM_LITELLM_MODEL_ID,
         messages=messages,
         response_format=response_model,
         reasoning_effort=constants.LLM_REASONING_EFFORT,
+        allowed_openai_params=list(ALLOWED_OPENAI_PARAMS),
     )
     raw_text = response.choices[0].message.content or ""
     return raw_text, response
@@ -178,7 +182,7 @@ def run_probe() -> None:
         run_metadata=run_metadata,
     )
     _write_run_metadata(probe_dir, run_metadata, sorted(probe_dir.glob("[0-9]*_*.json"))[-1])
-    artifact = sorted(probe_dir.glob("*.json"))[-1]
+    artifact = sorted(probe_dir.glob("[0-9]*_*.json"))[-1]
     usage = json.loads(artifact.read_text(encoding="utf-8"))["usage"]
     reasoning_tokens = usage.get("reasoning_tokens", 0)
     print(
