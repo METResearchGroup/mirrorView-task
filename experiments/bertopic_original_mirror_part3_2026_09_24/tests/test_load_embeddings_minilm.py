@@ -13,6 +13,7 @@ from experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings_m
     build_minilm_metadata,
     l2_normalize_rows,
     merge_minilm_embeddings,
+    minilm_embedding_identity,
 )
 
 
@@ -54,7 +55,9 @@ class TestMergeMinilmEmbeddings:
     def test_merge_reuses_seed_and_encodes_missing(self, monkeypatch) -> None:
         """Only missing post ids are sent to the encoder."""
         seed_vec = np.ones(MINILM_DIMENSIONS, dtype=np.float64)
-        seed = {"a": seed_vec}
+        seed = {
+            "a": (seed_vec, minilm_embedding_identity("text-a")),
+        }
         encoded = np.full((1, MINILM_DIMENSIONS), 2.0, dtype=np.float64)
 
         def fake_encode(texts: list[str]) -> np.ndarray:
@@ -75,3 +78,35 @@ class TestMergeMinilmEmbeddings:
         assert np.allclose(matrix[0], seed_vec)
         assert np.allclose(matrix[1], encoded[0])
         assert provenance == {PROVENANCE_REUSED_LOCAL: 1, PROVENANCE_COMPUTED: 1}
+
+    def test_merge_reuses_seed_when_identity_matches(self, monkeypatch) -> None:
+        """A seed row is reused when its stored identity matches the current text."""
+        seed_vec = np.ones(MINILM_DIMENSIONS, dtype=np.float64)
+        seed = {"p1": (seed_vec, minilm_embedding_identity("hello"))}
+        monkeypatch.setattr(
+            "experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings_minilm.encode_minilm",
+            lambda texts: pytest.fail(f"encode_minilm should not run: {texts}"),
+        )
+        matrix, provenance = merge_minilm_embeddings(["p1"], ["hello"], seed)
+
+        assert np.allclose(matrix[0], seed_vec)
+        assert provenance == {PROVENANCE_REUSED_LOCAL: 1, PROVENANCE_COMPUTED: 0}
+
+    def test_merge_reencodes_when_seed_stale(self, monkeypatch) -> None:
+        """Stale seed vectors are re-encoded when text identity no longer matches."""
+        seed_vec = np.zeros(MINILM_DIMENSIONS, dtype=np.float64)
+        seed = {"p1": (seed_vec, minilm_embedding_identity("old text"))}
+        encoded = np.ones((1, MINILM_DIMENSIONS), dtype=np.float64)
+
+        def fake_encode(texts: list[str]) -> np.ndarray:
+            assert texts == ["changed text"]
+            return encoded
+
+        monkeypatch.setattr(
+            "experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings_minilm.encode_minilm",
+            fake_encode,
+        )
+        matrix, provenance = merge_minilm_embeddings(["p1"], ["changed text"], seed)
+
+        assert np.allclose(matrix[0], encoded[0])
+        assert provenance == {PROVENANCE_REUSED_LOCAL: 0, PROVENANCE_COMPUTED: 1}

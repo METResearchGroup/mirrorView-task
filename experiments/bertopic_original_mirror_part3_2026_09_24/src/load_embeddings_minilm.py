@@ -17,12 +17,13 @@ import pandas as pd
 
 from experiments.bertopic_original_mirror_part3_2026_09_24.src import data as data_mod
 from experiments.bertopic_original_mirror_part3_2026_09_24.src import paths
+from lib.aws.embedding_identity import embedding_identity_sha256
+
 from experiments.bertopic_original_mirror_part3_2026_09_24.src.load_embeddings import (
     N_EXPECTED,
     assert_full_coverage,
-    build_index,
+    cache_file_paths,
     order_posts,
-    read_role_cache_vectors,
     require_embed_role,
     select_text_for_role,
     write_cache,
@@ -36,6 +37,17 @@ PROVENANCE_REUSED_LOCAL = "reused_local"
 PROVENANCE_COMPUTED = "computed"
 CORPUS_NAME = "study_phase_2_part_2_and_3_stimuli_full"
 ENCODE_BATCH_SIZE = 64
+INDEX_IDENTITY_COLUMN = "embedding_identity_sha256"
+
+
+def minilm_embedding_identity(text: str) -> str:
+    """Return the versioned identity hash for one MiniLM embedding."""
+    return embedding_identity_sha256(
+        text,
+        model_id=MINILM_MODEL_ID,
+        dimensions=MINILM_DIMENSIONS,
+        normalize=True,
+    )
 
 
 def l2_normalize_rows(vectors: np.ndarray) -> np.ndarray:
@@ -78,6 +90,52 @@ def build_minilm_metadata(
     }
 
 
+def build_minilm_index(post_ids: list[str], texts: list[str]) -> pd.DataFrame:
+    """Return index rows sorted by ``post_id`` with per-row embedding identity hashes."""
+    text_by_post = dict(zip(post_ids, texts, strict=True))
+    ordered = sorted(post_ids)
+    return pd.DataFrame(
+        {
+            "row_id": np.arange(len(ordered), dtype=np.int64),
+            "post_id": ordered,
+            INDEX_IDENTITY_COLUMN: [minilm_embedding_identity(text_by_post[post_id]) for post_id in ordered],
+        }
+    )
+
+
+def read_minilm_seed_cache(cache_dir: Path) -> dict[str, tuple[np.ndarray, str | None]]:
+    """Load seed vectors and optional identity hashes keyed by ``post_id``."""
+    emb_path, index_path, _ = cache_file_paths(cache_dir)
+    if not (emb_path.is_file() and index_path.is_file()):
+        raise FileNotFoundError(f"Incomplete cache at {cache_dir}")
+    index = pd.read_parquet(index_path)
+    embeddings = np.load(emb_path)
+    if embeddings.shape != (len(index), MINILM_DIMENSIONS):
+        raise ValueError(
+            f"Cache shape mismatch: embeddings={embeddings.shape} index_rows={len(index)}"
+        )
+    has_identity = INDEX_IDENTITY_COLUMN in index.columns
+    by_post: dict[str, tuple[np.ndarray, str | None]] = {}
+    for row in index.itertuples(index=False):
+        post_id = str(row.post_id)
+        row_id = int(row.row_id)
+        vector = np.asarray(embeddings[row_id], dtype=np.float64).ravel()
+        identity = str(getattr(row, INDEX_IDENTITY_COLUMN)) if has_identity else None
+        by_post[post_id] = (vector, identity)
+    return by_post
+
+
+def seed_vector_reusable(
+    text: str,
+    seed_vector: np.ndarray,
+    seed_identity: str | None,
+) -> bool:
+    """Return True when ``seed_vector`` may be reused for ``text``."""
+    if seed_identity is None:
+        return False
+    return seed_identity == minilm_embedding_identity(text)
+
+
 def encode_minilm(texts: list[str]) -> np.ndarray:
     """Encode ``texts`` with all-MiniLM-L6-v2 and L2-normalize rows."""
     from sentence_transformers import SentenceTransformer
@@ -90,16 +148,19 @@ def encode_minilm(texts: list[str]) -> np.ndarray:
 def merge_minilm_embeddings(
     post_ids: list[str],
     texts: list[str],
-    seed_vectors: dict[str, np.ndarray] | None,
+    seed_cache: dict[str, tuple[np.ndarray, str | None]] | None,
 ) -> tuple[np.ndarray, dict[str, int]]:
-    """Build a full embedding matrix, reusing seed rows when present."""
+    """Build a full embedding matrix, reusing seed rows when text identity matches."""
     missing_indices: list[int] = []
     for index, post_id in enumerate(post_ids):
-        if seed_vectors is None or post_id not in seed_vectors:
+        if seed_cache is None or post_id not in seed_cache:
+            missing_indices.append(index)
+            continue
+        seed_vector, seed_identity = seed_cache[post_id]
+        if not seed_vector_reusable(texts[index], seed_vector, seed_identity):
             missing_indices.append(index)
     provenance = {PROVENANCE_REUSED_LOCAL: 0, PROVENANCE_COMPUTED: 0}
-    if seed_vectors:
-        provenance[PROVENANCE_REUSED_LOCAL] = len(post_ids) - len(missing_indices)
+    provenance[PROVENANCE_REUSED_LOCAL] = len(post_ids) - len(missing_indices)
     if missing_indices:
         missing_texts = [texts[index] for index in missing_indices]
         computed = encode_minilm(missing_texts)
@@ -109,8 +170,12 @@ def merge_minilm_embeddings(
     rows: list[np.ndarray] = []
     computed_cursor = 0
     for index, post_id in enumerate(post_ids):
-        if seed_vectors is not None and post_id in seed_vectors:
-            rows.append(seed_vectors[post_id])
+        if (
+            seed_cache is not None
+            and post_id in seed_cache
+            and seed_vector_reusable(texts[index], seed_cache[post_id][0], seed_cache[post_id][1])
+        ):
+            rows.append(seed_cache[post_id][0])
             continue
         rows.append(computed[computed_cursor])
         computed_cursor += 1
@@ -141,14 +206,14 @@ def run_load_minilm(role: str, seed_from_local_cache: Path | None = None) -> pd.
     posts = order_posts(data_mod.load_stimuli_posts())
     texts = select_text_for_role(posts, validated).tolist()
     post_ids = posts["post_id"].astype(str).tolist()
-    seed_vectors = None
+    seed_cache = None
     if seed_from_local_cache is not None:
-        seed_vectors = read_role_cache_vectors(seed_from_local_cache, dimensions=MINILM_DIMENSIONS)
-    embeddings, provenance = merge_minilm_embeddings(post_ids, texts, seed_vectors)
+        seed_cache = read_minilm_seed_cache(seed_from_local_cache)
+    embeddings, provenance = merge_minilm_embeddings(post_ids, texts, seed_cache)
     if len(embeddings) != len(post_ids):
         assert_full_coverage(len(embeddings), N_EXPECTED, post_ids[len(embeddings) :], validated)
     assert_full_coverage(len(embeddings), N_EXPECTED, [], validated)
-    index = build_index(post_ids)
+    index = build_minilm_index(post_ids, texts)
     metadata = build_minilm_metadata(validated, len(index), provenance=provenance)
     write_cache(paths.embeddings_minilm_dir(validated), embeddings, index, metadata)
     print(
