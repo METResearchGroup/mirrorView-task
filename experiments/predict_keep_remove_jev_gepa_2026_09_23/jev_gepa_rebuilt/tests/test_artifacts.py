@@ -8,6 +8,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.artifacts import (
+    rebuilt_s3_key,
     rebuilt_s3_prefix,
     upload_rebuilt,
 )
@@ -48,3 +49,36 @@ class TestUploadRebuilt:
         mock_store.put_new.assert_called_once()
         key = mock_store.put_new.call_args[0][0]
         assert key.startswith(f"{expected_prefix}/")
+
+    def test_s3_key_when_repo_root_does_not_contain_path(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verifies upload uses package-relative keys when REPO_ROOT mismatches the file path."""
+        workspace = tmp_path / "workspace"
+        wrong_repo_root = tmp_path / "other-checkout"
+        monkeypatch.setattr(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.REPO_ROOT",
+            wrong_repo_root,
+        )
+        file_path = (
+            workspace
+            / "experiments"
+            / "predict_keep_remove_jev_gepa_2026_09_23"
+            / "jev_gepa_rebuilt"
+            / "outputs"
+            / "R1_gepa_pair"
+            / "foo.json"
+        )
+        file_path.parent.mkdir(parents=True)
+        file_path.write_bytes(b"{}")
+        expected_key = rebuilt_s3_key(file_path)
+        mock_store = MagicMock()
+        mock_store.get.return_value = None
+
+        with patch(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.CampaignObjectStore",
+            return_value=mock_store,
+        ):
+            upload_rebuilt(file_path)
+
+        mock_store.put_new.assert_called_once_with(expected_key, b"{}")

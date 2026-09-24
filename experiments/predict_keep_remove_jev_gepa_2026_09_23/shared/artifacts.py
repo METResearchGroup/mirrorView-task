@@ -42,22 +42,30 @@ def download_if_missing(path: Path, key: str) -> None:
     path.write_bytes(stored.body)
 
 
-def upload_under_prefix(path: Path, allowed_prefix: str = EXPERIMENT_S3_PREFIX) -> None:
+def upload_under_prefix(
+    path: Path,
+    allowed_prefix: str = EXPERIMENT_S3_PREFIX,
+    *,
+    s3_key: str | None = None,
+) -> None:
     """Upload ``path`` with put_new when absent, else replace.
 
     Parameters
     ----------
     path
-        Local file to upload. The S3 key is ``path.relative_to(REPO_ROOT)``.
+        Local file to upload. The S3 key is ``path.relative_to(REPO_ROOT)`` unless
+        ``s3_key`` is provided.
     allowed_prefix
         Allowed key prefix. Uploads outside this prefix are refused.
+    s3_key
+        Explicit object key. When set, ``REPO_ROOT`` is not used to derive the key.
 
     Raises
     ------
     ValueError
         When the derived S3 key is outside ``allowed_prefix``.
     """
-    key = str(path.relative_to(REPO_ROOT))
+    key = s3_key if s3_key is not None else str(path.relative_to(REPO_ROOT))
     if not key.startswith(allowed_prefix):
         raise ValueError(f"refusing S3 key outside {allowed_prefix}: {key}")
     store = CampaignObjectStore(OUTPUT_S3_BUCKET)
