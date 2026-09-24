@@ -143,7 +143,33 @@ def join_stimuli_for_platform(
     ValueError
         When stimuli keys are duplicated or any per-post id lacks a match.
     """
-    raise NotImplementedError
+    stimuli_keys = stimuli["post_primary_key"].astype(str)
+    if stimuli_keys.duplicated().any():
+        duplicate_examples = sorted(stimuli_keys[stimuli_keys.duplicated()].unique())[:5]
+        raise ValueError(
+            "Expected unique post_primary_key values in stimuli, but found "
+            f"duplicates. Examples: {duplicate_examples}"
+        )
+
+    merged = per_post.merge(
+        stimuli,
+        left_on="post_id",
+        right_on="post_primary_key",
+        how="inner",
+        validate="one_to_one",
+    )
+
+    input_ids = set(per_post["post_id"].astype(str))
+    joined_ids = set(merged["post_id"].astype(str))
+    missing = sorted(input_ids - joined_ids)
+    if missing:
+        examples = missing[:5]
+        raise ValueError(
+            "Per-post rows missing stimuli match after inner join. "
+            f"Examples: {examples}"
+        )
+
+    return merged.reset_index(drop=True)
 
 
 def build_labeled_posts(
