@@ -18,6 +18,21 @@ LLM_REASONING_EFFORT: Final = "none"
 SPLIT_SEED: Final = 42
 CLUSTER_SEEDS: Final = (42, 43, 44)
 DEFAULT_SEED: Final = 42
+KMEANS_N_INIT: Final = 10
+KMEANS_MAX_ITER: Final = 300
+KMEANS_NARROW_K_MIN: Final = 2
+KMEANS_NARROW_K_MAX: Final = 10
+KMEANS_WIDE_K_MIN: Final = 10
+KMEANS_WIDE_K_MAX: Final = 80
+KMEANS_WIDE_K_STEP: Final = 5
+HDBSCAN_DEFAULT_MIN_CLUSTER_SIZE: Final = 5
+HDBSCAN_SUBSAMPLE_FRACTION: Final = 0.9
+HDBSCAN_SUBSAMPLE_REPEATS: Final = 10
+HDBSCAN_REFERENCE_SEED: Final = 42
+NOISE_CLUSTER_ID: Final = -1
+STABILITY_V2_FILENAME: Final = "stability_v2.json"
+K_SELECTION_WIDE_FILENAME: Final = "k_selection_wide.json"
+STABILITY_ACROSS_ARMS_V2_FILENAME: Final = "stability_across_arms_v2.json"
 TEXT_ARMS: Final = ("original_only", "mirror_only", "paired")
 BATCH_DESIGN_MIXED: Final = "mixed"
 BATCH_DESIGN_MIXED_TOPUP: Final = "mixed_topup"
@@ -116,4 +131,29 @@ COHORT_COLUMNS: Final = (
     "in_part2_catalog",
     "split",
     "participant_filter",
+)
+CODEBOOK_EXAMPLES_PER_POLARITY: Final = 2
+CODEBOOK_NAME_MIN_WORDS: Final = 2
+CODEBOOK_NAME_MAX_WORDS: Final = 5
+CODEBOOK_FEATURE_ID_PREFIX: Final = "cb_"
+CODEBOOK_DRAFT_DIR_PREFIX: Final = "draft_"
+CODEBOOK_APPROVED_DIR_PREFIX: Final = "approved_"
+CODEBOOK_MERGE_SIMILARITY_THRESHOLD: Final = 0.85
+FEATURE_SYNONYMS_FILENAME: Final = "feature_synonyms.csv"
+ASSIGNMENTS_HDBSCAN_FILENAME: Final = "assignments_hdbscan.json"
+CLUSTER_SEED_DIR_TEMPLATE: Final = "clusters_seed_{seed}"
+NOISE_CLUSTER_ID: Final = -1
+CODEBOOK_JSON_FILENAME: Final = "codebook.json"
+CODEBOOK_MD_FILENAME: Final = "codebook.md"
+DROPPED_FEATURES_FILENAME: Final = "dropped_features.json"
+APPROVAL_JSON_FILENAME: Final = "approval.json"
+OPERATIONALIZE_CLUSTERS_FILENAME: Final = "clusters.jsonl"
+TOPIC_ONLY_CATEGORY: Final = "topic_subject"
+TOPIC_ONLY_POLICY_TERMS: Final = (
+    "guns",
+    "gun",
+    "immigration",
+    "abortion",
+    "climate",
+    "election",
 )
