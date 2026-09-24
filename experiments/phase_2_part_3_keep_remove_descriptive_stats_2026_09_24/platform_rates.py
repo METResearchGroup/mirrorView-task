@@ -223,7 +223,12 @@ def build_platform_crosstab(labeled_posts: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Integer counts indexed by ``DECISION_ROWS`` and ``PLATFORM_COLUMNS``.
     """
-    raise NotImplementedError
+    table = pd.crosstab(labeled_posts["decision"], labeled_posts["platform"])
+    return (
+        table.reindex(index=list(DECISION_ROWS), columns=list(PLATFORM_COLUMNS))
+        .fillna(0)
+        .astype(int)
+    )
 
 
 def build_platform_toxicity_crosstab(labeled_posts: pd.DataFrame) -> pd.DataFrame:
@@ -239,7 +244,16 @@ def build_platform_toxicity_crosstab(labeled_posts: pd.DataFrame) -> pd.DataFram
     pandas.DataFrame
         Integer counts indexed by ``DECISION_ROWS`` and ``PLATFORM_TOXICITY_COLUMNS``.
     """
-    raise NotImplementedError
+    table = pd.crosstab(
+        labeled_posts["decision"], labeled_posts["platform_toxicity"]
+    )
+    return (
+        table.reindex(
+            index=list(DECISION_ROWS), columns=list(PLATFORM_TOXICITY_COLUMNS)
+        )
+        .fillna(0)
+        .astype(int)
+    )
 
 
 def column_proportions(counts: pd.DataFrame) -> pd.DataFrame:
@@ -255,7 +269,8 @@ def column_proportions(counts: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Float proportions; zero-sum columns become ``pd.NA``.
     """
-    raise NotImplementedError
+    totals = counts.sum(axis=0).replace(0, pd.NA)
+    return counts.div(totals, axis=1)
 
 
 def load_stimuli() -> pd.DataFrame:
