@@ -19,7 +19,7 @@ from experiments.finetune_qwen_model_2026_08_08.src.train_config import (
 )
 
 MODEL_ID = "Qwen/Qwen3.5-4B"
-CHAT_TEMPLATE_KWARGS: dict[str, bool] = {"enable_thinking": False}
+CHAT_TEMPLATE_KWARGS: dict[str, bool] | None = {"enable_thinking": False}
 S3_BUCKET = "mirrorview-experimental-artifacts"
 S3_PREFIX = "experiments/finetune_lora_phase2_part3_2026_09_24"
 ECR_REPO_NAME = "mirrorview-finetune-lora-phase2-part3"
@@ -39,12 +39,30 @@ _THINKING_BODY_PATTERN = re.compile(r"<think>\s*\S")
 
 
 def default_hyperparams(experiment: str) -> TrainHyperparams:
-    """Return Part 3 hyperparams derived from the August defaults."""
+    """Return Part 3 hyperparams derived from the August defaults.
+
+    Parameters
+    ----------
+    experiment
+        One of ``EXPERIMENT_NAMES`` with a train epoch override in
+        ``EXPERIMENT_EPOCHS`` when training.
+
+    Returns
+    -------
+    TrainHyperparams
+        Frozen hyperparameter bundle with Part 3 model, seed, W&B, and epochs.
+    """
     raise NotImplementedError
 
 
 def chat_template_kwargs_json() -> str:
-    """Serialize chat-template kwargs for SageMaker environment."""
+    """Serialize chat-template kwargs for SageMaker environment.
+
+    Returns
+    -------
+    str
+        JSON object string, e.g. ``{"enable_thinking": false}``.
+    """
     raise NotImplementedError
 
 
@@ -53,10 +71,37 @@ def render_infer_prompt(
     messages: list[dict[str, Any]],
     chat_template_kwargs: dict[str, Any] | None,
 ) -> str:
-    """Render the inference prompt the same way ``inference.py`` does."""
+    """Render the inference prompt the same way ``inference.py`` does.
+
+    Parameters
+    ----------
+    tokenizer
+        Hugging Face tokenizer for ``MODEL_ID``.
+    messages
+        Full chat record including assistant gold turn.
+    chat_template_kwargs
+        Optional kwargs forwarded to ``apply_chat_template``; ``None`` keeps
+        tokenizer defaults.
+
+    Returns
+    -------
+    str
+        Prompt text with generation prompt appended.
+    """
     raise NotImplementedError
 
 
 def assert_no_thinking_body(prompt: str) -> None:
-    """Reject prompts whose thinking block contains non-whitespace content."""
+    """Reject prompts whose thinking block contains non-whitespace content.
+
+    Parameters
+    ----------
+    prompt
+        Rendered chat template text.
+
+    Raises
+    ------
+    AssertionError
+        When a ``<think>`` block contains visible thinking text.
+    """
     raise NotImplementedError
