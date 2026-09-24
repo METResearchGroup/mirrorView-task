@@ -7,6 +7,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.reflection_logging import (
+    REFLECTION_TIMEOUT_SECONDS,
     make_reflection_lm_with_usage_log,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.pricing import estimate_reflection_cost_usd
@@ -73,3 +74,13 @@ class TestReflectionLmWrapper:
                 lm("second")
                 expected_two_calls = expected_one_call * 2
                 assert lm.total_cost == expected_two_calls
+
+    def test_reflection_call_timeout_is_three_minutes(self, tmp_path: Path) -> None:
+        """A hung reflection call must fail instead of blocking the run."""
+        lm = make_reflection_lm_with_usage_log(
+            "openai/gpt-6-luna",
+            usage_jsonl_path=tmp_path / "reflection_usage.jsonl",
+            wandb_run=None,
+        )
+        assert lm.completion_kwargs["timeout"] == REFLECTION_TIMEOUT_SECONDS
+        assert REFLECTION_TIMEOUT_SECONDS == 180

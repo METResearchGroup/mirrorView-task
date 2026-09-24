@@ -16,6 +16,8 @@ from gepa.lm import LM
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.constants import (
     REFLECTION_USD_PER_MILLION,
 )
+
+REFLECTION_TIMEOUT_SECONDS = 180
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.pricing import estimate_reflection_cost_usd
 
 
@@ -85,4 +87,5 @@ def make_reflection_lm_with_usage_log(
         model,
         usage_jsonl_path=usage_jsonl_path,
         wandb_run=wandb_run,
+        timeout=REFLECTION_TIMEOUT_SECONDS,
     )
