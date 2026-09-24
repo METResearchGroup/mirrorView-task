@@ -38,7 +38,10 @@ INSTANCE_TYPE = "ml.g5.xlarge"
 
 EXPERIMENT_NAMES = tuple(EXPERIMENT_EPOCHS.keys()) + ("experiment4_cross_eval",)
 
-_THINKING_BODY_PATTERN = re.compile(r"<think>\s*\S")
+_THINKING_BODY_PATTERN = re.compile(
+    r"<think>(.*?)</think>",
+    re.DOTALL,
+)
 
 
 def default_hyperparams(experiment: str) -> TrainHyperparams:
@@ -100,16 +103,13 @@ def render_infer_prompt(
     str
         Prompt text with generation prompt appended.
     """
-    from experiments.finetune_qwen_model_2026_08_08.train import (
-        _bind_chat_template_kwargs,
-    )
-
     prompt_messages = messages_for_generation(messages)
-    bound = _bind_chat_template_kwargs(tokenizer, chat_template_kwargs)
-    return bound.apply_chat_template(
+    template_kwargs: dict[str, Any] = dict(chat_template_kwargs or {})
+    return tokenizer.apply_chat_template(
         prompt_messages,
         tokenize=False,
         add_generation_prompt=True,
+        **template_kwargs,
     )
 
 
@@ -126,4 +126,8 @@ def assert_no_thinking_body(prompt: str) -> None:
     AssertionError
         When a ``<think>`` block contains visible thinking text.
     """
-    assert _THINKING_BODY_PATTERN.search(prompt) is None
+    match = _THINKING_BODY_PATTERN.search(prompt)
+    if match is not None and match.group(1).strip():
+        raise AssertionError(
+            "prompt contains non-empty thinking body inside <think>"
+        )

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 import pytest
@@ -15,6 +14,7 @@ from experiments.finetune_lora_phase2_part3_2026_09_24.shared.run_config import 
     assert_no_thinking_body,
     default_hyperparams,
     render_infer_prompt,
+    _THINKING_BODY_PATTERN,
 )
 from experiments.finetune_qwen_model_2026_08_08.src.train_config import (
     default_hyperparams as prior_default_hyperparams,
@@ -22,7 +22,6 @@ from experiments.finetune_qwen_model_2026_08_08.src.train_config import (
 
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 CHAT_FIXTURE = EXPERIMENT_ROOT / "data" / "chat_test_unanimous.jsonl"
-_THINKING_BODY_PATTERN = re.compile(r"<think>\s*\S")
 
 
 class TestRunConfig:
@@ -93,4 +92,5 @@ class TestTemplateParity:
 
         # Assert
         assert_no_thinking_body(prompt)
-        assert _THINKING_BODY_PATTERN.search(prompt) is None
+        match = _THINKING_BODY_PATTERN.search(prompt)
+        assert match is None or not match.group(1).strip()
