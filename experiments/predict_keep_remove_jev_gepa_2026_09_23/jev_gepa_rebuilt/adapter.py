@@ -17,6 +17,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.consta
     R4_ROUND_ROBIN_COMPONENT_KEYS,
     STUDY_COMPONENT_KEY,
 )
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.errors import JevScoringFailed
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared import jev_scorer, secrets
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
     VIEW_MIRROR,
@@ -136,6 +137,9 @@ class JevGepaRebuiltAdapter:
         self,
         state_texts: list[str],
         study_instruction: str,
+        *,
+        batch_idx: int,
+        post_id: str | None,
     ) -> list[float]:
         def _attempt() -> list[float]:
             self._wait_for_rate_limit()
@@ -147,7 +151,14 @@ class JevGepaRebuiltAdapter:
             )
             return [float(value) for value in batch_result.probabilities]
 
-        return run_with_retries(_attempt)
+        try:
+            return run_with_retries(_attempt)
+        except Exception as exc:
+            raise JevScoringFailed(
+                str(exc),
+                post_id=post_id,
+                batch_idx=batch_idx,
+            ) from exc
 
     def _majority_probability(self, label: int, p_remove: float) -> float:
         if label == REMOVE_LABEL:
@@ -216,8 +227,14 @@ class JevGepaRebuiltAdapter:
 
         for chunk_start in range(0, len(instances), self._batch_size):
             chunk = instances[chunk_start : chunk_start + self._batch_size]
+            batch_idx = chunk_start // self._batch_size
             state_texts = [self._render_state_text(instance) for instance in chunk]
-            probabilities = self._call_scorer(state_texts, study_instruction)
+            probabilities = self._call_scorer(
+                state_texts,
+                study_instruction,
+                batch_idx=batch_idx,
+                post_id=chunk[0].post_id if chunk else None,
+            )
             num_metric_calls += len(chunk)
             for instance, p_remove in zip(chunk, probabilities):
                 outputs.append(JevRolloutOutput(post_id=instance.post_id, p_remove=p_remove))

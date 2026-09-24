@@ -70,6 +70,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.smoke_
     write_r4_smoke_passed,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.dev_ab import build_or_load_dev_ab_split
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.errors import JevScoringFailed
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.guards import check_candidate_guards
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.policies.val_subsample_on_accept import (
     PROPOSAL_REJECTED_KEY,
@@ -555,7 +556,19 @@ def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
         optimize_kwargs["callbacks"] = callbacks
 
     try:
-        result = gepa.optimize(**optimize_kwargs)
+        try:
+            result = gepa.optimize(**optimize_kwargs)
+        except JevScoringFailed as exc:
+            _write_json(
+                config.run_dir / "jev_failure.json",
+                {
+                    "message": str(exc),
+                    "post_id": exc.post_id,
+                    "batch_idx": exc.batch_idx,
+                },
+            )
+            wandb_run.summary["status"] = "jev_failed"
+            sys.exit(2)
         acceptance_log = _read_acceptance_log(acceptance_log_path)
         accepted_indices = list_accepted_candidate_indices(result, acceptance_log)
         top10 = preselect_top_by_val_score(result, accepted_indices, k=TOP_ACCEPTED_CANDIDATES)
