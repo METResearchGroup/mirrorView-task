@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import signal
 import threading
 from datetime import datetime, timezone
 from pathlib import Path
@@ -150,24 +149,24 @@ def _call_litellm(messages: list[dict[str, str]], response_model: type[BaseModel
     raise RuntimeError("litellm completion failed without an error")
 
 
-def _on_sigalrm(signum: int, frame: Any) -> None:
-    raise TimeoutError(f"litellm completion exceeded {REQUEST_TIMEOUT_SECONDS}s")
+def _with_thread_timeout(seconds: int, fn: Callable[[], _T]) -> _T:
+    result: list[_T | None] = [None]
+    error: list[BaseException | None] = [None]
 
+    def target() -> None:
+        try:
+            result[0] = fn()
+        except BaseException as exc:
+            error[0] = exc
 
-def _cancel_hard_timeout(previous_handler: Any) -> None:
-    signal.alarm(0)
-    signal.signal(signal.SIGALRM, previous_handler)
-
-
-def _with_hard_timeout(seconds: int, fn: Callable[[], _T]) -> _T:
-    if threading.current_thread() is not threading.main_thread():
-        return fn()
-    previous_handler = signal.signal(signal.SIGALRM, _on_sigalrm)
-    signal.alarm(seconds)
-    try:
-        return fn()
-    finally:
-        _cancel_hard_timeout(previous_handler)
+    thread = threading.Thread(target=target, daemon=True)
+    thread.start()
+    thread.join(timeout=seconds)
+    if thread.is_alive():
+        raise TimeoutError(f"litellm completion exceeded {seconds}s")
+    if error[0] is not None:
+        raise error[0]
+    return result[0]  # type: ignore[return-value]
 
 
 def _invoke_litellm_completion(
@@ -190,7 +189,7 @@ def _litellm_completion(
     messages: list[dict[str, str]],
     response_model: type[BaseModel],
 ) -> tuple[str, Any]:
-    return _with_hard_timeout(
+    return _with_thread_timeout(
         REQUEST_TIMEOUT_SECONDS,
         lambda: _invoke_litellm_completion(messages, response_model),
     )

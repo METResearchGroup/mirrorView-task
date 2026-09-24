@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import signal
 import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -138,26 +137,22 @@ def test_timeout_passthrough(tmp_path: Path) -> None:
     assert mock_completion.call_args.kwargs["timeout"] == float(REQUEST_TIMEOUT_SECONDS)
 
 
-def test_hard_timeout_via_mock_alarm() -> None:
-    """The alarm wrapper surfaces TimeoutError when SIGALRM fires during the call."""
+def test_hard_timeout_via_daemon_thread() -> None:
+    """The daemon-thread join surfaces TimeoutError when the call does not finish."""
 
     def hang(*args, **kwargs):
         while True:
             time.sleep(0.05)
 
-    def fire_alarm_immediately(seconds: int) -> int:
-        if seconds:
-            signal.raise_signal(signal.SIGALRM)
-        return 0
-
+    module = "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.llm_client"
     with patch("litellm.completion", side_effect=hang):
-        with patch("signal.alarm", side_effect=fire_alarm_immediately):
+        with patch(f"{module}.REQUEST_TIMEOUT_SECONDS", 0.05):
             with pytest.raises(TimeoutError):
                 _litellm_completion([{"role": "user", "content": "hi"}], _ProbeModel)
 
 
 def test_builtin_timeout_error_retries_once(tmp_path: Path) -> None:
-    """complete_structured retries once after a SIGALRM TimeoutError."""
+    """complete_structured retries once after a thread-timeout TimeoutError."""
     payload = {"ok": True}
     with patch(
         "litellm.completion",

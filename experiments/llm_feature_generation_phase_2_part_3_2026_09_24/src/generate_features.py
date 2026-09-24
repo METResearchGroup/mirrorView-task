@@ -150,15 +150,20 @@ def _run_one_batch(
     batch["arm"] = args.arm
     batch["batch_design"] = args.batch_design
     messages = build_feature_generation_messages(batch, args.arm)
-    result = complete_structured(
-        messages,
-        response_model,
-        stage="discovery",
-        arm=args.arm,
-        call_index=call_index,
-        output_dir=output_dir,
-        run_metadata=run_metadata,
-    )
+    try:
+        result = complete_structured(
+            messages,
+            response_model,
+            stage="discovery",
+            arm=args.arm,
+            call_index=call_index,
+            output_dir=output_dir,
+            run_metadata=run_metadata,
+        )
+    except Exception as exc:
+        print(f"batch_index={call_index} error={exc}", file=sys.stderr)
+        _write_batch_error(output_dir, call_index, exc)
+        return
     artifact_paths = sorted(output_dir.glob(f"{call_index:05d}_*.json"))
     if artifact_paths:
         artifact_path = artifact_paths[-1]
@@ -192,6 +197,13 @@ def _find_existing_run_dir(parent: Path, arm: str, batch_design: str) -> Path | 
 
 def _batch_artifact_exists(output_dir: Path, call_index: int) -> bool:
     return any(output_dir.glob(f"{call_index:05d}_*.json"))
+
+
+def _write_batch_error(output_dir: Path, call_index: int, exc: BaseException) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    artifact_path = output_dir / f"{call_index:05d}_{make_run_timestamp()}.json"
+    payload = {"error": True, "batch_index": call_index, "message": str(exc)}
+    artifact_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def _build_run_metadata(args: argparse.Namespace) -> dict[str, Any]:

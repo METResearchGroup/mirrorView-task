@@ -275,6 +275,90 @@ def test_production_skips_existing_batch_artifacts(tmp_path: Path) -> None:
     assert call_count["n"] == 1
 
 
+def _two_batch_cohort() -> pd.DataFrame:
+    rows: list[dict[str, object]] = []
+    for index in range(20):
+        rows.append(
+            {
+                "post_id": f"keep_{index}",
+                "original_text": f"keep original {index}",
+                "mirror_text": f"keep mirror {index}",
+                "modal_decision": constants.DECISION_KEEP,
+                "split": constants.DISCOVERY_SPLIT,
+            }
+        )
+    for index in range(20):
+        rows.append(
+            {
+                "post_id": f"remove_{index}",
+                "original_text": f"remove original {index}",
+                "mirror_text": f"remove mirror {index}",
+                "modal_decision": constants.DECISION_REMOVE,
+                "split": constants.DISCOVERY_SPLIT,
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def test_production_continues_after_batch_failure(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Production writes an error artifact and continues when a batch fails after retry."""
+    cohort = _two_batch_cohort()
+    batches = form_mixed_batches(cohort)
+    call_count = {"n": 0}
+
+    def _complete(*args, **kwargs):
+        call_count["n"] += 1
+        call_index = kwargs.get("call_index", args[5] if len(args) > 5 else None)
+        if call_index == 0:
+            raise TimeoutError("litellm completion exceeded 180s")
+        return _mixed_result()
+
+    approval_path = tmp_path / "approval_step3_production.json"
+    approval_path.write_text(json.dumps({"approved": True}), encoding="utf-8")
+    run_parent = tmp_path / "discovery_outputs"
+    run_parent.mkdir()
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.APPROVAL_PATH",
+        approval_path,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.load_discovery_cohort",
+        return_value=cohort,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.complete_structured",
+        side_effect=_complete,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.discovery_run_dir",
+        return_value=run_parent,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.make_run_timestamp",
+        return_value="2026-09-24T12-00-00",
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.EXPERIMENT_ROOT",
+        tmp_path,
+    ):
+        with pytest.raises(SystemExit) as exc_info:
+            main(
+                [
+                    "--arm",
+                    "original_only",
+                    "--batch-design",
+                    "mixed",
+                    "--production",
+                    "--seed",
+                    "42",
+                ]
+            )
+        assert exc_info.value.code == 0
+    assert call_count["n"] == len(batches)
+    run_dirs = list(run_parent.iterdir())
+    assert len(run_dirs) == 1
+    error_files = list(run_dirs[0].glob("00000_*.json"))
+    assert len(error_files) == 1
+    error_payload = json.loads(error_files[0].read_text(encoding="utf-8"))
+    assert error_payload.get("error") is True
+    assert "batch_index=0 error=" in capsys.readouterr().err
+
+
 def test_writer_row_shape_single_class() -> None:
     """Single-class discovery rows include label_class and feature_count."""
     batch = {
