@@ -107,6 +107,25 @@ class TestDedupeWorkerVotes:
         assert result.iloc[0]["prolific_id"] == "clean_worker"
         assert result.iloc[0]["decision"] == "keep"
 
+    def test_drops_blank_worker_id(self):
+        """Drop rows with an empty prolific_id before counting votes."""
+        trials = pd.DataFrame(
+            [
+                _trial_row(post_id="post_x", prolific_id="", decision="keep"),
+                _trial_row(post_id="post_x", prolific_id="nan", decision="remove"),
+                _trial_row(
+                    post_id="post_x",
+                    prolific_id="clean_worker",
+                    decision="keep",
+                ),
+            ]
+        )
+
+        result = dedupe_worker_votes(trials)
+
+        assert len(result) == 1
+        assert result.iloc[0]["prolific_id"] == "clean_worker"
+
     def test_keeps_earliest_trial_index_for_duplicate_keep(self):
         """Keep the earliest trial_index when a worker votes keep twice."""
         trials = pd.DataFrame(

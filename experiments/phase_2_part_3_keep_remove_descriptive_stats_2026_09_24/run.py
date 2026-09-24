@@ -70,16 +70,13 @@ def main() -> None:
         funnel,
     )
 
-    four_cell_output = four_cell_counts.merge(
-        four_cell_shares[["cell", "share"]], on="cell"
-    )
     csv_bundle = {
         "platform_counts.csv": _crosstab_to_csv(platform_counts),
         "platform_proportions.csv": _crosstab_to_csv(platform_proportions),
         "platform_toxicity_proportions.csv": _crosstab_to_csv(
             platform_toxicity_proportions
         ),
-        "four_cell_counts.csv": four_cell_output,
+        "four_cell_counts.csv": four_cell_shares,
         "funnel.csv": funnel,
     }
     results_path = write_results(markdown, csv_bundle, EXPERIMENT_DIR)

@@ -8,6 +8,8 @@ import pytest
 from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.agreement import (
     assign_agreement_cell,
     build_four_cell_counts,
+    build_four_cell_shares,
+    build_vote_funnel,
 )
 from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.platform_rates import (
     DECISION_ROWS,
@@ -72,6 +74,34 @@ class TestAssignAgreementCell:
         result = assign_agreement_cell(row)
         assert result == "majority_keep"
 
+    def test_unanimous_remove_cell(self):
+        """Unanimous remove rows map to unanimous_remove."""
+        row = pd.Series(
+            _per_post_row(
+                post_id="twitter_2",
+                n_raters=3,
+                keep_count=0,
+                remove_count=3,
+                is_unanimous=True,
+            )
+        )
+        result = assign_agreement_cell(row)
+        assert result == "unanimous_remove"
+
+    def test_majority_remove_cell(self):
+        """Majority remove rows map to majority_remove."""
+        row = pd.Series(
+            _per_post_row(
+                post_id="reddit_2",
+                n_raters=3,
+                keep_count=1,
+                remove_count=2,
+                is_unanimous=False,
+            )
+        )
+        result = assign_agreement_cell(row)
+        assert result == "majority_remove"
+
     def test_exact_tie_raises(self):
         """Exact ties raise ValueError."""
         row = pd.Series(
@@ -130,6 +160,47 @@ class TestBuildFourCellCounts:
         assert modal_decision(2, 2) == "remove"
         result = build_four_cell_counts(per_post)
         assert int(result["count"].sum()) == 0
+
+
+class TestBuildVoteFunnel:
+    """Tests for build_vote_funnel and share denominators."""
+
+    def test_funnel_counts_match_remaining_posts(self):
+        """Dropped posts and the four-cell total use the same per-post frame."""
+        per_post = pd.DataFrame(
+            [
+                _per_post_row(
+                    post_id="keep_all",
+                    n_raters=3,
+                    keep_count=3,
+                    remove_count=0,
+                    is_unanimous=True,
+                ),
+                _per_post_row(
+                    post_id="too_few",
+                    n_raters=2,
+                    keep_count=2,
+                    remove_count=0,
+                    is_unanimous=True,
+                ),
+                _per_post_row(
+                    post_id="tie",
+                    n_raters=4,
+                    keep_count=2,
+                    remove_count=2,
+                    is_unanimous=False,
+                ),
+            ]
+        )
+        funnel = build_vote_funnel(per_post)
+        counts = dict(zip(funnel["metric"], funnel["count"], strict=True))
+        shares = build_four_cell_shares(build_four_cell_counts(per_post))
+        assert counts["posts_after_vote_clean"] == 3
+        assert counts["posts_dropped_lt_3_raters"] == 1
+        assert counts["posts_dropped_ties"] == 1
+        assert counts["posts_remaining"] == 1
+        assert int(shares["count"].sum()) == counts["posts_remaining"]
+        assert float(shares["share"].sum()) == 1.0
 
 
 class TestFormatResultsMarkdown:
