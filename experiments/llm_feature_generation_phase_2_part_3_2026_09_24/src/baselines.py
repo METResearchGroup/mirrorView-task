@@ -254,13 +254,28 @@ def build_docfreq_outputs(
     }
 
 
+def default_embed_fn(text: str) -> np.ndarray:
+    """Embed text with the shared Bedrock Titan helper."""
+    result = create_embedding(
+        text,
+        model_id=constants.EMBEDDING_MODEL_ID,
+        dimensions=constants.EMBEDDING_DIM,
+        normalize=constants.EMBEDDING_NORMALIZE,
+    )
+    return np.asarray(result["embedding"], dtype=np.float32)
+
+
 def embed_posts(
     posts: pd.DataFrame,
     arm: str,
-    embed_fn: Callable[[str], np.ndarray],
+    embed_fn: Callable[[str], np.ndarray] | None = None,
 ) -> tuple[list[str], np.ndarray]:
     """Embed one text per discovery post and return aligned IDs and vectors."""
-    raise NotImplementedError
+    embed = embed_fn or default_embed_fn
+    post_ids = posts["post_id"].astype(str).tolist()
+    vectors = [embed(extract_arm_text(row, arm)) for _, row in posts.iterrows()]
+    matrix = np.vstack(vectors) if vectors else np.zeros((0, constants.EMBEDDING_DIM))
+    return post_ids, matrix
 
 
 def select_k_by_silhouette(
