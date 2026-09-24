@@ -17,7 +17,7 @@ WORKDIR /app
 # Install experiment Python deps (matches pyproject optional group intent).
 RUN pip install --upgrade pip && \
     pip install \
-      "transformers>=5.8.1" \
+      "transformers>=5.8.1,<5.13" \
       "datasets>=3.0.0" \
       "accelerate>=1.0.0" \
       "peft>=0.14.0" \
