@@ -16,6 +16,9 @@ GOLDEN_SINGLE_OPENING = (
 GOLDEN_SINGLE_NO_RIGHT_WRONG = (
     "There are no right or wrong answers - we are interested in what you personally think."
 )
+GOLDEN_SINGLE_JOB_SENTENCE = (
+    "Your job is to decide whether the post should be allowed or removed from the platform."
+)
 
 
 class TestRenderOriginalPrompt:
@@ -24,7 +27,9 @@ class TestRenderOriginalPrompt:
 
         assert "Post 1: o" in output
         assert GOLDEN_SINGLE_OPENING in output
+        assert GOLDEN_SINGLE_JOB_SENTENCE in output
         assert GOLDEN_SINGLE_NO_RIGHT_WRONG in output
+        assert "both posts in the pair" not in output
         assert "Post 2:" not in output
         assert "political mirrors" not in output
         assert output.endswith(CLOSING_LINE)
@@ -36,7 +41,9 @@ class TestRenderMirrorPrompt:
 
         assert "Post 1: m" in output
         assert GOLDEN_SINGLE_OPENING in output
+        assert GOLDEN_SINGLE_JOB_SENTENCE in output
         assert GOLDEN_SINGLE_NO_RIGHT_WRONG in output
+        assert "both posts in the pair" not in output
         assert "Post 2:" not in output
         assert "political mirrors" not in output
         assert output.endswith(CLOSING_LINE)

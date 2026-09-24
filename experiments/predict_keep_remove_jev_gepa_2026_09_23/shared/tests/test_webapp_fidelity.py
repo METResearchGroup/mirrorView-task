@@ -6,7 +6,11 @@ import re
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
     CLOSING_LINE,
+    STUDY_INSTRUCTION,
     render_pair_prompt,
+)
+from experiments.reasoning_during_moderation_2026_09_15.shared.prompt import (
+    STUDY_INSTRUCTION as REASONING_STUDY_INSTRUCTION,
 )
 
 # Literal linked-fate instruction strings from webapp/public/main.js lines 607-620.
@@ -55,6 +59,6 @@ class TestWebappFidelity:
         for sentence in _webapp_instruction_sentences():
             assert _normalize_whitespace(sentence) in normalized_rendered
 
-        assert rendered.endswith(CLOSING_LINE)
-        assert CLOSING_LINE == "Allow or Remove?"
+        assert rendered.endswith("Allow or Remove?")
+        assert STUDY_INSTRUCTION == REASONING_STUDY_INSTRUCTION
         assert "Allow Or Remove?" not in rendered
