@@ -85,6 +85,19 @@ class CostSummary:
     cost_usd: float
 
 
+def _confusion_counts(y_true: list[int], y_pred: list[int]) -> ConfusionCounts:
+    matrix = confusion_matrix(y_true, y_pred, labels=[0, 1])
+    tn, fp, fn, tp = matrix.ravel().tolist()
+    return ConfusionCounts(tn=int(tn), fp=int(fp), fn=int(fn), tp=int(tp))
+
+
+def _maybe_metric(metric_fn: Any) -> float:
+    try:
+        return float(metric_fn())
+    except ValueError:
+        return float("nan")
+
+
 def hard_label_metrics(
     y_true: list[int],
     y_pred: list[int],
@@ -92,7 +105,21 @@ def hard_label_metrics(
     threshold: float = DEFAULT_THRESHOLD,
 ) -> ClassificationMetrics:
     """F1, accuracy, precision, recall with positive class remove."""
-    raise NotImplementedError
+    y_true_arr = [int(value) for value in y_true]
+    y_pred_arr = [int(value) for value in y_pred]
+    confusion = _confusion_counts(y_true_arr, y_pred_arr)
+    return ClassificationMetrics(
+        accuracy=float(accuracy_score(y_true_arr, y_pred_arr)),
+        precision=float(precision_score(y_true_arr, y_pred_arr, zero_division=0)),
+        recall=float(recall_score(y_true_arr, y_pred_arr, zero_division=0)),
+        f1=float(f1_score(y_true_arr, y_pred_arr, zero_division=0)),
+        balanced_accuracy=float(balanced_accuracy_score(y_true_arr, y_pred_arr)),
+        roc_auc=float("nan"),
+        pr_auc=float("nan"),
+        confusion=confusion,
+        threshold=threshold,
+        n=len(y_true_arr),
+    )
 
 
 def probability_metrics(
@@ -102,7 +129,22 @@ def probability_metrics(
     threshold: float = DEFAULT_THRESHOLD,
 ) -> ClassificationMetrics:
     """Derive y_pred from p_remove and threshold; compute full classification metrics."""
-    raise NotImplementedError
+    y_true_arr = [int(value) for value in y_true]
+    scores = [float(value) for value in p_remove]
+    y_pred_arr = [1 if score >= threshold else 0 for score in scores]
+    confusion = _confusion_counts(y_true_arr, y_pred_arr)
+    return ClassificationMetrics(
+        accuracy=float(accuracy_score(y_true_arr, y_pred_arr)),
+        precision=float(precision_score(y_true_arr, y_pred_arr, zero_division=0)),
+        recall=float(recall_score(y_true_arr, y_pred_arr, zero_division=0)),
+        f1=float(f1_score(y_true_arr, y_pred_arr, zero_division=0)),
+        balanced_accuracy=float(balanced_accuracy_score(y_true_arr, y_pred_arr)),
+        roc_auc=_maybe_metric(lambda: roc_auc_score(y_true_arr, scores)),
+        pr_auc=_maybe_metric(lambda: average_precision_score(y_true_arr, scores)),
+        confusion=confusion,
+        threshold=threshold,
+        n=len(y_true_arr),
+    )
 
 
 def tune_threshold_for_f1(
@@ -112,7 +154,15 @@ def tune_threshold_for_f1(
     grid: list[float] | None = None,
 ) -> tuple[float, float]:
     """Return (best_threshold, best_f1)."""
-    raise NotImplementedError
+    thresholds = grid if grid is not None else DEFAULT_THRESHOLD_GRID
+    best_threshold = thresholds[0]
+    best_f1 = -1.0
+    for threshold in thresholds:
+        metrics = probability_metrics(y_true, p_remove, threshold=threshold)
+        if metrics.f1 > best_f1:
+            best_f1 = metrics.f1
+            best_threshold = threshold
+    return best_threshold, best_f1
 
 
 def trivial_baselines(
@@ -122,7 +172,23 @@ def trivial_baselines(
     prevalence_random_draws: int = PREVALENCE_RANDOM_DRAWS,
 ) -> TrivialBaselineMetrics:
     """keep-all, remove-all, prevalence-random F1 baselines."""
-    raise NotImplementedError
+    y_true_arr = [int(value) for value in y_true]
+    keep_all = hard_label_metrics(y_true_arr, [0] * len(y_true_arr))
+    remove_all = hard_label_metrics(y_true_arr, [1] * len(y_true_arr))
+    prevalence = sum(y_true_arr) / len(y_true_arr) if y_true_arr else 0.0
+    rng = np.random.default_rng(prevalence_random_seed)
+    random_f1_scores: list[float] = []
+    for _ in range(prevalence_random_draws):
+        random_preds = (rng.random(len(y_true_arr)) < prevalence).astype(int).tolist()
+        random_f1_scores.append(
+            f1_score(y_true_arr, random_preds, zero_division=0)
+        )
+    return TrivialBaselineMetrics(
+        keep_all_f1=keep_all.f1,
+        remove_all_f1=remove_all.f1,
+        prevalence_random_f1_mean=float(np.mean(random_f1_scores)),
+        prevalence_random_f1_std=float(np.std(random_f1_scores)),
+    )
 
 
 def subgroup_metrics(
