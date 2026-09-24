@@ -1,6 +1,6 @@
 # Step 2: Naive baselines per text arm on discovery posts
 
-Step 2 runs on discovery-split posts only. Compute document-frequency unigrams and bigrams separately for keep versus remove (not TF-IDF), embed posts with Titan, and run K-Means with k=2 through 10 for each of three random seeds (42, 43, 44). Run once per text arm (`original_only`, `mirror_only`, `paired`), and upload outputs to S3.
+Step 2 reruns on the updated discovery split only (about 10,000 posts after the union cohort refresh). Compute document-frequency unigrams and bigrams separately for keep versus remove (not TF-IDF), embed posts with Titan, and run K-Means with k=2 through 10 for each of three random seeds (42, 43, 44). Run once per text arm (`original_only`, `mirror_only`, `paired`), and upload outputs to S3.
 
 ## Scope
 
@@ -107,11 +107,11 @@ PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_202
 ### Expected output (representative lines)
 
 ```
-arm=original_only split=discovery n_posts=9449 docfreq_terms=... kmeans_k_values=9 kmeans_seeds=42,43,44
+arm=original_only split=discovery n_posts=9999 docfreq_terms=... kmeans_k_values=9 kmeans_seeds=42,43,44
 Wrote outputs/original_only/baselines/2026-09-24T12-34-56/
-arm=mirror_only split=discovery n_posts=9449 docfreq_terms=... kmeans_k_values=9 kmeans_seeds=42,43,44
+arm=mirror_only split=discovery n_posts=9999 docfreq_terms=... kmeans_k_values=9 kmeans_seeds=42,43,44
 Wrote outputs/mirror_only/baselines/2026-09-24T12-34-56/
-arm=paired split=discovery n_posts=9449 docfreq_terms=... kmeans_k_values=9 kmeans_seeds=42,43,44
+arm=paired split=discovery n_posts=9999 docfreq_terms=... kmeans_k_values=9 kmeans_seeds=42,43,44
 Wrote outputs/paired/baselines/2026-09-24T12-34-56/
 s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_feature_generation_phase_2_part_3_2026_09_24/
 ```
@@ -221,7 +221,7 @@ Repeat for each seed in `CLUSTER_SEEDS` (`42`, `43`, `44`). The CLI flag `--seed
   "arm": "original_only",
   "split": "discovery",
   "run_timestamp": "2026-09-24T12-34-56",
-  "n_posts": 9449,
+  "n_posts": 9999,
   "n_keep": 0,
   "n_remove": 0,
   "bedrock_model_id": "amazon.titan-embed-text-v2:0",
@@ -276,7 +276,7 @@ Suggested commits:
 
 Step 3 (LLM discovery) depends on the following:
 
-- Committed discovery post IDs (9,449) and cohort with `split`, `modal_decision`, and text columns.
+- Committed discovery post IDs (~9,999) and cohort with `split`, `modal_decision`, and text columns.
 - Baseline outputs on S3 for comparison in later analysis (optional read; not blocking).
 - Do not reuse baseline embeddings for LLM batches. Batching reads cohort directly.
 - `llm_client.py` (Step 3) will call LiteLLM directly per orchestrator override. Step 2 does not touch LLM code.

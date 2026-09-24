@@ -1,11 +1,11 @@
 # Step 7: Analyze held-out test set and write RESULTS.md
 
-Step 7 answers research questions Q1 through Q7 from `plan.md` on held-out test posts only (`split == test`). Discovery-half labels feed descriptive tables for feature description and Part 2 overlap on the 8,899 shared posts, while Q1 to Q7 hypothesis tests stay on the test split. Each Phase 2 Part 3 codebook feature maps to the rank-1 nearest Part 2 theme (132 themes from stage-2 synthesis at `experiments/llm_based_feature_generation_2026_07_31/outputs/2026_08_01-14:08:32.373981/`) through Titan cosine similarity on name plus definition, with no human confirmation step. `RESULTS.md` states that the mapping is provisional and lists the similarity score for each match. The step fits held-out logistic regression models for Q4 and Q7 (AUC and log loss), runs prevalence tests with Benjamini-Hochberg correction for Q1, Q2, Q5, and Q6, and documents ablations across text arm, batch design, label definition, participant filter, clustering method, and seeds. `RESULTS.md` records the Part 2 model-change caveat (`gpt-5.4-nano` vs `gpt-6-luna`) and the provisional-label caveat, and the step uploads all artifacts to S3.
+Step 7 answers research questions Q1 through Q7 from `plan.md` on held-out test posts only (`split == test`). Discovery-half labels feed descriptive tables for feature description and Part 2 catalog overlap, while Q1 to Q7 hypothesis tests stay on the test split. Part 2 themes were mined from Part 2 labels, so the Q1 replication check uses Part 3 labels only (`participant_filter=part3_only` cohort labels joined to the label matrix) on posts in the Part 2 catalog (`in_part2_catalog`). Primary prevalence analyses use union labels unless an ablation sets `label_source=part3_only`.
 
 ## Scope
 
 - **Caller / entrypoint:** `map_part2_themes`, `analyze`, `write_results`, and `s3_sync` CLIs.
-- **In scope:** Load Part 2 themes and map them with Titan embeddings. Compute Q1 to Q7 on the test split only. Run ablation runners. Assemble `RESULTS.md`. Upload the final experiment tree to S3. Write tests with mocked data and S3.
+- **In scope:** Load Part 2 themes and map them with Titan embeddings. Compute Q1 to Q7 on the test split only. Run ablation runners (including `label_source` union vs part3_only). Assemble `RESULTS.md`. Upload the final experiment tree to S3. Write tests with mocked data and S3.
 - **Out of scope:** Re-labeling or codebook edits, human validation set or kappa, discovery-half hypothesis tests, and editing earlier step modules except Step 7 owners.
 
 ## Files to inspect (read-only)
@@ -17,7 +17,7 @@ Step 7 answers research questions Q1 through Q7 from `plan.md` on held-out test 
 - `shared/data/transformed/study_phase_2_part_2/keep_remove_labels.csv`: Part 2 overlap (`message_id`).
 - `shared/embeddings/bedrock.py`: Titan embeddings for theme mapping.
 - `experiments/reasoning_during_moderation_2026_09_15/shared/cohort.py`: three-group label logic reference.
-- `shared/data/raw/study_phase_2_part_3/results/full.csv`: trial-level rows for Q6 (moderator party).
+- `shared/data/raw/study_phase_2_part_3/results/full.csv`: trial-level rows for Q6 (moderator party); union export may also be loaded via dataloader when Q6 is implemented.
 - `outputs/shared/label_matrix.parquet`: Step 6 output (sole label input for Step 7 analysis).
 - `outputs/shared/codebook/approved_<run_timestamp>/codebook.json`: Step 5 output.
 - `outputs/shared/self_consistency/<run_timestamp>/scores.json`: Step 6 output.
@@ -62,7 +62,8 @@ Step 7 answers research questions Q1 through Q7 from `plan.md` on held-out test 
 | `test_map_part2_embeds_name_plus_definition` | Mock Titan embed | `embed_feature_text(name, definition)` | Input string equals `"{name}. {definition}"` |
 | `test_map_part2_writes_rank1_table` | 3 codebook features, 132 themes | `map_part2_themes --write` | CSV columns: `feature_id`, `part2_theme_id`, `part2_theme_label`, `cosine_similarity`, `rank` (rank 1 only; no human confirmation) |
 | `test_analyze_filters_test_split_only` | Matrix with discovery and test rows | `load_test_labels()` | All rows `split == "test"`; count matches `test_post_ids.csv` |
-| `test_q1_prevalence_bh_correction` | Test labels fixture | `run_q1()` | Output includes raw p-values and BH-adjusted q-values; only test posts |
+| `test_q1_replication_uses_part3_only_on_part2_catalog` | Test matrix with union and part3_only modal labels | `run_q1_replication()` | Replication subset is `in_part2_catalog` test posts with part3_only labels only |
+| `test_q1_prevalence_bh_correction` | Test labels fixture (union modal labels) | `run_q1()` | Output includes raw p-values and BH-adjusted q-values; only test posts |
 | `test_q2_stance_concordance` | Original+mirror labels per post | `run_q2()` | Per-feature concordance rate on test posts |
 | `test_q3_flip_mismatch_rate` | Paired original/mirror presence | `run_q3()` | Per-feature rates: orig present mirror absent; mirror present orig absent |
 | `test_q4_logistic_auc_log_loss` | Feature matrix + modal_decision | `run_q4()` | JSON has `auc` and `log_loss` per model arm; test split only |
@@ -150,7 +151,14 @@ PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_
   --codebook "$CODEBOOK" \
   --label-matrix "$LABEL_MATRIX" \
   --write \
-  --ablation participant_filter --values all,attention_pass
+  --ablation participant_filter --values all,attention_pass,part3_only
+
+PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.analyze \
+  --split test \
+  --codebook "$CODEBOOK" \
+  --label-matrix "$LABEL_MATRIX" \
+  --write \
+  --ablation label_source --values union,part3_only
 
 PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.analyze \
   --split test \
@@ -189,7 +197,7 @@ PYTHONPATH=. uv run pytest experiments/llm_feature_generation_phase_2_part_3_202
 ```
 part2_themes_loaded=132
 Wrote outputs/shared/part2_theme_map/2026-09-24T16-00-00/theme_map.csv
-analyze split=test n_posts=9450
+analyze split=test n_posts=10001
 Wrote outputs/paired/analysis/2026-09-24T16-05-00/q1_replication.json
 ...
 Wrote experiments/llm_feature_generation_phase_2_part_3_2026_09_24/RESULTS.md
@@ -214,7 +222,7 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 
 | File | Purpose |
 |------|---------|
-| `q1_replication.json` | Feature prevalence keep vs remove on test set; BH-adjusted tests; Part 2 theme overlap on 8,899 shared test posts; themes replicated / new / disappeared |
+| `q1_replication.json` | Feature prevalence keep vs remove on test set (union labels); BH-adjusted tests; Part 2 theme replication on Part 2 catalog test posts using part3_only labels; themes replicated / new / disappeared |
 | `q2_stance_invariance.json` | Per-feature original-mirror concordance on test posts |
 | `q3_flip_fidelity.json` | Per-feature mismatch rates (orig on mirror off; mirror on orig off) |
 | `q4_prediction.json` | Logistic models: original_only, mirror_only, paired, combined; `auc`, `log_loss` |
@@ -228,7 +236,7 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 
 | Question | Method | Primary table in RESULTS.md |
 |----------|--------|----------------------------|
-| **Q1** | Feature prevalence by `modal_decision` on test posts; two-proportion or chi-square per feature; Benjamini-Hochberg across features. Map features to Part 2 themes via rank-1 `theme_map.csv` (cosine similarity reported; mapping provisional); on 8,899 `in_part2_catalog` test posts, report which Part 2 themes replicate (directionally consistent association), which Part 3 features are new, which Part 2 themes disappear. Discovery-half labels used only in a separate descriptive appendix table (not hypothesis tests). | `q1_feature_prevalence.csv`, `q1_part2_replication.csv` |
+| **Q1** | Feature prevalence by `modal_decision` on test posts (union labels by default); two-proportion or chi-square per feature; Benjamini-Hochberg across features. Map features to Part 2 themes via rank-1 `theme_map.csv` (cosine similarity reported; mapping provisional). For Part 2 theme replication, restrict to `in_part2_catalog` test posts and use `participant_filter=part3_only` modal labels (Part 2 themes were mined from Part 2 labels). Report which Part 2 themes replicate, which features are new, which Part 2 themes disappear. Discovery-half labels used only in a separate descriptive appendix table (not hypothesis tests). | `q1_feature_prevalence.csv`, `q1_part2_replication.csv` |
 | **Q2** | Per feature, concordance rate = share of test posts where original and mirror labels agree; classify stance-invariant (high concordance) vs stance-specific (low). BH correction across features. | `q2_stance_invariance.csv` |
 | **Q3** | Per feature on test posts: `P(orig present AND mirror absent)` and reverse; report mismatch rates. | `q3_flip_fidelity.csv` |
 | **Q4** | Logistic regression: `modal_decision` ~ feature vector per arm (original columns, mirror columns, paired, combined/diff). Report AUC and log loss on test split. | `q4_prediction_auc.csv` |
@@ -243,7 +251,8 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 | Text arm | `original_only`, `mirror_only`, `paired` | Primary: `paired` for Part 2 replication |
 | Batch design | `mixed`, `single_class` | Discovery-stage features; compare downstream if separate codebooks exist |
 | Label definition | `modal`, `unanimous`, `three_group` | `three_group` only on eligible posts for Q5 |
-| Participant filter | `all`, `attention_pass` | Primary: `attention_pass` |
+| Label source | `union`, `part3_only` | `union` | Q1 replication uses part3_only on Part 2 catalog posts |
+| Participant filter | `all`, `attention_pass`, `part3_only` | `attention_pass` |
 | Clustering | `hdbscan`, `kmeans`, `docfreq` | Compare baseline ladders from Steps 2 and 4 |
 | Random seeds | `42`, `43`, `44` | Cluster stability sensitivity |
 
@@ -254,7 +263,7 @@ s3_uploaded_prefix=s3://mirrorview-experimental-artifacts/experiments/llm_featur
 3. Self-consistency: features below 90% flagged, not dropped.
 4. Q1 to Q7 tables (test set only).
 5. Ablation summary.
-6. Part 2 overlap (8,899 posts): replication / new / disappeared themes (descriptive + test-set prevalence); provisional rank-1 theme mapping with cosine similarity scores.
+6. Part 2 catalog overlap: replication / new / disappeared themes on Part 2 catalog posts with part3_only labels (descriptive + test-set prevalence); provisional rank-1 theme mapping with cosine similarity scores.
 7. What is not answerable (from plan.md).
 
 ## Human gates (if any)

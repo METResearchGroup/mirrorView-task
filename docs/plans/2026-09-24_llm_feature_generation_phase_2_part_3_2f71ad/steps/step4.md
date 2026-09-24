@@ -8,7 +8,7 @@ Step 4 turns Step 3 mixed-discovery JSON into embeddings, cluster assignments, a
 
 - **Callers / entrypoints:** `generate_embeddings`, `cluster_embeddings`, and `label_clusters` CLIs (`if __name__ == "__main__"` each).
 - **In scope:**
-  - `generate_embeddings.py`: flatten Step 3 mixed-discovery JSON into `features.jsonl`, embed `text_embedded` with `shared.embeddings.bedrock.create_embedding` (256-d, L2 normalized).
+  - `generate_embeddings.py`: flatten Step 3 mixed and mixed_topup discovery JSON into one `features.jsonl`, embed `text_embedded` with `shared.embeddings.bedrock.create_embedding` (256-d, L2 normalized).
   - `cluster_embeddings.py`: HDBSCAN (main) plus K-Means k-sweep (k=2..10) per arm; run seeds 42, 43, 44; write stability metrics (adjusted Rand index within arm across seed pairs).
   - `label_clusters.py`: for each HDBSCAN cluster (skip noise id `-1`), sample member features and call `llm_client.complete_structured` with `ClusterLabelResult` from Step 3 `schemas.py` and `build_cluster_label_messages` from Step 3 `prompts.py`.
   - Cross-arm stability summary that rolls up per-arm seed stability and HDBSCAN cluster counts into `stability_across_arms.json`.
@@ -99,7 +99,7 @@ outputs/<arm>/normalize/
   stability_across_arms.json            # written once after all arms complete
 ```
 
-Primary input: the latest **mixed** discovery run at `outputs/<arm>/discovery/outputs/<discovery_timestamp>/`, unless the caller sets `--discovery-run-dir`.
+Primary input: the latest **mixed** discovery run at `outputs/<arm>/discovery/outputs/<discovery_timestamp>/`, plus the latest **`mixed_topup`** run for the same arm, unless the caller sets explicit `--discovery-run-dir` and `--topup-run-dir`.
 
 ### Phase 3 - Contract signatures
 
@@ -110,8 +110,13 @@ def make_run_timestamp() -> str: ...  # "%Y-%m-%dT%H-%M-%S"
 
 def resolve_discovery_run_dir(arm: str, discovery_run_dir: str | None) -> Path: ...
 
-def load_discovery_feature_rows(discovery_run_dir: Path) -> list[dict[str, Any]]: ...
-# Reads per-call JSON; extracts batch fields from top-level key `discovery_row` (required).
+def resolve_topup_run_dir(arm: str, topup_run_dir: str | None) -> Path: ...
+
+def load_discovery_feature_rows(
+    discovery_run_dir: Path,
+    topup_run_dir: Path | None = None,
+) -> list[dict[str, Any]]: ...
+# Reads per-call JSON from main mixed run and optional mixed_topup run; extracts batch fields from top-level key `discovery_row` (required).
 
 def build_feature_embed_text(feature: dict[str, Any]) -> str: ...
 # Returns "{feature_name}: {feature_value}. {rationale}"; raises ValueError if empty.
@@ -134,7 +139,7 @@ def write_embedding_artifacts(
 ) -> Path: ...
 ```
 
-CLI: `--arm` (required), `--discovery-run-dir` (optional), `--batch-design mixed` (default; error if metadata says otherwise).
+CLI: `--arm` (required), `--discovery-run-dir` (optional), `--topup-run-dir` (optional; default latest `mixed_topup` per arm), `--batch-design mixed` (default; error if main run metadata says otherwise).
 
 **`cluster_embeddings.py`**
 

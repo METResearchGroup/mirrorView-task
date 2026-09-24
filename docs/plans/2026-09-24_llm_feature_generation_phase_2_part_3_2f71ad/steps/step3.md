@@ -1,16 +1,16 @@
 # Step 3: LLM batch feature generation (discovery half only)
 
-Run mixed-contrast and single-class LLM feature discovery on the discovery split only. Run it separately for each text arm (`original_only`, `mirror_only`, `paired`). Copy reference code from `experiments/create_llm_features_2026_08_05/src/` and `experiments/llm_based_feature_generation_2026_07_31/`, and adapt it into the new experiment `src/`. Write a custom `llm_client.py` that calls LiteLLM directly. Do not use `research_tools.llm.runner`.
+Run mixed-contrast and single-class LLM feature discovery on the discovery split only. Run it separately for each text arm (`original_only`, `mirror_only`, `paired`). **Keep the finished production mixed run** on the original Part 3 discovery half (Part 3 majority labels at run time). About 12% of those discovery posts now have a different union majority label; document this label-drift caveat in run metadata and SETUP.md. Discovery only proposes features; all Q1 through Q7 tests use union labels on held-out posts. **Add a top-up mixed run** on new discovery posts only (about 550 Part-2-only posts), with `batch_design=mixed_topup` in a new run directory per arm. Step 4 reads both the main mixed run and the top-up run.
 
 ## Scope
 
 - **Caller / entrypoint:** `generate_features` CLI (`if __name__ == "__main__"`).
 - **In scope:**
-  - `batching.py`: form mixed batches (10 keep + 10 remove) and single-class batches (10 posts per batch, 500 keep + 500 remove sampled per arm) from discovery-split cohort rows.
+  - `batching.py`: form mixed batches (10 keep + 10 remove), top-up batches on Part-2-only discovery posts (`mixed_topup`), and single-class batches (10 posts per batch, 500 keep + 500 remove sampled per arm) from discovery-split cohort rows.
   - `prompts.py`: **all** LLM prompt templates for this experiment, including discovery prompts per arm and batch design, cluster labeling (`build_cluster_label_messages`), and post labeling through a prompt builder that prepends the codebook as a fixed prefix.
   - `schemas.py`: **all** LLM response schemas for this experiment, including discovery models (`ExtractedFeature`, `BatchFeatureGeneration`, `SingleClassBatchFeatureGeneration`), cluster labeling (`ClusterLabelResult`), and post labeling (per-text present/absent schema).
   - `llm_client.py`: LiteLLM structured completion, per-call JSON artifacts, `metadata.json`, spend logging, spend cap enforcement.
-  - `generate_features.py`: smoke (Phase 0 LiteLLM probe + 1 mixed batch per arm), production mixed (all discovery posts), production single-class ablation.
+  - `generate_features.py`: smoke (Phase 0 LiteLLM probe + 1 mixed batch per arm), production mixed (existing run retained; optional rerun flag), production `mixed_topup` on new discovery posts only, production single-class ablation.
   - `smoke_tests/run_smoke_discovery.py`: packaged smoke runner.
   - Unit tests with mocked LiteLLM (no network in pytest).
 - **Out of scope:**
@@ -124,11 +124,12 @@ experiments/llm_feature_generation_phase_2_part_3_2026_09_24/
     shared/cost_log.jsonl
 ```
 
-**Batch counts (discovery half, per arm, expect after Step 1):**
+**Batch counts (discovery half after union Step 1, per arm):**
 
 | Design | Posts used | Batch size | Expected batches |
 |--------|------------|------------|------------------|
-| `mixed` (primary) | all discovery keep + remove | 10 keep + 10 remove | about 287 (limited by remove count) |
+| `mixed` (primary; existing production run) | original Part 3 discovery keep + remove | 10 keep + 10 remove | about 287 (unchanged run artifact) |
+| `mixed_topup` | new Part-2-only discovery posts only | 10 keep + 10 remove | about 28 (about 550 posts) |
 | `single_class` (ablation) | 500 keep + 500 remove sampled | 10 per batch | 50 keep + 50 remove = 100 per arm |
 
 ### Phase 3 - Contract signatures
@@ -203,7 +204,7 @@ def complete_structured(
 | Flag | Required | Description |
 |------|----------|-------------|
 | `--arm` | yes | `original_only` \| `mirror_only` \| `paired` |
-| `--batch-design` | yes | `mixed` \| `single_class` |
+| `--batch-design` | yes | `mixed` \| `mixed_topup` \| `single_class` |
 | `--seed` | no (default 42) | batch sampling RNG |
 | `--smoke` | mutually exclusive with `--production` | Phase 0 probe + 1 mixed batch only |
 | `--production` | mutually exclusive with `--smoke` | full run; requires approval file |
@@ -278,8 +279,10 @@ APPROVAL_PATH = EXPERIMENT_ROOT / "outputs/shared/approval_step3_production.json
 ### Must pass
 
 - Discovery-only: no `post_id` from `data/post_split/test_post_ids.csv` appears in any discovery output `message_ids`.
-- Mixed production: about 287 batches per arm (assert `280 <= n_batches <= 295` after the Step 1 cohort is built).
+- Mixed production (existing): retain artifacts; metadata must note `label_drift_caveat` (about 12% of original discovery posts changed union modal label).
+- Mixed top-up: about 28 batches per arm for `mixed_topup` (assert `20 <= n_batches <= 35`).
 - Single-class ablation: exactly 100 batches per arm (50 keep + 50 remove).
+- Finished discovery spend in `cost_log.jsonl`: about $0.83 total for smoke plus production mixed (all arms), zero reasoning tokens.
 - Every LLM call uses `model="openai/gpt-6-luna"` and `reasoning_effort="none"`.
 - Each run's `metadata.json` has `run_metadata.reasoning_effort == "none"`.
 - Smoke Phase 0 (live network, manual): LiteLLM accepts `openai/gpt-6-luna` with `reasoning_effort="none"`, and usage shows `reasoning_tokens` is 0 or absent.
@@ -331,6 +334,15 @@ for ARM in original_only mirror_only paired; do
   PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features \
     --arm "$ARM" \
     --batch-design mixed \
+    --production \
+    --seed 42
+done
+
+# Top-up mixed discovery on new Part-2-only discovery posts (~550)
+for ARM in original_only mirror_only paired; do
+  PYTHONPATH=. uv run python -m experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features \
+    --arm "$ARM" \
+    --batch-design mixed_topup \
     --production \
     --seed 42
 done
@@ -415,7 +427,7 @@ Discovery result row (from `generate_features` writer): the writer merges its fi
 | `evidence_span` | str |
 | `rationale` | str |
 
-**`metadata.json`** in run dir - `run_metadata` must include: `model`, `reasoning_effort`, `arm`, `batch_design`, `seed`, `stage`, `max_keep_features_per_batch`, `max_remove_features_per_batch`, `litellm_model` (`openai/gpt-6-luna`), `timestamp_format` (`%Y-%m-%dT%H-%M-%S`).
+**`metadata.json`** in run dir - `run_metadata` must include: `model`, `reasoning_effort`, `arm`, `batch_design`, `seed`, `stage`, `max_keep_features_per_batch`, `max_remove_features_per_batch`, `litellm_model` (`openai/gpt-6-luna`), `timestamp_format` (`%Y-%m-%dT%H-%M-%S`). For the retained main mixed run, include `label_drift_caveat: true` and a short note that about 12% of discovery posts changed union modal label since the run.
 
 **`outputs/shared/cost_log.jsonl`** - one JSON object per line per Section 6.10.
 
@@ -447,13 +459,14 @@ Step 3 stops at discovery JSON and the shared cost log. Step 4 should not start 
 
 **Deliverables:**
 
-- Mixed discovery outputs per arm under `outputs/<arm>/discovery/outputs/<run_timestamp>/`. Step 4 uses these as the main input for normalize.
+- Main mixed discovery outputs per arm (existing production run retained).
+- Top-up mixed outputs per arm with `batch_design=mixed_topup` under `outputs/<arm>/discovery/outputs/<run_timestamp>/`.
 - Optional ablation under the same tree with `batch_design=single_class` in metadata.
-- `outputs/shared/cost_log.jsonl` with cumulative spend below $25.00.
+- `outputs/shared/cost_log.jsonl` with cumulative spend below $25.00 (discovery about $0.83 recorded).
 
 **Step 4 reads:**
 
-- The latest mixed-design discovery run per arm, or an explicit `--discovery-run-dir`.
-- `metadata.json` from each run to confirm `batch_design=mixed` for the main normalize path.
+- The latest mixed-design discovery run per arm (main mixed), plus the latest `mixed_topup` run per arm.
+- `metadata.json` from each run to confirm `batch_design` for the normalize path.
 
 Steps 4 through 7 import `prompts.py` and `schemas.py` from Step 3. They must not edit those files.
