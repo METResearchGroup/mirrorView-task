@@ -4,6 +4,7 @@
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
+3. Phase 2 Part 3 now has keep and remove rates by platform and unanimous versus majority cells. After vote cleaning, modal keep rates are 74.77% on Bluesky, 70.08% on Reddit, and 78.30% on Twitter, and 30.15% of the 14,914 posts with at least three raters and no exact tie are unanimous keep while 3.29% are unanimous remove. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
 
 ## 2026-09-22
 
