@@ -303,6 +303,17 @@ def score_ablation(
     return output_dir
 
 
+def _assert_prediction_coverage(predictions: pd.DataFrame, cohort: pd.DataFrame) -> None:
+    n_predictions = len(predictions)
+    n_cohort = len(cohort)
+    if n_predictions != n_cohort:
+        missing = n_cohort - n_predictions
+        raise RuntimeError(
+            f"prediction coverage incomplete: {n_predictions}/{n_cohort} rows scored; "
+            f"{missing} missing"
+        )
+
+
 def finalize_ablation(output_dir: Path, cohort: pd.DataFrame) -> dict[str, Any]:
     """Join predictions, write labels/requests parquet and results.json."""
     predictions_path = output_dir / jev_scorer.PREDICTIONS_FILENAME
@@ -310,6 +321,8 @@ def finalize_ablation(output_dir: Path, cohort: pd.DataFrame) -> dict[str, Any]:
     predictions = _load_predictions_frame(predictions_path)
     if predictions.empty:
         raise ValueError(f"no predictions found at {predictions_path}")
+
+    _assert_prediction_coverage(predictions, cohort)
 
     labels = cohort.merge(
         predictions[["post_id", "probability_remove"]],

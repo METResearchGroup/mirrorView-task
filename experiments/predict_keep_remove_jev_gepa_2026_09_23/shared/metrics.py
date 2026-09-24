@@ -306,7 +306,7 @@ def build_results_payload(
     *,
     ablation_id: str,
     split_metrics: dict[SplitName, ClassificationMetrics],
-    dev_tuned_test_metrics: ClassificationMetrics,
+    dev_tuned_test_metrics: ClassificationMetrics | None,
     dev_tuned_threshold: float,
     trivial: TrivialBaselineMetrics,
     subgroups: list[SubgroupMetrics],
@@ -330,7 +330,11 @@ def build_results_payload(
             for split_name, metrics in split_metrics.items()
         },
         "dev_tuned_threshold": dev_tuned_threshold,
-        "dev_tuned_test_metrics": _classification_metrics_to_dict(dev_tuned_test_metrics),
+        "dev_tuned_test_metrics": (
+            None
+            if dev_tuned_test_metrics is None
+            else _classification_metrics_to_dict(dev_tuned_test_metrics)
+        ),
         "trivial_baselines": _trivial_baselines_to_dict(trivial),
         "subgroups": _subgroup_metrics_to_dict(subgroups),
         "spearman_remove_share": spearman,

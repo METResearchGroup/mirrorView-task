@@ -217,6 +217,17 @@ def _compute_split_metrics(labels: pd.DataFrame) -> dict[SplitName, Any]:
     return metrics
 
 
+def _assert_prediction_coverage(predictions: pd.DataFrame, cohort: pd.DataFrame) -> None:
+    n_predictions = len(predictions)
+    n_cohort = len(cohort)
+    if n_predictions != n_cohort:
+        missing = n_cohort - n_predictions
+        raise RuntimeError(
+            f"prediction coverage incomplete: {n_predictions}/{n_cohort} rows scored; "
+            f"{missing} missing"
+        )
+
+
 def finalize_eval_output(
     output_dir: Path,
     cohort: pd.DataFrame,
@@ -230,6 +241,8 @@ def finalize_eval_output(
     predictions = _load_predictions_frame(predictions_path)
     if predictions.empty:
         raise ValueError(f"no predictions found at {predictions_path}")
+
+    _assert_prediction_coverage(predictions, cohort)
 
     labels = cohort.merge(
         predictions[["post_id", "probability_remove"]],
@@ -252,28 +265,20 @@ def finalize_eval_output(
     test_subset = labels.loc[labels["split"] == "test"]
     if dev_subset.empty:
         dev_threshold = DEFAULT_THRESHOLD
+        dev_tuned_test_metrics = None
     else:
         dev_threshold, _dev_f1 = tune_threshold_for_f1(
             dev_subset["keep_remove_label"].astype(int).tolist(),
             dev_subset["p_remove"].astype(float).tolist(),
         )
-    if test_subset.empty:
-        dev_tuned_test_metrics = split_metrics.get(
-            "dev",
-            probability_metrics(
-                dev_subset["keep_remove_label"].astype(int).tolist(),
-                dev_subset["p_remove"].astype(float).tolist(),
+        if test_subset.empty:
+            dev_tuned_test_metrics = None
+        else:
+            dev_tuned_test_metrics = probability_metrics(
+                test_subset["keep_remove_label"].astype(int).tolist(),
+                test_subset["p_remove"].astype(float).tolist(),
                 threshold=dev_threshold,
             )
-            if not dev_subset.empty
-            else probability_metrics([0], [0.0], threshold=dev_threshold),
-        )
-    else:
-        dev_tuned_test_metrics = probability_metrics(
-            test_subset["keep_remove_label"].astype(int).tolist(),
-            test_subset["p_remove"].astype(float).tolist(),
-            threshold=dev_threshold,
-        )
     headline_subset = labels.loc[labels["split"] == headline_split]
     trivial = trivial_baselines(headline_subset["keep_remove_label"].astype(int).tolist())
     subgroups = subgroup_metrics(headline_subset, threshold=DEFAULT_THRESHOLD)

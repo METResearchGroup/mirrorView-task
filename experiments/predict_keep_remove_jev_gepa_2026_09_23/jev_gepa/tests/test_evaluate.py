@@ -13,6 +13,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa.evaluate impor
     EvalConfig,
     compare_b1_b1t,
     evaluate_instruction,
+    finalize_eval_output,
     load_selected_instruction,
     resolve_transfer_eval_config,
 )
@@ -248,3 +249,79 @@ class TestCompareB1B1t:
             "test_f1": 0.52,
             "reflection_cost_usd": 18.0,
         }
+
+
+class TestFinalizeEvalOutput:
+    """Tests for finalize_eval_output."""
+
+    def test_raises_when_prediction_count_does_not_match_cohort(self, tmp_path: Path) -> None:
+        cohort = pd.DataFrame(
+            {
+                "post_id": ["post-a", "post-b"],
+                "split": ["test", "test"],
+                "label": [1, 0],
+                "sampled_stance": ["liberal", "conservative"],
+                "sample_toxicity_type": ["insult", "threat"],
+                "remove_share": [0.8, 0.2],
+                "is_unanimous": [False, True],
+                "n_raters": [10, 10],
+            }
+        )
+        output_dir = tmp_path / "test_eval"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "predictions.jsonl").write_text(
+            json.dumps({"post_id": "post-a", "probability_remove": 0.9}) + "\n",
+            encoding="utf-8",
+        )
+
+        with pytest.raises(RuntimeError, match="1/2 rows scored; 1 missing"):
+            finalize_eval_output(
+                output_dir,
+                cohort,
+                ablation_id="B1_gepa_pair",
+                headline_split="test",
+            )
+
+    def test_sets_dev_tuned_test_metrics_null_without_dev_split(self, tmp_path: Path) -> None:
+        cohort = pd.DataFrame(
+            {
+                "post_id": ["post-a"],
+                "split": ["test"],
+                "label": [1],
+                "sampled_stance": ["liberal"],
+                "sample_toxicity_type": ["insult"],
+                "remove_share": [0.8],
+                "is_unanimous": [False],
+                "n_raters": [10],
+            }
+        )
+        output_dir = tmp_path / "test_eval"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        (output_dir / "predictions.jsonl").write_text(
+            json.dumps({"post_id": "post-a", "probability_remove": 0.9}) + "\n",
+            encoding="utf-8",
+        )
+        (output_dir / "requests.jsonl").write_text(
+            json.dumps(
+                {
+                    "request_id": "req-0",
+                    "status": "ok",
+                    "latency_ms": 10.0,
+                    "latency_per_post_ms": 10.0,
+                    "input_tokens": 10,
+                    "output_tokens": 1,
+                    "estimated_cost_usd": 0.001,
+                }
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        results = finalize_eval_output(
+            output_dir,
+            cohort,
+            ablation_id="B1_gepa_pair",
+            headline_split="test",
+        )
+
+        assert results["dev_tuned_test_metrics"] is None
