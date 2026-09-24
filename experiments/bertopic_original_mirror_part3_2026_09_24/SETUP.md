@@ -1,41 +1,13 @@
 # Setup
 
-Required data:
+Required data (load with `shared.data.dataloader.load_dataset` from `s3://mirrorview-experimental-artifacts/`):
 
-- `STUDY_PHASE_2_PART_3_STIMULI`: 18,899 posts (`post_primary_key`, `original_text`, `mirrored_text`)
-- `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS`: 18,866 rated posts, used as outcome overlays only
-- `STUDY_PHASE_2_PART_3_RESULTS_FULL`: rater-party cuts in later steps
+| Registry name | Role | Counts |
+| --- | --- | --- |
+| `STUDY_PHASE_2_PART_2_AND_3_STIMULI` | Stimulus catalog (`post_primary_key`, `original_text`, `mirrored_text`, facets) | 20,000 unique posts: Part 2 catalog 10,000, Part 3 catalog 18,899, overlap 8,899 identical texts/facets. On overlap, the union keeps the Part 2 row. |
+| `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` | Linked-fate session export | 168,871 rows, 5,051 Prolific accounts (1,176 Part 2 only, 3,875 Part 3 only, no account overlap). Includes 108,213 scored `linked_fate` ratings. |
+| `STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS` | Modal keep/remove per post (outcomes only; not used to fit topics) | 20,000 posts, 103,060 ratings, 15,140 keep / 4,860 remove. Every post has at least 3 raters. |
 
-Install the topic-model extra:
+Keep/remove labels are built from the combined results table with `shared/data/transformed/study_phase_2_part_2_and_3/transform.py` (materializes `shared/data/transformed/study_phase_2_part_2_and_3/keep_remove_labels.csv`).
 
-```bash
-uv sync --extra bertopic
-```
-
-Stage 1 caches Titan and MiniLM vectors for all 18,899 stimulus posts, before dedupe:
-
-```bash
-PYTHONPATH=. uv run --extra bertopic python \
-  experiments/bertopic_original_mirror_part3_2026_09_24/src/load_embeddings.py \
-  --text-role original --refresh-from-identity-cache --backfill
-PYTHONPATH=. uv run --extra bertopic python \
-  experiments/bertopic_original_mirror_part3_2026_09_24/src/load_embeddings_minilm.py \
-  --text-role original
-```
-
-Repeat both commands with `--text-role mirror`. Embedding backfill needs AWS credentials:
-
-```bash
-export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
-export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
-```
-
-Large artifacts (`embeddings.npy`, BERTopic `model/` directories, `umap_2d.npy`) are gitignored. They live in S3 at `s3://mirrorview-experimental-artifacts/experiments/bertopic_original_mirror_part3_2026_09_24/` with the same relative paths. Small artifacts stay in git: `index.parquet`, `metadata.json`, the dedupe report, assignments, topic info, labels, analysis tables, and figure PNGs.
-
-Ablations and the topic-review sample export (human review is still pending; there is no `review_notes.md`):
-
-```bash
-PYTHONPATH=. uv run --extra bertopic python \
-  experiments/bertopic_original_mirror_part3_2026_09_24/src/run_ablations.py \
-  --ablation all --seed 42
-```
+S3 keys for the raw CSVs follow the repo layout under `shared/data/raw/study_phase_2_part_2_and_3/`. See `shared/data/raw/study_phase_2_part_2_and_3/README.md`.
