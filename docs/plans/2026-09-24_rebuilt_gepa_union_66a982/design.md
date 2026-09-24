@@ -65,7 +65,7 @@ Signature checked via `uv run python -c "import gepa, inspect; print(inspect.sig
 | `val_evaluation_policy` | `"full_eval"` only as string | Resolves to `FullEvaluationPolicy` (all val ids every eval). **No** built-in sampled-val string. |
 | `val_evaluation_policy` | Custom `EvaluationPolicy` instance | Implement `get_eval_batch`, `get_best_program`, `get_valset_score` to score a fixed-size random subset (plan: 100 val posts on accept only, seed-driven, refresh subset every N iterations). |
 | `acceptance_criterion` | `"strict_improvement"`, `"improvement_or_equal"` | Both compare **sums of adapter `scores`** on the reflection minibatch (soft scores today). |
-| `acceptance_criterion` | Custom `AcceptanceCriterion` | Implement `should_accept(proposal, state)` using hard labels at 0.5 and accuracy with margin **+2** correct vs parent on the 25-post reflection minibatch. Optionally score a larger acceptance batch (50 posts) via extra adapter calls inside the criterion (counts toward post budget). |
+| `acceptance_criterion` | Custom `AcceptanceCriterion` | Implement `should_accept(proposal, state)` using hard labels at 0.5 and accuracy with margin **+2** correct vs parent on the 25-post reflection minibatch. |
 | `reflection_minibatch_size` | int | Used with `batch_sampler="epoch_shuffled"`. Current runner uses 10; rebuild uses **25**. |
 | `batch_sampler` | `"epoch_shuffled"` or custom `BatchSampler` | Custom sampler can prefer misclassified, high-confidence errors, close vote splits, and contrastive near-duplicate pairs (build index from train parquet). |
 | `module_selector` | GEPA default (omit kwarg) | **R1 to R3, R5 to R7:** single `study_instruction` key only. |
@@ -93,9 +93,6 @@ Reflection here means the GEPA step where the reflection language model proposes
 5. Keep GEPA `acceptance_criterion` as custom class; do not rely on `"strict_improvement"` on soft probability scores.
 
 At **20% to 30%** acceptance, mean cost per iteration is about **70 to 80 posts** (50 always + 100 × accept rate).
-
-Optional: second-stage acceptance on a fixed 50-post acceptance batch drawn from train (extra post scorings, logged separately).
-
 ## Richer reflection feedback
 
 Extend `make_reflective_dataset` / `_build_feedback` to include:
