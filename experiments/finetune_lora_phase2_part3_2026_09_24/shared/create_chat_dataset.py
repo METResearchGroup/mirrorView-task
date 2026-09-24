@@ -10,8 +10,46 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import pandas as pd
+
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = EXPERIMENT_ROOT / "data"
+
+
+def row_to_chat_record(row: pd.Series) -> dict:
+    """Build one chat JSONL record from a split CSV row.
+
+    Parameters
+    ----------
+    row
+        Row with ``message_id``, ``original_text``, ``mirror_text``, ``decision``.
+
+    Returns
+    -------
+    dict
+        Chat record with ``message_id`` and three-role ``messages``.
+    """
+    raise NotImplementedError
+
+
+def write_chat_jsonl(csv_path: Path, jsonl_path: Path, force: bool) -> int:
+    """Convert a split CSV to chat JSONL.
+
+    Parameters
+    ----------
+    csv_path
+        Source train or test CSV.
+    jsonl_path
+        Destination JSONL path.
+    force
+        Overwrite when True.
+
+    Returns
+    -------
+    int
+        Number of rows written.
+    """
+    raise NotImplementedError
 
 
 def create_chat_datasets(force: bool) -> None:
