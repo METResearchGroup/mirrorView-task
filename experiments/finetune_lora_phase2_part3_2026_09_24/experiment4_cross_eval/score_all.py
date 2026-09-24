@@ -70,6 +70,29 @@ ARM_PRED_PATHS: dict[str, dict[str, Path]] = {
         / "experiment3_modal_size_matched/preds/test_modal.csv",
     },
 }
+MATRIX_ARM_ORDER = (
+    "zero-shot",
+    "experiment1_unanimous",
+    "experiment2_modal",
+    "experiment3_modal_size_matched",
+)
+MATRIX_ARM_LABELS = {
+    "zero-shot": "zero-shot",
+    "experiment1_unanimous": "Experiment 1",
+    "experiment2_modal": "Experiment 2",
+    "experiment3_modal_size_matched": "Experiment 3",
+}
+TEST_SET_ORDER = ("test_unanimous", "test_modal")
+TEST_SET_LABELS = {
+    "test_unanimous": "unanimous test",
+    "test_modal": "modal test",
+}
+PART2_REFERENCE_MODEL = "Qwen/Qwen3-4B-Instruct-2507"
+
+
+def format_metric(value: float) -> str:
+    """Format a metric to four decimal places."""
+    return f"{value:.4f}"
 
 
 def bootstrap_f1_ci(
@@ -189,13 +212,103 @@ def score_arm_test_set(pred_path: Path, arm: str, test_set: str) -> dict[str, fl
 
 
 def write_cross_eval_csv(path: Path, rows: list[dict[str, float | int | str]]) -> None:
-    """Write the eight-row cross-eval metrics table."""
-    raise NotImplementedError
+    """Write the eight-row cross-eval metrics table.
+
+    Parameters
+    ----------
+    path
+        Destination CSV path.
+    rows
+        One metrics dict per arm and test-set combination.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(rows, columns=list(CROSS_EVAL_COLUMNS)).to_csv(path, index=False)
+
+
+def _label_counts(frame: pd.DataFrame) -> tuple[int, int, int]:
+    row_count = len(frame)
+    remove_count = int((frame["keep_remove_label"] == 1).sum())
+    keep_count = row_count - remove_count
+    return row_count, remove_count, keep_count
 
 
 def load_split_counts(part3_root: Path) -> dict[str, int]:
-    """Load split and balanced row counts from manifest and CSVs."""
-    raise NotImplementedError
+    """Load split and balanced row counts from manifest and CSVs.
+
+    Parameters
+    ----------
+    part3_root
+        Part 3 experiment root directory.
+
+    Returns
+    -------
+    dict[str, int]
+        Post-level and balanced row counts for RESULTS.md tables.
+    """
+    manifest = pd.read_csv(part3_root / "data/split_manifest.csv")
+    test_unanimous = pd.read_csv(part3_root / "data/test_unanimous.csv")
+    test_modal = pd.read_csv(part3_root / "data/test_modal.csv")
+    exp1_train = pd.read_csv(part3_root / "experiment1_unanimous/data/train.csv")
+    exp2_train = pd.read_csv(part3_root / "experiment2_modal/data/train.csv")
+    exp3_train = pd.read_csv(
+        part3_root / "experiment3_modal_size_matched/data/train.csv"
+    )
+    unanimous_rows, unanimous_remove, unanimous_keep = _label_counts(test_unanimous)
+    modal_rows, modal_remove, modal_keep = _label_counts(test_modal)
+    return {
+        "modal_posts": len(manifest),
+        "unanimous_posts": int(manifest["in_unanimous"].sum()),
+        "exp1_train_rows": len(exp1_train),
+        "exp2_train_rows": len(exp2_train),
+        "exp3_train_rows": len(exp3_train),
+        "test_unanimous_rows": unanimous_rows,
+        "test_unanimous_remove": unanimous_remove,
+        "test_unanimous_keep": unanimous_keep,
+        "test_modal_rows": modal_rows,
+        "test_modal_remove": modal_remove,
+        "test_modal_keep": modal_keep,
+    }
+
+
+def _row_lookup(
+    rows: list[dict[str, float | int | str]],
+) -> dict[tuple[str, str], dict[str, float | int | str]]:
+    return {(str(row["arm"]), str(row["test_set"])): row for row in rows}
+
+
+def _format_f1_with_ci(row: dict[str, float | int | str]) -> str:
+    return (
+        f"{format_metric(float(row['f1']))} "
+        f"[{format_metric(float(row['f1_ci_low']))}, "
+        f"{format_metric(float(row['f1_ci_high']))}]"
+    )
+
+
+def _summary_paragraph(rows: list[dict[str, float | int | str]]) -> str:
+    best_row = max(rows, key=lambda row: float(row["f1"]))
+    best_arm = MATRIX_ARM_LABELS[str(best_row["arm"])]
+    best_test = TEST_SET_LABELS[str(best_row["test_set"])]
+    best_f1 = _format_f1_with_ci(best_row)
+    nonzero_invalid = [
+        f"{MATRIX_ARM_LABELS[str(row['arm'])]} on "
+        f"{TEST_SET_LABELS[str(row['test_set'])]} "
+        f"({format_metric(float(row['invalid_rate']))})"
+        for row in rows
+        if float(row["invalid_rate"]) > 0.0
+    ]
+    if nonzero_invalid:
+        invalid_text = (
+            " Nonzero invalid generation rates: "
+            + "; ".join(nonzero_invalid)
+            + "."
+        )
+    else:
+        invalid_text = " All arms had zero invalid generations."
+    return (
+        f"The highest remove-F1 on the Part 3 balanced test sets is "
+        f"{best_arm} on the {best_test} at {best_f1}."
+        f"{invalid_text}"
+    )
 
 
 def render_results_markdown(
@@ -203,7 +316,104 @@ def render_results_markdown(
     split_counts: dict[str, int],
 ) -> str:
     """Render RESULTS.md from cross-eval rows and split counts."""
-    raise NotImplementedError
+    lookup = _row_lookup(rows)
+    matrix_lines = [
+        "| Arm | unanimous test | modal test |",
+        "| --- | --- | --- |",
+    ]
+    for arm in MATRIX_ARM_ORDER:
+        unanimous_cell = _format_f1_with_ci(lookup[(arm, "test_unanimous")])
+        modal_cell = _format_f1_with_ci(lookup[(arm, "test_modal")])
+        matrix_lines.append(
+            f"| {MATRIX_ARM_LABELS[arm]} | {unanimous_cell} | {modal_cell} |"
+        )
+
+    metrics_lines = [
+        "| arm | test_set | n | n_remove | accuracy | precision | recall | f1 | "
+        "f1_ci_low | f1_ci_high | invalid_rate |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for row in rows:
+        metrics_lines.append(
+            "| {arm} | {test_set} | {n} | {n_remove} | {accuracy} | "
+            "{precision} | {recall} | {f1} | {f1_ci_low} | {f1_ci_high} | "
+            "{invalid_rate} |".format(
+                arm=row["arm"],
+                test_set=row["test_set"],
+                n=row["n"],
+                n_remove=row["n_remove"],
+                accuracy=format_metric(float(row["accuracy"])),
+                precision=format_metric(float(row["precision"])),
+                recall=format_metric(float(row["recall"])),
+                f1=format_metric(float(row["f1"])),
+                f1_ci_low=format_metric(float(row["f1_ci_low"])),
+                f1_ci_high=format_metric(float(row["f1_ci_high"])),
+                invalid_rate=format_metric(float(row["invalid_rate"])),
+            )
+        )
+
+    split_lines = [
+        "| Split | n | n_remove | n_keep |",
+        "| --- | --- | --- | --- |",
+        f"| modal pool posts | {split_counts['modal_posts']} | — | — |",
+        f"| unanimous-min3 posts | {split_counts['unanimous_posts']} | — | — |",
+        f"| Experiment 1 train | {split_counts['exp1_train_rows']} | — | — |",
+        f"| Experiment 2 train | {split_counts['exp2_train_rows']} | — | — |",
+        f"| Experiment 3 train | {split_counts['exp3_train_rows']} | — | — |",
+        "| test_unanimous | "
+        f"{split_counts['test_unanimous_rows']} | "
+        f"{split_counts['test_unanimous_remove']} | "
+        f"{split_counts['test_unanimous_keep']} |",
+        "| test_modal | "
+        f"{split_counts['test_modal_rows']} | "
+        f"{split_counts['test_modal_remove']} | "
+        f"{split_counts['test_modal_keep']} |",
+    ]
+
+    part2_block = "\n".join(
+        [
+            f"## Part 2 reference (different base model: `{PART2_REFERENCE_MODEL}`)",
+            "",
+            "These Part 2 test remove-F1 values use a different base model and are "
+            "not comparable to Part 3.",
+            "",
+            "| Test set | Arm | remove-F1 |",
+            "| --- | --- | --- |",
+            "| unanimous | baseline | 0.7407 |",
+            "| unanimous | fine-tuned | 0.9688 |",
+            "| modal | baseline | 0.7210 |",
+            "| modal | fine-tuned | 0.6962 |",
+        ]
+    )
+
+    return "\n".join(
+        [
+            "# Part 3 LoRA cross-eval keep/remove results",
+            "",
+            f"- Model: `{MODEL_ID}`",
+            f"- Seed: {RANDOM_SEED}",
+            "- Positive class: remove",
+            "",
+            "## Remove-F1 matrix (95% bootstrap CI)",
+            "",
+            "\n".join(matrix_lines),
+            "",
+            "## Full metrics",
+            "",
+            "\n".join(metrics_lines),
+            "",
+            "## Split counts",
+            "",
+            "\n".join(split_lines),
+            "",
+            "## Summary",
+            "",
+            _summary_paragraph(rows),
+            "",
+            part2_block,
+            "",
+        ]
+    )
 
 
 def score_all_arms() -> list[dict[str, float | int | str]]:
