@@ -49,6 +49,10 @@ METADATA_FILENAME = "metadata.json"
 SOURCE_LOCAL = "local_cache"
 SOURCE_IDENTITY = "identity_cache"
 SOURCE_MIXED = "mixed_identity_and_bedrock"
+SOURCE_SEED_MIXED = "mixed_local_seed_and_identity"
+PROVENANCE_REUSED_LOCAL = "reused_local"
+PROVENANCE_IDENTITY = "identity"
+PROVENANCE_BACKFILLED = "backfilled"
 RESOLVE_WORKERS = 16
 BACKFILL_ATTEMPTS = 5
 _VECTOR_CACHE_LOCK = threading.Lock()
@@ -66,6 +70,7 @@ METADATA_KEYS = (
     "backfill_post_ids",
     "corpus",
     "dedupe_applied",
+    "provenance",
 )
 
 
@@ -77,6 +82,7 @@ class EmbeddingCacheResult:
     n_rows: int
     n_backfilled: int
     source: str
+    provenance: dict[str, int] | None = None
 
 
 def require_embed_role(role: str) -> str:
@@ -170,6 +176,7 @@ def build_titan_metadata(
     dropped_post_ids: list[str],
     backfill_post_ids: list[str],
     n_expected: int = N_EXPECTED,
+    provenance: dict[str, int] | None = None,
 ) -> dict:
     """Return the Titan cache metadata document."""
     return {
@@ -185,7 +192,72 @@ def build_titan_metadata(
         "backfill_post_ids": backfill_post_ids,
         "corpus": CORPUS_NAME,
         "dedupe_applied": False,
+        "provenance": provenance or {
+            PROVENANCE_REUSED_LOCAL: 0,
+            PROVENANCE_IDENTITY: n_rows,
+            PROVENANCE_BACKFILLED: len(backfill_post_ids),
+        },
     }
+
+
+def vectors_match(left: np.ndarray, right: np.ndarray) -> bool:
+    """Return True when two Titan vectors are numerically identical."""
+    return bool(np.allclose(left.ravel(), right.ravel(), rtol=0.0, atol=1e-8))
+
+
+def read_role_cache_vectors(cache_dir: Path, dimensions: int = EMBEDDING_DIMENSIONS) -> dict[str, np.ndarray]:
+    """Load ``post_id`` → vector from a role cache directory."""
+    emb_path, index_path, _ = cache_file_paths(cache_dir)
+    if not (emb_path.is_file() and index_path.is_file()):
+        raise FileNotFoundError(f"Incomplete cache at {cache_dir}")
+    index = pd.read_parquet(index_path)
+    embeddings = np.load(emb_path)
+    if embeddings.shape != (len(index), dimensions):
+        raise ValueError(
+            f"Cache shape mismatch: embeddings={embeddings.shape} index_rows={len(index)}"
+        )
+    by_post: dict[str, np.ndarray] = {}
+    for row_id, post_id in zip(index["row_id"].astype(int), index["post_id"].astype(str)):
+        by_post[post_id] = np.asarray(embeddings[int(row_id)], dtype=np.float64).ravel()
+    return by_post
+
+
+def infer_titan_source(provenance: dict[str, int]) -> str:
+    """Map provenance counts to a metadata ``source`` label."""
+    if provenance.get(PROVENANCE_BACKFILLED, 0) > 0:
+        return SOURCE_MIXED
+    if provenance.get(PROVENANCE_REUSED_LOCAL, 0) > 0:
+        return SOURCE_SEED_MIXED
+    return SOURCE_IDENTITY
+
+
+def resolve_single_post_vector(
+    post_id: str,
+    text: str,
+    backfill: bool,
+    seed_vectors: dict[str, np.ndarray] | None,
+    ddb: DynamoDBEmbeddingIndex,
+    s3: S3,
+    disk_cache_root: Path,
+    embedding_id_to_vec: dict[str, np.ndarray],
+) -> tuple[np.ndarray | None, str]:
+    """Resolve one Titan vector and its provenance label."""
+    seed_vec = seed_vectors.get(post_id) if seed_vectors else None
+    identity_vec = fetch_identity_vector(text, ddb, s3, disk_cache_root, embedding_id_to_vec)
+    if seed_vec is not None:
+        if identity_vec is not None:
+            if vectors_match(seed_vec, identity_vec):
+                return seed_vec, PROVENANCE_REUSED_LOCAL
+            return identity_vec, PROVENANCE_IDENTITY
+        return seed_vec, PROVENANCE_REUSED_LOCAL
+    if identity_vec is not None:
+        return identity_vec, PROVENANCE_IDENTITY
+    if not backfill:
+        return None, "dropped"
+    try:
+        return backfill_embedding(text), PROVENANCE_BACKFILLED
+    except Exception:
+        return None, "dropped"
 
 
 def _disk_cache_path(disk_cache_root: Path, embedding_id: str) -> Path:
@@ -254,48 +326,55 @@ def _resolve_one(
     post_id: str,
     text: str,
     backfill: bool,
+    seed_vectors: dict[str, np.ndarray] | None,
     ddb: DynamoDBEmbeddingIndex,
     s3: S3,
     disk_cache_root: Path,
     embedding_id_to_vec: dict[str, np.ndarray],
-) -> tuple[str, np.ndarray | None, bool]:
-    """Return post id, vector, and whether Bedrock filled the miss."""
-    vector = fetch_identity_vector(text, ddb, s3, disk_cache_root, embedding_id_to_vec)
-    if vector is not None:
-        return post_id, np.asarray(vector, dtype=np.float64).ravel(), False
-    if not backfill:
-        return post_id, None, False
-    try:
-        return post_id, backfill_embedding(text), True
-    except Exception:
-        return post_id, None, False
+) -> tuple[str, np.ndarray | None, str]:
+    """Return post id, vector, and provenance label."""
+    vector, provenance = resolve_single_post_vector(
+        post_id,
+        text,
+        backfill,
+        seed_vectors,
+        ddb,
+        s3,
+        disk_cache_root,
+        embedding_id_to_vec,
+    )
+    if vector is None:
+        return post_id, None, provenance
+    return post_id, np.asarray(vector, dtype=np.float64).ravel(), provenance
 
 
 def resolve_role_vectors(
     posts: pd.DataFrame,
     role: str,
     backfill: bool,
-) -> tuple[np.ndarray, pd.DataFrame, list[str], list[str]]:
+    seed_dir: Path | None = None,
+) -> tuple[np.ndarray, pd.DataFrame, list[str], list[str], dict[str, int]]:
     """Resolve Titan vectors for ``posts`` in post-id order.
 
     Returns
     -------
     tuple
-        Embeddings, index, dropped post ids, backfilled post ids.
+        Embeddings, index, dropped post ids, backfilled post ids, provenance counts.
     """
     ordered = order_posts(posts)
     texts = select_text_for_role(ordered, role).tolist()
     post_ids = ordered["post_id"].astype(str).tolist()
+    seed_vectors = read_role_cache_vectors(seed_dir) if seed_dir is not None else None
     disk_cache = paths.EXPERIMENT_ROOT / "outputs" / "embeddings" / DISK_CACHE_DIRNAME
     disk_cache.mkdir(parents=True, exist_ok=True)
     s3 = S3(S3_BUCKET, region_name=BEDROCK_AWS_REGION)
     ddb = DynamoDBEmbeddingIndex(DYNAMODB_TABLE_NAME, region_name=BEDROCK_AWS_REGION)
     shared_vectors: dict[str, np.ndarray] = {}
     jobs = [
-        (post_id, text, backfill, ddb, s3, disk_cache, shared_vectors)
+        (post_id, text, backfill, seed_vectors, ddb, s3, disk_cache, shared_vectors)
         for post_id, text in zip(post_ids, texts)
     ]
-    resolved: list[tuple[str, np.ndarray | None, bool]] = []
+    resolved: list[tuple[str, np.ndarray | None, str]] = []
     with ThreadPoolExecutor(max_workers=RESOLVE_WORKERS) as pool:
         iterator = pool.map(lambda job: _resolve_one(*job), jobs)
         resolved = list(tqdm(iterator, total=len(jobs), desc=f"Titan {role}", unit="post"))
@@ -303,28 +382,35 @@ def resolve_role_vectors(
 
 
 def _stack_resolved(
-    resolved: list[tuple[str, np.ndarray | None, bool]],
-) -> tuple[np.ndarray, pd.DataFrame, list[str], list[str]]:
-    """Stack successful vectors and list drops and backfills."""
+    resolved: list[tuple[str, np.ndarray | None, str]],
+) -> tuple[np.ndarray, pd.DataFrame, list[str], list[str], dict[str, int]]:
+    """Stack successful vectors and list drops, backfills, and provenance."""
     vectors: list[np.ndarray] = []
     kept: list[str] = []
     dropped: list[str] = []
     backfilled: list[str] = []
-    for post_id, vector, used_backfill in resolved:
+    provenance_counts = {
+        PROVENANCE_REUSED_LOCAL: 0,
+        PROVENANCE_IDENTITY: 0,
+        PROVENANCE_BACKFILLED: 0,
+    }
+    for post_id, vector, label in resolved:
         if vector is None:
             dropped.append(post_id)
             continue
         vectors.append(vector)
         kept.append(post_id)
-        if used_backfill:
+        if label == PROVENANCE_BACKFILLED:
             backfilled.append(post_id)
+        if label in provenance_counts:
+            provenance_counts[label] += 1
     if not vectors:
         empty = np.zeros((0, EMBEDDING_DIMENSIONS), dtype=np.float64)
-        return empty, build_index([]), dropped, backfilled
+        return empty, build_index([]), dropped, backfilled, provenance_counts
     order = np.argsort(np.array(kept))
     ordered_ids = [kept[int(position)] for position in order]
     embeddings = np.vstack([vectors[int(position)] for position in order])
-    return embeddings, build_index(ordered_ids), dropped, backfilled
+    return embeddings, build_index(ordered_ids), dropped, backfilled, provenance_counts
 
 
 def local_cache_is_complete(cache_dir: Path, post_ids: set[str], role: str) -> bool:
@@ -354,15 +440,22 @@ def load_local_cache(cache_dir: Path) -> EmbeddingCacheResult:
     metadata = json.loads(meta_path.read_text(encoding="utf-8"))
     if embeddings.shape != (len(index), EMBEDDING_DIMENSIONS):
         raise ValueError(f"Cache shape mismatch: embeddings={embeddings.shape} index_rows={len(index)}")
+    provenance = metadata.get("provenance")
     return EmbeddingCacheResult(
         cache_dir=cache_dir,
         n_rows=len(index),
         n_backfilled=len(metadata.get("backfill_post_ids", [])),
         source=SOURCE_LOCAL,
+        provenance=provenance if isinstance(provenance, dict) else None,
     )
 
 
-def run_load_embeddings(role: str, refresh_from_identity_cache: bool, backfill: bool) -> EmbeddingCacheResult:
+def run_load_embeddings(
+    role: str,
+    refresh_from_identity_cache: bool,
+    backfill: bool,
+    seed_from_local_cache: Path | None = None,
+) -> EmbeddingCacheResult:
     """Build or load the Titan cache for one text role.
 
     Parameters
@@ -383,13 +476,26 @@ def run_load_embeddings(role: str, refresh_from_identity_cache: bool, backfill: 
     posts = data_mod.load_stimuli_posts()
     post_ids = set(posts["post_id"].astype(str))
     cache_dir = paths.embeddings_dir(validated)
-    if not refresh_from_identity_cache and local_cache_is_complete(cache_dir, post_ids, validated):
+    if (
+        not refresh_from_identity_cache
+        and seed_from_local_cache is None
+        and local_cache_is_complete(cache_dir, post_ids, validated)
+    ):
         result = load_local_cache(cache_dir)
     else:
-        result = _resolve_and_write(posts, validated, backfill, cache_dir)
+        result = _resolve_and_write(
+            posts,
+            validated,
+            backfill,
+            cache_dir,
+            seed_from_local_cache=seed_from_local_cache,
+        )
+    provenance_msg = ""
+    if result.provenance:
+        provenance_msg = f" provenance={result.provenance}"
     print(
         f"n_rows={result.n_rows} n_expected={N_EXPECTED} n_backfilled={result.n_backfilled} "
-        f"source={result.source} cache_path={result.cache_dir}"
+        f"source={result.source}{provenance_msg} cache_path={result.cache_dir}"
     )
     return result
 
@@ -399,14 +505,33 @@ def _resolve_and_write(
     role: str,
     backfill: bool,
     cache_dir: Path,
+    seed_from_local_cache: Path | None = None,
 ) -> EmbeddingCacheResult:
     """Resolve vectors, reject partial coverage, and write the cache."""
-    embeddings, index, dropped, backfilled = resolve_role_vectors(posts, role, backfill)
+    embeddings, index, dropped, backfilled, provenance = resolve_role_vectors(
+        posts,
+        role,
+        backfill,
+        seed_dir=seed_from_local_cache,
+    )
     assert_full_coverage(len(index), N_EXPECTED, dropped, role)
-    source = SOURCE_MIXED if backfilled else SOURCE_IDENTITY
-    metadata = build_titan_metadata(role, len(index), source, dropped, backfilled)
+    source = infer_titan_source(provenance)
+    metadata = build_titan_metadata(
+        role,
+        len(index),
+        source,
+        dropped,
+        backfilled,
+        provenance=provenance,
+    )
     write_cache(cache_dir, embeddings, index, metadata)
-    return EmbeddingCacheResult(cache_dir, len(index), len(backfilled), source)
+    return EmbeddingCacheResult(
+        cache_dir,
+        len(index),
+        len(backfilled),
+        source,
+        provenance=provenance,
+    )
 
 
 def main() -> None:
@@ -415,8 +540,19 @@ def main() -> None:
     parser.add_argument("--text-role", choices=sorted(EMBED_ROLES), required=True)
     parser.add_argument("--refresh-from-identity-cache", action="store_true")
     parser.add_argument("--backfill", action="store_true")
+    parser.add_argument(
+        "--seed-from-local-cache",
+        type=Path,
+        default=None,
+        help="Reuse vectors from an existing on-disk role cache when post_id and text identity match.",
+    )
     args = parser.parse_args()
-    run_load_embeddings(args.text_role, args.refresh_from_identity_cache, args.backfill)
+    run_load_embeddings(
+        args.text_role,
+        args.refresh_from_identity_cache,
+        args.backfill,
+        seed_from_local_cache=args.seed_from_local_cache,
+    )
 
 
 if __name__ == "__main__":
