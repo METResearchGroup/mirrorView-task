@@ -180,6 +180,8 @@ def run_bertopic(
 
     try:
         from bertopic import BERTopic
+        from hdbscan import HDBSCAN
+        from umap import UMAP
     except ImportError:
         return pd.DataFrame(
             {
@@ -192,11 +194,25 @@ def run_bertopic(
         )
 
     try:
+        umap_model = UMAP(
+            n_neighbors=15,
+            n_components=5,
+            min_dist=0.0,
+            metric="cosine",
+            random_state=seed,
+        )
+        hdbscan_model = HDBSCAN(
+            min_cluster_size=max(5, min(10, len(texts) // 20)),
+            metric="euclidean",
+            cluster_selection_method="eom",
+            prediction_data=True,
+        )
         topic_model = BERTopic(
             embedding_model=None,
+            umap_model=umap_model,
+            hdbscan_model=hdbscan_model,
             calculate_probabilities=False,
             verbose=False,
-            seed_model=seed,
         )
         topics, _ = topic_model.fit_transform(texts, embeddings=embeddings)
         topic_info = topic_model.get_topic_info()
