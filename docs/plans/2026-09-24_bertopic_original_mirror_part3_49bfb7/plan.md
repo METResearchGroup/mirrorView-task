@@ -80,7 +80,7 @@ Exact commands, expected output, and allowed/forbidden files per step go into `s
 
 ### Step 1: Build Part 3 keep/remove label table
 
-Add `shared/data/transformed/study_phase_2_part_3/` reusing Part 2 modal-aggregation logic (ties go to remove). Register the dataset in `shared/data/registry.py`. Store rater count per post and keep rate per post. Do not bake in the minimum-rater filter from the open questions; apply it at analysis time. Add unit tests.
+Add `shared/data/transformed/study_phase_2_part_3/` reusing Part 2 modal-aggregation logic (ties go to remove). Register the dataset in `shared/data/registry.py`. Store rater count per post and keep rate per post. Do not bake in the minimum-rater filter from the Decisions table; apply it at analysis time. Add unit tests.
 
 ### Step 2: Scaffold experiment and port Part 2 pipeline
 
@@ -88,11 +88,11 @@ Create `experiments/bertopic_original_mirror_part3_2026_09_24/` with README (1-2
 
 ### Step 3: Backfill and cache Titan embeddings
 
-Populate `outputs/embeddings/original/` and `outputs/embeddings/mirror/` from the identity cache with optional Bedrock backfill. Stop if coverage is not 100% for all 18,899 stimulus posts.
+Populate `outputs/embeddings/original/` and `outputs/embeddings/mirror/` from the identity cache with optional Bedrock backfill. Stop if coverage is not 100% for all 18,899 stimulus posts (embed before dedupe so the cache stays reusable).
 
 ### Step 4: Smoke run and production fits
 
-Apply the dedupe rule from the open questions before fitting. Run a fixed 50-pair smoke sample through cache, fit, LLM label, and viz stages. Then run production fits for original, mirror, and joint corpora. Assign mirrors to the original model, add post-hoc LLM labels, and write topic and overlay figures for each role and joint.
+Apply the dedupe rule from the Decisions table before fitting. Run a fixed 50-pair smoke sample through cache, fit, LLM label, and viz stages. Then run production fits for original, mirror, and joint corpora. Assign mirrors to the original model, add post-hoc LLM labels, and write topic and overlay figures for each role and joint.
 
 ### Step 5: Cross-role analyses (Q2 to Q4)
 
@@ -122,11 +122,11 @@ Summarize production counts, topic labels, Q1 to Q5 tables, and ablation sensiti
 8. `RESULTS.md` records parameters, counts, and links to local paths and S3 prefixes.
 9. `experiments/bertopic_modeling_2026_08_05/` is unchanged.
 
-## Open questions for approval
+## Decisions (approved 2026-09-24)
 
-| Topic | Proposal |
+| Topic | Decision |
 | --- | --- |
-| Dedupe 173 duplicate originals and 35 identical original-mirror pairs before fitting | Yes, dedupe before fit |
-| Minimum raters per post for Q5 outcome tables | 3 raters (align with Part 2 unanimous-min3 pattern) |
+| Dedupe 173 duplicate originals and 35 identical original-mirror pairs before fitting | Dedupe before fit |
+| Minimum raters per post for Q5 outcome tables | 3 raters, applied at analysis time |
 | Include local all-MiniLM-L6-v2 embedding ablation (A3) | Yes |
-| Fit corpus vs outcome analysis corpus | Fit on all 18,899 stimuli; analyze keep/remove outcomes on the 18,866 rated posts only |
+| Fit corpus vs outcome analysis corpus | Fit on all deduplicated stimuli; analyze keep/remove outcomes on rated posts only |
