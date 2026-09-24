@@ -16,16 +16,18 @@ export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 PYTHONPATH=. uv run python experiments/predict_keep_remove_jev_gepa_2026_09_23/shared/splits.py --write-counts
 ```
 
-Expected counts (frozen 2026-09-24):
+Expected counts (frozen 2026-09-24, with dedupe before aggregation):
+
+Counts below are from the spec-correct pipeline (one rating per participant × post, then majority with n_raters ≥ 3). An earlier probe reported 14,941 posts because it aggregated without deduping duplicate participant × post rows first.
 
 | Check | Expected |
 |-------|----------|
-| Cohort A posts | 14,941 |
-| Cohort A keep | 11,772 |
-| Cohort A remove | 3,169 |
-| Unanimous posts | 4,889 |
-| Test split | 2,988 |
-| Dev split | 1,494 |
-| GEPA pool | 10,459 |
+| Cohort A posts | 14,955 |
+| Cohort A keep | 11,775 |
+| Cohort A remove | 3,180 |
+| Unanimous posts | 4,939 |
+| Test split | 2,991 |
+| Dev split | 1,496 |
+| GEPA pool | 10,468 |
 | GEPA val | 300 (150/150) |
 | GEPA train | 2,000 (1000/1000) |
