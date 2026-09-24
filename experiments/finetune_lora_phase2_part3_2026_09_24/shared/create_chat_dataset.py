@@ -1,4 +1,4 @@
-"""Create chat JSONL files from Part 3 split CSVs.
+"""Create chat JSONL files from Part 2+3 union split CSVs.
 
 Reuses chat helpers from ``experiments.finetune_qwen_model_2026_08_08``.
 
@@ -47,7 +47,7 @@ def create_chat_datasets(force: bool) -> None:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     """Parse CLI arguments."""
     parser = argparse.ArgumentParser(
-        description="Create chat JSONL files from Part 3 split CSVs."
+        description="Create chat JSONL files from Part 2+3 union split CSVs."
     )
     parser.add_argument(
         "--force",

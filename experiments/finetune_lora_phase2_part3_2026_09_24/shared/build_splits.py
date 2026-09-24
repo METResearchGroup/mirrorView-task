@@ -1,4 +1,6 @@
-"""Build post-level splits and balanced train/test CSVs for Part 3 LoRA fine-tuning.
+"""Build post-level splits and balanced train/test CSVs for Part 2+3 LoRA fine-tuning.
+
+Study Phase 2 Part 2 and Part 3 union keep/remove labels.
 
 Run from root: PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py --force
 """
@@ -18,8 +20,8 @@ from experiments.finetune_qwen_model_2026_08_08.src.build_splits import (
 )
 from shared.data.dataloader import load_dataset
 from shared.data.registry import (
-    STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS,
-    STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3,
+    STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS,
+    STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3,
 )
 
 EXPERIMENT_ROOT = Path(__file__).resolve().parents[1]
@@ -264,9 +266,12 @@ def build_and_write_splits(force: bool, seed: int) -> SplitCounts:
     SplitCounts
         Row counts for each written output.
     """
-    modal_df = load_dataset(STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS, low_memory=False)
+    modal_df = load_dataset(
+        STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS,
+        low_memory=False,
+    )
     unanimous_df = load_dataset(
-        STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3,
+        STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3,
         low_memory=False,
     )
     unanimous_post_ids = set(unanimous_df["message_id"].astype(str))
