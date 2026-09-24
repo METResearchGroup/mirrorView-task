@@ -45,17 +45,35 @@ CONTAINER_ENTRY_POINT = (
 
 def _load_sagemaker_role_arn() -> str:
     """Return SAGEMAKER_ROLE_ARN, with a known-role fallback if redacted."""
-    raise NotImplementedError
+    role = os.environ.get("SAGEMAKER_ROLE_ARN", "").strip()
+    if not role or role.startswith("[REDACTED]"):
+        return DEFAULT_SAGEMAKER_ROLE_ARN
+    return prior._load_sagemaker_role_arn()
 
 
 def _validate_mode_experiment(mode: LaunchMode, experiment: str) -> None:
     """Reject invalid mode and experiment pairings."""
-    raise NotImplementedError
+    if experiment not in EXPERIMENT_NAMES:
+        raise ValueError(f"Unknown experiment: {experiment}")
+    if mode is LaunchMode.TRAIN and experiment == "experiment4_cross_eval":
+        raise ValueError("train mode does not support experiment4_cross_eval")
+    if mode is LaunchMode.INFER_ADAPTER and experiment == "experiment4_cross_eval":
+        raise ValueError(
+            "infer_adapter mode does not support experiment4_cross_eval"
+        )
+    if mode is LaunchMode.INFER_BASELINE and experiment != "experiment4_cross_eval":
+        raise ValueError(
+            "infer_baseline is only supported for experiment4_cross_eval"
+        )
 
 
 def resolve_image_uri(region: str, account_id: str | None = None) -> str:
     """Build ECR image URI for this experiment repository."""
-    raise NotImplementedError
+    return prior.resolve_image_uri(
+        region=region,
+        account_id=account_id,
+        ecr_repo_name=ECR_REPO_NAME,
+    )
 
 
 def build_job_config(
@@ -85,7 +103,69 @@ def build_job_config(
         adapter: ``{prefix}/{experiment}/adapters/{run_id}/``
         output: ``{prefix}/{experiment}/preds/``
     """
-    raise NotImplementedError
+    _validate_mode_experiment(mode, experiment)
+    template_json = chat_template_kwargs_json()
+    shared_data_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/data"
+    experiment_preds_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/{experiment}/preds"
+    adapter_s3_uri = (
+        f"s3://{S3_BUCKET}/{S3_PREFIX}/{experiment}/adapters/{run_id}"
+    )
+
+    base_env = {
+        "HF_TOKEN": hf_token,
+        "RUN_ID": run_id,
+        "MODE": mode.value,
+        "AWS_REGION": region,
+        "MODEL_ID": MODEL_ID,
+        "CHAT_TEMPLATE_KWARGS_JSON": template_json,
+    }
+    if smoke:
+        base_env["SMOKE"] = "1"
+
+    if mode is LaunchMode.TRAIN:
+        hyperparams = default_hyperparams(experiment)
+        data_s3_uri = f"s3://{S3_BUCKET}/{S3_PREFIX}/{experiment}/data"
+        output_s3_uri = adapter_s3_uri
+        container_arguments = ["train"]
+        environment = {
+            **base_env,
+            "WANDB_API_KEY": str(wandb_api_key),
+            "WANDB_PROJECT": WANDB_PROJECT,
+            "NUM_TRAIN_EPOCHS": str(hyperparams.num_train_epochs),
+            "ADAPTER_S3_URI": adapter_s3_uri,
+        }
+    elif mode is LaunchMode.INFER_BASELINE:
+        data_s3_uri = shared_data_uri
+        output_s3_uri = experiment_preds_uri
+        adapter_s3_uri = None
+        container_arguments = ["infer_baseline"]
+        environment = {
+            **base_env,
+            "PREDS_S3_URI": output_s3_uri,
+        }
+    else:
+        data_s3_uri = shared_data_uri
+        output_s3_uri = experiment_preds_uri
+        container_arguments = ["infer_adapter"]
+        environment = {
+            **base_env,
+            "PREDS_S3_URI": output_s3_uri,
+        }
+
+    return JobConfig(
+        mode=mode,
+        run_id=run_id,
+        region=region,
+        instance_type=instance_type,
+        image_uri=image_uri,
+        role_arn=role_arn,
+        data_s3_uri=data_s3_uri,
+        output_s3_uri=output_s3_uri,
+        adapter_s3_uri=adapter_s3_uri,
+        environment=environment,
+        container_arguments=container_arguments,
+        container_entry_point=list(CONTAINER_ENTRY_POINT),
+    )
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -130,7 +210,51 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> None:
     """CLI entrypoint."""
-    raise NotImplementedError
+    args = parse_args(argv)
+    mode = LaunchMode(args.mode)
+    run_id = args.run_id
+
+    role_arn = _load_sagemaker_role_arn()
+    hf_token = prior._require_hf_token()
+    wandb_key: str | None = None
+    if mode is LaunchMode.TRAIN:
+        wandb_key = prior._load_wandb_api_key()
+
+    if args.dry_run:
+        try:
+            image_uri = resolve_image_uri(AWS_REGION)
+        except Exception:
+            image_uri = (
+                f"<account>.dkr.ecr.{AWS_REGION}.amazonaws.com/"
+                f"{ECR_REPO_NAME}:latest"
+            )
+        config = build_job_config(
+            mode=mode,
+            experiment=args.experiment,
+            run_id=run_id,
+            role_arn=role_arn,
+            hf_token=hf_token,
+            wandb_api_key=wandb_key or "",
+            image_uri=image_uri,
+            smoke=bool(args.smoke),
+        )
+        prior.print_job_config(config)
+        print("dry-run: not submitting fit()")
+        return
+
+    image_uri = resolve_image_uri(AWS_REGION)
+    config = build_job_config(
+        mode=mode,
+        experiment=args.experiment,
+        run_id=run_id,
+        role_arn=role_arn,
+        hf_token=hf_token,
+        wandb_api_key=wandb_key or "",
+        image_uri=image_uri,
+        smoke=bool(args.smoke),
+    )
+    prior.print_job_config(config)
+    prior.submit_job(config, wait=bool(args.wait))
 
 
 if __name__ == "__main__":
