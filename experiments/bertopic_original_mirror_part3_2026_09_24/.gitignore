@@ -10,4 +10,5 @@ outputs/topics/**/probabilities.npy
 outputs/**/*.html
 outputs/ablations/**
 !outputs/ablations/summary.csv
+!outputs/analyses/**/*.csv
 outputs/ablations/**/model/
