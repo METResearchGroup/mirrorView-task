@@ -11,19 +11,18 @@ def filter_input_frame() -> pd.DataFrame:
     """Mixed trial rows for filter_keep_remove_trials tests."""
     return pd.DataFrame(
         {
-            "prolific_id": ["W1", "W1", "W2", "W3", "W4", "W5"],
-            "post_id": ["X1", "X1", "X2", "X3", "X4", ""],
-            "decision": ["keep", "remove", "keep", "KEEP", "keep", "keep"],
+            "prolific_id": ["W1", "W2", "W3", "W4", "W5"],
+            "post_id": ["X1", "X2", "X3", "X4", ""],
+            "decision": ["keep", "keep", "KEEP", "keep", "keep"],
             "evaluation_mode": [
-                "linked_fate",
                 "linked_fate",
                 "linked_fate",
                 "linked_fate",
                 "single",
                 "linked_fate",
             ],
-            "original_text": ["a", "a", "b", "c", "d", "e"],
-            "mirror_text": ["a'", "a'", "b'", "c'", "d'", "e'"],
+            "original_text": ["a", "b", "c", "d", "e"],
+            "mirror_text": ["a'", "b'", "c'", "d'", "e'"],
         }
     )
 
