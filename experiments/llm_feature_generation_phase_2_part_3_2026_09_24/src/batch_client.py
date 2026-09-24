@@ -18,7 +18,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Protocol
 
-from openai.lib._parsing._completions import type_to_response_format_param
 from pydantic import BaseModel
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, llm_client, paths
@@ -92,9 +91,30 @@ def split_custom_id(custom_id: str) -> tuple[str, str]:
     return post_id, text_surface
 
 
-def post_label_response_format() -> dict[str, Any]:
-    """Return OpenAI ``response_format`` for ``PostLabelResult``."""
-    return type_to_response_format_param(PostLabelResult)
+def post_label_response_format(codebook: list[dict[str, Any]]) -> dict[str, Any]:
+    """Return OpenAI ``response_format`` with one boolean property per feature."""
+    feature_ids = [str(feature["feature_id"]) for feature in codebook]
+    label_properties = {feature_id: {"type": "boolean"} for feature_id in feature_ids}
+    return {
+        "type": "json_schema",
+        "json_schema": {
+            "name": "PostLabelResult",
+            "strict": True,
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "labels": {
+                        "type": "object",
+                        "properties": label_properties,
+                        "required": feature_ids,
+                        "additionalProperties": False,
+                    }
+                },
+                "required": ["labels"],
+                "additionalProperties": False,
+            },
+        },
+    }
 
 
 def build_batch_request_line(
@@ -113,7 +133,7 @@ def build_batch_request_line(
             "model": constants.LLM_MODEL_ID,
             "reasoning_effort": constants.LLM_REASONING_EFFORT,
             "messages": messages,
-            "response_format": post_label_response_format(),
+            "response_format": post_label_response_format(codebook),
         },
     }
 

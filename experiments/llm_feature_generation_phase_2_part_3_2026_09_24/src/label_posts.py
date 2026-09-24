@@ -24,6 +24,8 @@ from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import (
     paths,
 )
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.prompts import build_labeling_prompt
+from pydantic import BaseModel, Field, create_model
+
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.schemas import PostLabelResult
 
 TEXT_SURFACE_ORIGINAL = "original"
@@ -65,6 +67,13 @@ def load_union_cohort() -> pd.DataFrame:
     """Load the union cohort parquet (all participant filter)."""
     cohort_dir = paths.latest_cohort_run_dir(COHORT_ARM, constants.PARTICIPANT_FILTER_ALL)
     return pd.read_parquet(cohort_dir / constants.COHORT_FILENAME)
+
+
+def post_label_model_for_codebook(codebook: list[dict[str, Any]]) -> type[BaseModel]:
+    """Build a strict OpenAI-compatible ``PostLabelResult`` model for one codebook."""
+    label_fields = {str(feature["feature_id"]): (bool, Field()) for feature in codebook}
+    labels_model = create_model("PostLabelLabels", **label_fields)
+    return create_model("PostLabelResultDynamic", labels=(labels_model, Field(...)))
 
 
 def post_text_for_surface(row: pd.Series, text_surface: str) -> str:
@@ -242,13 +251,14 @@ def _smoke_label_cohort(
     calls = 0
     output_dir = run_dir / "smoke_calls"
     metadata = {"model": constants.LLM_MODEL_ID, "reasoning_effort": constants.LLM_REASONING_EFFORT}
+    response_model = post_label_model_for_codebook(features)
     for _, row in cohort.iterrows():
         for surface in text_surfaces:
             text = post_text_for_surface(row, surface)
             messages = build_labeling_prompt(features, text, surface)
             llm_client.complete_structured(
                 messages,
-                PostLabelResult,
+                response_model,
                 stage=STAGE_LABEL_SMOKE,
                 arm=None,
                 call_index=calls,
