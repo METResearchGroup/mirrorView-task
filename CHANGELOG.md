@@ -2,7 +2,7 @@
 
 ## 2026-09-24
 
-1. Callers can load the June and September linked-fate collections as one dataset. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
+1. Callers can load the June and September linked-fate collections from `shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 
 ## 2026-09-22
 
