@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -68,16 +68,29 @@ class TestJevGepaAdapterEvaluate:
         assert result.scores[0] == pytest.approx(0.9)
         assert result.scores[1] == pytest.approx(0.9)
 
-    def test_scorer_failure_returns_zero_score_without_raising(self) -> None:
+    def test_scorer_failure_raises_without_fallback(self) -> None:
         scorer = FakeJevBatchScorer(raise_on_post_index=1)
         adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
         batch = [_make_inst("ok-post"), _make_inst("bad-post")]
 
-        result = adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=True)
+        with pytest.raises(ValueError, match="scorer failed for batch size"):
+            adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=True)
 
-        assert result.scores[1] == 0.0
-        assert result.trajectories is not None
-        assert result.trajectories[1].error is not None
+    def test_scorer_uses_run_with_retries(self) -> None:
+        scorer = FakeJevBatchScorer(probabilities_by_batch=[[0.5, 0.5]])
+        adapter = JevGepaAdapter(view="pair", scorer=scorer, client=MagicMock())
+        batch = [_make_inst("post-a"), _make_inst("post-b")]
+
+        with patch(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa.adapter.run_with_retries",
+            wraps=__import__(
+                "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.retries",
+                fromlist=["run_with_retries"],
+            ).run_with_retries,
+        ) as mock_retries:
+            adapter.evaluate(batch, {"instruction": "seed"}, capture_traces=False)
+
+        mock_retries.assert_called_once()
 
 
 class TestJevGepaAdapterReflectiveDataset:

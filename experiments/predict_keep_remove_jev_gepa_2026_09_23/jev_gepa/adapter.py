@@ -21,6 +21,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
     render_state_text,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.retries import run_with_retries
 
 ScoreMode = Literal["probability", "asymmetric"]
 ViewName = Literal["pair", "original", "mirror"]
@@ -130,14 +131,17 @@ class JevGepaAdapter:
         state_texts: list[str],
         instruction: str,
     ) -> list[float]:
-        self._wait_for_rate_limit()
-        batch_result = self._scorer(
-            self._resolve_client(),
-            state_texts,
-            self._view,
-            instruction=instruction,
-        )
-        return [float(value) for value in batch_result.probabilities]
+        def _attempt() -> list[float]:
+            self._wait_for_rate_limit()
+            batch_result = self._scorer(
+                self._resolve_client(),
+                state_texts,
+                self._view,
+                instruction=instruction,
+            )
+            return [float(value) for value in batch_result.probabilities]
+
+        return run_with_retries(_attempt)
 
     def _probability_score(self, label: int, p_remove: float) -> float:
         if label == REMOVE_LABEL:
@@ -203,44 +207,15 @@ class JevGepaAdapter:
         for chunk_start in range(0, len(instances), self._batch_size):
             chunk = instances[chunk_start : chunk_start + self._batch_size]
             state_texts = [self._render_state_text(instance) for instance in chunk]
-            try:
-                probabilities = self._call_scorer(state_texts, instruction)
-                num_metric_calls += 1
-                for instance, p_remove in zip(chunk, probabilities):
-                    outputs.append(JevRolloutOutput(post_id=instance.post_id, p_remove=p_remove))
-                    scores.append(self._score_example(instance, p_remove))
-                    if trajectories is not None:
-                        trajectories.append(
-                            self._build_trajectory(instance, instruction, p_remove, None)
-                        )
-            except Exception as batch_error:
-                for instance in chunk:
-                    state_text = self._render_state_text(instance)
-                    try:
-                        p_remove = self._call_scorer([state_text], instruction)[0]
-                        num_metric_calls += 1
-                        outputs.append(
-                            JevRolloutOutput(post_id=instance.post_id, p_remove=p_remove)
-                        )
-                        scores.append(self._score_example(instance, p_remove))
-                        if trajectories is not None:
-                            trajectories.append(
-                                self._build_trajectory(instance, instruction, p_remove, None)
-                            )
-                    except Exception as post_error:
-                        num_metric_calls += 1
-                        outputs.append(JevRolloutOutput(post_id=instance.post_id, p_remove=0.0))
-                        scores.append(0.0)
-                        if trajectories is not None:
-                            trajectories.append(
-                                self._build_trajectory(
-                                    instance,
-                                    instruction,
-                                    0.0,
-                                    str(post_error),
-                                )
-                            )
-                _ = batch_error
+            probabilities = self._call_scorer(state_texts, instruction)
+            num_metric_calls += 1
+            for instance, p_remove in zip(chunk, probabilities):
+                outputs.append(JevRolloutOutput(post_id=instance.post_id, p_remove=p_remove))
+                scores.append(self._score_example(instance, p_remove))
+                if trajectories is not None:
+                    trajectories.append(
+                        self._build_trajectory(instance, instruction, p_remove, None)
+                    )
         return outputs, scores, trajectories, num_metric_calls
 
     def evaluate(
