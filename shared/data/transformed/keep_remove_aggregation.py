@@ -114,6 +114,28 @@ def filter_keep_remove_trials(
     return trials
 
 
+def _assert_stable_texts(trials: pd.DataFrame) -> None:
+    """Raise if any ``post_id`` has conflicting original or mirror text."""
+    text_nunique = (
+        trials.groupby("post_id", dropna=False)
+        .agg(
+            original_text_nunique=("original_text", lambda s: s.fillna("").nunique()),
+            mirror_text_nunique=("mirror_text", lambda s: s.fillna("").nunique()),
+        )
+        .reset_index()
+    )
+    bad = text_nunique[
+        (text_nunique["original_text_nunique"] != 1)
+        | (text_nunique["mirror_text_nunique"] != 1)
+    ]
+    if len(bad):
+        example_post = str(bad.iloc[0]["post_id"])
+        raise ValueError(
+            "Expected stable original/mirror text per post_id, but found conflicts. "
+            f"Example problematic post_id={example_post}."
+        )
+
+
 def aggregate_modal_labels(trials: pd.DataFrame) -> pd.DataFrame:
     """Aggregate trials to one modal keep/remove label per post.
 
@@ -140,7 +162,43 @@ def aggregate_modal_labels(trials: pd.DataFrame) -> pd.DataFrame:
     ValueError
         If a post has conflicting ``original_text`` or ``mirror_text``.
     """
-    raise NotImplementedError
+    required = {"post_id", "original_text", "mirror_text", "decision", "prolific_id"}
+    missing = required - set(trials.columns)
+    if missing:
+        raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
+
+    _assert_stable_texts(trials)
+
+    counts = (
+        trials.groupby(["post_id", "decision"], dropna=False)
+        .size()
+        .unstack(fill_value=0)
+        .reset_index()
+    )
+    if "keep" not in counts.columns:
+        counts["keep"] = 0
+    if "remove" not in counts.columns:
+        counts["remove"] = 0
+
+    counts["decision"] = counts.apply(
+        lambda row: "keep" if int(row["keep"]) > int(row["remove"]) else "remove",
+        axis=1,
+    )
+    counts["keep_remove_label"] = (counts["decision"] == "remove").astype(int)
+
+    n_raters = (
+        trials.groupby("post_id", dropna=False)["prolific_id"]
+        .nunique()
+        .reset_index(name="n_raters")
+    )
+    counts = counts.merge(n_raters, on="post_id", how="left")
+
+    texts = trials.drop_duplicates(subset=["post_id"])[
+        ["post_id", "original_text", "mirror_text"]
+    ]
+    out = counts.merge(texts, on="post_id", how="left")
+    out = out.rename(columns={"post_id": "message_id"})
+    return out[_MODAL_OUTPUT_COLUMNS].reset_index(drop=True)
 
 
 def aggregate_unanimous_labels(
