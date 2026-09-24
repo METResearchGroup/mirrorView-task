@@ -269,15 +269,22 @@ def _join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.Dat
 def build_keep_remove_labels(
     raw: pd.DataFrame | None = None,
     stimuli: pd.DataFrame | None = None,
+    *,
+    results_dataset: str = STUDY_PHASE_2_PART_3_RESULTS_FULL,
+    stimuli_dataset: str = STUDY_PHASE_2_PART_3_STIMULI,
 ) -> pd.DataFrame:
-    """Build the Part 3 modal keep/remove frame.
+    """Build modal keep/remove labels from linked-fate results and stimuli.
 
     Parameters
     ----------
     raw
-        Part 3 results. Loads ``STUDY_PHASE_2_PART_3_RESULTS_FULL`` when omitted.
+        Study results rows. Loads ``results_dataset`` when omitted.
     stimuli
-        Part 3 stimuli. Loads ``STUDY_PHASE_2_PART_3_STIMULI`` when omitted.
+        Stimulus catalog. Loads ``stimuli_dataset`` when omitted.
+    results_dataset
+        Registry name used when ``raw`` is omitted.
+    stimuli_dataset
+        Registry name used when ``stimuli`` is omitted.
 
     Returns
     -------
@@ -292,9 +299,9 @@ def build_keep_remove_labels(
         If text conflicts within a post, or a rated post lacks a stimulus.
     """
     if raw is None:
-        raw = load_dataset(STUDY_PHASE_2_PART_3_RESULTS_FULL, low_memory=False)
+        raw = load_dataset(results_dataset, low_memory=False)
     if stimuli is None:
-        stimuli = load_dataset(STUDY_PHASE_2_PART_3_STIMULI, low_memory=False)
+        stimuli = load_dataset(stimuli_dataset, low_memory=False)
     trials = _load_slim_trial_frame(raw)
     modal = _aggregate_modal_labels_with_counts(trials)
     unanimous = _build_unanimous_flags(trials)
