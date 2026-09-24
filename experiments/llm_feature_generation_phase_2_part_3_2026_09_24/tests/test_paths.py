@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
 
-from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import paths
+from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 
 
 class TestExperimentRoot:
@@ -46,3 +47,43 @@ class TestLatestTimestampSubdir:
         empty.mkdir()
         with pytest.raises(FileNotFoundError):
             paths.latest_timestamp_subdir(empty)
+
+
+class TestLatestCohortRunDir:
+    """Tests for latest_cohort_run_dir."""
+
+    def test_latest_cohort_run_dir_filters_participant_filter(self, tmp_path: Path) -> None:
+        """The newest run matching participant_filter is returned."""
+        cohort_root = tmp_path / "outputs" / "original_only" / "cohort"
+        all_early = cohort_root / "2026-09-24T10-00-00"
+        all_late = cohort_root / "2026-09-24T11-00-00"
+        part3_only = cohort_root / "2026-09-24T12-00-00"
+        for run_dir in (all_early, all_late, part3_only):
+            run_dir.mkdir(parents=True)
+            metadata = {"participant_filter": "all"}
+            if run_dir == part3_only:
+                metadata = {"participant_filter": constants.PARTICIPANT_FILTER_PART3_ONLY}
+            (run_dir / constants.METADATA_FILENAME).write_text(
+                json.dumps(metadata),
+                encoding="utf-8",
+            )
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(paths, "EXPERIMENT_ROOT", tmp_path)
+            result = paths.latest_cohort_run_dir(
+                "original_only",
+                constants.PARTICIPANT_FILTER_ALL,
+            )
+        assert result == all_late
+
+    def test_latest_cohort_run_dir_missing_filter_raises(self, tmp_path: Path) -> None:
+        """Missing participant_filter runs raise FileNotFoundError."""
+        cohort_root = tmp_path / "outputs" / "paired" / "cohort" / "2026-09-24T10-00-00"
+        cohort_root.mkdir(parents=True)
+        (cohort_root / constants.METADATA_FILENAME).write_text(
+            json.dumps({"participant_filter": constants.PARTICIPANT_FILTER_PART3_ONLY}),
+            encoding="utf-8",
+        )
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(paths, "EXPERIMENT_ROOT", tmp_path)
+            with pytest.raises(FileNotFoundError):
+                paths.latest_cohort_run_dir("paired", constants.PARTICIPANT_FILTER_ALL)

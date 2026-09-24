@@ -20,6 +20,7 @@ CLUSTER_SEEDS: Final = (42, 43, 44)
 DEFAULT_SEED: Final = 42
 TEXT_ARMS: Final = ("original_only", "mirror_only", "paired")
 BATCH_DESIGN_MIXED: Final = "mixed"
+BATCH_DESIGN_MIXED_TOPUP: Final = "mixed_topup"
 BATCH_DESIGN_SINGLE_CLASS: Final = "single_class"
 MAX_KEEP_FEATURES_PER_BATCH: Final = 8
 MAX_REMOVE_FEATURES_PER_BATCH: Final = 8

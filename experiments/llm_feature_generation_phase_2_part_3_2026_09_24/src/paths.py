@@ -10,11 +10,14 @@ Run from the repo root::
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from pathlib import Path
 
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.constants import (
     COST_LOG_PATH,
+    METADATA_FILENAME,
+    PARTICIPANT_FILTER_ALL,
     RUN_TIMESTAMP_FORMAT,
 )
 
@@ -79,6 +82,49 @@ def post_split_dir() -> Path:
 def make_run_timestamp() -> str:
     """Return a new run timestamp folder name."""
     return datetime.now().strftime(RUN_TIMESTAMP_FORMAT)
+
+
+def latest_cohort_run_dir(
+    arm: str,
+    participant_filter: str = PARTICIPANT_FILTER_ALL,
+) -> Path:
+    """Return the newest cohort run whose metadata matches ``participant_filter``.
+
+    Parameters
+    ----------
+    arm
+        Text arm under ``outputs/<arm>/cohort``.
+    participant_filter
+        Value of ``participant_filter`` in run ``metadata.json``.
+
+    Returns
+    -------
+    Path
+        Newest matching cohort run directory by timestamp name.
+
+    Raises
+    ------
+    FileNotFoundError
+        When no matching cohort run exists.
+    """
+    parent = cohort_dir(arm)
+    if not parent.is_dir():
+        raise FileNotFoundError(f"Directory not found: {parent}")
+    matches: list[Path] = []
+    for child in parent.iterdir():
+        if not child.is_dir():
+            continue
+        metadata_path = child / METADATA_FILENAME
+        if not metadata_path.is_file():
+            continue
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        if metadata.get("participant_filter") == participant_filter:
+            matches.append(child)
+    if not matches:
+        raise FileNotFoundError(
+            f"No cohort run with participant_filter={participant_filter} under {parent}"
+        )
+    return sorted(matches, key=lambda path: path.name)[-1]
 
 
 def latest_timestamp_subdir(parent: Path) -> Path:
