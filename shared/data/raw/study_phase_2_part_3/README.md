@@ -6,3 +6,5 @@ This contains the September 2026 collection for `mirrorview_2026_09_09` (see [Hi
 - `stimuli/flips.csv`: the 18,899-post catalog shown to participants.
 
 Load either table with `shared.data.dataloader.load_dataset`. The names are `STUDY_PHASE_2_PART_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_3_STIMULI`.
+
+The full linked-fate dataset is the union of Part 2 and Part 3. Those names are `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_2_AND_3_STIMULI`.

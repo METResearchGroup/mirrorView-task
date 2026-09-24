@@ -209,9 +209,13 @@ The June catalog still needed more labels, so this run added a new 10,000-post c
 
 The data for this phase is in [this folder](../../shared/data/raw/study_phase_2_part_3). The flips shown to users are in [this path](../../shared/data/raw/study_phase_2_part_3/stimuli/flips.csv). The session export is in [this path](../../shared/data/raw/study_phase_2_part_3/results/full.csv) (131,175 rows, including instructions and surveys). Of the moderation rows, 79,500 have phase 1. Each of the 3,975 session files also has one practice moderation row. That row has an empty phase and no post id, so it is not in the 79,500 scored labels. Load the tables with `load_dataset` as `STUDY_PHASE_2_PART_3_STIMULI` and `STUDY_PHASE_2_PART_3_RESULTS_FULL`.
 
+The full linked-fate dataset is both collections together. `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` is 168,871 session rows and 5,051 Prolific accounts. `STUDY_PHASE_2_PART_2_AND_3_STIMULI` is 20,000 unique posts: the 10,000 June posts plus the 10,000 September posts. The 8,899 overlapping catalog keys match. Load those names with `load_dataset`; they have no single CSV.
+
 Progress tables for this run are in the [study progress dashboard](../../experiments/study_progress_dashboard_2026_09_11/RESULTS.md).
 
 ## Latest work
+
+(2026-09-24) The June and September collections load as one combined study dataset. See Study Phase 2, Part 3 above.
 
 (2026-09-22) The September 2026 collection is in the shared data loader. See Study Phase 2, Part 3 above. The study progress dashboard is at `/study-progress`.
 
