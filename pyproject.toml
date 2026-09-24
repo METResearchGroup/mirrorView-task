@@ -52,11 +52,11 @@ bertopic = [
 ]
 finetune-qwen-2026-08-08 = [
     "torch>=2.12.0",
-    "transformers>=5.8.1",
+    "transformers>=5.8.1,<5.13",
     "datasets>=3.0.0",
     "accelerate>=1.0.0",
     "peft>=0.14.0",
-    "trl>=0.15.0",
+    "trl>=0.15.0,<1.10",
     "scikit-learn>=1.8.0",
     "wandb>=0.26.1",
     "pyyaml>=6.0",
