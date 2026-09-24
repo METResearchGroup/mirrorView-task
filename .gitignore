@@ -106,6 +106,7 @@ experiments/upsample_mixed_study_feeds_2026_09_11/cache/
 
 # Predict keep/remove Jev and GEPA local outputs live in S3.
 experiments/predict_keep_remove_jev_gepa_2026_09_23/outputs/
+experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/outputs/
 experiments/predict_keep_remove_jev_gepa_2026_09_23/**/__pycache__/
 
 # Reasoning-during-moderation local cache and outputs live in S3.
