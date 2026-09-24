@@ -101,6 +101,58 @@ def _load_slim_trial_frame(raw: pd.DataFrame) -> pd.DataFrame:
     return _drop_unusable_post_ids(linked)
 
 
+def _assert_stable_trial_text(trials: pd.DataFrame) -> None:
+    """Raise when one post has more than one original or mirror string."""
+    _require_columns(trials, {"post_id", "original_text", "mirror_text", "decision"})
+    text_nunique = trials.groupby("post_id", dropna=False).agg(
+        original_text_nunique=("original_text", lambda series: series.fillna("").nunique()),
+        mirror_text_nunique=("mirror_text", lambda series: series.fillna("").nunique()),
+    )
+    unstable = text_nunique[
+        (text_nunique["original_text_nunique"] != 1) | (text_nunique["mirror_text_nunique"] != 1)
+    ]
+    if len(unstable):
+        example_post = str(unstable.index[0])
+        raise ValueError(
+            "Expected stable original/mirror text per post_id, but found conflicts. "
+            f"Example problematic post_id={example_post}."
+        )
+
+
+def _modal_decision(n_keep: pd.Series, n_remove: pd.Series) -> pd.Series:
+    """Return keep only when keep votes strictly outnumber remove votes."""
+    keep_wins = n_keep > n_remove
+    tied_or_remove = pd.Series(REMOVE_DECISION, index=n_keep.index)
+    return tied_or_remove.mask(keep_wins, KEEP_DECISION)
+
+
+def _vote_count_frame(trials: pd.DataFrame) -> pd.DataFrame:
+    """Count keep and remove votes per post."""
+    counts = (
+        trials.groupby(["post_id", "decision"], dropna=False)
+        .size()
+        .unstack(fill_value=0)
+        .reset_index()
+    )
+    for decision_name in (KEEP_DECISION, REMOVE_DECISION):
+        if decision_name not in counts.columns:
+            counts[decision_name] = 0
+    n_keep = counts[KEEP_DECISION].astype(int)
+    n_remove = counts[REMOVE_DECISION].astype(int)
+    decision = _modal_decision(n_keep, n_remove)
+    return pd.DataFrame(
+        {
+            "post_id": counts["post_id"],
+            "n_keep": n_keep,
+            "n_remove": n_remove,
+            "n_raters": n_keep + n_remove,
+            "keep_rate": n_keep / (n_keep + n_remove),
+            "decision": decision,
+            "keep_remove_label": (decision == REMOVE_DECISION).astype(int),
+        }
+    )
+
+
 def _aggregate_modal_labels_with_counts(trials: pd.DataFrame) -> pd.DataFrame:
     """Aggregate trials to one modal label and vote counts per post.
 
@@ -121,7 +173,8 @@ def _aggregate_modal_labels_with_counts(trials: pd.DataFrame) -> pd.DataFrame:
     ValueError
         If a post has conflicting ``original_text`` or ``mirror_text``.
     """
-    raise NotImplementedError
+    _assert_stable_trial_text(trials)
+    return _vote_count_frame(trials).reset_index(drop=True)
 
 
 def _build_unanimous_flags(trials: pd.DataFrame) -> pd.DataFrame:
