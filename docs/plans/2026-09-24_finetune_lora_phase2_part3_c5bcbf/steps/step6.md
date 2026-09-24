@@ -3,23 +3,25 @@
 ## Scope
 
 - **Caller:** operator running `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py`
-- **Task:** Train the Experiment 3 size-matched modal LoRA adapter for 3 epochs on `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/data/chat_train.jsonl`, then run `infer_adapter` on both balanced test sets. This experiment isolates the label rule: train row count and epoch count match Experiment 1 (~808 rows, 3 epochs), but labels are modal (drawn from Experiment 2 modal train posts, balanced to Experiment 1 remove and keep counts, seed 1).
+- **Task:** Train the Experiment 3 size-matched modal LoRA adapter for 3 epochs on `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/data/chat_train.jsonl`, then run `infer_adapter` on both balanced test sets in one SageMaker job. This isolates the label rule: train row count and epoch count match Experiment 1 (~808 rows, 3 epochs), but labels are modal (drawn from Experiment 2 modal train posts, balanced to Experiment 1 remove and keep counts, seed 1). Sync prediction CSVs locally and print invalid-rate and row-count checks.
 - **Run id:** `part3_modal_sm_001`
 - **Differences from Step 4 only:** `--experiment experiment3_modal_size_matched`, train file under `experiment3_modal_size_matched/data/`, run id `part3_modal_sm_001`, preds under `experiment3_modal_size_matched/preds/`. Epoch count is 3 (same as Experiment 1, not 1).
-- **Out of scope:** Code edits; rescaling train size; cross-eval scoring.
+- **Out of scope:** Code edits; rescaling train size; cross-eval scoring; training on test chat files.
 
 ## Dependencies
 
-- Step 3 smoke passed (`part3_smoke_001`).
-- Step 2 fixed all three train chat files and both test chat files. Step 6 can run in parallel with Steps 4 and 5 because train data for Experiment 3 was written in Step 2 and does not depend on Experiment 1 or 2 job outputs.
-- Env vars: `SAGEMAKER_ROLE_ARN`, `HF_TOKEN`, `WANDB_API_KEY` (train only).
+- Step 2 finished: all three train chat files and both test chat files exist under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/` and are synced to S3. Steps 4 and 5 may run in parallel because Experiment 3 train data does not depend on Experiment 1 or 2 job outputs.
+- Step 3 finished: smoke job `part3_smoke_001` completed with parseable `keep`/`remove` outputs.
+- Env vars before launch: `SAGEMAKER_ROLE_ARN`, `HF_TOKEN`, `WANDB_API_KEY` (train only).
 
 ## Files to inspect (read-only)
 
-- `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/steps/step4.md`
-- `/tmp/p3_manifest.md` (Exp3 sampling rule)
-- `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py`
-- `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/run_config.py`
+| Path | Why |
+|------|-----|
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/steps/step4.md` | Operational pattern to mirror |
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Decisions and pool table; Exp3 sampling rule |
+| `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py` | Exp3 size-match sampling |
+| `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/run_config.py` | Epoch count for Experiment 3 |
 
 ## Files allowed to change
 
@@ -32,6 +34,7 @@
 - `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/data/**`
 - `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/data/**`
 - Experiment 1 or 2 pred and adapter artifacts
+- Adapters in git (S3 only)
 
 ## Main caller
 
@@ -84,9 +87,9 @@ for name, (pred_path, chat_path) in checks.items():
 PY
 ```
 
-Preflight: `wc -l` on Experiment 1 and Experiment 3 `chat_train.jsonl` must match (~808 lines each).
+Preflight: `wc -l` on Experiment 1 and Experiment 3 `chat_train.jsonl` must match (~808 lines each). Train and infer launcher stdout ends with `Completed`. Row check prints `match=True` for both test sets and invalid counts.
 
-## Expected outputs
+### Expected outputs
 
 - Adapter S3: `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/adapters/part3_modal_sm_001/`
 - Preds local: `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/preds/test_unanimous.csv` and `test_modal.csv`
@@ -96,14 +99,18 @@ Preflight: `wc -l` on Experiment 1 and Experiment 3 `chat_train.jsonl` must matc
 ## Must pass
 
 - Experiment 3 `chat_train.jsonl` line count matches Experiment 1 before launch.
-- Jobs complete for `part3_modal_sm_001` without code edits; pred row counts match test JSONL.
-- Invalid counts printed; W&B run exists. One commit for the two Experiment 3 pred CSVs.
+- Train and infer jobs for `part3_modal_sm_001` complete without code edits.
+- Adapter on S3; both pred CSVs synced; pred row counts match test chat JSONL line counts.
+- Invalid counts printed; W&B run in `mirrorview-finetune-lora-phase2-part3`.
+- One commit with only the two Experiment 3 pred CSVs.
 
 ## Must fail
 
 - Changing row or epoch count to rescue a run; training on test chat files.
-- Reusing `part3_modal_sm_001` after failed train; code edits mid-run.
+- Reusing `part3_modal_sm_001` after partial failure; syncing preds from another experiment.
+- Committing adapter weights to git.
+- Code edits mid-run.
 
 ## Implement-from-spec notes
 
-Operational step. One git commit for the two `experiment3_modal_size_matched/preds/` CSVs only. Commit message names run id `part3_modal_sm_001` and notes the size-matched ablation (modal labels, Experiment 1 row and epoch counts).
+Operational step: skip implement-from-spec Phases 2 through 5. One commit for the two `experiment3_modal_size_matched/preds/` CSVs; message names `part3_modal_sm_001` and notes the size-matched ablation (modal labels, Experiment 1 row and epoch counts).

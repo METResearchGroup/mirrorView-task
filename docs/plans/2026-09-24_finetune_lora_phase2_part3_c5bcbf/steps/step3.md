@@ -2,9 +2,9 @@
 
 ## Scope
 
-- **Caller:** `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py` `main`, then `terraform apply`, Docker build/tag/push to ECR in `us-east-2`, `--dry-run`, and a live SageMaker smoke job with `--run-id part3_smoke_001`.
-- **Task:** Add `E/shared/run_config.py`, `E/launch_sagemaker.py`, `E/Dockerfile`, and `E/entrypoint.sh` mirroring `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/`. Do not add `E/train.py` or `E/inference.py`; `E/entrypoint.sh` calls `P/train.py` and `P/inference.py` directly. Extend `P/train.py` and `P/inference.py` with optional CLI flags (defaults preserve Part 2). Add S3 prefix and ECR repo to `P/infra/main.tf`. Build and push the image; smoke train (2 steps) and infer (5 rows per test set) on `Qwen/Qwen3.5-4B` with thinking disabled.
-- **Out of scope:** Full experiment trains (Steps 4 to 7), `E/shared/build_splits.py`, `E/shared/create_chat_dataset.py`, `score_all.py`, adapters in git, Hugging Face Jobs.
+- **Caller:** `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py` `main`, then `terraform apply`, Docker build/tag/push to ECR in `us-east-2`, `--dry-run`, and a live SageMaker smoke job (`--run-id part3_smoke_001`).
+- **Task:** Add `E/shared/run_config.py`, `E/launch_sagemaker.py`, `E/Dockerfile`, and `E/entrypoint.sh` mirroring `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/`. Do not add `E/train.py` or `E/inference.py`; `E/entrypoint.sh` calls `P/train.py` and `P/inference.py` directly. Extend `P/train.py` and `P/inference.py` with optional CLI flags (defaults preserve Part 2). Add S3 prefix and ECR repo to `P/infra/main.tf`. Build and push the image, then smoke train (2 steps) and infer (5 rows per test set) on `Qwen/Qwen3.5-4B` with thinking disabled.
+- **Out of scope:** Full experiment trains (Steps 4 to 7), `E/shared/build_splits.py`, `E/shared/create_chat_dataset.py`, `score_all.py`, adapters in git.
 
 Notation: `E` = `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/`, `P` = `/workspace/experiments/finetune_qwen_model_2026_08_08/`, `W` = `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/`.
 
@@ -13,23 +13,22 @@ Notation: `E` = `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/`,
 | Topic | Finding |
 |-------|---------|
 | Model class | `Qwen/Qwen3.5-4B` loads with `AutoModelForCausalLM.from_pretrained(..., trust_remote_code=True)` (same as `P/train.py`). Text-only SageMaker jobs do not need `AutoModelForImageTextToText`. |
-| Transformers | `pyproject.toml` group `finetune-qwen-2026-08-08` requires `transformers>=5.8.1`; `uv.lock` resolves `5.12.1`. Prior Dockerfiles pin `>=4.49.0`; `E/Dockerfile` must pin `>=5.8.1`. |
-| Disable thinking | Pass `enable_thinking=False` to `tokenizer.apply_chat_template` (equivalent to `chat_template_kwargs={"enable_thinking": False}` per model card). Empty `` block from the template is allowed; generated text must not contain thinking content. |
+| Transformers | `pyproject.toml` group `finetune-qwen-2026-08-08` requires `transformers>=5.8.1`; `uv.lock` resolves `5.12.1`. Older Dockerfiles pin `>=4.49.0`. `E/Dockerfile` must pin `>=5.8.1`. |
+| Disable thinking | Pass `enable_thinking=False` to `tokenizer.apply_chat_template` (same as `chat_template_kwargs={"enable_thinking": False}` on the model card). An empty `<think></think>` block from the template is allowed; generated text must not include thinking content. |
 
 ## Dependencies
 
-Step 2 synced data to `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`: shared `data/` (split manifest, test CSVs, `chat_test_unanimous.jsonl`, `chat_test_modal.jsonl`) and `experiment{1,2,3}_*/data/chat_train.jsonl`. Smoke train uses `experiment1_unanimous/data/`; smoke infer uses shared `data/` test chat files.
+Step 2 synced data to `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`: shared `data/` (`split_manifest.csv`, test CSVs, `chat_test_unanimous.jsonl`, `chat_test_modal.jsonl`) and `experiment{1,2,3}_*/data/chat_train.jsonl`. Smoke train uses `experiment1_unanimous/data/`; smoke infer uses shared `data/` test chat files.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/tmp/p3_manifest.md` | Canonical names, CLI, S3 layout, run ids |
-| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Step 3 scope and commands |
-| `W/{launch_sagemaker.py,entrypoint.sh,Dockerfile}` | Wrapper pattern to mirror |
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Decisions and pool table; Step 3 scope and commands |
+| `W/{launch_sagemaker.py,entrypoint.sh,Dockerfile}` | Wrapper to mirror |
 | `P/{launch_sagemaker.py,entrypoint.sh,Dockerfile,train.py,inference.py,infra/main.tf}` | Prior launcher, container, train/infer, Terraform |
 | `P/src/train_config.py` | LoRA hyperparam source for `dataclasses.replace` |
-| `P/tests/test_launch_sagemaker_config.py` | Launcher test house style |
+| `P/tests/test_launch_sagemaker_config.py` | Launcher test style |
 | `/workspace/pyproject.toml`, `/workspace/uv.lock` | `finetune-qwen-2026-08-08` deps |
 | `https://huggingface.co/Qwen/Qwen3.5-4B` | `enable_thinking=False` contract |
 
@@ -49,7 +48,7 @@ Step 2 synced data to `s3://mirrorview-experimental-artifacts/experiments/finetu
 
 ### `E/shared/run_config.py`
 
-`MODEL_ID="Qwen/Qwen3.5-4B"`, `CHAT_TEMPLATE_KWARGS={"enable_thinking": False}`, `S3_BUCKET="mirrorview-experimental-artifacts"`, `S3_PREFIX="experiments/finetune_lora_phase2_part3_2026_09_24"`, `ECR_REPO_NAME="mirrorview-finetune-lora-phase2-part3"`, `WANDB_PROJECT="mirrorview-finetune-lora-phase2-part3"`, `EXPERIMENT_EPOCHS={"experiment1_unanimous": 3, "experiment2_modal": 1, "experiment3_modal_size_matched": 3}`, `RANDOM_SEED=1`, `AWS_REGION="us-east-2"`, `INSTANCE_TYPE="ml.g5.xlarge"`. `default_hyperparams()` uses `dataclasses.replace` on `P/src/train_config.default_hyperparams()` for `model_id`, `seed`, `wandb_project`, and per-experiment `num_train_epochs`.
+`MODEL_ID="Qwen/Qwen3.5-4B"`, `CHAT_TEMPLATE_KWARGS={"enable_thinking": False}`, `S3_BUCKET="mirrorview-experimental-artifacts"`, `S3_PREFIX="experiments/finetune_lora_phase2_part3_2026_09_24"`, `ECR_REPO_NAME="mirrorview-finetune-lora-phase2-part3"`, `WANDB_PROJECT="mirrorview-finetune-lora-phase2-part3"`, `EXPERIMENT_EPOCHS={"experiment1_unanimous": 3, "experiment2_modal": 1, "experiment3_modal_size_matched": 3}`, `RANDOM_SEED=1`, `AWS_REGION="us-east-2"`, `INSTANCE_TYPE="ml.g5.xlarge"`. `default_hyperparams()` uses `dataclasses.replace` on `default_hyperparams()` in `P/src/train_config.py` for `model_id`, `seed`, `wandb_project`, and per-experiment `num_train_epochs`.
 
 ### `E/launch_sagemaker.py`
 
@@ -57,7 +56,7 @@ Wrapper over `P.launch_sagemaker.build_job_config` (same pattern as `W`). CLI ex
 
 `--mode {train,infer_baseline,infer_adapter} --experiment {experiment1_unanimous,experiment2_modal,experiment3_modal_size_matched,experiment4_cross_eval} --run-id RUN_ID [--smoke] [--dry-run] [--wait]`
 
-`--smoke`: train sets `max_steps=2`; infer sets `limit=5`. Validation: reject `--mode train` with `--experiment experiment4_cross_eval`; reject `--mode infer_adapter` with `experiment4_cross_eval`; allow `--mode infer_baseline` only with `experiment4_cross_eval` (reject `infer_baseline` for experiments 1 to 3).
+`--smoke`: train sets `max_steps=2`; infer sets `limit=5`. Reject `--mode train` with `--experiment experiment4_cross_eval`, `--mode infer_adapter` with `experiment4_cross_eval`, and `--mode infer_baseline` for experiments 1 to 3. Allow `--mode infer_baseline` only with `experiment4_cross_eval`.
 
 S3 URIs (local path = S3 key under prefix):
 
@@ -80,11 +79,11 @@ Do not use `P/inference.py --both-splits` (scores train+test, wrong filenames).
 
 ### `P/train.py` and `P/inference.py`
 
-Add optional CLI flags only (no `E/train.py` or `E/inference.py` wrappers). `P/train.py`: `--model-id`, `--num-train-epochs`, `--chat-template-kwargs-json` (JSON dict passed to `tokenizer.apply_chat_template`; omit or null preserves Part 2). `P/inference.py`: `--model-id`, `--chat-template-kwargs-json`. Defaults must keep Part 2 tests at 20 passed.
+Add optional CLI flags only (no `E/train.py` or `E/inference.py` wrappers). `P/train.py`: `--model-id`, `--num-train-epochs`, `--chat-template-kwargs-json` (JSON dict for `tokenizer.apply_chat_template`; omit or null keeps Part 2 behavior). `P/inference.py`: `--model-id`, `--chat-template-kwargs-json`. Part 2 tests must still show 20 passed.
 
 ### Template parity contract
 
-Train and infer render the same prompt with thinking disabled. `TestTemplateParity` in `E/tests/test_run_config.py` asserts the infer-rendered prompt does not match `re.search(r"<think>\\s*\\S", prompt)` (no non-whitespace thinking body). Empty `` block only is allowed.
+Train and infer must render the same prompt with thinking disabled. `TestTemplateParity` in `E/tests/test_run_config.py` asserts the infer-rendered prompt does not match `re.search(r"<think>\\s*\\S", prompt)` (no non-whitespace thinking body). Only an empty `<think></think>` block is allowed.
 
 ### `E/Dockerfile` and `P/infra/main.tf`
 
@@ -151,7 +150,7 @@ then output ends with experiment4_cross_eval/preds/
 
 ## Main caller
 
-From `/workspace` with AWS creds exported per `AGENTS.md`.
+Run from `/workspace` with AWS creds exported per `AGENTS.md`.
 
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
@@ -181,7 +180,7 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   --mode infer_adapter --experiment experiment1_unanimous --run-id part3_smoke_001 --smoke --wait
 ```
 
-Expected smoke result: train completes 2 steps; infer writes 5 rows each to `test_unanimous.csv` and `test_modal.csv` on S3 under `experiment1_unanimous/preds/`; every `predicted_decision` is `keep` or `remove`.
+Smoke result: train finishes 2 steps; infer writes 5 rows each to `test_unanimous.csv` and `test_modal.csv` on S3 under `experiment1_unanimous/preds/`; each `predicted_decision` is `keep` or `remove`.
 
 ## Must pass
 
@@ -200,4 +199,4 @@ Expected smoke result: train completes 2 steps; infer writes 5 rows each to `tes
 
 ## Implement-from-spec notes
 
-Follow `/workspace/.cursor/skills/implement-from-spec/SKILL.md`. Full auto. Phase 1: `launch_sagemaker.py` caller. Phase 2: scaffold files. Phase 3: lock contracts (`chat_template_kwargs` default `None`, S3 table, entrypoint modes). Phase 4: pytest from given/when/then blocks. Phase 5 order: `run_config`+`TestTemplateParity` then `P` kwargs then `launch_sagemaker` then `entrypoint`+`Dockerfile` then `main.tf` then docker push and live smoke. Phase 6: unit tests green, smoke complete, `20 passed` on Part 2.
+Follow `/workspace/.cursor/skills/implement-from-spec/SKILL.md`. Full auto. Phase 1: `launch_sagemaker.py` caller. Phase 2: scaffold files. Phase 3: lock contracts (`chat_template_kwargs` default `None`, S3 table, entrypoint modes). Phase 4: pytest from given/when/then blocks. Phase 5: `run_config` and `TestTemplateParity`, then `P` kwargs, `launch_sagemaker`, `entrypoint` and `Dockerfile`, `main.tf`, docker push, live smoke. Phase 6: unit tests green, smoke done, `20 passed` on Part 2.

@@ -1,14 +1,16 @@
 # Step 7: Experiment 4: run the zero-shot baseline, score all predictions, and write RESULTS.md
 
+Notation: `P` = `/workspace/experiments/finetune_qwen_model_2026_08_08/`.
+
 ## Scope
 
 - **Caller:** `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/score_all.py` `main`
-- **Task:** Launch zero-shot baseline inference on both balanced Part 3 test sets (`part3_zeroshot_001`). Score predictions from Experiments 1 to 3 (Steps 4 to 6) plus the zero-shot baseline. Add remove-F1 95% bootstrap confidence intervals over test posts. Write `cross_eval.csv` and `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md`.
+- **Task:** Run zero-shot baseline inference on both balanced Part 3 test sets (`part3_zeroshot_001`). Score predictions from Experiments 1 to 3 (Steps 4 to 6) and the zero-shot baseline. Add remove-F1 95% bootstrap CIs over test posts. Write `cross_eval.csv` and `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md`.
 - **Out of scope:** Retraining adapters, changing label builders or splits, editing Part 2 `RESULTS.md`, adding new experiments, changing `P/evaluate.py`.
 
 ## Dependencies
 
-Steps 4 to 6 wrote prediction CSVs locally (or on S3) for all three fine-tuned arms on both test sets:
+Steps 4 to 6 wrote prediction CSVs (local or S3) for all three fine-tuned arms on both test sets:
 
 ```text
 /workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment1_unanimous/preds/test_unanimous.csv
@@ -19,13 +21,13 @@ Steps 4 to 6 wrote prediction CSVs locally (or on S3) for all three fine-tuned a
 /workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment3_modal_size_matched/preds/test_modal.csv
 ```
 
-Step 3 landed `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py` with `--mode infer_baseline`.
+Step 3 added `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py` with `--mode infer_baseline`.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/tmp/p3_manifest.md` | Canonical names, run ids, metric rules |
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Decisions and pool table; run ids, metric rules |
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/evaluate.py` | `score_prediction_csv`, `effective_pred_labels`, `compute_metrics` |
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/inference.py` | Prediction CSV columns written by inference |
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/RESULTS.md` | Four-decimal metric table style |
@@ -33,7 +35,7 @@ Step 3 landed `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/laun
 | `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/run_config.py` | `MODEL_ID`, `RANDOM_SEED`, `S3_PREFIX` |
 | `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/data/split_manifest.csv` | Split counts for RESULTS.md |
 | `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py` | `infer_baseline` CLI for Experiment 4 |
-| `/workspace/AGENTS.md` | `RESULTS.md` is tables and short statements |
+| `/workspace/AGENTS.md` | `RESULTS.md` format: tables and short statements |
 
 ## Files allowed to change
 
@@ -58,11 +60,11 @@ Step 3 landed `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/laun
 
 Import and reuse from `P/evaluate.py`: `score_prediction_csv`, `effective_pred_labels`, `compute_metrics`. Do not copy scoring logic.
 
-`bootstrap_f1_ci(y_true, y_pred, n_resamples=1000, seed=1) -> tuple[float, float, float]` resamples test posts with replacement, computes remove-F1 per resample via `compute_metrics`, returns point F1 and 95% percentile bounds (`f1_ci_low`, `f1_ci_high`) using the percentile method (2.5th and 97.5th).
+`bootstrap_f1_ci(y_true, y_pred, n_resamples=1000, seed=1) -> tuple[float, float, float]` resamples test posts with replacement, computes remove-F1 per resample via `compute_metrics`, and returns point F1 with 95% percentile bounds (`f1_ci_low`, `f1_ci_high`) at the 2.5th and 97.5th percentiles.
 
-`invalid_rate(frame) -> float` counts rows where `predicted_decision == "__invalid__"` (from `P/src/parse_prediction.INVALID_DECISION`) or `predicted_label` is NA or empty, divided by row count.
+`invalid_rate(frame) -> float` counts rows where `predicted_decision == "__invalid__"` (from `P/src/parse_prediction.INVALID_DECISION`) or `predicted_label` is NA or empty, over row count.
 
-`score_arm_test_set(pred_path: Path, arm: str, test_set: str) -> dict` reads the CSV, calls `score_prediction_csv` for accuracy, precision, recall, f1; builds `y_true` and effective `y_pred` via `effective_pred_labels` for bootstrap; adds `n`, `n_remove` (gold remove count), `invalid_rate`, and CI fields.
+`score_arm_test_set(pred_path: Path, arm: str, test_set: str) -> dict` reads the CSV and calls `score_prediction_csv` for accuracy, precision, recall, and f1; builds `y_true` and effective `y_pred` via `effective_pred_labels` for bootstrap; adds `n`, `n_remove` (gold remove count), `invalid_rate`, and CI fields.
 
 `ARM_PRED_PATHS` maps four arms to two pred files:
 
@@ -89,11 +91,11 @@ Import and reuse from `P/evaluate.py`: `score_prediction_csv`, `effective_pred_l
 | `f1_ci_high` | Bootstrap 97.5th percentile |
 | `invalid_rate` | Fraction invalid generations |
 
-Prediction CSVs must include `keep_remove_label`, `predicted_decision`, `predicted_label` (plus `message_id`, `decision`, `raw_generation` from `P/inference.py`). Invalid rows are scored as wrong via `effective_pred_labels`.
+Prediction CSVs must include `keep_remove_label`, `predicted_decision`, and `predicted_label`, plus `message_id`, `decision`, and `raw_generation` from `P/inference.py`. Invalid rows count as wrong through `effective_pred_labels`.
 
-## RESULTS.md contract
+### RESULTS.md
 
-Write `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md` from `cross_eval.csv` and split manifest counts.
+Write `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/RESULTS.md` from `cross_eval.csv` and `split_manifest.csv` counts.
 
 The file must include:
 
@@ -101,8 +103,8 @@ The file must include:
 2. **4 by 2 remove-F1 matrix with 95% CIs.** Rows: zero-shot, Experiment 1, Experiment 2, Experiment 3. Columns: unanimous test, modal test. Cell format: `0.XXXX [0.XXXX, 0.XXXX]` (four decimals, same as Part 2 tables).
 3. **Full metrics table** copied from `cross_eval.csv` (all columns above).
 4. **Split counts table** from `data/split_manifest.csv`: modal pool posts, unanimous-min3 posts, balanced train rows per experiment, balanced test rows per test set (`n`, `n_remove`, `n_keep`).
-5. **One paragraph plain reading** stating only what the Part 3 numbers show (best F1 cell, invalid rates if nonzero). No causal claims. No head-to-head claims against Part 2.
-6. **Part 2 reference block** labeled `Part 2 reference (different base model: Qwen/Qwen3-4B-Instruct-2507)`. Copy test remove-F1 only from `P/RESULTS.md` (unanimous 0.7407 baseline, 0.9688 fine-tuned) and `larger_finetune` `RESULTS.md` (modal 0.7210 baseline, 0.6962 fine-tuned). State these are not comparable to Part 3.
+5. **One plain paragraph** on what the Part 3 numbers show (best F1 cell; invalid rates if nonzero). No causal claims or head-to-head claims against Part 2.
+6. **Part 2 reference block** labeled `Part 2 reference (different base model: Qwen/Qwen3-4B-Instruct-2507)`. Copy test remove-F1 only from `P/RESULTS.md` (unanimous 0.7407 baseline, 0.9688 fine-tuned) and `larger_finetune` `RESULTS.md` (modal 0.7210 baseline, 0.6962 fine-tuned). Note they are not comparable to Part 3.
 
 ## Pytest files
 
@@ -147,7 +149,8 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 
 aws s3 sync \
   s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/preds/ \
-  /workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/preds/
+  /workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/preds/ \
+  --region us-east-2
 
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   /workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/score_all.py \
@@ -157,7 +160,7 @@ PYTHONPATH=. uv run pytest \
   /workspace/experiments/finetune_lora_phase2_part3_2026_09_24/tests/test_score_all.py -q
 ```
 
-Expected: SageMaker job completes; both baseline pred CSVs exist locally; `cross_eval.csv` has eight rows; `RESULTS.md` has the 4 by 2 matrix, full metrics table, split counts, one reading paragraph, and Part 2 reference block; pytest exits 0.
+Expected: SageMaker job completes; both baseline pred CSVs exist locally; `cross_eval.csv` has eight rows; `RESULTS.md` has the 4 by 2 matrix, full metrics table, split counts, one plain paragraph, and Part 2 reference block; pytest exits 0.
 
 ## Must pass
 
@@ -172,7 +175,7 @@ Expected: SageMaker job completes; both baseline pred CSVs exist locally; `cross
 - Reimplementing metric math instead of importing `P/evaluate.py`.
 - Editing fine-tuned prediction CSVs from Steps 4 to 6.
 - Claiming Part 3 beats Part 2 (different base model).
-- Writing F1 without confidence intervals on the 4 by 2 matrix.
+- Writing F1 without CIs on the 4 by 2 matrix.
 - Silent skip when a pred file is missing.
 
 ## Implement-from-spec notes
@@ -189,4 +192,4 @@ Phase 4 writes `test_score_all.py` with the cases above.
 
 Phase 5 implements `bootstrap_f1_ci`, then `invalid_rate`, then `score_arm_test_set`, then `write_cross_eval_csv` and `RESULTS.md` rendering, then `main`.
 
-Phase 6 is complete when baseline preds exist, `cross_eval.csv` and `RESULTS.md` are written, and pytest exits 0.
+Phase 6 completes when baseline preds exist, `cross_eval.csv` and `RESULTS.md` are written, and pytest exits 0.

@@ -3,24 +3,26 @@
 ## Scope
 
 - **Caller:** operator running `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py`
-- **Task:** Train the Experiment 1 unanimous LoRA adapter for 3 epochs on `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment1_unanimous/data/chat_train.jsonl`, then run `infer_adapter` to score both balanced test chat files in one SageMaker job. Sync prediction CSVs locally. Record invalid rate and row-count checks. Do not score cross-eval or write `RESULTS.md` (Step 7).
+- **Task:** Train the Experiment 1 unanimous LoRA adapter for 3 epochs on `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/experiment1_unanimous/data/chat_train.jsonl`, then run `infer_adapter` on both balanced test sets in one SageMaker job. Sync prediction CSVs locally and print invalid-rate and row-count checks. Do not score cross-eval or write `RESULTS.md` (Step 7).
 - **Run id:** `part3_uni_001`
 - **Out of scope:** Editing Python, Terraform, Docker, or data files; training on test chat files; reusing a prior run id; Experiment 2 or 3 jobs.
 
 ## Dependencies
 
-- Step 2 finished: split manifest, train CSVs, chat JSONL files, and shared test chat files exist under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/` and are synced to `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`.
+- Step 2 finished: `split_manifest.csv`, train CSVs, chat JSONL files, and shared test chat files exist under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/` and are synced to `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`.
 - Step 3 finished: ECR image `mirrorview-finetune-lora-phase2-part3:latest` is pushed; smoke job `part3_smoke_001` completed with parseable `keep`/`remove` outputs.
-- Env vars set before launch: `SAGEMAKER_ROLE_ARN`, `HF_TOKEN`, `WANDB_API_KEY` (train only).
+- Env vars before launch: `SAGEMAKER_ROLE_ARN`, `HF_TOKEN`, `WANDB_API_KEY` (train only).
 
 ## Files to inspect (read-only)
 
-- `/tmp/p3_manifest.md` (run ids, epochs, S3 layout)
-- `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py`
-- `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/run_config.py`
-- `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/entrypoint.sh`
-- `/workspace/experiments/finetune_qwen_model_2026_08_08/README.md` (prior timing)
-- `/workspace/experiments/finetune_qwen_model_2026_08_08/evaluate.py` (`__invalid__` contract)
+| Path | Why |
+|------|-----|
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Decisions and pool table; run ids, epochs, S3 layout |
+| `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py` | Train and infer CLI |
+| `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/run_config.py` | Epoch count for Experiment 1 |
+| `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/entrypoint.sh` | Infer filenames and test chat inputs |
+| `/workspace/experiments/finetune_qwen_model_2026_08_08/README.md` | Prior timing reference |
+| `/workspace/experiments/finetune_qwen_model_2026_08_08/evaluate.py` | `__invalid__` contract |
 
 ## Files allowed to change
 
@@ -88,9 +90,9 @@ for name, (pred_path, chat_path) in checks.items():
 PY
 ```
 
-Expected train launcher stdout ends with job status `Completed`. Infer launcher stdout ends with `Completed`. Row-check prints `match=True` for both test sets and reports `invalid` counts.
+Train and infer launcher stdout ends with `Completed`. Row check prints `match=True` for both test sets and invalid counts.
 
-## Expected outputs
+### Expected outputs
 
 - Adapter S3: `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/experiment1_unanimous/adapters/part3_uni_001/`
 - Preds S3: `.../experiment1_unanimous/preds/test_unanimous.csv` and `test_modal.csv`
@@ -101,8 +103,8 @@ Expected train launcher stdout ends with job status `Completed`. Infer launcher 
 ## Must pass
 
 - Train and infer jobs for `part3_uni_001` complete without code edits.
-- Adapter on S3; both pred CSVs synced; row counts match test chat JSONL line counts.
-- Invalid counts printed; W&B train run in `mirrorview-finetune-lora-phase2-part3`.
+- Adapter on S3; both pred CSVs synced; pred row counts match test chat JSONL line counts.
+- Invalid counts printed; W&B run in `mirrorview-finetune-lora-phase2-part3`.
 - One commit with only the two Experiment 1 pred CSVs.
 
 ## Must fail

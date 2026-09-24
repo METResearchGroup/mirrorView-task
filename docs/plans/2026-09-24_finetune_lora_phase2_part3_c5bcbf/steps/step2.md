@@ -1,9 +1,11 @@
 # Step 2: Confirm post-level splits and chat datasets
 
+Notation: `E` = `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/`, `P` = `/workspace/experiments/finetune_qwen_model_2026_08_08/`, `W` = `/workspace/experiments/larger_finetune_qwen_model_2026_08_08/`.
+
 ## Scope
 
 - **Caller:** `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py` `main` with `--force`, then `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/shared/create_chat_dataset.py` `main` with `--force`
-- **Task:** Assign train and test once at the post level on the Part 3 modal label pool (stratified by modal label, 80/20, seed 1). Derive unanimous train and test as subsets of those post ids. Balance each train and test set with all removes plus equal sampled keeps (seed 1). Build Experiment 3 train by sampling modal train-split posts to match Experiment 1 balanced row counts. Write split CSVs, three experiment train CSVs, chat JSONL for all train and both shared test sets, print counts, write `README.md` and `SETUP.md`, sync data to S3.
+- **Task:** Assign train and test once at post level on the Part 3 modal label pool (stratified by modal label, 80/20, seed 1). Derive unanimous train and test as subsets of those post ids. Balance each train and test set with all removes plus equal sampled keeps (seed 1). Build Experiment 3 train by sampling modal train-split posts to match Experiment 1 balanced row counts. Write split CSVs, three experiment train CSVs, chat JSONL for all train sets and both shared test sets, print counts, write `README.md` and `SETUP.md`, and sync data to S3.
 - **Out of scope:** SageMaker launcher, Dockerfile, `run_config.py`, `launch_sagemaker.py`, `entrypoint.sh`, training, inference, `RESULTS.md` scoring, editing prior package P or wrapper W, editing shared Part 3 label builders from Step 1, infra Terraform, adapter or prediction outputs.
 
 ## Dependencies
@@ -19,8 +21,7 @@ Step 1 must be complete:
 
 | Path | Why |
 |------|-----|
-| `/tmp/p3_manifest.md` | Canonical names E, P, W, split rules, output paths, approximate counts |
-| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Step 2 scope and S3 prefix |
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Decisions and pool table; Step 2 scope and S3 prefix |
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/src/build_splits.py` | Import `balance_keep_remove`, `RANDOM_SEED`, `TRAIN_FRACTION`; do not call `build_and_write_splits` (row-level split, not post-level) |
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/src/create_chat_dataset.py` | Import `row_to_chat_record`, `write_chat_jsonl`; chat record shape |
 | `/workspace/experiments/finetune_qwen_model_2026_08_08/src/prompt.py` | `SYSTEM_CONTENT`, `generate_user_prompt`; Post 1 = original, Post 2 = mirror |
@@ -49,15 +50,15 @@ Step 1 must be complete:
 - `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md`
 - `/workspace/tests/**`, `/workspace/CHANGELOG.md`
 
-## Split contract
+## Public contracts
 
 Load modal labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` and unanimous labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS_UNANIMOUS_MIN3`. Treat `message_id` as post id.
 
 **Post-level split (once, seed 1):** On the modal pool, stratify by modal `decision`, assign 80% of each class to train using `n_train = int(0.8 * n_class)` (same cut as P `stratified_balanced_split`). Write `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/data/split_manifest.csv` with columns `post_id`, `split` (`train` or `test`), `modal_label`, `in_unanimous` (post in unanimous-min3 CSV).
 
-**Unanimous subset:** Unanimous train = modal-train posts in unanimous CSV; unanimous test = modal-test posts in unanimous CSV. Unanimous test post ids must be a subset of modal test post ids.
+**Unanimous subset:** Unanimous train = modal-train posts in the unanimous CSV; unanimous test = modal-test posts in the unanimous CSV. Unanimous test post ids must be a subset of modal test post ids.
 
-**Balancing (seed 1):** Reuse P `balance_keep_remove` on each slice. Train: all removes in slice plus equal sampled keeps. Test: all test removes plus equal sampled test keeps. Exp2 train uses modal train posts; `test_modal.csv` uses modal test posts. Exp1 train uses unanimous train posts; `test_unanimous.csv` uses unanimous test posts.
+**Balancing (seed 1):** Reuse P `balance_keep_remove` on each split. Train: all removes in that split plus equal sampled keeps. Test: all test removes plus equal sampled test keeps. Exp2 train uses modal train posts; `test_modal.csv` uses modal test posts. Exp1 train uses unanimous train posts; `test_unanimous.csv` uses unanimous test posts.
 
 **Experiment 3 size match:** Sample from modal train-split posts eligible for Exp2 balanced train. Match Exp1 remove count and keep count (about 404 each, 808 total), seed 1, 1:1 balance.
 
@@ -65,15 +66,15 @@ Load modal labels via `STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS` and unanimous la
 
 **Chat JSONL:** Reuse P `row_to_chat_record` and P `prompt.py`. Write `chat_train.jsonl` beside each experiment `train.csv`. Write `data/chat_test_unanimous.jsonl` and `data/chat_test_modal.jsonl` from shared test CSVs.
 
-## README and SETUP contract
+### README and SETUP
 
 `README.md`: agent read-only banner from `/workspace/experiments/filter_posts_used_for_stimulus_dataset_2026_09_08/README.md`, then one or two lines naming the Part 3 LoRA experiment and redirecting to `SETUP.md` and `RESULTS.md`.
 
-`SETUP.md`: Step 1 label CSVs and registry keys as prerequisites; post-level split and balance rules; approximate counts (modal 18,862; unanimous 4,988; exp1 and exp3 train about 808; exp2 train about 8,372; unanimous test about 87 removes before keep sampling, about 174 balanced rows; modal test about 2,094 balanced rows); S3 bucket `mirrorview-experimental-artifacts`, prefix `experiments/finetune_lora_phase2_part3_2026_09_24`; Main caller commands below.
+`SETUP.md`: Step 1 label CSVs and registry keys as prerequisites; post-level split and balance rules; approximate counts (modal 18,862; unanimous 4,988; exp1 and exp3 train about 808; exp2 train about 8,372; unanimous test about 87 removes before keep sampling, about 174 balanced rows; modal test about 2,094 balanced rows); S3 bucket `mirrorview-experimental-artifacts`, prefix `experiments/finetune_lora_phase2_part3_2026_09_24`; and Main caller commands below.
 
 ## Pytest files
 
-Under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/tests/`. Tiny in-memory frames; patch `load_dataset` when needed. No full Part 3 CSV loads.
+Under `/workspace/experiments/finetune_lora_phase2_part3_2026_09_24/tests/`. Use tiny in-memory frames; patch `load_dataset` when needed. Do not load full Part 3 CSVs.
 
 ### `tests/test_build_splits.py`
 
@@ -82,7 +83,7 @@ Classes `TestPostLevelSplit`, `TestBalanceOutputs`, `TestExperimentThreeSizeMatc
 ```text
 given tiny modal and unanimous frames
 when post-level split runs with seed 1
-then split_manifest has one row per modal post
+then split_manifest.csv has one row per modal post
 and per-class train counts equal int(0.8 * n_class)
 and in_unanimous is true only for unanimous posts
 
@@ -92,11 +93,11 @@ then each CSV has equal keep and remove
 and exp1 train rows equal exp3 train rows
 and exp1 remove count equals exp3 remove count
 
-given test post ids from split_manifest and three chat_train.jsonl files
+given test post ids from split_manifest.csv and three chat_train.jsonl files
 when message_ids are scanned
 then no test post id appears in any chat_train.jsonl (leakage test)
 
-given unanimous and modal test post ids from split_manifest
+given unanimous and modal test post ids from split_manifest.csv
 when set difference is taken
 then unanimous test ids minus modal test ids is empty
 ```
@@ -134,7 +135,7 @@ Build splits:
 PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py --force
 ```
 
-Expected stdout includes: `modal_posts=18862`, `unanimous_posts=4988`, `exp1_train_rows=808`, `exp2_train_rows=8372`, `exp3_train_rows=808`, `test_unanimous_rows=174`, `test_modal_rows=2094`. Pytest asserts relationships; exact integers print from the script.
+Expected stdout includes: `modal_posts=18862`, `unanimous_posts=4988`, `exp1_train_rows=808`, `exp2_train_rows=8372`, `exp3_train_rows=808`, `test_unanimous_rows=174`, `test_modal_rows=2094`. Pytest asserts relationships; the script prints exact integers.
 
 Build chat datasets:
 
@@ -157,7 +158,7 @@ for dir in data experiment1_unanimous/data experiment2_modal/data experiment3_mo
 done
 ```
 
-Expected: sync summary listing split manifest, test CSVs, chat JSONL, and three train CSV sets under the prefix.
+Expected: sync summary listing `split_manifest.csv`, test CSVs, chat JSONL, and three train CSV sets under the prefix.
 
 ## Must pass
 
@@ -177,4 +178,4 @@ Expected: sync summary listing split manifest, test CSVs, chat JSONL, and three 
 
 ## Implement-from-spec notes
 
-Follow `/workspace/.cursor/skills/implement-from-spec`. Full auto. Phase 1: callers above. Phase 2: scaffold E, stubs, `README.md`, `SETUP.md`. Phase 3: lock signatures (`post_level_split`, balance writers, exp3 sampler, chat CLI); bodies `NotImplementedError`. Phase 4: pytest from given/when/then blocks. Phase 5 (one commit each): (1) post-level split and manifest, (2) balanced CSV writers, (3) Exp3 sampler, (4) chat writer, (5) `main` counts, (6) S3 docs in `SETUP.md`. Phase 6: pytest green, both CLIs with `--force`, S3 sync succeeds.
+Follow `/workspace/.cursor/skills/implement-from-spec/SKILL.md` in full auto mode. Phase 1: callers above. Phase 2: scaffold E, stubs, `README.md`, `SETUP.md`. Phase 3: lock signatures (`post_level_split`, balance writers, exp3 sampler, chat CLI); bodies `NotImplementedError`. Phase 4: pytest from given/when/then blocks. Phase 5 (one commit each): (1) post-level split and `split_manifest.csv`, (2) balanced CSV writers, (3) Exp3 sampler, (4) chat writer, (5) `main` counts, (6) S3 docs in `SETUP.md`. Phase 6: pytest green, both CLIs with `--force`, S3 sync succeeds.

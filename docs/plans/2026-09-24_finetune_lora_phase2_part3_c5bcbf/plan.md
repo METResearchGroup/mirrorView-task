@@ -7,20 +7,20 @@
 - Delegated tasks must be impossible to misread.
 
 ## Overview
-Fine-tune `Qwen/Qwen3.5-4B` with LoRA on Study Phase 2 Part 3 keep/remove labels: unanimous-only posts (at least three raters, all agree) and modal posts (majority vote, ties become remove). Reuse the August 2026 Qwen fine-tune stack and the thin-wrapper pattern from `experiments/larger_finetune_qwen_model_2026_08_08/`. Part 2 baselines are reference only (different base model). Input: `shared/data/raw/study_phase_2_part_3/results/full.csv`. No Part 3 label builders or registry entries exist yet. New work lives under `experiments/finetune_lora_phase2_part3_2026_09_24/` with post-level leakage-safe splits, SageMaker training and inference (same pattern as the August 2026 experiment), and S3 prefix `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`.
+LoRA fine-tune `Qwen/Qwen3.5-4B` on Study Phase 2 Part 3 keep/remove labels: unanimous-only posts (at least three raters, all agree) and modal posts (majority vote; ties become remove). Reuse the August 2026 Qwen fine-tune stack and the thin-wrapper pattern from `experiments/larger_finetune_qwen_model_2026_08_08/`. Part 2 baselines are reference only because the base model differs. Input is `shared/data/raw/study_phase_2_part_3/results/full.csv`. No Part 3 label builders or registry entries exist yet. New work goes under `experiments/finetune_lora_phase2_part3_2026_09_24/` with post-level leakage-safe splits, SageMaker training and inference (same pattern as the August 2026 experiment), and S3 prefix `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/`.
 
-Verified Part 3 label pools (pre-balance, pre-split; worker-post dedupe on, conflicts dropped, earliest row per pair kept by original CSV row order):
+Verified Part 3 label pools (pre-balance, pre-split; worker-post dedupe on, conflicts dropped, earliest row per pair by original CSV row order):
 | Pool | Posts | Keep | Remove |
 | --- | ---: | ---: | ---: |
 | Modal | 18,862 | 13,629 | 5,233 |
 | Unanimous min-3 | 4,988 | 4,497 | 491 |
 
-Expected approximate balanced training sizes after Step 2 (exact counts print when split scripts run): unanimous train about 808 rows (404 remove + 404 keep); modal train about 8,372 rows; Experiment 3 matches Experiment 1 counts. Balanced test sets (approximate): unanimous about 174 rows; modal about 2,094 rows. Risk: unanimous remove count is small (491 total); unanimous test will have roughly 87 removes before keep sampling, so report 95% confidence intervals for F1 (bootstrap over test posts, seed 1).
+After Step 2, expected balanced training sizes are approximate (exact counts print when split scripts run): unanimous train about 808 rows (404 remove + 404 keep); modal train about 8,372 rows; Experiment 3 matches Experiment 1. Balanced test sets: unanimous about 174 rows; modal about 2,094 rows. Risk: unanimous remove count is small (491 total), so unanimous test has roughly 87 removes before keep sampling; report 95% confidence intervals for F1 (bootstrap over test posts, 1000 resamples, seed 1).
 
 **Out of scope:** QLoRA; hyperparameter sweeps; prompt ablations; editing Part 2 confirmed data or results; changing Part 2 label outputs (Step 1 moves shared logic but keeps Part 2 CSVs byte-identical).
 
 ## Happy flow
-An operator builds Part 3 modal and unanimous label CSVs in the shared data layer, confirms post-level splits and chat JSONL for three training sets and two balanced test sets, builds and pushes a SageMaker Docker image, smoke-tests train and infer on `Qwen/Qwen3.5-4B` with thinking disabled, trains three adapters (unanimous, full modal, size-matched modal), runs zero-shot baseline and all adapters on both test sets, and writes a cross-evaluation matrix to `RESULTS.md`.
+An operator builds Part 3 modal and unanimous label CSVs in the shared data layer, confirms post-level splits and chat JSONL for three training sets and two balanced test sets, builds and pushes a SageMaker Docker image, smoke-tests train and infer on `Qwen/Qwen3.5-4B` with thinking disabled, trains three adapters (unanimous, full modal, size-matched modal), runs the zero-shot baseline and all adapters on both test sets, and writes a cross-evaluation matrix to `RESULTS.md`.
 
 ```mermaid
 flowchart TD
@@ -59,7 +59,7 @@ flowchart TD
 ```
 
 ## Approach
-Import from `experiments/finetune_qwen_model_2026_08_08/` (prompt, split builders, chat dataset, train, inference, evaluate) instead of copying bodies. Add Part 3 label builders, post-level split logic, and a SageMaker wrapper mirroring `experiments/larger_finetune_qwen_model_2026_08_08/`. Extract shared aggregation into `shared/data/transformed/keep_remove_aggregation.py` (Step 1; Part 2 CSVs stay byte-identical with dedupe off; Part 3 builders enable worker-post dedupe). Assign train and test once at the post level on the modal pool (stratified by modal label, seed 1, 80/20); unanimous sets are subsets of those post ids. Balance train and test: all removes plus equal sampled keeps (seed 1). Experiment 3 subsamples Experiment 2 modal training posts to match Experiment 1 row counts (seed 1). Adapters live on S3 only, not in git.
+Import from `experiments/finetune_qwen_model_2026_08_08/` (prompt, split builders, chat dataset, train, inference, evaluate) instead of copying bodies. Add Part 3 label builders, post-level split logic, and a SageMaker wrapper that mirrors `experiments/larger_finetune_qwen_model_2026_08_08/`. In Step 1, extract shared aggregation into `shared/data/transformed/keep_remove_aggregation.py` so Part 2 CSVs stay byte-identical with dedupe off and Part 3 builders enable worker-post dedupe. Assign train and test once at post level on the modal pool (stratified by modal label, seed 1, 80/20); unanimous sets are subsets of those post ids. Balance train and test with all removes plus equal sampled keeps (seed 1). Experiment 3 subsamples Experiment 2 modal training posts to match Experiment 1 row counts (seed 1). Store adapters on S3 only, not in git.
 
 ## Proposed file structure
 ```text
@@ -72,6 +72,11 @@ experiments/finetune_lora_phase2_part3_2026_09_24/
   entrypoint.sh
   launch_sagemaker.py
   data/
+    split_manifest.csv
+    test_unanimous.csv
+    test_modal.csv
+    chat_test_unanimous.jsonl
+    chat_test_modal.jsonl
   shared/
     __init__.py
     run_config.py
@@ -107,6 +112,8 @@ shared/data/transformed/study_phase_2_part_3/
   keep_remove_labels.csv
   keep_remove_labels_unanimous_min3.csv
   tests/
+    __init__.py
+    conftest.py
     test_transform.py
     test_transform_unanimous_min3.py
 
@@ -118,7 +125,7 @@ experiments/finetune_qwen_model_2026_08_08/
   infra/main.tf
 ```
 
-S3 mirrors local paths under the experiment prefix, including `adapters/<run_id>/` on S3 only.
+S3 mirrors local paths under the experiment prefix; `adapters/<run_id>/` stays on S3 only.
 
 ## Proposed experiment setup
 | Arm | Training labels | Training rows (after balance) | Epochs | Inference targets |
@@ -137,20 +144,20 @@ S3 mirrors local paths under the experiment prefix, including `adapters/<run_id>
 | Split seed | 1 |
 | Prompt | `experiments/finetune_qwen_model_2026_08_08/src/prompt.py` |
 | Positive metric class | remove |
-| Metrics | remove-F1 (with 95% bootstrap CI over test posts, seed 1), precision, recall, accuracy, invalid rate; invalid generations scored as wrong |
+| Metrics | remove-F1 (with 95% bootstrap CI over test posts, 1000 resamples, seed 1), precision, recall, accuracy, invalid rate; invalid generations scored as wrong |
 | Compute | SageMaker, region us-east-2, instance ml.g5.xlarge, execution role from Terraform output mapped to `SAGEMAKER_ROLE_ARN`, ECR image `mirrorview-finetune-lora-phase2-part3` |
 | S3 prefix | `s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/` |
 
 ## Steps
 
 ### Step 1: Build Part 3 modal and unanimous label sets in the shared data layer
-Extract `keep_remove_aggregation.py`, update Part 2 imports (byte-identical outputs), add Part 3 builders, registry entries, and tests.
+Extract `keep_remove_aggregation.py`, update Part 2 imports for byte-identical outputs, add Part 3 builders, registry entries, and tests.
 
 ### Step 2: Confirm post-level splits and chat datasets for all training and test sets
 Add split and chat builders under `shared/`, write README and SETUP, sync confirmed data to S3.
 
 ### Step 3: SageMaker wrapper, Docker image, Terraform, and smoke job
-Add `run_config.py`, `launch_sagemaker.py`, `Dockerfile`, and `entrypoint.sh` (mirror larger-finetune wrapper). Extend prior-package train and inference with optional chat-template kwargs. Add S3 prefix and ECR repo to prior-package Terraform. Build and push image, run smoke job (2 train steps, 5 infer rows).
+Add `run_config.py`, `launch_sagemaker.py`, `Dockerfile`, and `entrypoint.sh` (mirror the larger-finetune wrapper). Extend prior-package train and inference with optional chat-template kwargs. Add the S3 prefix and ECR repo to prior-package Terraform. Build and push the image, then run a smoke job (2 train steps, 5 infer rows).
 
 ### Step 4: Experiment 1 train unanimous adapter and infer on both test sets
 Train 3 epochs via SageMaker (`part3_uni_001`); infer both test sets in one job. Artifacts on S3.
@@ -176,7 +183,7 @@ Zero-shot infer (`part3_zeroshot_001`), score all preds with bootstrap F1 CI, wr
 ## What "done" looks like
 1. Part 3 label CSVs, builders, tests, and registry entries exist; Part 2 transforms byte-identical.
 2. SageMaker wrapper, Dockerfile, entrypoint, four experiment arms, and passing tests in the experiment folder.
-3. One post-level split manifest (seed 1); no test post id in any training chat file.
+3. One post-level `split_manifest.csv` (seed 1), and no test post id appears in any training chat file.
 4. Three adapters plus zero-shot baseline scored on both balanced test sets; artifacts on S3.
 5. `RESULTS.md` has the 4-by-2 cross-eval matrix with F1 CIs, invalid rates, and split counts.
 6. Combined pytest exits 0; Part 2 experiment results stay untouched.
@@ -184,11 +191,11 @@ Zero-shot infer (`part3_zeroshot_001`), score all preds with bootstrap F1 CI, wr
 ## Decisions
 - **Scope:** Part 3 only; keep attention-check failures; modal ties become remove; unanimous requires at least three raters who all agree.
 - **Base model:** `Qwen/Qwen3.5-4B` with thinking disabled in the chat template for both training and inference.
-- **Compute:** SageMaker (region us-east-2, ml.g5.xlarge, ECR image, entrypoint modes train | infer_baseline | infer_adapter), same pattern as the August 2026 experiment. Not Hugging Face Jobs.
+- **Compute:** SageMaker (region us-east-2, ml.g5.xlarge, ECR image, entrypoint modes train | infer_baseline | infer_adapter), same pattern as the August 2026 experiment.
 - **Experiment 3:** Keep the size-matched ablation (same row counts and 3 epochs as Experiment 1, so only the label rule differs).
 
 ## Commands
-Part 3 label builders (after Step 1 lands):
+Part 3 label builders (after Step 1):
 ```bash
 PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transform.py
 PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transform_keep_remove_labels_unanimous_min3.py
@@ -196,7 +203,7 @@ PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transfor
 
 Expected: modal 18,862 posts; unanimous min-3 4,988 posts (counts match table above).
 
-Confirm splits (after Step 2 lands):
+Confirm splits (after Step 2):
 ```bash
 PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/shared/build_splits.py --force
 PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/shared/create_chat_dataset.py --force
@@ -204,17 +211,19 @@ PYTHONPATH=. uv run python experiments/finetune_lora_phase2_part3_2026_09_24/sha
 
 Expected: unanimous train about 808, modal about 8,372.
 
-Upload data to S3 (set AWS creds as in AGENTS.md):
+Upload data to S3 (Step 2; export AWS creds per AGENTS.md):
 ```bash
 export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
 export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
 
-aws s3 sync experiments/finetune_lora_phase2_part3_2026_09_24/ \
-  s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/ \
-  --exclude "preds/*" --exclude "*/adapters/*"
+for dir in data experiment1_unanimous/data experiment2_modal/data experiment3_modal_size_matched/data; do
+  aws s3 sync "experiments/finetune_lora_phase2_part3_2026_09_24/${dir}/" \
+    "s3://mirrorview-experimental-artifacts/experiments/finetune_lora_phase2_part3_2026_09_24/${dir}/" \
+    --region us-east-2
+done
 ```
 
-Terraform and Docker (after Step 3 lands):
+Terraform and Docker (after Step 3):
 ```bash
 cd experiments/finetune_qwen_model_2026_08_08/infra && terraform apply
 export SAGEMAKER_ROLE_ARN="$(terraform output -raw sagemaker_execution_role_arn)"
@@ -225,7 +234,7 @@ docker build -t mirrorview-finetune-lora-phase2-part3 \
 # tag and push to ECR repo mirrorview-finetune-lora-phase2-part3 in us-east-2
 ```
 
-SageMaker smoke (after Step 3 lands):
+SageMaker smoke (after Step 3):
 ```bash
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py \
@@ -234,9 +243,13 @@ PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py \
   --mode train --experiment experiment1_unanimous --run-id part3_smoke_001 --smoke --wait
+
+PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
+  experiments/finetune_lora_phase2_part3_2026_09_24/launch_sagemaker.py \
+  --mode infer_adapter --experiment experiment1_unanimous --run-id part3_smoke_001 --smoke --wait
 ```
 
-Expected: dry-run prints job config; live smoke completes with only `keep` or `remove` parses.
+Expected: dry-run prints job config; live smoke train completes 2 steps; live smoke infer writes 5 rows per test set with only `keep` or `remove` parses.
 
 Unit tests:
 ```bash
@@ -263,7 +276,7 @@ aws s3 sync \
   experiments/finetune_lora_phase2_part3_2026_09_24/experiment1_unanimous/preds/
 ```
 
-Write results (after Step 7 lands):
+Write results (after Step 7):
 ```bash
 PYTHONPATH=. uv run --extra finetune-qwen-2026-08-08 python \
   experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/score_all.py \

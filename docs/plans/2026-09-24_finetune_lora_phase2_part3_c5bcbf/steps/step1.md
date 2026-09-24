@@ -1,22 +1,23 @@
 # Step 1: Build Part 3 modal and unanimous label sets in the shared data layer
 
+Notation: `P` = `/workspace/experiments/finetune_qwen_model_2026_08_08/`.
+
 ## Scope
 
 - **Caller:** `/workspace/shared/data/transformed/study_phase_2_part_3/transform.py` `__main__` and `/workspace/shared/data/transformed/study_phase_2_part_3/transform_keep_remove_labels_unanimous_min3.py` `__main__`
-- **Task:** Extract shared keep/remove aggregation from Part 2 into `/workspace/shared/data/transformed/keep_remove_aggregation.py`, refactor Part 2 builders to import it and stay byte-identical, add Part 3 builders loading `STUDY_PHASE_2_PART_3_RESULTS_FULL`, register two transformed datasets, add pytest coverage, materialize Part 3 CSVs, print counts.
+- **Task:** Extract shared keep/remove aggregation from Part 2 into `/workspace/shared/data/transformed/keep_remove_aggregation.py`, refactor Part 2 builders to import it and stay byte-identical, add Part 3 builders that load `STUDY_PHASE_2_PART_3_RESULTS_FULL`, register two transformed datasets, add pytest coverage, write Part 3 CSVs, and print counts.
 - **Out of scope:** Experiment folder `experiments/finetune_lora_phase2_part3_2026_09_24/`, splits, chat JSONL, SageMaker, prior package P, editing raw Part 3 CSVs, `attention_check_passed` filtering.
 
 ## Dependencies
 
 - `/workspace/shared/data/raw/study_phase_2_part_3/results/full.csv` on disk (registry `STUDY_PHASE_2_PART_3_RESULTS_FULL`).
-- Part 2 transformed CSVs on disk for sha256 baseline before refactor.
+- Part 2 transformed CSVs on disk for a sha256 baseline before refactor.
 
 ## Files to inspect (read-only)
 
 | Path | Why |
 |------|-----|
-| `/tmp/p3_manifest.md` | Canonical names, registry constants, Part 3 counts |
-| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Step 1 scope, byte-identical Part 2 rule |
+| `/workspace/docs/plans/2026-09-24_finetune_lora_phase2_part3_c5bcbf/plan.md` | Decisions and pool table; Step 1 scope, byte-identical Part 2 rule |
 | `/workspace/shared/data/transformed/study_phase_2_part_2/transform.py` | Modal logic to extract |
 | `/workspace/shared/data/transformed/study_phase_2_part_2/transform_keep_remove_labels_unanimous_min3.py` | Unanimous logic to extract |
 | `/workspace/shared/data/transformed/study_phase_2_part_2/README.md` | Documented filter and aggregation rules |
@@ -53,7 +54,7 @@
 
 ## Public contracts
 
-Extract current Part 2 behavior exactly when `dedupe_worker_post=False`. Part 3 builders pass `dedupe_worker_post=True`. No `trial_type` filter, no `attention_check_passed` filter.
+Extract current Part 2 behavior exactly when `dedupe_worker_post=False`. Part 3 builders pass `dedupe_worker_post=True`. Do not filter on `trial_type` or `attention_check_passed`.
 
 ### `keep_remove_aggregation.py`
 
@@ -76,7 +77,7 @@ Extract current Part 2 behavior exactly when `dedupe_worker_post=False`. Part 3 
 
 ## Pytest files
 
-Under `/workspace/shared/data/transformed/study_phase_2_part_3/tests/`. Small in-memory frames in `conftest.py`. No `full.csv` reads.
+Under `/workspace/shared/data/transformed/study_phase_2_part_3/tests/`. Use small in-memory frames in `conftest.py`. Do not read `full.csv`.
 
 ### `tests/test_transform.py`
 
@@ -87,15 +88,15 @@ given linked_fate, single, practice, empty post_id, and decision "KEEP" rows
 when filter_keep_remove_trials with dedupe_worker_post False
 then only linked_fate keep or remove rows with usable post_id remain
 
-given worker W rates post P keep then remove (two rows, row order preserved)
+given worker W1 rates post X1 keep then remove (two rows, row order preserved)
 when filter_keep_remove_trials with dedupe_worker_post True
-then no rows remain for (W, P)
+then no rows remain for (W1, X1)
 
-given worker W rates post P keep twice (non-conflicting duplicate)
+given worker W1 rates post X1 keep twice (non-conflicting duplicate)
 when filter_keep_remove_trials with dedupe_worker_post True
 then the earliest row by original order remains
 
-given worker W rates post P keep twice (non-conflicting duplicate)
+given worker W1 rates post X1 keep twice (non-conflicting duplicate)
 when filter_keep_remove_trials with dedupe_worker_post False
 then both rows remain (Part 2 byte-identical path)
 
@@ -166,7 +167,7 @@ PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transfor
 PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transform_keep_remove_labels_unanimous_min3.py
 ```
 
-Expected: `rows=18862` `{'keep': 13629, 'remove': 5233}`; `rows=4988` `{'keep': 4497, 'remove': 491}`.
+Expected: `rows=18862` `{'keep': 13629, 'remove': 5233}`; `rows=4988` `{'keep': 4497, 'remove': 491}`. Trial rows after dedupe: 77,089 (411 conflicting worker-post pairs, 831 rows dropped).
 
 ```bash
 PYTHONPATH=. uv run pytest shared/data/transformed/study_phase_2_part_3/tests -q
@@ -190,6 +191,4 @@ Expected: exit 0.
 
 ## Implement-from-spec notes
 
-Follow `/workspace/.cursor/skills/implement-from-spec/SKILL.md`. Full auto.
-
-Phase 1: Part 3 `__main__` callers. Phase 2: scaffold stubs and registry constants. Phase 3: lock signatures. Phase 4: pytest from given/when/then blocks. Phase 5, one commit per unit: (1) `filter_keep_remove_trials`, (2) `aggregate_modal_labels`, (3) `aggregate_unanimous_labels`, (4) Part 2 refactor plus sha256 check, (5) Part 3 builders and live commands. Phase 6: pytest green, Part 2 sha256 match, Part 3 counts match.
+Follow `/workspace/.cursor/skills/implement-from-spec/SKILL.md` in full auto mode. Phase 1: Part 3 `__main__` callers. Phase 2: scaffold stubs and registry constants. Phase 3: lock signatures. Phase 4: pytest from given/when/then blocks. Phase 5, one commit per unit: (1) `filter_keep_remove_trials`, (2) `aggregate_modal_labels`, (3) `aggregate_unanimous_labels`, (4) Part 2 refactor plus sha256 check, (5) Part 3 builders and live commands. Phase 6: pytest green, Part 2 sha256 match, Part 3 counts match.
