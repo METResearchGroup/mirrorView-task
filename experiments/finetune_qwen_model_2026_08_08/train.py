@@ -118,12 +118,8 @@ def _bind_chat_template_kwargs(
         merged = dict(chat_template_kwargs)
         extra = kwargs.pop("chat_template_kwargs", None) or {}
         merged.update(extra)
-        return original_apply(
-            messages,
-            *args,
-            chat_template_kwargs=merged,
-            **kwargs,
-        )
+        # Qwen3.5 reads enable_thinking as a direct apply_chat_template kwarg.
+        return original_apply(messages, *args, **{**kwargs, **merged})
 
     tokenizer.apply_chat_template = apply_chat_template
     return tokenizer

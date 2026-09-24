@@ -100,15 +100,16 @@ def render_infer_prompt(
     str
         Prompt text with generation prompt appended.
     """
+    from experiments.finetune_qwen_model_2026_08_08.train import (
+        _bind_chat_template_kwargs,
+    )
+
     prompt_messages = messages_for_generation(messages)
-    template_kwargs: dict[str, Any] = {}
-    if chat_template_kwargs:
-        template_kwargs["chat_template_kwargs"] = chat_template_kwargs
-    return tokenizer.apply_chat_template(
+    bound = _bind_chat_template_kwargs(tokenizer, chat_template_kwargs)
+    return bound.apply_chat_template(
         prompt_messages,
         tokenize=False,
         add_generation_prompt=True,
-        **template_kwargs,
     )
 
 

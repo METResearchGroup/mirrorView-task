@@ -31,6 +31,7 @@ from experiments.finetune_qwen_model_2026_08_08.src.parse_prediction import (
     parse_generation,
 )
 from experiments.finetune_qwen_model_2026_08_08.src.train_config import MODEL_ID
+from experiments.finetune_qwen_model_2026_08_08.train import _bind_chat_template_kwargs
 
 PRED_COLUMNS = (
     "message_id",
@@ -165,6 +166,7 @@ def run_inference(
     )
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+    tokenizer = _bind_chat_template_kwargs(tokenizer, chat_template_kwargs)
 
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
@@ -185,14 +187,10 @@ def run_inference(
         gold_decision = gold_decision_from_messages(messages)
         gold_label = gold_label_from_decision(gold_decision)
         prompt_messages = messages_for_generation(messages)
-        template_kwargs: dict[str, Any] = {}
-        if chat_template_kwargs:
-            template_kwargs["chat_template_kwargs"] = chat_template_kwargs
         prompt_text = tokenizer.apply_chat_template(
             prompt_messages,
             tokenize=False,
             add_generation_prompt=True,
-            **template_kwargs,
         )
         inputs = tokenizer(prompt_text, return_tensors="pt")
         inputs = {k: v.to(model.device) for k, v in inputs.items()}
