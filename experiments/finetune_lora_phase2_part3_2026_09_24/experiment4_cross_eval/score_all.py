@@ -140,8 +140,52 @@ def invalid_rate(frame: pd.DataFrame) -> float:
 
 
 def score_arm_test_set(pred_path: Path, arm: str, test_set: str) -> dict[str, float | int | str]:
-    """Score one arm on one test set with bootstrap CIs."""
-    raise NotImplementedError
+    """Score one arm on one test set with bootstrap CIs.
+
+    Parameters
+    ----------
+    pred_path
+        Prediction CSV path.
+    arm
+        Model arm identifier.
+    test_set
+        Test set name (``test_unanimous`` or ``test_modal``).
+
+    Returns
+    -------
+    dict[str, float | int | str]
+        Metrics, counts, bootstrap CI, and invalid rate for one arm/test set.
+
+    Raises
+    ------
+    FileNotFoundError
+        When ``pred_path`` does not exist.
+    """
+    if not pred_path.is_file():
+        raise FileNotFoundError(f"Prediction CSV not found: {pred_path}")
+    frame = pd.read_csv(pred_path)
+    metrics = score_prediction_csv(pred_path)
+    y_true = [int(value) for value in frame["keep_remove_label"].tolist()]
+    y_pred = effective_pred_labels(
+        frame["keep_remove_label"],
+        frame["predicted_decision"],
+        frame["predicted_label"],
+    )
+    point_f1, f1_ci_low, f1_ci_high = bootstrap_f1_ci(y_true, y_pred)
+    n_remove = int((frame["keep_remove_label"] == 1).sum())
+    return {
+        "arm": arm,
+        "test_set": test_set,
+        "n": len(frame),
+        "n_remove": n_remove,
+        "accuracy": metrics["accuracy"],
+        "precision": metrics["precision"],
+        "recall": metrics["recall"],
+        "f1": point_f1,
+        "f1_ci_low": f1_ci_low,
+        "f1_ci_high": f1_ci_high,
+        "invalid_rate": invalid_rate(frame),
+    }
 
 
 def write_cross_eval_csv(path: Path, rows: list[dict[str, float | int | str]]) -> None:
