@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
 
 import pytest
@@ -11,8 +12,10 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared import jev_score
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.jev_scorer import (
     PostPrediction,
     PostTask,
+    instruction_sha256,
     score_batch,
     run_scoring_pass,
+    seen_post_ids,
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import POSTS_STATE_KEY
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.tests.conftest import (
@@ -22,6 +25,7 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.tests.conftest i
 
 
 OPTIMIZED_PROMPT = "OPTIMIZED_PROMPT"
+OTHER_PROMPT = "OTHER_PROMPT"
 
 
 class TestScoreBatch:
@@ -147,3 +151,179 @@ class TestScoreBatch:
         assert len(records) == 1
         assert records[0]["status"] == "error"
         assert records[0]["error_type"] == "RuntimeError"
+
+
+class TestSeenPostIds:
+    """Tests for seen_post_ids."""
+
+    def test_ignores_predictions_from_different_instruction(self, tmp_path: Path) -> None:
+        predictions_path = tmp_path / "predictions.jsonl"
+        seeded = PostPrediction(
+            post_id="A",
+            view="pair",
+            gold_label=0,
+            probability_remove=0.1,
+            batch_size=10,
+            request_index=0,
+            position_in_request=0,
+            n_posts_in_request=1,
+            request_latency_ms=10.0,
+            per_post_latency_ms=10.0,
+            request_input_tokens=10,
+            request_output_tokens=1,
+            per_post_input_tokens=10.0,
+            per_post_output_tokens=1.0,
+            estimated_cost_usd=0.0,
+            model_version="jev-1.13.0",
+            attempts=1,
+            instruction_sha256=instruction_sha256(OPTIMIZED_PROMPT, "pair"),
+        )
+        predictions_path.write_text(seeded.model_dump_json() + "\n", encoding="utf-8")
+
+        result = seen_post_ids(
+            predictions_path,
+            instruction=OTHER_PROMPT,
+            view="pair",
+        )
+
+        assert result == set()
+
+    def test_accepts_legacy_records_without_hash_when_instruction_none(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        predictions_path = tmp_path / "predictions.jsonl"
+        legacy = PostPrediction(
+            post_id="A",
+            view="pair",
+            gold_label=0,
+            probability_remove=0.1,
+            batch_size=10,
+            request_index=0,
+            position_in_request=0,
+            n_posts_in_request=1,
+            request_latency_ms=10.0,
+            per_post_latency_ms=10.0,
+            request_input_tokens=10,
+            request_output_tokens=1,
+            per_post_input_tokens=10.0,
+            per_post_output_tokens=1.0,
+            estimated_cost_usd=0.0,
+            model_version="jev-1.13.0",
+            attempts=1,
+        )
+        predictions_path.write_text(legacy.model_dump_json() + "\n", encoding="utf-8")
+
+        baseline_seen = seen_post_ids(predictions_path, instruction=None, view="pair")
+        custom_seen = seen_post_ids(
+            predictions_path,
+            instruction=OPTIMIZED_PROMPT,
+            view="pair",
+        )
+
+        assert baseline_seen == {"A"}
+        assert custom_seen == set()
+
+
+class TestRunScoringPassIncrementalAppend:
+    """Tests for incremental append behavior in run_scoring_pass."""
+
+    def test_appends_each_batch_inside_completion_loop(self, tmp_path: Path) -> None:
+        client = FakeTypeSafeClient(
+            answers={index: 0.5 for index in range(10)},
+            usage=FakeUsage(input_tokens=100, output_tokens=10),
+        )
+        tasks = [
+            PostTask(post_id=f"P{index}", state_text=f"state-{index}", gold_label=0)
+            for index in range(20)
+        ]
+        append_calls: list[tuple[str, int]] = []
+        original_append = jev_scorer._append_jsonl
+
+        def tracking_append(path: Path, records: list[dict[str, object]]) -> None:
+            append_calls.append((path.name, len(records)))
+            original_append(path, records)
+
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(jev_scorer, "build_client", lambda api_key: client)
+            monkeypatch.setattr(jev_scorer, "_append_jsonl", tracking_append)
+            run_scoring_pass(tasks, tmp_path, view="pair", api_key="test-key")
+
+        prediction_appends = [count for name, count in append_calls if name == "predictions.jsonl"]
+        request_appends = [count for name, count in append_calls if name == "requests.jsonl"]
+        assert prediction_appends == [10, 10]
+        assert request_appends == [1, 1]
+
+
+class TestRunScoringPassWorkerClient:
+    """Tests for worker-thread TypeSafe client construction."""
+
+    def test_build_client_runs_in_worker_thread(self, tmp_path: Path) -> None:
+        submitter_thread_id = threading.get_ident()
+        worker_thread_ids: list[int] = []
+
+        def tracking_build_client(api_key: str) -> FakeTypeSafeClient:
+            worker_thread_ids.append(threading.get_ident())
+            return FakeTypeSafeClient(
+                answers={0: 0.5},
+                usage=FakeUsage(input_tokens=10, output_tokens=1),
+            )
+
+        tasks = [PostTask(post_id="P1", state_text="state", gold_label=0)]
+
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(jev_scorer, "build_client", tracking_build_client)
+            run_scoring_pass(tasks, tmp_path, view="pair", api_key="test-key")
+
+        assert worker_thread_ids
+        assert all(thread_id != submitter_thread_id for thread_id in worker_thread_ids)
+
+
+class TestRunScoringPassInstructionResume:
+    """Tests for instruction-aware resume in run_scoring_pass."""
+
+    def test_rescores_posts_when_instruction_hash_changes(self, tmp_path: Path) -> None:
+        client = FakeTypeSafeClient(
+            answers={0: 0.2},
+            usage=FakeUsage(input_tokens=10, output_tokens=1),
+        )
+        tasks = [PostTask(post_id="A", state_text="a", gold_label=0)]
+        seeded = PostPrediction(
+            post_id="A",
+            view="pair",
+            gold_label=0,
+            probability_remove=0.9,
+            batch_size=10,
+            request_index=0,
+            position_in_request=0,
+            n_posts_in_request=1,
+            request_latency_ms=10.0,
+            per_post_latency_ms=10.0,
+            request_input_tokens=10,
+            request_output_tokens=1,
+            per_post_input_tokens=10.0,
+            per_post_output_tokens=1.0,
+            estimated_cost_usd=0.0,
+            model_version="jev-1.13.0",
+            attempts=1,
+            instruction_sha256=instruction_sha256(OPTIMIZED_PROMPT, "pair"),
+        )
+        predictions_path = tmp_path / "predictions.jsonl"
+        predictions_path.write_text(seeded.model_dump_json() + "\n", encoding="utf-8")
+
+        with pytest.MonkeyPatch.context() as monkeypatch:
+            monkeypatch.setattr(jev_scorer, "build_client", lambda api_key: client)
+            run_scoring_pass(
+                tasks,
+                tmp_path,
+                view="pair",
+                api_key="test-key",
+                instruction=OTHER_PROMPT,
+            )
+
+        lines = predictions_path.read_text(encoding="utf-8").strip().splitlines()
+        assert len(lines) == 2
+        assert client.call_count == 1
+        latest = json.loads(lines[-1])
+        assert latest["instruction_sha256"] == instruction_sha256(OTHER_PROMPT, "pair")
+        assert latest["probability_remove"] == pytest.approx(0.2)

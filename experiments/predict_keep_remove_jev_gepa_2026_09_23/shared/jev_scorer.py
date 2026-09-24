@@ -93,6 +93,7 @@ class PostPrediction(BaseModel):
     view: str
     gold_label: int
     probability_remove: float
+    instruction_sha256: str | None = None
     batch_size: int
     request_index: int
     position_in_request: int
@@ -257,10 +258,20 @@ def make_batches(tasks: list[PostTask], batch_size: int = BATCH_SIZE) -> list[li
     return [tasks[index : index + batch_size] for index in range(0, len(tasks), batch_size)]
 
 
-def seen_post_ids(predictions_path: Path) -> set[str]:
-    """Resume: read post_id from predictions.jsonl."""
+def seen_post_ids(
+    predictions_path: Path,
+    *,
+    instruction: str | None,
+    view: str,
+) -> set[str]:
+    """Resume: return post_ids already scored for the current instruction.
+
+    Legacy prediction rows without ``instruction_sha256`` are treated as matching
+    only when ``instruction`` is ``None`` (seed / baseline runs).
+    """
     if not predictions_path.is_file():
         return set()
+    expected_hash = instruction_sha256(instruction, view)
     seen: set[str] = set()
     with predictions_path.open(encoding="utf-8") as handle:
         for line in handle:
@@ -268,7 +279,12 @@ def seen_post_ids(predictions_path: Path) -> set[str]:
             if not stripped:
                 continue
             payload = json.loads(stripped)
-            seen.add(str(payload["post_id"]))
+            record_hash = payload.get("instruction_sha256")
+            if record_hash is None:
+                if instruction is None:
+                    seen.add(str(payload["post_id"]))
+            elif record_hash == expected_hash:
+                seen.add(str(payload["post_id"]))
     return seen
 
 
@@ -285,6 +301,7 @@ def _build_predictions(
     view: str,
     batch_result: BatchResult,
     attempts: int,
+    instruction_hash: str,
 ) -> list[PostPrediction]:
     n_posts = len(batch)
     per_post_latency_ms = batch_result.latency_ms / n_posts
@@ -315,6 +332,7 @@ def _build_predictions(
                 estimated_cost_usd=estimated_cost_usd / n_posts,
                 model_version=batch_result.model_version,
                 attempts=attempts,
+                instruction_sha256=instruction_hash,
             )
         )
     return predictions
@@ -363,12 +381,22 @@ def _process_batch(
     batch_index: int,
     batch: list[PostTask],
     view: str,
-    client: TypeSafeClient,
+    api_key: str,
     rate_limiter: RequestStartLimiter,
     instruction: str | None,
     ablation_id: str,
     instruction_hash: str,
 ) -> BatchWorkResult:
+    client_local = threading.local()
+
+    def _client_for_thread() -> TypeSafeClient:
+        client = getattr(client_local, "client", None)
+        if client is None:
+            client = build_client(api_key)
+            client_local.client = client
+        return client
+
+    client = _client_for_thread()
     started_at_utc = datetime.now(timezone.utc).isoformat()
     attempts = 0
     last_error: Exception | None = None
@@ -413,7 +441,14 @@ def _process_batch(
         output_tokens=batch_result.output_tokens,
         instruction_hash=instruction_hash,
     )
-    predictions = _build_predictions(batch, batch_index, view, batch_result, attempts)
+    predictions = _build_predictions(
+        batch,
+        batch_index,
+        view,
+        batch_result,
+        attempts,
+        instruction_hash,
+    )
     return BatchWorkResult(
         batch_index=batch_index,
         predictions=predictions,
@@ -475,17 +510,31 @@ def run_scoring_pass(
     ablation_id: str = "",
     add_criteria: bool = False,
 ) -> SmokeSummary:
-    """Score tasks with threading, rate limiting, retries, and resume."""
+    """Score tasks with threading, rate limiting, retries, and resume.
+
+    Each completed batch appends to ``predictions.jsonl`` and ``requests.jsonl`` so
+    a crash can resume. Resume ignores prediction rows whose ``instruction_sha256``
+    does not match the current instruction; legacy rows without that field match
+    only when ``instruction`` is ``None``.
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
     predictions_path = output_dir / PREDICTIONS_FILENAME
     requests_path = output_dir / REQUESTS_FILENAME
     deadletter_path = output_dir / DEADLETTER_FILENAME
 
-    already_seen = seen_post_ids(predictions_path)
+    already_seen = seen_post_ids(
+        predictions_path,
+        instruction=instruction,
+        view=view,
+    )
     pending_tasks = [task for task in tasks if task.post_id not in already_seen]
     batches = make_batches(pending_tasks)
     if not batches:
-        existing_predictions = _load_predictions(predictions_path)
+        existing_predictions = _load_predictions(
+            predictions_path,
+            instruction=instruction,
+            view=view,
+        )
         return _summarize_predictions(
             existing_predictions,
             view=view,
@@ -494,17 +543,6 @@ def run_scoring_pass(
 
     rate_limiter = RequestStartLimiter(max_starts_per_minute)
     instruction_hash = instruction_sha256(instruction, view)
-    client_local = threading.local()
-
-    def _client_for_thread() -> TypeSafeClient:
-        client = client_local.client if hasattr(client_local, "client") else None
-        if client is None:
-            client = build_client(api_key)
-            client_local.client = client
-        return client
-
-    results_by_index: dict[int, BatchWorkResult] = {}
-    deadletters: list[dict[str, Any]] = []
 
     with ThreadPoolExecutor(max_workers=WORKER_THREADS) as executor:
         futures: dict[Future[BatchWorkResult], int] = {}
@@ -514,7 +552,7 @@ def run_scoring_pass(
                 batch_index=batch_index,
                 batch=batch,
                 view=view,
-                client=_client_for_thread(),
+                api_key=api_key,
                 rate_limiter=rate_limiter,
                 instruction=instruction,
                 ablation_id=ablation_id,
@@ -528,11 +566,10 @@ def run_scoring_pass(
                 done, _ = wait(pending, return_when=FIRST_COMPLETED)
                 for future in done:
                     pending.remove(future)
-                    batch_index = futures[future]
                     try:
-                        results_by_index[batch_index] = future.result()
+                        work_result = future.result()
                     except _BatchProcessingError as exc:
-                        deadletters.append(exc.request_record.to_dict())
+                        _append_jsonl(deadletter_path, [exc.request_record.to_dict()])
                     except AUTH_ERROR_TYPES:
                         for other_future in pending:
                             other_future.cancel()
@@ -543,25 +580,23 @@ def run_scoring_pass(
                             other_future.cancel()
                         executor.shutdown(wait=False, cancel_futures=True)
                         raise
+                    else:
+                        _append_jsonl(
+                            predictions_path,
+                            [prediction.model_dump() for prediction in work_result.predictions],
+                        )
+                        _append_jsonl(
+                            requests_path,
+                            [work_result.request_record.to_dict()],
+                        )
         finally:
             executor.shutdown(wait=True, cancel_futures=False)
 
-    ordered_indices = sorted(results_by_index)
-    prediction_records: list[dict[str, Any]] = []
-    request_records: list[dict[str, Any]] = []
-    for batch_index in ordered_indices:
-        work_result = results_by_index[batch_index]
-        prediction_records.extend(
-            prediction.model_dump() for prediction in work_result.predictions
-        )
-        request_records.append(work_result.request_record.to_dict())
-
-    _append_jsonl(predictions_path, prediction_records)
-    _append_jsonl(requests_path, request_records)
-    if deadletters:
-        _append_jsonl(deadletter_path, deadletters)
-
-    all_predictions = _load_predictions(predictions_path)
+    all_predictions = _load_predictions(
+        predictions_path,
+        instruction=instruction,
+        view=view,
+    )
     return _summarize_predictions(
         all_predictions,
         view=view,
@@ -569,16 +604,29 @@ def run_scoring_pass(
     )
 
 
-def _load_predictions(predictions_path: Path) -> list[PostPrediction]:
+def _load_predictions(
+    predictions_path: Path,
+    *,
+    instruction: str | None,
+    view: str,
+) -> list[PostPrediction]:
     if not predictions_path.is_file():
         return []
+    expected_hash = instruction_sha256(instruction, view)
     predictions: list[PostPrediction] = []
     with predictions_path.open(encoding="utf-8") as handle:
         for line in handle:
             stripped = line.strip()
             if not stripped:
                 continue
-            predictions.append(PostPrediction.model_validate(json.loads(stripped)))
+            payload = json.loads(stripped)
+            record_hash = payload.get("instruction_sha256")
+            if record_hash is None:
+                if instruction is not None:
+                    continue
+            elif record_hash != expected_hash:
+                continue
+            predictions.append(PostPrediction.model_validate(payload))
     return predictions
 
 
@@ -654,7 +702,11 @@ def main(argv: list[str] | None = None) -> None:
         add_criteria=args.add_criteria,
     )
     predictions_path = args.output_dir / PREDICTIONS_FILENAME
-    already_seen = seen_post_ids(predictions_path)
+    already_seen = seen_post_ids(
+        predictions_path,
+        instruction=None,
+        view=args.view,
+    )
     pending_count = sum(1 for task in tasks if task.post_id not in already_seen)
 
     api_key = get_jev_api_key()
