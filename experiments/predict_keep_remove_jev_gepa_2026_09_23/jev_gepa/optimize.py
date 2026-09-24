@@ -7,6 +7,9 @@ Run from the repo root:
 
 from __future__ import annotations
 
+import argparse
+import json
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -19,6 +22,8 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from gepa.core.result import GEPAResult
+import gepa
+import numpy as np
 import pandas as pd
 
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa.adapter import (
@@ -30,7 +35,10 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa.adapter import
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.metrics import probability_metrics
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import POSTS_STATE_KEY, build_noul_instruction
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.secrets import get_openai_api_key
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.splits import COHORT_PARQUET
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.wandb_tracking import WandbRunSpec, init_run
 
 EXPERIMENT_ROOT = _REPO_ROOT / "experiments/predict_keep_remove_jev_gepa_2026_09_23"
 JEV_GEPA_ROOT = EXPERIMENT_ROOT / "jev_gepa"
@@ -81,6 +89,19 @@ ABLATION_REGISTRY: dict[str, dict[str, object]] = {
         "stage_a_seed": "A1_pair_study_prompt",
     },
 }
+
+
+@dataclass(frozen=True)
+class OptimizeConfig:
+    ablation_id: str
+    view: ViewName
+    score_mode: ScoreMode
+    reflection_lm: str
+    max_reflection_cost: float
+    max_metric_calls: int
+    seed: int
+    run_dir: Path
+    rate_cap_per_min: int = DEFAULT_RATE_CAP_PER_MIN
 
 
 def resolve_ablation_config(ablation_id: str) -> OptimizeConfig:
@@ -183,25 +204,171 @@ def select_candidate_on_dev(
     return best_idx, best_candidate, best_f1
 
 
-@dataclass(frozen=True)
-class OptimizeConfig:
-    ablation_id: str
-    view: ViewName
-    score_mode: ScoreMode
-    reflection_lm: str
-    max_reflection_cost: float
-    max_metric_calls: int
-    seed: int
-    run_dir: Path
-    rate_cap_per_min: int = DEFAULT_RATE_CAP_PER_MIN
+def _subset_valset_for_smoke(valset: list[JevDataInst], seed: int) -> list[JevDataInst]:
+    if len(valset) <= SMOKE_VAL_SUBSET_SIZE:
+        return list(valset)
+    rng = np.random.default_rng(seed)
+    chosen_indices = rng.choice(len(valset), size=SMOKE_VAL_SUBSET_SIZE, replace=False)
+    return [valset[int(index)] for index in sorted(chosen_indices.tolist())]
+
+
+def _ensure_openai_api_key() -> None:
+    if not os.environ.get("OPENAI_API_KEY", "").strip():
+        os.environ["OPENAI_API_KEY"] = get_openai_api_key()
+
+
+def _write_json(path: Path, payload: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _reflection_cost_usd(run: object) -> float:
+    summary = getattr(run, "summary", None)
+    if summary is None:
+        return 0.0
+    for key in ("reflection_cost_usd", "reflection/cost_usd", "total_reflection_cost"):
+        value = summary.get(key)
+        if value is not None:
+            return float(value)
+    return 0.0
+
+
+def _persist_run_outputs(
+    config: OptimizeConfig,
+    result: GEPAResult,
+    *,
+    selected_idx: int,
+    selected_candidate: dict[str, str],
+    selected_dev_f1: float,
+    reflection_cost_usd: float,
+) -> Path:
+    config.run_dir.mkdir(parents=True, exist_ok=True)
+    _write_json(config.run_dir / GEPA_RESULT_FILENAME, result.to_dict())
+    _write_json(config.run_dir / SELECTED_CANDIDATE_FILENAME, selected_candidate)
+    dev_selection_path = config.run_dir.parent / DEV_SELECTION_FILENAME
+    _write_json(
+        dev_selection_path,
+        {
+            "selected_candidate_idx": selected_idx,
+            "selected_dev_f1": selected_dev_f1,
+            "gepa_best_idx": result.best_idx,
+            "reflection_lm": config.reflection_lm,
+            "reflection_cost_usd": reflection_cost_usd,
+            "total_metric_calls": result.total_metric_calls,
+        },
+    )
+    return dev_selection_path
 
 
 def run_optimize(config: OptimizeConfig, *, smoke: bool = False) -> GEPAResult:
-    raise NotImplementedError
+    """Run GEPA optimization with Wandb tracking and dev-F1 candidate selection."""
+    _ensure_openai_api_key()
+    trainset, valset, devset = load_gepa_splits()
+    if smoke:
+        valset = _subset_valset_for_smoke(valset, config.seed)
+    seed_instruction = load_seed_instruction(config.ablation_id)
+    seed_candidate = {"instruction": seed_instruction}
+    rate_limiter = RequestStartLimiter(config.rate_cap_per_min)
+    adapter = JevGepaAdapter(
+        view=config.view,
+        score_mode=config.score_mode,
+        rate_limiter=rate_limiter,
+    )
+    wandb_run = init_run(
+        WandbRunSpec(
+            group="jev_gepa",
+            name=config.ablation_id,
+            job_type="optimize",
+            config={
+                "ablation_id": config.ablation_id,
+                "view": config.view,
+                "score_mode": config.score_mode,
+                "reflection_lm": config.reflection_lm,
+                "max_metric_calls": config.max_metric_calls,
+                "smoke": smoke,
+                "seed": config.seed,
+            },
+        )
+    )
+    try:
+        result = gepa.optimize(
+            seed_candidate=seed_candidate,
+            trainset=trainset,
+            valset=valset,
+            adapter=adapter,
+            reflection_lm=config.reflection_lm,
+            max_reflection_cost=config.max_reflection_cost,
+            reflection_minibatch_size=10,
+            candidate_selection_strategy="pareto",
+            use_merge=True,
+            max_metric_calls=config.max_metric_calls,
+            seed=config.seed,
+            use_wandb=True,
+            wandb_attach_existing=True,
+            run_dir=str(config.run_dir),
+        )
+        selected_idx, selected_candidate, selected_dev_f1 = select_candidate_on_dev(
+            result,
+            devset=devset,
+            adapter=adapter,
+        )
+        reflection_cost_usd = _reflection_cost_usd(wandb_run)
+        _persist_run_outputs(
+            config,
+            result,
+            selected_idx=selected_idx,
+            selected_candidate=selected_candidate,
+            selected_dev_f1=selected_dev_f1,
+            reflection_cost_usd=reflection_cost_usd,
+        )
+        print(
+            f"ablation_id={config.ablation_id} "
+            f"total_metric_calls={result.total_metric_calls} "
+            f"selected_dev_f1={selected_dev_f1:.4f}"
+        )
+        return result
+    finally:
+        wandb_run.finish()
 
 
 def main(argv: list[str] | None = None) -> None:
-    raise NotImplementedError
+    """CLI entrypoint for GEPA optimization runs."""
+    parser = argparse.ArgumentParser(description="Run Jev GEPA prompt optimization")
+    parser.add_argument("--ablation-id", required=True, choices=sorted(ABLATION_REGISTRY))
+    parser.add_argument("--smoke", action="store_true", help="Run tiny-budget smoke configuration")
+    parser.add_argument(
+        "--max-metric-calls",
+        type=int,
+        default=None,
+        help="Override max_metric_calls (smoke default 60)",
+    )
+    args = parser.parse_args(argv)
+    config = resolve_ablation_config(args.ablation_id)
+    if args.max_metric_calls is not None:
+        config = OptimizeConfig(
+            ablation_id=config.ablation_id,
+            view=config.view,
+            score_mode=config.score_mode,
+            reflection_lm=config.reflection_lm,
+            max_reflection_cost=config.max_reflection_cost,
+            max_metric_calls=args.max_metric_calls,
+            seed=config.seed,
+            run_dir=config.run_dir,
+            rate_cap_per_min=config.rate_cap_per_min,
+        )
+    elif args.smoke:
+        config = OptimizeConfig(
+            ablation_id=config.ablation_id,
+            view=config.view,
+            score_mode=config.score_mode,
+            reflection_lm=config.reflection_lm,
+            max_reflection_cost=config.max_reflection_cost,
+            max_metric_calls=60,
+            seed=config.seed,
+            run_dir=config.run_dir,
+            rate_cap_per_min=config.rate_cap_per_min,
+        )
+    run_optimize(config, smoke=args.smoke)
 
 
 if __name__ == "__main__":
