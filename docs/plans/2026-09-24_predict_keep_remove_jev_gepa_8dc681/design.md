@@ -8,13 +8,14 @@ experiments/predict_keep_remove_jev_gepa_2026_09_23/
   SETUP.md               # data requirements only
   RESULTS.md             # metric tables
   shared/
+    secrets.py           # env first, then Secrets Manager us-east-2 (jev-typesafe-api-key, wandb-api-key, openai-api-key)
     cohort.py            # dedupe, majority/unanimous labels
     splits.py            # stratified split, GEPA balanced subsets
     prompt.py            # STUDY_INSTRUCTION, pair/original/mirror render
     jev_scorer.py        # batched client.system_one calls
     rate_limiter.py      # RequestStartLimiter 1000/min
     retries.py           # 3 attempts, 1/2/4 s backoff
-    latency.py           # timed decorator, p50/p90/p99
+    latency.py           # timed decorator, percentile_ms, p50/p90/p99
     pricing.py           # $0.042/M input, $0 output
     metrics.py           # F1, AUC, slices, Spearman
     artifacts.py         # CampaignObjectStore, upload_under_prefix
@@ -27,9 +28,11 @@ experiments/predict_keep_remove_jev_gepa_2026_09_23/
     A3_mirror_only/
     A4_pair_features_addendum/
   jev_gepa/
-    adapter.py           # GEPAAdapter
+    adapter.py           # JevGepaAdapter (GEPAAdapter protocol)
     optimize.py          # gepa.optimize runner
+    evaluate.py          # test read and transfer evals (Step 7)
     B1_gepa_pair/
+    B1T_gepa_pair_terra/   # ablation id B1-T in prose and tables
     B2_gepa_original/
     B3_gepa_mirror/
     B4_gepa_asymmetric_reward/
@@ -54,11 +57,11 @@ S3 prefix mirrors the folder: `s3://mirrorview-experimental-artifacts/experiment
 | `STUDY_PHASE_2_PART_3_RESULTS_FULL` | `shared/data/raw/study_phase_2_part_3/results/full.csv` | 131,175 |
 | `STUDY_PHASE_2_PART_3_STIMULI` | `shared/data/raw/study_phase_2_part_3/stimuli/flips.csv` | 18,899 posts |
 
-Collection record: frozen 2026-09-22 snapshot of `s3://jspsych-mirror-view-2026-09-09/data/prolific/`; collection 2026-09-10 to 2026-09-21.
+Collection record: frozen 2026-09-22 snapshot of `s3://jspsych-mirror-view-2026-09-09/data/prolific/`, collected 2026-09-10 to 2026-09-21.
 
-Verification (2026-09-24): AWS STS as IAM user `mark_iam_credentials`, account 517478598677, region `us-east-2`; Wandb via Secrets Manager `wandb-api-key` as `markptorres1`; Jev via `jev-typesafe-api-key`; OpenAI via `OPENAI_API_KEY` and secret `openai-api-key`.
+Verification on 2026-09-24: AWS STS as IAM user `mark_iam_credentials`, account 517478598677, region `us-east-2`; Wandb via Secrets Manager `wandb-api-key` as `markptorres1`; Jev via `jev-typesafe-api-key`; OpenAI via `OPENAI_API_KEY` and secret `openai-api-key`.
 
-Load via `shared.data.dataloader.load_dataset`. Blueprint for label transforms: `shared/data/transformed/study_phase_2_part_2/transform.py` and `shared/data/transformed/study_phase_2_part_2/transform_keep_remove_labels_unanimous_min3.py` (no Part 3 transform exists yet).
+Load via `shared.data.dataloader.load_dataset`. Use the Part 2 transform scripts as the blueprint for label transforms: `shared/data/transformed/study_phase_2_part_2/transform.py` and `shared/data/transformed/study_phase_2_part_2/transform_keep_remove_labels_unanimous_min3.py`. No Part 3 transform exists yet.
 
 | Filter | Value |
 |--------|-------|
@@ -79,6 +82,8 @@ Load via `shared.data.dataloader.load_dataset`. Blueprint for label transforms: 
 Label convention: 1 = remove (positive), 0 = keep (issue #299, `experiments/llm_prompt_engineering_2026_08_05/evaluate.py`).
 
 Metadata per post: `sampled_stance` (left/right), `sample_toxicity_type` (low/middle/high).
+
+Ablation id **B1-T** (stronger reflection model) maps to folder `B1T_gepa_pair_terra/`; use `B1-T` in prose and plan tables, `B1T_gepa_pair_terra` in paths and `--ablation-id`.
 
 Text length: original mean 218 chars (~55 tokens); mirror mean 249 chars (~62 tokens).
 
@@ -103,11 +108,11 @@ One frozen parquet, stratified by label x stance x toxicity. Uploaded to S3 and 
 | Closing line | `Allow or Remove?` |
 | Human-mined criteria (A4) | `KEEP_REMOVE_FEATURES_ADDENDUM` from `experiments/llm_prompt_engineering_2026_08_05/prompt.py` |
 
-Jev optimizable component: instruction inside each `Noul` question. State holds post text only. Seed question: study instruction + yes/no "Should this pair be removed?" Single-text arms: minimal instruction edit referring to one post instead of a pair (document exact diff in step file; fidelity test against `webapp/public/main.js`).
+GEPA optimizes the instruction inside each `Noul` question. Scorer state holds post text only. The seed question is study instruction plus yes/no "Should this pair be removed?" Single-text arms use a minimal instruction edit that refers to one post instead of a pair. Document the exact diff in the step file and run a fidelity test against `webapp/public/main.js`.
 
 ## Jev scorer
 
-Port from `METResearchGroup/mind_technology_lab_experiments` PR #23 (`experiments/speedup_jev_2026_09_23/`).
+Copy from `METResearchGroup/mind_technology_lab_experiments` PR #23 (`experiments/speedup_jev_2026_09_23/`).
 
 ```python
 client.system_one(
@@ -117,6 +122,8 @@ client.system_one(
 )
 # response: answers[id].noul = P(remove)
 ```
+
+All Jev calls (Stage A, GEPA optimize, GEPA evaluate) go through `jev_scorer.score_batch` / `run_scoring_pass`. Optional `instruction: str | None` on `score_batch` (and forwarded by `run_scoring_pass`): when `None`, use seed questions from `prompt.build_questions`; when set, use that text as the task instruction for every post in the batch with the same per-index `Consider posts[i].` prefix as the seed path. GEPA passes `instruction=candidate["instruction"]`.
 
 | Setting | Value |
 |---------|-------|
@@ -131,6 +138,8 @@ client.system_one(
 | Resume | skip posts in `predictions.jsonl` |
 | Outputs | predictions.jsonl, requests.jsonl, deadletter.jsonl, then labels.parquet, requests.parquet, results.json |
 | Pricing | $0.042 / 1M input tokens, $0 output |
+
+`requests.parquet` is the finalized table of `requests.jsonl` with columns: `request_id`, `ablation_id`, `batch_index`, `post_ids`, `n_posts`, `attempt`, `status` (`ok` | `error`), `error_type`, `started_at_utc`, `latency_ms`, `latency_per_post_ms` (`latency_ms / n_posts`), `input_tokens`, `output_tokens`, `estimated_cost_usd`, `model`, `instruction_sha256`. Stage A and GEPA evaluate passes use these column names for latency and cost aggregation.
 
 ## Metrics
 
@@ -154,20 +163,23 @@ client.system_one(
 | Adapter | `GEPAAdapter`: `evaluate(batch, candidate, capture_traces)`, `make_reflective_dataset(...)` |
 | Default score | P(gold label): P(remove) if gold remove, else 1 - P(remove) |
 | Reflective feedback | post text(s), gold label, vote split, P(remove), stance, toxicity, threshold crossed |
-| Reflection LM | `openai/gpt-5.4` (alt: Qwen3.5 4B on HF Jobs) |
+| Reflection LM (B1, B2, B3, B4) | `openai/gpt-6-luna` (GPT-6 Luna; $0.10/M input, $0.50/M output; [docs](https://developers.openai.com/api/docs/models/gpt-6-luna), checked 2026-09-24) |
+| Reflection LM (B1-T) | `openai/gpt-5.6-terra` (GPT-5.6 Terra; $2.00/M input, $12.00/M output; [pricing](https://developers.openai.com/api/docs/pricing)) |
 | `reflection_minibatch_size` | 10 (one Jev request) |
 | `candidate_selection_strategy` | `pareto` |
 | `use_merge` | True |
 | `max_metric_calls` | 9,000 (30 x valset 300) |
-| `max_reflection_cost` | $20 per run |
+| `max_reflection_cost` | $5 per Luna run (B1, B2, B3, B4); $20 for B1-T |
 | `seed` | 20260924 |
 | Wandb | `use_wandb=True`, `wandb_attach_existing=True` inside lab run |
-| Parallel runs | 4 processes, 250 req/min each (total 1,000/min) |
+| Parallel runs | 5 processes (B1, B1-T, B2, B3, B4), 200 req/min each (total 1,000/min) |
 | Final candidate | highest dev F1 at 0.5 among accepted candidates; test reported once |
+
+B1-T matches B1 on pair view, A1 seed, and default score, but uses GPT-5.6 Terra for reflection. Compare B1 and B1-T on dev and test F1 and reflection cost to see whether the stronger model pays for itself. Same `max_metric_calls`, splits, and seed.
 
 B4 asymmetric reward (issue #299): TP +1, FN -3, FP -1, TN +0.5.
 
-Transfer evals (no new optimization): B1 prompt on original and mirror; B2 on mirror; B3 on original.
+Transfer evals score fixed prompts on alternate views without new optimization: B1 on original and mirror; B2 on mirror; B3 on original.
 
 ## Wandb conventions
 
@@ -187,7 +199,7 @@ Transfer evals (no new optimization): B1 prompt on original and mirror; B2 on mi
 | Feature mining | [HOW_TO_MINE_TEXT_FOR_FEATURES.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md) | GEPA final prompts vs `KEEP_REMOVE_FEATURES_ADDENDUM` |
 | Error clustering | [HOW_TO_CLUSTER_TEXT.md](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_CLUSTER_TEXT.md) | A1 and B1 test false positives/negatives |
 
-Clustering: embed with `all-MiniLM-L6-v2` (precomputed, seeded); K-means baseline then BERTopic; cluster original and mirror separately.
+Clustering embeds with `all-MiniLM-L6-v2` (precomputed, seeded), runs K-means as a baseline, then BERTopic. Original and mirror texts are clustered separately.
 
 ## Prior patterns reused
 
@@ -204,11 +216,13 @@ Clustering: embed with `all-MiniLM-L6-v2` (precomputed, seeded); K-means baselin
 
 | Risk | Mitigation |
 |------|------------|
-| Jev batch effects (posts in a batch influence each other) | seeded shuffle; constant batch composition across ablations |
-| GEPA overfitting valset | separate dev for candidate selection; single test read |
+| Jev batch effects (posts in a batch influence each other) | seeded shuffle; same batch composition across ablations |
+| GEPA overfitting valset | dev split for candidate selection; single test read |
 | Class imbalance | balanced GEPA train/val; natural prevalence on dev/test |
 | Pair-view prompt length | probe measured ~490 input tokens/post; monitor in smoke |
 | Duplicate sessions | dedupe to first rating per participant x post before aggregation |
+| GPT-6 Luna writes weaker instructions than a frontier model | B1-T with GPT-5.6 Terra reflection tests whether stronger reflection justifies cost |
+| LiteLLM/GEPA model id mismatch | confirm `openai/gpt-6-luna` and `openai/gpt-5.6-terra` in GEPA tiny-budget smoke before full Stage B |
 
 ## Dependencies
 
@@ -217,7 +231,7 @@ Add to `pyproject.toml` and refresh `uv.lock`:
 - `typesafe-sdk`
 - `gepa` 0.1.4
 
-`wandb` already present.
+`wandb` is already in the `[dependency-groups] dev` group (installed by default `uv sync`).
 
 ## Verification
 

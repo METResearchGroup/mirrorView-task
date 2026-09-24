@@ -12,7 +12,7 @@ Probe measured 2026-09-24 (seed 20260924, batch 10, model `jev-1.13.0`).
 
 Pricing: $0.042 per 1M input tokens, $0 output.
 
-Run 100-post smoke per view in Step 4 before full Stage A. A4 addendum assumes ~250 extra input tokens per post; measure in smoke.
+Run 100-post smoke per view in Step 4 before full Stage A. The A4 addendum assumes ~250 extra input tokens per post; measure that in smoke.
 
 ## Stage A (Jev baseline, cohort A = 14,941 posts)
 
@@ -31,7 +31,7 @@ Run 100-post smoke per view in Step 4 before full Stage A. A4 addendum assumes ~
 | API time at 1,000 req/min | ~6 min |
 | Wall time (finalize + upload) | under 20 min |
 
-The rate cap binds at about 1.5 min per ablation.
+At 1,000 requests per minute, the rate cap binds at about 1.5 min per ablation.
 
 ## Stage B (Jev + GEPA, per run)
 
@@ -42,35 +42,54 @@ The rate cap binds at about 1.5 min per ablation.
 | Test (~2,988) | ~2,988 | ~1.8M | ~$0.08 |
 | **Per run Jev subtotal** | **~34,000** | **~20M** | **~$0.87** |
 
-Reflection (`openai/gpt-5.4`: $2.50/M input, $15/M output per [OpenAI pricing](https://developers.openai.com/api/docs/models/gpt-5.4)):
+Reflection assumptions (unchanged): ~150 to 250 calls per run, ~10k input + ~4k output tokens per call.
+
+### GPT-6 Luna (B1, B2, B3, B4)
+
+Source: https://developers.openai.com/api/docs/models/gpt-6-luna (checked 2026-09-24). Standard tier, up to 272K input: $0.10 per 1M input, $0.01 cached input, $0.50 per 1M output. LiteLLM id: `openai/gpt-6-luna`.
 
 | Item | Value |
 |------|-------|
-| Calls per run | ~150 to 250 |
-| Tokens per call | ~10k input + ~4k output (incl. reasoning) |
-| Cost per run | ~$13 to ~$21 (capped at $20) |
-| Hard cap | `max_reflection_cost=$20` |
+| Cost per call | ~$0.001 input + ~$0.002 output = ~$0.003 |
+| Cost per run | ~$0.45 to ~$0.75 |
+| Hard cap per run | $5 (`max_reflection_cost`) |
+| Tokens per run | ~2.1M to ~3.5M |
+
+### GPT-5.6 Terra (B1-T only)
+
+Source: https://developers.openai.com/api/docs/pricing. $2.00 per 1M input, $12.00 per 1M output. LiteLLM id: `openai/gpt-5.6-terra`.
+
+| Item | Value |
+|------|-------|
+| Cost per call | ~$0.02 input + ~$0.048 output = ~$0.068 |
+| Cost per run (B1-T) | ~$10 to ~$17 |
+| Hard cap per run | $20 (`max_reflection_cost`) |
+| Tokens per run | ~2.1M to ~3.5M |
+
+If Luna uses more tokens than assumed, doubling tokens per call still keeps the four Luna runs under ~$6 total.
 
 Paper reference (arXiv 2507.19457): 2,270 to 6,926 rollouts per task.
 
-## Stage B totals (4 runs + transfer)
+## Stage B totals (5 runs + transfer)
 
 | Item | Value |
 |------|-------|
-| Jev tokens (4 runs) | ~80M |
-| Jev cost (4 runs) | ~$3.4 |
-| Reflection cost (4 runs) | ~$51 to $80 (cap $80) |
+| Jev tokens (5 runs) | ~100M (5 x ~20M) |
+| Jev cost (5 runs) | ~$4.35 |
+| Luna reflection (4 runs) | ~$1.80 to ~$3.00 (cap $20 total) |
+| Terra reflection (B1-T) | ~$10 to ~$17 (cap $20) |
 | Transfer evals | under $0.10 |
-| **Stage B total** | **<= ~$85** |
+| **Stage B total** | **~$16 to ~$25** |
+| **Hard ceiling (caps)** | **4 x $5 + $20 + ~$4.4 = ~$44.4** |
 | Wall time (parallel) | ~2 to 3 h (reflection ~30 to 60 s/iteration, ~150 to 250 iterations) |
-| Reflection tokens (4 runs) | ~2 to 3.5M |
+| Reflection tokens (5 runs) | ~10.5M to ~17.5M total (~2.1M to ~3.5M per run) |
 
 ## Project total
 
 | Stage | Jev | Reflection | Wall |
 |-------|-----|------------|------|
 | A | ~$0.93 | $0 | ~20 min |
-| B | ~$3.4 | $40 to $80 | ~2 to 3 h |
-| **Total** | **~$4.3** | **<= $80** | **~3 h** |
+| B | ~$4.35 | ~$12 to ~$20 | ~2 to 3 h |
+| **Total** | **~$5.3** | **~$12 to ~$20** | **~3 h** |
 
-**Project cap: <= ~$90.**
+**Project total: ~$17 to ~$26. Hard ceiling: ~$46** (Stage A ~$0.93 + Stage B cap ~$44.4).
