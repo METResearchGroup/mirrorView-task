@@ -72,7 +72,7 @@ def load_results_full() -> pd.DataFrame:
     pandas.DataFrame
         Raw results-full frame for Phase 2 Part 3.
     """
-    raise NotImplementedError
+    return load_dataset(STUDY_PHASE_2_PART_3_RESULTS_FULL, low_memory=False)
 
 
 def filter_linked_fate_trials(raw: pd.DataFrame) -> pd.DataFrame:
