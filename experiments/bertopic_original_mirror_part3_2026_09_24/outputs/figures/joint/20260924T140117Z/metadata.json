@@ -1,0 +1,11 @@
+{
+  "text_role": "joint",
+  "source_topics_run": "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/joint/20260924T135414Z",
+  "source_labels_run": "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/labels/joint/20260924T135924Z",
+  "n_docs": 39526,
+  "figure_stems": [
+    "clusters_by_topic",
+    "clusters_by_keep_remove",
+    "clusters_by_unanimous"
+  ]
+}

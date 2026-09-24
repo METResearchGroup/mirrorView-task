@@ -1,0 +1,495 @@
+{
+  "n_pairs": 19763,
+  "n_original_topics_matched": 97,
+  "n_mirror_topics_matched": 97,
+  "ari": 0.09433693105888184,
+  "nmi": 0.29769652378757416,
+  "matching": "hungarian_centroid",
+  "topic_mapping": [
+    {
+      "original_topic": 0,
+      "mirror_topic": 2,
+      "cosine_sim": 0.9331967106137973
+    },
+    {
+      "original_topic": 1,
+      "mirror_topic": 0,
+      "cosine_sim": 0.9093508266346798
+    },
+    {
+      "original_topic": 2,
+      "mirror_topic": 13,
+      "cosine_sim": 0.9616013647430685
+    },
+    {
+      "original_topic": 3,
+      "mirror_topic": 47,
+      "cosine_sim": 0.8883083907206782
+    },
+    {
+      "original_topic": 4,
+      "mirror_topic": 27,
+      "cosine_sim": 0.533983504030424
+    },
+    {
+      "original_topic": 5,
+      "mirror_topic": 5,
+      "cosine_sim": 0.9374876949825067
+    },
+    {
+      "original_topic": 6,
+      "mirror_topic": 4,
+      "cosine_sim": 0.9483454298946791
+    },
+    {
+      "original_topic": 7,
+      "mirror_topic": 16,
+      "cosine_sim": 0.8908235077876816
+    },
+    {
+      "original_topic": 8,
+      "mirror_topic": 11,
+      "cosine_sim": 0.9299815006506937
+    },
+    {
+      "original_topic": 9,
+      "mirror_topic": 64,
+      "cosine_sim": 0.559310125684546
+    },
+    {
+      "original_topic": 10,
+      "mirror_topic": 10,
+      "cosine_sim": 0.8141914740217464
+    },
+    {
+      "original_topic": 11,
+      "mirror_topic": 49,
+      "cosine_sim": 0.6066327342681979
+    },
+    {
+      "original_topic": 12,
+      "mirror_topic": 36,
+      "cosine_sim": 0.916785587632848
+    },
+    {
+      "original_topic": 13,
+      "mirror_topic": 20,
+      "cosine_sim": 0.9232083195233829
+    },
+    {
+      "original_topic": 14,
+      "mirror_topic": 33,
+      "cosine_sim": 0.703478187333919
+    },
+    {
+      "original_topic": 15,
+      "mirror_topic": 34,
+      "cosine_sim": 0.8273839832521757
+    },
+    {
+      "original_topic": 16,
+      "mirror_topic": 58,
+      "cosine_sim": 0.9132933972776316
+    },
+    {
+      "original_topic": 17,
+      "mirror_topic": 50,
+      "cosine_sim": 0.7671083049201725
+    },
+    {
+      "original_topic": 18,
+      "mirror_topic": 55,
+      "cosine_sim": 0.526849806592963
+    },
+    {
+      "original_topic": 19,
+      "mirror_topic": 15,
+      "cosine_sim": 0.6935325021364923
+    },
+    {
+      "original_topic": 20,
+      "mirror_topic": 21,
+      "cosine_sim": 0.9199400396547288
+    },
+    {
+      "original_topic": 21,
+      "mirror_topic": 70,
+      "cosine_sim": 0.6349514955020505
+    },
+    {
+      "original_topic": 22,
+      "mirror_topic": 88,
+      "cosine_sim": 0.47197947860953693
+    },
+    {
+      "original_topic": 23,
+      "mirror_topic": 1,
+      "cosine_sim": 0.9076133650621294
+    },
+    {
+      "original_topic": 24,
+      "mirror_topic": 3,
+      "cosine_sim": 0.8299217095856248
+    },
+    {
+      "original_topic": 25,
+      "mirror_topic": 73,
+      "cosine_sim": 0.9029760320001029
+    },
+    {
+      "original_topic": 26,
+      "mirror_topic": 22,
+      "cosine_sim": 0.9276031418265276
+    },
+    {
+      "original_topic": 27,
+      "mirror_topic": 30,
+      "cosine_sim": 0.6103670047289709
+    },
+    {
+      "original_topic": 28,
+      "mirror_topic": 17,
+      "cosine_sim": 0.9063811021093433
+    },
+    {
+      "original_topic": 29,
+      "mirror_topic": 9,
+      "cosine_sim": 0.8500826118502142
+    },
+    {
+      "original_topic": 30,
+      "mirror_topic": 94,
+      "cosine_sim": 0.6547680340536215
+    },
+    {
+      "original_topic": 31,
+      "mirror_topic": 67,
+      "cosine_sim": 0.5737488209196937
+    },
+    {
+      "original_topic": 32,
+      "mirror_topic": 18,
+      "cosine_sim": 0.9420794747994371
+    },
+    {
+      "original_topic": 33,
+      "mirror_topic": 23,
+      "cosine_sim": 0.8914299774803474
+    },
+    {
+      "original_topic": 34,
+      "mirror_topic": 45,
+      "cosine_sim": 0.6251288388094789
+    },
+    {
+      "original_topic": 35,
+      "mirror_topic": 71,
+      "cosine_sim": 0.7778859511285549
+    },
+    {
+      "original_topic": 36,
+      "mirror_topic": 57,
+      "cosine_sim": 0.8443280115801722
+    },
+    {
+      "original_topic": 37,
+      "mirror_topic": 92,
+      "cosine_sim": 0.7075660563902697
+    },
+    {
+      "original_topic": 38,
+      "mirror_topic": 83,
+      "cosine_sim": 0.4399549365214648
+    },
+    {
+      "original_topic": 39,
+      "mirror_topic": 63,
+      "cosine_sim": 0.5363628600347223
+    },
+    {
+      "original_topic": 40,
+      "mirror_topic": 35,
+      "cosine_sim": 0.6136221904431771
+    },
+    {
+      "original_topic": 41,
+      "mirror_topic": 85,
+      "cosine_sim": 0.8400485986639074
+    },
+    {
+      "original_topic": 42,
+      "mirror_topic": 54,
+      "cosine_sim": 0.812712158160157
+    },
+    {
+      "original_topic": 43,
+      "mirror_topic": 44,
+      "cosine_sim": 0.5951980437344258
+    },
+    {
+      "original_topic": 44,
+      "mirror_topic": 28,
+      "cosine_sim": 0.6172508013116833
+    },
+    {
+      "original_topic": 45,
+      "mirror_topic": 43,
+      "cosine_sim": 0.7776064962373674
+    },
+    {
+      "original_topic": 46,
+      "mirror_topic": 96,
+      "cosine_sim": 0.8127751583788911
+    },
+    {
+      "original_topic": 47,
+      "mirror_topic": 48,
+      "cosine_sim": 0.7968227839527208
+    },
+    {
+      "original_topic": 48,
+      "mirror_topic": 41,
+      "cosine_sim": 0.6031222819321299
+    },
+    {
+      "original_topic": 49,
+      "mirror_topic": 91,
+      "cosine_sim": 0.4820691195400129
+    },
+    {
+      "original_topic": 50,
+      "mirror_topic": 86,
+      "cosine_sim": 0.5417886504987088
+    },
+    {
+      "original_topic": 51,
+      "mirror_topic": 87,
+      "cosine_sim": 0.5913201138424135
+    },
+    {
+      "original_topic": 52,
+      "mirror_topic": 37,
+      "cosine_sim": 0.42777547898272233
+    },
+    {
+      "original_topic": 53,
+      "mirror_topic": 31,
+      "cosine_sim": 0.8518035486572922
+    },
+    {
+      "original_topic": 54,
+      "mirror_topic": 24,
+      "cosine_sim": 0.7192600879391727
+    },
+    {
+      "original_topic": 55,
+      "mirror_topic": 72,
+      "cosine_sim": 0.8038595542470236
+    },
+    {
+      "original_topic": 56,
+      "mirror_topic": 77,
+      "cosine_sim": 0.5594292370189093
+    },
+    {
+      "original_topic": 57,
+      "mirror_topic": 89,
+      "cosine_sim": 0.6046701415449581
+    },
+    {
+      "original_topic": 58,
+      "mirror_topic": 75,
+      "cosine_sim": 0.5699197349153884
+    },
+    {
+      "original_topic": 59,
+      "mirror_topic": 56,
+      "cosine_sim": 0.7459310584655653
+    },
+    {
+      "original_topic": 60,
+      "mirror_topic": 61,
+      "cosine_sim": 0.885815187968763
+    },
+    {
+      "original_topic": 61,
+      "mirror_topic": 8,
+      "cosine_sim": 0.6382009335355024
+    },
+    {
+      "original_topic": 62,
+      "mirror_topic": 78,
+      "cosine_sim": 0.6598879210233216
+    },
+    {
+      "original_topic": 63,
+      "mirror_topic": 40,
+      "cosine_sim": 0.5310853435094441
+    },
+    {
+      "original_topic": 64,
+      "mirror_topic": 25,
+      "cosine_sim": 0.5337846329866378
+    },
+    {
+      "original_topic": 66,
+      "mirror_topic": 95,
+      "cosine_sim": 0.399915606533154
+    },
+    {
+      "original_topic": 67,
+      "mirror_topic": 6,
+      "cosine_sim": 0.8488914359065874
+    },
+    {
+      "original_topic": 68,
+      "mirror_topic": 65,
+      "cosine_sim": 0.7033410441986384
+    },
+    {
+      "original_topic": 69,
+      "mirror_topic": 19,
+      "cosine_sim": 0.8147809895501948
+    },
+    {
+      "original_topic": 70,
+      "mirror_topic": 59,
+      "cosine_sim": 0.675728907667999
+    },
+    {
+      "original_topic": 71,
+      "mirror_topic": 52,
+      "cosine_sim": 0.43597051794167824
+    },
+    {
+      "original_topic": 72,
+      "mirror_topic": 90,
+      "cosine_sim": 0.6207156059663531
+    },
+    {
+      "original_topic": 73,
+      "mirror_topic": 74,
+      "cosine_sim": 0.5057372220788283
+    },
+    {
+      "original_topic": 74,
+      "mirror_topic": 7,
+      "cosine_sim": 0.8635838070208616
+    },
+    {
+      "original_topic": 75,
+      "mirror_topic": 62,
+      "cosine_sim": 0.6041437633193272
+    },
+    {
+      "original_topic": 76,
+      "mirror_topic": 14,
+      "cosine_sim": 0.5381802661363275
+    },
+    {
+      "original_topic": 77,
+      "mirror_topic": 68,
+      "cosine_sim": 0.46234585238512615
+    },
+    {
+      "original_topic": 78,
+      "mirror_topic": 53,
+      "cosine_sim": 0.3623126700557203
+    },
+    {
+      "original_topic": 80,
+      "mirror_topic": 84,
+      "cosine_sim": 0.5757782318843221
+    },
+    {
+      "original_topic": 81,
+      "mirror_topic": 69,
+      "cosine_sim": 0.5573048155630302
+    },
+    {
+      "original_topic": 82,
+      "mirror_topic": 12,
+      "cosine_sim": 0.7726975713975542
+    },
+    {
+      "original_topic": 83,
+      "mirror_topic": 81,
+      "cosine_sim": 0.8810492287006959
+    },
+    {
+      "original_topic": 84,
+      "mirror_topic": 32,
+      "cosine_sim": 0.5164094347748727
+    },
+    {
+      "original_topic": 85,
+      "mirror_topic": 29,
+      "cosine_sim": 0.623461795488826
+    },
+    {
+      "original_topic": 87,
+      "mirror_topic": 26,
+      "cosine_sim": 0.5613489978312468
+    },
+    {
+      "original_topic": 88,
+      "mirror_topic": 79,
+      "cosine_sim": 0.6167581061634496
+    },
+    {
+      "original_topic": 89,
+      "mirror_topic": 46,
+      "cosine_sim": 0.5234631938962722
+    },
+    {
+      "original_topic": 90,
+      "mirror_topic": 51,
+      "cosine_sim": 0.7615517725306749
+    },
+    {
+      "original_topic": 91,
+      "mirror_topic": 42,
+      "cosine_sim": 0.5183908468803922
+    },
+    {
+      "original_topic": 92,
+      "mirror_topic": 38,
+      "cosine_sim": 0.6188607094567354
+    },
+    {
+      "original_topic": 93,
+      "mirror_topic": 80,
+      "cosine_sim": 0.673009897339389
+    },
+    {
+      "original_topic": 94,
+      "mirror_topic": 39,
+      "cosine_sim": 0.4628878444575187
+    },
+    {
+      "original_topic": 95,
+      "mirror_topic": 76,
+      "cosine_sim": 0.893275561190665
+    },
+    {
+      "original_topic": 96,
+      "mirror_topic": 66,
+      "cosine_sim": 0.45094880568740503
+    },
+    {
+      "original_topic": 97,
+      "mirror_topic": 60,
+      "cosine_sim": 0.601199526638923
+    },
+    {
+      "original_topic": 98,
+      "mirror_topic": 82,
+      "cosine_sim": 0.8890134858417197
+    },
+    {
+      "original_topic": 99,
+      "mirror_topic": 93,
+      "cosine_sim": 0.5262698243169099
+    }
+  ]
+}
