@@ -108,10 +108,12 @@ class CodebookFeature:
     source_cluster_label: str
     source_definition: str
     member_records: tuple[dict[str, Any], ...] = ()
+    discovery_arms: tuple[str, ...] = ()
+    merged_source_feature_ids: tuple[str, ...] = ()
     part2_theme_id: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload = {
             "feature_id": self.feature_id,
             "name": self.name,
             "definition": self.definition,
@@ -125,6 +127,11 @@ class CodebookFeature:
             "cluster_size": self.cluster_size,
             "part2_theme_id": self.part2_theme_id,
         }
+        if self.discovery_arms:
+            payload["discovery_arms"] = list(self.discovery_arms)
+        if self.merged_source_feature_ids:
+            payload["merged_source_feature_ids"] = list(self.merged_source_feature_ids)
+        return payload
 
 
 @dataclass(frozen=True)
@@ -1188,10 +1195,405 @@ def _noise_shares_for_seeds(normalize_dir: Path, seeds: tuple[int, ...]) -> dict
     return shares
 
 
+def _resolve_local_codebook_path(raw_path: Path) -> Path:
+    if raw_path.is_absolute():
+        return raw_path
+    from_experiment = paths.EXPERIMENT_ROOT / raw_path
+    if from_experiment.is_file():
+        return from_experiment
+    if raw_path.is_file():
+        return raw_path
+    return from_experiment
+
+
 def _resolve_normalize_dir(arm: str, normalize_dirs: dict[str, Path] | None) -> Path:
     if normalize_dirs and arm in normalize_dirs:
         return normalize_dirs[arm]
     return latest_timestamp_subdir(paths.normalize_run_dir(arm))
+
+
+def gate_b_approved_groups() -> tuple[tuple[str, tuple[str, ...]], ...]:
+    """Return user-approved Gate B merge groups as (canonical_key, member names)."""
+    return (
+        ("emphatic typography", (
+            "emphatic capitalization", "emphatic capitalization",
+            "emphatic punctuation and formatting", "typographic emphasis",
+            "emphatic all caps", "emphatic heated rhetoric",
+        )),
+        ("political insults", (
+            "political insults and mockery", "political insults and mockery",
+            "political derogatory language", "direct political insults",
+            "insults and derogatory labels",
+        )),
+        ("sarcasm and mockery", (
+            "political sarcasm and irony", "political ridicule and mockery",
+            "sarcastic political mockery", "political sarcasm and mockery",
+        )),
+        ("criticism of political actors", (
+            "political actor criticism", "criticism of political actors",
+            "partisan political criticism", "hostile political criticism",
+        )),
+        ("persuasive argumentation", (
+            "persuasive argumentation", "political persuasion",
+            "political argumentation and advocacy",
+        )),
+        ("qualified claims", (
+            "qualified and tentative claims", "qualified claims",
+            "qualified or tentative stances",
+        )),
+        ("unqualified claims as fact", (
+            "unqualified political claims", "assertive political claims",
+            "political claims stated as fact",
+        )),
+        ("conditional reasoning", (
+            "conditional if-then claims", "conditional consequences",
+            "conditional reasoning",
+        )),
+        ("quoted or attributed speech", (
+            "quoted claims and responses", "attributed political claims",
+            "quoted or attributed speech",
+        )),
+        ("lists", (
+            "lists and enumerations", "enumerated political claims",
+            "lists of related points",
+        )),
+        ("parallel repetition", (
+            "emphatic parallel denunciation", "parallel condemnations",
+            "repetitive parallel emphasis",
+        )),
+        ("contrastive framing", (
+            "contrastive argumentation", "contrastive framing",
+            "contrastive framing and rebuttal",
+        )),
+        ("rhetorical questions", (
+            "challenging rhetorical questions", "pointed political questions",
+            "pointed rhetorical questions",
+        )),
+        ("conspiracy claims", (
+            "unsupported conspiracy claims", "conspiratorial political claims",
+            "political conspiracy allegations",
+        )),
+        ("anti-elite framing", (
+            "elite self-interest criticism", "populist anti-elite framing",
+            "elite versus ordinary people",
+        )),
+        ("persecution framing", (
+            "group persecution framing", "political persecution claims",
+            "political persecution framing",
+        )),
+        ("us versus them", (
+            "hostile group division", "partisan us versus them", "partisan us versus them",
+        )),
+        ("causal claims", (
+            "explicit causal attribution", "political causal claims", "political causal claims",
+        )),
+        ("moral condemnation", (
+            "explicit moral judgment", "moralized political condemnation",
+            "moral condemnation of politics",
+        )),
+        ("political outrage", (
+            "emphatic political outrage", "emphatic political outrage", "emphatic political outrage",
+        )),
+        ("calls to action", (
+            "civic action appeals", "political action appeals", "political calls to action",
+        )),
+        ("profane insults", (
+            "profane political insults", "profane political insults",
+            "political profanity and insults",
+        )),
+        ("slang and colloquial insults", (
+            "informal slang and colloquial language", "colloquial insults",
+            "informal slang and insults",
+        )),
+        ("partisan left-right framing", (
+            "partisan political framing", "partisan left right framing",
+        )),
+        ("hashtags and mentions", (
+            "hashtags and account mentions", "political hashtags",
+        )),
+        ("confrontational direct address", (
+            "confrontational direct address", "confrontational direct address",
+        )),
+        ("direct second-person address (neutral)", ("direct second-person address",)),
+        ("personal political distress", ("personal political distress",)),
+        ("violent political rhetoric", ("violent political rhetoric",)),
+        ("specific policy advocacy", ("specific policy advocacy",)),
+    )
+
+
+GATE_B_DROP_FEATURE_NAME = "criticism of democrats and left"
+GATE_B_DROP_REASON = (
+    "gate_b_drop:one-sided stance-specific; mirror flip confounds Q2/Q3"
+)
+
+
+def assign_gate_b_member_ids(
+    features: list[dict[str, Any]],
+) -> tuple[list[tuple[str, tuple[str, ...]]], str, dict[str, dict[str, Any]]]:
+    """Map draft features to Gate B groups; return groups, drop_id, by_id."""
+    pools: dict[str, list[str]] = {}
+    by_id = {feature["feature_id"]: feature for feature in features}
+    for feature in features:
+        pools.setdefault(feature["name"], []).append(feature["feature_id"])
+    grouped: list[tuple[str, tuple[str, ...]]] = []
+    mapped: set[str] = set()
+    for group_key, names in gate_b_approved_groups():
+        member_ids: list[str] = []
+        for name in names:
+            if not pools.get(name):
+                raise ValueError(f"Gate B mapping missing draft feature name: {name}")
+            member_ids.append(pools[name].pop(0))
+        grouped.append((group_key, tuple(member_ids)))
+        mapped.update(member_ids)
+    if not pools.get(GATE_B_DROP_FEATURE_NAME) or len(pools[GATE_B_DROP_FEATURE_NAME]) != 1:
+        raise ValueError(f"Expected exactly one drop feature: {GATE_B_DROP_FEATURE_NAME}")
+    drop_id = pools[GATE_B_DROP_FEATURE_NAME].pop(0)
+    mapped.add(drop_id)
+    leftover = {name: ids for name, ids in pools.items() if ids}
+    if leftover:
+        raise ValueError(f"Unmapped draft features remain: {leftover}")
+    if len(mapped) != len(features):
+        raise ValueError(f"Mapped {len(mapped)} of {len(features)} draft features")
+    return grouped, drop_id, by_id
+
+
+def write_gate_b_synonym_csv(
+    grouped: list[tuple[str, tuple[str, ...]]],
+    canonical_ids: dict[str, str],
+    confirmed_at: str,
+) -> None:
+    """Write feature_synonyms.csv for all Gate B merges."""
+    rows: list[list[str]] = []
+    for group_key, member_ids in grouped:
+        canonical_id = canonical_ids[group_key]
+        survivor_draft_id = member_ids[0]
+        for member_id in member_ids[1:]:
+            rows.append(
+                [
+                    member_id,
+                    survivor_draft_id,
+                    canonical_id,
+                    constants.GATE_B_APPROVED_BY,
+                    confirmed_at,
+                    group_key,
+                ]
+            )
+    with SYNONYMS_PATH.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(
+            [
+                "feature_id_a",
+                "feature_id_b",
+                "merged_to",
+                "confirmed_by",
+                "confirmed_at",
+                "notes",
+            ]
+        )
+        for row in rows:
+            writer.writerow(row)
+
+
+def _merge_example_lists(
+    members: list[dict[str, Any]],
+    field: str,
+    limit: int,
+    exclude_post_ids: set[str] | None = None,
+) -> tuple[PostExample, ...]:
+    exclude = exclude_post_ids or set()
+    chosen: list[PostExample] = []
+    seen: set[str] = set()
+    for member in members:
+        for raw in member.get(field, []):
+            post_id = str(raw["post_id"])
+            if post_id in seen or post_id in exclude:
+                continue
+            seen.add(post_id)
+            chosen.append(PostExample(post_id=post_id, text=str(raw["text"])))
+            if len(chosen) >= limit:
+                return tuple(chosen)
+    if len(chosen) < limit:
+        raise ValueError(f"Not enough {field} examples after merge")
+    return tuple(chosen)
+
+
+def _merge_group_feature_dict(
+    group_key: str,
+    member_ids: tuple[str, ...],
+    by_id: dict[str, dict[str, Any]],
+    rewrite_name: str,
+    rewrite_definition: str,
+    new_feature_id: str,
+) -> dict[str, Any]:
+    members = [by_id[member_id] for member_id in member_ids]
+    source_cluster_ids = {arm: [] for arm in constants.TEXT_ARMS}
+    member_feature_ids: list[str] = []
+    cluster_size = 0
+    arms: set[str] = set()
+    for member in members:
+        arms.add(str(member["discovery_arm"]))
+        cluster_size += int(member.get("cluster_size", 0))
+        member_feature_ids.extend(member.get("member_feature_ids", []))
+        for arm, ids in member.get("source_cluster_ids", {}).items():
+            source_cluster_ids[arm] = sorted(set(source_cluster_ids[arm]) | set(ids))
+    positives = _merge_example_lists(members, "positive_examples", constants.CODEBOOK_EXAMPLES_PER_POLARITY)
+    positive_posts = {example.post_id for example in positives}
+    negatives = _merge_example_lists(
+        members,
+        "negative_examples",
+        constants.CODEBOOK_EXAMPLES_PER_POLARITY,
+        exclude_post_ids=positive_posts,
+    )
+    discovery_arms = tuple(sorted(arms))
+    return {
+        "feature_id": new_feature_id,
+        "name": rewrite_name.strip().lower(),
+        "definition": rewrite_definition.strip(),
+        "source_cluster_label": group_key,
+        "source_definition": "; ".join(
+            member.get("source_definition", member.get("definition", "")) for member in members
+        )[:500],
+        "positive_examples": [example.to_dict() for example in positives],
+        "negative_examples": [example.to_dict() for example in negatives],
+        "discovery_arm": discovery_arms[0],
+        "discovery_arms": list(discovery_arms),
+        "source_cluster_ids": source_cluster_ids,
+        "member_feature_ids": sorted(set(member_feature_ids)),
+        "merged_source_feature_ids": list(member_ids),
+        "cluster_size": cluster_size,
+        "part2_theme_id": None,
+    }
+
+
+def rewrite_gate_b_groups_with_llm(
+    grouped: list[tuple[str, tuple[str, ...]]],
+    by_id: dict[str, dict[str, Any]],
+    output_dir: Path,
+) -> dict[str, Any]:
+    """LLM rewrite for merged Gate B groups (batched)."""
+    payload: list[dict[str, Any]] = []
+    for index, (group_key, member_ids) in enumerate(grouped, start=1):
+        members = [by_id[member_id] for member_id in member_ids]
+        payload.append(
+            {
+                "feature_id": f"grp_{index:02d}",
+                "source_cluster_label": group_key,
+                "source_definition": "\n".join(
+                    f"- {member['name']}: {member['definition']}" for member in members
+                ),
+                "interim_name": group_key,
+            }
+        )
+    features_for_rewrite = payload
+    output_dir.mkdir(parents=True, exist_ok=True)
+    run_metadata = {
+        "model": constants.LLM_MODEL_ID,
+        "reasoning_effort": constants.LLM_REASONING_EFFORT,
+        "stage": constants.STAGE_CODEBOOK_REWRITE,
+        "litellm_model": constants.LLM_LITELLM_MODEL_ID,
+        "gate_b": True,
+    }
+    rewrite_by_grp: dict[str, Any] = {}
+    batch_size = constants.CODEBOOK_REWRITE_BATCH_SIZE
+    for batch_index, start in enumerate(range(0, len(features_for_rewrite), batch_size)):
+        chunk = features_for_rewrite[start : start + batch_size]
+        messages = build_codebook_rewrite_messages(chunk)
+        parsed = llm_client.complete_structured(
+            messages,
+            CodebookRewriteBatch,
+            stage=constants.STAGE_CODEBOOK_REWRITE,
+            arm=None,
+            call_index=batch_index,
+            output_dir=output_dir,
+            run_metadata=run_metadata,
+        )
+        for item in parsed.items:
+            rewrite_by_grp[item.feature_id] = item
+    return rewrite_by_grp
+
+
+def finalize_gate_b_codebook(
+    draft_codebook_path: Path,
+    approved_by: str,
+) -> tuple[Path, Path]:
+    """Build final merged codebook, approve it, and return final and approved dirs."""
+    draft_codebook_path = _resolve_local_codebook_path(draft_codebook_path)
+    draft_payload = json.loads(draft_codebook_path.read_text(encoding="utf-8"))
+    draft_version = draft_payload["version"]
+    features = draft_payload["features"]
+    grouped, drop_id, by_id = assign_gate_b_member_ids(features)
+    confirmed_at = make_run_timestamp()
+    final_version = confirmed_at
+    canonical_ids = {
+        group_key: f"{constants.CODEBOOK_FEATURE_ID_PREFIX}{index:03d}"
+        for index, (group_key, _) in enumerate(grouped, start=1)
+    }
+    write_gate_b_synonym_csv(grouped, canonical_ids, confirmed_at)
+    rewrite_dir = paths.codebook_dir() / f"rewrite_gate_b_{final_version}"
+    rewrite_by_grp = rewrite_gate_b_groups_with_llm(grouped, by_id, rewrite_dir)
+    final_features: list[dict[str, Any]] = []
+    for index, (group_key, member_ids) in enumerate(grouped, start=1):
+        rewrite = rewrite_by_grp[f"grp_{index:02d}"]
+        validate_outcome_leakage(rewrite.name, rewrite.definition)
+        final_features.append(
+            _merge_group_feature_dict(
+                group_key,
+                member_ids,
+                by_id,
+                rewrite.name,
+                rewrite.definition,
+                canonical_ids[group_key],
+            )
+        )
+    drop_feature = by_id[drop_id]
+    draft_dropped_path = draft_codebook_path.parent / constants.DROPPED_FEATURES_FILENAME
+    prior_dropped: list[dict[str, Any]] = []
+    if draft_dropped_path.is_file():
+        prior_dropped = json.loads(draft_dropped_path.read_text())["dropped"]
+    gate_b_drop = {
+        "feature_id": drop_id,
+        "cluster_id": drop_feature["source_cluster_ids"][drop_feature["discovery_arm"]][0],
+        "arm": drop_feature["discovery_arm"],
+        "reason": GATE_B_DROP_REASON,
+        "cluster_label": drop_feature["name"],
+        "member_feature_ids": drop_feature.get("member_feature_ids", []),
+    }
+    dropped_all = prior_dropped + [gate_b_drop]
+    final_dir = paths.codebook_dir() / f"{constants.CODEBOOK_FINAL_DIR_PREFIX}{final_version}"
+    final_dir.mkdir(parents=True, exist_ok=True)
+    codebook_payload = {"version": final_version, "features": final_features}
+    (final_dir / constants.CODEBOOK_JSON_FILENAME).write_text(
+        json.dumps(codebook_payload, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    (final_dir / constants.DROPPED_FEATURES_FILENAME).write_text(
+        json.dumps({"dropped": dropped_all}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    metadata = {
+        "built_at": final_version,
+        "source_draft": str(
+            draft_codebook_path.resolve().relative_to(paths.EXPERIMENT_ROOT.resolve())
+        ),
+        "source_draft_version": draft_version,
+        "gate_b_groups": len(grouped),
+        "gate_b_approved_by": approved_by,
+    }
+    (final_dir / constants.METADATA_FILENAME).write_text(
+        json.dumps(metadata, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    md_lines = [f"# Final codebook {final_version}", ""]
+    for feature in final_features:
+        md_lines.append(f"## {feature['feature_id']}: {feature['name']}")
+        md_lines.append(feature["definition"])
+        md_lines.append("")
+    (final_dir / constants.CODEBOOK_MD_FILENAME).write_text("\n".join(md_lines) + "\n", encoding="utf-8")
+    approved_dir = approve_codebook(final_dir / constants.CODEBOOK_JSON_FILENAME, approved_by)
+    print(f"final_features={len(final_features)}")
+    print(f"Wrote {final_dir / constants.CODEBOOK_JSON_FILENAME}")
+    print(f"Wrote {SYNONYMS_PATH}")
+    return final_dir, approved_dir
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -1202,8 +1604,14 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--suggest-merges", action="store_true")
     parser.add_argument("--approve", type=Path, default=None)
     parser.add_argument("--approved-by", type=str, default=None)
+    parser.add_argument("--finalize-gate-b", type=Path, default=None)
     args = parser.parse_args(argv)
     seeds = tuple(args.seeds)
+    if args.finalize_gate_b is not None:
+        approved_by = args.approved_by or constants.GATE_B_APPROVED_BY
+        _final_dir, approved_dir = finalize_gate_b_codebook(args.finalize_gate_b, approved_by)
+        print(f"Wrote {approved_dir / constants.APPROVAL_JSON_FILENAME}")
+        return
     if args.approve is not None:
         if not args.approved_by:
             raise SystemExit("--approved-by is required with --approve")

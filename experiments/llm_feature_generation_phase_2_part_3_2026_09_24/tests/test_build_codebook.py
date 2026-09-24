@@ -247,6 +247,25 @@ class TestNormalizeFeatureName:
         assert len(result.split()) <= constants.CODEBOOK_NAME_MAX_WORDS
 
 
+class TestAssignGateBMemberIds:
+    """Tests for assign_gate_b_member_ids."""
+
+    def test_maps_all_draft_features_once(self) -> None:
+        features: list[dict] = []
+        index = 1
+        for _group_key, group_names in bc.gate_b_approved_groups():
+            for name in group_names:
+                features.append({"feature_id": f"cb_{index:03d}", "name": name})
+                index += 1
+        features.append(
+            {"feature_id": f"cb_{index:03d}", "name": bc.GATE_B_DROP_FEATURE_NAME}
+        )
+        grouped, drop_id, _by_id = bc.assign_gate_b_member_ids(features)
+        assert len(grouped) == 30
+        assert len(features) == 87
+        assert drop_id == f"cb_{index:03d}"
+
+
 class TestValidateOutcomeLeakage:
     """Tests for validate_outcome_leakage."""
 
