@@ -1,8 +1,8 @@
 {
-  "gepa_best_idx": 1,
+  "gepa_best_idx": 23,
   "reflection_cost_usd": 0.0,
   "reflection_lm": "openai/gpt-6-luna",
-  "selected_candidate_idx": 1,
-  "selected_dev_f1": 0.5422535211267606,
-  "total_metric_calls": 66
+  "selected_candidate_idx": 14,
+  "selected_dev_f1": 0.5533980582524272,
+  "total_metric_calls": 9058
 }
