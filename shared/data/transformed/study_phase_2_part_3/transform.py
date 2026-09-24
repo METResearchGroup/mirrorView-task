@@ -46,6 +46,38 @@ OUTPUT_COLUMNS = [
 ]
 
 
+def _require_columns(frame: pd.DataFrame, columns: set[str]) -> None:
+    """Raise KeyError when ``frame`` is missing any of ``columns``."""
+    missing = columns - set(frame.columns)
+    if missing:
+        raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
+
+
+def _normalize_decision_and_mode(raw: pd.DataFrame) -> pd.DataFrame:
+    """Return a copy with lowercased, stripped decision and evaluation mode."""
+    _require_columns(raw, {"decision", "evaluation_mode", "post_id"})
+    trials = raw.copy()
+    trials["decision"] = trials["decision"].astype(str).str.lower().str.strip()
+    trials["evaluation_mode"] = trials["evaluation_mode"].astype(str).str.lower().str.strip()
+    return trials
+
+
+def _filter_linked_fate_keep_remove(trials: pd.DataFrame) -> pd.DataFrame:
+    """Keep linked-fate rows whose decision is keep or remove."""
+    is_linked_fate = trials["evaluation_mode"] == LINKED_FATE_MODE
+    is_keep_or_remove = trials["decision"].isin([KEEP_DECISION, REMOVE_DECISION])
+    return trials.loc[is_linked_fate & is_keep_or_remove].copy()
+
+
+def _drop_unusable_post_ids(trials: pd.DataFrame) -> pd.DataFrame:
+    """Drop null, blank, and literal ``nan`` post ids, then strip the rest."""
+    present = trials.loc[trials["post_id"].notna()].copy()
+    present["post_id"] = present["post_id"].astype(str).str.strip()
+    blank = present["post_id"] == ""
+    literal_nan = present["post_id"].str.lower() == "nan"
+    return present.loc[~blank & ~literal_nan].copy()
+
+
 def _load_slim_trial_frame(raw: pd.DataFrame) -> pd.DataFrame:
     """Select linked-fate keep/remove trials with a usable ``post_id``.
 
@@ -64,7 +96,9 @@ def _load_slim_trial_frame(raw: pd.DataFrame) -> pd.DataFrame:
     KeyError
         If ``evaluation_mode`` or ``post_id`` is missing.
     """
-    raise NotImplementedError
+    normalized = _normalize_decision_and_mode(raw)
+    linked = _filter_linked_fate_keep_remove(normalized)
+    return _drop_unusable_post_ids(linked)
 
 
 def _aggregate_modal_labels_with_counts(trials: pd.DataFrame) -> pd.DataFrame:
