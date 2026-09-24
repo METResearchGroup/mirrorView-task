@@ -10,6 +10,8 @@ Run from the repo root::
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
@@ -80,6 +82,93 @@ def form_mixed_batches(
     return _build_mixed_batches(keep_rows, remove_rows, keep_per_batch, remove_per_batch, batch_count)
 
 
+def union_new_discovery_post_ids(arm: str) -> frozenset[str]:
+    """Return Part-2-only posts assigned to the discovery split for one arm.
+
+    Parameters
+    ----------
+    arm
+        Text arm whose cohort parquets define the union versus Part-3-only sets.
+
+    Returns
+    -------
+    frozenset[str]
+        Post IDs newly assigned to discovery (not in the legacy Part-3 cohort).
+    """
+    all_run = paths.latest_cohort_run_dir(arm, constants.PARTICIPANT_FILTER_ALL)
+    part3_run = paths.latest_cohort_run_dir(arm, constants.PARTICIPANT_FILTER_PART3_ONLY)
+    all_frame = pd.read_parquet(all_run / constants.COHORT_FILENAME)
+    all_ids = set(all_frame["post_id"].astype(str))
+    part3_only_ids = set(
+        pd.read_parquet(part3_run / constants.COHORT_FILENAME)["post_id"].astype(str)
+    )
+    union_only_ids = all_ids - part3_only_ids
+    discovery_mask = all_frame["split"] == constants.DISCOVERY_SPLIT
+    discovery_ids = set(all_frame.loc[discovery_mask, "post_id"].astype(str))
+    return frozenset(union_only_ids & discovery_ids)
+
+
+def covered_mixed_discovery_post_ids(arm: str) -> frozenset[str]:
+    """Collect post IDs already present in the latest finished mixed discovery run.
+
+    Parameters
+    ----------
+    arm
+        Text arm whose mixed discovery outputs should be scanned.
+
+    Returns
+    -------
+    frozenset[str]
+        Union of ``message_ids`` from per-call ``discovery_row`` payloads.
+    """
+    run_dir = _latest_discovery_run_dir(arm, constants.BATCH_DESIGN_MIXED)
+    return frozenset(_discovery_row_post_ids(run_dir))
+
+
+def form_mixed_topup_batches(
+    cohort: pd.DataFrame,
+    arm: str,
+    *,
+    keep_per_batch: int = DEFAULT_KEEP_PER_BATCH,
+    remove_per_batch: int = DEFAULT_REMOVE_PER_BATCH,
+) -> list[dict[str, Any]]:
+    """Form mixed batches on union-new discovery posts not yet in the mixed run.
+
+    Parameters
+    ----------
+    cohort
+        Discovery cohort rows (typically from ``load_discovery_cohort``).
+    arm
+        Text arm used to resolve union-new and mixed-run post ID sets.
+    keep_per_batch
+        Number of keep posts per batch.
+    remove_per_batch
+        Number of remove posts per batch.
+
+    Returns
+    -------
+    list[dict[str, Any]]
+        Mixed-style batch dicts for eligible posts only.
+
+    Raises
+    ------
+    ValueError
+        When no eligible posts remain or batch sizes are invalid.
+    """
+    new_ids = union_new_discovery_post_ids(arm)
+    covered_ids = covered_mixed_discovery_post_ids(arm)
+    eligible_ids = new_ids - covered_ids
+    post_ids = cohort["post_id"].astype(str)
+    eligible = cohort.loc[post_ids.isin(eligible_ids)].copy()
+    if eligible.empty:
+        raise ValueError("No eligible posts remain for mixed_topup batching")
+    return form_mixed_batches(
+        eligible,
+        keep_per_batch=keep_per_batch,
+        remove_per_batch=remove_per_batch,
+    )
+
+
 def form_single_class_batches(
     cohort: pd.DataFrame,
     *,
@@ -123,11 +212,47 @@ def form_single_class_batches(
 
 
 def _load_cohort_frame(arm: str) -> pd.DataFrame:
-    cohort_run_dir = paths.latest_timestamp_subdir(paths.cohort_dir(arm))
+    cohort_run_dir = paths.latest_cohort_run_dir(arm, constants.PARTICIPANT_FILTER_ALL)
     cohort_path = cohort_run_dir / constants.COHORT_FILENAME
     if not cohort_path.is_file():
         raise FileNotFoundError(f"Missing cohort parquet: {cohort_path}")
     return pd.read_parquet(cohort_path)
+
+
+def _latest_discovery_run_dir(arm: str, batch_design: str) -> Path:
+    parent = paths.discovery_run_dir(arm)
+    if not parent.is_dir():
+        raise FileNotFoundError(f"Discovery outputs missing: {parent}")
+    matches: list[Path] = []
+    for child in parent.iterdir():
+        if not child.is_dir():
+            continue
+        metadata_path = child / constants.METADATA_FILENAME
+        if not metadata_path.is_file():
+            continue
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        run_meta = metadata.get("run_metadata", {})
+        if run_meta.get("batch_design") == batch_design:
+            matches.append(child)
+    if not matches:
+        raise FileNotFoundError(
+            f"No discovery run with batch_design={batch_design} under {parent}"
+        )
+    return sorted(matches, key=lambda path: path.name)[-1]
+
+
+def _discovery_row_post_ids(run_dir: Path) -> set[str]:
+    covered: set[str] = set()
+    for artifact_path in run_dir.glob("*.json"):
+        if artifact_path.name == constants.METADATA_FILENAME:
+            continue
+        payload = json.loads(artifact_path.read_text(encoding="utf-8"))
+        discovery_row = payload.get("discovery_row")
+        if not isinstance(discovery_row, dict):
+            continue
+        message_ids = discovery_row.get("message_ids", [])
+        covered.update(str(post_id) for post_id in message_ids)
+    return covered
 
 
 def _class_rows(cohort: pd.DataFrame, label_class: str) -> pd.DataFrame:

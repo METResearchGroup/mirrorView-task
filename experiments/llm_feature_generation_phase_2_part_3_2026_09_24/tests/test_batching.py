@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from unittest.mock import patch
 
 import pandas as pd
@@ -10,6 +11,7 @@ import pytest
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.batching import (
     form_mixed_batches,
+    form_mixed_topup_batches,
     form_single_class_batches,
     load_discovery_cohort,
 )
@@ -122,6 +124,61 @@ def test_form_single_class_batch_count() -> None:
     assert len(remove_batches) == 50
     for batch in batches:
         assert len(batch["posts"]) == 10
+
+
+def test_form_mixed_topup_batches_excludes_covered_posts(tmp_path: Path) -> None:
+    """Top-up batches only include union-new discovery posts not in the mixed run."""
+    rows: list[dict[str, object]] = []
+    for index in range(15):
+        rows.append(
+            {
+                "post_id": f"new_keep_{index}",
+                "original_text": "text",
+                "mirror_text": "mirror",
+                "modal_decision": constants.DECISION_KEEP,
+                "split": constants.DISCOVERY_SPLIT,
+            }
+        )
+    for index in range(15):
+        rows.append(
+            {
+                "post_id": f"new_remove_{index}",
+                "original_text": "text",
+                "mirror_text": "mirror",
+                "modal_decision": constants.DECISION_REMOVE,
+                "split": constants.DISCOVERY_SPLIT,
+            }
+        )
+    rows.append(
+        {
+            "post_id": "legacy_keep_0",
+            "original_text": "text",
+            "mirror_text": "mirror",
+            "modal_decision": constants.DECISION_KEEP,
+            "split": constants.DISCOVERY_SPLIT,
+        }
+    )
+    cohort = pd.DataFrame(rows)
+    new_ids = frozenset(
+        {f"new_keep_{index}" for index in range(15)}
+        | {f"new_remove_{index}" for index in range(15)}
+    )
+    covered = frozenset({"new_keep_0", "new_remove_0"})
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.batching.union_new_discovery_post_ids",
+        return_value=new_ids,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.batching.covered_mixed_discovery_post_ids",
+        return_value=covered,
+    ):
+        batches = form_mixed_topup_batches(cohort, "original_only", keep_per_batch=5, remove_per_batch=5)
+    assert len(batches) == 2
+    batched_ids: set[str] = set()
+    for batch in batches:
+        batched_ids.update(batch["message_ids"])
+    assert "legacy_keep_0" not in batched_ids
+    assert "new_keep_0" not in batched_ids
+    assert "new_remove_0" not in batched_ids
 
 
 def test_discovery_filter() -> None:

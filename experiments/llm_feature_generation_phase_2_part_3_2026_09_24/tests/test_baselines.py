@@ -20,6 +20,7 @@ from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.baselines 
     extract_arm_text,
     load_discovery_posts,
     parse_args,
+    resolve_cohort_run_dir,
     run_baselines,
     tokenize_text,
     write_baseline_outputs,
@@ -203,6 +204,19 @@ def test_cli_requires_arm_and_split_discovery() -> None:
     with pytest.raises(SystemExit) as exc_info:
         parse_args([])
     assert exc_info.value.code != 0
+
+
+def test_resolve_cohort_run_dir_uses_all_participant_filter(tmp_path: Path) -> None:
+    """Default cohort resolution uses participant_filter=all, not the newest run."""
+    all_run = tmp_path / "all_run"
+    all_run.mkdir()
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.latest_cohort_run_dir",
+        return_value=all_run,
+    ) as mock_latest:
+        result = resolve_cohort_run_dir("original_only", None)
+    mock_latest.assert_called_once_with("original_only", constants.PARTICIPANT_FILTER_ALL)
+    assert result == all_run
 
 
 def test_bedrock_called_once_per_post() -> None:

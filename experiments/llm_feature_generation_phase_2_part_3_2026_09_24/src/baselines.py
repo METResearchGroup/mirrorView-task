@@ -100,7 +100,7 @@ def resolve_cohort_run_dir(arm: str, cohort_run_dir: Path | None) -> Path:
     """Return the cohort run directory from an explicit path or the latest run."""
     if cohort_run_dir is not None:
         return cohort_run_dir
-    return paths.latest_timestamp_subdir(paths.cohort_dir(arm))
+    return paths.latest_cohort_run_dir(arm, constants.PARTICIPANT_FILTER_ALL)
 
 
 def load_cohort_frame(cohort_run_dir: Path) -> pd.DataFrame:

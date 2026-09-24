@@ -22,6 +22,7 @@ from pydantic import BaseModel
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.batching import (
     form_mixed_batches,
+    form_mixed_topup_batches,
     form_single_class_batches,
     load_discovery_cohort,
 )
@@ -94,7 +95,11 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--arm", choices=constants.TEXT_ARMS, required=True)
     parser.add_argument(
         "--batch-design",
-        choices=(constants.BATCH_DESIGN_MIXED, constants.BATCH_DESIGN_SINGLE_CLASS),
+        choices=(
+            constants.BATCH_DESIGN_MIXED,
+            constants.BATCH_DESIGN_MIXED_TOPUP,
+            constants.BATCH_DESIGN_SINGLE_CLASS,
+        ),
         required=True,
     )
     parser.add_argument("--seed", type=int, default=constants.DEFAULT_SEED)
@@ -115,6 +120,9 @@ def _prepare_batches(
     cohort = load_discovery_cohort(args.arm)
     if args.batch_design == constants.BATCH_DESIGN_MIXED:
         batches = form_mixed_batches(cohort)
+        return batches, BatchFeatureGeneration, build_mixed_discovery_row
+    if args.batch_design == constants.BATCH_DESIGN_MIXED_TOPUP:
+        batches = form_mixed_topup_batches(cohort, args.arm)
         return batches, BatchFeatureGeneration, build_mixed_discovery_row
     batches = form_single_class_batches(cohort, seed=args.seed)
     return batches, SingleClassBatchFeatureGeneration, build_single_class_discovery_row

@@ -359,6 +359,58 @@ def test_production_continues_after_batch_failure(tmp_path: Path, capsys: pytest
     assert "batch_index=0 error=" in capsys.readouterr().err
 
 
+def test_production_mixed_topup_uses_topup_batching(tmp_path: Path) -> None:
+    """Production mixed_topup calls the LLM once per top-up batch."""
+    cohort = _sample_cohort()
+    call_count = {"n": 0}
+
+    def _complete(*args, **kwargs):
+        call_count["n"] += 1
+        return _mixed_result()
+
+    approval_path = tmp_path / "approval_step3_production.json"
+    approval_path.write_text(json.dumps({"approved": True}), encoding="utf-8")
+    run_parent = tmp_path / "discovery_outputs"
+    run_parent.mkdir()
+    topup_batches = [{"batch_id": 0, "message_ids": ["keep_0"], "keep_posts": [], "remove_posts": []}]
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.APPROVAL_PATH",
+        approval_path,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.load_discovery_cohort",
+        return_value=cohort,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.form_mixed_topup_batches",
+        return_value=topup_batches,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.complete_structured",
+        side_effect=_complete,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.discovery_run_dir",
+        return_value=run_parent,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.make_run_timestamp",
+        return_value="2026-09-24T12-00-00",
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.EXPERIMENT_ROOT",
+        tmp_path,
+    ):
+        with pytest.raises(SystemExit) as exc_info:
+            main(
+                [
+                    "--arm",
+                    "original_only",
+                    "--batch-design",
+                    constants.BATCH_DESIGN_MIXED_TOPUP,
+                    "--production",
+                    "--seed",
+                    "42",
+                ]
+            )
+        assert exc_info.value.code == 0
+    assert call_count["n"] == 1
+
+
 def test_writer_row_shape_single_class() -> None:
     """Single-class discovery rows include label_class and feature_count."""
     batch = {
