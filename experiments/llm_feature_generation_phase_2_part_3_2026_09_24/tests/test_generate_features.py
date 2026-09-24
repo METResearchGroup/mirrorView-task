@@ -76,10 +76,12 @@ def _single_class_result() -> SingleClassBatchFeatureGeneration:
     return SingleClassBatchFeatureGeneration(batch_index=0, features=[feature])
 
 
-def test_smoke_runs_one_batch(capsys: pytest.CaptureFixture[str]) -> None:
+def test_smoke_runs_one_batch(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     """Smoke mode runs exactly one mixed batch LLM call."""
     cohort = _sample_cohort()
     call_count = {"n": 0}
+    run_parent = tmp_path / "discovery_outputs"
+    run_parent.mkdir()
 
     def _complete(*args, **kwargs):
         call_count["n"] += 1
@@ -92,8 +94,14 @@ def test_smoke_runs_one_batch(capsys: pytest.CaptureFixture[str]) -> None:
         "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.complete_structured",
         side_effect=_complete,
     ), patch(
-        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.make_run_timestamp",
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.discovery_run_dir",
+        return_value=run_parent,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.make_run_timestamp",
         return_value="2026-09-24T12-00-00",
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.EXPERIMENT_ROOT",
+        tmp_path,
     ):
         with pytest.raises(SystemExit) as exc_info:
             main(
@@ -148,6 +156,8 @@ def test_production_runs_when_approved(tmp_path: Path) -> None:
         json.dumps({"approved": True, "approved_at": "2026-09-24T00:00:00", "note": "test"}),
         encoding="utf-8",
     )
+    run_parent = tmp_path / "discovery_outputs"
+    run_parent.mkdir()
     with patch(
         "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.APPROVAL_PATH",
         approval_path,
@@ -158,8 +168,14 @@ def test_production_runs_when_approved(tmp_path: Path) -> None:
         "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.complete_structured",
         side_effect=_complete,
     ), patch(
-        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.make_run_timestamp",
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.discovery_run_dir",
+        return_value=run_parent,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.make_run_timestamp",
         return_value="2026-09-24T12-00-00",
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.EXPERIMENT_ROOT",
+        tmp_path,
     ):
         with pytest.raises(SystemExit) as exc_info:
             main(
@@ -195,6 +211,65 @@ def test_writer_row_shape_mixed() -> None:
         "remove_feature_count",
         "result",
     }
+
+
+def test_production_skips_existing_batch_artifacts(tmp_path: Path) -> None:
+    """Production skips LLM calls when a batch artifact already exists."""
+    cohort = _sample_cohort()
+    batches = form_mixed_batches(cohort)
+    run_dir = tmp_path / "outputs" / "original_only" / "discovery" / "outputs" / "2026-09-24T12-00-00"
+    run_dir.mkdir(parents=True)
+    (run_dir / "metadata.json").write_text(
+        json.dumps(
+            {
+                "run_metadata": {
+                    "arm": "original_only",
+                    "batch_design": constants.BATCH_DESIGN_MIXED,
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    for call_index in range(len(batches) - 1):
+        (run_dir / f"{call_index:05d}_2026-09-24T12-00-00.json").write_text("{}", encoding="utf-8")
+    call_count = {"n": 0}
+
+    def _complete(*args, **kwargs):
+        call_count["n"] += 1
+        return _mixed_result()
+
+    approval_path = tmp_path / "approval_step3_production.json"
+    approval_path.write_text(json.dumps({"approved": True}), encoding="utf-8")
+    with patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.APPROVAL_PATH",
+        approval_path,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.load_discovery_cohort",
+        return_value=cohort,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.generate_features.complete_structured",
+        side_effect=_complete,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.discovery_run_dir",
+        return_value=run_dir.parent,
+    ), patch(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.paths.EXPERIMENT_ROOT",
+        tmp_path,
+    ):
+        with pytest.raises(SystemExit) as exc_info:
+            main(
+                [
+                    "--arm",
+                    "original_only",
+                    "--batch-design",
+                    "mixed",
+                    "--production",
+                    "--seed",
+                    "42",
+                ]
+            )
+        assert exc_info.value.code == 0
+    assert call_count["n"] == 1
 
 
 def test_writer_row_shape_single_class() -> None:

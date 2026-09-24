@@ -12,6 +12,7 @@ Run from the repo root::
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -125,10 +126,11 @@ def _run_batches(
     response_model: type[BaseModel],
     row_builder: Any,
 ) -> Path:
-    run_timestamp = paths.make_run_timestamp()
-    output_dir = paths.discovery_run_dir(args.arm) / run_timestamp
+    output_dir = _resolve_output_dir(args)
     run_metadata = _build_run_metadata(args)
     for call_index, batch in enumerate(batches):
+        if _batch_artifact_exists(output_dir, call_index):
+            continue
         batch["arm"] = args.arm
         batch["batch_design"] = args.batch_design
         messages = build_feature_generation_messages(batch, args.arm)
@@ -147,6 +149,34 @@ def _run_batches(
             merge_discovery_row(artifact_path, row_builder(batch, result))
             write_run_metadata(output_dir, run_metadata, artifact_path)
     return output_dir
+
+
+def _resolve_output_dir(args: argparse.Namespace) -> Path:
+    parent = paths.discovery_run_dir(args.arm)
+    existing = _find_existing_run_dir(parent, args.arm, args.batch_design)
+    if existing is not None:
+        return existing
+    return parent / paths.make_run_timestamp()
+
+
+def _find_existing_run_dir(parent: Path, arm: str, batch_design: str) -> Path | None:
+    if not parent.is_dir():
+        return None
+    for child in sorted(parent.iterdir(), key=lambda path: path.name, reverse=True):
+        if not child.is_dir():
+            continue
+        metadata_path = child / "metadata.json"
+        if not metadata_path.is_file():
+            continue
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        run_meta = metadata.get("run_metadata", {})
+        if run_meta.get("arm") == arm and run_meta.get("batch_design") == batch_design:
+            return child
+    return None
+
+
+def _batch_artifact_exists(output_dir: Path, call_index: int) -> bool:
+    return any(output_dir.glob(f"{call_index:05d}_*.json"))
 
 
 def _build_run_metadata(args: argparse.Namespace) -> dict[str, Any]:
