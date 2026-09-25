@@ -93,4 +93,8 @@ def load_jev_labels() -> pd.DataFrame:
     pandas.DataFrame
         The checked label frame.
     """
-    raise NotImplementedError
+    use_lab_credentials()
+    store = S3(JEV_BUCKET, region_name=DEFAULT_REGION_NAME)
+    labels = pd.read_parquet(BytesIO(store.get_bytes(JEV_LABELS_KEY)))
+    assert_jev_label_frame(labels)
+    return labels
