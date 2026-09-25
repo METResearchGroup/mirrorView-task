@@ -23,6 +23,12 @@ from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.platfor
     column_proportions,
     load_stimuli,
 )
+from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.remove_histogram import (
+    HISTOGRAM_FILENAME,
+    count_five_label_posts_by_remove_count,
+    format_remove_count_section,
+    plot_remove_count_histogram,
+)
 from experiments.phase_2_part_3_keep_remove_descriptive_stats_2026_09_24.votes import (
     build_per_post_votes,
     load_results_full,
@@ -60,6 +66,10 @@ def main() -> None:
     four_cell_counts = build_four_cell_counts(per_post)
     four_cell_shares = build_four_cell_shares(four_cell_counts)
     funnel = build_vote_funnel(per_post)
+    remove_counts = count_five_label_posts_by_remove_count(per_post)
+    plot_remove_count_histogram(
+        remove_counts, EXPERIMENT_DIR / "outputs" / HISTOGRAM_FILENAME
+    )
 
     markdown = format_results_markdown(
         platform_counts,
@@ -69,6 +79,7 @@ def main() -> None:
         four_cell_shares,
         funnel,
     )
+    markdown = f"{markdown}\n\n{format_remove_count_section(remove_counts)}\n"
 
     csv_bundle = {
         "platform_counts.csv": _crosstab_to_csv(platform_counts),
@@ -78,6 +89,7 @@ def main() -> None:
         ),
         "four_cell_counts.csv": four_cell_shares,
         "funnel.csv": funnel,
+        "five_label_remove_counts.csv": remove_counts,
     }
     results_path = write_results(markdown, csv_bundle, EXPERIMENT_DIR)
     print(markdown, end="")

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-25
+
+1. The Part 3 keep and remove experiment now shows how many five-label posts have 0 through 5 remove votes. Of 8,363 posts with five cleaned labels, 2,594 have one remove vote and 174 have five. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
+
 ## 2026-09-24
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)

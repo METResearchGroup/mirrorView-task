@@ -22,6 +22,7 @@ OUTPUT_CSV_NAMES = (
     "platform_toxicity_proportions.csv",
     "four_cell_counts.csv",
     "funnel.csv",
+    "five_label_remove_counts.csv",
 )
 
 RESULTS_SECTIONS = (

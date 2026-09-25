@@ -36,3 +36,18 @@
 | posts_dropped_lt_3_raters | 2979 |
 | posts_dropped_ties | 969 |
 | posts_remaining | 14914 |
+
+## Remove votes on posts with 5 labels
+
+Each post in this table has exactly five cleaned labels. The count is how many of those five labels are remove.
+
+| remove votes | posts |
+|---:|---:|
+| 0 | 1989 |
+| 1 | 2594 |
+| 2 | 1971 |
+| 3 | 1131 |
+| 4 | 504 |
+| 5 | 174 |
+
+![Posts with 5 labels by number of remove votes](outputs/five_label_remove_histogram.png)
