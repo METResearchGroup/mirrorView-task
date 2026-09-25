@@ -357,7 +357,12 @@ def _resolve_production_run_dir() -> Path:
 
 def _latest_label_run_dir() -> Path:
     parent = paths.shared_label_dir()
-    runs = sorted(child for child in parent.iterdir() if child.is_dir())
+    run_dir_pattern = re.compile(r"^\d{4}-\d{2}-\d{2}T")
+    runs = sorted(
+        child
+        for child in parent.iterdir()
+        if child.is_dir() and run_dir_pattern.match(child.name)
+    )
     if not runs:
         raise FileNotFoundError(f"No label runs under {parent}")
     return runs[-1]

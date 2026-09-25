@@ -12,6 +12,7 @@ import pytest
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import batch_client, constants
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.label_posts import (
     ApprovalRequiredError,
+    _latest_label_run_dir,
     assemble_label_matrix,
     main,
     require_approved_codebook,
@@ -163,6 +164,9 @@ class TestRunProduction:
                 "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.label_posts._submit_all_batches",
                 return_value=[],
             ),
+            patch(
+                "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.label_posts.assemble_label_matrix",
+            ),
         ):
             run_production(codebook, ("original", "mirror"), client=MagicMock())
         skip_ids = mock_build.call_args.kwargs["skip_custom_ids"]
@@ -198,3 +202,14 @@ class TestAssembleLabelMatrix:
         ]
         assert len(frame) == 4
         assert out.is_file()
+
+
+def test_latest_label_run_dir_ignores_smoke_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Production assembly must not pick a smoke or invalid directory."""
+    for name in ("smoke_2026-09-24T15-27-04", "2026-09-24T16-26-06", "INVALID_x"):
+        (tmp_path / name).mkdir()
+    monkeypatch.setattr(
+        "experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.label_posts.paths.shared_label_dir",
+        lambda: tmp_path,
+    )
+    assert _latest_label_run_dir().name == "2026-09-24T16-26-06"
