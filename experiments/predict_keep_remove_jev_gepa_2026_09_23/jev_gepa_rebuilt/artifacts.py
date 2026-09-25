@@ -47,9 +47,16 @@ def rebuilt_s3_key(path: Path) -> str:
 
 
 def upload_rebuilt(path: Path) -> None:
-    """Upload ``path`` under ``rebuilt_s3_prefix()`` using a package-relative S3 key."""
-    shared_artifacts.upload_under_prefix(
-        path,
-        allowed_prefix=rebuilt_s3_prefix(),
-        s3_key=rebuilt_s3_key(path),
-    )
+    """Upload ``path`` under ``rebuilt_s3_prefix()`` using a package-relative S3 key.
+
+    A directory is walked and each file is uploaded on its own key. The directory
+    itself is not passed to the file uploader.
+    """
+    resolved = path.resolve()
+    files = sorted(item for item in resolved.rglob("*") if item.is_file()) if resolved.is_dir() else [path]
+    for file_path in files:
+        shared_artifacts.upload_under_prefix(
+            file_path,
+            allowed_prefix=rebuilt_s3_prefix(),
+            s3_key=rebuilt_s3_key(file_path),
+        )
