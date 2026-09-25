@@ -41,6 +41,14 @@ class TestJoinOnPostId:
         with pytest.raises(ValueError):
             join_on_post_id(human, jev)
 
+    def test_duplicate_jev_post_id_raises(self) -> None:
+        """Raises ValueError when the Jev frame repeats a post id."""
+        human = pd.DataFrame({"post_id": ["a"], "n_remove": [1], "n_raters": [5]})
+        jev = pd.DataFrame({"post_id": ["a", "a"], "p_remove": [0.3, 0.4]})
+
+        with pytest.raises(ValueError):
+            join_on_post_id(human, jev)
+
 
 class TestBuildComparisonFrame:
     """Tests for build_comparison_frame."""

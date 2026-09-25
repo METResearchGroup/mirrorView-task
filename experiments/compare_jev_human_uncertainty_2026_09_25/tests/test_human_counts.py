@@ -63,6 +63,33 @@ class TestSelectScoredTrials:
 
         assert list(result["post_id"]) == ["post-a"]
 
+    def test_drops_missing_and_nan_post_id(self) -> None:
+        """Drops a null post id and the text nan."""
+        raw = pd.DataFrame(
+            [
+                _trial("p1", None, "keep"),
+                _trial("p2", "NaN", "keep"),
+                _trial("p3", "post-a", "keep"),
+            ]
+        )
+
+        result = select_scored_trials(raw)
+
+        assert list(result["post_id"]) == ["post-a"]
+
+    def test_keeps_uppercase_keep_and_remove(self) -> None:
+        """Keeps KEEP and REMOVE when the trial type is mixed case."""
+        raw = pd.DataFrame(
+            [
+                _trial("p1", "post-a", "KEEP", trial_type="Moderation-Trial"),
+                _trial("p2", "post-a", "REMOVE", trial_type="MODERATION-TRIAL"),
+            ]
+        )
+
+        result = select_scored_trials(raw)
+
+        assert list(result["decision"]) == ["keep", "remove"]
+
     def test_missing_column_raises(self) -> None:
         """Raises KeyError when decision is missing."""
         raw = pd.DataFrame([{"trial_type": "moderation-trial", "post_id": "post-a", "prolific_id": "p1"}])
@@ -86,6 +113,19 @@ class TestDedupeLabelerPost:
         result = dedupe_labeler_post(trials)
 
         assert len(result) == 1
+        assert result.iloc[0]["decision"] == "remove"
+
+    def test_keeps_lower_trial_index_when_elapsed_matches(self) -> None:
+        """Keeps the lower trial index when elapsed time is the same."""
+        trials = pd.DataFrame(
+            [
+                _trial("p1", "post-a", "keep", time_elapsed=10, trial_index=2),
+                _trial("p1", "post-a", "remove", time_elapsed=10, trial_index=1),
+            ]
+        )
+
+        result = dedupe_labeler_post(trials)
+
         assert result.iloc[0]["decision"] == "remove"
 
 

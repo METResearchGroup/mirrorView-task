@@ -94,3 +94,8 @@ class TestJevBinForProbability:
         """Raises ValueError when the probability is below 0."""
         with pytest.raises(ValueError):
             jev_bin_for_probability(-0.01)
+
+    def test_rejects_missing_probability(self) -> None:
+        """Raises ValueError when the probability is missing."""
+        with pytest.raises(ValueError):
+            jev_bin_for_probability(float("nan"))
