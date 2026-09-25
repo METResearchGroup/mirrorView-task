@@ -1,7 +1,0 @@
-{
-  "model": "gpt-5.4-nano",
-  "text_role": "mirror",
-  "source_topics_run": "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/mirror/20260924T053136Z",
-  "noise_label_policy": "llm_label_null_skip_api",
-  "n_topics_labeled": 83
-}

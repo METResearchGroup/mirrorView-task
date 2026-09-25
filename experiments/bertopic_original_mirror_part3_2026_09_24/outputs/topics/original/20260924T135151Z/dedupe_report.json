@@ -1,8 +1,0 @@
-{
-  "n_stimuli_raw": 20000,
-  "n_removed_duplicate_original": 205,
-  "n_removed_identical_pair": 32,
-  "n_after_dedupe": 19763,
-  "dedupe_rule_duplicate_original": "drop_duplicates on original_text keep first by post_id ascending",
-  "dedupe_rule_identical_pair": "drop rows where original_text == mirror_text"
-}

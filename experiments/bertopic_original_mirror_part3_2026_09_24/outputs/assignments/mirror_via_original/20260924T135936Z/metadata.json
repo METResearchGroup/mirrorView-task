@@ -1,8 +1,0 @@
-{
-  "source_original_topics_run": "experiments/bertopic_original_mirror_part3_2026_09_24/outputs/topics/original/20260924T135151Z",
-  "n_pairs": 19763,
-  "n_agree": 3846,
-  "n_agree_excl_noise": 3334,
-  "seed": 42,
-  "dedupe_report_path": "/workspace/experiments/bertopic_original_mirror_part3_2026_09_24/outputs/dedupe_report.json"
-}
