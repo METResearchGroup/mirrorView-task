@@ -77,11 +77,38 @@
           </tbody>
         </table>
         <p>Unclustered posts are not errors. They are posts whose language did not match any group strongly enough for HDBSCAN to assign them.</p>
+        <figure>
+          <svg role="img" aria-labelledby="chart-unclustered-title chart-unclustered-desc" viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg">
+            <title id="chart-unclustered-title">Share of posts placed in a group and left unclustered, by fit</title>
+            <desc id="chart-unclustered-desc">Stacked bars. Original text is 57.7 percent clustered and 42.3 percent unclustered. Mirror text is 55.2 and 44.8. The joint fit is 45.9 and 54.1.</desc>
+            <text x="320" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Clustered and unclustered posts</text>
+            <text x="168" y="78" text-anchor="end" font-size="12" fill="#333">Original text</text>
+            <rect x="180" y="62" width="253.9" height="22" fill="#2563eb"/>
+            <text x="306" y="77" text-anchor="end" font-size="11" fill="#fff">57.7%</text>
+            <rect x="433.9" y="62" width="186.1" height="22" fill="#94a3b8"/>
+            <text x="448" y="77" font-size="11" fill="#1a1a1a">42.3%</text>
+            <text x="168" y="118" text-anchor="end" font-size="12" fill="#333">Mirror text</text>
+            <rect x="180" y="102" width="242.9" height="22" fill="#2563eb"/>
+            <text x="295" y="117" text-anchor="end" font-size="11" fill="#fff">55.2%</text>
+            <rect x="422.9" y="102" width="197.1" height="22" fill="#94a3b8"/>
+            <text x="437" y="117" font-size="11" fill="#1a1a1a">44.8%</text>
+            <text x="168" y="158" text-anchor="end" font-size="12" fill="#333">Both together</text>
+            <rect x="180" y="142" width="202.0" height="22" fill="#2563eb"/>
+            <text x="254" y="157" text-anchor="end" font-size="11" fill="#fff">45.9%</text>
+            <rect x="382.0" y="142" width="238.0" height="22" fill="#94a3b8"/>
+            <text x="396" y="157" font-size="11" fill="#1a1a1a">54.1%</text>
+            <rect x="180" y="188" width="12" height="12" fill="#2563eb"/>
+            <text x="198" y="198" font-size="11" fill="#444">Placed in a group</text>
+            <rect x="330" y="188" width="12" height="12" fill="#94a3b8"/>
+            <text x="348" y="198" font-size="11" fill="#444">Left unclustered</text>
+          </svg>
+          <figcaption>Each bar splits one fit into posts placed in a group and posts left unclustered. The joint fit, which uses the original text and the mirror text together, leaves 54.1% of its documents unclustered.</figcaption>
+        </figure>
 
         <h3>A mirror usually lands in a different group than its original</h3>
         <p>When the model fit on original text reads mirror text, it places the mirror in the same topic as the original 19.5% of the time, which is 3,846 of 19,763 pairs. When neither side is unclustered, that rate is 30.5%, or 3,334 of 10,916 pairs. Compared with a model fit on mirror text directly, agreement between the two groupings is ARI 0.094 and NMI 0.30. ARI is a score from 0 to 1 for how much two groupings agree, where 1 means identical and 0 means no better than chance.</p>
         <figure>
-          <svg role="img" aria-labelledby="chart-same-group-title chart-same-group-desc" viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg">
+          <svg role="img" aria-labelledby="chart-same-group-title chart-same-group-desc" viewBox="0 0 520 330" xmlns="http://www.w3.org/2000/svg">
             <title id="chart-same-group-title">Share of pairs where original and mirror share a topic</title>
             <desc id="chart-same-group-desc">Three vertical bars for 19.5 percent, 30.5 percent, and 59.0 percent.</desc>
             <text x="260" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Same topic for original and mirror</text>
@@ -103,19 +130,130 @@
             <text x="396" y="122" text-anchor="middle" font-size="12" fill="#1a1a1a">59.0%</text>
             <text x="396" y="278" text-anchor="middle" font-size="10" fill="#444">Joint fit,</text>
             <text x="396" y="290" text-anchor="middle" font-size="10" fill="#444">all pairs</text>
-            <rect x="400" y="48" width="12" height="12" fill="#2563eb"/>
-            <text x="418" y="58" font-size="11" fill="#444">Original text model</text>
-            <rect x="400" y="66" width="12" height="12" fill="#64748b"/>
-            <text x="418" y="76" font-size="11" fill="#444">Joint fit</text>
+            <rect x="150" y="300" width="12" height="12" fill="#2563eb"/>
+            <text x="168" y="310" font-size="11" fill="#444">Original text model</text>
+            <rect x="310" y="300" width="12" height="12" fill="#64748b"/>
+            <text x="328" y="310" font-size="11" fill="#444">Joint fit</text>
           </svg>
           <figcaption>The joint model that sees both texts assigns original and mirror to the same topic 59.0% of the time, much more often than the original only model does when it reads mirror text.</figcaption>
         </figure>
 
         <h3>The groups line up only partly with the earlier round 1 analysis</h3>
         <p>An earlier BERTopic run grouped only round 1 posts. On the 8,579 posts that both analyses grouped, agreement is ARI 0.259 and NMI 0.56. The overlap is moderate, not a one to one match.</p>
+        <figure>
+          <svg role="img" aria-labelledby="chart-ari-title chart-ari-desc" viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg">
+            <title id="chart-ari-title">Agreement scores for three comparisons</title>
+            <desc id="chart-ari-desc">Horizontal bars on a 0 to 1 scale. Original model versus mirror model is 0.094. Union fit versus the round 1 run is 0.259. Refits that change the random seed average 0.558.</desc>
+            <text x="320" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">How much two groupings agree (ARI)</text>
+            <line x1="250" y1="40" x2="250" y2="160" stroke="#ccc"/>
+            <line x1="250" y1="160" x2="610" y2="160" stroke="#ccc"/>
+            <text x="250" y="176" text-anchor="middle" font-size="10" fill="#555">0</text>
+            <text x="430" y="176" text-anchor="middle" font-size="10" fill="#555">0.5</text>
+            <text x="610" y="176" text-anchor="middle" font-size="10" fill="#555">1</text>
+            <text x="242" y="68" text-anchor="end" font-size="12" fill="#333">Original model and mirror model</text>
+            <rect x="250" y="54" width="33.8" height="18" fill="#2563eb"/>
+            <text x="290" y="67" font-size="11" fill="#1a1a1a">0.094</text>
+            <text x="242" y="108" text-anchor="end" font-size="12" fill="#333">Union fit and round 1 run</text>
+            <rect x="250" y="94" width="93.2" height="18" fill="#2563eb"/>
+            <text x="350" y="107" font-size="11" fill="#1a1a1a">0.259</text>
+            <text x="242" y="148" text-anchor="end" font-size="12" fill="#333">Refits with a new random seed</text>
+            <rect x="250" y="134" width="200.9" height="18" fill="#2563eb"/>
+            <text x="458" y="147" font-size="11" fill="#1a1a1a">0.558</text>
+          </svg>
+          <figcaption>ARI runs from 0, which is no better than chance, to 1, which is the same grouping. The three bars answer different questions. Changing only the random seed moves the groups less than switching to the earlier round 1 run, and much less than comparing a model fit on original text with a model fit on mirror text.</figcaption>
+        </figure>
 
         <h3>Keep rates differ by group</h3>
-        <p>Keep rate is the share of posts raters voted to keep. Among the 19,763 clustered posts the overall keep rate is 69.8%, and a filter requiring at least 3 raters removed 0 posts. After a Benjamini Hochberg correction at 5%, which is a correction that limits false alarms when many groups are tested at once, 50 of the 100 original text groups have a keep rate that differs from the overall rate. Model written labels for the lowest keep rates include posts about anti Trump harassment at 31.7% with 144 posts, posts calling Trump a fascist at 45.0% with 19 posts, and posts accusing Trump of crimes at 46.9% with 56 posts. Among the highest keep rates are gun violence awareness and community safety at 90.7% with 23 posts, climate action for rainforests, wetlands, and reefs at 88.9% with 27 posts, and Florida property tax debate at 87.7% with 15 posts. Those names were written by a model and were not checked by a person. By rater party the keep rate is 69.4% for Democratic raters over 52,864 ratings and 70.0% for Republican raters over 48,970 ratings.</p>
+        <p>Keep rate is the share of posts raters voted to keep. Among the 19,763 clustered posts the overall keep rate is 69.8%, and a filter requiring at least 3 raters removed 0 posts. After a Benjamini Hochberg correction at 5%, which is a correction that limits false alarms when many groups are tested at once, 50 of the 100 original text groups have a keep rate that differs from the overall rate. The names below are shortened from labels that gpt-5.4-nano wrote, and no person has checked them.</p>
+        <figure>
+<svg role="img" aria-labelledby="chart-large-title chart-large-desc" viewBox="0 0 700 658" xmlns="http://www.w3.org/2000/svg">
+<title id="chart-large-title">Keep rate for original text groups with at least 100 posts</title>
+<desc id="chart-large-desc">Horizontal bars from 31.7 percent to 81.8 percent, with a marker at the overall keep rate of 69.8 percent.</desc>
+<text x="350" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Keep rate for groups with at least 100 posts</text>
+<line x1="210" y1="42" x2="210" y2="596" stroke="#ccc"/>
+<line x1="210" y1="596" x2="640" y2="596" stroke="#ccc"/>
+<text x="210.0" y="612" text-anchor="middle" font-size="10" fill="#555">0%</text>
+<text x="425.0" y="612" text-anchor="middle" font-size="10" fill="#555">50%</text>
+<text x="640.0" y="612" text-anchor="middle" font-size="10" fill="#555">100%</text>
+<line x1="510.1" y1="42" x2="510.1" y2="596" stroke="#b45309" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="510.1" y="36" text-anchor="middle" font-size="10" fill="#b45309">Overall 69.8%</text>
+<text x="202" y="60" text-anchor="end" font-size="11" fill="#333">Anti Trump harassment</text>
+<rect x="210" y="48" width="136.3" height="16" fill="#2563eb"/>
+<text x="351.3" y="60" font-size="10" fill="#1a1a1a">31.7%</text>
+<text x="202" y="84" text-anchor="end" font-size="11" fill="#333">Anti fascism messaging</text>
+<rect x="210" y="72" width="252.0" height="16" fill="#2563eb"/>
+<text x="467.0" y="84" font-size="10" fill="#1a1a1a">58.6%</text>
+<text x="202" y="108" text-anchor="end" font-size="11" fill="#333">Criticism of Republicans</text>
+<rect x="210" y="96" width="253.7" height="16" fill="#2563eb"/>
+<text x="468.7" y="108" font-size="10" fill="#1a1a1a">59.0%</text>
+<text x="202" y="132" text-anchor="end" font-size="11" fill="#333">MAGA and institutions</text>
+<rect x="210" y="120" width="254.1" height="16" fill="#2563eb"/>
+<text x="469.1" y="132" font-size="10" fill="#1a1a1a">59.1%</text>
+<text x="202" y="156" text-anchor="end" font-size="11" fill="#333">Trump media and lying</text>
+<rect x="210" y="144" width="255.0" height="16" fill="#2563eb"/>
+<text x="470.0" y="156" font-size="10" fill="#1a1a1a">59.3%</text>
+<text x="202" y="180" text-anchor="end" font-size="11" fill="#333">Abolish ICE</text>
+<rect x="210" y="168" width="267.0" height="16" fill="#2563eb"/>
+<text x="482.0" y="180" font-size="10" fill="#1a1a1a">62.1%</text>
+<text x="202" y="204" text-anchor="end" font-size="11" fill="#333">Trans rights in sports</text>
+<rect x="210" y="192" width="272.2" height="16" fill="#2563eb"/>
+<text x="487.2" y="204" font-size="10" fill="#1a1a1a">63.3%</text>
+<text x="202" y="228" text-anchor="end" font-size="11" fill="#333">Biden and Trump blame</text>
+<rect x="210" y="216" width="290.7" height="16" fill="#2563eb"/>
+<text x="505.7" y="228" font-size="10" fill="#1a1a1a">67.6%</text>
+<text x="202" y="252" text-anchor="end" font-size="11" fill="#333">Conservatism and religion</text>
+<rect x="210" y="240" width="297.6" height="16" fill="#cbd5e1"/>
+<text x="512.6" y="252" font-size="10" fill="#1a1a1a">69.2%</text>
+<text x="202" y="276" text-anchor="end" font-size="11" fill="#333">Criticism of Democrats</text>
+<rect x="210" y="264" width="298.0" height="16" fill="#cbd5e1"/>
+<text x="513.0" y="276" font-size="10" fill="#1a1a1a">69.3%</text>
+<text x="202" y="300" text-anchor="end" font-size="11" fill="#333">Open carry laws</text>
+<rect x="210" y="288" width="313.0" height="16" fill="#cbd5e1"/>
+<text x="528.0" y="300" font-size="10" fill="#1a1a1a">72.8%</text>
+<text x="202" y="324" text-anchor="end" font-size="11" fill="#333">Tariffs and prices</text>
+<rect x="210" y="312" width="314.3" height="16" fill="#cbd5e1"/>
+<text x="529.3" y="324" font-size="10" fill="#1a1a1a">73.1%</text>
+<text x="202" y="348" text-anchor="end" font-size="11" fill="#333">US and Iran</text>
+<rect x="210" y="336" width="315.2" height="16" fill="#cbd5e1"/>
+<text x="530.2" y="348" font-size="10" fill="#1a1a1a">73.3%</text>
+<text x="202" y="372" text-anchor="end" font-size="11" fill="#333">Medicaid and SNAP cuts</text>
+<rect x="210" y="360" width="315.6" height="16" fill="#2563eb"/>
+<text x="530.6" y="372" font-size="10" fill="#1a1a1a">73.4%</text>
+<text x="202" y="396" text-anchor="end" font-size="11" fill="#333">Democratic candidates</text>
+<rect x="210" y="384" width="316.1" height="16" fill="#2563eb"/>
+<text x="531.0" y="396" font-size="10" fill="#1a1a1a">73.5%</text>
+<text x="202" y="420" text-anchor="end" font-size="11" fill="#333">Supreme Court power</text>
+<rect x="210" y="408" width="318.6" height="16" fill="#2563eb"/>
+<text x="533.6" y="420" font-size="10" fill="#1a1a1a">74.1%</text>
+<text x="202" y="444" text-anchor="end" font-size="11" fill="#333">Abortion access</text>
+<rect x="210" y="432" width="323.4" height="16" fill="#2563eb"/>
+<text x="538.4" y="444" font-size="10" fill="#1a1a1a">75.2%</text>
+<text x="202" y="468" text-anchor="end" font-size="11" fill="#333">Border and immigration</text>
+<rect x="210" y="456" width="325.9" height="16" fill="#2563eb"/>
+<text x="540.9" y="468" font-size="10" fill="#1a1a1a">75.8%</text>
+<text x="202" y="492" text-anchor="end" font-size="11" fill="#333">Gun rights</text>
+<rect x="210" y="480" width="326.4" height="16" fill="#2563eb"/>
+<text x="541.4" y="492" font-size="10" fill="#1a1a1a">75.9%</text>
+<text x="202" y="516" text-anchor="end" font-size="11" fill="#333">Billionaires and taxes</text>
+<rect x="210" y="504" width="329.4" height="16" fill="#2563eb"/>
+<text x="544.4" y="516" font-size="10" fill="#1a1a1a">76.6%</text>
+<text x="202" y="540" text-anchor="end" font-size="11" fill="#333">Gun laws in schools</text>
+<rect x="210" y="528" width="341.0" height="16" fill="#2563eb"/>
+<text x="556.0" y="540" font-size="10" fill="#1a1a1a">79.3%</text>
+<text x="202" y="564" text-anchor="end" font-size="11" fill="#333">Sanctuary cities</text>
+<rect x="210" y="552" width="344.9" height="16" fill="#2563eb"/>
+<text x="559.9" y="564" font-size="10" fill="#1a1a1a">80.2%</text>
+<text x="202" y="588" text-anchor="end" font-size="11" fill="#333">Climate and fossil fuels</text>
+<rect x="210" y="576" width="351.7" height="16" fill="#2563eb"/>
+<text x="566.7" y="588" font-size="10" fill="#1a1a1a">81.8%</text>
+<rect x="150" y="630" width="12" height="12" fill="#2563eb"/>
+<text x="166" y="640" font-size="11" fill="#444">Differs from 69.8% after correction</text>
+<rect x="400" y="630" width="12" height="12" fill="#cbd5e1"/>
+<text x="416" y="640" font-size="11" fill="#444">Does not differ</text>
+</svg>
+          <figcaption>Every original text group with at least 100 posts is shown, from 104 posts to 1,122 posts. Dark bars differ from the overall 69.8% keep rate after the correction, and light bars do not. The lowest bar in this chart, anti Trump harassment, is 31.7%. The highest, climate and fossil fuels, is 81.8%.</figcaption>
+        </figure>
+        <p>A few groups are smaller than 100 posts and still differ from the overall rate. Among those, posts calling Trump a fascist are kept 45.0% of the time (19 posts) and posts accusing Trump of crimes are kept 46.9% of the time (56 posts). At the other end, gun violence awareness and community safety is 90.7% (23 posts), climate action for rainforests, wetlands, and reefs is 88.9% (27 posts), and the Florida property tax debate is 87.7% (15 posts).</p>
         <figure>
           <svg role="img" aria-labelledby="chart-keep-title chart-keep-desc" viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg">
             <title id="chart-keep-title">Keep rates for six groups compared with the overall rate</title>
@@ -157,7 +295,45 @@
             <rect x="280" y="348" width="12" height="12" fill="#2563eb"/>
             <text x="298" y="358" font-size="11" fill="#444">Higher keep rate groups</text>
           </svg>
-          <figcaption>Several groups with extreme keep rates are small, with 15 to 144 posts, so their percentages can shift easily if a few votes change.</figcaption>
+          <figcaption>These groups are small, with 15 to 144 posts, so a few votes can move the percentage.</figcaption>
+        </figure>
+        <p>By rater party the keep rate is 69.4% for Democratic raters over 52,864 ratings and 70.0% for Republican raters over 48,970 ratings. The largest gaps inside a single group are still only a few percentage points.</p>
+        <figure>
+          <svg role="img" aria-labelledby="chart-party-title chart-party-desc" viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg">
+            <title id="chart-party-title">Keep rate by rater party for the four groups with the largest party gap</title>
+            <desc id="chart-party-desc">Paired bars. Abolish ICE is 60.4 percent Democrat and 64.0 percent Republican. Gun rights is 77.6 and 73.9. Conservatism and religion is 70.7 and 67.1. MAGA and institutions is 57.6 and 60.8.</desc>
+            <text x="320" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Keep rate by rater party</text>
+            <line x1="200" y1="40" x2="200" y2="210" stroke="#ccc"/>
+            <line x1="200" y1="210" x2="560" y2="210" stroke="#ccc"/>
+            <text x="200" y="226" text-anchor="middle" font-size="10" fill="#555">0%</text>
+            <text x="380" y="226" text-anchor="middle" font-size="10" fill="#555">50%</text>
+            <text x="560" y="226" text-anchor="middle" font-size="10" fill="#555">100%</text>
+            <text x="192" y="62" text-anchor="end" font-size="11" fill="#333">Abolish ICE</text>
+            <rect x="200" y="48" width="217.4" height="12" fill="#2563eb"/>
+            <text x="422" y="58" font-size="10" fill="#1a1a1a">60.4%</text>
+            <rect x="200" y="62" width="230.4" height="12" fill="#64748b"/>
+            <text x="435" y="72" font-size="10" fill="#1a1a1a">64.0%</text>
+            <text x="192" y="106" text-anchor="end" font-size="11" fill="#333">Gun rights</text>
+            <rect x="200" y="92" width="279.4" height="12" fill="#2563eb"/>
+            <text x="484" y="102" font-size="10" fill="#1a1a1a">77.6%</text>
+            <rect x="200" y="106" width="266.0" height="12" fill="#64748b"/>
+            <text x="471" y="116" font-size="10" fill="#1a1a1a">73.9%</text>
+            <text x="192" y="150" text-anchor="end" font-size="11" fill="#333">Conservatism and religion</text>
+            <rect x="200" y="136" width="254.5" height="12" fill="#2563eb"/>
+            <text x="459" y="146" font-size="10" fill="#1a1a1a">70.7%</text>
+            <rect x="200" y="150" width="241.6" height="12" fill="#64748b"/>
+            <text x="446" y="160" font-size="10" fill="#1a1a1a">67.1%</text>
+            <text x="192" y="194" text-anchor="end" font-size="11" fill="#333">MAGA and institutions</text>
+            <rect x="200" y="176" width="207.4" height="12" fill="#2563eb"/>
+            <text x="412" y="186" font-size="10" fill="#1a1a1a">57.6%</text>
+            <rect x="200" y="190" width="218.9" height="12" fill="#64748b"/>
+            <text x="424" y="200" font-size="10" fill="#1a1a1a">60.8%</text>
+            <rect x="200" y="242" width="12" height="12" fill="#2563eb"/>
+            <text x="216" y="252" font-size="11" fill="#444">Democratic raters</text>
+            <rect x="360" y="242" width="12" height="12" fill="#64748b"/>
+            <text x="376" y="252" font-size="11" fill="#444">Republican raters</text>
+          </svg>
+          <figcaption>The chart shows the four groups where Democratic and Republican keep rates differ the most. The gaps are 3.2 to 3.7 percentage points. In the other large groups the two rates are closer than that.</figcaption>
         </figure>
       </section>
 
