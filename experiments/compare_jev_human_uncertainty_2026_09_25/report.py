@@ -22,9 +22,6 @@ from experiments.compare_jev_human_uncertainty_2026_09_25.constants import (
     REQUIRED_LABELERS,
     TABLE_FILENAMES,
 )
-from experiments.compare_jev_human_uncertainty_2026_09_25.jev_labels import (
-    use_lab_credentials,
-)
 from lib.aws.s3 import DEFAULT_REGION_NAME, S3
 from lib.constants import REPO_ROOT
 
@@ -191,7 +188,7 @@ def _results_sections(frame: pd.DataFrame) -> list[str]:
         "",
         _NO_SKIP_SENTENCE,
         "",
-        f"Mean difference score (human remove count minus Jev bin): {mean}",
+        f"The mean difference score, human remove count minus Jev bin, is {mean}.",
         "",
         *_figure_lines(),
         *_table_lines(frame),
@@ -221,7 +218,6 @@ def upload_outputs(paths: tuple[Path, ...], bucket: str) -> None:
     bucket
         Destination bucket name.
     """
-    use_lab_credentials()
     store = S3(bucket, region_name=DEFAULT_REGION_NAME)
     for path in paths:
         key = path.resolve().relative_to(REPO_ROOT).as_posix()

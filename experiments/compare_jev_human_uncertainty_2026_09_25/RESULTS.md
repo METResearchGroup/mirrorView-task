@@ -2,7 +2,7 @@
 
 Moderation trials have no skip decision. The human count is the number of remove votes among five labelers.
 
-Mean difference score (human remove count minus Jev bin): -0.1946
+The mean difference score, human remove count minus Jev bin, is -0.1946.
 
 ![Human remove counts](outputs/figures/human_remove_counts.png)
 
