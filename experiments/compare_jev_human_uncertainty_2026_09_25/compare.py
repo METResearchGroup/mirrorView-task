@@ -102,7 +102,24 @@ def join_on_post_id(human: pd.DataFrame, jev: pd.DataFrame) -> pd.DataFrame:
     KeyError
         When a required column is missing.
     """
-    raise NotImplementedError
+    _require_columns(human, ("post_id", "n_remove"))
+    _require_columns(jev, ("post_id", "p_remove"))
+    if human["post_id"].duplicated().any() or jev["post_id"].duplicated().any():
+        raise ValueError("duplicate post_id")
+    merged = human.merge(
+        jev.loc[:, ["post_id", "p_remove"]],
+        on="post_id",
+        how="inner",
+        validate="one_to_one",
+    )
+    return merged.loc[:, ["post_id", "n_remove", "p_remove"]].reset_index(drop=True)
+
+
+def _require_columns(frame: pd.DataFrame, columns: tuple[str, ...]) -> None:
+    """Raise KeyError when any named column is absent."""
+    missing = [name for name in columns if name not in frame.columns]
+    if missing:
+        raise KeyError(f"missing columns: {sorted(missing)}")
 
 
 def build_comparison_frame(human: pd.DataFrame, jev: pd.DataFrame) -> pd.DataFrame:
