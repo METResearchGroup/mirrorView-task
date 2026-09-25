@@ -12,6 +12,7 @@ import pandas as pd
 from experiments.compare_jev_human_uncertainty_2026_09_25.constants import (
     DECISION_KEEP,
     DECISION_REMOVE,
+    HUMAN_COUNT_COLUMNS,
     REQUIRED_LABELERS,
     TRIAL_TYPE_MODERATION,
 )
@@ -111,7 +112,16 @@ def aggregate_remove_counts(trials: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Columns ``post_id``, ``n_raters``, and ``n_remove``, sorted by ``post_id``.
     """
-    raise NotImplementedError
+    _require_columns(trials, ("post_id", "decision"))
+    grouped = trials.assign(_remove=trials["decision"].eq(DECISION_REMOVE))
+    counts = grouped.groupby("post_id", as_index=False).agg(
+        n_raters=("decision", "size"),
+        n_remove=("_remove", "sum"),
+    )
+    counts["n_raters"] = counts["n_raters"].astype(int)
+    counts["n_remove"] = counts["n_remove"].astype(int)
+    ordered = counts.loc[:, list(HUMAN_COUNT_COLUMNS)].sort_values("post_id")
+    return ordered.reset_index(drop=True)
 
 
 def posts_with_labeler_count(counts: pd.DataFrame, labeler_count: int) -> pd.DataFrame:
