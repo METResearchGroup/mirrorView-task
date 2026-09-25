@@ -25,3 +25,26 @@ JEV_BIN_EDGES = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
 JEV_BIN_COUNT = 5
 COMPARISON_COLUMNS = ("post_id", "n_remove", "p_remove", "jev_bin", "difference_score")
 EXPECTED_JEV_BIN_COUNTS = (1479, 6282, 3774, 2738, 840)
+PROBABILITY_HIST_BINS = 20
+DIFFERENCE_SCORE_MIN = -4
+DIFFERENCE_SCORE_MAX = 5
+EXPECTED_MEAN_DIFFERENCE = -0.1946
+FIGURE_DIRNAME = "outputs/figures"
+TABLE_DIRNAME = "outputs/tables"
+JOINED_FILENAME = "outputs/joined.parquet"
+RESULTS_FILENAME = "RESULTS.md"
+Y_AXIS_LABEL = "Posts"
+BAR_WIDTH = 0.4
+FIGURE_FILENAMES = (
+    "human_remove_counts.png",
+    "jev_probability.png",
+    "jev_five_bins.png",
+    "overlay_human_vs_jev.png",
+    "difference_score.png",
+)
+TABLE_FILENAMES = (
+    "human_remove_counts.csv",
+    "jev_bins.csv",
+    "difference_scores.csv",
+    "remove_by_jev_bin.csv",
+)
