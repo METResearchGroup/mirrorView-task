@@ -18,6 +18,7 @@ from experiments.compare_jev_human_uncertainty_2026_09_25.constants import (
 
 _SCORED_TRIAL_COLUMNS = ("trial_type", "post_id", "decision", "prolific_id")
 _DEDUPE_COLUMNS = ("prolific_id", "post_id", "time_elapsed", "trial_index")
+_DEDUPE_SORT = ("post_id", "prolific_id", "time_elapsed", "trial_index")
 _MINIMUM_LABELER_COUNT = 1
 _BLANK_POST_ID = "nan"
 
@@ -92,7 +93,9 @@ def dedupe_labeler_post(trials: pd.DataFrame) -> pd.DataFrame:
     KeyError
         When ``prolific_id``, ``post_id``, ``time_elapsed``, or ``trial_index`` is missing.
     """
-    raise NotImplementedError
+    _require_columns(trials, _DEDUPE_COLUMNS)
+    ordered = trials.sort_values(list(_DEDUPE_SORT), kind="mergesort")
+    return ordered.drop_duplicates(["prolific_id", "post_id"], keep="first")
 
 
 def aggregate_remove_counts(trials: pd.DataFrame) -> pd.DataFrame:
