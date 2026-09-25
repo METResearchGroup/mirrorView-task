@@ -10,7 +10,6 @@ from __future__ import annotations
 import pandas as pd
 
 from experiments.compare_jev_human_uncertainty_2026_09_25.constants import (
-    COMPARISON_COLUMNS,
     JEV_BIN_COUNT,
     JEV_BIN_EDGES,
 )
@@ -61,7 +60,11 @@ def attach_jev_bin(frame: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         A copy with ``jev_bin``.
     """
-    raise NotImplementedError
+    updated = frame.copy()
+    updated["jev_bin"] = [
+        jev_bin_for_probability(value) for value in updated["p_remove"]
+    ]
+    return updated
 
 
 def attach_difference_score(frame: pd.DataFrame) -> pd.DataFrame:
