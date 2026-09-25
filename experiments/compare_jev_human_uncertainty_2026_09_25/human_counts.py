@@ -144,7 +144,11 @@ def posts_with_labeler_count(counts: pd.DataFrame, labeler_count: int) -> pd.Dat
     ValueError
         When ``labeler_count`` is below 1.
     """
-    raise NotImplementedError
+    if labeler_count < _MINIMUM_LABELER_COUNT:
+        raise ValueError("labeler_count must be at least 1")
+    _require_columns(counts, ("n_raters",))
+    matched = counts.loc[counts["n_raters"].eq(labeler_count)]
+    return matched.reset_index(drop=True)
 
 
 def build_five_labeler_counts(raw: pd.DataFrame) -> pd.DataFrame:
