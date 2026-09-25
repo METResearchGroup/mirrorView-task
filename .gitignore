@@ -47,6 +47,8 @@ data_platform/data/**
 
 # Part 3 LoRA cross-eval score table (otherwise blocked by *.csv).
 !experiments/finetune_lora_phase2_part3_2026_09_24/experiment4_cross_eval/scores/cross_eval.csv
+!experiments/finetune_lora_phase2_part3_2026_09_24/experiment5_all_posts/scores/overall.csv
+!experiments/finetune_lora_phase2_part3_2026_09_24/experiment5_all_posts/scores/by_remove_votes.csv
 
 # Reddit curated Perspective v2 labels and promotion ids.
 !experiments/reddit_curated_perspective_v2_2026_09_08/outputs/

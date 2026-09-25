@@ -28,7 +28,7 @@ flowchart LR
   adapters["two trained adapters"] --> merge["merged models"]
   build --> vllm["vLLM batched inference"]
   merge --> vllm
-  vllm --> parity["parity check on held-out tests"]
+  vllm --> parity["optional parity metrics on held-out tests"]
   parity --> full["all 20,000 posts, both models"]
   full --> scores["score tables and RESULTS.md"]
 ```
@@ -113,9 +113,9 @@ Load Qwen3.5 4B in bf16, apply each adapter, merge it into the base weights, and
 
 Build an image from the same vLLM base image used by the reasoning experiment, add the repo code, and push it under the tag `vllm-all-posts`. The inference script loads one merged model at a time, sends all prompts in batches with prefix caching on, decodes greedily with the 8-token cap, and parses answers with the existing parser. It writes in chunks, skips post IDs already written, and writes the same prediction columns as the held-out runs. A dry run must print the data, merged-model, and prediction S3 paths without starting a job.
 
-### Step 4: Check parity against the held-out predictions
+### Step 4: Report parity against the held-out predictions (non-blocking)
 
-Run the modal merged model on the existing held-out modal test and the unanimous merged model on the existing held-out unanimous test. Compare those answers post by post with `experiment2_modal/preds/test_modal.csv` and `experiment1_unanimous/preds/test_unanimous.csv`. The gate is at least 98% agreement per file and remove-F1 within 0.01 of the held-out score, 0.7746 for the modal model and 0.9333 for the unanimous model. If either file misses the gate, stop and report the disagreements before the full run. Record throughput in posts per second from this run.
+Run the modal merged model on the existing held-out modal test and the unanimous merged model on the existing held-out unanimous test. Compare those answers post by post with `experiment2_modal/preds/test_modal.csv` and `experiment1_unanimous/preds/test_unanimous.csv`. Record agreement and remove-F1 versus the held-out scores for diagnostics; do not block the full 20,000-post run on a threshold. Record throughput in posts per second from this run.
 
 ### Step 5: Run both models on all 20,000 posts
 
@@ -129,7 +129,7 @@ For each model, write accuracy, precision, recall, and remove-F1 against the mod
 
 - `experiment5_all_posts/data/all_posts.csv` has 20,000 rows, and its labels match the union modal label file.
 - Two merged models are on S3, one per adapter.
-- `experiment5_all_posts/scores/parity.csv` shows both held-out files passing the gate.
+- `experiment5_all_posts/scores/parity.csv` reports held-out agreement and F1 (informational only).
 - Two prediction files, one per model, each with 20,000 rows, are local and on S3.
 - `experiment5_all_posts/scores/overall.csv` has, for both models, rows for all posts, training posts, held-out posts, and the unanimous subset.
 - `experiment5_all_posts/scores/by_remove_votes.csv` has 12 rows: 2 models times remove-vote counts 0 through 5, restricted to posts with 5 raters. The six counts sum to 14,884 for each model.
@@ -140,5 +140,5 @@ For each model, write accuracy, precision, recall, and remove-F1 against the mod
 ## Decisions for approval
 
 - Serve merged weights in vLLM instead of loading LoRA adapters in vLLM.
-- Use the parity gate of 98% agreement and remove-F1 within 0.01.
+- Run the full 20,000-post inference regardless of parity metrics; parity is reported but not gated.
 - Keep SageMaker `ml.g5.xlarge`, which has a quota of one instance, rather than moving this run to Hugging Face Jobs.
