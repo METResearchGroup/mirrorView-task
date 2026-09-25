@@ -9,6 +9,12 @@ from __future__ import annotations
 
 import pandas as pd
 
+from experiments.compare_jev_human_uncertainty_2026_09_25.constants import (
+    COMPARISON_COLUMNS,
+    JEV_BIN_COUNT,
+    JEV_BIN_EDGES,
+)
+
 
 def jev_bin_for_probability(probability: float) -> int:
     """Return the 0-based bin for one remove probability.
@@ -28,7 +34,18 @@ def jev_bin_for_probability(probability: float) -> int:
     ValueError
         When ``probability`` is missing or outside 0 to 1.
     """
-    raise NotImplementedError
+    if pd.isna(probability):
+        raise ValueError("p_remove is missing")
+    value = float(probability)
+    if value < JEV_BIN_EDGES[0] or value > JEV_BIN_EDGES[-1]:
+        raise ValueError(f"p_remove out of range: {value}")
+    last_bin = JEV_BIN_COUNT - 1
+    for index in range(last_bin):
+        lower = JEV_BIN_EDGES[index]
+        upper = JEV_BIN_EDGES[index + 1]
+        if lower <= value < upper:
+            return index
+    return last_bin
 
 
 def attach_jev_bin(frame: pd.DataFrame) -> pd.DataFrame:
