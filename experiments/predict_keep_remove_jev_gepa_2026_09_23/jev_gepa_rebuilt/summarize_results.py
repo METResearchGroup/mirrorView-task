@@ -297,11 +297,19 @@ def format_rebuilt_gepa_section(
     return f"{REBUILT_GEPA_SECTION_HEADER}\n\n{headline}\n\n{table}"
 
 
+_BLOCKED_REBUILT_HEADER = "## Rebuilt GEPA on the union cohort (blocked)"
+
+
 def _upsert_results_section(results_path: Path, section_markdown: str) -> None:
     if results_path.is_file():
         existing = results_path.read_text(encoding="utf-8")
     else:
         existing = ""
+    blocked = re.compile(
+        rf"{re.escape(_BLOCKED_REBUILT_HEADER)}.*?(?=\n## |\Z)",
+        re.DOTALL,
+    )
+    existing = blocked.sub("", existing)
     pattern = re.compile(
         rf"{re.escape(REBUILT_GEPA_SECTION_HEADER)}.*?(?=\n## |\Z)",
         re.DOTALL,

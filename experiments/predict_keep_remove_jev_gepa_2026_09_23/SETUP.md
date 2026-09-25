@@ -73,3 +73,25 @@ Measured union counts (2026-09-24 build):
 | GEPA train members changed vs frozen | 120 |
 
 Outputs: `data/cohort_union_splits.parquet`, `data/cohort_union_split_hash.json` (S3 prefix above). Frozen `data/cohort_a_splits.parquet` is not modified.
+
+## Rebuilt GEPA on the union cohort
+
+The rebuilt runs live in `jev_gepa_rebuilt/`. They need the union parquet above and `data/dev_ab_split.json` (stratified half of the dev split, seed `20260924`).
+
+```bash
+export AWS_ACCESS_KEY_ID="$LAB_AWS_ACCESS_KEY_ID"
+export AWS_SECRET_ACCESS_KEY="$LAB_AWS_ACCESS_KEY_SECRET"
+
+PYTHONPATH=. uv run python -c "from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.dev_ab import build_or_load_dev_ab_split; print(build_or_load_dev_ab_split(write=True)['n_dev_a'])"
+```
+
+Reflection calls use `OPENAI_API_KEY`. Jev scoring uses `TYPESAFE_API_KEY`, or the AWS secret `jev-typesafe-api-key` when that variable is unset. Wandb uses `WANDB_API_KEY`.
+
+R7 (plain majority-label probability) is in the default ablation set. R4 starts only after `jev_gepa_rebuilt/outputs/_smoke/r4_smoke_passed.json` records `passed: true`. R5 and R6 start only when R1 dev-B F1 is strictly above the union A1 test F1 of 0.538.
+
+```bash
+PYTHONPATH=. uv run python experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/optimize.py --ablation-id R1_gepa_pair --max-metric-calls 30000
+PYTHONPATH=. uv run python experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/evaluate.py --ablation-id R1_gepa_pair --split test
+```
+
+`optimize.py` resumes from `jev_gepa_rebuilt/outputs/<ablation>/gepa_run/gepa_state.bin` when that file exists.

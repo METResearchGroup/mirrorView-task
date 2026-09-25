@@ -19,7 +19,9 @@ from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.evalua
 )
 from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.summarize_results import (
     STAGE_A_UNION_A1_BASELINE_TEST_F1,
+    _upsert_results_section,
     collect_ablation_summaries,
+    format_rebuilt_gepa_section,
     format_results_markdown_table,
     load_ablation_summary,
 )
@@ -150,3 +152,38 @@ class TestSummarizeResults:
         )
 
         assert [row["ablation_id"] for row in summaries] == ["R1_gepa_pair"]
+
+    def test_upsert_replaces_blocked_section(self, tmp_path: Path) -> None:
+        """The credit-stop section is replaced by the scored rebuilt section."""
+        results_path = tmp_path / "RESULTS.md"
+        results_path.write_text(
+            "# Results\n\n## Stage A\n\nKept.\n\n"
+            "## Rebuilt GEPA on the union cohort (blocked)\n\n"
+            "Old credit stop table.\n",
+            encoding="utf-8",
+        )
+        section = format_rebuilt_gepa_section(
+            [
+                {
+                    "ablation_id": "R1_gepa_pair",
+                    "dev_a_f1": 0.61,
+                    "dev_b_f1": 0.58,
+                    "test_f1": 0.5521,
+                    "test_f1_at_0_5": 0.5410,
+                    "iterations": 2,
+                    "accept_rate": 2 / 3,
+                    "stop_reason": "max_metric_calls",
+                    "reflection_usd": 1.25,
+                    "prompt_chars": 40,
+                }
+            ],
+            STAGE_A_UNION_A1_BASELINE_TEST_F1,
+        )
+
+        _upsert_results_section(results_path, section)
+
+        text = results_path.read_text(encoding="utf-8")
+        assert "## Rebuilt GEPA on the union cohort (blocked)" not in text
+        assert "## Rebuilt GEPA (jev_gepa_rebuilt)" in text
+        assert "Old credit stop table." not in text
+        assert "## Stage A" in text
