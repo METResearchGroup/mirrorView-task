@@ -155,15 +155,23 @@ A1 per-request p50 **369.8** ms, p90 **687.5** ms, p99 **1547.4** ms; per-post p
 ### Error clustering summary
 K-means (k=5,10) baseline then BERTopic on seeded MiniLM embeddings for A1 and B1 test FN/FP; original and mirror clustered separately (805 error records per A1 arm, 583 per B1 arm). BERTopic assigned 9–15 topics per arm plus outliers. Outputs: `analysis/outputs/cluster_errors/` (`cluster_assignments.parquet`, `topic_summary.json`, `spot_checks.csv`).
 
-## Rebuilt GEPA on the union cohort (blocked)
 
-Production runs R1, R2, R3, and R7 started on 2026-09-24 and stopped when TypeSafe returned HTTP 402: the organization has no API credits (`https://console.typesafe.ai/settings/billing`). No test scores were written. Checkpoints are in `jev_gepa_rebuilt/outputs/<ablation>/gepa_run/gepa_state.bin`. Re-running `optimize.py` for the same ablation resumes from that file.
 
-| Run | Posts scored | Proposals | Accepted | Reflection USD | Stop point |
-| --- | ---: | ---: | ---: | ---: | --- |
-| R1 pair, vote-share score | 29,820 / 30,000 | 544 | 26 | 0.89 | Inside the optimize loop |
-| R2 one-vote down-weight | 30,000 / 30,000 | 498 | 48 | 0.77 | Dev selection, before a test read |
-| R3 Terra reflection | 20,350 / 30,000 | 401 | 0 | 13.90 | Inside the optimize loop. Every accepted-length proposal failed the +2 label margin, and 371 proposals exceeded 4,000 characters |
-| R7 plain majority probability | 30,000 / 30,000 | 482 | 56 | 0.77 | Dev selection, before a test read |
+## Rebuilt GEPA (jev_gepa_rebuilt)
 
-R4 did not run. Its round-robin smoke updated only the study-instruction section. R5 and R6 wait on R1's confirmation-half F1, which was not computed.
+Best rebuilt ablation **R1_gepa_pair** beats union A1 test F1 **0.5380** at the dev-A threshold (test F1 **0.5530**).
+
+| Ablation | dev-A F1 | dev-B F1 | test F1 | test F1 @0.5 | iterations | accept rate | stop reason | reflection USD | prompt chars |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A1_pair_study_prompt | — | — | 0.5380 | — | — | — | baseline | — | — |
+| R1_gepa_pair | 0.5560 | 0.5422 | 0.5530 | 0.5420 | 26 | 0.0474 | max_metric_calls | 0.90 | 3620 |
+| R2_majority_weighted | 0.5558 | 0.5174 | 0.5410 | 0.5542 | 48 | 0.0964 | max_metric_calls | 0.77 | 3882 |
+| R7_plain_majority | 0.5726 | 0.5243 | 0.5451 | 0.5270 | 56 | 0.1162 | max_metric_calls | 0.77 | 3591 |
+
+R1, R2, and R7 each stopped at the 30,000 scored-post budget. The selected prompt is the study instruction after GEPA edits. Test F1 uses the threshold tuned on dev-A. At that threshold R1 is highest (0.5530). At the fixed threshold 0.5, R2 is highest (0.5542) and R7 falls to 0.5270, below union A1. R7 had the best dev-A F1 (0.5726) and a weaker dev-B F1 (0.5243), so the dev-A threshold did not hold on the confirmation half or on test at 0.5.
+
+Most proposals were rejected by the 4,000-character cap. Acceptance rates are 0.0474 (R1), 0.0964 (R2), and 0.1162 (R7). Reflection cost, summed from `reflection_usage.jsonl`, is $0.90, $0.77, and $0.77. One test read of 3,841 posts cost $0.16, $0.17, and $0.16 in Jev tokens. Request latency on that read was about 140 ms at the median.
+
+R3 (Terra reflection) is still inside the 30,000-post budget. Through 474 proposals it has accepted none. 440 of those rejects are the length cap. R5 and R6 are running at 15,000 posts because R1 dev-B F1 (0.5422) is above 0.538. R4 did not run. Its round-robin smoke changed only the study instruction.
+
+Wandb group `jev_gepa_rebuilt` is in project `mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23`. Artifacts are under `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/`.
