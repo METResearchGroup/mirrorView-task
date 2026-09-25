@@ -2,40 +2,40 @@
 
 | decision | Bluesky | Reddit | Twitter |
 |---|---:|---:|---:|
-| keep | 2750 | 8613 | 2266 |
-| remove | 928 | 3677 | 628 |
+| keep | 3123 | 9322 | 2751 |
+| remove | 751 | 3582 | 471 |
 
 ## Platform proportions
 
 | decision | Bluesky | Reddit | Twitter |
 |---|---:|---:|---:|
-| keep | 0.7477 | 0.7008 | 0.7830 |
-| remove | 0.2523 | 0.2992 | 0.2170 |
+| keep | 0.8061 | 0.7224 | 0.8538 |
+| remove | 0.1939 | 0.2776 | 0.1462 |
 
 ## Platform by toxicity proportions
 
 | decision | Bluesky low toxicity | Bluesky medium toxicity | Bluesky high toxicity | Reddit low toxicity | Reddit medium toxicity | Reddit high toxicity | Twitter low toxicity | Twitter medium toxicity | Twitter high toxicity |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| keep | 0.9202 | 0.7461 | 0.4626 | 0.9191 | 0.7802 | 0.4429 | 0.8878 | 0.7233 | 0.4085 |
-| remove | 0.0798 | 0.2539 | 0.5374 | 0.0809 | 0.2198 | 0.5571 | 0.1122 | 0.2767 | 0.5915 |
+| keep | 0.9677 | 0.8138 | 0.4843 | 0.9332 | 0.8140 | 0.4661 | 0.9629 | 0.8021 | 0.4359 |
+| remove | 0.0323 | 0.1862 | 0.5157 | 0.0668 | 0.1860 | 0.5339 | 0.0371 | 0.1979 | 0.5641 |
 
 ## Four-cell counts
 
 | cell | count | share |
 |---|---:|---:|
-| unanimous_keep | 4497 | 0.3015 |
-| majority_keep | 7256 | 0.4865 |
-| majority_remove | 2670 | 0.1790 |
-| unanimous_remove | 491 | 0.0329 |
+| unanimous_keep | 5280 | 0.2753 |
+| majority_keep | 9914 | 0.5170 |
+| majority_remove | 3547 | 0.1850 |
+| unanimous_remove | 435 | 0.0227 |
 
 ## Vote funnel
 
 | metric | count |
 |---|---:|
-| posts_after_vote_clean | 18862 |
-| posts_dropped_lt_3_raters | 2979 |
-| posts_dropped_ties | 969 |
-| posts_remaining | 14914 |
+| posts_after_vote_clean | 20000 |
+| posts_dropped_lt_3_raters | 4 |
+| posts_dropped_ties | 820 |
+| posts_remaining | 19176 |
 
 ## Remove votes on posts with 5 labels
 
@@ -43,11 +43,11 @@ Each post in this table has exactly five cleaned labels. The count is how many o
 
 | remove votes | posts |
 |---:|---:|
-| 0 | 1989 |
-| 1 | 2594 |
-| 2 | 1971 |
-| 3 | 1131 |
-| 4 | 504 |
-| 5 | 174 |
+| 0 | 3962 |
+| 1 | 4511 |
+| 2 | 3277 |
+| 3 | 1881 |
+| 4 | 934 |
+| 5 | 319 |
 
 ![Posts with 5 labels by number of remove votes](outputs/five_label_remove_histogram.png)

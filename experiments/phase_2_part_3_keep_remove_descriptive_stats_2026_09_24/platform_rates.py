@@ -10,7 +10,7 @@ from __future__ import annotations
 import pandas as pd
 
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_3_STIMULI
+from shared.data.registry import STUDY_PHASE_2_PART_2_AND_3_STIMULI
 
 PLATFORM_BY_PREFIX: dict[str, str] = {
     "bluesky": "Bluesky",
@@ -274,11 +274,11 @@ def column_proportions(counts: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_stimuli() -> pd.DataFrame:
-    """Load Phase 2 Part 3 stimuli from the dataset registry.
+    """Load the combined Phase 2 Part 2 and Part 3 stimuli from the registry.
 
     Returns
     -------
     pandas.DataFrame
         Stimuli frame for toxicity lookup.
     """
-    return load_dataset(STUDY_PHASE_2_PART_3_STIMULI, low_memory=False)
+    return load_dataset(STUDY_PHASE_2_PART_2_AND_3_STIMULI, low_memory=False)

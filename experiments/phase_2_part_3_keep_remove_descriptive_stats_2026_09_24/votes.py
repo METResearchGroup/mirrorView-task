@@ -10,7 +10,7 @@ from __future__ import annotations
 import pandas as pd
 
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_3_RESULTS_FULL
+from shared.data.registry import STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL
 
 _KEEP_REMOVE = frozenset({"keep", "remove"})
 _REQUIRED_TRIAL_COLUMNS = frozenset(
@@ -65,14 +65,14 @@ def _require_columns(raw: pd.DataFrame, columns: frozenset[str]) -> None:
 
 
 def load_results_full() -> pd.DataFrame:
-    """Load Phase 2 Part 3 results full from the dataset registry.
+    """Load the combined Phase 2 Part 2 and Part 3 results from the registry.
 
     Returns
     -------
     pandas.DataFrame
-        Raw results-full frame for Phase 2 Part 3.
+        Raw results-full frame for the joint linked-fate collection.
     """
-    return load_dataset(STUDY_PHASE_2_PART_3_RESULTS_FULL, low_memory=False)
+    return load_dataset(STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL, low_memory=False)
 
 
 def filter_linked_fate_trials(raw: pd.DataFrame) -> pd.DataFrame:

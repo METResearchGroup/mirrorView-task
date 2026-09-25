@@ -2,13 +2,12 @@
 
 ## 2026-09-25
 
-1. The Part 3 keep and remove experiment now shows how many five-label posts have 0 through 5 remove votes. Of 8,363 posts with five cleaned labels, 2,594 have one remove vote and 174 have five. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
+1. Keep and remove rates now use the combined Phase 2 Part 2 and Part 3 dataset. Modal keep rates are 80.61% on Bluesky, 72.24% on Reddit, and 85.38% on Twitter. Of 14,884 posts with five cleaned labels, 4,511 have one remove vote and 319 have five. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
 
 ## 2026-09-24
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
-3. Phase 2 Part 3 now has keep and remove rates by platform and unanimous versus majority cells. After vote cleaning, modal keep rates are 74.77% on Bluesky, 70.08% on Reddit, and 78.30% on Twitter, and 30.15% of the 14,914 posts with at least three raters and no exact tie are unanimous keep while 3.29% are unanimous remove. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
 
 ## 2026-09-22
 

@@ -2,7 +2,7 @@
 
 ## Required datasets
 
-Load `STUDY_PHASE_2_PART_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_3_STIMULI` only through `shared.data.dataloader.load_dataset`.
+Load `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_2_AND_3_STIMULI` only through `shared.data.dataloader.load_dataset`. Those tables are the June Part 2 collection and the September Part 3 collection as one results file and one stimulus catalog. Votes on the same `post_id` from both collections count as one post.
 
 ## Filtering
 
