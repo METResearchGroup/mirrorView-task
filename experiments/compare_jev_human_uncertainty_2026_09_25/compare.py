@@ -80,7 +80,11 @@ def attach_difference_score(frame: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         A copy with ``difference_score``.
     """
-    raise NotImplementedError
+    updated = frame.copy()
+    updated["difference_score"] = (
+        updated["n_remove"].astype(int) - updated["jev_bin"].astype(int)
+    )
+    return updated
 
 
 def join_on_post_id(human: pd.DataFrame, jev: pd.DataFrame) -> pd.DataFrame:
