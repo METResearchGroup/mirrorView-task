@@ -23,16 +23,42 @@ ADAPTER_DIR="${ADAPTER_DIR:-${SM_ADAPTER_DIR}}"
 CHAT_JSONL="${CHAT_JSONL:-${SM_DATA_DIR}/chat_all_posts.jsonl}"
 OUTPUT_CSV="${OUTPUT_CSV:-${SM_MODEL_DIR}/all_posts.csv}"
 
+_merge_transformers() {
+  pip install -q "transformers>=5.8.1,<5.13"
+}
+
+_restore_vllm_transformers() {
+  pip install -q "transformers==4.57.6" --force-reinstall
+}
+
+_fix_merged_config() {
+  python3 <<'PY'
+import json
+import os
+from pathlib import Path
+
+from huggingface_hub import hf_hub_download
+
+model_id = os.environ["MODEL_ID"]
+token = os.environ.get("HF_TOKEN", "").strip() or None
+merged = Path(os.environ["MERGED_DIR"])
+hub_cfg = Path(hf_hub_download(model_id, "config.json", token=token))
+(merged / "config.json").write_text(hub_cfg.read_text())
+print(f"Refreshed {merged / 'config.json'} from {model_id}")
+PY
+}
+
 case "${MODE}" in
   merge)
-    exec python "${PKG}/merge_adapter.py" \
+    _merge_transformers
+    exec python3 "${PKG}/merge_adapter.py" \
       --model-id "${MODEL_ID}" \
       --adapter-dir "${ADAPTER_DIR}" \
       --merged-dir "${MERGED_DIR}" \
       "$@"
     ;;
   infer)
-    exec python "${PKG}/vllm_infer.py" \
+    exec python3 "${PKG}/vllm_infer.py" \
       --chat-jsonl "${CHAT_JSONL}" \
       --model-dir "${MERGED_DIR}" \
       --output-csv "${OUTPUT_CSV}" \
@@ -40,12 +66,15 @@ case "${MODE}" in
       "$@"
     ;;
   run)
-    python "${PKG}/merge_adapter.py" \
+    _merge_transformers
+    python3 "${PKG}/merge_adapter.py" \
       --model-id "${MODEL_ID}" \
       --adapter-dir "${ADAPTER_DIR}" \
       --merged-dir "${MERGED_DIR}" \
       "$@"
-    exec python "${PKG}/vllm_infer.py" \
+    _fix_merged_config
+    _restore_vllm_transformers
+    exec python3 "${PKG}/vllm_infer.py" \
       --chat-jsonl "${CHAT_JSONL}" \
       --model-dir "${MERGED_DIR}" \
       --output-csv "${OUTPUT_CSV}" \

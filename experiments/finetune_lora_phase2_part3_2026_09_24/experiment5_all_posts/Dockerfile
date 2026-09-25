@@ -15,8 +15,7 @@ RUN pip install --upgrade pip && \
     pip install \
       "peft>=0.14.0" \
       "pandas>=2.2.0" \
-      "boto3>=1.34.0" \
-      "transformers>=5.8.1,<5.13"
+      "boto3>=1.34.0"
 
 COPY experiments/finetune_qwen_model_2026_08_08 /app/experiments/finetune_qwen_model_2026_08_08
 COPY experiments/finetune_lora_phase2_part3_2026_09_24/__init__.py \
