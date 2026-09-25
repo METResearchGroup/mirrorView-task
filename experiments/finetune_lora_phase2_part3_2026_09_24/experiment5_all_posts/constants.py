@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Final, Literal
 
 ModelVariant = Literal["unanimous", "modal"]
-LaunchModeName = Literal["merge", "infer"]
+LaunchModeName = Literal["merge", "infer", "run"]
 
 MODEL_ID: Final[str] = "Qwen/Qwen3.5-4B"
 CHAT_TEMPLATE_KWARGS: Final[dict[str, bool]] = {"enable_thinking": False}

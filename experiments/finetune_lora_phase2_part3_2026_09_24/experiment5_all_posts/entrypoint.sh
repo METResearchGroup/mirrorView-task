@@ -4,7 +4,7 @@ set -euo pipefail
 
 MODE="${1:-${MODE:-}}"
 if [[ -z "${MODE}" ]]; then
-  echo "Usage: entrypoint.sh <merge|infer> [...]" >&2
+  echo "Usage: entrypoint.sh <merge|infer|run> [...]" >&2
   exit 2
 fi
 shift || true
@@ -39,9 +39,22 @@ case "${MODE}" in
       --model-id "${MODEL_ID}" \
       "$@"
     ;;
+  run)
+    python "${PKG}/merge_adapter.py" \
+      --model-id "${MODEL_ID}" \
+      --adapter-dir "${ADAPTER_DIR}" \
+      --merged-dir "${MERGED_DIR}" \
+      "$@"
+    exec python "${PKG}/vllm_infer.py" \
+      --chat-jsonl "${CHAT_JSONL}" \
+      --model-dir "${MERGED_DIR}" \
+      --output-csv "${OUTPUT_CSV}" \
+      --model-id "${MODEL_ID}" \
+      "$@"
+    ;;
   *)
     echo "Unknown mode: ${MODE}" >&2
-    echo "Expected: merge | infer" >&2
+    echo "Expected: merge | infer | run" >&2
     exit 2
     ;;
 esac

@@ -47,3 +47,20 @@ class TestBuildJobConfig:
         assert config.environment["PREDS_S3_URI"] == preds_s3_uri("modal")
         assert config.adapter_s3_uri is None
         assert config.container_arguments == ["infer"]
+
+    def test_run_unanimous_adapter_and_preds_no_merged_channel(self) -> None:
+        config = build_job_config(
+            mode="run",
+            model_variant="unanimous",
+            role_arn=_ROLE,
+            hf_token=_HF,
+            image_uri=ECR_IMAGE_URI,
+        )
+        assert config.data_s3_uri == DATA_S3_URI
+        assert config.adapter_s3_uri == ADAPTER_S3_URIS["unanimous"]
+        assert config.merged_s3_uri is None
+        assert config.output_s3_uri == preds_s3_uri("unanimous")
+        assert config.preds_s3_uri == preds_s3_uri("unanimous")
+        assert config.environment["MERGED_DIR"] == "/tmp/merged"
+        assert config.environment["PREDS_S3_URI"] == preds_s3_uri("unanimous")
+        assert config.container_arguments == ["run"]

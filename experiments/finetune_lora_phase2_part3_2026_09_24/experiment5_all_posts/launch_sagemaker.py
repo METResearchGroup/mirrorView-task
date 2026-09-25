@@ -35,7 +35,7 @@ from experiments.finetune_qwen_model_2026_08_08.launch_sagemaker import (
     print_job_config,
 )
 
-LaunchModeName = Literal["merge", "infer"]
+LaunchModeName = Literal["merge", "infer", "run"]
 
 
 @dataclass(frozen=True)
@@ -103,7 +103,7 @@ def build_job_config(
         merged_s3_uri_value = None
         preds_s3_uri_value = None
         data_s3_uri = DATA_S3_URI
-    else:
+    elif mode == "infer":
         output_uri = preds_uri
         environment = {
             **base_env,
@@ -114,6 +114,19 @@ def build_job_config(
         }
         adapter_s3_uri = None
         merged_s3_uri_value = merged_uri
+        preds_s3_uri_value = preds_uri
+        data_s3_uri = DATA_S3_URI
+    else:
+        output_uri = preds_uri
+        environment = {
+            **base_env,
+            "MERGED_DIR": "/tmp/merged",
+            "CHAT_JSONL": "/opt/ml/input/data/data/chat_all_posts.jsonl",
+            "OUTPUT_CSV": "/opt/ml/model/all_posts.csv",
+            "PREDS_S3_URI": preds_uri,
+        }
+        adapter_s3_uri = adapter_uri
+        merged_s3_uri_value = None
         preds_s3_uri_value = preds_uri
         data_s3_uri = DATA_S3_URI
 
@@ -139,7 +152,11 @@ def _to_legacy_job_config(config: AllPostsJobConfig) -> JobConfig:
     """Adapt experiment5 config to the August ``JobConfig`` for ``submit_job``."""
     from experiments.finetune_qwen_model_2026_08_08.launch_sagemaker import LaunchMode
 
-    mode = LaunchMode.INFER_ADAPTER if config.mode == "infer" else LaunchMode.TRAIN
+    mode = (
+        LaunchMode.INFER_ADAPTER
+        if config.mode in ("infer", "run")
+        else LaunchMode.TRAIN
+    )
     return JobConfig(
         mode=mode,
         run_id=f"exp5_{config.model_variant}_{config.mode}",
@@ -179,7 +196,7 @@ def submit_all_posts_job(config: AllPostsJobConfig, wait: bool) -> str:
     )
 
     inputs: dict[str, str] = {"data": config.data_s3_uri}
-    if config.mode == "merge" and config.adapter_s3_uri is not None:
+    if config.mode in ("merge", "run") and config.adapter_s3_uri is not None:
         inputs["adapter"] = config.adapter_s3_uri
     if config.mode == "infer" and config.merged_s3_uri is not None:
         inputs["merged"] = config.merged_s3_uri
@@ -204,9 +221,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     )
     parser.add_argument(
         "--mode",
-        choices=("merge", "infer"),
+        choices=("merge", "infer", "run"),
         required=True,
-        help="merge adapter into base | infer on merged weights",
+        help="merge | infer on merged channel | merge locally then infer (one job)",
     )
     parser.add_argument(
         "--model",
