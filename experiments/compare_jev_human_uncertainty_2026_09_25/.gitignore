@@ -1,2 +1,3 @@
 outputs/joined.parquet
 __pycache__/
+!outputs/tables/*.csv
