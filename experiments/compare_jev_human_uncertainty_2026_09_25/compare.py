@@ -10,6 +10,7 @@ from __future__ import annotations
 import pandas as pd
 
 from experiments.compare_jev_human_uncertainty_2026_09_25.constants import (
+    COMPARISON_COLUMNS,
     JEV_BIN_COUNT,
     JEV_BIN_EDGES,
 )
@@ -148,4 +149,4 @@ def build_comparison_frame(human: pd.DataFrame, jev: pd.DataFrame) -> pd.DataFra
     joined = join_on_post_id(human, jev)
     binned = attach_jev_bin(joined)
     scored = attach_difference_score(binned)
-    return scored
+    return scored.loc[:, list(COMPARISON_COLUMNS)].reset_index(drop=True)
