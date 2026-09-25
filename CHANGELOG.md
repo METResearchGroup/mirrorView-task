@@ -2,7 +2,7 @@
 
 ## 2026-09-25
 
-1. Operators can compare stored Jev remove probabilities with human remove votes on 15,113 posts with five labelers, from the Part 2 and Part 3 export. The mean of human remove count minus Jev bin is -0.1946, and the figures and count tables are in `experiments/compare_jev_human_uncertainty_2026_09_25/` and on S3. [PR #313](https://github.com/METResearchGroup/mirrorView-task/pull/313)
+1. Operators can compare stored Jev remove probabilities with human remove votes on 15,113 posts with five labelers, using six equal probability bins that line up with remove counts 0 through 5. The mean of human remove count minus Jev bin is -0.6147, and the figures and count tables are in `experiments/compare_jev_human_uncertainty_2026_09_25/` and on S3. [PR #313](https://github.com/METResearchGroup/mirrorView-task/pull/313)
 
 ## 2026-09-24
 

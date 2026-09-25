@@ -16,9 +16,9 @@ Figure files, under `experiments/compare_jev_human_uncertainty_2026_09_25/output
 
 1. `human_remove_counts.png`. Bars at x = 0, 1, 2, 3, 4, 5. The height is the number of posts with that many remove votes. Missing counts are 0. X-axis label: `Remove votes`.
 2. `jev_probability.png`. Histogram of `p_remove` with 20 equal-width bins on the closed range 0 to 1. X-axis label: `Jev p_remove`.
-3. `jev_five_bins.png`. Bars at x = 0, 1, 2, 3, 4. Tick labels are `0 remove`, `1 remove`, `2 remove`, `3 remove`, `4 remove`. The height is the number of posts in that Jev bin.
-4. `overlay_human_vs_jev.png`. Grouped bars at x = 0, 1, 2, 3, 4, 5. One series is the human remove-vote counts. The other series is the Jev bin counts. The Jev series is 0 at x = 5, because there is no sixth bin. Legend entries: `Human remove votes` and `Jev bin`.
-5. `difference_score.png`. Bars at every integer from -4 to 5, including zeros. X-axis label: `Human remove count minus Jev bin`.
+3. `jev_six_bins.png`. Bars at x = 0, 1, 2, 3, 4, 5. Tick labels are `0 remove` through `5 remove`. The height is the number of posts in that Jev bin.
+4. `overlay_human_vs_jev.png`. Grouped bars at x = 0, 1, 2, 3, 4, 5. One series is the human remove-vote counts. The other series is the Jev bin counts. Legend entries: `Human remove votes` and `Jev bin`.
+5. `difference_score.png`. Bars at every integer from -5 to 5, including zeros. X-axis label: `Human remove count minus Jev bin`.
 
 Count tables, under `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/tables/`:
 
@@ -29,14 +29,14 @@ Count tables, under `experiments/compare_jev_human_uncertainty_2026_09_25/output
 
 Also write `outputs/joined.parquet` with `COMPARISON_COLUMNS`. Add `outputs/joined.parquet` to the experiment `.gitignore`. Commit the four CSVs, the five PNGs, and `RESULTS.md`.
 
-`RESULTS.md` is written by `write_results`, not by hand. It contains the five images with relative links, the four tables, the mean difference score rounded to 4 decimal places, and the sentence that moderation trials have no skip decision. The pinned mean is `-0.1946`.
+`RESULTS.md` is written by `write_results`, not by hand. It contains the five images with relative links, the four tables, the mean difference score rounded to 4 decimal places, and the sentence that moderation trials have no skip decision. The pinned mean is `-0.6147`.
 
 Before writing files, `assert_pinned_counts` checks:
 
 - comparison rows equal `EXPECTED_FIVE_LABELER_POSTS` (15113)
 - remove-vote counts equal `EXPECTED_REMOVE_COUNTS`
 - Jev bin counts equal `EXPECTED_JEV_BIN_COUNTS`
-- mean difference score rounded to 4 decimal places equals `-0.1946`
+- mean difference score rounded to 4 decimal places equals `-0.6147`
 
 A mismatch raises `ValueError` and writes nothing.
 
@@ -83,9 +83,9 @@ Add to `constants.py`:
 
 ```text
 PROBABILITY_HIST_BINS = 20
-DIFFERENCE_SCORE_MIN = -4
+DIFFERENCE_SCORE_MIN = -5
 DIFFERENCE_SCORE_MAX = 5
-EXPECTED_MEAN_DIFFERENCE = -0.1946
+EXPECTED_MEAN_DIFFERENCE = -0.6147
 FIGURE_DIRNAME = "outputs/figures"
 TABLE_DIRNAME = "outputs/tables"
 JOINED_FILENAME = "outputs/joined.parquet"
@@ -103,7 +103,7 @@ Each plot function takes the comparison frame and a destination `Path`, writes o
 ```text
 plot_human_remove_counts(frame: pd.DataFrame, path: Path) -> Path
 plot_jev_probabilities(frame: pd.DataFrame, path: Path) -> Path
-plot_jev_five_bins(frame: pd.DataFrame, path: Path) -> Path
+plot_jev_six_bins(frame: pd.DataFrame, path: Path) -> Path
 plot_overlay(frame: pd.DataFrame, path: Path) -> Path
 plot_difference_scores(frame: pd.DataFrame, path: Path) -> Path
 write_figures(frame: pd.DataFrame, figure_dir: Path) -> tuple[Path, Path, Path, Path, Path]
@@ -216,7 +216,7 @@ Expected local files:
 
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/human_remove_counts.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/jev_probability.png`
-- `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/jev_five_bins.png`
+- `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/jev_six_bins.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/overlay_human_vs_jev.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/difference_score.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/tables/human_remove_counts.csv`
@@ -225,7 +225,7 @@ Expected local files:
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/tables/remove_by_jev_bin.csv`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/RESULTS.md`
 
-`human_remove_counts.csv` contains the six rows 3986, 4592, 3332, 1929, 950, 324. `jev_bins.csv` contains 1479, 6282, 3774, 2738, 840.
+`human_remove_counts.csv` contains the six rows 3986, 4592, 3332, 1929, 950, 324. `jev_bins.csv` contains 646, 5575, 3578, 2729, 2090, 495.
 
 Expected S3 keys under `s3://mirrorview-experimental-artifacts/`:
 
@@ -233,7 +233,7 @@ Expected S3 keys under `s3://mirrorview-experimental-artifacts/`:
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/joined.parquet`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/human_remove_counts.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/jev_probability.png`
-- `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/jev_five_bins.png`
+- `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/jev_six_bins.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/overlay_human_vs_jev.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/figures/difference_score.png`
 - `experiments/compare_jev_human_uncertainty_2026_09_25/outputs/tables/human_remove_counts.csv`

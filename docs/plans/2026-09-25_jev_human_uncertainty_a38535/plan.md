@@ -12,7 +12,7 @@
 
 The combined Part 2 and Part 3 session export, loaded as `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` through `shared/data/dataloader.py`, has no skip decision on moderation trials. Scored moderation decisions are `keep` and `remove` only. The human count is the number of `remove` votes, from 0 to 5.
 
-On the current objects, one vote per person and post leaves 15,113 posts with five labelers. Every five-labeler post is in the Jev file. The remove-vote counts are 3,986, 4,592, 3,332, 1,929, 950, and 324 for 0 through 5 removes. The five Jev bins, from 0.0 to 0.2 up through 0.8 to 1.0, hold 1,479, 6,282, 3,774, 2,738, and 840 posts. The mean of human remove count minus Jev bin is -0.1946, so the Jev bin is higher than the human remove count on average.
+On the current objects, one vote per person and post leaves 15,113 posts with five labelers. Every five-labeler post is in the Jev file. The remove-vote counts are 3,986, 4,592, 3,332, 1,929, 950, and 324 for 0 through 5 removes. The six Jev bins, each one sixth of the range from 0 to 1, hold 646, 5,575, 3,578, 2,729, 2,090, and 495 posts. The mean of human remove count minus Jev bin is -0.6147, so the Jev bin is higher than the human remove count on average.
 
 ## Happy flow
 
@@ -35,7 +35,7 @@ flowchart TD
 
 Count labelers from the shared Part 2 and Part 3 results, and keep one vote per person per post. The one-vote rule matches the rater count already stored on the Jev file. Without the one-vote rule, duplicate person-and-post rows shrink the five-labeler set, and the inner join no longer covers every Jev row that has five raters.
 
-Once the posts are joined, place each `p_remove` in one of five bins of width 0.2, starting at 0. Bin 0 is 0.0 up to but not including 0.2, and bin 0 matches 0 remove votes. The last bin includes 1.0. The difference score is the human remove count minus the Jev bin number. A post with 1 remove vote and Jev bin 0 has difference 1.
+Once the posts are joined, place each `p_remove` in one of six equal bins, so the bins match remove counts 0 through 5. Bin 0 is 0 up to but not including 1/6, and bin 0 matches 0 remove votes. Bin 5 is 5/6 through 1, including 1.0. The difference score is the human remove count minus the Jev bin number. A post with 1 remove vote and Jev bin 0 has difference 1.
 
 Put the experiment in `experiments/compare_jev_human_uncertainty_2026_09_25/`. Tests use small frames and do not download S3. The live command is the only step that downloads the two S3 objects. Upload the joined rows to `s3://mirrorview-experimental-artifacts/experiments/compare_jev_human_uncertainty_2026_09_25/`. Commit the figures and count tables so `RESULTS.md` can show them.
 
@@ -47,11 +47,11 @@ Build the five-labeler frame from the shared Part 2 and Part 3 loader. Keep mode
 
 ### Step 2: Join Jev probabilities and assign bins
 
-Download the stored Jev label file, check the 19,219 rows and the missing-probability count, and inner-join it to the five-labeler frame. Assign the five probability bins and the difference score. Tests cover the bin edges and the join.
+Download the stored Jev label file, check the 19,219 rows and the missing-probability count, and inner-join it to the five-labeler frame. Assign the six probability bins and the difference score. Tests cover the bin edges and the join.
 
 ### Step 3: Write the five figures, the results file, and the S3 copies
 
-Draw the human remove-count bars, the Jev probability histogram, the five Jev bins, the overlay of the human counts and the Jev bins, and the difference-score bars. Write `RESULTS.md` from the joined frame, upload the artifacts, and fail the command if a pinned count changes.
+Draw the human remove-count bars, the Jev probability histogram, the six Jev bins, the overlay of the human counts and the Jev bins, and the difference-score bars. Write `RESULTS.md` from the joined frame, upload the artifacts, and fail the command if a pinned count changes.
 
 ## What "done" looks like
 

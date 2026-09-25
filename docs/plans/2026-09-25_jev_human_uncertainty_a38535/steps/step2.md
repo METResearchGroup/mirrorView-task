@@ -1,6 +1,6 @@
 # Step 2: Join Jev probabilities and assign bins
 
-Join the five-labeler frame to the stored Jev probabilities, then assign the five bins and the difference score. The caller in this step is `build_comparison_frame` in `experiments/compare_jev_human_uncertainty_2026_09_25/compare.py`. Tests pass frames in. They do not download S3.
+Join the five-labeler frame to the stored Jev probabilities, then assign the six bins and the difference score. The caller in this step is `build_comparison_frame` in `experiments/compare_jev_human_uncertainty_2026_09_25/compare.py`. Tests pass frames in. They do not download S3.
 
 ## Task
 
@@ -10,15 +10,12 @@ Out of scope: drawing figures, writing `RESULTS.md`, and uploading to S3. Figure
 
 ## Decision
 
-Bin edges are `0.0, 0.2, 0.4, 0.6, 0.8, 1.0`.
+Bin edges are `0, 1/6, 2/6, 3/6, 4/6, 5/6, 1`.
 
-- Bin 0: `0.0 <= p_remove < 0.2`
-- Bin 1: `0.2 <= p_remove < 0.4`
-- Bin 2: `0.4 <= p_remove < 0.6`
-- Bin 3: `0.6 <= p_remove < 0.8`
-- Bin 4: `0.8 <= p_remove <= 1.0`
+- Bins 0 through 4: `k/6 <= p_remove < (k+1)/6`
+- Bin 5: `5/6 <= p_remove <= 1.0`
 
-Bin 0 matches 0 remove votes. A probability below 0 or above 1 raises `ValueError`. The stored file's probabilities run from 0.09 to 0.95, so bin 4 is the closed end and no row lands on 1.0 today.
+Bin 0 matches 0 remove votes, and bin 5 matches 5 remove votes. A probability below 0 or above 1 raises `ValueError`. The stored file's probabilities run from 0.09 to 0.95, so bin 5 is the closed end and no row lands on 1.0 today.
 
 `difference_score` is `n_remove - jev_bin`. The issue's example is 1 human remove minus Jev bin 0, which is difference 1.
 
@@ -61,10 +58,10 @@ Add these constants to `constants.py`:
 JEV_BUCKET = "mirrorview-experimental-artifacts"
 JEV_LABELS_KEY = "experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_baseline_union/A1_pair_study_prompt/labels.parquet"
 EXPECTED_JEV_ROWS = 19219
-JEV_BIN_EDGES = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
-JEV_BIN_COUNT = 5
+JEV_BIN_COUNT = 6
+JEV_BIN_EDGES = (0, 1/6, 2/6, 3/6, 4/6, 5/6, 1)
 COMPARISON_COLUMNS = ("post_id", "n_remove", "p_remove", "jev_bin", "difference_score")
-EXPECTED_JEV_BIN_COUNTS = (1479, 6282, 3774, 2738, 840)
+EXPECTED_JEV_BIN_COUNTS = (646, 5575, 3578, 2729, 2090, 495)
 ```
 
 `EXPECTED_JEV_BIN_COUNTS[k]` is the number of joined posts in bin `k`. Step 3 asserts `EXPECTED_JEV_BIN_COUNTS`. Step 2 tests do not read `EXPECTED_JEV_BIN_COUNTS`.
@@ -133,7 +130,7 @@ Class `TestAssertJevLabelFrame` for `assert_jev_label_frame`.
 
 Class `TestJevBinForProbability` for `jev_bin_for_probability`.
 
-- Parameterized `test_bin_edges` with these pairs: `0.0 -> 0`, `0.199 -> 0`, `0.2 -> 1`, `0.4 -> 2`, `0.6 -> 3`, `0.8 -> 4`, `0.95 -> 4`, `1.0 -> 4`.
+- Parameterized `test_bin_edges` with these pairs: `0.0 -> 0`, `0.16 -> 0`, `1/6 -> 1`, `1/3 -> 2`, `0.5 -> 3`, `2/3 -> 4`, `5/6 -> 5`, `0.95 -> 5`, `1.0 -> 5`.
 - `test_rejects_above_one`: `1.01` raises `ValueError`.
 - `test_rejects_below_zero`: `-0.01` raises `ValueError`.
 
@@ -155,4 +152,4 @@ Class `TestBuildComparisonFrame` for `build_comparison_frame`.
 
 ## Fail
 
-The command fails if a new test fails, if a step 1 test regresses, or if `jev_bin_for_probability(0.2)` returns 0.
+The command fails if a new test fails, if a step 1 test regresses, or if `jev_bin_for_probability(1/6)` returns 0.

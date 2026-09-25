@@ -1,4 +1,4 @@
-"""Draw the five Jev and human comparison figures.
+"""Draw the Jev and human comparison figures.
 
 Run from the repo root::
 
@@ -84,8 +84,8 @@ def plot_jev_probabilities(frame: pd.DataFrame, path: Path) -> Path:
     return _save(figure, path)
 
 
-def plot_jev_five_bins(frame: pd.DataFrame, path: Path) -> Path:
-    """Write bars for Jev bins 0 through 4.
+def plot_jev_six_bins(frame: pd.DataFrame, path: Path) -> Path:
+    """Write bars for Jev bins 0 through 5.
 
     Returns
     -------
@@ -109,9 +109,9 @@ def plot_overlay(frame: pd.DataFrame, path: Path) -> Path:
     pathlib.Path
         The PNG path.
     """
-    keys = range(REQUIRED_LABELERS + 1)
+    keys = range(JEV_BIN_COUNT)
     human = _heights(frame["n_remove"], keys)
-    jev = _heights(frame["jev_bin"], range(JEV_BIN_COUNT)) + [0]
+    jev = _heights(frame["jev_bin"], keys)
     left = [value - _BAR_OFFSET for value in keys]
     right = [value + _BAR_OFFSET for value in keys]
     figure, axis = plt.subplots()
@@ -124,7 +124,7 @@ def plot_overlay(frame: pd.DataFrame, path: Path) -> Path:
 
 
 def plot_difference_scores(frame: pd.DataFrame, path: Path) -> Path:
-    """Write bars for every difference score from -4 to 5.
+    """Write bars for every difference score from -5 to 5.
 
     Returns
     -------
@@ -148,12 +148,12 @@ def write_figures(
     -------
     tuple
         PNG paths in figure order: human counts, probability histogram,
-        five bins, overlay, and difference scores.
+        six bins, overlay, and difference scores.
     """
     plotters = (
         plot_human_remove_counts,
         plot_jev_probabilities,
-        plot_jev_five_bins,
+        plot_jev_six_bins,
         plot_overlay,
         plot_difference_scores,
     )

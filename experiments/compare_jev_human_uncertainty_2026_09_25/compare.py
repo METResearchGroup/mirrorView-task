@@ -27,7 +27,7 @@ def jev_bin_for_probability(probability: float) -> int:
     Returns
     -------
     int
-        Bin 0 through 4.
+        Bin 0 through 5.
 
     Raises
     ------

@@ -62,17 +62,18 @@ class TestJevBinForProbability:
         ("probability", "expected"),
         [
             (0.0, 0),
-            (0.199, 0),
-            (0.2, 1),
-            (0.4, 2),
-            (0.6, 3),
-            (0.8, 4),
-            (0.95, 4),
-            (1.0, 4),
+            (0.16, 0),
+            (1 / 6, 1),
+            (1 / 3, 2),
+            (0.5, 3),
+            (2 / 3, 4),
+            (5 / 6, 5),
+            (0.95, 5),
+            (1.0, 5),
         ],
     )
     def test_bin_edges(self, probability: float, expected: int) -> None:
-        """Maps probability edges onto bins 0 through 4.
+        """Maps probability edges onto bins 0 through 5.
 
         Parameters
         ----------

@@ -32,7 +32,7 @@ _NO_SKIP_SENTENCE = (
 _FIGURE_LINKS = (
     ("Human remove counts", "outputs/figures/human_remove_counts.png"),
     ("Jev probability", "outputs/figures/jev_probability.png"),
-    ("Jev five bins", "outputs/figures/jev_five_bins.png"),
+    ("Jev six bins", "outputs/figures/jev_six_bins.png"),
     ("Human counts and Jev bins", "outputs/figures/overlay_human_vs_jev.png"),
     ("Difference score", "outputs/figures/difference_score.png"),
 )
@@ -180,6 +180,16 @@ def _table_lines(frame: pd.DataFrame) -> list[str]:
     return lines
 
 
+def _bin_sentence() -> str:
+    """Return the sentence that maps the six Jev bins onto remove counts."""
+    last_bin = JEV_BIN_COUNT - 1
+    return (
+        f"Jev probabilities are split into {JEV_BIN_COUNT} equal bins from 0 to 1. "
+        f"Bin 0 matches 0 remove votes, and bin {last_bin} matches "
+        f"{REQUIRED_LABELERS} remove votes."
+    )
+
+
 def _results_sections(frame: pd.DataFrame) -> list[str]:
     """Return the RESULTS.md sections for ``frame``."""
     mean = f"{float(frame['difference_score'].mean()):.4f}"
@@ -187,6 +197,8 @@ def _results_sections(frame: pd.DataFrame) -> list[str]:
         "# Jev probabilities and human remove counts",
         "",
         _NO_SKIP_SENTENCE,
+        "",
+        _bin_sentence(),
         "",
         f"The mean difference score, human remove count minus Jev bin, is {mean}.",
         "",

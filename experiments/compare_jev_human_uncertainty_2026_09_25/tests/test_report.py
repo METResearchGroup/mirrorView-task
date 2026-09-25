@@ -132,4 +132,6 @@ class TestWriteResults:
         text = path.read_text(encoding="utf-8")
 
         assert "human_remove_counts.png" in text
+        assert "jev_six_bins.png" in text
         assert "Moderation trials have no skip decision." in text
+        assert "6 equal bins" in text

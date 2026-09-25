@@ -2,13 +2,15 @@
 
 Moderation trials have no skip decision. The human count is the number of remove votes among five labelers.
 
-The mean difference score, human remove count minus Jev bin, is -0.1946.
+Jev probabilities are split into 6 equal bins from 0 to 1. Bin 0 matches 0 remove votes, and bin 5 matches 5 remove votes.
+
+The mean difference score, human remove count minus Jev bin, is -0.6147.
 
 ![Human remove counts](outputs/figures/human_remove_counts.png)
 
 ![Jev probability](outputs/figures/jev_probability.png)
 
-![Jev five bins](outputs/figures/jev_five_bins.png)
+![Jev six bins](outputs/figures/jev_six_bins.png)
 
 ![Human counts and Jev bins](outputs/figures/overlay_human_vs_jev.png)
 
@@ -29,35 +31,37 @@ The mean difference score, human remove count minus Jev bin, is -0.1946.
 
 | jev_bin | n_posts |
 | --- | --- |
-| 0 | 1479 |
-| 1 | 6282 |
-| 2 | 3774 |
-| 3 | 2738 |
-| 4 | 840 |
+| 0 | 646 |
+| 1 | 5575 |
+| 2 | 3578 |
+| 3 | 2729 |
+| 4 | 2090 |
+| 5 | 495 |
 
 ## Difference scores
 
 | difference_score | n_posts |
 | --- | --- |
-| -4 | 16 |
-| -3 | 281 |
-| -2 | 1352 |
-| -1 | 4490 |
-| 0 | 5123 |
-| 1 | 2749 |
-| 2 | 913 |
-| 3 | 171 |
-| 4 | 18 |
+| -5 | 6 |
+| -4 | 145 |
+| -3 | 770 |
+| -2 | 2304 |
+| -1 | 5033 |
+| 0 | 4316 |
+| 1 | 1916 |
+| 2 | 523 |
+| 3 | 91 |
+| 4 | 9 |
 | 5 | 0 |
 
 ## Remove votes by Jev bin
 
-| n_remove | 0 | 1 | 2 | 3 | 4 |
-| --- | --- | --- | --- | --- | --- |
-| 0 | 840 | 2240 | 687 | 203 | 16 |
-| 1 | 467 | 2306 | 1229 | 512 | 78 |
-| 2 | 138 | 1213 | 1023 | 805 | 153 |
-| 3 | 26 | 424 | 563 | 700 | 216 |
-| 4 | 8 | 89 | 216 | 383 | 254 |
-| 5 | 0 | 10 | 56 | 135 | 123 |
+| n_remove | 0 | 1 | 2 | 3 | 4 | 5 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 0 | 391 | 2271 | 840 | 371 | 107 | 6 |
+| 1 | 194 | 2027 | 1244 | 772 | 317 | 38 |
+| 2 | 50 | 936 | 908 | 794 | 562 | 82 |
+| 3 | 8 | 281 | 425 | 519 | 566 | 130 |
+| 4 | 3 | 54 | 132 | 213 | 390 | 158 |
+| 5 | 0 | 6 | 29 | 60 | 148 | 81 |
 
