@@ -13,22 +13,57 @@ import pandas as pd
 
 
 def plot_human_remove_counts(frame: pd.DataFrame, path: Path) -> Path:
+    """Write bars for remove-vote counts 0 through 5.
+
+    Returns
+    -------
+    pathlib.Path
+        The PNG path.
+    """
     raise NotImplementedError
 
 
 def plot_jev_probabilities(frame: pd.DataFrame, path: Path) -> Path:
+    """Write a 20-bin histogram of ``p_remove`` on 0 to 1.
+
+    Returns
+    -------
+    pathlib.Path
+        The PNG path.
+    """
     raise NotImplementedError
 
 
 def plot_jev_five_bins(frame: pd.DataFrame, path: Path) -> Path:
+    """Write bars for Jev bins 0 through 4.
+
+    Returns
+    -------
+    pathlib.Path
+        The PNG path.
+    """
     raise NotImplementedError
 
 
 def plot_overlay(frame: pd.DataFrame, path: Path) -> Path:
+    """Write grouped bars of human remove counts and Jev bins.
+
+    Returns
+    -------
+    pathlib.Path
+        The PNG path.
+    """
     raise NotImplementedError
 
 
 def plot_difference_scores(frame: pd.DataFrame, path: Path) -> Path:
+    """Write bars for every difference score from -4 to 5.
+
+    Returns
+    -------
+    pathlib.Path
+        The PNG path.
+    """
     raise NotImplementedError
 
 
