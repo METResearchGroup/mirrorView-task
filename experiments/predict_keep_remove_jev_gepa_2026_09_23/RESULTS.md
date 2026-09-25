@@ -166,12 +166,14 @@ Best rebuilt ablation **R1_gepa_pair** beats union A1 test F1 **0.5380** at the 
 | A1_pair_study_prompt | — | — | 0.5380 | — | — | — | baseline | — | — |
 | R1_gepa_pair | 0.5560 | 0.5422 | 0.5530 | 0.5420 | 26 | 0.0474 | max_metric_calls | 0.90 | 3620 |
 | R2_majority_weighted | 0.5558 | 0.5174 | 0.5410 | 0.5542 | 48 | 0.0964 | max_metric_calls | 0.77 | 3882 |
+| R3_gepa_pair_terra | 0.5560 | 0.5072 | 0.5231 | 0.5122 | 0 | 0.0000 | max_metric_calls | 20.72 | 1475 |
+| R5_gepa_original | 0.5660 | 0.5450 | 0.5402 | 0.5504 | 41 | 0.1916 | max_metric_calls | 0.29 | 3743 |
+| R6_gepa_mirror | 0.5441 | 0.5375 | 0.5240 | 0.5111 | 51 | 0.2629 | max_metric_calls | 0.24 | 2754 |
 | R7_plain_majority | 0.5726 | 0.5243 | 0.5451 | 0.5270 | 56 | 0.1162 | max_metric_calls | 0.77 | 3591 |
 
-R1, R2, and R7 each stopped at the 30,000 scored-post budget. The selected prompt is the study instruction after GEPA edits. Test F1 uses the threshold tuned on dev-A. At that threshold R1 is highest (0.5530). At the fixed threshold 0.5, R2 is highest (0.5542) and R7 falls to 0.5270, below union A1. R7 had the best dev-A F1 (0.5726) and a weaker dev-B F1 (0.5243), so the dev-A threshold did not hold on the confirmation half or on test at 0.5.
+Every finished run stopped at its scored-post budget. The iterations column counts accepted prompts after the seed. Test F1 uses the threshold tuned on dev-A. At that threshold R1 is highest, at 0.5530, above the union A1 test F1 of 0.5380. At the fixed threshold 0.5, R2 is highest at 0.5542, then R5 at 0.5504, then R1 at 0.5420. R7 has the best dev-A F1 (0.5726) and a test F1 of 0.5451 at its tuned threshold. At threshold 0.5, R7 is 0.5270, below union A1.
 
-Most proposals were rejected by the 4,000-character cap. Acceptance rates are 0.0474 (R1), 0.0964 (R2), and 0.1162 (R7). Reflection cost, summed from `reflection_usage.jsonl`, is $0.90, $0.77, and $0.77. One test read of 3,841 posts cost $0.16, $0.17, and $0.16 in Jev tokens. Request latency on that read was about 140 ms at the median.
+R3 used Terra for reflection and accepted none of 594 proposals. 556 of those rejects were the 4,000-character cap, and 38 missed the +2 label margin. It kept the seed prompt (1,475 characters). Test F1 is 0.5231 at threshold 0.45 and 0.5122 at 0.5. R5, on the original text only, is above union A1 at both thresholds. R6, on the mirror text only, is below union A1 at both thresholds. R4 did not run. Its round-robin smoke changed only the study instruction.
 
-R3 (Terra reflection) is still inside the 30,000-post budget. Through 474 proposals it has accepted none. 440 of those rejects are the length cap. R5 and R6 are running at 15,000 posts because R1 dev-B F1 (0.5422) is above 0.538. R4 did not run. Its round-robin smoke changed only the study instruction.
+Reflection cost, summed from each `reflection_usage.jsonl`, is $23.69. R3 is $20.72 of that. The six test reads cost $0.83 in Jev tokens and finished in about 85 to 90 seconds each. Median request latency on those reads is 122 to 143 ms. Wandb group `jev_gepa_rebuilt` is in `mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23`. Artifacts are under `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/`.
 
-Wandb group `jev_gepa_rebuilt` is in project `mind_technology_lab/predict_keep_remove_jev_gepa_2026_09_23`. Artifacts are under `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/`.

@@ -2,7 +2,7 @@
 
 ## 2026-09-25
 
-1. Rebuilt GEPA on the Part 2 plus Part 3 union cohort (`jev_gepa_rebuilt`) finished R1, R2, and R7. R1 test F1 is 0.553 at the dev-A threshold, above union A1 test F1 0.538. R3, R5, and R6 are still running. R4 did not run. [PR #309](https://github.com/METResearchGroup/mirrorView-task/pull/309)
+1. Rebuilt GEPA on the Part 2 plus Part 3 union cohort (`jev_gepa_rebuilt`) scored R1, R2, R3, R5, R6, and R7. R1 test F1 is 0.553 at the dev-A threshold, above union A1 test F1 0.538. R4 did not run. [PR #309](https://github.com/METResearchGroup/mirrorView-task/pull/309)
 
 ## 2026-09-24
 
