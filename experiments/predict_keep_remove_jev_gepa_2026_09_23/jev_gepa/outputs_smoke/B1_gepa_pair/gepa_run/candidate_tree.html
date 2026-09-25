@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEPA Candidate Tree</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; }
+  #header { background: #fff; border-bottom: 1px solid #dee2e6; padding: 12px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  #header h1 { font-size: 18px; font-weight: 600; color: #212529; }
+  .legend { display: flex; gap: 14px; font-size: 13px; color: #495057; }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #adb5bd; }
+  #graph-container { flex: 1 1 auto; width: 100%; overflow: auto; padding: 20px; text-align: center; }
+  #graph-container svg { width: 100%; height: 100%; }
+  #tooltip {
+    display: none; position: fixed; background: #fff; border: 1px solid #dee2e6;
+    border-radius: 8px; padding: 14px 16px; max-width: 560px; max-height: 70vh; overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18); z-index: 1000; font-size: 13px; line-height: 1.5;
+  }
+  #tooltip .tt-header { font-weight: 700; font-size: 15px; margin-bottom: 6px; color: #212529; }
+  #tooltip .tt-meta { color: #6c757d; margin-bottom: 4px; }
+  #tooltip .tt-hint { color: #adb5bd; font-size: 11px; font-style: italic; margin-bottom: 10px; }
+  #tooltip .tt-comp-name { font-weight: 600; color: #495057; margin-top: 10px; border-bottom: 1px solid #e9ecef; padding-bottom: 2px; }
+  #tooltip .tt-comp-text {
+    white-space: pre-wrap; word-break: break-word; background: #f8f9fa;
+    border: 1px solid #e9ecef; border-radius: 4px; padding: 8px 10px; margin-top: 4px;
+    font-family: "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px;
+    max-height: 200px; overflow-y: auto;
+  }
+  .role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 6px; }
+  .role-best { background: #00e5ff33; color: #006064; }
+  .role-pareto { background: #ff980033; color: #e65100; }
+  .role-seed { background: #e0e0e0; color: #424242; }
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>GEPA Candidate Tree</h1>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:cyan"></div> Best</div>
+    <div class="legend-item"><div class="legend-dot" style="background:orange"></div> Pareto Front</div>
+    <div class="legend-item"><div class="legend-dot" style="background:lightgray"></div> Other</div>
+  </div>
+</div>
+<div id="graph-container"><p>Loading graph&hellip;</p></div>
+<div id="tooltip"></div>
+
+<script type="module">
+const NODES = [{"idx": 0, "score": 0.559, "parents": "seed", "role": "Pareto Front", "components": {"instruction": "You are evaluating a pair of political social media posts shown together, including the study instructions and both post texts. Should this pair of posts be removed from the platform? Answer yes if both posts should be removed; answer no if both should be allowed."}},
+{"idx": 1, "score": 0.632, "parents": "0", "role": "Best", "components": {"instruction": "You are evaluating a pair of political social media posts, presented together with any study instructions. The input contains two post texts (often labeled `original_text` and `mirror_text`); they may express opposite political viewpoints or be mirrored versions of the same argument.\n\nDecide whether BOTH posts should be removed from the platform. Assess each post separately, applying the supplied study instructions consistently and without favoring or penalizing a political side.\n\nAnswer \u201cyes\u201d only if both posts independently warrant removal. Answer \u201cno\u201d if either post should be allowed, including when neither should be removed. Return only \u201cyes\u201d or \u201cno.\u201d\n\nIn making the decision, distinguish political opinion, criticism, allegations, and heated but non-abusive rhetoric from content that crosses the study\u2019s removal standard. Political claims or criticism of elected officials, parties, policies, agencies, ideologies, or public figures are not by themselves grounds for removal. Posts criticizing elections, government programs, or political positions can generally remain when they do not cross that standard.\n\nPay particular attention to abusive or highly hostile language directed at political opponents or their supporters. Examples in this task include partisan slurs and demeaning insults (such as \u201cbrain dead\u201d or \u201clib-tards\u201d), vulgar contemptuous insults, claims portraying a party as supporting mass death, and extreme hyperbole about harming families or destroying cities. Such attacks can warrant removal when they are sufficiently toxic or hostile, even if framed as political commentary. Consider the wording and target of each post rather than its political stance.\n\nDo not infer that one post must receive the same decision as the other just because the pair is politically balanced or uses similar arguments. The final answer is about whether both should be removed, not whether either one should be removed."}},
+{"idx": 2, "score": 0.6015, "parents": "1", "role": "Pareto Front", "components": {"instruction": "You are evaluating a pair of political social-media posts, usually labeled `original_text` and `mirror_text`. They may take opposite political positions while using similar arguments. Apply the same standard to each post, without favoring either political side.\n\nDecide whether BOTH posts independently warrant removal under the study\u2019s standard. Answer \u201cyes\u201d only if both should be removed. Answer \u201cno\u201d if either should be allowed, including when neither should be removed. Return only \u201cyes\u201d or \u201cno,\u201d with no explanation.\n\nAssess the wording, target, and context of each post. Political opinions, policy arguments, criticism of elected officials, parties, agencies, ideologies, and public figures, and allegations of misconduct or bias are not by themselves grounds for removal. Do not remove a post merely because it is partisan, factually disputed, accusatory, or uses profanity. Do not infer that the posts must receive the same decision because they are politically balanced or mirror each other.\n\nCalibration from the study examples:\n- Allow criticism and allegations about political hypocrisy, corruption, business dealings, government agencies, special interests, or political opponents\u2019 motives when expressed as political argument. Broad rhetoric such as saying politicians are selling people out or \u201cdestroying the country\u201d for donors can remain. Criticism of political rhetoric, including quoted references to \u201cfight\u201d or calls to harass officials, can remain when the post is discussing or condemning it rather than endorsing harm.\n- Profanity alone is not decisive. Casual or contextual descriptions such as calling a politician an \u201casshole\u201d while discussing their record may remain. However, direct, contemptuous personal insults aimed at a named politician\u2014especially vulgar attacks on their intelligence or competence, such as saying they could not design a popsicle stick or find their way out of a paper bag\u2014warrant removal in this study\u2019s calibration. Calling a politician an \u201cidiot\u201d in a hostile political statement is also a removal-level signal.\n- Remove highly hostile or demeaning attacks on political opponents or their supporters, including partisan slurs, insults such as \u201cbrain dead\u201d or \u201clib-tards,\u201d vulgar contempt, and claims portraying a party or its supporters as backing mass death.\n- Remove extreme coercive or violent hyperbole aimed at political groups, such as calling to bring back the guillotine, send people to camps, or \u201cfind\u201d a camp or bunker. \u201cDeport them all\u201d in an extreme, hostile formulation is also a removal signal in the study examples. Do not treat every heated metaphor as equivalent: ordinary political claims that opponents are harming or \u201cdestroying\u201d the country are not, by themselves, a threat.\n- The study\u2019s calibration labels a paired exchange containing dismissive mockery of the other person\u2019s judgment (\u201cyour spider sense is calling bullshit\u201d / \u201cthe experts said so, case closed\u201d) alongside inflammatory allegations about Russia, the \u201cdeep state,\u201d the FBI, and the DOJ as removal. Political allegations alone generally do not justify removal, but do not automatically allow an exchange when the framing becomes highly hostile and contemptuous.\n\nApply the removal standard separately to both posts, then return the required pair-level answer."}}];
+const DOT = `digraph G {
+    rankdir=TB;
+    node [style=filled, shape=circle, fontsize=14, width=0.6, height=0.6];
+    0 [label="0\\n(0.56)", fillcolor=orange, tooltip=" "];
+    1 [label="1\\n(0.63)", fillcolor=cyan, tooltip=" "];
+    2 [label="2\\n(0.60)", fillcolor=orange, tooltip=" "];
+    0 -> 1;
+    1 -> 2;
+}`;
+
+const nodeMap = {};
+NODES.forEach(n => { nodeMap[n.idx] = n; });
+
+let pinnedIdx = null;   // non-null when tooltip is click-pinned (scrollable)
+let hoverIdx = null;    // non-null when hovering over a node
+
+function renderTooltip(idx) {
+  const n = nodeMap[idx];
+  if (!n) return "";
+  let roleBadge = "";
+  if (n.role === "Best") roleBadge = '<span class="role-badge role-best">BEST</span>';
+  else if (n.role === "Pareto Front") roleBadge = '<span class="role-badge role-pareto">PARETO</span>';
+  else if (n.role === "Seed") roleBadge = '<span class="role-badge role-seed">SEED</span>';
+
+  let comps = "";
+  for (const [name, text] of Object.entries(n.components)) {
+    const escaped = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    comps += '<div class="tt-comp-name">' + name + '</div><div class="tt-comp-text">' + escaped + '</div>';
+  }
+
+  return '<div class="tt-header">Candidate ' + n.idx + roleBadge + '</div>' +
+    '<div class="tt-meta">Score: <strong>' + n.score + '</strong>&nbsp;&nbsp;|&nbsp;&nbsp;Parent(s): ' + n.parents +
+    '</div><div class="tt-hint">' + (pinnedIdx === idx ? 'Click node again to dismiss' : 'Click to pin &amp; scroll') + '</div>' +
+    comps;
+}
+
+function positionTooltip(x, y) {
+  const tt = document.getElementById("tooltip");
+  let tx = x + 16, ty = y + 16;
+  const r = tt.getBoundingClientRect();
+  if (tx + r.width > window.innerWidth - 8) tx = x - r.width - 16;
+  if (ty + r.height > window.innerHeight - 8) ty = y - r.height - 16;
+  if (tx < 8) tx = 8;
+  if (ty < 8) ty = 8;
+  tt.style.left = tx + "px";
+  tt.style.top = ty + "px";
+}
+
+function showTooltip(idx, x, y) {
+  const tt = document.getElementById("tooltip");
+  tt.innerHTML = renderTooltip(idx);
+  tt.style.display = "block";
+  positionTooltip(x, y);
+}
+
+function hideTooltip() {
+  pinnedIdx = null;
+  hoverIdx = null;
+  document.getElementById("tooltip").style.display = "none";
+}
+
+// Click outside tooltip and outside nodes dismisses pinned tooltip
+document.addEventListener("mousedown", function(e) {
+  const tt = document.getElementById("tooltip");
+  if (pinnedIdx !== null && tt.style.display === "block"
+      && !tt.contains(e.target) && !e.target.closest(".node")) {
+    hideTooltip();
+  }
+});
+
+async function render() {
+  const { instance } = await import("https://cdn.jsdelivr.net/npm/@viz-js/viz@3.11.0/lib/viz-standalone.mjs");
+  const viz = await instance();
+  const svg = viz.renderSVGElement(DOT);
+  const container = document.getElementById("graph-container");
+  container.innerHTML = "";
+  container.appendChild(svg);
+
+  // Attach hover listeners and strip native <title> tooltips to avoid double tooltips
+  svg.querySelectorAll(".node").forEach(node => {
+    const title = node.querySelector("title");
+    if (!title) return;
+    const idx = parseInt(title.textContent, 10);
+    if (isNaN(idx)) return;
+    title.remove();  // remove native SVG tooltip
+    node.style.cursor = "pointer";
+    // Hover: show tooltip following the mouse (non-interactive)
+    node.addEventListener("mouseenter", e => {
+      if (pinnedIdx !== null) return;  // don't override a pinned tooltip
+      hoverIdx = idx;
+      showTooltip(idx, e.clientX, e.clientY);
+    });
+    node.addEventListener("mousemove", e => {
+      if (pinnedIdx !== null || hoverIdx !== idx) return;
+      positionTooltip(e.clientX, e.clientY);
+    });
+    node.addEventListener("mouseleave", () => {
+      if (pinnedIdx !== null) return;
+      hoverIdx = null;
+      document.getElementById("tooltip").style.display = "none";
+    });
+    // Click: pin the tooltip so user can scroll it
+    node.addEventListener("click", e => {
+      e.stopPropagation();
+      if (pinnedIdx === idx) { hideTooltip(); return; }
+      pinnedIdx = idx;
+      showTooltip(idx, e.clientX, e.clientY);
+    });
+  });
+  // Also strip <title> from edges and the graph itself
+  svg.querySelectorAll(".edge title").forEach(t => t.remove());
+  const graphTitle = svg.querySelector(":scope > title");
+  if (graphTitle) graphTitle.remove();
+}
+
+render().catch(err => {
+  document.getElementById("graph-container").innerHTML =
+    "<p style='color:red'>Failed to render graph: " + err.message + "</p>" +
+    "<pre>" + DOT.replace(/</g,"&lt;") + "</pre>";
+});
+</script>
+</body>
+</html>

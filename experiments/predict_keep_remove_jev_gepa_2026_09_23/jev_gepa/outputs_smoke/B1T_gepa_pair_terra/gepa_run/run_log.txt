@@ -1,0 +1,88 @@
+Iteration 0: Base program full valset score: 0.5525 over 20 / 20 examples
+Iteration 1: Selected program 0 score: 0.5525
+Iteration 1: Proposed new text for instruction: You are evaluating a paired political-post moderation task. You will be given:
+
+- `original_text`: one political social-media post
+- `mirror_text`: a politically mirrored/counterpart version of that post
+
+Decide whether the pair should be removed. Reply with exactly one lowercase word:
+
+- `yes` — both posts should be removed
+- `no` — both posts should be allowed
+
+Do not explain your answer, do not mention probabilities, and do not add formatting.
+
+Evaluate the actual wording and tone, not whether you agree with the political position. Apply the same standard to left- and right-leaning content; do not remove content merely because it criticizes Trump, Biden, Democrats, Republicans, MAGA supporters, progressives, Israel/Palestine, government, wealthy people, etc.
+
+The annotation standard is relatively permissive toward ordinary political disagreement, rhetoric, and criticism, but removes sufficiently toxic political abuse. Use the following calibration:
+
+ALLOW (`no`) for:
+- Normal political opinions, policy arguments, criticism of institutions, governments, parties, politicians, wealthy people, or ideology.
+- Predictions or warnings about political consequences, even dramatic ones, when they do not threaten or direct violence.
+- General claims about authoritarianism, government overreach, citizenship, constitutional rights, social hierarchy, taxation, or electoral systems.
+- Political mockery or ideological labels that remain mainly rhetorical rather than severely abusive.
+- Comparisons such as calling political opponents “Marxists,” “Nazis,” “far left,” “far right,” “Russian propaganda,” “cult-like,” etc., when presented as political commentary rather than extreme targeted abuse.
+- Mere profanity when it is not part of a strongly dehumanizing or abusive attack.
+
+REMOVE (`yes`) when both paired posts contain a comparable level of content such as:
+- Strong degrading insults aimed at political opponents or groups: e.g., calling them “fucking idiots,” “totally illiterate,” “dumber than a rock,” “cultist maniacs,” or similarly contemptuous language.
+- Dehumanizing, highly derogatory, or humiliating attacks that go beyond ordinary political criticism.
+- Explicitly baseless election-integrity accusations framed as factual claims, such as alleging that a party “stole elections” through corrupt or rigged voting systems, especially when paired with inflammatory group-directed rhetoric.
+- Severe harassment, threats, incitement, or advocacy of violence. These should be removed even if phrased politically.
+
+Important boundary calibration from prior human judgments:
+- “Talk about a third grade education. Totally illiterate and dumber than a rock. Perfect for [politician]’s garbage/clown-show Cabinet” is removal-level abuse.
+- Calling supporters “irrational delusions,” “cultist maniacs,” “woke fanatics,” or equivalent can be removal-level when the post is primarily a hostile, demeaning attack.
+- “These fucking idiots are eating up [side’s] propaganda” was judged removal-level due to the strong abusive phrasing.
+- By contrast, “these MAGAs/libs are so indoctrinated into their cult” was allowed in the observed data despite being insulting; do not over-remove lower-to-medium-level political snark.
+- Accusing someone of aligning with Nazis or radical Marxists, alongside criticism of their motives, was allowed in a close human judgment; do not automatically remove analogy-based political rhetoric.
+- A post criticizing “the ultra wealthy,” “big government,” bureaucrats, citizenship-based rights restrictions, or government social control is allowed absent direct abuse or threats.
+- Neutral policy prompts about carbon taxes, wealth taxes, income taxes, or abolishing taxes are allowed.
+- Claims that Democrats “steal elections” through mail-in-ballot chaos, corrupt machines, or a “rigged” system were removal-level in the observed data.
+
+Because the posts are mirrors, check that the conclusion is politically viewpoint-neutral: if the original is removable for abuse or misinformation, its mirror should ordinarily be treated the same way. Do not favor one side. If the pair is only borderline, ordinary political hyperbole, or lacks clear removal-level toxicity, choose `no`.
+Iteration 1: Accepted candidate (subsample score 6.08 -> 7.62); running full eval.
+Iteration 1: Found a better program on the valset with score 0.6025.
+Iteration 1: Valset score for new program: 0.6025 (coverage 20 / 20)
+Iteration 1: Val aggregate for new program: 0.6025
+Iteration 1: Individual valset scores for new program: {0: 0.64, 1: 0.62, 2: 0.6, 3: 0.52, 4: 0.24, 5: 0.52, 6: 0.72, 7: 0.6699999999999999, 8: 0.87, 9: 0.6799999999999999, 10: 0.57, 11: 0.76, 12: 0.73, 13: 0.27, 14: 0.28, 15: 0.79, 16: 0.79, 17: 0.7, 18: 0.87, 19: 0.21}
+Iteration 1: New valset pareto front scores: {0: 0.64, 1: 0.62, 2: 0.77, 3: 0.73, 4: 0.36, 5: 0.52, 6: 0.72, 7: 0.6699999999999999, 8: 0.87, 9: 0.6799999999999999, 10: 0.57, 11: 0.76, 12: 0.73, 13: 0.28, 14: 0.35, 15: 0.79, 16: 0.84, 17: 0.7, 18: 0.87, 19: 0.27}
+Iteration 1: Valset pareto front aggregate score: 0.637
+Iteration 1: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {0}, 3: {0}, 4: {0}, 5: {1}, 6: {1}, 7: {1}, 8: {0, 1}, 9: {1}, 10: {1}, 11: {1}, 12: {1}, 13: {0}, 14: {0}, 15: {1}, 16: {0}, 17: {1}, 18: {0, 1}, 19: {0}}
+Iteration 1: Best valset aggregate score so far: 0.6025
+Iteration 1: Best program as per aggregate score on valset: 1
+Iteration 1: Best score on valset: 0.6025
+Iteration 1: Linear pareto front program index: 1
+Iteration 1: New program candidate index: 1
+Iteration 2: No merge candidates found
+Iteration 2: Selected program 0 score: 0.5525
+Iteration 2: Proposed new text for instruction: You are moderating a paired set of political social-media posts. The input contains two parallel posts, typically labeled `original_text` and `mirror_text`, which express opposing political viewpoints. Assess each post under the same standard, without favoring either political side.
+
+Return exactly one lowercase word:
+
+- `yes` — only if BOTH posts should be removed.
+- `no` — if BOTH posts should be allowed, or if only one post clearly warrants removal.
+
+Removal standard:
+Remove posts that use severe, targeted, or broadly demeaning hostile language toward political parties, political movements, voters, or ideological groups; use identity-like slurs for political opponents; wish, endorse, imply, or normalize harm or “consequences” against political opponents or their families; or make sweeping, inflammatory claims that a political party/group supports killing, mass death, or comparable atrocities.
+
+Examples of removable patterns include:
+- Calling political opponents “brain dead,” “MAGAts,” “lib-tards,” “chuckle fucks,” etc.
+- Saying a political group would let families be killed, should face “actual consequences,” should starve, or expressing similar collective hostility or harm.
+- Blanket accusations such as “the Democrat/Republican Party supports killers,” “mass death,” or “destruction,” when used as a hostile attack on the group rather than substantive policy criticism.
+
+Allow ordinary political disagreement, criticism of politicians, parties, agencies, corporations, policies, ideologies, or election claims, even when sarcastic or rude. Terms such as “woke,” “corporate shills,” “clowns,” “bloated agencies,” or criticism that a policy is reckless, harmful, corrupt, or wrong are not by themselves enough for removal. Do not remove merely for profanity, partisan framing, controversial claims, factual inaccuracies, or criticism of institutions.
+
+Focus on the actual language and target, not the truth of the political claim, the sampled stance, or whether you agree with the viewpoint. Apply the standard symmetrically to the original and mirrored post.
+Iteration 2: Accepted candidate (subsample score 6.97 -> 7.09); running full eval.
+Iteration 2: Valset score for new program: 0.5549999999999999 (coverage 20 / 20)
+Iteration 2: Val aggregate for new program: 0.5549999999999999
+Iteration 2: Individual valset scores for new program: {0: 0.5700000000000001, 1: 0.29000000000000004, 2: 0.79, 3: 0.65, 4: 0.36, 5: 0.19999999999999996, 6: 0.64, 7: 0.54, 8: 0.94, 9: 0.5800000000000001, 10: 0.51, 11: 0.6799999999999999, 12: 0.65, 13: 0.33999999999999997, 14: 0.32, 15: 0.63, 16: 0.6599999999999999, 17: 0.56, 18: 0.93, 19: 0.26}
+Iteration 2: New valset pareto front scores: {0: 0.64, 1: 0.62, 2: 0.79, 3: 0.73, 4: 0.36, 5: 0.52, 6: 0.72, 7: 0.6699999999999999, 8: 0.94, 9: 0.6799999999999999, 10: 0.57, 11: 0.76, 12: 0.73, 13: 0.33999999999999997, 14: 0.35, 15: 0.79, 16: 0.84, 17: 0.7, 18: 0.93, 19: 0.27}
+Iteration 2: Valset pareto front aggregate score: 0.6475
+Iteration 2: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {2}, 3: {0}, 4: {0, 2}, 5: {1}, 6: {1}, 7: {1}, 8: {2}, 9: {1}, 10: {1}, 11: {1}, 12: {1}, 13: {2}, 14: {0}, 15: {1}, 16: {0}, 17: {1}, 18: {2}, 19: {0}}
+Iteration 2: Best valset aggregate score so far: 0.6025
+Iteration 2: Best program as per aggregate score on valset: 1
+Iteration 2: Best score on valset: 0.6025
+Iteration 2: Linear pareto front program index: 1
+Iteration 2: New program candidate index: 2

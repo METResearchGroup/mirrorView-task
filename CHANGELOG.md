@@ -1,9 +1,14 @@
 # CHANGELOG
 
+## 2026-09-25
+
+1. Rebuilt GEPA on the Part 2 plus Part 3 union cohort (`jev_gepa_rebuilt`) scored R1, R2, R3, R5, R6, and R7. R1 test F1 is 0.553 at the dev-A threshold, above union A1 test F1 0.538. R4 did not run. [PR #309](https://github.com/METResearchGroup/mirrorView-task/pull/309)
+
 ## 2026-09-24
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
+3. Operators now have Jev baseline and Jev+GEPA keep/remove predictions for Study Phase 2 Part 3 on a 14,955-post cohort; Stage A and Stage B completed with results in `experiments/predict_keep_remove_jev_gepa_2026_09_23/RESULTS.md` (pytest 88 passed). [PR #309](https://github.com/METResearchGroup/mirrorView-task/pull/309)
 
 ## 2026-09-22
 

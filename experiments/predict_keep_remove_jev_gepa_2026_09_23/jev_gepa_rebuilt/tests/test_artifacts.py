@@ -1,0 +1,118 @@
+"""Tests for jev_gepa_rebuilt artifact upload helpers."""
+
+from __future__ import annotations
+
+from pathlib import Path
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.jev_gepa_rebuilt.artifacts import (
+    rebuilt_s3_key,
+    rebuilt_s3_prefix,
+    upload_rebuilt,
+)
+
+
+class TestUploadRebuilt:
+    """Tests for upload_rebuilt."""
+
+    def test_put_new_key_under_rebuilt_prefix(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verifies upload keys start with the jev_gepa_rebuilt S3 subprefix."""
+        monkeypatch.setattr(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.REPO_ROOT",
+            tmp_path,
+        )
+        file_path = (
+            tmp_path
+            / "experiments"
+            / "predict_keep_remove_jev_gepa_2026_09_23"
+            / "jev_gepa_rebuilt"
+            / "outputs"
+            / "R1_gepa_pair"
+            / "foo.json"
+        )
+        file_path.parent.mkdir(parents=True)
+        file_path.write_bytes(b"{}")
+        expected_prefix = rebuilt_s3_prefix()
+        mock_store = MagicMock()
+        mock_store.get.return_value = None
+
+        with patch(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.CampaignObjectStore",
+            return_value=mock_store,
+        ):
+            upload_rebuilt(file_path)
+
+        mock_store.put_new.assert_called_once()
+        key = mock_store.put_new.call_args[0][0]
+        assert key.startswith(f"{expected_prefix}/")
+
+    def test_s3_key_when_repo_root_does_not_contain_path(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Verifies upload uses package-relative keys when REPO_ROOT mismatches the file path."""
+        workspace = tmp_path / "workspace"
+        wrong_repo_root = tmp_path / "other-checkout"
+        monkeypatch.setattr(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.REPO_ROOT",
+            wrong_repo_root,
+        )
+        file_path = (
+            workspace
+            / "experiments"
+            / "predict_keep_remove_jev_gepa_2026_09_23"
+            / "jev_gepa_rebuilt"
+            / "outputs"
+            / "R1_gepa_pair"
+            / "foo.json"
+        )
+        file_path.parent.mkdir(parents=True)
+        file_path.write_bytes(b"{}")
+        expected_key = rebuilt_s3_key(file_path)
+        mock_store = MagicMock()
+        mock_store.get.return_value = None
+
+        with patch(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.CampaignObjectStore",
+            return_value=mock_store,
+        ):
+            upload_rebuilt(file_path)
+
+        mock_store.put_new.assert_called_once_with(expected_key, b"{}")
+
+    def test_directory_uploads_each_file(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Verifies a directory upload sends each nested file and not the directory."""
+        monkeypatch.setattr(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.REPO_ROOT",
+            tmp_path / "unused-root",
+        )
+        ablation_dir = (
+            tmp_path
+            / "experiments"
+            / "predict_keep_remove_jev_gepa_2026_09_23"
+            / "jev_gepa_rebuilt"
+            / "outputs"
+            / "R1_gepa_pair"
+        )
+        nested = ablation_dir / "gepa_run" / "stop_reason.json"
+        nested.parent.mkdir(parents=True)
+        (ablation_dir / "dev_selection.json").write_bytes(b'{"selected":1}')
+        nested.write_bytes(b'{"stop":"budget"}')
+        mock_store = MagicMock()
+        mock_store.get.return_value = None
+
+        with patch(
+            "experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.artifacts.CampaignObjectStore",
+            return_value=mock_store,
+        ):
+            upload_rebuilt(ablation_dir)
+
+        uploaded = {call.args[0]: call.args[1] for call in mock_store.put_new.call_args_list}
+        assert uploaded == {
+            rebuilt_s3_key(ablation_dir / "dev_selection.json"): b'{"selected":1}',
+            rebuilt_s3_key(nested): b'{"stop":"budget"}',
+        }
+        assert str(ablation_dir) not in uploaded

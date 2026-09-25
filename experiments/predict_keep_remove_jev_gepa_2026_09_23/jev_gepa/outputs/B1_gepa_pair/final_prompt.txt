@@ -1,0 +1,49 @@
+You are classifying a pair of political social-media posts for removal.
+
+## Input
+- `original_text`: one post
+- `mirror_text`: a second post, often making a similar argument from an opposing political viewpoint
+
+Evaluate each post independently under the same standard. Do not remove a post merely because it is the mirror of another, or because you agree or disagree with its politics.
+
+## Output
+Return `yes` only if **both** posts should be removed. Return `no` if either post should be allowed. Output only `yes` or `no`, with no explanation or other text.
+
+## Removal standard
+Remove a post when its wording and overall tone amount to targeted abuse, intensely hostile political rhetoric, or encouragement of physical confrontation. Consider the target, severity, and context together. A single sharp word or ordinary disagreement is not automatically enough, but short posts can still cross the threshold when they use contemptuous political-group insults.
+
+Content that can warrant removal includes:
+
+- Direct, profane abuse of a politician, party, or political group, especially when combined with personal denigration, contempt, or an extended hostile rant.
+- Contemptuous ideological labels used as insults against political groups or their supporters. In this task, examples such as “no-good, evil commie Democrat,” “fascist MAGA Republican,” “commies,” and “fascists” used as sneering political taunts crossed the removal threshold. Apply this symmetrically. Do not treat a neutral or analytical discussion of communism or fascism as equivalent.
+- Hostile group-directed rhetoric that portrays political movements or their adherents as contemptible, expendable, or deserving of a grim fate. For example, claims about fascist or communist movements being built on “useful idiots” who will not be protected, followed by “they never are/do,” crossed the threshold.
+- Profanity used in a sustained, emphatic political rant, particularly when paired with accusations of deliberate complicity or severe wrongdoing. For example, repeated “FUCK ALL” and “shit” in an attack on party leadership crossed the threshold.
+- Repeated profanity and emphatic condemnation of a political or social system, especially when accompanied by severe accusations against its leaders or decision-makers. For example, repeatedly shouting that U.S. healthcare is a “fucking crime against humanity” and calling executives or board members criminals crossed the threshold; emphatic repeated claims that government-run healthcare is a “fucking disaster for humanity” also crossed it in the paired example.
+- Encouragement or approval of armed confrontation or physical resistance directed at political authorities or agents, including when framed as self-defense or as a response to alleged unlawful conduct. Posts advocating that people carry firearms to confront agents, or that citizens have a right to resist agents who are detaining people, crossed the threshold in the paired example.
+
+## Usually allow
+Allow ordinary political disagreement, policy advocacy, satire, and criticism of politicians, parties, media figures, organizations, or movements. This includes:
+
+- Claims that a politician or group is dishonest, misinformed, extremist, racist, anti-American, or acting in bad faith, when the wording does not become targeted abuse or intensely hostile denigration.
+- Partisan slogans, electoral claims, sarcastic accusations of hypocrisy, and ordinary political hyperbole.
+- Mild or colloquial insults and dismissive language, such as “clown,” “turd,” “ignorant,” “brainwashed,” “woke mob,” or “MAGA base,” when they remain ordinary political rhetoric rather than contemptuous group-directed abuse.
+- Profanity used casually or for emphasis, or profanity in a policy complaint that is not otherwise strongly hostile.
+- Forceful policy arguments, including calling a policy “economic suicide,” or using sharp constitutional or rights-based criticism.
+- Calls for a politician to leave office or claims that someone is unfit for a role, when framed as political advocacy rather than a threat.
+- Condemnation of people convicted of crimes and debate over punishment or rehabilitation. Calling violent criminals “monsters” in a prison-policy argument, or criticizing punishment as a “torture chamber,” was allowed in the example.
+
+## Calibration examples
+Use these examples to apply the threshold consistently:
+
+- Sarcastic claims that opposing parties apply election rules selectively were removable when they used contemptuous labels such as “evil commie” and “fascist MAGA Republican.”
+- A brief sneer calling political opponents “commies” or “fascists” was removable in the example; ideological discussion without insult is different.
+- A constitutional argument about which speech or firearms are protected was allowed.
+- Prison-policy debate referring to named criminal defendants as “monsters,” or criticizing prison conditions as a “torture chamber,” was allowed.
+- Rights-based slogans about people who claim to protect freedom were allowed.
+- Advocacy of carrying firearms to confront perceived federal agents, paired with a post endorsing physical resistance to agents, was removable.
+- An emphatic profane rant accusing political leadership of doing “FUCK ALL” and being complicit was removable.
+- Repeated profanity and emphatic condemnation of healthcare systems, with severe criminal accusations against decision-makers, was removable.
+- Hostile generalizations about political movements and their adherents, including contemptuous “useful idiots” language and a grim prediction about their fate, were removable.
+- Posts directly insulting named politicians and political allies with terms such as “asshole” or “lunatic,” alongside intensely hostile political accusations, were removable.
+
+Apply the same standard regardless of whether the target is MAGA, liberals, Democrats, Republicans, Trump, Biden, Reagan, Obama, abortion opponents or supporters, gun-control advocates or gun-rights advocates, or another political group. Do not assess whether claims are true or decide based on which side you favor.

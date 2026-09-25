@@ -1,0 +1,292 @@
+"""GEPA adapter for Jev keep/remove scoring.
+
+Run from the repo root:
+
+    PYTHONPATH=. uv run pytest experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa/tests/test_adapter.py -q
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any, Literal
+
+from gepa.core.adapter import EvaluationBatch, GEPAAdapter
+from typesafe_sdk import TypeSafeClient
+
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared import jev_scorer, secrets
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.prompt import (
+    VIEW_MIRROR,
+    VIEW_ORIGINAL,
+    VIEW_PAIR,
+    render_state_text,
+)
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.rate_limiter import RequestStartLimiter
+from experiments.predict_keep_remove_jev_gepa_2026_09_23.shared.retries import run_with_retries
+
+ScoreMode = Literal["probability", "asymmetric"]
+ViewName = Literal["pair", "original", "mirror"]
+
+DEFAULT_THRESHOLD = 0.5
+DEFAULT_BATCH_SIZE = 10
+REMOVE_LABEL = 1
+ASYMMETRIC_REWARDS = {
+    "tp": 1.0,
+    "fn": -3.0,
+    "fp": -1.0,
+    "tn": 0.5,
+}
+
+
+@dataclass(frozen=True)
+class JevDataInst:
+    """One GEPA evaluation instance with paired post texts and gold keep/remove label."""
+
+    post_id: str
+    original_text: str
+    mirror_text: str
+    post_1_role: str
+    post_2_role: str
+    label: int
+    n_keep: int
+    n_remove: int
+    n_raters: int
+    sampled_stance: str
+    sample_toxicity_type: str
+
+
+@dataclass(frozen=True)
+class JevTrajectory:
+    """Scored rollout trace for one instance, including threshold-crossing state."""
+
+    post_id: str
+    view: ViewName
+    instruction: str
+    original_text: str
+    mirror_text: str
+    p_remove: float
+    label: int
+    n_keep: int
+    n_remove: int
+    sampled_stance: str
+    sample_toxicity_type: str
+    threshold_crossed: bool
+    error: str | None = None
+
+
+@dataclass(frozen=True)
+class JevRolloutOutput:
+    """GEPA rollout output carrying the predicted P(remove) for one post."""
+
+    post_id: str
+    p_remove: float
+
+
+class JevGepaAdapter:
+    """Score Jev batches for GEPA with optional asymmetric reward mode."""
+
+    propose_new_texts = None
+
+    def __init__(
+        self,
+        *,
+        view: ViewName,
+        score_mode: ScoreMode = "probability",
+        scorer: Any | None = None,
+        client: TypeSafeClient | None = None,
+        rate_limiter: RequestStartLimiter | None = None,
+        threshold: float = DEFAULT_THRESHOLD,
+        batch_size: int = DEFAULT_BATCH_SIZE,
+    ) -> None:
+        self._view = view
+        self._score_mode = score_mode
+        self._scorer = scorer or jev_scorer.score_batch
+        self._client = client
+        self._lazy_client: TypeSafeClient | None = None
+        self._rate_limiter = rate_limiter
+        self._threshold = threshold
+        self._batch_size = batch_size
+
+    def _resolve_client(self) -> TypeSafeClient:
+        if self._client is not None:
+            return self._client
+        if self._lazy_client is None:
+            self._lazy_client = jev_scorer.build_client(secrets.get_jev_api_key())
+        return self._lazy_client
+
+    def _render_state_text(self, instance: JevDataInst) -> str:
+        return render_state_text(
+            self._view,
+            instance.original_text,
+            instance.mirror_text,
+            instance.post_1_role,
+            add_criteria=False,
+        )
+
+    def _wait_for_rate_limit(self) -> None:
+        if self._rate_limiter is not None:
+            self._rate_limiter.wait()
+
+    def _call_scorer(
+        self,
+        state_texts: list[str],
+        instruction: str,
+    ) -> list[float]:
+        def _attempt() -> list[float]:
+            self._wait_for_rate_limit()
+            batch_result = self._scorer(
+                self._resolve_client(),
+                state_texts,
+                self._view,
+                instruction=instruction,
+            )
+            return [float(value) for value in batch_result.probabilities]
+
+        return run_with_retries(_attempt)
+
+    def _probability_score(self, label: int, p_remove: float) -> float:
+        if label == REMOVE_LABEL:
+            return p_remove
+        return 1.0 - p_remove
+
+    def _asymmetric_score(self, label: int, p_remove: float) -> float:
+        predicted_remove = p_remove >= self._threshold
+        gold_remove = label == REMOVE_LABEL
+        if gold_remove and predicted_remove:
+            return ASYMMETRIC_REWARDS["tp"]
+        if gold_remove and not predicted_remove:
+            return ASYMMETRIC_REWARDS["fn"]
+        if not gold_remove and predicted_remove:
+            return ASYMMETRIC_REWARDS["fp"]
+        return ASYMMETRIC_REWARDS["tn"]
+
+    def _score_example(
+        self,
+        instance: JevDataInst,
+        p_remove: float,
+    ) -> float:
+        if self._score_mode == "probability":
+            return self._probability_score(instance.label, p_remove)
+        return self._asymmetric_score(instance.label, p_remove)
+
+    def _build_trajectory(
+        self,
+        instance: JevDataInst,
+        instruction: str,
+        p_remove: float,
+        error: str | None,
+    ) -> JevTrajectory:
+        predicted_remove = p_remove >= self._threshold
+        gold_remove = instance.label == REMOVE_LABEL
+        return JevTrajectory(
+            post_id=instance.post_id,
+            view=self._view,
+            instruction=instruction,
+            original_text=instance.original_text,
+            mirror_text=instance.mirror_text,
+            p_remove=p_remove,
+            label=instance.label,
+            n_keep=instance.n_keep,
+            n_remove=instance.n_remove,
+            sampled_stance=instance.sampled_stance,
+            sample_toxicity_type=instance.sample_toxicity_type,
+            threshold_crossed=predicted_remove != gold_remove,
+            error=error,
+        )
+
+    def _score_instances(
+        self,
+        instances: list[JevDataInst],
+        instruction: str,
+        capture_traces: bool,
+    ) -> tuple[list[JevRolloutOutput], list[float], list[JevTrajectory] | None, int]:
+        outputs: list[JevRolloutOutput] = []
+        scores: list[float] = []
+        trajectories: list[JevTrajectory] | None = [] if capture_traces else None
+        num_metric_calls = 0
+
+        for chunk_start in range(0, len(instances), self._batch_size):
+            chunk = instances[chunk_start : chunk_start + self._batch_size]
+            state_texts = [self._render_state_text(instance) for instance in chunk]
+            probabilities = self._call_scorer(state_texts, instruction)
+            num_metric_calls += 1
+            for instance, p_remove in zip(chunk, probabilities):
+                outputs.append(JevRolloutOutput(post_id=instance.post_id, p_remove=p_remove))
+                scores.append(self._score_example(instance, p_remove))
+                if trajectories is not None:
+                    trajectories.append(
+                        self._build_trajectory(instance, instruction, p_remove, None)
+                    )
+        return outputs, scores, trajectories, num_metric_calls
+
+    def evaluate(
+        self,
+        batch: list[JevDataInst],
+        candidate: dict[str, str],
+        capture_traces: bool = False,
+    ) -> EvaluationBatch[JevTrajectory, JevRolloutOutput]:
+        """Score a candidate instruction on a batch and return GEPA evaluation results."""
+        instruction = candidate["instruction"]
+        outputs, scores, trajectories, num_metric_calls = self._score_instances(
+            batch,
+            instruction,
+            capture_traces,
+        )
+        return EvaluationBatch(
+            outputs=outputs,
+            scores=scores,
+            trajectories=trajectories,
+            num_metric_calls=num_metric_calls,
+        )
+
+    def _build_reflective_inputs(self, trajectory: JevTrajectory) -> dict[str, str]:
+        if self._view == VIEW_PAIR:
+            return {
+                "original_text": trajectory.original_text,
+                "mirror_text": trajectory.mirror_text,
+            }
+        if self._view == VIEW_ORIGINAL:
+            return {"post_text": trajectory.original_text}
+        if self._view == VIEW_MIRROR:
+            return {"post_text": trajectory.mirror_text}
+        raise ValueError(f"unknown view: {self._view}")
+
+    def _build_feedback(self, trajectory: JevTrajectory) -> str:
+        predicted_label = REMOVE_LABEL if trajectory.p_remove >= self._threshold else 0
+        return (
+            f"Gold label={trajectory.label} ({'remove' if trajectory.label == REMOVE_LABEL else 'keep'}). "
+            f"Human votes: keep={trajectory.n_keep}, remove={trajectory.n_remove}. "
+            f"Sampled stance={trajectory.sampled_stance}. "
+            f"Toxicity={trajectory.sample_toxicity_type}. "
+            f"P(remove)={trajectory.p_remove:.3f}; predicted_label={predicted_label}. "
+            f"Threshold crossed={trajectory.threshold_crossed} at threshold={self._threshold}."
+        )
+
+    def make_reflective_dataset(
+        self,
+        candidate: dict[str, str],
+        eval_batch: EvaluationBatch[JevTrajectory, JevRolloutOutput],
+        components_to_update: list[str],
+    ) -> dict[str, list[dict[str, Any]]]:
+        """Build reflective-dataset records from scored trajectories for instruction updates."""
+        if eval_batch.trajectories is None:
+            raise ValueError("eval_batch.trajectories is required for reflection")
+        records: list[dict[str, Any]] = []
+        for trajectory in eval_batch.trajectories:
+            predicted_label = (
+                REMOVE_LABEL if trajectory.p_remove >= self._threshold else 0
+            )
+            records.append(
+                {
+                    "Inputs": self._build_reflective_inputs(trajectory),
+                    "Generated Outputs": {
+                        "p_remove": f"{trajectory.p_remove:.3f}",
+                        "predicted_label": str(predicted_label),
+                    },
+                    "Feedback": self._build_feedback(trajectory),
+                }
+            )
+        return {"instruction": records} if "instruction" in components_to_update else {}
+
+
+def _implements_gepa_adapter(adapter: JevGepaAdapter) -> GEPAAdapter[JevDataInst, JevTrajectory, JevRolloutOutput]:
+    return adapter

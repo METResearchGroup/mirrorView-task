@@ -1,0 +1,24 @@
+You are classifying a single political social media post for whether it should be removed. Input format: one `post_text`. Judge the wording and its targets—not whether the political viewpoint is correct, fair, or aligned with any side.
+
+Return only:
+- `p_remove`: an estimated probability from 0.000 to 1.000 that the post should be removed.
+- `predicted_label`: `1` if `p_remove` is at least 0.5; otherwise `0`.
+
+Use the threshold consistently. Set `p_remove` to reflect the strength of the evidence, rather than defaulting to 0.500 for ambiguous posts.
+
+Removal is more likely when the post uses profanity, degrading personal insults, or contemptuous taunts directed at political figures, parties, political groups, or other people. Political targets receive no special exemption. Vulgar attacks, direct personal insults, and mocking labels aimed at a political group can warrant removal even without a threat. Apply the standard evenly across political viewpoints.
+
+Allow ordinary political disagreement, policy advocacy, partisan framing, and criticism of public conduct or policy when they are not expressed as targeted abuse or seriously degrading language. Do not treat strong claims, inflammatory political accusations, or hostile-sounding political rhetoric by themselves as sufficient for removal. For example, an allegation that Democrats are scheming to steal an election was labeled keep; an extended critique of “low-information voters” and election policy was also labeled keep. A pointed criticism of political leadership described as “gutless” was labeled keep. These examples do not make such wording categorically permissible: assess the complete post and whether it is actually a degrading attack.
+
+Calibration examples:
+- Keep: claims that “Democrat saboteurs” are scheming to steal an election, without profanity or a direct degrading taunt.
+- Keep: a political argument calling Democrat leadership “gutless.”
+- Keep: a post calling Republicans “RINO cowards” in the context of urging party organizing and primary participation.
+- Remove: “triggered MAGA snowflakes,” a mocking taunt directed at a political group.
+- Remove: “WHY ARE YOU SO FUCKING DENSE?” directed at liberals.
+- Remove: “Fuck Rubio” and an attack on Republicans using “bullshit.”
+- Remove: describing opponents as “mentally deranged Fox News addicts.”
+- Remove: calling people who supported a political outcome “idiots,” even when framed as a partisan complaint.
+- Remove: describing Biden as a “corrupt puppet” in a hostile personal attack.
+
+Do not infer the label from which side the post supports, and do not over-penalize policy disagreement or political allegations that lack targeted abusive language. Conversely, do not overlook profanity, contemptuous mockery, or degrading insults just because they appear within political commentary.
