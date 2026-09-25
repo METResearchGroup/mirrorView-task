@@ -64,7 +64,7 @@ class AnalysisConfig:
     """Primary and ablation settings for one analysis run."""
 
     text_arm: str = TEXT_ARM_PAIRED
-    participant_filter: str = constants.PARTICIPANT_FILTER_ATTENTION_PASS
+    participant_filter: str = constants.PARTICIPANT_FILTER_ALL
     label_source: str = LABEL_SOURCE_UNION
     label_definition: str = LABEL_DEFINITION_MODAL
     batch_design: str = constants.BATCH_DESIGN_MIXED
@@ -174,15 +174,9 @@ def run_q1_replication(
     """Part 2 catalog replication using part3_only modal labels."""
     posts = _replication_post_ids(frame, part3_cohort)
     subset = frame.loc[frame["post_id"].astype(str).isin(posts)].copy()
-    subset = _apply_part3_modal(subset, part3_cohort)
-    subset = _post_level_original(subset)
-    subset = _assert_test_only(subset)
-    result = {
-        "n_posts": len(subset),
-        "post_ids": sorted(posts),
-        "uses_participant_filter": constants.PARTICIPANT_FILTER_PART3_ONLY,
-        "in_part2_catalog_only": True,
-    }
+    subset = _assert_test_only(_post_level_original(_apply_part3_modal(subset, part3_cohort)))
+    feature_ids = [column for column in subset.columns if str(column).startswith("cb_")]
+    result = _replication_payload(posts, subset, feature_ids)
     if theme_map is not None and not theme_map.empty:
         result["theme_mapping"] = theme_map.to_dict(orient="records")
     return result
@@ -363,7 +357,7 @@ def main(argv: list[str] | None = None) -> None:
     args = _parse_args(argv)
     if args.split != constants.TEST_SPLIT:
         raise SystemExit("only --split test is supported")
-    config = AnalysisConfig(participant_filter=constants.PARTICIPANT_FILTER_ATTENTION_PASS)
+    config = AnalysisConfig(participant_filter=constants.PARTICIPANT_FILTER_ALL)
     inputs = build_analysis_inputs(
         Path(args.label_matrix),
         Path(args.codebook),
@@ -606,11 +600,35 @@ def _q6_interaction_rows(
     return rows
 
 
+def _replication_payload(
+    posts: set[str],
+    subset: pd.DataFrame,
+    feature_ids: list[str],
+) -> dict[str, Any]:
+    prevalence = run_q1(subset, feature_ids)
+    return {
+        "n_posts": len(subset),
+        "post_ids": sorted(posts),
+        "uses_participant_filter": constants.PARTICIPANT_FILTER_PART3_ONLY,
+        "in_part2_catalog_only": True,
+        "features": prevalence["features"],
+    }
+
+
 def _replication_post_ids(frame: pd.DataFrame, part3_cohort: pd.DataFrame) -> set[str]:
-    catalog = part3_cohort.loc[part3_cohort["in_part2_catalog"]].copy()
-    catalog = catalog.loc[catalog["split"] == constants.TEST_SPLIT]
+    catalog = part3_cohort.loc[part3_cohort["in_part2_catalog"].fillna(False).astype(bool)]
+    catalog = _catalog_rows_on_test_split(catalog)
     test_posts = set(frame["post_id"].astype(str))
     return test_posts & set(catalog["post_id"].astype(str))
+
+
+def _catalog_rows_on_test_split(catalog: pd.DataFrame) -> pd.DataFrame:
+    if "split" not in catalog.columns:
+        return catalog
+    marked = catalog["split"].notna() & (catalog["split"].astype(str) != "None")
+    if not bool(marked.any()):
+        return catalog
+    return catalog.loc[catalog["split"] == constants.TEST_SPLIT]
 
 
 def _apply_part3_modal(frame: pd.DataFrame, part3_cohort: pd.DataFrame) -> pd.DataFrame:
@@ -635,6 +653,9 @@ def _write_question_outputs(output_dir: Path, results: dict[str, Any], feature_i
     pd.DataFrame(results["q1"]["features"]).to_csv(output_dir / "q1_feature_prevalence.csv", index=False)
     pd.DataFrame(results["q1_replication"].get("theme_mapping", [])).to_csv(
         output_dir / "q1_part2_replication.csv", index=False
+    )
+    pd.DataFrame(results["q1_replication"].get("features", [])).to_csv(
+        output_dir / "q1_catalog_prevalence.csv", index=False
     )
     pd.DataFrame(results["q2"]["features"]).to_csv(output_dir / "q2_stance_invariance.csv", index=False)
     pd.DataFrame(results["q3"]["features"]).to_csv(output_dir / "q3_flip_fidelity.csv", index=False)

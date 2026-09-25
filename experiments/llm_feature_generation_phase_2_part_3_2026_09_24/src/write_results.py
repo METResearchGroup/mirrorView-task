@@ -29,7 +29,8 @@ def load_self_consistency_flags(scores_path: Path | None) -> list[str]:
     payload = json.loads(scores_path.read_text(encoding="utf-8"))
     flagged: list[str] = []
     for feature_id, score in payload.get("per_feature", {}).items():
-        if float(score) < SELF_CONSISTENCY_THRESHOLD:
+        rate = score["agreement_rate"] if isinstance(score, dict) else score
+        if float(rate) < SELF_CONSISTENCY_THRESHOLD:
             flagged.append(str(feature_id))
     flagged.extend(str(item) for item in payload.get("features_below_threshold", []))
     return sorted(set(flagged))
