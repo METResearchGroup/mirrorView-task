@@ -1,0 +1,57 @@
+feature_id_a,feature_id_b,merged_to,confirmed_by,confirmed_at,notes
+cb_035,cb_006,cb_001,user,2026-09-24T15-11-53,emphatic typography
+cb_007,cb_006,cb_001,user,2026-09-24T15-11-53,emphatic typography
+cb_034,cb_006,cb_001,user,2026-09-24T15-11-53,emphatic typography
+cb_074,cb_006,cb_001,user,2026-09-24T15-11-53,emphatic typography
+cb_073,cb_006,cb_001,user,2026-09-24T15-11-53,emphatic typography
+cb_079,cb_023,cb_002,user,2026-09-24T15-11-53,political insults
+cb_026,cb_023,cb_002,user,2026-09-24T15-11-53,political insults
+cb_082,cb_023,cb_002,user,2026-09-24T15-11-53,political insults
+cb_084,cb_023,cb_002,user,2026-09-24T15-11-53,political insults
+cb_056,cb_022,cb_003,user,2026-09-24T15-11-53,sarcasm and mockery
+cb_057,cb_022,cb_003,user,2026-09-24T15-11-53,sarcasm and mockery
+cb_076,cb_022,cb_003,user,2026-09-24T15-11-53,sarcasm and mockery
+cb_053,cb_024,cb_004,user,2026-09-24T15-11-53,criticism of political actors
+cb_071,cb_024,cb_004,user,2026-09-24T15-11-53,criticism of political actors
+cb_080,cb_024,cb_004,user,2026-09-24T15-11-53,criticism of political actors
+cb_033,cb_011,cb_005,user,2026-09-24T15-11-53,persuasive argumentation
+cb_066,cb_011,cb_005,user,2026-09-24T15-11-53,persuasive argumentation
+cb_030,cb_001,cb_006,user,2026-09-24T15-11-53,qualified claims
+cb_058,cb_001,cb_006,user,2026-09-24T15-11-53,qualified claims
+cb_032,cb_003,cb_007,user,2026-09-24T15-11-53,unqualified claims as fact
+cb_060,cb_003,cb_007,user,2026-09-24T15-11-53,unqualified claims as fact
+cb_036,cb_004,cb_008,user,2026-09-24T15-11-53,conditional reasoning
+cb_065,cb_004,cb_008,user,2026-09-24T15-11-53,conditional reasoning
+cb_031,cb_005,cb_009,user,2026-09-24T15-11-53,quoted or attributed speech
+cb_059,cb_005,cb_009,user,2026-09-24T15-11-53,quoted or attributed speech
+cb_041,cb_008,cb_010,user,2026-09-24T15-11-53,lists
+cb_078,cb_008,cb_010,user,2026-09-24T15-11-53,lists
+cb_039,cb_009,cb_011,user,2026-09-24T15-11-53,parallel repetition
+cb_062,cb_009,cb_011,user,2026-09-24T15-11-53,parallel repetition
+cb_037,cb_010,cb_012,user,2026-09-24T15-11-53,contrastive framing
+cb_064,cb_010,cb_012,user,2026-09-24T15-11-53,contrastive framing
+cb_047,cb_019,cb_013,user,2026-09-24T15-11-53,rhetorical questions
+cb_075,cb_019,cb_013,user,2026-09-24T15-11-53,rhetorical questions
+cb_049,cb_013,cb_014,user,2026-09-24T15-11-53,conspiracy claims
+cb_068,cb_013,cb_014,user,2026-09-24T15-11-53,conspiracy claims
+cb_045,cb_017,cb_015,user,2026-09-24T15-11-53,anti-elite framing
+cb_067,cb_017,cb_015,user,2026-09-24T15-11-53,anti-elite framing
+cb_050,cb_020,cb_016,user,2026-09-24T15-11-53,persecution framing
+cb_069,cb_020,cb_016,user,2026-09-24T15-11-53,persecution framing
+cb_046,cb_016,cb_017,user,2026-09-24T15-11-53,us versus them
+cb_070,cb_016,cb_017,user,2026-09-24T15-11-53,us versus them
+cb_044,cb_015,cb_018,user,2026-09-24T15-11-53,causal claims
+cb_063,cb_015,cb_018,user,2026-09-24T15-11-53,causal claims
+cb_043,cb_025,cb_019,user,2026-09-24T15-11-53,moral condemnation
+cb_086,cb_025,cb_019,user,2026-09-24T15-11-53,moral condemnation
+cb_042,cb_028,cb_020,user,2026-09-24T15-11-53,political outrage
+cb_072,cb_028,cb_020,user,2026-09-24T15-11-53,political outrage
+cb_052,cb_029,cb_021,user,2026-09-24T15-11-53,calls to action
+cb_087,cb_029,cb_021,user,2026-09-24T15-11-53,calls to action
+cb_085,cb_027,cb_022,user,2026-09-24T15-11-53,profane insults
+cb_051,cb_027,cb_022,user,2026-09-24T15-11-53,profane insults
+cb_038,cb_002,cb_023,user,2026-09-24T15-11-53,slang and colloquial insults
+cb_077,cb_002,cb_023,user,2026-09-24T15-11-53,slang and colloquial insults
+cb_054,cb_014,cb_024,user,2026-09-24T15-11-53,partisan left-right framing
+cb_040,cb_012,cb_025,user,2026-09-24T15-11-53,hashtags and mentions
+cb_083,cb_048,cb_026,user,2026-09-24T15-11-53,confrontational direct address
