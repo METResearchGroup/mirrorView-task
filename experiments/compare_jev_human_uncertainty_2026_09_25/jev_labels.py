@@ -2,7 +2,7 @@
 
 Run from the repo root::
 
-    PYTHONPATH=. uv run pytest experiments/compare_jev_human_uncertainty_2026_09_25/tests/test_jev_bins.py -q
+    PYTHONPATH=. uv run python experiments/compare_jev_human_uncertainty_2026_09_25/run.py
 """
 
 from __future__ import annotations
