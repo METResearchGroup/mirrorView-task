@@ -24,8 +24,12 @@ STUDY_PHASE_2_PART_2_USER_REFLECTION_FEEDBACK = (
 )
 STUDY_PHASE_2_PART_3_RESULTS_FULL = "STUDY_PHASE_2_PART_3_RESULTS_FULL"
 STUDY_PHASE_2_PART_3_STIMULI = "STUDY_PHASE_2_PART_3_STIMULI"
+STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS = "STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS"
 STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL = "STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL"
 STUDY_PHASE_2_PART_2_AND_3_STIMULI = "STUDY_PHASE_2_PART_2_AND_3_STIMULI"
+STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS = (
+    "STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS"
+)
 
 
 @dataclass(frozen=True)
@@ -112,6 +116,14 @@ DATASETS: dict[str, DatasetEntry] = {
         kind="stimuli",
         study_phase="study_phase_2_part_3",
     ),
+    STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS: DatasetEntry(
+        name=STUDY_PHASE_2_PART_3_KEEP_REMOVE_LABELS,
+        relative_path=Path(
+            "shared/data/transformed/study_phase_2_part_3/keep_remove_labels.csv"
+        ),
+        kind="transformed",
+        study_phase="study_phase_2_part_3",
+    ),
     STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL: DatasetEntry(
         name=STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL,
         relative_path=Path(
@@ -126,6 +138,14 @@ DATASETS: dict[str, DatasetEntry] = {
             "shared/data/raw/study_phase_2_part_2_and_3/stimuli/flips.csv"
         ),
         kind="stimuli",
+        study_phase="study_phase_2_part_2_and_3",
+    ),
+    STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS: DatasetEntry(
+        name=STUDY_PHASE_2_PART_2_AND_3_KEEP_REMOVE_LABELS,
+        relative_path=Path(
+            "shared/data/transformed/study_phase_2_part_2_and_3/keep_remove_labels.csv"
+        ),
+        kind="transformed",
         study_phase="study_phase_2_part_2_and_3",
     ),
 }

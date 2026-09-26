@@ -9,6 +9,7 @@
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
+3. Phase 2 Parts 2 and 3 combined (20,000-post union) now have BERTopic fits on original text, mirrored text, and a pooled joint corpus, with pooled keep/remove labels joined afterwards. On 19,763 deduplicated posts, mirror text assigned by the original model matches the original topic 19.5% of the time (30.5% excluding noise pairs), and the overall keep rate is 69.8%. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
 
 ## 2026-09-22
 
