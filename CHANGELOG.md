@@ -2,7 +2,8 @@
 
 ## 2026-09-25
 
-1. Keep and remove rates now use the combined Phase 2 Part 2 and Part 3 dataset. Modal keep rates are 80.61% on Bluesky, 72.24% on Reddit, and 85.38% on Twitter. Of 14,884 posts with five cleaned labels, 4,511 have one remove vote and 319 have five. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
+1. Operators can compare stored Jev remove probabilities with human remove votes on 15,113 posts with five labelers, using six equal probability bins that line up with remove counts 0 through 5. The mean of human remove count minus Jev bin is -0.6147, and the figures and count tables are in `experiments/compare_jev_human_uncertainty_2026_09_25/` and on S3. [PR #313](https://github.com/METResearchGroup/mirrorView-task/pull/313)
+2. Keep and remove rates now use the combined Phase 2 Part 2 and Part 3 dataset. Modal keep rates are 80.61% on Bluesky, 72.24% on Reddit, and 85.38% on Twitter. Of 14,884 posts with five cleaned labels, 4,511 have one remove vote and 319 have five. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
 
 ## 2026-09-24
 
