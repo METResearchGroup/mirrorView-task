@@ -1,0 +1,5 @@
+metric,count
+posts_after_vote_clean,20000
+posts_dropped_lt_3_raters,4
+posts_dropped_ties,820
+posts_remaining,19176
