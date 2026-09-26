@@ -12,6 +12,7 @@ docs
 experiments/*
 !experiments/finetune_qwen_model_2026_08_08
 !experiments/larger_finetune_qwen_model_2026_08_08
+!experiments/finetune_lora_phase2_part3_2026_09_24
 experiments/finetune_qwen_model_2026_08_08/data
 experiments/finetune_qwen_model_2026_08_08/preds
 experiments/finetune_qwen_model_2026_08_08/RESULTS.md

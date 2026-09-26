@@ -21,6 +21,7 @@ import os
 import sys
 from enum import Enum
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -30,6 +31,7 @@ from experiments.finetune_qwen_model_2026_08_08.src.parse_prediction import (
     parse_generation,
 )
 from experiments.finetune_qwen_model_2026_08_08.src.train_config import MODEL_ID
+from experiments.finetune_qwen_model_2026_08_08.train import _bind_chat_template_kwargs
 
 PRED_COLUMNS = (
     "message_id",
@@ -46,6 +48,34 @@ class InferMode(str, Enum):
 
     BASELINE = "baseline"
     ADAPTER = "adapter"
+
+
+def _parse_chat_template_kwargs_json(raw: str | None) -> dict[str, Any] | None:
+    """Parse optional JSON chat-template kwargs from CLI.
+
+    Parameters
+    ----------
+    raw
+        JSON object string, or empty/``None`` to skip template kwargs.
+
+    Returns
+    -------
+    dict or None
+        Parsed kwargs for ``tokenizer.apply_chat_template``, or ``None``.
+
+    Raises
+    ------
+    SystemExit
+        If ``raw`` is not a JSON object.
+    """
+    if raw is None or not raw.strip():
+        return None
+    parsed = json.loads(raw)
+    if parsed is None:
+        return None
+    if not isinstance(parsed, dict):
+        raise SystemExit("--chat-template-kwargs-json must be a JSON object")
+    return parsed
 
 
 def _require_hf_token() -> str:
@@ -90,8 +120,31 @@ def run_inference(
     adapter_dir: Path | None,
     limit: int | None,
     upload_preds: bool,
+    model_id: str,
+    chat_template_kwargs: dict[str, Any] | None = None,
 ) -> None:
-    """Generate predictions and write the prediction CSV."""
+    """Generate predictions and write the prediction CSV.
+
+    Parameters
+    ----------
+    chat_jsonl
+        Input chat records with gold assistant turns.
+    output_csv
+        Destination prediction CSV path.
+    mode
+        Baseline base model or adapter-augmented inference.
+    adapter_dir
+        LoRA adapter directory when ``mode`` is ``ADAPTER``.
+    limit
+        Optional row cap for smoke runs.
+    upload_preds
+        Upload ``output_csv`` parent to ``PREDS_S3_URI`` when set.
+    model_id
+        Hugging Face model id for tokenizer and base weights.
+    chat_template_kwargs
+        Optional kwargs forwarded to ``apply_chat_template`` when rendering
+        prompts (for example ``enable_thinking=False``).
+    """
     hf_token = _require_hf_token()
     if mode is InferMode.ADAPTER and adapter_dir is None:
         raise SystemExit("--adapter-dir is required for --mode adapter")
@@ -107,15 +160,16 @@ def run_inference(
         records = records[: int(limit)]
 
     tokenizer = AutoTokenizer.from_pretrained(
-        MODEL_ID,
+        model_id,
         token=hf_token,
         trust_remote_code=True,
     )
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
+    tokenizer = _bind_chat_template_kwargs(tokenizer, chat_template_kwargs)
 
     model = AutoModelForCausalLM.from_pretrained(
-        MODEL_ID,
+        model_id,
         token=hf_token,
         torch_dtype=torch.bfloat16,
         trust_remote_code=True,
@@ -193,8 +247,29 @@ def run_both_splits(
     mode: InferMode,
     adapter_dir: Path | None,
     limit: int | None,
+    model_id: str,
+    chat_template_kwargs: dict[str, Any] | None = None,
 ) -> None:
-    """Write train_labels.csv and test_labels.csv for one arm."""
+    """Write train and test prediction CSVs for one inference arm.
+
+    Parameters
+    ----------
+    data_dir
+        Directory containing ``chat_train.jsonl`` and ``chat_test.jsonl``.
+    output_dir
+        Directory for ``train_labels.csv`` and ``test_labels.csv``.
+    mode
+        Baseline or adapter inference arm.
+    adapter_dir
+        LoRA adapter directory when ``mode`` is ``ADAPTER``.
+    limit
+        Optional per-split row cap for smoke runs.
+    model_id
+        Hugging Face model id for tokenizer and base weights.
+    chat_template_kwargs
+        Optional kwargs forwarded to ``apply_chat_template`` when rendering
+        prompts.
+    """
     for split_name, jsonl_name in (
         ("train", "chat_train.jsonl"),
         ("test", "chat_test.jsonl"),
@@ -206,6 +281,8 @@ def run_both_splits(
             adapter_dir=adapter_dir,
             limit=limit,
             upload_preds=False,
+            model_id=model_id,
+            chat_template_kwargs=chat_template_kwargs,
         )
     _maybe_upload_preds(output_dir)
 
@@ -257,6 +334,16 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Optional row cap for smoke runs.",
     )
+    parser.add_argument(
+        "--model-id",
+        default=None,
+        help="Optional model id override (default: August train_config).",
+    )
+    parser.add_argument(
+        "--chat-template-kwargs-json",
+        default=None,
+        help="Optional JSON object for tokenizer.apply_chat_template kwargs.",
+    )
     return parser.parse_args(argv)
 
 
@@ -265,6 +352,10 @@ def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     mode = InferMode(args.mode)
     adapter_dir = Path(args.adapter_dir) if args.adapter_dir else None
+    model_id = args.model_id or MODEL_ID
+    chat_template_kwargs = _parse_chat_template_kwargs_json(
+        args.chat_template_kwargs_json
+    )
 
     if args.both_splits:
         if not args.data_dir or not args.output_dir:
@@ -277,6 +368,8 @@ def main(argv: list[str] | None = None) -> None:
             mode=mode,
             adapter_dir=adapter_dir,
             limit=args.limit,
+            model_id=model_id,
+            chat_template_kwargs=chat_template_kwargs,
         )
         return
 
@@ -291,6 +384,8 @@ def main(argv: list[str] | None = None) -> None:
         adapter_dir=adapter_dir,
         limit=args.limit,
         upload_preds=True,
+        model_id=model_id,
+        chat_template_kwargs=chat_template_kwargs,
     )
 
 
