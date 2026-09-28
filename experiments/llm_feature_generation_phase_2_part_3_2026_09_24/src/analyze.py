@@ -84,9 +84,15 @@ class AnalysisInputs:
 
 
 def load_test_post_ids(split_dir: Path | None = None) -> set[str]:
-    """Load held-out test post IDs from the committed split file."""
+    """Load held-out test post IDs, downloading the split from S3 when absent."""
+    from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.s3_sync import (
+        ensure_post_split_local,
+    )
+
     directory = split_dir or paths.post_split_dir()
     test_path = directory / "test_post_ids.csv"
+    if not test_path.is_file():
+        ensure_post_split_local(directory)
     frame = pd.read_csv(test_path)
     return set(frame["post_id"].astype(str))
 

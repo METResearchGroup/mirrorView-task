@@ -75,7 +75,7 @@ def cost_log_path() -> Path:
 
 
 def post_split_dir() -> Path:
-    """Return the committed post split directory."""
+    """Return the local post split directory. Files live in S3 when absent here."""
     return EXPERIMENT_ROOT / DATA_DIRNAME / POST_SPLIT_DIRNAME
 
 

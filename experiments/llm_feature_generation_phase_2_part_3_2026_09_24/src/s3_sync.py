@@ -16,6 +16,35 @@ from lib.aws.s3 import S3
 from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src import constants, paths
 
 
+POST_SPLIT_RELATIVE = "data/post_split"
+POST_SPLIT_FILENAMES = (
+    "discovery_post_ids.csv",
+    "test_post_ids.csv",
+    "split_metadata.json",
+)
+
+
+def ensure_post_split_local(split_dir: Path | None = None) -> Path:
+    """Download post-split files from S3 when they are not on disk."""
+    directory = split_dir or paths.post_split_dir()
+    directory.mkdir(parents=True, exist_ok=True)
+    missing = _missing_post_split_files(directory)
+    if missing:
+        _download_post_split_files(directory, missing)
+    return directory
+
+
+def _missing_post_split_files(directory: Path) -> list[str]:
+    return [name for name in POST_SPLIT_FILENAMES if not (directory / name).is_file()]
+
+
+def _download_post_split_files(directory: Path, names: list[str]) -> None:
+    client = S3(constants.S3_BUCKET)
+    for name in names:
+        key = f"{constants.S3_PREFIX}{POST_SPLIT_RELATIVE}/{name}"
+        (directory / name).write_bytes(client.get_bytes(key))
+
+
 def s3_key_for_local(local_path: Path) -> str:
     """Map a local experiment path to an S3 object key."""
     resolved = local_path.resolve()

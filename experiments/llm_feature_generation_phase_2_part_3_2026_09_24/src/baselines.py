@@ -112,7 +112,13 @@ def load_cohort_frame(cohort_run_dir: Path) -> pd.DataFrame:
 
 
 def load_discovery_post_ids(discovery_ids_path: Path) -> set[str]:
-    """Load discovery post IDs from the committed CSV."""
+    """Load discovery post IDs, downloading the split from S3 when absent."""
+    from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.s3_sync import (
+        ensure_post_split_local,
+    )
+
+    if not discovery_ids_path.is_file():
+        ensure_post_split_local(discovery_ids_path.parent)
     frame = pd.read_csv(discovery_ids_path)
     return set(frame["post_id"].astype(str))
 

@@ -26,4 +26,4 @@
 
 ## Split output
 
-`split.py --seed 42 --write` reads committed `data/post_split/` CSVs, preserves prior discovery versus test assignments, stratifies only new union posts, writes updated CSVs and metadata, then sets the `split` column on the latest `participant_filter=all` cohort parquet under each text arm in place.
+`split.py --seed 42 --write` reads `data/post_split/` from S3 (`s3://mirrorview-experimental-artifacts/experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/`), preserves prior discovery versus test assignments, stratifies only new union posts, writes updated CSVs and metadata, then sets the `split` column on the latest `participant_filter=all` cohort parquet under each text arm in place.

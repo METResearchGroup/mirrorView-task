@@ -88,7 +88,13 @@ def stratified_split(
 
 
 def read_committed_post_ids(split_dir: Path) -> tuple[list[str], list[str]]:
-    """Load discovery and test ID lists from committed CSV files."""
+    """Load discovery and test ID lists, downloading them from S3 when absent."""
+    from experiments.llm_feature_generation_phase_2_part_3_2026_09_24.src.s3_sync import (
+        ensure_post_split_local,
+    )
+
+    if not (split_dir / DISCOVERY_IDS_FILENAME).is_file():
+        ensure_post_split_local(split_dir)
     discovery = _read_id_list(split_dir / DISCOVERY_IDS_FILENAME)
     test = _read_id_list(split_dir / TEST_IDS_FILENAME)
     return discovery, test
