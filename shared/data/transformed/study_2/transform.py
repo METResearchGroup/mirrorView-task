@@ -1,8 +1,8 @@
-"""Build and materialize Part 3 keep/remove labels.
+"""Build and materialize Study 2 keep/remove labels.
 
 Run from repo root::
 
-    PYTHONPATH=. uv run python shared/data/transformed/study_phase_2_part_3/transform.py
+    PYTHONPATH=. uv run python shared/data/transformed/study_2/transform.py
 """
 
 from __future__ import annotations
@@ -12,10 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from shared.data.dataloader import load_dataset
-from shared.data.registry import (
-    STUDY_PHASE_2_PART_3_RESULTS_FULL,
-    STUDY_PHASE_2_PART_3_STIMULI,
-)
+from shared.data.registry import STUDY_2_RESULTS_FULL, STUDY_2_STIMULI
 
 STIMULI_JOIN_KEY = "post_primary_key"
 RESULTS_JOIN_KEY = "post_id"
@@ -84,7 +81,7 @@ def _load_slim_trial_frame(raw: pd.DataFrame) -> pd.DataFrame:
     Parameters
     ----------
     raw
-        Part 3 results rows.
+        Study 2 results rows.
 
     Returns
     -------
@@ -247,7 +244,7 @@ def _join_stimuli_metadata(modal: pd.DataFrame, stimuli: pd.DataFrame) -> pd.Dat
     modal
         One row per rated post, including unanimous flags.
     stimuli
-        Part 3 stimulus catalog.
+        Study 2 stimulus catalog.
 
     Returns
     -------
@@ -270,8 +267,8 @@ def build_keep_remove_labels(
     raw: pd.DataFrame | None = None,
     stimuli: pd.DataFrame | None = None,
     *,
-    results_dataset: str = STUDY_PHASE_2_PART_3_RESULTS_FULL,
-    stimuli_dataset: str = STUDY_PHASE_2_PART_3_STIMULI,
+    results_dataset: str = STUDY_2_RESULTS_FULL,
+    stimuli_dataset: str = STUDY_2_STIMULI,
 ) -> pd.DataFrame:
     """Build modal keep/remove labels from linked-fate results and stimuli.
 

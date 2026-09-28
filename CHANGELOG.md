@@ -1,10 +1,19 @@
 # CHANGELOG
 
+## 2026-09-28
+
+1. The combined June and September linked-fate dataset loads as Study 2. Callers use `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` at `shared/data/raw/study_2/`. [PR #319](https://github.com/METResearchGroup/mirrorView-task/pull/319)
+
+## 2026-09-25
+
+1. Operators can compare stored Jev remove probabilities with human remove votes on 15,113 posts with five labelers, using six equal probability bins that line up with remove counts 0 through 5. The mean of human remove count minus Jev bin is -0.6147, and the figures and count tables are in `experiments/compare_jev_human_uncertainty_2026_09_25/` and on S3. [PR #313](https://github.com/METResearchGroup/mirrorView-task/pull/313)
+2. Keep and remove rates now use the combined Phase 2 Part 2 and Part 3 dataset. Modal keep rates are 80.61% on Bluesky, 72.24% on Reddit, and 85.38% on Twitter. Of 14,884 posts with five cleaned labels, 4,511 have one remove vote and 319 have five. [PR #306](https://github.com/METResearchGroup/mirrorView-task/pull/306)
+
 ## 2026-09-24
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
-3. Phase 2 Parts 2 and 3 combined (20,000-post union) now have BERTopic fits on original text, mirrored text, and a pooled joint corpus, with pooled keep/remove labels joined afterwards. On 19,763 deduplicated posts, mirror text assigned by the original model matches the original topic 19.5% of the time (30.5% excluding noise pairs), and the overall keep rate is 69.8%. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
+3. Study 2 (20,000 posts) now has BERTopic fits on original text, mirrored text, and a pooled joint corpus, with keep/remove labels joined afterwards. On 19,763 deduplicated posts, mirror text assigned by the original model matches the original topic 19.5% of the time (30.5% excluding noise pairs), and the overall keep rate is 69.8%. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
 
 ## 2026-09-22
 
