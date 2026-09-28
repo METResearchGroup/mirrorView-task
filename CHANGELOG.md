@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-28
+
+1. The combined June and September linked-fate dataset loads as Study 2. Callers use `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` at `shared/data/raw/study_2/`. [PR #319](https://github.com/METResearchGroup/mirrorView-task/pull/319)
+
 ## 2026-09-25
 
 1. Operators can compare stored Jev remove probabilities with human remove votes on 15,113 posts with five labelers, using six equal probability bins that line up with remove counts 0 through 5. The mean of human remove count minus Jev bin is -0.6147, and the figures and count tables are in `experiments/compare_jev_human_uncertainty_2026_09_25/` and on S3. [PR #313](https://github.com/METResearchGroup/mirrorView-task/pull/313)

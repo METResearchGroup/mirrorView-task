@@ -1,4 +1,4 @@
-"""Run joint Part 2 and Part 3 keep/remove descriptive stats and write RESULTS.md.
+"""Run Study 2 keep and remove descriptive stats and write RESULTS.md.
 
 Run from repo root::
 

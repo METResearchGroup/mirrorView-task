@@ -49,7 +49,7 @@ def select_scored_trials(raw: pd.DataFrame) -> pd.DataFrame:
     Parameters
     ----------
     raw
-        Part 2 and Part 3 session export.
+        Study 2 session export.
 
     Returns
     -------
@@ -157,7 +157,7 @@ def build_five_labeler_counts(raw: pd.DataFrame) -> pd.DataFrame:
     Parameters
     ----------
     raw
-        Part 2 and Part 3 session export.
+        Study 2 session export.
 
     Returns
     -------
