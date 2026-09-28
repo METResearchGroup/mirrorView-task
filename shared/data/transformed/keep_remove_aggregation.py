@@ -1,6 +1,6 @@
 """Shared keep/remove trial filtering and label aggregation.
 
-Used by Part 2 and Part 3 transformed label builders.
+Used by the Part 2 and Study 2 transformed label builders.
 """
 
 from __future__ import annotations
