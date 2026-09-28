@@ -3,6 +3,7 @@
 ## 2026-09-28
 
 1. The combined June and September linked-fate dataset loads as Study 2. Callers use `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` at `shared/data/raw/study_2/`. [PR #319](https://github.com/METResearchGroup/mirrorView-task/pull/319)
+2. LLM feature generation for Study 2 is in `experiments/llm_feature_generation_study_2_2026_09_24/`. Held-out tests use 10,001 posts and a 30-feature codebook. [PR #308](https://github.com/METResearchGroup/mirrorView-task/pull/308)
 
 ## 2026-09-25
 

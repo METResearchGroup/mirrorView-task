@@ -282,5 +282,5 @@ experiments/ai_simulation_responses_2026_09_11/**/outputs/
 experiments/ai_simulation_responses_2026_09_11/shared/cohort_users.parquet
 experiments/ai_simulation_responses_2026_09_11/shared/cohort_trials.parquet
 
-# Phase 2 Part 3 post split lives in S3
-experiments/llm_feature_generation_phase_2_part_3_2026_09_24/data/post_split/*
+# Study 2 post split lives in S3
+experiments/llm_feature_generation_study_2_2026_09_24/data/post_split/*
