@@ -1,191 +1,188 @@
 # Results
 
-Date: 2026-09-24. Status: Pipeline complete on Study 2 (20,000 stimuli). Human topic review is still pending.
+Date: 2026-09-24. This writeup answers five questions about topics in the original posts. Human review of the topic names is still pending.
 
-BERTopic on the Study 2 stimulus catalog: original text, mirrored text, and a pooled original+mirror joint fit. Topics are fit on text only; keep/remove labels are joined afterward. Dedupe drops duplicate originals and identical original–mirror pairs before clustering.
+Study 2 joins the June collection and the September collection. Topics were fit on the original wording of 19,763 posts, after duplicate wording was removed. The grouping found 100 topics and left 8,369 posts ungrouped (42.3%). Keep and remove votes were joined after the groups existed. They were not used to form the groups.
 
-## Setup
+Keep rate is the share of votes to keep. For a topic, it is the average of that share across the posts in the topic. Across all 19,763 posts, the keep rate is 69.8%. Posts left ungrouped have the same keep rate, 69.8%.
 
-| Setting | Value |
-| --- | --- |
-| Embedding | `amazon.titan-embed-text-v2:0`, 256-d, L2-normalized |
-| UMAP | 15 neighbors, 5 components, min distance 0, cosine, seed 42 |
-| HDBSCAN | min cluster size 15, euclidean, eom |
-| Vectorizer | English stopwords, `min_df=2` |
-| LLM labels | `gpt-5.4-nano` |
-| Fit corpus | All deduplicated stimuli (19,763 posts; 39,526 joint rows) |
-| Outcome corpus | Posts with `n_raters >= 3` (drops 0 posts on this union) |
+Each post was labeled left leaning or right leaning, and low, medium, or high toxicity, when it was sampled. Raters are recorded as Democrats or Republicans. In the rater section, Democrat stands for left leaning raters and Republican stands for right leaning raters.
 
-| Dedupe step | Removed | Remaining |
+Topic names below are shortened from the words in each group. A person has not checked them.
+
+## 1. What topics came out of the original posts?
+
+The ten largest topics are climate, the border, MAGA and institutions, abortion, Trump and the media, and criticism of each party. Together they hold 6,268 of the 11,394 grouped posts.
+
+| Topic | Posts | Keep rate |
 | --- | ---: | ---: |
-| Raw stimuli | — | 20,000 |
-| Duplicate `original_text` (first `post_id` kept) | 205 | 19,795 |
-| Identical original and mirror text | 32 | **19,763** |
+| Climate and fossil fuels | 1,122 | 81.8% |
+| Border and immigration | 862 | 75.8% |
+| MAGA and institutions | 851 | 59.1% |
+| Abortion access | 690 | 75.2% |
+| Trump media and lying | 636 | 59.3% |
+| Criticism of Democrats | 598 | 69.3% |
+| Criticism of Republicans | 566 | 59.0% |
+| Biden and Trump blame | 358 | 67.6% |
+| Billionaires and taxes | 326 | 76.6% |
+| Abolish ICE | 259 | 62.1% |
 
-Titan embeddings for all 20,000 stimuli: 18,899 reused from the earlier September cache, 1,101 from the identity cache, 0 new Bedrock calls (`outputs/embeddings/original/metadata.json` provenance).
+The other 90 topics are smaller. Names and sizes for every topic are in `outputs/labels/original/20260924T135628Z/topic_labels.parquet`. Assignments are in `outputs/topics/original/20260924T135151Z/assignments.parquet`.
 
-## Production counts
+## 2. Do some topics get kept or removed more often?
 
-| Role | Docs fitted | Topics (excl. noise) | Noise docs | Noise share |
-| --- | ---: | ---: | ---: | ---: |
-| original | 19,763 | 100 | 8,369 | 42.3% |
-| mirror | 19,763 | 97 | 8,857 | 44.8% |
-| joint | 39,526 | 154 | 21,398 | 54.1% |
+Yes. Among the 23 topics with at least 100 posts, the keep rate runs from 31.7% to 81.8%.
 
-| Artifact | Run ID |
-| --- | --- |
-| Topics original | `outputs/topics/original/20260924T135151Z` |
-| Topics mirror | `outputs/topics/mirror/20260924T135244Z` |
-| Topics joint | `outputs/topics/joint/20260924T135414Z` |
-| Labels original / mirror / joint | `20260924T135628Z` / `20260924T135739Z` / `20260924T135924Z` |
-| Mirror via original assignments | `outputs/assignments/mirror_via_original/20260924T135936Z` |
-| Cross-role analyses (Q2–Q4) | `outputs/analyses/cross_role/20260924T135955Z` |
-| June topic run comparison (Q1) | `outputs/analyses/june_comparison/20260924T135958Z` |
-| Outcomes (Q5) | `outputs/analyses/outcomes/20260924T140052Z` |
-| Figures | `outputs/figures/{original,mirror,joint}/20260924T140103Z` (and `140110Z`, `140117Z`) |
-| Ablations | `outputs/ablations/*/20260924T140407Z`, summary `outputs/ablations/summary.csv` |
-| Review samples | `outputs/reviews/20260924T140407Z/` |
-
-## Largest topics (LLM labels)
-
-Original model (`outputs/labels/original/20260924T135628Z/topic_labels.parquet`):
-
-| Topic | Docs | Label |
-| ---: | ---: | --- |
-| 0 | 1,122 | Green New Deal climate and fossil fuel policy |
-| 1 | 862 | Border security and immigration enforcement (deportations, due process, and legal status) |
-| 2 | 851 | MAGA vs. U.S. political institutions and rule-of-law / authoritarianism advocacy |
-| 3 | 690 | Abortion rights and access debate (Roe v. Wade, pro-choice vs pro-life) |
-| 4 | 636 | Critiques of Trump’s media strategy, lying, and divisive behavior |
-
-Joint model (`outputs/labels/joint/20260924T135924Z/topic_labels.parquet`):
-
-| Topic | Docs | Label |
-| ---: | ---: | --- |
-| 0 | 3,424 | Second Amendment and gun control debate (rights vs laws) |
-| 1 | 1,300 | Pro-choice reproductive rights and bodily autonomy |
-| 2 | 644 | Voter suppression and election integrity (voting rights, ID laws, voter rolls, and election fraud concerns) |
-| 3 | 623 | Anti–Joe Biden corruption and senility claims |
-| 4 | 601 | MAGA conspiracy and electoral integrity debate |
-
-## Q1. Study 2 fit versus the June topic run
-
-All 10,000 June catalog posts are inside this fit. Q1 compares topic assignments from the Study 2 original model (`20260924T135151Z`) to the June topic run `experiments/bertopic_modeling_2026_08_05/outputs/topics/original/20260805T135853Z` (framing `study_2_fit_vs_june_run`). Primary pairing uses posts with a direct June assignment that survive dedupe (8,579 posts). Centroid fill covers another 1,186 June catalog posts in the fit.
-
-| Comparison | ARI | NMI | n posts |
-| --- | ---: | ---: | ---: |
-| Direct June topic assignments only (primary) | 0.259 | 0.555 | 8,579 |
-| Including centroid-filled catalog posts | 0.235 | 0.539 | 9,765 |
-
-| Subset in union fit | Posts | Noise share (original model) |
+| Topic | Posts | Keep rate |
 | --- | ---: | ---: |
-| June catalog (`n=9,765`) | 9,765 | 40.0% |
-| September only posts (`n=9,998`) | 9,998 | 44.6% |
+| Anti Trump harassment | 144 | 31.7% |
+| Anti fascism messaging | 200 | 58.6% |
+| Criticism of Republicans | 566 | 59.0% |
+| MAGA and institutions | 851 | 59.1% |
+| Trump media and lying | 636 | 59.3% |
+| Abolish ICE | 259 | 62.1% |
+| Trans rights in sports | 171 | 63.3% |
+| Biden and Trump blame | 358 | 67.6% |
+| Conservatism and religion | 229 | 69.2% |
+| Criticism of Democrats | 598 | 69.3% |
+| Open carry laws | 104 | 72.8% |
+| Tariffs | 165 | 73.1% |
+| US and Iran | 162 | 73.3% |
+| Medicaid and SNAP | 212 | 73.4% |
+| Democratic candidates | 251 | 73.5% |
+| Supreme Court power | 124 | 74.1% |
+| Abortion access | 690 | 75.2% |
+| Border and immigration | 862 | 75.8% |
+| Gun rights | 230 | 75.9% |
+| Billionaires and taxes | 326 | 76.6% |
+| Gun laws in schools | 155 | 79.3% |
+| Sanctuary cities | 108 | 80.2% |
+| Climate and fossil fuels | 1,122 | 81.8% |
 
-Shares, crosstab, and facet charts: `outputs/analyses/june_comparison/20260924T135958Z`.
+A few smaller topics sit further out. Calling Trump a fascist is kept 45.0% of the time (19 posts). Accusations that Trump committed crimes are kept 46.9% of the time (56 posts). Gun violence awareness is kept 90.7% of the time (23 posts), climate and habitats 88.9% (27 posts), and the Florida property tax debate 87.7% (15 posts). These groups are small, so a few votes can move the percentage.
 
-## Q2. Do mirrors stay on the original's topic?
+### Left leaning and right leaning posts
 
-Mirrors are assigned with the fitted original model (`transform` via `outputs/assignments/mirror_via_original/20260924T135936Z`).
+The stance of the post barely moves the overall keep rate.
 
-| Metric | Rate | n pairs |
+| Stance of the post | Posts | Keep rate |
 | --- | ---: | ---: |
-| Same topic, including noise | 19.5% | 19,763 |
-| Same topic, excluding pairs where either side is noise | 30.5% | — |
+| Left leaning | 11,386 | 69.0% |
+| Right leaning | 8,377 | 70.9% |
 
-3,846 of 19,763 pairs match on raw topic id. A separately fitted mirror model, aligned to the original model by Hungarian matching on topic-centroid cosine similarity, yields ARI 0.094 and NMI 0.298 on the paired posts (97 topics matched). Details: `outputs/analyses/cross_role/20260924T135955Z/q2_ari_nmi.json`.
+Inside a topic, the gap is usually a few points. The rows below are the largest gaps among topics with at least 40 posts on each side.
 
-## Q3. Role skew in the joint model
+| Topic | Left leaning | Right leaning | Gap |
+| --- | --- | --- | --- |
+| Tariffs | 69.1% (82 posts) | 77.0% (83 posts) | Right leaning posts are kept 7.9 points more |
+| Conservatism and religion | 66.3% (143) | 73.9% (86) | Right leaning posts are kept 7.6 points more |
+| Criticism of Republicans | 57.7% (468) | 65.2% (98) | Right leaning posts are kept 7.5 points more |
+| Abolish ICE | 59.7% (171) | 66.9% (88) | Right leaning posts are kept 7.3 points more |
+| Democratic candidates | 76.4% (124) | 70.8% (127) | Left leaning posts are kept 5.6 points more |
+| Climate and fossil fuels | 82.9% (903) | 77.6% (219) | Left leaning posts are kept 5.3 points more |
 
-| Metric | Value |
-| --- | ---: |
-| Pair co-assignment rate | 59.0% (11,653 / 19,763) |
-| Role-dominated topics (FDR) | 75 of 155 (incl. noise) |
+### Low, medium, and high toxicity
 
-Co-assignment and role shares: `outputs/analyses/cross_role/20260924T135955Z/q3_coassignment.json`, `q3_role_shares.parquet`. Role dominance is an association; it does not by itself show that mirror generation caused the skew.
+Toxicity moves the keep rate much more than stance does. These rates use every post in the fit, including posts left ungrouped.
 
-## Q4. Vocabulary contrast
+| Toxicity | Posts | Keep rate |
+| --- | ---: | ---: |
+| Low | 4,892 | 84.7% |
+| Medium | 9,888 | 72.6% |
+| High | 4,983 | 49.8% |
 
-Within each non-noise joint topic, terms are ranked by Monroe log-odds with Dirichlet prior 0.01. Each topic keeps up to 15 terms favoring the original and 15 favoring the mirror. Table: `outputs/analyses/cross_role/20260924T135955Z/q4_keyword_contrast.parquet` (154 topics).
+The same drop shows up inside topics. In every topic with at least 25 low toxicity posts and 25 high toxicity posts, the high toxicity posts are kept less. There are 15 such topics. The typical gap is about 32 points.
 
-## Q5. Topic-level keep rates
+| Topic | Low | Medium | High |
+| --- | --- | --- | --- |
+| Criticism of Republicans | 79.2% (66) | 69.5% (272) | 40.5% (228) |
+| Abortion access | 86.0% (240) | 73.1% (389) | 46.5% (61) |
+| MAGA and institutions | 77.9% (98) | 65.6% (439) | 44.1% (314) |
+| Border and immigration | 86.5% (243) | 76.7% (482) | 53.6% (137) |
 
-All 19,763 deduplicated posts have at least 3 raters (`n_posts_dropped_min_raters`: 0). Overall keep rate: **69.8%**. The noise topic (8,369 posts) is 69.8%. **50** non-noise topics differ from the overall rate after Benjamini–Hochberg correction (`fdr_alpha` 0.05). Significance uses cluster bootstraps of 2,000 resamples by post.
+## 3. Which topics are more common in left leaning posts, and which in right leaning posts?
 
-| Party (rating-level) | Keep rate |
-| --- | ---: |
-| Democrat | 69.4% |
-| Republican | 70.0% |
+Among the 11,394 grouped posts, 6,668 are left leaning and 4,726 are right leaning. The shares are the share of that side's grouped posts.
 
-Lowest keep rates among non-noise original topics (labels not human-reviewed):
+Left leaning posts show up more often in climate, in criticism of Trump's media behavior, and in criticism of Republicans. Right leaning posts show up more often in border and immigration, in criticism of Democrats, and in gun rights.
 
-| Topic | Posts | Keep rate | Label |
-| ---: | ---: | ---: | --- |
-| 19 | 144 | 31.7% | Anti-Trump Hate Speech and Harassment |
-| 90 | 19 | 45.0% | Calling Trump a fascist and criticizing fascism in America |
-| 38 | 56 | 46.9% | Accusations of Trump as a rapist, pedophile, and criminal |
+| Topic | Share of left leaning posts | Share of right leaning posts |
+| --- | --- | --- |
+| Climate and fossil fuels | 13.5% (903 posts) | 4.6% (219 posts) |
+| Trump media and lying | 7.9% (528) | 2.3% (108) |
+| Criticism of Republicans | 7.0% (468) | 2.1% (98) |
+| Anti fascism messaging | 2.7% (179) | 0.4% (21) |
+| Border and immigration | 3.1% (210) | 13.8% (652) |
+| Criticism of Democrats | 3.8% (254) | 7.3% (344) |
+| Gun rights | 0.6% (42) | 4.0% (188) |
+| Biden and Trump blame | 1.9% (130) | 4.8% (228) |
 
-Highest keep rates:
+## 4. Which topics are more common at low, medium, and high toxicity?
 
-| Topic | Posts | Keep rate | Label |
-| ---: | ---: | ---: | --- |
-| 79 | 23 | 90.7% | National Gun Violence Awareness Month (Wear Orange) and Community Safety Action |
-| 68 | 27 | 88.9% | Global Climate Action for Rainforests, Wetlands, and Reefs Conservation |
-| 99 | 15 | 87.7% | Florida Property Tax & Homestead Tax Policy Debate (DeSantis) |
+Of the grouped posts, 2,943 are low toxicity, 5,559 are medium, and 2,892 are high. Medium toxicity is the largest slice, and its topics look more like the overall mix. The clear shifts are at the two ends.
 
-Facet cells are reported only when a topic has at least 30 posts in that facet value (70 stance, 78 toxicity, 74 platform cells). The keep/remove decision is one label per post pair. Tables: `outputs/analyses/outcomes/20260924T140052Z/`.
+Low toxicity posts are more often about climate, abortion, and billionaires and taxes. High toxicity posts are more often attacks on Trump, MAGA and institutions, and criticism of Republicans. Anti Trump harassment is almost entirely in the high toxicity sample (140 of 144 posts).
 
-## Ablation sensitivity
+| Topic | Low | Medium | High |
+| --- | --- | --- | --- |
+| Climate and fossil fuels | 20.5% (604) | 8.5% (471) | 1.6% (47) |
+| Abortion access | 8.2% (240) | 7.0% (389) | 2.1% (61) |
+| Billionaires and taxes | 4.8% (141) | 2.1% (117) | 2.4% (68) |
+| Trump media and lying | 1.1% (33) | 3.6% (200) | 13.9% (403) |
+| Anti Trump harassment | 0% (0) | 0.1% (4) | 4.8% (140) |
+| MAGA and institutions | 3.3% (98) | 7.9% (439) | 10.9% (314) |
+| Criticism of Republicans | 2.2% (66) | 4.9% (272) | 7.9% (228) |
 
-Summary: `outputs/ablations/summary.csv` (union production run `20260924T140407Z`).
+## 5. Which topics did Democratic raters keep, and which did they remove? What about Republican raters?
 
-| Ablation | Result |
+These rates are the share of that group's votes. Democratic raters kept 69.4% of 52,864 votes. Republican raters kept 70.0% of 48,970 votes.
+
+The topics each group was most likely to remove, and most likely to keep, are almost the same list. Both groups removed anti Trump harassment most often, at about 32%. Both groups kept climate and fossil fuels at about 82%. The lists below keep topics with at least 200 votes from that group.
+
+| Topic | Democratic keep rate | Democratic votes |
+| --- | ---: | ---: |
+| Anti Trump harassment | 31.5% | 444 |
+| MAGA and institutions | 57.6% | 2,308 |
+| Criticism of Republicans | 59.1% | 1,500 |
+| Trump media and lying | 59.4% | 1,788 |
+| Anti fascism messaging | 59.7% | 571 |
+
+| Topic | Democratic keep rate | Democratic votes |
+| --- | ---: | ---: |
+| Gun policy debate | 82.4% | 262 |
+| Climate and fossil fuels | 82.2% | 2,872 |
+| Gun laws in schools | 79.5% | 410 |
+| Sanctuary cities | 78.6% | 266 |
+| Gun rights | 77.6% | 602 |
+
+| Topic | Republican keep rate | Republican votes |
+| --- | ---: | ---: |
+| Anti Trump harassment | 31.9% | 282 |
+| Anti fascism messaging | 57.7% | 478 |
+| Criticism of Republicans | 59.1% | 1,377 |
+| Trump media and lying | 59.2% | 1,473 |
+| MAGA and institutions | 60.8% | 2,059 |
+
+| Topic | Republican keep rate | Republican votes |
+| --- | ---: | ---: |
+| Climate and fossil fuels | 81.5% | 2,893 |
+| Sanctuary cities | 80.6% | 289 |
+| Gun policy debate | 80.2% | 242 |
+| Gun laws in schools | 79.1% | 369 |
+| Mail and elections | 78.2% | 257 |
+
+Where the two groups differ, the gap is small. Across 26 topics with at least 200 votes from each group, the typical gap is under 2 points. The largest gap is open carry laws: Democratic raters kept 75.8% of 289 votes, and Republican raters kept 68.3% of 249 votes. The next largest runs the other way. Republican raters kept Supreme Court posts at 77.6% (308 votes), and Democratic raters kept them at 71.5% (330 votes).
+
+## Limits
+
+Topics describe wording. They do not explain why a rater voted keep or remove. The topic names have not been checked by a person. Posts left ungrouped are in the overall keep rate and are not in the topic tables.
+
+## Files
+
+| Item | Path |
 | --- | --- |
-| A0 K-Means on Titan | Highest silhouette on a 2,000-row sample at k=5 (automatic; samples under `outputs/ablations/a0_naive/20260924T140407Z/`) |
-| A1 UMAP seeds 42–46 | Seed 42 matches production (ARI 1.0). Mean pairwise ARI across seeds **0.558**; topic count ranges ~90–103 |
-| A2 `min_cluster_size` 15 / 30 / 50 | **100 / 48 / 32** topics; noise share ~37–42% |
-| A3 MiniLM vs Titan | 132 topics, **32.5%** noise; Spearman of per-topic keep rates vs production **0.749** (centroid matching) |
-| A4 Fit design (no refit) | Separate original+mirror models: Q2 agreement **22.5%**, 5 role-dominated topics. Joint: **59.0%** co-assign, **75** role-dominated. Original assigns mirror: **19.5%**, 54 role-dominated |
-| A5 `reduce_outliers` (`embeddings`) | Noise 42.3% → 0% on refit; Spearman keep-rate ranking vs production **0.950** |
-
-## Human review export (pending)
-
-Samples of 10 centroid neighbors and 10 random documents per topic, plus 30 noise documents:
-
-- `outputs/reviews/20260924T140407Z/review_original.md`
-- `outputs/reviews/20260924T140407Z/review_joint.md`
-- `outputs/reviews/20260924T140407Z/samples.parquet`
-
-`review_notes.md` is not in this run. A person still needs to read the markdown files and record whether the topics are acceptable.
-
-## Changes from the September only run
-
-The earlier same-day run fit only the 18,899-post September catalog (`outputs/topics/original/20260924T053045Z` and matching analysis timestamps). The Study 2 rerun adds all June catalog posts, pools June and September keep/remove ratings, and compares the Study 2 fit with the June topic run.
-
-| Metric | September only run | Union run | Notes |
-| --- | ---: | ---: | --- |
-| Stimuli / fit posts | 18,698 | 19,763 | Union dedupe: 205 duplicate originals, 32 identical pairs |
-| Topics original / mirror / joint | 92 / 83 / 143 | 100 / 97 / 154 | |
-| Noise share original / mirror / joint | 39.5% / 40.5% / 45.8% | 42.3% / 44.8% / 54.1% | |
-| Q1 ARI / NMI (primary n) | 0.41 / 0.60 (8,700) | 0.259 / 0.555 (8,579) | Q1 compares the Study 2 fit with the June topic run; June posts are in the fit |
-| Q2 same-topic all / excl. noise | 22.8% / 34.7% | 19.5% / 30.5% | |
-| Q2 Hungarian ARI (orig vs mirror fit) | 0.15 | 0.094 | |
-| Q3 joint co-assign | 49.7% | 59.0% | |
-| Q3 role-dominated topics | 70 | 75 | |
-| Q5 posts analyzed | 15,846 | 19,763 | Min-3-raters filter kept but drops **0** posts on the union |
-| Q5 overall keep rate | 69.4% | 69.8% | |
-| Q5 BH-significant topics | 37 | 50 | |
-| A1 mean pairwise UMAP ARI | 0.571 | 0.558 | |
-| A3 MiniLM topics / noise / Q5 Spearman | 128 / 34.9% / 0.76 | 132 / 32.5% / 0.749 | |
-
-Pooling June and September ratings changes the modal keep/remove decision on **1,161** of **8,866** overlap posts that the September collection alone had rated (same post ids in both catalogs).
-
-## Limitations
-
-Topics are post-hoc. Keep/remove is one decision per pair with multiple raters per post. Titan vectors for posts missing from the September cache were satisfied from the identity cache (no new Bedrock calls). UMAP partitions move with the seed (A1). MiniLM shifts topic count and keep-rate ranking (A3). K-Means k in A0 was not chosen by a person.
-
-## S3 storage
+| Original topic assignments | `outputs/topics/original/20260924T135151Z` |
+| Topic names | `outputs/labels/original/20260924T135628Z` |
+| Keep rates by topic, stance, toxicity, and rater party | `outputs/analyses/outcomes/20260924T140052Z` |
 
 `s3://mirrorview-experimental-artifacts/experiments/bertopic_original_mirror_study_2_2026_09_24/`
-
-Large artifacts (embedding arrays, BERTopic `model/` directories, `umap_2d.npy`, HTML figures) are gitignored and stored under that prefix. Assignments, labels, analysis tables, review markdown, figure PNGs, and `outputs/ablations/summary.csv` are in git. Upload on 2026-09-24: **476** files, **710,666,913** bytes (`outputs/upload_manifest.json`).

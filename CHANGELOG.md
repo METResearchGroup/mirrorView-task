@@ -3,6 +3,7 @@
 ## 2026-09-28
 
 1. The combined June and September linked-fate dataset loads as Study 2. Callers use `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` at `shared/data/raw/study_2/`. [PR #319](https://github.com/METResearchGroup/mirrorView-task/pull/319)
+2. The Study 2 topic writeup and public page now report original posts only: which topics appear, how keep rates differ by topic, stance, and toxicity, and which topics Democratic and Republican raters keep or remove. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
 
 ## 2026-09-25
 

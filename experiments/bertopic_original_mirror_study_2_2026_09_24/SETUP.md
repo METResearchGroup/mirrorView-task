@@ -1,5 +1,7 @@
 # Setup
 
+The reported results use the original text fit only. See [RESULTS.md](RESULTS.md). The commands below also build the mirror and joint fits that are stored with the run and are not in that writeup.
+
 Required data (load with `shared.data.dataloader.load_dataset` from `s3://mirrorview-experimental-artifacts/`):
 
 | Registry name | Role | Counts |
