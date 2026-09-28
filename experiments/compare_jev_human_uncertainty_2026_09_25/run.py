@@ -35,7 +35,7 @@ from experiments.compare_jev_human_uncertainty_2026_09_25.report import (
     write_results,
 )
 from shared.data.dataloader import load_dataset
-from shared.data.registry import STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL
+from shared.data.registry import STUDY_2_RESULTS_FULL
 
 
 def _experiment_dir() -> Path:
@@ -66,7 +66,7 @@ def _print_summary(jev: pd.DataFrame, human: pd.DataFrame, comparison: pd.DataFr
 
 def main() -> None:
     """Load both sources, write the figures and tables, and upload them."""
-    raw = load_dataset(STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL, low_memory=False)
+    raw = load_dataset(STUDY_2_RESULTS_FULL, low_memory=False)
     human = build_five_labeler_counts(raw)
     jev = load_jev_labels()
     comparison = build_comparison_frame(human, jev)
