@@ -1,0 +1,3 @@
+# Keep and remove rates for Study 2
+
+See [SETUP.md](SETUP.md) for data requirements and [RESULTS.md](RESULTS.md) for output tables.
