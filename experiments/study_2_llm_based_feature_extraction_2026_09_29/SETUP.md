@@ -19,6 +19,8 @@ PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026
 
 ### Step 2: mine candidate features
 
+OpenAI calls are synchronous chat completions. asyncio runs them, and at most 8 run at once.
+
 Smoke (five batches, writes estimates):
 
 ```bash

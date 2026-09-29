@@ -8,9 +8,9 @@ Out of scope are Jev calls and any change to the step 1 to step 4 code.
 
 For each cluster, take its member features sorted by `feature_id`. When a cluster has more than 30 members, draw 30 without replacement with one `numpy.random.default_rng(SEED)`, and visit the clusters in `cluster_key` order so the draw is the same on every run. When a cluster has 30 or fewer members, use all of them. Show the kept text from step 3 for each sampled member.
 
-Use `build_engine` and `run_batch` from `shared/llm.py`, so the model, the temperature, and the Batch API settings match step 2. The smoke test names the first 5 clusters in `cluster_key` order. The estimates use `total_requests` equal to the number of clusters, and they follow the same rules as step 2.
+Use `run_concurrent` from `shared/llm.py`, so the model, the temperature, and the 8-thread pool match step 2. The smoke test names the first 5 clusters in `cluster_key` order. The estimates use `total_requests` equal to the number of clusters. Token totals, price, and the runtime scale follow the step 2 rules, including `scaled_runtime_minutes` and the list rates `LLM_USD_PER_MILLION_INPUT` and `LLM_USD_PER_MILLION_OUTPUT`. The smoke request count is 5.
 
-The prompt asks for a name of at most eight words. A longer name is kept. After the batch returns, any cluster whose name is empty after strip, or whose definition is empty after strip, is sent again in one new batch. That retry happens once. If a name or a definition is still empty, the step fails and lists those cluster keys.
+The prompt asks for a name of at most eight words. A longer name is kept. After the concurrent run returns, any cluster whose name is empty after strip, or whose definition is empty after strip, is sent again in one more `run_concurrent` call. That retry happens once, still with at most 8 requests in flight. If a name or a definition is still empty, the step fails and lists those cluster keys.
 
 The review table needs "the relative number of posts that have each feature", but no post has a label until step 6. So the table uses the share of the 320 batches whose features landed in the cluster as a stand-in, and it adds the share of the cluster's features that came from the kept side. The review table sorts rows by `n_batches` from high to low.
 
@@ -52,7 +52,7 @@ Return the name and the definition.
 | Path | Why |
 |------|-----|
 | `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
-| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/llm.py` | `build_feature_spec`, `build_engine`, `run_batch` |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/llm.py` | `run_concurrent` |
 | `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/estimates.py` | `build_estimates`, `require_estimates` |
 | `shared/feature_discovery/llm_based/schemas.py` | The earlier `ClusterLabelResult`, which this step does not reuse because it asks the model for a cluster id and notes the issue did not request |
 
@@ -142,8 +142,8 @@ validate_label_to_detail(mapping: dict[str, dict[str, str]]) -> None
 
 `src/step5_name_clusters/run.py` takes exactly one of `--smoke`, `--full`, or `--write-label-details`.
 
-- With `--smoke`, it names the first 5 clusters, writes and uploads the smoke rows and `NAMING_ESTIMATES_KEY`, and prints the table.
-- With `--full`, it calls `require_estimates(NAMING_ESTIMATES_KEY)` and names every cluster. It then calls `empty_cluster_keys`. When that list is non-empty, it sends those clusters once more and replaces their rows. If any name or definition is still empty, it raises `ValueError` with those cluster keys. Otherwise it writes and uploads `CLUSTER_NAMES_KEY` and `FEATURE_REVIEW_KEY`, and prints the review Markdown.
+- With `--smoke`, it names the first 5 clusters through `run_concurrent`, writes and uploads the smoke rows and `NAMING_ESTIMATES_KEY`, and prints the table.
+- With `--full`, it calls `require_estimates(NAMING_ESTIMATES_KEY)` and names every cluster through `run_concurrent`. It then calls `empty_cluster_keys`. When that list is non-empty, it sends those clusters once more through `run_concurrent` and replaces their rows. If any name or definition is still empty, it raises `ValueError` with those cluster keys. Otherwise it writes and uploads `CLUSTER_NAMES_KEY` and `FEATURE_REVIEW_KEY`, and prints the review Markdown.
 - With `--write-label-details`, it reads the review, builds and validates the mapping, writes `shared/label_to_detail.py`, and prints `features=F`. It raises `FileExistsError` when `shared/label_to_detail.py` already exists, so a rerun cannot overwrite your edits.
 
 ## Commands

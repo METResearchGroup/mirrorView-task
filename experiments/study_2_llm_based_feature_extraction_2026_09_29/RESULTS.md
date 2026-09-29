@@ -13,7 +13,7 @@
 
 ## Step 2: mine candidate features
 
-Smoke and full runs use OpenAI Batch `completion_window=1h` per the step 2 plan. On 2026-09-29 the Batch API returned HTTP 400: `Invalid value: '1h'. Supported values are: '24h'.` until that window is accepted, `--smoke` cannot produce the estimate table and `--full` cannot run.
+The plan sends these prompts with the synchronous chat completions API, 8 at a time. The smoke estimate table is not filled in yet.
 
 ## Step 3: embed candidates
 
