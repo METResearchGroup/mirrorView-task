@@ -118,7 +118,7 @@ def render_user_prompt(
 def _pairs_for_post_ids(
     post_ids: list[str], cohort: pd.DataFrame
 ) -> list[tuple[str, str]]:
-    indexed = cohort.set_index("post_id", verify=False)
+    indexed = cohort.set_index("post_id")
     pairs: list[tuple[str, str]] = []
     for post_id in post_ids:
         row = indexed.loc[post_id]
