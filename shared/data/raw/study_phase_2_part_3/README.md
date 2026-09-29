@@ -9,4 +9,4 @@ The CSVs are in `s3://mirrorview-experimental-artifacts/` at these keys:
 
 Load either table with `shared.data.dataloader.load_dataset`. The names are `STUDY_PHASE_2_PART_3_RESULTS_FULL` and `STUDY_PHASE_2_PART_3_STIMULI`.
 
-The combined Part 2 and Part 3 tables are in [Study 2](../study_2).
+The full linked-fate tables are in [Study 2](../study_2).

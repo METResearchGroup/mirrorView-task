@@ -38,10 +38,12 @@ locals {
   s3_prefixes = [
     "mirrorview-finetune_qwen_model_2026_08_08",
     "mirrorview-larger_finetune_qwen_model_2026_08_08",
+    "experiments/finetune_lora_study_2_2026_09_24",
   ]
   ecr_repos = [
     "mirrorview-finetune_qwen_model_2026_08_08",
     "mirrorview-larger_finetune_qwen_model_2026_08_08",
+    "mirrorview-finetune-lora-study-2",
   ]
 
   # Also allow PassRole to the legacy ModernBERT role (optional reuse).

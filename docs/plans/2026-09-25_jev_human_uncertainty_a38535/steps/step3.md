@@ -139,7 +139,7 @@ PYTHONPATH=. uv run python experiments/compare_jev_human_uncertainty_2026_09_25/
 
 ```text
 main() -> None
-  load_dataset(STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL)
+  load_dataset(STUDY_2_RESULTS_FULL)
   build_five_labeler_counts
   load_jev_labels
   build_comparison_frame

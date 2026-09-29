@@ -1,6 +1,6 @@
 # Step 1: Count remove votes for posts with five labelers
 
-Build the five-labeler remove counts from the Part 2 and Part 3 session export. The caller in step 1 is `build_five_labeler_counts` in `experiments/compare_jev_human_uncertainty_2026_09_25/human_counts.py`. Later steps join Jev probabilities onto the five-labeler frame. Step 1 does not download S3 and does not draw figures.
+Build the five-labeler remove counts from the Study 2 session export. The caller in step 1 is `build_five_labeler_counts` in `experiments/compare_jev_human_uncertainty_2026_09_25/human_counts.py`. Later steps join Jev probabilities onto the five-labeler frame. Step 1 does not download S3 and does not draw figures.
 
 ## Task
 
@@ -22,8 +22,8 @@ Keep rows where `trial_type` is `moderation-trial`, `post_id` is non-empty after
 |------|-----|
 | `/workspace/docs/plans/2026-09-25_jev_human_uncertainty_a38535/plan.md` | Parent plan |
 | `/workspace/shared/data/dataloader.py` | `load_dataset` reads the registered CSV from S3. Do not call it in tests. |
-| `/workspace/shared/data/registry.py` | `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` |
-| `/workspace/shared/data/raw/study_phase_2_part_2_and_3/README.md` | Combined export size |
+| `/workspace/shared/data/registry.py` | `STUDY_2_RESULTS_FULL` |
+| `/workspace/shared/data/raw/study_2/README.md` | Combined export size |
 | `/workspace/experiments/unanimous_vs_majority_labels_2026_08_08/src/build_cohort.py` | Earlier per-post keep and remove counts |
 | `/workspace/.cursor/skills/implement-plan-and-open-pr/CODING_RULES.md` | Short functions, named constants, numpy-style docstrings |
 | `/workspace/.cursor/skills/implement-plan-and-open-pr/UNIT_TESTING_STANDARDS.md` | One test class per function, arrange-act-assert |

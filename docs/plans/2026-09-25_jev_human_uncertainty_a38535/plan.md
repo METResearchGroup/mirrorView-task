@@ -10,7 +10,7 @@
 
 [Issue 312](https://github.com/METResearchGroup/mirrorView-task/issues/312) asks whether Jev's remove probability matches the number of human labelers who removed the post. Keep the comparison on posts with exactly five labelers. The Jev probability is the stored `p_remove` column in `s3://mirrorview-experimental-artifacts/experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_baseline_union/A1_pair_study_prompt/labels.parquet`. The parquet file has 19,219 rows, and `p_remove` has no missing values. Join the two sets on `post_id`, and keep posts that appear in both.
 
-The combined Part 2 and Part 3 session export, loaded as `STUDY_PHASE_2_PART_2_AND_3_RESULTS_FULL` through `shared/data/dataloader.py`, has no skip decision on moderation trials. Scored moderation decisions are `keep` and `remove` only. The human count is the number of `remove` votes, from 0 to 5.
+The Study 2 session export, loaded as `STUDY_2_RESULTS_FULL` through `shared/data/dataloader.py`, has no skip decision on moderation trials. Scored moderation decisions are `keep` and `remove` only. The human count is the number of `remove` votes, from 0 to 5.
 
 On the current objects, one vote per person and post leaves 15,113 posts with five labelers. Every five-labeler post is in the Jev file. The remove-vote counts are 3,986, 4,592, 3,332, 1,929, 950, and 324 for 0 through 5 removes. The six Jev bins, each one sixth of the range from 0 to 1, hold 646, 5,575, 3,578, 2,729, 2,090, and 495 posts. The mean of human remove count minus Jev bin is -0.6147, so the Jev bin is higher than the human remove count on average.
 
@@ -20,7 +20,7 @@ An operator runs one command from the repo root. The command counts remove votes
 
 ```mermaid
 flowchart TD
-  sessions[Part 2 and Part 3 session export]
+  sessions[Study 2 session export]
   five[Posts with five labelers]
   jev[Stored Jev remove probabilities]
   joined[Inner join on post id]
@@ -33,7 +33,7 @@ flowchart TD
 
 ## Approach
 
-Count labelers from the shared Part 2 and Part 3 results, and keep one vote per person per post. The one-vote rule matches the rater count already stored on the Jev file. Without the one-vote rule, duplicate person-and-post rows shrink the five-labeler set, and the inner join no longer covers every Jev row that has five raters.
+Count labelers from the shared Study 2 results, and keep one vote per person per post. The one-vote rule matches the rater count already stored on the Jev file. Without the one-vote rule, duplicate person-and-post rows shrink the five-labeler set, and the inner join no longer covers every Jev row that has five raters.
 
 Once the posts are joined, place each `p_remove` in one of six equal bins, so the bins match remove counts 0 through 5. Bin 0 is 0 up to but not including 1/6, and bin 0 matches 0 remove votes. Bin 5 is 5/6 through 1, including 1.0. The difference score is the human remove count minus the Jev bin number. A post with 1 remove vote and Jev bin 0 has difference 1.
 
@@ -43,7 +43,7 @@ Put the experiment in `experiments/compare_jev_human_uncertainty_2026_09_25/`. T
 
 ### Step 1: Count remove votes for posts with five labelers
 
-Build the five-labeler frame from the shared Part 2 and Part 3 loader. Keep moderation trials, keep one vote per person and post, and count `remove` votes. Tests cover the filter, the dedupe, and the five-labeler cut.
+Build the five-labeler frame from the shared Study 2 loader. Keep moderation trials, keep one vote per person and post, and count `remove` votes. Tests cover the filter, the dedupe, and the five-labeler cut.
 
 ### Step 2: Join Jev probabilities and assign bins
 
