@@ -5,6 +5,15 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constants import (
+    BATCH_ID_PREFIX,
+    BATCH_ID_WIDTH,
+    KEEP_PAIRS_PER_BATCH,
+    MODAL_LABEL_KEEP,
+    MODAL_LABEL_REMOVE,
+    REMOVE_PAIRS_PER_BATCH,
+)
+
 
 def shuffled_post_ids(
     cohort: pd.DataFrame, modal_label: str, rng: np.random.Generator
@@ -41,7 +50,7 @@ def format_batch_id(index: int) -> str:
     str
         Batch id such as ``batch_007``.
     """
-    raise NotImplementedError
+    return f"{BATCH_ID_PREFIX}{index:0{BATCH_ID_WIDTH}d}"
 
 
 def build_batches(cohort: pd.DataFrame, seed: int) -> list[dict]:
