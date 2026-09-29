@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
@@ -42,6 +43,42 @@ def estimate_row(value_name: str, median: float) -> EstimateRow:
     low = median * (1.0 - ESTIMATE_BAND)
     high = median * (1.0 + ESTIMATE_BAND)
     return EstimateRow(value_name=value_name, low=low, median=median, high=high)
+
+
+def scaled_runtime_minutes(
+    smoke_wall_minutes: float,
+    smoke_requests: int,
+    total_requests: int,
+    concurrency: int,
+) -> float:
+    """Scale smoke wall time to a full run using concurrent request groups.
+
+    Parameters
+    ----------
+    smoke_wall_minutes
+        Wall-clock minutes for the smoke run.
+    smoke_requests
+        Number of requests in the smoke run.
+    total_requests
+        Full-run request count.
+    concurrency
+        Maximum in-flight requests.
+
+    Returns
+    -------
+    float
+        Estimated full-run runtime in minutes.
+
+    Raises
+    ------
+    ValueError
+        When any argument is zero or negative.
+    """
+    if smoke_wall_minutes <= 0 or smoke_requests <= 0 or total_requests <= 0 or concurrency <= 0:
+        raise ValueError("scaled_runtime_minutes arguments must be positive")
+    smoke_groups = math.ceil(smoke_requests / concurrency)
+    total_groups = math.ceil(total_requests / concurrency)
+    return smoke_wall_minutes * total_groups / smoke_groups
 
 
 def build_estimates(
