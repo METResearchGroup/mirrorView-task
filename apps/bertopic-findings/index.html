@@ -484,6 +484,38 @@
         <p>Where the two groups differ, the gap is small. Across 26 topics with at least 200 votes from each group, the typical gap is under 2 points. The largest gap is open carry laws: Democratic raters kept 75.8% of 289 votes, and Republican raters kept 68.3% of 249 votes. The next largest is the other way. Republican raters kept Supreme Court posts at 77.6% (308 votes), and Democratic raters kept them at 71.5% (330 votes).</p>
       </section>
 
+      <section id="map">
+        <h2>Where each post sits</h2>
+        <p>Each dot is one wording of a post. The original and its mirror are both drawn. Blue means left leaning. Red means right leaning. A mirror is colored with the opposite lean of its original.</p>
+        <p>The circles mark the largest topics in this map. This map was fit on the original and the mirror together, so these topic names are not the same list as the tables above. A person has not checked these names. Drag to move the map. Scroll to zoom. Click a dot to read it. The other wording of that post lights up as well.</p>
+        <div class="map-break">
+          <div class="map-toolbar">
+            <p class="map-legend"><span class="swatch swatch-left"></span>Left leaning <span class="swatch swatch-right"></span>Right leaning</p>
+            <div class="map-controls" role="group" aria-label="How many topic circles to show">
+              <span class="map-controls-label">Topic circles</span>
+              <button type="button" data-map-count="5" aria-pressed="false">5</button>
+              <button type="button" data-map-count="10" aria-pressed="true">10</button>
+              <button type="button" data-map-count="20" aria-pressed="false">20</button>
+            </div>
+            <button type="button" id="map-reset">Reset view</button>
+          </div>
+          <div class="map-layout">
+            <div class="map-plot">
+              <canvas id="map-canvas" aria-label="Map of original posts and mirrors. Blue dots are left leaning. Red dots are right leaning."></canvas>
+              <p id="map-status" class="map-status">Loading the map.</p>
+            </div>
+            <div id="map-panel" class="map-panel" aria-live="polite">
+              <p id="map-empty">Click a dot.</p>
+              <div id="map-detail" hidden>
+                <p><span class="map-key">Type:</span> <span id="map-type"></span></p>
+                <p><span class="map-key">Text:</span> <span id="map-text"></span></p>
+                <p><span class="map-key">Topic:</span> <span id="map-topic"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="limits">
         <h2>Limits</h2>
         <p>Topics describe wording. They do not explain why a rater voted keep or remove.</p>
@@ -494,5 +526,6 @@
     </main>
     <footer><p>MirrorView study, MET Research Group</p></footer>
   </div>
+  <script src="map.js"></script>
 </body>
 </html>

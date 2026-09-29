@@ -102,6 +102,10 @@ PYTHONPATH=. uv run --extra bertopic python $EXP/src/run_ablations.py \
 
 PYTHONPATH=. uv run --extra bertopic python $EXP/src/upload_outputs.py
 # optional: add --dry-run
+
+PYTHONPATH=. uv run python $EXP/src/export_map_data.py
 ```
+
+`export_map_data.py` writes the public map files to `s3://mirrorview-experimental-artifacts/$EXP/outputs/map/map-points.json` and `map-texts.json`. Those files stay out of the repo. The page reads them from S3.
 
 Large artifacts (`embeddings.npy`, BERTopic `model/` trees, `umap_2d.npy`, HTML figures) are gitignored and mirrored under `s3://mirrorview-experimental-artifacts/$EXP/`.

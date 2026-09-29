@@ -13,3 +13,6 @@
 !apps/bertopic-findings/
 !apps/bertopic-findings/index.html
 !apps/bertopic-findings/styles.css
+!apps/bertopic-findings/map.js
+!apps/bertopic-findings/api/
+!apps/bertopic-findings/api/map.js

@@ -169,6 +169,140 @@ figcaption {
   line-height: 1.5;
 }
 
+.map-break {
+  width: min(1100px, calc(100vw - 2rem));
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.map-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
+  margin: 0 0 0.75rem;
+}
+
+.map-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-right: 0.15rem;
+}
+
+.swatch-left {
+  background: rgba(37, 99, 235, 0.85);
+}
+
+.swatch-right {
+  background: rgba(220, 38, 38, 0.85);
+  margin-left: 0.75rem;
+}
+
+.map-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.map-controls-label {
+  font-size: 0.875rem;
+  color: #444;
+  margin-right: 0.25rem;
+}
+
+.map-controls button,
+#map-reset {
+  font: inherit;
+  font-size: 0.875rem;
+  background: #fff;
+  border: 1px solid #d0d5dd;
+  border-radius: 4px;
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+  color: #1a1a1a;
+}
+
+.map-controls button[aria-pressed="true"] {
+  background: #f3f6fb;
+  border-color: #2563eb;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 1rem;
+  align-items: start;
+}
+
+.map-plot {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+}
+
+#map-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  height: auto;
+  cursor: grab;
+}
+
+#map-canvas:active {
+  cursor: grabbing;
+}
+
+.map-status {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  margin: 0;
+  font-size: 0.875rem;
+  color: #444;
+}
+
+.map-panel {
+  border: 1px solid #e5e5e5;
+  background: #f7f9fc;
+  padding: 0.9rem 1rem;
+  min-height: 8rem;
+  font-size: 0.9375rem;
+}
+
+.map-panel p {
+  margin: 0 0 0.75rem;
+}
+
+.map-panel p:last-child {
+  margin-bottom: 0;
+}
+
+.map-key {
+  font-weight: 600;
+}
+
+#map-text {
+  white-space: pre-wrap;
+}
+
+@media (max-width: 800px) {
+  .map-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 footer {
   margin-top: 2.5rem;
   padding-top: 1.5rem;
