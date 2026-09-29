@@ -2,6 +2,15 @@
 
 ## Step 1: cohort and batches
 
+| Metric | Count |
+| --- | --- |
+| Five-label pairs | 15,113 |
+| Modal keep | 11,910 |
+| Modal remove | 3,203 |
+| Mining batches | 320 |
+| Keep pairs not in any batch | 8,710 |
+| Remove pairs not in any batch | 3 |
+
 ## Step 2: mine candidate features
 
 ## Step 3: embed candidates
