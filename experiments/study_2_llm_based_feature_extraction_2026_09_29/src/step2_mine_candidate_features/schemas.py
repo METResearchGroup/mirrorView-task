@@ -4,11 +4,6 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constants import (
-    FEATURE_CATEGORIES,
-    FEATURE_SIDES,
-)
-
 _CATEGORY_DESCRIPTIONS = {
     "lexical": "Surface and lexical",
     "topic_subject": "Topic and subject matter",
@@ -17,13 +12,6 @@ _CATEGORY_DESCRIPTIONS = {
     "target": "Target and directionality",
     "structure": "Compositional and syntactic structure",
 }
-
-
-def _category_field(category: str) -> tuple[str, Field]:
-    return (
-        category,
-        Field(description=_CATEGORY_DESCRIPTIONS[category]),
-    )
 
 
 class FeatureCategoryLists(BaseModel):
@@ -53,12 +41,3 @@ class CandidateFeatureRow(CandidateFeatures):
 
     source_record_id: str
     label_timestamp: str
-
-
-__all__ = [
-    "FEATURE_CATEGORIES",
-    "FEATURE_SIDES",
-    "CandidateFeatureRow",
-    "CandidateFeatures",
-    "FeatureCategoryLists",
-]
