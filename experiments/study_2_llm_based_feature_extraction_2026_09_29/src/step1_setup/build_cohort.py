@@ -65,7 +65,19 @@ def attach_pair_text(labeled: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFra
     ValueError
         When a labeled ``post_id`` has no matching stimulus row.
     """
-    raise NotImplementedError
+    stimulus_keys = stimuli.copy()
+    stimulus_keys["post_primary_key"] = stimulus_keys["post_primary_key"].astype(str)
+    merged = labeled.merge(
+        stimulus_keys,
+        left_on="post_id",
+        right_on="post_primary_key",
+        how="inner",
+    )
+    if len(merged) != len(labeled):
+        raise ValueError("labeled post_id missing from stimulus table")
+    renamed = merged.rename(columns={"mirrored_text": "mirror_text"})
+    cohort = renamed.loc[:, list(COHORT_COLUMNS)].sort_values("post_id")
+    return cohort.reset_index(drop=True)
 
 
 def build_cohort(results: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFrame:
