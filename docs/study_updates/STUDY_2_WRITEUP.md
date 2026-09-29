@@ -14,6 +14,7 @@ Below is a 2-D visualization of the posts clustered by their key topics. An inte
 
 ### Which topics most commonly appear?
 
+
 | Topic                    | Posts | Keep rate |
 | ------------------------ | ----- | --------- |
 | Climate and fossil fuels | 1,122 | 81.8%     |
@@ -27,6 +28,9 @@ Below is a 2-D visualization of the posts clustered by their key topics. An inte
 | Billionaires and taxes   | 326   | 76.6%     |
 | Abolish ICE              | 259   | 62.1%     |
 
+
+
+
 ### Which topics are more common in originally left leaning posts, and which in right leaning posts?
 
 Each post and its mirror are shown, so users see both the left-leaning and right-leaning versions. We analyze, based on the original posts, which topics tend to be more common in left-leaning vs. right-leaning posts.
@@ -37,6 +41,7 @@ Each post and its mirror are shown, so users see both the left-leaning and right
 
 Low toxicity posts are more often about climate, abortion, and billionaires and taxes. Climate alone is 20.5% of low toxicity grouped posts and 1.6% of high toxicity grouped posts. High toxicity posts are more often attacks on Trump, MAGA and institutions, and criticism of Republicans. Criticism of Trump's media behavior is 13.9% of high toxicity grouped posts and 1.1% of low toxicity grouped posts. Anti Trump harassment is almost entirely in the high toxicity sample (140 of 144 posts).
 
+
 | Topic                    | Low         | Medium     | High        |
 | ------------------------ | ----------- | ---------- | ----------- |
 | Climate and fossil fuels | 20.5% (604) | 8.5% (471) | 1.6% (47)   |
@@ -46,6 +51,9 @@ Low toxicity posts are more often about climate, abortion, and billionaires and 
 | Anti Trump harassment    | 0% (0)      | 0.1% (4)   | 4.8% (140)  |
 | MAGA and institutions    | 3.3% (98)   | 7.9% (439) | 10.9% (314) |
 | Criticism of Republicans | 2.2% (66)   | 4.9% (272) | 7.9% (228)  |
+
+
+
 
 ### Do some topics get removed more often?
 
@@ -62,9 +70,12 @@ Where the two groups differ, the gap is generally small. Across 26 topics with a
 - Open carry laws: Democratic raters kept 75.8% of 289 votes, and Republican raters kept 68.3% of 249 votes.
 - Supreme Court: Republican raters kept Supreme Court posts at 77.6% (308 votes), and Democratic raters kept them at 71.5% (330 votes).
 
+
+
 #### Keep/remove behavior for Democrats
 
 Here are the topics Democratic raters were most likely to remove, among topics with at least 200 of their votes.
+
 
 | Topic                    | Keep rate | Votes |
 | ------------------------ | --------- | ----- |
@@ -74,7 +85,9 @@ Here are the topics Democratic raters were most likely to remove, among topics w
 | Trump media and lying    | 59.4%     | 1,788 |
 | Anti fascism messaging   | 59.7%     | 571   |
 
+
 Here are the topics Democrat raters were most likely to keep:
+
 
 | Topic                    | Keep rate | Votes |
 | ------------------------ | --------- | ----- |
@@ -84,9 +97,13 @@ Here are the topics Democrat raters were most likely to keep:
 | Sanctuary cities         | 78.6%     | 266   |
 | Gun rights               | 77.6%     | 602   |
 
+
+
+
 #### Keep/remove behavior for Republicans
 
 Here are the topics Republican raters were most likely to remove, among topics with at least 200 of their votes.
+
 
 | Topic                    | Keep rate | Votes |
 | ------------------------ | --------- | ----- |
@@ -96,7 +113,9 @@ Here are the topics Republican raters were most likely to remove, among topics w
 | Trump media and lying    | 59.2%     | 1,473 |
 | MAGA and institutions    | 60.8%     | 2,059 |
 
+
 Here are the topics Republican raters were most likely to keep:
+
 
 | Topic                    | Keep rate | Votes |
 | ------------------------ | --------- | ----- |
@@ -105,6 +124,9 @@ Here are the topics Republican raters were most likely to keep:
 | Gun policy debate        | 80.2%     | 242   |
 | Gun laws in schools      | 79.1%     | 369   |
 | Mail and elections       | 78.2%     | 257   |
+
+
+
 
 #### Does the stance of the post affect the keep/remove rate?
 
@@ -128,17 +150,30 @@ This trend is generally true across topics as well:
 
 ## LLM-based feature generation
 
-We then use LLMs to perform feature extraction. We follow the 
+We then use LLMs to perform feature extraction. We follow a [protocol](https://www.lesswrong.com/posts/WAZWA6FPQvH8okouJ/llm-driven-feature-discovery) developed by Google DeepMind on how to use LLMs for automated feature extraction.
 
 ### Methods
 
-1. We assign a keep/remove label to each original+mirror combination based on the modal label. Stick to posts with exactly 5 labels.
+1. **Setup**: We assign a keep/remove label to each original + mirror combination based on the modal label.
+2. **Use an LLM to mine features**: We pass in batches of 10 pairs of posts that were majority keep and 10 pairs of posts that were majority remove. We then ask an LLM to extract features to distinguish posts that were kept and posts that were removed. We do this across a few categories of features (see below).
+3. **Embed the feature records and cluster them**: We embed the features and then use HDBSCAN to generate clusters.
+4. **Name each cluster**: We take each cluster and pass them to an LLM to generate a human-readable label and description of each feature cluster. This generates a compiled list of feature groups.
+5. **Label every post against the features**: We label each post against each feature group.
 
+### Categories of features
 
+1. **Surface and lexical**: This category is about how the post is written, not what claim it makes. It covers length, slang, heavy punctuation, all-caps emphasis, profanity, hashtags and account mentions, and a high density of proper names. Examples include emphatic typography, profane derogatory insults, colloquial language and insults, and hashtags and account mentions.
+2. **Topic and subject matter**: This category is about the subject of the post. Examples include a policy area (guns, climate, immigration, abortion, elections), a specific event or bill, a geographic scope, a historical analogy, and culture-war salience.
+3. **Semantic content**: This category is about the kind of claim the post makes. Examples include causal claims, moral language, a factual claim versus speculation, conspiracy, a claim that a group is being persecuted, a policy prescription, and a cost-benefit argument.
+4. **Pragmatics and communicative intent**: This category is about what the post is doing to the reader. Examples include sarcasm, mockery, a call to action, persuasion, venting, hedging, and outrage.
+5. **Target and directionality**: This category is about who the post attacks or praises, and which political side it points at. Examples include the type of actor criticized or praised, a left/right cue, us-versus-them framing, and elite-versus-populist framing.
+6. **Compositional and syntactic structure**: This category is about the shape of the sentences. Examples include if-then conditionals, contrast with "but" or "however," rhetorical questions, parallel repetition, lists, quoted or attributed speech, and direct address in the second person.
 
 (Write results)
 
 ## Training a binary classifier
+
+
 
 ### Zero-shot results
 
@@ -146,7 +181,11 @@ Asking an LLM to do the keep-remove task
 
 ### Prompt-tuned results
 
+
+
 ### LLM fine-tuning results
+
+
 
 ## Training a calibrated classifier
 
