@@ -22,6 +22,20 @@
 
 The runtime median scales the smoke wall time by the number of groups of 8 requests (40 groups for 320 requests versus 1 group for the 5-request smoke).
 
+Full run: `mined_batches=320 candidate_features=20573`
+
+| Side / category | Count |
+| --- | --- |
+| features_from_kept_posts | 10,145 |
+| features_from_removed_posts | 10,428 |
+| lexical | 3,414 |
+| topic_subject | 3,529 |
+| semantic_content | 3,498 |
+| pragmatics | 3,418 |
+| target | 3,192 |
+| structure | 3,522 |
+| **Total** | **20,573** |
+
 ## Step 3: embed candidates
 
 ## Step 4: cluster features
