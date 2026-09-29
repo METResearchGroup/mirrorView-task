@@ -13,7 +13,14 @@
 
 ## Step 2: mine candidate features
 
-The plan sends these prompts with the synchronous chat completions API, 8 at a time. The smoke estimate table is not filled in yet.
+| Value | Low | Median | High |
+| --- | --- | --- | --- |
+| Runtime (minutes) | 12.3 | 15.4 | 18.4 |
+| Input tokens | 647,936 | 809,920 | 971,904 |
+| Output tokens | 180,992 | 226,240 | 271,488 |
+| Price (USD) | $3.47 | $4.33 | $5.20 |
+
+The runtime median scales the smoke wall time by the number of groups of 8 requests (40 groups for 320 requests versus 1 group for the 5-request smoke).
 
 ## Step 3: embed candidates
 
