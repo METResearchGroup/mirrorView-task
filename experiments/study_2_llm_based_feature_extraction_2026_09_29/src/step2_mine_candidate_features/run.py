@@ -1,4 +1,4 @@
-"""Step 2 entrypoint: mine candidate features via the OpenAI Batch API.
+"""Step 2 entrypoint: mine candidate features via concurrent chat completions.
 
 Run from the repo root::
 
@@ -33,8 +33,9 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constant
     CANDIDATE_FEATURES_KEY,
     COHORT_KEY,
     EXPECTED_BATCHES,
-    LLM_BATCH_USD_PER_MILLION_INPUT,
-    LLM_BATCH_USD_PER_MILLION_OUTPUT,
+    LLM_CONCURRENCY,
+    LLM_USD_PER_MILLION_INPUT,
+    LLM_USD_PER_MILLION_OUTPUT,
     MINING_ESTIMATES_KEY,
     MINING_SMOKE_KEY,
     SMOKE_QUERY_COUNT,
@@ -43,16 +44,10 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.estimate
     build_estimates,
     render_estimates_markdown,
     require_estimates,
+    scaled_runtime_minutes,
     write_estimates,
 )
-from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.llm import (
-    build_engine,
-    build_feature_spec,
-    run_batch,
-)
-from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.secrets import (
-    ensure_openai_api_key,
-)
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.llm import run_concurrent
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.storage import (
     download_artifact,
     local_path,
@@ -66,9 +61,6 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.src.step2_mine_
     CandidateFeatureRow,
     CandidateFeatures,
 )
-from data_platform.generate_features.engines.openai_engine import create_openai_client
-
-FEATURE_NAME = "study2_candidate_features"
 
 
 def _load_batches() -> list[dict]:
@@ -100,38 +92,36 @@ def _count_feature_strings(rows: list[dict]) -> int:
     return total
 
 
-def _run_mining(tasks: list) -> tuple[list[dict], object]:
-    ensure_openai_api_key()
-    client = create_openai_client()
-    spec = build_feature_spec(
-        FEATURE_NAME,
-        CandidateFeatureRow,
-        SYSTEM_PROMPT,
-        CandidateFeatures,
-    )
-    engine = build_engine(spec, client)
-    batch_run = run_batch(engine, client, tasks, time.time)
-    return batch_run.rows, batch_run
-
-
 def run_smoke() -> None:
     batches = _load_batches()
     cohort = _load_cohort()
     all_tasks = build_mining_tasks(batches, cohort)
     tasks = all_tasks[:SMOKE_QUERY_COUNT]
-    rows, batch_run = _run_mining(tasks)
-    _write_jsonl_rows(MINING_SMOKE_KEY, rows)
+    concurrent_run = run_concurrent(
+        tasks,
+        CandidateFeatures,
+        CandidateFeatureRow,
+        SYSTEM_PROMPT,
+        time.time,
+    )
+    _write_jsonl_rows(MINING_SMOKE_KEY, concurrent_run.rows)
     upload_artifact(MINING_SMOKE_KEY)
-    input_tokens = [usage.input_tokens for usage in batch_run.usage]
-    output_tokens = [usage.output_tokens for usage in batch_run.usage]
-    runtime_minutes = batch_run.wall_seconds / 60.0
+    input_tokens = [usage.input_tokens for usage in concurrent_run.usage]
+    output_tokens = [usage.output_tokens for usage in concurrent_run.usage]
+    smoke_wall_minutes = concurrent_run.wall_seconds / 60.0
+    runtime_minutes = scaled_runtime_minutes(
+        smoke_wall_minutes,
+        len(tasks),
+        EXPECTED_BATCHES,
+        LLM_CONCURRENCY,
+    )
     estimate_rows = build_estimates(
         input_tokens,
         output_tokens,
         runtime_minutes,
         EXPECTED_BATCHES,
-        LLM_BATCH_USD_PER_MILLION_INPUT,
-        LLM_BATCH_USD_PER_MILLION_OUTPUT,
+        LLM_USD_PER_MILLION_INPUT,
+        LLM_USD_PER_MILLION_OUTPUT,
     )
     write_estimates(estimate_rows, MINING_ESTIMATES_KEY)
     upload_artifact(MINING_ESTIMATES_KEY)
@@ -143,7 +133,14 @@ def run_full() -> None:
     batches = _load_batches()
     cohort = _load_cohort()
     tasks = build_mining_tasks(batches, cohort)
-    rows, _batch_run = _run_mining(tasks)
+    concurrent_run = run_concurrent(
+        tasks,
+        CandidateFeatures,
+        CandidateFeatureRow,
+        SYSTEM_PROMPT,
+        time.time,
+    )
+    rows = concurrent_run.rows
     if len(rows) != EXPECTED_BATCHES:
         raise ValueError(f"expected {EXPECTED_BATCHES} mined rows, found {len(rows)}")
     _write_jsonl_rows(CANDIDATE_FEATURES_KEY, rows)
