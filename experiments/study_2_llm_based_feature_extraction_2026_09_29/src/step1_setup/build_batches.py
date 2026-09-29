@@ -71,4 +71,23 @@ def build_batches(cohort: pd.DataFrame, seed: int) -> list[dict]:
     list[dict]
         Each dict has ``batch_id``, ``keep_post_ids``, and ``remove_post_ids``.
     """
-    raise NotImplementedError
+    rng = np.random.default_rng(seed)
+    keep_ids = shuffled_post_ids(cohort, MODAL_LABEL_KEEP, rng)
+    remove_ids = shuffled_post_ids(cohort, MODAL_LABEL_REMOVE, rng)
+    keep_batches = len(keep_ids) // KEEP_PAIRS_PER_BATCH
+    remove_batches = len(remove_ids) // REMOVE_PAIRS_PER_BATCH
+    batch_count = min(keep_batches, remove_batches)
+    batches: list[dict] = []
+    for index in range(batch_count):
+        keep_start = index * KEEP_PAIRS_PER_BATCH
+        keep_end = keep_start + KEEP_PAIRS_PER_BATCH
+        remove_start = index * REMOVE_PAIRS_PER_BATCH
+        remove_end = remove_start + REMOVE_PAIRS_PER_BATCH
+        batches.append(
+            {
+                "batch_id": format_batch_id(index),
+                "keep_post_ids": keep_ids[keep_start:keep_end],
+                "remove_post_ids": remove_ids[remove_start:remove_end],
+            }
+        )
+    return batches
