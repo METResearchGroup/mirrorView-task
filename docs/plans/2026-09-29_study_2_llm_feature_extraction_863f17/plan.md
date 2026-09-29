@@ -3,12 +3,12 @@
 ## Remember
 - Exact file paths always
 - Exact commands with expected output
-- DRY, YAGNI, TDD, frequent commits
+- DRY, YAGNI, frequent commits
 - Delegated tasks must be impossible to misread.
 
 ## Overview
 
-[Issue 321](https://github.com/METResearchGroup/mirrorView-task/issues/321) asks which features of a Study 2 post pair go with a keep decision and which go with a remove decision, and how often each feature appears across the 20,000 pairs. The method follows approach 3 in the lab's [text mining manual](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md#approach-3-asking-an-llm-to-give-features). GPT-5.6 Terra reads batches of kept and removed pairs and lists candidate features in six categories. Amazon Titan embeddings and HDBSCAN group the candidates, and GPT-5.6 Terra names each group. Once you approve the named features, Jev scores every pair on every feature. The last step answers four questions about political lean, toxicity, and rater party, and it publishes the answers on a Vercel page.
+[Issue 321](https://github.com/METResearchGroup/mirrorView-task/issues/321) asks which features of a Study 2 post pair go with a keep decision and which go with a remove decision. The method follows approach 3 in the lab's [text mining manual](https://github.com/METResearchGroup/lab_wiki/blob/main/docs/manuals/methods/HOW_TO_MINE_TEXT_FOR_FEATURES.md#approach-3-asking-an-llm-to-give-features). GPT-5.6 Terra reads batches of kept and removed pairs and lists candidate features in six categories. Amazon Titan embeddings and HDBSCAN group the candidates, and GPT-5.6 Terra names each group. Once you approve the named features, Jev scores every pair on every feature. The last step counts the top features within groups of pairs by lean, toxicity, and remove votes, and it publishes the tables on a Vercel page. The analyses are plain counts, with no statistical tests, no p-values, no feature shares across all pairs, and no rater party breakdown. The experiment has no unit or integration tests, and each step checks its own output counts instead.
 
 The code and Markdown live in `experiments/study_2_llm_based_feature_extraction_2026_09_29/`. Every data file, figure, and table goes to `s3://mirrorview-experimental-artifacts/experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
 
@@ -21,10 +21,11 @@ We measured these facts on 2026-09-29, before writing the plan:
 
 ## Main questions
 
-1. Which features appear most often?
-2. Which features are more common in pairs whose original post leans left, and which in pairs whose original post leans right?
-3. Which features are more common at low, medium, and high toxicity of the original post?
-4. Which features did Democratic raters and Republican raters keep more often, and which did they remove more often?
+1. What are the 10 most common features in pairs whose original post leans left, and in pairs whose original post leans right?
+2. What are the 10 most common features at low, medium, and high toxicity of the original post?
+3. For the five-label pairs with 0, 1, 2, 3, 4, or 5 remove votes, what are the 10 most common features in each group?
+
+Issue questions 1 and 4, overall feature shares and rater party, are out of scope.
 
 ## Happy flow
 
@@ -64,10 +65,10 @@ Before a GPT-5.6 Terra or Jev step runs in full, it sends 5 queries to the model
 
 - Mining uses 320 batches and shows no pair twice, so 8,710 keep pairs never appear in a mining prompt. The other option reuses remove pairs until every keep pair appears once, which takes 1,191 batches and about 3.7 times the mining cost. The plan uses 320 batches.
 - HDBSCAN in scikit-learn takes no random seed, and it returns the same clusters for the same input order. Seed 1 still fixes the batch shuffle in step 1 and the feature samples in step 5.
-- Because a mirror post reverses the side that the original post attacks or praises, a target feature such as "criticizes Republicans" is true of one post in the pair and false of the other. The Jev prompt names the original post and the mirror post, so a feature definition can refer to one of them. Even so, read the target features in the answer to question 2 as pair features, not as the lean of one post.
-- "Every post" means all 20,000 pairs in the stimulus file. The 4,887 pairs outside the five-label cohort each have 3 to 14 human decisions, so question 4 uses all 20,000 pairs.
+- Because a mirror post reverses the side that the original post attacks or praises, a target feature such as "criticizes Republicans" is true of one post in the pair and false of the other. The Jev prompt names the original post and the mirror post, so a feature definition can refer to one of them. Even so, read the target features in the answer to question 1 as pair features, not as the lean of one post.
+- Questions 1 and 2 use all 20,000 pairs in the stimulus file. Question 3 uses only the 15,113 five-label pairs, as the issue asks.
+- Each top 10 list ranks features by a raw count within one group. The groups differ in size, so the page shows each group's pair count and does not compare counts across groups.
 - The analyses read "topics" in the issue as all approved features. Each table and chart shows the feature's category, so the topic and subject rows answer the narrower reading.
-- Question 4 counts one decision per person and pair. One person makes many decisions, so the decisions are not independent. For that reason, the party table reports rates and differences without p-values.
 - The pull requests contain only `.py` and `.md` files, with these exceptions that the issue or Vercel requires:
   - the experiment's `.gitignore`, which keeps local outputs out of git
   - the page template's HTML, CSS, and JavaScript files in step 7
@@ -102,13 +103,12 @@ Jev reads one pair per request and returns a probability for each approved featu
 
 ### Step 7: Analyze the labels and publish the Vercel page
 
-Compute the four analyses, draw one chart per question with the evident-charts rules, and write one static page that Vercel serves at `/study-2-features`. Details are in [steps/step7.md](steps/step7.md).
+Count the 10 most common features in each lean, toxicity, and remove votes group. Draw the lean and toxicity charts with the evident-charts rules, and write one static page that Vercel serves at `/study-2-features`. Details are in [steps/step7.md](steps/step7.md).
 
 ## What "done" looks like
 
-1. `experiments/study_2_llm_based_feature_extraction_2026_09_29/` has `README.md`, `SETUP.md`, `RESULTS.md`, the shared helpers, the seven step folders, and the tests.
-2. `RESULTS.md` has the three estimate tables, the cohort and batch counts, the approved feature list, and the answer tables for the four questions.
+1. `experiments/study_2_llm_based_feature_extraction_2026_09_29/` has `README.md`, `SETUP.md`, `RESULTS.md`, the shared helpers, and the seven step folders.
+2. `RESULTS.md` has the three estimate tables, the cohort and batch counts, the approved feature list, and the top 10 tables for the three questions.
 3. The S3 prefix has the cohort, the batches, the candidate features, the embeddings, the clusters, the cluster names, the Jev probabilities, the 0 or 1 label table for 20,000 pairs, and the analysis tables.
 4. The label table has one row per pair, with the post id, the original text, the mirror text, and one 0 or 1 column per approved feature.
-5. The Vercel preview serves `/study-2-features` with four charts and a feature table that you can filter.
-6. `PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q` passes.
+5. The Vercel preview serves `/study-2-features` with two charts, the top 10 tables, and a feature table that you can filter.

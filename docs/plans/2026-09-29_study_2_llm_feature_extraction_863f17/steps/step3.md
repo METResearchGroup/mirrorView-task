@@ -45,7 +45,6 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Create `src/step3_embed_features/__init__.py`, `dedupe.py`, `embed.py`, and `run.py`
-- Create `tests/test_dedupe.py` and `tests/test_embed.py`
 - Edit `SETUP.md` to add the step 3 command, and edit `RESULTS.md` under `## Step 3: deduplicated features`
 
 ## Files forbidden to change
@@ -95,25 +94,9 @@ embed_texts(texts: list[str], embed_fn: Callable[[str], dict],
 
 `src/step3_embed_features/run.py` has `main()`. It downloads `CANDIDATE_FEATURES_KEY`, runs `flatten_candidate_rows`, `dedupe_features`, and `embed_texts` with `create_embedding`, `time.sleep`, and `EMBED_MAX_WORKERS`. It writes `FEATURES_KEY`, `EMBEDDINGS_KEY`, and `FEATURE_IDS_KEY`, where `feature_ids.json` lists `feature_id` in matrix row order, uploads all three, and prints one line.
 
-## Tests
-
-- `tests/test_dedupe.py`
-  - `TestNormalizeFeatureText.test_drops_case_punctuation_and_stopwords`: `"Uses ALL-CAPS for the emphasis!"` becomes `"uses caps emphasis"`.
-  - `TestNormalizeFeatureText.test_all_stopwords_falls_back`: `"The"` becomes `"the"`.
-  - `TestDedupeFeatures.test_merges_within_category_only`: the same string in `lexical` on both sides and once in `target` gives two features, and the `lexical` one has `n_kept_side` 1 and `n_removed_side` 1.
-  - `TestDedupeFeatures.test_keeps_first_text_and_counts_batches`: two duplicates from `batch_001` and one from `batch_000` give the text of the `batch_000` record and `n_batches` 2.
-  - `TestFlattenCandidateRows.test_one_record_per_string`: one row with two kept `lexical` strings and one removed `target` string gives three records.
-- `tests/test_embed.py`
-  - `TestEmbedOneWithRetry.test_retries_throttling`: a fake that raises `ThrottlingException` twice and then returns a vector is called three times, and `sleep_fn` gets 1.0 and 2.0.
-  - `TestEmbedOneWithRetry.test_other_error_raises`: an `AccessDeniedException` raises on the first call.
-  - `TestEmbedTexts.test_keeps_input_order`: a fake that returns a vector from the text keeps the rows in input order with two workers.
-
-No test calls Bedrock or reads S3.
-
 ## Commands
 
 ```bash
-PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step3_embed_features/run.py
 ```
 
@@ -127,8 +110,8 @@ candidate_records=M distinct_features=D titan_tokens=T titan_cost_usd=C
 
 ## Pass
 
-The pytest command exits 0. `M` equals the step 2 count, `D` is at most `M`, `embeddings.npy` has `D` rows and 256 columns, and all three files are on S3.
+`M` equals the step 2 count, `D` is at most `M`, `embeddings.npy` has `D` rows and 256 columns, and all three files are on S3.
 
 ## Fail
 
-The step fails when a test calls Bedrock, when `feature_ids.json` does not match the row order of `features.parquet`, or when any vector does not have length 256.
+The step fails when `feature_ids.json` does not match the row order of `features.parquet`, or when any vector does not have length 256.

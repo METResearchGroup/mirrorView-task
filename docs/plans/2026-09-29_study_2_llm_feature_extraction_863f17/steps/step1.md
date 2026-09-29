@@ -23,22 +23,20 @@ Local outputs go under `experiments/study_2_llm_based_feature_extraction_2026_09
 | `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
 | `/workspace/experiments/compare_jev_human_uncertainty_2026_09_25/human_counts.py` | `build_five_labeler_counts`, which you reuse |
 | `/workspace/experiments/compare_jev_human_uncertainty_2026_09_25/jev_labels.py` | `use_lab_credentials`, which you reuse |
-| `/workspace/shared/data/dataloader.py` | `load_dataset`, which downloads a registered CSV from S3. Do not call it in tests. |
+| `/workspace/shared/data/dataloader.py` | `load_dataset`, which downloads a registered CSV from S3. |
 | `/workspace/shared/data/registry.py` | `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` |
 | `/workspace/shared/data/raw/study_2/README.md` | Table sizes |
 | `/workspace/lib/aws/s3.py` | `S3.upload_file` and `S3.get_bytes` |
 | `/workspace/.cursor/skills/implement-plan-and-open-pr/CODING_RULES.md` | Short functions, named constants, numpy-style docstrings |
-| `/workspace/.cursor/skills/implement-plan-and-open-pr/UNIT_TESTING_STANDARDS.md` | One test class per function, arrange, act, and assert |
 
 ## Files allowed to change
 
 All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
 
 - Create `README.md`, `SETUP.md`, `RESULTS.md`, and `.gitignore`
-- Create `__init__.py`, `shared/__init__.py`, `src/__init__.py`, `src/step1_setup/__init__.py`, and `tests/__init__.py`
+- Create `__init__.py`, `shared/__init__.py`, `src/__init__.py`, and `src/step1_setup/__init__.py`
 - Create `shared/constants.py` and `shared/storage.py`
 - Create `src/step1_setup/build_cohort.py`, `src/step1_setup/build_batches.py`, and `src/step1_setup/run.py`
-- Create `tests/test_build_cohort.py`, `tests/test_build_batches.py`, and `tests/test_storage.py`
 
 ## Files forbidden to change
 
@@ -134,39 +132,13 @@ build_batches(cohort: pd.DataFrame, seed: int) -> list[dict]
 
 Do not give these functions default arguments.
 
-## Tests
-
-`tests/test_build_cohort.py`:
-
-- `TestAssignModalLabel.test_three_removes_is_remove`: rows with `n_remove` 2 and 3 get `keep` and `remove`.
-- `TestAssignModalLabel.test_rejects_wrong_rater_count`: a row with `n_raters` 4 raises `ValueError`.
-- `TestAttachPairText.test_renames_mirror_and_keeps_columns`: the result columns equal `COHORT_COLUMNS`.
-- `TestAttachPairText.test_missing_stimulus_raises`: a labeled post with no stimulus row raises `ValueError`.
-- `TestBuildCohort.test_keeps_only_five_label_pairs`: a raw frame where post `a` has five people and post `b` has two people returns only `a`.
-
-`tests/test_build_batches.py`:
-
-- `TestBuildBatches.test_batch_count_is_limited_by_smaller_label`: 35 keep pairs and 21 remove pairs give 2 batches.
-- `TestBuildBatches.test_each_batch_has_ten_and_ten`: every batch has 10 keep ids and 10 remove ids.
-- `TestBuildBatches.test_no_id_repeats`: no id appears in two batches.
-- `TestBuildBatches.test_same_seed_same_batches`: two calls with seed 1 return equal lists, and seed 2 returns a different list.
-- `TestFormatBatchId.test_zero_pads`: index 7 gives `batch_007`.
-
-`tests/test_storage.py`:
-
-- `TestLocalPath.test_joins_under_outputs`: `local_path("step1_setup/cohort.parquet")` ends with `outputs/step1_setup/cohort.parquet`.
-- `TestUploadArtifact.test_missing_file_raises`: a key with no local file raises `FileNotFoundError`, and the test does not reach S3.
-
-No test reads S3 or calls a model.
-
 ## Commands
 
 ```bash
-PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step1_setup/run.py
 ```
 
-The second command prints these lines:
+The command prints these lines:
 
 ```text
 uploaded=s3://mirrorview-experimental-artifacts/experiments/study_2_llm_based_feature_extraction_2026_09_29/step1_setup/cohort.parquet
@@ -178,8 +150,8 @@ After the run, write the four counts and the 3 remove and 8,710 keep pairs left 
 
 ## Pass
 
-The pytest command exits 0, and the run prints the three lines in the Commands section.
+The run prints the three lines in the Commands section.
 
 ## Fail
 
-The step fails when a test fails, when a test reads S3, when any count differs from the pinned count, or when `git status` shows a file under `outputs/`.
+The step fails when any count differs from the pinned count, or when `git status` shows a file under `outputs/`.

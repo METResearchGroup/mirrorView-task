@@ -30,7 +30,6 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Create `src/step4_cluster_records/__init__.py`, `cluster.py`, and `run.py`
-- Create `tests/test_cluster.py`
 - Edit `SETUP.md` to add the step 4 command, and edit `RESULTS.md` under `## Step 4: clusters`
 
 ## Files forbidden to change
@@ -73,21 +72,9 @@ summarize_clusters(assignments: pd.DataFrame, features: pd.DataFrame) -> pd.Data
 
 `src/step4_cluster_records/run.py` has `main()`. It downloads the three step 3 files, clusters, and writes and uploads `ASSIGNMENTS_KEY`, `CLUSTER_SIZES_KEY`, and `CLUSTER_METADATA_KEY`. The metadata holds `SEED`, `HDBSCAN_MIN_CLUSTER_SIZE`, the per-category params, the number of clusters, and the noise count. It prints one line per category and one total line.
 
-## Tests
-
-`tests/test_cluster.py`:
-
-- `TestFormatClusterKey.test_pads`: `("pragmatics", 4)` gives `pragmatics__004`.
-- `TestClusterCategory.test_two_clear_groups`: 12 unit vectors near one direction and 12 near another give two clusters.
-- `TestClusterCategory.test_rejects_one_row`: a 1-row matrix raises `ValueError`.
-- `TestClusterAllCategories.test_clusters_each_category_separately`: two categories with identical vectors still give cluster keys with different category prefixes.
-- `TestClusterAllCategories.test_noise_has_no_key`: a far outlier gets `cluster_id` -1 and `cluster_key` None.
-- `TestSummarizeClusters.test_batches_count_once`: two members that both list `batch_003` give `n_batches` 1.
-
 ## Commands
 
 ```bash
-PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step4_cluster_records/run.py
 ```
 
@@ -102,7 +89,7 @@ Write a table of features, clusters, and noise per category under `## Step 4: cl
 
 ## Pass
 
-The pytest command exits 0, `K` is at least 1, the number of clustered features plus `Z` equals the step 3 distinct count, and the three files are on S3.
+`K` is at least 1, the number of clustered features plus `Z` equals the step 3 distinct count, and the three files are on S3.
 
 ## Fail
 

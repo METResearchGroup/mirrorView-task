@@ -77,7 +77,6 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 - Edit `shared/constants.py` to add the constants in the Contracts section and the import of `LABEL_TO_DETAIL`
 - Create `shared/label_to_detail.py`, only through `run.py --write-label-details` and then through your edits
 - Create `src/step5_name_clusters/__init__.py`, `prompt.py`, `schemas.py`, `review.py`, `write_label_details.py`, and `run.py`
-- Create `tests/test_naming_prompt.py`, `tests/test_review.py`, and `tests/test_write_label_details.py`
 - Edit `SETUP.md` to add the step 5 commands, and edit `RESULTS.md` under `## Step 5: named features`
 
 ## Files forbidden to change
@@ -165,18 +164,9 @@ validate_label_to_detail(mapping: dict[str, dict[str, str]]) -> None
 - With `--full`, it calls `require_estimates(NAMING_ESTIMATES_KEY)`, names every cluster, runs `check_cluster_names`, writes and uploads `CLUSTER_NAMES_KEY` and `FEATURE_REVIEW_KEY`, and prints the review Markdown.
 - With `--write-label-details`, it reads the review, builds and validates the mapping, writes `shared/label_to_detail.py`, and prints `features=F`. It raises `FileExistsError` when `shared/label_to_detail.py` already exists, so a rerun cannot overwrite your edits.
 
-## Tests
-
-- `tests/test_naming_prompt.py`: `TestSampleClusterFeatures.test_caps_at_sample_size` gives a 40-member cluster 30 texts and a 3-member cluster 3 texts. `test_same_seed_same_sample` checks that two calls match. `TestRenderClusterPrompt.test_includes_title_and_bullets` checks the title line and one `- ` line per feature.
-- `tests/test_review.py`: `TestCheckClusterNames` accepts an 8-word name, rejects a 9-word name, rejects a definition with a line break, and checks that the error lists both bad cluster keys. `TestBuildFeatureReview` checks `batch_share` 0.25 for 80 of 320 batches and `kept_share` 0.75 for 3 kept and 1 removed.
-- `tests/test_write_label_details.py`: `TestLabelKey` turns `"All-caps emphasis!"` into `is_all_caps_emphasis`. `TestBuildLabelToDetail.test_collision_suffix` gives two clusters named `"Sarcasm"` the keys `is_sarcasm` and `is_sarcasm_2`. `TestValidateLabelToDetail` rejects a missing `category` and a category outside `FEATURE_CATEGORIES`. `TestRenderLabelDetailsModule.test_round_trips` runs the rendered text with `exec` and gets the same mapping back.
-
-No test calls OpenAI or reads S3.
-
 ## Commands
 
 ```bash
-PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --smoke
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --full
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --write-label-details
@@ -196,8 +186,8 @@ When you reply, the operator changes only `shared/label_to_detail.py`. To merge 
 
 ## Pass
 
-The pytest command exits 0, the full run reports no name or definition errors, `features=F` matches the cluster count, and you have approved the feature list in writing.
+The full run reports no name or definition errors, `features=F` matches the cluster count, and you have approved the feature list in writing.
 
 ## Fail
 
-The step fails when step 6 starts before your approval, when `shared/label_to_detail.py` fails `validate_label_to_detail`, or when a test calls OpenAI.
+The step fails when step 6 starts before your approval, or when `shared/label_to_detail.py` fails `validate_label_to_detail`.

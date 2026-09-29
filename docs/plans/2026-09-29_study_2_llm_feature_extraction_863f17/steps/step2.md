@@ -104,7 +104,6 @@ Render each pair as two lines, numbered from 1 within its list, with the kept pa
 | `/workspace/data_platform/generate_features/engines/openai_engine.py` | `OpenAIBatchEngine`, `OpenAIBatchEngineConfig`, `create_openai_client`, `CUSTOM_ID_PREFIX`, `CUSTOM_ID_INDEX_WIDTH` |
 | `/workspace/data_platform/generate_features/models.py` | `FeatureSpec`, `FeatureRunConfig`, `LabelTask` |
 | `/workspace/data_platform/generate_features/engines/base.py` | `row_with_label_timestamp`, which sets the row shape |
-| `/workspace/tests/data_platform/generate_features/conftest.py` | The fake OpenAI client pattern for tests |
 | `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/storage.py` | `download_artifact`, `upload_artifact`, `local_path` |
 
 ## Files allowed to change
@@ -114,7 +113,6 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Create `shared/secrets.py`, `shared/llm.py`, and `shared/estimates.py`
 - Create `src/step2_mine_candidate_features/__init__.py`, `prompt.py`, `schemas.py`, and `run.py`
-- Create `tests/test_secrets.py`, `tests/test_llm.py`, `tests/test_estimates.py`, `tests/test_mining_prompt.py`, and `tests/test_mining_schemas.py`
 - Edit `SETUP.md` to add the step 2 commands, and edit `RESULTS.md` under `## Step 2: candidate features`
 
 ## Files forbidden to change
@@ -231,20 +229,9 @@ build_mining_tasks(batches: list[dict], cohort: pd.DataFrame) -> list[LabelTask]
 - With `--smoke`, it runs the first `SMOKE_QUERY_COUNT` tasks, writes and uploads `MINING_SMOKE_KEY` and `MINING_ESTIMATES_KEY` with `total_requests=EXPECTED_BATCHES`, and prints the estimate table.
 - With `--full`, it calls `require_estimates(MINING_ESTIMATES_KEY)`, runs all 320 tasks, raises `ValueError` unless there are 320 rows, writes and uploads `CANDIDATE_FEATURES_KEY`, and prints one line.
 
-## Tests
-
-- `tests/test_secrets.py`: `TestParseSecretString` covers a plain string, a JSON object with `api_key`, and a JSON object with only empty values, which raises `ValueError`. `TestEnsureOpenaiApiKey.test_keeps_existing_env` sets the variable with `monkeypatch` and asserts that Secrets Manager is not called.
-- `tests/test_llm.py`: `TestParseRequestUsage` builds two output lines, `task-00000` and `task-00001`, and asserts the token counts map to the right ids. It also asserts that a line without `usage` raises `ValueError`. `TestRunTerraBatch` uses a fake engine and a fake client from the `conftest.py` pattern, and a clock that returns 0.0 and then 90.0, and asserts `wall_seconds == 90.0`.
-- `tests/test_estimates.py`: `TestEstimateRow` checks that median 100 gives low 80 and high 120. `TestBuildEstimates` checks that per-request inputs `[10, 20, 30]` with 320 requests give a median of 6,400 input tokens, and that the price row equals the tokens times the rates. `TestRenderEstimatesMarkdown` checks the header and the row order.
-- `tests/test_mining_prompt.py`: `TestRenderPairList` checks the two-line numbered format. `TestBuildMiningTasks` checks one task per batch with the batch id as `uri`, and checks that a batch with 9 kept ids raises `ValueError`.
-- `tests/test_mining_schemas.py`: `TestCandidateFeatures` checks that the example JSON from the issue validates and that an extra key raises a validation error.
-
-No test calls OpenAI or reads S3.
-
 ## Commands
 
 ```bash
-PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py --smoke
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py --full
 ```
@@ -261,8 +248,8 @@ Add the count of feature strings per category and per side to `RESULTS.md`.
 
 ## Pass
 
-The pytest command exits 0. The smoke command prints the four-row table. The full command prints `mined_batches=320`, and it uploads `candidate_features.jsonl` to the S3 prefix.
+The smoke command prints the four-row table. The full command prints `mined_batches=320`, and it uploads `candidate_features.jsonl` to the S3 prefix.
 
 ## Fail
 
-The step fails when a test calls OpenAI, when the full run starts without `estimates.json`, when the full run writes fewer than 320 rows, or when any file under `data_platform/` changes.
+The step fails when the full run starts without `estimates.json`, when the full run writes fewer than 320 rows, or when any file under `data_platform/` changes.

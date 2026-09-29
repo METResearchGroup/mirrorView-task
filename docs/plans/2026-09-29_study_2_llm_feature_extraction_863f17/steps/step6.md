@@ -6,7 +6,7 @@ Step 6 starts only after you approve the feature list at the end of step 5. Out 
 
 ## Decisions
 
-Jev is the TypeSafe model `jev-1.13.0`. Its client is `TypeSafeClient` in the package `typesafe-sdk==0.7.1`. The package is not in `pyproject.toml` on `main`, so every Jev command adds it with `uv run --with typesafe-sdk==0.7.1`. `shared/jev.py` imports the package inside the function that builds the client, so the tests run without it.
+Jev is the TypeSafe model `jev-1.13.0`. Its client is `TypeSafeClient` in the package `typesafe-sdk==0.7.1`. The package is not in `pyproject.toml` on `main`, so every Jev command adds it with `uv run --with typesafe-sdk==0.7.1`. `shared/jev.py` imports the package inside the function that builds the client, so the rest of the experiment imports without it.
 
 A Jev request sends one `state` dictionary and one question per feature. Each question is a `Noul` with an `instructions` string, and each answer has a `noul` value between 0 and 1, which is the probability that the answer is yes. On 2026-09-29 one request with one pair and 60 questions returned in 0.13 seconds, used 2,654 input tokens, and gave 0.88 for all-caps emphasis on a post that ended in "Vote them OUT!". A request therefore holds one pair and up to 60 features. When `LABEL_TO_DETAIL` has more than 60 features, the pair takes more than one request, and each request holds the next 60 keys in sorted order.
 
@@ -62,7 +62,6 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 - Edit `shared/secrets.py` to add `get_jev_api_key`
 - Create `shared/jev.py`
 - Create `src/step6_label_posts_with_features/__init__.py`, `prompt.py`, `label.py`, `threshold.py`, and `run.py`
-- Create `tests/test_jev.py`, `tests/test_labeling_prompt.py`, `tests/test_label.py`, and `tests/test_threshold.py`
 - Edit `SETUP.md` to add the step 6 commands, and edit `RESULTS.md` under `## Step 6: Jev labels`
 
 ## Files forbidden to change
@@ -173,19 +172,9 @@ build_label_table(labels: pd.DataFrame, pairs: pd.DataFrame) -> pd.DataFrame
 - With `--smoke`, it labels the first `SMOKE_QUERY_COUNT` pairs into `LABELING_SMOKE_KEY`, writes and uploads `LABELING_ESTIMATES_KEY`, and prints the table.
 - With `--full`, it calls `require_estimates(LABELING_ESTIMATES_KEY)`, labels all pairs, and uploads the predictions and the dead letters. It raises `ValueError` when the dead letter file has lines or when fewer than 20,000 pairs have the current hash. Otherwise it writes and uploads `JEV_PROBABILITIES_KEY` and `POST_FEATURE_LABELS_KEY`, and prints one line.
 
-## Tests
-
-- `tests/test_jev.py`: `TestJevScorer` uses a fake client whose `system_one` returns answers with `noul` values and a usage block. It checks the probabilities by id and the token counts, that a missing answer raises `KeyError`, and that a value of 1.2 raises `ValueError`. `TestRequestStartLimiter.test_spaces_starts` checks that a limit of 60 per minute with a fake clock sleeps about 1 second before the second start.
-- `tests/test_labeling_prompt.py`: `TestRenderPairState` checks the `pair` key and the two labeled posts. `TestRenderFeatureInstruction` checks that the JSON holds only `name` and `description`, and that the text ends with that JSON.
-- `tests/test_label.py`: `TestChunkFeatureKeys` splits 130 keys into chunks of 60, 60, and 10. `TestFeaturesSha256` checks that key order does not change the hash and that an edited description does. `TestLabelPair.test_retries_then_succeeds` checks that a scorer that fails twice and then succeeds gives `attempts` 3. `TestRunLabeling.test_resume_skips_current_hash` checks that a predictions file with 2 of 3 pairs under the current hash leads to 1 request. `TestRunLabeling.test_deadletters_after_retries` checks that a scorer that always fails writes one dead letter line and no prediction line.
-- `tests/test_threshold.py`: `TestApplyThreshold` checks that 0.69 gives 0, and that 0.7 and 0.95 give 1. `TestBuildLabelTable` checks the column order and that every label column is 0 or 1.
-
-No test imports `typesafe_sdk`, calls Jev, or reads S3.
-
 ## Commands
 
 ```bash
-PYTHONPATH=. uv run pytest experiments/study_2_llm_based_feature_extraction_2026_09_29/tests -q
 PYTHONPATH=. uv run --with typesafe-sdk==0.7.1 python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step6_label_posts_with_features/run.py --smoke
 PYTHONPATH=. uv run --with typesafe-sdk==0.7.1 python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step6_label_posts_with_features/run.py --full
 ```
@@ -196,12 +185,10 @@ Paste the smoke table under `## Step 6: Jev labels` in `RESULTS.md`. The full co
 labeled_pairs=20000 features=F requests=R deadletters=0
 ```
 
-Under the table, add a table of each feature's share of pairs at the 0.7 cutoff. Name any feature that is present in fewer than 1% or more than 90% of pairs, because those features split the pairs very little.
-
 ## Pass
 
-The pytest command exits 0. The full command prints `labeled_pairs=20000` and `deadletters=0`. `post_feature_labels.parquet` on S3 has 20,000 rows, the three text columns, and `F` label columns, all 0 or 1 with no missing values.
+The full command prints `labeled_pairs=20000` and `deadletters=0`. `post_feature_labels.parquet` on S3 has 20,000 rows, the three text columns, and `F` label columns, all 0 or 1 with no missing values.
 
 ## Fail
 
-The step fails when it starts before your approval, when a test imports `typesafe_sdk`, when `pyproject.toml` changes, or when any pair is missing from the label table.
+The step fails when it starts before your approval, when `pyproject.toml` changes, or when any pair is missing from the label table.
