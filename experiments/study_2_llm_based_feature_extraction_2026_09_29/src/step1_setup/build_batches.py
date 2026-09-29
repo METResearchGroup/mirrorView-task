@@ -34,7 +34,10 @@ def shuffled_post_ids(
     list[str]
         Post ids in shuffled order.
     """
-    raise NotImplementedError
+    matched = cohort.loc[cohort["modal_label"].eq(modal_label), "post_id"]
+    sorted_ids = sorted(matched.astype(str).tolist())
+    permuted = rng.permutation(sorted_ids)
+    return [str(post_id) for post_id in permuted]
 
 
 def format_batch_id(index: int) -> str:
