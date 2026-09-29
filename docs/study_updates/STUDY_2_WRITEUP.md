@@ -6,8 +6,13 @@ We focus the BERTopic analysis on the original posts. The mirroring operation di
 
 We see more well-defined BERTopic results from the larger combined Study 2 dataset than we did in the first run given our larger dataset and the increased number of labels per post.
 
-### Which topics most commonly appear?
+### Overview
 
+Below is a 2-D visualization of the posts clustered by their key topics. An interactive visualization can be found [at this link](https://bertopic-findings.vercel.app/).
+
+![BERTopic Cluster Map](static/study_2_writeup/bertopic_cluster_map.png)
+
+### Which topics most commonly appear?
 
 | Topic                    | Posts | Keep rate |
 | ------------------------ | ----- | --------- |
@@ -22,7 +27,9 @@ We see more well-defined BERTopic results from the larger combined Study 2 datas
 | Billionaires and taxes   | 326   | 76.6%     |
 | Abolish ICE              | 259   | 62.1%     |
 
-### Which topics are more common in left leaning posts, and which in right leaning posts?
+### Which topics are more common in originally left leaning posts, and which in right leaning posts?
+
+Each post and its mirror are shown, so users see both the left-leaning and right-leaning versions. We analyze, based on the original posts, which topics tend to be more common in left-leaning vs. right-leaning posts.
 
 ![Topics by Left/Right-Leaning](static/study_2_writeup/topics_by_left_right_leaning.png)
 
@@ -119,27 +126,27 @@ This trend is generally true across topics as well:
 
 ...
 
-### LLM-based feature generation
+## LLM-based feature generation
 
-(Write about the procedure and how it works)
+We then use LLMs to perform feature extraction. We follow the 
+
+### Methods
+
+1. We assign a keep/remove label to each original+mirror combination based on the modal label. Stick to posts with exactly 5 labels.
+
+
 
 (Write results)
 
-## Model training
-
-
+## Training a binary classifier
 
 ### Zero-shot results
 
-
+Asking an LLM to do the keep-remove task
 
 ### Prompt-tuned results
 
-
-
 ### LLM fine-tuning results
-
-
 
 ## Training a calibrated classifier
 
