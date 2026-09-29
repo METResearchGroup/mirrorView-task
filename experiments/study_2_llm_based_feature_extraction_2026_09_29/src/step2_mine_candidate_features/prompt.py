@@ -6,6 +6,9 @@ import pandas as pd
 
 from data_platform.generate_features.models import LabelTask
 
+SYSTEM_PROMPT: str = ""
+USER_TEMPLATE: str = ""
+
 
 def render_pair_list(pairs: list[tuple[str, str]]) -> str:
     raise NotImplementedError

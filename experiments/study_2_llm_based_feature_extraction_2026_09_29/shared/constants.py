@@ -36,3 +36,23 @@ SMOKE_QUERY_COUNT = 5
 ESTIMATE_BAND = 0.20
 COHORT_KEY = "step1_setup/cohort.parquet"
 BATCHES_KEY = "step1_setup/batches.jsonl"
+LLM_MODEL = "gpt-5.6-terra"
+LLM_TEMPERATURE = 1.0
+OPENAI_POLL_INTERVAL_SECONDS = 30.0
+OPENAI_BATCH_COMPLETION_WINDOW = "1h"
+LLM_BATCH_USD_PER_MILLION_INPUT = 1.00
+LLM_BATCH_USD_PER_MILLION_OUTPUT = 6.00
+AWS_SECRETS_REGION = "us-east-2"
+OPENAI_SECRET_ID = "openai-api-key"
+FEATURE_CATEGORIES = (
+    "lexical",
+    "topic_subject",
+    "semantic_content",
+    "pragmatics",
+    "target",
+    "structure",
+)
+FEATURE_SIDES = ("features_from_kept_posts", "features_from_removed_posts")
+MINING_SMOKE_KEY = "step2_mine_candidate_features/smoke_candidate_features.jsonl"
+MINING_ESTIMATES_KEY = "step2_mine_candidate_features/estimates.json"
+CANDIDATE_FEATURES_KEY = "step2_mine_candidate_features/candidate_features.jsonl"
