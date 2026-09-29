@@ -13,15 +13,17 @@ A Jev request sends one `state` dictionary and one question per feature. Each qu
 The pairs are all 20,000 rows of `STUDY_2_STIMULI`, with `post_id` equal to `post_primary_key` as a string, sorted by `post_id`. The state is one key, `pair`, whose value is this text:
 
 ```text
-Original post: {original_text}
+Text 1: {original_text}
 
-Mirror post: {mirrored_text}
+Text 2: {mirrored_text}
 ```
+
+Text 1 is the original post and text 2 is the mirror. The prompt does not say that.
 
 Each question id is the feature's key in `LABEL_TO_DETAIL`, for example `is_sarcasm`. Each question's instructions are the text below, with `{feature_json}` set to `json.dumps({"name": ..., "description": ...}, ensure_ascii=False)` for that feature. The text follows the issue's starting prompt, changed from one post and a list of features to one pair and one feature, because each question scores one feature:
 
 ```markdown
-You are labeling one social-media post pair against one approved feature. The pair is in `pair`. It has an original post and a mirror post that makes the same point from the opposite political side.
+You are labeling one social-media post pair against one approved feature. The pair is in `pair`. Each pair is an original post and a mirror of that post. The two texts are labeled text 1 and text 2. Those labels do not say which text is the original.
 
 Return true when the feature clearly applies to the post text, otherwise return false. Use only the provided feature definition.
 
@@ -47,16 +49,16 @@ When `TYPESAFE_API_KEY` is not set, download the secret `jev-typesafe-api-key` i
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
+| `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
 | `experiments/predict_keep_remove_jev_gepa_2026_09_23/shared/jev_scorer.py` on branch `origin/cursor/predict-keep-remove-jev-gepa-plan-ed3f` | `build_client`, `score_batch`, the thread pool, and resume. Read it with `git show origin/cursor/predict-keep-remove-jev-gepa-plan-ed3f:experiments/predict_keep_remove_jev_gepa_2026_09_23/shared/jev_scorer.py`. |
 | `experiments/predict_keep_remove_jev_gepa_2026_09_23/shared/rate_limiter.py` on the same branch | The request start limiter |
-| `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/constants.py` | `LABEL_TO_DETAIL` |
-| `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/secrets.py` | `parse_secret_string` |
-| `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/estimates.py` | `estimate_row`, `render_estimates_markdown`, `require_estimates` |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/constants.py` | `LABEL_TO_DETAIL` |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/secrets.py` | `parse_secret_string` |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/estimates.py` | `estimate_row`, `render_estimates_markdown`, `require_estimates` |
 
 ## Files allowed to change
 
-All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
+All paths are under `experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
 
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Edit `shared/secrets.py` to add `get_jev_api_key`
@@ -66,10 +68,10 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 
 ## Files forbidden to change
 
-- `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/label_to_detail.py`
-- `/workspace/pyproject.toml` and `/workspace/uv.lock`
-- `/workspace/shared/**`
-- `/workspace/experiments/predict_keep_remove_jev_gepa_2026_09_23/**`
+- `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/label_to_detail.py`
+- `pyproject.toml` and `uv.lock`
+- `shared/**`
+- `experiments/predict_keep_remove_jev_gepa_2026_09_23/**`
 
 ## Contracts
 

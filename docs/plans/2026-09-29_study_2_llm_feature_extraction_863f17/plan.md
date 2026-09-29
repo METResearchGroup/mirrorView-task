@@ -38,7 +38,7 @@ flowchart TD
   batches[320 batches of 10 kept and 10 removed pairs]
   mine[GPT-5.6 Terra lists candidate features per batch]
   embed[Deduplicate and embed candidates with Titan]
-  cluster[HDBSCAN groups candidates within each category]
+  cluster[HDBSCAN groups all candidates in one run]
   name[GPT-5.6 Terra names each group]
   review{You approve the feature list}
   label[Jev scores all 20,000 pairs on every feature]
@@ -65,10 +65,10 @@ Before a GPT-5.6 Terra or Jev step runs in full, it sends 5 queries to the model
 
 - Mining uses 320 batches and shows no pair twice, so 8,710 keep pairs never appear in a mining prompt. The other option reuses remove pairs until every keep pair appears once, which takes 1,191 batches and about 3.7 times the mining cost. The plan uses 320 batches.
 - HDBSCAN in scikit-learn takes no random seed, and it returns the same clusters for the same input order. Seed 1 still fixes the batch shuffle in step 1 and the feature samples in step 5.
-- Because a mirror post reverses the side that the original post attacks or praises, a target feature such as "criticizes Republicans" is true of one post in the pair and false of the other. The Jev prompt names the original post and the mirror post, so a feature definition can refer to one of them. Even so, read the target features in the answer to question 1 as pair features, not as the lean of one post.
+- Because a mirror post reverses the side that the original post attacks or praises, a target feature such as "criticizes Republicans" is true of one post in the pair and false of the other. The mining prompt and the Jev prompt say that each pair is an original post and its mirror, and they label the two texts as text 1 and text 2. They do not say which text is the original. Read the target features in the answer to question 1 as pair features, not as the lean of one post.
 - Questions 1 and 2 use all 20,000 pairs in the stimulus file. Question 3 uses only the 15,113 five-label pairs, as the issue asks.
 - Each top 10 list ranks features by a raw count within one group. The groups differ in size, so the page shows each group's pair count and does not compare counts across groups.
-- The analyses read "topics" in the issue as all approved features. Each table and chart shows the feature's category, so the topic and subject rows answer the narrower reading.
+- The analyses read "topics" in the issue as all approved features. The mining prompt still asks for six categories, and the feature id keeps the category as a prefix. Clustering, naming, and the page do not group features by category.
 - The pull requests contain only `.py` and `.md` files, with these exceptions that the issue or Vercel requires:
   - the experiment's `.gitignore`, which keeps local outputs out of git
   - the page template's HTML, CSS, and JavaScript files in step 7
@@ -89,13 +89,13 @@ Put each batch into the issue's prompt, and send the 320 prompts through the Ope
 
 Flatten the candidates, and merge exact duplicates within a category after lowercasing and dropping stopwords. Then embed one text per merged feature with Titan. Details are in [steps/step3.md](steps/step3.md).
 
-### Step 4: Cluster the features within each category
+### Step 4: Cluster the features in one run
 
-Run HDBSCAN on the Titan vectors separately for each of the six categories, and drop the features that HDBSCAN marks as noise. Details are in [steps/step4.md](steps/step4.md).
+Run HDBSCAN once on all of the Titan vectors, and drop the features that HDBSCAN marks as noise. Details are in [steps/step4.md](steps/step4.md).
 
 ### Step 5: Name each cluster and ask for your review
 
-GPT-5.6 Terra reads a sample of up to 30 features from each cluster and returns a name of at most eight words and a one-sentence definition. The step writes a review table with how many batches produced each feature, and then it stops for your feedback. Details are in [steps/step5.md](steps/step5.md).
+GPT-5.6 Terra reads a sample of up to 30 features from each cluster and returns a name and a one-sentence definition. A name longer than eight words is kept. The step writes a review table with how many batches produced each feature, and then it stops for your feedback. Details are in [steps/step5.md](steps/step5.md).
 
 ### Step 6: Label every pair with Jev
 
@@ -111,4 +111,4 @@ Count the 10 most common features in each lean, toxicity, and remove votes group
 2. `RESULTS.md` has the three estimate tables, the cohort and batch counts, the approved feature list, and the top 10 tables for the three questions.
 3. The S3 prefix has the cohort, the batches, the candidate features, the embeddings, the clusters, the cluster names, the Jev probabilities, the 0 or 1 label table for 20,000 pairs, and the analysis tables.
 4. The label table has one row per pair, with the post id, the original text, the mirror text, and one 0 or 1 column per approved feature.
-5. The Vercel preview serves `/study-2-features` with two charts, the top 10 tables, and a feature table that you can filter.
+5. The Vercel preview serves `/study-2-features` with two charts, the top 10 tables, and a feature table that you can search.

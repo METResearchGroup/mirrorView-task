@@ -1,12 +1,12 @@
 # Step 2: Mine candidate features with GPT-5.6 Terra
 
-Step 2 sends each of the 320 batches to GPT-5.6 Terra through the OpenAI Batch API and saves the candidate features that come back. The main caller is `main` in `experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py`. Step 2 also adds the three shared helpers that steps 5 and 6 reuse, which are the API key lookup, the GPT-5.6 Terra batch wrapper, and the estimate table.
+Step 2 sends each of the 320 batches to GPT-5.6 Terra through the OpenAI Batch API and saves the candidate features that come back. The main caller is `main` in `experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py`. Step 2 also adds the three shared helpers that steps 5 and 6 reuse, which are the API key lookup, the batch wrapper, and the estimate table.
 
 Out of scope are deduplication, embeddings, and any change to `data_platform/`.
 
 ## Decisions
 
-Use `OpenAIBatchEngine` from `data_platform/generate_features/engines/openai_engine.py` with no edits. Build it with `OpenAIBatchEngineConfig(model="gpt-5.6-terra", temperature=1.0, poll_interval_seconds=30.0, completion_window="24h", endpoint="/v1/chat/completions")`. On 2026-09-29 the model returned HTTP 400 for `temperature=0.0` with the message "Only the default (1) value is supported", so the temperature is 1.0.
+Use `OpenAIBatchEngine` from `data_platform/generate_features/engines/openai_engine.py` with no edits. Build it through `build_engine`, which reads `LLM_MODEL`, `LLM_TEMPERATURE`, `OPENAI_POLL_INTERVAL_SECONDS`, `OPENAI_BATCH_COMPLETION_WINDOW`, and the endpoint `/v1/chat/completions`. `LLM_MODEL` is `gpt-5.6-terra`. On 2026-09-29 that model returned HTTP 400 for `temperature=0.0` with the message "Only the default (1) value is supported", so the temperature is 1.0. The completion window is `1h`. The engine module's own default is `24h`, and the OpenAI Batch API reference currently lists only `24h` as a supported value. Send `1h` anyway. If batch creation fails because the window is rejected, stop and report the error. Do not change the constant back to `24h`.
 
 Call `batch_label_records` once per run, so each run is one provider batch. The method raises when any request fails, and the operator reruns the command. With 320 requests, a full rerun costs at most one more batch and needs no resume code.
 
@@ -23,7 +23,7 @@ The smoke test sends the first 5 batches, `batch_000` to `batch_004`, as one pro
 
 The full run refuses to start when `step2_mine_candidate_features/estimates.json` is missing from the local outputs and from S3.
 
-When `OPENAI_API_KEY` is not set, download the secret `openai-api-key` in AWS Secrets Manager in `us-east-2` and set the variable. The secret is either a plain string or a JSON object. For a JSON object, take the first non-empty value among the keys `api_key` and `OPENAI_API_KEY`.
+`OPENAI_API_KEY` is not set. Download the secret `openai-api-key` in AWS Secrets Manager in `us-east-2` and set the variable. The secret is either a plain string or a JSON object. For a JSON object, take the first non-empty value among the keys `api_key` and `OPENAI_API_KEY`.
 
 ## Prompt
 
@@ -74,11 +74,15 @@ This category is about the shape of the sentences. Examples include if-then cond
 
 ### Posts that were kept
 
+Each numbered item is one post pair. A pair is an original post and a mirror of that post. The two texts are labeled text 1 and text 2. Those labels do not say which text is the original.
+
 Here are ten post pairs that were kept by human annotators:
 
 {kept_pairs}
 
 ### Posts that were removed
+
+Each numbered item is one post pair, labeled the same way as the kept pairs.
 
 Here are ten post pairs that were removed by human annotators:
 
@@ -89,26 +93,26 @@ Here are ten post pairs that were removed by human annotators:
 Consider the kept post pairs and the removed post pairs jointly. For each of the six categories, list the features that are distinct to the kept post pairs and the features that are distinct to the removed post pairs. Write each feature as one short phrase. Return as structured output.
 ```
 
-Render each pair as two lines, numbered from 1 within its list, with the kept pairs in `keep_post_ids` order and the removed pairs in `remove_post_ids` order:
+Render each pair as two lines, numbered from 1 within its list, with the kept pairs in `keep_post_ids` order and the removed pairs in `remove_post_ids` order. Text 1 is `original_text` and text 2 is `mirror_text`. The prompt does not say that.
 
 ```text
-1. Original post: {original_text}
-   Mirror post: {mirror_text}
+1. Text 1: {original_text}
+   Text 2: {mirror_text}
 ```
 
 ## Files to inspect
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
-| `/workspace/data_platform/generate_features/engines/openai_engine.py` | `OpenAIBatchEngine`, `OpenAIBatchEngineConfig`, `create_openai_client`, `CUSTOM_ID_PREFIX`, `CUSTOM_ID_INDEX_WIDTH` |
-| `/workspace/data_platform/generate_features/models.py` | `FeatureSpec`, `FeatureRunConfig`, `LabelTask` |
-| `/workspace/data_platform/generate_features/engines/base.py` | `row_with_label_timestamp`, which sets the row shape |
-| `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/storage.py` | `download_artifact`, `upload_artifact`, `local_path` |
+| `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
+| `data_platform/generate_features/engines/openai_engine.py` | `OpenAIBatchEngine`, `OpenAIBatchEngineConfig`, `create_openai_client`, `CUSTOM_ID_PREFIX`, `CUSTOM_ID_INDEX_WIDTH` |
+| `data_platform/generate_features/models.py` | `FeatureSpec`, `FeatureRunConfig`, `LabelTask` |
+| `data_platform/generate_features/engines/base.py` | `row_with_label_timestamp`, which sets the row shape |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/storage.py` | `download_artifact`, `upload_artifact`, `local_path` |
 
 ## Files allowed to change
 
-All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
+All paths are under `experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
 
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Create `shared/secrets.py`, `shared/llm.py`, and `shared/estimates.py`
@@ -117,20 +121,21 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 
 ## Files forbidden to change
 
-- `/workspace/data_platform/**`
-- `/workspace/shared/**`
-- `/workspace/pyproject.toml` and `/workspace/uv.lock`
+- `data_platform/**`
+- `shared/**`
+- `pyproject.toml` and `uv.lock`
 
 ## Contracts
 
 Add to `shared/constants.py`:
 
 ```text
-TERRA_MODEL = "gpt-5.6-terra"
-TERRA_TEMPERATURE = 1.0
+LLM_MODEL = "gpt-5.6-terra"
+LLM_TEMPERATURE = 1.0
 OPENAI_POLL_INTERVAL_SECONDS = 30.0
-TERRA_BATCH_USD_PER_MILLION_INPUT = 1.00
-TERRA_BATCH_USD_PER_MILLION_OUTPUT = 6.00
+OPENAI_BATCH_COMPLETION_WINDOW = "1h"
+LLM_BATCH_USD_PER_MILLION_INPUT = 1.00
+LLM_BATCH_USD_PER_MILLION_OUTPUT = 6.00
 AWS_SECRETS_REGION = "us-east-2"
 OPENAI_SECRET_ID = "openai-api-key"
 FEATURE_CATEGORIES = ("lexical", "topic_subject", "semantic_content",
@@ -149,8 +154,8 @@ parse_secret_string(raw: str, keys: tuple[str, ...]) -> str
   non-empty value among keys. Raise ValueError when nothing non-empty is found.
 
 ensure_openai_api_key() -> None
-  Leave OPENAI_API_KEY alone when it is set. Otherwise read OPENAI_SECRET_ID in AWS_SECRETS_REGION,
-  parse it with keys ("api_key", "OPENAI_API_KEY"), and set OPENAI_API_KEY.
+  Download OPENAI_SECRET_ID in AWS_SECRETS_REGION, parse it with keys ("api_key", "OPENAI_API_KEY"),
+  and set OPENAI_API_KEY. Do this even when the variable is already set.
 ```
 
 `shared/llm.py`:
@@ -163,14 +168,14 @@ build_feature_spec(name: str, row_model: type[BaseModel], system_prompt: str,
                    output_schema: type[BaseModel]) -> FeatureSpec
   engine_type="openai".
 
-build_terra_engine(spec: FeatureSpec, client: OpenAIBatchClient) -> OpenAIBatchEngine
-  OpenAIBatchEngineConfig from TERRA_MODEL, TERRA_TEMPERATURE, OPENAI_POLL_INTERVAL_SECONDS,
-  "24h", and "/v1/chat/completions"; FeatureRunConfig(); time.sleep.
+build_engine(spec: FeatureSpec, client: OpenAIBatchClient) -> OpenAIBatchEngine
+  OpenAIBatchEngineConfig from LLM_MODEL, LLM_TEMPERATURE, OPENAI_POLL_INTERVAL_SECONDS,
+  OPENAI_BATCH_COMPLETION_WINDOW, and "/v1/chat/completions"; FeatureRunConfig(); time.sleep.
 
 parse_request_usage(output_text: str, ordered_ids: list[str]) -> list[RequestUsage]
   Map each custom_id back to ordered_ids by index. Raise ValueError when a line has no usage.
 
-run_terra_batch(engine: OpenAIBatchEngine, client: OpenAIBatchClient,
+run_batch(engine: OpenAIBatchEngine, client: OpenAIBatchClient,
                 tasks: list[LabelTask], clock: Callable[[], float]) -> BatchRun
   Time batch_label_records with clock, download last_batch.output_file_id, and parse usage.
 ```

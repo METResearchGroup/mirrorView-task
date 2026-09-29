@@ -6,7 +6,7 @@ Out of scope are statistical tests, p-values, confidence intervals, feature shar
 
 ## Decisions
 
-Every analysis is one count. For each group of pairs, count the pairs in the group where each feature is 1, and keep the 10 features with the highest counts. Break ties by `feature_key` in alphabetical order. A table row holds the group, the rank, the feature name, the category, and the count, and each table header gives the number of pairs in the group. Counts in different groups are not compared with each other, because the groups differ in size.
+Every analysis is one count. For each group of pairs, count the pairs in the group where each feature is 1, and keep the 10 features with the highest counts. Break ties by `feature_key` in alphabetical order. A table row holds the group, the rank, the feature name, and the count, and each table header gives the number of pairs in the group. Counts in different groups are not compared with each other, because the groups differ in size.
 
 The three analyses group the pairs this way:
 
@@ -23,7 +23,7 @@ The remove votes analysis has six groups, so it is a table only, as the issue as
 
 Each chart script writes an SVG. `render.py` puts the SVG text inside the page, so the page is one self-contained HTML file.
 
-The page template is three files in `src/step7_analyze_post_features/webapp/`, which the issue allows: `index.html`, `styles.css`, and `app.js`. `index.html` has the placeholders `{{STYLES}}`, `{{SCRIPT}}`, `{{CHARTS}}`, and `{{DATA_JSON}}`. `render.py` fills them in and writes `/workspace/public/study-2-features.html`. The page has one section per question. The lean and toxicity sections each show the chart and the top 10 tables. The remove votes section shows six top 10 tables. The page ends with a table of every approved feature, showing the name, the category, and the definition. `app.js` reads the embedded JSON and lets you filter the feature table by category and search it by text. The page loads no outside script, font, or file.
+The page template is three files in `src/step7_analyze_post_features/webapp/`, which the issue allows: `index.html`, `styles.css`, and `app.js`. `index.html` has the placeholders `{{STYLES}}`, `{{SCRIPT}}`, `{{CHARTS}}`, and `{{DATA_JSON}}`. `render.py` fills them in and writes `public/study-2-features.html`. The page has one section per question. The lean and toxicity sections each show the chart and the top 10 tables. The remove votes section shows six top 10 tables. The page ends with a table of every approved feature, showing the name and the definition. `app.js` reads the embedded JSON and lets you search the feature table by text. The page loads no outside script, font, or file.
 
 Vercel serves `public/` because `vercel.json` sets `"outputDirectory": "public"`. Add rewrites from `/study-2-features` and `/study-2-features/` to `/study-2-features.html`, following the existing `/study-progress` rewrites. Add `!public/study-2-features.html` to `.vercelignore`, next to `!public/study-progress.html`.
 
@@ -33,16 +33,16 @@ The three analysis tables go to `outputs/analyses/` and to the `analyses/` key u
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
+| `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
 | `/tmp/evident-charts/skills/evident-charts/SKILL.md` | Chart rules and the check workflow |
 | `/tmp/evident-charts/skills/evident-charts/scripts/evident.py` | `figure`, `titles`, `value_labels`, `save` |
-| `/workspace/experiments/study_progress_dashboard_2026_09_11/render.py` | An earlier static page renderer in this repository |
-| `/workspace/vercel.json` and `/workspace/.vercelignore` | The existing `/study-progress` route and allow lines |
-| `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/constants.py` | `LABEL_TO_DETAIL`, `COHORT_KEY`, `POST_FEATURE_LABELS_KEY` |
+| `experiments/study_progress_dashboard_2026_09_11/render.py` | An earlier static page renderer in this repository |
+| `vercel.json` and `.vercelignore` | The existing `/study-progress` route and allow lines |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/constants.py` | `LABEL_TO_DETAIL`, `COHORT_KEY`, `POST_FEATURE_LABELS_KEY` |
 
 ## Files allowed to change
 
-Paths under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/`:
+Paths under `experiments/study_2_llm_based_feature_extraction_2026_09_29/`:
 
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Create `src/step7_analyze_post_features/__init__.py`, `analyses.py`, `render.py`, and `run.py`
@@ -52,18 +52,18 @@ Paths under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09
 
 Paths elsewhere:
 
-- Create `/workspace/public/study-2-features.html`, only through `render.py`
-- Edit `/workspace/vercel.json` to add the two rewrites
-- Edit `/workspace/.vercelignore` to add one allow line
-- Edit `/workspace/CHANGELOG.md` to add one entry under the date the page ships
-- Create `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/images/before/study-2-features.png` and `images/after/study-2-features.png`
+- Create `public/study-2-features.html`, only through `render.py`
+- Edit `vercel.json` to add the two rewrites
+- Edit `.vercelignore` to add one allow line
+- Edit `CHANGELOG.md` to add one entry under the date the page ships
+- Create `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/images/before/study-2-features.png` and `images/after/study-2-features.png`
 
 ## Files forbidden to change
 
-- `/workspace/public/index.html` and `/workspace/public/study-progress.html`
-- `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/label_to_detail.py`
+- `public/index.html` and `public/study-progress.html`
+- `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/label_to_detail.py`
 - Everything under `src/step1_setup/` to `src/step6_label_posts_with_features/`
-- `/workspace/shared/**` and `/workspace/webapp/**`
+- `shared/**` and `webapp/**`
 
 ## Contracts
 
@@ -95,7 +95,7 @@ PAGE_KEY = "step7_analyze_post_features/study-2-features.html"
 top_features_by_group(labels: pd.DataFrame, groups: pd.Series, details: dict[str, dict[str, str]],
                       top_n: int) -> pd.DataFrame
   groups is indexed by post_id. Columns group, n_group_pairs, rank, feature_key, name,
-  category, n_pairs. Sort by n_pairs descending, then feature_key ascending, within each group.
+  n_pairs. Sort by n_pairs descending, then feature_key ascending, within each group.
   Raise ValueError when a post_id in groups has no row in labels.
 
 check_group_counts(groups: pd.Series, expected: dict) -> None
@@ -124,7 +124,7 @@ PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026
 for chart in lean toxicity; do
   PYTHONPATH=. uv run python /tmp/evident-charts/skills/evident-charts/scripts/check_chart.py \
     experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step7_analyze_post_features/charts/${chart}_chart.py \
-    --cwd /workspace --dest blog
+    --cwd . --dest blog
 done
 ```
 
@@ -140,7 +140,7 @@ Each `check_chart.py` run exits 0. Fix every failure, then follow the review loo
 
 1. Before the change is deployed, take a screenshot of `/study-2-features` on the current Vercel production site, which shows a not found page, and save it to `images/before/study-2-features.png`.
 2. Push the branch and wait for the Vercel preview deployment of the pull request. Find its URL in the Vercel comment on the pull request, or with `gh pr view --comments`.
-3. Open `<preview URL>/study-2-features`. Check that the two charts, the eleven top 10 tables, and the feature table show, that the category filter changes the rows, and that the browser console has no errors. Save a screenshot to `images/after/study-2-features.png`.
+3. Open `<preview URL>/study-2-features`. Check that the two charts, the eleven top 10 tables, and the feature table show, that the search box changes the rows, and that the browser console has no errors. Save a screenshot to `images/after/study-2-features.png`.
 
 ## Results
 
@@ -148,7 +148,7 @@ Under `## Step 7: analyses` in `RESULTS.md`, write the top 10 table for each gro
 
 ## Pass
 
-The run prints the line in the Commands section, both chart checks exit 0, and the preview page shows the two charts, the eleven top 10 tables, and a feature table that you can filter.
+The run prints the line in the Commands section, both chart checks exit 0, and the preview page shows the two charts, the eleven top 10 tables, and a feature table that you can search.
 
 ## Fail
 

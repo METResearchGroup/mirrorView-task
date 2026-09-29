@@ -20,18 +20,18 @@ Local outputs go under `experiments/study_2_llm_based_feature_extraction_2026_09
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
-| `/workspace/experiments/compare_jev_human_uncertainty_2026_09_25/human_counts.py` | `build_five_labeler_counts`, which you reuse |
-| `/workspace/experiments/compare_jev_human_uncertainty_2026_09_25/jev_labels.py` | `use_lab_credentials`, which you reuse |
-| `/workspace/shared/data/dataloader.py` | `load_dataset`, which downloads a registered CSV from S3. |
-| `/workspace/shared/data/registry.py` | `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` |
-| `/workspace/shared/data/raw/study_2/README.md` | Table sizes |
-| `/workspace/lib/aws/s3.py` | `S3.upload_file` and `S3.get_bytes` |
-| `/workspace/.cursor/skills/implement-plan-and-open-pr/CODING_RULES.md` | Short functions, named constants, numpy-style docstrings |
+| `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
+| `experiments/compare_jev_human_uncertainty_2026_09_25/human_counts.py` | `build_five_labeler_counts`, which you reuse |
+| `experiments/compare_jev_human_uncertainty_2026_09_25/jev_labels.py` | `use_lab_credentials`, which you reuse |
+| `shared/data/dataloader.py` | `load_dataset`, which downloads a registered CSV from S3. |
+| `shared/data/registry.py` | `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` |
+| `shared/data/raw/study_2/README.md` | Table sizes |
+| `lib/aws/s3.py` | `S3.upload_file` and `S3.get_bytes` |
+| `.cursor/skills/implement-plan-and-open-pr/CODING_RULES.md` | Short functions, named constants, numpy-style docstrings |
 
 ## Files allowed to change
 
-All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
+All paths are under `experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
 
 - Create `README.md`, `SETUP.md`, `RESULTS.md`, and `.gitignore`
 - Create `__init__.py`, `shared/__init__.py`, `src/__init__.py`, and `src/step1_setup/__init__.py`
@@ -40,10 +40,10 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 
 ## Files forbidden to change
 
-- `/workspace/shared/**`
-- `/workspace/data_platform/**`
-- `/workspace/experiments/compare_jev_human_uncertainty_2026_09_25/**`
-- `/workspace/pyproject.toml` and `/workspace/uv.lock`
+- `shared/**`
+- `data_platform/**`
+- `experiments/compare_jev_human_uncertainty_2026_09_25/**`
+- `pyproject.toml` and `uv.lock`
 
 ## Contracts
 

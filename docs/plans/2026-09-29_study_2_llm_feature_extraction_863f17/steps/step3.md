@@ -15,7 +15,7 @@ The duplicate key for a feature is the text after these changes, in this order:
 3. Drop tokens that are in `sklearn.feature_extraction.text.ENGLISH_STOP_WORDS`.
 4. Join the remaining tokens with one space.
 
-When no tokens are left, the key is the lowercased and stripped text. Two records are duplicates when they have the same `category` and the same key. A string that appears in two categories stays as two features, because step 4 clusters each category on its own.
+When no tokens are left, the key is the lowercased and stripped text. Two records are duplicates when they have the same `category` and the same key. A string that appears in two categories stays as two features, because the feature id includes the category. Step 4 then clusters every feature in one run.
 
 Each distinct feature keeps the text of its first record, in the order of `batch_id`, then `side`, then `position`. It also keeps these counts:
 
@@ -34,14 +34,14 @@ Titan is an embedding model, not a language model, so step 3 has no smoke test. 
 
 | Path | Why |
 |------|-----|
-| `/workspace/docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
-| `/workspace/shared/embeddings/bedrock.py` | `create_embedding`, `BEDROCK_MODEL_ID`, `EMBEDDING_DIMENSIONS` |
-| `/workspace/shared/feature_discovery/llm_based/embed_features.py` | The earlier embedding output layout of `embeddings.npy` with `feature_ids.json` |
-| `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/schemas.py` | `CandidateFeatureRow` |
+| `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
+| `shared/embeddings/bedrock.py` | `create_embedding`, `BEDROCK_MODEL_ID`, `EMBEDDING_DIMENSIONS` |
+| `shared/feature_discovery/llm_based/embed_features.py` | The earlier embedding output layout of `embeddings.npy` with `feature_ids.json` |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/schemas.py` | `CandidateFeatureRow` |
 
 ## Files allowed to change
 
-All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
+All paths are under `experiments/study_2_llm_based_feature_extraction_2026_09_29/`.
 
 - Edit `shared/constants.py` to add the constants in the Contracts section
 - Create `src/step3_embed_features/__init__.py`, `dedupe.py`, `embed.py`, and `run.py`
@@ -49,8 +49,8 @@ All paths are under `/workspace/experiments/study_2_llm_based_feature_extraction
 
 ## Files forbidden to change
 
-- `/workspace/shared/**`
-- `/workspace/experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/**`
+- `shared/**`
+- `experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/**`
 
 ## Contracts
 
