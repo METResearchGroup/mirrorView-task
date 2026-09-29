@@ -95,4 +95,6 @@ def build_cohort(results: pd.DataFrame, stimuli: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         Cohort with ``COHORT_COLUMNS``.
     """
-    raise NotImplementedError
+    counts = build_five_labeler_counts(results)
+    labeled = assign_modal_label(counts)
+    return attach_pair_text(labeled, stimuli)
