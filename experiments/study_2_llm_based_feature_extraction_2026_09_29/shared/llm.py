@@ -1,32 +1,30 @@
-"""OpenAI Batch helpers shared across GPT-5.6 Terra experiment steps."""
+"""Concurrent synchronous OpenAI chat completions for Study 2 LLM steps."""
 
 from __future__ import annotations
 
-import json
-import time
+import asyncio
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
-from data_platform.generate_features.engines.openai_engine import (
-    CUSTOM_ID_PREFIX,
-    OpenAIBatchClient,
-    OpenAIBatchEngine,
-    OpenAIBatchEngineConfig,
-)
-from data_platform.generate_features.models import FeatureRunConfig, FeatureSpec, LabelTask
+from data_platform.generate_features.models import LabelTask
+from openai import OpenAI
 from pydantic import BaseModel
 
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constants import (
+    LLM_CONCURRENCY,
     LLM_MODEL,
     LLM_TEMPERATURE,
-    OPENAI_BATCH_COMPLETION_WINDOW,
-    OPENAI_POLL_INTERVAL_SECONDS,
 )
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.secrets import (
+    ensure_openai_api_key,
+)
+from lib.timestamp_utils import get_current_timestamp
 
 
 @dataclass(frozen=True)
 class RequestUsage:
-    """Token usage for one labeled record in a provider batch."""
+    """Token usage for one labeled record."""
 
     source_record_id: str
     input_tokens: int
@@ -34,156 +32,137 @@ class RequestUsage:
 
 
 @dataclass(frozen=True)
-class BatchRun:
-    """Rows, per-request usage, and wall time for one provider batch."""
+class ConcurrentRun:
+    """Rows, per-request usage, and wall time for one concurrent labeling run."""
 
     rows: list[dict]
     usage: list[RequestUsage]
     wall_seconds: float
 
 
-def build_feature_spec(
-    name: str,
+def complete_one(
+    client: OpenAI,
+    task: LabelTask,
+    output_schema: type[BaseModel],
     row_model: type[BaseModel],
     system_prompt: str,
-    output_schema: type[BaseModel],
-) -> FeatureSpec:
-    """Build an OpenAI Batch ``FeatureSpec`` for structured labeling.
+    label_timestamp: str,
+) -> tuple[dict, RequestUsage]:
+    """Run one synchronous structured chat completion for a label task.
 
     Parameters
     ----------
-    name
-        Feature registry name.
-    row_model
-        Pydantic model for validated label rows on disk.
-    system_prompt
-        System message sent to the model.
-    output_schema
-        Structured output schema for the completion.
-
-    Returns
-    -------
-    FeatureSpec
-        Spec with ``engine_type=\"openai\"``.
-    """
-    return FeatureSpec(
-        name=name,
-        model=row_model,
-        engine_type="openai",
-        system_prompt=system_prompt,
-        llm_output_schema=output_schema,
-    )
-
-
-def build_engine(spec: FeatureSpec, client: OpenAIBatchClient) -> OpenAIBatchEngine:
-    """Construct an OpenAI Batch engine with experiment model settings.
-
-    Parameters
-    ----------
-    spec
-        Feature specification for labeling.
     client
         OpenAI SDK client.
+    task
+        Label task with ``uri`` and user ``text``.
+    output_schema
+        Pydantic model passed as ``response_format``.
+    row_model
+        Pydantic model used to validate the saved row.
+    system_prompt
+        System message content.
+    label_timestamp
+        Shared timestamp for all rows in the run.
 
     Returns
     -------
-    OpenAIBatchEngine
-        Engine configured for this experiment's model and poll interval.
-    """
-    engine_config = OpenAIBatchEngineConfig(
-        model=LLM_MODEL,
-        temperature=LLM_TEMPERATURE,
-        poll_interval_seconds=OPENAI_POLL_INTERVAL_SECONDS,
-        completion_window=OPENAI_BATCH_COMPLETION_WINDOW,
-        endpoint="/v1/chat/completions",
-    )
-    return OpenAIBatchEngine(
-        spec,
-        FeatureRunConfig(),
-        client,
-        engine_config,
-        time.sleep,
-    )
-
-
-def parse_request_usage(output_text: str, ordered_ids: list[str]) -> list[RequestUsage]:
-    """Parse per-request token usage from a batch output JSONL file.
-
-    Parameters
-    ----------
-    output_text
-        Raw JSONL text from ``output_file_id``.
-    ordered_ids
-        ``LabelTask.uri`` values in submission order.
-
-    Returns
-    -------
-    list[RequestUsage]
-        Usage aligned with ``ordered_ids``.
+    tuple[dict, RequestUsage]
+        Validated row dict and token usage for the task.
 
     Raises
     ------
     ValueError
-        When a line is missing usage or custom ids do not match the task order.
+        When the parsed object or usage is missing.
     """
-    usages: list[RequestUsage | None] = [None] * len(ordered_ids)
-    for line in output_text.splitlines():
-        if not line.strip():
-            continue
-        payload = json.loads(line)
-        custom_id = payload.get("custom_id", "")
-        if not custom_id.startswith(CUSTOM_ID_PREFIX):
-            raise ValueError(f"unexpected custom_id {custom_id}")
-        index = int(custom_id[len(CUSTOM_ID_PREFIX) :])
-        if index < 0 or index >= len(ordered_ids):
-            raise ValueError(f"custom_id index {index} out of range")
-        response = payload.get("response") or {}
-        body = response.get("body") or {}
-        usage = body.get("usage")
-        if not usage:
-            raise ValueError(f"missing usage for {custom_id}")
-        usages[index] = RequestUsage(
-            source_record_id=ordered_ids[index],
-            input_tokens=int(usage["prompt_tokens"]),
-            output_tokens=int(usage["completion_tokens"]),
-        )
-    if any(entry is None for entry in usages):
-        missing = [ordered_ids[i] for i, entry in enumerate(usages) if entry is None]
-        raise ValueError(f"missing usage for tasks: {missing}")
-    return [entry for entry in usages if entry is not None]
+    response = client.chat.completions.parse(
+        model=LLM_MODEL,
+        temperature=LLM_TEMPERATURE,
+        response_format=output_schema,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": task.text},
+        ],
+    )
+    choice = response.choices[0].message
+    parsed = choice.parsed
+    if parsed is None:
+        raise ValueError(f"missing parsed output for {task.uri}")
+    usage = response.usage
+    if usage is None:
+        raise ValueError(f"missing usage for {task.uri}")
+    row = {
+        "source_record_id": task.uri,
+        "label_timestamp": label_timestamp,
+        **parsed.model_dump(),
+    }
+    row_model.model_validate(row)
+    request_usage = RequestUsage(
+        source_record_id=task.uri,
+        input_tokens=int(usage.prompt_tokens),
+        output_tokens=int(usage.completion_tokens),
+    )
+    return row, request_usage
 
 
-def run_batch(
-    engine: OpenAIBatchEngine,
-    client: OpenAIBatchClient,
+def run_concurrent(
     tasks: list[LabelTask],
+    output_schema: type[BaseModel],
+    row_model: type[BaseModel],
+    system_prompt: str,
     clock: Callable[[], float],
-) -> BatchRun:
-    """Run one provider batch and collect rows with token usage.
+) -> ConcurrentRun:
+    """Label tasks with at most ``LLM_CONCURRENCY`` synchronous API calls in flight.
 
     Parameters
     ----------
-    engine
-        OpenAI Batch engine.
-    client
-        OpenAI SDK client for downloading the output file.
     tasks
-        Label tasks submitted as one batch.
+        Label tasks in submission order.
+    output_schema
+        Structured output schema for completions.
+    row_model
+        Row model for on-disk validation.
+    system_prompt
+        System message shared by every task.
     clock
-        Monotonic or wall clock callable.
+        Callable returning seconds for wall-time measurement.
 
     Returns
     -------
-    BatchRun
-        Parsed rows, usage, and elapsed seconds.
+    ConcurrentRun
+        Rows and usage in task order, plus elapsed wall seconds.
+
+    Raises
+    ------
+    Exception
+        When any completion request fails.
     """
-    ordered_ids = [task.uri for task in tasks]
+    ensure_openai_api_key()
+    client = OpenAI()
+    label_timestamp = get_current_timestamp()
+
+    async def _run_all() -> tuple[list[dict], list[RequestUsage]]:
+        loop = asyncio.get_running_loop()
+        with ThreadPoolExecutor(max_workers=LLM_CONCURRENCY) as executor:
+            futures = [
+                loop.run_in_executor(
+                    executor,
+                    complete_one,
+                    client,
+                    task,
+                    output_schema,
+                    row_model,
+                    system_prompt,
+                    label_timestamp,
+                )
+                for task in tasks
+            ]
+            results = await asyncio.gather(*futures)
+        rows = [pair[0] for pair in results]
+        usage = [pair[1] for pair in results]
+        return rows, usage
+
     started = clock()
-    rows = engine.batch_label_records(tasks)
+    rows, usage = asyncio.run(_run_all())
     wall_seconds = clock() - started
-    batch = engine.last_batch
-    if batch is None or batch.output_file_id is None:
-        raise RuntimeError("batch finished without output_file_id")
-    output_text = client.files.content(batch.output_file_id).text
-    usage = parse_request_usage(output_text, ordered_ids)
-    return BatchRun(rows=rows, usage=usage, wall_seconds=wall_seconds)
+    return ConcurrentRun(rows=rows, usage=usage, wall_seconds=wall_seconds)
