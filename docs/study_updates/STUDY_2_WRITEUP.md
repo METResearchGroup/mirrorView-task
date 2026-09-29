@@ -171,30 +171,40 @@ We then use LLMs to perform feature extraction. We follow a [protocol](https://w
 
 (Write results)
 
+### Results
+
+... (Insert results here)
+
 ## Training a binary classifier
 
+# TODO: when building this, ask the LLM to also return a probability in addition to the label, so that we can use the probabilities in the "## Training a calibrated classifier" section.
 
+We train a variety of binary classifiers to predict the keep/remove task. We experimented with the following approaches:
 
-### Zero-shot results
+1. Zero-shot LLM inference
+2. Few-shot LLM inference
+3. Few-shot prompt-tuned LLM inference
+4. Fine-tuning an open-source LLM
 
-Asking an LLM to do the keep-remove task
+We test across the following models:
 
-### Prompt-tuned results
+- Amazon Nova
+- Qwen 3.8 27B
+- OpenAI GPT-5.6 Terra
+- Claude Sonnet 5.5
 
-
-
-### LLM fine-tuning results
-
-
+For fine-tuning, we use `Qwen3.8-27B`. We deploy using `vLLM` and we use a quantized deployment.
 
 ## Training a calibrated classifier
 
-One of the shortcomings of building a binary classifier is that it imposes a discrete label on an inherently uncertain task. In a non-trivial amount of tasks, people themselves were uncertain of what the label should have been. I propose two approaches for this:
+One of the shortcomings of building a binary classifier is that it imposes a discrete label on an inherently uncertain task. In a non-trivial amount of tasks, people themselves were uncertain of what the label should have been.
 
-1. An ensemble approach.
-2. A calibrated classifier that returns a probability, and we can then set an arbitrary threshold. This would be inspired by how the Perspective API was built.
+We present several approaches for this:
 
-
+1. **Few-shot prompt-tuned LLMs that return their own probabilities**: ...
+2. **Few-shot prompt-tuned calibrated classifier (Jev)**: ...
+3. **An ensemble approach**. (Add more details)
+4. **A calibrated classifier**. We can develop a classifier that returns a probability, and we can then set an arbitrary threshold to generate keep/remove decisions. This is inspired by how the Perspective API was built and follows past work on [reinforcement learning with calibration rewards (RLCR)](https://www.alphaxiv.org/abs/2507.16806).
 
 ### Prompt-tuning a calibrated classifier
 
