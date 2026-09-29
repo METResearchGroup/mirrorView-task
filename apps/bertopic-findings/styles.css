@@ -241,9 +241,24 @@ figcaption {
 
 .map-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: 1fr;
   gap: 1rem;
   align-items: start;
+}
+
+.map-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.map-panels:has(#map-panel-pair[hidden]) {
+  grid-template-columns: 1fr;
+}
+
+.map-card-label {
+  font-weight: 600;
 }
 
 .map-plot {
@@ -293,12 +308,13 @@ figcaption {
   font-weight: 600;
 }
 
-#map-text {
+#map-text,
+#map-text-pair {
   white-space: pre-wrap;
 }
 
 @media (max-width: 800px) {
-  .map-layout {
+  .map-panels {
     grid-template-columns: 1fr;
   }
 }

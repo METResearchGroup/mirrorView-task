@@ -5,9 +5,13 @@
   const statusEl = document.getElementById("map-status");
   const emptyEl = document.getElementById("map-empty");
   const detailEl = document.getElementById("map-detail");
+  const pairPanel = document.getElementById("map-panel-pair");
   const typeEl = document.getElementById("map-type");
   const textEl = document.getElementById("map-text");
   const topicEl = document.getElementById("map-topic");
+  const typePairEl = document.getElementById("map-type-pair");
+  const textPairEl = document.getElementById("map-text-pair");
+  const topicPairEl = document.getElementById("map-topic-pair");
   const resetButton = document.getElementById("map-reset");
   const countButtons = Array.from(document.querySelectorAll("[data-map-count]"));
 
@@ -31,10 +35,18 @@
     statusEl.textContent = message || "";
   }
 
-  function colorFor(lean, solid) {
-    if (lean === 0) return solid ? BLUE : "rgba(37, 99, 235, 0.5)";
-    if (lean === 1) return solid ? RED : "rgba(220, 38, 38, 0.5)";
-    return solid ? GRAY : "rgba(148, 163, 184, 0.5)";
+  const GROUPED_ALPHA = 0.25;
+  const UNGROUPED_ALPHA = 0.125;
+
+  function colorFor(lean, solid, alpha) {
+    if (solid) {
+      if (lean === 0) return BLUE;
+      if (lean === 1) return RED;
+      return GRAY;
+    }
+    if (lean === 0) return `rgba(37, 99, 235, ${alpha})`;
+    if (lean === 1) return `rgba(220, 38, 38, ${alpha})`;
+    return `rgba(148, 163, 184, ${alpha})`;
   }
 
   function fitHome() {
@@ -201,17 +213,22 @@
     ctx.beginPath();
     ctx.rect(0, 0, size.width, size.height);
     ctx.clip();
-    for (let lean = 0; lean < 3; lean += 1) {
-      ctx.fillStyle = colorFor(lean, false);
-      ctx.beginPath();
-      for (let i = 0; i < data.x.length; i += 1) {
-        if (data.lean[i] !== lean) continue;
-        if (i === selected || i === data.pair[selected]) continue;
-        const point = toScreen(data.x[i], data.y[i]);
-        ctx.moveTo(point[0] + radius, point[1]);
-        ctx.arc(point[0], point[1], radius, 0, Math.PI * 2);
+    for (let pass = 0; pass < 2; pass += 1) {
+      const ungrouped = pass === 0;
+      const alpha = ungrouped ? UNGROUPED_ALPHA : GROUPED_ALPHA;
+      for (let lean = 0; lean < 3; lean += 1) {
+        ctx.fillStyle = colorFor(lean, false, alpha);
+        ctx.beginPath();
+        for (let i = 0; i < data.x.length; i += 1) {
+          if (data.lean[i] !== lean) continue;
+          if ((data.topic[i] < 0) !== ungrouped) continue;
+          if (i === selected || i === data.pair[selected]) continue;
+          const point = toScreen(data.x[i], data.y[i]);
+          ctx.moveTo(point[0] + radius, point[1]);
+          ctx.arc(point[0], point[1], radius, 0, Math.PI * 2);
+        }
+        ctx.fill();
       }
-      ctx.fill();
     }
     ctx.restore();
   }
@@ -320,30 +337,56 @@
     return best;
   }
 
+  function roleName(index) {
+    return data.role[index] === 1 ? "mirror" : "original";
+  }
+
+  function topicName(index) {
+    return data.labels[String(data.topic[index])] || "Ungrouped";
+  }
+
   function showEmpty() {
     emptyEl.hidden = false;
     detailEl.hidden = true;
+    pairPanel.hidden = true;
     emptyEl.textContent = "Click a dot.";
+  }
+
+  async function loadText(index, element, request) {
+    const response = await fetch(`/api/map?kind=text&i=${index}`);
+    if (!response.ok) throw new Error("text");
+    const payload = await response.json();
+    if (request !== textRequest) return;
+    element.textContent = payload.text || "";
   }
 
   async function showSelection(index) {
     const request = ++textRequest;
+    const pair = data.pair[index];
     selected = index;
     draw();
     emptyEl.hidden = true;
     detailEl.hidden = false;
-    typeEl.textContent = data.role[index] === 1 ? "mirror" : "original";
-    topicEl.textContent = data.labels[String(data.topic[index])] || "Ungrouped";
+    pairPanel.hidden = false;
+    typeEl.textContent = roleName(index);
+    topicEl.textContent = topicName(index);
     textEl.textContent = "Loading the post.";
+    typePairEl.textContent = roleName(pair);
+    topicPairEl.textContent = topicName(pair);
+    textPairEl.textContent = "Loading the post.";
     try {
-      const response = await fetch(`/api/map?kind=text&i=${index}`);
-      if (!response.ok) throw new Error("text");
-      const payload = await response.json();
-      if (request !== textRequest) return;
-      textEl.textContent = payload.text || "";
+      await Promise.all([
+        loadText(index, textEl, request),
+        loadText(pair, textPairEl, request),
+      ]);
     } catch (error) {
       if (request !== textRequest) return;
-      textEl.textContent = "The post text could not be loaded.";
+      if (textEl.textContent === "Loading the post.") {
+        textEl.textContent = "The post text could not be loaded.";
+      }
+      if (textPairEl.textContent === "Loading the post.") {
+        textPairEl.textContent = "The post text could not be loaded.";
+      }
     }
   }
 
