@@ -25,6 +25,8 @@ function table(rows, groupLabel) {
 
 document.getElementById("lean-slot").innerHTML = document.getElementById("lean-chart").outerHTML;
 document.getElementById("toxicity-slot").innerHTML = document.getElementById("toxicity-chart").outerHTML;
+document.getElementById("toxicity-lines-slot").innerHTML = document.getElementById("toxicity-lines").outerHTML;
+document.getElementById("remove-lines-slot").innerHTML = document.getElementById("remove-lines").outerHTML;
 document.getElementById("lean-tables").innerHTML = table(data.lean, (group) => group);
 document.getElementById("toxicity-tables").innerHTML = table(data.toxicity, (group) => group);
 document.getElementById("remove-tables").innerHTML = table(

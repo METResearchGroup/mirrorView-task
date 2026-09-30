@@ -125,7 +125,7 @@ Full run: `labeled_pairs=20000 features=30 requests=20000 deadletters=0`
 
 ## Step 7: analyses
 
-Jev labeled all 20,000 pairs on the 30 named features. A feature counts as present when its probability is at least 0.7. Counts are not compared across groups, because the groups differ in size. The page is `public/study-2-features.html`, served at `/study-2-features`.
+Jev labeled all 20,000 pairs on the 30 named features. A feature counts as present when its probability is at least 0.7. Counts are not compared across groups, because the groups differ in size. The page is `public/study-2-features.html`, served at `/study-2-features`. The toxicity section and the remove-votes section also include a line chart of every feature as a proportion of that group. Grey lines are the unlabeled features. Blue lines are the policy and institution features. Red lines are the hostility features. The y-axis is that proportion, shown to three decimal places.
 
 For lean, both left and right pairs are led by Political Actor and Institution Criticism, then Political and Institutional Targets. For toxicity, low and medium pairs are also led by that institutional criticism, while high-toxicity pairs are led by Escalatory Partisan Hostility and Hostile Outrage Venting. For remove votes, pairs with 0, 1, or 2 remove votes are led by institutional criticism, and pairs with 3, 4, or 5 remove votes are led by Escalatory Partisan Hostility.
 

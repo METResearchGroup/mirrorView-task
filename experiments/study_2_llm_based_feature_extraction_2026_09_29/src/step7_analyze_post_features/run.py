@@ -29,6 +29,8 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constant
     PAGE_PATH,
     POST_FEATURE_LABELS_KEY,
     REMOVE_VOTE_LEVELS,
+    REMOVE_VOTE_PROPORTION_CHART_KEY,
+    REMOVE_VOTE_PROPORTION_KEY,
     STANCE_LEVELS,
     TOP_BY_LEAN_KEY,
     TOP_BY_REMOVE_VOTES_KEY,
@@ -36,6 +38,8 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constant
     TOP_FEATURES_PER_GROUP,
     TOXICITY_CHART_KEY,
     TOXICITY_LEVELS,
+    TOXICITY_PROPORTION_CHART_KEY,
+    TOXICITY_PROPORTION_KEY,
 )
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.storage import (
     download_artifact,
@@ -44,7 +48,14 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.storage 
 )
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.src.step7_analyze_post_features.analyses import (
     check_group_counts,
+    feature_proportions,
     top_features_by_group,
+)
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.src.step7_analyze_post_features.charts.remove_votes_proportion_chart import (
+    main as draw_remove_proportions,
+)
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.src.step7_analyze_post_features.charts.toxicity_proportion_chart import (
+    main as draw_toxicity_proportions,
 )
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.src.step7_analyze_post_features.charts.lean_chart import (
     main as draw_lean,
@@ -102,15 +113,34 @@ def main() -> None:
     _write_table(by_lean, TOP_BY_LEAN_KEY)
     _write_table(by_toxicity, TOP_BY_TOXICITY_KEY)
     _write_table(by_remove, TOP_BY_REMOVE_VOTES_KEY)
+    _write_table(
+        feature_proportions(labels, toxicity, LABEL_TO_DETAIL, ["low", "medium", "high"]),
+        TOXICITY_PROPORTION_KEY,
+    )
+    _write_table(
+        feature_proportions(
+            labels,
+            remove_votes,
+            LABEL_TO_DETAIL,
+            list(REMOVE_VOTE_LEVELS),
+        ),
+        REMOVE_VOTE_PROPORTION_KEY,
+    )
 
     draw_lean()
     draw_toxicity()
+    draw_toxicity_proportions()
+    draw_remove_proportions()
     upload_artifact(LEAN_CHART_KEY)
     upload_artifact(TOXICITY_CHART_KEY)
+    upload_artifact(TOXICITY_PROPORTION_CHART_KEY)
+    upload_artifact(REMOVE_VOTE_PROPORTION_CHART_KEY)
 
     charts = {
         "lean": (LOCAL_OUTPUT_DIR / LEAN_CHART_KEY).read_text(encoding="utf-8"),
         "toxicity": (LOCAL_OUTPUT_DIR / TOXICITY_CHART_KEY).read_text(encoding="utf-8"),
+        "toxicity_lines": (LOCAL_OUTPUT_DIR / TOXICITY_PROPORTION_CHART_KEY).read_text(encoding="utf-8"),
+        "remove_lines": (LOCAL_OUTPUT_DIR / REMOVE_VOTE_PROPORTION_CHART_KEY).read_text(encoding="utf-8"),
     }
     page = render_page(
         (WEBAPP / "index.html").read_text(encoding="utf-8"),

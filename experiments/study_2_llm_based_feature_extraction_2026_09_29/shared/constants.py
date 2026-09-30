@@ -114,6 +114,10 @@ PAGE_PATH = REPO_ROOT / "public" / "study-2-features.html"
 PAGE_KEY = "step7_analyze_post_features/study-2-features.html"
 LEAN_CHART_KEY = "step7_analyze_post_features/figures/lean.svg"
 TOXICITY_CHART_KEY = "step7_analyze_post_features/figures/toxicity.svg"
+TOXICITY_PROPORTION_KEY = "analyses/feature_proportions_by_toxicity.csv"
+REMOVE_VOTE_PROPORTION_KEY = "analyses/feature_proportions_by_remove_votes.csv"
+TOXICITY_PROPORTION_CHART_KEY = "step7_analyze_post_features/figures/toxicity_proportions.svg"
+REMOVE_VOTE_PROPORTION_CHART_KEY = "step7_analyze_post_features/figures/remove_votes_proportions.svg"
 
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.label_to_detail import (  # noqa: E402
     LABEL_TO_DETAIL,

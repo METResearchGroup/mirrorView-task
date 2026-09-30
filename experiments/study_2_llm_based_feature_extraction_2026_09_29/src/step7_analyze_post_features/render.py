@@ -67,9 +67,14 @@ def render_page(
     for name in ("lean", "toxicity"):
         if name not in charts or not charts[name].strip():
             raise ValueError(f"missing chart: {name}")
+    for name in ("toxicity_lines", "remove_lines"):
+        if name not in charts or not charts[name].strip():
+            raise ValueError(f"missing chart: {name}")
     charts_html = (
         f'<div class="chart" id="lean-chart">{charts["lean"]}</div>'
         f'<div class="chart" id="toxicity-chart">{charts["toxicity"]}</div>'
+        f'<div class="chart" id="toxicity-lines">{charts["toxicity_lines"]}</div>'
+        f'<div class="chart" id="remove-lines">{charts["remove_lines"]}</div>'
     )
     page = (
         template.replace("{{STYLES}}", styles)
