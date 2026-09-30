@@ -46,3 +46,13 @@ K-means runs twice on the step 3 vectors, with 15 clusters for kept-post feature
 ```bash
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step4_cluster_records/run.py
 ```
+
+### Step 5: name clusters
+
+Each prompt receives the 50 features closest to that cluster's center. Smoke names the first five clusters. The full run names all 30.
+
+```bash
+PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --smoke
+PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --full
+PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --write-label-details
+```
