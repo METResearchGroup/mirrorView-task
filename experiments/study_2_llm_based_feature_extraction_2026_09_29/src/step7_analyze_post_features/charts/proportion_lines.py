@@ -15,15 +15,18 @@ from experiments.study_2_llm_based_feature_extraction_2026_09_29.src.step7_analy
     load_evident,
 )
 
-BLUE = "#0072B2"
+CHARCOAL = "#3D4A5C"
+GREEN = "#3B8E3D"
 RED = "#D62728"
 GREY = "#767676"
 
-BLUE_NAMES = (
+CHARCOAL_NAMES = (
     "Political Actor and Institution Criticism",
     "Specific Political and Institutional References",
-    "Substantive Policy and Institutional Claims",
     "Political and Institutional Targets",
+)
+GREEN_NAMES = (
+    "Substantive Policy and Institutional Claims",
     "Policy Advocacy and Tradeoff Arguments",
 )
 RED_NAMES = (
@@ -55,7 +58,7 @@ def _spread_labels(
     text position, which moves only when two names would collide.
     """
     ordered = sorted(points, key=lambda item: item[0])
-    gap = 0.045
+    gap = 0.07
     placed: list[tuple[float, float, str, str]] = []
     for y_value, name, color in ordered:
         y_pos = y_value
@@ -75,7 +78,7 @@ def draw_proportion_lines(
     group_order: list[str],
     x_labels: list[str],
     title: str,
-    subtitle: str,
+    subtitle: str | None,
     figure_path: Path,
     x_axis_label: str | None = None,
 ) -> Path:
@@ -92,7 +95,7 @@ def draw_proportion_lines(
     title
         Chart title.
     subtitle
-        Chart subtitle. States that the y values are proportions.
+        Optional second line under the title. These charts leave it empty.
     figure_path
         SVG destination.
 
@@ -103,8 +106,13 @@ def draw_proportion_lines(
     """
     evident = load_evident()
     fig, ax = evident.figure(CHART_PRESET, rows=12)
+    fig.set_size_inches(12.5, fig.get_figheight())
     xs = list(range(len(group_order)))
-    highlighted = {name: BLUE for name in BLUE_NAMES} | {name: RED for name in RED_NAMES}
+    highlighted = (
+        {name: CHARCOAL for name in CHARCOAL_NAMES}
+        | {name: GREEN for name in GREEN_NAMES}
+        | {name: RED for name in RED_NAMES}
+    )
     for name in sorted(table["name"].unique()):
         if name in highlighted:
             continue
@@ -154,7 +162,7 @@ def draw_proportion_lines(
             fontsize=evident.size("annotation", fig),
             clip_on=False,
         )
-    evident.titles(fig, title, subtitle=subtitle, source=CHART_SOURCE)
+    evident.titles(fig, title, subtitle=subtitle or None, source=CHART_SOURCE)
     figure_path.parent.mkdir(parents=True, exist_ok=True)
     evident.save(fig, figure_path)
     return figure_path

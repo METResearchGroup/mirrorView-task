@@ -25,7 +25,7 @@ def main() -> Path:
         ["low", "medium", "high"],
         ["Low", "Medium", "High"],
         "Hostility rises with toxicity. Policy argument falls.",
-        "Each line is one feature. Y is the fraction of pairs in that toxicity group where the feature is present.",
+        None,
         FIGURE_PATH,
         x_axis_label="Toxicity of the original post",
     )

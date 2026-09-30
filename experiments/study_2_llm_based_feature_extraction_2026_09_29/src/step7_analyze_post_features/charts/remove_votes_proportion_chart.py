@@ -25,7 +25,7 @@ def main() -> Path:
         ["0", "1", "2", "3", "4", "5"],
         ["0", "1", "2", "3", "4", "5"],
         "Hostility rises with remove votes. Policy argument falls.",
-        "Each line is one feature. Y is the fraction of five-label pairs with that many remove votes where the feature is present.",
+        None,
         FIGURE_PATH,
         x_axis_label="Remove votes",
     )
