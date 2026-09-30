@@ -51,24 +51,36 @@ def _series(table: pd.DataFrame, name: str, group_order: list[str]) -> list[floa
 
 def _spread_labels(
     points: list[tuple[float, str, str]],
+    min_y: float,
+    max_y: float,
 ) -> list[tuple[float, float, str, str]]:
-    """Return label positions that stay near each line and do not overlap.
+    """Return label positions that stay on the plot and do not overlap.
 
     The first number is the line's ending proportion. The second is the
-    text position, which moves only when two names would collide.
+    text position. A name never sits low enough for its letters to cross
+    the x-axis.
     """
     ordered = sorted(points, key=lambda item: item[0])
-    gap = 0.07
+    if not ordered:
+        return []
+    span = max(max_y - min_y, 0.01)
+    gap = min(0.055, span / max(len(ordered) - 1, 1))
     placed: list[tuple[float, float, str, str]] = []
     for y_value, name, color in ordered:
-        y_pos = y_value
+        y_pos = min(max(y_value, min_y), max_y)
         if placed and y_pos < placed[-1][1] + gap:
             y_pos = placed[-1][1] + gap
         placed.append((y_value, y_pos, name, color))
-    if placed and placed[-1][1] > 1.02:
-        shift = placed[-1][1] - 1.02
+    if placed[-1][1] > max_y:
+        overflow = placed[-1][1] - max_y
         placed = [
-            (y_value, y_pos - shift, name, color) for y_value, y_pos, name, color in placed
+            (y_value, y_pos - overflow, name, color) for y_value, y_pos, name, color in placed
+        ]
+    if placed[0][1] < min_y:
+        step = span / max(len(placed) - 1, 1)
+        placed = [
+            (y_value, min_y + index * step, name, color)
+            for index, (y_value, _y_pos, name, color) in enumerate(placed)
         ]
     return placed
 
@@ -148,8 +160,17 @@ def draw_proportion_lines(
         ax.set_xlabel(x_axis_label)
     ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1.0])
     ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.3f"))
+    label_size = evident.size("annotation", fig) * 0.75
+    probe = ax.text(0, 0, "Mg", fontsize=label_size, alpha=0)
+    fig.canvas.draw()
+    text_height = probe.get_window_extent(fig.canvas.get_renderer()).height
+    probe.remove()
+    origin, raised = ax.transData.inverted().transform([(0, 0), (0, text_height)])
+    half_height = (raised[1] - origin[1]) / 2
+    min_y = half_height + 0.03
+    max_y = 1 - half_height - 0.02
     label_x = len(xs) - 1 + 0.18
-    for y_value, y_pos, name, color in _spread_labels(endpoints):
+    for y_value, y_pos, name, color in _spread_labels(endpoints, min_y, max_y):
         if abs(y_pos - y_value) > 0.02:
             ax.plot([xs[-1], label_x - 0.04], [y_value, y_pos], color=color, linewidth=0.6, zorder=2)
         ax.text(
@@ -159,7 +180,7 @@ def draw_proportion_lines(
             color=color,
             va="center",
             ha="left",
-            fontsize=evident.size("annotation", fig),
+            fontsize=label_size,
             clip_on=False,
         )
     evident.titles(fig, title, subtitle=subtitle or None, source=CHART_SOURCE)
