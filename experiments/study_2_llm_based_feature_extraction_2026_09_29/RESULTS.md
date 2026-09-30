@@ -36,7 +36,19 @@ Full run: `mined_batches=320 candidate_features=20573`
 | structure | 3,522 |
 | **Total** | **20,573** |
 
-## Step 3: embed candidates
+## Step 3: deduplicated features
+
+`candidate_records=20573 distinct_features=19536 titan_tokens=209004 titan_cost_usd=0.00418008`
+
+| Category | Distinct features |
+| --- | --- |
+| lexical | 3,126 |
+| topic_subject | 3,453 |
+| semantic_content | 3,466 |
+| pragmatics | 3,126 |
+| target | 3,130 |
+| structure | 3,235 |
+| **Total** | **19,536** |
 
 ## Step 4: cluster features
 
