@@ -23,6 +23,33 @@ UNANIMOUS_OUTPUT_CSV = Path(__file__).resolve().parent / "keep_remove_unanimous_
 SPLIT_OUTPUT_CSV = Path(__file__).resolve().parent / "keep_remove_split_labels.csv"
 
 
+def _require_columns(labels: pd.DataFrame) -> None:
+    """Raise KeyError when ``n_raters`` or ``n_remove`` is missing."""
+    missing = REQUIRED_COLUMNS - set(labels.columns)
+    if missing:
+        raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
+
+
+def _integer_column(labels: pd.DataFrame, column: str) -> pd.Series:
+    """Return ``column`` as integers, or raise when a value is not integral."""
+    numeric = pd.to_numeric(labels[column], errors="coerce")
+    non_integer = numeric.isna() | (numeric != numeric.round())
+    if bool(non_integer.any()):
+        raise ValueError(f"{column} must be an integer on every row")
+    return numeric.astype(int)
+
+
+def _assert_five_rater_remove_counts(n_remove: pd.Series) -> None:
+    """Raise when a five-labeler remove count is outside 0 to 5."""
+    allowed = UNANIMOUS_REMOVE_COUNTS | SPLIT_REMOVE_COUNTS
+    unexpected = sorted(set(int(value) for value in n_remove.tolist()) - allowed)
+    if unexpected:
+        raise ValueError(
+            "Five-labeler posts must have n_remove from 0 to 5. "
+            f"Unexpected n_remove values: {unexpected}."
+        )
+
+
 def select_five_rater_labels(labels: pd.DataFrame) -> pd.DataFrame:
     """Return posts that have exactly five labelers.
 
@@ -44,7 +71,12 @@ def select_five_rater_labels(labels: pd.DataFrame) -> pd.DataFrame:
         When a count is not an integer, or a five-labeler post has
         ``n_remove`` outside 0 to 5.
     """
-    raise NotImplementedError
+    _require_columns(labels)
+    n_raters = _integer_column(labels, "n_raters")
+    n_remove = _integer_column(labels, "n_remove")
+    five_rater = n_raters == FIVE_LABELER_COUNT
+    _assert_five_rater_remove_counts(n_remove.loc[five_rater])
+    return labels.loc[five_rater].reset_index(drop=True)
 
 
 def build_unanimous_keep_remove_labels(
