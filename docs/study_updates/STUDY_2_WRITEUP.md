@@ -1,3 +1,13 @@
+---
+geometry:
+  - letterpaper
+  - landscape
+  - margin=0.4in
+header-includes:
+  - \usepackage{float}
+  - \floatplacement{figure}{H}
+---
+
 # Study 2 Writeup
 
 ## Feature generation key takeaways
@@ -168,9 +178,7 @@ We then use LLMs to perform feature extraction. We follow a [protocol](https://w
 2. **Use an LLM to mine features**: We pass in batches of 10 pairs of posts that were majority keep and 10 pairs of posts that were majority remove. We then ask an LLM to extract features to distinguish posts that were kept and posts that were removed. We do this across a few categories of features (see below).
 3. **Embed the feature records and cluster them**: We embed the features and then use K-Means to generate clusters. We do this instead of recursively asking an LLM to generate a feature category given a list of features since we want a sense of "global similarity" across all features. We choose K-Means since HDBSCAN rendered unstable estimates.
 4. **Name each cluster**: We take each cluster and pass them to an LLM to generate a human-readable label and description of each feature cluster. This generates a compiled list of feature groups.
-5. **Label every post against the features**: We label each post against each feature group.
-
-
+5. **Label every post against the features**: We label each post against each feature group. This means that a post can have multiple features, which makes this approach more feature-rich and expressive than BERTopic.
 
 ### Categories of features
 
