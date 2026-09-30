@@ -130,9 +130,11 @@ Here are the topics Republican raters were most likely to keep:
 
 #### Does the stance of the post affect the keep/remove rate?
 
-The stance of the post barely moves the overall keep rate. Left leaning posts are kept at 69.0% (11,386 posts). Right leaning posts are kept at 70.9% (8,377 posts). Inside a topic, the gap is usually a few points. There are a few topics that show a nontrivial gap (see below).
+The stance of the post barely moves the overall keep rate. Left leaning posts are kept at 69.0% (11,386 posts). Right leaning posts are kept at 70.9% (8,377 posts). Within topics, certain topics present in left-leaning or right-leaning posts are kept more often:
 
-(TODO: Insert visualizations here, once I analyze the 2-d distribution)
+![Keep Rate by Political Lean](static/study_2_writeup/keep_rate_by_political_lean.png)
+
+![Keep Rate by Topic and Political Lean](static/study_2_writeup/keep_rate_topics_by_political_lean.png)
 
 #### Does the toxicity of the post affect the keep/remove rate?
 
@@ -143,10 +145,6 @@ Toxicity moves the keep rate much more than stance does. Low toxicity posts are 
 This trend is generally true across topics as well:
 
 ![Keep Rate by Toxicity and Topic](static/study_2_writeup/keep_rate_by_toxicity_topic.png)
-
-### BERTopic on the original and the mirrored posts
-
-...
 
 ## LLM-based feature generation
 
@@ -160,6 +158,8 @@ We then use LLMs to perform feature extraction. We follow a [protocol](https://w
 4. **Name each cluster**: We take each cluster and pass them to an LLM to generate a human-readable label and description of each feature cluster. This generates a compiled list of feature groups.
 5. **Label every post against the features**: We label each post against each feature group.
 
+
+
 ### Categories of features
 
 These are the categories that we gave to the LLM when asking them to mine for features in the original posts:
@@ -170,6 +170,8 @@ These are the categories that we gave to the LLM when asking them to mine for fe
 4. **Pragmatics and communicative intent**: This category is about what the post is doing to the reader. Examples include sarcasm, mockery, a call to action, persuasion, venting, hedging, and outrage.
 5. **Target and directionality**: This category is about who the post attacks or praises, and which political side it points at. Examples include the type of actor criticized or praised, a left/right cue, us-versus-them framing, and elite-versus-populist framing.
 6. **Compositional and syntactic structure**: This category is about the shape of the sentences. Examples include if-then conditionals, contrast with "but" or "however," rhetorical questions, parallel repetition, lists, quoted or attributed speech, and direct address in the second person.
+
+
 
 ### Discovered categories
 
@@ -209,22 +211,21 @@ After mining features, embedding, and naming each resulting feature cluster, her
 | Substantive Policy and Institutional Claims          | Posts make concrete factual, causal, or interpretive claims about laws, government actions, institutions, political actors, or their social, economic, and rights-related consequences.                                        |
 | Sweeping Unsubstantiated Political Accusations       | Posts make broad, categorical allegations that political opponents or leaders are corrupt, criminal, authoritarian, immoral, dishonest, or otherwise malign without qualifying evidence or nuance.                             |
 
-
-
-
 ### Results
 
+We have evidence that suggests that people moderate on the quality of conversation and less on the substance of the conversation.
 
+We find that the probability of a post being removed is correlated to increases in hostile language and negatively linked to material policy arguments. Substance-related references and mentions of political actors remain relatively constant.
 
-### Results
+![Topic Distribution by Keep/Remove](static/study_2_writeup/llm_generated_topics_by_keep_remove.png)
 
-... (Insert results here)
+Similarly, we find that as toxicity of the post increases, hostile language increases and policy argument decreases, while substance-related references and mentions of political actors remain relatively constant.
+
+![Topic Distribution by Toxicity](static/study_2_writeup/llm_generated_topic_by_toxicity.png)
 
 ## Training a binary classifier
 
-
-
-# TODO: when building this, ask the LLM to also return a probability in addition to the label, so that we can use the probabilities in the "## Training a calibrated classifier" section.
+**Work is still ongoing and pending results**
 
 We train a variety of binary classifiers to predict the keep/remove task. We experimented with the following approaches:
 
@@ -244,12 +245,16 @@ For fine-tuning, we use `Qwen3.8-27B`. We deploy using `vLLM` and we use a quant
 
 ## Training a calibrated classifier
 
-One of the shortcomings of building a binary classifier is that it imposes a discrete label on an inherently uncertain task. In a non-trivial amount of tasks, people themselves were uncertain of what the label should have been.
+**Work is still ongoing and pending results**
+
+One of the shortcomings of building a binary classifier is that it imposes a discrete label on an inherently uncertain task. In a non-trivial amount of tasks, people themselves were uncertain of what the label should have been. We turn this into the following prediction task:
+
+$p(\text{label}) = p\left(\text{proportion of 5 raters that would,\,\text{on average},\,\text{remove this post}}\right)$
 
 We present several approaches for this:
 
-1. **Few-shot prompt-tuned LLMs that return their own probabilities**: ...
-2. **Few-shot prompt-tuned calibrated classifier (Jev)**: ...
+1. **Few-shot prompt-tuned LLMs that return their own probabilities**: We ask LLMs to report their own probabilities.
+2. **Few-shot prompt-tuned calibrated classifier (Jev)**: We prompt-tune Jev using DSPy and GEPA.
 3. **An ensemble approach**. (Add more details)
 4. **A calibrated classifier**. We can develop a classifier that returns a probability, and we can then set an arbitrary threshold to generate keep/remove decisions. This is inspired by how the Perspective API was built and follows past work on [reinforcement learning with calibration rewards (RLCR)](https://www.alphaxiv.org/abs/2507.16806).
 
