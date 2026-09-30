@@ -41,6 +41,8 @@ PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026
 
 ### Step 4: cluster feature embeddings
 
+K-means runs twice on the step 3 vectors, with 15 clusters for kept-post features and 15 clusters for removed-post features.
+
 ```bash
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step4_cluster_records/run.py
 ```

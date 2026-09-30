@@ -52,9 +52,42 @@ Full run: `mined_batches=320 candidate_features=20573`
 
 ## Step 4: clusters
 
-`features=19536 clusters=2 noise=1188`
+`features=19536 keep_features=9534 remove_features=10019 clusters=30 noise=0`
 
-HDBSCAN: `min_cluster_size=5`, `min_samples=5`, `metric=euclidean`. Largest cluster: 18,340 features (`cluster_000`).
+K-means, seed 1, 15 clusters for features mined from kept posts and 15 for features mined from removed posts. Vectors were not scaled. Seventeen features mined from both sides are in both fits. Within each side, `000` is the largest group. The phrase is the feature nearest the group center.
+
+| Cluster | Features | Nearest phrase |
+| --- | ---: | --- |
+| kept_000 | 1,446 | Concern about armed extremists, authoritarian government, or corporate influence |
+| kept_001 | 1,031 | Criticism aimed at parties, politicians, ideologies, or institutions |
+| kept_002 | 853 | Policy prescriptions or arguments about government action |
+| kept_003 | 837 | Predictions about elections or partisan behavior |
+| kept_004 | 686 | Substantive factual or quasi-factual claims about policy, law, or institutions |
+| kept_005 | 678 | Occasional italicized emphasis and slogan-like phrasing |
+| kept_006 | 648 | Rhetorical challenges to an opposing position |
+| kept_007 | 551 | Abortion rights, gun control, and immigration policy |
+| kept_008 | 524 | Longer explanatory passages and multi-sentence arguments |
+| kept_009 | 498 | Political leaders, parties, institutions, and policies as targets |
+| kept_010 | 448 | Contrastive framing with “but,” “while,” and “instead” |
+| kept_011 | 406 | Named politicians, institutions, and policy terms |
+| kept_012 | 361 | Occasional profanity embedded in argument rather than sustained insult |
+| kept_013 | 318 | Elite-versus-public framing involving bureaucrats, billionaires, or party establishments |
+| kept_014 | 249 | Persuasion through explanation and political argument |
+| removed_000 | 1,124 | Mobilizing partisan hostility through alarmist framing |
+| removed_001 | 1,092 | Culture-war claims about policing, transgender sports, abortion, and border enforcement |
+| removed_002 | 1,011 | Provocative mockery intended to demean an opposing side |
+| removed_003 | 917 | Opponents portrayed as stupid, fanatical, corrupt, or dangerous |
+| removed_004 | 868 | All-caps commands, slogans, and repeated emphasis |
+| removed_005 | 817 | Sweeping accusations of lying, corruption, criminality, or authoritarian takeover |
+| removed_006 | 805 | Calls for exclusion, punishment, or removal of opponents |
+| removed_007 | 590 | Broad partisan out-groups such as Republicans, Democrats, liberals, and MAGA supporters |
+| removed_008 | 577 | Derogatory labels such as 'moron,' 'thugs,' and 'pigs' |
+| removed_009 | 488 | Direct attacks on named politicians and their supporters |
+| removed_010 | 482 | Short, slogan-like statements and blunt insults |
+| removed_011 | 378 | Heavy profanity and vulgar insults |
+| removed_012 | 355 | Direct second-person address with insults |
+| removed_013 | 310 | Collective blame assigned to voters or broad partisan populations |
+| removed_014 | 205 | Hostile venting and outrage |
 
 ## Step 5: name clusters
 

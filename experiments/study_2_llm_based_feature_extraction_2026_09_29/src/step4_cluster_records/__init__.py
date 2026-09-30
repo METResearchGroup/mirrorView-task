@@ -1,1 +1,1 @@
-"""Step 4: cluster deduplicated feature embeddings with HDBSCAN."""
+"""Step 4: cluster kept-post and removed-post features with K-means."""
