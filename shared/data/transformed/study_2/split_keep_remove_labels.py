@@ -14,6 +14,9 @@ from pathlib import Path
 
 import pandas as pd
 
+from shared.data import dataloader
+from shared.data.registry import STUDY_2_KEEP_REMOVE_LABELS
+
 FIVE_LABELER_COUNT = 5
 UNANIMOUS_REMOVE_COUNTS = frozenset({0, FIVE_LABELER_COUNT})
 SPLIT_REMOVE_COUNTS = frozenset(range(1, FIVE_LABELER_COUNT))
@@ -130,12 +133,16 @@ def build_split_keep_remove_labels(
 
 def _load_modal_labels(labels: pd.DataFrame | None) -> pd.DataFrame:
     """Return ``labels`` or load ``STUDY_2_KEEP_REMOVE_LABELS``."""
-    raise NotImplementedError
+    if labels is not None:
+        return labels
+    return dataloader.load_dataset(STUDY_2_KEEP_REMOVE_LABELS, low_memory=False)
 
 
 def _write_label_frame(frame: pd.DataFrame, path: Path) -> pd.DataFrame:
     """Write ``frame`` to ``path`` and return it."""
-    raise NotImplementedError
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frame.to_csv(path, index=False)
+    return frame
 
 
 def write_keep_remove_label_splits(
@@ -159,7 +166,12 @@ def write_keep_remove_label_splits(
     tuple[pandas.DataFrame, pandas.DataFrame]
         Unanimous frame, then split frame.
     """
-    raise NotImplementedError
+    modal = _load_modal_labels(labels)
+    unanimous = build_unanimous_keep_remove_labels(modal)
+    split = build_split_keep_remove_labels(modal)
+    _write_label_frame(unanimous, unanimous_path)
+    _write_label_frame(split, split_path)
+    return unanimous, split
 
 
 if __name__ == "__main__":
