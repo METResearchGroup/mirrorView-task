@@ -79,6 +79,17 @@ def select_five_rater_labels(labels: pd.DataFrame) -> pd.DataFrame:
     return labels.loc[five_rater].reset_index(drop=True)
 
 
+def _rows_with_remove_counts(
+    labels: pd.DataFrame,
+    remove_counts: frozenset[int],
+) -> pd.DataFrame:
+    """Return five-labeler rows whose remove count is in ``remove_counts``."""
+    five_rater = select_five_rater_labels(labels)
+    n_remove = _integer_column(five_rater, "n_remove")
+    selected = five_rater.loc[n_remove.isin(remove_counts)]
+    return selected.reset_index(drop=True)
+
+
 def build_unanimous_keep_remove_labels(
     labels: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
@@ -94,7 +105,8 @@ def build_unanimous_keep_remove_labels(
     pandas.DataFrame
         Unanimous five-labeler rows. Other labeler counts are excluded.
     """
-    raise NotImplementedError
+    modal = labels if labels is not None else _load_modal_labels(None)
+    return _rows_with_remove_counts(modal, UNANIMOUS_REMOVE_COUNTS)
 
 
 def build_split_keep_remove_labels(
