@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Topics in the original posts, and keep or remove votes</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Topics in the original posts, and keep or remove votes</h1>
+      <p class="lede">This page describes the topics in the original posts from Study 2, and how those topics line up with keep or remove votes. A topic is a group of posts that use similar wording.</p>
+      <p class="date-line">Analysis run 24 September 2026</p>
+    </header>
+    <main>
+      <section id="map">
+        <h2>Where each post sits</h2>
+        <p>Each dot is one wording of a post. The original and its mirror are both drawn. Blue means left leaning. Red means right leaning. A mirror is colored with the opposite lean of its original. Dots that were left ungrouped are fainter than dots that sit in a topic.</p>
+        <p>The circles mark the largest topics in this map. This map was fit on the original and the mirror together, so these topic names are not the same list as the tables below. A person has not checked these names. Drag to move the map. Scroll to zoom. Click a dot to read it. The other wording appears beside it, and that dot lights up as well.</p>
+        <div class="map-break">
+          <div class="map-toolbar">
+            <p class="map-legend"><span class="swatch swatch-left"></span>Left leaning <span class="swatch swatch-right"></span>Right leaning</p>
+            <div class="map-controls" role="group" aria-label="How many topic circles to show">
+              <span class="map-controls-label">Topic circles</span>
+              <button type="button" data-map-count="5" aria-pressed="false">5</button>
+              <button type="button" data-map-count="10" aria-pressed="true">10</button>
+              <button type="button" data-map-count="20" aria-pressed="false">20</button>
+            </div>
+            <button type="button" id="map-reset">Reset view</button>
+          </div>
+          <div class="map-layout">
+            <div class="map-plot">
+              <canvas id="map-canvas" aria-label="Map of original posts and mirrors. Blue dots are left leaning. Red dots are right leaning."></canvas>
+              <p id="map-status" class="map-status">Loading the map.</p>
+            </div>
+            <div class="map-panels">
+              <div id="map-panel" class="map-panel" aria-live="polite">
+                <p id="map-empty">Click a dot.</p>
+                <div id="map-detail" hidden>
+                  <p class="map-card-label">This wording</p>
+                  <p><span class="map-key">Type:</span> <span id="map-type"></span></p>
+                  <p><span class="map-key">Text:</span> <span id="map-text"></span></p>
+                  <p><span class="map-key">Topic:</span> <span id="map-topic"></span></p>
+                </div>
+              </div>
+              <div id="map-panel-pair" class="map-panel" hidden>
+                <p class="map-card-label">Other wording</p>
+                <p><span class="map-key">Type:</span> <span id="map-type-pair"></span></p>
+                <p><span class="map-key">Text:</span> <span id="map-text-pair"></span></p>
+                <p><span class="map-key">Topic:</span> <span id="map-topic-pair"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="study">
+        <h2>The posts</h2>
+        <p>Study 2 joins the June collection and the September collection. The topics on this page come from the original wording only. The fit uses 19,763 posts, after duplicate wording was removed. The grouping found 100 topics and left 8,369 posts ungrouped (42.3%), because their wording did not sit near a group.</p>
+        <p>Keep rate is the share of votes to keep. For a topic, it is the average of that share across the posts in the topic. Across all 19,763 posts, the keep rate is 69.8%. Posts that were left ungrouped have the same keep rate, 69.8%.</p>
+        <ul class="stats" aria-label="Key numbers">
+          <li class="stat"><span class="stat-value">19,763</span><span class="stat-label">Original posts in the fit</span></li>
+          <li class="stat"><span class="stat-value">100</span><span class="stat-label">Topics</span></li>
+          <li class="stat"><span class="stat-value">42.3%</span><span class="stat-label">Posts left ungrouped</span></li>
+          <li class="stat"><span class="stat-value">69.8%</span><span class="stat-label">Keep rate</span></li>
+        </ul>
+      </section>
+
+      <section id="procedure">
+        <h2>Procedure</h2>
+        <p>These steps are enough to repeat the analysis on the original posts. Keep and remove votes are attached after the groups exist. They are not used to form the groups.</p>
+        <ol>
+          <li>Turn each original post into a list of numbers so that posts with similar wording sit near each other.</li>
+          <li>Group posts whose numbers are close. Leave a post ungrouped when it does not sit near a group.</li>
+          <li>Name each group from the words the posts share. The names below are shortened from those words, and a person has not checked them.</li>
+          <li>For each group, compute the keep rate, then split the same posts by left leaning or right leaning stance and by low, medium, or high toxicity.</li>
+          <li>Separately, look at each rater's own votes. Raters are recorded as Democrats or Republicans.</li>
+        </ol>
+      </section>
+
+      <section id="q1">
+        <h2>1. What topics came out of the original posts?</h2>
+        <p>The ten largest topics cover everyday political fights: climate, the border, MAGA and institutions, abortion, Trump and the media, and criticism of each party. Together these ten topics hold 6,268 of the 11,394 grouped posts. The other 90 topics are smaller. The names are a short label for the words the posts share.</p>
+        <table>
+          <caption>Largest topics in the original posts</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Posts</th><th scope="col">Keep rate</th></tr></thead>
+          <tbody>
+            <tr><td>Climate and fossil fuels</td><td>1,122</td><td>81.8%</td></tr>
+            <tr><td>Border and immigration</td><td>862</td><td>75.8%</td></tr>
+            <tr><td>MAGA and institutions</td><td>851</td><td>59.1%</td></tr>
+            <tr><td>Abortion access</td><td>690</td><td>75.2%</td></tr>
+            <tr><td>Trump media and lying</td><td>636</td><td>59.3%</td></tr>
+            <tr><td>Criticism of Democrats</td><td>598</td><td>69.3%</td></tr>
+            <tr><td>Criticism of Republicans</td><td>566</td><td>59.0%</td></tr>
+            <tr><td>Biden and Trump blame</td><td>358</td><td>67.6%</td></tr>
+            <tr><td>Billionaires and taxes</td><td>326</td><td>76.6%</td></tr>
+            <tr><td>Abolish ICE</td><td>259</td><td>62.1%</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="q2">
+        <h2>2. Do some topics get kept or removed more often?</h2>
+        <p>Yes. Among the 23 topics with at least 100 posts, the keep rate runs from 31.7% to 81.8%. Anti Trump harassment is the low end (144 posts). Climate and fossil fuels is the high end (1,122 posts). Criticism of a party, MAGA and institutions, and attacks on Trump sit near 59%. Abortion, the border, and gun rights sit near 76%.</p>
+        <figure>
+          <svg role="img" aria-labelledby="keep-title keep-desc" viewBox="0 0 700 578" xmlns="http://www.w3.org/2000/svg">
+<title id="keep-title">Keep rate for original post topics with at least 100 posts</title>
+<desc id="keep-desc">Horizontal bars from 31.7 percent to 81.8 percent, with a marker at the overall keep rate of 69.8 percent.</desc>
+<text x="350" y="18" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Keep rate for topics with at least 100 posts</text>
+<line x1="214" y1="28" x2="214" y2="536" stroke="#ccc"/>
+<line x1="525.3" y1="28" x2="525.3" y2="536" stroke="#b45309" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="525.3" y="28" text-anchor="middle" font-size="10" fill="#b45309">Overall 69.8%</text>
+<text x="206" y="48" text-anchor="end" font-size="11" fill="#333">Anti Trump harassment</text>
+<rect x="214" y="36" width="141.4" height="16" fill="#2563eb"/>
+<text x="361.4" y="48" font-size="10" fill="#1a1a1a">31.7%</text>
+<text x="206" y="70" text-anchor="end" font-size="11" fill="#333">Anti fascism messaging</text>
+<rect x="214" y="58" width="261.4" height="16" fill="#2563eb"/>
+<text x="481.4" y="70" font-size="10" fill="#1a1a1a">58.6%</text>
+<text x="206" y="92" text-anchor="end" font-size="11" fill="#333">Criticism of Republicans</text>
+<rect x="214" y="80" width="263.1" height="16" fill="#2563eb"/>
+<text x="483.1" y="92" font-size="10" fill="#1a1a1a">59.0%</text>
+<text x="206" y="114" text-anchor="end" font-size="11" fill="#333">MAGA and institutions</text>
+<rect x="214" y="102" width="263.6" height="16" fill="#2563eb"/>
+<text x="483.6" y="114" font-size="10" fill="#1a1a1a">59.1%</text>
+<text x="206" y="136" text-anchor="end" font-size="11" fill="#333">Trump media and lying</text>
+<rect x="214" y="124" width="264.5" height="16" fill="#2563eb"/>
+<text x="484.5" y="136" font-size="10" fill="#1a1a1a">59.3%</text>
+<text x="206" y="158" text-anchor="end" font-size="11" fill="#333">Abolish ICE</text>
+<rect x="214" y="146" width="277.0" height="16" fill="#2563eb"/>
+<text x="497.0" y="158" font-size="10" fill="#1a1a1a">62.1%</text>
+<text x="206" y="180" text-anchor="end" font-size="11" fill="#333">Trans rights in sports</text>
+<rect x="214" y="168" width="282.3" height="16" fill="#2563eb"/>
+<text x="502.3" y="180" font-size="10" fill="#1a1a1a">63.3%</text>
+<text x="206" y="202" text-anchor="end" font-size="11" fill="#333">Biden and Trump blame</text>
+<rect x="214" y="190" width="301.5" height="16" fill="#2563eb"/>
+<text x="521.5" y="202" font-size="10" fill="#1a1a1a">67.6%</text>
+<text x="206" y="224" text-anchor="end" font-size="11" fill="#333">Conservatism and religion</text>
+<rect x="214" y="212" width="308.6" height="16" fill="#2563eb"/>
+<text x="528.6" y="224" font-size="10" fill="#1a1a1a">69.2%</text>
+<text x="206" y="246" text-anchor="end" font-size="11" fill="#333">Criticism of Democrats</text>
+<rect x="214" y="234" width="309.1" height="16" fill="#2563eb"/>
+<text x="529.1" y="246" font-size="10" fill="#1a1a1a">69.3%</text>
+<text x="206" y="268" text-anchor="end" font-size="11" fill="#333">Open carry laws</text>
+<rect x="214" y="256" width="324.7" height="16" fill="#2563eb"/>
+<text x="544.7" y="268" font-size="10" fill="#1a1a1a">72.8%</text>
+<text x="206" y="290" text-anchor="end" font-size="11" fill="#333">Tariffs</text>
+<rect x="214" y="278" width="326.0" height="16" fill="#2563eb"/>
+<text x="546.0" y="290" font-size="10" fill="#1a1a1a">73.1%</text>
+<text x="206" y="312" text-anchor="end" font-size="11" fill="#333">US and Iran</text>
+<rect x="214" y="300" width="326.9" height="16" fill="#2563eb"/>
+<text x="546.9" y="312" font-size="10" fill="#1a1a1a">73.3%</text>
+<text x="206" y="334" text-anchor="end" font-size="11" fill="#333">Medicaid and SNAP</text>
+<rect x="214" y="322" width="327.4" height="16" fill="#2563eb"/>
+<text x="547.4" y="334" font-size="10" fill="#1a1a1a">73.4%</text>
+<text x="206" y="356" text-anchor="end" font-size="11" fill="#333">Democratic candidates</text>
+<rect x="214" y="344" width="327.8" height="16" fill="#2563eb"/>
+<text x="547.8" y="356" font-size="10" fill="#1a1a1a">73.5%</text>
+<text x="206" y="378" text-anchor="end" font-size="11" fill="#333">Supreme Court power</text>
+<rect x="214" y="366" width="330.5" height="16" fill="#2563eb"/>
+<text x="550.5" y="378" font-size="10" fill="#1a1a1a">74.1%</text>
+<text x="206" y="400" text-anchor="end" font-size="11" fill="#333">Abortion access</text>
+<rect x="214" y="388" width="335.4" height="16" fill="#2563eb"/>
+<text x="555.4" y="400" font-size="10" fill="#1a1a1a">75.2%</text>
+<text x="206" y="422" text-anchor="end" font-size="11" fill="#333">Border and immigration</text>
+<rect x="214" y="410" width="338.1" height="16" fill="#2563eb"/>
+<text x="558.1" y="422" font-size="10" fill="#1a1a1a">75.8%</text>
+<text x="206" y="444" text-anchor="end" font-size="11" fill="#333">Gun rights</text>
+<rect x="214" y="432" width="338.5" height="16" fill="#2563eb"/>
+<text x="558.5" y="444" font-size="10" fill="#1a1a1a">75.9%</text>
+<text x="206" y="466" text-anchor="end" font-size="11" fill="#333">Billionaires and taxes</text>
+<rect x="214" y="454" width="341.6" height="16" fill="#2563eb"/>
+<text x="561.6" y="466" font-size="10" fill="#1a1a1a">76.6%</text>
+<text x="206" y="488" text-anchor="end" font-size="11" fill="#333">Gun laws in schools</text>
+<rect x="214" y="476" width="353.7" height="16" fill="#2563eb"/>
+<text x="573.7" y="488" font-size="10" fill="#1a1a1a">79.3%</text>
+<text x="206" y="510" text-anchor="end" font-size="11" fill="#333">Sanctuary cities</text>
+<rect x="214" y="498" width="357.7" height="16" fill="#2563eb"/>
+<text x="577.7" y="510" font-size="10" fill="#1a1a1a">80.2%</text>
+<text x="206" y="532" text-anchor="end" font-size="11" fill="#333">Climate and fossil fuels</text>
+<rect x="214" y="520" width="364.8" height="16" fill="#2563eb"/>
+<text x="584.8" y="532" font-size="10" fill="#1a1a1a">81.8%</text>
+<line x1="214" y1="550" x2="660" y2="550" stroke="#ccc"/>
+<text x="214.0" y="566" text-anchor="middle" font-size="10" fill="#555">0%</text>
+<text x="437.0" y="566" text-anchor="middle" font-size="10" fill="#555">50%</text>
+<text x="660.0" y="566" text-anchor="middle" font-size="10" fill="#555">100%</text>
+</svg>
+          <figcaption>Each bar is one topic with at least 100 posts. The dashed line is the overall keep rate, 69.8%. The percentage is the average share of raters who voted keep.</figcaption>
+        </figure>
+        <p>A few smaller topics sit further out, and a few votes can move them. Calling Trump a fascist is kept 45.0% of the time (19 posts). Accusations that Trump committed crimes are kept 46.9% of the time (56 posts). Gun violence awareness is kept 90.7% of the time (23 posts), climate and habitats 88.9% (27 posts), and the Florida property tax debate 87.7% (15 posts).</p>
+        <h3>Left leaning and right leaning posts</h3>
+        <p>The stance of the post barely moves the overall keep rate. Left leaning posts are kept at 69.0% (11,386 posts). Right leaning posts are kept at 70.9% (8,377 posts). Inside a topic, the gap is usually a few points. The table uses topics with at least 40 posts on each side. The largest gap is 7.9 points.</p>
+        <figure>
+          <svg role="img" aria-labelledby="stance-title stance-desc" viewBox="0 0 520 268" xmlns="http://www.w3.org/2000/svg">
+<title id="stance-title">Keep rate by stance of the original post</title>
+<desc id="stance-desc">Two bars. Left leaning posts are kept at 69.0 percent, 11,386 posts. Right leaning posts are kept at 70.9 percent, 8,377 posts.</desc>
+<text x="260" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Keep rate by stance of the post</text>
+<line x1="70" y1="200" x2="470" y2="200" stroke="#ccc"/>
+<line x1="70" y1="40" x2="70" y2="200" stroke="#ccc"/>
+<text x="62" y="204" text-anchor="end" font-size="11" fill="#555">0%</text>
+<text x="62" y="124" text-anchor="end" font-size="11" fill="#555">50%</text>
+<text x="62" y="44" text-anchor="end" font-size="11" fill="#555">100%</text>
+<rect x="155" y="89.6" width="70" height="110.4" fill="#2563eb"><title>Left leaning: 69.0% kept, 11,386 posts</title></rect>
+<text x="190" y="81" text-anchor="middle" font-size="12" fill="#1a1a1a">69.0%</text>
+<text x="190" y="220" text-anchor="middle" font-size="12" fill="#333">Left leaning</text>
+<text x="190" y="236" text-anchor="middle" font-size="11" fill="#555">11,386 posts</text>
+<rect x="295" y="86.6" width="70" height="113.4" fill="#b45309"><title>Right leaning: 70.9% kept, 8,377 posts</title></rect>
+<text x="330" y="78" text-anchor="middle" font-size="12" fill="#1a1a1a">70.9%</text>
+<text x="330" y="220" text-anchor="middle" font-size="12" fill="#333">Right leaning</text>
+<text x="330" y="236" text-anchor="middle" font-size="11" fill="#555">8,377 posts</text>
+</svg>
+          <figcaption>Right leaning posts are kept 1.9 points more often than left leaning posts. This split uses every post in the fit, including posts that were left ungrouped.</figcaption>
+        </figure>
+        <table>
+          <caption>Largest keep rate gaps between left leaning and right leaning posts in the same topic</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Left leaning</th><th scope="col">Right leaning</th><th scope="col">Gap</th></tr></thead>
+          <tbody>
+            <tr><td>Tariffs</td><td>69.1% (82 posts)</td><td>77.0% (83 posts)</td><td>Right leaning posts are kept 7.9 points more</td></tr>
+            <tr><td>Conservatism and religion</td><td>66.3% (143)</td><td>73.9% (86)</td><td>Right leaning posts are kept 7.6 points more</td></tr>
+            <tr><td>Criticism of Republicans</td><td>57.7% (468)</td><td>65.2% (98)</td><td>Right leaning posts are kept 7.5 points more</td></tr>
+            <tr><td>Abolish ICE</td><td>59.7% (171)</td><td>66.9% (88)</td><td>Right leaning posts are kept 7.3 points more</td></tr>
+            <tr><td>Democratic candidates</td><td>76.4% (124)</td><td>70.8% (127)</td><td>Left leaning posts are kept 5.6 points more</td></tr>
+            <tr><td>Climate and fossil fuels</td><td>82.9% (903)</td><td>77.6% (219)</td><td>Left leaning posts are kept 5.3 points more</td></tr>
+          </tbody>
+        </table>
+        <figure>
+        <svg role="img" aria-labelledby="gap-title gap-desc" viewBox="0 0 760 620" xmlns="http://www.w3.org/2000/svg">
+        <title id="gap-title">Keep rates for left leaning and right leaning posts in the same topic</title>
+        <desc id="gap-desc">Six topics. Each row has a blue dot for the left leaning keep rate and a brown dot for the right leaning keep rate, joined by a line. Topics where right leaning posts are kept more are listed first.</desc>
+        <rect width="760" height="620" fill="#fff"/>
+        <text x="380" y="22" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#1a1a1a">Keep rates for left leaning and right leaning posts in the same topic</text>
+        <circle cx="250" cy="46" r="5" fill="#2563eb"/>
+        <text x="260" y="50" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#1a1a1a">Left leaning</text>
+        <circle cx="390" cy="46" r="5" fill="#b45309"/>
+        <text x="400" y="50" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#1a1a1a">Right leaning</text>
+        <text x="198" y="86" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">Right leaning posts kept more</text>
+        <line x1="214.0" y1="78" x2="214.0" y2="548" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="344.5" y1="78" x2="344.5" y2="548" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="475.0" y1="78" x2="475.0" y2="548" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="605.5" y1="78" x2="605.5" y2="548" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="736.0" y1="78" x2="736.0" y2="548" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="198" y="382.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">Left leaning posts kept more</text>
+        <line x1="214" y1="378.0" x2="736" y2="378.0" stroke="#ddd" stroke-width="1"/>
+        <text x="198" y="112.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Tariffs</text>
+        <line x1="463.3" y1="108.0" x2="566.4" y2="108.0" stroke="#94a3b8" stroke-width="2"/>
+        <g><title>Tariffs: 69.1% kept, n=82</title><circle cx="463.3" cy="108.0" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="463.3" y="86.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" stroke="#fff" stroke-width="3" paint-order="stroke">69.1%</text><text x="463.3" y="98.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=82</text></g>
+        <g><title>Tariffs: 77.0% kept, n=83</title><circle cx="566.4" cy="108.0" r="6" fill="#b45309" stroke="#fff" stroke-width="1.5"/><text x="566.4" y="86.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309" stroke="#fff" stroke-width="3" paint-order="stroke">77.0%</text><text x="566.4" y="98.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=83</text></g>
+        <text x="198" y="184.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Conservatism and religion</text>
+        <line x1="426.7" y1="180.0" x2="525.9" y2="180.0" stroke="#94a3b8" stroke-width="2"/>
+        <g><title>Conservatism and religion: 66.3% kept, n=143</title><circle cx="426.7" cy="180.0" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="426.7" y="158.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" stroke="#fff" stroke-width="3" paint-order="stroke">66.3%</text><text x="426.7" y="170.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=143</text></g>
+        <g><title>Conservatism and religion: 73.9% kept, n=86</title><circle cx="525.9" cy="180.0" r="6" fill="#b45309" stroke="#fff" stroke-width="1.5"/><text x="525.9" y="158.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309" stroke="#fff" stroke-width="3" paint-order="stroke">73.9%</text><text x="525.9" y="170.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=86</text></g>
+        <text x="198" y="256.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Criticism of Republicans</text>
+        <line x1="314.5" y1="252.0" x2="412.4" y2="252.0" stroke="#94a3b8" stroke-width="2"/>
+        <g><title>Criticism of Republicans: 57.7% kept, n=468</title><circle cx="314.5" cy="252.0" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="314.5" y="230.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" stroke="#fff" stroke-width="3" paint-order="stroke">57.7%</text><text x="314.5" y="242.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=468</text></g>
+        <g><title>Criticism of Republicans: 65.2% kept, n=98</title><circle cx="412.4" cy="252.0" r="6" fill="#b45309" stroke="#fff" stroke-width="1.5"/><text x="412.4" y="230.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309" stroke="#fff" stroke-width="3" paint-order="stroke">65.2%</text><text x="412.4" y="242.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=98</text></g>
+        <text x="198" y="328.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Abolish ICE</text>
+        <line x1="340.6" y1="324.0" x2="434.5" y2="324.0" stroke="#94a3b8" stroke-width="2"/>
+        <g><title>Abolish ICE: 59.7% kept, n=171</title><circle cx="340.6" cy="324.0" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="340.6" y="302.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" stroke="#fff" stroke-width="3" paint-order="stroke">59.7%</text><text x="340.6" y="314.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=171</text></g>
+        <g><title>Abolish ICE: 66.9% kept, n=88</title><circle cx="434.5" cy="324.0" r="6" fill="#b45309" stroke="#fff" stroke-width="1.5"/><text x="434.5" y="302.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309" stroke="#fff" stroke-width="3" paint-order="stroke">66.9%</text><text x="434.5" y="314.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=88</text></g>
+        <text x="198" y="436.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Climate and fossil fuels</text>
+        <line x1="574.2" y1="432.0" x2="643.3" y2="432.0" stroke="#94a3b8" stroke-width="2"/>
+        <g><title>Climate and fossil fuels: 82.9% kept, n=903</title><circle cx="643.3" cy="432.0" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="643.3" y="410.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" stroke="#fff" stroke-width="3" paint-order="stroke">82.9%</text><text x="643.3" y="422.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=903</text></g>
+        <g><title>Climate and fossil fuels: 77.6% kept, n=219</title><circle cx="574.2" cy="432.0" r="6" fill="#b45309" stroke="#fff" stroke-width="1.5"/><text x="574.2" y="410.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309" stroke="#fff" stroke-width="3" paint-order="stroke">77.6%</text><text x="574.2" y="422.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=219</text></g>
+        <text x="198" y="508.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Democratic candidates</text>
+        <line x1="485.4" y1="504.0" x2="558.5" y2="504.0" stroke="#94a3b8" stroke-width="2"/>
+        <g><title>Democratic candidates: 76.4% kept, n=124</title><circle cx="558.5" cy="504.0" r="6" fill="#2563eb" stroke="#fff" stroke-width="1.5"/><text x="558.5" y="482.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb" stroke="#fff" stroke-width="3" paint-order="stroke">76.4%</text><text x="558.5" y="494.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=124</text></g>
+        <g><title>Democratic candidates: 70.8% kept, n=127</title><circle cx="485.4" cy="504.0" r="6" fill="#b45309" stroke="#fff" stroke-width="1.5"/><text x="485.4" y="482.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309" stroke="#fff" stroke-width="3" paint-order="stroke">70.8%</text><text x="485.4" y="494.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555" stroke="#fff" stroke-width="3" paint-order="stroke">n=127</text></g>
+        <line x1="214" y1="548" x2="736" y2="548" stroke="#ccc"/>
+        <text x="214.0" y="566" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">50%</text>
+        <text x="344.5" y="566" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">60%</text>
+        <text x="475.0" y="566" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">70%</text>
+        <text x="605.5" y="566" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">80%</text>
+        <text x="736.0" y="566" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">90%</text>
+        <text x="475.0" y="592" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">Keep rate</text>
+        </svg>
+        <figcaption>Each line joins the keep rate for left leaning posts and right leaning posts in one topic. A longer line is a larger gap. The place of each dot is the keep rate. Topics where right leaning posts are kept more are listed first.</figcaption>
+        </figure>
+        <h3>Low, medium, and high toxicity</h3>
+        <p>Toxicity moves the keep rate much more than stance does. Low toxicity posts are kept at 84.7% (4,892 posts). Medium toxicity posts are kept at 72.6% (9,888 posts). High toxicity posts are kept at 49.8% (4,983 posts). The study sampled posts into these three levels before the topics were fit.</p>
+        <figure>
+          <svg role="img" aria-labelledby="tox-title tox-desc" viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg">
+<title id="tox-title">Keep rate by toxicity of the original post</title>
+<desc id="tox-desc">Three bars. Low toxicity is 84.7 percent, medium is 72.6 percent, and high is 49.8 percent.</desc>
+<text x="260" y="22" text-anchor="middle" font-size="14" font-weight="600" fill="#1a1a1a">Keep rate by toxicity of the post</text>
+<line x1="70" y1="200" x2="470" y2="200" stroke="#ccc"/>
+<line x1="70" y1="40" x2="70" y2="200" stroke="#ccc"/>
+<text x="62" y="204" text-anchor="end" font-size="11" fill="#555">0%</text>
+<text x="62" y="124" text-anchor="end" font-size="11" fill="#555">50%</text>
+<text x="62" y="44" text-anchor="end" font-size="11" fill="#555">100%</text>
+<rect x="110" y="64.5" width="70" height="135.5" fill="#2563eb"/>
+<text x="145" y="56" text-anchor="middle" font-size="12" fill="#1a1a1a">84.7%</text>
+<text x="145" y="220" text-anchor="middle" font-size="12" fill="#333">Low</text>
+<rect x="230" y="83.8" width="70" height="116.2" fill="#2563eb"/>
+<text x="265" y="75" text-anchor="middle" font-size="12" fill="#1a1a1a">72.6%</text>
+<text x="265" y="220" text-anchor="middle" font-size="12" fill="#333">Medium</text>
+<rect x="350" y="120.3" width="70" height="79.7" fill="#64748b"/>
+<text x="385" y="112" text-anchor="middle" font-size="12" fill="#1a1a1a">49.8%</text>
+<text x="385" y="220" text-anchor="middle" font-size="12" fill="#333">High</text>
+</svg>
+          <figcaption>High toxicity posts are kept about 35 points less often than low toxicity posts. This split uses every post in the fit, including posts that were left ungrouped.</figcaption>
+        </figure>
+        <p>The same drop shows up inside topics. In every topic that has at least 25 low toxicity posts and 25 high toxicity posts, the high toxicity posts are kept less. The typical gap is about 32 points. A few examples:</p>
+        <table>
+          <caption>Keep rate inside a topic, by toxicity</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Low</th><th scope="col">Medium</th><th scope="col">High</th></tr></thead>
+          <tbody>
+            <tr><td>Criticism of Republicans</td><td>79.2% (66)</td><td>69.5% (272)</td><td>40.5% (228)</td></tr>
+            <tr><td>Abortion access</td><td>86.0% (240)</td><td>73.1% (389)</td><td>46.5% (61)</td></tr>
+            <tr><td>MAGA and institutions</td><td>77.9% (98)</td><td>65.6% (439)</td><td>44.1% (314)</td></tr>
+            <tr><td>Border and immigration</td><td>86.5% (243)</td><td>76.7% (482)</td><td>53.6% (137)</td></tr>
+          </tbody>
+        </table>
+        <figure>
+        <svg role="img" aria-labelledby="slope-title slope-desc" viewBox="0 0 760 540" xmlns="http://www.w3.org/2000/svg">
+        <title id="slope-title">Keep rate inside a topic, from low to high toxicity</title>
+        <desc id="slope-desc">Fifteen lines, one per topic. Each line connects the keep rate at low, medium, and high toxicity. Every line falls. Four topics from the table above are drawn in color and labeled.</desc>
+        <rect width="760" height="540" fill="#fff"/>
+        <text x="380" y="24" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#1a1a1a">Inside each topic, higher toxicity posts are kept less</text>
+        <text x="380" y="46" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#555">Keep rate from low to high toxicity, one line per topic</text>
+        <line x1="78" y1="470.0" x2="510" y2="470.0" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="474.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">30%</text>
+        <line x1="78" y1="403.7" x2="510" y2="403.7" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="407.7" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">40%</text>
+        <line x1="78" y1="337.3" x2="510" y2="337.3" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="341.3" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">50%</text>
+        <line x1="78" y1="271.0" x2="510" y2="271.0" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="275.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">60%</text>
+        <line x1="78" y1="204.7" x2="510" y2="204.7" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="208.7" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">70%</text>
+        <line x1="78" y1="138.3" x2="510" y2="138.3" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="142.3" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">80%</text>
+        <line x1="78" y1="72.0" x2="510" y2="72.0" stroke="#e6e6e6" stroke-width="1"/>
+        <text x="70" y="76.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">90%</text>
+        <line x1="78" y1="72" x2="78" y2="470" stroke="#ccc"/>
+        <line x1="78" y1="470" x2="510" y2="470" stroke="#ccc"/>
+        <g><title>Conservatism and religion: low 87.9%, medium 73.1%, high 46.4%</title><polyline points="150.0,85.9 330.0,184.1 510.0,361.2" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="85.9" r="3" fill="#c5ced9"/><circle cx="330.0" cy="184.1" r="3" fill="#c5ced9"/><circle cx="510.0" cy="361.2" r="3" fill="#c5ced9"/></g>
+        <g><title>Climate and fossil fuels: low 87.4%, medium 76.9%, high 58.8%</title><polyline points="150.0,89.2 330.0,158.9 510.0,279.0" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="89.2" r="3" fill="#c5ced9"/><circle cx="330.0" cy="158.9" r="3" fill="#c5ced9"/><circle cx="510.0" cy="279.0" r="3" fill="#c5ced9"/></g>
+        <g><title>Billionaires and taxes: low 85.6%, medium 79.2%, high 53.5%</title><polyline points="150.0,101.2 330.0,143.6 510.0,314.1" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="101.2" r="3" fill="#c5ced9"/><circle cx="330.0" cy="143.6" r="3" fill="#c5ced9"/><circle cx="510.0" cy="314.1" r="3" fill="#c5ced9"/></g>
+        <g><title>Democratic candidates: low 85.3%, medium 75.7%, high 55.8%</title><polyline points="150.0,103.2 330.0,166.9 510.0,298.9" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="103.2" r="3" fill="#c5ced9"/><circle cx="330.0" cy="166.9" r="3" fill="#c5ced9"/><circle cx="510.0" cy="298.9" r="3" fill="#c5ced9"/></g>
+        <g><title>Tariffs: low 84.6%, medium 74.6%, high 54.8%</title><polyline points="150.0,107.8 330.0,174.2 510.0,305.5" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="107.8" r="3" fill="#c5ced9"/><circle cx="330.0" cy="174.2" r="3" fill="#c5ced9"/><circle cx="510.0" cy="305.5" r="3" fill="#c5ced9"/></g>
+        <g><title>Medicaid and SNAP: low 83.8%, medium 74.6%, high 51.5%</title><polyline points="150.0,113.1 330.0,174.2 510.0,327.4" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="113.1" r="3" fill="#c5ced9"/><circle cx="330.0" cy="174.2" r="3" fill="#c5ced9"/><circle cx="510.0" cy="327.4" r="3" fill="#c5ced9"/></g>
+        <g><title>Supreme Court power: low 83.3%, medium 77.7%, high 57.2%</title><polyline points="150.0,116.4 330.0,153.6 510.0,289.6" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="116.4" r="3" fill="#c5ced9"/><circle cx="330.0" cy="153.6" r="3" fill="#c5ced9"/><circle cx="510.0" cy="289.6" r="3" fill="#c5ced9"/></g>
+        <g><title>Trump media and lying: low 81.0%, medium 68.8%, high 52.9%</title><polyline points="150.0,131.7 330.0,212.6 510.0,318.1" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="131.7" r="3" fill="#c5ced9"/><circle cx="330.0" cy="212.6" r="3" fill="#c5ced9"/><circle cx="510.0" cy="318.1" r="3" fill="#c5ced9"/></g>
+        <g><title>Criticism of Democrats: low 80.6%, medium 74.5%, high 53.1%</title><polyline points="150.0,134.4 330.0,174.8 510.0,316.8" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="134.4" r="3" fill="#c5ced9"/><circle cx="330.0" cy="174.8" r="3" fill="#c5ced9"/><circle cx="510.0" cy="316.8" r="3" fill="#c5ced9"/></g>
+        <g><title>Biden and Trump blame: low 79.4%, medium 70.7%, high 53.5%</title><polyline points="150.0,142.3 330.0,200.0 510.0,314.1" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="142.3" r="3" fill="#c5ced9"/><circle cx="330.0" cy="200.0" r="3" fill="#c5ced9"/><circle cx="510.0" cy="314.1" r="3" fill="#c5ced9"/></g>
+        <g><title>Abolish ICE: low 78.7%, medium 69.6%, high 44.2%</title><polyline points="150.0,147.0 330.0,207.3 510.0,375.8" fill="none" stroke="#c5ced9" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="147.0" r="3" fill="#c5ced9"/><circle cx="330.0" cy="207.3" r="3" fill="#c5ced9"/><circle cx="510.0" cy="375.8" r="3" fill="#c5ced9"/></g>
+        <g><title>Border and immigration: low 86.5%, medium 76.7%, high 53.6%</title><polyline points="150.0,95.2 330.0,160.2 510.0,313.5" fill="none" stroke="#6d28d9" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="95.2" r="4.5" fill="#6d28d9" stroke="#fff" stroke-width="1.25"/><circle cx="330.0" cy="160.2" r="4.5" fill="#6d28d9" stroke="#fff" stroke-width="1.25"/><circle cx="510.0" cy="313.5" r="4.5" fill="#6d28d9" stroke="#fff" stroke-width="1.25"/><text x="528" y="317.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#6d28d9">Border and immigration</text></g>
+        <g><title>Abortion access: low 86.0%, medium 73.1%, high 46.5%</title><polyline points="150.0,98.5 330.0,184.1 510.0,360.6" fill="none" stroke="#0f766e" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="98.5" r="4.5" fill="#0f766e" stroke="#fff" stroke-width="1.25"/><circle cx="330.0" cy="184.1" r="4.5" fill="#0f766e" stroke="#fff" stroke-width="1.25"/><circle cx="510.0" cy="360.6" r="4.5" fill="#0f766e" stroke="#fff" stroke-width="1.25"/><text x="528" y="364.6" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#0f766e">Abortion access</text></g>
+        <g><title>Criticism of Republicans: low 79.2%, medium 69.5%, high 40.5%</title><polyline points="150.0,143.6 330.0,208.0 510.0,400.4" fill="none" stroke="#1d4ed8" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="143.6" r="4.5" fill="#1d4ed8" stroke="#fff" stroke-width="1.25"/><circle cx="330.0" cy="208.0" r="4.5" fill="#1d4ed8" stroke="#fff" stroke-width="1.25"/><circle cx="510.0" cy="400.4" r="4.5" fill="#1d4ed8" stroke="#fff" stroke-width="1.25"/><text x="528" y="404.4" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1d4ed8">Criticism of Republicans</text></g>
+        <g><title>MAGA and institutions: low 77.9%, medium 65.6%, high 44.1%</title><polyline points="150.0,152.3 330.0,233.9 510.0,376.5" fill="none" stroke="#b45309" stroke-width="2.25" stroke-linejoin="round" stroke-linecap="round"/><circle cx="150.0" cy="152.3" r="4.5" fill="#b45309" stroke="#fff" stroke-width="1.25"/><circle cx="330.0" cy="233.9" r="4.5" fill="#b45309" stroke="#fff" stroke-width="1.25"/><circle cx="510.0" cy="376.5" r="4.5" fill="#b45309" stroke="#fff" stroke-width="1.25"/><text x="528" y="380.5" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#b45309">MAGA and institutions</text></g>
+        <text x="150" y="492" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Low</text>
+        <text x="330" y="492" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Medium</text>
+        <text x="510" y="492" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">High</text>
+        <text x="330" y="516" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">Toxicity of the post</text>
+        <text x="16" y="271" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555" transform="rotate(-90 16 271)">Keep rate</text>
+        </svg>
+        <figcaption>Each line is one topic with at least 25 posts at low, medium, and high toxicity. All 15 lines fall as toxicity rises. The colored lines are the four topics in the table above. Fainter lines are the other 11 topics.</figcaption>
+        </figure>
+      </section>
+
+      <section id="q3">
+        <h2>3. Which topics are more common in left leaning posts, and which in right leaning posts?</h2>
+        <p>Among the 11,394 grouped posts, 6,668 are left leaning and 4,726 are right leaning. The shares below are the share of each side's grouped posts. A topic "comes up more" for one side when that share is higher.</p>
+        <p>Left leaning posts show up more often in climate, in criticism of Trump's media behavior, and in criticism of Republicans. Right leaning posts show up more often in border and immigration, in criticism of Democrats, and in gun rights. Climate is 13.5% of left leaning grouped posts and 4.6% of right leaning grouped posts. Border and immigration is 3.1% of left leaning grouped posts and 13.8% of right leaning grouped posts.</p>
+        <table>
+          <caption>Topics with the largest difference in share between left leaning and right leaning posts</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Share of left leaning posts</th><th scope="col">Share of right leaning posts</th></tr></thead>
+          <tbody>
+            <tr><td>Climate and fossil fuels</td><td>13.5% (903 posts)</td><td>4.6% (219 posts)</td></tr>
+            <tr><td>Trump media and lying</td><td>7.9% (528)</td><td>2.3% (108)</td></tr>
+            <tr><td>Criticism of Republicans</td><td>7.0% (468)</td><td>2.1% (98)</td></tr>
+            <tr><td>Anti fascism messaging</td><td>2.7% (179)</td><td>0.4% (21)</td></tr>
+            <tr><td>Border and immigration</td><td>3.1% (210)</td><td>13.8% (652)</td></tr>
+            <tr><td>Criticism of Democrats</td><td>3.8% (254)</td><td>7.3% (344)</td></tr>
+            <tr><td>Gun rights</td><td>0.6% (42)</td><td>4.0% (188)</td></tr>
+            <tr><td>Biden and Trump blame</td><td>1.9% (130)</td><td>4.8% (228)</td></tr>
+          </tbody>
+        </table>
+        <figure>
+        <svg role="img" aria-labelledby="share-title share-desc" viewBox="0 0 760 640" xmlns="http://www.w3.org/2000/svg">
+        <title id="share-title">Some topics appear much more often in left- or right-leaning posts</title>
+        <desc id="share-desc">Mirrored bars. Left leaning shares extend left of a center line. Right leaning shares extend right. Climate and fossil fuels is 13.5 percent of left leaning posts and 4.6 percent of right leaning posts. Border and immigration is 3.1 percent of left leaning posts and 13.8 percent of right leaning posts.</desc>
+        <rect width="760" height="640" fill="#fff"/>
+        <text x="380" y="24" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#1a1a1a">Some topics appear much more often in left- or right-leaning posts</text>
+        <text x="380" y="46" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="12" fill="#555">Share of posts within each political-leaning group, by topic</text>
+        <text x="353.0" y="78" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#2563eb" letter-spacing="0.04em">LEFT-LEANING POSTS</text>
+        <text x="603.0" y="78" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="700" fill="#b45309" letter-spacing="0.04em">RIGHT-LEANING POSTS</text>
+        <text x="214" y="108" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">More common in left leaning posts</text>
+        <line x1="16" y1="334.0" x2="748" y2="334.0" stroke="#e5e5e5"/>
+        <text x="214" y="350.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">More common in right leaning posts</text>
+        <line x1="399.9" y1="96" x2="399.9" y2="558.0" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="556.1" y1="96" x2="556.1" y2="558.0" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="321.8" y1="96" x2="321.8" y2="558.0" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="634.2" y1="96" x2="634.2" y2="558.0" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="243.6" y1="96" x2="243.6" y2="558.0" stroke="#e6e6e6" stroke-width="1"/>
+        <line x1="712.4" y1="96" x2="712.4" y2="558.0" stroke="#e6e6e6" stroke-width="1"/>
+        <rect x="8" y="110.0" width="744" height="46" fill="#f3f6fb"/>
+        <g><title>Climate and fossil fuels: 13.5% of left leaning posts, n=903</title><rect x="267.1" y="122.0" width="210.9" height="20" fill="#2563eb"/>
+        <text x="273.1" y="136.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">13.5%</text><text x="311.1" y="136.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=903</text>
+        </g>
+        <g><title>Climate and fossil fuels: 4.6% of right leaning posts, n=219</title><rect x="478.0" y="122.0" width="71.9" height="20" fill="#b45309"/>
+        <text x="543.9" y="136.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">4.6%</text><text x="512.3" y="136.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=219</text>
+        </g>
+        <text x="214" y="130.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#1a1a1a">Climate and fossil fuels</text>
+        <text x="214" y="146.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">+8.9 pp toward left-leaning posts</text>
+        <g><title>Trump media and lying: 7.9% of left leaning posts, n=528</title><rect x="354.6" y="176.0" width="123.4" height="16" fill="#2563eb"/>
+        <text x="360.6" y="188.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">7.9%</text><text x="392.2" y="188.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=528</text>
+        </g>
+        <g><title>Trump media and lying: 2.3% of right leaning posts, n=108</title><rect x="478.0" y="176.0" width="35.9" height="16" fill="#b45309"/>
+        <text x="517.9" y="188.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309">2.3%</text><text x="549.5" y="188.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=108</text>
+        </g>
+        <text x="214" y="182.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Trump media and lying</text>
+        <text x="214" y="198.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">+5.6 pp toward left-leaning posts</text>
+        <g><title>Criticism of Republicans: 7.0% of left leaning posts, n=468</title><rect x="368.6" y="228.0" width="109.4" height="16" fill="#2563eb"/>
+        <text x="374.6" y="240.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">7.0%</text><text x="406.2" y="240.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=468</text>
+        </g>
+        <g><title>Criticism of Republicans: 2.1% of right leaning posts, n=98</title><rect x="478.0" y="228.0" width="32.8" height="16" fill="#b45309"/>
+        <text x="514.8" y="240.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309">2.1%</text><text x="546.4" y="240.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=98</text>
+        </g>
+        <text x="214" y="234.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Criticism of Republicans</text>
+        <text x="214" y="250.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">+4.9 pp toward left-leaning posts</text>
+        <g><title>Anti fascism messaging: 2.7% of left leaning posts, n=179</title><rect x="435.8" y="280.0" width="42.2" height="16" fill="#2563eb"/>
+        <text x="441.8" y="292.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">2.7%</text><text x="408.2" y="292.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=179</text>
+        </g>
+        <g><title>Anti fascism messaging: 0.4% of right leaning posts, n=21</title><rect x="478.0" y="280.0" width="6.2" height="16" fill="#b45309"/>
+        <text x="488.2" y="292.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#b45309">0.4%</text><text x="519.9" y="292.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=21</text>
+        </g>
+        <text x="214" y="286.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Anti fascism messaging</text>
+        <text x="214" y="302.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">+2.3 pp toward left-leaning posts</text>
+        <g><title>Biden and Trump blame: 1.9% of left leaning posts, n=130</title><rect x="448.3" y="372.0" width="29.7" height="16" fill="#2563eb"/>
+        <text x="444.3" y="384.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb">1.9%</text><text x="412.7" y="384.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=130</text>
+        </g>
+        <g><title>Biden and Trump blame: 4.8% of right leaning posts, n=228</title><rect x="478.0" y="372.0" width="75.0" height="16" fill="#b45309"/>
+        <text x="547.0" y="384.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">4.8%</text><text x="515.4" y="384.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=228</text>
+        </g>
+        <text x="214" y="378.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Biden and Trump blame</text>
+        <text x="214" y="394.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">2.9 pp toward right-leaning posts</text>
+        <g><title>Gun rights: 0.6% of left leaning posts, n=42</title><rect x="468.6" y="424.0" width="9.4" height="16" fill="#2563eb"/>
+        <text x="464.6" y="436.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#2563eb">0.6%</text><text x="433.0" y="436.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=42</text>
+        </g>
+        <g><title>Gun rights: 4.0% of right leaning posts, n=188</title><rect x="478.0" y="424.0" width="62.5" height="16" fill="#b45309"/>
+        <text x="534.5" y="436.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">4.0%</text><text x="544.5" y="436.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=188</text>
+        </g>
+        <text x="214" y="430.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Gun rights</text>
+        <text x="214" y="446.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">3.4 pp toward right-leaning posts</text>
+        <g><title>Criticism of Democrats: 3.8% of left leaning posts, n=254</title><rect x="418.6" y="476.0" width="59.4" height="16" fill="#2563eb"/>
+        <text x="424.6" y="488.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">3.8%</text><text x="391.0" y="488.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=254</text>
+        </g>
+        <g><title>Criticism of Democrats: 7.3% of right leaning posts, n=344</title><rect x="478.0" y="476.0" width="114.1" height="16" fill="#b45309"/>
+        <text x="586.1" y="488.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">7.3%</text><text x="554.5" y="488.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=344</text>
+        </g>
+        <text x="214" y="482.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="600" fill="#1a1a1a">Criticism of Democrats</text>
+        <text x="214" y="498.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">3.5 pp toward right-leaning posts</text>
+        <rect x="8" y="514.0" width="744" height="46" fill="#f3f6fb"/>
+        <g><title>Border and immigration: 3.1% of left leaning posts, n=210</title><rect x="429.6" y="526.0" width="48.4" height="20" fill="#2563eb"/>
+        <text x="435.6" y="540.0" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">3.1%</text><text x="402.0" y="540.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#666">n=210</text>
+        </g>
+        <g><title>Border and immigration: 13.8% of right leaning posts, n=652</title><rect x="478.0" y="526.0" width="215.6" height="20" fill="#b45309"/>
+        <text x="687.6" y="540.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#fff">13.8%</text><text x="649.6" y="540.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="9" fill="#ffffff">n=652</text>
+        </g>
+        <text x="214" y="534.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#1a1a1a">Border and immigration</text>
+        <text x="214" y="550.0" text-anchor="end" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10" fill="#555">10.7 pp toward right-leaning posts</text>
+        <line x1="478" y1="90" x2="478" y2="564.0" stroke="#1a1a1a" stroke-width="1.5"/>
+        <line x1="228" y1="564.0" x2="728" y2="564.0" stroke="#ccc"/>
+        <text x="478" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">0</text>
+        <text x="399.9" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">5%</text>
+        <text x="556.1" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">5%</text>
+        <text x="321.8" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">10%</text>
+        <text x="634.2" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">10%</text>
+        <text x="243.6" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">15%</text>
+        <text x="712.4" y="580.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">15%</text>
+        <text x="478" y="602.0" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#555">Share of that group&#39;s grouped posts</text>
+        </svg>
+        <figcaption>Bar length is the share of grouped posts on that side. Both sides use the same scale. Climate and fossil fuels is 13.5% of left leaning posts and 4.6% of right leaning posts. Border and immigration is 3.1% of left leaning posts and 13.8% of right leaning posts. The note under each topic is the difference in percentage points. The small n next to a percentage is the number of posts.</figcaption>
+        </figure>
+      </section>
+
+      <section id="q4">
+        <h2>4. Which topics are more common at low, medium, and high toxicity?</h2>
+        <p>Of the grouped posts, 2,943 are low toxicity, 5,559 are medium, and 2,892 are high. Medium toxicity is the largest slice, and its topics look more like the overall mix. The clear shifts are at the two ends.</p>
+        <p>Low toxicity posts are more often about climate, abortion, and billionaires and taxes. Climate alone is 20.5% of low toxicity grouped posts and 1.6% of high toxicity grouped posts. High toxicity posts are more often attacks on Trump, MAGA and institutions, and criticism of Republicans. Criticism of Trump's media behavior is 13.9% of high toxicity grouped posts and 1.1% of low toxicity grouped posts. Anti Trump harassment is almost entirely in the high toxicity sample (140 of 144 posts).</p>
+        <table>
+          <caption>Share of grouped posts in each toxicity level</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Low</th><th scope="col">Medium</th><th scope="col">High</th></tr></thead>
+          <tbody>
+            <tr><td>Climate and fossil fuels</td><td>20.5% (604)</td><td>8.5% (471)</td><td>1.6% (47)</td></tr>
+            <tr><td>Abortion access</td><td>8.2% (240)</td><td>7.0% (389)</td><td>2.1% (61)</td></tr>
+            <tr><td>Billionaires and taxes</td><td>4.8% (141)</td><td>2.1% (117)</td><td>2.4% (68)</td></tr>
+            <tr><td>Trump media and lying</td><td>1.1% (33)</td><td>3.6% (200)</td><td>13.9% (403)</td></tr>
+            <tr><td>Anti Trump harassment</td><td>0% (0)</td><td>0.1% (4)</td><td>4.8% (140)</td></tr>
+            <tr><td>MAGA and institutions</td><td>3.3% (98)</td><td>7.9% (439)</td><td>10.9% (314)</td></tr>
+            <tr><td>Criticism of Republicans</td><td>2.2% (66)</td><td>4.9% (272)</td><td>7.9% (228)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="q5">
+        <h2>5. Which topics did Democratic raters keep, and which did they remove?</h2>
+        <p>The study records each rater as a Democrat or a Republican. This section uses those labels for left leaning and right leaning raters. Each number is the share of that group's votes, not the average of posts.</p>
+        <p>Democratic raters kept 69.4% of 52,864 votes. Republican raters kept 70.0% of 48,970 votes. The topics they were most likely to remove, and the topics they were most likely to keep, are almost the same list. Both groups removed anti Trump harassment most often, at about 32%. Both groups kept climate and fossil fuels most often among large topics, at about 82%.</p>
+        <table>
+          <caption>Topics Democratic raters were most likely to remove, among topics with at least 200 of their votes</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Keep rate</th><th scope="col">Votes</th></tr></thead>
+          <tbody>
+            <tr><td>Anti Trump harassment</td><td>31.5%</td><td>444</td></tr>
+            <tr><td>MAGA and institutions</td><td>57.6%</td><td>2,308</td></tr>
+            <tr><td>Criticism of Republicans</td><td>59.1%</td><td>1,500</td></tr>
+            <tr><td>Trump media and lying</td><td>59.4%</td><td>1,788</td></tr>
+            <tr><td>Anti fascism messaging</td><td>59.7%</td><td>571</td></tr>
+          </tbody>
+        </table>
+        <table>
+          <caption>Topics Democratic raters were most likely to keep, among topics with at least 200 of their votes</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Keep rate</th><th scope="col">Votes</th></tr></thead>
+          <tbody>
+            <tr><td>Gun policy debate</td><td>82.4%</td><td>262</td></tr>
+            <tr><td>Climate and fossil fuels</td><td>82.2%</td><td>2,872</td></tr>
+            <tr><td>Gun laws in schools</td><td>79.5%</td><td>410</td></tr>
+            <tr><td>Sanctuary cities</td><td>78.6%</td><td>266</td></tr>
+            <tr><td>Gun rights</td><td>77.6%</td><td>602</td></tr>
+          </tbody>
+        </table>
+        <h3>Republican raters</h3>
+        <table>
+          <caption>Topics Republican raters were most likely to remove, among topics with at least 200 of their votes</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Keep rate</th><th scope="col">Votes</th></tr></thead>
+          <tbody>
+            <tr><td>Anti Trump harassment</td><td>31.9%</td><td>282</td></tr>
+            <tr><td>Anti fascism messaging</td><td>57.7%</td><td>478</td></tr>
+            <tr><td>Criticism of Republicans</td><td>59.1%</td><td>1,377</td></tr>
+            <tr><td>Trump media and lying</td><td>59.2%</td><td>1,473</td></tr>
+            <tr><td>MAGA and institutions</td><td>60.8%</td><td>2,059</td></tr>
+          </tbody>
+        </table>
+        <table>
+          <caption>Topics Republican raters were most likely to keep, among topics with at least 200 of their votes</caption>
+          <thead><tr><th scope="col">Topic</th><th scope="col">Keep rate</th><th scope="col">Votes</th></tr></thead>
+          <tbody>
+            <tr><td>Climate and fossil fuels</td><td>81.5%</td><td>2,893</td></tr>
+            <tr><td>Sanctuary cities</td><td>80.6%</td><td>289</td></tr>
+            <tr><td>Gun policy debate</td><td>80.2%</td><td>242</td></tr>
+            <tr><td>Gun laws in schools</td><td>79.1%</td><td>369</td></tr>
+            <tr><td>Mail and elections</td><td>78.2%</td><td>257</td></tr>
+          </tbody>
+        </table>
+        <p>Where the two groups differ, the gap is small. Across 26 topics with at least 200 votes from each group, the typical gap is under 2 points. The largest gap is open carry laws: Democratic raters kept 75.8% of 289 votes, and Republican raters kept 68.3% of 249 votes. The next largest is the other way. Republican raters kept Supreme Court posts at 77.6% (308 votes), and Democratic raters kept them at 71.5% (330 votes).</p>
+      </section>
+
+      <section id="limits">
+        <h2>Limits</h2>
+        <p>Topics describe wording. They do not explain why a rater voted keep or remove.</p>
+        <p>Each post has several raters. The topic keep rate averages their votes. A post can have a keep rate near 50% and still have a majority on one side.</p>
+        <p>The topic names have not been checked by a person.</p>
+        <p>42.3% of posts were left ungrouped. Those posts are in the overall keep rate, and they are not in the topic tables.</p>
+      </section>
+    </main>
+    <footer><p>MirrorView study, MET Research Group</p></footer>
+  </div>
+  <script src="map.js"></script>
+</body>
+</html>

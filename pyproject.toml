@@ -49,6 +49,9 @@ bertopic = [
     "openai>=1.0.0",
     "plotly>=5.0.0",
     "kaleido>=0.2.1",
+    "scipy>=1.11.0",
+    "statsmodels>=0.14.0",
+    "sentence-transformers>=3.0.0",
 ]
 finetune-qwen-2026-08-08 = [
     "torch>=2.12.0",
