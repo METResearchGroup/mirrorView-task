@@ -20,76 +20,24 @@ from shared.data.registry import STUDY_2_KEEP_REMOVE_LABELS
 FIVE_LABELER_COUNT = 5
 UNANIMOUS_REMOVE_COUNTS = frozenset({0, FIVE_LABELER_COUNT})
 SPLIT_REMOVE_COUNTS = frozenset(range(1, FIVE_LABELER_COUNT))
-REQUIRED_COLUMNS = frozenset({"n_raters", "n_remove"})
 
 UNANIMOUS_OUTPUT_CSV = Path(__file__).resolve().parent / "keep_remove_unanimous_labels.csv"
 SPLIT_OUTPUT_CSV = Path(__file__).resolve().parent / "keep_remove_split_labels.csv"
 
 
-def _require_columns(labels: pd.DataFrame) -> None:
-    """Raise KeyError when ``n_raters`` or ``n_remove`` is missing."""
-    missing = REQUIRED_COLUMNS - set(labels.columns)
-    if missing:
-        raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
-
-
-def _integer_column(labels: pd.DataFrame, column: str) -> pd.Series:
-    """Return ``column`` as integers, or raise when a value is not integral."""
-    numeric = pd.to_numeric(labels[column], errors="coerce")
-    non_integer = numeric.isna() | (numeric != numeric.round())
-    if bool(non_integer.any()):
-        raise ValueError(f"{column} must be an integer on every row")
-    return numeric.astype(int)
-
-
-def _assert_five_rater_remove_counts(n_remove: pd.Series) -> None:
-    """Raise when a five-labeler remove count is outside 0 to 5."""
-    allowed = UNANIMOUS_REMOVE_COUNTS | SPLIT_REMOVE_COUNTS
-    unexpected = sorted(set(int(value) for value in n_remove.tolist()) - allowed)
-    if unexpected:
-        raise ValueError(
-            "Five-labeler posts must have n_remove from 0 to 5. "
-            f"Unexpected n_remove values: {unexpected}."
-        )
-
-
-def select_five_rater_labels(labels: pd.DataFrame) -> pd.DataFrame:
-    """Return posts that have exactly five labelers.
-
-    Parameters
-    ----------
-    labels
-        Modal keep/remove rows, including ``n_raters`` and ``n_remove``.
-
-    Returns
-    -------
-    pandas.DataFrame
-        Copy of the five-labeler rows, with the input columns unchanged.
+def _five_labeler_subset(
+    labels: pd.DataFrame,
+    remove_counts: frozenset[int],
+) -> pd.DataFrame:
+    """Return five-labeler rows whose remove count is in ``remove_counts``.
 
     Raises
     ------
     KeyError
         When ``n_raters`` or ``n_remove`` is missing.
-    ValueError
-        When a count is not an integer, or a five-labeler post has
-        ``n_remove`` outside 0 to 5.
     """
-    _require_columns(labels)
-    n_raters = _integer_column(labels, "n_raters")
-    n_remove = _integer_column(labels, "n_remove")
-    five_rater = n_raters == FIVE_LABELER_COUNT
-    _assert_five_rater_remove_counts(n_remove.loc[five_rater])
-    return labels.loc[five_rater].reset_index(drop=True)
-
-
-def _rows_with_remove_counts(
-    labels: pd.DataFrame,
-    remove_counts: frozenset[int],
-) -> pd.DataFrame:
-    """Return five-labeler rows whose remove count is in ``remove_counts``."""
-    five_rater = select_five_rater_labels(labels)
-    n_remove = _integer_column(five_rater, "n_remove")
-    selected = five_rater.loc[n_remove.isin(remove_counts)]
+    five_labelers = labels.loc[labels["n_raters"] == FIVE_LABELER_COUNT]
+    selected = five_labelers.loc[five_labelers["n_remove"].isin(remove_counts)]
     return selected.reset_index(drop=True)
 
 
@@ -108,8 +56,7 @@ def build_unanimous_keep_remove_labels(
     pandas.DataFrame
         Unanimous five-labeler rows. Other labeler counts are excluded.
     """
-    modal = labels if labels is not None else _load_modal_labels(None)
-    return _rows_with_remove_counts(modal, UNANIMOUS_REMOVE_COUNTS)
+    return _five_labeler_subset(_load_modal_labels(labels), UNANIMOUS_REMOVE_COUNTS)
 
 
 def build_split_keep_remove_labels(
@@ -127,8 +74,7 @@ def build_split_keep_remove_labels(
     pandas.DataFrame
         Split five-labeler rows. Other labeler counts are excluded.
     """
-    modal = labels if labels is not None else _load_modal_labels(None)
-    return _rows_with_remove_counts(modal, SPLIT_REMOVE_COUNTS)
+    return _five_labeler_subset(_load_modal_labels(labels), SPLIT_REMOVE_COUNTS)
 
 
 def _load_modal_labels(labels: pd.DataFrame | None) -> pd.DataFrame:
@@ -136,13 +82,6 @@ def _load_modal_labels(labels: pd.DataFrame | None) -> pd.DataFrame:
     if labels is not None:
         return labels
     return dataloader.load_dataset(STUDY_2_KEEP_REMOVE_LABELS, low_memory=False)
-
-
-def _write_label_frame(frame: pd.DataFrame, path: Path) -> pd.DataFrame:
-    """Write ``frame`` to ``path`` and return it."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_csv(path, index=False)
-    return frame
 
 
 def write_keep_remove_label_splits(
@@ -169,8 +108,10 @@ def write_keep_remove_label_splits(
     modal = _load_modal_labels(labels)
     unanimous = build_unanimous_keep_remove_labels(modal)
     split = build_split_keep_remove_labels(modal)
-    _write_label_frame(unanimous, unanimous_path)
-    _write_label_frame(split, split_path)
+    unanimous_path.parent.mkdir(parents=True, exist_ok=True)
+    split_path.parent.mkdir(parents=True, exist_ok=True)
+    unanimous.to_csv(unanimous_path, index=False)
+    split.to_csv(split_path, index=False)
     return unanimous, split
 
 

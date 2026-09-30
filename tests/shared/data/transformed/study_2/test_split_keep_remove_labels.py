@@ -2,9 +2,6 @@
 
 given modal labels with five-labeler posts at 0, 1, 2, 3, 4, and 5 removes,
 and posts with 1, 4, and 6 labelers
-when select_five_rater_labels runs
-then only the five-labeler posts remain, in input order, and the input is unchanged
-
 when build_unanimous_keep_remove_labels runs
 then only five-labeler posts with 0 or 5 removes remain
 
@@ -13,12 +10,6 @@ then only five-labeler posts with 1, 2, 3, or 4 removes remain
 
 when both builders run
 then their post ids are disjoint and their union is every five-labeler post
-
-when n_raters or n_remove is missing
-then select_five_rater_labels raises KeyError
-
-when a five-labeler post has n_remove outside 0 to 5, or a count is not an integer
-then select_five_rater_labels raises ValueError
 
 when write_keep_remove_label_splits runs on that frame
 then both CSVs match the two subsets
@@ -36,7 +27,6 @@ from pathlib import Path
 from unittest.mock import patch
 
 import pandas as pd
-import pytest
 
 from shared.data.registry import (
     STUDY_2_KEEP_REMOVE_LABELS,
@@ -47,7 +37,6 @@ from shared.data.registry import (
 from shared.data.transformed.study_2.split_keep_remove_labels import (
     build_split_keep_remove_labels,
     build_unanimous_keep_remove_labels,
-    select_five_rater_labels,
     write_keep_remove_label_splits,
 )
 from shared.data.transformed.study_2.transform import OUTPUT_COLUMNS
@@ -88,58 +77,6 @@ def _mixed_labels() -> pd.DataFrame:
     return pd.DataFrame(rows)[OUTPUT_COLUMNS]
 
 
-class TestSelectFiveRaterLabels:
-    """Tests for select_five_rater_labels."""
-
-    def test_keeps_only_five_labeler_posts_in_input_order(self) -> None:
-        """Five-labeler posts stay, and posts with other labeler counts drop."""
-        labels = _mixed_labels()
-        expected = ["reddit_zero", "reddit_one", "bluesky_two", "twitter_three", "reddit_four", "bluesky_five"]
-
-        result = select_five_rater_labels(labels)
-
-        assert list(result["post_id"]) == expected
-        assert list(result.columns) == OUTPUT_COLUMNS
-
-    def test_does_not_mutate_input(self) -> None:
-        """Selecting five-labeler posts leaves the caller's frame unchanged."""
-        labels = _mixed_labels()
-        before = labels.copy(deep=True)
-
-        select_five_rater_labels(labels)
-
-        pd.testing.assert_frame_equal(labels, before)
-
-    def test_accepts_integer_valued_floats(self) -> None:
-        """CSV-style 5.0 and 0.0 counts still count as five labelers and zero removes."""
-        labels = pd.DataFrame([_row("reddit_zero", 5.0, 0.0)])
-
-        result = select_five_rater_labels(labels)
-
-        assert list(result["post_id"]) == ["reddit_zero"]
-
-    def test_missing_n_remove_raises_key_error(self) -> None:
-        """A frame without n_remove cannot be split."""
-        labels = _mixed_labels().drop(columns=["n_remove"])
-
-        with pytest.raises(KeyError, match="n_remove"):
-            select_five_rater_labels(labels)
-
-    def test_non_integer_rater_count_raises_value_error(self) -> None:
-        """A fractional labeler count is rejected."""
-        labels = pd.DataFrame([_row("reddit_bad", 5.5, 0)])
-
-        with pytest.raises(ValueError, match="n_raters"):
-            select_five_rater_labels(labels)
-
-    def test_remove_count_outside_zero_to_five_raises_value_error(self) -> None:
-        """A five-labeler post with 6 removes is not unanimous or split."""
-        labels = pd.DataFrame([_row("reddit_bad", 5, 6)])
-
-        with pytest.raises(ValueError, match="n_remove"):
-            select_five_rater_labels(labels)
-
-
 class TestBuildUnanimousKeepRemoveLabels:
     """Tests for build_unanimous_keep_remove_labels."""
 
@@ -169,7 +106,7 @@ class TestBuildSplitKeepRemoveLabels:
     def test_unanimous_and_split_partition_five_labeler_posts(self) -> None:
         """Every five-labeler post is in exactly one subset."""
         labels = _mixed_labels()
-        five_ids = set(select_five_rater_labels(labels)["post_id"])
+        five_ids = set(labels.loc[labels["n_raters"] == 5, "post_id"])
 
         unanimous_ids = set(build_unanimous_keep_remove_labels(labels)["post_id"])
         split_ids = set(build_split_keep_remove_labels(labels)["post_id"])
