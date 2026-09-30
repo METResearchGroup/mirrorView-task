@@ -50,7 +50,11 @@ Full run: `mined_batches=320 candidate_features=20573`
 | structure | 3,235 |
 | **Total** | **19,536** |
 
-## Step 4: cluster features
+## Step 4: clusters
+
+`features=19536 clusters=2 noise=1188`
+
+HDBSCAN: `min_cluster_size=5`, `min_samples=5`, `metric=euclidean`. Largest cluster: 18,340 features (`cluster_000`).
 
 ## Step 5: name clusters
 

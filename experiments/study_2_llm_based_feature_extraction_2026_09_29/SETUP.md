@@ -38,3 +38,9 @@ PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026
 ```bash
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step3_embed_features/run.py
 ```
+
+### Step 4: cluster feature embeddings
+
+```bash
+PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step4_cluster_records/run.py
+```
