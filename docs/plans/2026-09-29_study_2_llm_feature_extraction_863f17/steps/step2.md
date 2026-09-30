@@ -1,24 +1,24 @@
 # Step 2: Mine candidate features with GPT-5.6 Terra
 
-Step 2 sends each of the 320 batches to GPT-5.6 Terra through the OpenAI Batch API and saves the candidate features that come back. The main caller is `main` in `experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py`. Step 2 also adds the three shared helpers that steps 5 and 6 reuse, which are the API key lookup, the batch wrapper, and the estimate table.
+Step 2 sends each of the 320 batches to GPT-5.6 Terra with the synchronous OpenAI chat completions API and saves the candidate features that come back. Requests run through asyncio with a thread pool of 8, so at most 8 requests are in flight. The main caller is `main` in `experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py`. Step 2 also adds the three shared helpers that later steps reuse: the API key lookup, the concurrent runner that step 5 uses, and the estimate table that steps 5 and 6 use.
 
 Out of scope are deduplication, embeddings, and any change to `data_platform/`.
 
 ## Decisions
 
-Use `OpenAIBatchEngine` from `data_platform/generate_features/engines/openai_engine.py` with no edits. Build it through `build_engine`, which reads `LLM_MODEL`, `LLM_TEMPERATURE`, `OPENAI_POLL_INTERVAL_SECONDS`, `OPENAI_BATCH_COMPLETION_WINDOW`, and the endpoint `/v1/chat/completions`. `LLM_MODEL` is `gpt-5.6-terra`. On 2026-09-29 that model returned HTTP 400 for `temperature=0.0` with the message "Only the default (1) value is supported", so the temperature is 1.0. The completion window is `1h`. The engine module's own default is `24h`, and the OpenAI Batch API reference currently lists only `24h` as a supported value. Send `1h` anyway. If batch creation fails because the window is rejected, stop and report the error. Do not change the constant back to `24h`.
+Do not use `OpenAIBatchEngine` or the OpenAI Batch API. On 2026-09-29 batch creation returned HTTP 400 for `completion_window=1h` and said the only supported value is `24h`. This experiment calls the synchronous client's `chat.completions.parse` instead.
 
-Call `batch_label_records` once per run, so each run is one provider batch. The method raises when any request fails, and the operator reruns the command. With 320 requests, a full rerun costs at most one more batch and needs no resume code.
+`LLM_MODEL` is `gpt-5.6-terra`. On 2026-09-29 that model returned HTTP 400 for `temperature=0.0` with the message "Only the default (1) value is supported", so the temperature is 1.0.
 
-The engine sends `spec.system_prompt` as the system message and `LabelTask.text` as the user message. The system message holds the task and the six categories, and the user message holds the stimuli and the repeated task. The row model the engine checks is `{source_record_id, label_timestamp, ...parsed output}`, so the row model adds those two string fields to the output fields.
+`run_concurrent` starts one asyncio event loop and one `ThreadPoolExecutor` with `max_workers=LLM_CONCURRENCY`. `LLM_CONCURRENCY` is 8. Each worker calls the synchronous OpenAI client. The pool is the cap, so a run never has more than 8 requests in flight. `asyncio.gather` waits for every task. Rows and token counts are stored in the same order as the input tasks. If any request raises, the run raises and the operator reruns the command. There is no resume file, and `run.py` uploads only after `run_concurrent` returns.
 
-The engine keeps no token counts, but the Batch output file does. After the batch completes, download `engine.last_batch.output_file_id` with the same client and read `response.body.usage.prompt_tokens` and `response.body.usage.completion_tokens` from each line. The line's `custom_id` is `task-` plus the task index padded to 5 digits, from `CUSTOM_ID_PREFIX` and `CUSTOM_ID_INDEX_WIDTH` in the engine module.
+Each call sends the system prompt as the system message and `LabelTask.text` as the user message. The system message holds the task and the six categories, and the user message holds the stimuli and the repeated task. The response format is the output schema, `CandidateFeatures` in this step. The saved row is `{source_record_id, label_timestamp, ...parsed output}`. `source_record_id` is `task.uri`. `label_timestamp` is one `get_current_timestamp()` value for the whole run. Token counts come from `response.usage.prompt_tokens` and `response.usage.completion_tokens` on that same response.
 
-The smoke test sends the first 5 batches, `batch_000` to `batch_004`, as one provider batch. The estimates use these rules:
+The smoke test sends the first 5 batches, `batch_000` to `batch_004`. Those 5 requests share the pool of 8, so they run together. The estimates use these rules:
 
 - Input tokens and output tokens are the median per smoke request times 320.
-- Price is the median input tokens times $1.00 per million plus the median output tokens times $6.00 per million. The $1.00 and $6.00 rates are half of the $2.00 and $12.00 list rates pinned for `openai/gpt-5.6-terra` in `experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/constants.py` on branch `origin/cursor/predict-keep-remove-jev-gepa-plan-ed3f`, because the Batch API bills at half the list rate.
-- Runtime is the wall time of the smoke batch, from submit to the downloaded output. The full run is also one provider batch. The Batch API does not process requests one after another, so the smoke wall time is the closest measure we have, even though a 320-request batch can take longer than a 5-request batch. `RESULTS.md` states the assumption under the table.
+- Price is the median input tokens times $2.00 per million plus the median output tokens times $12.00 per million. Those are the list rates pinned for `openai/gpt-5.6-terra` in `experiments/predict_keep_remove_jev_gepa_2026_09_23/jev_gepa_rebuilt/constants.py` on branch `origin/cursor/predict-keep-remove-jev-gepa-plan-ed3f`. The synchronous API does not get the Batch API half-price rate.
+- The runtime median is the smoke wall time, from the start of the first request to the end of the last of the 5, times 40. 320 divided by 8 is 40, and the 5 smoke requests fit in one group of 8. The general rule is `scaled_runtime_minutes`: smoke wall minutes times the full request count divided by 8, rounded up, divided by the smoke request count divided by 8, rounded up. `RESULTS.md` states that under the table.
 - Low is the median times 0.8, and high is the median times 1.2.
 
 The full run refuses to start when `step2_mine_candidate_features/estimates.json` is missing from the local outputs and from S3.
@@ -105,9 +105,8 @@ Render each pair as two lines, numbered from 1 within its list, with the kept pa
 | Path | Why |
 |------|-----|
 | `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
-| `data_platform/generate_features/engines/openai_engine.py` | `OpenAIBatchEngine`, `OpenAIBatchEngineConfig`, `create_openai_client`, `CUSTOM_ID_PREFIX`, `CUSTOM_ID_INDEX_WIDTH` |
-| `data_platform/generate_features/models.py` | `FeatureSpec`, `FeatureRunConfig`, `LabelTask` |
-| `data_platform/generate_features/engines/base.py` | `row_with_label_timestamp`, which sets the row shape |
+| `data_platform/generate_features/models.py` | `LabelTask` (`uri`, `text`). Do not use `OpenAIBatchEngine`. |
+| `lib/timestamp_utils.py` | `get_current_timestamp` |
 | `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/storage.py` | `download_artifact`, `upload_artifact`, `local_path` |
 
 ## Files allowed to change
@@ -132,10 +131,9 @@ Add to `shared/constants.py`:
 ```text
 LLM_MODEL = "gpt-5.6-terra"
 LLM_TEMPERATURE = 1.0
-OPENAI_POLL_INTERVAL_SECONDS = 30.0
-OPENAI_BATCH_COMPLETION_WINDOW = "1h"
-LLM_BATCH_USD_PER_MILLION_INPUT = 1.00
-LLM_BATCH_USD_PER_MILLION_OUTPUT = 6.00
+LLM_CONCURRENCY = 8
+LLM_USD_PER_MILLION_INPUT = 2.00
+LLM_USD_PER_MILLION_OUTPUT = 12.00
 AWS_SECRETS_REGION = "us-east-2"
 OPENAI_SECRET_ID = "openai-api-key"
 FEATURE_CATEGORIES = ("lexical", "topic_subject", "semantic_content",
@@ -162,22 +160,26 @@ ensure_openai_api_key() -> None
 
 ```text
 @dataclass(frozen=True) RequestUsage: source_record_id: str, input_tokens: int, output_tokens: int
-@dataclass(frozen=True) BatchRun: rows: list[dict], usage: list[RequestUsage], wall_seconds: float
+@dataclass(frozen=True) ConcurrentRun: rows: list[dict], usage: list[RequestUsage], wall_seconds: float
 
-build_feature_spec(name: str, row_model: type[BaseModel], system_prompt: str,
-                   output_schema: type[BaseModel]) -> FeatureSpec
-  engine_type="openai".
+complete_one(client: OpenAI, task: LabelTask, output_schema: type[BaseModel],
+             row_model: type[BaseModel], system_prompt: str, label_timestamp: str) -> tuple[dict, RequestUsage]
+  One synchronous client.chat.completions.parse call.
+  model=LLM_MODEL, temperature=LLM_TEMPERATURE, response_format=output_schema.
+  Messages are the system prompt and task.text.
+  Raise ValueError when the parsed object is missing or usage is missing.
+  source_record_id is task.uri. Validate the saved row with row_model.
 
-build_engine(spec: FeatureSpec, client: OpenAIBatchClient) -> OpenAIBatchEngine
-  OpenAIBatchEngineConfig from LLM_MODEL, LLM_TEMPERATURE, OPENAI_POLL_INTERVAL_SECONDS,
-  OPENAI_BATCH_COMPLETION_WINDOW, and "/v1/chat/completions"; FeatureRunConfig(); time.sleep.
-
-parse_request_usage(output_text: str, ordered_ids: list[str]) -> list[RequestUsage]
-  Map each custom_id back to ordered_ids by index. Raise ValueError when a line has no usage.
-
-run_batch(engine: OpenAIBatchEngine, client: OpenAIBatchClient,
-                tasks: list[LabelTask], clock: Callable[[], float]) -> BatchRun
-  Time batch_label_records with clock, download last_batch.output_file_id, and parse usage.
+run_concurrent(tasks: list[LabelTask], output_schema: type[BaseModel],
+               row_model: type[BaseModel], system_prompt: str,
+               clock: Callable[[], float]) -> ConcurrentRun
+  Call ensure_openai_api_key(), then build one synchronous OpenAI client.
+  asyncio.run drives a ThreadPoolExecutor(max_workers=LLM_CONCURRENCY).
+  Each complete_one runs on that executor. At most LLM_CONCURRENCY calls are in flight.
+  rows and usage follow the input task order.
+  wall_seconds is the clock after the gather minus the clock before it.
+  One label_timestamp from get_current_timestamp() is shared by every row.
+  Raise the request error. Do not return a partial run.
 ```
 
 `shared/estimates.py`:
@@ -187,6 +189,11 @@ run_batch(engine: OpenAIBatchEngine, client: OpenAIBatchClient,
 
 estimate_row(value_name: str, median: float) -> EstimateRow
   low = median * (1 - ESTIMATE_BAND), high = median * (1 + ESTIMATE_BAND).
+
+scaled_runtime_minutes(smoke_wall_minutes: float, smoke_requests: int,
+                       total_requests: int, concurrency: int) -> float
+  Raise ValueError when any argument is <= 0.
+  Return smoke_wall_minutes * ceil(total_requests / concurrency) / ceil(smoke_requests / concurrency).
 
 build_estimates(input_tokens: list[int], output_tokens: list[int], runtime_minutes: float,
                 total_requests: int, usd_per_million_input: float,
@@ -231,8 +238,8 @@ build_mining_tasks(batches: list[dict], cohort: pd.DataFrame) -> list[LabelTask]
 
 `src/step2_mine_candidate_features/run.py` takes exactly one of `--smoke` or `--full`.
 
-- With `--smoke`, it runs the first `SMOKE_QUERY_COUNT` tasks, writes and uploads `MINING_SMOKE_KEY` and `MINING_ESTIMATES_KEY` with `total_requests=EXPECTED_BATCHES`, and prints the estimate table.
-- With `--full`, it calls `require_estimates(MINING_ESTIMATES_KEY)`, runs all 320 tasks, raises `ValueError` unless there are 320 rows, writes and uploads `CANDIDATE_FEATURES_KEY`, and prints one line.
+- With `--smoke`, it runs the first `SMOKE_QUERY_COUNT` tasks through `run_concurrent`, writes and uploads `MINING_SMOKE_KEY` and `MINING_ESTIMATES_KEY` with `total_requests=EXPECTED_BATCHES`, and prints the estimate table. The runtime median comes from `scaled_runtime_minutes` with `concurrency=LLM_CONCURRENCY`. The price rates are `LLM_USD_PER_MILLION_INPUT` and `LLM_USD_PER_MILLION_OUTPUT`.
+- With `--full`, it calls `require_estimates(MINING_ESTIMATES_KEY)`, runs all 320 tasks through `run_concurrent`, raises `ValueError` unless there are 320 rows, writes and uploads `CANDIDATE_FEATURES_KEY`, and prints one line.
 
 ## Commands
 
@@ -241,7 +248,7 @@ PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step2_mine_candidate_features/run.py --full
 ```
 
-The smoke command prints a Markdown table with the rows `Runtime (minutes)`, `Input tokens`, `Output tokens`, and `Price (USD)`, and the columns `Low`, `Median`, and `High`. Paste the table under `## Step 2: candidate features` in `RESULTS.md`, with one sentence under it that says the runtime assumes one provider batch.
+The smoke command prints a Markdown table with the rows `Runtime (minutes)`, `Input tokens`, `Output tokens`, and `Price (USD)`, and the columns `Low`, `Median`, and `High`. Paste the table under `## Step 2: candidate features` in `RESULTS.md`, with one sentence under it that says the runtime scales the smoke wall time by the number of groups of 8 requests.
 
 The full command prints this line, where `N` is the total number of feature strings across all batches, sides, and categories:
 
@@ -257,4 +264,4 @@ The smoke command prints the four-row table. The full command prints `mined_batc
 
 ## Fail
 
-The step fails when the full run starts without `estimates.json`, when the full run writes fewer than 320 rows, or when any file under `data_platform/` changes.
+The step fails when the full run starts without `estimates.json`, when the full run writes fewer than 320 rows, when the code calls the OpenAI Batch API, or when any file under `data_platform/` changes.

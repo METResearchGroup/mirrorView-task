@@ -16,7 +16,8 @@ We measured these facts on 2026-09-29, before writing the plan:
 
 - 15,113 pairs have exactly five labels once each person counts once per pair. By the modal label, 11,910 of them are keep and 3,203 are remove. Every one of the 15,113 pairs is in the 20,000-pair stimulus file.
 - Because there are only 3,203 remove pairs, the pairs fill at most 320 mining batches of 10 kept and 10 removed pairs without showing any pair twice.
-- GPT-5.6 Terra rejects a temperature of 0 and accepts only its default of 1. The shared OpenAI engine sends a temperature with every request, so this experiment sets it to 1.
+- GPT-5.6 Terra rejects a temperature of 0 and accepts only its default of 1, so this experiment sets the temperature to 1.
+- GPT-5.6 Terra calls use the synchronous chat completions API. asyncio runs the calls, and a thread pool of 8 keeps at most 8 requests in flight. The OpenAI Batch API is not used. On 2026-09-29 it rejected a completion window of 1h and accepted only 24h.
 - One Jev request with one pair and 60 feature questions returned in 0.13 seconds and used 2,654 input tokens.
 
 ## Main questions
@@ -52,7 +53,7 @@ flowchart TD
 
 Each step downloads the previous step's file from S3 and uploads one new file, so you can rerun a step without repeating the steps before it. The experiment reuses these parts of the repository:
 
-- the OpenAI Batch engine in `data_platform/generate_features/engines/openai_engine.py`
+- a small OpenAI client in the experiment's `shared/llm.py`, which calls the synchronous chat completions API through asyncio and 8 threads
 - the Titan helper in `shared/embeddings/bedrock.py`
 - the HDBSCAN helpers in `shared/feature_discovery/llm_based/cluster.py`
 - the five-label counts in `experiments/compare_jev_human_uncertainty_2026_09_25/human_counts.py`
@@ -83,7 +84,7 @@ Label each five-label pair keep or remove by its modal label, and attach the pai
 
 ### Step 2: Mine candidate features with GPT-5.6 Terra
 
-Put each batch into the issue's prompt, and send the 320 prompts through the OpenAI Batch API with structured output. The smoke test on 5 batches writes the first estimate table. Details are in [steps/step2.md](steps/step2.md).
+Put each batch into the issue's prompt, and send the 320 prompts to GPT-5.6 Terra with structured output. At most 8 requests run at once. The smoke test on 5 batches writes the first estimate table. Details are in [steps/step2.md](steps/step2.md).
 
 ### Step 3: Deduplicate and embed the candidate features
 
@@ -95,7 +96,7 @@ Run HDBSCAN once on all of the Titan vectors, and drop the features that HDBSCAN
 
 ### Step 5: Name each cluster and ask for your review
 
-GPT-5.6 Terra reads a sample of up to 30 features from each cluster and returns a name and a one-sentence definition. A name longer than eight words is kept. The step writes a review table with how many batches produced each feature, and then it stops for your feedback. Details are in [steps/step5.md](steps/step5.md).
+GPT-5.6 Terra reads the 50 features closest to each cluster's center and returns a name and a one-sentence definition, using the same 8-thread runner as step 2. A name longer than eight words is kept. The step writes a review table with how many batches produced each feature, and then it stops for your feedback. Details are in [steps/step5.md](steps/step5.md).
 
 ### Step 6: Label every pair with Jev
 

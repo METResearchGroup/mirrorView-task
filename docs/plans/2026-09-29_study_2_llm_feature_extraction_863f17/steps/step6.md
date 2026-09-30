@@ -35,7 +35,7 @@ Requests run on 8 threads, with one client per thread. A shared limiter starts a
 
 Each finished pair appends one line to `jev_predictions.jsonl` with the SHA-256 hash of `LABEL_TO_DETAIL`, serialized as JSON with sorted keys. On a rerun, pairs whose line has the current hash are skipped. Lines with an older hash are ignored, so an edit to the feature list relabels every pair.
 
-The smoke test labels the first 5 pairs in `post_id` order, which is 5 queries when there are 60 features or fewer. The estimates follow the step 2 rules, with these changes:
+The smoke test labels the first 5 pairs in `post_id` order, which is 5 queries when there are 60 features or fewer. The estimates follow the step 2 rules for the 20 percent band and the four-row table. The runtime and the price rates below replace the step 2 rules for those two rows:
 
 - The total request count is 20,000 times the number of requests per pair.
 - Price uses the pinned Jev rates in `experiments/predict_keep_remove_jev_gepa_2026_09_23/shared/pricing.py` on branch `origin/cursor/predict-keep-remove-jev-gepa-plan-ed3f`, which are $0.042 per million input tokens and $0 per million output tokens.

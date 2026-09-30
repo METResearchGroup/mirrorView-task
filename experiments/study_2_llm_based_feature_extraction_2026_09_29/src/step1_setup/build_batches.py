@@ -1,0 +1,93 @@
+"""Build mining batches of kept and removed pairs."""
+
+from __future__ import annotations
+
+import numpy as np
+import pandas as pd
+
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constants import (
+    BATCH_ID_PREFIX,
+    BATCH_ID_WIDTH,
+    KEEP_PAIRS_PER_BATCH,
+    MODAL_LABEL_KEEP,
+    MODAL_LABEL_REMOVE,
+    REMOVE_PAIRS_PER_BATCH,
+)
+
+
+def shuffled_post_ids(
+    cohort: pd.DataFrame, modal_label: str, rng: np.random.Generator
+) -> list[str]:
+    """Return shuffled post ids for one modal label.
+
+    Parameters
+    ----------
+    cohort
+        Cohort with ``post_id`` and ``modal_label``.
+    modal_label
+        ``keep`` or ``remove`` label to filter on.
+    rng
+        NumPy random generator used for the permutation.
+
+    Returns
+    -------
+    list[str]
+        Post ids in shuffled order.
+    """
+    matched = cohort.loc[cohort["modal_label"].eq(modal_label), "post_id"]
+    sorted_ids = sorted(matched.astype(str).tolist())
+    permuted = rng.permutation(sorted_ids)
+    return [str(post_id) for post_id in permuted]
+
+
+def format_batch_id(index: int) -> str:
+    """Format a zero-padded batch identifier.
+
+    Parameters
+    ----------
+    index
+        Batch index starting at zero.
+
+    Returns
+    -------
+    str
+        Batch id such as ``batch_007``.
+    """
+    return f"{BATCH_ID_PREFIX}{index:0{BATCH_ID_WIDTH}d}"
+
+
+def build_batches(cohort: pd.DataFrame, seed: int) -> list[dict]:
+    """Build mining batches of kept and removed post ids.
+
+    Parameters
+    ----------
+    cohort
+        Cohort with modal labels.
+    seed
+        Random seed for shuffling keep then remove ids.
+
+    Returns
+    -------
+    list[dict]
+        Each dict has ``batch_id``, ``keep_post_ids``, and ``remove_post_ids``.
+    """
+    rng = np.random.default_rng(seed)
+    keep_ids = shuffled_post_ids(cohort, MODAL_LABEL_KEEP, rng)
+    remove_ids = shuffled_post_ids(cohort, MODAL_LABEL_REMOVE, rng)
+    keep_batches = len(keep_ids) // KEEP_PAIRS_PER_BATCH
+    remove_batches = len(remove_ids) // REMOVE_PAIRS_PER_BATCH
+    batch_count = min(keep_batches, remove_batches)
+    batches: list[dict] = []
+    for index in range(batch_count):
+        keep_start = index * KEEP_PAIRS_PER_BATCH
+        keep_end = keep_start + KEEP_PAIRS_PER_BATCH
+        remove_start = index * REMOVE_PAIRS_PER_BATCH
+        remove_end = remove_start + REMOVE_PAIRS_PER_BATCH
+        batches.append(
+            {
+                "batch_id": format_batch_id(index),
+                "keep_post_ids": keep_ids[keep_start:keep_end],
+                "remove_post_ids": remove_ids[remove_start:remove_end],
+            }
+        )
+    return batches
