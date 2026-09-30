@@ -1,0 +1,14 @@
+# Identity-cache download scratch (local only)
+outputs/embeddings/.identity_disk_cache/
+
+# S3-primary large artifacts (same relative paths under mirrorview-experimental-artifacts)
+outputs/embeddings/**/embeddings.npy
+outputs/embeddings_minilm/**/embeddings.npy
+outputs/topics/**/model/
+outputs/topics/**/umap_2d.npy
+outputs/topics/**/probabilities.npy
+outputs/**/*.html
+outputs/ablations/**
+!outputs/ablations/summary.csv
+!outputs/analyses/**/*.csv
+outputs/ablations/**/model/

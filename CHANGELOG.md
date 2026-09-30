@@ -1,8 +1,13 @@
 # CHANGELOG
 
+## 2026-09-30
+
+1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
+
 ## 2026-09-28
 
 1. The combined June and September linked-fate dataset loads as Study 2. Callers use `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` at `shared/data/raw/study_2/`. [PR #319](https://github.com/METResearchGroup/mirrorView-task/pull/319)
+2. The Study 2 topic writeup and public page now report original posts only: which topics appear, how keep rates differ by topic, stance, and toxicity, and which topics Democratic and Republican raters keep or remove. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
 
 ## 2026-09-25
 
@@ -13,6 +18,7 @@
 
 1. Callers can load the June and September linked-fate collections from `s3://mirrorview-experimental-artifacts/shared/data/raw/study_phase_2_part_2_and_3/`. The combined session table is 168,871 rows and 5,051 Prolific accounts. The combined stimulus catalog is 20,000 unique posts. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
 2. The shared study loader reads every registered CSV from `mirrorview-experimental-artifacts`. The object key is the repo-relative path, such as `shared/data/raw/study_phase_2_part_2/results/full.csv`. Those CSVs are no longer in git. [PR #311](https://github.com/METResearchGroup/mirrorView-task/pull/311)
+3. Study 2 (20,000 posts) now has BERTopic fits on original text, mirrored text, and a pooled joint corpus, with keep/remove labels joined afterwards. On 19,763 deduplicated posts, mirror text assigned by the original model matches the original topic 19.5% of the time (30.5% excluding noise pairs), and the overall keep rate is 69.8%. [PR #307](https://github.com/METResearchGroup/mirrorView-task/pull/307)
 
 ## 2026-09-22
 

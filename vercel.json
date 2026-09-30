@@ -13,6 +13,14 @@
     {
       "source": "/study-progress/",
       "destination": "/study-progress.html"
+    },
+    {
+      "source": "/study-2-features",
+      "destination": "/study-2-features.html"
+    },
+    {
+      "source": "/study-2-features/",
+      "destination": "/study-2-features.html"
     }
   ]
 }
