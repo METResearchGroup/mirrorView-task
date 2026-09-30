@@ -1,5 +1,17 @@
 # Study 2 Writeup
 
+## Feature generation key takeaways
+
+We use two approaches for generating featuers:
+
+1. **BERTopic**: Clusters post embeddings and generates topics based on the substance of the text.
+2. **LLM-driven feature generation**: generates features based on both the substance of text and the civility of conversation.
+
+The key takeaway across both these methods is that:
+
+- The topic, substance, or political lean of a post are weak predictors of keep/remove behavior
+- The civility of conversation (i.e., the toxicity of language) is a strong predictor.
+
 ## BERTopic on the original posts
 
 We focus the BERTopic analysis on the original posts. The mirroring operation did change some of the topics from the original post. We try to keep the same stance and political intensity, but there are different topics that are triggers for left-leaning and right-leaning groups. We add a follow-up set of analyses later on reviewing how the mirroring approach changed the topics. We also use all keep/remove decisions per post, rather than taking a majority vote. For convention's sake, we measure the overall keep rate, rather than the remove rate.
@@ -213,7 +225,7 @@ After mining features, embedding, and naming each resulting feature cluster, her
 
 ### Results
 
-We have evidence that suggests that people moderate on the quality of conversation and less on the substance of the conversation.
+We have evidence that suggests that people moderate on the civility of conversation and less on the substance of the conversation.
 
 We find that the probability of a post being removed is correlated to increases in hostile language and negatively linked to material policy arguments. Substance-related references and mentions of political actors remain relatively constant.
 
