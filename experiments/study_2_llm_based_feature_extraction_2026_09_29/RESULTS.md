@@ -121,6 +121,67 @@ Smoke labeled the first 5 stimulus pairs, one request each, with all 30 features
 
 `smoke_pairs=5 features=30 requests_per_pair=1`
 
-## Step 7: analyses
+Full run: `labeled_pairs=20000 features=30 requests=20000 deadletters=0`
 
 ## Step 7: analyses
+
+Jev labeled all 20,000 pairs on the 30 named features. A feature counts as present when its probability is at least 0.7. Counts are not compared across groups, because the groups differ in size. The page is `public/study-2-features.html`, served at `/study-2-features`.
+
+For lean, both left and right pairs are led by Political Actor and Institution Criticism, then Political and Institutional Targets. For toxicity, low and medium pairs are also led by that institutional criticism, while high-toxicity pairs are led by Escalatory Partisan Hostility and Hostile Outrage Venting. For remove votes, pairs with 0, 1, or 2 remove votes are led by institutional criticism, and pairs with 3, 4, or 5 remove votes are led by Escalatory Partisan Hostility.
+
+S3 keys:
+
+- `analyses/top_features_by_lean.csv`
+- `analyses/top_features_by_toxicity.csv`
+- `analyses/top_features_by_remove_votes.csv`
+
+### Lean
+
+Left pairs (11,550) and right pairs (8,450) share the same top three features: Political Actor and Institution Criticism, Political and Institutional Targets, and Specific Political and Institutional References.
+
+| Rank | Left (11,550 pairs) | Pairs | Right (8,450 pairs) | Pairs |
+| ---: | --- | ---: | --- | ---: |
+| 1 | Political Actor and Institution Criticism | 9,810 | Political Actor and Institution Criticism | 6,542 |
+| 2 | Political and Institutional Targets | 9,252 | Political and Institutional Targets | 6,317 |
+| 3 | Specific Political and Institutional References | 8,665 | Specific Political and Institutional References | 6,277 |
+| 4 | Escalatory Partisan Hostility | 8,581 | Escalatory Partisan Hostility | 5,438 |
+| 5 | Hostile Outrage Venting | 7,225 | Substantive Policy and Institutional Claims | 4,473 |
+| 6 | Sweeping Unsubstantiated Political Accusations | 6,563 | Partisan Mockery and Taunting | 4,445 |
+| 7 | Partisan Mockery and Taunting | 6,317 | Hostile Outrage Venting | 4,273 |
+| 8 | Substantive Policy and Institutional Claims | 5,970 | Broad Partisan Out-Group Targeting | 3,545 |
+| 9 | Derogatory Labels and Epithets | 5,039 | Sweeping Unsubstantiated Political Accusations | 3,477 |
+| 10 | Partisan Collective Blame | 4,990 | Quoted Slogans and Emphatic Framing | 3,242 |
+
+### Toxicity
+
+Low and medium toxicity are led by criticism of political actors. High toxicity is led by escalatory hostility and outrage.
+
+| Rank | Low (5,000) | Pairs | Medium (10,000) | Pairs | High (5,000) | Pairs |
+| ---: | --- | ---: | --- | ---: | --- | ---: |
+| 1 | Political Actor and Institution Criticism | 3,490 | Political Actor and Institution Criticism | 8,355 | Escalatory Partisan Hostility | 4,695 |
+| 2 | Specific Political and Institutional References | 3,482 | Political and Institutional Targets | 7,882 | Hostile Outrage Venting | 4,635 |
+| 3 | Substantive Policy and Institutional Claims | 3,321 | Escalatory Partisan Hostility | 7,485 | Political Actor and Institution Criticism | 4,507 |
+| 4 | Political and Institutional Targets | 3,292 | Specific Political and Institutional References | 7,433 | Political and Institutional Targets | 4,395 |
+| 5 | Policy Advocacy and Tradeoff Arguments | 2,382 | Hostile Outrage Venting | 6,035 | Specific Political and Institutional References | 4,027 |
+| 6 | Policy Consequence Warnings and Civic Mobilization | 1,870 | Sweeping Unsubstantiated Political Accusations | 5,575 | Partisan Mockery and Taunting | 3,935 |
+| 7 | Escalatory Partisan Hostility | 1,839 | Partisan Mockery and Taunting | 5,538 | Derogatory Labels and Epithets | 3,649 |
+| 8 | Quoted Slogans and Emphatic Framing | 1,689 | Substantive Policy and Institutional Claims | 5,535 | Sweeping Unsubstantiated Political Accusations | 3,229 |
+| 9 | Culture-War Policy Issues | 1,649 | Broad Partisan Out-Group Targeting | 4,551 | Blanket Demonization of Political Opponents | 2,927 |
+| 10 | Explicit Contrastive Framing | 1,485 | Partisan Collective Blame | 4,387 | Broad Partisan Out-Group Targeting | 2,600 |
+
+### Remove votes
+
+Among the 15,113 five-label pairs, 0 to 2 remove votes are led by institutional criticism. 3 to 5 remove votes are led by Escalatory Partisan Hostility. At 5 remove votes, Hostile Outrage Venting is second, on 307 of 324 pairs.
+
+| Rank | 0 (3,986) | 1 (4,592) | 2 (3,332) | 3 (1,929) | 4 (950) | 5 (324) |
+| ---: | --- | --- | --- | --- | --- | --- |
+| 1 | Political Actor and Institution Criticism (2,951) | Political Actor and Institution Criticism (3,707) | Political Actor and Institution Criticism (2,862) | Escalatory Partisan Hostility (1,723) | Escalatory Partisan Hostility (888) | Escalatory Partisan Hostility (313) |
+| 2 | Specific Political and Institutional References (2,751) | Political and Institutional Targets (3,496) | Political and Institutional Targets (2,712) | Political Actor and Institution Criticism (1,709) | Hostile Outrage Venting (860) | Hostile Outrage Venting (307) |
+| 3 | Political and Institutional Targets (2,747) | Specific Political and Institutional References (3,401) | Escalatory Partisan Hostility (2,654) | Political and Institutional Targets (1,658) | Political and Institutional Targets (838) | Political and Institutional Targets (293) |
+| 4 | Substantive Policy and Institutional Claims (2,581) | Escalatory Partisan Hostility (2,974) | Specific Political and Institutional References (2,567) | Hostile Outrage Venting (1,569) | Political Actor and Institution Criticism (828) | Political Actor and Institution Criticism (292) |
+| 5 | Escalatory Partisan Hostility (1,978) | Substantive Policy and Institutional Claims (2,674) | Hostile Outrage Venting (2,246) | Specific Political and Institutional References (1,557) | Specific Political and Institutional References (756) | Specific Political and Institutional References (256) |
+| 6 | Policy Advocacy and Tradeoff Arguments (1,780) | Partisan Mockery and Taunting (2,249) | Partisan Mockery and Taunting (2,060) | Partisan Mockery and Taunting (1,434) | Partisan Mockery and Taunting (745) | Derogatory Labels and Epithets (254) |
+| 7 | Policy Consequence Warnings and Civic Mobilization (1,490) | Hostile Outrage Venting (2,248) | Sweeping Unsubstantiated Political Accusations (1,908) | Sweeping Unsubstantiated Political Accusations (1,222) | Derogatory Labels and Epithets (686) | Partisan Mockery and Taunting (246) |
+| 8 | Sweeping Unsubstantiated Political Accusations (1,456) | Sweeping Unsubstantiated Political Accusations (2,178) | Substantive Policy and Institutional Claims (1,641) | Derogatory Labels and Epithets (1,180) | Sweeping Unsubstantiated Political Accusations (599) | Blanket Demonization of Political Opponents (206) |
+| 9 | Quoted Slogans and Emphatic Framing (1,383) | Broad Partisan Out-Group Targeting (1,766) | Derogatory Labels and Epithets (1,565) | Broad Partisan Out-Group Targeting (1,014) | Blanket Demonization of Political Opponents (583) | Brief Slogan-Like Insult Attacks (202) |
+| 10 | Culture-War Policy Issues (1,355) | Quoted Slogans and Emphatic Framing (1,710) | Broad Partisan Out-Group Targeting (1,560) | Blanket Demonization of Political Opponents (986) | Broad Partisan Out-Group Targeting (518) | Sweeping Unsubstantiated Political Accusations (198) |

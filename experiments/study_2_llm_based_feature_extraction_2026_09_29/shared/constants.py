@@ -92,6 +92,28 @@ JEV_PREDICTIONS_KEY = "step6_label_posts_with_features/jev_predictions.jsonl"
 JEV_DEADLETTER_KEY = "step6_label_posts_with_features/deadletter.jsonl"
 JEV_PROBABILITIES_KEY = "step6_label_posts_with_features/jev_probabilities.parquet"
 POST_FEATURE_LABELS_KEY = "step6_label_posts_with_features/post_feature_labels.parquet"
+STANCE_LEVELS = ("left", "right")
+TOXICITY_LEVELS = {
+    "sample_low_toxicity": "low",
+    "sample_middle_toxicity": "medium",
+    "sample_high_toxicity": "high",
+}
+REMOVE_VOTE_LEVELS = (0, 1, 2, 3, 4, 5)
+EXPECTED_STANCE_COUNTS = {"left": 11550, "right": 8450}
+EXPECTED_TOXICITY_COUNTS = {"low": 5000, "medium": 10000, "high": 5000}
+EXPECTED_REMOVE_VOTE_COUNTS = {0: 3986, 1: 4592, 2: 3332, 3: 1929, 4: 950, 5: 324}
+TOP_FEATURES_PER_GROUP = 10
+EVIDENT_CHARTS_SCRIPTS_DIR = Path("/tmp/evident-charts/skills/evident-charts/scripts")
+CHART_PRESET = "blog"
+CHART_SOURCE = "Source: MirrorView Study 2, Jev labels at a 0.7 cutoff"
+ANALYSES_PREFIX = "analyses/"
+TOP_BY_LEAN_KEY = "analyses/top_features_by_lean.csv"
+TOP_BY_TOXICITY_KEY = "analyses/top_features_by_toxicity.csv"
+TOP_BY_REMOVE_VOTES_KEY = "analyses/top_features_by_remove_votes.csv"
+PAGE_PATH = REPO_ROOT / "public" / "study-2-features.html"
+PAGE_KEY = "step7_analyze_post_features/study-2-features.html"
+LEAN_CHART_KEY = "step7_analyze_post_features/figures/lean.svg"
+TOXICITY_CHART_KEY = "step7_analyze_post_features/figures/toxicity.svg"
 
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.label_to_detail import (  # noqa: E402
     LABEL_TO_DETAIL,

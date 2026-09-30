@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-09-30
+
+1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
+
 ## 2026-09-28
 
 1. The combined June and September linked-fate dataset loads as Study 2. Callers use `STUDY_2_RESULTS_FULL` and `STUDY_2_STIMULI` at `shared/data/raw/study_2/`. [PR #319](https://github.com/METResearchGroup/mirrorView-task/pull/319)

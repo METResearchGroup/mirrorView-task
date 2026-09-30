@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study 2 feature counts</title>
+  <style>{{STYLES}}</style>
+</head>
+<body>
+  <main>
+    <h1>Study 2 feature counts</h1>
+    <p class="lede">Counts of pairs where Jev marked a feature present at a probability of 0.7 or higher. Groups differ in size, so counts are not compared across groups.</p>
+
+    <section>
+      <h2>Lean of the original post</h2>
+      <div id="lean-slot"></div>
+      <div id="lean-tables"></div>
+    </section>
+
+    <section>
+      <h2>Toxicity of the original post</h2>
+      <div id="toxicity-slot"></div>
+      <div id="toxicity-tables"></div>
+    </section>
+
+    <section>
+      <h2>Remove votes among five labelers</h2>
+      <div id="remove-tables"></div>
+    </section>
+
+    <section>
+      <h2>All features</h2>
+      <label for="feature-search">Search features</label>
+      <input id="feature-search" type="search" placeholder="Type a name or definition">
+      <table>
+        <thead><tr><th>Name</th><th>Definition</th></tr></thead>
+        <tbody id="feature-rows"></tbody>
+      </table>
+    </section>
+  </main>
+  <div id="charts" hidden>{{CHARTS}}</div>
+  <script id="page-data" type="application/json">{{DATA_JSON}}</script>
+  <script>{{SCRIPT}}</script>
+</body>
+</html>
