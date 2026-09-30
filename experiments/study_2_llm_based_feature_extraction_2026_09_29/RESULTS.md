@@ -91,6 +91,23 @@ K-means, seed 1, 15 clusters for features mined from kept posts and 15 for featu
 
 ## Step 5: named features
 
+Smoke named `kept_000` through `kept_004`. The table scales that run to all 30 clusters. The runtime scales the smoke wall time by the number of groups of 8 requests.
+
+| Value | Low | Median | High |
+| --- | --- | --- | --- |
+| Runtime (minutes) | 0.2 | 0.2 | 0.2 |
+| Input tokens | 19,008 | 23,760 | 28,512 |
+| Output tokens | 1,296 | 1,620 | 1,944 |
+| Price (USD) | $0.05 | $0.07 | $0.08 |
+
+| Cluster | Smoke name |
+| --- | --- |
+| kept_000 | Policy Consequence Warnings and Civic Appeals |
+| kept_001 | Political Actor and Institution Criticism |
+| kept_002 | Substantive Policy Advocacy and Tradeoffs |
+| kept_003 | Political Strategy and Electoral Consequences |
+| kept_004 | Substantive Policy and Institutional Claims |
+
 ## Step 6: Jev labels
 
 ## Step 7: analyses
