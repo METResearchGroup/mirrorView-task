@@ -124,7 +124,8 @@ def build_split_keep_remove_labels(
     pandas.DataFrame
         Split five-labeler rows. Other labeler counts are excluded.
     """
-    raise NotImplementedError
+    modal = labels if labels is not None else _load_modal_labels(None)
+    return _rows_with_remove_counts(modal, SPLIT_REMOVE_COUNTS)
 
 
 def _load_modal_labels(labels: pd.DataFrame | None) -> pd.DataFrame:
