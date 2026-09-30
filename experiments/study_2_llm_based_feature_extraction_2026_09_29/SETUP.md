@@ -56,3 +56,12 @@ PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --full
 PYTHONPATH=. uv run python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step5_name_clusters/run.py --write-label-details
 ```
+
+### Step 6: label pairs with Jev
+
+Smoke labels the first five pairs. The full run labels all 20,000 pairs and does not start until the smoke estimate exists.
+
+```bash
+PYTHONPATH=. uv run --with typesafe-sdk==0.7.1 python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step6_label_posts_with_features/run.py --smoke
+PYTHONPATH=. uv run --with typesafe-sdk==0.7.1 python experiments/study_2_llm_based_feature_extraction_2026_09_29/src/step6_label_posts_with_features/run.py --full
+```

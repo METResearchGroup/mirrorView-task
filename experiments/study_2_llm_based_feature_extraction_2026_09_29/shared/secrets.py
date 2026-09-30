@@ -12,6 +12,7 @@ from experiments.compare_jev_human_uncertainty_2026_09_25.jev_labels import (
 )
 from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.constants import (
     AWS_SECRETS_REGION,
+    JEV_SECRET_ID,
     OPENAI_SECRET_ID,
 )
 
@@ -65,3 +66,28 @@ def ensure_openai_api_key() -> None:
         raise ValueError(f"secret {OPENAI_SECRET_ID} has no SecretString")
     api_key = parse_secret_string(secret_string, ("api_key", "OPENAI_API_KEY"))
     os.environ["OPENAI_API_KEY"] = api_key
+
+
+def get_jev_api_key() -> str:
+    """Return the TypeSafe API key from Secrets Manager.
+
+    Returns
+    -------
+    str
+        Key taken from ``api_key``, ``TYPESAFE_API_KEY``, or ``key``.
+
+    Raises
+    ------
+    ValueError
+        When the secret has no usable string.
+    """
+    if os.environ.get("TYPESAFE_API_KEY", "").strip():
+        return os.environ["TYPESAFE_API_KEY"].strip()
+    use_lab_credentials()
+    os.environ["AWS_DEFAULT_REGION"] = AWS_SECRETS_REGION
+    client = boto3.client("secretsmanager", region_name=AWS_SECRETS_REGION)
+    response = client.get_secret_value(SecretId=JEV_SECRET_ID)
+    secret_string = response.get("SecretString")
+    if not secret_string:
+        raise ValueError(f"secret {JEV_SECRET_ID} has no SecretString")
+    return parse_secret_string(secret_string, ("api_key", "TYPESAFE_API_KEY", "key"))

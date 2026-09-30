@@ -110,4 +110,17 @@ Smoke named `kept_000` through `kept_004`. The table scales that run to all 30 c
 
 ## Step 6: Jev labels
 
+Smoke labeled the first 5 stimulus pairs, one request each, with all 30 features. The table scales that sample to 20,000 pairs. The runtime median is the 1,000-request-per-minute cap, which is 20 minutes.
+
+| Value | Low | Median | High |
+| --- | --- | --- | --- |
+| Runtime (minutes) | 16.0 | 20.0 | 24.0 |
+| Input tokens | 73,856,000 | 92,320,000 | 110,784,000 |
+| Output tokens | 12,848,000 | 16,060,000 | 19,272,000 |
+| Price (USD) | $3.10 | $3.88 | $4.65 |
+
+`smoke_pairs=5 features=30 requests_per_pair=1`
+
+## Step 7: analyses
+
 ## Step 7: analyses

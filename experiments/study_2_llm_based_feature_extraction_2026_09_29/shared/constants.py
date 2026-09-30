@@ -74,3 +74,25 @@ NAMING_SMOKE_KEY = "step5_name_clusters/smoke_cluster_names.jsonl"
 NAMING_ESTIMATES_KEY = "step5_name_clusters/estimates.json"
 CLUSTER_NAMES_KEY = "step5_name_clusters/cluster_names.jsonl"
 FEATURE_REVIEW_KEY = "step5_name_clusters/feature_review.csv"
+JEV_MODEL_ID = "jev-1.13.0"
+JEV_SECRET_ID = "jev-typesafe-api-key"
+JEV_STATE_KEY = "pair"
+JEV_REQUEST_TIMEOUT_SECONDS = 120.0
+JEV_MAX_WORKERS = 8
+JEV_MAX_REQUESTS_PER_MINUTE = 1000
+JEV_RETRY_BACKOFF_SECONDS = (1.0, 2.0, 4.0)
+MAX_FEATURES_PER_JEV_REQUEST = 60
+JEV_USD_PER_MILLION_INPUT = 0.042
+JEV_USD_PER_MILLION_OUTPUT = 0.0
+FEATURE_PRESENT_THRESHOLD = 0.7
+LABEL_COLUMNS_PREFIX = ("post_id", "original_text", "mirror_text")
+LABELING_SMOKE_KEY = "step6_label_posts_with_features/smoke_jev_predictions.jsonl"
+LABELING_ESTIMATES_KEY = "step6_label_posts_with_features/estimates.json"
+JEV_PREDICTIONS_KEY = "step6_label_posts_with_features/jev_predictions.jsonl"
+JEV_DEADLETTER_KEY = "step6_label_posts_with_features/deadletter.jsonl"
+JEV_PROBABILITIES_KEY = "step6_label_posts_with_features/jev_probabilities.parquet"
+POST_FEATURE_LABELS_KEY = "step6_label_posts_with_features/post_feature_labels.parquet"
+
+from experiments.study_2_llm_based_feature_extraction_2026_09_29.shared.label_to_detail import (  # noqa: E402
+    LABEL_TO_DETAIL,
+)
