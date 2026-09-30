@@ -89,7 +89,7 @@ K-means, seed 1, 15 clusters for features mined from kept posts and 15 for featu
 | removed_013 | 310 | Collective blame assigned to voters or broad partisan populations |
 | removed_014 | 205 | Hostile venting and outrage |
 
-## Step 5: name clusters
+## Step 5: named features
 
 ## Step 6: Jev labels
 

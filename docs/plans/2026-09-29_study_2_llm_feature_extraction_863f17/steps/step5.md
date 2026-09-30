@@ -6,9 +6,9 @@ Out of scope are Jev calls and any change to the step 1 to step 4 code.
 
 ## Decisions
 
-For each cluster, take its member features sorted by `feature_id`. When a cluster has more than 30 members, draw 30 without replacement with one `numpy.random.default_rng(SEED)`, and visit the clusters in `cluster_key` order so the draw is the same on every run. When a cluster has 30 or fewer members, use all of them. Show the kept text from step 3 for each sampled member.
+For each cluster, rank its member features by closeness to that cluster's centroid. The centroid is the mean of the members' Titan vectors. Closeness is Euclidean distance, smallest first. Take the closest 50. When a cluster has 50 or fewer members, use all of them. Every cluster in the current step 4 result has at least 205 members, so each prompt receives 50 texts. If two members are the same distance from the centroid, the one with the earlier `feature_id` comes first. There is no random draw. Show the kept text from step 3 for each selected member, in that closeness order. The bullets in the user prompt stay in that order, closest first.
 
-Use `run_concurrent` from `shared/llm.py`, so the model, the temperature, and the 8-thread pool match step 2. The smoke test names the first 5 clusters in `cluster_key` order. The estimates use `total_requests` equal to the number of clusters. Token totals, price, and the runtime scale follow the step 2 rules, including `scaled_runtime_minutes` and the list rates `LLM_USD_PER_MILLION_INPUT` and `LLM_USD_PER_MILLION_OUTPUT`. The smoke request count is 5.
+Use `run_concurrent` from `shared/llm.py`, so the model, the temperature, and the 8-thread pool match step 2. The smoke test names the first 5 clusters in `cluster_key` order, which is `kept_000` through `kept_004`. The full run names all 30 clusters, `kept_000` through `kept_014` and then `removed_000` through `removed_014`. The estimates use `total_requests` equal to the number of clusters. Token totals, price, and the runtime scale follow the step 2 rules, including `scaled_runtime_minutes` and the list rates `LLM_USD_PER_MILLION_INPUT` and `LLM_USD_PER_MILLION_OUTPUT`. The smoke request count is 5.
 
 The prompt asks for a name of at most eight words. A longer name is kept. After the concurrent run returns, any cluster whose name is empty after strip, or whose definition is empty after strip, is sent again in one more `run_concurrent` call. That retry happens once, still with at most 8 requests in flight. If a name or a definition is still empty, the step fails and lists those cluster keys.
 
@@ -53,6 +53,7 @@ Return the name and the definition.
 |------|-----|
 | `docs/plans/2026-09-29_study_2_llm_feature_extraction_863f17/plan.md` | Parent plan |
 | `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/llm.py` | `run_concurrent` |
+| `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/constants.py` | `EMBEDDINGS_KEY`, `FEATURE_IDS_KEY`, `FEATURES_KEY`, and `ASSIGNMENTS_KEY`. Download these. Do not edit step 3 or step 4 code. |
 | `experiments/study_2_llm_based_feature_extraction_2026_09_29/shared/estimates.py` | `build_estimates`, `require_estimates` |
 | `shared/feature_discovery/llm_based/schemas.py` | The earlier `ClusterLabelResult`, which this step does not reuse because it asks the model for a cluster id and notes the issue did not request |
 
@@ -76,7 +77,7 @@ All paths are under `experiments/study_2_llm_based_feature_extraction_2026_09_29
 Add to `shared/constants.py`:
 
 ```text
-CLUSTER_NAMING_SAMPLE_SIZE = 30
+CLUSTER_NAMING_SAMPLE_SIZE = 50
 LABEL_KEY_PREFIX = "is_"
 NAMING_SMOKE_KEY = "step5_name_clusters/smoke_cluster_names.jsonl"
 NAMING_ESTIMATES_KEY = "step5_name_clusters/estimates.json"
@@ -106,8 +107,10 @@ ClusterNameRow(ClusterName):
 SYSTEM_PROMPT: str
 USER_TEMPLATE: str
 sample_cluster_features(assignments: pd.DataFrame, features: pd.DataFrame,
-                        sample_size: int, seed: int) -> dict[str, list[str]]
-  cluster_key -> sampled feature texts, following the Decisions section.
+                        matrix: np.ndarray, feature_ids: list[str],
+                        sample_size: int) -> dict[str, list[str]]
+  cluster_key -> feature texts closest to that cluster's centroid, following the Decisions section.
+  Raise ValueError when a feature id is missing from feature_ids or the matrix row count disagrees.
 render_cluster_prompt(feature_texts: list[str]) -> str
 build_naming_tasks(samples: dict[str, list[str]], sizes: pd.DataFrame) -> list[LabelTask]
   One task per cluster in cluster_key order, with uri = cluster_key.

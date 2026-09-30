@@ -96,7 +96,7 @@ Run HDBSCAN once on all of the Titan vectors, and drop the features that HDBSCAN
 
 ### Step 5: Name each cluster and ask for your review
 
-GPT-5.6 Terra reads a sample of up to 30 features from each cluster and returns a name and a one-sentence definition, using the same 8-thread runner as step 2. A name longer than eight words is kept. The step writes a review table with how many batches produced each feature, and then it stops for your feedback. Details are in [steps/step5.md](steps/step5.md).
+GPT-5.6 Terra reads the 50 features closest to each cluster's center and returns a name and a one-sentence definition, using the same 8-thread runner as step 2. A name longer than eight words is kept. The step writes a review table with how many batches produced each feature, and then it stops for your feedback. Details are in [steps/step5.md](steps/step5.md).
 
 ### Step 6: Label every pair with Jev
 

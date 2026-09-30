@@ -42,7 +42,7 @@ Replace the HDBSCAN fit in the Study 2 clustering command with the two K-means f
 
 ### Step 2: Point later naming at all 30 clusters
 
-Adjust the Study 2 naming step so it names every kept-post group and every removed-post group. Do not run naming as part of this plan.
+Adjust the Study 2 naming step so it names every kept-post group and every removed-post group. Each prompt receives the 50 member features closest to that group's center. A group with 50 or fewer members sends every member. Do not run naming as part of this plan.
 
 ## What "done" looks like
 
