@@ -72,21 +72,24 @@ def _rows_for_smaller_classes(
     random_state: int,
 ) -> list[pd.DataFrame]:
     """Sample each class that is smaller than the largest, in first-seen order."""
-    counts = labels.value_counts(sort=False)
-    if counts.empty:
+    counts = _counts_by_first_appearance(labels)
+    if not counts:
         return []
-    largest_count = int(counts.max())
+    largest_count = max(class_count for _, class_count in counts)
     return [
-        _sample_class(
-            df,
-            labels,
-            class_value,
-            largest_count - int(class_count),
-            random_state,
-        )
-        for class_value, class_count in counts.items()
-        if int(class_count) < largest_count
+        _sample_class(df, labels, class_value, largest_count - class_count, random_state)
+        for class_value, class_count in counts
+        if class_count < largest_count
     ]
+
+
+def _counts_by_first_appearance(labels: pd.Series) -> list[tuple[object, int]]:
+    """Return each observed class and its row count, in first-seen order."""
+    first_seen = labels.drop_duplicates(keep="first")
+    if first_seen.empty:
+        return []
+    counts = labels.value_counts(sort=False)
+    return [(value, int(counts[value])) for value in first_seen.tolist()]
 
 
 def _sample_class(
