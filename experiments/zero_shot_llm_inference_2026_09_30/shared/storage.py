@@ -10,10 +10,18 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, TypeVar
 
-from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import EXPERIMENT_S3_ROOT
-from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import Study2InputRecord
+from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
+    EXPERIMENT_S3_ROOT,
+    INPUT_MANIFEST_KEY,
+)
+from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
+    InputManifest,
+    Study2InputRecord,
+)
+
+ModelT = TypeVar("ModelT")
 
 if TYPE_CHECKING:
     from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
@@ -229,6 +237,74 @@ def put_immutable_object(
 def object_exists(store: CampaignObjectStore, key: str) -> bool:
     """Return whether ``key`` is already present in the store."""
     return store.get(key) is not None
+
+
+def load_verified_prepared_input(
+    store: CampaignObjectStore,
+) -> tuple[InputManifest, tuple[Study2InputRecord, ...]]:
+    """Load prepared input bytes, verify digest, and parse records.
+
+    Raises
+    ------
+    ValueError
+        When manifest or records are missing, digest mismatches, or IDs duplicate.
+    """
+    manifest = _load_input_manifest(store)
+    records_bytes = _load_required_bytes(store, manifest.records_s3_key)
+    digest = sha256_hex(records_bytes)
+    if digest != manifest.records_sha256:
+        raise ValueError("prepared input records digest mismatch")
+    records = parse_study2_input_jsonl_bytes(records_bytes)
+    _assert_unique_post_ids(records)
+    return manifest, tuple(records)
+
+
+def parse_study2_input_jsonl_bytes(data: bytes) -> list[Study2InputRecord]:
+    """Parse prepared input JSONL bytes into validated records."""
+    return _parse_jsonl_lines(data, Study2InputRecord)
+
+
+def parse_jsonl_document_bytes(
+    data: bytes,
+    model_type: type[ModelT],
+) -> list[ModelT]:
+    """Parse JSONL bytes into validated Pydantic rows."""
+    return _parse_jsonl_lines(data, model_type)
+
+
+def _load_input_manifest(store: CampaignObjectStore) -> InputManifest:
+    manifest_bytes = _load_required_bytes(store, INPUT_MANIFEST_KEY)
+    return InputManifest.model_validate_json(manifest_bytes)
+
+
+def _load_required_bytes(store: CampaignObjectStore, key: str) -> bytes:
+    stored = store.get(key)
+    if stored is None:
+        raise ValueError(f"missing required object: {key}")
+    return stored.body
+
+
+def _parse_jsonl_lines(data: bytes, model_type: type[ModelT]) -> list[ModelT]:
+    text = data.decode("utf-8")
+    if not text.strip():
+        return []
+    records: list[ModelT] = []
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        if not line.strip():
+            raise ValueError(f"empty JSONL line at line {line_number}")
+        try:
+            records.append(model_type.model_validate_json(line))
+        except ValueError as error:
+            raise ValueError(f"invalid JSONL at line {line_number}: {error}") from error
+    return records
+
+
+def _assert_unique_post_ids(records: list[Study2InputRecord]) -> None:
+    seen: set[str] = set()
+    for record in records:
+        if record.post_id in seen:
+            raise ValueError(f"duplicate prepared post_id: {record.post_id}")
+        seen.add(record.post_id)
 
 
 def _serialize_record_line(record: Study2InputRecord) -> str:
