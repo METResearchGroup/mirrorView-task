@@ -7,6 +7,7 @@ Run from repo root::
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable
 
 from langchain_typesafe import (
@@ -22,7 +23,12 @@ from langchain_typesafe.client import (
     TypeSafeRateLimitError,
 )
 
-from shared.models.jev.constants import JEV_MODEL_ID, JEV_RETRY_BACKOFF_SECONDS
+from shared.models.jev.client import build_jev_classifier
+from shared.models.jev.constants import (
+    JEV_MAX_REQUESTS_PER_MINUTE,
+    JEV_MODEL_ID,
+    JEV_RETRY_BACKOFF_SECONDS,
+)
 from shared.models.jev.rate_limit import RequestStartLimiter
 from shared.models.jev.schemas import JevResult
 
@@ -172,5 +178,26 @@ class JevScorer:
 
 
 def build_jev_scorer(model_id: str = JEV_MODEL_ID) -> JevScorer:
-    """Build the real scorer: pinned classifier, shared limiter, real clock."""
-    raise NotImplementedError
+    """Build the real scorer: pinned classifier, shared limiter, real clock.
+
+    Parameters
+    ----------
+    model_id
+        TypeSafe model ID to pin. Defaults to the shared Jev model constant.
+
+    Returns
+    -------
+    JevScorer
+        Scorer wired to the live classifier, monotonic limiter, and real clock.
+    """
+    limiter = RequestStartLimiter(
+        JEV_MAX_REQUESTS_PER_MINUTE,
+        time.monotonic,
+        time.sleep,
+    )
+    return JevScorer(
+        build_jev_classifier(model_id),
+        limiter,
+        time.perf_counter,
+        time.sleep,
+    )
