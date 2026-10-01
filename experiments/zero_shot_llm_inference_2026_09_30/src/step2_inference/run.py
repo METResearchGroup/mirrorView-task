@@ -1,5 +1,9 @@
 """Resumable per-model Bedrock inference for Study 2 zero-shot runs.
 
+The default ``--max-tokens`` is 256 because the Bedrock engine's built-in
+default of 32 tokens is often too small for a JSON object with both
+``is_remove`` and ``p_remove``.
+
 Run from repo root::
 
     PYTHONPATH=. uv run python -m experiments.zero_shot_llm_inference_2026_09_30.src.step2_inference.run --help
@@ -65,6 +69,9 @@ _BATCH_OBJECT_PREFIX = "batch-"
 _JSONL_OBJECT_SUFFIX = ".jsonl"
 _MANIFEST_OBJECT_PREFIX = "manifest-"
 _JSON_OBJECT_SUFFIX = ".json"
+DEFAULT_BATCH_SIZE = 64
+DEFAULT_MAX_CONCURRENCY = 8
+DEFAULT_MAX_TOKENS = 256
 
 
 def run_model_inference(
@@ -86,57 +93,53 @@ def run_model_inference(
     FileExistsError
         When an immutable write collides with an existing object.
     """
-    _load_prepared_input(store)
-    _load_resume_state(store, run_id, model_folder, limit)
-    _run_pending_batches(
-        store,
-        client,
+    model = validate_inference_arguments(
         run_id,
         model_folder,
+        limit,
         batch_size,
         max_concurrency,
         max_tokens,
     )
-    _write_model_manifest(store, run_id, model_folder)
-
-
-def _load_prepared_input(store: CampaignObjectStore) -> None:
-    raise NotImplementedError
-
-
-def _load_resume_state(
-    store: CampaignObjectStore,
-    run_id: str,
-    model_folder: str,
-    limit: int | None,
-) -> None:
-    raise NotImplementedError
-
-
-def _run_pending_batches(
-    store: CampaignObjectStore,
-    client: BedrockRuntimeClient,
-    run_id: str,
-    model_folder: str,
-    batch_size: int,
-    max_concurrency: int,
-    max_tokens: int,
-) -> None:
-    raise NotImplementedError
-
-
-def _write_model_manifest(
-    store: CampaignObjectStore,
-    run_id: str,
-    model_folder: str,
-) -> None:
-    raise NotImplementedError
+    run_plan = _build_inference_run_plan(store, run_id, model, limit)
+    run_state = _run_pending_record_batches(
+        store,
+        client,
+        run_id,
+        model,
+        run_plan,
+        batch_size,
+        max_concurrency,
+        max_tokens,
+    )
+    manifest = build_model_run_manifest(
+        run_plan.input_manifest,
+        model,
+        run_id,
+        limit,
+        batch_size,
+        max_tokens,
+        run_plan.requested_records,
+        tuple(run_state.predictions),
+        tuple(run_state.failures),
+        tuple(run_state.prediction_keys),
+        tuple(run_state.failure_keys),
+    )
+    write_model_run_manifest(store, run_id, model.folder_name, manifest)
 
 
 def main() -> None:
     """Parse CLI arguments and run one model inference task."""
-    apply_lab_aws_credentials_when_unset()
     args = _parse_args()
+    validate_inference_arguments(
+        args.run_id,
+        args.model,
+        args.limit,
+        args.batch_size,
+        args.max_concurrency,
+        args.max_tokens,
+    )
+    apply_lab_aws_credentials_when_unset()
     store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, DEFAULT_S3_REGION)
     client = create_bedrock_runtime_client()
     run_model_inference(
@@ -151,8 +154,79 @@ def main() -> None:
     )
 
 
+def validate_inference_arguments(
+    run_id: str,
+    model_folder: str,
+    limit: int | None,
+    batch_size: int,
+    max_concurrency: int,
+    max_tokens: int,
+) -> ModelDefinition:
+    """Validate CLI configuration before any AWS client is constructed.
+
+    Raises
+    ------
+    ValueError
+        When arguments are unsafe or refer to an unknown model folder.
+    """
+    validate_path_segment(run_id)
+    validate_positive_optional_limit(limit)
+    _validate_positive_integer(batch_size, "batch_size")
+    _validate_positive_integer(max_concurrency, "max_concurrency")
+    _validate_positive_integer(max_tokens, "max_tokens")
+    return get_model_definition_by_folder(model_folder)
+
+
 def _parse_args() -> argparse.Namespace:
-    raise NotImplementedError
+    parser = argparse.ArgumentParser(
+        description="Run resumable zero-shot Bedrock inference for one Study 2 model.",
+    )
+    parser.add_argument("--run-id", required=True, help="Safe run identifier segment")
+    parser.add_argument(
+        "--model",
+        required=True,
+        help="Confirmed model folder name from the Study 2 registry",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Optional positive record limit for bounded smoke runs",
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=DEFAULT_BATCH_SIZE,
+        help="Positive number of pending records per inference batch",
+    )
+    parser.add_argument(
+        "--max-concurrency",
+        type=int,
+        default=DEFAULT_MAX_CONCURRENCY,
+        help="Positive maximum concurrent Bedrock calls within one batch",
+    )
+    parser.add_argument(
+        "--max-tokens",
+        type=int,
+        default=DEFAULT_MAX_TOKENS,
+        help="Positive maximum output tokens forwarded to Converse",
+    )
+    return parser.parse_args()
+
+
+def _chunk_records(
+    records: tuple[Study2InputRecord, ...],
+    batch_size: int,
+) -> list[tuple[Study2InputRecord, ...]]:
+    batches: list[tuple[Study2InputRecord, ...]] = []
+    for start in range(0, len(records), batch_size):
+        batches.append(records[start : start + batch_size])
+    return batches
+
+
+def _validate_positive_integer(value: int, field_name: str) -> None:
+    if value <= 0:
+        raise ValueError(f"{field_name} must be a positive integer")
 
 
 def validate_positive_optional_limit(limit: int | None) -> None:
@@ -178,6 +252,26 @@ def select_requested_records(
 
 
 @dataclass(frozen=True)
+class InferenceRunPlan:
+    """Validated prepared input and pending work for one model run."""
+
+    input_manifest: InputManifest
+    requested_records: tuple[Study2InputRecord, ...]
+    pending_records: tuple[Study2InputRecord, ...]
+    artifacts: LoadedRunArtifacts
+
+
+@dataclass(frozen=True)
+class InferenceRunState:
+    """Accumulated predictions, failures, and object keys for one pass."""
+
+    prediction_keys: tuple[str, ...]
+    predictions: tuple[PredictionRecord, ...]
+    failure_keys: tuple[str, ...]
+    failures: tuple[FailureRecord, ...]
+
+
+@dataclass(frozen=True)
 class LoadedRunArtifacts:
     """Immutable artifacts already stored for one model run."""
 
@@ -186,6 +280,86 @@ class LoadedRunArtifacts:
     predictions: tuple[PredictionRecord, ...]
     failure_object_keys: tuple[str, ...]
     failures: tuple[FailureRecord, ...]
+
+
+def _build_inference_run_plan(
+    store: CampaignObjectStore,
+    run_id: str,
+    model: ModelDefinition,
+    limit: int | None,
+) -> InferenceRunPlan:
+    input_manifest, prepared_records = load_verified_prepared_input(store)
+    requested_records = select_requested_records(prepared_records, limit)
+    prepared_post_ids = frozenset(record.post_id for record in prepared_records)
+    artifacts = load_existing_run_artifacts(
+        store,
+        run_id,
+        model.folder_name,
+        model.model_id,
+        prepared_post_ids,
+    )
+    assert_configured_limit_matches_manifests(limit, artifacts.manifests)
+    requested_post_ids = frozenset(record.post_id for record in requested_records)
+    completed_ids = completed_post_ids_for_requested_set(
+        artifacts.predictions,
+        requested_post_ids,
+    )
+    pending_records = select_pending_records(requested_records, completed_ids)
+    return InferenceRunPlan(
+        input_manifest=input_manifest,
+        requested_records=requested_records,
+        pending_records=pending_records,
+        artifacts=artifacts,
+    )
+
+
+def _run_pending_record_batches(
+    store: CampaignObjectStore,
+    client: BedrockRuntimeClient,
+    run_id: str,
+    model: ModelDefinition,
+    run_plan: InferenceRunPlan,
+    batch_size: int,
+    max_concurrency: int,
+    max_tokens: int,
+) -> InferenceRunState:
+    prediction_keys = list(run_plan.artifacts.prediction_object_keys)
+    failure_keys = list(run_plan.artifacts.failure_object_keys)
+    all_predictions = list(run_plan.artifacts.predictions)
+    all_failures = list(run_plan.artifacts.failures)
+    for batch in _chunk_records(run_plan.pending_records, batch_size):
+        batch_predictions, batch_failures = run_ordered_inference_batch(
+            client,
+            model,
+            run_id,
+            batch,
+            max_concurrency,
+            max_tokens,
+        )
+        prediction_key = write_prediction_batch_if_nonempty(
+            store,
+            run_id,
+            model.folder_name,
+            batch_predictions,
+        )
+        failure_key = write_failure_batch_if_nonempty(
+            store,
+            run_id,
+            model.folder_name,
+            batch_failures,
+        )
+        if prediction_key is not None:
+            prediction_keys.append(prediction_key)
+            all_predictions.extend(batch_predictions)
+        if failure_key is not None:
+            failure_keys.append(failure_key)
+            all_failures.extend(batch_failures)
+    return InferenceRunState(
+        prediction_keys=tuple(prediction_keys),
+        predictions=tuple(all_predictions),
+        failure_keys=tuple(failure_keys),
+        failures=tuple(all_failures),
+    )
 
 
 def load_existing_run_artifacts(
@@ -341,6 +515,74 @@ def write_prediction_batch_if_nonempty(
     return key
 
 
+def build_model_run_manifest(
+    input_manifest: InputManifest,
+    model: ModelDefinition,
+    run_id: str,
+    configured_limit: int | None,
+    batch_size: int,
+    max_tokens: int,
+    requested_records: tuple[Study2InputRecord, ...],
+    predictions: tuple[PredictionRecord, ...],
+    failures: tuple[FailureRecord, ...],
+    prediction_object_keys: tuple[str, ...],
+    failure_object_keys: tuple[str, ...],
+) -> ModelRunManifest:
+    """Summarize the observed run state for one immutable manifest."""
+    requested_ids = frozenset(record.post_id for record in requested_records)
+    completed = completed_post_ids_for_requested_set(predictions, requested_ids)
+    unresolved = unresolved_failure_post_ids(failures, predictions, requested_ids)
+    status = _manifest_status_for_counts(
+        len(requested_records),
+        len(completed),
+        len(unresolved),
+    )
+    return ModelRunManifest(
+        schema_version=MANIFEST_SCHEMA_VERSION,
+        run_id=run_id,
+        model_display_name=model.display_name,
+        model_folder=model.folder_name,
+        model_id=model.model_id,
+        prepared_input_records_key=input_manifest.records_s3_key,
+        prepared_input_records_sha256=input_manifest.records_sha256,
+        configured_batch_size=batch_size,
+        configured_max_tokens=max_tokens,
+        configured_limit=configured_limit,
+        requested_record_count=len(requested_records),
+        completed_prediction_count=len(completed),
+        unresolved_failure_count=len(unresolved),
+        prediction_object_keys=prediction_object_keys,
+        failure_object_keys=failure_object_keys,
+        status=status,
+    )
+
+
+def write_model_run_manifest(
+    store: CampaignObjectStore,
+    run_id: str,
+    model_folder: str,
+    manifest: ModelRunManifest,
+) -> str:
+    """Write one immutable manifest describing the current run state.
+
+    Raises
+    ------
+    FileExistsError
+        When the target manifest key already exists.
+    """
+    prefix = build_manifests_prefix(run_id, model_folder)
+    sequence = next_sequence_for_prefix(
+        store,
+        prefix,
+        _MANIFEST_OBJECT_PREFIX,
+        _JSON_OBJECT_SUFFIX,
+    )
+    key = build_manifest_key(run_id, model_folder, sequence)
+    body = serialize_json_document(manifest.model_dump(mode="json"))
+    put_immutable_object(store, key, body)
+    return key
+
+
 def write_failure_batch_if_nonempty(
     store: CampaignObjectStore,
     run_id: str,
@@ -462,6 +704,16 @@ def _flatten_and_validate_predictions(
             seen_post_ids.add(record.post_id)
             predictions.append(record)
     return tuple(predictions)
+
+
+def _manifest_status_for_counts(
+    requested_count: int,
+    completed_count: int,
+    unresolved_failure_count: int,
+) -> ModelRunManifestStatus:
+    if completed_count == requested_count and unresolved_failure_count == 0:
+        return ModelRunManifestStatus.COMPLETE
+    return ModelRunManifestStatus.INCOMPLETE
 
 
 def _split_prediction_and_failure_outcomes(
