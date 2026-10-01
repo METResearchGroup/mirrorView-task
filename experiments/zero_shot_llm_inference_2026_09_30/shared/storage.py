@@ -105,7 +105,7 @@ def build_prediction_batch_key(run_id: str, model_folder: str, sequence: int) ->
     ValueError
         When ``sequence`` is negative or path segments are unsafe.
     """
-    raise NotImplementedError
+    return _build_batch_key(run_id, model_folder, _PREDICTIONS_SEGMENT, sequence)
 
 
 def build_failure_batch_key(run_id: str, model_folder: str, sequence: int) -> str:
@@ -116,7 +116,7 @@ def build_failure_batch_key(run_id: str, model_folder: str, sequence: int) -> st
     ValueError
         When ``sequence`` is negative or path segments are unsafe.
     """
-    raise NotImplementedError
+    return _build_batch_key(run_id, model_folder, _FAILURES_SEGMENT, sequence)
 
 
 def build_manifest_key(run_id: str, model_folder: str, sequence: int) -> str:
@@ -127,7 +127,10 @@ def build_manifest_key(run_id: str, model_folder: str, sequence: int) -> str:
     ValueError
         When ``sequence`` is negative or path segments are unsafe.
     """
-    raise NotImplementedError
+    _validate_sequence(sequence)
+    filename = f"{_MANIFEST_FILE_PREFIX}{sequence:0{_SEQUENCE_WIDTH}d}{_JSON_SUFFIX}"
+    prefix = build_manifests_prefix(run_id, model_folder)
+    return prefix + filename
 
 
 def next_sequence_for_prefix(
@@ -137,7 +140,56 @@ def next_sequence_for_prefix(
     suffix: str,
 ) -> int:
     """Return the next six-digit sequence under ``prefix`` for ``file_prefix``."""
-    raise NotImplementedError
+    keys = store.list_keys(prefix)
+    return _max_sequence_from_keys(keys, prefix, file_prefix, suffix) + 1
+
+
+def _build_batch_key(
+    run_id: str,
+    model_folder: str,
+    artifact_segment: str,
+    sequence: int,
+) -> str:
+    _validate_sequence(sequence)
+    filename = f"{_BATCH_FILE_PREFIX}{sequence:0{_SEQUENCE_WIDTH}d}{_JSONL_SUFFIX}"
+    run_prefix = build_model_run_prefix(run_id, model_folder)
+    return run_prefix + f"{artifact_segment}/" + filename
+
+
+def _validate_sequence(sequence: int) -> None:
+    if sequence < 0:
+        raise ValueError("sequence must be nonnegative")
+
+
+def _max_sequence_from_keys(
+    keys: list[str],
+    prefix: str,
+    file_prefix: str,
+    suffix: str,
+) -> int:
+    max_sequence = -1
+    for key in keys:
+        if not key.startswith(prefix):
+            continue
+        filename = key[len(prefix) :]
+        parsed = _parse_sequence_filename(filename, file_prefix, suffix)
+        if parsed is None:
+            continue
+        max_sequence = max(max_sequence, parsed)
+    return max_sequence
+
+
+def _parse_sequence_filename(
+    filename: str,
+    file_prefix: str,
+    suffix: str,
+) -> int | None:
+    if not filename.startswith(file_prefix) or not filename.endswith(suffix):
+        return None
+    middle = filename[len(file_prefix) : -len(suffix)]
+    if len(middle) != _SEQUENCE_WIDTH or not middle.isdigit():
+        return None
+    return int(middle)
 
 
 def sha256_hex(data: bytes) -> str:
