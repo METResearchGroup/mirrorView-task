@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-01
+
+1. Study 2 few-shot keep-or-remove optimization selected one GEPA instruction on the 405-row pilot. On the 61-row test split, F1 moved from 0.285714 to 0.545455 and recall from 0.200000 to 0.600000, with accuracy unchanged at 0.918033. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
+
 ## 2026-09-30
 
 1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
