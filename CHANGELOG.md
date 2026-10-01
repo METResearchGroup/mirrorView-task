@@ -2,7 +2,7 @@
 
 ## 2026-10-01
 
-1. Study 2 few-shot keep-or-remove optimization can prepare a 405-row pilot, trace GPT-5.6 Terra through DSPy and Weave, and stop after a 30-call GEPA smoke. The development baseline F1 is 0.285714, and the measured pilot estimates are $4.21, $6.02, and $9.63. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
+1. Study 2 few-shot keep-or-remove optimization selected one GEPA instruction on the 405-row pilot. On the 61-row test split, F1 moved from 0.285714 to 0.545455 and recall from 0.200000 to 0.600000, with accuracy unchanged at 0.918033. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
 
 ## 2026-09-30
 

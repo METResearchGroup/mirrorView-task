@@ -20,6 +20,7 @@ from experiments.dspy_gepa_optimization_2026_09_30.shared.config import (
     BEDROCK_MODEL_ID,
     DEVELOPMENT_SPLIT,
     INPUT_PRICE_PER_MILLION,
+    INSTRUCTION_LENGTH_LIMIT_RATIO,
     OUTPUT_PRICE_PER_MILLION,
     PILOT_METRIC_CALLS,
     PRELIMINARY_HIGH_COST_USD,
@@ -315,7 +316,13 @@ class _GuardedProposer:
         updated = {}
         for name in components_to_update:
             current = candidate[name]
-            proposed = self._predict(current_instruction=current, feedback=str(reflective_dataset)[:4000]).improved_instruction
+            length_limit = int(len(seed_instruction()) * INSTRUCTION_LENGTH_LIMIT_RATIO)
+            feedback = (
+                f"The improved instruction must be at most {length_limit} characters, "
+                "must keep the line 'Allow Or Remove?', and must not quote post text.\n\n"
+                + str(reflective_dataset)[:3000]
+            )
+            proposed = self._predict(current_instruction=current, feedback=feedback).improved_instruction
             reasons = rejection_reasons(str(proposed), self._post_texts)
             if reasons:
                 self._rejections.append({"component": name, "reasons": reasons, "source": "optimizer"})
@@ -397,9 +404,12 @@ def _pilot_estimates(usage: dict[str, float]) -> dict[str, float]:
 
 def _upload_log_dir(run_id: str, log_dir: Path) -> None:
     for path in log_dir.rglob("*"):
-        if path.is_file() and path.stat().st_size < 5_000_000:
-            relative = f"optimization/optimizer_state/{path.relative_to(log_dir).as_posix()}"
-            upload_run_bytes(run_id, relative, path.read_bytes())
+        if not path.is_file() or path.stat().st_size >= 5_000_000:
+            continue
+        body = path.read_bytes()
+        digest = __import__("hashlib").sha256(body).hexdigest()[:12]
+        relative = f"optimization/optimizer_state/{digest}/{path.name}"
+        upload_run_bytes(run_id, relative, body)
 
 
 def _write_results(run_id: str, metrics: dict[str, float], estimates: dict[str, float], rejections: list[dict[str, object]], compiled: object) -> None:
@@ -511,7 +521,6 @@ def run_pilot(args: argparse.Namespace) -> None:
     log_dir = Path("/tmp") / f"dspy-gepa-{args.run_id}"
     log_dir.mkdir(parents=True, exist_ok=True)
     _restore_optimizer_state(args.run_id, log_dir)
-    client = initialize_weave()
     configure_task_model()
     program = build_seed_program()
     optimization = evaluation.optimization_batch()
@@ -519,27 +528,26 @@ def run_pilot(args: argparse.Namespace) -> None:
     rejections: list[dict[str, object]] = []
     pause = _PilotPause(PRELIMINARY_HIGH_COST_USD)
     metric = _pilot_metric(pause)
-    with trace_attributes({"run_id": args.run_id, "mode": "pilot", "stage": "optimizer", "model_id": BEDROCK_MODEL_ID}):
-        compiled = _compile_gepa(
-            program,
-            optimization,
-            validation,
-            rejections,
-            log_dir,
-            PILOT_METRIC_CALLS,
-            metric,
-            [pause],
-            pause,
-        )
+    compiled = _compile_gepa(
+        program,
+        optimization,
+        validation,
+        rejections,
+        log_dir,
+        PILOT_METRIC_CALLS,
+        metric,
+        [pause],
+        pause,
+    )
     if pause.paused:
-        _upload_log_dir(args.run_id, log_dir)
-        client.finish()
         print("status", "paused")
         print("pause_reason", pause.reason)
         print("test_rows_loaded", 0)
+        _upload_log_dir(args.run_id, log_dir)
         return
     selected = _lock_selection(args, smoke, compiled, optimization.post_texts, rejections)
     _copy_smoke_baseline(args.approved_smoke_run_id, args.run_id)
+    client = initialize_weave()
     development = evaluation.load_scored_split(DEVELOPMENT_SPLIT)
     with trace_attributes({"run_id": args.run_id, "mode": "pilot", "stage": "development", "model_id": BEDROCK_MODEL_ID}):
         rows = evaluation.score_examples(selected["program"], development.examples, concurrency=1)
@@ -565,7 +573,8 @@ def _pilot_metric(pause: _PilotPause):
 
     def metric(gold, pred=None, trace=None, pred_name=None, pred_trace=None):
         result = gepa_metric(gold, pred, trace, pred_name, pred_trace)
-        pause.record_failure("contract failure" in result.feedback)
+        malformed = "contract failure" in result.feedback and "disagrees" not in result.feedback
+        pause.record_failure(malformed)
         return result
 
     return metric
