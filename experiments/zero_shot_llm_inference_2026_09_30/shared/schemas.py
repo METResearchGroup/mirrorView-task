@@ -2,7 +2,14 @@
 
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+PREDICTION_SCHEMA_VERSION = "study2-zero-shot-prediction-v1"
+FAILURE_SCHEMA_VERSION = "study2-zero-shot-failure-v1"
+MANIFEST_SCHEMA_VERSION = "study2-zero-shot-model-run-v1"
+FAILURE_WRAPPER_CALL_COUNT = 1
 
 FIVE_RATER_COUNT = 5
 PROBABILITY_THRESHOLD = 0.5
@@ -62,6 +69,83 @@ class RemovePrediction(BaseModel):
         if self.is_remove != expected:
             raise ValueError("is_remove must match the 0.5 probability threshold")
         return self
+
+
+class TokenUsage(BaseModel):
+    """Per-record token counts from one Converse call."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    input_tokens: int = Field(ge=0)
+    output_tokens: int = Field(ge=0)
+    total_tokens: int = Field(ge=0)
+
+    @model_validator(mode="after")
+    def _check_total(self) -> TokenUsage:
+        expected = self.input_tokens + self.output_tokens
+        if self.total_tokens != expected:
+            raise ValueError("total_tokens must equal input_tokens plus output_tokens")
+        return self
+
+
+class PredictionRecord(BaseModel):
+    """One immutable prediction row for a requested post."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: str = Field(min_length=1)
+    run_id: str = Field(min_length=1)
+    model_folder: str = Field(min_length=1)
+    model_id: str = Field(min_length=1)
+    post_id: str = Field(min_length=1)
+    is_remove: bool
+    p_remove: float
+    usage: TokenUsage
+
+
+class FailureRecord(BaseModel):
+    """One immutable failure row for a post that did not produce a prediction."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: str = Field(min_length=1)
+    run_id: str = Field(min_length=1)
+    model_folder: str = Field(min_length=1)
+    model_id: str = Field(min_length=1)
+    post_id: str = Field(min_length=1)
+    exception_type: str = Field(min_length=1)
+    error_message: str = Field(min_length=1)
+    wrapper_call_count: int = Field(ge=1)
+
+
+class ModelRunManifestStatus(str, Enum):
+    """Terminal status for one model run after a finished pass."""
+
+    COMPLETE = "complete"
+    INCOMPLETE = "incomplete"
+
+
+class ModelRunManifest(BaseModel):
+    """Immutable manifest summarizing one model folder under a run."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: str = Field(min_length=1)
+    run_id: str = Field(min_length=1)
+    model_display_name: str = Field(min_length=1)
+    model_folder: str = Field(min_length=1)
+    model_id: str = Field(min_length=1)
+    prepared_input_records_key: str = Field(min_length=1)
+    prepared_input_records_sha256: str = Field(min_length=1)
+    configured_batch_size: int = Field(ge=1)
+    configured_max_tokens: int = Field(ge=1)
+    configured_limit: int | None = Field(default=None)
+    requested_record_count: int = Field(ge=0)
+    completed_prediction_count: int = Field(ge=0)
+    unresolved_failure_count: int = Field(ge=0)
+    prediction_object_keys: tuple[str, ...]
+    failure_object_keys: tuple[str, ...]
+    status: ModelRunManifestStatus
 
 
 class InputManifest(BaseModel):

@@ -30,5 +30,27 @@ def label_record(
     record: Study2InputRecord,
     max_tokens: int,
 ) -> tuple[RemovePrediction, BedrockUsage]:
-    """Label one prepared record through the public Converse helper."""
+    """Label one prepared record through the public Converse helper.
+
+    Parameters
+    ----------
+    client
+        Injected Bedrock runtime client; not constructed here.
+    model
+        Confirmed registry entry supplying the exact Bedrock model ID.
+    record
+        One prepared Study 2 input row.
+    max_tokens
+        Maximum output tokens forwarded to Converse.
+
+    Returns
+    -------
+    tuple[RemovePrediction, BedrockUsage]
+        Validated label and per-call token usage from the engine.
+
+    Raises
+    ------
+    Exception
+        Propagates Bedrock, JSON, or validation errors from ``converse_label``.
+    """
     raise NotImplementedError

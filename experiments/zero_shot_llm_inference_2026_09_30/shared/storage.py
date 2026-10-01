@@ -19,6 +19,14 @@ if TYPE_CHECKING:
     from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 
 _RUNS_SEGMENT = "runs"
+_PREDICTIONS_SEGMENT = "predictions"
+_FAILURES_SEGMENT = "failures"
+_MANIFESTS_SEGMENT = "manifests"
+_BATCH_FILE_PREFIX = "batch-"
+_MANIFEST_FILE_PREFIX = "manifest-"
+_SEQUENCE_WIDTH = 6
+_JSONL_SUFFIX = ".jsonl"
+_JSON_SUFFIX = ".json"
 
 
 def apply_lab_aws_credentials_when_unset() -> None:
@@ -72,6 +80,64 @@ def build_model_run_prefix(run_id: str, model_folder: str) -> str:
     safe_run_id = validate_path_segment(run_id)
     safe_folder = validate_path_segment(model_folder)
     return join_experiment_key(_RUNS_SEGMENT, safe_run_id, safe_folder) + "/"
+
+
+def build_predictions_prefix(run_id: str, model_folder: str) -> str:
+    """Return the predictions prefix for one model folder under a run."""
+    return build_model_run_prefix(run_id, model_folder) + f"{_PREDICTIONS_SEGMENT}/"
+
+
+def build_failures_prefix(run_id: str, model_folder: str) -> str:
+    """Return the failures prefix for one model folder under a run."""
+    return build_model_run_prefix(run_id, model_folder) + f"{_FAILURES_SEGMENT}/"
+
+
+def build_manifests_prefix(run_id: str, model_folder: str) -> str:
+    """Return the manifests prefix for one model folder under a run."""
+    return build_model_run_prefix(run_id, model_folder) + f"{_MANIFESTS_SEGMENT}/"
+
+
+def build_prediction_batch_key(run_id: str, model_folder: str, sequence: int) -> str:
+    """Return the immutable prediction batch key for ``sequence``.
+
+    Raises
+    ------
+    ValueError
+        When ``sequence`` is negative or path segments are unsafe.
+    """
+    raise NotImplementedError
+
+
+def build_failure_batch_key(run_id: str, model_folder: str, sequence: int) -> str:
+    """Return the immutable failure batch key for ``sequence``.
+
+    Raises
+    ------
+    ValueError
+        When ``sequence`` is negative or path segments are unsafe.
+    """
+    raise NotImplementedError
+
+
+def build_manifest_key(run_id: str, model_folder: str, sequence: int) -> str:
+    """Return the immutable manifest key for ``sequence``.
+
+    Raises
+    ------
+    ValueError
+        When ``sequence`` is negative or path segments are unsafe.
+    """
+    raise NotImplementedError
+
+
+def next_sequence_for_prefix(
+    store: CampaignObjectStore,
+    prefix: str,
+    file_prefix: str,
+    suffix: str,
+) -> int:
+    """Return the next six-digit sequence under ``prefix`` for ``file_prefix``."""
+    raise NotImplementedError
 
 
 def sha256_hex(data: bytes) -> str:
