@@ -21,6 +21,11 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
     PredictionRecord,
     Study2InputRecord,
 )
+from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
+    EXPECTED_SPLIT_RECORD_COUNT,
+    EXPECTED_TOTAL_RECORD_COUNT,
+    EXPECTED_UNANIMOUS_RECORD_COUNT,
+)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
     validate_path_segment,
@@ -211,12 +216,29 @@ def partition_prepared_records(
     records: tuple[Study2InputRecord, ...],
 ) -> PreparedInputPartitions:
     """Split prepared rows into all, unanimous, and split partitions."""
-    raise NotImplementedError
+    unanimous = tuple(record for record in records if record.is_unanimous)
+    split = tuple(record for record in records if not record.is_unanimous)
+    return PreparedInputPartitions(
+        all_rows=records,
+        unanimous_rows=unanimous,
+        split_rows=split,
+    )
 
 
 def validate_prepared_partitions(partitions: PreparedInputPartitions) -> None:
     """Reject prepared partitions whose counts differ from pinned totals."""
-    raise NotImplementedError
+    _reject_partition_count(len(partitions.all_rows), EXPECTED_TOTAL_RECORD_COUNT, "all")
+    _reject_partition_count(
+        len(partitions.unanimous_rows),
+        EXPECTED_UNANIMOUS_RECORD_COUNT,
+        "unanimous",
+    )
+    _reject_partition_count(len(partitions.split_rows), EXPECTED_SPLIT_RECORD_COUNT, "split")
+
+
+def _reject_partition_count(observed: int, expected: int, name: str) -> None:
+    if observed != expected:
+        raise ValueError(f"{name} partition count mismatch: {observed} != {expected}")
 
 
 def build_label_counts(partitions: PreparedInputPartitions) -> tuple[LabelCountRow, ...]:
