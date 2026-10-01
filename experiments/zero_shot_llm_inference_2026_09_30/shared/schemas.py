@@ -102,6 +102,11 @@ class PredictionRecord(BaseModel):
     p_remove: float
     usage: TokenUsage
 
+    @model_validator(mode="after")
+    def _check_label(self) -> PredictionRecord:
+        RemovePrediction(is_remove=self.is_remove, p_remove=self.p_remove)
+        return self
+
 
 class FailureRecord(BaseModel):
     """One immutable failure row for a post that did not produce a prediction."""
@@ -174,3 +179,78 @@ def _validate_rater_counts(n_raters: int, n_keep: int, n_remove: int) -> None:
         raise ValueError("n_raters must equal five")
     if n_keep + n_remove != FIVE_RATER_COUNT:
         raise ValueError("n_keep and n_remove must sum to five")
+
+
+def validate_prediction_record_identity(
+    record: PredictionRecord,
+    run_id: str,
+    model_folder: str,
+    model_id: str,
+    known_post_ids: frozenset[str],
+) -> None:
+    """Raise when a stored prediction does not match the active run identity.
+
+    Raises
+    ------
+    ValueError
+        When run, model, or post identity does not match expectations.
+    """
+    if record.schema_version != PREDICTION_SCHEMA_VERSION:
+        raise ValueError("prediction schema_version mismatch")
+    if record.run_id != run_id:
+        raise ValueError("prediction run_id mismatch")
+    if record.model_folder != model_folder:
+        raise ValueError("prediction model_folder mismatch")
+    if record.model_id != model_id:
+        raise ValueError("prediction model_id mismatch")
+    if record.post_id not in known_post_ids:
+        raise ValueError(f"unknown prediction post_id: {record.post_id}")
+
+
+def validate_failure_record_identity(
+    record: FailureRecord,
+    run_id: str,
+    model_folder: str,
+    model_id: str,
+    known_post_ids: frozenset[str],
+) -> None:
+    """Raise when a stored failure does not match the active run identity.
+
+    Raises
+    ------
+    ValueError
+        When run, model, or post identity does not match expectations.
+    """
+    if record.schema_version != FAILURE_SCHEMA_VERSION:
+        raise ValueError("failure schema_version mismatch")
+    if record.run_id != run_id:
+        raise ValueError("failure run_id mismatch")
+    if record.model_folder != model_folder:
+        raise ValueError("failure model_folder mismatch")
+    if record.model_id != model_id:
+        raise ValueError("failure model_id mismatch")
+    if record.post_id not in known_post_ids:
+        raise ValueError(f"unknown failure post_id: {record.post_id}")
+
+
+def validate_model_run_manifest_identity(
+    manifest: ModelRunManifest,
+    run_id: str,
+    model_folder: str,
+    model_id: str,
+) -> None:
+    """Raise when a stored manifest does not match the active run identity.
+
+    Raises
+    ------
+    ValueError
+        When run or model identity does not match expectations.
+    """
+    if manifest.schema_version != MANIFEST_SCHEMA_VERSION:
+        raise ValueError("manifest schema_version mismatch")
+    if manifest.run_id != run_id:
+        raise ValueError("manifest run_id mismatch")
+    if manifest.model_folder != model_folder:
+        raise ValueError("manifest model_folder mismatch")
+    if manifest.model_id != model_id:
+        raise ValueError("manifest model_id mismatch")
