@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-01
+
+1. Study 2 zero-shot keep or remove inference can prepare the 13,992 five-labeler posts, resume one Bedrock model at a time into immutable S3 batches, and write remove-positive metric tables for the all, unanimous, and split slices. [PR #333](https://github.com/METResearchGroup/mirrorView-task/pull/333)
+
 ## 2026-09-30
 
 1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
