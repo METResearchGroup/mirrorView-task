@@ -302,6 +302,3 @@ def _row_to_record(row: pd.Series) -> Study2InputRecord:
 
 if __name__ == "__main__":
     main()
-
-
-
