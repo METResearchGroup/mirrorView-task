@@ -124,7 +124,7 @@ def _render_model_metrics_section(rows: tuple[ModelMetricRow, ...]) -> str:
 
 def _model_metrics_table(rows: tuple[ModelMetricRow, ...], dataset: AnalysisDataset) -> str:
     header = "| Model | N | F1 | Accuracy | Recall | Precision |\n| --- | ---: | ---: | ---: | ---: | ---: |"
-    dataset_rows = [row for row in rows if row.dataset is dataset]
+    dataset_rows = [row for row in rows if row.dataset == dataset]
     body = "\n".join(_model_metric_row(row) for row in dataset_rows)
     return f"{header}\n{body}"
 
