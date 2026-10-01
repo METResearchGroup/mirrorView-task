@@ -1,4 +1,4 @@
-"""Jev model, secret, and request settings shared across experiments.
+"""Jev model, secret, and request settings for shared scoring.
 
 Run from repo root::
 
