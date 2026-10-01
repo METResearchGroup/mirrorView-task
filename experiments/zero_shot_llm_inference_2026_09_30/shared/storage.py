@@ -17,7 +17,10 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     INPUT_MANIFEST_KEY,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
+    FailureRecord,
     InputManifest,
+    ModelRunManifest,
+    PredictionRecord,
     Study2InputRecord,
 )
 
@@ -187,6 +190,11 @@ def _max_sequence_from_keys(
     return max_sequence
 
 
+def _sorted_artifact_keys(keys: list[str], prefix: str, suffix: str) -> list[str]:
+    matching = [key for key in keys if key.startswith(prefix) and key.endswith(suffix)]
+    return sorted(matching)
+
+
 def _parse_sequence_filename(
     filename: str,
     file_prefix: str,
@@ -270,6 +278,50 @@ def parse_jsonl_document_bytes(
 ) -> list[ModelT]:
     """Parse JSONL bytes into validated Pydantic rows."""
     return _parse_jsonl_lines(data, model_type)
+
+
+def serialize_jsonl_models(rows: list[ModelT]) -> bytes:
+    """Serialize Pydantic rows as sorted-key JSONL with a final newline."""
+    if not rows:
+        return b""
+    lines = [
+        json.dumps(row.model_dump(), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+        for row in rows
+    ]
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def load_json_objects_under_prefix(
+    store: CampaignObjectStore,
+    prefix: str,
+    suffix: str,
+    model_type: type[ModelT],
+) -> list[tuple[str, ModelT]]:
+    """Load one JSON object per key under ``prefix`` ending in ``suffix``."""
+    keys = _sorted_artifact_keys(store.list_keys(prefix), prefix, suffix)
+    loaded: list[tuple[str, ModelT]] = []
+    for key in keys:
+        stored = store.get(key)
+        if stored is None:
+            raise ValueError(f"missing object listed under prefix: {key}")
+        loaded.append((key, model_type.model_validate_json(stored.body)))
+    return loaded
+
+
+def load_jsonl_records_under_prefix(
+    store: CampaignObjectStore,
+    prefix: str,
+    model_type: type[ModelT],
+) -> list[tuple[str, list[ModelT]]]:
+    """Load JSONL batches under ``prefix``."""
+    keys = _sorted_artifact_keys(store.list_keys(prefix), prefix, _JSONL_SUFFIX)
+    loaded: list[tuple[str, list[ModelT]]] = []
+    for key in keys:
+        stored = store.get(key)
+        if stored is None:
+            raise ValueError(f"missing object listed under prefix: {key}")
+        loaded.append((key, parse_jsonl_document_bytes(stored.body, model_type)))
+    return loaded
 
 
 def _load_input_manifest(store: CampaignObjectStore) -> InputManifest:
