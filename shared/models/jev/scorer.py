@@ -12,6 +12,7 @@ from collections.abc import Callable
 from langchain_typesafe import (
     ClassifierRequest,
     ClassifierResponse,
+    Noul,
     TypeSafeClassifier,
 )
 from langchain_typesafe.client import (
@@ -67,7 +68,26 @@ def parse_response(
     ValueError
         When Jev answered with a model other than ``expected_model``.
     """
-    raise NotImplementedError
+    if response.model != expected_model:
+        raise ValueError(f"expected model {expected_model}, got {response.model}")
+    noul_ids = [
+        question_id
+        for question_id, question in request["questions"].items()
+        if isinstance(question, Noul)
+    ]
+    answers = response.nouls
+    missing = [question_id for question_id in noul_ids if question_id not in answers]
+    if missing:
+        raise KeyError(f"missing Noul answers for {missing}")
+    return JevResult(
+        model=response.model,
+        request_id=response.request_id,
+        nouls={question_id: answers[question_id].noul for question_id in noul_ids},
+        input_tokens=response.usage.input_tokens or 0,
+        output_tokens=response.usage.output_tokens or 0,
+        latency_ms=latency_ms,
+        attempts=attempts,
+    )
 
 
 class JevScorer:
