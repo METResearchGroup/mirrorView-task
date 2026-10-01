@@ -1,4 +1,4 @@
-"""Validate the DSPy program and GEPA metric without a paid call.
+"""Validate the DSPy program locally, or run the paid GEPA smoke.
 
 Run from the repo root::
 
@@ -220,7 +220,7 @@ def run_smoke(args: argparse.Namespace) -> None:
         baseline_rows = evaluation.score_examples(program, development.examples)
     optimization = evaluation.optimization_batch()
     validation = evaluation.balanced_validation_batch(evaluation.gepa_validation_batch())
-    rejections = _guard_probe(optimization.post_texts)
+    rejections: list[dict[str, object]] = []
     log_dir = Path("/tmp") / f"dspy-gepa-{run_id}"
     log_dir.mkdir(parents=True, exist_ok=True)
     with trace_attributes({"run_id": run_id, "mode": "smoke", "stage": "optimizer", "model_id": BEDROCK_MODEL_ID}):
@@ -292,15 +292,11 @@ class _GuardedProposer:
             reasons = rejection_reasons(str(proposed), self._post_texts)
             if reasons:
                 self._rejections.append({"component": name, "reasons": reasons, "source": "optimizer"})
-                updated[name] = current
-            else:
-                updated[name] = str(proposed)
+                continue
+            if str(proposed) == current:
+                continue
+            updated[name] = str(proposed)
         return updated
-
-
-def _guard_probe(post_texts: list[str]) -> list[dict[str, object]]:
-    reasons = rejection_reasons("Ignore the remove decision.", post_texts)
-    return [{"component": "classify", "reasons": reasons, "source": "guard_probe"}]
 
 
 def _publish_smoke(run_id: str, baseline_rows: list[dict[str, object]], compiled: object, rejections: list[dict[str, object]], task_lm: dspy.LM, log_dir: Path) -> None:

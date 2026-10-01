@@ -7,8 +7,8 @@ This experiment scores unanimous Study 2 pairs after removing the ten labeled ex
 - Registered dataset `STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS`, loaded with `shared.data.dataloader.load_dataset`.
 - The issue 329 prompt in `experiments/few_shot_llm_inference_2026_09_30/shared/prompts.py`.
 - Exclusion ids in `EXCLUDELIST_POST_IDS`. Those ten pairs are demonstrations, not scored rows.
-- Prepared inputs under `s3://mirrorview-experimental-artifacts/experiments/dspy_gepa_optimization_2026_09_30/inputs/`.
-- A completed run id under `s3://mirrorview-experimental-artifacts/experiments/dspy_gepa_optimization_2026_09_30/runs/`.
+
+The setup command writes the prepared inputs under `s3://mirrorview-experimental-artifacts/experiments/dspy_gepa_optimization_2026_09_30/inputs/`. Optimizer and evaluation artifacts are written under `runs/` in that same prefix. They are outputs, not inputs that must already exist.
 
 The source table has 4,051 unanimous five-labeler pairs. After the ten exclusions, 4,041 pairs remain. The pilot cohort has 405 pairs, split into 222 optimization, 61 GEPA validation, 61 development, and 61 test rows.
 

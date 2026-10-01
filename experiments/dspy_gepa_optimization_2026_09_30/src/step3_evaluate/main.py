@@ -1,4 +1,4 @@
-"""Evaluate the locked original and selected programs on the test split.
+"""Stop test evaluation until a pilot selection is locked.
 
 Run from the repo root::
 

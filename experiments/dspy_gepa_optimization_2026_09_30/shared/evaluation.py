@@ -91,9 +91,11 @@ def score_examples(program: dspy.Module, examples: list[dspy.Example], concurren
 def metrics_frame(rows: list[dict[str, object]]) -> dict[str, float]:
     """Aggregate remove-positive metrics from scored rows."""
     gold = [bool(row["gold_is_remove"]) for row in rows]
-    predicted = [bool(row["predicted_is_remove"]) for row in rows if row["contract_passed"]]
-    aligned_gold = [bool(row["gold_is_remove"]) for row in rows if row["contract_passed"]]
-    metrics = classification_metrics(aligned_gold, predicted)
+    predicted = [
+        bool(row["predicted_is_remove"]) if row["contract_passed"] else not bool(row["gold_is_remove"])
+        for row in rows
+    ]
+    metrics = classification_metrics(gold, predicted)
     metrics["rows"] = float(len(rows))
     metrics["contract_failures"] = float(sum(not row["contract_passed"] for row in rows))
     if len(gold) != len(rows):
