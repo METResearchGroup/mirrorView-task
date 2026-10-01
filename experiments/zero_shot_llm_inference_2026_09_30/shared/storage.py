@@ -7,24 +7,30 @@ Run from repo root::
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 from typing import TYPE_CHECKING, Any
 
+from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import EXPERIMENT_S3_ROOT
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import Study2InputRecord
 
 if TYPE_CHECKING:
     from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 
+_RUNS_SEGMENT = "runs"
+
 
 def apply_lab_aws_credentials_when_unset() -> None:
-    """Copy lab AWS env vars into standard names when those are empty.
-
-    Raises
-    ------
-    ValueError
-        Never raised; invalid env values are ignored like empty strings.
-    """
-    raise NotImplementedError
+    """Copy lab AWS env vars into standard names when those are empty."""
+    if not os.environ.get("AWS_ACCESS_KEY_ID"):
+        access_key = os.environ.get("LAB_AWS_ACCESS_KEY_ID", "")
+        if access_key:
+            os.environ["AWS_ACCESS_KEY_ID"] = access_key
+    if not os.environ.get("AWS_SECRET_ACCESS_KEY"):
+        secret_key = os.environ.get("LAB_AWS_ACCESS_KEY_SECRET", "")
+        if secret_key:
+            os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key
 
 
 def validate_path_segment(segment: str) -> str:
@@ -35,7 +41,13 @@ def validate_path_segment(segment: str) -> str:
     ValueError
         When the segment is empty, unsafe, or contains slashes.
     """
-    raise NotImplementedError
+    if segment != segment.strip():
+        raise ValueError("path segment must not have leading or trailing whitespace")
+    if not segment or segment in {".", ".."}:
+        raise ValueError("path segment must be nonempty and not . or ..")
+    if "/" in segment or "\\" in segment:
+        raise ValueError("path segment must not contain slashes")
+    return segment
 
 
 def join_experiment_key(*segments: str) -> str:
@@ -46,33 +58,39 @@ def join_experiment_key(*segments: str) -> str:
     ValueError
         When any segment fails validation or the key escapes the root.
     """
-    raise NotImplementedError
+    if not segments:
+        raise ValueError("at least one path segment is required")
+    safe_segments = [validate_path_segment(segment) for segment in segments]
+    joined = EXPERIMENT_S3_ROOT + "/".join(safe_segments)
+    if not joined.startswith(EXPERIMENT_S3_ROOT):
+        raise ValueError("constructed key must remain under the experiment root")
+    return joined
 
 
 def build_model_run_prefix(run_id: str, model_folder: str) -> str:
-    """Return the S3 prefix for one model folder under a run.
-
-    Raises
-    ------
-    ValueError
-        When ``run_id`` or ``model_folder`` is not a safe segment.
-    """
-    raise NotImplementedError
+    """Return the S3 prefix for one model folder under a run."""
+    safe_run_id = validate_path_segment(run_id)
+    safe_folder = validate_path_segment(model_folder)
+    return join_experiment_key(_RUNS_SEGMENT, safe_run_id, safe_folder) + "/"
 
 
 def sha256_hex(data: bytes) -> str:
     """Return the SHA-256 hex digest of ``data``."""
-    raise NotImplementedError
+    return hashlib.sha256(data).hexdigest()
 
 
 def serialize_json_document(value: dict[str, Any]) -> bytes:
     """Serialize one JSON object as compact UTF-8 bytes with a final newline."""
-    raise NotImplementedError
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return (encoded + "\n").encode("utf-8")
 
 
 def serialize_study2_input_jsonl(records: list[Study2InputRecord]) -> bytes:
     """Serialize prepared records as sorted-key JSONL with a final newline."""
-    raise NotImplementedError
+    lines = [_serialize_record_line(record) for record in records]
+    if not lines:
+        return b""
+    return ("\n".join(lines) + "\n").encode("utf-8")
 
 
 def put_immutable_object(
@@ -87,9 +105,14 @@ def put_immutable_object(
     FileExistsError
         When the object key already exists in the store.
     """
-    raise NotImplementedError
+    store.put_new(key, body)
 
 
 def object_exists(store: CampaignObjectStore, key: str) -> bool:
     """Return whether ``key`` is already present in the store."""
-    raise NotImplementedError
+    return store.get(key) is not None
+
+
+def _serialize_record_line(record: Study2InputRecord) -> str:
+    payload = record.model_dump()
+    return json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
