@@ -16,20 +16,33 @@ from data_platform.generate_features.s3_feature_campaign import CampaignObjectSt
 from pydantic import BaseModel, ConfigDict, Field
 
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
+    FailureRecord,
     InputManifest,
     ModelRunManifest,
+    ModelRunManifestStatus,
     PredictionRecord,
     Study2InputRecord,
+    validate_model_run_manifest_identity,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     EXPECTED_SPLIT_RECORD_COUNT,
     EXPECTED_TOTAL_RECORD_COUNT,
     EXPECTED_UNANIMOUS_RECORD_COUNT,
     MODEL_REGISTRY,
+    ModelDefinition,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
+    build_manifests_prefix,
+    join_experiment_key,
+    load_json_objects_under_prefix,
+    load_verified_prepared_input,
+    sha256_hex,
     validate_path_segment,
+)
+from experiments.zero_shot_llm_inference_2026_09_30.src.step2_inference.run import (
+    load_existing_run_artifacts,
+    unresolved_failure_post_ids,
 )
 
 ANALYSIS_SCHEMA_VERSION = "study2-zero-shot-analysis-v1"
@@ -413,12 +426,174 @@ def _predictions_map(predictions: tuple[PredictionRecord, ...]) -> dict[str, boo
 
 def load_run_inputs(store: CampaignObjectStore, run_id: str) -> LoadedAnalysisRun:
     """Load prepared input and four completed model outputs for one run."""
-    raise NotImplementedError
+    safe_run_id = validate_path_segment(run_id)
+    input_manifest, prepared_records = load_verified_prepared_input(store)
+    prepared_post_ids = frozenset(record.post_id for record in prepared_records)
+    expected_count = len(prepared_records)
+    model_runs = _load_completed_model_runs(
+        store,
+        safe_run_id,
+        input_manifest,
+        prepared_records,
+        prepared_post_ids,
+        expected_count,
+    )
+    return LoadedAnalysisRun(safe_run_id, input_manifest, prepared_records, model_runs)
 
 
 def validate_run_inputs(loaded: LoadedAnalysisRun) -> None:
     """Reject incomplete or mismatched inputs before calculation."""
-    raise NotImplementedError
+    if len(loaded.model_runs) != len(MODEL_REGISTRY):
+        raise ValueError("expected four completed model runs")
+    partitions = partition_prepared_records(loaded.prepared_records)
+    validate_prepared_partitions(partitions)
+    for model_run in loaded.model_runs:
+        _validate_model_run_predictions(model_run, loaded.prepared_records)
+
+
+def _load_completed_model_runs(
+    store: CampaignObjectStore,
+    run_id: str,
+    input_manifest: InputManifest,
+    prepared_records: tuple[Study2InputRecord, ...],
+    prepared_post_ids: frozenset[str],
+    expected_count: int,
+) -> tuple[LoadedModelRun, ...]:
+    loaded_runs: list[LoadedModelRun] = []
+    for model in MODEL_REGISTRY:
+        loaded_runs.append(
+            _load_one_completed_model_run(
+                store,
+                run_id,
+                model,
+                input_manifest,
+                prepared_records,
+                prepared_post_ids,
+                expected_count,
+            )
+        )
+    return tuple(loaded_runs)
+
+
+def _load_one_completed_model_run(
+    store: CampaignObjectStore,
+    run_id: str,
+    model: ModelDefinition,
+    input_manifest: InputManifest,
+    prepared_records: tuple[Study2InputRecord, ...],
+    prepared_post_ids: frozenset[str],
+    expected_count: int,
+) -> LoadedModelRun:
+    artifacts = load_existing_run_artifacts(
+        store,
+        run_id,
+        model.folder_name,
+        model.model_id,
+        prepared_post_ids,
+    )
+    manifest_key, manifest, manifest_sha = _select_complete_manifest(
+        store,
+        run_id,
+        model.folder_name,
+        model.model_id,
+        expected_count,
+    )
+    _validate_manifest_prepared_identity(manifest, input_manifest)
+    _reject_unresolved_failures(artifacts.failures, artifacts.predictions, prepared_post_ids)
+    _validate_prediction_coverage(artifacts.predictions, prepared_records)
+    return LoadedModelRun(
+        model_folder=model.folder_name,
+        model_id=model.model_id,
+        manifest=manifest,
+        manifest_s3_key=manifest_key,
+        manifest_sha256=manifest_sha,
+        predictions=artifacts.predictions,
+    )
+
+
+def _select_complete_manifest(
+    store: CampaignObjectStore,
+    run_id: str,
+    model_folder: str,
+    model_id: str,
+    expected_count: int,
+) -> tuple[str, ModelRunManifest, str]:
+    entries = _load_manifest_entries(store, run_id, model_folder, model_id)
+    complete = [
+        entry
+        for entry in entries
+        if _manifest_is_complete(entry[1], expected_count)
+    ]
+    if not complete:
+        raise ValueError(f"incomplete model run for folder: {model_folder}")
+    return complete[-1]
+
+
+def _load_manifest_entries(
+    store: CampaignObjectStore,
+    run_id: str,
+    model_folder: str,
+    model_id: str,
+) -> list[tuple[str, ModelRunManifest, str]]:
+    prefix = build_manifests_prefix(run_id, model_folder)
+    loaded = load_json_objects_under_prefix(store, prefix, ".json", ModelRunManifest)
+    entries: list[tuple[str, ModelRunManifest, str]] = []
+    for key, manifest in loaded:
+        validate_model_run_manifest_identity(manifest, run_id, model_folder, model_id)
+        stored = store.get(key)
+        if stored is None:
+            raise ValueError(f"missing manifest object: {key}")
+        entries.append((key, manifest, sha256_hex(stored.body)))
+    return entries
+
+
+def _manifest_is_complete(manifest: ModelRunManifest, expected_count: int) -> bool:
+    return (
+        manifest.status is ModelRunManifestStatus.COMPLETE
+        and manifest.configured_limit is None
+        and manifest.requested_record_count == expected_count
+        and manifest.completed_prediction_count == expected_count
+        and manifest.unresolved_failure_count == 0
+    )
+
+
+def _validate_manifest_prepared_identity(
+    manifest: ModelRunManifest,
+    input_manifest: InputManifest,
+) -> None:
+    if manifest.prepared_input_records_key != input_manifest.records_s3_key:
+        raise ValueError("prepared input records key mismatch")
+    if manifest.prepared_input_records_sha256 != input_manifest.records_sha256:
+        raise ValueError("prepared input records digest mismatch")
+
+
+def _reject_unresolved_failures(
+    failures: tuple[FailureRecord, ...],
+    predictions: tuple[PredictionRecord, ...],
+    prepared_post_ids: frozenset[str],
+) -> None:
+    unresolved = unresolved_failure_post_ids(failures, predictions, prepared_post_ids)
+    if unresolved:
+        raise ValueError("unresolved inference failures remain")
+
+
+def _validate_prediction_coverage(
+    predictions: tuple[PredictionRecord, ...],
+    prepared_records: tuple[Study2InputRecord, ...],
+) -> None:
+    if len(predictions) != len(prepared_records):
+        raise ValueError("prediction row count mismatch")
+    prediction_ids = {record.post_id for record in predictions}
+    for record in prepared_records:
+        if record.post_id not in prediction_ids:
+            raise ValueError(f"missing prediction post_id: {record.post_id}")
+
+
+def _validate_model_run_predictions(
+    model_run: LoadedModelRun,
+    prepared_records: tuple[Study2InputRecord, ...],
+) -> None:
+    _validate_prediction_coverage(model_run.predictions, prepared_records)
 
 
 def calculate_analysis_tables(loaded: LoadedAnalysisRun) -> AnalysisTables:
