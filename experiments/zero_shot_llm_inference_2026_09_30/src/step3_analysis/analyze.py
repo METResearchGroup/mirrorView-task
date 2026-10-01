@@ -586,12 +586,12 @@ def _validate_prediction_coverage(
     predictions: tuple[PredictionRecord, ...],
     prepared_records: tuple[Study2InputRecord, ...],
 ) -> None:
-    if len(predictions) != len(prepared_records):
-        raise ValueError("prediction row count mismatch")
     prediction_ids = {record.post_id for record in predictions}
     for record in prepared_records:
         if record.post_id not in prediction_ids:
             raise ValueError(f"missing prediction post_id: {record.post_id}")
+    if len(predictions) != len(prepared_records):
+        raise ValueError("prediction row count mismatch")
 
 
 def _validate_model_run_predictions(
