@@ -8,6 +8,8 @@ Run from repo root::
 from __future__ import annotations
 
 import argparse
+import csv
+import io
 from dataclasses import dataclass
 from enum import Enum
 from typing import Protocol
@@ -18,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
     FailureRecord,
     InputManifest,
+    ModelDefinition,
     ModelRunManifest,
     ModelRunManifestStatus,
     PredictionRecord,
@@ -28,8 +31,8 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     EXPECTED_SPLIT_RECORD_COUNT,
     EXPECTED_TOTAL_RECORD_COUNT,
     EXPECTED_UNANIMOUS_RECORD_COUNT,
+    EXPERIMENT_S3_BUCKET,
     MODEL_REGISTRY,
-    ModelDefinition,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
@@ -37,6 +40,8 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     join_experiment_key,
     load_json_objects_under_prefix,
     load_verified_prepared_input,
+    put_immutable_object,
+    serialize_json_document,
     sha256_hex,
     validate_path_segment,
 )
@@ -598,7 +603,12 @@ def _validate_model_run_predictions(
 
 def calculate_analysis_tables(loaded: LoadedAnalysisRun) -> AnalysisTables:
     """Build label, vote, and metric tables from validated inputs."""
-    raise NotImplementedError
+    partitions = partition_prepared_records(loaded.prepared_records)
+    validate_prepared_partitions(partitions)
+    label_counts = build_label_counts(partitions)
+    split_remove_vote_counts = build_split_remove_vote_counts(partitions.split_rows)
+    model_metrics = build_model_metrics_table(partitions, loaded.model_runs)
+    return AnalysisTables(label_counts, split_remove_vote_counts, model_metrics)
 
 
 def write_analysis_bundle(
@@ -608,7 +618,28 @@ def write_analysis_bundle(
     results_fragment: str,
 ) -> str:
     """Serialize tables and write the immutable analysis bundle."""
-    raise NotImplementedError
+    prefix = build_analysis_prefix(loaded.run_id)
+    bodies = _serialize_analysis_artifact_bodies(tables, results_fragment)
+    keys = _analysis_artifact_keys(prefix)
+    _write_or_verify_artifact(store, keys.label_counts, bodies.label_counts)
+    _write_or_verify_artifact(store, keys.split_remove_vote_counts, bodies.split_remove_vote_counts)
+    _write_or_verify_artifact(store, keys.model_metrics, bodies.model_metrics)
+    _write_or_verify_artifact(store, keys.results_fragment, bodies.results_fragment)
+    manifest = _build_analysis_manifest(loaded, keys, bodies)
+    manifest_body = serialize_json_document(manifest.model_dump(mode="json"))
+    _write_or_verify_artifact(store, keys.analysis_manifest, manifest_body)
+    return build_analysis_prefix_uri(loaded.run_id)
+
+
+def build_analysis_prefix(run_id: str) -> str:
+    """Return the S3 key prefix for one analysis run."""
+    safe_run_id = validate_path_segment(run_id)
+    return join_experiment_key(_ANALYSIS_SEGMENT, safe_run_id) + "/"
+
+
+def build_analysis_prefix_uri(run_id: str) -> str:
+    """Return the S3 URI prefix for one analysis run."""
+    return f"s3://{EXPERIMENT_S3_BUCKET}/{build_analysis_prefix(run_id)}"
 
 
 def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
@@ -645,7 +676,167 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _print_success_line(prefix: str, run_id: str) -> None:
-    raise NotImplementedError
+    print(
+        f"{prefix} input_rows={EXPECTED_TOTAL_RECORD_COUNT} "
+        f"unanimous_rows={EXPECTED_UNANIMOUS_RECORD_COUNT} "
+        f"split_rows={EXPECTED_SPLIT_RECORD_COUNT} models=4 metric_rows=12 artifacts=5"
+    )
+
+
+@dataclass(frozen=True)
+class _AnalysisArtifactKeys:
+    label_counts: str
+    split_remove_vote_counts: str
+    model_metrics: str
+    results_fragment: str
+    analysis_manifest: str
+
+
+@dataclass(frozen=True)
+class _SerializedAnalysisBodies:
+    label_counts: bytes
+    split_remove_vote_counts: bytes
+    model_metrics: bytes
+    results_fragment: bytes
+
+
+def _analysis_artifact_keys(prefix: str) -> _AnalysisArtifactKeys:
+    return _AnalysisArtifactKeys(
+        label_counts=prefix + _LABEL_COUNTS_FILENAME,
+        split_remove_vote_counts=prefix + _SPLIT_REMOVE_VOTE_COUNTS_FILENAME,
+        model_metrics=prefix + _MODEL_METRICS_FILENAME,
+        results_fragment=prefix + _RESULTS_FRAGMENT_FILENAME,
+        analysis_manifest=prefix + _ANALYSIS_MANIFEST_FILENAME,
+    )
+
+
+def _serialize_analysis_artifact_bodies(
+    tables: AnalysisTables,
+    results_fragment: str,
+) -> _SerializedAnalysisBodies:
+    return _SerializedAnalysisBodies(
+        label_counts=_serialize_label_counts_csv(tables.label_counts),
+        split_remove_vote_counts=_serialize_split_remove_vote_counts_csv(
+            tables.split_remove_vote_counts
+        ),
+        model_metrics=_serialize_model_metrics_csv(tables.model_metrics),
+        results_fragment=results_fragment.encode("utf-8"),
+    )
+
+
+def _serialize_label_counts_csv(rows: tuple[LabelCountRow, ...]) -> bytes:
+    buffer = io.StringIO()
+    writer = csv.writer(buffer, lineterminator="\n")
+    writer.writerow(["dataset", "label", "count", "dataset_total", "proportion"])
+    for row in rows:
+        writer.writerow(
+            [row.dataset.value, row.label.value, row.count, row.dataset_total, row.proportion]
+        )
+    return buffer.getvalue().encode("utf-8")
+
+
+def _serialize_split_remove_vote_counts_csv(
+    rows: tuple[SplitRemoveVoteCountRow, ...],
+) -> bytes:
+    buffer = io.StringIO()
+    writer = csv.writer(buffer, lineterminator="\n")
+    writer.writerow(["remove_votes", "count", "split_total", "proportion"])
+    for row in rows:
+        writer.writerow([row.remove_votes, row.count, row.split_total, row.proportion])
+    return buffer.getvalue().encode("utf-8")
+
+
+def _serialize_model_metrics_csv(rows: tuple[ModelMetricRow, ...]) -> bytes:
+    buffer = io.StringIO()
+    writer = csv.writer(buffer, lineterminator="\n")
+    writer.writerow(
+        [
+            "dataset",
+            "model",
+            "sample_count",
+            "true_positive",
+            "false_positive",
+            "true_negative",
+            "false_negative",
+            "f1",
+            "accuracy",
+            "recall",
+            "precision",
+        ]
+    )
+    for row in rows:
+        writer.writerow(
+            [
+                row.dataset.value,
+                row.model_folder,
+                row.sample_count,
+                row.true_positive,
+                row.false_positive,
+                row.true_negative,
+                row.false_negative,
+                row.f1,
+                row.accuracy,
+                row.recall,
+                row.precision,
+            ]
+        )
+    return buffer.getvalue().encode("utf-8")
+
+
+def _write_or_verify_artifact(
+    store: CampaignObjectStore,
+    key: str,
+    body: bytes,
+) -> None:
+    existing = store.get(key)
+    digest = sha256_hex(body)
+    if existing is None:
+        put_immutable_object(store, key, body)
+        return
+    if sha256_hex(existing.body) != digest:
+        raise ValueError(f"immutable object hash mismatch: {key}")
+
+
+def _build_analysis_manifest(
+    loaded: LoadedAnalysisRun,
+    keys: _AnalysisArtifactKeys,
+    bodies: _SerializedAnalysisBodies,
+) -> AnalysisManifest:
+    partitions = partition_prepared_records(loaded.prepared_records)
+    return AnalysisManifest(
+        schema_version=ANALYSIS_SCHEMA_VERSION,
+        run_id=loaded.run_id,
+        prepared_input_records_s3_key=loaded.input_manifest.records_s3_key,
+        prepared_input_records_sha256=loaded.input_manifest.records_sha256,
+        prepared_input_manifest_schema_version=loaded.input_manifest.schema_version,
+        input_row_count=len(loaded.prepared_records),
+        unanimous_row_count=len(partitions.unanimous_rows),
+        split_row_count=len(partitions.split_rows),
+        model_runs=_model_run_references(loaded.model_runs),
+        label_counts_s3_key=keys.label_counts,
+        split_remove_vote_counts_s3_key=keys.split_remove_vote_counts,
+        model_metrics_s3_key=keys.model_metrics,
+        results_fragment_s3_key=keys.results_fragment,
+        analysis_manifest_s3_key=keys.analysis_manifest,
+        label_counts_sha256=sha256_hex(bodies.label_counts),
+        split_remove_vote_counts_sha256=sha256_hex(bodies.split_remove_vote_counts),
+        model_metrics_sha256=sha256_hex(bodies.model_metrics),
+        results_fragment_sha256=sha256_hex(bodies.results_fragment),
+    )
+
+
+def _model_run_references(
+    model_runs: tuple[LoadedModelRun, ...],
+) -> tuple[ModelRunReference, ...]:
+    return tuple(
+        ModelRunReference(
+            model_folder=run.model_folder,
+            model_id=run.model_id,
+            manifest_s3_key=run.manifest_s3_key,
+            manifest_sha256=run.manifest_sha256,
+        )
+        for run in model_runs
+    )
 
 
 if __name__ == "__main__":
