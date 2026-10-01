@@ -307,12 +307,56 @@ def build_confusion_counts(
     predictions_by_post_id: dict[str, bool],
 ) -> ConfusionCounts:
     """Build confusion counts for one dataset with remove as positive."""
-    raise NotImplementedError
+    true_positive = 0
+    false_positive = 0
+    true_negative = 0
+    false_negative = 0
+    for row in rows:
+        bucket = _confusion_bucket(row.gold_is_remove, predictions_by_post_id[row.post_id])
+        if bucket == "tp":
+            true_positive += 1
+        elif bucket == "fp":
+            false_positive += 1
+        elif bucket == "tn":
+            true_negative += 1
+        else:
+            false_negative += 1
+    sample_count = len(rows)
+    return ConfusionCounts(
+        sample_count,
+        true_positive,
+        false_positive,
+        true_negative,
+        false_negative,
+    )
+
+
+def _confusion_bucket(actual_remove: bool, predicted_remove: bool) -> str:
+    if predicted_remove and actual_remove:
+        return "tp"
+    if predicted_remove and not actual_remove:
+        return "fp"
+    if not predicted_remove and not actual_remove:
+        return "tn"
+    return "fn"
 
 
 def build_classification_metrics(confusion: ConfusionCounts) -> ClassificationMetrics:
     """Derive F1, accuracy, recall, and precision from confusion counts."""
-    raise NotImplementedError
+    precision = _safe_ratio(confusion.true_positive, confusion.true_positive + confusion.false_positive)
+    recall = _safe_ratio(confusion.true_positive, confusion.true_positive + confusion.false_negative)
+    f1 = _safe_ratio(2 * precision * recall, precision + recall)
+    accuracy = _safe_ratio(
+        confusion.true_positive + confusion.true_negative,
+        confusion.sample_count,
+    )
+    return ClassificationMetrics(f1=f1, accuracy=accuracy, recall=recall, precision=precision)
+
+
+def _safe_ratio(numerator: float, denominator: float) -> float:
+    if denominator == 0:
+        return 0.0
+    return numerator / denominator
 
 
 def build_model_metric_row(
@@ -322,7 +366,21 @@ def build_model_metric_row(
     predictions_by_post_id: dict[str, bool],
 ) -> ModelMetricRow:
     """Build one model metric row for one dataset partition."""
-    raise NotImplementedError
+    confusion = build_confusion_counts(rows, predictions_by_post_id)
+    metrics = build_classification_metrics(confusion)
+    return ModelMetricRow(
+        dataset=dataset,
+        model_folder=model_folder,
+        sample_count=confusion.sample_count,
+        true_positive=confusion.true_positive,
+        false_positive=confusion.false_positive,
+        true_negative=confusion.true_negative,
+        false_negative=confusion.false_negative,
+        f1=metrics.f1,
+        accuracy=metrics.accuracy,
+        recall=metrics.recall,
+        precision=metrics.precision,
+    )
 
 
 def build_model_metrics_table(
