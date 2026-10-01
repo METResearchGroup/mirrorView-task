@@ -30,7 +30,6 @@ from lib.constants import BEDROCK_REGION, DEFAULT_BEDROCK_NOVA_MICRO
 from lib.timestamp_utils import get_current_timestamp
 
 BEDROCK_MAX_TOKENS = 32
-BEDROCK_TEMPERATURE = 0.0
 JSON_INSTRUCTION_PREFIX = "Reply with a single JSON object only. The object must have these fields: "
 JSON_FENCE = "```"
 JSON_FENCE_LANGUAGE = "json"
@@ -239,10 +238,7 @@ def _converse_once(
         modelId=model_id,
         system=[{"text": f"{system_prompt}\n{json_instruction_for_schema(output_schema)}"}],
         messages=[{"role": "user", "content": [{"text": user_text}]}],
-        inferenceConfig={
-            "maxTokens": max_tokens,
-            "temperature": BEDROCK_TEMPERATURE,
-        },
+        inferenceConfig={"maxTokens": max_tokens},
     )
     text = _first_text_block(response)
     parsed = output_schema.model_validate(parse_json_object(text))
