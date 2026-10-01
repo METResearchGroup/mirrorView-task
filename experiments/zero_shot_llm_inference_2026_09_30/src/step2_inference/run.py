@@ -8,6 +8,7 @@ Run from repo root::
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 from dataclasses import dataclass
 
 from data_platform.generate_features.engines.bedrock_engine import (
@@ -205,6 +206,50 @@ def load_existing_run_artifacts(
         failure_object_keys=tuple(key for key, _ in failure_batches),
         failures=failures,
     )
+
+
+def completed_post_ids_for_requested_set(
+    predictions: tuple[PredictionRecord, ...],
+    requested_post_ids: frozenset[str],
+) -> frozenset[str]:
+    """Return requested post IDs with exactly one stored prediction."""
+    counts = Counter(record.post_id for record in predictions)
+    completed: set[str] = set()
+    for post_id in requested_post_ids:
+        count = counts.get(post_id, 0)
+        if count > 1:
+            raise ValueError(f"duplicate prediction post_id: {post_id}")
+        if count == 1:
+            completed.add(post_id)
+    return frozenset(completed)
+
+
+def select_pending_records(
+    requested_records: tuple[Study2InputRecord, ...],
+    completed_post_ids: frozenset[str],
+) -> tuple[Study2InputRecord, ...]:
+    """Return requested records that still need inference in prepared order."""
+    return tuple(
+        record for record in requested_records if record.post_id not in completed_post_ids
+    )
+
+
+def unresolved_failure_post_ids(
+    failures: tuple[FailureRecord, ...],
+    predictions: tuple[PredictionRecord, ...],
+    requested_post_ids: frozenset[str],
+) -> frozenset[str]:
+    """Return requested post IDs with failures but no valid prediction."""
+    predicted_ids = {
+        record.post_id for record in predictions if record.post_id in requested_post_ids
+    }
+    unresolved: set[str] = set()
+    for failure in failures:
+        if failure.post_id not in requested_post_ids:
+            continue
+        if failure.post_id not in predicted_ids:
+            unresolved.add(failure.post_id)
+    return frozenset(unresolved)
 
 
 def assert_configured_limit_matches_manifests(
