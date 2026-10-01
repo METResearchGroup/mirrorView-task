@@ -30,11 +30,11 @@ def upsample_df(
     Returns
     -------
     pandas.DataFrame
-        Every input row, in its original order, followed by sampled rows for
-        each smaller class in the order that class first appears. The result
-        has a fresh ``RangeIndex``, the same columns, and the same dtypes.
-        An empty table, a one-class table, or an already balanced table is
-        an independent copy.
+        The returned frame has every input row in its original order, and
+        then the sampled rows for each smaller class in the order that class
+        first appears. The result has a fresh ``RangeIndex``, the same
+        columns, and the same dtypes. An empty table, a table with one class,
+        or an already balanced table is an independent copy.
 
     Raises
     ------
@@ -71,7 +71,7 @@ def _rows_for_smaller_classes(
     labels: pd.Series,
     random_state: int,
 ) -> list[pd.DataFrame]:
-    """Sample each class that is smaller than the largest, in first-seen order."""
+    """Sample each class that is smaller than the largest, in the order that class first appears."""
     counts = _counts_by_first_appearance(labels)
     if not counts:
         return []

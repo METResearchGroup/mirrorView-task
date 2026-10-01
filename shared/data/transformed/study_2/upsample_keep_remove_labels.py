@@ -30,7 +30,9 @@ SOURCE_OUTPUT_PAIRS: tuple[tuple[str, str], ...] = (
 
 
 def write_upsampled_keep_remove_label_datasets() -> dict[str, pd.DataFrame]:
-    """Load the three source tables, balance each one, and write its CSV.
+    """Load the three source tables and balance each one.
+
+    Write each balanced table to its CSV.
 
     Returns
     -------
@@ -46,7 +48,10 @@ def write_upsampled_keep_remove_label_datasets() -> dict[str, pd.DataFrame]:
 
 
 def _write_balanced_dataset(source_name: str, output_name: str) -> pd.DataFrame:
-    """Load one source, balance ``keep_remove_label``, and write its CSV."""
+    """Load one source and balance ``keep_remove_label``.
+
+    Write the balanced table to its CSV.
+    """
     source = dataloader.load_dataset(source_name, low_memory=False)
     balanced = upsample_df(source, CLASS_LABEL_COLUMN)
     output_path = registry.resolve_path(output_name)
@@ -56,7 +61,7 @@ def _write_balanced_dataset(source_name: str, output_name: str) -> pd.DataFrame:
 
 
 def main() -> None:
-    """Print one line per written table, in source pair order.
+    """Print one line per written table, in ``SOURCE_OUTPUT_PAIRS`` order.
 
     Each line includes the output registry name, absolute local path, row
     count, and class counts sorted by class value.
