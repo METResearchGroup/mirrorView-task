@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-01
+
+1. Jev 1.13.0 scores the 13,992 five-labeler Study 2 pairs as a zero-shot keep or remove classifier and stores the same prediction rows used for the Bedrock models. Remove-class F1 is 0.529 and accuracy is 0.713, at a measured cost of $0.427. [PR #341](https://github.com/METResearchGroup/mirrorView-task/pull/341)
+
 ## 2026-09-30
 
 1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
