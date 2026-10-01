@@ -97,7 +97,7 @@ def parse_response(
 
 
 class JevScorer:
-    """Send one ``ClassifierRequest`` at a time. Safe to share across threads."""
+    """Send one ``ClassifierRequest`` at a time, and share one scorer across threads."""
 
     def __init__(
         self,
@@ -114,7 +114,7 @@ class JevScorer:
         self._backoff_seconds = backoff_seconds
 
     def score(self, request: ClassifierRequest) -> JevResult:
-        """Call Jev once, retrying only transient errors.
+        """Send one request to Jev, and retry only after a transient error.
 
         Parameters
         ----------
@@ -178,7 +178,7 @@ class JevScorer:
 
 
 def build_jev_scorer(model_id: str = JEV_MODEL_ID) -> JevScorer:
-    """Build the real scorer: pinned classifier, shared limiter, real clock.
+    """Build the scorer with the pinned classifier, a shared limiter, and ``time.perf_counter`` for latency.
 
     Parameters
     ----------
@@ -188,7 +188,7 @@ def build_jev_scorer(model_id: str = JEV_MODEL_ID) -> JevScorer:
     Returns
     -------
     JevScorer
-        Scorer wired to the live classifier, monotonic limiter, and real clock.
+        Scorer that uses the pinned classifier, the shared limiter, and ``time.perf_counter``.
     """
     limiter = RequestStartLimiter(
         JEV_MAX_REQUESTS_PER_MINUTE,

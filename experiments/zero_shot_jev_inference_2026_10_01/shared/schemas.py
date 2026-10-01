@@ -10,7 +10,7 @@ JEV_RUN_MANIFEST_SCHEMA_VERSION = "study2-zero-shot-jev-run-v1"
 
 
 class JevRunManifest(BaseModel):
-    """Immutable manifest for one Jev folder. Replaces max tokens with worker count."""
+    """Frozen manifest for one Jev run folder, including the worker count."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 

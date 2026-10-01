@@ -1,8 +1,8 @@
-"""Score a complete Jev run against Study 2 human labels.
+"""Compare a complete Jev run with Study 2 human labels.
 
 Issue 326 supplies dataset splits, label counts, split-vote counts, and the
-per-dataset confusion metrics. This module loads the Jev run, checks the
-pinned counts, and writes the analysis bundle.
+per-dataset confusion metrics. This module loads the Jev run, checks those
+counts against the fixed Study 2 totals, and writes the analysis bundle.
 
 Run from repo root::
 

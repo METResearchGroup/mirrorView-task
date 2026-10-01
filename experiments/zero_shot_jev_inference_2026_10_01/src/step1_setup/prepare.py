@@ -1,4 +1,4 @@
-"""Copy issue 326's prepared Study 2 input and reject any digest mismatch.
+"""Copy issue 326's prepared Study 2 input, and reject a mismatch in the digest, the row counts, or the post IDs.
 
 Run from repo root::
 

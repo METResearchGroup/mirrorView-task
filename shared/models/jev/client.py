@@ -60,7 +60,7 @@ def build_jev_classifier(
     api_key: str | None = None,
     timeout: float = JEV_REQUEST_TIMEOUT_SECONDS,
 ) -> TypeSafeClassifier:
-    """Build a classifier pinned to ``model_id``. Looks up the key when omitted.
+    """Build a classifier for ``model_id``, and load the API key when ``api_key`` is omitted.
 
     Parameters
     ----------

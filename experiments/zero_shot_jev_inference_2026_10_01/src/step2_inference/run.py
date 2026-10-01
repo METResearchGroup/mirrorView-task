@@ -406,9 +406,9 @@ def _score_one(
 ) -> PredictionRecord | FailureRecord:
     try:
         result = scorer.score(build_remove_request(record))
+        return to_prediction_record(run_id, record, result)
     except Exception as error:
         return _failure_from_exception(run_id, record, error)
-    return to_prediction_record(run_id, record, result)
 
 
 def _failure_from_exception(

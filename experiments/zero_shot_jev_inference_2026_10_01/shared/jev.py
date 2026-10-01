@@ -1,4 +1,4 @@
-"""Keep or remove request and result mapping on top of the shared Jev scorer.
+"""Build keep or remove requests for the shared Jev scorer, and map each result to a prediction row.
 
 Run from repo root::
 
@@ -40,7 +40,7 @@ REMOVE_CRITERIA = NoulCriteria(
 
 
 def build_remove_instructions(prompt: str) -> str:
-    """Swap the baseline prompt's pair block for a yes or no remove question.
+    """Return the prompt text before the Post 1 and Post 2 block, followed by the remove question.
 
     Parameters
     ----------
@@ -98,11 +98,10 @@ def to_prediction_record(
     record: Study2InputRecord,
     result: JevResult,
 ) -> PredictionRecord:
-    """Map one Jev result onto the issue 326 prediction row.
+    """Map one Jev result to an issue 326 prediction row.
 
-    ``is_remove`` is derived from ``p_remove`` at 0.5. ``schema_version`` is
-    issue 326's prediction schema version, which the proposal omitted because
-    that field was added after the proposal text.
+    ``is_remove`` is set from ``p_remove`` at 0.5, and ``schema_version`` is
+    issue 326's prediction schema version.
 
     Parameters
     ----------

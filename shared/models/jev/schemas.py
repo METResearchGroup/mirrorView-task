@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class JevResult(BaseModel):
-    """Noul probabilities, usage, and request metadata from one Jev call."""
+    """Yes-or-no probabilities, token usage, and request metadata from one Jev call."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
