@@ -43,4 +43,59 @@ def upsample_df(
     ValueError
         When the class column contains a null value.
     """
-    ...
+    labels = _class_labels(df, class_label)
+    sampled_rows = _rows_for_smaller_classes(df, labels, random_state)
+    if not sampled_rows:
+        return df.copy().reset_index(drop=True)
+    return pd.concat([df, *sampled_rows], ignore_index=True)
+
+
+def _class_labels(df: pd.DataFrame, class_label: str) -> pd.Series:
+    """Return the class column, rejecting null class values.
+
+    Raises
+    ------
+    KeyError
+        When ``class_label`` is not a column.
+    ValueError
+        When the class column contains a null value.
+    """
+    labels = df[class_label]
+    if bool(labels.isna().any()):
+        raise ValueError(f"{class_label} contains null values")
+    return labels
+
+
+def _rows_for_smaller_classes(
+    df: pd.DataFrame,
+    labels: pd.Series,
+    random_state: int,
+) -> list[pd.DataFrame]:
+    """Sample each class that is smaller than the largest, in first-seen order."""
+    counts = labels.value_counts(sort=False)
+    if counts.empty:
+        return []
+    largest_count = int(counts.max())
+    return [
+        _sample_class(
+            df,
+            labels,
+            class_value,
+            largest_count - int(class_count),
+            random_state,
+        )
+        for class_value, class_count in counts.items()
+        if int(class_count) < largest_count
+    ]
+
+
+def _sample_class(
+    df: pd.DataFrame,
+    labels: pd.Series,
+    class_value: object,
+    deficit: int,
+    random_state: int,
+) -> pd.DataFrame:
+    """Sample ``deficit`` rows from one class, with replacement."""
+    class_rows = df.loc[labels == class_value]
+    return class_rows.sample(n=deficit, replace=True, random_state=random_state)
