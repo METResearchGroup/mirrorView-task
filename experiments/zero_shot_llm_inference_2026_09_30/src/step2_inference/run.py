@@ -28,10 +28,12 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.llm import label_reco
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
     FAILURE_SCHEMA_VERSION,
     FAILURE_WRAPPER_CALL_COUNT,
+    MANIFEST_SCHEMA_VERSION,
     FailureRecord,
     InputManifest,
     ModelDefinition,
     ModelRunManifest,
+    ModelRunManifestStatus,
     PREDICTION_SCHEMA_VERSION,
     PredictionRecord,
     RemovePrediction,
@@ -310,6 +312,60 @@ def build_failure_record(
         error_message=message,
         wrapper_call_count=FAILURE_WRAPPER_CALL_COUNT,
     )
+
+
+def write_prediction_batch_if_nonempty(
+    store: CampaignObjectStore,
+    run_id: str,
+    model_folder: str,
+    records: list[PredictionRecord],
+) -> str | None:
+    """Write one immutable prediction JSONL batch when rows are present.
+
+    Raises
+    ------
+    FileExistsError
+        When the target batch key already exists.
+    """
+    if not records:
+        return None
+    prefix = build_predictions_prefix(run_id, model_folder)
+    sequence = next_sequence_for_prefix(
+        store,
+        prefix,
+        _BATCH_OBJECT_PREFIX,
+        _JSONL_OBJECT_SUFFIX,
+    )
+    key = build_prediction_batch_key(run_id, model_folder, sequence)
+    put_immutable_object(store, key, serialize_jsonl_models(records))
+    return key
+
+
+def write_failure_batch_if_nonempty(
+    store: CampaignObjectStore,
+    run_id: str,
+    model_folder: str,
+    records: list[FailureRecord],
+) -> str | None:
+    """Write one immutable failure JSONL batch when rows are present.
+
+    Raises
+    ------
+    FileExistsError
+        When the target batch key already exists.
+    """
+    if not records:
+        return None
+    prefix = build_failures_prefix(run_id, model_folder)
+    sequence = next_sequence_for_prefix(
+        store,
+        prefix,
+        _BATCH_OBJECT_PREFIX,
+        _JSONL_OBJECT_SUFFIX,
+    )
+    key = build_failure_batch_key(run_id, model_folder, sequence)
+    put_immutable_object(store, key, serialize_jsonl_models(records))
+    return key
 
 
 def run_ordered_inference_batch(
