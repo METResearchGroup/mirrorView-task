@@ -26,6 +26,9 @@ Post 2: {post_2_text}
 
 Allow Or Remove?"""
 
+_POST_1_PLACEHOLDER = "{post_1_text}"
+_POST_2_PLACEHOLDER = "{post_2_text}"
+
 
 def format_baseline_zero_shot_keep_remove_prompt(
     post_1_text: str,
@@ -45,7 +48,10 @@ def format_baseline_zero_shot_keep_remove_prompt(
     str
         Prompt text with only placeholder substitution applied.
     """
-    return BASELINE_ZERO_SHOT_KEEP_REMOVE_PROMPT.format(
-        post_1_text=post_1_text,
-        post_2_text=post_2_text,
-    )
+    template = BASELINE_ZERO_SHOT_KEEP_REMOVE_PROMPT
+    if _POST_1_PLACEHOLDER not in template:
+        raise ValueError(f"missing placeholder {_POST_1_PLACEHOLDER!r}")
+    if _POST_2_PLACEHOLDER not in template:
+        raise ValueError(f"missing placeholder {_POST_2_PLACEHOLDER!r}")
+    rendered = template.replace(_POST_1_PLACEHOLDER, post_1_text, 1)
+    return rendered.replace(_POST_2_PLACEHOLDER, post_2_text, 1)

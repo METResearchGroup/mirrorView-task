@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from data_platform.generate_features.engines.bedrock_engine import (
     BedrockRuntimeClient,
     BedrockUsage,
@@ -17,9 +15,6 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
     RemovePrediction,
     Study2InputRecord,
 )
-
-if TYPE_CHECKING:
-    pass
 
 EMPTY_SYSTEM_PROMPT = ""
 
@@ -65,4 +60,6 @@ def label_record(
         user_text,
         max_tokens,
     )
+    if isinstance(prediction, RemovePrediction):
+        return prediction, usage
     return RemovePrediction.model_validate(prediction.model_dump()), usage

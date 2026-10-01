@@ -12,8 +12,6 @@ import csv
 import io
 from dataclasses import dataclass
 from enum import Enum
-from typing import Protocol
-
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -219,16 +217,6 @@ class LoadedAnalysisRun:
     input_manifest: InputManifest
     prepared_records: tuple[Study2InputRecord, ...]
     model_runs: tuple[LoadedModelRun, ...]
-
-
-class ObjectStoreBoundary(Protocol):
-    """Minimal store surface required by analysis IO."""
-
-    def get(self, key: str) -> object | None: ...
-
-    def put_new(self, key: str, body: bytes) -> None: ...
-
-    def list_keys(self, prefix: str) -> list[str]: ...
 
 
 def partition_prepared_records(
