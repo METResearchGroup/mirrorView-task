@@ -39,8 +39,20 @@ def write_upsampled_keep_remove_label_datasets() -> dict[str, pd.DataFrame]:
         order. Each CSV is written at that name's registry path with no index
         column.
     """
-    # load → balance → resolve → write
-    ...
+    return {
+        output_name: _write_balanced_dataset(source_name, output_name)
+        for source_name, output_name in SOURCE_OUTPUT_PAIRS
+    }
+
+
+def _write_balanced_dataset(source_name: str, output_name: str) -> pd.DataFrame:
+    """Load one source, balance ``keep_remove_label``, and write its CSV."""
+    source = dataloader.load_dataset(source_name, low_memory=False)
+    balanced = upsample_df(source, CLASS_LABEL_COLUMN)
+    output_path = registry.resolve_path(output_name)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    balanced.to_csv(output_path, index=False)
+    return balanced
 
 
 def main() -> None:
@@ -49,8 +61,15 @@ def main() -> None:
     Each line includes the output registry name, absolute local path, row
     count, and class counts sorted by class value.
     """
-    write_upsampled_keep_remove_label_datasets()
-    ...
+    for output_name, frame in write_upsampled_keep_remove_label_datasets().items():
+        _print_written_dataset(output_name, frame)
+
+
+def _print_written_dataset(output_name: str, frame: pd.DataFrame) -> None:
+    """Print the registry name, absolute path, row count, and class counts."""
+    path = registry.resolve_path(output_name).resolve()
+    counts = frame[CLASS_LABEL_COLUMN].value_counts().sort_index().to_dict()
+    print(f"{output_name} path={path} rows={len(frame)} class_counts={counts}")
 
 
 if __name__ == "__main__":
