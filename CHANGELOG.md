@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-01
+
+1. Study 2 few-shot keep-or-remove optimization can prepare a 405-row pilot, trace GPT-5.6 Terra through DSPy and Weave, and stop after a 30-call GEPA smoke. The development baseline F1 is 0.285714, and the measured pilot estimates are $4.21, $6.02, and $9.63. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
+
 ## 2026-09-30
 
 1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
