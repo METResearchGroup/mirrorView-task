@@ -91,9 +91,17 @@ class BalancedReflectionSampler:
             self._remove_ids = _ordered(self._remove_ids, self._remove_cursor)
 
 
-def gepa_metric(gold: dspy.Example, pred: dspy.Prediction, trace: object, pred_name: str | None, pred_trace: object) -> dspy.Prediction:
-    """Return GEPA's five-argument metric result."""
+def gepa_metric(
+    gold: dspy.Example,
+    pred: dspy.Prediction | None = None,
+    trace: object = None,
+    pred_name: str | None = None,
+    pred_trace: object = None,
+) -> dspy.Prediction:
+    """Return GEPA's metric result for both two-argument and five-argument calls."""
     del trace, pred_name, pred_trace
+    if pred is None:
+        pred = dspy.Prediction(is_remove=False, p_remove=float("nan"))
     result = score_example(gold, pred)
     return dspy.Prediction(score=result.score, feedback=result.feedback)
 

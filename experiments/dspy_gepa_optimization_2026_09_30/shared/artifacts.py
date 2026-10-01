@@ -20,6 +20,7 @@ from experiments.dspy_gepa_optimization_2026_09_30.shared.config import (
     RANDOM_SEED,
     REMOVE_LABEL,
     S3_BUCKET,
+    S3_PREFIX,
     SPLIT_NAMES,
 )
 from experiments.dspy_gepa_optimization_2026_09_30.shared.data import (
@@ -90,6 +91,21 @@ def upload_inputs(bundle: SplitBundle) -> dict[str, str]:
         _put_or_confirm(store, key, body)
     _read_back(store, objects)
     return {key: sha256_hex(body) for key, body in objects.items()}
+
+
+def upload_run_bytes(run_id: str, relative_key: str, body: bytes) -> str:
+    """Upload one run artifact and return its key."""
+    apply_lab_aws_credentials()
+    key = f"{S3_PREFIX}runs/{run_id}/{relative_key}"
+    store = S3(S3_BUCKET, region_name="us-east-2")
+    if store.object_exists(key) and store.get_bytes(key) == body:
+        return key
+    if store.object_exists(key):
+        raise ValueError(f"run object already exists with different bytes: {key}")
+    store.upload_bytes(key, body, content_type=_content_type(key), metadata={"sha256": sha256_hex(body)})
+    if store.get_bytes(key) != body:
+        raise ValueError(f"read-after-write mismatch for {key}")
+    return key
 
 
 def read_manifest() -> dict[str, Any]:

@@ -7,6 +7,8 @@ Run from the repo root::
 
 from __future__ import annotations
 
+import time
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 import dspy
@@ -21,9 +23,11 @@ from experiments.dspy_gepa_optimization_2026_09_30.shared.config import (
     KEEP_LABEL,
     OPTIMIZATION_SPLIT,
     REMOVE_LABEL,
+    TASK_CONCURRENCY,
     TEST_SPLIT,
 )
 from experiments.dspy_gepa_optimization_2026_09_30.shared.data import post_rank
+from experiments.dspy_gepa_optimization_2026_09_30.shared.metric import classification_metrics, score_example
 
 LOADED_SPLITS: list[str] = []
 
@@ -76,6 +80,27 @@ def balanced_validation_batch(frame_batch: ExampleBatch) -> ExampleBatch:
     return _batch_from_examples(ordered)
 
 
+def score_examples(program: dspy.Module, examples: list[dspy.Example], concurrency: int = TASK_CONCURRENCY) -> list[dict[str, object]]:
+    """Score examples with bounded concurrency and preserve input order."""
+    if concurrency < 1:
+        raise ValueError("concurrency must be positive")
+    with ThreadPoolExecutor(max_workers=concurrency) as pool:
+        return list(pool.map(lambda example: _score_one(program, example), examples))
+
+
+def metrics_frame(rows: list[dict[str, object]]) -> dict[str, float]:
+    """Aggregate remove-positive metrics from scored rows."""
+    gold = [bool(row["gold_is_remove"]) for row in rows]
+    predicted = [bool(row["predicted_is_remove"]) for row in rows if row["contract_passed"]]
+    aligned_gold = [bool(row["gold_is_remove"]) for row in rows if row["contract_passed"]]
+    metrics = classification_metrics(aligned_gold, predicted)
+    metrics["rows"] = float(len(rows))
+    metrics["contract_failures"] = float(sum(not row["contract_passed"] for row in rows))
+    if len(gold) != len(rows):
+        raise ValueError("scored rows are incomplete")
+    return metrics
+
+
 def optimization_batch() -> ExampleBatch:
     """Return the optimization split and mark it as loaded."""
     return load_scored_split(OPTIMIZATION_SPLIT)
@@ -112,6 +137,48 @@ def _example(row: dict[str, object]) -> dspy.Example:
     if int(row["keep_remove_label"]) not in {KEEP_LABEL, REMOVE_LABEL}:
         raise ValueError(f"unexpected label for {row['post_id']}")
     return example.with_inputs("post_1_text", "post_2_text")
+
+
+def _score_one(program: dspy.Module, example: dspy.Example) -> dict[str, object]:
+    started = time.perf_counter()
+    try:
+        prediction = program(post_1_text=example.post_1_text, post_2_text=example.post_2_text)
+        result = score_example(example, prediction)
+        reported = getattr(prediction, "p_remove", None)
+        returned = getattr(prediction, "is_remove", None)
+    except Exception as error:
+        result = score_example(example, SimplePrediction(error))
+        reported = None
+        returned = None
+        prediction_error = type(error).__name__
+    else:
+        prediction_error = ""
+    return {
+        "post_id": str(example.post_id),
+        "gold_is_remove": bool(example.is_remove),
+        "is_remove": returned,
+        "p_remove": reported,
+        "predicted_is_remove": _predicted(result, reported),
+        "score": result.score,
+        "feedback": result.feedback,
+        "contract_passed": result.contract_passed,
+        "latency_seconds": time.perf_counter() - started,
+        "error": prediction_error,
+    }
+
+
+class SimplePrediction:
+    """Stand-in prediction that fails the output contract."""
+
+    def __init__(self, error: Exception) -> None:
+        self.is_remove = False
+        self.p_remove = error
+
+
+def _predicted(result: object, reported: object) -> bool:
+    if not result.contract_passed:
+        return False
+    return float(reported) >= 0.5
 
 
 def _contract_mode() -> bool:
