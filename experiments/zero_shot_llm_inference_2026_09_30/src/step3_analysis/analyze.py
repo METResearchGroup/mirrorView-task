@@ -243,7 +243,38 @@ def _reject_partition_count(observed: int, expected: int, name: str) -> None:
 
 def build_label_counts(partitions: PreparedInputPartitions) -> tuple[LabelCountRow, ...]:
     """Build human label counts and proportions for each dataset."""
-    raise NotImplementedError
+    rows: list[LabelCountRow] = []
+    dataset_rows = (
+        (AnalysisDataset.ALL, partitions.all_rows),
+        (AnalysisDataset.UNANIMOUS, partitions.unanimous_rows),
+        (AnalysisDataset.SPLIT, partitions.split_rows),
+    )
+    for dataset, partition in dataset_rows:
+        rows.extend(_label_count_rows_for_partition(dataset, partition))
+    return tuple(rows)
+
+
+def _label_count_rows_for_partition(
+    dataset: AnalysisDataset,
+    rows: tuple[Study2InputRecord, ...],
+) -> list[LabelCountRow]:
+    dataset_total = len(rows)
+    keep_count = sum(1 for row in rows if not row.gold_is_remove)
+    remove_count = dataset_total - keep_count
+    return [
+        _label_count_row(dataset, LabelName.KEEP, keep_count, dataset_total),
+        _label_count_row(dataset, LabelName.REMOVE, remove_count, dataset_total),
+    ]
+
+
+def _label_count_row(
+    dataset: AnalysisDataset,
+    label: LabelName,
+    count: int,
+    dataset_total: int,
+) -> LabelCountRow:
+    proportion = count / dataset_total if dataset_total else 0.0
+    return LabelCountRow(dataset, label, count, dataset_total, proportion)
 
 
 def build_split_remove_vote_counts(
