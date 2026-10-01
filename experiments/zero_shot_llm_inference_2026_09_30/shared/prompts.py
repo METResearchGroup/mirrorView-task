@@ -45,4 +45,7 @@ def format_baseline_zero_shot_keep_remove_prompt(
     str
         Prompt text with only placeholder substitution applied.
     """
-    raise NotImplementedError
+    return BASELINE_ZERO_SHOT_KEEP_REMOVE_PROMPT.format(
+        post_1_text=post_1_text,
+        post_2_text=post_2_text,
+    )
