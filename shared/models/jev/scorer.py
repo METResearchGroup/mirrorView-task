@@ -128,7 +128,26 @@ class JevScorer:
         KeyError, ValueError
             From ``parse_response``. Never retried.
         """
-        raise NotImplementedError
+        max_attempts = 1 + len(self._backoff_seconds)
+        for attempt in range(1, max_attempts + 1):
+            self._limiter.wait()
+            started = self._clock()
+            try:
+                response = self._classifier.invoke(request)
+            except _RETRYABLE_ERRORS as error:
+                if attempt == max_attempts:
+                    raise
+                self._sleep_fn(self._retry_delay(error, attempt))
+                continue
+            latency_ms = (self._clock() - started) * 1000.0
+            return parse_response(
+                request,
+                response,
+                self._classifier.model,
+                latency_ms,
+                attempt,
+            )
+        raise AssertionError("unreachable")
 
     def _retry_delay(self, error: Exception, attempt: int) -> float:
         """Use the fixed backoff, or the server's retry-after when it is longer.
@@ -145,7 +164,11 @@ class JevScorer:
         float
             Seconds to wait before the next attempt.
         """
-        raise NotImplementedError
+        delay = self._backoff_seconds[attempt - 1]
+        retry_after_ms = getattr(error, "retry_after_ms", None)
+        if retry_after_ms is not None:
+            delay = max(delay, retry_after_ms / 1000.0)
+        return delay
 
 
 def build_jev_scorer(model_id: str = JEV_MODEL_ID) -> JevScorer:
