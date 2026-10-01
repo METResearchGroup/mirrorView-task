@@ -664,7 +664,7 @@ def main() -> None:
         EXPERIMENT_S3_BUCKET,
     )
 
-    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, DEFAULT_S3_REGION)
+    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, region_name=DEFAULT_S3_REGION)
     prefix = run_analysis(store, args.run_id)
     _print_success_line(prefix, args.run_id)
 

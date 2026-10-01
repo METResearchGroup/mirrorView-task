@@ -140,7 +140,7 @@ def main() -> None:
         args.max_tokens,
     )
     apply_lab_aws_credentials_when_unset()
-    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, DEFAULT_S3_REGION)
+    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, region_name=DEFAULT_S3_REGION)
     run_plan = _build_inference_run_plan(store, args.run_id, model, args.limit)
     if run_plan.pending_records:
         client = create_bedrock_runtime_client()
