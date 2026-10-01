@@ -16,7 +16,18 @@ from shared.models.jev.constants import (
 
 
 def get_jev_api_key() -> str:
-    """Return the TypeSafe API key from ``TYPESAFE_API_KEY`` or Secrets Manager."""
+    """Return the TypeSafe API key from ``TYPESAFE_API_KEY`` or Secrets Manager.
+
+    Returns
+    -------
+    str
+        Stripped API key. The key is never logged.
+
+    Raises
+    ------
+    ValueError
+        When the secret is empty or has none of the expected JSON keys.
+    """
     raise NotImplementedError
 
 
