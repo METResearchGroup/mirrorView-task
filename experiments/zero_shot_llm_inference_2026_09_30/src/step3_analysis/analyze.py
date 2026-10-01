@@ -25,6 +25,7 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     EXPECTED_SPLIT_RECORD_COUNT,
     EXPECTED_TOTAL_RECORD_COUNT,
     EXPECTED_UNANIMOUS_RECORD_COUNT,
+    MODEL_REGISTRY,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
@@ -388,7 +389,26 @@ def build_model_metrics_table(
     model_runs: tuple[LoadedModelRun, ...],
 ) -> tuple[ModelMetricRow, ...]:
     """Build the standardized twelve-row model metric table."""
-    raise NotImplementedError
+    runs_by_folder = {run.model_folder: run for run in model_runs}
+    rows: list[ModelMetricRow] = []
+    partition_by_dataset = {
+        AnalysisDataset.ALL: partitions.all_rows,
+        AnalysisDataset.UNANIMOUS: partitions.unanimous_rows,
+        AnalysisDataset.SPLIT: partitions.split_rows,
+    }
+    for dataset in _DATASET_ORDER:
+        partition_rows = partition_by_dataset[dataset]
+        for model in MODEL_REGISTRY:
+            loaded = runs_by_folder[model.folder_name]
+            predictions = _predictions_map(loaded.predictions)
+            rows.append(
+                build_model_metric_row(dataset, model.folder_name, partition_rows, predictions)
+            )
+    return tuple(rows)
+
+
+def _predictions_map(predictions: tuple[PredictionRecord, ...]) -> dict[str, bool]:
+    return {record.post_id: record.is_remove for record in predictions}
 
 
 def load_run_inputs(store: CampaignObjectStore, run_id: str) -> LoadedAnalysisRun:
