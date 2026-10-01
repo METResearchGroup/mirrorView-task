@@ -7,45 +7,321 @@ Run from repo root::
 
 from __future__ import annotations
 
+import argparse
 from dataclasses import dataclass
-from typing import Any
+from enum import Enum
+from typing import Protocol
+
+from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
+from pydantic import BaseModel, ConfigDict, Field
+
+from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
+    InputManifest,
+    ModelRunManifest,
+    PredictionRecord,
+    Study2InputRecord,
+)
+from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
+    apply_lab_aws_credentials_when_unset,
+    validate_path_segment,
+)
+
+ANALYSIS_SCHEMA_VERSION = "study2-zero-shot-analysis-v1"
+_ANALYSIS_SEGMENT = "analysis"
+_LABEL_COUNTS_FILENAME = "label_counts.csv"
+_SPLIT_REMOVE_VOTE_COUNTS_FILENAME = "split_remove_vote_counts.csv"
+_MODEL_METRICS_FILENAME = "model_metrics.csv"
+_RESULTS_FRAGMENT_FILENAME = "results_fragment.md"
+_ANALYSIS_MANIFEST_FILENAME = "analysis_manifest.json"
+_METRIC_DECIMAL_PLACES = 6
+_SPLIT_REMOVE_VOTE_VALUES = (1, 2, 3, 4)
+
+
+class AnalysisDataset(str, Enum):
+    """Evaluation dataset partitions for Study 2 analysis."""
+
+    ALL = "all"
+    UNANIMOUS = "unanimous"
+    SPLIT = "split"
+
+
+_DATASET_ORDER: tuple[AnalysisDataset, ...] = (
+    AnalysisDataset.ALL,
+    AnalysisDataset.UNANIMOUS,
+    AnalysisDataset.SPLIT,
+)
+
+
+class LabelName(str, Enum):
+    """Human keep/remove labels."""
+
+    KEEP = "keep"
+    REMOVE = "remove"
+
+
+_LABEL_ORDER: tuple[LabelName, ...] = (LabelName.KEEP, LabelName.REMOVE)
+
+
+@dataclass(frozen=True)
+class PreparedInputPartitions:
+    """Prepared input rows partitioned by evaluation dataset."""
+
+    all_rows: tuple[Study2InputRecord, ...]
+    unanimous_rows: tuple[Study2InputRecord, ...]
+    split_rows: tuple[Study2InputRecord, ...]
+
+
+@dataclass(frozen=True)
+class LabelCountRow:
+    """One human label count row."""
+
+    dataset: AnalysisDataset
+    label: LabelName
+    count: int
+    dataset_total: int
+    proportion: float
+
+
+@dataclass(frozen=True)
+class SplitRemoveVoteCountRow:
+    """One split remove-vote count row."""
+
+    remove_votes: int
+    count: int
+    split_total: int
+    proportion: float
+
+
+@dataclass(frozen=True)
+class ConfusionCounts:
+    """Confusion matrix counts with remove as the positive class."""
+
+    sample_count: int
+    true_positive: int
+    false_positive: int
+    true_negative: int
+    false_negative: int
+
+
+@dataclass(frozen=True)
+class ClassificationMetrics:
+    """Classification metrics derived from one confusion matrix."""
+
+    f1: float
+    accuracy: float
+    recall: float
+    precision: float
+
+
+@dataclass(frozen=True)
+class ModelMetricRow:
+    """One model metric row for one evaluation dataset."""
+
+    dataset: AnalysisDataset
+    model_folder: str
+    sample_count: int
+    true_positive: int
+    false_positive: int
+    true_negative: int
+    false_negative: int
+    f1: float
+    accuracy: float
+    recall: float
+    precision: float
 
 
 @dataclass(frozen=True)
 class AnalysisTables:
     """Completed machine-readable tables for one analysis run."""
 
-    label_counts: tuple[Any, ...]
-    split_remove_vote_counts: tuple[Any, ...]
-    model_metrics: tuple[Any, ...]
+    label_counts: tuple[LabelCountRow, ...]
+    split_remove_vote_counts: tuple[SplitRemoveVoteCountRow, ...]
+    model_metrics: tuple[ModelMetricRow, ...]
 
 
-def load_run_inputs(run_id: str, store: Any) -> Any:
-    """Load prepared input and four model outputs for one run."""
-    return None
+class ModelRunReference(BaseModel):
+    """One completed model manifest referenced by the analysis bundle."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    model_folder: str = Field(min_length=1)
+    model_id: str = Field(min_length=1)
+    manifest_s3_key: str = Field(min_length=1)
+    manifest_sha256: str = Field(min_length=1)
 
 
-def validate_run_inputs(loaded: Any) -> None:
+class AnalysisManifest(BaseModel):
+    """Immutable manifest describing one analysis bundle."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    schema_version: str = Field(min_length=1)
+    run_id: str = Field(min_length=1)
+    prepared_input_records_s3_key: str = Field(min_length=1)
+    prepared_input_records_sha256: str = Field(min_length=1)
+    prepared_input_manifest_schema_version: str = Field(min_length=1)
+    input_row_count: int = Field(ge=0)
+    unanimous_row_count: int = Field(ge=0)
+    split_row_count: int = Field(ge=0)
+    model_runs: tuple[ModelRunReference, ...]
+    label_counts_s3_key: str = Field(min_length=1)
+    split_remove_vote_counts_s3_key: str = Field(min_length=1)
+    model_metrics_s3_key: str = Field(min_length=1)
+    results_fragment_s3_key: str = Field(min_length=1)
+    analysis_manifest_s3_key: str = Field(min_length=1)
+    label_counts_sha256: str = Field(min_length=1)
+    split_remove_vote_counts_sha256: str = Field(min_length=1)
+    model_metrics_sha256: str = Field(min_length=1)
+    results_fragment_sha256: str = Field(min_length=1)
+
+
+@dataclass(frozen=True)
+class LoadedModelRun:
+    """Validated predictions and manifest for one model folder."""
+
+    model_folder: str
+    model_id: str
+    manifest: ModelRunManifest
+    manifest_s3_key: str
+    manifest_sha256: str
+    predictions: tuple[PredictionRecord, ...]
+
+
+@dataclass(frozen=True)
+class LoadedAnalysisRun:
+    """Validated prepared input and model outputs for one run."""
+
+    run_id: str
+    input_manifest: InputManifest
+    prepared_records: tuple[Study2InputRecord, ...]
+    model_runs: tuple[LoadedModelRun, ...]
+
+
+class ObjectStoreBoundary(Protocol):
+    """Minimal store surface required by analysis IO."""
+
+    def get(self, key: str) -> object | None: ...
+
+    def put_new(self, key: str, body: bytes) -> None: ...
+
+    def list_keys(self, prefix: str) -> list[str]: ...
+
+
+def partition_prepared_records(
+    records: tuple[Study2InputRecord, ...],
+) -> PreparedInputPartitions:
+    """Split prepared rows into all, unanimous, and split partitions."""
+    raise NotImplementedError
+
+
+def validate_prepared_partitions(partitions: PreparedInputPartitions) -> None:
+    """Reject prepared partitions whose counts differ from pinned totals."""
+    raise NotImplementedError
+
+
+def build_label_counts(partitions: PreparedInputPartitions) -> tuple[LabelCountRow, ...]:
+    """Build human label counts and proportions for each dataset."""
+    raise NotImplementedError
+
+
+def build_split_remove_vote_counts(
+    split_rows: tuple[Study2InputRecord, ...],
+) -> tuple[SplitRemoveVoteCountRow, ...]:
+    """Build split remove-vote counts and proportions for votes one through four."""
+    raise NotImplementedError
+
+
+def build_confusion_counts(
+    rows: tuple[Study2InputRecord, ...],
+    predictions_by_post_id: dict[str, bool],
+) -> ConfusionCounts:
+    """Build confusion counts for one dataset with remove as positive."""
+    raise NotImplementedError
+
+
+def build_classification_metrics(confusion: ConfusionCounts) -> ClassificationMetrics:
+    """Derive F1, accuracy, recall, and precision from confusion counts."""
+    raise NotImplementedError
+
+
+def build_model_metric_row(
+    dataset: AnalysisDataset,
+    model_folder: str,
+    rows: tuple[Study2InputRecord, ...],
+    predictions_by_post_id: dict[str, bool],
+) -> ModelMetricRow:
+    """Build one model metric row for one dataset partition."""
+    raise NotImplementedError
+
+
+def build_model_metrics_table(
+    partitions: PreparedInputPartitions,
+    model_runs: tuple[LoadedModelRun, ...],
+) -> tuple[ModelMetricRow, ...]:
+    """Build the standardized twelve-row model metric table."""
+    raise NotImplementedError
+
+
+def load_run_inputs(store: CampaignObjectStore, run_id: str) -> LoadedAnalysisRun:
+    """Load prepared input and four completed model outputs for one run."""
+    raise NotImplementedError
+
+
+def validate_run_inputs(loaded: LoadedAnalysisRun) -> None:
     """Reject incomplete or mismatched inputs before calculation."""
-    return None
+    raise NotImplementedError
 
 
-def calculate_analysis_tables(loaded: Any) -> AnalysisTables:
+def calculate_analysis_tables(loaded: LoadedAnalysisRun) -> AnalysisTables:
     """Build label, vote, and metric tables from validated inputs."""
-    return AnalysisTables((), (), ())
+    raise NotImplementedError
 
 
-def write_analysis_bundle(run_id: str, store: Any, tables: AnalysisTables, loaded: Any) -> None:
+def write_analysis_bundle(
+    store: CampaignObjectStore,
+    loaded: LoadedAnalysisRun,
+    tables: AnalysisTables,
+    results_fragment: str,
+) -> str:
     """Serialize tables and write the immutable analysis bundle."""
-    return None
+    raise NotImplementedError
+
+
+def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
+    """Execute the full analysis pipeline and return the analysis prefix."""
+    loaded = load_run_inputs(store, run_id)
+    validate_run_inputs(loaded)
+    tables = calculate_analysis_tables(loaded)
+    from experiments.zero_shot_llm_inference_2026_09_30.src.step3_analysis.render import (
+        render_results_fragment,
+    )
+
+    fragment = render_results_fragment(tables)
+    return write_analysis_bundle(store, loaded, tables, fragment)
 
 
 def main() -> None:
     """Run load, validate, calculate, render, and write for one run ID."""
-    loaded = load_run_inputs("", None)
-    validate_run_inputs(loaded)
-    tables = calculate_analysis_tables(loaded)
-    write_analysis_bundle("", None, tables, loaded)
+    args = _parse_args()
+    apply_lab_aws_credentials_when_unset()
+    from data_platform.utils.object_store import DEFAULT_S3_REGION
+    from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
+        EXPERIMENT_S3_BUCKET,
+    )
+
+    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, DEFAULT_S3_REGION)
+    prefix = run_analysis(store, args.run_id)
+    _print_success_line(prefix, args.run_id)
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Analyze one complete Study 2 zero-shot run.")
+    parser.add_argument("--run-id", required=True, help="Safe run identifier segment")
+    return parser.parse_args()
+
+
+def _print_success_line(prefix: str, run_id: str) -> None:
+    raise NotImplementedError
 
 
 if __name__ == "__main__":

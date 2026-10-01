@@ -13,5 +13,16 @@ from experiments.zero_shot_llm_inference_2026_09_30.src.step3_analysis.analyze i
 
 
 def render_results_fragment(tables: AnalysisTables) -> str:
-    """Render the fixed results fragment from completed analysis tables."""
-    return ""
+    """Render the fixed results fragment from completed analysis tables.
+
+    Parameters
+    ----------
+    tables
+        Completed label, vote, and metric tables.
+
+    Returns
+    -------
+    str
+        Deterministic Markdown fragment with the fixed headings and tables.
+    """
+    raise NotImplementedError
