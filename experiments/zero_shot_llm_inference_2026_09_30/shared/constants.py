@@ -23,6 +23,20 @@ INPUT_MANIFEST_SCHEMA_VERSION = "study2-five-labeler-input-v1"
 REMOVE_LABEL_VALUE = 1
 PROBABILITY_THRESHOLD = 0.5
 
+def get_model_definition_by_folder(folder_name: str) -> ModelDefinition:
+    """Return the registry entry for ``folder_name``.
+
+    Raises
+    ------
+    ValueError
+        When ``folder_name`` is not one of the confirmed registry folders.
+    """
+    for entry in MODEL_REGISTRY:
+        if entry.folder_name == folder_name:
+            return entry
+    raise ValueError(f"unknown model folder: {folder_name}")
+
+
 MODEL_REGISTRY: tuple[ModelDefinition, ...] = (
     ModelDefinition(
         display_name="Amazon Nova Micro",
