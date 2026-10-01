@@ -21,6 +21,8 @@ from experiments.dspy_gepa_optimization_2026_09_30.shared.config import (
     DEVELOPMENT_SPLIT,
     INPUT_PRICE_PER_MILLION,
     OUTPUT_PRICE_PER_MILLION,
+    PILOT_METRIC_CALLS,
+    PRELIMINARY_HIGH_COST_USD,
     PRELIMINARY_HIGH_MINUTES,
     PRELIMINARY_LOW_MINUTES,
     PRELIMINARY_MEDIAN_MINUTES,
@@ -71,8 +73,9 @@ def main() -> None:
         run_smoke(args)
         return
     if args.approved_smoke_run_id:
-        raise SystemExit("pilot execution waits for explicit approval after the smoke report")
-    raise SystemExit("pass --validate-contracts or --smoke")
+        run_pilot(args)
+        return
+    raise SystemExit("pass --validate-contracts, --smoke, or an approved pilot run")
 
 
 def run_contract_checks() -> None:
@@ -224,7 +227,14 @@ def run_smoke(args: argparse.Namespace) -> None:
     log_dir = Path("/tmp") / f"dspy-gepa-{run_id}"
     log_dir.mkdir(parents=True, exist_ok=True)
     with trace_attributes({"run_id": run_id, "mode": "smoke", "stage": "optimizer", "model_id": BEDROCK_MODEL_ID}):
-        compiled = _compile_gepa(program, optimization, validation, rejections, log_dir)
+        compiled = _compile_gepa(
+            program,
+            optimization,
+            validation,
+            rejections,
+            log_dir,
+            SMOKE_METRIC_CALLS,
+        )
     client.finish()
     _publish_smoke(run_id, baseline_rows, compiled, rejections, task_lm, log_dir)
     print("smoke_run_id", run_id)
@@ -256,11 +266,27 @@ def _print_completed_smoke(run_id: str, payload: dict[str, object]) -> None:
     print("status", "awaiting_user_approval")
 
 
-def _compile_gepa(program: object, optimization: evaluation.ExampleBatch, validation: evaluation.ExampleBatch, rejections: list[dict[str, object]], log_dir: Path) -> object:
-    proposer = _GuardedProposer(optimization.post_texts, rejections)
+def _compile_gepa(
+    program: object,
+    optimization: evaluation.ExampleBatch,
+    validation: evaluation.ExampleBatch,
+    rejections: list[dict[str, object]],
+    log_dir: Path,
+    max_metric_calls: int,
+    metric: object = gepa_metric,
+    stop_callbacks: list[object] | None = None,
+    pause: _PilotPause | None = None,
+) -> object:
+    proposer = _GuardedProposer(optimization.post_texts, rejections, pause)
+    gepa_kwargs: dict[str, object] = {
+        "batch_sampler": BalancedReflectionSampler(),
+        "acceptance_criterion": "strict_improvement",
+    }
+    if stop_callbacks:
+        gepa_kwargs["stop_callbacks"] = stop_callbacks
     optimizer = dspy.GEPA(
-        metric=gepa_metric,
-        max_metric_calls=SMOKE_METRIC_CALLS,
+        metric=metric,
+        max_metric_calls=max_metric_calls,
         reflection_lm=build_reflection_model(),
         reflection_minibatch_size=None,
         candidate_selection_strategy="current_best",
@@ -271,7 +297,7 @@ def _compile_gepa(program: object, optimization: evaluation.ExampleBatch, valida
         num_threads=TASK_CONCURRENCY,
         log_dir=str(log_dir),
         instruction_proposer=proposer,
-        gepa_kwargs={"batch_sampler": BalancedReflectionSampler(), "acceptance_criterion": "strict_improvement"},
+        gepa_kwargs=gepa_kwargs,
     )
     return optimizer.compile(program, trainset=optimization.examples, valset=validation.examples)
 
@@ -279,10 +305,11 @@ def _compile_gepa(program: object, optimization: evaluation.ExampleBatch, valida
 class _GuardedProposer:
     """Propose an instruction and reject copies, length, or a broken contract."""
 
-    def __init__(self, post_texts: list[str], rejections: list[dict[str, object]]) -> None:
+    def __init__(self, post_texts: list[str], rejections: list[dict[str, object]], pause: _PilotPause | None = None) -> None:
         self._predict = dspy.Predict("current_instruction, feedback -> improved_instruction")
         self._post_texts = post_texts
         self._rejections = rejections
+        self._pause = pause
 
     def __call__(self, candidate: dict[str, str], reflective_dataset: object, components_to_update: list[str]) -> dict[str, str]:
         updated = {}
@@ -292,9 +319,13 @@ class _GuardedProposer:
             reasons = rejection_reasons(str(proposed), self._post_texts)
             if reasons:
                 self._rejections.append({"component": name, "reasons": reasons, "source": "optimizer"})
+                if self._pause is not None:
+                    self._pause.record_rejection(reasons[0])
                 continue
             if str(proposed) == current:
                 continue
+            if self._pause is not None:
+                self._pause.record_success()
             updated[name] = str(proposed)
         return updated
 
@@ -411,6 +442,246 @@ def _write_results(run_id: str, metrics: dict[str, float], estimates: dict[str, 
         ),
         encoding="utf-8",
     )
+
+
+class _PilotPause:
+    """Stop the pilot when spend or repeated rejections cross a limit."""
+
+    def __init__(self, cost_limit_usd: float) -> None:
+        self.cost_limit_usd = cost_limit_usd
+        self.paused = False
+        self.reason = ""
+        self._last_reason = ""
+        self._same_reason_count = 0
+        self.recent_failures: list[bool] = []
+
+    def record_rejection(self, reason: str) -> None:
+        """Count consecutive rejections that share one reason."""
+        if reason == self._last_reason:
+            self._same_reason_count += 1
+        else:
+            self._last_reason = reason
+            self._same_reason_count = 1
+        if self._same_reason_count >= 5:
+            self.paused = True
+            self.reason = f"five consecutive rejections for {reason}"
+
+    def record_success(self) -> None:
+        """Clear the consecutive rejection count after an accepted proposal."""
+        self._same_reason_count = 0
+        self._last_reason = ""
+
+    def record_failure(self, failed: bool) -> None:
+        """Track the contract-failure rate over the most recent 50 metric calls."""
+        self.recent_failures.append(failed)
+        self.recent_failures = self.recent_failures[-50:]
+        if len(self.recent_failures) < 50:
+            return
+        if sum(self.recent_failures) / len(self.recent_failures) > 0.05:
+            self.paused = True
+            self.reason = "error rate above 5 percent over the most recent 50 calls"
+
+    def __call__(self, gepa_state: object) -> bool:
+        """Return true when GEPA should stop."""
+        del gepa_state
+        if self.paused:
+            return True
+        if _history_cost_usd() > self.cost_limit_usd:
+            self.paused = True
+            self.reason = f"projected cost exceeded ${self.cost_limit_usd:.2f}"
+            return True
+        return False
+
+
+def run_pilot(args: argparse.Namespace) -> None:
+    """Run the approved 1,000-call pilot and lock one development score."""
+    if args.max_metric_calls != PILOT_METRIC_CALLS:
+        raise SystemExit(f"pilot requires --max-metric-calls {PILOT_METRIC_CALLS}")
+    if not args.run_id:
+        raise SystemExit("pilot requires --run-id")
+    smoke = _completed_smoke(args.approved_smoke_run_id)
+    if smoke is None:
+        raise SystemExit("approved smoke run is missing or is not awaiting approval")
+    if _selection_is_locked(args.run_id):
+        _print_locked_selection(args.run_id)
+        return
+    evaluation.BLOCKED_SPLITS.add(TEST_SPLIT)
+    evaluation.CONTRACT_MODE = False
+    apply_lab_aws_credentials()
+    log_dir = Path("/tmp") / f"dspy-gepa-{args.run_id}"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    _restore_optimizer_state(args.run_id, log_dir)
+    client = initialize_weave()
+    configure_task_model()
+    program = build_seed_program()
+    optimization = evaluation.optimization_batch()
+    validation = evaluation.balanced_validation_batch(evaluation.gepa_validation_batch())
+    rejections: list[dict[str, object]] = []
+    pause = _PilotPause(PRELIMINARY_HIGH_COST_USD)
+    metric = _pilot_metric(pause)
+    with trace_attributes({"run_id": args.run_id, "mode": "pilot", "stage": "optimizer", "model_id": BEDROCK_MODEL_ID}):
+        compiled = _compile_gepa(
+            program,
+            optimization,
+            validation,
+            rejections,
+            log_dir,
+            PILOT_METRIC_CALLS,
+            metric,
+            [pause],
+            pause,
+        )
+    if pause.paused:
+        _upload_log_dir(args.run_id, log_dir)
+        client.finish()
+        print("status", "paused")
+        print("pause_reason", pause.reason)
+        print("test_rows_loaded", 0)
+        return
+    selected = _lock_selection(args, smoke, compiled, optimization.post_texts, rejections)
+    _copy_smoke_baseline(args.approved_smoke_run_id, args.run_id)
+    development = evaluation.load_scored_split(DEVELOPMENT_SPLIT)
+    with trace_attributes({"run_id": args.run_id, "mode": "pilot", "stage": "development", "model_id": BEDROCK_MODEL_ID}):
+        rows = evaluation.score_examples(selected["program"], development.examples, concurrency=1)
+    metrics = evaluation.metrics_frame(rows)
+    _upload_development(args.run_id, rows, metrics)
+    _upload_log_dir(args.run_id, log_dir)
+    client.finish()
+    print("run_id", args.run_id)
+    print("selected_index", selected["index"])
+    print("balanced_validation_accuracy", selected["accuracy"])
+    print("development_rows", len(rows))
+    print("development_f1", f"{metrics['f1']:.6f}")
+    print("development_accuracy", f"{metrics['accuracy']:.6f}")
+    print("development_recall", f"{metrics['recall']:.6f}")
+    print("development_precision", f"{metrics['precision']:.6f}")
+    print("reflection_and_task_cost_usd", f"{_history_cost_usd():.2f}")
+    print("status", "selection_locked")
+    print("test_rows_loaded", 0)
+
+
+def _pilot_metric(pause: _PilotPause):
+    """Return a GEPA metric that records contract failures for the pause check."""
+
+    def metric(gold, pred=None, trace=None, pred_name=None, pred_trace=None):
+        result = gepa_metric(gold, pred, trace, pred_name, pred_trace)
+        pause.record_failure("contract failure" in result.feedback)
+        return result
+
+    return metric
+
+
+def _selection_is_locked(run_id: str) -> bool:
+    store = S3(S3_BUCKET, region_name="us-east-2")
+    key = f"{S3_PREFIX}runs/{run_id}/selection/selected_program.json"
+    if not store.object_exists(key):
+        return False
+    payload = json.loads(store.get_bytes(key))
+    metrics_key = f"{S3_PREFIX}runs/{run_id}/selection/development_metrics.json"
+    return payload.get("selection_status") == "locked" and store.object_exists(metrics_key)
+
+
+def _print_locked_selection(run_id: str) -> None:
+    store = S3(S3_BUCKET, region_name="us-east-2")
+    payload = json.loads(store.get_bytes(f"{S3_PREFIX}runs/{run_id}/selection/selected_program.json"))
+    metrics = json.loads(store.get_bytes(f"{S3_PREFIX}runs/{run_id}/selection/development_metrics.json"))
+    print("run_id", run_id)
+    print("selected_index", payload["candidate_index"])
+    print("balanced_validation_accuracy", payload["balanced_validation_accuracy"])
+    print("development_rows", int(metrics["rows"]))
+    print("development_f1", f"{metrics['f1']:.6f}")
+    print("duplicate_task_calls", 0)
+    print("status", "selection_locked")
+    print("test_rows_loaded", 0)
+
+
+def _lock_selection(args: argparse.Namespace, smoke: dict[str, object], compiled: object, post_texts: list[str], rejections: list[dict[str, object]]) -> dict[str, object]:
+    details = compiled.detailed_results
+    records = [
+        CandidateRecord(index, float(score), _module_instruction(module))
+        for index, (module, score) in enumerate(zip(details.candidates, details.val_aggregate_scores, strict=True))
+    ]
+    chosen = select_candidate(records)
+    instruction = chosen.instruction
+    reasons = rejection_reasons(instruction, post_texts)
+    if reasons:
+        raise SystemExit(f"selected instruction failed proposal checks: {reasons}")
+    program = details.candidates[chosen.index]
+    digest = _sha256_text(instruction)
+    payload = {
+        "selection_status": "locked",
+        "run_id": args.run_id,
+        "approved_smoke_run_id": args.approved_smoke_run_id,
+        "candidate_index": chosen.index,
+        "balanced_validation_accuracy": chosen.accuracy,
+        "prompt_sha256": digest,
+        "instruction": instruction,
+        "model_id": BEDROCK_MODEL_ID,
+        "smoke_estimates": smoke.get("estimates", {}),
+    }
+    lines = [
+        json.dumps({"index": record.index, "accuracy": record.accuracy, "instruction_length": len(record.instruction)})
+        for record in records
+    ]
+    upload_run_bytes(args.run_id, "selection/candidate_metrics.jsonl", ("\n".join(lines) + "\n").encode())
+    upload_run_bytes(args.run_id, "selection/selected_program.json", json.dumps(payload, indent=2, sort_keys=True).encode())
+    upload_run_bytes(args.run_id, "selection/optimized_prompt.txt", instruction.encode())
+    upload_run_bytes(args.run_id, "optimization/rejection_log.json", json.dumps(rejections, indent=2).encode())
+    return {"program": program, "index": chosen.index, "accuracy": chosen.accuracy, "instruction": instruction}
+
+
+def _module_instruction(module: object) -> str:
+    return str(module.classify.signature.instructions)
+
+
+def _sha256_text(value: str) -> str:
+    import hashlib
+
+    return hashlib.sha256(value.encode()).hexdigest()
+
+
+def _upload_development(run_id: str, rows: list[dict[str, object]], metrics: dict[str, float]) -> None:
+    frame = __import__("pandas").DataFrame(rows)
+    upload_run_bytes(run_id, "selection/development_predictions.parquet", evaluation_parquet(frame))
+    upload_run_bytes(run_id, "selection/development_metrics.json", json.dumps(metrics, indent=2, sort_keys=True).encode())
+
+
+def evaluation_parquet(frame: object) -> bytes:
+    """Serialize scored rows with the experiment Parquet helper."""
+    from experiments.dspy_gepa_optimization_2026_09_30.shared.artifacts import parquet_bytes
+
+    return parquet_bytes(frame)
+
+
+def _copy_smoke_baseline(smoke_run_id: str, pilot_run_id: str) -> None:
+    store = S3(S3_BUCKET, region_name="us-east-2")
+    for relative in ("baseline/metrics.json", "baseline/predictions.json"):
+        source = f"{S3_PREFIX}runs/{smoke_run_id}/{relative}"
+        upload_run_bytes(pilot_run_id, relative, store.get_bytes(source))
+
+
+def _restore_optimizer_state(run_id: str, log_dir: Path) -> None:
+    if any(log_dir.iterdir()):
+        return
+    store = S3(S3_BUCKET, region_name="us-east-2")
+    prefix = f"{S3_PREFIX}runs/{run_id}/optimization/optimizer_state/"
+    for key in store.list_keys_ordered(prefix):
+        relative = key.removeprefix(prefix)
+        destination = log_dir / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(store.get_bytes(key))
+
+
+def _history_cost_usd() -> float:
+    from dspy.clients.base_lm import GLOBAL_HISTORY
+
+    input_tokens = 0
+    output_tokens = 0
+    for entry in GLOBAL_HISTORY:
+        usage = entry.get("usage") or {}
+        input_tokens += int(usage.get("prompt_tokens") or usage.get("input_tokens") or 0)
+        output_tokens += int(usage.get("completion_tokens") or usage.get("output_tokens") or 0)
+    return (input_tokens * INPUT_PRICE_PER_MILLION + output_tokens * OUTPUT_PRICE_PER_MILLION) / 1_000_000
 
 
 if __name__ == "__main__":

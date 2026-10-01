@@ -57,8 +57,13 @@ class IndexedExampleLoader:
         return len(self.items)
 
 
+BLOCKED_SPLITS: set[str] = set()
+
+
 def load_scored_split(split_name: str) -> ExampleBatch:
     """Load one prepared split. Development and test stay out of contract mode."""
+    if split_name in BLOCKED_SPLITS:
+        raise RuntimeError(f"this stage cannot load {split_name}")
     if split_name in {DEVELOPMENT_SPLIT, TEST_SPLIT} and _contract_mode():
         raise RuntimeError(f"contract mode cannot load {split_name}")
     LOADED_SPLITS.append(split_name)
