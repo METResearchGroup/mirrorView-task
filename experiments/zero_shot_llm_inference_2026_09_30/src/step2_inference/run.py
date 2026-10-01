@@ -43,12 +43,26 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
+    build_failure_batch_key,
     build_failures_prefix,
+    build_manifest_key,
     build_manifests_prefix,
+    build_prediction_batch_key,
     build_predictions_prefix,
     load_json_objects_under_prefix,
     load_jsonl_records_under_prefix,
+    load_verified_prepared_input,
+    next_sequence_for_prefix,
+    put_immutable_object,
+    serialize_json_document,
+    serialize_jsonl_models,
+    validate_path_segment,
 )
+
+_BATCH_OBJECT_PREFIX = "batch-"
+_JSONL_OBJECT_SUFFIX = ".jsonl"
+_MANIFEST_OBJECT_PREFIX = "manifest-"
+_JSON_OBJECT_SUFFIX = ".json"
 
 
 def run_model_inference(
@@ -394,27 +408,41 @@ def _flatten_and_validate_predictions(
     return tuple(predictions)
 
 
+def _split_prediction_and_failure_outcomes(
+    outcomes: list[PredictionRecord | FailureRecord],
+) -> tuple[list[PredictionRecord], list[FailureRecord]]:
+    predictions: list[PredictionRecord] = []
+    failures: list[FailureRecord] = []
+    for outcome in outcomes:
+        if isinstance(outcome, FailureRecord):
+            failures.append(outcome)
+            continue
+        predictions.append(outcome)
+    return predictions, failures
+
+
 def _label_records_in_input_order(
     client: BedrockRuntimeClient,
     model: ModelDefinition,
+    run_id: str,
     records: tuple[Study2InputRecord, ...],
     max_concurrency: int,
     max_tokens: int,
 ) -> list[PredictionRecord | FailureRecord]:
     indexed_outcomes: list[PredictionRecord | FailureRecord | None] = [None] * len(records)
     with ThreadPoolExecutor(max_workers=max_concurrency) as executor:
-        futures = {
+        future_to_index = {
             executor.submit(
                 _label_single_record,
                 client,
                 model,
-                run_id="",
-                record=record,
-                max_tokens=max_tokens,
+                run_id,
+                record,
+                max_tokens,
             ): index
             for index, record in enumerate(records)
         }
-        for future, index in ((future, futures[future]) for future in futures):
+        for future, index in future_to_index.items():
             indexed_outcomes[index] = future.result()
     return [outcome for outcome in indexed_outcomes if outcome is not None]
 
