@@ -9,21 +9,34 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 from data_platform.generate_features.engines.bedrock_engine import (
     BedrockRuntimeClient,
+    BedrockUsage,
     create_bedrock_runtime_client,
 )
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from data_platform.utils.object_store import DEFAULT_S3_REGION
 
-from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import EXPERIMENT_S3_BUCKET
+from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
+    EXPERIMENT_S3_BUCKET,
+    get_model_definition_by_folder,
+)
+from experiments.zero_shot_llm_inference_2026_09_30.shared.llm import label_record
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
+    FAILURE_SCHEMA_VERSION,
+    FAILURE_WRAPPER_CALL_COUNT,
     FailureRecord,
+    InputManifest,
+    ModelDefinition,
     ModelRunManifest,
+    PREDICTION_SCHEMA_VERSION,
     PredictionRecord,
+    RemovePrediction,
     Study2InputRecord,
+    TokenUsage,
     validate_failure_record_identity,
     validate_model_run_manifest_identity,
     validate_prediction_record_identity,
@@ -234,6 +247,79 @@ def select_pending_records(
     )
 
 
+def map_bedrock_usage_to_token_usage(usage: BedrockUsage) -> TokenUsage:
+    """Convert engine usage into the experiment TokenUsage model."""
+    return TokenUsage(
+        input_tokens=usage.input_tokens,
+        output_tokens=usage.output_tokens,
+        total_tokens=usage.total_tokens,
+    )
+
+
+def build_prediction_record(
+    run_id: str,
+    model: ModelDefinition,
+    record: Study2InputRecord,
+    prediction: RemovePrediction,
+    usage: TokenUsage,
+) -> PredictionRecord:
+    """Build one prediction row for immutable storage."""
+    return PredictionRecord(
+        schema_version=PREDICTION_SCHEMA_VERSION,
+        run_id=run_id,
+        model_folder=model.folder_name,
+        model_id=model.model_id,
+        post_id=record.post_id,
+        is_remove=prediction.is_remove,
+        p_remove=prediction.p_remove,
+        usage=usage,
+    )
+
+
+def build_failure_record(
+    run_id: str,
+    model: ModelDefinition,
+    record: Study2InputRecord,
+    error: BaseException,
+) -> FailureRecord:
+    """Build one failure row for immutable storage."""
+    message = str(error).strip()
+    if not message:
+        message = error.__class__.__name__
+    return FailureRecord(
+        schema_version=FAILURE_SCHEMA_VERSION,
+        run_id=run_id,
+        model_folder=model.folder_name,
+        model_id=model.model_id,
+        post_id=record.post_id,
+        exception_type=error.__class__.__name__,
+        error_message=message,
+        wrapper_call_count=FAILURE_WRAPPER_CALL_COUNT,
+    )
+
+
+def run_ordered_inference_batch(
+    client: BedrockRuntimeClient,
+    model: ModelDefinition,
+    run_id: str,
+    pending_records: tuple[Study2InputRecord, ...],
+    max_concurrency: int,
+    max_tokens: int,
+) -> tuple[list[PredictionRecord], list[FailureRecord]]:
+    """Run one batch in input order with bounded concurrency."""
+    if not pending_records:
+        return [], []
+    outcomes = _label_records_in_input_order(
+        client,
+        model,
+        run_id,
+        pending_records,
+        max_concurrency,
+        max_tokens,
+    )
+    return _split_prediction_and_failure_outcomes(outcomes)
+
+
 def unresolved_failure_post_ids(
     failures: tuple[FailureRecord, ...],
     predictions: tuple[PredictionRecord, ...],
@@ -306,6 +392,46 @@ def _flatten_and_validate_predictions(
             seen_post_ids.add(record.post_id)
             predictions.append(record)
     return tuple(predictions)
+
+
+def _label_records_in_input_order(
+    client: BedrockRuntimeClient,
+    model: ModelDefinition,
+    records: tuple[Study2InputRecord, ...],
+    max_concurrency: int,
+    max_tokens: int,
+) -> list[PredictionRecord | FailureRecord]:
+    indexed_outcomes: list[PredictionRecord | FailureRecord | None] = [None] * len(records)
+    with ThreadPoolExecutor(max_workers=max_concurrency) as executor:
+        futures = {
+            executor.submit(
+                _label_single_record,
+                client,
+                model,
+                run_id="",
+                record=record,
+                max_tokens=max_tokens,
+            ): index
+            for index, record in enumerate(records)
+        }
+        for future, index in ((future, futures[future]) for future in futures):
+            indexed_outcomes[index] = future.result()
+    return [outcome for outcome in indexed_outcomes if outcome is not None]
+
+
+def _label_single_record(
+    client: BedrockRuntimeClient,
+    model: ModelDefinition,
+    run_id: str,
+    record: Study2InputRecord,
+    max_tokens: int,
+) -> PredictionRecord | FailureRecord:
+    try:
+        prediction, usage = label_record(client, model, record, max_tokens)
+        token_usage = map_bedrock_usage_to_token_usage(usage)
+        return build_prediction_record(run_id, model, record, prediction, token_usage)
+    except Exception as error:
+        return build_failure_record(run_id, model, record, error)
 
 
 def _flatten_and_validate_failures(
