@@ -12,9 +12,22 @@ from importlib.metadata import version
 
 import weave
 
+from experiments.dspy_gepa_optimization_2026_09_30.shared.artifacts import (
+    MANIFEST_KEY,
+    upload_inputs,
+)
 from experiments.dspy_gepa_optimization_2026_09_30.shared.config import (
     BEDROCK_MODEL_ID,
+    S3_BUCKET,
+    SPLIT_NAMES,
+    SPLIT_REMOVE_COUNTS,
+    SPLIT_ROW_COUNTS,
     WANDB_PROJECT_PATH,
+)
+from experiments.dspy_gepa_optimization_2026_09_30.shared.data import (
+    EXCLUDELIST_POST_IDS,
+    build_splits,
+    load_unanimous_labels,
 )
 from experiments.dspy_gepa_optimization_2026_09_30.shared.program import (
     build_reflection_model,
@@ -49,7 +62,29 @@ def main() -> None:
     if args.contract_only:
         run_contract()
         return
-    raise SystemExit("dataset setup is not available until the contract check passes")
+    run_setup()
+
+
+def run_setup() -> None:
+    """Validate the unanimous dataset and write the pilot splits to S3."""
+    bundle = build_splits(load_unanimous_labels())
+    hashes = upload_inputs(bundle)
+    print("source_rows", bundle.source_count)
+    print("excluded_examples", len(EXCLUDELIST_POST_IDS))
+    print("eligible_rows", len(bundle.eligible))
+    print("cohort_rows", len(bundle.cohort_ids))
+    for name in SPLIT_NAMES:
+        print(
+            "split",
+            name,
+            "rows",
+            SPLIT_ROW_COUNTS[name],
+            "remove",
+            SPLIT_REMOVE_COUNTS[name],
+        )
+    print("manifest_uri", f"s3://{S3_BUCKET}/{MANIFEST_KEY}")
+    for key, digest in hashes.items():
+        print("sha256", digest, key)
 
 
 def run_contract() -> None:
