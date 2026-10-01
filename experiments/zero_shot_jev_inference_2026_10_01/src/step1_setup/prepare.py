@@ -113,3 +113,7 @@ def _summary_line(manifest: InputManifest, records: list[Study2InputRecord]) -> 
         f"unanimous_rows={manifest.unanimous_record_count} "
         f"split_rows={manifest.split_record_count} sha256_matches_source=true"
     )
+
+
+if __name__ == "__main__":
+    main()
