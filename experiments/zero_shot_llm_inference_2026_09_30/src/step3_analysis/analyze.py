@@ -281,7 +281,25 @@ def build_split_remove_vote_counts(
     split_rows: tuple[Study2InputRecord, ...],
 ) -> tuple[SplitRemoveVoteCountRow, ...]:
     """Build split remove-vote counts and proportions for votes one through four."""
-    raise NotImplementedError
+    split_total = len(split_rows)
+    vote_counts = {vote: 0 for vote in _SPLIT_REMOVE_VOTE_VALUES}
+    for row in split_rows:
+        if row.n_remove not in vote_counts:
+            raise ValueError(f"unexpected split remove votes: {row.n_remove}")
+        vote_counts[row.n_remove] += 1
+    return tuple(
+        _split_remove_vote_row(vote, vote_counts[vote], split_total)
+        for vote in _SPLIT_REMOVE_VOTE_VALUES
+    )
+
+
+def _split_remove_vote_row(
+    remove_votes: int,
+    count: int,
+    split_total: int,
+) -> SplitRemoveVoteCountRow:
+    proportion = count / split_total if split_total else 0.0
+    return SplitRemoveVoteCountRow(remove_votes, count, split_total, proportion)
 
 
 def build_confusion_counts(
