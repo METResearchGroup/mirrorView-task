@@ -1,0 +1,116 @@
+{
+  "n_scored_trials": 101020,
+  "n_raters": 5051,
+  "n_posts": 20000,
+  "median_posts_per_rater": 20.0,
+  "five_rater_posts": 15113,
+  "remove_vote_counts": [
+    3986,
+    4592,
+    3332,
+    1929,
+    950,
+    324
+  ],
+  "unanimous_share": 0.2851849401177794,
+  "beta_binomial": {
+    "alpha": 1.733499716380752,
+    "beta": 4.089950335475692,
+    "expected_counts": [
+      4078.5,
+      4369.7,
+      3369.4,
+      2065.6,
+      960.5,
+      269.3
+    ]
+  },
+  "noise_ceiling_accuracy_by_remove_votes": {
+    "0": 0.9930298595004773,
+    "1": 0.9589068968889031,
+    "2": 0.8579180176244734,
+    "3": 0.33386079389616957,
+    "4": 0.5805965090194962,
+    "5": 0.7996376877218779
+  },
+  "noise_ceiling_accuracy_overall": 0.8386665182970695,
+  "two_panel_same_majority": 0.7673785956434656,
+  "two_panel_same_count": 0.33410789472188207,
+  "count_nll_oracle_knows_p": 1.2646205231037035,
+  "count_nll_prior_only": 1.5669740479723662,
+  "split_auroc_oracle_knows_p": 0.7936210105154607,
+  "prior_share_p_between_0.2_and_0.8": 0.655065499481919,
+  "prior_share_p_unanimous_at_least_0.8": 0.033597511332363696,
+  "p_split_at_p": {
+    "0.05": 0.22621875000000025,
+    "0.1": 0.4095,
+    "0.2": 0.6719999999999999,
+    "0.3": 0.8295,
+    "0.5": 0.9375
+  },
+  "rater_remove_rate_quantiles": {
+    "0.1": 0.0,
+    "0.25": 0.15,
+    "0.5": 0.3,
+    "0.75": 0.45,
+    "0.9": 0.6
+  },
+  "rater_share_removing_zero": 0.10987923183528014,
+  "split_half_reliability_resid": 0.8005359421438415,
+  "null_split_half_reliability_resid": 0.0009482234409079672,
+  "within_band_split_half": {
+    "sample_high_toxicity": 0.6035037930239013,
+    "sample_low_toxicity": 0.46878965216120866,
+    "sample_middle_toxicity": 0.673700863482524
+  },
+  "cross_band_resid_correlation": {
+    "low_vs_high": 0.26773254398648505,
+    "low_vs_high_n_raters": 4871,
+    "low_vs_middle": 0.5092331965266644,
+    "low_vs_middle_n_raters": 4870,
+    "middle_vs_high": 0.5337038200523464,
+    "middle_vs_high_n_raters": 4942
+  },
+  "resid_by_party": {
+    "democrat": {
+      "mean": -0.0072,
+      "std": 0.2187,
+      "size": 2651
+    },
+    "republican": {
+      "mean": 0.0079,
+      "std": 0.2207,
+      "size": 2400
+    }
+  },
+  "party_welch_t": {
+    "t": -2.4327422645684487,
+    "p": 0.015019869155785348
+  },
+  "jev_a1_pair": {
+    "n_posts": 15113,
+    "count_nll_raw": 1.6612185191010833,
+    "spearman_raw": 0.5236642376937046,
+    "split_auroc_raw": 0.6187132967490125,
+    "count_nll_isotonic": 1.4089811168124693,
+    "spearman_isotonic": 0.5206616994047174,
+    "split_auroc_isotonic": 0.6942947874967274
+  },
+  "resid_by_attention_check": {
+    "0.0": {
+      "mean": 0.0476,
+      "std": 0.2174,
+      "size": 883
+    },
+    "1.0": {
+      "mean": -0.0129,
+      "std": 0.2246,
+      "size": 2992
+    },
+    "nan": {
+      "mean": -0.003,
+      "std": 0.2038,
+      "size": 1176
+    }
+  }
+}
