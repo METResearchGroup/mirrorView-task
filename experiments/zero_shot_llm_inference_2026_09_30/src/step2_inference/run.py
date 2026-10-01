@@ -17,6 +17,7 @@ from data_platform.generate_features.s3_feature_campaign import CampaignObjectSt
 from data_platform.utils.object_store import DEFAULT_S3_REGION
 
 from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import EXPERIMENT_S3_BUCKET
+from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import Study2InputRecord
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import apply_lab_aws_credentials_when_unset
 
 
@@ -30,7 +31,15 @@ def run_model_inference(
     max_concurrency: int,
     max_tokens: int,
 ) -> None:
-    """Execute one resumable inference pass for a single model folder."""
+    """Execute one resumable inference pass for a single model folder.
+
+    Raises
+    ------
+    ValueError
+        When prepared input, resume state, or CLI configuration is invalid.
+    FileExistsError
+        When an immutable write collides with an existing object.
+    """
     _load_prepared_input(store)
     _load_resume_state(store, run_id, model_folder, limit)
     _run_pending_batches(
