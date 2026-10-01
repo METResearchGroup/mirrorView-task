@@ -52,7 +52,7 @@ Read the smoke predictions to measure usage:
 aws s3 cp "s3://mirrorview-experimental-artifacts/experiments/zero_shot_jev_inference_2026_10_01/runs/$SMOKE_RUN_ID/jev_1_13_0/predictions/batch-000000.jsonl" - | PYTHONPATH=. uv run python -c 'import json, sys; rows=[json.loads(line) for line in sys.stdin if line.strip()]; tokens=[row["usage"]["input_tokens"] for row in rows]; mean=sum(tokens)/len(tokens); print(f"rows={len(rows)} mean_input_tokens={mean:.1f} est_full_input_tokens={mean*13992:.0f} est_full_usd={mean*13992*0.042/1e6:.4f}")'
 ```
 
-The command should print `rows=5` and a `mean_input_tokens` value. The proposal estimates about 600 tokens per request, which would make `est_full_usd` about 0.35. Record the printed line for `RESULTS.md`. If `est_full_usd` is above 5.00, stop and ask the reviewer before the full run.
+The command should print `rows=5` and a `mean_input_tokens` value. The plan's estimates range from 530 to 1,000 tokens per request, which would make `est_full_usd` between 0.31 and 0.59, with a median of 0.41. Record the printed line for `RESULTS.md`. If `est_full_usd` is above 5.00, stop and ask the reviewer before the full run.
 
 The smoke run passes when all five predictions are valid, each `p_remove` is in [0, 1], and each label follows the 0.5 rule.
 

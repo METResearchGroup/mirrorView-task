@@ -41,6 +41,32 @@ flowchart TD
 
 Put Jev behavior that is not tied to one task in the root module, so later experiments can reuse it. Keep everything that depends on issue 326 or on this experiment's storage inside the experiment, because root `shared/` never imports from `experiments/`. The Jev run folder uses the same layout and prediction schema as an issue 326 model folder, so Step 5 can import issue 326's metric functions instead of copying them.
 
+## Cost and runtime estimates
+
+The full run sends 13,992 requests, one per pair, and the whole experiment should cost well under $1. Jev bills input at $0.042 per 1M tokens and does not bill output, so cost depends only on input tokens.
+
+| Estimate | Input tokens per request | Total input tokens | Cost (USD) | Runtime (minutes) |
+| --- | ---: | ---: | ---: | ---: |
+| Low | 530 | 7.4M | $0.31 | 14 |
+| Median | 700 | 9.8M | $0.41 | 16 |
+| High | 1,000 | 14.0M | $0.59 | 29 |
+
+The token estimates come from three measurements:
+
+- The remove instructions are 1,501 characters, which is about 330 tokens.
+- A Bedrock measurement in `experiments/match_lengths_original_mirrors_2026_06_19/ABLATIONS.md` puts the two posts at about 166 tokens together.
+- Study 2's Jev labeling run used 4,616 input tokens per request for 30 questions, which leaves about 360 tokens beyond the instructions and posts. That figure is from `experiments/study_2_llm_based_feature_extraction_2026_09_29/RESULTS.md`.
+
+The low estimate assumes the 360 extra tokens scale with the number of questions. The median assumes about half of them are a fixed cost per request. The high estimate assumes all of them are fixed, and it adds room for longer posts.
+
+The runtime estimates follow from the scorer's limits:
+
+- **Low:** the rate limit of 1,000 request starts per minute sets a floor of 14 minutes.
+- **Median:** adds about 2 minutes for the 28 batches of 500, because each batch waits for its slowest request and its S3 writes. Study 2's Jev run, which had 8 workers and requests about 6 times larger, also hit this rate limit.
+- **High:** assumes each request takes 1 second, so 8 workers handle 8 requests per second.
+
+Step 4's smoke run replaces these estimates with measured values before the full run starts.
+
 ## Steps
 
 ### Step 1: Add the root Jev module
