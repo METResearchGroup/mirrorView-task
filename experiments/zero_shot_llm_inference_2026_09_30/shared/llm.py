@@ -53,4 +53,16 @@ def label_record(
     Exception
         Propagates Bedrock, JSON, or validation errors from ``converse_label``.
     """
-    raise NotImplementedError
+    user_text = format_baseline_zero_shot_keep_remove_prompt(
+        record.post_1_text,
+        record.post_2_text,
+    )
+    prediction, usage = converse_label(
+        client,
+        model.model_id,
+        EMPTY_SYSTEM_PROMPT,
+        RemovePrediction,
+        user_text,
+        max_tokens,
+    )
+    return RemovePrediction.model_validate(prediction.model_dump()), usage
