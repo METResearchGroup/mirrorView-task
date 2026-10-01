@@ -2,7 +2,7 @@
 
 ## 2026-10-01
 
-1. Study 2 callers can load three keep and remove tables with equal class counts. `UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS` has 30,280 rows, `UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` has 7,486 rows, and `UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS` has 14,562 rows. [Issue #338](https://github.com/METResearchGroup/mirrorView-task/issues/338)
+1. Study 2 callers can load three keep and remove tables with equal class counts. `UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS` has 30,280 rows, `UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` has 7,486 rows, and `UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS` has 14,562 rows. [Issue #338](https://github.com/METResearchGroup/mirrorView-task/issues/338). [PR #343](https://github.com/METResearchGroup/mirrorView-task/pull/343)
 
 ## 2026-09-30
 
