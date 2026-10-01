@@ -201,6 +201,24 @@ def _write_model_run_from_state(
         tuple(run_state.failure_keys),
     )
     write_model_run_manifest(store, run_id, model.folder_name, manifest)
+    print_model_run_completion_summary(manifest)
+
+
+def format_model_run_completion_line(manifest: ModelRunManifest) -> str:
+    """Return the single-line CLI summary for one written model run manifest."""
+    return (
+        f"run_id={manifest.run_id} model_folder={manifest.model_folder} "
+        f"model_id={manifest.model_id} expected={manifest.requested_record_count} "
+        f"unique_valid_predictions={manifest.completed_prediction_count} "
+        f"unresolved_failures={manifest.unresolved_failure_count}"
+    )
+
+
+def print_model_run_completion_summary(manifest: ModelRunManifest) -> None:
+    """Print the completion summary and exit nonzero when the run is incomplete."""
+    print(format_model_run_completion_line(manifest))
+    if manifest.status is not ModelRunManifestStatus.COMPLETE:
+        raise SystemExit(1)
 
 
 def validate_inference_arguments(
