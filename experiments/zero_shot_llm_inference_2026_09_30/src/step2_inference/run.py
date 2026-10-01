@@ -131,7 +131,7 @@ def run_model_inference(
 def main() -> None:
     """Parse CLI arguments and run one model inference task."""
     args = _parse_args()
-    validate_inference_arguments(
+    model = validate_inference_arguments(
         args.run_id,
         args.model,
         args.limit,
@@ -141,17 +141,66 @@ def main() -> None:
     )
     apply_lab_aws_credentials_when_unset()
     store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, DEFAULT_S3_REGION)
-    client = create_bedrock_runtime_client()
-    run_model_inference(
+    run_plan = _build_inference_run_plan(store, args.run_id, model, args.limit)
+    if run_plan.pending_records:
+        client = create_bedrock_runtime_client()
+        run_state = _run_pending_record_batches(
+            store,
+            client,
+            args.run_id,
+            model,
+            run_plan,
+            args.batch_size,
+            args.max_concurrency,
+            args.max_tokens,
+        )
+    else:
+        run_state = _inference_run_state_from_artifacts(run_plan.artifacts)
+    _write_model_run_from_state(
         store,
-        client,
         args.run_id,
-        args.model,
+        model,
         args.limit,
         args.batch_size,
-        args.max_concurrency,
         args.max_tokens,
+        run_plan,
+        run_state,
     )
+
+
+def _inference_run_state_from_artifacts(artifacts: LoadedRunArtifacts) -> InferenceRunState:
+    return InferenceRunState(
+        prediction_keys=artifacts.prediction_object_keys,
+        predictions=artifacts.predictions,
+        failure_keys=artifacts.failure_object_keys,
+        failures=artifacts.failures,
+    )
+
+
+def _write_model_run_from_state(
+    store: CampaignObjectStore,
+    run_id: str,
+    model: ModelDefinition,
+    limit: int | None,
+    batch_size: int,
+    max_tokens: int,
+    run_plan: InferenceRunPlan,
+    run_state: InferenceRunState,
+) -> None:
+    manifest = build_model_run_manifest(
+        run_plan.input_manifest,
+        model,
+        run_id,
+        limit,
+        batch_size,
+        max_tokens,
+        run_plan.requested_records,
+        tuple(run_state.predictions),
+        tuple(run_state.failures),
+        tuple(run_state.prediction_keys),
+        tuple(run_state.failure_keys),
+    )
+    write_model_run_manifest(store, run_id, model.folder_name, manifest)
 
 
 def validate_inference_arguments(
