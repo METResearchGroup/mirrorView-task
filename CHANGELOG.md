@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-02
+
+1. Jev 1.13.0 scores the same 13,992 Study 2 pairs with the ten-example keep or remove prompt. After dropping five demonstration matches from the metrics, remove-class F1 is 0.562 and accuracy is 0.788, at a measured cost of $1.036. [PR #348](https://github.com/METResearchGroup/mirrorView-task/pull/348)
+
 ## 2026-10-01
 
 1. Jev 1.13.0 scores the 13,992 five-labeler Study 2 pairs as a zero-shot keep or remove classifier, and the run writes prediction rows in the same schema the Bedrock models use. Remove-class F1 is 0.529 and accuracy is 0.713, at a measured cost of $0.427. [PR #341](https://github.com/METResearchGroup/mirrorView-task/pull/341)
