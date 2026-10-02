@@ -96,20 +96,48 @@ def join_experiment_key(
 
 
 def build_model_run_prefix(
-    run_id: str,
+    run_id: str | Study2InferenceVariant,
     model_folder: str,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant | str | None = None,
 ) -> str:
     """Return the S3 prefix for one model folder under a run.
 
     Parameters
     ----------
+    run_id
+        Run identifier, or the active variant when the call is variant-first.
     variant
-        Active experiment. Omitted calls use the zero-shot variant.
+        Active experiment for the run-id-first form. Omitted calls use zero-shot.
     """
-    safe_run_id = validate_path_segment(run_id)
-    safe_folder = validate_path_segment(model_folder)
-    return join_experiment_key(_RUNS_SEGMENT, safe_run_id, safe_folder, variant=variant) + "/"
+    active, resolved_run_id, resolved_folder = _resolve_model_run_prefix_args(
+        run_id,
+        model_folder,
+        variant,
+    )
+    safe_run_id = validate_path_segment(resolved_run_id)
+    safe_folder = validate_path_segment(resolved_folder)
+    return join_experiment_key(
+        _RUNS_SEGMENT,
+        safe_run_id,
+        safe_folder,
+        variant=active,
+    ) + "/"
+
+
+def _resolve_model_run_prefix_args(
+    run_id: str | Study2InferenceVariant,
+    model_folder: str,
+    variant: Study2InferenceVariant | str | None,
+) -> tuple[Study2InferenceVariant, str, str]:
+    if isinstance(run_id, Study2InferenceVariant):
+        if not isinstance(variant, str):
+            raise ValueError("model folder is required when the variant is passed first")
+        return run_id, model_folder, variant
+    if isinstance(variant, str):
+        raise ValueError("variant must be a Study2InferenceVariant")
+    if not isinstance(run_id, str):
+        raise ValueError("run_id must be a path segment")
+    return _active_variant(variant), run_id, model_folder
 
 
 def build_predictions_prefix(

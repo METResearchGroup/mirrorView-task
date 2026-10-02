@@ -9,9 +9,6 @@ from data_platform.generate_features.engines.bedrock_engine import (
     BedrockUsage,
     converse_label,
 )
-from experiments.zero_shot_llm_inference_2026_09_30.shared.prompts import (
-    format_baseline_zero_shot_keep_remove_prompt,
-)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
     ModelDefinition,
     RemovePrediction,
@@ -27,6 +24,7 @@ def label_record(
     model: ModelDefinition,
     record: Study2InputRecord,
     max_tokens: int,
+    prompt_formatter: PromptFormatter,
 ) -> tuple[RemovePrediction, BedrockUsage]:
     """Label one prepared record through the public Converse helper.
 
@@ -40,6 +38,8 @@ def label_record(
         One prepared Study 2 input row.
     max_tokens
         Maximum output tokens forwarded to Converse.
+    prompt_formatter
+        Renders the user prompt from the two post texts.
 
     Returns
     -------
@@ -51,10 +51,7 @@ def label_record(
     Exception
         Propagates Bedrock, JSON, or validation errors from ``converse_label``.
     """
-    user_text = format_baseline_zero_shot_keep_remove_prompt(
-        record.post_1_text,
-        record.post_2_text,
-    )
+    user_text = prompt_formatter(record.post_1_text, record.post_2_text)
     prediction, usage = converse_label(
         client,
         model.model_id,
