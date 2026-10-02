@@ -15,6 +15,10 @@ from enum import Enum
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from pydantic import BaseModel, ConfigDict, Field
 
+from experiments.zero_shot_llm_inference_2026_09_30.shared.config import (
+    ZERO_SHOT_VARIANT,
+    Study2InferenceVariant,
+)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
     FailureRecord,
     InputManifest,
@@ -29,7 +33,6 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     EXPECTED_SPLIT_RECORD_COUNT,
     EXPECTED_TOTAL_RECORD_COUNT,
     EXPECTED_UNANIMOUS_RECORD_COUNT,
-    EXPERIMENT_S3_BUCKET,
     MODEL_REGISTRY,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
@@ -48,8 +51,18 @@ from experiments.zero_shot_llm_inference_2026_09_30.src.step2_inference.run impo
     unresolved_failure_post_ids,
 )
 
-ANALYSIS_SCHEMA_VERSION = "study2-zero-shot-analysis-v1"
+ANALYSIS_SCHEMA_VERSION = ZERO_SHOT_VARIANT.analysis_schema_version
 _ANALYSIS_SEGMENT = "analysis"
+_APPROVED_METRIC_EXCLUSION_POST_IDS = (
+    "bluesky_0bd24d995926c0a58ee7129aa11cb44919170f35e9d51c137745334333c17cd7",
+    "bluesky_0e8a5a0e2e218f117502ba8bb6c697977992905462970a1c2c0773a22ea2888c",
+    "bluesky_007568ddfadcb450bb8b91253a673315384eb1d5ca9f9886462eb722ea5c2b48",
+    "bluesky_00a60cda611def7235d1ac6d87c60320703653e74fb39204a819ec86d6db680b",
+    "bluesky_00efc34ac2738154e7f93b9e110637107b810be4ae2173e8657241f3d1fdd206",
+)
+_METRIC_ALL_ROW_COUNT = 13987
+_METRIC_UNANIMOUS_ROW_COUNT = 4046
+_METRIC_SPLIT_ROW_COUNT = 9941
 _LABEL_COUNTS_FILENAME = "label_counts.csv"
 _SPLIT_REMOVE_VOTE_COUNTS_FILENAME = "split_remove_vote_counts.csv"
 _MODEL_METRICS_FILENAME = "model_metrics.csv"
@@ -195,6 +208,10 @@ class AnalysisManifest(BaseModel):
     split_remove_vote_counts_sha256: str = Field(min_length=1)
     model_metrics_sha256: str = Field(min_length=1)
     results_fragment_sha256: str = Field(min_length=1)
+    experiment_name: str = Field(default=ZERO_SHOT_VARIANT.experiment_name, min_length=1)
+    prompt_name: str = Field(default=ZERO_SHOT_VARIANT.prompt_name, min_length=1)
+    prompt_sha256: str = Field(default=ZERO_SHOT_VARIANT.prompt_sha256, min_length=1)
+    metric_exclusion_post_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -217,6 +234,7 @@ class LoadedAnalysisRun:
     input_manifest: InputManifest
     prepared_records: tuple[Study2InputRecord, ...]
     model_runs: tuple[LoadedModelRun, ...]
+    variant: Study2InferenceVariant
 
 
 def partition_prepared_records(
@@ -241,6 +259,70 @@ def validate_prepared_partitions(partitions: PreparedInputPartitions) -> None:
         "unanimous",
     )
     _reject_partition_count(len(partitions.split_rows), EXPECTED_SPLIT_RECORD_COUNT, "split")
+
+
+def build_metric_partitions(
+    partitions: PreparedInputPartitions,
+    variant: Study2InferenceVariant,
+) -> PreparedInputPartitions:
+    """Return partitions used for model metrics after approved exclusions.
+
+    Raises
+    ------
+    ValueError
+        When configured exclusions are not the approved unanimous demonstration set.
+    """
+    _reject_invalid_metric_exclusions(partitions, variant.metric_exclusion_post_ids)
+    excluded_ids = set(variant.metric_exclusion_post_ids)
+    if not excluded_ids:
+        return partitions
+    return PreparedInputPartitions(
+        all_rows=_rows_without_ids(partitions.all_rows, excluded_ids),
+        unanimous_rows=_rows_without_ids(partitions.unanimous_rows, excluded_ids),
+        split_rows=_rows_without_ids(partitions.split_rows, excluded_ids),
+    )
+
+
+def _rows_without_ids(
+    rows: tuple[Study2InputRecord, ...],
+    excluded_ids: set[str],
+) -> tuple[Study2InputRecord, ...]:
+    return tuple(record for record in rows if record.post_id not in excluded_ids)
+
+
+def _reject_invalid_metric_exclusions(
+    partitions: PreparedInputPartitions,
+    excluded_ids: tuple[str, ...],
+) -> None:
+    if not excluded_ids:
+        return
+    if len(excluded_ids) != len(set(excluded_ids)):
+        raise ValueError("metric exclusion ids must be unique")
+    if set(excluded_ids) != set(_APPROVED_METRIC_EXCLUSION_POST_IDS):
+        raise ValueError("metric exclusions must be the approved demonstration set")
+    by_id = {record.post_id: record for record in partitions.all_rows}
+    for post_id in excluded_ids:
+        record = by_id.get(post_id)
+        if record is None:
+            raise ValueError(f"unknown metric exclusion post_id: {post_id}")
+        if not record.is_unanimous:
+            raise ValueError(f"metric exclusion post_id is not unanimous: {post_id}")
+
+
+def _validate_metric_partition_counts(
+    partitions: PreparedInputPartitions,
+    variant: Study2InferenceVariant,
+) -> None:
+    if not variant.metric_exclusion_post_ids:
+        validate_prepared_partitions(partitions)
+        return
+    _reject_partition_count(len(partitions.all_rows), _METRIC_ALL_ROW_COUNT, "metric all")
+    _reject_partition_count(
+        len(partitions.unanimous_rows),
+        _METRIC_UNANIMOUS_ROW_COUNT,
+        "metric unanimous",
+    )
+    _reject_partition_count(len(partitions.split_rows), _METRIC_SPLIT_ROW_COUNT, "metric split")
 
 
 def _reject_partition_count(observed: int, expected: int, name: str) -> None:
@@ -417,10 +499,14 @@ def _predictions_map(predictions: tuple[PredictionRecord, ...]) -> dict[str, boo
     return {record.post_id: record.is_remove for record in predictions}
 
 
-def load_run_inputs(store: CampaignObjectStore, run_id: str) -> LoadedAnalysisRun:
+def load_run_inputs(
+    store: CampaignObjectStore,
+    run_id: str,
+    variant: Study2InferenceVariant,
+) -> LoadedAnalysisRun:
     """Load prepared input and four completed model outputs for one run."""
     safe_run_id = validate_path_segment(run_id)
-    input_manifest, prepared_records = load_verified_prepared_input(store)
+    input_manifest, prepared_records = load_verified_prepared_input(store, variant)
     prepared_post_ids = frozenset(record.post_id for record in prepared_records)
     expected_count = len(prepared_records)
     model_runs = _load_completed_model_runs(
@@ -430,8 +516,15 @@ def load_run_inputs(store: CampaignObjectStore, run_id: str) -> LoadedAnalysisRu
         prepared_records,
         prepared_post_ids,
         expected_count,
+        variant,
     )
-    return LoadedAnalysisRun(safe_run_id, input_manifest, prepared_records, model_runs)
+    return LoadedAnalysisRun(
+        safe_run_id,
+        input_manifest,
+        prepared_records,
+        model_runs,
+        variant,
+    )
 
 
 def validate_run_inputs(loaded: LoadedAnalysisRun) -> None:
@@ -451,6 +544,7 @@ def _load_completed_model_runs(
     prepared_records: tuple[Study2InputRecord, ...],
     prepared_post_ids: frozenset[str],
     expected_count: int,
+    variant: Study2InferenceVariant,
 ) -> tuple[LoadedModelRun, ...]:
     loaded_runs: list[LoadedModelRun] = []
     for model in MODEL_REGISTRY:
@@ -463,6 +557,7 @@ def _load_completed_model_runs(
                 prepared_records,
                 prepared_post_ids,
                 expected_count,
+                variant,
             )
         )
     return tuple(loaded_runs)
@@ -476,6 +571,7 @@ def _load_one_completed_model_run(
     prepared_records: tuple[Study2InputRecord, ...],
     prepared_post_ids: frozenset[str],
     expected_count: int,
+    variant: Study2InferenceVariant,
 ) -> LoadedModelRun:
     artifacts = load_existing_run_artifacts(
         store,
@@ -483,6 +579,7 @@ def _load_one_completed_model_run(
         model.folder_name,
         model.model_id,
         prepared_post_ids,
+        variant,
     )
     manifest_key, manifest, manifest_sha = _select_complete_manifest(
         store,
@@ -490,6 +587,7 @@ def _load_one_completed_model_run(
         model.folder_name,
         model.model_id,
         expected_count,
+        variant,
     )
     _validate_manifest_prepared_identity(manifest, input_manifest)
     _reject_unresolved_failures(artifacts.failures, artifacts.predictions, prepared_post_ids)
@@ -510,8 +608,9 @@ def _select_complete_manifest(
     model_folder: str,
     model_id: str,
     expected_count: int,
+    variant: Study2InferenceVariant,
 ) -> tuple[str, ModelRunManifest, str]:
-    entries = _load_manifest_entries(store, run_id, model_folder, model_id)
+    entries = _load_manifest_entries(store, run_id, model_folder, model_id, variant)
     complete = [
         entry
         for entry in entries
@@ -527,12 +626,19 @@ def _load_manifest_entries(
     run_id: str,
     model_folder: str,
     model_id: str,
+    variant: Study2InferenceVariant,
 ) -> list[tuple[str, ModelRunManifest, str]]:
-    prefix = build_manifests_prefix(run_id, model_folder)
+    prefix = build_manifests_prefix(run_id, model_folder, variant)
     loaded = load_json_objects_under_prefix(store, prefix, ".json", ModelRunManifest)
     entries: list[tuple[str, ModelRunManifest, str]] = []
     for key, manifest in loaded:
-        validate_model_run_manifest_identity(manifest, run_id, model_folder, model_id)
+        validate_model_run_manifest_identity(
+            manifest,
+            run_id,
+            model_folder,
+            model_id,
+            variant,
+        )
         stored = store.get(key)
         if stored is None:
             raise ValueError(f"missing manifest object: {key}")
@@ -595,7 +701,9 @@ def calculate_analysis_tables(loaded: LoadedAnalysisRun) -> AnalysisTables:
     validate_prepared_partitions(partitions)
     label_counts = build_label_counts(partitions)
     split_remove_vote_counts = build_split_remove_vote_counts(partitions.split_rows)
-    model_metrics = build_model_metrics_table(partitions, loaded.model_runs)
+    metric_partitions = build_metric_partitions(partitions, loaded.variant)
+    _validate_metric_partition_counts(metric_partitions, loaded.variant)
+    model_metrics = build_model_metrics_table(metric_partitions, loaded.model_runs)
     return AnalysisTables(label_counts, split_remove_vote_counts, model_metrics)
 
 
@@ -606,7 +714,7 @@ def write_analysis_bundle(
     results_fragment: str,
 ) -> str:
     """Serialize tables and write the immutable analysis bundle."""
-    prefix = build_analysis_prefix(loaded.run_id)
+    prefix = build_analysis_prefix(loaded.run_id, loaded.variant)
     bodies = _serialize_analysis_artifact_bodies(tables, results_fragment)
     keys = _analysis_artifact_keys(prefix)
     _write_or_verify_artifact(store, keys.label_counts, bodies.label_counts)
@@ -614,25 +722,36 @@ def write_analysis_bundle(
     _write_or_verify_artifact(store, keys.model_metrics, bodies.model_metrics)
     _write_or_verify_artifact(store, keys.results_fragment, bodies.results_fragment)
     manifest = _build_analysis_manifest(loaded, keys, bodies)
-    manifest_body = serialize_json_document(manifest.model_dump(mode="json"))
+    manifest_body = serialize_json_document(_analysis_manifest_payload(manifest))
     _write_or_verify_artifact(store, keys.analysis_manifest, manifest_body)
-    return build_analysis_prefix_uri(loaded.run_id)
+    return build_analysis_prefix_uri(loaded.run_id, loaded.variant)
 
 
-def build_analysis_prefix(run_id: str) -> str:
+def build_analysis_prefix(run_id: str, variant: Study2InferenceVariant) -> str:
     """Return the S3 key prefix for one analysis run."""
     safe_run_id = validate_path_segment(run_id)
-    return join_experiment_key(_ANALYSIS_SEGMENT, safe_run_id) + "/"
+    return join_experiment_key(_ANALYSIS_SEGMENT, safe_run_id, variant=variant) + "/"
 
 
-def build_analysis_prefix_uri(run_id: str) -> str:
+def build_analysis_prefix_uri(run_id: str, variant: Study2InferenceVariant) -> str:
     """Return the S3 URI prefix for one analysis run."""
-    return f"s3://{EXPERIMENT_S3_BUCKET}/{build_analysis_prefix(run_id)}"
+    return f"s3://{variant.s3_bucket}/{build_analysis_prefix(run_id, variant)}"
 
 
-def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
+def run_analysis_cli(variant: Study2InferenceVariant) -> None:
+    """Load, validate, calculate, render, and write analysis for ``variant``."""
+    args = _parse_args()
+    apply_lab_aws_credentials_when_unset()
+    from data_platform.utils.object_store import DEFAULT_S3_REGION
+
+    store = CampaignObjectStore(variant.s3_bucket, region_name=DEFAULT_S3_REGION)
+    prefix = run_analysis(store, args.run_id, variant)
+    _print_success_line(prefix, variant)
+
+
+def run_analysis(store: CampaignObjectStore, run_id: str, variant: Study2InferenceVariant) -> str:
     """Execute the full analysis pipeline and return the analysis prefix."""
-    loaded = load_run_inputs(store, run_id)
+    loaded = load_run_inputs(store, run_id, variant)
     validate_run_inputs(loaded)
     tables = calculate_analysis_tables(loaded)
     from experiments.zero_shot_llm_inference_2026_09_30.src.step3_analysis.render import (
@@ -644,17 +763,8 @@ def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
 
 
 def main() -> None:
-    """Run load, validate, calculate, render, and write for one run ID."""
-    args = _parse_args()
-    apply_lab_aws_credentials_when_unset()
-    from data_platform.utils.object_store import DEFAULT_S3_REGION
-    from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
-        EXPERIMENT_S3_BUCKET,
-    )
-
-    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, region_name=DEFAULT_S3_REGION)
-    prefix = run_analysis(store, args.run_id)
-    _print_success_line(prefix, args.run_id)
+    """Run zero-shot analysis for one run ID."""
+    run_analysis_cli(ZERO_SHOT_VARIANT)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -663,11 +773,20 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _print_success_line(prefix: str, run_id: str) -> None:
-    print(
+def _print_success_line(prefix: str, variant: Study2InferenceVariant) -> None:
+    summary = (
         f"{prefix} input_rows={EXPECTED_TOTAL_RECORD_COUNT} "
         f"unanimous_rows={EXPECTED_UNANIMOUS_RECORD_COUNT} "
         f"split_rows={EXPECTED_SPLIT_RECORD_COUNT} models=4 metric_rows=12 artifacts=5"
+    )
+    if not variant.metric_exclusion_post_ids:
+        print(summary)
+        return
+    print(
+        f"{summary} metric_all_rows={_METRIC_ALL_ROW_COUNT} "
+        f"metric_unanimous_rows={_METRIC_UNANIMOUS_ROW_COUNT} "
+        f"metric_split_rows={_METRIC_SPLIT_ROW_COUNT} "
+        f"exclusions={len(variant.metric_exclusion_post_ids)}"
     )
 
 
@@ -792,7 +911,7 @@ def _build_analysis_manifest(
 ) -> AnalysisManifest:
     partitions = partition_prepared_records(loaded.prepared_records)
     return AnalysisManifest(
-        schema_version=ANALYSIS_SCHEMA_VERSION,
+        schema_version=loaded.variant.analysis_schema_version,
         run_id=loaded.run_id,
         prepared_input_records_s3_key=loaded.input_manifest.records_s3_key,
         prepared_input_records_sha256=loaded.input_manifest.records_sha256,
@@ -810,6 +929,32 @@ def _build_analysis_manifest(
         split_remove_vote_counts_sha256=sha256_hex(bodies.split_remove_vote_counts),
         model_metrics_sha256=sha256_hex(bodies.model_metrics),
         results_fragment_sha256=sha256_hex(bodies.results_fragment),
+        experiment_name=loaded.variant.experiment_name,
+        prompt_name=loaded.variant.prompt_name,
+        prompt_sha256=loaded.variant.prompt_sha256,
+        metric_exclusion_post_ids=loaded.variant.metric_exclusion_post_ids,
+    )
+
+
+def _analysis_manifest_payload(manifest: AnalysisManifest) -> dict[str, object]:
+    payload = manifest.model_dump(mode="json")
+    if _manifest_uses_zero_shot_identity(manifest):
+        for field_name in (
+            "experiment_name",
+            "prompt_name",
+            "prompt_sha256",
+            "metric_exclusion_post_ids",
+        ):
+            payload.pop(field_name, None)
+    return payload
+
+
+def _manifest_uses_zero_shot_identity(manifest: AnalysisManifest) -> bool:
+    return (
+        manifest.experiment_name == ZERO_SHOT_VARIANT.experiment_name
+        and manifest.prompt_name == ZERO_SHOT_VARIANT.prompt_name
+        and manifest.prompt_sha256 == ZERO_SHOT_VARIANT.prompt_sha256
+        and manifest.metric_exclusion_post_ids == ()
     )
 
 
