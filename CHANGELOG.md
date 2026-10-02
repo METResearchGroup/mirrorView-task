@@ -2,8 +2,9 @@
 
 ## 2026-10-01
 
-1. Study 2 zero-shot keep or remove inference can prepare the 13,992 five-labeler posts, resume one Bedrock model at a time into immutable S3 batches, and write remove-positive metric tables for the all, unanimous, and split slices. On run `study2-zero-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.499, and Claude Sonnet 5.5 has the highest accuracy at 0.803. [PR #333](https://github.com/METResearchGroup/mirrorView-task/pull/333)
-2. Study 2 callers can load three keep and remove tables with equal class counts. `UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS` has 30,280 rows, `UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` has 7,486 rows, and `UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS` has 14,562 rows. [Issue #338](https://github.com/METResearchGroup/mirrorView-task/issues/338). [PR #343](https://github.com/METResearchGroup/mirrorView-task/pull/343)
+1. Jev 1.13.0 scores the 13,992 five-labeler Study 2 pairs as a zero-shot keep or remove classifier, and the run writes prediction rows in the same schema the Bedrock models use. Remove-class F1 is 0.529 and accuracy is 0.713, at a measured cost of $0.427. [PR #341](https://github.com/METResearchGroup/mirrorView-task/pull/341)
+2. Study 2 zero-shot keep or remove inference can prepare the 13,992 five-labeler posts, resume one Bedrock model at a time into immutable S3 batches, and write remove-positive metric tables for the all, unanimous, and split slices. On run `study2-zero-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.499, and Claude Sonnet 5.5 has the highest accuracy at 0.803. [PR #333](https://github.com/METResearchGroup/mirrorView-task/pull/333)
+3. Study 2 callers can load three keep and remove tables with equal class counts. `UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS` has 30,280 rows, `UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` has 7,486 rows, and `UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS` has 14,562 rows. [Issue #338](https://github.com/METResearchGroup/mirrorView-task/issues/338). [PR #343](https://github.com/METResearchGroup/mirrorView-task/pull/343)
 
 ## 2026-09-30
 
