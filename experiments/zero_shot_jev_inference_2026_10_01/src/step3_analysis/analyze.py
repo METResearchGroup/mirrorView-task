@@ -20,13 +20,15 @@ from dataclasses import dataclass
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from pydantic import BaseModel, ConfigDict, Field
 
-from experiments.zero_shot_jev_inference_2026_10_01.shared.constants import (
-    INPUT_MANIFEST_KEY,
-    INPUT_RECORDS_KEY,
-    JEV_MODEL,
-    S3_BUCKET,
+from experiments.zero_shot_jev_inference_2026_10_01.shared.config import (
+    JevInferenceVariant,
+    ZERO_SHOT_VARIANT,
 )
-from experiments.zero_shot_jev_inference_2026_10_01.shared.schemas import JevRunManifest
+from experiments.zero_shot_jev_inference_2026_10_01.shared.constants import JEV_MODEL
+from experiments.zero_shot_jev_inference_2026_10_01.shared.schemas import (
+    JevRunManifest,
+    reject_run_manifest_identity,
+)
 from experiments.zero_shot_jev_inference_2026_10_01.shared.storage import (
     build_analysis_prefix,
     build_manifests_prefix,
@@ -58,6 +60,7 @@ from experiments.zero_shot_llm_inference_2026_09_30.src.step3_analysis.analyze i
     build_label_counts,
     build_model_metric_row,
     build_split_remove_vote_counts,
+    PreparedInputPartitions,
     partition_prepared_records,
     validate_prepared_partitions,
 )
@@ -125,6 +128,7 @@ class JevAnalysisManifest(BaseModel):
     split_remove_vote_rows: int = Field(ge=0)
     metric_rows: int = Field(ge=0)
     usage_rows: int = Field(ge=0)
+    metric_exclusion_post_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -139,13 +143,19 @@ class LoadedJevAnalysis:
     manifest: JevRunManifest
 
 
-def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
+def run_analysis(
+    store: CampaignObjectStore,
+    variant: JevInferenceVariant,
+    run_id: str,
+) -> str:
     """Validate one complete run and write or verify the analysis bundle.
 
     Parameters
     ----------
     store
         Object store for the experiment bucket.
+    variant
+        Experiment paths, prompt identity, and metric exclusions.
     run_id
         Safe run identifier.
 
@@ -158,12 +168,16 @@ def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
     ------
     ValueError
         When the run is incomplete, the join fails, a pinned count differs,
-        or an existing object does not match the new bytes.
+        an exclusion is invalid, or an existing object does not match.
     """
     validate_path_segment(run_id)
-    loaded = _load_analysis_inputs(store, run_id)
+    loaded = _load_analysis_inputs(store, variant, run_id)
     _reject_incomplete_run(loaded)
-    tables = build_analysis_tables(loaded.records, loaded.predictions)
+    tables = build_analysis_tables(
+        loaded.records,
+        loaded.predictions,
+        variant.metric_exclusion_post_ids,
+    )
     _reject_pinned_count_mismatch(tables)
     fragment = render_results_fragment(
         tables.label_counts,
@@ -171,8 +185,8 @@ def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
         tables.metrics,
         tables.usage,
     )
-    prefix = build_analysis_prefix(run_id)
-    _write_bundle(store, prefix, loaded, tables, fragment)
+    prefix = build_analysis_prefix(run_id, variant=variant)
+    _write_bundle(store, prefix, loaded, tables, fragment, variant.metric_exclusion_post_ids)
     _print_success(prefix, tables)
     return prefix
 
@@ -180,8 +194,12 @@ def run_analysis(store: CampaignObjectStore, run_id: str) -> str:
 def build_analysis_tables(
     records: tuple[Study2InputRecord, ...],
     predictions: tuple[PredictionRecord, ...],
+    metric_exclusion_post_ids: tuple[str, ...],
 ) -> AnalysisTables:
     """Calculate label, vote, metric, and usage tables for one joined run.
+
+    Human counts, split-vote counts, and usage keep every prepared row.
+    Metric rows omit ``metric_exclusion_post_ids``.
 
     Parameters
     ----------
@@ -189,16 +207,25 @@ def build_analysis_tables(
         Prepared rows in input order.
     predictions
         One prediction per prepared post. The stored Boolean is the label.
+    metric_exclusion_post_ids
+        Prepared unanimous post IDs removed only from metric partitions.
 
     Returns
     -------
     AnalysisTables
         Counts and metrics. The remove threshold is not applied again.
+
+    Raises
+    ------
+    ValueError
+        When an exclusion is missing, duplicated, or not unanimous.
     """
+    _reject_invalid_metric_exclusions(records, metric_exclusion_post_ids)
     partitions = partition_prepared_records(records)
     labels = build_label_counts(partitions)
     votes = build_split_remove_vote_counts(partitions.split_rows)
-    metrics = _metric_rows(partitions, predictions)
+    metric_partitions = _partitions_without_exclusions(partitions, metric_exclusion_post_ids)
+    metrics = _metric_rows(metric_partitions, predictions)
     usage = build_usage_row(predictions)
     return AnalysisTables(labels, votes, metrics, usage)
 
@@ -231,8 +258,14 @@ def build_usage_row(predictions: tuple[PredictionRecord, ...]) -> UsageRow:
     )
 
 
-def main() -> None:
-    """Parse the run id and write the analysis bundle."""
+def run_analysis_cli(variant: JevInferenceVariant) -> None:
+    """Parse the run id and write the analysis bundle for ``variant``.
+
+    Parameters
+    ----------
+    variant
+        Experiment bucket, paths, and metric exclusions.
+    """
     args = _parse_args()
     try:
         validate_path_segment(args.run_id)
@@ -240,8 +273,13 @@ def main() -> None:
         print(str(error), file=sys.stderr)
         raise SystemExit(2) from error
     apply_lab_aws_credentials_when_unset()
-    store = CampaignObjectStore(S3_BUCKET)
-    run_analysis(store, args.run_id)
+    store = CampaignObjectStore(variant.s3_bucket)
+    run_analysis(store, variant, args.run_id)
+
+
+def main() -> None:
+    """Analyze one complete zero-shot Jev Study 2 run."""
+    run_analysis_cli(ZERO_SHOT_VARIANT)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -250,15 +288,23 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def _load_analysis_inputs(store: CampaignObjectStore, run_id: str) -> LoadedJevAnalysis:
-    manifest_bytes = _required_bytes(store, INPUT_MANIFEST_KEY)
-    records_bytes = _required_bytes(store, INPUT_RECORDS_KEY)
+def _load_analysis_inputs(
+    store: CampaignObjectStore,
+    variant: JevInferenceVariant,
+    run_id: str,
+) -> LoadedJevAnalysis:
+    manifest_bytes = _required_bytes(store, variant.input_manifest_key)
+    records_bytes = _required_bytes(store, variant.input_records_key)
     input_manifest = InputManifest.model_validate_json(manifest_bytes)
     if sha256_hex(records_bytes) != input_manifest.records_sha256:
         raise ValueError("prepared input records digest mismatch")
     records = tuple(parse_study2_input_jsonl_bytes(records_bytes))
-    manifest_key, run_manifest = _latest_run_manifest(store, run_id)
-    predictions = _load_predictions(store, run_id, records)
+    manifest_key, run_manifest = _latest_run_manifest(store, variant, run_id)
+    if run_manifest.prepared_input_records_sha256 != input_manifest.records_sha256:
+        raise ValueError("prepared input records digest mismatch")
+    if run_manifest.prepared_input_records_key != variant.input_records_key:
+        raise ValueError("prepared input records key mismatch")
+    predictions = _load_predictions(store, variant, run_id, records)
     return LoadedJevAnalysis(
         run_id,
         input_manifest,
@@ -278,30 +324,37 @@ def _required_bytes(store: CampaignObjectStore, key: str) -> bytes:
 
 def _latest_run_manifest(
     store: CampaignObjectStore,
+    variant: JevInferenceVariant,
     run_id: str,
 ) -> tuple[str, JevRunManifest]:
     loaded = load_json_objects_under_prefix(
         store,
-        build_manifests_prefix(run_id),
+        build_manifests_prefix(run_id, variant=variant),
         _JSON_SUFFIX,
         JevRunManifest,
     )
     if not loaded:
         raise ValueError("run has no manifest")
     key, manifest = loaded[-1]
-    if manifest.run_id != run_id or manifest.model_folder != JEV_MODEL.folder_name:
-        raise ValueError("latest manifest identity mismatch")
+    reject_run_manifest_identity(
+        manifest,
+        variant,
+        run_id,
+        JEV_MODEL.folder_name,
+        JEV_MODEL.model_id,
+    )
     return key, manifest
 
 
 def _load_predictions(
     store: CampaignObjectStore,
+    variant: JevInferenceVariant,
     run_id: str,
     records: tuple[Study2InputRecord, ...],
 ) -> tuple[PredictionRecord, ...]:
     batches = load_jsonl_records_under_prefix(
         store,
-        build_predictions_prefix(run_id),
+        build_predictions_prefix(run_id, variant=variant),
         PredictionRecord,
     )
     known_ids = frozenset(record.post_id for record in records)
@@ -337,7 +390,56 @@ def _reject_incomplete_run(loaded: LoadedJevAnalysis) -> None:
         raise ValueError("prediction count does not match prepared input")
 
 
-def _metric_rows(partitions, predictions: tuple[PredictionRecord, ...]) -> tuple[ModelMetricRow, ...]:
+def _reject_invalid_metric_exclusions(
+    records: tuple[Study2InputRecord, ...],
+    exclusion_post_ids: tuple[str, ...],
+) -> None:
+    if not exclusion_post_ids:
+        return
+    counts, unanimous = _post_id_counts(records)
+    for post_id in exclusion_post_ids:
+        if counts.get(post_id) != 1:
+            raise ValueError(f"unknown or duplicate metric exclusion post id: {post_id}")
+        if not unanimous[post_id]:
+            raise ValueError(f"metric exclusion post id is not unanimous: {post_id}")
+
+
+def _post_id_counts(
+    records: tuple[Study2InputRecord, ...],
+) -> tuple[dict[str, int], dict[str, bool]]:
+    counts: dict[str, int] = {}
+    unanimous: dict[str, bool] = {}
+    for record in records:
+        counts[record.post_id] = counts.get(record.post_id, 0) + 1
+        unanimous[record.post_id] = record.is_unanimous
+    return counts, unanimous
+
+
+def _partitions_without_exclusions(
+    partitions: PreparedInputPartitions,
+    exclusion_post_ids: tuple[str, ...],
+) -> PreparedInputPartitions:
+    excluded = frozenset(exclusion_post_ids)
+    if not excluded:
+        return partitions
+    return PreparedInputPartitions(
+        all_rows=_rows_without_exclusions(partitions.all_rows, excluded),
+        unanimous_rows=_rows_without_exclusions(partitions.unanimous_rows, excluded),
+        split_rows=_rows_without_exclusions(partitions.split_rows, excluded),
+    )
+
+
+def _rows_without_exclusions(
+    rows: tuple[Study2InputRecord, ...],
+    excluded: frozenset[str],
+) -> tuple[Study2InputRecord, ...]:
+    return tuple(row for row in rows if row.post_id not in excluded)
+
+
+def _metric_rows(
+    partitions: PreparedInputPartitions,
+    predictions: tuple[PredictionRecord, ...],
+) -> tuple[ModelMetricRow, ...]:
     by_post_id = {row.post_id: row.is_remove for row in predictions}
     dataset_rows = {
         AnalysisDataset.ALL: partitions.all_rows,
@@ -366,6 +468,7 @@ def _write_bundle(
     loaded: LoadedJevAnalysis,
     tables: AnalysisTables,
     fragment: str,
+    metric_exclusion_post_ids: tuple[str, ...],
 ) -> None:
     bodies = {
         prefix + _LABEL_COUNTS_NAME: _label_counts_csv(tables.label_counts),
@@ -374,8 +477,9 @@ def _write_bundle(
         prefix + _USAGE_NAME: _usage_csv(tables.usage),
         prefix + _FRAGMENT_NAME: fragment.encode("utf-8"),
     }
-    manifest = _analysis_manifest(loaded, tables, bodies, prefix)
-    bodies[prefix + _MANIFEST_NAME] = serialize_json_document(manifest.model_dump(mode="json"))
+    manifest = _analysis_manifest(loaded, tables, bodies, prefix, metric_exclusion_post_ids)
+    dumped = manifest.model_dump(mode="json", exclude_defaults=True)
+    bodies[prefix + _MANIFEST_NAME] = serialize_json_document(dumped)
     for key, body in bodies.items():
         _write_or_verify(store, key, body)
 
@@ -385,6 +489,7 @@ def _analysis_manifest(
     tables: AnalysisTables,
     bodies: dict[str, bytes],
     prefix: str,
+    metric_exclusion_post_ids: tuple[str, ...],
 ) -> JevAnalysisManifest:
     partitions = partition_prepared_records(loaded.records)
     validate_prepared_partitions(partitions)
@@ -404,6 +509,7 @@ def _analysis_manifest(
         split_remove_vote_rows=len(tables.split_votes),
         metric_rows=len(tables.metrics),
         usage_rows=1,
+        metric_exclusion_post_ids=metric_exclusion_post_ids,
     )
 
 

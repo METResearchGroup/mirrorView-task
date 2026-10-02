@@ -10,9 +10,12 @@ Run from repo root::
 
 from __future__ import annotations
 
+from experiments.zero_shot_jev_inference_2026_10_01.shared.config import (
+    JevInferenceVariant,
+    ZERO_SHOT_VARIANT,
+)
 from experiments.zero_shot_jev_inference_2026_10_01.shared.constants import (
     JEV_MODEL,
-    S3_PREFIX,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     validate_path_segment,
@@ -30,13 +33,19 @@ _JSONL_SUFFIX = ".jsonl"
 _JSON_SUFFIX = ".json"
 
 
-def build_run_prefix(run_id: str) -> str:
+def build_run_prefix(
+    run_id: str,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the Jev run folder prefix for ``run_id``.
 
     Parameters
     ----------
     run_id
         Safe path segment identifying the run.
+    variant
+        Experiment whose S3 prefix owns the run folder.
 
     Returns
     -------
@@ -49,31 +58,49 @@ def build_run_prefix(run_id: str) -> str:
         When ``run_id`` is not a single safe path segment.
     """
     safe_run_id = validate_path_segment(run_id)
-    return f"{S3_PREFIX}{_RUNS_SEGMENT}/{safe_run_id}/{JEV_MODEL.folder_name}/"
+    return f"{variant.s3_prefix}{_RUNS_SEGMENT}/{safe_run_id}/{JEV_MODEL.folder_name}/"
 
 
-def build_predictions_prefix(run_id: str) -> str:
+def build_predictions_prefix(
+    run_id: str,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the predictions prefix for one Jev run."""
-    return build_run_prefix(run_id) + f"{_PREDICTIONS_SEGMENT}/"
+    return build_run_prefix(run_id, variant=variant) + f"{_PREDICTIONS_SEGMENT}/"
 
 
-def build_failures_prefix(run_id: str) -> str:
+def build_failures_prefix(
+    run_id: str,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the failures prefix for one Jev run."""
-    return build_run_prefix(run_id) + f"{_FAILURES_SEGMENT}/"
+    return build_run_prefix(run_id, variant=variant) + f"{_FAILURES_SEGMENT}/"
 
 
-def build_manifests_prefix(run_id: str) -> str:
+def build_manifests_prefix(
+    run_id: str,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the manifests prefix for one Jev run."""
-    return build_run_prefix(run_id) + f"{_MANIFESTS_SEGMENT}/"
+    return build_run_prefix(run_id, variant=variant) + f"{_MANIFESTS_SEGMENT}/"
 
 
-def build_analysis_prefix(run_id: str) -> str:
+def build_analysis_prefix(
+    run_id: str,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the analysis prefix for one run.
 
     Parameters
     ----------
     run_id
         Safe path segment identifying the run.
+    variant
+        Experiment whose S3 prefix owns the analysis folder.
 
     Returns
     -------
@@ -86,30 +113,51 @@ def build_analysis_prefix(run_id: str) -> str:
         When ``run_id`` is not a single safe path segment.
     """
     safe_run_id = validate_path_segment(run_id)
-    return f"{S3_PREFIX}{_ANALYSIS_SEGMENT}/{safe_run_id}/"
+    return f"{variant.s3_prefix}{_ANALYSIS_SEGMENT}/{safe_run_id}/"
 
 
-def build_prediction_batch_key(run_id: str, sequence: int) -> str:
+def build_prediction_batch_key(
+    run_id: str,
+    sequence: int,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the immutable prediction batch key for ``sequence``."""
-    return _build_batch_key(run_id, _PREDICTIONS_SEGMENT, sequence)
+    return _build_batch_key(run_id, _PREDICTIONS_SEGMENT, sequence, variant=variant)
 
 
-def build_failure_batch_key(run_id: str, sequence: int) -> str:
+def build_failure_batch_key(
+    run_id: str,
+    sequence: int,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the immutable failure batch key for ``sequence``."""
-    return _build_batch_key(run_id, _FAILURES_SEGMENT, sequence)
+    return _build_batch_key(run_id, _FAILURES_SEGMENT, sequence, variant=variant)
 
 
-def build_manifest_key(run_id: str, sequence: int) -> str:
+def build_manifest_key(
+    run_id: str,
+    sequence: int,
+    *,
+    variant: JevInferenceVariant = ZERO_SHOT_VARIANT,
+) -> str:
     """Return the immutable manifest key for ``sequence``."""
     _validate_sequence(sequence)
     filename = f"{_MANIFEST_FILE_PREFIX}{sequence:0{_SEQUENCE_WIDTH}d}{_JSON_SUFFIX}"
-    return build_manifests_prefix(run_id) + filename
+    return build_manifests_prefix(run_id, variant=variant) + filename
 
 
-def _build_batch_key(run_id: str, artifact_segment: str, sequence: int) -> str:
+def _build_batch_key(
+    run_id: str,
+    artifact_segment: str,
+    sequence: int,
+    *,
+    variant: JevInferenceVariant,
+) -> str:
     _validate_sequence(sequence)
     filename = f"{_BATCH_FILE_PREFIX}{sequence:0{_SEQUENCE_WIDTH}d}{_JSONL_SUFFIX}"
-    return build_run_prefix(run_id) + f"{artifact_segment}/" + filename
+    return build_run_prefix(run_id, variant=variant) + f"{artifact_segment}/" + filename
 
 
 def _validate_sequence(sequence: int) -> None:
