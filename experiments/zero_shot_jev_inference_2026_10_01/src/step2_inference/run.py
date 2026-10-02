@@ -15,21 +15,23 @@ from dataclasses import dataclass
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 
+from experiments.zero_shot_jev_inference_2026_10_01.shared.config import (
+    JevInferenceVariant,
+    ZERO_SHOT_VARIANT,
+)
 from experiments.zero_shot_jev_inference_2026_10_01.shared.constants import (
     DEFAULT_BATCH_SIZE,
     DEFAULT_MAX_WORKERS,
-    INPUT_MANIFEST_KEY,
-    INPUT_RECORDS_KEY,
     JEV_MODEL,
-    S3_BUCKET,
 )
 from experiments.zero_shot_jev_inference_2026_10_01.shared.jev import (
+    RemoveRequestBuilder,
     build_remove_request,
     to_prediction_record,
 )
 from experiments.zero_shot_jev_inference_2026_10_01.shared.schemas import (
-    JEV_RUN_MANIFEST_SCHEMA_VERSION,
     JevRunManifest,
+    reject_run_manifest_identity,
 )
 from experiments.zero_shot_jev_inference_2026_10_01.shared.storage import (
     build_failure_batch_key,
@@ -66,6 +68,7 @@ from experiments.zero_shot_llm_inference_2026_09_30.src.step2_inference.run impo
     completed_post_ids_for_requested_set,
     unresolved_failure_post_ids,
 )
+from shared.models.jev import JevScorer
 _BATCH_OBJECT_PREFIX = "batch-"
 _JSONL_OBJECT_SUFFIX = ".jsonl"
 _MANIFEST_OBJECT_PREFIX = "manifest-"
@@ -102,7 +105,9 @@ class WrittenCounts:
 
 def run_inference(
     store: CampaignObjectStore,
-    scorer: object,
+    scorer: JevScorer,
+    variant: JevInferenceVariant,
+    request_builder: RemoveRequestBuilder,
     run_id: str,
     limit: int | None,
     batch_size: int,
@@ -115,7 +120,11 @@ def run_inference(
     store
         Object store for the experiment bucket.
     scorer
-        Object with ``score(request) -> JevResult``.
+        Jev scorer shared by the worker threads.
+    variant
+        Experiment paths and prompt identity for this run.
+    request_builder
+        Builds one classifier request from a prepared pair.
     run_id
         Safe run identifier.
     limit
@@ -138,13 +147,23 @@ def run_inference(
         When an immutable write collides. No manifest is written after that.
     """
     _validate_options(run_id, limit, batch_size, max_workers)
-    prepared = _load_prepared_request(store, limit)
-    state = _load_stored_run_state(store, run_id, prepared.prepared_records)
+    prepared = _load_prepared_request(store, variant, limit)
+    state = _load_stored_run_state(store, variant, run_id, prepared.prepared_records)
     _reject_option_mismatch(state.manifests, limit, batch_size, max_workers)
     pending = _pending_records(prepared.requested_records, state.predictions)
-    written = _write_scored_batches(store, scorer, run_id, pending, batch_size, max_workers)
+    written = _write_scored_batches(
+        store,
+        scorer,
+        variant,
+        request_builder,
+        run_id,
+        pending,
+        batch_size,
+        max_workers,
+    )
     manifest, recounted = _write_recounted_manifest(
         store,
+        variant,
         prepared,
         run_id,
         limit,
@@ -155,16 +174,41 @@ def run_inference(
     return manifest
 
 
-def main() -> None:
-    """Parse arguments, then run one Jev process."""
+def run_inference_cli(
+    variant: JevInferenceVariant,
+    request_builder: RemoveRequestBuilder,
+) -> None:
+    """Parse arguments, then score one run for ``variant``.
+
+    Parameters
+    ----------
+    variant
+        Experiment paths, bucket, and prompt identity.
+    request_builder
+        Builds one classifier request from a prepared pair.
+    """
     args = _parse_args()
     _exit_when_options_invalid(args.run_id, args.limit, args.batch_size, args.max_workers)
     apply_lab_aws_credentials_when_unset()
-    store = CampaignObjectStore(S3_BUCKET)
+    store = CampaignObjectStore(variant.s3_bucket)
     from shared.models.jev import build_jev_scorer
 
     scorer = build_jev_scorer()
-    run_inference(store, scorer, args.run_id, args.limit, args.batch_size, args.max_workers)
+    run_inference(
+        store,
+        scorer,
+        variant,
+        request_builder,
+        args.run_id,
+        args.limit,
+        args.batch_size,
+        args.max_workers,
+    )
+
+
+def main() -> None:
+    """Run resumable zero-shot Jev inference."""
+    run_inference_cli(ZERO_SHOT_VARIANT, build_remove_request)
 
 
 def _parse_args() -> argparse.Namespace:
@@ -204,9 +248,13 @@ def _validate_options(
         raise ValueError("max_workers must be a positive integer")
 
 
-def _load_prepared_request(store: CampaignObjectStore, limit: int | None) -> PreparedRequest:
-    manifest_bytes = _required_bytes(store, INPUT_MANIFEST_KEY)
-    records_bytes = _required_bytes(store, INPUT_RECORDS_KEY)
+def _load_prepared_request(
+    store: CampaignObjectStore,
+    variant: JevInferenceVariant,
+    limit: int | None,
+) -> PreparedRequest:
+    manifest_bytes = _required_bytes(store, variant.input_manifest_key)
+    records_bytes = _required_bytes(store, variant.input_records_key)
     manifest = InputManifest.model_validate_json(manifest_bytes)
     if sha256_hex(records_bytes) != manifest.records_sha256:
         raise ValueError("prepared input records digest mismatch")
@@ -233,19 +281,20 @@ def _reject_duplicate_post_ids(records: tuple[Study2InputRecord, ...]) -> None:
 
 def _load_stored_run_state(
     store: CampaignObjectStore,
+    variant: JevInferenceVariant,
     run_id: str,
     prepared_records: tuple[Study2InputRecord, ...],
 ) -> StoredRunState:
     known_ids = frozenset(record.post_id for record in prepared_records)
-    manifests = _load_manifests(store, run_id)
+    manifests = _load_manifests(store, variant, run_id)
     prediction_batches = load_jsonl_records_under_prefix(
         store,
-        build_predictions_prefix(run_id),
+        build_predictions_prefix(run_id, variant=variant),
         PredictionRecord,
     )
     failure_batches = load_jsonl_records_under_prefix(
         store,
-        build_failures_prefix(run_id),
+        build_failures_prefix(run_id, variant=variant),
         FailureRecord,
     )
     predictions = _validated_predictions(prediction_batches, run_id, known_ids)
@@ -259,27 +308,28 @@ def _load_stored_run_state(
     )
 
 
-def _load_manifests(store: CampaignObjectStore, run_id: str) -> tuple[JevRunManifest, ...]:
+def _load_manifests(
+    store: CampaignObjectStore,
+    variant: JevInferenceVariant,
+    run_id: str,
+) -> tuple[JevRunManifest, ...]:
     loaded = load_json_objects_under_prefix(
         store,
-        build_manifests_prefix(run_id),
+        build_manifests_prefix(run_id, variant=variant),
         _JSON_OBJECT_SUFFIX,
         JevRunManifest,
     )
     manifests: list[JevRunManifest] = []
     for _, manifest in loaded:
-        _reject_manifest_identity(manifest, run_id)
+        reject_run_manifest_identity(
+            manifest,
+            variant,
+            run_id,
+            JEV_MODEL.folder_name,
+            JEV_MODEL.model_id,
+        )
         manifests.append(manifest)
     return tuple(manifests)
-
-
-def _reject_manifest_identity(manifest: JevRunManifest, run_id: str) -> None:
-    if manifest.run_id != run_id:
-        raise ValueError("manifest run_id mismatch")
-    if manifest.model_folder != JEV_MODEL.folder_name:
-        raise ValueError("manifest model_folder mismatch")
-    if manifest.model_id != JEV_MODEL.model_id:
-        raise ValueError("manifest model_id mismatch")
 
 
 def _validated_predictions(
@@ -352,7 +402,9 @@ def _pending_records(
 
 def _write_scored_batches(
     store: CampaignObjectStore,
-    scorer: object,
+    scorer: JevScorer,
+    variant: JevInferenceVariant,
+    request_builder: RemoveRequestBuilder,
     run_id: str,
     pending: tuple[Study2InputRecord, ...],
     batch_size: int,
@@ -362,19 +414,27 @@ def _write_scored_batches(
     failures_written = 0
     for start in range(0, len(pending), batch_size):
         batch = pending[start : start + batch_size]
-        predictions, failures = _score_batch_in_order(scorer, run_id, batch, max_workers)
+        predictions, failures = _score_batch_in_order(
+            scorer,
+            request_builder,
+            run_id,
+            batch,
+            max_workers,
+        )
         _put_jsonl_batch(
             store,
+            variant,
             run_id,
             predictions,
-            build_predictions_prefix(run_id),
+            build_predictions_prefix(run_id, variant=variant),
             build_prediction_batch_key,
         )
         _put_jsonl_batch(
             store,
+            variant,
             run_id,
             failures,
-            build_failures_prefix(run_id),
+            build_failures_prefix(run_id, variant=variant),
             build_failure_batch_key,
         )
         predictions_written += len(predictions)
@@ -383,7 +443,8 @@ def _write_scored_batches(
 
 
 def _score_batch_in_order(
-    scorer: object,
+    scorer: JevScorer,
+    request_builder: RemoveRequestBuilder,
     run_id: str,
     records: tuple[Study2InputRecord, ...],
     max_workers: int,
@@ -391,7 +452,7 @@ def _score_batch_in_order(
     ordered: list[PredictionRecord | FailureRecord | None] = [None] * len(records)
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         futures = {
-            executor.submit(_score_one, scorer, run_id, record): index
+            executor.submit(_score_one, scorer, request_builder, run_id, record): index
             for index, record in enumerate(records)
         }
         for future, index in futures.items():
@@ -400,12 +461,13 @@ def _score_batch_in_order(
 
 
 def _score_one(
-    scorer: object,
+    scorer: JevScorer,
+    request_builder: RemoveRequestBuilder,
     run_id: str,
     record: Study2InputRecord,
 ) -> PredictionRecord | FailureRecord:
     try:
-        result = scorer.score(build_remove_request(record))
+        result = scorer.score(request_builder(record))
         return to_prediction_record(run_id, record, result)
     except Exception as error:
         return _failure_from_exception(run_id, record, error)
@@ -447,10 +509,11 @@ def _split_outcomes(
 
 def _put_jsonl_batch(
     store: CampaignObjectStore,
+    variant: JevInferenceVariant,
     run_id: str,
     rows: list[PredictionRecord] | list[FailureRecord],
     prefix: str,
-    key_for_sequence: Callable[[str, int], str],
+    key_for_sequence: Callable[..., str],
 ) -> None:
     if not rows:
         return
@@ -460,31 +523,42 @@ def _put_jsonl_batch(
         _BATCH_OBJECT_PREFIX,
         _JSONL_OBJECT_SUFFIX,
     )
-    put_immutable_object(store, key_for_sequence(run_id, sequence), serialize_jsonl_models(rows))
+    key = key_for_sequence(run_id, sequence, variant=variant)
+    put_immutable_object(store, key, serialize_jsonl_models(rows))
 
 
 def _write_recounted_manifest(
     store: CampaignObjectStore,
+    variant: JevInferenceVariant,
     prepared: PreparedRequest,
     run_id: str,
     limit: int | None,
     batch_size: int,
     max_workers: int,
 ) -> tuple[JevRunManifest, StoredRunState]:
-    state = _load_stored_run_state(store, run_id, prepared.prepared_records)
-    manifest = _manifest_from_state(prepared, state, run_id, limit, batch_size, max_workers)
+    state = _load_stored_run_state(store, variant, run_id, prepared.prepared_records)
+    manifest = _manifest_from_state(
+        variant,
+        prepared,
+        state,
+        run_id,
+        limit,
+        batch_size,
+        max_workers,
+    )
     sequence = next_sequence_for_prefix(
         store,
-        build_manifests_prefix(run_id),
+        build_manifests_prefix(run_id, variant=variant),
         _MANIFEST_OBJECT_PREFIX,
         _JSON_OBJECT_SUFFIX,
     )
     body = serialize_json_document(manifest.model_dump(mode="json"))
-    put_immutable_object(store, build_manifest_key(run_id, sequence), body)
+    put_immutable_object(store, build_manifest_key(run_id, sequence, variant=variant), body)
     return manifest, state
 
 
 def _manifest_from_state(
+    variant: JevInferenceVariant,
     prepared: PreparedRequest,
     state: StoredRunState,
     run_id: str,
@@ -497,12 +571,16 @@ def _manifest_from_state(
     unresolved = unresolved_failure_post_ids(state.failures, state.predictions, requested_ids)
     status = _status_for_counts(len(prepared.requested_records), len(completed), len(unresolved))
     return JevRunManifest(
-        schema_version=JEV_RUN_MANIFEST_SCHEMA_VERSION,
+        schema_version=variant.run_manifest_schema_version,
+        experiment_name=variant.experiment_name,
+        prompt_name=variant.prompt_name,
+        prompt_sha256=variant.prompt_sha256,
+        instructions_sha256=variant.instructions_sha256,
         run_id=run_id,
         model_display_name=JEV_MODEL.display_name,
         model_folder=JEV_MODEL.folder_name,
         model_id=JEV_MODEL.model_id,
-        prepared_input_records_key=INPUT_RECORDS_KEY,
+        prepared_input_records_key=variant.input_records_key,
         prepared_input_records_sha256=prepared.manifest.records_sha256,
         configured_batch_size=batch_size,
         max_workers=max_workers,
