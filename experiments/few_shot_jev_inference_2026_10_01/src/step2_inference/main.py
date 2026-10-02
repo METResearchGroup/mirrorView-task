@@ -18,7 +18,11 @@ from experiments.zero_shot_jev_inference_2026_10_01.src.step2_inference.run impo
 
 def main() -> None:
     """Score prepared pairs with the few-shot Jev request."""
-    run_inference_cli(FEW_SHOT_VARIANT, build_few_shot_remove_request)
+    run_inference_cli(
+        FEW_SHOT_VARIANT,
+        build_few_shot_remove_request,
+        description="Run resumable few-shot Jev inference.",
+    )
 
 
 if __name__ == "__main__":

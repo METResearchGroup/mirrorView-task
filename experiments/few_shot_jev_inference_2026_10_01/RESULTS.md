@@ -16,7 +16,7 @@ Production measurement:
 
 production_run_id=study2-jev-few-shot-2026-10-01 predictions=13992 unresolved_failures=0 status=complete real_seconds=809.81 input_tokens=24672077 output_tokens=293832 usd=1.036227
 
-The five prompt demonstrations are excluded only from model metrics. Human label counts, split-vote counts, and usage cover all 13,992 predictions. Model metrics use 13,987 all rows, 4,046 unanimous rows, and 9,941 split rows.
+The prompt has ten demonstrations. Five of them are exact matches to prepared rows, and those five rows are unanimous. Model metrics leave those five rows out. Human label counts include all 13,992 predictions, including those five rows. The split-vote table counts the 9,941 split predictions, and those five unanimous rows are not in it. Usage includes all 13,992 predictions. Model metrics use 13,987 rows for all posts, 4,046 unanimous rows, and 9,941 split rows. F1, recall, and precision treat remove as the positive label.
 
 ## Human label distribution
 

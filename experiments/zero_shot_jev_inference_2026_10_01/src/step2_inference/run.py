@@ -12,6 +12,7 @@ import sys
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 
@@ -68,7 +69,11 @@ from experiments.zero_shot_llm_inference_2026_09_30.src.step2_inference.run impo
     completed_post_ids_for_requested_set,
     unresolved_failure_post_ids,
 )
-from shared.models.jev import JevScorer
+
+if TYPE_CHECKING:
+    from shared.models.jev import JevScorer
+
+_ZERO_SHOT_INFERENCE_HELP = "Run resumable zero-shot Jev inference."
 _BATCH_OBJECT_PREFIX = "batch-"
 _JSONL_OBJECT_SUFFIX = ".jsonl"
 _MANIFEST_OBJECT_PREFIX = "manifest-"
@@ -150,6 +155,11 @@ def run_inference(
     prepared = _load_prepared_request(store, variant, limit)
     state = _load_stored_run_state(store, variant, run_id, prepared.prepared_records)
     _reject_option_mismatch(state.manifests, limit, batch_size, max_workers)
+    _reject_stored_input_mismatch(
+        state.manifests,
+        variant,
+        prepared.manifest.records_sha256,
+    )
     pending = _pending_records(prepared.requested_records, state.predictions)
     written = _write_scored_batches(
         store,
@@ -177,6 +187,7 @@ def run_inference(
 def run_inference_cli(
     variant: JevInferenceVariant,
     request_builder: RemoveRequestBuilder,
+    description: str = _ZERO_SHOT_INFERENCE_HELP,
 ) -> None:
     """Parse arguments, then score one run for ``variant``.
 
@@ -186,8 +197,10 @@ def run_inference_cli(
         Experiment paths, bucket, and prompt identity.
     request_builder
         Builds one classifier request from a prepared pair.
+    description
+        Help text. The zero-shot command keeps the original sentence.
     """
-    args = _parse_args()
+    args = _parse_args(description)
     _exit_when_options_invalid(args.run_id, args.limit, args.batch_size, args.max_workers)
     apply_lab_aws_credentials_when_unset()
     store = CampaignObjectStore(variant.s3_bucket)
@@ -211,8 +224,8 @@ def main() -> None:
     run_inference_cli(ZERO_SHOT_VARIANT, build_remove_request)
 
 
-def _parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Run resumable zero-shot Jev inference.")
+def _parse_args(description: str) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument("--run-id", required=True, help="Safe run identifier segment")
     parser.add_argument("--limit", type=int, default=None, help="Positive record limit")
     parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE)
@@ -372,6 +385,18 @@ def _validated_failures(
             )
             rows.append(record)
     return tuple(rows)
+
+
+def _reject_stored_input_mismatch(
+    manifests: tuple[JevRunManifest, ...],
+    variant: JevInferenceVariant,
+    records_sha256: str,
+) -> None:
+    for manifest in manifests:
+        if manifest.prepared_input_records_sha256 != records_sha256:
+            raise ValueError("prepared input digest mismatch with existing manifest")
+        if manifest.prepared_input_records_key != variant.input_records_key:
+            raise ValueError("prepared input key mismatch with existing manifest")
 
 
 def _reject_option_mismatch(

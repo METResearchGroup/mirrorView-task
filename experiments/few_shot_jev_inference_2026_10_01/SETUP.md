@@ -8,7 +8,7 @@ That package has 13,992 rows, 4,051 unanimous rows, and 9,941 split rows. This e
 
 `s3://mirrorview-experimental-artifacts/experiments/few_shot_jev_inference_2026_10_01/inputs/study_2_five_labeler/`
 
-Model metrics exclude these five unanimous demonstration post IDs:
+The prompt has ten demonstrations. Five of them are exact matches to prepared rows, two labeled remove and three labeled keep, and all five rows are unanimous. Model metrics exclude these post IDs. The other five demonstrations do not match a prepared row.
 
 - `bluesky_0bd24d995926c0a58ee7129aa11cb44919170f35e9d51c137745334333c17cd7`
 - `bluesky_0e8a5a0e2e218f117502ba8bb6c697977992905462970a1c2c0773a22ea2888c`
