@@ -13,7 +13,6 @@ import os
 from typing import TYPE_CHECKING, Any, TypeVar
 
 from experiments.zero_shot_llm_inference_2026_09_30.shared.config import (
-    ZERO_SHOT_VARIANT,
     Study2InferenceVariant,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
@@ -71,7 +70,7 @@ def validate_path_segment(segment: str) -> str:
 
 def join_experiment_key(
     *segments: str,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Join path segments below the active experiment S3 root.
 
@@ -85,12 +84,11 @@ def join_experiment_key(
     ValueError
         When any segment fails validation or the key escapes the root.
     """
-    active = _active_variant(variant)
     if not segments:
         raise ValueError("at least one path segment is required")
     safe_segments = [validate_path_segment(segment) for segment in segments]
-    joined = active.s3_root + "/".join(safe_segments)
-    if not joined.startswith(active.s3_root):
+    joined = variant.s3_root + "/".join(safe_segments)
+    if not joined.startswith(variant.s3_root):
         raise ValueError("constructed key must remain under the experiment root")
     return joined
 
@@ -107,7 +105,7 @@ def build_model_run_prefix(
     run_id
         Run identifier, or the active variant when the call is variant-first.
     variant
-        Active experiment for the run-id-first form. Omitted calls use zero-shot.
+        Active experiment for the run-id-first form. Variant-first calls pass the folder here.
     """
     active, resolved_run_id, resolved_folder = _resolve_model_run_prefix_args(
         run_id,
@@ -135,15 +133,15 @@ def _resolve_model_run_prefix_args(
         return run_id, model_folder, variant
     if isinstance(variant, str):
         raise ValueError("variant must be a Study2InferenceVariant")
-    if not isinstance(run_id, str):
-        raise ValueError("run_id must be a path segment")
-    return _active_variant(variant), run_id, model_folder
+    if not isinstance(run_id, str) or not isinstance(variant, Study2InferenceVariant):
+        raise ValueError("variant is required")
+    return variant, run_id, model_folder
 
 
 def build_predictions_prefix(
     run_id: str,
     model_folder: str,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Return the predictions prefix for one model folder under a run."""
     return build_model_run_prefix(run_id, model_folder, variant) + f"{_PREDICTIONS_SEGMENT}/"
@@ -152,7 +150,7 @@ def build_predictions_prefix(
 def build_failures_prefix(
     run_id: str,
     model_folder: str,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Return the failures prefix for one model folder under a run."""
     return build_model_run_prefix(run_id, model_folder, variant) + f"{_FAILURES_SEGMENT}/"
@@ -161,7 +159,7 @@ def build_failures_prefix(
 def build_manifests_prefix(
     run_id: str,
     model_folder: str,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Return the manifests prefix for one model folder under a run."""
     return build_model_run_prefix(run_id, model_folder, variant) + f"{_MANIFESTS_SEGMENT}/"
@@ -171,7 +169,7 @@ def build_prediction_batch_key(
     run_id: str,
     model_folder: str,
     sequence: int,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Return the immutable prediction batch key for ``sequence``.
 
@@ -187,7 +185,7 @@ def build_failure_batch_key(
     run_id: str,
     model_folder: str,
     sequence: int,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Return the immutable failure batch key for ``sequence``.
 
@@ -203,7 +201,7 @@ def build_manifest_key(
     run_id: str,
     model_folder: str,
     sequence: int,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Return the immutable manifest key for ``sequence``.
 
@@ -240,12 +238,6 @@ def _build_batch_key(
     filename = f"{_BATCH_FILE_PREFIX}{sequence:0{_SEQUENCE_WIDTH}d}{_JSONL_SUFFIX}"
     run_prefix = build_model_run_prefix(run_id, model_folder, variant)
     return run_prefix + f"{artifact_segment}/" + filename
-
-
-def _active_variant(variant: Study2InferenceVariant | None) -> Study2InferenceVariant:
-    if variant is None:
-        return ZERO_SHOT_VARIANT
-    return variant
 
 
 def _validate_sequence(sequence: int) -> None:
@@ -330,7 +322,7 @@ def object_exists(store: CampaignObjectStore, key: str) -> bool:
 
 def load_verified_prepared_input(
     store: CampaignObjectStore,
-    variant: Study2InferenceVariant | None = None,
+    variant: Study2InferenceVariant,
 ) -> tuple[InputManifest, tuple[Study2InputRecord, ...]]:
     """Load prepared input bytes, verify digest, and parse records.
 
@@ -344,9 +336,8 @@ def load_verified_prepared_input(
     ValueError
         When manifest or records are missing, digest mismatches, or IDs duplicate.
     """
-    active = _active_variant(variant)
-    manifest = _load_input_manifest(store, active)
-    if manifest.records_s3_key != active.input_records_s3_key:
+    manifest = _load_input_manifest(store, variant)
+    if manifest.records_s3_key != variant.input_records_s3_key:
         raise ValueError("prepared input records key does not match the active variant")
     records_bytes = _load_required_bytes(store, manifest.records_s3_key)
     digest = sha256_hex(records_bytes)
