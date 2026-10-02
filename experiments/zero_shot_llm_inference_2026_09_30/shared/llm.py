@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from data_platform.generate_features.engines.bedrock_engine import (
     BedrockRuntimeClient,
     BedrockUsage,
@@ -17,6 +19,7 @@ from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
 )
 
 EMPTY_SYSTEM_PROMPT = ""
+PromptFormatter = Callable[[str, str], str]
 
 
 def label_record(

@@ -3,12 +3,20 @@
 from __future__ import annotations
 
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-PREDICTION_SCHEMA_VERSION = "study2-zero-shot-prediction-v1"
-FAILURE_SCHEMA_VERSION = "study2-zero-shot-failure-v1"
-MANIFEST_SCHEMA_VERSION = "study2-zero-shot-model-run-v1"
+from experiments.zero_shot_llm_inference_2026_09_30.shared.config import ZERO_SHOT_VARIANT
+
+if TYPE_CHECKING:
+    from experiments.zero_shot_llm_inference_2026_09_30.shared.config import (
+        Study2InferenceVariant,
+    )
+
+PREDICTION_SCHEMA_VERSION = ZERO_SHOT_VARIANT.prediction_schema_version
+FAILURE_SCHEMA_VERSION = ZERO_SHOT_VARIANT.failure_schema_version
+MANIFEST_SCHEMA_VERSION = ZERO_SHOT_VARIANT.model_run_schema_version
 FAILURE_WRAPPER_CALL_COUNT = 1
 
 FIVE_RATER_COUNT = 5
@@ -151,6 +159,9 @@ class ModelRunManifest(BaseModel):
     prediction_object_keys: tuple[str, ...]
     failure_object_keys: tuple[str, ...]
     status: ModelRunManifestStatus
+    experiment_name: str = Field(default=ZERO_SHOT_VARIANT.experiment_name, min_length=1)
+    prompt_name: str = Field(default=ZERO_SHOT_VARIANT.prompt_name, min_length=1)
+    prompt_sha256: str = Field(default=ZERO_SHOT_VARIANT.prompt_sha256, min_length=1)
 
 
 class InputManifest(BaseModel):
@@ -187,15 +198,22 @@ def validate_prediction_record_identity(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
+    variant: Study2InferenceVariant | None = None,
 ) -> None:
     """Raise when a stored prediction does not match the active run identity.
+
+    Parameters
+    ----------
+    variant
+        Active experiment. Omitted calls use the zero-shot variant.
 
     Raises
     ------
     ValueError
-        When run, model, or post identity does not match expectations.
+        When run, model, schema, or post identity does not match expectations.
     """
-    if record.schema_version != PREDICTION_SCHEMA_VERSION:
+    active = _active_variant(variant)
+    if record.schema_version != active.prediction_schema_version:
         raise ValueError("prediction schema_version mismatch")
     if record.run_id != run_id:
         raise ValueError("prediction run_id mismatch")
@@ -213,15 +231,22 @@ def validate_failure_record_identity(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
+    variant: Study2InferenceVariant | None = None,
 ) -> None:
     """Raise when a stored failure does not match the active run identity.
+
+    Parameters
+    ----------
+    variant
+        Active experiment. Omitted calls use the zero-shot variant.
 
     Raises
     ------
     ValueError
-        When run, model, or post identity does not match expectations.
+        When run, model, schema, or post identity does not match expectations.
     """
-    if record.schema_version != FAILURE_SCHEMA_VERSION:
+    active = _active_variant(variant)
+    if record.schema_version != active.failure_schema_version:
         raise ValueError("failure schema_version mismatch")
     if record.run_id != run_id:
         raise ValueError("failure run_id mismatch")
@@ -238,15 +263,22 @@ def validate_model_run_manifest_identity(
     run_id: str,
     model_folder: str,
     model_id: str,
+    variant: Study2InferenceVariant | None = None,
 ) -> None:
     """Raise when a stored manifest does not match the active run identity.
+
+    Parameters
+    ----------
+    variant
+        Active experiment. Omitted calls use the zero-shot variant.
 
     Raises
     ------
     ValueError
-        When run or model identity does not match expectations.
+        When run, model, schema, or prompt identity does not match expectations.
     """
-    if manifest.schema_version != MANIFEST_SCHEMA_VERSION:
+    active = _active_variant(variant)
+    if manifest.schema_version != active.model_run_schema_version:
         raise ValueError("manifest schema_version mismatch")
     if manifest.run_id != run_id:
         raise ValueError("manifest run_id mismatch")
@@ -254,3 +286,22 @@ def validate_model_run_manifest_identity(
         raise ValueError("manifest model_folder mismatch")
     if manifest.model_id != model_id:
         raise ValueError("manifest model_id mismatch")
+    _reject_prompt_identity_mismatch(manifest, active)
+
+
+def _active_variant(variant: Study2InferenceVariant | None) -> Study2InferenceVariant:
+    if variant is None:
+        return ZERO_SHOT_VARIANT
+    return variant
+
+
+def _reject_prompt_identity_mismatch(
+    manifest: ModelRunManifest,
+    variant: Study2InferenceVariant,
+) -> None:
+    if manifest.experiment_name != variant.experiment_name:
+        raise ValueError("manifest experiment_name mismatch")
+    if manifest.prompt_name != variant.prompt_name:
+        raise ValueError("manifest prompt_name mismatch")
+    if manifest.prompt_sha256 != variant.prompt_sha256:
+        raise ValueError("manifest prompt_sha256 mismatch")
