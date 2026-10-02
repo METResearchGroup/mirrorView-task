@@ -19,21 +19,23 @@ from shared.data.registry import (
     STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS,
 )
 
+from experiments.zero_shot_llm_inference_2026_09_30.shared.config import (
+    ZERO_SHOT_VARIANT,
+    Study2InferenceVariant,
+)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
     EXPECTED_SPLIT_RECORD_COUNT,
     EXPECTED_TOTAL_RECORD_COUNT,
     EXPECTED_UNANIMOUS_RECORD_COUNT,
-    EXPERIMENT_S3_BUCKET,
     FIVE_RATER_COUNT,
-    INPUT_MANIFEST_KEY,
     INPUT_MANIFEST_SCHEMA_VERSION,
-    INPUT_RECORDS_KEY,
     REMOVE_LABEL_VALUE,
 )
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import InputManifest, Study2InputRecord
 from experiments.zero_shot_llm_inference_2026_09_30.shared.storage import (
     apply_lab_aws_credentials_when_unset,
     object_exists,
+    parse_study2_input_jsonl_bytes,
     put_immutable_object,
     serialize_json_document,
     serialize_study2_input_jsonl,
@@ -77,8 +79,46 @@ class LoadedStudy2Datasets:
     split_labels: pd.DataFrame
 
 
+def run_setup(variant: Study2InferenceVariant) -> PreparedInputSummary:
+    """Build and write the immutable input package for ``variant``.
+
+    Raises
+    ------
+    ValueError
+        When the registered partition or row invariants fail.
+    FileExistsError
+        When either immutable input object already exists.
+    """
+    store = _store_for_variant(variant)
+    return prepare_study2_five_labeler_input(store, variant)
+
+
+def copy_prepared_input(
+    source: Study2InferenceVariant,
+    target: Study2InferenceVariant,
+) -> PreparedInputSummary:
+    """Copy verified source input bytes into an empty target prefix.
+
+    Raises
+    ------
+    ValueError
+        When the source digest, counts, or identity do not match.
+    FileExistsError
+        When the target prefix is not empty.
+    """
+    _reject_shared_root(source, target)
+    source_store = _store_for_variant(source)
+    target_store = _store_for_variant(target)
+    _reject_nonempty_prefix(target_store, target.s3_root)
+    manifest, records_bytes = _load_source_input_bytes(source_store, source)
+    _reject_unverified_source(source, manifest, records_bytes)
+    _write_copied_input(target_store, target, manifest, records_bytes)
+    return _summary_from_copied_manifest(target, manifest)
+
+
 def prepare_study2_five_labeler_input(
     store: CampaignObjectStore,
+    variant: Study2InferenceVariant,
 ) -> PreparedInputSummary:
     """Load, validate, serialize, and write the immutable input package.
 
@@ -89,12 +129,12 @@ def prepare_study2_five_labeler_input(
     FileExistsError
         When either immutable input object already exists.
     """
-    _ensure_input_keys_absent(store)
+    _ensure_input_keys_absent(store, variant)
     records = _load_and_build_records()
     records_bytes = serialize_study2_input_jsonl(records)
-    manifest = build_input_manifest(records, records_bytes)
-    _write_input_package(store, records_bytes, manifest)
-    return _summary_from_records(records, manifest)
+    manifest = build_input_manifest(records, records_bytes, variant)
+    _write_input_package(store, records_bytes, manifest, variant)
+    return _summary_from_records(records, manifest, variant)
 
 
 def load_registered_study2_datasets() -> LoadedStudy2Datasets:
@@ -149,6 +189,7 @@ def build_study2_input_records(all_rows: pd.DataFrame) -> list[Study2InputRecord
 def build_input_manifest(
     records: list[Study2InputRecord],
     records_bytes: bytes,
+    variant: Study2InferenceVariant,
 ) -> InputManifest:
     """Construct the manifest from the exact serialized JSONL bytes."""
     unanimous_count = sum(1 for record in records if record.is_unanimous)
@@ -156,7 +197,7 @@ def build_input_manifest(
     return InputManifest(
         schema_version=INPUT_MANIFEST_SCHEMA_VERSION,
         source_dataset_names=_SOURCE_DATASET_NAMES,
-        records_s3_key=INPUT_RECORDS_KEY,
+        records_s3_key=variant.input_records_s3_key,
         records_sha256=sha256_hex(records_bytes),
         total_record_count=len(records),
         unanimous_record_count=unanimous_count,
@@ -169,16 +210,33 @@ def build_input_manifest(
 def main() -> None:
     """CLI entrypoint for the real S3 preparation path."""
     apply_lab_aws_credentials_when_unset()
-    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, region_name=DEFAULT_S3_REGION)
-    summary = prepare_study2_five_labeler_input(store)
-    _print_success(summary)
+    summary = run_setup(ZERO_SHOT_VARIANT)
+    print_prepared_input_summary(summary)
 
 
-def _ensure_input_keys_absent(store: CampaignObjectStore) -> None:
-    if object_exists(store, INPUT_RECORDS_KEY):
-        raise FileExistsError(f"Object already exists: {INPUT_RECORDS_KEY}")
-    if object_exists(store, INPUT_MANIFEST_KEY):
-        raise FileExistsError(f"Object already exists: {INPUT_MANIFEST_KEY}")
+def print_prepared_input_summary(summary: PreparedInputSummary) -> None:
+    """Print the setup success line for ``summary``."""
+    print(
+        f"records_key={summary.records_key} "
+        f"manifest_key={summary.manifest_key} "
+        f"rows={summary.row_count} "
+        f"unique_post_ids={summary.unique_post_id_count} "
+        f"unanimous_rows={summary.unanimous_row_count} "
+        f"split_rows={summary.split_row_count}"
+    )
+
+
+def _ensure_input_keys_absent(
+    store: CampaignObjectStore,
+    variant: Study2InferenceVariant,
+) -> None:
+    _reject_existing_object(store, variant.input_records_s3_key)
+    _reject_existing_object(store, variant.input_manifest_s3_key)
+
+
+def _reject_existing_object(store: CampaignObjectStore, key: str) -> None:
+    if object_exists(store, key):
+        raise FileExistsError(f"Object already exists: {key}")
 
 
 def _load_and_build_records() -> list[Study2InputRecord]:
@@ -192,21 +250,23 @@ def _write_input_package(
     store: CampaignObjectStore,
     records_bytes: bytes,
     manifest: InputManifest,
+    variant: Study2InferenceVariant,
 ) -> None:
-    put_immutable_object(store, INPUT_RECORDS_KEY, records_bytes)
+    put_immutable_object(store, variant.input_records_s3_key, records_bytes)
     manifest_bytes = serialize_json_document(manifest.model_dump())
-    put_immutable_object(store, INPUT_MANIFEST_KEY, manifest_bytes)
+    put_immutable_object(store, variant.input_manifest_s3_key, manifest_bytes)
 
 
 def _summary_from_records(
     records: list[Study2InputRecord],
     manifest: InputManifest,
+    variant: Study2InferenceVariant,
 ) -> PreparedInputSummary:
     unanimous_rows = sum(1 for record in records if record.is_unanimous)
     split_rows = len(records) - unanimous_rows
     return PreparedInputSummary(
-        records_key=INPUT_RECORDS_KEY,
-        manifest_key=INPUT_MANIFEST_KEY,
+        records_key=variant.input_records_s3_key,
+        manifest_key=variant.input_manifest_s3_key,
         row_count=len(records),
         unique_post_id_count=len({record.post_id for record in records}),
         unanimous_row_count=unanimous_rows,
@@ -214,14 +274,90 @@ def _summary_from_records(
     )
 
 
-def _print_success(summary: PreparedInputSummary) -> None:
-    print(
-        f"records_key={summary.records_key} "
-        f"manifest_key={summary.manifest_key} "
-        f"rows={summary.row_count} "
-        f"unique_post_ids={summary.unique_post_id_count} "
-        f"unanimous_rows={summary.unanimous_row_count} "
-        f"split_rows={summary.split_row_count}"
+def _store_for_variant(variant: Study2InferenceVariant) -> CampaignObjectStore:
+    return CampaignObjectStore(variant.s3_bucket, region_name=DEFAULT_S3_REGION)
+
+
+def _reject_shared_root(source: Study2InferenceVariant, target: Study2InferenceVariant) -> None:
+    if source.s3_root == target.s3_root and source.s3_bucket == target.s3_bucket:
+        raise ValueError("source and target experiment roots must differ")
+
+
+def _reject_nonempty_prefix(store: CampaignObjectStore, prefix: str) -> None:
+    if store.list_keys(prefix):
+        raise FileExistsError(f"target prefix is not empty: {prefix}")
+
+
+def _load_source_input_bytes(
+    store: CampaignObjectStore,
+    source: Study2InferenceVariant,
+) -> tuple[InputManifest, bytes]:
+    manifest_object = store.get(source.input_manifest_s3_key)
+    records_object = store.get(source.input_records_s3_key)
+    if manifest_object is None or records_object is None:
+        raise ValueError("source prepared input is missing")
+    manifest = InputManifest.model_validate_json(manifest_object.body)
+    return manifest, records_object.body
+
+
+def _reject_unverified_source(
+    source: Study2InferenceVariant,
+    manifest: InputManifest,
+    records_bytes: bytes,
+) -> None:
+    if manifest.records_s3_key != source.input_records_s3_key:
+        raise ValueError("source manifest records key mismatch")
+    if sha256_hex(records_bytes) != manifest.records_sha256:
+        raise ValueError("source records digest mismatch")
+    _reject_source_record_counts(manifest, records_bytes)
+
+
+def _reject_source_record_counts(manifest: InputManifest, records_bytes: bytes) -> None:
+    records = parse_study2_input_jsonl_bytes(records_bytes)
+    unanimous_count = sum(1 for record in records if record.is_unanimous)
+    split_count = len(records) - unanimous_count
+    observed = (len(records), unanimous_count, split_count)
+    expected = (
+        EXPECTED_TOTAL_RECORD_COUNT,
+        EXPECTED_UNANIMOUS_RECORD_COUNT,
+        EXPECTED_SPLIT_RECORD_COUNT,
+    )
+    declared = (
+        manifest.total_record_count,
+        manifest.unanimous_record_count,
+        manifest.split_record_count,
+    )
+    if observed != expected or declared != expected:
+        raise ValueError(f"source record counts do not match the approved input: {observed}")
+    if len({record.post_id for record in records}) != len(records):
+        raise ValueError("source records contain duplicate post ids")
+    if records[0].post_id != manifest.first_post_id or records[-1].post_id != manifest.last_post_id:
+        raise ValueError("source first or last post id mismatch")
+
+
+def _write_copied_input(
+    store: CampaignObjectStore,
+    target: Study2InferenceVariant,
+    manifest: InputManifest,
+    records_bytes: bytes,
+) -> None:
+    copied = manifest.model_copy(update={"records_s3_key": target.input_records_s3_key})
+    put_immutable_object(store, target.input_records_s3_key, records_bytes)
+    manifest_bytes = serialize_json_document(copied.model_dump())
+    put_immutable_object(store, target.input_manifest_s3_key, manifest_bytes)
+
+
+def _summary_from_copied_manifest(
+    target: Study2InferenceVariant,
+    manifest: InputManifest,
+) -> PreparedInputSummary:
+    return PreparedInputSummary(
+        records_key=target.input_records_s3_key,
+        manifest_key=target.input_manifest_s3_key,
+        row_count=manifest.total_record_count,
+        unique_post_id_count=manifest.total_record_count,
+        unanimous_row_count=manifest.unanimous_record_count,
+        split_row_count=manifest.split_record_count,
     )
 
 
