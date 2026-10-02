@@ -119,10 +119,21 @@ class _GuardedProposer:
             current = candidate[name]
             proposed = str(self._predict(current_instruction=current, feedback=feedback).improved_instruction)
             reasons = rejection_reasons(proposed, self._post_texts)
+            if reasons == ["instruction_too_long"]:
+                shortened = self._predict(
+                    current_instruction=proposed,
+                    feedback=(
+                        f"Rewrite that instruction in at most {length_limit} characters. "
+                        "Keep the line 'Allow Or Remove?' and do not quote post text."
+                    ),
+                )
+                proposed = str(shortened.improved_instruction)
+                reasons = rejection_reasons(proposed, self._post_texts)
             if reasons or proposed == current:
                 if reasons:
                     self._rejections.append({"component": name, "reasons": reasons})
-                    self._pause.record_rejection(reasons[0])
+                    if reasons[0] != "instruction_too_long":
+                        self._pause.record_rejection(reasons[0])
                 continue
             self._pause.record_success()
             updated[name] = proposed
