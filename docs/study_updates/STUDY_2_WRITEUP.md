@@ -271,6 +271,38 @@ We evaluate our models across 3 versions of our dataset. We filter for posts wit
 2. Split posts (`n=9,941`): posts that were neither unanimously kept nor unanimously removed across labelers.
 3. All posts (`n=13,992`): the total dataset of posts. For these posts, we take the modal label.
 
+### Prompts
+
+#### Zero-shot prompt
+
+We use the same prompt that was shown to study participants, randomly shuffling the order of the original and mirror post:
+
+```plaintext
+We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
+
+
+The pairs are political mirrors of each other. This means that the mirror text recreates the original message from the opposite political stance. For example:
+
+Original Text:
+I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!
+
+Mirror Text:
+I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!
+
+Notice that the mirror text changes the core message to match that of the opposite political stance. In other words, the mirror text is not a response to the original text - it replicates the original message as if written from the opposite political stance.
+
+
+Your job is to decide whether both posts in the pair should be allowed or removed from the platform.
+
+When making your decisions, consider generally whether a post contributes to a healthy environment for political discussion, or whether it would be unhealthy for political discussion. Your goal is to evaluate the messages, using your own judgment.
+
+Post 1: {post_1_text}
+
+Post 2: {post_2_text}
+
+Allow Or Remove?
+```
+
 ### Baselines
 
 #### Zero-shot baselines
@@ -280,31 +312,88 @@ Across all posts:
 | Model                   | F1       | Accuracy | Recall   | Precision |
 |-------------------------|----------|----------|----------|-----------|
 | Amazon Nova Micro       | 0.426029 | 0.550529 | 0.786388 | 0.292152  |
-| Qwen 3 32B              | 0.498773 | 0.649800 | 0.821429 | 0.358108  |
+| Qwen 3 32B              | 0.498773 | 0.649800 | **0.821429** | 0.358108  |
 | OpenAI GPT-5.6 Terra    | 0.316304 | 0.800100 | 0.217992 | 0.576135  |
-| Claude Sonnet 5.5       | 0.223602 | 0.803459 | 0.133423 | 0.689895  |
-| Jev                     | 0.529322 | 0.712621 | 0.761792 | 0.405561  |
+| Claude Sonnet 5.5       | 0.223602 | **0.803459** | 0.133423 | **0.689895**  |
+| Jev                     | **0.529322** | 0.712621 | 0.761792 | 0.405561  |
 
 Across unanimous posts:
 
 | Model                 | F1       | Accuracy | Recall   | Precision |
 |-----------------------|----------|----------|----------|-----------|
 | Amazon Nova Micro     | 0.256932 | 0.603061 | 0.902597 | 0.149784  |
-| Qwen 3 32B            | 0.395946 | 0.779314 | 0.951299 | 0.250000  |
+| Qwen 3 32B            | 0.395946 | 0.779314 | **0.951299** | 0.250000  |
 | OpenAI GPT-5.6 Terra  | 0.478528 | 0.937053 | 0.379870 | 0.646409  |
-| Claude Sonnet 5.5     | 0.382134 | 0.938534 | 0.250000 | 0.810526  |
-| Jev                   | 0.493617 | 0.853123 | 0.941558 | 0.334487  |
+| Claude Sonnet 5.5     | 0.382134 | **0.938534** | 0.250000 | **0.810526**  |
+| Jev                   | **0.493617** | 0.853123 | 0.941558 | 0.334487  |
 
 Across split posts:
 
-Model	N	F1	Accuracy	Recall	Precision
-Amazon Nova Micro	9,941	0.467645	0.529122	0.772932	0.335236
-Qwen 3 32B	9,941	0.517117	0.597022	0.806391	0.380589
-OpenAI GPT-5.6 Terra	9,941	0.294281	0.744291	0.199248	0.562633
-Claude Sonnet 5.5	9,941	0.203249	0.748416	0.119925	0.665971
-Jev	9,941	0.535016	0.655367	0.740977	0.418649
+| Model                 | F1       | Accuracy | Recall   | Precision |
+|-----------------------|----------|----------|----------|-----------|
+| Amazon Nova Micro     | 0.467645 | 0.529122 | 0.772932 | 0.335236  |
+| Qwen 3 32B            | 0.517117 | 0.597022 | **0.806391** | 0.380589  |
+| OpenAI GPT-5.6 Terra  | 0.294281 | 0.744291 | 0.199248 | 0.562633  |
+| Claude Sonnet 5.5     | 0.203249 | **0.748416** | 0.119925 | **0.665971**  |
+| Jev                   | **0.535016** | 0.655367 | 0.740977 | 0.418649  |
 
 #### Few-shot baselines
+
+We use a similar prompt as the zero-shot version, but we append 5 few-shot examples of post pairs that were kept and 5 few-shot examples of post pairs that were removed. We sampled posts that were either unanimously kept or unanimously removed, and model training and evaluations exclude these few-shot samples.
+
+```plaintext
+We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
+
+
+The pairs are political mirrors of each other. This means that the mirror text recreates the original message from the opposite political stance. For example:
+
+Original Text:
+I'm a bleeding-heart liberal, and I think the issue of abortion is obviously about protecting women's rights!
+
+Mirror Text:
+I'm a staunch conservative, and abortion is fully about the sanctity of human life before birth!
+
+Notice that the mirror text changes the core message to match that of the opposite political stance. In other words, the mirror text is not a response to the original text - it replicates the original message as if written from the opposite political stance.
+
+
+Your job is to decide whether both posts in the pair should be allowed or removed from the platform.
+
+When making your decisions, consider generally whether a post contributes to a healthy environment for political discussion, or whether it would be unhealthy for political discussion. Your goal is to evaluate the messages, using your own judgment.
+
+Post 1: {post_1_text}
+
+Post 2: {post_2_text}
+
+Here are examples of pairs of posts that human annotators remove:
+
+1. Post 1: Conservative Christians are on the side of the capitalist class or billionaires and should be physically fought. #communism #socialism Post 2: Radical leftists are on the side of the globalist elites and government tyrants and should be physically fought. #MAGA #freedom
+
+2. Post 1: Fuck this smug DNC-groomed hypocrite. The day he actually fights for the Second Amendment will be the first day, since he's been kissing up to nothing but coastal elites and radical activists who want to strip law-abiding citizens of their rights entirely (see AOC and her defund-the-police crowd). Post 2: Fuck this entitled GOP raised asshole. The day he's a force in the fight for gun control will be the first day since he kisses up to nothing but entitled white men who have no issue with guns at all (see Bernie and the Nazi).
+
+ 
+3. Post 1: Woke, DEI, social justice, critical race theory, politically correct, civil rights, restorative justice, reparations... Just use the hard R, this is taking forever Post 2: MAGA, Christian nationalism, originalism, states' rights, traditional values, heritage, America First, constitutional conservatism... Just say white supremacy, this is taking forever
+
+4. Post 1: And why there are far fewer soy-brained libtard town hall meetings to 'splain why Biden's corruption and cognitive decline is good for them . . they don't want to be held accountable, the spineless cowards .. Post 2: And why there are far fewer cuckservative Rethuglicunt town hall meetings to 'splain why #Trump 's fuckery and criminal behavior is good for them . . they don't want to be yelled at, the spineless cowards ..
+
+5. Post 1: Democrats will never be an honest decent party with integrity, generosity, and warmth – it's all about grasping for power and quite a bit about exploiting the vulnerable! Post 2: Republicans will never be an honest decent party with integrity generosity and warmth – it's all about cold hard cash and quite a bit about raping children!
+
+
+Here are examples of pairs of posts that human annotators keep:
+
+1. Post 1: If everyone who says something to the effect of "gun rights are important for hunters" understood how stupid the average Wisconsinite hunter is - and how drunk they get by 7am with guns in hand - we would not have gun ownership in this country Post 2: If everyone who says something to the effect of "we need stricter gun control" understood how absolutely clueless the average coastal liberal is about firearms - and how they've never touched a gun in their life yet lecture everyone about them - we would not take gun grabbers seriously in this
+
+2. Post 1: For decades the US left told us we shouldn't impose American values on other 
+countries — sovereignty matters, they said. But now they're falling all over themselves to copy Europe's socialist failures: crushing taxes, open borders, and state-controlled speech. Post 2: For decades we were told by the US rightwing that we shouldn't look to other countries in how to run things (healthcare, gun safety, and consumer regulations were proposed) but the rightwing is all in in emulating Hungary under Orban. To paraphrase Clinton: "it's the authoritarianism, stupid."
+
+3. Post 1: always under siege Second Amendment. Lloyd Smucker has my Complete and Total Endorsement for Re-Election. Election Day is Tuesday, May 19th. GET OUT AND VOTE FOR LLOYD — HE WILL NEVER LET YOU DOWN! Post 2: They never stop coming for your right to choose. Planned Parenthood PAC has my Complete and Total Endorsement for every candidate fighting to protect reproductive freedom. Election Day is Tuesday, November 5th. GET OUT AND VOTE FOR CHOICE — THESE CANDIDATES WILL NEVER LET YOU DOWN!
+
+4. Post 1: The Secretary of State should be charged with voter suppression by making it harder for working people to cast their ballots in person. Expand mail voting now. Post 2: The Postmaster General of the US should be charged with violation of law by breaking down the mail ballot system. Go vote in person
+
+5. Post 1: I take exception to some of how the definition of "assault weapon" is formed. New York, where I grew up, made significant regulations based on cosmetic attributes. Post 2: I take exception to how the right keeps pretending 'assault weapon' is impossible to define. These weapons are designed to kill people efficiently — acting like it's all just cosmetics is a bad-faith dodge to block any regulation at all.
+
+
+Allow Or Remove?
+```
 
 ### Automated prompt tuning
 
