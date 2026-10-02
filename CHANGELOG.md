@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-02
+
+1. A separate GEPA ablation scores the same prompt procedure on a 405-post cohort with 203 keep and 202 remove posts. On the 61-row test split, F1 moves from 0.680851 to 0.835821 and recall from 0.533333 to 0.933333. The finished natural-prevalence run is unchanged. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
+
 ## 2026-10-01
 
 1. Study 2 few-shot keep-or-remove optimization selected one GEPA instruction on the 405-row pilot. On the 61-row test split, F1 moved from 0.285714 to 0.545455 and recall from 0.200000 to 0.600000, with accuracy unchanged at 0.918033. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
