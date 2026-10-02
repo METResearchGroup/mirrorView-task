@@ -198,7 +198,7 @@ def validate_prediction_record_identity(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
-    variant: Study2InferenceVariant,
+    variant: Study2InferenceVariant | None = None,
 ) -> None:
     """Raise when a stored prediction does not match the active run identity.
 
@@ -212,7 +212,8 @@ def validate_prediction_record_identity(
     ValueError
         When run, model, schema, or post identity does not match expectations.
     """
-    if record.schema_version != variant.prediction_schema_version:
+    active = variant if variant is not None else ZERO_SHOT_VARIANT
+    if record.schema_version != active.prediction_schema_version:
         raise ValueError("prediction schema_version mismatch")
     if record.run_id != run_id:
         raise ValueError("prediction run_id mismatch")
@@ -230,7 +231,7 @@ def validate_failure_record_identity(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
-    variant: Study2InferenceVariant,
+    variant: Study2InferenceVariant | None = None,
 ) -> None:
     """Raise when a stored failure does not match the active run identity.
 
@@ -244,7 +245,8 @@ def validate_failure_record_identity(
     ValueError
         When run, model, schema, or post identity does not match expectations.
     """
-    if record.schema_version != variant.failure_schema_version:
+    active = variant if variant is not None else ZERO_SHOT_VARIANT
+    if record.schema_version != active.failure_schema_version:
         raise ValueError("failure schema_version mismatch")
     if record.run_id != run_id:
         raise ValueError("failure run_id mismatch")
@@ -261,7 +263,7 @@ def validate_model_run_manifest_identity(
     run_id: str,
     model_folder: str,
     model_id: str,
-    variant: Study2InferenceVariant,
+    variant: Study2InferenceVariant | None = None,
 ) -> None:
     """Raise when a stored manifest does not match the active run identity.
 
@@ -275,7 +277,8 @@ def validate_model_run_manifest_identity(
     ValueError
         When run, model, schema, or prompt identity does not match expectations.
     """
-    if manifest.schema_version != variant.model_run_schema_version:
+    active = variant if variant is not None else ZERO_SHOT_VARIANT
+    if manifest.schema_version != active.model_run_schema_version:
         raise ValueError("manifest schema_version mismatch")
     if manifest.run_id != run_id:
         raise ValueError("manifest run_id mismatch")
@@ -283,7 +286,7 @@ def validate_model_run_manifest_identity(
         raise ValueError("manifest model_folder mismatch")
     if manifest.model_id != model_id:
         raise ValueError("manifest model_id mismatch")
-    _reject_prompt_identity_mismatch(manifest, variant)
+    _reject_prompt_identity_mismatch(manifest, active)
 
 
 def _reject_prompt_identity_mismatch(

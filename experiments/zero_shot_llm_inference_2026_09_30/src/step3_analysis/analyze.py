@@ -722,7 +722,7 @@ def write_analysis_bundle(
     _write_or_verify_artifact(store, keys.model_metrics, bodies.model_metrics)
     _write_or_verify_artifact(store, keys.results_fragment, bodies.results_fragment)
     manifest = _build_analysis_manifest(loaded, keys, bodies)
-    manifest_body = serialize_json_document(manifest.model_dump(mode="json"))
+    manifest_body = serialize_json_document(_analysis_manifest_payload(manifest))
     _write_or_verify_artifact(store, keys.analysis_manifest, manifest_body)
     return build_analysis_prefix_uri(loaded.run_id, loaded.variant)
 
@@ -933,6 +933,28 @@ def _build_analysis_manifest(
         prompt_name=loaded.variant.prompt_name,
         prompt_sha256=loaded.variant.prompt_sha256,
         metric_exclusion_post_ids=loaded.variant.metric_exclusion_post_ids,
+    )
+
+
+def _analysis_manifest_payload(manifest: AnalysisManifest) -> dict[str, object]:
+    payload = manifest.model_dump(mode="json")
+    if _manifest_uses_zero_shot_identity(manifest):
+        for field_name in (
+            "experiment_name",
+            "prompt_name",
+            "prompt_sha256",
+            "metric_exclusion_post_ids",
+        ):
+            payload.pop(field_name, None)
+    return payload
+
+
+def _manifest_uses_zero_shot_identity(manifest: AnalysisManifest) -> bool:
+    return (
+        manifest.experiment_name == ZERO_SHOT_VARIANT.experiment_name
+        and manifest.prompt_name == ZERO_SHOT_VARIANT.prompt_name
+        and manifest.prompt_sha256 == ZERO_SHOT_VARIANT.prompt_sha256
+        and manifest.metric_exclusion_post_ids == ()
     )
 
 

@@ -2,7 +2,7 @@
 
 ## 2026-10-02
 
-1. Study 2 few-shot keep or remove inference runs the issue 329 prompt on the same 13,992 five-labeler pairs and four Bedrock models. On run `study2-few-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.463, and Claude Sonnet 5.5 has the highest accuracy at 0.806. Model metrics exclude five demonstration rows that also appear in the input. [PR #346](https://github.com/METResearchGroup/mirrorView-task/pull/346)
+1. Four Bedrock models run the issue 329 few-shot keep or remove prompt on the 13,992 five-labeler Study 2 pairs from the zero-shot input. On run `study2-few-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.463, and Claude Sonnet 5.5 has the highest accuracy at 0.806. The F1 and accuracy figures omit five demonstration rows that also appear in the input. [PR #346](https://github.com/METResearchGroup/mirrorView-task/pull/346)
 
 ## 2026-10-01
 
