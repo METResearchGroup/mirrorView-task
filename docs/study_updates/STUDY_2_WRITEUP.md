@@ -277,7 +277,7 @@ We evaluate our models across 3 versions of our dataset. We filter for posts wit
 
 We use the same prompt that was shown to study participants, randomly shuffling the order of the original and mirror post:
 
-```plaintext
+```markdown
 We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
 
 
@@ -303,45 +303,11 @@ Post 2: {post_2_text}
 Allow Or Remove?
 ```
 
-### Baselines
-
-#### Zero-shot baselines
-
-Across all posts:
-
-| Model                   | F1       | Accuracy | Recall   | Precision |
-|-------------------------|----------|----------|----------|-----------|
-| Amazon Nova Micro       | 0.426029 | 0.550529 | 0.786388 | 0.292152  |
-| Qwen 3 32B              | 0.498773 | 0.649800 | **0.821429** | 0.358108  |
-| OpenAI GPT-5.6 Terra    | 0.316304 | 0.800100 | 0.217992 | 0.576135  |
-| Claude Sonnet 5.5       | 0.223602 | **0.803459** | 0.133423 | **0.689895**  |
-| Jev                     | **0.529322** | 0.712621 | 0.761792 | 0.405561  |
-
-Across unanimous posts:
-
-| Model                 | F1       | Accuracy | Recall   | Precision |
-|-----------------------|----------|----------|----------|-----------|
-| Amazon Nova Micro     | 0.256932 | 0.603061 | 0.902597 | 0.149784  |
-| Qwen 3 32B            | 0.395946 | 0.779314 | **0.951299** | 0.250000  |
-| OpenAI GPT-5.6 Terra  | 0.478528 | 0.937053 | 0.379870 | 0.646409  |
-| Claude Sonnet 5.5     | 0.382134 | **0.938534** | 0.250000 | **0.810526**  |
-| Jev                   | **0.493617** | 0.853123 | 0.941558 | 0.334487  |
-
-Across split posts:
-
-| Model                 | F1       | Accuracy | Recall   | Precision |
-|-----------------------|----------|----------|----------|-----------|
-| Amazon Nova Micro     | 0.467645 | 0.529122 | 0.772932 | 0.335236  |
-| Qwen 3 32B            | 0.517117 | 0.597022 | **0.806391** | 0.380589  |
-| OpenAI GPT-5.6 Terra  | 0.294281 | 0.744291 | 0.199248 | 0.562633  |
-| Claude Sonnet 5.5     | 0.203249 | **0.748416** | 0.119925 | **0.665971**  |
-| Jev                   | **0.535016** | 0.655367 | 0.740977 | 0.418649  |
-
-#### Few-shot baselines
+#### Few-shot prompt
 
 We use a similar prompt as the zero-shot version, but we append 5 few-shot examples of post pairs that were kept and 5 few-shot examples of post pairs that were removed. We sampled posts that were either unanimously kept or unanimously removed, and model training and evaluations exclude these few-shot samples.
 
-```plaintext
+```markdown
 We are developing a new social media platform designed specifically for political discussion. As part of this process, we'd like to understand how people think content on their platform should be moderated. Your task will be to review a series of pairs of real political social media posts, and decide whether both posts in the pair should be allowed or removed from the platform.
 
 
@@ -394,6 +360,50 @@ countries — sovereignty matters, they said. But now they're falling all over t
 
 Allow Or Remove?
 ```
+
+#### Optimized prompt
+
+We run DSPy and GEPA to optimize our prompt.
+
+...
+
+### Baselines
+
+#### Zero-shot baselines
+
+Across all posts:
+
+| Model                   | F1       | Accuracy | Recall   | Precision |
+|-------------------------|----------|----------|----------|-----------|
+| Amazon Nova Micro       | 0.426029 | 0.550529 | 0.786388 | 0.292152  |
+| Qwen 3 32B              | 0.498773 | 0.649800 | **0.821429** | 0.358108  |
+| OpenAI GPT-5.6 Terra    | 0.316304 | 0.800100 | 0.217992 | 0.576135  |
+| Claude Sonnet 5.5       | 0.223602 | **0.803459** | 0.133423 | **0.689895**  |
+| Jev                     | **0.529322** | 0.712621 | 0.761792 | 0.405561  |
+
+Across unanimous posts:
+
+| Model                 | F1       | Accuracy | Recall   | Precision |
+|-----------------------|----------|----------|----------|-----------|
+| Amazon Nova Micro     | 0.256932 | 0.603061 | 0.902597 | 0.149784  |
+| Qwen 3 32B            | 0.395946 | 0.779314 | **0.951299** | 0.250000  |
+| OpenAI GPT-5.6 Terra  | 0.478528 | 0.937053 | 0.379870 | 0.646409  |
+| Claude Sonnet 5.5     | 0.382134 | **0.938534** | 0.250000 | **0.810526**  |
+| Jev                   | **0.493617** | 0.853123 | 0.941558 | 0.334487  |
+
+Across split posts:
+
+| Model                 | F1       | Accuracy | Recall   | Precision |
+|-----------------------|----------|----------|----------|-----------|
+| Amazon Nova Micro     | 0.467645 | 0.529122 | 0.772932 | 0.335236  |
+| Qwen 3 32B            | 0.517117 | 0.597022 | **0.806391** | 0.380589  |
+| OpenAI GPT-5.6 Terra  | 0.294281 | 0.744291 | 0.199248 | 0.562633  |
+| Claude Sonnet 5.5     | 0.203249 | **0.748416** | 0.119925 | **0.665971**  |
+| Jev                   | **0.535016** | 0.655367 | 0.740977 | 0.418649  |
+
+#### Few-shot baselines
+
+...
 
 ### Automated prompt tuning
 
