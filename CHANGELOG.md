@@ -1,8 +1,14 @@
 # CHANGELOG
 
+## 2026-10-01
+
+1. Study 2 zero-shot keep or remove inference can prepare the 13,992 five-labeler posts, resume one Bedrock model at a time into immutable S3 batches, and write remove-positive metric tables for the all, unanimous, and split slices. On run `study2-zero-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.499, and Claude Sonnet 5.5 has the highest accuracy at 0.803. [PR #333](https://github.com/METResearchGroup/mirrorView-task/pull/333)
+2. Study 2 callers can load three keep and remove tables with equal class counts. `UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS` has 30,280 rows, `UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` has 7,486 rows, and `UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS` has 14,562 rows. [Issue #338](https://github.com/METResearchGroup/mirrorView-task/issues/338). [PR #343](https://github.com/METResearchGroup/mirrorView-task/pull/343)
+
 ## 2026-09-30
 
 1. Study 2 feature counts are on a static page at `/study-2-features`. The page lists the 30 approved features and the top 10 features by lean, toxicity, and remove votes. [PR #323](https://github.com/METResearchGroup/mirrorView-task/pull/323)
+2. Study 2 posts with five labelers are registered as `STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS` and `STUDY_2_KEEP_REMOVE_SPLIT_LABELS`. Unanimous posts have 0 or 5 remove votes (4,051 posts), and split posts have 1, 2, 3, or 4 remove votes (9,941 posts). [PR #328](https://github.com/METResearchGroup/mirrorView-task/pull/328)
 
 ## 2026-09-28
 
