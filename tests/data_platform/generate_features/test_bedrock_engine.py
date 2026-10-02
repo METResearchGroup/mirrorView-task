@@ -137,6 +137,9 @@ class TestBedrockConverseEngineBatchLabelRecords:
         assert result == expected
         assert engine.last_usage == BedrockUsage(10, 2, 12)
         client.converse.assert_called_once()
+        inference_config = client.converse.call_args.kwargs["inferenceConfig"]
+        assert inference_config == {"maxTokens": 32}
+        assert "temperature" not in inference_config
 
     def test_preserves_input_order_for_two_tasks(
         self,

@@ -29,6 +29,11 @@ STUDY_2_STIMULI = "STUDY_2_STIMULI"
 STUDY_2_KEEP_REMOVE_LABELS = "STUDY_2_KEEP_REMOVE_LABELS"
 STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS = "STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS"
 STUDY_2_KEEP_REMOVE_SPLIT_LABELS = "STUDY_2_KEEP_REMOVE_SPLIT_LABELS"
+UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS = "UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS"
+UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS = (
+    "UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS"
+)
+UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS = "UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS"
 
 
 @dataclass(frozen=True)
@@ -144,6 +149,30 @@ DATASETS: dict[str, DatasetEntry] = {
     STUDY_2_KEEP_REMOVE_SPLIT_LABELS: DatasetEntry(
         name=STUDY_2_KEEP_REMOVE_SPLIT_LABELS,
         relative_path=Path("shared/data/transformed/study_2/keep_remove_split_labels.csv"),
+        kind="transformed",
+        study_phase="study_2",
+    ),
+    UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS: DatasetEntry(
+        name=UPSAMPLED_STUDY_2_KEEP_REMOVE_LABELS,
+        relative_path=Path(
+            "shared/data/transformed/study_2/upsampled_keep_remove_labels.csv"
+        ),
+        kind="transformed",
+        study_phase="study_2",
+    ),
+    UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS: DatasetEntry(
+        name=UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS,
+        relative_path=Path(
+            "shared/data/transformed/study_2/upsampled_keep_remove_unanimous_labels.csv"
+        ),
+        kind="transformed",
+        study_phase="study_2",
+    ),
+    UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS: DatasetEntry(
+        name=UPSAMPLED_STUDY_2_KEEP_REMOVE_SPLIT_LABELS,
+        relative_path=Path(
+            "shared/data/transformed/study_2/upsampled_keep_remove_split_labels.csv"
+        ),
         kind="transformed",
         study_phase="study_2",
     ),
