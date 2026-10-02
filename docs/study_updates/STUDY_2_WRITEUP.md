@@ -257,19 +257,58 @@ We train a variety of binary classifiers to predict the keep/remove task. We exp
 We test across the following models:
 
 - Amazon Nova
-- Qwen 3.8 27B
+- Qwen 3 32B
 - OpenAI GPT-5.6 Terra
 - Claude Sonnet 5.5
+
+For fine-tuning, we use `Qwen3.8-27B`. We deploy using `vLLM` and we use a quantized deployment.
 
 ### Dataset
 
 We evaluate our models across 3 versions of our dataset. We filter for posts with exactly 5 labels, to avoid ties in labels (`n=13,992`):
 
-1. Unanimous labels (`n=4,051`): posts that were unanimously kept or unanimously removed across labelers.
-2. Split labels (`n=9,941`): posts that were neither unanimously kept nor unanimously removed across labelers.
-3. All labels (`n=13,992`): the total dataset of posts. For these posts, we take the modal label.
+1. Unanimous posts (`n=4,051`): posts that were unanimously kept or unanimously removed across labelers.
+2. Split posts (`n=9,941`): posts that were neither unanimously kept nor unanimously removed across labelers.
+3. All posts (`n=13,992`): the total dataset of posts. For these posts, we take the modal label.
 
-For fine-tuning, we use `Qwen3.8-27B`. We deploy using `vLLM` and we use a quantized deployment.
+### Baselines
+
+#### Zero-shot baselines
+
+Across all posts:
+
+| Model                   | F1       | Accuracy | Recall   | Precision |
+|-------------------------|----------|----------|----------|-----------|
+| Amazon Nova Micro       | 0.426029 | 0.550529 | 0.786388 | 0.292152  |
+| Qwen 3 32B              | 0.498773 | 0.649800 | 0.821429 | 0.358108  |
+| OpenAI GPT-5.6 Terra    | 0.316304 | 0.800100 | 0.217992 | 0.576135  |
+| Claude Sonnet 5.5       | 0.223602 | 0.803459 | 0.133423 | 0.689895  |
+| Jev                     | 0.529322 | 0.712621 | 0.761792 | 0.405561  |
+
+Across unanimous posts:
+
+| Model                 | F1       | Accuracy | Recall   | Precision |
+|-----------------------|----------|----------|----------|-----------|
+| Amazon Nova Micro     | 0.256932 | 0.603061 | 0.902597 | 0.149784  |
+| Qwen 3 32B            | 0.395946 | 0.779314 | 0.951299 | 0.250000  |
+| OpenAI GPT-5.6 Terra  | 0.478528 | 0.937053 | 0.379870 | 0.646409  |
+| Claude Sonnet 5.5     | 0.382134 | 0.938534 | 0.250000 | 0.810526  |
+| Jev                   | 0.493617 | 0.853123 | 0.941558 | 0.334487  |
+
+Across split posts:
+
+Model	N	F1	Accuracy	Recall	Precision
+Amazon Nova Micro	9,941	0.467645	0.529122	0.772932	0.335236
+Qwen 3 32B	9,941	0.517117	0.597022	0.806391	0.380589
+OpenAI GPT-5.6 Terra	9,941	0.294281	0.744291	0.199248	0.562633
+Claude Sonnet 5.5	9,941	0.203249	0.748416	0.119925	0.665971
+Jev	9,941	0.535016	0.655367	0.740977	0.418649
+
+#### Few-shot baselines
+
+### Automated prompt tuning
+
+We performed automated prompt tuning using DSPy and the GEPA optimization metric (CITE).
 
 ## Training a calibrated classifier
 
