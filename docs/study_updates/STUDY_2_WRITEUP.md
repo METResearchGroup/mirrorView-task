@@ -261,6 +261,14 @@ We test across the following models:
 - OpenAI GPT-5.6 Terra
 - Claude Sonnet 5.5
 
+### Dataset
+
+We evaluate our models across 3 versions of our dataset. We filter for posts with exactly 5 labels, to avoid ties in labels (`n=13,992`):
+
+1. Unanimous labels (`n=4,051`): posts that were unanimously kept or unanimously removed across labelers.
+2. Split labels (`n=9,941`): posts that were neither unanimously kept nor unanimously removed across labelers.
+3. All labels (`n=13,992`): the total dataset of posts. For these posts, we take the modal label.
+
 For fine-tuning, we use `Qwen3.8-27B`. We deploy using `vLLM` and we use a quantized deployment.
 
 ## Training a calibrated classifier
