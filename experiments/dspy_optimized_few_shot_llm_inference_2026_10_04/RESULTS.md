@@ -4,11 +4,11 @@ Run ID: `study2-dspy-optimized-few-shot-2026-10-04`
 
 Analysis: `s3://mirrorview-experimental-artifacts/experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/analysis/study2-dspy-optimized-few-shot-2026-10-04/`
 
-Input: `experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/inputs/study_2_five_labeler/records.jsonl` with SHA-256 `1dead1efcbc7f0023813bca357d845461ddbc87b93c50e9e73b4642977883395`. It contains 13,992 rows: 4,051 unanimous and 9,941 split.
+Input: `experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/inputs/study_2_five_labeler/records.jsonl` with SHA-256 `1dead1efcbc7f0023813bca357d845461ddbc87b93c50e9e73b4642977883395`. It contains 13,992 rows. 4,051 rows are unanimous, and 9,941 rows are split.
 
 Prompt: `OPTIMIZED_STUDY_PROMPT_TEMPLATE` with SHA-256 `6ebcd9bbb16ff39dbeba93fe832a601a589ce1d8233645aad5030b105df9af15`.
 
-All 13,992 rows were predicted for each model. Model metrics alone exclude these five prompt-demonstration matches:
+Each model predicted all 13,992 rows. The model metrics omit these five rows, because the same rows appear as demonstrations in the prompt:
 
 - `bluesky_0bd24d995926c0a58ee7129aa11cb44919170f35e9d51c137745334333c17cd7`
 - `bluesky_0e8a5a0e2e218f117502ba8bb6c697977992905462970a1c2c0773a22ea2888c`
@@ -16,7 +16,7 @@ All 13,992 rows were predicted for each model. Model metrics alone exclude these
 - `bluesky_00a60cda611def7235d1ac6d87c60320703653e74fb39204a819ec86d6db680b`
 - `bluesky_00efc34ac2738154e7f93b9e110637107b810be4ae2173e8657241f3d1fdd206`
 
-The run stored 27,984 valid predictions and no unresolved failures. Nova's recorded process time includes the first pass and the later passes that retried rows whose responses failed validation. One extra Nova prediction batch was removed because it was a byte-identical copy of the previous batch.
+The run has 27,984 valid predictions and no unresolved failures. Nova's wall time is the sum of the recorded process times. That includes the first pass and the later passes that retried rows whose responses failed validation. One extra Nova prediction batch was removed because it was a byte-identical copy of the previous batch.
 
 ## Measured usage
 
