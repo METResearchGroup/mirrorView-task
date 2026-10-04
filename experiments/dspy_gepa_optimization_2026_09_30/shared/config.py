@@ -1,0 +1,122 @@
+"""Fixed settings for the Study 2 DSPy GEPA experiment.
+
+Run from the repo root::
+
+    PYTHONPATH=. uv run python -c "from experiments.dspy_gepa_optimization_2026_09_30.shared.config import TASK_MODEL_SETTINGS"
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+BEDROCK_MODEL_ID = "us.openai.gpt-5.6-terra"
+LITELLM_MODEL = "bedrock/converse/us.openai.gpt-5.6-terra"
+AWS_REGION = "us-east-2"
+
+WANDB_ENTITY = "mind_technology_lab"
+WANDB_PROJECT = "dspy_gepa_optimization_2026_09_30"
+WANDB_PROJECT_PATH = f"{WANDB_ENTITY}/{WANDB_PROJECT}"
+
+S3_BUCKET = "mirrorview-experimental-artifacts"
+S3_PREFIX = "experiments/dspy_gepa_optimization_2026_09_30/"
+INPUT_PREFIX = f"{S3_PREFIX}inputs/"
+
+RANDOM_SEED = 20261001
+PROBABILITY_THRESHOLD = 0.5
+POSITIVE_CLASS = "remove"
+PROBABILITY_MIN = 0.0
+PROBABILITY_MAX = 1.0
+
+SOURCE_ROW_COUNT = 4051
+SOURCE_KEEP_COUNT = 3743
+SOURCE_REMOVE_COUNT = 308
+EXCLUDED_EXAMPLE_COUNT = 10
+ELIGIBLE_ROW_COUNT = 4041
+ELIGIBLE_KEEP_COUNT = 3738
+ELIGIBLE_REMOVE_COUNT = 303
+FIVE_LABELER_COUNT = 5
+COHORT_ROW_COUNT = 405
+KEEP_LABEL = 0
+REMOVE_LABEL = 1
+
+OPTIMIZATION_SPLIT = "optimization"
+GEPA_VALIDATION_SPLIT = "gepa_validation"
+DEVELOPMENT_SPLIT = "development"
+TEST_SPLIT = "test"
+SPLIT_NAMES = (
+    OPTIMIZATION_SPLIT,
+    GEPA_VALIDATION_SPLIT,
+    DEVELOPMENT_SPLIT,
+    TEST_SPLIT,
+)
+SPLIT_ROW_COUNTS = {
+    OPTIMIZATION_SPLIT: 222,
+    GEPA_VALIDATION_SPLIT: 61,
+    DEVELOPMENT_SPLIT: 61,
+    TEST_SPLIT: 61,
+}
+SPLIT_REMOVE_COUNTS = {
+    OPTIMIZATION_SPLIT: 17,
+    GEPA_VALIDATION_SPLIT: 5,
+    DEVELOPMENT_SPLIT: 5,
+    TEST_SPLIT: 5,
+}
+
+INSTRUCTION_LENGTH_LIMIT_RATIO = 1.25
+COPIED_SPAN_CHARACTERS = 40
+SMOKE_METRIC_CALLS = 30
+PILOT_METRIC_CALLS = 1000
+BALANCED_VALIDATION_REMOVE_COUNT = 5
+BALANCED_VALIDATION_KEEP_COUNT = 5
+REFLECTION_BATCH_SIZE = 2
+LM_NUM_RETRIES = 3
+TASK_CONCURRENCY = 8
+REMOVE_EXAMPLE_PROBABILITY = 1.0
+KEEP_EXAMPLE_PROBABILITY = 0.0
+
+# GPT-5.6 Terra on Bedrock rejects the temperature field. Leave it unset.
+TASK_TEMPERATURE = None
+TASK_MAX_TOKENS = 1024
+REFLECTION_TEMPERATURE = None
+REFLECTION_MAX_TOKENS = 4096
+DSPY_CACHE_ENABLED = False
+
+INPUT_PRICE_PER_MILLION = 2.20
+OUTPUT_PRICE_PER_MILLION = 13.20
+PRELIMINARY_LOW_COST_USD = 6
+PRELIMINARY_MEDIAN_COST_USD = 9
+PRELIMINARY_HIGH_COST_USD = 18
+PRELIMINARY_LOW_MINUTES = 10
+PRELIMINARY_MEDIAN_MINUTES = 30
+PRELIMINARY_HIGH_MINUTES = 120
+PRELIMINARY_HIGH_COST_USD = 18.0
+
+
+@dataclass(frozen=True)
+class LanguageModelSettings:
+    """Confirmed Bedrock language-model settings for one call role."""
+
+    litellm_model: str
+    model_id: str
+    temperature: float | None
+    max_tokens: int
+    cache: bool
+    num_retries: int
+
+
+TASK_MODEL_SETTINGS = LanguageModelSettings(
+    litellm_model=LITELLM_MODEL,
+    model_id=BEDROCK_MODEL_ID,
+    temperature=TASK_TEMPERATURE,
+    max_tokens=TASK_MAX_TOKENS,
+    cache=DSPY_CACHE_ENABLED,
+    num_retries=LM_NUM_RETRIES,
+)
+REFLECTION_MODEL_SETTINGS = LanguageModelSettings(
+    litellm_model=LITELLM_MODEL,
+    model_id=BEDROCK_MODEL_ID,
+    temperature=REFLECTION_TEMPERATURE,
+    max_tokens=REFLECTION_MAX_TOKENS,
+    cache=DSPY_CACHE_ENABLED,
+    num_retries=LM_NUM_RETRIES,
+)
