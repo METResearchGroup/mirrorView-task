@@ -27,7 +27,9 @@ TRAIN_COMMAND = (
     "experiments/lora_finetuning_study2_2026_10_04/train.py",
 )
 FLAVOR = "a10g-large"
-TIMEOUT = "24h"
+# The all-label table is about 30k rows for 3 epochs. Two days covers a slow
+# A10G pass plus model download, and the job stops when training finishes.
+TIMEOUT = "2d"
 
 
 def resolve_image() -> str:

@@ -25,6 +25,7 @@ RUN pip install --upgrade pip && \
       "pandas>=3.0.2" \
       "pyarrow>=20.0.0" \
       "boto3>=1.42.88" \
+      "bitsandbytes>=0.45.0" \
       "python-dotenv>=1.2.2" \
       "pyyaml>=6.0"
 
