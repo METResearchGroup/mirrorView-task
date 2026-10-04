@@ -57,7 +57,7 @@ Run from `/Users/mark/.codex/worktrees/39d9/mirrorview-wt`:
 export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-${LAB_AWS_ACCESS_KEY_ID:-}}"
 export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-${LAB_AWS_ACCESS_KEY_SECRET:-}}"
 export AWS_DEFAULT_REGION=us-east-2
-test -n "$AWS_ACCESS_KEY_ID" && test -n "$AWS_SECRET_ACCESS_KEY"
+[[ -n "$AWS_ACCESS_KEY_ID" && -n "$AWS_SECRET_ACCESS_KEY" ]]
 aws sts get-caller-identity --output json
 aws s3api head-object --bucket mirrorview-experimental-artifacts --key experiments/few_shot_llm_inference_2026_09_30/inputs/study_2_five_labeler/records.jsonl --region us-east-2 --query '{ContentLength:ContentLength,ETag:ETag}'
 aws s3 cp s3://mirrorview-experimental-artifacts/experiments/few_shot_llm_inference_2026_09_30/inputs/study_2_five_labeler/records.jsonl - --region us-east-2 --no-progress | shasum -a 256

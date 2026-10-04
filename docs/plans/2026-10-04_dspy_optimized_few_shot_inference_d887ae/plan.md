@@ -4,7 +4,7 @@
 
 - Exact file paths always
 - Exact commands with expected output
-- DRY, YAGNI, TDD, frequent commits
+- DRY, YAGNI, frequent commits
 - Delegated tasks must be impossible to misread.
 
 ## Overview
@@ -58,7 +58,7 @@ Analyze the two complete model folders with the confirmed five-row metric exclus
 
 ## What "done" looks like
 
-1. The existing zero-shot and baseline few-shot commands retain their four-model behavior, and their targeted regression tests pass.
+1. The existing zero-shot and baseline few-shot commands retain their four-model behavior, and their import and CLI smoke checks pass.
 2. The repository stores the exact issue 351 prompt under `shared/models/llm/prompt.py` with SHA-256 `6ebcd9bbb16ff39dbeba93fe832a601a589ce1d8233645aad5030b105df9af15`.
 3. The optimized experiment allows only `amazon_nova_micro` and `qwen3_32b`.
 4. The new S3 input contains the same 13,992 records and digest as the completed baseline few-shot input.

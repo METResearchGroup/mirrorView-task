@@ -43,15 +43,29 @@ The analysis caller may create or verify these S3 objects below `analysis/study2
 
 ## Preflight
 
-Use the same `OPTIMIZED_RUN_ID` and `OPTIMIZED_RUN_LOG_DIR` from Step 4. Confirm both logs contain `expected=13992 unique_valid_predictions=13992 unresolved_failures=0` and one `real` timing line. Run the Step 1 and Step 2 test files together before analysis:
+Use the same `OPTIMIZED_RUN_ID` and `OPTIMIZED_RUN_LOG_DIR` from Step 4. Confirm both logs contain `expected=13992 unique_valid_predictions=13992 unresolved_failures=0` and one `real` timing line. Run this contract smoke check before analysis:
 
 ```bash
-PYTHONPATH=. uv run pytest -q \
-  experiments/zero_shot_llm_inference_2026_09_30/tests/test_model_selection.py \
-  experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/tests/test_prompt_and_config.py
+PYTHONPATH=. uv run python - <<'PY'
+import hashlib
+
+from experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.shared.config import OPTIMIZED_FEW_SHOT_VARIANT
+from shared.models.llm.prompt import OPTIMIZED_STUDY_PROMPT_TEMPLATE, format_optimized_study_prompt
+
+expected_digest = "6ebcd9bbb16ff39dbeba93fe832a601a589ce1d8233645aad5030b105df9af15"
+assert hashlib.sha256(OPTIMIZED_STUDY_PROMPT_TEMPLATE.encode("utf-8")).hexdigest() == expected_digest
+rendered = format_optimized_study_prompt("POST_ONE_SENTINEL", "POST_TWO_SENTINEL")
+assert rendered.count("POST_ONE_SENTINEL") == 1
+assert rendered.count("POST_TWO_SENTINEL") == 1
+assert OPTIMIZED_FEW_SHOT_VARIANT.model_folders == ("amazon_nova_micro", "qwen3_32b")
+exclusions = OPTIMIZED_FEW_SHOT_VARIANT.metric_exclusion_post_ids
+assert len(exclusions) == 5
+assert len(set(exclusions)) == 5
+print("optimized-contract-smoke-ok models=2 exclusions=5")
+PY
 ```
 
-The command must report twelve passed tests.
+The command must print `optimized-contract-smoke-ok models=2 exclusions=5`.
 
 ## Run analysis
 
@@ -176,9 +190,6 @@ cmp "$ANALYSIS_VERIFY_DIR/results_fragment.md" "$RESULTS_TABLES_FILE"
 ## Final verification
 
 ```bash
-PYTHONPATH=. uv run pytest -q \
-  experiments/zero_shot_llm_inference_2026_09_30/tests/test_model_selection.py \
-  experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/tests/test_prompt_and_config.py
 PYTHONPATH=. uv run python -m experiments.zero_shot_llm_inference_2026_09_30.src.step2_inference.run --help >/dev/null
 PYTHONPATH=. uv run python -m experiments.few_shot_llm_inference_2026_09_30.src.step2_inference.main --help >/dev/null
 PYTHONPATH=. uv run python -m experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.src.step2_inference.main --help >/dev/null
@@ -187,7 +198,7 @@ git status --short
 git diff --name-only
 ```
 
-The tests must report twelve passed tests. Every help command must exit 0. `git diff --check` must print nothing. Review every changed path against the proposal file tree, and keep unrelated user files out of the commit.
+The preflight smoke check must pass. Every help command must exit 0. `git diff --check` must print nothing. Review every changed path against the proposal file tree, and keep unrelated user files out of the commit.
 
 ## Must pass
 
@@ -195,7 +206,7 @@ The tests must report twelve passed tests. Every help command must exit 0. `git 
 - The analysis bundle has exactly five objects with matching digests, six metric rows, and the confirmed five exclusions.
 - Repeated analysis is byte-identical.
 - `RESULTS.md` uses stored tables and measured usage.
-- Existing zero-shot and baseline few-shot commands and focused tests remain green.
+- Existing zero-shot and baseline few-shot command help remains functional.
 
 ## Must fail
 

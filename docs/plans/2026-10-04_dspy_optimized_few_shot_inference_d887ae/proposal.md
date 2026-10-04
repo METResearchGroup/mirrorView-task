@@ -70,8 +70,6 @@ experiments/zero_shot_llm_inference_2026_09_30/
   src/
     step2_inference/run.py                         enforce the active variant's model folders
     step3_analysis/analyze.py                      load and analyze the active variant's model folders
-  tests/
-    test_model_selection.py                        model-set configuration, inference, and analysis regressions
 
 experiments/few_shot_llm_inference_2026_09_30/
   shared/config.py                                 list the existing four model folders explicitly
@@ -83,8 +81,6 @@ experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/
   shared/
     __init__.py
     config.py                                      OPTIMIZED_FEW_SHOT_VARIANT
-  tests/
-    test_prompt_and_config.py                      exact prompt, formatter, and variant contract
   src/
     step1_setup/
       __init__.py

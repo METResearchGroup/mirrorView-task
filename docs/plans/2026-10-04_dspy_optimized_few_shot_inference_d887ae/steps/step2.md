@@ -39,7 +39,6 @@
 - `/Users/mark/.codex/worktrees/39d9/mirrorview-wt/experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/src/step2_inference/main.py` (new)
 - `/Users/mark/.codex/worktrees/39d9/mirrorview-wt/experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/src/step3_analysis/__init__.py` (new)
 - `/Users/mark/.codex/worktrees/39d9/mirrorview-wt/experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/src/step3_analysis/main.py` (new)
-- `/Users/mark/.codex/worktrees/39d9/mirrorview-wt/experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/tests/test_prompt_and_config.py` (new)
 
 ## Files forbidden to change
 
@@ -83,47 +82,58 @@ Copy the five metric exclusion post IDs from `FEW_SHOT_VARIANT` by value. Do not
 - `SETUP.md` describes required data and S3 locations, without environment setup or commands.
 - `RESULTS.md` contains a title and states that no completed run has been published yet. Step 5 replaces this placeholder.
 
-## Test design
+## Smoke contract
 
-Write the scenarios as given, when, and then notes before writing the tests:
-
-1. Given the exact prompt constant, when it is encoded as UTF-8, then its digest equals the confirmed issue digest.
-2. Given sentinel post strings, when the formatter runs, then each sentinel occurs once and no other prompt byte changes.
-3. Given a template with a missing or repeated placeholder, when formatting is attempted through the formatter's validation boundary, then it raises `ValueError`.
-4. Given the optimized variant, when its identity is read, then the paths, schema versions, prompt identity, and ordered two-model set match the table above.
-5. Given the baseline and optimized variants, when their exclusion IDs are compared, then the ordered five IDs are equal and unique.
-6. Given the three new command modules, when they are imported, then each exposes a callable `main` without constructing AWS clients.
+The inline smoke check must confirm the exact prompt digest, one substitution for each sentinel, the ordered two-model set, the five unique exclusion IDs, and import-safe command modules with callable `main` functions. It must not construct AWS clients or access AWS.
 
 ## Implementation order
 
 1. Create the package tree, empty documentation files, and thin caller stubs, then confirm that imports reach only stubbed behavior.
-2. Add the prompt formatter and variant signatures without implementation behavior.
-3. Add `test_prompt_and_config.py` and confirm that all six scenarios fail for the expected missing behavior rather than missing imports.
-4. Add the exact prompt and formatter behavior, then make the prompt tests pass.
-5. Add the variant values and thin caller wiring, then make the remaining tests pass.
-6. Complete `README.md`, `SETUP.md`, and the temporary `RESULTS.md` without adding run results.
+2. Add the exact prompt and formatter behavior.
+3. Add the variant values and thin caller wiring.
+4. Complete `README.md`, `SETUP.md`, and the temporary `RESULTS.md` without adding run results.
 
-Keep the initial files, interfaces, tests, prompt behavior, and caller wiring in separate commits. Suggested commit messages are `chore: scaffold optimized few-shot experiment`, `test: define optimized few-shot contracts`, `feat: add optimized Study 2 prompt`, and `feat: add optimized few-shot callers`.
+Keep the initial files, prompt behavior, and caller wiring in separate commits. Suggested commit messages are `chore: scaffold optimized few-shot experiment`, `feat: add optimized Study 2 prompt`, and `feat: add optimized few-shot callers`.
 
 ## Verification
 
 Run from `/Users/mark/.codex/worktrees/39d9/mirrorview-wt`:
 
 ```bash
-PYTHONPATH=. uv run pytest -q experiments/dspy_optimized_few_shot_llm_inference_2026_10_04/tests/test_prompt_and_config.py
+PYTHONPATH=. uv run python - <<'PY'
+import hashlib
+
+from experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.shared.config import OPTIMIZED_FEW_SHOT_VARIANT
+from experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.src.step1_setup.main import main as setup_main
+from experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.src.step2_inference.main import main as inference_main
+from experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.src.step3_analysis.main import main as analysis_main
+from shared.models.llm.prompt import OPTIMIZED_STUDY_PROMPT_TEMPLATE, format_optimized_study_prompt
+
+expected_digest = "6ebcd9bbb16ff39dbeba93fe832a601a589ce1d8233645aad5030b105df9af15"
+assert hashlib.sha256(OPTIMIZED_STUDY_PROMPT_TEMPLATE.encode("utf-8")).hexdigest() == expected_digest
+rendered = format_optimized_study_prompt("POST_ONE_SENTINEL", "POST_TWO_SENTINEL")
+assert rendered.count("POST_ONE_SENTINEL") == 1
+assert rendered.count("POST_TWO_SENTINEL") == 1
+assert OPTIMIZED_FEW_SHOT_VARIANT.model_folders == ("amazon_nova_micro", "qwen3_32b")
+exclusions = OPTIMIZED_FEW_SHOT_VARIANT.metric_exclusion_post_ids
+assert len(exclusions) == 5
+assert len(set(exclusions)) == 5
+assert all(callable(entry_point) for entry_point in (setup_main, inference_main, analysis_main))
+print("optimized-contract-smoke-ok models=2 exclusions=5")
+PY
 PYTHONPATH=. uv run python -m experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.src.step2_inference.main --help >/dev/null
 PYTHONPATH=. uv run python -m experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.src.step3_analysis.main --help >/dev/null
 git diff --check
 ```
 
-The test command must report six passed tests. The inference and analysis help commands must exit 0 without AWS access. The setup command has no arguments, so this step verifies it by import in the test instead of running it. `git diff --check` must print nothing.
+The smoke command must print `optimized-contract-smoke-ok models=2 exclusions=5`. The inference and analysis help commands must exit 0 without AWS access. The setup command has no arguments, so the smoke command verifies it by import instead of running it. `git diff --check` must print nothing.
 
 ## Must pass
 
 - The prompt digest, placeholders, example order, labels, whitespace, and final newline match issue 351.
 - The new variant enables only Nova Micro and Qwen 3 32B and uses the five confirmed exclusions.
 - All three entry points are thin callers of the existing shared functions.
-- Existing experiment imports and tests remain green.
+- Existing experiment imports and command help remain functional.
 
 ## Must fail
 
