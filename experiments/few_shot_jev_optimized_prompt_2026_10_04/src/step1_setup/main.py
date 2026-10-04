@@ -9,6 +9,7 @@ from __future__ import annotations
 
 
 def main() -> None:
+    """Copy the prepared input and print one summary line."""
     raise NotImplementedError
 
 
