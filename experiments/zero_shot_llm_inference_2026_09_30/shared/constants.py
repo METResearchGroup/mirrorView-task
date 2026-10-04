@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
+from experiments.zero_shot_llm_inference_2026_09_30.shared.config import ZERO_SHOT_VARIANT
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import ModelDefinition
 
-EXPERIMENT_S3_BUCKET = "mirrorview-experimental-artifacts"
-EXPERIMENT_S3_ROOT = "experiments/zero_shot_llm_inference_2026_09_30/"
-INPUT_RECORDS_KEY = (
-    "experiments/zero_shot_llm_inference_2026_09_30/inputs/study_2_five_labeler/records.jsonl"
-)
-INPUT_MANIFEST_KEY = (
-    "experiments/zero_shot_llm_inference_2026_09_30/inputs/study_2_five_labeler/manifest.json"
-)
+EXPERIMENT_S3_BUCKET = ZERO_SHOT_VARIANT.s3_bucket
+EXPERIMENT_S3_ROOT = ZERO_SHOT_VARIANT.s3_root
+INPUT_RECORDS_KEY = ZERO_SHOT_VARIANT.input_records_s3_key
+INPUT_MANIFEST_KEY = ZERO_SHOT_VARIANT.input_manifest_s3_key
 
 EXPECTED_TOTAL_RECORD_COUNT = 13992
 EXPECTED_UNANIMOUS_RECORD_COUNT = 4051

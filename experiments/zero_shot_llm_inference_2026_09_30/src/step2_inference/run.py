@@ -24,21 +24,24 @@ from data_platform.generate_features.engines.bedrock_engine import (
 from data_platform.generate_features.s3_feature_campaign import CampaignObjectStore
 from data_platform.utils.object_store import DEFAULT_S3_REGION
 
+from experiments.zero_shot_llm_inference_2026_09_30.shared.config import (
+    ZERO_SHOT_VARIANT,
+    Study2InferenceVariant,
+)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.constants import (
-    EXPERIMENT_S3_BUCKET,
     get_model_definition_by_folder,
 )
-from experiments.zero_shot_llm_inference_2026_09_30.shared.llm import label_record
+from experiments.zero_shot_llm_inference_2026_09_30.shared.llm import PromptFormatter, label_record
+from experiments.zero_shot_llm_inference_2026_09_30.shared.prompts import (
+    format_baseline_zero_shot_keep_remove_prompt,
+)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import (
-    FAILURE_SCHEMA_VERSION,
     FAILURE_WRAPPER_CALL_COUNT,
-    MANIFEST_SCHEMA_VERSION,
     FailureRecord,
     InputManifest,
     ModelDefinition,
     ModelRunManifest,
     ModelRunManifestStatus,
-    PREDICTION_SCHEMA_VERSION,
     PredictionRecord,
     RemovePrediction,
     Study2InputRecord,
@@ -74,6 +77,47 @@ DEFAULT_MAX_CONCURRENCY = 8
 DEFAULT_MAX_TOKENS = 256
 
 
+def run_inference_cli(
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
+) -> None:
+    """Parse CLI arguments and run one model folder for ``variant``."""
+    args = _parse_args()
+    model = validate_inference_arguments(
+        args.run_id,
+        args.model,
+        args.limit,
+        args.batch_size,
+        args.max_concurrency,
+        args.max_tokens,
+    )
+    apply_lab_aws_credentials_when_unset()
+    store = CampaignObjectStore(variant.s3_bucket, region_name=DEFAULT_S3_REGION)
+    run_plan = _build_inference_run_plan(store, args.run_id, model, args.limit, variant)
+    run_state = _run_state_for_plan(
+        store,
+        variant,
+        prompt_formatter,
+        args.run_id,
+        model,
+        run_plan,
+        args.batch_size,
+        args.max_concurrency,
+        args.max_tokens,
+    )
+    _write_model_run_from_state(
+        store,
+        variant,
+        args.run_id,
+        model,
+        args.limit,
+        args.batch_size,
+        args.max_tokens,
+        run_plan,
+        run_state,
+    )
+
+
 def run_model_inference(
     store: CampaignObjectStore,
     client: BedrockRuntimeClient,
@@ -83,6 +127,8 @@ def run_model_inference(
     batch_size: int,
     max_concurrency: int,
     max_tokens: int,
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
 ) -> None:
     """Execute one resumable inference pass for a single model folder.
 
@@ -101,10 +147,12 @@ def run_model_inference(
         max_concurrency,
         max_tokens,
     )
-    run_plan = _build_inference_run_plan(store, run_id, model, limit)
+    run_plan = _build_inference_run_plan(store, run_id, model, limit, variant)
     run_state = _run_pending_record_batches(
         store,
         client,
+        variant,
+        prompt_formatter,
         run_id,
         model,
         run_plan,
@@ -124,47 +172,41 @@ def run_model_inference(
         tuple(run_state.failures),
         tuple(run_state.prediction_keys),
         tuple(run_state.failure_keys),
+        variant,
     )
-    write_model_run_manifest(store, run_id, model.folder_name, manifest)
+    write_model_run_manifest(store, run_id, model.folder_name, manifest, variant)
 
 
 def main() -> None:
-    """Parse CLI arguments and run one model inference task."""
-    args = _parse_args()
-    model = validate_inference_arguments(
-        args.run_id,
-        args.model,
-        args.limit,
-        args.batch_size,
-        args.max_concurrency,
-        args.max_tokens,
-    )
-    apply_lab_aws_credentials_when_unset()
-    store = CampaignObjectStore(EXPERIMENT_S3_BUCKET, region_name=DEFAULT_S3_REGION)
-    run_plan = _build_inference_run_plan(store, args.run_id, model, args.limit)
-    if run_plan.pending_records:
-        client = create_bedrock_runtime_client()
-        run_state = _run_pending_record_batches(
-            store,
-            client,
-            args.run_id,
-            model,
-            run_plan,
-            args.batch_size,
-            args.max_concurrency,
-            args.max_tokens,
-        )
-    else:
-        run_state = _inference_run_state_from_artifacts(run_plan.artifacts)
-    _write_model_run_from_state(
+    """Parse CLI arguments and run one zero-shot model inference task."""
+    run_inference_cli(ZERO_SHOT_VARIANT, format_baseline_zero_shot_keep_remove_prompt)
+
+
+def _run_state_for_plan(
+    store: CampaignObjectStore,
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
+    run_id: str,
+    model: ModelDefinition,
+    run_plan: InferenceRunPlan,
+    batch_size: int,
+    max_concurrency: int,
+    max_tokens: int,
+) -> InferenceRunState:
+    if not run_plan.pending_records:
+        return _inference_run_state_from_artifacts(run_plan.artifacts)
+    client = create_bedrock_runtime_client()
+    return _run_pending_record_batches(
         store,
-        args.run_id,
+        client,
+        variant,
+        prompt_formatter,
+        run_id,
         model,
-        args.limit,
-        args.batch_size,
-        args.max_tokens,
         run_plan,
-        run_state,
+        batch_size,
+        max_concurrency,
+        max_tokens,
     )
 
 
@@ -179,6 +221,7 @@ def _inference_run_state_from_artifacts(artifacts: LoadedRunArtifacts) -> Infere
 
 def _write_model_run_from_state(
     store: CampaignObjectStore,
+    variant: Study2InferenceVariant,
     run_id: str,
     model: ModelDefinition,
     limit: int | None,
@@ -199,8 +242,9 @@ def _write_model_run_from_state(
         tuple(run_state.failures),
         tuple(run_state.prediction_keys),
         tuple(run_state.failure_keys),
+        variant,
     )
-    write_model_run_manifest(store, run_id, model.folder_name, manifest)
+    write_model_run_manifest(store, run_id, model.folder_name, manifest, variant)
     print_model_run_completion_summary(manifest)
 
 
@@ -354,8 +398,9 @@ def _build_inference_run_plan(
     run_id: str,
     model: ModelDefinition,
     limit: int | None,
+    variant: Study2InferenceVariant,
 ) -> InferenceRunPlan:
-    input_manifest, prepared_records = load_verified_prepared_input(store)
+    input_manifest, prepared_records = load_verified_prepared_input(store, variant)
     requested_records = select_requested_records(prepared_records, limit)
     prepared_post_ids = frozenset(record.post_id for record in prepared_records)
     artifacts = load_existing_run_artifacts(
@@ -364,8 +409,10 @@ def _build_inference_run_plan(
         model.folder_name,
         model.model_id,
         prepared_post_ids,
+        variant,
     )
     assert_configured_limit_matches_manifests(limit, artifacts.manifests)
+    _reject_input_identity_mismatch(artifacts.manifests, input_manifest)
     requested_post_ids = frozenset(record.post_id for record in requested_records)
     completed_ids = completed_post_ids_for_requested_set(
         artifacts.predictions,
@@ -383,6 +430,8 @@ def _build_inference_run_plan(
 def _run_pending_record_batches(
     store: CampaignObjectStore,
     client: BedrockRuntimeClient,
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
     run_id: str,
     model: ModelDefinition,
     run_plan: InferenceRunPlan,
@@ -398,6 +447,8 @@ def _run_pending_record_batches(
         batch_predictions, batch_failures = run_ordered_inference_batch(
             client,
             model,
+            variant,
+            prompt_formatter,
             run_id,
             batch,
             max_concurrency,
@@ -408,12 +459,14 @@ def _run_pending_record_batches(
             run_id,
             model.folder_name,
             batch_predictions,
+            variant,
         )
         failure_key = write_failure_batch_if_nonempty(
             store,
             run_id,
             model.folder_name,
             batch_failures,
+            variant,
         )
         if prediction_key is not None:
             prediction_keys.append(prediction_key)
@@ -435,6 +488,7 @@ def load_existing_run_artifacts(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
+    variant: Study2InferenceVariant | None = None,
 ) -> LoadedRunArtifacts:
     """Load manifests, predictions, and failures for one model folder.
 
@@ -444,15 +498,15 @@ def load_existing_run_artifacts(
         When stored rows are invalid or conflict with run identity.
     """
     known_ids = known_post_ids
-    manifests = _load_manifest_objects(store, run_id, model_folder, model_id)
+    manifests = _load_manifest_objects(store, run_id, model_folder, model_id, variant)
     prediction_batches = load_jsonl_records_under_prefix(
         store,
-        build_predictions_prefix(run_id, model_folder),
+        build_predictions_prefix(run_id, model_folder, variant),
         PredictionRecord,
     )
     failure_batches = load_jsonl_records_under_prefix(
         store,
-        build_failures_prefix(run_id, model_folder),
+        build_failures_prefix(run_id, model_folder, variant),
         FailureRecord,
     )
     predictions = _flatten_and_validate_predictions(
@@ -461,6 +515,7 @@ def load_existing_run_artifacts(
         model_folder,
         model_id,
         known_ids,
+        variant,
     )
     failures = _flatten_and_validate_failures(
         failure_batches,
@@ -468,6 +523,7 @@ def load_existing_run_artifacts(
         model_folder,
         model_id,
         known_ids,
+        variant,
     )
     return LoadedRunArtifacts(
         manifests=manifests,
@@ -519,10 +575,11 @@ def build_prediction_record(
     record: Study2InputRecord,
     prediction: RemovePrediction,
     usage: TokenUsage,
+    variant: Study2InferenceVariant,
 ) -> PredictionRecord:
     """Build one prediction row for immutable storage."""
     return PredictionRecord(
-        schema_version=PREDICTION_SCHEMA_VERSION,
+        schema_version=variant.prediction_schema_version,
         run_id=run_id,
         model_folder=model.folder_name,
         model_id=model.model_id,
@@ -538,13 +595,14 @@ def build_failure_record(
     model: ModelDefinition,
     record: Study2InputRecord,
     error: BaseException,
+    variant: Study2InferenceVariant,
 ) -> FailureRecord:
     """Build one failure row for immutable storage."""
     message = str(error).strip()
     if not message:
         message = error.__class__.__name__
     return FailureRecord(
-        schema_version=FAILURE_SCHEMA_VERSION,
+        schema_version=variant.failure_schema_version,
         run_id=run_id,
         model_folder=model.folder_name,
         model_id=model.model_id,
@@ -560,6 +618,7 @@ def write_prediction_batch_if_nonempty(
     run_id: str,
     model_folder: str,
     records: list[PredictionRecord],
+    variant: Study2InferenceVariant,
 ) -> str | None:
     """Write one immutable prediction JSONL batch when rows are present.
 
@@ -570,14 +629,14 @@ def write_prediction_batch_if_nonempty(
     """
     if not records:
         return None
-    prefix = build_predictions_prefix(run_id, model_folder)
+    prefix = build_predictions_prefix(run_id, model_folder, variant)
     sequence = next_sequence_for_prefix(
         store,
         prefix,
         _BATCH_OBJECT_PREFIX,
         _JSONL_OBJECT_SUFFIX,
     )
-    key = build_prediction_batch_key(run_id, model_folder, sequence)
+    key = build_prediction_batch_key(run_id, model_folder, sequence, variant)
     put_immutable_object(store, key, serialize_jsonl_models(records))
     return key
 
@@ -594,6 +653,7 @@ def build_model_run_manifest(
     failures: tuple[FailureRecord, ...],
     prediction_object_keys: tuple[str, ...],
     failure_object_keys: tuple[str, ...],
+    variant: Study2InferenceVariant,
 ) -> ModelRunManifest:
     """Summarize the observed run state for one immutable manifest."""
     requested_ids = frozenset(record.post_id for record in requested_records)
@@ -605,7 +665,7 @@ def build_model_run_manifest(
         len(unresolved),
     )
     return ModelRunManifest(
-        schema_version=MANIFEST_SCHEMA_VERSION,
+        schema_version=variant.model_run_schema_version,
         run_id=run_id,
         model_display_name=model.display_name,
         model_folder=model.folder_name,
@@ -621,6 +681,9 @@ def build_model_run_manifest(
         prediction_object_keys=prediction_object_keys,
         failure_object_keys=failure_object_keys,
         status=status,
+        experiment_name=variant.experiment_name,
+        prompt_name=variant.prompt_name,
+        prompt_sha256=variant.prompt_sha256,
     )
 
 
@@ -629,6 +692,7 @@ def write_model_run_manifest(
     run_id: str,
     model_folder: str,
     manifest: ModelRunManifest,
+    variant: Study2InferenceVariant,
 ) -> str:
     """Write one immutable manifest describing the current run state.
 
@@ -637,14 +701,14 @@ def write_model_run_manifest(
     FileExistsError
         When the target manifest key already exists.
     """
-    prefix = build_manifests_prefix(run_id, model_folder)
+    prefix = build_manifests_prefix(run_id, model_folder, variant)
     sequence = next_sequence_for_prefix(
         store,
         prefix,
         _MANIFEST_OBJECT_PREFIX,
         _JSON_OBJECT_SUFFIX,
     )
-    key = build_manifest_key(run_id, model_folder, sequence)
+    key = build_manifest_key(run_id, model_folder, sequence, variant)
     body = serialize_json_document(manifest.model_dump(mode="json"))
     put_immutable_object(store, key, body)
     return key
@@ -655,6 +719,7 @@ def write_failure_batch_if_nonempty(
     run_id: str,
     model_folder: str,
     records: list[FailureRecord],
+    variant: Study2InferenceVariant,
 ) -> str | None:
     """Write one immutable failure JSONL batch when rows are present.
 
@@ -665,14 +730,14 @@ def write_failure_batch_if_nonempty(
     """
     if not records:
         return None
-    prefix = build_failures_prefix(run_id, model_folder)
+    prefix = build_failures_prefix(run_id, model_folder, variant)
     sequence = next_sequence_for_prefix(
         store,
         prefix,
         _BATCH_OBJECT_PREFIX,
         _JSONL_OBJECT_SUFFIX,
     )
-    key = build_failure_batch_key(run_id, model_folder, sequence)
+    key = build_failure_batch_key(run_id, model_folder, sequence, variant)
     put_immutable_object(store, key, serialize_jsonl_models(records))
     return key
 
@@ -680,6 +745,8 @@ def write_failure_batch_if_nonempty(
 def run_ordered_inference_batch(
     client: BedrockRuntimeClient,
     model: ModelDefinition,
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
     run_id: str,
     pending_records: tuple[Study2InputRecord, ...],
     max_concurrency: int,
@@ -691,6 +758,8 @@ def run_ordered_inference_batch(
     outcomes = _label_records_in_input_order(
         client,
         model,
+        variant,
+        prompt_formatter,
         run_id,
         pending_records,
         max_concurrency,
@@ -717,6 +786,17 @@ def unresolved_failure_post_ids(
     return frozenset(unresolved)
 
 
+def _reject_input_identity_mismatch(
+    manifests: tuple[ModelRunManifest, ...],
+    input_manifest: InputManifest,
+) -> None:
+    for manifest in manifests:
+        if manifest.prepared_input_records_sha256 != input_manifest.records_sha256:
+            raise ValueError("prepared input digest mismatch with existing manifest")
+        if manifest.prepared_input_records_key != input_manifest.records_s3_key:
+            raise ValueError("prepared input key mismatch with existing manifest")
+
+
 def assert_configured_limit_matches_manifests(
     configured_limit: int | None,
     manifests: tuple[ModelRunManifest, ...],
@@ -738,12 +818,19 @@ def _load_manifest_objects(
     run_id: str,
     model_folder: str,
     model_id: str,
+    variant: Study2InferenceVariant | None,
 ) -> tuple[ModelRunManifest, ...]:
-    prefix = build_manifests_prefix(run_id, model_folder)
+    prefix = build_manifests_prefix(run_id, model_folder, variant)
     loaded = load_json_objects_under_prefix(store, prefix, ".json", ModelRunManifest)
     manifests: list[ModelRunManifest] = []
     for _, manifest in loaded:
-        validate_model_run_manifest_identity(manifest, run_id, model_folder, model_id)
+        validate_model_run_manifest_identity(
+            manifest,
+            run_id,
+            model_folder,
+            model_id,
+            variant,
+        )
         manifests.append(manifest)
     return tuple(manifests)
 
@@ -754,6 +841,7 @@ def _flatten_and_validate_predictions(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
+    variant: Study2InferenceVariant | None,
 ) -> tuple[PredictionRecord, ...]:
     predictions: list[PredictionRecord] = []
     seen_post_ids: set[str] = set()
@@ -765,6 +853,7 @@ def _flatten_and_validate_predictions(
                 model_folder,
                 model_id,
                 known_post_ids,
+                variant,
             )
             if record.post_id in seen_post_ids:
                 raise ValueError(f"duplicate prediction post_id: {record.post_id}")
@@ -799,6 +888,8 @@ def _split_prediction_and_failure_outcomes(
 def _label_records_in_input_order(
     client: BedrockRuntimeClient,
     model: ModelDefinition,
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
     run_id: str,
     records: tuple[Study2InputRecord, ...],
     max_concurrency: int,
@@ -811,6 +902,8 @@ def _label_records_in_input_order(
                 _label_single_record,
                 client,
                 model,
+                variant,
+                prompt_formatter,
                 run_id,
                 record,
                 max_tokens,
@@ -825,16 +918,31 @@ def _label_records_in_input_order(
 def _label_single_record(
     client: BedrockRuntimeClient,
     model: ModelDefinition,
+    variant: Study2InferenceVariant,
+    prompt_formatter: PromptFormatter,
     run_id: str,
     record: Study2InputRecord,
     max_tokens: int,
 ) -> PredictionRecord | FailureRecord:
     try:
-        prediction, usage = label_record(client, model, record, max_tokens)
+        prediction, usage = label_record(
+            client,
+            model,
+            record,
+            max_tokens,
+            prompt_formatter,
+        )
         token_usage = map_bedrock_usage_to_token_usage(usage)
-        return build_prediction_record(run_id, model, record, prediction, token_usage)
+        return build_prediction_record(
+            run_id,
+            model,
+            record,
+            prediction,
+            token_usage,
+            variant,
+        )
     except Exception as error:
-        return build_failure_record(run_id, model, record, error)
+        return build_failure_record(run_id, model, record, error, variant)
 
 
 def _flatten_and_validate_failures(
@@ -843,6 +951,7 @@ def _flatten_and_validate_failures(
     model_folder: str,
     model_id: str,
     known_post_ids: frozenset[str],
+    variant: Study2InferenceVariant | None,
 ) -> tuple[FailureRecord, ...]:
     failures: list[FailureRecord] = []
     for _, rows in batches:
@@ -853,6 +962,7 @@ def _flatten_and_validate_failures(
                 model_folder,
                 model_id,
                 known_post_ids,
+                variant,
             )
             failures.append(record)
     return tuple(failures)
