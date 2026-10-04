@@ -17,7 +17,11 @@ _HEX_DIGITS = frozenset("0123456789abcdef")
 
 @dataclass(frozen=True)
 class Study2InferenceVariant:
-    """One Study 2 keep or remove experiment: paths, schemas, and prompt identity."""
+    """One Study 2 keep or remove experiment: paths, schemas, prompt, and models.
+
+    ``model_folders`` is the ordered set of registry folders this experiment
+    may run and analyze. Entries are unique nonempty tokens.
+    """
 
     experiment_name: str
     s3_bucket: str
@@ -31,12 +35,14 @@ class Study2InferenceVariant:
     prompt_name: str
     prompt_sha256: str
     metric_exclusion_post_ids: tuple[str, ...]
+    model_folders: tuple[str, ...]
 
     def __post_init__(self) -> None:
         _validate_variant_names(self)
         _validate_variant_locations(self)
         _validate_variant_versions(self)
         _validate_exclusion_ids(self.metric_exclusion_post_ids)
+        _validate_model_folders(self.model_folders)
 
 
 def _validate_variant_names(variant: Study2InferenceVariant) -> None:
@@ -72,6 +78,15 @@ def _validate_exclusion_ids(post_ids: tuple[str, ...]) -> None:
         raise ValueError("metric_exclusion_post_ids must be unique")
     for post_id in post_ids:
         _require_token(post_id, "metric_exclusion_post_ids")
+
+
+def _validate_model_folders(model_folders: tuple[str, ...]) -> None:
+    if not isinstance(model_folders, tuple) or not model_folders:
+        raise ValueError("model_folders must be a nonempty tuple")
+    if len(model_folders) != len(set(model_folders)):
+        raise ValueError("model_folders must be unique")
+    for folder_name in model_folders:
+        _require_token(folder_name, "model_folders")
 
 
 def _require_token(value: str, field_name: str) -> None:
@@ -124,4 +139,10 @@ ZERO_SHOT_VARIANT = Study2InferenceVariant(
     prompt_name="BASELINE_ZERO_SHOT_KEEP_REMOVE_PROMPT",
     prompt_sha256=_confirmed_zero_shot_prompt_sha256(),
     metric_exclusion_post_ids=(),
+    model_folders=(
+        "amazon_nova_micro",
+        "qwen3_32b",
+        "openai_gpt_5_6_terra",
+        "claude_sonnet_5_5",
+    ),
 )
