@@ -78,6 +78,12 @@ A pair is labeled remove when its remove probability is at least the threshold. 
 
 ![Precision by remove threshold](static/precision_by_remove_threshold.png)
 
+## Human votes and Jev bins
+
+The bars use all 13,992 pairs. Blue bars count human remove votes from 0 through 5. Orange bars place each Jev remove probability into those same six bins. Each bin covers one sixth of the range from 0 to 1, and the last bin includes 1.
+
+![Human remove votes and Jev bins](static/overlay_human_vs_jev.png)
+
 ## Jev usage
 
 | Model | Predictions | Input tokens | Output tokens | USD |

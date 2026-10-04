@@ -2,7 +2,7 @@
 
 ## 2026-10-04
 
-1. Jev 1.13.0 scores the 13,992 Study 2 pairs with the balanced GEPA keep or remove instruction and the ten labeled examples. After dropping five demonstration matches, remove-class F1 is 0.542 and accuracy is 0.739 at a measured cost of $1.077, and threshold curves show F1, recall, accuracy, and precision from 0.00 to 1.00 in steps of 0.05. [PR #356](https://github.com/METResearchGroup/mirrorView-task/pull/356)
+1. Jev 1.13.0 scores the 13,992 Study 2 pairs with the balanced GEPA keep or remove instruction and the ten labeled examples. After dropping five demonstration matches, remove-class F1 is 0.542 and accuracy is 0.739 at a measured cost of $1.077, with threshold curves and an overlay of human remove votes against six Jev probability bins. [PR #356](https://github.com/METResearchGroup/mirrorView-task/pull/356)
 
 ## 2026-10-02
 
