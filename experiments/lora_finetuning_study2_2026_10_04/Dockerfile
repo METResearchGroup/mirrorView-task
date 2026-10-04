@@ -14,6 +14,12 @@ ENV PYTHONUNBUFFERED=1 \
 
 WORKDIR /app
 
+# Qwen3.5 linear attention falls back to a slow PyTorch reference unless both
+# kernels import. This image is torch 2.6, CUDA 12.4, Python 3.11. The current
+# flash-linear-attention release requires torch>=2.7, so pin 0.4.2 and install
+# it without dependencies so pip does not replace the image's CUDA torch.
+# causal-conv1d has no matching PyPI wheel; the GitHub wheel is the CXX11 ABI
+# build used by the official PyTorch conda image.
 RUN pip install --upgrade pip && \
     pip install \
       "transformers>=5.8.1" \
@@ -26,7 +32,12 @@ RUN pip install --upgrade pip && \
       "pyarrow>=20.0.0" \
       "boto3>=1.42.88" \
       "python-dotenv>=1.2.2" \
-      "pyyaml>=6.0"
+      "pyyaml>=6.0" \
+      "einops" && \
+    pip install --no-deps \
+      "flash-linear-attention==0.4.2" \
+      "fla-core==0.4.2" \
+      "https://github.com/Dao-AILab/causal-conv1d/releases/download/v1.6.2.post1/causal_conv1d-1.6.2.post1+cu12torch2.6cxx11abiTRUE-cp311-cp311-linux_x86_64.whl"
 
 COPY shared /app/shared
 COPY lib /app/lib
