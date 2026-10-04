@@ -33,6 +33,7 @@ class LoraTrainer:
         self.lora_target_modules = config["lora"]["target_modules"]
 
         self.learning_rate = config["lr"]
+        self.num_train_epochs = config["epochs"]
         self.max_length = config["max_length"]
         self.model_name = config["model_name"]
         self.dataset_name = config["dataset_name"]
@@ -65,6 +66,7 @@ class LoraTrainer:
                 "model": self.model_name,
                 "dataset": self.dataset_name,
                 "learning_rate": self.learning_rate,
+                "num_train_epochs": self.num_train_epochs,
                 "max_length": self.max_length,
                 "lora_r": self.lora_rank,
                 "lora_alpha": self.lora_alpha,
@@ -75,6 +77,7 @@ class LoraTrainer:
             self.training_args = SFTConfig(
                 output_dir=str(self.output_dir),
                 learning_rate=self.learning_rate,
+                num_train_epochs=self.num_train_epochs,
                 max_length=self.max_length,
                 bf16=True,
                 save_strategy="no",

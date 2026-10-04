@@ -25,13 +25,15 @@ from experiments.lora_finetuning_study2_2026_10_04.dataloader import (
 )
 
 MODEL_NAME = "Qwen/Qwen3.5-4B"
-# Rank 256 and a learning rate above the full fine-tuning default, from the
+# Rank 128 and a learning rate above the full fine-tuning default, from the
 # TRL SFT LoRA guide.
-LORA_RANK = 256
+LORA_RANK = 128
 LORA_ALPHA = 32 # see https://thinkingmachines.ai/blog/lora/
 # Qwen3.5 alternates full attention and Gated DeltaNet linear attention, then
-# an MLP. `all-linear` only wraps nn.Linear, so it skips the depthwise conv
-# inside linear attention. List both attention families and the MLP.
+# an MLP. The depthwise conv inside linear attention is a grouped Conv1d
+# (groups=8192). PEFT only wraps that layer when rank is divisible by the
+# group count, and rank 128 is not, so conv1d stays frozen. The names below
+# cover both attention families and the MLP.
 LORA_TARGET_MODULES = [
     "q_proj",
     "k_proj",
@@ -42,14 +44,14 @@ LORA_TARGET_MODULES = [
     "in_proj_b",
     "in_proj_a",
     "out_proj",
-    "conv1d",
     "gate_proj",
     "up_proj",
     "down_proj",
 ]
 LEARNING_RATE = 2e-4
-# The study prompt is about 1k tokens before the two posts. 4096 leaves room
-# for the posts and keeps the completion inside the trained sequence.
+NUM_TRAIN_EPOCHS = 1
+# The optimized study prompt is about 1.5k tokens before the two posts.
+# 4096 leaves room for the posts and keeps the completion inside the sequence.
 MAX_LENGTH = 4096
 
 
@@ -73,6 +75,7 @@ def build_config(run_name: str, dataset_name: str, project: str, group: str) -> 
             "target_modules": LORA_TARGET_MODULES,
         },
         "lr": LEARNING_RATE,
+        "epochs": NUM_TRAIN_EPOCHS,
         "max_length": MAX_LENGTH,
         "model_name": MODEL_NAME,
         "dataset_name": dataset_name,

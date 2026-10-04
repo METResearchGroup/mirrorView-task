@@ -18,7 +18,7 @@ from datasets import Dataset
 
 from shared.data.dataloader import load_dataset
 from shared.data.registry import UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS
-from shared.models.llm.prompt import STUDY_PROMPT_TEMPLATE, SYSTEM_CONTENT
+from shared.models.llm.prompt import OPTIMIZED_STUDY_PROMPT_TEMPLATE, SYSTEM_CONTENT
 
 _REQUIRED_COLUMNS = {"post_id", "original_text", "mirror_text", "decision"}
 _DECISIONS = {"keep", "remove"}
@@ -27,18 +27,17 @@ _DECISIONS = {"keep", "remove"}
 def row_to_prompt_completion(row: dict) -> dict[str, list[dict[str, str]]]:
     """Map one label row to a conversational prompt and completion.
 
-    The prompt is the Study 2 keep/remove instruction plus the original post
-    and its mirror. The completion is the gold ``decision`` (``keep`` or
-    ``remove``). TRL treats ``prompt`` and ``completion`` as the SFT fields
-    and, by default, ignores prompt tokens in the loss.
+    The prompt is the optimized Study 2 keep/remove instruction plus the
+    original post and its mirror. The completion is the gold ``decision``
+    (``keep`` or ``remove``). TRL treats ``prompt`` and ``completion`` as
+    the SFT fields and, by default, ignores prompt tokens in the loss.
     """
     decision = str(row["decision"]).lower().strip()
     if decision not in _DECISIONS:
         raise ValueError(
             f"Unexpected decision={decision!r} for post_id={row.get('post_id')!r}"
         )
-    user_content = STUDY_PROMPT_TEMPLATE.format(
-        ADD_KEEP_REMOVE_FEATURES_ADDENDUM="",
+    user_content = OPTIMIZED_STUDY_PROMPT_TEMPLATE.format(
         post_1_text=_text(row["original_text"]),
         post_2_text=_text(row["mirror_text"]),
     )

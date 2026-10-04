@@ -26,7 +26,7 @@ TRAIN_COMMAND = (
     "python",
     "experiments/lora_finetuning_study2_2026_10_04/train.py",
 )
-FLAVOR = "a10g-large"
+FLAVOR = "a100-large"
 TIMEOUT = "24h"
 
 
