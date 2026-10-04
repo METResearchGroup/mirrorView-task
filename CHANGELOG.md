@@ -2,8 +2,9 @@
 
 ## 2026-10-02
 
-1. A separate GEPA ablation scores the same prompt procedure on a 405-post cohort with 203 keep and 202 remove posts. On the 61-row test split, F1 moves from 0.680851 to 0.835821 and recall from 0.533333 to 0.933333. The finished natural-prevalence run is unchanged. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
-2. Jev 1.13.0 scores the same 13,992 Study 2 pairs with the ten-example keep or remove prompt. After dropping five demonstration matches from the metrics, remove-class F1 is 0.562 and accuracy is 0.788, at a measured cost of $1.036. [PR #348](https://github.com/METResearchGroup/mirrorView-task/pull/348)
+1. Four Bedrock models run the issue 329 few-shot keep or remove prompt on the 13,992 five-labeler Study 2 pairs from the zero-shot input. On run `study2-few-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.463, and Claude Sonnet 5.5 has the highest accuracy at 0.806. The F1 and accuracy figures omit five demonstration rows that also appear in the input. [PR #346](https://github.com/METResearchGroup/mirrorView-task/pull/346)
+2. A separate GEPA ablation scores the same prompt procedure on a 405-post cohort with 203 keep and 202 remove posts. On the 61-row test split, F1 moves from 0.680851 to 0.835821 and recall from 0.533333 to 0.933333. The finished natural-prevalence run is unchanged. [PR #339](https://github.com/METResearchGroup/mirrorView-task/pull/339)
+3. Jev 1.13.0 scores the same 13,992 Study 2 pairs with the ten-example keep or remove prompt. After dropping five demonstration matches from the metrics, remove-class F1 is 0.562 and accuracy is 0.788, at a measured cost of $1.036. [PR #348](https://github.com/METResearchGroup/mirrorView-task/pull/348)
 
 ## 2026-10-01
 

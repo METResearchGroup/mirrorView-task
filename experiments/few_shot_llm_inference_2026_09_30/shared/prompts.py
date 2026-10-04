@@ -58,3 +58,33 @@ countries — sovereignty matters, they said. But now they're falling all over t
 
 
 Allow Or Remove?"""
+
+_POST_1_PLACEHOLDER = "{post_1_text}"
+_POST_2_PLACEHOLDER = "{post_2_text}"
+
+
+def format_baseline_few_shot_keep_remove_prompt(post_1_text: str, post_2_text: str) -> str:
+    """Render the few-shot prompt with unchanged post text.
+
+    Parameters
+    ----------
+    post_1_text
+        Original-side post text inserted at the first placeholder.
+    post_2_text
+        Mirror-side post text inserted at the second placeholder.
+
+    Returns
+    -------
+    str
+        Prompt text with only the two post placeholders substituted.
+
+    Raises
+    ------
+    ValueError
+        When either placeholder is missing from the template.
+    """
+    template = BASELINE_FEW_SHOT_KEEP_REMOVE_PROMPT
+    if template.count(_POST_1_PLACEHOLDER) != 1 or template.count(_POST_2_PLACEHOLDER) != 1:
+        raise ValueError("few-shot prompt must contain each post placeholder once")
+    rendered = template.replace(_POST_1_PLACEHOLDER, post_1_text, 1)
+    return rendered.replace(_POST_2_PLACEHOLDER, post_2_text, 1)
