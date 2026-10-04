@@ -58,6 +58,26 @@ The prompt has ten demonstrations. Five of them are exact matches to prepared ro
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Jev 1.13.0 | 9,941 | 0.541099 | 0.678201 | 0.709023 | 0.437486 |
 
+## Threshold curves
+
+A pair is labeled remove when its remove probability is at least the threshold. Thresholds run from 0.00 to 1.00 in steps of 0.05. The axis labels are every 0.10. All has 13,987 pairs, unanimous has 4,046, and split has 9,941. The value at 0.50 matches the tables above.
+
+### F1
+
+![F1 by remove threshold](static/f1_by_remove_threshold.png)
+
+### Recall
+
+![Recall by remove threshold](static/recall_by_remove_threshold.png)
+
+### Accuracy
+
+![Accuracy by remove threshold](static/accuracy_by_remove_threshold.png)
+
+### Precision
+
+![Precision by remove threshold](static/precision_by_remove_threshold.png)
+
 ## Jev usage
 
 | Model | Predictions | Input tokens | Output tokens | USD |
