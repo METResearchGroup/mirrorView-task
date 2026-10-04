@@ -7,10 +7,17 @@ Run from repo root::
 
 from __future__ import annotations
 
+from experiments.dspy_optimized_few_shot_llm_inference_2026_10_04.shared.config import (
+    OPTIMIZED_FEW_SHOT_VARIANT,
+)
+from experiments.zero_shot_llm_inference_2026_09_30.src.step3_analysis.analyze import (
+    run_analysis_cli,
+)
+
 
 def main() -> None:
     """Analyze one optimized few-shot run through the shared analysis runner."""
-    raise NotImplementedError
+    run_analysis_cli(OPTIMIZED_FEW_SHOT_VARIANT)
 
 
 if __name__ == "__main__":
