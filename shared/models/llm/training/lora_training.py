@@ -49,9 +49,9 @@ class LoraTrainer:
         self.wandb_project = config["wandb"]["project"]
         self.wandb_group = config["wandb"]["group"]
         self.wandb_run_name = config["wandb"]["run_name"]
-        # One A10G has 24 GB. Rank 256 does not fit the library batch of 8
-        # at this sequence length, so the step is one example and the
-        # effective batch stays 8. 8-bit Adam keeps the optimizer state small.
+        # One A10G has 24 GB. The library batch of 8 does not fit at this
+        # sequence length, so the step is one example and the effective batch
+        # stays 8. 8-bit Adam keeps the optimizer state small.
         self.per_device_train_batch_size = int(config.get("per_device_train_batch_size", 1))
         self.gradient_accumulation_steps = int(config.get("gradient_accumulation_steps", 8))
         self.num_train_epochs = float(config.get("num_train_epochs", 3))

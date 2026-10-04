@@ -26,9 +26,9 @@ from experiments.lora_finetuning_study2_2026_10_04.dataloader import (
 )
 
 MODEL_NAME = "Qwen/Qwen3.5-4B"
-# Rank 256 and a learning rate above the full fine-tuning default, from the
-# TRL SFT LoRA guide.
-LORA_RANK = 256
+# Rank 128. Alpha stays 32, so the LoRA scale (alpha / rank) is 0.25.
+# The learning rate is the TRL SFT LoRA rate, above the full fine-tuning default.
+LORA_RANK = 128
 LORA_ALPHA = 32 # see https://thinkingmachines.ai/blog/lora/
 # Qwen3.5 alternates full attention and Gated DeltaNet linear attention, then
 # an MLP. `all-linear` only wraps nn.Linear, so it skips the depthwise conv
@@ -78,7 +78,7 @@ def build_config(run_name: str, dataset_name: str, project: str, group: str) -> 
         "model_name": MODEL_NAME,
         "dataset_name": dataset_name,
         "output_dir": str(Path("/tmp") / run_name),
-        # Effective batch is 8. The micro-batch is 1 so rank 256 fits on one A10G.
+        # Effective batch is 8. The micro-batch is 1 so the adapter fits on one A10G.
         "per_device_train_batch_size": 1,
         "gradient_accumulation_steps": 8,
         "num_train_epochs": 3,
