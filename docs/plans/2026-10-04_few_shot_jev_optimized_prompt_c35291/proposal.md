@@ -30,7 +30,7 @@ Root `shared/` never imports from `experiments/`. Issue 352 puts the prompt stri
 
 ### Prompt bytes
 
-`OPTIMIZED_STUDY_PROMPT_TEMPLATE` follows the issue 352 paste. Decision 1 chooses whether to restore one space that GitHub dropped. The constant has no final newline, matching `BASELINE_FEW_SHOT_KEEP_REMOVE_PROMPT`. The issue's Python literal has a newline only because the closing quotes are on the next line, and the compiler deletes that ending before the request, so Jev does not receive it.
+`OPTIMIZED_STUDY_PROMPT_TEMPLATE` follows the issue 352 paste. The confirmed prompt restores the line that contains only a space before remove example 3. The constant has no final newline, matching `BASELINE_FEW_SHOT_KEEP_REMOVE_PROMPT`. The issue's Python literal has a newline only because the closing quotes are on the next line, and the compiler deletes that ending before the request, so Jev does not receive it.
 
 Build the recommended string as follows.
 
@@ -57,7 +57,7 @@ Model metrics omit the same five unanimous demonstration post IDs that PR 348 om
 - `bluesky_00a60cda611def7235d1ac6d87c60320703653e74fb39204a819ec86d6db680b`
 - `bluesky_00efc34ac2738154e7f93b9e110637107b810be4ae2173e8657241f3d1fdd206`
 
-Human label counts and token totals still use all 13,992 predictions. Decision 4 covers whether the 405 balanced GEPA posts are also left out of the metrics.
+Human label counts and token totals still use all 13,992 predictions. The confirmed metrics leave the 405 balanced GEPA posts in the unanimous count.
 
 ### Model and request limits
 
@@ -72,6 +72,8 @@ The production run ID is `study2-jev-optimized-prompt-2026-10-04`. The prompt na
 ```text
 docs/plans/2026-10-04_few_shot_jev_optimized_prompt_c35291/
   proposal.md                                      this proposal
+  plan.md                                          implementation plan
+  steps/                                           step1.md through step6.md
 
 shared/models/llm/
   __init__.py                                      re-exports the prompt constant
@@ -168,7 +170,7 @@ Reuse the existing label counts, split-vote counts, classification metrics, usag
 
 ## Expected results
 
-The full run writes 13,992 predictions under `jev_1_13_0/` with no unresolved failures. Step 5 writes the same table shapes as PR 348. If decision 4 stays with the recommendation, model metrics use 13,987 all rows, 4,046 unanimous rows, and 9,941 split rows. Metric values cannot be estimated before the run.
+The full run writes 13,992 predictions under `jev_1_13_0/` with no unresolved failures. Analysis writes the same table shapes as PR 348. Model metrics use 13,987 all rows, 4,046 unanimous rows, and 9,941 split rows. Metric values cannot be estimated before the run.
 
 Input tokens are estimated from the two completed Jev runs. Zero-shot used 10,162,373 input tokens with 1,501 compiled instruction bytes. Few-shot used 24,672,077 input tokens with 6,000 compiled instruction bytes. The difference is 3,225.1 input tokens per extra instruction byte across 13,992 requests, or about 0.230 tokens per byte per request. The recommended template compiles to 6,339 bytes, which is 339 bytes more than the few-shot instructions, so the estimate adds 1,093,307 input tokens.
 
@@ -181,9 +183,9 @@ Input tokens are estimated from the two completed Jev runs. Zero-shot used 10,16
 
 The five-row smoke run replaces the estimates before the full run.
 
-## Decisions to confirm
+## Confirmed decisions
 
-1. **Restore the line that contains only a space before remove example 3.** Recommendation: copy that line from `BASELINE_FEW_SHOT_KEEP_REMOVE_PROMPT`, so the ten examples match the bytes used by issue 329, PR 348, and the GEPA demonstrations. The main alternative is the issue paste as GitHub stored it, which uses a normal blank line there. The GitHub paste is SHA-256 `6ebcd9bbb16ff39dbeba93fe832a601a589ce1d8233645aad5030b105df9af15`.
-2. **Put the run in a new experiment prefix.** Recommendation: `experiments/few_shot_jev_optimized_prompt_2026_10_04/`, so the completed run `study2-jev-few-shot-2026-10-01` stays unchanged. The main alternative is a new run ID under the existing few-shot prefix.
-3. **Keep the terminal line `keep or remove` and add a small compiler.** Recommendation: follow the issue 352 template, and leave `build_few_shot_remove_instructions` unchanged. The compiled Jev text is the same if the stored template instead ends with `Allow Or Remove?`, and in that case the experiment calls the existing compiler.
-4. **Leave only the five demonstration rows out of model metrics.** Recommendation: follow PR 348, score all 13,992 pairs, and report metrics on 13,987, 4,046, and 9,941 rows. The unanimous number then includes the 405 posts in the balanced GEPA cohort at `s3://mirrorview-experimental-artifacts/experiments/dspy_gepa_balanced_labels_2026_10_02/`. The split rows were not used to choose the instruction. The main alternative is to also leave those 405 posts out of model metrics.
+1. **Confirmed: Restore the line that contains only a space before remove example 3.** Copy that line from `BASELINE_FEW_SHOT_KEEP_REMOVE_PROMPT`, so the ten examples match the bytes used by issue 329, PR 348, and the GEPA demonstrations. The rejected alternative was the GitHub paste, SHA-256 `6ebcd9bbb16ff39dbeba93fe832a601a589ce1d8233645aad5030b105df9af15`, which uses a normal blank line there.
+2. **Confirmed: Put the run in a new experiment prefix.** Use `experiments/few_shot_jev_optimized_prompt_2026_10_04/`, so the completed run `study2-jev-few-shot-2026-10-01` stays unchanged.
+3. **Confirmed: Keep the terminal line `keep or remove` and add a small compiler.** Follow the issue 352 template, and leave `build_few_shot_remove_instructions` unchanged.
+4. **Confirmed: Leave only the five demonstration rows out of model metrics.** Follow PR 348, score all 13,992 pairs, and report metrics on 13,987, 4,046, and 9,941 rows. The unanimous number includes the 405 posts in the balanced GEPA cohort at `s3://mirrorview-experimental-artifacts/experiments/dspy_gepa_balanced_labels_2026_10_02/`. The split rows were not used to choose the instruction.
