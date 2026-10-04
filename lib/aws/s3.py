@@ -9,6 +9,7 @@ import pandas as pd
 from botocore.exceptions import ClientError
 
 DEFAULT_REGION_NAME = "us-east-2"
+DEFAULT_BUCKET = "mind-technology-lab-experiments"
 NOT_FOUND_ERROR_CODES = frozenset({"404", "NoSuchKey", "NotFound"})
 
 
