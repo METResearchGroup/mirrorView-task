@@ -8,4 +8,6 @@ smoke_run_id=study2-jev-optimized-prompt-2026-10-04-smoke rows=5 predictions=5 u
 
 The smoke run scores five pairs. It is not a forecast of the full run.
 
-Production measurement is pending.
+Production measurement:
+
+production_run_id=study2-jev-optimized-prompt-2026-10-04 predictions=13992 unresolved_failures=0 status=complete real_seconds=804.78 input_tokens=25637525 output_tokens=293832 usd=1.076776
