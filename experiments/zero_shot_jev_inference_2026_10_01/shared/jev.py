@@ -7,6 +7,8 @@ Run from repo root::
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from langchain_typesafe import ClassifierRequest, Noul, NoulCriteria
 
 from experiments.zero_shot_jev_inference_2026_10_01.shared.constants import (
@@ -64,15 +66,21 @@ def build_remove_instructions(prompt: str) -> str:
 
 
 REMOVE_INSTRUCTIONS = build_remove_instructions(BASELINE_ZERO_SHOT_KEEP_REMOVE_PROMPT)
+RemoveRequestBuilder = Callable[[Study2InputRecord], ClassifierRequest]
 
 
-def build_remove_request(record: Study2InputRecord) -> ClassifierRequest:
+def build_remove_request(
+    record: Study2InputRecord,
+    instructions: str = REMOVE_INSTRUCTIONS,
+) -> ClassifierRequest:
     """Build the classifier input for one prepared pair, posts in input order.
 
     Parameters
     ----------
     record
         Prepared Study 2 pair.
+    instructions
+        Compiled remove question. The default is the zero-shot prompt.
 
     Returns
     -------
@@ -86,7 +94,7 @@ def build_remove_request(record: Study2InputRecord) -> ClassifierRequest:
         },
         "questions": {
             REMOVE_QUESTION_ID: Noul(
-                instructions=REMOVE_INSTRUCTIONS,
+                instructions=instructions,
                 criteria=REMOVE_CRITERIA,
             ),
         },
