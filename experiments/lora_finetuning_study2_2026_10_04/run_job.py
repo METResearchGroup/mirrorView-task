@@ -1,18 +1,15 @@
-"""Build this experiment's image and submit it to Hugging Face Jobs.
+"""Build this experiment's image and submit one training job.
 
-Set ``HF_JOB_IMAGE`` to the registry tag to build, push, and run. Jobs
-pulls that same tag. Log in to its registry before starting.
-
-Run from the repo root:
-
-    HF_JOB_IMAGE=docker.io/<namespace>/lora-finetuning-study2-2026-10-04:latest \\
-        PYTHONPATH=. uv run python experiments/lora_finetuning_study2_2026_10_04/run_job.py
+``run_ablations.py`` is the entry point. It builds and pushes the image
+once, then calls ``training_job_config`` and ``upload_to_hf_jobs`` for
+each ablation. Jobs pulls the tag in ``HF_JOB_IMAGE``.
 """
 
 from __future__ import annotations
 
 import os
 import subprocess
+from collections.abc import Sequence
 from pathlib import Path
 
 from lib.aws.s3 import DEFAULT_REGION_NAME
@@ -62,10 +59,17 @@ def build_image(image: str) -> None:
     subprocess.run(docker_build_command(image), check=True)
 
 
-def training_job_config() -> HuggingFaceJobConfig:
+def training_job_config(
+    command: Sequence[str] | None = None,
+    *,
+    ablation: str | None = None,
+) -> HuggingFaceJobConfig:
     """Return the Jobs settings for one LoRA training run."""
+    labels = {"experiment": "lora_finetuning_study2_2026_10_04"}
+    if ablation is not None:
+        labels["ablation"] = ablation
     return HuggingFaceJobConfig(
-        command=TRAIN_COMMAND,
+        command=TRAIN_COMMAND if command is None else command,
         flavor=FLAVOR,
         timeout=TIMEOUT,
         env={
@@ -86,16 +90,16 @@ def training_job_config() -> HuggingFaceJobConfig:
                 "AWS_ACCESS_KEY_SECRET", required=True
             ),
         },
-        labels={"experiment": "lora_finetuning_study2_2026_10_04"},
+        labels=labels,
     )
 
 
 def main() -> None:
-    """Build the image, push it, and start the training job."""
-    image = resolve_image()
-    build_image(image)
-    job = upload_to_hf_jobs(image, training_job_config(), push=True)
-    print(job.url)
+    """The three ablations start from ``run_ablations.py``."""
+    raise SystemExit(
+        "Run experiments/lora_finetuning_study2_2026_10_04/run_ablations.py "
+        "to build the image and start the three ablation jobs."
+    )
 
 
 if __name__ == "__main__":

@@ -1,19 +1,23 @@
-"""Fine-tune Qwen3.5-4B with LoRA on Study 2 unanimous keep/remove labels.
+"""Fine-tune Qwen3.5-4B with LoRA on one Study 2 keep/remove label set.
 
-Uses the full upsampled unanimous table as the training set. There is no
-held-out eval split.
+The dataset and Weights & Biases project come from the command line.
+``run_ablations.py`` starts one job per ablation. There is no held-out
+eval split.
 
 Run from the repo root:
 
-    PYTHONPATH=. uv run python experiments/lora_finetuning_study2_2026_10_04/train.py
+    PYTHONPATH=. uv run python experiments/lora_finetuning_study2_2026_10_04/train.py \\
+        --dataset UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS \\
+        --project lora_finetuning_study2_2026_10_04_unanimous \\
+        --group unanimous
 """
 
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 from lib.timestamp_utils import get_current_timestamp
-from shared.data.registry import UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS
 from shared.models.llm.training.lora_training import LoraTrainer
 
 from experiments.lora_finetuning_study2_2026_10_04.dataloader import (
@@ -47,11 +51,20 @@ LEARNING_RATE = 2e-4
 # The study prompt is about 1k tokens before the two posts. 4096 leaves room
 # for the posts and keeps the completion inside the trained sequence.
 MAX_LENGTH = 4096
-WANDB_PROJECT = "lora_finetuning_study2_2026_10_04"
-WANDB_GROUP = "trl_lora_training" # TODO: edit to distinguish between the unanimous, split, and all label versions.
 
 
-def build_config(run_name: str) -> dict:
+def build_parser() -> argparse.ArgumentParser:
+    """Return the parser for one ablation run."""
+    parser = argparse.ArgumentParser(
+        description="Fine-tune Qwen3.5-4B with LoRA on one Study 2 label set."
+    )
+    parser.add_argument("--dataset", required=True, help="Registry name of the training table.")
+    parser.add_argument("--project", required=True, help="Weights & Biases project name.")
+    parser.add_argument("--group", required=True, help="Weights & Biases group name.")
+    return parser
+
+
+def build_config(run_name: str, dataset_name: str, project: str, group: str) -> dict:
     """Return the ``LoraTrainer`` config for one run."""
     return {
         "lora": {
@@ -62,21 +75,26 @@ def build_config(run_name: str) -> dict:
         "lr": LEARNING_RATE,
         "max_length": MAX_LENGTH,
         "model_name": MODEL_NAME,
-        "dataset_name": UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS,
+        "dataset_name": dataset_name,
         "output_dir": str(Path("/tmp") / run_name),
         "wandb": {
-            "project": WANDB_PROJECT,
-            "group": WANDB_GROUP,
+            "project": project,
+            "group": group,
             "run_name": run_name,
         },
     }
 
 
 def main() -> None:
-    """Train on the full upsampled unanimous keep/remove set."""
-    run_name = f"{MODEL_NAME.rsplit('/', 1)[-1]}_lora_{get_current_timestamp()}"
-    trainer = LoraTrainer(build_config(run_name))
-    trainer.load_dataset(load_training_dataset())
+    """Train on the label set named by ``--dataset``."""
+    args = build_parser().parse_args()
+    run_name = (
+        f"{MODEL_NAME.rsplit('/', 1)[-1]}_lora_{args.group}_{get_current_timestamp()}"
+    )
+    trainer = LoraTrainer(
+        build_config(run_name, args.dataset, args.project, args.group)
+    )
+    trainer.load_dataset(load_training_dataset(args.dataset))
     trainer.run()
 
 

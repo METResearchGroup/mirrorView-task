@@ -1,9 +1,9 @@
-"""Training set for Study 2 unanimous keep/remove LoRA fine-tuning.
+"""Training set for Study 2 keep/remove LoRA fine-tuning.
 
-Loads ``UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS`` and converts every
-row into TRL's conversational prompt-completion format. ``SFTTrainer`` then
-computes the loss on the completion only. The returned dataset is the full
-table: there is no train/eval split.
+Loads one registered label table and converts every row into TRL's
+conversational prompt-completion format. ``SFTTrainer`` then computes the
+loss on the completion only. The returned dataset is the full table: there
+is no train/eval split.
 
 Run from the repo root::
 
@@ -16,9 +16,9 @@ import math
 
 from datasets import Dataset
 
-from shared.models.llm.prompt import STUDY_PROMPT_TEMPLATE, SYSTEM_CONTENT
 from shared.data.dataloader import load_dataset
 from shared.data.registry import UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS
+from shared.models.llm.prompt import STUDY_PROMPT_TEMPLATE, SYSTEM_CONTENT
 
 _REQUIRED_COLUMNS = {"post_id", "original_text", "mirror_text", "decision"}
 _DECISIONS = {"keep", "remove"}
@@ -53,9 +53,9 @@ def row_to_prompt_completion(row: dict) -> dict[str, list[dict[str, str]]]:
     }
 
 
-def load_training_dataset() -> Dataset:
-    """Return the full upsampled unanimous table in TRL SFT format."""
-    frame = load_dataset(UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS)
+def load_training_dataset(dataset_name: str) -> Dataset:
+    """Return one registered label table in TRL SFT format."""
+    frame = load_dataset(dataset_name)
     missing = _REQUIRED_COLUMNS - set(frame.columns)
     if missing:
         raise KeyError(f"Dataset is missing required columns: {sorted(missing)}")
@@ -74,7 +74,7 @@ def _text(value: object) -> str:
 
 def main() -> None:
     """Load the training set and print its size."""
-    dataset = load_training_dataset()
+    dataset = load_training_dataset(UPSAMPLED_STUDY_2_KEEP_REMOVE_UNANIMOUS_LABELS)
     print(f"train rows={len(dataset)} columns={dataset.column_names}")
 
 
