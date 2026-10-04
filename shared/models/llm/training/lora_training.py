@@ -1,14 +1,10 @@
-"""LoRA SFT script for Hugging Face Jobs."""
+"""LoRA SFT trainer for Hugging Face Jobs."""
 
-import pandas as pd
-# from datasets import load_dataset  # noqa: E402
+from datasets import Dataset
+from peft import LoraConfig
+from trl import SFTConfig, SFTTrainer
 
-from peft import LoraConfig  # noqa: E402
-from trl import SFTConfig, SFTTrainer  # noqa: E402
-
-from lib.timestamp_utils import get_current_timestamp  # noqa: E402
-from shared.aws.constants import DEFAULT_BUCKET, DEFAULT_REGION_NAME  # noqa: E402
-from lib.telemetry.wandb import start_run  # noqa: E402
+from lib.telemetry.wandb import start_run
 
 # SFT LoRA from the TRL guide: every linear layer, rank 256, and a learning
 # rate above the full fine-tuning default.
@@ -37,6 +33,7 @@ class LoraTrainer:
         self.lora_target_modules = config["lora"]["target_modules"]
 
         self.learning_rate = config["lr"]
+        self.max_length = config["max_length"]
         self.model_name = config["model_name"]
         self.dataset_name = config["dataset_name"]
         self.output_dir = config["output_dir"]
@@ -51,10 +48,15 @@ class LoraTrainer:
             target_modules=self.lora_target_modules,
         )
 
-    def load_dataset(self, dataset: pd.DataFrame):
+    def load_dataset(self, dataset: Dataset) -> None:
+        """Store the full training set.
+
+        ``dataset`` is a Hugging Face ``Dataset`` in TRL prompt-completion
+        form. This trainer does not hold an eval split.
+        """
         self.dataset = dataset
 
-    def run(self):
+    def run(self) -> None:
         with start_run(
             self.wandb_project,
             self.wandb_group,
@@ -63,15 +65,18 @@ class LoraTrainer:
                 "model": self.model_name,
                 "dataset": self.dataset_name,
                 "learning_rate": self.learning_rate,
-                "lora_r": LORA_RANK,
-                "lora_alpha": LORA_ALPHA,
-                "lora_target_modules": LORA_TARGET_MODULES,
+                "max_length": self.max_length,
+                "lora_r": self.lora_rank,
+                "lora_alpha": self.lora_alpha,
+                "lora_target_modules": self.lora_target_modules,
             },
         ):
 
             self.training_args = SFTConfig(
-                output_dir=self.output_dir,
+                output_dir=str(self.output_dir),
                 learning_rate=self.learning_rate,
+                max_length=self.max_length,
+                bf16=True,
                 save_strategy="no",
                 report_to="wandb",
                 run_name=self.wandb_run_name,
@@ -80,7 +85,7 @@ class LoraTrainer:
             )
 
             self.trainer = SFTTrainer(
-                model=MODEL_NAME,
+                model=self.model_name,
                 args=self.training_args,
                 train_dataset=self.dataset,
                 peft_config=self.peft_config,

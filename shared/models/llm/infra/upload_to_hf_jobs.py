@@ -1,85 +1,125 @@
-"""Submit the LoRA train script as a Hugging Face Job.
+"""Submit a Docker image and its run settings to Hugging Face Jobs.
 
-Reuses the job helpers from ``cookbooks/fine_tuning_llms/trl_jobs/runner.py``.
-The train script imports that cookbook's model and dataset constants, so the
-job also mounts ``trl_jobs``.
+Jobs pulls ``image`` from a registry. ``upload_to_hf_jobs`` sends that
+reference together with the hardware, command, environment, and secrets.
+Pass ``push=True`` after a local ``docker build`` of the same tag so the
+registry has the image before the job starts. A Docker Space image
+(``hf.co/spaces/<namespace>/<space>``) is already hosted, so leave
+``push`` false for those.
 
-Launch from the repository root:
+Call it from an experiment after the image exists:
 
-    uv run python cookbooks/fine_tuning_llms/trl_lora_training/runner.py
+    upload_to_hf_jobs(
+        "docker.io/<namespace>/my-image:latest",
+        HuggingFaceJobConfig(
+            command=("python", "train.py"),
+            flavor="a10g-large",
+            timeout="24h",
+        ),
+        push=True,
+    )
 """
 
 from __future__ import annotations
 
-import argparse
-import sys
-from pathlib import Path
+import subprocess
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 
-_FINE_TUNING_DIR = Path(__file__).resolve().parent.parent
-if str(_FINE_TUNING_DIR) not in sys.path:
-    sys.path.insert(0, str(_FINE_TUNING_DIR))
+from huggingface_hub import JobInfo, run_job
 
-from huggingface_hub import run_uv_job  # noqa: E402
-from trl_jobs.runner import (  # noqa: E402
-    JOB_TIMEOUT,
-    REPO_MOUNT_PATH,
-    TRAIN_JOB_FLAVOR,
-    TRL_JOBS_MOUNT_PATH,
-    _aws_and_hf_secrets,
-    _shared_volumes,
-    _sync_python_modules_volume,
+_SPACE_IMAGE_PREFIXES = (
+    "hf.co/spaces/",
+    "huggingface.co/spaces/",
+    "https://hf.co/spaces/",
+    "https://huggingface.co/spaces/",
 )
 
-from lib.load_env_vars import EnvVarsContainer  # noqa: E402
-from shared.aws.constants import DEFAULT_REGION_NAME  # noqa: E402
 
-LORA_DIR = Path(__file__).resolve().parent
-TRAIN_SCRIPT = LORA_DIR / "train.py"
-FINE_TUNING_MOUNT_PATH = str(Path(TRL_JOBS_MOUNT_PATH).parent)
+@dataclass(frozen=True)
+class HuggingFaceJobConfig:
+    """Settings submitted with the image.
+
+    ``command`` is the process Jobs runs inside the image. ``flavor`` is a
+    Jobs hardware name such as ``a10g-large``. ``timeout`` uses the Jobs
+    duration form, for example ``24h``. ``secrets`` are encrypted job
+    environment variables.
+    """
+
+    command: Sequence[str]
+    flavor: str = "cpu-basic"
+    timeout: str | None = None
+    env: Mapping[str, str] = field(default_factory=dict)
+    secrets: Mapping[str, str] = field(default_factory=dict)
+    namespace: str | None = None
+    labels: Mapping[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        command = tuple(self.command)
+        if not command or any(not str(part).strip() for part in command):
+            raise ValueError("command must contain at least one non-empty argument.")
+        if not self.flavor or not self.flavor.strip():
+            raise ValueError("flavor must be a non-empty hardware flavor.")
+        object.__setattr__(self, "command", command)
+        object.__setattr__(self, "env", dict(self.env))
+        object.__setattr__(self, "secrets", dict(self.secrets))
+        object.__setattr__(self, "labels", dict(self.labels))
 
 
-def launch_train_job() -> object:
-    """Submit ``train.py`` for LoRA SFT on Hugging Face Jobs."""
-    secrets = _aws_and_hf_secrets()
-    secrets["WANDB_API_KEY"] = EnvVarsContainer.get_env_var(
-        "WANDB_API_KEY", required=True
+def upload_to_hf_jobs(
+    image: str,
+    config: HuggingFaceJobConfig,
+    *,
+    push: bool = False,
+) -> JobInfo:
+    """Push ``image`` when requested, then start a Job with ``config``.
+
+    Parameters
+    ----------
+    image
+        Image reference Jobs will pull, for example
+        ``docker.io/<namespace>/my-image:latest`` or
+        ``hf.co/spaces/<namespace>/<space>``.
+    config
+        Command, hardware, timeout, environment, and secrets.
+    push
+        When true, ``docker push`` ``image`` before creating the Job.
+        The tag must already exist in the local Docker daemon.
+
+    Returns
+    -------
+    JobInfo
+        The created job. ``url`` is the Hub page for the run.
+    """
+    reference = image.strip()
+    if not reference:
+        raise ValueError("image must be a non-empty Docker image reference.")
+    if push:
+        _push_image(reference)
+    return run_job(
+        image=reference,
+        command=list(config.command),
+        env=dict(config.env) or None,
+        secrets=dict(config.secrets) or None,
+        flavor=config.flavor,  # type: ignore[arg-type]
+        timeout=config.timeout,
+        labels=dict(config.labels) or None,
+        namespace=config.namespace,
     )
-    pythonpath = f"{REPO_MOUNT_PATH}:{FINE_TUNING_MOUNT_PATH}"
-
-    return run_uv_job(
-        str(TRAIN_SCRIPT),
-        dependencies=["trl", "peft", "wandb", "boto3"],
-        flavor=TRAIN_JOB_FLAVOR,
-        timeout=JOB_TIMEOUT,
-        volumes=[*_shared_volumes(), _sync_python_modules_volume()],
-        env={
-            "PYTHONPATH": pythonpath,
-            "AWS_DEFAULT_REGION": DEFAULT_REGION_NAME,
-            "AWS_REGION": DEFAULT_REGION_NAME,
-        },
-        secrets=secrets,
-    )
 
 
-def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Submit the LoRA SFT script to Hugging Face Jobs."
-    )
-    parser.add_argument(
-        "command",
-        nargs="?",
-        default="train",
-        choices=("train",),
-        help="Which job to launch (default: train).",
-    )
-    return parser
-
-
-def main() -> None:
-    build_parser().parse_args()
-    job = launch_train_job()
-    print(job)
-
-
-if __name__ == "__main__":
-    main()
+def _push_image(image: str) -> None:
+    """Publish ``image`` so Jobs can pull the tag this machine built."""
+    if image.startswith(_SPACE_IMAGE_PREFIXES):
+        raise ValueError(
+            "Docker Space images are already hosted on the Hub. "
+            f"Do not push {image!r}."
+        )
+    repository = image.split("@", 1)[0].split(":", 1)[0]
+    if "/" not in repository:
+        raise ValueError(
+            "A pushed image needs a registry name, for example "
+            "'docker.io/<namespace>/lora-finetuning-study2-2026-10-04:latest'. "
+            f"Got {image!r}."
+        )
+    subprocess.run(["docker", "push", image], check=True)
