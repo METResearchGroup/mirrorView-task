@@ -363,9 +363,42 @@ Allow Or Remove?
 
 #### Optimized prompt
 
-We run DSPy and GEPA to optimize our prompt.
+We performed automated prompt tuning using DSPy and the GEPA optimization metric.
 
-...
+`DSPy` is a framework for writing a language-model program as typed inputs and outputs, then optimizing that program. Here the program was one predictor. Its inputs were the two post texts. Its outputs were a Boolean remove decision and a remove probability. GEPA is a reflective prompt optimizer. On each iteration it draws a small batch, runs the current program, and reads a written explanation of what the program got wrong. A reflection call then proposes a new instruction. GEPA keeps that proposal only when it strictly improves the batch score. For the DSPy and GEPA optimization, we use `GPT 5.6-Terra`.
+
+We started with our few-shot prompt and iterated. We fixed the few-shot examples and edited the system prompt. The optimized system prompt is as follows:
+
+```markdown
+You are reviewing a pair of political mirror posts for a political social media platform. The posts express analogous messages from opposing viewpoints and are not replies. Apply the same standards regardless of ideology, party, candidate, movement, or protected characteristic.
+
+Decide whether the pair supports healthy political discussion.
+
+Allow substantive political speech, including criticism of politicians, parties, policies, institutions, and movements; claims that policies cause harm; and forceful, blunt, or emotional disagreement.
+
+Remove if either post contains:
+- Targeted hostile abuse, harassment, threats, calls for harm, dehumanization, or degrading/contemptuous language.
+- Sweeping attacks on political groups or their members.
+- Obscene, aggressively dismissive, taunting, mocking, or inflammatory language directed at opponents or their views.
+- Unsupported assertions or insinuations that a named person committed serious criminal, sexual, or similarly grave misconduct. A bare accusation is not protected political criticism merely because it concerns a public figure.
+
+Distinguish criticism from abuse:
+- Allow criticism focused on actions, policies, consequences, public statements, or documented conduct, when not abusively framed.
+- Remove language whose main effect is to insult, humiliate, provoke hostility toward, or contemptuously dismiss a political person, group, or viewpoint.
+- Do not remove solely for strong political disagreement. Remove only when abusive, threatening, degrading, inflammatory, or gravely accusatory as described above.
+
+Make one binary decision for the pair:
+- Allow only if both posts should remain.
+- Remove if either post should be removed.
+
+{Few-shot examples}
+
+Return only the decision.
+
+Allow Or Remove?
+```
+
+We
 
 ### Baselines
 
@@ -403,11 +436,54 @@ Across split posts:
 
 #### Few-shot baselines
 
+Across all posts:
+
+| Model                 |    F1     | Accuracy  |  Recall   | Precision  |
+|-----------------------|-----------|-----------|-----------|------------|
+| Amazon Nova Micro     | 0.428947  | 0.580253  | 0.743425  | 0.301435   |
+| Qwen 3 32B            | 0.463378  | 0.566812  | **0.881996**  | 0.314234   |
+| OpenAI GPT-5.6 Terra  | 0.338110  | 0.805176  | 0.234659  | 0.604692   |
+| Claude Sonnet 5.5     | 0.330366  | **0.806392**  | 0.225219  | **0.619666**   |
+| Jev                   | **0.561910**  | 0.787517  | 0.642616  | 0.499214   |
+
+Across unanimous posts:
+
+| Model                 |    F1     | Accuracy  |  Recall   | Precision  |
+|-----------------------|-----------|-----------|-----------|------------|
+| Amazon Nova Micro     | 0.274428  | 0.654968  | 0.862745  | 0.163164   |
+| Qwen 3 32B            | 0.305225  | 0.668067  | **0.964052**  | 0.181315   |
+| OpenAI GPT-5.6 Terra  | 0.526316  | 0.942165  | 0.424837  | 0.691489   |
+| Claude Sonnet 5.5     | 0.511931  | **0.944390**  | 0.385621  | **0.761290**   |
+| Jev                   | **0.664251**  | 0.931290  | 0.898693  | 0.526820   |
+
+Across split posts:
+
+| Model                 |    F1     | Accuracy  |  Recall   | Precision  |
+|-----------------------|-----------|-----------|-----------|------------|
+| Amazon Nova Micro     | 0.464521  | 0.549844  | 0.729699  | 0.340706   |
+| Qwen 3 32B            | 0.496046  | 0.525601  | **0.872556**  | 0.346521   |
+| OpenAI GPT-5.6 Terra  | 0.312448  | 0.749422  | 0.212782  | 0.587747   |
+| Claude Sonnet 5.5     | 0.307005  | **0.750226**  | 0.206767  | **0.595883**   |
+| Jev                   | **0.547683**  | 0.729001  | 0.613158  | 0.494842   |
+
+## Automated prompt tuning
+
+We used DSPy and GEPA to optimize the original few-shot prompt. We used `GPT 5.6-Terra` to review and rewrite the prompts. We trained and tested the optimization on only unanimous keep/remove labels. The new few-shot prompt improved F1 from 0.68 to 0.84 on the hold-out set.
+
+| Model Version |    F1    | Accuracy |  Recall  | Precision |
+|---------------|----------|----------|----------|-----------|
+| Original      | 0.680851 | 0.754098 | 0.533333 | 0.941176  |
+| Selected      | 0.835821 | 0.819672 | 0.933333 | 0.756757  |
+
+We rerun Jev, Amazon Nova Micro, and Qwen 3 32B on this optimized prompt (GPT-5.6 Terra and Claude Sonnet 5.5 underperform these models and are 10x the price).
+
 ...
 
-### Automated prompt tuning
+## Fine-tuning a classifier
 
-We performed automated prompt tuning using DSPy and the GEPA optimization metric (CITE).
+**TODO: describe**
+
+We fine-tune `Qwen3.5-4B` on the datasets...
 
 ## Training a calibrated classifier
 
