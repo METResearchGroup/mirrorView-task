@@ -18,6 +18,7 @@ import argparse
 from pathlib import Path
 
 from lib.timestamp_utils import get_current_timestamp
+from shared.data.dataloader import STUDY_DATA_BUCKET
 from shared.models.llm.training.lora_training import LoraTrainer
 
 from experiments.lora_finetuning_study2_2026_10_04.dataloader import (
@@ -77,6 +78,13 @@ def build_config(run_name: str, dataset_name: str, project: str, group: str) -> 
         "model_name": MODEL_NAME,
         "dataset_name": dataset_name,
         "output_dir": str(Path("/tmp") / run_name),
+        # Effective batch is 8. The micro-batch is 1 so rank 256 fits on one A10G.
+        "per_device_train_batch_size": 1,
+        "gradient_accumulation_steps": 8,
+        "num_train_epochs": 3,
+        "artifact_s3_uri": (
+            f"s3://{STUDY_DATA_BUCKET}/experiments/lora_finetuning_study2_2026_10_04/{run_name}"
+        ),
         "wandb": {
             "project": project,
             "group": group,

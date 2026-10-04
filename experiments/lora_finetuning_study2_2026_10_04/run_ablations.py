@@ -84,15 +84,16 @@ def launch_ablations(image: str) -> list[JobInfo]:
             training_job_config(train_command(ablation), ablation=ablation.name),
             push=index == 0,
         )
+        # Print before the next submission. A later failure must not hide a job
+        # that is already running.
+        print(f"{ablation.project} {job.url}", flush=True)
         jobs.append(job)
     return jobs
 
 
 def main() -> None:
     """Build the image and start the unanimous, split, and all-label jobs."""
-    jobs = launch_ablations(resolve_image())
-    for ablation, job in zip(ABLATIONS, jobs, strict=True):
-        print(f"{ablation.project} {job.url}")
+    launch_ablations(resolve_image())
 
 
 if __name__ == "__main__":

@@ -9,6 +9,8 @@ HF_JOB_IMAGE=docker.io/<namespace>/lora-finetuning-study2-2026-10-04:latest \
 
 `HF_JOB_IMAGE` is the registry tag Hugging Face Jobs pulls. Log in to that registry before the push. The job receives `HF_TOKEN`, `WANDB_API_KEY`, `AWS_ACCESS_KEY_ID`, and `AWS_SECRET_ACCESS_KEY` from `EnvVarsContainer` in `lib/load_env_vars.py`.
 
+Each job uses one A10G (`a10g-large`) and a 2-day timeout. Training is 3 epochs, micro-batch 1, gradient accumulation 8, and 8-bit Adam. The saved adapter is uploaded to `s3://mirrorview-experimental-artifacts/experiments/lora_finetuning_study2_2026_10_04/<run_name>/` before the job exits.
+
 Each job trains on one upsampled label set and records a separate Weights & Biases project:
 
 | Ablation | Training table | Project |
