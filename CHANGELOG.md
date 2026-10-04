@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-04
+
+1. Study 2 can fine-tune Qwen3.5-4B with LoRA on the unanimous, split, and all keep/remove tables, and callers resolve API keys from AWS Secrets Manager. One command builds the training image and starts the three Hugging Face Jobs, each logging to its own Weights & Biases project. [PR #349](https://github.com/METResearchGroup/mirrorView-task/pull/349)
+
 ## 2026-10-01
 
 1. Jev 1.13.0 scores the 13,992 five-labeler Study 2 pairs as a zero-shot keep or remove classifier, and the run writes prediction rows in the same schema the Bedrock models use. Remove-class F1 is 0.529 and accuracy is 0.713, at a measured cost of $0.427. [PR #341](https://github.com/METResearchGroup/mirrorView-task/pull/341)
