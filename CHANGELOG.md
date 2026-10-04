@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-10-04
+
+1. Amazon Nova Micro and Qwen 3 32B scored the 13,992 five-labeler Study 2 pairs with the few-shot keep or remove prompt that DSPy optimized. On run `study2-dspy-optimized-few-shot-2026-10-04`, Qwen 3 32B has the higher remove-class F1 at 0.466, and Amazon Nova Micro has the higher accuracy at 0.803. The F1 and accuracy figures omit the same five demonstration rows that the baseline few-shot metrics omit. [PR #355](https://github.com/METResearchGroup/mirrorView-task/pull/355)
+
 ## 2026-10-02
 
 1. Four Bedrock models run the issue 329 few-shot keep or remove prompt on the 13,992 five-labeler Study 2 pairs from the zero-shot input. On run `study2-few-shot-2026-10-01`, Qwen 3 32B has the highest remove-class F1 at 0.463, and Claude Sonnet 5.5 has the highest accuracy at 0.806. The F1 and accuracy figures omit five demonstration rows that also appear in the input. [PR #346](https://github.com/METResearchGroup/mirrorView-task/pull/346)
