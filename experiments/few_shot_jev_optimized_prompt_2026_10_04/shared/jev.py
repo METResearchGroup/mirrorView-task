@@ -9,7 +9,10 @@ from __future__ import annotations
 
 from langchain_typesafe import ClassifierRequest
 
-from experiments.zero_shot_jev_inference_2026_10_01.shared.jev import REMOVE_QUESTION
+from experiments.zero_shot_jev_inference_2026_10_01.shared.jev import (
+    REMOVE_QUESTION,
+    build_remove_request,
+)
 from experiments.zero_shot_llm_inference_2026_09_30.shared.schemas import Study2InputRecord
 from shared.models.llm import OPTIMIZED_STUDY_PROMPT_TEMPLATE
 
@@ -66,7 +69,7 @@ def build_optimized_remove_request(record: Study2InputRecord) -> ClassifierReque
     ClassifierRequest
         State for the two posts and one remove question using the compiled prompt.
     """
-    raise NotImplementedError
+    return build_remove_request(record, instructions=OPTIMIZED_REMOVE_INSTRUCTIONS)
 
 
 OPTIMIZED_REMOVE_INSTRUCTIONS = build_optimized_remove_instructions(
