@@ -30,6 +30,13 @@ def test_rewrite_adapter_key_for_vllm_keeps_flat_keys() -> None:
     assert evaluate_mod.rewrite_adapter_key_for_vllm(key) == key
 
 
+def test_prompt_truncation_leaves_room_for_completion() -> None:
+    kwargs = evaluate_mod.prompt_truncation_kwargs()
+    limit = evaluate_mod.MAX_LENGTH - evaluate_mod.MAX_NEW_TOKENS
+    assert kwargs["truncate_prompt_tokens"] == limit
+    assert kwargs["truncation_side"] == "left"
+
+
 def test_chat_template_kwargs_disable_thinking() -> None:
     assert evaluate_mod.CHAT_TEMPLATE_KWARGS == {"enable_thinking": False}
 

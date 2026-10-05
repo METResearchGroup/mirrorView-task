@@ -23,6 +23,7 @@ import shutil
 import subprocess
 import sys
 import time
+import traceback
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -62,6 +63,9 @@ EVAL_COMMAND = (
 RESULTS_S3_PREFIX = "experiments/lora_finetuning_study2_2026_10_04/results"
 POSITIVE_CLASS = "remove"
 MAX_NEW_TOKENS = 8
+# Leave room for the keep/remove completion. vLLM rejects a prompt that
+# uses the whole 4096-token context, and one full-table row was 4097 tokens.
+PROMPT_TOKEN_LIMIT = MAX_LENGTH - MAX_NEW_TOKENS
 FULL_TABLE_N = 20_000
 EVAL_FLAVOR = "l4x1"
 EVAL_TIMEOUT = "8h"
@@ -510,6 +514,14 @@ def _load_vllm_engine() -> Any:
         return LLM(**kwargs)
 
 
+def prompt_truncation_kwargs() -> dict[str, int | str]:
+    """Truncate long prompts from the left so the closing instruction remains."""
+    return {
+        "truncate_prompt_tokens": PROMPT_TOKEN_LIMIT,
+        "truncation_side": "left",
+    }
+
+
 def _chat_generations(
     llm: Any,
     message_lists: Sequence[list[dict[str, str]]],
@@ -528,11 +540,16 @@ def _chat_generations(
     root_logger = logging.getLogger()
     root_logger.addHandler(ignore_capture)
     try:
+        print(
+            f"TRUNCATE_PROMPT_TOKENS {PROMPT_TOKEN_LIMIT} side=left",
+            flush=True,
+        )
         outputs = llm.chat(
             list(message_lists),
             sampling_params=sampling,
             lora_request=lora_request,
             chat_template_kwargs=dict(CHAT_TEMPLATE_KWARGS),
+            tokenization_kwargs=prompt_truncation_kwargs(),
             use_tqdm=True,
         )
     finally:
@@ -755,4 +772,12 @@ def main(argv: list[str] | None = None) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    try:
+        main(sys.argv[1:])
+    except SystemExit:
+        raise
+    except Exception:
+        traceback.print_exc()
+        # vLLM's engine subprocess does not die when chat() raises, and the
+        # interpreter then waits on it until SageMaker hits the runtime cap.
+        os._exit(1)
