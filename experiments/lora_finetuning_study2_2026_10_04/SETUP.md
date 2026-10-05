@@ -81,3 +81,13 @@ When the job finishes, the launcher downloads metrics locally to:
 `experiments/lora_finetuning_study2_2026_10_04/results/{ablation}/{run_name}/metrics.jsonl`
 
 Expected L4 wall clock for the full table is about 1.5–3 hours ($1.20–$2.40). Conservative band is 4–7 hours ($3.20–$5.60). The 8-hour timeout caps spend at $6.40.
+
+# SageMaker eval (smoke)
+
+Push the eval image to ECR tag `study2-vllm-eval` on `mirrorview-finetune_qwen_model_2026_08_08` (do not overwrite `:latest`). Source `/tmp/aws-lab-env.sh`, set `AWS_SDK_UA_APP_ID=AWSSkill-SageMaker`, then:
+
+```bash
+PYTHONPATH=. uv run python experiments/lora_finetuning_study2_2026_10_04/launch_sagemaker.py --wait
+```
+
+Uses execution role `mirrorview-qwen-finetune-sm-exec`, `ml.g5.xlarge`, 120 GB volume, and passes lab AWS keys plus `HF_TOKEN` into the container so S3 reads/writes under `experiments/lora_finetuning_study2_2026_10_04/` work. Smoke defaults: `--ablation unanimous`, `--limit 32`, and the unanimous adapter run name from training. A full labeling pass is `--no-limit` (four-hour cap). That one pass scores the 20,000-row table and writes unanimous, split, and all metrics from the same predictions.
