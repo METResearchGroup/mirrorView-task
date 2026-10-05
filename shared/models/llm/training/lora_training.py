@@ -1,28 +1,47 @@
 """LoRA SFT trainer for Hugging Face Jobs."""
 
+from __future__ import annotations
+
+from pathlib import Path
+from urllib.parse import urlparse
+
 from datasets import Dataset
 from peft import LoraConfig
 from trl import SFTConfig, SFTTrainer
 
+from lib.aws.s3 import DEFAULT_REGION_NAME, S3
 from lib.telemetry.wandb import start_run
 
-# SFT LoRA from the TRL guide: every linear layer, rank 256, and a learning
-# rate above the full fine-tuning default.
-# LORA_RANK = 256
-# LORA_ALPHA = 16
-# LORA_TARGET_MODULES = "all-linear"
-# LEARNING_RATE = 2e-4
 
-# WANDB_GROUP = "trl_lora_training"
-# RUN_NAME = f"{MODEL_NAME.rsplit('/', 1)[-1]}_lora_{get_current_timestamp()}"
-
-# ARTIFACT_PREFIX = "cookbooks/fine_tuning_llms/trl_lora_training"
-# OUTPUT_DIR = Path("/tmp") / RUN_NAME
+def parse_s3_uri(uri: str) -> tuple[str, str]:
+    """Split ``s3://bucket/prefix`` into bucket and key prefix."""
+    parsed = urlparse(uri)
+    if parsed.scheme != "s3" or not parsed.netloc:
+        raise ValueError(f"Invalid S3 URI: {uri}")
+    bucket = parsed.netloc
+    prefix = parsed.path.lstrip("/").rstrip("/")
+    return bucket, prefix
 
 
-# def artifact_s3_uri() -> str:
-#     """Return the S3 prefix for this run's saved adapter."""
-#     return f"s3://{DEFAULT_BUCKET}/{ARTIFACT_PREFIX}/{RUN_NAME}"
+def upload_adapter_directory(local_dir: Path, adapter_s3_uri: str) -> None:
+    """Upload every file under ``local_dir`` to ``adapter_s3_uri``.
+
+    Relative paths under ``local_dir`` are preserved under the URI prefix.
+    """
+    bucket, prefix = parse_s3_uri(adapter_s3_uri)
+    s3 = S3(bucket, region_name=DEFAULT_REGION_NAME)
+    root = Path(local_dir)
+    if not root.is_dir():
+        raise FileNotFoundError(f"Adapter output directory not found: {root}")
+
+    for path in sorted(root.rglob("*")):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(root).as_posix()
+        key = f"{prefix}/{relative}" if prefix else relative
+        s3.upload_file(path, key)
+
+    print(adapter_s3_uri)
 
 
 class LoraTrainer:
@@ -42,6 +61,11 @@ class LoraTrainer:
         self.wandb_project = config["wandb"]["project"]
         self.wandb_group = config["wandb"]["group"]
         self.wandb_run_name = config["wandb"]["run_name"]
+
+        adapter_s3_uri = config.get("adapter_s3_uri")
+        if not adapter_s3_uri:
+            raise ValueError("adapter_s3_uri is required")
+        self.adapter_s3_uri = adapter_s3_uri
 
         self.peft_config = LoraConfig(
             r=self.lora_rank,
@@ -96,8 +120,4 @@ class LoraTrainer:
 
             self.trainer.train()
             self.trainer.save_model(self.output_dir)
-            # upload_directory(
-            #     OUTPUT_DIR,
-            #     artifact_s3_uri(),
-            #     region=DEFAULT_REGION_NAME,
-            # )
+            upload_adapter_directory(Path(self.output_dir), self.adapter_s3_uri)

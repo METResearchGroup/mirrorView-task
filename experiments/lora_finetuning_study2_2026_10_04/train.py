@@ -54,6 +54,14 @@ NUM_TRAIN_EPOCHS = 1
 # 4096 leaves room for the posts and keeps the completion inside the sequence.
 MAX_LENGTH = 4096
 
+ARTIFACTS_BUCKET = "mirrorview-experimental-artifacts"
+ADAPTER_S3_PREFIX = "experiments/lora_finetuning_study2_2026_10_04/adapters"
+
+
+def build_adapter_s3_uri(group: str, run_name: str) -> str:
+    """Return the S3 prefix where this run's LoRA adapter is stored."""
+    return f"s3://{ARTIFACTS_BUCKET}/{ADAPTER_S3_PREFIX}/{group}/{run_name}/"
+
 
 def build_parser() -> argparse.ArgumentParser:
     """Return the parser for one ablation run."""
@@ -80,6 +88,7 @@ def build_config(run_name: str, dataset_name: str, project: str, group: str) -> 
         "model_name": MODEL_NAME,
         "dataset_name": dataset_name,
         "output_dir": str(Path("/tmp") / run_name),
+        "adapter_s3_uri": build_adapter_s3_uri(group, run_name),
         "wandb": {
             "project": project,
             "group": group,

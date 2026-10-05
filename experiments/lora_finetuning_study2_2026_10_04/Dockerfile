@@ -33,7 +33,8 @@ RUN pip install --upgrade pip && \
       "boto3>=1.42.88" \
       "python-dotenv>=1.2.2" \
       "pyyaml>=6.0" \
-      "einops" && \
+      "einops" \
+      "scikit-learn>=1.5" && \
     pip install --no-deps \
       "flash-linear-attention==0.4.2" \
       "fla-core==0.4.2" \
